@@ -5,7 +5,7 @@ import styles from "./Nav.module.css";
 const SOCIALS = [
   { label: "Instagram", href: "https://www.instagram.com/garammasaladating" },
   { label: "TikTok", href: "https://tiktok.com/@garammasaladating" },
-  { label: "YouTube", href: "#" },
+  { label: "YouTube", href: "https://www.youtube.com/playlist?list=PLgDtd7hFH7diDNPEPu_6BWMs017q-I-wZ" },
 ];
 
 export function Nav() {

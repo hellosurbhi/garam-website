@@ -28,6 +28,7 @@ export default function AdminDashboard({ onLogout }: AdminDashboardProps) {
   const [applications, setApplications] = useState<Application[]>([]);
   const [loading, setLoading] = useState(true);
   const [selectedApp, setSelectedApp] = useState<Application | null>(null);
+  const [toast, setToast] = useState<{ msg: string; ok: boolean } | null>(null);
 
   const [sortBy, setSortBy] = useState<SortOption>("newest");
   const [cityFilter, setCityFilter] = useState("");
@@ -58,8 +59,12 @@ export default function AdminDashboard({ onLogout }: AdminDashboardProps) {
       await updateDoc(doc(db, "applications", id), patch);
       setApplications((prev) => prev.map((a) => (a.id === id ? { ...a, ...patch } : a)));
       setSelectedApp((prev) => (prev?.id === id ? { ...prev, ...patch } : prev));
+      setToast({ msg: "Saved", ok: true });
     } catch (err) {
       console.error("Failed to update application:", err);
+      setToast({ msg: "Save failed", ok: false });
+    } finally {
+      setTimeout(() => setToast(null), 2500);
     }
   }
 
@@ -85,7 +90,8 @@ export default function AdminDashboard({ onLogout }: AdminDashboardProps) {
     if (incomeFilter !== "All") result = result.filter((a) => a.income === incomeFilter);
     if (statusFilter !== "All") result = result.filter((a) => a.status === statusFilter);
     switch (sortBy) {
-      case "oldest": result.sort((a, b) => a.submittedAt?.seconds - b.submittedAt?.seconds); break;
+      case "newest": result.sort((a, b) => (b.submittedAt?.seconds ?? 0) - (a.submittedAt?.seconds ?? 0)); break;
+      case "oldest": result.sort((a, b) => (a.submittedAt?.seconds ?? 0) - (b.submittedAt?.seconds ?? 0)); break;
       case "city-az": result.sort((a, b) => a.city.localeCompare(b.city)); break;
       case "age-asc": result.sort((a, b) => a.age - b.age); break;
       case "age-desc": result.sort((a, b) => b.age - a.age); break;
@@ -226,6 +232,28 @@ export default function AdminDashboard({ onLogout }: AdminDashboardProps) {
 
       {selectedApp && (
         <ApplicantModal app={selectedApp} onClose={() => setSelectedApp(null)} onUpdate={handleUpdate} />
+      )}
+
+      {toast && (
+        <div
+          style={{
+            position: "fixed",
+            bottom: "24px",
+            right: "24px",
+            padding: "10px 20px",
+            borderRadius: "100px",
+            background: toast.ok ? "#22C55E" : "var(--crimson)",
+            color: "#fff",
+            fontFamily: "var(--font-dm-sans)",
+            fontSize: "14px",
+            fontWeight: 600,
+            boxShadow: "0 4px 16px rgba(0,0,0,0.15)",
+            zIndex: 100,
+            pointerEvents: "none",
+          }}
+        >
+          {toast.msg}
+        </div>
       )}
     </div>
   );

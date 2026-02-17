@@ -4,7 +4,6 @@ import { collection, addDoc, serverTimestamp } from "firebase/firestore";
 import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import { db, storage } from "@/lib/firebase";
 import { COMMUNITY_OPTIONS, INCOME_OPTIONS } from "@/types/application";
-import { SubpageBackground } from "@/components/SubpageBackground/SubpageBackground";
 
 /* ─── Shared input styles ────────────────────────────────────── */
 
@@ -281,16 +280,16 @@ export default function ApplyPage() {
 
   return (
     <>
-      <style>{focusStyle}</style>
+      <style>{focusStyle + `@keyframes pageIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}`}</style>
 
       <div
         style={{
           minHeight: "100vh",
           background: "transparent",
           position: "relative",
+          animation: "pageIn 0.3s ease-out both",
         }}
       >
-        <SubpageBackground />
 
         <div
           style={{

@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
+import { SubpageBackground } from "@/components/SubpageBackground/SubpageBackground";
 import {
   Heart,
   Instagram,
@@ -236,39 +237,11 @@ export default function LinksPage() {
       <div
         style={{
           minHeight: "100vh",
-          background: "var(--cream)",
+          background: "transparent",
           position: "relative",
-          overflow: "hidden",
         }}
       >
-        <div
-          aria-hidden="true"
-          style={{
-            position: "absolute",
-            width: "500px",
-            height: "500px",
-            top: "-100px",
-            left: "-150px",
-            background: "radial-gradient(circle, rgba(196,30,58,0.06) 0%, transparent 70%)",
-            borderRadius: "50%",
-            filter: "blur(60px)",
-            pointerEvents: "none",
-          }}
-        />
-        <div
-          aria-hidden="true"
-          style={{
-            position: "absolute",
-            width: "400px",
-            height: "400px",
-            bottom: "-80px",
-            right: "-100px",
-            background: "radial-gradient(circle, rgba(212,168,67,0.09) 0%, transparent 70%)",
-            borderRadius: "50%",
-            filter: "blur(50px)",
-            pointerEvents: "none",
-          }}
-        />
+        <SubpageBackground />
 
         <div
           style={{

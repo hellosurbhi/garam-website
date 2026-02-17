@@ -1,6 +1,5 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
-import { SubpageBackground } from "@/components/SubpageBackground/SubpageBackground";
 import {
   Heart,
   Instagram,
@@ -220,6 +219,10 @@ export default function LinksPage() {
   return (
     <>
       <style>{`
+        @keyframes pageIn {
+          from { opacity: 0; transform: translateY(8px); }
+          to   { opacity: 1; transform: translateY(0); }
+        }
         @keyframes fadeUp {
           from { opacity: 0; transform: translateY(16px); }
           to   { opacity: 1; transform: translateY(0); }
@@ -239,9 +242,9 @@ export default function LinksPage() {
           minHeight: "100vh",
           background: "transparent",
           position: "relative",
+          animation: "pageIn 0.3s ease-out both",
         }}
       >
-        <SubpageBackground />
 
         <div
           style={{

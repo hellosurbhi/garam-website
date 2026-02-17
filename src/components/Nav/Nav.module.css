@@ -60,8 +60,10 @@
   position: absolute;
   top: calc(100% + 8px);
   right: 0;
-  background: #111;
-  border: 1px solid rgba(255, 255, 255, 0.15);
+  background: rgba(10, 10, 10, 0.45);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.18);
   border-radius: 10px;
   overflow: hidden;
   min-width: 148px;

@@ -104,7 +104,7 @@ export default function AdminDashboard({ onLogout }: AdminDashboardProps) {
     orientationFilter !== "All" || communityFilter !== "All" || incomeFilter !== "All" || statusFilter !== "All";
 
   return (
-    <div style={{ minHeight: "100vh", background: "var(--cream)" }}>
+    <div style={{ minHeight: "100vh", background: "var(--cream)", position: "relative" }}>
       <header style={{ background: "#fff", borderBottom: "1px solid var(--border)", padding: "0 32px" }}>
         <div
           style={{

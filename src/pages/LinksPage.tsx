@@ -49,10 +49,10 @@ const LINKS: LinkItem[] = [
   },
   {
     label: "YouTube",
-    href: "#",
+    href: "https://www.youtube.com/playlist?list=PLgDtd7hFH7diDNPEPu_6BWMs017q-I-wZ",
     filled: false,
     icon: Youtube,
-    comingSoon: true,
+    external: true,
   },
   {
     label: "Upcoming Shows & Tickets",

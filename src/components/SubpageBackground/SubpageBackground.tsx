@@ -27,7 +27,7 @@ export function SubpageBackground() {
         style={{
           position: "absolute",
           inset: 0,
-          background: "rgba(255, 248, 240, 0.88)",
+          background: "rgba(255, 248, 240, 0.65)",
         }}
       />
     </div>

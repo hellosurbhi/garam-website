@@ -20,6 +20,42 @@ function LandingPage() {
   );
 }
 
+function NotFound() {
+  return (
+    <div
+      style={{
+        minHeight: "100vh",
+        background: "var(--cream)",
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+        fontFamily: "var(--font-dm-sans)",
+      }}
+    >
+      <div style={{ textAlign: "center" }}>
+        <p style={{ fontSize: "3rem", marginBottom: "16px" }}>🌶️</p>
+        <h1
+          style={{
+            fontFamily: "var(--font-playfair)",
+            fontSize: "28px",
+            fontWeight: 700,
+            color: "var(--text)",
+            marginBottom: "12px",
+          }}
+        >
+          Page not found
+        </h1>
+        <a
+          href="/"
+          style={{ color: "var(--crimson)", fontSize: "15px", fontWeight: 500 }}
+        >
+          ← Back to home
+        </a>
+      </div>
+    </div>
+  );
+}
+
 function App() {
   return (
     <BrowserRouter>
@@ -28,6 +64,7 @@ function App() {
         <Route path="/apply" element={<ApplyPage />} />
         <Route path="/links" element={<LinksPage />} />
         <Route path="/admin" element={<AdminPage />} />
+        <Route path="*" element={<NotFound />} />
       </Routes>
     </BrowserRouter>
   );

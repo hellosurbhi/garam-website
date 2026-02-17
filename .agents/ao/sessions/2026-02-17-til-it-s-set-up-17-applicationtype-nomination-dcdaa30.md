@@ -39,16 +39,21 @@ When applying for a friend, the section title says "Your Info" — this is fine,
 
 ## Issues
 - `qa-tester`
+- `as-error-field`
 
 ## Tool Usage
 
 | Tool | Count |
 |------|-------|
+| Bash | 8 |
+| Edit | 22 |
 | Read | 12 |
 | Task | 1 |
+| TaskCreate | 1 |
+| TaskUpdate | 2 |
 
 ## Tokens
 
 - **Input:** 0
 - **Output:** 0
-- **Total:** ~132351 (estimated)
+- **Total:** ~255866 (estimated)

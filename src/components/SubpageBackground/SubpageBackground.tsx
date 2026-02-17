@@ -1,4 +1,5 @@
 import heroImage from "@/assets/hero.jpeg";
+import heroMobileImage from "@/assets/hero-mobile.jpeg";
 
 export function SubpageBackground() {
   return (
@@ -11,17 +12,20 @@ export function SubpageBackground() {
         pointerEvents: "none",
       }}
     >
-      <img
-        src={heroImage}
-        alt=""
-        style={{
-          width: "100%",
-          height: "100%",
-          objectFit: "cover",
-          objectPosition: "50% 35%",
-          display: "block",
-        }}
-      />
+      <picture style={{ width: "100%", height: "100%", display: "block" }}>
+        <source media="(max-width: 768px)" srcSet={heroMobileImage} />
+        <img
+          src={heroImage}
+          alt=""
+          style={{
+            width: "100%",
+            height: "100%",
+            objectFit: "cover",
+            objectPosition: "50% 35%",
+            display: "block",
+          }}
+        />
+      </picture>
       {/* Cream wash — lets the photo breathe through without competing with text */}
       <div
         style={{

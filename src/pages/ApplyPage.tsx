@@ -4,6 +4,7 @@ import { collection, addDoc, serverTimestamp } from "firebase/firestore";
 import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import { db, storage } from "@/lib/firebase";
 import { COMMUNITY_OPTIONS, INCOME_OPTIONS } from "@/types/application";
+import { SubpageBackground } from "@/components/SubpageBackground/SubpageBackground";
 
 /* ─── Shared input styles ────────────────────────────────────── */
 
@@ -285,39 +286,11 @@ export default function ApplyPage() {
       <div
         style={{
           minHeight: "100vh",
-          background: "var(--cream)",
+          background: "transparent",
           position: "relative",
-          overflow: "hidden",
         }}
       >
-        <div
-          aria-hidden="true"
-          style={{
-            position: "absolute",
-            width: "500px",
-            height: "500px",
-            top: "-120px",
-            left: "-160px",
-            background: "radial-gradient(circle, rgba(196,30,58,0.06) 0%, transparent 70%)",
-            borderRadius: "50%",
-            filter: "blur(60px)",
-            pointerEvents: "none",
-          }}
-        />
-        <div
-          aria-hidden="true"
-          style={{
-            position: "absolute",
-            width: "400px",
-            height: "400px",
-            top: "40%",
-            right: "-120px",
-            background: "radial-gradient(circle, rgba(212,168,67,0.07) 0%, transparent 70%)",
-            borderRadius: "50%",
-            filter: "blur(50px)",
-            pointerEvents: "none",
-          }}
-        />
+        <SubpageBackground />
 
         <div
           style={{

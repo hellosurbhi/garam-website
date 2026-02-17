@@ -1,0 +1,123 @@
+import { type Application, STATUS_COLORS } from "@/types/application";
+
+interface ApplicantCardProps {
+  app: Application;
+  onClick: () => void;
+}
+
+function StatusBadge({ status }: { status: Application["status"] }) {
+  const color = STATUS_COLORS[status];
+  return (
+    <span
+      style={{
+        display: "inline-block",
+        padding: "2px 8px",
+        borderRadius: "100px",
+        fontSize: "11px",
+        fontWeight: 600,
+        background: color + "22",
+        color,
+        letterSpacing: "0.02em",
+      }}
+    >
+      {status}
+    </span>
+  );
+}
+
+export default function ApplicantCard({ app, onClick }: ApplicantCardProps) {
+  const handle = app.instagram.replace(/^@/, "");
+
+  return (
+    <article
+      onClick={onClick}
+      style={{
+        background: "#fff",
+        borderRadius: "12px",
+        boxShadow: "0 1px 6px rgba(0,0,0,0.07)",
+        overflow: "hidden",
+        cursor: "pointer",
+        transition: "transform 0.2s, box-shadow 0.2s",
+      }}
+      onMouseEnter={(e) => {
+        e.currentTarget.style.transform = "translateY(-2px)";
+        e.currentTarget.style.boxShadow = "0 6px 20px rgba(0,0,0,0.12)";
+      }}
+      onMouseLeave={(e) => {
+        e.currentTarget.style.transform = "translateY(0)";
+        e.currentTarget.style.boxShadow = "0 1px 6px rgba(0,0,0,0.07)";
+      }}
+    >
+      <div
+        style={{
+          width: "100%",
+          aspectRatio: "3/4",
+          maxHeight: "220px",
+          overflow: "hidden",
+          background: "var(--border)",
+        }}
+      >
+        {app.photoUrl ? (
+          <img
+            src={app.photoUrl}
+            alt={app.name}
+            loading="lazy"
+            style={{ width: "100%", height: "100%", objectFit: "cover", display: "block" }}
+          />
+        ) : (
+          <div
+            style={{
+              width: "100%",
+              height: "100%",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              fontSize: "2.5rem",
+              color: "var(--text-light)",
+            }}
+          >
+            🌶️
+          </div>
+        )}
+      </div>
+
+      <div style={{ padding: "16px" }}>
+        <div
+          style={{
+            display: "flex",
+            justifyContent: "space-between",
+            alignItems: "baseline",
+            marginBottom: "2px",
+          }}
+        >
+          <span style={{ fontWeight: 600, fontSize: "16px", color: "var(--text)" }}>
+            {app.name}
+          </span>
+          <span style={{ fontSize: "14px", color: "var(--text-light)" }}>{app.age}</span>
+        </div>
+
+        <p style={{ fontSize: "13px", color: "var(--text-light)", marginBottom: "8px" }}>
+          {app.city}
+        </p>
+
+        <a
+          href={`https://instagram.com/${handle}`}
+          target="_blank"
+          rel="noopener noreferrer"
+          onClick={(e) => e.stopPropagation()}
+          style={{
+            fontSize: "13px",
+            color: "var(--crimson)",
+            textDecoration: "none",
+            display: "block",
+            marginBottom: "10px",
+          }}
+        >
+          @{handle}
+        </a>
+
+        <StatusBadge status={app.status} />
+      </div>
+    </article>
+  );
+}

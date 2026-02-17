@@ -5,7 +5,6 @@ import {
   Instagram,
   Music2,
   Youtube,
-  Users,
   Ticket,
   Mail,
   type LucideIcon,
@@ -21,6 +20,7 @@ interface LinkItem {
   icon: LucideIcon;
   isPrimary?: boolean;
   external?: boolean;
+  comingSoon?: boolean;
 }
 
 const LINKS: LinkItem[] = [
@@ -51,18 +51,14 @@ const LINKS: LinkItem[] = [
     href: "#",
     filled: false,
     icon: Youtube,
-  },
-  {
-    label: "Facebook",
-    href: "#",
-    filled: true,
-    icon: Users,
+    comingSoon: true,
   },
   {
     label: "Upcoming Shows & Tickets",
     href: "#",
     filled: false,
     icon: Ticket,
+    comingSoon: true,
   },
   {
     label: "Press & Collaborations",
@@ -75,8 +71,6 @@ const LINKS: LinkItem[] = [
 const SOCIALS = [
   { icon: Instagram, href: "https://instagram.com/garammasaladating", label: "Instagram" },
   { icon: Music2, href: "https://tiktok.com/@garammasaladating", label: "TikTok" },
-  { icon: Youtube, href: "#", label: "YouTube" },
-  { icon: Users, href: "#", label: "Facebook" },
 ];
 
 /* ─── LinkButton ─────────────────────────────────────────────── */
@@ -89,9 +83,41 @@ function LinkButton({
   icon: Icon,
   isPrimary,
   external,
+  comingSoon,
   delay,
 }: LinkItem & { delay: number }) {
   const [hovered, setHovered] = useState(false);
+
+  if (comingSoon) {
+    return (
+      <div
+        style={{
+          display: "flex",
+          alignItems: "center",
+          gap: "12px",
+          width: "100%",
+          padding: "17px 22px",
+          borderRadius: "14px",
+          border: "2px solid var(--border)",
+          background: "var(--cream)",
+          color: "var(--text-light)",
+          fontFamily: "var(--font-dm-sans)",
+          fontSize: "15px",
+          fontWeight: 600,
+          letterSpacing: "0.01em",
+          opacity: 0.55,
+          cursor: "default",
+          animation: `fadeUp 0.5s ease-out ${delay}s both`,
+        }}
+      >
+        <Icon size={20} style={{ flexShrink: 0 }} />
+        <span style={{ flex: 1, textAlign: "center" }}>{label}</span>
+        <span style={{ fontSize: "11px", fontWeight: 500, letterSpacing: "0.05em", textTransform: "uppercase" }}>
+          Soon
+        </span>
+      </div>
+    );
+  }
 
   const baseStyle: React.CSSProperties = {
     display: "flex",
@@ -283,7 +309,7 @@ export default function LinksPage() {
                 lineHeight: 1.5,
               }}
             >
-              NYC&apos;s Hottest Live Comedy Dating Show&nbsp;🌶️
+              NYC&apos;s hottest live comedy dating show&nbsp;🌶️
             </p>
             <div
               style={{

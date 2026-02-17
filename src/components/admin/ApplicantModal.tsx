@@ -34,12 +34,26 @@ export default function ApplicantModal({ app, onClose, onUpdate }: ApplicantModa
   const handle = app.instagram.replace(/^@/, "");
 
   useEffect(() => {
+    const prev = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    return () => { document.body.style.overflow = prev; };
+  }, []);
+
+  useEffect(() => {
     function onKey(e: KeyboardEvent) {
-      if (e.key === "Escape") onClose();
+      if (e.key === "Escape") handleClose();
     }
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
-  }, [onClose]);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  function handleClose() {
+    if (notes !== (app.notes ?? "")) {
+      onUpdate(app.id, { notes });
+    }
+    onClose();
+  }
 
   function handleStatusChange(e: React.ChangeEvent<HTMLSelectElement>) {
     const next = e.target.value as Application["status"];
@@ -76,7 +90,7 @@ export default function ApplicantModal({ app, onClose, onUpdate }: ApplicantModa
         justifyContent: "center",
         padding: "16px",
       }}
-      onClick={onClose}
+      onClick={handleClose}
     >
       <div
         style={{
@@ -121,7 +135,7 @@ export default function ApplicantModal({ app, onClose, onUpdate }: ApplicantModa
           )}
 
           <button
-            onClick={onClose}
+            onClick={handleClose}
             style={{
               position: "absolute",
               top: "12px",

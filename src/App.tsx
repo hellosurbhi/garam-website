@@ -1,4 +1,4 @@
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { BrowserRouter, Routes, Route, useLocation } from "react-router-dom";
 import { Nav } from "./components/Nav/Nav";
 import { Hero } from "./components/Hero/Hero";
 import { CenterBox } from "./components/CenterBox/CenterBox";
@@ -8,13 +8,27 @@ import LinksPage from "./pages/LinksPage";
 import ApplyPage from "./pages/ApplyPage";
 import AdminPage from "./pages/AdminPage";
 
+function SubpageOverlay() {
+  const { pathname } = useLocation();
+  if (pathname === "/" || pathname === "/admin") return null;
+  return (
+    <div
+      style={{
+        position: "fixed",
+        inset: 0,
+        zIndex: 0,
+        pointerEvents: "none",
+        background: "rgba(255, 248, 240, 0.50)",
+      }}
+    />
+  );
+}
+
 function LandingPage() {
   return (
     <>
-      <Hero />
       <Nav />
       <CenterBox />
-      <GrainOverlay />
       <ScrollIndicator />
     </>
   );
@@ -59,6 +73,9 @@ function NotFound() {
 function App() {
   return (
     <BrowserRouter>
+      <Hero />
+      <GrainOverlay />
+      <SubpageOverlay />
       <Routes>
         <Route path="/" element={<LandingPage />} />
         <Route path="/apply" element={<ApplyPage />} />

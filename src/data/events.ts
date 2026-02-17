@@ -7,39 +7,33 @@ export interface EventEntry {
 
 export const events: EventEntry[] = [
   {
-    date: "Feb 28",
+    date: "Feb 22",
     city: "New York City",
     numeral: "I",
-    url: "https://www.eventbrite.com/e/garam-masala-dating-a-belated-valentines-day-tickets-1982103088695",
+    url: "https://www.eventbrite.com/e/garam-masala-dating-a-belated-valentines-day-tickets-1982103088695?aff=ebdsshcopyurl&utm-campaign=social&utm-content=attendeeshare&utm-medium=discovery&utm-term=",
   },
   {
-    date: "Mar 14",
-    city: "New York City",
+    date: "Mar 7",
+    city: "San Diego",
     numeral: "II",
-    url: "https://www.eventbrite.com/e/garam-masala-dating-st-patricks-day-tickets-1982720502396",
-  },
-  {
-    date: "Apr 11",
-    city: "New York City",
-    numeral: "III",
     url: "#",
   },
   {
-    date: "May 9",
-    city: "Los Angeles",
+    date: "Mar 15",
+    city: "New York City",
+    numeral: "III",
+    url: "https://www.eventbrite.com/e/garam-masala-dating-st-patricks-day-tickets-1982720502396?aff=ebdsshcopyurl&utm-campaign=social&utm-content=attendeeshare&utm-medium=discovery&utm-term=",
+  },
+  {
+    date: "Apr 4",
+    city: "Chicago",
     numeral: "IV",
     url: "#",
   },
   {
-    date: "Jun 6",
-    city: "London",
+    date: "TBA",
+    city: "Edinburgh",
     numeral: "V",
-    url: "#",
-  },
-  {
-    date: "Jul 4",
-    city: "New York City",
-    numeral: "VI",
     url: "#",
   },
 ];

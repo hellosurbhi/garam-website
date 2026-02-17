@@ -1,5 +1,6 @@
 import { useMouseParallax } from "../../hooks/useMouseParallax";
 import heroImage from "../../assets/hero.jpeg";
+import heroMobileImage from "../../assets/hero-mobile.jpeg";
 import styles from "./Hero.module.css";
 
 export function Hero() {
@@ -8,7 +9,10 @@ export function Hero() {
   return (
     <section className={styles.hero}>
       <div ref={parallaxRef} className={styles.imageWrap}>
-        <img src={heroImage} alt="" className={styles.image} />
+        <picture className={styles.image}>
+          <source media="(max-width: 768px)" srcSet={heroMobileImage} />
+          <img src={heroImage} alt="" className={styles.image} />
+        </picture>
       </div>
       <div className={styles.grid}>
         {Array.from({ length: 7 }).map((_, i) => (

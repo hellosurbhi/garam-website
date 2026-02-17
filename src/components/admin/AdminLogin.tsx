@@ -39,6 +39,7 @@ export default function AdminLogin({ onSuccess }: AdminLoginProps) {
         style={{
           minHeight: "100vh",
           background: "var(--cream)",
+          position: "relative",
           display: "flex",
           alignItems: "center",
           justifyContent: "center",

@@ -1,4 +1,5 @@
 import { useState, useRef, type ChangeEvent } from "react";
+import { Link } from "react-router-dom";
 import { collection, addDoc, serverTimestamp } from "firebase/firestore";
 import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import { db, storage } from "@/lib/firebase";
@@ -190,6 +191,7 @@ export default function ApplyPage() {
   const [errors, setErrors] = useState<Partial<Record<keyof FormState | "photo", string>>>({});
   const [submitting, setSubmitting] = useState(false);
   const [submitted, setSubmitted] = useState(false);
+  const [submitError, setSubmitError] = useState("");
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   if (submitted) return <SuccessScreen />;
@@ -202,6 +204,11 @@ export default function ApplyPage() {
   function handlePhotoChange(e: ChangeEvent<HTMLInputElement>) {
     const file = e.target.files?.[0];
     if (!file) return;
+    if (file.size > 10 * 1024 * 1024) {
+      setErrors((prev) => ({ ...prev, photo: "Photo must be under 10 MB" }));
+      e.target.value = "";
+      return;
+    }
     setPhotoFile(file);
     setErrors((prev) => ({ ...prev, photo: undefined }));
     const reader = new FileReader();
@@ -231,6 +238,7 @@ export default function ApplyPage() {
     e.preventDefault();
     if (!validate()) return;
 
+    setSubmitError("");
     setSubmitting(true);
     try {
       const ext = photoFile!.name.split(".").pop() ?? "jpg";
@@ -260,7 +268,7 @@ export default function ApplyPage() {
       setSubmitted(true);
     } catch (err) {
       console.error("Submission error:", err);
-      setErrors({ pitch: "Something went wrong. Please try again." });
+      setSubmitError("Something went wrong. Please try again.");
     } finally {
       setSubmitting(false);
     }
@@ -320,6 +328,23 @@ export default function ApplyPage() {
             padding: "48px 24px 72px",
           }}
         >
+          <div style={{ marginBottom: "24px" }}>
+            <Link
+              to="/"
+              style={{
+                display: "inline-flex",
+                alignItems: "center",
+                gap: "6px",
+                color: "var(--text-light)",
+                fontFamily: "var(--font-dm-sans)",
+                fontSize: "14px",
+                textDecoration: "none",
+              }}
+            >
+              ← Home
+            </Link>
+          </div>
+
           <div style={{ textAlign: "center", marginBottom: "40px" }}>
             <h1
               style={{
@@ -619,9 +644,9 @@ export default function ApplyPage() {
               </FieldGroup>
             </div>
 
-            {errors.pitch && errors.pitch.includes("went wrong") && (
+            {submitError && (
               <p style={{ textAlign: "center", color: "var(--crimson)", fontSize: "14px", marginBottom: "12px" }}>
-                {errors.pitch}
+                {submitError}
               </p>
             )}
 

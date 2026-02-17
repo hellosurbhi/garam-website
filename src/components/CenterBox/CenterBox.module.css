@@ -57,11 +57,15 @@
 
 @media (max-width: 768px) {
   .wrapper {
-    padding: 80px 20px;
+    padding: 100px 24px 80px;
+    align-items: flex-start;
   }
 
   .box {
-    padding: 36px 28px;
+    border: none;
+    background: transparent;
+    padding: 0;
+    max-width: 100%;
   }
 
   .title {
@@ -70,15 +74,5 @@
 
   .subtitle {
     font-size: 0.88rem;
-  }
-}
-
-@media (max-width: 480px) {
-  .box {
-    padding: 28px 22px;
-  }
-
-  .title {
-    font-size: 1.75rem;
   }
 }

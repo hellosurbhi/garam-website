@@ -1,0 +1,86 @@
+.toc {
+  width: 100%;
+  margin-top: 28px;
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+.row {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  padding: 6px 0;
+  text-decoration: none;
+  color: #fff;
+  cursor: pointer;
+  transition: color 0.3s ease;
+  animation: fadeRowIn 0.7s ease-out both;
+}
+
+@keyframes fadeRowIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.row:hover {
+  color: #ff2d9b;
+}
+
+.rowDimmed {
+  opacity: 0.4;
+  cursor: default;
+  pointer-events: none;
+}
+
+.date {
+  font-family: "DM Sans", sans-serif;
+  font-size: 0.78rem;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+}
+
+.divider {
+  display: none;
+}
+
+.city {
+  font-family: "DM Sans", sans-serif;
+  font-size: 0.72rem;
+  font-weight: 400;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  flex-shrink: 0;
+}
+
+.numeral {
+  font-family: "Cormorant Garamond", serif;
+  font-size: 0.75rem;
+  font-weight: 300;
+  letter-spacing: 0.04em;
+  opacity: 0.65;
+  font-style: italic;
+}
+
+@media (max-width: 600px) {
+  .row {
+    padding: 5px 0;
+  }
+
+  .date {
+    font-size: 0.72rem;
+  }
+
+  .city {
+    font-size: 0.68rem;
+  }
+}

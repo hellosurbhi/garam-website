@@ -1,5 +1,5 @@
 import { useState, useEffect, useMemo } from "react";
-import { collection, getDocs, query, orderBy, doc, updateDoc } from "firebase/firestore";
+import { collection, getDocs, doc, updateDoc } from "firebase/firestore";
 import { db } from "@/lib/firebase";
 import { type Application, COMMUNITY_OPTIONS, INCOME_OPTIONS } from "@/types/application";
 import ApplicantCard from "./ApplicantCard";
@@ -41,8 +41,8 @@ export default function AdminDashboard({ onLogout }: AdminDashboardProps) {
   useEffect(() => {
     async function fetchApps() {
       try {
-        const q = query(collection(db, "applications"), orderBy("submittedAt", "desc"));
-        const snap = await getDocs(q);
+        const snap = await getDocs(collection(db, "applications"));
+        console.log("Snapshot size:", snap.size, snap.docs.map(d => ({ id: d.id, ...d.data() })));
         const docs = snap.docs.map((d) => ({ id: d.id, ...d.data() } as Application));
         setApplications(docs);
       } catch (err) {

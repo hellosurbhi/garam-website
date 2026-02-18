@@ -28,7 +28,7 @@ export const events: EventEntry[] = [
     date: "Apr 4",
     city: "Chicago",
     numeral: "IV",
-    url: "#",
+    url: "https://www.eventbrite.com/e/saturday-april-4-garam-masala-dating-tickets-1983144430376?aff=oddtdtcreator",
   },
   {
     date: "TBA",

@@ -36,17 +36,18 @@ tags:
 
 | Tool | Count |
 |------|-------|
-| Bash | 5 |
-| Edit | 2 |
+| Bash | 7 |
+| Edit | 5 |
 | ExitPlanMode | 1 |
 | Glob | 1 |
 | Grep | 1 |
 | Read | 1 |
 | Task | 1 |
 | Write | 1 |
+| mcp__codex__codex | 1 |
 
 ## Tokens
 
 - **Input:** 0
 - **Output:** 0
-- **Total:** ~74670 (estimated)
+- **Total:** ~136551 (estimated)

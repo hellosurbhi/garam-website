@@ -2,7 +2,8 @@ import { useState, useEffect, type ChangeEvent } from "react";
 import { Link } from "react-router-dom";
 import { collection, addDoc, serverTimestamp } from "firebase/firestore";
 import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
-import { db, storage } from "@/lib/firebase";
+import { db, storage, auth } from "@/lib/firebase";
+import { signInAnonymously } from "firebase/auth";
 import { COMMUNITY_OPTIONS, INCOME_OPTIONS } from "@/types/application";
 
 /* ─── Shared input styles ────────────────────────────────────── */
@@ -208,6 +209,9 @@ export default function ApplyPage() {
 
     setSubmitting(true);
     try {
+      // Ensure we have an auth token so Firebase Storage CORS preflight passes
+      if (!auth.currentUser) await signInAnonymously(auth);
+
       const ext = photoFile!.name.split(".").pop() ?? "jpg";
       const storageRef = ref(storage, `photos/${crypto.randomUUID()}.${ext}`);
       await uploadBytes(storageRef, photoFile!);

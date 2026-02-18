@@ -1,9 +1,11 @@
 .toc {
   width: 100%;
-  margin-top: 28px;
+  margin-top: 0;
   display: flex;
   flex-direction: column;
   gap: 0;
+  flex-shrink: 0;
+  max-width: 280px;
 }
 
 .row {
@@ -12,10 +14,11 @@
   justify-content: space-between;
   padding: 6px 0;
   text-decoration: none;
-  color: #fff;
+  color: #F5EDE4;
   cursor: pointer;
   transition: color 0.3s ease;
   animation: fadeRowIn 0.7s ease-out both;
+  text-shadow: 0 2px 12px rgba(0, 0, 0, 0.4);
 }
 
 @keyframes fadeRowIn {
@@ -44,6 +47,7 @@
   font-size: 0.78rem;
   font-weight: 600;
   letter-spacing: 0.02em;
+  color: #F5EDE4;
 }
 
 .divider {
@@ -60,6 +64,7 @@
   align-items: baseline;
   gap: 8px;
   flex-shrink: 0;
+  color: rgba(245, 237, 228, 0.6);
 }
 
 .numeral {
@@ -67,8 +72,14 @@
   font-size: 0.75rem;
   font-weight: 300;
   letter-spacing: 0.04em;
-  opacity: 0.65;
+  color: #C9A84C;
   font-style: italic;
+}
+
+@media (max-width: 768px) {
+  .toc {
+    max-width: 100%;
+  }
 }
 
 @media (max-width: 600px) {

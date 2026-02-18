@@ -38,11 +38,11 @@
 }
 
 .season {
-  font-family: "DM Sans", sans-serif;
-  font-size: 0.7rem;
+  font-family: monospace;
+  font-size: 10px;
   font-weight: 400;
-  color: rgba(255, 255, 255, 0.55);
-  letter-spacing: 0.08em;
+  color: #C9A84C;
+  letter-spacing: 0.25em;
   text-transform: uppercase;
 }
 
@@ -115,9 +115,11 @@
 }
 
 .btnOutline {
-  color: #fff;
-  background: transparent;
-  border: 1px solid rgba(255, 255, 255, 0.35);
+  color: #F5EDE4;
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
 }
 
 .btnOutline:hover {
@@ -126,9 +128,9 @@
 }
 
 .btnSolid {
-  color: #0a0a0a;
-  background: #fff;
-  border: 1px solid #fff;
+  color: #4A0E1B;
+  background: #F5EDE4;
+  border: 1px solid #F5EDE4;
 }
 
 .btnSolid:hover {

@@ -57,9 +57,9 @@ export default function ApplicantCard({ app, onClick }: ApplicantCardProps) {
           background: "var(--border)",
         }}
       >
-        {app.photoUrl ? (
+        {app.photoBase64 ? (
           <img
-            src={app.photoUrl}
+            src={app.photoBase64}
             alt={app.name}
             loading="lazy"
             style={{ width: "100%", height: "100%", objectFit: "cover", display: "block" }}

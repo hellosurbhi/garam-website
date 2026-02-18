@@ -14,7 +14,7 @@ export interface Application {
   applicationType: string;
   referrerName?: string;
   pitch?: string;
-  photoUrl: string;
+  photoBase64?: string;
   status: "New" | "Contacted" | "Cast" | "Rejected";
   notes?: string;
   submittedAt: Timestamp;

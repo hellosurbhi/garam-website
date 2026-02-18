@@ -230,24 +230,26 @@ export default function AdminPage() {
   const [selected, setSelected] = useState<Application | null>(null);
   const [sort, setSort] = useState<"newest" | "city" | "age">("newest");
 
-  useEffect(() => {
-    setAuthed(sessionStorage.getItem(SESSION_KEY) === "true");
-  }, []);
+  async function fetchApps() {
+    setLoading(true);
+    try {
+      const snap = await getDocs(collection(db, "applications"));
+      setApps(snap.docs.map((d) => ({ id: d.id, ...d.data() })) as Application[]);
+    } catch (err) {
+      console.error("Firestore fetch failed:", err);
+    } finally {
+      setLoading(false);
+    }
+  }
 
   useEffect(() => {
-    if (!authed) return;
-    setLoading(true);
-    getDocs(collection(db, "applications"))
-      .then((snap) => {
-        const data = snap.docs.map((d) => ({ id: d.id, ...d.data() })) as Application[];
-        setApps(data);
-      })
-      .catch(console.error)
-      .finally(() => setLoading(false));
-  }, [authed]);
+    const isAuthed = sessionStorage.getItem(SESSION_KEY) === "true";
+    setAuthed(isAuthed);
+    if (isAuthed) fetchApps();
+  }, []); // runs once on mount — no state deps to avoid infinite loop
 
   if (authed === null) return null;
-  if (!authed) return <LoginScreen onLogin={() => setAuthed(true)} />;
+  if (!authed) return <LoginScreen onLogin={() => { setAuthed(true); fetchApps(); }} />;
 
   async function handleUpdate(id: string, patch: Partial<Application>) {
     try {

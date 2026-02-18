@@ -114,9 +114,9 @@ export default function ApplicantModal({ app, onClose, onUpdate }: ApplicantModa
             background: "var(--border)",
           }}
         >
-          {app.photoBase64 ? (
+          {app.photoUrl ? (
             <img
-              src={app.photoBase64}
+              src={app.photoUrl}
               alt={app.name}
               style={{ width: "100%", height: "400px", objectFit: "cover", display: "block" }}
             />

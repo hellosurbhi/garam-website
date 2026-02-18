@@ -20,6 +20,7 @@ interface Application {
   referrerName: string;
   pitch: string;
   photoUrl: string;
+  photoBase64?: string;
   status: "New" | "Contacted" | "Cast" | "Rejected";
   notes: string;
   submittedAt: Timestamp | null;
@@ -84,8 +85,8 @@ function AppCard({ app, onClick }: { app: Application; onClick: () => void }) {
       onMouseLeave={(e) => { e.currentTarget.style.transform = "translateY(0)"; e.currentTarget.style.boxShadow = "0 1px 6px rgba(0,0,0,0.07)"; }}
     >
       <div style={{ width: "100%", aspectRatio: "3/4", maxHeight: "220px", overflow: "hidden" }}>
-        {app.photoUrl ? (
-          <img src={app.photoUrl} alt={app.name} loading="lazy" style={{ width: "100%", height: "100%", objectFit: "cover", display: "block" }} />
+        {(app.photoBase64 || app.photoUrl) ? (
+          <img src={app.photoBase64 || app.photoUrl} alt={app.name} loading="lazy" style={{ width: "100%", height: "100%", objectFit: "cover", display: "block" }} />
         ) : (
           <div style={{ width: "100%", height: "100%", background: "linear-gradient(135deg, #C9A84C33 0%, #4A0E1B33 100%)", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "2.5rem" }}>🌶️</div>
         )}
@@ -148,9 +149,9 @@ function AppModal({ app, onClose, onUpdate }: { app: Application; onClose: () =>
       <div onClick={(e) => e.stopPropagation()} style={{ background: "#fff", borderRadius: "16px", maxWidth: "640px", width: "100%", maxHeight: "90vh", overflowY: "auto", position: "relative" }}>
 
         {/* Photo header */}
-        <div style={{ position: "relative", width: "100%", overflow: "hidden", borderRadius: "16px 16px 0 0", background: app.photoUrl ? undefined : "linear-gradient(135deg, #C9A84C33 0%, #4A0E1B33 100%)" }}>
-          {app.photoUrl ? (
-            <img src={app.photoUrl} alt={app.name} style={{ width: "100%", maxHeight: "380px", objectFit: "cover", display: "block" }} />
+        <div style={{ position: "relative", width: "100%", overflow: "hidden", borderRadius: "16px 16px 0 0", background: (app.photoBase64 || app.photoUrl) ? undefined : "linear-gradient(135deg, #C9A84C33 0%, #4A0E1B33 100%)" }}>
+          {(app.photoBase64 || app.photoUrl) ? (
+            <img src={app.photoBase64 || app.photoUrl} alt={app.name} style={{ width: "100%", maxHeight: "380px", objectFit: "cover", display: "block" }} />
           ) : (
             <div style={{ height: "200px", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "4rem" }}>🌶️</div>
           )}
@@ -234,6 +235,7 @@ export default function AdminPage() {
     setLoading(true);
     try {
       const snap = await getDocs(collection(db, "applications"));
+      console.log("Raw snapshot:", snap.docs.length, snap.docs.map(d => ({ id: d.id, ...d.data() })));
       setApps(snap.docs.map((d) => ({ id: d.id, ...d.data() })) as Application[]);
     } catch (err) {
       console.error("Firestore fetch failed:", err);

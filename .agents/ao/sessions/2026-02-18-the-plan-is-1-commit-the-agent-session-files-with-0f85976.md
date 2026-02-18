@@ -44,6 +44,7 @@ tags:
   - Removed Storage upload from submit flow
   - FileReader.readAsDataURL...
 - till reference `photoBase64`. Fixing both:
+- till stuck on loading, open DevTools → Console — you'll now see the exact Firestore error (likely a security rules rejection).
 
 ## Files Changed
 - `/Users/surbhi/.claude/plans/calm-crunching-penguin.md`
@@ -62,17 +63,18 @@ tags:
 - `ad-hoc`
 - `re-writed`
 - `re-enable`
+- `re-run`
 
 ## Tool Usage
 
 | Tool | Count |
 |------|-------|
-| Bash | 12 |
-| Edit | 13 |
+| Bash | 14 |
+| Edit | 14 |
 | ExitPlanMode | 2 |
 | Glob | 1 |
-| Grep | 1 |
-| Read | 8 |
+| Grep | 2 |
+| Read | 10 |
 | Task | 2 |
 | Write | 5 |
 | mcp__codex__codex | 1 |
@@ -81,4 +83,4 @@ tags:
 
 - **Input:** 0
 - **Output:** 0
-- **Total:** ~320887 (estimated)
+- **Total:** ~365730 (estimated)

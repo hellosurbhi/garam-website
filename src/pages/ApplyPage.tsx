@@ -1,9 +1,7 @@
 import { useState, useEffect, type ChangeEvent } from "react";
 import { Link } from "react-router-dom";
 import { collection, addDoc, serverTimestamp } from "firebase/firestore";
-import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
-import { db, storage, auth } from "@/lib/firebase";
-import { signInAnonymously } from "firebase/auth";
+import { db } from "@/lib/firebase";
 import { COMMUNITY_OPTIONS, INCOME_OPTIONS } from "@/types/application";
 
 /* ─── Shared input styles ────────────────────────────────────── */
@@ -176,51 +174,15 @@ export default function ApplyPage() {
     reader.readAsDataURL(file);
   }
 
-  function validate(): boolean {
-    const errs: typeof errors = {};
-    if (!form.name.trim()) errs.name = "Required";
-    if (!form.age || parseInt(form.age) < 18) errs.age = "Must be 18 or older";
-    if (!form.gender) errs.gender = "Required";
-    if (!form.orientation) errs.orientation = "Required";
-    if (!form.city.trim()) errs.city = "Required";
-    if (!form.instagram.trim()) errs.instagram = "Required";
-    if (!form.community) errs.community = "Required";
-    if (!form.income) errs.income = "Required";
-    if (!photoFile) errs.photo = "A photo is required";
-    if (form.applicationType === "Nomination" && !form.referrerName.trim()) {
-      errs.referrerName = "Required";
-    }
-    setErrors(errs);
-    if (Object.keys(errs).length > 0) {
-      showToast("Please fill in all required fields", false);
-      // Scroll to first error after state update
-      setTimeout(() => {
-        const el = document.querySelector<HTMLElement>("[data-error]");
-        el?.scrollIntoView({ behavior: "smooth", block: "center" });
-      }, 50);
-      return false;
-    }
-    return true;
-  }
-
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
-    if (!validate()) return;
 
     setSubmitting(true);
     try {
-      // Ensure we have an auth token so Firebase Storage CORS preflight passes
-      if (!auth.currentUser) await signInAnonymously(auth);
-
-      const ext = photoFile!.name.split(".").pop() ?? "jpg";
-      const storageRef = ref(storage, `photos/${crypto.randomUUID()}.${ext}`);
-      await uploadBytes(storageRef, photoFile!);
-      const photoUrl = await getDownloadURL(storageRef);
-
       await addDoc(collection(db, "applications"), {
         applicationType: form.applicationType,
         name: form.name.trim(),
-        age: parseInt(form.age),
+        age: form.age ? parseInt(form.age) : null,
         gender: form.gender,
         orientation: form.orientation,
         city: form.city.trim(),
@@ -230,7 +192,7 @@ export default function ApplyPage() {
         income: form.income,
         referrerName: form.applicationType === "Nomination" ? form.referrerName.trim() : "",
         pitch: form.pitch.trim(),
-        photoUrl,
+        photoBase64: photoPreview ?? "",
         status: "New",
         notes: "",
         submittedAt: serverTimestamp(),

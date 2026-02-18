@@ -17,7 +17,4 @@ export const db = getFirestore(app);
 export const storage = getStorage(app);
 export const auth = getAuth(app);
 
-// Sign in anonymously so Firebase Storage CORS preflight allows uploads.
-// Firebase Storage's firebasestorage.googleapis.com endpoint only allows
-// POST/PUT via CORS when the request carries a Firebase auth token.
-signInAnonymously(auth).catch(() => {});
+signInAnonymously(auth).catch((err) => console.error("Anonymous auth failed:", err));

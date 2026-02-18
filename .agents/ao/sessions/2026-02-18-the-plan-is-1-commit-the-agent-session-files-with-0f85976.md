@@ -26,28 +26,48 @@ tags:
 2. **Push** to `origin/main` — Vercel auto-deploys on push
 3. **Verify** deployment via `vercel --prod` if auto-deploy...
 
+## Knowledge
+- till reads `photoUrl` (`ApplicantCard.tsx:60`, `ApplicantModal.tsx:117`, `types/application.ts:17`)
+
+---
+
+### 3. How We Fixed It
+- Removed Storage upload from submit flow
+- `FileReader.readAsDataURL`...
+- till not able to see anything on admin. I am stuck. Let's just remove the password bro. I need to be able to fucking go into admin. You've broken admin. You've broken the form. It's stuck on...
+
 ## Files Changed
 - `/Users/surbhi/.claude/plans/calm-crunching-penguin.md`
 - `/Users/surbhi/workspace/garam-masala-dating/src/pages/ApplyPage.tsx`
 - `/Users/surbhi/workspace/garam-masala-dating`
 - `/Users/surbhi/workspace/garam-masala-dating/src/components/admin/AdminLogin.tsx`
+- `/Users/surbhi/workspace/garam-masala-dating/src/components/admin/ApplicantCard.tsx`
+- `/Users/surbhi/workspace/garam-masala-dating/src/components/admin/ApplicantModal.tsx`
+- `/Users/surbhi/workspace/garam-masala-dating/src/pages/AdminPage.tsx`
+- `/Users/surbhi/workspace/garam-masala-dating/src/types/application.ts`
+
+## Issues
+- `to-end`
+- `pre-ship`
+- `ad-hoc`
+- `re-writed`
 
 ## Tool Usage
 
 | Tool | Count |
 |------|-------|
-| Bash | 7 |
-| Edit | 5 |
-| ExitPlanMode | 1 |
+| Bash | 9 |
+| Edit | 10 |
+| ExitPlanMode | 2 |
 | Glob | 1 |
 | Grep | 1 |
-| Read | 1 |
-| Task | 1 |
-| Write | 1 |
+| Read | 5 |
+| Task | 2 |
+| Write | 2 |
 | mcp__codex__codex | 1 |
 
 ## Tokens
 
 - **Input:** 0
 - **Output:** 0
-- **Total:** ~136551 (estimated)
+- **Total:** ~214518 (estimated)

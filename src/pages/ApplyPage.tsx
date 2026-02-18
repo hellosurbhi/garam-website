@@ -1,4 +1,4 @@
-import { useState, useRef, type ChangeEvent } from "react";
+import { useState, type ChangeEvent } from "react";
 import { Link } from "react-router-dom";
 import { collection, addDoc, serverTimestamp } from "firebase/firestore";
 import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
@@ -194,7 +194,6 @@ export default function ApplyPage() {
   const [submitting, setSubmitting] = useState(false);
   const [submitted, setSubmitted] = useState(false);
   const [submitError, setSubmitError] = useState("");
-  const fileInputRef = useRef<HTMLInputElement>(null);
 
   if (submitted) return <SuccessScreen />;
 
@@ -270,7 +269,7 @@ export default function ApplyPage() {
       setSubmitted(true);
     } catch (err) {
       console.error("Submission error:", err);
-      setSubmitError("Something went wrong. Please try again.");
+      setSubmitError(`Submission failed: ${(err as Error).message || "Please try again."}`);
     } finally {
       setSubmitting(false);
     }
@@ -554,16 +553,17 @@ export default function ApplyPage() {
                 </p>
 
                 <input
-                  ref={fileInputRef}
+                  id="photo-input"
                   type="file"
                   accept="image/*"
                   onChange={handlePhotoChange}
                   style={{ display: "none" }}
                 />
 
-                <div
-                  onClick={() => fileInputRef.current?.click()}
+                <label
+                  htmlFor="photo-input"
                   style={{
+                    display: "block",
                     border: `2px dashed ${errors.photo ? "var(--crimson)" : "rgba(201, 168, 76, 0.3)"}`,
                     borderRadius: "14px",
                     padding: "24px",
@@ -606,26 +606,23 @@ export default function ApplyPage() {
                       </p>
                     </>
                   )}
-                </div>
+                </label>
 
                 {photoPreview && (
-                  <button
-                    type="button"
-                    onClick={() => fileInputRef.current?.click()}
+                  <label
+                    htmlFor="photo-input"
                     style={{
+                      display: "inline-block",
                       marginTop: "8px",
-                      background: "none",
-                      border: "none",
                       color: "#A68B3C",
                       fontFamily: "var(--font-cormorant)",
                       fontSize: "15px",
                       cursor: "pointer",
                       textDecoration: "underline",
-                      padding: 0,
                     }}
                   >
                     Change photo
-                  </button>
+                  </label>
                 )}
 
                 {errors.photo && (

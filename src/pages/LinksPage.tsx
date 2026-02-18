@@ -79,7 +79,6 @@ function LinkButton({
   label,
   href,
   to,
-  filled,
   icon: Icon,
   isPrimary,
   external,
@@ -98,58 +97,100 @@ function LinkButton({
           width: "100%",
           padding: "17px 22px",
           borderRadius: "14px",
-          border: "2px solid var(--border)",
-          background: "var(--cream)",
-          color: "var(--text-light)",
-          fontFamily: "var(--font-dm-sans)",
-          fontSize: "15px",
-          fontWeight: 600,
-          letterSpacing: "0.01em",
-          opacity: 0.55,
+          border: "1px solid rgba(245, 237, 228, 0.1)",
+          background: "rgba(255, 255, 255, 0.05)",
+          backdropFilter: "blur(12px)",
+          WebkitBackdropFilter: "blur(12px)",
+          color: "#F5EDE4",
+          fontFamily: "var(--font-cormorant)",
+          fontSize: "16px",
+          fontWeight: 500,
+          opacity: 0.6,
           cursor: "default",
           animation: `fadeUp 0.5s ease-out ${delay}s both`,
         }}
       >
-        <Icon size={20} style={{ flexShrink: 0 }} />
+        <Icon size={20} style={{ flexShrink: 0, color: "rgba(245, 237, 228, 0.5)" }} />
         <span style={{ flex: 1, textAlign: "center" }}>{label}</span>
-        <span style={{ fontSize: "11px", fontWeight: 500, letterSpacing: "0.05em", textTransform: "uppercase" }}>
+        <span
+          style={{
+            fontFamily: "var(--font-jetbrains)",
+            fontSize: "10px",
+            fontWeight: 500,
+            letterSpacing: "0.15em",
+            textTransform: "uppercase",
+            color: "#C9A84C",
+            background: "rgba(201, 168, 76, 0.15)",
+            padding: "3px 8px",
+            borderRadius: "4px",
+          }}
+        >
           Soon
         </span>
       </div>
     );
   }
 
-  const baseStyle: React.CSSProperties = {
+  const primaryStyle: React.CSSProperties = {
     display: "flex",
     alignItems: "center",
     gap: "12px",
     width: "100%",
-    padding: isPrimary ? "20px 24px" : "17px 22px",
+    padding: "20px 24px",
     borderRadius: "14px",
-    border: `2px solid var(--crimson)`,
-    background: filled ? "var(--crimson)" : "var(--cream)",
-    color: filled ? "#fff" : "var(--crimson)",
-    fontFamily: "var(--font-dm-sans)",
-    fontSize: "15px",
+    border: "none",
+    background: "#C9A84C",
+    color: "#0D0A08",
+    fontFamily: "var(--font-cormorant)",
+    fontSize: "17px",
     fontWeight: 600,
-    letterSpacing: "0.01em",
+    letterSpacing: "0.04em",
     textDecoration: "none",
     cursor: "pointer",
-    transition: "transform 0.2s ease, box-shadow 0.2s ease",
+    transition: "transform 0.25s ease, box-shadow 0.25s ease",
     transform: hovered ? "scale(1.02)" : "scale(1)",
     boxShadow: hovered
-      ? `0 6px 24px rgba(196,30,58,${filled ? "0.22" : "0.12"})`
-      : isPrimary
-      ? "0 2px 12px rgba(196,30,58,0.15)"
-      : "none",
-    animation: isPrimary
-      ? `fadeUp 0.5s ease-out ${delay}s both, pulseGlow 2.5s ease-in-out 1s infinite`
-      : `fadeUp 0.5s ease-out ${delay}s both`,
+      ? "0 4px 20px rgba(0, 0, 0, 0.3)"
+      : "0 2px 12px rgba(201, 168, 76, 0.25)",
+    animation: `fadeUp 0.5s ease-out ${delay}s both, pulseGlow 2.5s ease-in-out 1s infinite`,
   };
+
+  const glassStyle: React.CSSProperties = {
+    display: "flex",
+    alignItems: "center",
+    gap: "12px",
+    width: "100%",
+    padding: "17px 22px",
+    borderRadius: "14px",
+    border: hovered
+      ? "1px solid rgba(201, 168, 76, 0.35)"
+      : "1px solid rgba(245, 237, 228, 0.1)",
+    background: hovered ? "rgba(255, 255, 255, 0.08)" : "rgba(255, 255, 255, 0.05)",
+    backdropFilter: "blur(12px)",
+    WebkitBackdropFilter: "blur(12px)",
+    color: "#F5EDE4",
+    fontFamily: "var(--font-cormorant)",
+    fontSize: "16px",
+    fontWeight: 500,
+    textDecoration: "none",
+    cursor: "pointer",
+    transition: "all 0.25s ease",
+    transform: hovered ? "scale(1.015)" : "scale(1)",
+    boxShadow: hovered ? "0 4px 20px rgba(0, 0, 0, 0.3)" : "none",
+    animation: `fadeUp 0.5s ease-out ${delay}s both`,
+  };
+
+  const baseStyle = isPrimary ? primaryStyle : glassStyle;
 
   const inner = (
     <>
-      <Icon size={20} style={{ flexShrink: 0 }} />
+      <Icon
+        size={20}
+        style={{
+          flexShrink: 0,
+          color: isPrimary ? "#0D0A08" : "rgba(245, 237, 228, 0.5)",
+        }}
+      />
       <span style={{ flex: 1, textAlign: "center" }}>{label}</span>
     </>
   );
@@ -200,8 +241,8 @@ function SocialIcon({ icon: Icon, href, label }: (typeof SOCIALS)[number]) {
         display: "flex",
         alignItems: "center",
         justifyContent: "center",
-        background: hovered ? "rgba(196,30,58,0.1)" : "rgba(122,111,102,0.1)",
-        color: hovered ? "var(--crimson)" : "var(--text-light)",
+        background: hovered ? "rgba(201, 168, 76, 0.15)" : "rgba(245, 237, 228, 0.08)",
+        color: hovered ? "#C9A84C" : "rgba(245, 237, 228, 0.25)",
         transition: "background 0.2s, color 0.2s",
         textDecoration: "none",
       }}
@@ -232,8 +273,8 @@ export default function LinksPage() {
           to   { opacity: 1; transform: translateY(0); }
         }
         @keyframes pulseGlow {
-          0%, 100% { box-shadow: 0 2px 12px rgba(196,30,58,0.15), 0 0 0 0 rgba(196,30,58,0); }
-          50%       { box-shadow: 0 2px 12px rgba(196,30,58,0.15), 0 0 0 8px rgba(196,30,58,0.14); }
+          0%, 100% { box-shadow: 0 2px 12px rgba(201,168,76,0.25), 0 0 0 0 rgba(201,168,76,0); }
+          50%       { box-shadow: 0 2px 12px rgba(201,168,76,0.25), 0 0 0 8px rgba(201,168,76,0.12); }
         }
       `}</style>
 
@@ -245,7 +286,6 @@ export default function LinksPage() {
           animation: "pageIn 0.3s ease-out both",
         }}
       >
-
         <div
           style={{
             position: "relative",
@@ -270,18 +310,18 @@ export default function LinksPage() {
                 fontFamily: "var(--font-playfair)",
                 fontSize: "36px",
                 fontWeight: 700,
-                color: "var(--crimson)",
+                color: "#F5EDE4",
                 lineHeight: 1.15,
                 marginBottom: "10px",
               }}
             >
-              Garam Masala Dating
+              Garam Mas<em style={{ fontStyle: "italic", color: "#E2C97E" }}>ala</em> Dating
             </h1>
             <p
               style={{
-                fontFamily: "var(--font-dm-sans)",
-                fontSize: "15px",
-                color: "var(--text-light)",
+                fontFamily: "var(--font-cormorant)",
+                fontSize: "17px",
+                color: "rgba(245, 237, 228, 0.55)",
                 lineHeight: 1.5,
               }}
             >
@@ -290,9 +330,8 @@ export default function LinksPage() {
             <div
               style={{
                 width: "48px",
-                height: "2px",
-                background: "var(--gold)",
-                borderRadius: "2px",
+                height: "1px",
+                background: "rgba(201, 168, 76, 0.3)",
                 margin: "18px auto 0",
               }}
             />
@@ -327,9 +366,10 @@ export default function LinksPage() {
           <p
             style={{
               marginTop: "32px",
-              fontSize: "13px",
-              color: "var(--text-light)",
+              fontSize: "14px",
+              fontFamily: "var(--font-cormorant)",
               fontStyle: "italic",
+              color: "rgba(245, 237, 228, 0.2)",
               textAlign: "center",
               animation: "headerFadeUp 0.5s ease-out 1s both",
             }}

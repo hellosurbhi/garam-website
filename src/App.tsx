@@ -11,6 +11,11 @@ import AdminPage from "./pages/AdminPage";
 function SubpageOverlay() {
   const { pathname } = useLocation();
   if (pathname === "/" || pathname === "/admin") return null;
+  const overlayBg: Record<string, string> = {
+    "/links": "rgba(13, 10, 8, 0.88)",
+    "/apply": "rgba(13, 10, 8, 0.75)",
+  };
+  const background = overlayBg[pathname] ?? "rgba(255, 248, 240, 0.50)";
   return (
     <div
       style={{
@@ -18,7 +23,7 @@ function SubpageOverlay() {
         inset: 0,
         zIndex: 0,
         pointerEvents: "none",
-        background: "rgba(255, 248, 240, 0.50)",
+        background,
       }}
     />
   );

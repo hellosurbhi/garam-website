@@ -9,16 +9,16 @@ import { COMMUNITY_OPTIONS, INCOME_OPTIONS } from "@/types/application";
 
 const inputStyle: React.CSSProperties = {
   width: "100%",
-  padding: "13px 18px",
-  borderRadius: "100px",
-  border: "1.5px solid var(--border)",
-  fontFamily: "var(--font-dm-sans)",
-  fontSize: "15px",
-  color: "var(--text)",
+  padding: "14px 16px",
+  borderRadius: "12px",
+  border: "1px solid #E0D5C8",
+  fontFamily: "var(--font-cormorant)",
+  fontSize: "16px",
+  color: "#3D3532",
   background: "#fff",
   outline: "none",
   boxSizing: "border-box",
-  transition: "border-color 0.2s",
+  transition: "border-color 0.2s, box-shadow 0.2s",
   appearance: "none",
 };
 
@@ -41,11 +41,12 @@ const textareaStyle: React.CSSProperties = {
 
 const labelStyle: React.CSSProperties = {
   display: "block",
+  fontFamily: "var(--font-jetbrains)",
   fontSize: "11px",
-  fontWeight: 600,
+  fontWeight: 500,
   textTransform: "uppercase" as const,
-  letterSpacing: "0.07em",
-  color: "var(--text-light)",
+  letterSpacing: "0.15em",
+  color: "#3D3532",
   marginBottom: "7px",
 };
 
@@ -65,14 +66,15 @@ function FieldGroup({
       <label style={labelStyle}>
         {label}
         {required && (
-          <span style={{ color: "var(--crimson)", marginLeft: "3px" }}>*</span>
+          <span style={{ color: "#C9A84C", marginLeft: "3px" }}>*</span>
         )}
       </label>
       {children}
       {error && (
         <p
           style={{
-            fontSize: "12px",
+            fontFamily: "var(--font-cormorant)",
+            fontSize: "13px",
             color: "var(--crimson)",
             marginTop: "5px",
             paddingLeft: "4px",
@@ -90,12 +92,12 @@ function SectionTitle({ children }: { children: React.ReactNode }) {
     <h2
       style={{
         fontFamily: "var(--font-playfair)",
-        fontSize: "18px",
-        fontWeight: 700,
-        color: "var(--text)",
+        fontSize: "24px",
+        fontWeight: 600,
+        color: "#4A0E1B",
         marginBottom: "20px",
         paddingBottom: "10px",
-        borderBottom: "1px solid var(--border)",
+        borderBottom: "1px solid rgba(201, 168, 76, 0.2)",
       }}
     >
       {children}
@@ -131,7 +133,7 @@ function SuccessScreen() {
             fontFamily: "var(--font-playfair)",
             fontSize: "32px",
             fontWeight: 700,
-            color: "var(--crimson)",
+            color: "#4A0E1B",
             marginBottom: "12px",
           }}
         >
@@ -139,9 +141,9 @@ function SuccessScreen() {
         </h1>
         <p
           style={{
-            fontFamily: "var(--font-dm-sans)",
-            fontSize: "16px",
-            color: "var(--text-light)",
+            fontFamily: "var(--font-cormorant)",
+            fontSize: "18px",
+            color: "#3D3532",
             lineHeight: 1.6,
           }}
         >
@@ -275,7 +277,13 @@ export default function ApplyPage() {
   }
 
   const focusStyle = `
-    input:focus, select:focus, textarea:focus { border-color: var(--crimson) !important; }
+    input:focus, select:focus, textarea:focus {
+      border-color: #C9A84C !important;
+      box-shadow: 0 0 0 3px rgba(201, 168, 76, 0.1) !important;
+    }
+    input::placeholder, textarea::placeholder {
+      color: rgba(61, 53, 50, 0.35);
+    }
   `;
 
   return (
@@ -290,16 +298,16 @@ export default function ApplyPage() {
           animation: "pageIn 0.3s ease-out both",
         }}
       >
-
         <div
           style={{
             position: "relative",
             zIndex: 1,
-            maxWidth: "560px",
+            maxWidth: "640px",
             margin: "0 auto",
             padding: "48px 24px 72px",
           }}
         >
+          {/* Header — lives on the dark illustration background */}
           <div style={{ marginBottom: "24px" }}>
             <Link
               to="/"
@@ -307,9 +315,9 @@ export default function ApplyPage() {
                 display: "inline-flex",
                 alignItems: "center",
                 gap: "6px",
-                color: "var(--text-light)",
-                fontFamily: "var(--font-dm-sans)",
-                fontSize: "14px",
+                color: "#F5EDE4",
+                fontFamily: "var(--font-cormorant)",
+                fontSize: "16px",
                 textDecoration: "none",
               }}
             >
@@ -323,18 +331,19 @@ export default function ApplyPage() {
                 fontFamily: "var(--font-playfair)",
                 fontSize: "34px",
                 fontWeight: 700,
-                color: "var(--crimson)",
+                color: "#F5EDE4",
                 lineHeight: 1.15,
                 marginBottom: "10px",
+                textShadow: "0 2px 12px rgba(0, 0, 0, 0.4)",
               }}
             >
               Apply to Be on the Show
             </h1>
             <p
               style={{
-                fontFamily: "var(--font-dm-sans)",
-                fontSize: "15px",
-                color: "var(--text-light)",
+                fontFamily: "var(--font-cormorant)",
+                fontSize: "18px",
+                color: "rgba(245, 237, 228, 0.6)",
                 lineHeight: 1.5,
               }}
             >
@@ -343,346 +352,383 @@ export default function ApplyPage() {
             <div
               style={{
                 width: "48px",
-                height: "2px",
-                background: "var(--gold)",
-                borderRadius: "2px",
+                height: "1px",
+                background: "rgba(201, 168, 76, 0.4)",
                 margin: "18px auto 0",
               }}
             />
           </div>
 
-          <form onSubmit={handleSubmit} noValidate>
-            <div style={{ marginBottom: "36px" }}>
-              <p style={{ ...labelStyle, marginBottom: "12px" }}>I am applying…</p>
-              <div style={{ display: "flex", gap: "10px" }}>
-                {(["Self", "Nomination"] as const).map((type) => {
-                  const active = form.applicationType === type;
-                  return (
-                    <button
-                      key={type}
-                      type="button"
-                      onClick={() => set("applicationType", type)}
+          {/* Ivory content panel */}
+          <div
+            style={{
+              background: "rgba(250, 247, 242, 0.95)",
+              borderRadius: "20px",
+              padding: "40px 36px",
+              boxShadow: "0 8px 40px rgba(0, 0, 0, 0.25)",
+              border: "1px solid rgba(201, 168, 76, 0.1)",
+            }}
+          >
+            <form onSubmit={handleSubmit} noValidate>
+              <div style={{ marginBottom: "36px" }}>
+                <p
+                  style={{
+                    fontFamily: "var(--font-jetbrains)",
+                    fontSize: "11px",
+                    fontWeight: 500,
+                    textTransform: "uppercase",
+                    letterSpacing: "0.2em",
+                    color: "#A68B3C",
+                    marginBottom: "12px",
+                  }}
+                >
+                  I am applying…
+                </p>
+                <div style={{ display: "flex", gap: "10px" }}>
+                  {(["Self", "Nomination"] as const).map((type) => {
+                    const active = form.applicationType === type;
+                    return (
+                      <button
+                        key={type}
+                        type="button"
+                        onClick={() => set("applicationType", type)}
+                        style={{
+                          flex: 1,
+                          padding: "12px 16px",
+                          borderRadius: "100px",
+                          border: active ? "none" : "1px solid #4A0E1B",
+                          background: active ? "#4A0E1B" : "transparent",
+                          color: active ? "#F5EDE4" : "#4A0E1B",
+                          fontFamily: "var(--font-cormorant)",
+                          fontSize: "15px",
+                          fontWeight: 500,
+                          cursor: "pointer",
+                          transition: "all 0.2s",
+                        }}
+                      >
+                        {type === "Self" ? "For myself" : "For a friend"}
+                      </button>
+                    );
+                  })}
+                </div>
+              </div>
+
+              <div style={{ marginBottom: "32px" }}>
+                <SectionTitle>
+                  {form.applicationType === "Self" ? "About You" : "About Your Friend"}
+                </SectionTitle>
+
+                <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "0 16px" }}>
+                  <FieldGroup label="Full Name" required error={errors.name}>
+                    <input
+                      type="text"
+                      value={form.name}
+                      onChange={(e) => set("name", e.target.value)}
+                      placeholder="Name"
+                      style={inputStyle}
+                    />
+                  </FieldGroup>
+
+                  <FieldGroup label="Age" required error={errors.age}>
+                    <input
+                      type="number"
+                      value={form.age}
+                      onChange={(e) => set("age", e.target.value)}
+                      placeholder="Age"
+                      min={18}
+                      max={99}
+                      style={inputStyle}
+                    />
+                  </FieldGroup>
+                </div>
+
+                <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "0 16px" }}>
+                  <FieldGroup label="Gender" required error={errors.gender}>
+                    <select value={form.gender} onChange={(e) => set("gender", e.target.value)} style={selectStyle}>
+                      <option value="">Select…</option>
+                      {["Man", "Woman", "Non-binary", "Other"].map((g) => (
+                        <option key={g} value={g}>{g}</option>
+                      ))}
+                    </select>
+                  </FieldGroup>
+
+                  <FieldGroup label="Orientation" required error={errors.orientation}>
+                    <select value={form.orientation} onChange={(e) => set("orientation", e.target.value)} style={selectStyle}>
+                      <option value="">Select…</option>
+                      {["Straight", "Gay", "Bisexual", "Other"].map((o) => (
+                        <option key={o} value={o}>{o}</option>
+                      ))}
+                    </select>
+                  </FieldGroup>
+                </div>
+
+                <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "0 16px" }}>
+                  <FieldGroup label="City" required error={errors.city}>
+                    <input
+                      type="text"
+                      value={form.city}
+                      onChange={(e) => set("city", e.target.value)}
+                      placeholder="New York City"
+                      style={inputStyle}
+                    />
+                  </FieldGroup>
+
+                  <FieldGroup label="Height" error={errors.height}>
+                    <input
+                      type="text"
+                      value={form.height}
+                      onChange={(e) => set("height", e.target.value)}
+                      placeholder={`5'8"`}
+                      style={inputStyle}
+                    />
+                  </FieldGroup>
+                </div>
+
+                <FieldGroup label="Instagram Handle" required error={errors.instagram}>
+                  <div style={{ position: "relative" }}>
+                    <span
                       style={{
-                        flex: 1,
-                        padding: "12px 16px",
-                        borderRadius: "100px",
-                        border: `2px solid ${active ? "var(--crimson)" : "var(--border)"}`,
-                        background: active ? "var(--crimson)" : "#fff",
-                        color: active ? "#fff" : "var(--text-light)",
-                        fontFamily: "var(--font-dm-sans)",
-                        fontSize: "14px",
-                        fontWeight: 600,
-                        cursor: "pointer",
-                        transition: "all 0.2s",
+                        position: "absolute",
+                        left: "16px",
+                        top: "50%",
+                        transform: "translateY(-50%)",
+                        color: "#A68B3C",
+                        fontFamily: "var(--font-cormorant)",
+                        fontSize: "16px",
+                        pointerEvents: "none",
                       }}
                     >
-                      {type === "Self" ? "For myself" : "For a friend"}
-                    </button>
-                  );
-                })}
-              </div>
-            </div>
-
-            <div style={{ marginBottom: "32px" }}>
-              <SectionTitle>
-                {form.applicationType === "Self" ? "About You" : "About Your Friend"}
-              </SectionTitle>
-
-              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "0 16px" }}>
-                <FieldGroup label="Full Name" required error={errors.name}>
-                  <input
-                    type="text"
-                    value={form.name}
-                    onChange={(e) => set("name", e.target.value)}
-                    placeholder="Name"
-                    style={inputStyle}
-                  />
+                      @
+                    </span>
+                    <input
+                      type="text"
+                      value={form.instagram}
+                      onChange={(e) => set("instagram", e.target.value.replace(/^@/, ""))}
+                      placeholder="yourhandle"
+                      style={{ ...inputStyle, paddingLeft: "30px" }}
+                    />
+                  </div>
                 </FieldGroup>
 
-                <FieldGroup label="Age" required error={errors.age}>
-                  <input
-                    type="number"
-                    value={form.age}
-                    onChange={(e) => set("age", e.target.value)}
-                    placeholder="Age"
-                    min={18}
-                    max={99}
-                    style={inputStyle}
-                  />
-                </FieldGroup>
+                <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "0 16px" }}>
+                  <FieldGroup label="Community" required error={errors.community}>
+                    <select value={form.community} onChange={(e) => set("community", e.target.value)} style={selectStyle}>
+                      <option value="">Select…</option>
+                      {COMMUNITY_OPTIONS.map((c) => (
+                        <option key={c} value={c}>{c}</option>
+                      ))}
+                    </select>
+                  </FieldGroup>
+
+                  <FieldGroup label="Income" required error={errors.income}>
+                    <select value={form.income} onChange={(e) => set("income", e.target.value)} style={selectStyle}>
+                      <option value="">Select…</option>
+                      {INCOME_OPTIONS.map((i) => (
+                        <option key={i} value={i}>{i}</option>
+                      ))}
+                    </select>
+                  </FieldGroup>
+                </div>
               </div>
 
-              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "0 16px" }}>
-                <FieldGroup label="Gender" required error={errors.gender}>
-                  <select value={form.gender} onChange={(e) => set("gender", e.target.value)} style={selectStyle}>
-                    <option value="">Select…</option>
-                    {["Man", "Woman", "Non-binary", "Other"].map((g) => (
-                      <option key={g} value={g}>{g}</option>
-                    ))}
-                  </select>
-                </FieldGroup>
+              {form.applicationType === "Nomination" && (
+                <div style={{ marginBottom: "32px" }}>
+                  <SectionTitle>Your Info</SectionTitle>
+                  <FieldGroup label="Your Name" required error={errors.referrerName}>
+                    <input
+                      type="text"
+                      value={form.referrerName}
+                      onChange={(e) => set("referrerName", e.target.value)}
+                      placeholder="So we know who nominated them"
+                      style={inputStyle}
+                    />
+                  </FieldGroup>
+                </div>
+              )}
 
-                <FieldGroup label="Orientation" required error={errors.orientation}>
-                  <select value={form.orientation} onChange={(e) => set("orientation", e.target.value)} style={selectStyle}>
-                    <option value="">Select…</option>
-                    {["Straight", "Gay", "Bisexual", "Other"].map((o) => (
-                      <option key={o} value={o}>{o}</option>
-                    ))}
-                  </select>
-                </FieldGroup>
-              </div>
+              <div style={{ marginBottom: "32px" }}>
+                <SectionTitle>Photo</SectionTitle>
+                <p style={{ ...labelStyle, marginBottom: "12px" }}>
+                  Best recent photo
+                  <span style={{ color: "#C9A84C", marginLeft: "3px" }}>*</span>
+                </p>
 
-              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "0 16px" }}>
-                <FieldGroup label="City" required error={errors.city}>
-                  <input
-                    type="text"
-                    value={form.city}
-                    onChange={(e) => set("city", e.target.value)}
-                    placeholder="New York City"
-                    style={inputStyle}
-                  />
-                </FieldGroup>
+                <input
+                  ref={fileInputRef}
+                  type="file"
+                  accept="image/*"
+                  onChange={handlePhotoChange}
+                  style={{ display: "none" }}
+                />
 
-                <FieldGroup label="Height" error={errors.height}>
-                  <input
-                    type="text"
-                    value={form.height}
-                    onChange={(e) => set("height", e.target.value)}
-                    placeholder={`5'8"`}
-                    style={inputStyle}
-                  />
-                </FieldGroup>
-              </div>
+                <div
+                  onClick={() => fileInputRef.current?.click()}
+                  style={{
+                    border: `2px dashed ${errors.photo ? "var(--crimson)" : "rgba(201, 168, 76, 0.3)"}`,
+                    borderRadius: "14px",
+                    padding: "24px",
+                    textAlign: "center",
+                    cursor: "pointer",
+                    transition: "border-color 0.2s",
+                    background: "rgba(201, 168, 76, 0.03)",
+                    overflow: "hidden",
+                  }}
+                  onMouseEnter={(e) =>
+                    (e.currentTarget.style.borderColor = "#C9A84C")
+                  }
+                  onMouseLeave={(e) =>
+                    (e.currentTarget.style.borderColor = errors.photo ? "var(--crimson)" : "rgba(201, 168, 76, 0.3)")
+                  }
+                >
+                  {photoPreview ? (
+                    <img
+                      src={photoPreview}
+                      alt="Preview"
+                      style={{
+                        width: "100%",
+                        maxHeight: "280px",
+                        objectFit: "cover",
+                        borderRadius: "8px",
+                        display: "block",
+                      }}
+                    />
+                  ) : (
+                    <>
+                      <p style={{ fontSize: "2rem", marginBottom: "8px" }}>📸</p>
+                      <p
+                        style={{
+                          fontFamily: "var(--font-cormorant)",
+                          fontSize: "16px",
+                          color: "#A68B3C",
+                        }}
+                      >
+                        Tap to upload a photo
+                      </p>
+                    </>
+                  )}
+                </div>
 
-              <FieldGroup label="Instagram Handle" required error={errors.instagram}>
-                <div style={{ position: "relative" }}>
-                  <span
+                {photoPreview && (
+                  <button
+                    type="button"
+                    onClick={() => fileInputRef.current?.click()}
                     style={{
-                      position: "absolute",
-                      left: "18px",
-                      top: "50%",
-                      transform: "translateY(-50%)",
-                      color: "var(--text-light)",
+                      marginTop: "8px",
+                      background: "none",
+                      border: "none",
+                      color: "#A68B3C",
+                      fontFamily: "var(--font-cormorant)",
                       fontSize: "15px",
-                      pointerEvents: "none",
+                      cursor: "pointer",
+                      textDecoration: "underline",
+                      padding: 0,
                     }}
                   >
-                    @
-                  </span>
-                  <input
-                    type="text"
-                    value={form.instagram}
-                    onChange={(e) => set("instagram", e.target.value.replace(/^@/, ""))}
-                    placeholder="yourhandle"
-                    style={{ ...inputStyle, paddingLeft: "34px" }}
-                  />
-                </div>
-              </FieldGroup>
+                    Change photo
+                  </button>
+                )}
 
-              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "0 16px" }}>
-                <FieldGroup label="Community" required error={errors.community}>
-                  <select value={form.community} onChange={(e) => set("community", e.target.value)} style={selectStyle}>
-                    <option value="">Select…</option>
-                    {COMMUNITY_OPTIONS.map((c) => (
-                      <option key={c} value={c}>{c}</option>
-                    ))}
-                  </select>
-                </FieldGroup>
-
-                <FieldGroup label="Income" required error={errors.income}>
-                  <select value={form.income} onChange={(e) => set("income", e.target.value)} style={selectStyle}>
-                    <option value="">Select…</option>
-                    {INCOME_OPTIONS.map((i) => (
-                      <option key={i} value={i}>{i}</option>
-                    ))}
-                  </select>
-                </FieldGroup>
-              </div>
-            </div>
-
-            {form.applicationType === "Nomination" && (
-              <div style={{ marginBottom: "32px" }}>
-                <SectionTitle>Your Info</SectionTitle>
-                <FieldGroup label="Your Name" required error={errors.referrerName}>
-                  <input
-                    type="text"
-                    value={form.referrerName}
-                    onChange={(e) => set("referrerName", e.target.value)}
-                    placeholder="So we know who nominated them"
-                    style={inputStyle}
-                  />
-                </FieldGroup>
-              </div>
-            )}
-
-            <div style={{ marginBottom: "32px" }}>
-              <SectionTitle>Photo</SectionTitle>
-              <p style={{ ...labelStyle, marginBottom: "12px" }}>
-                Best recent photo
-                <span style={{ color: "var(--crimson)", marginLeft: "3px" }}>*</span>
-              </p>
-
-              <input
-                ref={fileInputRef}
-                type="file"
-                accept="image/*"
-                onChange={handlePhotoChange}
-                style={{ display: "none" }}
-              />
-
-              <div
-                onClick={() => fileInputRef.current?.click()}
-                style={{
-                  border: `2px dashed ${errors.photo ? "var(--crimson)" : "var(--border)"}`,
-                  borderRadius: "14px",
-                  padding: "24px",
-                  textAlign: "center",
-                  cursor: "pointer",
-                  transition: "border-color 0.2s",
-                  background: "#fff",
-                  overflow: "hidden",
-                }}
-                onMouseEnter={(e) =>
-                  (e.currentTarget.style.borderColor = "var(--crimson)")
-                }
-                onMouseLeave={(e) =>
-                  (e.currentTarget.style.borderColor = errors.photo ? "var(--crimson)" : "var(--border)")
-                }
-              >
-                {photoPreview ? (
-                  <img
-                    src={photoPreview}
-                    alt="Preview"
-                    style={{
-                      width: "100%",
-                      maxHeight: "280px",
-                      objectFit: "cover",
-                      borderRadius: "8px",
-                      display: "block",
-                    }}
-                  />
-                ) : (
-                  <>
-                    <p style={{ fontSize: "2rem", marginBottom: "8px" }}>📸</p>
-                    <p style={{ fontSize: "14px", color: "var(--text-light)", fontFamily: "var(--font-dm-sans)" }}>
-                      Tap to upload a photo
-                    </p>
-                  </>
+                {errors.photo && (
+                  <p style={{ fontFamily: "var(--font-cormorant)", fontSize: "13px", color: "var(--crimson)", marginTop: "6px" }}>
+                    {errors.photo}
+                  </p>
                 )}
               </div>
 
-              {photoPreview && (
-                <button
-                  type="button"
-                  onClick={() => fileInputRef.current?.click()}
-                  style={{
-                    marginTop: "8px",
-                    background: "none",
-                    border: "none",
-                    color: "var(--crimson)",
-                    fontFamily: "var(--font-dm-sans)",
-                    fontSize: "13px",
-                    cursor: "pointer",
-                    textDecoration: "underline",
-                    padding: 0,
-                  }}
+              <div style={{ marginBottom: "40px" }}>
+                <SectionTitle>Anything else?</SectionTitle>
+                <FieldGroup
+                  label={
+                    form.applicationType === "Self"
+                      ? "Why would you be a great fit? (optional)"
+                      : "Why would your friend be a great fit? (optional)"
+                  }
                 >
-                  Change photo
-                </button>
-              )}
+                  <textarea
+                    value={form.pitch}
+                    onChange={(e) => set("pitch", e.target.value)}
+                    placeholder="Tell us something fun, bold, or irresistible…"
+                    style={textareaStyle}
+                  />
+                </FieldGroup>
+              </div>
 
-              {errors.photo && (
-                <p style={{ fontSize: "12px", color: "var(--crimson)", marginTop: "6px" }}>
-                  {errors.photo}
+              {submitError && (
+                <p style={{ textAlign: "center", color: "var(--crimson)", fontFamily: "var(--font-cormorant)", fontSize: "16px", marginBottom: "12px" }}>
+                  {submitError}
                 </p>
               )}
-            </div>
 
-            <div style={{ marginBottom: "40px" }}>
-              <SectionTitle>Anything else?</SectionTitle>
-              <FieldGroup
-                label={
-                  form.applicationType === "Self"
-                    ? "Why would you be a great fit? (optional)"
-                    : "Why would your friend be a great fit? (optional)"
-                }
+              <button
+                type="submit"
+                disabled={submitting}
+                style={{
+                  width: "100%",
+                  padding: "16px 48px",
+                  borderRadius: "100px",
+                  border: "none",
+                  background: submitting ? "#A68B3C" : "#C9A84C",
+                  color: "#0D0A08",
+                  fontFamily: "var(--font-cormorant)",
+                  fontSize: "17px",
+                  fontWeight: 600,
+                  letterSpacing: "0.02em",
+                  cursor: submitting ? "not-allowed" : "pointer",
+                  transition: "background 0.2s, box-shadow 0.2s",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  gap: "10px",
+                }}
+                onMouseEnter={(e) => {
+                  if (!submitting) {
+                    e.currentTarget.style.background = "#E2C97E";
+                    e.currentTarget.style.boxShadow = "0 4px 20px rgba(201, 168, 76, 0.3)";
+                  }
+                }}
+                onMouseLeave={(e) => {
+                  if (!submitting) {
+                    e.currentTarget.style.background = "#C9A84C";
+                    e.currentTarget.style.boxShadow = "none";
+                  }
+                }}
               >
-                <textarea
-                  value={form.pitch}
-                  onChange={(e) => set("pitch", e.target.value)}
-                  placeholder="Tell us something fun, bold, or irresistible…"
-                  style={textareaStyle}
-                />
-              </FieldGroup>
-            </div>
+                {submitting ? (
+                  <>
+                    <span
+                      style={{
+                        width: "16px",
+                        height: "16px",
+                        border: "2px solid rgba(13,10,8,0.3)",
+                        borderTopColor: "#0D0A08",
+                        borderRadius: "50%",
+                        display: "inline-block",
+                        animation: "spin 0.7s linear infinite",
+                      }}
+                    />
+                    Submitting…
+                    <style>{`@keyframes spin{to{transform:rotate(360deg)}}`}</style>
+                  </>
+                ) : (
+                  "Submit Application 🌶️"
+                )}
+              </button>
 
-            {submitError && (
-              <p style={{ textAlign: "center", color: "var(--crimson)", fontSize: "14px", marginBottom: "12px" }}>
-                {submitError}
+              <p
+                style={{
+                  textAlign: "center",
+                  fontFamily: "var(--font-cormorant)",
+                  fontSize: "14px",
+                  color: "#3D3532",
+                  opacity: 0.6,
+                  marginTop: "16px",
+                  lineHeight: 1.5,
+                }}
+              >
+                By submitting, you agree to be contacted by the Garam Masala Dating team.
               </p>
-            )}
-
-            <button
-              type="submit"
-              disabled={submitting}
-              style={{
-                width: "100%",
-                padding: "16px",
-                borderRadius: "100px",
-                border: "none",
-                background: submitting ? "var(--crimson-dark)" : "var(--crimson)",
-                color: "#fff",
-                fontFamily: "var(--font-dm-sans)",
-                fontSize: "16px",
-                fontWeight: 600,
-                letterSpacing: "0.02em",
-                cursor: submitting ? "not-allowed" : "pointer",
-                transition: "background 0.2s",
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-                gap: "10px",
-              }}
-              onMouseEnter={(e) => {
-                if (!submitting) e.currentTarget.style.background = "var(--crimson-dark)";
-              }}
-              onMouseLeave={(e) => {
-                if (!submitting) e.currentTarget.style.background = "var(--crimson)";
-              }}
-            >
-              {submitting ? (
-                <>
-                  <span
-                    style={{
-                      width: "16px",
-                      height: "16px",
-                      border: "2px solid rgba(255,255,255,0.4)",
-                      borderTopColor: "#fff",
-                      borderRadius: "50%",
-                      display: "inline-block",
-                      animation: "spin 0.7s linear infinite",
-                    }}
-                  />
-                  Submitting…
-                  <style>{`@keyframes spin{to{transform:rotate(360deg)}}`}</style>
-                </>
-              ) : (
-                "Submit Application 🌶️"
-              )}
-            </button>
-
-            <p
-              style={{
-                textAlign: "center",
-                fontSize: "12px",
-                color: "var(--text-light)",
-                marginTop: "16px",
-                lineHeight: 1.5,
-              }}
-            >
-              By submitting, you agree to be contacted by the Garam Masala Dating team.
-            </p>
-          </form>
+            </form>
+          </div>
         </div>
       </div>
     </>

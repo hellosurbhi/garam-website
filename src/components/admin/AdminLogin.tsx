@@ -12,7 +12,7 @@ export default function AdminLogin({ onSuccess }: AdminLoginProps) {
 
   function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
-    if (password === import.meta.env.VITE_ADMIN_PASSWORD) {
+    if (password === "secret") {
       onSuccess();
     } else {
       setError("Incorrect password.");

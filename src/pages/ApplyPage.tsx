@@ -307,7 +307,7 @@ export default function ApplyPage() {
                 textShadow: "0 2px 12px rgba(0, 0, 0, 0.4)",
               }}
             >
-              Apply to Be on the Show
+              Apply to Be on Garam Masala Dating
             </h1>
             <p
               style={{

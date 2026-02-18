@@ -1,13 +1,15 @@
-@import url("https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400;1,500&family=DM+Sans:wght@400;500;600&family=Playfair+Display:ital,wght@0,400;0,700;1,400&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400;1,500&family=DM+Sans:wght@400;500;600&family=JetBrains+Mono:wght@400;500&family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;0,800;0,900;1,400;1,500;1,600;1,700;1,800;1,900&display=swap");
 
 :root {
   --font-playfair: "Playfair Display";
   --font-dm-sans: "DM Sans";
   --font-cormorant: "Cormorant Garamond";
+  --font-jetbrains: "JetBrains Mono";
   --crimson: #C41E3A;
   --crimson-dark: #9E1830;
   --crimson-light: #E8435A;
   --gold: #D4A843;
+  --gold-dark: #C9A84C;
   --cream: #FFF8F0;
   --text: #2D2420;
   --text-light: #7A6F66;

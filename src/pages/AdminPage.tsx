@@ -59,6 +59,7 @@ function LoginScreen({ onLogin }: { onLogin: () => void }) {
         </h1>
         <input
           type="password"
+          autoComplete="new-password"
           value={pw}
           onChange={(e) => { setPw(e.target.value); setError(""); }}
           placeholder="Password"

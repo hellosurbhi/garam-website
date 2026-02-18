@@ -1,4 +1,4 @@
-import { useState, type ChangeEvent } from "react";
+import { useState, useEffect, type ChangeEvent } from "react";
 import { Link } from "react-router-dom";
 import { collection, addDoc, serverTimestamp } from "firebase/firestore";
 import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
@@ -62,7 +62,7 @@ function FieldGroup({
   children: React.ReactNode;
 }) {
   return (
-    <div style={{ marginBottom: "18px" }}>
+    <div style={{ marginBottom: "18px" }} {...(error ? { "data-error": "true" } : {})}>
       <label style={labelStyle}>
         {label}
         {required && (
@@ -105,55 +105,6 @@ function SectionTitle({ children }: { children: React.ReactNode }) {
   );
 }
 
-/* ─── Success screen ─────────────────────────────────────────── */
-
-function SuccessScreen() {
-  return (
-    <div
-      style={{
-        minHeight: "100vh",
-        background: "var(--cream)",
-        display: "flex",
-        alignItems: "center",
-        justifyContent: "center",
-        padding: "24px",
-      }}
-    >
-      <div
-        style={{
-          textAlign: "center",
-          maxWidth: "400px",
-          animation: "fadeUp 0.5s ease-out both",
-        }}
-      >
-        <style>{`@keyframes fadeUp{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}`}</style>
-        <p style={{ fontSize: "3.5rem", marginBottom: "16px" }}>🌶️</p>
-        <h1
-          style={{
-            fontFamily: "var(--font-playfair)",
-            fontSize: "32px",
-            fontWeight: 700,
-            color: "#4A0E1B",
-            marginBottom: "12px",
-          }}
-        >
-          You&apos;re in!
-        </h1>
-        <p
-          style={{
-            fontFamily: "var(--font-cormorant)",
-            fontSize: "18px",
-            color: "#3D3532",
-            lineHeight: 1.6,
-          }}
-        >
-          Application received. We&apos;ll be in touch soon. 🎭
-        </p>
-      </div>
-    </div>
-  );
-}
-
 /* ─── Main form ──────────────────────────────────────────────── */
 
 interface FormState {
@@ -192,10 +143,17 @@ export default function ApplyPage() {
   const [photoPreview, setPhotoPreview] = useState<string | null>(null);
   const [errors, setErrors] = useState<Partial<Record<keyof FormState | "photo", string>>>({});
   const [submitting, setSubmitting] = useState(false);
-  const [submitted, setSubmitted] = useState(false);
-  const [submitError, setSubmitError] = useState("");
+  const [toast, setToast] = useState<{ msg: string; ok: boolean } | null>(null);
 
-  if (submitted) return <SuccessScreen />;
+  useEffect(() => {
+    if (!toast) return;
+    const id = setTimeout(() => setToast(null), 5000);
+    return () => clearTimeout(id);
+  }, [toast]);
+
+  function showToast(msg: string, ok: boolean) {
+    setToast({ msg, ok });
+  }
 
   function set(field: keyof FormState, value: string) {
     setForm((prev) => ({ ...prev, [field]: value }));
@@ -232,14 +190,22 @@ export default function ApplyPage() {
       errs.referrerName = "Required";
     }
     setErrors(errs);
-    return Object.keys(errs).length === 0;
+    if (Object.keys(errs).length > 0) {
+      showToast("Please fill in all required fields", false);
+      // Scroll to first error after state update
+      setTimeout(() => {
+        const el = document.querySelector<HTMLElement>("[data-error]");
+        el?.scrollIntoView({ behavior: "smooth", block: "center" });
+      }, 50);
+      return false;
+    }
+    return true;
   }
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     if (!validate()) return;
 
-    setSubmitError("");
     setSubmitting(true);
     try {
       const ext = photoFile!.name.split(".").pop() ?? "jpg";
@@ -266,10 +232,15 @@ export default function ApplyPage() {
         submittedAt: serverTimestamp(),
       });
 
-      setSubmitted(true);
+      // Reset form and show success toast
+      setForm(INITIAL);
+      setPhotoFile(null);
+      setPhotoPreview(null);
+      setErrors({});
+      showToast("Application received! We'll be in touch. 🌶️", true);
     } catch (err) {
       console.error("Submission error:", err);
-      setSubmitError(`Submission failed: ${(err as Error).message || "Please try again."}`);
+      showToast("Submission failed — please try again", false);
     } finally {
       setSubmitting(false);
     }
@@ -650,12 +621,6 @@ export default function ApplyPage() {
                 </FieldGroup>
               </div>
 
-              {submitError && (
-                <p style={{ textAlign: "center", color: "var(--crimson)", fontFamily: "var(--font-cormorant)", fontSize: "16px", marginBottom: "12px" }}>
-                  {submitError}
-                </p>
-              )}
-
               <button
                 type="submit"
                 disabled={submitting}
@@ -728,6 +693,49 @@ export default function ApplyPage() {
           </div>
         </div>
       </div>
+
+      {toast && (
+        <div
+          style={{
+            position: "fixed",
+            bottom: "24px",
+            right: "24px",
+            display: "flex",
+            alignItems: "center",
+            gap: "10px",
+            padding: "12px 20px",
+            borderRadius: "100px",
+            background: toast.ok ? "#22C55E" : "var(--crimson)",
+            color: "#fff",
+            fontFamily: "var(--font-cormorant)",
+            fontSize: "15px",
+            fontWeight: 600,
+            boxShadow: "0 4px 20px rgba(0,0,0,0.2)",
+            zIndex: 9999,
+            maxWidth: "calc(100vw - 48px)",
+            animation: "toastIn 0.2s ease-out both",
+          }}
+        >
+          <style>{`@keyframes toastIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}`}</style>
+          <span>{toast.msg}</span>
+          <button
+            onClick={() => setToast(null)}
+            style={{
+              background: "none",
+              border: "none",
+              color: "rgba(255,255,255,0.8)",
+              cursor: "pointer",
+              padding: "0",
+              lineHeight: 1,
+              fontSize: "16px",
+              flexShrink: 0,
+            }}
+            aria-label="Dismiss"
+          >
+            ✕
+          </button>
+        </div>
+      )}
     </>
   );
 }

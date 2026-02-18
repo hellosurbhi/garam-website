@@ -35,6 +35,15 @@ tags:
 - Removed Storage upload from submit flow
 - `FileReader.readAsDataURL`...
 - till not able to see anything on admin. I am stuck. Let's just remove the password bro. I need to be able to fucking go into admin. You've broken admin. You've broken the form. It's stuck on...
+- till reads photoUrl (ApplicantCard.tsx:60,
+  ApplicantModal.tsx:117, types/application.ts:17)
+
+  ---
+  3. How We Fixed It
+
+  - Removed Storage upload from submit flow
+  - FileReader.readAsDataURL...
+- till reference `photoBase64`. Fixing both:
 
 ## Files Changed
 - `/Users/surbhi/.claude/plans/calm-crunching-penguin.md`
@@ -45,29 +54,31 @@ tags:
 - `/Users/surbhi/workspace/garam-masala-dating/src/components/admin/ApplicantModal.tsx`
 - `/Users/surbhi/workspace/garam-masala-dating/src/pages/AdminPage.tsx`
 - `/Users/surbhi/workspace/garam-masala-dating/src/types/application.ts`
+- `/Users/surbhi/workspace/garam-masala-dating/src/lib/firebase.ts`
 
 ## Issues
 - `to-end`
 - `pre-ship`
 - `ad-hoc`
 - `re-writed`
+- `re-enable`
 
 ## Tool Usage
 
 | Tool | Count |
 |------|-------|
-| Bash | 9 |
-| Edit | 10 |
+| Bash | 12 |
+| Edit | 13 |
 | ExitPlanMode | 2 |
 | Glob | 1 |
 | Grep | 1 |
-| Read | 5 |
+| Read | 8 |
 | Task | 2 |
-| Write | 2 |
+| Write | 5 |
 | mcp__codex__codex | 1 |
 
 ## Tokens
 
 - **Input:** 0
 - **Output:** 0
-- **Total:** ~214518 (estimated)
+- **Total:** ~320887 (estimated)

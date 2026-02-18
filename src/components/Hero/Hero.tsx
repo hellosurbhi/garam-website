@@ -14,6 +14,7 @@ export function Hero() {
           <img src={heroImage} alt="" className={styles.image} />
         </picture>
       </div>
+      <div className={styles.vignette} />
       <div className={styles.grid}>
         {Array.from({ length: 7 }).map((_, i) => (
           <div key={`v-${i}`} className={styles.gridLineV} style={{ left: `${(i + 1) * 12.5}%` }} />

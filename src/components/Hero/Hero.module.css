@@ -27,6 +27,18 @@
 }
 
 
+/* Dark vignette: bottom-to-top + side edges */
+.vignette {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+  background:
+    linear-gradient(to top, rgba(13,10,8,0.85) 0%, rgba(13,10,8,0.50) 25%, rgba(13,10,8,0.10) 50%, transparent 65%),
+    linear-gradient(to right, rgba(13,10,8,0.3) 0%, transparent 20%),
+    linear-gradient(to left, rgba(13,10,8,0.3) 0%, transparent 20%);
+}
+
 /* Subtle grid overlay */
 .grid {
   position: absolute;

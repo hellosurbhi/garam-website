@@ -138,7 +138,6 @@ const INITIAL: FormState = {
 
 export default function ApplyPage() {
   const [form, setForm] = useState<FormState>(INITIAL);
-  const [photoFile, setPhotoFile] = useState<File | null>(null);
   const [photoPreview, setPhotoPreview] = useState<string | null>(null);
   const [errors, setErrors] = useState<Partial<Record<keyof FormState | "photo", string>>>({});
   const [submitting, setSubmitting] = useState(false);
@@ -162,13 +161,6 @@ export default function ApplyPage() {
   function handlePhotoChange(e: ChangeEvent<HTMLInputElement>) {
     const file = e.target.files?.[0];
     if (!file) return;
-    if (file.size > 10 * 1024 * 1024) {
-      setErrors((prev) => ({ ...prev, photo: "Photo must be under 10 MB" }));
-      e.target.value = "";
-      return;
-    }
-    setPhotoFile(file);
-    setErrors((prev) => ({ ...prev, photo: undefined }));
     const reader = new FileReader();
     reader.onloadend = () => setPhotoPreview(reader.result as string);
     reader.readAsDataURL(file);
@@ -200,7 +192,6 @@ export default function ApplyPage() {
 
       // Reset form and show success toast
       setForm(INITIAL);
-      setPhotoFile(null);
       setPhotoPreview(null);
       setErrors({});
       showToast("Application received! We'll be in touch. 🌶️", true);

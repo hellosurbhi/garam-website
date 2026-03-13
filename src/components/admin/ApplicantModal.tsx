@@ -1,11 +1,14 @@
 import { useState, useEffect } from "react";
-import { X } from "lucide-react";
+import { X, Trash2, ArchiveRestore } from "lucide-react";
 import { type Application, STATUS_COLORS } from "@/types/application";
+import { formatLocation } from "@/utils/locationDisplay";
 
 interface ApplicantModalProps {
   app: Application;
   onClose: () => void;
   onUpdate: (id: string, patch: Partial<Omit<Application, "id">>) => void;
+  onDelete?: (id: string) => void;
+  onRestore?: (id: string) => void;
 }
 
 function InfoRow({ label, value }: { label: string; value?: string | number }) {
@@ -28,10 +31,11 @@ function InfoRow({ label, value }: { label: string; value?: string | number }) {
   );
 }
 
-export default function ApplicantModal({ app, onClose, onUpdate }: ApplicantModalProps) {
+export default function ApplicantModal({ app, onClose, onUpdate, onDelete, onRestore }: ApplicantModalProps) {
   const [status, setStatus] = useState<Application["status"]>(app.status);
   const [notes, setNotes] = useState(app.notes ?? "");
   const handle = app.instagram.replace(/^@/, "");
+  const isDeleted = !!app.deletedAt;
 
   useEffect(() => {
     const prev = document.body.style.overflow;
@@ -157,6 +161,26 @@ export default function ApplicantModal({ app, onClose, onUpdate }: ApplicantModa
           >
             <X size={18} />
           </button>
+
+          {isDeleted && (
+            <div
+              style={{
+                position: "absolute",
+                bottom: 0,
+                left: 0,
+                right: 0,
+                background: "rgba(220,38,38,0.85)",
+                color: "#fff",
+                textAlign: "center",
+                fontSize: "12px",
+                fontWeight: 700,
+                letterSpacing: "0.08em",
+                padding: "6px 0",
+              }}
+            >
+              DELETED
+            </div>
+          )}
         </div>
 
         <div style={{ padding: "24px" }}>
@@ -203,7 +227,7 @@ export default function ApplicantModal({ app, onClose, onUpdate }: ApplicantModa
             <InfoRow label="Age" value={app.age} />
             <InfoRow label="Gender" value={app.gender} />
             <InfoRow label="Orientation" value={app.orientation} />
-            <InfoRow label="City" value={app.city} />
+            <InfoRow label="Location" value={formatLocation(app)} />
             <InfoRow label="Height" value={app.height} />
             <InfoRow label="Community" value={app.community} />
             <InfoRow label="Income" value={app.income} />
@@ -331,6 +355,64 @@ export default function ApplicantModal({ app, onClose, onUpdate }: ApplicantModa
                 lineHeight: 1.5,
               }}
             />
+          </div>
+
+          <hr style={{ border: "none", borderTop: "1px solid var(--border)", margin: "24px 0" }} />
+
+          <div style={{ display: "flex", justifyContent: "flex-end" }}>
+            {isDeleted ? (
+              onRestore && (
+                <button
+                  onClick={() => onRestore(app.id)}
+                  style={{
+                    display: "inline-flex",
+                    alignItems: "center",
+                    gap: "6px",
+                    padding: "10px 18px",
+                    borderRadius: "100px",
+                    border: "1px solid var(--success)",
+                    background: "transparent",
+                    fontFamily: "var(--font-dm-sans)",
+                    fontSize: "14px",
+                    fontWeight: 600,
+                    color: "var(--success)",
+                    cursor: "pointer",
+                    transition: "background 0.15s",
+                  }}
+                  onMouseEnter={(e) => (e.currentTarget.style.background = "#22C55E11")}
+                  onMouseLeave={(e) => (e.currentTarget.style.background = "transparent")}
+                >
+                  <ArchiveRestore size={16} />
+                  Restore
+                </button>
+              )
+            ) : (
+              onDelete && (
+                <button
+                  onClick={() => onDelete(app.id)}
+                  style={{
+                    display: "inline-flex",
+                    alignItems: "center",
+                    gap: "6px",
+                    padding: "10px 18px",
+                    borderRadius: "100px",
+                    border: "1px solid var(--crimson)",
+                    background: "transparent",
+                    fontFamily: "var(--font-dm-sans)",
+                    fontSize: "14px",
+                    fontWeight: 600,
+                    color: "var(--crimson)",
+                    cursor: "pointer",
+                    transition: "background 0.15s",
+                  }}
+                  onMouseEnter={(e) => (e.currentTarget.style.background = "rgba(220,38,38,0.06)")}
+                  onMouseLeave={(e) => (e.currentTarget.style.background = "transparent")}
+                >
+                  <Trash2 size={16} />
+                  Move to Deleted
+                </button>
+              )
+            )}
           </div>
         </div>
       </div>

@@ -14,6 +14,11 @@
   --text: #2D2420;
   --text-light: #7A6F66;
   --border: #E0D5C8;
+  --success: #22C55E;
+  --accent-pink: #ff2d9b;
+  --text-ivory: #F5EDE4;
+  --gold-accent: #E2C97E;
+  --surface-dark: #4A0E1B;
 }
 
 *,
@@ -40,7 +45,7 @@ body {
 }
 
 ::selection {
-  background: #ff2d9b;
+  background: var(--accent-pink);
   color: #fff;
 }
 

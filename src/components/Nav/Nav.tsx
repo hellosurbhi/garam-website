@@ -1,11 +1,12 @@
 import { useState, useRef, useEffect } from "react";
 import { Link } from "react-router-dom";
+import { SOCIAL_URLS } from "@/data/socials";
 import styles from "./Nav.module.css";
 
 const SOCIALS = [
-  { label: "Instagram", href: "https://www.instagram.com/garammasaladating" },
-  { label: "TikTok", href: "https://tiktok.com/@garammasaladating" },
-  { label: "YouTube", href: "https://www.youtube.com/playlist?list=PLgDtd7hFH7diDNPEPu_6BWMs017q-I-wZ" },
+  { label: "Instagram", href: SOCIAL_URLS.instagram },
+  { label: "TikTok", href: SOCIAL_URLS.tiktok },
+  { label: "YouTube", href: SOCIAL_URLS.youtube },
 ];
 
 export function Nav() {
@@ -45,8 +46,8 @@ export function Nav() {
                 <a
                   key={label}
                   href={href}
-                  target={href !== "#" ? "_blank" : undefined}
-                  rel={href !== "#" ? "noopener noreferrer" : undefined}
+                  target="_blank"
+                  rel="noopener noreferrer"
                   className={styles.dropItem}
                   onClick={() => setFollowOpen(false)}
                 >

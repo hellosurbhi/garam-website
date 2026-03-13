@@ -30,7 +30,7 @@
 }
 
 .brand {
-  font-family: "Cormorant Garamond", serif;
+  font-family: var(--font-cormorant), serif;
   font-size: 1.15rem;
   font-weight: 500;
   color: #fff;
@@ -38,10 +38,10 @@
 }
 
 .season {
-  font-family: monospace;
+  font-family: var(--font-jetbrains), monospace;
   font-size: 10px;
   font-weight: 400;
-  color: #C9A84C;
+  color: var(--gold-dark);
   letter-spacing: 0.25em;
   text-transform: uppercase;
 }
@@ -85,7 +85,7 @@
 .dropItem {
   display: block;
   padding: 10px 16px;
-  font-family: "DM Sans", sans-serif;
+  font-family: var(--font-dm-sans), sans-serif;
   font-size: 0.78rem;
   font-weight: 500;
   letter-spacing: 0.03em;
@@ -96,12 +96,12 @@
 
 .dropItem:hover {
   background: rgba(255, 255, 255, 0.07);
-  color: #ff2d9b;
+  color: var(--accent-pink);
 }
 
 .btnOutline,
 .btnSolid {
-  font-family: "DM Sans", sans-serif;
+  font-family: var(--font-dm-sans), sans-serif;
   font-size: 0.78rem;
   font-weight: 500;
   letter-spacing: 0.04em;
@@ -115,7 +115,7 @@
 }
 
 .btnOutline {
-  color: #F5EDE4;
+  color: var(--text-ivory);
   background: rgba(255, 255, 255, 0.08);
   border: 1px solid rgba(255, 255, 255, 0.15);
   backdrop-filter: blur(12px);
@@ -123,19 +123,19 @@
 }
 
 .btnOutline:hover {
-  border-color: #ff2d9b;
-  color: #ff2d9b;
+  border-color: var(--accent-pink);
+  color: var(--accent-pink);
 }
 
 .btnSolid {
-  color: #4A0E1B;
-  background: #F5EDE4;
-  border: 1px solid #F5EDE4;
+  color: var(--surface-dark);
+  background: var(--text-ivory);
+  border: 1px solid var(--text-ivory);
 }
 
 .btnSolid:hover {
-  background: #ff2d9b;
-  border-color: #ff2d9b;
+  background: var(--accent-pink);
+  border-color: var(--accent-pink);
   color: #fff;
 }
 

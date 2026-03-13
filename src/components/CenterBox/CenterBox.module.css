@@ -37,10 +37,10 @@
 }
 
 .title {
-  font-family: "Cormorant Garamond", serif;
+  font-family: var(--font-cormorant), serif;
   font-size: 3rem;
   font-weight: 600;
-  color: #F5EDE4;
+  color: var(--text-ivory);
   line-height: 1.08;
   margin: 0 0 16px 0;
   letter-spacing: -0.01em;
@@ -50,11 +50,11 @@
 .title em {
   font-style: italic;
   font-weight: 400;
-  color: #E2C97E;
+  color: var(--gold-accent);
 }
 
 .subtitle {
-  font-family: "DM Sans", sans-serif;
+  font-family: var(--font-dm-sans), sans-serif;
   font-size: 0.95rem;
   font-weight: 400;
   color: rgba(245, 237, 228, 0.8);
@@ -62,6 +62,17 @@
   margin: 0;
   letter-spacing: 0.01em;
   text-shadow: 0 2px 12px rgba(0, 0, 0, 0.4);
+}
+
+.subtitleLink {
+  color: var(--gold-accent);
+  text-decoration: none;
+  transition: color 0.2s ease;
+}
+
+.subtitleLink:hover {
+  color: var(--text-ivory);
+  text-decoration: underline;
 }
 
 @media (max-width: 768px) {

@@ -22,7 +22,7 @@ export const events: EventEntry[] = [
     date: "Mar 15",
     city: "New York City",
     numeral: "III",
-    url: "https://www.eventbrite.com/e/garam-masala-dating-st-patricks-day-tickets-1982720502396?aff=ebdsshcopyurl&utm-campaign=social&utm-content=attendeeshare&utm-medium=discovery&utm-term=",
+    url: "https://www.eventbrite.com/e/garam-masala-dating-st-patricks-day-tickets-1982103088695",
   },
   {
     date: "Apr 4",

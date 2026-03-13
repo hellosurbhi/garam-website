@@ -1,7 +1,10 @@
 import { useState, useEffect, useMemo } from "react";
-import { collection, getDocs, doc, updateDoc } from "firebase/firestore";
+import { collection, getDocs, doc, updateDoc, Timestamp } from "firebase/firestore";
+import { ChevronRight, ChevronDown } from "lucide-react";
+import Select from "react-select";
 import { db } from "@/lib/firebase";
-import { type Application, COMMUNITY_OPTIONS, INCOME_OPTIONS } from "@/types/application";
+import { type Application } from "@/types/application";
+import { adminSelectStyles } from "@/utils/reactSelectStyles";
 import ApplicantCard from "./ApplicantCard";
 import ApplicantModal from "./ApplicantModal";
 
@@ -9,50 +12,41 @@ interface AdminDashboardProps {
   onLogout: () => void;
 }
 
-type SortOption = "newest" | "oldest" | "city-az" | "age-asc" | "age-desc";
+type FilterOption = { value: string; label: string };
 
-const FILTER_STYLE: React.CSSProperties = {
-  padding: "7px 14px",
-  borderRadius: "100px",
-  border: "1px solid var(--border)",
-  background: "#fff",
-  fontFamily: "var(--font-dm-sans)",
-  fontSize: "13px",
-  color: "var(--text)",
-  outline: "none",
-  cursor: "pointer",
-  flexShrink: 0,
-};
+const GENDER_OPTIONS: FilterOption[] = [
+  { value: "Man", label: "Man" },
+  { value: "Woman", label: "Woman" },
+  { value: "Non-binary", label: "Non-binary" },
+  { value: "Other", label: "Other" },
+];
 
 export default function AdminDashboard({ onLogout }: AdminDashboardProps) {
   const [applications, setApplications] = useState<Application[]>([]);
   const [loading, setLoading] = useState(true);
+  const [fetchError, setFetchError] = useState(false);
   const [selectedApp, setSelectedApp] = useState<Application | null>(null);
   const [toast, setToast] = useState<{ msg: string; ok: boolean } | null>(null);
+  const [deletedOpen, setDeletedOpen] = useState(false);
 
-  const [sortBy, setSortBy] = useState<SortOption>("newest");
-  const [cityFilter, setCityFilter] = useState("");
-  const [genderFilter, setGenderFilter] = useState("All");
-  const [orientationFilter, setOrientationFilter] = useState("All");
-  const [communityFilter, setCommunityFilter] = useState("All");
-  const [incomeFilter, setIncomeFilter] = useState("All");
-  const [statusFilter, setStatusFilter] = useState("All");
+  const [genderFilter, setGenderFilter] = useState<readonly FilterOption[]>([]);
+  const [cityFilter, setCityFilter] = useState<readonly FilterOption[]>([]);
 
-  useEffect(() => {
-    async function fetchApps() {
-      try {
-        const snap = await getDocs(collection(db, "applications"));
-        console.log("Snapshot size:", snap.size, snap.docs.map(d => ({ id: d.id, ...d.data() })));
-        const docs = snap.docs.map((d) => ({ id: d.id, ...d.data() } as Application));
-        setApplications(docs);
-      } catch (err) {
-        console.error("Failed to fetch applications:", err);
-      } finally {
-        setLoading(false);
-      }
+  async function fetchApps() {
+    setLoading(true);
+    setFetchError(false);
+    try {
+      const snap = await getDocs(collection(db, "applications"));
+      const docs = snap.docs.map((d) => ({ id: d.id, ...d.data() } as Application));
+      setApplications(docs);
+    } catch {
+      setFetchError(true);
+    } finally {
+      setLoading(false);
     }
-    fetchApps();
-  }, []);
+  }
+
+  useEffect(() => { fetchApps(); }, []);
 
   async function handleUpdate(id: string, patch: Partial<Omit<Application, "id">>) {
     try {
@@ -60,48 +54,68 @@ export default function AdminDashboard({ onLogout }: AdminDashboardProps) {
       setApplications((prev) => prev.map((a) => (a.id === id ? { ...a, ...patch } : a)));
       setSelectedApp((prev) => (prev?.id === id ? { ...prev, ...patch } : prev));
       setToast({ msg: "Saved", ok: true });
-    } catch (err) {
-      console.error("Failed to update application:", err);
+    } catch {
       setToast({ msg: "Save failed", ok: false });
     } finally {
       setTimeout(() => setToast(null), 2500);
     }
   }
 
-  function clearFilters() {
-    setSortBy("newest");
-    setCityFilter("");
-    setGenderFilter("All");
-    setOrientationFilter("All");
-    setCommunityFilter("All");
-    setIncomeFilter("All");
-    setStatusFilter("All");
+  function handleDelete(id: string) {
+    handleUpdate(id, { deletedAt: Timestamp.now() } as Partial<Omit<Application, "id">>);
+    setSelectedApp(null);
   }
 
-  const filtered = useMemo(() => {
-    let result = [...applications];
-    if (cityFilter.trim()) {
-      const q = cityFilter.trim().toLowerCase();
-      result = result.filter((a) => a.city.toLowerCase().includes(q));
-    }
-    if (genderFilter !== "All") result = result.filter((a) => a.gender === genderFilter);
-    if (orientationFilter !== "All") result = result.filter((a) => a.orientation === orientationFilter);
-    if (communityFilter !== "All") result = result.filter((a) => a.community === communityFilter);
-    if (incomeFilter !== "All") result = result.filter((a) => a.income === incomeFilter);
-    if (statusFilter !== "All") result = result.filter((a) => a.status === statusFilter);
-    switch (sortBy) {
-      case "newest": result.sort((a, b) => (b.submittedAt?.seconds ?? 0) - (a.submittedAt?.seconds ?? 0)); break;
-      case "oldest": result.sort((a, b) => (a.submittedAt?.seconds ?? 0) - (b.submittedAt?.seconds ?? 0)); break;
-      case "city-az": result.sort((a, b) => a.city.localeCompare(b.city)); break;
-      case "age-asc": result.sort((a, b) => a.age - b.age); break;
-      case "age-desc": result.sort((a, b) => b.age - a.age); break;
-    }
-    return result;
-  }, [applications, sortBy, cityFilter, genderFilter, orientationFilter, communityFilter, incomeFilter, statusFilter]);
+  function handleRestore(id: string) {
+    handleUpdate(id, { deletedAt: null });
+  }
 
-  const hasActiveFilters =
-    sortBy !== "newest" || cityFilter.trim() !== "" || genderFilter !== "All" ||
-    orientationFilter !== "All" || communityFilter !== "All" || incomeFilter !== "All" || statusFilter !== "All";
+  const cityOptions = useMemo(() => {
+    const cities = new Set(
+      applications.filter((a) => !a.deletedAt && a.city?.trim()).map((a) => a.city.trim())
+    );
+    return [...cities].sort().map((c) => ({ value: c, label: c }));
+  }, [applications]);
+
+  function clearFilters() {
+    setGenderFilter([]);
+    setCityFilter([]);
+  }
+
+  const { activeApps, deletedApps } = useMemo(() => {
+    const active = applications.filter((a) => !a.deletedAt);
+    const deleted = applications.filter((a) => !!a.deletedAt);
+
+    // Filter active list
+    let result = [...active];
+    if (genderFilter.length > 0) {
+      const selected = new Set(genderFilter.map((o) => o.value));
+      result = result.filter((a) => selected.has(a.gender));
+    }
+    if (cityFilter.length > 0) {
+      const selected = new Set(cityFilter.map((o) => o.value));
+      result = result.filter((a) => selected.has(a.city?.trim()));
+    }
+
+    // Sort newest first, then push rejected to bottom
+    result.sort((a, b) => (b.submittedAt?.seconds ?? 0) - (a.submittedAt?.seconds ?? 0));
+    result.sort((a, b) => {
+      const aRej = a.status === "Rejected" ? 1 : 0;
+      const bRej = b.status === "Rejected" ? 1 : 0;
+      return aRej - bRej;
+    });
+
+    // Sort deleted by deletedAt descending
+    deleted.sort((a, b) => {
+      const aTime = a.deletedAt && "seconds" in a.deletedAt ? a.deletedAt.seconds : 0;
+      const bTime = b.deletedAt && "seconds" in b.deletedAt ? b.deletedAt.seconds : 0;
+      return bTime - aTime;
+    });
+
+    return { activeApps: result, deletedApps: deleted };
+  }, [applications, genderFilter, cityFilter]);
+
+  const hasActiveFilters = genderFilter.length > 0 || cityFilter.length > 0;
 
   return (
     <div style={{ minHeight: "100vh", background: "var(--cream)", position: "relative" }}>
@@ -117,7 +131,9 @@ export default function AdminDashboard({ onLogout }: AdminDashboardProps) {
               Applications
             </h1>
             {!loading && (
-              <span style={{ fontSize: "13px", color: "var(--text-light)" }}>{applications.length} total</span>
+              <span style={{ fontSize: "13px", color: "var(--text-light)" }}>
+                {activeApps.length} active
+              </span>
             )}
           </div>
           <button
@@ -134,48 +150,28 @@ export default function AdminDashboard({ onLogout }: AdminDashboardProps) {
           </button>
         </div>
 
-        <div style={{ maxWidth: "1200px", margin: "0 auto", overflowX: "auto", paddingBottom: "12px" }}>
-          <div style={{ display: "flex", alignItems: "center", gap: "10px", minWidth: "max-content" }}>
-            <select value={sortBy} onChange={(e) => setSortBy(e.target.value as SortOption)} style={FILTER_STYLE}>
-              <option value="newest">Newest</option>
-              <option value="oldest">Oldest</option>
-              <option value="city-az">City A–Z</option>
-              <option value="age-asc">Age ↑</option>
-              <option value="age-desc">Age ↓</option>
-            </select>
-
-            <div style={{ width: "1px", height: "20px", background: "var(--border)", flexShrink: 0 }} />
-
-            <input
-              type="text" value={cityFilter} onChange={(e) => setCityFilter(e.target.value)}
-              placeholder="City…" style={{ ...FILTER_STYLE, cursor: "text", minWidth: "100px" }}
-            />
-
-            <select value={genderFilter} onChange={(e) => setGenderFilter(e.target.value)} style={FILTER_STYLE}>
-              <option value="All">All genders</option>
-              {["Man", "Woman", "Non-binary", "Other"].map((g) => <option key={g} value={g}>{g}</option>)}
-            </select>
-
-            <select value={orientationFilter} onChange={(e) => setOrientationFilter(e.target.value)} style={FILTER_STYLE}>
-              <option value="All">All orientations</option>
-              {["Straight", "Gay", "Bisexual", "Other"].map((o) => <option key={o} value={o}>{o}</option>)}
-            </select>
-
-            <select value={communityFilter} onChange={(e) => setCommunityFilter(e.target.value)} style={FILTER_STYLE}>
-              <option value="All">All communities</option>
-              {COMMUNITY_OPTIONS.map((c) => <option key={c} value={c}>{c}</option>)}
-            </select>
-
-            <select value={incomeFilter} onChange={(e) => setIncomeFilter(e.target.value)} style={FILTER_STYLE}>
-              <option value="All">All incomes</option>
-              {INCOME_OPTIONS.map((i) => <option key={i} value={i}>{i}</option>)}
-            </select>
-
-            <select value={statusFilter} onChange={(e) => setStatusFilter(e.target.value)} style={FILTER_STYLE}>
-              <option value="All">All statuses</option>
-              {(["New", "Contacted", "Cast", "Rejected"] as const).map((s) => <option key={s} value={s}>{s}</option>)}
-            </select>
-
+        <div style={{ maxWidth: "1200px", margin: "0 auto", paddingBottom: "12px" }}>
+          <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
+            <div style={{ minWidth: "180px" }}>
+              <Select
+                isMulti
+                options={GENDER_OPTIONS}
+                value={genderFilter}
+                onChange={(v) => setGenderFilter(v)}
+                placeholder="Gender…"
+                styles={adminSelectStyles}
+              />
+            </div>
+            <div style={{ minWidth: "220px" }}>
+              <Select
+                isMulti
+                options={cityOptions}
+                value={cityFilter}
+                onChange={(v) => setCityFilter(v)}
+                placeholder="City…"
+                styles={adminSelectStyles}
+              />
+            </div>
             {hasActiveFilters && (
               <button
                 onClick={clearFilters}
@@ -194,11 +190,21 @@ export default function AdminDashboard({ onLogout }: AdminDashboardProps) {
       <main style={{ maxWidth: "1200px", margin: "0 auto", padding: "32px" }}>
         {loading ? (
           <div style={{ textAlign: "center", padding: "80px 0", color: "var(--text-light)" }}>Loading…</div>
+        ) : fetchError ? (
+          <div style={{ textAlign: "center", padding: "80px 0", color: "var(--text-light)", fontSize: "16px" }}>
+            <p style={{ marginBottom: "12px" }}>Failed to load applications.</p>
+            <button
+              onClick={fetchApps}
+              style={{ background: "none", border: "none", color: "var(--crimson)", fontFamily: "var(--font-dm-sans)", fontSize: "14px", cursor: "pointer", textDecoration: "underline" }}
+            >
+              Try again
+            </button>
+          </div>
         ) : applications.length === 0 ? (
           <div style={{ textAlign: "center", padding: "80px 0", color: "var(--text-light)", fontSize: "16px" }}>
             No applications yet. Share the link! 🌶️
           </div>
-        ) : filtered.length === 0 ? (
+        ) : activeApps.length === 0 && deletedApps.length === 0 ? (
           <div style={{ textAlign: "center", padding: "80px 0", color: "var(--text-light)", fontSize: "16px" }}>
             <p style={{ marginBottom: "12px" }}>No applications match these filters.</p>
             <button
@@ -211,16 +217,67 @@ export default function AdminDashboard({ onLogout }: AdminDashboardProps) {
         ) : (
           <>
             <p style={{ fontSize: "13px", color: "var(--text-light)", marginBottom: "20px" }}>
-              Showing {filtered.length} of {applications.length}
+              Showing {activeApps.length} active · {deletedApps.length} deleted
             </p>
-            <div
-              style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: "20px" }}
-              className="applicant-grid"
-            >
-              {filtered.map((app) => (
-                <ApplicantCard key={app.id} app={app} onClick={() => setSelectedApp(app)} />
-              ))}
-            </div>
+
+            {activeApps.length > 0 && (
+              <div
+                style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: "20px" }}
+                className="applicant-grid"
+              >
+                {activeApps.map((app) => (
+                  <ApplicantCard
+                    key={app.id}
+                    app={app}
+                    onClick={() => setSelectedApp(app)}
+                    onDelete={() => handleDelete(app.id)}
+                    dimmed={app.status === "Rejected"}
+                  />
+                ))}
+              </div>
+            )}
+
+            {deletedApps.length > 0 && (
+              <div style={{ marginTop: "40px" }}>
+                <button
+                  onClick={() => setDeletedOpen((v) => !v)}
+                  style={{
+                    display: "inline-flex",
+                    alignItems: "center",
+                    gap: "6px",
+                    background: "none",
+                    border: "none",
+                    fontFamily: "var(--font-dm-sans)",
+                    fontSize: "14px",
+                    fontWeight: 600,
+                    color: "var(--text-light)",
+                    cursor: "pointer",
+                    padding: "8px 0",
+                    marginBottom: "16px",
+                  }}
+                >
+                  {deletedOpen ? <ChevronDown size={16} /> : <ChevronRight size={16} />}
+                  Deleted Applications ({deletedApps.length})
+                </button>
+
+                {deletedOpen && (
+                  <div
+                    style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: "20px" }}
+                    className="applicant-grid"
+                  >
+                    {deletedApps.map((app) => (
+                      <ApplicantCard
+                        key={app.id}
+                        app={app}
+                        onClick={() => setSelectedApp(app)}
+                        onRestore={() => handleRestore(app.id)}
+                        dimmed
+                      />
+                    ))}
+                  </div>
+                )}
+              </div>
+            )}
           </>
         )}
       </main>
@@ -231,7 +288,13 @@ export default function AdminDashboard({ onLogout }: AdminDashboardProps) {
       `}</style>
 
       {selectedApp && (
-        <ApplicantModal app={selectedApp} onClose={() => setSelectedApp(null)} onUpdate={handleUpdate} />
+        <ApplicantModal
+          app={selectedApp}
+          onClose={() => setSelectedApp(null)}
+          onUpdate={handleUpdate}
+          onDelete={handleDelete}
+          onRestore={handleRestore}
+        />
       )}
 
       {toast && (
@@ -242,7 +305,7 @@ export default function AdminDashboard({ onLogout }: AdminDashboardProps) {
             right: "24px",
             padding: "10px 20px",
             borderRadius: "100px",
-            background: toast.ok ? "#22C55E" : "var(--crimson)",
+            background: toast.ok ? "var(--success)" : "var(--crimson)",
             color: "#fff",
             fontFamily: "var(--font-dm-sans)",
             fontSize: "14px",

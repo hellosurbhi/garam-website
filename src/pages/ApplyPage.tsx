@@ -1,9 +1,12 @@
-import { useState, useEffect, type ChangeEvent } from "react";
-import { Link } from "react-router-dom";
+import { useState, useEffect, useMemo, type ChangeEvent } from "react";
+import { useNavigate } from "react-router-dom";
 import { collection, addDoc, serverTimestamp } from "firebase/firestore";
 import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
+import Select from "react-select";
+import { Country, State, City } from "country-state-city";
 import { db, storage } from "@/lib/firebase";
 import { COMMUNITY_OPTIONS, INCOME_OPTIONS } from "@/types/application";
+import { formSelectStyles } from "@/utils/reactSelectStyles";
 
 /* ─── Shared input styles ────────────────────────────────────── */
 
@@ -94,7 +97,7 @@ function SectionTitle({ children }: { children: React.ReactNode }) {
         fontFamily: "var(--font-playfair)",
         fontSize: "24px",
         fontWeight: 600,
-        color: "#4A0E1B",
+        color: "var(--surface-dark)",
         marginBottom: "20px",
         paddingBottom: "10px",
         borderBottom: "1px solid rgba(201, 168, 76, 0.2)",
@@ -113,6 +116,8 @@ interface FormState {
   age: string;
   gender: string;
   orientation: string;
+  country: string;
+  state: string;
   city: string;
   height: string;
   instagram: string;
@@ -128,6 +133,8 @@ const INITIAL: FormState = {
   age: "",
   gender: "",
   orientation: "",
+  country: "US",
+  state: "",
   city: "",
   height: "",
   instagram: "",
@@ -137,7 +144,10 @@ const INITIAL: FormState = {
   pitch: "",
 };
 
+type SelectOption = { value: string; label: string };
+
 export default function ApplyPage() {
+  const navigate = useNavigate();
   const [form, setForm] = useState<FormState>(INITIAL);
   const [photoFile, setPhotoFile] = useState<File | null>(null);
   const [photoPreview, setPhotoPreview] = useState<string | null>(null);
@@ -155,9 +165,40 @@ export default function ApplyPage() {
     setToast({ msg, ok });
   }
 
+  const countryOptions = useMemo<SelectOption[]>(() =>
+    Country.getAllCountries().map((c) => ({ value: c.isoCode, label: c.name })),
+  []);
+
+  const stateOptions = useMemo<SelectOption[]>(() =>
+    form.country
+      ? State.getStatesOfCountry(form.country).map((s) => ({ value: s.isoCode, label: s.name }))
+      : [],
+  [form.country]);
+
+  const cityOptions = useMemo<SelectOption[]>(() =>
+    form.country && form.state
+      ? City.getCitiesOfState(form.country, form.state).map((c) => ({ value: c.name, label: c.name }))
+      : [],
+  [form.country, form.state]);
+
   function set(field: keyof FormState, value: string) {
     setForm((prev) => ({ ...prev, [field]: value }));
     setErrors((prev) => ({ ...prev, [field]: undefined }));
+  }
+
+  function handleCountryChange(option: SelectOption | null) {
+    setForm((prev) => ({ ...prev, country: option?.value ?? "", state: "", city: "" }));
+    setErrors((prev) => ({ ...prev, country: undefined, state: undefined, city: undefined }));
+  }
+
+  function handleStateChange(option: SelectOption | null) {
+    setForm((prev) => ({ ...prev, state: option?.value ?? "", city: "" }));
+    setErrors((prev) => ({ ...prev, state: undefined, city: undefined }));
+  }
+
+  function handleCityChange(option: SelectOption | null) {
+    setForm((prev) => ({ ...prev, city: option?.value ?? "" }));
+    setErrors((prev) => ({ ...prev, city: undefined }));
   }
 
   function handlePhotoChange(e: ChangeEvent<HTMLInputElement>) {
@@ -181,7 +222,9 @@ export default function ApplyPage() {
     if (!form.age || parseInt(form.age) < 18) errs.age = "Must be 18 or older";
     if (!form.gender) errs.gender = "Required";
     if (!form.orientation) errs.orientation = "Required";
-    if (!form.city.trim()) errs.city = "Required";
+    if (!form.country) errs.country = "Required";
+    if (!form.state) errs.state = "Required";
+    if (!form.city) errs.city = "Required";
     if (!form.instagram.trim()) errs.instagram = "Required";
     if (!form.community) errs.community = "Required";
     if (!form.income) errs.income = "Required";
@@ -219,7 +262,9 @@ export default function ApplyPage() {
         age: parseInt(form.age),
         gender: form.gender,
         orientation: form.orientation,
-        city: form.city.trim(),
+        country: form.country,
+        state: form.state,
+        city: form.city,
         height: form.height.trim(),
         instagram: form.instagram.trim().replace(/^@/, ""),
         community: form.community,
@@ -238,8 +283,7 @@ export default function ApplyPage() {
       setPhotoPreview(null);
       setErrors({});
       showToast("Application received! We'll be in touch. 🌶️", true);
-    } catch (err) {
-      console.error("Submission error:", err);
+    } catch {
       showToast("Submission failed — please try again", false);
     } finally {
       setSubmitting(false);
@@ -261,6 +305,7 @@ export default function ApplyPage() {
       <style>{focusStyle + `@keyframes pageIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}`}</style>
 
       <div
+        onClick={() => navigate(-1)}
         style={{
           minHeight: "100vh",
           background: "transparent",
@@ -269,6 +314,7 @@ export default function ApplyPage() {
         }}
       >
         <div
+          onClick={(e) => e.stopPropagation()}
           style={{
             position: "relative",
             zIndex: 1,
@@ -279,20 +325,25 @@ export default function ApplyPage() {
         >
           {/* Header — lives on the dark illustration background */}
           <div style={{ marginBottom: "24px" }}>
-            <Link
-              to="/"
+            <button
+              type="button"
+              onClick={() => navigate(-1)}
               style={{
                 display: "inline-flex",
                 alignItems: "center",
                 gap: "6px",
-                color: "#F5EDE4",
+                color: "var(--text-ivory)",
                 fontFamily: "var(--font-cormorant)",
                 fontSize: "16px",
                 textDecoration: "none",
+                background: "none",
+                border: "none",
+                cursor: "pointer",
+                padding: 0,
               }}
             >
-              ← Home
-            </Link>
+              ← Back
+            </button>
           </div>
 
           <div style={{ textAlign: "center", marginBottom: "40px" }}>
@@ -301,7 +352,7 @@ export default function ApplyPage() {
                 fontFamily: "var(--font-playfair)",
                 fontSize: "34px",
                 fontWeight: 700,
-                color: "#F5EDE4",
+                color: "var(--text-ivory)",
                 lineHeight: 1.15,
                 marginBottom: "10px",
                 textShadow: "0 2px 12px rgba(0, 0, 0, 0.4)",
@@ -366,9 +417,9 @@ export default function ApplyPage() {
                           flex: 1,
                           padding: "12px 16px",
                           borderRadius: "100px",
-                          border: active ? "none" : "1px solid #4A0E1B",
-                          background: active ? "#4A0E1B" : "transparent",
-                          color: active ? "#F5EDE4" : "#4A0E1B",
+                          border: active ? "none" : "1px solid var(--surface-dark)",
+                          background: active ? "var(--surface-dark)" : "transparent",
+                          color: active ? "var(--text-ivory)" : "var(--surface-dark)",
                           fontFamily: "var(--font-cormorant)",
                           fontSize: "15px",
                           fontWeight: 500,
@@ -432,17 +483,46 @@ export default function ApplyPage() {
                   </FieldGroup>
                 </div>
 
-                <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "0 16px" }}>
-                  <FieldGroup label="City" required error={errors.city}>
-                    <input
-                      type="text"
-                      value={form.city}
-                      onChange={(e) => set("city", e.target.value)}
-                      placeholder="New York City"
-                      style={inputStyle}
+                <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: "0 16px" }}>
+                  <FieldGroup label="Country" required error={errors.country}>
+                    <Select<SelectOption>
+                      options={countryOptions}
+                      value={countryOptions.find((o) => o.value === form.country) ?? null}
+                      onChange={handleCountryChange}
+                      placeholder="Select…"
+                      styles={formSelectStyles}
+                      isSearchable
                     />
                   </FieldGroup>
 
+                  {form.country && (
+                    <FieldGroup label="State" required error={errors.state}>
+                      <Select<SelectOption>
+                        options={stateOptions}
+                        value={stateOptions.find((o) => o.value === form.state) ?? null}
+                        onChange={handleStateChange}
+                        placeholder="Select…"
+                        styles={formSelectStyles}
+                        isSearchable
+                      />
+                    </FieldGroup>
+                  )}
+
+                  {form.country && form.state && (
+                    <FieldGroup label="City" required error={errors.city}>
+                      <Select<SelectOption>
+                        options={cityOptions}
+                        value={cityOptions.find((o) => o.value === form.city) ?? null}
+                        onChange={handleCityChange}
+                        placeholder="Select…"
+                        styles={formSelectStyles}
+                        isSearchable
+                      />
+                    </FieldGroup>
+                  )}
+                </div>
+
+                <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "0 16px" }}>
                   <FieldGroup label="Height" error={errors.height}>
                     <input
                       type="text"
@@ -474,7 +554,7 @@ export default function ApplyPage() {
                       type="text"
                       value={form.instagram}
                       onChange={(e) => set("instagram", e.target.value.replace(/^@/, ""))}
-                      placeholder="yourhandle"
+                      placeholder={form.applicationType === "Nomination" ? "yourfriendshandle" : "yourhandle"}
                       style={{ ...inputStyle, paddingLeft: "30px" }}
                     />
                   </div>
@@ -705,7 +785,7 @@ export default function ApplyPage() {
             gap: "10px",
             padding: "12px 20px",
             borderRadius: "100px",
-            background: toast.ok ? "#22C55E" : "var(--crimson)",
+            background: toast.ok ? "var(--success)" : "var(--crimson)",
             color: "#fff",
             fontFamily: "var(--font-cormorant)",
             fontSize: "15px",

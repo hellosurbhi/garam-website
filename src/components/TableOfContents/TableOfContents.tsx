@@ -1,10 +1,24 @@
+import { useState, useEffect } from "react";
 import { events } from "../../data/events";
+import { isEventPast, msUntilMidnight } from "../../utils/eventDate";
 import styles from "./TableOfContents.module.css";
 
 export function TableOfContents() {
+  const [, setTick] = useState(0);
+
+  useEffect(() => {
+    const timeout = setTimeout(
+      () => setTick((t) => t + 1),
+      msUntilMidnight(),
+    );
+    return () => clearTimeout(timeout);
+  });
+
+  const upcomingEvents = events.filter((e) => !isEventPast(e.date));
+
   return (
     <div className={styles.toc}>
-      {events.map((event, i) => {
+      {upcomingEvents.map((event, i) => {
         const isLive = event.url && event.url !== "#";
         const rowClass = isLive ? styles.row : `${styles.row} ${styles.rowDimmed}`;
         const content = (

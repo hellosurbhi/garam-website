@@ -7,6 +7,8 @@ export interface Application {
   gender: string;
   orientation: string;
   city: string;
+  country?: string;
+  state?: string;
   height: string;
   instagram: string;
   community: string;
@@ -15,6 +17,7 @@ export interface Application {
   referrerName?: string;
   pitch?: string;
   photoUrl: string;
+  deletedAt?: Timestamp | null;
   status: "New" | "Contacted" | "Cast" | "Rejected";
   notes?: string;
   submittedAt: Timestamp;

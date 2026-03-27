@@ -33,6 +33,11 @@ export const events: EventEntry[] = [
     url: "https://www.eventbrite.com/e/garam-masala-dating-420-blazin-in-love-tickets-1985330936274?aff=garamsite",
   },
   {
+    date: "Apr 26",
+    city: "Jersey City",
+    url: "https://www.eventbrite.com/e/garam-masala-dating-jersey-city-tickets-1986100570270?aff=garamsite",
+  },
+  {
     date: "TBA",
     city: "Edinburgh",
     url: "#",

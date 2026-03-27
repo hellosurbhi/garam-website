@@ -14,7 +14,7 @@ export function TableOfContents() {
     return () => clearTimeout(timeout);
   });
 
-  const upcomingEvents = events.filter((e) => !isEventPast(e.date));
+  const upcomingEvents = events.filter((e) => !isEventPast(e.date) && !e.hidden);
 
   return (
     <div className={styles.toc}>
@@ -24,10 +24,7 @@ export function TableOfContents() {
         const content = (
           <>
             <span className={styles.date}>{event.date}</span>
-            <span className={styles.city}>
-              <span className={styles.numeral}>{event.numeral}</span>
-              {event.city}
-            </span>
+            <span className={styles.city}>{event.city}</span>
           </>
         );
         return isLive ? (

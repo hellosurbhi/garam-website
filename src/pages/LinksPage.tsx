@@ -260,7 +260,7 @@ function SocialIcon({ icon: Icon, href, label }: (typeof SOCIALS)[number]) {
 export default function LinksPage() {
   const [showModal, setShowModal] = useState(false);
   const [showPressModal, setShowPressModal] = useState(false);
-  const upcomingEvents = events.filter((e) => !isEventPast(e.date));
+  const upcomingEvents = events.filter((e) => !isEventPast(e.date) && !e.hidden);
 
   useEffect(() => {
     if (!showModal && !showPressModal) return;
@@ -510,7 +510,7 @@ export default function LinksPage() {
                   const hasLink = event.url && event.url !== "#";
                   return hasLink ? (
                     <a
-                      key={event.numeral}
+                      key={event.date}
                       href={event.url}
                       target="_blank"
                       rel="noopener noreferrer"
@@ -535,29 +535,16 @@ export default function LinksPage() {
                         e.currentTarget.style.borderColor = "rgba(201, 168, 76, 0.15)";
                       }}
                     >
-                      <div>
-                        <span
-                          style={{
-                            fontFamily: "var(--font-cormorant)",
-                            fontSize: "13px",
-                            fontStyle: "italic",
-                            color: "#C9A84C",
-                            marginRight: "8px",
-                          }}
-                        >
-                          {event.numeral}
-                        </span>
-                        <span
-                          style={{
-                            fontFamily: "var(--font-cormorant)",
-                            fontSize: "16px",
-                            fontWeight: 500,
-                            color: "#F5EDE4",
-                          }}
-                        >
-                          {event.city}
-                        </span>
-                      </div>
+                      <span
+                        style={{
+                          fontFamily: "var(--font-cormorant)",
+                          fontSize: "16px",
+                          fontWeight: 500,
+                          color: "#F5EDE4",
+                        }}
+                      >
+                        {event.city}
+                      </span>
                       <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
                         <span
                           style={{
@@ -574,7 +561,7 @@ export default function LinksPage() {
                     </a>
                   ) : (
                     <div
-                      key={event.numeral}
+                      key={event.date}
                       style={{
                         display: "flex",
                         alignItems: "center",
@@ -586,29 +573,16 @@ export default function LinksPage() {
                         opacity: 0.5,
                       }}
                     >
-                      <div>
-                        <span
-                          style={{
-                            fontFamily: "var(--font-cormorant)",
-                            fontSize: "13px",
-                            fontStyle: "italic",
-                            color: "#C9A84C",
-                            marginRight: "8px",
-                          }}
-                        >
-                          {event.numeral}
-                        </span>
-                        <span
-                          style={{
-                            fontFamily: "var(--font-cormorant)",
-                            fontSize: "16px",
-                            fontWeight: 500,
-                            color: "#F5EDE4",
-                          }}
-                        >
-                          {event.city}
-                        </span>
-                      </div>
+                      <span
+                        style={{
+                          fontFamily: "var(--font-cormorant)",
+                          fontSize: "16px",
+                          fontWeight: 500,
+                          color: "#F5EDE4",
+                        }}
+                      >
+                        {event.city}
+                      </span>
                       <span
                         style={{
                           fontFamily: "var(--font-dm-sans)",

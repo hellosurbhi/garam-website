@@ -42,4 +42,9 @@ export const events: EventEntry[] = [
     city: "Edinburgh",
     url: "#",
   },
+  {
+    date: "Dec 2026",
+    city: "India Tour",
+    url: "#",
+  },
 ];

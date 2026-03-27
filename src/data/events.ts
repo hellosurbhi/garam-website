@@ -8,7 +8,7 @@ export interface EventEntry {
 export const events: EventEntry[] = [
   {
     date: "Feb 22",
-    city: "New York City",
+    city: "Manhattan, New York",
     url: "https://www.eventbrite.com/e/garam-masala-dating-a-belated-valentines-day-tickets-1982103088695?aff=ebdsshcopyurl&utm-campaign=social&utm-content=attendeeshare&utm-medium=discovery&utm-term=",
   },
   {
@@ -18,7 +18,7 @@ export const events: EventEntry[] = [
   },
   {
     date: "Mar 15",
-    city: "New York City",
+    city: "Manhattan, New York",
     url: "https://www.eventbrite.com/e/garam-masala-dating-st-patricks-day-tickets-1982103088695?aff=garamsite",
   },
   {
@@ -29,12 +29,12 @@ export const events: EventEntry[] = [
   },
   {
     date: "Apr 19",
-    city: "New York City",
+    city: "Manhattan, New York",
     url: "https://www.eventbrite.com/e/garam-masala-dating-420-blazin-in-love-tickets-1985330936274?aff=garamsite",
   },
   {
     date: "Apr 26",
-    city: "Jersey City",
+    city: "Jersey City, New Jersey",
     url: "https://www.eventbrite.com/e/garam-masala-dating-jersey-city-tickets-1986100570270?aff=garamsite",
   },
   {

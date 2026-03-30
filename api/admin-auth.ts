@@ -16,6 +16,7 @@ export default function handler(req: VercelRequest, res: VercelResponse) {
   }
 
   const adminPassword = process.env.ADMIN_PASSWORD;
+  console.log("[admin-auth] ADMIN_PASSWORD present:", !!adminPassword, "keys:", Object.keys(process.env).filter(k => k.includes("ADMIN")));
   if (!adminPassword) {
     return res.status(500).json({ error: "Server misconfigured" });
   }

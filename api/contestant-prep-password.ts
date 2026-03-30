@@ -1,5 +1,5 @@
 import type { VercelRequest, VercelResponse } from "@vercel/node";
-import crypto from "crypto";
+import { createHmac } from "crypto";
 
 const CHARS = "abcdefghjkmnpqrstuvwxyz23456789";
 
@@ -19,7 +19,7 @@ function getCurrentWeekMonday(): string {
 }
 
 function generatePassword(salt: string): string {
-  const hash = crypto.createHmac("sha256", salt).update(getCurrentWeekMonday()).digest("hex");
+  const hash = createHmac("sha256", salt).update(getCurrentWeekMonday()).digest("hex");
   let password = "";
   for (let i = 0; i < 6; i++) password += CHARS[parseInt(hash.substring(i * 2, i * 2 + 2), 16) % CHARS.length];
   return password;
@@ -27,7 +27,7 @@ function generatePassword(salt: string): string {
 
 function generateSessionToken(secret: string): string {
   const dayTimestamp = Math.floor(Date.now() / (1000 * 60 * 60 * 24));
-  return crypto.createHmac("sha256", secret).update(String(dayTimestamp)).digest("hex");
+  return createHmac("sha256", secret).update(String(dayTimestamp)).digest("hex");
 }
 
 function getSundayExpirationMs(): number {

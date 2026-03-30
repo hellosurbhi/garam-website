@@ -1,9 +1,9 @@
 import type { VercelRequest, VercelResponse } from "@vercel/node";
-import crypto from "crypto";
+import { createHmac } from "crypto";
 
 function generateSessionToken(secret: string): string {
   const dayTimestamp = Math.floor(Date.now() / (1000 * 60 * 60 * 24));
-  return crypto.createHmac("sha256", secret).update(String(dayTimestamp)).digest("hex");
+  return createHmac("sha256", secret).update(String(dayTimestamp)).digest("hex");
 }
 
 export default function handler(req: VercelRequest, res: VercelResponse) {
@@ -14,8 +14,7 @@ export default function handler(req: VercelRequest, res: VercelResponse) {
 
   const adminPassword = process.env.ADMIN_PASSWORD;
   if (!adminPassword) {
-    const adminKeys = Object.keys(process.env).filter(k => k.toLowerCase().includes("admin") || k.toLowerCase().includes("password"));
-    return res.status(500).json({ error: "Server misconfigured", availableKeys: adminKeys });
+    return res.status(500).json({ error: "Server misconfigured" });
   }
 
   const { password } = req.body as { password?: string };

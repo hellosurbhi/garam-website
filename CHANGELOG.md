@@ -1,5 +1,48 @@
 # Changelog
 
+## fix: events below the fold on mobile
+
+On mobile, the event dates in the TableOfContents were pushed below the visible viewport due to `align-items: flex-end` pinning content to the bottom of a `min-height: 100vh` container with 100px top padding. Changed mobile wrapper to `align-items: center` and reduced top padding to 60px so events are immediately visible. Also bumped mobile font sizes for date (0.88rem) and city (0.82rem) for readability.
+
+**Files:**
+- `src/components/CenterBox/CenterBox.module.css` — mobile wrapper alignment and padding
+- `src/components/TableOfContents/TableOfContents.module.css` — mobile font sizes
+
+## feat: add NYC 4/19 event, remove roman numerals
+
+Added "420 Blazin' in Love" New York City event on April 19 with Eventbrite ticket link. Removed the roman numeral labels (I, II, III…) from all events since past events make the sequential numbering meaningless.
+
+**Files:**
+- `src/data/events.ts` — new event entry, removed `numeral` field from interface and all objects
+- `src/pages/LinksPage.tsx` — removed numeral `<span>` elements, switched keys from `event.numeral` to `event.date`
+- `src/components/TableOfContents/TableOfContents.tsx` — removed numeral span
+- `src/components/TableOfContents/TableOfContents.module.css` — removed `.numeral` class
+
+## feat: password-protected contestant prep guide at /contestant-prep
+
+Added a full contestant prep guide page for show contestants, gated by a weekly-rotating password.
+
+**Password system:**
+- Deterministic weekly password generated via HMAC-SHA256 from current week's Monday date (ET timezone) + a secret salt. Rotates automatically every Sunday 11:59 PM ET without needing a cron job.
+- Two new Vercel Serverless Functions: `api/contestant-prep-auth.ts` (validates password, returns session token) and `api/contestant-prep-password.ts` (returns current password for admin use).
+- Session stored in localStorage with auto-expiration each Sunday night.
+
+**Page content:** Welcome message, Golden Rules, 13 questions contestants will be asked, "Come Prepared With" checklist, wardrobe guidance, arrival times, and notes for guys/girls. Styled with the site's dark/warm design system.
+
+**Admin integration:** AdminDashboard now shows the current week's contestant prep password with a "Copy" button, fetched from the serverless API.
+
+**New env var:** `CONTESTANT_PREP_SALT` (server-only, no VITE_ prefix) — must be set in Vercel dashboard for production.
+
+**Files:**
+- New: `api/lib/weekly-password.ts`, `api/contestant-prep-auth.ts`, `api/contestant-prep-password.ts`, `src/pages/ContestantPrepPage.tsx`
+- Modified: `src/App.tsx`, `src/components/admin/AdminDashboard.tsx`, `.env.local`, `package.json`
+
+## feat: add Vercel Analytics
+
+Wired up the `@vercel/analytics` React component (package was already installed but unused). Imported `Analytics` from `@vercel/analytics/react` and added `<Analytics />` inside `BrowserRouter` in `App.tsx`. Automatically tracks page views and web vitals on Vercel deployments.
+
+**Files:** `src/App.tsx`
+
 ## fix: links page title hyperlink, cursor pointer, press order
 
 Three UX fixes on the `/links` page:

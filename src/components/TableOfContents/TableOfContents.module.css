@@ -67,15 +67,6 @@
   color: rgba(245, 237, 228, 0.6);
 }
 
-.numeral {
-  font-family: "Cormorant Garamond", serif;
-  font-size: 0.75rem;
-  font-weight: 300;
-  letter-spacing: 0.04em;
-  color: #C9A84C;
-  font-style: italic;
-}
-
 @media (max-width: 768px) {
   .toc {
     max-width: 100%;
@@ -88,10 +79,10 @@
   }
 
   .date {
-    font-size: 0.72rem;
+    font-size: 0.88rem;
   }
 
   .city {
-    font-size: 0.68rem;
+    font-size: 0.82rem;
   }
 }

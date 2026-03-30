@@ -77,14 +77,15 @@
 
 @media (max-width: 768px) {
   .wrapper {
-    padding: 100px 24px 56px;
+    padding: 0 24px 24px;
     align-items: flex-end;
+    min-height: 100dvh;
   }
 
   .box {
     flex-direction: column;
     align-items: flex-start;
-    gap: 24px;
+    gap: 16px;
   }
 
   .titleArea {
@@ -92,10 +93,12 @@
   }
 
   .title {
-    font-size: 2.2rem;
+    font-size: 2rem;
+    margin-bottom: 8px;
   }
 
   .subtitle {
-    font-size: 0.88rem;
+    font-size: 0.82rem;
+    line-height: 1.4;
   }
 }

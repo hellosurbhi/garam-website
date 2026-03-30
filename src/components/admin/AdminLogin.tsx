@@ -8,17 +8,30 @@ export default function AdminLogin({ onSuccess }: AdminLoginProps) {
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [shaking, setShaking] = useState(false);
+  const [loading, setLoading] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
 
-  function handleSubmit(e: React.FormEvent) {
+  async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
-    if (password === import.meta.env.VITE_ADMIN_PASSWORD) {
-      onSuccess();
-    } else {
-      setError("Incorrect password.");
-      setShaking(true);
-      setPassword("");
-      inputRef.current?.focus();
+    setLoading(true);
+    try {
+      const res = await fetch("/api/admin-auth", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ password }),
+      });
+      if (res.ok) {
+        onSuccess();
+      } else {
+        setError("Incorrect password.");
+        setShaking(true);
+        setPassword("");
+        inputRef.current?.focus();
+      }
+    } catch {
+      setError("Something went wrong. Try again.");
+    } finally {
+      setLoading(false);
     }
   }
 
@@ -119,6 +132,7 @@ export default function AdminLogin({ onSuccess }: AdminLoginProps) {
 
             <button
               type="submit"
+              disabled={loading}
               style={{
                 width: "100%",
                 padding: "13px",
@@ -141,7 +155,7 @@ export default function AdminLogin({ onSuccess }: AdminLoginProps) {
                 (e.currentTarget.style.background = "var(--crimson)")
               }
             >
-              Enter
+              {loading ? "..." : "Enter"}
             </button>
           </form>
         </div>

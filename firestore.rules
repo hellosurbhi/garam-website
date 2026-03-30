@@ -1,0 +1,11 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    match /applications/{doc} {
+      allow read, write: if true;
+    }
+    match /applications/{doc}/{subcollection=**} {
+      allow read, write: if true;
+    }
+  }
+}

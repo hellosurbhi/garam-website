@@ -40,11 +40,9 @@ export default function AdminDashboard({ onLogout, sessionToken }: AdminDashboar
     setFetchError(false);
     try {
       const snap = await getDocs(collection(db, "applications"));
-      console.log("[admin] Firestore snap size:", snap.size, "empty:", snap.empty);
       const docs = snap.docs.map((d) => ({ id: d.id, ...d.data() } as Application));
       setApplications(docs);
-    } catch (err) {
-      console.error("[admin] Firestore fetch error:", err);
+    } catch {
       setFetchError(true);
     } finally {
       setLoading(false);

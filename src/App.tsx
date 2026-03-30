@@ -4,9 +4,11 @@ import { Hero } from "./components/Hero/Hero";
 import { CenterBox } from "./components/CenterBox/CenterBox";
 import { GrainOverlay } from "./components/GrainOverlay/GrainOverlay";
 import { ScrollIndicator } from "./components/ScrollIndicator/ScrollIndicator";
+import { Analytics } from "@vercel/analytics/react";
 import LinksPage from "./pages/LinksPage";
 import ApplyPage from "./pages/ApplyPage";
 import AdminPage from "./pages/AdminPage";
+import ContestantPrepPage from "./pages/ContestantPrepPage";
 
 function SubpageOverlay() {
   const { pathname } = useLocation();
@@ -14,6 +16,7 @@ function SubpageOverlay() {
   const overlayBg: Record<string, string> = {
     "/links": "rgba(13, 10, 8, 0.88)",
     "/apply": "rgba(13, 10, 8, 0.75)",
+    "/contestant-prep": "rgba(13, 10, 8, 0.88)",
   };
   const background = overlayBg[pathname] ?? "rgba(255, 248, 240, 0.50)";
   return (
@@ -86,8 +89,10 @@ function App() {
         <Route path="/apply" element={<ApplyPage />} />
         <Route path="/links" element={<LinksPage />} />
         <Route path="/admin" element={<AdminPage />} />
+        <Route path="/contestant-prep" element={<ContestantPrepPage />} />
         <Route path="*" element={<NotFound />} />
       </Routes>
+      <Analytics />
     </BrowserRouter>
   );
 }

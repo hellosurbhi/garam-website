@@ -1,7 +1,7 @@
 import { useState, useRef } from "react";
 
 interface AdminLoginProps {
-  onSuccess: () => void;
+  onSuccess: (sessionToken: string) => void;
 }
 
 export default function AdminLogin({ onSuccess }: AdminLoginProps) {
@@ -21,7 +21,8 @@ export default function AdminLogin({ onSuccess }: AdminLoginProps) {
         body: JSON.stringify({ password }),
       });
       if (res.ok) {
-        onSuccess();
+        const { sessionToken } = await res.json();
+        onSuccess(sessionToken);
       } else {
         setError("Incorrect password.");
         setShaking(true);

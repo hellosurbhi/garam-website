@@ -1,4 +1,13 @@
 import type { VercelRequest, VercelResponse } from "@vercel/node";
+import crypto from "crypto";
+
+function generateSessionToken(secret: string): string {
+  // Rotates every 24 hours
+  const dayTimestamp = Math.floor(Date.now() / (1000 * 60 * 60 * 24));
+  return crypto.createHmac("sha256", secret).update(String(dayTimestamp)).digest("hex");
+}
+
+export { generateSessionToken };
 
 export default function handler(req: VercelRequest, res: VercelResponse) {
   if (req.method !== "POST") {
@@ -20,5 +29,6 @@ export default function handler(req: VercelRequest, res: VercelResponse) {
     return res.status(401).json({ error: "Incorrect password" });
   }
 
-  return res.status(200).json({ ok: true });
+  const sessionToken = generateSessionToken(adminPassword);
+  return res.status(200).json({ ok: true, sessionToken });
 }

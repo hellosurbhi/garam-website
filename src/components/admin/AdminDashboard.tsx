@@ -1,6 +1,6 @@
 import { useState, useEffect, useMemo } from "react";
 import { collection, getDocs, doc, updateDoc, Timestamp } from "firebase/firestore";
-import { ChevronRight, ChevronDown } from "lucide-react";
+import { ChevronRight, ChevronDown, Copy, Check } from "lucide-react";
 import Select from "react-select";
 import { db } from "@/lib/firebase";
 import { type Application } from "@/types/application";
@@ -10,6 +10,7 @@ import ApplicantModal from "./ApplicantModal";
 
 interface AdminDashboardProps {
   onLogout: () => void;
+  sessionToken: string;
 }
 
 type FilterOption = { value: string; label: string };
@@ -21,7 +22,7 @@ const GENDER_OPTIONS: FilterOption[] = [
   { value: "Other", label: "Other" },
 ];
 
-export default function AdminDashboard({ onLogout }: AdminDashboardProps) {
+export default function AdminDashboard({ onLogout, sessionToken }: AdminDashboardProps) {
   const [applications, setApplications] = useState<Application[]>([]);
   const [loading, setLoading] = useState(true);
   const [fetchError, setFetchError] = useState(false);
@@ -31,6 +32,8 @@ export default function AdminDashboard({ onLogout }: AdminDashboardProps) {
 
   const [genderFilter, setGenderFilter] = useState<readonly FilterOption[]>([]);
   const [cityFilter, setCityFilter] = useState<readonly FilterOption[]>([]);
+  const [prepPassword, setPrepPassword] = useState<string | null>(null);
+  const [prepCopied, setPrepCopied] = useState(false);
 
   async function fetchApps() {
     setLoading(true);
@@ -47,6 +50,23 @@ export default function AdminDashboard({ onLogout }: AdminDashboardProps) {
   }
 
   useEffect(() => { fetchApps(); }, []);
+
+  useEffect(() => {
+    async function fetchPrepPassword() {
+      try {
+        const res = await fetch("/api/contestant-prep-password", {
+          headers: { Authorization: `Bearer ${sessionToken}` },
+        });
+        if (res.ok) {
+          const data = await res.json();
+          setPrepPassword(data.password);
+        }
+      } catch {
+        // Silently fail — password section just won't show
+      }
+    }
+    fetchPrepPassword();
+  }, []);
 
   async function handleUpdate(id: string, patch: Partial<Omit<Application, "id">>) {
     try {
@@ -186,6 +206,75 @@ export default function AdminDashboard({ onLogout }: AdminDashboardProps) {
           </div>
         </div>
       </header>
+
+      {prepPassword && (
+        <div style={{ maxWidth: "1200px", margin: "0 auto", padding: "24px 32px 0" }}>
+          <div
+            style={{
+              display: "flex",
+              alignItems: "center",
+              gap: "16px",
+              padding: "14px 20px",
+              borderRadius: "12px",
+              background: "rgba(201, 168, 76, 0.06)",
+              border: "1px solid rgba(201, 168, 76, 0.15)",
+              flexWrap: "wrap",
+            }}
+          >
+            <span
+              style={{
+                fontFamily: "var(--font-dm-sans)",
+                fontSize: "13px",
+                fontWeight: 500,
+                color: "var(--text-light)",
+              }}
+            >
+              Contestant Prep Password
+            </span>
+            <code
+              style={{
+                fontFamily: "var(--font-jetbrains, monospace)",
+                fontSize: "16px",
+                fontWeight: 600,
+                color: "var(--text)",
+                letterSpacing: "0.12em",
+                background: "#fff",
+                padding: "4px 14px",
+                borderRadius: "8px",
+                border: "1px solid var(--border)",
+              }}
+            >
+              {prepPassword}
+            </code>
+            <button
+              type="button"
+              onClick={() => {
+                navigator.clipboard.writeText(prepPassword);
+                setPrepCopied(true);
+                setTimeout(() => setPrepCopied(false), 2000);
+              }}
+              style={{
+                display: "inline-flex",
+                alignItems: "center",
+                gap: "6px",
+                padding: "6px 14px",
+                borderRadius: "100px",
+                border: `1px solid ${prepCopied ? "var(--success)" : "var(--border)"}`,
+                background: prepCopied ? "rgba(34, 197, 94, 0.08)" : "transparent",
+                fontFamily: "var(--font-dm-sans)",
+                fontSize: "13px",
+                fontWeight: 500,
+                color: prepCopied ? "var(--success)" : "var(--text-light)",
+                cursor: "pointer",
+                transition: "all 0.2s",
+              }}
+            >
+              {prepCopied ? <Check size={14} /> : <Copy size={14} />}
+              {prepCopied ? "Copied!" : "Copy"}
+            </button>
+          </div>
+        </div>
+      )}
 
       <main style={{ maxWidth: "1200px", margin: "0 auto", padding: "32px" }}>
         {loading ? (

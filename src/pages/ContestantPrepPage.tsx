@@ -106,7 +106,13 @@ function PrepLogin({ onSuccess }: { onSuccess: () => void }) {
             boxShadow: "0 8px 40px rgba(0, 0, 0, 0.3)",
           }}
         >
-          <p style={{ textAlign: "center", fontSize: "2.2rem", marginBottom: "12px" }}>
+          <p
+            style={{
+              textAlign: "center",
+              fontSize: "2.2rem",
+              marginBottom: "12px",
+            }}
+          >
             🌶️
           </p>
           <h1
@@ -168,10 +174,14 @@ function PrepLogin({ onSuccess }: { onSuccess: () => void }) {
                   textAlign: "center",
                 }}
                 onFocus={(e) => {
-                  if (!error) e.currentTarget.style.borderColor = "rgba(201, 168, 76, 0.4)";
+                  if (!error)
+                    e.currentTarget.style.borderColor =
+                      "rgba(201, 168, 76, 0.4)";
                 }}
                 onBlur={(e) => {
-                  if (!error) e.currentTarget.style.borderColor = "rgba(245, 237, 228, 0.15)";
+                  if (!error)
+                    e.currentTarget.style.borderColor =
+                      "rgba(245, 237, 228, 0.15)";
                 }}
               />
             </div>
@@ -350,7 +360,7 @@ const PREPARED_WITH = [
   {
     title: "One thoughtful question to ask your date",
     detail:
-      'Make it conversational. Good: \u201CIf we had one weekend anywhere, where are we going?\u201D Bad: \u201CWhat do you do for work?\u201D',
+      "Make it conversational. Good: \u201CIf we had one weekend anywhere, where are we going?\u201D Bad: \u201CWhat do you do for work?\u201D",
   },
   {
     title: "One talent or party trick you can show in 30 seconds",
@@ -405,7 +415,9 @@ function PrepGuide() {
               }}
             >
               Welcome to Garam Mas
-              <em style={{ fontStyle: "italic", color: "var(--gold-accent)" }}>ala</em>{" "}
+              <em style={{ fontStyle: "italic", color: "var(--gold-accent)" }}>
+                ala
+              </em>{" "}
               Dating!
             </h1>
             <p
@@ -418,9 +430,12 @@ function PrepGuide() {
                 margin: "0 auto",
               }}
             >
-              You&apos;re about to be on a live comedy dating show in front of 250
-              people. Here&apos;s the secret: we don&apos;t need you to be funny.{" "}
-              <strong style={{ color: "var(--text-ivory)" }}>We need you to be REAL.</strong>
+              You&apos;re about to be on a live comedy dating show in front of
+              250 people. Here&apos;s the secret: we don&apos;t need you to be
+              funny.{" "}
+              <strong style={{ color: "var(--text-ivory)" }}>
+                We need you to be REAL.
+              </strong>
             </p>
           </div>
 
@@ -428,7 +443,9 @@ function PrepGuide() {
 
           {/* ── The Golden Rules ── */}
           <SectionHeader icon={Star} title="The Golden Rules" />
-          <div style={{ display: "flex", flexDirection: "column", gap: "12px" }}>
+          <div
+            style={{ display: "flex", flexDirection: "column", gap: "12px" }}
+          >
             {GOLDEN_RULES.map((rule, i) => (
               <div
                 key={i}
@@ -476,7 +493,9 @@ function PrepGuide() {
 
           {/* ── Questions ── */}
           <SectionHeader title="Questions You Will Be Asked" />
-          <div style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
+          <div
+            style={{ display: "flex", flexDirection: "column", gap: "10px" }}
+          >
             {QUESTIONS.map((q, i) => (
               <div
                 key={i}
@@ -519,7 +538,9 @@ function PrepGuide() {
 
           {/* ── Come Prepared With ── */}
           <SectionHeader icon={Check} title="Come Prepared With" />
-          <div style={{ display: "flex", flexDirection: "column", gap: "12px" }}>
+          <div
+            style={{ display: "flex", flexDirection: "column", gap: "12px" }}
+          >
             {PREPARED_WITH.map((item, i) => (
               <div
                 key={i}
@@ -589,8 +610,8 @@ function PrepGuide() {
               lineHeight: 1.6,
             }}
           >
-            This is a real date. Dress hot &mdash; bright colors, bold fits, sequins
-            welcome. No &ldquo;just came from the office&rdquo; energy.
+            This is a real date. Dress hot &mdash; bright colors, bold fits,
+            sequins welcome. No &ldquo;just came from the office&rdquo; energy.
           </p>
 
           <Divider />
@@ -605,8 +626,9 @@ function PrepGuide() {
               lineHeight: 1.6,
             }}
           >
-            Invite your friends to come support you. More energy in the room = better
-            show for everyone.
+            Invite your friends to come support you. More energy in the room =
+            better show for everyone. Your first name will double as a discount
+            code you can share with friends for 20% off.
           </p>
 
           <Divider />
@@ -659,9 +681,10 @@ function PrepGuide() {
 
           {/* ── Notes ── */}
           <Callout title="Note for Guys">
-            Audiences tend to root for the girls. Don&apos;t try to win the crowd by
-            being cocky or mean &mdash; it backfires every time. Charming, genuine,
-            and a little self-deprecating is what wins. Confident but humble.
+            Audiences tend to root for the girls. Don&apos;t try to win the
+            crowd by being cocky or mean &mdash; it backfires every time.
+            Charming, genuine, and a little self-deprecating is what wins.
+            Confident but humble.
           </Callout>
 
           <Callout title="Note for Girls">
@@ -700,5 +723,9 @@ function PrepGuide() {
 export default function ContestantPrepPage() {
   const [authed, setAuthed] = useState(() => getSession() !== null);
 
-  return authed ? <PrepGuide /> : <PrepLogin onSuccess={() => setAuthed(true)} />;
+  return authed ? (
+    <PrepGuide />
+  ) : (
+    <PrepLogin onSuccess={() => setAuthed(true)} />
+  );
 }

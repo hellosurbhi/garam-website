@@ -25,9 +25,8 @@ function generatePassword(salt: string): string {
   return password;
 }
 
-function generateSessionToken(secret: string): string {
-  const dayTimestamp = Math.floor(Date.now() / (1000 * 60 * 60 * 24));
-  return crypto.createHmac("sha256", secret).update(String(dayTimestamp)).digest("hex");
+function generateToken(salt: string): string {
+  return crypto.createHmac("sha256", salt).update(`token-${getCurrentWeekMonday()}`).digest("hex");
 }
 
 function getSundayExpirationMs(): number {
@@ -49,23 +48,9 @@ function getSundayExpirationMs(): number {
 }
 
 export default function handler(req: VercelRequest, res: VercelResponse) {
-  if (req.method !== "GET") {
-    res.setHeader("Allow", "GET");
+  if (req.method !== "POST") {
+    res.setHeader("Allow", "POST");
     return res.status(405).json({ error: "Method not allowed" });
-  }
-
-  const adminPassword = process.env.ADMIN_PASSWORD;
-  if (!adminPassword) {
-    return res.status(500).json({ error: "Server misconfigured" });
-  }
-
-  const auth = req.headers.authorization;
-  if (!auth || !auth.startsWith("Bearer ")) {
-    return res.status(401).json({ error: "Authorization required" });
-  }
-
-  if (auth.slice(7) !== generateSessionToken(adminPassword)) {
-    return res.status(401).json({ error: "Invalid credentials" });
   }
 
   const salt = process.env.CONTESTANT_PREP_SALT;
@@ -73,5 +58,14 @@ export default function handler(req: VercelRequest, res: VercelResponse) {
     return res.status(500).json({ error: "Server misconfigured" });
   }
 
-  return res.status(200).json({ password: generatePassword(salt), expiresAt: getSundayExpirationMs() });
+  const { password } = req.body as { password?: string };
+  if (!password || typeof password !== "string") {
+    return res.status(400).json({ error: "Password required" });
+  }
+
+  if (password.toLowerCase() !== generatePassword(salt).toLowerCase()) {
+    return res.status(401).json({ error: "Incorrect password" });
+  }
+
+  return res.status(200).json({ token: generateToken(salt), expiresAt: getSundayExpirationMs() });
 }

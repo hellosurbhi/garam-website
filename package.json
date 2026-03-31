@@ -16,7 +16,7 @@
     "@vercel/speed-insights": "^2.0.0",
     "country-state-city": "^3.2.1",
     "firebase": "^12.9.0",
-    "firebase-admin": "^13.7.0",
+    "jose": "^6.2.2",
     "lucide-react": "^0.570.0",
     "react": "^19.2.0",
     "react-dom": "^19.2.0",

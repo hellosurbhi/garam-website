@@ -1,30 +1,18 @@
 import type { VercelRequest, VercelResponse } from "@vercel/node";
 import { createHmac } from "crypto";
+import { verifyIdToken } from "./_firebase-admin";
 
 const ISO_DATE_RE = /^\d{4}-\d{2}-\d{2}$/;
 
-function generateSessionToken(secret: string): string {
-  const dayTimestamp = Math.floor(Date.now() / (1000 * 60 * 60 * 24));
-  return createHmac("sha256", secret).update(String(dayTimestamp)).digest("hex");
-}
-
-export default function handler(req: VercelRequest, res: VercelResponse) {
+export default async function handler(req: VercelRequest, res: VercelResponse) {
   if (req.method !== "POST") {
     res.setHeader("Allow", "POST");
     return res.status(405).json({ error: "Method not allowed" });
   }
 
-  const adminPassword = process.env.ADMIN_PASSWORD;
-  if (!adminPassword) {
-    return res.status(500).json({ error: "Server misconfigured" });
-  }
-
-  const auth = req.headers.authorization;
-  if (!auth || !auth.startsWith("Bearer ")) {
-    return res.status(401).json({ error: "Authorization required" });
-  }
-  if (auth.slice(7) !== generateSessionToken(adminPassword)) {
-    return res.status(401).json({ error: "Invalid credentials" });
+  const uid = await verifyIdToken(req.headers.authorization);
+  if (!uid) {
+    return res.status(401).json({ error: "Authentication required" });
   }
 
   const salt = process.env.CONTESTANT_PREP_SALT;

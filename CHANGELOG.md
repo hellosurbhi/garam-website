@@ -1,5 +1,90 @@
 # Changelog
 
+## feat: static prerendering for SEO + social crawlers
+
+Added a Puppeteer-based post-build step that prerenderes all 18 public routes to static HTML. Social crawlers (Facebook, Twitter, LinkedIn, Slack, iMessage) and non-Google search engines now see fully rendered pages with content, meta tags, and JSON-LD schemas — instead of an empty React shell.
+
+**Prerender script:** `scripts/prerender.ts`
+- Starts a local server on `dist/`, visits each route with Puppeteer, waits for React + useEffect to run, saves the rendered HTML
+- All useEffect-based JSON-LD (Organization, Breadcrumb, FAQ, Article, Event schemas) is captured in the static output
+- 18 routes prerendered: homepage, apply, faq, links, cities (6), journal (3), tips (3)
+- Client-only routes excluded: /admin, /contestant-prep
+
+**Build commands:**
+- `npm run build` — standard Vite build (no prerendering)
+- `npm run build:prerender` — build + prerender all public routes
+- Vercel configured to use `build:prerender` via vercel.json `buildCommand`
+
+**No existing code changed.** The prerender is purely additive — a post-build step. Can be removed at any time with zero impact.
+
+**Files added:** `scripts/prerender.ts`
+**Files changed:** `package.json` (new script + puppeteer devDependency), `vercel.json` (buildCommand)
+
+---
+
+## seo: replace SVG OG image + add Event schema to homepage
+
+**OG image fix:**
+- Replaced `og-image.svg` (406 bytes, unsupported by most social platforms) with `og-image.jpg` (1200x630 JPEG, 194KB)
+- Updated all references: `index.html`, `OrganizationSchema.tsx`, `AuthorBio.tsx`, `JournalPostPage.tsx`, `TipPostPage.tsx`
+- Social link previews now render correctly on Twitter/X, iMessage, Slack, WhatsApp, LinkedIn, Facebook
+
+**Event schema on homepage:**
+- New `EventsSchema.tsx` component renders ItemList of Event JSON-LD for all upcoming non-hidden events
+- Added to the `LandingPage` function in `App.tsx`
+- Events appear in Google Rich Results with dates, venues, and ticket links
+
+**Files added:** `src/components/EventsSchema.tsx`, `public/og-image.jpg`
+**Files changed:** `index.html`, `src/App.tsx`, `src/components/OrganizationSchema.tsx`, `src/components/AuthorBio.tsx`, `src/pages/JournalPostPage.tsx`, `src/pages/TipPostPage.tsx`
+
+---
+
+## fix: dynamic import country-state-city + migrate inline styles to CSS modules
+
+**Bundle size fix:**
+- Created `useGeoData` hook (`src/hooks/useGeoData.ts`) that dynamically imports `country-state-city` on mount
+- Removed static import from ApplyPage — the 8.3MB geo data now loads asynchronously instead of blocking page render
+- Country select shows loading indicator while module loads
+- Removed redundant `vendor-geo` manual chunk from vite.config.ts
+
+**Inline styles to CSS modules migration (168 occurrences across 5 files):**
+- `AdminLogin.tsx` → `AdminLogin.module.css` (7 styles, shake animation)
+- `ApplicantModal.tsx` → `ApplicantModal.module.css` (29 styles, hover handlers → CSS `:hover`)
+- `AdminDashboard.tsx` → `AdminDashboard.module.css` (34 styles, responsive grid, data-copied attribute)
+- `ApplyPage.tsx` → `ApplyPage.module.css` (53 styles, form elements, type toggles via `data-active`, keyframes)
+- `LinksPage.tsx` → `LinksPage.module.css` (45 styles, removed hover `useState` from LinkButton/SocialIcon, 6 keyframes)
+
+All JS-based hover state (`useState` + `onMouseEnter`/`onMouseLeave`) replaced with CSS `:hover`. Dynamic values (animation delays, status badge colors) kept as minimal inline styles. react-select style configs untouched.
+
+**Files changed:** `src/hooks/useGeoData.ts` (new), `vite.config.ts`, `ApplyPage.tsx`, `LinksPage.tsx`, `AdminDashboard.tsx`, `ApplicantModal.tsx`, `AdminLogin.tsx`, plus 5 new `.module.css` files.
+
+## security: migrate admin auth to Firebase Authentication
+
+Replaced the password-based admin authentication with Firebase Authentication (email/password). This is a critical security fix — Firestore rules were `allow read, write: if true`, meaning anyone with the Firebase project ID could read all application data.
+
+**Firebase Auth integration:**
+- Added `firebase/auth` to the client SDK exports in `firebase.ts`
+- Created `api/_firebase-admin.ts` shared helper for server-side ID token verification using `firebase-admin`
+- `AdminLogin.tsx` now uses `signInWithEmailAndPassword()` instead of POST to `/api/admin-auth`
+- `AdminPage.tsx` uses `onAuthStateChanged()` for persistent session management (replaces sessionStorage)
+- `AdminDashboard.tsx` gets Firebase ID tokens via `auth.currentUser.getIdToken()` for API calls
+
+**Firestore rules locked down:**
+- `allow create: if true` (applications can still be submitted without auth)
+- `allow read, update, delete: if request.auth != null` (only authenticated users can view/manage applications)
+
+**API endpoint updates:**
+- `generate-contestant-link.ts` now verifies Firebase ID tokens via `firebase-admin` instead of HMAC session tokens
+- Removed `admin-auth.ts` (no longer needed)
+
+**Files affected:** `src/lib/firebase.ts`, `src/components/admin/AdminLogin.tsx`, `src/pages/AdminPage.tsx`, `src/components/admin/AdminDashboard.tsx`, `api/generate-contestant-link.ts`, `api/_firebase-admin.ts` (new), `firestore.rules`, `vite.config.ts`
+
+**Setup required:** Create a Firebase Auth email/password user in the Firebase Console. Set `FIREBASE_ADMIN_CLIENT_EMAIL` and `FIREBASE_ADMIN_PRIVATE_KEY` as Vercel environment variables.
+
+**Deleted:** `api/admin-auth.ts`
+
+---
+
 ## seo: full SEO/AEO technical pass — schema markup, breadcrumbs, author bios, sitemap, noindex
 
 Comprehensive SEO and AEO audit and implementation across the entire site.

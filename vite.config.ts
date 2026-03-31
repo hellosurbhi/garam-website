@@ -17,9 +17,8 @@ export default defineConfig({
       output: {
         manualChunks: {
           'vendor-react': ['react', 'react-dom', 'react-router-dom'],
-          'vendor-firebase': ['firebase/app', 'firebase/firestore', 'firebase/storage'],
+          'vendor-firebase': ['firebase/app', 'firebase/auth', 'firebase/firestore', 'firebase/storage'],
           'vendor-select': ['react-select'],
-          'vendor-geo': ['country-state-city'],
         },
       },
     },

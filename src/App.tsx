@@ -10,16 +10,29 @@ import LinksPage from "./pages/LinksPage";
 import ApplyPage from "./pages/ApplyPage";
 import AdminPage from "./pages/AdminPage";
 import ContestantPrepPage from "./pages/ContestantPrepPage";
+import FaqPage from "./pages/FaqPage";
+import CityPage from "./pages/CityPage";
+import CitiesIndexPage from "./pages/CitiesIndexPage";
+import JournalPage from "./pages/JournalPage";
+import JournalPostPage from "./pages/JournalPostPage";
 
 function SubpageOverlay() {
   const { pathname } = useLocation();
   if (pathname === "/" || pathname === "/admin") return null;
+  const DARK = "rgba(13, 10, 8, 0.88)";
   const overlayBg: Record<string, string> = {
-    "/links": "rgba(13, 10, 8, 0.88)",
+    "/links": DARK,
     "/apply": "rgba(13, 10, 8, 0.75)",
-    "/contestant-prep": "rgba(13, 10, 8, 0.88)",
+    "/contestant-prep": DARK,
+    "/faq": DARK,
+    "/cities": DARK,
+    "/journal": DARK,
   };
-  const background = overlayBg[pathname] ?? "rgba(255, 248, 240, 0.50)";
+  const background =
+    overlayBg[pathname] ??
+    (pathname.startsWith("/cities/") || pathname.startsWith("/journal/")
+      ? DARK
+      : "rgba(255, 248, 240, 0.50)");
   return (
     <div
       style={{
@@ -91,6 +104,11 @@ function App() {
         <Route path="/links" element={<LinksPage />} />
         <Route path="/admin" element={<AdminPage />} />
         <Route path="/contestant-prep" element={<ContestantPrepPage />} />
+        <Route path="/faq" element={<FaqPage />} />
+        <Route path="/cities" element={<CitiesIndexPage />} />
+        <Route path="/cities/:city" element={<CityPage />} />
+        <Route path="/journal" element={<JournalPage />} />
+        <Route path="/journal/:slug" element={<JournalPostPage />} />
         <Route path="*" element={<NotFound />} />
       </Routes>
       <Analytics />

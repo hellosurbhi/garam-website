@@ -1,5 +1,6 @@
 import { useState, useEffect, useMemo, type ChangeEvent } from "react";
 import { useNavigate } from "react-router-dom";
+import { usePageMeta } from "@/hooks/usePageMeta";
 import { collection, addDoc, serverTimestamp } from "firebase/firestore";
 import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import Select from "react-select";
@@ -147,6 +148,10 @@ const INITIAL: FormState = {
 type SelectOption = { value: string; label: string };
 
 export default function ApplyPage() {
+  usePageMeta(
+    "Apply to Be a Contestant | Garam Masala Dating",
+    "Think you've got what it takes? Apply to be a contestant on NYC's funniest desi dating show. South Asian singles of all backgrounds welcome."
+  );
   const navigate = useNavigate();
   const [form, setForm] = useState<FormState>(INITIAL);
   const [photoFile, setPhotoFile] = useState<File | null>(null);

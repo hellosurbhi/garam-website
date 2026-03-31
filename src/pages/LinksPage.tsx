@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
+import { usePageMeta } from "@/hooks/usePageMeta";
 import {
   Heart,
   Instagram,
@@ -258,6 +259,10 @@ function SocialIcon({ icon: Icon, href, label }: (typeof SOCIALS)[number]) {
 /* ─── Page ───────────────────────────────────────────────────── */
 
 export default function LinksPage() {
+  usePageMeta(
+    "Tickets, Shows & More | Garam Masala Dating",
+    "Get tickets to upcoming Garam Masala Dating shows, follow us on Instagram and TikTok, apply as a contestant, or reach out for booking and press."
+  );
   const [showModal, setShowModal] = useState(false);
   const [showPressModal, setShowPressModal] = useState(false);
   const upcomingEvents = events.filter((e) => !isEventPast(e.date) && !e.hidden);

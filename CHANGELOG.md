@@ -1,5 +1,67 @@
 # Changelog
 
+## seo: update meta tags with desi/South Asian keywords
+
+Updated `<title>`, meta description, Open Graph, and Twitter Card tags across three routes for better SEO targeting.
+
+**Changes:**
+- `/` (landing): title and description updated in `index.html` + OG/Twitter tags
+- `/apply`: added `usePageMeta` hook call with contestant-focused copy
+- `/links`: added `usePageMeta` hook call with links hub copy
+
+**Files modified:** `index.html`, `src/pages/ApplyPage.tsx`, `src/pages/LinksPage.tsx`
+
+## feat: add Jersey City page + venue-aware Event schema
+
+Added `/cities/jersey-city` with The Laugh Tour Comedy Club as a named venue and monthly recurrence in the Event schema.
+
+**Changes:**
+- `CityData` interface: added `badgeLabel`, optional `venueName`, optional `eventScheduleFrequency` fields
+- Jersey City entry: status "active", badgeLabel "Monthly Shows", venueName "The Laugh Tour Comedy Club", eventScheduleFrequency "P1M"
+- `buildCityJsonLd`: uses `venueName` for location.name, injects `eventSchedule` with `repeatFrequency` when present
+- `/cities` index: Jersey City appears second (after Manhattan, before Coming Soon cities), labeled "Monthly Shows"
+- `CitiesIndexPage`: uses `city.badgeLabel` directly instead of status-based lookup
+
+**Files modified:** `src/data/cities.ts`, `src/pages/CityPage.tsx`, `src/pages/CitiesIndexPage.tsx`
+
+## feat: expand /cities routes — 5 cities + index page
+
+Expanded city pages from 2 to 5, added a `/cities` index page, and introduced city-type-aware JSON-LD.
+
+**Cities added/updated:**
+- Manhattan — updated copy + H1, "Weekly Shows" status, Event schema included
+- San Diego — reframed to past tense, no Event schema
+- Los Angeles — new, "Coming Soon", Wyatt/Netflix Is a Joke crossover, Event schema included
+- Salt Lake City — new, "Coming Soon", Wyatt/Happy Valley Comedy crossover, LocalBusiness only
+- Denver — new, "Coming Soon", Wyatt/Comedy Works crossover, LocalBusiness only
+
+**Architecture:**
+- `CityData.status` field: `"active" | "coming-soon" | "past"` drives index badges and copy tone
+- `CityData.includeEventSchema` flag: `buildCityJsonLd` conditionally emits Event schema block
+- `/cities` index page: ordered card list with status badges ("Weekly Shows" / "Coming Soon")
+
+**Files created:** `src/pages/CitiesIndexPage.tsx`
+**Files modified:** `src/data/cities.ts` (5 cities, new fields), `src/pages/CityPage.tsx` (conditional schema, footer links), `src/App.tsx` (route + overlay)
+
+## feat: add /faq, /cities/[city], and /journal SEO routes
+
+Built three new SEO-optimized route groups in one pass. All pages use the existing dark overlay, inline style pattern, and design system tokens (Playfair/Cormorant/DM Sans, gold accents).
+
+**Architecture:**
+- `src/hooks/usePageMeta.ts` — lightweight hook that sets `document.title`, `<meta name="description">`, and injects/removes `<script type="application/ld+json">` via `useEffect`. No new dependencies.
+- `src/data/journal.ts` — 2 posts as typed `PostBlock[]` objects with slug, title, metaDescription, excerpt, and body.
+- `src/data/cities.ts` — Manhattan and San Diego city data with editorial copy, CTAs, and schema fields.
+
+**Routes added:**
+- `/faq` — 10-item accordion FAQ with FAQPage JSON-LD schema
+- `/cities/:city` — Dynamic city page (Manhattan, San Diego); LocalBusiness + Event JSON-LD; 404 for unknown slugs
+- `/journal` — Post index, reverse-chrono, with excerpt and date
+- `/journal/:slug` — Full article view with Article JSON-LD; 404 for unknown slugs
+
+**Files created:** `src/hooks/usePageMeta.ts`, `src/data/journal.ts`, `src/data/cities.ts`, `src/pages/FaqPage.tsx`, `src/pages/CityPage.tsx`, `src/pages/JournalPage.tsx`, `src/pages/JournalPostPage.tsx`
+
+**Files modified:** `src/App.tsx` (4 new routes + SubpageOverlay prefix matching for `/cities/*` and `/journal/*`), `CHANGELOG.md`
+
 ## chore: add sitemap.xml
 
 Added `public/sitemap.xml` with the homepage URL, weekly change frequency, and priority 1.0.

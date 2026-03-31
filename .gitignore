@@ -25,7 +25,8 @@ dist-ssr
 *.sw?
 .vercel
 .claude
-
+.beads
+.ralph-tui
 
 # Dolt database files (added by bd init)
 .dolt/

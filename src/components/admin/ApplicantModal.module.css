@@ -1,0 +1,248 @@
+.overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(4px);
+  z-index: 50;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+}
+
+.modal {
+  background: #fff;
+  border-radius: 16px;
+  max-width: 640px;
+  width: 100%;
+  max-height: 90vh;
+  overflow-y: auto;
+  position: relative;
+}
+
+.imageWrap {
+  position: relative;
+  width: 100%;
+  max-height: 400px;
+  overflow: hidden;
+  border-radius: 16px 16px 0 0;
+  background: var(--border);
+}
+
+.image {
+  width: 100%;
+  height: 400px;
+  object-fit: cover;
+  display: block;
+}
+
+.noPhoto {
+  height: 200px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 4rem;
+}
+
+.closeButton {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  background: rgba(0, 0, 0, 0.45);
+  border: none;
+  border-radius: 100px;
+  padding: 6px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
+  transition: background 0.15s;
+}
+
+.closeButton:hover {
+  background: rgba(0, 0, 0, 0.65);
+}
+
+.deletedBanner {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: rgba(220, 38, 38, 0.85);
+  color: #fff;
+  text-align: center;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  padding: 6px 0;
+}
+
+.body {
+  padding: 24px;
+}
+
+.nameRow {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 20px;
+}
+
+.name {
+  font-family: var(--font-playfair);
+  font-size: 24px;
+  font-weight: 700;
+  color: var(--text);
+}
+
+.statusBadge {
+  padding: 3px 10px;
+  border-radius: 100px;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.infoGrid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px 24px;
+  margin-bottom: 24px;
+}
+
+.infoLabel {
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--text-light);
+  margin-bottom: 3px;
+}
+
+.infoValue {
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--text);
+}
+
+.igLink {
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--crimson);
+}
+
+.pitch {
+  border-left: 3px solid var(--crimson);
+  padding-left: 16px;
+  margin: 0 0 24px;
+}
+
+.pitchText {
+  font-style: italic;
+  font-size: 14px;
+  color: var(--text);
+  line-height: 1.6;
+}
+
+.submittedDate {
+  font-size: 12px;
+  color: var(--text-light);
+  margin-bottom: 24px;
+}
+
+.divider {
+  border: none;
+  border-top: 1px solid var(--border);
+  margin-bottom: 24px;
+}
+
+.dividerSpaced {
+  border: none;
+  border-top: 1px solid var(--border);
+  margin: 24px 0;
+}
+
+.formGroup {
+  margin-bottom: 20px;
+}
+
+.formLabel {
+  display: block;
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--text-light);
+  margin-bottom: 8px;
+}
+
+.statusSelect {
+  padding: 10px 14px;
+  border-radius: 100px;
+  border: 1px solid var(--border);
+  font-family: var(--font-dm-sans);
+  font-size: 14px;
+  color: var(--text);
+  background: #fff;
+  cursor: pointer;
+  outline: none;
+}
+
+.notesTextarea {
+  width: 100%;
+  padding: 12px 16px;
+  border-radius: 12px;
+  border: 1px solid var(--border);
+  font-family: var(--font-dm-sans);
+  font-size: 14px;
+  color: var(--text);
+  background: #fff;
+  resize: vertical;
+  outline: none;
+  box-sizing: border-box;
+  line-height: 1.5;
+}
+
+.actionRow {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.deleteButton {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 10px 18px;
+  border-radius: 100px;
+  border: 1px solid var(--crimson);
+  background: transparent;
+  font-family: var(--font-dm-sans);
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--crimson);
+  cursor: pointer;
+  transition: background 0.15s;
+}
+
+.deleteButton:hover {
+  background: rgba(220, 38, 38, 0.06);
+}
+
+.restoreButton {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 10px 18px;
+  border-radius: 100px;
+  border: 1px solid var(--success);
+  background: transparent;
+  font-family: var(--font-dm-sans);
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--success);
+  cursor: pointer;
+  transition: background 0.15s;
+}
+
+.restoreButton:hover {
+  background: rgba(34, 197, 94, 0.04);
+}

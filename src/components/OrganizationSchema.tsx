@@ -9,7 +9,7 @@ const ORG_JSONLD = JSON.stringify({
   description:
     "A live comedy dating show and South Asian singles mixer running weekly in NYC and monthly in Jersey City.",
   sameAs: [SOCIAL_URLS.instagram, SOCIAL_URLS.tiktok, SOCIAL_URLS.youtube],
-  logo: "https://garammasaladating.com/og-image.svg",
+  logo: "https://garammasaladating.com/og-image.jpg",
   contactPoint: {
     "@type": "ContactPoint",
     email: "contact@garammasaladating.com",

@@ -7,6 +7,7 @@ import { GrainOverlay } from "./components/GrainOverlay/GrainOverlay";
 import { ScrollIndicator } from "./components/ScrollIndicator/ScrollIndicator";
 import { OrganizationSchema } from "./components/OrganizationSchema";
 import { BreadcrumbSchema } from "./components/BreadcrumbSchema";
+import { EventsSchema } from "./components/EventsSchema";
 import { Analytics } from "@vercel/analytics/react";
 import { SpeedInsights } from "@vercel/speed-insights/react";
 
@@ -61,6 +62,7 @@ function LandingPage() {
       <Nav />
       <CenterBox />
       <ScrollIndicator />
+      <EventsSchema />
     </>
   );
 }

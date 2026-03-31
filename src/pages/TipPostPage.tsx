@@ -22,7 +22,7 @@ function buildArticleJsonLd(post: TipPost): string {
       url: "https://garammasaladating.com",
       logo: {
         "@type": "ImageObject",
-        url: "https://garammasaladating.com/og-image.svg",
+        url: "https://garammasaladating.com/og-image.jpg",
       },
     },
   });

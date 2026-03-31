@@ -1,0 +1,97 @@
+@keyframes shake {
+  0%, 100% { transform: translateX(0); }
+  20%       { transform: translateX(-6px); }
+  40%       { transform: translateX(6px); }
+  60%       { transform: translateX(-6px); }
+  80%       { transform: translateX(6px); }
+}
+
+.shake {
+  animation: shake 0.4s ease;
+}
+
+.page {
+  min-height: 100vh;
+  background: var(--cream);
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+}
+
+.card {
+  background: #fff;
+  border-radius: 16px;
+  box-shadow: 0 4px 32px rgba(0, 0, 0, 0.08);
+  padding: 48px 40px;
+  width: 100%;
+  max-width: 380px;
+}
+
+.emoji {
+  text-align: center;
+  font-size: 2rem;
+  margin-bottom: 12px;
+}
+
+.title {
+  font-family: var(--font-playfair);
+  font-size: 28px;
+  font-weight: 700;
+  color: var(--text);
+  text-align: center;
+  margin-bottom: 32px;
+}
+
+.input {
+  width: 100%;
+  padding: 12px 18px;
+  border-radius: 100px;
+  border: 1px solid var(--border);
+  font-family: var(--font-dm-sans);
+  font-size: 15px;
+  color: var(--text);
+  background: #fff;
+  outline: none;
+  box-sizing: border-box;
+  margin-bottom: 8px;
+  transition: border-color 0.2s;
+}
+
+.inputError {
+  composes: input;
+  border-color: var(--crimson);
+}
+
+.error {
+  color: var(--crimson);
+  font-size: 13px;
+  margin-bottom: 12px;
+  padding-left: 4px;
+}
+
+.submitButton {
+  width: 100%;
+  padding: 13px;
+  border-radius: 100px;
+  border: none;
+  background: var(--crimson);
+  color: #fff;
+  font-family: var(--font-dm-sans);
+  font-size: 15px;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  cursor: pointer;
+  margin-top: 4px;
+  transition: background 0.2s;
+}
+
+.submitButton:hover {
+  background: var(--crimson-dark);
+}
+
+.submitButtonWithError {
+  composes: submitButton;
+  margin-top: 0;
+}

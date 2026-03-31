@@ -11,7 +11,7 @@ export function AuthorBio() {
       }}
     >
       <img
-        src="/og-image.svg"
+        src="/og-image.jpg"
         alt="Garam Masala Dating logo"
         width={48}
         height={48}

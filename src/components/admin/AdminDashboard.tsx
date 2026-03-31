@@ -2,16 +2,16 @@ import { useState, useEffect, useMemo } from "react";
 import { collection, getDocs, doc, updateDoc, Timestamp } from "firebase/firestore";
 import { ChevronRight, ChevronDown, Copy, Check } from "lucide-react";
 import Select from "react-select";
-import { db } from "@/lib/firebase";
+import { db, auth } from "@/lib/firebase";
 import { type Application } from "@/types/application";
 import { adminSelectStyles } from "@/utils/reactSelectStyles";
 import { events } from "@/data/events";
 import ApplicantCard from "./ApplicantCard";
 import ApplicantModal from "./ApplicantModal";
+import styles from "./AdminDashboard.module.css";
 
 interface AdminDashboardProps {
   onLogout: () => void;
-  sessionToken: string;
 }
 
 type FilterOption = { value: string; label: string };
@@ -23,7 +23,7 @@ const GENDER_OPTIONS: FilterOption[] = [
   { value: "Other", label: "Other" },
 ];
 
-export default function AdminDashboard({ onLogout, sessionToken }: AdminDashboardProps) {
+export default function AdminDashboard({ onLogout }: AdminDashboardProps) {
   const [applications, setApplications] = useState<Application[]>([]);
   const [loading, setLoading] = useState(true);
   const [fetchError, setFetchError] = useState(false);
@@ -42,11 +42,17 @@ export default function AdminDashboard({ onLogout, sessionToken }: AdminDashboar
   async function handleCopyPrepLink(isoDate: string) {
     setPrepLinkLoading(isoDate);
     try {
+      const idToken = await auth.currentUser?.getIdToken();
+      if (!idToken) {
+        setToast({ msg: "Session expired. Please log in again.", ok: false });
+        setTimeout(() => setToast(null), 2500);
+        return;
+      }
       const res = await fetch("/api/generate-contestant-link", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          Authorization: `Bearer ${sessionToken}`,
+          Authorization: `Bearer ${idToken}`,
         },
         body: JSON.stringify({ showDate: isoDate }),
       });
@@ -121,7 +127,6 @@ export default function AdminDashboard({ onLogout, sessionToken }: AdminDashboar
     const active = applications.filter((a) => !a.deletedAt);
     const deleted = applications.filter((a) => !!a.deletedAt);
 
-    // Filter active list
     let result = [...active];
     if (genderFilter.length > 0) {
       const selected = new Set(genderFilter.map((o) => o.value));
@@ -132,7 +137,6 @@ export default function AdminDashboard({ onLogout, sessionToken }: AdminDashboar
       result = result.filter((a) => selected.has(a.city?.trim()));
     }
 
-    // Sort newest first, then push rejected to bottom
     result.sort((a, b) => (b.submittedAt?.seconds ?? 0) - (a.submittedAt?.seconds ?? 0));
     result.sort((a, b) => {
       const aRej = a.status === "Rejected" ? 1 : 0;
@@ -140,7 +144,6 @@ export default function AdminDashboard({ onLogout, sessionToken }: AdminDashboar
       return aRej - bRej;
     });
 
-    // Sort deleted by deletedAt descending
     deleted.sort((a, b) => {
       const aTime = a.deletedAt && "seconds" in a.deletedAt ? a.deletedAt.seconds : 0;
       const bTime = b.deletedAt && "seconds" in b.deletedAt ? b.deletedAt.seconds : 0;
@@ -153,41 +156,19 @@ export default function AdminDashboard({ onLogout, sessionToken }: AdminDashboar
   const hasActiveFilters = genderFilter.length > 0 || cityFilter.length > 0;
 
   return (
-    <div style={{ minHeight: "100vh", background: "var(--cream)", position: "relative" }}>
-      <header style={{ background: "#fff", borderBottom: "1px solid var(--border)", padding: "0 32px" }}>
-        <div
-          style={{
-            maxWidth: "1200px", margin: "0 auto", display: "flex", alignItems: "center",
-            justifyContent: "space-between", height: "64px", gap: "16px",
-          }}
-        >
-          <div style={{ display: "flex", alignItems: "baseline", gap: "12px" }}>
-            <h1 style={{ fontFamily: "var(--font-playfair)", fontSize: "22px", fontWeight: 700, color: "var(--text)" }}>
-              Applications
-            </h1>
-            {!loading && (
-              <span style={{ fontSize: "13px", color: "var(--text-light)" }}>
-                {activeApps.length} active
-              </span>
-            )}
+    <div className={styles.page}>
+      <header className={styles.header}>
+        <div className={styles.headerInner}>
+          <div className={styles.titleGroup}>
+            <h1 className={styles.title}>Applications</h1>
+            {!loading && <span className={styles.count}>{activeApps.length} active</span>}
           </div>
-          <button
-            onClick={onLogout}
-            style={{
-              padding: "7px 18px", borderRadius: "100px", border: "1px solid var(--border)",
-              background: "transparent", fontFamily: "var(--font-dm-sans)", fontSize: "13px",
-              color: "var(--text-light)", cursor: "pointer", transition: "border-color 0.2s, color 0.2s",
-            }}
-            onMouseEnter={(e) => { e.currentTarget.style.borderColor = "var(--crimson)"; e.currentTarget.style.color = "var(--crimson)"; }}
-            onMouseLeave={(e) => { e.currentTarget.style.borderColor = "var(--border)"; e.currentTarget.style.color = "var(--text-light)"; }}
-          >
-            Logout
-          </button>
+          <button onClick={onLogout} className={styles.logoutButton}>Logout</button>
         </div>
 
-        <div style={{ maxWidth: "1200px", margin: "0 auto", paddingBottom: "12px" }}>
-          <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
-            <div style={{ minWidth: "180px" }}>
+        <div className={styles.filterBar}>
+          <div className={styles.filterRow}>
+            <div className={styles.filterItem}>
               <Select
                 isMulti
                 options={GENDER_OPTIONS}
@@ -197,7 +178,7 @@ export default function AdminDashboard({ onLogout, sessionToken }: AdminDashboar
                 styles={adminSelectStyles}
               />
             </div>
-            <div style={{ minWidth: "220px" }}>
+            <div className={styles.filterItemWide}>
               <Select
                 isMulti
                 options={cityOptions}
@@ -208,84 +189,31 @@ export default function AdminDashboard({ onLogout, sessionToken }: AdminDashboar
               />
             </div>
             {hasActiveFilters && (
-              <button
-                onClick={clearFilters}
-                style={{
-                  background: "none", border: "none", fontFamily: "var(--font-dm-sans)", fontSize: "13px",
-                  color: "var(--crimson)", cursor: "pointer", padding: "4px 0", flexShrink: 0, textDecoration: "underline",
-                }}
-              >
-                Clear all
-              </button>
+              <button onClick={clearFilters} className={styles.clearButton}>Clear all</button>
             )}
           </div>
         </div>
       </header>
 
       {upcomingEvents.length > 0 && (
-        <div style={{ maxWidth: "1200px", margin: "0 auto", padding: "24px 32px 0" }}>
-          <div
-            style={{
-              padding: "16px 20px",
-              borderRadius: "12px",
-              background: "rgba(201, 168, 76, 0.06)",
-              border: "1px solid rgba(201, 168, 76, 0.15)",
-            }}
-          >
-            <span
-              style={{
-                fontFamily: "var(--font-dm-sans)",
-                fontSize: "12px",
-                fontWeight: 600,
-                textTransform: "uppercase",
-                letterSpacing: "0.08em",
-                color: "var(--text-light)",
-                display: "block",
-                marginBottom: "12px",
-              }}
-            >
-              Contestant Prep Links
-            </span>
-            <div style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
+        <div className={styles.prepSection}>
+          <div className={styles.prepBox}>
+            <span className={styles.prepLabel}>Contestant Prep Links</span>
+            <div className={styles.prepList}>
               {upcomingEvents.map((event) => {
                 const isCopied = prepLinkCopied === event.isoDate;
                 const isLoading = prepLinkLoading === event.isoDate;
                 return (
-                  <div
-                    key={event.isoDate}
-                    style={{ display: "flex", alignItems: "center", gap: "12px" }}
-                  >
-                    <span
-                      style={{
-                        fontFamily: "var(--font-dm-sans)",
-                        fontSize: "14px",
-                        color: "var(--text)",
-                        flex: 1,
-                      }}
-                    >
+                  <div key={event.isoDate} className={styles.prepRow}>
+                    <span className={styles.prepEventLabel}>
                       {event.date} — {event.city}
                     </span>
                     <button
                       type="button"
                       onClick={() => handleCopyPrepLink(event.isoDate!)}
                       disabled={isLoading}
-                      style={{
-                        display: "inline-flex",
-                        alignItems: "center",
-                        gap: "6px",
-                        padding: "6px 14px",
-                        borderRadius: "100px",
-                        border: `1px solid ${isCopied ? "var(--success)" : "var(--border)"}`,
-                        background: isCopied ? "rgba(34, 197, 94, 0.08)" : "transparent",
-                        fontFamily: "var(--font-dm-sans)",
-                        fontSize: "13px",
-                        fontWeight: 500,
-                        color: isCopied ? "var(--success)" : "var(--text-light)",
-                        cursor: isLoading ? "default" : "pointer",
-                        opacity: isLoading ? 0.5 : 1,
-                        transition: "all 0.2s",
-                        flexShrink: 0,
-                      }}
+                      className={styles.copyButton}
+                      data-copied={isCopied || undefined}
                     >
                       {isCopied ? <Check size={14} /> : <Copy size={14} />}
                       {isLoading ? "Generating…" : isCopied ? "Copied!" : "Copy Link"}
@@ -298,44 +226,29 @@ export default function AdminDashboard({ onLogout, sessionToken }: AdminDashboar
         </div>
       )}
 
-      <main style={{ maxWidth: "1200px", margin: "0 auto", padding: "32px" }}>
+      <main className={styles.main}>
         {loading ? (
-          <div style={{ textAlign: "center", padding: "80px 0", color: "var(--text-light)" }}>Loading…</div>
+          <div className={styles.loadingState}>Loading…</div>
         ) : fetchError ? (
-          <div style={{ textAlign: "center", padding: "80px 0", color: "var(--text-light)", fontSize: "16px" }}>
+          <div className={styles.errorState}>
             <p style={{ marginBottom: "12px" }}>Failed to load applications.</p>
-            <button
-              onClick={fetchApps}
-              style={{ background: "none", border: "none", color: "var(--crimson)", fontFamily: "var(--font-dm-sans)", fontSize: "14px", cursor: "pointer", textDecoration: "underline" }}
-            >
-              Try again
-            </button>
+            <button onClick={fetchApps} className={styles.retryButton}>Try again</button>
           </div>
         ) : applications.length === 0 ? (
-          <div style={{ textAlign: "center", padding: "80px 0", color: "var(--text-light)", fontSize: "16px" }}>
-            No applications yet. Share the link! 🌶️
-          </div>
+          <div className={styles.emptyState}>No applications yet. Share the link! 🌶️</div>
         ) : activeApps.length === 0 && deletedApps.length === 0 ? (
-          <div style={{ textAlign: "center", padding: "80px 0", color: "var(--text-light)", fontSize: "16px" }}>
+          <div className={styles.emptyState}>
             <p style={{ marginBottom: "12px" }}>No applications match these filters.</p>
-            <button
-              onClick={clearFilters}
-              style={{ background: "none", border: "none", color: "var(--crimson)", fontFamily: "var(--font-dm-sans)", fontSize: "14px", cursor: "pointer", textDecoration: "underline" }}
-            >
-              Clear filters
-            </button>
+            <button onClick={clearFilters} className={styles.clearFiltersButton}>Clear filters</button>
           </div>
         ) : (
           <>
-            <p style={{ fontSize: "13px", color: "var(--text-light)", marginBottom: "20px" }}>
+            <p className={styles.summary}>
               Showing {activeApps.length} active · {deletedApps.length} deleted
             </p>
 
             {activeApps.length > 0 && (
-              <div
-                style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: "20px" }}
-                className="applicant-grid"
-              >
+              <div className={styles.grid}>
                 {activeApps.map((app) => (
                   <ApplicantCard
                     key={app.id}
@@ -349,33 +262,14 @@ export default function AdminDashboard({ onLogout, sessionToken }: AdminDashboar
             )}
 
             {deletedApps.length > 0 && (
-              <div style={{ marginTop: "40px" }}>
-                <button
-                  onClick={() => setDeletedOpen((v) => !v)}
-                  style={{
-                    display: "inline-flex",
-                    alignItems: "center",
-                    gap: "6px",
-                    background: "none",
-                    border: "none",
-                    fontFamily: "var(--font-dm-sans)",
-                    fontSize: "14px",
-                    fontWeight: 600,
-                    color: "var(--text-light)",
-                    cursor: "pointer",
-                    padding: "8px 0",
-                    marginBottom: "16px",
-                  }}
-                >
+              <div className={styles.deletedSection}>
+                <button onClick={() => setDeletedOpen((v) => !v)} className={styles.deletedToggle}>
                   {deletedOpen ? <ChevronDown size={16} /> : <ChevronRight size={16} />}
                   Deleted Applications ({deletedApps.length})
                 </button>
 
                 {deletedOpen && (
-                  <div
-                    style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: "20px" }}
-                    className="applicant-grid"
-                  >
+                  <div className={styles.grid}>
                     {deletedApps.map((app) => (
                       <ApplicantCard
                         key={app.id}
@@ -393,11 +287,6 @@ export default function AdminDashboard({ onLogout, sessionToken }: AdminDashboar
         )}
       </main>
 
-      <style>{`
-        @media (max-width: 900px) { .applicant-grid { grid-template-columns: repeat(2, 1fr) !important; } }
-        @media (max-width: 600px) { .applicant-grid { grid-template-columns: 1fr !important; } }
-      `}</style>
-
       {selectedApp && (
         <ApplicantModal
           app={selectedApp}
@@ -410,21 +299,8 @@ export default function AdminDashboard({ onLogout, sessionToken }: AdminDashboar
 
       {toast && (
         <div
-          style={{
-            position: "fixed",
-            bottom: "24px",
-            right: "24px",
-            padding: "10px 20px",
-            borderRadius: "100px",
-            background: toast.ok ? "var(--success)" : "var(--crimson)",
-            color: "#fff",
-            fontFamily: "var(--font-dm-sans)",
-            fontSize: "14px",
-            fontWeight: 600,
-            boxShadow: "0 4px 16px rgba(0,0,0,0.15)",
-            zIndex: 100,
-            pointerEvents: "none",
-          }}
+          className={styles.toast}
+          style={{ background: toast.ok ? "var(--success)" : "var(--crimson)" }}
         >
           {toast.msg}
         </div>

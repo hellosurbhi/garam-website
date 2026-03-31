@@ -1,73 +1,95 @@
-# React + TypeScript + Vite
+# Garam Masala Dating
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Website, contestant application system, and admin dashboard for [Garam Masala Dating](https://garammasaladating.com) — a weekly live comedy dating show in NYC.
 
-Currently, two official plugins are available:
+## Tech Stack
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+- **Frontend:** React 19, TypeScript, Vite
+- **Data:** Firebase Firestore (applications), Firebase Auth (admin)
+- **Hosting:** Vercel with static prerendering
+- **Styling:** CSS custom properties, component-level CSS modules
 
-## React Compiler
+## Quick Start
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
-
-## Expanding the ESLint configuration
-
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
-
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
-
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+```bash
+git clone https://github.com/your-org/garam-masala-dating.git
+cd garam-masala-dating
+npm install
+cp .env.example .env.local  # then fill in your values
+npm run dev
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+## Environment Variables
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+Create a `.env.local` file with the following:
 
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+| Variable | Purpose |
+|----------|---------|
+| `VITE_FIREBASE_API_KEY` | Firebase client API key |
+| `VITE_FIREBASE_AUTH_DOMAIN` | Firebase auth domain |
+| `VITE_FIREBASE_PROJECT_ID` | Firestore project ID |
+| `VITE_FIREBASE_STORAGE_BUCKET` | Cloud Storage bucket |
+| `VITE_FIREBASE_MESSAGING_SENDER_ID` | Firebase messaging sender ID |
+| `VITE_FIREBASE_APP_ID` | Firebase app ID |
+| `FIREBASE_ADMIN_CLIENT_EMAIL` | Service account email (server-side only) |
+| `FIREBASE_ADMIN_PRIVATE_KEY` | Service account private key (server-side only) |
+| `CONTESTANT_PREP_SALT` | Salt for weekly password rotation |
+
+`VITE_`-prefixed variables are exposed to the client. `FIREBASE_ADMIN_*` variables are used only in Vercel serverless functions.
+
+## Project Structure
+
 ```
+src/
+  components/
+    admin/        # Admin dashboard (login, applicant list, modals)
+    home/         # Landing page sections
+    ui/           # Shared reusable components
+    layout/       # Nav, Footer, SEOHead
+  pages/          # Route-level page components
+  data/           # Static content (events, cities, journal, tips)
+  hooks/          # Custom React hooks
+  lib/            # Firebase init
+  utils/          # Date formatting, location display
+  styles/         # Global CSS, design tokens
+  types/          # TypeScript type definitions
+api/              # Vercel serverless functions (Firebase Admin)
+scripts/          # Build-time scripts (prerender, data migration)
+```
+
+## Pages
+
+| Route | What it does |
+|-------|-------------|
+| `/` | Landing page — hero, next show, social proof, FAQ, newsletter |
+| `/links` | Linktree replacement for Instagram bio |
+| `/apply` | Contestant application form (writes to Firestore) |
+| `/admin` | Protected dashboard to review applications (Firebase Auth) |
+| `/contestant-prep` | Password-protected prep guide for selected contestants |
+| `/faq` | Frequently asked questions |
+| `/cities` | Events directory by city |
+| `/journal` | Blog / articles |
+| `/south-asian-dating-tips` | Dating tips content hub |
+
+## Scripts
+
+| Command | What it does |
+|---------|-------------|
+| `npm run dev` | Start dev server with HMR |
+| `npm run build` | Type-check and build for production |
+| `npm run build:prerender` | Build + generate static HTML with Puppeteer |
+| `npm run lint` | Run ESLint |
+| `npm run preview` | Preview production build locally |
+
+## Deployment
+
+The site deploys to **Vercel**. The production build uses `build:prerender` to generate static HTML for key pages via Puppeteer. Security headers (CSP, HSTS, X-Frame-Options) are configured in `vercel.json`.
+
+## Contributing
+
+1. Create a branch off `main`
+2. Run `npm run lint` before committing
+3. Open a PR — CI runs lint, type-check, and build
+4. All PRs require passing CI before merge
+
+Code conventions and project rules live in `CLAUDE.md`.

@@ -4,7 +4,7 @@ import { isEventPast, msUntilMidnight } from "../../utils/eventDate";
 import styles from "./TableOfContents.module.css";
 
 export function TableOfContents() {
-  const [, setTick] = useState(0);
+  const [tick, setTick] = useState(0);
 
   useEffect(() => {
     const timeout = setTimeout(
@@ -12,7 +12,7 @@ export function TableOfContents() {
       msUntilMidnight(),
     );
     return () => clearTimeout(timeout);
-  });
+  }, [tick]);
 
   const upcomingEvents = events.filter((e) => !isEventPast(e.date) && !e.hidden);
 

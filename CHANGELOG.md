@@ -1,5 +1,31 @@
 # Changelog
 
+## perf: fix remaining PageSpeed issues — mobile animation, parallax, dead code cleanup
+
+Addresses remaining performance issues after the initial PageSpeed optimization pass.
+
+**GrainOverlay hidden on mobile:**
+- Added `@media (max-width: 768px) { display: none }` — the SVG feTurbulence filter animation was consuming GPU budget and blocking LCP paint on mobile devices. Imperceptible at 0.035 opacity on small screens.
+
+**useMouseParallax optimized:**
+- Skip entirely on touch devices via `(pointer: coarse)` media query — the rAF loop was running 60fps on phones where mouse events never fire
+- Added convergence detection — loop stops when offset matches target, restarts on next mousemove. Eliminates continuous 60fps overhead when mouse is stationary.
+
+**TableOfContents useEffect bug fixed:**
+- Added `[tick]` dependency array — was firing on every render, creating/cancelling timeouts in a tight loop
+
+**country-state-city isolated:**
+- Moved to dedicated `vendor-geo` chunk in manualChunks — the 8.7MB library data no longer inflates ApplyPage chunk (now 15KB). Loads only when /apply is visited.
+
+**Dead code removed:**
+- Deleted `SubpageBackground.tsx` (exported but never imported)
+- Deleted `src/assets/hero.jpeg` (855KB) and `src/assets/hero-mobile.jpeg` (799KB) — superseded by optimized AVIF/WebP in `public/images/`
+
+**Files modified:** `src/components/GrainOverlay/GrainOverlay.module.css`, `src/hooks/useMouseParallax.ts`, `src/components/TableOfContents/TableOfContents.tsx`, `vite.config.ts`
+**Files deleted:** `src/components/SubpageBackground/SubpageBackground.tsx`, `src/assets/hero.jpeg`, `src/assets/hero-mobile.jpeg`
+
+---
+
 ## perf: PageSpeed optimization — code splitting, image + font optimization, security headers
 
 Improved Desktop Performance score from 63 to 90+ by addressing all major PageSpeed Insights issues.

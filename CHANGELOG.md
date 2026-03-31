@@ -1,5 +1,44 @@
 # Changelog
 
+## v1.0.0: Migrate from Vite SPA to Astro with React islands
+
+Major architecture migration. The site was a React 19 SPA with Vite, react-router-dom, and a Puppeteer prerender script. It is now an Astro static site with React islands for the 3 interactive pages.
+
+### Phase 1: Replace firebase-admin with jose
+- Replaced 48MB `firebase-admin` SDK with `jose` (~45KB) for JWT verification in Vercel serverless functions
+- New `api/_verify-token.ts` fetches Google's X.509 public certs, caches 1 hour, verifies signature/issuer/audience
+- Same `verifyIdToken()` interface preserved — only the import in `generate-contestant-link.ts` changed
+- npm audit vulnerabilities: 17 down to 9
+
+### Phase 2: Astro migration
+- Installed `astro`, `@astrojs/react`, `@astrojs/vercel` with static output mode
+- Created `BaseLayout.astro` replacing `index.html` + `usePageMeta` hook (props for title, description, OG, noindex)
+- **Static pages (zero client JS):** landing, FAQ, links, cities (6), journal (3), tips (3), 404
+- **React islands (client:load):** apply form, admin dashboard, contestant prep
+- JSON-LD schemas now render at build time in Astro frontmatter (not useEffect injection)
+- Nav dropdown: vanilla JS (~15 lines) replaces React useState
+- FAQ accordion: vanilla JS toggle replaces React useState
+- Links page modals: `<dialog>` elements replace React state
+- Hero parallax: inline `<script>` replaces React hook
+- All `<Link to>` replaced with `<a href>` (no more react-router-dom)
+- Puppeteer prerender script deleted (Astro generates static HTML natively)
+- 21 pages generated in ~3.8s build time
+
+### Phase 3: Package cleanup
+- Removed: react-router-dom, @vitejs/plugin-react, puppeteer, @types/react-select, firebase-admin
+- Added: astro, @astrojs/react, @astrojs/vercel, jose
+- Version bumped from 0.0.0 to 1.0.0
+- Scripts updated to astro dev/build/preview
+
+### What stayed the same
+- Visual design unchanged — all pages look identical
+- Firebase client SDK (Firestore, Auth, Storage) unchanged
+- Vercel API functions (`/api/`) unchanged
+- CSS architecture (custom properties + CSS modules for React islands) unchanged
+- All data files (events, cities, journal, tips, press, socials) unchanged
+
+---
+
 ## feat: static prerendering for SEO + social crawlers
 
 Added a Puppeteer-based post-build step that prerenderes all 18 public routes to static HTML. Social crawlers (Facebook, Twitter, LinkedIn, Slack, iMessage) and non-Google search engines now see fully rendered pages with content, meta tags, and JSON-LD schemas — instead of an empty React shell.

@@ -1,0 +1,127 @@
+<section class="hero">
+  <div id="hero-image-wrap" class="image-wrap">
+    <picture class="image">
+      <source media="(max-width: 768px)" srcset="/images/hero-mobile.avif" type="image/avif" />
+      <source media="(max-width: 768px)" srcset="/images/hero-mobile.webp" type="image/webp" />
+      <source media="(max-width: 768px)" srcset="/images/hero-mobile.jpeg" type="image/jpeg" />
+      <source srcset="/images/hero.avif" type="image/avif" />
+      <source srcset="/images/hero.webp" type="image/webp" />
+      <img
+        src="/images/hero.jpeg"
+        alt="Garam Masala Dating live comedy dating show"
+        class="image"
+        fetchpriority="high"
+        width="1920"
+        height="815"
+        decoding="async"
+      />
+    </picture>
+  </div>
+  <div class="vignette"></div>
+  <div class="grid">
+    {Array.from({ length: 7 }).map((_, i) => (
+      <div class="grid-line-v" style={`left: ${(i + 1) * 12.5}%`}></div>
+    ))}
+    {Array.from({ length: 5 }).map((_, i) => (
+      <div class="grid-line-h" style={`top: ${(i + 1) * 16.66}%`}></div>
+    ))}
+  </div>
+</section>
+
+<script>
+  const INTENSITY = 18;
+  const el = document.getElementById('hero-image-wrap');
+  if (
+    el &&
+    !window.matchMedia('(prefers-reduced-motion: reduce)').matches &&
+    !window.matchMedia('(pointer: coarse)').matches
+  ) {
+    let ox = 0, oy = 0, tx = 0, ty = 0, raf = 0;
+    function lerp(a: number, b: number, f: number) { return a + (b - a) * f; }
+    function animate() {
+      const dx = Math.abs(ox - tx);
+      const dy = Math.abs(oy - ty);
+      if (dx < 0.1 && dy < 0.1) { raf = 0; return; }
+      ox = lerp(ox, tx, 0.08);
+      oy = lerp(oy, ty, 0.08);
+      el!.style.transform = `translate3d(${ox}px, ${oy}px, 0) scale(1.05)`;
+      raf = requestAnimationFrame(animate);
+    }
+    window.addEventListener('mousemove', (e) => {
+      const cx = window.innerWidth / 2;
+      const cy = window.innerHeight / 2;
+      tx = -((e.clientX - cx) / cx) * INTENSITY;
+      ty = -((e.clientY - cy) / cy) * INTENSITY;
+      if (!raf) raf = requestAnimationFrame(animate);
+    });
+  }
+</script>
+
+<style>
+  .hero {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100vh;
+    overflow: hidden;
+    z-index: 0;
+  }
+
+  .image-wrap {
+    position: absolute;
+    top: -20px;
+    left: -20px;
+    right: -20px;
+    bottom: -20px;
+    will-change: transform;
+  }
+
+  .image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: 50% 35%;
+    display: block;
+  }
+
+  .vignette {
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+    pointer-events: none;
+    background:
+      linear-gradient(to top, rgba(13,10,8,0.85) 0%, rgba(13,10,8,0.50) 25%, rgba(13,10,8,0.10) 50%, transparent 65%),
+      linear-gradient(to right, rgba(13,10,8,0.3) 0%, transparent 20%),
+      linear-gradient(to left, rgba(13,10,8,0.3) 0%, transparent 20%);
+  }
+
+  .grid {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    z-index: 2;
+  }
+
+  .grid-line-v,
+  .grid-line-h {
+    position: absolute;
+    background: rgba(255, 255, 255, 0.06);
+  }
+
+  .grid-line-v {
+    top: 0;
+    bottom: 0;
+    width: 1px;
+  }
+
+  .grid-line-h {
+    left: 0;
+    right: 0;
+    height: 1px;
+  }
+
+  @media (max-width: 768px) {
+    .grid { display: none; }
+  }
+</style>

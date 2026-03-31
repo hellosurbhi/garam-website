@@ -1,5 +1,5 @@
 {
-  "buildCommand": "npm run build:prerender",
+  "buildCommand": "astro build",
   "headers": [
     {
       "source": "/(.*)",
@@ -28,5 +28,5 @@
       ]
     }
   ],
-  "rewrites": [{ "source": "/(.*)", "destination": "/index.html" }]
+  "rewrites": []
 }

@@ -79,7 +79,7 @@ export default function JournalPage() {
                 lineHeight: 1.55,
               }}
             >
-              Essays on desi dating, the live show, and what we\u2019ve learned
+              Essays on desi dating, the live show, and what we've learned
               from watching it all unfold on stage.
             </p>
           </div>

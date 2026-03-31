@@ -1,5 +1,39 @@
 # Changelog
 
+## seo: full SEO/AEO technical pass — schema markup, breadcrumbs, author bios, sitemap, noindex
+
+Comprehensive SEO and AEO audit and implementation across the entire site.
+
+**Global Organization schema:**
+- New `OrganizationSchema.tsx` component injected at the App level. Every page now has Organization JSON-LD with name, URL, sameAs (Instagram, TikTok, YouTube), logo, and contactPoint.
+
+**Dynamic BreadcrumbList schema:**
+- New `BreadcrumbSchema.tsx` component generates BreadcrumbList JSON-LD from the current route. Resolves display names for dynamic segments (city pages, journal posts, tip posts). Skipped on homepage, admin, and contestant-prep.
+
+**Author bios on all article pages:**
+- New `AuthorBio.tsx` component rendered below article content on `/journal/:slug` and `/south-asian-dating-tips/:slug`. Includes logo, organization name, and bio text styled to match existing design system.
+- Added `publisher.logo` (ImageObject) to Article JSON-LD in both `JournalPostPage.tsx` and `TipPostPage.tsx`.
+
+**noindex on private routes:**
+- Extended `usePageMeta` hook with optional `noindex` parameter that injects `<meta name="robots" content="noindex, nofollow">` into `<head>`.
+- Applied to `AdminPage.tsx` and `ContestantPrepPage.tsx`.
+
+**Sitemap expanded (9 → 18 URLs):**
+- Added: `/links`, `/cities` index, `/cities/jersey-city`, `/cities/los-angeles`, `/cities/salt-lake-city`, `/cities/denver`, `/journal` index, 2 journal post URLs.
+- Updated `changefreq` to weekly for city pages with active shows.
+
+**robots.txt updated:**
+- Added `Disallow: /contestant-prep` (auth-gated page).
+
+**Hero image alt text fixed:**
+- Changed empty `alt=""` to descriptive `alt="Garam Masala Dating live comedy dating show"` in `Hero.tsx`.
+
+**Broken links audit:**
+- Created `BROKEN_LINKS.md` — no broken internal links found. External links (Eventbrite, social) flagged for manual verification.
+
+**Files created:** `OrganizationSchema.tsx`, `BreadcrumbSchema.tsx`, `AuthorBio.tsx`, `BROKEN_LINKS.md`
+**Files modified:** `usePageMeta.ts`, `App.tsx`, `AdminPage.tsx`, `ContestantPrepPage.tsx`, `JournalPostPage.tsx`, `TipPostPage.tsx`, `Hero.tsx`, `sitemap.xml`, `robots.txt`
+
 ## perf: fix remaining PageSpeed issues — mobile animation, parallax, dead code cleanup
 
 Addresses remaining performance issues after the initial PageSpeed optimization pass.

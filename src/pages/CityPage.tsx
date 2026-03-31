@@ -85,7 +85,7 @@ function CityNotFound() {
           to="/cities"
           style={{ color: "#C9A84C", fontSize: "15px", fontWeight: 500, textDecoration: "none" }}
         >
-          \u2190 View all cities
+          ← View all cities
         </Link>
       </div>
     </div>
@@ -244,7 +244,7 @@ export default function CityPage() {
                 textDecoration: "none",
               }}
             >
-              \u2190 All cities
+              ← All cities
             </Link>
           </div>
         </div>

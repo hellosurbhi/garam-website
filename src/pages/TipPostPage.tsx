@@ -2,6 +2,7 @@ import { useParams, Link } from "react-router-dom";
 import { usePageMeta } from "@/hooks/usePageMeta";
 import { getTipBySlug } from "@/data/tips";
 import type { TipPost } from "@/data/tips";
+import { AuthorBio } from "@/components/AuthorBio";
 
 function buildArticleJsonLd(post: TipPost): string {
   return JSON.stringify({
@@ -19,6 +20,10 @@ function buildArticleJsonLd(post: TipPost): string {
       "@type": "Organization",
       name: "Garam Masala Dating",
       url: "https://garammasaladating.com",
+      logo: {
+        "@type": "ImageObject",
+        url: "https://garammasaladating.com/og-image.svg",
+      },
     },
   });
 }
@@ -210,6 +215,9 @@ export default function TipPostPage() {
               );
             })}
           </article>
+
+          {/* Author bio */}
+          <AuthorBio />
 
           {/* Footer */}
           <div

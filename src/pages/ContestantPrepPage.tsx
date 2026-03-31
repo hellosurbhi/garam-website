@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { Check, Clock, Users, Shirt, Star } from "lucide-react";
+import { usePageMeta } from "@/hooks/usePageMeta";
 
 /* ─── Session helpers ──────────────────────────────────────────── */
 
@@ -595,6 +596,8 @@ function PrepGuide() {
 /* ─── Page ─────────────────────────────────────────────────────── */
 
 export default function ContestantPrepPage() {
+  usePageMeta("Contestant Prep | Garam Masala Dating", "", undefined, true);
+
   const [state, setState] = useState<"checking" | "authed" | "error">(() =>
     getSession() !== null ? "authed" : "checking"
   );

@@ -5,6 +5,8 @@ import { Hero } from "./components/Hero/Hero";
 import { CenterBox } from "./components/CenterBox/CenterBox";
 import { GrainOverlay } from "./components/GrainOverlay/GrainOverlay";
 import { ScrollIndicator } from "./components/ScrollIndicator/ScrollIndicator";
+import { OrganizationSchema } from "./components/OrganizationSchema";
+import { BreadcrumbSchema } from "./components/BreadcrumbSchema";
 import { Analytics } from "@vercel/analytics/react";
 import { SpeedInsights } from "@vercel/speed-insights/react";
 
@@ -105,6 +107,8 @@ function App() {
       <Hero />
       <GrainOverlay />
       <SubpageOverlay />
+      <OrganizationSchema />
+      <BreadcrumbSchema />
       <Suspense fallback={null}>
         <Routes>
           <Route path="/" element={<LandingPage />} />

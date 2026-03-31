@@ -10,7 +10,8 @@ import { useEffect } from "react";
 export function usePageMeta(
   title: string,
   description: string,
-  jsonLd?: string
+  jsonLd?: string,
+  noindex?: boolean
 ) {
   useEffect(() => {
     const prevTitle = document.title;
@@ -30,10 +31,19 @@ export function usePageMeta(
       document.head.appendChild(script);
     }
 
+    let robotsMeta: HTMLMetaElement | null = null;
+    if (noindex) {
+      robotsMeta = document.createElement("meta");
+      robotsMeta.name = "robots";
+      robotsMeta.content = "noindex, nofollow";
+      document.head.appendChild(robotsMeta);
+    }
+
     return () => {
       document.title = prevTitle;
       if (metaDesc) metaDesc.content = prevDesc;
       script?.remove();
+      robotsMeta?.remove();
     };
-  }, [title, description, jsonLd]);
+  }, [title, description, jsonLd, noindex]);
 }

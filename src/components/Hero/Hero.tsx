@@ -15,7 +15,7 @@ export function Hero() {
           <source srcSet="/images/hero.webp" type="image/webp" />
           <img
             src="/images/hero.jpeg"
-            alt=""
+            alt="Garam Masala Dating live comedy dating show"
             className={styles.image}
             fetchPriority="high"
             width={1920}

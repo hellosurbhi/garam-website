@@ -19,16 +19,70 @@
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://garammasaladating.com/cities/manhattan</loc>
+    <loc>https://garammasaladating.com/links</loc>
     <lastmod>2026-03-31</lastmod>
     <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://garammasaladating.com/cities</loc>
+    <lastmod>2026-03-31</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://garammasaladating.com/cities/manhattan</loc>
+    <lastmod>2026-03-31</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://garammasaladating.com/cities/jersey-city</loc>
+    <lastmod>2026-03-31</lastmod>
+    <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://garammasaladating.com/cities/san-diego</loc>
     <lastmod>2026-03-31</lastmod>
-    <changefreq>monthly</changefreq>
+    <changefreq>weekly</changefreq>
     <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://garammasaladating.com/cities/los-angeles</loc>
+    <lastmod>2026-03-31</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://garammasaladating.com/cities/salt-lake-city</loc>
+    <lastmod>2026-03-31</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://garammasaladating.com/cities/denver</loc>
+    <lastmod>2026-03-31</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://garammasaladating.com/journal</loc>
+    <lastmod>2026-03-31</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://garammasaladating.com/journal/what-we-learned-from-100-desi-blind-dates</loc>
+    <lastmod>2026-03-31</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://garammasaladating.com/journal/how-to-prepare-for-a-live-matchmaking-show</loc>
+    <lastmod>2026-03-31</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
   </url>
   <url>
     <loc>https://garammasaladating.com/south-asian-dating-tips</loc>

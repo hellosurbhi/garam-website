@@ -1,6 +1,7 @@
 import { useParams, Link } from "react-router-dom";
 import { usePageMeta } from "@/hooks/usePageMeta";
 import { getPostBySlug } from "@/data/journal";
+import { AuthorBio } from "@/components/AuthorBio";
 
 function buildArticleJsonLd(post: NonNullable<ReturnType<typeof getPostBySlug>>): string {
   return JSON.stringify({
@@ -18,6 +19,10 @@ function buildArticleJsonLd(post: NonNullable<ReturnType<typeof getPostBySlug>>)
       "@type": "Organization",
       name: "Garam Masala Dating",
       url: "https://garammasaladating.com",
+      logo: {
+        "@type": "ImageObject",
+        url: "https://garammasaladating.com/og-image.svg",
+      },
     },
   });
 }
@@ -61,7 +66,7 @@ function PostNotFound() {
           to="/journal"
           style={{ color: "#C9A84C", fontSize: "15px", fontWeight: 500, textDecoration: "none" }}
         >
-          \u2190 Back to journal
+          ← Back to journal
         </Link>
       </div>
     </div>
@@ -116,7 +121,7 @@ export default function JournalPostPage() {
               marginBottom: "36px",
             }}
           >
-            \u2190 Journal
+            ← Journal
           </Link>
 
           {/* Article header */}
@@ -193,6 +198,9 @@ export default function JournalPostPage() {
             })}
           </article>
 
+          {/* Author bio */}
+          <AuthorBio />
+
           {/* Footer */}
           <div
             style={{
@@ -215,7 +223,7 @@ export default function JournalPostPage() {
                 textDecoration: "none",
               }}
             >
-              \u2190 All posts
+              ← All posts
             </Link>
             <Link
               to="/apply"
@@ -227,7 +235,7 @@ export default function JournalPostPage() {
                 textDecoration: "none",
               }}
             >
-              Apply to be on the show \u2192
+              Apply to be on the show →
             </Link>
           </div>
         </div>

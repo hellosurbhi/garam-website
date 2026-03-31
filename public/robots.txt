@@ -2,5 +2,6 @@ User-agent: *
 Allow: /
 Disallow: /admin
 Disallow: /api/
+Disallow: /contestant-prep
 
 Sitemap: https://garammasaladating.com/sitemap.xml

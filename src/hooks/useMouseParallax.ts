@@ -17,8 +17,17 @@ export function useMouseParallax(intensity: number = 20) {
 
   useEffect(() => {
     if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+    if (window.matchMedia("(pointer: coarse)").matches) return;
 
     function animate() {
+      const dx = Math.abs(offset.current.x - target.current.x);
+      const dy = Math.abs(offset.current.y - target.current.y);
+
+      if (dx < 0.1 && dy < 0.1) {
+        rafId.current = 0;
+        return;
+      }
+
       offset.current.x = lerp(offset.current.x, target.current.x, 0.08);
       offset.current.y = lerp(offset.current.y, target.current.y, 0.08);
 
@@ -37,14 +46,17 @@ export function useMouseParallax(intensity: number = 20) {
 
       target.current.x = -normalizedX * intensity;
       target.current.y = -normalizedY * intensity;
+
+      if (!rafId.current) {
+        rafId.current = requestAnimationFrame(animate);
+      }
     }
 
     window.addEventListener("mousemove", handleMouseMove);
-    rafId.current = requestAnimationFrame(animate);
 
     return () => {
       window.removeEventListener("mousemove", handleMouseMove);
-      cancelAnimationFrame(rafId.current);
+      if (rafId.current) cancelAnimationFrame(rafId.current);
     };
   }, [intensity]);
 

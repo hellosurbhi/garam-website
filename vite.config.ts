@@ -19,6 +19,7 @@ export default defineConfig({
           'vendor-react': ['react', 'react-dom', 'react-router-dom'],
           'vendor-firebase': ['firebase/app', 'firebase/firestore', 'firebase/storage'],
           'vendor-select': ['react-select'],
+          'vendor-geo': ['country-state-city'],
         },
       },
     },

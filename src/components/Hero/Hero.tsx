@@ -1,6 +1,4 @@
 import { useMouseParallax } from "../../hooks/useMouseParallax";
-import heroImage from "../../assets/hero.jpeg";
-import heroMobileImage from "../../assets/hero-mobile.jpeg";
 import styles from "./Hero.module.css";
 
 export function Hero() {
@@ -10,8 +8,20 @@ export function Hero() {
     <section className={styles.hero}>
       <div ref={parallaxRef} className={styles.imageWrap}>
         <picture className={styles.image}>
-          <source media="(max-width: 768px)" srcSet={heroMobileImage} />
-          <img src={heroImage} alt="" className={styles.image} />
+          <source media="(max-width: 768px)" srcSet="/images/hero-mobile.avif" type="image/avif" />
+          <source media="(max-width: 768px)" srcSet="/images/hero-mobile.webp" type="image/webp" />
+          <source media="(max-width: 768px)" srcSet="/images/hero-mobile.jpeg" type="image/jpeg" />
+          <source srcSet="/images/hero.avif" type="image/avif" />
+          <source srcSet="/images/hero.webp" type="image/webp" />
+          <img
+            src="/images/hero.jpeg"
+            alt=""
+            className={styles.image}
+            fetchPriority="high"
+            width={1920}
+            height={815}
+            decoding="async"
+          />
         </picture>
       </div>
       <div className={styles.vignette} />

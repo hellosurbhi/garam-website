@@ -1,3 +1,4 @@
+import { lazy, Suspense } from "react";
 import { BrowserRouter, Routes, Route, useLocation } from "react-router-dom";
 import { Nav } from "./components/Nav/Nav";
 import { Hero } from "./components/Hero/Hero";
@@ -6,15 +7,16 @@ import { GrainOverlay } from "./components/GrainOverlay/GrainOverlay";
 import { ScrollIndicator } from "./components/ScrollIndicator/ScrollIndicator";
 import { Analytics } from "@vercel/analytics/react";
 import { SpeedInsights } from "@vercel/speed-insights/react";
-import LinksPage from "./pages/LinksPage";
-import ApplyPage from "./pages/ApplyPage";
-import AdminPage from "./pages/AdminPage";
-import ContestantPrepPage from "./pages/ContestantPrepPage";
-import FaqPage from "./pages/FaqPage";
-import CityPage from "./pages/CityPage";
-import CitiesIndexPage from "./pages/CitiesIndexPage";
-import JournalPage from "./pages/JournalPage";
-import JournalPostPage from "./pages/JournalPostPage";
+
+const LinksPage = lazy(() => import("./pages/LinksPage"));
+const ApplyPage = lazy(() => import("./pages/ApplyPage"));
+const AdminPage = lazy(() => import("./pages/AdminPage"));
+const ContestantPrepPage = lazy(() => import("./pages/ContestantPrepPage"));
+const FaqPage = lazy(() => import("./pages/FaqPage"));
+const CityPage = lazy(() => import("./pages/CityPage"));
+const CitiesIndexPage = lazy(() => import("./pages/CitiesIndexPage"));
+const JournalPage = lazy(() => import("./pages/JournalPage"));
+const JournalPostPage = lazy(() => import("./pages/JournalPostPage"));
 
 function SubpageOverlay() {
   const { pathname } = useLocation();
@@ -98,19 +100,21 @@ function App() {
       <Hero />
       <GrainOverlay />
       <SubpageOverlay />
-      <Routes>
-        <Route path="/" element={<LandingPage />} />
-        <Route path="/apply" element={<ApplyPage />} />
-        <Route path="/links" element={<LinksPage />} />
-        <Route path="/admin" element={<AdminPage />} />
-        <Route path="/contestant-prep" element={<ContestantPrepPage />} />
-        <Route path="/faq" element={<FaqPage />} />
-        <Route path="/cities" element={<CitiesIndexPage />} />
-        <Route path="/cities/:city" element={<CityPage />} />
-        <Route path="/journal" element={<JournalPage />} />
-        <Route path="/journal/:slug" element={<JournalPostPage />} />
-        <Route path="*" element={<NotFound />} />
-      </Routes>
+      <Suspense fallback={null}>
+        <Routes>
+          <Route path="/" element={<LandingPage />} />
+          <Route path="/apply" element={<ApplyPage />} />
+          <Route path="/links" element={<LinksPage />} />
+          <Route path="/admin" element={<AdminPage />} />
+          <Route path="/contestant-prep" element={<ContestantPrepPage />} />
+          <Route path="/faq" element={<FaqPage />} />
+          <Route path="/cities" element={<CitiesIndexPage />} />
+          <Route path="/cities/:city" element={<CityPage />} />
+          <Route path="/journal" element={<JournalPage />} />
+          <Route path="/journal/:slug" element={<JournalPostPage />} />
+          <Route path="*" element={<NotFound />} />
+        </Routes>
+      </Suspense>
       <Analytics />
       <SpeedInsights />
     </BrowserRouter>

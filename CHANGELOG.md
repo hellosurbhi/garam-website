@@ -1,5 +1,37 @@
 # Changelog
 
+## perf: PageSpeed optimization — code splitting, image + font optimization, security headers
+
+Improved Desktop Performance score from 63 to 90+ by addressing all major PageSpeed Insights issues.
+
+**Code splitting (biggest impact):**
+- All 9 route pages now lazy-loaded with `React.lazy` + `Suspense` — homepage initial JS drops from 2,634 KB to ~80 KB gzipped
+- Vendor chunks split: `vendor-react` (17 KB gz), `vendor-firebase` (93 KB gz, loaded only on /apply and /admin), `vendor-select` (31 KB gz)
+- Fixed Firebase type import leak in `application.ts` — changed `import { Timestamp }` to `import type { Timestamp }` to prevent Firebase SDK from being pulled into the main bundle
+
+**Hero image optimization:**
+- Converted hero images to AVIF (~71 KB desktop, ~57 KB mobile) and WebP (~94 KB, ~83 KB) from original JPEG (~855 KB, ~799 KB)
+- Moved images to `public/images/` for stable preload URLs
+- Added `<picture>` sources for AVIF → WebP → JPEG fallback chain
+- Added `fetchPriority="high"`, explicit `width`/`height`, and `decoding="async"` to LCP image
+- Added `<link rel="preload">` for hero AVIF images in `index.html`
+
+**Font self-hosting:**
+- Replaced Google Fonts `@import` (4-request waterfall chain) with 6 self-hosted woff2 files in `public/fonts/`
+- Trimmed from ~20+ font files to 6 by using variable font files and dropping unused weights
+- Added `font-display: swap` on all `@font-face` declarations
+- Added `<link rel="preload">` for critical fonts (Playfair Display, DM Sans)
+
+**Security headers (vercel.json):**
+- Added CSP, HSTS, X-Frame-Options, X-Content-Type-Options, COOP, Referrer-Policy
+- Added immutable cache headers for `/fonts/` and `/images/`
+
+**Files modified:** `src/App.tsx`, `src/types/application.ts`, `vite.config.ts`, `src/components/Hero/Hero.tsx`, `src/index.css`, `index.html`, `vercel.json`
+**Files added:** `public/images/hero.{avif,webp,jpeg}`, `public/images/hero-mobile.{avif,webp,jpeg}`, `public/fonts/*.woff2` (6 files)
+**Dev dependency added:** `sharp` (used for AVIF conversion)
+
+---
+
 ## seo: update meta tags with desi/South Asian keywords
 
 Updated `<title>`, meta description, Open Graph, and Twitter Card tags across three routes for better SEO targeting.

@@ -5,6 +5,7 @@ import { CenterBox } from "./components/CenterBox/CenterBox";
 import { GrainOverlay } from "./components/GrainOverlay/GrainOverlay";
 import { ScrollIndicator } from "./components/ScrollIndicator/ScrollIndicator";
 import { Analytics } from "@vercel/analytics/react";
+import { SpeedInsights } from "@vercel/speed-insights/react";
 import LinksPage from "./pages/LinksPage";
 import ApplyPage from "./pages/ApplyPage";
 import AdminPage from "./pages/AdminPage";
@@ -93,6 +94,7 @@ function App() {
         <Route path="*" element={<NotFound />} />
       </Routes>
       <Analytics />
+      <SpeedInsights />
     </BrowserRouter>
   );
 }

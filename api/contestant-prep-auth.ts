@@ -1,50 +1,30 @@
 import type { VercelRequest, VercelResponse } from "@vercel/node";
-import { createHmac } from "crypto";
+import { createHmac, timingSafeEqual } from "crypto";
 
-const CHARS = "abcdefghjkmnpqrstuvwxyz23456789";
+const ISO_DATE_RE = /^\d{4}-\d{2}-\d{2}$/;
 
-function getCurrentWeekMonday(): string {
-  const now = new Date();
-  const parts = new Intl.DateTimeFormat("en-US", {
-    timeZone: "America/New_York",
-    year: "numeric", month: "2-digit", day: "2-digit", weekday: "short",
-  }).formatToParts(now);
-  const year = parts.find((p) => p.type === "year")!.value;
-  const month = parseInt(parts.find((p) => p.type === "month")!.value, 10);
-  const day = parseInt(parts.find((p) => p.type === "day")!.value, 10);
-  const weekday = parts.find((p) => p.type === "weekday")!.value;
-  const offsets: Record<string, number> = { Mon: 0, Tue: 1, Wed: 2, Thu: 3, Fri: 4, Sat: 5, Sun: 6 };
-  const monday = new Date(parseInt(year, 10), month - 1, day - (offsets[weekday] ?? 0));
-  return `${monday.getFullYear()}-${String(monday.getMonth() + 1).padStart(2, "0")}-${String(monday.getDate()).padStart(2, "0")}`;
+function computeSig(salt: string, date: string): string {
+  return createHmac("sha256", salt).update(date).digest("hex");
 }
 
-function generatePassword(salt: string): string {
-  const hash = createHmac("sha256", salt).update(getCurrentWeekMonday()).digest("hex");
-  let password = "";
-  for (let i = 0; i < 6; i++) password += CHARS[parseInt(hash.substring(i * 2, i * 2 + 2), 16) % CHARS.length];
-  return password;
+function computeToken(salt: string, date: string): string {
+  return createHmac("sha256", salt).update(`token-${date}`).digest("hex");
 }
 
-function generateToken(salt: string): string {
-  return createHmac("sha256", salt).update(`token-${getCurrentWeekMonday()}`).digest("hex");
+function timingSafeCompare(a: string, b: string): boolean {
+  if (a.length !== b.length) return false;
+  const bufA = Buffer.from(a, "hex");
+  const bufB = Buffer.from(b, "hex");
+  if (bufA.length !== bufB.length) return false;
+  return timingSafeEqual(bufA, bufB);
 }
 
-function getSundayExpirationMs(): number {
-  const now = new Date();
-  const parts = new Intl.DateTimeFormat("en-US", {
-    timeZone: "America/New_York",
-    year: "numeric", month: "2-digit", day: "2-digit", weekday: "short",
-    hour: "2-digit", minute: "2-digit", second: "2-digit", hour12: false,
-  }).formatToParts(now);
-  const year = parseInt(parts.find((p) => p.type === "year")!.value, 10);
-  const month = parseInt(parts.find((p) => p.type === "month")!.value, 10) - 1;
-  const day = parseInt(parts.find((p) => p.type === "day")!.value, 10);
-  const weekday = parts.find((p) => p.type === "weekday")!.value;
-  const daysMap: Record<string, number> = { Sun: 0, Mon: 1, Tue: 2, Wed: 3, Thu: 4, Fri: 5, Sat: 6 };
-  const daysUntilSunday = (7 - (daysMap[weekday] ?? 0)) % 7;
-  const etNow = new Date(year, month, day);
-  const utcOffsetMs = now.getTime() - etNow.getTime();
-  return new Date(year, month, day + daysUntilSunday, 23, 59, 0, 0).getTime() + utcOffsetMs;
+function getShowExpiryMs(isoDate: string): number {
+  const [y, m, d] = isoDate.split("-").map(Number);
+  // EDT (UTC-4) Apr–Oct, EST (UTC-5) Nov–Mar
+  const offsetHours = m >= 4 && m <= 10 ? 4 : 5;
+  // Midnight ending the show day = 00:00 ET on the next calendar day
+  return Date.UTC(y, m - 1, d + 1, offsetHours, 0, 0);
 }
 
 export default function handler(req: VercelRequest, res: VercelResponse) {
@@ -58,14 +38,25 @@ export default function handler(req: VercelRequest, res: VercelResponse) {
     return res.status(500).json({ error: "Server misconfigured" });
   }
 
-  const { password } = req.body as { password?: string };
-  if (!password || typeof password !== "string") {
-    return res.status(400).json({ error: "Password required" });
+  const { date, sig } = req.body as { date?: string; sig?: string };
+
+  if (!date || !sig || typeof date !== "string" || typeof sig !== "string") {
+    return res.status(400).json({ error: "date and sig are required" });
   }
 
-  if (password.toLowerCase() !== generatePassword(salt).toLowerCase()) {
-    return res.status(401).json({ error: "Incorrect password" });
+  if (!ISO_DATE_RE.test(date)) {
+    return res.status(400).json({ error: "Invalid date format" });
   }
 
-  return res.status(200).json({ token: generateToken(salt), expiresAt: getSundayExpirationMs() });
+  const expected = computeSig(salt, date);
+  if (!timingSafeCompare(sig, expected)) {
+    return res.status(401).json({ error: "Invalid link" });
+  }
+
+  const expiresAt = getShowExpiryMs(date);
+  if (Date.now() >= expiresAt) {
+    return res.status(401).json({ error: "Link expired" });
+  }
+
+  return res.status(200).json({ token: computeToken(salt, date), expiresAt });
 }

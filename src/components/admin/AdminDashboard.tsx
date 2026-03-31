@@ -5,6 +5,7 @@ import Select from "react-select";
 import { db } from "@/lib/firebase";
 import { type Application } from "@/types/application";
 import { adminSelectStyles } from "@/utils/reactSelectStyles";
+import { events } from "@/data/events";
 import ApplicantCard from "./ApplicantCard";
 import ApplicantModal from "./ApplicantModal";
 
@@ -32,8 +33,39 @@ export default function AdminDashboard({ onLogout, sessionToken }: AdminDashboar
 
   const [genderFilter, setGenderFilter] = useState<readonly FilterOption[]>([]);
   const [cityFilter, setCityFilter] = useState<readonly FilterOption[]>([]);
-  const [prepPassword, setPrepPassword] = useState<string | null>(null);
-  const [prepCopied, setPrepCopied] = useState(false);
+  const [prepLinkLoading, setPrepLinkLoading] = useState<string | null>(null);
+  const [prepLinkCopied, setPrepLinkCopied] = useState<string | null>(null);
+
+  const today = new Date().toISOString().slice(0, 10);
+  const upcomingEvents = events.filter((e) => e.isoDate && e.isoDate >= today);
+
+  async function handleCopyPrepLink(isoDate: string) {
+    setPrepLinkLoading(isoDate);
+    try {
+      const res = await fetch("/api/generate-contestant-link", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${sessionToken}`,
+        },
+        body: JSON.stringify({ showDate: isoDate }),
+      });
+      if (res.ok) {
+        const { url } = await res.json() as { url: string };
+        await navigator.clipboard.writeText(url);
+        setPrepLinkCopied(isoDate);
+        setTimeout(() => setPrepLinkCopied(null), 2000);
+      } else {
+        setToast({ msg: "Failed to generate link", ok: false });
+        setTimeout(() => setToast(null), 2500);
+      }
+    } catch {
+      setToast({ msg: "Failed to generate link", ok: false });
+      setTimeout(() => setToast(null), 2500);
+    } finally {
+      setPrepLinkLoading(null);
+    }
+  }
 
   async function fetchApps() {
     setLoading(true);
@@ -50,23 +82,6 @@ export default function AdminDashboard({ onLogout, sessionToken }: AdminDashboar
   }
 
   useEffect(() => { fetchApps(); }, []);
-
-  useEffect(() => {
-    async function fetchPrepPassword() {
-      try {
-        const res = await fetch("/api/contestant-prep-password", {
-          headers: { Authorization: `Bearer ${sessionToken}` },
-        });
-        if (res.ok) {
-          const data = await res.json();
-          setPrepPassword(data.password);
-        }
-      } catch {
-        // Silently fail — password section just won't show
-      }
-    }
-    fetchPrepPassword();
-  }, []);
 
   async function handleUpdate(id: string, patch: Partial<Omit<Application, "id">>) {
     try {
@@ -207,71 +222,78 @@ export default function AdminDashboard({ onLogout, sessionToken }: AdminDashboar
         </div>
       </header>
 
-      {prepPassword && (
+      {upcomingEvents.length > 0 && (
         <div style={{ maxWidth: "1200px", margin: "0 auto", padding: "24px 32px 0" }}>
           <div
             style={{
-              display: "flex",
-              alignItems: "center",
-              gap: "16px",
-              padding: "14px 20px",
+              padding: "16px 20px",
               borderRadius: "12px",
               background: "rgba(201, 168, 76, 0.06)",
               border: "1px solid rgba(201, 168, 76, 0.15)",
-              flexWrap: "wrap",
             }}
           >
             <span
               style={{
                 fontFamily: "var(--font-dm-sans)",
-                fontSize: "13px",
-                fontWeight: 500,
-                color: "var(--text-light)",
-              }}
-            >
-              Contestant Prep Password
-            </span>
-            <code
-              style={{
-                fontFamily: "var(--font-jetbrains, monospace)",
-                fontSize: "16px",
+                fontSize: "12px",
                 fontWeight: 600,
-                color: "var(--text)",
-                letterSpacing: "0.12em",
-                background: "#fff",
-                padding: "4px 14px",
-                borderRadius: "8px",
-                border: "1px solid var(--border)",
+                textTransform: "uppercase",
+                letterSpacing: "0.08em",
+                color: "var(--text-light)",
+                display: "block",
+                marginBottom: "12px",
               }}
             >
-              {prepPassword}
-            </code>
-            <button
-              type="button"
-              onClick={() => {
-                navigator.clipboard.writeText(prepPassword);
-                setPrepCopied(true);
-                setTimeout(() => setPrepCopied(false), 2000);
-              }}
-              style={{
-                display: "inline-flex",
-                alignItems: "center",
-                gap: "6px",
-                padding: "6px 14px",
-                borderRadius: "100px",
-                border: `1px solid ${prepCopied ? "var(--success)" : "var(--border)"}`,
-                background: prepCopied ? "rgba(34, 197, 94, 0.08)" : "transparent",
-                fontFamily: "var(--font-dm-sans)",
-                fontSize: "13px",
-                fontWeight: 500,
-                color: prepCopied ? "var(--success)" : "var(--text-light)",
-                cursor: "pointer",
-                transition: "all 0.2s",
-              }}
-            >
-              {prepCopied ? <Check size={14} /> : <Copy size={14} />}
-              {prepCopied ? "Copied!" : "Copy"}
-            </button>
+              Contestant Prep Links
+            </span>
+            <div style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
+              {upcomingEvents.map((event) => {
+                const isCopied = prepLinkCopied === event.isoDate;
+                const isLoading = prepLinkLoading === event.isoDate;
+                return (
+                  <div
+                    key={event.isoDate}
+                    style={{ display: "flex", alignItems: "center", gap: "12px" }}
+                  >
+                    <span
+                      style={{
+                        fontFamily: "var(--font-dm-sans)",
+                        fontSize: "14px",
+                        color: "var(--text)",
+                        flex: 1,
+                      }}
+                    >
+                      {event.date} — {event.city}
+                    </span>
+                    <button
+                      type="button"
+                      onClick={() => handleCopyPrepLink(event.isoDate!)}
+                      disabled={isLoading}
+                      style={{
+                        display: "inline-flex",
+                        alignItems: "center",
+                        gap: "6px",
+                        padding: "6px 14px",
+                        borderRadius: "100px",
+                        border: `1px solid ${isCopied ? "var(--success)" : "var(--border)"}`,
+                        background: isCopied ? "rgba(34, 197, 94, 0.08)" : "transparent",
+                        fontFamily: "var(--font-dm-sans)",
+                        fontSize: "13px",
+                        fontWeight: 500,
+                        color: isCopied ? "var(--success)" : "var(--text-light)",
+                        cursor: isLoading ? "default" : "pointer",
+                        opacity: isLoading ? 0.5 : 1,
+                        transition: "all 0.2s",
+                        flexShrink: 0,
+                      }}
+                    >
+                      {isCopied ? <Check size={14} /> : <Copy size={14} />}
+                      {isLoading ? "Generating…" : isCopied ? "Copied!" : "Copy Link"}
+                    </button>
+                  </div>
+                );
+              })}
+            </div>
           </div>
         </div>
       )}

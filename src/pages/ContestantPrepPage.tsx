@@ -1,4 +1,4 @@
-import { useState, useRef } from "react";
+import { useState, useEffect } from "react";
 import { Check, Clock, Users, Shirt, Star } from "lucide-react";
 
 /* ─── Session helpers ──────────────────────────────────────────── */
@@ -24,63 +24,48 @@ function saveSession(token: string, expiresAt: number) {
   localStorage.setItem(EXPIRES_KEY, String(expiresAt));
 }
 
-/* ─── Password gate ────────────────────────────────────────────── */
+/* ─── Loading state ────────────────────────────────────────────── */
 
-function PrepLogin({ onSuccess }: { onSuccess: () => void }) {
-  const [password, setPassword] = useState("");
-  const [error, setError] = useState("");
-  const [loading, setLoading] = useState(false);
-  const [shaking, setShaking] = useState(false);
-  const inputRef = useRef<HTMLInputElement>(null);
+function PrepLoading() {
+  return (
+    <>
+      <style>{`@keyframes prepSpin { to { transform: rotate(360deg); } }`}</style>
+      <div
+        style={{
+          minHeight: "100vh",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          position: "relative",
+          zIndex: 1,
+        }}
+      >
+        <div
+          style={{
+            width: "32px",
+            height: "32px",
+            border: "2px solid rgba(201, 168, 76, 0.2)",
+            borderTopColor: "#C9A84C",
+            borderRadius: "50%",
+            animation: "prepSpin 0.7s linear infinite",
+          }}
+        />
+      </div>
+    </>
+  );
+}
 
-  async function handleSubmit(e: React.FormEvent) {
-    e.preventDefault();
-    if (!password.trim() || loading) return;
+/* ─── Error / expired state ────────────────────────────────────── */
 
-    setLoading(true);
-    setError("");
-
-    try {
-      const res = await fetch("/api/contestant-prep-auth", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ password: password.trim() }),
-      });
-
-      if (res.ok) {
-        const data = await res.json();
-        saveSession(data.token, data.expiresAt);
-        onSuccess();
-      } else {
-        setError("Incorrect password.");
-        setShaking(true);
-        setPassword("");
-        inputRef.current?.focus();
-      }
-    } catch {
-      setError("Something went wrong. Try again.");
-    } finally {
-      setLoading(false);
-    }
-  }
-
+function PrepError() {
   return (
     <>
       <style>{`
-        @keyframes shake {
-          0%, 100% { transform: translateX(0); }
-          20%       { transform: translateX(-6px); }
-          40%       { transform: translateX(6px); }
-          60%       { transform: translateX(-6px); }
-          80%       { transform: translateX(6px); }
-        }
-        .prep-shake { animation: shake 0.4s ease; }
         @keyframes prepFadeIn {
           from { opacity: 0; transform: translateY(12px); }
           to   { opacity: 1; transform: translateY(0); }
         }
       `}</style>
-
       <div
         style={{
           minHeight: "100vh",
@@ -90,7 +75,7 @@ function PrepLogin({ onSuccess }: { onSuccess: () => void }) {
           padding: "24px",
           position: "relative",
           zIndex: 1,
-          animation: "prepFadeIn 0.5s ease-out both",
+          animation: "prepFadeIn 0.4s ease-out both",
         }}
       >
         <div
@@ -104,130 +89,32 @@ function PrepLogin({ onSuccess }: { onSuccess: () => void }) {
             backdropFilter: "blur(20px)",
             WebkitBackdropFilter: "blur(20px)",
             boxShadow: "0 8px 40px rgba(0, 0, 0, 0.3)",
+            textAlign: "center",
           }}
         >
-          <p
-            style={{
-              textAlign: "center",
-              fontSize: "2.2rem",
-              marginBottom: "12px",
-            }}
-          >
-            🌶️
-          </p>
+          <p style={{ fontSize: "2.2rem", marginBottom: "12px" }}>🌶️</p>
           <h1
             style={{
               fontFamily: "var(--font-playfair)",
-              fontSize: "26px",
+              fontSize: "24px",
               fontWeight: 700,
               color: "var(--text-ivory)",
-              textAlign: "center",
-              marginBottom: "8px",
+              marginBottom: "12px",
               lineHeight: 1.2,
             }}
           >
-            Contestant Prep
+            Link expired
           </h1>
           <p
             style={{
               fontFamily: "var(--font-cormorant)",
-              fontSize: "15px",
-              color: "rgba(245, 237, 228, 0.45)",
-              textAlign: "center",
-              marginBottom: "32px",
+              fontSize: "16px",
+              color: "rgba(245, 237, 228, 0.55)",
+              lineHeight: 1.55,
             }}
           >
-            Enter your access code to continue
+            This link has expired or is invalid. Ask your host for a new one.
           </p>
-
-          <form onSubmit={handleSubmit} noValidate>
-            <div
-              className={shaking ? "prep-shake" : ""}
-              onAnimationEnd={() => setShaking(false)}
-            >
-              <input
-                ref={inputRef}
-                type="text"
-                inputMode="text"
-                autoComplete="off"
-                value={password}
-                onChange={(e) => {
-                  setPassword(e.target.value);
-                  setError("");
-                }}
-                placeholder="Access code"
-                autoFocus
-                style={{
-                  width: "100%",
-                  padding: "14px 20px",
-                  borderRadius: "100px",
-                  border: `1px solid ${error ? "var(--crimson)" : "rgba(245, 237, 228, 0.15)"}`,
-                  fontFamily: "var(--font-jetbrains)",
-                  fontSize: "16px",
-                  letterSpacing: "0.12em",
-                  color: "var(--text-ivory)",
-                  background: "rgba(255, 255, 255, 0.05)",
-                  outline: "none",
-                  boxSizing: "border-box",
-                  marginBottom: "8px",
-                  transition: "border-color 0.2s",
-                  textAlign: "center",
-                }}
-                onFocus={(e) => {
-                  if (!error)
-                    e.currentTarget.style.borderColor =
-                      "rgba(201, 168, 76, 0.4)";
-                }}
-                onBlur={(e) => {
-                  if (!error)
-                    e.currentTarget.style.borderColor =
-                      "rgba(245, 237, 228, 0.15)";
-                }}
-              />
-            </div>
-
-            {error && (
-              <p
-                style={{
-                  color: "var(--crimson-light)",
-                  fontSize: "13px",
-                  marginBottom: "12px",
-                  textAlign: "center",
-                }}
-              >
-                {error}
-              </p>
-            )}
-
-            <button
-              type="submit"
-              disabled={loading}
-              style={{
-                width: "100%",
-                padding: "14px",
-                borderRadius: "100px",
-                border: "none",
-                background: "var(--gold-dark)",
-                color: "#0D0A08",
-                fontFamily: "var(--font-cormorant)",
-                fontSize: "16px",
-                fontWeight: 600,
-                letterSpacing: "0.04em",
-                cursor: loading ? "wait" : "pointer",
-                marginTop: error ? "0" : "4px",
-                transition: "background 0.2s, transform 0.15s",
-                opacity: loading ? 0.7 : 1,
-              }}
-              onMouseEnter={(e) => {
-                if (!loading) e.currentTarget.style.background = "#D4B05A";
-              }}
-              onMouseLeave={(e) => {
-                e.currentTarget.style.background = "var(--gold-dark)";
-              }}
-            >
-              {loading ? "Checking..." : "Enter"}
-            </button>
-          </form>
         </div>
       </div>
     </>
@@ -360,7 +247,7 @@ const PREPARED_WITH = [
   {
     title: "One thoughtful question to ask your date",
     detail:
-      "Make it conversational. Good: \u201CIf we had one weekend anywhere, where are we going?\u201D Bad: \u201CWhat do you do for work?\u201D",
+      'Make it conversational. Good: \u201CIf we had one weekend anywhere, where are we going?\u201D Bad: \u201CWhat do you do for work?\u201D',
   },
   {
     title: "One talent or party trick you can show in 30 seconds",
@@ -415,9 +302,7 @@ function PrepGuide() {
               }}
             >
               Welcome to Garam Mas
-              <em style={{ fontStyle: "italic", color: "var(--gold-accent)" }}>
-                ala
-              </em>{" "}
+              <em style={{ fontStyle: "italic", color: "var(--gold-accent)" }}>ala</em>{" "}
               Dating!
             </h1>
             <p
@@ -430,12 +315,9 @@ function PrepGuide() {
                 margin: "0 auto",
               }}
             >
-              You&apos;re about to be on a live comedy dating show in front of
-              250 people. Here&apos;s the secret: we don&apos;t need you to be
-              funny.{" "}
-              <strong style={{ color: "var(--text-ivory)" }}>
-                We need you to be REAL.
-              </strong>
+              You&apos;re about to be on a live comedy dating show in front of 250
+              people. Here&apos;s the secret: we don&apos;t need you to be funny.{" "}
+              <strong style={{ color: "var(--text-ivory)" }}>We need you to be REAL.</strong>
             </p>
           </div>
 
@@ -443,9 +325,7 @@ function PrepGuide() {
 
           {/* ── The Golden Rules ── */}
           <SectionHeader icon={Star} title="The Golden Rules" />
-          <div
-            style={{ display: "flex", flexDirection: "column", gap: "12px" }}
-          >
+          <div style={{ display: "flex", flexDirection: "column", gap: "12px" }}>
             {GOLDEN_RULES.map((rule, i) => (
               <div
                 key={i}
@@ -493,9 +373,7 @@ function PrepGuide() {
 
           {/* ── Questions ── */}
           <SectionHeader title="Questions You Will Be Asked" />
-          <div
-            style={{ display: "flex", flexDirection: "column", gap: "10px" }}
-          >
+          <div style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
             {QUESTIONS.map((q, i) => (
               <div
                 key={i}
@@ -538,9 +416,7 @@ function PrepGuide() {
 
           {/* ── Come Prepared With ── */}
           <SectionHeader icon={Check} title="Come Prepared With" />
-          <div
-            style={{ display: "flex", flexDirection: "column", gap: "12px" }}
-          >
+          <div style={{ display: "flex", flexDirection: "column", gap: "12px" }}>
             {PREPARED_WITH.map((item, i) => (
               <div
                 key={i}
@@ -610,8 +486,8 @@ function PrepGuide() {
               lineHeight: 1.6,
             }}
           >
-            This is a real date. Dress hot &mdash; bright colors, bold fits,
-            sequins welcome. No &ldquo;just came from the office&rdquo; energy.
+            This is a real date. Dress hot &mdash; bright colors, bold fits, sequins
+            welcome. No &ldquo;just came from the office&rdquo; energy.
           </p>
 
           <Divider />
@@ -626,9 +502,8 @@ function PrepGuide() {
               lineHeight: 1.6,
             }}
           >
-            Invite your friends to come support you. More energy in the room =
-            better show for everyone. Your first name will double as a discount
-            code you can share with friends for 20% off.
+            Invite your friends to come support you. More energy in the room = better
+            show for everyone.
           </p>
 
           <Divider />
@@ -681,10 +556,9 @@ function PrepGuide() {
 
           {/* ── Notes ── */}
           <Callout title="Note for Guys">
-            Audiences tend to root for the girls. Don&apos;t try to win the
-            crowd by being cocky or mean &mdash; it backfires every time.
-            Charming, genuine, and a little self-deprecating is what wins.
-            Confident but humble.
+            Audiences tend to root for the girls. Don&apos;t try to win the crowd by
+            being cocky or mean &mdash; it backfires every time. Charming, genuine,
+            and a little self-deprecating is what wins. Confident but humble.
           </Callout>
 
           <Callout title="Note for Girls">
@@ -721,11 +595,40 @@ function PrepGuide() {
 /* ─── Page ─────────────────────────────────────────────────────── */
 
 export default function ContestantPrepPage() {
-  const [authed, setAuthed] = useState(() => getSession() !== null);
-
-  return authed ? (
-    <PrepGuide />
-  ) : (
-    <PrepLogin onSuccess={() => setAuthed(true)} />
+  const [state, setState] = useState<"checking" | "authed" | "error">(() =>
+    getSession() !== null ? "authed" : "checking"
   );
+
+  useEffect(() => {
+    if (state !== "checking") return;
+
+    const params = new URLSearchParams(window.location.search);
+    const date = params.get("date");
+    const sig = params.get("sig");
+
+    if (!date || !sig) {
+      setState("error");
+      return;
+    }
+
+    fetch("/api/contestant-prep-auth", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ date, sig }),
+    })
+      .then(async (res) => {
+        if (res.ok) {
+          const data = (await res.json()) as { token: string; expiresAt: number };
+          saveSession(data.token, data.expiresAt);
+          setState("authed");
+        } else {
+          setState("error");
+        }
+      })
+      .catch(() => setState("error"));
+  }, []);
+
+  if (state === "authed") return <PrepGuide />;
+  if (state === "checking") return <PrepLoading />;
+  return <PrepError />;
 }

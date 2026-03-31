@@ -1,5 +1,39 @@
 # Changelog
 
+## chore: add sitemap.xml
+
+Added `public/sitemap.xml` with the homepage URL, weekly change frequency, and priority 1.0.
+
+**Files affected:** `public/sitemap.xml` (new)
+
+## chore: add robots.txt
+
+Added `public/robots.txt` to allow all crawlers to index public pages while blocking `/admin` and `/api/`. Includes Sitemap reference pointing to the production domain.
+
+**Files affected:** `public/robots.txt` (new)
+
+## feat: replace contestant prep password with magic links
+
+Replaced the weekly-rotating password system with per-show magic links. Admin now clicks "Copy Link" next to a show in the dashboard to get a unique, shareable URL. Contestants open the link and are automatically authenticated — no password entry needed. Links expire at midnight ET on the day of the show.
+
+**Architecture:**
+- Token scheme: `HMAC-SHA256(CONTESTANT_PREP_SALT, showDate)` embedded as `?date=YYYY-MM-DD&sig=<hex>` URL params
+- ContestantPrepPage auto-authenticates from URL params on mount; falls back to localStorage session on reload; shows "Link expired" error if invalid or no params
+- Admin dashboard shows upcoming shows with a "Copy Link" button per show that calls `POST /api/generate-contestant-link`
+
+**Files added:**
+- `api/generate-contestant-link.ts` — admin-authenticated endpoint that generates show magic links
+
+**Files modified:**
+- `api/contestant-prep-auth.ts` — rewritten to validate `{ date, sig }` instead of `{ password }`
+- `src/pages/ContestantPrepPage.tsx` — removed password form; auto-auth from URL params
+- `src/components/admin/AdminDashboard.tsx` — replaced password panel with per-show link generator
+- `src/data/events.ts` — added `isoDate` (YYYY-MM-DD) field to events with specific dates
+
+**Files deleted:**
+- `api/contestant-prep-password.ts` — weekly password fetcher, no longer needed
+- `api/lib/weekly-password.ts` — weekly password utilities, no longer needed
+
 ## fix: events below the fold on mobile
 
 On mobile, the event dates in the TableOfContents were pushed below the visible viewport due to `align-items: flex-end` pinning content to the bottom of a `min-height: 100vh` container with 100px top padding. Changed mobile wrapper to `align-items: center` and reduced top padding to 60px so events are immediately visible. Also bumped mobile font sizes for date (0.88rem) and city (0.82rem) for readability.

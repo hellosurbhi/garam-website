@@ -17,6 +17,8 @@ const CityPage = lazy(() => import("./pages/CityPage"));
 const CitiesIndexPage = lazy(() => import("./pages/CitiesIndexPage"));
 const JournalPage = lazy(() => import("./pages/JournalPage"));
 const JournalPostPage = lazy(() => import("./pages/JournalPostPage"));
+const TipsPage = lazy(() => import("./pages/TipsPage"));
+const TipPostPage = lazy(() => import("./pages/TipPostPage"));
 
 function SubpageOverlay() {
   const { pathname } = useLocation();
@@ -29,10 +31,13 @@ function SubpageOverlay() {
     "/faq": DARK,
     "/cities": DARK,
     "/journal": DARK,
+    "/south-asian-dating-tips": DARK,
   };
   const background =
     overlayBg[pathname] ??
-    (pathname.startsWith("/cities/") || pathname.startsWith("/journal/")
+    (pathname.startsWith("/cities/") ||
+    pathname.startsWith("/journal/") ||
+    pathname.startsWith("/south-asian-dating-tips/")
       ? DARK
       : "rgba(255, 248, 240, 0.50)");
   return (
@@ -112,6 +117,8 @@ function App() {
           <Route path="/cities/:city" element={<CityPage />} />
           <Route path="/journal" element={<JournalPage />} />
           <Route path="/journal/:slug" element={<JournalPostPage />} />
+          <Route path="/south-asian-dating-tips" element={<TipsPage />} />
+          <Route path="/south-asian-dating-tips/:slug" element={<TipPostPage />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
       </Suspense>

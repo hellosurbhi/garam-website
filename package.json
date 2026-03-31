@@ -4,16 +4,19 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
-    "dev": "vite",
-    "build": "tsc -b && vite build",
-    "build:prerender": "tsc -b && vite build && npx tsx scripts/prerender.ts",
+    "dev": "astro dev",
+    "build": "astro build",
+    "preview": "astro preview",
     "lint": "eslint .",
-    "preview": "vite preview",
+    "check": "astro check",
     "migrate:locations": "npx tsx scripts/migrate-locations.ts"
   },
   "dependencies": {
+    "@astrojs/react": "^5.0.2",
+    "@astrojs/vercel": "^10.0.3",
     "@vercel/analytics": "^2.0.1",
     "@vercel/speed-insights": "^2.0.0",
+    "astro": "^6.1.2",
     "country-state-city": "^3.2.1",
     "firebase": "^12.9.0",
     "jose": "^6.2.2",

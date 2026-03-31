@@ -10,6 +10,7 @@ lerna-debug.log*
 node_modules
 dist
 dist-ssr
+.astro
 *.local
 .agents
 
@@ -31,3 +32,6 @@ dist-ssr
 # Dolt database files (added by bd init)
 .dolt/
 *.db
+
+# bv (beads viewer) local config and caches
+.bv/

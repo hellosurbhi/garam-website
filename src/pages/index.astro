@@ -1,0 +1,283 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import Hero from '@/components/Hero.astro';
+import Nav from '@/components/Nav.astro';
+import { CREATOR_URLS } from '@/data/socials';
+import { SOCIAL_URLS } from '@/data/socials';
+import { events } from '@/data/events';
+import { isEventPast } from '@/utils/eventDate';
+
+const upcomingEvents = events.filter((e) => !isEventPast(e.date) && !e.hidden);
+
+// Organization JSON-LD
+const orgJsonLd = JSON.stringify({
+  "@context": "https://schema.org",
+  "@type": "Organization",
+  name: "Garam Masala Dating",
+  url: "https://garammasaladating.com",
+  description: "A live comedy dating show and South Asian singles mixer running weekly in NYC and monthly in Jersey City.",
+  sameAs: [SOCIAL_URLS.instagram, SOCIAL_URLS.tiktok, SOCIAL_URLS.youtube],
+  logo: "https://garammasaladating.com/og-image.jpg",
+  contactPoint: {
+    "@type": "ContactPoint",
+    email: "contact@garammasaladating.com",
+    contactType: "customer service",
+  },
+});
+
+// Events JSON-LD
+const today = new Date().toISOString().slice(0, 10);
+const upcomingForSchema = events.filter((e) => !e.hidden && e.isoDate && e.isoDate >= today);
+const eventsJsonLd = upcomingForSchema.length > 0 ? JSON.stringify({
+  "@context": "https://schema.org",
+  "@type": "ItemList",
+  itemListElement: upcomingForSchema.map((e, i) => ({
+    "@type": "ListItem",
+    position: i + 1,
+    item: {
+      "@type": "Event",
+      name: `Garam Masala Dating — ${e.city}`,
+      description: "A live comedy dating show and South Asian singles mixer. Real blind dates on stage, followed by a mixer.",
+      startDate: `${e.isoDate}T20:00:00-04:00`,
+      endDate: `${e.isoDate}T22:00:00-04:00`,
+      eventStatus: "https://schema.org/EventScheduled",
+      eventAttendanceMode: "https://schema.org/OfflineEventAttendanceMode",
+      location: {
+        "@type": "Place",
+        name: e.city,
+        address: {
+          "@type": "PostalAddress",
+          addressLocality: e.city.split(",")[0].trim(),
+          addressRegion: e.city.includes(",") ? e.city.split(",")[1].trim() : undefined,
+          addressCountry: "US",
+        },
+      },
+      organizer: {
+        "@type": "Organization",
+        name: "Garam Masala Dating",
+        url: "https://garammasaladating.com",
+      },
+      offers: {
+        "@type": "Offer",
+        url: e.url,
+        availability: "https://schema.org/InStock",
+      },
+      image: "https://garammasaladating.com/og-image.jpg",
+    },
+  })),
+}) : null;
+---
+
+<BaseLayout
+  title="Garam Masala Dating | Desi Comedy Dating Show in NYC"
+  description="Garam Masala Dating is a live South Asian comedy dating show and singles mixer in New York City. Watch real desi singles compete for a date on stage. Tickets available now."
+>
+  <Fragment slot="head">
+    <script type="application/ld+json" set:html={orgJsonLd} />
+    {eventsJsonLd && <script type="application/ld+json" set:html={eventsJsonLd} />}
+  </Fragment>
+
+  <Hero />
+  <Nav />
+
+  <!-- CenterBox -->
+  <div class="center-wrapper">
+    <div class="center-box">
+      <div class="title-area">
+        <h1 class="title">Garam Mas<em>ala</em> Dating</h1>
+        <p class="subtitle">
+          Come watch a desi couple find love, and if you're lucky, make out.
+          Made with love in New York by comedians
+          <a href={CREATOR_URLS.surbhi} target="_blank" rel="noopener noreferrer" class="subtitle-link">Surbhi</a>
+          {' '}and{' '}
+          <a href={CREATOR_URLS.wyatt} target="_blank" rel="noopener noreferrer" class="subtitle-link">Wyatt Feegrado</a>
+          {' '}at{' '}
+          <a href={CREATOR_URLS.venue} target="_blank" rel="noopener noreferrer" class="subtitle-link">Top Secret Comedy Club</a>.
+        </p>
+      </div>
+
+      <!-- TableOfContents -->
+      <div class="toc">
+        {upcomingEvents.map((event, i) => {
+          const isLive = event.url && event.url !== "#";
+          return isLive ? (
+            <a
+              href={event.url}
+              target="_blank"
+              rel="noopener noreferrer"
+              class="toc-row"
+              style={`animation-delay: ${1.0 + i * 0.12}s`}
+            >
+              <span class="toc-date">{event.date}</span>
+              <span class="toc-city">{event.city}</span>
+            </a>
+          ) : (
+            <div
+              class="toc-row toc-row-dimmed"
+              style={`animation-delay: ${1.0 + i * 0.12}s`}
+            >
+              <span class="toc-date">{event.date}</span>
+              <span class="toc-city">{event.city}</span>
+            </div>
+          );
+        })}
+      </div>
+    </div>
+  </div>
+
+  <!-- ScrollIndicator -->
+  <div class="scroll-indicator">
+    <div class="scroll-line"></div>
+  </div>
+</BaseLayout>
+
+<style>
+  /* CenterBox */
+  .center-wrapper {
+    position: relative;
+    z-index: 10;
+    display: flex;
+    align-items: flex-end;
+    justify-content: flex-start;
+    min-height: 100vh;
+    padding: 0 60px 64px;
+    box-sizing: border-box;
+    width: 100%;
+    animation: fadeUp 1.2s ease-out both;
+    animation-delay: 0.3s;
+  }
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(30px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  .center-box {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    width: 100%;
+    gap: 48px;
+  }
+  .title-area {
+    flex: 0 0 auto;
+    max-width: 440px;
+  }
+  .title {
+    font-family: var(--font-cormorant), serif;
+    font-size: 3rem;
+    font-weight: 600;
+    color: var(--text-ivory);
+    line-height: 1.08;
+    margin: 0 0 16px 0;
+    letter-spacing: -0.01em;
+    text-shadow: 0 2px 12px rgba(0, 0, 0, 0.4);
+  }
+  .title em {
+    font-style: italic;
+    font-weight: 400;
+    color: var(--gold-accent);
+  }
+  .subtitle {
+    font-family: var(--font-dm-sans), sans-serif;
+    font-size: 0.95rem;
+    font-weight: 400;
+    color: rgba(245, 237, 228, 0.8);
+    line-height: 1.5;
+    margin: 0;
+    letter-spacing: 0.01em;
+    text-shadow: 0 2px 12px rgba(0, 0, 0, 0.4);
+  }
+  .subtitle-link {
+    color: var(--gold-accent);
+    text-decoration: none;
+    transition: color 0.2s ease;
+  }
+  .subtitle-link:hover {
+    color: var(--text-ivory);
+    text-decoration: underline;
+  }
+
+  /* TableOfContents */
+  .toc {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+    flex-shrink: 0;
+    max-width: 280px;
+  }
+  .toc-row {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    padding: 6px 0;
+    text-decoration: none;
+    color: #F5EDE4;
+    cursor: pointer;
+    transition: color 0.3s ease;
+    animation: fadeRowIn 0.7s ease-out both;
+    text-shadow: 0 2px 12px rgba(0, 0, 0, 0.4);
+  }
+  @keyframes fadeRowIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  .toc-row:hover { color: #ff2d9b; }
+  .toc-row-dimmed {
+    opacity: 0.4;
+    cursor: default;
+    pointer-events: none;
+  }
+  .toc-date {
+    font-family: "DM Sans", sans-serif;
+    font-size: 0.78rem;
+    font-weight: 600;
+    letter-spacing: 0.02em;
+    color: #F5EDE4;
+  }
+  .toc-city {
+    font-family: "DM Sans", sans-serif;
+    font-size: 0.72rem;
+    font-weight: 400;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: rgba(245, 237, 228, 0.6);
+  }
+
+  /* ScrollIndicator */
+  .scroll-indicator {
+    position: fixed;
+    bottom: 28px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 60;
+    animation: indicatorFadeUp 1s ease-out 2s both;
+  }
+  @keyframes indicatorFadeUp {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+  .scroll-line {
+    width: 1px;
+    height: 36px;
+    background: rgba(255, 255, 255, 0.5);
+    animation: pulse 2s ease-in-out infinite;
+  }
+  @keyframes pulse {
+    0%, 100% { opacity: 0.25; transform: scaleY(0.7); }
+    50% { opacity: 0.8; transform: scaleY(1); }
+  }
+
+  @media (max-width: 768px) {
+    .center-wrapper { padding: 0 24px 24px; min-height: 100dvh; }
+    .center-box { flex-direction: column; align-items: flex-start; gap: 16px; }
+    .title-area { max-width: 100%; }
+    .title { font-size: 2rem; margin-bottom: 8px; }
+    .subtitle { font-size: 0.82rem; line-height: 1.4; }
+    .toc { max-width: 100%; }
+  }
+  @media (max-width: 600px) {
+    .toc-row { padding: 5px 0; }
+    .toc-date { font-size: 0.88rem; }
+    .toc-city { font-size: 0.82rem; }
+  }
+</style>

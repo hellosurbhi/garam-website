@@ -1,6 +1,6 @@
 import type { VercelRequest, VercelResponse } from "@vercel/node";
 import { createHmac } from "crypto";
-import { verifyIdToken } from "./_firebase-admin";
+import { verifyIdToken } from "./_verify-token";
 
 const ISO_DATE_RE = /^\d{4}-\d{2}-\d{2}$/;
 

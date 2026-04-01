@@ -1,5 +1,13 @@
 # Changelog
 
+## feat: success confirmation screen and improved error toast on apply form
+
+Replaced the brief success toast with a full confirmation panel after form submission. The panel thanks the applicant, encourages following @garammasaladating on Instagram (increases odds), explains that most contestants start as audience Stealers, offers a 20% off coupon code (STEALER), and links to the next upcoming show's tickets (dynamically computed from events data). Updated the error toast with friendlier copy that directs users to DM @garammasaladating on Instagram. Toast styling updated to support longer messages.
+
+- **Modified:** `src/components/ApplyPage.tsx` — added `submitted` state, success panel with next-show link, updated error toast copy
+- **Modified:** `src/components/ApplyPage.module.css` — success panel styles, wider toast for error messages
+- **Imports:** `events` from `@/data/events` for dynamic next-show lookup
+
 ## feat: email notifications on contestant application submission
 
 Added email notifications via Resend so Surbhi gets an email with applicant details (name, age, location, Instagram, pitch, etc.) every time someone submits the contestant application form. The notification is fire-and-forget — if the email fails to send, the application is still saved to Firestore and the user sees the normal success message.

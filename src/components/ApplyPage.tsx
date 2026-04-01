@@ -1,10 +1,11 @@
-import { useState, useEffect, type ChangeEvent } from "react";
+import { useState, useEffect, useMemo, type ChangeEvent } from "react";
 import { collection, addDoc, serverTimestamp } from "firebase/firestore";
 import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import Select from "react-select";
 import { useGeoData } from "@/hooks/useGeoData";
 import { db, storage } from "@/lib/firebase";
 import { COMMUNITY_OPTIONS, INCOME_OPTIONS } from "@/types/application";
+import { events } from "@/data/events";
 import { formSelectStyles } from "@/utils/reactSelectStyles";
 import styles from "./ApplyPage.module.css";
 
@@ -81,6 +82,7 @@ export default function ApplyPage() {
   const [photoPreview, setPhotoPreview] = useState<string | null>(null);
   const [errors, setErrors] = useState<Partial<Record<keyof FormState | "photo", string>>>({});
   const [submitting, setSubmitting] = useState(false);
+  const [submitted, setSubmitted] = useState(false);
   const [toast, setToast] = useState<{ msg: string; ok: boolean } | null>(null);
 
   useEffect(() => {
@@ -92,6 +94,11 @@ export default function ApplyPage() {
   function showToast(msg: string, ok: boolean) {
     setToast({ msg, ok });
   }
+
+  const nextShow = useMemo(() => {
+    const today = new Date().toISOString().slice(0, 10);
+    return events.find((e) => !e.hidden && e.isoDate && e.isoDate >= today) ?? null;
+  }, []);
 
   const { loading: geoLoading, countryOptions, stateOptions, cityOptions } = useGeoData(form.country, form.state);
 
@@ -205,9 +212,9 @@ export default function ApplyPage() {
       setPhotoFile(null);
       setPhotoPreview(null);
       setErrors({});
-      showToast("Application received! We'll be in touch. 🌶️", true);
+      setSubmitted(true);
     } catch {
-      showToast("Submission failed — please try again", false);
+      showToast("Sorry, the form isn't working right now. DM us on @garammasaladating on Instagram and we'll sort it out!", false);
     } finally {
       setSubmitting(false);
     }
@@ -224,11 +231,61 @@ export default function ApplyPage() {
           </div>
 
           <div className={styles.titleArea}>
-            <h1 className={styles.title}>Apply to Be on Garam Masala Dating</h1>
-            <p className={styles.subtitle}>NYC&apos;s hottest live comedy dating show 🌶️</p>
-            <div className={styles.divider} />
+            {!submitted && (
+              <>
+                <h1 className={styles.title}>Apply to Be on Garam Masala Dating</h1>
+                <p className={styles.subtitle}>NYC&apos;s hottest live comedy dating show 🌶️</p>
+                <div className={styles.divider} />
+              </>
+            )}
           </div>
 
+          {submitted ? (
+            <div className={styles.successPanel}>
+              <div className={styles.successEmoji}>🌶️</div>
+              <h1 className={styles.successTitle}>Thanks for applying!</h1>
+              <p className={styles.successText}>
+                We review every application and will reach out if you&apos;re selected.
+              </p>
+
+              <div className={styles.successCard}>
+                <h3 className={styles.successCardTitle}>Want to boost your chances?</h3>
+                <p className={styles.successCardText}>
+                  Follow{" "}
+                  <a
+                    href="https://instagram.com/garammasaladating"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className={styles.successLink}
+                  >
+                    @garammasaladating
+                  </a>{" "}
+                  on Instagram — we tend to pick contestants who are already part of the community.
+                </p>
+              </div>
+
+              <div className={styles.successCard}>
+                <h3 className={styles.successCardTitle}>Come steal the show</h3>
+                <p className={styles.successCardText}>
+                  Most of our contestants started as audience members. Come to a show, be a Stealer,
+                  and show us what you&apos;ve got — it seriously increases your odds.
+                </p>
+                <p className={styles.successCoupon}>
+                  Use code <strong>STEALER</strong> for 20% off your next ticket.
+                </p>
+                {nextShow && (
+                  <a
+                    href={nextShow.url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className={styles.successTicketButton}
+                  >
+                    Get Tickets — {nextShow.date} in {nextShow.city}
+                  </a>
+                )}
+              </div>
+            </div>
+          ) : (
           <div className={styles.panel}>
             <form onSubmit={handleSubmit} noValidate>
               <div className={styles.typeSection}>
@@ -471,6 +528,7 @@ export default function ApplyPage() {
               </p>
             </form>
           </div>
+          )}
         </div>
       </div>
 

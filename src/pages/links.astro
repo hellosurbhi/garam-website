@@ -472,9 +472,6 @@ const reversedPress = [...pressItems].reverse();
     width: 100%;
     height: 100%;
     overflow: visible;
-    display: flex;
-    align-items: center;
-    justify-content: center;
   }
 
   .modal-dialog::backdrop {
@@ -485,6 +482,8 @@ const reversedPress = [...pressItems].reverse();
 
   .modal-dialog[open] {
     display: flex;
+    align-items: center;
+    justify-content: center;
   }
 
   .modal-inner {

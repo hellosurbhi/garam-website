@@ -1,5 +1,11 @@
 # Changelog
 
+## fix: links page modals always visible and not closable
+
+The two `<dialog>` modals (events and press) on `/links` were permanently visible at the bottom of the page, stacked on each other, and could not be closed. Root cause: `.modal-dialog` had `display: flex` set unconditionally, overriding the browser's native `display: none` for closed `<dialog>` elements. Moved `display: flex` and alignment properties into `.modal-dialog[open]` only.
+
+- **File:** `src/pages/links.astro` (CSS section)
+
 ## v1.0.0: Migrate from Vite SPA to Astro with React islands
 
 Major architecture migration. The site was a React 19 SPA with Vite, react-router-dom, and a Puppeteer prerender script. It is now an Astro static site with React islands for the 3 interactive pages.

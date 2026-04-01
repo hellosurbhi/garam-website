@@ -169,7 +169,7 @@ export default function ApplyPage() {
       await uploadBytes(storageRef, photoFile!);
       const photoUrl = await getDownloadURL(storageRef);
 
-      await addDoc(collection(db, "applications"), {
+      const applicationData = {
         applicationType: form.applicationType,
         name: form.name.trim(),
         age: parseInt(form.age),
@@ -185,10 +185,21 @@ export default function ApplyPage() {
         referrerName: form.applicationType === "Nomination" ? form.referrerName.trim() : "",
         pitch: form.pitch.trim(),
         photoUrl,
+      };
+
+      await addDoc(collection(db, "applications"), {
+        ...applicationData,
         status: "New",
         notes: "",
         submittedAt: serverTimestamp(),
       });
+
+      // Fire-and-forget: email notification (does not affect submission)
+      fetch("/api/notify-application", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(applicationData),
+      }).catch(() => {});
 
       setForm(INITIAL);
       setPhotoFile(null);

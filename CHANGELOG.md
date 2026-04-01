@@ -1,5 +1,14 @@
 # Changelog
 
+## feat: email notifications on contestant application submission
+
+Added email notifications via Resend so Surbhi gets an email with applicant details (name, age, location, Instagram, pitch, etc.) every time someone submits the contestant application form. The notification is fire-and-forget — if the email fails to send, the application is still saved to Firestore and the user sees the normal success message.
+
+- **New file:** `api/notify-application.ts` — Vercel serverless function that sends the notification email via Resend
+- **Modified:** `src/components/ApplyPage.tsx` — fires a non-blocking POST to the notification endpoint after Firestore write
+- **New dependency:** `resend` (server-side only, zero client bundle impact)
+- **New env vars:** `RESEND_API_KEY`, `NOTIFICATION_EMAIL` (must be set in Vercel dashboard)
+
 ## fix: links page modals always visible and not closable
 
 The two `<dialog>` modals (events and press) on `/links` were permanently visible at the bottom of the page, stacked on each other, and could not be closed. Root cause: `.modal-dialog` had `display: flex` set unconditionally, overriding the browser's native `display: none` for closed `<dialog>` elements. Moved `display: flex` and alignment properties into `.modal-dialog[open]` only.

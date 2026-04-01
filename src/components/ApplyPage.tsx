@@ -83,7 +83,12 @@ export default function ApplyPage() {
   const [errors, setErrors] = useState<Partial<Record<keyof FormState | "photo", string>>>({});
   const [submitting, setSubmitting] = useState(false);
   const [submitted, setSubmitted] = useState(false);
+  const [canGoBack, setCanGoBack] = useState(false);
   const [toast, setToast] = useState<{ msg: string; ok: boolean } | null>(null);
+
+  useEffect(() => {
+    if (window.history.length > 1) setCanGoBack(true);
+  }, []);
 
   useEffect(() => {
     if (!toast) return;
@@ -225,9 +230,11 @@ export default function ApplyPage() {
       <div className={styles.page} onClick={() => window.history.back()}>
         <div className={styles.container} onClick={(e) => e.stopPropagation()}>
           <div className={styles.headerArea}>
-            <button type="button" onClick={() => window.history.back()} className={styles.backButton}>
-              ← Back
-            </button>
+            {canGoBack && (
+              <button type="button" onClick={() => window.history.back()} className={styles.backButton}>
+                ← Back
+              </button>
+            )}
           </div>
 
           <div className={styles.titleArea}>

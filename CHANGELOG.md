@@ -1,5 +1,11 @@
 # Changelog
 
+## fix: hide back button when landing directly on /apply
+
+The back button on the apply page now only shows when there's browser history to go back to. Users arriving directly (e.g. from Instagram bio link) no longer see a useless back button.
+
+- **Modified:** `src/components/ApplyPage.tsx` — added `canGoBack` state checked via `window.history.length` on mount
+
 ## feat: success confirmation screen and improved error toast on apply form
 
 Replaced the brief success toast with a full confirmation panel after form submission. The panel thanks the applicant, encourages following @garammasaladating on Instagram (increases odds), explains that most contestants start as audience Stealers, offers a 20% off coupon code (STEALER), and links to the next upcoming show's tickets (dynamically computed from events data). Updated the error toast with friendlier copy that directs users to DM @garammasaladating on Instagram. Toast styling updated to support longer messages.

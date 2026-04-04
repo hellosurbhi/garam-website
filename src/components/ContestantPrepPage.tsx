@@ -596,27 +596,25 @@ function PrepGuide() {
 /* ─── Page ─────────────────────────────────────────────────────── */
 
 export default function ContestantPrepPage() {
+  const [params] = useState(() => {
+    if (typeof window === "undefined") return { date: null as string | null, sig: null as string | null };
+    const sp = new URLSearchParams(window.location.search);
+    return { date: sp.get("date"), sig: sp.get("sig") };
+  });
 
-  const [state, setState] = useState<"checking" | "authed" | "error">(() =>
-    getSession() !== null ? "authed" : "checking"
-  );
+  const [state, setState] = useState<"checking" | "authed" | "error">(() => {
+    if (getSession() !== null) return "authed";
+    if (!params.date || !params.sig) return "error";
+    return "checking";
+  });
 
   useEffect(() => {
     if (state !== "checking") return;
 
-    const params = new URLSearchParams(window.location.search);
-    const date = params.get("date");
-    const sig = params.get("sig");
-
-    if (!date || !sig) {
-      setState("error");
-      return;
-    }
-
     fetch("/api/contestant-prep-auth", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ date, sig }),
+      body: JSON.stringify({ date: params.date, sig: params.sig }),
     })
       .then(async (res) => {
         if (res.ok) {
@@ -628,7 +626,7 @@ export default function ContestantPrepPage() {
         }
       })
       .catch(() => setState("error"));
-  }, []);
+  }, [state, params]);
 
   if (state === "authed") return <PrepGuide />;
   if (state === "checking") return <PrepLoading />;

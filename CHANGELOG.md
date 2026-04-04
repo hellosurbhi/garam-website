@@ -1,5 +1,14 @@
 # Changelog
 
+## remove: Content-Security-Policy header from vercel.json
+
+Removed the CSP header entirely rather than continuing to patch allowed origins for each new third-party script (GTM, PostHog, Meta Pixel, etc.). The header was actively blocking analytics scripts in production.
+
+**Files changed:**
+- `vercel.json` — removed `Content-Security-Policy` header; all other security headers (HSTS, X-Frame-Options, X-Content-Type-Options, Referrer-Policy, COOP) remain
+- `test/meta-pixel.test.ts` — removed the CSP validation test suite (3 tests); Meta Pixel component and BaseLayout tests unchanged
+- `BUGS.md` — removed the open "CSP blocks GTM and PostHog scripts" bug entry (resolved by this change)
+
 ## fix: code review round — photo state, DST offsets, storage auth, toast cleanup, touch targets
 
 Verified and fixed findings from code review:

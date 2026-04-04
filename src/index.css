@@ -73,6 +73,17 @@
   --text-ivory: #F5EDE4;
   --gold-accent: #E2C97E;
   --surface-dark: #4A0E1B;
+
+  /* v3 palette */
+  --hot-pink: #E91E76;
+  --electric-yellow: #FFD600;
+  --off-white: #FFF8F0;
+  --rich-red: #C62828;
+  --deep-magenta: #AD1457;
+  --charcoal: #1A1A1A;
+  --ink: #111;
+  --spice-orange: #FF6D00;
+  --muted: #888;
 }
 
 *,

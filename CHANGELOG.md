@@ -1,5 +1,19 @@
 # Changelog
 
+## add: 5 SEO journal posts scheduled over next 5 weeks
+
+Added five blog posts targeting featured snippets, scheduled weekly Apr 11 through May 9:
+1. "What Actually Happens at a Live Comedy Dating Show" (Apr 11) — targets "live dating show NYC"
+2. "The Realest Way to Meet Desi Singles in NYC" (Apr 18) — targets "desi singles NYC"
+3. "How to Get Cast on a Live Dating Show" (Apr 25) — targets "apply to be on a dating show"
+4. "Best Things to Do in NYC If You're Single and Bored of Bars" (May 2) — targets "singles events NYC"
+5. "Indian Matchmaking, Hinge, and a Live Comedy Show" (May 9) — targets "Indian Matchmaking vs dating apps"
+
+All include H2 sections, snippet-ready openers, 4-question FAQPage schema, and real show details (whiteboard reveal, 250-person audience, 40+ shows, 3 couples). Posts 4 mentions UCB/Magnet/PIT, speed dating, rooftop events for editorial depth.
+
+**Files changed:**
+- `src/data/journal.ts` — 5 new posts added to journalPosts array
+
 ## add: 3 SEO-optimized journal posts with FAQPage schema
 
 Added three blog posts targeting Google featured snippets and People Also Ask boxes:

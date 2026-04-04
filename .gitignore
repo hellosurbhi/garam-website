@@ -36,3 +36,6 @@ SITE-AUDIT.md
 
 # bv (beads viewer) local config and caches
 .bv/
+
+# stryker temp files
+.stryker-tmp

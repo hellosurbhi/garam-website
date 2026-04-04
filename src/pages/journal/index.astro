@@ -1,6 +1,6 @@
 ---
 import BaseLayout from '@/layouts/BaseLayout.astro';
-import { journalPostsSorted } from '@/data/journal';
+import { journalPostsPublished } from '@/data/journal';
 import { buildBreadcrumbJsonLd } from '@/utils/breadcrumbs';
 
 const TITLE = "Journal | Garam Masala Dating";
@@ -50,7 +50,7 @@ const breadcrumbJsonLd = buildBreadcrumbJsonLd([
 
       <!-- Post list -->
       <div class="journal-list">
-        {journalPostsSorted.map((post, i) => (
+        {journalPostsPublished.map((post, i) => (
           <a
             href={`/journal/${post.slug}`}
             class="journal-card"

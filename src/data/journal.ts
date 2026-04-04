@@ -144,8 +144,8 @@ export const journalPosts: JournalPost[] = [
       "South Asian Singles Events in NYC: What\u2019s Actually Worth Going To",
     metaDescription:
       "A guide to South Asian singles events in NYC, from desi mixers to live dating shows. What\u2019s actually worth your time and what to skip.",
-    datePublished: "2026-04-04",
-    dateModified: "2026-04-04",
+    datePublished: "2026-03-28",
+    dateModified: "2026-03-28",
     author: "Garam Masala Dating",
     excerpt:
       "Yes, there are South Asian singles events in NYC. And the options have gotten significantly better in the last few years.",
@@ -260,8 +260,8 @@ export const journalPosts: JournalPost[] = [
       "Desi Dating Show vs. Dating Apps: What 4 Years of Running One Taught Me",
     metaDescription:
       "After four years of running Garam Masala Dating, here\u2019s what a live desi dating show taught me about chemistry, connection, and why apps can\u2019t replicate what happens on stage.",
-    datePublished: "2026-04-04",
-    dateModified: "2026-04-04",
+    datePublished: "2026-03-21",
+    dateModified: "2026-03-21",
     author: "Surbhi",
     excerpt:
       "A live desi dating show puts two people in front of a crowd and asks them to be real. Dating apps let you curate a version of yourself from behind a screen.",
@@ -383,8 +383,8 @@ export const journalPosts: JournalPost[] = [
     title: "What We Learned From 100 Desi Blind Dates",
     metaDescription:
       "After running Garam Masala Dating for over a year and watching hundreds of live blind dates unfold on stage, here's what we actually learned about South Asian dating.",
-    datePublished: "2026-03-31",
-    dateModified: "2026-03-31",
+    datePublished: "2026-03-14",
+    dateModified: "2026-03-14",
     author: "Garam Masala Dating",
     excerpt:
       "We've watched a lot of first dates. Not through an app, not on a reality show set — live, on stage, in front of a couple hundred people who have opinions and aren't shy about sharing them.",
@@ -448,8 +448,8 @@ export const journalPosts: JournalPost[] = [
     title: "How to Prepare for a Live Matchmaking Show (Without Psyching Yourself Out)",
     metaDescription:
       "You got cast on Garam Masala Dating. Here\u2019s exactly how to prepare \u2014 what to wear, what to expect on stage, and how to not be the person who chokes in front of 250 people.",
-    datePublished: "2026-03-31",
-    dateModified: "2026-03-31",
+    datePublished: "2026-03-07",
+    dateModified: "2026-03-07",
     author: "Garam Masala Dating",
     excerpt:
       "So you applied, you got picked, and now you\u2019re going to go on a blind date in front of 250 strangers. Good.",

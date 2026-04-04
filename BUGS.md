@@ -56,14 +56,6 @@
 - **What should happen:** Applications should be paginated with Firestore cursor-based pagination.
 - **Fix:** Use `query()` with `limit()`, `orderBy()`, and `startAfter()` for pagination when app count grows.
 
-### [MEDIUM] CSP blocks GTM and PostHog scripts
-- **Date:** 2026-04-03
-- **File:** `vercel.json:14`
-- **Status:** Open
-- **Severity:** Medium
-- **What's happening:** The Content-Security-Policy in `vercel.json` is missing origins for GTM (`https://www.googletagmanager.com` needed in `script-src` and `connect-src`) and PostHog (`https://us-assets.i.posthog.com` in `script-src`, `https://us.i.posthog.com` in `connect-src`). Both scripts are injected via inline code but load external resources that the CSP blocks.
-- **What should happen:** GTM and PostHog should load and send analytics without CSP violations.
-- **Fix:** Add the missing origins to the relevant CSP directives in `vercel.json`.
 
 ## Fixed
 

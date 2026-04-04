@@ -8,11 +8,7 @@
         { "key": "X-Frame-Options", "value": "DENY" },
         { "key": "Referrer-Policy", "value": "strict-origin-when-cross-origin" },
         { "key": "Strict-Transport-Security", "value": "max-age=63072000; includeSubDomains; preload" },
-        { "key": "Cross-Origin-Opener-Policy", "value": "same-origin" },
-        {
-          "key": "Content-Security-Policy",
-          "value": "default-src 'self'; script-src 'self' 'unsafe-inline' https://va.vercel-scripts.com https://connect.facebook.net; style-src 'self' 'unsafe-inline'; img-src 'self' data: https://firebasestorage.googleapis.com https://www.facebook.com; font-src 'self'; connect-src 'self' https://*.firebaseio.com https://*.googleapis.com https://firestore.googleapis.com https://va.vercel-scripts.com https://vitals.vercel-insights.com https://www.facebook.com; frame-src 'none'; object-src 'none'; base-uri 'self'"
-        }
+        { "key": "Cross-Origin-Opener-Policy", "value": "same-origin" }
       ]
     },
     {

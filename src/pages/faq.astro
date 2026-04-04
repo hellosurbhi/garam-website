@@ -107,16 +107,8 @@ const breadcrumbJsonLd = buildBreadcrumbJsonLd([
       <div class="faq-list">
         {FAQS.map((item, i) => (
           <div class="faq-item">
-            <button
-              class="faq-toggle"
-              aria-expanded="false"
-            >
-              <span class="faq-question">{item.q}</span>
-              <svg class="faq-chevron" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg>
-            </button>
-            <div class="faq-answer">
-              <p class="faq-answer-text">{item.a}</p>
-            </div>
+            <h2 class="faq-question">{item.q}</h2>
+            <p class="faq-answer-text">{item.a}</p>
           </div>
         ))}
       </div>
@@ -134,24 +126,6 @@ const breadcrumbJsonLd = buildBreadcrumbJsonLd([
   </div>
 </BaseLayout>
 
-<script>
-  document.querySelectorAll('.faq-toggle').forEach(btn => {
-    btn.addEventListener('click', () => {
-      const item = btn.closest('.faq-item');
-      const isOpen = item?.classList.contains('is-open');
-      // Close all
-      document.querySelectorAll('.faq-item').forEach(el => {
-        el.classList.remove('is-open');
-        el.querySelector('.faq-toggle')?.setAttribute('aria-expanded', 'false');
-      });
-      // Open clicked if it was closed
-      if (!isOpen) {
-        item?.classList.add('is-open');
-        btn.setAttribute('aria-expanded', 'true');
-      }
-    });
-  });
-</script>
 
 <style>
   @keyframes faqFadeIn {
@@ -227,61 +201,16 @@ const breadcrumbJsonLd = buildBreadcrumbJsonLd([
     border-radius: 12px;
     border: 1px solid rgba(245, 237, 228, 0.07);
     background: rgba(255, 255, 255, 0.02);
-    overflow: hidden;
-    transition: border-color 0.15s, background 0.15s;
-  }
-
-  .faq-item.is-open {
-    border-color: rgba(201, 168, 76, 0.25);
-    background: rgba(201, 168, 76, 0.05);
-  }
-
-  .faq-toggle {
-    width: 100%;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 16px;
     padding: 18px 20px;
-    background: none;
-    border: none;
-    cursor: pointer;
-    text-align: left;
   }
 
   .faq-question {
     font-family: var(--font-cormorant);
     font-size: 17px;
     font-weight: 600;
-    color: rgba(245, 237, 228, 0.85);
-    line-height: 1.4;
-    transition: color 0.15s;
-  }
-
-  .faq-item.is-open .faq-question {
     color: var(--text-ivory);
-  }
-
-  .faq-answer {
-    max-height: 0;
-    overflow: hidden;
-    padding: 0 20px;
-    transition: max-height 0.25s ease, padding 0.25s ease;
-  }
-
-  .faq-item.is-open .faq-answer {
-    max-height: 500px;
-    padding: 0 20px 20px;
-  }
-
-  .faq-chevron {
-    color: #C9A84C;
-    flex-shrink: 0;
-    transition: transform 0.2s;
-  }
-
-  .faq-item.is-open .faq-chevron {
-    transform: rotate(180deg);
+    line-height: 1.4;
+    margin: 0 0 8px;
   }
 
   .faq-answer-text {

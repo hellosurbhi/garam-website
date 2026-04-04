@@ -23,8 +23,14 @@ vi.mock("@/lib/firebase", () => ({
   getFirebaseStorage: vi.fn(() => "mock-storage"),
 }));
 
+interface MockSelectProps {
+  placeholder: string;
+  onChange: (v: { value: string; label: string } | null) => void;
+  value: { value: string; label: string } | null;
+}
+
 vi.mock("react-select", () => ({
-  default: ({ placeholder, onChange, value }: { placeholder: string; onChange: (v: { value: string; label: string } | null) => void; value: { value: string; label: string } | null }) => (
+  default: ({ placeholder, onChange, value }: MockSelectProps) => (
     <select
       data-testid={`select-${placeholder}`}
       value={value?.value ?? ""}

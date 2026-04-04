@@ -8,9 +8,6 @@ vi.mock("jose", () => ({
   importX509: (...args: unknown[]) => mockImportX509(...args),
 }));
 
-// Must import after mocking
-const { verifyIdToken } = await import("./_verify-token");
-
 const TEST_PROJECT_ID = "test-project-123";
 
 function makeToken(kid: string, sub: string): string {
@@ -20,8 +17,13 @@ function makeToken(kid: string, sub: string): string {
 }
 
 describe("verifyIdToken", () => {
-  beforeEach(() => {
+  let verifyIdToken: (authHeader: string | undefined) => Promise<string | null>;
+
+  beforeEach(async () => {
+    vi.resetModules();
     vi.clearAllMocks();
+    const mod = await import("./_verify-token");
+    verifyIdToken = mod.verifyIdToken;
     process.env.VITE_FIREBASE_PROJECT_ID = TEST_PROJECT_ID;
     mockImportX509.mockResolvedValue("mock-key");
     // Mock global fetch for Google certs

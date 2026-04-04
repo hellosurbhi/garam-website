@@ -1,5 +1,29 @@
 # Changelog
 
+## fix: code review round — photo state, DST offsets, storage auth, toast cleanup, touch targets
+
+Verified and fixed findings from code review:
+
+**Functional fixes:**
+- Clear `photoFile`/`photoPreview` when file selection is empty or exceeds 5 MB limit, preventing stale photo submission
+- Compute correct EST/EDT offset (`-05:00` or `-04:00`) for Event JSON-LD instead of hardcoding `-04:00`. Extracted `nyOffset()` to shared `src/utils/timezone.ts` used by both index.astro and tickets.astro
+- Fix useGeoData perpetual loading on import failure — added `geoFailed` state so `loading` becomes false when the dynamic import rejects
+- Fix AdminDashboard toast timeout leak — use ref + cleanup to prevent `setToast` on unmounted component
+
+**Security:**
+- Add `request.auth != null` to storage write rule (was unauthenticated)
+- Revert storage read rule to `allow read: if true` since ApplyPage's `getDownloadURL` runs without auth
+- Add `signInAnonymously` before Storage upload in ApplyPage so writes succeed with auth-required rules
+
+**UI/accessibility:**
+- Bump ApplicantCard action button touch target from 44px to 48px per project standards
+
+**Tests:**
+- Add 2 tests for photoUrl URL scheme validation (non-https and invalid URL)
+- Add import failure test for useGeoData
+
+**Files modified:** ApplyPage.tsx, useGeoData.ts, AdminDashboard.tsx, ApplicantCard.tsx, storage.rules, index.astro, tickets.astro, timezone.ts (new), notify-application.test.ts, useGeoData.importError.test.ts (new), useGeoData.test.ts
+
 ## fix: use dynamic EST/EDT timezone offset in tickets.astro Event schema
 
 The tickets page JSON-LD was hardcoding `-04:00` (EDT) for event startDate/endDate. Added the same `nyOffset()` helper already used in index.astro to compute the correct America/New_York offset per event, handling the EST/EDT boundary correctly.

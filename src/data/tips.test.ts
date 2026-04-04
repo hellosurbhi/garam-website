@@ -32,6 +32,12 @@ describe("tipPosts", () => {
     }
   });
 
+  it("every post has a dateModified in YYYY-MM-DD format", () => {
+    for (const post of tipPosts) {
+      expect(post.dateModified).toMatch(ISO_DATE_RE);
+    }
+  });
+
   it("every post has a non-empty author", () => {
     for (const post of tipPosts) {
       expect(post.author.trim()).not.toBe("");

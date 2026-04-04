@@ -39,7 +39,7 @@ function makeRes() {
 function makeReq(
   method: string,
   body: unknown = {},
-  headers: Record<string, string> = {},
+  headers: Record<string, string> = { authorization: "Bearer test-token" },
 ): VercelRequest {
   return { method, body, headers } as unknown as VercelRequest;
 }

@@ -15,10 +15,14 @@ const mockCities = [
   { name: "Buffalo" },
 ];
 
+const mockGetAllCountries = vi.fn(() => mockCountries);
+const mockGetStatesOfCountry = vi.fn(() => mockStates);
+const mockGetCitiesOfState = vi.fn(() => mockCities);
+
 vi.mock("country-state-city", () => ({
-  Country: { getAllCountries: () => mockCountries },
-  State: { getStatesOfCountry: () => mockStates },
-  City: { getCitiesOfState: () => mockCities },
+  Country: { getAllCountries: (...args: unknown[]) => mockGetAllCountries(...args) },
+  State: { getStatesOfCountry: (...args: unknown[]) => mockGetStatesOfCountry(...args) },
+  City: { getCitiesOfState: (...args: unknown[]) => mockGetCitiesOfState(...args) },
 }));
 
 describe("useGeoData", () => {

@@ -16,6 +16,7 @@ describe("useGeoData – import failure", () => {
     await waitFor(() => {
       expect(result.current.loading).toBe(false);
     });
+    expect(result.current.failed).toBe(true);
     expect(result.current.countryOptions).toEqual([]);
     expect(result.current.stateOptions).toEqual([]);
     expect(result.current.cityOptions).toEqual([]);

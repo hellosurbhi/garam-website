@@ -45,5 +45,5 @@ export function useGeoData(countryCode: string, stateCode: string) {
     [geo, countryCode, stateCode],
   );
 
-  return { loading: !geo && !geoFailed, countryOptions, stateOptions, cityOptions };
+  return { loading: !geo && !geoFailed, failed: geoFailed, countryOptions, stateOptions, cityOptions };
 }

@@ -1,0 +1,174 @@
+---
+const faqs = [
+  {
+    q: 'What is Garam Masala Dating?',
+    short: "Garam Masala Dating is New York City's live South Asian comedy dating show — a 90-minute live event where two real singles go on a first date on stage in front of a live audience, hosted by comedians Surbhi and Wyatt.",
+    long: "The show combines stand-up comedy, live matchmaking, and audience participation. Two strangers meet for the first time on stage. They go through a date — questions, games, and genuine moments — with 150 people watching. At the end, the audience votes on whether they should get a second date. Then we throw a singles mixer in the same venue so the audience can continue the magic themselves. It's part comedy show, part reality TV, part social experiment, and entirely unforgettable.",
+  },
+  {
+    q: 'How do I get on stage as a dater?',
+    short: "Apply through our casting form and we'll reach out if you're selected. You can also buy a ticket and volunteer from the audience — we pull brave souls up at every show.",
+    long: "We receive hundreds of applications per season and review every one. We look for people who are genuinely single, comfortable with being the center of attention, and up for an unpredictable night. If you're not selected in advance, don't worry — at every show, Surbhi asks the audience for volunteers. Some of our most memorable moments have come from people who decided to raise their hand on the night.",
+  },
+  {
+    q: 'Is the show only for South Asian / desi people?',
+    short: "Absolutely not. Everyone is welcome. The show has a desi cultural flavor, but love — and comedy — are universal. We've matched people of every background.",
+    long: "Our audience is beautifully mixed. While the show draws heavily from New York's South Asian diaspora, roughly 40% of our audience at every show is non-desi. Our daters have been from India, Pakistan, Sri Lanka, Bangladesh, the US, the UK, and beyond. If you think love and chaos are interesting regardless of your background, you belong here.",
+  },
+  {
+    q: 'Do I have to participate if I buy a ticket?',
+    short: "Not at all. Most of our audience comes to watch, drink, and laugh. Participation is entirely voluntary — no one gets pulled up without agreeing.",
+    long: "Audience voting is the only thing everyone does — and that's just raising your hand. Beyond that, nothing is required. About 95% of attendees watch from their seats the whole evening. The other 5% raise their hands when Surbhi asks for volunteers, and from there it's their choice entirely.",
+  },
+  {
+    q: 'How long is the show and what happens after?',
+    short: 'The show runs approximately 90 minutes, followed by a free singles mixer at the same venue where the show took place.',
+    long: "Doors open 30 minutes before showtime. The main show is 90 minutes of live comedy and dating. After the final curtain, we transition into a singles mixer — same space, music comes on, and the energy from the show carries everyone forward. The mixer runs for about an hour and is included with your ticket. It's where a surprising number of actual connections happen.",
+  },
+];
+---
+
+<section class="faq" id="faq" aria-labelledby="faq-heading">
+  <div class="faq-inner">
+    <div class="faq-eyebrow" data-reveal>Frequently Asked Questions</div>
+    <h2 id="faq-heading" data-reveal>Everything You<br />Need to Know</h2>
+    <div class="faq-list">
+      {faqs.map((faq, i) => (
+        <div class:list={['faq-item', { open: i === 0 }]} data-reveal>
+          <button
+            class="faq-q"
+            type="button"
+            aria-expanded={i === 0 ? 'true' : 'false'}
+          >
+            {faq.q}
+            <span class="faq-toggle">+</span>
+          </button>
+          <div class="faq-body">
+            <div class="faq-short-answer">{faq.short}</div>
+            <div class="faq-long-answer">{faq.long}</div>
+          </div>
+        </div>
+      ))}
+    </div>
+  </div>
+</section>
+
+<script>
+  document.querySelectorAll('.faq-q').forEach((btn) => {
+    btn.addEventListener('click', () => {
+      const item = btn.parentElement;
+      if (!item) return;
+      const isOpen = item.classList.contains('open');
+      document.querySelectorAll('.faq-item').forEach((i) => {
+        i.classList.remove('open');
+        const b = i.querySelector('.faq-q');
+        if (b) b.setAttribute('aria-expanded', 'false');
+      });
+      if (!isOpen) {
+        item.classList.add('open');
+        btn.setAttribute('aria-expanded', 'true');
+      }
+    });
+  });
+</script>
+
+<style>
+  .faq {
+    padding: 80px 20px;
+    background: white;
+  }
+  .faq-inner {
+    max-width: 800px;
+    margin: 0 auto;
+  }
+  .faq-eyebrow {
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: var(--hot-pink);
+    margin-bottom: 16px;
+  }
+  .faq-inner > h2 {
+    font-family: var(--font-playfair), serif;
+    font-size: clamp(30px, 4vw, 52px);
+    font-weight: 900;
+    color: var(--charcoal);
+    margin-bottom: 48px;
+    line-height: 1.05;
+  }
+  .faq-list { display: flex; flex-direction: column; }
+  .faq-item { border-bottom: 1.5px solid #eee; }
+  .faq-q {
+    font-family: var(--font-playfair), serif;
+    font-size: 18px;
+    font-weight: 700;
+    color: var(--charcoal);
+    padding: 24px 0;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    cursor: pointer;
+    transition: color 0.2s;
+    gap: 16px;
+    background: none;
+    border: none;
+    width: 100%;
+    text-align: left;
+    min-height: 48px;
+  }
+  .faq-q:hover { color: var(--hot-pink); }
+  .faq-toggle {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background: var(--off-white);
+    border: 1.5px solid #ddd;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    font-size: 18px;
+    color: var(--hot-pink);
+    transition: transform 0.3s, background 0.3s;
+    line-height: 1;
+  }
+  .faq-item.open .faq-toggle {
+    transform: rotate(45deg);
+    background: var(--hot-pink);
+    color: white;
+    border-color: var(--hot-pink);
+  }
+  .faq-body {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.45s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+  .faq-item.open .faq-body { max-height: 500px; }
+  .faq-short-answer {
+    background: var(--cream);
+    border-left: 3px solid var(--hot-pink);
+    border-radius: 0 8px 8px 0;
+    padding: 16px 20px;
+    margin-bottom: 16px;
+    font-family: var(--font-cormorant), serif;
+    font-size: 17px;
+    font-style: italic;
+    color: var(--charcoal);
+    line-height: 1.6;
+  }
+  .faq-long-answer {
+    font-size: 15px;
+    color: #666;
+    line-height: 1.8;
+    padding-bottom: 24px;
+  }
+
+  @media (min-width: 768px) {
+    .faq { padding: 120px 48px; }
+    .faq-inner > h2 { margin-bottom: 64px; }
+    .faq-q { font-size: 20px; padding: 28px 0; gap: 20px; }
+    .faq-short-answer { font-size: 18px; }
+    .faq-long-answer { padding-bottom: 28px; }
+  }
+</style>

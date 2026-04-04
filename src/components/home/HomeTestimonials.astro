@@ -1,0 +1,105 @@
+---
+const testimonials = [
+  {
+    quote: "I came alone expecting a chill Friday night out. I left with someone's number and a story I've now told forty times.",
+    author: 'Priya, 27',
+    location: 'New York City',
+  },
+  {
+    quote: "Surbhi and Wyatt are genuinely unhinged in the best way. Laughed until I cried. Best live comedy show in NYC right now.",
+    author: 'Dev, 31',
+    location: 'Chicago',
+  },
+  {
+    quote: "Best date night we've had in years — and we're already dating. The energy in that room was something else entirely.",
+    author: 'Ava & Rohan',
+    location: 'Audience, NYC',
+  },
+];
+
+const accentColors = ['var(--electric-yellow)', 'var(--hot-pink)', 'var(--spice-orange)'];
+---
+
+<section class="testimonials" aria-label="Audience reviews">
+  <div class="testimonials-inner">
+    <h2 data-reveal>What They're <em>Saying</em></h2>
+    <div class="testi-grid">
+      {testimonials.map((t, i) => (
+        <div class="testi-card" data-reveal style={`--quote-color: ${accentColors[i]}`}>
+          <div class="testi-quote">{t.quote}</div>
+          <div class="testi-author">{t.author} · {t.location}</div>
+        </div>
+      ))}
+    </div>
+  </div>
+</section>
+
+<style>
+  .testimonials {
+    padding: 80px 20px;
+    background: var(--off-white);
+  }
+  .testimonials-inner {
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+  .testimonials-inner > h2 {
+    font-family: var(--font-playfair), serif;
+    font-size: clamp(32px, 5vw, 60px);
+    font-weight: 900;
+    color: var(--charcoal);
+    margin-bottom: 40px;
+    line-height: 1;
+  }
+  .testimonials-inner > h2 em { color: var(--hot-pink); font-style: italic; }
+  .testi-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+  .testi-card {
+    background: white;
+    border-radius: 20px;
+    padding: 32px;
+    position: relative;
+  }
+  .testi-card::before {
+    content: '\201C';
+    font-family: var(--font-playfair), serif;
+    font-size: 64px;
+    color: var(--quote-color, var(--electric-yellow));
+    line-height: 0.6;
+    display: block;
+    margin-bottom: 12px;
+  }
+  .testi-quote {
+    font-family: var(--font-cormorant), serif;
+    font-size: 18px;
+    font-style: italic;
+    line-height: 1.5;
+    color: var(--charcoal);
+    margin-bottom: 20px;
+  }
+  .testi-author {
+    font-size: 12px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    color: var(--muted);
+  }
+
+  @media (min-width: 768px) {
+    .testimonials { padding: 120px 48px; }
+    .testimonials-inner > h2 { margin-bottom: 60px; }
+    .testi-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 20px;
+      align-items: start;
+    }
+    .testi-card { padding: 36px; }
+    .testi-card:nth-child(2) { margin-top: 32px; }
+    .testi-card::before { font-size: 80px; margin-bottom: 16px; }
+    .testi-quote { font-size: 20px; margin-bottom: 24px; }
+  }
+</style>

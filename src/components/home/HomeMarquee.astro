@@ -1,0 +1,60 @@
+---
+const phrases = [
+  'Live in New York City',
+  'South Asian Comedy Dating',
+  'Hosted by Surbhi & Wyatt',
+  'Apply Now',
+  'Singles Mixer After Every Show',
+  'Tickets Selling Fast',
+];
+---
+
+<div class="marquee" aria-hidden="true">
+  <div class="marquee-inner">
+    {[...phrases, ...phrases].map((text) => (
+      <Fragment>
+        <span>{text}</span>
+        <span class="dot">✦</span>
+      </Fragment>
+    ))}
+  </div>
+</div>
+
+<style>
+  .marquee {
+    background: var(--charcoal);
+    padding: 14px 0;
+    overflow: hidden;
+    white-space: nowrap;
+    border-top: 3px solid var(--electric-yellow);
+    border-bottom: 3px solid var(--electric-yellow);
+  }
+  .marquee-inner {
+    display: inline-block;
+    animation: marquee 22s linear infinite;
+  }
+  .marquee-inner span {
+    font-family: var(--font-playfair), serif;
+    font-size: 15px;
+    font-weight: 700;
+    font-style: italic;
+    color: var(--electric-yellow);
+    padding: 0 32px;
+    letter-spacing: 0.5px;
+  }
+  .marquee-inner .dot {
+    color: var(--hot-pink);
+    padding: 0 10px;
+    font-style: normal;
+  }
+  @keyframes marquee {
+    0% { transform: translateX(0); }
+    100% { transform: translateX(-50%); }
+  }
+  @media (min-width: 768px) {
+    .marquee-inner span { font-size: 17px; padding: 0 48px; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .marquee-inner { animation: none; }
+  }
+</style>

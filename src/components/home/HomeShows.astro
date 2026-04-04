@@ -1,0 +1,185 @@
+---
+import type { EventEntry } from '@/data/events';
+
+interface Props {
+  events: EventEntry[];
+}
+
+const { events } = Astro.props;
+
+function parseMonth(dateStr: string): string {
+  return dateStr.split(' ')[0];
+}
+
+function parseDay(dateStr: string): string {
+  const parts = dateStr.split(' ');
+  return parts[1] ?? '—';
+}
+---
+
+<section class="shows" id="shows" aria-labelledby="shows-heading">
+  <div class="shows-header" data-reveal>
+    <div>
+      <h2 id="shows-heading">Grab Your Seat</h2>
+      <p>Tickets always sell out. You've been warned.</p>
+    </div>
+  </div>
+  <div class="shows-list">
+    {events.map((event) => {
+      const isLive = event.url && event.url !== '#';
+      return (
+        <article class="show-card" data-reveal>
+          <div class="show-date-block">
+            <div class="mo">{parseMonth(event.date)}</div>
+            <div class="dy">{parseDay(event.date)}</div>
+          </div>
+          <div class="show-info">
+            <h3>{event.city}</h3>
+            <span>{isLive ? 'Tickets available' : 'Dates to be announced'}</span>
+          </div>
+          {isLive ? (
+            <a href={event.url} target="_blank" rel="noopener noreferrer" class="ticket-btn">
+              Tickets
+            </a>
+          ) : (
+            <span class="ticket-btn notify">Notify Me</span>
+          )}
+        </article>
+      );
+    })}
+  </div>
+  <div class="request-city" data-reveal>
+    <a href="/cities">Don't see your city? Request it →</a>
+  </div>
+</section>
+
+<style>
+  .shows {
+    padding: 80px 20px;
+    background: var(--hot-pink);
+    position: relative;
+  }
+  .shows::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 5px;
+    background: repeating-linear-gradient(90deg, var(--electric-yellow) 0, var(--electric-yellow) 20px, var(--hot-pink) 20px, var(--hot-pink) 40px);
+  }
+  .shows-header {
+    max-width: 1200px;
+    margin: 0 auto 40px;
+  }
+  .shows-header h2 {
+    font-family: var(--font-playfair), serif;
+    font-size: clamp(32px, 5vw, 60px);
+    font-weight: 900;
+    color: white;
+    line-height: 1;
+  }
+  .shows-header p {
+    color: rgba(255, 255, 255, 0.7);
+    font-size: 15px;
+    margin-top: 8px;
+  }
+  .shows-list {
+    max-width: 1200px;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+  .show-card {
+    background: white;
+    border-radius: 16px;
+    padding: 20px;
+    display: grid;
+    grid-template-columns: 64px 1fr;
+    gap: 16px;
+    align-items: center;
+    transition: transform 0.2s, box-shadow 0.2s;
+  }
+  .show-card:hover {
+    transform: translateX(6px);
+    box-shadow: -6px 0 0 var(--electric-yellow);
+  }
+  .show-date-block { text-align: center; }
+  .show-date-block .mo {
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    color: var(--hot-pink);
+  }
+  .show-date-block .dy {
+    font-family: var(--font-playfair), serif;
+    font-size: 36px;
+    font-weight: 900;
+    line-height: 1;
+    color: var(--charcoal);
+  }
+  .show-info h3 {
+    font-family: var(--font-playfair), serif;
+    font-size: 18px;
+    font-weight: 700;
+    color: var(--charcoal);
+    margin-bottom: 2px;
+  }
+  .show-info span {
+    font-size: 13px;
+    color: var(--muted);
+  }
+  .ticket-btn {
+    background: var(--hot-pink);
+    color: white;
+    border: none;
+    padding: 12px 24px;
+    border-radius: 50px;
+    font-family: var(--font-dm-sans), sans-serif;
+    font-weight: 700;
+    font-size: 13px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    transition: background 0.2s;
+    text-decoration: none;
+    text-align: center;
+    min-height: 48px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    grid-column: 1 / -1;
+  }
+  .ticket-btn:hover { background: var(--deep-magenta); }
+  .ticket-btn.notify { background: var(--muted); }
+  .ticket-btn.notify:hover { background: #666; }
+  .request-city {
+    text-align: center;
+    margin-top: 36px;
+  }
+  .request-city a {
+    color: var(--electric-yellow);
+    font-weight: 600;
+    font-size: 15px;
+    text-decoration: none;
+    border-bottom: 1px solid rgba(255, 214, 0, 0.4);
+    transition: border-color 0.2s;
+  }
+  .request-city a:hover { border-color: var(--electric-yellow); }
+
+  @media (min-width: 768px) {
+    .shows { padding: 100px 48px; }
+    .shows-header { margin-bottom: 56px; }
+    .show-card {
+      grid-template-columns: 80px 1fr auto;
+      padding: 24px 32px;
+    }
+    .show-date-block .dy { font-size: 42px; }
+    .show-info h3 { font-size: 22px; margin-bottom: 4px; }
+    .ticket-btn {
+      padding: 12px 28px;
+      grid-column: auto;
+    }
+  }
+</style>

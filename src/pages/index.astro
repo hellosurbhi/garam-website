@@ -1,14 +1,25 @@
 ---
 import BaseLayout from '@/layouts/BaseLayout.astro';
-import Hero from '@/components/Hero.astro';
-import Nav from '@/components/Nav.astro';
-import { CREATOR_URLS } from '@/data/socials';
+import HomeNav from '@/components/home/HomeNav.astro';
+import HomeHero from '@/components/home/HomeHero.astro';
+import HomeMarquee from '@/components/home/HomeMarquee.astro';
+import HomeExperience from '@/components/home/HomeExperience.astro';
+import HomeShows from '@/components/home/HomeShows.astro';
+import HomeStats from '@/components/home/HomeStats.astro';
+import HomePhotos from '@/components/home/HomePhotos.astro';
+import HomePress from '@/components/home/HomePress.astro';
+import HomeTestimonials from '@/components/home/HomeTestimonials.astro';
+import HomeCreators from '@/components/home/HomeCreators.astro';
+import HomeFAQ from '@/components/home/HomeFAQ.astro';
+import HomeNewsletter from '@/components/home/HomeNewsletter.astro';
+import HomeFooter from '@/components/home/HomeFooter.astro';
 import { SOCIAL_URLS } from '@/data/socials';
 import { events } from '@/data/events';
 import { isEventPast } from '@/utils/eventDate';
 import { buildEventSchemas } from '@/utils/eventSchema';
 
 const upcomingEvents = events.filter((e) => !isEventPast(e.date) && !e.hidden);
+const firstTicketUrl = upcomingEvents.find((e) => e.url && e.url !== '#')?.url ?? '/tickets';
 
 // Organization JSON-LD
 const orgJsonLd = JSON.stringify({
@@ -76,10 +87,12 @@ const eventSchemas = buildEventSchemas(upcomingForSchema);
 ---
 
 <BaseLayout
-  title="Garam Masala Dating | Desi Comedy Dating Show in NYC"
-  description="Garam Masala Dating is a live South Asian comedy dating show and singles mixer in New York City. Watch real desi singles compete for a date on stage. Tickets available now."
+  title="Garam Masala Dating — NYC's Live South Asian Comedy Dating Show"
+  description="Garam Masala Dating is New York City's hottest live comedy dating show. Watch real South Asian singles find love on stage. Hosted by comedians Surbhi & Wyatt. Tickets available now."
+  bodyClass="home-v3"
 >
   <Fragment slot="head">
+    <meta name="keywords" content="live dating show NYC, south asian comedy show, indian dating show new york, comedy dating show, desi dating show, live comedy show NYC, indian matchmaking live" />
     <script type="application/ld+json" set:html={orgJsonLd} />
     <script type="application/ld+json" set:html={websiteJsonLd} />
     {eventSchemas.map((schema) => (
@@ -88,336 +101,51 @@ const eventSchemas = buildEventSchemas(upcomingForSchema);
     <script type="application/ld+json" set:html={faqJsonLd} />
   </Fragment>
 
-  <Hero />
-  <Nav />
-
-  <!-- CenterBox -->
-  <div class="center-wrapper">
-    <div class="center-box">
-      <div class="title-area">
-        <h1 class="title">Garam Mas<em>ala</em> Dating</h1>
-        <p class="subtitle">
-          Come watch a desi couple find love, and if you're lucky, make out.
-          Made with love in New York by comedians
-          <a href={CREATOR_URLS.surbhi} target="_blank" rel="noopener noreferrer" class="subtitle-link">Surbhi</a>
-          {' '}and{' '}
-          <a href={CREATOR_URLS.wyatt} target="_blank" rel="noopener noreferrer" class="subtitle-link">Wyatt Feegrado</a>
-          {' '}at{' '}
-          <a href={CREATOR_URLS.venue} target="_blank" rel="noopener noreferrer" class="subtitle-link">Top Secret Comedy Club</a>.
-        </p>
-      </div>
-
-      <!-- TableOfContents -->
-      <div class="toc">
-        {upcomingEvents.map((event, i) => {
-          const isLive = event.url && event.url !== "#";
-          return isLive ? (
-            <a
-              href={event.url}
-              target="_blank"
-              rel="noopener noreferrer"
-              class="toc-row"
-              style={`animation-delay: ${1.0 + i * 0.12}s`}
-            >
-              <span class="toc-date">{event.date}</span>
-              <span class="toc-city">{event.city}</span>
-            </a>
-          ) : (
-            <div
-              class="toc-row toc-row-dimmed"
-              style={`animation-delay: ${1.0 + i * 0.12}s`}
-            >
-              <span class="toc-date">{event.date}</span>
-              <span class="toc-city">{event.city}</span>
-            </div>
-          );
-        })}
-      </div>
-    </div>
-  </div>
-
-  <!-- ScrollIndicator -->
-  <div class="scroll-indicator">
-    <div class="scroll-line"></div>
-  </div>
-
-  <!-- FAQ Section -->
-  <section class="home-faq" id="faq" aria-labelledby="home-faq-heading">
-    <div class="home-faq-container">
-      <h2 id="home-faq-heading" class="home-faq-title">Frequently Asked Questions</h2>
-      <div class="home-faq-list">
-        {HOME_FAQS.map((item, i) => (
-          <div class:list={['home-faq-item', { 'is-open': i === 0 }]}>
-            <button
-              class="home-faq-toggle"
-              type="button"
-              aria-expanded={i === 0 ? 'true' : 'false'}
-            >
-              <span class="home-faq-question">{item.q}</span>
-              <svg class="home-faq-chevron" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg>
-            </button>
-            <div class="home-faq-answer">
-              <p class="home-faq-answer-text">{item.a}</p>
-            </div>
-          </div>
-        ))}
-      </div>
-    </div>
-  </section>
+  <HomeNav ticketsUrl={firstTicketUrl} />
+  <main>
+    <HomeHero ticketsUrl={firstTicketUrl} />
+    <HomeMarquee />
+    <HomeExperience />
+    <HomeShows events={upcomingEvents} />
+    <HomeStats />
+    <HomePhotos />
+    <HomePress />
+    <HomeTestimonials />
+    <HomeCreators />
+    <HomeFAQ />
+    <HomeNewsletter />
+  </main>
+  <HomeFooter />
 </BaseLayout>
 
-<style>
-  /* CenterBox */
-  .center-wrapper {
-    position: relative;
-    z-index: 10;
-    display: flex;
-    align-items: flex-end;
-    justify-content: flex-start;
-    min-height: 100vh;
-    padding: 0 60px 64px;
-    box-sizing: border-box;
-    width: 100%;
-    animation: fadeUp 1.2s ease-out both;
-    animation-delay: 0.3s;
-  }
-  @keyframes fadeUp {
-    from { opacity: 0; transform: translateY(30px); }
-    to { opacity: 1; transform: translateY(0); }
-  }
-  .center-box {
-    display: flex;
-    align-items: flex-end;
-    justify-content: space-between;
-    width: 100%;
-    gap: 48px;
-  }
-  .title-area {
-    flex: 0 0 auto;
-    max-width: 440px;
-  }
-  .title {
-    font-family: var(--font-cormorant), serif;
-    font-size: 3rem;
-    font-weight: 600;
-    color: var(--text-ivory);
-    line-height: 1.08;
-    margin: 0 0 16px 0;
-    letter-spacing: -0.01em;
-    text-shadow: 0 2px 12px rgba(0, 0, 0, 0.4);
-  }
-  .title em {
-    font-style: italic;
-    font-weight: 400;
-    color: var(--gold-accent);
-  }
-  .subtitle {
-    font-family: var(--font-dm-sans), sans-serif;
-    font-size: 0.95rem;
-    font-weight: 400;
-    color: rgba(245, 237, 228, 0.8);
-    line-height: 1.5;
-    margin: 0;
-    letter-spacing: 0.01em;
-    text-shadow: 0 2px 12px rgba(0, 0, 0, 0.4);
-  }
-  .subtitle-link {
-    color: var(--gold-accent);
-    text-decoration: none;
-    transition: color 0.2s ease;
-  }
-  .subtitle-link:hover {
-    color: var(--text-ivory);
-    text-decoration: underline;
+<script>
+  const observer = new IntersectionObserver(
+    (entries) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('revealed');
+          observer.unobserve(entry.target);
+        }
+      });
+    },
+    { threshold: 0.12 }
+  );
+  document.querySelectorAll('[data-reveal]').forEach((el) => observer.observe(el));
+</script>
+
+<style is:global>
+  body.home-v3 {
+    background: var(--off-white);
+    color: var(--charcoal);
   }
 
-  /* TableOfContents */
-  .toc {
-    width: 100%;
-    display: flex;
-    flex-direction: column;
-    gap: 0;
-    flex-shrink: 0;
-    max-width: 280px;
+  [data-reveal] {
+    opacity: 0;
+    transform: translateY(32px);
+    transition: opacity 0.7s ease, transform 0.7s cubic-bezier(0.22, 1, 0.36, 1);
   }
-  .toc-row {
-    display: flex;
-    align-items: baseline;
-    justify-content: space-between;
-    padding: 6px 0;
-    text-decoration: none;
-    color: #F5EDE4;
-    cursor: pointer;
-    transition: color 0.3s ease;
-    animation: fadeRowIn 0.7s ease-out both;
-    text-shadow: 0 2px 12px rgba(0, 0, 0, 0.4);
-  }
-  @keyframes fadeRowIn {
-    from { opacity: 0; transform: translateY(10px); }
-    to { opacity: 1; transform: translateY(0); }
-  }
-  .toc-row:hover { color: #ff2d9b; }
-  .toc-row-dimmed {
-    opacity: 0.4;
-    cursor: default;
-    pointer-events: none;
-  }
-  .toc-date {
-    font-family: "DM Sans", sans-serif;
-    font-size: 0.78rem;
-    font-weight: 600;
-    letter-spacing: 0.02em;
-    color: #F5EDE4;
-  }
-  .toc-city {
-    font-family: "DM Sans", sans-serif;
-    font-size: 0.72rem;
-    font-weight: 400;
-    letter-spacing: 0.1em;
-    text-transform: uppercase;
-    color: rgba(245, 237, 228, 0.6);
-  }
-
-  /* ScrollIndicator */
-  .scroll-indicator {
-    position: fixed;
-    bottom: 28px;
-    left: 50%;
-    transform: translateX(-50%);
-    z-index: 60;
-    animation: indicatorFadeUp 1s ease-out 2s both;
-  }
-  @keyframes indicatorFadeUp {
-    from { opacity: 0; }
-    to { opacity: 1; }
-  }
-  .scroll-line {
-    width: 1px;
-    height: 36px;
-    background: rgba(255, 255, 255, 0.5);
-    animation: pulse 2s ease-in-out infinite;
-  }
-  @keyframes pulse {
-    0%, 100% { opacity: 0.25; transform: scaleY(0.7); }
-    50% { opacity: 0.8; transform: scaleY(1); }
-  }
-
-  @media (max-width: 768px) {
-    .center-wrapper { padding: 0 24px 24px; min-height: 100dvh; }
-    .center-box { flex-direction: column; align-items: flex-start; gap: 16px; }
-    .title-area { max-width: 100%; }
-    .title { font-size: 2rem; margin-bottom: 8px; }
-    .subtitle { font-size: 0.82rem; line-height: 1.4; }
-    .toc { max-width: 100%; }
-  }
-  @media (max-width: 600px) {
-    .toc-row { padding: 5px 0; }
-    .toc-date { font-size: 0.88rem; }
-    .toc-city { font-size: 0.82rem; }
-  }
-
-  /* FAQ Section */
-  .home-faq {
-    position: relative;
-    z-index: 10;
-    padding: 80px 24px;
-  }
-  .home-faq-container {
-    max-width: 620px;
-    margin: 0 auto;
-  }
-  .home-faq-title {
-    font-family: var(--font-playfair), serif;
-    font-size: 1.6rem;
-    font-weight: 700;
-    color: var(--text-ivory);
-    margin-bottom: 32px;
-    letter-spacing: -0.01em;
-  }
-  .home-faq-list {
-    display: flex;
-    flex-direction: column;
-    gap: 2px;
-  }
-  .home-faq-item {
-    border-radius: 12px;
-    border: 1px solid rgba(245, 237, 228, 0.07);
-    background: rgba(255, 255, 255, 0.02);
-    overflow: hidden;
-    transition: border-color 0.15s, background 0.15s;
-  }
-  .home-faq-item.is-open {
-    border-color: rgba(201, 168, 76, 0.25);
-    background: rgba(201, 168, 76, 0.05);
-  }
-  .home-faq-toggle {
-    width: 100%;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 16px;
-    padding: 18px 20px;
-    background: none;
-    border: none;
-    cursor: pointer;
-    text-align: left;
-    min-height: 48px;
-  }
-  .home-faq-question {
-    font-family: var(--font-cormorant), serif;
-    font-size: 17px;
-    font-weight: 600;
-    color: rgba(245, 237, 228, 0.85);
-    line-height: 1.4;
-    transition: color 0.15s;
-  }
-  .home-faq-item.is-open .home-faq-question {
-    color: var(--text-ivory);
-  }
-  .home-faq-chevron {
-    color: var(--gold-dark);
-    flex-shrink: 0;
-    transition: transform 0.2s;
-  }
-  .home-faq-item.is-open .home-faq-chevron {
-    transform: rotate(180deg);
-  }
-  .home-faq-answer {
-    max-height: 0;
-    overflow: hidden;
-    transition: max-height 0.35s cubic-bezier(0.4, 0, 0.2, 1);
-  }
-  .home-faq-item.is-open .home-faq-answer {
-    max-height: 300px;
-  }
-  .home-faq-answer-text {
-    font-family: var(--font-cormorant), serif;
-    font-size: 16px;
-    color: rgba(245, 237, 228, 0.7);
-    line-height: 1.65;
-    margin: 0;
-    padding: 0 20px 18px;
-  }
-  @media (min-width: 769px) {
-    .home-faq { padding: 100px 60px; }
-    .home-faq-title { font-size: 1.8rem; }
+  [data-reveal].revealed {
+    opacity: 1;
+    transform: none;
   }
 </style>
-
-<script>
-  document.querySelectorAll('.home-faq-toggle').forEach((btn) => {
-    btn.addEventListener('click', () => {
-      const item = btn.closest('.home-faq-item');
-      if (!item) return;
-      const isOpen = item.classList.contains('is-open');
-      document.querySelectorAll('.home-faq-item').forEach((el) => {
-        el.classList.remove('is-open');
-        el.querySelector('.home-faq-toggle')?.setAttribute('aria-expanded', 'false');
-      });
-      if (!isOpen) {
-        item.classList.add('is-open');
-        btn.setAttribute('aria-expanded', 'true');
-      }
-    });
-  });
-</script>

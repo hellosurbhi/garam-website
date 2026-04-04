@@ -1,0 +1,60 @@
+---
+const outlets = [
+  'Time Out New York',
+  'Vulture',
+  'Brown Girl Magazine',
+  'Comedy Wire',
+  'Desi Diaspora',
+];
+---
+
+<section class="press" aria-label="Press coverage" data-reveal>
+  <div class="press-label">As Seen In</div>
+  <div class="press-logos">
+    {outlets.map((name) => (
+      <span class="press-name">{name}</span>
+    ))}
+  </div>
+</section>
+
+<style>
+  .press {
+    padding: 56px 20px;
+    background: white;
+    border-top: 4px solid var(--electric-yellow);
+  }
+  .press-label {
+    text-align: center;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: #ccc;
+    margin-bottom: 28px;
+  }
+  .press-logos {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 24px;
+    flex-wrap: wrap;
+    max-width: 900px;
+    margin: 0 auto;
+  }
+  .press-name {
+    font-family: var(--font-playfair), serif;
+    font-size: 16px;
+    font-weight: 700;
+    color: #c8c8c8;
+    font-style: italic;
+    transition: color 0.2s;
+  }
+  .press-name:hover { color: var(--hot-pink); }
+
+  @media (min-width: 768px) {
+    .press { padding: 72px 48px; }
+    .press-logos { gap: 52px; }
+    .press-name { font-size: 19px; }
+    .press-label { margin-bottom: 36px; }
+  }
+</style>

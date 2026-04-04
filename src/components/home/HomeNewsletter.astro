@@ -1,0 +1,90 @@
+---
+
+---
+
+<section class="newsletter" aria-labelledby="newsletter-heading">
+  <h2 id="newsletter-heading" data-reveal>Join the Spice List</h2>
+  <p data-reveal>Early tickets, casting calls, and chaos — before anyone else.</p>
+  <form class="newsletter-form" data-reveal>
+    <input type="tel" placeholder="Your phone number" aria-label="Phone number" />
+    <input type="email" placeholder="Your email" aria-label="Email address" />
+    <button type="submit">Subscribe</button>
+  </form>
+</section>
+
+<style>
+  .newsletter {
+    padding: 80px 20px;
+    background: var(--charcoal);
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+  }
+  .newsletter h2 {
+    font-family: var(--font-playfair), serif;
+    font-size: clamp(30px, 5vw, 60px);
+    font-weight: 900;
+    color: white;
+    margin-bottom: 12px;
+    position: relative;
+  }
+  .newsletter p {
+    color: rgba(255, 255, 255, 0.6);
+    font-size: 16px;
+    margin-bottom: 36px;
+    font-family: var(--font-cormorant), serif;
+    font-style: italic;
+    position: relative;
+  }
+  .newsletter-form {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    max-width: 420px;
+    margin: 0 auto;
+    position: relative;
+  }
+  .newsletter-form input {
+    padding: 16px 24px;
+    border: 1.5px solid rgba(255, 255, 255, 0.2);
+    border-radius: 50px;
+    background: rgba(255, 255, 255, 0.08);
+    color: white;
+    font-size: 16px;
+    font-family: var(--font-dm-sans), sans-serif;
+    outline: none;
+    transition: border-color 0.2s;
+    min-height: 48px;
+  }
+  .newsletter-form input::placeholder {
+    color: rgba(255, 255, 255, 0.35);
+  }
+  .newsletter-form input:focus {
+    border-color: var(--hot-pink);
+  }
+  .newsletter-form button {
+    background: var(--hot-pink);
+    color: white;
+    border: none;
+    padding: 16px;
+    border-radius: 50px;
+    font-family: var(--font-dm-sans), sans-serif;
+    font-size: 14px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    cursor: pointer;
+    transition: background 0.2s;
+    min-height: 48px;
+  }
+  .newsletter-form button:hover {
+    background: var(--deep-magenta);
+  }
+
+  @media (min-width: 768px) {
+    .newsletter { padding: 120px 48px; }
+    .newsletter p { font-size: 17px; margin-bottom: 48px; }
+    .newsletter-form input { padding: 18px 28px; }
+    .newsletter-form button { padding: 18px; }
+  }
+</style>

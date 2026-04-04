@@ -1,0 +1,115 @@
+---
+const steps = [
+  { title: 'Arrive & Settle In', desc: 'Doors open 30 minutes before showtime. Grab a drink, find your seat, and talk to the strangers next to you — half of them are single.' },
+  { title: 'The Main Event', desc: 'Surbhi and Wyatt take the stage. Two strangers go on a first date in front of 150 people. Comedy, questions, vulnerability, and usually at least one moment that breaks the room.' },
+  { title: 'The Decision', desc: 'Do they want a second date? The audience votes. The couple decides. The room explodes. You\'ve now watched something real happen.' },
+  { title: 'Singles Mixer', desc: 'After every show, we host a singles mixer at the venue. The energy is already warm from 90 minutes of watching love unfold. This is where audience romances begin.' },
+];
+---
+
+<section class="experience" id="experience" aria-labelledby="exp-heading" data-reveal>
+  <div class="experience-inner">
+    <div class="experience-left">
+      <h2 id="exp-heading">NYC's Most Talked-About <em>Live</em> Dating Show</h2>
+      <p class="lead">Imagine The Bachelor meets Indian Matchmaking — but live on stage in New York City, hosted by two comedians who are deeply unqualified and absolutely thriving.</p>
+      <p>Garam Masala Dating is the live comedy dating show where South Asian singles go on a date in front of 150 strangers. Our hosts Surbhi and Wyatt guide the chaos with stand-up, crowd work, and genuine matchmaking instincts. Every show ends with a singles mixer where the audience gets to continue the experiment.</p>
+      <p>Whether you're South Asian or not — curious, single, coupled up, or just need a Friday night story — this is the most fun you'll have watching two people fall in love (or spectacularly not) in real time.</p>
+    </div>
+    <div class="experience-steps">
+      {steps.map((step, i) => (
+        <div class="exp-step">
+          <div class="exp-num">{String(i + 1).padStart(2, '0')}</div>
+          <div>
+            <h3>{step.title}</h3>
+            <p>{step.desc}</p>
+          </div>
+        </div>
+      ))}
+    </div>
+  </div>
+</section>
+
+<style>
+  .experience {
+    padding: 80px 20px;
+    background: var(--off-white);
+  }
+  .experience-inner {
+    max-width: 1200px;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    gap: 48px;
+  }
+  .experience-left h2 {
+    font-family: var(--font-playfair), serif;
+    font-size: clamp(32px, 5vw, 64px);
+    font-weight: 900;
+    line-height: 1.0;
+    color: var(--charcoal);
+    margin-bottom: 20px;
+    letter-spacing: -1px;
+  }
+  .experience-left h2 em { color: var(--hot-pink); font-style: italic; }
+  .experience-left .lead {
+    font-family: var(--font-cormorant), serif;
+    font-size: 18px;
+    font-style: italic;
+    color: #555;
+    line-height: 1.65;
+    margin-bottom: 24px;
+  }
+  .experience-left p {
+    font-size: 16px;
+    color: #666;
+    line-height: 1.8;
+    margin-bottom: 16px;
+  }
+  .experience-steps {
+    display: flex;
+    flex-direction: column;
+  }
+  .exp-step {
+    display: grid;
+    grid-template-columns: 48px 1fr;
+    gap: 16px;
+    padding: 24px 0;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+    align-items: start;
+  }
+  .exp-step:last-child { border-bottom: none; }
+  .exp-num {
+    font-family: var(--font-playfair), serif;
+    font-size: 36px;
+    font-weight: 900;
+    color: var(--electric-yellow);
+    line-height: 1;
+    -webkit-text-stroke: 1.5px var(--charcoal);
+  }
+  .exp-step h3 {
+    font-family: var(--font-playfair), serif;
+    font-size: 18px;
+    font-weight: 700;
+    margin-bottom: 6px;
+    color: var(--charcoal);
+  }
+  .exp-step p {
+    font-size: 15px;
+    color: #777;
+    line-height: 1.65;
+  }
+
+  @media (min-width: 768px) {
+    .experience { padding: 120px 48px; }
+    .experience-inner {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 80px;
+      align-items: start;
+    }
+    .experience-left .lead { font-size: 20px; margin-bottom: 32px; }
+    .exp-step { grid-template-columns: 56px 1fr; gap: 20px; padding: 28px 0; }
+    .exp-num { font-size: 42px; }
+    .exp-step h3 { font-size: 20px; }
+  }
+</style>

@@ -1,0 +1,97 @@
+---
+interface Props {
+  ticketsUrl: string;
+}
+
+const { ticketsUrl } = Astro.props;
+---
+
+<nav class="home-nav" id="home-nav">
+  <a href="/" class="nav-logo">Garam Mas<em>ala</em> Dating</a>
+  <div class="nav-right">
+    <a href="/apply" class="nav-pill">Apply</a>
+    <a href={ticketsUrl} target="_blank" rel="noopener noreferrer" class="nav-pill primary">Get Tickets</a>
+  </div>
+</nav>
+
+<script>
+  const nav = document.getElementById('home-nav');
+  if (nav) {
+    window.addEventListener('scroll', () => {
+      nav.classList.toggle('scrolled', window.scrollY > 60);
+    }, { passive: true });
+  }
+</script>
+
+<style>
+  .home-nav {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 500;
+    padding: 16px 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    transition: background 0.4s, padding 0.4s, border-color 0.4s;
+    border-bottom: 2px solid transparent;
+  }
+  .home-nav.scrolled {
+    background: rgba(255, 248, 240, 0.95);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    padding: 12px 20px;
+    border-bottom-color: var(--hot-pink);
+  }
+  .nav-logo {
+    font-family: var(--font-playfair), serif;
+    font-size: 18px;
+    font-weight: 900;
+    color: var(--charcoal);
+    text-decoration: none;
+    letter-spacing: -0.5px;
+  }
+  .nav-logo em {
+    color: var(--hot-pink);
+    font-style: italic;
+  }
+  .nav-right {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .nav-pill {
+    font-family: var(--font-dm-sans), sans-serif;
+    font-size: 12px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    text-decoration: none;
+    color: var(--charcoal);
+    padding: 12px 22px;
+    border-radius: 50px;
+    border: 1.5px solid transparent;
+    transition: all 0.2s;
+    min-height: 48px;
+    display: inline-flex;
+    align-items: center;
+  }
+  .nav-pill:hover {
+    border-color: var(--charcoal);
+  }
+  .nav-pill.primary {
+    background: var(--hot-pink);
+    color: white;
+    border-color: var(--hot-pink);
+  }
+  .nav-pill.primary:hover {
+    background: var(--deep-magenta);
+    border-color: var(--deep-magenta);
+  }
+  @media (min-width: 768px) {
+    .home-nav { padding: 20px 48px; }
+    .home-nav.scrolled { padding: 14px 48px; }
+    .nav-logo { font-size: 20px; }
+  }
+</style>

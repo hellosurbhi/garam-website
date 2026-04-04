@@ -1,0 +1,169 @@
+---
+import { SOCIAL_URLS } from '@/data/socials';
+
+const showLinks = [
+  { label: 'New York City', href: '/cities/manhattan' },
+  { label: 'Jersey City', href: '/cities/jersey-city' },
+  { label: 'Edinburgh Fringe', href: '#' },
+  { label: 'All Cities', href: '/cities' },
+];
+
+const involvedLinks = [
+  { label: 'Apply to Date on Stage', href: '/apply' },
+  { label: 'Buy Tickets', href: '/tickets' },
+  { label: 'Brand Partnerships', href: `mailto:${SOCIAL_URLS.email.replace('mailto:', '')}` },
+];
+
+const exploreLinks = [
+  { label: 'FAQ', href: '/faq' },
+  { label: 'The Journal', href: '/journal' },
+  { label: 'Meet the Hosts', href: '#about' },
+  { label: 'Contact', href: `mailto:${SOCIAL_URLS.email.replace('mailto:', '')}` },
+];
+
+const socials = [
+  { label: 'IG', aria: 'Instagram', href: SOCIAL_URLS.instagram },
+  { label: 'TT', aria: 'TikTok', href: SOCIAL_URLS.tiktok },
+  { label: 'YT', aria: 'YouTube', href: SOCIAL_URLS.youtube },
+];
+---
+
+<footer role="contentinfo">
+  <div class="footer-top">
+    <div class="footer-brand">
+      <h3>Garam Mas<em>ala</em> Dating</h3>
+      <p>New York City's live South Asian comedy dating show. Hosted by Surbhi & Wyatt. Performing across the US and UK since 2023.</p>
+      <div class="footer-social">
+        {socials.map((s) => (
+          <a href={s.href} target="_blank" rel="noopener noreferrer" aria-label={s.aria}>{s.label}</a>
+        ))}
+      </div>
+    </div>
+    <div class="footer-col">
+      <h4>Shows</h4>
+      <ul>
+        {showLinks.map((link) => (
+          <li><a href={link.href}>{link.label}</a></li>
+        ))}
+      </ul>
+    </div>
+    <div class="footer-col">
+      <h4>Get Involved</h4>
+      <ul>
+        {involvedLinks.map((link) => (
+          <li><a href={link.href}>{link.label}</a></li>
+        ))}
+      </ul>
+    </div>
+    <div class="footer-col">
+      <h4>Explore</h4>
+      <ul>
+        {exploreLinks.map((link) => (
+          <li><a href={link.href}>{link.label}</a></li>
+        ))}
+      </ul>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <div class="footer-copy">&copy; 2026 Garam Masala Dating. All rights reserved.</div>
+  </div>
+</footer>
+
+<style>
+  footer {
+    background: var(--ink);
+    padding: 60px 20px 32px;
+  }
+  .footer-top {
+    display: flex;
+    flex-direction: column;
+    gap: 40px;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding-bottom: 40px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  }
+  .footer-brand h3 {
+    font-family: var(--font-playfair), serif;
+    font-size: 22px;
+    font-weight: 900;
+    color: white;
+    margin-bottom: 12px;
+  }
+  .footer-brand h3 em { color: var(--hot-pink); font-style: italic; }
+  .footer-brand p {
+    font-size: 14px;
+    color: rgba(255, 255, 255, 0.4);
+    line-height: 1.7;
+    margin-bottom: 20px;
+    max-width: 280px;
+  }
+  .footer-social { display: flex; gap: 12px; }
+  .footer-social a {
+    width: 40px;
+    height: 40px;
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: rgba(255, 255, 255, 0.5);
+    text-decoration: none;
+    font-size: 12px;
+    font-weight: 700;
+    transition: border-color 0.2s, color 0.2s;
+    min-height: 48px;
+    min-width: 48px;
+  }
+  .footer-social a:hover {
+    border-color: var(--hot-pink);
+    color: var(--hot-pink);
+  }
+  .footer-col h4 {
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    color: rgba(255, 255, 255, 0.35);
+    margin-bottom: 16px;
+  }
+  .footer-col ul {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+  .footer-col ul li a {
+    color: rgba(255, 255, 255, 0.55);
+    text-decoration: none;
+    font-size: 14px;
+    transition: color 0.2s;
+    padding: 4px 0;
+    display: inline-block;
+  }
+  .footer-col ul li a:hover { color: white; }
+  .footer-bottom {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding-top: 24px;
+  }
+  .footer-copy {
+    font-size: 13px;
+    color: rgba(255, 255, 255, 0.25);
+  }
+
+  @media (min-width: 768px) {
+    footer { padding: 80px 48px 40px; }
+    .footer-top {
+      display: grid;
+      grid-template-columns: 2fr 1fr 1fr 1fr;
+      gap: 60px;
+      padding-bottom: 60px;
+    }
+    .footer-brand h3 { font-size: 26px; }
+    .footer-brand p { margin-bottom: 24px; }
+    .footer-col h4 { margin-bottom: 20px; }
+    .footer-col ul { gap: 12px; }
+    .footer-bottom { padding-top: 32px; }
+  }
+</style>

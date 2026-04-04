@@ -1,0 +1,72 @@
+---
+const stats = [
+  { num: '12', label: 'Shows' },
+  { num: '2K+', label: 'Audience' },
+  { num: '3', label: 'Couples Matched' },
+  { num: '500K', label: 'Views' },
+];
+---
+
+<section class="stats" aria-label="Show statistics" data-reveal>
+  <h2>The Numbers Don't Lie</h2>
+  <div class="stats-grid">
+    {stats.map((stat) => (
+      <div class="stat-item">
+        <div class="stat-num">{stat.num}</div>
+        <div class="stat-label">{stat.label}</div>
+      </div>
+    ))}
+  </div>
+</section>
+
+<style>
+  .stats {
+    padding: 80px 20px;
+    background: var(--electric-yellow);
+    text-align: center;
+  }
+  .stats h2 {
+    font-family: var(--font-playfair), serif;
+    font-size: clamp(28px, 4vw, 52px);
+    font-weight: 900;
+    color: var(--charcoal);
+    margin-bottom: 48px;
+  }
+  .stats-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 32px 0;
+    max-width: 900px;
+    margin: 0 auto;
+  }
+  .stat-item { padding: 0 20px; }
+  .stat-num {
+    font-family: var(--font-playfair), serif;
+    font-size: 48px;
+    font-weight: 900;
+    color: var(--hot-pink);
+    line-height: 1;
+  }
+  .stat-label {
+    font-size: 12px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    color: var(--charcoal);
+    margin-top: 8px;
+    opacity: 0.7;
+  }
+
+  @media (min-width: 768px) {
+    .stats { padding: 100px 48px; }
+    .stats h2 { margin-bottom: 64px; }
+    .stats-grid { grid-template-columns: repeat(4, 1fr); gap: 0; }
+    .stat-item {
+      padding: 0 40px;
+      border-right: 1px solid rgba(0, 0, 0, 0.12);
+    }
+    .stat-item:last-child { border-right: none; }
+    .stat-num { font-size: 72px; }
+    .stat-label { font-size: 13px; }
+  }
+</style>

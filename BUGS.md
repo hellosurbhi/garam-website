@@ -2,6 +2,33 @@
 
 ## Open
 
+### [MEDIUM] No rate limiting on API endpoints
+- **Date:** 2026-04-04
+- **File:** `api/notify-application.ts`, `api/contestant-prep-auth.ts`
+- **Status:** Open
+- **Severity:** Medium
+- **What's happening:** No rate limiting on any API endpoint. A bot can trigger unlimited Resend emails (incurring cost) or brute-force the contestant prep auth endpoint.
+- **What should happen:** Endpoints should be rate-limited.
+- **Fix:** Use Vercel Edge Rate Limiting or Upstash Redis for per-IP rate limits.
+
+### [MEDIUM] CORS config allows all origins with DELETE method
+- **Date:** 2026-04-04
+- **File:** `cors.json`
+- **Status:** Open
+- **Severity:** Medium
+- **What's happening:** Firebase Storage CORS allows `origin: ["*"]` with all HTTP methods including DELETE. This is overly permissive.
+- **What should happen:** Restrict to production domain and only needed methods (GET, PUT for upload).
+- **Fix:** Update cors.json with specific origin and reduced method list.
+
+### [LOW] CSP uses unsafe-inline weakening XSS protection
+- **Date:** 2026-04-04
+- **File:** `vercel.json`
+- **Status:** Open
+- **Severity:** Low
+- **What's happening:** Both script-src and style-src include 'unsafe-inline', weakening CSP XSS protection.
+- **What should happen:** Use CSP nonces to eliminate unsafe-inline from script-src.
+- **Fix:** Migrate to Astro CSP nonce middleware. Lower priority since the site has minimal user-generated content.
+
 ### [MEDIUM] No server-side file-type validation on photo uploads
 - **Date:** 2026-04-04
 - **File:** `src/components/ApplyPage.tsx`

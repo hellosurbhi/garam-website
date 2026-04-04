@@ -130,8 +130,8 @@ export default function ApplyPage() {
   function handlePhotoChange(e: ChangeEvent<HTMLInputElement>) {
     const file = e.target.files?.[0];
     if (!file) return;
-    if (file.size > 10 * 1024 * 1024) {
-      setErrors((prev) => ({ ...prev, photo: "Photo must be under 10 MB" }));
+    if (file.size > 5 * 1024 * 1024) {
+      setErrors((prev) => ({ ...prev, photo: "Photo must be under 5 MB" }));
       e.target.value = "";
       return;
     }

@@ -1,0 +1,4 @@
+reviews:
+  auto_review:
+    enabled: true
+    auto_pause_after_reviewed_commits: 0

@@ -1,5 +1,19 @@
 # Changelog
 
+## update: use purpose-specific email aliases
+
+Split `contact@` into dedicated aliases where it makes the site look more professional:
+- `casting@` — application notification sender (Resend)
+- `hello@` — FAQ footer "still have questions?" CTA
+- `press@` — collaboration/sponsorship/media FAQ answer
+- `contact@` kept for schema.org contactPoint and social links (general catch-all)
+
+**Aliases to create:** `casting@`, `hello@`, `press@` (all @garammasaladating.com)
+
+**Files changed:**
+- `api/notify-application.ts` — from address `contact@` → `casting@`
+- `src/pages/faq.astro` — footer mailto `contact@` → `hello@`, collab answer now says `press@`
+
 ## update: FAQ page — SEO-friendly accordion, new entries, updated answers
 
 Replaced `display:none/block` JS toggling with CSS `max-height` transition so answer text is always present in the DOM for Google to index. Moved inline SVG styles to stylesheet.

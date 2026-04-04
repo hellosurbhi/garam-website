@@ -1,5 +1,26 @@
 # Changelog
 
+## fix: individual Event JSON-LD schemas with real venue data
+
+Replaced the ItemList-wrapped Event schema on both index.astro and tickets.astro with individual `<script type="application/ld+json">` blocks per show — the format Google's Events carousel actually parses.
+
+**Data changes (events.ts):**
+- Added `EventVenue` interface with streetAddress, postalCode, addressLocality, addressRegion, addressCountry
+- Added `venue` and `price` fields to EventEntry interface
+- Manhattan events now reference Top Secret Comedy Club (44 Avenue A, New York, NY 10009)
+- Jersey City events reference The Laugh Tour Comedy Club (555 Washington Blvd, Jersey City, NJ 07310)
+
+**Schema changes:**
+- Each upcoming show gets its own Event JSON-LD block (not wrapped in ItemList)
+- Event name standardized to "Garam Masala Dating — Live Comedy Dating Show"
+- Description updated to the 250-person audience version
+- Location includes real venue name and street address where known
+- Extracted shared `buildEventSchemas()` utility in src/utils/eventSchema.ts to eliminate duplicated schema logic between index.astro and tickets.astro
+
+**Files:** src/data/events.ts, src/utils/eventSchema.ts (new), src/pages/index.astro, src/pages/tickets.astro
+
+---
+
 ## update: use purpose-specific email aliases
 
 Split `contact@` into dedicated aliases where it makes the site look more professional:

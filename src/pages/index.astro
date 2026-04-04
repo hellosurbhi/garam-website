@@ -6,7 +6,7 @@ import { CREATOR_URLS } from '@/data/socials';
 import { SOCIAL_URLS } from '@/data/socials';
 import { events } from '@/data/events';
 import { isEventPast } from '@/utils/eventDate';
-import { nyOffset } from '@/utils/timezone';
+import { buildEventSchemas } from '@/utils/eventSchema';
 
 const upcomingEvents = events.filter((e) => !isEventPast(e.date) && !e.hidden);
 
@@ -16,69 +16,63 @@ const orgJsonLd = JSON.stringify({
   "@type": "Organization",
   name: "Garam Masala Dating",
   url: "https://garammasaladating.com",
-  description: "A live comedy dating show and South Asian singles mixer running weekly in NYC and monthly in Jersey City.",
+  logo: "https://garammasaladating.com/logo.png",
+  description: "Garam Masala Dating is a live comedy dating show and singles mixer in New York City. Real singles go on blind dates on stage in front of a 250-person live audience. Weekly in Manhattan, monthly in Jersey City.",
+  foundingDate: "2023",
   sameAs: [SOCIAL_URLS.instagram, SOCIAL_URLS.tiktok, SOCIAL_URLS.youtube],
-  logo: "https://garammasaladating.com/og-image.jpg",
   contactPoint: {
     "@type": "ContactPoint",
     email: "contact@garammasaladating.com",
-    contactType: "customer service",
+    contactType: "customer support",
   },
 });
 
-// Events JSON-LD
+// WebSite JSON-LD
+const websiteJsonLd = JSON.stringify({
+  "@context": "https://schema.org",
+  "@type": "WebSite",
+  name: "Garam Masala Dating",
+  url: "https://garammasaladating.com",
+});
+
+// FAQ data and JSON-LD
+const HOME_FAQS = [
+  {
+    q: "What is Garam Masala Dating?",
+    a: "Garam Masala Dating is a live comedy dating show in New York City where real singles go on blind dates on stage in front of a 250-person audience. Hosted by comedians Surbhi and Wyatt, the show runs weekly in Manhattan and monthly in Jersey City, followed by a singles mixer open to all attendees.",
+  },
+  {
+    q: "Do you have to be South Asian to come?",
+    a: "No. The show is open to everyone. The audience is a mix of South Asian, desi diaspora, and anyone who loves comedy and meeting new people.",
+  },
+  {
+    q: "Is Garam Masala Dating like Indian Matchmaking?",
+    a: "No. Garam Masala Dating is a live comedy show that happens in real time in front of 250 people in NYC. There are no producers, no editing, no second takes — just two real singles on a real first date on stage.",
+  },
+  {
+    q: "How do I get tickets?",
+    a: "Tickets are available on Eventbrite. Search \u2018Garam Masala Dating\u2019 or visit garammasaladating.com/tickets.",
+  },
+  {
+    q: "How do I apply to be on the show?",
+    a: "Fill out the contestant application at garammasaladating.com/apply. We cast based on personality and your answers, not looks.",
+  },
+];
+
+const faqJsonLd = JSON.stringify({
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  mainEntity: HOME_FAQS.map(({ q, a }) => ({
+    "@type": "Question",
+    name: q,
+    acceptedAnswer: { "@type": "Answer", text: a },
+  })),
+});
+
+// Individual Event JSON-LD blocks (one per upcoming show)
 const today = new Date().toISOString().slice(0, 10);
 const upcomingForSchema = events.filter((e) => !e.hidden && e.isoDate && e.isoDate >= today);
-
-const eventsJsonLd = upcomingForSchema.length > 0 ? JSON.stringify({
-  "@context": "https://schema.org",
-  "@type": "ItemList",
-  itemListElement: upcomingForSchema.map((e, i) => {
-    const start = e.startTime ?? "20:00";
-    const end = e.endTime ?? "22:00";
-    return {
-    "@type": "ListItem",
-    position: i + 1,
-    item: {
-      "@type": "Event",
-      name: `Garam Masala Dating — ${e.city}`,
-      description: "A live comedy dating show and South Asian singles mixer. Real blind dates on stage, followed by a mixer.",
-      startDate: `${e.isoDate}T${start}:00${nyOffset(e.isoDate!, start)}`,
-      endDate: `${e.isoDate}T${end}:00${nyOffset(e.isoDate!, end)}`,
-      eventStatus: "https://schema.org/EventScheduled",
-      eventAttendanceMode: "https://schema.org/OfflineEventAttendanceMode",
-      location: {
-        "@type": "Place",
-        name: e.city,
-        address: {
-          "@type": "PostalAddress",
-          addressLocality: e.city.split(",")[0].trim(),
-          addressRegion: e.city.includes(",") ? e.city.split(",")[1].trim() : undefined,
-          addressCountry: "US",
-        },
-      },
-      organizer: {
-        "@type": "Organization",
-        name: "Garam Masala Dating",
-        url: "https://garammasaladating.com",
-      },
-      performer: [
-        { "@type": "Person", name: "Surbhi", url: "https://www.instagram.com/lordmakemetaller/" },
-        { "@type": "Person", name: "Wyatt Feegrado", url: "https://www.instagram.com/wyattfeegrado/" },
-      ],
-      offers: {
-        "@type": "Offer",
-        url: e.url,
-        availability: "https://schema.org/InStock",
-        price: "15",
-        priceCurrency: "USD",
-        validFrom: e.isoDate,
-      },
-      image: "https://garammasaladating.com/og-image.jpg",
-    },
-  };
-  }),
-}) : null;
+const eventSchemas = buildEventSchemas(upcomingForSchema);
 ---
 
 <BaseLayout
@@ -87,7 +81,11 @@ const eventsJsonLd = upcomingForSchema.length > 0 ? JSON.stringify({
 >
   <Fragment slot="head">
     <script type="application/ld+json" set:html={orgJsonLd} />
-    {eventsJsonLd && <script type="application/ld+json" set:html={eventsJsonLd} />}
+    <script type="application/ld+json" set:html={websiteJsonLd} />
+    {eventSchemas.map((schema) => (
+      <script type="application/ld+json" set:html={schema} />
+    ))}
+    <script type="application/ld+json" set:html={faqJsonLd} />
   </Fragment>
 
   <Hero />
@@ -142,6 +140,30 @@ const eventsJsonLd = upcomingForSchema.length > 0 ? JSON.stringify({
   <div class="scroll-indicator">
     <div class="scroll-line"></div>
   </div>
+
+  <!-- FAQ Section -->
+  <section class="home-faq" id="faq" aria-labelledby="home-faq-heading">
+    <div class="home-faq-container">
+      <h2 id="home-faq-heading" class="home-faq-title">Frequently Asked Questions</h2>
+      <div class="home-faq-list">
+        {HOME_FAQS.map((item, i) => (
+          <div class:list={['home-faq-item', { 'is-open': i === 0 }]}>
+            <button
+              class="home-faq-toggle"
+              type="button"
+              aria-expanded={i === 0 ? 'true' : 'false'}
+            >
+              <span class="home-faq-question">{item.q}</span>
+              <svg class="home-faq-chevron" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg>
+            </button>
+            <div class="home-faq-answer">
+              <p class="home-faq-answer-text">{item.a}</p>
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  </section>
 </BaseLayout>
 
 <style>
@@ -293,4 +315,109 @@ const eventsJsonLd = upcomingForSchema.length > 0 ? JSON.stringify({
     .toc-date { font-size: 0.88rem; }
     .toc-city { font-size: 0.82rem; }
   }
+
+  /* FAQ Section */
+  .home-faq {
+    position: relative;
+    z-index: 10;
+    padding: 80px 24px;
+  }
+  .home-faq-container {
+    max-width: 620px;
+    margin: 0 auto;
+  }
+  .home-faq-title {
+    font-family: var(--font-playfair), serif;
+    font-size: 1.6rem;
+    font-weight: 700;
+    color: var(--text-ivory);
+    margin-bottom: 32px;
+    letter-spacing: -0.01em;
+  }
+  .home-faq-list {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+  }
+  .home-faq-item {
+    border-radius: 12px;
+    border: 1px solid rgba(245, 237, 228, 0.07);
+    background: rgba(255, 255, 255, 0.02);
+    overflow: hidden;
+    transition: border-color 0.15s, background 0.15s;
+  }
+  .home-faq-item.is-open {
+    border-color: rgba(201, 168, 76, 0.25);
+    background: rgba(201, 168, 76, 0.05);
+  }
+  .home-faq-toggle {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    padding: 18px 20px;
+    background: none;
+    border: none;
+    cursor: pointer;
+    text-align: left;
+    min-height: 48px;
+  }
+  .home-faq-question {
+    font-family: var(--font-cormorant), serif;
+    font-size: 17px;
+    font-weight: 600;
+    color: rgba(245, 237, 228, 0.85);
+    line-height: 1.4;
+    transition: color 0.15s;
+  }
+  .home-faq-item.is-open .home-faq-question {
+    color: var(--text-ivory);
+  }
+  .home-faq-chevron {
+    color: var(--gold-dark);
+    flex-shrink: 0;
+    transition: transform 0.2s;
+  }
+  .home-faq-item.is-open .home-faq-chevron {
+    transform: rotate(180deg);
+  }
+  .home-faq-answer {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+  .home-faq-item.is-open .home-faq-answer {
+    max-height: 300px;
+  }
+  .home-faq-answer-text {
+    font-family: var(--font-cormorant), serif;
+    font-size: 16px;
+    color: rgba(245, 237, 228, 0.7);
+    line-height: 1.65;
+    margin: 0;
+    padding: 0 20px 18px;
+  }
+  @media (min-width: 769px) {
+    .home-faq { padding: 100px 60px; }
+    .home-faq-title { font-size: 1.8rem; }
+  }
 </style>
+
+<script>
+  document.querySelectorAll('.home-faq-toggle').forEach((btn) => {
+    btn.addEventListener('click', () => {
+      const item = btn.closest('.home-faq-item');
+      if (!item) return;
+      const isOpen = item.classList.contains('is-open');
+      document.querySelectorAll('.home-faq-item').forEach((el) => {
+        el.classList.remove('is-open');
+        el.querySelector('.home-faq-toggle')?.setAttribute('aria-expanded', 'false');
+      });
+      if (!isOpen) {
+        item.classList.add('is-open');
+        btn.setAttribute('aria-expanded', 'true');
+      }
+    });
+  });
+</script>

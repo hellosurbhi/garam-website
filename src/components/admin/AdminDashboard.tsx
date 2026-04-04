@@ -36,7 +36,7 @@ export default function AdminDashboard({ onLogout }: AdminDashboardProps) {
   const [prepLinkLoading, setPrepLinkLoading] = useState<string | null>(null);
   const [prepLinkCopied, setPrepLinkCopied] = useState<string | null>(null);
 
-  const today = new Date().toISOString().slice(0, 10);
+  const today = new Date().toLocaleDateString("en-CA");
   const upcomingEvents = events.filter((e) => e.isoDate && e.isoDate >= today);
 
   async function handleCopyPrepLink(isoDate: string) {
@@ -102,8 +102,8 @@ export default function AdminDashboard({ onLogout }: AdminDashboardProps) {
     }
   }
 
-  function handleDelete(id: string) {
-    handleUpdate(id, { deletedAt: Timestamp.now() } as Partial<Omit<Application, "id">>);
+  async function handleDelete(id: string) {
+    await handleUpdate(id, { deletedAt: Timestamp.now() } as Partial<Omit<Application, "id">>);
     setSelectedApp(null);
   }
 

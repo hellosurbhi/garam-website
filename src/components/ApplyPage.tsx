@@ -101,7 +101,7 @@ export default function ApplyPage() {
   }
 
   const nextShow = useMemo(() => {
-    const today = new Date().toISOString().slice(0, 10);
+    const today = new Date().toLocaleDateString("en-CA");
     return events.find((e) => !e.hidden && e.isoDate && e.isoDate >= today) ?? null;
   }, []);
 
@@ -139,6 +139,11 @@ export default function ApplyPage() {
     setErrors((prev) => ({ ...prev, photo: undefined }));
     const reader = new FileReader();
     reader.onloadend = () => setPhotoPreview(reader.result as string);
+    reader.onerror = () => {
+      setErrors((prev) => ({ ...prev, photo: "Failed to read file. Please try again." }));
+      setPhotoFile(null);
+      setPhotoPreview(null);
+    };
     reader.readAsDataURL(file);
   }
 

@@ -1,4 +1,4 @@
-import { describe, it, expect, beforeEach, afterEach, vi } from "vitest";
+import { describe, it, expect, afterEach, vi } from "vitest";
 import { isEventPast, msUntilMidnight } from "../src/utils/eventDate";
 
 describe("isEventPast", () => {
@@ -26,6 +26,18 @@ describe("isEventPast", () => {
 
   it("returns false for non-numeric day", () => {
     expect(isEventPast("Jan abc")).toBe(false);
+  });
+
+  it("returns false for day out of range (year parsed as day)", () => {
+    expect(isEventPast("Dec 2026")).toBe(false);
+  });
+
+  it("returns false for day zero", () => {
+    expect(isEventPast("Jan 0")).toBe(false);
+  });
+
+  it("returns false for day exceeding 31", () => {
+    expect(isEventPast("Feb 32")).toBe(false);
   });
 
   it("returns true for a date clearly in the past (yesterday)", () => {

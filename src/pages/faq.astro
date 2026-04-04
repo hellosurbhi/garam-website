@@ -17,7 +17,7 @@ const FAQS = [
   },
   {
     q: "How do I get tickets?",
-    a: "Tickets are available on Eventbrite. Search \u201CGaram Masala Dating\u201D or go to our tickets page. General admission gets you in the door and access to the mixer before and after the show.",
+    a: "Tickets are available on Eventbrite. Search \u2018Garam Masala Dating\u2019 or visit garammasaladating.com/tickets. General admission includes entry to the show and the singles mixer before and after.",
   },
   {
     q: "How do I apply to be a contestant?",
@@ -41,7 +41,19 @@ const FAQS = [
   },
   {
     q: "How often does the show run?",
-    a: "We run weekly shows in NYC. Check the events page for upcoming dates and cities.",
+    a: "Garam Masala Dating runs weekly in Manhattan and monthly in Jersey City, New Jersey. Visit garammasaladating.com for upcoming dates.",
+  },
+  {
+    q: "Is Garam Masala Dating like Indian Matchmaking?",
+    a: "Garam Masala Dating is a live comedy show, not a TV production. Unlike Indian Matchmaking, it happens in real time in front of a live audience of 250 people in NYC. There are no producers, no editing, and no second takes \u2014 just two real singles on a real date on stage.",
+  },
+  {
+    q: "What cities is Garam Masala Dating in?",
+    a: "Garam Masala Dating currently runs weekly in Manhattan, New York City and monthly in Jersey City, New Jersey. Check garammasaladating.com for upcoming show dates and locations.",
+  },
+  {
+    q: "Is Garam Masala Dating free?",
+    a: "No. Tickets are purchased on Eventbrite. Prices vary by show \u2014 check garammasaladating.com for current pricing and upcoming dates.",
   },
   {
     q: "I want to collaborate, sponsor, or book the show for a private event. Who do I contact?",
@@ -100,9 +112,9 @@ const breadcrumbJsonLd = buildBreadcrumbJsonLd([
               aria-expanded="false"
             >
               <span class="faq-question">{item.q}</span>
-              <svg class="faq-chevron" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color: #C9A84C; flex-shrink: 0; transition: transform 0.2s;"><path d="m6 9 6 6 6-6"/></svg>
+              <svg class="faq-chevron" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg>
             </button>
-            <div class="faq-answer" style="display: none; padding: 0 20px 20px;" aria-hidden="true">
+            <div class="faq-answer">
               <p class="faq-answer-text">{item.a}</p>
             </div>
           </div>
@@ -126,22 +138,14 @@ const breadcrumbJsonLd = buildBreadcrumbJsonLd([
   document.querySelectorAll('.faq-toggle').forEach(btn => {
     btn.addEventListener('click', () => {
       const item = btn.closest('.faq-item');
-      const answer = item?.querySelector<HTMLElement>('.faq-answer');
-      const chevron = btn.querySelector<HTMLElement>('.faq-chevron');
-      const isOpen = answer?.style.display !== 'none';
+      const isOpen = item?.classList.contains('is-open');
       // Close all
       document.querySelectorAll('.faq-item').forEach(el => {
-        const a = el.querySelector<HTMLElement>('.faq-answer');
-        const c = el.querySelector<HTMLElement>('.faq-chevron');
-        if (a) a.style.display = 'none';
-        if (c) c.style.transform = 'rotate(0deg)';
         el.classList.remove('is-open');
         el.querySelector('.faq-toggle')?.setAttribute('aria-expanded', 'false');
       });
       // Open clicked if it was closed
       if (!isOpen) {
-        if (answer) answer.style.display = 'block';
-        if (chevron) chevron.style.transform = 'rotate(180deg)';
         item?.classList.add('is-open');
         btn.setAttribute('aria-expanded', 'true');
       }
@@ -256,6 +260,30 @@ const breadcrumbJsonLd = buildBreadcrumbJsonLd([
 
   .faq-item.is-open .faq-question {
     color: var(--text-ivory);
+  }
+
+  .faq-answer {
+    max-height: 0;
+    overflow: hidden;
+    visibility: hidden;
+    padding: 0 20px;
+    transition: max-height 0.25s ease, visibility 0.25s, padding 0.25s ease;
+  }
+
+  .faq-item.is-open .faq-answer {
+    max-height: 500px;
+    visibility: visible;
+    padding: 0 20px 20px;
+  }
+
+  .faq-chevron {
+    color: #C9A84C;
+    flex-shrink: 0;
+    transition: transform 0.2s;
+  }
+
+  .faq-item.is-open .faq-chevron {
+    transform: rotate(180deg);
   }
 
   .faq-answer-text {

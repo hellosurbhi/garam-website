@@ -1,5 +1,16 @@
 # Changelog
 
+## update: FAQ page — SEO-friendly accordion, new entries, updated answers
+
+Replaced `display:none/block` JS toggling with CSS `max-height` transition so answer text is always present in the DOM for Google to index. Moved inline SVG styles to stylesheet.
+
+Updated two answer strings ("How do I get tickets?" and "How often does the show run?") with current show details (weekly Manhattan, monthly Jersey City).
+
+Added three new FAQ entries before the collaboration question: "Is Garam Masala Dating like Indian Matchmaking?", "What cities is Garam Masala Dating in?", "Is Garam Masala Dating free?" — all auto-included in the FAQPage JSON-LD schema.
+
+**Files changed:**
+- `src/pages/faq.astro` — accordion CSS/JS rewrite, 2 answer updates, 3 new entries
+
 ## fix: add .js extensions to relative imports in API routes
 
 TypeScript with `node16`/`nodenext` module resolution requires explicit `.js` extensions on relative imports. Fixed in `api/generate-contestant-link.ts` and its test file.

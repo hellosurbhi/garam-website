@@ -33,7 +33,7 @@ function StatusBadge({ status }: { status: Application["status"] }) {
 export default function ApplicantCard({ app, onClick, onDelete, onRestore, dimmed }: ApplicantCardProps) {
   const handle = app.instagram.replace(/^@/, "");
 
-  const actionButton = onDelete ?? onRestore ? (
+  const actionButton = (onDelete ?? onRestore) ? (
     <button
       onClick={(e) => {
         e.stopPropagation();
@@ -47,8 +47,8 @@ export default function ApplicantCard({ app, onClick, onDelete, onRestore, dimme
         background: "rgba(0,0,0,0.45)",
         border: "none",
         borderRadius: "100px",
-        minWidth: "44px",
-        minHeight: "44px",
+        minWidth: "48px",
+        minHeight: "48px",
         padding: "10px",
         cursor: "pointer",
         display: "flex",

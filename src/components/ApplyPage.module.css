@@ -411,6 +411,14 @@
   animation: toastIn 0.2s ease-out both;
 }
 
+.toast[data-status="success"] {
+  background: var(--success);
+}
+
+.toast[data-status="error"] {
+  background: var(--crimson);
+}
+
 .toastDismiss {
   background: none;
   border: none;

@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo } from "react";
+import { useState, useEffect, useMemo, useRef } from "react";
 import { collection, getDocs, doc, updateDoc, Timestamp } from "firebase/firestore";
 import { ChevronRight, ChevronDown, Copy, Check } from "lucide-react";
 import Select from "react-select";
@@ -36,16 +36,24 @@ export default function AdminDashboard({ onLogout }: AdminDashboardProps) {
   const [prepLinkLoading, setPrepLinkLoading] = useState<string | null>(null);
   const [prepLinkCopied, setPrepLinkCopied] = useState<string | null>(null);
 
-  const today = new Date().toISOString().slice(0, 10);
+  const today = new Date().toLocaleDateString("en-CA");
   const upcomingEvents = events.filter((e) => e.isoDate && e.isoDate >= today);
+
+  const toastTimerRef = useRef<ReturnType<typeof setTimeout>>();
+  useEffect(() => () => { clearTimeout(toastTimerRef.current); }, []);
+
+  function showToast(msg: string, ok: boolean) {
+    clearTimeout(toastTimerRef.current);
+    setToast({ msg, ok });
+    toastTimerRef.current = setTimeout(() => setToast(null), 2500);
+  }
 
   async function handleCopyPrepLink(isoDate: string) {
     setPrepLinkLoading(isoDate);
     try {
       const idToken = await getFirebaseAuth().currentUser?.getIdToken();
       if (!idToken) {
-        setToast({ msg: "Session expired. Please log in again.", ok: false });
-        setTimeout(() => setToast(null), 2500);
+        showToast("Session expired. Please log in again.", false);
         return;
       }
       const res = await fetch("/api/generate-contestant-link", {
@@ -62,12 +70,10 @@ export default function AdminDashboard({ onLogout }: AdminDashboardProps) {
         setPrepLinkCopied(isoDate);
         setTimeout(() => setPrepLinkCopied(null), 2000);
       } else {
-        setToast({ msg: "Failed to generate link", ok: false });
-        setTimeout(() => setToast(null), 2500);
+        showToast("Failed to generate link", false);
       }
     } catch {
-      setToast({ msg: "Failed to generate link", ok: false });
-      setTimeout(() => setToast(null), 2500);
+      showToast("Failed to generate link", false);
     } finally {
       setPrepLinkLoading(null);
     }
@@ -94,16 +100,14 @@ export default function AdminDashboard({ onLogout }: AdminDashboardProps) {
       await updateDoc(doc(getFirebaseDb(), "applications", id), patch);
       setApplications((prev) => prev.map((a) => (a.id === id ? { ...a, ...patch } : a)));
       setSelectedApp((prev) => (prev?.id === id ? { ...prev, ...patch } : prev));
-      setToast({ msg: "Saved", ok: true });
+      showToast("Saved", true);
     } catch {
-      setToast({ msg: "Save failed", ok: false });
-    } finally {
-      setTimeout(() => setToast(null), 2500);
+      showToast("Save failed", false);
     }
   }
 
-  function handleDelete(id: string) {
-    handleUpdate(id, { deletedAt: Timestamp.now() } as Partial<Omit<Application, "id">>);
+  async function handleDelete(id: string) {
+    await handleUpdate(id, { deletedAt: Timestamp.now() } as Partial<Omit<Application, "id">>);
     setSelectedApp(null);
   }
 

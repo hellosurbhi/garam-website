@@ -126,21 +126,23 @@ const breadcrumbJsonLd = buildBreadcrumbJsonLd([
   document.querySelectorAll('.faq-toggle').forEach(btn => {
     btn.addEventListener('click', () => {
       const item = btn.closest('.faq-item');
-      const answer = item.querySelector('.faq-answer');
-      const chevron = btn.querySelector('.faq-chevron');
-      const isOpen = answer.style.display !== 'none';
+      const answer = item?.querySelector<HTMLElement>('.faq-answer');
+      const chevron = btn.querySelector<HTMLElement>('.faq-chevron');
+      const isOpen = answer?.style.display !== 'none';
       // Close all
       document.querySelectorAll('.faq-item').forEach(el => {
-        el.querySelector('.faq-answer').style.display = 'none';
-        el.querySelector('.faq-chevron').style.transform = 'rotate(0deg)';
+        const a = el.querySelector<HTMLElement>('.faq-answer');
+        const c = el.querySelector<HTMLElement>('.faq-chevron');
+        if (a) a.style.display = 'none';
+        if (c) c.style.transform = 'rotate(0deg)';
         el.classList.remove('is-open');
-        el.querySelector('.faq-toggle').setAttribute('aria-expanded', 'false');
+        el.querySelector('.faq-toggle')?.setAttribute('aria-expanded', 'false');
       });
       // Open clicked if it was closed
       if (!isOpen) {
-        answer.style.display = 'block';
-        chevron.style.transform = 'rotate(180deg)';
-        item.classList.add('is-open');
+        if (answer) answer.style.display = 'block';
+        if (chevron) chevron.style.transform = 'rotate(180deg)';
+        item?.classList.add('is-open');
         btn.setAttribute('aria-expanded', 'true');
       }
     });

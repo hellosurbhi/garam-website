@@ -4,6 +4,8 @@ export interface EventEntry {
   url: string;
   hidden?: boolean;
   isoDate?: string; // YYYY-MM-DD — present only for events with a specific date
+  startTime?: string; // HH:MM 24h format, ET (default: "20:00")
+  endTime?: string; // HH:MM 24h format, ET (default: "22:00")
 }
 
 export const events: EventEntry[] = [

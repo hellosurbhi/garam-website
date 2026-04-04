@@ -3,6 +3,7 @@ import react from "@astrojs/react";
 import vercel from "@astrojs/vercel";
 
 export default defineConfig({
+  site: "https://garammasaladating.com",
   output: "static",
   adapter: vercel(),
   integrations: [react()],

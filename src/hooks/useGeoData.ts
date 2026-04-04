@@ -10,14 +10,19 @@ interface GeoModule {
 
 export function useGeoData(countryCode: string, stateCode: string) {
   const [geo, setGeo] = useState<GeoModule | null>(null);
+  const [geoFailed, setGeoFailed] = useState(false);
 
   useEffect(() => {
     let cancelled = false;
-    import("country-state-city").then((mod) => {
-      if (!cancelled) {
-        setGeo({ Country: mod.Country, State: mod.State, City: mod.City });
-      }
-    });
+    import("country-state-city")
+      .then((mod) => {
+        if (!cancelled) {
+          setGeo({ Country: mod.Country, State: mod.State, City: mod.City });
+        }
+      })
+      .catch(() => {
+        if (!cancelled) setGeoFailed(true);
+      });
     return () => { cancelled = true; };
   }, []);
 
@@ -40,5 +45,5 @@ export function useGeoData(countryCode: string, stateCode: string) {
     [geo, countryCode, stateCode],
   );
 
-  return { loading: !geo, countryOptions, stateOptions, cityOptions };
+  return { loading: !geo && !geoFailed, failed: geoFailed, countryOptions, stateOptions, cityOptions };
 }

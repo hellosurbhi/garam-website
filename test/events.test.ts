@@ -1,6 +1,5 @@
 import { describe, it, expect } from "vitest";
 import { events } from "../src/data/events";
-import type { EventEntry } from "../src/data/events";
 
 const ISO_DATE_RE = /^\d{4}-\d{2}-\d{2}$/;
 const SHORT_DATE_RE = /^[A-Z][a-z]{2} \d{1,2}$/;

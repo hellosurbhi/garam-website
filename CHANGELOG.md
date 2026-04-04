@@ -1,5 +1,29 @@
 # Changelog
 
+## fix: 10 bugs from code audit (operator precedence, stale closure, date overflow, security hardening, canonical link)
+
+Fixed 10 issues identified in a comprehensive code audit across 13 files:
+
+**Functional bugs:**
+- Fixed operator precedence in ApplicantCard that silently prevented card-level delete button from rendering (`onDelete ?? onRestore` → `(onDelete ?? onRestore)`)
+- Fixed stale closure in ApplicantModal Escape key handler — pressing Escape after editing notes now saves current value instead of discarding changes
+- Fixed isEventPast overflow where "Dec 2026" was parsed as day=2026, creating a date in ~2031. Added day range guard (1-31)
+- Fixed UTC date comparison in next-show detection — switched from `toISOString().slice(0,10)` to `toLocaleDateString("en-CA")` for local timezone
+- Added FileReader.onerror handler on photo upload so corrupted files show an error instead of silently hanging
+- Made handleDelete await the Firestore update before closing the modal, preventing lost error feedback
+
+**Security hardening:**
+- Switched ContestantPrepPage session token from localStorage to sessionStorage (cleared on tab close)
+- Added autocomplete attributes to admin login form for password managers
+- Added null-safe optional chaining to all FAQ accordion DOM queries
+
+**SEO / data model:**
+- Added missing `<link rel="canonical">` tag to BaseLayout (was only in og:url)
+- Set `site` in astro.config.mjs so each page gets its own canonical URL automatically
+- Added optional `startTime`/`endTime` fields to EventEntry to avoid hardcoded 20:00-22:00 in event schema
+
+**Files modified:** ApplicantCard.tsx, ApplicantModal.tsx, eventDate.ts, ApplyPage.tsx, AdminDashboard.tsx, ContestantPrepPage.tsx, AdminLogin.tsx, faq.astro, BaseLayout.astro, astro.config.mjs, events.ts, index.astro, eventDate.test.ts
+
 ## fix: hide back button when landing directly on /apply
 
 The back button on the apply page now only shows when there's browser history to go back to. Users arriving directly (e.g. from Instagram bio link) no longer see a useless back button.

@@ -114,6 +114,47 @@ Removed the CSP header entirely rather than continuing to patch allowed origins 
 - `test/meta-pixel.test.ts` — removed the CSP validation test suite (3 tests); Meta Pixel component and BaseLayout tests unchanged
 - `BUGS.md` — removed the open "CSP blocks GTM and PostHog scripts" bug entry (resolved by this change)
 
+## feat: v3 SEO-optimized home page rewrite
+
+Complete redesign of the landing page from a minimal dark hero + event list to a 13-section light-themed marketing page.
+
+**New sections:**
+- Hero with gradient blobs, eyebrow badge, and dual CTAs (Get Tickets + Apply)
+- Scrolling marquee text strip
+- "The Experience" — 2-column SEO content with 4 numbered steps explaining the show format
+- Shows section with data-driven event cards (from events.ts) and ticket links
+- Stats section (12 shows, 2K+ audience, 3 couples matched, 500K views)
+- Photo grid with gradient placeholders (real images to be added)
+- "As Seen In" press section
+- Testimonials with 3 audience quote cards
+- Creators section with host bios and schema.org Person markup
+- Answer-first FAQ accordion with 5 questions
+- Newsletter signup (phone + email)
+- 4-column fat footer with navigation links
+
+**SEO additions:**
+- FAQPage JSON-LD schema for rich results
+- Keywords meta tag targeting NYC live dating show queries
+- Rich below-fold content for crawlers
+
+**Architecture:**
+- 13 Astro components in `src/components/home/` (one per section)
+- `bodyClass` prop added to BaseLayout for page-specific body overrides
+- v3 color palette tokens (--hot-pink, --electric-yellow, --charcoal, etc.) added to `:root`
+- All sections mobile-first responsive with 768px breakpoint
+- Scroll-reveal animations via IntersectionObserver
+- Sticky nav with scroll state detection
+- No React hydration — all interactivity via vanilla JS
+
+**Removed:**
+- Old Hero.astro (parallax photo background) — replaced by CSS gradient blobs
+- Old Nav.astro (dark glassmorphism) — replaced by light pill-button nav
+- Custom cursor stripped (banned for mobile-first site)
+
+**Files:** src/pages/index.astro, src/layouts/BaseLayout.astro, src/index.css, 13 new files in src/components/home/, 2 deleted components
+
+---
+
 ## fix: code review round — photo state, DST offsets, storage auth, toast cleanup, touch targets
 
 Verified and fixed findings from code review:

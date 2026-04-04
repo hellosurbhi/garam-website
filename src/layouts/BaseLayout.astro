@@ -17,7 +17,7 @@ const {
   title,
   description,
   ogImage = 'https://garammasaladating.com/og-image.jpg',
-  canonicalUrl = 'https://garammasaladating.com/',
+  canonicalUrl = Astro.site ? new URL(Astro.url.pathname, Astro.site).href : 'https://garammasaladating.com/',
   noindex = false,
   overlayBg,
 } = Astro.props;
@@ -63,6 +63,7 @@ const {
       href="/fonts/dm-sans-latin.woff2"
       crossorigin
     />
+    <link rel="canonical" href={canonicalUrl} />
     <meta property="og:type" content="website" />
     <meta property="og:url" content={canonicalUrl} />
     <meta property="og:title" content={title} />

@@ -1,5 +1,94 @@
 # Changelog
 
+## fix: code review round — photo state, DST offsets, storage auth, toast cleanup, touch targets
+
+Verified and fixed findings from code review:
+
+**Functional fixes:**
+- Clear `photoFile`/`photoPreview` when file selection is empty or exceeds 5 MB limit, preventing stale photo submission
+- Compute correct EST/EDT offset (`-05:00` or `-04:00`) for Event JSON-LD instead of hardcoding `-04:00`. Extracted `nyOffset()` to shared `src/utils/timezone.ts` used by both index.astro and tickets.astro
+- Fix useGeoData perpetual loading on import failure — added `geoFailed` state so `loading` becomes false when the dynamic import rejects
+- Fix AdminDashboard toast timeout leak — use ref + cleanup to prevent `setToast` on unmounted component
+
+**Security:**
+- Add `request.auth != null` to storage write rule (was unauthenticated)
+- Revert storage read rule to `allow read: if true` since ApplyPage's `getDownloadURL` runs without auth
+- Add `signInAnonymously` before Storage upload in ApplyPage so writes succeed with auth-required rules
+
+**UI/accessibility:**
+- Bump ApplicantCard action button touch target from 44px to 48px per project standards
+
+**Tests:**
+- Add 2 tests for photoUrl URL scheme validation (non-https and invalid URL)
+- Add import failure test for useGeoData
+
+**Files modified:** ApplyPage.tsx, useGeoData.ts, AdminDashboard.tsx, ApplicantCard.tsx, storage.rules, index.astro, tickets.astro, timezone.ts (new), notify-application.test.ts, useGeoData.importError.test.ts (new), useGeoData.test.ts
+
+## fix: use dynamic EST/EDT timezone offset in tickets.astro Event schema
+
+The tickets page JSON-LD was hardcoding `-04:00` (EDT) for event startDate/endDate. Added the same `nyOffset()` helper already used in index.astro to compute the correct America/New_York offset per event, handling the EST/EDT boundary correctly.
+
+- **Modified:** `src/pages/tickets.astro`
+
+## feat: add /tickets page for SEO
+
+New standalone `/tickets` page showing all upcoming Garam Masala Dating shows with Eventbrite links. Targets "garam masala dating tickets" and related search queries.
+
+- Event cards with date, city, and "Get Tickets" CTA linking to Eventbrite
+- TBA events (Edinburgh, India Tour) shown dimmed with "Coming Soon" label
+- Empty state with Instagram follow prompt when no upcoming shows
+- Event ItemList JSON-LD schema (same as homepage) for rich search results
+- BreadcrumbList JSON-LD for search navigation
+- Added `/tickets` to sitemap.xml (priority 0.9, weekly changefreq)
+
+- **Created:** `src/pages/tickets.astro`
+- **Modified:** `public/sitemap.xml`
+
+## fix: add missing Event JSON-LD fields flagged by Google Search Console
+
+Added `performer` (Surbhi + Wyatt Feegrado) to Event schemas in index.astro and city pages. Added `price`, `priceCurrency`, and `validFrom` to the `offers` object. The `offers.url` uses the existing Eventbrite ticketing links from `src/data/events.ts`.
+
+- **Modified:** `src/pages/index.astro`, `src/pages/cities/[slug].astro`
+
+## fix: 5 more audit issues (storage auth, photoUrl validation, file size mismatch, toast dedup, geo error handling)
+
+Second round of code audit fixes:
+
+**Security:**
+- Restricted Firebase Storage photo reads to authenticated users (was `allow read: if true`)
+- Added URL scheme validation for photoUrl in admin email — only https links render
+- Aligned client-side file size limit to 5 MB to match storage rules (was 10 MB client-side, causing silent rejections between 5-10 MB)
+
+**Code quality:**
+- Extracted `showToast` helper in AdminDashboard, replacing 5 duplicate setTimeout/setToast patterns
+- Added `.catch` to dynamic `country-state-city` import in useGeoData so a failed chunk load doesn't hang the geo selectors in loading state forever
+
+**Files modified:** storage.rules, api/notify-application.ts, ApplyPage.tsx, AdminDashboard.tsx, useGeoData.ts
+
+## fix: 10 bugs from code audit (operator precedence, stale closure, date overflow, security hardening, canonical link)
+
+Fixed 10 issues identified in a comprehensive code audit across 13 files:
+
+**Functional bugs:**
+- Fixed operator precedence in ApplicantCard that silently prevented card-level delete button from rendering (`onDelete ?? onRestore` → `(onDelete ?? onRestore)`)
+- Fixed stale closure in ApplicantModal Escape key handler — pressing Escape after editing notes now saves current value instead of discarding changes
+- Fixed isEventPast overflow where "Dec 2026" was parsed as day=2026, creating a date in ~2031. Added day range guard (1-31)
+- Fixed UTC date comparison in next-show detection — switched from `toISOString().slice(0,10)` to `toLocaleDateString("en-CA")` for local timezone
+- Added FileReader.onerror handler on photo upload so corrupted files show an error instead of silently hanging
+- Made handleDelete await the Firestore update before closing the modal, preventing lost error feedback
+
+**Security hardening:**
+- Switched ContestantPrepPage session token from localStorage to sessionStorage (cleared on tab close)
+- Added autocomplete attributes to admin login form for password managers
+- Added null-safe optional chaining to all FAQ accordion DOM queries
+
+**SEO / data model:**
+- Added missing `<link rel="canonical">` tag to BaseLayout (was only in og:url)
+- Set `site` in astro.config.mjs so each page gets its own canonical URL automatically
+- Added optional `startTime`/`endTime` fields to EventEntry to avoid hardcoded 20:00-22:00 in event schema
+
+**Files modified:** ApplicantCard.tsx, ApplicantModal.tsx, eventDate.ts, ApplyPage.tsx, AdminDashboard.tsx, ContestantPrepPage.tsx, AdminLogin.tsx, faq.astro, BaseLayout.astro, astro.config.mjs, events.ts, index.astro, eventDate.test.ts
+
 ## fix: hide back button when landing directly on /apply
 
 The back button on the apply page now only shows when there's browser history to go back to. Users arriving directly (e.g. from Instagram bio link) no longer see a useless back button.

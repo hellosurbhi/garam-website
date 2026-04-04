@@ -6,6 +6,7 @@ import { CREATOR_URLS } from '@/data/socials';
 import { SOCIAL_URLS } from '@/data/socials';
 import { events } from '@/data/events';
 import { isEventPast } from '@/utils/eventDate';
+import { nyOffset } from '@/utils/timezone';
 
 const upcomingEvents = events.filter((e) => !isEventPast(e.date) && !e.hidden);
 
@@ -28,18 +29,22 @@ const orgJsonLd = JSON.stringify({
 // Events JSON-LD
 const today = new Date().toISOString().slice(0, 10);
 const upcomingForSchema = events.filter((e) => !e.hidden && e.isoDate && e.isoDate >= today);
+
 const eventsJsonLd = upcomingForSchema.length > 0 ? JSON.stringify({
   "@context": "https://schema.org",
   "@type": "ItemList",
-  itemListElement: upcomingForSchema.map((e, i) => ({
+  itemListElement: upcomingForSchema.map((e, i) => {
+    const start = e.startTime ?? "20:00";
+    const end = e.endTime ?? "22:00";
+    return {
     "@type": "ListItem",
     position: i + 1,
     item: {
       "@type": "Event",
       name: `Garam Masala Dating — ${e.city}`,
       description: "A live comedy dating show and South Asian singles mixer. Real blind dates on stage, followed by a mixer.",
-      startDate: `${e.isoDate}T20:00:00-04:00`,
-      endDate: `${e.isoDate}T22:00:00-04:00`,
+      startDate: `${e.isoDate}T${start}:00${nyOffset(e.isoDate!, start)}`,
+      endDate: `${e.isoDate}T${end}:00${nyOffset(e.isoDate!, end)}`,
       eventStatus: "https://schema.org/EventScheduled",
       eventAttendanceMode: "https://schema.org/OfflineEventAttendanceMode",
       location: {
@@ -57,14 +62,22 @@ const eventsJsonLd = upcomingForSchema.length > 0 ? JSON.stringify({
         name: "Garam Masala Dating",
         url: "https://garammasaladating.com",
       },
+      performer: [
+        { "@type": "Person", name: "Surbhi", url: "https://www.instagram.com/lordmakemetaller/" },
+        { "@type": "Person", name: "Wyatt Feegrado", url: "https://www.instagram.com/wyattfeegrado/" },
+      ],
       offers: {
         "@type": "Offer",
         url: e.url,
         availability: "https://schema.org/InStock",
+        price: "15",
+        priceCurrency: "USD",
+        validFrom: e.isoDate,
       },
       image: "https://garammasaladating.com/og-image.jpg",
     },
-  })),
+  };
+  }),
 }) : null;
 ---
 

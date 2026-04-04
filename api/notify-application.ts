@@ -68,9 +68,15 @@ function buildEmailHtml(data: ApplicationNotification): string {
       </div>`
     : "";
 
-  const photoSection = data.photoUrl
-    ? `<p style="margin-top:12px;"><a href="${escapeHtml(data.photoUrl)}" style="color:#E91E76;">View Photo</a></p>`
-    : "";
+  let photoSection = "";
+  if (data.photoUrl) {
+    try {
+      const parsed = new URL(data.photoUrl);
+      if (parsed.protocol === "https:") {
+        photoSection = `<p style="margin-top:12px;"><a href="${escapeHtml(data.photoUrl)}" style="color:#E91E76;">View Photo</a></p>`;
+      }
+    } catch { /* invalid URL — skip photo link */ }
+  }
 
   return `<div style="font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;max-width:600px;margin:0 auto;padding:20px;">
     <h2 style="color:#E91E76;margin:0 0 16px;">New ${isNomination ? "Nomination" : "Self-Application"}</h2>

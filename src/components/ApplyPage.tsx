@@ -1,9 +1,10 @@
 import { useState, useEffect, useMemo, type ChangeEvent } from "react";
 import { collection, addDoc, serverTimestamp } from "firebase/firestore";
 import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
+import { signInAnonymously } from "firebase/auth";
 import Select from "react-select";
 import { useGeoData } from "@/hooks/useGeoData";
-import { getFirebaseDb, getFirebaseStorage } from "@/lib/firebase";
+import { getFirebaseDb, getFirebaseStorage, getFirebaseAuth } from "@/lib/firebase";
 import { COMMUNITY_OPTIONS, INCOME_OPTIONS } from "@/types/application";
 import { events } from "@/data/events";
 import { formSelectStyles } from "@/utils/reactSelectStyles";
@@ -101,11 +102,11 @@ export default function ApplyPage() {
   }
 
   const nextShow = useMemo(() => {
-    const today = new Date().toISOString().slice(0, 10);
+    const today = new Date().toLocaleDateString("en-CA");
     return events.find((e) => !e.hidden && e.isoDate && e.isoDate >= today) ?? null;
   }, []);
 
-  const { loading: geoLoading, countryOptions, stateOptions, cityOptions } = useGeoData(form.country, form.state);
+  const { loading: geoLoading, failed: geoFailed, countryOptions, stateOptions, cityOptions } = useGeoData(form.country, form.state);
 
   function set(field: keyof FormState, value: string) {
     setForm((prev) => ({ ...prev, [field]: value }));
@@ -129,9 +130,15 @@ export default function ApplyPage() {
 
   function handlePhotoChange(e: ChangeEvent<HTMLInputElement>) {
     const file = e.target.files?.[0];
-    if (!file) return;
-    if (file.size > 10 * 1024 * 1024) {
-      setErrors((prev) => ({ ...prev, photo: "Photo must be under 10 MB" }));
+    if (!file) {
+      setPhotoFile(null);
+      setPhotoPreview(null);
+      return;
+    }
+    if (file.size > 5 * 1024 * 1024) {
+      setErrors((prev) => ({ ...prev, photo: "Photo must be under 5 MB" }));
+      setPhotoFile(null);
+      setPhotoPreview(null);
       e.target.value = "";
       return;
     }
@@ -139,6 +146,11 @@ export default function ApplyPage() {
     setErrors((prev) => ({ ...prev, photo: undefined }));
     const reader = new FileReader();
     reader.onloadend = () => setPhotoPreview(reader.result as string);
+    reader.onerror = () => {
+      setErrors((prev) => ({ ...prev, photo: "Failed to read file. Please try again." }));
+      setPhotoFile(null);
+      setPhotoPreview(null);
+    };
     reader.readAsDataURL(file);
   }
 
@@ -176,6 +188,7 @@ export default function ApplyPage() {
 
     setSubmitting(true);
     try {
+      await signInAnonymously(getFirebaseAuth());
       const ext = photoFile!.name.split(".").pop() ?? "jpg";
       const storageRef = ref(getFirebaseStorage(), `photos/${crypto.randomUUID()}.${ext}`);
       await uploadBytes(storageRef, photoFile!);
@@ -367,7 +380,7 @@ export default function ApplyPage() {
                       options={countryOptions}
                       value={countryOptions.find((o) => o.value === form.country) ?? null}
                       onChange={handleCountryChange}
-                      placeholder={geoLoading ? "Loading…" : "Select…"}
+                      placeholder={geoLoading ? "Loading…" : geoFailed ? "Type your country" : "Select…"}
                       styles={formSelectStyles}
                       isSearchable
                       isLoading={geoLoading}
@@ -542,7 +555,7 @@ export default function ApplyPage() {
       {toast && (
         <div
           className={styles.toast}
-          style={{ background: toast.ok ? "var(--success)" : "var(--crimson)" }}
+          data-status={toast.ok ? "success" : "error"}
         >
           <span>{toast.msg}</span>
           <button onClick={() => setToast(null)} className={styles.toastDismiss} aria-label="Dismiss">

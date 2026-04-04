@@ -8,21 +8,21 @@ const EXPIRES_KEY = "gm-prep-expires";
 
 function getSession(): { token: string; expiresAt: number } | null {
   if (typeof window === "undefined") return null;
-  const token = localStorage.getItem(TOKEN_KEY);
-  const expires = localStorage.getItem(EXPIRES_KEY);
+  const token = sessionStorage.getItem(TOKEN_KEY);
+  const expires = sessionStorage.getItem(EXPIRES_KEY);
   if (!token || !expires) return null;
   const expiresAt = parseInt(expires, 10);
   if (Number.isNaN(expiresAt) || Date.now() >= expiresAt) {
-    localStorage.removeItem(TOKEN_KEY);
-    localStorage.removeItem(EXPIRES_KEY);
+    sessionStorage.removeItem(TOKEN_KEY);
+    sessionStorage.removeItem(EXPIRES_KEY);
     return null;
   }
   return { token, expiresAt };
 }
 
 function saveSession(token: string, expiresAt: number) {
-  localStorage.setItem(TOKEN_KEY, token);
-  localStorage.setItem(EXPIRES_KEY, String(expiresAt));
+  sessionStorage.setItem(TOKEN_KEY, token);
+  sessionStorage.setItem(EXPIRES_KEY, String(expiresAt));
 }
 
 /* ─── Loading state ────────────────────────────────────────────── */

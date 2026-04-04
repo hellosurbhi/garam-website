@@ -19,7 +19,7 @@ export function isEventPast(dateStr: string): boolean {
   if (monthIndex === undefined) return false;
 
   const day = parseInt(parts[1], 10);
-  if (isNaN(day)) return false;
+  if (isNaN(day) || day < 1 || day > 31) return false;
 
   const now = new Date();
   const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());

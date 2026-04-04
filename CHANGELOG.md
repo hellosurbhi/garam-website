@@ -1,5 +1,12 @@
 # Changelog
 
+## fix: add style-src to CSP to restore inline styles
+
+The permissive CSP was missing `style-src * 'unsafe-inline'`, causing the browser to block all inline styles and CSS custom properties — rendering the site in black/default colors.
+
+**Files changed:**
+- `vercel.json` — added `style-src * 'unsafe-inline'` to the CSP directive
+
 ## add: permissive Content-Security-Policy header
 
 Added a wide-open CSP to `vercel.json` that allows all origins. Needed to enable CSP presence without blocking any third-party scripts (GTM, PostHog, Meta Pixel, etc.).

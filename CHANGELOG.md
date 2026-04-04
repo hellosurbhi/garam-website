@@ -1,5 +1,20 @@
 # Changelog
 
+## fix: 5 more audit issues (storage auth, photoUrl validation, file size mismatch, toast dedup, geo error handling)
+
+Second round of code audit fixes:
+
+**Security:**
+- Restricted Firebase Storage photo reads to authenticated users (was `allow read: if true`)
+- Added URL scheme validation for photoUrl in admin email — only https links render
+- Aligned client-side file size limit to 5 MB to match storage rules (was 10 MB client-side, causing silent rejections between 5-10 MB)
+
+**Code quality:**
+- Extracted `showToast` helper in AdminDashboard, replacing 5 duplicate setTimeout/setToast patterns
+- Added `.catch` to dynamic `country-state-city` import in useGeoData so a failed chunk load doesn't hang the geo selectors in loading state forever
+
+**Files modified:** storage.rules, api/notify-application.ts, ApplyPage.tsx, AdminDashboard.tsx, useGeoData.ts
+
 ## fix: 10 bugs from code audit (operator precedence, stale closure, date overflow, security hardening, canonical link)
 
 Fixed 10 issues identified in a comprehensive code audit across 13 files:

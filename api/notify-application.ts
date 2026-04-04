@@ -113,7 +113,7 @@ export default async function handler(
   const resend = new Resend(apiKey);
   try {
     await resend.emails.send({
-      from: "Garam Masala Dating <contact@garammasaladating.com>",
+      from: "Garam Masala Dating <casting@garammasaladating.com>",
       to: notificationEmail,
       subject: `New Application: ${body.name} (${body.applicationType === "Nomination" ? "Nomination" : "Self"})`,
       html: buildEmailHtml(body),

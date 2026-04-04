@@ -1,5 +1,14 @@
 # Changelog
 
+## update: links page email aliases
+
+- "Booking & Press Inquiries" link now points to `press@garammasaladating.com`
+- Bottom social email icon now points to `hello@garammasaladating.com`
+- Apply page has no email references, no changes needed
+
+**Files changed:**
+- `src/pages/links.astro` — updated both mailto links
+
 ## fix: individual Event JSON-LD schemas with real venue data
 
 Replaced the ItemList-wrapped Event schema on both index.astro and tickets.astro with individual `<script type="application/ld+json">` blocks per show — the format Google's Events carousel actually parses.

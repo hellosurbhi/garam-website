@@ -1,0 +1,344 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import { buildBreadcrumbJsonLd } from '@/utils/breadcrumbs';
+import { events } from '@/data/events';
+import { isEventPast } from '@/utils/eventDate';
+
+const TITLE = "Tickets & Upcoming Shows | Garam Masala Dating";
+const DESC =
+  "Get tickets to upcoming Garam Masala Dating shows — a live South Asian comedy dating show and singles mixer in NYC, Jersey City, San Diego, and more.";
+
+const upcomingEvents = events.filter((e) => !isEventPast(e.date) && !e.hidden);
+
+const breadcrumbJsonLd = buildBreadcrumbJsonLd([
+  { name: "Home", url: "https://garammasaladating.com/" },
+  { name: "Tickets" },
+]);
+
+// Event ItemList JSON-LD (same schema as homepage)
+const today = new Date().toISOString().slice(0, 10);
+const upcomingForSchema = events.filter((e) => !e.hidden && e.isoDate && e.isoDate >= today);
+const eventsJsonLd = upcomingForSchema.length > 0 ? JSON.stringify({
+  "@context": "https://schema.org",
+  "@type": "ItemList",
+  itemListElement: upcomingForSchema.map((e, i) => ({
+    "@type": "ListItem",
+    position: i + 1,
+    item: {
+      "@type": "Event",
+      name: `Garam Masala Dating — ${e.city}`,
+      description: "A live comedy dating show and South Asian singles mixer. Real blind dates on stage, followed by a mixer.",
+      startDate: `${e.isoDate}T${e.startTime ?? "20:00"}:00-04:00`,
+      endDate: `${e.isoDate}T${e.endTime ?? "22:00"}:00-04:00`,
+      eventStatus: "https://schema.org/EventScheduled",
+      eventAttendanceMode: "https://schema.org/OfflineEventAttendanceMode",
+      location: {
+        "@type": "Place",
+        name: e.city,
+        address: {
+          "@type": "PostalAddress",
+          addressLocality: e.city.split(",")[0].trim(),
+          addressRegion: e.city.includes(",") ? e.city.split(",")[1].trim() : undefined,
+          addressCountry: "US",
+        },
+      },
+      organizer: {
+        "@type": "Organization",
+        name: "Garam Masala Dating",
+        url: "https://garammasaladating.com",
+      },
+      performer: [
+        { "@type": "Person", name: "Surbhi", url: "https://www.instagram.com/lordmakemetaller/" },
+        { "@type": "Person", name: "Wyatt Feegrado", url: "https://www.instagram.com/wyattfeegrado/" },
+      ],
+      offers: {
+        "@type": "Offer",
+        url: e.url,
+        availability: "https://schema.org/InStock",
+        price: "15",
+        priceCurrency: "USD",
+        validFrom: e.isoDate,
+      },
+      image: "https://garammasaladating.com/og-image.jpg",
+    },
+  })),
+}) : null;
+---
+
+<BaseLayout title={TITLE} description={DESC} overlayBg="rgba(13, 10, 8, 0.88)">
+  <Fragment slot="head">
+    <script type="application/ld+json" set:html={breadcrumbJsonLd} />
+    {eventsJsonLd && <script type="application/ld+json" set:html={eventsJsonLd} />}
+  </Fragment>
+
+  <div class="tickets-page">
+    <div class="tickets-container">
+      {/* Header */}
+      <div class="tickets-header">
+        <p class="tickets-eyebrow">Tickets</p>
+        <h1 class="tickets-h1">Upcoming Shows</h1>
+        <p class="tickets-intro">
+          Garam Masala Dating is a live comedy dating show and South Asian singles mixer.
+          Grab tickets on Eventbrite.
+        </p>
+      </div>
+
+      {/* Divider */}
+      <div class="tickets-divider" />
+
+      {/* Event cards */}
+      {upcomingEvents.length > 0 ? (
+        <div class="tickets-list">
+          {upcomingEvents.map((event, i) => {
+            const isLive = event.url && event.url !== "#";
+            return isLive ? (
+              <a
+                href={event.url}
+                target="_blank"
+                rel="noopener noreferrer"
+                class="ticket-card ticket-card--live"
+                style={`animation-delay: ${0.1 + i * 0.06}s`}
+              >
+                <div class="ticket-card__info">
+                  <span class="ticket-card__date">{event.date}</span>
+                  <span class="ticket-card__city">{event.city}</span>
+                </div>
+                <span class="ticket-card__cta">
+                  Get Tickets
+                  <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
+                </span>
+              </a>
+            ) : (
+              <div
+                class="ticket-card ticket-card--tba"
+                style={`animation-delay: ${0.1 + i * 0.06}s`}
+              >
+                <div class="ticket-card__info">
+                  <span class="ticket-card__date ticket-card__date--tba">{event.date}</span>
+                  <span class="ticket-card__city ticket-card__city--tba">{event.city}</span>
+                </div>
+                <span class="ticket-card__soon">Coming Soon</span>
+              </div>
+            );
+          })}
+        </div>
+      ) : (
+        <p class="tickets-empty">
+          No upcoming shows — follow us on{' '}
+          <a href="https://www.instagram.com/garammasaladating/" target="_blank" rel="noopener noreferrer" class="tickets-empty__link">
+            Instagram
+          </a>{' '}
+          for announcements.
+        </p>
+      )}
+
+      {/* Footer */}
+      <div class="tickets-footer">
+        <a href="/" class="tickets-footer__back">
+          <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5"/><path d="m12 19-7-7 7-7"/></svg>
+          Back to Home
+        </a>
+      </div>
+    </div>
+  </div>
+</BaseLayout>
+
+<style>
+  @keyframes ticketsFadeIn {
+    from { opacity: 0; transform: translateY(16px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  .tickets-page {
+    min-height: 100vh;
+    position: relative;
+    z-index: 1;
+    animation: ticketsFadeIn 0.5s ease-out both;
+  }
+
+  .tickets-container {
+    max-width: 560px;
+    margin: 0 auto;
+    padding: 48px 24px 80px;
+  }
+
+  /* ─── Header ─────────────────────────────────────────── */
+
+  .tickets-header {
+    margin-bottom: 40px;
+  }
+
+  .tickets-eyebrow {
+    font-family: var(--font-jetbrains);
+    font-size: 11px;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.15em;
+    color: #C9A84C;
+    margin-bottom: 12px;
+  }
+
+  .tickets-h1 {
+    font-family: var(--font-playfair);
+    font-size: 32px;
+    font-weight: 700;
+    color: var(--text-ivory);
+    line-height: 1.15;
+    margin-bottom: 14px;
+  }
+
+  .tickets-intro {
+    font-family: var(--font-cormorant);
+    font-size: 17px;
+    color: rgba(245, 237, 228, 0.6);
+    line-height: 1.55;
+  }
+
+  .tickets-divider {
+    width: 48px;
+    height: 1px;
+    background: rgba(201, 168, 76, 0.3);
+    margin-bottom: 32px;
+  }
+
+  /* ─── Event Cards ────────────────────────────────────── */
+
+  .tickets-list {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .ticket-card {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    padding: 22px;
+    border-radius: 14px;
+    border: 1px solid;
+    text-decoration: none;
+    animation: ticketsFadeIn 0.5s ease-out both;
+    transition: border-color 0.15s, background 0.15s;
+  }
+
+  .ticket-card--live {
+    border-color: rgba(201, 168, 76, 0.35);
+    background: rgba(201, 168, 76, 0.06);
+  }
+
+  .ticket-card--live:hover {
+    border-color: rgba(201, 168, 76, 0.55);
+    background: rgba(201, 168, 76, 0.1);
+  }
+
+  .ticket-card--tba {
+    border-color: rgba(245, 237, 228, 0.08);
+    background: rgba(255, 255, 255, 0.02);
+    opacity: 0.5;
+  }
+
+  .ticket-card__info {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+
+  .ticket-card__date {
+    font-family: var(--font-jetbrains);
+    font-size: 11px;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    color: #C9A84C;
+  }
+
+  .ticket-card__date--tba {
+    color: rgba(245, 237, 228, 0.4);
+  }
+
+  .ticket-card__city {
+    font-family: var(--font-playfair);
+    font-size: 20px;
+    font-weight: 600;
+    color: var(--text-ivory);
+    line-height: 1.25;
+  }
+
+  .ticket-card__city--tba {
+    color: rgba(245, 237, 228, 0.5);
+  }
+
+  .ticket-card__cta {
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-family: var(--font-dm-sans);
+    font-size: 13px;
+    font-weight: 500;
+    color: #C9A84C;
+    padding: 8px 14px;
+    border: 1px solid rgba(201, 168, 76, 0.35);
+    border-radius: 8px;
+    background: rgba(201, 168, 76, 0.08);
+    white-space: nowrap;
+    transition: background 0.15s, border-color 0.15s;
+  }
+
+  .ticket-card--live:hover .ticket-card__cta {
+    background: rgba(201, 168, 76, 0.15);
+    border-color: rgba(201, 168, 76, 0.5);
+  }
+
+  .ticket-card__soon {
+    flex-shrink: 0;
+    font-family: var(--font-jetbrains);
+    font-size: 10px;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    color: rgba(245, 237, 228, 0.4);
+  }
+
+  /* ─── Empty State ────────────────────────────────────── */
+
+  .tickets-empty {
+    font-family: var(--font-cormorant);
+    font-size: 17px;
+    color: rgba(245, 237, 228, 0.5);
+    line-height: 1.55;
+    text-align: center;
+    padding: 40px 0;
+  }
+
+  .tickets-empty__link {
+    color: #C9A84C;
+    text-decoration: underline;
+    text-underline-offset: 3px;
+  }
+
+  /* ─── Footer ─────────────────────────────────────────── */
+
+  .tickets-footer {
+    margin-top: 48px;
+    padding-top: 24px;
+    border-top: 1px solid rgba(245, 237, 228, 0.06);
+  }
+
+  .tickets-footer__back {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-family: var(--font-dm-sans);
+    font-size: 13px;
+    font-weight: 500;
+    color: rgba(245, 237, 228, 0.5);
+    text-decoration: none;
+    transition: color 0.15s;
+  }
+
+  .tickets-footer__back:hover {
+    color: var(--text-ivory);
+  }
+</style>

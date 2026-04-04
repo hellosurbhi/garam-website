@@ -265,14 +265,12 @@ const breadcrumbJsonLd = buildBreadcrumbJsonLd([
   .faq-answer {
     max-height: 0;
     overflow: hidden;
-    visibility: hidden;
     padding: 0 20px;
-    transition: max-height 0.25s ease, visibility 0.25s, padding 0.25s ease;
+    transition: max-height 0.25s ease, padding 0.25s ease;
   }
 
   .faq-item.is-open .faq-answer {
     max-height: 500px;
-    visibility: visible;
     padding: 0 20px 20px;
   }
 

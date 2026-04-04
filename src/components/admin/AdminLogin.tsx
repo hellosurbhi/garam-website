@@ -1,6 +1,6 @@
 import { useState, useRef } from "react";
 import { signInWithEmailAndPassword } from "firebase/auth";
-import { auth } from "@/lib/firebase";
+import { getFirebaseAuth } from "@/lib/firebase";
 import styles from "./AdminLogin.module.css";
 
 interface AdminLoginProps {
@@ -20,7 +20,7 @@ export default function AdminLogin({ onSuccess }: AdminLoginProps) {
     setLoading(true);
     setError("");
     try {
-      await signInWithEmailAndPassword(auth, email, password);
+      await signInWithEmailAndPassword(getFirebaseAuth(), email, password);
       onSuccess();
     } catch {
       setError("Invalid email or password.");

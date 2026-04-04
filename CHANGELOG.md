@@ -1,5 +1,11 @@
 # Changelog
 
+## fix: use dynamic EST/EDT timezone offset in tickets.astro Event schema
+
+The tickets page JSON-LD was hardcoding `-04:00` (EDT) for event startDate/endDate. Added the same `nyOffset()` helper already used in index.astro to compute the correct America/New_York offset per event, handling the EST/EDT boundary correctly.
+
+- **Modified:** `src/pages/tickets.astro`
+
 ## feat: add /tickets page for SEO
 
 New standalone `/tickets` page showing all upcoming Garam Masala Dating shows with Eventbrite links. Targets "garam masala dating tickets" and related search queries.

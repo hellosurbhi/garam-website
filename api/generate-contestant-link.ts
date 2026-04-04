@@ -1,6 +1,6 @@
 import type { VercelRequest, VercelResponse } from "@vercel/node";
 import { createHmac } from "crypto";
-import { verifyIdToken } from "./_verify-token";
+import { verifyIdToken } from "./_verify-token.js";
 
 const ISO_DATE_RE = /^\d{4}-\d{2}-\d{2}$/;
 

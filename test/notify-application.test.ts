@@ -269,6 +269,24 @@ describe("notify-application handler", () => {
     expect(html).toContain("USA");
   });
 
+  it("email HTML omits photo link for non-https URL", async () => {
+    const req = makeReq("POST", { ...validBody, photoUrl: "http://example.com/photo.jpg" });
+    const res = makeRes();
+    await handler(req, res);
+    expect(res.statusCode).toBe(200);
+    const html: string = mockSend.mock.calls[0][0].html;
+    expect(html).not.toContain("View Photo");
+  });
+
+  it("email HTML omits photo link for invalid URL", async () => {
+    const req = makeReq("POST", { ...validBody, photoUrl: "not a url" });
+    const res = makeRes();
+    await handler(req, res);
+    expect(res.statusCode).toBe(200);
+    const html: string = mockSend.mock.calls[0][0].html;
+    expect(html).not.toContain("View Photo");
+  });
+
   it("returns 500 when Resend throws an error", async () => {
     mockSend.mockRejectedValue(new Error("Network failure"));
     const req = makeReq("POST", validBody);

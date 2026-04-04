@@ -28,6 +28,9 @@ vi.mock("country-state-city", () => ({
 describe("useGeoData", () => {
   beforeEach(() => {
     vi.clearAllMocks();
+    mockGetAllCountries.mockImplementation(() => mockCountries);
+    mockGetStatesOfCountry.mockImplementation(() => mockStates);
+    mockGetCitiesOfState.mockImplementation(() => mockCities);
   });
 
   it("returns loading true initially", () => {

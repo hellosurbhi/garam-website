@@ -13,6 +13,7 @@ dist-ssr
 .astro
 *.local
 .agents
+SITE-AUDIT.md
 
 # Editor directories and files
 .vscode/*

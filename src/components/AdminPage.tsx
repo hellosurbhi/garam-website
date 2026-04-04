@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { onAuthStateChanged, signOut } from "firebase/auth";
-import { auth } from "@/lib/firebase";
+import { getFirebaseAuth } from "@/lib/firebase";
 import AdminLogin from "@/components/admin/AdminLogin";
 import AdminDashboard from "@/components/admin/AdminDashboard";
 export default function AdminPage() {
@@ -8,7 +8,7 @@ export default function AdminPage() {
   const [checking, setChecking] = useState(true);
 
   useEffect(() => {
-    const unsub = onAuthStateChanged(auth, (user) => {
+    const unsub = onAuthStateChanged(getFirebaseAuth(), (user) => {
       setAuthed(!!user);
       setChecking(false);
     });
@@ -16,7 +16,7 @@ export default function AdminPage() {
   }, []);
 
   function handleLogout() {
-    signOut(auth);
+    signOut(getFirebaseAuth());
   }
 
   if (checking) return null;

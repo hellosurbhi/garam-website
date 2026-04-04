@@ -2,7 +2,7 @@ import { useState, useEffect, useMemo } from "react";
 import { collection, getDocs, doc, updateDoc, Timestamp } from "firebase/firestore";
 import { ChevronRight, ChevronDown, Copy, Check } from "lucide-react";
 import Select from "react-select";
-import { db, auth } from "@/lib/firebase";
+import { getFirebaseDb, getFirebaseAuth } from "@/lib/firebase";
 import { type Application } from "@/types/application";
 import { adminSelectStyles } from "@/utils/reactSelectStyles";
 import { events } from "@/data/events";
@@ -42,7 +42,7 @@ export default function AdminDashboard({ onLogout }: AdminDashboardProps) {
   async function handleCopyPrepLink(isoDate: string) {
     setPrepLinkLoading(isoDate);
     try {
-      const idToken = await auth.currentUser?.getIdToken();
+      const idToken = await getFirebaseAuth().currentUser?.getIdToken();
       if (!idToken) {
         setToast({ msg: "Session expired. Please log in again.", ok: false });
         setTimeout(() => setToast(null), 2500);
@@ -77,7 +77,7 @@ export default function AdminDashboard({ onLogout }: AdminDashboardProps) {
     setLoading(true);
     setFetchError(false);
     try {
-      const snap = await getDocs(collection(db, "applications"));
+      const snap = await getDocs(collection(getFirebaseDb(), "applications"));
       const docs = snap.docs.map((d) => ({ id: d.id, ...d.data() } as Application));
       setApplications(docs);
     } catch {
@@ -91,7 +91,7 @@ export default function AdminDashboard({ onLogout }: AdminDashboardProps) {
 
   async function handleUpdate(id: string, patch: Partial<Omit<Application, "id">>) {
     try {
-      await updateDoc(doc(db, "applications", id), patch);
+      await updateDoc(doc(getFirebaseDb(), "applications", id), patch);
       setApplications((prev) => prev.map((a) => (a.id === id ? { ...a, ...patch } : a)));
       setSelectedApp((prev) => (prev?.id === id ? { ...prev, ...patch } : prev));
       setToast({ msg: "Saved", ok: true });

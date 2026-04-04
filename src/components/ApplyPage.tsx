@@ -3,7 +3,7 @@ import { collection, addDoc, serverTimestamp } from "firebase/firestore";
 import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import Select from "react-select";
 import { useGeoData } from "@/hooks/useGeoData";
-import { db, storage } from "@/lib/firebase";
+import { getFirebaseDb, getFirebaseStorage } from "@/lib/firebase";
 import { COMMUNITY_OPTIONS, INCOME_OPTIONS } from "@/types/application";
 import { events } from "@/data/events";
 import { formSelectStyles } from "@/utils/reactSelectStyles";
@@ -177,7 +177,7 @@ export default function ApplyPage() {
     setSubmitting(true);
     try {
       const ext = photoFile!.name.split(".").pop() ?? "jpg";
-      const storageRef = ref(storage, `photos/${crypto.randomUUID()}.${ext}`);
+      const storageRef = ref(getFirebaseStorage(), `photos/${crypto.randomUUID()}.${ext}`);
       await uploadBytes(storageRef, photoFile!);
       const photoUrl = await getDownloadURL(storageRef);
 
@@ -199,7 +199,7 @@ export default function ApplyPage() {
         photoUrl,
       };
 
-      await addDoc(collection(db, "applications"), {
+      await addDoc(collection(getFirebaseDb(), "applications"), {
         ...applicationData,
         status: "New",
         notes: "",

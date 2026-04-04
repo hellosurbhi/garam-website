@@ -13,11 +13,15 @@ export function useGeoData(countryCode: string, stateCode: string) {
 
   useEffect(() => {
     let cancelled = false;
-    import("country-state-city").then((mod) => {
-      if (!cancelled) {
-        setGeo({ Country: mod.Country, State: mod.State, City: mod.City });
-      }
-    });
+    import("country-state-city")
+      .then((mod) => {
+        if (!cancelled) {
+          setGeo({ Country: mod.Country, State: mod.State, City: mod.City });
+        }
+      })
+      .catch(() => {
+        // Import failed — geo selectors will remain in loading state
+      });
     return () => { cancelled = true; };
   }, []);
 

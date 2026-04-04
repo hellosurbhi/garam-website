@@ -39,13 +39,17 @@ export default function AdminDashboard({ onLogout }: AdminDashboardProps) {
   const today = new Date().toLocaleDateString("en-CA");
   const upcomingEvents = events.filter((e) => e.isoDate && e.isoDate >= today);
 
+  function showToast(msg: string, ok: boolean) {
+    setToast({ msg, ok });
+    setTimeout(() => setToast(null), 2500);
+  }
+
   async function handleCopyPrepLink(isoDate: string) {
     setPrepLinkLoading(isoDate);
     try {
       const idToken = await getFirebaseAuth().currentUser?.getIdToken();
       if (!idToken) {
-        setToast({ msg: "Session expired. Please log in again.", ok: false });
-        setTimeout(() => setToast(null), 2500);
+        showToast("Session expired. Please log in again.", false);
         return;
       }
       const res = await fetch("/api/generate-contestant-link", {
@@ -62,12 +66,10 @@ export default function AdminDashboard({ onLogout }: AdminDashboardProps) {
         setPrepLinkCopied(isoDate);
         setTimeout(() => setPrepLinkCopied(null), 2000);
       } else {
-        setToast({ msg: "Failed to generate link", ok: false });
-        setTimeout(() => setToast(null), 2500);
+        showToast("Failed to generate link", false);
       }
     } catch {
-      setToast({ msg: "Failed to generate link", ok: false });
-      setTimeout(() => setToast(null), 2500);
+      showToast("Failed to generate link", false);
     } finally {
       setPrepLinkLoading(null);
     }
@@ -94,11 +96,9 @@ export default function AdminDashboard({ onLogout }: AdminDashboardProps) {
       await updateDoc(doc(getFirebaseDb(), "applications", id), patch);
       setApplications((prev) => prev.map((a) => (a.id === id ? { ...a, ...patch } : a)));
       setSelectedApp((prev) => (prev?.id === id ? { ...prev, ...patch } : prev));
-      setToast({ msg: "Saved", ok: true });
+      showToast("Saved", true);
     } catch {
-      setToast({ msg: "Save failed", ok: false });
-    } finally {
-      setTimeout(() => setToast(null), 2500);
+      showToast("Save failed", false);
     }
   }
 

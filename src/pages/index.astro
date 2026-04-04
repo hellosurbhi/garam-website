@@ -38,8 +38,8 @@ const eventsJsonLd = upcomingForSchema.length > 0 ? JSON.stringify({
       "@type": "Event",
       name: `Garam Masala Dating — ${e.city}`,
       description: "A live comedy dating show and South Asian singles mixer. Real blind dates on stage, followed by a mixer.",
-      startDate: `${e.isoDate}T20:00:00-04:00`,
-      endDate: `${e.isoDate}T22:00:00-04:00`,
+      startDate: `${e.isoDate}T${e.startTime ?? "20:00"}:00-04:00`,
+      endDate: `${e.isoDate}T${e.endTime ?? "22:00"}:00-04:00`,
       eventStatus: "https://schema.org/EventScheduled",
       eventAttendanceMode: "https://schema.org/OfflineEventAttendanceMode",
       location: {

@@ -2,6 +2,33 @@
 
 ## Open
 
+### [MEDIUM] No server-side file-type validation on photo uploads
+- **Date:** 2026-04-04
+- **File:** `src/components/ApplyPage.tsx`
+- **Status:** Open
+- **Severity:** Medium
+- **What's happening:** Photos are uploaded directly to Firebase Storage from the client. The `accept="image/*"` HTML attribute is trivially bypassed. An attacker could upload SVGs with embedded scripts or other malicious file types.
+- **What should happen:** File type should be validated server-side via MIME type / magic bytes.
+- **Fix:** Create a Firebase Cloud Function trigger on `storage.object.finalize` that checks `contentType` and deletes non-image files. Or use a server API endpoint as an upload proxy.
+
+### [MEDIUM] No CAPTCHA or rate limiting on application form
+- **Date:** 2026-04-04
+- **File:** `src/components/ApplyPage.tsx`
+- **Status:** Open
+- **Severity:** Medium
+- **What's happening:** The form submits directly to Firestore from the browser with no bot protection. A script could submit thousands of fake applications.
+- **What should happen:** Bot submissions should be blocked or rate-limited.
+- **Fix:** Add Firebase App Check with reCAPTCHA v3 and enforce in Firestore security rules.
+
+### [LOW] No pagination in AdminDashboard
+- **Date:** 2026-04-04
+- **File:** `src/components/admin/AdminDashboard.tsx`
+- **Status:** Open
+- **Severity:** Low
+- **What's happening:** All applications are fetched in a single `getDocs` call. With 500+ records this will be slow and expensive.
+- **What should happen:** Applications should be paginated with Firestore cursor-based pagination.
+- **Fix:** Use `query()` with `limit()`, `orderBy()`, and `startAfter()` for pagination when app count grows.
+
 ### [MEDIUM] CSP blocks GTM and PostHog scripts
 - **Date:** 2026-04-03
 - **File:** `vercel.json:14`

@@ -1,5 +1,19 @@
 # Changelog
 
+## feat: add /tickets page for SEO
+
+New standalone `/tickets` page showing all upcoming Garam Masala Dating shows with Eventbrite links. Targets "garam masala dating tickets" and related search queries.
+
+- Event cards with date, city, and "Get Tickets" CTA linking to Eventbrite
+- TBA events (Edinburgh, India Tour) shown dimmed with "Coming Soon" label
+- Empty state with Instagram follow prompt when no upcoming shows
+- Event ItemList JSON-LD schema (same as homepage) for rich search results
+- BreadcrumbList JSON-LD for search navigation
+- Added `/tickets` to sitemap.xml (priority 0.9, weekly changefreq)
+
+- **Created:** `src/pages/tickets.astro`
+- **Modified:** `public/sitemap.xml`
+
 ## fix: add missing Event JSON-LD fields flagged by Google Search Console
 
 Added `performer` (Surbhi + Wyatt Feegrado) to Event schemas in index.astro and city pages. Added `price`, `priceCurrency`, and `validFrom` to the `offers` object. The `offers.url` uses the existing Eventbrite ticketing links from `src/data/events.ts`.

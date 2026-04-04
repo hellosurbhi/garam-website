@@ -1,5 +1,12 @@
 # Changelog
 
+## add: permissive Content-Security-Policy header
+
+Added a wide-open CSP to `vercel.json` that allows all origins. Needed to enable CSP presence without blocking any third-party scripts (GTM, PostHog, Meta Pixel, etc.).
+
+**Files changed:**
+- `vercel.json` — added `Content-Security-Policy` header with `default-src *` and permissive directives
+
 ## remove: Content-Security-Policy header from vercel.json
 
 Removed the CSP header entirely rather than continuing to patch allowed origins for each new third-party script (GTM, PostHog, Meta Pixel, etc.). The header was actively blocking analytics scripts in production.

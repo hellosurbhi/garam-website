@@ -54,6 +54,18 @@ const articleJsonLd = JSON.stringify({
   },
 });
 
+const faqJsonLd = post.faqs?.length
+  ? JSON.stringify({
+      "@context": "https://schema.org",
+      "@type": "FAQPage",
+      mainEntity: post.faqs.map(({ q, a }: JournalFaq) => ({
+        "@type": "Question",
+        name: q,
+        acceptedAnswer: { "@type": "Answer", text: a },
+      })),
+    })
+  : null;
+
 const breadcrumbJsonLd = buildBreadcrumbJsonLd([
   { name: "Home", url: "https://garammasaladating.com" },
   { name: "Journal", url: "https://garammasaladating.com/journal" },
@@ -71,6 +83,7 @@ const pageTitle = `${post.title} | Garam Masala Dating`;
   <Fragment slot="head">
     <script type="application/ld+json" set:html={articleJsonLd} />
     <script type="application/ld+json" set:html={breadcrumbJsonLd} />
+    {faqJsonLd && <script type="application/ld+json" set:html={faqJsonLd} />}
   </Fragment>
 
   <div class="post-page">
@@ -92,6 +105,16 @@ const pageTitle = `${post.title} | Garam Masala Dating`;
       <!-- Article body -->
       <article class="post-body">
         {post.body.map((block, i) => {
+          if (block.type === "h2") {
+            return (
+              <h2
+                class="post-h2"
+                style={i === 0 ? "margin-top: 0;" : "margin-top: 16px;"}
+              >
+                {block.text}
+              </h2>
+            );
+          }
           if (block.type === "h3") {
             return (
               <h3
@@ -178,6 +201,14 @@ const pageTitle = `${post.title} | Garam Masala Dating`;
     display: flex;
     flex-direction: column;
     gap: 20px;
+  }
+
+  .post-h2 {
+    font-family: var(--font-playfair);
+    font-size: 24px;
+    font-weight: 700;
+    color: var(--text-ivory);
+    line-height: 1.25;
   }
 
   .post-h3 {

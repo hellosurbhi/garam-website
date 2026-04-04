@@ -56,10 +56,10 @@ describe("journalPosts", () => {
     }
   });
 
-  it("every body block has type 'p' or 'h3' and non-empty text", () => {
+  it("every body block has type 'p', 'h2', or 'h3' and non-empty text", () => {
     for (const post of journalPosts) {
       for (const block of post.body) {
-        expect(["p", "h3"]).toContain(block.type);
+        expect(["p", "h2", "h3"]).toContain(block.type);
         expect(block.text.trim()).not.toBe("");
       }
     }

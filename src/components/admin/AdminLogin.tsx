@@ -53,6 +53,7 @@ export default function AdminLogin({ onSuccess }: AdminLoginProps) {
               }}
               placeholder="Email"
               autoFocus
+              autoComplete="email"
               className={error ? styles.inputError : styles.input}
             />
             <input
@@ -63,6 +64,7 @@ export default function AdminLogin({ onSuccess }: AdminLoginProps) {
                 setError("");
               }}
               placeholder="Password"
+              autoComplete="current-password"
               className={error ? styles.inputError : styles.input}
             />
           </div>

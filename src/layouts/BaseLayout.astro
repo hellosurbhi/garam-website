@@ -2,6 +2,7 @@
 import '../index.css';
 import PostHog from '../components/posthog.astro';
 import GTM from '../components/gtm.astro';
+import MetaPixel from '../components/meta-pixel.astro';
 
 interface Props {
   title: string;
@@ -76,6 +77,7 @@ const {
     {noindex && <meta name="robots" content="noindex, nofollow" />}
     <slot name="head" />
     <PostHog />
+    <MetaPixel />
   </head>
   <body>
     <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-KQCBBL2W" height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>

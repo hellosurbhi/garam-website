@@ -1,5 +1,19 @@
 # Changelog
 
+## add: 3 SEO-optimized journal posts with FAQPage schema
+
+Added three blog posts targeting Google featured snippets and People Also Ask boxes:
+1. "The Only Live Desi Dating Show in NYC" (desi dating show NYC, Indian dating show New York)
+2. "South Asian Singles Events in NYC: What's Actually Worth Going To" (desi singles mixer NYC)
+3. "Desi Dating Show vs. Dating Apps: What 4 Years of Running One Taught Me" (first-person from Surbhi)
+
+Each post has H2 section headings, snippet-ready opening paragraphs, and a 3-question FAQ section with FAQPage JSON-LD schema. Extended PostBlock type to support "h2" and JournalPost to support optional faqs array.
+
+**Files changed:**
+- `src/data/journal.ts` — added h2 to PostBlock, JournalFaq interface, faqs field, 3 new posts
+- `src/data/journal.test.ts` — updated block type assertion to include h2
+- `src/pages/journal/[slug].astro` — h2 rendering, FAQPage JSON-LD, .post-h2 CSS
+
 ## update: links page email aliases
 
 - "Booking & Press Inquiries" link now points to `press@garammasaladating.com`

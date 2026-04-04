@@ -3,11 +3,11 @@ import type { VercelRequest, VercelResponse } from "@vercel/node";
 
 const mockVerifyIdToken = vi.fn();
 
-vi.mock("./_verify-token", () => ({
+vi.mock("./_verify-token.js", () => ({
   verifyIdToken: (...args: unknown[]) => mockVerifyIdToken(...args),
 }));
 
-const { default: handler } = await import("./generate-contestant-link");
+const { default: handler } = await import("./generate-contestant-link.js");
 
 const TEST_SALT = "test-secret-salt";
 

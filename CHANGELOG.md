@@ -1,5 +1,13 @@
 # Changelog
 
+## fix: add .js extensions to relative imports in API routes
+
+TypeScript with `node16`/`nodenext` module resolution requires explicit `.js` extensions on relative imports. Fixed in `api/generate-contestant-link.ts` and its test file.
+
+**Files changed:**
+- `api/generate-contestant-link.ts` — `./_verify-token` → `./_verify-token.js`
+- `api/generate-contestant-link.test.ts` — `./_verify-token` and `./generate-contestant-link` → `.js` extensions
+
 ## fix: add style-src to CSP to restore inline styles
 
 The permissive CSP was missing `style-src * 'unsafe-inline'`, causing the browser to block all inline styles and CSS custom properties — rendering the site in black/default colors.

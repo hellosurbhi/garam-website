@@ -1,5 +1,11 @@
 # Changelog
 
+## fix: add missing Event JSON-LD fields flagged by Google Search Console
+
+Added `performer` (Surbhi + Wyatt Feegrado) to Event schemas in index.astro and city pages. Added `price`, `priceCurrency`, and `validFrom` to the `offers` object. The `offers.url` uses the existing Eventbrite ticketing links from `src/data/events.ts`.
+
+- **Modified:** `src/pages/index.astro`, `src/pages/cities/[slug].astro`
+
 ## fix: 5 more audit issues (storage auth, photoUrl validation, file size mismatch, toast dedup, geo error handling)
 
 Second round of code audit fixes:

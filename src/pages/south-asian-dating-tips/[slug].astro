@@ -26,6 +26,7 @@ function formatDate(iso: string): string {
   });
 }
 
+const postUrl = `https://garammasaladating.com/south-asian-dating-tips/${post.slug}`;
 const articleJsonLd = JSON.stringify({
   "@context": "https://schema.org",
   "@type": "Article",
@@ -33,8 +34,8 @@ const articleJsonLd = JSON.stringify({
   datePublished: post.datePublished,
   dateModified: post.dateModified,
   author: {
-    "@type": "Organization",
-    name: post.author,
+    "@type": "Person",
+    name: "Surbhi",
     url: "https://garammasaladating.com",
   },
   publisher: {
@@ -43,8 +44,13 @@ const articleJsonLd = JSON.stringify({
     url: "https://garammasaladating.com",
     logo: {
       "@type": "ImageObject",
-      url: "https://garammasaladating.com/og-image.jpg",
+      url: "https://garammasaladating.com/logo.png",
     },
+  },
+  description: post.metaDescription,
+  mainEntityOfPage: {
+    "@type": "WebPage",
+    "@id": postUrl,
   },
 });
 

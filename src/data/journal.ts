@@ -23,6 +23,618 @@ export interface JournalPost {
 
 export const journalPosts: JournalPost[] = [
   {
+    slug: "indian-matchmaking-hinge-and-a-live-comedy-show",
+    title:
+      "Indian Matchmaking, Hinge, and a Live Comedy Show: What 4 Years of Running One Taught Me About How Desis Actually Date",
+    metaDescription:
+      "After 4 years and 40+ live shows, Surbhi shares what Indian Matchmaking got right, what Hinge gets wrong, and what actually happens when desis date on stage in front of 250 people.",
+    datePublished: "2026-05-09",
+    dateModified: "2026-05-09",
+    author: "Surbhi",
+    excerpt:
+      "South Asian dating in 2026 looks nothing like your parents\u2019 version and nothing like Netflix\u2019s version either. It\u2019s messier, funnier, and more honest than both.",
+    faqs: [
+      {
+        q: "Is Garam Masala Dating like Indian Matchmaking?",
+        a: "Not really. Indian Matchmaking is a produced Netflix show with edited story arcs. Garam Masala Dating is a live, unscripted comedy dating show where real singles go on blind dates on stage in front of 250 people. Nothing is edited. Nothing is planned. The audience watches it happen in real time.",
+      },
+      {
+        q: "What is the best dating show for South Asians?",
+        a: "Garam Masala Dating is the only weekly live South Asian dating show in the US. It runs at Top Secret Comedy Club in Manhattan with monthly shows in Jersey City. Over 40 shows and 3 real couples so far. Tickets and contestant applications at garammasaladating.com.",
+      },
+      {
+        q: "Is there a live South Asian dating show?",
+        a: "Yes. Garam Masala Dating is a weekly live comedy dating show in NYC featuring South Asian singles on blind dates on stage. Hosted by Surbhi and Wyatt at Top Secret Comedy Club in Manhattan. Tickets at garammasaladating.com.",
+      },
+      {
+        q: "How is Garam Masala Dating different from a dating app?",
+        a: "Dating apps give you a photo and a bio. Garam Masala Dating puts two people on stage in front of 250 strangers with no script and no filter. You can\u2019t curate yourself live. Chemistry either happens or it doesn\u2019t, and the whole room knows immediately.",
+      },
+    ],
+    body: [
+      {
+        type: "p",
+        text: "South Asian dating in 2026 looks nothing like your parents\u2019 version and nothing like Netflix\u2019s version either. It\u2019s messier, funnier, and more honest than both. I know because I\u2019ve watched it happen live, on stage, over 40 times.",
+      },
+      { type: "h2", text: "What Indian Matchmaking got right that nobody talks about" },
+      {
+        type: "p",
+        text: "Indian Matchmaking understood something fundamental: desi singles are not just choosing a person. They\u2019re negotiating with an entire system of expectations that started before they were born. The show put that tension on camera, and millions of people recognized it immediately. That part was real.",
+      },
+      {
+        type: "p",
+        text: "What Sima Aunty got right is that compatibility for desis is never just about two people vibing. There\u2019s family. There\u2019s community. There\u2019s the unspoken checklist that nobody wrote down but everyone seems to have memorized. I grew up with that checklist. So did most of the people who come to our show. The difference is that Indian Matchmaking made it look orderly. Clean spreadsheets, calm conversations, chai on the couch. That\u2019s the fantasy version.",
+      },
+      {
+        type: "p",
+        text: "The real version is chaotic. People contradict themselves constantly. They say they want one thing and then light up on stage for someone who is the exact opposite. I\u2019ve seen it happen so many times that I\u2019ve stopped being surprised. The checklist goes out the window when the person across from you makes you laugh so hard you forget the audience is there.",
+      },
+      { type: "h2", text: "What dating apps miss for South Asian singles" },
+      {
+        type: "p",
+        text: "Dating apps reduce you to a profile. For South Asian singles, that profile carries extra weight because the filtering starts before anyone says a word. Religion, caste, height, profession, family background. Apps let people screen for all of that before a single conversation happens. The result is that most desi singles on apps are eliminating people, not meeting them.",
+      },
+      {
+        type: "p",
+        text: "I\u2019ve talked to hundreds of contestants who apply to Garam Masala Dating. The ones coming off apps sound the same. Burned out. Cynical. Convinced that everyone on Hinge is either lying about their height or using photos from 2019. And honestly, some of them are right. Apps reward performance. You pick the best photo, write the wittiest prompt, and present a version of yourself that is technically accurate but emotionally hollow.",
+      },
+      {
+        type: "p",
+        text: "The thing apps cannot replicate is how someone reacts when they\u2019re caught off guard. That\u2019s where the real information is. Not in a curated bio. In the split second when someone hears a question they didn\u2019t expect and their actual personality comes out. You can\u2019t swipe your way to that moment. You have to be in the room.",
+      },
+      { type: "h2", text: "What a live audience changes about attraction" },
+      {
+        type: "p",
+        text: "Put two people at a coffee shop and they\u2019ll have a perfectly fine first date. Put those same two people on stage in front of 250 strangers and something completely different happens. The stakes go up. The masks come down. People say things they\u2019d never say in a quiet booth because the room\u2019s energy pulls it out of them.",
+      },
+      {
+        type: "p",
+        text: "I\u2019ve hosted over 40 shows with Wyatt and the pattern is consistent. Contestants who walk on stage with a plan abandon it within two minutes. The audience reacts. The date says something unexpected. The whole room shifts. Attraction in front of a live crowd is not a slow build. It\u2019s a verdict. You can feel the moment 250 people collectively decide these two have something. And you can feel the exact moment they decide they don\u2019t.",
+      },
+      {
+        type: "p",
+        text: "The whiteboard reveal is the clearest example. Both contestants write down a rating for the date. They flip the boards at the same time. The room erupts. Sometimes it\u2019s a perfect match. Sometimes one board says 9 and the other says 3. There\u2019s nowhere to hide. The audience sees everything. And that honesty, forced by the format, is what makes the connections that do happen feel earned.",
+      },
+      { type: "h2", text: "The thing that surprises people most about our show" },
+      {
+        type: "p",
+        text: "People expect the comedy. They expect the cringe. They expect to laugh at someone bombing on stage. What they do not expect is to get genuinely emotional. But it happens constantly. Someone says something vulnerable. The room goes quiet. 250 people hold their breath for a stranger\u2019s love life. That part catches everyone off guard, including me, and I\u2019ve seen it dozens of times.",
+      },
+      {
+        type: "p",
+        text: "The other surprise is the mixer. People buy tickets for the show. They stay for the mixer. And the mixer is where most of the real connections happen. The live dates break the ice for the entire room. By the time the show ends, nobody is standing in a corner pretending to check their phone. The energy is already there. Three real couples have met at Garam Masala Dating, and not all of them met on stage. Some met at the bar after, riding the high of what they just watched.",
+      },
+      { type: "h2", text: "What actually makes two desis click" },
+      {
+        type: "p",
+        text: "After four years and hundreds of live dates, I can tell you what it is not. It\u2019s not the job title. It\u2019s not the height. It\u2019s not whether they\u2019re vegetarian. Those things matter on paper. On stage, they evaporate.",
+      },
+      {
+        type: "p",
+        text: "What makes two desis click is the same thing that makes any two people click, but with one extra layer. The willingness to be yourself in front of people who might judge you for it. Desi culture has strong opinions about how dating should look. Quiet. Private. Respectable. Our show is the opposite of all of that. And the people who thrive on stage are the ones who decided they\u2019re done performing the version their family wants to see.",
+      },
+      {
+        type: "p",
+        text: "The best dates I\u2019ve seen at Garam Masala Dating had one thing in common. Both people stopped trying to impress and started trying to connect. That flip usually happens about three minutes in. One person says something real. The other person matches it. The audience leans forward. And for a few minutes, 250 people are rooting for two strangers to figure it out together. I built this show because I wanted that to exist. Four years later, it still gets me every time.",
+      },
+      { type: "h2", text: "Frequently asked questions about South Asian dating shows" },
+      { type: "h3", text: "Is Garam Masala Dating like Indian Matchmaking?" },
+      {
+        type: "p",
+        text: "Not really. Indian Matchmaking is a produced Netflix show with edited story arcs. Garam Masala Dating is a live, unscripted comedy dating show where real singles go on blind dates on stage in front of 250 people. Nothing is edited. Nothing is planned. The audience watches it happen in real time.",
+      },
+      { type: "h3", text: "What is the best dating show for South Asians?" },
+      {
+        type: "p",
+        text: "Garam Masala Dating is the only weekly live South Asian dating show in the US. It runs at Top Secret Comedy Club in Manhattan with monthly shows in Jersey City. Over 40 shows and 3 real couples so far. Tickets and contestant applications at garammasaladating.com.",
+      },
+      { type: "h3", text: "Is there a live South Asian dating show?" },
+      {
+        type: "p",
+        text: "Yes. Garam Masala Dating is a weekly live comedy dating show in NYC featuring South Asian singles on blind dates on stage. Hosted by Surbhi and Wyatt at Top Secret Comedy Club in Manhattan. Tickets at garammasaladating.com.",
+      },
+      { type: "h3", text: "How is Garam Masala Dating different from a dating app?" },
+      {
+        type: "p",
+        text: "Dating apps give you a photo and a bio. Garam Masala Dating puts two people on stage in front of 250 strangers with no script and no filter. You can\u2019t curate yourself live. Chemistry either happens or it doesn\u2019t, and the whole room knows immediately.",
+      },
+      {
+        type: "p",
+        text: "Come see it live or apply to be on stage. Buy tickets and submit your application at garammasaladating.com.",
+      },
+    ],
+  },
+  {
+    slug: "best-things-to-do-in-nyc-if-youre-single",
+    title:
+      "The Best Things to Do in NYC If You\u2019re Single and Bored of Bars",
+    metaDescription:
+      "Tired of the same bar scene? Here are the best things to do in NYC if you\u2019re single, from improv shows to rooftop mixers to a live comedy dating show with 250 people.",
+    datePublished: "2026-05-02",
+    dateModified: "2026-05-02",
+    author: "Garam Masala Dating",
+    excerpt:
+      "You\u2019ve done the bar thing. You\u2019ve done the app thing. You\u2019ve stood in a loud room pretending to enjoy a conversation you couldn\u2019t hear. NYC has better options for single people.",
+    faqs: [
+      {
+        q: "What are the best singles events in NYC?",
+        a: "The best singles events in NYC combine a shared experience with built-in social time. Comedy dating shows, improv nights, speed dating, and rooftop mixers all outperform the standard bar crawl. Garam Masala Dating runs a weekly live dating show and singles mixer at Top Secret Comedy Club in Manhattan. Tickets at garammasaladating.com.",
+      },
+      {
+        q: "Is there a live dating show in NYC?",
+        a: "Yes. Garam Masala Dating is a weekly live comedy dating show in Manhattan where real singles go on blind dates on stage in front of 250 people. Over 40 shows have run so far and 3 real couples have come out of it.",
+      },
+      {
+        q: "What is a singles mixer?",
+        a: "A singles mixer is a social event designed for single people to meet each other in person. The best ones give you something to talk about before the mingling starts. At Garam Masala Dating, the mixer happens after the live show, so the entire room already has a shared experience.",
+      },
+      {
+        q: "Is Garam Masala Dating free?",
+        a: "Garam Masala Dating is a ticketed event. General admission includes the full live dating show and the singles mixer. Ticket prices vary by show. Buy tickets on Eventbrite or at garammasaladating.com.",
+      },
+    ],
+    body: [
+      {
+        type: "p",
+        text: "You\u2019ve done the bar thing. You\u2019ve done the app thing. You\u2019ve stood in a loud room pretending to enjoy a conversation you couldn\u2019t hear. NYC has better options for single people. Most of them just aren\u2019t on your radar yet.",
+      },
+      { type: "h2", text: "Comedy shows that actually help you meet people" },
+      {
+        type: "p",
+        text: "Comedy shows put an entire room in the same mood. Everyone laughs at the same moments, loosens up at the same pace, and leaves in a better headspace than when they walked in. That\u2019s a stronger starting point for talking to a stranger than standing next to them at a bar hoping one of you says something.",
+      },
+      {
+        type: "p",
+        text: "Improv shows are especially good for this. The audience participates. You shout suggestions, you react out loud, and you end up feeling like you were part of something instead of just watching something. UCB, Magnet Theater, PIT. All solid. All cheap. All full of people in a good mood on a weeknight.",
+      },
+      {
+        type: "p",
+        text: "The catch with a regular comedy show is that there\u2019s no built-in social moment after. The lights come up and everyone leaves. You need the show plus something after. A bar next door. A plan with friends. Some reason to keep the night going. Otherwise it\u2019s just entertainment, not a singles activity.",
+      },
+      { type: "h2", text: "Live events with built-in reasons to talk to each other" },
+      {
+        type: "p",
+        text: "The best singles events give you something to do besides introduce yourself. Speed dating gives you structure. Rooftop mixers give you a view and a drink. Trivia nights give you a team. The format matters less than the principle: if you have a shared activity, conversations start without anyone having to cold-approach a stranger.",
+      },
+      {
+        type: "p",
+        text: "Speed dating in NYC has gotten better than its reputation suggests. Companies like DateSwitch and SpeedNY run themed events by age group and interest. You sit, you talk, you rotate. It\u2019s efficient. Some people love that. Others find the timer stressful and the conversations shallow. But at least you\u2019re meeting real humans instead of swiping.",
+      },
+      {
+        type: "p",
+        text: "Rooftop events and themed mixers pop up constantly in the summer. The good ones have a vibe. The bad ones are just an overpriced bar with a dress code and a Canva flyer. Look for events that cap attendance or include something beyond \u201Copen bar and a DJ.\u201D Small detail, but events that charge a real ticket price tend to attract people who actually want to be there.",
+      },
+      { type: "h2", text: "How a live dating show is different from a bar night" },
+      {
+        type: "p",
+        text: "At a bar, you\u2019re on your own. You have to spot someone, approach them, start a conversation from nothing, and hope it goes somewhere. A live dating show skips all of that by putting connection at the center of the room instead of leaving it to chance.",
+      },
+      {
+        type: "p",
+        text: "At Garam Masala Dating, two real singles go on a blind date on stage in front of 250 people. The hosts, Surbhi and Wyatt, run the date. The audience reacts in real time. Then everyone stays for the mixer. By the time you\u2019re talking to someone at the bar, you\u2019ve already spent an hour laughing together, gasping at the same awkward moments, and forming opinions about the same people. You have something to say. You\u2019re already in it.",
+      },
+      {
+        type: "p",
+        text: "The show runs weekly at Top Secret Comedy Club in Manhattan and monthly in Jersey City. Over 40 shows in and the mixer is still the part that surprises people most. The energy after a live show is different from any bar you\u2019ve been to. People are open. They\u2019re in a good mood. Nobody is pretending to be too cool to talk to you.",
+      },
+      { type: "h2", text: "Why watching other people date is oddly useful for your own love life" },
+      {
+        type: "p",
+        text: "This sounds counterintuitive, but watching two strangers try to connect live on stage teaches you things about yourself that no dating app ever will. You see what works. You see what falls flat. You watch someone ask a boring question and feel the room deflate, and you think, okay, I do that too.",
+      },
+      {
+        type: "p",
+        text: "The whiteboard rating reveal is the moment where both contestants show the room what they scored their date. Sometimes they match. Sometimes one person is at a 9 and the other is at a 4, and the room loses its mind. It\u2019s brutal, it\u2019s honest, and it teaches you something about how differently two people can experience the same conversation.",
+      },
+      {
+        type: "p",
+        text: "Three real couples have come out of Garam Masala Dating so far. Not all of them met on stage. Some met during the mixer after. The show creates the conditions. The connection is up to you.",
+      },
+      {
+        type: "p",
+        text: "If you\u2019re single in New York and you\u2019ve burned out on the same routine, try something that gives you a story. Not every night out has to end with a match. Some of the best ones just end with you laughing harder than you have in months and texting your friends about what you just saw.",
+      },
+      { type: "h2", text: "Frequently asked questions about singles events in NYC" },
+      { type: "h3", text: "What are the best singles events in NYC?" },
+      {
+        type: "p",
+        text: "The best singles events in NYC combine a shared experience with built-in social time. Comedy dating shows, improv nights, speed dating, and rooftop mixers all outperform the standard bar crawl. Garam Masala Dating runs a weekly live dating show and singles mixer at Top Secret Comedy Club in Manhattan. Tickets at garammasaladating.com.",
+      },
+      { type: "h3", text: "Is there a live dating show in NYC?" },
+      {
+        type: "p",
+        text: "Yes. Garam Masala Dating is a weekly live comedy dating show in Manhattan where real singles go on blind dates on stage in front of 250 people. Over 40 shows have run so far and 3 real couples have come out of it.",
+      },
+      { type: "h3", text: "What is a singles mixer?" },
+      {
+        type: "p",
+        text: "A singles mixer is a social event designed for single people to meet each other in person. The best ones give you something to talk about before the mingling starts. At Garam Masala Dating, the mixer happens after the live show, so the entire room already has a shared experience.",
+      },
+      { type: "h3", text: "Is Garam Masala Dating free?" },
+      {
+        type: "p",
+        text: "Garam Masala Dating is a ticketed event. General admission includes the full live dating show and the singles mixer. Ticket prices vary by show. Buy tickets on Eventbrite or at garammasaladating.com.",
+      },
+      {
+        type: "p",
+        text: "Stop doing the same thing every weekend. Get tickets to Garam Masala Dating at garammasaladating.com.",
+      },
+    ],
+  },
+  {
+    slug: "how-to-get-cast-on-a-live-dating-show",
+    title:
+      "How to Get Cast on a Live Dating Show (What We\u2019re Actually Looking For)",
+    metaDescription:
+      "Want to be on a live dating show? Here\u2019s exactly how casting works at Garam Masala Dating, what we look for in applications, and what to expect if you get picked.",
+    datePublished: "2026-04-25",
+    dateModified: "2026-04-25",
+    author: "Surbhi",
+    excerpt:
+      "You apply at garammasaladating.com/apply. We read every single application. Most of them are bad. Here\u2019s how to not be one of those.",
+    faqs: [
+      {
+        q: "How do I apply to be on Garam Masala Dating?",
+        a: "Go to garammasaladating.com/apply and fill out the application. It takes about ten minutes. We read every submission and cast based on personality, honesty, and stage potential. No headshots required. No agents. Just be interesting.",
+      },
+      {
+        q: "Do you have to be South Asian to be a contestant?",
+        a: "No. Garam Masala Dating is rooted in desi culture but contestants come from all backgrounds. We cast based on personality and chemistry potential, not ethnicity. If you\u2019re funny, honest, and open to going on a blind date on stage, you\u2019re eligible.",
+      },
+      {
+        q: "Is the dating show scripted?",
+        a: "No. Nothing is scripted. Contestants don\u2019t know who their date is until they walk on stage. There are no rehearsals, no pre-written questions for contestants, and no planned outcomes. The hosts guide the conversation but every word from the contestants is real.",
+      },
+      {
+        q: "What age range are contestants?",
+        a: "Most contestants are between 23 and 38, but there is no strict age cutoff. We\u2019ve cast people in their early 20s and people in their 40s. What matters is that you\u2019re single, open to being matched, and comfortable being yourself in front of 250 people.",
+      },
+    ],
+    body: [
+      {
+        type: "p",
+        text: "You apply at garammasaladating.com/apply. We read every single application. Most of them are bad. Here\u2019s how to not be one of those.",
+      },
+      { type: "h2", text: "What we\u2019re not looking for (and what we are)" },
+      {
+        type: "p",
+        text: "We are not looking for people who are perfect on paper. We are looking for people who are honest, a little weird, and willing to be themselves on a stage in front of 250 strangers. Perfection is boring to watch. Realness is not.",
+      },
+      {
+        type: "p",
+        text: "Let me be specific. We are not casting for attractiveness. We are not casting for career prestige. We are not casting for someone who \u201Clooks good on camera.\u201D This is a live show at a comedy club, not a Netflix production. What we need is someone who can hold a conversation, take a joke, and say something genuine when a room full of people is staring at them.",
+      },
+      {
+        type: "p",
+        text: "The best contestants we\u2019ve ever had were not the most conventionally impressive. They were the most themselves. The person who admitted they still live with their parents and made it funny. The person who said something so specific about what they want that the whole room went quiet. The person who had zero filter and somehow made it charming. That\u2019s what we\u2019re casting for.",
+      },
+      { type: "h2", text: "The application question that eliminates 80% of people" },
+      {
+        type: "p",
+        text: "There is one question on the application that separates good candidates from forgettable ones. It\u2019s the one that asks you to describe yourself in a way that your friends would recognize. Most people answer with a resume. We need a personality.",
+      },
+      {
+        type: "p",
+        text: "The wrong answer sounds like this: \u201CI\u2019m a driven professional who loves to travel, try new restaurants, and spend time with family.\u201D That\u2019s everyone. That is literally every person on every dating app. I\u2019ve read thousands of these applications and I can tell you that sentence appears in at least 40% of them. It tells me nothing.",
+      },
+      {
+        type: "p",
+        text: "The right answer sounds like a person. \u201CMy friends call me the group\u2019s chaos coordinator because I will plan an entire weekend trip in 20 minutes and forget to book the hotel.\u201D That\u2019s a person. I can see them on stage. I can imagine the audience reacting to them. Write like a person, not like a LinkedIn bio.",
+      },
+      {
+        type: "p",
+        text: "One more thing. Short answers are almost always better than long ones. If you can make me laugh or feel something in two sentences, you\u2019ll do the same on stage. If you need a full paragraph to say something interesting, that\u2019s a red flag for live performance.",
+      },
+      { type: "h2", text: "What happens after you apply" },
+      {
+        type: "p",
+        text: "Wyatt and I read every application. Not a bot. Not an intern. We read them because casting is the single most important thing we do. A great cast makes a great show. A boring cast makes a boring show. There is no amount of hosting that fixes a bad cast.",
+      },
+      {
+        type: "p",
+        text: "If your application stands out, we reach out. Sometimes it\u2019s a quick call. Sometimes it\u2019s a few messages. We want to hear your voice and get a sense of your energy. This isn\u2019t a formal audition. It\u2019s a vibe check. Can this person be fun on stage? Will the audience root for them? Those are the only two questions that matter.",
+      },
+      {
+        type: "p",
+        text: "Timing varies. Sometimes we cast someone the week they apply. Sometimes we hold an application for a month because we\u2019re looking for the right match. We pair people intentionally. It\u2019s not random. If we think two people will have an interesting dynamic, that\u2019s a show.",
+      },
+      { type: "h2", text: "What to expect if you get cast" },
+      {
+        type: "p",
+        text: "You show up early on show day. You get a briefing. You do not meet your date beforehand. You do not know who they are, what they look like, or anything about them. The first time you see each other is on stage in front of 250 people. That\u2019s the format. It\u2019s terrifying and exhilarating in equal measure.",
+      },
+      {
+        type: "p",
+        text: "The date runs about 15 minutes. Wyatt and I ask questions, facilitate the conversation, and keep the energy up. You talk to your date. You talk to us. The audience reacts to everything. At the end, you both write a rating on a whiteboard and reveal it to the room at the same time. Whatever number you wrote is now public knowledge.",
+      },
+      {
+        type: "p",
+        text: "After that, you\u2019re done. You come back into the venue for the singles mixer and people will absolutely come up to you. Contestants are minor celebrities for the rest of the night. Whether the date went well or terribly, the audience wants to talk to you about it.",
+      },
+      { type: "h2", text: "What makes a contestant people actually root for" },
+      {
+        type: "p",
+        text: "Audiences root for vulnerability. Not weakness. Vulnerability. The person who says \u201CI\u2019m nervous\u201D and then powers through it. The person who gives a real answer when a safe one would have been easier. The person who takes a risk because the moment called for it.",
+      },
+      {
+        type: "p",
+        text: "Nobody roots for the person trying to be cool. I\u2019ve seen it a hundred times. Someone walks on stage with rehearsed confidence and the audience goes neutral. Someone else walks on visibly nervous, says something honest, and 250 people lean forward. The room wants to see a real person. Give them that and they\u2019ll be on your side the entire date.",
+      },
+      {
+        type: "p",
+        text: "The contestants who get talked about for weeks after are never the smoothest ones. They\u2019re the ones who did something unexpected. Said something too honest. Had a reaction they couldn\u2019t control. That\u2019s the content. That\u2019s what makes someone memorable. You don\u2019t need to be perfect. You need to be present.",
+      },
+      { type: "h2", text: "Frequently asked questions about getting on a live dating show" },
+      { type: "h3", text: "How do I apply to be on Garam Masala Dating?" },
+      {
+        type: "p",
+        text: "Go to garammasaladating.com/apply and fill out the application. It takes about ten minutes. We read every submission and cast based on personality, honesty, and stage potential. No headshots required. No agents. Just be interesting.",
+      },
+      { type: "h3", text: "Do you have to be South Asian to be a contestant?" },
+      {
+        type: "p",
+        text: "No. Garam Masala Dating is rooted in desi culture but contestants come from all backgrounds. We cast based on personality and chemistry potential, not ethnicity. If you\u2019re funny, honest, and open to going on a blind date on stage, you\u2019re eligible.",
+      },
+      { type: "h3", text: "Is the dating show scripted?" },
+      {
+        type: "p",
+        text: "No. Nothing is scripted. Contestants don\u2019t know who their date is until they walk on stage. There are no rehearsals, no pre-written questions for contestants, and no planned outcomes. The hosts guide the conversation but every word from the contestants is real.",
+      },
+      { type: "h3", text: "What age range are contestants?" },
+      {
+        type: "p",
+        text: "Most contestants are between 23 and 38, but there is no strict age cutoff. We\u2019ve cast people in their early 20s and people in their 40s. What matters is that you\u2019re single, open to being matched, and comfortable being yourself in front of 250 people.",
+      },
+      {
+        type: "p",
+        text: "Think you\u2019d be good on stage? Apply at garammasaladating.com/apply.",
+      },
+    ],
+  },
+  {
+    slug: "the-realest-way-to-meet-desi-singles-in-nyc",
+    title:
+      "The Realest Way to Meet Desi Singles in NYC (That Isn\u2019t an App)",
+    metaDescription:
+      "Tired of swiping through the same desi profiles? Here\u2019s how to actually meet South Asian singles in NYC in person, at a live dating show with 250 people in the room.",
+    datePublished: "2026-04-18",
+    dateModified: "2026-04-18",
+    author: "Surbhi",
+    excerpt:
+      "You meet desi singles in NYC by getting off the apps and into a room where people actually came to connect. I run that room every week.",
+    faqs: [
+      {
+        q: "Where can I meet South Asian singles in NYC?",
+        a: "Garam Masala Dating is a weekly live comedy dating show and singles mixer in Manhattan at Top Secret Comedy Club. It\u2019s the largest recurring South Asian singles event in NYC with 250 people per show. Tickets at garammasaladating.com.",
+      },
+      {
+        q: "Is Garam Masala Dating only for desi people?",
+        a: "No. The show is rooted in South Asian culture but open to everyone. The audience and contestants include people from all backgrounds. You don\u2019t have to be desi to attend or apply.",
+      },
+      {
+        q: "How do I get tickets to Garam Masala Dating?",
+        a: "Buy tickets at garammasaladating.com. Shows run weekly at Top Secret Comedy Club in Manhattan and monthly in Jersey City. Tickets include the live dating show and the singles mixer after.",
+      },
+      {
+        q: "Is there a singles mixer in NYC for South Asians?",
+        a: "Yes. Every Garam Masala Dating show ends with a singles mixer where the full audience stays to meet each other. 250 people who just shared an experience, now in the same room with a reason to talk.",
+      },
+    ],
+    body: [
+      {
+        type: "p",
+        text: "You meet desi singles in NYC by getting off the apps and into a room where people actually came to connect. I run that room every week. Here\u2019s what works.",
+      },
+      { type: "h2", text: "Why apps are exhausting for South Asians specifically" },
+      {
+        type: "p",
+        text: "Dating apps are tiring for everyone, but they\u2019re a specific flavor of exhausting for South Asians. The filters don\u2019t capture what matters. The bios all sound the same. And you\u2019re trying to figure out cultural compatibility from four photos and a prompt about hiking.",
+      },
+      {
+        type: "p",
+        text: "Here\u2019s the thing nobody talks about. Desi dating involves a set of unspoken questions that apps cannot answer. Does this person understand what it means to navigate two cultures at once? Are they close with their family in a way that\u2019s healthy or in a way that\u2019s going to be a problem? Do they actually want a relationship or are they just here because their mom asked if they\u2019re seeing anyone again?",
+      },
+      {
+        type: "p",
+        text: "You cannot swipe your way to those answers. You need to be in a room with someone. You need to hear how they talk, watch how they react, and feel whether the energy is real. That takes about 30 seconds in person. On an app, it takes three weeks of texting and you still don\u2019t know.",
+      },
+      {
+        type: "p",
+        text: "I\u2019ve watched this play out hundreds of times at Garam Masala Dating. Two people who would have swiped past each other end up having incredible chemistry on stage because the app version of them doesn\u2019t capture what actually makes them attractive. Confidence, humor, and the ability to roll with something unexpected. None of that shows up in a Hinge prompt.",
+      },
+      { type: "h2", text: "What actually works about meeting people in person" },
+      {
+        type: "p",
+        text: "In-person connection gives you information that no profile ever will. You know within seconds if someone\u2019s energy matches yours. You can feel chemistry. You can\u2019t manufacture that through a screen, no matter how good the texting is.",
+      },
+      {
+        type: "p",
+        text: "The problem with most in-person options is that they\u2019re unstructured. A bar doesn\u2019t give you a reason to approach someone. A house party only works if you know the right people. Speed dating is efficient but sterile. Most desi mixers are 150 people standing around hoping someone else makes the first move.",
+      },
+      {
+        type: "p",
+        text: "What works is a shared experience with built-in momentum. Something that puts everyone in the same emotional state so that when the socializing starts, people are already open. That\u2019s why concerts create connections. That\u2019s why weddings create connections. And that\u2019s why watching two people go on a live blind date in front of you creates connections. You\u2019re not cold-approaching a stranger. You\u2019re turning to someone who just laughed at the same moment you did.",
+      },
+      { type: "h2", text: "Why a room of 250 people changes the math" },
+      {
+        type: "p",
+        text: "A room of 250 people gives you real odds. Not app odds where you\u2019re one of 10,000 profiles. Not mixer odds where 30 people showed up and half are there with their ex. 250 people who bought a ticket to a dating show on purpose. The intent level in that room is different.",
+      },
+      {
+        type: "p",
+        text: "At Garam Masala Dating, the audience skews 20s and 30s, heavily South Asian, and genuinely single. Not always, but mostly. People bring friends. Groups of four or five come together. That matters because it means the room isn\u2019t just solo people nervously clutching drinks. It\u2019s a social environment. People are loose. People are laughing. The show does the work of warming everyone up before the mixer even starts.",
+      },
+      {
+        type: "p",
+        text: "I\u2019ve done the math on this and it\u2019s simple. If 60% of a 250-person room is single, that\u2019s 150 single people in one room on one night. You will not find that concentration on any app in any borough. And these are people who left their apartment on a weeknight to come to a live dating show. That tells you something about what they\u2019re looking for.",
+      },
+      { type: "h2", text: "The singles mixer: what it is and why it works" },
+      {
+        type: "p",
+        text: "After the live dates end, the venue stays open and the whole room becomes a mixer. No structured rotations. No name tags. No forced icebreakers. Just 250 people who spent the last 90 minutes watching blind dates together and now have plenty to talk about.",
+      },
+      {
+        type: "p",
+        text: "The mixer works because the show already did the hard part. Everyone watched the same dates. Everyone has opinions. \u201CDid you think they had chemistry?\u201D is the easiest opener in the world and it leads to real conversation because people actually care about the answer. You\u2019re not performing small talk. You\u2019re debating something you both just experienced.",
+      },
+      {
+        type: "p",
+        text: "I cannot overstate how different this is from a normal bar night. At a bar, you have to generate a reason to talk. At the mixer, the reason already exists. The contestants come back into the room and people crowd them. Audience members who noticed each other during the show finally go say hi. It\u2019s organic in a way that feels rare in a city where most social interactions feel transactional.",
+      },
+      {
+        type: "p",
+        text: "We run shows weekly at Top Secret Comedy Club in Manhattan and monthly in Jersey City. The mixer runs after every single one.",
+      },
+      { type: "h2", text: "Frequently asked questions about meeting desi singles in NYC" },
+      { type: "h3", text: "Where can I meet South Asian singles in NYC?" },
+      {
+        type: "p",
+        text: "Garam Masala Dating is a weekly live comedy dating show and singles mixer in Manhattan at Top Secret Comedy Club. It\u2019s the largest recurring South Asian singles event in NYC with 250 people per show. Tickets at garammasaladating.com.",
+      },
+      { type: "h3", text: "Is Garam Masala Dating only for desi people?" },
+      {
+        type: "p",
+        text: "No. The show is rooted in South Asian culture but open to everyone. The audience and contestants include people from all backgrounds. You don\u2019t have to be desi to attend or apply.",
+      },
+      { type: "h3", text: "How do I get tickets to Garam Masala Dating?" },
+      {
+        type: "p",
+        text: "Buy tickets at garammasaladating.com. Shows run weekly at Top Secret Comedy Club in Manhattan and monthly in Jersey City. Tickets include the live dating show and the singles mixer after.",
+      },
+      { type: "h3", text: "Is there a singles mixer in NYC for South Asians?" },
+      {
+        type: "p",
+        text: "Yes. Every Garam Masala Dating show ends with a singles mixer where the full audience stays to meet each other. 250 people who just shared an experience, now in the same room with a reason to talk.",
+      },
+      {
+        type: "p",
+        text: "Stop swiping. Buy tickets at garammasaladating.com.",
+      },
+    ],
+  },
+  {
+    slug: "what-actually-happens-at-a-live-comedy-dating-show",
+    title:
+      "What Actually Happens at a Live Comedy Dating Show (From the Person Running It)",
+    metaDescription:
+      "Here\u2019s what actually happens at a live comedy dating show. Blind dates on stage, audience chaos, whiteboard reveals, and a singles mixer after. From the person who runs it.",
+    datePublished: "2026-04-11",
+    dateModified: "2026-04-11",
+    author: "Surbhi",
+    excerpt:
+      "A live comedy dating show puts real singles on blind dates in front of a live audience. No script. No safety net. I run one every week, and here\u2019s what actually goes down.",
+    faqs: [
+      {
+        q: "What is a live comedy dating show?",
+        a: "A live comedy dating show is a stage show where real singles go on blind dates in front of a live audience. The dates are unscripted. The hosts interview the contestants, the audience reacts, and the chemistry either works or it doesn\u2019t. Garam Masala Dating runs weekly in Manhattan.",
+      },
+      {
+        q: "Is a live dating show scripted?",
+        a: "No. Garam Masala Dating is completely unscripted. Contestants don\u2019t know who their date is until they walk on stage. There are no pre-planned jokes, no rehearsals, and no teleprompters. The hosts guide the conversation but every answer is real.",
+      },
+      {
+        q: "What city is Garam Masala Dating in?",
+        a: "Garam Masala Dating runs weekly at Top Secret Comedy Club in Manhattan, New York City. Monthly shows also run in Jersey City, New Jersey. Visit garammasaladating.com for the full schedule and tickets.",
+      },
+      {
+        q: "Can the audience participate?",
+        a: "Yes. The audience at Garam Masala Dating is actively part of the show. You react, you cheer, you groan, and your energy directly shapes how the date goes. After the show, the full room turns into a singles mixer where everyone can meet each other.",
+      },
+    ],
+    body: [
+      {
+        type: "p",
+        text: "A live comedy dating show puts real singles on blind dates in front of a live audience. No script. No safety net. I run one every week, and here\u2019s what actually goes down.",
+      },
+      { type: "h2", text: "Before the show even starts" },
+      {
+        type: "p",
+        text: "Contestants arrive early and get separated immediately. The two people going on a date cannot see each other, talk to each other, or know anything about each other before they hit the stage. That\u2019s the whole point. We keep them in different areas of the venue until it\u2019s time.",
+      },
+      {
+        type: "p",
+        text: "Meanwhile, the audience is filing into Top Secret Comedy Club in Manhattan. 250 seats. The energy before a show is specific. People are buying drinks, grabbing seats with their friends, and sizing up the room because half of them are single too. Wyatt and I do a quick briefing with contestants backstage. We go over the format, remind them to keep answers short, and tell them to breathe. Most of them don\u2019t listen to that last part.",
+      },
+      {
+        type: "p",
+        text: "We also scope out the vibe. Every audience is different. A Friday crowd is louder than a Thursday crowd. A sold-out room hits different than a room at 80%. We adjust on the fly. That\u2019s the live show part of a live show.",
+      },
+      { type: "h2", text: "The moment contestants meet for the first time" },
+      {
+        type: "p",
+        text: "The first meeting happens on stage, in front of everyone, with microphones on. There is no backstage introduction. No warm-up chat. One person is already seated when the other walks out. The audience sees the reaction before the contestants can hide it.",
+      },
+      {
+        type: "p",
+        text: "This is the moment that makes the whole format work. You cannot fake a first impression in front of 250 people. The face someone makes when they see their date for the first time is honest in a way that nothing on a dating app will ever be. Sometimes it\u2019s a grin. Sometimes it\u2019s visible panic. Both are entertaining.",
+      },
+      {
+        type: "p",
+        text: "Wyatt and I run the conversation from there. We ask questions, we push, we let the awkward silences breathe when they need to breathe. The contestants talk to each other, talk to us, and talk to the crowd. Each date runs about 15 minutes. It goes fast when it\u2019s good. It goes very slow when it\u2019s not.",
+      },
+      { type: "h2", text: "What the audience does (and why it matters)" },
+      {
+        type: "p",
+        text: "The audience is not sitting quietly. They gasp. They cheer. They groan. They yell things that are sometimes helpful and sometimes absolutely unhinged. And all of that energy lands directly on the two people sitting on stage.",
+      },
+      {
+        type: "p",
+        text: "This is the part that surprises people. The audience isn\u2019t a passive observer. They\u2019re a participant. When someone says something smooth and 250 people react at once, that contestant stands a little taller. When someone fumbles and the crowd winces, everyone in the room felt it together. The audience creates a feedback loop that makes the dates more honest, more intense, and way funnier than any date you\u2019d go on at a coffee shop.",
+      },
+      {
+        type: "p",
+        text: "I\u2019ve watched contestants completely shift their energy because the room told them to be braver. That doesn\u2019t happen on Hinge.",
+      },
+      { type: "h2", text: "The whiteboard reveal" },
+      {
+        type: "p",
+        text: "At the end of each date, both contestants rate each other on whiteboards. They write their number, hold the boards up at the same time, and the audience sees everything. There is nowhere to hide. If you gave a 4 and they gave a 9, that\u2019s public information now.",
+      },
+      {
+        type: "p",
+        text: "The whiteboard reveal is the most electric moment of the night. The room loses its mind every single time. Matching high numbers get a roar. A mismatch gets the most dramatic audience reaction you\u2019ve ever heard. One time someone wrote \u201Ccall me\u201D instead of a number and the crowd genuinely erupted. The reveal forces honesty. You can\u2019t hedge. You can\u2019t ghost. You have to commit to a number and live with it in front of 250 witnesses.",
+      },
+      { type: "h2", text: "The singles mixer after" },
+      {
+        type: "p",
+        text: "After the dates wrap, the whole venue becomes a singles mixer. The audience stays, the contestants come back into the room, and everybody talks to everybody. This is where the second wave of connections happens.",
+      },
+      {
+        type: "p",
+        text: "The mixer works because everyone in the room just shared an experience. You watched the same dates, laughed at the same moments, and had the same reactions. You already have something to talk about. That\u2019s a completely different starting point than walking up to a stranger at a bar and trying to generate conversation from nothing.",
+      },
+      {
+        type: "p",
+        text: "Some of the best couples to come out of Garam Masala Dating didn\u2019t meet on stage. They met at the mixer. The show is the shared experience. The mixer is where it turns into something real.",
+      },
+      { type: "h2", text: "Frequently asked questions about live comedy dating shows" },
+      { type: "h3", text: "What is a live comedy dating show?" },
+      {
+        type: "p",
+        text: "A live comedy dating show is a stage show where real singles go on blind dates in front of a live audience. The dates are unscripted. The hosts interview the contestants, the audience reacts, and the chemistry either works or it doesn\u2019t. Garam Masala Dating runs weekly in Manhattan.",
+      },
+      { type: "h3", text: "Is a live dating show scripted?" },
+      {
+        type: "p",
+        text: "No. Garam Masala Dating is completely unscripted. Contestants don\u2019t know who their date is until they walk on stage. There are no pre-planned jokes, no rehearsals, and no teleprompters. The hosts guide the conversation but every answer is real.",
+      },
+      { type: "h3", text: "What city is Garam Masala Dating in?" },
+      {
+        type: "p",
+        text: "Garam Masala Dating runs weekly at Top Secret Comedy Club in Manhattan, New York City. Monthly shows also run in Jersey City, New Jersey. Visit garammasaladating.com for the full schedule and tickets.",
+      },
+      { type: "h3", text: "Can the audience participate?" },
+      {
+        type: "p",
+        text: "Yes. The audience at Garam Masala Dating is actively part of the show. You react, you cheer, you groan, and your energy directly shapes how the date goes. After the show, the full room turns into a singles mixer where everyone can meet each other.",
+      },
+      {
+        type: "p",
+        text: "Want to see it for yourself? Buy tickets at garammasaladating.com.",
+      },
+    ],
+  },
+  {
     slug: "the-only-live-desi-dating-show-in-nyc",
     title:
       "The Only Live Desi Dating Show in NYC (And What Actually Happens There)",

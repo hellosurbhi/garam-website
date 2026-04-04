@@ -1,7 +1,25 @@
 User-agent: *
 Allow: /
 Disallow: /admin
-Disallow: /api/
 Disallow: /contestant-prep
+Disallow: /api/
+
+User-agent: GPTBot
+Allow: /
+
+User-agent: Google-Extended
+Allow: /
+
+User-agent: ChatGPT-User
+Allow: /
+
+User-agent: PerplexityBot
+Allow: /
+
+User-agent: ClaudeBot
+Allow: /
+
+User-agent: anthropic-ai
+Allow: /
 
 Sitemap: https://garammasaladating.com/sitemap.xml

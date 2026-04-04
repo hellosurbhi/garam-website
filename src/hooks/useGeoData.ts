@@ -10,6 +10,7 @@ interface GeoModule {
 
 export function useGeoData(countryCode: string, stateCode: string) {
   const [geo, setGeo] = useState<GeoModule | null>(null);
+  const [geoFailed, setGeoFailed] = useState(false);
 
   useEffect(() => {
     let cancelled = false;
@@ -20,7 +21,7 @@ export function useGeoData(countryCode: string, stateCode: string) {
         }
       })
       .catch(() => {
-        // Import failed — geo selectors will remain in loading state
+        if (!cancelled) setGeoFailed(true);
       });
     return () => { cancelled = true; };
   }, []);
@@ -44,5 +45,5 @@ export function useGeoData(countryCode: string, stateCode: string) {
     [geo, countryCode, stateCode],
   );
 
-  return { loading: !geo, countryOptions, stateOptions, cityOptions };
+  return { loading: !geo && !geoFailed, countryOptions, stateOptions, cityOptions };
 }

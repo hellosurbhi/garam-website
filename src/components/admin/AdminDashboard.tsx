@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo } from "react";
+import { useState, useEffect, useMemo, useRef } from "react";
 import { collection, getDocs, doc, updateDoc, Timestamp } from "firebase/firestore";
 import { ChevronRight, ChevronDown, Copy, Check } from "lucide-react";
 import Select from "react-select";
@@ -39,9 +39,13 @@ export default function AdminDashboard({ onLogout }: AdminDashboardProps) {
   const today = new Date().toLocaleDateString("en-CA");
   const upcomingEvents = events.filter((e) => e.isoDate && e.isoDate >= today);
 
+  const toastTimerRef = useRef<ReturnType<typeof setTimeout>>();
+  useEffect(() => () => { clearTimeout(toastTimerRef.current); }, []);
+
   function showToast(msg: string, ok: boolean) {
+    clearTimeout(toastTimerRef.current);
     setToast({ msg, ok });
-    setTimeout(() => setToast(null), 2500);
+    toastTimerRef.current = setTimeout(() => setToast(null), 2500);
   }
 
   async function handleCopyPrepLink(isoDate: string) {

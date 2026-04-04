@@ -1,9 +1,10 @@
 import { useState, useEffect, useMemo, type ChangeEvent } from "react";
 import { collection, addDoc, serverTimestamp } from "firebase/firestore";
 import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
+import { signInAnonymously } from "firebase/auth";
 import Select from "react-select";
 import { useGeoData } from "@/hooks/useGeoData";
-import { getFirebaseDb, getFirebaseStorage } from "@/lib/firebase";
+import { getFirebaseDb, getFirebaseStorage, getFirebaseAuth } from "@/lib/firebase";
 import { COMMUNITY_OPTIONS, INCOME_OPTIONS } from "@/types/application";
 import { events } from "@/data/events";
 import { formSelectStyles } from "@/utils/reactSelectStyles";
@@ -129,9 +130,15 @@ export default function ApplyPage() {
 
   function handlePhotoChange(e: ChangeEvent<HTMLInputElement>) {
     const file = e.target.files?.[0];
-    if (!file) return;
+    if (!file) {
+      setPhotoFile(null);
+      setPhotoPreview(null);
+      return;
+    }
     if (file.size > 5 * 1024 * 1024) {
       setErrors((prev) => ({ ...prev, photo: "Photo must be under 5 MB" }));
+      setPhotoFile(null);
+      setPhotoPreview(null);
       e.target.value = "";
       return;
     }
@@ -181,6 +188,7 @@ export default function ApplyPage() {
 
     setSubmitting(true);
     try {
+      await signInAnonymously(getFirebaseAuth());
       const ext = photoFile!.name.split(".").pop() ?? "jpg";
       const storageRef = ref(getFirebaseStorage(), `photos/${crypto.randomUUID()}.${ext}`);
       await uploadBytes(storageRef, photoFile!);

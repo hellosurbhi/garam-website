@@ -3,7 +3,7 @@ import BaseLayout from '@/layouts/BaseLayout.astro';
 import { buildBreadcrumbJsonLd } from '@/utils/breadcrumbs';
 import { events } from '@/data/events';
 import { isEventPast } from '@/utils/eventDate';
-import { nyOffset } from '@/utils/timezone';
+import { buildEventSchemas } from '@/utils/eventSchema';
 
 const TITLE = "Tickets & Upcoming Shows | Garam Masala Dating";
 const DESC =
@@ -16,65 +16,18 @@ const breadcrumbJsonLd = buildBreadcrumbJsonLd([
   { name: "Tickets" },
 ]);
 
-// Event ItemList JSON-LD (same schema as homepage)
+// Individual Event JSON-LD blocks (one per upcoming show)
 const today = new Date().toISOString().slice(0, 10);
 const upcomingForSchema = events.filter((e) => !e.hidden && e.isoDate && e.isoDate >= today);
-
-const eventsJsonLd = upcomingForSchema.length > 0 ? JSON.stringify({
-  "@context": "https://schema.org",
-  "@type": "ItemList",
-  itemListElement: upcomingForSchema.map((e, i) => {
-    const start = e.startTime ?? "20:00";
-    const end = e.endTime ?? "22:00";
-    return {
-    "@type": "ListItem",
-    position: i + 1,
-    item: {
-      "@type": "Event",
-      name: `Garam Masala Dating — ${e.city}`,
-      description: "A live comedy dating show and South Asian singles mixer. Real blind dates on stage, followed by a mixer.",
-      startDate: `${e.isoDate}T${start}:00${nyOffset(e.isoDate!, start)}`,
-      endDate: `${e.isoDate}T${end}:00${nyOffset(e.isoDate!, end)}`,
-      eventStatus: "https://schema.org/EventScheduled",
-      eventAttendanceMode: "https://schema.org/OfflineEventAttendanceMode",
-      location: {
-        "@type": "Place",
-        name: e.city,
-        address: {
-          "@type": "PostalAddress",
-          addressLocality: e.city.split(",")[0].trim(),
-          addressRegion: e.city.includes(",") ? e.city.split(",")[1].trim() : undefined,
-          addressCountry: "US",
-        },
-      },
-      organizer: {
-        "@type": "Organization",
-        name: "Garam Masala Dating",
-        url: "https://garammasaladating.com",
-      },
-      performer: [
-        { "@type": "Person", name: "Surbhi", url: "https://www.instagram.com/lordmakemetaller/" },
-        { "@type": "Person", name: "Wyatt Feegrado", url: "https://www.instagram.com/wyattfeegrado/" },
-      ],
-      offers: {
-        "@type": "Offer",
-        url: e.url,
-        availability: "https://schema.org/InStock",
-        price: "15",
-        priceCurrency: "USD",
-        validFrom: e.isoDate,
-      },
-      image: "https://garammasaladating.com/og-image.jpg",
-    },
-  };
-  }),
-}) : null;
+const eventSchemas = buildEventSchemas(upcomingForSchema);
 ---
 
 <BaseLayout title={TITLE} description={DESC} overlayBg="rgba(13, 10, 8, 0.88)">
   <Fragment slot="head">
     <script type="application/ld+json" set:html={breadcrumbJsonLd} />
-    {eventsJsonLd && <script type="application/ld+json" set:html={eventsJsonLd} />}
+    {eventSchemas.map((schema) => (
+      <script type="application/ld+json" set:html={schema} />
+    ))}
   </Fragment>
 
   <div class="tickets-page">

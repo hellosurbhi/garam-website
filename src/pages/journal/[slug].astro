@@ -1,11 +1,11 @@
 ---
 import BaseLayout from '@/layouts/BaseLayout.astro';
 import AuthorBio from '@/components/AuthorBio.astro';
-import { journalPosts, type JournalPost, type JournalFaq } from '@/data/journal';
+import { journalPostsPublished, type JournalPost, type JournalFaq } from '@/data/journal';
 import { buildBreadcrumbJsonLd } from '@/utils/breadcrumbs';
 
 export function getStaticPaths() {
-  return journalPosts.map((post) => ({
+  return journalPostsPublished.map((post) => ({
     params: { slug: post.slug },
     props: { post },
   }));

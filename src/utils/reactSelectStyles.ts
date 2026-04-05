@@ -56,7 +56,7 @@ export const formSelectStyles: BaseStyles = {
     borderRadius: "12px",
     border: `1px solid ${state.isFocused ? "#E91E76" : "rgba(0, 0, 0, 0.1)"}`,
     boxShadow: state.isFocused ? "0 0 0 3px rgba(233, 30, 118, 0.1)" : "none",
-    fontFamily: "var(--font-cormorant)",
+    fontFamily: "var(--font-dm-sans)",
     fontSize: "16px",
     background: "#fff",
     padding: "6px 4px",
@@ -67,7 +67,7 @@ export const formSelectStyles: BaseStyles = {
   }),
   option: (base: CSSObjectWithLabel, state) => ({
     ...base,
-    fontFamily: "var(--font-cormorant)",
+    fontFamily: "var(--font-dm-sans)",
     fontSize: "16px",
     background: state.isSelected
       ? "rgba(233, 30, 118, 0.15)"
@@ -100,7 +100,7 @@ export const formSelectStyles: BaseStyles = {
   }),
   input: (base: CSSObjectWithLabel) => ({
     ...base,
-    fontFamily: "var(--font-cormorant)",
+    fontFamily: "var(--font-dm-sans)",
     fontSize: "16px",
     color: "var(--charcoal)",
   }),

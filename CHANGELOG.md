@@ -1,5 +1,33 @@
 # Changelog
 
+## feat: redesign contestant-prep page to match v3 visual language
+
+Ported the contestant-prep page from the old dark/gold theme to the v3 light theme used on the home page.
+
+**Visual changes:**
+- Light theme: off-white background with charcoal text (was dark overlay with ivory text)
+- Hot-pink accents replace gold throughout (icons, numbers, callout tints, spinner)
+- Electric-yellow dividers and step numbers with text-stroke
+- DM Sans body text replaces Cormorant Garamond for readability
+- White cards with subtle borders replace translucent dark cards
+- Error state: clean white card instead of dark glassmorphism
+
+**Code quality:**
+- Extracted all inline React styles to CSS module (`ContestantPrepPage.module.css`)
+- Component reduced from 635 to ~270 lines
+- Added responsive breakpoint at 768px (desktop padding bumps)
+- Added `prefers-reduced-motion` support
+- Uses v3 CSS custom properties exclusively (no hardcoded colors)
+
+**Preserved exactly:** all auth logic, session management, content arrays, API integration.
+
+**Files changed:**
+- `src/pages/contestant-prep.astro` — `overlayBg` replaced with `bodyClass="home-v3"`
+- `src/components/ContestantPrepPage.module.css` — new CSS module with all styles
+- `src/components/ContestantPrepPage.tsx` — inline styles replaced with CSS module classNames
+
+---
+
 ## add: 5 SEO journal posts scheduled over next 5 weeks
 
 Added five blog posts targeting featured snippets, scheduled weekly Apr 11 through May 9:

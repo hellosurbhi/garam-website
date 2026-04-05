@@ -37,7 +37,7 @@ export default function AdminDashboard({ onLogout }: AdminDashboardProps) {
   const [prepLinkCopied, setPrepLinkCopied] = useState<string | null>(null);
 
   const today = new Date().toLocaleDateString("en-CA");
-  const upcomingEvents = events.filter((e) => e.isoDate && e.isoDate >= today);
+  const upcomingEvents = events.filter((e) => e.isoDate && e.isoDate > today && !e.hidden);
 
   const toastTimerRef = useRef<ReturnType<typeof setTimeout>>();
   useEffect(() => () => { clearTimeout(toastTimerRef.current); }, []);
@@ -64,24 +64,28 @@ export default function AdminDashboard({ onLogout }: AdminDashboardProps) {
         },
         body: JSON.stringify({ showDate: isoDate }),
       });
+      let url: string;
       if (res.ok) {
-        const { url } = await res.json() as { url: string };
-        try {
-          await navigator.clipboard.writeText(url);
-        } catch {
-          const ta = document.createElement("textarea");
-          ta.value = url;
-          ta.style.position = "fixed";
-          ta.style.opacity = "0";
-          document.body.appendChild(ta);
-          ta.select();
-          document.execCommand("copy");
-          document.body.removeChild(ta);
-        }
-        setPrepLinkCopied(isoDate);
-        setTimeout(() => setPrepLinkCopied(null), 2000);
+        ({ url } = await res.json() as { url: string });
       } else {
-        showToast("Failed to generate link", false);
+        url = `${window.location.origin}/contestant-prep?date=${isoDate}`;
+      }
+      try {
+        await navigator.clipboard.writeText(url);
+      } catch {
+        const ta = document.createElement("textarea");
+        ta.value = url;
+        ta.style.position = "fixed";
+        ta.style.opacity = "0";
+        document.body.appendChild(ta);
+        ta.select();
+        document.execCommand("copy");
+        document.body.removeChild(ta);
+      }
+      setPrepLinkCopied(isoDate);
+      setTimeout(() => setPrepLinkCopied(null), 2000);
+      if (!res.ok) {
+        showToast("Copied link (without auth token)", true);
       }
     } catch {
       showToast("Failed to generate link", false);

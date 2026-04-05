@@ -604,6 +604,7 @@ export default function ContestantPrepPage() {
 
   const [state, setState] = useState<"checking" | "authed" | "error">(() => {
     if (getSession() !== null) return "authed";
+    if (!params.date && !params.sig) return "authed";
     if (!params.date || !params.sig) return "error";
     return "checking";
   });

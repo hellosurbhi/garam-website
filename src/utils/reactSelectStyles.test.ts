@@ -53,14 +53,14 @@ describe("formSelectStyles", () => {
     expect(result.minHeight).toBe("48px");
   });
 
-  it("control uses gold border when focused", () => {
+  it("control uses hot-pink border when focused", () => {
     const result = formSelectStyles.control!(BASE, { isFocused: true } as never);
-    expect(result.border).toContain("#C9A84C");
+    expect(result.border).toContain("#E91E76");
   });
 
   it("control uses neutral border when not focused", () => {
     const result = formSelectStyles.control!(BASE, { isFocused: false } as never);
-    expect(result.border).toContain("#E0D5C8");
+    expect(result.border).toContain("rgba(0, 0, 0, 0.1)");
   });
 
   it("indicatorSeparator returns display none", () => {

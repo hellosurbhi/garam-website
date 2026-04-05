@@ -155,7 +155,7 @@ export default function ApplicantCard({ app, onClick, onDelete, onRestore, dimme
           onClick={(e) => e.stopPropagation()}
           style={{
             fontSize: "13px",
-            color: "var(--crimson)",
+            color: "var(--hot-pink)",
             textDecoration: "none",
             display: "block",
             marginBottom: "10px",

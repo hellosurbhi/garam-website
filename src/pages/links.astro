@@ -265,8 +265,8 @@ const reversedPress = [...pressItems].reverse();
   }
 
   @keyframes pulseGlow {
-    0%, 100% { box-shadow: 0 2px 12px rgba(201, 168, 76, 0.25), 0 0 0 0 rgba(201, 168, 76, 0); }
-    50%       { box-shadow: 0 2px 12px rgba(201, 168, 76, 0.25), 0 0 0 8px rgba(201, 168, 76, 0.12); }
+    0%, 100% { box-shadow: 0 2px 12px rgba(233, 30, 118, 0.25), 0 0 0 0 rgba(233, 30, 118, 0); }
+    50%       { box-shadow: 0 2px 12px rgba(233, 30, 118, 0.25), 0 0 0 8px rgba(233, 30, 118, 0.12); }
   }
 
   @keyframes modalIn {
@@ -311,27 +311,27 @@ const reversedPress = [...pressItems].reverse();
     font-family: var(--font-playfair);
     font-size: 36px;
     font-weight: 700;
-    color: #F5EDE4;
+    color: var(--charcoal);
     line-height: 1.15;
     margin-bottom: 10px;
   }
 
   .title-accent {
     font-style: italic;
-    color: #E2C97E;
+    color: var(--hot-pink);
   }
 
   .subtitle {
-    font-family: var(--font-cormorant);
+    font-family: var(--font-dm-sans);
     font-size: 17px;
-    color: rgba(245, 237, 228, 0.55);
+    color: #666;
     line-height: 1.5;
   }
 
   .divider {
     width: 48px;
     height: 1px;
-    background: rgba(201, 168, 76, 0.3);
+    background: rgba(233, 30, 118, 0.3);
     margin: 18px auto 0;
   }
 
@@ -354,9 +354,9 @@ const reversedPress = [...pressItems].reverse();
     padding: 20px 24px;
     border-radius: 14px;
     border: none;
-    background: #C9A84C;
-    color: #0D0A08;
-    font-family: var(--font-cormorant);
+    background: var(--hot-pink);
+    color: white;
+    font-family: var(--font-dm-sans);
     font-size: 17px;
     font-weight: 600;
     letter-spacing: 0.04em;
@@ -364,12 +364,12 @@ const reversedPress = [...pressItems].reverse();
     cursor: pointer;
     transition: transform 0.25s ease, box-shadow 0.25s ease;
     transform: scale(1);
-    box-shadow: 0 2px 12px rgba(201, 168, 76, 0.25);
+    box-shadow: 0 2px 12px rgba(233, 30, 118, 0.25);
   }
 
   .primary-link:hover {
     transform: scale(1.02);
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
   }
 
   /* ─── LinkButton — glass ──────────────────────────────────── */
@@ -380,40 +380,38 @@ const reversedPress = [...pressItems].reverse();
     gap: 12px;
     width: 100%;
     padding: 17px 22px;
-    border-radius: 14px;
-    border: 1px solid rgba(245, 237, 228, 0.1);
-    background: rgba(255, 255, 255, 0.05);
-    backdrop-filter: blur(12px);
-    -webkit-backdrop-filter: blur(12px);
-    color: #F5EDE4;
-    font-family: var(--font-cormorant);
+    border-radius: 12px;
+    border: 1px solid rgba(0, 0, 0, 0.06);
+    background: white;
+    color: var(--charcoal);
+    font-family: var(--font-dm-sans);
     font-size: 16px;
     font-weight: 500;
     text-decoration: none;
     cursor: pointer;
     transition: all 0.25s ease;
     transform: scale(1);
-    box-shadow: none;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
     text-align: left;
   }
 
   .glass-link:hover {
-    border-color: rgba(201, 168, 76, 0.35);
-    background: rgba(255, 255, 255, 0.08);
+    border-color: rgba(233, 30, 118, 0.35);
+    background: white;
     transform: scale(1.015);
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
   }
 
   /* icon-primary / icon-glass are injected via set:html, so need :global */
   :global(.icon-primary) {
     flex-shrink: 0;
-    color: #0D0A08;
+    color: white;
     display: inline-flex;
   }
 
   :global(.icon-glass) {
     flex-shrink: 0;
-    color: rgba(245, 237, 228, 0.5);
+    color: #888;
     display: inline-flex;
   }
 
@@ -438,15 +436,15 @@ const reversedPress = [...pressItems].reverse();
     display: flex;
     align-items: center;
     justify-content: center;
-    background: rgba(245, 237, 228, 0.08);
-    color: rgba(245, 237, 228, 0.25);
+    background: rgba(0, 0, 0, 0.06);
+    color: #888;
     transition: background 0.2s, color 0.2s;
     text-decoration: none;
   }
 
   .social-icon:hover {
-    background: rgba(201, 168, 76, 0.15);
-    color: #C9A84C;
+    background: rgba(233, 30, 118, 0.15);
+    color: var(--hot-pink);
   }
 
   /* ─── Footer ──────────────────────────────────────────────── */
@@ -454,9 +452,9 @@ const reversedPress = [...pressItems].reverse();
   .footer-text {
     margin-top: 32px;
     font-size: 14px;
-    font-family: var(--font-cormorant);
+    font-family: var(--font-dm-sans);
     font-style: italic;
-    color: rgba(245, 237, 228, 0.2);
+    color: var(--muted);
     text-align: center;
     animation: headerFadeUp 0.5s ease-out 1s both;
   }
@@ -475,9 +473,7 @@ const reversedPress = [...pressItems].reverse();
   }
 
   .modal-dialog::backdrop {
-    background: rgba(0, 0, 0, 0.7);
-    backdrop-filter: blur(8px);
-    -webkit-backdrop-filter: blur(8px);
+    background: rgba(0, 0, 0, 0.5);
   }
 
   .modal-dialog[open] {
@@ -489,8 +485,8 @@ const reversedPress = [...pressItems].reverse();
   .modal-inner {
     width: 100%;
     max-width: 400px;
-    background: rgba(20, 16, 13, 0.95);
-    border: 1px solid rgba(201, 168, 76, 0.2);
+    background: white;
+    border: 1px solid rgba(0, 0, 0, 0.1);
     border-radius: 20px;
     padding: 32px 24px;
     animation: modalIn 0.25s ease-out both;
@@ -508,7 +504,7 @@ const reversedPress = [...pressItems].reverse();
     right: 16px;
     background: none;
     border: none;
-    color: rgba(245, 237, 228, 0.4);
+    color: #888;
     cursor: pointer;
     padding: 4px;
     display: flex;
@@ -518,21 +514,21 @@ const reversedPress = [...pressItems].reverse();
   }
 
   .modal-close:hover {
-    color: #F5EDE4;
+    color: var(--charcoal);
   }
 
   .modal-title {
     font-family: var(--font-playfair);
     font-size: 22px;
     font-weight: 600;
-    color: #F5EDE4;
+    color: var(--charcoal);
     margin-bottom: 8px;
   }
 
   .modal-divider {
     width: 32px;
     height: 1px;
-    background: rgba(201, 168, 76, 0.3);
+    background: rgba(233, 30, 118, 0.3);
     margin-bottom: 24px;
   }
 
@@ -550,16 +546,16 @@ const reversedPress = [...pressItems].reverse();
     justify-content: space-between;
     padding: 14px 16px;
     border-radius: 12px;
-    border: 1px solid rgba(201, 168, 76, 0.15);
-    background: rgba(255, 255, 255, 0.04);
+    border: 1px solid rgba(0, 0, 0, 0.06);
+    background: white;
     text-decoration: none;
     transition: all 0.2s ease;
     cursor: pointer;
   }
 
   .event-link:hover {
-    background: rgba(201, 168, 76, 0.1);
-    border-color: rgba(201, 168, 76, 0.35);
+    background: rgba(233, 30, 118, 0.06);
+    border-color: rgba(233, 30, 118, 0.35);
   }
 
   .event-tba {
@@ -568,30 +564,30 @@ const reversedPress = [...pressItems].reverse();
     justify-content: space-between;
     padding: 14px 16px;
     border-radius: 12px;
-    border: 1px solid rgba(245, 237, 228, 0.06);
-    background: rgba(255, 255, 255, 0.02);
+    border: 1px solid rgba(0, 0, 0, 0.06);
+    background: white;
     opacity: 0.5;
   }
 
   .event-city {
-    font-family: var(--font-cormorant);
+    font-family: var(--font-dm-sans);
     font-size: 16px;
     font-weight: 500;
-    color: #F5EDE4;
+    color: var(--charcoal);
   }
 
   .event-date {
     font-family: var(--font-dm-sans);
     font-size: 13px;
     font-weight: 600;
-    color: rgba(245, 237, 228, 0.6);
+    color: #666;
   }
 
   .event-date-muted {
     font-family: var(--font-dm-sans);
     font-size: 13px;
     font-weight: 600;
-    color: rgba(245, 237, 228, 0.4);
+    color: #888;
   }
 
   .event-date-group {
@@ -601,13 +597,13 @@ const reversedPress = [...pressItems].reverse();
   }
 
   .ticket-icon {
-    color: #C9A84C;
+    color: var(--hot-pink);
   }
 
   .no-events {
-    font-family: var(--font-cormorant);
+    font-family: var(--font-dm-sans);
     font-size: 16px;
-    color: rgba(245, 237, 228, 0.5);
+    color: #666;
     text-align: center;
     padding: 16px 0;
   }
@@ -620,8 +616,8 @@ const reversedPress = [...pressItems].reverse();
     justify-content: space-between;
     padding: 14px 16px;
     border-radius: 12px;
-    border: 1px solid rgba(201, 168, 76, 0.15);
-    background: rgba(255, 255, 255, 0.04);
+    border: 1px solid rgba(0, 0, 0, 0.06);
+    background: white;
     text-decoration: none;
     transition: all 0.2s ease;
     cursor: pointer;
@@ -629,8 +625,8 @@ const reversedPress = [...pressItems].reverse();
   }
 
   .press-item:hover {
-    background: rgba(201, 168, 76, 0.1);
-    border-color: rgba(201, 168, 76, 0.35);
+    background: rgba(233, 30, 118, 0.06);
+    border-color: rgba(233, 30, 118, 0.35);
   }
 
   .press-content {
@@ -651,26 +647,26 @@ const reversedPress = [...pressItems].reverse();
     gap: 4px;
     padding: 2px 8px;
     border-radius: 6px;
-    background: rgba(201, 168, 76, 0.12);
+    background: rgba(233, 30, 118, 0.12);
     font-family: var(--font-dm-sans);
     font-size: 11px;
     font-weight: 600;
-    color: #C9A84C;
+    color: var(--hot-pink);
     text-transform: uppercase;
     letter-spacing: 0.04em;
   }
 
   .press-source {
-    font-family: var(--font-cormorant);
+    font-family: var(--font-dm-sans);
     font-size: 16px;
     font-weight: 500;
-    color: #F5EDE4;
+    color: var(--charcoal);
     margin: 0;
     line-height: 1.3;
   }
 
   .press-external-icon {
     flex-shrink: 0;
-    color: #C9A84C;
+    color: var(--hot-pink);
   }
 </style>

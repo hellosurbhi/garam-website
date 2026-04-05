@@ -59,20 +59,16 @@
   --font-dm-sans: "DM Sans";
   --font-cormorant: "Cormorant Garamond";
   --font-jetbrains: "JetBrains Mono";
-  --crimson: #C41E3A;
-  --crimson-dark: #9E1830;
-  --crimson-light: #E8435A;
-  --gold: #D4A843;
-  --gold-dark: #C9A84C;
+  /* legacy aliases — mapped to brand palette */
+  --crimson: #E91E76;
+  --crimson-dark: #AD1457;
+  --crimson-light: #E91E76;
   --cream: #FFF8F0;
-  --text: #2D2420;
-  --text-light: #7A6F66;
-  --border: #E0D5C8;
+  --text: #1A1A1A;
+  --text-light: #666;
+  --border: rgba(0, 0, 0, 0.1);
   --success: #22C55E;
-  --accent-pink: #ff2d9b;
-  --text-ivory: #F5EDE4;
-  --gold-accent: #E2C97E;
-  --surface-dark: #4A0E1B;
+  --accent-pink: #E91E76;
 
   /* brand palette */
   --hot-pink: #E91E76;

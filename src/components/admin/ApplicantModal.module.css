@@ -2,7 +2,6 @@
   position: fixed;
   inset: 0;
   background: rgba(0, 0, 0, 0.5);
-  backdrop-filter: blur(4px);
   z-index: 50;
   display: flex;
   align-items: center;
@@ -144,11 +143,11 @@
 .igLink {
   font-size: 14px;
   font-weight: 500;
-  color: var(--crimson);
+  color: var(--hot-pink);
 }
 
 .pitch {
-  border-left: 3px solid var(--crimson);
+  border-left: 3px solid var(--hot-pink);
   padding-left: 16px;
   margin: 0 0 24px;
 }
@@ -230,12 +229,12 @@
   gap: 6px;
   padding: 10px 18px;
   border-radius: 100px;
-  border: 1px solid var(--crimson);
+  border: 1px solid var(--hot-pink);
   background: transparent;
   font-family: var(--font-dm-sans);
   font-size: 14px;
   font-weight: 600;
-  color: var(--crimson);
+  color: var(--hot-pink);
   cursor: pointer;
   transition: background 0.15s;
 }

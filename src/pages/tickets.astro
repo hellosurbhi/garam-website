@@ -133,7 +133,7 @@ const eventSchemas = buildEventSchemas(upcomingForSchema);
     font-weight: 500;
     text-transform: uppercase;
     letter-spacing: 0.15em;
-    color: #C9A84C;
+    color: var(--hot-pink);
     margin-bottom: 12px;
   }
 
@@ -141,22 +141,22 @@ const eventSchemas = buildEventSchemas(upcomingForSchema);
     font-family: var(--font-playfair);
     font-size: 32px;
     font-weight: 700;
-    color: var(--text-ivory);
+    color: var(--charcoal);
     line-height: 1.15;
     margin-bottom: 14px;
   }
 
   .tickets-intro {
-    font-family: var(--font-cormorant);
+    font-family: var(--font-dm-sans);
     font-size: 17px;
-    color: rgba(245, 237, 228, 0.6);
+    color: #666;
     line-height: 1.55;
   }
 
   .tickets-divider {
     width: 48px;
     height: 1px;
-    background: rgba(201, 168, 76, 0.3);
+    background: rgba(233, 30, 118, 0.3);
     margin-bottom: 32px;
   }
 
@@ -174,7 +174,7 @@ const eventSchemas = buildEventSchemas(upcomingForSchema);
     justify-content: space-between;
     gap: 16px;
     padding: 22px;
-    border-radius: 14px;
+    border-radius: 12px;
     border: 1px solid;
     text-decoration: none;
     animation: ticketsFadeIn 0.5s ease-out both;
@@ -182,18 +182,18 @@ const eventSchemas = buildEventSchemas(upcomingForSchema);
   }
 
   .ticket-card--live {
-    border-color: rgba(201, 168, 76, 0.35);
-    background: rgba(201, 168, 76, 0.06);
+    border-color: rgba(233, 30, 118, 0.35);
+    background: white;
   }
 
   .ticket-card--live:hover {
-    border-color: rgba(201, 168, 76, 0.55);
-    background: rgba(201, 168, 76, 0.1);
+    border-color: rgba(233, 30, 118, 0.55);
+    background: rgba(233, 30, 118, 0.04);
   }
 
   .ticket-card--tba {
-    border-color: rgba(245, 237, 228, 0.08);
-    background: rgba(255, 255, 255, 0.02);
+    border-color: rgba(0, 0, 0, 0.06);
+    background: white;
     opacity: 0.5;
   }
 
@@ -209,23 +209,23 @@ const eventSchemas = buildEventSchemas(upcomingForSchema);
     font-weight: 500;
     text-transform: uppercase;
     letter-spacing: 0.12em;
-    color: #C9A84C;
+    color: var(--hot-pink);
   }
 
   .ticket-card__date--tba {
-    color: rgba(245, 237, 228, 0.4);
+    color: var(--muted);
   }
 
   .ticket-card__city {
     font-family: var(--font-playfair);
     font-size: 20px;
     font-weight: 600;
-    color: var(--text-ivory);
+    color: var(--charcoal);
     line-height: 1.25;
   }
 
   .ticket-card__city--tba {
-    color: rgba(245, 237, 228, 0.5);
+    color: #666;
   }
 
   .ticket-card__cta {
@@ -236,18 +236,18 @@ const eventSchemas = buildEventSchemas(upcomingForSchema);
     font-family: var(--font-dm-sans);
     font-size: 13px;
     font-weight: 500;
-    color: #C9A84C;
+    color: var(--hot-pink);
     padding: 8px 14px;
-    border: 1px solid rgba(201, 168, 76, 0.35);
+    border: 1px solid rgba(233, 30, 118, 0.35);
     border-radius: 8px;
-    background: rgba(201, 168, 76, 0.08);
+    background: rgba(233, 30, 118, 0.08);
     white-space: nowrap;
     transition: background 0.15s, border-color 0.15s;
   }
 
   .ticket-card--live:hover .ticket-card__cta {
-    background: rgba(201, 168, 76, 0.15);
-    border-color: rgba(201, 168, 76, 0.5);
+    background: rgba(233, 30, 118, 0.15);
+    border-color: rgba(233, 30, 118, 0.5);
   }
 
   .ticket-card__soon {
@@ -257,22 +257,22 @@ const eventSchemas = buildEventSchemas(upcomingForSchema);
     font-weight: 500;
     text-transform: uppercase;
     letter-spacing: 0.12em;
-    color: rgba(245, 237, 228, 0.4);
+    color: var(--muted);
   }
 
   /* ─── Empty State ────────────────────────────────────── */
 
   .tickets-empty {
-    font-family: var(--font-cormorant);
+    font-family: var(--font-dm-sans);
     font-size: 17px;
-    color: rgba(245, 237, 228, 0.5);
+    color: #666;
     line-height: 1.55;
     text-align: center;
     padding: 40px 0;
   }
 
   .tickets-empty__link {
-    color: #C9A84C;
+    color: var(--hot-pink);
     text-decoration: underline;
     text-underline-offset: 3px;
   }
@@ -282,7 +282,7 @@ const eventSchemas = buildEventSchemas(upcomingForSchema);
   .tickets-footer {
     margin-top: 48px;
     padding-top: 24px;
-    border-top: 1px solid rgba(245, 237, 228, 0.06);
+    border-top: 1px solid rgba(0, 0, 0, 0.06);
   }
 
   .tickets-footer__back {
@@ -292,12 +292,12 @@ const eventSchemas = buildEventSchemas(upcomingForSchema);
     font-family: var(--font-dm-sans);
     font-size: 13px;
     font-weight: 500;
-    color: rgba(245, 237, 228, 0.5);
+    color: #666;
     text-decoration: none;
     transition: color 0.15s;
   }
 
   .tickets-footer__back:hover {
-    color: var(--text-ivory);
+    color: var(--charcoal);
   }
 </style>

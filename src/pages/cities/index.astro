@@ -108,7 +108,7 @@ const breadcrumbJsonLd = buildBreadcrumbJsonLd([
     font-weight: 500;
     text-transform: uppercase;
     letter-spacing: 0.15em;
-    color: #C9A84C;
+    color: var(--hot-pink);
     margin-bottom: 12px;
   }
 
@@ -116,22 +116,22 @@ const breadcrumbJsonLd = buildBreadcrumbJsonLd([
     font-family: var(--font-playfair);
     font-size: 32px;
     font-weight: 700;
-    color: var(--text-ivory);
+    color: var(--charcoal);
     line-height: 1.15;
     margin-bottom: 14px;
   }
 
   .cities-desc {
-    font-family: var(--font-cormorant);
+    font-family: var(--font-dm-sans);
     font-size: 17px;
-    color: rgba(245, 237, 228, 0.6);
+    color: #666;
     line-height: 1.55;
   }
 
   .cities-divider {
     width: 48px;
     height: 1px;
-    background: rgba(201, 168, 76, 0.3);
+    background: rgba(233, 30, 118, 0.3);
     margin-bottom: 32px;
   }
 
@@ -155,20 +155,20 @@ const breadcrumbJsonLd = buildBreadcrumbJsonLd([
   }
 
   .city-card--active {
-    border-color: rgba(201, 168, 76, 0.35);
-    background: rgba(201, 168, 76, 0.06);
+    border-color: rgba(233, 30, 118, 0.2);
+    background: white;
   }
 
   .city-card--inactive {
-    border-color: rgba(245, 237, 228, 0.08);
-    background: rgba(255, 255, 255, 0.02);
+    border-color: rgba(0, 0, 0, 0.06);
+    background: white;
   }
 
   .city-card__name {
     font-family: var(--font-playfair);
     font-size: 20px;
     font-weight: 600;
-    color: var(--text-ivory);
+    color: var(--charcoal);
     line-height: 1.25;
     margin-bottom: 6px;
   }
@@ -182,11 +182,11 @@ const breadcrumbJsonLd = buildBreadcrumbJsonLd([
   }
 
   .city-card__badge--active {
-    color: #C9A84C;
+    color: var(--hot-pink);
   }
 
   .city-card__badge--inactive {
-    color: rgba(245, 237, 228, 0.4);
+    color: #888;
   }
 
   .city-card__arrow {
@@ -194,10 +194,10 @@ const breadcrumbJsonLd = buildBreadcrumbJsonLd([
   }
 
   .city-card__arrow--active {
-    color: #C9A84C;
+    color: var(--hot-pink);
   }
 
   .city-card__arrow--inactive {
-    color: rgba(245, 237, 228, 0.3);
+    color: #888;
   }
 </style>

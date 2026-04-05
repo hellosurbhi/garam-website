@@ -319,7 +319,7 @@ export default function AdminDashboard({ onLogout }: AdminDashboardProps) {
       {toast && (
         <div
           className={styles.toast}
-          style={{ background: toast.ok ? "var(--success)" : "var(--crimson)" }}
+          style={{ background: toast.ok ? "var(--success)" : "var(--hot-pink)" }}
         >
           {toast.msg}
         </div>

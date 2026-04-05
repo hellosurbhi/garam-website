@@ -17,8 +17,8 @@
 .page input:focus,
 .page select:focus,
 .page textarea:focus {
-  border-color: #C9A84C !important;
-  box-shadow: 0 0 0 3px rgba(201, 168, 76, 0.1) !important;
+  border-color: var(--hot-pink) !important;
+  box-shadow: 0 0 0 3px rgba(233, 30, 118, 0.1) !important;
 }
 
 .page input::placeholder,
@@ -53,7 +53,7 @@
   display: inline-flex;
   align-items: center;
   gap: 6px;
-  color: var(--text-ivory);
+  color: var(--charcoal);
   font-family: var(--font-cormorant);
   font-size: 16px;
   text-decoration: none;
@@ -72,34 +72,33 @@
   font-family: var(--font-playfair);
   font-size: 34px;
   font-weight: 700;
-  color: var(--text-ivory);
+  color: var(--charcoal);
   line-height: 1.15;
   margin-bottom: 10px;
-  text-shadow: 0 2px 12px rgba(0, 0, 0, 0.4);
 }
 
 .subtitle {
   font-family: var(--font-cormorant);
   font-size: 18px;
-  color: rgba(245, 237, 228, 0.6);
+  color: #555;
   line-height: 1.5;
 }
 
 .divider {
   width: 48px;
   height: 1px;
-  background: rgba(201, 168, 76, 0.4);
+  background: rgba(233, 30, 118, 0.4);
   margin: 18px auto 0;
 }
 
 /* ─── Panel ──────────────────────────────────────────────────── */
 
 .panel {
-  background: rgba(250, 247, 242, 0.95);
+  background: white;
   border-radius: 20px;
   padding: 40px 36px;
-  box-shadow: 0 8px 40px rgba(0, 0, 0, 0.25);
-  border: 1px solid rgba(201, 168, 76, 0.1);
+  box-shadow: 0 8px 40px rgba(0, 0, 0, 0.08);
+  border: 1px solid rgba(0, 0, 0, 0.1);
 }
 
 /* ─── Form elements ──────────────────────────────────────────── */
@@ -120,14 +119,14 @@
 }
 
 .requiredMark {
-  color: #C9A84C;
+  color: var(--hot-pink);
   margin-left: 3px;
 }
 
 .errorText {
   font-family: var(--font-cormorant);
   font-size: 13px;
-  color: var(--crimson);
+  color: var(--hot-pink);
   margin-top: 5px;
   padding-left: 4px;
 }
@@ -136,7 +135,7 @@
   width: 100%;
   padding: 14px 16px;
   border-radius: 12px;
-  border: 1px solid #E0D5C8;
+  border: 1px solid rgba(0, 0, 0, 0.1);
   font-family: var(--font-cormorant);
   font-size: 16px;
   color: #3D3532;
@@ -168,10 +167,10 @@
   font-family: var(--font-playfair);
   font-size: 24px;
   font-weight: 600;
-  color: var(--surface-dark);
+  color: var(--charcoal);
   margin-bottom: 20px;
   padding-bottom: 10px;
-  border-bottom: 1px solid rgba(201, 168, 76, 0.2);
+  border-bottom: 1px solid rgba(0, 0, 0, 0.1);
 }
 
 /* ─── Type toggle ────────────────────────────────────────────── */
@@ -186,7 +185,7 @@
   font-weight: 500;
   text-transform: uppercase;
   letter-spacing: 0.2em;
-  color: #A68B3C;
+  color: #555;
   margin-bottom: 12px;
 }
 
@@ -199,9 +198,9 @@
   flex: 1;
   padding: 12px 16px;
   border-radius: 100px;
-  border: 1px solid var(--surface-dark);
+  border: 1px solid rgba(0, 0, 0, 0.15);
   background: transparent;
-  color: var(--surface-dark);
+  color: var(--charcoal);
   font-family: var(--font-cormorant);
   font-size: 15px;
   font-weight: 500;
@@ -211,8 +210,8 @@
 
 .typeButton[data-active] {
   border: none;
-  background: var(--surface-dark);
-  color: var(--text-ivory);
+  background: var(--hot-pink);
+  color: white;
 }
 
 /* ─── Grid layouts ───────────────────────────────────────────── */
@@ -250,7 +249,7 @@
   left: 16px;
   top: 50%;
   transform: translateY(-50%);
-  color: #A68B3C;
+  color: var(--hot-pink);
   font-family: var(--font-cormorant);
   font-size: 16px;
   pointer-events: none;
@@ -270,27 +269,27 @@
 
 .photoDropzone {
   display: block;
-  border: 2px dashed rgba(201, 168, 76, 0.3);
+  border: 2px dashed rgba(233, 30, 118, 0.3);
   border-radius: 14px;
   padding: 24px;
   text-align: center;
   cursor: pointer;
   transition: border-color 0.2s;
-  background: rgba(201, 168, 76, 0.03);
+  background: rgba(233, 30, 118, 0.03);
   overflow: hidden;
 }
 
 .photoDropzone:hover {
-  border-color: #C9A84C;
+  border-color: var(--hot-pink);
 }
 
 .photoDropzoneError {
   composes: photoDropzone;
-  border-color: var(--crimson);
+  border-color: var(--hot-pink);
 }
 
 .photoDropzoneError:hover {
-  border-color: #C9A84C;
+  border-color: var(--hot-pink);
 }
 
 .photoPreview {
@@ -309,13 +308,13 @@
 .photoPrompt {
   font-family: var(--font-cormorant);
   font-size: 16px;
-  color: #A68B3C;
+  color: var(--hot-pink);
 }
 
 .changePhoto {
   display: inline-block;
   margin-top: 8px;
-  color: #A68B3C;
+  color: var(--hot-pink);
   font-family: var(--font-cormorant);
   font-size: 15px;
   cursor: pointer;
@@ -325,7 +324,7 @@
 .photoError {
   font-family: var(--font-cormorant);
   font-size: 13px;
-  color: var(--crimson);
+  color: var(--hot-pink);
   margin-top: 6px;
 }
 
@@ -336,8 +335,8 @@
   padding: 16px 48px;
   border-radius: 100px;
   border: none;
-  background: #C9A84C;
-  color: #0D0A08;
+  background: var(--hot-pink);
+  color: white;
   font-family: var(--font-cormorant);
   font-size: 17px;
   font-weight: 600;
@@ -351,25 +350,25 @@
 }
 
 .submitButton:hover {
-  background: #E2C97E;
-  box-shadow: 0 4px 20px rgba(201, 168, 76, 0.3);
+  background: #AD1457;
+  box-shadow: 0 4px 20px rgba(233, 30, 118, 0.3);
 }
 
 .submitButton:disabled {
-  background: #A68B3C;
+  background: rgba(233, 30, 118, 0.5);
   cursor: not-allowed;
 }
 
 .submitButton:disabled:hover {
-  background: #A68B3C;
+  background: rgba(233, 30, 118, 0.5);
   box-shadow: none;
 }
 
 .spinner {
   width: 16px;
   height: 16px;
-  border: 2px solid rgba(13, 10, 8, 0.3);
-  border-top-color: #0D0A08;
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  border-top-color: white;
   border-radius: 50%;
   display: inline-block;
   animation: spin 0.7s linear infinite;
@@ -416,7 +415,7 @@
 }
 
 .toast[data-status="error"] {
-  background: var(--crimson);
+  background: var(--hot-pink);
 }
 
 .toastDismiss {
@@ -483,7 +482,7 @@
 }
 
 .successLink {
-  color: var(--crimson);
+  color: var(--hot-pink);
   font-weight: 600;
   text-decoration: none;
 }
@@ -503,7 +502,7 @@
 }
 
 .successCoupon strong {
-  color: var(--crimson);
+  color: var(--hot-pink);
   letter-spacing: 0.5px;
 }
 
@@ -511,7 +510,7 @@
   display: inline-block;
   margin-top: 16px;
   padding: 14px 28px;
-  background: var(--crimson);
+  background: var(--hot-pink);
   color: #fff;
   font-family: var(--font-cormorant);
   font-size: 16px;
@@ -523,5 +522,5 @@
 }
 
 .successTicketButton:hover {
-  background: var(--crimson-dark);
+  background: #AD1457;
 }

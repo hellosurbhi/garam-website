@@ -54,8 +54,8 @@ export const formSelectStyles: BaseStyles = {
   control: (base: CSSObjectWithLabel, state) => ({
     ...base,
     borderRadius: "12px",
-    border: `1px solid ${state.isFocused ? "#C9A84C" : "#E0D5C8"}`,
-    boxShadow: state.isFocused ? "0 0 0 3px rgba(201, 168, 76, 0.1)" : "none",
+    border: `1px solid ${state.isFocused ? "#E91E76" : "rgba(0, 0, 0, 0.1)"}`,
+    boxShadow: state.isFocused ? "0 0 0 3px rgba(233, 30, 118, 0.1)" : "none",
     fontFamily: "var(--font-cormorant)",
     fontSize: "16px",
     background: "#fff",
@@ -63,20 +63,20 @@ export const formSelectStyles: BaseStyles = {
     minHeight: "48px",
     cursor: "pointer",
     transition: "border-color 0.2s, box-shadow 0.2s",
-    "&:hover": { borderColor: state.isFocused ? "#C9A84C" : "#d0c5b8" },
+    "&:hover": { borderColor: state.isFocused ? "#E91E76" : "rgba(0, 0, 0, 0.15)" },
   }),
   option: (base: CSSObjectWithLabel, state) => ({
     ...base,
     fontFamily: "var(--font-cormorant)",
     fontSize: "16px",
     background: state.isSelected
-      ? "rgba(201, 168, 76, 0.15)"
+      ? "rgba(233, 30, 118, 0.15)"
       : state.isFocused
-        ? "rgba(201, 168, 76, 0.08)"
+        ? "rgba(233, 30, 118, 0.08)"
         : "transparent",
-    color: "#3D3532",
+    color: "var(--charcoal)",
     cursor: "pointer",
-    "&:active": { background: "rgba(201, 168, 76, 0.2)" },
+    "&:active": { background: "rgba(233, 30, 118, 0.2)" },
   }),
   placeholder: (base: CSSObjectWithLabel) => ({
     ...base,
@@ -84,7 +84,7 @@ export const formSelectStyles: BaseStyles = {
   }),
   singleValue: (base: CSSObjectWithLabel) => ({
     ...base,
-    color: "#3D3532",
+    color: "var(--charcoal)",
   }),
   menu: (base: CSSObjectWithLabel) => ({
     ...base,
@@ -102,12 +102,12 @@ export const formSelectStyles: BaseStyles = {
     ...base,
     fontFamily: "var(--font-cormorant)",
     fontSize: "16px",
-    color: "#3D3532",
+    color: "var(--charcoal)",
   }),
   indicatorSeparator: () => ({ display: "none" }) as CSSObjectWithLabel,
   dropdownIndicator: (base: CSSObjectWithLabel) => ({
     ...base,
-    color: "#7A6F66",
-    "&:hover": { color: "#3D3532" },
+    color: "rgba(0, 0, 0, 0.3)",
+    "&:hover": { color: "var(--charcoal)" },
   }),
 };

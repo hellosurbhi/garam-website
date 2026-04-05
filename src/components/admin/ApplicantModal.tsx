@@ -25,6 +25,7 @@ function InfoRow({ label, value }: { label: string; value?: string | number }) {
 export default function ApplicantModal({ app, onClose, onUpdate, onDelete, onRestore }: ApplicantModalProps) {
   const [status, setStatus] = useState<Application["status"]>(app.status);
   const [notes, setNotes] = useState(app.notes ?? "");
+  const [lightbox, setLightbox] = useState(false);
   const handle = app.instagram.replace(/^@/, "");
   const isDeleted = !!app.deletedAt;
 
@@ -77,19 +78,28 @@ export default function ApplicantModal({ app, onClose, onUpdate, onDelete, onRes
   return (
     <div className={styles.overlay} onClick={handleClose}>
       <div className={styles.modal} onClick={(e) => e.stopPropagation()}>
-        <div className={styles.imageWrap}>
+        <div
+          className={styles.imageWrap}
+          onClick={() => app.photoUrl && setLightbox(true)}
+        >
           {app.photoUrl ? (
             <img src={app.photoUrl} alt={app.name} className={styles.image} />
           ) : (
             <div className={styles.noPhoto}>🌶️</div>
           )}
 
-          <button onClick={handleClose} className={styles.closeButton} aria-label="Close">
+          <button onClick={(e) => { e.stopPropagation(); handleClose(); }} className={styles.closeButton} aria-label="Close">
             <X size={18} />
           </button>
 
           {isDeleted && <div className={styles.deletedBanner}>DELETED</div>}
         </div>
+
+        {lightbox && app.photoUrl && (
+          <div className={styles.lightbox} onClick={() => setLightbox(false)}>
+            <img src={app.photoUrl} alt={app.name} className={styles.lightboxImage} />
+          </div>
+        )}
 
         <div className={styles.body}>
           <div className={styles.nameRow}>

@@ -82,7 +82,7 @@ const breadcrumbJsonLd = buildBreadcrumbJsonLd([
 ]);
 ---
 
-<BaseLayout title={title} description={description} overlayBg="rgba(13, 10, 8, 0.88)">
+<BaseLayout title={title} description={description}>
   <Fragment slot="head">
     <script type="application/ld+json" set:html={cityJsonLd} />
     <script type="application/ld+json" set:html={breadcrumbJsonLd} />

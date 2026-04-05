@@ -22,7 +22,7 @@ const upcomingForSchema = events.filter((e) => !e.hidden && e.isoDate && e.isoDa
 const eventSchemas = buildEventSchemas(upcomingForSchema);
 ---
 
-<BaseLayout title={TITLE} description={DESC} overlayBg="rgba(13, 10, 8, 0.88)">
+<BaseLayout title={TITLE} description={DESC}>
   <Fragment slot="head">
     <script type="application/ld+json" set:html={breadcrumbJsonLd} />
     {eventSchemas.map((schema) => (

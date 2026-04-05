@@ -10,8 +10,6 @@ interface Props {
   ogImage?: string;
   canonicalUrl?: string;
   noindex?: boolean;
-  overlayBg?: string;
-  bodyClass?: string;
 }
 
 const {
@@ -20,8 +18,6 @@ const {
   ogImage = 'https://garammasaladating.com/og-image.jpg',
   canonicalUrl = Astro.site ? new URL(Astro.url.pathname, Astro.site).href : 'https://garammasaladating.com/',
   noindex = false,
-  overlayBg,
-  bodyClass,
 } = Astro.props;
 ---
 
@@ -82,10 +78,9 @@ const {
     <PostHog />
     <MetaPixel />
   </head>
-  <body class={bodyClass ?? ''}>
+  <body>
     <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-KQCBBL2W" height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
     <div class="grain-overlay"></div>
-    {overlayBg && <div class="subpage-overlay" style={`background: ${overlayBg}`}></div>}
     <slot />
     <script>
       import { inject } from '@vercel/analytics';
@@ -121,10 +116,4 @@ const {
     .grain-overlay { display: none; }
   }
 
-  .subpage-overlay {
-    position: fixed;
-    inset: 0;
-    z-index: 0;
-    pointer-events: none;
-  }
 </style>

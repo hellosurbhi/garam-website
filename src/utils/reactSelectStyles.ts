@@ -20,10 +20,17 @@ export const adminSelectStyles: BaseStyles = {
     ...base,
     color: "var(--text-light)",
   }),
-  option: (base: CSSObjectWithLabel) => ({
+  option: (base: CSSObjectWithLabel, state) => ({
     ...base,
     fontFamily: "var(--font-dm-sans)",
     fontSize: "13px",
+    color: "var(--text)",
+    background: state.isSelected
+      ? "rgba(0, 0, 0, 0.06)"
+      : state.isFocused
+        ? "rgba(0, 0, 0, 0.03)"
+        : "transparent",
+    cursor: "pointer",
   }),
   multiValue: (base: CSSObjectWithLabel) => ({
     ...base,

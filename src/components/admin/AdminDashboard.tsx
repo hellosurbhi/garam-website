@@ -68,7 +68,7 @@ export default function AdminDashboard({ onLogout }: AdminDashboardProps) {
       if (res.ok) {
         ({ url } = await res.json() as { url: string });
       } else {
-        url = `${window.location.origin}/contestant-prep?date=${isoDate}`;
+        url = `${window.location.origin}/contestant-prep`;
       }
       try {
         await navigator.clipboard.writeText(url);

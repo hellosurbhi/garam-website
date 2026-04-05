@@ -109,6 +109,11 @@ body {
   min-width: 320px;
 }
 
+body.home-v3 {
+  background: var(--off-white);
+  color: var(--charcoal);
+}
+
 ::selection {
   background: var(--accent-pink);
   color: #fff;

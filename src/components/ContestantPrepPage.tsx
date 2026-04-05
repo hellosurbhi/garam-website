@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { Check, Clock, Users, Shirt, Star } from "lucide-react";
+import { Clock, Users, Shirt, Star } from "lucide-react";
 import styles from "./ContestantPrepPage.module.css";
 
 /* ─── Session helpers ──────────────────────────────────────────── */
@@ -187,13 +187,11 @@ function PrepGuide() {
         <Divider />
 
         {/* ── Come Prepared With ── */}
-        <SectionHeader icon={Check} title="Come Prepared With" />
+        <SectionHeader icon={Star} title="Come Prepared With" />
         <div className={styles.prepList}>
           {PREPARED_WITH.map((item, i) => (
             <div key={i} className={styles.prepCard}>
-              <div className={styles.prepCheckbox}>
-                <Check size={12} className={styles.prepCheckIcon} />
-              </div>
+              <div className={styles.prepBullet} />
               <div>
                 <p className={styles.prepTitle}>{item.title}</p>
                 <p className={styles.prepDetail}>{item.detail}</p>

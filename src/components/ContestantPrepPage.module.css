@@ -248,21 +248,13 @@
   background: white;
 }
 
-.prepCheckbox {
-  width: 22px;
-  height: 22px;
-  border-radius: 6px;
-  border: 1.5px solid var(--hot-pink);
-  display: flex;
-  align-items: center;
-  justify-content: center;
+.prepBullet {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--hot-pink);
   flex-shrink: 0;
-  margin-top: 1px;
-  opacity: 0.6;
-}
-
-.prepCheckIcon {
-  color: var(--hot-pink);
+  margin-top: 7px;
 }
 
 .prepTitle {

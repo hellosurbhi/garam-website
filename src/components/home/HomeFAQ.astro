@@ -34,11 +34,11 @@ const faqs = [
     <h2 id="faq-heading" data-reveal>Everything You<br />Need to Know</h2>
     <div class="faq-list">
       {faqs.map((faq, i) => (
-        <div class:list={['faq-item', { open: i === 0 }]} data-reveal>
+        <div class="faq-item" data-reveal>
           <button
             class="faq-q"
             type="button"
-            aria-expanded={i === 0 ? 'true' : 'false'}
+            aria-expanded="false"
           >
             {faq.q}
             <span class="faq-toggle">+</span>
@@ -173,7 +173,7 @@ const faqs = [
     .faq { padding: 120px 48px; }
     .faq-inner > h2 { margin-bottom: 64px; }
     .faq-q { font-size: 20px; padding: 28px 0; gap: 20px; }
-    .faq-answer-summary { font-size: 17px; }
+    .faq-answer-summary { font-size: 18px; }
     .faq-answer-detail { padding-bottom: 28px; }
   }
 </style>

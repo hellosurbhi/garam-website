@@ -148,8 +148,8 @@ const eventSchemas = buildEventSchemas(upcomingForSchema);
   import { getFirebaseDb } from '@/lib/firebase';
   import { collection, addDoc } from 'firebase/firestore';
 
-  // Email popup logic
-  const POPUP_KEY = 'gmd-popup-dismissed';
+  // Email popup logic — only suppressed permanently after email submit
+  const POPUP_KEY = 'gmd-popup-subscribed';
   const popup = document.getElementById('email-popup') as HTMLDialogElement;
 
   if (popup && !localStorage.getItem(POPUP_KEY)) {
@@ -159,17 +159,16 @@ const eventSchemas = buildEventSchemas(upcomingForSchema);
       }
     }, 30000);
 
-    const dismiss = () => {
-      localStorage.setItem(POPUP_KEY, 'true');
+    const close = () => {
       popup.close();
       clearTimeout(timer);
     };
 
-    popup.querySelector('.popup-close')?.addEventListener('click', dismiss);
-    popup.querySelector('.popup-dismiss')?.addEventListener('click', dismiss);
-    popup.querySelector('.popup-skip')?.addEventListener('click', dismiss);
+    popup.querySelector('.popup-close')?.addEventListener('click', close);
+    popup.querySelector('.popup-dismiss')?.addEventListener('click', close);
+    popup.querySelector('.popup-skip')?.addEventListener('click', close);
     popup.addEventListener('click', (e) => {
-      if (e.target === popup) dismiss();
+      if (e.target === popup) close();
     });
 
     let savedEmail = '';
@@ -177,6 +176,7 @@ const eventSchemas = buildEventSchemas(upcomingForSchema);
     document.getElementById('popup-email-form')?.addEventListener('submit', async (e) => {
       e.preventDefault();
       savedEmail = (document.getElementById('popup-email') as HTMLInputElement).value;
+      localStorage.setItem(POPUP_KEY, 'true');
       try {
         const db = getFirebaseDb();
         await addDoc(collection(db, 'subscribers'), {
@@ -203,7 +203,7 @@ const eventSchemas = buildEventSchemas(upcomingForSchema);
           });
         } catch { /* fail silently */ }
       }
-      dismiss();
+      close();
     });
   }
 

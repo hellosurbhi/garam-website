@@ -1,5 +1,54 @@
 # Changelog
 
+## v3 UI rewrite — full design pass, new features, infrastructure cleanup
+
+Comprehensive UI overhaul across the entire site based on iterative design feedback.
+
+**Navigation & branding:**
+- Hot-pink logo nav (PageNav) added to every page linking back to home
+- Landing page nav transitions to white background with pink logo only after hero ends (pixel-perfect scroll threshold using marquee position)
+- Favicon replaced with actual logo SVG in hot pink, theme-color meta tag added
+- Custom cursor (hot-pink dot + trailing ring) on desktop, hidden on mobile. Enlarges on hover. Works inside dialog modals via MutationObserver. All default cursors killed site-wide with `cursor: none !important`
+
+**Social media:**
+- Added Threads, X (Twitter), Facebook URLs and SVG icons
+- All 6 social platforms show in footer icons and links page social row
+- JSON-LD sameAs includes all profiles for SEO
+
+**Shows & tickets:**
+- All "Get Tickets" buttons (nav, hero, show cards) link to /tickets instead of Eventbrite
+- TBA events auto-generated from coming-soon cities in cities.ts (single source of truth)
+- Notify Me buttons open email collection modal (Firestore)
+- "Don't see your city? Request it" opens city request modal (Firestore)
+- City page waitlist CTAs open email modal instead of linking to /links
+
+**Signup & conversion:**
+- Renamed HomeNewsletter to HomeSignup (not a newsletter, it's for ticket discounts)
+- Two-step email-then-phone flow with Firestore on the Spice List section
+- 30-second timed popup: shows every visit until email is submitted (localStorage only set after email, not on dismiss)
+- Newsletter copy updated to focus on discount codes, not "subscribers"
+
+**Pages:**
+- /hosts rewritten as standalone page with unique expanded bios (not a copy of landing page section)
+- Click empty background space navigates back to home (only when came from home, excluded on admin/contestant-prep)
+- Admin and contestant-prep pages hide nav and footer via hideFooter prop
+- Links page: removed duplicate logo, reordered links (Short form content - Instagram, Full episodes - YouTube), removed redundant social buttons
+
+**Design polish:**
+- FAQ: Cormorant Garamond font, all accordions start closed, cream callout box removed, grid transition, reduced padding
+- Creators: Cormorant names, wider cards on mobile (edge-to-edge), off-white background
+- Footer: increased text opacity for readability, SVG social icons
+- As Seen In: real press data from press.ts, charcoal text (not grey)
+- Marquee: removed "Apply Now"
+- Founding year fixed from 2023 to 2022 across bio, footer, JSON-LD
+- Spice List section: hot-pink background, yellow/charcoal button default, trust text spacing fixed
+
+**Firestore:**
+- New collections: notifications, city_requests, subscribers
+- Firestore rules updated for all three
+
+**Files changed:** 30+ files across components, pages, data, layouts, and public assets
+
 ## Homepage feedback fixes — 13 changes across UX, copy, and conversion
 
 Addressed 13 pieces of user feedback from a homepage review session.

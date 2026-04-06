@@ -22,7 +22,9 @@ const { ticketsUrl } = Astro.props;
   const marquee = document.querySelector('.marquee') as HTMLElement;
   if (nav && marquee) {
     window.addEventListener('scroll', () => {
-      nav.classList.toggle('scrolled', window.scrollY >= marquee.offsetTop);
+      const navHeight = nav.offsetHeight;
+      const trigger = marquee.offsetTop - navHeight;
+      nav.classList.toggle('scrolled', window.scrollY >= trigger);
     }, { passive: true });
   }
 </script>

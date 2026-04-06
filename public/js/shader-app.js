@@ -25,10 +25,12 @@ const SVG_DATA_URI = "data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNv
 // WebGL Setup
 // ============================================
 const canvas = document.getElementById('glCanvas');
+if (!canvas) throw new Error('No canvas#glCanvas found');
 const gl = canvas.getContext('webgl');
 
 if (!gl) {
-    document.body.innerHTML = '<p style="color:#fff;text-align:center;margin-top:40vh">WebGL not supported</p>';
+    // Graceful fallback — hide canvas, hero shows dark gradient background
+    canvas.style.display = 'none';
     throw new Error('WebGL not supported');
 }
 
@@ -221,8 +223,11 @@ gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
 // Responsive Resize
 // ============================================
 function resize() {
-    canvas.width = window.innerWidth * window.devicePixelRatio;
-    canvas.height = window.innerHeight * window.devicePixelRatio;
+    const dpr = window.innerWidth < 768
+      ? Math.min(window.devicePixelRatio, 1.5)
+      : window.devicePixelRatio;
+    canvas.width = window.innerWidth * dpr;
+    canvas.height = window.innerHeight * dpr;
     gl.viewport(0, 0, canvas.width, canvas.height);
 }
 window.addEventListener('resize', resize);
@@ -262,10 +267,14 @@ function drawFrame(time) {
     gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
 }
 
+const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
 function render(time) {
     time *= 0.001;
     drawFrame(time);
-    requestAnimationFrame(render);
+    if (!prefersReducedMotion) {
+        requestAnimationFrame(render);
+    }
 }
 
 requestAnimationFrame(render);

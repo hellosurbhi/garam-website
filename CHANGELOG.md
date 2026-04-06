@@ -1,5 +1,11 @@
 # Changelog
 
+## Mobile audit: add modal scroll support on small viewports
+
+Added `max-height: 80vh; overflow-y: auto` to all modal inner containers so forms are scrollable on small phones (especially with keyboard open).
+
+**Files:** index.astro (`.popup-inner`), links.astro (`.modal-inner` — consolidated from scrollable modifier), cities/[slug].astro (`.modal-inner`), HomeShows.astro (`.modal-inner` — notify + request city modals)
+
 ## Mobile audit: fix overflow, iOS zoom, touch targets, and grid layouts
 
 Deep mobile audit fixing critical usability issues across the site (98% mobile traffic).

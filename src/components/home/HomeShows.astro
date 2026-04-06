@@ -29,7 +29,7 @@ function parseDay(dateStr: string): string {
     {events.map((event) => {
       const isLive = event.url && event.url !== '#';
       return isLive ? (
-        <a href="/tickets" class="show-card show-card--live" data-reveal>
+        <a href={event.url} target="_blank" rel="noopener noreferrer" class="show-card show-card--live" data-reveal>
           <div class="show-date-block">
             <div class="mo">{parseMonth(event.date)}</div>
             <div class="dy">{parseDay(event.date)}</div>
@@ -38,7 +38,7 @@ function parseDay(dateStr: string): string {
             <h3>{event.city}</h3>
             <span>{event.tagline ?? 'On sale now'}</span>
           </div>
-          <span class="ticket-label">Tickets</span>
+          <span class="ticket-label">Get Tickets</span>
         </a>
       ) : (
         <div class="show-card show-card--notify" role="button" tabindex="0" data-notify-city={event.city} data-reveal>

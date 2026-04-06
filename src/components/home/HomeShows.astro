@@ -284,6 +284,7 @@ function parseDay(dateStr: string): string {
     transition: background 0.2s;
     text-align: center;
     min-height: 48px;
+    white-space: nowrap;
     display: inline-flex;
     align-items: center;
     justify-content: center;
@@ -345,6 +346,7 @@ function parseDay(dateStr: string): string {
     padding: 32px 24px;
     position: relative;
     animation: modalIn 0.25s ease-out both;
+    text-align: center;
   }
   @keyframes modalIn {
     from { opacity: 0; transform: scale(0.95) translateY(8px); }
@@ -410,6 +412,8 @@ function parseDay(dateStr: string): string {
     cursor: pointer;
     transition: background 0.2s;
     min-height: 48px;
+    white-space: nowrap;
+    width: 100%;
   }
   .modal-submit:hover { background: var(--deep-magenta); }
   .modal-success {

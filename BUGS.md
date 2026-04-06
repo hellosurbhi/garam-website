@@ -3,6 +3,7 @@
 ## Open
 
 ### [MEDIUM] No rate limiting on API endpoints
+
 - **Date:** 2026-04-04
 - **File:** `api/notify-application.ts`, `api/contestant-prep-auth.ts`
 - **Status:** Open
@@ -12,6 +13,7 @@
 - **Fix:** Use Vercel Edge Rate Limiting or Upstash Redis for per-IP rate limits.
 
 ### [MEDIUM] CORS config allows all origins with DELETE method
+
 - **Date:** 2026-04-04
 - **File:** `cors.json`
 - **Status:** Open
@@ -21,6 +23,7 @@
 - **Fix:** Update cors.json with specific origin and reduced method list.
 
 ### [LOW] CSP uses unsafe-inline weakening XSS protection
+
 - **Date:** 2026-04-04
 - **File:** `vercel.json`
 - **Status:** Open
@@ -30,6 +33,7 @@
 - **Fix:** Migrate to Astro CSP nonce middleware. Lower priority since the site has minimal user-generated content.
 
 ### [MEDIUM] No server-side file-type validation on photo uploads
+
 - **Date:** 2026-04-04
 - **File:** `src/components/ApplyPage.tsx`
 - **Status:** Open
@@ -39,6 +43,7 @@
 - **Fix:** Create a Firebase Cloud Function trigger on `storage.object.finalize` that checks `contentType` and deletes non-image files. Or use a server API endpoint as an upload proxy.
 
 ### [MEDIUM] No CAPTCHA or rate limiting on application form
+
 - **Date:** 2026-04-04
 - **File:** `src/components/ApplyPage.tsx`
 - **Status:** Open
@@ -48,6 +53,7 @@
 - **Fix:** Add Firebase App Check with reCAPTCHA v3 and enforce in Firestore security rules.
 
 ### [LOW] No pagination in AdminDashboard
+
 - **Date:** 2026-04-04
 - **File:** `src/components/admin/AdminDashboard.tsx`
 - **Status:** Open
@@ -56,10 +62,10 @@
 - **What should happen:** Applications should be paginated with Firestore cursor-based pagination.
 - **Fix:** Use `query()` with `limit()`, `orderBy()`, and `startAfter()` for pagination when app count grows.
 
-
 ## Fixed
 
 ### [MEDIUM] Apply page backdrop dismiss always navigates to landing page
+
 - **Date:** 2026-03-13
 - **File:** `src/pages/ApplyPage.tsx:308`
 - **Status:** Fixed
@@ -67,6 +73,7 @@
 - **Fix:** Changed backdrop `onClick` to `navigate(-1)` to match the "Back" button behavior.
 
 ### [CRITICAL] Admin password hardcoded as "secret" instead of env var
+
 - **Date:** 2026-03-12
 - **File:** `src/components/admin/AdminLogin.tsx:15`
 - **Status:** Fixed
@@ -74,6 +81,7 @@
 - **Fix:** Changed to `import.meta.env.VITE_ADMIN_PASSWORD`.
 
 ### [MEDIUM] Font CSS variable typo — `var(--font-dm)` doesn't exist
+
 - **Date:** 2026-03-12
 - **File:** `src/pages/LinksPage.tsx:562,614`
 - **Status:** Fixed
@@ -81,6 +89,7 @@
 - **Fix:** Changed to `var(--font-dm-sans)`.
 
 ### [MEDIUM] Debug console.log leaks PII to browser console
+
 - **Date:** 2026-03-12
 - **File:** `src/components/admin/AdminDashboard.tsx:76`
 - **Status:** Fixed
@@ -88,6 +97,7 @@
 - **Fix:** Removed the console.log statement.
 
 ### [MEDIUM] Admin dashboard shows infinite loading on fetch error
+
 - **Date:** 2026-03-12
 - **File:** `src/components/admin/AdminDashboard.tsx`
 - **Status:** Fixed
@@ -95,6 +105,7 @@
 - **Fix:** Added `fetchError` state with an error message and "Try again" button.
 
 ### [LOW] Unused `searchableLocation` export — dead code
+
 - **Date:** 2026-03-12
 - **File:** `src/utils/locationDisplay.ts`
 - **Status:** Fixed
@@ -102,6 +113,7 @@
 - **Fix:** Removed the function.
 
 ### [LOW] Pointless variable alias `sortedPress = pressItems`
+
 - **Date:** 2026-03-12
 - **File:** `src/pages/LinksPage.tsx:263`
 - **Status:** Fixed
@@ -109,6 +121,7 @@
 - **Fix:** Removed alias, use `pressItems` directly.
 
 ### [LOW] ESLint error — ternary used as expression statement
+
 - **Date:** 2026-03-12
 - **File:** `src/components/admin/ApplicantCard.tsx:40`
 - **Status:** Fixed
@@ -116,6 +129,7 @@
 - **Fix:** Changed to `if/else` statement.
 
 ### [LOW] ESLint error — useCallback self-reference ordering
+
 - **Date:** 2026-03-12
 - **File:** `src/hooks/useMouseParallax.ts`
 - **Status:** Fixed
@@ -123,19 +137,17 @@
 - **Fix:** Moved `animate` inside the `useEffect` body where it's naturally in scope. Moved `lerp` to module scope.
 
 ### [LOW] ESLint error — setState in useEffect body
+
 - **Date:** 2026-03-12
 - **File:** `src/pages/AdminPage.tsx`
 - **Status:** Fixed
 - **What happened:** `setAuthed(sessionStorage.getItem(...))` called synchronously in a useEffect body.
 - **Fix:** Replaced with a lazy state initializer `useState(() => ...)`.
 
-## Open
-
-(none)
-
 ## Fixed (continued)
 
 ### [LOW] Large bundle size (9.5MB uncompressed JS)
+
 - **Date:** 2026-03-12
 - **File:** Build output
 - **Status:** Fixed (2026-03-31)
@@ -143,6 +155,7 @@
 - **Fix:** Created `useGeoData` hook with dynamic `import()`. The geo data now loads asynchronously on mount instead of blocking page render. Removed `vendor-geo` manual chunk from vite config.
 
 ### [LOW] Inline styles throughout admin + form pages
+
 - **Date:** 2026-03-12
 - **Files:** `ApplyPage.tsx`, `LinksPage.tsx`, `AdminDashboard.tsx`, `ApplicantModal.tsx`, `AdminLogin.tsx`
 - **Status:** Fixed (2026-03-31)

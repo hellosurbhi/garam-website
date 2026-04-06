@@ -43,7 +43,6 @@ src/
 
 - Hardcode colors, fonts, or spacing values in components. Import from tokens.
 - Hardcode external URLs (Eventbrite, YouTube, Instagram) in JSX. Import from `lib/constants.ts`.
-- Use `cursor: none` or custom cursor elements. This is a mobile-first site.
 - Run continuous CSS animations when elements are off-screen. Use IntersectionObserver.
 - Add inline `style={}` props. Use CSS modules or classes.
 - Put API keys or secrets in client-side code. All secrets go in `.env.local` (never committed) and are accessed through server functions or Vercel environment variables.

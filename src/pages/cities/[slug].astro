@@ -1,8 +1,9 @@
 ---
 import BaseLayout from '@/layouts/BaseLayout.astro';
-import PageNav from '@/components/layout/PageNav.astro';
 import { cities } from '@/data/cities';
 import type { CityData } from '@/data/cities';
+import { events } from '@/data/events';
+import { isEventPast } from '@/utils/eventDate';
 import { buildBreadcrumbJsonLd } from '@/utils/breadcrumbs';
 
 export function getStaticPaths() {
@@ -17,6 +18,16 @@ const { city } = Astro.props;
 
 const title = city.titleTag;
 const description = city.metaDescription;
+
+// Upcoming events matching this city (for active cities with real shows)
+const cityEvents = city.status === "active"
+  ? events.filter((e) =>
+      !e.hidden &&
+      !isEventPast(e.date) &&
+      e.url !== "#" &&
+      e.city.includes(city.displayName)
+    )
+  : [];
 
 /* ── City JSON-LD ─────────────────────────────────────────── */
 
@@ -89,7 +100,6 @@ const breadcrumbJsonLd = buildBreadcrumbJsonLd([
     <script type="application/ld+json" set:html={breadcrumbJsonLd} />
   </Fragment>
 
-  <PageNav />
   <div class="city-page">
     <div class="city-container">
       {/* Eyebrow label */}
@@ -110,12 +120,26 @@ const breadcrumbJsonLd = buildBreadcrumbJsonLd([
 
       {/* CTAs */}
       <div class="city-ctas">
+        {/* Per-event ticket buttons for active cities */}
+        {cityEvents.map((event) => (
+          <a
+            href={event.url}
+            target="_blank"
+            rel="noopener noreferrer"
+            class="city-cta city-cta--primary"
+          >
+            <span>{event.date} — Get Tickets</span>
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="city-cta__arrow"><path d="M5 12h14" /><path d="m12 5 7 7-7 7" /></svg>
+          </a>
+        ))}
+        {/* Static CTAs (apply, waitlist, etc.) */}
         {city.ctas.map((cta, i) => {
           const isWaitlist = cta.href === '#waitlist';
+          const isPrimary = cityEvents.length === 0 && i === 0;
           return isWaitlist ? (
             <button
               type="button"
-              class:list={["city-cta", i === 0 ? "city-cta--primary" : "city-cta--secondary"]}
+              class:list={["city-cta", isPrimary ? "city-cta--primary" : "city-cta--secondary"]}
               data-waitlist-trigger
             >
               <span>{cta.label}</span>
@@ -124,7 +148,7 @@ const breadcrumbJsonLd = buildBreadcrumbJsonLd([
           ) : (
             <a
               href={cta.href}
-              class:list={["city-cta", i === 0 ? "city-cta--primary" : "city-cta--secondary"]}
+              class:list={["city-cta", isPrimary ? "city-cta--primary" : "city-cta--secondary"]}
             >
               <span>{cta.label}</span>
               <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="city-cta__arrow"><path d="M5 12h14" /><path d="m12 5 7 7-7 7" /></svg>

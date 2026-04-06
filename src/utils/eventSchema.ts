@@ -2,7 +2,7 @@ import type { EventEntry } from "@/data/events";
 import { nyOffset } from "@/utils/timezone";
 
 const EVENT_DESCRIPTION =
-  "NYC's live comedy dating show where two real singles go on a blind date in front of 250 people. Hosted by comedians Surbhi and Wyatt. Singles mixer follows every show.";
+  "NYC's live South Asian dating show where two real singles go on a blind date in front of 250 people. Hosted by comedians Surbhi and Wyatt. Singles mixer follows every show.";
 
 /**
  * Build an array of individual Event JSON-LD strings from a list of events.

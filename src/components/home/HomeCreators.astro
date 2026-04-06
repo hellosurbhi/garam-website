@@ -5,7 +5,7 @@ const hosts = [
   {
     name: 'Surbhi',
     role: 'Co-Creator & Host',
-    bio: "Surbhi is a New York-based stand-up comedian and the creative force behind Garam Masala Dating. She created the show in 2022 after noticing a gap in the South Asian comedy and dating space. What started as a one-off experiment in a downtown bar is now NYC's #1 live dating show, selling out 250-seat venues every week and expanding to LA, SF, and San Diego. She's performed at venues across the US and UK, and has accidentally matched three couples since launching the show. And counting.",
+    bio: "Surbhi is a New York-based stand-up comedian and the creative force behind Garam Masala Dating. She created the show in 2022 after noticing a gap in the South Asian comedy and dating space. What started as a one-off experiment in a downtown bar is now NYC's #1 live South Asian dating show, selling out 250-seat venues every week and expanding to LA, SF, and San Diego. She's performed at venues across the US and UK, and has accidentally matched three couples since launching the show. And counting.",
     credits: ['Stand-Up Comedian', 'Co-Creator', 'NYC · LA · SF'],
     url: CREATOR_URLS.surbhi,
   },
@@ -50,7 +50,7 @@ const hosts = [
 <style>
   .creators {
     padding: 80px 0;
-    background: var(--charcoal);
+    background: #FFF0E2;
     position: relative;
     overflow: hidden;
   }
@@ -62,7 +62,7 @@ const hosts = [
     font-family: var(--font-playfair), serif;
     font-size: clamp(32px, 5vw, 60px);
     font-weight: 900;
-    color: white;
+    color: var(--charcoal);
     line-height: 1;
     margin-bottom: 12px;
   }
@@ -70,7 +70,7 @@ const hosts = [
     font-family: var(--font-cormorant), serif;
     font-size: 18px;
     font-style: italic;
-    color: rgba(255, 255, 255, 0.5);
+    color: rgba(26, 26, 26, 0.5);
   }
   .hosts-grid {
     display: flex;
@@ -80,8 +80,8 @@ const hosts = [
     margin: 0 auto;
   }
   .host-card {
-    background: rgba(255, 255, 255, 0.05);
-    border: 1px solid rgba(255, 255, 255, 0.1);
+    background: rgba(26, 26, 26, 0.03);
+    border: 1px solid rgba(26, 26, 26, 0.08);
     border-radius: 0;
     padding: 28px 20px;
     display: flex;
@@ -112,7 +112,7 @@ const hosts = [
     font-family: var(--font-cormorant), serif;
     font-size: 28px;
     font-weight: 700;
-    color: white;
+    color: var(--charcoal);
     text-decoration: none;
     transition: color 0.2s;
   }
@@ -127,7 +127,7 @@ const hosts = [
   }
   .host-bio {
     font-size: 15px;
-    color: rgba(255, 255, 255, 0.6);
+    color: rgba(26, 26, 26, 0.6);
     line-height: 1.75;
   }
   .host-credits {
@@ -140,8 +140,8 @@ const hosts = [
   .credit-tag {
     font-size: 11px;
     font-weight: 600;
-    background: rgba(255, 214, 0, 0.12);
-    color: var(--electric-yellow);
+    background: rgba(233, 30, 118, 0.1);
+    color: var(--hot-pink);
     padding: 4px 12px;
     border-radius: 50px;
     letter-spacing: 0.5px;

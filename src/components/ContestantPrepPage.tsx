@@ -152,7 +152,7 @@ function PrepGuide() {
             Dating!
           </h1>
           <p className={styles.headerSubtitle}>
-            You&apos;re about to be on a live comedy dating show in front of 250
+            You&apos;re about to be on a live South Asian dating show in front of 250
             people. Here&apos;s the secret: we don&apos;t need you to be funny.{" "}
             <strong className={styles.headerSubtitleStrong}>We need you to be REAL.</strong>
           </p>

@@ -17,6 +17,7 @@ export interface EventEntry {
   endTime?: string; // HH:MM 24h format, ET (default: "22:00")
   venue?: EventVenue;
   price?: string; // USD amount, e.g. "15"
+  tagline?: string; // Short status line shown on the card (e.g. "Selling fast")
 }
 
 const VENUE_TOP_SECRET: EventVenue = {
@@ -45,6 +46,7 @@ export const events: EventEntry[] = [
     isoDate: "2026-02-22",
     venue: VENUE_TOP_SECRET,
     price: "15",
+    tagline: "Sold out",
   },
   {
     date: "Mar 7",
@@ -58,6 +60,7 @@ export const events: EventEntry[] = [
       addressCountry: "US",
     },
     price: "15",
+    tagline: "Sold out",
   },
   {
     date: "Mar 15",
@@ -66,6 +69,7 @@ export const events: EventEntry[] = [
     isoDate: "2026-03-15",
     venue: VENUE_TOP_SECRET,
     price: "15",
+    tagline: "Sold out",
   },
   {
     date: "Apr 4",
@@ -80,6 +84,7 @@ export const events: EventEntry[] = [
       addressCountry: "US",
     },
     price: "15",
+    tagline: "Sold out",
   },
   {
     date: "Apr 19",
@@ -90,6 +95,7 @@ export const events: EventEntry[] = [
     endTime: "20:00",
     venue: VENUE_TOP_SECRET,
     price: "15",
+    tagline: "Low tickets — don\u2019t wait",
   },
   {
     date: "Apr 26",
@@ -100,6 +106,7 @@ export const events: EventEntry[] = [
     endTime: "20:00",
     venue: VENUE_LAUGH_TOUR,
     price: "15",
+    tagline: "Just announced",
   },
 ];
 

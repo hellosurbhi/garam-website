@@ -1,6 +1,5 @@
 ---
 import BaseLayout from '@/layouts/BaseLayout.astro';
-import PageNav from '@/components/layout/PageNav.astro';
 import { tipPostsSorted } from '@/data/tips';
 import { buildBreadcrumbJsonLd } from '@/utils/breadcrumbs';
 
@@ -31,7 +30,6 @@ const breadcrumbJsonLd = buildBreadcrumbJsonLd([
     <script type="application/ld+json" set:html={breadcrumbJsonLd} />
   </Fragment>
 
-  <PageNav />
   <div class="tips-page">
     <div class="tips-container">
       <!-- Header -->

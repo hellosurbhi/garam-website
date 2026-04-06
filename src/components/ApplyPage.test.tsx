@@ -82,7 +82,7 @@ describe("ApplyPage", () => {
 
   it("renders the subtitle", () => {
     render(<ApplyPage />);
-    expect(screen.getByText(/NYC's hottest live comedy dating show/)).toBeInTheDocument();
+    expect(screen.getByText(/NYC's hottest live South Asian dating show/)).toBeInTheDocument();
   });
 
   it("shows 'For myself' and 'For a friend' toggle buttons", () => {

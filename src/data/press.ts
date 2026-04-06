@@ -8,13 +8,13 @@ export interface PressItem {
 export const pressItems: PressItem[] = [
   {
     title: "Garam Masala Dating on Gen Zenophobic",
-    source: "Gen Zenophobic Podcast",
+    source: "Gen Zenophobic",
     url: "https://www.youtube.com/watch?v=PyjeLMZohqY",
     type: "podcast",
   },
   {
     title: "Garam Masala Dating on Big Silly World",
-    source: "Big Silly World Podcast",
+    source: "Big Silly World",
     url: "https://www.youtube.com/watch?v=wEVFBODzYdI",
     type: "podcast",
   },

@@ -264,7 +264,7 @@ export default function ApplyPage() {
             {!submitted && (
               <>
                 <h1 className={styles.title}>Apply to Be on Garam Masala Dating</h1>
-                <p className={styles.subtitle}>NYC&apos;s hottest live comedy dating show 🌶️</p>
+                <p className={styles.subtitle}>NYC&apos;s hottest live South Asian dating show 🌶️</p>
                 <div className={styles.divider} />
               </>
             )}

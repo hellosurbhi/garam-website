@@ -2,13 +2,13 @@
 const faqs = [
   {
     q: 'What is Garam Masala Dating?',
-    short: "Garam Masala Dating is NYC's #1 live South Asian comedy dating show. A 90-minute live event where two real singles go on a first date on stage in front of a live audience, hosted by comedians Surbhi and Wyatt.",
+    short: "Garam Masala Dating is NYC's #1 live South Asian dating show. A 90-minute live event where two real singles go on a first date on stage in front of a live audience, hosted by comedians Surbhi and Wyatt.",
     long: "The show combines stand-up comedy, live matchmaking, and audience participation. Two strangers meet for the first time on stage. They go through a date full of questions, games, and genuine moments with a packed house watching. At the end, the audience votes on whether they should get a second date. Then we throw a singles mixer in the same venue so the audience can continue the magic themselves. It's part comedy show, part reality TV, part social experiment, and entirely unforgettable.",
   },
   {
     q: 'How do I get on stage as a dater?',
-    short: "Apply through our casting form and we'll reach out if you're selected. You can also buy a ticket and volunteer from the audience. We pull brave souls up at every show.",
-    long: "We receive hundreds of applications per season and review every one. We look for people who are genuinely single, comfortable with being the center of attention, and up for an unpredictable night. If you're not selected in advance, don't worry. At every show, Surbhi asks the audience for volunteers. Some of our most memorable moments have come from people who decided to raise their hand on the night.",
+    short: 'Apply through our <a href="/apply">casting form</a> and we\u2019ll reach out if you\u2019re selected. You can also <a href="/tickets">buy a ticket</a> and steal your way on stage from the audience. We pull brave souls up at every show.',
+    long: "We receive hundreds of applications per season and review every one. We look for people who are genuinely single, comfortable with being the center of attention, and up for an unpredictable night. If you\u2019re not selected in advance, don\u2019t worry. At every show, Surbhi asks the audience for volunteers. Some of our most memorable moments have come from people who decided to raise their hand on the night.",
   },
   {
     q: 'Is the show only for South Asian / desi people?',
@@ -45,8 +45,8 @@ const faqs = [
           </button>
           <div class="faq-body">
             <div class="faq-answer">
-              <p class="faq-answer-summary">{faq.short}</p>
-              <p class="faq-answer-detail">{faq.long}</p>
+              <p class="faq-answer-summary" set:html={faq.short} />
+              <p class="faq-answer-detail" set:html={faq.long} />
             </div>
           </div>
         </div>
@@ -167,6 +167,15 @@ const faqs = [
     color: #666;
     line-height: 1.8;
     padding-bottom: 24px;
+  }
+  .faq-answer a {
+    color: var(--hot-pink);
+    text-decoration: underline;
+    text-underline-offset: 2px;
+    transition: color 0.2s;
+  }
+  .faq-answer a:hover {
+    color: var(--deep-magenta);
   }
 
   @media (min-width: 768px) {

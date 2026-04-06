@@ -3,7 +3,7 @@
 // ============================================
 const CONFIG = {
     size: 1200,
-    intensity: 1.45,
+    intensity: 1.4,
     speed: 1.23,
     complexity: 5,
     flowStrength: 0.2,
@@ -11,9 +11,9 @@ const CONFIG = {
     edgeGlow: 1.0,
     zoom: 1.0,
 
-    colorA: [0xE9 / 255, 0x1E / 255, 0x76 / 255],  // #8E9FB1
-    colorB: [0xAD / 255, 0x14 / 255, 0x57 / 255],  // #42389D
-    colorC: [0xFF / 255, 0xD6 / 255, 0x00 / 255],  // #BF0E4B
+    colorA: [0xE9 / 255, 0x1E / 255, 0x76 / 255],  // #E91E76 hot pink
+    colorB: [0xAD / 255, 0x14 / 255, 0x57 / 255],  // #AD1457 deep magenta
+    colorC: [0xFF / 255, 0xD6 / 255, 0x00 / 255],  // #FFD600 electric yellow
 };
 
 // ============================================
@@ -141,6 +141,7 @@ const fsSource = `
         float w2 = sin(p.y * uComplexity + t * 0.8) * 0.5 + 0.5;
         float w3 = sin((p.x + p.y) * uComplexity + t * 1.2) * 0.5 + 0.5;
         vec3 fluid = (uColorA*w1 + uColorB*w2 + uColorC*w3) / (w1+w2+w3+0.1) * max(uIntensity, 0.01);
+        fluid = mix(fluid, vec3(1.0), 0.3); // lift dark areas toward white
 
         // 4. ANALYTICAL ANTI-ALIASING (The Elegant Solution)
         vec4 texData = texture2D(uTextTexture, textUv);
@@ -257,7 +258,7 @@ function drawFrame(time) {
     gl.uniform3f(uniforms.uColA, CONFIG.colorA[0], CONFIG.colorA[1], CONFIG.colorA[2]);
     gl.uniform3f(uniforms.uColB, CONFIG.colorB[0], CONFIG.colorB[1], CONFIG.colorB[2]);
     gl.uniform3f(uniforms.uColC, CONFIG.colorC[0], CONFIG.colorC[1], CONFIG.colorC[2]);
-    gl.uniform3f(uniforms.uTextCol, 0, 0, 0);
+    gl.uniform3f(uniforms.uTextCol, 1, 1, 1);
 
     gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
 }

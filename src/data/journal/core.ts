@@ -1,35 +1,15 @@
-export interface PostBlock {
-  type: "p" | "h2" | "h3";
-  text: string;
-}
+import type { JournalPost } from "./types";
 
-export interface JournalFaq {
-  q: string;
-  a: string;
-}
-
-export interface JournalPost {
-  slug: string;
-  title: string;
-  metaDescription: string;
-  datePublished: string;
-  dateModified: string;
-  author: string;
-  /** First two sentences of the body — used on the index page. */
-  excerpt: string;
-  body: PostBlock[];
-  faqs?: JournalFaq[];
-}
-
-export const journalPosts: JournalPost[] = [
+export const corePosts: JournalPost[] = [
   {
     slug: "indian-matchmaking-hinge-and-a-live-comedy-show",
     title:
       "Indian Matchmaking, Hinge, and a Live Comedy Show: What 4 Years of Running One Taught Me About How Desis Actually Date",
     metaDescription:
       "After 4 years and 40+ live shows, Surbhi shares what Indian Matchmaking got right, what Hinge gets wrong, and what actually happens when desis date on stage in front of 250 people.",
-    datePublished: "2026-05-09",
-    dateModified: "2026-05-09",
+    datePublished: "2026-04-25",
+    dateModified: "2026-04-25",
+    relatedSlugs: ["desi-dating-show-vs-dating-apps", "what-actually-happens-at-a-live-comedy-dating-show", "best-dil-mil-alternatives"],
     author: "Surbhi",
     excerpt:
       "South Asian dating in 2026 looks nothing like your parents\u2019 version and nothing like Netflix\u2019s version either. It\u2019s messier, funnier, and more honest than both.",
@@ -150,8 +130,9 @@ export const journalPosts: JournalPost[] = [
       "The Best Things to Do in NYC If You\u2019re Single and Bored of Bars",
     metaDescription:
       "Tired of the same bar scene? Here are the best things to do in NYC if you\u2019re single, from improv shows to rooftop mixers to a live comedy dating show with 250 people.",
-    datePublished: "2026-05-02",
-    dateModified: "2026-05-02",
+    datePublished: "2026-04-23",
+    dateModified: "2026-04-23",
+    relatedSlugs: ["south-asian-singles-events-nyc", "the-realest-way-to-meet-desi-singles-in-nyc", "what-actually-happens-at-a-live-comedy-dating-show"],
     author: "Surbhi",
     excerpt:
       "You\u2019ve done the bar thing. You\u2019ve done the app thing. You\u2019ve stood in a loud room pretending to enjoy a conversation you couldn\u2019t hear. NYC has better options for single people.",
@@ -267,8 +248,9 @@ export const journalPosts: JournalPost[] = [
       "How to Get Cast on a Live Dating Show (What We\u2019re Actually Looking For)",
     metaDescription:
       "Want to be on a live dating show? Here\u2019s exactly how casting works at Garam Masala Dating, what we look for in applications, and what to expect if you get picked.",
-    datePublished: "2026-04-25",
-    dateModified: "2026-04-25",
+    datePublished: "2026-04-21",
+    dateModified: "2026-04-21",
+    relatedSlugs: ["how-to-prepare-for-a-live-matchmaking-show", "what-actually-happens-at-a-live-comedy-dating-show", "the-only-live-desi-dating-show-in-nyc"],
     author: "Surbhi",
     excerpt:
       "You apply at garammasaladating.com/apply. We read every single application. Most of them are bad. Here\u2019s how to not be one of those.",
@@ -397,8 +379,9 @@ export const journalPosts: JournalPost[] = [
       "The Realest Way to Meet Desi Singles in NYC (That Isn\u2019t an App)",
     metaDescription:
       "Tired of swiping through the same desi profiles? Here\u2019s how to actually meet South Asian singles in NYC in person, at a live dating show with 250 people in the room.",
-    datePublished: "2026-04-18",
-    dateModified: "2026-04-18",
+    datePublished: "2026-04-19",
+    dateModified: "2026-04-19",
+    relatedSlugs: ["the-only-live-desi-dating-show-in-nyc", "south-asian-singles-events-nyc", "how-to-get-cast-on-a-live-dating-show"],
     author: "Surbhi",
     excerpt:
       "You meet desi singles in NYC by getting off the apps and into a room where people actually came to connect. I run that room every week.",
@@ -518,8 +501,9 @@ export const journalPosts: JournalPost[] = [
       "What Actually Happens at a Live Comedy Dating Show (From the Person Running It)",
     metaDescription:
       "Here\u2019s what actually happens at a live comedy dating show. Blind dates on stage, audience chaos, whiteboard reveals, and a singles mixer after. From the person who runs it.",
-    datePublished: "2026-04-11",
-    dateModified: "2026-04-11",
+    datePublished: "2026-04-17",
+    dateModified: "2026-04-17",
+    relatedSlugs: ["how-to-prepare-for-a-live-matchmaking-show", "desi-dating-show-vs-dating-apps", "the-only-live-desi-dating-show-in-nyc"],
     author: "Surbhi",
     excerpt:
       "A live comedy dating show puts real singles on blind dates in front of a live audience. No script. No safety net. I run one every week, and here\u2019s what actually goes down.",
@@ -640,8 +624,9 @@ export const journalPosts: JournalPost[] = [
       "The Only Live Desi Dating Show in NYC (And What Actually Happens There)",
     metaDescription:
       "Garam Masala Dating is the only weekly live desi dating show in NYC. Here\u2019s what actually happens at the show, who can come, and how it compares to Indian Matchmaking.",
-    datePublished: "2026-04-04",
-    dateModified: "2026-04-04",
+    datePublished: "2026-04-15",
+    dateModified: "2026-04-15",
+    relatedSlugs: ["what-actually-happens-at-a-live-comedy-dating-show", "south-asian-singles-events-nyc", "desi-dating-show-vs-dating-apps"],
     author: "Surbhi",
     excerpt:
       "Garam Masala Dating is a weekly live desi dating show in New York City. Real singles go on blind dates on stage in front of 250 people at a Manhattan comedy club.",
@@ -756,8 +741,9 @@ export const journalPosts: JournalPost[] = [
       "South Asian Singles Events in NYC: What\u2019s Actually Worth Going To",
     metaDescription:
       "A guide to South Asian singles events in NYC, from desi mixers to live dating shows. What\u2019s actually worth your time and what to skip.",
-    datePublished: "2026-03-28",
-    dateModified: "2026-03-28",
+    datePublished: "2026-04-13",
+    dateModified: "2026-04-13",
+    relatedSlugs: ["the-realest-way-to-meet-desi-singles-in-nyc", "desi-dating-show-vs-dating-apps", "what-we-learned-from-100-desi-blind-dates"],
     author: "Surbhi",
     excerpt:
       "Yes, there are South Asian singles events in NYC. And the options have gotten significantly better in the last few years.",
@@ -872,8 +858,9 @@ export const journalPosts: JournalPost[] = [
       "Desi Dating Show vs. Dating Apps: What 4 Years of Running One Taught Me",
     metaDescription:
       "After four years of running Garam Masala Dating, here\u2019s what a live desi dating show taught me about chemistry, connection, and why apps can\u2019t replicate what happens on stage.",
-    datePublished: "2026-03-21",
-    dateModified: "2026-03-21",
+    datePublished: "2026-04-11",
+    dateModified: "2026-04-11",
+    relatedSlugs: ["what-we-learned-from-100-desi-blind-dates", "how-to-prepare-for-a-live-matchmaking-show", "what-actually-happens-at-a-live-comedy-dating-show"],
     author: "Surbhi",
     excerpt:
       "A live desi dating show puts two people in front of a crowd and asks them to be real. Dating apps let you curate a version of yourself from behind a screen.",
@@ -995,8 +982,9 @@ export const journalPosts: JournalPost[] = [
     title: "What We Learned From 100 Desi Blind Dates",
     metaDescription:
       "After running Garam Masala Dating for over a year and watching hundreds of live blind dates unfold on stage, here's what we actually learned about South Asian dating.",
-    datePublished: "2026-03-14",
-    dateModified: "2026-03-14",
+    datePublished: "2026-04-09",
+    dateModified: "2026-04-09",
+    relatedSlugs: ["desi-dating-show-vs-dating-apps", "how-to-prepare-for-a-live-matchmaking-show", "indian-matchmaking-hinge-and-a-live-comedy-show"],
     author: "Surbhi",
     excerpt:
       "We've watched a lot of first dates. Not through an app, not on a reality show set. Live, on stage, in front of a couple hundred people who have opinions and aren't shy about sharing them.",
@@ -1060,8 +1048,9 @@ export const journalPosts: JournalPost[] = [
     title: "How to Prepare for a Live Matchmaking Show (Without Psyching Yourself Out)",
     metaDescription:
       "You got cast on Garam Masala Dating. Here\u2019s exactly how to prepare \u2014 what to wear, what to expect on stage, and how to not be the person who chokes in front of 250 people.",
-    datePublished: "2026-03-07",
-    dateModified: "2026-03-07",
+    datePublished: "2026-04-07",
+    dateModified: "2026-04-07",
+    relatedSlugs: ["how-to-get-cast-on-a-live-dating-show", "what-actually-happens-at-a-live-comedy-dating-show", "what-we-learned-from-100-desi-blind-dates"],
     author: "Surbhi",
     excerpt:
       "So you applied, you got picked, and now you\u2019re going to go on a blind date in front of 250 strangers. Good.",
@@ -1134,20 +1123,3 @@ export const journalPosts: JournalPost[] = [
   },
 ];
 
-/** Sorted newest-first by datePublished. */
-export const journalPostsSorted = [...journalPosts].sort(
-  (a, b) =>
-    new Date(b.datePublished).getTime() - new Date(a.datePublished).getTime()
-);
-
-/** Only posts whose datePublished is today or earlier. */
-export const journalPostsPublished = journalPostsSorted.filter((p) => {
-  const pub = new Date(p.datePublished + "T00:00:00Z");
-  const now = new Date();
-  const today = new Date(Date.UTC(now.getFullYear(), now.getMonth(), now.getDate()));
-  return pub <= today;
-});
-
-export function getPostBySlug(slug: string): JournalPost | undefined {
-  return journalPosts.find((p) => p.slug === slug);
-}

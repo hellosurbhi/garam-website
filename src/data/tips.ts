@@ -1,4 +1,4 @@
-import type { PostBlock } from "./journal";
+import type { PostBlock } from "./journal/types";
 
 export interface TipPost {
   slug: string;

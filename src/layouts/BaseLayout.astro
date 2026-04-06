@@ -10,6 +10,7 @@ interface Props {
   title: string;
   description: string;
   ogImage?: string;
+  ogType?: string;
   canonicalUrl?: string;
   noindex?: boolean;
   hideNav?: boolean;
@@ -20,6 +21,7 @@ const {
   title,
   description,
   ogImage = 'https://garammasaladating.com/og-image.jpg',
+  ogType = 'website',
   canonicalUrl = Astro.site ? new URL(Astro.url.pathname, Astro.site).href : 'https://garammasaladating.com/',
   noindex = false,
   hideNav = false,
@@ -73,7 +75,8 @@ const isHome = Astro.url.pathname === '/' || Astro.url.pathname === '';
       crossorigin
     />
     <link rel="canonical" href={canonicalUrl} />
-    <meta property="og:type" content="website" />
+    <meta property="og:type" content={ogType} />
+    <meta property="og:site_name" content="Garam Masala Dating" />
     <meta property="og:url" content={canonicalUrl} />
     <meta property="og:title" content={title} />
     <meta property="og:description" content={description} />
@@ -81,6 +84,8 @@ const isHome = Astro.url.pathname === '/' || Astro.url.pathname === '';
     <meta property="og:image:width" content="1200" />
     <meta property="og:image:height" content="630" />
     <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:site" content="@garamdatingshow" />
+    <meta name="twitter:creator" content="@garamdatingshow" />
     <meta name="twitter:title" content={title} />
     <meta name="twitter:description" content={description} />
     <meta name="twitter:image" content={ogImage} />

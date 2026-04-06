@@ -44,7 +44,7 @@ const articleJsonLd = JSON.stringify({
     url: "https://garammasaladating.com",
     logo: {
       "@type": "ImageObject",
-      url: "https://garammasaladating.com/logo.png",
+      url: "https://garammasaladating.com/images/logo.svg",
     },
   },
   description: post.metaDescription,
@@ -68,8 +68,12 @@ const remainingBlocks = post.body.slice(1);
 <BaseLayout
   title={pageTitle}
   description={post.metaDescription}
+  ogType="article"
 >
   <Fragment slot="head">
+    <meta property="article:published_time" content={post.datePublished} />
+    {post.dateModified && <meta property="article:modified_time" content={post.dateModified} />}
+    <meta property="article:author" content="Surbhi" />
     <script type="application/ld+json" set:html={articleJsonLd} />
     <script type="application/ld+json" set:html={breadcrumbJsonLd} />
   </Fragment>

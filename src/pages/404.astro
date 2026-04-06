@@ -119,17 +119,17 @@ import HomeNav from '@/components/home/HomeNav.astro';
     background: transparent !important;
   }
   :global(.footer-logo) {
-    filter: none !important;
+    filter: brightness(0) !important;
   }
-  :global(.footer-brand p),
-  :global(.footer-col h4),
-  :global(.footer-col ul li a),
-  :global(.footer-copy),
-  :global(.footer-social a) {
-    color: black !important;
+  :global(footer *) {
+    color: #000 !important;
+  }
+  :global(footer svg) {
+    color: #000 !important;
+    fill: #000 !important;
   }
   :global(.footer-social a) {
-    border-color: black !important;
+    border-color: #000 !important;
   }
   :global(.footer-social a:hover) {
     color: var(--hot-pink) !important;

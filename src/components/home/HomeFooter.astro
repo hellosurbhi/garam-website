@@ -71,6 +71,10 @@ const socials = [
   </div>
   <div class="footer-bottom">
     <div class="footer-copy">&copy; 2026 Garam Masala Dating. All rights reserved.</div>
+    <div class="footer-legal">
+      <a href="/privacy">Privacy</a>
+      <a href="/terms">Terms</a>
+    </div>
   </div>
 </footer>
 
@@ -147,10 +151,26 @@ const socials = [
     max-width: 1200px;
     margin: 0 auto;
     padding-top: 24px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
   }
   .footer-copy {
     font-size: 13px;
     color: rgba(255, 255, 255, 0.45);
+  }
+  .footer-legal {
+    display: flex;
+    gap: 24px;
+  }
+  .footer-legal a {
+    font-size: 13px;
+    color: rgba(255, 255, 255, 0.45);
+    text-decoration: none;
+    transition: color 0.2s;
+  }
+  .footer-legal a:hover {
+    color: white;
   }
 
   @media (min-width: 768px) {

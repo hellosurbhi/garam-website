@@ -119,7 +119,16 @@ import HomeNav from '@/components/home/HomeNav.astro';
     background: transparent !important;
   }
   footer .footer-logo {
-    filter: brightness(0) !important;
+    filter: none !important;
+    background-color: var(--hot-pink);
+    -webkit-mask-image: url(/images/logo.svg);
+    mask-image: url(/images/logo.svg);
+    -webkit-mask-size: contain;
+    mask-size: contain;
+    -webkit-mask-repeat: no-repeat;
+    mask-repeat: no-repeat;
+    width: 160px;
+    height: 48px;
   }
   footer .footer-brand p {
     color: #000 !important;

@@ -5,12 +5,73 @@
 <section class="newsletter" aria-labelledby="newsletter-heading">
   <h2 id="newsletter-heading" data-reveal>Join the Spice List</h2>
   <p data-reveal>Subscribers get exclusive discount codes for cheaper (and sometimes free) tickets.</p>
-  <form class="newsletter-form" data-reveal>
-    <input type="email" placeholder="Your email" required aria-label="Email address" />
-    <button type="submit">Get My Discount Code</button>
-  </form>
-  <p class="newsletter-trust" data-reveal>No spam. Just discounts and show dates.</p>
+
+  <div id="nl-step-1" data-reveal>
+    <form id="nl-email-form" class="newsletter-form">
+      <input type="email" id="nl-email" placeholder="Your email" required aria-label="Email address" />
+      <button type="submit">Get My Discount Code</button>
+    </form>
+    <p class="newsletter-trust">No spam. Just discounts and show dates.</p>
+  </div>
+
+  <div id="nl-step-2" class="newsletter-form" hidden data-reveal>
+    <p class="nl-step2-text">Add your number for text-only discounts and free ticket drops.</p>
+    <form id="nl-phone-form" class="newsletter-form">
+      <input type="tel" id="nl-phone" placeholder="Your phone number" aria-label="Phone number" />
+      <button type="submit">Send Me Deals</button>
+    </form>
+    <button type="button" id="nl-skip" class="newsletter-skip">Maybe later</button>
+  </div>
+
+  <div id="nl-success" hidden data-reveal>
+    <p class="nl-done-text">You're on the list!</p>
+  </div>
 </section>
+
+<script>
+  import { getFirebaseDb } from '@/lib/firebase';
+  import { collection, addDoc } from 'firebase/firestore';
+
+  let savedEmail = '';
+
+  document.getElementById('nl-email-form')?.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    savedEmail = (document.getElementById('nl-email') as HTMLInputElement).value;
+    try {
+      const db = getFirebaseDb();
+      await addDoc(collection(db, 'subscribers'), {
+        email: savedEmail,
+        source: 'spice-list',
+        createdAt: new Date().toISOString(),
+      });
+    } catch { /* fail silently */ }
+    document.getElementById('nl-step-1')?.setAttribute('hidden', '');
+    document.getElementById('nl-step-2')?.removeAttribute('hidden');
+  });
+
+  document.getElementById('nl-phone-form')?.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const phone = (document.getElementById('nl-phone') as HTMLInputElement).value;
+    if (phone) {
+      try {
+        const db = getFirebaseDb();
+        await addDoc(collection(db, 'subscribers'), {
+          email: savedEmail,
+          phone,
+          source: 'spice-list-phone',
+          createdAt: new Date().toISOString(),
+        });
+      } catch { /* fail silently */ }
+    }
+    document.getElementById('nl-step-2')?.setAttribute('hidden', '');
+    document.getElementById('nl-success')?.removeAttribute('hidden');
+  });
+
+  document.getElementById('nl-skip')?.addEventListener('click', () => {
+    document.getElementById('nl-step-2')?.setAttribute('hidden', '');
+    document.getElementById('nl-success')?.removeAttribute('hidden');
+  });
+</script>
 
 <style>
   .newsletter {
@@ -87,6 +148,31 @@
     margin-top: 16px;
     font-style: normal;
     font-family: var(--font-body), sans-serif;
+  }
+
+  .nl-step2-text {
+    color: rgba(255, 255, 255, 0.85);
+    font-size: 16px;
+    margin-bottom: 20px;
+    font-family: var(--font-cormorant), serif;
+    font-style: italic;
+  }
+  .newsletter-skip {
+    background: none;
+    border: none;
+    color: rgba(255, 255, 255, 0.5);
+    font-size: 14px;
+    font-family: var(--font-body), sans-serif;
+    margin-top: 12px;
+    transition: color 0.2s;
+    padding: 4px;
+  }
+  .newsletter-skip:hover { color: white; }
+  .nl-done-text {
+    color: white;
+    font-family: var(--font-cormorant), serif;
+    font-size: 22px;
+    font-style: italic;
   }
 
   @media (min-width: 768px) {

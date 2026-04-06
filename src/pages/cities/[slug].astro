@@ -110,30 +110,48 @@ const breadcrumbJsonLd = buildBreadcrumbJsonLd([
 
       {/* CTAs */}
       <div class="city-ctas">
-        {city.ctas.map((cta, i) => (
-          <a
-            href={cta.href}
-            class:list={["city-cta", i === 0 ? "city-cta--primary" : "city-cta--secondary"]}
-          >
-            <span>{cta.label}</span>
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              width="16"
-              height="16"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              stroke-width="2"
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              class="city-cta__arrow"
+        {city.ctas.map((cta, i) => {
+          const isWaitlist = cta.href === '#waitlist';
+          return isWaitlist ? (
+            <button
+              type="button"
+              class:list={["city-cta", i === 0 ? "city-cta--primary" : "city-cta--secondary"]}
+              data-waitlist-trigger
             >
-              <path d="M5 12h14" />
-              <path d="m12 5 7 7-7 7" />
-            </svg>
-          </a>
-        ))}
+              <span>{cta.label}</span>
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="city-cta__arrow"><path d="M5 12h14" /><path d="m12 5 7 7-7 7" /></svg>
+            </button>
+          ) : (
+            <a
+              href={cta.href}
+              class:list={["city-cta", i === 0 ? "city-cta--primary" : "city-cta--secondary"]}
+            >
+              <span>{cta.label}</span>
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="city-cta__arrow"><path d="M5 12h14" /><path d="m12 5 7 7-7 7" /></svg>
+            </a>
+          );
+        })}
       </div>
+
+      {/* Waitlist modal */}
+      <dialog id="waitlist-modal" class="modal-dialog">
+        <div class="modal-inner">
+          <button type="button" class="modal-close" aria-label="Close">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
+          </button>
+          <div id="waitlist-form-view">
+            <h2 class="modal-title">Join the {city.displayName} Waitlist</h2>
+            <p class="modal-subtitle">We'll email you the moment tickets drop for {city.displayName}.</p>
+            <form id="waitlist-form" class="modal-form">
+              <input type="email" id="waitlist-email" placeholder="Your email" required aria-label="Email address" />
+              <button type="submit" class="modal-submit">Join the Waitlist</button>
+            </form>
+          </div>
+          <div id="waitlist-success" class="modal-success" hidden>
+            <p>You're on the list! We'll let you know.</p>
+          </div>
+        </div>
+      </dialog>
 
       {/* Footer */}
       <div class="city-footer">
@@ -144,6 +162,39 @@ const breadcrumbJsonLd = buildBreadcrumbJsonLd([
     </div>
   </div>
 </BaseLayout>
+
+<script>
+  import { getFirebaseDb } from '@/lib/firebase';
+  import { collection, addDoc } from 'firebase/firestore';
+
+  const dialog = document.getElementById('waitlist-modal') as HTMLDialogElement;
+  if (dialog) {
+    document.querySelectorAll('[data-waitlist-trigger]').forEach((btn) => {
+      btn.addEventListener('click', () => dialog.showModal());
+    });
+    dialog.querySelector('.modal-close')?.addEventListener('click', () => dialog.close());
+    dialog.addEventListener('click', (e) => {
+      if (e.target === dialog) dialog.close();
+    });
+
+    document.getElementById('waitlist-form')?.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const email = (document.getElementById('waitlist-email') as HTMLInputElement).value;
+      const city = document.querySelector('.city-eyebrow')?.textContent ?? '';
+      try {
+        const db = getFirebaseDb();
+        await addDoc(collection(db, 'notifications'), {
+          email,
+          city,
+          source: 'city-waitlist',
+          createdAt: new Date().toISOString(),
+        });
+      } catch { /* fail silently */ }
+      document.getElementById('waitlist-form-view')?.setAttribute('hidden', '');
+      document.getElementById('waitlist-success')?.removeAttribute('hidden');
+    });
+  }
+</script>
 
 <style>
   @keyframes cityFadeIn {
@@ -253,5 +304,105 @@ const breadcrumbJsonLd = buildBreadcrumbJsonLd([
     font-size: 14px;
     color: var(--muted);
     text-decoration: none;
+  }
+
+  /* Waitlist modal */
+  .modal-dialog {
+    border: none;
+    background: transparent;
+    padding: 24px;
+    max-width: 100vw;
+    max-height: 100vh;
+    width: 100%;
+    height: 100%;
+    overflow: visible;
+  }
+  .modal-dialog::backdrop { background: rgba(0, 0, 0, 0.5); }
+  .modal-dialog[open] {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .modal-inner {
+    width: 100%;
+    max-width: 400px;
+    background: white;
+    border: 1px solid rgba(0, 0, 0, 0.1);
+    border-radius: 20px;
+    padding: 32px 24px;
+    position: relative;
+    animation: modalIn 0.25s ease-out both;
+  }
+  @keyframes modalIn {
+    from { opacity: 0; transform: scale(0.95) translateY(8px); }
+    to { opacity: 1; transform: scale(1) translateY(0); }
+  }
+  .modal-close {
+    position: absolute;
+    top: 16px;
+    right: 16px;
+    background: none;
+    border: none;
+    color: #888;
+    padding: 4px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: color 0.2s;
+  }
+  .modal-close:hover { color: var(--charcoal); }
+  .modal-title {
+    font-family: var(--font-playfair), serif;
+    font-size: 22px;
+    font-weight: 600;
+    color: var(--charcoal);
+    margin-bottom: 8px;
+  }
+  .modal-subtitle {
+    font-size: 15px;
+    color: #666;
+    margin-bottom: 24px;
+    line-height: 1.5;
+  }
+  .modal-form {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+  .modal-form input {
+    padding: 14px 20px;
+    border: 1.5px solid rgba(0, 0, 0, 0.1);
+    border-radius: 50px;
+    font-size: 16px;
+    font-family: var(--font-body), sans-serif;
+    outline: none;
+    transition: border-color 0.2s;
+    min-height: 48px;
+  }
+  .modal-form input:focus { border-color: var(--hot-pink); }
+  .modal-submit {
+    background: var(--hot-pink);
+    color: white;
+    border: none;
+    padding: 14px;
+    border-radius: 50px;
+    font-family: var(--font-body), sans-serif;
+    font-size: 14px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    transition: background 0.2s;
+    min-height: 48px;
+  }
+  .modal-submit:hover { background: var(--deep-magenta); }
+  .modal-success {
+    text-align: center;
+    padding: 24px 0;
+  }
+  .modal-success p {
+    font-family: var(--font-cormorant), serif;
+    font-size: 18px;
+    font-style: italic;
+    color: var(--charcoal);
   }
 </style>

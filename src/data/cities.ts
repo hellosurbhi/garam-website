@@ -50,7 +50,7 @@ export const cities: Record<string, CityData> = {
       "If you\u2019re tired of apps and tired of manufactured mixers, this is the alternative. Come watch a few strangers try to fall in love on stage, then go find your own person at the bar.",
     ],
     ctas: [
-      { label: "Get Tickets", href: "/links" },
+      { label: "Get Tickets", href: "/tickets" },
       { label: "Apply to Be a Contestant", href: "/apply?city=New+York&state=NY" },
     ],
     includeEventSchema: true,
@@ -75,7 +75,7 @@ export const cities: Record<string, CityData> = {
       "We\u2019re coming back. Dates are TBA, but if you want to be first to know when tickets drop, get on the waitlist. And if you want to be a contestant when we return, apply below.",
     ],
     ctas: [
-      { label: "Join the San Diego Waitlist", href: "/links" },
+      { label: "Join the San Diego Waitlist", href: "#waitlist" },
       { label: "Apply to Be a Contestant", href: "/apply?city=San+Diego&state=CA" },
     ],
     includeEventSchema: false,
@@ -102,7 +102,7 @@ export const cities: Record<string, CityData> = {
       "Monthly dates are posted on the events page. Tickets go fast because the room is smaller. Don\u2019t wait.",
     ],
     ctas: [
-      { label: "Get Tickets", href: "/links" },
+      { label: "Get Tickets", href: "/tickets" },
       { label: "Apply to Be a Contestant", href: "/apply?city=Jersey+City&state=NJ" },
     ],
     includeEventSchema: true,
@@ -129,7 +129,7 @@ export const cities: Record<string, CityData> = {
       "We\u2019ve been building a waitlist for LA and the interest has been strong. When we announce dates, the waitlist gets first access to tickets. If you want to be a contestant when we come to your city, apply below.",
     ],
     ctas: [
-      { label: "Join the LA Waitlist", href: "/links" },
+      { label: "Join the LA Waitlist", href: "#waitlist" },
       { label: "Apply to Be a Contestant", href: "/apply?city=Los+Angeles&state=CA" },
     ],
     includeEventSchema: false,
@@ -154,7 +154,7 @@ export const cities: Record<string, CityData> = {
       "We\u2019re considering Salt Lake City for a future tour date. Drop your email to get notified if we announce a show, or apply now if you want to be a contestant when we come.",
     ],
     ctas: [
-      { label: "Join the SLC Waitlist", href: "/links" },
+      { label: "Join the SLC Waitlist", href: "#waitlist" },
       { label: "Apply to Be a Contestant", href: "/apply?city=Salt+Lake+City&state=UT" },
     ],
     includeEventSchema: false,
@@ -180,7 +180,7 @@ export const cities: Record<string, CityData> = {
       "Get on the list to be notified first. If you want to be a contestant when we come to your city, apply below.",
     ],
     ctas: [
-      { label: "Join the SF Waitlist", href: "/links" },
+      { label: "Join the SF Waitlist", href: "#waitlist" },
       { label: "Apply to Be a Contestant", href: "/apply?city=San+Francisco&state=CA" },
     ],
     includeEventSchema: false,
@@ -205,7 +205,7 @@ export const cities: Record<string, CityData> = {
       "We\u2019re looking at Denver for a future tour stop. Get on the waitlist and you\u2019ll be first to know when tickets drop. Or apply to be a contestant now so you\u2019re already in the system when we announce.",
     ],
     ctas: [
-      { label: "Join the Denver Waitlist", href: "/links" },
+      { label: "Join the Denver Waitlist", href: "#waitlist" },
       { label: "Apply to Be a Contestant", href: "/apply?city=Denver&state=CO" },
     ],
     includeEventSchema: false,

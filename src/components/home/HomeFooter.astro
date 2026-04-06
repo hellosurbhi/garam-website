@@ -31,7 +31,9 @@ const socials = [
 <footer role="contentinfo">
   <div class="footer-top">
     <div class="footer-brand">
-      <h3>Garam Mas<em>ala</em> Dating</h3>
+      <a href="/" aria-label="Garam Masala Dating — Home">
+        <img src="/images/logo.svg" alt="Garam Masala Dating Show" class="footer-logo" width="160" height="82" loading="lazy" />
+      </a>
       <p>New York City's live South Asian comedy dating show. Hosted by Surbhi & Wyatt. Performing across the US and UK since 2023.</p>
       <div class="footer-social">
         {socials.map((s) => (
@@ -83,14 +85,11 @@ const socials = [
     padding-bottom: 40px;
     border-bottom: 1px solid rgba(255, 255, 255, 0.08);
   }
-  .footer-brand h3 {
-    font-family: var(--font-playfair), serif;
-    font-size: 22px;
-    font-weight: 900;
-    color: white;
+  .footer-logo {
+    height: 48px;
+    width: auto;
     margin-bottom: 12px;
   }
-  .footer-brand h3 em { color: var(--hot-pink); font-style: italic; }
   .footer-brand p {
     font-size: 14px;
     color: rgba(255, 255, 255, 0.4);
@@ -160,7 +159,7 @@ const socials = [
       gap: 60px;
       padding-bottom: 60px;
     }
-    .footer-brand h3 { font-size: 26px; }
+    .footer-logo { height: 56px; }
     .footer-brand p { margin-bottom: 24px; }
     .footer-col h4 { margin-bottom: 20px; }
     .footer-col ul { gap: 12px; }

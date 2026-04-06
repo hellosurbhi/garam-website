@@ -195,7 +195,7 @@
   padding: 10px 14px;
   border-radius: 100px;
   border: 1px solid var(--border);
-  font-family: var(--font-dm-sans);
+  font-family: var(--font-body);
   font-size: 14px;
   color: var(--text);
   background: #fff;
@@ -208,7 +208,7 @@
   padding: 12px 16px;
   border-radius: 12px;
   border: 1px solid var(--border);
-  font-family: var(--font-dm-sans);
+  font-family: var(--font-body);
   font-size: 14px;
   color: var(--text);
   background: #fff;
@@ -231,7 +231,7 @@
   border-radius: 100px;
   border: 1px solid var(--hot-pink);
   background: transparent;
-  font-family: var(--font-dm-sans);
+  font-family: var(--font-body);
   font-size: 14px;
   font-weight: 600;
   color: var(--hot-pink);
@@ -251,7 +251,7 @@
   border-radius: 100px;
   border: 1px solid var(--success);
   background: transparent;
-  font-family: var(--font-dm-sans);
+  font-family: var(--font-body);
   font-size: 14px;
   font-weight: 600;
   color: var(--success);

@@ -54,7 +54,7 @@
   align-items: center;
   gap: 6px;
   color: var(--charcoal);
-  font-family: var(--font-dm-sans);
+  font-family: var(--font-body);
   font-size: 16px;
   text-decoration: none;
   background: none;
@@ -78,7 +78,7 @@
 }
 
 .subtitle {
-  font-family: var(--font-dm-sans);
+  font-family: var(--font-body);
   font-size: 18px;
   color: #555;
   line-height: 1.5;
@@ -124,7 +124,7 @@
 }
 
 .errorText {
-  font-family: var(--font-dm-sans);
+  font-family: var(--font-body);
   font-size: 13px;
   color: var(--hot-pink);
   margin-top: 5px;
@@ -136,7 +136,7 @@
   padding: 14px 16px;
   border-radius: 12px;
   border: 1px solid rgba(0, 0, 0, 0.1);
-  font-family: var(--font-dm-sans);
+  font-family: var(--font-body);
   font-size: 16px;
   color: #3D3532;
   background: #fff;
@@ -201,7 +201,7 @@
   border: 1px solid rgba(0, 0, 0, 0.15);
   background: transparent;
   color: var(--charcoal);
-  font-family: var(--font-dm-sans);
+  font-family: var(--font-body);
   font-size: 15px;
   font-weight: 500;
   cursor: pointer;
@@ -250,7 +250,7 @@
   top: 50%;
   transform: translateY(-50%);
   color: var(--hot-pink);
-  font-family: var(--font-dm-sans);
+  font-family: var(--font-body);
   font-size: 16px;
   pointer-events: none;
 }
@@ -306,7 +306,7 @@
 }
 
 .photoPrompt {
-  font-family: var(--font-dm-sans);
+  font-family: var(--font-body);
   font-size: 16px;
   color: var(--hot-pink);
 }
@@ -315,14 +315,14 @@
   display: inline-block;
   margin-top: 8px;
   color: var(--hot-pink);
-  font-family: var(--font-dm-sans);
+  font-family: var(--font-body);
   font-size: 15px;
   cursor: pointer;
   text-decoration: underline;
 }
 
 .photoError {
-  font-family: var(--font-dm-sans);
+  font-family: var(--font-body);
   font-size: 13px;
   color: var(--hot-pink);
   margin-top: 6px;
@@ -337,7 +337,7 @@
   border: none;
   background: var(--hot-pink);
   color: white;
-  font-family: var(--font-dm-sans);
+  font-family: var(--font-body);
   font-size: 17px;
   font-weight: 600;
   letter-spacing: 0.02em;
@@ -378,7 +378,7 @@
 
 .disclaimer {
   text-align: center;
-  font-family: var(--font-dm-sans);
+  font-family: var(--font-body);
   font-size: 14px;
   color: #3D3532;
   opacity: 0.6;
@@ -399,7 +399,7 @@
   padding: 14px 20px;
   border-radius: 12px;
   color: #fff;
-  font-family: var(--font-dm-sans);
+  font-family: var(--font-body);
   font-size: 15px;
   font-weight: 600;
   line-height: 1.4;
@@ -443,7 +443,7 @@
 }
 
 .successTitle {
-  font-family: var(--font-dm-sans);
+  font-family: var(--font-body);
   font-size: 28px;
   font-weight: 700;
   color: var(--charcoal);
@@ -467,7 +467,7 @@
 }
 
 .successCardTitle {
-  font-family: var(--font-dm-sans);
+  font-family: var(--font-body);
   font-size: 18px;
   font-weight: 700;
   color: var(--charcoal);
@@ -512,7 +512,7 @@
   padding: 14px 28px;
   background: var(--hot-pink);
   color: #fff;
-  font-family: var(--font-dm-sans);
+  font-family: var(--font-body);
   font-size: 16px;
   font-weight: 700;
   border-radius: 100px;

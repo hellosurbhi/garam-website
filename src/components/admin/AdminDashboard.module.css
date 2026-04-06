@@ -43,7 +43,7 @@
   border-radius: 100px;
   border: 1px solid var(--border);
   background: transparent;
-  font-family: var(--font-dm-sans);
+  font-family: var(--font-body);
   font-size: 13px;
   color: var(--text-light);
   cursor: pointer;
@@ -78,7 +78,7 @@
 .clearButton {
   background: none;
   border: none;
-  font-family: var(--font-dm-sans);
+  font-family: var(--font-body);
   font-size: 13px;
   color: var(--hot-pink);
   cursor: pointer;
@@ -101,7 +101,7 @@
 }
 
 .prepLabel {
-  font-family: var(--font-dm-sans);
+  font-family: var(--font-body);
   font-size: 12px;
   font-weight: 600;
   text-transform: uppercase;
@@ -124,7 +124,7 @@
 }
 
 .prepEventLabel {
-  font-family: var(--font-dm-sans);
+  font-family: var(--font-body);
   font-size: 14px;
   color: var(--text);
   flex: 1;
@@ -138,7 +138,7 @@
   border-radius: 100px;
   border: 1px solid var(--border);
   background: transparent;
-  font-family: var(--font-dm-sans);
+  font-family: var(--font-body);
   font-size: 13px;
   font-weight: 500;
   color: var(--text-light);
@@ -182,7 +182,7 @@
   background: none;
   border: none;
   color: var(--hot-pink);
-  font-family: var(--font-dm-sans);
+  font-family: var(--font-body);
   font-size: 14px;
   cursor: pointer;
   text-decoration: underline;
@@ -217,7 +217,7 @@
   gap: 6px;
   background: none;
   border: none;
-  font-family: var(--font-dm-sans);
+  font-family: var(--font-body);
   font-size: 14px;
   font-weight: 600;
   color: var(--text-light);
@@ -233,7 +233,7 @@
   padding: 10px 20px;
   border-radius: 100px;
   color: #fff;
-  font-family: var(--font-dm-sans);
+  font-family: var(--font-body);
   font-size: 14px;
   font-weight: 600;
   box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);

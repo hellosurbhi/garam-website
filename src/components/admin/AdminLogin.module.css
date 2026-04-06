@@ -49,7 +49,7 @@
   padding: 12px 18px;
   border-radius: 100px;
   border: 1px solid var(--border);
-  font-family: var(--font-dm-sans);
+  font-family: var(--font-body);
   font-size: 15px;
   color: var(--text);
   background: #fff;
@@ -78,7 +78,7 @@
   border: none;
   background: var(--hot-pink);
   color: #fff;
-  font-family: var(--font-dm-sans);
+  font-family: var(--font-body);
   font-size: 15px;
   font-weight: 600;
   letter-spacing: 0.02em;

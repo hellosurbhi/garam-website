@@ -67,7 +67,7 @@
 }
 
 .errorText {
-  font-family: var(--font-dm-sans);
+  font-family: var(--font-body);
   font-size: 16px;
   color: #777;
   line-height: 1.55;
@@ -115,7 +115,7 @@
 }
 
 .headerSubtitle {
-  font-family: var(--font-dm-sans);
+  font-family: var(--font-body);
   font-size: 16px;
   color: #666;
   line-height: 1.6;
@@ -190,7 +190,7 @@
 }
 
 .ruleText {
-  font-family: var(--font-dm-sans);
+  font-family: var(--font-body);
   font-size: 15px;
   color: #555;
   line-height: 1.6;
@@ -223,7 +223,7 @@
 }
 
 .questionText {
-  font-family: var(--font-dm-sans);
+  font-family: var(--font-body);
   font-size: 15px;
   color: #666;
   line-height: 1.6;
@@ -258,7 +258,7 @@
 }
 
 .prepTitle {
-  font-family: var(--font-dm-sans);
+  font-family: var(--font-body);
   font-size: 15px;
   font-weight: 600;
   color: var(--charcoal);
@@ -267,7 +267,7 @@
 }
 
 .prepDetail {
-  font-family: var(--font-dm-sans);
+  font-family: var(--font-body);
   font-size: 14px;
   color: var(--muted);
   margin: 4px 0 0;
@@ -277,7 +277,7 @@
 /* ─── Body text (What to Wear, Bring Friends) ─────────────────── */
 
 .bodyText {
-  font-family: var(--font-dm-sans);
+  font-family: var(--font-body);
   font-size: 15px;
   color: #666;
   line-height: 1.7;
@@ -337,7 +337,7 @@
 }
 
 .calloutBody {
-  font-family: var(--font-dm-sans);
+  font-family: var(--font-body);
   font-size: 15px;
   color: #555;
   line-height: 1.6;

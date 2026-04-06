@@ -61,11 +61,11 @@
 
 .inputError {
   composes: input;
-  border-color: var(--hot-pink);
+  border-color: var(--brand-red);
 }
 
 .error {
-  color: var(--hot-pink);
+  color: var(--brand-red);
   font-size: 13px;
   margin-bottom: 12px;
   padding-left: 4px;
@@ -76,7 +76,7 @@
   padding: 13px;
   border-radius: 100px;
   border: none;
-  background: var(--hot-pink);
+  background: var(--brand-red);
   color: #fff;
   font-family: var(--font-body);
   font-size: 15px;
@@ -88,7 +88,7 @@
 }
 
 .submitButton:hover {
-  background: var(--deep-magenta);
+  background: var(--brand-red-dark);
 }
 
 .submitButtonWithError {

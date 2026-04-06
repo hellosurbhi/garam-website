@@ -143,11 +143,11 @@
 .igLink {
   font-size: 14px;
   font-weight: 500;
-  color: var(--hot-pink);
+  color: var(--brand-red);
 }
 
 .pitch {
-  border-left: 3px solid var(--hot-pink);
+  border-left: 3px solid var(--brand-red);
   padding-left: 16px;
   margin: 0 0 24px;
 }
@@ -229,12 +229,12 @@
   gap: 6px;
   padding: 10px 18px;
   border-radius: 100px;
-  border: 1px solid var(--hot-pink);
+  border: 1px solid var(--brand-red);
   background: transparent;
   font-family: var(--font-body);
   font-size: 14px;
   font-weight: 600;
-  color: var(--hot-pink);
+  color: var(--brand-red);
   cursor: pointer;
   transition: background 0.15s;
 }

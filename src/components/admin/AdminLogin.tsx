@@ -54,6 +54,9 @@ export default function AdminLogin({ onSuccess }: AdminLoginProps) {
               placeholder="Email"
               autoFocus
               autoComplete="email"
+              required
+              aria-label="Email"
+              aria-invalid={!!error}
               className={error ? styles.inputError : styles.input}
             />
             <input
@@ -65,11 +68,14 @@ export default function AdminLogin({ onSuccess }: AdminLoginProps) {
               }}
               placeholder="Password"
               autoComplete="current-password"
+              required
+              aria-label="Password"
+              aria-invalid={!!error}
               className={error ? styles.inputError : styles.input}
             />
           </div>
 
-          {error && <p className={styles.error}>{error}</p>}
+          {error && <p className={styles.error} role="alert">{error}</p>}
 
           <button
             type="submit"

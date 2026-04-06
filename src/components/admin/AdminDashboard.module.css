@@ -51,8 +51,8 @@
 }
 
 .logoutButton:hover {
-  border-color: var(--hot-pink);
-  color: var(--hot-pink);
+  border-color: var(--brand-red);
+  color: var(--brand-red);
 }
 
 .filterBar {
@@ -80,7 +80,7 @@
   border: none;
   font-family: var(--font-body);
   font-size: 13px;
-  color: var(--hot-pink);
+  color: var(--brand-red);
   cursor: pointer;
   padding: 4px 0;
   flex-shrink: 0;
@@ -96,8 +96,8 @@
 .prepBox {
   padding: 16px 20px;
   border-radius: 12px;
-  background: rgba(var(--hot-pink-rgb), 0.06);
-  border: 1px solid rgba(var(--hot-pink-rgb), 0.15);
+  background: rgba(var(--brand-red-rgb), 0.06);
+  border: 1px solid rgba(var(--brand-red-rgb), 0.15);
 }
 
 .prepLabel {
@@ -181,7 +181,7 @@
 .clearFiltersButton {
   background: none;
   border: none;
-  color: var(--hot-pink);
+  color: var(--brand-red);
   font-family: var(--font-body);
   font-size: 14px;
   cursor: pointer;

@@ -1,5 +1,139 @@
 # Changelog
 
+## 120 SEO Articles + Staggered Publishing System (2026-04-06)
+
+Major content expansion: 120 journal articles across 14 categories, publishing every 2 days from April 7 through December 2026 via automated daily rebuild.
+
+### What changed
+- **Refactored `src/data/journal.ts`** into `src/data/journal/` directory (16 files) mirroring the cities/ pattern
+- **Re-dated 10 existing articles** from fake backdates to honest future dates (Apr 7-25)
+- **Wrote 110 new SEO articles** targeting keywords with 500K+ monthly addressable search volume
+- **Added `relatedSlugs` field** to JournalPost for cross-linking ("You might also like" section)
+- **Added prev/next navigation** to article pages
+- **Enabled inline HTML** in article body text for natural cross-links between articles
+- **Removed Kampala** city page (not in Africa keep list)
+- **Added daily rebuild cron** (.github/workflows/daily-rebuild.yml) for scheduled article publishing
+- **Added monthly refresh cron** (.github/workflows/article-refresh.yml + scripts/refresh-articles.js) for dateModified freshness signals
+
+### Article categories (110 new)
+1. App Fatigue & Alternatives (8) — Dil Mil, Hinge, Muzz, Bumble reviews
+2. Dating Culture & Advice (15) — telling parents, red flags, rishta culture, ABCD/FOB
+3. Identity & Demographics (8) — third culture kids, NRI, LGBTQ, tech bros, divorce
+4. Comedy & Entertainment (5) — NYC comedy guide, Indian Love Is Blind
+5. Events & IRL Dating (5) — speed dating, meeting singles, date ideas
+6. Seasonal (5) — shaadi season, cuffing season, Diwali, Holi, Valentine's
+7. Matrimony Platforms (8) — Shaadi.com, BharatMatrimony, Jeevansathi, Betterhalf
+8. Community Singles (4) — Sikh, Gujarati, Punjabi, Jain events
+9. Bollywood & Dating (10) — gaslighting movies, breakup films, toxic heroes
+10. Cross-Cultural Intros (10) — introducing partners to Indian/Punjabi/Gujarati/Tamil/Bengali parents
+11. Toxic Dating Patterns (8) — gaslighting, breadcrumbing, love bombing, ghosting
+12. Caste, Class & Financial (8) — dating across castes, money dynamics, career pressure
+13. Arranged Marriage Deep Dives (8) — timelines, red flags, biodata, NRI complications
+14. Community Deep Dives (8) — South Indian, Bengali, Pakistani, Muslim, Hindu, Bangladeshi
+
+### Key decisions
+- Every 2 days publishing schedule (not backdated) with daily Vercel deploy hook
+- Articles only appear when their datePublished date arrives (SSG date filter)
+- Monthly cron refreshes dateModified on articles older than 60 days for Google freshness
+- Each article has 12-20 body blocks, 3-5 FAQs for JSON-LD, 2-3 inline cross-links, 2-3 relatedSlugs
+
+---
+
+## Add 8 SEO journal articles: Community Deep Dives
+
+Wrote full content for all 8 articles in `src/data/journal/community-deep-dives.ts`, replacing the empty array placeholder. Articles cover the "Community Deep Dives" category — South Indian, Marathi, Bengali, Pakistani, South Asian Muslim, Hindu, Bangladeshi, and vegetarian desi dating — with Surbhi's direct and culturally specific voice.
+
+### Articles added (slugs)
+1. `south-indian-dating-culture` — Nov 17 — Tamil/Telugu/Kannada/Malayalam perspectives, sambandhi culture, thali traditions
+2. `marathi-dating-practical-expectations` — Nov 19 — Maharashtrian pragmatism, Maharashtra Mandal, family dynamics
+3. `bengali-dating-culture` — Nov 21 — Adda culture, food as love language, progressive norms, West Bengali vs Bangladeshi split
+4. `pakistani-dating-america` — Nov 23 — Dual-world navigation, religion nuance, community judgment, hybrid app/rishta approach
+5. `muslim-dating-south-asian` — Nov 25 — Halal dating, Muzz/Salams landscape, wali question, interfaith stakes
+6. `hindu-dating-expectations` — Nov 27 — Caste dynamics, vegetarianism as religious practice, festival infrastructure, kundali matching
+7. `bangladeshi-dating-diaspora` — Nov 29 — Tight-knit community dynamics, Bangladeshi identity distinct from Bengali/Pakistani, Liberation War context
+8. `vegetarian-dating-desi` — Dec 1 — Jain vs Hindu vegetarianism, the 'will they eat my mom's food' test, non-vegetarian partner compatibility
+
+### Structure per article
+- 12–18 PostBlock items (h2/h3/p mix, always opens with p)
+- 3–5 FAQs for JSON-LD schema
+- metaDescription under 160 chars with primary keyword
+- 2–3 natural inline cross-links to related articles
+- CTA paragraph pointing to tickets page in final section
+- 2–3 relatedSlugs
+
+### Files affected
+- `src/data/journal/community-deep-dives.ts` — full content written from empty array
+
+---
+
+## Add 8 SEO journal articles: Toxic Dating Patterns in Desi Culture
+
+Wrote full content for all 8 articles in `src/data/journal/toxic-patterns.ts`, replacing the empty array placeholder. Articles cover the full "Toxic Dating Patterns in Desi Culture" category with Surbhi's voice, culturally specific analysis, and SEO-optimized structure.
+
+### Articles added (slugs)
+1. `gaslighting-desi-relationships` — Sep 30
+2. `breadcrumbing-desi-dating` — Oct 2
+3. `love-bombing-desi-culture` — Oct 4
+4. `desi-situationship-trap` — Oct 6
+5. `emotional-unavailability-desi-men` — Oct 8
+6. `ghosting-desi-dating` — Oct 10
+7. `weaponized-compatibility-family-pressure` — Oct 12
+8. `comparison-culture-toxic-desi-dating` — Oct 14
+
+### Structure per article
+- 12–18 PostBlock items (h2/h3/p mix, always opens with p)
+- 3–5 FAQs for JSON-LD schema
+- metaDescription under 160 chars with primary keyword
+- 2–3 natural inline cross-links to related articles
+- CTA to Garam Masala Dating at the close
+- 2–3 relatedSlugs for cross-linking
+
+### Files affected
+- `src/data/journal/toxic-patterns.ts` — full rewrite with all 8 articles
+
+---
+
+## Rewrite all US city H1s and titleTags to be unique (anti-doorway-page fix)
+
+Google treats templated city pages with identical "[City]'s Desi Dating Night Is Coming" H1s and "South Asian Singles Events [City] | Garam Masala Dating" titleTags as doorway pages. Rewrote every h1 and titleTag across 6 US city data files (75 cities total) so that no two cities share the same structure.
+
+### What changed
+- **active.ts (7 cities):** Replaced 5 templated H1s and all 7 templated titleTags. Preserved the 2 already-unique H1s (Salt Lake City, Denver).
+- **us-northeast.ts (15 cities):** All H1s and titleTags rewritten with unique, city-specific copy.
+- **us-southeast.ts (16 cities):** All H1s and titleTags rewritten.
+- **us-midwest.ts (18 cities):** All H1s and titleTags rewritten.
+- **us-south-texas.ts (7 cities):** All H1s and titleTags rewritten. Includes cultural references (Hillcroft, Aggies, Keep Austin Weird).
+- **us-west.ts (12 cities):** All H1s and titleTags rewritten.
+
+### H1 format variety includes
+- Questions: "Where Do Desi Singles Go in Chicago?"
+- Statements: "Boston Finally Gets a Live Dating Show Worth Showing Up For"
+- Cultural references: "Oak Tree Road Deserves a Dating Show" (Edison), "Green Street Has Enough Bars" (Champaign)
+- Direct/playful: "Troy, Michigan Has More Desi Singles Than Your Group Chat"
+- Imperative: "Stop Swiping, Seattle. Come Meet Someone in Person."
+- Data-driven: "130,000 South Asians in DFW and the Dating Scene Is Still Broken"
+
+### titleTag format variety includes
+- "[City] Desi Dating Show | Garam Masala Dating"
+- "[City] Indian Singles Mixer | Garam Masala Dating"
+- "Live Desi Dating Night [City] | Garam Masala Dating"
+- "[City] [State] Desi Singles Event | Garam Masala Dating"
+- "[University] Desi Dating Night | Garam Masala Dating"
+
+### Rules followed
+- No em dashes, no double dashes
+- Every H1 is unique across the entire site
+- Title tags kept under 60 characters where possible
+- No other fields changed (bodyParagraphs, ctas, slug, etc.)
+
+### Files affected
+- `src/data/cities/active.ts`
+- `src/data/cities/us-northeast.ts`
+- `src/data/cities/us-southeast.ts`
+- `src/data/cities/us-midwest.ts`
+- `src/data/cities/us-south-texas.ts`
+- `src/data/cities/us-west.ts`
+
 ## Expand Europe cities and rewrite international-other.ts
 
 ### europe.ts: added 47 new cities (73 total)

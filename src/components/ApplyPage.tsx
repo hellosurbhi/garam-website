@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo, type ChangeEvent } from "react";
+import { useState, useEffect, useId, useMemo, type ChangeEvent } from "react";
 import { collection, addDoc, serverTimestamp } from "firebase/firestore";
 import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import { signInAnonymously } from "firebase/auth";
@@ -16,21 +16,26 @@ function FieldGroup({
   label,
   required,
   error,
+  htmlFor,
   children,
 }: {
   label: string;
   required?: boolean;
   error?: string;
+  htmlFor?: string;
   children: React.ReactNode;
 }) {
+  const autoId = useId();
+  const fieldId = htmlFor ?? autoId;
+  const errorId = `${fieldId}-error`;
   return (
     <div className={styles.fieldGroup} {...(error ? { "data-error": "true" } : {})}>
-      <label className={styles.label}>
+      <label htmlFor={fieldId} className={styles.label}>
         {label}
         {required && <span className={styles.requiredMark}>*</span>}
       </label>
       {children}
-      {error && <p className={styles.errorText}>{error}</p>}
+      {error && <p id={errorId} className={styles.errorText} role="alert">{error}</p>}
     </div>
   );
 }
@@ -269,7 +274,7 @@ export default function ApplyPage() {
           </div>
 
           {submitted ? (
-            <div className={styles.successPanel}>
+            <div className={styles.successPanel} role="status" aria-live="polite">
               <div className={styles.successEmoji}>🌶️</div>
               <h1 className={styles.successTitle}>Thanks for applying!</h1>
               <p className={styles.successText}>
@@ -326,6 +331,7 @@ export default function ApplyPage() {
                       onClick={() => set("applicationType", type)}
                       className={styles.typeButton}
                       data-active={form.applicationType === type || undefined}
+                      aria-pressed={form.applicationType === type}
                     >
                       {type === "Self" ? "For myself" : "For a friend"}
                     </button>
@@ -339,18 +345,24 @@ export default function ApplyPage() {
                 </SectionTitle>
 
                 <div className={styles.gridTwo}>
-                  <FieldGroup label="Full Name" required error={errors.name}>
+                  <FieldGroup label="Full Name" required error={errors.name} htmlFor="field-name">
                     <input
+                      id="field-name"
                       type="text"
                       value={form.name}
                       onChange={(e) => set("name", e.target.value)}
                       placeholder="Name"
                       className={styles.input}
+                      required
+                      autoComplete="name"
+                      aria-invalid={!!errors.name}
+                      aria-describedby={errors.name ? "field-name-error" : undefined}
                     />
                   </FieldGroup>
 
-                  <FieldGroup label="Age" required error={errors.age}>
+                  <FieldGroup label="Age" required error={errors.age} htmlFor="field-age">
                     <input
+                      id="field-age"
                       type="number"
                       value={form.age}
                       onChange={(e) => set("age", e.target.value)}
@@ -358,13 +370,16 @@ export default function ApplyPage() {
                       min={18}
                       max={99}
                       className={styles.input}
+                      required
+                      aria-invalid={!!errors.age}
+                      aria-describedby={errors.age ? "field-age-error" : undefined}
                     />
                   </FieldGroup>
                 </div>
 
                 <div className={styles.gridTwo}>
-                  <FieldGroup label="Gender" required error={errors.gender}>
-                    <select value={form.gender} onChange={(e) => set("gender", e.target.value)} className={styles.select}>
+                  <FieldGroup label="Gender" required error={errors.gender} htmlFor="field-gender">
+                    <select id="field-gender" value={form.gender} onChange={(e) => set("gender", e.target.value)} className={styles.select} required aria-invalid={!!errors.gender} aria-describedby={errors.gender ? "field-gender-error" : undefined}>
                       <option value="">Select…</option>
                       {["Man", "Woman", "Non-binary", "Other"].map((g) => (
                         <option key={g} value={g}>{g}</option>
@@ -372,8 +387,8 @@ export default function ApplyPage() {
                     </select>
                   </FieldGroup>
 
-                  <FieldGroup label="Orientation" required error={errors.orientation}>
-                    <select value={form.orientation} onChange={(e) => set("orientation", e.target.value)} className={styles.select}>
+                  <FieldGroup label="Orientation" required error={errors.orientation} htmlFor="field-orientation">
+                    <select id="field-orientation" value={form.orientation} onChange={(e) => set("orientation", e.target.value)} className={styles.select} required aria-invalid={!!errors.orientation} aria-describedby={errors.orientation ? "field-orientation-error" : undefined}>
                       <option value="">Select…</option>
                       {["Straight", "Gay", "Bisexual", "Other"].map((o) => (
                         <option key={o} value={o}>{o}</option>
@@ -398,6 +413,7 @@ export default function ApplyPage() {
                         isSearchable
                         isLoading={geoLoading}
                         isDisabled={geoLoading}
+                        aria-label="Country"
                       />
                     )}
                   </FieldGroup>
@@ -411,6 +427,7 @@ export default function ApplyPage() {
                         placeholder="Select…"
                         styles={formSelectStyles}
                         isSearchable
+                        aria-label="State"
                       />
                     </FieldGroup>
                   )}
@@ -424,14 +441,16 @@ export default function ApplyPage() {
                         placeholder="Select…"
                         styles={formSelectStyles}
                         isSearchable
+                        aria-label="City"
                       />
                     </FieldGroup>
                   )}
                 </div>
 
                 <div className={styles.gridTwo}>
-                  <FieldGroup label="Height" error={errors.height}>
+                  <FieldGroup label="Height" error={errors.height} htmlFor="field-height">
                     <input
+                      id="field-height"
                       type="text"
                       value={form.height}
                       onChange={(e) => set("height", e.target.value)}
@@ -441,15 +460,19 @@ export default function ApplyPage() {
                   </FieldGroup>
                 </div>
 
-                <FieldGroup label="Instagram Handle" required error={errors.instagram}>
+                <FieldGroup label="Instagram Handle" required error={errors.instagram} htmlFor="field-instagram">
                   <div className={styles.igWrapper}>
-                    <span className={styles.igPrefix}>@</span>
+                    <span className={styles.igPrefix} aria-hidden="true">@</span>
                     <input
+                      id="field-instagram"
                       type="text"
                       value={form.instagram}
                       onChange={(e) => set("instagram", e.target.value.replace(/^@/, ""))}
                       placeholder={form.applicationType === "Nomination" ? "yourfriendshandle" : "yourhandle"}
                       className={styles.igInput}
+                      required
+                      aria-invalid={!!errors.instagram}
+                      aria-describedby={errors.instagram ? "field-instagram-error" : undefined}
                     />
                   </div>
                   <p className={styles.igHint}>
@@ -467,8 +490,8 @@ export default function ApplyPage() {
                 </FieldGroup>
 
                 <div className={styles.gridTwo}>
-                  <FieldGroup label="Community" error={errors.community}>
-                    <select value={form.community} onChange={(e) => set("community", e.target.value)} className={styles.select}>
+                  <FieldGroup label="Community" error={errors.community} htmlFor="field-community">
+                    <select id="field-community" value={form.community} onChange={(e) => set("community", e.target.value)} className={styles.select}>
                       <option value="">Select…</option>
                       {COMMUNITY_OPTIONS.map((c) => (
                         <option key={c} value={c}>{c}</option>
@@ -476,8 +499,8 @@ export default function ApplyPage() {
                     </select>
                   </FieldGroup>
 
-                  <FieldGroup label="Income" error={errors.income}>
-                    <select value={form.income} onChange={(e) => set("income", e.target.value)} className={styles.select}>
+                  <FieldGroup label="Income" error={errors.income} htmlFor="field-income">
+                    <select id="field-income" value={form.income} onChange={(e) => set("income", e.target.value)} className={styles.select}>
                       <option value="">Select…</option>
                       {INCOME_OPTIONS.map((i) => (
                         <option key={i} value={i}>{i}</option>
@@ -490,13 +513,18 @@ export default function ApplyPage() {
               {form.applicationType === "Nomination" && (
                 <div className={styles.section}>
                   <SectionTitle>Your Info</SectionTitle>
-                  <FieldGroup label="Your Name" required error={errors.referrerName}>
+                  <FieldGroup label="Your Name" required error={errors.referrerName} htmlFor="field-referrer">
                     <input
+                      id="field-referrer"
                       type="text"
                       value={form.referrerName}
                       onChange={(e) => set("referrerName", e.target.value)}
                       placeholder="So we know who nominated them"
                       className={styles.input}
+                      required
+                      autoComplete="name"
+                      aria-invalid={!!errors.referrerName}
+                      aria-describedby={errors.referrerName ? "field-referrer-error" : undefined}
                     />
                   </FieldGroup>
                 </div>
@@ -537,7 +565,7 @@ export default function ApplyPage() {
                   </label>
                 )}
 
-                {errors.photo && <p className={styles.photoError}>{errors.photo}</p>}
+                {errors.photo && <p className={styles.photoError} role="alert">{errors.photo}</p>}
               </div>
 
               <div className={styles.sectionLarge}>
@@ -550,6 +578,7 @@ export default function ApplyPage() {
                   }
                 >
                   <textarea
+                    id="field-pitch"
                     value={form.pitch}
                     onChange={(e) => set("pitch", e.target.value)}
                     placeholder="Tell us something fun, bold, or irresistible…"
@@ -582,6 +611,8 @@ export default function ApplyPage() {
         <div
           className={styles.toast}
           data-status={toast.ok ? "success" : "error"}
+          role="alert"
+          aria-live="assertive"
         >
           <span>{toast.msg}</span>
           <button onClick={() => setToast(null)} className={styles.toastDismiss} aria-label="Dismiss">

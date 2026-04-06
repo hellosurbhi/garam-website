@@ -4,6 +4,7 @@ import PostHog from '../components/posthog.astro';
 import GTM from '../components/gtm.astro';
 import MetaPixel from '../components/meta-pixel.astro';
 import HomeFooter from '../components/home/HomeFooter.astro';
+import PageNav from '../components/layout/PageNav.astro';
 
 interface Props {
   title: string;
@@ -11,6 +12,7 @@ interface Props {
   ogImage?: string;
   canonicalUrl?: string;
   noindex?: boolean;
+  hideNav?: boolean;
 }
 
 const {
@@ -19,6 +21,7 @@ const {
   ogImage = 'https://garammasaladating.com/og-image.jpg',
   canonicalUrl = Astro.site ? new URL(Astro.url.pathname, Astro.site).href : 'https://garammasaladating.com/',
   noindex = false,
+  hideNav = false,
 } = Astro.props;
 ---
 
@@ -83,6 +86,7 @@ const {
     <div class="grain-overlay"></div>
     <div class="cursor" id="cursor"></div>
     <div class="cursor-ring" id="cursorRing"></div>
+    {!hideNav && <PageNav />}
     <slot />
     <HomeFooter />
     <script>
@@ -181,21 +185,14 @@ const {
     display: none;
   }
 
-  :global(html.custom-cursor) {
-    cursor: none;
-  }
-  :global(html.custom-cursor a),
-  :global(html.custom-cursor button),
-  :global(html.custom-cursor [role="button"]),
-  :global(html.custom-cursor dialog),
-  :global(html.custom-cursor dialog *),
-  :global(html.custom-cursor input),
-  :global(html.custom-cursor textarea),
-  :global(html.custom-cursor select) {
-    cursor: none;
+  :global(html.custom-cursor),
+  :global(html.custom-cursor *),
+  :global(html.custom-cursor *::before),
+  :global(html.custom-cursor *::after) {
+    cursor: none !important;
   }
   :global(html.custom-cursor dialog::backdrop) {
-    cursor: none;
+    cursor: none !important;
   }
 
   :global(html.custom-cursor) .cursor {

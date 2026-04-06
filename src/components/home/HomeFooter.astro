@@ -165,6 +165,7 @@ const socials = [
     transition: color 0.2s;
     padding: 2px 0;
     display: inline-block;
+    white-space: nowrap;
   }
   .footer-col ul li a:hover { color: white; }
 
@@ -208,14 +209,14 @@ const socials = [
     footer { padding: 56px 48px 32px; }
     .footer-top {
       display: grid;
-      grid-template-columns: 2fr 1fr 1fr 1fr;
+      grid-template-columns: 1.5fr 1fr 1fr 2fr;
       text-align: left;
       gap: 48px;
       padding-bottom: 40px;
     }
     .footer-brand { margin-bottom: 0; }
     .footer-logo { height: 56px; }
-    .footer-brand p { font-size: 14px; margin-bottom: 24px; max-width: 280px; }
+    .footer-brand p { font-size: 14px; margin-bottom: 24px; }
     .footer-social { justify-content: flex-start; gap: 10px; }
     .footer-social a { width: 40px; height: 40px; }
     .footer-social a :global(svg) { width: 18px; height: 18px; }

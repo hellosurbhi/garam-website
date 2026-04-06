@@ -174,8 +174,6 @@ export default function ApplyPage() {
     if (!form.state) errs.state = "Required";
     if (!form.city) errs.city = "Required";
     if (!form.instagram.trim()) errs.instagram = "Required";
-    if (!form.community) errs.community = "Required";
-    if (!form.income) errs.income = "Required";
     if (!photoFile) errs.photo = "A photo is required";
     if (form.applicationType === "Nomination" && !form.referrerName.trim()) {
       errs.referrerName = "Required";
@@ -454,10 +452,22 @@ export default function ApplyPage() {
                       className={styles.igInput}
                     />
                   </div>
+                  <p className={styles.igHint}>
+                    Follow{" "}
+                    <a
+                      href="https://instagram.com/garammasaladating"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className={styles.igHintLink}
+                    >
+                      @garammasaladating
+                    </a>{" "}
+                    and DM us for a faster response.
+                  </p>
                 </FieldGroup>
 
                 <div className={styles.gridTwo}>
-                  <FieldGroup label="Community" required error={errors.community}>
+                  <FieldGroup label="Community" error={errors.community}>
                     <select value={form.community} onChange={(e) => set("community", e.target.value)} className={styles.select}>
                       <option value="">Select…</option>
                       {COMMUNITY_OPTIONS.map((c) => (
@@ -466,7 +476,7 @@ export default function ApplyPage() {
                     </select>
                   </FieldGroup>
 
-                  <FieldGroup label="Income" required error={errors.income}>
+                  <FieldGroup label="Income" error={errors.income}>
                     <select value={form.income} onChange={(e) => set("income", e.target.value)} className={styles.select}>
                       <option value="">Select…</option>
                       {INCOME_OPTIONS.map((i) => (

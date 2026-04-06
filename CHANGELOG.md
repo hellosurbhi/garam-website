@@ -1,5 +1,47 @@
 # Changelog
 
+## WCAG accessibility audit — non-visual fixes
+
+Comprehensive accessibility pass across the entire site. Only changes that have zero visual impact on current layouts/responsiveness were applied. Visual-impact issues logged in BUGS.md.
+
+### Landmarks & navigation
+- `<main id="main-content">` added to all 15 pages (was only on index.astro)
+- Skip-to-content link in BaseLayout (sr-only, visible on keyboard focus)
+- `aria-label="Main navigation"` on HomeNav and PageNav
+
+### Apply page form (ApplyPage.tsx)
+- FieldGroup now links labels via `htmlFor` to matching input `id`s
+- Error messages get `role="alert"` and are linked to inputs via `aria-describedby`
+- Inputs get `aria-invalid` when in error state
+- Required fields get HTML `required` attribute
+- react-select components get `aria-label` (Country, State, City)
+- Toggle buttons ("For myself" / "For a friend") get `aria-pressed`
+- Success panel gets `role="status"` + `aria-live="polite"`
+- Toast notification gets `role="alert"` + `aria-live="assertive"`
+- Name/referrer inputs get `autocomplete="name"`
+- Instagram `@` prefix gets `aria-hidden="true"`
+
+### Admin components
+- Filter selects get `aria-label` ("Filter by gender", "Filter by city")
+- Deleted toggle button gets `aria-expanded` + `aria-controls`
+- Loading state gets `role="status"` + `aria-live="polite"`
+- Toast gets `role="alert"` + `aria-live="assertive"`
+- ApplicantCard: `tabindex=0`, `role="button"`, keyboard handler (Enter/Space)
+- AdminLogin: `aria-label` on inputs, `required`, `aria-invalid`, error `role="alert"`
+
+### Misc
+- Decorative SVGs in links page get `aria-hidden="true"`
+- Newsletter signup step-2 and success get `aria-live="polite"`
+
+### Logged in BUGS.md (visual-impact, deferred)
+- Color contrast: `#888` and `#666` on `#FFF8F0`
+- `outline:none` without focus replacement
+- Social icon / modal close button touch targets below 44px
+- ApplicantModal missing focus trap
+- HomeShows div-as-button
+- Missing `aria-current="page"` on nav
+- AdminLogin missing visible labels
+
 ## Multi-page updates: apply form, tickets notify, journal/FAQ width, city signup
 
 ### Apply form

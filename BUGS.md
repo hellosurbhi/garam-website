@@ -62,6 +62,96 @@
 - **What should happen:** Applications should be paginated with Firestore cursor-based pagination.
 - **Fix:** Use `query()` with `limit()`, `orderBy()`, and `startAfter()` for pagination when app count grows.
 
+### [HIGH] Color contrast: #888 (--muted) fails WCAG AA on #FFF8F0
+
+- **Date:** 2026-04-06
+- **File:** Multiple — `links.astro`, `privacy.astro`, `terms.astro`, `faq.astro`, city pages
+- **Status:** Open
+- **Severity:** High
+- **What's happening:** `#888` on `#FFF8F0` is 2.98:1 contrast ratio, fails WCAG AA minimum of 4.5:1 for normal text.
+- **What should happen:** Replace `#888` with `#666` minimum, or `#595959` for safe AA compliance.
+- **Fix:** Update `--muted` in `:root` to a darker value. Affects footer text, badge icons, social icons, modal close buttons, date labels.
+
+### [HIGH] Color contrast: #666 (--text-light) borderline on #FFF8F0
+
+- **Date:** 2026-04-06
+- **File:** Multiple — `tickets.astro`, `faq.astro`, `hosts.astro`, `links.astro`, `index.astro`
+- **Status:** Open
+- **Severity:** High
+- **What's happening:** `#666` on `#FFF8F0` is 4.14:1 — passes WCAG AA for large text (18pt+) but fails for normal text (<4.5:1).
+- **What should happen:** Use `#595959` or darker for normal-size text, or keep `#666` only on large/bold text.
+- **Fix:** Update `--text-light` or use it only for text that qualifies as large text per WCAG.
+
+### [MEDIUM] outline:none on form inputs without visible focus replacement
+
+- **Date:** 2026-04-06
+- **File:** `ApplyPage.module.css`, `AdminLogin.module.css`, `ApplicantModal.module.css`, `HomeShows.astro`, `HomeSignup.astro`, `index.astro`, `tickets.astro`, `cities/[slug].astro`
+- **Status:** Open
+- **Severity:** Medium
+- **What's happening:** `outline: none` removes the browser's default focus ring with no replacement `:focus-visible` style. Keyboard users can't see which element has focus.
+- **What should happen:** Replace with a visible `:focus-visible` ring (e.g., `outline: 2px solid var(--brand-red); outline-offset: 2px`).
+- **Fix:** Add a global `:focus-visible` style in `index.css` for inputs/buttons, or add per-component focus styles.
+
+### [MEDIUM] Social icon touch targets 40x40px (below 44px WCAG minimum)
+
+- **Date:** 2026-04-06
+- **File:** `src/pages/links.astro` (lines 407–418)
+- **Status:** Open
+- **Severity:** Medium
+- **What's happening:** Social icons are 40x40px, below the 44x44px WCAG 2.5.8 target size minimum.
+- **What should happen:** Increase to 44x44px minimum.
+- **Fix:** Change `.social-icon` width/height from 40px to 44px.
+
+### [MEDIUM] Modal close buttons too small (~28px effective area)
+
+- **Date:** 2026-04-06
+- **File:** `links.astro` (lines 474–487), `ApplicantModal.module.css` (lines 63–77)
+- **Status:** Open
+- **Severity:** Medium
+- **What's happening:** Close buttons have only 4–6px padding on 20px icons, giving ~28–32px effective target.
+- **What should happen:** Minimum 44x44px touch target.
+- **Fix:** Add explicit `min-width: 44px; min-height: 44px` or increase padding to reach 44px total.
+
+### [MEDIUM] ApplicantModal: no focus trap, not using native dialog
+
+- **Date:** 2026-04-06
+- **File:** `src/components/admin/ApplicantModal.tsx`
+- **Status:** Open
+- **Severity:** Medium
+- **What's happening:** Modal uses a custom overlay div, not `<dialog>`. No focus trap — keyboard users can tab to elements behind the modal.
+- **What should happen:** Either use native `<dialog>` element or implement focus trap + `aria-modal="true"`.
+- **Fix:** Refactor to `<dialog>` or add focus trap via `onKeyDown` handler cycling Tab between first/last focusable elements.
+
+### [MEDIUM] HomeShows: div with role="button" should be a button element
+
+- **Date:** 2026-04-06
+- **File:** `src/components/home/HomeShows.astro` (line 44)
+- **Status:** Open
+- **Severity:** Medium
+- **What's happening:** Notify-me show card is a `<div role="button" tabindex="0">` instead of a semantic `<button>`.
+- **What should happen:** Replace with `<button>` element and reset default button styling.
+- **Fix:** Change to `<button>` with `appearance: none; background: none; border: none; text-align: left; width: 100%`.
+
+### [LOW] No aria-current="page" on active nav links
+
+- **Date:** 2026-04-06
+- **File:** `src/components/home/HomeNav.astro`, `src/components/layout/PageNav.astro`
+- **Status:** Open
+- **Severity:** Low
+- **What's happening:** Navigation links don't indicate which page is currently active to screen readers.
+- **What should happen:** Active link should have `aria-current="page"`.
+- **Fix:** Use `Astro.url.pathname` to conditionally add `aria-current="page"` to matching nav links.
+
+### [LOW] AdminLogin: inputs rely on placeholder instead of visible labels
+
+- **Date:** 2026-04-06
+- **File:** `src/components/admin/AdminLogin.tsx`
+- **Status:** Open
+- **Severity:** Low
+- **What's happening:** Email and password inputs use placeholder text as their only visible label. Placeholders disappear when typing, leaving no label context.
+- **What should happen:** Add visible `<label>` elements above or beside the inputs.
+- **Fix:** Add `<label htmlFor="..." className={styles.label}>` for each input. Currently mitigated by `aria-label` attributes.
+
 ## Fixed
 
 ### [MEDIUM] Apply page backdrop dismiss always navigates to landing page

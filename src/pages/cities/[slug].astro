@@ -1,5 +1,6 @@
 ---
 import BaseLayout from '@/layouts/BaseLayout.astro';
+import PageNav from '@/components/layout/PageNav.astro';
 import { cities } from '@/data/cities';
 import type { CityData } from '@/data/cities';
 import { buildBreadcrumbJsonLd } from '@/utils/breadcrumbs';
@@ -88,6 +89,7 @@ const breadcrumbJsonLd = buildBreadcrumbJsonLd([
     <script type="application/ld+json" set:html={breadcrumbJsonLd} />
   </Fragment>
 
+  <PageNav />
   <div class="city-page">
     <div class="city-container">
       {/* Eyebrow label */}

@@ -1,0 +1,35 @@
+---
+
+---
+
+<nav class="page-nav">
+  <a href="/" aria-label="Garam Masala Dating — Home">
+    <div class="page-nav-logo" role="img" aria-hidden="true"></div>
+  </a>
+</nav>
+
+<style>
+  .page-nav {
+    padding: 24px 20px;
+  }
+  .page-nav-logo {
+    height: 36px;
+    width: 160px;
+    background-color: var(--hot-pink);
+    -webkit-mask-image: url(/images/logo.svg);
+    mask-image: url(/images/logo.svg);
+    -webkit-mask-size: contain;
+    mask-size: contain;
+    -webkit-mask-repeat: no-repeat;
+    mask-repeat: no-repeat;
+    transition: opacity 0.2s;
+  }
+  .page-nav a:hover .page-nav-logo {
+    opacity: 0.7;
+  }
+
+  @media (min-width: 768px) {
+    .page-nav { padding: 24px 48px; }
+    .page-nav-logo { height: 40px; width: 180px; }
+  }
+</style>

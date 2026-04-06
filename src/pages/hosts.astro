@@ -1,5 +1,6 @@
 ---
 import BaseLayout from '@/layouts/BaseLayout.astro';
+import PageNav from '@/components/layout/PageNav.astro';
 import HomeCreators from '@/components/home/HomeCreators.astro';
 import HomeFooter from '@/components/home/HomeFooter.astro';
 import { buildBreadcrumbJsonLd } from '@/utils/breadcrumbs';
@@ -19,6 +20,7 @@ const breadcrumbJsonLd = buildBreadcrumbJsonLd([
     <script type="application/ld+json" set:html={breadcrumbJsonLd} />
   </Fragment>
 
+  <PageNav />
   <main>
     <HomeCreators />
   </main>

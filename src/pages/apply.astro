@@ -1,5 +1,6 @@
 ---
 import BaseLayout from '@/layouts/BaseLayout.astro';
+import PageNav from '@/components/layout/PageNav.astro';
 import { buildBreadcrumbJsonLd } from '@/utils/breadcrumbs';
 import ApplyPage from '@/components/ApplyPage';
 
@@ -17,5 +18,6 @@ const breadcrumbJsonLd = buildBreadcrumbJsonLd([
     <script type="application/ld+json" set:html={breadcrumbJsonLd} />
   </Fragment>
 
+  <PageNav />
   <ApplyPage client:load />
 </BaseLayout>

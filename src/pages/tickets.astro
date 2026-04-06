@@ -1,5 +1,6 @@
 ---
 import BaseLayout from '@/layouts/BaseLayout.astro';
+import PageNav from '@/components/layout/PageNav.astro';
 import { buildBreadcrumbJsonLd } from '@/utils/breadcrumbs';
 import { events } from '@/data/events';
 import { isEventPast } from '@/utils/eventDate';
@@ -30,6 +31,7 @@ const eventSchemas = buildEventSchemas(upcomingForSchema);
     ))}
   </Fragment>
 
+  <PageNav />
   <div class="tickets-page">
     <div class="tickets-container">
       {/* Header */}

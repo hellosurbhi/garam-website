@@ -1,5 +1,6 @@
 ---
 import BaseLayout from '@/layouts/BaseLayout.astro';
+import PageNav from '@/components/layout/PageNav.astro';
 import AuthorBio from '@/components/AuthorBio.astro';
 import { tipPosts, type TipPost } from '@/data/tips';
 import { buildBreadcrumbJsonLd } from '@/utils/breadcrumbs';
@@ -74,6 +75,7 @@ const remainingBlocks = post.body.slice(1);
     <script type="application/ld+json" set:html={breadcrumbJsonLd} />
   </Fragment>
 
+  <PageNav />
   <div class="tip-post-page">
     <div class="tip-post-container">
       <!-- Back link -->

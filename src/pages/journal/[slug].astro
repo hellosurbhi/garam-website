@@ -1,5 +1,6 @@
 ---
 import BaseLayout from '@/layouts/BaseLayout.astro';
+import PageNav from '@/components/layout/PageNav.astro';
 import AuthorBio from '@/components/AuthorBio.astro';
 import { journalPostsPublished, type JournalPost, type JournalFaq } from '@/data/journal';
 import { buildBreadcrumbJsonLd } from '@/utils/breadcrumbs';
@@ -85,6 +86,7 @@ const pageTitle = `${post.title} | Garam Masala Dating`;
     {faqJsonLd && <script type="application/ld+json" set:html={faqJsonLd} />}
   </Fragment>
 
+  <PageNav />
   <div class="post-page">
     <div class="post-container">
       <!-- Back link -->

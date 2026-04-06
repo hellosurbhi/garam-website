@@ -68,16 +68,21 @@ const eventSchemas = buildEventSchemas(upcomingForSchema);
                 </span>
               </a>
             ) : (
-              <div
+              <button
+                type="button"
                 class="ticket-card ticket-card--tba"
                 style={`animation-delay: ${0.1 + i * 0.06}s`}
+                data-notify-city={event.city}
               >
                 <div class="ticket-card__info">
                   <span class="ticket-card__date ticket-card__date--tba">{event.date}</span>
                   <span class="ticket-card__city ticket-card__city--tba">{event.city}</span>
                 </div>
-                <span class="ticket-card__soon">Coming Soon</span>
-              </div>
+                <span class="ticket-card__cta ticket-card__cta--notify">
+                  Notify Me
+                  <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/></svg>
+                </span>
+              </button>
             );
           })}
         </div>
@@ -91,6 +96,27 @@ const eventSchemas = buildEventSchemas(upcomingForSchema);
         </p>
       )}
 
+      {/* Notify modal */}
+      <dialog id="notify-modal" class="modal-dialog">
+        <div class="modal-inner">
+          <button type="button" class="modal-close" aria-label="Close">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
+          </button>
+          <div id="notify-form-view">
+            <h2 class="modal-title">Get Notified</h2>
+            <p class="modal-subtitle">We'll email you when tickets drop for <strong id="notify-city-name"></strong>.</p>
+            <form id="notify-form" class="modal-form">
+              <input type="email" id="notify-email" placeholder="Your email" required aria-label="Email address" />
+              <input type="hidden" id="notify-city" />
+              <button type="submit" class="modal-submit">Notify Me</button>
+            </form>
+          </div>
+          <div id="notify-success" class="modal-success" hidden>
+            <p>You're on the list! We'll let you know.</p>
+          </div>
+        </div>
+      </dialog>
+
       {/* Footer */}
       <div class="tickets-footer">
         <a href="/" class="tickets-footer__back">
@@ -101,6 +127,47 @@ const eventSchemas = buildEventSchemas(upcomingForSchema);
     </div>
   </div>
 </BaseLayout>
+
+<script>
+  import { getFirebaseDb } from '@/lib/firebase';
+  import { collection, addDoc } from 'firebase/firestore';
+
+  const dialog = document.getElementById('notify-modal') as HTMLDialogElement;
+  if (dialog) {
+    document.querySelectorAll<HTMLElement>('[data-notify-city]').forEach((btn) => {
+      btn.addEventListener('click', () => {
+        const city = btn.dataset.notifyCity ?? '';
+        (document.getElementById('notify-city') as HTMLInputElement).value = city;
+        const nameEl = document.getElementById('notify-city-name');
+        if (nameEl) nameEl.textContent = city;
+        document.getElementById('notify-form-view')?.removeAttribute('hidden');
+        document.getElementById('notify-success')?.setAttribute('hidden', '');
+        dialog.showModal();
+      });
+    });
+    dialog.querySelector('.modal-close')?.addEventListener('click', () => dialog.close());
+    dialog.addEventListener('click', (e) => {
+      if (e.target === dialog) dialog.close();
+    });
+
+    document.getElementById('notify-form')?.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const email = (document.getElementById('notify-email') as HTMLInputElement).value;
+      const city = (document.getElementById('notify-city') as HTMLInputElement).value;
+      try {
+        const db = getFirebaseDb();
+        await addDoc(collection(db, 'notifications'), {
+          email,
+          city,
+          source: 'tickets-notify',
+          createdAt: new Date().toISOString(),
+        });
+      } catch { /* fail silently */ }
+      document.getElementById('notify-form-view')?.setAttribute('hidden', '');
+      document.getElementById('notify-success')?.removeAttribute('hidden');
+    });
+  }
+</script>
 
 <style>
   @keyframes ticketsFadeIn {
@@ -193,9 +260,16 @@ const eventSchemas = buildEventSchemas(upcomingForSchema);
   }
 
   .ticket-card--tba {
-    border-color: rgba(0, 0, 0, 0.06);
+    border-color: rgba(0, 0, 0, 0.08);
     background: white;
-    opacity: 0.5;
+    cursor: pointer;
+    text-align: left;
+    font: inherit;
+  }
+
+  .ticket-card--tba:hover {
+    border-color: rgba(233, 30, 118, 0.3);
+    background: rgba(233, 30, 118, 0.02);
   }
 
   .ticket-card__info {
@@ -251,14 +325,16 @@ const eventSchemas = buildEventSchemas(upcomingForSchema);
     border-color: rgba(233, 30, 118, 0.5);
   }
 
-  .ticket-card__soon {
-    flex-shrink: 0;
-    font-family: var(--font-jetbrains);
-    font-size: 10px;
-    font-weight: 500;
-    text-transform: uppercase;
-    letter-spacing: 0.12em;
-    color: var(--muted);
+  .ticket-card__cta--notify {
+    border-color: rgba(0, 0, 0, 0.1);
+    background: rgba(0, 0, 0, 0.03);
+    color: #666;
+  }
+
+  .ticket-card--tba:hover .ticket-card__cta--notify {
+    background: rgba(233, 30, 118, 0.08);
+    border-color: rgba(233, 30, 118, 0.35);
+    color: var(--hot-pink);
   }
 
   /* ─── Empty State ────────────────────────────────────── */
@@ -299,6 +375,114 @@ const eventSchemas = buildEventSchemas(upcomingForSchema);
   }
 
   .tickets-footer__back:hover {
+    color: var(--charcoal);
+  }
+
+  /* ─── Notify Modal ──────────────────────────────────── */
+
+  .modal-dialog {
+    border: none;
+    background: transparent;
+    padding: 24px;
+    max-width: 100%;
+    max-height: 100vh;
+    width: 100%;
+    height: 100%;
+    overflow: visible;
+  }
+  .modal-dialog::backdrop { background: rgba(0, 0, 0, 0.5); }
+  .modal-dialog[open] {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .modal-inner {
+    width: 100%;
+    max-width: 400px;
+    max-height: 80vh;
+    overflow-y: auto;
+    background: white;
+    border: 1px solid rgba(0, 0, 0, 0.1);
+    border-radius: 20px;
+    padding: 32px 24px;
+    position: relative;
+    animation: modalIn 0.25s ease-out both;
+    text-align: center;
+  }
+  @keyframes modalIn {
+    from { opacity: 0; transform: scale(0.95) translateY(8px); }
+    to { opacity: 1; transform: scale(1) translateY(0); }
+  }
+  .modal-close {
+    position: absolute;
+    top: 16px;
+    right: 16px;
+    background: none;
+    border: none;
+    color: #888;
+    padding: 4px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: color 0.2s;
+    cursor: pointer;
+  }
+  .modal-close:hover { color: var(--charcoal); }
+  .modal-title {
+    font-family: var(--font-playfair), serif;
+    font-size: 22px;
+    font-weight: 600;
+    color: var(--charcoal);
+    margin-bottom: 8px;
+  }
+  .modal-subtitle {
+    font-size: 15px;
+    color: #666;
+    margin-bottom: 24px;
+    line-height: 1.5;
+  }
+  .modal-form {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+  .modal-form input {
+    padding: 14px 20px;
+    border: 1.5px solid rgba(0, 0, 0, 0.1);
+    border-radius: 50px;
+    font-size: 16px;
+    font-family: var(--font-body), sans-serif;
+    outline: none;
+    transition: border-color 0.2s;
+    min-height: 48px;
+  }
+  .modal-form input:focus { border-color: var(--hot-pink); }
+  .modal-submit {
+    background: var(--hot-pink);
+    color: white;
+    border: none;
+    padding: 14px;
+    border-radius: 50px;
+    font-family: var(--font-body), sans-serif;
+    font-size: 14px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    transition: background 0.2s;
+    min-height: 48px;
+    white-space: nowrap;
+    width: 100%;
+    cursor: pointer;
+  }
+  .modal-submit:hover { background: var(--deep-magenta); }
+  .modal-success {
+    text-align: center;
+    padding: 24px 0;
+  }
+  .modal-success p {
+    font-family: var(--font-cormorant), serif;
+    font-size: 18px;
+    font-style: italic;
     color: var(--charcoal);
   }
 </style>

@@ -64,7 +64,7 @@
   --crimson-dark: #A33D62;
   --crimson-light: #D4537E;
   --cream: #FFF8F0;
-  --text: #2C2C2A;
+  --text: #1A1A1A;
   --text-light: #666;
   --border: rgba(0, 0, 0, 0.1);
   --success: #22C55E;
@@ -76,7 +76,7 @@
   --warm-red: #E24B4A;
   --off-white: #FFF8F0;
   --deep-magenta: #A33D62;
-  --charcoal: #2C2C2A;
+  --charcoal: #1A1A1A;
   --ink: #111;
   --muted: #888;
 }

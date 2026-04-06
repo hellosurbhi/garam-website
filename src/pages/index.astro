@@ -115,9 +115,101 @@ const eventSchemas = buildEventSchemas(upcomingForSchema);
     <HomeNewsletter />
   </main>
   <HomeFooter />
+
+  <!-- 30-second email popup -->
+  <dialog id="email-popup" class="popup-dialog">
+    <div class="popup-inner">
+      <button type="button" class="popup-close" aria-label="Close">
+        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
+      </button>
+
+      <div id="popup-step-1">
+        <h2 class="popup-title">Want Cheaper Tickets?</h2>
+        <p class="popup-subtitle">Join our list for exclusive discount codes and early access.</p>
+        <form id="popup-email-form" class="popup-form">
+          <input type="email" id="popup-email" placeholder="Your email" required aria-label="Email address" />
+          <button type="submit" class="popup-submit">Get My Discount Code</button>
+        </form>
+        <button type="button" class="popup-dismiss">No thanks</button>
+      </div>
+
+      <div id="popup-step-2" hidden>
+        <h2 class="popup-title">One more thing...</h2>
+        <p class="popup-subtitle">Add your number for text-only discounts and free ticket drops.</p>
+        <form id="popup-phone-form" class="popup-form">
+          <input type="tel" id="popup-phone" placeholder="Your phone number" aria-label="Phone number" />
+          <button type="submit" class="popup-submit">Send Me Deals</button>
+        </form>
+        <button type="button" class="popup-skip">Maybe later</button>
+      </div>
+    </div>
+  </dialog>
 </BaseLayout>
 
 <script>
+  import { getFirebaseDb } from '@/lib/firebase';
+  import { collection, addDoc } from 'firebase/firestore';
+
+  // Email popup logic
+  const POPUP_KEY = 'gmd-popup-dismissed';
+  const popup = document.getElementById('email-popup') as HTMLDialogElement;
+
+  if (popup && !localStorage.getItem(POPUP_KEY)) {
+    const timer = setTimeout(() => {
+      if (!document.querySelector('dialog[open]')) {
+        popup.showModal();
+      }
+    }, 30000);
+
+    const dismiss = () => {
+      localStorage.setItem(POPUP_KEY, 'true');
+      popup.close();
+      clearTimeout(timer);
+    };
+
+    popup.querySelector('.popup-close')?.addEventListener('click', dismiss);
+    popup.querySelector('.popup-dismiss')?.addEventListener('click', dismiss);
+    popup.querySelector('.popup-skip')?.addEventListener('click', dismiss);
+    popup.addEventListener('click', (e) => {
+      if (e.target === popup) dismiss();
+    });
+
+    let savedEmail = '';
+
+    document.getElementById('popup-email-form')?.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      savedEmail = (document.getElementById('popup-email') as HTMLInputElement).value;
+      try {
+        const db = getFirebaseDb();
+        await addDoc(collection(db, 'subscribers'), {
+          email: savedEmail,
+          source: 'popup',
+          createdAt: new Date().toISOString(),
+        });
+      } catch { /* fail silently */ }
+      document.getElementById('popup-step-1')?.setAttribute('hidden', '');
+      document.getElementById('popup-step-2')?.removeAttribute('hidden');
+    });
+
+    document.getElementById('popup-phone-form')?.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const phone = (document.getElementById('popup-phone') as HTMLInputElement).value;
+      if (phone) {
+        try {
+          const db = getFirebaseDb();
+          await addDoc(collection(db, 'subscribers'), {
+            email: savedEmail,
+            phone,
+            source: 'popup-phone',
+            createdAt: new Date().toISOString(),
+          });
+        } catch { /* fail silently */ }
+      }
+      dismiss();
+    });
+  }
+
+  // Scroll reveal observer
   const observer = new IntersectionObserver(
     (entries) => {
       entries.forEach((entry) => {
@@ -142,4 +234,116 @@ const eventSchemas = buildEventSchemas(upcomingForSchema);
     opacity: 1;
     transform: none;
   }
+
+  /* Email popup */
+  .popup-dialog {
+    border: none;
+    background: transparent;
+    padding: 24px;
+    max-width: 100vw;
+    max-height: 100vh;
+    width: 100%;
+    height: 100%;
+    overflow: visible;
+  }
+  .popup-dialog::backdrop {
+    background: rgba(0, 0, 0, 0.5);
+  }
+  .popup-dialog[open] {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .popup-inner {
+    width: 100%;
+    max-width: 400px;
+    background: white;
+    border: 1px solid rgba(0, 0, 0, 0.1);
+    border-radius: 20px;
+    padding: 32px 24px;
+    position: relative;
+    animation: popupIn 0.25s ease-out both;
+    text-align: center;
+  }
+  @keyframes popupIn {
+    from { opacity: 0; transform: scale(0.95) translateY(8px); }
+    to { opacity: 1; transform: scale(1) translateY(0); }
+  }
+  .popup-close {
+    position: absolute;
+    top: 16px;
+    right: 16px;
+    background: none;
+    border: none;
+    color: #888;
+    cursor: pointer;
+    padding: 4px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: color 0.2s;
+  }
+  .popup-close:hover { color: var(--charcoal); }
+  .popup-title {
+    font-family: var(--font-playfair), serif;
+    font-size: 24px;
+    font-weight: 700;
+    color: var(--charcoal);
+    margin-bottom: 8px;
+  }
+  .popup-subtitle {
+    font-size: 15px;
+    color: #666;
+    margin-bottom: 24px;
+    line-height: 1.5;
+  }
+  .popup-form {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+  .popup-form input {
+    padding: 14px 20px;
+    border: 1.5px solid rgba(0, 0, 0, 0.1);
+    border-radius: 50px;
+    font-size: 16px;
+    font-family: var(--font-body), sans-serif;
+    outline: none;
+    transition: border-color 0.2s;
+    min-height: 48px;
+  }
+  .popup-form input:focus {
+    border-color: var(--hot-pink);
+  }
+  .popup-submit {
+    background: var(--hot-pink);
+    color: white;
+    border: none;
+    padding: 14px;
+    border-radius: 50px;
+    font-family: var(--font-body), sans-serif;
+    font-size: 14px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    cursor: pointer;
+    transition: background 0.2s;
+    min-height: 48px;
+  }
+  .popup-submit:hover { background: var(--deep-magenta); }
+  .popup-dismiss,
+  .popup-skip {
+    display: inline-block;
+    margin-top: 16px;
+    background: none;
+    border: none;
+    color: #999;
+    font-size: 14px;
+    cursor: pointer;
+    font-family: var(--font-body), sans-serif;
+    transition: color 0.2s;
+    padding: 4px;
+  }
+  .popup-dismiss:hover,
+  .popup-skip:hover { color: #666; }
 </style>

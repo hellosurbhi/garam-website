@@ -69,14 +69,27 @@ const { ticketsUrl } = Astro.props;
   }
 
   .hero-eyebrow {
-    display: block;
-    font-size: 11px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(255, 255, 255, 0.15);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid rgba(255, 255, 255, 0.25);
+    color: var(--charcoal);
+    font-family: var(--font-body), sans-serif;
+    font-size: clamp(14px, 2.5vw, 20px);
     font-weight: 700;
     font-style: normal;
     letter-spacing: 3px;
     text-transform: uppercase;
-    color: var(--hot-pink);
-    margin-bottom: 16px;
+    padding: 12px 32px;
+    border-radius: 50px;
+    margin-bottom: 20px;
+    width: 100%;
+    max-width: max-content;
+    min-width: min(100%, 420px);
+    box-sizing: border-box;
   }
 
   @keyframes pop {

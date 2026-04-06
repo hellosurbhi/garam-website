@@ -1,4 +1,4 @@
-# CLAUDE.md - garamasolidating.com
+# CLAUDE.md - garammasaladating.com
 
 ## What this project is
 
@@ -8,112 +8,153 @@ The site has three jobs: get someone to understand the show, find the next event
 
 ## Tech stack
 
-- React SPA with Vite (considering migration to SSR/SSG later)
-- Firebase Firestore for contestant applications
+- Astro static site (SSG) with React islands for interactive components
+- Firebase Firestore for contestant applications, subscribers, city requests, notifications
 - Firebase Auth for admin access
+- jose for contestant prep page auth (weekly rotating passwords)
 - Hosted on Vercel
-- Styling: CSS custom properties in `:root`, component-level CSS
+- Styling: CSS custom properties in `:root`, scoped Astro `<style>` blocks, CSS modules for React components
 
 ## Project structure
 
 ```
 src/
   components/
-    ui/           # shared reusable components (Button, Section, Accordion, etc.)
-    layout/       # Nav, Footer, MobileMenu, SEOHead
-    home/         # landing page sections
-    admin/        # admin dashboard components
-  hooks/          # useScrolled, useIntersectionObserver, useMediaQuery
-  lib/            # constants, utils, formatDate, eventSchema
-  styles/         # tokens.ts, global.css
-  pages/          # route-level page components
+    home/         # landing page sections (HomeHero, HomeShows, HomeFAQ, etc.)
+    admin/        # admin dashboard (AdminDashboard, ApplicantCard, ApplicantModal)
+    layout/       # PageNav, BaseLayout is in layouts/
+  data/           # all content as TypeScript data files (events, copy, press, etc.)
+  hooks/          # useGeoData (country/state/city for apply form)
+  layouts/        # BaseLayout.astro (wraps every page)
+  pages/          # file-based routing (index, apply, tickets, faq, etc.)
+  utils/          # breadcrumbs, eventSchema, reactSelectStyles, eventDate
+  types/          # application.ts (Firestore types)
+api/              # Vercel serverless functions (notify-application, contestant-prep-auth)
+public/
+  fonts/          # self-hosted woff2 (Playfair, Nunito, Cormorant, JetBrains)
+  images/         # all images (logo.svg, hero.avif, host photos, etc.)
+  js/             # shader-app.js (WebGL background on 404)
 ```
 
 ## Key pages
 
-- `/` — landing page (hero, next show, social proof, video, FAQ, newsletter, hosts, footer)
+- `/` — landing page (hero, marquee, stats, shows, experience, testimonials, FAQ, signup, creators, press, photos, footer)
+- `/tickets` — all upcoming + TBA shows with notify modals
+- `/apply` — contestant application form (React island, writes to Firestore)
 - `/links` — linktree replacement for Instagram bio
-- `/apply` — contestant application form (writes to Firestore)
-- `/admin` — protected dashboard to view/filter submitted applications (requires Firebase Auth)
+- `/faq` — standalone FAQ page
+- `/hosts` — host bios (Surbhi + Wyatt)
+- `/journal` — blog/journal posts
+- `/south-asian-dating-tips` — SEO content hub
+- `/cities/[slug]` — city landing pages (expansion markets)
+- `/admin` — protected dashboard to view/filter applications (requires Firebase Auth)
 - `/contestant-prep` — password-protected prep guide for selected contestants
+- `/privacy`, `/terms` — legal pages
+
+## Content architecture
+
+**All user-facing text lives in `src/data/` files, never hardcoded in components.**
+
+- `data/copy.ts` — site-wide copy: taglines, stats, testimonials, FAQs, experience steps, marquee items
+- `data/events.ts` — show dates, venues, Eventbrite URLs, taglines
+- `data/press.ts` — press mentions (source, url, type)
+- `data/socials.ts` — all social URLs (Instagram, TikTok, YouTube, etc.)
+- `data/icons.ts` — SVG icon strings for links page + social rows
+- `data/journal.ts` — blog post content
+- `data/tips.ts` — dating tips content
+- `data/cities/` — city landing page data
+
+When adding new content (shows, press, FAQs, testimonials), update the data file — never edit component HTML directly.
 
 ## Code rules
 
 ### Never do
 
-- Hardcode colors, fonts, or spacing values in components. Import from tokens.
-- Hardcode external URLs (Eventbrite, YouTube, Instagram) in JSX. Import from `lib/constants.ts`.
-- Run continuous CSS animations when elements are off-screen. Use IntersectionObserver.
-- Add inline `style={}` props. Use CSS modules or classes.
-- Put API keys or secrets in client-side code. All secrets go in `.env.local` (never committed) and are accessed through server functions or Vercel environment variables.
-- Duplicate component patterns. If a button/heading/section-wrapper already exists in `ui/`, use it.
-- Use `console.log` in committed code. Remove before pushing.
-- Use `any` type in TypeScript. Type everything.
-- Install new npm packages without checking bundle size on bundlephobia.com first.
+- Hardcode user-facing text in components. All copy goes in `src/data/` files.
+- Hardcode colors, fonts, or spacing values. Use CSS custom properties from `:root`.
+- Hardcode external URLs (Eventbrite, YouTube, Instagram) in JSX. Import from data files.
+- Add inline `style={}` props in Astro components. Use scoped `<style>` blocks or CSS modules.
+- Put API keys or secrets in client-side code. All secrets go in `.env.local`.
+- Use `console.log` in committed code.
+- Use `any` type in TypeScript.
+- Use font-size below 16px on any interactive element (buttons, inputs, links). iOS auto-zooms on focus.
+- Use `outline: none` without a visible `:focus-visible` replacement.
+- Install npm packages without checking bundle size first.
 
 ### Always do
 
-- Mobile-first CSS: base styles are mobile, media queries scale up to desktop.
+- Mobile-first CSS: base styles are mobile, media queries scale up.
 - All touch targets minimum 48x48px.
 - All `<img>` tags need `loading="lazy"`, `width`, `height`, and descriptive `alt` text.
-- Font minimum 16px on all mobile form inputs (prevents iOS auto-zoom).
-- Semantic HTML: use `<nav>`, `<main>`, `<section>`, `<header>`, `<footer>`, `<article>`.
-- Every page gets meta title, description, and OG tags via the SEOHead component.
-- Test on a real phone, not just Chrome DevTools.
+- Every page has `<main id="main-content">` landmark.
+- Every page gets meta title, description, OG tags, and canonical via BaseLayout.
+- Blog posts pass `ogType="article"` and include `article:published_time` meta.
+- All form inputs need `aria-label` or associated `<label>`, `required` where applicable.
+- Error messages use `role="alert"` and link to inputs via `aria-describedby`.
+- Decorative SVGs get `aria-hidden="true"`.
 - Run `npm run lint` before committing.
-
-### Component patterns
-
-- Shared UI components live in `src/components/ui/` and are generic (no page-specific logic).
-- Page-specific sections live in `src/components/home/`, `src/components/admin/`, etc.
-- Hooks that are used by more than one component live in `src/hooks/`.
-- If you're about to copy-paste styling from another component, stop and extract a shared component instead.
+- Commit after each meaningful change, not in one giant blob.
 
 ### Design tokens
 
-All colors, fonts, spacing, and breakpoints come from `src/styles/tokens.ts` (or CSS custom properties in `:root`). The brand colors are:
+All colors come from CSS custom properties in `src/index.css` `:root`:
 
-- Red: #DC2626 (primary CTA, accents)
-- Electric yellow: #FFD600 (highlights, badges)
-- Off-white: #FFF8F0 (background)
-- Charcoal: #1A1A1A (text)
-- Red dark: #b91c1c (hover states)
-- Spice orange: #FF6D00 (secondary accent)
+- `--brand-red`: #DC2626 (primary CTA, accents)
+- `--brand-red-dark`: #b91c1c (hover states)
+- `--electric-yellow`: #FFD600 (highlights, badges)
+- `--off-white`: #FFF8F0 (page background)
+- `--charcoal`: #1A1A1A (body text)
+- `--spice-orange`: #FF6D00 (secondary accent)
+- `--muted`: #888 (secondary text — needs contrast fix, see BUGS.md)
 
-Font families: Playfair Display (headings), Outfit (body). Maximum two families loaded.
+Font families: Playfair Display (headings), Nunito (body), Cormorant Garamond (decorative italic). Self-hosted as woff2 in `public/fonts/`.
 
 ### Firestore rules
 
-Applications collection: public can create (with field validation), only authenticated admins can read/update/delete. All other collections default deny. Never use `allow read, write: if true`.
+- `applications`: public create with field validation, admin-only read/update/delete
+- `notifications`, `city_requests`, `subscribers`: public create with field-level validation (type, length, required fields), admin-only read/update/delete
+- Validation functions: `validNotification()`, `validCityRequest()`, `validSubscriber()`
 
 ### External services
 
-- Eventbrite: ticket links stored in `lib/constants.ts`, never called via API from the client
-- YouTube: use facade pattern (thumbnail + play button, load iframe on click)
-- Instagram: link out, don't embed (embeds are heavy)
-- Firebase: Firestore for data, Auth for admin access. No Firebase hosting.
+- Eventbrite: ticket links in `data/events.ts`, show cards link directly to Eventbrite URLs
+- Firebase: Firestore for data, Auth for admin. No Firebase hosting.
+- Resend: email notifications for new applications (`api/notify-application.ts`)
+- Vercel: hosting, serverless functions, analytics, speed insights
 
-### Performance budget
+### JSON-LD schemas
 
-- Total page weight: under 500KB
-- JavaScript: under 100KB gzipped
-- LCP: under 2.5 seconds on mobile 4G
-- Lighthouse performance: 90+
-- Lighthouse accessibility: 90+
+- Organization + WebSite on homepage
+- Event schema for each upcoming show (auto-generated via `buildEventSchemas`)
+- FAQPage on homepage and blog posts with FAQs
+- Article on journal + tips posts
+- BreadcrumbList on all pages
+- Logo URL: `https://garammasaladating.com/images/logo.svg`
+
+### Performance
+
+- Astro SSG: zero JS on static pages, React islands only on apply/admin/prep
+- Hero images preloaded (AVIF, conditional on viewport)
+- Fonts preloaded (Playfair + Nunito)
+- Sitemap auto-generated via `@astrojs/sitemap`
+- `country-state-city` package lazy-loaded only on apply page
+- ErrorBoundary wraps ApplyPage (prevents white screen on crash)
+- Global `prefers-reduced-motion` kills all animations
 
 ### Git workflow
 
 - All changes go through PRs to `main`. No direct pushes.
 - CI runs lint, type-check, build, and security scan on every PR.
-- CodeRabbit reviews every PR automatically.
-- Branch protection requires passing CI before merge.
+- Husky pre-commit: lint-staged + test suite.
 
 ### Environment variables
 
-- `VITE_FIREBASE_*` — Firebase config (client-safe, but don't add admin/service keys)
-- `CONTESTANT_PREP_PASSWORD` — current valid password for contestant prep page
+- `PUBLIC_FIREBASE_*` — Firebase config (client-safe, Astro PUBLIC_ prefix)
+- `FIREBASE_ADMIN_CLIENT_EMAIL`, `FIREBASE_ADMIN_PRIVATE_KEY` — server-side only
 - `CONTESTANT_PREP_SALT` — salt for weekly password rotation
-- Never commit `.env.local`. The `.env.example` file shows what's needed without real values.
+- `RESEND_API_KEY` — email notification service
+- `NOTIFICATION_EMAIL` — where application notifications go
+- See `.env.example` for the full list.
 
 ## Team context
 
@@ -127,5 +168,6 @@ Applications collection: public can create (with field validation), only authent
 
 - Ask before adding a new dependency.
 - Prefer deleting code to adding code.
-- If a component is over 150 lines, it probably needs to be split.
+- Add new content to data files, not component HTML.
+- If a component is over 150 lines, split it.
 - Ship the smallest working version first, then iterate.

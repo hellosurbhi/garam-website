@@ -100,7 +100,8 @@ const {
         if (cameFromHome) {
           document.body.addEventListener('click', (e) => {
             const target = e.target as HTMLElement;
-            if (target === document.body || target.classList.contains('grain-overlay')) {
+            const interactive = target.closest('a, button, input, textarea, select, dialog, form, nav, footer, [role="button"], .show-card, .host-card, .faq-item, .press-name');
+            if (!interactive) {
               window.location.href = '/';
             }
           });

@@ -17,7 +17,8 @@ import { events, allEvents } from '@/data/events';
 import { isEventPast } from '@/utils/eventDate';
 import { buildEventSchemas } from '@/utils/eventSchema';
 
-const upcomingEvents = allEvents.filter((e) => !isEventPast(e.date) && !e.hidden);
+const HIDDEN_FROM_HOME = ['Salt Lake City', 'Denver'];
+const upcomingEvents = allEvents.filter((e) => !isEventPast(e.date) && !e.hidden && !HIDDEN_FROM_HOME.includes(e.city));
 const firstTicketUrl = '/tickets';
 
 // Organization JSON-LD

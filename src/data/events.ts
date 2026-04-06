@@ -103,6 +103,16 @@ export const events: EventEntry[] = [
   },
   {
     date: "TBA",
+    city: "San Diego",
+    url: "#",
+  },
+  {
+    date: "TBA",
+    city: "Los Angeles",
+    url: "#",
+  },
+  {
+    date: "TBA",
     city: "Edinburgh",
     url: "#",
   },

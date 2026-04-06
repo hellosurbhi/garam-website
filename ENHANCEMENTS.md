@@ -69,3 +69,23 @@ Items from the GMD website audit checklist that are either external tasks, requi
 ### AggregateRating schema on testimonials
 - **Why:** Could trigger rich result stars in search.
 - **How:** Add AggregateRating JSON-LD to the testimonials section if enough data points exist.
+
+### Astro Content Collections for blog/journal
+- **Why:** Blog data is currently in `src/data/journal.ts` as inline objects. Content Collections (`src/content/`) would give type-safe frontmatter, auto slug generation, and better build perf.
+- **How:** Create `src/content/journal/` with .md files, define collection schema, update `[slug].astro` to use `getCollection()`.
+
+### Astro Image component for auto-optimization
+- **Why:** `astro:assets` `<Image>` auto-generates responsive sizes, converts to WebP/AVIF, adds width/height. Eliminates manual image optimization.
+- **How:** Replace `<img>` tags in Astro components with `<Image>` imports. React islands would still use `<img>`.
+
+### Shared UI components (Button, Section wrapper)
+- **Why:** Buttons and section wrappers are duplicated across pages with scoped styles. A shared component would reduce drift.
+- **How:** Create `src/components/ui/Button.astro` with primary/outline/white variants. Low urgency — current duplication is manageable since each page has scoped styles.
+
+### Prettier configuration
+- **Why:** ESLint handles lint rules but not opinionated formatting (trailing commas, quote style, line width). Prettier would enforce consistency.
+- **How:** `npm i -D prettier`, add `.prettierrc`, add to lint-staged. Optional — ESLint `--fix` already handles most formatting.
+
+### StructuredData component
+- **Why:** JSON-LD is inlined in pages via `JSON.stringify` + `set:html`. A `<StructuredData>` component would be slightly cleaner but the current utility function approach (`buildBreadcrumbJsonLd`, `buildEventSchemas`) already works well.
+- **How:** Create `src/components/StructuredData.astro` that takes `data` prop and renders the script tag. Marginal improvement.

@@ -44,18 +44,18 @@ const { ticketsUrl } = Astro.props;
     place-items: center;
     position: relative;
     overflow: hidden;
-    background: var(--off-white);
+    background: #0a0a09;
     padding: 80px 20px 60px;
   }
 
-  /* Shader fills the entire hero as a subtle background wash */
+  /* Shader fills hero — full color on dark bg */
   .hero-shader {
     position: absolute;
     inset: 0;
     width: 100%;
     height: 100%;
-    opacity: 0.4;
     pointer-events: none;
+    z-index: 0;
   }
 
   .hero-content {
@@ -73,6 +73,7 @@ const { ticketsUrl } = Astro.props;
     color: var(--charcoal);
     font-weight: 700;
     font-size: 10px;
+    position: relative;
     letter-spacing: 2.5px;
     text-transform: uppercase;
     padding: 8px 18px;
@@ -92,7 +93,7 @@ const { ticketsUrl } = Astro.props;
     font-weight: 900;
     line-height: 0.9;
     letter-spacing: -2px;
-    color: var(--charcoal);
+    color: white;
     margin-bottom: 24px;
     animation: rise 0.9s cubic-bezier(0.22, 1, 0.36, 1) 0.2s both;
   }
@@ -112,7 +113,7 @@ const { ticketsUrl } = Astro.props;
     font-size: 0.55em;
     font-weight: 400;
     font-style: italic;
-    color: var(--muted);
+    color: rgba(255, 255, 255, 0.5);
     letter-spacing: 0;
     margin-top: 4px;
   }
@@ -121,7 +122,7 @@ const { ticketsUrl } = Astro.props;
     font-family: var(--font-cormorant), serif;
     font-size: 18px;
     font-style: italic;
-    color: #555;
+    color: rgba(255, 255, 255, 0.75);
     margin-bottom: 36px;
     line-height: 1.5;
     animation: rise 0.9s cubic-bezier(0.22, 1, 0.36, 1) 0.35s both;
@@ -167,13 +168,14 @@ const { ticketsUrl } = Astro.props;
 
   .btn-outline {
     background: transparent;
-    color: var(--charcoal);
-    border-color: var(--charcoal);
+    color: white;
+    border-color: rgba(255, 255, 255, 0.3);
   }
 
   .btn-outline:hover {
-    background: var(--charcoal);
-    color: white;
+    background: white;
+    color: var(--charcoal);
+    border-color: white;
     transform: translateY(-3px);
   }
 
@@ -189,7 +191,7 @@ const { ticketsUrl } = Astro.props;
     opacity: 0.45;
     animation: bounce 2s ease-in-out infinite;
     z-index: 2;
-    color: var(--charcoal);
+    color: rgba(255, 255, 255, 0.6);
   }
 
   .scroll-cue span {

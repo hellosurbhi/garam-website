@@ -54,6 +54,11 @@ const { ticketsUrl } = Astro.props;
   .nav-logo-img {
     height: 36px;
     width: auto;
+    filter: brightness(0) invert(1);
+    transition: filter 0.4s;
+  }
+  .home-nav.scrolled .nav-logo-img {
+    filter: none;
   }
   .nav-right {
     display: flex;
@@ -67,16 +72,22 @@ const { ticketsUrl } = Astro.props;
     text-transform: uppercase;
     letter-spacing: 1.5px;
     text-decoration: none;
-    color: var(--charcoal);
+    color: white;
     padding: 12px 22px;
     border-radius: 50px;
     border: 1.5px solid transparent;
-    transition: all 0.2s;
+    transition: all 0.2s, color 0.4s;
     min-height: 48px;
     display: inline-flex;
     align-items: center;
   }
   .nav-pill:hover {
+    border-color: rgba(255, 255, 255, 0.3);
+  }
+  .home-nav.scrolled .nav-pill {
+    color: var(--charcoal);
+  }
+  .home-nav.scrolled .nav-pill:hover {
     border-color: var(--charcoal);
   }
   .nav-pill.primary {

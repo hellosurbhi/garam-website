@@ -1,4 +1,5 @@
 import { useState, useEffect, useId, useMemo, type ChangeEvent } from "react";
+import { ErrorBoundary } from "./ErrorBoundary";
 import { collection, addDoc, serverTimestamp } from "firebase/firestore";
 import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import { signInAnonymously } from "firebase/auth";
@@ -83,6 +84,14 @@ const INITIAL: FormState = {
 type SelectOption = { value: string; label: string };
 
 export default function ApplyPage() {
+  return (
+    <ErrorBoundary>
+      <ApplyPageInner />
+    </ErrorBoundary>
+  );
+}
+
+function ApplyPageInner() {
   const [form, setForm] = useState<FormState>(INITIAL);
   const [photoFile, setPhotoFile] = useState<File | null>(null);
   const [photoPreview, setPhotoPreview] = useState<string | null>(null);

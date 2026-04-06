@@ -51,7 +51,7 @@ export const cities: Record<string, CityData> = {
     ],
     ctas: [
       { label: "Get Tickets", href: "/links" },
-      { label: "Apply to Be a Contestant", href: "/apply" },
+      { label: "Apply to Be a Contestant", href: "/apply?city=New+York&state=NY" },
     ],
     includeEventSchema: true,
     areaServed: "Manhattan, New York",
@@ -76,7 +76,7 @@ export const cities: Record<string, CityData> = {
     ],
     ctas: [
       { label: "Join the San Diego Waitlist", href: "/links" },
-      { label: "Apply to Be a Contestant", href: "/apply" },
+      { label: "Apply to Be a Contestant", href: "/apply?city=San+Diego&state=CA" },
     ],
     includeEventSchema: false,
     areaServed: "San Diego, California",
@@ -103,7 +103,7 @@ export const cities: Record<string, CityData> = {
     ],
     ctas: [
       { label: "Get Tickets", href: "/links" },
-      { label: "Apply to Be a Contestant", href: "/apply" },
+      { label: "Apply to Be a Contestant", href: "/apply?city=Jersey+City&state=NJ" },
     ],
     includeEventSchema: true,
     areaServed: "Jersey City, New Jersey",
@@ -130,7 +130,7 @@ export const cities: Record<string, CityData> = {
     ],
     ctas: [
       { label: "Join the LA Waitlist", href: "/links" },
-      { label: "Apply to Be a Contestant", href: "/apply" },
+      { label: "Apply to Be a Contestant", href: "/apply?city=Los+Angeles&state=CA" },
     ],
     includeEventSchema: false,
     areaServed: "Los Angeles, California",
@@ -155,7 +155,7 @@ export const cities: Record<string, CityData> = {
     ],
     ctas: [
       { label: "Join the SLC Waitlist", href: "/links" },
-      { label: "Apply to Be a Contestant", href: "/apply" },
+      { label: "Apply to Be a Contestant", href: "/apply?city=Salt+Lake+City&state=UT" },
     ],
     includeEventSchema: false,
     areaServed: "Salt Lake City, Utah",
@@ -181,7 +181,7 @@ export const cities: Record<string, CityData> = {
     ],
     ctas: [
       { label: "Join the SF Waitlist", href: "/links" },
-      { label: "Apply to Be a Contestant", href: "/apply" },
+      { label: "Apply to Be a Contestant", href: "/apply?city=San+Francisco&state=CA" },
     ],
     includeEventSchema: false,
     areaServed: "San Francisco, California",
@@ -206,7 +206,7 @@ export const cities: Record<string, CityData> = {
     ],
     ctas: [
       { label: "Join the Denver Waitlist", href: "/links" },
-      { label: "Apply to Be a Contestant", href: "/apply" },
+      { label: "Apply to Be a Contestant", href: "/apply?city=Denver&state=CO" },
     ],
     includeEventSchema: false,
     areaServed: "Denver, Colorado",

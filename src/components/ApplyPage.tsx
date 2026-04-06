@@ -89,6 +89,16 @@ export default function ApplyPage() {
 
   useEffect(() => {
     if (window.history.length > 1) setCanGoBack(true);
+    const params = new URLSearchParams(window.location.search);
+    const urlCity = params.get("city");
+    const urlState = params.get("state");
+    if (urlCity || urlState) {
+      setForm((prev) => ({
+        ...prev,
+        ...(urlState ? { state: urlState } : {}),
+        ...(urlCity ? { city: urlCity } : {}),
+      }));
+    }
   }, []);
 
   useEffect(() => {

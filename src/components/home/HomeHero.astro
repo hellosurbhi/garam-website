@@ -10,7 +10,7 @@ const { ticketsUrl } = Astro.props;
   <canvas id="glCanvas" class="hero-shader"></canvas>
 
   <div class="hero-content">
-    <div class="hero-eyebrow">🌶️ NYC's #1 Live Dating Show · NYC · LA · SF · San Diego</div>
+    <div class="hero-eyebrow">🌶️ NYC's #1 Live Dating Show</div>
     <h1>
       Garam<br />
       Mas<em>ala</em><br />
@@ -72,7 +72,10 @@ const { ticketsUrl } = Astro.props;
     display: inline-flex;
     align-items: center;
     gap: 8px;
-    background: var(--electric-yellow);
+    background: rgba(255, 255, 255, 0.15);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid rgba(255, 255, 255, 0.25);
     color: var(--charcoal);
     font-weight: 700;
     font-size: 10px;

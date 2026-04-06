@@ -11,7 +11,7 @@ import HomePress from '@/components/home/HomePress.astro';
 import HomeTestimonials from '@/components/home/HomeTestimonials.astro';
 import HomeCreators from '@/components/home/HomeCreators.astro';
 import HomeFAQ from '@/components/home/HomeFAQ.astro';
-import HomeNewsletter from '@/components/home/HomeNewsletter.astro';
+import HomeSignup from '@/components/home/HomeSignup.astro';
 import { SOCIAL_URLS } from '@/data/socials';
 import { events, allEvents } from '@/data/events';
 import { isEventPast } from '@/utils/eventDate';
@@ -88,6 +88,7 @@ const eventSchemas = buildEventSchemas(upcomingForSchema);
 <BaseLayout
   title="Garam Masala Dating | NYC's Live South Asian Comedy Dating Show"
   description="Garam Masala Dating is New York City's hottest live comedy dating show. Watch real South Asian singles find love on stage. Hosted by comedians Surbhi & Wyatt. Tickets available now."
+  hideNav={true}
 >
   <Fragment slot="head">
     <meta name="keywords" content="live dating show NYC, south asian comedy show, indian dating show new york, comedy dating show, desi dating show, live comedy show NYC, indian matchmaking live" />
@@ -111,7 +112,7 @@ const eventSchemas = buildEventSchemas(upcomingForSchema);
     <HomeTestimonials />
     <HomeCreators />
     <HomeFAQ />
-    <HomeNewsletter />
+    <HomeSignup />
   </main>
 
   <!-- 30-second email popup -->

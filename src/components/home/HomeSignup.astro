@@ -2,25 +2,25 @@
 
 ---
 
-<section class="newsletter" aria-labelledby="newsletter-heading">
-  <h2 id="newsletter-heading" data-reveal>Join the Spice List</h2>
+<section class="spicelist" aria-labelledby="spicelist-heading">
+  <h2 id="spicelist-heading" data-reveal>Join the Spice List</h2>
   <p data-reveal>Get exclusive discount codes for cheaper (and sometimes free) tickets.</p>
 
   <div id="nl-step-1" data-reveal>
-    <form id="nl-email-form" class="newsletter-form">
+    <form id="nl-email-form" class="spicelist-form">
       <input type="email" id="nl-email" placeholder="Your email" required aria-label="Email address" />
       <button type="submit">Get My Discount Code</button>
     </form>
-    <p class="newsletter-trust">Just discount codes and show announcements.</p>
+    <p class="spicelist-trust">Just discount codes and show announcements.</p>
   </div>
 
-  <div id="nl-step-2" class="newsletter-form" hidden data-reveal>
+  <div id="nl-step-2" hidden data-reveal>
     <p class="nl-step2-text">Add your number for text-only discounts and free ticket drops.</p>
-    <form id="nl-phone-form" class="newsletter-form">
+    <form id="nl-phone-form" class="spicelist-form">
       <input type="tel" id="nl-phone" placeholder="Your phone number" aria-label="Phone number" />
       <button type="submit">Send Me Deals</button>
     </form>
-    <button type="button" id="nl-skip" class="newsletter-skip">Maybe later</button>
+    <button type="button" id="nl-skip" class="spicelist-skip">Maybe later</button>
   </div>
 
   <div id="nl-success" hidden data-reveal>
@@ -74,14 +74,14 @@
 </script>
 
 <style>
-  .newsletter {
+  .spicelist {
     padding: 56px 20px;
     background: var(--hot-pink);
     text-align: center;
     position: relative;
     overflow: hidden;
   }
-  .newsletter h2 {
+  .spicelist h2 {
     font-family: var(--font-playfair), serif;
     font-size: clamp(30px, 5vw, 60px);
     font-weight: 900;
@@ -89,7 +89,7 @@
     margin-bottom: 12px;
     position: relative;
   }
-  .newsletter p {
+  .spicelist p {
     color: rgba(255, 255, 255, 0.85);
     font-size: 16px;
     margin-bottom: 36px;
@@ -97,7 +97,7 @@
     font-style: italic;
     position: relative;
   }
-  .newsletter-form {
+  .spicelist-form {
     display: flex;
     flex-direction: column;
     gap: 12px;
@@ -105,7 +105,7 @@
     margin: 0 auto;
     position: relative;
   }
-  .newsletter-form input {
+  .spicelist-form input {
     padding: 16px 24px;
     border: 1.5px solid rgba(255, 255, 255, 0.4);
     border-radius: 50px;
@@ -117,13 +117,13 @@
     transition: border-color 0.2s;
     min-height: 48px;
   }
-  .newsletter-form input::placeholder {
+  .spicelist-form input::placeholder {
     color: rgba(255, 255, 255, 0.5);
   }
-  .newsletter-form input:focus {
+  .spicelist-form input:focus {
     border-color: var(--electric-yellow);
   }
-  .newsletter-form button {
+  .spicelist-form button {
     background: var(--electric-yellow);
     color: var(--charcoal);
     border: none;
@@ -137,11 +137,11 @@
     transition: background 0.2s, color 0.2s;
     min-height: 48px;
   }
-  .newsletter-form button:hover {
+  .spicelist-form button:hover {
     background: white;
     color: var(--hot-pink);
   }
-  .newsletter-trust {
+  .spicelist-trust {
     font-size: 13px;
     color: rgba(255, 255, 255, 0.6);
     margin-bottom: 0;
@@ -157,7 +157,7 @@
     font-family: var(--font-cormorant), serif;
     font-style: italic;
   }
-  .newsletter-skip {
+  .spicelist-skip {
     background: none;
     border: none;
     color: rgba(255, 255, 255, 0.5);
@@ -167,7 +167,7 @@
     transition: color 0.2s;
     padding: 4px;
   }
-  .newsletter-skip:hover { color: white; }
+  .spicelist-skip:hover { color: white; }
   .nl-done-text {
     color: white;
     font-family: var(--font-cormorant), serif;
@@ -176,9 +176,9 @@
   }
 
   @media (min-width: 768px) {
-    .newsletter { padding: 80px 48px; }
-    .newsletter p { font-size: 17px; margin-bottom: 48px; }
-    .newsletter-form input { padding: 18px 28px; }
-    .newsletter-form button { padding: 18px; }
+    .spicelist { padding: 80px 48px; }
+    .spicelist p { font-size: 17px; margin-bottom: 48px; }
+    .spicelist-form input { padding: 18px 28px; }
+    .spicelist-form button { padding: 18px; }
   }
 </style>

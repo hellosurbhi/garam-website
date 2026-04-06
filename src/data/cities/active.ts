@@ -1,42 +1,11 @@
-export interface CityCta {
-  label: string;
-  href: string;
-}
+import type { CityData } from "./types";
 
-export interface CityData {
-  slug: string;
-  displayName: string;
-  titleTag: string;
-  metaDescription: string;
-  h1: string;
-  bodyParagraphs: string[];
-  ctas: CityCta[];
-  /**
-   * "active"      — weekly / regular shows running now
-   * "coming-soon" — announced or planned, no confirmed date yet
-   * "past"        — show already happened
-   */
-  status: "active" | "coming-soon" | "past";
-  /** Label shown on the /cities index card (e.g. "Weekly Shows", "Monthly Shows") */
-  badgeLabel: string;
-  /** For LocalBusiness schema */
-  areaServed: string;
-  /** Whether to include an Event schema block (false for unconfirmed / past cities) */
-  includeEventSchema: boolean;
-  addressLocality: string;
-  addressRegion: string;
-  /** Named venue for Event schema location.name (defaults to displayName) */
-  venueName?: string;
-  /** ISO 8601 duration for eventSchedule.repeatFrequency (e.g. "P1M" for monthly) */
-  eventScheduleFrequency?: string;
-}
-
-export const cities: Record<string, CityData> = {
+/** Cities with active shows or confirmed coming-soon status */
+export const activeCities: Record<string, CityData> = {
   manhattan: {
     slug: "manhattan",
     displayName: "Manhattan",
-    titleTag:
-      "South Asian Singles Events Manhattan | Garam Masala Dating NYC",
+    titleTag: "South Asian Singles Events Manhattan | Garam Masala Dating NYC",
     metaDescription:
       "The best South Asian singles event in Manhattan. A live South Asian dating show with a real mixer. Meet people, watch blind dates unfold on stage, and have an actual night out in NYC.",
     h1: "Manhattan\u2019s Desi Dating Night",
@@ -56,39 +25,16 @@ export const cities: Record<string, CityData> = {
     areaServed: "Manhattan, New York",
     addressLocality: "Manhattan",
     addressRegion: "NY",
+    addressCountry: "US",
     venueName: "Top Secret Comedy Club",
-  },
-
-  "san-diego": {
-    slug: "san-diego",
-    displayName: "San Diego",
-    titleTag:
-      "South Asian Singles Events San Diego | Garam Masala Dating",
-    metaDescription:
-      "Garam Masala Dating is coming back to San Diego. A live South Asian dating show and singles mixer from the creators of NYC\u2019s #1 live South Asian dating show.",
-    h1: "San Diego\u2019s Desi Dating Night Is Coming Back",
-    status: "coming-soon",
-    badgeLabel: "Coming Soon",
-    bodyParagraphs: [
-      "Garam Masala Dating came to San Diego in March 2026 and sold out. Same format as the NYC show: real singles, live blind dates on stage, and a mixer built into the night so everyone could meet.",
-      "The San Diego desi scene showed up. The room was tight-knit, the energy was different from New York. More personal, more \u201Cwait, do we have a friend in common?\u201D The show worked.",
-      "We\u2019re coming back. Dates are TBA, but if you want to be first to know when tickets drop, get on the waitlist. And if you want to be a contestant when we return, apply below.",
-    ],
-    ctas: [
-      { label: "Join the San Diego Waitlist", href: "#waitlist" },
-      { label: "Apply to Be a Contestant", href: "/apply?city=San+Diego&state=CA" },
-    ],
-    includeEventSchema: false,
-    areaServed: "San Diego, California",
-    addressLocality: "San Diego",
-    addressRegion: "CA",
+    region: "US Northeast",
+    nearbyCities: ["jersey-city", "edison", "philadelphia", "boston", "stamford"],
   },
 
   "jersey-city": {
     slug: "jersey-city",
     displayName: "Jersey City",
-    titleTag:
-      "South Asian Singles Events Jersey City NJ | Garam Masala Dating Hoboken",
+    titleTag: "South Asian Singles Events Jersey City NJ | Garam Masala Dating Hoboken",
     metaDescription:
       "Garam Masala Dating has a monthly show at The Laugh Tour Comedy Club in Jersey City. A live South Asian dating show and singles mixer. No PATH anxiety required.",
     h1: "Jersey City\u2019s Desi Dating Night",
@@ -108,15 +54,44 @@ export const cities: Record<string, CityData> = {
     areaServed: "Jersey City, New Jersey",
     addressLocality: "Jersey City",
     addressRegion: "NJ",
+    addressCountry: "US",
     venueName: "The Laugh Tour Comedy Club",
     eventScheduleFrequency: "P1M",
+    region: "US Northeast",
+    nearbyCities: ["manhattan", "edison", "parsippany", "stony-brook", "philadelphia"],
+  },
+
+  "san-diego": {
+    slug: "san-diego",
+    displayName: "San Diego",
+    titleTag: "South Asian Singles Events San Diego | Garam Masala Dating",
+    metaDescription:
+      "Garam Masala Dating is coming back to San Diego. A live South Asian dating show and singles mixer from the creators of NYC\u2019s #1 live South Asian dating show.",
+    h1: "San Diego\u2019s Desi Dating Night Is Coming Back",
+    status: "coming-soon",
+    badgeLabel: "Coming Soon",
+    bodyParagraphs: [
+      "Garam Masala Dating came to San Diego in March 2026 and sold out. Same format as the NYC show: real singles, live blind dates on stage, and a mixer built into the night so everyone could meet.",
+      "The San Diego desi scene showed up. The room was tight-knit, the energy was different from New York. More personal, more \u201Cwait, do we have a friend in common?\u201D The show worked.",
+      "We\u2019re coming back. Dates are TBA, but if you want to be first to know when tickets drop, get on the waitlist. And if you want to be a contestant when we return, apply below.",
+    ],
+    ctas: [
+      { label: "Join the San Diego Waitlist", href: "#waitlist" },
+      { label: "Apply to Be a Contestant", href: "/apply?city=San+Diego&state=CA" },
+    ],
+    includeEventSchema: false,
+    areaServed: "San Diego, California",
+    addressLocality: "San Diego",
+    addressRegion: "CA",
+    addressCountry: "US",
+    region: "US West",
+    nearbyCities: ["los-angeles", "irvine", "phoenix", "las-vegas", "sacramento"],
   },
 
   "los-angeles": {
     slug: "los-angeles",
     displayName: "Los Angeles",
-    titleTag:
-      "South Asian Singles Events Los Angeles | Garam Masala Dating",
+    titleTag: "South Asian Singles Events Los Angeles | Garam Masala Dating",
     metaDescription:
       "Garam Masala Dating is coming to LA. A live South Asian dating show and singles mixer from the creators of NYC\u2019s #1 live South Asian dating show.",
     h1: "LA\u2019s Desi Dating Night Is Coming",
@@ -135,38 +110,15 @@ export const cities: Record<string, CityData> = {
     areaServed: "Los Angeles, California",
     addressLocality: "Los Angeles",
     addressRegion: "CA",
-  },
-
-  "salt-lake-city": {
-    slug: "salt-lake-city",
-    displayName: "Salt Lake City",
-    titleTag:
-      "South Asian Singles Events Salt Lake City | Garam Masala Dating",
-    metaDescription:
-      "Garam Masala Dating may be coming to Salt Lake City. A live South Asian dating show and singles mixer. Join the waitlist to be first to know.",
-    h1: "Salt Lake City, We\u2019re Looking at You",
-    status: "coming-soon",
-    badgeLabel: "Coming Soon",
-    bodyParagraphs: [
-      "Garam Masala Dating is a live South Asian dating show and singles mixer that runs every week in New York City. The format: real singles, live blind dates on stage in front of 250 people, and a mixer built into the night.",
-      "Wyatt Feegrado, co-host of the show, is performing at Happy Valley Comedy in Salt Lake City on June 26. If you\u2019re in SLC and you\u2019ve been looking for a way to actually meet South Asian singles in person instead of swiping, this is the room you\u2019ve been missing.",
-      "We\u2019re considering Salt Lake City for a future tour date. Drop your email to get notified if we announce a show, or apply now if you want to be a contestant when we come.",
-    ],
-    ctas: [
-      { label: "Join the SLC Waitlist", href: "#waitlist" },
-      { label: "Apply to Be a Contestant", href: "/apply?city=Salt+Lake+City&state=UT" },
-    ],
-    includeEventSchema: false,
-    areaServed: "Salt Lake City, Utah",
-    addressLocality: "Salt Lake City",
-    addressRegion: "UT",
+    addressCountry: "US",
+    region: "US West",
+    nearbyCities: ["san-diego", "irvine", "san-francisco", "phoenix", "las-vegas"],
   },
 
   "san-francisco": {
     slug: "san-francisco",
     displayName: "San Francisco",
-    titleTag:
-      "South Asian Singles Events San Francisco | Garam Masala Dating",
+    titleTag: "South Asian Singles Events San Francisco | Garam Masala Dating",
     metaDescription:
       "Garam Masala Dating is coming to San Francisco. A live South Asian dating show and singles mixer from the creators of NYC\u2019s #1 live South Asian dating show.",
     h1: "SF\u2019s Desi Dating Night Is Coming",
@@ -186,13 +138,42 @@ export const cities: Record<string, CityData> = {
     areaServed: "San Francisco, California",
     addressLocality: "San Francisco",
     addressRegion: "CA",
+    addressCountry: "US",
+    region: "US West",
+    nearbyCities: ["san-jose", "sacramento", "los-angeles", "portland", "seattle"],
+  },
+
+  "salt-lake-city": {
+    slug: "salt-lake-city",
+    displayName: "Salt Lake City",
+    titleTag: "South Asian Singles Events Salt Lake City | Garam Masala Dating",
+    metaDescription:
+      "Garam Masala Dating may be coming to Salt Lake City. A live South Asian dating show and singles mixer. Join the waitlist to be first to know.",
+    h1: "Salt Lake City, We\u2019re Looking at You",
+    status: "coming-soon",
+    badgeLabel: "Coming Soon",
+    bodyParagraphs: [
+      "Garam Masala Dating is a live South Asian dating show and singles mixer that runs every week in New York City. The format: real singles, live blind dates on stage in front of 250 people, and a mixer built into the night.",
+      "Wyatt Feegrado, co-host of the show, is performing at Happy Valley Comedy in Salt Lake City on June 26. If you\u2019re in SLC and you\u2019ve been looking for a way to actually meet South Asian singles in person instead of swiping, this is the room you\u2019ve been missing.",
+      "We\u2019re considering Salt Lake City for a future tour date. Drop your email to get notified if we announce a show, or apply now if you want to be a contestant when we come.",
+    ],
+    ctas: [
+      { label: "Join the SLC Waitlist", href: "#waitlist" },
+      { label: "Apply to Be a Contestant", href: "/apply?city=Salt+Lake+City&state=UT" },
+    ],
+    includeEventSchema: false,
+    areaServed: "Salt Lake City, Utah",
+    addressLocality: "Salt Lake City",
+    addressRegion: "UT",
+    addressCountry: "US",
+    region: "US West",
+    nearbyCities: ["denver", "boise", "phoenix", "las-vegas", "seattle"],
   },
 
   denver: {
     slug: "denver",
     displayName: "Denver",
-    titleTag:
-      "South Asian Singles Events Denver | Garam Masala Dating",
+    titleTag: "South Asian Singles Events Denver | Garam Masala Dating",
     metaDescription:
       "Garam Masala Dating may be coming to Denver. A live South Asian dating show and singles mixer. Join the waitlist and be first to know.",
     h1: "Denver, You\u2019re on the List",
@@ -211,20 +192,8 @@ export const cities: Record<string, CityData> = {
     areaServed: "Denver, Colorado",
     addressLocality: "Denver",
     addressRegion: "CO",
+    addressCountry: "US",
+    region: "US West",
+    nearbyCities: ["salt-lake-city", "phoenix", "albuquerque", "kansas-city", "minneapolis"],
   },
 };
-
-/** Ordered list for the /cities index page */
-export const citiesIndex: CityData[] = [
-  cities["manhattan"],
-  cities["jersey-city"],
-  cities["los-angeles"],
-  cities["san-francisco"],
-  cities["san-diego"],
-  cities["salt-lake-city"],
-  cities["denver"],
-];
-
-export function getCityBySlug(slug: string): CityData | undefined {
-  return cities[slug];
-}

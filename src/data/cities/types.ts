@@ -1,0 +1,53 @@
+export interface CityCta {
+  label: string;
+  href: string;
+}
+
+export type CityRegion =
+  | "US Northeast"
+  | "US Southeast"
+  | "US Midwest"
+  | "US South & Texas"
+  | "US West"
+  | "Canada"
+  | "United Kingdom"
+  | "Australia"
+  | "Europe"
+  | "Asia-Pacific"
+  | "Middle East"
+  | "Africa"
+  | "Caribbean & South America";
+
+export interface CityData {
+  slug: string;
+  displayName: string;
+  titleTag: string;
+  metaDescription: string;
+  h1: string;
+  bodyParagraphs: string[];
+  ctas: CityCta[];
+  /**
+   * "active"      — weekly / regular shows running now
+   * "coming-soon" — announced or planned, no confirmed date yet
+   * "past"        — show already happened
+   */
+  status: "active" | "coming-soon" | "past";
+  /** Label shown on the /cities index card (e.g. "Weekly Shows", "Coming Soon") */
+  badgeLabel: string;
+  /** For LocalBusiness schema */
+  areaServed: string;
+  /** Whether to include an Event schema block */
+  includeEventSchema: boolean;
+  addressLocality: string;
+  addressRegion: string;
+  /** Two-letter country code (US, CA, GB, AU, etc.) */
+  addressCountry: string;
+  /** Named venue for Event schema location.name */
+  venueName?: string;
+  /** ISO 8601 duration for eventSchedule.repeatFrequency */
+  eventScheduleFrequency?: string;
+  /** Region grouping for the /cities hub page */
+  region: CityRegion;
+  /** Slugs of 3-5 nearby cities for cross-linking */
+  nearbyCities: string[];
+}

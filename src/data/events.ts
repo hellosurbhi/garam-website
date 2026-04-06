@@ -110,13 +110,15 @@ export const events: EventEntry[] = [
   },
 ];
 
-// Auto-generate TBA entries from coming-soon cities so there's one source of truth.
-// Import is lazy to avoid circular deps — cities.ts doesn't import events.ts.
-import { citiesIndex } from './cities';
+// Only show TBA entries for cities with active tour planning (not all 200+ expansion pages).
+// These slugs appear as TBA cards on the tickets page and home shows section.
+const TBA_CITIES = ['Los Angeles', 'San Francisco', 'San Diego', 'Salt Lake City', 'Denver'];
 
-const comingSoonEvents: EventEntry[] = citiesIndex
-  .filter((c) => c.status === 'coming-soon')
-  .map((c) => ({ date: 'TBA', city: c.displayName, url: '#' }));
+const comingSoonEvents: EventEntry[] = TBA_CITIES.map((city) => ({
+  date: 'TBA',
+  city,
+  url: '#',
+}));
 
-/** All events: confirmed shows + auto-generated TBA from coming-soon cities */
+/** All events: confirmed shows + hand-picked TBA cities */
 export const allEvents: EventEntry[] = [...events, ...comingSoonEvents];

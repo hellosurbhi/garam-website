@@ -48,14 +48,6 @@ const socials = [
       </div>
     </div>
     <div class="footer-col">
-      <h4>Shows</h4>
-      <ul>
-        {showLinks.map((link) => (
-          <li><a href={link.href}>{link.label}</a></li>
-        ))}
-      </ul>
-    </div>
-    <div class="footer-col">
       <h4>Get Involved</h4>
       <ul>
         {involvedLinks.map((link) => (
@@ -67,6 +59,14 @@ const socials = [
       <h4>Explore</h4>
       <ul>
         {exploreLinks.map((link) => (
+          <li><a href={link.href}>{link.label}</a></li>
+        ))}
+      </ul>
+    </div>
+    <div class="footer-col footer-col-shows">
+      <h4>Shows</h4>
+      <ul class="footer-shows-list">
+        {showLinks.map((link) => (
           <li><a href={link.href}>{link.label}</a></li>
         ))}
       </ul>
@@ -163,6 +163,13 @@ const socials = [
   }
   .footer-col ul li a:hover { color: white; }
 
+  /* Shows list: 2-col grid on mobile */
+  .footer-shows-list {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 4px 16px;
+  }
+
   .footer-bottom {
     max-width: 1200px;
     margin: 0 auto;
@@ -209,6 +216,7 @@ const socials = [
     .footer-social a :global(svg) { width: 18px; height: 18px; }
     .footer-col h4 { margin-top: 0; margin-bottom: 20px; }
     .footer-col ul { gap: 10px; }
+    .footer-shows-list { display: flex; flex-direction: column; grid-template-columns: none; }
     .footer-bottom { flex-direction: row; justify-content: space-between; padding-top: 24px; gap: 0; }
     .footer-copy, .footer-legal a { font-size: 13px; }
   }

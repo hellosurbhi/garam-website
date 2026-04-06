@@ -133,6 +133,19 @@ const {
             });
           });
           document.documentElement.classList.add('custom-cursor');
+
+          // Keep custom cursor visible over <dialog> top-layer
+          const observer = new MutationObserver(() => {
+            const openDialog = document.querySelector('dialog[open]');
+            if (openDialog && cursor.parentElement !== openDialog) {
+              openDialog.appendChild(cursor);
+              openDialog.appendChild(ring);
+            } else if (!openDialog && cursor.parentElement !== document.body) {
+              document.body.appendChild(cursor);
+              document.body.appendChild(ring);
+            }
+          });
+          observer.observe(document.body, { subtree: true, attributes: true, attributeFilter: ['open'] });
         }
       }
     </script>
@@ -174,7 +187,15 @@ const {
   }
   :global(html.custom-cursor a),
   :global(html.custom-cursor button),
-  :global(html.custom-cursor [role="button"]) {
+  :global(html.custom-cursor [role="button"]),
+  :global(html.custom-cursor dialog),
+  :global(html.custom-cursor dialog *),
+  :global(html.custom-cursor input),
+  :global(html.custom-cursor textarea),
+  :global(html.custom-cursor select) {
+    cursor: none;
+  }
+  :global(html.custom-cursor dialog::backdrop) {
     cursor: none;
   }
 

@@ -9,5 +9,17 @@ service cloud.firestore {
       allow create: if true;
       allow read, update, delete: if request.auth != null;
     }
+    match /notifications/{doc} {
+      allow create: if true;
+      allow read, update, delete: if request.auth != null;
+    }
+    match /city_requests/{doc} {
+      allow create: if true;
+      allow read, update, delete: if request.auth != null;
+    }
+    match /subscribers/{doc} {
+      allow create: if true;
+      allow read, update, delete: if request.auth != null;
+    }
   }
 }

@@ -1,5 +1,54 @@
 # Changelog
 
+## Homepage feedback fixes — 13 changes across UX, copy, and conversion
+
+Addressed 13 pieces of user feedback from a homepage review session.
+
+**Copy & data fixes:**
+- Removed "Apply Now" from the marquee ticker
+- Fixed founding year from 2023 to 2022 across bio, footer, and JSON-LD schema
+- Replaced 5 fake press outlets (Time Out, Vulture, etc.) with 2 real press sources from press.ts
+- Ticket buttons now link to /tickets instead of Eventbrite
+
+**Footer improvements:**
+- Replaced text social labels (IG, TT, YT) with actual SVG icons
+- Increased all text opacity values for better readability on dark background
+- "Meet the Hosts" now links to /hosts page instead of #about anchor
+- Created shared SVG icon module (src/data/icons.ts) to deduplicate between footer and links page
+
+**New modals:**
+- Notify Me: collects email when tickets aren't yet available, auto-fills city from event card
+- Request City: replaces /cities link, collects city name + email
+- 30-second popup: two-step flow (email then phone), emphasizes discount codes, respects localStorage dismissal
+- All three write to new Firestore collections (notifications, city_requests, subscribers)
+
+**FAQ accordion cleanup:**
+- Removed cream background callout box and pink left-border from answers
+- Replaced max-height animation hack with CSS grid row transition for smoother expand/collapse
+
+**Newsletter redesign:**
+- Switched background from charcoal to hot-pink for visual separation from Creators section
+- Updated copy to emphasize exclusive discount codes as main value prop
+- Simplified form to email-only (popup handles phone collection)
+- Inverted CTA: white button with pink text, yellow on hover
+
+**New pages:**
+- /hosts — standalone hosts page reusing HomeCreators component
+
+**Files changed:**
+- `src/components/home/HomeMarquee.astro` — removed Apply Now
+- `src/components/home/HomeCreators.astro` — year fix
+- `src/components/home/HomeFooter.astro` — year, readability, SVG icons, hosts link
+- `src/components/home/HomePress.astro` — real press data with links
+- `src/components/home/HomeShows.astro` — /tickets links, notify + city request modals
+- `src/components/home/HomeFAQ.astro` — clean accordion styles
+- `src/components/home/HomeNewsletter.astro` — hot-pink bg, discount copy
+- `src/pages/index.astro` — founding year, 30s popup dialog
+- `src/pages/links.astro` — import icons from shared module
+- `src/pages/hosts.astro` — new hosts page
+- `src/data/icons.ts` — shared SVG icon module
+- `firestore.rules` — 3 new collections
+
 ## fix: site copy — add SF city page, update SD/LA, position as NYC's #1
 
 Fixed nonsensical copy across the site: wrong cities in the hero eyebrow, inconsistent audience numbers, stale event references, and weak positioning.

@@ -152,7 +152,7 @@ export const journalPosts: JournalPost[] = [
       "Tired of the same bar scene? Here are the best things to do in NYC if you\u2019re single, from improv shows to rooftop mixers to a live comedy dating show with 250 people.",
     datePublished: "2026-05-02",
     dateModified: "2026-05-02",
-    author: "Garam Masala Dating",
+    author: "Surbhi",
     excerpt:
       "You\u2019ve done the bar thing. You\u2019ve done the app thing. You\u2019ve stood in a loud room pretending to enjoy a conversation you couldn\u2019t hear. NYC has better options for single people.",
     faqs: [
@@ -642,7 +642,7 @@ export const journalPosts: JournalPost[] = [
       "Garam Masala Dating is the only weekly live desi dating show in NYC. Here\u2019s what actually happens at the show, who can come, and how it compares to Indian Matchmaking.",
     datePublished: "2026-04-04",
     dateModified: "2026-04-04",
-    author: "Garam Masala Dating",
+    author: "Surbhi",
     excerpt:
       "Garam Masala Dating is a weekly live desi dating show in New York City. Real singles go on blind dates on stage in front of 250 people at a Manhattan comedy club.",
     faqs: [
@@ -758,7 +758,7 @@ export const journalPosts: JournalPost[] = [
       "A guide to South Asian singles events in NYC, from desi mixers to live dating shows. What\u2019s actually worth your time and what to skip.",
     datePublished: "2026-03-28",
     dateModified: "2026-03-28",
-    author: "Garam Masala Dating",
+    author: "Surbhi",
     excerpt:
       "Yes, there are South Asian singles events in NYC. And the options have gotten significantly better in the last few years.",
     faqs: [
@@ -997,7 +997,7 @@ export const journalPosts: JournalPost[] = [
       "After running Garam Masala Dating for over a year and watching hundreds of live blind dates unfold on stage, here's what we actually learned about South Asian dating.",
     datePublished: "2026-03-14",
     dateModified: "2026-03-14",
-    author: "Garam Masala Dating",
+    author: "Surbhi",
     excerpt:
       "We've watched a lot of first dates. Not through an app, not on a reality show set. Live, on stage, in front of a couple hundred people who have opinions and aren't shy about sharing them.",
     body: [
@@ -1062,7 +1062,7 @@ export const journalPosts: JournalPost[] = [
       "You got cast on Garam Masala Dating. Here\u2019s exactly how to prepare \u2014 what to wear, what to expect on stage, and how to not be the person who chokes in front of 250 people.",
     datePublished: "2026-03-07",
     dateModified: "2026-03-07",
-    author: "Garam Masala Dating",
+    author: "Surbhi",
     excerpt:
       "So you applied, you got picked, and now you\u2019re going to go on a blind date in front of 250 strangers. Good.",
     body: [

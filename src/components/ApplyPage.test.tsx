@@ -111,7 +111,7 @@ describe("ApplyPage", () => {
 
   it("shows error text when submitting with empty required fields", async () => {
     render(<ApplyPage />);
-    fireEvent.click(screen.getByText("Submit Application 🌶️"));
+    fireEvent.click(screen.getByText("Submit Application"));
     await waitFor(() => {
       expect(screen.getByText("Please fill in all required fields")).toBeInTheDocument();
     });
@@ -119,7 +119,7 @@ describe("ApplyPage", () => {
 
   it("shows 'Required' error for empty name after submit", async () => {
     render(<ApplyPage />);
-    fireEvent.click(screen.getByText("Submit Application 🌶️"));
+    fireEvent.click(screen.getByText("Submit Application"));
     await waitFor(() => {
       const errors = screen.getAllByText("Required");
       expect(errors.length).toBeGreaterThan(0);
@@ -128,7 +128,7 @@ describe("ApplyPage", () => {
 
   it("renders the submit button", () => {
     render(<ApplyPage />);
-    expect(screen.getByText("Submit Application 🌶️")).toBeInTheDocument();
+    expect(screen.getByText("Submit Application")).toBeInTheDocument();
   });
 
   it("renders the disclaimer text", () => {

@@ -1,5 +1,12 @@
 # Changelog
 
+## Fix article authors, apply page polish, remove chili emoji
+
+- All article authors changed from "Garam Masala Dating" → "Surbhi" (journal.ts: 5 posts, tips.ts: 3 posts, AuthorBio component)
+- Submit button: removed chili emoji (invisible on red background), added white-space: nowrap, reduced padding
+- Country field: removed "Type your country" fallback placeholder, now always shows "Select..." like other dropdowns
+- Cleaned up unused `geoFailed` destructuring
+
 ## Fix nav overflow on mobile: shrink logo + tighten pills
 
 Both navs (HomeNav, PageNav) overflowed on 320px because 160px logo + two pills + padding exceeded viewport. Shrunk mobile logo from 36px/160px to 28px/120px, pills from 13px/18px to 11px/14px padding, letter-spacing 1.5→1px. Desktop restored to full sizes via 768px breakpoint.

@@ -19,7 +19,7 @@ export const tipPosts: TipPost[] = [
       "Finding love as a South Asian in NYC means getting off the apps and tapping into high-intent, real-world networks. Here\u2019s how to actually cut through the noise.",
     datePublished: "2026-03-31",
     dateModified: "2026-03-31",
-    author: "Garam Masala Dating",
+    author: "Surbhi",
     excerpt:
       "The apps are exhausting, the aunties are hovering, and the city is massive. Here is how to actually meet people.",
     body: [
@@ -76,7 +76,7 @@ export const tipPosts: TipPost[] = [
       "To find a partner before an arranged marriage, treat your dating life with the same urgency your parents treat your biodata. Here\u2019s how to take control of your timeline.",
     datePublished: "2026-03-31",
     dateModified: "2026-03-31",
-    author: "Garam Masala Dating",
+    author: "Surbhi",
     excerpt:
       "The clock is ticking and the biodatas are piling up. A survival guide to taking control of your own timeline.",
     body: [
@@ -129,7 +129,7 @@ export const tipPosts: TipPost[] = [
       "\u201CGoing with the flow\u201D is a dating trap that leads directly to dead-end situationships. Replace passive dating with active vetting to find real commitment.",
     datePublished: "2026-03-31",
     dateModified: "2026-03-31",
-    author: "Garam Masala Dating",
+    author: "Surbhi",
     excerpt:
       "Getting offline and into a room with people who are actually serious about dating.",
     body: [

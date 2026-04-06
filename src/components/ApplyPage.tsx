@@ -116,7 +116,7 @@ export default function ApplyPage() {
     return events.find((e) => !e.hidden && e.isoDate && e.isoDate >= today) ?? null;
   }, []);
 
-  const { loading: geoLoading, failed: geoFailed, countryOptions, stateOptions, cityOptions } = useGeoData(form.country, form.state);
+  const { loading: geoLoading, countryOptions, stateOptions, cityOptions } = useGeoData(form.country, form.state);
 
   function set(field: keyof FormState, value: string) {
     setForm((prev) => ({ ...prev, [field]: value }));
@@ -390,7 +390,7 @@ export default function ApplyPage() {
                       options={countryOptions}
                       value={countryOptions.find((o) => o.value === form.country) ?? null}
                       onChange={handleCountryChange}
-                      placeholder={geoLoading ? "Loading…" : geoFailed ? "Type your country" : "Select…"}
+                      placeholder={geoLoading ? "Loading…" : "Select…"}
                       styles={formSelectStyles}
                       isSearchable
                       isLoading={geoLoading}
@@ -549,7 +549,7 @@ export default function ApplyPage() {
                     Submitting…
                   </>
                 ) : (
-                  "Submit Application 🌶️"
+                  "Submit Application"
                 )}
               </button>
 

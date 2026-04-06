@@ -27,11 +27,14 @@ const hosts = [
   <div class="hosts-grid">
     {hosts.map((host) => (
       <article class="host-card" data-reveal>
-        {host.name === 'Wyatt' ? (
-          <img src="/images/wyatt.avif" alt="Wyatt" class="host-avatar-img" width="120" height="120" loading="lazy" />
-        ) : (
-          <div class="host-avatar" aria-hidden="true">👩🏽</div>
-        )}
+        <img
+          src={host.name === 'Surbhi' ? '/images/surbhi.png' : '/images/wyatt.avif'}
+          alt={host.name}
+          class="host-avatar-img"
+          width="120"
+          height="120"
+          loading="lazy"
+        />
         <div class="host-info">
           <h3>
             <a href={host.url} target="_blank" rel="noopener noreferrer">{host.name}</a>

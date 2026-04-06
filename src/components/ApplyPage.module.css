@@ -131,6 +131,25 @@
   padding-left: 4px;
 }
 
+.retryButton {
+  width: 100%;
+  padding: 14px 16px;
+  border-radius: 12px;
+  border: 1px dashed rgba(0, 0, 0, 0.15);
+  font-family: var(--font-body);
+  font-size: 15px;
+  color: var(--hot-pink);
+  background: rgba(233, 30, 118, 0.04);
+  cursor: pointer;
+  text-align: center;
+  transition: background 0.2s, border-color 0.2s;
+}
+
+.retryButton:hover {
+  background: rgba(233, 30, 118, 0.08);
+  border-color: var(--hot-pink);
+}
+
 .input {
   width: 100%;
   padding: 14px 16px;

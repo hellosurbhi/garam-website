@@ -116,7 +116,7 @@ export default function ApplyPage() {
     return events.find((e) => !e.hidden && e.isoDate && e.isoDate >= today) ?? null;
   }, []);
 
-  const { loading: geoLoading, countryOptions, stateOptions, cityOptions } = useGeoData(form.country, form.state);
+  const { loading: geoLoading, failed: geoFailed, retry: retryGeo, countryOptions, stateOptions, cityOptions } = useGeoData(form.country, form.state);
 
   function set(field: keyof FormState, value: string) {
     setForm((prev) => ({ ...prev, [field]: value }));
@@ -386,16 +386,22 @@ export default function ApplyPage() {
 
                 <div className={styles.gridThree}>
                   <FieldGroup label="Country" required error={errors.country}>
-                    <Select<SelectOption>
-                      options={countryOptions}
-                      value={countryOptions.find((o) => o.value === form.country) ?? null}
-                      onChange={handleCountryChange}
-                      placeholder={geoLoading ? "Loading…" : "Select…"}
-                      styles={formSelectStyles}
-                      isSearchable
-                      isLoading={geoLoading}
-                      isDisabled={geoLoading}
-                    />
+                    {geoFailed ? (
+                      <button type="button" onClick={retryGeo} className={styles.retryButton}>
+                        Failed to load countries — tap to retry
+                      </button>
+                    ) : (
+                      <Select<SelectOption>
+                        options={countryOptions}
+                        value={countryOptions.find((o) => o.value === form.country) ?? null}
+                        onChange={handleCountryChange}
+                        placeholder={geoLoading ? "Loading…" : "Select…"}
+                        styles={formSelectStyles}
+                        isSearchable
+                        isLoading={geoLoading}
+                        isDisabled={geoLoading}
+                      />
+                    )}
                   </FieldGroup>
 
                   {form.country && (

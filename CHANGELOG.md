@@ -1,5 +1,13 @@
 # Changelog
 
+## Fix apply page hydration errors + country selector stuck on loading
+
+- **Hydration fix:** Changed `ApplyPage` from `client:load` to `client:only="react"` — the form uses browser APIs (`window.history`, `window.location`) that cause SSR/client mismatches. No SEO value in server-rendering a form, so skip SSR entirely.
+- **Country selector timeout:** Added 5-second timeout to `useGeoData` dynamic import. Previously, if the `country-state-city` chunk hung, the selector stayed disabled with "Loading..." forever.
+- **Retry on failure:** When geo data fails to load (timeout or network error), the country field now shows a "tap to retry" button instead of a permanently disabled dropdown.
+
+**Files:** `src/pages/apply.astro`, `src/hooks/useGeoData.ts`, `src/components/ApplyPage.tsx`, `src/components/ApplyPage.module.css`
+
 ## Fix article authors, apply page polish, remove chili emoji
 
 - All article authors changed from "Garam Masala Dating" → "Surbhi" (journal.ts: 5 posts, tips.ts: 3 posts, AuthorBio component)

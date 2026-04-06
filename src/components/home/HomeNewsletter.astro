@@ -4,18 +4,18 @@
 
 <section class="newsletter" aria-labelledby="newsletter-heading">
   <h2 id="newsletter-heading" data-reveal>Join the Spice List</h2>
-  <p data-reveal>Early tickets, casting calls, and chaos. Before anyone else.</p>
+  <p data-reveal>Subscribers get exclusive discount codes for cheaper (and sometimes free) tickets.</p>
   <form class="newsletter-form" data-reveal>
-    <input type="tel" placeholder="Your phone number" aria-label="Phone number" />
-    <input type="email" placeholder="Your email" aria-label="Email address" />
-    <button type="submit">Subscribe</button>
+    <input type="email" placeholder="Your email" required aria-label="Email address" />
+    <button type="submit">Get My Discount Code</button>
   </form>
+  <p class="newsletter-trust" data-reveal>No spam. Just discounts and show dates.</p>
 </section>
 
 <style>
   .newsletter {
     padding: 80px 20px;
-    background: var(--charcoal);
+    background: var(--hot-pink);
     text-align: center;
     position: relative;
     overflow: hidden;
@@ -29,7 +29,7 @@
     position: relative;
   }
   .newsletter p {
-    color: rgba(255, 255, 255, 0.6);
+    color: rgba(255, 255, 255, 0.85);
     font-size: 16px;
     margin-bottom: 36px;
     font-family: var(--font-cormorant), serif;
@@ -46,9 +46,9 @@
   }
   .newsletter-form input {
     padding: 16px 24px;
-    border: 1.5px solid rgba(255, 255, 255, 0.2);
+    border: 1.5px solid rgba(255, 255, 255, 0.4);
     border-radius: 50px;
-    background: rgba(255, 255, 255, 0.08);
+    background: rgba(255, 255, 255, 0.15);
     color: white;
     font-size: 16px;
     font-family: var(--font-body), sans-serif;
@@ -57,14 +57,14 @@
     min-height: 48px;
   }
   .newsletter-form input::placeholder {
-    color: rgba(255, 255, 255, 0.35);
+    color: rgba(255, 255, 255, 0.5);
   }
   .newsletter-form input:focus {
-    border-color: var(--hot-pink);
+    border-color: var(--electric-yellow);
   }
   .newsletter-form button {
-    background: var(--hot-pink);
-    color: white;
+    background: white;
+    color: var(--hot-pink);
     border: none;
     padding: 16px;
     border-radius: 50px;
@@ -74,11 +74,20 @@
     text-transform: uppercase;
     letter-spacing: 1.5px;
     cursor: pointer;
-    transition: background 0.2s;
+    transition: background 0.2s, color 0.2s;
     min-height: 48px;
   }
   .newsletter-form button:hover {
-    background: var(--deep-magenta);
+    background: var(--electric-yellow);
+    color: var(--charcoal);
+  }
+  .newsletter-trust {
+    font-size: 13px;
+    color: rgba(255, 255, 255, 0.6);
+    margin-bottom: 0;
+    margin-top: -12px;
+    font-style: normal;
+    font-family: var(--font-body), sans-serif;
   }
 
   @media (min-width: 768px) {

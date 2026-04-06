@@ -1,5 +1,40 @@
 # Changelog
 
+## Mobile audit: fix overflow, iOS zoom, touch targets, and grid layouts
+
+Deep mobile audit fixing critical usability issues across the site (98% mobile traffic).
+
+**P0 — Overflow fix:**
+- `HomeStats.astro`: Changed stats grid from `flex-wrap: nowrap` (5 items crammed into one row) to `flex-wrap: wrap` with `flex: 0 1 33.33%` — stats now flow as 3+2 rows on mobile, single row on desktop
+- Desktop breakpoint corrected from orphaned `grid-template-columns` to `flex-wrap: nowrap; flex: 1`
+
+**P1 — iOS auto-zoom prevention (font-size < 16px on interactive elements):**
+- `HomeHero.astro`: CTA `.btn` 14px → 16px
+- `HomeNav.astro`: `.nav-pill` 12px → 16px
+- `PageNav.astro`: `.page-nav-pill` 12px → 16px
+- `HomeShows.astro`: `.ticket-label` 13px → 16px, `.modal-submit` 14px → 16px
+- `HomeSignup.astro`: `.spicelist-form button` 14px → 16px
+- `AdminLogin.module.css`: `.input` 15px → 16px
+
+**P2 — Touch target fixes:**
+- `HomeFAQ.astro`: `.faq-toggle` 32×32px → 48×48px (meets minimum touch target)
+- `HomeShows.astro`: Added `min-height: 48px` to `.request-city button`
+
+**P3 — Layout fixes:**
+- `ApplyPage.module.css`: Added `@media (max-width: 600px)` breakpoint — `.gridTwo` and `.gridThree` collapse to single column (was 107px per column on 320px, unusable)
+- `AdminDashboard.module.css`: Added mobile breakpoint — filter items go full width, header/main padding reduced, filter row wraps
+
+**Files changed:** HomeStats, HomeHero, HomeNav, PageNav, HomeShows, HomeSignup, HomeFAQ, ApplyPage.module.css, AdminDashboard.module.css, AdminLogin.module.css
+
+## Fix mobile horizontal overflow + update sitemap
+
+**Mobile right-side white border fixed:**
+- Added `overflow-x: hidden` to `html` selector in `src/index.css` — `body` alone doesn't prevent the root scroll container from overflowing
+- Changed `max-width: 100vw` → `max-width: 100%` on all modal dialog elements (HomeShows, index.astro popup, links.astro, cities/[slug].astro) — `100vw` includes scrollbar width and can push content past viewport edge on mobile
+
+**Sitemap updated (`public/sitemap.xml`):**
+- Added `/cities/san-francisco`, `/hosts`, `/privacy`, `/terms` (all missing since addition)
+
 ## v3 UI rewrite — full design pass, new features, infrastructure cleanup
 
 Comprehensive UI overhaul across the entire site based on iterative design feedback.

@@ -35,12 +35,13 @@ const stats = [
   }
   .stats-grid {
     display: flex;
+    flex-wrap: wrap;
     justify-content: center;
-    flex-wrap: nowrap;
+    gap: 32px 0;
     max-width: 900px;
     margin: 0 auto;
   }
-  .stat-item { padding: 0 10px; flex: 1; }
+  .stat-item { flex: 0 1 33.33%; padding: 0 10px; }
   .stat-num {
     font-family: var(--font-playfair), serif;
     font-size: 32px;
@@ -61,8 +62,9 @@ const stats = [
   @media (min-width: 768px) {
     .stats { padding: 100px 48px; }
     .stats h2 { margin-bottom: 64px; }
-    .stats-grid { grid-template-columns: repeat(4, 1fr); gap: 0; }
+    .stats-grid { flex-wrap: nowrap; gap: 0; }
     .stat-item {
+      flex: 1;
       padding: 0 40px;
       border-right: 1px solid rgba(0, 0, 0, 0.12);
     }

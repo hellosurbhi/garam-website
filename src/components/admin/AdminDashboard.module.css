@@ -226,6 +226,15 @@
   margin-bottom: 16px;
 }
 
+@media (max-width: 600px) {
+  .header { padding: 0 16px; }
+  .main { padding: 16px; }
+  .filterItem { min-width: 100%; }
+  .filterItemWide { min-width: 100%; }
+  .filterRow { flex-wrap: wrap; }
+  .prepSection { padding: 16px 16px 0; }
+}
+
 .toast {
   position: fixed;
   bottom: 24px;

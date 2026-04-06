@@ -10,7 +10,7 @@ const { ticketsUrl } = Astro.props;
   <canvas id="glCanvas" class="hero-shader"></canvas>
 
   <div class="hero-content">
-    <div class="hero-eyebrow">🌶️ Season 2026 · NYC · Chicago · Edinburgh</div>
+    <div class="hero-eyebrow">🌶️ NYC's #1 Live Dating Show · Now Expanding Nationwide</div>
     <h1>
       Garam<br />
       Mas<em>ala</em><br />
@@ -44,11 +44,11 @@ const { ticketsUrl } = Astro.props;
     place-items: center;
     position: relative;
     overflow: hidden;
-    background: #0a0a09;
+    background: #fff;
     padding: 80px 20px 60px;
   }
 
-  /* Shader fills hero — full color on dark bg */
+  /* Shader fills hero — subtle wash over white bg */
   .hero-shader {
     position: absolute;
     inset: 0;
@@ -56,6 +56,7 @@ const { ticketsUrl } = Astro.props;
     height: 100%;
     pointer-events: none;
     z-index: 0;
+    opacity: 0.5;
   }
 
   .hero-content {
@@ -63,6 +64,8 @@ const { ticketsUrl } = Astro.props;
     z-index: 2;
     text-align: center;
     max-width: 980px;
+    padding: 60px 48px;
+    background: radial-gradient(ellipse at center, rgba(255, 255, 255, 0.6) 0%, rgba(255, 255, 255, 0) 70%);
   }
 
   .hero-eyebrow {
@@ -93,7 +96,7 @@ const { ticketsUrl } = Astro.props;
     font-weight: 900;
     line-height: 0.9;
     letter-spacing: -2px;
-    color: white;
+    color: var(--charcoal);
     margin-bottom: 24px;
     animation: rise 0.9s cubic-bezier(0.22, 1, 0.36, 1) 0.2s both;
   }
@@ -113,7 +116,7 @@ const { ticketsUrl } = Astro.props;
     font-size: 0.55em;
     font-weight: 400;
     font-style: italic;
-    color: rgba(255, 255, 255, 0.5);
+    color: #333;
     letter-spacing: 0;
     margin-top: 4px;
   }
@@ -122,7 +125,7 @@ const { ticketsUrl } = Astro.props;
     font-family: var(--font-cormorant), serif;
     font-size: 18px;
     font-style: italic;
-    color: rgba(255, 255, 255, 0.75);
+    color: var(--charcoal);
     margin-bottom: 36px;
     line-height: 1.5;
     animation: rise 0.9s cubic-bezier(0.22, 1, 0.36, 1) 0.35s both;
@@ -168,14 +171,14 @@ const { ticketsUrl } = Astro.props;
 
   .btn-outline {
     background: transparent;
-    color: white;
-    border-color: rgba(255, 255, 255, 0.3);
+    color: var(--charcoal);
+    border-color: rgba(26, 26, 26, 0.25);
   }
 
   .btn-outline:hover {
-    background: white;
-    color: var(--charcoal);
-    border-color: white;
+    background: var(--charcoal);
+    color: white;
+    border-color: var(--charcoal);
     transform: translateY(-3px);
   }
 
@@ -191,7 +194,7 @@ const { ticketsUrl } = Astro.props;
     opacity: 0.45;
     animation: bounce 2s ease-in-out infinite;
     z-index: 2;
-    color: rgba(255, 255, 255, 0.6);
+    color: rgba(26, 26, 26, 0.4);
   }
 
   .scroll-cue span {

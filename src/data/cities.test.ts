@@ -6,11 +6,12 @@ const VALID_STATUSES = new Set(["active", "coming-soon", "past"]);
 describe("cities", () => {
   const allCities = Object.values(cities);
 
-  it("contains manhattan, san-diego, jersey-city, los-angeles, salt-lake-city, and denver", () => {
+  it("contains all expected cities", () => {
     expect(cities).toHaveProperty("manhattan");
     expect(cities).toHaveProperty("san-diego");
     expect(cities).toHaveProperty("jersey-city");
     expect(cities).toHaveProperty("los-angeles");
+    expect(cities).toHaveProperty("san-francisco");
     expect(cities).toHaveProperty("salt-lake-city");
     expect(cities).toHaveProperty("denver");
   });

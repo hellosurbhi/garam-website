@@ -65,17 +65,17 @@ export const cities: Record<string, CityData> = {
     titleTag:
       "South Asian Singles Events San Diego | Garam Masala Dating",
     metaDescription:
-      "Garam Masala Dating came to San Diego \u2014 a live comedy dating show and South Asian singles mixer. Join the waitlist for the next show and apply to be a contestant.",
-    h1: "San Diego\u2019s First Desi Dating Show",
-    status: "past",
-    badgeLabel: "Past Shows",
+      "Garam Masala Dating is coming back to San Diego. A live comedy dating show and South Asian singles mixer \u2014 from the creators of NYC\u2019s #1 live dating show.",
+    h1: "San Diego\u2019s Desi Dating Night Is Coming Back",
+    status: "coming-soon",
+    badgeLabel: "Coming Soon",
     bodyParagraphs: [
-      "Garam Masala Dating came to San Diego on March 7, 2026. Same format as the NYC show: real singles, live blind dates on stage in front of a packed house, and a mixer built into the night so the audience could find their own person too.",
-      "San Diego\u2019s desi scene showed up. The room was tight-knit, the energy was different from New York \u2014 more personal, more \u201Cwait, do we have a friend in common?\u201D \u2014 and the show worked.",
-      "We\u2019ll be back. If you missed it, get on the waitlist for the next San Diego date. And if you want to be a contestant when we return, apply below \u2014 we\u2019ll have your name when we announce.",
+      "Garam Masala Dating came to San Diego in March 2026 and sold out. Same format as the NYC show: real singles, live blind dates on stage, and a mixer built into the night so everyone could meet.",
+      "The San Diego desi scene showed up. The room was tight-knit, the energy was different from New York \u2014 more personal, more \u201Cwait, do we have a friend in common?\u201D \u2014 and the show worked.",
+      "We\u2019re coming back. Dates are TBA, but if you want to be first to know when tickets drop, get on the waitlist. And if you want to be a contestant when we return, apply below.",
     ],
     ctas: [
-      { label: "Join the Waitlist for Next Time", href: "/links" },
+      { label: "Join the San Diego Waitlist", href: "/links" },
       { label: "Apply to Be a Contestant", href: "/apply" },
     ],
     includeEventSchema: false,
@@ -126,14 +126,13 @@ export const cities: Record<string, CityData> = {
     bodyParagraphs: [
       "New York has been doing this for over a year. LA is next.",
       "Garam Masala Dating is a live comedy dating show and South Asian singles mixer that sells out a 250-person venue in NYC every week. Real contestants. Real blind dates on stage. A real mixer before and after so the audience can find their own person too.",
-      "Wyatt Feegrado \u2014 co-host of Garam Masala Dating \u2014 is performing in Los Angeles May 4 through May 10 as part of Netflix Is a Joke Fest. If you\u2019re going to one of his shows, this is the same guy who hosts a room every week where South Asian singles go on live blind dates in front of hundreds of people. It\u2019s exactly as chaotic as it sounds, and it works.",
-      "We\u2019re planning LA dates now. Get on the list to be notified first \u2014 and if you want to be a contestant when we come to your city, apply below.",
+      "We\u2019ve been building a waitlist for LA and the interest has been strong. When we announce dates, the waitlist gets first access to tickets. If you want to be a contestant when we come to your city, apply below.",
     ],
     ctas: [
       { label: "Join the LA Waitlist", href: "/links" },
       { label: "Apply to Be a Contestant", href: "/apply" },
     ],
-    includeEventSchema: true,
+    includeEventSchema: false,
     areaServed: "Los Angeles, California",
     addressLocality: "Los Angeles",
     addressRegion: "CA",
@@ -162,6 +161,32 @@ export const cities: Record<string, CityData> = {
     areaServed: "Salt Lake City, Utah",
     addressLocality: "Salt Lake City",
     addressRegion: "UT",
+  },
+
+  "san-francisco": {
+    slug: "san-francisco",
+    displayName: "San Francisco",
+    titleTag:
+      "South Asian Singles Events San Francisco | Garam Masala Dating",
+    metaDescription:
+      "Garam Masala Dating is coming to San Francisco. A live comedy dating show and South Asian singles mixer \u2014 from the creators of NYC\u2019s #1 live dating show.",
+    h1: "SF\u2019s Desi Dating Night Is Coming",
+    status: "coming-soon",
+    badgeLabel: "Coming Soon",
+    bodyParagraphs: [
+      "New York has been doing this for over a year. The Bay Area is next.",
+      "Garam Masala Dating is NYC\u2019s #1 live comedy dating show and South Asian singles mixer. Real contestants. Real blind dates on stage. A real mixer before and after so the audience can find their own person too.",
+      "The Bay Area has one of the largest South Asian communities in the country \u2014 and somehow no one has built this yet. We\u2019re fixing that. Dates are TBA, but when we announce, the waitlist gets first access.",
+      "Get on the list to be notified first \u2014 and if you want to be a contestant when we come to your city, apply below.",
+    ],
+    ctas: [
+      { label: "Join the SF Waitlist", href: "/links" },
+      { label: "Apply to Be a Contestant", href: "/apply" },
+    ],
+    includeEventSchema: false,
+    areaServed: "San Francisco, California",
+    addressLocality: "San Francisco",
+    addressRegion: "CA",
   },
 
   denver: {
@@ -195,6 +220,8 @@ export const citiesIndex: CityData[] = [
   cities["manhattan"],
   cities["jersey-city"],
   cities["los-angeles"],
+  cities["san-francisco"],
+  cities["san-diego"],
   cities["salt-lake-city"],
   cities["denver"],
 ];

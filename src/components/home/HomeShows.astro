@@ -28,24 +28,33 @@ function parseDay(dateStr: string): string {
   <div class="shows-list">
     {events.map((event) => {
       const isLive = event.url && event.url !== '#';
-      return (
-        <article class="show-card" data-reveal>
+      return isLive ? (
+        <a href="/tickets" class="show-card show-card--live" data-reveal>
           <div class="show-date-block">
             <div class="mo">{parseMonth(event.date)}</div>
             <div class="dy">{parseDay(event.date)}</div>
           </div>
           <div class="show-info">
             <h3>{event.city}</h3>
-            <span>{isLive ? 'Tickets available' : 'Dates to be announced'}</span>
+            <span>{event.tagline ?? 'On sale now'}</span>
           </div>
-          {isLive ? (
-            <a href="/tickets" class="ticket-btn">
-              Tickets
-            </a>
-          ) : (
-            <button type="button" class="ticket-btn notify" data-notify-city={event.city}>Notify Me</button>
-          )}
-        </article>
+          <span class="ticket-label">Tickets</span>
+        </a>
+      ) : (
+        <div class="show-card show-card--notify" role="button" tabindex="0" data-notify-city={event.city} data-reveal>
+          <div class="show-date-block">
+            {parseDay(event.date) !== '—' ? (
+              <><div class="mo">{parseMonth(event.date)}</div><div class="dy">{parseDay(event.date)}</div></>
+            ) : (
+              <div class="dy dy--tba">TBA</div>
+            )}
+          </div>
+          <div class="show-info">
+            <h3>{event.city}</h3>
+            <span>Dates to be announced</span>
+          </div>
+          <span class="ticket-label ticket-label--notify">Notify Me</span>
+        </div>
       );
     })}
   </div>
@@ -114,12 +123,19 @@ function parseDay(dateStr: string): string {
   const notifyCityName = document.getElementById('notify-city-name');
   const notifyCityInput = document.getElementById('notify-city') as HTMLInputElement;
 
-  document.querySelectorAll('[data-notify-city]').forEach((btn) => {
-    btn.addEventListener('click', () => {
-      const city = (btn as HTMLElement).dataset.notifyCity ?? '';
+  document.querySelectorAll('[data-notify-city]').forEach((el) => {
+    const openNotify = () => {
+      const city = (el as HTMLElement).dataset.notifyCity ?? '';
       if (notifyCityName) notifyCityName.textContent = city;
       if (notifyCityInput) notifyCityInput.value = city;
       notifyDialog?.showModal();
+    };
+    el.addEventListener('click', openNotify);
+    el.addEventListener('keydown', (e) => {
+      if ((e as KeyboardEvent).key === 'Enter' || (e as KeyboardEvent).key === ' ') {
+        e.preventDefault();
+        openNotify();
+      }
     });
   });
 
@@ -213,6 +229,9 @@ function parseDay(dateStr: string): string {
     gap: 16px;
     align-items: center;
     transition: transform 0.2s, box-shadow 0.2s;
+    text-decoration: none;
+    cursor: pointer;
+    color: inherit;
   }
   .show-card:hover {
     transform: translateX(6px);
@@ -233,6 +252,12 @@ function parseDay(dateStr: string): string {
     line-height: 1;
     color: var(--charcoal);
   }
+  .show-date-block .dy--tba {
+    font-size: 24px;
+    font-weight: 900;
+    color: var(--hot-pink);
+    letter-spacing: 3px;
+  }
   .show-info h3 {
     font-family: var(--font-playfair), serif;
     font-size: 18px;
@@ -244,7 +269,7 @@ function parseDay(dateStr: string): string {
     font-size: 13px;
     color: var(--muted);
   }
-  .ticket-btn {
+  .ticket-label {
     background: var(--hot-pink);
     color: white;
     border: none;
@@ -256,20 +281,20 @@ function parseDay(dateStr: string): string {
     text-transform: uppercase;
     letter-spacing: 1px;
     transition: background 0.2s;
-    text-decoration: none;
     text-align: center;
     min-height: 48px;
     display: inline-flex;
     align-items: center;
     justify-content: center;
     grid-column: 1 / -1;
+    pointer-events: none;
   }
-  .ticket-btn:hover { background: var(--deep-magenta); }
-  .ticket-btn.notify {
-    background: var(--muted);
-    cursor: pointer;
+  .show-card--live:hover .ticket-label { background: var(--deep-magenta); }
+  .ticket-label--notify {
+    background: var(--electric-yellow);
+    color: var(--charcoal);
   }
-  .ticket-btn.notify:hover { background: #666; }
+  .show-card--notify:hover .ticket-label--notify { background: #FFC400; }
   .request-city {
     text-align: center;
     margin-top: 36px;
@@ -403,7 +428,7 @@ function parseDay(dateStr: string): string {
     }
     .show-date-block .dy { font-size: 42px; }
     .show-info h3 { font-size: 22px; margin-bottom: 4px; }
-    .ticket-btn {
+    .ticket-label {
       padding: 12px 28px;
       grid-column: auto;
     }

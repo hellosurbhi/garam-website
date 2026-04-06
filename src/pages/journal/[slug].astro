@@ -1,21 +1,30 @@
 ---
 import BaseLayout from '@/layouts/BaseLayout.astro';
 import AuthorBio from '@/components/AuthorBio.astro';
-import { journalPostsPublished, type JournalPost, type JournalFaq } from '@/data/journal';
+import { journalPostsPublished, getPostBySlug, type JournalPost, type JournalFaq } from '@/data/journal';
 import { buildBreadcrumbJsonLd } from '@/utils/breadcrumbs';
 
 export function getStaticPaths() {
-  return journalPostsPublished.map((post) => ({
-    params: { slug: post.slug },
-    props: { post },
-  }));
+  return journalPostsPublished.map((post, idx) => {
+    const prev = idx < journalPostsPublished.length - 1 ? journalPostsPublished[idx + 1] : null;
+    const next = idx > 0 ? journalPostsPublished[idx - 1] : null;
+    return {
+      params: { slug: post.slug },
+      props: { post, prev, next },
+    };
+  });
 }
 
 interface Props {
   post: JournalPost;
+  prev: JournalPost | null;
+  next: JournalPost | null;
 }
 
-const { post } = Astro.props;
+const { post, prev, next } = Astro.props;
+const related = post.relatedSlugs
+  .map((s) => getPostBySlug(s))
+  .filter((p): p is JournalPost => p !== undefined);
 
 function formatDate(iso: string): string {
   return new Date(iso).toLocaleDateString("en-US", {
@@ -128,12 +137,43 @@ const pageTitle = `${post.title} | Garam Masala Dating`;
               </h3>
             );
           }
-          return <p class="post-p">{block.text}</p>;
+          return <p class="post-p" set:html={block.text} />;
         })}
       </article>
 
       <!-- Author bio -->
       <AuthorBio />
+
+      <!-- Related articles -->
+      {related.length > 0 && (
+        <section class="related-section">
+          <h2 class="related-heading">You might also like</h2>
+          <div class="related-grid">
+            {related.map((r) => (
+              <a href={`/journal/${r.slug}`} class="related-card">
+                <span class="related-card-title">{r.title}</span>
+                <span class="related-card-arrow">&rarr;</span>
+              </a>
+            ))}
+          </div>
+        </section>
+      )}
+
+      <!-- Prev / Next navigation -->
+      <nav class="post-nav" aria-label="Article navigation">
+        {prev ? (
+          <a href={`/journal/${prev.slug}`} class="post-nav-link post-nav-prev">
+            <span class="post-nav-label">&larr; Previous</span>
+            <span class="post-nav-title">{prev.title}</span>
+          </a>
+        ) : <span />}
+        {next ? (
+          <a href={`/journal/${next.slug}`} class="post-nav-link post-nav-next">
+            <span class="post-nav-label">Next &rarr;</span>
+            <span class="post-nav-title">{next.title}</span>
+          </a>
+        ) : <span />}
+      </nav>
 
       <!-- Footer -->
       <div class="post-footer">
@@ -228,6 +268,132 @@ const pageTitle = `${post.title} | Garam Masala Dating`;
     color: #555;
     line-height: 1.75;
     margin: 0;
+  }
+
+  /* Inline links in body text */
+  .post-p :global(a) {
+    color: var(--brand-red);
+    text-decoration: underline;
+    text-underline-offset: 2px;
+    transition: color 0.15s ease;
+  }
+  .post-p :global(a:hover) {
+    color: var(--brand-red-dark);
+  }
+
+  /* Related articles */
+  .related-section {
+    margin-top: 56px;
+    padding-top: 24px;
+    border-top: 1px solid rgba(0, 0, 0, 0.06);
+  }
+
+  .related-heading {
+    font-family: var(--font-playfair);
+    font-size: 20px;
+    font-weight: 700;
+    color: var(--charcoal);
+    margin-bottom: 16px;
+  }
+
+  .related-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .related-card {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 14px 18px;
+    background: rgba(var(--brand-red-rgb), 0.04);
+    border: 1px solid rgba(var(--brand-red-rgb), 0.1);
+    border-radius: 8px;
+    text-decoration: none;
+    transition: background 0.15s ease, border-color 0.15s ease;
+  }
+
+  .related-card:hover {
+    background: rgba(var(--brand-red-rgb), 0.08);
+    border-color: rgba(var(--brand-red-rgb), 0.2);
+  }
+
+  .related-card-title {
+    font-family: var(--font-body);
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--charcoal);
+    line-height: 1.35;
+  }
+
+  .related-card-arrow {
+    color: var(--brand-red);
+    font-size: 16px;
+    flex-shrink: 0;
+  }
+
+  /* Prev / Next navigation */
+  .post-nav {
+    margin-top: 40px;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+  }
+
+  .post-nav-link {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    padding: 14px 16px;
+    border: 1px solid rgba(0, 0, 0, 0.08);
+    border-radius: 8px;
+    text-decoration: none;
+    transition: border-color 0.15s ease;
+  }
+
+  .post-nav-link:hover {
+    border-color: var(--brand-red);
+  }
+
+  .post-nav-prev {
+    text-align: left;
+  }
+
+  .post-nav-next {
+    text-align: right;
+    grid-column: 2;
+  }
+
+  .post-nav-label {
+    font-family: var(--font-jetbrains);
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: #888;
+  }
+
+  .post-nav-title {
+    font-family: var(--font-body);
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--charcoal);
+    line-height: 1.3;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+
+  @media (max-width: 480px) {
+    .post-nav {
+      grid-template-columns: 1fr;
+    }
+    .post-nav-next {
+      text-align: left;
+      grid-column: 1;
+    }
   }
 
   .post-footer {

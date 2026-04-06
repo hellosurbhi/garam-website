@@ -1,0 +1,25 @@
+# Daily Rebuild — publishes scheduled journal articles
+#
+# The journal system hides articles with future datePublished values.
+# This workflow triggers a Vercel redeploy daily so articles appear
+# on their scheduled date.
+#
+# SETUP:
+# 1. Go to Vercel Dashboard > Project > Settings > Git > Deploy Hooks
+# 2. Create a hook named "Daily Scheduled Rebuild" for the main branch
+# 3. Copy the URL and add it as a GitHub secret named VERCEL_DEPLOY_HOOK
+#    (Repo > Settings > Secrets and variables > Actions > New repository secret)
+
+name: Daily Rebuild
+
+on:
+  schedule:
+    - cron: "0 6 * * *" # 6:00 AM UTC daily (2:00 AM ET)
+  workflow_dispatch: {} # Allow manual trigger
+
+jobs:
+  trigger-deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Trigger Vercel Deploy Hook
+        run: curl -sS -X POST "${{ secrets.VERCEL_DEPLOY_HOOK }}"

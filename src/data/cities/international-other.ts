@@ -205,7 +205,7 @@ export const internationalOtherCities: Record<string, CityData> = {
     addressRegion: "Nairobi",
     addressCountry: "KE",
     region: "Africa",
-    nearbyCities: ["mombasa", "dar-es-salaam", "kampala", "johannesburg", "durban"],
+    nearbyCities: ["mombasa", "dar-es-salaam", "johannesburg", "durban"],
   },
 
   mombasa: {
@@ -234,7 +234,7 @@ export const internationalOtherCities: Record<string, CityData> = {
     addressRegion: "Mombasa",
     addressCountry: "KE",
     region: "Africa",
-    nearbyCities: ["nairobi", "dar-es-salaam", "kampala", "johannesburg", "durban"],
+    nearbyCities: ["nairobi", "dar-es-salaam", "johannesburg", "durban"],
   },
 
   "dar-es-salaam": {
@@ -263,36 +263,7 @@ export const internationalOtherCities: Record<string, CityData> = {
     addressRegion: "",
     addressCountry: "TZ",
     region: "Africa",
-    nearbyCities: ["nairobi", "mombasa", "kampala", "johannesburg", "durban"],
-  },
-
-  kampala: {
-    slug: "kampala",
-    displayName: "Kampala",
-    titleTag: "South Asian Singles Events Kampala | Garam Masala Dating",
-    metaDescription:
-      "Garam Masala Dating is coming to Kampala. A live South Asian dating show and singles mixer. Uganda's resilient Indian community and East Africa's desi network.",
-    h1: "Kampala's Desi Dating Night Is Coming",
-    status: "coming-soon",
-    badgeLabel: "Coming Soon",
-    bodyParagraphs: [
-      "Kampala's Indian community has one of the most dramatic histories in the diaspora. Idi Amin expelled all Asians from Uganda in 1972, and the community was scattered across the world. Since the 1990s, many families have returned, rebuilt businesses, and re-established the community. The resilience is extraordinary. Today's Indian Kampalan community is small but proud, concentrated around the Nakasero and Old Kampala areas.",
-      "Garam Masala Dating is a live South Asian dating show and singles mixer from NYC. Real blind dates on stage, two hosts, a live audience, and a mixer. In Kampala, this show would carry extra weight because the community's history of loss and return makes every gathering feel significant.",
-      "Makerere University and the growing East African business scene attract new South Asian arrivals. The returned families and the newcomers create an interesting generational dynamic. Some people's grandparents were here before the expulsion. Others arrived last year. The show puts both groups in the same room.",
-      "Kampala's social scene is vibrant and welcoming. The city has a warmth that makes events feel more communal than transactional. A dating show here wouldn't just be entertainment, it'd be a community moment.",
-      "Waitlist is open. Kampala is part of our East African tour plans alongside Nairobi. Get on the list or apply to be a contestant.",
-    ],
-    ctas: [
-      { label: "Join the Kampala Waitlist", href: "#waitlist" },
-      { label: "Apply to Be a Contestant", href: "/apply?city=Kampala" },
-    ],
-    includeEventSchema: false,
-    areaServed: "Kampala, Uganda",
-    addressLocality: "Kampala",
-    addressRegion: "",
-    addressCountry: "UG",
-    region: "Africa",
-    nearbyCities: ["nairobi", "mombasa", "dar-es-salaam", "johannesburg", "durban"],
+    nearbyCities: ["nairobi", "mombasa", "johannesburg", "durban", "cape-town"],
   },
 
   johannesburg: {

@@ -262,7 +262,7 @@
 
 .igInput {
   composes: input;
-  padding-left: 30px;
+  padding-left: 34px;
 }
 
 /* ─── Photo upload ───────────────────────────────────────────── */

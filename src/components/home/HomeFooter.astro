@@ -168,8 +168,8 @@ const socials = [
   }
   .footer-col ul li a:hover { color: white; }
 
-  /* Shows list: 2-col grid on mobile */
-  .footer-shows-list {
+  /* Shows list: always 2-col grid */
+  .footer-col .footer-shows-list {
     display: grid;
     grid-template-columns: 1fr 1fr;
     gap: 4px 16px;
@@ -221,7 +221,7 @@ const socials = [
     .footer-social a :global(svg) { width: 18px; height: 18px; }
     .footer-col h4 { margin-top: 0; margin-bottom: 20px; }
     .footer-col ul { gap: 10px; }
-    .footer-shows-list { grid-template-columns: 1fr 1fr; gap: 10px 24px; }
+    .footer-col .footer-shows-list { grid-template-columns: 1fr 1fr; gap: 10px 24px; }
     .footer-bottom { flex-direction: row; justify-content: space-between; padding-top: 24px; gap: 0; }
     .footer-copy, .footer-legal a { font-size: 13px; }
   }

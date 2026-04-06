@@ -13,11 +13,11 @@ import HomeCreators from '@/components/home/HomeCreators.astro';
 import HomeFAQ from '@/components/home/HomeFAQ.astro';
 import HomeNewsletter from '@/components/home/HomeNewsletter.astro';
 import { SOCIAL_URLS } from '@/data/socials';
-import { events } from '@/data/events';
+import { events, allEvents } from '@/data/events';
 import { isEventPast } from '@/utils/eventDate';
 import { buildEventSchemas } from '@/utils/eventSchema';
 
-const upcomingEvents = events.filter((e) => !isEventPast(e.date) && !e.hidden);
+const upcomingEvents = allEvents.filter((e) => !isEventPast(e.date) && !e.hidden);
 const firstTicketUrl = '/tickets';
 
 // Organization JSON-LD

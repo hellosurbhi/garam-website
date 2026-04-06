@@ -101,24 +101,15 @@ export const events: EventEntry[] = [
     venue: VENUE_LAUGH_TOUR,
     price: "15",
   },
-  {
-    date: "TBA",
-    city: "San Diego",
-    url: "#",
-  },
-  {
-    date: "TBA",
-    city: "Los Angeles",
-    url: "#",
-  },
-  {
-    date: "TBA",
-    city: "Edinburgh",
-    url: "#",
-  },
-  {
-    date: "Dec 2026",
-    city: "India Tour",
-    url: "#",
-  },
 ];
+
+// Auto-generate TBA entries from coming-soon cities so there's one source of truth.
+// Import is lazy to avoid circular deps — cities.ts doesn't import events.ts.
+import { citiesIndex } from './cities';
+
+const comingSoonEvents: EventEntry[] = citiesIndex
+  .filter((c) => c.status === 'coming-soon')
+  .map((c) => ({ date: 'TBA', city: c.displayName, url: '#' }));
+
+/** All events: confirmed shows + auto-generated TBA from coming-soon cities */
+export const allEvents: EventEntry[] = [...events, ...comingSoonEvents];

@@ -2,7 +2,7 @@
 import BaseLayout from '@/layouts/BaseLayout.astro';
 import PageNav from '@/components/layout/PageNav.astro';
 import { buildBreadcrumbJsonLd } from '@/utils/breadcrumbs';
-import { events } from '@/data/events';
+import { events, allEvents } from '@/data/events';
 import { isEventPast } from '@/utils/eventDate';
 import { buildEventSchemas } from '@/utils/eventSchema';
 
@@ -10,7 +10,7 @@ const TITLE = "Tickets & Upcoming Shows | Garam Masala Dating";
 const DESC =
   "Get tickets to upcoming Garam Masala Dating shows. NYC's #1 live South Asian comedy dating show and singles mixer, now in LA, SF, San Diego, and more.";
 
-const upcomingEvents = events.filter((e) => !isEventPast(e.date) && !e.hidden);
+const upcomingEvents = allEvents.filter((e) => !isEventPast(e.date) && !e.hidden);
 
 const breadcrumbJsonLd = buildBreadcrumbJsonLd([
   { name: "Home", url: "https://garammasaladating.com/" },

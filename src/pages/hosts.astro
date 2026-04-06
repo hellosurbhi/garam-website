@@ -1,32 +1,274 @@
 ---
 import BaseLayout from '@/layouts/BaseLayout.astro';
 import PageNav from '@/components/layout/PageNav.astro';
-import HomeCreators from '@/components/home/HomeCreators.astro';
+import { CREATOR_URLS } from '@/data/socials';
 import { buildBreadcrumbJsonLd } from '@/utils/breadcrumbs';
 
-const TITLE = "Meet the Hosts | Garam Masala Dating";
+const TITLE = "Meet the Hosts — Surbhi & Wyatt | Garam Masala Dating";
 const DESC =
-  "Meet Surbhi and Wyatt, the comedians and chaos agents behind Garam Masala Dating — NYC's #1 live South Asian comedy dating show.";
+  "Meet Surbhi and Wyatt, the stand-up comedians behind Garam Masala Dating. Learn how a one-off downtown bar experiment became NYC's biggest live dating show.";
 
 const breadcrumbJsonLd = buildBreadcrumbJsonLd([
   { name: "Home", url: "https://garammasaladating.com/" },
   { name: "Hosts" },
+]);
+
+const personJsonLd = JSON.stringify([
+  {
+    "@context": "https://schema.org",
+    "@type": "Person",
+    name: "Surbhi",
+    jobTitle: "Stand-Up Comedian & Co-Creator",
+    url: CREATOR_URLS.surbhi,
+    worksFor: { "@type": "Organization", name: "Garam Masala Dating" },
+  },
+  {
+    "@context": "https://schema.org",
+    "@type": "Person",
+    name: "Wyatt Feegrado",
+    jobTitle: "Stand-Up Comedian & Co-Host",
+    url: CREATOR_URLS.wyatt,
+    worksFor: { "@type": "Organization", name: "Garam Masala Dating" },
+  },
 ]);
 ---
 
 <BaseLayout title={TITLE} description={DESC}>
   <Fragment slot="head">
     <script type="application/ld+json" set:html={breadcrumbJsonLd} />
+    <script type="application/ld+json" set:html={personJsonLd} />
   </Fragment>
 
   <PageNav />
-  <main>
-    <HomeCreators />
-  </main>
+  <div class="hosts-page">
+    <div class="hosts-container">
+      <p class="hosts-eyebrow">The Hosts</p>
+      <h1>The Comedians Behind<br />the Chaos</h1>
+      <p class="hosts-intro">
+        Garam Masala Dating didn't come from a pitch deck or a production company. It started when two comedians decided that watching real people go on blind dates in front of a live audience was funnier than anything they could write.
+      </p>
+
+      <div class="host-section">
+        <div class="host-avatar" aria-hidden="true">👩🏽</div>
+        <div class="host-content">
+          <h2>
+            <a href={CREATOR_URLS.surbhi} target="_blank" rel="noopener noreferrer">Surbhi</a>
+          </h2>
+          <p class="host-role">Co-Creator & Host</p>
+          <p>
+            Surbhi is a New York-based stand-up comedian and the creative force behind Garam Masala Dating. She created the show in 2022 after noticing something missing in the South Asian comedy and dating scene — a space where desi singles could meet in real life, in a room full of energy, without the awkwardness of apps or the pressure of family setups.
+          </p>
+          <p>
+            What started as a one-off experiment in a downtown bar is now NYC's #1 live dating show. The show sells out 250-seat venues weekly in Manhattan, runs monthly in Jersey City, and has expanded to Los Angeles, San Francisco, and San Diego. Surbhi has performed at comedy venues across the US and UK, and has accidentally matched three real couples through the show — and counting.
+          </p>
+          <p>
+            She handles everything from casting and producing to hosting the show itself, where her ability to make strangers comfortable on stage in front of hundreds of people is the reason contestants keep coming back.
+          </p>
+          <div class="host-credits">
+            <span>Stand-Up Comedian</span>
+            <span>Co-Creator & Producer</span>
+            <span>NYC · LA · SF · SD</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="host-section">
+        <div class="host-avatar" aria-hidden="true">👨🏽‍🦱</div>
+        <div class="host-content">
+          <h2>
+            <a href={CREATOR_URLS.wyatt} target="_blank" rel="noopener noreferrer">Wyatt Feegrado</a>
+          </h2>
+          <p class="host-role">Co-Host & Actor</p>
+          <p>
+            Wyatt Feegrado is a stand-up comedian and actor who started sneaking out of his parents' house in Walnut Creek, California to do open mics at 16. He went on to attend NYU Tisch School of the Arts, then landed a starring role in ESPN+'s <em>Bettor Days</em>, followed by Hulu's <em>Chicano Squad</em> and the History Channel's <em>Holy Marvels</em>.
+          </p>
+          <p>
+            He tours the US 11 months of the year and co-hosts the podcast <em>Gen Zenophobic</em> with his brother Luke. On Garam Masala Dating, Wyatt is the reason no awkward silence survives longer than two seconds. His improvisation keeps the energy high, the contestants laughing, and the audience on the edge of their seats.
+          </p>
+          <p>
+            Together with Surbhi, he's built a show that feels less like a production and more like the best house party you've ever been to — except two strangers are falling in love on stage while 250 people lose their minds.
+          </p>
+          <div class="host-credits">
+            <span>Stand-Up Comedian</span>
+            <span>Actor — ESPN+, Hulu, History</span>
+            <span>NYU Tisch</span>
+            <span>Co-Host</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="hosts-cta">
+        <a href="/apply" class="btn-primary">Apply to Be on the Show</a>
+        <a href="/tickets" class="btn-outline">Get Tickets</a>
+      </div>
+    </div>
+  </div>
 </BaseLayout>
 
 <style>
-  main {
-    padding-top: 32px;
+  .hosts-page {
+    padding: 32px 20px 80px;
+  }
+  .hosts-container {
+    max-width: 720px;
+    margin: 0 auto;
+  }
+  .hosts-eyebrow {
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: var(--hot-pink);
+    margin-bottom: 16px;
+  }
+  h1 {
+    font-family: var(--font-playfair), serif;
+    font-size: clamp(32px, 5vw, 52px);
+    font-weight: 900;
+    color: var(--charcoal);
+    line-height: 1.05;
+    margin-bottom: 20px;
+  }
+  .hosts-intro {
+    font-family: var(--font-cormorant), serif;
+    font-size: 18px;
+    font-style: italic;
+    color: #666;
+    line-height: 1.7;
+    margin-bottom: 56px;
+  }
+
+  .host-section {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    margin-bottom: 56px;
+    padding-bottom: 56px;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+  }
+  .host-section:last-of-type {
+    border-bottom: none;
+    margin-bottom: 48px;
+  }
+  .host-avatar {
+    width: 96px;
+    height: 96px;
+    border-radius: 50%;
+    border: 3px solid var(--hot-pink);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 44px;
+    background: linear-gradient(135deg, rgba(233, 30, 118, 0.15), rgba(255, 109, 0, 0.1));
+    margin-bottom: 20px;
+    flex-shrink: 0;
+  }
+  .host-content h2 {
+    margin-bottom: 4px;
+  }
+  .host-content h2 a {
+    font-family: var(--font-cormorant), serif;
+    font-size: 28px;
+    font-weight: 700;
+    color: var(--charcoal);
+    text-decoration: none;
+    transition: color 0.2s;
+  }
+  .host-content h2 a:hover { color: var(--hot-pink); }
+  .host-role {
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    color: var(--hot-pink);
+    margin-bottom: 20px;
+  }
+  .host-content p {
+    font-size: 16px;
+    color: #444;
+    line-height: 1.8;
+    margin-bottom: 16px;
+  }
+  .host-credits {
+    margin-top: 20px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    justify-content: center;
+  }
+  .host-credits span {
+    font-size: 11px;
+    font-weight: 600;
+    background: rgba(233, 30, 118, 0.08);
+    color: var(--hot-pink);
+    padding: 4px 12px;
+    border-radius: 50px;
+    letter-spacing: 0.5px;
+  }
+
+  .hosts-cta {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    align-items: center;
+  }
+  .btn-primary {
+    background: var(--hot-pink);
+    color: white;
+    padding: 16px 36px;
+    border-radius: 50px;
+    font-family: var(--font-body), sans-serif;
+    font-size: 14px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    text-decoration: none;
+    transition: background 0.2s;
+    min-height: 48px;
+    display: inline-flex;
+    align-items: center;
+  }
+  .btn-primary:hover { background: var(--deep-magenta); }
+  .btn-outline {
+    color: var(--charcoal);
+    padding: 16px 36px;
+    border-radius: 50px;
+    border: 1.5px solid rgba(0, 0, 0, 0.15);
+    font-family: var(--font-body), sans-serif;
+    font-size: 14px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    text-decoration: none;
+    transition: all 0.2s;
+    min-height: 48px;
+    display: inline-flex;
+    align-items: center;
+  }
+  .btn-outline:hover {
+    background: var(--charcoal);
+    color: white;
+    border-color: var(--charcoal);
+  }
+
+  @media (min-width: 768px) {
+    .hosts-page { padding: 48px 48px 100px; }
+    .hosts-container { max-width: 800px; }
+    .hosts-intro { font-size: 20px; margin-bottom: 72px; }
+    .host-section {
+      flex-direction: row;
+      text-align: left;
+      gap: 32px;
+      align-items: flex-start;
+    }
+    .host-avatar {
+      width: 120px;
+      height: 120px;
+      font-size: 52px;
+      margin-bottom: 0;
+    }
+    .host-credits { justify-content: flex-start; }
+    .hosts-cta { flex-direction: row; justify-content: center; }
   }
 </style>

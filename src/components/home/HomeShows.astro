@@ -13,7 +13,8 @@ function parseMonth(dateStr: string): string {
 
 function parseDay(dateStr: string): string {
   const parts = dateStr.split(' ');
-  return parts[1] ?? '—';
+  const day = parts[1] ?? '—';
+  return /^\d{1,2}$/.test(day) ? day : '—';
 }
 ---
 
@@ -193,7 +194,7 @@ function parseDay(dateStr: string): string {
   }
   .shows-header p {
     color: rgba(255, 255, 255, 0.7);
-    font-size: 15px;
+    font-size: 18px;
     margin-top: 8px;
   }
   .shows-list {
@@ -275,13 +276,14 @@ function parseDay(dateStr: string): string {
   }
   .request-city button {
     color: var(--electric-yellow);
-    font-weight: 600;
-    font-size: 15px;
+    font-weight: 500;
+    font-size: 13px;
     background: none;
     border: none;
     border-bottom: 1px solid rgba(255, 214, 0, 0.4);
     cursor: pointer;
-    font-family: inherit;
+    font-family: var(--font-cormorant), serif;
+    font-style: italic;
     transition: border-color 0.2s;
     padding: 0;
   }

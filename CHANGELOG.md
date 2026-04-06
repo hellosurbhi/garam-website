@@ -1,5 +1,35 @@
 # Changelog
 
+## Audit implementation: SEO, conversion, mobile, resilience
+
+### SEO meta fixes
+- Fix logo URL in JSON-LD: `logo.png` (didn't exist) → `images/logo.svg`
+- Add `og:site_name="Garam Masala Dating"` to all pages
+- Add `twitter:site` and `twitter:creator` tags
+- Add `ogType` prop to BaseLayout (default "website", blog posts pass "article")
+- Blog posts get `article:published_time` and `article:modified_time` meta tags
+
+### Conversion: direct Eventbrite links
+- Show cards on homepage now link directly to each event's Eventbrite URL (was /tickets)
+- "Tickets" label → "Get Tickets" with `target="_blank"`
+- Removes one click from the purchase funnel
+
+### Mobile: iOS auto-zoom prevention
+- Hero `.btn`: 14px → 16px
+- HomeNav `.nav-pill`: 11px → 16px
+- PageNav `.page-nav-pill`: 11px → 16px
+- All interactive elements now ≥16px to prevent iOS Safari auto-zoom on focus
+
+### Resilience
+- New `ErrorBoundary.tsx` wraps ApplyPage — catches React crashes and shows friendly fallback with refresh button and Instagram DM link instead of white screen
+
+### Auto-generated sitemap
+- Install `@astrojs/sitemap` integration — sitemap auto-generated at build time
+- Delete stale `public/sitemap.xml` that was missing 5+ pages and had old dates
+
+### Backlog additions
+- Placeholder photo gallery, video section, section CTAs, press logos, testimonial badges, scarcity indicators, discount code preview logged in ENHANCEMENTS.md
+
 ## WCAG accessibility audit — non-visual fixes
 
 Comprehensive accessibility pass across the entire site. Only changes that have zero visual impact on current layouts/responsiveness were applied. Visual-impact issues logged in BUGS.md.

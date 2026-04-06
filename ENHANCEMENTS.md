@@ -1,8 +1,26 @@
 # Enhancements Backlog
 
-Items from the GMD website audit checklist that are either external tasks, require visual design decisions, or are low-priority improvements. Sorted by impact.
+Items from the GMD website audit checklists (site audit, codebase cleanup, conversion audit, mobile audit) that need content, design decisions, or external work. Sorted by impact.
+
+## Critical (Needs Content Assets)
+
+### Replace placeholder photo gallery with real show photos
+- **File:** `src/components/home/HomePhotos.astro`
+- **Why:** Line 17 literally says "Your photos go here" with gradient color blocks. This is the #1 conversion killer — visitors need visual proof the show is real, packed, and fun.
+- **How:** Replace the `photos` array (lines 2-11) with real image paths. Need 6-8 photos: on-stage moments, crowd energy, host reactions, matched couples. Use AVIF/WebP with `<picture>` elements.
+
+### Add video section on homepage
+- **Why:** Site claims "10M+ Views" but embeds zero videos. A 60-second clip converts more skeptics than 1,000 words of copy.
+- **How:** Create `src/components/home/HomeVideo.astro` with YouTube facade pattern (thumbnail + play button, load iframe on click). Position between Experience and Shows sections. Add VideoObject JSON-LD.
 
 ## High Impact
+
+### CTAs after Experience, FAQ, and Creators sections
+- **Files:** `src/components/home/HomeExperience.astro`, `HomeFAQ.astro`, `HomeCreators.astro`
+- **Why:** All three sections build conviction then give visitors nowhere to go. The FAQ section especially — those are high-intent buyers overcoming objections.
+- **How:** Add centered "Get Tickets" button + secondary "Apply" link after each section's content. Design decision needed on styling.
+
+
 
 ### Optimize surbhi.png to AVIF/WebP
 - **File:** `public/images/surbhi.png` (595 KB)

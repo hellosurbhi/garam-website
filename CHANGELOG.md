@@ -1,5 +1,38 @@
 # Changelog
 
+## fix: site copy — add SF city page, update SD/LA, position as NYC's #1
+
+Fixed nonsensical copy across the site: wrong cities in the hero eyebrow, inconsistent audience numbers, stale event references, and weak positioning.
+
+**Copy changes:**
+- Positioned the show as "NYC's #1 Live Dating Show" across hero eyebrow, experience section, FAQ, and marquee ticker
+- Replaced hard-coded audience numbers (150) with generic language ("a packed house", "a live audience") since capacity varies by venue — 250 stays only in NYC-specific city page copy
+- Hero eyebrow: "Season 2026 · NYC · Chicago · Edinburgh" → "NYC's #1 Live Dating Show · Now Expanding Nationwide"
+- Surbhi's credits: removed Edinburgh Fringe, added "NYC · LA · SF"
+
+**City pages:**
+- Added San Francisco as a new coming-soon city (`/cities/san-francisco`)
+- Updated San Diego from "past" → "coming-soon" with forward-looking copy (acknowledges sold-out March show)
+- Removed stale Netflix Is a Joke Fest reference from LA page, fixed `includeEventSchema` to `false`
+- Updated `citiesIndex` to include SF and SD
+
+**Footer & tickets:**
+- Replaced dead Edinburgh Fringe link with LA, SF, SD city page links
+- Updated tickets page meta description to mention expansion cities
+
+**Files changed:**
+- `src/data/cities.ts` — SD status/copy, LA copy fix, new SF entry, updated index
+- `src/data/cities.test.ts` — added SF to expected cities
+- `src/components/home/HomeHero.astro` — eyebrow text
+- `src/components/home/HomeExperience.astro` — h2, audience numbers, tone
+- `src/components/home/HomeFAQ.astro` — audience numbers, positioning
+- `src/components/home/HomeFooter.astro` — shows links
+- `src/components/home/HomeCreators.astro` — Surbhi credits
+- `src/components/home/HomeMarquee.astro` — first ticker phrase
+- `src/pages/tickets.astro` — meta description
+
+---
+
 ## feat: redesign contestant-prep page to match v3 visual language
 
 Ported the contestant-prep page from the old dark/gold theme to the v3 light theme used on the home page.

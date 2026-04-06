@@ -98,6 +98,11 @@ const socials = [
   .footer-brand {
     margin-bottom: 28px;
   }
+  .footer-brand a {
+    display: inline-block;
+    text-decoration: none;
+    line-height: 0;
+  }
   .footer-logo {
     height: 36px;
     width: auto;
@@ -210,13 +215,13 @@ const socials = [
     }
     .footer-brand { margin-bottom: 0; }
     .footer-logo { height: 56px; }
-    .footer-brand p { font-size: 14px; margin-bottom: 24px; }
+    .footer-brand p { font-size: 14px; margin-bottom: 24px; max-width: 280px; }
     .footer-social { justify-content: flex-start; gap: 10px; }
     .footer-social a { width: 40px; height: 40px; }
     .footer-social a :global(svg) { width: 18px; height: 18px; }
     .footer-col h4 { margin-top: 0; margin-bottom: 20px; }
     .footer-col ul { gap: 10px; }
-    .footer-shows-list { display: flex; flex-direction: column; grid-template-columns: none; }
+    .footer-shows-list { grid-template-columns: 1fr 1fr; gap: 10px 24px; }
     .footer-bottom { flex-direction: row; justify-content: space-between; padding-top: 24px; gap: 0; }
     .footer-copy, .footer-legal a { font-size: 13px; }
   }

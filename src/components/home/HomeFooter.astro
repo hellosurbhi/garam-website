@@ -89,6 +89,8 @@ const socials = [
   .footer-top {
     display: flex;
     flex-direction: column;
+    align-items: center;
+    text-align: center;
     gap: 32px;
     max-width: 1200px;
     margin: 0 auto;
@@ -108,7 +110,7 @@ const socials = [
     margin-bottom: 20px;
     max-width: 280px;
   }
-  .footer-social { display: flex; gap: 12px; }
+  .footer-social { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; }
   .footer-social a {
     width: 40px;
     height: 40px;
@@ -139,6 +141,7 @@ const socials = [
     list-style: none;
     display: flex;
     flex-direction: column;
+    align-items: center;
     gap: 10px;
   }
   .footer-col ul li a {
@@ -155,8 +158,9 @@ const socials = [
     margin: 0 auto;
     padding-top: 24px;
     display: flex;
-    justify-content: space-between;
+    flex-direction: column;
     align-items: center;
+    gap: 12px;
   }
   .footer-copy {
     font-size: 13px;
@@ -181,13 +185,17 @@ const socials = [
     .footer-top {
       display: grid;
       grid-template-columns: 2fr 1fr 1fr 1fr;
+      align-items: start;
+      text-align: left;
       gap: 48px;
       padding-bottom: 40px;
     }
+    .footer-social { justify-content: flex-start; }
+    .footer-col ul { align-items: flex-start; }
     .footer-logo { height: 56px; }
     .footer-brand p { margin-bottom: 24px; }
     .footer-col h4 { margin-bottom: 20px; }
     .footer-col ul { gap: 12px; }
-    .footer-bottom { padding-top: 24px; }
+    .footer-bottom { flex-direction: row; justify-content: space-between; padding-top: 24px; gap: 0; }
   }
 </style>

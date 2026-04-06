@@ -1,5 +1,11 @@
 # Changelog
 
+## Fix nav pill overflow: revert to 13px, add nowrap, tighten padding
+
+Nav pills ("Apply" / "Get Tickets") were bumped to 16px in the mobile audit, but these are `<a>` links not form controls — iOS zoom only triggers on `<input>`/`<button>`, not anchors. Reverted to 13px, reduced horizontal padding from 22px to 18px, added `white-space: nowrap` to prevent "Get Tickets" wrapping to two lines on mobile.
+
+**Files:** HomeNav.astro, PageNav.astro
+
 ## Mobile audit: add modal scroll support on small viewports
 
 Added `max-height: 80vh; overflow-y: auto` to all modal inner containers so forms are scrollable on small phones (especially with keyboard open).

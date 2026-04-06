@@ -350,8 +350,8 @@
 }
 
 .submitButton:hover {
-  background: #AD1457;
-  box-shadow: 0 4px 20px rgba(233, 30, 118, 0.3);
+  background: #c43318;
+  box-shadow: 0 4px 20px rgba(232, 60, 34, 0.3);
 }
 
 .submitButton:disabled {
@@ -522,5 +522,5 @@
 }
 
 .successTicketButton:hover {
-  background: #AD1457;
+  background: #c43318;
 }

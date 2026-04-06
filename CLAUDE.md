@@ -73,11 +73,11 @@ src/
 
 All colors, fonts, spacing, and breakpoints come from `src/styles/tokens.ts` (or CSS custom properties in `:root`). The brand colors are:
 
-- Hot pink: #E91E76 (primary CTA, accents)
+- Spice red: #e83c22 (primary CTA, accents)
 - Electric yellow: #FFD600 (highlights, badges)
 - Off-white: #FFF8F0 (background)
 - Charcoal: #1A1A1A (text)
-- Deep magenta: #AD1457 (hover states)
+- Spice red dark: #c43318 (hover states)
 - Spice orange: #FF6D00 (secondary accent)
 
 Font families: Playfair Display (headings), Outfit (body). Maximum two families loaded.

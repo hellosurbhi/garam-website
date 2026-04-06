@@ -1,0 +1,32 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import HomeCreators from '@/components/home/HomeCreators.astro';
+import HomeFooter from '@/components/home/HomeFooter.astro';
+import { buildBreadcrumbJsonLd } from '@/utils/breadcrumbs';
+
+const TITLE = "Meet the Hosts | Garam Masala Dating";
+const DESC =
+  "Meet Surbhi and Wyatt, the comedians and chaos agents behind Garam Masala Dating — NYC's #1 live South Asian comedy dating show.";
+
+const breadcrumbJsonLd = buildBreadcrumbJsonLd([
+  { name: "Home", url: "https://garammasaladating.com/" },
+  { name: "Hosts" },
+]);
+---
+
+<BaseLayout title={TITLE} description={DESC}>
+  <Fragment slot="head">
+    <script type="application/ld+json" set:html={breadcrumbJsonLd} />
+  </Fragment>
+
+  <main>
+    <HomeCreators />
+  </main>
+  <HomeFooter />
+</BaseLayout>
+
+<style>
+  main {
+    padding-top: 32px;
+  }
+</style>

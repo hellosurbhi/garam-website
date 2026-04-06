@@ -1,5 +1,6 @@
 ---
 import { SOCIAL_URLS } from '@/data/socials';
+import { SOCIAL_ICON_SVGS } from '@/data/icons';
 
 const showLinks = [
   { label: 'New York City', href: '/cities/manhattan' },
@@ -19,14 +20,14 @@ const involvedLinks = [
 const exploreLinks = [
   { label: 'FAQ', href: '/faq' },
   { label: 'The Journal', href: '/journal' },
-  { label: 'Meet the Hosts', href: '#about' },
+  { label: 'Meet the Hosts', href: '/hosts' },
   { label: 'Contact', href: `mailto:${SOCIAL_URLS.email.replace('mailto:', '')}` },
 ];
 
 const socials = [
-  { label: 'IG', aria: 'Instagram', href: SOCIAL_URLS.instagram },
-  { label: 'TT', aria: 'TikTok', href: SOCIAL_URLS.tiktok },
-  { label: 'YT', aria: 'YouTube', href: SOCIAL_URLS.youtube },
+  { icon: 'instagram', aria: 'Instagram', href: SOCIAL_URLS.instagram },
+  { icon: 'tiktok', aria: 'TikTok', href: SOCIAL_URLS.tiktok },
+  { icon: 'youtube', aria: 'YouTube', href: SOCIAL_URLS.youtube },
 ];
 ---
 
@@ -39,7 +40,7 @@ const socials = [
       <p>New York City's live South Asian comedy dating show. Hosted by Surbhi & Wyatt. Performing across the US and UK since 2022.</p>
       <div class="footer-social">
         {socials.map((s) => (
-          <a href={s.href} target="_blank" rel="noopener noreferrer" aria-label={s.aria}>{s.label}</a>
+          <a href={s.href} target="_blank" rel="noopener noreferrer" aria-label={s.aria}><Fragment set:html={SOCIAL_ICON_SVGS[s.icon]} /></a>
         ))}
       </div>
     </div>
@@ -95,7 +96,7 @@ const socials = [
   }
   .footer-brand p {
     font-size: 14px;
-    color: rgba(255, 255, 255, 0.4);
+    color: rgba(255, 255, 255, 0.6);
     line-height: 1.7;
     margin-bottom: 20px;
     max-width: 280px;
@@ -111,8 +112,6 @@ const socials = [
     justify-content: center;
     color: rgba(255, 255, 255, 0.5);
     text-decoration: none;
-    font-size: 12px;
-    font-weight: 700;
     transition: border-color 0.2s, color 0.2s;
     min-height: 48px;
     min-width: 48px;
@@ -126,7 +125,7 @@ const socials = [
     font-weight: 700;
     text-transform: uppercase;
     letter-spacing: 2px;
-    color: rgba(255, 255, 255, 0.35);
+    color: rgba(255, 255, 255, 0.55);
     margin-bottom: 16px;
   }
   .footer-col ul {
@@ -136,7 +135,7 @@ const socials = [
     gap: 10px;
   }
   .footer-col ul li a {
-    color: rgba(255, 255, 255, 0.55);
+    color: rgba(255, 255, 255, 0.7);
     text-decoration: none;
     font-size: 14px;
     transition: color 0.2s;
@@ -151,7 +150,7 @@ const socials = [
   }
   .footer-copy {
     font-size: 13px;
-    color: rgba(255, 255, 255, 0.25);
+    color: rgba(255, 255, 255, 0.45);
   }
 
   @media (min-width: 768px) {

@@ -999,11 +999,11 @@ export const journalPosts: JournalPost[] = [
     dateModified: "2026-03-14",
     author: "Garam Masala Dating",
     excerpt:
-      "We've watched a lot of first dates. Not through an app, not on a reality show set — live, on stage, in front of a couple hundred people who have opinions and aren't shy about sharing them.",
+      "We've watched a lot of first dates. Not through an app, not on a reality show set. Live, on stage, in front of a couple hundred people who have opinions and aren't shy about sharing them.",
     body: [
       {
         type: "p",
-        text: "We've watched a lot of first dates. Not through an app, not on a reality show set — live, on stage, in front of a couple hundred people who have opinions and aren't shy about sharing them.",
+        text: "We've watched a lot of first dates. Not through an app, not on a reality show set. Live, on stage, in front of a couple hundred people who have opinions and aren't shy about sharing them.",
       },
       {
         type: "p",

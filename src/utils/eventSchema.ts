@@ -27,7 +27,7 @@ export function buildEventSchemas(eventsList: EventEntry[]): string[] {
       return JSON.stringify({
         "@context": "https://schema.org",
         "@type": "Event",
-        name: "Garam Masala Dating — Live Comedy Dating Show",
+        name: "Garam Masala Dating | Live Comedy Dating Show",
         startDate: `${e.isoDate}T${start}:00${nyOffset(e.isoDate!, start)}`,
         endDate: `${e.isoDate}T${end}:00${nyOffset(e.isoDate!, end)}`,
         eventStatus: "https://schema.org/EventScheduled",

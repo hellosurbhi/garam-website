@@ -7,7 +7,7 @@ const { ticketsUrl } = Astro.props;
 ---
 
 <nav class="home-nav" id="home-nav">
-  <a href="/" class="nav-logo" aria-label="Garam Masala Dating — Home">
+  <a href="/" class="nav-logo" aria-label="Garam Masala Dating Home">
     <img src="/images/logo.svg" alt="Garam Masala Dating Show" class="nav-logo-img" width="160" height="82" />
   </a>
   <div class="nav-right">
@@ -54,7 +54,6 @@ const { ticketsUrl } = Astro.props;
   .nav-logo-img {
     height: 36px;
     width: auto;
-    filter: brightness(0) invert(1);
     transition: filter 0.4s;
   }
   .home-nav.scrolled .nav-logo-img {
@@ -72,7 +71,7 @@ const { ticketsUrl } = Astro.props;
     text-transform: uppercase;
     letter-spacing: 1.5px;
     text-decoration: none;
-    color: white;
+    color: var(--charcoal);
     padding: 12px 22px;
     border-radius: 50px;
     border: 1.5px solid transparent;
@@ -82,7 +81,7 @@ const { ticketsUrl } = Astro.props;
     align-items: center;
   }
   .nav-pill:hover {
-    border-color: rgba(255, 255, 255, 0.3);
+    border-color: rgba(26, 26, 26, 0.2);
   }
   .home-nav.scrolled .nav-pill {
     color: var(--charcoal);

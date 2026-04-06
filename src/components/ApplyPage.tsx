@@ -280,7 +280,7 @@ export default function ApplyPage() {
                   >
                     @garammasaladating
                   </a>{" "}
-                  on Instagram — we tend to pick contestants who are already part of the community.
+                  on Instagram. We tend to pick contestants who are already part of the community.
                 </p>
               </div>
 
@@ -288,7 +288,7 @@ export default function ApplyPage() {
                 <h3 className={styles.successCardTitle}>Come steal the show</h3>
                 <p className={styles.successCardText}>
                   Most of our contestants started as audience members. Come to a show, be a Stealer,
-                  and show us what you&apos;ve got — it seriously increases your odds.
+                  and show us what you&apos;ve got. It seriously increases your odds.
                 </p>
                 <p className={styles.successCoupon}>
                   Use code <strong>STEALER</strong> for 20% off your next ticket.
@@ -300,7 +300,7 @@ export default function ApplyPage() {
                     rel="noopener noreferrer"
                     className={styles.successTicketButton}
                   >
-                    Get Tickets — {nextShow.date} in {nextShow.city}
+                    Get Tickets | {nextShow.date} in {nextShow.city}
                   </a>
                 )}
               </div>

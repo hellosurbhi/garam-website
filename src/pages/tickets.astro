@@ -7,7 +7,7 @@ import { buildEventSchemas } from '@/utils/eventSchema';
 
 const TITLE = "Tickets & Upcoming Shows | Garam Masala Dating";
 const DESC =
-  "Get tickets to upcoming Garam Masala Dating shows — NYC's #1 live South Asian comedy dating show and singles mixer, now expanding to LA, SF, San Diego, and more.";
+  "Get tickets to upcoming Garam Masala Dating shows. NYC's #1 live South Asian comedy dating show and singles mixer, now in LA, SF, San Diego, and more.";
 
 const upcomingEvents = events.filter((e) => !isEventPast(e.date) && !e.hidden);
 
@@ -83,7 +83,7 @@ const eventSchemas = buildEventSchemas(upcomingForSchema);
         </div>
       ) : (
         <p class="tickets-empty">
-          No upcoming shows — follow us on{' '}
+          No upcoming shows. Follow us on{' '}
           <a href="https://www.instagram.com/garammasaladating/" target="_blank" rel="noopener noreferrer" class="tickets-empty__link">
             Instagram
           </a>{' '}

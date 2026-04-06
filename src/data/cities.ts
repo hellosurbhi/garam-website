@@ -38,15 +38,15 @@ export const cities: Record<string, CityData> = {
     titleTag:
       "South Asian Singles Events Manhattan | Garam Masala Dating NYC",
     metaDescription:
-      "The best South Asian singles event in Manhattan \u2014 a live comedy dating show with a real mixer. Meet people, watch blind dates unfold on stage, and have an actual night out in NYC.",
+      "The best South Asian singles event in Manhattan. A live comedy dating show with a real mixer. Meet people, watch blind dates unfold on stage, and have an actual night out in NYC.",
     h1: "Manhattan\u2019s Weekly Desi Dating Night",
     status: "active",
     badgeLabel: "Weekly Shows",
     bodyParagraphs: [
-      "Manhattan has no shortage of things to do on a Friday or Saturday night. What it\u2019s short on is a room full of interesting, single people who are actually trying to meet someone \u2014 without the pressure of a formal event or the numbness of another app.",
+      "Manhattan has no shortage of things to do on a Friday or Saturday night. What it\u2019s short on is a room full of interesting, single people who are actually trying to meet someone without the pressure of a formal event or the numbness of another app.",
       "Garam Masala Dating fills that gap. Every week, we take over a venue in Manhattan and run a live comedy dating show with a singles mixer built around it. Real blind dates, on stage, in front of 250 people. Before and after, everyone mixes. It\u2019s low-stakes, high-energy, and nothing like the other \u201Cnetworking\u201D events you\u2019ve skipped.",
       "Our Manhattan shows draw South Asian professionals, desi diaspora, expats, and anyone who shows up curious and leaves having actually talked to someone new. The crowd skews late 20s to mid 30s, culturally mixed, and genuinely there for a good time.",
-      "We run the show weekly. Check the events page for the current venue and date \u2014 we move around the East Village, Lower East Side, and Lower Manhattan depending on the week.",
+      "We run the show weekly. Check the events page for the current venue and date. We move around the East Village, Lower East Side, and Lower Manhattan depending on the week.",
       "If you\u2019re tired of apps and tired of manufactured mixers, this is the alternative. Come watch a few strangers try to fall in love on stage, then go find your own person at the bar.",
     ],
     ctas: [
@@ -65,13 +65,13 @@ export const cities: Record<string, CityData> = {
     titleTag:
       "South Asian Singles Events San Diego | Garam Masala Dating",
     metaDescription:
-      "Garam Masala Dating is coming back to San Diego. A live comedy dating show and South Asian singles mixer \u2014 from the creators of NYC\u2019s #1 live dating show.",
+      "Garam Masala Dating is coming back to San Diego. A live comedy dating show and South Asian singles mixer from the creators of NYC\u2019s #1 live dating show.",
     h1: "San Diego\u2019s Desi Dating Night Is Coming Back",
     status: "coming-soon",
     badgeLabel: "Coming Soon",
     bodyParagraphs: [
       "Garam Masala Dating came to San Diego in March 2026 and sold out. Same format as the NYC show: real singles, live blind dates on stage, and a mixer built into the night so everyone could meet.",
-      "The San Diego desi scene showed up. The room was tight-knit, the energy was different from New York \u2014 more personal, more \u201Cwait, do we have a friend in common?\u201D \u2014 and the show worked.",
+      "The San Diego desi scene showed up. The room was tight-knit, the energy was different from New York. More personal, more \u201Cwait, do we have a friend in common?\u201D The show worked.",
       "We\u2019re coming back. Dates are TBA, but if you want to be first to know when tickets drop, get on the waitlist. And if you want to be a contestant when we return, apply below.",
     ],
     ctas: [
@@ -90,16 +90,16 @@ export const cities: Record<string, CityData> = {
     titleTag:
       "South Asian Singles Events Jersey City NJ | Garam Masala Dating Hoboken",
     metaDescription:
-      "Garam Masala Dating has a monthly show at The Laugh Tour Comedy Club in Jersey City. A live comedy dating show and South Asian singles mixer \u2014 no PATH anxiety required.",
+      "Garam Masala Dating has a monthly show at The Laugh Tour Comedy Club in Jersey City. A live comedy dating show and South Asian singles mixer. No PATH anxiety required.",
     h1: "Jersey City\u2019s Desi Dating Night",
     status: "active",
     badgeLabel: "Monthly Shows",
     bodyParagraphs: [
       "If you\u2019ve been skipping the NYC show because you didn\u2019t feel like dealing with the commute home, this one\u2019s for you.",
-      "Garam Masala Dating runs a monthly show at The Laugh Tour Comedy Club in Jersey City \u2014 same format as the NYC show, same hosts, smaller room. Real singles go on live blind dates on stage while the audience watches, reacts, and roots for them. Before and after, everyone mixes.",
-      "The JC show draws from Jersey City, Hoboken, Newport, Weehawken, and the rest of Hudson County. The South Asian and desi community in this pocket of NJ is massive and concentrated \u2014 which means the odds that you already have a mutual with someone in the room are higher than you\u2019d think. That\u2019s not a bug.",
+      "Garam Masala Dating runs a monthly show at The Laugh Tour Comedy Club in Jersey City. Same format as the NYC show, same hosts, smaller room. Real singles go on live blind dates on stage while the audience watches, reacts, and roots for them. Before and after, everyone mixes.",
+      "The JC show draws from Jersey City, Hoboken, Newport, Weehawken, and the rest of Hudson County. The South Asian and desi community in this pocket of NJ is massive and concentrated, which means the odds that you already have a mutual with someone in the room are higher than you\u2019d think. That\u2019s not a bug.",
       "The room at The Laugh Tour is more intimate than our 250-person Manhattan venue. Less anonymous, more personal. If you\u2019ve ever wanted to do the show but felt like the NYC crowd was too big, this is the one to start with.",
-      "Monthly dates are posted on the events page. Tickets go fast because the room is smaller \u2014 don\u2019t wait.",
+      "Monthly dates are posted on the events page. Tickets go fast because the room is smaller. Don\u2019t wait.",
     ],
     ctas: [
       { label: "Get Tickets", href: "/links" },
@@ -119,7 +119,7 @@ export const cities: Record<string, CityData> = {
     titleTag:
       "South Asian Singles Events Los Angeles | Garam Masala Dating",
     metaDescription:
-      "Garam Masala Dating is coming to LA. A live comedy dating show and South Asian singles mixer \u2014 from the co-creator of the NYC show that sells out 250 seats every week.",
+      "Garam Masala Dating is coming to LA. A live comedy dating show and South Asian singles mixer from the creators of NYC\u2019s #1 live dating show.",
     h1: "LA\u2019s Desi Dating Night Is Coming",
     status: "coming-soon",
     badgeLabel: "Coming Soon",
@@ -144,13 +144,13 @@ export const cities: Record<string, CityData> = {
     titleTag:
       "South Asian Singles Events Salt Lake City | Garam Masala Dating",
     metaDescription:
-      "Garam Masala Dating may be coming to Salt Lake City. A live comedy dating show and singles mixer \u2014 join the waitlist to be first to know.",
+      "Garam Masala Dating may be coming to Salt Lake City. A live comedy dating show and singles mixer. Join the waitlist to be first to know.",
     h1: "Salt Lake City, We\u2019re Looking at You",
     status: "coming-soon",
     badgeLabel: "Coming Soon",
     bodyParagraphs: [
       "Garam Masala Dating is a live comedy dating show and South Asian singles mixer that runs every week in New York City. The format: real singles, live blind dates on stage in front of 250 people, and a mixer built into the night.",
-      "Wyatt Feegrado \u2014 co-host of the show \u2014 is performing at Happy Valley Comedy in Salt Lake City on June 26. If you\u2019re in SLC and you\u2019ve been looking for a way to actually meet South Asian singles in person instead of swiping, this is the room you\u2019ve been missing.",
+      "Wyatt Feegrado, co-host of the show, is performing at Happy Valley Comedy in Salt Lake City on June 26. If you\u2019re in SLC and you\u2019ve been looking for a way to actually meet South Asian singles in person instead of swiping, this is the room you\u2019ve been missing.",
       "We\u2019re considering Salt Lake City for a future tour date. Drop your email to get notified if we announce a show, or apply now if you want to be a contestant when we come.",
     ],
     ctas: [
@@ -169,15 +169,15 @@ export const cities: Record<string, CityData> = {
     titleTag:
       "South Asian Singles Events San Francisco | Garam Masala Dating",
     metaDescription:
-      "Garam Masala Dating is coming to San Francisco. A live comedy dating show and South Asian singles mixer \u2014 from the creators of NYC\u2019s #1 live dating show.",
+      "Garam Masala Dating is coming to San Francisco. A live comedy dating show and South Asian singles mixer from the creators of NYC\u2019s #1 live dating show.",
     h1: "SF\u2019s Desi Dating Night Is Coming",
     status: "coming-soon",
     badgeLabel: "Coming Soon",
     bodyParagraphs: [
       "New York has been doing this for over a year. The Bay Area is next.",
       "Garam Masala Dating is NYC\u2019s #1 live comedy dating show and South Asian singles mixer. Real contestants. Real blind dates on stage. A real mixer before and after so the audience can find their own person too.",
-      "The Bay Area has one of the largest South Asian communities in the country \u2014 and somehow no one has built this yet. We\u2019re fixing that. Dates are TBA, but when we announce, the waitlist gets first access.",
-      "Get on the list to be notified first \u2014 and if you want to be a contestant when we come to your city, apply below.",
+      "The Bay Area has one of the largest South Asian communities in the country and somehow no one has built this yet. We\u2019re fixing that. Dates are TBA, but when we announce, the waitlist gets first access.",
+      "Get on the list to be notified first. If you want to be a contestant when we come to your city, apply below.",
     ],
     ctas: [
       { label: "Join the SF Waitlist", href: "/links" },
@@ -195,14 +195,14 @@ export const cities: Record<string, CityData> = {
     titleTag:
       "South Asian Singles Events Denver | Garam Masala Dating",
     metaDescription:
-      "Garam Masala Dating may be coming to Denver. A live comedy dating show and South Asian singles mixer \u2014 join the waitlist and be first to know.",
+      "Garam Masala Dating may be coming to Denver. A live comedy dating show and South Asian singles mixer. Join the waitlist and be first to know.",
     h1: "Denver, You\u2019re on the List",
     status: "coming-soon",
     badgeLabel: "Coming Soon",
     bodyParagraphs: [
       "Garam Masala Dating is a live comedy dating show and South Asian singles mixer running every week in New York City. The format is simple: real singles go on blind dates on stage in front of 250 people, the hosts ask questions, the audience reacts, and everyone mixes after.",
-      "Wyatt Feegrado \u2014 co-host of the show \u2014 is performing at Comedy Works in Denver on June 28. If you caught his set and want more, this is the show he co-hosts back home in NYC every week.",
-      "We\u2019re looking at Denver for a future tour stop. Get on the waitlist and you\u2019ll be first to know when tickets drop \u2014 or apply to be a contestant now so you\u2019re already in the system when we announce.",
+      "Wyatt Feegrado, co-host of the show, is performing at Comedy Works in Denver on June 28. If you caught his set and want more, this is the show he co-hosts back home in NYC every week.",
+      "We\u2019re looking at Denver for a future tour stop. Get on the waitlist and you\u2019ll be first to know when tickets drop. Or apply to be a contestant now so you\u2019re already in the system when we announce.",
     ],
     ctas: [
       { label: "Join the Denver Waitlist", href: "/links" },

@@ -18,7 +18,7 @@
 .page select:focus,
 .page textarea:focus {
   border-color: var(--hot-pink) !important;
-  box-shadow: 0 0 0 3px rgba(233, 30, 118, 0.1) !important;
+  box-shadow: 0 0 0 3px rgba(var(--hot-pink-rgb), 0.1) !important;
 }
 
 .page input::placeholder,
@@ -87,7 +87,7 @@
 .divider {
   width: 48px;
   height: 1px;
-  background: rgba(233, 30, 118, 0.4);
+  background: rgba(var(--hot-pink-rgb), 0.4);
   margin: 18px auto 0;
 }
 
@@ -139,14 +139,14 @@
   font-family: var(--font-body);
   font-size: 15px;
   color: var(--hot-pink);
-  background: rgba(233, 30, 118, 0.04);
+  background: rgba(var(--hot-pink-rgb), 0.04);
   cursor: pointer;
   text-align: center;
   transition: background 0.2s, border-color 0.2s;
 }
 
 .retryButton:hover {
-  background: rgba(233, 30, 118, 0.08);
+  background: rgba(var(--hot-pink-rgb), 0.08);
   border-color: var(--hot-pink);
 }
 
@@ -308,13 +308,13 @@
 
 .photoDropzone {
   display: block;
-  border: 2px dashed rgba(233, 30, 118, 0.3);
+  border: 2px dashed rgba(var(--hot-pink-rgb), 0.3);
   border-radius: 14px;
   padding: 24px;
   text-align: center;
   cursor: pointer;
   transition: border-color 0.2s;
-  background: rgba(233, 30, 118, 0.03);
+  background: rgba(var(--hot-pink-rgb), 0.03);
   overflow: hidden;
 }
 
@@ -395,12 +395,12 @@
 }
 
 .submitButton:disabled {
-  background: rgba(233, 30, 118, 0.5);
+  background: rgba(var(--hot-pink-rgb), 0.5);
   cursor: not-allowed;
 }
 
 .submitButton:disabled:hover {
-  background: rgba(233, 30, 118, 0.5);
+  background: rgba(var(--hot-pink-rgb), 0.5);
   box-shadow: none;
 }
 

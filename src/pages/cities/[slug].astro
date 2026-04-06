@@ -177,6 +177,31 @@ const breadcrumbJsonLd = buildBreadcrumbJsonLd([
         </div>
       </dialog>
 
+      {/* Email + phone signup for cities with events */}
+      {cityEvents.length > 0 && (
+        <div class="city-notify">
+          <div id="city-notify-step1">
+            <h3 class="city-notify__title">Stay in the Loop</h3>
+            <p class="city-notify__desc">Get notified about future {city.displayName} shows, discount codes, and free ticket drops.</p>
+            <form id="city-notify-email-form" class="city-notify__form">
+              <input type="email" id="city-notify-email" placeholder="Your email" required aria-label="Email address" />
+              <button type="submit">Get Notified</button>
+            </form>
+          </div>
+          <div id="city-notify-step2" hidden>
+            <p class="city-notify__desc">Add your number for text-only discounts and free ticket drops.</p>
+            <form id="city-notify-phone-form" class="city-notify__form">
+              <input type="tel" id="city-notify-phone" placeholder="Your phone number" aria-label="Phone number" />
+              <button type="submit">Send Me Deals</button>
+            </form>
+            <button type="button" id="city-notify-skip" class="city-notify__skip">Maybe later</button>
+          </div>
+          <div id="city-notify-success" hidden>
+            <p class="city-notify__done">You're on the list!</p>
+          </div>
+        </div>
+      )}
+
       {/* Footer */}
       <div class="city-footer">
         <a href="/cities" class="city-footer__link">
@@ -218,6 +243,50 @@ const breadcrumbJsonLd = buildBreadcrumbJsonLd([
       document.getElementById('waitlist-success')?.removeAttribute('hidden');
     });
   }
+
+  // City page email + phone signup
+  let cityNotifyEmail = '';
+  const cityName = document.querySelector('.city-eyebrow')?.textContent ?? '';
+
+  document.getElementById('city-notify-email-form')?.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    cityNotifyEmail = (document.getElementById('city-notify-email') as HTMLInputElement).value;
+    try {
+      const db = getFirebaseDb();
+      await addDoc(collection(db, 'subscribers'), {
+        email: cityNotifyEmail,
+        city: cityName,
+        source: 'city-page',
+        createdAt: new Date().toISOString(),
+      });
+    } catch { /* fail silently */ }
+    document.getElementById('city-notify-step1')?.setAttribute('hidden', '');
+    document.getElementById('city-notify-step2')?.removeAttribute('hidden');
+  });
+
+  document.getElementById('city-notify-phone-form')?.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const phone = (document.getElementById('city-notify-phone') as HTMLInputElement).value;
+    if (phone) {
+      try {
+        const db = getFirebaseDb();
+        await addDoc(collection(db, 'subscribers'), {
+          email: cityNotifyEmail,
+          phone,
+          city: cityName,
+          source: 'city-page-phone',
+          createdAt: new Date().toISOString(),
+        });
+      } catch { /* fail silently */ }
+    }
+    document.getElementById('city-notify-step2')?.setAttribute('hidden', '');
+    document.getElementById('city-notify-success')?.removeAttribute('hidden');
+  });
+
+  document.getElementById('city-notify-skip')?.addEventListener('click', () => {
+    document.getElementById('city-notify-step2')?.setAttribute('hidden', '');
+    document.getElementById('city-notify-success')?.removeAttribute('hidden');
+  });
 </script>
 
 <style>
@@ -328,6 +397,102 @@ const breadcrumbJsonLd = buildBreadcrumbJsonLd([
     font-size: 14px;
     color: var(--muted);
     text-decoration: none;
+  }
+
+  /* ─── City Notify Signup ──────────────────────────── */
+
+  .city-notify {
+    margin-top: 48px;
+    padding: 32px 24px;
+    border: 1px solid rgba(0, 0, 0, 0.06);
+    border-radius: 16px;
+    background: rgba(233, 30, 118, 0.02);
+    text-align: center;
+  }
+
+  .city-notify__title {
+    font-family: var(--font-playfair), serif;
+    font-size: 22px;
+    font-weight: 600;
+    color: var(--charcoal);
+    margin-bottom: 8px;
+  }
+
+  .city-notify__desc {
+    font-family: var(--font-cormorant), serif;
+    font-style: italic;
+    font-size: 16px;
+    color: #666;
+    line-height: 1.5;
+    margin-bottom: 20px;
+  }
+
+  .city-notify__form {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    max-width: 380px;
+    margin: 0 auto;
+  }
+
+  .city-notify__form input {
+    padding: 14px 20px;
+    border: 1.5px solid rgba(0, 0, 0, 0.1);
+    border-radius: 50px;
+    font-size: 16px;
+    font-family: var(--font-body), sans-serif;
+    outline: none;
+    transition: border-color 0.2s;
+    min-height: 48px;
+  }
+
+  .city-notify__form input:focus {
+    border-color: var(--hot-pink);
+  }
+
+  .city-notify__form button {
+    background: var(--hot-pink);
+    color: white;
+    border: none;
+    padding: 14px;
+    border-radius: 50px;
+    font-family: var(--font-body), sans-serif;
+    font-size: 14px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    transition: background 0.2s;
+    min-height: 48px;
+    white-space: nowrap;
+    cursor: pointer;
+  }
+
+  .city-notify__form button:hover {
+    background: var(--deep-magenta);
+  }
+
+  .city-notify__skip {
+    background: none;
+    border: none;
+    color: #999;
+    font-size: 14px;
+    font-family: var(--font-body), sans-serif;
+    margin-top: 12px;
+    transition: color 0.2s;
+    padding: 4px;
+    cursor: pointer;
+  }
+
+  .city-notify__skip:hover {
+    color: var(--charcoal);
+  }
+
+  .city-notify__done {
+    font-family: var(--font-cormorant), serif;
+    font-size: 20px;
+    font-style: italic;
+    color: var(--charcoal);
+    padding: 12px 0;
   }
 
   /* Waitlist modal */

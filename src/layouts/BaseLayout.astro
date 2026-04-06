@@ -99,7 +99,8 @@ const {
 
       // Click empty space to go home (only if came from home)
       const isHome = window.location.pathname === '/';
-      if (!isHome) {
+      const isProtected = window.location.pathname.startsWith('/admin') || window.location.pathname.startsWith('/contestant-prep');
+      if (!isHome && !isProtected) {
         const cameFromHome = document.referrer.includes(window.location.origin)
           && new URL(document.referrer).pathname === '/';
         if (cameFromHome) {

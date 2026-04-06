@@ -92,6 +92,21 @@ const {
       inject();
       injectSpeedInsights();
 
+      // Click empty space to go home (only if came from home)
+      const isHome = window.location.pathname === '/';
+      if (!isHome) {
+        const cameFromHome = document.referrer.includes(window.location.origin)
+          && new URL(document.referrer).pathname === '/';
+        if (cameFromHome) {
+          document.body.addEventListener('click', (e) => {
+            const target = e.target as HTMLElement;
+            if (target === document.body || target.classList.contains('grain-overlay')) {
+              window.location.href = '/';
+            }
+          });
+        }
+      }
+
       // Custom cursor — desktop only (pointer: fine)
       if (window.matchMedia('(pointer: fine)').matches) {
         const cursor = document.getElementById('cursor');

@@ -47,7 +47,7 @@ const personJsonLd = JSON.stringify([
       </p>
 
       <div class="host-section">
-        <div class="host-avatar" aria-hidden="true">👩🏽</div>
+        <img src="/images/surbhi.png" alt="Surbhi" class="host-avatar" width="96" height="96" loading="lazy" />
         <div class="host-content">
           <h2>
             <a href={CREATOR_URLS.surbhi} target="_blank" rel="noopener noreferrer">Surbhi</a>
@@ -71,7 +71,7 @@ const personJsonLd = JSON.stringify([
       </div>
 
       <div class="host-section">
-        <div class="host-avatar" aria-hidden="true">👨🏽‍🦱</div>
+        <img src="/images/wyatt.avif" alt="Wyatt" class="host-avatar" width="96" height="96" loading="lazy" />
         <div class="host-content">
           <h2>
             <a href={CREATOR_URLS.wyatt} target="_blank" rel="noopener noreferrer">Wyatt Feegrado</a>
@@ -154,11 +154,7 @@ const personJsonLd = JSON.stringify([
     height: 96px;
     border-radius: 50%;
     border: 3px solid var(--hot-pink);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 44px;
-    background: linear-gradient(135deg, rgba(233, 30, 118, 0.15), rgba(255, 109, 0, 0.1));
+    object-fit: cover;
     margin-bottom: 20px;
     flex-shrink: 0;
   }
@@ -245,8 +241,6 @@ const personJsonLd = JSON.stringify([
     align-items: center;
   }
   .btn-outline:hover {
-    background: var(--charcoal);
-    color: white;
     border-color: var(--charcoal);
   }
 

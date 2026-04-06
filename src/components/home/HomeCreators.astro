@@ -50,7 +50,7 @@ const hosts = [
 <style>
   .creators {
     padding: 80px 20px;
-    background: var(--off-white);
+    background: var(--charcoal);
     position: relative;
     overflow: hidden;
   }
@@ -62,7 +62,7 @@ const hosts = [
     font-family: var(--font-playfair), serif;
     font-size: clamp(32px, 5vw, 60px);
     font-weight: 900;
-    color: var(--charcoal);
+    color: white;
     line-height: 1;
     margin-bottom: 12px;
   }
@@ -70,7 +70,7 @@ const hosts = [
     font-family: var(--font-cormorant), serif;
     font-size: 18px;
     font-style: italic;
-    color: #666;
+    color: rgba(255, 255, 255, 0.5);
   }
   .hosts-grid {
     display: flex;
@@ -80,8 +80,8 @@ const hosts = [
     margin: 0 auto;
   }
   .host-card {
-    background: white;
-    border: 1px solid rgba(0, 0, 0, 0.08);
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
     border-radius: 20px;
     padding: 32px 24px;
     display: flex;
@@ -93,7 +93,7 @@ const hosts = [
   }
   .host-card:hover {
     border-color: var(--hot-pink);
-    background: rgba(233, 30, 118, 0.03);
+    background: rgba(233, 30, 118, 0.06);
   }
   .host-avatar {
     width: 96px;
@@ -112,7 +112,7 @@ const hosts = [
     font-family: var(--font-cormorant), serif;
     font-size: 28px;
     font-weight: 700;
-    color: var(--charcoal);
+    color: white;
     text-decoration: none;
     transition: color 0.2s;
   }
@@ -127,7 +127,7 @@ const hosts = [
   }
   .host-bio {
     font-size: 15px;
-    color: #666;
+    color: rgba(255, 255, 255, 0.6);
     line-height: 1.75;
   }
   .host-credits {
@@ -140,8 +140,8 @@ const hosts = [
   .credit-tag {
     font-size: 11px;
     font-weight: 600;
-    background: rgba(233, 30, 118, 0.08);
-    color: var(--hot-pink);
+    background: rgba(255, 214, 0, 0.12);
+    color: var(--electric-yellow);
     padding: 4px 12px;
     border-radius: 50px;
     letter-spacing: 0.5px;

@@ -1,9 +1,10 @@
 ---
 const stats = [
-  { num: '12', label: 'Shows' },
+  { num: '40+', label: 'Shows' },
   { num: '2K+', label: 'Audience' },
-  { num: '3', label: 'Couples Matched' },
-  { num: '500K', label: 'Views' },
+  { num: '100%', label: 'One Night Stand Rate' },
+  { num: '13', label: 'Couples Matched' },
+  { num: '10M+', label: 'Views' },
 ];
 ---
 
@@ -33,16 +34,16 @@ const stats = [
     margin-bottom: 48px;
   }
   .stats-grid {
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: 32px 0;
+    display: flex;
+    justify-content: center;
+    flex-wrap: nowrap;
     max-width: 900px;
     margin: 0 auto;
   }
-  .stat-item { padding: 0 20px; }
+  .stat-item { padding: 0 10px; flex: 1; }
   .stat-num {
     font-family: var(--font-playfair), serif;
-    font-size: 48px;
+    font-size: 32px;
     font-weight: 900;
     color: var(--hot-pink);
     line-height: 1;

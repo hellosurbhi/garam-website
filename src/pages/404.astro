@@ -3,8 +3,8 @@ import BaseLayout from '@/layouts/BaseLayout.astro';
 ---
 
 <BaseLayout title="404 — Page Not Found | Garam Masala Dating" description="This page doesn't exist.">
+  <canvas id="glCanvas" class="not-found-shader"></canvas>
   <div class="not-found">
-    <canvas id="glCanvas" class="not-found-shader"></canvas>
     <div class="not-found-content">
       <div class="not-found-code">404</div>
       <h1>This Page Ghosted <em>You</em></h1>
@@ -20,23 +20,23 @@ import BaseLayout from '@/layouts/BaseLayout.astro';
 <script src="/js/shader-app.js" defer></script>
 
 <style>
-  .not-found {
-    min-height: 60vh;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    position: relative;
-    overflow: hidden;
-    padding: 20px 24px 40px;
-  }
   .not-found-shader {
-    position: absolute;
+    position: fixed;
     inset: 0;
     width: 100%;
     height: 100%;
     pointer-events: none;
     z-index: 0;
     opacity: 0.5;
+  }
+  .not-found {
+    min-height: 60vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    z-index: 1;
+    padding: 20px 24px 40px;
   }
   .not-found-content {
     position: relative;

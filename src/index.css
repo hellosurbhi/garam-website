@@ -79,11 +79,6 @@
   --ink: #111;
   --spice-orange: #FF6D00;
   --muted: #888;
-
-  /* logo colors — only used in logo SVG and shader */
-  --logo-red: #E24B4A;
-  --logo-gold: #FAC775;
-  --logo-rose: #D4537E;
 }
 
 *,

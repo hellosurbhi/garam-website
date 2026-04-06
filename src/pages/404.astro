@@ -119,24 +119,8 @@ import HomeNav from '@/components/home/HomeNav.astro';
     background: transparent !important;
   }
   footer .footer-logo {
-    /* Hide the img, show pink mask instead */
-    -webkit-appearance: none;
-    appearance: none;
-    border: none;
-    content: "";
-    font-size: 0;
-    color: transparent;
-    background: var(--hot-pink) !important;
-    -webkit-mask-image: url(/images/logo.svg) !important;
-    mask-image: url(/images/logo.svg) !important;
-    -webkit-mask-size: contain !important;
-    mask-size: contain !important;
-    -webkit-mask-repeat: no-repeat !important;
-    mask-repeat: no-repeat !important;
     filter: none !important;
-    width: 160px !important;
-    height: 48px !important;
-    display: block !important;
+    content: url(/favicon.svg) !important;
   }
   footer .footer-brand p {
     color: #000 !important;

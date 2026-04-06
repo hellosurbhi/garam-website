@@ -1,5 +1,34 @@
 # Changelog
 
+## Add city data for India, Southeast Asia, and East Asia
+
+Added three new TypeScript city data files for international expansion pages.
+
+### india.ts (46 cities)
+- **Tier 1 (9):** Mumbai, Delhi, Gurgaon, Noida, Bangalore, Hyderabad, Chennai, Pune, Kolkata
+- **Tier 2 (14):** Ahmedabad, Chandigarh, Jaipur, Lucknow, Kochi, Goa, Indore, Thiruvananthapuram, Coimbatore, Nagpur, Vadodara, Surat, Visakhapatnam, Bhopal
+- **Tier 3 (23):** Mysore, Dehradun, Mangalore, Manipal, Amritsar, Ludhiana, Patna, Ranchi, Bhubaneswar, Raipur, Guwahati, Shillong, Pondicherry, Jamshedpur, Trichy, Vellore, Warangal, Kanpur, Allahabad, Varanasi, Jodhpur, Udaipur, Kota
+- All cities: status "coming-soon", addressCountry "IN", region "India"
+- CTAs: waitlist + apply with city param only (no state)
+
+### southeast-asia.ts (6 cities)
+- Bangkok (TH), Chiang Mai (TH), Ho Chi Minh City (VN), Manila (PH), Colombo (LK), Kandy (LK)
+- Sri Lanka cities use "desi" framing, not "Indian"
+
+### east-asia.ts (7 cities)
+- Tokyo (JP), Osaka (JP), Nagoya (JP), Seoul (KR), Taipei (TW), Hsinchu (TW), Hong Kong (HK)
+- Each has unique, location-specific body copy (~400 words, 4-5 paragraphs)
+
+**Files created:**
+- `src/data/cities/india.ts`
+- `src/data/cities/southeast-asia.ts`
+- `src/data/cities/east-asia.ts`
+
+**Notes:**
+- index.ts already imported these files (wired up in a previous commit)
+- No em dashes, double dashes, or AI-sounding copy
+- TypeScript and ESLint pass clean
+
 ## Audit implementation: SEO, conversion, mobile, resilience
 
 ### SEO meta fixes

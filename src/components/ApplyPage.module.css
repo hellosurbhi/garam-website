@@ -18,7 +18,7 @@
 .page select:focus,
 .page textarea:focus {
   border-color: var(--hot-pink) !important;
-  box-shadow: 0 0 0 3px rgba(233, 30, 118, 0.1) !important;
+  box-shadow: 0 0 0 3px rgba(212, 83, 126, 0.1) !important;
 }
 
 .page input::placeholder,
@@ -87,7 +87,7 @@
 .divider {
   width: 48px;
   height: 1px;
-  background: rgba(233, 30, 118, 0.4);
+  background: rgba(212, 83, 126, 0.4);
   margin: 18px auto 0;
 }
 
@@ -269,13 +269,13 @@
 
 .photoDropzone {
   display: block;
-  border: 2px dashed rgba(233, 30, 118, 0.3);
+  border: 2px dashed rgba(212, 83, 126, 0.3);
   border-radius: 14px;
   padding: 24px;
   text-align: center;
   cursor: pointer;
   transition: border-color 0.2s;
-  background: rgba(233, 30, 118, 0.03);
+  background: rgba(212, 83, 126, 0.03);
   overflow: hidden;
 }
 
@@ -351,16 +351,16 @@
 
 .submitButton:hover {
   background: #AD1457;
-  box-shadow: 0 4px 20px rgba(233, 30, 118, 0.3);
+  box-shadow: 0 4px 20px rgba(212, 83, 126, 0.3);
 }
 
 .submitButton:disabled {
-  background: rgba(233, 30, 118, 0.5);
+  background: rgba(212, 83, 126, 0.5);
   cursor: not-allowed;
 }
 
 .submitButton:disabled:hover {
-  background: rgba(233, 30, 118, 0.5);
+  background: rgba(212, 83, 126, 0.5);
   box-shadow: none;
 }
 

@@ -54,8 +54,8 @@ export const formSelectStyles: BaseStyles = {
   control: (base: CSSObjectWithLabel, state) => ({
     ...base,
     borderRadius: "12px",
-    border: `1px solid ${state.isFocused ? "#D4537E" : "rgba(0, 0, 0, 0.1)"}`,
-    boxShadow: state.isFocused ? "0 0 0 3px rgba(212, 83, 126, 0.1)" : "none",
+    border: `1px solid ${state.isFocused ? "#E91E76" : "rgba(0, 0, 0, 0.1)"}`,
+    boxShadow: state.isFocused ? "0 0 0 3px rgba(233, 30, 118, 0.1)" : "none",
     fontFamily: "var(--font-body)",
     fontSize: "16px",
     background: "#fff",
@@ -63,20 +63,20 @@ export const formSelectStyles: BaseStyles = {
     minHeight: "48px",
     cursor: "pointer",
     transition: "border-color 0.2s, box-shadow 0.2s",
-    "&:hover": { borderColor: state.isFocused ? "#D4537E" : "rgba(0, 0, 0, 0.15)" },
+    "&:hover": { borderColor: state.isFocused ? "#E91E76" : "rgba(0, 0, 0, 0.15)" },
   }),
   option: (base: CSSObjectWithLabel, state) => ({
     ...base,
     fontFamily: "var(--font-body)",
     fontSize: "16px",
     background: state.isSelected
-      ? "rgba(212, 83, 126, 0.15)"
+      ? "rgba(233, 30, 118, 0.15)"
       : state.isFocused
-        ? "rgba(212, 83, 126, 0.08)"
+        ? "rgba(233, 30, 118, 0.08)"
         : "transparent",
     color: "var(--charcoal)",
     cursor: "pointer",
-    "&:active": { background: "rgba(212, 83, 126, 0.2)" },
+    "&:active": { background: "rgba(233, 30, 118, 0.2)" },
   }),
   placeholder: (base: CSSObjectWithLabel) => ({
     ...base,

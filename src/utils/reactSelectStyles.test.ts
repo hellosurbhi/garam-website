@@ -55,7 +55,7 @@ describe("formSelectStyles", () => {
 
   it("control uses hot-pink border when focused", () => {
     const result = formSelectStyles.control!(BASE, { isFocused: true } as never);
-    expect(result.border).toContain("#D4537E");
+    expect(result.border).toContain("#E91E76");
   });
 
   it("control uses neutral border when not focused", () => {

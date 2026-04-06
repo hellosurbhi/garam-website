@@ -5,6 +5,7 @@ import vercel from "@astrojs/vercel";
 export default defineConfig({
   site: "https://garammasaladating.com",
   output: "static",
+  trailingSlash: "never",
   adapter: vercel(),
   integrations: [react()],
   vite: {

@@ -114,29 +114,30 @@ import HomeNav from '@/components/home/HomeNav.astro';
     transform: translateY(-2px);
   }
 
-  /* 404 footer: transparent bg, all text black */
+  /* 404 footer: transparent bg, pure black everything */
   :global(footer) {
     background: transparent !important;
+    color: #000 !important;
   }
   :global(.footer-logo) {
     filter: brightness(0) !important;
   }
-  :global(footer *) {
+  :global(footer),
+  :global(footer p),
+  :global(footer h4),
+  :global(footer a),
+  :global(footer span),
+  :global(footer div),
+  :global(footer li) {
     color: #000 !important;
-  }
-  :global(footer svg) {
-    color: #000 !important;
-    fill: #000 !important;
   }
   :global(.footer-social a) {
+    color: #000 !important;
     border-color: #000 !important;
   }
   :global(.footer-social a:hover) {
     color: var(--hot-pink) !important;
     border-color: var(--hot-pink) !important;
-  }
-  :global(.footer-col ul li a:hover) {
-    color: var(--hot-pink) !important;
   }
   :global(.footer-top) {
     border-bottom-color: rgba(0, 0, 0, 0.15) !important;

@@ -21,7 +21,7 @@ import HomeNav from '@/components/home/HomeNav.astro';
 
 <script src="/js/shader-app.js" defer></script>
 
-<style>
+<style is:global>
   .not-found-shader {
     position: fixed;
     inset: 0;
@@ -55,20 +55,20 @@ import HomeNav from '@/components/home/HomeNav.astro';
     opacity: 0.15;
     margin-bottom: -20px;
   }
-  h1 {
+  .not-found-content h1 {
     font-family: var(--font-playfair), serif;
     font-size: clamp(28px, 6vw, 48px);
     font-weight: 900;
-    color: var(--charcoal);
+    color: #000;
     margin-bottom: 12px;
   }
-  h1 em {
+  .not-found-content h1 em {
     color: var(--hot-pink);
     font-style: italic;
   }
   .not-found-content > p {
     font-size: 16px;
-    color: rgba(26, 26, 26, 0.5);
+    color: #000;
     max-width: 380px;
     margin: 0 auto 32px;
     line-height: 1.6;
@@ -105,46 +105,46 @@ import HomeNav from '@/components/home/HomeNav.astro';
   }
   .not-found-btn--outline {
     background: transparent;
-    color: var(--charcoal);
-    border: 1.5px solid var(--charcoal);
+    color: #000;
+    border: 1.5px solid #000;
   }
   .not-found-btn--outline:hover {
-    background: var(--charcoal);
+    background: #000;
     color: white;
     transform: translateY(-2px);
   }
 
-  /* 404 footer: transparent bg, pure #000 black everything */
-  :global(footer) {
+  /* Footer on 404: transparent bg, pure black text */
+  footer {
     background: transparent !important;
   }
-  :global(.footer-logo) {
+  footer .footer-logo {
     filter: brightness(0) !important;
   }
-  :global(.footer-brand p) {
+  footer .footer-brand p {
     color: #000 !important;
   }
-  :global(.footer-social a) {
+  footer .footer-social a {
     color: #000 !important;
     border-color: #000 !important;
   }
-  :global(.footer-social a:hover) {
+  footer .footer-social a:hover {
     color: var(--hot-pink) !important;
     border-color: var(--hot-pink) !important;
   }
-  :global(.footer-col h4) {
+  footer .footer-col h4 {
     color: #000 !important;
   }
-  :global(.footer-col ul li a) {
+  footer .footer-col ul li a {
     color: #000 !important;
   }
-  :global(.footer-col ul li a:hover) {
+  footer .footer-col ul li a:hover {
     color: var(--hot-pink) !important;
   }
-  :global(.footer-copy) {
+  footer .footer-copy {
     color: #000 !important;
   }
-  :global(.footer-top) {
+  footer .footer-top {
     border-bottom-color: rgba(0, 0, 0, 0.15) !important;
   }
 </style>

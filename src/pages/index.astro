@@ -19,7 +19,7 @@ import { isEventPast } from '@/utils/eventDate';
 import { buildEventSchemas } from '@/utils/eventSchema';
 
 const upcomingEvents = events.filter((e) => !isEventPast(e.date) && !e.hidden);
-const firstTicketUrl = upcomingEvents.find((e) => e.url && e.url !== '#')?.url ?? '/tickets';
+const firstTicketUrl = '/tickets';
 
 // Organization JSON-LD
 const orgJsonLd = JSON.stringify({

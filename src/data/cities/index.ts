@@ -11,9 +11,12 @@ import { usMidwestCities } from "./us-midwest";
 import { usSouthTexasCities } from "./us-south-texas";
 import { usWestCities } from "./us-west";
 import { canadaCities } from "./canada";
+import { indiaCities } from "./india";
 import { ukCities } from "./uk";
 import { australiaCities } from "./australia";
 import { europeCities } from "./europe";
+import { southeastAsiaCities } from "./southeast-asia";
+import { eastAsiaCities } from "./east-asia";
 import { internationalOtherCities } from "./international-other";
 
 /** All cities keyed by slug */
@@ -25,9 +28,12 @@ export const cities: Record<string, CityData> = {
   ...usSouthTexasCities,
   ...usWestCities,
   ...canadaCities,
+  ...indiaCities,
   ...ukCities,
   ...australiaCities,
   ...europeCities,
+  ...southeastAsiaCities,
+  ...eastAsiaCities,
   ...internationalOtherCities,
 };
 
@@ -39,13 +45,15 @@ const REGION_ORDER: CityRegion[] = [
   "US South & Texas",
   "US West",
   "Canada",
+  "India",
   "United Kingdom",
   "Australia",
   "Europe",
-  "Asia-Pacific",
-  "Middle East",
+  "Southeast Asia",
+  "East Asia",
   "Africa",
-  "Caribbean & South America",
+  "Pacific Islands",
+  "Caribbean",
 ];
 
 /**
@@ -80,7 +88,7 @@ export function citiesByRegion(): { region: CityRegion; cities: CityData[] }[] {
 }
 
 /**
- * Flat ordered list: active first, then US, then international.
+ * Flat ordered list: active first, then US, then India, then rest.
  */
 export const citiesIndex: CityData[] = Object.values(cities).sort((a, b) => {
   if (a.status === "active" && b.status !== "active") return -1;
@@ -89,6 +97,10 @@ export const citiesIndex: CityData[] = Object.values(cities).sort((a, b) => {
   const bUS = b.addressCountry === "US";
   if (aUS && !bUS) return -1;
   if (bUS && !aUS) return 1;
+  const aIN = a.addressCountry === "IN";
+  const bIN = b.addressCountry === "IN";
+  if (aIN && !bIN) return -1;
+  if (bIN && !aIN) return 1;
   return a.displayName.localeCompare(b.displayName);
 });
 

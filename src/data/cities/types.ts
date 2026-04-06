@@ -13,10 +13,12 @@ export type CityRegion =
   | "United Kingdom"
   | "Australia"
   | "Europe"
-  | "Asia-Pacific"
-  | "Middle East"
+  | "India"
+  | "Southeast Asia"
+  | "East Asia"
   | "Africa"
-  | "Caribbean & South America";
+  | "Pacific Islands"
+  | "Caribbean";
 
 export interface CityData {
   slug: string;

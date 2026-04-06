@@ -1,5 +1,63 @@
 # Changelog
 
+## Expand Europe cities and rewrite international-other.ts
+
+### europe.ts: added 47 new cities (73 total)
+
+New cities by country:
+- **Netherlands (4):** Eindhoven, Delft, Groningen, Leiden
+- **Germany (7):** Aachen, Stuttgart, Nuremberg, Darmstadt, Dresden, Cologne, Dusseldorf
+- **Belgium (2):** Leuven, Ghent
+- **Switzerland (2):** Lausanne, Basel
+- **Ireland (2):** Cork, Galway
+- **Portugal (2):** Porto, Braga
+- **Spain (2):** Valencia, Seville
+- **Italy (5):** Bologna, Turin, Padua, Naples, Florence
+- **Sweden (3):** Gothenburg, Uppsala, Lund
+- **Finland (2):** Tampere, Oulu
+- **Norway (1):** Trondheim
+- **Poland (2):** Krakow, Wroclaw
+- **Czech Republic (1):** Brno
+- **Hungary (1):** Budapest
+- **Romania (2):** Bucharest, Cluj-Napoca
+- **Bulgaria (1):** Sofia
+- **Lithuania (1):** Vilnius
+- **Latvia (1):** Riga
+- **Slovenia (1):** Ljubljana
+- **Croatia (1):** Zagreb
+- **Greece (2):** Athens, Thessaloniki
+- **Cyprus (2):** Nicosia, Limassol
+
+All 26 existing cities preserved unchanged.
+
+### international-other.ts: restructured and expanded (22 cities)
+
+**Removed (10 cities):**
+- Middle East (cut for legal/content): Dubai, Abu Dhabi, Doha, Muscat
+- Moved to separate files: Singapore, KL, Bangkok, Tokyo, Seoul, Hong Kong
+
+**Region updates:**
+- NZ cities (Auckland, Wellington, Christchurch): "Asia-Pacific" to "Pacific Islands"
+- Fiji/Suva: "Asia-Pacific" to "Pacific Islands"
+- Caribbean cities: "Caribbean & South America" to "Caribbean"
+- Africa cities: kept "Africa" (no change)
+
+**Added (7 cities):**
+- Pacific Islands: Nadi (FJ), Lautoka (FJ)
+- Africa: Mombasa (KE)
+- Caribbean: San Fernando (TT), Chaguanas (TT), New Amsterdam (GY), San Juan (PR)
+
+**Files modified:**
+- `src/data/cities/europe.ts`
+- `src/data/cities/international-other.ts`
+
+**Notes:**
+- All regions match valid CityRegion type values
+- No em dashes, double dashes, or AI slop in copy
+- TypeScript and ESLint pass clean
+- nearbyCities updated to reference new slugs where appropriate
+- Panama City nearbyCities updated to use new Caribbean slugs instead of old Middle East refs
+
 ## Add city data for India, Southeast Asia, and East Asia
 
 Added three new TypeScript city data files for international expansion pages.

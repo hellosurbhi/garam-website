@@ -2,7 +2,6 @@
 import BaseLayout from '@/layouts/BaseLayout.astro';
 import PageNav from '@/components/layout/PageNav.astro';
 import HomeCreators from '@/components/home/HomeCreators.astro';
-import HomeFooter from '@/components/home/HomeFooter.astro';
 import { buildBreadcrumbJsonLd } from '@/utils/breadcrumbs';
 
 const TITLE = "Meet the Hosts | Garam Masala Dating";
@@ -24,7 +23,6 @@ const breadcrumbJsonLd = buildBreadcrumbJsonLd([
   <main>
     <HomeCreators />
   </main>
-  <HomeFooter />
 </BaseLayout>
 
 <style>

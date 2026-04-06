@@ -12,7 +12,6 @@ import HomeTestimonials from '@/components/home/HomeTestimonials.astro';
 import HomeCreators from '@/components/home/HomeCreators.astro';
 import HomeFAQ from '@/components/home/HomeFAQ.astro';
 import HomeNewsletter from '@/components/home/HomeNewsletter.astro';
-import HomeFooter from '@/components/home/HomeFooter.astro';
 import { SOCIAL_URLS } from '@/data/socials';
 import { events } from '@/data/events';
 import { isEventPast } from '@/utils/eventDate';
@@ -114,7 +113,6 @@ const eventSchemas = buildEventSchemas(upcomingForSchema);
     <HomeFAQ />
     <HomeNewsletter />
   </main>
-  <HomeFooter />
 
   <!-- 30-second email popup -->
   <dialog id="email-popup" class="popup-dialog">

@@ -60,21 +60,21 @@
   --font-cormorant: "Cormorant Garamond";
   --font-jetbrains: "JetBrains Mono";
   /* legacy aliases — mapped to brand palette */
-  --crimson: #e83c22;
-  --crimson-dark: #c43318;
-  --crimson-light: #e83c22;
+  --crimson: #DC2626;
+  --crimson-dark: #b91c1c;
+  --crimson-light: #DC2626;
   --cream: #FFF8F0;
   --text: #1A1A1A;
   --text-light: #666;
   --border: rgba(0, 0, 0, 0.1);
   --success: #22C55E;
-  --accent-pink: #e83c22;
+  --accent-pink: #DC2626;
 
   /* brand palette */
-  --hot-pink: #e83c22;
+  --hot-pink: #DC2626;
   --electric-yellow: #FFD600;
   --off-white: #FFF8F0;
-  --deep-magenta: #c43318;
+  --deep-magenta: #b91c1c;
   --charcoal: #1A1A1A;
   --ink: #111;
   --spice-orange: #FF6D00;
@@ -90,6 +90,7 @@
 }
 
 html {
+  overflow-x: hidden;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   text-rendering: optimizeLegibility;

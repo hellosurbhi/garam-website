@@ -11,8 +11,8 @@ const CONFIG = {
     edgeGlow: 1.0,
     zoom: 1.0,
 
-    colorA: [0xE8 / 255, 0x3C / 255, 0x22 / 255],  // #e83c22 spice red
-    colorB: [0xC4 / 255, 0x33 / 255, 0x18 / 255],  // #c43318 spice red dark
+    colorA: [0xDC / 255, 0x26 / 255, 0x26 / 255],  // #DC2626 red
+    colorB: [0xB9 / 255, 0x1C / 255, 0x1C / 255],  // #b91c1c red dark
     colorC: [0xFF / 255, 0xD6 / 255, 0x00 / 255],  // #FFD600 electric yellow
 };
 

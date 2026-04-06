@@ -41,7 +41,7 @@ function buildEmailHtml(data: ApplicationNotification): string {
     ["Location", location],
     [
       "Instagram",
-      `<a href="https://instagram.com/${escapeHtml(data.instagram)}" style="color:#e83c22;">@${escapeHtml(data.instagram)}</a>`,
+      `<a href="https://instagram.com/${escapeHtml(data.instagram)}" style="color:#DC2626;">@${escapeHtml(data.instagram)}</a>`,
     ],
     ["Community", escapeHtml(data.community)],
     ["Income", escapeHtml(data.income)],
@@ -73,19 +73,19 @@ function buildEmailHtml(data: ApplicationNotification): string {
     try {
       const parsed = new URL(data.photoUrl);
       if (parsed.protocol === "https:") {
-        photoSection = `<p style="margin-top:12px;"><a href="${escapeHtml(data.photoUrl)}" style="color:#e83c22;">View Photo</a></p>`;
+        photoSection = `<p style="margin-top:12px;"><a href="${escapeHtml(data.photoUrl)}" style="color:#DC2626;">View Photo</a></p>`;
       }
     } catch { /* invalid URL — skip photo link */ }
   }
 
   return `<div style="font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;max-width:600px;margin:0 auto;padding:20px;">
-    <h2 style="color:#e83c22;margin:0 0 16px;">New ${isNomination ? "Nomination" : "Self-Application"}</h2>
+    <h2 style="color:#DC2626;margin:0 0 16px;">New ${isNomination ? "Nomination" : "Self-Application"}</h2>
     <table style="width:100%;border-collapse:collapse;">${tableRows}</table>
     ${pitchSection}
     ${photoSection}
     <hr style="border:none;border-top:1px solid #eee;margin:24px 0 12px;" />
     <p style="color:#999;font-size:12px;margin:0;">
-      View all applications in the <a href="https://garammasaladating.com/admin" style="color:#e83c22;">admin dashboard</a>.
+      View all applications in the <a href="https://garammasaladating.com/admin" style="color:#DC2626;">admin dashboard</a>.
     </p>
   </div>`;
 }

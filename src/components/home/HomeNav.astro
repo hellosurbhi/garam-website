@@ -19,11 +19,10 @@ const { ticketsUrl } = Astro.props;
 
 <script>
   const nav = document.getElementById('home-nav');
-  const hero = document.querySelector('.hero') as HTMLElement;
-  if (nav && hero) {
+  const marquee = document.querySelector('.marquee') as HTMLElement;
+  if (nav && marquee) {
     window.addEventListener('scroll', () => {
-      const heroBottom = hero.offsetTop + hero.offsetHeight;
-      nav.classList.toggle('scrolled', window.scrollY >= heroBottom);
+      nav.classList.toggle('scrolled', window.scrollY >= marquee.offsetTop);
     }, { passive: true });
   }
 </script>

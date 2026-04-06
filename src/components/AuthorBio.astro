@@ -1,14 +1,11 @@
+---
+import { CREATOR_URLS } from '@/data/socials';
+---
+
 <div class="author-bio">
-  <img
-    src="/og-image.jpg"
-    alt="Garam Masala Dating logo"
-    width="48"
-    height="48"
-    class="author-avatar"
-    loading="lazy"
-  />
+  <div class="author-avatar" aria-hidden="true">👩🏽</div>
   <div>
-    <p class="author-name">Surbhi</p>
+    <a href={CREATOR_URLS.surbhi} target="_blank" rel="noopener noreferrer" class="author-name">Surbhi</a>
     <p class="author-desc">
       Co-creator and host of Garam Masala Dating, NYC's live South Asian
       dating show. Stand-up comedian. Accidentally matched three couples and counting.
@@ -26,17 +23,29 @@
     gap: 16px;
   }
   .author-avatar {
+    width: 48px;
+    height: 48px;
     border-radius: 50%;
-    border: 1px solid rgba(233, 30, 118, 0.25);
+    border: 2px solid var(--hot-pink);
     flex-shrink: 0;
-    background: white;
+    background: linear-gradient(135deg, rgba(233, 30, 118, 0.3), rgba(255, 109, 0, 0.2));
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 24px;
   }
   .author-name {
     font-family: var(--font-playfair);
     font-size: 16px;
     font-weight: 600;
     color: var(--charcoal);
+    text-decoration: none;
+    display: block;
     margin: 0 0 6px;
+    transition: color 0.2s;
+  }
+  .author-name:hover {
+    color: var(--hot-pink);
   }
   .author-desc {
     font-family: var(--font-body);

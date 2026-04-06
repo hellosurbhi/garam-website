@@ -13,6 +13,7 @@ interface Props {
   canonicalUrl?: string;
   noindex?: boolean;
   hideNav?: boolean;
+  hideFooter?: boolean;
 }
 
 const {
@@ -22,6 +23,7 @@ const {
   canonicalUrl = Astro.site ? new URL(Astro.url.pathname, Astro.site).href : 'https://garammasaladating.com/',
   noindex = false,
   hideNav = false,
+  hideFooter = false,
 } = Astro.props;
 ---
 
@@ -88,7 +90,7 @@ const {
     <div class="cursor-ring" id="cursorRing"></div>
     {!hideNav && <PageNav />}
     <slot />
-    <HomeFooter />
+    {!hideFooter && <HomeFooter />}
     <script>
       import { inject } from '@vercel/analytics';
       import { injectSpeedInsights } from '@vercel/speed-insights';

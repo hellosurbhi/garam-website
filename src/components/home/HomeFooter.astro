@@ -86,34 +86,39 @@ const socials = [
     background: var(--ink);
     padding: 40px 20px 24px;
   }
+
+  /* ── Mobile: centered, compact ── */
   .footer-top {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    text-align: center;
-    gap: 32px;
     max-width: 1200px;
     margin: 0 auto;
-    padding-bottom: 32px;
+    padding-bottom: 28px;
     border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    text-align: center;
+  }
+  .footer-brand {
+    margin-bottom: 28px;
   }
   .footer-logo {
-    height: 48px;
+    height: 36px;
     width: auto;
-    margin-bottom: 12px;
+    margin-bottom: 10px;
     filter: brightness(0) invert(1);
   }
   .footer-brand p {
-    font-size: 14px;
-    color: rgba(255, 255, 255, 0.6);
-    line-height: 1.7;
-    margin-bottom: 20px;
-    max-width: 280px;
+    font-size: 13px;
+    color: rgba(255, 255, 255, 0.5);
+    line-height: 1.6;
+    margin-bottom: 16px;
   }
-  .footer-social { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; }
+  .footer-social {
+    display: flex;
+    gap: 8px;
+    justify-content: center;
+    flex-wrap: wrap;
+  }
   .footer-social a {
-    width: 40px;
-    height: 40px;
+    width: 36px;
+    height: 36px;
     border: 1px solid rgba(255, 255, 255, 0.15);
     border-radius: 50%;
     display: flex;
@@ -122,57 +127,63 @@ const socials = [
     color: rgba(255, 255, 255, 0.5);
     text-decoration: none;
     transition: border-color 0.2s, color 0.2s;
-    min-height: 48px;
-    min-width: 48px;
+  }
+  .footer-social a :global(svg) {
+    width: 16px;
+    height: 16px;
   }
   .footer-social a:hover {
     border-color: var(--hot-pink);
     color: var(--hot-pink);
   }
+
+  /* ── Link columns: 2-col grid on mobile ── */
   .footer-col h4 {
     font-size: 11px;
     font-weight: 700;
     text-transform: uppercase;
     letter-spacing: 2px;
     color: rgba(255, 255, 255, 0.55);
-    margin-bottom: 16px;
+    margin-bottom: 8px;
+    margin-top: 20px;
   }
   .footer-col ul {
     list-style: none;
     display: flex;
     flex-direction: column;
-    align-items: center;
-    gap: 10px;
+    gap: 4px;
   }
   .footer-col ul li a {
     color: rgba(255, 255, 255, 0.7);
     text-decoration: none;
     font-size: 14px;
     transition: color 0.2s;
-    padding: 4px 0;
+    padding: 2px 0;
     display: inline-block;
   }
   .footer-col ul li a:hover { color: white; }
+
   .footer-bottom {
     max-width: 1200px;
     margin: 0 auto;
-    padding-top: 24px;
+    padding-top: 20px;
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 12px;
+    gap: 8px;
+    text-align: center;
   }
   .footer-copy {
-    font-size: 13px;
-    color: rgba(255, 255, 255, 0.45);
+    font-size: 12px;
+    color: rgba(255, 255, 255, 0.35);
   }
   .footer-legal {
     display: flex;
-    gap: 24px;
+    gap: 16px;
   }
   .footer-legal a {
-    font-size: 13px;
-    color: rgba(255, 255, 255, 0.45);
+    font-size: 12px;
+    color: rgba(255, 255, 255, 0.35);
     text-decoration: none;
     transition: color 0.2s;
   }
@@ -180,22 +191,25 @@ const socials = [
     color: white;
   }
 
+  /* ── Desktop: 4-col grid, left-aligned ── */
   @media (min-width: 768px) {
     footer { padding: 56px 48px 32px; }
     .footer-top {
       display: grid;
       grid-template-columns: 2fr 1fr 1fr 1fr;
-      align-items: start;
       text-align: left;
       gap: 48px;
       padding-bottom: 40px;
     }
-    .footer-social { justify-content: flex-start; }
-    .footer-col ul { align-items: flex-start; }
+    .footer-brand { margin-bottom: 0; }
     .footer-logo { height: 56px; }
-    .footer-brand p { margin-bottom: 24px; }
-    .footer-col h4 { margin-bottom: 20px; }
-    .footer-col ul { gap: 12px; }
+    .footer-brand p { font-size: 14px; margin-bottom: 24px; }
+    .footer-social { justify-content: flex-start; gap: 10px; }
+    .footer-social a { width: 40px; height: 40px; }
+    .footer-social a :global(svg) { width: 18px; height: 18px; }
+    .footer-col h4 { margin-top: 0; margin-bottom: 20px; }
+    .footer-col ul { gap: 10px; }
     .footer-bottom { flex-direction: row; justify-content: space-between; padding-top: 24px; gap: 0; }
+    .footer-copy, .footer-legal a { font-size: 13px; }
   }
 </style>

@@ -1,5 +1,28 @@
 # Changelog
 
+## Multi-page updates: apply form, tickets notify, journal/FAQ width, city signup
+
+### Apply form
+- Income ranges refined: split $100k–$200k into $100k–$150k and $150k–$200k
+- Community and income fields are now optional (no longer required for submission)
+- Added hint under Instagram handle: "Follow @garammasaladating and DM us for a faster response"
+
+### Tickets page
+- TBA event cards are no longer grayed out / disabled
+- TBA cards now show "Notify Me" button that opens a modal to collect email
+- Saves to Firebase `notifications` collection with source `tickets-notify`
+
+### Journal + FAQ pages
+- Journal card gap increased from 2px to 12px (sections were visually touching)
+- Both journal and FAQ containers widened from 560px to 680px to reduce empty side margins
+
+### City pages
+- Active city pages (with upcoming events) now show a two-step email + phone signup section after the CTAs
+- Pattern matches home page "Spice List" flow: email → phone → success
+- Saves to Firebase `subscribers` collection with city tracking
+
+**Files:** `src/types/application.ts`, `src/components/ApplyPage.tsx`, `src/components/ApplyPage.module.css`, `src/pages/tickets.astro`, `src/pages/journal/index.astro`, `src/pages/faq.astro`, `src/pages/cities/[slug].astro`, `test/application.test.ts`
+
 ## Fix apply page hydration errors + country selector stuck on loading
 
 - **Hydration fix:** Changed `ApplyPage` from `client:load` to `client:only="react"` — the form uses browser APIs (`window.history`, `window.location`) that cause SSR/client mismatches. No SEO value in server-rendering a form, so skip SSR entirely.

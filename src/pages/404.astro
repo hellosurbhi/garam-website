@@ -2,37 +2,121 @@
 import BaseLayout from '@/layouts/BaseLayout.astro';
 ---
 
-<BaseLayout title="Page Not Found | Garam Masala Dating" description="The page you're looking for doesn't exist.">
+<BaseLayout title="404 — Page Not Found | Garam Masala Dating" description="This page doesn't exist.">
   <div class="not-found">
+    <canvas id="glCanvas404" class="not-found-shader"></canvas>
     <div class="not-found-content">
-      <p class="emoji">🌶️</p>
-      <h1 class="heading">Page not found</h1>
-      <a href="/" class="back-link">← Back to home</a>
+      <div class="not-found-code">404</div>
+      <h1>This Page Ghosted <em>You</em></h1>
+      <p>Just like your last Hinge match. But unlike them, we're still here. Let's find you somewhere better.</p>
+      <div class="not-found-links">
+        <a href="/" class="not-found-btn not-found-btn--primary">Go Home</a>
+        <a href="/tickets" class="not-found-btn not-found-btn--outline">See Shows</a>
+      </div>
     </div>
   </div>
 </BaseLayout>
 
+<script src="/js/shader-app.js" defer></script>
+<script>
+  // Re-init shader on the 404 canvas if shader-app targets #glCanvas
+  const canvas = document.getElementById('glCanvas404');
+  if (canvas) {
+    canvas.id = 'glCanvas';
+  }
+</script>
+
 <style>
   .not-found {
     min-height: 100vh;
-    background: var(--cream);
+    min-height: 100dvh;
     display: flex;
     align-items: center;
     justify-content: center;
-    font-family: var(--font-body);
+    position: relative;
+    overflow: hidden;
+    padding: 80px 24px 60px;
   }
-  .not-found-content { text-align: center; }
-  .emoji { font-size: 3rem; margin-bottom: 16px; }
-  .heading {
-    font-family: var(--font-playfair);
-    font-size: 28px;
-    font-weight: 700;
-    color: var(--text);
+  .not-found-shader {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: 0;
+    opacity: 0.5;
+  }
+  .not-found-content {
+    position: relative;
+    z-index: 2;
+    text-align: center;
+    max-width: 480px;
+  }
+  .not-found-code {
+    font-family: var(--font-playfair), serif;
+    font-size: clamp(80px, 20vw, 180px);
+    font-weight: 900;
+    line-height: 1;
+    color: var(--hot-pink);
+    opacity: 0.15;
+    margin-bottom: -20px;
+  }
+  h1 {
+    font-family: var(--font-playfair), serif;
+    font-size: clamp(28px, 6vw, 48px);
+    font-weight: 900;
+    color: var(--charcoal);
     margin-bottom: 12px;
   }
-  .back-link {
+  h1 em {
     color: var(--hot-pink);
-    font-size: 15px;
-    font-weight: 500;
+    font-style: italic;
+  }
+  .not-found-content > p {
+    font-size: 16px;
+    color: rgba(26, 26, 26, 0.5);
+    max-width: 380px;
+    margin: 0 auto 32px;
+    line-height: 1.6;
+    font-family: var(--font-body), sans-serif;
+  }
+  .not-found-links {
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+  .not-found-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 14px 28px;
+    border-radius: 50px;
+    font-family: var(--font-body), sans-serif;
+    font-size: 13px;
+    font-weight: 600;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    text-decoration: none;
+    min-height: 48px;
+    transition: all 0.3s;
+  }
+  .not-found-btn--primary {
+    background: var(--hot-pink);
+    color: white;
+  }
+  .not-found-btn--primary:hover {
+    background: var(--deep-magenta);
+    transform: translateY(-2px);
+  }
+  .not-found-btn--outline {
+    background: transparent;
+    color: var(--charcoal);
+    border: 1.5px solid var(--charcoal);
+  }
+  .not-found-btn--outline:hover {
+    background: var(--charcoal);
+    color: white;
+    transform: translateY(-2px);
   }
 </style>

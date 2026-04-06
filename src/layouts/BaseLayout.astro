@@ -25,6 +25,8 @@ const {
   hideNav = false,
   hideFooter = false,
 } = Astro.props;
+
+const isHome = Astro.url.pathname === '/' || Astro.url.pathname === '';
 ---
 
 <!doctype html>
@@ -38,20 +40,24 @@ const {
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
     <meta name="theme-color" content="#DC2626" />
-    <link
-      rel="preload"
-      as="image"
-      type="image/avif"
-      href="/images/hero.avif"
-      media="(min-width: 769px)"
-    />
-    <link
-      rel="preload"
-      as="image"
-      type="image/avif"
-      href="/images/hero-mobile.avif"
-      media="(max-width: 768px)"
-    />
+    {isHome && (
+      <link
+        rel="preload"
+        as="image"
+        type="image/avif"
+        href="/images/hero.avif"
+        media="(min-width: 769px)"
+      />
+    )}
+    {isHome && (
+      <link
+        rel="preload"
+        as="image"
+        type="image/avif"
+        href="/images/hero-mobile.avif"
+        media="(max-width: 768px)"
+      />
+    )}
     <link
       rel="preload"
       as="font"

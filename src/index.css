@@ -118,3 +118,29 @@ body {
     transition-duration: 0.01ms !important;
   }
 }
+
+/* ─── Skip-to-content link (visible only on keyboard focus) ── */
+.sr-skip-link {
+  position: absolute;
+  left: -9999px;
+  top: auto;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  z-index: 9999;
+}
+.sr-skip-link:focus {
+  position: fixed;
+  top: 8px;
+  left: 8px;
+  width: auto;
+  height: auto;
+  padding: 12px 24px;
+  background: var(--charcoal);
+  color: #fff;
+  font-family: var(--font-body);
+  font-size: 14px;
+  font-weight: 600;
+  border-radius: 8px;
+  text-decoration: none;
+}

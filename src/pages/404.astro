@@ -6,7 +6,7 @@ import HomeNav from '@/components/home/HomeNav.astro';
 <BaseLayout title="404 — Page Not Found | Garam Masala Dating" description="This page doesn't exist." hideNav={true}>
   <canvas id="glCanvas" class="not-found-shader"></canvas>
   <HomeNav ticketsUrl="/tickets" />
-  <div class="not-found">
+  <main id="main-content" class="not-found">
     <div class="not-found-content">
       <div class="not-found-code">404</div>
       <h1>This Page Ghosted <em>You</em></h1>
@@ -16,7 +16,7 @@ import HomeNav from '@/components/home/HomeNav.astro';
         <a href="/tickets" class="not-found-btn not-found-btn--outline">See Shows</a>
       </div>
     </div>
-  </div>
+  </main>
 </BaseLayout>
 
 <script src="/js/shader-app.js" defer></script>

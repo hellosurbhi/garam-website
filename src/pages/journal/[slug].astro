@@ -85,7 +85,7 @@ const pageTitle = `${post.title} | Garam Masala Dating`;
     {faqJsonLd && <script type="application/ld+json" set:html={faqJsonLd} />}
   </Fragment>
 
-  <div class="post-page">
+  <main id="main-content" class="post-page">
     <div class="post-container">
       <!-- Back link -->
       <a href="/journal" class="post-back">&larr; Journal</a>
@@ -137,7 +137,7 @@ const pageTitle = `${post.title} | Garam Masala Dating`;
         <a href="/apply" class="post-footer-cta">Apply to be on the show &rarr;</a>
       </div>
     </div>
-  </div>
+  </main>
 </BaseLayout>
 
 <style>

@@ -1,5 +1,9 @@
 # Changelog
 
+## Fix nav overflow on mobile: shrink logo + tighten pills
+
+Both navs (HomeNav, PageNav) overflowed on 320px because 160px logo + two pills + padding exceeded viewport. Shrunk mobile logo from 36px/160px to 28px/120px, pills from 13px/18px to 11px/14px padding, letter-spacing 1.5→1px. Desktop restored to full sizes via 768px breakpoint.
+
 ## Fix nav pill overflow: revert to 13px, add nowrap, tighten padding
 
 Nav pills ("Apply" / "Get Tickets") were bumped to 16px in the mobile audit, but these are `<a>` links not form controls — iOS zoom only triggers on `<input>`/`<button>`, not anchors. Reverted to 13px, reduced horizontal padding from 22px to 18px, added `white-space: nowrap` to prevent "Get Tickets" wrapping to two lines on mobile.

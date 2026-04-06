@@ -56,14 +56,14 @@ const { ticketsUrl } = Astro.props;
     align-items: center;
   }
   .nav-logo-img {
-    height: 36px;
+    height: 28px;
     width: auto;
     transition: opacity 0.4s;
   }
   .nav-logo-pink {
     display: none;
-    height: 36px;
-    width: 160px;
+    height: 28px;
+    width: 120px;
     background-color: var(--hot-pink);
     -webkit-mask-image: url(/images/logo.svg);
     mask-image: url(/images/logo.svg);
@@ -85,13 +85,13 @@ const { ticketsUrl } = Astro.props;
   }
   .nav-pill {
     font-family: var(--font-body), sans-serif;
-    font-size: 13px;
+    font-size: 11px;
     font-weight: 700;
     text-transform: uppercase;
-    letter-spacing: 1.5px;
+    letter-spacing: 1px;
     text-decoration: none;
     color: var(--charcoal);
-    padding: 12px 18px;
+    padding: 10px 14px;
     border-radius: 50px;
     border: 1.5px solid transparent;
     transition: all 0.2s, color 0.4s;
@@ -123,5 +123,6 @@ const { ticketsUrl } = Astro.props;
     .home-nav.scrolled { padding: 14px 48px; }
     .nav-logo-img { height: 40px; }
     .nav-logo-pink { height: 40px; width: 180px; }
+    .nav-pill { font-size: 13px; letter-spacing: 1.5px; padding: 12px 22px; }
   }
 </style>

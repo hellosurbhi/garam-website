@@ -39,14 +39,10 @@ interface LinkDef {
 
 const links: LinkDef[] = [
   { label: "Apply to Be on the Show", href: "/apply", isPrimary: true, icon: "heart" },
-  { label: "Instagram", href: SOCIAL_URLS.instagram, external: true, icon: "instagram" },
-  { label: "TikTok", href: SOCIAL_URLS.tiktok, external: true, icon: "tiktok" },
-  { label: "YouTube", href: SOCIAL_URLS.youtube, external: true, icon: "youtube" },
-  { label: "Threads", href: SOCIAL_URLS.threads, external: true, icon: "threads" },
-  { label: "X (Twitter)", href: SOCIAL_URLS.x, external: true, icon: "x" },
-  { label: "Facebook", href: SOCIAL_URLS.facebook, external: true, icon: "facebook" },
-  { label: "As Seen In", dialogTrigger: "press-trigger", icon: "mic" },
+  { label: "Short form content — Instagram", href: SOCIAL_URLS.instagram, external: true, icon: "instagram" },
+  { label: "Full episodes — YouTube", href: SOCIAL_URLS.youtube, external: true, icon: "youtube" },
   { label: "Upcoming Shows & Tickets", dialogTrigger: "events-trigger", icon: "ticket" },
+  { label: "As Seen In", dialogTrigger: "press-trigger", icon: "mic" },
   { label: "Booking & Press Inquiries", href: "mailto:press@garammasaladating.com", icon: "mail" },
 ];
 
@@ -63,7 +59,7 @@ const socials = [
 const reversedPress = [...pressItems].reverse();
 ---
 
-<BaseLayout title={TITLE} description={DESC} hideNav={true}>
+<BaseLayout title={TITLE} description={DESC}>
   <Fragment slot="head">
     <script type="application/ld+json" set:html={breadcrumbJsonLd} />
   </Fragment>
@@ -75,7 +71,7 @@ const reversedPress = [...pressItems].reverse();
         <a href="/" class="home-link">
           <img src="/images/logo.svg" alt="Garam Masala Dating Show" class="links-logo" width="160" height="82" />
         </a>
-        <p class="subtitle">NYC&apos;s hottest live comedy dating show&nbsp;🌶️</p>
+        <p class="subtitle">NYC&apos;s hottest live South Asian dating show&nbsp;🌶️</p>
         <div class="divider" />
       </div>
 

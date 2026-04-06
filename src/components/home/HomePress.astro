@@ -1,18 +1,12 @@
 ---
-const outlets = [
-  'Time Out New York',
-  'Vulture',
-  'Brown Girl Magazine',
-  'Comedy Wire',
-  'Desi Diaspora',
-];
+import { pressItems } from '@/data/press';
 ---
 
 <section class="press" aria-label="Press coverage" data-reveal>
   <div class="press-label">As Seen In</div>
   <div class="press-logos">
-    {outlets.map((name) => (
-      <span class="press-name">{name}</span>
+    {pressItems.map((item) => (
+      <a href={item.url} target="_blank" rel="noopener noreferrer" class="press-name">{item.source}</a>
     ))}
   </div>
 </section>
@@ -47,6 +41,7 @@ const outlets = [
     font-weight: 700;
     color: #c8c8c8;
     font-style: italic;
+    text-decoration: none;
     transition: color 0.2s;
   }
   .press-name:hover { color: var(--hot-pink); }

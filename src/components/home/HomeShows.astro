@@ -38,7 +38,7 @@ function parseDay(dateStr: string): string {
             <span>{isLive ? 'Tickets available' : 'Dates to be announced'}</span>
           </div>
           {isLive ? (
-            <a href={event.url} target="_blank" rel="noopener noreferrer" class="ticket-btn">
+            <a href="/tickets" class="ticket-btn">
               Tickets
             </a>
           ) : (

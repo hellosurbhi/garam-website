@@ -9,10 +9,12 @@ Open `shader.html` in any browser. That's it. Works from `file://` protocol.
 
 ## Project Structure
 
-```
-shader.html       — minimal HTML shell (canvas + script tag)
-shader-app.js     — all logic: config, SVG data, WebGL shader, render loop
-logo.svg          — original SVG source file (not used at runtime, for reference)
+```text
+shader.html            — minimal HTML shell (canvas + script tag)
+shader-app.js          — all logic: config, SVG data, WebGL shader, render loop
+swap-svg.sh            — helper script to swap the logo automatically
+logo.svg               — flat logo SVG (used at runtime via base64 in shader-app.js)
+logo-with-stroke.svg   — stroke variant of the logo (alternate version)
 ```
 
 ## Changing Shader Values
@@ -44,17 +46,28 @@ colorA: [0xFF / 255, 0x55 / 255, 0x00 / 255]
 
 ## Replacing the Logo
 
-1. Replace `logo.svg` with your new SVG file
-2. Convert it to a base64 data URI:
+### Automated (recommended)
+
+Use the included helper script:
+
+```bash
+./swap-svg.sh /path/to/your-logo.svg
+```
+
+This base64-encodes the SVG and updates `SVG_DATA_URI` in `shader-app.js` automatically.
+
+### Manual
+
+1. Convert your SVG to a base64 data URI:
    ```bash
    cat your-logo.svg | base64 | tr -d '\n'
    ```
-3. Replace the value of `SVG_DATA_URI` in `shader-app.js` with:
-   ```
+2. Replace the value of `SVG_DATA_URI` in `shader-app.js` with:
+   ```text
    "data:image/svg+xml;base64,<your-base64-string>"
    ```
 
-Or use a tool like https://base64.guru/converter/encode/svg
+The current logo source is `logo.svg` (a stroke variant is in `logo-with-stroke.svg`).
 
 ## Embedding in Another Webpage
 

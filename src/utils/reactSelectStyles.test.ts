@@ -53,7 +53,7 @@ describe("formSelectStyles", () => {
     expect(result.minHeight).toBe("48px");
   });
 
-  it("control uses hot-pink border when focused", () => {
+  it("control uses brand-red border when focused", () => {
     const result = formSelectStyles.control!(BASE, { isFocused: true } as never);
     expect(result.border).toContain("#DC2626");
   });

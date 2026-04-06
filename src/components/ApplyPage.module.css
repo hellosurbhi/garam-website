@@ -17,8 +17,8 @@
 .page input:focus,
 .page select:focus,
 .page textarea:focus {
-  border-color: var(--hot-pink) !important;
-  box-shadow: 0 0 0 3px rgba(var(--hot-pink-rgb), 0.1) !important;
+  border-color: var(--brand-red) !important;
+  box-shadow: 0 0 0 3px rgba(var(--brand-red-rgb), 0.1) !important;
 }
 
 .page input::placeholder,
@@ -87,7 +87,7 @@
 .divider {
   width: 48px;
   height: 1px;
-  background: rgba(var(--hot-pink-rgb), 0.4);
+  background: rgba(var(--brand-red-rgb), 0.4);
   margin: 18px auto 0;
 }
 
@@ -119,14 +119,14 @@
 }
 
 .requiredMark {
-  color: var(--hot-pink);
+  color: var(--brand-red);
   margin-left: 3px;
 }
 
 .errorText {
   font-family: var(--font-body);
   font-size: 13px;
-  color: var(--hot-pink);
+  color: var(--brand-red);
   margin-top: 5px;
   padding-left: 4px;
 }
@@ -138,16 +138,16 @@
   border: 1px dashed rgba(0, 0, 0, 0.15);
   font-family: var(--font-body);
   font-size: 15px;
-  color: var(--hot-pink);
-  background: rgba(var(--hot-pink-rgb), 0.04);
+  color: var(--brand-red);
+  background: rgba(var(--brand-red-rgb), 0.04);
   cursor: pointer;
   text-align: center;
   transition: background 0.2s, border-color 0.2s;
 }
 
 .retryButton:hover {
-  background: rgba(var(--hot-pink-rgb), 0.08);
-  border-color: var(--hot-pink);
+  background: rgba(var(--brand-red-rgb), 0.08);
+  border-color: var(--brand-red);
 }
 
 .input {
@@ -229,7 +229,7 @@
 
 .typeButton[data-active] {
   border: none;
-  background: var(--hot-pink);
+  background: var(--brand-red);
   color: white;
 }
 
@@ -273,7 +273,7 @@
   left: 16px;
   top: 50%;
   transform: translateY(-50%);
-  color: var(--hot-pink);
+  color: var(--brand-red);
   font-family: var(--font-body);
   font-size: 16px;
   pointer-events: none;
@@ -294,7 +294,7 @@
 }
 
 .igHintLink {
-  color: var(--hot-pink);
+  color: var(--brand-red);
   text-decoration: none;
   font-weight: 500;
 }
@@ -308,27 +308,27 @@
 
 .photoDropzone {
   display: block;
-  border: 2px dashed rgba(var(--hot-pink-rgb), 0.3);
+  border: 2px dashed rgba(var(--brand-red-rgb), 0.3);
   border-radius: 14px;
   padding: 24px;
   text-align: center;
   cursor: pointer;
   transition: border-color 0.2s;
-  background: rgba(var(--hot-pink-rgb), 0.03);
+  background: rgba(var(--brand-red-rgb), 0.03);
   overflow: hidden;
 }
 
 .photoDropzone:hover {
-  border-color: var(--hot-pink);
+  border-color: var(--brand-red);
 }
 
 .photoDropzoneError {
   composes: photoDropzone;
-  border-color: var(--hot-pink);
+  border-color: var(--brand-red);
 }
 
 .photoDropzoneError:hover {
-  border-color: var(--hot-pink);
+  border-color: var(--brand-red);
 }
 
 .photoPreview {
@@ -347,13 +347,13 @@
 .photoPrompt {
   font-family: var(--font-body);
   font-size: 16px;
-  color: var(--hot-pink);
+  color: var(--brand-red);
 }
 
 .changePhoto {
   display: inline-block;
   margin-top: 8px;
-  color: var(--hot-pink);
+  color: var(--brand-red);
   font-family: var(--font-body);
   font-size: 15px;
   cursor: pointer;
@@ -363,7 +363,7 @@
 .photoError {
   font-family: var(--font-body);
   font-size: 13px;
-  color: var(--hot-pink);
+  color: var(--brand-red);
   margin-top: 6px;
 }
 
@@ -375,7 +375,7 @@
   white-space: nowrap;
   border-radius: 100px;
   border: none;
-  background: var(--hot-pink);
+  background: var(--brand-red);
   color: white;
   font-family: var(--font-body);
   font-size: 17px;
@@ -395,12 +395,12 @@
 }
 
 .submitButton:disabled {
-  background: rgba(var(--hot-pink-rgb), 0.5);
+  background: rgba(var(--brand-red-rgb), 0.5);
   cursor: not-allowed;
 }
 
 .submitButton:disabled:hover {
-  background: rgba(var(--hot-pink-rgb), 0.5);
+  background: rgba(var(--brand-red-rgb), 0.5);
   box-shadow: none;
 }
 
@@ -455,7 +455,7 @@
 }
 
 .toast[data-status="error"] {
-  background: var(--hot-pink);
+  background: var(--brand-red);
 }
 
 .toastDismiss {
@@ -522,7 +522,7 @@
 }
 
 .successLink {
-  color: var(--hot-pink);
+  color: var(--brand-red);
   font-weight: 600;
   text-decoration: none;
 }
@@ -542,7 +542,7 @@
 }
 
 .successCoupon strong {
-  color: var(--hot-pink);
+  color: var(--brand-red);
   letter-spacing: 0.5px;
 }
 
@@ -550,7 +550,7 @@
   display: inline-block;
   margin-top: 16px;
   padding: 14px 28px;
-  background: var(--hot-pink);
+  background: var(--brand-red);
   color: #fff;
   font-family: var(--font-body);
   font-size: 16px;

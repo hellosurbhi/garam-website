@@ -24,7 +24,7 @@
   width: 32px;
   height: 32px;
   border: 2px solid rgba(0, 0, 0, 0.08);
-  border-top-color: var(--hot-pink);
+  border-top-color: var(--brand-red);
   border-radius: 50%;
   animation: prepSpin 0.7s linear infinite;
 }
@@ -111,7 +111,7 @@
 
 .headerTitleAccent {
   font-style: italic;
-  color: var(--hot-pink);
+  color: var(--brand-red);
 }
 
 .headerSubtitle {
@@ -147,7 +147,7 @@
 }
 
 .sectionIcon {
-  color: var(--hot-pink);
+  color: var(--brand-red);
   flex-shrink: 0;
 }
 
@@ -215,7 +215,7 @@
   font-family: var(--font-cormorant);
   font-size: 15px;
   font-style: italic;
-  color: var(--hot-pink);
+  color: var(--brand-red);
   line-height: 24px;
   flex-shrink: 0;
   width: 24px;
@@ -252,7 +252,7 @@
   width: 8px;
   height: 8px;
   border-radius: 50%;
-  background: var(--hot-pink);
+  background: var(--brand-red);
   flex-shrink: 0;
   margin-top: 7px;
 }
@@ -305,7 +305,7 @@
   font-size: 11px;
   text-transform: uppercase;
   letter-spacing: 0.15em;
-  color: var(--hot-pink);
+  color: var(--brand-red);
   margin-bottom: 6px;
 }
 
@@ -319,8 +319,8 @@
 /* ─── Callout cards ───────────────────────────────────────────── */
 
 .callout {
-  background: rgba(var(--hot-pink-rgb), 0.04);
-  border: 1px solid rgba(var(--hot-pink-rgb), 0.12);
+  background: rgba(var(--brand-red-rgb), 0.04);
+  border: 1px solid rgba(var(--brand-red-rgb), 0.12);
   border-radius: 14px;
   padding: 20px 22px;
   margin-bottom: 16px;
@@ -332,7 +332,7 @@
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.15em;
-  color: var(--hot-pink);
+  color: var(--brand-red);
   margin-bottom: 8px;
 }
 

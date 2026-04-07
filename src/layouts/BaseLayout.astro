@@ -136,6 +136,7 @@ const {
             }
           });
           observer.observe(document.body, { subtree: true, attributes: true, attributeFilter: ['open'] });
+          document.addEventListener('astro:before-swap', () => observer.disconnect(), { once: true });
         }
       }
     </script>

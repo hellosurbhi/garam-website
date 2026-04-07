@@ -1,5 +1,57 @@
 # Changelog
 
+## perf: YouTube facade + lazy-load Instagram embed.js on scroll (2026-04-07)
+
+### What changed
+- **YouTube:** restored facade pattern (thumbnail → iframe on click). Uses the real YouTube play button SVG instead of a text ▶ character. iframe only loads when tapped/clicked — saves ~600KB on page load.
+- **Instagram:** `embed.js` (200KB) now deferred via Intersection Observer — only injected into the DOM when the reels row scrolls within 200px of the viewport. On bounce/quick visits, it may never load at all.
+
+**Files affected:** `src/components/home/HomeVideo.astro`
+
+## fix: popup email error feedback + HomeVideo background distinction (2026-04-07)
+
+### What changed
+- `src/pages/index.astro`: popup email form catch block was silently swallowing all errors. Added `#popup-email-error` element to markup, wired it in the catch block, added `.popup-error` style.
+- `src/components/home/HomeVideo.astro`: changed background from `var(--off-white)` to `white` so the "See What You're Missing" section is visually distinct from the Creators section above it (both were `#FFF8F0`).
+
+## feat: real YouTube iframe + Instagram embeds with fallbacks (2026-04-07)
+
+### What changed
+Replaced facade/link pattern with real embeds throughout, with proper fallbacks.
+
+**YouTube:** switched from click-to-load facade back to always-visible `<iframe>`. Fallback link (thumbnail + play icon) sits behind the iframe via `z-index`; visible only if the iframe fails to load.
+
+**Instagram:** `blockquote.instagram-media` embeds with `embed.js`. The `<a>` inside each blockquote is the native Instagram fallback if the script doesn't execute.
+
+**Files affected:** `src/components/home/HomeVideo.astro`
+
+## feat: restore Instagram reel embeds + fix CSP for YouTube, Instagram, pixels (2026-04-07)
+
+### What changed
+Restored Instagram blockquote embeds (removed in previous session for perf) and fixed all CSP violations blocking video/embed content.
+
+**HomeVideo.astro:** reverted Instagram reels from link buttons back to `blockquote.instagram-media` embeds with `embed.js` script. Removed dead `.reel-link` CSS, added `.reel-embed` centering styles.
+
+**vercel.json CSP additions:**
+- `script-src`: `https://www.instagram.com` (embed.js), TikTok, Twitter pixels
+- `frame-src`: `https://www.instagram.com`, `https://www.youtube-nocookie.com`, `https://vercel.live`
+- `img-src`: `https://i.ytimg.com`, `https://www.instagram.com`, `https://*.cdninstagram.com`, `https://*.fbcdn.net`
+- `connect-src`: `https://us-assets.i.posthog.com`, TikTok, Instagram
+
+**Files affected:** `src/components/home/HomeVideo.astro`, `vercel.json`
+
+## fix(csp): allow YouTube thumbnails, YouTube player, TikTok, Twitter pixels (2026-04-07)
+
+### What changed
+Updated CSP in `vercel.json` to unblock previously broken features:
+- `img-src` + `https://i.ytimg.com` — YouTube thumbnail was being blocked
+- `frame-src` + `https://www.youtube-nocookie.com` — YouTube player iframe was blocked on click
+- `frame-src` + `https://vercel.live` — Vercel dev toolbar was blocked
+- `script-src` + `https://analytics.tiktok.com` + `https://static.ads-twitter.com` — GTM-injected pixels were blocked
+- `connect-src` + `https://us-assets.i.posthog.com` + `https://analytics.tiktok.com` — PostHog source maps and TikTok network requests blocked
+
+**Files affected:** `vercel.json`
+
 ## fix: CodeRabbit PR #11 review — a11y, error handling, touch targets, data (2026-04-07)
 
 ### What changed

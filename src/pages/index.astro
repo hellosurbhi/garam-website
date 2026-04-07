@@ -93,6 +93,7 @@ const eventSchemas = buildEventSchemas(upcomingForSchema);
         <p class="popup-subtitle">Join our list for exclusive discount codes and early access.</p>
         <form id="popup-email-form" class="popup-form">
           <input type="email" id="popup-email" placeholder="Your email" required aria-label="Email address" />
+          <p id="popup-email-error" class="popup-error" hidden role="alert"></p>
           <button type="submit" class="popup-submit">Get My Discount Code</button>
         </form>
         <button type="button" class="popup-dismiss">No thanks</button>
@@ -154,7 +155,10 @@ const eventSchemas = buildEventSchemas(upcomingForSchema);
         localStorage.setItem(POPUP_KEY, 'true');
         document.getElementById('popup-step-1')?.setAttribute('hidden', '');
         document.getElementById('popup-step-2')?.removeAttribute('hidden');
-      } catch { /* fail silently — don't advance to step 2 */ }
+      } catch {
+        const errorEl = document.getElementById('popup-email-error');
+        if (errorEl) { errorEl.textContent = 'Something went wrong. Please try again.'; errorEl.removeAttribute('hidden'); }
+      }
     });
 
     document.getElementById('popup-phone-form')?.addEventListener('submit', async (e) => {
@@ -313,6 +317,13 @@ const eventSchemas = buildEventSchemas(upcomingForSchema);
     width: 100%;
   }
   .popup-submit:hover { background: var(--brand-red-dark); }
+  .popup-error {
+    font-size: 13px;
+    color: var(--brand-red);
+    text-align: center;
+    margin: 0;
+    font-family: var(--font-body), sans-serif;
+  }
   .popup-dismiss,
   .popup-skip {
     display: inline-flex;

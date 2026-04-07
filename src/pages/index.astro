@@ -7,7 +7,6 @@ import HomeExperience from '@/components/home/HomeExperience.astro';
 import HomeShows from '@/components/home/HomeShows.astro';
 import HomeStats from '@/components/home/HomeStats.astro';
 import HomePress from '@/components/home/HomePress.astro';
-import HomePhotoBreak from '@/components/home/HomePhotoBreak.astro';
 import HomeTestimonials from '@/components/home/HomeTestimonials.astro';
 import HomeCreators from '@/components/home/HomeCreators.astro';
 import HomeFAQ from '@/components/home/HomeFAQ.astro';
@@ -111,13 +110,7 @@ const eventSchemas = buildEventSchemas(upcomingForSchema);
     <HomePress />
     <HomeTestimonials />
     <HomeCreators />
-    <div class="photo-wide">
-      <img src="/images/on-stage.webp" alt="Contestants and hosts laughing during a blindfolded dating round" width="1200" height="800" loading="lazy" style="object-position: center 40%;" />
-    </div>
     <HomeFAQ />
-    <div class="photo-wide photo-wide-zoom">
-      <img src="/images/tickets-hero.webp" alt="Blindfolded contestant on stage with women contestants during the show" width="1200" height="800" loading="lazy" style="object-position: center 70%;" />
-    </div>
     <HomeSignup />
   </main>
 
@@ -243,24 +236,6 @@ const eventSchemas = buildEventSchemas(upcomingForSchema);
 </noscript>
 
 <style is:global>
-  .photo-wide {
-    width: 100%;
-    aspect-ratio: 21 / 9;
-    overflow: hidden;
-  }
-  .photo-wide img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    display: block;
-  }
-  .photo-wide-zoom img {
-    transform: scale(1.15);
-  }
-  @media (max-width: 767px) {
-    .photo-wide { aspect-ratio: 16 / 9; }
-  }
-
   [data-reveal] {
     opacity: 0;
     transform: translateY(32px);

@@ -1,5 +1,27 @@
 # Changelog
 
+## fix: address all remaining CodeRabbit PR #11 review comments (2026-04-07)
+
+### What changed
+Resolved all 15 unresolved CodeRabbit review threads on PR #11 (13 fixed, 2 dismissed).
+
+**Fixes:**
+- **scripts/optimize-images.js:** Missing source images now fail the run with non-zero exit instead of silently succeeding under VERBOSE-only logging.
+- **ApplicantModal.tsx:** Guarded `showModal()` against already-open dialogs and jsdom environments. Added `aria-labelledby` linking dialog to applicant name heading. Made photo preview keyboard-accessible with `role="button"`, `tabIndex`, and Enter/Space handling.
+- **ApplicantModal.module.css:** Replaced hardcoded `32px` and `rgba(0,0,0,0.5)` with new `--dialog-gutter` and `--backdrop` CSS tokens in `:root`.
+- **useApplyForm.ts:** Fixed age validation gap where non-numeric input (`"abc"`) passed validation because `NaN < 18` is `false`.
+- **ApplyPage.module.css:** Renamed `@keyframes toastIn` to `toast-in` for stylelint kebab-case. Added 48px touch targets to `.termsLink` and `.toastDismiss`. Replaced undefined `var(--font-heading)` with `var(--font-playfair)`.
+- **HomeVideo.astro:** Added unique `aria-label` per Instagram embed link. Added guard for missing `data-youtube-id`.
+- **PageNav.astro:** Initialized scroll state on page load (previously only updated after first scroll event).
+- **posthog.astro:** Removed invalid `defaults: '2026-01-30'` PostHog init option.
+- **index.css:** Added `--dialog-gutter: 16px` and `--backdrop: rgba(0,0,0,0.5)` tokens to `:root`.
+
+**Dismissed:**
+- BaseLayout.astro custom cursor — already removed in commit 7d30c7e.
+- organize-images.js `import.meta.dirname` — package.json already requires `>=20.11.0`.
+
+**Files affected:** `scripts/optimize-images.js`, `src/index.css`, `src/components/admin/ApplicantModal.tsx`, `src/components/admin/ApplicantModal.module.css`, `src/components/apply/useApplyForm.ts`, `src/components/ApplyPage.module.css`, `src/components/home/HomeVideo.astro`, `src/components/layout/PageNav.astro`, `src/components/posthog.astro`
+
 ## perf: YouTube facade + lazy-load Instagram embed.js on scroll (2026-04-07)
 
 ### What changed

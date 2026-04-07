@@ -84,9 +84,10 @@
 /* ─── Cover / header ──────────────────────────────────────────── */
 
 .cover {
-  margin-bottom: 40px;
-  padding-bottom: 32px;
+  margin-bottom: 32px;
+  padding-bottom: 0;
   border-bottom: none;
+  text-align: center;
 }
 
 .coverTitle {
@@ -95,18 +96,18 @@
   font-weight: 900;
   color: var(--charcoal);
   line-height: 1.1;
-  margin-bottom: 12px;
+  margin-bottom: 6px;
 }
 
 .coverShow {
-  font-family: var(--font-body);
-  font-size: 14px;
-  font-weight: 600;
-  text-transform: uppercase;
-  letter-spacing: 0.12em;
+  font-family: var(--font-cormorant);
+  font-size: 18px;
+  font-weight: 500;
+  font-style: italic;
+  letter-spacing: 0;
+  text-transform: none;
   color: var(--brand-red);
   margin-bottom: 28px;
-  text-align: center;
 }
 
 .coverIntro {
@@ -114,7 +115,8 @@
   font-size: 15px;
   color: var(--text-secondary);
   line-height: 1.75;
-  margin-bottom: 20px;
+  margin-bottom: 16px;
+  text-align: left;
 }
 
 .coverCore {
@@ -122,6 +124,7 @@
   font-size: 17px;
   color: var(--charcoal);
   line-height: 1.6;
+  text-align: left;
 }
 
 /* ─── Sections ────────────────────────────────────────────────── */

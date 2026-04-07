@@ -1,5 +1,6 @@
 ---
 import type { EventEntry } from '@/data/events';
+import NotifyModal from '@/components/NotifyModal.astro';
 
 interface Props {
   events: EventEntry[];
@@ -62,26 +63,7 @@ function parseDay(dateStr: string): string {
     <button type="button" id="request-city-trigger">Don't see your city? Request it →</button>
   </div>
 
-  <!-- Notify Me Modal -->
-  <dialog id="notify-modal" class="modal-dialog">
-    <div class="modal-inner">
-      <button type="button" class="modal-close" aria-label="Close">
-        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
-      </button>
-      <div id="notify-form-view">
-        <h2 class="modal-title">Get Notified</h2>
-        <p class="modal-subtitle">We'll email you when tickets drop for <strong id="notify-city-name"></strong>.</p>
-        <form id="notify-form" class="modal-form">
-          <input type="email" id="notify-email" placeholder="Your email" required aria-label="Email address" />
-          <input type="hidden" id="notify-city" />
-          <button type="submit" class="modal-submit">Notify Me</button>
-        </form>
-      </div>
-      <div id="notify-success" class="modal-success" hidden>
-        <p>You're on the list! We'll let you know.</p>
-      </div>
-    </div>
-  </dialog>
+  <NotifyModal />
 
   <!-- Request City Modal -->
   <dialog id="request-city-modal" class="modal-dialog">
@@ -109,77 +91,34 @@ function parseDay(dateStr: string): string {
   import { getFirebaseDb } from '@/lib/firebase';
   import { collection, addDoc } from 'firebase/firestore';
 
-  function setupModal(dialogId: string) {
-    const dialog = document.getElementById(dialogId) as HTMLDialogElement;
-    if (!dialog) return;
-    dialog.querySelector('.modal-close')?.addEventListener('click', () => dialog.close());
-    dialog.addEventListener('click', (e) => {
-      if (e.target === dialog) dialog.close();
-    });
-  }
-
-  // Notify Me modal
-  const notifyDialog = document.getElementById('notify-modal') as HTMLDialogElement;
-  const notifyCityName = document.getElementById('notify-city-name');
-  const notifyCityInput = document.getElementById('notify-city') as HTMLInputElement;
-
-  document.querySelectorAll('[data-notify-city]').forEach((el) => {
-    const openNotify = () => {
-      const city = (el as HTMLElement).dataset.notifyCity ?? '';
-      if (notifyCityName) notifyCityName.textContent = city;
-      if (notifyCityInput) notifyCityInput.value = city;
-      notifyDialog?.showModal();
-    };
-    el.addEventListener('click', openNotify);
-    el.addEventListener('keydown', (e) => {
-      if ((e as KeyboardEvent).key === 'Enter' || (e as KeyboardEvent).key === ' ') {
-        e.preventDefault();
-        openNotify();
-      }
-    });
-  });
-
-  document.getElementById('notify-form')?.addEventListener('submit', async (e) => {
-    e.preventDefault();
-    const email = (document.getElementById('notify-email') as HTMLInputElement).value;
-    const city = notifyCityInput?.value ?? '';
-    try {
-      const db = getFirebaseDb();
-      await addDoc(collection(db, 'notifications'), {
-        email,
-        city,
-        createdAt: new Date().toISOString(),
-      });
-    } catch { /* fail silently */ }
-    document.getElementById('notify-form-view')?.setAttribute('hidden', '');
-    document.getElementById('notify-success')?.removeAttribute('hidden');
-  });
-
-  setupModal('notify-modal');
-
   // Request City modal
   const cityDialog = document.getElementById('request-city-modal') as HTMLDialogElement;
-  document.getElementById('request-city-trigger')?.addEventListener('click', () => {
-    cityDialog?.showModal();
-  });
+  if (cityDialog) {
+    document.getElementById('request-city-trigger')?.addEventListener('click', () => {
+      cityDialog.showModal();
+    });
 
-  document.getElementById('city-form')?.addEventListener('submit', async (e) => {
-    e.preventDefault();
-    const city = (document.getElementById('city-name') as HTMLInputElement).value;
-    const email = (document.getElementById('city-email') as HTMLInputElement).value;
-    try {
-      const db = getFirebaseDb();
-      await addDoc(collection(db, 'city_requests'), {
-        city,
-        email,
-        createdAt: new Date().toISOString(),
-      });
-    } catch { /* fail silently */ }
-    document.getElementById('city-form-view')?.setAttribute('hidden', '');
-    document.getElementById('city-success')?.removeAttribute('hidden');
-  });
+    cityDialog.querySelector('.modal-close')?.addEventListener('click', () => cityDialog.close());
+    cityDialog.addEventListener('click', (e) => {
+      if (e.target === cityDialog) cityDialog.close();
+    });
 
-  setupModal('request-city-modal');
+    document.getElementById('city-form')?.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const city = (document.getElementById('city-name') as HTMLInputElement).value;
+      const email = (document.getElementById('city-email') as HTMLInputElement).value;
+      try {
+        const db = getFirebaseDb();
+        await addDoc(collection(db, 'city_requests'), {
+          city,
+          email,
+          createdAt: new Date().toISOString(),
+        });
+      } catch { /* fail silently */ }
+      document.getElementById('city-form-view')?.setAttribute('hidden', '');
+      document.getElementById('city-success')?.removeAttribute('hidden');
+    });
+  }
 </script>
 
 <style>
@@ -316,116 +255,6 @@ function parseDay(dateStr: string): string {
   }
   .request-city button:hover { border-color: var(--electric-yellow); }
 
-  /* Modal styles */
-  .modal-dialog {
-    border: none;
-    background: transparent;
-    padding: 24px;
-    max-width: 100%;
-    max-height: 100vh;
-    width: 100%;
-    height: 100%;
-    overflow: visible;
-  }
-  .modal-dialog::backdrop {
-    background: rgba(0, 0, 0, 0.5);
-  }
-  .modal-dialog[open] {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-  }
-  .modal-inner {
-    width: 100%;
-    max-width: 400px;
-    max-height: 80vh;
-    overflow-y: auto;
-    background: white;
-    border: 1px solid rgba(0, 0, 0, 0.1);
-    border-radius: 20px;
-    padding: 32px 24px;
-    position: relative;
-    animation: modalIn 0.25s ease-out both;
-    text-align: center;
-  }
-  @keyframes modalIn {
-    from { opacity: 0; transform: scale(0.95) translateY(8px); }
-    to { opacity: 1; transform: scale(1) translateY(0); }
-  }
-  .modal-close {
-    position: absolute;
-    top: 16px;
-    right: 16px;
-    background: none;
-    border: none;
-    color: var(--muted);
-    cursor: pointer;
-    padding: 4px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    transition: color 0.2s;
-  }
-  .modal-close:hover { color: var(--charcoal); }
-  .modal-title {
-    font-family: var(--font-playfair), serif;
-    font-size: 22px;
-    font-weight: 600;
-    color: var(--charcoal);
-    margin-bottom: 8px;
-  }
-  .modal-subtitle {
-    font-size: 15px;
-    color: var(--text-light);
-    margin-bottom: 24px;
-    line-height: 1.5;
-  }
-  .modal-form {
-    display: flex;
-    flex-direction: column;
-    gap: 12px;
-  }
-  .modal-form input {
-    padding: 14px 20px;
-    border: 1.5px solid rgba(0, 0, 0, 0.1);
-    border-radius: 50px;
-    font-size: 16px;
-    font-family: var(--font-body), sans-serif;
-    outline: none;
-    transition: border-color 0.2s;
-    min-height: 48px;
-  }
-  .modal-form input:focus {
-    border-color: var(--brand-red);
-  }
-  .modal-submit {
-    background: var(--brand-red);
-    color: white;
-    border: none;
-    padding: 14px;
-    border-radius: 50px;
-    font-family: var(--font-body), sans-serif;
-    font-size: 16px;
-    font-weight: 700;
-    text-transform: uppercase;
-    letter-spacing: 1px;
-    cursor: pointer;
-    transition: background 0.2s;
-    min-height: 48px;
-    white-space: nowrap;
-    width: 100%;
-  }
-  .modal-submit:hover { background: var(--brand-red-dark); }
-  .modal-success {
-    text-align: center;
-    padding: 24px 0;
-  }
-  .modal-success p {
-    font-family: var(--font-cormorant), serif;
-    font-size: 18px;
-    font-style: italic;
-    color: var(--charcoal);
-  }
 
   @media (min-width: 768px) {
     .shows { padding: 100px 48px; }

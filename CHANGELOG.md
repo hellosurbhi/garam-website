@@ -1,5 +1,30 @@
 # Changelog
 
+## Site audit remediation — SEO, FAQ, sold-out display, broken images (2026-04-07)
+
+Reviewed the site audit against current codebase (~70 commits after the audit). Fixed remaining issues, deferred visual/home-page changes to ENHANCEMENTS.md.
+
+### What changed
+- **`src/pages/faq.astro`**: Fixed broken hero image (`gmd-37.webp` deleted, replaced with `on-stage.webp`). Changed footer email from `hello@` to `contact@` (matches Organization JSON-LD). Made FAQ answers linkable with `set:html` — added HTML links for /tickets, /apply, and press email. Added `stripHtml()` to keep JSON-LD text clean. Added `.faq-answer-text a` link styling.
+- **`src/pages/index.astro`**: Removed `<meta name="keywords">` (ignored by Google since 2009). Removed duplicate FAQPage JSON-LD (the /faq page owns the canonical schema). Visual HomeFAQ component unaffected — it uses `copy.ts` data.
+- **`astro.config.mjs`**: Added sitemap filter excluding `/admin` and `/contestant-prep` routes.
+- **`src/layouts/BaseLayout.astro`**: Added `og:image:alt` meta tag for social sharing accessibility.
+- **`src/pages/tickets.astro`**: Events with "Sold out" tagline now show muted "Sold Out" pill instead of active "Get Tickets" CTA. Link preserved for waitlist access.
+- **`src/components/home/HomeShows.astro`**: Same sold-out display logic (defensive — past sold-out events are already filtered by `isEventPast()`).
+- **`src/pages/journal/index.astro`**: Replaced hardcoded "First essays drop April 7" with evergreen fallback text and Instagram link.
+- **`BUGS.md`**: Added fixed entry for broken FAQ image.
+- **`ENHANCEMENTS.md`**: Added 7 deferred items: click-to-home removal, bio shortening, h2 variation, social proof near CTAs, hero preload cleanup, FAQ content unification.
+
+### Deferred (added to ENHANCEMENTS.md)
+- Remove "click empty space to go home" behavior (conversion risk)
+- Shorten HomeCreators bios + add /hosts link
+- Vary HomeExperience h2 to reduce tagline repetition
+- Add social proof stats near ticket CTAs
+- Clean up hero image preloads if unused
+- Unify FAQ content between home and /faq
+
+---
+
 ## Code review fixes — bugs, accessibility, mobile-first, and docs (2026-04-07)
 
 Verified each finding against current code before applying. Skipped color token replacements where no exact token match exists (to avoid visual regressions) and the galleryImages path consolidation (requires moving image files on disk).

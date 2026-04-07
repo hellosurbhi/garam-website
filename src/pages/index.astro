@@ -106,13 +106,22 @@ const eventSchemas = buildEventSchemas(upcomingForSchema);
     <HomeHero ticketsUrl={firstTicketUrl} />
     <HomeMarquee />
     <HomeExperience />
-    <HomePhotoBreak src="the-match" alt="A matched couple laughing together on stage after the blindfold reveal" />
+    <HomePhotoBreak
+      left={{ src: "/images/gallery/on-stage", alt: "Contestants and hosts laughing during a blindfolded dating round", position: "center 40%" }}
+      right={{ src: "/images/journal-featured", alt: "Full stage with blindfolded contestant and hosts at Top Secret Comedy Club", position: "center 40%" }}
+    />
     <HomeShows events={upcomingEvents} />
     <HomeStats />
-    <HomePhotoBreak src="dance-off" alt="The full cast standing together on stage during the final reveal" />
+    <HomePhotoBreak
+      left={{ src: "/images/gallery/the-match", alt: "A matched couple laughing together on stage after the blindfold reveal", position: "center 45%" }}
+      right={{ src: "/images/gallery/dance-off", alt: "The full cast standing together on stage during the final reveal", position: "center 40%" }}
+    />
     <HomePress />
     <HomeTestimonials />
-    <HomePhotoBreak src="magic-moment" alt="A contestant sharing an intimate moment with their date on stage" position="center 30%" />
+    <HomePhotoBreak
+      left={{ src: "/images/gallery/pure-chaos", alt: "A contestant lifting another person on stage", position: "center 35%" }}
+      right={{ src: "/images/tickets-hero", alt: "Blindfolded contestant on stage with women contestants during the show", position: "center 40%" }}
+    />
     <HomeCreators />
     <HomeFAQ />
     <HomeSignup />

@@ -1,5 +1,19 @@
 # Changelog
 
+## Rework photo integration based on feedback (2026-04-07)
+
+Reverted experience step photos (too small, not impactful). Fixed testimonials to show the crowd photo clearly (0% background overlay, glass on cards). Swapped hosts page to sitting-down photo. Changed photo breaks from single full-bleed to two photos side by side. Added Event 2 photos throughout.
+
+### What changed
+- **`HomeExperience.astro`**: Reverted to original yellow numbers, no photos.
+- **`HomeTestimonials.astro`**: Removed dark background overlay — crowd photo now fully visible. Glass-morphism moved to individual quote cards (dark translucent + backdrop blur). Changed accent color on heading em to yellow for contrast on photo.
+- **`hosts.astro`**: Swapped action shot from standing (#1) to sitting-down posed photo (#117).
+- **`HomePhotoBreak.astro`**: Now takes `left` and `right` photo props instead of single `src`. Two photos side by side with 4px gap (mobile) / 6px gap (desktop). 3:2 mobile, 16:9 desktop.
+- **`index.astro`**: Updated photo break props with Event 2 photos (on-stage, journal-featured, the-match, dance-off, tickets-hero, pure-chaos).
+- **`src/data/copy.ts`**: Removed image/alt/pos fields from EXPERIENCE_STEPS.
+
+---
+
 ## Fix CodeRabbit code review comments (2026-04-07)
 
 Resolved actionable CodeRabbit review comments on PR #11.

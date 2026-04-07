@@ -103,29 +103,17 @@ export const EXPERIENCE_STEPS = [
   {
     title: "Arrive & Settle In",
     text: "Doors open 30 minutes early. Grab a drink, find your seat, and settle into the energy. The venue is intimate  with 250 seats, come early to grab one with the best view.",
-    image: "/images/gallery/after-party",
-    alt: "Audience clapping and celebrating during the show",
-    pos: "center center",
   },
   {
     title: "The Main Event",
     text: "Two real singles meet for the first time on stage. Surbhi and Wyatt guide the date with stand-up, games, and crowd work. The audience drives the chaos.",
-    image: "/images/gallery/on-stage",
-    alt: "Contestants and hosts laughing during a blindfolded dating round",
-    pos: "center 40%",
   },
   {
     title: "The Decision",
     text: "At the end of the date, the audience votes. Then the daters decide: second date or not? The room erupts either way.",
-    image: "/images/testimonial-reaction",
-    alt: "Audience member reacting emotionally during the show",
-    pos: "center 35%",
   },
   {
     title: "Singles Mixer",
     text: "After the show, the venue transforms into a singles mixer. Same room, live DJ, and the energy from the show carries everyone forward. Included with your ticket.",
-    image: "/images/gallery/pure-chaos",
-    alt: "A contestant lifting another person on stage during a high-energy moment",
-    pos: "center 35%",
   },
 ];

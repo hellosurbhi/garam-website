@@ -1,40 +1,66 @@
 ---
-interface Props {
+interface Photo {
   src: string;
   alt: string;
   position?: string;
 }
 
-const { src, alt, position = 'center 40%' } = Astro.props;
+interface Props {
+  left: Photo;
+  right: Photo;
+}
+
+const { left, right } = Astro.props;
 ---
 
-<div class="photo-break" data-reveal>
-  <picture>
-    <source srcset={`/images/gallery/${src}.avif`} type="image/avif" />
-    <source srcset={`/images/gallery/${src}.webp`} type="image/webp" />
-    <img
-      src={`/images/gallery/${src}.jpg`}
-      alt={alt}
-      width="1200"
-      height="800"
-      loading="lazy"
-      style={`object-position: ${position};`}
-    />
-  </picture>
+<div class="photo-pair" data-reveal>
+  <div class="photo-pair-item">
+    <picture>
+      <source srcset={`${left.src}.avif`} type="image/avif" />
+      <source srcset={`${left.src}.webp`} type="image/webp" />
+      <img
+        src={`${left.src}.jpg`}
+        alt={left.alt}
+        width="1200"
+        height="800"
+        loading="lazy"
+        style={`object-position: ${left.position ?? 'center 40%'};`}
+      />
+    </picture>
+  </div>
+  <div class="photo-pair-item">
+    <picture>
+      <source srcset={`${right.src}.avif`} type="image/avif" />
+      <source srcset={`${right.src}.webp`} type="image/webp" />
+      <img
+        src={`${right.src}.jpg`}
+        alt={right.alt}
+        width="1200"
+        height="800"
+        loading="lazy"
+        style={`object-position: ${right.position ?? 'center 40%'};`}
+      />
+    </picture>
+  </div>
 </div>
 
 <style>
-  .photo-break {
+  .photo-pair {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 4px;
     width: 100%;
-    height: 280px;
+  }
+  .photo-pair-item {
     overflow: hidden;
-    position: relative;
+    aspect-ratio: 3 / 2;
   }
-  .photo-break picture {
-    position: absolute;
-    inset: 0;
+  .photo-pair-item picture {
+    display: block;
+    width: 100%;
+    height: 100%;
   }
-  .photo-break img {
+  .photo-pair-item img {
     width: 100%;
     height: 100%;
     object-fit: cover;
@@ -42,8 +68,11 @@ const { src, alt, position = 'center 40%' } = Astro.props;
   }
 
   @media (min-width: 768px) {
-    .photo-break {
-      height: 420px;
+    .photo-pair {
+      gap: 6px;
+    }
+    .photo-pair-item {
+      aspect-ratio: 16 / 9;
     }
   }
 </style>

@@ -10,7 +10,6 @@ const accentColors = ['var(--electric-yellow)', 'var(--brand-red)', 'var(--spice
     <source srcset="/images/gallery/the-crowd.webp" type="image/webp" />
     <img src="/images/gallery/the-crowd.jpg" alt="" width="800" height="1200" loading="lazy" aria-hidden="true" />
   </picture>
-  <div class="testi-overlay"></div>
   <div class="testimonials-inner">
     <h2 data-reveal>What They're <em>Saying</em></h2>
     <div class="testi-grid">
@@ -42,21 +41,11 @@ const accentColors = ['var(--electric-yellow)', 'var(--brand-red)', 'var(--spice
     object-position: center 40%;
     display: block;
   }
-  .testi-overlay {
-    position: absolute;
-    inset: 0;
-    background: linear-gradient(
-      180deg,
-      rgba(26, 26, 26, 0.88) 0%,
-      rgba(26, 26, 26, 0.82) 100%
-    );
-    z-index: 1;
-  }
   .testimonials-inner {
     max-width: 1200px;
     margin: 0 auto;
     position: relative;
-    z-index: 2;
+    z-index: 1;
   }
   .testimonials-inner > h2 {
     font-family: var(--font-playfair), serif;
@@ -65,17 +54,18 @@ const accentColors = ['var(--electric-yellow)', 'var(--brand-red)', 'var(--spice
     color: white;
     margin-bottom: 40px;
     line-height: 1;
+    text-shadow: 0 2px 12px rgba(0, 0, 0, 0.5);
   }
-  .testimonials-inner > h2 em { color: var(--brand-red); font-style: italic; }
+  .testimonials-inner > h2 em { color: var(--electric-yellow); font-style: italic; }
   .testi-grid {
     display: flex;
     flex-direction: column;
     gap: 16px;
   }
   .testi-card {
-    background: rgba(255, 255, 255, 0.08);
-    backdrop-filter: blur(12px);
-    border: 1px solid rgba(255, 255, 255, 0.1);
+    background: rgba(0, 0, 0, 0.6);
+    backdrop-filter: blur(16px);
+    border: 1px solid rgba(255, 255, 255, 0.12);
     border-radius: 20px;
     padding: 32px;
     position: relative;
@@ -94,7 +84,7 @@ const accentColors = ['var(--electric-yellow)', 'var(--brand-red)', 'var(--spice
     font-size: 18px;
     font-style: italic;
     line-height: 1.5;
-    color: rgba(255, 255, 255, 0.9);
+    color: rgba(255, 255, 255, 0.95);
     margin-bottom: 20px;
   }
   .testi-author {
@@ -102,7 +92,7 @@ const accentColors = ['var(--electric-yellow)', 'var(--brand-red)', 'var(--spice
     font-weight: 700;
     text-transform: uppercase;
     letter-spacing: 1.5px;
-    color: rgba(255, 255, 255, 0.45);
+    color: rgba(255, 255, 255, 0.5);
   }
 
   @media (min-width: 768px) {

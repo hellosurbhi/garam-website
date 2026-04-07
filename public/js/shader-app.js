@@ -222,8 +222,12 @@ gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
 // Responsive Resize
 // ============================================
 function resize() {
-    const dpr = window.innerWidth < 768 ? Math.min(window.devicePixelRatio, 1.5) : window.devicePixelRatio; canvas.width = window.innerWidth * dpr;
-    canvas.height = window.innerHeight * dpr;
+    const hero = canvas.parentElement;
+    const w = hero ? hero.clientWidth : window.innerWidth;
+    const h = hero ? hero.clientHeight : window.innerHeight;
+    const dpr = window.innerWidth < 768 ? Math.min(window.devicePixelRatio, 1.5) : window.devicePixelRatio;
+    canvas.width = w * dpr;
+    canvas.height = h * dpr;
     gl.viewport(0, 0, canvas.width, canvas.height);
 }
 window.addEventListener('resize', resize);

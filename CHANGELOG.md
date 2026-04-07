@@ -1,5 +1,35 @@
 # Changelog
 
+## Add event photography to homepage gallery (2026-04-07)
+
+Replaced the placeholder gradient gallery with real event photos from two Top Secret Comedy Club shows. 17 source photos analyzed, best 8 selected for the gallery mixing both events for variety (blindfolded guy choosing women + blindfolded woman choosing men).
+
+### What changed
+- **`src/components/home/HomePhotos.astro`**: Replaced gradient `<div>`s with `<picture>` elements serving AVIF/WebP/JPG. Each photo has per-image `object-position` for proper focal-point cropping across mobile (1:1) and desktop layouts. Updated subtitle from placeholder to "What happens when 250 strangers pick your date".
+- **`public/images/gallery/`** (new, 8 photos x 3 formats = 24 files): on-stage, the-match, hosts, the-crowd, pure-chaos, after-party, magic-moment, dance-off. All resized to max 1200px, AVIF ~40-80KB each.
+- **`public/images/`** (4 additional photos): tickets-hero, testimonial-reaction, links-hero, journal-featured for future page use.
+- **`public/og-image.jpg`**: Replaced with event photo (hosts on stage, 1200x630 crop).
+- **`scripts/optimize-images.js`** (new): Sharp-based script to resize, convert, and optimize source photos to AVIF/WebP/JPG.
+
+### Gallery slot mapping
+| Slot | Photo source | Event |
+|------|-------------|-------|
+| On Stage (featured 2x2) | _U7A8432-2 — peak chaos, everyone laughing | Event 2 |
+| The Match | _U7A8858 — couple together after reveal | Event 2 |
+| Hosts | Garammasaladating-117 — Surbhi & Wyatt posed | Event 1 |
+| The Crowd | Garammasaladating-14 — diverse audience laughing | Event 1 |
+| Pure Chaos | Garammasaladating-45 — guy lifting someone | Event 1 |
+| After Party | Garammasaladating-66 — audience clapping | Event 1 |
+| Magic Moment | Garammasaladating-68 — intimate contestant moment | Event 1 |
+| Dance Off | _U7A9273 — final reveal lineup | Event 2 |
+
+### Performance
+- Gallery AVIF total: ~495KB for all 8 images
+- DSLR source files (12-27MB each) compressed to 40-80KB AVIF
+- All images lazy-loaded with explicit width/height (no layout shift)
+
+---
+
 ## Code Review Fixes — PR #11 (2026-04-07)
 
 Resolved 5 of 6 issues flagged in automated code review of the ui-v3-seo-rewrite PR. The `console.log` in `scripts/refresh-articles.js` was intentionally kept as it provides useful progress output for GitHub Actions runs.

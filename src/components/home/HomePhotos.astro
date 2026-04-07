@@ -1,24 +1,44 @@
 ---
 const photos = [
-  { label: 'On Stage', gradient: 'linear-gradient(145deg, var(--brand-red), var(--spice-orange))', span: true },
-  { label: 'The Match', gradient: 'linear-gradient(135deg, var(--electric-yellow), #FF9800)' },
-  { label: 'Hosts', gradient: 'linear-gradient(135deg, var(--rich-red), var(--brand-red-dark))' },
-  { label: 'After Party', gradient: 'linear-gradient(135deg, var(--spice-orange), #FFB300)' },
-  { label: 'The Crowd', gradient: 'linear-gradient(135deg, var(--brand-red-dark), var(--rich-red))' },
-  { label: 'Pure Chaos', gradient: 'linear-gradient(135deg, #1A237E, var(--brand-red-dark))' },
-  { label: 'Dance Off', gradient: 'linear-gradient(135deg, var(--brand-red), #FF1744)' },
-  { label: 'Magic Moment', gradient: 'linear-gradient(135deg, #FF9800, var(--spice-orange))' },
+  { label: 'On Stage', src: 'on-stage', w: 1200, h: 800, pos: 'center 40%', span: true,
+    alt: 'Contestants and hosts laughing during a blindfolded dating round at Top Secret Comedy Club' },
+  { label: 'The Match', src: 'the-match', w: 1200, h: 800, pos: 'center 45%',
+    alt: 'A matched couple laughing together on stage after the blindfold reveal' },
+  { label: 'Hosts', src: 'hosts', w: 733, h: 1200, pos: 'center 30%',
+    alt: 'Hosts Surbhi and Wyatt sitting together on stage' },
+  { label: 'The Crowd', src: 'the-crowd', w: 800, h: 1200, pos: 'center 40%',
+    alt: 'Audience members laughing together during a Garam Masala Dating show' },
+  { label: 'Pure Chaos', src: 'pure-chaos', w: 1200, h: 800, pos: 'center 35%',
+    alt: 'A contestant lifting another person on stage during a high-energy moment' },
+  { label: 'After Party', src: 'after-party', w: 1200, h: 800, pos: 'center center',
+    alt: 'Audience clapping and celebrating during the show' },
+  { label: 'Magic Moment', src: 'magic-moment', w: 800, h: 1200, pos: 'center 30%',
+    alt: 'A contestant sharing an intimate moment with their date on stage' },
+  { label: 'Dance Off', src: 'dance-off', w: 1200, h: 800, pos: 'center 40%',
+    alt: 'The full cast standing together on stage during the final reveal' },
 ];
 ---
 
 <section class="photos" id="gallery" aria-label="Show gallery">
   <div class="photos-header" data-reveal>
     <h2>The Vibes</h2>
-    <p>Your photos go here</p>
+    <p>What happens when 250 strangers pick your date</p>
   </div>
   <div class="photo-grid">
     {photos.map((photo) => (
-      <div class:list={['ph', { 'ph-span': photo.span }]} style={`background: ${photo.gradient}`} data-reveal>
+      <div class:list={['ph', { 'ph-span': photo.span }]} data-reveal>
+        <picture>
+          <source srcset={`/images/gallery/${photo.src}.avif`} type="image/avif" />
+          <source srcset={`/images/gallery/${photo.src}.webp`} type="image/webp" />
+          <img
+            src={`/images/gallery/${photo.src}.jpg`}
+            alt={photo.alt}
+            width={photo.w}
+            height={photo.h}
+            loading="lazy"
+            style={`object-position: ${photo.pos};`}
+          />
+        </picture>
         <div class="ph-label">{photo.label}</div>
       </div>
     ))}
@@ -64,12 +84,24 @@ const photos = [
     aspect-ratio: 1;
     padding: 10px;
   }
+  .ph picture {
+    position: absolute;
+    inset: 0;
+  }
+  .ph img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+  }
   .ph:hover {
     transform: scale(1.025);
     filter: brightness(1.08);
   }
   .ph-span { display: none; }
   .ph-label {
+    position: relative;
+    z-index: 1;
     color: white;
     font-size: 10px;
     font-weight: 700;

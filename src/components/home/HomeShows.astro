@@ -148,85 +148,76 @@ function parseDay(dateStr: string): string {
     margin: 0 auto;
     display: flex;
     flex-direction: column;
-    gap: 12px;
   }
   .show-card {
-    background: white;
-    border-radius: 16px;
-    padding: 20px;
+    background: none;
+    border: none;
+    border-top: 1px solid rgba(255, 255, 255, 0.2);
+    padding: 24px 0;
     display: grid;
-    grid-template-columns: 64px 1fr;
+    grid-template-columns: 56px 1fr;
     gap: 16px;
     align-items: center;
-    transition: transform 0.2s, box-shadow 0.2s;
+    transition: opacity 0.2s;
     text-decoration: none;
     cursor: pointer;
-    color: inherit;
+    color: white;
   }
-  .show-card:hover {
-    transform: translateX(6px);
-    box-shadow: -6px 0 0 var(--electric-yellow);
+  .show-card:last-child {
+    border-bottom: 1px solid rgba(255, 255, 255, 0.2);
   }
+  .show-card:hover { opacity: 0.8; }
   .show-date-block { text-align: center; }
   .show-date-block .mo {
     font-size: 11px;
     font-weight: 700;
     text-transform: uppercase;
     letter-spacing: 2px;
-    color: var(--brand-red);
+    color: var(--electric-yellow);
   }
   .show-date-block .dy {
     font-family: var(--font-playfair), serif;
     font-size: 36px;
     font-weight: 900;
     line-height: 1;
-    color: var(--charcoal);
+    color: white;
   }
   .show-date-block .dy--tba {
     font-size: 20px;
     font-family: var(--font-body), sans-serif;
     font-weight: 900;
-    color: var(--brand-red);
+    color: var(--electric-yellow);
     letter-spacing: 3px;
   }
   .show-info h3 {
     font-family: var(--font-playfair), serif;
     font-size: 18px;
     font-weight: 700;
-    color: var(--charcoal);
+    color: white;
     margin-bottom: 2px;
   }
   .show-info span {
     font-size: 13px;
-    color: var(--muted);
+    color: rgba(255, 255, 255, 0.55);
   }
   .ticket-label {
-    background: var(--brand-red);
-    color: white;
+    background: none;
+    color: var(--electric-yellow);
     border: none;
-    padding: 12px 24px;
-    border-radius: 50px;
+    padding: 0;
     font-family: var(--font-body), sans-serif;
     font-weight: 700;
-    font-size: 16px;
+    font-size: 12px;
     text-transform: uppercase;
-    letter-spacing: 1px;
-    transition: background 0.2s;
-    text-align: center;
-    min-height: 48px;
+    letter-spacing: 2px;
+    text-align: right;
     white-space: nowrap;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    grid-column: 1 / -1;
+    display: none;
     pointer-events: none;
   }
-  .show-card--live:hover .ticket-label { background: var(--brand-red-dark); }
   .ticket-label--notify {
-    background: var(--electric-yellow);
-    color: var(--charcoal);
+    color: rgba(255, 255, 255, 0.45);
   }
-  .show-card--notify:hover .ticket-label--notify { background: var(--electric-yellow); }
   .request-city {
     text-align: center;
     margin-top: 36px;
@@ -252,14 +243,15 @@ function parseDay(dateStr: string): string {
     .shows-header { margin-bottom: 56px; }
     .show-card {
       grid-template-columns: 80px 1fr auto;
-      padding: 24px 32px;
+      padding: 28px 0;
     }
-    .show-date-block .dy { font-size: 42px; }
+    .show-date-block .dy { font-size: 48px; }
     .show-date-block .dy--tba { font-size: 20px; }
-    .show-info h3 { font-size: 22px; margin-bottom: 4px; }
+    .show-info h3 { font-size: 24px; margin-bottom: 4px; }
     .ticket-label {
-      padding: 12px 28px;
-      grid-column: auto;
+      display: inline-flex;
+      align-items: center;
+      font-size: 13px;
     }
   }
 

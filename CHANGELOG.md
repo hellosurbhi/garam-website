@@ -1,5 +1,25 @@
 # Changelog
 
+## Enhancements batch — CTAs, perf, SEO, conversion, security (2026-04-07)
+
+Implemented 9 items from ENHANCEMENTS.md. Removed completed items from backlog.
+
+### What changed
+- **`src/layouts/BaseLayout.astro`**: Removed click-empty-space-to-go-home behavior (conversion risk). Removed unused hero.avif/hero-mobile.avif preloads (hero uses WebGL shader, not images). Cleaned up unused `isHome` variable.
+- **`src/components/home/HomeExperience.astro`**: Changed h2 from "NYC's #1 Live South Asian Dating Show" to "How the Night Works" to reduce tagline repetition. Added Get Tickets + Apply CTA below description.
+- **`src/components/home/HomeFAQ.astro`**: Converted from custom JS accordion to native `<details>/<summary>`. Fully indexable by Google when collapsed. Added Get Tickets + Apply CTA below FAQ list.
+- **`src/components/home/HomeCreators.astro`**: Shortened bios to 2-sentence teasers. Changed name links from external social URLs to internal `/hosts` page. Added "Meet the Hosts" CTA. Removed unused CREATOR_URLS import.
+- **`src/components/home/HomeShows.astro`**: Added social proof line ("40+ shows sold out · 2,000+ audience members · 13 couples matched").
+- **`src/pages/tickets.astro`**: Added social proof line near ticket cards.
+- **`src/components/gtm.astro`**: Deferred GTM loading via `requestIdleCallback` (3s timeout fallback).
+- **`src/components/posthog.astro`**: Deferred PostHog loading via `requestIdleCallback`.
+- **`src/components/meta-pixel.astro`**: Deferred Meta Pixel loading via `requestIdleCallback`.
+- **`vercel.json`**: Tightened CSP from wildcard `*` to explicit allow-list for GTM, GA, Meta, PostHog, Firebase, Vercel, Eventbrite.
+- **`src/components/ApplyPage.tsx`**: Fixed flaky test — replaced `setTimeout` with `requestAnimationFrame` for scroll-to-error.
+- **`ENHANCEMENTS.md`**: Removed 13 completed items. Backlog now has items needing content assets or external action.
+
+---
+
 ## Site audit remediation — SEO, FAQ, sold-out display, broken images (2026-04-07)
 
 Reviewed the site audit against current codebase (~70 commits after the audit). Fixed remaining issues, deferred visual/home-page changes to ENHANCEMENTS.md.

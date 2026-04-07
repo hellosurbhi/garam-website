@@ -28,11 +28,10 @@ export default function ApplicantModal({ app, onClose, onUpdate, onDelete, onRes
   const [lightbox, setLightbox] = useState(false);
   const handle = app.instagram.replace(/^@/, "");
   const isDeleted = !!app.deletedAt;
+  const dialogRef = useRef<HTMLDialogElement>(null);
 
   useEffect(() => {
-    const prev = document.body.style.overflow;
-    document.body.style.overflow = "hidden";
-    return () => { document.body.style.overflow = prev; };
+    dialogRef.current?.showModal?.();
   }, []);
 
   function handleClose() {
@@ -46,11 +45,13 @@ export default function ApplicantModal({ app, onClose, onUpdate, onDelete, onRes
   useEffect(() => { handleCloseRef.current = handleClose; });
 
   useEffect(() => {
-    function onKey(e: KeyboardEvent) {
-      if (e.key === "Escape") handleCloseRef.current();
+    const dialog = dialogRef.current;
+    function onCancel(e: Event) {
+      e.preventDefault();
+      handleCloseRef.current();
     }
-    window.addEventListener("keydown", onKey);
-    return () => window.removeEventListener("keydown", onKey);
+    dialog?.addEventListener("cancel", onCancel);
+    return () => dialog?.removeEventListener("cancel", onCancel);
   }, []);
 
   function handleStatusChange(e: React.ChangeEvent<HTMLSelectElement>) {
@@ -75,13 +76,16 @@ export default function ApplicantModal({ app, onClose, onUpdate, onDelete, onRes
 
   const statusColor = STATUS_COLORS[status];
 
+  function handleDialogClick(e: React.MouseEvent<HTMLDialogElement>) {
+    if (e.target === e.currentTarget) handleClose();
+  }
+
   return (
-    <div className={styles.overlay} onClick={handleClose}>
-      <div className={styles.modal} onClick={(e) => e.stopPropagation()}>
-        <div
-          className={styles.imageWrap}
-          onClick={() => app.photoUrl && setLightbox(true)}
-        >
+    <dialog ref={dialogRef} className={styles.dialog} role="dialog" aria-modal="true" onClick={handleDialogClick}>
+      <div
+        className={styles.imageWrap}
+        onClick={() => app.photoUrl && setLightbox(true)}
+      >
           {app.photoUrl ? (
             <img src={app.photoUrl} alt={app.name} className={styles.image} />
           ) : (
@@ -188,7 +192,6 @@ export default function ApplicantModal({ app, onClose, onUpdate, onDelete, onRes
             )}
           </div>
         </div>
-      </div>
-    </div>
+    </dialog>
   );
 }

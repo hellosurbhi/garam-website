@@ -43,33 +43,34 @@ export default function AdminLogin({ onSuccess }: AdminLoginProps) {
             className={shaking ? styles.shake : undefined}
             onAnimationEnd={() => setShaking(false)}
           >
+            <label htmlFor="admin-email" className={styles.label}>Email</label>
             <input
               ref={emailRef}
+              id="admin-email"
               type="email"
               value={email}
               onChange={(e) => {
                 setEmail(e.target.value);
                 setError("");
               }}
-              placeholder="Email"
+              placeholder="you@example.com"
               autoFocus
               autoComplete="email"
               required
-              aria-label="Email"
               aria-invalid={!!error}
               className={error ? styles.inputError : styles.input}
             />
+            <label htmlFor="admin-password" className={styles.label}>Password</label>
             <input
+              id="admin-password"
               type="password"
               value={password}
               onChange={(e) => {
                 setPassword(e.target.value);
                 setError("");
               }}
-              placeholder="Password"
               autoComplete="current-password"
               required
-              aria-label="Password"
               aria-invalid={!!error}
               className={error ? styles.inputError : styles.input}
             />

@@ -44,6 +44,17 @@
   margin-bottom: 32px;
 }
 
+.label {
+  display: block;
+  font-family: var(--font-body);
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text);
+  margin-bottom: 4px;
+  margin-top: 12px;
+  padding-left: 4px;
+}
+
 .input {
   width: 100%;
   padding: 12px 18px;
@@ -54,7 +65,7 @@
   color: var(--text);
   background: #fff;
   box-sizing: border-box;
-  margin-bottom: 8px;
+  margin-bottom: 0;
   transition: border-color 0.2s;
 }
 

@@ -450,15 +450,20 @@ function ApplyPageInner() {
                 </div>
 
                 {/* ─── Marketing consent ──────────────────────── */}
-                <div
+                <fieldset
                   className={styles.consentSection}
                   {...(errors.marketingConsent ? { "data-error": "true" } : {})}
+                  aria-describedby={
+                    errors.marketingConsent
+                      ? "marketing-consent-error"
+                      : undefined
+                  }
                 >
-                  <p className={styles.consentQuestion}>
+                  <legend className={styles.consentQuestion}>
                     I grant Garam Masala Dating permission to use any of these
                     responses and casting submissions for marketing purposes.
                     <span className={styles.requiredMark}>*</span>
-                  </p>
+                  </legend>
                   <div className={styles.radioGroup}>
                     <label className={styles.radioLabel}>
                       <input
@@ -468,6 +473,7 @@ function ApplyPageInner() {
                         checked={form.marketingConsent === "yes"}
                         onChange={() => set("marketingConsent", "yes")}
                         className={styles.radioInput}
+                        aria-invalid={!!errors.marketingConsent}
                       />
                       Yes
                     </label>
@@ -479,16 +485,21 @@ function ApplyPageInner() {
                         checked={form.marketingConsent === "no"}
                         onChange={() => set("marketingConsent", "no")}
                         className={styles.radioInput}
+                        aria-invalid={!!errors.marketingConsent}
                       />
                       No
                     </label>
                   </div>
                   {errors.marketingConsent && (
-                    <p className={styles.errorText} role="alert">
+                    <p
+                      id="marketing-consent-error"
+                      className={styles.errorText}
+                      role="alert"
+                    >
                       {errors.marketingConsent}
                     </p>
                   )}
-                </div>
+                </fieldset>
 
                 {/* ─── Terms & Conditions ─────────────────────── */}
                 <div
@@ -510,7 +521,7 @@ function ApplyPageInner() {
                       <button
                         type="button"
                         className={styles.termsLink}
-                        onClick={() => setShowTermsModal(true)}
+                        onClick={(e) => { e.stopPropagation(); setShowTermsModal(true); }}
                       >
                         Terms &amp; Conditions
                       </button>

@@ -31,7 +31,8 @@ const hosts = [
           class="host-avatar-img"
           width="120"
           height="120"
-          loading="eager"
+          loading="lazy"
+          decoding="async"
         />
         <div class="host-info">
           <h3>
@@ -76,7 +77,7 @@ const hosts = [
     font-family: var(--font-cormorant), serif;
     font-size: 18px;
     font-style: italic;
-    color: rgba(26, 26, 26, 0.7);
+    color: rgba(26, 26, 26, 0.87);
   }
   .hosts-grid {
     display: flex;
@@ -135,7 +136,7 @@ const hosts = [
   }
   .host-bio {
     font-size: 15px;
-    color: rgba(26, 26, 26, 0.75);
+    color: rgba(26, 26, 26, 0.87);
     line-height: 1.75;
   }
   .host-credits {

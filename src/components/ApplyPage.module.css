@@ -329,6 +329,10 @@
   margin-bottom: 12px;
 }
 
+.hiddenInput {
+  display: none;
+}
+
 .photoDropzone {
   display: block;
   border: 2px dashed rgba(var(--brand-red-rgb), 0.3);
@@ -451,7 +455,7 @@
 }
 
 .consentSection[data-error] {
-  border-color: var(--brand-red);
+  border: 1px solid var(--brand-red);
   background: rgba(220, 38, 38, 0.03);
 }
 
@@ -605,6 +609,7 @@
 .termsAgreeButton {
   flex: 1;
   padding: 14px 24px;
+  min-height: var(--touch-target);
   border-radius: 100px;
   border: none;
   background: var(--brand-red);
@@ -622,6 +627,7 @@
 
 .termsDismissButton {
   padding: 14px 24px;
+  min-height: var(--touch-target);
   border-radius: 100px;
   border: 1px solid rgba(0, 0, 0, 0.15);
   background: white;

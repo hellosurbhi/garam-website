@@ -25,7 +25,7 @@ export function PhotoUploadField({
         type="file"
         accept="image/*"
         onChange={onChange}
-        style={{ display: "none" }}
+        className={styles.hiddenInput}
       />
 
       <label
@@ -33,7 +33,14 @@ export function PhotoUploadField({
         className={error ? styles.photoDropzoneError : styles.photoDropzone}
       >
         {photoPreview ? (
-          <img src={photoPreview} alt="Preview" className={styles.photoPreview} />
+          <img
+            src={photoPreview}
+            alt="Photo preview"
+            className={styles.photoPreview}
+            loading="lazy"
+            width={200}
+            height={200}
+          />
         ) : (
           <>
             <p className={styles.photoEmoji}>📸</p>

@@ -51,165 +51,211 @@ function PrepError() {
   );
 }
 
-/* ─── Prep guide content ───────────────────────────────────────── */
-
-const GOLDEN_RULES = [
-  "Give 20\u201330 second answers. Not one word. Not a monologue.",
-  "Be vulnerable over being funny. Honesty is funnier than forced jokes.",
-  "The audience is rooting for you. They WANT you to find love.",
-  "Don\u2019t try to \u201Cwin\u201D the audience. Focus on your date.",
-  "It\u2019s okay to say \u201CI don\u2019t like this person.\u201D Honesty is content.",
-  "2\u20133 drinks max before going on. Loose, not sloppy.",
-];
-
-const QUESTIONS = [
-  "What\u2019s your name, and what do you do?",
-  "What are you looking for in a partner?",
-  "What are your dealbreakers / red flags?",
-  "What are your green flags?",
-  "What\u2019s your biggest ick?",
-  "Why did your last relationship end?",
-  "Are you over your ex?",
-  "What\u2019s your best quality? Worst quality?",
-  "Where would you take someone on a first date in NYC?",
-  "How close are you to your family?",
-  "What do you do for fun?",
-  "How many serious relationships have you been in?",
-  "How much do you make? (this might come up)",
-];
-
-const PREPARED_WITH = [
-  {
-    title: "One thoughtful question to ask your date",
-    detail:
-      'Make it conversational. Good: \u201CIf we had one weekend anywhere, where are we going?\u201D Bad: \u201CWhat do you do for work?\u201D',
-  },
-  {
-    title: "One talent or party trick you can show in 30 seconds",
-    detail: "Dance, song, joke, impression \u2014 whatever you\u2019ve got.",
-  },
-  {
-    title: "One pickup line",
-    detail: "Cheesy is fine.",
-  },
-  {
-    title: "Your 30-second elevator pitch",
-    detail: "Who are you and why should someone date you?",
-  },
-];
+/* ─── Prep guide ───────────────────────────────────────────────── */
 
 function PrepGuide() {
   return (
     <div className={styles.page}>
       <div className={styles.container}>
 
-        {/* ── Header ── */}
-        <div className={styles.headerArea}>
-          <p className={styles.headerEmoji}>🌶️</p>
-          <h1 className={styles.headerTitle}>
-            Welcome to Garam Mas<em className={styles.headerTitleAccent}>ala</em> Dating!
+        {/* ── Cover ── */}
+        <header className={styles.cover}>
+          <p className={styles.coverEmoji}>🌶️</p>
+          <h1 className={styles.coverTitle}>
+            Contestant Orientation
           </h1>
-          <p className={styles.headerSubtitle}>
-            You&apos;re about to be on a live South Asian dating show in front of a live
-            audience. Here&apos;s the secret: we don&apos;t need you to be funny.{" "}
-            <strong className={styles.headerSubtitleStrong}>We need you to be REAL.</strong>
+          <p className={styles.coverShow}>Garam Masala Dating</p>
+          <p className={styles.coverIntro}>
+            You&apos;ve been selected as a contestant on a live South Asian dating show.
+            You&apos;ll be on stage, mic&apos;d up, matched with someone you&apos;ve never met,
+            in front of a full audience. It&apos;s real, it&apos;s fast, and it&apos;s genuinely
+            one of the most fun things you&apos;ll do. Read this packet before you arrive.
           </p>
-        </div>
+          <p className={styles.coverCore}>
+            We don&apos;t need you to be funny. We need you to be <strong>REAL</strong>.
+          </p>
+        </header>
 
-        {/* ── The Golden Rules ── */}
-        <div className={styles.section}>
+        {/* ── Golden Rules ── */}
+        <section className={styles.section}>
           <h2 className={styles.sectionTitle}>The Golden Rules</h2>
-          <div className={styles.list}>
-            {GOLDEN_RULES.map((rule, i) => (
-              <div key={i} className={styles.listRow}>
-                <span className={styles.listNum}>{i + 1}.</span>
-                <p className={styles.listText}>{rule}</p>
-              </div>
-            ))}
-          </div>
-        </div>
+          <p className={styles.lead}>
+            These apply to every contestant, every show. There are no exceptions.
+          </p>
+          <ol className={styles.numberedList}>
+            <li>
+              <strong>Keep answers to 20–30 seconds.</strong> Not a one-word answer.
+              Not a five-minute story. The sweet spot is conversational — enough to
+              say something real without losing the room.
+            </li>
+            <li>
+              <strong>Vulnerable beats funny every time.</strong> A genuine moment
+              lands harder than a polished joke. You don&apos;t have to be entertaining.
+              You have to be honest.
+            </li>
+            <li>
+              <strong>The audience is on your side.</strong> They showed up wanting
+              to see a real connection. They are rooting for you — not waiting for you
+              to fail.
+            </li>
+            <li>
+              <strong>Focus on your date, not the crowd.</strong> The moment you start
+              playing to the room, you lose everything. Your date is the only person
+              that matters on that stage.
+            </li>
+            <li>
+              <strong>It&apos;s okay to not feel it.</strong> Saying &ldquo;I&apos;m not
+              feeling the chemistry&rdquo; is honest and it makes for great television.
+              Faking attraction is not. The audience can always tell.
+            </li>
+            <li>
+              <strong>Two to three drinks before you go on — maximum.</strong> Enough
+              to be relaxed and loose. Not enough to be impaired. You want your full
+              self on stage, just without the nerves.
+            </li>
+          </ol>
+        </section>
 
         {/* ── Questions ── */}
-        <div className={styles.section}>
+        <section className={styles.section}>
           <h2 className={styles.sectionTitle}>Questions You May Be Asked</h2>
-          <p className={styles.sectionNote}>Prepare 30–60 second answers for all of these.</p>
-          <div className={styles.list}>
-            {QUESTIONS.map((q, i) => (
-              <div key={i} className={styles.listRow}>
-                <span className={styles.listNum}>{i + 1}.</span>
-                <p className={styles.listText}>{q}</p>
-              </div>
-            ))}
-          </div>
-        </div>
+          <p className={styles.lead}>
+            Prepare a 30–60 second answer for every question on this list. You
+            won&apos;t be asked all of them, and the host may go off-script based
+            on your answers — but nothing on this list should catch you off guard.
+          </p>
+          <ol className={styles.numberedList}>
+            <li>What&apos;s your name, and what do you do?</li>
+            <li>What are you actually looking for in a partner?</li>
+            <li>What are your dealbreakers?</li>
+            <li>What are your green flags?</li>
+            <li>What&apos;s your biggest ick?</li>
+            <li>Why did your last relationship end?</li>
+            <li>Are you over your ex?</li>
+            <li>What&apos;s your best quality? Your worst?</li>
+            <li>Where would you take someone on a first date?</li>
+            <li>How close are you to your family?</li>
+            <li>What do you do for fun outside of work?</li>
+            <li>How many serious relationships have you been in?</li>
+            <li>How much do you make? (Yes, this comes up.)</li>
+          </ol>
+        </section>
 
         {/* ── Come Prepared With ── */}
-        <div className={styles.section}>
+        <section className={styles.section}>
           <h2 className={styles.sectionTitle}>Come Prepared With</h2>
-          <div className={styles.list}>
-            {PREPARED_WITH.map((item, i) => (
-              <div key={i} className={styles.listRow}>
-                <span className={styles.listNum}>—</span>
-                <div>
-                  <p className={styles.prepTitle}>{item.title}</p>
-                  <p className={styles.prepDetail}>{item.detail}</p>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-
-        {/* ── Day Of ── */}
-        <div className={styles.section}>
-          <h2 className={styles.sectionTitle}>Day Of</h2>
-          <div className={styles.list}>
-            <div className={styles.listRow}>
-              <span className={styles.listNum}>—</span>
-              <p className={styles.listText}>
-                Dress hot &mdash; bright colors, bold fits, sequins welcome.
-                No &ldquo;just came from the office&rdquo; energy.
-              </p>
-            </div>
-            <div className={styles.listRow}>
-              <span className={styles.listNum}>—</span>
-              <p className={styles.listText}>
-                Invite your friends to come support you. More energy in the room = better show for everyone.
-              </p>
-            </div>
-          </div>
-        </div>
-
-        {/* ── For Guys / For Girls ── */}
-        <div className={styles.section}>
-          <h2 className={styles.sectionTitle}>Arrival &amp; Notes</h2>
-          <p className={styles.sectionNote}>
-            We stagger arrival by 15 minutes so guys and girls don&apos;t see each other before the show starts.
+          <p className={styles.lead}>
+            These are not suggestions. Have all four ready before you arrive.
           </p>
-          <div className={styles.genderGrid}>
-            <div className={styles.genderColumn}>
-              <p className={styles.genderHeading}>Guys</p>
-              <p className={styles.genderTimeValue}>5:20 PM</p>
-              <p className={styles.genderNote}>
-                Audiences tend to root for the girls. Don&apos;t try to win the crowd
-                by being cocky or mean &mdash; it backfires every time. Charming,
-                genuine, and a little self-deprecating wins. Confident but humble.
-              </p>
+          <ul className={styles.prepList}>
+            <li>
+              <strong>One thoughtful question to ask your date.</strong> Make it
+              conversational, not interview-style. Good example: &ldquo;If we had one
+              free weekend anywhere, where are we going?&rdquo; Bad example:
+              &ldquo;What do you do for work?&rdquo; The goal is to learn something
+              real about them, not run through a checklist.
+            </li>
+            <li>
+              <strong>A talent or party trick you can perform in 30 seconds.</strong>{" "}
+              A dance move, an impression, a joke, a magic trick — whatever you&apos;ve
+              got. The weirder and more specific to you, the better.
+            </li>
+            <li>
+              <strong>A pickup line.</strong> Cheesy is completely fine. That&apos;s
+              the point. Lean into it.
+            </li>
+            <li>
+              <strong>Your 30-second elevator pitch.</strong> Who are you, and why
+              should someone want to go on a date with you? Practice saying this out
+              loud before you come. It should feel natural, not rehearsed.
+            </li>
+          </ul>
+        </section>
+
+        {/* ── What to Wear ── */}
+        <section className={styles.section}>
+          <h2 className={styles.sectionTitle}>What to Wear</h2>
+          <p className={styles.body}>
+            Dress like you&apos;re going on a real first date — because you are. Bold
+            colors, statement fits, sequins absolutely welcome. Think about what
+            you would wear if you were genuinely trying to impress someone, and wear
+            that. No &ldquo;just came from the office&rdquo; energy. No gym clothes.
+            You&apos;ll be on a lit stage in front of a full audience, so whatever
+            reads as confident and put-together in real life will read even better
+            up there.
+          </p>
+        </section>
+
+        {/* ── Day of ── */}
+        <section className={styles.section}>
+          <h2 className={styles.sectionTitle}>Day Of</h2>
+          <p className={styles.body}>
+            Bring your friends. The more people cheering for you in the audience,
+            the better the show — and honestly, the better your own performance.
+            Having friendly faces in the crowd makes a real difference when you&apos;re
+            up there. Tell your people to come.
+          </p>
+          <p className={styles.body}>
+            Your phone will be with you backstage. You can look at these notes again
+            before you go on. Take a breath. You&apos;re ready.
+          </p>
+        </section>
+
+        {/* ── Arrival ── */}
+        <section className={styles.section}>
+          <h2 className={styles.sectionTitle}>Arrival</h2>
+          <p className={styles.body}>
+            We stagger contestant arrivals by 15 minutes so guys and girls do not
+            see each other before the show begins. This is intentional — your first
+            impression of each other should happen on stage, in front of the audience,
+            not in a hallway backstage.
+          </p>
+          <div className={styles.arrivalTimes}>
+            <div className={styles.arrivalRow}>
+              <span className={styles.arrivalLabel}>Guys</span>
+              <span className={styles.arrivalTime}>5:20 PM sharp</span>
             </div>
-            <div className={styles.genderColumn}>
-              <p className={styles.genderHeading}>Girls</p>
-              <p className={styles.genderTimeValue}>5:30 PM</p>
-              <p className={styles.genderNote}>
-                You&apos;re allowed to not like someone. Say it. &ldquo;I&apos;m not
-                feeling this&rdquo; is great content. Don&apos;t fake chemistry.
-              </p>
+            <div className={styles.arrivalRow}>
+              <span className={styles.arrivalLabel}>Girls</span>
+              <span className={styles.arrivalTime}>5:30 PM sharp</span>
             </div>
           </div>
-        </div>
+        </section>
+
+        {/* ── Notes by gender ── */}
+        <section className={styles.section}>
+          <h2 className={styles.sectionTitle}>A Few More Notes</h2>
+
+          <div className={styles.genderBlock}>
+            <p className={styles.genderLabel}>For Guys</p>
+            <p className={styles.body}>
+              Historically, audiences on this show tend to root for the women. Don&apos;t
+              try to compensate by turning up the charm or playing an exaggerated
+              version of confidence — it reads as cocky, and it backfires every time.
+              What actually works: being genuinely curious about your date, not taking
+              yourself too seriously, and being willing to be a little self-deprecating.
+              Confident but humble. The guys who do well on this show are the ones who
+              make their date feel like the most interesting person in the room.
+            </p>
+          </div>
+
+          <div className={styles.genderBlock}>
+            <p className={styles.genderLabel}>For Girls</p>
+            <p className={styles.body}>
+              You have full permission to not like someone. You don&apos;t owe anyone
+              chemistry, and you don&apos;t need to perform it. &ldquo;I&apos;m not really
+              feeling the connection&rdquo; is honest, it&apos;s real, and it makes for
+              genuinely good television. The girls who are remembered on this show are
+              the ones who said exactly what they thought. Please don&apos;t fake it.
+              The audience always knows.
+            </p>
+          </div>
+        </section>
 
         {/* ── Footer ── */}
-        <div className={styles.footer}>
-          <p className={styles.footerText}>See you on stage 🌶️</p>
-        </div>
+        <footer className={styles.footer}>
+          <p>See you on stage. 🌶️</p>
+        </footer>
 
       </div>
     </div>

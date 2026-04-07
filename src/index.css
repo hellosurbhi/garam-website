@@ -81,9 +81,11 @@
 }
 
 html {
+  background: var(--off-white);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   text-rendering: optimizeLegibility;
+  overflow-x: hidden;
 }
 
 body {
@@ -91,7 +93,6 @@ body {
   background: var(--off-white);
   color: var(--charcoal);
   font-family: "Nunito", sans-serif;
-  overflow-x: hidden;
   min-width: 320px;
 }
 

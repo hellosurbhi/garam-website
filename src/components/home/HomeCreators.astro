@@ -22,6 +22,16 @@ const hosts = [
     <h2 id="creators-heading">The Creators</h2>
     <p>The comedians, matchmakers, and chaos agents behind the show.</p>
   </div>
+  <div class="creators-photo" data-reveal>
+    <img
+      src="/images/hosts.JPG"
+      alt="Surbhi and Wyatt on stage at Garam Masala Dating"
+      class="creators-group-photo"
+      width="1200"
+      height="800"
+      loading="lazy"
+    />
+  </div>
   <div class="hosts-grid">
     {hosts.map((host) => (
       <article class="host-card" data-reveal>
@@ -153,6 +163,19 @@ const hosts = [
     padding: 4px 12px;
     border-radius: 50px;
     letter-spacing: 0.5px;
+  }
+
+  .creators-photo {
+    margin-bottom: 48px;
+  }
+  .creators-group-photo {
+    width: 100%;
+    max-width: 900px;
+    height: auto;
+    border-radius: 16px;
+    display: block;
+    margin: 0 auto;
+    object-fit: cover;
   }
 
   .creators-cta {

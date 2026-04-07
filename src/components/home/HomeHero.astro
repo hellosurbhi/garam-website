@@ -167,7 +167,7 @@ function formatTime(t?: string): string {
     display: flex;
     align-items: center;
     gap: 16px;
-    background: white;
+    background: transparent;
     border-radius: 16px;
     padding: 16px 20px;
     text-decoration: none;
@@ -175,10 +175,9 @@ function formatTime(t?: string): string {
     max-width: 420px;
     width: 100%;
     animation: rise 0.9s cubic-bezier(0.22, 1, 0.36, 1) 0.45s both;
-    transition: box-shadow 0.2s;
-    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
+    transition: opacity 0.2s;
   }
-  .next-show:hover { box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1); }
+  .next-show:hover { opacity: 0.8; }
   .next-show-date {
     display: flex;
     flex-direction: column;

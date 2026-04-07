@@ -54,6 +54,8 @@ function PrepError() {
 /* ─── Prep guide ───────────────────────────────────────────────── */
 
 function PrepGuide() {
+  const [gender, setGender] = useState<'female' | 'male' | ''>('');
+
   return (
     <div className={styles.page}>
       <div className={styles.container}>
@@ -203,52 +205,35 @@ function PrepGuide() {
         {/* ── Arrival ── */}
         <section className={styles.section}>
           <h2 className={styles.sectionTitle}>Arrival</h2>
-          <p className={styles.body}>
-            We stagger contestant arrivals by 15 minutes so guys and girls do not
-            see each other before the show begins. This is intentional — your first
-            impression of each other should happen on stage, in front of the audience,
-            not in a hallway backstage.
+          <p className={styles.lead}>
+            We stagger contestant arrivals by 15 minutes so guys and girls don&apos;t
+            see each other before the show. Your first impression of each other
+            happens on stage.
           </p>
-          <div className={styles.arrivalTimes}>
-            <div className={styles.arrivalRow}>
-              <span className={styles.arrivalLabel}>Guys</span>
-              <span className={styles.arrivalTime}>5:20 PM sharp</span>
+          <select
+            className={styles.genderSelect}
+            value={gender}
+            onChange={(e) => setGender(e.target.value as 'female' | 'male' | '')}
+            aria-label="Select your contestant type"
+          >
+            <option value="">I am a…</option>
+            <option value="female">Female contestant</option>
+            <option value="male">Male contestant</option>
+          </select>
+
+          {gender && (
+            <div className={styles.genderReveal}>
+              <p className={styles.arrivalTime}>
+                Arrive by {gender === 'female' ? '5:30 PM' : '5:20 PM'} sharp.
+              </p>
+              <p className={styles.body}>
+                {gender === 'female'
+                  ? "You have full permission to not like someone. You don't owe anyone chemistry, and you don't need to perform it. \"I'm not really feeling the connection\" is honest, real, and makes for great television. The girls who are remembered are the ones who said exactly what they thought. Don't fake it — the audience always knows."
+                  : "Audiences on this show tend to root for the women. Don't compensate by playing up charm or confidence — it reads as cocky and always backfires. What actually works: being genuinely curious about your date, not taking yourself too seriously, and being a little self-deprecating. Confident but humble. The guys who do well are the ones who make their date feel like the most interesting person in the room."
+                }
+              </p>
             </div>
-            <div className={styles.arrivalRow}>
-              <span className={styles.arrivalLabel}>Girls</span>
-              <span className={styles.arrivalTime}>5:30 PM sharp</span>
-            </div>
-          </div>
-        </section>
-
-        {/* ── Notes by gender ── */}
-        <section className={styles.section}>
-          <h2 className={styles.sectionTitle}>A Few More Notes</h2>
-
-          <div className={styles.genderBlock}>
-            <p className={styles.genderLabel}>For Guys</p>
-            <p className={styles.body}>
-              Historically, audiences on this show tend to root for the women. Don&apos;t
-              try to compensate by turning up the charm or playing an exaggerated
-              version of confidence — it reads as cocky, and it backfires every time.
-              What actually works: being genuinely curious about your date, not taking
-              yourself too seriously, and being willing to be a little self-deprecating.
-              Confident but humble. The guys who do well on this show are the ones who
-              make their date feel like the most interesting person in the room.
-            </p>
-          </div>
-
-          <div className={styles.genderBlock}>
-            <p className={styles.genderLabel}>For Girls</p>
-            <p className={styles.body}>
-              You have full permission to not like someone. You don&apos;t owe anyone
-              chemistry, and you don&apos;t need to perform it. &ldquo;I&apos;m not really
-              feeling the connection&rdquo; is honest, it&apos;s real, and it makes for
-              genuinely good television. The girls who are remembered on this show are
-              the ones who said exactly what they thought. Please don&apos;t fake it.
-              The audience always knows.
-            </p>
-          </div>
+          )}
         </section>
 
         {/* ── Footer ── */}

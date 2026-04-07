@@ -44,7 +44,11 @@ const { ticketsUrl } = Astro.props;
     place-items: center;
     position: relative;
     overflow: hidden;
-    background: #fff;
+    background:
+      radial-gradient(ellipse at 30% 50%, rgba(220, 38, 38, 0.15) 0%, transparent 60%),
+      radial-gradient(ellipse at 70% 40%, rgba(255, 214, 0, 0.12) 0%, transparent 50%),
+      radial-gradient(ellipse at 50% 60%, rgba(185, 28, 28, 0.1) 0%, transparent 55%),
+      #fff;
     padding: 80px 20px 60px;
   }
 

@@ -1,5 +1,25 @@
 # Changelog
 
+## Code review fixes — bugs, accessibility, mobile-first, and docs (2026-04-07)
+
+Verified each finding against current code before applying. Skipped color token replacements where no exact token match exists (to avoid visual regressions) and the galleryImages path consolidation (requires moving image files on disk).
+
+### What changed
+- **`package.json`**: Lowered `engines.node` from `>=22` to `>=20` to match the `node-version: 20` used in `ci.yml` and `article-refresh.yml`. Eliminates engine check failures when running locally with Node 20.
+- **`scripts/optimize-images.js`**: Fixed OG image filename mismatch — script was writing `og-image-new.jpg` but `BaseLayout.astro` defaults to `og-image.jpg`. Also gated all `console.log`/`console.error` calls behind a `VERBOSE=1` env flag; fatal catch remains ungated.
+- **`src/components/ApplyPage.module.css`**: Added `min-height: 48px` to `.retryButton` (computed height was ~46px, below the 48px touch target minimum). Converted `.gridTwo`/`.gridThree` from desktop-first (`max-width: 600px`) to mobile-first (`min-width: 601px`). Replaced two `rgba(0,0,0,0.1)` border values with `var(--border)` and one hardcoded `rgba(220,38,38,0.3)` with `rgba(var(--brand-red-rgb),0.3)`.
+- **`src/components/home/HomeCreators.astro`**: Removed unused `.host-avatar` CSS rule — template only uses `.host-avatar-img`, the emoji-avatar rule was dead code.
+- **`CLAUDE.md`**: Added `plaintext` language specifier to the `src/` directory structure code fence. Rewrote the font-size "Never do" bullet to clearly express prohibition ("Do not use...").
+- **`CHANGELOG.md`**: Added blank line between `### Photo mapping` heading and the table below it for correct markdown rendering.
+
+### Skipped (with rationale)
+- `background: white` on `.panel` → `--off-white` is `#FFF8F0`, not `#fff`; replacement would change appearance
+- `rgba(0,0,0,0.08)` box-shadow → no shadow token in `:root`
+- HomeCreators hardcoded colors → no exact token matches; `--charcoal-rgb` doesn't exist
+- `galleryImages` path inconsistency → requires moving actual image files
+
+---
+
 ## CodeRabbit review fixes — bugs and code quality (2026-04-07)
 
 Applied the valid subset of CodeRabbit suggestions after verifying each against current code. Skipped suggestions that don't apply (no stylelint in project, shader files are a different project, intentional design decisions).

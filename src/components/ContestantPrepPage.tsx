@@ -202,14 +202,10 @@ function PrepGuide() {
           </p>
         </section>
 
-        {/* ── Arrival ── */}
+        {/* ── Arrival & Notes ── */}
         <section className={styles.section}>
-          <h2 className={styles.sectionTitle}>Arrival</h2>
-          <p className={styles.lead}>
-            We stagger contestant arrivals by 15 minutes so guys and girls don&apos;t
-            see each other before the show. Your first impression of each other
-            happens on stage.
-          </p>
+          <h2 className={styles.sectionTitle}>Arrival &amp; Notes</h2>
+          <p className={styles.toggleLabel}>Select if you&apos;re a guy or a girl:</p>
           <div className={styles.genderToggle} role="group" aria-label="Select your contestant type">
             <button
               type="button"
@@ -234,8 +230,8 @@ function PrepGuide() {
               </p>
               <p className={styles.body}>
                 {gender === 'female'
-                  ? "You have full permission to not like someone. You don't owe anyone chemistry, and you don't need to perform it. \"I'm not really feeling the connection\" is honest, real, and makes for great television. The girls who are remembered are the ones who said exactly what they thought. Don't fake it — the audience always knows."
-                  : "Audiences on this show tend to root for the women. Don't compensate by playing up charm or confidence — it reads as cocky and always backfires. What actually works: being genuinely curious about your date, not taking yourself too seriously, and being a little self-deprecating. Confident but humble. The guys who do well are the ones who make their date feel like the most interesting person in the room."
+                  ? "Arrive 15 minutes after the guys — we keep you separate so your first impression of each other happens on stage. You have full permission to not like someone. You don't owe anyone chemistry, and you don't need to perform it. \"I'm not really feeling the connection\" is great content. The girls who are remembered are the ones who said exactly what they thought. Don't fake it — the audience always knows."
+                  : "Arrive 15 minutes before the girls — we keep you separate so your first impression of each other happens on stage. Audiences on this show tend to root for the women. Don't compensate by playing up charm or confidence — it reads as cocky and always backfires. What actually works: being genuinely curious about your date, not taking yourself too seriously, and being a little self-deprecating. Confident but humble."
                 }
               </p>
             </div>

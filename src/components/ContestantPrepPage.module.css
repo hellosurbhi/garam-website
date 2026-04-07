@@ -196,6 +196,16 @@
 
 /* ─── Arrival gender toggle ───────────────────────────────────── */
 
+.toggleLabel {
+  font-family: var(--font-body);
+  font-size: 13px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--text-secondary);
+  margin-bottom: 10px;
+}
+
 .genderToggle {
   display: flex;
   gap: 8px;
@@ -223,9 +233,7 @@
 }
 
 .genderReveal {
-  margin-top: 24px;
-  padding-top: 24px;
-  border-top: 1px solid rgba(0, 0, 0, 0.08);
+  margin-top: 16px;
 }
 
 .arrivalTime {

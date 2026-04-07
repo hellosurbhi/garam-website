@@ -95,6 +95,13 @@ function parseDay(dateStr: string): string {
   const cityDialog = document.getElementById('request-city-modal') as HTMLDialogElement;
   if (cityDialog) {
     document.getElementById('request-city-trigger')?.addEventListener('click', () => {
+      // Reset to form state before opening
+      document.getElementById('city-form-view')?.removeAttribute('hidden');
+      document.getElementById('city-success')?.setAttribute('hidden', '');
+      const nameInput = document.getElementById('city-name') as HTMLInputElement;
+      const emailInput = document.getElementById('city-email') as HTMLInputElement;
+      if (nameInput) nameInput.value = '';
+      if (emailInput) emailInput.value = '';
       cityDialog.showModal();
     });
 

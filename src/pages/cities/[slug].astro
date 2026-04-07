@@ -175,6 +175,7 @@ const breadcrumbJsonLd = buildBreadcrumbJsonLd([
             <p class="modal-subtitle">We'll email you the moment tickets drop for {city.displayName}.</p>
             <form id="waitlist-form" class="modal-form">
               <input type="email" id="waitlist-email" placeholder="Your email" required aria-label="Email address" />
+              <p id="waitlist-error" class="modal-error" hidden role="alert"></p>
               <button type="submit" class="modal-submit">Join the Waitlist</button>
             </form>
           </div>
@@ -252,6 +253,9 @@ const breadcrumbJsonLd = buildBreadcrumbJsonLd([
       e.preventDefault();
       const email = (document.getElementById('waitlist-email') as HTMLInputElement).value;
       const city = document.querySelector('.city-eyebrow')?.textContent ?? '';
+      const submitBtn = (e.target as HTMLFormElement).querySelector<HTMLButtonElement>('[type="submit"]');
+      const errorEl = document.getElementById('waitlist-error');
+      if (submitBtn) submitBtn.disabled = true;
       try {
         const db = getFirebaseDb();
         await addDoc(collection(db, 'notifications'), {
@@ -260,9 +264,13 @@ const breadcrumbJsonLd = buildBreadcrumbJsonLd([
           source: 'city-waitlist',
           createdAt: new Date().toISOString(),
         });
-      } catch { /* fail silently */ }
-      document.getElementById('waitlist-form-view')?.setAttribute('hidden', '');
-      document.getElementById('waitlist-success')?.removeAttribute('hidden');
+        document.getElementById('waitlist-form-view')?.setAttribute('hidden', '');
+        document.getElementById('waitlist-success')?.removeAttribute('hidden');
+      } catch {
+        if (errorEl) { errorEl.textContent = 'Something went wrong. Please try again.'; errorEl.removeAttribute('hidden'); }
+      } finally {
+        if (submitBtn) submitBtn.disabled = false;
+      }
     });
   }
 

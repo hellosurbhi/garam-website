@@ -118,6 +118,7 @@ const comingSoonEvents: EventEntry[] = TBA_CITIES.map((city) => ({
   date: 'TBA',
   city,
   url: '',
+  tagline: 'Coming soon',
 }));
 
 /** All events: confirmed shows + hand-picked TBA cities */

@@ -113,7 +113,7 @@ const eventSchemas = buildEventSchemas(upcomingForSchema);
 
 <script>
   import { getFirebaseDb } from '@/lib/firebase';
-  import { collection, addDoc } from 'firebase/firestore';
+  import { collection, addDoc, updateDoc, type DocumentReference } from 'firebase/firestore';
 
   // Email popup logic — only suppressed permanently after email submit
   const POPUP_KEY = 'gmd-popup-subscribed';
@@ -139,21 +139,22 @@ const eventSchemas = buildEventSchemas(upcomingForSchema);
     });
 
     let savedEmail = '';
+    let popupDocRef: DocumentReference | null = null;
 
     document.getElementById('popup-email-form')?.addEventListener('submit', async (e) => {
       e.preventDefault();
       savedEmail = (document.getElementById('popup-email') as HTMLInputElement).value;
-      localStorage.setItem(POPUP_KEY, 'true');
       try {
         const db = getFirebaseDb();
-        await addDoc(collection(db, 'subscribers'), {
+        popupDocRef = await addDoc(collection(db, 'subscribers'), {
           email: savedEmail,
           source: 'popup',
           createdAt: new Date().toISOString(),
         });
-      } catch { /* fail silently */ }
-      document.getElementById('popup-step-1')?.setAttribute('hidden', '');
-      document.getElementById('popup-step-2')?.removeAttribute('hidden');
+        localStorage.setItem(POPUP_KEY, 'true');
+        document.getElementById('popup-step-1')?.setAttribute('hidden', '');
+        document.getElementById('popup-step-2')?.removeAttribute('hidden');
+      } catch { /* fail silently — don't advance to step 2 */ }
     });
 
     document.getElementById('popup-phone-form')?.addEventListener('submit', async (e) => {
@@ -162,13 +163,17 @@ const eventSchemas = buildEventSchemas(upcomingForSchema);
       if (phone) {
         try {
           const db = getFirebaseDb();
-          await addDoc(collection(db, 'subscribers'), {
-            email: savedEmail,
-            phone,
-            source: 'popup-phone',
-            createdAt: new Date().toISOString(),
-          });
-        } catch { /* fail silently */ }
+          if (popupDocRef) {
+            await updateDoc(popupDocRef, { phone, source: 'popup-phone' });
+          } else {
+            await addDoc(collection(db, 'subscribers'), {
+              email: savedEmail,
+              phone,
+              source: 'popup-phone',
+              createdAt: new Date().toISOString(),
+            });
+          }
+        } catch { /* phone step is optional — fail silently */ }
       }
       close();
     });

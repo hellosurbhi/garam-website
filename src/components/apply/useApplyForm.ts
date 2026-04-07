@@ -1,6 +1,7 @@
 import {
   useState,
   useEffect,
+  useCallback,
   type ChangeEvent,
 } from "react";
 import { collection, addDoc, serverTimestamp } from "firebase/firestore";
@@ -86,7 +87,10 @@ export function useApplyForm() {
     return () => clearTimeout(id);
   }, [toast]);
 
-  const geo = useGeoData(form.country, form.state);
+  const [geoLoadTriggered, setGeoLoadTriggered] = useState(false);
+  const triggerGeoLoad = useCallback(() => setGeoLoadTriggered(true), []);
+
+  const geo = useGeoData(form.country, form.state, geoLoadTriggered);
 
   function set(field: keyof FormState, value: string) {
     setForm((prev) => ({ ...prev, [field]: value }));
@@ -268,6 +272,7 @@ export function useApplyForm() {
     toast,
     setToast,
     geo,
+    triggerGeoLoad,
     set,
     handleCountryChange,
     handleStateChange,

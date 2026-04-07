@@ -10,12 +10,14 @@ interface GeoModule {
 
 const GEO_TIMEOUT_MS = 5000;
 
-export function useGeoData(countryCode: string, stateCode: string) {
+export function useGeoData(countryCode: string, stateCode: string, shouldLoad: boolean = true) {
   const [geo, setGeo] = useState<GeoModule | null>(null);
   const [geoFailed, setGeoFailed] = useState(false);
   const [attempt, setAttempt] = useState(0);
 
   useEffect(() => {
+    if (!shouldLoad) return;
+
     let cancelled = false;
 
     setGeoFailed(false);
@@ -43,7 +45,7 @@ export function useGeoData(countryCode: string, stateCode: string) {
       cancelled = true;
       clearTimeout(timeout);
     };
-  }, [attempt]);
+  }, [attempt, shouldLoad]);
 
   const retry = useCallback(() => setAttempt((n) => n + 1), []);
 

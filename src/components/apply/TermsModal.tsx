@@ -32,7 +32,7 @@ export function TermsModal({ open, onClose, onAgree }: TermsModalProps) {
     }
     if (e.key === "Tab" && modalRef.current) {
       const focusable = Array.from(
-        modalRef.current.querySelectorAll<HTMLElement>("button"),
+        modalRef.current.querySelectorAll<HTMLButtonElement>("button"),
       ).filter((el) => !el.disabled);
       if (focusable.length === 0) return;
       const first = focusable[0];

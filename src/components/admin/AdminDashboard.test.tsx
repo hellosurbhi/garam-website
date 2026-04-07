@@ -133,7 +133,7 @@ describe("AdminDashboard", () => {
     mockGetDocs.mockResolvedValue({
       docs: [
         { id: "1", data: () => ({ ...makeApp({ id: "1" }) }) },
-        { id: "2", data: () => ({ ...makeApp({ id: "2", deletedAt: { seconds: 100, toDate: () => new Date() } }) }) },
+        { id: "2", data: () => ({ ...makeApp({ id: "2", deletedAt: { seconds: 100, nanoseconds: 0, toDate: () => new Date(), toMillis: () => 100000, isEqual: () => false, toJSON: () => ({ seconds: 100, nanoseconds: 0 }) } }) }) },
       ],
     });
     render(<AdminDashboard onLogout={onLogout} />);

@@ -32,6 +32,7 @@ function ApplyPageInner() {
     toast,
     setToast,
     geo,
+    triggerGeoLoad,
     set,
     handleCountryChange,
     handleStateChange,
@@ -233,6 +234,7 @@ function ApplyPageInner() {
                             ) ?? null
                           }
                           onChange={handleCountryChange}
+                          onMenuOpen={triggerGeoLoad}
                           placeholder={geoLoading ? "Loading…" : "Select…"}
                           styles={formSelectStyles}
                           isSearchable

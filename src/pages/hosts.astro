@@ -47,18 +47,22 @@ const personJsonLd = JSON.stringify([
       </p>
 
       <div class="hosts-action-shot">
-        <img
-          src="/images/hosts.JPG"
-          alt="Surbhi and Wyatt sitting together on stage at Top Secret Comedy Club"
-          width="733"
-          height="1200"
-          loading="lazy"
-          style="object-position: center 25%;"
-        />
+        <picture>
+          <source srcset="/images/hosts.avif" type="image/avif" />
+          <source srcset="/images/hosts.webp" type="image/webp" />
+          <img
+            src="/images/hosts.JPG"
+            alt="Surbhi and Wyatt sitting together on stage at Top Secret Comedy Club"
+            width="733"
+            height="1200"
+            loading="lazy"
+            style="object-position: center 25%;"
+          />
+        </picture>
       </div>
 
       <div class="host-section">
-        <img src="/images/surbhi.png" alt="Surbhi" class="host-avatar" width="96" height="96" loading="lazy" />
+        <img src="/images/surbhi.webp" alt="Surbhi" class="host-avatar" width="96" height="96" loading="lazy" />
         <div class="host-content">
           <h2>
             <a href={CREATOR_URLS.surbhi} target="_blank" rel="noopener noreferrer">Surbhi</a>

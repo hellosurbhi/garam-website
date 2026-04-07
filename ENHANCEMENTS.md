@@ -58,6 +58,10 @@ Items from the GMD website audit checklists (site audit, codebase cleanup, conve
 - **Why:** `astro:assets` `<Image>` auto-generates responsive sizes, converts to WebP/AVIF, adds width/height. Eliminates manual image optimization.
 - **How:** Replace `<img>` tags in Astro components with `<Image>` imports. React islands would still use `<img>`.
 
+### Shared UI components + field config data file (apply form)
+- **Why:** Apply form fields (labels, placeholders, option lists) are hardcoded in JSX. A `src/data/applyForm.ts` config + shared input primitives in `components/ui/` would follow the workspace pattern of separating content from markup.
+- **How:** Extract field metadata (labels, placeholders, options for gender/orientation/community/income) to `src/data/applyForm.ts`. Create `components/ui/Input.tsx`, `components/ui/Select.tsx`, `components/ui/RadioGroup.tsx` used by the apply form and any future forms. Low urgency — current split into `apply/` modules is already a significant improvement.
+
 ### Shared UI components (Button, Section wrapper)
 - **Why:** Buttons and section wrappers are duplicated across pages with scoped styles. A shared component would reduce drift.
 - **How:** Create `src/components/ui/Button.astro` with primary/outline/white variants. Low urgency — current duplication is manageable since each page has scoped styles.

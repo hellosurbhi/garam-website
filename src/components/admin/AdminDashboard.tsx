@@ -39,7 +39,7 @@ export default function AdminDashboard({ onLogout }: AdminDashboardProps) {
   const today = new Date().toLocaleDateString("en-CA");
   const upcomingEvents = events.filter((e) => e.isoDate && e.isoDate > today && !e.hidden);
 
-  const toastTimerRef = useRef<ReturnType<typeof setTimeout>>();
+  const toastTimerRef = useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
   useEffect(() => () => { clearTimeout(toastTimerRef.current); }, []);
 
   function showToast(msg: string, ok: boolean) {

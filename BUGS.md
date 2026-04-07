@@ -154,6 +154,14 @@
 
 ## Fixed
 
+### [MEDIUM] FAQ page hero references deleted image (gmd-37.webp)
+
+- **Date:** 2026-04-07
+- **File:** `src/pages/faq.astro:95`
+- **Status:** Fixed (2026-04-07)
+- **What happened:** `gmd-37.webp` was deleted but `faq.astro` still referenced it, causing a broken image in the FAQ hero.
+- **Fix:** Replaced with `on-stage.webp`.
+
 ### [MEDIUM] Apply page backdrop dismiss always navigates to landing page
 
 - **Date:** 2026-03-13

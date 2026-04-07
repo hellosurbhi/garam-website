@@ -107,3 +107,31 @@ Items from the GMD website audit checklists (site audit, codebase cleanup, conve
 ### StructuredData component
 - **Why:** JSON-LD is inlined in pages via `JSON.stringify` + `set:html`. A `<StructuredData>` component would be slightly cleaner but the current utility function approach (`buildBreadcrumbJsonLd`, `buildEventSchemas`) already works well.
 - **How:** Create `src/components/StructuredData.astro` that takes `data` prop and renders the script tag. Marginal improvement.
+
+### Remove "click empty space to go home" behavior
+- **File:** `src/layouts/BaseLayout.astro` (lines 112-127)
+- **Why:** Users clicking anywhere non-interactive get navigated home unexpectedly. Conversion risk — someone reading content could click whitespace and lose their place.
+- **How:** Remove the click handler entirely. If back-navigation is desired, use an explicit "Back to Home" link.
+
+### Shorten HomeCreators bios and add /hosts link
+- **File:** `src/components/home/HomeCreators.astro`
+- **Why:** Full bios are duplicated between home page and /hosts. Short teasers with a "Meet the Hosts" link drive users deeper.
+- **How:** Truncate bios to 2-3 sentences, add CTA linking to `/hosts`.
+
+### Vary HomeExperience h2 to reduce tagline repetition
+- **File:** `src/components/home/HomeExperience.astro`
+- **Why:** "NYC's #1 Live South Asian Dating Show" appears in hero, marquee, experience h2, meta title. Varying the h2 keeps copy fresh.
+- **How:** Change h2 to something distinct like "How the Night Works" or "What to Expect".
+
+### Add social proof stats near ticket CTAs
+- **Why:** Stats (40+ shows, 2K+ audience) are in a separate HomeStats section far from buy buttons. Placing mini stats near ticket CTAs increases urgency.
+- **How:** Add a small proof line near ticket cards in HomeShows and /tickets.
+
+### Clean up hero image preloads if unused
+- **File:** `src/layouts/BaseLayout.astro` (lines 45-62)
+- **Why:** Preloads for `hero.avif` and `hero-mobile.avif` fire on home page. Verify `HomeHero.astro` actually uses these files. If not, remove to save bandwidth.
+- **How:** Check HomeHero image references against preloaded paths.
+
+### Unify FAQ content between home page and /faq
+- **Why:** HomeFAQ (from `copy.ts`) and /faq page have overlapping questions with different answer wording. Duplicate FAQ JSON-LD was removed, but content divergence remains.
+- **How:** Share a data source or intentionally differentiate (short on home, detailed on /faq).

@@ -1,5 +1,46 @@
 # Changelog
 
+## fix: CodeRabbit PR review fixes — bugs, a11y, performance, code quality (2026-04-07)
+
+### What changed
+Four atomic commits addressing CodeRabbit review comments on PR #11.
+
+**Bug fixes**
+- `formatTime` in `HomeHero.astro`: midnight (h=0) now correctly formats as "12 AM" instead of "0 AM"
+- `HomeShows.astro`: city-request modal success state only shows after `addDoc` resolves (not on error)
+- `NotifyModal.astro`: keyboard focus moves to `#notify-success` on reveal so users aren't stranded on a hidden submit button
+- `canada.ts`: fixed `city=London+ON` → `city=London&state=ON` and `city=St.+John%27s` → `city=St.+John%27s&state=NL` so apply form pre-selection matches the `country-state-city` library
+- `useApplyForm.ts`: orphaned photo in Firebase Storage is now deleted if `addDoc` fails after upload succeeds
+
+**Accessibility**
+- Marketing consent radios wrapped in `<fieldset>`/`<legend>` — screen readers now announce the question before each Yes/No option
+- Terms & Conditions button no longer accidentally toggles the checkbox (added `e.stopPropagation()`)
+- Fixed `.consentSection[data-error]` border — `border-color` alone was invisible on a `border:none` base
+- `termsAgreeButton` and `termsDismissButton` now have `min-height: var(--touch-target)` (48px)
+- `PhotoUploadField`: replaced inline `style={{ display:'none' }}` with CSS class; preview `<img>` now has `loading="lazy"`, `width`, `height`
+- `HomeCreators`: avatar images changed to `loading="lazy"` + `decoding="async"`; subtitle and bio contrast bumped to `rgba(26,26,26,0.87)` for WCAG AA
+
+**Performance**
+- Created `src/lib/constants.ts` for `YOUTUBE_VIDEO_ID` and `INSTAGRAM_REEL_URLS`
+- YouTube video uses facade pattern (thumbnail + play button) — iframe only loads on click, saving ~600KB of blocking resources
+- Instagram blockquote embeds + `embed.js` (~200KB) replaced with styled anchor links
+- Video section background tokenized: `#fff` → `var(--off-white)`
+
+**Code quality**
+- Added `--off-white-rgb: 255, 248, 240` to `:root`; `HomeNav` scrolled background now uses token
+- `HomeHero` `.line-accent` color: `#333` → `var(--charcoal)`
+- `scripts/organize-images.js`: `console.log` → `console.debug` in verbose helper
+- `package.json`: `engines.node` tightened to `>=20.11.0` (required for `import.meta.dirname`)
+- `ErrorBoundary`: added `componentDidCatch` for production error logging
+- `posthog.astro`: `window._phLoaded` → namespaced `window.__garamAnalytics.posthog`
+- `AdminDashboard.test.tsx`: extracted `makeTimestamp()` helper, replaced 130-char inline mock
+- `ApplicantModal`: inline `style={{ background, color }}` replaced with CSS custom property `--status-color` + `color-mix()`
+
+### Files affected
+`src/components/home/HomeHero.astro`, `src/components/home/HomeShows.astro`, `src/components/NotifyModal.astro`, `src/data/cities/canada.ts`, `src/components/apply/useApplyForm.ts`, `src/components/ApplyPage.tsx`, `src/components/ApplyPage.module.css`, `src/components/apply/PhotoUploadField.tsx`, `src/components/home/HomeCreators.astro`, `src/lib/constants.ts` (new), `src/components/home/HomeVideo.astro`, `src/index.css`, `src/components/home/HomeNav.astro`, `scripts/organize-images.js`, `package.json`, `src/components/ErrorBoundary.tsx`, `src/components/posthog.astro`, `src/components/admin/AdminDashboard.test.tsx`, `src/components/admin/ApplicantModal.tsx`, `src/components/admin/ApplicantModal.module.css`
+
+---
+
 ## chore: remove unused shader export dir and gitignore it (2026-04-07)
 
 ### What changed

@@ -1,5 +1,21 @@
 # Changelog
 
+## Code Review Fixes — PR #11 (2026-04-07)
+
+Resolved 5 of 6 issues flagged in automated code review of the ui-v3-seo-rewrite PR. The `console.log` in `scripts/refresh-articles.js` was intentionally kept as it provides useful progress output for GitHub Actions runs.
+
+### What changed
+- **`firestore.rules`**: Added `city` to `validSubscriber()` `hasOnly` allowlist + optional city field validation. City-page subscriber writes were being silently rejected because `cities/[slug].astro` writes a `city` field that was not in the validator's allowlist (critical functional bug).
+- **`src/index.css`**: Corrected `--brand-red-rgb` from `233, 30, 118` (old pink `#E91E76`) to `220, 38, 38` (correct for `--brand-red: #DC2626`). Affected 62+ `rgba()` usages rendering magenta instead of red.
+- **`src/index.css`**: Removed `--font-jetbrains: "Nunito"` backward-compat alias; replaced all 19 usages with `var(--font-body)`. Added `--text-secondary: #555` and `--text-tertiary: #777` design tokens.
+- **13 files**: Replaced scattered hardcoded hex grays (`#555`, `#666`, `#777`, `#888`, `#999`, `#b91c1c`, `#FFC400`) with CSS custom properties in all new/modified components and pages.
+- **`src/components/NotifyModal.astro`** (new): Extracted the notify modal HTML, script, and CSS that was duplicated in `HomeShows.astro` and `tickets.astro` into a shared component. Accepts optional `source` prop.
+
+### Files affected
+`firestore.rules`, `src/index.css`, `src/components/NotifyModal.astro` (new), `src/components/home/HomeShows.astro`, `src/pages/tickets.astro`, `src/components/home/HomeExperience.astro`, `src/components/home/HomeFAQ.astro`, `src/components/home/HomePress.astro`, `src/components/ContestantPrepPage.module.css`, `src/components/ApplyPage.module.css`, `src/components/AuthorBio.astro`, `src/pages/cities/[slug].astro`, `src/pages/cities/index.astro`, `src/pages/faq.astro`, `src/pages/privacy.astro`, `src/pages/terms.astro`
+
+---
+
 ## 120 SEO Articles + Staggered Publishing System (2026-04-06)
 
 Major content expansion: 120 journal articles across 14 categories, publishing every 2 days from April 7 through December 2026 via automated daily rebuild.

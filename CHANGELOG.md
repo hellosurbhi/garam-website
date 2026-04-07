@@ -17,33 +17,36 @@ Resolved actionable CodeRabbit review comments on PR #11.
 
 ---
 
-## Add event photography to homepage gallery (2026-04-07)
+## Organic event photography across site (2026-04-07)
 
-Replaced the placeholder gradient gallery with real event photos from two Top Secret Comedy Club shows. 17 source photos analyzed, best 8 selected for the gallery mixing both events for variety (blindfolded guy choosing women + blindfolded woman choosing men).
+Removed the dedicated photo gallery section. Integrated event photos organically into existing sections where they naturally belong.
 
 ### What changed
-- **`src/components/home/HomePhotos.astro`**: Replaced gradient `<div>`s with `<picture>` elements serving AVIF/WebP/JPG. Each photo has per-image `object-position` for proper focal-point cropping across mobile (1:1) and desktop layouts. Updated subtitle from placeholder to "What happens when 250 strangers pick your date".
-- **`public/images/gallery/`** (new, 8 photos x 3 formats = 24 files): on-stage, the-match, hosts, the-crowd, pure-chaos, after-party, magic-moment, dance-off. All resized to max 1200px, AVIF ~40-80KB each.
-- **`public/images/`** (4 additional photos): tickets-hero, testimonial-reaction, links-hero, journal-featured for future page use.
-- **`public/og-image.jpg`**: Replaced with event photo (hosts on stage, 1200x630 crop).
-- **`scripts/optimize-images.js`** (new): Sharp-based script to resize, convert, and optimize source photos to AVIF/WebP/JPG.
+- **Killed `HomePhotos` gallery** from homepage — photos belong in context, not a portfolio grid.
+- **`HomeExperience.astro`**: Each of the 4 steps now shows a rounded photo thumbnail (72px mobile, 88px desktop) with the step number overlaid. Photos match the step content.
+- **`HomeTestimonials.astro`**: Dark cinematic treatment — crowd photo behind at ~85% dark overlay. Quote cards are now glass-morphism (translucent with backdrop blur). White text on dark.
+- **`HomePhotoBreak.astro`** (new): Full-bleed photo separator component. 3 placed between homepage sections (280px mobile, 420px desktop).
+- **`hosts.astro`**: Wide action shot of hosts on stage between intro and bios. Rounded corners, 3:2 aspect ratio.
+- **`src/data/copy.ts`**: Added `image`, `alt`, `pos` fields to `EXPERIENCE_STEPS`.
 
-### Gallery slot mapping
-| Slot | Photo source | Event |
-|------|-------------|-------|
-| On Stage (featured 2x2) | _U7A8432-2 — peak chaos, everyone laughing | Event 2 |
-| The Match | _U7A8858 — couple together after reveal | Event 2 |
-| Hosts | Garammasaladating-117 — Surbhi & Wyatt posed | Event 1 |
-| The Crowd | Garammasaladating-14 — diverse audience laughing | Event 1 |
-| Pure Chaos | Garammasaladating-45 — guy lifting someone | Event 1 |
-| After Party | Garammasaladating-66 — audience clapping | Event 1 |
-| Magic Moment | Garammasaladating-68 — intimate contestant moment | Event 1 |
-| Dance Off | _U7A9273 — final reveal lineup | Event 2 |
+### Photo mapping
+| Placement | Photo |
+|-----------|-------|
+| Experience Step 1 | after-party (crowd) |
+| Experience Step 2 | on-stage (blindfolded round) |
+| Experience Step 3 | testimonial-reaction (audience gasp) |
+| Experience Step 4 | pure-chaos (lifting moment) |
+| Testimonials BG | the-crowd (audience laughing) |
+| Photo break 1 | the-match (couple reveal) |
+| Photo break 2 | dance-off (final lineup) |
+| Photo break 3 | magic-moment (intimate) |
+| Hosts page | links-hero (both hosts on stage) |
 
-### Performance
-- Gallery AVIF total: ~495KB for all 8 images
-- DSLR source files (12-27MB each) compressed to 40-80KB AVIF
-- All images lazy-loaded with explicit width/height (no layout shift)
+---
+
+## Add optimized event photos and image pipeline (2026-04-07)
+
+17 source photos from two Top Secret Comedy Club events optimized via sharp. DSLR files (12-27MB) compressed to 40-80KB AVIF. Created reusable optimization script.
 
 ---
 

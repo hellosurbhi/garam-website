@@ -46,6 +46,21 @@ const personJsonLd = JSON.stringify([
         Garam Masala Dating didn't come from a pitch deck or a production company. It started when two comedians decided that watching real people go on blind dates in front of a live audience was funnier than anything they could write.
       </p>
 
+      <div class="hosts-action-shot">
+        <picture>
+          <source srcset="/images/links-hero.avif" type="image/avif" />
+          <source srcset="/images/links-hero.webp" type="image/webp" />
+          <img
+            src="/images/links-hero.jpg"
+            alt="Surbhi and Wyatt hosting together on stage at Top Secret Comedy Club"
+            width="1200"
+            height="800"
+            loading="lazy"
+            style="object-position: center 40%;"
+          />
+        </picture>
+      </div>
+
       <div class="host-section">
         <img src="/images/surbhi.png" alt="Surbhi" class="host-avatar" width="96" height="96" loading="lazy" />
         <div class="host-content">
@@ -134,6 +149,24 @@ const personJsonLd = JSON.stringify([
     color: #666;
     line-height: 1.7;
     margin-bottom: 56px;
+  }
+
+  .hosts-action-shot {
+    border-radius: 16px;
+    overflow: hidden;
+    margin-bottom: 56px;
+    aspect-ratio: 3 / 2;
+  }
+  .hosts-action-shot picture {
+    display: block;
+    width: 100%;
+    height: 100%;
+  }
+  .hosts-action-shot img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
   }
 
   .host-section {

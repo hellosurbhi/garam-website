@@ -325,6 +325,12 @@ function formatTime(t?: string): string {
     50% { transform: translateX(-50%) translateY(8px); }
   }
 
+  /* On mobile, pin content to top of padding so it never overlaps the fixed nav */
+  @media (max-width: 767px) {
+    .hero { align-items: start; }
+    .hero-content { width: 100%; }
+  }
+
   @media (min-width: 768px) {
     .hero { padding: 80px 48px 60px; }
     .hero-content { padding: 32px 48px; }

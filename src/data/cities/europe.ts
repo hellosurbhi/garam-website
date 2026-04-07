@@ -375,7 +375,7 @@ export const europeCities: Record<string, CityData> = {
     addressRegion: "Geneva",
     addressCountry: "CH",
     region: "Europe",
-    nearbyCities: ["zurich", "paris", "lyon", "milan", "vienna"],
+    nearbyCities: ["zurich", "paris", "milan", "vienna"],
   },
 
   vienna: {
@@ -1187,7 +1187,7 @@ export const europeCities: Record<string, CityData> = {
     addressRegion: "Basel-Stadt",
     addressCountry: "CH",
     region: "Europe",
-    nearbyCities: ["zurich", "lausanne", "geneva", "frankfurt", "strasbourg"],
+    nearbyCities: ["zurich", "lausanne", "geneva", "frankfurt"],
   },
 
   cork: {
@@ -1970,7 +1970,7 @@ export const europeCities: Record<string, CityData> = {
     addressRegion: "Central Slovenia",
     addressCountry: "SI",
     region: "Europe",
-    nearbyCities: ["zagreb", "vienna", "budapest", "milan", "venice"],
+    nearbyCities: ["zagreb", "vienna", "budapest", "milan"],
   },
 
   zagreb: {
@@ -1999,7 +1999,7 @@ export const europeCities: Record<string, CityData> = {
     addressRegion: "Zagreb",
     addressCountry: "HR",
     region: "Europe",
-    nearbyCities: ["ljubljana", "budapest", "vienna", "belgrade", "munich"],
+    nearbyCities: ["ljubljana", "budapest", "vienna", "munich"],
   },
 
   athens: {

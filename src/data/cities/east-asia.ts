@@ -114,7 +114,7 @@ export const eastAsiaCities: Record<string, CityData> = {
     addressRegion: "",
     addressCountry: "KR",
     region: "East Asia",
-    nearbyCities: ["tokyo", "osaka", "taipei", "hong-kong", "singapore"],
+    nearbyCities: ["tokyo", "osaka", "taipei", "hong-kong"],
   },
 
   taipei: {
@@ -201,6 +201,6 @@ export const eastAsiaCities: Record<string, CityData> = {
     addressRegion: "",
     addressCountry: "HK",
     region: "East Asia",
-    nearbyCities: ["taipei", "tokyo", "seoul", "singapore", "manila"],
+    nearbyCities: ["taipei", "tokyo", "seoul", "manila"],
   },
 };

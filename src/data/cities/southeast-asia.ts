@@ -27,7 +27,7 @@ export const southeastAsiaCities: Record<string, CityData> = {
     addressRegion: "",
     addressCountry: "TH",
     region: "Southeast Asia",
-    nearbyCities: ["chiang-mai", "ho-chi-minh-city", "singapore", "kuala-lumpur", "colombo"],
+    nearbyCities: ["chiang-mai", "ho-chi-minh-city", "colombo"],
   },
 
   "chiang-mai": {
@@ -56,7 +56,7 @@ export const southeastAsiaCities: Record<string, CityData> = {
     addressRegion: "Chiang Mai",
     addressCountry: "TH",
     region: "Southeast Asia",
-    nearbyCities: ["bangkok", "ho-chi-minh-city", "singapore", "kuala-lumpur", "colombo"],
+    nearbyCities: ["bangkok", "ho-chi-minh-city", "colombo"],
   },
 
   "ho-chi-minh-city": {
@@ -85,7 +85,7 @@ export const southeastAsiaCities: Record<string, CityData> = {
     addressRegion: "",
     addressCountry: "VN",
     region: "Southeast Asia",
-    nearbyCities: ["bangkok", "singapore", "manila", "kuala-lumpur", "chiang-mai"],
+    nearbyCities: ["bangkok", "manila", "chiang-mai"],
   },
 
   manila: {
@@ -114,7 +114,7 @@ export const southeastAsiaCities: Record<string, CityData> = {
     addressRegion: "Metro Manila",
     addressCountry: "PH",
     region: "Southeast Asia",
-    nearbyCities: ["ho-chi-minh-city", "singapore", "bangkok", "hong-kong", "taipei"],
+    nearbyCities: ["ho-chi-minh-city", "bangkok", "hong-kong", "taipei"],
   },
 
   colombo: {
@@ -142,8 +142,8 @@ export const southeastAsiaCities: Record<string, CityData> = {
     addressLocality: "Colombo",
     addressRegion: "Western Province",
     addressCountry: "LK",
-    region: "Southeast Asia",
-    nearbyCities: ["kandy", "bangalore", "chennai", "singapore", "kuala-lumpur"],
+    region: "South Asia",
+    nearbyCities: ["kandy", "bangalore", "chennai"],
   },
 
   kandy: {
@@ -171,7 +171,7 @@ export const southeastAsiaCities: Record<string, CityData> = {
     addressLocality: "Kandy",
     addressRegion: "Central Province",
     addressCountry: "LK",
-    region: "Southeast Asia",
-    nearbyCities: ["colombo", "bangalore", "chennai", "singapore", "kochi"],
+    region: "South Asia",
+    nearbyCities: ["colombo", "bangalore", "chennai", "kochi"],
   },
 };

@@ -16,6 +16,7 @@ export type CityRegion =
   | "India"
   | "Southeast Asia"
   | "East Asia"
+  | "South Asia"
   | "Africa"
   | "Pacific Islands"
   | "Caribbean";

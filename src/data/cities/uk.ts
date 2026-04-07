@@ -1245,6 +1245,6 @@ export const ukCities: Record<string, CityData> = {
     addressRegion: "Scotland",
     addressCountry: "GB",
     region: "United Kingdom",
-    nearbyCities: ["edinburgh", "glasgow", "newcastle", "durham", "dundee"],
+    nearbyCities: ["edinburgh", "glasgow", "newcastle", "durham"],
   },
 };

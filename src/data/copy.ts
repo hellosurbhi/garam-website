@@ -11,7 +11,8 @@ export const SITE = {
     "Garam Masala Dating is the live South Asian dating show where South Asian singles go on a date in front of a packed house. Our hosts Surbhi and Wyatt guide the chaos with stand-up, crowd work, and genuine matchmaking instincts. Every show ends with a singles mixer where the audience gets to continue the experiment.",
   shortDescription:
     "New York City's live South Asian comedy dating show. Real singles. Real dates. 250-person audience. Weekly in Manhattan.",
-  footerLine: "NYC's #1 live South Asian dating show. Hosted by Surbhi & Wyatt.",
+  footerLine:
+    "NYC's #1 live South Asian dating show. Hosted by Surbhi & Wyatt.",
   hosts: "Surbhi & Wyatt",
 } as const;
 
@@ -101,7 +102,7 @@ export const MARQUEE_ITEMS = [
 export const EXPERIENCE_STEPS = [
   {
     title: "Arrive & Settle In",
-    text: "Doors open 30 minutes early. Grab a drink, find your seat, and settle into the energy. The venue is intimate \u2014 250 seats, no bad views.",
+    text: "Doors open 30 minutes early. Grab a drink, find your seat, and settle into the energy. The venue is intimate  with 250 seats, come early to grab one with the best view.",
   },
   {
     title: "The Main Event",

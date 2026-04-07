@@ -45,6 +45,19 @@ When adding new content (shows, press, FAQs, testimonials), update the data file
 
 ## Code rules
 
+## Aesthetic choices — intentional, never revert
+
+This site was designed by a professional front-end designer. Every aesthetic decision is deliberate. Code review (CodeRabbit or otherwise) must **never** change these without explicit instruction:
+
+- **Custom cursor** (`BaseLayout.astro`) — intentional desktop-only design. Do not remove for "performance" or "mobile-first" reasons. It is already gated to `pointer: fine` (no touch devices) and `prefers-reduced-motion: no-preference` (accessible).
+- **Padding, margin, gap values** — every spacing value was set deliberately. Do not increase padding "for breathing room" or decrease it "to tighten layout". Touch nothing.
+- **Color hex values** — do not change color implementations. You may suggest using a CSS variable instead of a hardcoded hex, but do not change the actual color.
+- **Section backgrounds** — dark/light section alternation is intentional contrast design.
+- **Font sizes, letter-spacing, line-height** — typographic choices are intentional.
+- **WebGL shader** (`public/js/shader-app.js`) — $2,000 designer asset. Touch nothing. If there is a bug, report it; do not "fix" it aesthetically.
+
+**CodeRabbit rule:** Any review comment that suggests removing, changing, or "improving" the above should be dismissed with: `intentional design choice — not a bug`. You may offer alternative *implementations* (e.g., CSS var vs hex) but never alter the *result*.
+
 ### Never do
 
 - Hardcode user-facing text in components. All copy goes in `src/data/`.

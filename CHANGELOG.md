@@ -1,5 +1,23 @@
 # Changelog
 
+## Code review fixes — a11y, data integrity, SEO (2026-04-07)
+
+Post-audit code review pass. All findings were verified against current code before fixing.
+
+### What changed
+- **Data integrity**: Added `"South Asia"` to `REGION_ORDER` in `cities/index.ts` — cities with `region: "South Asia"` were silently dropped by `citiesByRegion()`. Removed `"lyon"` from Lausanne's `nearbyCities` (no Lyon entry exists).
+- **Touch targets**: Standardized from 44px → 48px across `links.astro` (social icons, modal close), `ApplicantModal.module.css` (close button), `ApplyPage.module.css` (back button, type buttons, terms close). CLAUDE.md requires 48px; previous audit used WCAG 2.5.8 minimum of 44px.
+- **BUGS.md corrections**: Fixed two contrast ratio errors (`#888` = 3.38:1 not 2.98:1; `#666` = 5.45:1 not 4.14:1 — the `#666` bug was a false positive, already passing AA). Updated touch target references to 48px.
+- **NotifyModal**: Submit success now only shown in `try` block; `catch` shows an error message. Submit button disabled during async call. Added `role="dialog" aria-modal="true" aria-labelledby` to `<dialog>`. Added `id` to h2. Focus moves to close button on open; restored to opener on close via dialog `close` event. Success div gets `role="status" aria-live="polite"`. Error paragraph uses `aria-live="assertive"`. Close button touch target: 4px → min 48×48px.
+- **ApplyPage — label/input association**: Country/State/City React Select fields now pass `inputId` matching `htmlFor` on the wrapping `FieldGroup`, so screen readers correctly associate labels with the Select's inner input. Removed now-redundant `aria-label` attributes.
+- **ApplyPage — terms modal focus management**: Escape closes the modal. Tab/Shift+Tab cycles through the 3 action buttons. Focus moves to close button on open; restored to the Terms link on close.
+- **seo-article-strategy.md**: Replaced doorway-page H1 template with guidance requiring unique city-specific H1s.
+
+### Files affected
+`src/data/cities/index.ts`, `src/data/cities/europe.ts`, `src/pages/links.astro`, `src/components/admin/ApplicantModal.module.css`, `src/components/ApplyPage.module.css`, `BUGS.md`, `src/components/NotifyModal.astro`, `src/components/ApplyPage.tsx`, `seo-article-strategy.md`
+
+---
+
 ## Visual overhaul — CTAs, cursor, pages, photos, cleanup (2026-04-07)
 
 Batch of visual fixes, page improvements, and code cleanup based on direct user feedback.

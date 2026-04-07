@@ -111,15 +111,13 @@ const eventSchemas = buildEventSchemas(upcomingForSchema);
     <HomePress />
     <HomeTestimonials />
     <HomeCreators />
-    <HomePhotoBreak
-      left={{ src: "on-stage", alt: "Contestants and hosts laughing during a blindfolded dating round", position: "center 40%" }}
-      right={{ src: "journal-featured", alt: "Full stage with blindfolded contestant and hosts at Top Secret Comedy Club", position: "center 40%" }}
-    />
+    <div class="photo-wide">
+      <img src="/images/on-stage.webp" alt="Contestants and hosts laughing during a blindfolded dating round" width="1200" height="800" loading="lazy" style="object-position: center 40%;" />
+    </div>
     <HomeFAQ />
-    <HomePhotoBreak
-      left={{ src: "pure-chaos", alt: "A contestant lifting another person on stage", position: "center 35%" }}
-      right={{ src: "tickets-hero", alt: "Blindfolded contestant on stage with women contestants during the show", position: "center 40%" }}
-    />
+    <div class="photo-wide">
+      <img src="/images/tickets-hero.webp" alt="Blindfolded contestant on stage with women contestants during the show" width="1200" height="800" loading="lazy" style="object-position: center 40%;" />
+    </div>
     <HomeSignup />
   </main>
 
@@ -245,6 +243,21 @@ const eventSchemas = buildEventSchemas(upcomingForSchema);
 </noscript>
 
 <style is:global>
+  .photo-wide {
+    width: 100%;
+    aspect-ratio: 21 / 9;
+    overflow: hidden;
+  }
+  .photo-wide img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+  @media (max-width: 767px) {
+    .photo-wide { aspect-ratio: 16 / 9; }
+  }
+
   [data-reveal] {
     opacity: 0;
     transform: translateY(32px);

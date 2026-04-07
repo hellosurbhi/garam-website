@@ -154,6 +154,7 @@ const fsSource = `
         float w2 = sin(p.y * uComplexity + t * 0.8) * 0.5 + 0.5;
         float w3 = sin((p.x + p.y) * uComplexity + t * 1.2) * 0.5 + 0.5;
         vec3 fluid = (uColorA*w1 + uColorB*w2 + uColorC*w3) / (w1+w2+w3+0.1) * max(uIntensity, 0.01);
+        fluid = mix(fluid, vec3(1.0), 0.3); // lift dark areas toward white
 
         // 4. ANALYTICAL ANTI-ALIASING (The Elegant Solution)
         vec4 texData = texture2D(uTextTexture, textUv);

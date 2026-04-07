@@ -7,13 +7,6 @@ interface Props {
 }
 
 const { ticketsUrl, nextEvent } = Astro.props;
-
-function formatTime(t?: string): string {
-  if (!t) return '';
-  const h = parseInt(t.split(':')[0]);
-  const hour12 = (h % 12) || 12;
-  return `${hour12} ${h >= 12 ? 'PM' : 'AM'}`;
-}
 ---
 
 <section class="hero" aria-label="Hero">
@@ -31,22 +24,21 @@ function formatTime(t?: string): string {
       Real singles. Real sparks. Real chaos.
     </p>
     {nextEvent && (
-      <a href={nextEvent.url} target="_blank" rel="noopener noreferrer" class="next-show">
-        <div class="next-show-date">
-          <span class="next-show-month">{nextEvent.date.split(' ')[0]}</span>
-          <span class="next-show-day">{nextEvent.date.split(' ')[1]}</span>
-        </div>
-        <div class="next-show-info">
-          <span class="next-show-city">{nextEvent.city.split(',')[0]}</span>
-          <span class="next-show-venue">
-            {nextEvent.venue?.name ?? ''}{nextEvent.startTime && ` · ${formatTime(nextEvent.startTime)}`}
-          </span>
-        </div>
-        <span class="next-show-btn">Tickets</span>
+      <a href={nextEvent.url} target="_blank" rel="noopener noreferrer" class="next-show-pill">
+        <span class="next-show-pill-date">{nextEvent.date.split(' ')[0]} {nextEvent.date.split(' ')[1]}</span>
+        <span class="next-show-pill-sep" aria-hidden="true">·</span>
+        <span>{nextEvent.city.split(',')[0]}</span>
+        {nextEvent.venue?.name && (
+          <>
+            <span class="next-show-pill-sep" aria-hidden="true">·</span>
+            <span class="next-show-pill-venue">{nextEvent.venue.name}</span>
+          </>
+        )}
+        <span class="next-show-pill-cta" aria-hidden="true">→</span>
       </a>
     )}
     <div class="hero-ctas">
-      <a href={ticketsUrl} class="btn btn-hot">Get Tickets</a>
+      {!nextEvent && <a href={ticketsUrl} class="btn btn-hot">Get Tickets</a>}
       <a href="/apply" class="btn btn-outline">Apply for the Show</a>
     </div>
   </div>
@@ -63,8 +55,6 @@ function formatTime(t?: string): string {
 
 <style>
   .hero {
-    min-height: 100vh;
-    min-height: 100dvh;
     display: grid;
     place-items: center;
     position: relative;
@@ -74,7 +64,7 @@ function formatTime(t?: string): string {
       radial-gradient(ellipse at 70% 40%, rgba(255, 214, 0, 0.12) 0%, transparent 50%),
       radial-gradient(ellipse at 50% 60%, rgba(185, 28, 28, 0.1) 0%, transparent 55%),
       #fff;
-    padding: 64px 20px 32px;
+    padding: 80px 20px 56px;
   }
 
   /* Shader fills hero — subtle wash over white bg */
@@ -164,77 +154,52 @@ function formatTime(t?: string): string {
     animation: rise 0.9s cubic-bezier(0.22, 1, 0.36, 1) 0.35s both;
   }
 
-  .next-show {
-    display: flex;
+  /* Next show pill */
+  .next-show-pill {
+    display: inline-flex;
     align-items: center;
-    gap: 16px;
-    background: none;
-    border: none;
-    border-radius: 0;
-    padding: 12px 0;
-    text-decoration: none;
-    margin: 0 auto 12px;
-    max-width: 420px;
-    width: 100%;
-    animation: rise 0.9s cubic-bezier(0.22, 1, 0.36, 1) 0.45s both;
-    transition: opacity 0.2s;
-    box-shadow: none;
-  }
-  .next-show:hover { opacity: 0.8; }
-  .next-show-date {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    flex-shrink: 0;
-    min-width: 44px;
-  }
-  .next-show-month {
-    font-family: var(--font-body), sans-serif;
-    font-size: 11px;
-    font-weight: 700;
-    text-transform: uppercase;
-    letter-spacing: 1px;
-    color: var(--brand-red);
-  }
-  .next-show-day {
-    font-family: var(--font-playfair), serif;
-    font-size: 32px;
-    font-weight: 900;
-    line-height: 1;
+    gap: 8px;
+    background: rgba(220, 38, 38, 0.08);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    border: 1px solid rgba(220, 38, 38, 0.2);
     color: var(--charcoal);
-  }
-  .next-show-info {
-    display: flex;
-    flex-direction: column;
-    gap: 2px;
-    flex: 1;
-    min-width: 0;
-  }
-  .next-show-city {
-    font-family: var(--font-playfair), serif;
-    font-size: 16px;
-    font-weight: 700;
-    color: var(--charcoal);
-  }
-  .next-show-venue {
     font-family: var(--font-body), sans-serif;
     font-size: 13px;
-    color: var(--muted);
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-  }
-  .next-show-btn {
-    flex-shrink: 0;
-    background: var(--brand-red);
-    color: white;
-    font-family: var(--font-body), sans-serif;
-    font-size: 12px;
-    font-weight: 700;
-    text-transform: uppercase;
-    letter-spacing: 1px;
+    font-weight: 600;
     padding: 10px 20px;
     border-radius: 50px;
+    text-decoration: none;
+    margin-bottom: 20px;
+    transition: background 0.2s, border-color 0.2s;
+    animation: rise 0.9s cubic-bezier(0.22, 1, 0.36, 1) 0.45s both;
+    max-width: 100%;
+  }
+  .next-show-pill:hover {
+    background: rgba(220, 38, 38, 0.14);
+    border-color: rgba(220, 38, 38, 0.35);
+  }
+  .next-show-pill-date {
+    color: var(--brand-red);
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    flex-shrink: 0;
+  }
+  .next-show-pill-sep {
+    color: rgba(26, 26, 26, 0.3);
+    flex-shrink: 0;
+  }
+  .next-show-pill-venue {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    min-width: 0;
+  }
+  .next-show-pill-cta {
+    color: var(--brand-red);
+    flex-shrink: 0;
+    margin-left: 2px;
   }
 
   .hero-ctas {
@@ -329,17 +294,10 @@ function formatTime(t?: string): string {
     100% { transform: translateX(-50%) translateY(0);  opacity: 0.45; }
   }
 
-  /* On mobile, pin content to top of padding so it never overlaps the fixed nav */
-  @media (max-width: 767px) {
-    .hero { align-items: start; }
-    .hero-content { width: 100%; }
-  }
-
   /* Narrow phones (<=430px) */
   @media (max-width: 430px) {
     .hero { padding-left: 12px; padding-right: 12px; }
     .hero-content { padding-left: 8px; padding-right: 8px; }
-    /* block + max-content is the only reliable way to get inline-flex text to wrap */
     .hero-eyebrow {
       display: block;
       width: max-content;
@@ -352,16 +310,9 @@ function formatTime(t?: string): string {
       letter-spacing: 1px;
       font-size: 11px;
     }
-    /* let venue wrap instead of truncate */
-    .next-show-venue {
-      white-space: normal;
-      overflow: visible;
-      text-overflow: clip;
-    }
-    /* allow button text to wrap on narrow screens */
+    .next-show-pill { font-size: 12px; padding: 9px 14px; gap: 6px; }
+    .next-show-pill-venue { display: none; }
     .btn { white-space: normal; padding: 14px 16px; letter-spacing: 1px; }
-    .next-show { gap: 12px; }
-    .next-show-btn { padding: 8px 16px; }
   }
 
   /* Very narrow phones (<=390px) */
@@ -369,8 +320,6 @@ function formatTime(t?: string): string {
     .hero h1 { font-size: clamp(52px, 18vw, 70px); }
     .hero-sub { font-size: 18px; word-break: normal; overflow-wrap: break-word; }
     .btn { padding: 14px 14px; letter-spacing: 0.5px; font-size: 14px; }
-    .next-show-day { font-size: 28px; }
-    .next-show-btn { padding: 8px 14px; font-size: 11px; }
   }
 
   /* Ultra-narrow phones (<=340px) — Galaxy Fold outer screen */
@@ -383,7 +332,11 @@ function formatTime(t?: string): string {
   }
 
   @media (min-width: 768px) {
-    .hero { padding: 80px 48px 60px; }
+    .hero {
+      min-height: 100vh;
+      min-height: 100dvh;
+      padding: 80px 48px 60px;
+    }
     .hero-content { padding: 32px 48px; }
     .hero-eyebrow { font-size: 14px; padding: 16px 36px; }
     .hero-sub { font-size: 22px; margin-bottom: 32px; }
@@ -402,6 +355,6 @@ function formatTime(t?: string): string {
 
   @media (prefers-reduced-motion: reduce) {
     .scroll-cue { animation: none; }
-    .hero-eyebrow, .hero h1, .hero-sub, .hero-ctas { animation: none; opacity: 1; }
+    .hero-eyebrow, .hero h1, .hero-sub, .next-show-pill, .hero-ctas { animation: none; opacity: 1; }
   }
 </style>

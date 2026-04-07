@@ -8,7 +8,12 @@ export default defineConfig({
   output: "static",
   trailingSlash: "never",
   adapter: vercel(),
-  integrations: [react(), sitemap()],
+  integrations: [
+    react(),
+    sitemap({
+      filter: (page) => !page.includes('/admin') && !page.includes('/contestant-prep'),
+    }),
+  ],
   vite: {
     resolve: {
       alias: {

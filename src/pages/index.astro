@@ -45,40 +45,6 @@ const websiteJsonLd = JSON.stringify({
   url: "https://garammasaladating.com",
 });
 
-// FAQ data and JSON-LD
-const HOME_FAQS = [
-  {
-    q: "What is Garam Masala Dating?",
-    a: "Garam Masala Dating is a live South Asian dating show in New York City where real singles go on blind dates on stage in front of a 250-person audience. Hosted by comedians Surbhi and Wyatt, the show runs weekly in Manhattan and monthly in Jersey City, followed by a singles mixer open to all attendees.",
-  },
-  {
-    q: "Do you have to be South Asian to come?",
-    a: "No. The show is open to everyone. The audience is a mix of South Asian, desi diaspora, and anyone who loves comedy and meeting new people.",
-  },
-  {
-    q: "Is Garam Masala Dating like Indian Matchmaking?",
-    a: "No. Garam Masala Dating is a live comedy show that happens in real time in front of 250 people in NYC. There are no producers, no editing, no second takes. Just two real singles on a real first date on stage.",
-  },
-  {
-    q: "How do I get tickets?",
-    a: "Tickets are available on Eventbrite. Search \u2018Garam Masala Dating\u2019 or visit garammasaladating.com/tickets.",
-  },
-  {
-    q: "How do I apply to be on the show?",
-    a: "Fill out the contestant application at garammasaladating.com/apply. We cast based on personality and your answers, not looks.",
-  },
-];
-
-const faqJsonLd = JSON.stringify({
-  "@context": "https://schema.org",
-  "@type": "FAQPage",
-  mainEntity: HOME_FAQS.map(({ q, a }) => ({
-    "@type": "Question",
-    name: q,
-    acceptedAnswer: { "@type": "Answer", text: a },
-  })),
-});
-
 // Individual Event JSON-LD blocks (one per upcoming show)
 const today = new Date().toISOString().slice(0, 10);
 const upcomingForSchema = events.filter((e) => !e.hidden && e.isoDate && e.isoDate >= today);
@@ -91,13 +57,11 @@ const eventSchemas = buildEventSchemas(upcomingForSchema);
   hideNav={true}
 >
   <Fragment slot="head">
-    <meta name="keywords" content="live dating show NYC, south asian comedy show, indian dating show new york, comedy dating show, desi dating show, live comedy show NYC, indian matchmaking live" />
     <script type="application/ld+json" set:html={orgJsonLd} />
     <script type="application/ld+json" set:html={websiteJsonLd} />
     {eventSchemas.map((schema) => (
       <script type="application/ld+json" set:html={schema} />
     ))}
-    <script type="application/ld+json" set:html={faqJsonLd} />
   </Fragment>
 
   <HomeNav ticketsUrl={firstTicketUrl} />

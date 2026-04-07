@@ -23,12 +23,13 @@ service cloud.firestore {
 
     function validSubscriber() {
       let d = request.resource.data;
-      return d.keys().hasOnly(['email', 'phone', 'source', 'createdAt'])
+      return d.keys().hasOnly(['email', 'phone', 'source', 'city', 'createdAt'])
         && d.keys().hasAll(['email', 'source', 'createdAt'])
         && d.email is string && d.email.size() > 0 && d.email.size() <= 320
         && d.source is string && d.source.size() > 0 && d.source.size() <= 50
         && d.createdAt is string && d.createdAt.size() > 0 && d.createdAt.size() <= 30
-        && (!('phone' in d.keys()) || (d.phone is string && d.phone.size() > 0 && d.phone.size() <= 20));
+        && (!('phone' in d.keys()) || (d.phone is string && d.phone.size() > 0 && d.phone.size() <= 20))
+        && (!('city' in d.keys()) || (d.city is string && d.city.size() > 0 && d.city.size() <= 100));
     }
 
     match /applications/{doc} {

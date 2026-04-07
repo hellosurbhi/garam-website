@@ -48,7 +48,6 @@
   --font-playfair: "Playfair Display";
   --font-body: "Nunito";
   --font-cormorant: "Cormorant Garamond";
-  --font-jetbrains: "Nunito";
   /* legacy aliases — used only by admin components */
   --cream: #FFF8F0;
   --text: #1A1A1A;
@@ -58,7 +57,7 @@
 
   /* brand palette */
   --brand-red: #DC2626;
-  --brand-red-rgb: 233, 30, 118;
+  --brand-red-rgb: 220, 38, 38;
   --brand-red-dark: #b91c1c;
   --electric-yellow: #FFD600;
   --off-white: #FFF8F0;
@@ -66,6 +65,8 @@
   --ink: #111;
   --spice-orange: #FF6D00;
   --muted: #888;
+  --text-secondary: #555;
+  --text-tertiary: #777;
 }
 
 *,

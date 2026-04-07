@@ -61,7 +61,7 @@
   border: none;
   cursor: pointer;
   padding: 0;
-  min-height: 48px;
+  min-height: var(--touch-target);
 }
 
 .titleArea {
@@ -131,7 +131,7 @@
 
 .retryButton {
   width: 100%;
-  min-height: 48px;
+  min-height: var(--touch-target);
   padding: 14px 16px;
   border-radius: 12px;
   border: 1px dashed rgba(0, 0, 0, 0.15);
@@ -222,7 +222,7 @@
 .typeButton {
   flex: 1;
   padding: 12px 16px;
-  min-height: 48px;
+  min-height: var(--touch-target);
   border-radius: 100px;
   border: 1px solid rgba(0, 0, 0, 0.15);
   background: transparent;
@@ -459,7 +459,7 @@
   font-size: 15px;
   color: #3D3532;
   cursor: pointer;
-  min-height: 48px;
+  min-height: var(--touch-target);
 }
 
 .radioInput {
@@ -479,7 +479,7 @@
   font-size: 15px;
   color: #3D3532;
   line-height: 1.5;
-  min-height: 48px;
+  min-height: var(--touch-target);
 }
 
 .checkInput {
@@ -547,8 +547,8 @@
   background: none;
   border: none;
   padding: 8px;
-  min-width: 48px;
-  min-height: 48px;
+  min-width: var(--touch-target);
+  min-height: var(--touch-target);
   cursor: pointer;
   color: #888;
   display: flex;
@@ -762,7 +762,7 @@
   border-radius: 100px;
   text-decoration: none;
   transition: background 0.2s ease-out;
-  min-height: 48px;
+  min-height: var(--touch-target);
 }
 
 .successTicketButton:hover {

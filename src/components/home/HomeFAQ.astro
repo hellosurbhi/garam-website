@@ -85,14 +85,14 @@ import { HOME_FAQS as faqs } from '@/data/copy';
     transition: color 0.2s;
     gap: 16px;
     list-style: none;
-    min-height: 48px;
+    min-height: var(--touch-target);
   }
   .faq-q::-webkit-details-marker { display: none; }
   .faq-q::marker { display: none; content: ''; }
   .faq-q:hover { color: var(--brand-red); }
   .faq-toggle {
-    width: 48px;
-    height: 48px;
+    width: var(--touch-target);
+    height: var(--touch-target);
     border-radius: 50%;
     background: var(--off-white);
     border: 1.5px solid #ddd;
@@ -162,7 +162,7 @@ import { HOME_FAQS as faqs } from '@/data/copy';
     padding: 14px 32px;
     border-radius: 50px;
     text-decoration: none;
-    min-height: 48px;
+    min-height: var(--touch-target);
     transition: background 0.2s;
   }
   .faq-cta-btn:hover { background: var(--brand-red-dark); }

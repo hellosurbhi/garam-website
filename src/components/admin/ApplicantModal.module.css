@@ -63,8 +63,8 @@
   border: none;
   border-radius: 100px;
   padding: 6px;
-  min-width: 48px;
-  min-height: 48px;
+  min-width: var(--touch-target);
+  min-height: var(--touch-target);
   cursor: pointer;
   display: flex;
   align-items: center;

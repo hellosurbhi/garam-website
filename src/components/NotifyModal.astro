@@ -137,8 +137,8 @@ const { source = '' } = Astro.props;
     border: none;
     color: var(--muted);
     cursor: pointer;
-    min-width: 48px;
-    min-height: 48px;
+    min-width: var(--touch-target);
+    min-height: var(--touch-target);
     padding: 12px;
     display: flex;
     align-items: center;
@@ -172,7 +172,7 @@ const { source = '' } = Astro.props;
     font-family: var(--font-body), sans-serif;
     outline: none;
     transition: border-color 0.2s;
-    min-height: 48px;
+    min-height: var(--touch-target);
   }
   .modal-form input:focus { border-color: var(--brand-red); }
   .modal-error {
@@ -194,7 +194,7 @@ const { source = '' } = Astro.props;
     letter-spacing: 1px;
     cursor: pointer;
     transition: background 0.2s;
-    min-height: 48px;
+    min-height: var(--touch-target);
     white-space: nowrap;
     width: 100%;
   }

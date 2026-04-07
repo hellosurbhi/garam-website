@@ -295,7 +295,7 @@ const eventSchemas = buildEventSchemas(upcomingForSchema);
     font-family: var(--font-body), sans-serif;
     outline: none;
     transition: border-color 0.2s;
-    min-height: 48px;
+    min-height: var(--touch-target);
   }
   .popup-form input:focus {
     border-color: var(--brand-red);
@@ -313,7 +313,7 @@ const eventSchemas = buildEventSchemas(upcomingForSchema);
     letter-spacing: 1px;
     cursor: pointer;
     transition: background 0.2s;
-    min-height: 48px;
+    min-height: var(--touch-target);
     white-space: nowrap;
     width: 100%;
   }

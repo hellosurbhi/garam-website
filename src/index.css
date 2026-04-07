@@ -67,6 +67,9 @@
   --muted: #6b6b6b;
   --text-secondary: #555;
   --text-tertiary: #777;
+
+  /* accessibility */
+  --touch-target: 48px;
 }
 
 *,

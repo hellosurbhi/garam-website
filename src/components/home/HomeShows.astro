@@ -240,7 +240,7 @@ function parseDay(dateStr: string): string {
     font-size: 22px;
     background: none;
     border: none;
-    min-height: 48px;
+    min-height: var(--touch-target);
     border-bottom: 1px solid rgba(255, 214, 0, 0.4);
     font-family: var(--font-cormorant), serif;
     font-style: italic;
@@ -338,7 +338,7 @@ function parseDay(dateStr: string): string {
     font-family: var(--font-body), sans-serif;
     outline: none;
     transition: border-color 0.2s;
-    min-height: 48px;
+    min-height: var(--touch-target);
   }
   .modal-form input:focus { border-color: var(--brand-red); }
   .modal-submit {
@@ -354,7 +354,7 @@ function parseDay(dateStr: string): string {
     letter-spacing: 1px;
     cursor: pointer;
     transition: background 0.2s;
-    min-height: 48px;
+    min-height: var(--touch-target);
     width: 100%;
   }
   .modal-submit:hover { background: var(--brand-red-dark); }

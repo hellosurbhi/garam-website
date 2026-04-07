@@ -22,11 +22,13 @@ const pathname = Astro.url.pathname;
   const nav = document.getElementById('home-nav');
   const marquee = document.querySelector('.marquee') as HTMLElement;
   if (nav && marquee) {
-    window.addEventListener('scroll', () => {
+    const updateScrolled = () => {
       const navHeight = nav.offsetHeight;
       const trigger = marquee.offsetTop - navHeight;
       nav.classList.toggle('scrolled', window.scrollY >= trigger);
-    }, { passive: true });
+    };
+    window.addEventListener('scroll', updateScrolled, { passive: true });
+    updateScrolled();
   }
 </script>
 
@@ -55,6 +57,7 @@ const pathname = Astro.url.pathname;
     text-decoration: none;
     display: flex;
     align-items: center;
+    min-height: var(--touch-target);
   }
   .nav-logo-img {
     height: 28px;

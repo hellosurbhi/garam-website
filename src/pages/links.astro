@@ -352,7 +352,8 @@ const reversedPress = [...pressItems].reverse();
     transition: transform 0.25s ease, box-shadow 0.25s ease;
     transform: scale(1);
     box-shadow: 0 2px 12px rgba(var(--brand-red-rgb), 0.25);
-    white-space: nowrap;
+    white-space: normal;
+    overflow-wrap: anywhere;
   }
 
   .primary-link:hover {
@@ -414,7 +415,7 @@ const reversedPress = [...pressItems].reverse();
 
   .social-row {
     display: flex;
-    flex-wrap: nowrap;
+    flex-wrap: wrap;
     justify-content: center;
     gap: 12px;
     margin-top: 36px;

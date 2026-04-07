@@ -91,6 +91,10 @@ const pathname = Astro.url.pathname;
   .page-nav-pill:hover {
     border-color: rgba(26, 26, 26, 0.2);
   }
+  .page-nav-pill:focus-visible {
+    outline: 2px solid var(--brand-red);
+    outline-offset: 2px;
+  }
   .page-nav-pill--primary {
     background: var(--brand-red);
     color: white;

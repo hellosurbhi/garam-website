@@ -547,7 +547,10 @@ const breadcrumbJsonLd = buildBreadcrumbJsonLd([
     font-family: var(--font-body), sans-serif;
     margin-top: 12px;
     transition: color 0.2s;
-    padding: 4px;
+    padding: 12px 16px;
+    min-height: var(--touch-target);
+    display: inline-flex;
+    align-items: center;
     cursor: pointer;
   }
 
@@ -604,11 +607,14 @@ const breadcrumbJsonLd = buildBreadcrumbJsonLd([
     background: none;
     border: none;
     color: var(--muted);
-    padding: 4px;
+    padding: 12px;
+    min-width: var(--touch-target);
+    min-height: var(--touch-target);
     display: flex;
     align-items: center;
     justify-content: center;
     transition: color 0.2s;
+    cursor: pointer;
   }
   .modal-close:hover { color: var(--charcoal); }
   .modal-title {

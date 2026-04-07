@@ -4,7 +4,7 @@ import HomeNav from '@/components/home/HomeNav.astro';
 ---
 
 <BaseLayout title="404 — Page Not Found | Garam Masala Dating" description="This page doesn't exist." hideNav={true}>
-  <canvas id="glCanvas" class="not-found-shader"></canvas>
+  <canvas id="glCanvas" class="not-found-shader" aria-hidden="true"></canvas>
   <HomeNav ticketsUrl="/tickets" />
   <main id="main-content" class="not-found">
     <div class="not-found-content">
@@ -143,6 +143,12 @@ import HomeNav from '@/components/home/HomeNav.astro';
     color: var(--brand-red) !important;
   }
   footer .footer-copy {
+    color: #000 !important;
+  }
+  footer .footer-legal a {
+    color: rgba(0, 0, 0, 0.6) !important;
+  }
+  footer .footer-legal a:hover {
     color: #000 !important;
   }
   footer .footer-top {

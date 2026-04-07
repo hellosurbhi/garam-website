@@ -195,8 +195,10 @@ const regions = citiesByRegion();
   }
 
   .region-nav__link {
-    display: inline-block;
+    display: inline-flex;
+    align-items: center;
     padding: 6px 14px;
+    min-height: var(--touch-target);
     border: 1px solid rgba(0, 0, 0, 0.08);
     border-radius: 50px;
     font-family: var(--font-body);

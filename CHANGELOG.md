@@ -68,6 +68,7 @@ Removed the dedicated photo gallery section. Integrated event photos organically
 - **`src/data/copy.ts`**: Added `image`, `alt`, `pos` fields to `EXPERIENCE_STEPS`.
 
 ### Photo mapping
+
 | Placement | Photo |
 |-----------|-------|
 | Experience Step 1 | after-party (crowd) |

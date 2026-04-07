@@ -10,7 +10,7 @@ Astro SSG + React islands | Firebase Firestore + Auth | Vercel hosting | CSS cus
 
 ## Structure
 
-```
+```plaintext
 src/
   data/           # ALL content lives here — events, copy, press, socials, journal, tips, cities, icons
   components/
@@ -50,7 +50,7 @@ When adding new content (shows, press, FAQs, testimonials), update the data file
 - Hardcode user-facing text in components. All copy goes in `src/data/`.
 - Hardcode colors, fonts, or spacing. Use CSS custom properties from `:root`.
 - Hardcode external URLs in JSX. Import from data files.
-- Use font-size below 16px on interactive elements (buttons, inputs, links). iOS auto-zooms.
+- Do not use font-size below 16px on interactive elements (buttons, inputs, links) — iOS will auto-zoom.
 - Use `outline: none` without a visible `:focus-visible` replacement.
 - Add inline `style={}` props in Astro components. Use scoped `<style>` or CSS modules.
 - Use `any` type in TypeScript. Type everything.

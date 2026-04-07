@@ -6,21 +6,29 @@ const steps = EXPERIENCE_STEPS;
 <section class="experience" id="experience" aria-labelledby="exp-heading" data-reveal>
   <div class="experience-inner">
     <div class="experience-left">
-      <h2 id="exp-heading">NYC's #1 <em>Live</em> South Asian Dating Show</h2>
-      <p class="lead">Imagine The Bachelor meets Indian Matchmaking, but live on stage in New York City, hosted by two comedians who are deeply unqualified and absolutely thriving.</p>
-      <p>{SITE.description}</p>
-      <p>Whether you're South Asian or not, curious, single, coupled up, or just need a Friday night story, this is the most fun you'll have watching two people fall in love (or spectacularly not) in real time.</p>
+      <img class="exp-bg" src="/images/magic-moment.webp" alt="" width="800" height="1200" loading="lazy" aria-hidden="true" />
+      <div class="exp-content">
+        <h2 id="exp-heading">NYC's #1 <em>Live</em> South Asian Dating Show</h2>
+        <p class="lead">Imagine The Bachelor meets Indian Matchmaking, but live on stage in New York City, hosted by two comedians who are deeply unqualified and absolutely thriving.</p>
+        <p>{SITE.description}</p>
+        <p>Whether you're South Asian or not, curious, single, coupled up, or just need a Friday night story, this is the most fun you'll have watching two people fall in love (or spectacularly not) in real time.</p>
+      </div>
     </div>
-    <div class="experience-steps">
-      {steps.map((step, i) => (
-        <div class="exp-step">
-          <div class="exp-num">{String(i + 1).padStart(2, '0')}</div>
-          <div>
-            <h3>{step.title}</h3>
-            <p>{step.text}</p>
-          </div>
+    <div class="experience-right">
+      <img class="exp-bg" src="/images/pure-chaos.webp" alt="" width="1200" height="800" loading="lazy" aria-hidden="true" />
+      <div class="exp-content">
+        <div class="experience-steps">
+          {steps.map((step, i) => (
+            <div class="exp-step">
+              <div class="exp-num">{String(i + 1).padStart(2, '0')}</div>
+              <div>
+                <h3>{step.title}</h3>
+                <p>{step.text}</p>
+              </div>
+            </div>
+          ))}
         </div>
-      ))}
+      </div>
     </div>
   </div>
 </section>
@@ -28,39 +36,65 @@ const steps = EXPERIENCE_STEPS;
 <style>
   .experience {
     padding: 80px 20px;
-    background: var(--off-white);
   }
   .experience-inner {
     max-width: 1200px;
     margin: 0 auto;
     display: flex;
     flex-direction: column;
-    gap: 48px;
+    gap: 16px;
   }
+  .experience-left,
+  .experience-right {
+    position: relative;
+    overflow: hidden;
+    border-radius: 20px;
+  }
+  .exp-bg {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center 30%;
+    display: block;
+    z-index: 0;
+    opacity: 0.7;
+  }
+  .exp-content {
+    position: relative;
+    z-index: 1;
+    padding: 40px 24px;
+  }
+
   .experience-left h2 {
     font-family: var(--font-playfair), serif;
     font-size: clamp(32px, 5vw, 64px);
     font-weight: 900;
     line-height: 1.0;
-    color: var(--charcoal);
+    color: white;
     margin-bottom: 20px;
     letter-spacing: -1px;
+    text-shadow: 0 2px 16px rgba(0, 0, 0, 0.7);
   }
-  .experience-left h2 em { color: var(--brand-red); font-style: italic; }
+  .experience-left h2 em { color: var(--electric-yellow); font-style: italic; }
   .experience-left .lead {
     font-family: var(--font-cormorant), serif;
     font-size: 18px;
     font-style: italic;
-    color: var(--text-secondary);
+    color: rgba(255, 255, 255, 0.9);
     line-height: 1.65;
     margin-bottom: 24px;
+    text-shadow: 0 1px 8px rgba(0, 0, 0, 0.5);
   }
   .experience-left p {
     font-size: 16px;
-    color: var(--text-light);
+    color: rgba(255, 255, 255, 0.85);
     line-height: 1.8;
     margin-bottom: 16px;
+    text-shadow: 0 1px 8px rgba(0, 0, 0, 0.5);
   }
+
   .experience-steps {
     display: flex;
     flex-direction: column;
@@ -70,7 +104,7 @@ const steps = EXPERIENCE_STEPS;
     grid-template-columns: 48px 1fr;
     gap: 16px;
     padding: 24px 0;
-    border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.15);
     align-items: start;
   }
   .exp-step:last-child { border-bottom: none; }
@@ -80,19 +114,21 @@ const steps = EXPERIENCE_STEPS;
     font-weight: 900;
     color: var(--electric-yellow);
     line-height: 1;
-    -webkit-text-stroke: 1.5px var(--charcoal);
+    text-shadow: 0 2px 8px rgba(0, 0, 0, 0.5);
   }
   .exp-step h3 {
     font-family: var(--font-playfair), serif;
     font-size: 18px;
     font-weight: 700;
     margin-bottom: 6px;
-    color: var(--charcoal);
+    color: white;
+    text-shadow: 0 1px 8px rgba(0, 0, 0, 0.5);
   }
   .exp-step p {
     font-size: 15px;
-    color: var(--text-tertiary);
+    color: rgba(255, 255, 255, 0.85);
     line-height: 1.65;
+    text-shadow: 0 1px 6px rgba(0, 0, 0, 0.5);
   }
 
   @media (min-width: 768px) {
@@ -100,9 +136,9 @@ const steps = EXPERIENCE_STEPS;
     .experience-inner {
       display: grid;
       grid-template-columns: 1fr 1fr;
-      gap: 80px;
-      align-items: start;
+      gap: 24px;
     }
+    .exp-content { padding: 48px 40px; }
     .experience-left .lead { font-size: 20px; margin-bottom: 32px; }
     .exp-step { grid-template-columns: 56px 1fr; gap: 20px; padding: 28px 0; }
     .exp-num { font-size: 42px; }

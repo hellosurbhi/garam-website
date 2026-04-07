@@ -2,7 +2,7 @@
   background: #fff;
   border-radius: 16px;
   max-width: 640px;
-  width: calc(100% - 32px);
+  width: calc(100% - 2 * var(--dialog-gutter));
   max-height: 90vh;
   overflow-y: auto;
   position: relative;
@@ -11,7 +11,7 @@
 }
 
 .dialog::backdrop {
-  background: rgba(0, 0, 0, 0.5);
+  background: var(--backdrop);
 }
 
 .imageWrap {

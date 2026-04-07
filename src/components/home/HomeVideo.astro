@@ -33,13 +33,13 @@ import { YOUTUBE_VIDEO_ID, INSTAGRAM_REEL_URLS } from '@/lib/constants';
   </div>
 
   <div class="reels-row" id="reels-row" data-reveal>
-    {INSTAGRAM_REEL_URLS.map((url) => (
+    {INSTAGRAM_REEL_URLS.map((url, index) => (
       <div class="reel-embed">
         <blockquote
           class="instagram-media"
           data-instgrm-permalink={url}
           data-instgrm-version="14"
-        ><a href={url} target="_blank" rel="noopener noreferrer">Watch on Instagram</a></blockquote>
+        ><a href={url} target="_blank" rel="noopener noreferrer" aria-label={`Watch Instagram reel ${index + 1}`}>Watch on Instagram</a></blockquote>
       </div>
     ))}
   </div>
@@ -50,6 +50,7 @@ import { YOUTUBE_VIDEO_ID, INSTAGRAM_REEL_URLS } from '@/lib/constants';
   document.querySelector<HTMLButtonElement>('.video-facade')?.addEventListener('click', (e) => {
     const btn = e.currentTarget as HTMLButtonElement;
     const id = btn.dataset.youtubeId;
+    if (!id) return;
     const iframe = document.createElement('iframe');
     iframe.src = `https://www.youtube-nocookie.com/embed/${id}?rel=0&autoplay=1`;
     iframe.title = 'Garam Masala Dating show highlight';

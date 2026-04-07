@@ -16,9 +16,9 @@ const pathname = Astro.url.pathname;
 <script>
   const nav = document.getElementById('page-nav');
   if (nav) {
-    window.addEventListener('scroll', () => {
-      nav.classList.toggle('scrolled', window.scrollY > 10);
-    }, { passive: true });
+    const updateScrolled = () => nav.classList.toggle('scrolled', window.scrollY > 10);
+    updateScrolled();
+    window.addEventListener('scroll', updateScrolled, { passive: true });
   }
 </script>
 

@@ -165,7 +165,8 @@ export function useApplyForm() {
   function validate(): boolean {
     const errs: FormErrors = {};
     if (!form.name.trim()) errs.name = "Required";
-    if (!form.age || parseInt(form.age) < 18) errs.age = "Must be 18 or older";
+    const ageNum = parseInt(form.age, 10);
+    if (!form.age || Number.isNaN(ageNum) || ageNum < 18) errs.age = "Must be 18 or older";
     if (!form.gender) errs.gender = "Required";
     if (!form.orientation) errs.orientation = "Required";
     if (!form.country) errs.country = "Required";

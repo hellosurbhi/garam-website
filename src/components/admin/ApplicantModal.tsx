@@ -31,7 +31,10 @@ export default function ApplicantModal({ app, onClose, onUpdate, onDelete, onRes
   const dialogRef = useRef<HTMLDialogElement>(null);
 
   useEffect(() => {
-    dialogRef.current?.showModal?.();
+    const dialog = dialogRef.current;
+    if (!dialog || dialog.open || typeof dialog.showModal !== 'function') return;
+    dialog.showModal();
+    return () => { if (dialog.open) dialog.close(); };
   }, []);
 
   function handleClose() {
@@ -81,10 +84,14 @@ export default function ApplicantModal({ app, onClose, onUpdate, onDelete, onRes
   }
 
   return (
-    <dialog ref={dialogRef} className={styles.dialog} role="dialog" aria-modal="true" onClick={handleDialogClick}>
+    <dialog ref={dialogRef} className={styles.dialog} role="dialog" aria-modal="true" aria-labelledby="applicant-modal-title" onClick={handleDialogClick}>
       <div
         className={styles.imageWrap}
+        role="button"
+        tabIndex={0}
+        aria-label="Open photo preview"
         onClick={() => app.photoUrl && setLightbox(true)}
+        onKeyDown={(e) => { if ((e.key === 'Enter' || e.key === ' ') && app.photoUrl) { e.preventDefault(); setLightbox(true); } }}
       >
           {app.photoUrl ? (
             <img src={app.photoUrl} alt={app.name} className={styles.image} />
@@ -107,7 +114,7 @@ export default function ApplicantModal({ app, onClose, onUpdate, onDelete, onRes
 
         <div className={styles.body}>
           <div className={styles.nameRow}>
-            <h2 className={styles.name}>{app.name}</h2>
+            <h2 id="applicant-modal-title" className={styles.name}>{app.name}</h2>
             <span
               className={styles.statusBadge}
               style={{ '--status-color': statusColor } as React.CSSProperties}

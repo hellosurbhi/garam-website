@@ -9,6 +9,7 @@ const GALLERY_DIR = join(PUBLIC, 'images', 'gallery');
 const VERBOSE = !!process.env.VERBOSE;
 const log = (...args) => { if (VERBOSE) console.log(...args); };
 const logError = (...args) => { if (VERBOSE) console.error(...args); };
+const missingFiles = [];
 
 // Ensure output dirs exist
 [GALLERY_DIR].forEach(d => { if (!existsSync(d)) mkdirSync(d, { recursive: true }); });
@@ -36,7 +37,8 @@ const otherImages = [
 async function processImage(srcPath, outputDir, outputName, maxWidth = 1200) {
   const input = join(ROOT, srcPath);
   if (!existsSync(input)) {
-    logError(`  SKIP (not found): ${srcPath}`);
+    missingFiles.push(srcPath);
+    console.error(`  MISSING: ${srcPath}`);
     return;
   }
 
@@ -65,7 +67,8 @@ async function processImage(srcPath, outputDir, outputName, maxWidth = 1200) {
 async function processOgImage() {
   const src = join(ROOT, 'src/data/Garammasaladating-7.jpg');
   if (!existsSync(src)) {
-    logError('  SKIP OG image (not found)');
+    missingFiles.push('src/data/Garammasaladating-7.jpg');
+    console.error('  MISSING: OG image (src/data/Garammasaladating-7.jpg)');
     return;
   }
 
@@ -98,6 +101,12 @@ async function main() {
   }
 
   await processOgImage();
+
+  if (missingFiles.length > 0) {
+    console.error(`\nFailed: ${missingFiles.length} source image(s) not found:`);
+    missingFiles.forEach(f => console.error(`  - ${f}`));
+    process.exit(1);
+  }
 
   log('\nDone! All images optimized.');
 }

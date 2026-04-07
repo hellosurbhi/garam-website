@@ -159,7 +159,7 @@ const { source = '' } = Astro.props;
         successEl?.focus();
       } catch (err) {
         if (phoneErrorEl) {
-          phoneErrorEl.textContent = err instanceof Error ? err.message : 'Something went wrong. Try again or skip.';
+          phoneErrorEl.textContent = 'Something went wrong. Please try again or skip.';
           phoneErrorEl.removeAttribute('hidden');
         }
       } finally {

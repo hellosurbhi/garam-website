@@ -63,7 +63,7 @@
       document.getElementById('nl-step-2')?.removeAttribute('hidden');
     } catch (err) {
       if (errorEl) {
-        errorEl.textContent = err instanceof Error ? err.message : 'Something went wrong. Please try again.';
+        errorEl.textContent = 'Something went wrong. Please try again.';
         errorEl.removeAttribute('hidden');
       }
     } finally {
@@ -111,7 +111,7 @@
       document.getElementById('nl-success')?.removeAttribute('hidden');
     } catch (err) {
       if (phoneErrorEl) {
-        phoneErrorEl.textContent = err instanceof Error ? err.message : 'Something went wrong. Try again or skip.';
+        phoneErrorEl.textContent = 'Something went wrong. Please try again or skip.';
         phoneErrorEl.removeAttribute('hidden');
       }
     } finally {

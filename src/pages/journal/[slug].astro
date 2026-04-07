@@ -22,9 +22,10 @@ interface Props {
 }
 
 const { post, prev, next } = Astro.props;
+const publishedSlugs = new Set(journalPostsPublished.map((p) => p.slug));
 const related = post.relatedSlugs
   .map((s) => getPostBySlug(s))
-  .filter((p): p is JournalPost => p !== undefined);
+  .filter((p): p is JournalPost => p !== undefined && publishedSlugs.has(p.slug));
 
 function formatDate(iso: string): string {
   return new Date(iso).toLocaleDateString("en-US", {

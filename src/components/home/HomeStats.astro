@@ -3,29 +3,48 @@ import { STATS as stats } from '@/data/copy';
 ---
 
 <section class="stats" aria-label="Show statistics" data-reveal>
-  <h2>The Numbers Don't Lie</h2>
-  <div class="stats-grid">
-    {stats.map((stat) => (
-      <div class="stat-item">
-        <div class="stat-num">{stat.num}</div>
-        <div class="stat-label">{stat.label}</div>
-      </div>
-    ))}
+  <img class="stats-bg" src="/images/after-party.webp" alt="" width="1200" height="800" loading="lazy" aria-hidden="true" />
+  <div class="stats-inner">
+    <h2>The Numbers Don't Lie</h2>
+    <div class="stats-grid">
+      {stats.map((stat) => (
+        <div class="stat-item">
+          <div class="stat-num">{stat.num}</div>
+          <div class="stat-label">{stat.label}</div>
+        </div>
+      ))}
+    </div>
   </div>
 </section>
 
 <style>
   .stats {
     padding: 80px 20px;
-    background: var(--electric-yellow);
     text-align: center;
+    position: relative;
+    overflow: hidden;
+  }
+  .stats-bg {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center center;
+    display: block;
+    z-index: 0;
+  }
+  .stats-inner {
+    position: relative;
+    z-index: 1;
   }
   .stats h2 {
     font-family: var(--font-playfair), serif;
     font-size: clamp(28px, 4vw, 52px);
     font-weight: 900;
-    color: var(--charcoal);
+    color: white;
     margin-bottom: 48px;
+    text-shadow: 0 2px 12px rgba(0, 0, 0, 0.5);
   }
   .stats-grid {
     display: flex;
@@ -35,22 +54,25 @@ import { STATS as stats } from '@/data/copy';
     max-width: 900px;
     margin: 0 auto;
   }
-  .stat-item { flex: 0 1 33.33%; padding: 0 10px; }
+  .stat-item {
+    flex: 0 1 33.33%;
+    padding: 0 10px;
+  }
   .stat-num {
     font-family: var(--font-playfair), serif;
     font-size: 32px;
     font-weight: 900;
-    color: var(--brand-red);
+    color: var(--electric-yellow);
     line-height: 1;
+    text-shadow: 0 2px 8px rgba(0, 0, 0, 0.4);
   }
   .stat-label {
     font-size: 12px;
     font-weight: 700;
     text-transform: uppercase;
     letter-spacing: 1.5px;
-    color: var(--charcoal);
+    color: rgba(255, 255, 255, 0.7);
     margin-top: 8px;
-    opacity: 0.7;
     white-space: nowrap;
   }
 
@@ -61,7 +83,7 @@ import { STATS as stats } from '@/data/copy';
     .stat-item {
       flex: 1;
       padding: 0 40px;
-      border-right: 1px solid rgba(0, 0, 0, 0.12);
+      border-right: 1px solid rgba(255, 255, 255, 0.2);
     }
     .stat-item:last-child { border-right: none; }
     .stat-num { font-size: 72px; }

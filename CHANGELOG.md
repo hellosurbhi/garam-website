@@ -1,5 +1,27 @@
 # Changelog
 
+## redesign(contestant-prep): simplify layout and unify visual language (2026-04-07)
+
+Complete visual overhaul of the `/contestant-prep` page — the private briefing guide sent to show contestants. The page had two core problems: a `max-width: 560px` container leaving excessive dead space at wider viewports, and six competing visual treatments (yellow text-stroked numbers, italic red numbers, red bullet dots, full card backgrounds, red-tinted callout cards, 40px yellow divider bars) all at the same visual weight making the content hard to scan quickly.
+
+### What changed
+- **Layout**: `max-width` 560→720px, desktop horizontal padding 48→64px. On a 1400px screen content fills ~720px instead of ~560px.
+- **Section spacing**: Removed all `<Divider />` components (yellow 40px horizontal bars). Replaced with `margin-top: 48px` via a `.section` wrapper class — cleaner vertical rhythm.
+- **Golden Rules**: Removed yellow text-stroke from numbers (replaced with plain bold red). Added yellow left-border accent to each rule card. Section header is now the primary/dominant heading (`clamp(22px, 5vw, 28px)` weight-900) to establish hierarchy.
+- **Questions**: Body font bumped 15→16px, color lightened to `--charcoal` (was `--text-light`), row gap 10→14px for breathing room.
+- **Come Prepared**: Replaced white card + red bullet dot pattern with simple ✓ checklist rows — less visual noise, same information.
+- **Day Of**: Merged "What to Wear" and "Bring Friends" (two identical-looking single-paragraph sections) into one "Day Of" section with a dash-list. Eliminates a redundant section header.
+- **Arrival times**: Added `border-top: 4px solid var(--electric-yellow)` accent to time cards.
+- **Notes (Guys/Girls)**: Replaced red-tinted background callout cards with left-border note style (`border-left: 4px solid var(--brand-red)`, no background). Both notes share one `.section` wrapper.
+- **Unused imports**: Removed `Clock`, `Users`, `Shirt` from Lucide import.
+
+### Files changed
+- `src/components/ContestantPrepPage.tsx`
+- `src/components/ContestantPrepPage.module.css`
+
+### Decisions
+Chose wider column over tabs — contestants read this linearly before going on stage, not as reference during. Tabs would add interaction complexity for no real benefit. Unified visual language (one accent color per element type, one size treatment per hierarchy level) rather than adding more variety.
+
 ## Accessibility and security bug fixes (2026-04-07)
 
 Resolved 9 open bugs from BUGS.md — all were accessibility or security issues that didn't require external services.

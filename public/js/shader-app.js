@@ -17,6 +17,11 @@ const CONFIG = {
 };
 
 // ============================================
+// SVG embedded as data URI
+// ============================================
+const SVG_DATA_URI = "data:image/svg+xml;base64,PHN2ZyB4bWxucz0naHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmcnIHZpZXdCb3g9JzAgMCAxIDEnPjwvc3ZnPg==";
+
+// ============================================
 // WebGL Setup
 // ============================================
 const canvas = document.getElementById('glCanvas');
@@ -46,7 +51,7 @@ img.onload = () => {
     updateTextCanvas();
     uploadMaskTexture();
 };
-img.src = '/images/logo.svg';
+img.src = SVG_DATA_URI;
 
 function updateTextCanvas() {
     const size = CONFIG.size;

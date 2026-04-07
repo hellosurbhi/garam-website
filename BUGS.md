@@ -2,6 +2,15 @@
 
 ## Open
 
+### [HIGH] Firebase Auth blocked by CSP in production — apply form silently fails
+
+- **Date:** 2026-04-07
+- **File:** `vercel.json`
+- **Status:** Fixed (2026-04-07)
+- **Severity:** High
+- **What happened:** `connect-src` in the Vercel CSP was missing `https://identitytoolkit.googleapis.com` and `https://securetoken.googleapis.com`. The apply form calls `signInAnonymously()` before writing to Firestore — that call requires `identitytoolkit.googleapis.com`. Without it, Firebase Auth is blocked in production. The catch block swallows the error and shows an error toast, but the form never submits. No data reaches Firestore.
+- **Fix:** Added both domains to `connect-src` in `vercel.json`.
+
 ### [MEDIUM] No rate limiting on API endpoints
 
 - **Date:** 2026-04-04

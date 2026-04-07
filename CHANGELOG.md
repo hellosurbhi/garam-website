@@ -1,5 +1,20 @@
 # Changelog
 
+## fix: revert shader logo, fix Firebase Auth CSP, Instagram post-load (2026-04-07)
+
+### What changed
+
+**shader-app.js:** Reverted `img.src` from `/images/logo.svg` back to the blank 1×1 SVG data URI. The CodeRabbit commit (7d30c7e) had replaced the placeholder with the real logo, causing it to appear as a white watermark in the hero background and making the fluid animation look washed out/pink. The blank SVG restores the pure red/yellow fluid look. The `maskDirty` performance improvement (don't upload texture every RAF frame) is preserved.
+
+**vercel.json:** Added `https://identitytoolkit.googleapis.com` and `https://securetoken.googleapis.com` to `connect-src`. These are required for `signInAnonymously()` (Firebase Auth). Missing them caused the apply form to fail silently in production — the form appeared to submit but no data reached Firestore.
+
+**HomeVideo.astro:** Instagram `embed.js` now loads via `requestIdleCallback` after `window.load` instead of waiting for scroll intersection. This means embeds are populated before the user scrolls to the reels section. LCP is unaffected because the load is deferred until after `window.load`.
+
+### Files changed
+- `public/js/shader-app.js`
+- `vercel.json`
+- `src/components/home/HomeVideo.astro`
+
 ## fix: address all remaining CodeRabbit PR #11 review comments (2026-04-07)
 
 ### What changed

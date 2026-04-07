@@ -60,23 +60,21 @@ import { YOUTUBE_VIDEO_ID, INSTAGRAM_REEL_URLS } from '@/lib/constants';
     btn.replaceWith(iframe);
   });
 
-  // Instagram: lazy-load embed.js only when reels row enters the viewport
-  const reelsRow = document.getElementById('reels-row');
-  if (reelsRow) {
-    const observer = new IntersectionObserver(
-      (entries, obs) => {
-        if (entries[0].isIntersecting) {
-          const script = document.createElement('script');
-          script.src = 'https://www.instagram.com/embed.js';
-          script.async = true;
-          document.body.appendChild(script);
-          obs.disconnect();
-        }
-      },
-      { rootMargin: '200px' }
-    );
-    observer.observe(reelsRow);
+  // Instagram: load embed.js in idle time after page load (post-LCP)
+  function loadInstagramEmbed() {
+    const script = document.createElement('script');
+    script.src = 'https://www.instagram.com/embed.js';
+    script.async = true;
+    document.body.appendChild(script);
   }
+
+  window.addEventListener('load', () => {
+    if ('requestIdleCallback' in window) {
+      requestIdleCallback(() => loadInstagramEmbed(), { timeout: 3000 });
+    } else {
+      setTimeout(loadInstagramEmbed, 1000);
+    }
+  }, { once: true });
 </script>
 
 <style>

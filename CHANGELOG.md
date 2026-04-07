@@ -1,5 +1,26 @@
 # Changelog
 
+## Visual overhaul — CTAs, cursor, pages, photos, cleanup (2026-04-07)
+
+Batch of visual fixes, page improvements, and code cleanup based on direct user feedback.
+
+### What changed
+- **Cursor**: turns white on dark/red sections (was invisible on HomeShows/HomeSignup)
+- **Hero**: added "Next show" pill with date/city above CTA buttons
+- **Experience/FAQ CTAs**: now side by side (flex-row) instead of stacked, Apply text bigger
+- **HomeShows**: removed nested div for cleaner alignment, tightened proof line
+- **HomeFAQ**: added border-top on first item as visual divider
+- **Tickets page**: bumped h1 (32→36px), intro (17→19px), proof (12→14px) font sizes
+- **FAQ page**: replaced 2-image hero with higgs-field.webp bg at 6% opacity, tightened padding, bigger question/answer fonts
+- **Apply page**: bigger title (clamp 36-48px), removed white card panel (open layout on off-white), red labels, rounder inputs, bigger submit button
+- **Hosts page**: moved action shot below bios (important content above fold)
+- **Cities pages**: added object-position center 35% to bias toward faces, reduced max-height
+- **Journal**: tightened padding across index and article pages, reduced AuthorBio whitespace
+- **Images**: deleted hero.jpeg/hero-mobile.jpeg dupes (1.6MB saved), renamed /hf/ → /ai-art/, fixed HomePhotos gallery paths (removed nonexistent /gallery/ prefix), dropped missing dance-off entry
+- **Class names**: .ph → .photo, .ph-span → .photo--wide, .mo → .month, .dy → .day
+
+---
+
 ## redesign(contestant-prep): simplify layout and unify visual language (2026-04-07)
 
 Complete visual overhaul of the `/contestant-prep` page — the private briefing guide sent to show contestants. The page had two core problems: a `max-width: 560px` container leaving excessive dead space at wider viewports, and six competing visual treatments (yellow text-stroked numbers, italic red numbers, red bullet dots, full card backgrounds, red-tinted callout cards, 40px yellow divider bars) all at the same visual weight making the content hard to scan quickly.

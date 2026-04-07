@@ -71,22 +71,6 @@ function SectionHeader({
   );
 }
 
-/* ─── Note card ────────────────────────────────────────────────── */
-
-function Note({
-  title,
-  children,
-}: {
-  title: string;
-  children: React.ReactNode;
-}) {
-  return (
-    <div className={styles.note}>
-      <p className={styles.noteLabel}>{title}</p>
-      <div className={styles.noteBody}>{children}</div>
-    </div>
-  );
-}
 
 /* ─── Prep guide content ───────────────────────────────────────── */
 
@@ -149,8 +133,8 @@ function PrepGuide() {
             Dating!
           </h1>
           <p className={styles.headerSubtitle}>
-            You&apos;re about to be on a live South Asian dating show in front of 250
-            people. Here&apos;s the secret: we don&apos;t need you to be funny.{" "}
+            You&apos;re about to be on a live South Asian dating show in front of a live
+            audience. Here&apos;s the secret: we don&apos;t need you to be funny.{" "}
             <strong className={styles.headerSubtitleStrong}>We need you to be REAL.</strong>
           </p>
         </div>
@@ -170,7 +154,8 @@ function PrepGuide() {
 
         {/* ── Questions ── */}
         <div className={styles.section}>
-          <SectionHeader title="Questions You Will Be Asked" />
+          <SectionHeader title="Questions You May Be Asked" />
+          <p className={styles.sectionNote}>Prepare 30–60 second answers for all of these.</p>
           <div className={styles.questionsList}>
             {QUESTIONS.map((q, i) => (
               <div key={i} className={styles.questionRow}>
@@ -212,33 +197,35 @@ function PrepGuide() {
           </ul>
         </div>
 
-        {/* ── Arrival Times ── */}
+        {/* ── For Guys / For Girls ── */}
         <div className={styles.section}>
-          <SectionHeader title="Arrival Times" />
-          <div className={styles.timeGrid}>
-            {[
-              { label: "Guys", time: "5:20 PM sharp" },
-              { label: "Girls", time: "5:30 PM sharp" },
-            ].map((item) => (
-              <div key={item.label} className={styles.timeCard}>
-                <p className={styles.timeLabel}>{item.label}</p>
-                <p className={styles.timeValue}>{item.time}</p>
-              </div>
-            ))}
+          <SectionHeader title="For Guys &amp; Girls" />
+          <p className={styles.genderSharedNote}>
+            We stagger arrival by 15 minutes so guys and girls don&apos;t see each other
+            before the show &mdash; it keeps the magic of those first-impression moments
+            on stage.
+          </p>
+          <div className={styles.genderGrid}>
+            <div className={styles.genderColumn}>
+              <p className={styles.genderHeading}>Guys</p>
+              <p className={styles.genderTimeLabel}>Arrive</p>
+              <p className={styles.genderTimeValue}>5:20 PM sharp</p>
+              <p className={styles.genderNote}>
+                Audiences tend to root for the girls. Don&apos;t try to win the crowd
+                by being cocky or mean &mdash; it backfires every time. Charming,
+                genuine, and a little self-deprecating wins. Confident but humble.
+              </p>
+            </div>
+            <div className={styles.genderColumn}>
+              <p className={styles.genderHeading}>Girls</p>
+              <p className={styles.genderTimeLabel}>Arrive</p>
+              <p className={styles.genderTimeValue}>5:30 PM sharp</p>
+              <p className={styles.genderNote}>
+                You&apos;re allowed to not like someone. Say it. &ldquo;I&apos;m not
+                feeling this&rdquo; is great content. Don&apos;t fake chemistry.
+              </p>
+            </div>
           </div>
-        </div>
-
-        {/* ── Notes ── */}
-        <div className={styles.section}>
-          <Note title="Note for Guys">
-            Audiences tend to root for the girls. Don&apos;t try to win the crowd by
-            being cocky or mean &mdash; it backfires every time. Charming, genuine,
-            and a little self-deprecating is what wins. Confident but humble.
-          </Note>
-          <Note title="Note for Girls">
-            You&apos;re allowed to not like someone. Say it. &ldquo;I&apos;m not
-            feeling this&rdquo; is great content. Don&apos;t fake chemistry.
-          </Note>
         </div>
 
         {/* ── Footer ── */}

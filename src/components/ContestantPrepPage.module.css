@@ -313,62 +313,74 @@
   line-height: 1.65;
 }
 
-/* ─── Arrival time cards ──────────────────────────────────────── */
+/* ─── Section note (e.g. under Questions header) ─────────────── */
 
-.timeGrid {
-  display: flex;
-  gap: 12px;
-  flex-wrap: wrap;
-}
-
-.timeCard {
-  flex: 1 1 140px;
-  padding: 18px 20px;
-  border-radius: 12px;
-  background: white;
-  border: 1px solid rgba(0, 0, 0, 0.06);
-  text-align: center;
-}
-
-.timeLabel {
+.sectionNote {
   font-family: var(--font-body);
-  font-size: 11px;
-  text-transform: uppercase;
-  letter-spacing: 0.15em;
-  color: var(--brand-red);
-  margin-bottom: 6px;
+  font-size: 15px;
+  color: var(--muted);
+  line-height: 1.5;
+  margin-top: -8px;
+  margin-bottom: 20px;
 }
 
-.timeValue {
-  font-family: var(--font-playfair);
-  font-size: 20px;
-  font-weight: 700;
-  color: var(--charcoal);
-}
+/* ─── Guys / Girls two-column section ────────────────────────── */
 
-/* ─── Notes ───────────────────────────────────────────────────── */
-
-.note {
-  border-left: 4px solid var(--brand-red);
-  padding: 12px 0 12px 20px;
-  margin-bottom: 16px;
-}
-
-.noteLabel {
-  font-family: var(--font-body);
-  font-size: 11px;
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 0.15em;
-  color: var(--brand-red);
-  margin-bottom: 6px;
-}
-
-.noteBody {
+.genderSharedNote {
   font-family: var(--font-body);
   font-size: 15px;
   color: var(--text-secondary);
+  line-height: 1.6;
+  margin-bottom: 20px;
+}
+
+.genderGrid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+
+.genderColumn {
+  background: white;
+  border: 1px solid rgba(0, 0, 0, 0.06);
+  border-radius: 12px;
+  padding: 20px;
+}
+
+.genderHeading {
+  font-family: var(--font-body);
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.15em;
+  color: var(--brand-red);
+  margin-bottom: 12px;
+}
+
+.genderTimeLabel {
+  font-family: var(--font-body);
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--muted);
+  margin-bottom: 2px;
+}
+
+.genderTimeValue {
+  font-family: var(--font-playfair);
+  font-size: 22px;
+  font-weight: 700;
+  color: var(--charcoal);
+  margin-bottom: 16px;
+}
+
+.genderNote {
+  font-family: var(--font-body);
+  font-size: 14px;
+  color: var(--text-secondary);
   line-height: 1.65;
+  border-top: 1px solid rgba(0, 0, 0, 0.06);
+  padding-top: 14px;
 }
 
 /* ─── Footer ──────────────────────────────────────────────────── */
@@ -394,16 +406,18 @@
     padding: 80px 64px 120px;
   }
 
-  .timeCard {
-    padding: 24px 28px;
-  }
-
-  .note {
-    padding: 14px 0 14px 24px;
+  .genderColumn {
+    padding: 24px;
   }
 }
 
 /* ─── Reduced motion ──────────────────────────────────────────── */
+
+@media (max-width: 480px) {
+  .genderGrid {
+    grid-template-columns: 1fr;
+  }
+}
 
 @media (prefers-reduced-motion: reduce) {
   .page,

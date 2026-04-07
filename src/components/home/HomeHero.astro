@@ -331,13 +331,69 @@ function formatTime(t?: string): string {
     .hero-content { width: 100%; }
   }
 
+  /* Narrow phones (<=430px) */
+  @media (max-width: 430px) {
+    .hero { padding-left: 12px; padding-right: 12px; }
+    .hero-content { padding-left: 8px; padding-right: 8px; }
+    /* block + max-content is the only reliable way to get inline-flex text to wrap */
+    .hero-eyebrow {
+      display: block;
+      width: max-content;
+      max-width: 100%;
+      margin-left: auto;
+      margin-right: auto;
+      white-space: normal;
+      text-align: center;
+      padding: 10px 14px;
+      letter-spacing: 1px;
+      font-size: 11px;
+    }
+    /* let venue wrap instead of truncate */
+    .next-show-venue {
+      white-space: normal;
+      overflow: visible;
+      text-overflow: clip;
+    }
+    /* allow button text to wrap on narrow screens */
+    .btn { white-space: normal; padding: 14px 16px; letter-spacing: 1px; }
+    .next-show { gap: 12px; }
+    .next-show-btn { padding: 8px 16px; }
+  }
+
+  /* Very narrow phones (<=390px) */
+  @media (max-width: 390px) {
+    .hero h1 { font-size: clamp(52px, 18vw, 70px); }
+    .hero-sub { font-size: 18px; word-break: normal; overflow-wrap: break-word; }
+    .btn { padding: 14px 14px; letter-spacing: 0.5px; font-size: 14px; }
+    .next-show-day { font-size: 28px; }
+    .next-show-btn { padding: 8px 14px; font-size: 11px; }
+  }
+
+  /* Ultra-narrow phones (<=340px) — Galaxy Fold outer screen */
+  @media (max-width: 340px) {
+    .hero { padding-left: 8px; padding-right: 8px; }
+    .hero-content { padding-left: 4px; padding-right: 4px; }
+    .hero h1 { font-size: clamp(44px, 16vw, 52px); }
+    .hero-sub { font-size: 16px; }
+    .hero-eyebrow { font-size: 10px; letter-spacing: 0.5px; padding: 8px 10px; }
+  }
+
   @media (min-width: 768px) {
     .hero { padding: 80px 48px 60px; }
     .hero-content { padding: 32px 48px; }
     .hero-eyebrow { font-size: 14px; padding: 16px 36px; }
     .hero-sub { font-size: 22px; margin-bottom: 32px; }
+    .btn { font-size: 16px; padding: 18px 44px; }
+  }
+
+  @media (min-width: 1025px) {
     .hero-ctas { flex-direction: row; flex-wrap: wrap; align-items: center; justify-content: center; }
-    .btn { font-size: 16px; padding: 18px 44px; display: inline-flex; width: auto; }
+    .btn { display: inline-flex; width: auto; }
+  }
+
+  @media (max-width: 1024px) {
+    .scroll-cue { display: none; }
+    .hero-sub br { display: none; }
   }
 
   @media (prefers-reduced-motion: reduce) {

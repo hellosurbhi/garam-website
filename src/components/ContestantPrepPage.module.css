@@ -1,12 +1,20 @@
 /* ─── Animations ──────────────────────────────────────────────── */
 
 @keyframes prep-spin {
-  to { transform: rotate(360deg); }
+  to {
+    transform: rotate(360deg);
+  }
 }
 
 @keyframes fade-in {
-  from { opacity: 0; transform: translateY(12px); }
-  to   { opacity: 1; transform: translateY(0); }
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 /* ─── Loading ─────────────────────────────────────────────────── */
@@ -78,13 +86,12 @@
 .container {
   max-width: 680px;
   margin: 0 auto;
-  padding: 40px 16px 64px;
+  padding: 40px 16px;
 }
 
 /* ─── Cover / header ──────────────────────────────────────────── */
 
 .cover {
-  margin-bottom: 32px;
   padding-bottom: 0;
   border-bottom: none;
   text-align: center;
@@ -222,7 +229,10 @@
   border: 1.5px solid rgba(0, 0, 0, 0.12);
   border-radius: 8px;
   cursor: pointer;
-  transition: border-color 0.15s, color 0.15s, background 0.15s;
+  transition:
+    border-color 0.15s,
+    color 0.15s,
+    background 0.15s;
   min-height: 48px;
 }
 
@@ -247,7 +257,7 @@
 /* ─── Footer ──────────────────────────────────────────────────── */
 
 .footer {
-  margin-top: 48px;
+  margin-top: 40px;
   padding-top: 0;
   border-top: none;
   font-family: var(--font-body);
@@ -260,7 +270,7 @@
 
 @media (min-width: 768px) {
   .container {
-    padding: 56px 32px 80px;
+    padding: 56px 32px;
   }
 }
 

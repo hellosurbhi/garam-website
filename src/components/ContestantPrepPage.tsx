@@ -60,9 +60,8 @@ function PrepGuide() {
 
         {/* ── Cover ── */}
         <header className={styles.cover}>
-          <p className={styles.coverEmoji}>🌶️</p>
           <h1 className={styles.coverTitle}>
-            Contestant Orientation
+            🌶️ Contestant Orientation
           </h1>
           <p className={styles.coverShow}>Garam Masala Dating</p>
           <p className={styles.coverIntro}>

@@ -89,11 +89,6 @@
   border-bottom: 2px solid var(--charcoal);
 }
 
-.coverEmoji {
-  font-size: 2rem;
-  margin-bottom: 16px;
-}
-
 .coverTitle {
   font-family: var(--font-playfair);
   font-size: clamp(28px, 6vw, 40px);

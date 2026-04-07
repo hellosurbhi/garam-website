@@ -1,5 +1,16 @@
 # Changelog
 
+## chore: remove unused shader export dir and gitignore it (2026-04-07)
+
+### What changed
+- Removed `surbhi-shader-export 4/` from git tracking — standalone dev artifact not referenced by any page, was deploying as dead weight to Vercel.
+- Added `surbhi-shader-export*/` to `.gitignore` to prevent re-tracking.
+
+### Files affected
+`.gitignore`
+
+---
+
 ## fix(qa): resolve all critical and warning issues from QA pass (2026-04-07)
 
 ### What changed

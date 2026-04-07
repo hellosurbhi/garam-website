@@ -5,6 +5,7 @@ import type { CityData } from '@/data/cities';
 import { events } from '@/data/events';
 import { isEventPast } from '@/utils/eventDate';
 import { buildBreadcrumbJsonLd } from '@/utils/breadcrumbs';
+import { SHOW_IMAGES, slugToImageIndex } from '@/data/images';
 
 export function getStaticPaths() {
   return Object.keys(cities).map((slug) => ({
@@ -15,6 +16,8 @@ export function getStaticPaths() {
 
 interface Props { city: CityData; }
 const { city } = Astro.props;
+
+const heroImage = SHOW_IMAGES[slugToImageIndex(city.slug, SHOW_IMAGES.length)];
 
 // Nearby cities for cross-linking
 const nearbyCities = (city.nearbyCities ?? [])
@@ -105,6 +108,10 @@ const breadcrumbJsonLd = buildBreadcrumbJsonLd([
     <script type="application/ld+json" set:html={cityJsonLd} />
     <script type="application/ld+json" set:html={breadcrumbJsonLd} />
   </Fragment>
+
+  <div class="city-hero" aria-hidden="true">
+    <img src={heroImage} alt="" width="1200" height="675" loading="eager" class="city-hero-img" />
+  </div>
 
   <main id="main-content" class="city-page">
     <div class="city-container">
@@ -314,6 +321,19 @@ const breadcrumbJsonLd = buildBreadcrumbJsonLd([
   @keyframes cityFadeIn {
     from { opacity: 0; transform: translateY(16px); }
     to   { opacity: 1; transform: translateY(0); }
+  }
+
+  .city-hero {
+    width: 100%;
+    aspect-ratio: 16 / 9;
+    max-height: 480px;
+    overflow: hidden;
+  }
+  .city-hero-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
   }
 
   .city-page {

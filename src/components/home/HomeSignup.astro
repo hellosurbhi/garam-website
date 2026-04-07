@@ -51,8 +51,11 @@
       if (errorEl) { errorEl.textContent = ''; errorEl.setAttribute('hidden', ''); }
       document.getElementById('nl-step-1')?.setAttribute('hidden', '');
       document.getElementById('nl-step-2')?.removeAttribute('hidden');
-    } catch {
-      if (errorEl) { errorEl.textContent = 'Something went wrong. Please try again.'; errorEl.removeAttribute('hidden'); }
+    } catch (err) {
+      if (errorEl) {
+        errorEl.textContent = err instanceof Error ? err.message : 'Something went wrong. Please try again.';
+        errorEl.removeAttribute('hidden');
+      }
     } finally {
       if (submitBtn) submitBtn.disabled = false;
     }

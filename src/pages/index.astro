@@ -155,9 +155,12 @@ const eventSchemas = buildEventSchemas(upcomingForSchema);
         localStorage.setItem(POPUP_KEY, 'true');
         document.getElementById('popup-step-1')?.setAttribute('hidden', '');
         document.getElementById('popup-step-2')?.removeAttribute('hidden');
-      } catch {
+      } catch (err) {
         const errorEl = document.getElementById('popup-email-error');
-        if (errorEl) { errorEl.textContent = 'Something went wrong. Please try again.'; errorEl.removeAttribute('hidden'); }
+        if (errorEl) {
+          errorEl.textContent = err instanceof Error ? err.message : 'Something went wrong. Please try again.';
+          errorEl.removeAttribute('hidden');
+        }
       }
     });
 

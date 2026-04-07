@@ -52,6 +52,9 @@ const hosts = [
       </article>
     ))}
   </div>
+  <div class="creators-cta" data-reveal>
+    <a href="/hosts" class="creators-cta-link">Meet the Hosts →</a>
+  </div>
 </section>
 
 <style>
@@ -155,6 +158,20 @@ const hosts = [
     border-radius: 50px;
     letter-spacing: 0.5px;
   }
+
+  .creators-cta {
+    text-align: center;
+    margin-top: 40px;
+  }
+  .creators-cta-link {
+    font-family: var(--font-cormorant), serif;
+    font-size: 18px;
+    font-style: italic;
+    color: var(--brand-red);
+    text-decoration: none;
+    transition: color 0.2s;
+  }
+  .creators-cta-link:hover { color: var(--brand-red-dark); }
 
   @media (min-width: 768px) {
     .creators { padding: 60px 48px; overflow: visible; }

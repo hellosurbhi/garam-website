@@ -26,6 +26,10 @@ import { HOME_FAQS as faqs } from '@/data/copy';
         </div>
       ))}
     </div>
+    <div class="faq-cta" data-reveal>
+      <a href="/tickets" class="faq-cta-btn">Get Tickets</a>
+      <a href="/apply" class="faq-cta-link">or Apply for the Show →</a>
+    </div>
   </div>
 </section>
 
@@ -152,6 +156,42 @@ import { HOME_FAQS as faqs } from '@/data/copy';
   .faq-answer a:hover {
     color: var(--brand-red-dark);
   }
+
+  .faq-cta {
+    text-align: center;
+    margin-top: 48px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 12px;
+  }
+  .faq-cta-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--brand-red);
+    color: white;
+    font-family: var(--font-body), sans-serif;
+    font-size: 14px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    padding: 14px 32px;
+    border-radius: 50px;
+    text-decoration: none;
+    min-height: 48px;
+    transition: background 0.2s;
+  }
+  .faq-cta-btn:hover { background: var(--brand-red-dark); }
+  .faq-cta-link {
+    font-family: var(--font-cormorant), serif;
+    font-size: 16px;
+    font-style: italic;
+    color: var(--brand-red);
+    text-decoration: none;
+    transition: color 0.2s;
+  }
+  .faq-cta-link:hover { color: var(--brand-red-dark); }
 
   @media (min-width: 768px) {
     .faq { padding: 80px 48px; }

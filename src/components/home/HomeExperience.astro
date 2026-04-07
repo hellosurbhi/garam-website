@@ -8,10 +8,14 @@ const steps = EXPERIENCE_STEPS;
     <div class="experience-left">
       <img class="exp-bg" src="/images/magic-moment.webp" alt="" width="800" height="1200" loading="lazy" aria-hidden="true" />
       <div class="exp-content">
-        <h2 id="exp-heading">NYC's #1 <em>Live</em> South Asian Dating Show</h2>
+        <h2 id="exp-heading">How the <em>Night</em> Works</h2>
         <p class="lead">Imagine The Bachelor meets Indian Matchmaking, but live on stage in New York City, hosted by two comedians who are deeply unqualified and absolutely thriving.</p>
         <p>{SITE.description}</p>
         <p>Whether you're South Asian or not, curious, single, coupled up, or just need a Friday night story, this is the most fun you'll have watching two people fall in love (or spectacularly not) in real time.</p>
+        <div class="exp-cta">
+          <a href="/tickets" class="exp-cta-btn">Get Tickets</a>
+          <a href="/apply" class="exp-cta-link">or Apply for the Show →</a>
+        </div>
       </div>
     </div>
     <div class="experience-right">
@@ -104,6 +108,41 @@ const steps = EXPERIENCE_STEPS;
     line-height: 1.8;
     margin-bottom: 16px;
   }
+
+  .exp-cta {
+    margin-top: 32px;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
+  }
+  .exp-cta-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--brand-red);
+    color: white;
+    font-family: var(--font-body), sans-serif;
+    font-size: 14px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    padding: 14px 32px;
+    border-radius: 50px;
+    text-decoration: none;
+    min-height: 48px;
+    transition: background 0.2s;
+  }
+  .exp-cta-btn:hover { background: var(--brand-red-dark); }
+  .exp-cta-link {
+    font-family: var(--font-cormorant), serif;
+    font-size: 16px;
+    font-style: italic;
+    color: var(--brand-red);
+    text-decoration: none;
+    transition: color 0.2s;
+  }
+  .exp-cta-link:hover { color: var(--brand-red-dark); }
 
   .experience-steps {
     display: flex;

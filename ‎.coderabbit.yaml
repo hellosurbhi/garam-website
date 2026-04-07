@@ -1,0 +1,18 @@
+reviews:
+  path_filters:
+    - "!**/*.webp"
+    - "!**/*.avif"
+    - "!**/*.woff2"
+    - "!**/*.jpeg"
+    - "!**/*.jpg"
+    - "!**/*.png"
+    - "!**/*.md"
+    - "!CHANGELOG.md"
+    - "!CLAUDE.md"
+    - "!AGENTS.md"
+    - "!BUGS.md"
+    - "!BROKEN_LINKS.md"
+    - "!ENHANCEMENTS.md"
+    - "!README.md"
+    - "!public/images/**"
+    - "!src/assets/**"

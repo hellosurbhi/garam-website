@@ -88,12 +88,6 @@
   padding: 48px 24px 80px;
 }
 
-/* ─── Section spacing (replaces dividers) ─────────────────────── */
-
-.section {
-  margin-top: 48px;
-}
-
 /* ─── Header ──────────────────────────────────────────────────── */
 
 .headerArea {
@@ -125,7 +119,7 @@
   font-size: 16px;
   color: var(--text-light);
   line-height: 1.6;
-  max-width: 440px;
+  max-width: 480px;
   margin: 0 auto;
 }
 
@@ -134,13 +128,10 @@
   font-weight: 600;
 }
 
-/* ─── Section headers ─────────────────────────────────────────── */
+/* ─── Sections ────────────────────────────────────────────────── */
 
-.sectionHeader {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  margin-bottom: 20px;
+.section {
+  margin-top: 48px;
 }
 
 .sectionTitle {
@@ -149,124 +140,52 @@
   font-weight: 700;
   color: var(--charcoal);
   line-height: 1.2;
+  margin-bottom: 16px;
 }
 
-.sectionHeaderPrimary {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  margin-bottom: 24px;
+.sectionNote {
+  font-family: var(--font-body);
+  font-size: 15px;
+  color: var(--muted);
+  line-height: 1.5;
+  margin-top: -8px;
+  margin-bottom: 20px;
 }
 
-.sectionTitlePrimary {
-  font-family: var(--font-playfair);
-  font-size: clamp(22px, 5vw, 28px);
-  font-weight: 900;
-  color: var(--charcoal);
-  line-height: 1.2;
-}
+/* ─── Unified list ────────────────────────────────────────────── */
 
-.sectionIcon {
-  color: var(--brand-red);
-  flex-shrink: 0;
-}
-
-/* ─── Golden Rules ────────────────────────────────────────────── */
-
-.rulesList {
+.list {
   display: flex;
   flex-direction: column;
   gap: 14px;
 }
 
-.ruleCard {
+.listRow {
   display: flex;
-  gap: 14px;
+  gap: 16px;
   align-items: flex-start;
 }
 
-.ruleNumber {
-  font-family: var(--font-playfair);
-  font-size: 16px;
-  font-weight: 700;
-  color: var(--brand-red);
-  line-height: 1.5;
-  flex-shrink: 0;
-  width: 20px;
-  text-align: right;
-}
-
-.ruleText {
+.listNum {
   font-family: var(--font-body);
   font-size: 16px;
-  color: var(--text-secondary);
-  line-height: 1.6;
-  margin: 0;
-}
-
-/* ─── Questions ───────────────────────────────────────────────── */
-
-.questionsList {
-  display: flex;
-  flex-direction: column;
-  gap: 14px;
-}
-
-.questionRow {
-  display: flex;
-  gap: 14px;
-  align-items: flex-start;
-}
-
-.questionNumber {
-  font-family: var(--font-cormorant);
-  font-size: 16px;
-  font-style: italic;
-  color: var(--brand-red);
-  line-height: 1.6;
+  color: var(--charcoal);
+  opacity: 0.35;
+  line-height: 1.65;
   flex-shrink: 0;
   width: 24px;
   text-align: right;
 }
 
-.questionText {
+.listText {
   font-family: var(--font-body);
   font-size: 16px;
   color: var(--charcoal);
-  line-height: 1.6;
+  line-height: 1.65;
   margin: 0;
 }
 
-/* ─── Come Prepared With ──────────────────────────────────────── */
-
-.prepList {
-  display: flex;
-  flex-direction: column;
-  gap: 14px;
-}
-
-.prepRow {
-  display: flex;
-  gap: 14px;
-  align-items: flex-start;
-}
-
-.prepCheck {
-  font-family: var(--font-body);
-  font-size: 16px;
-  font-weight: 700;
-  color: var(--brand-red);
-  line-height: 1.6;
-  flex-shrink: 0;
-  width: 20px;
-  text-align: center;
-}
-
-.prepContent {
-  display: flex;
-  flex-direction: column;
-  gap: 2px;
-}
+/* ─── Come Prepared item title + detail ───────────────────────── */
 
 .prepTitle {
   font-family: var(--font-body);
@@ -279,60 +198,13 @@
 
 .prepDetail {
   font-family: var(--font-body);
-  font-size: 14px;
-  color: var(--muted);
-  margin: 0;
-  line-height: 1.5;
-}
-
-/* ─── Day Of ──────────────────────────────────────────────────── */
-
-.dayOfList {
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-  padding: 0;
-  list-style: none;
-}
-
-.dayOfItem {
-  display: flex;
-  gap: 12px;
-  align-items: flex-start;
-  font-family: var(--font-body);
-  font-size: 16px;
-  color: var(--text-secondary);
-  line-height: 1.65;
-}
-
-.dayOfItem::before {
-  content: "—";
-  color: var(--brand-red);
-  font-weight: 700;
-  flex-shrink: 0;
-  line-height: 1.65;
-}
-
-/* ─── Section note (e.g. under Questions header) ─────────────── */
-
-.sectionNote {
-  font-family: var(--font-body);
   font-size: 15px;
   color: var(--muted);
-  line-height: 1.5;
-  margin-top: -8px;
-  margin-bottom: 20px;
+  margin: 3px 0 0;
+  line-height: 1.55;
 }
 
-/* ─── Guys / Girls two-column section ────────────────────────── */
-
-.genderSharedNote {
-  font-family: var(--font-body);
-  font-size: 15px;
-  color: var(--text-secondary);
-  line-height: 1.6;
-  margin-bottom: 20px;
-}
+/* ─── Guys / Girls columns ────────────────────────────────────── */
 
 .genderGrid {
   display: grid;
@@ -342,7 +214,7 @@
 
 .genderColumn {
   background: white;
-  border: 1px solid rgba(0, 0, 0, 0.06);
+  border: 1px solid rgba(0, 0, 0, 0.08);
   border-radius: 12px;
   padding: 20px;
 }
@@ -354,16 +226,7 @@
   text-transform: uppercase;
   letter-spacing: 0.15em;
   color: var(--brand-red);
-  margin-bottom: 12px;
-}
-
-.genderTimeLabel {
-  font-family: var(--font-body);
-  font-size: 11px;
-  text-transform: uppercase;
-  letter-spacing: 0.1em;
-  color: var(--muted);
-  margin-bottom: 2px;
+  margin-bottom: 6px;
 }
 
 .genderTimeValue {
@@ -376,7 +239,7 @@
 
 .genderNote {
   font-family: var(--font-body);
-  font-size: 14px;
+  font-size: 15px;
   color: var(--text-secondary);
   line-height: 1.65;
   border-top: 1px solid rgba(0, 0, 0, 0.06);
@@ -411,13 +274,13 @@
   }
 }
 
-/* ─── Reduced motion ──────────────────────────────────────────── */
-
 @media (max-width: 480px) {
   .genderGrid {
     grid-template-columns: 1fr;
   }
 }
+
+/* ─── Reduced motion ──────────────────────────────────────────── */
 
 @media (prefers-reduced-motion: reduce) {
   .page,

@@ -1,5 +1,4 @@
 import { useState, useEffect } from "react";
-import { Star } from "lucide-react";
 import styles from "./ContestantPrepPage.module.css";
 
 /* ─── Session helpers ──────────────────────────────────────────── */
@@ -51,26 +50,6 @@ function PrepError() {
     </div>
   );
 }
-
-/* ─── Section header ───────────────────────────────────────────── */
-
-function SectionHeader({
-  icon: Icon,
-  title,
-  primary,
-}: {
-  icon?: typeof Star;
-  title: string;
-  primary?: boolean;
-}) {
-  return (
-    <div className={primary ? styles.sectionHeaderPrimary : styles.sectionHeader}>
-      {Icon && <Icon size={18} className={styles.sectionIcon} />}
-      <h2 className={primary ? styles.sectionTitlePrimary : styles.sectionTitle}>{title}</h2>
-    </div>
-  );
-}
-
 
 /* ─── Prep guide content ───────────────────────────────────────── */
 
@@ -128,9 +107,7 @@ function PrepGuide() {
         <div className={styles.headerArea}>
           <p className={styles.headerEmoji}>🌶️</p>
           <h1 className={styles.headerTitle}>
-            Welcome to Garam Mas
-            <em className={styles.headerTitleAccent}>ala</em>{" "}
-            Dating!
+            Welcome to Garam Mas<em className={styles.headerTitleAccent}>ala</em> Dating!
           </h1>
           <p className={styles.headerSubtitle}>
             You&apos;re about to be on a live South Asian dating show in front of a live
@@ -141,12 +118,12 @@ function PrepGuide() {
 
         {/* ── The Golden Rules ── */}
         <div className={styles.section}>
-          <SectionHeader icon={Star} title="The Golden Rules" primary />
-          <div className={styles.rulesList}>
+          <h2 className={styles.sectionTitle}>The Golden Rules</h2>
+          <div className={styles.list}>
             {GOLDEN_RULES.map((rule, i) => (
-              <div key={i} className={styles.ruleCard}>
-                <span className={styles.ruleNumber}>{i + 1}</span>
-                <p className={styles.ruleText}>{rule}</p>
+              <div key={i} className={styles.listRow}>
+                <span className={styles.listNum}>{i + 1}.</span>
+                <p className={styles.listText}>{rule}</p>
               </div>
             ))}
           </div>
@@ -154,13 +131,13 @@ function PrepGuide() {
 
         {/* ── Questions ── */}
         <div className={styles.section}>
-          <SectionHeader title="Questions You May Be Asked" />
+          <h2 className={styles.sectionTitle}>Questions You May Be Asked</h2>
           <p className={styles.sectionNote}>Prepare 30–60 second answers for all of these.</p>
-          <div className={styles.questionsList}>
+          <div className={styles.list}>
             {QUESTIONS.map((q, i) => (
-              <div key={i} className={styles.questionRow}>
-                <span className={styles.questionNumber}>{i + 1}.</span>
-                <p className={styles.questionText}>{q}</p>
+              <div key={i} className={styles.listRow}>
+                <span className={styles.listNum}>{i + 1}.</span>
+                <p className={styles.listText}>{q}</p>
               </div>
             ))}
           </div>
@@ -168,12 +145,12 @@ function PrepGuide() {
 
         {/* ── Come Prepared With ── */}
         <div className={styles.section}>
-          <SectionHeader title="Come Prepared With" />
-          <div className={styles.prepList}>
+          <h2 className={styles.sectionTitle}>Come Prepared With</h2>
+          <div className={styles.list}>
             {PREPARED_WITH.map((item, i) => (
-              <div key={i} className={styles.prepRow}>
-                <span className={styles.prepCheck}>✓</span>
-                <div className={styles.prepContent}>
+              <div key={i} className={styles.listRow}>
+                <span className={styles.listNum}>—</span>
+                <div>
                   <p className={styles.prepTitle}>{item.title}</p>
                   <p className={styles.prepDetail}>{item.detail}</p>
                 </div>
@@ -184,32 +161,34 @@ function PrepGuide() {
 
         {/* ── Day Of ── */}
         <div className={styles.section}>
-          <SectionHeader title="Day Of" />
-          <ul className={styles.dayOfList}>
-            <li className={styles.dayOfItem}>
-              Dress hot &mdash; bright colors, bold fits, sequins welcome.
-              No &ldquo;just came from the office&rdquo; energy.
-            </li>
-            <li className={styles.dayOfItem}>
-              Invite your friends to come support you. More energy in the room = better
-              show for everyone.
-            </li>
-          </ul>
+          <h2 className={styles.sectionTitle}>Day Of</h2>
+          <div className={styles.list}>
+            <div className={styles.listRow}>
+              <span className={styles.listNum}>—</span>
+              <p className={styles.listText}>
+                Dress hot &mdash; bright colors, bold fits, sequins welcome.
+                No &ldquo;just came from the office&rdquo; energy.
+              </p>
+            </div>
+            <div className={styles.listRow}>
+              <span className={styles.listNum}>—</span>
+              <p className={styles.listText}>
+                Invite your friends to come support you. More energy in the room = better show for everyone.
+              </p>
+            </div>
+          </div>
         </div>
 
         {/* ── For Guys / For Girls ── */}
         <div className={styles.section}>
-          <SectionHeader title="For Guys &amp; Girls" />
-          <p className={styles.genderSharedNote}>
-            We stagger arrival by 15 minutes so guys and girls don&apos;t see each other
-            before the show &mdash; it keeps the magic of those first-impression moments
-            on stage.
+          <h2 className={styles.sectionTitle}>Arrival &amp; Notes</h2>
+          <p className={styles.sectionNote}>
+            We stagger arrival by 15 minutes so guys and girls don&apos;t see each other before the show starts.
           </p>
           <div className={styles.genderGrid}>
             <div className={styles.genderColumn}>
               <p className={styles.genderHeading}>Guys</p>
-              <p className={styles.genderTimeLabel}>Arrive</p>
-              <p className={styles.genderTimeValue}>5:20 PM sharp</p>
+              <p className={styles.genderTimeValue}>5:20 PM</p>
               <p className={styles.genderNote}>
                 Audiences tend to root for the girls. Don&apos;t try to win the crowd
                 by being cocky or mean &mdash; it backfires every time. Charming,
@@ -218,8 +197,7 @@ function PrepGuide() {
             </div>
             <div className={styles.genderColumn}>
               <p className={styles.genderHeading}>Girls</p>
-              <p className={styles.genderTimeLabel}>Arrive</p>
-              <p className={styles.genderTimeValue}>5:30 PM sharp</p>
+              <p className={styles.genderTimeValue}>5:30 PM</p>
               <p className={styles.genderNote}>
                 You&apos;re allowed to not like someone. Say it. &ldquo;I&apos;m not
                 feeling this&rdquo; is great content. Don&apos;t fake chemistry.

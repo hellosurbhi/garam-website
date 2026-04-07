@@ -6,8 +6,8 @@ export const crossCulturalPosts: JournalPost[] = [
     title: "How to Introduce Your East Asian Partner to Your Indian Parents",
     metaDescription:
       "Bringing your East Asian partner home to Indian parents? Practical advice on navigating expectations and the conversation no one prepares you for.",
-    datePublished: "2025-09-10",
-    dateModified: "2025-09-10",
+    datePublished: "2026-09-10",
+    dateModified: "2026-09-10",
     author: "Surbhi",
     excerpt:
       "You\u2019ve found someone who makes you happy, and they happen to be East Asian. Now comes the part nobody warned you about: your Indian parents.",
@@ -122,8 +122,8 @@ export const crossCulturalPosts: JournalPost[] = [
     title: "How to Introduce Your Black Partner to Your Indian Parents",
     metaDescription:
       "Introducing a Black partner to Indian parents is one of the harder conversations in cross-cultural dating. Here\u2019s honest advice that doesn\u2019t sugarcoat it.",
-    datePublished: "2025-09-12",
-    dateModified: "2025-09-12",
+    datePublished: "2026-09-12",
+    dateModified: "2026-09-12",
     author: "Surbhi",
     excerpt:
       "This is one of the most-asked questions I get from South Asian singles, and it\u2019s also the one people are most afraid to ask out loud. Let\u2019s talk about it honestly.",
@@ -238,8 +238,8 @@ export const crossCulturalPosts: JournalPost[] = [
     title: "How to Introduce Your Latino Partner to Your Indian Parents",
     metaDescription:
       "Bringing your Latino partner home to Indian parents? What to expect, how to prep both sides, and why this combo works better than your parents think.",
-    datePublished: "2025-09-14",
-    dateModified: "2025-09-14",
+    datePublished: "2026-09-14",
+    dateModified: "2026-09-14",
     author: "Surbhi",
     excerpt:
       "Two of the most family-obsessed, food-obsessed, \u2018why aren\u2019t you married yet\u2019 cultures on earth, and somehow your parents still think this is a problem.",
@@ -354,8 +354,8 @@ export const crossCulturalPosts: JournalPost[] = [
     title: "How to Introduce Your White Partner to Your Indian Parents",
     metaDescription:
       "Bringing a white partner home to Indian parents? The honest guide for second-gen South Asians on making it go as well as it possibly can.",
-    datePublished: "2025-09-16",
-    dateModified: "2025-09-16",
+    datePublished: "2026-09-16",
+    dateModified: "2026-09-16",
     author: "Surbhi",
     excerpt:
       "This is the most common version of the \u2018non-Indian partner\u2019 conversation in the South Asian diaspora, and it comes with its own very specific flavor of parental panic.",
@@ -474,8 +474,8 @@ export const crossCulturalPosts: JournalPost[] = [
     title: "Introducing Your Non-Indian Partner to Punjabi Parents: A Survival Guide",
     metaDescription:
       "Punjabi parents are loud, warm, and have very strong opinions. Here\u2019s how to introduce your non-Indian partner to a Punjabi family and actually survive it.",
-    datePublished: "2025-09-18",
-    dateModified: "2025-09-18",
+    datePublished: "2026-09-18",
+    dateModified: "2026-09-18",
     author: "Surbhi",
     excerpt:
       "Punjabi parents are not the same as \u2018Indian parents\u2019 in general. They are louder, more opinionated, more hospitable, and more emotionally expressive \u2014 and your non-Indian partner is going to experience all of that at once.",
@@ -582,8 +582,8 @@ export const crossCulturalPosts: JournalPost[] = [
     title: "Introducing Your Non-Indian Partner to Gujarati Parents: A Survival Guide",
     metaDescription:
       "Gujarati parents have tight community networks and strong marriage opinions. Here\u2019s how to introduce your non-Indian partner and make it work.",
-    datePublished: "2025-09-20",
-    dateModified: "2025-09-20",
+    datePublished: "2026-09-20",
+    dateModified: "2026-09-20",
     author: "Surbhi",
     excerpt:
       "Gujarati parents are warm, community-connected, and operating with a mental model of your future that they started drafting at your naming ceremony. Your non-Indian partner is a variable they did not account for.",
@@ -690,8 +690,8 @@ export const crossCulturalPosts: JournalPost[] = [
     title: "Introducing Your Non-Indian Partner to Tamil Parents: A Survival Guide",
     metaDescription:
       "Tamil parents prize education and cultural continuity. Here\u2019s how to introduce your non-Indian partner to a Tamil family and what to actually expect.",
-    datePublished: "2025-09-22",
-    dateModified: "2025-09-22",
+    datePublished: "2026-09-22",
+    dateModified: "2026-09-22",
     author: "Surbhi",
     excerpt:
       "Tamil parents are some of the most academically rigorous people you will ever meet, and they will absolutely ask your partner where they went to school within the first ten minutes.",
@@ -798,8 +798,8 @@ export const crossCulturalPosts: JournalPost[] = [
     title: "Introducing Your Non-Indian Partner to Bengali Parents: A Survival Guide",
     metaDescription:
       "Bengali parents value intellect, adda, and cultural depth. Here\u2019s the survival guide for introducing your non-Indian partner to a Bengali family.",
-    datePublished: "2025-09-24",
-    dateModified: "2025-09-24",
+    datePublished: "2026-09-24",
+    dateModified: "2026-09-24",
     author: "Surbhi",
     excerpt:
       "Bengali parents will discuss your relationship with the same analytical rigor they apply to Tagore\u2019s later poetry \u2014 thoroughly, passionately, and probably over a very long dinner.",
@@ -910,8 +910,8 @@ export const crossCulturalPosts: JournalPost[] = [
     title: "Dating Someone from a Different South Asian Culture: What Nobody Tells You",
     metaDescription:
       "Dating another South Asian from a different culture? Here\u2019s what nobody tells you about intra-desi relationships \u2014 the food, families, and unspoken assumptions.",
-    datePublished: "2025-09-26",
-    dateModified: "2025-09-26",
+    datePublished: "2026-09-26",
+    dateModified: "2026-09-26",
     author: "Surbhi",
     excerpt:
       "You figured dating another South Asian would be straightforward. Then you realized \u2018South Asian\u2019 covers a billion people across dozens of cultures, and the Punjabi-Tamil match is its own kind of adventure.",
@@ -1022,8 +1022,8 @@ export const crossCulturalPosts: JournalPost[] = [
     title: "When Your Family Expects Arranged and You\u2019re in an Interracial Relationship",
     metaDescription:
       "Your family expected an arranged match. You\u2019re in an interracial relationship. Here\u2019s how to navigate the gap between their expectations and your actual life.",
-    datePublished: "2025-09-28",
-    dateModified: "2025-09-28",
+    datePublished: "2026-09-28",
+    dateModified: "2026-09-28",
     author: "Surbhi",
     excerpt:
       "The gap between what your family imagined for your love life and what you actually have can feel enormous. But it\u2019s a gap that\u2019s been bridged before, and here\u2019s how.",

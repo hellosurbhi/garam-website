@@ -6,8 +6,8 @@ export const communityDeepDivesPosts: JournalPost[] = [
     title: "South Indian Dating Culture: What Non-South Indians Need to Know",
     metaDescription:
       "Tamil, Telugu, Kannada, Malayalam dating culture explained — family expectations, thali traditions, sambandhi networks, and why courtship looks different below the Vindhyas.",
-    datePublished: "2025-11-17",
-    dateModified: "2025-11-17",
+    datePublished: "2026-11-17",
+    dateModified: "2026-11-17",
     author: "Surbhi",
     excerpt:
       "South Indian dating culture is not a monolith, but it shares a few things across Tamil, Telugu, Kannada, and Malayalam communities that non-South Indians consistently misread. The family involvement starts earlier, the expectations are more precisely defined, and the word 'casual' does not translate the same way.",
@@ -126,8 +126,8 @@ export const communityDeepDivesPosts: JournalPost[] = [
     title: "Marathi Dating: Finding Love in the Land of Practical Expectations",
     metaDescription:
       "Maharashtrian dating culture decoded — pragmatic family values, community dynamics, and how Marathi singles navigate love between tradition and modern life.",
-    datePublished: "2025-11-19",
-    dateModified: "2025-11-19",
+    datePublished: "2026-11-19",
+    dateModified: "2026-11-19",
     author: "Surbhi",
     excerpt:
       "Marathi dating culture has a reputation for being no-nonsense, and that reputation is largely earned. But 'practical' does not mean unromantic — it means the romance is built on something you can actually stand on.",
@@ -246,8 +246,8 @@ export const communityDeepDivesPosts: JournalPost[] = [
     title: "Bengali Dating Culture: Intellectuals, Foodies, and Fierce Independence",
     metaDescription:
       "Bengali dating culture explained — adda culture, food as love language, progressive norms, and why Bengali singles are some of the most interesting people to date.",
-    datePublished: "2025-11-21",
-    dateModified: "2025-11-21",
+    datePublished: "2026-11-21",
+    dateModified: "2026-11-21",
     author: "Surbhi",
     excerpt:
       "Bengali dating culture produced the concept of adda — long, rambling intellectual conversations that go nowhere and mean everything. If you can hang in a four-hour adda about Tagore, colonialism, and whether the fish was fresher in Kolkata or Dhaka, you've passed the first real test.",
@@ -362,8 +362,8 @@ export const communityDeepDivesPosts: JournalPost[] = [
     title: "Pakistani Dating in America: Between Two Worlds",
     metaDescription:
       "Pakistani dating in America decoded — navigating conservative family expectations, American dating norms, religious values, and community judgment with honesty.",
-    datePublished: "2025-11-23",
-    dateModified: "2025-11-23",
+    datePublished: "2026-11-23",
+    dateModified: "2026-11-23",
     author: "Surbhi",
     excerpt:
       "Pakistani dating in America is a study in dual citizenship — not the legal kind, but the cultural kind. You're simultaneously navigating what your family expects, what your religion teaches, what American dating culture assumes, and what you actually want.",
@@ -486,8 +486,8 @@ export const communityDeepDivesPosts: JournalPost[] = [
     title: "Muslim Dating as a South Asian: Navigating Faith, Family, and Feelings",
     metaDescription:
       "Muslim dating as a South Asian explained — halal dating, Muzz and Salams apps, chaperoned meetings, interfaith relationships, and balancing deen with modern love.",
-    datePublished: "2025-11-25",
-    dateModified: "2025-11-25",
+    datePublished: "2026-11-25",
+    dateModified: "2026-11-25",
     author: "Surbhi",
     excerpt:
       "Muslim dating as a South Asian sits at a specific crossroads: Islamic values about courtship, South Asian cultural expectations about family involvement, and the practical reality of being a young person who wants to find a partner in America in 2025.",
@@ -610,8 +610,8 @@ export const communityDeepDivesPosts: JournalPost[] = [
     title: "Hindu Dating Expectations: When Religion Shapes Your Love Life",
     metaDescription:
       "Hindu dating expectations decoded — caste dynamics, vegetarian preferences, festival culture as dating context, and how Hinduism shapes South Asian love lives in America.",
-    datePublished: "2025-11-27",
-    dateModified: "2025-11-27",
+    datePublished: "2026-11-27",
+    dateModified: "2026-11-27",
     author: "Surbhi",
     excerpt:
       "Hindu dating expectations are not a single thing. Hinduism contains multitudes — regional traditions, caste structures, vegetarian and non-vegetarian communities, goddess-worshipping matrilineal traditions alongside strictly patrilineal ones. What they share is that religion doesn't stay outside the relationship.",
@@ -734,8 +734,8 @@ export const communityDeepDivesPosts: JournalPost[] = [
     title: "Bangladeshi Dating in the Diaspora: Building Community One Connection at a Time",
     metaDescription:
       "Bangladeshi dating in the diaspora — navigating a tight-knit community, distinct Bangladeshi identity, Islamic values, and finding love beyond the stereotype.",
-    datePublished: "2025-11-29",
-    dateModified: "2025-11-29",
+    datePublished: "2026-11-29",
+    dateModified: "2026-11-29",
     author: "Surbhi",
     excerpt:
       "Bangladeshi diaspora dating is shaped by a community that is small enough to know everyone, religious enough that it matters, and proud enough to insist on being seen as Bangladeshi rather than being folded into a generic 'South Asian' or 'Bengali' category.",
@@ -854,8 +854,8 @@ export const communityDeepDivesPosts: JournalPost[] = [
     title: "Vegetarian Dating as a Desi: Finding Someone Who Gets the Paneer Obsession",
     metaDescription:
       "Vegetarian dating as a desi explained — Jain and Hindu vegetarianism, the 'will they eat my mom's food' question, interfaith food dynamics, and finding vegetarian love.",
-    datePublished: "2025-12-01",
-    dateModified: "2025-12-01",
+    datePublished: "2026-12-01",
+    dateModified: "2026-12-01",
     author: "Surbhi",
     excerpt:
       "Vegetarian dating as a desi is a niche problem with outsized stakes. It's not just about what you eat — it's about whether your partner can show up at your mother's dinner table without creating a logistical crisis, whether they'll ever really understand why you ordered the paneer tikka again, and whether the kitchen you eventually share will make sense.",

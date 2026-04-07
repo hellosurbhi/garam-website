@@ -6,8 +6,8 @@ export const toxicPatternsPosts: JournalPost[] = [
     title: "Gaslighting in Desi Relationships: How to Recognize It",
     metaDescription:
       "Gaslighting in desi relationships is often disguised as care, tradition, or respect. Learn to recognize the signs before they cost you your sanity.",
-    datePublished: "2025-09-30",
-    dateModified: "2025-09-30",
+    datePublished: "2026-09-30",
+    dateModified: "2026-09-30",
     author: "Surbhi",
     excerpt:
       "Gaslighting in desi relationships rarely looks like the textbook version. It comes wrapped in family loyalty, cultural duty, and the language of love — which is exactly what makes it so hard to name.",
@@ -122,8 +122,8 @@ export const toxicPatternsPosts: JournalPost[] = [
     title: "Breadcrumbing in Desi Dating: When They Keep You Around But Never Commit",
     metaDescription:
       "Breadcrumbing in desi dating looks like 'let's see where this goes' — indefinitely. Here's how to spot it and stop waiting for commitment that isn't coming.",
-    datePublished: "2025-10-02",
-    dateModified: "2025-10-02",
+    datePublished: "2026-10-02",
+    dateModified: "2026-10-02",
     author: "Surbhi",
     excerpt:
       "Breadcrumbing in desi dating has a distinct flavor: they're interested enough to keep you around, but the family card is always the reason they can't fully commit — and that reason never expires.",
@@ -238,8 +238,8 @@ export const toxicPatternsPosts: JournalPost[] = [
     title: "Love Bombing in Desi Culture: The Fine Line Between Intensity and Manipulation",
     metaDescription:
       "Love bombing in desi culture is hard to spot because cultural intensity looks similar. Here's how to tell the difference between real passion and manipulation.",
-    datePublished: "2025-10-04",
-    dateModified: "2025-10-04",
+    datePublished: "2026-10-04",
+    dateModified: "2026-10-04",
     author: "Surbhi",
     excerpt:
       "Desi relationships move fast and feel intense — that's not automatically a red flag. But love bombing uses that cultural intensity as cover, and knowing the difference can save you months of confusion.",
@@ -354,8 +354,8 @@ export const toxicPatternsPosts: JournalPost[] = [
     title: "The Desi Situationship Trap: Why Brown People Stay in Limbo",
     metaDescription:
       "The desi situationship has a specific shape: fear of community judgment, 'what will people think,' and the settle-or-hold pattern. Here's why brown people stay in it.",
-    datePublished: "2025-10-06",
-    dateModified: "2025-10-06",
+    datePublished: "2026-10-06",
+    dateModified: "2026-10-06",
     author: "Surbhi",
     excerpt:
       "A desi situationship isn't just two people who can't define things — it's two people trapped between fear of commitment and fear of what walking away would look like to everyone watching.",
@@ -454,8 +454,8 @@ export const toxicPatternsPosts: JournalPost[] = [
     title: "Emotional Unavailability in Desi Men: What's Cultural and What's a Red Flag",
     metaDescription:
       "Emotional unavailability in desi men: how to tell the difference between cultural conditioning and a genuine red flag that won't change with time or patience.",
-    datePublished: "2025-10-08",
-    dateModified: "2025-10-08",
+    datePublished: "2026-10-08",
+    dateModified: "2026-10-08",
     author: "Surbhi",
     excerpt:
       "Not every desi man who struggles to open up is emotionally unavailable — some of them are working against decades of conditioning that said feelings are weakness. The question is whether they're doing the work or just waiting for you to stop asking.",
@@ -566,8 +566,8 @@ export const toxicPatternsPosts: JournalPost[] = [
     title: "Ghosting in Desi Dating: When Cultural Avoidance Meets Modern Dating",
     metaDescription:
       "Ghosting in desi dating has cultural roots in conflict-avoidance — but understanding why it happens doesn't make disappearing acceptable. Here's what's really going on.",
-    datePublished: "2025-10-10",
-    dateModified: "2025-10-10",
+    datePublished: "2026-10-10",
+    dateModified: "2026-10-10",
     author: "Surbhi",
     excerpt:
       "Ghosting in desi dating isn't random rudeness — it grows directly out of a conflict-avoidance culture that treats the end of a relationship as something to be disappeared from rather than navigated through.",
@@ -682,8 +682,8 @@ export const toxicPatternsPosts: JournalPost[] = [
     title: "Weaponized Compatibility: When Families Use 'Good Match' to Pressure You",
     metaDescription:
       "When families say 'good match,' they might mean it genuinely — or they might be using compatibility metrics as pressure. Here's how to tell the difference.",
-    datePublished: "2025-10-12",
-    dateModified: "2025-10-12",
+    datePublished: "2026-10-12",
+    dateModified: "2026-10-12",
     author: "Surbhi",
     excerpt:
       "A 'good match' according to your family's criteria and a genuinely good match for you are not always the same thing — and the pressure to confuse the two is one of the most quietly corrosive patterns in desi dating.",
@@ -794,8 +794,8 @@ export const toxicPatternsPosts: JournalPost[] = [
     title: "The Toxic Desi Dating Pattern Nobody Talks About: Comparison Culture",
     metaDescription:
       "Comparison culture in desi dating — 'Sharma ji ka beta' applied to your love life — creates impossible standards and undermines real connection. Here's how to stop it.",
-    datePublished: "2025-10-14",
-    dateModified: "2025-10-14",
+    datePublished: "2026-10-14",
+    dateModified: "2026-10-14",
     author: "Surbhi",
     excerpt:
       "Desi comparison culture doesn't stop at grades and careers — it follows you into your love life, where your partner gets quietly benchmarked against everyone else's partner until no one alive could possibly measure up.",

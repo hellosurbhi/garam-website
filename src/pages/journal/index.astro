@@ -49,7 +49,9 @@ const breadcrumbJsonLd = buildBreadcrumbJsonLd([
 
       <!-- Post list -->
       <div class="journal-list">
-        {journalPostsPublished.map((post, i) => (
+        {journalPostsPublished.length === 0 ? (
+          <p class="journal-empty">First essays drop April 7 — check back soon.</p>
+        ) : journalPostsPublished.map((post, i) => (
           <a
             href={`/journal/${post.slug}`}
             class="journal-card"
@@ -189,5 +191,13 @@ const breadcrumbJsonLd = buildBreadcrumbJsonLd([
     font-size: 13px;
     font-weight: 500;
     color: var(--brand-red);
+  }
+
+  .journal-empty {
+    font-family: var(--font-cormorant);
+    font-style: italic;
+    font-size: 18px;
+    color: #888;
+    padding: 24px 0;
   }
 </style>

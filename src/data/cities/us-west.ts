@@ -4,10 +4,10 @@ export const usWestCities: Record<string, CityData> = {
   "san-jose": {
     slug: "san-jose",
     displayName: "San Jose",
-    titleTag: "South Asian Singles Events San Jose Bay Area | Garam Masala Dating",
+    titleTag: "San Jose South Bay Desi Dating | Garam Masala Dating",
     metaDescription:
       "Garam Masala Dating is coming to San Jose. A live South Asian dating show and singles mixer. Sunnyvale, Cupertino, Fremont, Santa Clara, and the whole South Bay.",
-    h1: "San Jose\u2019s Desi Dating Night Is Coming",
+    h1: "200,000 Indian Americans in Santa Clara County. Time for a Dating Show.",
     status: "coming-soon",
     badgeLabel: "Coming Soon",
     bodyParagraphs: [
@@ -33,10 +33,10 @@ export const usWestCities: Record<string, CityData> = {
   sacramento: {
     slug: "sacramento",
     displayName: "Sacramento",
-    titleTag: "South Asian Singles Events Sacramento CA | Garam Masala Dating",
+    titleTag: "Sacramento CA Desi Singles Event | Garam Masala Dating",
     metaDescription:
       "Garam Masala Dating is coming to Sacramento. A live South Asian dating show and singles mixer. Folsom, Elk Grove, and the whole metro.",
-    h1: "Sacramento\u2019s Desi Dating Night Is Coming",
+    h1: "You Left the Bay for Better Rent. We're Bringing You Better Dating.",
     status: "coming-soon",
     badgeLabel: "Coming Soon",
     bodyParagraphs: [
@@ -62,10 +62,10 @@ export const usWestCities: Record<string, CityData> = {
   davis: {
     slug: "davis",
     displayName: "Davis",
-    titleTag: "South Asian Singles Events Davis UC Davis | Garam Masala Dating",
+    titleTag: "UC Davis Desi Dating Event | Garam Masala Dating",
     metaDescription:
       "Garam Masala Dating is coming to Davis. A live South Asian dating show for UC Davis\u2019s large desi community. Join the waitlist.",
-    h1: "Davis\u2019s Desi Dating Night Is Coming",
+    h1: "Three Square Miles of Bike Paths and the Same Twelve Profiles. We Can Do Better.",
     status: "coming-soon",
     badgeLabel: "Coming Soon",
     bodyParagraphs: [
@@ -90,10 +90,10 @@ export const usWestCities: Record<string, CityData> = {
   irvine: {
     slug: "irvine",
     displayName: "Irvine",
-    titleTag: "South Asian Singles Events Irvine CA | Garam Masala Dating",
+    titleTag: "Irvine CA Indian Dating Show | Garam Masala Dating",
     metaDescription:
       "Garam Masala Dating is coming to Irvine. A live South Asian dating show for UCI\u2019s massive desi community and the OC South Asian scene.",
-    h1: "Irvine\u2019s Desi Dating Night Is Coming",
+    h1: "Irvine Was Designed for Families, Not Singles. We're Fixing That.",
     status: "coming-soon",
     badgeLabel: "Coming Soon",
     bodyParagraphs: [
@@ -119,10 +119,10 @@ export const usWestCities: Record<string, CityData> = {
   seattle: {
     slug: "seattle",
     displayName: "Seattle",
-    titleTag: "South Asian Singles Events Seattle WA | Garam Masala Dating",
+    titleTag: "Seattle Desi Dating Night | Garam Masala Dating",
     metaDescription:
       "Garam Masala Dating is coming to Seattle. A live South Asian dating show and singles mixer. Bellevue, Redmond, Kirkland, and the Eastside.",
-    h1: "Seattle\u2019s Desi Dating Night Is Coming",
+    h1: "Stop Swiping, Seattle. Come Meet Someone in Person.",
     status: "coming-soon",
     badgeLabel: "Coming Soon",
     bodyParagraphs: [
@@ -148,10 +148,10 @@ export const usWestCities: Record<string, CityData> = {
   portland: {
     slug: "portland",
     displayName: "Portland",
-    titleTag: "South Asian Singles Events Portland OR | Garam Masala Dating",
+    titleTag: "Portland OR Desi Singles Night | Garam Masala Dating",
     metaDescription:
       "Garam Masala Dating is coming to Portland. A live South Asian dating show and singles mixer. Beaverton, Hillsboro, and the whole metro.",
-    h1: "Portland\u2019s Desi Dating Night Is Coming",
+    h1: "Portland Put a Bird on Everything. Let's Put a Desi Dating Show on It.",
     status: "coming-soon",
     badgeLabel: "Coming Soon",
     bodyParagraphs: [
@@ -177,10 +177,10 @@ export const usWestCities: Record<string, CityData> = {
   phoenix: {
     slug: "phoenix",
     displayName: "Phoenix",
-    titleTag: "South Asian Singles Events Phoenix AZ | Garam Masala Dating",
+    titleTag: "Phoenix AZ Live Desi Dating Event | Garam Masala Dating",
     metaDescription:
       "Garam Masala Dating is coming to Phoenix. A live South Asian dating show and singles mixer. Chandler, Gilbert, Tempe, and the East Valley.",
-    h1: "Phoenix\u2019s Desi Dating Night Is Coming",
+    h1: "The East Valley's Desi Population Is Booming. The Dating Scene Isn't. Yet.",
     status: "coming-soon",
     badgeLabel: "Coming Soon",
     bodyParagraphs: [
@@ -206,10 +206,10 @@ export const usWestCities: Record<string, CityData> = {
   tucson: {
     slug: "tucson",
     displayName: "Tucson",
-    titleTag: "South Asian Singles Events Tucson AZ | Garam Masala Dating",
+    titleTag: "Tucson AZ Desi Dating Near UofA | Garam Masala Dating",
     metaDescription:
       "Garam Masala Dating is coming to Tucson. A live South Asian dating show for the U of Arizona desi community. Join the waitlist.",
-    h1: "Tucson\u2019s Desi Dating Night Is Coming",
+    h1: "Desert Town, Tight Community, One Night to Meet Everyone",
     status: "coming-soon",
     badgeLabel: "Coming Soon",
     bodyParagraphs: [
@@ -234,10 +234,10 @@ export const usWestCities: Record<string, CityData> = {
   "las-vegas": {
     slug: "las-vegas",
     displayName: "Las Vegas",
-    titleTag: "South Asian Singles Events Las Vegas NV | Garam Masala Dating",
+    titleTag: "Las Vegas Desi Dating Show | Garam Masala Dating",
     metaDescription:
       "Garam Masala Dating is coming to Las Vegas. A live South Asian dating show and singles mixer. Henderson, Summerlin, and the whole valley.",
-    h1: "Vegas\u2019s Desi Dating Night Is Coming",
+    h1: "Entertainment Capital of the World, and This Is the Show You Actually Need",
     status: "coming-soon",
     badgeLabel: "Coming Soon",
     bodyParagraphs: [
@@ -263,10 +263,10 @@ export const usWestCities: Record<string, CityData> = {
   albuquerque: {
     slug: "albuquerque",
     displayName: "Albuquerque",
-    titleTag: "South Asian Singles Events Albuquerque NM | Garam Masala Dating",
+    titleTag: "Albuquerque NM Indian Singles Event | Garam Masala Dating",
     metaDescription:
       "Garam Masala Dating is coming to Albuquerque. A live South Asian dating show and singles mixer for New Mexico\u2019s desi community.",
-    h1: "Albuquerque\u2019s Desi Dating Night Is Coming",
+    h1: "Before You Expand Your App Radius to Santa Fe, Try This",
     status: "coming-soon",
     badgeLabel: "Coming Soon",
     bodyParagraphs: [
@@ -291,10 +291,10 @@ export const usWestCities: Record<string, CityData> = {
   boise: {
     slug: "boise",
     displayName: "Boise",
-    titleTag: "South Asian Singles Events Boise ID | Garam Masala Dating",
+    titleTag: "Boise ID Desi Dating Night | Garam Masala Dating",
     metaDescription:
       "Garam Masala Dating is coming to Boise. A live South Asian dating show and singles mixer for Idaho\u2019s growing desi tech community.",
-    h1: "Boise\u2019s Desi Dating Night Is Coming",
+    h1: "Pioneer Energy, Desi Flavor. Boise Is Ready.",
     status: "coming-soon",
     badgeLabel: "Coming Soon",
     bodyParagraphs: [
@@ -319,10 +319,10 @@ export const usWestCities: Record<string, CityData> = {
   honolulu: {
     slug: "honolulu",
     displayName: "Honolulu",
-    titleTag: "South Asian Singles Events Honolulu HI | Garam Masala Dating",
+    titleTag: "Honolulu HI Desi Singles Event | Garam Masala Dating",
     metaDescription:
       "Garam Masala Dating is coming to Honolulu. A live South Asian dating show and singles mixer. Island desi energy, meet the mainland show.",
-    h1: "Honolulu\u2019s Desi Dating Night Is Coming",
+    h1: "A Desi Dating Show in Paradise. Your Mainland Friends Will Be Jealous.",
     status: "coming-soon",
     badgeLabel: "Coming Soon",
     bodyParagraphs: [

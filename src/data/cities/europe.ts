@@ -4,10 +4,10 @@ export const europeCities: Record<string, CityData> = {
   amsterdam: {
     slug: "amsterdam",
     displayName: "Amsterdam",
-    titleTag: "South Asian Singles Events Amsterdam | Garam Masala Dating",
+    titleTag: "Desi Dating Show Amsterdam | Garam Masala Dating",
     metaDescription:
       "Garam Masala Dating is coming to Amsterdam. A live South Asian dating show and singles mixer. Surinamese, Indian, and tech expat community. Join the waitlist.",
-    h1: "Amsterdam\u2019s Desi Dating Night Is Coming",
+    h1: "Where Do Amsterdam's Desi Professionals Go on a Saturday Night?",
     status: "coming-soon",
     badgeLabel: "Coming Soon",
     bodyParagraphs: [
@@ -33,10 +33,10 @@ export const europeCities: Record<string, CityData> = {
   "the-hague": {
     slug: "the-hague",
     displayName: "The Hague",
-    titleTag: "South Asian Singles Events The Hague | Garam Masala Dating",
+    titleTag: "Live Desi Night The Hague | Garam Masala Dating",
     metaDescription:
       "Garam Masala Dating is coming to The Hague. A live South Asian dating show and singles mixer. Surinamese Hindustani community and international professionals.",
-    h1: "The Hague\u2019s Desi Dating Night Is Coming",
+    h1: "International Court, International Singles. The Hague Gets a Dating Show.",
     status: "coming-soon",
     badgeLabel: "Coming Soon",
     bodyParagraphs: [
@@ -62,10 +62,10 @@ export const europeCities: Record<string, CityData> = {
   rotterdam: {
     slug: "rotterdam",
     displayName: "Rotterdam",
-    titleTag: "South Asian Singles Events Rotterdam | Garam Masala Dating",
+    titleTag: "Desi Singles Event Rotterdam | Garam Masala Dating",
     metaDescription:
       "Garam Masala Dating is coming to Rotterdam. A live South Asian dating show and singles mixer. Surinamese community, Erasmus University, and the port city\u2019s desi scene.",
-    h1: "Rotterdam\u2019s Desi Dating Night Is Coming",
+    h1: "Rotterdam's Erasmus Crowd Needs More Than a Borrel",
     status: "coming-soon",
     badgeLabel: "Coming Soon",
     bodyParagraphs: [
@@ -91,10 +91,10 @@ export const europeCities: Record<string, CityData> = {
   berlin: {
     slug: "berlin",
     displayName: "Berlin",
-    titleTag: "South Asian Singles Events Berlin | Garam Masala Dating",
+    titleTag: "South Asian Dating Berlin | Garam Masala Dating",
     metaDescription:
       "Garam Masala Dating is coming to Berlin. A live South Asian dating show and singles mixer. Indian tech expats, TU Berlin, and Germany\u2019s fastest growing desi community.",
-    h1: "Berlin\u2019s Desi Dating Night Is Coming",
+    h1: "Kreuzberg to Mitte, Berlin Gets a Live Desi Dating Show",
     status: "coming-soon",
     badgeLabel: "Coming Soon",
     bodyParagraphs: [
@@ -120,10 +120,10 @@ export const europeCities: Record<string, CityData> = {
   munich: {
     slug: "munich",
     displayName: "Munich",
-    titleTag: "South Asian Singles Events Munich | Garam Masala Dating",
+    titleTag: "Meet Desi Singles Munich | Garam Masala Dating",
     metaDescription:
       "Garam Masala Dating is coming to Munich. A live South Asian dating show and singles mixer. TUM, Indian tech professionals, and Bavaria\u2019s growing desi community.",
-    h1: "Munich\u2019s Desi Dating Night Is Coming",
+    h1: "BMW to Biergarten, Munich's Desi Engineers Get a Night Out",
     status: "coming-soon",
     badgeLabel: "Coming Soon",
     bodyParagraphs: [
@@ -149,10 +149,10 @@ export const europeCities: Record<string, CityData> = {
   frankfurt: {
     slug: "frankfurt",
     displayName: "Frankfurt",
-    titleTag: "South Asian Singles Events Frankfurt | Garam Masala Dating",
+    titleTag: "Desi Singles Night Frankfurt | Garam Masala Dating",
     metaDescription:
       "Garam Masala Dating is coming to Frankfurt. A live South Asian dating show and singles mixer. Indian finance and tech professionals, Goethe University, and the Rhein Main desi crowd.",
-    h1: "Frankfurt\u2019s Desi Dating Night Is Coming",
+    h1: "Frankfurt's Banking Crowd Needs More Than Thursday Drinks",
     status: "coming-soon",
     badgeLabel: "Coming Soon",
     bodyParagraphs: [
@@ -178,10 +178,10 @@ export const europeCities: Record<string, CityData> = {
   hamburg: {
     slug: "hamburg",
     displayName: "Hamburg",
-    titleTag: "South Asian Singles Events Hamburg | Garam Masala Dating",
+    titleTag: "Live Dating Show Hamburg | Garam Masala Dating",
     metaDescription:
       "Garam Masala Dating is coming to Hamburg. A live South Asian dating show and singles mixer. Indian tech workers, University of Hamburg, and northern Germany\u2019s desi scene.",
-    h1: "Hamburg\u2019s Desi Dating Night Is Coming",
+    h1: "From the Reeperbahn to the Alster, Hamburg Gets a Desi Night",
     status: "coming-soon",
     badgeLabel: "Coming Soon",
     bodyParagraphs: [
@@ -207,10 +207,10 @@ export const europeCities: Record<string, CityData> = {
   dublin: {
     slug: "dublin",
     displayName: "Dublin",
-    titleTag: "South Asian Singles Events Dublin | Garam Masala Dating",
+    titleTag: "Desi Dating Night Dublin | Garam Masala Dating",
     metaDescription:
       "Garam Masala Dating is coming to Dublin. A live South Asian dating show and singles mixer. Indian tech workers, Trinity, UCD, and Ireland\u2019s booming desi population.",
-    h1: "Dublin\u2019s Desi Dating Night Is Coming",
+    h1: "Google, Meta, Microsoft. Dublin's Tech Desis Need a Dating Night.",
     status: "coming-soon",
     badgeLabel: "Coming Soon",
     bodyParagraphs: [
@@ -236,10 +236,10 @@ export const europeCities: Record<string, CityData> = {
   paris: {
     slug: "paris",
     displayName: "Paris",
-    titleTag: "South Asian Singles Events Paris | Garam Masala Dating",
+    titleTag: "Desi Dating Show Paris | Garam Masala Dating",
     metaDescription:
       "Garam Masala Dating is coming to Paris. A live South Asian dating show and singles mixer. La Chapelle, Gare du Nord, and the Parisian desi community. Join the waitlist.",
-    h1: "Paris\u2019s Desi Dating Night Is Coming",
+    h1: "La Chapelle to Le Marais, Paris Gets a Live Desi Dating Show",
     status: "coming-soon",
     badgeLabel: "Coming Soon",
     bodyParagraphs: [
@@ -265,10 +265,10 @@ export const europeCities: Record<string, CityData> = {
   antwerp: {
     slug: "antwerp",
     displayName: "Antwerp",
-    titleTag: "South Asian Singles Events Antwerp | Garam Masala Dating",
+    titleTag: "Live Desi Night Antwerp | Garam Masala Dating",
     metaDescription:
       "Garam Masala Dating is coming to Antwerp. A live South Asian dating show and singles mixer. Indian diamond traders, University of Antwerp, and the Belgian desi scene.",
-    h1: "Antwerp\u2019s Desi Dating Night Is Coming",
+    h1: "Diamond District to City Center, Antwerp's Desi Night Is Coming",
     status: "coming-soon",
     badgeLabel: "Coming Soon",
     bodyParagraphs: [
@@ -294,10 +294,10 @@ export const europeCities: Record<string, CityData> = {
   brussels: {
     slug: "brussels",
     displayName: "Brussels",
-    titleTag: "South Asian Singles Events Brussels | Garam Masala Dating",
+    titleTag: "Desi Singles Event Brussels | Garam Masala Dating",
     metaDescription:
       "Garam Masala Dating is coming to Brussels. A live South Asian dating show and singles mixer. EU institutions, Indian diplomats, and the Belgian capital\u2019s desi crowd.",
-    h1: "Brussels\u2019s Desi Dating Night Is Coming",
+    h1: "EU Quarter Has the Diplomats. Now Give Them a Dating Night.",
     status: "coming-soon",
     badgeLabel: "Coming Soon",
     bodyParagraphs: [
@@ -323,10 +323,10 @@ export const europeCities: Record<string, CityData> = {
   zurich: {
     slug: "zurich",
     displayName: "Zurich",
-    titleTag: "South Asian Singles Events Zurich | Garam Masala Dating",
+    titleTag: "South Asian Dating Zurich | Garam Masala Dating",
     metaDescription:
       "Garam Masala Dating is coming to Zurich. A live South Asian dating show and singles mixer. ETH, Indian finance and tech professionals, and Swiss desi life.",
-    h1: "Zurich\u2019s Desi Dating Night Is Coming",
+    h1: "ETH Grads and Banking Professionals. Zurich's Desi Night.",
     status: "coming-soon",
     badgeLabel: "Coming Soon",
     bodyParagraphs: [
@@ -352,10 +352,10 @@ export const europeCities: Record<string, CityData> = {
   geneva: {
     slug: "geneva",
     displayName: "Geneva",
-    titleTag: "South Asian Singles Events Geneva | Garam Masala Dating",
+    titleTag: "Meet Desi Singles Geneva | Garam Masala Dating",
     metaDescription:
       "Garam Masala Dating is coming to Geneva. A live South Asian dating show and singles mixer. UN, CERN, WHO, and the international desi community in Switzerland.",
-    h1: "Geneva\u2019s Desi Dating Night Is Coming",
+    h1: "UN City, International Singles. Geneva Gets a Show.",
     status: "coming-soon",
     badgeLabel: "Coming Soon",
     bodyParagraphs: [
@@ -381,10 +381,10 @@ export const europeCities: Record<string, CityData> = {
   vienna: {
     slug: "vienna",
     displayName: "Vienna",
-    titleTag: "South Asian Singles Events Vienna | Garam Masala Dating",
+    titleTag: "Desi Singles Night Vienna | Garam Masala Dating",
     metaDescription:
       "Garam Masala Dating is coming to Vienna. A live South Asian dating show and singles mixer. TU Wien, Indian professionals, and the Austrian capital\u2019s growing desi community.",
-    h1: "Vienna\u2019s Desi Dating Night Is Coming",
+    h1: "From TU Wien to the Ringstrasse, Vienna Gets a Desi Dating Night",
     status: "coming-soon",
     badgeLabel: "Coming Soon",
     bodyParagraphs: [
@@ -410,10 +410,10 @@ export const europeCities: Record<string, CityData> = {
   stockholm: {
     slug: "stockholm",
     displayName: "Stockholm",
-    titleTag: "South Asian Singles Events Stockholm | Garam Masala Dating",
+    titleTag: "Live Dating Show Stockholm | Garam Masala Dating",
     metaDescription:
       "Garam Masala Dating is coming to Stockholm. A live South Asian dating show and singles mixer. Indian tech professionals, KTH, and the Swedish desi community.",
-    h1: "Stockholm\u2019s Desi Dating Night Is Coming",
+    h1: "KTH to Sodermalm, Stockholm's Desi Tech Crowd Gets a Night Out",
     status: "coming-soon",
     badgeLabel: "Coming Soon",
     bodyParagraphs: [
@@ -439,10 +439,10 @@ export const europeCities: Record<string, CityData> = {
   copenhagen: {
     slug: "copenhagen",
     displayName: "Copenhagen",
-    titleTag: "South Asian Singles Events Copenhagen | Garam Masala Dating",
+    titleTag: "Desi Dating Night Copenhagen | Garam Masala Dating",
     metaDescription:
       "Garam Masala Dating is coming to Copenhagen. A live South Asian dating show and singles mixer. Indian tech professionals and the Danish capital\u2019s growing desi community.",
-    h1: "Copenhagen\u2019s Desi Dating Night Is Coming",
+    h1: "DTU to Vesterbro, Copenhagen Gets a Desi Dating Show",
     status: "coming-soon",
     badgeLabel: "Coming Soon",
     bodyParagraphs: [
@@ -468,10 +468,10 @@ export const europeCities: Record<string, CityData> = {
   helsinki: {
     slug: "helsinki",
     displayName: "Helsinki",
-    titleTag: "South Asian Singles Events Helsinki | Garam Masala Dating",
+    titleTag: "Desi Dating Show Helsinki | Garam Masala Dating",
     metaDescription:
       "Garam Masala Dating is coming to Helsinki. A live South Asian dating show and singles mixer. Indian tech workers, Aalto University, and the Finnish desi community.",
-    h1: "Helsinki\u2019s Desi Dating Night Is Coming",
+    h1: "Aalto Campus to Kallio, Helsinki's Desi Scene Gets a Show",
     status: "coming-soon",
     badgeLabel: "Coming Soon",
     bodyParagraphs: [
@@ -497,10 +497,10 @@ export const europeCities: Record<string, CityData> = {
   oslo: {
     slug: "oslo",
     displayName: "Oslo",
-    titleTag: "South Asian Singles Events Oslo | Garam Masala Dating",
+    titleTag: "Live Desi Night Oslo | Garam Masala Dating",
     metaDescription:
       "Garam Masala Dating is coming to Oslo. A live South Asian dating show and singles mixer. Pakistani community, Indian tech workers, and Norway\u2019s capital desi scene.",
-    h1: "Oslo\u2019s Desi Dating Night Is Coming",
+    h1: "From Gronland to Grunerløkka, Oslo Gets a Desi Night",
     status: "coming-soon",
     badgeLabel: "Coming Soon",
     bodyParagraphs: [
@@ -526,10 +526,10 @@ export const europeCities: Record<string, CityData> = {
   lisbon: {
     slug: "lisbon",
     displayName: "Lisbon",
-    titleTag: "South Asian Singles Events Lisbon | Garam Masala Dating",
+    titleTag: "Desi Singles Event Lisbon | Garam Masala Dating",
     metaDescription:
       "Garam Masala Dating is coming to Lisbon. A live South Asian dating show and singles mixer. Indian tech workers, Goan Portuguese connections, and Lisbon\u2019s growing desi scene.",
-    h1: "Lisbon\u2019s Desi Dating Night Is Coming",
+    h1: "Lisbon's Desi Startup Scene Finally Gets a Social Night",
     status: "coming-soon",
     badgeLabel: "Coming Soon",
     bodyParagraphs: [
@@ -555,10 +555,10 @@ export const europeCities: Record<string, CityData> = {
   barcelona: {
     slug: "barcelona",
     displayName: "Barcelona",
-    titleTag: "South Asian Singles Events Barcelona | Garam Masala Dating",
+    titleTag: "South Asian Dating Barcelona | Garam Masala Dating",
     metaDescription:
       "Garam Masala Dating is coming to Barcelona. A live South Asian dating show and singles mixer. Raval, Pakistani community, and the Catalan capital\u2019s desi scene.",
-    h1: "Barcelona\u2019s Desi Dating Night Is Coming",
+    h1: "Raval to Gracia, Barcelona's Desi Community Gets a Dating Show",
     status: "coming-soon",
     badgeLabel: "Coming Soon",
     bodyParagraphs: [
@@ -584,10 +584,10 @@ export const europeCities: Record<string, CityData> = {
   madrid: {
     slug: "madrid",
     displayName: "Madrid",
-    titleTag: "South Asian Singles Events Madrid | Garam Masala Dating",
+    titleTag: "Meet Desi Singles Madrid | Garam Masala Dating",
     metaDescription:
       "Garam Masala Dating is coming to Madrid. A live South Asian dating show and singles mixer. Lavapi\u00e9s, Indian community, and the Spanish capital\u2019s desi scene.",
-    h1: "Madrid\u2019s Desi Dating Night Is Coming",
+    h1: "Lavapies to Malasana, Madrid's Desi Scene Deserves This",
     status: "coming-soon",
     badgeLabel: "Coming Soon",
     bodyParagraphs: [
@@ -613,10 +613,10 @@ export const europeCities: Record<string, CityData> = {
   milan: {
     slug: "milan",
     displayName: "Milan",
-    titleTag: "South Asian Singles Events Milan | Garam Masala Dating",
+    titleTag: "Desi Singles Night Milan | Garam Masala Dating",
     metaDescription:
       "Garam Masala Dating is coming to Milan. A live South Asian dating show and singles mixer. Indian professionals in fashion, finance, and tech, plus Politecnico di Milano.",
-    h1: "Milan\u2019s Desi Dating Night Is Coming",
+    h1: "Politecnico to Porta Venezia, Milan Gets a Desi Dating Night",
     status: "coming-soon",
     badgeLabel: "Coming Soon",
     bodyParagraphs: [
@@ -642,10 +642,10 @@ export const europeCities: Record<string, CityData> = {
   rome: {
     slug: "rome",
     displayName: "Rome",
-    titleTag: "South Asian Singles Events Rome | Garam Masala Dating",
+    titleTag: "Live Dating Show Rome | Garam Masala Dating",
     metaDescription:
       "Garam Masala Dating is coming to Rome. A live South Asian dating show and singles mixer. Esquilino, Bangladeshi and Indian community, and the Eternal City\u2019s desi scene.",
-    h1: "Rome\u2019s Desi Dating Night Is Coming",
+    h1: "Esquilino to Trastevere, Rome's Desi Community Gets a Show",
     status: "coming-soon",
     badgeLabel: "Coming Soon",
     bodyParagraphs: [
@@ -671,10 +671,10 @@ export const europeCities: Record<string, CityData> = {
   prague: {
     slug: "prague",
     displayName: "Prague",
-    titleTag: "South Asian Singles Events Prague | Garam Masala Dating",
+    titleTag: "Desi Dating Night Prague | Garam Masala Dating",
     metaDescription:
       "Garam Masala Dating is coming to Prague. A live South Asian dating show and singles mixer. Indian tech workers, Czech Technical University, and the Prague desi scene.",
-    h1: "Prague\u2019s Desi Dating Night Is Coming",
+    h1: "Old Town to Dejvice, Prague's Desi Students Get a Night Out",
     status: "coming-soon",
     badgeLabel: "Coming Soon",
     bodyParagraphs: [
@@ -700,10 +700,10 @@ export const europeCities: Record<string, CityData> = {
   warsaw: {
     slug: "warsaw",
     displayName: "Warsaw",
-    titleTag: "South Asian Singles Events Warsaw | Garam Masala Dating",
+    titleTag: "Desi Dating Show Warsaw | Garam Masala Dating",
     metaDescription:
       "Garam Masala Dating is coming to Warsaw. A live South Asian dating show and singles mixer. Indian tech and business community in Poland\u2019s capital. Join the waitlist.",
-    h1: "Warsaw\u2019s Desi Dating Night Is Coming",
+    h1: "Warsaw's Growing Desi Tech Scene Needs Somewhere to Meet",
     status: "coming-soon",
     badgeLabel: "Coming Soon",
     bodyParagraphs: [
@@ -729,10 +729,10 @@ export const europeCities: Record<string, CityData> = {
   tallinn: {
     slug: "tallinn",
     displayName: "Tallinn",
-    titleTag: "South Asian Singles Events Tallinn | Garam Masala Dating",
+    titleTag: "Live Desi Night Tallinn | Garam Masala Dating",
     metaDescription:
       "Garam Masala Dating is coming to Tallinn. A live South Asian dating show and singles mixer. Indian tech workers in Estonia\u2019s digital capital. Join the waitlist.",
-    h1: "Tallinn\u2019s Desi Dating Night Is Coming",
+    h1: "The Baltic's Tiniest Desi Scene Is About to Get Loud",
     status: "coming-soon",
     badgeLabel: "Coming Soon",
     bodyParagraphs: [
@@ -758,10 +758,10 @@ export const europeCities: Record<string, CityData> = {
   eindhoven: {
     slug: "eindhoven",
     displayName: "Eindhoven",
-    titleTag: "South Asian Singles Events Eindhoven | Garam Masala Dating",
+    titleTag: "Desi Singles Event Eindhoven | Garam Masala Dating",
     metaDescription:
       "Garam Masala Dating is coming to Eindhoven. A live South Asian dating show and singles mixer. ASML, TU Eindhoven, and the Brainport tech corridor's growing desi community.",
-    h1: "Eindhoven's Desi Dating Night Is Coming",
+    h1: "ASML to the Strip, Eindhoven's Desi Engineers Get a Night Out",
     status: "coming-soon",
     badgeLabel: "Coming Soon",
     bodyParagraphs: [
@@ -787,10 +787,10 @@ export const europeCities: Record<string, CityData> = {
   delft: {
     slug: "delft",
     displayName: "Delft",
-    titleTag: "South Asian Singles Events Delft | Garam Masala Dating",
+    titleTag: "South Asian Dating Delft | Garam Masala Dating",
     metaDescription:
       "Garam Masala Dating is coming to Delft. A live South Asian dating show and singles mixer. TU Delft's Indian engineering community and the Dutch tech pipeline.",
-    h1: "Delft's Desi Dating Night Is Coming",
+    h1: "TU Delft's Desi Grad Students Deserve More Than a Borrel",
     status: "coming-soon",
     badgeLabel: "Coming Soon",
     bodyParagraphs: [
@@ -816,10 +816,10 @@ export const europeCities: Record<string, CityData> = {
   groningen: {
     slug: "groningen",
     displayName: "Groningen",
-    titleTag: "South Asian Singles Events Groningen | Garam Masala Dating",
+    titleTag: "Meet Desi Singles Groningen | Garam Masala Dating",
     metaDescription:
       "Garam Masala Dating is coming to Groningen. A live South Asian dating show and singles mixer. University of Groningen and northern Netherlands' desi student scene.",
-    h1: "Groningen's Desi Dating Night Is Coming",
+    h1: "Student City, Zero Desi Events. Groningen, We're Fixing That.",
     status: "coming-soon",
     badgeLabel: "Coming Soon",
     bodyParagraphs: [
@@ -845,10 +845,10 @@ export const europeCities: Record<string, CityData> = {
   leiden: {
     slug: "leiden",
     displayName: "Leiden",
-    titleTag: "South Asian Singles Events Leiden | Garam Masala Dating",
+    titleTag: "Desi Singles Night Leiden | Garam Masala Dating",
     metaDescription:
       "Garam Masala Dating is coming to Leiden. A live South Asian dating show and singles mixer. Leiden University, South Asian studies, and the Randstad desi community.",
-    h1: "Leiden's Desi Dating Night Is Coming",
+    h1: "Leiden's Oldest University Has a Young Desi Scene",
     status: "coming-soon",
     badgeLabel: "Coming Soon",
     bodyParagraphs: [
@@ -874,10 +874,10 @@ export const europeCities: Record<string, CityData> = {
   aachen: {
     slug: "aachen",
     displayName: "Aachen",
-    titleTag: "South Asian Singles Events Aachen | Garam Masala Dating",
+    titleTag: "Live Dating Show Aachen | Garam Masala Dating",
     metaDescription:
       "Garam Masala Dating is coming to Aachen. A live South Asian dating show and singles mixer. RWTH Aachen's Indian engineering community at the Dutch and Belgian border.",
-    h1: "Aachen's Desi Dating Night Is Coming",
+    h1: "RWTH's Engineering Corridor Is Full of Desi Students. Where Do They Go?",
     status: "coming-soon",
     badgeLabel: "Coming Soon",
     bodyParagraphs: [
@@ -903,10 +903,10 @@ export const europeCities: Record<string, CityData> = {
   stuttgart: {
     slug: "stuttgart",
     displayName: "Stuttgart",
-    titleTag: "South Asian Singles Events Stuttgart | Garam Masala Dating",
+    titleTag: "Desi Dating Night Stuttgart | Garam Masala Dating",
     metaDescription:
       "Garam Masala Dating is coming to Stuttgart. A live South Asian dating show and singles mixer. Bosch, Daimler, Porsche, University of Stuttgart, and the Swabian desi crowd.",
-    h1: "Stuttgart's Desi Dating Night Is Coming",
+    h1: "Bosch, Daimler, Porsche. Stuttgart's Desi Engineers Need a Night Out.",
     status: "coming-soon",
     badgeLabel: "Coming Soon",
     bodyParagraphs: [
@@ -932,10 +932,10 @@ export const europeCities: Record<string, CityData> = {
   nuremberg: {
     slug: "nuremberg",
     displayName: "Nuremberg",
-    titleTag: "South Asian Singles Events Nuremberg | Garam Masala Dating",
+    titleTag: "Desi Dating Show Nuremberg | Garam Masala Dating",
     metaDescription:
       "Garam Masala Dating is coming to Nuremberg. A live South Asian dating show and singles mixer. Siemens HQ, FAU, and Franconia's growing Indian community.",
-    h1: "Nuremberg's Desi Dating Night Is Coming",
+    h1: "Siemens HQ and a Growing Desi Community. Nuremberg Gets a Show.",
     status: "coming-soon",
     badgeLabel: "Coming Soon",
     bodyParagraphs: [
@@ -961,10 +961,10 @@ export const europeCities: Record<string, CityData> = {
   darmstadt: {
     slug: "darmstadt",
     displayName: "Darmstadt",
-    titleTag: "South Asian Singles Events Darmstadt | Garam Masala Dating",
+    titleTag: "Live Desi Night Darmstadt | Garam Masala Dating",
     metaDescription:
       "Garam Masala Dating is coming to Darmstadt. A live South Asian dating show and singles mixer. TU Darmstadt, ESA, and the Rhein Main desi tech community.",
-    h1: "Darmstadt's Desi Dating Night Is Coming",
+    h1: "TU Darmstadt's Desi Grad Students Need More Than the Mensa",
     status: "coming-soon",
     badgeLabel: "Coming Soon",
     bodyParagraphs: [
@@ -990,10 +990,10 @@ export const europeCities: Record<string, CityData> = {
   dresden: {
     slug: "dresden",
     displayName: "Dresden",
-    titleTag: "South Asian Singles Events Dresden | Garam Masala Dating",
+    titleTag: "Desi Singles Event Dresden | Garam Masala Dating",
     metaDescription:
       "Garam Masala Dating is coming to Dresden. A live South Asian dating show and singles mixer. TU Dresden, Silicon Saxony, and eastern Germany's semiconductor desi community.",
-    h1: "Dresden's Desi Dating Night Is Coming",
+    h1: "Dresden's Semiconductor Valley Has More Desi Engineers Than You Think",
     status: "coming-soon",
     badgeLabel: "Coming Soon",
     bodyParagraphs: [
@@ -1019,10 +1019,10 @@ export const europeCities: Record<string, CityData> = {
   cologne: {
     slug: "cologne",
     displayName: "Cologne",
-    titleTag: "South Asian Singles Events Cologne | Garam Masala Dating",
+    titleTag: "South Asian Dating Cologne | Garam Masala Dating",
     metaDescription:
       "Garam Masala Dating is coming to Cologne. A live South Asian dating show and singles mixer. University of Cologne, media industry, and the Rhineland desi community.",
-    h1: "Cologne's Desi Dating Night Is Coming",
+    h1: "Ehrenfeld to the Dom, Cologne's Desi Scene Gets a Night",
     status: "coming-soon",
     badgeLabel: "Coming Soon",
     bodyParagraphs: [
@@ -1048,10 +1048,10 @@ export const europeCities: Record<string, CityData> = {
   dusseldorf: {
     slug: "dusseldorf",
     displayName: "Dusseldorf",
-    titleTag: "South Asian Singles Events Dusseldorf | Garam Masala Dating",
+    titleTag: "Meet Desi Singles Dusseldorf | Garam Masala Dating",
     metaDescription:
       "Garam Masala Dating is coming to Dusseldorf. A live South Asian dating show and singles mixer. Business hub, Immermannstrasse, and the Rhineland's professional desi community.",
-    h1: "Dusseldorf's Desi Dating Night Is Coming",
+    h1: "Dusseldorf's Desi Business Community Deserves a Proper Night Out",
     status: "coming-soon",
     badgeLabel: "Coming Soon",
     bodyParagraphs: [
@@ -1077,10 +1077,10 @@ export const europeCities: Record<string, CityData> = {
   leuven: {
     slug: "leuven",
     displayName: "Leuven",
-    titleTag: "South Asian Singles Events Leuven | Garam Masala Dating",
+    titleTag: "Desi Singles Night Leuven | Garam Masala Dating",
     metaDescription:
       "Garam Masala Dating is coming to Leuven. A live South Asian dating show and singles mixer. KU Leuven, IMEC, and Belgium's university capital desi scene.",
-    h1: "Leuven's Desi Dating Night Is Coming",
+    h1: "KU Leuven Has the Students. Now Give Them a Dating Show.",
     status: "coming-soon",
     badgeLabel: "Coming Soon",
     bodyParagraphs: [
@@ -1106,10 +1106,10 @@ export const europeCities: Record<string, CityData> = {
   ghent: {
     slug: "ghent",
     displayName: "Ghent",
-    titleTag: "South Asian Singles Events Ghent | Garam Masala Dating",
+    titleTag: "Live Dating Show Ghent | Garam Masala Dating",
     metaDescription:
       "Garam Masala Dating is coming to Ghent. A live South Asian dating show and singles mixer. Ghent University, biotech, and the Flemish university city desi community.",
-    h1: "Ghent's Desi Dating Night Is Coming",
+    h1: "Ghent's University Quarter Needs a Desi Night, Not Another Student Bar",
     status: "coming-soon",
     badgeLabel: "Coming Soon",
     bodyParagraphs: [
@@ -1135,10 +1135,10 @@ export const europeCities: Record<string, CityData> = {
   lausanne: {
     slug: "lausanne",
     displayName: "Lausanne",
-    titleTag: "South Asian Singles Events Lausanne | Garam Masala Dating",
+    titleTag: "Desi Dating Night Lausanne | Garam Masala Dating",
     metaDescription:
       "Garam Masala Dating is coming to Lausanne. A live South Asian dating show and singles mixer. EPFL, Lake Geneva, and the Swiss Romande desi community.",
-    h1: "Lausanne's Desi Dating Night Is Coming",
+    h1: "EPFL to the Lakefront, Lausanne Gets a Desi Dating Night",
     status: "coming-soon",
     badgeLabel: "Coming Soon",
     bodyParagraphs: [
@@ -1164,10 +1164,10 @@ export const europeCities: Record<string, CityData> = {
   basel: {
     slug: "basel",
     displayName: "Basel",
-    titleTag: "South Asian Singles Events Basel | Garam Masala Dating",
+    titleTag: "Desi Dating Show Basel | Garam Masala Dating",
     metaDescription:
       "Garam Masala Dating is coming to Basel. A live South Asian dating show and singles mixer. Novartis, Roche, pharma industry, and the tri-border desi community.",
-    h1: "Basel's Desi Dating Night Is Coming",
+    h1: "Novartis, Roche, and a Pharma Corridor Full of Desi Scientists",
     status: "coming-soon",
     badgeLabel: "Coming Soon",
     bodyParagraphs: [
@@ -1193,10 +1193,10 @@ export const europeCities: Record<string, CityData> = {
   cork: {
     slug: "cork",
     displayName: "Cork",
-    titleTag: "South Asian Singles Events Cork | Garam Masala Dating",
+    titleTag: "Live Desi Night Cork | Garam Masala Dating",
     metaDescription:
       "Garam Masala Dating is coming to Cork. A live South Asian dating show and singles mixer. UCC, pharma, tech, and Ireland's second city desi community.",
-    h1: "Cork's Desi Dating Night Is Coming",
+    h1: "UCC to the English Market, Cork Gets a Desi Dating Show",
     status: "coming-soon",
     badgeLabel: "Coming Soon",
     bodyParagraphs: [
@@ -1222,10 +1222,10 @@ export const europeCities: Record<string, CityData> = {
   galway: {
     slug: "galway",
     displayName: "Galway",
-    titleTag: "South Asian Singles Events Galway | Garam Masala Dating",
+    titleTag: "Desi Singles Event Galway | Garam Masala Dating",
     metaDescription:
       "Garam Masala Dating is coming to Galway. A live South Asian dating show and singles mixer. NUI Galway, medtech, and the west of Ireland's growing desi community.",
-    h1: "Galway's Desi Dating Night Is Coming",
+    h1: "NUI Galway's Desi Students Deserve a Night Beyond the Latin Quarter",
     status: "coming-soon",
     badgeLabel: "Coming Soon",
     bodyParagraphs: [
@@ -1251,10 +1251,10 @@ export const europeCities: Record<string, CityData> = {
   porto: {
     slug: "porto",
     displayName: "Porto",
-    titleTag: "South Asian Singles Events Porto | Garam Masala Dating",
+    titleTag: "South Asian Dating Porto | Garam Masala Dating",
     metaDescription:
       "Garam Masala Dating is coming to Porto. A live South Asian dating show and singles mixer. University of Porto, tech scene, and northern Portugal's desi community.",
-    h1: "Porto's Desi Dating Night Is Coming",
+    h1: "Ribeira to Campanha, Porto's Desi Scene Is Quietly Growing",
     status: "coming-soon",
     badgeLabel: "Coming Soon",
     bodyParagraphs: [
@@ -1280,10 +1280,10 @@ export const europeCities: Record<string, CityData> = {
   braga: {
     slug: "braga",
     displayName: "Braga",
-    titleTag: "South Asian Singles Events Braga | Garam Masala Dating",
+    titleTag: "Meet Desi Singles Braga | Garam Masala Dating",
     metaDescription:
       "Garam Masala Dating is coming to Braga. A live South Asian dating show and singles mixer. University of Minho, tech growth, and northern Portugal's desi community.",
-    h1: "Braga's Desi Dating Night Is Coming",
+    h1: "University of Minho's Campus Crowd Gets a Desi Night",
     status: "coming-soon",
     badgeLabel: "Coming Soon",
     bodyParagraphs: [
@@ -1309,10 +1309,10 @@ export const europeCities: Record<string, CityData> = {
   valencia: {
     slug: "valencia",
     displayName: "Valencia",
-    titleTag: "South Asian Singles Events Valencia | Garam Masala Dating",
+    titleTag: "Desi Singles Night Valencia | Garam Masala Dating",
     metaDescription:
       "Garam Masala Dating is coming to Valencia. A live South Asian dating show and singles mixer. UPV, digital nomads, and the Mediterranean coast desi scene.",
-    h1: "Valencia's Desi Dating Night Is Coming",
+    h1: "Digital Nomads and Desi Expats. Valencia Gets a Dating Show.",
     status: "coming-soon",
     badgeLabel: "Coming Soon",
     bodyParagraphs: [
@@ -1338,10 +1338,10 @@ export const europeCities: Record<string, CityData> = {
   seville: {
     slug: "seville",
     displayName: "Seville",
-    titleTag: "South Asian Singles Events Seville | Garam Masala Dating",
+    titleTag: "Live Dating Show Seville | Garam Masala Dating",
     metaDescription:
       "Garam Masala Dating is coming to Seville. A live South Asian dating show and singles mixer. University of Seville, Andalusian warmth, and southern Spain's desi scene.",
-    h1: "Seville's Desi Dating Night Is Coming",
+    h1: "Triana to Alameda, Seville Gets a Desi Night With Flamenco Energy",
     status: "coming-soon",
     badgeLabel: "Coming Soon",
     bodyParagraphs: [
@@ -1367,10 +1367,10 @@ export const europeCities: Record<string, CityData> = {
   bologna: {
     slug: "bologna",
     displayName: "Bologna",
-    titleTag: "South Asian Singles Events Bologna | Garam Masala Dating",
+    titleTag: "Desi Dating Night Bologna | Garam Masala Dating",
     metaDescription:
       "Garam Masala Dating is coming to Bologna. A live South Asian dating show and singles mixer. The oldest university in Europe, Emilia-Romagna's food capital, and Italy's desi student community.",
-    h1: "Bologna's Desi Dating Night Is Coming",
+    h1: "The Oldest University in Europe. The Newest Desi Dating Show.",
     status: "coming-soon",
     badgeLabel: "Coming Soon",
     bodyParagraphs: [
@@ -1396,10 +1396,10 @@ export const europeCities: Record<string, CityData> = {
   turin: {
     slug: "turin",
     displayName: "Turin",
-    titleTag: "South Asian Singles Events Turin | Garam Masala Dating",
+    titleTag: "Desi Dating Show Turin | Garam Masala Dating",
     metaDescription:
       "Garam Masala Dating is coming to Turin. A live South Asian dating show and singles mixer. Politecnico di Torino, Piedmont's Sikh community, and northern Italy's desi scene.",
-    h1: "Turin's Desi Dating Night Is Coming",
+    h1: "Politecnico to Piazza Vittorio, Turin Gets a Desi Night",
     status: "coming-soon",
     badgeLabel: "Coming Soon",
     bodyParagraphs: [
@@ -1425,10 +1425,10 @@ export const europeCities: Record<string, CityData> = {
   padua: {
     slug: "padua",
     displayName: "Padua",
-    titleTag: "South Asian Singles Events Padua | Garam Masala Dating",
+    titleTag: "Live Desi Night Padua | Garam Masala Dating",
     metaDescription:
       "Garam Masala Dating is coming to Padua. A live South Asian dating show and singles mixer. University of Padua, Veneto desi community, and northeast Italy's desi student scene.",
-    h1: "Padua's Desi Dating Night Is Coming",
+    h1: "University of Padua's Desi Students Need More Than Aperol Spritzes",
     status: "coming-soon",
     badgeLabel: "Coming Soon",
     bodyParagraphs: [
@@ -1454,10 +1454,10 @@ export const europeCities: Record<string, CityData> = {
   naples: {
     slug: "naples",
     displayName: "Naples",
-    titleTag: "South Asian Singles Events Naples | Garam Masala Dating",
+    titleTag: "Desi Singles Event Naples | Garam Masala Dating",
     metaDescription:
       "Garam Masala Dating is coming to Naples. A live South Asian dating show and singles mixer. Federico II University and southern Italy's desi community.",
-    h1: "Naples's Desi Dating Night Is Coming",
+    h1: "Federico II to Spaccanapoli, Naples Gets a Desi Dating Night",
     status: "coming-soon",
     badgeLabel: "Coming Soon",
     bodyParagraphs: [
@@ -1483,10 +1483,10 @@ export const europeCities: Record<string, CityData> = {
   florence: {
     slug: "florence",
     displayName: "Florence",
-    titleTag: "South Asian Singles Events Florence | Garam Masala Dating",
+    titleTag: "South Asian Dating Florence | Garam Masala Dating",
     metaDescription:
       "Garam Masala Dating is coming to Florence. A live South Asian dating show and singles mixer. Art, architecture, study abroad crossover, and Tuscany's desi community.",
-    h1: "Florence's Desi Dating Night Is Coming",
+    h1: "Duomo to Santa Croce, Florence Gets a Desi Night",
     status: "coming-soon",
     badgeLabel: "Coming Soon",
     bodyParagraphs: [
@@ -1512,10 +1512,10 @@ export const europeCities: Record<string, CityData> = {
   gothenburg: {
     slug: "gothenburg",
     displayName: "Gothenburg",
-    titleTag: "South Asian Singles Events Gothenburg | Garam Masala Dating",
+    titleTag: "Meet Desi Singles Gothenburg | Garam Masala Dating",
     metaDescription:
       "Garam Masala Dating is coming to Gothenburg. A live South Asian dating show and singles mixer. Volvo, Ericsson, Chalmers, and Sweden's west coast desi community.",
-    h1: "Gothenburg's Desi Dating Night Is Coming",
+    h1: "Volvo, Ericsson, Chalmers. Gothenburg's Desi Engineers Get a Night.",
     status: "coming-soon",
     badgeLabel: "Coming Soon",
     bodyParagraphs: [
@@ -1541,10 +1541,10 @@ export const europeCities: Record<string, CityData> = {
   uppsala: {
     slug: "uppsala",
     displayName: "Uppsala",
-    titleTag: "South Asian Singles Events Uppsala | Garam Masala Dating",
+    titleTag: "Desi Singles Night Uppsala | Garam Masala Dating",
     metaDescription:
       "Garam Masala Dating is coming to Uppsala. A live South Asian dating show and singles mixer. Uppsala University, Swedish university town desi community.",
-    h1: "Uppsala's Desi Dating Night Is Coming",
+    h1: "Uppsala University's Desi Crowd Deserves a Night Beyond the Nations",
     status: "coming-soon",
     badgeLabel: "Coming Soon",
     bodyParagraphs: [
@@ -1570,10 +1570,10 @@ export const europeCities: Record<string, CityData> = {
   lund: {
     slug: "lund",
     displayName: "Lund",
-    titleTag: "South Asian Singles Events Lund | Garam Masala Dating",
+    titleTag: "Live Dating Show Lund | Garam Masala Dating",
     metaDescription:
       "Garam Masala Dating is coming to Lund. A live South Asian dating show and singles mixer. Lund University, MAX IV, and Skane's desi academic community.",
-    h1: "Lund's Desi Dating Night Is Coming",
+    h1: "Lund University's Desi Students Need More Than AF Borgen",
     status: "coming-soon",
     badgeLabel: "Coming Soon",
     bodyParagraphs: [
@@ -1599,10 +1599,10 @@ export const europeCities: Record<string, CityData> = {
   tampere: {
     slug: "tampere",
     displayName: "Tampere",
-    titleTag: "South Asian Singles Events Tampere | Garam Masala Dating",
+    titleTag: "Desi Dating Night Tampere | Garam Masala Dating",
     metaDescription:
       "Garam Masala Dating is coming to Tampere. A live South Asian dating show and singles mixer. Tampere University, Nokia, and central Finland's desi tech community.",
-    h1: "Tampere's Desi Dating Night Is Coming",
+    h1: "Nokia Corridor and a Growing Desi Tech Scene. Tampere Gets a Show.",
     status: "coming-soon",
     badgeLabel: "Coming Soon",
     bodyParagraphs: [
@@ -1628,10 +1628,10 @@ export const europeCities: Record<string, CityData> = {
   oulu: {
     slug: "oulu",
     displayName: "Oulu",
-    titleTag: "South Asian Singles Events Oulu | Garam Masala Dating",
+    titleTag: "Desi Dating Show Oulu | Garam Masala Dating",
     metaDescription:
       "Garam Masala Dating is coming to Oulu. A live South Asian dating show and singles mixer. Nokia, University of Oulu, and Arctic Finland's desi tech community.",
-    h1: "Oulu's Desi Dating Night Is Coming",
+    h1: "The Northernmost Desi Dating Show in the World. Oulu, You're Welcome.",
     status: "coming-soon",
     badgeLabel: "Coming Soon",
     bodyParagraphs: [
@@ -1657,10 +1657,10 @@ export const europeCities: Record<string, CityData> = {
   trondheim: {
     slug: "trondheim",
     displayName: "Trondheim",
-    titleTag: "South Asian Singles Events Trondheim | Garam Masala Dating",
+    titleTag: "Live Desi Night Trondheim | Garam Masala Dating",
     metaDescription:
       "Garam Masala Dating is coming to Trondheim. A live South Asian dating show and singles mixer. NTNU, Norwegian tech hub, and central Norway's desi community.",
-    h1: "Trondheim's Desi Dating Night Is Coming",
+    h1: "NTNU's Desi Grad Students Need a Night That Isn't a Cabin Trip",
     status: "coming-soon",
     badgeLabel: "Coming Soon",
     bodyParagraphs: [
@@ -1686,10 +1686,10 @@ export const europeCities: Record<string, CityData> = {
   krakow: {
     slug: "krakow",
     displayName: "Krakow",
-    titleTag: "South Asian Singles Events Krakow | Garam Masala Dating",
+    titleTag: "Desi Singles Event Krakow | Garam Masala Dating",
     metaDescription:
       "Garam Masala Dating is coming to Krakow. A live South Asian dating show and singles mixer. AGH, Jagiellonian University, and Poland's cultural capital desi scene.",
-    h1: "Krakow's Desi Dating Night Is Coming",
+    h1: "Kazimierz to Nowa Huta, Krakow's Desi Scene Gets a Night",
     status: "coming-soon",
     badgeLabel: "Coming Soon",
     bodyParagraphs: [
@@ -1715,10 +1715,10 @@ export const europeCities: Record<string, CityData> = {
   wroclaw: {
     slug: "wroclaw",
     displayName: "Wroclaw",
-    titleTag: "South Asian Singles Events Wroclaw | Garam Masala Dating",
+    titleTag: "South Asian Dating Wroclaw | Garam Masala Dating",
     metaDescription:
       "Garam Masala Dating is coming to Wroclaw. A live South Asian dating show and singles mixer. Wroclaw University of Technology, IT hub, and Lower Silesia's desi community.",
-    h1: "Wroclaw's Desi Dating Night Is Coming",
+    h1: "Wroclaw's Tech Hub Is Growing. So Is the Desi Community.",
     status: "coming-soon",
     badgeLabel: "Coming Soon",
     bodyParagraphs: [
@@ -1744,10 +1744,10 @@ export const europeCities: Record<string, CityData> = {
   brno: {
     slug: "brno",
     displayName: "Brno",
-    titleTag: "South Asian Singles Events Brno | Garam Masala Dating",
+    titleTag: "Meet Desi Singles Brno | Garam Masala Dating",
     metaDescription:
       "Garam Masala Dating is coming to Brno. A live South Asian dating show and singles mixer. Masaryk University, BUT, and Moravia's growing desi tech community.",
-    h1: "Brno's Desi Dating Night Is Coming",
+    h1: "Masaryk to VUT, Brno's Desi Students Get a Night Out",
     status: "coming-soon",
     badgeLabel: "Coming Soon",
     bodyParagraphs: [
@@ -1773,10 +1773,10 @@ export const europeCities: Record<string, CityData> = {
   budapest: {
     slug: "budapest",
     displayName: "Budapest",
-    titleTag: "South Asian Singles Events Budapest | Garam Masala Dating",
+    titleTag: "Desi Singles Night Budapest | Garam Masala Dating",
     metaDescription:
       "Garam Masala Dating is coming to Budapest. A live South Asian dating show and singles mixer. BME, Semmelweis, desi medical students, and Hungary's growing South Asian community.",
-    h1: "Budapest's Desi Dating Night Is Coming",
+    h1: "Semmelweis to the Ruin Bars, Budapest's Desi Medical Students Get a Show",
     status: "coming-soon",
     badgeLabel: "Coming Soon",
     bodyParagraphs: [
@@ -1802,10 +1802,10 @@ export const europeCities: Record<string, CityData> = {
   bucharest: {
     slug: "bucharest",
     displayName: "Bucharest",
-    titleTag: "South Asian Singles Events Bucharest | Garam Masala Dating",
+    titleTag: "Live Dating Show Bucharest | Garam Masala Dating",
     metaDescription:
       "Garam Masala Dating is coming to Bucharest. A live South Asian dating show and singles mixer. University of Bucharest, IT sector, and Romania's growing desi community.",
-    h1: "Bucharest's Desi Dating Night Is Coming",
+    h1: "Bucharest's Growing Desi Student Community Deserves a Night",
     status: "coming-soon",
     badgeLabel: "Coming Soon",
     bodyParagraphs: [
@@ -1831,10 +1831,10 @@ export const europeCities: Record<string, CityData> = {
   "cluj-napoca": {
     slug: "cluj-napoca",
     displayName: "Cluj-Napoca",
-    titleTag: "South Asian Singles Events Cluj-Napoca | Garam Masala Dating",
+    titleTag: "Desi Dating Night Cluj-Napoca | Garam Masala Dating",
     metaDescription:
       "Garam Masala Dating is coming to Cluj-Napoca. A live South Asian dating show and singles mixer. Romania's tech hub, Babes-Bolyai University, and Transylvania's desi community.",
-    h1: "Cluj's Desi Dating Night Is Coming",
+    h1: "Cluj's Tech Hub Is Attracting Desi Engineers. Here's Their Night Out.",
     status: "coming-soon",
     badgeLabel: "Coming Soon",
     bodyParagraphs: [
@@ -1860,10 +1860,10 @@ export const europeCities: Record<string, CityData> = {
   sofia: {
     slug: "sofia",
     displayName: "Sofia",
-    titleTag: "South Asian Singles Events Sofia | Garam Masala Dating",
+    titleTag: "Desi Dating Show Sofia | Garam Masala Dating",
     metaDescription:
       "Garam Masala Dating is coming to Sofia. A live South Asian dating show and singles mixer. Medical University of Sofia, desi medical students, and Bulgaria's growing South Asian community.",
-    h1: "Sofia's Desi Dating Night Is Coming",
+    h1: "Medical University Desi Students Need More Than Vitosha Boulevard",
     status: "coming-soon",
     badgeLabel: "Coming Soon",
     bodyParagraphs: [
@@ -1889,10 +1889,10 @@ export const europeCities: Record<string, CityData> = {
   vilnius: {
     slug: "vilnius",
     displayName: "Vilnius",
-    titleTag: "South Asian Singles Events Vilnius | Garam Masala Dating",
+    titleTag: "Live Desi Night Vilnius | Garam Masala Dating",
     metaDescription:
       "Garam Masala Dating is coming to Vilnius. A live South Asian dating show and singles mixer. Vilnius University, fintech hub, and the Baltics' growing desi community.",
-    h1: "Vilnius's Desi Dating Night Is Coming",
+    h1: "Vilnius Is Tiny but Loud. The Desi Scene Is About to Get Louder.",
     status: "coming-soon",
     badgeLabel: "Coming Soon",
     bodyParagraphs: [
@@ -1918,10 +1918,10 @@ export const europeCities: Record<string, CityData> = {
   riga: {
     slug: "riga",
     displayName: "Riga",
-    titleTag: "South Asian Singles Events Riga | Garam Masala Dating",
+    titleTag: "Desi Singles Event Riga | Garam Masala Dating",
     metaDescription:
       "Garam Masala Dating is coming to Riga. A live South Asian dating show and singles mixer. Riga Stradins University, desi medical students, and Latvia's South Asian community.",
-    h1: "Riga's Desi Dating Night Is Coming",
+    h1: "Riga Stradins Has the Desi Medical Students. Now They Get a Night.",
     status: "coming-soon",
     badgeLabel: "Coming Soon",
     bodyParagraphs: [
@@ -1947,10 +1947,10 @@ export const europeCities: Record<string, CityData> = {
   ljubljana: {
     slug: "ljubljana",
     displayName: "Ljubljana",
-    titleTag: "South Asian Singles Events Ljubljana | Garam Masala Dating",
+    titleTag: "South Asian Dating Ljubljana | Garam Masala Dating",
     metaDescription:
       "Garam Masala Dating is coming to Ljubljana. A live South Asian dating show and singles mixer. University of Ljubljana and Slovenia's growing desi community.",
-    h1: "Ljubljana's Desi Dating Night Is Coming",
+    h1: "Small Capital, Big Personality. Ljubljana Gets a Desi Night.",
     status: "coming-soon",
     badgeLabel: "Coming Soon",
     bodyParagraphs: [
@@ -1976,10 +1976,10 @@ export const europeCities: Record<string, CityData> = {
   zagreb: {
     slug: "zagreb",
     displayName: "Zagreb",
-    titleTag: "South Asian Singles Events Zagreb | Garam Masala Dating",
+    titleTag: "Meet Desi Singles Zagreb | Garam Masala Dating",
     metaDescription:
       "Garam Masala Dating is coming to Zagreb. A live South Asian dating show and singles mixer. University of Zagreb, Balkan hub, and Croatia's growing desi community.",
-    h1: "Zagreb's Desi Dating Night Is Coming",
+    h1: "University to the Upper Town, Zagreb Gets a Desi Dating Show",
     status: "coming-soon",
     badgeLabel: "Coming Soon",
     bodyParagraphs: [
@@ -2005,10 +2005,10 @@ export const europeCities: Record<string, CityData> = {
   athens: {
     slug: "athens",
     displayName: "Athens",
-    titleTag: "South Asian Singles Events Athens | Garam Masala Dating",
+    titleTag: "Desi Singles Night Athens | Garam Masala Dating",
     metaDescription:
       "Garam Masala Dating is coming to Athens. A live South Asian dating show and singles mixer. NTUA, digital nomads, and Greece's growing South Asian community.",
-    h1: "Athens's Desi Dating Night Is Coming",
+    h1: "Exarchia to Monastiraki, Athens Gets a Desi Night",
     status: "coming-soon",
     badgeLabel: "Coming Soon",
     bodyParagraphs: [
@@ -2034,10 +2034,10 @@ export const europeCities: Record<string, CityData> = {
   thessaloniki: {
     slug: "thessaloniki",
     displayName: "Thessaloniki",
-    titleTag: "South Asian Singles Events Thessaloniki | Garam Masala Dating",
+    titleTag: "Live Dating Show Thessaloniki | Garam Masala Dating",
     metaDescription:
       "Garam Masala Dating is coming to Thessaloniki. A live South Asian dating show and singles mixer. Aristotle University, northern Greece, and the Balkans desi community.",
-    h1: "Thessaloniki's Desi Dating Night Is Coming",
+    h1: "Aristotle's City Gets a Dating Show Worthy of the Name",
     status: "coming-soon",
     badgeLabel: "Coming Soon",
     bodyParagraphs: [
@@ -2063,10 +2063,10 @@ export const europeCities: Record<string, CityData> = {
   nicosia: {
     slug: "nicosia",
     displayName: "Nicosia",
-    titleTag: "South Asian Singles Events Nicosia | Garam Masala Dating",
+    titleTag: "Desi Dating Night Nicosia | Garam Masala Dating",
     metaDescription:
       "Garam Masala Dating is coming to Nicosia. A live South Asian dating show and singles mixer. University of Cyprus and the island's growing South Asian community.",
-    h1: "Nicosia's Desi Dating Night Is Coming",
+    h1: "Nicosia's Desi Students Need More Than a Kebab Run",
     status: "coming-soon",
     badgeLabel: "Coming Soon",
     bodyParagraphs: [
@@ -2092,10 +2092,10 @@ export const europeCities: Record<string, CityData> = {
   limassol: {
     slug: "limassol",
     displayName: "Limassol",
-    titleTag: "South Asian Singles Events Limassol | Garam Masala Dating",
+    titleTag: "Desi Dating Show Limassol | Garam Masala Dating",
     metaDescription:
       "Garam Masala Dating is coming to Limassol. A live South Asian dating show and singles mixer. Tech and business hub, TEPAK, and Cyprus's cosmopolitan desi scene.",
-    h1: "Limassol's Desi Dating Night Is Coming",
+    h1: "Tech Hub, Beach Town, and a Growing Desi Expat Scene",
     status: "coming-soon",
     badgeLabel: "Coming Soon",
     bodyParagraphs: [

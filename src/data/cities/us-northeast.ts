@@ -4,10 +4,10 @@ export const usNortheastCities: Record<string, CityData> = {
   edison: {
     slug: "edison",
     displayName: "Edison/Iselin",
-    titleTag: "South Asian Singles Events Edison NJ | Garam Masala Dating",
+    titleTag: "Edison NJ Indian Singles Event | Garam Masala Dating",
     metaDescription:
       "Garam Masala Dating is coming to Edison, NJ. A live South Asian dating show and singles mixer from the creators of NYC\u2019s #1 desi dating event. Join the waitlist.",
-    h1: "Edison\u2019s Desi Dating Night Is Coming",
+    h1: "Oak Tree Road Deserves a Dating Show",
     status: "coming-soon",
     badgeLabel: "Coming Soon",
     bodyParagraphs: [
@@ -33,10 +33,10 @@ export const usNortheastCities: Record<string, CityData> = {
   parsippany: {
     slug: "parsippany",
     displayName: "Parsippany/Morris County",
-    titleTag: "South Asian Singles Events Parsippany NJ | Garam Masala Dating",
+    titleTag: "Parsippany NJ Desi Dating Show | Garam Masala Dating",
     metaDescription:
       "Garam Masala Dating is coming to Parsippany and Morris County, NJ. A live South Asian dating show and singles mixer. Join the waitlist.",
-    h1: "Parsippany\u2019s Desi Dating Night Is Coming",
+    h1: "Morris County Is Full of Desi Singles. They Just Need a Room.",
     status: "coming-soon",
     badgeLabel: "Coming Soon",
     bodyParagraphs: [
@@ -61,10 +61,10 @@ export const usNortheastCities: Record<string, CityData> = {
   philadelphia: {
     slug: "philadelphia",
     displayName: "Philadelphia",
-    titleTag: "South Asian Singles Events Philadelphia | Garam Masala Dating",
+    titleTag: "Philly Desi Singles Night | Garam Masala Dating",
     metaDescription:
       "Garam Masala Dating is coming to Philadelphia. A live South Asian dating show and singles mixer from the creators of NYC\u2019s #1 desi dating event. Join the waitlist.",
-    h1: "Philly\u2019s Desi Dating Night Is Coming",
+    h1: "Live Comedy Dating for South Asian Singles in Philly",
     status: "coming-soon",
     badgeLabel: "Coming Soon",
     bodyParagraphs: [
@@ -90,10 +90,10 @@ export const usNortheastCities: Record<string, CityData> = {
   boston: {
     slug: "boston",
     displayName: "Boston",
-    titleTag: "South Asian Singles Events Boston | Garam Masala Dating",
+    titleTag: "Boston South Asian Dating Show | Garam Masala Dating",
     metaDescription:
       "Garam Masala Dating is coming to Boston. A live South Asian dating show and singles mixer from the creators of NYC\u2019s #1 desi dating event. Join the waitlist.",
-    h1: "Boston\u2019s Desi Dating Night Is Coming",
+    h1: "Boston Finally Gets a Live Dating Show Worth Showing Up For",
     status: "coming-soon",
     badgeLabel: "Coming Soon",
     bodyParagraphs: [
@@ -119,10 +119,10 @@ export const usNortheastCities: Record<string, CityData> = {
   stamford: {
     slug: "stamford",
     displayName: "Hartford/Stamford",
-    titleTag: "South Asian Singles Events Stamford CT | Garam Masala Dating",
+    titleTag: "CT Desi Dating Night | Garam Masala Dating",
     metaDescription:
       "Garam Masala Dating is coming to Stamford and Hartford, CT. A live South Asian dating show and singles mixer. Join the waitlist.",
-    h1: "Connecticut\u2019s Desi Dating Night Is Coming",
+    h1: "Stop Driving to Manhattan. The Show Is Coming to Connecticut.",
     status: "coming-soon",
     badgeLabel: "Coming Soon",
     bodyParagraphs: [
@@ -147,10 +147,10 @@ export const usNortheastCities: Record<string, CityData> = {
   "new-haven": {
     slug: "new-haven",
     displayName: "New Haven",
-    titleTag: "South Asian Singles Events New Haven CT | Garam Masala Dating",
+    titleTag: "Meet Desi Singles in New Haven | Garam Masala Dating",
     metaDescription:
       "Garam Masala Dating is coming to New Haven, CT. A live South Asian dating show and singles mixer. Join the waitlist.",
-    h1: "New Haven\u2019s Desi Dating Night Is Coming",
+    h1: "Yale Town, Small Pool. We Can Fix That.",
     status: "coming-soon",
     badgeLabel: "Coming Soon",
     bodyParagraphs: [
@@ -175,10 +175,10 @@ export const usNortheastCities: Record<string, CityData> = {
   providence: {
     slug: "providence",
     displayName: "Providence",
-    titleTag: "South Asian Singles Events Providence RI | Garam Masala Dating",
+    titleTag: "Providence RI Desi Singles Event | Garam Masala Dating",
     metaDescription:
       "Garam Masala Dating is coming to Providence, RI. A live South Asian dating show and singles mixer. Join the waitlist.",
-    h1: "Providence\u2019s Desi Dating Night Is Coming",
+    h1: "Rhode Island Is Small. Your Dating Options Don't Have to Be.",
     status: "coming-soon",
     badgeLabel: "Coming Soon",
     bodyParagraphs: [
@@ -203,10 +203,10 @@ export const usNortheastCities: Record<string, CityData> = {
   pittsburgh: {
     slug: "pittsburgh",
     displayName: "Pittsburgh",
-    titleTag: "South Asian Singles Events Pittsburgh | Garam Masala Dating",
+    titleTag: "Pittsburgh Indian Singles Mixer | Garam Masala Dating",
     metaDescription:
       "Garam Masala Dating is coming to Pittsburgh. A live South Asian dating show and singles mixer. Join the waitlist.",
-    h1: "Pittsburgh\u2019s Desi Dating Night Is Coming",
+    h1: "CMU and Pitt Built the Talent Pool. We're Building the Dating Scene.",
     status: "coming-soon",
     badgeLabel: "Coming Soon",
     bodyParagraphs: [
@@ -232,10 +232,10 @@ export const usNortheastCities: Record<string, CityData> = {
   "state-college": {
     slug: "state-college",
     displayName: "State College",
-    titleTag: "South Asian Singles Events State College PA | Garam Masala Dating",
+    titleTag: "Penn State Desi Dating Event | Garam Masala Dating",
     metaDescription:
       "Garam Masala Dating is coming to State College, PA. A live South Asian dating show near Penn State. Join the waitlist.",
-    h1: "State College\u2019s Desi Dating Night Is Coming",
+    h1: "Happy Valley, Meet Your Next Blind Date",
     status: "coming-soon",
     badgeLabel: "Coming Soon",
     bodyParagraphs: [
@@ -260,10 +260,10 @@ export const usNortheastCities: Record<string, CityData> = {
   buffalo: {
     slug: "buffalo",
     displayName: "Buffalo",
-    titleTag: "South Asian Singles Events Buffalo NY | Garam Masala Dating",
+    titleTag: "Buffalo NY Desi Dating Show | Garam Masala Dating",
     metaDescription:
       "Garam Masala Dating is coming to Buffalo, NY. A live South Asian dating show and singles mixer near UB. Join the waitlist.",
-    h1: "Buffalo\u2019s Desi Dating Night Is Coming",
+    h1: "Lake Effect Snow Is No Excuse Not to Find Love",
     status: "coming-soon",
     badgeLabel: "Coming Soon",
     bodyParagraphs: [
@@ -288,10 +288,10 @@ export const usNortheastCities: Record<string, CityData> = {
   syracuse: {
     slug: "syracuse",
     displayName: "Syracuse",
-    titleTag: "South Asian Singles Events Syracuse NY | Garam Masala Dating",
+    titleTag: "Syracuse Desi Singles Night | Garam Masala Dating",
     metaDescription:
       "Garam Masala Dating is coming to Syracuse, NY. A live South Asian dating show and singles mixer. Join the waitlist.",
-    h1: "Syracuse\u2019s Desi Dating Night Is Coming",
+    h1: "The 315 Deserves a Night Out Too",
     status: "coming-soon",
     badgeLabel: "Coming Soon",
     bodyParagraphs: [
@@ -316,10 +316,10 @@ export const usNortheastCities: Record<string, CityData> = {
   ithaca: {
     slug: "ithaca",
     displayName: "Ithaca",
-    titleTag: "South Asian Singles Events Ithaca NY | Garam Masala Dating",
+    titleTag: "Ithaca NY Desi Dating Near Cornell | Garam Masala Dating",
     metaDescription:
       "Garam Masala Dating is coming to Ithaca, NY. A live South Asian dating show and singles mixer near Cornell. Join the waitlist.",
-    h1: "Ithaca\u2019s Desi Dating Night Is Coming",
+    h1: "Ithaca Is Gorges. Your Dating Life Doesn't Have to Be Lonely.",
     status: "coming-soon",
     badgeLabel: "Coming Soon",
     bodyParagraphs: [
@@ -344,10 +344,10 @@ export const usNortheastCities: Record<string, CityData> = {
   rochester: {
     slug: "rochester",
     displayName: "Rochester",
-    titleTag: "South Asian Singles Events Rochester NY | Garam Masala Dating",
+    titleTag: "Rochester NY Indian Dating Night | Garam Masala Dating",
     metaDescription:
       "Garam Masala Dating is coming to Rochester, NY. A live South Asian dating show and singles mixer near RIT and U of Rochester. Join the waitlist.",
-    h1: "Rochester\u2019s Desi Dating Night Is Coming",
+    h1: "The Flour City Deserves Better Than Bumble",
     status: "coming-soon",
     badgeLabel: "Coming Soon",
     bodyParagraphs: [
@@ -372,10 +372,10 @@ export const usNortheastCities: Record<string, CityData> = {
   albany: {
     slug: "albany",
     displayName: "Albany",
-    titleTag: "South Asian Singles Events Albany NY | Garam Masala Dating",
+    titleTag: "Albany NY Live Desi Dating Event | Garam Masala Dating",
     metaDescription:
       "Garam Masala Dating is coming to Albany, NY. A live South Asian dating show and singles mixer. Join the waitlist.",
-    h1: "Albany\u2019s Desi Dating Night Is Coming",
+    h1: "Capital Region, the Waitlist Is Open",
     status: "coming-soon",
     badgeLabel: "Coming Soon",
     bodyParagraphs: [
@@ -400,10 +400,10 @@ export const usNortheastCities: Record<string, CityData> = {
   "stony-brook": {
     slug: "stony-brook",
     displayName: "Stony Brook",
-    titleTag: "South Asian Singles Events Stony Brook NY | Garam Masala Dating",
+    titleTag: "Stony Brook Long Island Desi Event | Garam Masala Dating",
     metaDescription:
       "Garam Masala Dating is coming to Stony Brook, Long Island. A live South Asian dating show and singles mixer. Join the waitlist.",
-    h1: "Stony Brook\u2019s Desi Dating Night Is Coming",
+    h1: "You Shouldn't Have to Take the LIRR to Find Your Person",
     status: "coming-soon",
     badgeLabel: "Coming Soon",
     bodyParagraphs: [

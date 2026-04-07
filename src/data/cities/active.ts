@@ -5,10 +5,10 @@ export const activeCities: Record<string, CityData> = {
   manhattan: {
     slug: "manhattan",
     displayName: "Manhattan",
-    titleTag: "South Asian Singles Events Manhattan | Garam Masala Dating NYC",
+    titleTag: "NYC's Live Desi Dating Show | Garam Masala Dating",
     metaDescription:
       "The best South Asian singles event in Manhattan. A live South Asian dating show with a real mixer. Meet people, watch blind dates unfold on stage, and have an actual night out in NYC.",
-    h1: "Manhattan\u2019s Desi Dating Night",
+    h1: "The Live Dating Show That Took Over the East Village",
     status: "active",
     badgeLabel: "Every 2\u20133 Weeks",
     bodyParagraphs: [
@@ -34,10 +34,10 @@ export const activeCities: Record<string, CityData> = {
   "jersey-city": {
     slug: "jersey-city",
     displayName: "Jersey City",
-    titleTag: "South Asian Singles Events Jersey City NJ | Garam Masala Dating Hoboken",
+    titleTag: "Desi Dating Night Jersey City NJ | Garam Masala Dating",
     metaDescription:
       "Garam Masala Dating has a monthly show at The Laugh Tour Comedy Club in Jersey City. A live South Asian dating show and singles mixer. No PATH anxiety required.",
-    h1: "Jersey City\u2019s Desi Dating Night",
+    h1: "No PATH Required. The Show Comes to Jersey City.",
     status: "active",
     badgeLabel: "Monthly Shows",
     bodyParagraphs: [
@@ -64,10 +64,10 @@ export const activeCities: Record<string, CityData> = {
   "san-diego": {
     slug: "san-diego",
     displayName: "San Diego",
-    titleTag: "South Asian Singles Events San Diego | Garam Masala Dating",
+    titleTag: "Live Desi Dating Night San Diego | Garam Masala Dating",
     metaDescription:
       "Garam Masala Dating is coming back to San Diego. A live South Asian dating show and singles mixer from the creators of NYC\u2019s #1 live South Asian dating show.",
-    h1: "San Diego\u2019s Desi Dating Night Is Coming Back",
+    h1: "San Diego, We Sold Out Once. We're Coming Back.",
     status: "coming-soon",
     badgeLabel: "Coming Soon",
     bodyParagraphs: [
@@ -91,10 +91,10 @@ export const activeCities: Record<string, CityData> = {
   "los-angeles": {
     slug: "los-angeles",
     displayName: "Los Angeles",
-    titleTag: "South Asian Singles Events Los Angeles | Garam Masala Dating",
+    titleTag: "LA South Asian Dating Show | Garam Masala Dating",
     metaDescription:
       "Garam Masala Dating is coming to LA. A live South Asian dating show and singles mixer from the creators of NYC\u2019s #1 live South Asian dating show.",
-    h1: "LA\u2019s Desi Dating Night Is Coming",
+    h1: "New York Built It. LA Is Next.",
     status: "coming-soon",
     badgeLabel: "Coming Soon",
     bodyParagraphs: [
@@ -118,10 +118,10 @@ export const activeCities: Record<string, CityData> = {
   "san-francisco": {
     slug: "san-francisco",
     displayName: "San Francisco",
-    titleTag: "South Asian Singles Events San Francisco | Garam Masala Dating",
+    titleTag: "SF Bay Area Desi Dating Show | Garam Masala Dating",
     metaDescription:
       "Garam Masala Dating is coming to San Francisco. A live South Asian dating show and singles mixer from the creators of NYC\u2019s #1 live South Asian dating show.",
-    h1: "SF\u2019s Desi Dating Night Is Coming",
+    h1: "The Bay Area Has 300K South Asians and No Dating Show. Until Now.",
     status: "coming-soon",
     badgeLabel: "Coming Soon",
     bodyParagraphs: [
@@ -146,7 +146,7 @@ export const activeCities: Record<string, CityData> = {
   "salt-lake-city": {
     slug: "salt-lake-city",
     displayName: "Salt Lake City",
-    titleTag: "South Asian Singles Events Salt Lake City | Garam Masala Dating",
+    titleTag: "Desi Singles in Salt Lake City | Garam Masala Dating",
     metaDescription:
       "Garam Masala Dating may be coming to Salt Lake City. A live South Asian dating show and singles mixer. Join the waitlist to be first to know.",
     h1: "Salt Lake City, We\u2019re Looking at You",
@@ -173,7 +173,7 @@ export const activeCities: Record<string, CityData> = {
   denver: {
     slug: "denver",
     displayName: "Denver",
-    titleTag: "South Asian Singles Events Denver | Garam Masala Dating",
+    titleTag: "Denver Desi Dating Night | Garam Masala Dating",
     metaDescription:
       "Garam Masala Dating may be coming to Denver. A live South Asian dating show and singles mixer. Join the waitlist and be first to know.",
     h1: "Denver, You\u2019re on the List",

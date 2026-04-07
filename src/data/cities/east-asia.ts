@@ -4,10 +4,10 @@ export const eastAsiaCities: Record<string, CityData> = {
   tokyo: {
     slug: "tokyo",
     displayName: "Tokyo",
-    titleTag: "South Asian Singles Events Tokyo | Garam Masala Dating",
+    titleTag: "Tokyo Desi Dating Night | Garam Masala Dating",
     metaDescription:
       "Garam Masala Dating is coming to Tokyo. A live South Asian dating show and singles mixer. Nishi Kasai, IT professionals, and Japan\u2019s growing desi community.",
-    h1: "Tokyo\u2019s Desi Dating Night Is Coming",
+    h1: "Nishi-Kasai to Roppongi, Tokyo Gets a Live Desi Show",
     status: "coming-soon",
     badgeLabel: "Coming Soon",
     bodyParagraphs: [
@@ -33,10 +33,10 @@ export const eastAsiaCities: Record<string, CityData> = {
   osaka: {
     slug: "osaka",
     displayName: "Osaka",
-    titleTag: "South Asian Singles Events Osaka | Garam Masala Dating",
+    titleTag: "Osaka Desi Singles Show | Garam Masala Dating",
     metaDescription:
       "Garam Masala Dating is coming to Osaka. A live South Asian dating show and singles mixer. Indian IT community, Osaka University, and Kansai\u2019s desi crowd.",
-    h1: "Osaka\u2019s Desi Dating Night Is Coming",
+    h1: "Osaka\u2019s Growing Desi IT Scene Deserves More Than Izakayas",
     status: "coming-soon",
     badgeLabel: "Coming Soon",
     bodyParagraphs: [
@@ -62,10 +62,10 @@ export const eastAsiaCities: Record<string, CityData> = {
   nagoya: {
     slug: "nagoya",
     displayName: "Nagoya",
-    titleTag: "South Asian Singles Events Nagoya | Garam Masala Dating",
+    titleTag: "Nagoya Desi Singles Night | Garam Masala Dating",
     metaDescription:
       "Garam Masala Dating is coming to Nagoya. A live South Asian dating show and singles mixer. Toyota corridor, desi auto engineers, and central Japan\u2019s South Asian community.",
-    h1: "Nagoya\u2019s Desi Dating Night Is Coming",
+    h1: "Toyota City\u2019s Desi Engineers Need a Night Out",
     status: "coming-soon",
     badgeLabel: "Coming Soon",
     bodyParagraphs: [
@@ -91,10 +91,10 @@ export const eastAsiaCities: Record<string, CityData> = {
   seoul: {
     slug: "seoul",
     displayName: "Seoul",
-    titleTag: "South Asian Singles Events Seoul | Garam Masala Dating",
+    titleTag: "Seoul Desi Dating Show | Garam Masala Dating",
     metaDescription:
       "Garam Masala Dating is coming to Seoul. A live South Asian dating show and singles mixer. Itaewon, KAIST, SNU, and South Korea\u2019s growing desi community.",
-    h1: "Seoul\u2019s Desi Dating Night Is Coming",
+    h1: "From Itaewon to Gangnam, Seoul Gets a Desi Dating Night",
     status: "coming-soon",
     badgeLabel: "Coming Soon",
     bodyParagraphs: [
@@ -120,10 +120,10 @@ export const eastAsiaCities: Record<string, CityData> = {
   taipei: {
     slug: "taipei",
     displayName: "Taipei",
-    titleTag: "South Asian Singles Events Taipei | Garam Masala Dating",
+    titleTag: "Taipei Desi Singles Night | Garam Masala Dating",
     metaDescription:
       "Garam Masala Dating is coming to Taipei. A live South Asian dating show and singles mixer. NTU, NTHU, semiconductor engineers, and Taiwan\u2019s desi professional community.",
-    h1: "Taipei\u2019s Desi Dating Night Is Coming",
+    h1: "Taipei\u2019s Semiconductor Crowd Gets a Dating Show",
     status: "coming-soon",
     badgeLabel: "Coming Soon",
     bodyParagraphs: [
@@ -149,10 +149,10 @@ export const eastAsiaCities: Record<string, CityData> = {
   hsinchu: {
     slug: "hsinchu",
     displayName: "Hsinchu",
-    titleTag: "South Asian Singles Events Hsinchu | Garam Masala Dating",
+    titleTag: "Hsinchu Desi Dating | Garam Masala Dating",
     metaDescription:
       "Garam Masala Dating is coming to Hsinchu. A live South Asian dating show and singles mixer. TSMC corridor, NTHU, NCTU, and Taiwan\u2019s semiconductor desi community.",
-    h1: "Hsinchu\u2019s Desi Dating Night Is Coming",
+    h1: "TSMC Corridor\u2019s Desi Engineers Deserve a Night Out",
     status: "coming-soon",
     badgeLabel: "Coming Soon",
     bodyParagraphs: [
@@ -178,10 +178,10 @@ export const eastAsiaCities: Record<string, CityData> = {
   "hong-kong": {
     slug: "hong-kong",
     displayName: "Hong Kong",
-    titleTag: "South Asian Singles Events Hong Kong | Garam Masala Dating",
+    titleTag: "Hong Kong Desi Dating | Garam Masala Dating",
     metaDescription:
       "Garam Masala Dating is coming to Hong Kong. A live South Asian dating show and singles mixer. Chungking Mansions, HKU, HKUST, and HK\u2019s 80,000 strong South Asian community.",
-    h1: "Hong Kong\u2019s Desi Dating Night Is Coming",
+    h1: "Chungking Mansions to Mid Levels, HK Gets a Live Desi Show",
     status: "coming-soon",
     badgeLabel: "Coming Soon",
     bodyParagraphs: [

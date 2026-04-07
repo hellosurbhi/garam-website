@@ -6,10 +6,10 @@ export const indiaCities: Record<string, CityData> = {
   mumbai: {
     slug: "mumbai",
     displayName: "Mumbai",
-    titleTag: "South Asian Singles Events Mumbai | Garam Masala Dating India",
+    titleTag: "Live Desi Dating Show Mumbai | Garam Masala Dating",
     metaDescription:
       "Garam Masala Dating is coming to Mumbai. A live dating show and singles mixer. Bandra, Andheri, Lower Parel. The city that never sleeps deserves a dating show that actually works.",
-    h1: "Mumbai\u2019s Desi Dating Night Is Coming",
+    h1: "Bandra to Andheri, Mumbai Is Getting a Dating Show That Actually Works",
     status: "coming-soon",
     badgeLabel: "Coming Soon",
     bodyParagraphs: [
@@ -35,10 +35,10 @@ export const indiaCities: Record<string, CityData> = {
   delhi: {
     slug: "delhi",
     displayName: "Delhi / New Delhi",
-    titleTag: "South Asian Singles Events Delhi NCR | Garam Masala Dating India",
+    titleTag: "Delhi NCR Dating Show | Garam Masala Dating",
     metaDescription:
       "Garam Masala Dating is coming to Delhi NCR. A live dating show and singles mixer. Hauz Khas, Connaught Place, Saket. DU, JNU, and the entire NCR dating scene.",
-    h1: "Delhi\u2019s Desi Dating Night Is Coming",
+    h1: "Hauz Khas to CP, Delhi Has a Million Singles and No Good Events",
     status: "coming-soon",
     badgeLabel: "Coming Soon",
     bodyParagraphs: [
@@ -64,10 +64,10 @@ export const indiaCities: Record<string, CityData> = {
   gurgaon: {
     slug: "gurgaon",
     displayName: "Gurgaon (Gurugram)",
-    titleTag: "South Asian Singles Events Gurgaon | Garam Masala Dating India",
+    titleTag: "Gurgaon Singles Night | Garam Masala Dating",
     metaDescription:
       "Garam Masala Dating is coming to Gurgaon. A live dating show and singles mixer. Cyber Hub, MG Road, and the entire Gurugram tech and startup crowd.",
-    h1: "Gurgaon\u2019s Desi Dating Night Is Coming",
+    h1: "Cyber Hub Crowd, This One Is for You",
     status: "coming-soon",
     badgeLabel: "Coming Soon",
     bodyParagraphs: [
@@ -93,10 +93,10 @@ export const indiaCities: Record<string, CityData> = {
   noida: {
     slug: "noida",
     displayName: "Noida",
-    titleTag: "South Asian Singles Events Noida | Garam Masala Dating India",
+    titleTag: "Noida Singles Events | Garam Masala Dating",
     metaDescription:
       "Garam Masala Dating is coming to Noida. A live dating show and singles mixer. Sector 18, tech parks, and the entire Noida and Greater Noida crowd.",
-    h1: "Noida\u2019s Desi Dating Night Is Coming",
+    h1: "Sector 18 Has the Nightlife but Zero Dating Events",
     status: "coming-soon",
     badgeLabel: "Coming Soon",
     bodyParagraphs: [
@@ -122,10 +122,10 @@ export const indiaCities: Record<string, CityData> = {
   bangalore: {
     slug: "bangalore",
     displayName: "Bangalore (Bengaluru)",
-    titleTag: "South Asian Singles Events Bangalore | Garam Masala Dating India",
+    titleTag: "Bangalore Singles Night | Garam Masala Dating",
     metaDescription:
       "Garam Masala Dating is coming to Bangalore. A live dating show and singles mixer. Koramangala, Indiranagar, HSR Layout. India\u2019s startup capital deserves better dating.",
-    h1: "Bangalore\u2019s Desi Dating Night Is Coming",
+    h1: "Koramangala Already Has Everything Except a Proper Dating Night",
     status: "coming-soon",
     badgeLabel: "Coming Soon",
     bodyParagraphs: [
@@ -151,10 +151,10 @@ export const indiaCities: Record<string, CityData> = {
   hyderabad: {
     slug: "hyderabad",
     displayName: "Hyderabad",
-    titleTag: "South Asian Singles Events Hyderabad | Garam Masala Dating India",
+    titleTag: "Hyderabad Dating Show | Garam Masala Dating",
     metaDescription:
       "Garam Masala Dating is coming to Hyderabad. A live dating show and singles mixer. HITEC City, Jubilee Hills, Banjara Hills, and Hyderabad\u2019s booming tech scene.",
-    h1: "Hyderabad\u2019s Desi Dating Night Is Coming",
+    h1: "HITEC City Has 100K Singles and Zero Good Events",
     status: "coming-soon",
     badgeLabel: "Coming Soon",
     bodyParagraphs: [
@@ -180,10 +180,10 @@ export const indiaCities: Record<string, CityData> = {
   chennai: {
     slug: "chennai",
     displayName: "Chennai",
-    titleTag: "South Asian Singles Events Chennai | Garam Masala Dating India",
+    titleTag: "Chennai Singles Night | Garam Masala Dating",
     metaDescription:
       "Garam Masala Dating is coming to Chennai. A live dating show and singles mixer. OMR IT corridor, IIT Madras, Anna University, and Chennai\u2019s growing singles scene.",
-    h1: "Chennai\u2019s Desi Dating Night Is Coming",
+    h1: "OMR to Besant Nagar, Chennai Deserves a Real Singles Night",
     status: "coming-soon",
     badgeLabel: "Coming Soon",
     bodyParagraphs: [
@@ -209,10 +209,10 @@ export const indiaCities: Record<string, CityData> = {
   pune: {
     slug: "pune",
     displayName: "Pune",
-    titleTag: "South Asian Singles Events Pune | Garam Masala Dating India",
+    titleTag: "Meet Singles in Pune | Garam Masala Dating",
     metaDescription:
       "Garam Masala Dating is coming to Pune. A live dating show and singles mixer. Koregaon Park, FC Road, and Pune\u2019s massive student and tech crowd.",
-    h1: "Pune\u2019s Desi Dating Night Is Coming",
+    h1: "Where Do Pune\u2019s College Grads Go After FC Road?",
     status: "coming-soon",
     badgeLabel: "Coming Soon",
     bodyParagraphs: [
@@ -238,10 +238,10 @@ export const indiaCities: Record<string, CityData> = {
   kolkata: {
     slug: "kolkata",
     displayName: "Kolkata",
-    titleTag: "South Asian Singles Events Kolkata | Garam Masala Dating India",
+    titleTag: "Kolkata Dating Show | Garam Masala Dating",
     metaDescription:
       "Garam Masala Dating is coming to Kolkata. A live dating show and singles mixer. Park Street, Salt Lake, Jadavpur, Presidency, and the city\u2019s passionate cultural crowd.",
-    h1: "Kolkata\u2019s Desi Dating Night Is Coming",
+    h1: "Park Street Deserves Better Than Another Boring Mixer",
     status: "coming-soon",
     badgeLabel: "Coming Soon",
     bodyParagraphs: [
@@ -269,10 +269,10 @@ export const indiaCities: Record<string, CityData> = {
   ahmedabad: {
     slug: "ahmedabad",
     displayName: "Ahmedabad",
-    titleTag: "South Asian Singles Events Ahmedabad | Garam Masala Dating India",
+    titleTag: "Ahmedabad Singles Night | Garam Masala Dating",
     metaDescription:
       "Garam Masala Dating is coming to Ahmedabad. A live dating show and singles mixer. IIM Ahmedabad, NID, CEPT, SG Highway, and Gujarat\u2019s most underserved singles scene.",
-    h1: "Ahmedabad\u2019s Desi Dating Night Is Coming",
+    h1: "SG Highway Runs on Chai and Creativity, Not Dating Apps",
     status: "coming-soon",
     badgeLabel: "Coming Soon",
     bodyParagraphs: [
@@ -298,10 +298,10 @@ export const indiaCities: Record<string, CityData> = {
   chandigarh: {
     slug: "chandigarh",
     displayName: "Chandigarh",
-    titleTag: "South Asian Singles Events Chandigarh | Garam Masala Dating India",
+    titleTag: "Chandigarh Singles Event | Garam Masala Dating",
     metaDescription:
       "Garam Masala Dating is coming to Chandigarh. A live dating show and singles mixer. Panjab University, PEC, Sector 17, and the Chandigarh tricity crowd.",
-    h1: "Chandigarh\u2019s Desi Dating Night Is Coming",
+    h1: "Sector 17 to Sector 26, Chandigarh Needs This",
     status: "coming-soon",
     badgeLabel: "Coming Soon",
     bodyParagraphs: [
@@ -327,10 +327,10 @@ export const indiaCities: Record<string, CityData> = {
   jaipur: {
     slug: "jaipur",
     displayName: "Jaipur",
-    titleTag: "South Asian Singles Events Jaipur | Garam Masala Dating India",
+    titleTag: "Jaipur Singles Night | Garam Masala Dating",
     metaDescription:
       "Garam Masala Dating is coming to Jaipur. A live dating show and singles mixer. The Pink City\u2019s college crowd, IIS University, MNIT, and Rajasthan\u2019s desi singles.",
-    h1: "Jaipur\u2019s Desi Dating Night Is Coming",
+    h1: "The Pink City Has Plenty of Singles and Nothing for Them",
     status: "coming-soon",
     badgeLabel: "Coming Soon",
     bodyParagraphs: [
@@ -356,10 +356,10 @@ export const indiaCities: Record<string, CityData> = {
   lucknow: {
     slug: "lucknow",
     displayName: "Lucknow",
-    titleTag: "South Asian Singles Events Lucknow | Garam Masala Dating India",
+    titleTag: "Lucknow Dating Show | Garam Masala Dating",
     metaDescription:
       "Garam Masala Dating is coming to Lucknow. A live dating show and singles mixer. IIM Lucknow, Hazratganj, and the Nawabi city\u2019s growing young professional crowd.",
-    h1: "Lucknow\u2019s Desi Dating Night Is Coming",
+    h1: "Hazratganj Has the Charm but Where\u2019s the Dating Scene?",
     status: "coming-soon",
     badgeLabel: "Coming Soon",
     bodyParagraphs: [
@@ -385,10 +385,10 @@ export const indiaCities: Record<string, CityData> = {
   kochi: {
     slug: "kochi",
     displayName: "Kochi (Cochin)",
-    titleTag: "South Asian Singles Events Kochi | Garam Masala Dating India",
+    titleTag: "Kochi Singles Night | Garam Masala Dating",
     metaDescription:
       "Garam Masala Dating is coming to Kochi. A live dating show and singles mixer. Marine Drive, Fort Kochi, CUSAT, and Kerala\u2019s most cosmopolitan city.",
-    h1: "Kochi\u2019s Desi Dating Night Is Coming",
+    h1: "Fort Kochi to Infopark, Kerala\u2019s Coolest City Needs This",
     status: "coming-soon",
     badgeLabel: "Coming Soon",
     bodyParagraphs: [
@@ -414,10 +414,10 @@ export const indiaCities: Record<string, CityData> = {
   goa: {
     slug: "goa",
     displayName: "Goa",
-    titleTag: "South Asian Singles Events Goa | Garam Masala Dating India",
+    titleTag: "Goa Singles Event | Garam Masala Dating",
     metaDescription:
       "Garam Masala Dating is coming to Goa. A live dating show and singles mixer. Goa University, BITS Goa, and the tourist and expat crowd that lives for weekends.",
-    h1: "Goa\u2019s Desi Dating Night Is Coming",
+    h1: "Everyone Comes to Goa to Let Loose, Nobody Actually Meets Anyone",
     status: "coming-soon",
     badgeLabel: "Coming Soon",
     bodyParagraphs: [
@@ -443,10 +443,10 @@ export const indiaCities: Record<string, CityData> = {
   indore: {
     slug: "indore",
     displayName: "Indore",
-    titleTag: "South Asian Singles Events Indore | Garam Masala Dating India",
+    titleTag: "Indore Singles Night | Garam Masala Dating",
     metaDescription:
       "Garam Masala Dating is coming to Indore. A live dating show and singles mixer. IIM Indore, IIT Indore, and India\u2019s street food capital\u2019s singles scene.",
-    h1: "Indore\u2019s Desi Dating Night Is Coming",
+    h1: "Sarafa Bazaar Energy, Vijay Nagar Crowd, One Dating Show",
     status: "coming-soon",
     badgeLabel: "Coming Soon",
     bodyParagraphs: [
@@ -472,10 +472,10 @@ export const indiaCities: Record<string, CityData> = {
   thiruvananthapuram: {
     slug: "thiruvananthapuram",
     displayName: "Thiruvananthapuram (Trivandrum)",
-    titleTag: "South Asian Singles Events Trivandrum | Garam Masala Dating India",
+    titleTag: "Trivandrum Dating Show | Garam Masala Dating",
     metaDescription:
       "Garam Masala Dating is coming to Thiruvananthapuram. A live dating show and singles mixer. University of Kerala, IIST, Technopark, and the capital\u2019s singles scene.",
-    h1: "Trivandrum\u2019s Desi Dating Night Is Coming",
+    h1: "Technopark Has the Talent, Trivandrum Needs the Night Out",
     status: "coming-soon",
     badgeLabel: "Coming Soon",
     bodyParagraphs: [
@@ -501,10 +501,10 @@ export const indiaCities: Record<string, CityData> = {
   coimbatore: {
     slug: "coimbatore",
     displayName: "Coimbatore",
-    titleTag: "South Asian Singles Events Coimbatore | Garam Masala Dating India",
+    titleTag: "Coimbatore Singles Night | Garam Masala Dating",
     metaDescription:
       "Garam Masala Dating is coming to Coimbatore. A live dating show and singles mixer. PSG, Amrita, and the industrial hub\u2019s growing young professional crowd.",
-    h1: "Coimbatore\u2019s Desi Dating Night Is Coming",
+    h1: "Avinashi Road Is Growing Fast, the Social Scene Isn\u2019t",
     status: "coming-soon",
     badgeLabel: "Coming Soon",
     bodyParagraphs: [
@@ -530,10 +530,10 @@ export const indiaCities: Record<string, CityData> = {
   nagpur: {
     slug: "nagpur",
     displayName: "Nagpur",
-    titleTag: "South Asian Singles Events Nagpur | Garam Masala Dating India",
+    titleTag: "Nagpur Dating Event | Garam Masala Dating",
     metaDescription:
       "Garam Masala Dating is coming to Nagpur. A live dating show and singles mixer. VNIT, IIM Nagpur, and the orange city\u2019s overlooked singles scene.",
-    h1: "Nagpur\u2019s Desi Dating Night Is Coming",
+    h1: "The Center of India Keeps Getting Skipped. Not This Time.",
     status: "coming-soon",
     badgeLabel: "Coming Soon",
     bodyParagraphs: [
@@ -559,10 +559,10 @@ export const indiaCities: Record<string, CityData> = {
   vadodara: {
     slug: "vadodara",
     displayName: "Vadodara (Baroda)",
-    titleTag: "South Asian Singles Events Vadodara | Garam Masala Dating India",
+    titleTag: "Vadodara Singles Night | Garam Masala Dating",
     metaDescription:
       "Garam Masala Dating is coming to Vadodara. A live dating show and singles mixer. MS University, Gujarat\u2019s cultural capital, and the Baroda creative crowd.",
-    h1: "Vadodara\u2019s Desi Dating Night Is Coming",
+    h1: "MS University Made Baroda Creative. Now Make It Social.",
     status: "coming-soon",
     badgeLabel: "Coming Soon",
     bodyParagraphs: [
@@ -588,10 +588,10 @@ export const indiaCities: Record<string, CityData> = {
   surat: {
     slug: "surat",
     displayName: "Surat",
-    titleTag: "South Asian Singles Events Surat | Garam Masala Dating India",
+    titleTag: "Surat Singles Night | Garam Masala Dating",
     metaDescription:
       "Garam Masala Dating is coming to Surat. A live dating show and singles mixer. SVNIT, the diamond and textile capital, and Gujarat\u2019s fastest growing singles scene.",
-    h1: "Surat\u2019s Desi Dating Night Is Coming",
+    h1: "Diamond Capital, Zero Dating Events. Let\u2019s Fix That.",
     status: "coming-soon",
     badgeLabel: "Coming Soon",
     bodyParagraphs: [
@@ -617,10 +617,10 @@ export const indiaCities: Record<string, CityData> = {
   visakhapatnam: {
     slug: "visakhapatnam",
     displayName: "Visakhapatnam (Vizag)",
-    titleTag: "South Asian Singles Events Vizag | Garam Masala Dating India",
+    titleTag: "Vizag Dating Show | Garam Masala Dating",
     metaDescription:
       "Garam Masala Dating is coming to Visakhapatnam. A live dating show and singles mixer. Andhra University, GITAM, and the port city\u2019s young professional crowd.",
-    h1: "Vizag\u2019s Desi Dating Night Is Coming",
+    h1: "Rushikonda Beach Has More Singles Than Most Dating Events",
     status: "coming-soon",
     badgeLabel: "Coming Soon",
     bodyParagraphs: [
@@ -646,10 +646,10 @@ export const indiaCities: Record<string, CityData> = {
   bhopal: {
     slug: "bhopal",
     displayName: "Bhopal",
-    titleTag: "South Asian Singles Events Bhopal | Garam Masala Dating India",
+    titleTag: "Bhopal Singles Night | Garam Masala Dating",
     metaDescription:
       "Garam Masala Dating is coming to Bhopal. A live dating show and singles mixer. MANIT, IISER, and the lake city\u2019s growing singles scene.",
-    h1: "Bhopal\u2019s Desi Dating Night Is Coming",
+    h1: "The Lake City Has Curious People and No Place to Meet Them",
     status: "coming-soon",
     badgeLabel: "Coming Soon",
     bodyParagraphs: [
@@ -677,10 +677,10 @@ export const indiaCities: Record<string, CityData> = {
   mysore: {
     slug: "mysore",
     displayName: "Mysore (Mysuru)",
-    titleTag: "South Asian Singles Events Mysore | Garam Masala Dating India",
+    titleTag: "Mysore Singles Event | Garam Masala Dating",
     metaDescription:
       "Garam Masala Dating is coming to Mysore. A live dating show and singles mixer. University of Mysore, the heritage crowd, and Karnataka\u2019s cultural capital.",
-    h1: "Mysore\u2019s Desi Dating Night Is Coming",
+    h1: "Mysore Chose Peace Over Bangalore. It Still Deserves a Dating Night.",
     status: "coming-soon",
     badgeLabel: "Coming Soon",
     bodyParagraphs: [
@@ -705,10 +705,10 @@ export const indiaCities: Record<string, CityData> = {
   dehradun: {
     slug: "dehradun",
     displayName: "Dehradun",
-    titleTag: "South Asian Singles Events Dehradun | Garam Masala Dating India",
+    titleTag: "Dehradun Singles Night | Garam Masala Dating",
     metaDescription:
       "Garam Masala Dating is coming to Dehradun. A live dating show and singles mixer. UPES, Doon School alumni, and Uttarakhand\u2019s hill capital singles scene.",
-    h1: "Dehradun\u2019s Desi Dating Night Is Coming",
+    h1: "Rajpur Road Is Full of Remote Workers Who Never Leave the House",
     status: "coming-soon",
     badgeLabel: "Coming Soon",
     bodyParagraphs: [
@@ -733,10 +733,10 @@ export const indiaCities: Record<string, CityData> = {
   mangalore: {
     slug: "mangalore",
     displayName: "Mangalore",
-    titleTag: "South Asian Singles Events Mangalore | Garam Masala Dating India",
+    titleTag: "Mangalore Singles Event | Garam Masala Dating",
     metaDescription:
       "Garam Masala Dating is coming to Mangalore. A live dating show and singles mixer. NITK, the coastal Karnataka crowd, and the Mangalorean diaspora.",
-    h1: "Mangalore\u2019s Desi Dating Night Is Coming",
+    h1: "Ghee Roast Capital Deserves a Night Out Worth Talking About",
     status: "coming-soon",
     badgeLabel: "Coming Soon",
     bodyParagraphs: [
@@ -761,10 +761,10 @@ export const indiaCities: Record<string, CityData> = {
   manipal: {
     slug: "manipal",
     displayName: "Manipal",
-    titleTag: "South Asian Singles Events Manipal | Garam Masala Dating India",
+    titleTag: "Manipal Dating Show | Garam Masala Dating",
     metaDescription:
       "Garam Masala Dating is coming to Manipal. A live dating show and singles mixer. Manipal Academy of Higher Education and the college town crowd.",
-    h1: "Manipal\u2019s Desi Dating Night Is Coming",
+    h1: "End Point Sunsets, Library Crushes, and No Way to Meet Them",
     status: "coming-soon",
     badgeLabel: "Coming Soon",
     bodyParagraphs: [
@@ -789,10 +789,10 @@ export const indiaCities: Record<string, CityData> = {
   amritsar: {
     slug: "amritsar",
     displayName: "Amritsar",
-    titleTag: "South Asian Singles Events Amritsar | Garam Masala Dating India",
+    titleTag: "Amritsar Singles Night | Garam Masala Dating",
     metaDescription:
       "Garam Masala Dating is coming to Amritsar. A live dating show and singles mixer. Guru Nanak Dev University, the Golden Temple city, and Punjab\u2019s singles scene.",
-    h1: "Amritsar\u2019s Desi Dating Night Is Coming",
+    h1: "Lawrence Road Energy, Golden City Heart, One Dating Show",
     status: "coming-soon",
     badgeLabel: "Coming Soon",
     bodyParagraphs: [
@@ -817,10 +817,10 @@ export const indiaCities: Record<string, CityData> = {
   ludhiana: {
     slug: "ludhiana",
     displayName: "Ludhiana",
-    titleTag: "South Asian Singles Events Ludhiana | Garam Masala Dating India",
+    titleTag: "Ludhiana Singles Night | Garam Masala Dating",
     metaDescription:
       "Garam Masala Dating is coming to Ludhiana. A live dating show and singles mixer. Punjab Agricultural University, the industrial hub, and Punjab\u2019s biggest city.",
-    h1: "Ludhiana\u2019s Desi Dating Night Is Coming",
+    h1: "Punjab\u2019s Biggest City and Nobody\u2019s Doing Singles Events",
     status: "coming-soon",
     badgeLabel: "Coming Soon",
     bodyParagraphs: [
@@ -845,10 +845,10 @@ export const indiaCities: Record<string, CityData> = {
   patna: {
     slug: "patna",
     displayName: "Patna",
-    titleTag: "South Asian Singles Events Patna | Garam Masala Dating India",
+    titleTag: "Patna Dating Show | Garam Masala Dating",
     metaDescription:
       "Garam Masala Dating is coming to Patna. A live dating show and singles mixer. Patna University, NIT Patna, and Bihar\u2019s capital city singles scene.",
-    h1: "Patna\u2019s Desi Dating Night Is Coming",
+    h1: "Boring Road Isn\u2019t Boring, the Dating Scene Is",
     status: "coming-soon",
     badgeLabel: "Coming Soon",
     bodyParagraphs: [
@@ -873,10 +873,10 @@ export const indiaCities: Record<string, CityData> = {
   ranchi: {
     slug: "ranchi",
     displayName: "Ranchi",
-    titleTag: "South Asian Singles Events Ranchi | Garam Masala Dating India",
+    titleTag: "Ranchi Singles Night | Garam Masala Dating",
     metaDescription:
       "Garam Masala Dating is coming to Ranchi. A live dating show and singles mixer. BIT Mesra, Ranchi University, and Jharkhand\u2019s capital city crowd.",
-    h1: "Ranchi\u2019s Desi Dating Night Is Coming",
+    h1: "BIT Mesra to Main Road, Ranchi Deserves Something New",
     status: "coming-soon",
     badgeLabel: "Coming Soon",
     bodyParagraphs: [
@@ -901,10 +901,10 @@ export const indiaCities: Record<string, CityData> = {
   bhubaneswar: {
     slug: "bhubaneswar",
     displayName: "Bhubaneswar",
-    titleTag: "South Asian Singles Events Bhubaneswar | Garam Masala Dating India",
+    titleTag: "Bhubaneswar Singles Night | Garam Masala Dating",
     metaDescription:
       "Garam Masala Dating is coming to Bhubaneswar. A live dating show and singles mixer. IIIT, KIIT, Xavier\u2019s, and Odisha\u2019s capital city singles scene.",
-    h1: "Bhubaneswar\u2019s Desi Dating Night Is Coming",
+    h1: "Temple City Turned Tech Hub, Still Zero Singles Events",
     status: "coming-soon",
     badgeLabel: "Coming Soon",
     bodyParagraphs: [
@@ -929,10 +929,10 @@ export const indiaCities: Record<string, CityData> = {
   raipur: {
     slug: "raipur",
     displayName: "Raipur",
-    titleTag: "South Asian Singles Events Raipur | Garam Masala Dating India",
+    titleTag: "Raipur Dating Event | Garam Masala Dating",
     metaDescription:
       "Garam Masala Dating is coming to Raipur. A live dating show and singles mixer. IIT Bhilai nearby, NIT Raipur, and Chhattisgarh\u2019s capital city crowd.",
-    h1: "Raipur\u2019s Desi Dating Night Is Coming",
+    h1: "Telibandha Lake Walks Are Nice but They\u2019re Not a Dating Scene",
     status: "coming-soon",
     badgeLabel: "Coming Soon",
     bodyParagraphs: [
@@ -957,10 +957,10 @@ export const indiaCities: Record<string, CityData> = {
   guwahati: {
     slug: "guwahati",
     displayName: "Guwahati",
-    titleTag: "South Asian Singles Events Guwahati | Garam Masala Dating India",
+    titleTag: "Guwahati Singles Night | Garam Masala Dating",
     metaDescription:
       "Garam Masala Dating is coming to Guwahati. A live dating show and singles mixer. IIT Guwahati, Cotton University, and the gateway to Northeast India.",
-    h1: "Guwahati\u2019s Desi Dating Night Is Coming",
+    h1: "The Gateway to the Northeast Finally Gets a Dating Show",
     status: "coming-soon",
     badgeLabel: "Coming Soon",
     bodyParagraphs: [
@@ -985,10 +985,10 @@ export const indiaCities: Record<string, CityData> = {
   shillong: {
     slug: "shillong",
     displayName: "Shillong",
-    titleTag: "South Asian Singles Events Shillong | Garam Masala Dating India",
+    titleTag: "Shillong Singles Event | Garam Masala Dating",
     metaDescription:
       "Garam Masala Dating is coming to Shillong. A live dating show and singles mixer. NEHU, the Scotland of the East, and Meghalaya\u2019s vibrant social scene.",
-    h1: "Shillong\u2019s Desi Dating Night Is Coming",
+    h1: "Live Music Capital, Zero Live Dating. Let\u2019s Change That.",
     status: "coming-soon",
     badgeLabel: "Coming Soon",
     bodyParagraphs: [
@@ -1013,10 +1013,10 @@ export const indiaCities: Record<string, CityData> = {
   pondicherry: {
     slug: "pondicherry",
     displayName: "Pondicherry",
-    titleTag: "South Asian Singles Events Pondicherry | Garam Masala Dating India",
+    titleTag: "Pondicherry Dating Show | Garam Masala Dating",
     metaDescription:
       "Garam Masala Dating is coming to Pondicherry. A live dating show and singles mixer. The French Quarter, Auroville, and the union territory\u2019s unique dating scene.",
-    h1: "Pondicherry\u2019s Desi Dating Night Is Coming",
+    h1: "French Quarter Vibes, Promenade Walks, and Nobody Talks to Each Other",
     status: "coming-soon",
     badgeLabel: "Coming Soon",
     bodyParagraphs: [
@@ -1041,10 +1041,10 @@ export const indiaCities: Record<string, CityData> = {
   jamshedpur: {
     slug: "jamshedpur",
     displayName: "Jamshedpur",
-    titleTag: "South Asian Singles Events Jamshedpur | Garam Masala Dating India",
+    titleTag: "Jamshedpur Singles Night | Garam Masala Dating",
     metaDescription:
       "Garam Masala Dating is coming to Jamshedpur. A live dating show and singles mixer. XLRI, NIT Jamshedpur, and India\u2019s original planned steel city.",
-    h1: "Jamshedpur\u2019s Desi Dating Night Is Coming",
+    h1: "The Tata Township Has Everything Planned Except Your Love Life",
     status: "coming-soon",
     badgeLabel: "Coming Soon",
     bodyParagraphs: [
@@ -1069,10 +1069,10 @@ export const indiaCities: Record<string, CityData> = {
   trichy: {
     slug: "trichy",
     displayName: "Trichy (Tiruchirappalli)",
-    titleTag: "South Asian Singles Events Trichy | Garam Masala Dating India",
+    titleTag: "Trichy Singles Event | Garam Masala Dating",
     metaDescription:
       "Garam Masala Dating is coming to Trichy. A live dating show and singles mixer. NIT Trichy, Anna University campus, and central Tamil Nadu\u2019s singles crowd.",
-    h1: "Trichy\u2019s Desi Dating Night Is Coming",
+    h1: "NIT Trichy Grads Stay for the City, Not the Dating Scene",
     status: "coming-soon",
     badgeLabel: "Coming Soon",
     bodyParagraphs: [
@@ -1097,10 +1097,10 @@ export const indiaCities: Record<string, CityData> = {
   vellore: {
     slug: "vellore",
     displayName: "Vellore",
-    titleTag: "South Asian Singles Events Vellore | Garam Masala Dating India",
+    titleTag: "Vellore Singles Night | Garam Masala Dating",
     metaDescription:
       "Garam Masala Dating is coming to Vellore. A live dating show and singles mixer. VIT campus, the fort city, and northern Tamil Nadu\u2019s college crowd.",
-    h1: "Vellore\u2019s Desi Dating Night Is Coming",
+    h1: "VIT Brought 30,000 Students. Where Do They All Go on Weekends?",
     status: "coming-soon",
     badgeLabel: "Coming Soon",
     bodyParagraphs: [
@@ -1125,10 +1125,10 @@ export const indiaCities: Record<string, CityData> = {
   warangal: {
     slug: "warangal",
     displayName: "Warangal",
-    titleTag: "South Asian Singles Events Warangal | Garam Masala Dating India",
+    titleTag: "Warangal Singles Event | Garam Masala Dating",
     metaDescription:
       "Garam Masala Dating is coming to Warangal. A live dating show and singles mixer. NIT Warangal, the Kakatiya heritage city, and Telangana\u2019s second city.",
-    h1: "Warangal\u2019s Desi Dating Night Is Coming",
+    h1: "NIT Warangal\u2019s Campus Bubble Needs Popping",
     status: "coming-soon",
     badgeLabel: "Coming Soon",
     bodyParagraphs: [
@@ -1153,10 +1153,10 @@ export const indiaCities: Record<string, CityData> = {
   kanpur: {
     slug: "kanpur",
     displayName: "Kanpur",
-    titleTag: "South Asian Singles Events Kanpur | Garam Masala Dating India",
+    titleTag: "Kanpur Singles Night | Garam Masala Dating",
     metaDescription:
       "Garam Masala Dating is coming to Kanpur. A live dating show and singles mixer. IIT Kanpur and the industrial city\u2019s young professional crowd.",
-    h1: "Kanpur\u2019s Desi Dating Night Is Coming",
+    h1: "IIT Kanpur Is World Class. The Dating Options? Not So Much.",
     status: "coming-soon",
     badgeLabel: "Coming Soon",
     bodyParagraphs: [
@@ -1181,10 +1181,10 @@ export const indiaCities: Record<string, CityData> = {
   allahabad: {
     slug: "allahabad",
     displayName: "Allahabad (Prayagraj)",
-    titleTag: "South Asian Singles Events Allahabad | Garam Masala Dating India",
+    titleTag: "Allahabad Dating Show | Garam Masala Dating",
     metaDescription:
       "Garam Masala Dating is coming to Allahabad. A live dating show and singles mixer. University of Allahabad, MNNIT, and the Sangam city\u2019s young crowd.",
-    h1: "Allahabad\u2019s Desi Dating Night Is Coming",
+    h1: "Civil Lines Charm, UPSC Ambition, and No Singles Events",
     status: "coming-soon",
     badgeLabel: "Coming Soon",
     bodyParagraphs: [
@@ -1209,10 +1209,10 @@ export const indiaCities: Record<string, CityData> = {
   varanasi: {
     slug: "varanasi",
     displayName: "Varanasi",
-    titleTag: "South Asian Singles Events Varanasi | Garam Masala Dating India",
+    titleTag: "Varanasi Singles Night | Garam Masala Dating",
     metaDescription:
       "Garam Masala Dating is coming to Varanasi. A live dating show and singles mixer. BHU, the holy city\u2019s young population, and a dating show unlike any other.",
-    h1: "Varanasi\u2019s Desi Dating Night Is Coming",
+    h1: "Oldest City in the World, Still No Live Dating Show",
     status: "coming-soon",
     badgeLabel: "Coming Soon",
     bodyParagraphs: [
@@ -1237,10 +1237,10 @@ export const indiaCities: Record<string, CityData> = {
   jodhpur: {
     slug: "jodhpur",
     displayName: "Jodhpur",
-    titleTag: "South Asian Singles Events Jodhpur | Garam Masala Dating India",
+    titleTag: "Jodhpur Singles Event | Garam Masala Dating",
     metaDescription:
       "Garam Masala Dating is coming to Jodhpur. A live dating show and singles mixer. IIT Jodhpur, AIIMS Jodhpur, and the Blue City\u2019s young crowd.",
-    h1: "Jodhpur\u2019s Desi Dating Night Is Coming",
+    h1: "The Blue City Is Stunning. The Dating Scene Needs Work.",
     status: "coming-soon",
     badgeLabel: "Coming Soon",
     bodyParagraphs: [
@@ -1265,10 +1265,10 @@ export const indiaCities: Record<string, CityData> = {
   udaipur: {
     slug: "udaipur",
     displayName: "Udaipur",
-    titleTag: "South Asian Singles Events Udaipur | Garam Masala Dating India",
+    titleTag: "Udaipur Singles Night | Garam Masala Dating",
     metaDescription:
       "Garam Masala Dating is coming to Udaipur. A live dating show and singles mixer. The City of Lakes, Mohanlal Sukhadia University, and Rajasthan\u2019s most romantic city.",
-    h1: "Udaipur\u2019s Desi Dating Night Is Coming",
+    h1: "India\u2019s Most Romantic City Has No Actual Dating Events",
     status: "coming-soon",
     badgeLabel: "Coming Soon",
     bodyParagraphs: [
@@ -1293,10 +1293,10 @@ export const indiaCities: Record<string, CityData> = {
   kota: {
     slug: "kota",
     displayName: "Kota",
-    titleTag: "South Asian Singles Events Kota | Garam Masala Dating India",
+    titleTag: "Kota Singles Event | Garam Masala Dating",
     metaDescription:
       "Garam Masala Dating is coming to Kota. A live dating show and singles mixer. The coaching capital, young aspirants, and the city that runs on competitive exams.",
-    h1: "Kota\u2019s Desi Dating Night Is Coming",
+    h1: "500,000 Students, 14 Hour Study Days, and Zero Social Life",
     status: "coming-soon",
     badgeLabel: "Coming Soon",
     bodyParagraphs: [

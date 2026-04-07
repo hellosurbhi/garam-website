@@ -4,10 +4,10 @@ export const usMidwestCities: Record<string, CityData> = {
   chicago: {
     slug: "chicago",
     displayName: "Chicago",
-    titleTag: "South Asian Singles Events Chicago | Garam Masala Dating",
+    titleTag: "Chicago Desi Dating Show | Garam Masala Dating",
     metaDescription:
       "Garam Masala Dating is coming to Chicago. A live South Asian dating show and singles mixer. Devon Avenue energy meets East Village chaos.",
-    h1: "Chicago\u2019s Desi Dating Night Is Coming",
+    h1: "Where Do Desi Singles Go in Chicago? Devon Avenue Deserves a Dating Show.",
     status: "coming-soon",
     badgeLabel: "Coming Soon",
     bodyParagraphs: [
@@ -33,10 +33,10 @@ export const usMidwestCities: Record<string, CityData> = {
   champaign: {
     slug: "champaign",
     displayName: "Champaign",
-    titleTag: "South Asian Singles Events Champaign | Garam Masala Dating UIUC",
+    titleTag: "UIUC Desi Dating Night Champaign | Garam Masala Dating",
     metaDescription:
       "Garam Masala Dating is coming to Champaign. A live South Asian dating show for the massive UIUC desi community. Join the waitlist.",
-    h1: "Champaign\u2019s Desi Dating Night Is Coming",
+    h1: "Green Street Has Enough Bars. It Needs a Dating Show.",
     status: "coming-soon",
     badgeLabel: "Coming Soon",
     bodyParagraphs: [
@@ -61,10 +61,10 @@ export const usMidwestCities: Record<string, CityData> = {
   detroit: {
     slug: "detroit",
     displayName: "Detroit",
-    titleTag: "South Asian Singles Events Detroit Troy MI | Garam Masala Dating",
+    titleTag: "Detroit Troy MI Indian Dating Night | Garam Masala Dating",
     metaDescription:
       "Garam Masala Dating is coming to the Detroit metro. Troy, Canton, Novi, Farmington Hills. A live South Asian dating show and singles mixer.",
-    h1: "Detroit\u2019s Desi Dating Night Is Coming",
+    h1: "Troy, Michigan Has More Desi Singles Than Your Group Chat",
     status: "coming-soon",
     badgeLabel: "Coming Soon",
     bodyParagraphs: [
@@ -90,10 +90,10 @@ export const usMidwestCities: Record<string, CityData> = {
   "ann-arbor": {
     slug: "ann-arbor",
     displayName: "Ann Arbor",
-    titleTag: "South Asian Singles Events Ann Arbor MI | Garam Masala Dating",
+    titleTag: "Ann Arbor UMich Desi Dating Event | Garam Masala Dating",
     metaDescription:
       "Garam Masala Dating is coming to Ann Arbor. A live South Asian dating show for the UMich desi community. Join the waitlist.",
-    h1: "Ann Arbor\u2019s Desi Dating Night Is Coming",
+    h1: "A Fishbowl Town Needs Fresh Faces. We Bring Them.",
     status: "coming-soon",
     badgeLabel: "Coming Soon",
     bodyParagraphs: [
@@ -118,10 +118,10 @@ export const usMidwestCities: Record<string, CityData> = {
   "columbus-oh": {
     slug: "columbus-oh",
     displayName: "Columbus",
-    titleTag: "South Asian Singles Events Columbus OH | Garam Masala Dating",
+    titleTag: "Columbus OH Live Desi Dating Show | Garam Masala Dating",
     metaDescription:
       "Garam Masala Dating is coming to Columbus, Ohio. A live South Asian dating show and singles mixer. Dublin, Westerville, Powell, and beyond.",
-    h1: "Columbus\u2019s Desi Dating Night Is Coming",
+    h1: "Stop Hoping to Run Into Someone at Patel Brothers on Sawmill",
     status: "coming-soon",
     badgeLabel: "Coming Soon",
     bodyParagraphs: [
@@ -147,10 +147,10 @@ export const usMidwestCities: Record<string, CityData> = {
   cincinnati: {
     slug: "cincinnati",
     displayName: "Cincinnati",
-    titleTag: "South Asian Singles Events Cincinnati OH | Garam Masala Dating",
+    titleTag: "Cincinnati Indian Singles Mixer | Garam Masala Dating",
     metaDescription:
       "Garam Masala Dating is coming to Cincinnati. A live South Asian dating show and singles mixer. Mason, West Chester, and the whole tri-state area.",
-    h1: "Cincinnati\u2019s Desi Dating Night Is Coming",
+    h1: "Mason, West Chester, and a Room Full of Desi Singles. Finally.",
     status: "coming-soon",
     badgeLabel: "Coming Soon",
     bodyParagraphs: [
@@ -175,10 +175,10 @@ export const usMidwestCities: Record<string, CityData> = {
   cleveland: {
     slug: "cleveland",
     displayName: "Cleveland",
-    titleTag: "South Asian Singles Events Cleveland OH | Garam Masala Dating",
+    titleTag: "Cleveland OH Desi Dating Night | Garam Masala Dating",
     metaDescription:
       "Garam Masala Dating is coming to Cleveland. A live South Asian dating show and singles mixer. Brecksville, Strongsville, and the whole metro.",
-    h1: "Cleveland\u2019s Desi Dating Night Is Coming",
+    h1: "CWRU Students, Clinic Residents, the Strongsville Crowd. We See You.",
     status: "coming-soon",
     badgeLabel: "Coming Soon",
     bodyParagraphs: [
@@ -204,10 +204,10 @@ export const usMidwestCities: Record<string, CityData> = {
   minneapolis: {
     slug: "minneapolis",
     displayName: "Minneapolis",
-    titleTag: "South Asian Singles Events Minneapolis | Garam Masala Dating",
+    titleTag: "Minneapolis South Asian Dating Show | Garam Masala Dating",
     metaDescription:
       "Garam Masala Dating is coming to Minneapolis. A live South Asian dating show and singles mixer. Maple Grove, Plymouth, Eagan, and the Twin Cities.",
-    h1: "Minneapolis\u2019s Desi Dating Night Is Coming",
+    h1: "Minnesota Nice Won't Find You a Date. This Show Will.",
     status: "coming-soon",
     badgeLabel: "Coming Soon",
     bodyParagraphs: [
@@ -233,10 +233,10 @@ export const usMidwestCities: Record<string, CityData> = {
   indianapolis: {
     slug: "indianapolis",
     displayName: "Indianapolis",
-    titleTag: "South Asian Singles Events Indianapolis | Garam Masala Dating",
+    titleTag: "Indianapolis Desi Singles Night | Garam Masala Dating",
     metaDescription:
       "Garam Masala Dating is coming to Indianapolis. A live South Asian dating show and singles mixer. Carmel, Fishers, and the whole Indy metro.",
-    h1: "Indy\u2019s Desi Dating Night Is Coming",
+    h1: "Hamilton County Desi Community, This Is Your Moment",
     status: "coming-soon",
     badgeLabel: "Coming Soon",
     bodyParagraphs: [
@@ -262,10 +262,10 @@ export const usMidwestCities: Record<string, CityData> = {
   "west-lafayette": {
     slug: "west-lafayette",
     displayName: "West Lafayette",
-    titleTag: "South Asian Singles Events West Lafayette Purdue | Garam Masala Dating",
+    titleTag: "Purdue Desi Dating Night | Garam Masala Dating",
     metaDescription:
       "Garam Masala Dating is coming to West Lafayette. A live South Asian dating show for Purdue\u2019s massive desi community. Join the waitlist.",
-    h1: "West Lafayette\u2019s Desi Dating Night Is Coming",
+    h1: "Swiping Through the Same 20 Profiles Near Purdue? There's a Better Way.",
     status: "coming-soon",
     badgeLabel: "Coming Soon",
     bodyParagraphs: [
@@ -290,10 +290,10 @@ export const usMidwestCities: Record<string, CityData> = {
   "bloomington-in": {
     slug: "bloomington-in",
     displayName: "Bloomington",
-    titleTag: "South Asian Singles Events Bloomington IN | Garam Masala Dating",
+    titleTag: "Bloomington IN Desi Event Near IU | Garam Masala Dating",
     metaDescription:
       "Garam Masala Dating is coming to Bloomington, Indiana. A live South Asian dating show for the IU desi community. Join the waitlist.",
-    h1: "Bloomington\u2019s Desi Dating Night Is Coming",
+    h1: "IU Desi Community, Let's See What You've Got",
     status: "coming-soon",
     badgeLabel: "Coming Soon",
     bodyParagraphs: [
@@ -318,10 +318,10 @@ export const usMidwestCities: Record<string, CityData> = {
   milwaukee: {
     slug: "milwaukee",
     displayName: "Milwaukee",
-    titleTag: "South Asian Singles Events Milwaukee | Garam Masala Dating",
+    titleTag: "Milwaukee Desi Dating Show | Garam Masala Dating",
     metaDescription:
       "Garam Masala Dating is coming to Milwaukee. A live South Asian dating show and singles mixer. Brookfield, Wauwatosa, and the whole metro.",
-    h1: "Milwaukee\u2019s Desi Dating Night Is Coming",
+    h1: "Stop Driving to Chicago. MKE Gets Its Own Show.",
     status: "coming-soon",
     badgeLabel: "Coming Soon",
     bodyParagraphs: [
@@ -346,10 +346,10 @@ export const usMidwestCities: Record<string, CityData> = {
   "madison-wi": {
     slug: "madison-wi",
     displayName: "Madison",
-    titleTag: "South Asian Singles Events Madison WI | Garam Masala Dating",
+    titleTag: "Madison WI Desi Dating Night | Garam Masala Dating",
     metaDescription:
       "Garam Masala Dating is coming to Madison, Wisconsin. A live South Asian dating show for the UW and Epic Systems desi community.",
-    h1: "Madison\u2019s Desi Dating Night Is Coming",
+    h1: "Epic Employees and UW Students, This One's for You",
     status: "coming-soon",
     badgeLabel: "Coming Soon",
     bodyParagraphs: [
@@ -375,10 +375,10 @@ export const usMidwestCities: Record<string, CityData> = {
   "kansas-city": {
     slug: "kansas-city",
     displayName: "Kansas City",
-    titleTag: "South Asian Singles Events Kansas City | Garam Masala Dating",
+    titleTag: "Kansas City Indian Singles Event | Garam Masala Dating",
     metaDescription:
       "Garam Masala Dating is coming to Kansas City. A live South Asian dating show and singles mixer. Overland Park, Lenexa, and the whole metro.",
-    h1: "Kansas City\u2019s Desi Dating Night Is Coming",
+    h1: "Missouri Side, Kansas Side. We Don't Care. Just Show Up.",
     status: "coming-soon",
     badgeLabel: "Coming Soon",
     bodyParagraphs: [
@@ -404,10 +404,10 @@ export const usMidwestCities: Record<string, CityData> = {
   "st-louis": {
     slug: "st-louis",
     displayName: "St. Louis",
-    titleTag: "South Asian Singles Events St. Louis | Garam Masala Dating",
+    titleTag: "St. Louis Desi Singles Mixer | Garam Masala Dating",
     metaDescription:
       "Garam Masala Dating is coming to St. Louis. A live South Asian dating show and singles mixer. Chesterfield, Creve Coeur, and the metro.",
-    h1: "St. Louis\u2019s Desi Dating Night Is Coming",
+    h1: "Same Hundred Faces at Every Desi Event in STL? Not Anymore.",
     status: "coming-soon",
     badgeLabel: "Coming Soon",
     bodyParagraphs: [
@@ -432,10 +432,10 @@ export const usMidwestCities: Record<string, CityData> = {
   "iowa-city": {
     slug: "iowa-city",
     displayName: "Iowa City",
-    titleTag: "South Asian Singles Events Iowa City | Garam Masala Dating",
+    titleTag: "Iowa City Desi Event Near UIowa | Garam Masala Dating",
     metaDescription:
       "Garam Masala Dating is coming to Iowa City. A live South Asian dating show for the University of Iowa desi community. Join the waitlist.",
-    h1: "Iowa City\u2019s Desi Dating Night Is Coming",
+    h1: "Your Dating Pool Is the Size of a Puddle. Let's Fix That, Iowa City.",
     status: "coming-soon",
     badgeLabel: "Coming Soon",
     bodyParagraphs: [
@@ -460,10 +460,10 @@ export const usMidwestCities: Record<string, CityData> = {
   ames: {
     slug: "ames",
     displayName: "Ames",
-    titleTag: "South Asian Singles Events Ames Iowa State | Garam Masala Dating",
+    titleTag: "Ames Iowa State Desi Dating Show | Garam Masala Dating",
     metaDescription:
       "Garam Masala Dating is coming to Ames. A live South Asian dating show for the Iowa State desi community. Join the waitlist.",
-    h1: "Ames\u2019s Desi Dating Night Is Coming",
+    h1: "Two Hours From Any Major City. Zero Excuses Not to Show Up.",
     status: "coming-soon",
     badgeLabel: "Coming Soon",
     bodyParagraphs: [
@@ -488,10 +488,10 @@ export const usMidwestCities: Record<string, CityData> = {
   omaha: {
     slug: "omaha",
     displayName: "Omaha",
-    titleTag: "South Asian Singles Events Omaha Lincoln NE | Garam Masala Dating",
+    titleTag: "Omaha NE Indian Dating Night | Garam Masala Dating",
     metaDescription:
       "Garam Masala Dating is coming to Omaha. A live South Asian dating show and singles mixer for Nebraska\u2019s growing desi community.",
-    h1: "Omaha\u2019s Desi Dating Night Is Coming",
+    h1: "Nebraska Desi Community, Let's Make Some Noise",
     status: "coming-soon",
     badgeLabel: "Coming Soon",
     bodyParagraphs: [

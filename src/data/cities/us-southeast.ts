@@ -4,10 +4,10 @@ export const usSoutheastCities: Record<string, CityData> = {
   "washington-dc": {
     slug: "washington-dc",
     displayName: "Washington DC / NoVA",
-    titleTag: "South Asian Singles Events Washington DC | Garam Masala Dating",
+    titleTag: "DC South Asian Dating Show | Garam Masala Dating",
     metaDescription:
       "Garam Masala Dating is coming to Washington DC and Northern Virginia. A live South Asian dating show and singles mixer from the creators of NYC\u2019s #1 desi dating event.",
-    h1: "DC\u2019s Desi Dating Night Is Coming",
+    h1: "100,000 Desi Singles in the DMV and Nowhere to Meet. We're Fixing That.",
     status: "coming-soon",
     badgeLabel: "Coming Soon",
     bodyParagraphs: [
@@ -33,10 +33,10 @@ export const usSoutheastCities: Record<string, CityData> = {
   atlanta: {
     slug: "atlanta",
     displayName: "Atlanta",
-    titleTag: "South Asian Singles Events Atlanta | Garam Masala Dating",
+    titleTag: "Atlanta Desi Singles Mixer | Garam Masala Dating",
     metaDescription:
       "Garam Masala Dating is coming to Atlanta. A live South Asian dating show and singles mixer from the creators of NYC\u2019s #1 desi dating event. Join the waitlist.",
-    h1: "Atlanta\u2019s Desi Dating Night Is Coming",
+    h1: "The ATL Desi Scene Deserves More Than Another Garba Night",
     status: "coming-soon",
     badgeLabel: "Coming Soon",
     bodyParagraphs: [
@@ -61,10 +61,10 @@ export const usSoutheastCities: Record<string, CityData> = {
   charlotte: {
     slug: "charlotte",
     displayName: "Charlotte",
-    titleTag: "South Asian Singles Events Charlotte NC | Garam Masala Dating",
+    titleTag: "Charlotte NC Indian Dating Event | Garam Masala Dating",
     metaDescription:
       "Garam Masala Dating is coming to Charlotte, NC. A live South Asian dating show and singles mixer. Join the waitlist.",
-    h1: "Charlotte\u2019s Desi Dating Night Is Coming",
+    h1: "Where Do Desi Singles Go in Charlotte? Now You Know.",
     status: "coming-soon",
     badgeLabel: "Coming Soon",
     bodyParagraphs: [
@@ -89,10 +89,10 @@ export const usSoutheastCities: Record<string, CityData> = {
   "raleigh-durham": {
     slug: "raleigh-durham",
     displayName: "Raleigh-Durham",
-    titleTag: "South Asian Singles Events Raleigh Durham NC | Garam Masala Dating",
+    titleTag: "Raleigh Durham Desi Dating Show | Garam Masala Dating",
     metaDescription:
       "Garam Masala Dating is coming to Raleigh, Durham, and the Triangle. A live South Asian dating show and singles mixer. Join the waitlist.",
-    h1: "The Triangle\u2019s Desi Dating Night Is Coming",
+    h1: "Cary, Morrisville, the Whole Triangle. One Room. One Night.",
     status: "coming-soon",
     badgeLabel: "Coming Soon",
     bodyParagraphs: [
@@ -117,10 +117,10 @@ export const usSoutheastCities: Record<string, CityData> = {
   tampa: {
     slug: "tampa",
     displayName: "Tampa",
-    titleTag: "South Asian Singles Events Tampa FL | Garam Masala Dating",
+    titleTag: "Tampa FL Live Desi Dating Night | Garam Masala Dating",
     metaDescription:
       "Garam Masala Dating is coming to Tampa, FL. A live South Asian dating show and singles mixer. Join the waitlist.",
-    h1: "Tampa\u2019s Desi Dating Night Is Coming",
+    h1: "A Live South Asian Dating Show Comes to Tampa Bay",
     status: "coming-soon",
     badgeLabel: "Coming Soon",
     bodyParagraphs: [
@@ -145,10 +145,10 @@ export const usSoutheastCities: Record<string, CityData> = {
   orlando: {
     slug: "orlando",
     displayName: "Orlando",
-    titleTag: "South Asian Singles Events Orlando FL | Garam Masala Dating",
+    titleTag: "Orlando Indian Singles Night | Garam Masala Dating",
     metaDescription:
       "Garam Masala Dating is coming to Orlando, FL. A live South Asian dating show and singles mixer. Join the waitlist.",
-    h1: "Orlando\u2019s Desi Dating Night Is Coming",
+    h1: "Central Florida's Desi Singles Deserve Better Than Swiping Near Theme Parks",
     status: "coming-soon",
     badgeLabel: "Coming Soon",
     bodyParagraphs: [
@@ -173,10 +173,10 @@ export const usSoutheastCities: Record<string, CityData> = {
   miami: {
     slug: "miami",
     displayName: "Miami",
-    titleTag: "South Asian Singles Events Miami FL | Garam Masala Dating",
+    titleTag: "Miami Desi Dating Show | Garam Masala Dating",
     metaDescription:
       "Garam Masala Dating is coming to Miami. A live South Asian dating show and singles mixer. Join the waitlist.",
-    h1: "Miami\u2019s Desi Dating Night Is Coming",
+    h1: "305 Energy, Meet Desi Dating",
     status: "coming-soon",
     badgeLabel: "Coming Soon",
     bodyParagraphs: [
@@ -201,10 +201,10 @@ export const usSoutheastCities: Record<string, CityData> = {
   jacksonville: {
     slug: "jacksonville",
     displayName: "Jacksonville",
-    titleTag: "South Asian Singles Events Jacksonville FL | Garam Masala Dating",
+    titleTag: "Jacksonville FL Desi Singles Event | Garam Masala Dating",
     metaDescription:
       "Garam Masala Dating is coming to Jacksonville, FL. A live South Asian dating show and singles mixer. Join the waitlist.",
-    h1: "Jacksonville\u2019s Desi Dating Night Is Coming",
+    h1: "Jax Is Bigger Than People Think. So Is Its Desi Community.",
     status: "coming-soon",
     badgeLabel: "Coming Soon",
     bodyParagraphs: [
@@ -229,10 +229,10 @@ export const usSoutheastCities: Record<string, CityData> = {
   nashville: {
     slug: "nashville",
     displayName: "Nashville",
-    titleTag: "South Asian Singles Events Nashville TN | Garam Masala Dating",
+    titleTag: "Nashville Desi Dating Night | Garam Masala Dating",
     metaDescription:
       "Garam Masala Dating is coming to Nashville. A live South Asian dating show and singles mixer. Join the waitlist.",
-    h1: "Nashville\u2019s Desi Dating Night Is Coming",
+    h1: "Music City, Meet Desi Dating. No Bachelorette Bus Required.",
     status: "coming-soon",
     badgeLabel: "Coming Soon",
     bodyParagraphs: [
@@ -257,10 +257,10 @@ export const usSoutheastCities: Record<string, CityData> = {
   baltimore: {
     slug: "baltimore",
     displayName: "Baltimore",
-    titleTag: "South Asian Singles Events Baltimore MD | Garam Masala Dating",
+    titleTag: "Baltimore MD Desi Singles Mixer | Garam Masala Dating",
     metaDescription:
       "Garam Masala Dating is coming to Baltimore. A live South Asian dating show and singles mixer. Join the waitlist.",
-    h1: "Baltimore\u2019s Desi Dating Night Is Coming",
+    h1: "Charm City Has Plenty of Charm. Now It Gets a Dating Show.",
     status: "coming-soon",
     badgeLabel: "Coming Soon",
     bodyParagraphs: [
@@ -285,10 +285,10 @@ export const usSoutheastCities: Record<string, CityData> = {
   richmond: {
     slug: "richmond",
     displayName: "Richmond",
-    titleTag: "South Asian Singles Events Richmond VA | Garam Masala Dating",
+    titleTag: "Richmond VA Indian Dating Night | Garam Masala Dating",
     metaDescription:
       "Garam Masala Dating is coming to Richmond, VA. A live South Asian dating show and singles mixer. Join the waitlist.",
-    h1: "Richmond\u2019s Desi Dating Night Is Coming",
+    h1: "RVA's Food Scene Punches Above Its Weight. Time the Dating Scene Did Too.",
     status: "coming-soon",
     badgeLabel: "Coming Soon",
     bodyParagraphs: [
@@ -313,10 +313,10 @@ export const usSoutheastCities: Record<string, CityData> = {
   charlottesville: {
     slug: "charlottesville",
     displayName: "Charlottesville",
-    titleTag: "South Asian Singles Events Charlottesville VA | Garam Masala Dating",
+    titleTag: "Charlottesville Desi Event Near UVA | Garam Masala Dating",
     metaDescription:
       "Garam Masala Dating is coming to Charlottesville, VA. A live South Asian dating show and singles mixer near UVA. Join the waitlist.",
-    h1: "Charlottesville\u2019s Desi Dating Night Is Coming",
+    h1: "Wahoowa. Now Go Find Your Person.",
     status: "coming-soon",
     badgeLabel: "Coming Soon",
     bodyParagraphs: [
@@ -341,10 +341,10 @@ export const usSoutheastCities: Record<string, CityData> = {
   blacksburg: {
     slug: "blacksburg",
     displayName: "Blacksburg",
-    titleTag: "South Asian Singles Events Blacksburg VA | Garam Masala Dating",
+    titleTag: "Blacksburg VA Desi Event Near VT | Garam Masala Dating",
     metaDescription:
       "Garam Masala Dating is coming to Blacksburg, VA. A live South Asian dating show and singles mixer near Virginia Tech. Join the waitlist.",
-    h1: "Blacksburg\u2019s Desi Dating Night Is Coming",
+    h1: "The New River Valley Doesn't Have to Be Lonely",
     status: "coming-soon",
     badgeLabel: "Coming Soon",
     bodyParagraphs: [
@@ -369,10 +369,10 @@ export const usSoutheastCities: Record<string, CityData> = {
   knoxville: {
     slug: "knoxville",
     displayName: "Knoxville",
-    titleTag: "South Asian Singles Events Knoxville TN | Garam Masala Dating",
+    titleTag: "Knoxville TN Desi Dating Show | Garam Masala Dating",
     metaDescription:
       "Garam Masala Dating is coming to Knoxville, TN. A live South Asian dating show and singles mixer. Join the waitlist.",
-    h1: "Knoxville\u2019s Desi Dating Night Is Coming",
+    h1: "East Tennessee Is Overdue for a Desi Dating Night",
     status: "coming-soon",
     badgeLabel: "Coming Soon",
     bodyParagraphs: [
@@ -397,10 +397,10 @@ export const usSoutheastCities: Record<string, CityData> = {
   "greenville-sc": {
     slug: "greenville-sc",
     displayName: "Greenville",
-    titleTag: "South Asian Singles Events Greenville SC | Garam Masala Dating",
+    titleTag: "Greenville SC Indian Singles Event | Garam Masala Dating",
     metaDescription:
       "Garam Masala Dating is coming to Greenville, SC. A live South Asian dating show and singles mixer. Join the waitlist.",
-    h1: "Greenville\u2019s Desi Dating Night Is Coming",
+    h1: "The Upstate Is on Our Map",
     status: "coming-soon",
     badgeLabel: "Coming Soon",
     bodyParagraphs: [
@@ -425,10 +425,10 @@ export const usSoutheastCities: Record<string, CityData> = {
   savannah: {
     slug: "savannah",
     displayName: "Savannah",
-    titleTag: "South Asian Singles Events Savannah GA | Garam Masala Dating",
+    titleTag: "Savannah GA Desi Dating Event | Garam Masala Dating",
     metaDescription:
       "Garam Masala Dating is coming to Savannah, GA. A live South Asian dating show and singles mixer. Join the waitlist.",
-    h1: "Savannah\u2019s Desi Dating Night Is Coming",
+    h1: "Spanish Moss, Historic Squares, and a Blind Date You Didn't See Coming",
     status: "coming-soon",
     badgeLabel: "Coming Soon",
     bodyParagraphs: [

@@ -4,10 +4,10 @@ export const ukCities: Record<string, CityData> = {
   london: {
     slug: "london",
     displayName: "London",
-    titleTag: "South Asian Singles Events London | Garam Masala Dating UK",
+    titleTag: "London South Asian Singles | Garam Masala Dating",
     metaDescription:
       "Garam Masala Dating is coming to London. A live South Asian dating show and singles mixer. Southall, Wembley, Tooting, East Ham, and the rest of London\u2019s massive desi scene.",
-    h1: "London\u2019s Desi Dating Night Is Coming",
+    h1: "From Southall to Shoreditch, London Gets a Live Dating Show",
     status: "coming-soon",
     badgeLabel: "Coming Soon",
     bodyParagraphs: [
@@ -33,10 +33,10 @@ export const ukCities: Record<string, CityData> = {
   birmingham: {
     slug: "birmingham",
     displayName: "Birmingham",
-    titleTag: "South Asian Singles Events Birmingham | Garam Masala Dating UK",
+    titleTag: "Live Dating Show Birmingham UK | Garam Masala Dating",
     metaDescription:
       "Garam Masala Dating is coming to Birmingham. A live South Asian dating show and singles mixer. Handsworth, Sparkhill, and the UK\u2019s largest South Asian community outside London.",
-    h1: "Birmingham\u2019s Desi Dating Night Is Coming",
+    h1: "The Balti Triangle Built a Food Legacy. Now Brum Gets a Dating One.",
     status: "coming-soon",
     badgeLabel: "Coming Soon",
     bodyParagraphs: [
@@ -62,10 +62,10 @@ export const ukCities: Record<string, CityData> = {
   leicester: {
     slug: "leicester",
     displayName: "Leicester",
-    titleTag: "South Asian Singles Events Leicester | Garam Masala Dating UK",
+    titleTag: "Desi Dating Night Leicester | Garam Masala Dating",
     metaDescription:
       "Garam Masala Dating is coming to Leicester. A live South Asian dating show and singles mixer. The UK\u2019s first ethnic minority majority city. Belgrave Road and beyond.",
-    h1: "Leicester\u2019s Desi Dating Night Is Coming",
+    h1: "Belgrave Road\u2019s Golden Mile Gets a Golden Night Out",
     status: "coming-soon",
     badgeLabel: "Coming Soon",
     bodyParagraphs: [
@@ -91,10 +91,10 @@ export const ukCities: Record<string, CityData> = {
   manchester: {
     slug: "manchester",
     displayName: "Manchester",
-    titleTag: "South Asian Singles Events Manchester | Garam Masala Dating UK",
+    titleTag: "Desi Singles Night Manchester | Garam Masala Dating",
     metaDescription:
       "Garam Masala Dating is coming to Manchester. A live South Asian dating show and singles mixer. Rusholme, Longsight, Curry Mile, and Manchester\u2019s massive desi scene.",
-    h1: "Manchester\u2019s Desi Dating Night Is Coming",
+    h1: "Curry Mile Meets Comedy. Manchester, You\u2019re Welcome.",
     status: "coming-soon",
     badgeLabel: "Coming Soon",
     bodyParagraphs: [
@@ -120,10 +120,10 @@ export const ukCities: Record<string, CityData> = {
   leeds: {
     slug: "leeds",
     displayName: "Leeds",
-    titleTag: "South Asian Singles Events Leeds | Garam Masala Dating UK",
+    titleTag: "South Asian Dating Night Leeds | Garam Masala Dating",
     metaDescription:
       "Garam Masala Dating is coming to Leeds. A live South Asian dating show and singles mixer. Harehills, University of Leeds, and Yorkshire\u2019s desi community.",
-    h1: "Leeds\u2019s Desi Dating Night Is Coming",
+    h1: "Best Curry in the UK and Nobody to Share It With. Leeds, We\u2019re Fixing That.",
     status: "coming-soon",
     badgeLabel: "Coming Soon",
     bodyParagraphs: [
@@ -149,10 +149,10 @@ export const ukCities: Record<string, CityData> = {
   bradford: {
     slug: "bradford",
     displayName: "Bradford",
-    titleTag: "South Asian Singles Events Bradford | Garam Masala Dating UK",
+    titleTag: "Desi Dating Show Bradford UK | Garam Masala Dating",
     metaDescription:
       "Garam Masala Dating is coming to Bradford. A live South Asian dating show and singles mixer. One of the highest South Asian populations in the UK. Join the waitlist.",
-    h1: "Bradford\u2019s Desi Dating Night Is Coming",
+    h1: "Everyone\u2019s Parents Know Each Other. Bradford Needs a New Way to Date.",
     status: "coming-soon",
     badgeLabel: "Coming Soon",
     bodyParagraphs: [
@@ -178,10 +178,10 @@ export const ukCities: Record<string, CityData> = {
   coventry: {
     slug: "coventry",
     displayName: "Coventry",
-    titleTag: "South Asian Singles Events Coventry | Garam Masala Dating UK",
+    titleTag: "South Asian Singles Coventry | Garam Masala Dating",
     metaDescription:
       "Garam Masala Dating is coming to Coventry. A live South Asian dating show and singles mixer. Warwick University, Foleshill Road, and the Midlands desi scene.",
-    h1: "Coventry\u2019s Desi Dating Night Is Coming",
+    h1: "UK City of Culture. Biggest Indian Student Intake. Zero Dating Shows. Until Now.",
     status: "coming-soon",
     badgeLabel: "Coming Soon",
     bodyParagraphs: [
@@ -207,10 +207,10 @@ export const ukCities: Record<string, CityData> = {
   glasgow: {
     slug: "glasgow",
     displayName: "Glasgow",
-    titleTag: "South Asian Singles Events Glasgow | Garam Masala Dating UK",
+    titleTag: "Desi Dating Night Glasgow | Garam Masala Dating",
     metaDescription:
       "Garam Masala Dating is coming to Glasgow. A live South Asian dating show and singles mixer. Southside, University of Glasgow, and Scotland\u2019s largest desi community.",
-    h1: "Glasgow\u2019s Desi Dating Night Is Coming",
+    h1: "Pollokshields Raised Three Generations of British Asians. Time for a Proper Night Out.",
     status: "coming-soon",
     badgeLabel: "Coming Soon",
     bodyParagraphs: [
@@ -236,10 +236,10 @@ export const ukCities: Record<string, CityData> = {
   edinburgh: {
     slug: "edinburgh",
     displayName: "Edinburgh",
-    titleTag: "South Asian Singles Events Edinburgh | Garam Masala Dating UK",
+    titleTag: "South Asian Dating Show Edinburgh | Garam Masala Dating",
     metaDescription:
       "Garam Masala Dating is coming to Edinburgh. A live South Asian dating show and singles mixer. University of Edinburgh, Festival Fringe comedy connection. Join the waitlist.",
-    h1: "Edinburgh\u2019s Desi Dating Night Is Coming",
+    h1: "The Fringe Capital Gets a Live Dating Format That Actually Fits",
     status: "coming-soon",
     badgeLabel: "Coming Soon",
     bodyParagraphs: [
@@ -265,10 +265,10 @@ export const ukCities: Record<string, CityData> = {
   nottingham: {
     slug: "nottingham",
     displayName: "Nottingham",
-    titleTag: "South Asian Singles Events Nottingham | Garam Masala Dating UK",
+    titleTag: "Desi Dating Event Nottingham | Garam Masala Dating",
     metaDescription:
       "Garam Masala Dating is coming to Nottingham. A live South Asian dating show and singles mixer. Hyson Green, University of Nottingham, and the East Midlands desi scene.",
-    h1: "Nottingham\u2019s Desi Dating Night Is Coming",
+    h1: "More Than Ocean Nightclub. Nottingham\u2019s Desi Scene Gets a Real Event.",
     status: "coming-soon",
     badgeLabel: "Coming Soon",
     bodyParagraphs: [
@@ -294,10 +294,10 @@ export const ukCities: Record<string, CityData> = {
   liverpool: {
     slug: "liverpool",
     displayName: "Liverpool",
-    titleTag: "South Asian Singles Events Liverpool | Garam Masala Dating UK",
+    titleTag: "Desi Dating Night Liverpool UK | Garam Masala Dating",
     metaDescription:
       "Garam Masala Dating is coming to Liverpool. A live South Asian dating show and singles mixer. University of Liverpool and Merseyside\u2019s growing desi community.",
-    h1: "Liverpool\u2019s Desi Dating Night Is Coming",
+    h1: "Scousers Don\u2019t Just Watch. They Participate. Liverpool Gets the Show.",
     status: "coming-soon",
     badgeLabel: "Coming Soon",
     bodyParagraphs: [
@@ -323,10 +323,10 @@ export const ukCities: Record<string, CityData> = {
   sheffield: {
     slug: "sheffield",
     displayName: "Sheffield",
-    titleTag: "South Asian Singles Events Sheffield | Garam Masala Dating UK",
+    titleTag: "South Asian Singles Sheffield | Garam Masala Dating",
     metaDescription:
       "Garam Masala Dating is coming to Sheffield. A live South Asian dating show and singles mixer. Page Hall, University of Sheffield, and South Yorkshire\u2019s desi community.",
-    h1: "Sheffield\u2019s Desi Dating Night Is Coming",
+    h1: "Sheffield Is the Friendliest City in the UK. That Energy Belongs on Stage.",
     status: "coming-soon",
     badgeLabel: "Coming Soon",
     bodyParagraphs: [
@@ -352,10 +352,10 @@ export const ukCities: Record<string, CityData> = {
   cambridge: {
     slug: "cambridge",
     displayName: "Cambridge",
-    titleTag: "South Asian Singles Events Cambridge | Garam Masala Dating UK",
+    titleTag: "Desi Dating Show Cambridge UK | Garam Masala Dating",
     metaDescription:
       "Garam Masala Dating is coming to Cambridge. A live South Asian dating show and singles mixer. University of Cambridge, Indian academics, and the biotech corridor.",
-    h1: "Cambridge\u2019s Desi Dating Night Is Coming",
+    h1: "Smartest People in Britain. Still Can\u2019t Figure Out Dating.",
     status: "coming-soon",
     badgeLabel: "Coming Soon",
     bodyParagraphs: [
@@ -381,10 +381,10 @@ export const ukCities: Record<string, CityData> = {
   oxford: {
     slug: "oxford",
     displayName: "Oxford",
-    titleTag: "South Asian Singles Events Oxford | Garam Masala Dating UK",
+    titleTag: "South Asian Dating Night Oxford | Garam Masala Dating",
     metaDescription:
       "Garam Masala Dating is coming to Oxford. A live South Asian dating show and singles mixer. University of Oxford, Cowley Road, and the city\u2019s South Asian professionals.",
-    h1: "Oxford\u2019s Desi Dating Night Is Coming",
+    h1: "Cowley Road Has the Culture. Oxford Gets the Dating Show to Match.",
     status: "coming-soon",
     badgeLabel: "Coming Soon",
     bodyParagraphs: [
@@ -410,10 +410,10 @@ export const ukCities: Record<string, CityData> = {
   southampton: {
     slug: "southampton",
     displayName: "Southampton",
-    titleTag: "South Asian Singles Events Southampton | Garam Masala Dating UK",
+    titleTag: "Desi Dating Event Southampton | Garam Masala Dating",
     metaDescription:
       "Garam Masala Dating is coming to Southampton. A live South Asian dating show and singles mixer. University of Southampton and the south coast\u2019s growing desi community.",
-    h1: "Southampton\u2019s Desi Dating Night Is Coming",
+    h1: "South Coast Desi Singles Keep Taking the Train to London. Not Anymore.",
     status: "coming-soon",
     badgeLabel: "Coming Soon",
     bodyParagraphs: [
@@ -439,10 +439,10 @@ export const ukCities: Record<string, CityData> = {
   bristol: {
     slug: "bristol",
     displayName: "Bristol",
-    titleTag: "South Asian Singles Events Bristol | Garam Masala Dating UK",
+    titleTag: "Desi Singles Night Bristol UK | Garam Masala Dating",
     metaDescription:
       "Garam Masala Dating is coming to Bristol. A live South Asian dating show and singles mixer. Easton, University of Bristol, UWE, and the West Country desi scene.",
-    h1: "Bristol\u2019s Desi Dating Night Is Coming",
+    h1: "Easton\u2019s Stapleton Road Meets Live Comedy Dating. Bristol Is Ready.",
     status: "coming-soon",
     badgeLabel: "Coming Soon",
     bodyParagraphs: [
@@ -468,10 +468,10 @@ export const ukCities: Record<string, CityData> = {
   wolverhampton: {
     slug: "wolverhampton",
     displayName: "Wolverhampton",
-    titleTag: "South Asian Singles Events Wolverhampton | Garam Masala Dating UK",
+    titleTag: "South Asian Dating Wolverhampton | Garam Masala Dating",
     metaDescription:
       "Garam Masala Dating is coming to Wolverhampton. A live South Asian dating show and singles mixer. One of the highest South Asian populations in the West Midlands.",
-    h1: "Wolverhampton\u2019s Desi Dating Night Is Coming",
+    h1: "Wolves Has the Desi Density. It Just Needs the Event.",
     status: "coming-soon",
     badgeLabel: "Coming Soon",
     bodyParagraphs: [
@@ -497,10 +497,10 @@ export const ukCities: Record<string, CityData> = {
   luton: {
     slug: "luton",
     displayName: "Luton",
-    titleTag: "South Asian Singles Events Luton | Garam Masala Dating UK",
+    titleTag: "Desi Dating Night Luton UK | Garam Masala Dating",
     metaDescription:
       "Garam Masala Dating is coming to Luton. A live South Asian dating show and singles mixer. Large South Asian community just north of London. Join the waitlist.",
-    h1: "Luton\u2019s Desi Dating Night Is Coming",
+    h1: "Bury Park\u2019s Desi Scene Rivals Areas Ten Times the Size. Where\u2019s the Singles Event?",
     status: "coming-soon",
     badgeLabel: "Coming Soon",
     bodyParagraphs: [
@@ -526,10 +526,10 @@ export const ukCities: Record<string, CityData> = {
   slough: {
     slug: "slough",
     displayName: "Slough",
-    titleTag: "South Asian Singles Events Slough | Garam Masala Dating UK",
+    titleTag: "South Asian Singles Night Slough | Garam Masala Dating",
     metaDescription:
       "Garam Masala Dating is coming to Slough. A live South Asian dating show and singles mixer. Massive South Asian suburb west of London. Join the waitlist.",
-    h1: "Slough\u2019s Desi Dating Night Is Coming",
+    h1: "More Punjabi Than English on the High Street. Slough Gets Its Own Show.",
     status: "coming-soon",
     badgeLabel: "Coming Soon",
     bodyParagraphs: [
@@ -555,10 +555,10 @@ export const ukCities: Record<string, CityData> = {
   reading: {
     slug: "reading",
     displayName: "Reading",
-    titleTag: "South Asian Singles Events Reading | Garam Masala Dating UK",
+    titleTag: "Desi Dating Show Reading UK | Garam Masala Dating",
     metaDescription:
       "Garam Masala Dating is coming to Reading. A live South Asian dating show and singles mixer. University of Reading, Indian tech workers, Thames Valley corridor.",
-    h1: "Reading\u2019s Desi Dating Night Is Coming",
+    h1: "Thames Valley Tech Corridor Is Full of Indian Engineers. Time They Met Each Other.",
     status: "coming-soon",
     badgeLabel: "Coming Soon",
     bodyParagraphs: [
@@ -584,10 +584,10 @@ export const ukCities: Record<string, CityData> = {
   newcastle: {
     slug: "newcastle",
     displayName: "Newcastle",
-    titleTag: "South Asian Singles Events Newcastle | Garam Masala Dating UK",
+    titleTag: "South Asian Dating Newcastle | Garam Masala Dating",
     metaDescription:
       "Garam Masala Dating is coming to Newcastle. A live South Asian dating show and singles mixer. Newcastle University, Northumbria, and the Tyneside desi community.",
-    h1: "Newcastle\u2019s Desi Dating Night Is Coming",
+    h1: "Geordie Warmth Plus Desi Energy. Newcastle Is Going to Be Electric.",
     status: "coming-soon",
     badgeLabel: "Coming Soon",
     bodyParagraphs: [
@@ -613,10 +613,10 @@ export const ukCities: Record<string, CityData> = {
   derby: {
     slug: "derby",
     displayName: "Derby",
-    titleTag: "South Asian Singles Events Derby | Garam Masala Dating UK",
+    titleTag: "Desi Dating Night Derby UK | Garam Masala Dating",
     metaDescription:
       "Garam Masala Dating is coming to Derby. A live South Asian dating show and singles mixer. Rolls-Royce engineering families, University of Derby, and Normanton Road.",
-    h1: "Derby\u2019s Desi Dating Night Is Coming",
+    h1: "Normanton Road\u2019s Been Desi for Decades. The Singles Scene Hasn\u2019t Kept Up.",
     status: "coming-soon",
     badgeLabel: "Coming Soon",
     bodyParagraphs: [
@@ -642,10 +642,10 @@ export const ukCities: Record<string, CityData> = {
   middlesbrough: {
     slug: "middlesbrough",
     displayName: "Middlesbrough",
-    titleTag: "South Asian Singles Events Middlesbrough | Garam Masala Dating UK",
+    titleTag: "Desi Singles Night Middlesbrough | Garam Masala Dating",
     metaDescription:
       "Garam Masala Dating is coming to Middlesbrough. A live South Asian dating show and singles mixer. Teesside University and the growing desi community on Teesside.",
-    h1: "Middlesbrough\u2019s Desi Dating Night Is Coming",
+    h1: "The North East Forgot Middlesbrough. We Didn\u2019t. Teesside Gets the Show.",
     status: "coming-soon",
     badgeLabel: "Coming Soon",
     bodyParagraphs: [
@@ -671,10 +671,10 @@ export const ukCities: Record<string, CityData> = {
   sunderland: {
     slug: "sunderland",
     displayName: "Sunderland",
-    titleTag: "South Asian Singles Events Sunderland | Garam Masala Dating UK",
+    titleTag: "South Asian Dating Sunderland | Garam Masala Dating",
     metaDescription:
       "Garam Masala Dating is coming to Sunderland. A live South Asian dating show and singles mixer. University of Sunderland and the North East\u2019s desi community.",
-    h1: "Sunderland\u2019s Desi Dating Night Is Coming",
+    h1: "Working Class Energy, Zero Pretence. Sunderland\u2019s Crowd Will Make This Show.",
     status: "coming-soon",
     badgeLabel: "Coming Soon",
     bodyParagraphs: [
@@ -700,10 +700,10 @@ export const ukCities: Record<string, CityData> = {
   swansea: {
     slug: "swansea",
     displayName: "Swansea",
-    titleTag: "South Asian Singles Events Swansea | Garam Masala Dating UK",
+    titleTag: "Desi Dating Night Swansea Wales | Garam Masala Dating",
     metaDescription:
       "Garam Masala Dating is coming to Swansea. A live South Asian dating show and singles mixer. Swansea University and South Wales\u2019s desi community. Join the waitlist.",
-    h1: "Swansea\u2019s Desi Dating Night Is Coming",
+    h1: "Cardiff Gets Everything. Swansea\u2019s Desi Community Gets Something of Its Own.",
     status: "coming-soon",
     badgeLabel: "Coming Soon",
     bodyParagraphs: [
@@ -729,10 +729,10 @@ export const ukCities: Record<string, CityData> = {
   bath: {
     slug: "bath",
     displayName: "Bath",
-    titleTag: "South Asian Singles Events Bath | Garam Masala Dating UK",
+    titleTag: "Desi Dating Show Bath UK | Garam Masala Dating",
     metaDescription:
       "Garam Masala Dating is coming to Bath. A live South Asian dating show and singles mixer. University of Bath and the city\u2019s South Asian professionals. Join the waitlist.",
-    h1: "Bath\u2019s Desi Dating Night Is Coming",
+    h1: "Georgian Architecture, Roman Baths, and Terrible Dating Options. Let\u2019s Fix One.",
     status: "coming-soon",
     badgeLabel: "Coming Soon",
     bodyParagraphs: [
@@ -758,10 +758,10 @@ export const ukCities: Record<string, CityData> = {
   exeter: {
     slug: "exeter",
     displayName: "Exeter",
-    titleTag: "South Asian Singles Events Exeter | Garam Masala Dating UK",
+    titleTag: "South Asian Singles Exeter UK | Garam Masala Dating",
     metaDescription:
       "Garam Masala Dating is coming to Exeter. A live South Asian dating show and singles mixer. University of Exeter and Devon\u2019s growing desi community. Join the waitlist.",
-    h1: "Exeter\u2019s Desi Dating Night Is Coming",
+    h1: "The Apps Show You People in Bristol Because Exeter Runs Out. That Changes Now.",
     status: "coming-soon",
     badgeLabel: "Coming Soon",
     bodyParagraphs: [
@@ -787,10 +787,10 @@ export const ukCities: Record<string, CityData> = {
   york: {
     slug: "york",
     displayName: "York",
-    titleTag: "South Asian Singles Events York | Garam Masala Dating UK",
+    titleTag: "Desi Dating Night York UK | Garam Masala Dating",
     metaDescription:
       "Garam Masala Dating is coming to York. A live South Asian dating show and singles mixer. University of York and one of England\u2019s most visited cities. Join the waitlist.",
-    h1: "York\u2019s Desi Dating Night Is Coming",
+    h1: "The Shambles Is Great for Tourists. It Won\u2019t Solve Your Love Life.",
     status: "coming-soon",
     badgeLabel: "Coming Soon",
     bodyParagraphs: [
@@ -816,10 +816,10 @@ export const ukCities: Record<string, CityData> = {
   durham: {
     slug: "durham",
     displayName: "Durham",
-    titleTag: "South Asian Singles Events Durham | Garam Masala Dating UK",
+    titleTag: "Desi Singles Event Durham UK | Garam Masala Dating",
     metaDescription:
       "Garam Masala Dating is coming to Durham. A live South Asian dating show and singles mixer. Durham University and the North East\u2019s academic desi community.",
-    h1: "Durham\u2019s Desi Dating Night Is Coming",
+    h1: "Durham\u2019s Collegiate System Builds Great Friends. Terrible Dating Pool.",
     status: "coming-soon",
     badgeLabel: "Coming Soon",
     bodyParagraphs: [
@@ -845,10 +845,10 @@ export const ukCities: Record<string, CityData> = {
   norwich: {
     slug: "norwich",
     displayName: "Norwich",
-    titleTag: "South Asian Singles Events Norwich | Garam Masala Dating UK",
+    titleTag: "South Asian Dating Night Norwich | Garam Masala Dating",
     metaDescription:
       "Garam Masala Dating is coming to Norwich. A live South Asian dating show and singles mixer. UEA and Norfolk\u2019s growing desi community. Join the waitlist.",
-    h1: "Norwich\u2019s Desi Dating Night Is Coming",
+    h1: "Nobody Passes Through Norwich. The People Here Committed. So Did We.",
     status: "coming-soon",
     badgeLabel: "Coming Soon",
     bodyParagraphs: [
@@ -874,10 +874,10 @@ export const ukCities: Record<string, CityData> = {
   lancaster: {
     slug: "lancaster",
     displayName: "Lancaster",
-    titleTag: "South Asian Singles Events Lancaster | Garam Masala Dating UK",
+    titleTag: "Desi Dating Event Lancaster UK | Garam Masala Dating",
     metaDescription:
       "Garam Masala Dating is coming to Lancaster. A live South Asian dating show and singles mixer. Lancaster University and North West England\u2019s desi community.",
-    h1: "Lancaster\u2019s Desi Dating Night Is Coming",
+    h1: "Top 15 University, Middle of Nowhere Dating. Lancaster Needs a Shake Up.",
     status: "coming-soon",
     badgeLabel: "Coming Soon",
     bodyParagraphs: [
@@ -903,10 +903,10 @@ export const ukCities: Record<string, CityData> = {
   "warwick-leamington-spa": {
     slug: "warwick-leamington-spa",
     displayName: "Warwick/Leamington Spa",
-    titleTag: "South Asian Singles Events Warwick Leamington Spa | Garam Masala Dating UK",
+    titleTag: "Desi Dating Warwick Leamington | Garam Masala Dating",
     metaDescription:
       "Garam Masala Dating is coming to Warwick and Leamington Spa. A live South Asian dating show and singles mixer. University of Warwick\u2019s massive desi student population.",
-    h1: "Warwick\u2019s Desi Dating Night Is Coming",
+    h1: "Warwick\u2019s Diwali Fills the Piazza. Now Fill a Room with Singles.",
     status: "coming-soon",
     badgeLabel: "Coming Soon",
     bodyParagraphs: [
@@ -932,10 +932,10 @@ export const ukCities: Record<string, CityData> = {
   loughborough: {
     slug: "loughborough",
     displayName: "Loughborough",
-    titleTag: "South Asian Singles Events Loughborough | Garam Masala Dating UK",
+    titleTag: "South Asian Dating Loughborough | Garam Masala Dating",
     metaDescription:
       "Garam Masala Dating is coming to Loughborough. A live South Asian dating show and singles mixer. Loughborough University and the East Midlands desi community.",
-    h1: "Loughborough\u2019s Desi Dating Night Is Coming",
+    h1: "Loughborough Trains Athletes to Perform. This Crowd\u2019s Going to Bring Energy.",
     status: "coming-soon",
     badgeLabel: "Coming Soon",
     bodyParagraphs: [
@@ -961,10 +961,10 @@ export const ukCities: Record<string, CityData> = {
   "stoke-on-trent": {
     slug: "stoke-on-trent",
     displayName: "Stoke-on-Trent",
-    titleTag: "South Asian Singles Events Stoke-on-Trent | Garam Masala Dating UK",
+    titleTag: "Desi Dating Night Stoke on Trent | Garam Masala Dating",
     metaDescription:
       "Garam Masala Dating is coming to Stoke-on-Trent. A live South Asian dating show and singles mixer. Staffordshire University and the Potteries\u2019 South Asian community.",
-    h1: "Stoke\u2019s Desi Dating Night Is Coming",
+    h1: "The Potteries Built an Industry. Now Build a Dating Scene.",
     status: "coming-soon",
     badgeLabel: "Coming Soon",
     bodyParagraphs: [
@@ -990,10 +990,10 @@ export const ukCities: Record<string, CityData> = {
   peterborough: {
     slug: "peterborough",
     displayName: "Peterborough",
-    titleTag: "South Asian Singles Events Peterborough | Garam Masala Dating UK",
+    titleTag: "Desi Dating Event Peterborough | Garam Masala Dating",
     metaDescription:
       "Garam Masala Dating is coming to Peterborough. A live South Asian dating show and singles mixer. Significant South Asian community in the heart of England.",
-    h1: "Peterborough\u2019s Desi Dating Night Is Coming",
+    h1: "Lincoln Road Has Been Desi for Thirty Years. The Singles Night Is Overdue.",
     status: "coming-soon",
     badgeLabel: "Coming Soon",
     bodyParagraphs: [
@@ -1019,10 +1019,10 @@ export const ukCities: Record<string, CityData> = {
   walsall: {
     slug: "walsall",
     displayName: "Walsall",
-    titleTag: "South Asian Singles Events Walsall | Garam Masala Dating UK",
+    titleTag: "South Asian Singles Walsall UK | Garam Masala Dating",
     metaDescription:
       "Garam Masala Dating is coming to Walsall. A live South Asian dating show and singles mixer. One of the West Midlands\u2019 most concentrated desi communities.",
-    h1: "Walsall\u2019s Desi Dating Night Is Coming",
+    h1: "Caldmore\u2019s Auntie Network Knows Everything. This Show Gives You Cover.",
     status: "coming-soon",
     badgeLabel: "Coming Soon",
     bodyParagraphs: [
@@ -1048,10 +1048,10 @@ export const ukCities: Record<string, CityData> = {
   oldham: {
     slug: "oldham",
     displayName: "Oldham",
-    titleTag: "South Asian Singles Events Oldham | Garam Masala Dating UK",
+    titleTag: "Desi Dating Night Oldham UK | Garam Masala Dating",
     metaDescription:
       "Garam Masala Dating is coming to Oldham. A live South Asian dating show and singles mixer. Large South Asian community in Greater Manchester. Join the waitlist.",
-    h1: "Oldham\u2019s Desi Dating Night Is Coming",
+    h1: "Second Gen Energy in Oldham Is Strong. It Deserves a Stage.",
     status: "coming-soon",
     badgeLabel: "Coming Soon",
     bodyParagraphs: [
@@ -1077,10 +1077,10 @@ export const ukCities: Record<string, CityData> = {
   blackburn: {
     slug: "blackburn",
     displayName: "Blackburn",
-    titleTag: "South Asian Singles Events Blackburn | Garam Masala Dating UK",
+    titleTag: "South Asian Dating Blackburn UK | Garam Masala Dating",
     metaDescription:
       "Garam Masala Dating is coming to Blackburn. A live South Asian dating show and singles mixer. One of Lancashire\u2019s largest South Asian communities. Join the waitlist.",
-    h1: "Blackburn\u2019s Desi Dating Night Is Coming",
+    h1: "Lancashire Mill Towns Have Deep Roots. Blackburn\u2019s Desi Singles Need Something New.",
     status: "coming-soon",
     badgeLabel: "Coming Soon",
     bodyParagraphs: [
@@ -1106,10 +1106,10 @@ export const ukCities: Record<string, CityData> = {
   bolton: {
     slug: "bolton",
     displayName: "Bolton",
-    titleTag: "South Asian Singles Events Bolton | Garam Masala Dating UK",
+    titleTag: "Desi Dating Show Bolton UK | Garam Masala Dating",
     metaDescription:
       "Garam Masala Dating is coming to Bolton. A live South Asian dating show and singles mixer. South Asian community and University of Bolton. Join the waitlist.",
-    h1: "Bolton\u2019s Desi Dating Night Is Coming",
+    h1: "Bolton Has the Albert Halls and the Octagon. Now It Gets a Proper Desi Night.",
     status: "coming-soon",
     badgeLabel: "Coming Soon",
     bodyParagraphs: [
@@ -1135,10 +1135,10 @@ export const ukCities: Record<string, CityData> = {
   huddersfield: {
     slug: "huddersfield",
     displayName: "Huddersfield",
-    titleTag: "South Asian Singles Events Huddersfield | Garam Masala Dating UK",
+    titleTag: "Desi Singles Night Huddersfield | Garam Masala Dating",
     metaDescription:
       "Garam Masala Dating is coming to Huddersfield. A live South Asian dating show and singles mixer. University of Huddersfield and West Yorkshire\u2019s desi community.",
-    h1: "Huddersfield\u2019s Desi Dating Night Is Coming",
+    h1: "Not Bradford. Not Leeds. Huddersfield Has Its Own Identity and Its Own Singles.",
     status: "coming-soon",
     badgeLabel: "Coming Soon",
     bodyParagraphs: [
@@ -1164,10 +1164,10 @@ export const ukCities: Record<string, CityData> = {
   cardiff: {
     slug: "cardiff",
     displayName: "Cardiff",
-    titleTag: "South Asian Singles Events Cardiff | Garam Masala Dating UK",
+    titleTag: "Desi Dating Night Cardiff Wales | Garam Masala Dating",
     metaDescription:
       "Garam Masala Dating is coming to Cardiff. A live South Asian dating show and singles mixer. Cardiff University, Riverside, and the capital of Wales\u2019s desi community.",
-    h1: "Cardiff\u2019s Desi Dating Night Is Coming",
+    h1: "All of South Wales Looks to Cardiff. Time the Capital Delivered a Dating Night.",
     status: "coming-soon",
     badgeLabel: "Coming Soon",
     bodyParagraphs: [
@@ -1193,10 +1193,10 @@ export const ukCities: Record<string, CityData> = {
   belfast: {
     slug: "belfast",
     displayName: "Belfast",
-    titleTag: "South Asian Singles Events Belfast | Garam Masala Dating UK",
+    titleTag: "South Asian Dating Belfast NI | Garam Masala Dating",
     metaDescription:
       "Garam Masala Dating is coming to Belfast. A live South Asian dating show and singles mixer. Queen\u2019s University Belfast and Northern Ireland\u2019s growing desi community.",
-    h1: "Belfast\u2019s Desi Dating Night Is Coming",
+    h1: "Belfast\u2019s Desi Community Is New and Growing Fast. The Social Scene Needs to Catch Up.",
     status: "coming-soon",
     badgeLabel: "Coming Soon",
     bodyParagraphs: [
@@ -1222,10 +1222,10 @@ export const ukCities: Record<string, CityData> = {
   aberdeen: {
     slug: "aberdeen",
     displayName: "Aberdeen",
-    titleTag: "South Asian Singles Events Aberdeen | Garam Masala Dating UK",
+    titleTag: "Desi Dating Show Aberdeen UK | Garam Masala Dating",
     metaDescription:
       "Garam Masala Dating is coming to Aberdeen. A live South Asian dating show and singles mixer. University of Aberdeen, oil industry professionals, and the Granite City.",
-    h1: "Aberdeen\u2019s Desi Dating Night Is Coming",
+    h1: "Three Hours to Glasgow. Three Hours to Edinburgh. Aberdeen\u2019s Desi Singles Are on Their Own.",
     status: "coming-soon",
     badgeLabel: "Coming Soon",
     bodyParagraphs: [

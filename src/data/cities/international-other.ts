@@ -6,10 +6,10 @@ export const internationalOtherCities: Record<string, CityData> = {
   auckland: {
     slug: "auckland",
     displayName: "Auckland",
-    titleTag: "South Asian Singles Events Auckland | Garam Masala Dating",
+    titleTag: "Auckland Desi Dating Show | Garam Masala Dating",
     metaDescription:
       "Garam Masala Dating is coming to Auckland. A live South Asian dating show and singles mixer. New Zealand's largest Indian community, University of Auckland, and the Kiwi desi scene.",
-    h1: "Auckland's Desi Dating Night Is Coming",
+    h1: "From Sandringham to the CBD, Auckland Gets a Live Desi Show",
     status: "coming-soon",
     badgeLabel: "Coming Soon",
     bodyParagraphs: [
@@ -35,10 +35,10 @@ export const internationalOtherCities: Record<string, CityData> = {
   wellington: {
     slug: "wellington",
     displayName: "Wellington",
-    titleTag: "South Asian Singles Events Wellington | Garam Masala Dating",
+    titleTag: "Wellington Desi Singles | Garam Masala Dating",
     metaDescription:
       "Garam Masala Dating is coming to Wellington. A live South Asian dating show and singles mixer. Victoria University, government workers, and the capital's desi community.",
-    h1: "Wellington's Desi Dating Night Is Coming",
+    h1: "Wellington Has the Policy Wonks. Now Give Them a Dating Night.",
     status: "coming-soon",
     badgeLabel: "Coming Soon",
     bodyParagraphs: [
@@ -64,10 +64,10 @@ export const internationalOtherCities: Record<string, CityData> = {
   christchurch: {
     slug: "christchurch",
     displayName: "Christchurch",
-    titleTag: "South Asian Singles Events Christchurch | Garam Masala Dating",
+    titleTag: "Christchurch Desi Night | Garam Masala Dating",
     metaDescription:
       "Garam Masala Dating is coming to Christchurch. A live South Asian dating show and singles mixer. University of Canterbury and the South Island's growing desi community.",
-    h1: "Christchurch's Desi Dating Night Is Coming",
+    h1: "Canterbury's Desi Community Is Small but Growing Fast",
     status: "coming-soon",
     badgeLabel: "Coming Soon",
     bodyParagraphs: [
@@ -96,7 +96,7 @@ export const internationalOtherCities: Record<string, CityData> = {
     titleTag: "South Asian Singles Events Fiji | Garam Masala Dating",
     metaDescription:
       "Garam Masala Dating is coming to Fiji. A live South Asian dating show and singles mixer. Indo-Fijian community, USP, and the Pacific's largest South Asian population.",
-    h1: "Fiji's Desi Dating Night Is Coming",
+    h1: "37% South Asian and No Dating Show. Fiji, We're Fixing That.",
     status: "coming-soon",
     badgeLabel: "Coming Soon",
     bodyParagraphs: [
@@ -125,7 +125,7 @@ export const internationalOtherCities: Record<string, CityData> = {
     titleTag: "South Asian Singles Events Nadi Fiji | Garam Masala Dating",
     metaDescription:
       "Garam Masala Dating is coming to Nadi, Fiji. A live South Asian dating show and singles mixer. Tourist gateway city with a deeply rooted South Asian Fijian community.",
-    h1: "Nadi's Desi Dating Night Is Coming",
+    h1: "Nadi's South Asian-Fijian Community Gets a Proper Night Out",
     status: "coming-soon",
     badgeLabel: "Coming Soon",
     bodyParagraphs: [
@@ -154,7 +154,7 @@ export const internationalOtherCities: Record<string, CityData> = {
     titleTag: "South Asian Singles Events Lautoka Fiji | Garam Masala Dating",
     metaDescription:
       "Garam Masala Dating is coming to Lautoka, Fiji. A live South Asian dating show and singles mixer. Sugar City, heavily South Asian Fijian population.",
-    h1: "Lautoka's Desi Dating Night Is Coming",
+    h1: "Sugar City's Desi Families Have Singles Too. Here's Their Night.",
     status: "coming-soon",
     badgeLabel: "Coming Soon",
     bodyParagraphs: [
@@ -182,10 +182,10 @@ export const internationalOtherCities: Record<string, CityData> = {
   nairobi: {
     slug: "nairobi",
     displayName: "Nairobi",
-    titleTag: "South Asian Singles Events Nairobi | Garam Masala Dating",
+    titleTag: "Nairobi Desi Dating | Garam Masala Dating",
     metaDescription:
       "Garam Masala Dating is coming to Nairobi. A live South Asian dating show and singles mixer. Kenya's established Indian community and East Africa's desi hub.",
-    h1: "Nairobi's Desi Dating Night Is Coming",
+    h1: "Westlands to Parklands, Nairobi's Desi Scene Gets a Show",
     status: "coming-soon",
     badgeLabel: "Coming Soon",
     bodyParagraphs: [
@@ -214,7 +214,7 @@ export const internationalOtherCities: Record<string, CityData> = {
     titleTag: "South Asian Singles Events Mombasa Kenya | Garam Masala Dating",
     metaDescription:
       "Garam Masala Dating is coming to Mombasa, Kenya. A live South Asian dating show and singles mixer. Historic coastal Desi Kenyan community on the Indian Ocean.",
-    h1: "Mombasa's Desi Dating Night Is Coming",
+    h1: "Mombasa's Desi Trading Community Gets a Night Worth Staying Out For",
     status: "coming-soon",
     badgeLabel: "Coming Soon",
     bodyParagraphs: [
@@ -240,10 +240,10 @@ export const internationalOtherCities: Record<string, CityData> = {
   "dar-es-salaam": {
     slug: "dar-es-salaam",
     displayName: "Dar es Salaam",
-    titleTag: "South Asian Singles Events Dar es Salaam | Garam Masala Dating",
+    titleTag: "Dar es Salaam Desi Night | Garam Masala Dating",
     metaDescription:
       "Garam Masala Dating is coming to Dar es Salaam. A live South Asian dating show and singles mixer. Tanzania's established Indian business community and the Swahili Coast desi scene.",
-    h1: "Dar es Salaam's Desi Dating Night Is Coming",
+    h1: "Upanga to Oyster Bay, Dar's Desi Community Gets Its Own Night",
     status: "coming-soon",
     badgeLabel: "Coming Soon",
     bodyParagraphs: [
@@ -269,10 +269,10 @@ export const internationalOtherCities: Record<string, CityData> = {
   johannesburg: {
     slug: "johannesburg",
     displayName: "Johannesburg",
-    titleTag: "South Asian Singles Events Johannesburg | Garam Masala Dating",
+    titleTag: "Joburg Desi Dating Show | Garam Masala Dating",
     metaDescription:
       "Garam Masala Dating is coming to Johannesburg. A live South Asian dating show and singles mixer. Lenasia, Fordsburg, and South Africa's vibrant Indian community.",
-    h1: "Joburg's Desi Dating Night Is Coming",
+    h1: "From Fordsburg to Sandton, Joburg Gets a Live Desi Dating Show",
     status: "coming-soon",
     badgeLabel: "Coming Soon",
     bodyParagraphs: [
@@ -298,10 +298,10 @@ export const internationalOtherCities: Record<string, CityData> = {
   durban: {
     slug: "durban",
     displayName: "Durban",
-    titleTag: "South Asian Singles Events Durban | Garam Masala Dating",
+    titleTag: "Durban Desi Singles Event | Garam Masala Dating",
     metaDescription:
       "Garam Masala Dating is coming to Durban. A live South Asian dating show and singles mixer. The largest Indian community in Africa and the heart of desi South Africa.",
-    h1: "Durban's Desi Dating Night Is Coming",
+    h1: "The Largest Desi Population Outside Asia. Durban, It's Your Turn.",
     status: "coming-soon",
     badgeLabel: "Coming Soon",
     bodyParagraphs: [
@@ -327,10 +327,10 @@ export const internationalOtherCities: Record<string, CityData> = {
   "cape-town": {
     slug: "cape-town",
     displayName: "Cape Town",
-    titleTag: "South Asian Singles Events Cape Town | Garam Masala Dating",
+    titleTag: "Cape Town Desi Dating | Garam Masala Dating",
     metaDescription:
       "Garam Masala Dating is coming to Cape Town. A live South Asian dating show and singles mixer. Indian professionals, UCT, and the Mother City's growing desi community.",
-    h1: "Cape Town's Desi Dating Night Is Coming",
+    h1: "Cape Town's Desi Professionals Need More Than Braais",
     status: "coming-soon",
     badgeLabel: "Coming Soon",
     bodyParagraphs: [
@@ -359,7 +359,7 @@ export const internationalOtherCities: Record<string, CityData> = {
     titleTag: "South Asian Singles Events Mauritius | Garam Masala Dating",
     metaDescription:
       "Garam Masala Dating is coming to Mauritius. A live South Asian dating show and singles mixer. Indo-Mauritian majority, Port Louis, and the island's desi culture.",
-    h1: "Mauritius's Desi Dating Night Is Coming",
+    h1: "68% South Asian and the Whole Island Knows It. Mauritius Gets a Show.",
     status: "coming-soon",
     badgeLabel: "Coming Soon",
     bodyParagraphs: [
@@ -387,10 +387,10 @@ export const internationalOtherCities: Record<string, CityData> = {
   "port-of-spain": {
     slug: "port-of-spain",
     displayName: "Port of Spain",
-    titleTag: "South Asian Singles Events Port of Spain | Garam Masala Dating",
+    titleTag: "Port of Spain Desi Night | Garam Masala Dating",
     metaDescription:
       "Garam Masala Dating is coming to Port of Spain. A live South Asian dating show and singles mixer. Indo-Trinidadian community, UWI, and the Caribbean's desi heartland.",
-    h1: "Port of Spain's Desi Dating Night Is Coming",
+    h1: "Trini Doubles and a Dating Show. Port of Spain Gets Both.",
     status: "coming-soon",
     badgeLabel: "Coming Soon",
     bodyParagraphs: [
@@ -419,7 +419,7 @@ export const internationalOtherCities: Record<string, CityData> = {
     titleTag: "South Asian Singles Events San Fernando Trinidad | Garam Masala Dating",
     metaDescription:
       "Garam Masala Dating is coming to San Fernando, Trinidad. A live South Asian dating show and singles mixer. Southern Trinidad's heavily South Asian city.",
-    h1: "San Fernando's Desi Dating Night Is Coming",
+    h1: "South Trinidad's Desi Heartland Deserves Its Own Night",
     status: "coming-soon",
     badgeLabel: "Coming Soon",
     bodyParagraphs: [
@@ -448,7 +448,7 @@ export const internationalOtherCities: Record<string, CityData> = {
     titleTag: "South Asian Singles Events Chaguanas Trinidad | Garam Masala Dating",
     metaDescription:
       "Garam Masala Dating is coming to Chaguanas, Trinidad. A live South Asian dating show and singles mixer. The most South Asian city in the Caribbean.",
-    h1: "Chaguanas's Desi Dating Night Is Coming",
+    h1: "The Most South Asian City in the Caribbean Gets a Dating Show",
     status: "coming-soon",
     badgeLabel: "Coming Soon",
     bodyParagraphs: [
@@ -477,7 +477,7 @@ export const internationalOtherCities: Record<string, CityData> = {
     titleTag: "South Asian Singles Events Georgetown Guyana | Garam Masala Dating",
     metaDescription:
       "Garam Masala Dating is coming to Georgetown, Guyana. A live South Asian dating show and singles mixer. Indo-Guyanese community and the Caribbean's second largest desi population.",
-    h1: "Georgetown's Desi Dating Night Is Coming",
+    h1: "40% Indo-Guyanese. Georgetown Gets a Night That Isn't a Fundraiser.",
     status: "coming-soon",
     badgeLabel: "Coming Soon",
     bodyParagraphs: [
@@ -506,7 +506,7 @@ export const internationalOtherCities: Record<string, CityData> = {
     titleTag: "South Asian Singles Events New Amsterdam Guyana | Garam Masala Dating",
     metaDescription:
       "Garam Masala Dating is coming to New Amsterdam, Guyana. A live South Asian dating show and singles mixer. Heavily Indo-Guyanese Berbice region.",
-    h1: "New Amsterdam's Desi Dating Night Is Coming",
+    h1: "Berbice's Indo-Guyanese Community Gets Its Own Night Out",
     status: "coming-soon",
     badgeLabel: "Coming Soon",
     bodyParagraphs: [
@@ -532,10 +532,10 @@ export const internationalOtherCities: Record<string, CityData> = {
   paramaribo: {
     slug: "paramaribo",
     displayName: "Paramaribo",
-    titleTag: "South Asian Singles Events Paramaribo | Garam Masala Dating",
+    titleTag: "Paramaribo Desi Dating | Garam Masala Dating",
     metaDescription:
       "Garam Masala Dating is coming to Paramaribo. A live South Asian dating show and singles mixer. Hindustani Surinamese community and South America's desi heartland.",
-    h1: "Paramaribo's Desi Dating Night Is Coming",
+    h1: "27% Hindustani. Paramaribo Gets a Dating Show in Dutch and Sarnami.",
     status: "coming-soon",
     badgeLabel: "Coming Soon",
     bodyParagraphs: [
@@ -561,10 +561,10 @@ export const internationalOtherCities: Record<string, CityData> = {
   "panama-city": {
     slug: "panama-city",
     displayName: "Panama City",
-    titleTag: "South Asian Singles Events Panama City | Garam Masala Dating",
+    titleTag: "Panama City Desi Night | Garam Masala Dating",
     metaDescription:
       "Garam Masala Dating is coming to Panama City. A live South Asian dating show and singles mixer. Indian professionals in the Canal Zone and Central America's growing desi community.",
-    h1: "Panama City's Desi Dating Night Is Coming",
+    h1: "Panama City's Desi Trading Community Gets a Social Night",
     status: "coming-soon",
     badgeLabel: "Coming Soon",
     bodyParagraphs: [
@@ -593,7 +593,7 @@ export const internationalOtherCities: Record<string, CityData> = {
     titleTag: "South Asian Singles Events San Juan Puerto Rico | Garam Masala Dating",
     metaDescription:
       "Garam Masala Dating is coming to San Juan, Puerto Rico. A live South Asian dating show and singles mixer. UPR, medical professionals, and the island's growing desi community.",
-    h1: "San Juan's Desi Dating Night Is Coming",
+    h1: "San Juan Has Sun, Salsa, and a Surprising Desi Crowd",
     status: "coming-soon",
     badgeLabel: "Coming Soon",
     bodyParagraphs: [

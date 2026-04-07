@@ -4,10 +4,10 @@ export const australiaCities: Record<string, CityData> = {
   sydney: {
     slug: "sydney",
     displayName: "Sydney",
-    titleTag: "South Asian Singles Events Sydney | Garam Masala Dating Australia",
+    titleTag: "Sydney Desi Dating Show | Garam Masala Dating",
     metaDescription:
       "Garam Masala Dating is coming to Sydney. A live South Asian dating show and singles mixer. Parramatta, Harris Park, UNSW, USyd, and Sydney\u2019s massive desi community.",
-    h1: "Sydney\u2019s Desi Dating Night Is Coming",
+    h1: "Harris Park to Parramatta, Sydney Gets a Live Dating Show",
     status: "coming-soon",
     badgeLabel: "Coming Soon",
     bodyParagraphs: [
@@ -33,10 +33,10 @@ export const australiaCities: Record<string, CityData> = {
   melbourne: {
     slug: "melbourne",
     displayName: "Melbourne",
-    titleTag: "South Asian Singles Events Melbourne | Garam Masala Dating Australia",
+    titleTag: "Live Desi Dating Night Melbourne | Garam Masala Dating",
     metaDescription:
       "Garam Masala Dating is coming to Melbourne. A live South Asian dating show and singles mixer. Dandenong, Tarneit, Truganina, Monash, UniMelb, and Melbourne\u2019s desi scene.",
-    h1: "Melbourne\u2019s Desi Dating Night Is Coming",
+    h1: "Dandenong to Tarneit, Melbourne Has the Crowd. Now It Gets the Show.",
     status: "coming-soon",
     badgeLabel: "Coming Soon",
     bodyParagraphs: [
@@ -62,10 +62,10 @@ export const australiaCities: Record<string, CityData> = {
   brisbane: {
     slug: "brisbane",
     displayName: "Brisbane",
-    titleTag: "South Asian Singles Events Brisbane | Garam Masala Dating Australia",
+    titleTag: "Brisbane South Asian Singles | Garam Masala Dating",
     metaDescription:
       "Garam Masala Dating is coming to Brisbane. A live South Asian dating show and singles mixer. UQ, QUT, Griffith, and Queensland\u2019s growing desi community.",
-    h1: "Brisbane\u2019s Desi Dating Night Is Coming",
+    h1: "Brisbane’s Desi Scene Is Growing Faster Than Anyone Expected",
     status: "coming-soon",
     badgeLabel: "Coming Soon",
     bodyParagraphs: [
@@ -91,10 +91,10 @@ export const australiaCities: Record<string, CityData> = {
   perth: {
     slug: "perth",
     displayName: "Perth",
-    titleTag: "South Asian Singles Events Perth | Garam Masala Dating Australia",
+    titleTag: "Desi Singles Night Perth | Garam Masala Dating",
     metaDescription:
       "Garam Masala Dating is coming to Perth. A live South Asian dating show and singles mixer. Canning Vale, UWA, Curtin, and Western Australia\u2019s desi community.",
-    h1: "Perth\u2019s Desi Dating Night Is Coming",
+    h1: "From Canning Vale to the City, Perth Gets a Night Worth Driving For",
     status: "coming-soon",
     badgeLabel: "Coming Soon",
     bodyParagraphs: [
@@ -120,10 +120,10 @@ export const australiaCities: Record<string, CityData> = {
   adelaide: {
     slug: "adelaide",
     displayName: "Adelaide",
-    titleTag: "South Asian Singles Events Adelaide | Garam Masala Dating Australia",
+    titleTag: "Adelaide Desi Dating Show | Garam Masala Dating",
     metaDescription:
       "Garam Masala Dating is coming to Adelaide. A live South Asian dating show and singles mixer. University of Adelaide, Flinders, UniSA, and South Australia\u2019s booming desi community.",
-    h1: "Adelaide\u2019s Desi Dating Night Is Coming",
+    h1: "Adelaide’s Desi Student Population Deserves More Than Lecture Halls",
     status: "coming-soon",
     badgeLabel: "Coming Soon",
     bodyParagraphs: [
@@ -149,10 +149,10 @@ export const australiaCities: Record<string, CityData> = {
   canberra: {
     slug: "canberra",
     displayName: "Canberra",
-    titleTag: "South Asian Singles Events Canberra | Garam Masala Dating Australia",
+    titleTag: "Meet Desi Singles Canberra | Garam Masala Dating",
     metaDescription:
       "Garam Masala Dating is coming to Canberra. A live South Asian dating show and singles mixer. ANU, government workers, and the capital\u2019s desi community.",
-    h1: "Canberra\u2019s Desi Dating Night Is Coming",
+    h1: "Canberra Has the Diplomats. Now Give Them a Dating Night.",
     status: "coming-soon",
     badgeLabel: "Coming Soon",
     bodyParagraphs: [
@@ -178,10 +178,10 @@ export const australiaCities: Record<string, CityData> = {
   "gold-coast": {
     slug: "gold-coast",
     displayName: "Gold Coast",
-    titleTag: "South Asian Singles Events Gold Coast | Garam Masala Dating Australia",
+    titleTag: "Gold Coast Desi Singles | Garam Masala Dating",
     metaDescription:
       "Garam Masala Dating is coming to the Gold Coast. A live South Asian dating show and singles mixer. Griffith University and the Gold Coast\u2019s growing desi community.",
-    h1: "Gold Coast\u2019s Desi Dating Night Is Coming",
+    h1: "Gold Coast Gets a Night Out That Isn’t Just Surfers Paradise",
     status: "coming-soon",
     badgeLabel: "Coming Soon",
     bodyParagraphs: [
@@ -210,7 +210,7 @@ export const australiaCities: Record<string, CityData> = {
     titleTag: "South Asian Singles Events Newcastle Australia | Garam Masala Dating",
     metaDescription:
       "Garam Masala Dating is coming to Newcastle, Australia. A live South Asian dating show and singles mixer. University of Newcastle and the Hunter Valley\u2019s desi community.",
-    h1: "Newcastle\u2019s Desi Dating Night Is Coming",
+    h1: "Newcastle’s Campus Crowd Needs More Than Pub Trivia",
     status: "coming-soon",
     badgeLabel: "Coming Soon",
     bodyParagraphs: [
@@ -236,10 +236,10 @@ export const australiaCities: Record<string, CityData> = {
   hobart: {
     slug: "hobart",
     displayName: "Hobart",
-    titleTag: "South Asian Singles Events Hobart | Garam Masala Dating Australia",
+    titleTag: "Hobart Desi Singles Night | Garam Masala Dating",
     metaDescription:
       "Garam Masala Dating is coming to Hobart. A live South Asian dating show and singles mixer. UTAS and Tasmania\u2019s fastest growing community proportionally.",
-    h1: "Hobart\u2019s Desi Dating Night Is Coming",
+    h1: "The Smallest Capital, the Fastest Growing Desi Community",
     status: "coming-soon",
     badgeLabel: "Coming Soon",
     bodyParagraphs: [

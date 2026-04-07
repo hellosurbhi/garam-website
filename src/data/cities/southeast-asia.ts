@@ -4,10 +4,10 @@ export const southeastAsiaCities: Record<string, CityData> = {
   bangkok: {
     slug: "bangkok",
     displayName: "Bangkok",
-    titleTag: "South Asian Singles Events Bangkok | Garam Masala Dating",
+    titleTag: "Bangkok Desi Dating Show | Garam Masala Dating",
     metaDescription:
       "Garam Masala Dating is coming to Bangkok. A live South Asian dating show and singles mixer. Phahurat, Sukhumvit, and Bangkok\u2019s growing desi expat community.",
-    h1: "Bangkok\u2019s Desi Dating Night Is Coming",
+    h1: "Phahurat Meets Comedy. Bangkok Gets a Live Desi Show.",
     status: "coming-soon",
     badgeLabel: "Coming Soon",
     bodyParagraphs: [
@@ -33,10 +33,10 @@ export const southeastAsiaCities: Record<string, CityData> = {
   "chiang-mai": {
     slug: "chiang-mai",
     displayName: "Chiang Mai",
-    titleTag: "South Asian Singles Events Chiang Mai | Garam Masala Dating",
+    titleTag: "Desi Night Chiang Mai | Garam Masala Dating",
     metaDescription:
       "Garam Masala Dating is coming to Chiang Mai. A live South Asian dating show and singles mixer. Digital nomads, desi expats, and northern Thailand\u2019s growing community.",
-    h1: "Chiang Mai\u2019s Desi Dating Night Is Coming",
+    h1: "Chiang Mai Gets a Night That Isn\u2019t a Coworking Mixer",
     status: "coming-soon",
     badgeLabel: "Coming Soon",
     bodyParagraphs: [
@@ -62,10 +62,10 @@ export const southeastAsiaCities: Record<string, CityData> = {
   "ho-chi-minh-city": {
     slug: "ho-chi-minh-city",
     displayName: "Ho Chi Minh City",
-    titleTag: "South Asian Singles Events Ho Chi Minh City | Garam Masala Dating",
+    titleTag: "Saigon Desi Singles | Garam Masala Dating",
     metaDescription:
       "Garam Masala Dating is coming to Ho Chi Minh City. A live South Asian dating show and singles mixer. RMIT Vietnam, the growing desi IT community, and Saigon\u2019s expat scene.",
-    h1: "Saigon\u2019s Desi Dating Night Is Coming",
+    h1: "Saigon\u2019s Desi Expat Community Finally Gets Its Own Night",
     status: "coming-soon",
     badgeLabel: "Coming Soon",
     bodyParagraphs: [
@@ -91,10 +91,10 @@ export const southeastAsiaCities: Record<string, CityData> = {
   manila: {
     slug: "manila",
     displayName: "Manila",
-    titleTag: "South Asian Singles Events Manila | Garam Masala Dating",
+    titleTag: "Manila Desi Dating Night | Garam Masala Dating",
     metaDescription:
       "Garam Masala Dating is coming to Manila. A live South Asian dating show and singles mixer. Makati, BGC, UP Diliman, and the Philippines\u2019 desi professional community.",
-    h1: "Manila\u2019s Desi Dating Night Is Coming",
+    h1: "From Makati to BGC, Manila Gets a Show Worth Dressing Up For",
     status: "coming-soon",
     badgeLabel: "Coming Soon",
     bodyParagraphs: [
@@ -120,10 +120,10 @@ export const southeastAsiaCities: Record<string, CityData> = {
   colombo: {
     slug: "colombo",
     displayName: "Colombo",
-    titleTag: "South Asian Singles Events Colombo | Garam Masala Dating",
+    titleTag: "Colombo Desi Dating Show | Garam Masala Dating",
     metaDescription:
       "Garam Masala Dating is coming to Colombo. A live desi dating show and singles mixer. University of Colombo, Wellawatte, and Sri Lanka\u2019s young professional crowd.",
-    h1: "Colombo\u2019s Desi Dating Night Is Coming",
+    h1: "Wellawatte to Colombo 7, a Live Desi Dating Show",
     status: "coming-soon",
     badgeLabel: "Coming Soon",
     bodyParagraphs: [
@@ -149,10 +149,10 @@ export const southeastAsiaCities: Record<string, CityData> = {
   kandy: {
     slug: "kandy",
     displayName: "Kandy",
-    titleTag: "South Asian Singles Events Kandy | Garam Masala Dating",
+    titleTag: "Kandy Desi Singles Night | Garam Masala Dating",
     metaDescription:
       "Garam Masala Dating is coming to Kandy. A live desi dating show and singles mixer. University of Peradeniya, the hill capital, and Kandy\u2019s student crowd.",
-    h1: "Kandy\u2019s Desi Dating Night Is Coming",
+    h1: "Peradeniya\u2019s Campus Crowd Deserves a Night Beyond the Books",
     status: "coming-soon",
     badgeLabel: "Coming Soon",
     bodyParagraphs: [

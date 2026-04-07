@@ -4,10 +4,10 @@ export const canadaCities: Record<string, CityData> = {
   toronto: {
     slug: "toronto",
     displayName: "Toronto",
-    titleTag: "South Asian Singles Events Toronto | Garam Masala Dating",
+    titleTag: "Desi Dating Night Toronto | Garam Masala Dating",
     metaDescription:
       "Garam Masala Dating is coming to Toronto. A live South Asian dating show and singles mixer from the creators of NYC\u2019s biggest desi dating night. Join the waitlist.",
-    h1: "Toronto\u2019s Desi Dating Night Is Coming",
+    h1: "The GTA Has 1.2 Million South Asians. Time for a Proper Dating Night.",
     status: "coming-soon",
     badgeLabel: "Coming Soon",
     bodyParagraphs: [
@@ -33,10 +33,10 @@ export const canadaCities: Record<string, CityData> = {
   vancouver: {
     slug: "vancouver",
     displayName: "Vancouver",
-    titleTag: "South Asian Singles Events Vancouver | Garam Masala Dating",
+    titleTag: "Live Desi Dating Show Vancouver | Garam Masala Dating",
     metaDescription:
       "Garam Masala Dating is coming to Vancouver. A live South Asian dating show and singles mixer. Surrey, UBC, SFU, and the rest of the Lower Mainland. Join the waitlist.",
-    h1: "Vancouver\u2019s Desi Dating Night Is Coming",
+    h1: "100,000 People Show Up to Vaisakhi. Now Give Them a Dating Night.",
     status: "coming-soon",
     badgeLabel: "Coming Soon",
     bodyParagraphs: [
@@ -62,10 +62,10 @@ export const canadaCities: Record<string, CityData> = {
   calgary: {
     slug: "calgary",
     displayName: "Calgary",
-    titleTag: "South Asian Singles Events Calgary | Garam Masala Dating",
+    titleTag: "South Asian Singles Night Calgary | Garam Masala Dating",
     metaDescription:
       "Garam Masala Dating is coming to Calgary. A live South Asian dating show and singles mixer. NE Calgary, U of Calgary, and Alberta\u2019s growing desi community. Waitlist open.",
-    h1: "Calgary\u2019s Desi Dating Night Is Coming",
+    h1: "NE Calgary Is Packed with Desi Families. The Singles Need a Night Out.",
     status: "coming-soon",
     badgeLabel: "Coming Soon",
     bodyParagraphs: [
@@ -91,10 +91,10 @@ export const canadaCities: Record<string, CityData> = {
   edmonton: {
     slug: "edmonton",
     displayName: "Edmonton",
-    titleTag: "South Asian Singles Events Edmonton | Garam Masala Dating",
+    titleTag: "Desi Singles Night Edmonton AB | Garam Masala Dating",
     metaDescription:
       "Garam Masala Dating is coming to Edmonton. A live South Asian dating show and singles mixer. Mill Woods, U of Alberta, and Edmonton\u2019s growing desi scene. Join the waitlist.",
-    h1: "Edmonton\u2019s Desi Dating Night Is Coming",
+    h1: "Mill Woods Raised You. Now Let It Set You Up.",
     status: "coming-soon",
     badgeLabel: "Coming Soon",
     bodyParagraphs: [
@@ -120,10 +120,10 @@ export const canadaCities: Record<string, CityData> = {
   ottawa: {
     slug: "ottawa",
     displayName: "Ottawa",
-    titleTag: "South Asian Singles Events Ottawa | Garam Masala Dating",
+    titleTag: "South Asian Dating Event Ottawa | Garam Masala Dating",
     metaDescription:
       "Garam Masala Dating is coming to Ottawa. A live South Asian dating show and singles mixer. Kanata tech corridor, Carleton, U of Ottawa, and the capital\u2019s desi crowd.",
-    h1: "Ottawa\u2019s Desi Dating Night Is Coming",
+    h1: "Government Jobs and Kanata Tech. Ottawa\u2019s Desi Singles Deserve Better.",
     status: "coming-soon",
     badgeLabel: "Coming Soon",
     bodyParagraphs: [
@@ -149,10 +149,10 @@ export const canadaCities: Record<string, CityData> = {
   montreal: {
     slug: "montreal",
     displayName: "Montreal",
-    titleTag: "South Asian Singles Events Montreal | Garam Masala Dating",
+    titleTag: "Desi Dating Show Montreal QC | Garam Masala Dating",
     metaDescription:
       "Garam Masala Dating is coming to Montreal. A live South Asian dating show and singles mixer. McGill, Concordia, Parc-Extension, and Montreal\u2019s desi scene.",
-    h1: "Montreal\u2019s Desi Dating Night Is Coming",
+    h1: "McGill Grads Need More Than Hinge. Montreal Gets a Live Show.",
     status: "coming-soon",
     badgeLabel: "Coming Soon",
     bodyParagraphs: [
@@ -178,10 +178,10 @@ export const canadaCities: Record<string, CityData> = {
   winnipeg: {
     slug: "winnipeg",
     displayName: "Winnipeg",
-    titleTag: "South Asian Singles Events Winnipeg | Garam Masala Dating",
+    titleTag: "Desi Singles Mixer Winnipeg | Garam Masala Dating",
     metaDescription:
       "Garam Masala Dating is coming to Winnipeg. A live South Asian dating show and singles mixer. U of Manitoba, growing Indian and Filipino community. Join the waitlist.",
-    h1: "Winnipeg\u2019s Desi Dating Night Is Coming",
+    h1: "Winnipeg Winters Are Long. Your Dating Life Shouldn\u2019t Be This Cold.",
     status: "coming-soon",
     badgeLabel: "Coming Soon",
     bodyParagraphs: [
@@ -207,10 +207,10 @@ export const canadaCities: Record<string, CityData> = {
   "waterloo-kitchener": {
     slug: "waterloo-kitchener",
     displayName: "Waterloo/Kitchener",
-    titleTag: "South Asian Singles Events Waterloo Kitchener | Garam Masala Dating",
+    titleTag: "South Asian Dating Night Waterloo KW | Garam Masala Dating",
     metaDescription:
       "Garam Masala Dating is coming to Waterloo and Kitchener. A live South Asian dating show and singles mixer. UW, Laurier, and the tech corridor\u2019s massive desi population.",
-    h1: "Waterloo\u2019s Desi Dating Night Is Coming",
+    h1: "UW\u2019s CS Program Is Basically a Pipeline from India. Where\u2019s the Dating Show?",
     status: "coming-soon",
     badgeLabel: "Coming Soon",
     bodyParagraphs: [
@@ -236,10 +236,10 @@ export const canadaCities: Record<string, CityData> = {
   hamilton: {
     slug: "hamilton",
     displayName: "Hamilton",
-    titleTag: "South Asian Singles Events Hamilton | Garam Masala Dating",
+    titleTag: "Live Dating Show Hamilton ON | Garam Masala Dating",
     metaDescription:
       "Garam Masala Dating is coming to Hamilton. A live South Asian dating show and singles mixer. McMaster University and the GTA spillover crowd. Join the waitlist.",
-    h1: "Hamilton\u2019s Desi Dating Night Is Coming",
+    h1: "McMaster Grads and GTA Spillover. Hamilton\u2019s Brown Scene Is Bigger Than You Think.",
     status: "coming-soon",
     badgeLabel: "Coming Soon",
     bodyParagraphs: [
@@ -265,10 +265,10 @@ export const canadaCities: Record<string, CityData> = {
   "london-on": {
     slug: "london-on",
     displayName: "London ON",
-    titleTag: "South Asian Singles Events London Ontario | Garam Masala Dating",
+    titleTag: "Desi Dating Night London Ontario | Garam Masala Dating",
     metaDescription:
       "Garam Masala Dating is coming to London, Ontario. A live South Asian dating show and singles mixer. Western University and London\u2019s growing Indian student community.",
-    h1: "London ON\u2019s Desi Dating Night Is Coming",
+    h1: "Western\u2019s Indian Student Boom Is Real. London ON Gets the Show.",
     status: "coming-soon",
     badgeLabel: "Coming Soon",
     bodyParagraphs: [
@@ -294,10 +294,10 @@ export const canadaCities: Record<string, CityData> = {
   halifax: {
     slug: "halifax",
     displayName: "Halifax",
-    titleTag: "South Asian Singles Events Halifax | Garam Masala Dating",
+    titleTag: "South Asian Singles Halifax NS | Garam Masala Dating",
     metaDescription:
       "Garam Masala Dating is coming to Halifax. A live South Asian dating show and singles mixer. Dalhousie, SMU, and the Maritimes\u2019 growing desi community. Join the waitlist.",
-    h1: "Halifax\u2019s Desi Dating Night Is Coming",
+    h1: "Atlantic Canada\u2019s Fastest Growing Desi City Gets a Live Dating Show",
     status: "coming-soon",
     badgeLabel: "Coming Soon",
     bodyParagraphs: [
@@ -323,10 +323,10 @@ export const canadaCities: Record<string, CityData> = {
   saskatoon: {
     slug: "saskatoon",
     displayName: "Saskatoon",
-    titleTag: "South Asian Singles Events Saskatoon | Garam Masala Dating",
+    titleTag: "Desi Dating Event Saskatoon SK | Garam Masala Dating",
     metaDescription:
       "Garam Masala Dating is coming to Saskatoon. A live South Asian dating show and singles mixer. U of Saskatchewan and the prairies\u2019 growing Indian community.",
-    h1: "Saskatoon\u2019s Desi Dating Night Is Coming",
+    h1: "Prairie Desi Energy Deserves a Stage. Saskatoon, You\u2019re Up.",
     status: "coming-soon",
     badgeLabel: "Coming Soon",
     bodyParagraphs: [
@@ -352,10 +352,10 @@ export const canadaCities: Record<string, CityData> = {
   regina: {
     slug: "regina",
     displayName: "Regina",
-    titleTag: "South Asian Singles Events Regina | Garam Masala Dating",
+    titleTag: "South Asian Dating Show Regina | Garam Masala Dating",
     metaDescription:
       "Garam Masala Dating is coming to Regina. A live South Asian dating show and singles mixer. U of Regina and Saskatchewan\u2019s tight knit Indian community. Join the waitlist.",
-    h1: "Regina\u2019s Desi Dating Night Is Coming",
+    h1: "Your Mom Finds Out About Every Date Before You Get Home. Regina Needs This.",
     status: "coming-soon",
     badgeLabel: "Coming Soon",
     bodyParagraphs: [
@@ -381,10 +381,10 @@ export const canadaCities: Record<string, CityData> = {
   victoria: {
     slug: "victoria",
     displayName: "Victoria",
-    titleTag: "South Asian Singles Events Victoria BC | Garam Masala Dating",
+    titleTag: "Desi Singles Event Victoria BC | Garam Masala Dating",
     metaDescription:
       "Garam Masala Dating is coming to Victoria, BC. A live South Asian dating show and singles mixer. UVic and Vancouver Island\u2019s desi community. Join the waitlist.",
-    h1: "Victoria\u2019s Desi Dating Night Is Coming",
+    h1: "Island Life Is Beautiful Until You Exhaust the Dating Apps in a Week",
     status: "coming-soon",
     badgeLabel: "Coming Soon",
     bodyParagraphs: [
@@ -410,10 +410,10 @@ export const canadaCities: Record<string, CityData> = {
   "windsor-on": {
     slug: "windsor-on",
     displayName: "Windsor",
-    titleTag: "South Asian Singles Events Windsor Ontario | Garam Masala Dating",
+    titleTag: "Desi Dating Night Windsor ON | Garam Masala Dating",
     metaDescription:
       "Garam Masala Dating is coming to Windsor, Ontario. A live South Asian dating show and singles mixer. U of Windsor, cross border with Detroit. Join the waitlist.",
-    h1: "Windsor\u2019s Desi Dating Night Is Coming",
+    h1: "Two Countries, One Dating Pool. Windsor Gets a Cross Border Show.",
     status: "coming-soon",
     badgeLabel: "Coming Soon",
     bodyParagraphs: [
@@ -439,10 +439,10 @@ export const canadaCities: Record<string, CityData> = {
   brampton: {
     slug: "brampton",
     displayName: "Brampton",
-    titleTag: "South Asian Singles Events Brampton | Garam Masala Dating",
+    titleTag: "Brampton Desi Dating Night | Garam Masala Dating",
     metaDescription:
       "Garam Masala Dating is coming to Brampton. A live South Asian dating show and singles mixer for the most desi city in Canada. Join the waitlist.",
-    h1: "Brampton\u2019s Desi Dating Night Is Coming",
+    h1: "Brampton Is 50% South Asian. Time for a Proper Dating Night.",
     status: "coming-soon",
     badgeLabel: "Coming Soon",
     bodyParagraphs: [
@@ -468,10 +468,10 @@ export const canadaCities: Record<string, CityData> = {
   mississauga: {
     slug: "mississauga",
     displayName: "Mississauga",
-    titleTag: "South Asian Singles Events Mississauga | Garam Masala Dating",
+    titleTag: "South Asian Singles Mississauga | Garam Masala Dating",
     metaDescription:
       "Garam Masala Dating is coming to Mississauga. A live South Asian dating show and singles mixer. U of T Mississauga, Hurontario corridor, and Sauga\u2019s massive desi scene.",
-    h1: "Mississauga\u2019s Desi Dating Night Is Coming",
+    h1: "Sauga Has the Brown People. It Just Needs the Right Event.",
     status: "coming-soon",
     badgeLabel: "Coming Soon",
     bodyParagraphs: [
@@ -497,10 +497,10 @@ export const canadaCities: Record<string, CityData> = {
   surrey: {
     slug: "surrey",
     displayName: "Surrey",
-    titleTag: "South Asian Singles Events Surrey BC | Garam Masala Dating",
+    titleTag: "Surrey BC Desi Dating Show | Garam Masala Dating",
     metaDescription:
       "Garam Masala Dating is coming to Surrey, BC. A live South Asian dating show and singles mixer. The Punjabi heartland of the Lower Mainland. Join the waitlist.",
-    h1: "Surrey\u2019s Desi Dating Night Is Coming",
+    h1: "Surrey\u2019s Punjabi Scene Finally Gets the Show It Deserves",
     status: "coming-soon",
     badgeLabel: "Coming Soon",
     bodyParagraphs: [
@@ -526,10 +526,10 @@ export const canadaCities: Record<string, CityData> = {
   abbotsford: {
     slug: "abbotsford",
     displayName: "Abbotsford",
-    titleTag: "South Asian Singles Events Abbotsford | Garam Masala Dating",
+    titleTag: "Desi Dating Night Abbotsford BC | Garam Masala Dating",
     metaDescription:
       "Garam Masala Dating is coming to Abbotsford. A live South Asian dating show and singles mixer. The Fraser Valley\u2019s Punjabi heartland. Join the waitlist.",
-    h1: "Abbotsford\u2019s Desi Dating Night Is Coming",
+    h1: "The Fraser Valley\u2019s Punjabi Families Go Back Generations. The Singles Need Something New.",
     status: "coming-soon",
     badgeLabel: "Coming Soon",
     bodyParagraphs: [
@@ -555,10 +555,10 @@ export const canadaCities: Record<string, CityData> = {
   kelowna: {
     slug: "kelowna",
     displayName: "Kelowna",
-    titleTag: "South Asian Singles Events Kelowna | Garam Masala Dating",
+    titleTag: "South Asian Singles Kelowna BC | Garam Masala Dating",
     metaDescription:
       "Garam Masala Dating is coming to Kelowna. A live South Asian dating show and singles mixer. UBC Okanagan and the valley\u2019s growing desi community. Join the waitlist.",
-    h1: "Kelowna\u2019s Desi Dating Night Is Coming",
+    h1: "Wineries and Mountains Are Great. The Okanagan Desi Dating Pool Is Not.",
     status: "coming-soon",
     badgeLabel: "Coming Soon",
     bodyParagraphs: [
@@ -584,10 +584,10 @@ export const canadaCities: Record<string, CityData> = {
   "st-johns": {
     slug: "st-johns",
     displayName: "St. John\u2019s",
-    titleTag: "South Asian Singles Events St. John\u2019s NL | Garam Masala Dating",
+    titleTag: "Desi Dating St. John\u2019s NL | Garam Masala Dating",
     metaDescription:
       "Garam Masala Dating is coming to St. John\u2019s, Newfoundland. A live South Asian dating show and singles mixer. Memorial University\u2019s growing desi community. Join the waitlist.",
-    h1: "St. John\u2019s Desi Dating Night Is Coming",
+    h1: "George Street Meets Desi Singles. St. John\u2019s Gets the Show.",
     status: "coming-soon",
     badgeLabel: "Coming Soon",
     bodyParagraphs: [
@@ -613,10 +613,10 @@ export const canadaCities: Record<string, CityData> = {
   moncton: {
     slug: "moncton",
     displayName: "Moncton",
-    titleTag: "South Asian Singles Events Moncton | Garam Masala Dating",
+    titleTag: "South Asian Dating Moncton NB | Garam Masala Dating",
     metaDescription:
       "Garam Masala Dating is coming to Moncton. A live South Asian dating show and singles mixer. Growing Indian immigration and university community. Join the waitlist.",
-    h1: "Moncton\u2019s Desi Dating Night Is Coming",
+    h1: "New Brunswick\u2019s Desi Community Is Building from Scratch. The Dating Scene Should Too.",
     status: "coming-soon",
     badgeLabel: "Coming Soon",
     bodyParagraphs: [
@@ -642,10 +642,10 @@ export const canadaCities: Record<string, CityData> = {
   charlottetown: {
     slug: "charlottetown",
     displayName: "Charlottetown",
-    titleTag: "South Asian Singles Events Charlottetown | Garam Masala Dating",
+    titleTag: "Desi Singles Night Charlottetown | Garam Masala Dating",
     metaDescription:
       "Garam Masala Dating is coming to Charlottetown. A live South Asian dating show and singles mixer. UPEI and PEI\u2019s growing desi student community. Join the waitlist.",
-    h1: "Charlottetown\u2019s Desi Dating Night Is Coming",
+    h1: "PEI\u2019s Desi Population Tripled. The Dating Apps Haven\u2019t Noticed.",
     status: "coming-soon",
     badgeLabel: "Coming Soon",
     bodyParagraphs: [
@@ -671,10 +671,10 @@ export const canadaCities: Record<string, CityData> = {
   fredericton: {
     slug: "fredericton",
     displayName: "Fredericton",
-    titleTag: "South Asian Singles Events Fredericton | Garam Masala Dating",
+    titleTag: "Desi Dating Show Fredericton NB | Garam Masala Dating",
     metaDescription:
       "Garam Masala Dating is coming to Fredericton. A live South Asian dating show and singles mixer. UNB and New Brunswick\u2019s growing desi community. Join the waitlist.",
-    h1: "Fredericton\u2019s Desi Dating Night Is Coming",
+    h1: "UNB Students Stayed After Graduation. Now They Need Somewhere to Meet People.",
     status: "coming-soon",
     badgeLabel: "Coming Soon",
     bodyParagraphs: [
@@ -700,10 +700,10 @@ export const canadaCities: Record<string, CityData> = {
   "thunder-bay": {
     slug: "thunder-bay",
     displayName: "Thunder Bay",
-    titleTag: "South Asian Singles Events Thunder Bay | Garam Masala Dating",
+    titleTag: "Desi Dating Night Thunder Bay | Garam Masala Dating",
     metaDescription:
       "Garam Masala Dating is coming to Thunder Bay. A live South Asian dating show and singles mixer. Lakehead University and Northwestern Ontario\u2019s desi students.",
-    h1: "Thunder Bay\u2019s Desi Dating Night Is Coming",
+    h1: "Six Hours to the Next City. Thunder Bay\u2019s Desi Singles Can\u2019t Wait.",
     status: "coming-soon",
     badgeLabel: "Coming Soon",
     bodyParagraphs: [
@@ -729,10 +729,10 @@ export const canadaCities: Record<string, CityData> = {
   guelph: {
     slug: "guelph",
     displayName: "Guelph",
-    titleTag: "South Asian Singles Events Guelph | Garam Masala Dating",
+    titleTag: "South Asian Dating Night Guelph | Garam Masala Dating",
     metaDescription:
       "Garam Masala Dating is coming to Guelph. A live South Asian dating show and singles mixer. University of Guelph and the city\u2019s growing desi population. Join the waitlist.",
-    h1: "Guelph\u2019s Desi Dating Night Is Coming",
+    h1: "Vet School, Ag Science, and Zero Dating Events. Guelph, We See You.",
     status: "coming-soon",
     badgeLabel: "Coming Soon",
     bodyParagraphs: [
@@ -758,10 +758,10 @@ export const canadaCities: Record<string, CityData> = {
   kingston: {
     slug: "kingston",
     displayName: "Kingston",
-    titleTag: "South Asian Singles Events Kingston | Garam Masala Dating",
+    titleTag: "Desi Dating Night Kingston ON | Garam Masala Dating",
     metaDescription:
       "Garam Masala Dating is coming to Kingston. A live South Asian dating show and singles mixer. Queen\u2019s University and Eastern Ontario\u2019s desi community. Join the waitlist.",
-    h1: "Kingston\u2019s Desi Dating Night Is Coming",
+    h1: "Queen\u2019s Has the Smart Desi Singles. Princess Street Has the Same Three Bars.",
     status: "coming-soon",
     badgeLabel: "Coming Soon",
     bodyParagraphs: [

@@ -4,10 +4,10 @@ export const usSouthTexasCities: Record<string, CityData> = {
   dallas: {
     slug: "dallas",
     displayName: "Dallas",
-    titleTag: "South Asian Singles Events Dallas DFW | Garam Masala Dating",
+    titleTag: "Dallas DFW Desi Dating Show | Garam Masala Dating",
     metaDescription:
       "Garam Masala Dating is coming to Dallas. A live South Asian dating show and singles mixer. Plano, Irving, Richardson, Frisco, and the whole DFW metro.",
-    h1: "Dallas\u2019s Desi Dating Night Is Coming",
+    h1: "130,000 South Asians in DFW and the Dating Scene Is Still Broken",
     status: "coming-soon",
     badgeLabel: "Coming Soon",
     bodyParagraphs: [
@@ -33,10 +33,10 @@ export const usSouthTexasCities: Record<string, CityData> = {
   houston: {
     slug: "houston",
     displayName: "Houston",
-    titleTag: "South Asian Singles Events Houston TX | Garam Masala Dating",
+    titleTag: "Houston TX Live Desi Dating Night | Garam Masala Dating",
     metaDescription:
       "Garam Masala Dating is coming to Houston. A live South Asian dating show and singles mixer. Sugar Land, Katy, Hillcroft, and the whole metro.",
-    h1: "Houston\u2019s Desi Dating Night Is Coming",
+    h1: "The Hillcroft Corridor Is Too Desi to Not Have a Dating Show",
     status: "coming-soon",
     badgeLabel: "Coming Soon",
     bodyParagraphs: [
@@ -62,10 +62,10 @@ export const usSouthTexasCities: Record<string, CityData> = {
   austin: {
     slug: "austin",
     displayName: "Austin",
-    titleTag: "South Asian Singles Events Austin TX | Garam Masala Dating",
+    titleTag: "Austin TX Indian Singles Mixer | Garam Masala Dating",
     metaDescription:
       "Garam Masala Dating is coming to Austin. A live South Asian dating show and singles mixer. UT students, tech transplants, and the whole metro.",
-    h1: "Austin\u2019s Desi Dating Night Is Coming",
+    h1: "Keep Austin Weird. Keep Austin Desi. We're Coming.",
     status: "coming-soon",
     badgeLabel: "Coming Soon",
     bodyParagraphs: [
@@ -91,10 +91,10 @@ export const usSouthTexasCities: Record<string, CityData> = {
   "san-antonio": {
     slug: "san-antonio",
     displayName: "San Antonio",
-    titleTag: "South Asian Singles Events San Antonio TX | Garam Masala Dating",
+    titleTag: "San Antonio Desi Dating Event | Garam Masala Dating",
     metaDescription:
       "Garam Masala Dating is coming to San Antonio. A live South Asian dating show and singles mixer for the Alamo City\u2019s desi community.",
-    h1: "San Antonio\u2019s Desi Dating Night Is Coming",
+    h1: "You Don't Have to Drive to Austin or Houston for This",
     status: "coming-soon",
     badgeLabel: "Coming Soon",
     bodyParagraphs: [
@@ -120,10 +120,10 @@ export const usSouthTexasCities: Record<string, CityData> = {
   "college-station": {
     slug: "college-station",
     displayName: "College Station",
-    titleTag: "South Asian Singles Events College Station Texas A&M | Garam Masala Dating",
+    titleTag: "Texas A&M Desi Dating Night | Garam Masala Dating",
     metaDescription:
       "Garam Masala Dating is coming to College Station. A live South Asian dating show for the Texas A&M desi community. Join the waitlist.",
-    h1: "College Station\u2019s Desi Dating Night Is Coming",
+    h1: "Aggies, Your Blind Date Awaits",
     status: "coming-soon",
     badgeLabel: "Coming Soon",
     bodyParagraphs: [
@@ -148,10 +148,10 @@ export const usSouthTexasCities: Record<string, CityData> = {
   "oklahoma-city": {
     slug: "oklahoma-city",
     displayName: "Oklahoma City",
-    titleTag: "South Asian Singles Events Oklahoma City | Garam Masala Dating",
+    titleTag: "OKC Desi Dating Show | Garam Masala Dating",
     metaDescription:
       "Garam Masala Dating is coming to Oklahoma City. A live South Asian dating show and singles mixer for the OKC and Norman desi community.",
-    h1: "OKC\u2019s Desi Dating Night Is Coming",
+    h1: "OKC Is Punching Above Its Weight. The Desi Singles Scene Should Too.",
     status: "coming-soon",
     badgeLabel: "Coming Soon",
     bodyParagraphs: [
@@ -176,10 +176,10 @@ export const usSouthTexasCities: Record<string, CityData> = {
   "new-orleans": {
     slug: "new-orleans",
     displayName: "New Orleans",
-    titleTag: "South Asian Singles Events New Orleans | Garam Masala Dating",
+    titleTag: "New Orleans Desi Dating Night | Garam Masala Dating",
     metaDescription:
       "Garam Masala Dating is coming to New Orleans. A live South Asian dating show and singles mixer. Desi spice meets NOLA flavor.",
-    h1: "New Orleans\u2019s Desi Dating Night Is Coming",
+    h1: "South Asian Spices Meet Louisiana Seasoning",
     status: "coming-soon",
     badgeLabel: "Coming Soon",
     bodyParagraphs: [

@@ -4,6 +4,7 @@ interface Props {
 }
 
 const { ticketsUrl } = Astro.props;
+const pathname = Astro.url.pathname;
 ---
 
 <nav class="home-nav" id="home-nav" aria-label="Main navigation">
@@ -12,7 +13,7 @@ const { ticketsUrl } = Astro.props;
     <div class="nav-logo-pink" role="img" aria-hidden="true"></div>
   </a>
   <div class="nav-right">
-    <a href="/apply" class="nav-pill">Apply</a>
+    <a href="/apply" class="nav-pill" aria-current={pathname.startsWith('/apply') ? 'page' : undefined}>Apply</a>
     <a href={ticketsUrl} class="nav-pill primary">Get Tickets</a>
   </div>
 </nav>

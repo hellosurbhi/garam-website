@@ -1,5 +1,5 @@
 ---
-
+const pathname = Astro.url.pathname;
 ---
 
 <div class="page-nav-spacer"></div>
@@ -8,8 +8,8 @@
     <div class="page-nav-logo" role="img" aria-hidden="true"></div>
   </a>
   <div class="page-nav-right">
-    <a href="/apply" class="page-nav-pill">Apply</a>
-    <a href="/tickets" class="page-nav-pill page-nav-pill--primary">Get Tickets</a>
+    <a href="/apply" class="page-nav-pill" aria-current={pathname.startsWith('/apply') ? 'page' : undefined}>Apply</a>
+    <a href="/tickets" class="page-nav-pill page-nav-pill--primary" aria-current={pathname.startsWith('/tickets') ? 'page' : undefined}>Get Tickets</a>
   </div>
 </nav>
 

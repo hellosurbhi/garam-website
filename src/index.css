@@ -93,6 +93,7 @@ body {
   background: var(--off-white);
   color: var(--charcoal);
   font-family: "Nunito", sans-serif;
+  overflow-x: hidden;
   min-width: 320px;
 }
 

@@ -232,6 +232,9 @@ function resize() {
 }
 window.addEventListener('resize', resize);
 resize();
+if (canvas.parentElement && typeof ResizeObserver !== 'undefined') {
+    new ResizeObserver(resize).observe(canvas.parentElement);
+}
 
 // ============================================
 // Render Loop

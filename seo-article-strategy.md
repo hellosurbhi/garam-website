@@ -280,7 +280,7 @@ The ABCD vs. FOB dating divide is one of the most actively discussed topics on r
 
 ## Category 7: City-specific landing pages ranked by opportunity
 
-City pages should follow the template: "Indian/Desi/South Asian Singles in [City] — Dating Events & Comedy Shows." Each page targets multiple keyword variants: "Indian singles in [city]," "desi singles [city]," "Indian speed dating [city]," "South Asian dating events [city]," "desi events [city]."
+City pages must have **unique, city-specific H1s** — not a fill-in-the-blank template. Identical templated H1s across many URLs is a doorway-page pattern that search engines penalize. Each page's H1 should reflect what actually makes that city's show or community distinct (e.g., local neighborhood, upcoming show date, city-specific cultural references). Keyword variants ("Indian singles in [city]," "desi singles [city]," "Indian speed dating [city]," "South Asian dating events [city]") belong in body copy, subheadings, and meta descriptions — not stamped verbatim into every H1.
 
 ### Tier 1 cities — build immediately
 

@@ -54,7 +54,7 @@
   z-index: 1;
   max-width: 640px;
   margin: 0 auto;
-  padding: 40px 20px 40px;
+  padding: 20px;
 }
 
 /* ─── Header ─────────────────────────────────────────────────── */
@@ -198,6 +198,12 @@
   line-height: 1.55;
 }
 
+.anythingElse {
+  margin-top: 20px;
+  padding-top: 20px;
+  border-top: 1px solid rgba(0, 0, 0, 0.08);
+}
+
 .sectionTitle {
   font-family: var(--font-playfair);
   font-size: 28px;
@@ -283,9 +289,9 @@
 
 /* ─── Section spacing ────────────────────────────────────────── */
 
-.section {
+/* .section {
   margin-bottom: 32px;
-}
+} */
 
 .sectionLarge {
   margin-bottom: 40px;

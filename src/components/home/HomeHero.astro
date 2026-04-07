@@ -38,7 +38,7 @@ const { ticketsUrl, nextEvent } = Astro.props;
       </a>
     )}
     <div class="hero-ctas">
-      {!nextEvent && <a href={ticketsUrl} class="btn btn-hot">Get Tickets</a>}
+      <a href={ticketsUrl} class="btn btn-hot">Get Tickets</a>
       <a href="/apply" class="btn btn-outline">Apply for the Show</a>
     </div>
   </div>
@@ -162,7 +162,6 @@ const { ticketsUrl, nextEvent } = Astro.props;
     background: rgba(220, 38, 38, 0.08);
     backdrop-filter: blur(8px);
     -webkit-backdrop-filter: blur(8px);
-    border: 1px solid rgba(220, 38, 38, 0.2);
     color: var(--charcoal);
     font-family: var(--font-body), sans-serif;
     font-size: 13px;

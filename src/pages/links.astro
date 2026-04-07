@@ -281,7 +281,7 @@ const reversedPress = [...pressItems].reverse();
     z-index: 1;
     max-width: 420px;
     margin: 0 auto;
-    padding: 48px 24px 56px;
+    padding: 32px 16px 48px;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -414,6 +414,8 @@ const reversedPress = [...pressItems].reverse();
 
   .social-row {
     display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
     gap: 12px;
     margin-top: 36px;
     animation: headerFadeUp 0.5s ease-out 0.9s both;
@@ -673,5 +675,15 @@ const reversedPress = [...pressItems].reverse();
   .press-badge--soon {
     background: rgba(0, 0, 0, 0.06);
     color: #888;
+  }
+
+  @media (max-width: 767px) {
+    .primary-link,
+    .glass-link {
+      white-space: normal;
+    }
+    .link-label {
+      text-align: left;
+    }
   }
 </style>

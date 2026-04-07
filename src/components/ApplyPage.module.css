@@ -54,13 +54,13 @@
   z-index: 1;
   max-width: 640px;
   margin: 0 auto;
-  padding: 40px 20px 60px;
+  padding: 16px 16px 40px;
 }
 
 /* ─── Header ─────────────────────────────────────────────────── */
 
 .headerArea {
-  margin-bottom: 24px;
+  margin-bottom: 8px;
 }
 
 .backButton {
@@ -80,7 +80,7 @@
 
 .titleArea {
   text-align: center;
-  margin-bottom: 40px;
+  margin-bottom: 24px;
 }
 
 .title {

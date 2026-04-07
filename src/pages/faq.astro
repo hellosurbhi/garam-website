@@ -104,9 +104,6 @@ const breadcrumbJsonLd = buildBreadcrumbJsonLd([
         </p>
       </div>
 
-      <!-- Divider -->
-      <div class="faq-divider"></div>
-
       <!-- FAQ items -->
       <div class="faq-list">
         {FAQS.map((item, i) => (
@@ -161,12 +158,12 @@ const breadcrumbJsonLd = buildBreadcrumbJsonLd([
     z-index: 1;
     max-width: 680px;
     margin: 0 auto;
-    padding: 36px 24px 60px;
+    padding: 24px 16px 48px;
   }
 
   /* Header */
   .faq-header {
-    margin-bottom: 40px;
+    margin-bottom: 20px;
   }
 
   .faq-label {
@@ -199,14 +196,6 @@ const breadcrumbJsonLd = buildBreadcrumbJsonLd([
     font-size: 17px;
     color: var(--text-light);
     line-height: 1.55;
-  }
-
-  /* Divider */
-  .faq-divider {
-    width: 48px;
-    height: 1px;
-    background: rgba(var(--brand-red-rgb), 0.3);
-    margin-bottom: 36px;
   }
 
   /* FAQ list */
@@ -249,9 +238,8 @@ const breadcrumbJsonLd = buildBreadcrumbJsonLd([
   /* Footer */
   .faq-footer {
     text-align: center;
-    margin-top: 56px;
-    padding-top: 24px;
-    border-top: 1px solid rgba(0, 0, 0, 0.06);
+    margin-top: 28px;
+    padding-top: 12px;
   }
 
   .faq-footer-text {

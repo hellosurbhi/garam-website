@@ -1,5 +1,23 @@
 # Changelog
 
+## design: taste-review fixes — mobile ticket labels, spacing scale, backdrop, tokens (2026-04-07)
+
+### What changed
+- **HomeShows**: Ticket/notify labels now visible on mobile (were `display:none` — a conversion issue). Grid updated to 3-column at all viewports. `shows-proof` opacity 0.4→0.6 and font-size 14→15px. Padding normalized to 56px/80px.
+- **HomeTestimonials**: Replaced inline `style` prop for `--quote-color` with `nth-child` CSS selectors (CLAUDE.md compliance). Card backdrop increased from 0.25→0.45 opacity with `backdrop-filter: blur(4px)` for legibility on light image areas.
+- **HomeStats**: Removed `-webkit-text-stroke` from h2 and stat numbers (text-shadow already handles legibility; stroke caused jagged edges at large sizes). Desktop padding normalized to 120px.
+- **HomePress**: Replaced hardcoded `#FFF0E2` with new `--cream-warm` design token. Padding normalized to 40px/56px.
+- **HomeHero**: Replaced generic `bounce` keyframe with asymmetric `scrollHint` — a double-dip spring pattern that reads as intentional rather than template.
+- **index.css**: Added `--cream-warm: #FFF0E2` to `:root`.
+
+### Files affected
+`src/index.css`, `src/components/home/HomeHero.astro`, `src/components/home/HomePress.astro`, `src/components/home/HomeShows.astro`, `src/components/home/HomeStats.astro`, `src/components/home/HomeTestimonials.astro`
+
+### Decisions
+Mobile ticket label was a silent conversion failure — users had no visual feedback distinguishing tap-to-buy from tap-to-notify. The `display:none` was likely left from an early mobile layout iteration. The inline style for `--quote-color` worked technically but violated project standards and made the Astro template harder to reason about. Spacing normalization targets 8px grid multiples (40, 56, 80, 120) to create visual rhythm across sections.
+
+---
+
 ## fix: Instagram reels, YouTube embed, FAQ toggle size, hero spacing, section color separation (2026-04-07)
 
 ### What changed

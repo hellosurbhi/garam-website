@@ -80,8 +80,6 @@ const {
     <a href="#main-content" class="sr-skip-link">Skip to content</a>
     <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-KQCBBL2W" height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
     <div class="grain-overlay"></div>
-    <div class="cursor" id="cursor"></div>
-    <div class="cursor-ring" id="cursorRing"></div>
     {!hideNav && <PageNav />}
     <slot />
     {!hideFooter && <HomeFooter />}
@@ -90,55 +88,6 @@ const {
       import { injectSpeedInsights } from '@vercel/speed-insights';
       inject();
       injectSpeedInsights();
-
-      // Custom cursor — desktop only (pointer: fine)
-      if (window.matchMedia('(pointer: fine)').matches) {
-        const cursor = document.getElementById('cursor');
-        const ring = document.getElementById('cursorRing');
-        if (cursor && ring) {
-          let mx = 0, my = 0, rx = 0, ry = 0;
-          const darkSel = '.shows,.spicelist,.photo-break,.photos';
-          document.addEventListener('mousemove', (e) => {
-            mx = e.clientX; my = e.clientY;
-            const el = document.elementFromPoint(mx, my);
-            const onDark = el?.closest(darkSel);
-            cursor.classList.toggle('light', !!onDark);
-            ring.classList.toggle('light', !!onDark);
-          });
-          (function loop() {
-            rx += (mx - rx) * 0.12;
-            ry += (my - ry) * 0.12;
-            cursor.style.left = mx + 'px'; cursor.style.top = my + 'px';
-            ring.style.left = rx + 'px'; ring.style.top = ry + 'px';
-            requestAnimationFrame(loop);
-          })();
-          document.querySelectorAll('a,button,[role="button"]').forEach((el) => {
-            el.addEventListener('mouseenter', () => {
-              cursor.style.width = '20px'; cursor.style.height = '20px';
-              ring.style.width = '60px'; ring.style.height = '60px'; ring.style.opacity = '0.8';
-            });
-            el.addEventListener('mouseleave', () => {
-              cursor.style.width = '12px'; cursor.style.height = '12px';
-              ring.style.width = '40px'; ring.style.height = '40px'; ring.style.opacity = '0.5';
-            });
-          });
-          document.documentElement.classList.add('custom-cursor');
-
-          // Keep custom cursor visible over <dialog> top-layer
-          const observer = new MutationObserver(() => {
-            const openDialog = document.querySelector('dialog[open]');
-            if (openDialog && cursor.parentElement !== openDialog) {
-              openDialog.appendChild(cursor);
-              openDialog.appendChild(ring);
-            } else if (!openDialog && cursor.parentElement !== document.body) {
-              document.body.appendChild(cursor);
-              document.body.appendChild(ring);
-            }
-          });
-          observer.observe(document.body, { subtree: true, attributes: true, attributeFilter: ['open'] });
-          document.addEventListener('astro:before-swap', () => observer.disconnect(), { once: true });
-        }
-      }
     </script>
   </body>
 </html>
@@ -168,47 +117,4 @@ const {
     .grain-overlay { display: none; animation: none; }
   }
 
-  /* Custom cursor — only visible on desktop with mouse */
-  .cursor, .cursor-ring {
-    display: none;
-  }
-
-  :global(html.custom-cursor),
-  :global(html.custom-cursor *),
-  :global(html.custom-cursor *::before),
-  :global(html.custom-cursor *::after) {
-    cursor: none !important;
-  }
-  :global(html.custom-cursor dialog::backdrop) {
-    cursor: none !important;
-  }
-
-  :global(html.custom-cursor) .cursor {
-    display: block;
-    position: fixed;
-    width: 12px;
-    height: 12px;
-    background: var(--brand-red);
-    border-radius: 50%;
-    pointer-events: none;
-    z-index: 9999;
-    transform: translate(-50%, -50%);
-    transition: width 0.3s, height 0.3s, background 0.3s;
-  }
-  :global(html.custom-cursor) .cursor.light { background: white; }
-
-  :global(html.custom-cursor) .cursor-ring {
-    display: block;
-    position: fixed;
-    width: 40px;
-    height: 40px;
-    border: 1.5px solid var(--brand-red);
-    border-radius: 50%;
-    pointer-events: none;
-    z-index: 9998;
-    transform: translate(-50%, -50%);
-    transition: width 0.3s, height 0.3s, opacity 0.3s, border-color 0.3s;
-    opacity: 0.5;
-  }
-  :global(html.custom-cursor) .cursor-ring.light { border-color: white; }
 </style>

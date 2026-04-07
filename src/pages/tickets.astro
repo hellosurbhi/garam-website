@@ -65,6 +65,9 @@ const eventSchemas = buildEventSchemas(upcomingForSchema);
                 <div class="ticket-card__info">
                   <span class="ticket-card__date">{event.date}</span>
                   <span class="ticket-card__city">{event.city}</span>
+                  {event.tagline && !isSoldOut && (
+                    <span class="ticket-card__tagline">{event.tagline}</span>
+                  )}
                 </div>
                 <span class={`ticket-card__cta${isSoldOut ? ' ticket-card__cta--soldout' : ''}`}>
                   {isSoldOut ? 'Sold Out' : 'Get Tickets'}
@@ -268,6 +271,14 @@ const eventSchemas = buildEventSchemas(upcomingForSchema);
 
   .ticket-card__city--tba {
     color: var(--text-light);
+  }
+
+  .ticket-card__tagline {
+    font-family: var(--font-body);
+    font-size: 11px;
+    font-weight: 500;
+    color: var(--muted);
+    letter-spacing: 0.04em;
   }
 
   .ticket-card__cta {

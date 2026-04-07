@@ -27,7 +27,7 @@ export const australiaCities: Record<string, CityData> = {
     addressRegion: "NSW",
     addressCountry: "AU",
     region: "Australia",
-    nearbyCities: ["melbourne", "brisbane", "canberra", "newcastle", "gold-coast"],
+    nearbyCities: ["melbourne", "brisbane", "canberra", "newcastle-au", "gold-coast"],
   },
 
   melbourne: {
@@ -172,7 +172,7 @@ export const australiaCities: Record<string, CityData> = {
     addressRegion: "ACT",
     addressCountry: "AU",
     region: "Australia",
-    nearbyCities: ["sydney", "melbourne", "brisbane", "newcastle", "adelaide"],
+    nearbyCities: ["sydney", "melbourne", "brisbane", "newcastle-au", "adelaide"],
   },
 
   "gold-coast": {
@@ -201,11 +201,11 @@ export const australiaCities: Record<string, CityData> = {
     addressRegion: "QLD",
     addressCountry: "AU",
     region: "Australia",
-    nearbyCities: ["brisbane", "sydney", "melbourne", "newcastle", "adelaide"],
+    nearbyCities: ["brisbane", "sydney", "melbourne", "newcastle-au", "adelaide"],
   },
 
-  newcastle: {
-    slug: "newcastle",
+  "newcastle-au": {
+    slug: "newcastle-au",
     displayName: "Newcastle",
     titleTag: "South Asian Singles Events Newcastle Australia | Garam Masala Dating",
     metaDescription:

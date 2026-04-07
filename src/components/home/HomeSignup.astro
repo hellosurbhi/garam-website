@@ -48,6 +48,7 @@
         source: 'spice-list',
         createdAt: new Date().toISOString(),
       });
+      localStorage.setItem('gmd-popup-subscribed', 'true');
       if (errorEl) { errorEl.textContent = ''; errorEl.setAttribute('hidden', ''); }
       document.getElementById('nl-step-1')?.setAttribute('hidden', '');
       document.getElementById('nl-step-2')?.removeAttribute('hidden');

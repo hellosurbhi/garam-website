@@ -51,10 +51,16 @@ describe("journalPosts", () => {
   });
 
   it("every post has a relatedSlugs array", () => {
+    const allSlugs = new Set(journalPosts.map((p) => p.slug));
     for (const post of journalPosts) {
       expect(Array.isArray(post.relatedSlugs)).toBe(true);
       expect(post.relatedSlugs.length).toBeGreaterThanOrEqual(2);
       expect(post.relatedSlugs.length).toBeLessThanOrEqual(3);
+      for (const s of post.relatedSlugs) {
+        expect(allSlugs.has(s), `"${s}" not found in catalog (referenced from "${post.slug}")`).toBe(true);
+      }
+      expect(new Set(post.relatedSlugs).size).toBe(post.relatedSlugs.length);
+      expect(post.relatedSlugs).not.toContain(post.slug);
     }
   });
 

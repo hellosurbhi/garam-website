@@ -17,11 +17,6 @@ const CONFIG = {
 };
 
 // ============================================
-// SVG embedded as data URI
-// ============================================
-const SVG_DATA_URI = "data:image/svg+xml;base64,PHN2ZyB4bWxucz0naHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmcnIHZpZXdCb3g9JzAgMCAxIDEnPjwvc3ZnPg==";
-
-// ============================================
 // WebGL Setup
 // ============================================
 const canvas = document.getElementById('glCanvas');
@@ -42,11 +37,16 @@ const tctx = textCanvas.getContext('2d');
 textCanvas.width = 2048;
 textCanvas.height = 2048;
 
-// Load SVG (embedded as data URI so it works from file:// too)
 let svgImage = null;
+let maskDirty = false;
+
 const img = new Image();
-img.onload = () => { svgImage = img; };
-img.src = SVG_DATA_URI;
+img.onload = () => {
+    svgImage = img;
+    updateTextCanvas();
+    uploadMaskTexture();
+};
+img.src = '/images/logo.svg';
 
 function updateTextCanvas() {
     const size = CONFIG.size;
@@ -76,6 +76,14 @@ function updateTextCanvas() {
     drawSvg('red', 60);
     // Green channel: crisp visual mask
     drawSvg('lime', 0);
+
+    maskDirty = true;
+}
+
+function uploadMaskTexture() {
+    gl.bindTexture(gl.TEXTURE_2D, textTexture);
+    gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, textCanvas);
+    maskDirty = false;
 }
 
 // ============================================
@@ -180,14 +188,26 @@ function createShader(gl, type, source) {
     gl.compileShader(s);
     if (!gl.getShaderParameter(s, gl.COMPILE_STATUS)) {
         console.error(gl.getShaderInfoLog(s));
+        gl.deleteShader(s);
+        return null;
     }
     return s;
 }
 
+const vs = createShader(gl, gl.VERTEX_SHADER, vsSource);
+const fs = createShader(gl, gl.FRAGMENT_SHADER, fsSource);
 const program = gl.createProgram();
-gl.attachShader(program, createShader(gl, gl.VERTEX_SHADER, vsSource));
-gl.attachShader(program, createShader(gl, gl.FRAGMENT_SHADER, fsSource));
-gl.linkProgram(program);
+if (vs && fs) {
+    gl.attachShader(program, vs);
+    gl.attachShader(program, fs);
+    gl.linkProgram(program);
+    if (!gl.getProgramParameter(program, gl.LINK_STATUS)) {
+        console.error(gl.getProgramInfoLog(program));
+        gl.deleteProgram(program);
+        canvas.style.display = 'none';
+        throw new Error('WebGL program linking failed');
+    }
+}
 
 const positionBuffer = gl.createBuffer();
 gl.bindBuffer(gl.ARRAY_BUFFER, positionBuffer);
@@ -240,12 +260,11 @@ if (canvas.parentElement && typeof ResizeObserver !== 'undefined') {
 // Render Loop
 // ============================================
 function drawFrame(time) {
-    updateTextCanvas();
+    if (maskDirty) uploadMaskTexture();
 
     gl.useProgram(program);
     gl.activeTexture(gl.TEXTURE0);
     gl.bindTexture(gl.TEXTURE_2D, textTexture);
-    gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, textCanvas);
     gl.uniform1i(uniforms.uTextTex, 0);
 
     gl.enableVertexAttribArray(posAttrib);

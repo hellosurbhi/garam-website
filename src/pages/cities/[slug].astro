@@ -34,7 +34,8 @@ const cityEvents = city.status === "active"
       !e.hidden &&
       !isEventPast(e.date) &&
       e.url !== "#" &&
-      e.city.includes(city.displayName)
+      e.url !== "" &&
+      (e.citySlug ? e.citySlug === city.slug : e.city.includes(city.displayName))
     )
   : [];
 

@@ -7,8 +7,8 @@ export interface PressItem {
 
 export const pressItems: PressItem[] = [
   {
-    title: "Garam Masala Dating on Gen Zenophobic",
-    source: "Gen Zenophobic",
+    title: "Garam Masala Dating on Doctor Lawyer Comedian",
+    source: "Doctor Lawyer Comedian",
     url: "https://www.youtube.com/watch?v=PyjeLMZohqY",
     type: "podcast",
   },

@@ -35,6 +35,9 @@ const accentColors = ['var(--electric-yellow)', 'var(--brand-red)', 'var(--spice
     display: block;
     z-index: 0;
   }
+  @media (min-width: 768px) {
+    .testi-bg { object-position: center 55%; }
+  }
   .testimonials-inner {
     max-width: 1200px;
     margin: 0 auto;
@@ -59,6 +62,8 @@ const accentColors = ['var(--electric-yellow)', 'var(--brand-red)', 'var(--spice
   .testi-card {
     padding: 32px;
     position: relative;
+    background: rgba(0, 0, 0, 0.25);
+    border-radius: 16px;
   }
   .testi-card::before {
     content: '\201C';

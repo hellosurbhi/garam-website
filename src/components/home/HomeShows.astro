@@ -32,8 +32,8 @@ function parseDay(dateStr: string): string {
       return isLive ? (
         <a href={event.url} target="_blank" rel="noopener noreferrer" class="show-card show-card--live" data-reveal>
           <div class="show-date-block">
-            <div class="mo">{parseMonth(event.date)}</div>
-            <div class="dy">{parseDay(event.date)}</div>
+            <div class="month">{parseMonth(event.date)}</div>
+            <div class="day">{parseDay(event.date)}</div>
           </div>
           <div class="show-info">
             <h3>{event.city}</h3>
@@ -45,9 +45,9 @@ function parseDay(dateStr: string): string {
         <button type="button" class="show-card show-card--notify" data-notify-city={event.city} data-reveal>
           <div class="show-date-block">
             {parseDay(event.date) !== '—' ? (
-              <><div class="mo">{parseMonth(event.date)}</div><div class="dy">{parseDay(event.date)}</div></>
+              <><div class="month">{parseMonth(event.date)}</div><div class="day">{parseDay(event.date)}</div></>
             ) : (
-              <div class="dy dy--tba">TBA</div>
+              <div class="day day--tba">TBA</div>
             )}
           </div>
           <div class="show-info">
@@ -177,21 +177,21 @@ function parseDay(dateStr: string): string {
   }
   .show-card:hover { opacity: 0.8; }
   .show-date-block { text-align: center; }
-  .show-date-block .mo {
+  .show-date-block .month {
     font-size: 11px;
     font-weight: 700;
     text-transform: uppercase;
     letter-spacing: 2px;
     color: var(--electric-yellow);
   }
-  .show-date-block .dy {
+  .show-date-block .day {
     font-family: var(--font-playfair), serif;
     font-size: 36px;
     font-weight: 900;
     line-height: 1;
     color: white;
   }
-  .show-date-block .dy--tba {
+  .show-date-block .day--tba {
     font-size: 20px;
     font-family: var(--font-body), sans-serif;
     font-weight: 900;
@@ -257,8 +257,8 @@ function parseDay(dateStr: string): string {
       grid-template-columns: 80px 1fr auto;
       padding: 28px 0;
     }
-    .show-date-block .dy { font-size: 48px; }
-    .show-date-block .dy--tba { font-size: 20px; }
+    .show-date-block .day { font-size: 48px; }
+    .show-date-block .day--tba { font-size: 20px; }
     .show-info h3 { font-size: 24px; margin-bottom: 4px; }
     .ticket-label {
       display: inline-flex;

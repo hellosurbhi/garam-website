@@ -115,7 +115,7 @@ const eventSchemas = buildEventSchemas(upcomingForSchema);
       <img src="/images/on-stage.webp" alt="Contestants and hosts laughing during a blindfolded dating round" width="1200" height="800" loading="lazy" style="object-position: center 40%;" />
     </div>
     <HomeFAQ />
-    <div class="photo-wide">
+    <div class="photo-wide photo-wide-zoom">
       <img src="/images/tickets-hero.webp" alt="Blindfolded contestant on stage with women contestants during the show" width="1200" height="800" loading="lazy" style="object-position: center 70%;" />
     </div>
     <HomeSignup />
@@ -253,6 +253,9 @@ const eventSchemas = buildEventSchemas(upcomingForSchema);
     height: 100%;
     object-fit: cover;
     display: block;
+  }
+  .photo-wide-zoom img {
+    transform: scale(1.15);
   }
   @media (max-width: 767px) {
     .photo-wide { aspect-ratio: 16 / 9; }

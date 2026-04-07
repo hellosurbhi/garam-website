@@ -202,10 +202,10 @@ function ApplyPageInner() {
     setErrors(errs);
     if (Object.keys(errs).length > 0) {
       showToast("Please fill in all required fields", false);
-      setTimeout(() => {
+      requestAnimationFrame(() => {
         const el = document.querySelector<HTMLElement>("[data-error]");
         el?.scrollIntoView({ behavior: "smooth", block: "center" });
-      }, 50);
+      });
       return false;
     }
     return true;

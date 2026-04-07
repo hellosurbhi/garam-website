@@ -60,8 +60,8 @@ function FieldGroup({
   );
 }
 
-function SectionTitle({ children }: { children: React.ReactNode }) {
-  return <h2 className={styles.sectionTitle}>{children}</h2>;
+function SectionTitle({ children, className }: { children: React.ReactNode; className?: string }) {
+  return <h2 className={[styles.sectionTitle, className].filter(Boolean).join(' ')}>{children}</h2>;
 }
 
 /* ─── Main form ──────────────────────────────────────────────── */
@@ -840,8 +840,8 @@ function ApplyPageInner() {
                   )}
                 </div>
 
-                <div className={`${styles.sectionLarge} ${styles.anythingElse}`}>
-                  <SectionTitle>
+                <div className={styles.sectionLarge}>
+                  <SectionTitle className={styles.anythingElse}>
                     Anything else?
                   </SectionTitle>
                   <FieldGroup

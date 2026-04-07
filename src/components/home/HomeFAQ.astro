@@ -7,23 +7,17 @@ import { HOME_FAQS as faqs } from '@/data/copy';
     <div class="faq-eyebrow" data-reveal>Frequently Asked Questions</div>
     <h2 id="faq-heading" data-reveal>Everything You<br />Need to Know</h2>
     <div class="faq-list">
-      {faqs.map((faq, i) => (
-        <div class="faq-item" data-reveal>
-          <button
-            class="faq-q"
-            type="button"
-            aria-expanded="false"
-          >
+      {faqs.map((faq) => (
+        <details class="faq-item" data-reveal>
+          <summary class="faq-q">
             {faq.q}
             <span class="faq-toggle">+</span>
-          </button>
-          <div class="faq-body">
-            <div class="faq-answer">
-              <p class="faq-answer-summary" set:html={faq.short} />
-              <p class="faq-answer-detail" set:html={faq.long} />
-            </div>
+          </summary>
+          <div class="faq-answer">
+            <p class="faq-answer-summary" set:html={faq.short} />
+            <p class="faq-answer-detail" set:html={faq.long} />
           </div>
-        </div>
+        </details>
       ))}
     </div>
     <div class="faq-cta" data-reveal>
@@ -34,19 +28,15 @@ import { HOME_FAQS as faqs } from '@/data/copy';
 </section>
 
 <script>
-  document.querySelectorAll('.faq-q').forEach((btn) => {
-    btn.addEventListener('click', () => {
-      const item = btn.parentElement;
-      if (!item) return;
-      const isOpen = item.classList.contains('open');
-      document.querySelectorAll('.faq-item').forEach((i) => {
-        i.classList.remove('open');
-        const b = i.querySelector('.faq-q');
-        if (b) b.setAttribute('aria-expanded', 'false');
-      });
-      if (!isOpen) {
-        item.classList.add('open');
-        btn.setAttribute('aria-expanded', 'true');
+  // Single-open: close siblings when one opens
+  document.querySelectorAll('.faq-item').forEach((details) => {
+    details.addEventListener('toggle', () => {
+      if ((details as HTMLDetailsElement).open) {
+        document.querySelectorAll('.faq-item').forEach((other) => {
+          if (other !== details && (other as HTMLDetailsElement).open) {
+            (other as HTMLDetailsElement).open = false;
+          }
+        });
       }
     });
   });
@@ -93,12 +83,11 @@ import { HOME_FAQS as faqs } from '@/data/copy';
     cursor: pointer;
     transition: color 0.2s;
     gap: 16px;
-    background: none;
-    border: none;
-    width: 100%;
-    text-align: left;
+    list-style: none;
     min-height: 48px;
   }
+  .faq-q::-webkit-details-marker { display: none; }
+  .faq-q::marker { display: none; content: ''; }
   .faq-q:hover { color: var(--brand-red); }
   .faq-toggle {
     width: 48px;
@@ -115,19 +104,11 @@ import { HOME_FAQS as faqs } from '@/data/copy';
     transition: transform 0.3s, background 0.3s;
     line-height: 1;
   }
-  .faq-item.open .faq-toggle {
+  .faq-item[open] .faq-toggle {
     transform: rotate(45deg);
     background: var(--brand-red);
     color: white;
     border-color: var(--brand-red);
-  }
-  .faq-body {
-    display: grid;
-    grid-template-rows: 0fr;
-    transition: grid-template-rows 0.35s ease;
-  }
-  .faq-item.open .faq-body {
-    grid-template-rows: 1fr;
   }
   .faq-answer {
     overflow: hidden;

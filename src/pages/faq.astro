@@ -91,14 +91,7 @@ const breadcrumbJsonLd = buildBreadcrumbJsonLd([
   </Fragment>
 
   <main id="main-content" class="faq-page">
-    <div class="faq-hero">
-      <div class="faq-hero-item">
-        <img src="/images/the-match.webp" alt="" width="1200" height="800" aria-hidden="true" />
-      </div>
-      <div class="faq-hero-item">
-        <img src="/images/on-stage.webp" alt="" width="1200" height="800" aria-hidden="true" />
-      </div>
-    </div>
+    <img class="faq-bg" src="/images/higgs-field.webp" alt="" width="1200" height="800" aria-hidden="true" />
     <div class="faq-container">
       <!-- Header -->
       <div class="faq-header">
@@ -149,33 +142,26 @@ const breadcrumbJsonLd = buildBreadcrumbJsonLd([
     position: relative;
     z-index: 1;
     animation: faqFadeIn 0.5s ease-out both;
-  }
-
-  .faq-hero {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 4px;
-  }
-  .faq-hero-item {
     overflow: hidden;
-    aspect-ratio: 3 / 2;
   }
-  .faq-hero-item img {
+  .faq-bg {
+    position: absolute;
+    inset: 0;
     width: 100%;
     height: 100%;
     object-fit: cover;
-    object-position: center 45%;
+    object-position: center center;
     display: block;
-  }
-  @media (min-width: 768px) {
-    .faq-hero { gap: 6px; }
-    .faq-hero-item { aspect-ratio: 16 / 9; }
+    z-index: 0;
+    opacity: 0.06;
   }
 
   .faq-container {
+    position: relative;
+    z-index: 1;
     max-width: 680px;
     margin: 0 auto;
-    padding: 48px 24px 80px;
+    padding: 36px 24px 60px;
   }
 
   /* Header */
@@ -245,7 +231,7 @@ const breadcrumbJsonLd = buildBreadcrumbJsonLd([
 
   .faq-question {
     font-family: var(--font-body);
-    font-size: 18px;
+    font-size: 20px;
     font-weight: 600;
     color: var(--charcoal);
     line-height: 1.4;
@@ -254,7 +240,7 @@ const breadcrumbJsonLd = buildBreadcrumbJsonLd([
 
   .faq-answer-text {
     font-family: var(--font-body);
-    font-size: 16px;
+    font-size: 17px;
     color: var(--text-secondary);
     line-height: 1.65;
     margin: 0;

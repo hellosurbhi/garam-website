@@ -1,5 +1,6 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import { render, screen, fireEvent, waitFor } from "@testing-library/react";
+import type { Timestamp } from "firebase/firestore";
 import type { Application } from "@/types/application";
 import AdminDashboard from "./AdminDashboard";
 
@@ -133,7 +134,7 @@ describe("AdminDashboard", () => {
     mockGetDocs.mockResolvedValue({
       docs: [
         { id: "1", data: () => ({ ...makeApp({ id: "1" }) }) },
-        { id: "2", data: () => ({ ...makeApp({ id: "2", deletedAt: { seconds: 100, nanoseconds: 0, toDate: () => new Date(), toMillis: () => 100000, isEqual: () => false, toJSON: () => ({ seconds: 100, nanoseconds: 0 }) } }) }) },
+        { id: "2", data: () => ({ ...makeApp({ id: "2", deletedAt: { seconds: 100, nanoseconds: 0, toDate: () => new Date(), toMillis: () => 100000, isEqual: () => false, toJSON: () => ({ seconds: 100, nanoseconds: 0, type: "timestamp" }) } as unknown as Timestamp }) }) },
       ],
     });
     render(<AdminDashboard onLogout={onLogout} />);

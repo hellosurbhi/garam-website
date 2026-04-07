@@ -1,5 +1,43 @@
 # Changelog
 
+## fix: CodeRabbit PR #11 review — a11y, error handling, touch targets, data (2026-04-07)
+
+### What changed
+Two atomic commits addressing all actionable CodeRabbit review comments on PR #11.
+
+**Touch targets (48px minimum)**
+- `index.astro` popup: close/dismiss/skip buttons from 4px → full 48px hit area
+- `HomeNav.astro`: logo link gets `min-height: var(--touch-target)`
+- `PageNav.astro`: added `:focus-visible` outline to pill links
+- `HomeFooter.astro`: desktop social icons 32px → 48px
+- `cities/index.astro`: region nav jump links min-height 48px
+- `cities/[slug].astro`: modal close button and "Maybe later" skip button both 48px
+
+**Contrast / ARIA**
+- `HomeCreators.astro`: subtitle opacity 0.5 → 0.7; bio text 0.6 → 0.75 (WCAG AA)
+- `404.astro`: canvas gets `aria-hidden="true"`; footer legal links get contrast override
+
+**Error handling**
+- `HomeSignup.astro`: email step shows inline error on Firestore failure; no longer silently advances
+- `cities/[slug].astro`: waitlist modal only flips to success after Firestore write succeeds
+- `HomeShows.astro`: Request City modal resets to form state before each open
+
+**Data integrity**
+- `index.astro`: popup email step stores `DocumentReference`; phone step calls `updateDoc` (no duplicate subscriber doc); localStorage key only set after successful write
+- `events.ts`: TBA entries get `tagline: 'Coming soon'` to prevent false "On sale now" label
+
+**Styling**
+- `links.astro`: removed `white-space: nowrap` from `.primary-link`; social row wraps on mobile
+- `index.css`: `"Nunito"` → `Nunito` (stylelint compliance)
+
+**Files changed:** `src/pages/index.astro`, `src/components/home/HomeSignup.astro`, `src/components/home/HomeNav.astro`, `src/components/home/HomeCreators.astro`, `src/components/home/HomeFooter.astro`, `src/components/home/HomeShows.astro`, `src/components/layout/PageNav.astro`, `src/pages/cities/[slug].astro`, `src/pages/cities/index.astro`, `src/pages/links.astro`, `src/pages/404.astro`, `src/data/events.ts`, `src/index.css`
+
+**Dismissed (already correct):** reveal effect (js-reveal scoping), ErrorBoundary (already CSS module + SOCIAL_URLS), NotifyModal (already has error display), AdminDashboard brand-red-rgb (already 220,38,38), cities/index.ts REGION_ORDER (South Asia present)
+
+**Deferred:** custom cursor (design decision), cross-component subscriber dedup (architectural), tagline in tickets page (feature), shader performance (separate pass)
+
+---
+
 ## fix: CodeRabbit PR review fixes — bugs, a11y, performance, code quality (2026-04-07)
 
 ### What changed

@@ -114,6 +114,8 @@
   border-radius: 100px;
   font-size: 12px;
   font-weight: 600;
+  background: color-mix(in srgb, var(--status-color) 13%, transparent);
+  color: var(--status-color);
 }
 
 .infoGrid {

@@ -31,7 +31,7 @@ const HF_OUT   = join(PUBLIC, 'images', 'hf');
 const SHOW_OUT  = join(PUBLIC, 'images', 'show');
 
 const VERBOSE = !!process.env.VERBOSE;
-const log = (...args) => { if (VERBOSE) console.log(...args); };
+const log = (...args) => { if (VERBOSE) console.debug(...args); };
 
 const IMAGE_EXTS = new Set(['.jpg', '.jpeg', '.png', '.webp', '.avif']);
 

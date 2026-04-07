@@ -110,7 +110,7 @@ export default function ApplicantModal({ app, onClose, onUpdate, onDelete, onRes
             <h2 className={styles.name}>{app.name}</h2>
             <span
               className={styles.statusBadge}
-              style={{ background: statusColor + "22", color: statusColor }}
+              style={{ '--status-color': statusColor } as React.CSSProperties}
             >
               {status}
             </span>

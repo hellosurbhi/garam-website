@@ -68,6 +68,7 @@
   --text-secondary: #555;
   --text-tertiary: #777;
   --cream-warm: #FFF0E2;
+  --off-white-rgb: 255, 248, 240;
 
   /* accessibility */
   --touch-target: 48px;

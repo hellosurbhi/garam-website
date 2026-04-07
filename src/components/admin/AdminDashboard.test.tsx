@@ -4,6 +4,17 @@ import type { Timestamp } from "firebase/firestore";
 import type { Application } from "@/types/application";
 import AdminDashboard from "./AdminDashboard";
 
+function makeTimestamp(seconds: number): Timestamp {
+  return {
+    seconds,
+    nanoseconds: 0,
+    toDate: () => new Date(seconds * 1000),
+    toMillis: () => seconds * 1000,
+    isEqual: () => false,
+    toJSON: () => ({ seconds, nanoseconds: 0 }),
+  } as unknown as Timestamp;
+}
+
 function makeApp(overrides?: Partial<Application>): Application {
   return {
     id: "test-1",
@@ -134,7 +145,7 @@ describe("AdminDashboard", () => {
     mockGetDocs.mockResolvedValue({
       docs: [
         { id: "1", data: () => ({ ...makeApp({ id: "1" }) }) },
-        { id: "2", data: () => ({ ...makeApp({ id: "2", deletedAt: { seconds: 100, nanoseconds: 0, toDate: () => new Date(), toMillis: () => 100000, isEqual: () => false, toJSON: () => ({ seconds: 100, nanoseconds: 0, type: "timestamp" }) } as unknown as Timestamp }) }) },
+        { id: "2", data: () => ({ ...makeApp({ id: "2", deletedAt: makeTimestamp(100) }) }) },
       ],
     });
     render(<AdminDashboard onLogout={onLogout} />);

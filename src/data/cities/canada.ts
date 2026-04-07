@@ -280,7 +280,7 @@ export const canadaCities: Record<string, CityData> = {
     ],
     ctas: [
       { label: "Join the London ON Waitlist", href: "#waitlist" },
-      { label: "Apply to Be a Contestant", href: "/apply?city=London+ON" },
+      { label: "Apply to Be a Contestant", href: "/apply?city=London&state=ON" },
     ],
     includeEventSchema: false,
     areaServed: "London, Ontario",
@@ -599,7 +599,7 @@ export const canadaCities: Record<string, CityData> = {
     ],
     ctas: [
       { label: "Join the St. John\u2019s Waitlist", href: "#waitlist" },
-      { label: "Apply to Be a Contestant", href: "/apply?city=St.+John%27s" },
+      { label: "Apply to Be a Contestant", href: "/apply?city=St.+John%27s&state=NL" },
     ],
     includeEventSchema: false,
     areaServed: "St. John\u2019s, Newfoundland and Labrador",

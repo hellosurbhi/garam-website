@@ -121,9 +121,9 @@ function parseDay(dateStr: string): string {
           email,
           createdAt: new Date().toISOString(),
         });
-      } catch { /* fail silently */ }
-      document.getElementById('city-form-view')?.setAttribute('hidden', '');
-      document.getElementById('city-success')?.removeAttribute('hidden');
+        document.getElementById('city-form-view')?.setAttribute('hidden', '');
+        document.getElementById('city-success')?.removeAttribute('hidden');
+      } catch { /* fail silently — form stays visible on error */ }
     });
   }
 </script>

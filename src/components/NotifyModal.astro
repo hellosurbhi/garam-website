@@ -20,7 +20,7 @@ const { source = '' } = Astro.props;
         <button type="submit" class="modal-submit">Notify Me</button>
       </form>
     </div>
-    <div id="notify-success" class="modal-success" role="status" aria-live="polite" hidden>
+    <div id="notify-success" class="modal-success" role="status" aria-live="polite" tabindex="-1" hidden>
       <p>You're on the list! We'll let you know.</p>
     </div>
   </div>
@@ -83,7 +83,9 @@ const { source = '' } = Astro.props;
         if (source) data.source = source;
         await addDoc(collection(db, 'notifications'), data);
         document.getElementById('notify-form-view')?.setAttribute('hidden', '');
-        document.getElementById('notify-success')?.removeAttribute('hidden');
+        const successEl = document.getElementById('notify-success') as HTMLElement | null;
+        successEl?.removeAttribute('hidden');
+        successEl?.focus();
       } catch {
         if (errorEl) { errorEl.textContent = 'Something went wrong. Please try again.'; errorEl.removeAttribute('hidden'); }
       } finally {

@@ -11,7 +11,8 @@ const { ticketsUrl, nextEvent } = Astro.props;
 function formatTime(t?: string): string {
   if (!t) return '';
   const h = parseInt(t.split(':')[0]);
-  return `${h > 12 ? h - 12 : h} ${h >= 12 ? 'PM' : 'AM'}`;
+  const hour12 = (h % 12) || 12;
+  return `${hour12} ${h >= 12 ? 'PM' : 'AM'}`;
 }
 ---
 

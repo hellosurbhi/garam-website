@@ -5,7 +5,7 @@ import {
   type ChangeEvent,
 } from "react";
 import { collection, addDoc, serverTimestamp } from "firebase/firestore";
-import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
+import { ref, uploadBytes, getDownloadURL, deleteObject, type StorageReference } from "firebase/storage";
 import { signInAnonymously } from "firebase/auth";
 import { useGeoData } from "@/hooks/useGeoData";
 import {
@@ -197,10 +197,11 @@ export function useApplyForm() {
     if (!validate()) return;
 
     setSubmitting(true);
+    let storageRef: StorageReference | null = null;
     try {
       await signInAnonymously(getFirebaseAuth());
       const ext = photoFile!.name.split(".").pop() ?? "jpg";
-      const storageRef = ref(
+      storageRef = ref(
         getFirebaseStorage(),
         `photos/${crypto.randomUUID()}.${ext}`,
       );
@@ -234,6 +235,7 @@ export function useApplyForm() {
         notes: "",
         submittedAt: serverTimestamp(),
       });
+      storageRef = null; // committed — no cleanup needed
 
       // Fire-and-forget: email notification (does not affect submission)
       fetch("/api/notify-application", {
@@ -249,6 +251,8 @@ export function useApplyForm() {
       setErrors({});
       setSubmitted(true);
     } catch {
+      // Clean up orphaned photo if upload succeeded but Firestore write failed
+      if (storageRef) deleteObject(storageRef).catch(() => {});
       setToast({
         msg: "Sorry, the form isn't working right now. DM us on @garammasaladating on Instagram and we'll sort it out!",
         ok: false,

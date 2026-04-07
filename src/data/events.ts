@@ -117,7 +117,7 @@ const TBA_CITIES = ['Los Angeles', 'San Francisco', 'San Diego'];
 const comingSoonEvents: EventEntry[] = TBA_CITIES.map((city) => ({
   date: 'TBA',
   city,
-  url: '#',
+  url: '',
 }));
 
 /** All events: confirmed shows + hand-picked TBA cities */

@@ -28,7 +28,7 @@ function parseDay(dateStr: string): string {
   </div>
   <div class="shows-list">
     {events.map((event) => {
-      const isLive = event.url && event.url !== '#';
+      const isLive = Boolean(event.url);
       return isLive ? (
         <a href={event.url} target="_blank" rel="noopener noreferrer" class="show-card show-card--live" data-reveal>
           <div class="show-date-block">

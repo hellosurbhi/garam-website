@@ -69,7 +69,7 @@
 .errorText {
   font-family: var(--font-body);
   font-size: 16px;
-  color: #777;
+  color: var(--text-tertiary);
   line-height: 1.55;
 }
 
@@ -117,7 +117,7 @@
 .headerSubtitle {
   font-family: var(--font-body);
   font-size: 16px;
-  color: #666;
+  color: var(--text-light);
   line-height: 1.6;
   max-width: 440px;
   margin: 0 auto;
@@ -192,7 +192,7 @@
 .ruleText {
   font-family: var(--font-body);
   font-size: 15px;
-  color: #555;
+  color: var(--text-secondary);
   line-height: 1.6;
   margin: 0;
 }
@@ -225,7 +225,7 @@
 .questionText {
   font-family: var(--font-body);
   font-size: 15px;
-  color: #666;
+  color: var(--text-light);
   line-height: 1.6;
   margin: 0;
 }
@@ -279,7 +279,7 @@
 .bodyText {
   font-family: var(--font-body);
   font-size: 15px;
-  color: #666;
+  color: var(--text-light);
   line-height: 1.7;
 }
 
@@ -339,7 +339,7 @@
 .calloutBody {
   font-family: var(--font-body);
   font-size: 15px;
-  color: #555;
+  color: var(--text-secondary);
   line-height: 1.6;
 }
 

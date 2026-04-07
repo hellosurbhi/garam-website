@@ -44,7 +44,7 @@ function parseDay(dateStr: string): string {
           <span class={`ticket-label${isSoldOut ? ' ticket-label--soldout' : ''}`}>{isSoldOut ? 'Sold Out' : 'Get Tickets'}</span>
         </a>
       ) : (
-        <div class="show-card show-card--notify" role="button" tabindex="0" data-notify-city={event.city} data-reveal>
+        <button type="button" class="show-card show-card--notify" data-notify-city={event.city} data-reveal>
           <div class="show-date-block">
             {parseDay(event.date) !== '—' ? (
               <><div class="mo">{parseMonth(event.date)}</div><div class="dy">{parseDay(event.date)}</div></>
@@ -57,7 +57,7 @@ function parseDay(dateStr: string): string {
             <span>Dates to be announced</span>
           </div>
           <span class="ticket-label ticket-label--notify">Notify Me</span>
-        </div>
+        </button>
       );
     })}
   </div>
@@ -170,6 +170,9 @@ function parseDay(dateStr: string): string {
     text-decoration: none;
     cursor: pointer;
     color: white;
+    width: 100%;
+    font: inherit;
+    text-align: left;
   }
   .show-card:last-child {
     border-bottom: 1px solid rgba(255, 255, 255, 0.2);

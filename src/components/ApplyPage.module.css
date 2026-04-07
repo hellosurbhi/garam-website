@@ -40,7 +40,7 @@
   z-index: 1;
   max-width: 640px;
   margin: 0 auto;
-  padding: 48px 24px 72px;
+  padding: 40px 20px 60px;
 }
 
 /* ─── Header ─────────────────────────────────────────────────── */
@@ -61,6 +61,7 @@
   border: none;
   cursor: pointer;
   padding: 0;
+  min-height: 48px;
 }
 
 .titleArea {
@@ -70,10 +71,10 @@
 
 .title {
   font-family: var(--font-playfair);
-  font-size: 34px;
+  font-size: clamp(36px, 5vw, 48px);
   font-weight: 700;
   color: var(--charcoal);
-  line-height: 1.15;
+  line-height: 1.1;
   margin-bottom: 10px;
 }
 
@@ -85,20 +86,17 @@
 }
 
 .divider {
-  width: 48px;
-  height: 1px;
-  background: rgba(var(--brand-red-rgb), 0.4);
-  margin: 18px auto 0;
+  display: none;
 }
 
 /* ─── Panel ──────────────────────────────────────────────────── */
 
 .panel {
-  background: white;
-  border-radius: 20px;
-  padding: 40px 36px;
-  box-shadow: 0 8px 40px rgba(0, 0, 0, 0.08);
-  border: 1px solid var(--border);
+  background: transparent;
+  border-radius: 0;
+  padding: 0;
+  box-shadow: none;
+  border: none;
 }
 
 /* ─── Form elements ──────────────────────────────────────────── */
@@ -111,10 +109,10 @@
   display: block;
   font-family: var(--font-body);
   font-size: 11px;
-  font-weight: 500;
+  font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 0.15em;
-  color: #3D3532;
+  color: var(--brand-red);
   margin-bottom: 7px;
 }
 
@@ -153,8 +151,8 @@
 
 .input {
   width: 100%;
-  padding: 14px 16px;
-  border-radius: 12px;
+  padding: 16px 18px;
+  border-radius: 16px;
   border: 1px solid var(--border);
   font-family: var(--font-body);
   font-size: 16px;
@@ -176,7 +174,7 @@
 
 .textarea {
   composes: input;
-  border-radius: 14px;
+  border-radius: 16px;
   resize: vertical;
   min-height: 100px;
   line-height: 1.55;
@@ -184,12 +182,20 @@
 
 .sectionTitle {
   font-family: var(--font-playfair);
-  font-size: 24px;
+  font-size: 28px;
   font-weight: 600;
   color: var(--charcoal);
   margin-bottom: 20px;
-  padding-bottom: 10px;
-  border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+  padding-bottom: 12px;
+  border-bottom: none;
+}
+.sectionTitle::after {
+  content: '';
+  display: block;
+  width: 48px;
+  height: 1px;
+  background: rgba(var(--brand-red-rgb), 0.3);
+  margin-top: 12px;
 }
 
 /* ─── Type toggle ────────────────────────────────────────────── */
@@ -216,6 +222,7 @@
 .typeButton {
   flex: 1;
   padding: 12px 16px;
+  min-height: 48px;
   border-radius: 100px;
   border: 1px solid rgba(0, 0, 0, 0.15);
   background: transparent;
@@ -371,16 +378,17 @@
 
 .submitButton {
   width: 100%;
-  padding: 16px 24px;
+  padding: 18px 32px;
   white-space: nowrap;
   border-radius: 100px;
   border: none;
   background: var(--brand-red);
   color: white;
   font-family: var(--font-body);
-  font-size: 17px;
-  font-weight: 600;
-  letter-spacing: 0.02em;
+  font-size: 18px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 1px;
   cursor: pointer;
   transition: background 0.2s, box-shadow 0.2s;
   display: flex;

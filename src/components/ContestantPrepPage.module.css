@@ -176,18 +176,13 @@
 .rulesList {
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: 14px;
 }
 
 .ruleCard {
   display: flex;
   gap: 14px;
   align-items: flex-start;
-  padding: 14px 16px;
-  border-radius: 12px;
-  background: white;
-  border: 1px solid rgba(0, 0, 0, 0.06);
-  border-left: 4px solid var(--electric-yellow);
 }
 
 .ruleNumber {
@@ -332,7 +327,6 @@
   border-radius: 12px;
   background: white;
   border: 1px solid rgba(0, 0, 0, 0.06);
-  border-top: 4px solid var(--electric-yellow);
   text-align: center;
 }
 
@@ -398,10 +392,6 @@
 @media (min-width: 768px) {
   .container {
     padding: 80px 64px 120px;
-  }
-
-  .ruleCard {
-    padding: 18px 22px;
   }
 
   .timeCard {

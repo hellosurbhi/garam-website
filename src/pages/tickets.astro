@@ -32,6 +32,7 @@ const eventSchemas = buildEventSchemas(upcomingForSchema);
   </Fragment>
 
   <main id="main-content" class="tickets-page">
+    <img class="tickets-bg" src="/images/higgs-field.webp" alt="" width="1200" height="800" aria-hidden="true" />
     <div class="tickets-container">
       {/* Header */}
       <div class="tickets-header">
@@ -122,6 +123,18 @@ const eventSchemas = buildEventSchemas(upcomingForSchema);
     position: relative;
     z-index: 1;
     animation: ticketsFadeIn 0.5s ease-out both;
+    overflow: hidden;
+  }
+  .tickets-bg {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center center;
+    display: block;
+    z-index: 0;
+    opacity: 0.06;
   }
 
   .tickets-container {

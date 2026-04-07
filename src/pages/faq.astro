@@ -88,7 +88,12 @@ const breadcrumbJsonLd = buildBreadcrumbJsonLd([
 
   <main id="main-content" class="faq-page">
     <div class="faq-hero">
-      <img src="/images/the-match.webp" alt="" width="1200" height="800" aria-hidden="true" />
+      <div class="faq-hero-item">
+        <img src="/images/the-match.webp" alt="" width="1200" height="800" aria-hidden="true" />
+      </div>
+      <div class="faq-hero-item">
+        <img src="/images/gmd-37.webp" alt="" width="1200" height="800" aria-hidden="true" />
+      </div>
     </div>
     <div class="faq-container">
       <!-- Header -->
@@ -143,11 +148,15 @@ const breadcrumbJsonLd = buildBreadcrumbJsonLd([
   }
 
   .faq-hero {
-    width: 100%;
-    height: 200px;
-    overflow: hidden;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 4px;
   }
-  .faq-hero img {
+  .faq-hero-item {
+    overflow: hidden;
+    aspect-ratio: 3 / 2;
+  }
+  .faq-hero-item img {
     width: 100%;
     height: 100%;
     object-fit: cover;
@@ -155,7 +164,8 @@ const breadcrumbJsonLd = buildBreadcrumbJsonLd([
     display: block;
   }
   @media (min-width: 768px) {
-    .faq-hero { height: 300px; }
+    .faq-hero { gap: 6px; }
+    .faq-hero-item { aspect-ratio: 16 / 9; }
   }
 
   .faq-container {

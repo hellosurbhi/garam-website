@@ -1,5 +1,22 @@
 # Changelog
 
+## Fix CodeRabbit code review comments (2026-04-07)
+
+Resolved actionable CodeRabbit review comments on PR #11.
+
+### What changed
+- **`src/components/home/HomeCreators.astro`**: Added `image` field to each host data object; render uses `host.image` instead of `host.name === 'Surbhi'` ternary. Added `:focus-visible` outline on host name links for keyboard accessibility.
+- **`src/components/home/HomeHero.astro`**: Added `aria-hidden="true"` to the decorative WebGL canvas. Added `:focus-visible` styles for `.btn-hot` and `.btn-outline` so keyboard users get a visible focus ring.
+- **`src/pages/index.astro`**: Guarded `[data-reveal]` IntersectionObserver behind `'IntersectionObserver' in window` check and `prefers-reduced-motion` media query — content is immediately revealed when JS is unavailable or reduced motion is preferred. Added `<noscript>` CSS fallback and `@media (prefers-reduced-motion)` rule to ensure content is never hidden.
+- **`src/pages/south-asian-dating-tips/[slug].astro`**: Replaced inline `style={i === 0 ? "margin-top: 0" : "margin-top: 12px"}` with a `.tip-post-h3--spaced` CSS class toggled via `class:list`.
+- **`src/components/admin/ApplicantModal.module.css`**: Bumped `statusSelect` and `notesTextarea` from `font-size: 14px` to `16px` to prevent iOS auto-zoom on form inputs.
+
+### Decisions
+- `HomePress.astro` press items are already `<a>` tags — that review comment was stale, no change needed.
+- `tickets.astro` `opacity: 0.5` on TBA card was already removed in a prior commit — no change needed.
+
+---
+
 ## Add event photography to homepage gallery (2026-04-07)
 
 Replaced the placeholder gradient gallery with real event photos from two Top Secret Comedy Club shows. 17 source photos analyzed, best 8 selected for the gallery mixing both events for variety (blindfolded guy choosing women + blindfolded woman choosing men).

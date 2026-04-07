@@ -15,32 +15,24 @@ const { left, right } = Astro.props;
 
 <div class="photo-pair">
   <div class="photo-pair-item">
-    <picture>
-      <source srcset={`${left.src}.avif`} type="image/avif" />
-      <source srcset={`${left.src}.webp`} type="image/webp" />
-      <img
-        src={`${left.src}.jpg`}
-        alt={left.alt}
-        width="1200"
-        height="800"
-        loading="lazy"
-        style={`object-position: ${left.position ?? 'center 40%'};`}
-      />
-    </picture>
+    <img
+      src={`/images/${left.src}.webp`}
+      alt={left.alt}
+      width="1200"
+      height="800"
+      loading="lazy"
+      style={`object-position: ${left.position ?? 'center 40%'};`}
+    />
   </div>
   <div class="photo-pair-item">
-    <picture>
-      <source srcset={`${right.src}.avif`} type="image/avif" />
-      <source srcset={`${right.src}.webp`} type="image/webp" />
-      <img
-        src={`${right.src}.jpg`}
-        alt={right.alt}
-        width="1200"
-        height="800"
-        loading="lazy"
-        style={`object-position: ${right.position ?? 'center 40%'};`}
-      />
-    </picture>
+    <img
+      src={`/images/${right.src}.webp`}
+      alt={right.alt}
+      width="1200"
+      height="800"
+      loading="lazy"
+      style={`object-position: ${right.position ?? 'center 40%'};`}
+    />
   </div>
 </div>
 
@@ -55,11 +47,9 @@ const { left, right } = Astro.props;
     overflow: hidden;
     aspect-ratio: 3 / 2;
   }
-  .photo-pair-item picture {
+  .photo-pair-item img {
     position: absolute;
     inset: 0;
-  }
-  .photo-pair-item img {
     width: 100%;
     height: 100%;
     object-fit: cover;

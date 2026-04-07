@@ -35,20 +35,19 @@ const steps = EXPERIENCE_STEPS;
 
 <style>
   .experience {
-    padding: 80px 20px;
-  }
-  .experience-inner {
-    max-width: 1200px;
-    margin: 0 auto;
+    position: relative;
+    overflow: hidden;
     display: flex;
     flex-direction: column;
-    gap: 16px;
+  }
+  .experience-inner {
+    display: flex;
+    flex-direction: column;
   }
   .experience-left,
   .experience-right {
     position: relative;
     overflow: hidden;
-    border-radius: 20px;
   }
   .exp-bg {
     position: absolute;
@@ -64,7 +63,7 @@ const steps = EXPERIENCE_STEPS;
   .exp-content {
     position: relative;
     z-index: 1;
-    padding: 40px 24px;
+    padding: 80px 20px;
   }
 
   .experience-left h2 {
@@ -132,13 +131,11 @@ const steps = EXPERIENCE_STEPS;
   }
 
   @media (min-width: 768px) {
-    .experience { padding: 120px 48px; }
     .experience-inner {
       display: grid;
       grid-template-columns: 1fr 1fr;
-      gap: 24px;
     }
-    .exp-content { padding: 48px 40px; }
+    .exp-content { padding: 120px 48px; }
     .experience-left .lead { font-size: 20px; margin-bottom: 32px; }
     .exp-step { grid-template-columns: 56px 1fr; gap: 20px; padding: 28px 0; }
     .exp-num { font-size: 42px; }

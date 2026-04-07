@@ -4,6 +4,7 @@ import { CREATOR_URLS } from '@/data/socials';
 const hosts = [
   {
     name: 'Surbhi',
+    image: '/images/surbhi.png',
     role: 'Co-Creator & Host',
     bio: "Surbhi is a New York-based stand-up comedian and the creative force behind Garam Masala Dating. She created the show in 2022 after noticing a gap in the South Asian comedy and dating space. What started as a one-off experiment in a downtown bar is now NYC's #1 live South Asian dating show, selling out 250-seat venues every week and expanding to LA, SF, and San Diego. She's performed at venues across the US and UK, and has accidentally matched three couples since launching the show. And counting.",
     credits: ['Stand-Up Comedian', 'Co-Creator', 'NYC · LA · SF'],
@@ -11,6 +12,7 @@ const hosts = [
   },
   {
     name: 'Wyatt',
+    image: '/images/wyatt.avif',
     role: 'Co-Host & Actor',
     bio: "Wyatt Feegrado is a stand-up comedian and actor who started sneaking out of his parents\u2019 house in Walnut Creek, California to do open mics at 16. He went on to attend NYU Tisch, then landed a starring role in ESPN+\u2019s Bettor Days, followed by HULU\u2019s Chicano Squad and the History Channel\u2019s Holy Marvels. He tours the US 11 months of the year and co-hosts the podcast Gen Zenophobic with his brother Luke. On Garam Masala, he\u2019s the reason no awkward silence survives longer than two seconds.",
     credits: ['Stand-Up Comedian', 'Actor', 'NYU Tisch', 'Co-Host'],
@@ -28,7 +30,7 @@ const hosts = [
     {hosts.map((host) => (
       <article class="host-card" data-reveal>
         <img
-          src={host.name === 'Surbhi' ? '/images/surbhi.png' : '/images/wyatt.avif'}
+          src={host.image}
           alt={host.name}
           class="host-avatar-img"
           width="120"
@@ -130,6 +132,12 @@ const hosts = [
     transition: color 0.2s;
   }
   .host-info h3 a:hover { color: var(--brand-red); }
+  .host-info h3 a:focus-visible {
+    color: var(--brand-red);
+    outline: 2px solid var(--brand-red);
+    outline-offset: 2px;
+    border-radius: 2px;
+  }
   .host-role {
     font-size: 11px;
     font-weight: 700;

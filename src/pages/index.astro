@@ -210,19 +210,32 @@ const eventSchemas = buildEventSchemas(upcomingForSchema);
   }
 
   // Scroll reveal observer
-  const observer = new IntersectionObserver(
-    (entries) => {
-      entries.forEach((entry) => {
-        if (entry.isIntersecting) {
-          entry.target.classList.add('revealed');
-          observer.unobserve(entry.target);
-        }
-      });
-    },
-    { threshold: 0.12 }
-  );
-  document.querySelectorAll('[data-reveal]').forEach((el) => observer.observe(el));
+  const revealNodes = document.querySelectorAll('[data-reveal]');
+  const prefersReducedMotion = window.matchMedia?.('(prefers-reduced-motion: reduce)')?.matches ?? false;
+
+  if (!('IntersectionObserver' in window) || prefersReducedMotion) {
+    revealNodes.forEach((el) => el.classList.add('revealed'));
+  } else {
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add('revealed');
+            observer.unobserve(entry.target);
+          }
+        });
+      },
+      { threshold: 0.12 }
+    );
+    revealNodes.forEach((el) => observer.observe(el));
+  }
 </script>
+
+<noscript>
+  <style>
+    [data-reveal] { opacity: 1 !important; transform: none !important; }
+  </style>
+</noscript>
 
 <style is:global>
   [data-reveal] {
@@ -233,6 +246,13 @@ const eventSchemas = buildEventSchemas(upcomingForSchema);
   [data-reveal].revealed {
     opacity: 1;
     transform: none;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    [data-reveal] {
+      opacity: 1;
+      transform: none;
+      transition: none;
+    }
   }
 
   /* Email popup */

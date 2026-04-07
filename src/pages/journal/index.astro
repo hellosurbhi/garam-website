@@ -50,7 +50,7 @@ const breadcrumbJsonLd = buildBreadcrumbJsonLd([
       <!-- Post list -->
       <div class="journal-list">
         {journalPostsPublished.length === 0 ? (
-          <p class="journal-empty">First essays drop April 7 — check back soon.</p>
+          <p class="journal-empty" set:html='New essays coming soon — follow us on <a href="https://www.instagram.com/garammasaladating/" target="_blank" rel="noopener noreferrer">Instagram</a> for the latest.' />
         ) : journalPostsPublished.map((post, i) => (
           <a
             href={`/journal/${post.slug}`}
@@ -199,5 +199,11 @@ const breadcrumbJsonLd = buildBreadcrumbJsonLd([
     font-size: 18px;
     color: #888;
     padding: 24px 0;
+  }
+
+  .journal-empty a {
+    color: var(--brand-red);
+    text-decoration: underline;
+    text-underline-offset: 2px;
   }
 </style>

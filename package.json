@@ -15,7 +15,9 @@
     "migrate:locations": "npx tsx scripts/migrate-locations.ts",
     "test": "vitest run",
     "test:coverage": "vitest run --coverage",
-    "prepare": "husky"
+    "prepare": "husky",
+    "images:organize": "node scripts/organize-images.js",
+    "images:organize:v": "VERBOSE=1 node scripts/organize-images.js"
   },
   "dependencies": {
     "@astrojs/react": "^5.0.2",

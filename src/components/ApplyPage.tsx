@@ -1,4 +1,4 @@
-import { useState, useEffect, useId, useMemo, type ChangeEvent } from "react";
+import { useState, useEffect, useRef, useId, useMemo, type ChangeEvent } from "react";
 import { ErrorBoundary } from "./ErrorBoundary";
 import { collection, addDoc, serverTimestamp } from "firebase/firestore";
 import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
@@ -103,6 +103,8 @@ function ApplyPageInner() {
   const [submitted, setSubmitted] = useState(false);
   const [termsAgreed, setTermsAgreed] = useState(false);
   const [showTermsModal, setShowTermsModal] = useState(false);
+  const termsModalRef = useRef<HTMLDivElement>(null);
+  const termsOpenerRef = useRef<HTMLElement | null>(null);
   const [canGoBack, setCanGoBack] = useState(false);
   const [toast, setToast] = useState<{ msg: string; ok: boolean } | null>(null);
 
@@ -125,6 +127,40 @@ function ApplyPageInner() {
     const id = setTimeout(() => setToast(null), 5000);
     return () => clearTimeout(id);
   }, [toast]);
+
+  useEffect(() => {
+    if (showTermsModal) {
+      termsOpenerRef.current = document.activeElement as HTMLElement;
+      requestAnimationFrame(() => {
+        termsModalRef.current?.querySelector<HTMLElement>('[aria-label="Close"]')?.focus();
+      });
+    } else if (termsOpenerRef.current) {
+      termsOpenerRef.current.focus();
+      termsOpenerRef.current = null;
+    }
+  }, [showTermsModal]);
+
+  function handleTermsKeyDown(e: React.KeyboardEvent) {
+    if (e.key === "Escape") {
+      setShowTermsModal(false);
+      return;
+    }
+    if (e.key === "Tab" && termsModalRef.current) {
+      const focusable = Array.from(
+        termsModalRef.current.querySelectorAll<HTMLElement>("button")
+      ).filter((el) => !el.disabled);
+      if (focusable.length === 0) return;
+      const first = focusable[0];
+      const last = focusable[focusable.length - 1];
+      if (e.shiftKey && document.activeElement === first) {
+        e.preventDefault();
+        last.focus();
+      } else if (!e.shiftKey && document.activeElement === last) {
+        e.preventDefault();
+        first.focus();
+      }
+    }
+  }
 
   function showToast(msg: string, ok: boolean) {
     setToast({ msg, ok });
@@ -417,13 +453,14 @@ function ApplyPageInner() {
                 </div>
 
                 <div className={styles.gridThree}>
-                  <FieldGroup label="Country" required error={errors.country}>
+                  <FieldGroup label="Country" required error={errors.country} htmlFor="geo-country">
                     {geoFailed ? (
-                      <button type="button" onClick={retryGeo} className={styles.retryButton}>
+                      <button type="button" id="geo-country" onClick={retryGeo} className={styles.retryButton}>
                         Failed to load countries — tap to retry
                       </button>
                     ) : (
                       <Select<SelectOption>
+                        inputId="geo-country"
                         options={countryOptions}
                         value={countryOptions.find((o) => o.value === form.country) ?? null}
                         onChange={handleCountryChange}
@@ -432,35 +469,34 @@ function ApplyPageInner() {
                         isSearchable
                         isLoading={geoLoading}
                         isDisabled={geoLoading}
-                        aria-label="Country"
                       />
                     )}
                   </FieldGroup>
 
                   {form.country && (
-                    <FieldGroup label="State" required error={errors.state}>
+                    <FieldGroup label="State" required error={errors.state} htmlFor="geo-state">
                       <Select<SelectOption>
+                        inputId="geo-state"
                         options={stateOptions}
                         value={stateOptions.find((o) => o.value === form.state) ?? null}
                         onChange={handleStateChange}
                         placeholder="Select…"
                         styles={formSelectStyles}
                         isSearchable
-                        aria-label="State"
                       />
                     </FieldGroup>
                   )}
 
                   {form.country && form.state && (
-                    <FieldGroup label="City" required error={errors.city}>
+                    <FieldGroup label="City" required error={errors.city} htmlFor="geo-city">
                       <Select<SelectOption>
+                        inputId="geo-city"
                         options={cityOptions}
                         value={cityOptions.find((o) => o.value === form.city) ?? null}
                         onChange={handleCityChange}
                         placeholder="Select…"
                         styles={formSelectStyles}
                         isSearchable
-                        aria-label="City"
                       />
                     </FieldGroup>
                   )}
@@ -692,8 +728,8 @@ function ApplyPageInner() {
 
       {/* ─── Terms & Conditions Modal ───────────────────── */}
       {showTermsModal && (
-        <div className={styles.termsOverlay} onClick={() => setShowTermsModal(false)} role="dialog" aria-modal="true" aria-labelledby="terms-modal-title">
-          <div className={styles.termsModal} onClick={(e) => e.stopPropagation()}>
+        <div className={styles.termsOverlay} onClick={() => setShowTermsModal(false)} onKeyDown={handleTermsKeyDown} role="dialog" aria-modal="true" aria-labelledby="terms-modal-title">
+          <div className={styles.termsModal} ref={termsModalRef} onClick={(e) => e.stopPropagation()}>
             <div className={styles.termsModalHeader}>
               <h2 id="terms-modal-title" className={styles.termsModalTitle}>Appearance Release &amp; Voluntary Participation Agreement</h2>
               <button type="button" className={styles.termsModalClose} onClick={() => setShowTermsModal(false)} aria-label="Close">

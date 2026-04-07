@@ -39,8 +39,8 @@ interface LinkDef {
 
 const links: LinkDef[] = [
   { label: "Apply to Be on the Show", href: "/apply", isPrimary: true, icon: "heart" },
-  { label: "Short form content — Instagram", href: SOCIAL_URLS.instagram, external: true, icon: "instagram" },
-  { label: "Full episodes — YouTube", href: SOCIAL_URLS.youtube, external: true, icon: "youtube" },
+  { label: "Short form content @ Instagram", href: SOCIAL_URLS.instagram, external: true, icon: "instagram" },
+  { label: "Full episodes @ YouTube", href: SOCIAL_URLS.youtube, external: true, icon: "youtube" },
   { label: "Upcoming Shows & Tickets", dialogTrigger: "events-trigger", icon: "ticket" },
   { label: "As Seen In", dialogTrigger: "press-trigger", icon: "mic" },
   { label: "Booking & Press Inquiries", href: "mailto:press@garammasaladating.com", icon: "mail" },
@@ -181,29 +181,30 @@ const reversedPress = [...pressItems].reverse();
       <div class="modal-divider" />
 
       <div class="event-list">
-        {reversedPress.map((item) => (
-          <a
-            href={item.url}
-            target="_blank"
-            rel="noopener noreferrer"
-            class="press-item"
-          >
-            <div class="press-content">
-              <div class="press-badge-row">
-                <span class="press-badge">
-                  {item.type === "podcast" ? (
-                    <svg xmlns="http://www.w3.org/2000/svg" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" x2="12" y1="19" y2="22"/></svg>
-                  ) : (
-                    <svg xmlns="http://www.w3.org/2000/svg" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 22h16a2 2 0 0 0 2-2V4a2 2 0 0 0-2-2H8a2 2 0 0 0-2 2v16a2 2 0 0 1-2 2Zm0 0a2 2 0 0 1-2-2v-9c0-1.1.9-2 2-2h2"/><path d="M18 14h-8"/><path d="M15 18h-5"/><path d="M10 6h8v4h-8V6Z"/></svg>
-                  )}
-                  {item.type}
-                </span>
+        {reversedPress.map((item) => {
+          const inner = (
+            <>
+              <div class="press-content">
+                <div class="press-badge-row">
+                  <span class="press-badge">
+                    {item.type === "podcast" ? (
+                      <svg xmlns="http://www.w3.org/2000/svg" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" x2="12" y1="19" y2="22"/></svg>
+                    ) : (
+                      <svg xmlns="http://www.w3.org/2000/svg" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 22h16a2 2 0 0 0 2-2V4a2 2 0 0 0-2-2H8a2 2 0 0 0-2 2v16a2 2 0 0 1-2 2Zm0 0a2 2 0 0 1-2-2v-9c0-1.1.9-2 2-2h2"/><path d="M18 14h-8"/><path d="M15 18h-5"/><path d="M10 6h8v4h-8V6Z"/></svg>
+                    )}
+                    {item.type}
+                  </span>
+                  {!item.url && <span class="press-badge press-badge--soon">Coming Soon</span>}
+                </div>
+                <p class="press-source">{item.source}</p>
               </div>
-              <p class="press-source">{item.source}</p>
-            </div>
-            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="press-external-icon" aria-hidden="true"><path d="M15 3h6v6"/><path d="M10 14 21 3"/><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/></svg>
-          </a>
-        ))}
+              {item.url && <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="press-external-icon" aria-hidden="true"><path d="M15 3h6v6"/><path d="M10 14 21 3"/><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/></svg>}
+            </>
+          );
+          return item.url
+            ? <a href={item.url} target="_blank" rel="noopener noreferrer" class="press-item">{inner}</a>
+            : <div class="press-item press-item--disabled">{inner}</div>;
+        })}
       </div>
     </div>
   </dialog>
@@ -642,5 +643,20 @@ const reversedPress = [...pressItems].reverse();
   .press-external-icon {
     flex-shrink: 0;
     color: var(--brand-red);
+  }
+
+  .press-item--disabled {
+    opacity: 0.5;
+    cursor: default;
+  }
+
+  .press-item--disabled:hover {
+    background: white;
+    border-color: rgba(0, 0, 0, 0.06);
+  }
+
+  .press-badge--soon {
+    background: rgba(0, 0, 0, 0.06);
+    color: #888;
   }
 </style>

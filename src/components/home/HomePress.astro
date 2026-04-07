@@ -6,7 +6,9 @@ import { pressItems } from '@/data/press';
   <div class="press-label">As Seen In</div>
   <div class="press-logos">
     {pressItems.map((item) => (
-      <a href={item.url} target="_blank" rel="noopener noreferrer" class="press-name">{item.source}</a>
+      item.url
+        ? <a href={item.url} target="_blank" rel="noopener noreferrer" class="press-name">{item.source}</a>
+        : <span class="press-name press-name--coming-soon">{item.source}</span>
     ))}
   </div>
 </section>
@@ -45,6 +47,10 @@ import { pressItems } from '@/data/press';
     transition: color 0.2s;
   }
   .press-name:hover { color: var(--brand-red); }
+  .press-name--coming-soon {
+    opacity: 0.4;
+    cursor: default;
+  }
 
   @media (min-width: 768px) {
     .press { padding: 72px 48px; }

@@ -1,4 +1,6 @@
 import { Component, type ReactNode } from "react";
+import { SOCIAL_URLS } from "@/data/socials";
+import styles from "./ErrorBoundary.module.css";
 
 interface Props {
   children: ReactNode;
@@ -18,46 +20,24 @@ export class ErrorBoundary extends Component<Props, State> {
   render() {
     if (this.state.hasError) {
       return (
-        <div style={{
-          minHeight: "60vh",
-          display: "flex",
-          flexDirection: "column",
-          alignItems: "center",
-          justifyContent: "center",
-          padding: "32px",
-          textAlign: "center",
-          fontFamily: "var(--font-body), sans-serif",
-        }}>
-          <p style={{ fontSize: "48px", marginBottom: "16px" }}>🌶️</p>
-          <h1 style={{ fontSize: "22px", marginBottom: "12px", color: "var(--charcoal)" }}>
-            Something went wrong
-          </h1>
-          <p style={{ fontSize: "16px", color: "#666", lineHeight: 1.6, maxWidth: "400px" }}>
+        <div className={styles.container}>
+          <p className={styles.emoji}>🌶️</p>
+          <h1 className={styles.title}>Something went wrong</h1>
+          <p className={styles.description}>
             Please refresh the page and try again. If the problem persists,
             DM us on{" "}
             <a
-              href="https://instagram.com/garammasaladating"
+              href={SOCIAL_URLS.instagram}
               target="_blank"
               rel="noopener noreferrer"
-              style={{ color: "var(--brand-red)" }}
+              className={styles.link}
             >
               @garammasaladating
             </a>.
           </p>
           <button
             onClick={() => window.location.reload()}
-            style={{
-              marginTop: "24px",
-              padding: "14px 32px",
-              borderRadius: "50px",
-              border: "none",
-              background: "var(--brand-red)",
-              color: "white",
-              fontSize: "16px",
-              fontWeight: 600,
-              cursor: "pointer",
-              fontFamily: "var(--font-body), sans-serif",
-            }}
+            className={styles.reloadButton}
           >
             Refresh Page
           </button>

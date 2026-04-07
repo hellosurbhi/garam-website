@@ -10,6 +10,7 @@ import { COMMUNITY_OPTIONS, INCOME_OPTIONS } from "@/types/application";
 import { events } from "@/data/events";
 import { formSelectStyles } from "@/utils/reactSelectStyles";
 import styles from "./ApplyPage.module.css";
+import { SOCIAL_URLS } from "@/data/socials";
 
 /* ─── Shared sub-components ──────────────────────────────────── */
 
@@ -295,7 +296,7 @@ function ApplyPageInner() {
                 <p className={styles.successCardText}>
                   Follow{" "}
                   <a
-                    href="https://instagram.com/garammasaladating"
+                    href={SOCIAL_URLS.instagram}
                     target="_blank"
                     rel="noopener noreferrer"
                     className={styles.successLink}
@@ -487,7 +488,7 @@ function ApplyPageInner() {
                   <p className={styles.igHint}>
                     Follow{" "}
                     <a
-                      href="https://instagram.com/garammasaladating"
+                      href={SOCIAL_URLS.instagram}
                       target="_blank"
                       rel="noopener noreferrer"
                       className={styles.igHintLink}

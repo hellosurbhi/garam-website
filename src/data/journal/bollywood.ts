@@ -338,7 +338,7 @@ export const bollywoodPosts: JournalPost[] = [
       },
       {
         type: "p",
-        text: "Cocktail is the most complete situationship film Bollywood has made, and it\u2019s barely discussed as such because the film itself doesn\u2019t realize what it\u2019s doing. Meera (Deepika Padukone in the early going) is in a full situationship with Gautam for the entire first half of the film. He\u2019s living with her, sleeping with her, letting her take care of him — and not labeling any of it, because the label would mean giving up his optionality.",
+        text: "Cocktail is the most complete situationship film Bollywood has made, and it\u2019s barely discussed as such because the film itself doesn\u2019t realize what it\u2019s doing. Veronica (Deepika Padukone in the early going) is in a full situationship with Gautam for the entire first half of the film. He\u2019s living with her, sleeping with her, letting her take care of him — and not labeling any of it, because the label would mean giving up his optionality.",
       },
       {
         type: "p",

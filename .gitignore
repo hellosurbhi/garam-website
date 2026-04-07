@@ -39,3 +39,4 @@ SITE-AUDIT.md
 
 # stryker temp files
 .stryker-tmp
+.gstack/

@@ -1,0 +1,7 @@
+{
+  "projects": {
+    "  firebase deploy --only firestore:rules": "garam-masala-9f15b"
+  },
+  "targets": {},
+  "etags": {}
+}

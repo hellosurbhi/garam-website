@@ -41,7 +41,7 @@ const socials = [
       <a href="/" aria-label="Garam Masala Dating Home">
         <img src="/images/logo.svg" alt="Garam Masala Dating Show" class="footer-logo" width="160" height="82" loading="lazy" />
       </a>
-      <p>{SITE.footerLine}</p>
+      <p>NYC's #1 live South Asian dating show.<br />Hosted by Surbhi & Wyatt.</p>
       <div class="footer-social">
         {socials.map((s) => (
           <a href={s.href} target="_blank" rel="noopener noreferrer" aria-label={s.aria}><Fragment set:html={SOCIAL_ICON_SVGS[s.icon]} /></a>
@@ -105,13 +105,13 @@ const socials = [
     line-height: 0;
   }
   .footer-logo {
-    height: 36px;
+    height: 44px;
     width: auto;
     margin-bottom: 10px;
     filter: brightness(0) invert(1);
   }
   .footer-brand p {
-    font-size: 13px;
+    font-size: 15px;
     color: rgba(255, 255, 255, 0.5);
     line-height: 1.6;
     margin-bottom: 16px;
@@ -135,8 +135,8 @@ const socials = [
     transition: border-color 0.2s, color 0.2s;
   }
   .footer-social a :global(svg) {
-    width: 16px;
-    height: 16px;
+    width: 18px;
+    height: 18px;
   }
   .footer-social a:hover {
     border-color: var(--brand-red);
@@ -155,9 +155,9 @@ const socials = [
   }
   .footer-col ul {
     list-style: none;
-    display: flex;
-    flex-direction: column;
-    gap: 4px;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 4px 16px;
   }
   .footer-col ul li a {
     color: rgba(255, 255, 255, 0.7);
@@ -222,7 +222,7 @@ const socials = [
     .footer-social a { width: 32px; height: 32px; }
     .footer-social a :global(svg) { width: 18px; height: 18px; }
     .footer-col h4 { margin-top: 0; margin-bottom: 20px; }
-    .footer-col ul { gap: 10px; }
+    .footer-col ul { display: flex; flex-direction: column; gap: 10px; }
     .footer-col .footer-shows-list { grid-template-columns: 1fr 1fr; gap: 10px 24px; }
     .footer-bottom { flex-direction: row; justify-content: space-between; padding-top: 24px; gap: 0; }
     .footer-copy, .footer-legal a { font-size: 13px; }

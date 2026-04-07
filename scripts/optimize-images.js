@@ -6,6 +6,10 @@ const ROOT = resolve(import.meta.dirname, '..');
 const PUBLIC = join(ROOT, 'public');
 const GALLERY_DIR = join(PUBLIC, 'images', 'gallery');
 
+const VERBOSE = !!process.env.VERBOSE;
+const log = (...args) => { if (VERBOSE) console.log(...args); };
+const logError = (...args) => { if (VERBOSE) console.error(...args); };
+
 // Ensure output dirs exist
 [GALLERY_DIR].forEach(d => { if (!existsSync(d)) mkdirSync(d, { recursive: true }); });
 
@@ -32,13 +36,13 @@ const otherImages = [
 async function processImage(srcPath, outputDir, outputName, maxWidth = 1200) {
   const input = join(ROOT, srcPath);
   if (!existsSync(input)) {
-    console.error(`  SKIP (not found): ${srcPath}`);
+    logError(`  SKIP (not found): ${srcPath}`);
     return;
   }
 
   const img = sharp(input);
   const meta = await img.metadata();
-  console.log(`  ${srcPath} — ${meta.width}x${meta.height} (${(meta.size / 1024 / 1024).toFixed(1)}MB)`);
+  log(`  ${srcPath} — ${meta.width}x${meta.height} (${(meta.size / 1024 / 1024).toFixed(1)}MB)`);
 
   const resized = img.resize({ width: maxWidth, height: maxWidth, fit: 'inside', withoutEnlargement: true });
 
@@ -54,48 +58,48 @@ async function processImage(srcPath, outputDir, outputName, maxWidth = 1200) {
     const out = join(outputDir, `${outputName}.${ext}`);
     const outMeta = await sharp(out).metadata();
     const sizeKB = (outMeta.size / 1024).toFixed(0);
-    console.log(`    → ${outputName}.${ext}: ${outMeta.width}x${outMeta.height} (${sizeKB}KB)`);
+    log(`    → ${outputName}.${ext}: ${outMeta.width}x${outMeta.height} (${sizeKB}KB)`);
   }
 }
 
 async function processOgImage() {
   const src = join(ROOT, 'src/data/Garammasaladating-7.jpg');
   if (!existsSync(src)) {
-    console.error('  SKIP OG image (not found)');
+    logError('  SKIP OG image (not found)');
     return;
   }
 
-  console.log('\nOG Image (1200x630 crop):');
+  log('\nOG Image (1200x630 crop):');
   const img = sharp(src);
   const meta = await img.metadata();
-  console.log(`  source: ${meta.width}x${meta.height}`);
+  log(`  source: ${meta.width}x${meta.height}`);
 
   // Resize to cover 1200x630, then extract center
   await img
     .resize({ width: 1200, height: 630, fit: 'cover', position: 'centre' })
     .jpeg({ quality: 85, mozjpeg: true })
-    .toFile(join(PUBLIC, 'og-image-new.jpg'));
+    .toFile(join(PUBLIC, 'og-image.jpg'));
 
-  const outMeta = await sharp(join(PUBLIC, 'og-image-new.jpg')).metadata();
-  console.log(`  → og-image-new.jpg: ${outMeta.width}x${outMeta.height} (${(outMeta.size / 1024).toFixed(0)}KB)`);
+  const outMeta = await sharp(join(PUBLIC, 'og-image.jpg')).metadata();
+  log(`  → og-image.jpg: ${outMeta.width}x${outMeta.height} (${(outMeta.size / 1024).toFixed(0)}KB)`);
 }
 
 async function main() {
-  console.log('=== Gallery Images (8) ===\n');
+  log('=== Gallery Images (8) ===\n');
   for (const img of galleryImages) {
     await processImage(img.src, GALLERY_DIR, img.name);
-    console.log('');
+    log('');
   }
 
-  console.log('\n=== Other Page Images (4) ===\n');
+  log('\n=== Other Page Images (4) ===\n');
   for (const img of otherImages) {
     await processImage(img.src, img.dir, img.name);
-    console.log('');
+    log('');
   }
 
   await processOgImage();
 
-  console.log('\nDone! All images optimized.');
+  log('\nDone! All images optimized.');
 }
 
 main().catch(err => {

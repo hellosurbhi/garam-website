@@ -3,9 +3,9 @@ const YOUTUBE_ID = 'AXDhphHBUj4';
 const THUMBNAIL = `https://img.youtube.com/vi/${YOUTUBE_ID}/maxresdefault.jpg`;
 
 const reels = [
-  { url: 'https://www.instagram.com/p/C79Pohcxu4j/', label: 'Blindfold Round' },
-  { url: 'https://www.instagram.com/p/DWeM47lkTXS/', label: 'Audience Reactions' },
-  { url: 'https://www.instagram.com/reel/DWuAL_REcJD/', label: 'Show Highlights' },
+  'https://www.instagram.com/p/C79Pohcxu4j/embed/',
+  'https://www.instagram.com/p/DWeM47lkTXS/embed/',
+  'https://www.instagram.com/reel/DWuAL_REcJD/embed/',
 ];
 ---
 
@@ -32,14 +32,15 @@ const reels = [
     </div>
 
     <div class="reels-row" data-reveal>
-      {reels.map((reel) => (
-        <a href={reel.url} target="_blank" rel="noopener noreferrer" class="reel-card">
-          <div class="reel-icon">
-            <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="5 3 19 12 5 21 5 3"/></svg>
-          </div>
-          <span class="reel-label">{reel.label}</span>
-          <svg class="reel-arrow" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17 17 7"/><path d="M7 7h10v10"/></svg>
-        </a>
+      {reels.map((src) => (
+        <div class="reel-embed">
+          <iframe
+            src={src}
+            loading="lazy"
+            allowtransparency="true"
+            title="Instagram reel"
+          ></iframe>
+        </div>
       ))}
     </div>
   </div>
@@ -138,61 +139,34 @@ const reels = [
   .reels-row {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
-    gap: 12px;
-    margin-top: 16px;
+    gap: 16px;
+    margin-top: 32px;
   }
-  .reel-card {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    padding: 16px;
-    background: white;
+  .reel-embed {
     border-radius: 14px;
-    text-decoration: none;
+    overflow: hidden;
+    background: white;
     border: 1px solid rgba(0, 0, 0, 0.06);
-    transition: border-color 0.2s, box-shadow 0.2s;
   }
-  .reel-card:hover {
-    border-color: rgba(var(--brand-red-rgb), 0.3);
-    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
+  .reel-embed iframe {
+    width: 100%;
+    height: 480px;
+    border: none;
+    display: block;
   }
-  .reel-icon {
-    width: 40px;
-    height: 40px;
-    border-radius: 50%;
-    background: rgba(var(--brand-red-rgb), 0.1);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    flex-shrink: 0;
-    color: var(--brand-red);
-  }
-  .reel-label {
-    font-family: var(--font-body), sans-serif;
-    font-size: 14px;
-    font-weight: 600;
-    color: var(--charcoal);
-    flex: 1;
-  }
-  .reel-arrow {
-    color: var(--brand-red);
-    flex-shrink: 0;
-    opacity: 0.5;
-    transition: opacity 0.2s;
-  }
-  .reel-card:hover .reel-arrow { opacity: 1; }
 
   @media (max-width: 600px) {
     .reels-row {
       grid-template-columns: 1fr;
-      gap: 8px;
+      gap: 12px;
+    }
+    .reel-embed iframe {
+      height: 520px;
     }
   }
 
   @media (min-width: 768px) {
     .video { padding: 80px 48px; }
     .video-header { margin-bottom: 48px; }
-    .reels-row { gap: 16px; }
-    .reel-card { padding: 18px 20px; }
   }
 </style>

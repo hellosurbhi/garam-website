@@ -2,14 +2,12 @@
 const hosts = [
   {
     name: 'Surbhi',
-    image: '/images/surbhi.png',
     role: 'Co-Creator & Host',
     bio: "Surbhi is a stand-up comedian and the creative force behind Garam Masala Dating. She created the show in 2022, turning a one-off bar experiment into NYC's biggest live dating show — selling out 250-seat venues every week.",
     credits: ['Stand-Up Comedian', 'Co-Creator', 'NYC · LA · SF'],
   },
   {
     name: 'Wyatt',
-    image: '/images/wyatt.avif',
     role: 'Co-Host & Actor',
     bio: "Wyatt Feegrado is a stand-up comedian and actor who\u2019s starred in ESPN+\u2019s Bettor Days, Hulu\u2019s Chicano Squad, and the History Channel\u2019s Holy Marvels. On Garam Masala, he\u2019s the reason no awkward silence lasts longer than two seconds.",
     credits: ['Stand-Up Comedian', 'Actor', 'NYU Tisch', 'Co-Host'],
@@ -35,14 +33,6 @@ const hosts = [
   <div class="hosts-grid">
     {hosts.map((host) => (
       <article class="host-card" data-reveal>
-        <img
-          src={host.image}
-          alt={host.name}
-          class="host-avatar-img"
-          width="120"
-          height="120"
-          loading="lazy"
-        />
         <div class="host-info">
           <h3>
             <a href="/hosts">{host.name}</a>
@@ -110,14 +100,6 @@ const hosts = [
   .host-card:hover {
     border-color: var(--brand-red);
     background: rgba(var(--brand-red-rgb), 0.06);
-  }
-  .host-avatar-img {
-    width: 96px;
-    height: 96px;
-    border-radius: 50%;
-    border: 3px solid var(--brand-red);
-    object-fit: cover;
-    flex-shrink: 0;
   }
   .host-info h3 { margin-bottom: 4px; }
   .host-info h3 a {
@@ -206,14 +188,9 @@ const hosts = [
     .host-card {
       border-radius: 20px;
       padding: 48px 40px;
-      display: grid;
-      grid-template-columns: 120px 1fr;
-      gap: 28px;
       align-items: start;
       text-align: left;
     }
-    .host-avatar { width: 120px; height: 120px; font-size: 52px; }
-    .host-avatar-img { width: 120px; height: 120px; }
     .host-info h3 a { font-size: 32px; }
     .host-role { margin-bottom: 16px; }
     .host-credits { justify-content: flex-start; }

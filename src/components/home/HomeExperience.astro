@@ -15,7 +15,7 @@ const steps = EXPERIENCE_STEPS;
       </div>
     </div>
     <div class="experience-right">
-      <img class="exp-bg" src="/images/pure-chaos.webp" alt="" width="1200" height="800" loading="lazy" aria-hidden="true" />
+      <img class="exp-bg exp-bg-zoom" src="/images/pure-chaos.webp" alt="" width="1200" height="800" loading="lazy" aria-hidden="true" />
       <div class="exp-content">
         <div class="experience-steps">
           {steps.map((step, i) => (
@@ -59,6 +59,11 @@ const steps = EXPERIENCE_STEPS;
     display: block;
     z-index: 0;
     opacity: 0.35;
+  }
+  .exp-bg-zoom {
+    inset: -5%;
+    width: 110%;
+    height: 110%;
   }
   .exp-content {
     position: relative;

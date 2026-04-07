@@ -10,30 +10,47 @@ const { source = '' } = Astro.props;
     <button type="button" class="modal-close" aria-label="Close">
       <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
     </button>
-    <div id="notify-form-view">
-      <h2 id="notify-modal-title" class="modal-title">Get Notified</h2>
-      <p class="modal-subtitle">We'll email you when tickets drop for <strong id="notify-city-name"></strong>.</p>
-      <form id="notify-form" class="modal-form">
-        <input type="email" id="notify-email" placeholder="Your email" required aria-label="Email address" />
-        <input type="hidden" id="notify-city" />
-        <p id="notify-error" class="modal-error" hidden aria-live="assertive"></p>
-        <button type="submit" class="modal-submit">Notify Me</button>
-      </form>
-    </div>
-    <div id="notify-success" class="modal-success" role="status" aria-live="polite" tabindex="-1" hidden>
-      <p>You're on the list! We'll let you know.</p>
+    <!-- min-height prevents CLS when switching between steps -->
+    <div class="notify-steps-wrapper">
+      <div id="notify-form-view">
+        <h2 id="notify-modal-title" class="modal-title">Get Notified</h2>
+        <p class="modal-subtitle">We'll email you when tickets drop for <strong id="notify-city-name"></strong>.</p>
+        <form id="notify-form" class="modal-form">
+          <input type="text" id="notify-firstname" placeholder="Your first name" required aria-label="First name" />
+          <input type="email" id="notify-email" placeholder="Your email" required aria-label="Email address" />
+          <input type="hidden" id="notify-city" />
+          <p id="notify-error" class="modal-error" hidden aria-live="assertive"></p>
+          <button type="submit" class="modal-submit">Notify Me</button>
+        </form>
+      </div>
+      <div id="notify-phone-view" hidden>
+        <h2 class="modal-title">One more thing…</h2>
+        <p class="modal-subtitle">Add your number for text-only ticket drops.</p>
+        <form id="notify-phone-form" class="modal-form">
+          <input type="tel" id="notify-phone" placeholder="+1 (555) 123-4567" aria-label="Phone number (include country code)" />
+          <p id="notify-phone-error" class="modal-error" hidden aria-live="assertive"></p>
+          <button type="submit" class="modal-submit">Send Me Drops</button>
+        </form>
+        <button type="button" id="notify-skip" class="modal-skip">Maybe later</button>
+      </div>
+      <div id="notify-success" class="modal-success" role="status" aria-live="polite" tabindex="-1" hidden>
+        <p>You're on the list! We'll let you know.</p>
+      </div>
     </div>
   </div>
 </dialog>
 
 <script>
   import { getFirebaseDb } from '@/lib/firebase';
-  import { collection, addDoc } from 'firebase/firestore';
+  import { collection, addDoc, updateDoc, type DocumentReference } from 'firebase/firestore';
 
   const dialog = document.getElementById('notify-modal') as HTMLDialogElement;
   if (dialog) {
     const source = (dialog as HTMLElement).dataset.source ?? '';
     let openerEl: HTMLElement | null = null;
+    let notifyDocRef: DocumentReference | null = null;
+    let notifyFirstName = '';
+    let notifyEmail = '';
 
     // Restore focus to the element that opened the modal
     dialog.addEventListener('close', () => {
@@ -49,10 +66,13 @@ const { source = '' } = Astro.props;
         const cityInput = document.getElementById('notify-city') as HTMLInputElement;
         if (nameEl) nameEl.textContent = city;
         if (cityInput) cityInput.value = city;
+        // Reset to form state
         document.getElementById('notify-form-view')?.removeAttribute('hidden');
+        document.getElementById('notify-phone-view')?.setAttribute('hidden', '');
         document.getElementById('notify-success')?.setAttribute('hidden', '');
         const errorEl = document.getElementById('notify-error');
         if (errorEl) { errorEl.textContent = ''; errorEl.setAttribute('hidden', ''); }
+        notifyDocRef = null;
         openerEl = document.activeElement as HTMLElement;
         dialog.showModal();
         (dialog.querySelector('.modal-close') as HTMLElement | null)?.focus();
@@ -69,28 +89,90 @@ const { source = '' } = Astro.props;
       if (e.target === dialog) dialog.close();
     });
 
-    // Form submit — write to notifications collection
+    // Step 1: email form
     document.getElementById('notify-form')?.addEventListener('submit', async (e) => {
       e.preventDefault();
-      const email = (document.getElementById('notify-email') as HTMLInputElement).value;
+      notifyFirstName = (document.getElementById('notify-firstname') as HTMLInputElement).value.trim();
+      notifyEmail = (document.getElementById('notify-email') as HTMLInputElement).value;
       const city = (document.getElementById('notify-city') as HTMLInputElement).value;
       const submitBtn = (e.target as HTMLFormElement).querySelector<HTMLButtonElement>('[type="submit"]');
       const errorEl = document.getElementById('notify-error');
       if (submitBtn) submitBtn.disabled = true;
       try {
         const db = getFirebaseDb();
-        const data: Record<string, string> = { email, city, createdAt: new Date().toISOString() };
+        const data: Record<string, string> = { firstName: notifyFirstName, email: notifyEmail, city, createdAt: new Date().toISOString() };
         if (source) data.source = source;
-        await addDoc(collection(db, 'notifications'), data);
+        notifyDocRef = await addDoc(collection(db, 'notifications'), data);
+        if (errorEl) { errorEl.textContent = ''; errorEl.setAttribute('hidden', ''); }
         document.getElementById('notify-form-view')?.setAttribute('hidden', '');
-        const successEl = document.getElementById('notify-success') as HTMLElement | null;
-        successEl?.removeAttribute('hidden');
-        successEl?.focus();
+        document.getElementById('notify-phone-view')?.removeAttribute('hidden');
+        (document.getElementById('notify-phone') as HTMLInputElement | null)?.focus();
       } catch {
         if (errorEl) { errorEl.textContent = 'Something went wrong. Please try again.'; errorEl.removeAttribute('hidden'); }
       } finally {
         if (submitBtn) submitBtn.disabled = false;
       }
+    });
+
+    // Step 2: phone form
+    document.getElementById('notify-phone-form')?.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const raw = (document.getElementById('notify-phone') as HTMLInputElement).value;
+      const cleaned = raw.replace(/[\s\-().]/g, '');
+      const phoneErrorEl = document.getElementById('notify-phone-error');
+
+      if (!cleaned) {
+        // Empty — show success
+        document.getElementById('notify-phone-view')?.setAttribute('hidden', '');
+        const successEl = document.getElementById('notify-success') as HTMLElement | null;
+        successEl?.removeAttribute('hidden');
+        successEl?.focus();
+        return;
+      }
+
+      if (!/^\+\d{7,15}$/.test(cleaned)) {
+        if (phoneErrorEl) {
+          phoneErrorEl.textContent = 'Include your country code, e.g. +1 555 123 4567';
+          phoneErrorEl.removeAttribute('hidden');
+        }
+        return;
+      }
+
+      const submitBtn = (e.target as HTMLFormElement).querySelector<HTMLButtonElement>('[type="submit"]');
+      if (submitBtn) submitBtn.disabled = true;
+      try {
+        const db = getFirebaseDb();
+        if (notifyDocRef) {
+          await updateDoc(notifyDocRef, { phone: cleaned });
+        } else {
+          await addDoc(collection(db, 'notifications'), {
+            firstName: notifyFirstName,
+            email: notifyEmail,
+            phone: cleaned,
+            source,
+            createdAt: new Date().toISOString(),
+          });
+        }
+        document.getElementById('notify-phone-view')?.setAttribute('hidden', '');
+        const successEl = document.getElementById('notify-success') as HTMLElement | null;
+        successEl?.removeAttribute('hidden');
+        successEl?.focus();
+      } catch (err) {
+        if (phoneErrorEl) {
+          phoneErrorEl.textContent = err instanceof Error ? err.message : 'Something went wrong. Try again or skip.';
+          phoneErrorEl.removeAttribute('hidden');
+        }
+      } finally {
+        if (submitBtn) submitBtn.disabled = false;
+      }
+    });
+
+    // Skip phone step
+    document.getElementById('notify-skip')?.addEventListener('click', () => {
+      document.getElementById('notify-phone-view')?.setAttribute('hidden', '');
+      const successEl = document.getElementById('notify-success') as HTMLElement | null;
+      successEl?.removeAttribute('hidden');
+      successEl?.focus();
     });
   }
 </script>
@@ -130,6 +212,10 @@ const { source = '' } = Astro.props;
   @keyframes modalIn {
     from { opacity: 0; transform: scale(0.95) translateY(8px); }
     to { opacity: 1; transform: scale(1) translateY(0); }
+  }
+  /* Prevent CLS when switching between steps */
+  .notify-steps-wrapper {
+    min-height: 260px;
   }
   .modal-close {
     position: absolute;
@@ -202,6 +288,19 @@ const { source = '' } = Astro.props;
   }
   .modal-submit:hover { background: var(--brand-red-dark); }
   .modal-submit:disabled { opacity: 0.6; cursor: not-allowed; }
+  .modal-skip {
+    background: none;
+    border: none;
+    color: var(--muted);
+    font-size: 14px;
+    font-family: var(--font-body), sans-serif;
+    margin-top: 12px;
+    transition: color 0.2s;
+    padding: 12px 16px;
+    min-height: var(--touch-target);
+    cursor: pointer;
+  }
+  .modal-skip:hover { color: var(--charcoal); }
   .modal-success {
     text-align: center;
     padding: 24px 0;

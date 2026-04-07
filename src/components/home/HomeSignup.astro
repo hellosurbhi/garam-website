@@ -6,44 +6,53 @@
   <h2 id="spicelist-heading" data-reveal>Join the Spice List</h2>
   <p data-reveal>Get exclusive discount codes for cheaper (and sometimes free) tickets.</p>
 
-  <div id="nl-step-1" data-reveal>
-    <form id="nl-email-form" class="spicelist-form">
-      <input type="email" id="nl-email" placeholder="Your email" required aria-label="Email address" />
-      <p id="nl-email-error" class="spicelist-error" hidden role="alert"></p>
-      <button type="submit">Get My Discount Code</button>
-    </form>
-    <p class="spicelist-trust">Just discount codes and show announcements.</p>
-  </div>
+  <!-- min-height prevents CLS when switching between steps -->
+  <div class="nl-steps-wrapper" data-reveal>
+    <div id="nl-step-1">
+      <form id="nl-email-form" class="spicelist-form">
+        <input type="text" id="nl-firstname" placeholder="Your first name" required aria-label="First name" />
+        <input type="email" id="nl-email" placeholder="Your email" required aria-label="Email address" />
+        <p id="nl-email-error" class="spicelist-error" hidden role="alert"></p>
+        <button type="submit">Get My Discount Code</button>
+      </form>
+      <p class="spicelist-trust">Just discount codes and show announcements.</p>
+    </div>
 
-  <div id="nl-step-2" hidden data-reveal aria-live="polite">
-    <p class="nl-step2-text">Add your number for text-only discounts and free ticket drops.</p>
-    <form id="nl-phone-form" class="spicelist-form">
-      <input type="tel" id="nl-phone" placeholder="Your phone number" aria-label="Phone number" />
-      <button type="submit">Send Me Deals</button>
-    </form>
-    <button type="button" id="nl-skip" class="spicelist-skip">Maybe later</button>
-  </div>
+    <div id="nl-step-2" hidden aria-live="polite">
+      <p class="nl-step2-text">Add your number for text-only discounts and free ticket drops.</p>
+      <form id="nl-phone-form" class="spicelist-form">
+        <input type="tel" id="nl-phone" placeholder="+1 (555) 123-4567" aria-label="Phone number (include country code)" />
+        <p id="nl-phone-error" class="spicelist-error" hidden role="alert"></p>
+        <button type="submit">Send Me Deals</button>
+      </form>
+      <button type="button" id="nl-skip" class="spicelist-skip">Maybe later</button>
+    </div>
 
-  <div id="nl-success" hidden data-reveal role="status" aria-live="polite">
-    <p class="nl-done-text">You're on the list!</p>
+    <div id="nl-success" hidden role="status" aria-live="polite">
+      <p class="nl-done-text">You're on the list!</p>
+    </div>
   </div>
 </section>
 
 <script>
   import { getFirebaseDb } from '@/lib/firebase';
-  import { collection, addDoc } from 'firebase/firestore';
+  import { collection, addDoc, updateDoc, type DocumentReference } from 'firebase/firestore';
 
+  let savedFirstName = '';
   let savedEmail = '';
+  let nlDocRef: DocumentReference | null = null;
 
   document.getElementById('nl-email-form')?.addEventListener('submit', async (e) => {
     e.preventDefault();
+    savedFirstName = (document.getElementById('nl-firstname') as HTMLInputElement).value.trim();
     savedEmail = (document.getElementById('nl-email') as HTMLInputElement).value;
     const errorEl = document.getElementById('nl-email-error');
     const submitBtn = (e.target as HTMLFormElement).querySelector<HTMLButtonElement>('[type="submit"]');
     if (submitBtn) submitBtn.disabled = true;
     try {
       const db = getFirebaseDb();
-      await addDoc(collection(db, 'subscribers'), {
+      nlDocRef = await addDoc(collection(db, 'subscribers'), {
+        firstName: savedFirstName,
         email: savedEmail,
         source: 'spice-list',
         createdAt: new Date().toISOString(),
@@ -64,20 +73,50 @@
 
   document.getElementById('nl-phone-form')?.addEventListener('submit', async (e) => {
     e.preventDefault();
-    const phone = (document.getElementById('nl-phone') as HTMLInputElement).value;
-    if (phone) {
-      try {
-        const db = getFirebaseDb();
+    const raw = (document.getElementById('nl-phone') as HTMLInputElement).value;
+    const cleaned = raw.replace(/[\s\-().]/g, '');
+    const phoneErrorEl = document.getElementById('nl-phone-error');
+
+    if (!cleaned) {
+      // Empty — treat as skip
+      document.getElementById('nl-step-2')?.setAttribute('hidden', '');
+      document.getElementById('nl-success')?.removeAttribute('hidden');
+      return;
+    }
+
+    if (!/^\+\d{7,15}$/.test(cleaned)) {
+      if (phoneErrorEl) {
+        phoneErrorEl.textContent = 'Include your country code, e.g. +1 555 123 4567';
+        phoneErrorEl.removeAttribute('hidden');
+      }
+      return;
+    }
+
+    const submitBtn = (e.target as HTMLFormElement).querySelector<HTMLButtonElement>('[type="submit"]');
+    if (submitBtn) submitBtn.disabled = true;
+    try {
+      const db = getFirebaseDb();
+      if (nlDocRef) {
+        await updateDoc(nlDocRef, { phone: cleaned });
+      } else {
         await addDoc(collection(db, 'subscribers'), {
+          firstName: savedFirstName,
           email: savedEmail,
-          phone,
+          phone: cleaned,
           source: 'spice-list-phone',
           createdAt: new Date().toISOString(),
         });
-      } catch { /* phone step is optional — fail silently */ }
+      }
+      document.getElementById('nl-step-2')?.setAttribute('hidden', '');
+      document.getElementById('nl-success')?.removeAttribute('hidden');
+    } catch (err) {
+      if (phoneErrorEl) {
+        phoneErrorEl.textContent = err instanceof Error ? err.message : 'Something went wrong. Try again or skip.';
+        phoneErrorEl.removeAttribute('hidden');
+      }
+    } finally {
+      if (submitBtn) submitBtn.disabled = false;
     }
-    document.getElementById('nl-step-2')?.setAttribute('hidden', '');
-    document.getElementById('nl-success')?.removeAttribute('hidden');
   });
 
   document.getElementById('nl-skip')?.addEventListener('click', () => {
@@ -109,6 +148,10 @@
     font-family: var(--font-cormorant), serif;
     font-style: italic;
     position: relative;
+  }
+  /* Prevent CLS when switching between steps */
+  .nl-steps-wrapper {
+    min-height: 220px;
   }
   .spicelist-form {
     display: flex;

@@ -88,25 +88,30 @@ const eventSchemas = buildEventSchemas(upcomingForSchema);
         <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
       </button>
 
-      <div id="popup-step-1">
-        <h2 class="popup-title">Want Cheaper Tickets?</h2>
-        <p class="popup-subtitle">Join our list for exclusive discount codes and early access.</p>
-        <form id="popup-email-form" class="popup-form">
-          <input type="email" id="popup-email" placeholder="Your email" required aria-label="Email address" />
-          <p id="popup-email-error" class="popup-error" hidden role="alert"></p>
-          <button type="submit" class="popup-submit">Get My Discount Code</button>
-        </form>
-        <button type="button" class="popup-dismiss">No thanks</button>
-      </div>
+      <!-- min-height prevents CLS when switching between steps -->
+      <div class="popup-steps-wrapper">
+        <div id="popup-step-1">
+          <h2 class="popup-title">Want Cheaper Tickets?</h2>
+          <p class="popup-subtitle">Join our list for exclusive discount codes and early access.</p>
+          <form id="popup-email-form" class="popup-form">
+            <input type="text" id="popup-firstname" placeholder="Your first name" required aria-label="First name" />
+            <input type="email" id="popup-email" placeholder="Your email" required aria-label="Email address" />
+            <p id="popup-email-error" class="popup-error" hidden role="alert"></p>
+            <button type="submit" class="popup-submit">Get My Discount Code</button>
+          </form>
+          <button type="button" class="popup-dismiss">No thanks</button>
+        </div>
 
-      <div id="popup-step-2" hidden>
-        <h2 class="popup-title">One more thing...</h2>
-        <p class="popup-subtitle">Add your number for text-only discounts and free ticket drops.</p>
-        <form id="popup-phone-form" class="popup-form">
-          <input type="tel" id="popup-phone" placeholder="Your phone number" aria-label="Phone number" />
-          <button type="submit" class="popup-submit">Send Me Deals</button>
-        </form>
-        <button type="button" class="popup-skip">Maybe later</button>
+        <div id="popup-step-2" hidden>
+          <h2 class="popup-title">One more thing...</h2>
+          <p class="popup-subtitle">Add your number for text-only discounts and free ticket drops.</p>
+          <form id="popup-phone-form" class="popup-form">
+            <input type="tel" id="popup-phone" placeholder="+1 (555) 123-4567" aria-label="Phone number (include country code)" />
+            <p id="popup-phone-error" class="popup-error" hidden role="alert"></p>
+            <button type="submit" class="popup-submit">Send Me Deals</button>
+          </form>
+          <button type="button" class="popup-skip">Maybe later</button>
+        </div>
       </div>
     </div>
   </dialog>
@@ -139,50 +144,79 @@ const eventSchemas = buildEventSchemas(upcomingForSchema);
       if (e.target === popup) close();
     });
 
+    let savedFirstName = '';
     let savedEmail = '';
     let popupDocRef: DocumentReference | null = null;
 
     document.getElementById('popup-email-form')?.addEventListener('submit', async (e) => {
       e.preventDefault();
+      savedFirstName = (document.getElementById('popup-firstname') as HTMLInputElement).value.trim();
       savedEmail = (document.getElementById('popup-email') as HTMLInputElement).value;
+      const errorEl = document.getElementById('popup-email-error');
+      const submitBtn = (e.target as HTMLFormElement).querySelector<HTMLButtonElement>('[type="submit"]');
+      if (submitBtn) submitBtn.disabled = true;
       try {
         const db = getFirebaseDb();
         popupDocRef = await addDoc(collection(db, 'subscribers'), {
+          firstName: savedFirstName,
           email: savedEmail,
           source: 'popup',
           createdAt: new Date().toISOString(),
         });
         localStorage.setItem(POPUP_KEY, 'true');
+        if (errorEl) { errorEl.textContent = ''; errorEl.setAttribute('hidden', ''); }
         document.getElementById('popup-step-1')?.setAttribute('hidden', '');
         document.getElementById('popup-step-2')?.removeAttribute('hidden');
       } catch (err) {
-        const errorEl = document.getElementById('popup-email-error');
         if (errorEl) {
           errorEl.textContent = err instanceof Error ? err.message : 'Something went wrong. Please try again.';
           errorEl.removeAttribute('hidden');
         }
+      } finally {
+        if (submitBtn) submitBtn.disabled = false;
       }
     });
 
     document.getElementById('popup-phone-form')?.addEventListener('submit', async (e) => {
       e.preventDefault();
-      const phone = (document.getElementById('popup-phone') as HTMLInputElement).value;
-      if (phone) {
-        try {
-          const db = getFirebaseDb();
-          if (popupDocRef) {
-            await updateDoc(popupDocRef, { phone, source: 'popup-phone' });
-          } else {
-            await addDoc(collection(db, 'subscribers'), {
-              email: savedEmail,
-              phone,
-              source: 'popup-phone',
-              createdAt: new Date().toISOString(),
-            });
-          }
-        } catch { /* phone step is optional — fail silently */ }
+      const raw = (document.getElementById('popup-phone') as HTMLInputElement).value;
+      const cleaned = raw.replace(/[\s\-().]/g, '');
+      const phoneErrorEl = document.getElementById('popup-phone-error');
+
+      if (!cleaned) { close(); return; }
+
+      if (!/^\+\d{7,15}$/.test(cleaned)) {
+        if (phoneErrorEl) {
+          phoneErrorEl.textContent = 'Include your country code, e.g. +1 555 123 4567';
+          phoneErrorEl.removeAttribute('hidden');
+        }
+        return;
       }
-      close();
+
+      const submitBtn = (e.target as HTMLFormElement).querySelector<HTMLButtonElement>('[type="submit"]');
+      if (submitBtn) submitBtn.disabled = true;
+      try {
+        const db = getFirebaseDb();
+        if (popupDocRef) {
+          await updateDoc(popupDocRef, { phone: cleaned });
+        } else {
+          await addDoc(collection(db, 'subscribers'), {
+            firstName: savedFirstName,
+            email: savedEmail,
+            phone: cleaned,
+            source: 'popup-phone',
+            createdAt: new Date().toISOString(),
+          });
+        }
+        close();
+      } catch (err) {
+        if (phoneErrorEl) {
+          phoneErrorEl.textContent = err instanceof Error ? err.message : 'Something went wrong. Try again or skip.';
+          phoneErrorEl.removeAttribute('hidden');
+        }
+      } finally {
+        if (submitBtn) submitBtn.disabled = false;
+      }
     });
   }
 
@@ -249,6 +283,10 @@ const eventSchemas = buildEventSchemas(upcomingForSchema);
     position: relative;
     animation: popupIn 0.25s ease-out both;
     text-align: center;
+  }
+  /* Prevent CLS when switching between steps */
+  .popup-steps-wrapper {
+    min-height: 240px;
   }
   @keyframes popupIn {
     from { opacity: 0; transform: scale(0.95) translateY(8px); }

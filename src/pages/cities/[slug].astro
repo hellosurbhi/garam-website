@@ -189,24 +189,30 @@ const breadcrumbJsonLd = buildBreadcrumbJsonLd([
       {/* Email + phone signup for cities with events */}
       {cityEvents.length > 0 && (
         <div class="city-notify">
-          <div id="city-notify-step1">
-            <h3 class="city-notify__title">Stay in the Loop</h3>
-            <p class="city-notify__desc">Get notified about future {city.displayName} shows, discount codes, and free ticket drops.</p>
-            <form id="city-notify-email-form" class="city-notify__form">
-              <input type="email" id="city-notify-email" placeholder="Your email" required aria-label="Email address" />
-              <button type="submit">Get Notified</button>
-            </form>
-          </div>
-          <div id="city-notify-step2" hidden>
-            <p class="city-notify__desc">Add your number for text-only discounts and free ticket drops.</p>
-            <form id="city-notify-phone-form" class="city-notify__form">
-              <input type="tel" id="city-notify-phone" placeholder="Your phone number" aria-label="Phone number" />
-              <button type="submit">Send Me Deals</button>
-            </form>
-            <button type="button" id="city-notify-skip" class="city-notify__skip">Maybe later</button>
-          </div>
-          <div id="city-notify-success" hidden>
-            <p class="city-notify__done">You're on the list!</p>
+          <!-- min-height prevents CLS when switching between steps -->
+          <div class="city-notify__steps">
+            <div id="city-notify-step1">
+              <h3 class="city-notify__title">Stay in the Loop</h3>
+              <p class="city-notify__desc">Get notified about future {city.displayName} shows, discount codes, and free ticket drops.</p>
+              <form id="city-notify-email-form" class="city-notify__form">
+                <input type="text" id="city-notify-firstname" placeholder="Your first name" required aria-label="First name" />
+                <input type="email" id="city-notify-email" placeholder="Your email" required aria-label="Email address" />
+                <p id="city-notify-email-error" class="city-notify__error" hidden role="alert"></p>
+                <button type="submit">Get Notified</button>
+              </form>
+            </div>
+            <div id="city-notify-step2" hidden>
+              <p class="city-notify__desc">Add your number for text-only discounts and free ticket drops.</p>
+              <form id="city-notify-phone-form" class="city-notify__form">
+                <input type="tel" id="city-notify-phone" placeholder="+1 (555) 123-4567" aria-label="Phone number (include country code)" />
+                <p id="city-notify-phone-error" class="city-notify__error" hidden role="alert"></p>
+                <button type="submit">Send Me Deals</button>
+              </form>
+              <button type="button" id="city-notify-skip" class="city-notify__skip">Maybe later</button>
+            </div>
+            <div id="city-notify-success" hidden>
+              <p class="city-notify__done">You're on the list!</p>
+            </div>
           </div>
         </div>
       )}
@@ -238,7 +244,7 @@ const breadcrumbJsonLd = buildBreadcrumbJsonLd([
 
 <script>
   import { getFirebaseDb } from '@/lib/firebase';
-  import { collection, addDoc } from 'firebase/firestore';
+  import { collection, addDoc, updateDoc, type DocumentReference } from 'firebase/firestore';
 
   const dialog = document.getElementById('waitlist-modal') as HTMLDialogElement;
   if (dialog) {
@@ -276,42 +282,86 @@ const breadcrumbJsonLd = buildBreadcrumbJsonLd([
   }
 
   // City page email + phone signup
+  let cityNotifyFirstName = '';
   let cityNotifyEmail = '';
+  let cityNotifyDocRef: DocumentReference | null = null;
   const cityName = document.querySelector('.city-eyebrow')?.textContent ?? '';
 
   document.getElementById('city-notify-email-form')?.addEventListener('submit', async (e) => {
     e.preventDefault();
+    cityNotifyFirstName = (document.getElementById('city-notify-firstname') as HTMLInputElement).value.trim();
     cityNotifyEmail = (document.getElementById('city-notify-email') as HTMLInputElement).value;
+    const errorEl = document.getElementById('city-notify-email-error');
+    const submitBtn = (e.target as HTMLFormElement).querySelector<HTMLButtonElement>('[type="submit"]');
+    if (submitBtn) submitBtn.disabled = true;
     try {
       const db = getFirebaseDb();
-      await addDoc(collection(db, 'subscribers'), {
+      cityNotifyDocRef = await addDoc(collection(db, 'subscribers'), {
+        firstName: cityNotifyFirstName,
         email: cityNotifyEmail,
         city: cityName,
         source: 'city-page',
         createdAt: new Date().toISOString(),
       });
-    } catch { /* fail silently */ }
-    document.getElementById('city-notify-step1')?.setAttribute('hidden', '');
-    document.getElementById('city-notify-step2')?.removeAttribute('hidden');
+      if (errorEl) { errorEl.textContent = ''; errorEl.setAttribute('hidden', ''); }
+      document.getElementById('city-notify-step1')?.setAttribute('hidden', '');
+      document.getElementById('city-notify-step2')?.removeAttribute('hidden');
+    } catch (err) {
+      if (errorEl) {
+        errorEl.textContent = err instanceof Error ? err.message : 'Something went wrong. Please try again.';
+        errorEl.removeAttribute('hidden');
+      }
+    } finally {
+      if (submitBtn) submitBtn.disabled = false;
+    }
   });
 
   document.getElementById('city-notify-phone-form')?.addEventListener('submit', async (e) => {
     e.preventDefault();
-    const phone = (document.getElementById('city-notify-phone') as HTMLInputElement).value;
-    if (phone) {
-      try {
-        const db = getFirebaseDb();
+    const raw = (document.getElementById('city-notify-phone') as HTMLInputElement).value;
+    const cleaned = raw.replace(/[\s\-().]/g, '');
+    const phoneErrorEl = document.getElementById('city-notify-phone-error');
+
+    if (!cleaned) {
+      document.getElementById('city-notify-step2')?.setAttribute('hidden', '');
+      document.getElementById('city-notify-success')?.removeAttribute('hidden');
+      return;
+    }
+
+    if (!/^\+\d{7,15}$/.test(cleaned)) {
+      if (phoneErrorEl) {
+        phoneErrorEl.textContent = 'Include your country code, e.g. +1 555 123 4567';
+        phoneErrorEl.removeAttribute('hidden');
+      }
+      return;
+    }
+
+    const submitBtn = (e.target as HTMLFormElement).querySelector<HTMLButtonElement>('[type="submit"]');
+    if (submitBtn) submitBtn.disabled = true;
+    try {
+      const db = getFirebaseDb();
+      if (cityNotifyDocRef) {
+        await updateDoc(cityNotifyDocRef, { phone: cleaned });
+      } else {
         await addDoc(collection(db, 'subscribers'), {
+          firstName: cityNotifyFirstName,
           email: cityNotifyEmail,
-          phone,
+          phone: cleaned,
           city: cityName,
           source: 'city-page-phone',
           createdAt: new Date().toISOString(),
         });
-      } catch { /* fail silently */ }
+      }
+      document.getElementById('city-notify-step2')?.setAttribute('hidden', '');
+      document.getElementById('city-notify-success')?.removeAttribute('hidden');
+    } catch (err) {
+      if (phoneErrorEl) {
+        phoneErrorEl.textContent = err instanceof Error ? err.message : 'Something went wrong. Try again or skip.';
+        phoneErrorEl.removeAttribute('hidden');
+      }
+    } finally {
+      if (submitBtn) submitBtn.disabled = false;
     }
-    document.getElementById('city-notify-step2')?.setAttribute('hidden', '');
-    document.getElementById('city-notify-success')?.removeAttribute('hidden');
   });
 
   document.getElementById('city-notify-skip')?.addEventListener('click', () => {
@@ -485,6 +535,19 @@ const breadcrumbJsonLd = buildBreadcrumbJsonLd([
     border-radius: 16px;
     background: rgba(var(--brand-red-rgb), 0.02);
     text-align: center;
+  }
+
+  /* Prevent CLS when switching between steps */
+  .city-notify__steps {
+    min-height: 220px;
+  }
+
+  .city-notify__error {
+    font-size: 13px;
+    color: var(--brand-red);
+    text-align: center;
+    margin: 0;
+    font-family: var(--font-body), sans-serif;
   }
 
   .city-notify__title {

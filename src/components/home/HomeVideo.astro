@@ -1,10 +1,10 @@
 ---
 const YOUTUBE_ID = 'AXDhphHBUj4';
 
-const reels = [
-  { url: 'https://www.instagram.com/p/C79Pohcxu4j/', label: 'Show Highlight' },
-  { url: 'https://www.instagram.com/p/DWeM47lkTXS/', label: 'Fan Reactions' },
-  { url: 'https://www.instagram.com/reel/DWuAL_REcJD/', label: 'Behind the Scenes' },
+const reelUrls = [
+  'https://www.instagram.com/p/C79Pohcxu4j/',
+  'https://www.instagram.com/p/DWeM47lkTXS/',
+  'https://www.instagram.com/reel/DWuAL_REcJD/',
 ];
 ---
 
@@ -24,23 +24,23 @@ const reels = [
         loading="lazy"
       ></iframe>
     </div>
+  </div>
 
-    <div class="reels-row" data-reveal>
-      {reels.map((reel) => (
-        <a href={reel.url} target="_blank" rel="noopener noreferrer" class="reel-card" aria-label={`Watch ${reel.label} on Instagram`}>
-          <div class="reel-card-inner">
-            <svg class="reel-play-icon" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-              <circle cx="12" cy="12" r="12" fill="rgba(255,255,255,0.2)" />
-              <path d="M10 8l6 4-6 4V8z" fill="white" />
-            </svg>
-            <span class="reel-label">{reel.label}</span>
-            <span class="reel-cta">Watch on Instagram</span>
-          </div>
-        </a>
-      ))}
-    </div>
+  <div class="reels-row" data-reveal>
+    {reelUrls.map((url) => (
+      <div class="reel-embed">
+        <blockquote
+          class="instagram-media"
+          data-instgrm-permalink={url}
+          data-instgrm-version="14"
+        ></blockquote>
+      </div>
+    ))}
   </div>
 </section>
+
+<!-- Instagram official embed script — loads once, processes all blockquotes -->
+<script async src="https://www.instagram.com/embed.js"></script>
 
 <style>
   .video {
@@ -89,76 +89,35 @@ const reels = [
     display: block;
   }
 
+  /* Reels row sits outside video-inner so it can be wider than 900px */
   .reels-row {
     display: grid;
-    grid-template-columns: repeat(3, 1fr);
+    grid-template-columns: 1fr;
     gap: 16px;
     margin-top: 32px;
+    max-width: 1100px;
+    margin-left: auto;
+    margin-right: auto;
+    padding: 0 16px;
   }
-  .reel-card {
-    border-radius: 14px;
-    overflow: hidden;
-    text-decoration: none;
-    display: block;
-    aspect-ratio: 9 / 16;
-    background: linear-gradient(135deg, #833ab4 0%, #fd1d1d 50%, #fcb045 100%);
-    transition: transform 0.2s, box-shadow 0.2s;
-  }
-  .reel-card:hover {
-    transform: translateY(-4px);
-    box-shadow: 0 12px 32px rgba(0, 0, 0, 0.18);
-  }
-  .reel-card-inner {
-    width: 100%;
-    height: 100%;
+  .reel-embed {
     display: flex;
-    flex-direction: column;
-    align-items: center;
     justify-content: center;
-    gap: 12px;
-    padding: 24px 16px;
-    text-align: center;
   }
-  .reel-play-icon {
-    flex-shrink: 0;
-    width: 2.5rem;
-    height: 2.5rem;
-  }
-  .reel-label {
-    font-family: var(--font-body), sans-serif;
-    font-size: 14px;
-    font-weight: 700;
-    color: white;
-    letter-spacing: 0.5px;
-  }
-  .reel-cta {
-    font-family: var(--font-body), sans-serif;
-    font-size: 11px;
-    font-weight: 600;
-    color: rgba(255, 255, 255, 0.75);
-    text-transform: uppercase;
-    letter-spacing: 1.5px;
-  }
-
-  @media (max-width: 600px) {
-    .reels-row {
-      grid-template-columns: 1fr;
-      gap: 12px;
-    }
-    .reel-card {
-      aspect-ratio: 16 / 7;
-    }
-    .reel-card-inner {
-      flex-direction: row;
-      justify-content: flex-start;
-      gap: 16px;
-      padding: 20px;
-    }
-    .reel-label { font-size: 16px; }
+  /* Let Instagram's embed control its own sizing */
+  .reel-embed .instagram-media {
+    margin: 0 !important;
+    min-width: 0 !important;
+    width: 100% !important;
+    max-width: 540px !important;
   }
 
   @media (min-width: 768px) {
     .video { padding: 80px 48px; }
     .video-header { margin-bottom: 48px; }
+    .reels-row {
+      grid-template-columns: repeat(3, 1fr);
+      padding: 0 48px;
+    }
   }
 </style>

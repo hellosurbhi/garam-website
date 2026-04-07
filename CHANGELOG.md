@@ -1,5 +1,26 @@
 # Changelog
 
+## Accessibility and security bug fixes (2026-04-07)
+
+Resolved 9 open bugs from BUGS.md — all were accessibility or security issues that didn't require external services.
+
+### What changed
+- **`cors.json`**: Restricted Firebase Storage CORS from wildcard origin to `garammasaladating.com` only. Removed DELETE, POST, HEAD methods (was allowing all methods on all origins).
+- **`src/index.css`**: Fixed WCAG AA color contrast failures. `--muted` updated from `#888` (2.98:1) to `#6b6b6b` (5.06:1). `--text-light` updated from `#666` (4.14:1) to `#595959` (6.65:1). Added global `:focus-visible` ring for keyboard navigation.
+- **`src/components/ApplyPage.module.css`**, **`AdminLogin.module.css`**, **`ApplicantModal.module.css`**: Removed `outline: none` from 4 CSS rules that were suppressing keyboard focus indicators with no replacement.
+- **`src/pages/links.astro`**: Social icons enlarged from 40×40px to 44×44px (WCAG 2.5.8). Modal close button padding increased to meet 44×44px minimum.
+- **`src/components/admin/ApplicantModal.module.css`**: Close button `min-width/height: 44px` added. Converted overlay+modal div structure to native `<dialog>::backdrop` pattern.
+- **`src/components/admin/ApplicantModal.tsx`**: Replaced custom `<div>` overlay with native `<dialog>` element using `.showModal()`. Provides built-in focus trap, `aria-modal` semantics, and scroll lock. Escape key now uses `cancel` event instead of window keydown listener.
+- **`src/components/layout/PageNav.astro`**, **`src/components/home/HomeNav.astro`**: Added `aria-current="page"` on active nav links using `Astro.url.pathname`.
+- **`src/components/home/HomeShows.astro`**: Replaced `<div role="button" tabindex="0">` with semantic `<button type="button">`. Added `width: 100%; font: inherit; text-align: left` to CSS reset.
+- **`src/components/admin/AdminLogin.tsx`**, **`AdminLogin.module.css`**: Added visible `<label>` elements for Email and Password inputs. Removed redundant `aria-label` attributes now that visible labels exist.
+
+### Not fixed (requires external services)
+- Rate limiting on API endpoints (needs Upstash or Vercel Edge)
+- CAPTCHA on apply form (needs Firebase App Check)
+- Server-side file-type validation (needs Firebase Cloud Function)
+- Admin pagination (low priority at current volume)
+
 ## Enhancements batch — CTAs, perf, SEO, conversion, security (2026-04-07)
 
 Implemented 9 items from ENHANCEMENTS.md. Removed completed items from backlog.

@@ -67,16 +67,16 @@
 - **File:** `src/index.css`
 - **Status:** Fixed (2026-04-07)
 - **Severity:** High
-- **What happened:** `#888` on `#FFF8F0` was 2.98:1, failing WCAG AA.
+- **What happened:** `#888` on `#FFF8F0` was 3.38:1, failing WCAG AA (requires 4.5:1 for normal text).
 - **Fix:** Changed `--muted` to `#6b6b6b` (5.06:1 ratio — passes WCAG AA).
 
-### [HIGH] Color contrast: #666 (--text-light) borderline on #FFF8F0
+### [LOW] Color contrast: #666 (--text-light) improved proactively
 
 - **Date:** 2026-04-06
 - **File:** `src/index.css`
 - **Status:** Fixed (2026-04-07)
-- **Severity:** High
-- **What happened:** `#666` on `#FFF8F0` was 4.14:1 — fails WCAG AA for normal text.
+- **Severity:** Low (was a false positive — #666 on #FFF8F0 is 5.45:1, already passing WCAG AA)
+- **What happened:** `#666` on `#FFF8F0` was initially recorded as 4.14:1 (incorrect). Correct value is 5.45:1, which passes WCAG AA. The fix was applied anyway as a proactive improvement.
 - **Fix:** Changed `--text-light` to `#595959` (6.65:1 ratio — passes WCAG AA for all text sizes).
 
 ### [MEDIUM] outline:none on form inputs without visible focus replacement
@@ -94,8 +94,8 @@
 - **File:** `src/pages/links.astro`
 - **Status:** Fixed (2026-04-07)
 - **Severity:** Medium
-- **What happened:** Social icons were 40x40px, below WCAG 2.5.8 minimum.
-- **Fix:** Changed `.social-icon` width/height to 44x44px.
+- **What happened:** Social icons were 40x40px, below WCAG 2.5.8 minimum and repo standard.
+- **Fix:** Changed `.social-icon` width/height to 48x48px (repo minimum per CLAUDE.md).
 
 ### [MEDIUM] Modal close buttons too small (~28px effective area)
 
@@ -104,7 +104,7 @@
 - **Status:** Fixed (2026-04-07)
 - **Severity:** Medium
 - **What happened:** Close buttons had only 4–6px padding giving ~28–32px effective target.
-- **Fix:** `links.astro` `.modal-close`: padding 4px → 12px with min 44x44px. `ApplicantModal.module.css` `.closeButton`: added `min-width: 44px; min-height: 44px`.
+- **Fix:** `links.astro` `.modal-close`: padding 4px → 12px with min 48x48px. `ApplicantModal.module.css` `.closeButton`: added `min-width: 48px; min-height: 48px`.
 
 ### [MEDIUM] ApplicantModal: no focus trap, not using native dialog
 

@@ -1,21 +1,19 @@
 ---
 const photos = [
-  { label: 'On Stage', src: 'on-stage', w: 1200, h: 800, pos: 'center 40%', span: true,
+  { label: 'On Stage', src: 'on-stage.webp', w: 1200, h: 800, pos: 'center 40%', span: true,
     alt: 'Contestants and hosts laughing during a blindfolded dating round at Top Secret Comedy Club' },
-  { label: 'The Match', src: 'the-match', w: 1200, h: 800, pos: 'center 45%',
+  { label: 'The Match', src: 'the-match.webp', w: 1200, h: 800, pos: 'center 45%',
     alt: 'A matched couple laughing together on stage after the blindfold reveal' },
-  { label: 'Hosts', src: 'hosts', w: 733, h: 1200, pos: 'center 30%',
+  { label: 'Hosts', src: 'hosts.JPG', w: 733, h: 1200, pos: 'center 30%',
     alt: 'Hosts Surbhi and Wyatt sitting together on stage' },
-  { label: 'The Crowd', src: 'the-crowd', w: 800, h: 1200, pos: 'center 40%',
+  { label: 'The Crowd', src: 'the-crowd.webp', w: 800, h: 1200, pos: 'center 40%',
     alt: 'Audience members laughing together during a Garam Masala Dating show' },
-  { label: 'Pure Chaos', src: 'pure-chaos', w: 1200, h: 800, pos: 'center 35%',
+  { label: 'Pure Chaos', src: 'pure-chaos.webp', w: 1200, h: 800, pos: 'center 35%',
     alt: 'A contestant lifting another person on stage during a high-energy moment' },
-  { label: 'After Party', src: 'after-party', w: 1200, h: 800, pos: 'center center',
+  { label: 'After Party', src: 'after-party.webp', w: 1200, h: 800, pos: 'center center',
     alt: 'Audience clapping and celebrating during the show' },
-  { label: 'Magic Moment', src: 'magic-moment', w: 800, h: 1200, pos: 'center 30%',
+  { label: 'Magic Moment', src: 'magic-moment.webp', w: 800, h: 1200, pos: 'center 30%',
     alt: 'A contestant sharing an intimate moment with their date on stage' },
-  { label: 'Dance Off', src: 'dance-off', w: 1200, h: 800, pos: 'center 40%',
-    alt: 'The full cast standing together on stage during the final reveal' },
 ];
 ---
 
@@ -26,20 +24,16 @@ const photos = [
   </div>
   <div class="photo-grid">
     {photos.map((photo) => (
-      <div class:list={['ph', { 'ph-span': photo.span }]} data-reveal>
-        <picture>
-          <source srcset={`/images/gallery/${photo.src}.avif`} type="image/avif" />
-          <source srcset={`/images/gallery/${photo.src}.webp`} type="image/webp" />
-          <img
-            src={`/images/gallery/${photo.src}.jpg`}
-            alt={photo.alt}
-            width={photo.w}
-            height={photo.h}
-            loading="lazy"
-            style={`object-position: ${photo.pos};`}
-          />
-        </picture>
-        <div class="ph-label">{photo.label}</div>
+      <div class:list={['photo', { 'photo--wide': photo.span }]} data-reveal>
+        <img
+          src={`/images/${photo.src}`}
+          alt={photo.alt}
+          width={photo.w}
+          height={photo.h}
+          loading="lazy"
+          style={`object-position: ${photo.pos};`}
+        />
+        <div class="photo-label">{photo.label}</div>
       </div>
     ))}
   </div>
@@ -73,7 +67,7 @@ const photos = [
     max-width: 1200px;
     margin: 0 auto;
   }
-  .ph {
+  .photo {
     border-radius: 12px;
     display: flex;
     align-items: flex-end;
@@ -84,22 +78,20 @@ const photos = [
     aspect-ratio: 1;
     padding: 10px;
   }
-  .ph picture {
+  .photo img {
     position: absolute;
     inset: 0;
-  }
-  .ph img {
     width: 100%;
     height: 100%;
     object-fit: cover;
     display: block;
   }
-  .ph:hover {
+  .photo:hover {
     transform: scale(1.025);
     filter: brightness(1.08);
   }
-  .ph-span { display: none; }
-  .ph-label {
+  .photo--wide { display: none; }
+  .photo-label {
     position: relative;
     z-index: 1;
     color: white;
@@ -121,12 +113,12 @@ const photos = [
       grid-template-rows: 300px 220px;
       gap: 10px;
     }
-    .ph { aspect-ratio: auto; }
-    .ph-span {
+    .photo { aspect-ratio: auto; }
+    .photo--wide {
       display: flex;
       grid-column: span 2;
       grid-row: span 2;
     }
-    .ph-label { font-size: 11px; }
+    .photo-label { font-size: 11px; }
   }
 </style>

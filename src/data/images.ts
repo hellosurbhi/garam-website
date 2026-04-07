@@ -17,7 +17,7 @@
 export const HF_IMAGES: readonly string[] = [
   ...Array.from(
     { length: 26 },
-    (_, i) => `/images/hf/hf-${String(i + 1).padStart(2, '0')}.webp`
+    (_, i) => `/images/ai-art/hf-${String(i + 1).padStart(2, '0')}.webp`
   ),
   '/images/higgs-field.webp',
 ];

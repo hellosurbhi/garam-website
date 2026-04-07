@@ -23,17 +23,17 @@ npm run dev
 
 Create a `.env.local` file with the following:
 
-| Variable | Purpose |
-|----------|---------|
-| `VITE_FIREBASE_API_KEY` | Firebase client API key |
-| `VITE_FIREBASE_AUTH_DOMAIN` | Firebase auth domain |
-| `VITE_FIREBASE_PROJECT_ID` | Firestore project ID |
-| `VITE_FIREBASE_STORAGE_BUCKET` | Cloud Storage bucket |
-| `VITE_FIREBASE_MESSAGING_SENDER_ID` | Firebase messaging sender ID |
-| `VITE_FIREBASE_APP_ID` | Firebase app ID |
-| `FIREBASE_ADMIN_CLIENT_EMAIL` | Service account email (server-side only) |
-| `FIREBASE_ADMIN_PRIVATE_KEY` | Service account private key (server-side only) |
-| `CONTESTANT_PREP_SALT` | Salt for weekly password rotation |
+| Variable                            | Purpose                                        |
+| ----------------------------------- | ---------------------------------------------- |
+| `VITE_FIREBASE_API_KEY`             | Firebase client API key                        |
+| `VITE_FIREBASE_AUTH_DOMAIN`         | Firebase auth domain                           |
+| `VITE_FIREBASE_PROJECT_ID`          | Firestore project ID                           |
+| `VITE_FIREBASE_STORAGE_BUCKET`      | Cloud Storage bucket                           |
+| `VITE_FIREBASE_MESSAGING_SENDER_ID` | Firebase messaging sender ID                   |
+| `VITE_FIREBASE_APP_ID`              | Firebase app ID                                |
+| `FIREBASE_ADMIN_CLIENT_EMAIL`       | Service account email (server-side only)       |
+| `FIREBASE_ADMIN_PRIVATE_KEY`        | Service account private key (server-side only) |
+| `CONTESTANT_PREP_SALT`              | Salt for weekly password rotation              |
 
 `VITE_`-prefixed variables are exposed to the client. `FIREBASE_ADMIN_*` variables are used only in Vercel serverless functions.
 
@@ -59,27 +59,27 @@ scripts/          # Build-time scripts (prerender, data migration)
 
 ## Pages
 
-| Route | What it does |
-|-------|-------------|
-| `/` | Landing page — hero, next show, social proof, FAQ, newsletter |
-| `/links` | Linktree replacement for Instagram bio |
-| `/apply` | Contestant application form (writes to Firestore) |
-| `/admin` | Protected dashboard to review applications (Firebase Auth) |
-| `/contestant-prep` | Password-protected prep guide for selected contestants |
-| `/faq` | Frequently asked questions |
-| `/cities` | Events directory by city |
-| `/journal` | Blog / articles |
-| `/south-asian-dating-tips` | Dating tips content hub |
+| Route                      | What it does                                                  |
+| -------------------------- | ------------------------------------------------------------- |
+| `/`                        | Landing page — hero, next show, social proof, FAQ, newsletter |
+| `/links`                   | Linktree replacement for Instagram bio                        |
+| `/apply`                   | Contestant application form (writes to Firestore)             |
+| `/admin`                   | Protected dashboard to review applications (Firebase Auth)    |
+| `/contestant-prep`         | Password-protected prep guide for selected contestants        |
+| `/faq`                     | Frequently asked questions                                    |
+| `/cities`                  | Events directory by city                                      |
+| `/journal`                 | Blog / articles                                               |
+| `/south-asian-dating-tips` | Dating tips content hub                                       |
 
 ## Scripts
 
-| Command | What it does |
-|---------|-------------|
-| `npm run dev` | Start dev server with HMR |
-| `npm run build` | Type-check and build for production |
+| Command                   | What it does                                |
+| ------------------------- | ------------------------------------------- |
+| `npm run dev`             | Start dev server with HMR                   |
+| `npm run build`           | Type-check and build for production         |
 | `npm run build:prerender` | Build + generate static HTML with Puppeteer |
-| `npm run lint` | Run ESLint |
-| `npm run preview` | Preview production build locally |
+| `npm run lint`            | Run ESLint                                  |
+| `npm run preview`         | Preview production build locally            |
 
 ## Deployment
 
@@ -93,3 +93,28 @@ The site deploys to **Vercel**. The production build uses `build:prerender` to g
 4. All PRs require passing CI before merge
 
 Code conventions and project rules live in `CLAUDE.md`.
+
+.env.example
+
+# Firebase (client-safe — these are public config, not secrets)
+
+PUBLIC_FIREBASE_API_KEY=
+PUBLIC_FIREBASE_AUTH_DOMAIN=
+PUBLIC_FIREBASE_PROJECT_ID=
+PUBLIC_FIREBASE_STORAGE_BUCKET=
+PUBLIC_FIREBASE_MESSAGING_SENDER_ID=
+PUBLIC_FIREBASE_APP_ID=
+
+# Firebase Admin (server-side only — used by API routes)
+
+FIREBASE_ADMIN_CLIENT_EMAIL=
+FIREBASE_ADMIN_PRIVATE_KEY=
+
+# Contestant prep page password rotation
+
+CONTESTANT_PREP_SALT=
+
+# Resend (email notifications for new applications)
+
+RESEND_API_KEY=
+NOTIFICATION_EMAIL=

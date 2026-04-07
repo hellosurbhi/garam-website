@@ -1,5 +1,56 @@
 # Changelog
 
+## feat: redesign all email forms — first name, phone step, proper error handling (2026-04-07)
+
+### What changed
+
+**All four sign-up/notify forms** now share a consistent two-step flow with proper error handling, CLS prevention, and international phone support.
+
+**Files affected:** `src/components/home/HomeSignup.astro`, `src/pages/index.astro` (popup), `src/pages/cities/[slug].astro` (city notify), `src/components/NotifyModal.astro`
+
+**What changed in each:**
+- Added first name input to step 1 (all forms previously only asked for email)
+- Step 1 writes `{ firstName, email, source, createdAt }` to Firestore and stores `DocumentReference`
+- Step 2 is an optional phone number step — uses `updateDoc(docRef, { phone })` to update the same doc (fallback: `addDoc` with full data if ref lost)
+- Success state is only shown **after confirmed Firestore resolve** — never optimistically
+- Network errors show inline error messages; skip button remains available on phone step failure
+- Phone validation: strip autocorrect noise first (`replace(/[\s\-().]/g, '')`), then validate `/^\+\d{7,15}$/`; E.164 format required (+1...)
+- CLS fix: steps wrapped in container with `min-height` (220–260px) so step 1→2 swap doesn't shift content below
+
+**ENHANCEMENT.md:** Added full-site CLS audit documenting 13 instances (7 HIGH, 4 MEDIUM, 2 LOW) with specific files, triggers, and recommended fixes.
+
+---
+
+## fix: restore custom cursor, revert CodeRabbit padding regressions, fix shader pink (2026-04-07)
+
+### What changed
+
+**BaseLayout.astro:** Restored custom cursor (desktop-only, `pointer: fine` guard, `prefers-reduced-motion` accessibility guard). CodeRabbit had removed it in commit 7d30c7e. Cursor divs, JS animation loop, dark-section detection, and hover scale all restored. Added dialog observer so cursor moves inside `<dialog>` when modal is open.
+
+**shader-app.js:** Removed `fluid = mix(fluid, vec3(1.0), 0.3)` — this line was mixing 30% white into all fluid colors, turning the DC2626 red pink/washed out.
+
+**Section padding reverted** (CodeRabbit had increased all of these):
+- `HomeStats.astro` desktop: `120px 48px` → `100px 48px`
+- `HomeShows.astro` desktop: `80px 36px` → `75px 36px`
+- `HomeShows.astro` mobile: `56px 16px` → `55px 16px`
+- `HomePress.astro` desktop: `56px 48px` → `48px 48px`
+- `HomePress.astro` mobile: `40px 20px` → `36px 20px`
+
+**HomeSignup.astro:** Fixed `.spicelist-form button:hover` to use `white` background (was incorrectly changed to `charcoal/black`).
+
+**CLAUDE.md:** Added "Aesthetic choices — intentional, never revert" section documenting custom cursor, all padding/margin/gap values, color hex values, section backgrounds, font sizes/spacing, and the $2k WebGL shader. Rule: CodeRabbit comments on these must be dismissed with "intentional design choice".
+
+### Files changed
+- `src/layouts/BaseLayout.astro`
+- `public/js/shader-app.js`
+- `src/components/home/HomeStats.astro`
+- `src/components/home/HomeShows.astro`
+- `src/components/home/HomePress.astro`
+- `src/components/home/HomeSignup.astro` (hover fix)
+- `CLAUDE.md`
+
+---
+
 ## fix: revert shader logo, fix Firebase Auth CSP, Instagram post-load (2026-04-07)
 
 ### What changed

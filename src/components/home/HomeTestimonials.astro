@@ -1,7 +1,5 @@
 ---
 import { TESTIMONIALS as testimonials } from '@/data/copy';
-
-const accentColors = ['var(--electric-yellow)', 'var(--brand-red)', 'var(--spice-orange)'];
 ---
 
 <section class="testimonials" aria-label="Audience reviews">
@@ -9,8 +7,8 @@ const accentColors = ['var(--electric-yellow)', 'var(--brand-red)', 'var(--spice
   <div class="testimonials-inner">
     <h2 data-reveal>What They're <em>Saying</em></h2>
     <div class="testi-grid">
-      {testimonials.map((t, i) => (
-        <div class="testi-card" data-reveal style={`--quote-color: ${accentColors[i]}`}>
+      {testimonials.map((t) => (
+        <div class="testi-card" data-reveal>
           <div class="testi-quote">{t.quote}</div>
           <div class="testi-author">{t.author} · {t.location}</div>
         </div>
@@ -62,9 +60,14 @@ const accentColors = ['var(--electric-yellow)', 'var(--brand-red)', 'var(--spice
   .testi-card {
     padding: 32px;
     position: relative;
-    background: rgba(0, 0, 0, 0.25);
+    background: rgba(0, 0, 0, 0.45);
+    backdrop-filter: blur(4px);
+    -webkit-backdrop-filter: blur(4px);
     border-radius: 16px;
   }
+  .testi-card:nth-child(1) { --quote-color: var(--electric-yellow); }
+  .testi-card:nth-child(2) { --quote-color: var(--brand-red); }
+  .testi-card:nth-child(3) { --quote-color: var(--spice-orange); }
   .testi-card::before {
     content: '\201C';
     font-family: var(--font-playfair), serif;

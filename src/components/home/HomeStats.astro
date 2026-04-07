@@ -55,8 +55,6 @@ import { STATS as stats } from '@/data/copy';
     color: white;
     margin-bottom: 48px;
     text-shadow: 0 2px 16px rgba(0, 0, 0, 0.7), 0 0 40px rgba(0, 0, 0, 0.3);
-    -webkit-text-stroke: 1px rgba(0, 0, 0, 0.2);
-    paint-order: stroke fill;
   }
   .stats-grid {
     display: flex;
@@ -75,8 +73,6 @@ import { STATS as stats } from '@/data/copy';
     color: var(--electric-yellow);
     line-height: 1;
     text-shadow: 0 2px 12px rgba(0, 0, 0, 0.6);
-    -webkit-text-stroke: 1px rgba(0, 0, 0, 0.3);
-    paint-order: stroke fill;
   }
   .stat-label {
     font-size: 12px;
@@ -90,7 +86,7 @@ import { STATS as stats } from '@/data/copy';
   }
 
   @media (min-width: 768px) {
-    .stats { padding: 100px 48px; }
+    .stats { padding: 120px 48px; }
     .stats h2 { margin-bottom: 64px; }
     .stats-grid { flex-wrap: nowrap; gap: 0; }
     .stat-item {

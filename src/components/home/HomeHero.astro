@@ -309,7 +309,7 @@ function formatTime(t?: string): string {
     align-items: center;
     gap: 6px;
     opacity: 0.45;
-    animation: bounce 2s ease-in-out infinite;
+    animation: scrollHint 2.4s cubic-bezier(0.4, 0, 0.2, 1) infinite;
     z-index: 2;
     color: rgba(26, 26, 26, 0.4);
   }
@@ -320,9 +320,12 @@ function formatTime(t?: string): string {
     text-transform: uppercase;
   }
 
-  @keyframes bounce {
-    0%, 100% { transform: translateX(-50%) translateY(0); }
-    50% { transform: translateX(-50%) translateY(8px); }
+  @keyframes scrollHint {
+    0%   { transform: translateX(-50%) translateY(0);  opacity: 0.45; }
+    30%  { transform: translateX(-50%) translateY(7px); opacity: 0.3; }
+    55%  { transform: translateX(-50%) translateY(3px); opacity: 0.4; }
+    70%  { transform: translateX(-50%) translateY(8px); opacity: 0.3; }
+    100% { transform: translateX(-50%) translateY(0);  opacity: 0.45; }
   }
 
   /* On mobile, pin content to top of padding so it never overlaps the fixed nav */

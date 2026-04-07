@@ -57,10 +57,6 @@ const accentColors = ['var(--electric-yellow)', 'var(--brand-red)', 'var(--spice
     gap: 16px;
   }
   .testi-card {
-    background: rgba(0, 0, 0, 0.6);
-    backdrop-filter: blur(16px);
-    border: 1px solid rgba(255, 255, 255, 0.12);
-    border-radius: 20px;
     padding: 32px;
     position: relative;
   }
@@ -78,15 +74,17 @@ const accentColors = ['var(--electric-yellow)', 'var(--brand-red)', 'var(--spice
     font-size: 18px;
     font-style: italic;
     line-height: 1.5;
-    color: rgba(255, 255, 255, 0.95);
+    color: white;
     margin-bottom: 20px;
+    text-shadow: 0 2px 12px rgba(0, 0, 0, 0.7), 0 0 40px rgba(0, 0, 0, 0.3);
   }
   .testi-author {
     font-size: 12px;
     font-weight: 700;
     text-transform: uppercase;
     letter-spacing: 1.5px;
-    color: rgba(255, 255, 255, 0.5);
+    color: rgba(255, 255, 255, 0.8);
+    text-shadow: 0 1px 8px rgba(0, 0, 0, 0.6);
   }
 
   @media (min-width: 768px) {

@@ -31,6 +31,7 @@ const breadcrumbJsonLd = buildBreadcrumbJsonLd([
   </Fragment>
 
   <main id="main-content" class="journal-page">
+    <img class="journal-bg" src="/images/higgs-field.webp" alt="" width="1200" height="800" aria-hidden="true" />
     <div class="journal-container">
       <!-- Header -->
       <div class="journal-header">
@@ -88,9 +89,22 @@ const breadcrumbJsonLd = buildBreadcrumbJsonLd([
     position: relative;
     z-index: 1;
     animation: journalFadeIn 0.5s ease-out both;
+    overflow: hidden;
+  }
+  .journal-bg {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+    z-index: 0;
+    opacity: 0.06;
   }
 
   .journal-container {
+    position: relative;
+    z-index: 1;
     max-width: 680px;
     margin: 0 auto;
     padding: 36px 20px 60px;

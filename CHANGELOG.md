@@ -1,5 +1,26 @@
 # Changelog
 
+## fix(qa): resolve all critical and warning issues from QA pass (2026-04-07)
+
+### What changed
+- **F1 — `@astrojs/check` installed**: Added `@astrojs/check` to `devDependencies`. `npm run check` was hanging on an interactive install prompt, breaking any CI pipeline.
+- **F2 — `AdminDashboard.tsx` useRef type**: Changed `useRef<ReturnType<typeof setTimeout>>()` to `useRef<ReturnType<typeof setTimeout> | undefined>(undefined)` to satisfy React 19 strict types.
+- **W1 — Nav touch targets**: Added `min-height: var(--touch-target)` to `.nav-pill` (HomeNav.astro) and `.page-nav-pill` (PageNav.astro). Both were ~32px on mobile, below the 48px WCAG 2.5.5 requirement.
+- **W2 — Lazy-load country-state-city**: `useGeoData` now accepts `shouldLoad: boolean` (default `true`). `useApplyForm` defers loading until the user opens the country dropdown (`onMenuOpen`). The 8.3MB data chunk no longer loads on page mount.
+- **W3 — surbhi.png converted to WebP**: 595KB PNG → 25KB WebP (96% reduction). Updated references in HomeCreators.astro, AuthorBio.astro, and hosts.astro.
+- **W4 — Instagram embed fallback**: Added `<a href={url}>Watch on Instagram</a>` inside each `<blockquote>` embed so blocked/failed embeds show a working link instead of empty boxes.
+- **W5 — Replace hardcoded hex values**: `.experience-left .lead color: #555` → `var(--text-secondary)` (exact match). `.exp-step p color: #777` → `var(--text-tertiary)` (exact match). `.next-show-venue color: #888` → `var(--muted)` (contrast bug fix: #888 was the failing-contrast old value).
+- **W6 — Delete dead code**: Removed commented-out coverage configuration from `vitest.config.ts`.
+- **Bonus — TypeScript check now 0 errors**: Added `src/env.d.ts` with `@testing-library/jest-dom/vitest` reference. Fixed `TermsModal.tsx` `querySelectorAll<HTMLButtonElement>`. Fixed `useGeoData.test.ts` spread argument pattern. Fixed `AdminDashboard.test.tsx` Timestamp mock.
+
+### Files affected
+`package.json`, `package-lock.json`, `src/env.d.ts`, `test/setup.ts`, `vitest.config.ts`, `src/components/admin/AdminDashboard.tsx`, `src/components/admin/AdminDashboard.test.tsx`, `src/components/apply/TermsModal.tsx`, `src/components/apply/useApplyForm.ts`, `src/components/ApplyPage.tsx`, `src/hooks/useGeoData.ts`, `src/hooks/useGeoData.test.ts`, `src/components/home/HomeNav.astro`, `src/components/layout/PageNav.astro`, `src/components/home/HomeCreators.astro`, `src/components/AuthorBio.astro`, `src/pages/hosts.astro`, `src/components/home/HomeVideo.astro`, `src/components/home/HomeExperience.astro`, `src/components/home/HomeHero.astro`, `public/images/surbhi.webp`
+
+### Decisions
+The TypeScript errors from `npx tsc --noEmit` were mostly test-infrastructure issues (CSS module types, jest-dom matchers not typed for Vitest) rather than production bugs. The real failures were the missing `@astrojs/check` dependency and the AdminDashboard `useRef` strict-type error. The lazy-load approach for `country-state-city` defers the 8.3MB data chunk until the user actually opens the country dropdown — zero behavior change on the happy path, significant improvement for users who never touch the location fields. The `#888` hex fix in HomeHero is a color change (not just rename) because `#888 on #FFF8F0` was a known failing contrast ratio.
+
+---
+
 ## design: taste-review fixes — mobile ticket labels, spacing scale, backdrop, tokens (2026-04-07)
 
 ### What changed

@@ -1,11 +1,10 @@
 ---
 const YOUTUBE_ID = 'AXDhphHBUj4';
-const THUMBNAIL = `https://img.youtube.com/vi/${YOUTUBE_ID}/maxresdefault.jpg`;
 
 const reels = [
-  'https://www.instagram.com/p/C79Pohcxu4j/embed/',
-  'https://www.instagram.com/p/DWeM47lkTXS/embed/',
-  'https://www.instagram.com/reel/DWuAL_REcJD/embed/',
+  { url: 'https://www.instagram.com/p/C79Pohcxu4j/', label: 'Show Highlight' },
+  { url: 'https://www.instagram.com/p/DWeM47lkTXS/', label: 'Fan Reactions' },
+  { url: 'https://www.instagram.com/reel/DWuAL_REcJD/', label: 'Behind the Scenes' },
 ];
 ---
 
@@ -17,57 +16,36 @@ const reels = [
     </div>
 
     <div class="video-main" data-reveal>
-      <button type="button" class="video-facade" id="yt-facade" aria-label="Play show highlight video">
-        <img
-          src={THUMBNAIL}
-          alt="Garam Masala Dating show highlight reel"
-          width="1280"
-          height="720"
-          loading="lazy"
-        />
-        <div class="video-play">
-          <svg viewBox="0 0 68 48" width="68" height="48"><path d="M66.52 7.74c-.78-2.93-2.49-5.41-5.42-6.19C55.79.13 34 0 34 0S12.21.13 6.9 1.55C3.97 2.33 2.27 4.81 1.48 7.74.06 13.05 0 24 0 24s.06 10.95 1.48 16.26c.78 2.93 2.49 5.41 5.42 6.19C12.21 47.87 34 48 34 48s21.79-.13 27.1-1.55c2.93-.78 4.64-3.26 5.42-6.19C67.94 34.95 68 24 68 24s-.06-10.95-1.48-16.26z" fill="var(--brand-red)"/><path d="M45 24 27 14v20" fill="#fff"/></svg>
-        </div>
-      </button>
+      <iframe
+        src={`https://www.youtube-nocookie.com/embed/${YOUTUBE_ID}?rel=0`}
+        title="Garam Masala Dating show highlight"
+        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; fullscreen"
+        allowfullscreen
+        loading="lazy"
+      ></iframe>
     </div>
 
     <div class="reels-row" data-reveal>
-      {reels.map((src) => (
-        <div class="reel-embed">
-          <iframe
-            src={src}
-            loading="lazy"
-            allowtransparency="true"
-            title="Instagram reel"
-          ></iframe>
-        </div>
+      {reels.map((reel) => (
+        <a href={reel.url} target="_blank" rel="noopener noreferrer" class="reel-card" aria-label={`Watch ${reel.label} on Instagram`}>
+          <div class="reel-card-inner">
+            <svg class="reel-play-icon" viewBox="0 0 24 24" fill="none" aria-hidden="true" width="40" height="40">
+              <circle cx="12" cy="12" r="12" fill="rgba(255,255,255,0.2)" />
+              <path d="M10 8l6 4-6 4V8z" fill="white" />
+            </svg>
+            <span class="reel-label">{reel.label}</span>
+            <span class="reel-cta">Watch on Instagram</span>
+          </div>
+        </a>
       ))}
     </div>
   </div>
 </section>
 
-<script>
-  const facade = document.getElementById('yt-facade');
-  facade?.addEventListener('click', () => {
-    const iframe = document.createElement('iframe');
-    iframe.src = 'https://www.youtube-nocookie.com/embed/AXDhphHBUj4?autoplay=1&rel=0';
-    iframe.allow = 'accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture';
-    iframe.allowFullscreen = true;
-    iframe.title = 'Garam Masala Dating show highlight';
-    iframe.style.cssText = 'position:absolute;inset:0;width:100%;height:100%;border:none;border-radius:20px;';
-    const parent = facade.parentElement;
-    if (parent) {
-      parent.innerHTML = '';
-      parent.style.position = 'relative';
-      parent.appendChild(iframe);
-    }
-  });
-</script>
-
 <style>
   .video {
     padding: 56px 16px;
-    background: var(--off-white);
+    background: #fff;
   }
   .video-inner {
     max-width: 900px;
@@ -104,37 +82,12 @@ const reels = [
     background: var(--charcoal);
     position: relative;
   }
-  .video-facade {
-    display: block;
+  .video-main iframe {
     width: 100%;
     height: 100%;
     border: none;
-    padding: 0;
-    cursor: pointer;
-    position: relative;
-    background: var(--charcoal);
-  }
-  .video-facade img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
     display: block;
-    opacity: 0.7;
-    transition: opacity 0.3s;
   }
-  .video-facade:hover img { opacity: 0.5; }
-  .video-play {
-    position: absolute;
-    inset: 0;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-  }
-  .video-play svg {
-    filter: drop-shadow(0 4px 12px rgba(0, 0, 0, 0.3));
-    transition: transform 0.2s;
-  }
-  .video-facade:hover .video-play svg { transform: scale(1.1); }
 
   .reels-row {
     display: grid;
@@ -142,17 +95,47 @@ const reels = [
     gap: 16px;
     margin-top: 32px;
   }
-  .reel-embed {
+  .reel-card {
     border-radius: 14px;
     overflow: hidden;
-    background: white;
-    border: 1px solid rgba(0, 0, 0, 0.06);
-  }
-  .reel-embed iframe {
-    width: 100%;
-    height: 480px;
-    border: none;
+    text-decoration: none;
     display: block;
+    aspect-ratio: 9 / 16;
+    background: linear-gradient(135deg, #833ab4 0%, #fd1d1d 50%, #fcb045 100%);
+    transition: transform 0.2s, box-shadow 0.2s;
+  }
+  .reel-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 12px 32px rgba(0, 0, 0, 0.18);
+  }
+  .reel-card-inner {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    padding: 24px 16px;
+    text-align: center;
+  }
+  .reel-play-icon {
+    flex-shrink: 0;
+  }
+  .reel-label {
+    font-family: var(--font-body), sans-serif;
+    font-size: 14px;
+    font-weight: 700;
+    color: white;
+    letter-spacing: 0.5px;
+  }
+  .reel-cta {
+    font-family: var(--font-body), sans-serif;
+    font-size: 11px;
+    font-weight: 600;
+    color: rgba(255, 255, 255, 0.75);
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
   }
 
   @media (max-width: 600px) {
@@ -160,9 +143,16 @@ const reels = [
       grid-template-columns: 1fr;
       gap: 12px;
     }
-    .reel-embed iframe {
-      height: 520px;
+    .reel-card {
+      aspect-ratio: 16 / 7;
     }
+    .reel-card-inner {
+      flex-direction: row;
+      justify-content: flex-start;
+      gap: 16px;
+      padding: 20px;
+    }
+    .reel-label { font-size: 16px; }
   }
 
   @media (min-width: 768px) {

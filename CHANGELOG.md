@@ -1,5 +1,19 @@
 # Changelog
 
+## fix: Instagram reels, YouTube embed, FAQ toggle size, hero spacing, section color separation (2026-04-07)
+
+### What changed
+- **HomeVideo — Instagram**: Replaced broken `embed/` iframes (Instagram blocked them, showed "photo or video may be broken") with 3 styled "Watch on Instagram" link cards using the Instagram gradient. No external JS, always works, links open the actual reels.
+- **HomeVideo — YouTube**: Replaced click-to-load facade (unreliable on mobile, perceived as non-embedded) with a direct `<iframe>` embed. YouTube player renders immediately, user presses play.
+- **HomeVideo — background**: Changed from `var(--off-white)` to `#fff` to create visual separation from the HomeCreators section above it (both were identical cream).
+- **HomeFAQ — toggle circle**: Increased from 48px to 60px, font-size 18px → 24px. Circle was too small and the +/× looked cramped.
+- **HomeHero — spacing**: Reduced hero top padding (80px → 64px mobile, 100px → 80px desktop), hero-content top padding (40px → 8px mobile, 60px → 32px desktop), and tightened margins between eyebrow/h1/sub/next-show. Reduces gap between the fixed nav and the pill badge, and brings the CTA buttons above the fold on mobile.
+
+### Files changed
+- `src/components/home/HomeVideo.astro`
+- `src/components/home/HomeFAQ.astro`
+- `src/components/home/HomeHero.astro`
+
 ## Code review fixes — a11y, data integrity, SEO (2026-04-07)
 
 Post-audit code review pass. All findings were verified against current code before fixing.

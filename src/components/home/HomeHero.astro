@@ -73,7 +73,7 @@ function formatTime(t?: string): string {
       radial-gradient(ellipse at 70% 40%, rgba(255, 214, 0, 0.12) 0%, transparent 50%),
       radial-gradient(ellipse at 50% 60%, rgba(185, 28, 28, 0.1) 0%, transparent 55%),
       #fff;
-    padding: 80px 20px 60px;
+    padding: 64px 20px 32px;
   }
 
   /* Shader fills hero — subtle wash over white bg */
@@ -92,7 +92,7 @@ function formatTime(t?: string): string {
     z-index: 2;
     text-align: center;
     max-width: 980px;
-    padding: 40px 16px;
+    padding: 8px 16px;
     background: radial-gradient(ellipse at center, rgba(255, 255, 255, 0.6) 0%, rgba(255, 255, 255, 0) 70%);
   }
 
@@ -113,7 +113,7 @@ function formatTime(t?: string): string {
     letter-spacing: 1.5px;
     padding: 12px 24px;
     border-radius: 50px;
-    margin-bottom: 24px;
+    margin-bottom: 14px;
     animation: pop 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) both;
   }
 
@@ -129,7 +129,7 @@ function formatTime(t?: string): string {
     line-height: 0.9;
     letter-spacing: -2px;
     color: var(--charcoal);
-    margin-bottom: 24px;
+    margin-bottom: 14px;
     animation: rise 0.9s cubic-bezier(0.22, 1, 0.36, 1) 0.2s both;
   }
 
@@ -158,7 +158,7 @@ function formatTime(t?: string): string {
     font-size: 20px;
     font-style: italic;
     color: var(--charcoal);
-    margin-bottom: 36px;
+    margin-bottom: 20px;
     line-height: 1.5;
     animation: rise 0.9s cubic-bezier(0.22, 1, 0.36, 1) 0.35s both;
   }
@@ -172,7 +172,7 @@ function formatTime(t?: string): string {
     border-radius: 0;
     padding: 12px 0;
     text-decoration: none;
-    margin: 0 auto 24px;
+    margin: 0 auto 12px;
     max-width: 420px;
     width: 100%;
     animation: rise 0.9s cubic-bezier(0.22, 1, 0.36, 1) 0.45s both;
@@ -326,10 +326,10 @@ function formatTime(t?: string): string {
   }
 
   @media (min-width: 768px) {
-    .hero { padding: 100px 48px 60px; }
-    .hero-content { padding: 60px 48px; }
+    .hero { padding: 80px 48px 60px; }
+    .hero-content { padding: 32px 48px; }
     .hero-eyebrow { font-size: 14px; padding: 16px 36px; }
-    .hero-sub { font-size: 22px; margin-bottom: 44px; }
+    .hero-sub { font-size: 22px; margin-bottom: 32px; }
     .hero-ctas { flex-direction: row; flex-wrap: wrap; align-items: center; justify-content: center; }
     .btn { font-size: 16px; padding: 18px 44px; display: inline-flex; width: auto; }
   }

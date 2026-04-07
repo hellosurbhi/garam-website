@@ -1,5 +1,29 @@
 # Changelog
 
+## CodeRabbit review fixes — bugs and code quality (2026-04-07)
+
+Applied the valid subset of CodeRabbit suggestions after verifying each against current code. Skipped suggestions that don't apply (no stylelint in project, shader files are a different project, intentional design decisions).
+
+### What changed
+- **`.github/workflows/article-refresh.yml`**: Added `permissions: contents: write` so the monthly article refresh workflow can push commits. Without it the git push step fails with 403 when GITHUB_TOKEN defaults to read-only.
+- **`src/data/journal/bollywood.ts`**: Fixed factual error — Deepika Padukone plays Veronica in Cocktail (2012), not Meera. Diana Penty plays Meera. First paragraph had the characters swapped.
+- **`src/components/home/HomeMarquee.astro`**: Fixed invisible dot separators — `.dot` was `color: var(--brand-red)` on a red background. Changed to `white`.
+- **`src/data/events.ts`**: Changed `url: '#'` to `url: ''` for TBA cities — `'#'` was a sentinel hack.
+- **`src/components/home/HomeShows.astro`**: Simplified `isLive` check from `url && url !== '#'` to `Boolean(url)` now that the sentinel is gone.
+- **`src/components/ContestantPrepPage.module.css`**: Renamed keyframes from camelCase (`prepSpin`, `fadeIn`) to kebab-case (`prep-spin`, `fade-in`) per CSS convention. Updated all `animation` references.
+- **`src/data/cities/types.ts`**: Added `"South Asia"` to `CityRegion` union.
+- **`src/data/cities/southeast-asia.ts`**: Updated Colombo and Kandy `region` from `"Southeast Asia"` to `"South Asia"` (Sri Lanka is South Asia). Removed undefined city slugs `singapore` and `kuala-lumpur` from all nearbyCities arrays in the file.
+- **`src/data/cities/east-asia.ts`**: Removed undefined `singapore` from Seoul and Hong Kong nearbyCities.
+- **`src/data/cities/europe.ts`**: Removed undefined slugs `lyon` (Geneva), `strasbourg` (Basel), `venice` (Ljubljana), `belgrade` (Zagreb) from nearbyCities.
+- **`src/data/cities/uk.ts`**: Removed undefined `dundee` from Aberdeen nearbyCities.
+- **`src/components/ErrorBoundary.tsx`**: Extracted all inline `style={}` props into `ErrorBoundary.module.css` using CSS vars. Replaced hardcoded Instagram URL with `SOCIAL_URLS.instagram`.
+- **`src/components/ApplyPage.tsx`**: Replaced two hardcoded Instagram URLs with `SOCIAL_URLS.instagram` from `@/data/socials`.
+
+### Decisions
+- Did not add stylelint config — project has no stylelint dependency.
+- Did not fix popup localStorage order — intentional design to suppress re-show even on Firestore failure.
+- Did not change bollywood.ts "10 movies" title — content decision for the author.
+
 ## Rework photo integration based on feedback (2026-04-07)
 
 Reverted experience step photos (too small, not impactful). Fixed testimonials to show the crowd photo clearly (0% background overlay, glass on cards). Swapped hosts page to sitting-down photo. Changed photo breaks from single full-bleed to two photos side by side. Added Event 2 photos throughout.

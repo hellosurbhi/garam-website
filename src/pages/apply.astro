@@ -17,7 +17,26 @@ const breadcrumbJsonLd = buildBreadcrumbJsonLd([
     <script type="application/ld+json" set:html={breadcrumbJsonLd} />
   </Fragment>
 
-  <main id="main-content">
+  <main id="main-content" class="apply-main">
+    <img class="apply-bg" src="/images/tickets-hero.webp" alt="" width="1200" height="800" aria-hidden="true" />
     <ApplyPage client:only="react" />
   </main>
 </BaseLayout>
+
+<style>
+  .apply-main {
+    position: relative;
+    overflow: hidden;
+  }
+  .apply-bg {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center 40%;
+    display: block;
+    z-index: 0;
+    opacity: 0.06;
+  }
+</style>

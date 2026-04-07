@@ -87,6 +87,9 @@ const breadcrumbJsonLd = buildBreadcrumbJsonLd([
   </Fragment>
 
   <main id="main-content" class="faq-page">
+    <div class="faq-hero">
+      <img src="/images/the-match.webp" alt="" width="1200" height="800" aria-hidden="true" />
+    </div>
     <div class="faq-container">
       <!-- Header -->
       <div class="faq-header">
@@ -137,6 +140,22 @@ const breadcrumbJsonLd = buildBreadcrumbJsonLd([
     position: relative;
     z-index: 1;
     animation: faqFadeIn 0.5s ease-out both;
+  }
+
+  .faq-hero {
+    width: 100%;
+    height: 200px;
+    overflow: hidden;
+  }
+  .faq-hero img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center 45%;
+    display: block;
+  }
+  @media (min-width: 768px) {
+    .faq-hero { height: 300px; }
   }
 
   .faq-container {

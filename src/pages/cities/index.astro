@@ -21,6 +21,9 @@ const regions = citiesByRegion();
   </Fragment>
 
   <main id="main-content" class="cities-page">
+    <div class="cities-hero">
+      <img src="/images/on-stage.webp" alt="" width="1200" height="800" aria-hidden="true" />
+    </div>
     <div class="cities-container">
       {/* Header */}
       <div class="cities-header">
@@ -120,6 +123,22 @@ const regions = citiesByRegion();
     position: relative;
     z-index: 1;
     animation: citiesIdxFadeIn 0.5s ease-out both;
+  }
+
+  .cities-hero {
+    width: 100%;
+    height: 200px;
+    overflow: hidden;
+  }
+  .cities-hero img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center 40%;
+    display: block;
+  }
+  @media (min-width: 768px) {
+    .cities-hero { height: 300px; }
   }
 
   .cities-container {

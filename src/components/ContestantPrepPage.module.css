@@ -84,8 +84,8 @@
 /* ─── Cover / header ──────────────────────────────────────────── */
 
 .cover {
-  margin-bottom: 56px;
-  padding-bottom: 48px;
+  margin-bottom: 40px;
+  padding-bottom: 32px;
   border-bottom: 2px solid var(--charcoal);
 }
 

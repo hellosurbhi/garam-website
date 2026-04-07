@@ -3,10 +3,22 @@ import type { EventEntry } from '@/data/events';
 
 interface Props {
   ticketsUrl: string;
-  nextEvent?: EventEntry;
+  heroEvents: EventEntry[];
 }
 
-const { ticketsUrl, nextEvent } = Astro.props;
+const { ticketsUrl, heroEvents } = Astro.props;
+
+function formatTime(t: string): string {
+  const h = parseInt(t.split(':')[0]);
+  const hour12 = h === 0 ? 12 : h > 12 ? h - 12 : h;
+  return `${hour12} ${h >= 12 ? 'PM' : 'AM'}`;
+}
+
+function getHeroCity(city: string): string {
+  const primary = city.split(',')[0].trim();
+  const nycBoroughs = ['Manhattan', 'Brooklyn', 'Queens', 'Bronx', 'The Bronx', 'Staten Island'];
+  return nycBoroughs.includes(primary) ? 'NYC' : primary;
+}
 ---
 
 <section class="hero" aria-label="Hero">
@@ -23,20 +35,27 @@ const { ticketsUrl, nextEvent } = Astro.props;
       New York City's live South Asian comedy dating show.<br />
       Real singles. Real sparks. Real chaos.
     </p>
-    {nextEvent && (
-      <a href={nextEvent.url} target="_blank" rel="noopener noreferrer" class="next-show-pill">
-        <span class="next-show-pill-date">{nextEvent.date.split(' ')[0]} {nextEvent.date.split(' ')[1]}</span>
+
+    {heroEvents.map((event) => (
+      <a
+        href={event.url}
+        target="_blank"
+        rel="noopener noreferrer"
+        class="next-show-pill"
+        hidden
+        data-iso-date={event.isoDate}
+        data-start-time={event.startTime ?? '20:00'}
+        data-end-time={event.endTime ?? '22:00'}
+      >
+        <span class="next-show-pill-date">{event.date.split(' ')[0]} {event.date.split(' ')[1]}</span>
         <span class="next-show-pill-sep" aria-hidden="true">·</span>
-        <span>{nextEvent.city.split(',')[0]}</span>
-        {nextEvent.venue?.name && (
-          <>
-            <span class="next-show-pill-sep" aria-hidden="true">·</span>
-            <span class="next-show-pill-venue">{nextEvent.venue.name}</span>
-          </>
-        )}
+        <span>{getHeroCity(event.city)}</span>
+        <span class="next-show-pill-sep" aria-hidden="true">·</span>
+        <span>{formatTime(event.startTime ?? '20:00')}</span>
         <span class="next-show-pill-cta" aria-hidden="true">→</span>
       </a>
-    )}
+    ))}
+
     <div class="hero-ctas">
       <a href={ticketsUrl} class="btn btn-hot">Get Tickets</a>
       <a href="/apply" class="btn btn-outline">Apply for the Show</a>
@@ -52,6 +71,42 @@ const { ticketsUrl, nextEvent } = Astro.props;
 </section>
 
 <script src="/js/shader-app.js" defer></script>
+
+<script>
+  // Pick the first upcoming event that hasn't ended yet; switch to next when it does
+  const BUFFER_H = 1; // hide pill 1h after event endTime
+  const pills = Array.from(document.querySelectorAll<HTMLElement>('.next-show-pill[data-iso-date]'));
+
+  function getEventEnd(isoDate: string, endTime: string): Date {
+    const [h, m] = endTime.split(':').map(Number);
+    const d = new Date(isoDate + 'T00:00:00');
+    d.setHours(h + BUFFER_H, m, 0, 0);
+    return d;
+  }
+
+  function showNextPill(): void {
+    const now = new Date();
+    for (const pill of pills) {
+      const isoDate = pill.dataset.isoDate!;
+      const endTime = pill.dataset.endTime ?? '22:00';
+      const end = getEventEnd(isoDate, endTime);
+
+      if (now < end) {
+        pill.removeAttribute('hidden');
+        // Schedule auto-hide when this show's window closes
+        const msUntilEnd = end.getTime() - now.getTime();
+        setTimeout(() => {
+          pill.setAttribute('hidden', '');
+          showNextPill();
+        }, msUntilEnd);
+        return;
+      }
+    }
+    // No upcoming events — pill area stays empty
+  }
+
+  showNextPill();
+</script>
 
 <style>
   .hero {
@@ -75,7 +130,7 @@ const { ticketsUrl, nextEvent } = Astro.props;
     height: 100%;
     pointer-events: none;
     z-index: 0;
-    opacity: 0.5;
+    opacity: 0.65;
   }
 
   .hero-content {
@@ -84,7 +139,7 @@ const { ticketsUrl, nextEvent } = Astro.props;
     text-align: center;
     max-width: 980px;
     padding: 8px 16px;
-    background: radial-gradient(ellipse at center, rgba(255, 255, 255, 0.6) 0%, rgba(255, 255, 255, 0) 70%);
+    background: radial-gradient(ellipse at center, rgba(255, 255, 255, 0.35) 0%, rgba(255, 255, 255, 0) 70%);
   }
 
   .hero-eyebrow {
@@ -162,6 +217,7 @@ const { ticketsUrl, nextEvent } = Astro.props;
     background: rgba(220, 38, 38, 0.08);
     backdrop-filter: blur(8px);
     -webkit-backdrop-filter: blur(8px);
+    border: 1px solid rgba(220, 38, 38, 0.2);
     color: var(--charcoal);
     font-family: var(--font-body), sans-serif;
     font-size: 13px;
@@ -188,12 +244,6 @@ const { ticketsUrl, nextEvent } = Astro.props;
   .next-show-pill-sep {
     color: rgba(26, 26, 26, 0.3);
     flex-shrink: 0;
-  }
-  .next-show-pill-venue {
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-    min-width: 0;
   }
   .next-show-pill-cta {
     color: var(--brand-red);
@@ -310,7 +360,6 @@ const { ticketsUrl, nextEvent } = Astro.props;
       font-size: 11px;
     }
     .next-show-pill { font-size: 12px; padding: 9px 14px; gap: 6px; }
-    .next-show-pill-venue { display: none; }
     .btn { white-space: normal; padding: 14px 16px; letter-spacing: 1px; }
   }
 

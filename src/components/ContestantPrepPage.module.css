@@ -78,7 +78,7 @@
 .container {
   max-width: 680px;
   margin: 0 auto;
-  padding: 56px 24px 96px;
+  padding: 40px 16px 64px;
 }
 
 /* ─── Cover / header ──────────────────────────────────────────── */
@@ -95,7 +95,7 @@
   font-weight: 900;
   color: var(--charcoal);
   line-height: 1.1;
-  margin-bottom: 4px;
+  margin-bottom: 12px;
 }
 
 .coverShow {
@@ -106,6 +106,7 @@
   letter-spacing: 0.12em;
   color: var(--brand-red);
   margin-bottom: 28px;
+  text-align: center;
 }
 
 .coverIntro {
@@ -263,7 +264,7 @@
 
 @media (min-width: 768px) {
   .container {
-    padding: 72px 48px 120px;
+    padding: 56px 32px 80px;
   }
 }
 

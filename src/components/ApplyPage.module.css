@@ -98,7 +98,7 @@
   border-radius: 20px;
   padding: 40px 36px;
   box-shadow: 0 8px 40px rgba(0, 0, 0, 0.08);
-  border: 1px solid rgba(0, 0, 0, 0.1);
+  border: 1px solid var(--border);
 }
 
 /* ─── Form elements ──────────────────────────────────────────── */
@@ -133,6 +133,7 @@
 
 .retryButton {
   width: 100%;
+  min-height: 48px;
   padding: 14px 16px;
   border-radius: 12px;
   border: 1px dashed rgba(0, 0, 0, 0.15);
@@ -154,7 +155,7 @@
   width: 100%;
   padding: 14px 16px;
   border-radius: 12px;
-  border: 1px solid rgba(0, 0, 0, 0.1);
+  border: 1px solid var(--border);
   font-family: var(--font-body);
   font-size: 16px;
   color: #3D3532;
@@ -237,19 +238,19 @@
 
 .gridTwo {
   display: grid;
-  grid-template-columns: 1fr 1fr;
+  grid-template-columns: 1fr;
   gap: 0 16px;
 }
 
 .gridThree {
   display: grid;
-  grid-template-columns: 1fr 1fr 1fr;
+  grid-template-columns: 1fr;
   gap: 0 16px;
 }
 
-@media (max-width: 600px) {
-  .gridTwo { grid-template-columns: 1fr; }
-  .gridThree { grid-template-columns: 1fr; }
+@media (min-width: 601px) {
+  .gridTwo { grid-template-columns: 1fr 1fr; }
+  .gridThree { grid-template-columns: 1fr 1fr 1fr; }
 }
 
 /* ─── Section spacing ────────────────────────────────────────── */
@@ -391,7 +392,7 @@
 
 .submitButton:hover {
   background: var(--brand-red-dark);
-  box-shadow: 0 4px 20px rgba(220, 38, 38, 0.3);
+  box-shadow: 0 4px 20px rgba(var(--brand-red-rgb), 0.3);
 }
 
 .submitButton:disabled {

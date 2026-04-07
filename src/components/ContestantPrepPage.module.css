@@ -86,7 +86,7 @@
 .cover {
   margin-bottom: 40px;
   padding-bottom: 32px;
-  border-bottom: 2px solid var(--charcoal);
+  border-bottom: none;
 }
 
 .coverTitle {
@@ -250,9 +250,9 @@
 /* ─── Footer ──────────────────────────────────────────────────── */
 
 .footer {
-  margin-top: 64px;
-  padding-top: 28px;
-  border-top: 2px solid var(--charcoal);
+  margin-top: 48px;
+  padding-top: 0;
+  border-top: none;
   font-family: var(--font-body);
   font-size: 16px;
   color: var(--charcoal);

@@ -112,9 +112,9 @@ const steps = EXPERIENCE_STEPS;
   .exp-cta {
     margin-top: 32px;
     display: flex;
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 12px;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 16px;
   }
   .exp-cta-btn {
     display: inline-flex;
@@ -136,7 +136,7 @@ const steps = EXPERIENCE_STEPS;
   .exp-cta-btn:hover { background: var(--brand-red-dark); }
   .exp-cta-link {
     font-family: var(--font-cormorant), serif;
-    font-size: 16px;
+    font-size: 18px;
     font-style: italic;
     color: var(--brand-red);
     text-decoration: none;

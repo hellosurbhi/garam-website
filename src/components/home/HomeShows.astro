@@ -21,11 +21,9 @@ function parseDay(dateStr: string): string {
 
 <section class="shows" id="shows" aria-labelledby="shows-heading">
   <div class="shows-header" data-reveal>
-    <div>
-      <h2 id="shows-heading">Grab Your Seat</h2>
-      <p>Tickets always sell out. You've been warned.</p>
-      <p class="shows-proof">40+ shows sold out · 2,000+ audience members · 13 couples matched</p>
-    </div>
+    <h2 id="shows-heading">Grab Your Seat</h2>
+    <p>Tickets always sell out. You've been warned.</p>
+    <p class="shows-proof">40+ shows sold out · 2,000+ audience members · 13 couples matched</p>
   </div>
   <div class="shows-list">
     {events.map((event) => {
@@ -148,7 +146,7 @@ function parseDay(dateStr: string): string {
   .shows-proof {
     font-size: 13px;
     color: rgba(255, 255, 255, 0.4);
-    margin-top: 8px;
+    margin-top: 4px;
     letter-spacing: 0.5px;
   }
   .shows-list {

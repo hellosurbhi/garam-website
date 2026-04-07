@@ -19,6 +19,7 @@ import { buildEventSchemas } from '@/utils/eventSchema';
 const HIDDEN_FROM_HOME = ['Salt Lake City', 'Denver'];
 const upcomingEvents = allEvents.filter((e) => !isEventPast(e.date) && !e.hidden && !HIDDEN_FROM_HOME.includes(e.city));
 const firstTicketUrl = '/tickets';
+const nextEvent = events.find((e) => !e.hidden && e.isoDate && e.isoDate >= new Date().toISOString().slice(0, 10) && e.url);
 
 // Organization JSON-LD
 const orgJsonLd = JSON.stringify({
@@ -66,7 +67,7 @@ const eventSchemas = buildEventSchemas(upcomingForSchema);
 
   <HomeNav ticketsUrl={firstTicketUrl} />
   <main id="main-content">
-    <HomeHero ticketsUrl={firstTicketUrl} />
+    <HomeHero ticketsUrl={firstTicketUrl} nextEvent={nextEvent} />
     <HomeMarquee />
     <HomeExperience />
     <HomeShows events={upcomingEvents} />

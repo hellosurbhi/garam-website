@@ -69,6 +69,7 @@ import { HOME_FAQS as faqs } from '@/data/copy';
   }
   .faq-list { display: flex; flex-direction: column; }
   .faq-item { border-bottom: 1.5px solid #eee; }
+  .faq-item:first-child { border-top: 1.5px solid #eee; }
   .faq-q {
     font-family: var(--font-cormorant), serif;
     font-size: 25px;
@@ -142,9 +143,10 @@ import { HOME_FAQS as faqs } from '@/data/copy';
     text-align: center;
     margin-top: 48px;
     display: flex;
-    flex-direction: column;
+    flex-wrap: wrap;
+    justify-content: center;
     align-items: center;
-    gap: 12px;
+    gap: 16px;
   }
   .faq-cta-btn {
     display: inline-flex;
@@ -166,7 +168,7 @@ import { HOME_FAQS as faqs } from '@/data/copy';
   .faq-cta-btn:hover { background: var(--brand-red-dark); }
   .faq-cta-link {
     font-family: var(--font-cormorant), serif;
-    font-size: 16px;
+    font-size: 18px;
     font-style: italic;
     color: var(--brand-red);
     text-decoration: none;

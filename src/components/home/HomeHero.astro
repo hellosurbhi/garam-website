@@ -1,9 +1,12 @@
 ---
+import type { EventEntry } from '@/data/events';
+
 interface Props {
   ticketsUrl: string;
+  nextEvent?: EventEntry;
 }
 
-const { ticketsUrl } = Astro.props;
+const { ticketsUrl, nextEvent } = Astro.props;
 ---
 
 <section class="hero" aria-label="Hero">
@@ -20,6 +23,12 @@ const { ticketsUrl } = Astro.props;
       New York City's live South Asian comedy dating show.<br />
       Real singles. Real sparks. Real chaos.
     </p>
+    {nextEvent && (
+      <a href={nextEvent.url} target="_blank" rel="noopener noreferrer" class="next-show">
+        Next show: {nextEvent.date} · {nextEvent.city.split(',')[0]}
+        {nextEvent.tagline && <span class="next-show-tag">{nextEvent.tagline}</span>}
+      </a>
+    )}
     <div class="hero-ctas">
       <a href={ticketsUrl} class="btn btn-hot">Get Tickets</a>
       <a href="/apply" class="btn btn-outline">Apply for the Show</a>
@@ -137,6 +146,33 @@ const { ticketsUrl } = Astro.props;
     margin-bottom: 36px;
     line-height: 1.5;
     animation: rise 0.9s cubic-bezier(0.22, 1, 0.36, 1) 0.35s both;
+  }
+
+  .next-show {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-family: var(--font-cormorant), serif;
+    font-size: 17px;
+    font-style: italic;
+    color: var(--charcoal);
+    text-decoration: none;
+    margin-bottom: 20px;
+    animation: rise 0.9s cubic-bezier(0.22, 1, 0.36, 1) 0.45s both;
+    transition: color 0.2s;
+  }
+  .next-show:hover { color: var(--brand-red); }
+  .next-show-tag {
+    font-family: var(--font-body), sans-serif;
+    font-size: 11px;
+    font-weight: 700;
+    font-style: normal;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: var(--brand-red);
+    background: rgba(var(--brand-red-rgb), 0.1);
+    padding: 3px 10px;
+    border-radius: 50px;
   }
 
   .hero-ctas {

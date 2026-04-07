@@ -6,6 +6,10 @@ const FAQ_TITLE = "FAQ \u2013 Garam Masala Dating | Live South Asian Dating Show
 const FAQ_DESC =
   "Everything you need to know about Garam Masala Dating \u2014 tickets, how the show works, who can apply, what to expect, and how to get on stage.";
 
+function stripHtml(str: string): string {
+  return str.replace(/<[^>]*>/g, '');
+}
+
 const FAQS = [
   {
     q: "What is Garam Masala Dating?",
@@ -17,11 +21,11 @@ const FAQS = [
   },
   {
     q: "How do I get tickets?",
-    a: "Tickets are available on Eventbrite. Search \u2018Garam Masala Dating\u2019 or visit garammasaladating.com/tickets. General admission includes entry to the show and the singles mixer before and after.",
+    a: 'Tickets are available on Eventbrite. Search \u2018Garam Masala Dating\u2019 or visit <a href="/tickets">garammasaladating.com/tickets</a>. General admission includes entry to the show and the singles mixer before and after.',
   },
   {
     q: "How do I apply to be a contestant?",
-    a: "Fill out the application on our website. We cast contestants based on personality, chemistry potential, and your answers \u2014 not looks. Being genuinely funny, honest, or a little chaotic helps.",
+    a: 'Fill out the <a href="/apply">application on our website</a>. We cast contestants based on personality, chemistry potential, and your answers \u2014 not looks. Being genuinely funny, honest, or a little chaotic helps.',
   },
   {
     q: "What actually happens at the show?",
@@ -41,7 +45,7 @@ const FAQS = [
   },
   {
     q: "How often does the show run?",
-    a: "Garam Masala Dating runs weekly in Manhattan and monthly in Jersey City, New Jersey. Visit garammasaladating.com for upcoming dates.",
+    a: 'Garam Masala Dating runs weekly in Manhattan and monthly in Jersey City, New Jersey. Visit <a href="/tickets">garammasaladating.com</a> for upcoming dates.',
   },
   {
     q: "Is Garam Masala Dating like Indian Matchmaking?",
@@ -49,15 +53,15 @@ const FAQS = [
   },
   {
     q: "What cities is Garam Masala Dating in?",
-    a: "Garam Masala Dating currently runs weekly in Manhattan, New York City and monthly in Jersey City, New Jersey. Check garammasaladating.com for upcoming show dates and locations.",
+    a: 'Garam Masala Dating currently runs weekly in Manhattan, New York City and monthly in Jersey City, New Jersey. Check <a href="/tickets">garammasaladating.com</a> for upcoming show dates and locations.',
   },
   {
     q: "Is Garam Masala Dating free?",
-    a: "No. Tickets are purchased on Eventbrite. Prices vary by show \u2014 check garammasaladating.com for current pricing and upcoming dates.",
+    a: 'No. Tickets are purchased on Eventbrite. Prices vary by show \u2014 check <a href="/tickets">garammasaladating.com</a> for current pricing and upcoming dates.',
   },
   {
     q: "I want to collaborate, sponsor, or book the show for a private event. Who do I contact?",
-    a: "Email press@garammasaladating.com. We do private events, brand partnerships, and media features.",
+    a: 'Email <a href="mailto:press@garammasaladating.com">press@garammasaladating.com</a>. We do private events, brand partnerships, and media features.',
   },
 ];
 
@@ -67,7 +71,7 @@ const faqJsonLd = JSON.stringify({
   mainEntity: FAQS.map(({ q, a }) => ({
     "@type": "Question",
     name: q,
-    acceptedAnswer: { "@type": "Answer", text: a },
+    acceptedAnswer: { "@type": "Answer", text: stripHtml(a) },
   })),
 });
 
@@ -115,7 +119,7 @@ const breadcrumbJsonLd = buildBreadcrumbJsonLd([
         {FAQS.map((item, i) => (
           <div class="faq-item">
             <h2 class="faq-question">{item.q}</h2>
-            <p class="faq-answer-text">{item.a}</p>
+            <p class="faq-answer-text" set:html={item.a} />
           </div>
         ))}
       </div>
@@ -124,8 +128,8 @@ const breadcrumbJsonLd = buildBreadcrumbJsonLd([
       <div class="faq-footer">
         <p class="faq-footer-text">
           Still have questions? Reach out at{' '}
-          <a href="mailto:hello@garammasaladating.com" class="faq-footer-link">
-            hello@garammasaladating.com
+          <a href="mailto:contact@garammasaladating.com" class="faq-footer-link">
+            contact@garammasaladating.com
           </a>
         </p>
       </div>
@@ -269,6 +273,12 @@ const breadcrumbJsonLd = buildBreadcrumbJsonLd([
     font-size: 15px;
     font-style: italic;
     color: var(--muted);
+  }
+
+  .faq-answer-text a {
+    color: var(--brand-red);
+    text-decoration: underline;
+    text-underline-offset: 2px;
   }
 
   .faq-footer-link {

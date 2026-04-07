@@ -1,22 +1,18 @@
 ---
-import { CREATOR_URLS } from '@/data/socials';
-
 const hosts = [
   {
     name: 'Surbhi',
     image: '/images/surbhi.png',
     role: 'Co-Creator & Host',
-    bio: "Surbhi is a New York-based stand-up comedian and the creative force behind Garam Masala Dating. She created the show in 2022 after noticing a gap in the South Asian comedy and dating space. What started as a one-off experiment in a downtown bar is now NYC's #1 live South Asian dating show, selling out 250-seat venues every week and expanding to LA, SF, and San Diego. She's performed at venues across the US and UK, and has accidentally matched three couples since launching the show. And counting.",
+    bio: "Surbhi is a stand-up comedian and the creative force behind Garam Masala Dating. She created the show in 2022, turning a one-off bar experiment into NYC's biggest live dating show — selling out 250-seat venues every week.",
     credits: ['Stand-Up Comedian', 'Co-Creator', 'NYC · LA · SF'],
-    url: CREATOR_URLS.surbhi,
   },
   {
     name: 'Wyatt',
     image: '/images/wyatt.avif',
     role: 'Co-Host & Actor',
-    bio: "Wyatt Feegrado is a stand-up comedian and actor who started sneaking out of his parents\u2019 house in Walnut Creek, California to do open mics at 16. He went on to attend NYU Tisch, then landed a starring role in ESPN+\u2019s Bettor Days, followed by HULU\u2019s Chicano Squad and the History Channel\u2019s Holy Marvels. He tours the US 11 months of the year and co-hosts the podcast Gen Zenophobic with his brother Luke. On Garam Masala, he\u2019s the reason no awkward silence survives longer than two seconds.",
+    bio: "Wyatt Feegrado is a stand-up comedian and actor who\u2019s starred in ESPN+\u2019s Bettor Days, Hulu\u2019s Chicano Squad, and the History Channel\u2019s Holy Marvels. On Garam Masala, he\u2019s the reason no awkward silence lasts longer than two seconds.",
     credits: ['Stand-Up Comedian', 'Actor', 'NYU Tisch', 'Co-Host'],
-    url: CREATOR_URLS.wyatt,
   },
 ];
 ---
@@ -39,7 +35,7 @@ const hosts = [
         />
         <div class="host-info">
           <h3>
-            <a href={host.url} target="_blank" rel="noopener noreferrer">{host.name}</a>
+            <a href="/hosts">{host.name}</a>
           </h3>
           <div class="host-role">{host.role}</div>
           <p class="host-bio">{host.bio}</p>

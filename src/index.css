@@ -51,7 +51,7 @@
   /* legacy aliases — used only by admin components */
   --cream: #FFF8F0;
   --text: #1A1A1A;
-  --text-light: #666;
+  --text-light: #595959;
   --border: rgba(0, 0, 0, 0.1);
   --success: #22C55E;
 
@@ -64,7 +64,7 @@
   --charcoal: #1A1A1A;
   --ink: #111;
   --spice-orange: #FF6D00;
-  --muted: #888;
+  --muted: #6b6b6b;
   --text-secondary: #555;
   --text-tertiary: #777;
 }

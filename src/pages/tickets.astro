@@ -52,21 +52,24 @@ const eventSchemas = buildEventSchemas(upcomingForSchema);
         <div class="tickets-list">
           {upcomingEvents.map((event, i) => {
             const isLive = event.url && event.url !== "#";
+            const isSoldOut = event.tagline?.toLowerCase().includes('sold out');
             return isLive ? (
               <a
                 href={event.url}
                 target="_blank"
                 rel="noopener noreferrer"
-                class="ticket-card ticket-card--live"
+                class={`ticket-card ticket-card--live${isSoldOut ? ' ticket-card--soldout' : ''}`}
                 style={`animation-delay: ${0.1 + i * 0.06}s`}
               >
                 <div class="ticket-card__info">
                   <span class="ticket-card__date">{event.date}</span>
                   <span class="ticket-card__city">{event.city}</span>
                 </div>
-                <span class="ticket-card__cta">
-                  Get Tickets
-                  <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
+                <span class={`ticket-card__cta${isSoldOut ? ' ticket-card__cta--soldout' : ''}`}>
+                  {isSoldOut ? 'Sold Out' : 'Get Tickets'}
+                  {!isSoldOut && (
+                    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
+                  )}
                 </span>
               </a>
             ) : (
@@ -278,6 +281,17 @@ const eventSchemas = buildEventSchemas(upcomingForSchema);
   .ticket-card--live:hover .ticket-card__cta {
     background: rgba(var(--brand-red-rgb), 0.15);
     border-color: rgba(var(--brand-red-rgb), 0.5);
+  }
+
+  .ticket-card__cta--soldout {
+    background: rgba(0, 0, 0, 0.04);
+    color: var(--muted);
+    border-color: rgba(0, 0, 0, 0.08);
+  }
+
+  .ticket-card--live:hover .ticket-card__cta--soldout {
+    background: rgba(0, 0, 0, 0.04);
+    border-color: rgba(0, 0, 0, 0.08);
   }
 
   .ticket-card__cta--notify {

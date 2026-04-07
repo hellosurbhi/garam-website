@@ -29,6 +29,7 @@ function parseDay(dateStr: string): string {
   <div class="shows-list">
     {events.map((event) => {
       const isLive = Boolean(event.url);
+      const isSoldOut = event.tagline?.toLowerCase().includes('sold out');
       return isLive ? (
         <a href={event.url} target="_blank" rel="noopener noreferrer" class="show-card show-card--live" data-reveal>
           <div class="show-date-block">
@@ -39,7 +40,7 @@ function parseDay(dateStr: string): string {
             <h3>{event.city}</h3>
             <span>{event.tagline ?? 'On sale now'}</span>
           </div>
-          <span class="ticket-label">Get Tickets</span>
+          <span class={`ticket-label${isSoldOut ? ' ticket-label--soldout' : ''}`}>{isSoldOut ? 'Sold Out' : 'Get Tickets'}</span>
         </a>
       ) : (
         <div class="show-card show-card--notify" role="button" tabindex="0" data-notify-city={event.city} data-reveal>
@@ -217,6 +218,9 @@ function parseDay(dateStr: string): string {
   }
   .ticket-label--notify {
     color: rgba(255, 255, 255, 0.45);
+  }
+  .ticket-label--soldout {
+    color: rgba(255, 255, 255, 0.35);
   }
   .request-city {
     text-align: center;

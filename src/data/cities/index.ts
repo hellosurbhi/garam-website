@@ -51,6 +51,7 @@ const REGION_ORDER: CityRegion[] = [
   "Europe",
   "Southeast Asia",
   "East Asia",
+  "South Asia",
   "Africa",
   "Pacific Islands",
   "Caribbean",

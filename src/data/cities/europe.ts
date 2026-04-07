@@ -1158,7 +1158,7 @@ export const europeCities: Record<string, CityData> = {
     addressRegion: "Vaud",
     addressCountry: "CH",
     region: "Europe",
-    nearbyCities: ["geneva", "zurich", "basel", "lyon", "milan"],
+    nearbyCities: ["geneva", "zurich", "basel", "milan"],
   },
 
   basel: {

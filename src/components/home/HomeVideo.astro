@@ -1,0 +1,198 @@
+---
+const YOUTUBE_ID = 'AXDhphHBUj4';
+const THUMBNAIL = `https://img.youtube.com/vi/${YOUTUBE_ID}/maxresdefault.jpg`;
+
+const reels = [
+  { url: 'https://www.instagram.com/p/C79Pohcxu4j/', label: 'Blindfold Round' },
+  { url: 'https://www.instagram.com/p/DWeM47lkTXS/', label: 'Audience Reactions' },
+  { url: 'https://www.instagram.com/reel/DWuAL_REcJD/', label: 'Show Highlights' },
+];
+---
+
+<section class="video" id="watch" aria-labelledby="video-heading">
+  <div class="video-inner">
+    <div class="video-header" data-reveal>
+      <div class="video-eyebrow">Watch</div>
+      <h2 id="video-heading">See What You're <em>Missing</em></h2>
+    </div>
+
+    <div class="video-main" data-reveal>
+      <button type="button" class="video-facade" id="yt-facade" aria-label="Play show highlight video">
+        <img
+          src={THUMBNAIL}
+          alt="Garam Masala Dating show highlight reel"
+          width="1280"
+          height="720"
+          loading="lazy"
+        />
+        <div class="video-play">
+          <svg viewBox="0 0 68 48" width="68" height="48"><path d="M66.52 7.74c-.78-2.93-2.49-5.41-5.42-6.19C55.79.13 34 0 34 0S12.21.13 6.9 1.55C3.97 2.33 2.27 4.81 1.48 7.74.06 13.05 0 24 0 24s.06 10.95 1.48 16.26c.78 2.93 2.49 5.41 5.42 6.19C12.21 47.87 34 48 34 48s21.79-.13 27.1-1.55c2.93-.78 4.64-3.26 5.42-6.19C67.94 34.95 68 24 68 24s-.06-10.95-1.48-16.26z" fill="var(--brand-red)"/><path d="M45 24 27 14v20" fill="#fff"/></svg>
+        </div>
+      </button>
+    </div>
+
+    <div class="reels-row" data-reveal>
+      {reels.map((reel) => (
+        <a href={reel.url} target="_blank" rel="noopener noreferrer" class="reel-card">
+          <div class="reel-icon">
+            <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+          </div>
+          <span class="reel-label">{reel.label}</span>
+          <svg class="reel-arrow" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17 17 7"/><path d="M7 7h10v10"/></svg>
+        </a>
+      ))}
+    </div>
+  </div>
+</section>
+
+<script>
+  const facade = document.getElementById('yt-facade');
+  facade?.addEventListener('click', () => {
+    const iframe = document.createElement('iframe');
+    iframe.src = 'https://www.youtube-nocookie.com/embed/AXDhphHBUj4?autoplay=1&rel=0';
+    iframe.allow = 'accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture';
+    iframe.allowFullscreen = true;
+    iframe.title = 'Garam Masala Dating show highlight';
+    iframe.style.cssText = 'position:absolute;inset:0;width:100%;height:100%;border:none;border-radius:20px;';
+    const parent = facade.parentElement;
+    if (parent) {
+      parent.innerHTML = '';
+      parent.style.position = 'relative';
+      parent.appendChild(iframe);
+    }
+  });
+</script>
+
+<style>
+  .video {
+    padding: 56px 16px;
+    background: var(--off-white);
+  }
+  .video-inner {
+    max-width: 900px;
+    margin: 0 auto;
+  }
+  .video-header {
+    text-align: center;
+    margin-bottom: 40px;
+  }
+  .video-eyebrow {
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: var(--brand-red);
+    margin-bottom: 12px;
+  }
+  .video-header h2 {
+    font-family: var(--font-playfair), serif;
+    font-size: clamp(32px, 5vw, 56px);
+    font-weight: 900;
+    color: var(--charcoal);
+    line-height: 1.05;
+  }
+  .video-header h2 em {
+    color: var(--brand-red);
+    font-style: italic;
+  }
+
+  .video-main {
+    border-radius: 20px;
+    overflow: hidden;
+    aspect-ratio: 16 / 9;
+    background: var(--charcoal);
+    position: relative;
+  }
+  .video-facade {
+    display: block;
+    width: 100%;
+    height: 100%;
+    border: none;
+    padding: 0;
+    cursor: pointer;
+    position: relative;
+    background: var(--charcoal);
+  }
+  .video-facade img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+    opacity: 0.7;
+    transition: opacity 0.3s;
+  }
+  .video-facade:hover img { opacity: 0.5; }
+  .video-play {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .video-play svg {
+    filter: drop-shadow(0 4px 12px rgba(0, 0, 0, 0.3));
+    transition: transform 0.2s;
+  }
+  .video-facade:hover .video-play svg { transform: scale(1.1); }
+
+  .reels-row {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 12px;
+    margin-top: 16px;
+  }
+  .reel-card {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 16px;
+    background: white;
+    border-radius: 14px;
+    text-decoration: none;
+    border: 1px solid rgba(0, 0, 0, 0.06);
+    transition: border-color 0.2s, box-shadow 0.2s;
+  }
+  .reel-card:hover {
+    border-color: rgba(var(--brand-red-rgb), 0.3);
+    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
+  }
+  .reel-icon {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: rgba(var(--brand-red-rgb), 0.1);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    color: var(--brand-red);
+  }
+  .reel-label {
+    font-family: var(--font-body), sans-serif;
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--charcoal);
+    flex: 1;
+  }
+  .reel-arrow {
+    color: var(--brand-red);
+    flex-shrink: 0;
+    opacity: 0.5;
+    transition: opacity 0.2s;
+  }
+  .reel-card:hover .reel-arrow { opacity: 1; }
+
+  @media (max-width: 600px) {
+    .reels-row {
+      grid-template-columns: 1fr;
+      gap: 8px;
+    }
+  }
+
+  @media (min-width: 768px) {
+    .video { padding: 80px 48px; }
+    .video-header { margin-bottom: 48px; }
+    .reels-row { gap: 16px; }
+    .reel-card { padding: 18px 20px; }
+  }
+</style>

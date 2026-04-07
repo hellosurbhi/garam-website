@@ -28,7 +28,6 @@ const {
   hideFooter = false,
 } = Astro.props;
 
-const isHome = Astro.url.pathname === '/' || Astro.url.pathname === '';
 ---
 
 <!doctype html>
@@ -42,24 +41,6 @@ const isHome = Astro.url.pathname === '/' || Astro.url.pathname === '';
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
     <meta name="theme-color" content="#DC2626" />
-    {isHome && (
-      <link
-        rel="preload"
-        as="image"
-        type="image/avif"
-        href="/images/hero.avif"
-        media="(min-width: 769px)"
-      />
-    )}
-    {isHome && (
-      <link
-        rel="preload"
-        as="image"
-        type="image/avif"
-        href="/images/hero-mobile.avif"
-        media="(max-width: 768px)"
-      />
-    )}
     <link
       rel="preload"
       as="font"
@@ -109,23 +90,6 @@ const isHome = Astro.url.pathname === '/' || Astro.url.pathname === '';
       import { injectSpeedInsights } from '@vercel/speed-insights';
       inject();
       injectSpeedInsights();
-
-      // Click empty space to go home (only if came from home)
-      const isHome = window.location.pathname === '/';
-      const isProtected = window.location.pathname.startsWith('/admin') || window.location.pathname.startsWith('/contestant-prep');
-      if (!isHome && !isProtected) {
-        const cameFromHome = document.referrer.includes(window.location.origin)
-          && new URL(document.referrer).pathname === '/';
-        if (cameFromHome) {
-          document.body.addEventListener('click', (e) => {
-            const target = e.target as HTMLElement;
-            const interactive = target.closest('a, button, input, textarea, select, dialog, form, nav, footer, [role="button"], .show-card, .host-card, .faq-item, .press-name');
-            if (!interactive) {
-              window.location.href = '/';
-            }
-          });
-        }
-      }
 
       // Custom cursor — desktop only (pointer: fine)
       if (window.matchMedia('(pointer: fine)').matches) {

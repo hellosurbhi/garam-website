@@ -130,8 +130,8 @@
 /* ─── Sections ────────────────────────────────────────────────── */
 
 .section {
-  margin-top: 48px;
-  padding-top: 48px;
+  margin-top: 32px;
+  padding-top: 32px;
   border-top: 1px solid rgba(0, 0, 0, 0.1);
 }
 
@@ -194,19 +194,32 @@
   list-style: disc;
 }
 
-/* ─── Arrival gender dropdown ─────────────────────────────────── */
+/* ─── Arrival gender toggle ───────────────────────────────────── */
 
-.genderSelect {
-  width: 100%;
-  max-width: 320px;
+.genderToggle {
+  display: flex;
+  gap: 8px;
+}
+
+.genderBtn {
+  flex: 1;
   padding: 12px 16px;
   font-family: var(--font-body);
-  font-size: 16px;
-  color: var(--charcoal);
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--text-secondary);
   background: white;
-  border: 1.5px solid rgba(0, 0, 0, 0.15);
+  border: 1.5px solid rgba(0, 0, 0, 0.12);
   border-radius: 8px;
   cursor: pointer;
+  transition: border-color 0.15s, color 0.15s, background 0.15s;
+  min-height: 48px;
+}
+
+.genderBtnActive {
+  background: var(--charcoal);
+  color: white;
+  border-color: var(--charcoal);
 }
 
 .genderReveal {

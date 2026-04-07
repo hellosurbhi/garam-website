@@ -210,16 +210,22 @@ function PrepGuide() {
             see each other before the show. Your first impression of each other
             happens on stage.
           </p>
-          <select
-            className={styles.genderSelect}
-            value={gender}
-            onChange={(e) => setGender(e.target.value as 'female' | 'male' | '')}
-            aria-label="Select your contestant type"
-          >
-            <option value="">I am a…</option>
-            <option value="female">Female contestant</option>
-            <option value="male">Male contestant</option>
-          </select>
+          <div className={styles.genderToggle} role="group" aria-label="Select your contestant type">
+            <button
+              type="button"
+              className={`${styles.genderBtn}${gender === 'male' ? ` ${styles.genderBtnActive}` : ''}`}
+              onClick={() => setGender('male')}
+            >
+              Guys
+            </button>
+            <button
+              type="button"
+              className={`${styles.genderBtn}${gender === 'female' ? ` ${styles.genderBtnActive}` : ''}`}
+              onClick={() => setGender('female')}
+            >
+              Girls
+            </button>
+          </div>
 
           {gender && (
             <div className={styles.genderReveal}>

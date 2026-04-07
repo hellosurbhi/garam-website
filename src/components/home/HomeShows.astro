@@ -271,4 +271,103 @@ function parseDay(dateStr: string): string {
       grid-column: auto;
     }
   }
+
+  /* ─── Request City Modal ─────────────────────────────────────── */
+  .modal-dialog {
+    border: none;
+    background: transparent;
+    padding: 24px;
+    max-width: 100%;
+    max-height: 100vh;
+    width: 100%;
+    height: 100%;
+    overflow: visible;
+  }
+  .modal-dialog::backdrop { background: rgba(0, 0, 0, 0.5); }
+  .modal-dialog[open] {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .modal-inner {
+    width: 100%;
+    max-width: 400px;
+    max-height: 80vh;
+    overflow-y: auto;
+    background: white;
+    border: 1px solid rgba(0, 0, 0, 0.1);
+    border-radius: 20px;
+    padding: 32px 24px;
+    position: relative;
+    animation: modalIn 0.25s ease-out both;
+    text-align: center;
+  }
+  @keyframes modalIn {
+    from { opacity: 0; transform: scale(0.95) translateY(8px); }
+    to   { opacity: 1; transform: scale(1) translateY(0); }
+  }
+  .modal-close {
+    position: absolute;
+    top: 16px;
+    right: 16px;
+    background: none;
+    border: none;
+    color: var(--muted);
+    cursor: pointer;
+    padding: 4px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: color 0.2s;
+  }
+  .modal-close:hover { color: var(--charcoal); }
+  .modal-title {
+    font-family: var(--font-playfair), serif;
+    font-size: 22px;
+    font-weight: 600;
+    color: var(--charcoal);
+    margin-bottom: 8px;
+  }
+  .modal-subtitle {
+    font-size: 15px;
+    color: var(--muted);
+    margin-bottom: 24px;
+    line-height: 1.5;
+  }
+  .modal-form { display: flex; flex-direction: column; gap: 12px; }
+  .modal-form input {
+    padding: 14px 20px;
+    border: 1.5px solid rgba(0, 0, 0, 0.1);
+    border-radius: 50px;
+    font-size: 16px;
+    font-family: var(--font-body), sans-serif;
+    outline: none;
+    transition: border-color 0.2s;
+    min-height: 48px;
+  }
+  .modal-form input:focus { border-color: var(--brand-red); }
+  .modal-submit {
+    background: var(--brand-red);
+    color: white;
+    border: none;
+    padding: 14px;
+    border-radius: 50px;
+    font-family: var(--font-body), sans-serif;
+    font-size: 16px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    cursor: pointer;
+    transition: background 0.2s;
+    min-height: 48px;
+    width: 100%;
+  }
+  .modal-submit:hover { background: var(--brand-red-dark); }
+  .modal-success { text-align: center; padding: 24px 0; }
+  .modal-success p {
+    font-family: var(--font-cormorant), serif;
+    font-size: 18px;
+    font-style: italic;
+    color: var(--charcoal);
+  }
 </style>

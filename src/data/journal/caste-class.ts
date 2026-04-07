@@ -334,15 +334,7 @@ export const casteClassPosts: JournalPost[] = [
       },
       {
         type: "p",
-        text: "On matrimonial sites, income brackets are listed right next to height and religion. Caste filter. Income filter. Education filter. The economic sorting starts before any conversation happens. People who use platforms like Shaadi or BharatMatrimony know this. They also know that listing 'prefers equivalent background' is a polite way of saying class matters.",
-      },
-      {
-        type: "p",
-        text: "On apps like Hinge and Dil Mil, the filtering is less explicit but still present. Someone from a wealthy family who grew up in certain zip codes, attended certain schools, and works in certain fields is identifiable through profile cues to anyone who knows how to read them. Desis are particularly good at reading these cues because they grew up learning them. The job title, the school, the neighborhood, the type of vacation mentioned in a photo — all of it communicates economic class before a single message gets sent.",
-      },
-      {
-        type: "p",
-        text: "The article on how to use Indian matrimony sites breaks down how these filters work in practice — including who sets them and why. If you're navigating the matrimonial site world, that's worth reading alongside this one.",
+        text: "On matrimonial sites, income brackets are listed right next to height and religion. The economic sorting starts before any conversation happens — 'prefers equivalent background' is just a polite way of saying class matters. On apps like Hinge and Dil Mil, the filtering is less explicit but still present. Job title, school, neighborhood, the type of vacation in a profile photo — all of it communicates economic class before a single message gets sent. Desis are particularly good at reading these signals because they grew up learning them. The article on how to use Indian matrimony sites breaks down how these filters work in practice.",
       },
       {
         type: "h2",
@@ -350,15 +342,11 @@ export const casteClassPosts: JournalPost[] = [
       },
       {
         type: "p",
-        text: "Most South Asian parents who care about money don't think of themselves as materialistic. They think of themselves as practical. They want security for their child. They want to know the other family is 'good people' — which in practice often means financially stable, educated, and from a similar background. These are reasonable things to care about. They become a problem when 'similar background' is treated as a moral requirement rather than a preference.",
+        text: "Most South Asian parents who care about money don't think of themselves as materialistic. They think of themselves as practical. They want security for their child. They want the other family to be 'good people' — which in practice often means financially stable, educated, and from a similar background. These become a problem when 'similar background' is treated as a moral requirement rather than a preference.",
       },
       {
         type: "p",
-        text: "The script usually goes like this: someone brings home a partner the family has reservations about. The reservations are economic but they're expressed as something else — 'different lifestyle,' 'different values,' 'not sure they're serious.' These terms do real work. They let families object on class grounds while maintaining the fiction that class isn't the issue.",
-      },
-      {
-        type: "p",
-        text: "The person in the relationship is then in an impossible position: defending a partner against objections that aren't being stated directly, trying to argue against a charge that keeps shifting. This is what happens when class goes underground. It doesn't disappear — it just gets harder to challenge.",
+        text: "The script goes like this: someone brings home a partner the family has reservations about. The reservations are economic but get expressed as something else — 'different lifestyle,' 'different values,' 'not sure they're serious.' These terms do real work. They let families object on class grounds while maintaining the fiction that class isn't the issue. The person in the relationship ends up defending a partner against charges that keep shifting.",
       },
       {
         type: "h2",
@@ -366,15 +354,7 @@ export const casteClassPosts: JournalPost[] = [
       },
       {
         type: "p",
-        text: "Here's one of the stranger dynamics I see in desi dating: people who worked extremely hard to achieve financial stability — first-generation college students, people from working-class backgrounds who clawed their way into professional careers — sometimes end up with the strictest financial requirements in a partner. Not because they're snobs, but because financial security was never guaranteed for them, and they need to know it won't be taken away.",
-      },
-      {
-        type: "p",
-        text: "That's a reasonable fear. But it can translate into filtering out people who are ambitious and capable but not yet financially established — people who, in five years, will look exactly like the person doing the filtering looks today. The fear of scarcity, applied as a dating filter, ends up replicating the exact hierarchy that caused the fear in the first place.",
-      },
-      {
-        type: "p",
-        text: "Separately, people who grew up wealthy sometimes have a different version of this problem — a reflexive preference for people 'at their level' that is really about comfort and familiarity rather than any deliberate snobbery. Neither version is flattering when you look at it directly, and both are worth examining.",
+        text: "People who worked hard to achieve financial stability — first-generation college students, people from working-class backgrounds — sometimes end up with the strictest financial requirements in a partner. Not because they're snobs, but because financial security was never guaranteed for them. That's a reasonable fear. But it can translate into filtering out people who are ambitious and capable but not yet established — people who, in five years, will look exactly like the person doing the filtering looks today. The fear of scarcity, applied as a dating filter, ends up replicating the hierarchy that caused the fear. People who grew up wealthy can have the opposite version — a reflexive preference for people 'at their level' that's really about comfort rather than deliberate snobbery. Both are worth examining.",
       },
       {
         type: "h2",
@@ -450,15 +430,7 @@ export const casteClassPosts: JournalPost[] = [
       },
       {
         type: "p",
-        text: "The hierarchy made sense in a specific historical moment. South Asian immigrants, especially in the 1970s and 1980s, came to the US primarily through H-1B and similar visa categories that required technical or professional skills. Medicine and engineering were pathways to permanent stability in an uncertain new country. Parents who had been through economic hardship or partition or both wanted their children in careers that could not easily be taken away. That logic was not irrational.",
-      },
-      {
-        type: "p",
-        text: "But the logic hardened into culture. The career requirements got passed down to children who were born into stability they'd never had to build from scratch. The 'safe' career stopped being about immigration and became about status — a signal to the community that this family had arrived and their children were keeping pace. Medicine and engineering stopped being careers and became identity markers.",
-      },
-      {
-        type: "p",
-        text: "And then those children had to go date. Suddenly the identity marker was being applied to someone else's worth in a context — romantic compatibility — where it was never designed to function.",
+        text: "The hierarchy made sense in a specific historical moment. South Asian immigrants in the 1970s and 1980s came to the US primarily through visa categories that required technical or professional skills. Medicine and engineering were pathways to permanent stability in an uncertain new country. That logic was not irrational. But it hardened into culture. The 'safe' career stopped being about immigration and became about status — a signal to the community that this family had arrived. Medicine and engineering stopped being careers and became identity markers. And then those children had to go date.",
       },
       {
         type: "h2",
@@ -466,15 +438,7 @@ export const casteClassPosts: JournalPost[] = [
       },
       {
         type: "p",
-        text: "The career pressure operates differently across gender lines in desi dating, and the asymmetry is worth naming. For desi men, a prestigious career is often treated as a baseline requirement — the minimum to be considered dateable by families doing the screening. For desi women, the equation has been historically more complicated: career is valued, but not to the point of being more accomplished than a potential husband.",
-      },
-      {
-        type: "p",
-        text: "This creates a particular bind for highly accomplished desi women. The same medical degree or finance career that makes a desi man maximally attractive can make a desi woman intimidating to some families and to some men who've internalized the idea that the male partner should be 'the provider.' Women in this situation report getting fewer matches, fielding comments about being 'too focused on work,' and being asked by aunties when they're going to 'slow down.'",
-      },
-      {
-        type: "p",
-        text: "The piece on how parents measure love in salary and status goes into more depth on how this plays out when families are doing the evaluation — it's worth reading if you're navigating this from any direction.",
+        text: "For desi men, a prestigious career is often treated as a baseline requirement — the minimum to be considered dateable. For desi women, the equation is more complicated: career is valued, but not to the point of being more accomplished than a potential husband. The same medical degree that makes a desi man maximally attractive can make a desi woman intimidating to families who've internalized the idea that the male partner should be 'the provider.' Women in this situation report fewer matches, comments about being 'too focused on work,' and aunties asking when they're going to 'slow down.' The piece on how parents measure love in salary and status goes deeper on how this plays out.",
       },
       {
         type: "h2",
@@ -566,15 +530,11 @@ export const casteClassPosts: JournalPost[] = [
       },
       {
         type: "p",
-        text: "The signal is not universal. A surname that means something specific within one community may be opaque to people from a different region or background. Caste-surname associations are most legible within communities — a Tamil Brahmin family will read a Tamil surname differently than a Punjabi family will, and both will read it differently than a Bangladeshi Muslim family will. The system is internally coherent within groups and often illegible across them.",
+        text: "The signal is not universal — it's most legible within the same community and often opaque across different regional groups. A Tamil Brahmin family reads a Tamil surname very differently than a Punjabi or Bangladeshi Muslim family would. But within the relevant community, the reading can be extremely specific: not just 'upper caste' or 'lower caste' but which jati, which geographic cluster, which historical occupational category. Second-generation desis often know only the broad category. First-generation parents often know it in far more detail.",
       },
       {
         type: "p",
-        text: "Within the relevant community, though, the reading can be extremely specific. Not just 'upper caste' or 'lower caste' but which jati, which geographic cluster, which occupational category the name historically maps to. This is information that second-generation desis often only partially know — they can name the broad category but not always the specific history. First-generation parents and grandparents often know it in much more detail.",
-      },
-      {
-        type: "p",
-        text: "That generational difference creates one of the friction points of modern desi dating: the person in their twenties or thirties who genuinely doesn't know or care about the caste implications of a name, whose parents most certainly do, and whose parents will ask questions the young person doesn't even have the vocabulary to answer.",
+        text: "That generational difference creates a recurring friction point in modern desi dating: the person in their twenties who genuinely doesn't know or care about the caste implications of a name, whose parents most certainly do, and whose parents will ask questions the young person doesn't even have the vocabulary to answer.",
       },
       {
         type: "h2",
@@ -582,27 +542,7 @@ export const casteClassPosts: JournalPost[] = [
       },
       {
         type: "p",
-        text: "On matrimonial sites, surname is often one of the first pieces of visible information. Some sites allow caste-based filtering directly; others do it implicitly through community and surname fields. Either way, someone looking to filter by caste can do so very easily, and the name is usually how they confirm what the filters surfaced.",
-      },
-      {
-        type: "p",
-        text: "On general dating apps, it's less structured but still present. Some people list their full name including surname; others use only a first name. The decision to include or omit a surname is often conscious — people who've been burned by caste-based rejection sometimes remove it; people who want to signal their background prominently include it. The surname's presence or absence is itself a signal.",
-      },
-      {
-        type: "p",
-        text: "In real life — at community events, temples, desi parties, shows like ours — the surname question often comes up through family rather than directly through the person. 'What's your last name?' from a parent is almost never just curiosity about nomenclature. It's the opening move in a categorization exercise that the parent considers perfectly normal and the adult child may find mortifying.",
-      },
-      {
-        type: "h2",
-        text: "When changing or hyphenating your name affects how you're perceived",
-      },
-      {
-        type: "p",
-        text: "Some people in cross-caste or inter-community relationships have made deliberate choices about surnames — hyphenating, taking the partner's name, using a name that doesn't legibly signal community of origin. These choices can be genuinely liberating on a personal level. They can also create new friction: families who feel the name change is a rejection of background, community members who use the ambiguity to press harder for information.",
-      },
-      {
-        type: "p",
-        text: "None of this means you owe your surname to anyone's comfort. It's your name and your choice. But it's worth knowing that the choice has reverberations in communities where names carry history, and being clear-eyed about what you're signaling by any decision you make.",
+        text: "On matrimonial sites, surname is often one of the first pieces of visible information — some sites allow direct caste filtering, others do it implicitly through community and surname fields. On apps, the decision to include or omit a surname is often conscious: people burned by caste-based rejection sometimes remove it; people who want to signal their background include it. The surname's presence or absence is itself a signal. In real life, 'what's your last name?' from a parent is almost never just curiosity. It's the opening move in a categorization exercise the parent considers perfectly normal and the adult child may find mortifying.",
       },
       {
         type: "h2",
@@ -610,15 +550,11 @@ export const casteClassPosts: JournalPost[] = [
       },
       {
         type: "p",
-        text: "This is where the conversation gets nuanced and important. Pride in your regional identity, your family history, your cultural traditions — that's not the same as caste hierarchy. Being Tamil or Punjabi or Gujarati or Bengali is a cultural identity with food, language, art, ritual, and history attached to it. That's beautiful and worth preserving.",
+        text: "Pride in your regional identity — in being Tamil, Punjabi, Gujarati, Bengali, with all the food, language, ritual, and history that comes with it — is not the same thing as caste hierarchy. The cultural identity part is genuinely worth preserving. Caste hierarchy is the part that ranks people — the part that says some families are inherently more valuable because of which occupational group their ancestors were assigned to centuries ago. That part is not cultural richness. It's inherited prejudice, and calling it tradition doesn't make it harmless.",
       },
       {
         type: "p",
-        text: "Caste hierarchy is the part that ranks people — the part that says some families are inherently more valuable than others because of which occupational group their ancestors were assigned to centuries ago. That part is not cultural richness. It's inherited prejudice, and calling it tradition doesn't make it harmless.",
-      },
-      {
-        type: "p",
-        text: "The question for modern desi daters is which of these things their surname represents to them, and how they feel when someone treats their name as a sorting mechanism rather than an identity. The article on caste and dating more broadly gets into the full picture of how this plays out in relationships — worth reading as a companion to this one.",
+        text: "The question for modern desi daters is which of these things their surname represents to them, and how they feel when someone treats their name as a sorting mechanism rather than an identity. The article on caste and dating more broadly gets into the full picture of how this plays out in relationships.",
       },
       {
         type: "h2",
@@ -690,43 +626,23 @@ export const casteClassPosts: JournalPost[] = [
       },
       {
         type: "p",
-        text: "It's not purely mercenary, even when it looks like it. For many desi parents — especially first-generation immigrants who built economic stability from nothing — financial security is not abstract. It was the thing that made everything else possible. Healthcare. Education. Safety. Dignity. They experienced a world where not having enough money had real, material consequences. The instinct to protect their child from that world by ensuring a partner who 'earns well' is genuinely motivated by love.",
-      },
-      {
-        type: "p",
-        text: "The problem is that the proxy is leaky. Income tells you something about financial security. It doesn't tell you whether someone is kind, whether they're honest, whether they'll show up when things get hard, whether they're compatible with the specific person your child actually is. Parents using salary as a filter are making a real but limited bet: that financial security will produce a good life. Sometimes it does. Often it doesn't, and the gap between the two can be invisible until it's too late.",
-      },
-      {
-        type: "p",
-        text: "There's also a status component that's separate from the financial security logic. The partner's income is partly about security for your child and partly about how the match looks in the community. A daughter married to a surgeon reflects on the family. A son married to a nurse does not, regardless of how good the marriage actually is. That second consideration — appearances — is harder to defend and parents rarely name it directly. But it's operating.",
+        text: "It's not purely mercenary, even when it looks like it. For many desi parents — especially first-generation immigrants who built economic stability from nothing — financial security is not abstract. It was the thing that made healthcare, education, safety, and dignity possible. The instinct to ensure a partner who 'earns well' is genuinely motivated by love. The problem is that the proxy is leaky. Income tells you something about financial security. It doesn't tell you whether someone is kind, honest, or compatible with the specific person your child actually is. And there's a status component too: the partner's income is partly about security and partly about how the match looks in the community — a consideration parents rarely name directly but absolutely factor in.",
       },
       {
         type: "h2",
-        text: "What happens to you when you're doing the evaluating",
+        text: "What happens when you've absorbed the filter yourself",
       },
       {
         type: "p",
-        text: "There's a version of this where the person in the relationship has fully absorbed the salary-as-worth framework and is applying it themselves, not just on behalf of their parents. This is worth sitting with honestly. If you won't seriously consider a partner who earns below a certain threshold, regardless of everything else about them — regardless of trajectory, values, warmth, compatibility — that's a financial filter operating as a worth filter, and it's limiting you in ways you may not have intended.",
-      },
-      {
-        type: "p",
-        text: "The question to ask yourself is: what would I need to see from someone who doesn't earn what I imagined a partner would earn? If you can answer that question — there are things about a person's character and direction that would make you genuinely open — then you have a real value system. If no answer comes because you can't imagine the scenario being okay at all, that's the financial filter doing full work.",
+        text: "There's a version of this where the person in the relationship has fully absorbed the salary-as-worth framework and is applying it themselves. If you won't seriously consider a partner who earns below a certain threshold — regardless of their trajectory, values, warmth, or compatibility — that's a financial filter operating as a worth filter. Ask yourself: what would I need to see from someone who doesn't earn what I imagined? If you can answer that, you have real values. If no scenario seems plausible, the filter may be running on inherited settings.",
       },
       {
         type: "h2",
-        text: "How to handle a parent who won't approve someone they haven't really met",
+        text: "How to handle a parent who won't approve someone they haven't met",
       },
       {
         type: "p",
-        text: "The most common mistake in this situation is trying to argue with the financial objection on its own terms. Your partner earns X, your parents want Y, you try to explain why X is actually fine. This rarely works because the objection isn't really about the number — it's about the parent's larger anxiety about your future and their community position, which the number is standing in for. You can win the salary argument and still lose the war because you never addressed what the salary was supposed to represent.",
-      },
-      {
-        type: "p",
-        text: "What works better: address the anxiety directly. What are your parents actually afraid of? That you'll struggle financially? That the community will judge the match? That your partner isn't serious? That your happiness is at risk in a way they can't see? If you can name the real fear, you can speak to it. 'I'm not going to struggle financially, and here's why' is more useful than 'but he/she makes enough.'",
-      },
-      {
-        type: "p",
-        text: "The article on how to tell Indian parents about a partner covers this territory in more tactical detail — how to frame the introduction, what to lead with, what to let them discover on their own. Worth reading if you're in the middle of this.",
+        text: "The most common mistake is trying to argue with the financial objection on its own terms. You can win the salary argument and still lose the war because you never addressed what the salary was standing in for. What works better: address the anxiety directly. What are your parents actually afraid of? Financial struggle? Community judgment? Your partner not being serious? Name the real fear and speak to it. The article on how to tell Indian parents about a partner goes deeper on how to frame this conversation.",
       },
       {
         type: "h2",
@@ -734,11 +650,7 @@ export const casteClassPosts: JournalPost[] = [
       },
       {
         type: "p",
-        text: "Sometimes what looks like a family conflict is actually a values conflict that you need to resolve in yourself first. If you're trying to convince your parents to accept a partner you're not actually sure about, you'll feel it — the advocacy will feel performative rather than genuine. Parents pick up on that.",
-      },
-      {
-        type: "p",
-        text: "But if you're genuinely clear that you want this person, that you've thought it through, that the financial differences are real and you have a plan — that clarity comes through too. The parents who come around most often do so because they can see their child is certain, not because they were out-argued. Certainty is persuasive in a way that logic often isn't.",
+        text: "If you're trying to convince your parents to accept a partner you're not actually sure about yourself, you'll feel it — the advocacy will feel performative rather than genuine. Parents pick up on that. But if you're genuinely clear that you want this person — that you've thought it through, that the financial differences are real and you have a plan — that clarity comes through too. The parents who come around most often do so because they can see their child is certain, not because they were out-argued.",
       },
       {
         type: "h2",
@@ -814,15 +726,7 @@ export const casteClassPosts: JournalPost[] = [
       },
       {
         type: "p",
-        text: "It happens at the network level first. Where you went to college, what field you work in, what neighborhood you live in, what events you attend — all of these determine who you're likely to meet, and who you meet is who you date. Desi social networks have class structure built in. The diaspora community that clusters around a particular temple or cultural organization often has a fairly narrow economic band. The desi social scene in a given city often has visible class stratification, even if nobody says so explicitly.",
-      },
-      {
-        type: "p",
-        text: "Then it happens at the screening level. The questions families ask. The income brackets on matrimonial sites. The 'equivalent background' preference that shows up in match requirements. The article on how money complicates South Asian dating covers this screening layer in more depth — it's worth reading alongside this one.",
-      },
-      {
-        type: "p",
-        text: "Then it happens at the evaluation level — after two people have met, as families start assessing whether the match is 'appropriate.' This is where language like 'different lifestyle' and 'family culture' tends to enter. These terms are doing class work while maintaining the fiction that class isn't the variable.",
+        text: "It happens at the network level first. Where you went to college, what field you work in, what neighborhood you live in — all of these determine who you're likely to meet, and who you meet is who you date. Desi social networks have class structure built in. Then it happens at the screening level: the questions families ask, the income brackets on matrimonial sites, the 'equivalent background' preference in match requirements. Then at the evaluation level — after two people have met — as families assess whether the match is 'appropriate' using language like 'different lifestyle' that does class work while maintaining the fiction that class isn't the variable.",
       },
       {
         type: "h2",
@@ -830,31 +734,15 @@ export const casteClassPosts: JournalPost[] = [
       },
       {
         type: "p",
-        text: "Education level is one of the most common. A significant asymmetry — one person has a postgraduate degree, the other doesn't — can become a source of subtle friction that neither person names directly. Families notice. Sometimes the person with more credentials notices too, in ways they're not entirely comfortable admitting.",
-      },
-      {
-        type: "p",
-        text: "Generational wealth versus earned wealth is another. A family that has had money for two or three generations has a different relationship to it than a first-generation professional who built their stability themselves. The old-money family may look down on the newly wealthy; the newly wealthy family may resent what looks like ease that wasn't earned. Both dynamics are real and both can be toxic in a relationship if they're not named.",
-      },
-      {
-        type: "p",
-        text: "Geographic class signals are also significant in the desi diaspora specifically. Growing up in Edison versus Short Hills in New Jersey, or in Artesia versus Arcadia in California — these are not just zip codes. They carry economic and community associations that desi families read clearly. Where you're from communicates class in ways that don't require any words.",
+        text: "Education asymmetry is one of the most common — one person has a postgraduate degree, the other doesn't — and it creates subtle friction neither person names directly. Generational wealth versus earned wealth is another: families with old money and families with new money have genuinely different relationships to it, and those differences surface in how they talk about spending, risk, and what's considered a reasonable ask. Geographic class signals matter too: in the desi diaspora, the zip code you grew up in communicates economic class to anyone who knows how to read it.",
       },
       {
         type: "h2",
-        text: "What the biodata era got wrong and what it accidentally got right",
+        text: "What the biodata era got wrong and accidentally got right",
       },
       {
         type: "p",
-        text: "The traditional biodata was transparently transactional, which was one of its genuine failures. It treated marriage as an economic arrangement rather than an emotional one, and it gave families the power to filter out human beings based on columns on a page. That was harmful, and the decline of the formal biodata is not a loss.",
-      },
-      {
-        type: "p",
-        text: "But the biodata had one accidental advantage: it made the economic factors visible and discussable. When income and family status are on the page, they can be negotiated, questioned, contextualized. Everyone knows they're part of the picture. In modern desi dating, those same factors are operating, but they're hidden behind softer language. That makes them harder to challenge when they're being used badly.",
-      },
-      {
-        type: "p",
-        text: "The modern matrimonial site is essentially a biodata with a better UI. If you've ever used one, the piece on how to use Indian matrimony sites covers how to navigate the class and caste filtering that's built into the platform — it's a more honest account of what you're actually doing when you set those filters.",
+        text: "The traditional biodata was transparently transactional, which was one of its genuine failures. But it had one accidental advantage: it made economic factors visible and discussable. When income and family status are on the page, they can be questioned and contextualized. In modern desi dating, those same factors are operating but hidden behind softer language — which makes them harder to challenge when they're being used badly. The modern matrimonial site is essentially a biodata with a better UI. The piece on how to use Indian matrimony sites covers how to navigate the class filtering that's built into those platforms.",
       },
       {
         type: "h2",
@@ -862,11 +750,7 @@ export const casteClassPosts: JournalPost[] = [
       },
       {
         type: "p",
-        text: "In South Asian communities, class and caste are often correlated but not identical, and conflating them creates confusion. Caste is about lineage — which community your family descended from, which occupational group you were historically assigned to. Class is about current economic position. They often travel together because historically, higher castes had more access to education, land, and resources. But they can come apart, and in diaspora communities they increasingly do.",
-      },
-      {
-        type: "p",
-        text: "A family can be from a historically lower caste and be extremely wealthy in 2026. A family can be from a historically high caste and be working class. When this happens, the caste-status premium and the economic-class premium can point in opposite directions, and families sometimes have to choose which hierarchy they're actually applying. Those choices are revealing.",
+        text: "Class and caste are often correlated but not identical, and conflating them creates confusion. Caste is about lineage. Class is about current economic position. They often travel together because historically, higher castes had more access to education and resources. But they can come apart — a family from a historically lower caste can be extremely wealthy in 2026, and vice versa. When the caste-status premium and the economic-class premium point in opposite directions, families have to choose which hierarchy they're actually applying. Those choices are revealing.",
       },
       {
         type: "h2",
@@ -874,23 +758,7 @@ export const casteClassPosts: JournalPost[] = [
       },
       {
         type: "p",
-        text: "The couples I've seen handle class differences most successfully share a few characteristics. They talked about it early and directly. They made explicit decisions about what their shared life would look like rather than defaulting to whoever's class background had the stronger template. They developed a sense of financial values that belonged to their relationship — how they'd save, spend, give, and plan — rather than inheriting two incompatible frameworks.",
-      },
-      {
-        type: "p",
-        text: "They also tended to have families that, even if they had class-based reservations early on, eventually prioritized their child's genuine happiness over the match's economic profile. That shift often takes time. It's more likely to happen when the couple is clearly happy and the partner is clearly a good person than when the couple is visibly uncertain and the family's doubts are being validated by behavior.",
-      },
-      {
-        type: "h2",
-        text: "What class can't account for",
-      },
-      {
-        type: "p",
-        text: "All the class sorting in South Asian dating is ultimately trying to predict something: whether this match will produce a good life. The bet is that equivalent economic backgrounds produce equivalent values, equivalent expectations, equivalent compatibility. It's a reasonable bet that turns out to be wrong at a fairly high rate, because class does not determine character.",
-      },
-      {
-        type: "p",
-        text: "The things that actually predict a good relationship — the ability to communicate, to repair, to stay curious about the other person, to choose each other when things get hard — don't distribute along class lines. They show up at every income level and fail to show up at every income level. The class filter catches a real thing but misses the more important thing. The best version of dating asks for both.",
+        text: "The couples I've seen handle class differences most successfully talked about it early and directly, made explicit decisions about their shared financial life rather than defaulting to whoever's background had the stronger template, and developed values around money that belonged to their relationship rather than inheriting two incompatible frameworks. The class filter catches something real but misses the more important thing: whether two people can communicate, repair, stay curious about each other, and choose each other when things get hard. Those things don't distribute along class lines.",
       },
       {
         type: "h2",

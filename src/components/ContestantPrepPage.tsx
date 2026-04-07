@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { Clock, Users, Shirt, Star } from "lucide-react";
+import { Star } from "lucide-react";
 import styles from "./ContestantPrepPage.module.css";
 
 /* ─── Session helpers ──────────────────────────────────────────── */
@@ -52,32 +52,28 @@ function PrepError() {
   );
 }
 
-/* ─── Section divider ──────────────────────────────────────────── */
-
-function Divider() {
-  return <div className={styles.divider} />;
-}
-
 /* ─── Section header ───────────────────────────────────────────── */
 
 function SectionHeader({
   icon: Icon,
   title,
+  primary,
 }: {
   icon?: typeof Star;
   title: string;
+  primary?: boolean;
 }) {
   return (
-    <div className={styles.sectionHeader}>
+    <div className={primary ? styles.sectionHeaderPrimary : styles.sectionHeader}>
       {Icon && <Icon size={18} className={styles.sectionIcon} />}
-      <h2 className={styles.sectionTitle}>{title}</h2>
+      <h2 className={primary ? styles.sectionTitlePrimary : styles.sectionTitle}>{title}</h2>
     </div>
   );
 }
 
-/* ─── Callout card ─────────────────────────────────────────────── */
+/* ─── Note card ────────────────────────────────────────────────── */
 
-function Callout({
+function Note({
   title,
   children,
 }: {
@@ -85,9 +81,9 @@ function Callout({
   children: React.ReactNode;
 }) {
   return (
-    <div className={styles.callout}>
-      <p className={styles.calloutLabel}>{title}</p>
-      <div className={styles.calloutBody}>{children}</div>
+    <div className={styles.note}>
+      <p className={styles.noteLabel}>{title}</p>
+      <div className={styles.noteBody}>{children}</div>
     </div>
   );
 }
@@ -143,6 +139,7 @@ function PrepGuide() {
   return (
     <div className={styles.page}>
       <div className={styles.container}>
+
         {/* ── Header ── */}
         <div className={styles.headerArea}>
           <p className={styles.headerEmoji}>🌶️</p>
@@ -158,100 +155,97 @@ function PrepGuide() {
           </p>
         </div>
 
-        <Divider />
-
         {/* ── The Golden Rules ── */}
-        <SectionHeader icon={Star} title="The Golden Rules" />
-        <div className={styles.rulesList}>
-          {GOLDEN_RULES.map((rule, i) => (
-            <div key={i} className={styles.ruleCard}>
-              <span className={styles.ruleNumber}>{i + 1}</span>
-              <p className={styles.ruleText}>{rule}</p>
-            </div>
-          ))}
+        <div className={styles.section}>
+          <SectionHeader icon={Star} title="The Golden Rules" primary />
+          <div className={styles.rulesList}>
+            {GOLDEN_RULES.map((rule, i) => (
+              <div key={i} className={styles.ruleCard}>
+                <span className={styles.ruleNumber}>{i + 1}</span>
+                <p className={styles.ruleText}>{rule}</p>
+              </div>
+            ))}
+          </div>
         </div>
-
-        <Divider />
 
         {/* ── Questions ── */}
-        <SectionHeader title="Questions You Will Be Asked" />
-        <div className={styles.questionsList}>
-          {QUESTIONS.map((q, i) => (
-            <div key={i} className={styles.questionRow}>
-              <span className={styles.questionNumber}>{i + 1}.</span>
-              <p className={styles.questionText}>{q}</p>
-            </div>
-          ))}
+        <div className={styles.section}>
+          <SectionHeader title="Questions You Will Be Asked" />
+          <div className={styles.questionsList}>
+            {QUESTIONS.map((q, i) => (
+              <div key={i} className={styles.questionRow}>
+                <span className={styles.questionNumber}>{i + 1}.</span>
+                <p className={styles.questionText}>{q}</p>
+              </div>
+            ))}
+          </div>
         </div>
-
-        <Divider />
 
         {/* ── Come Prepared With ── */}
-        <SectionHeader icon={Star} title="Come Prepared With" />
-        <div className={styles.prepList}>
-          {PREPARED_WITH.map((item, i) => (
-            <div key={i} className={styles.prepCard}>
-              <div className={styles.prepBullet} />
-              <div>
-                <p className={styles.prepTitle}>{item.title}</p>
-                <p className={styles.prepDetail}>{item.detail}</p>
+        <div className={styles.section}>
+          <SectionHeader title="Come Prepared With" />
+          <div className={styles.prepList}>
+            {PREPARED_WITH.map((item, i) => (
+              <div key={i} className={styles.prepRow}>
+                <span className={styles.prepCheck}>✓</span>
+                <div className={styles.prepContent}>
+                  <p className={styles.prepTitle}>{item.title}</p>
+                  <p className={styles.prepDetail}>{item.detail}</p>
+                </div>
               </div>
-            </div>
-          ))}
+            ))}
+          </div>
         </div>
 
-        <Divider />
-
-        {/* ── What to Wear ── */}
-        <SectionHeader icon={Shirt} title="What to Wear" />
-        <p className={styles.bodyText}>
-          This is a real date. Dress hot &mdash; bright colors, bold fits, sequins
-          welcome. No &ldquo;just came from the office&rdquo; energy.
-        </p>
-
-        <Divider />
-
-        {/* ── Bring Your Friends ── */}
-        <SectionHeader icon={Users} title="Bring Your Friends" />
-        <p className={styles.bodyText}>
-          Invite your friends to come support you. More energy in the room = better
-          show for everyone.
-        </p>
-
-        <Divider />
+        {/* ── Day Of ── */}
+        <div className={styles.section}>
+          <SectionHeader title="Day Of" />
+          <ul className={styles.dayOfList}>
+            <li className={styles.dayOfItem}>
+              Dress hot &mdash; bright colors, bold fits, sequins welcome.
+              No &ldquo;just came from the office&rdquo; energy.
+            </li>
+            <li className={styles.dayOfItem}>
+              Invite your friends to come support you. More energy in the room = better
+              show for everyone.
+            </li>
+          </ul>
+        </div>
 
         {/* ── Arrival Times ── */}
-        <SectionHeader icon={Clock} title="Arrival Times" />
-        <div className={styles.timeGrid}>
-          {[
-            { label: "Guys", time: "5:20 PM sharp" },
-            { label: "Girls", time: "5:30 PM sharp" },
-          ].map((item) => (
-            <div key={item.label} className={styles.timeCard}>
-              <p className={styles.timeLabel}>{item.label}</p>
-              <p className={styles.timeValue}>{item.time}</p>
-            </div>
-          ))}
+        <div className={styles.section}>
+          <SectionHeader title="Arrival Times" />
+          <div className={styles.timeGrid}>
+            {[
+              { label: "Guys", time: "5:20 PM sharp" },
+              { label: "Girls", time: "5:30 PM sharp" },
+            ].map((item) => (
+              <div key={item.label} className={styles.timeCard}>
+                <p className={styles.timeLabel}>{item.label}</p>
+                <p className={styles.timeValue}>{item.time}</p>
+              </div>
+            ))}
+          </div>
         </div>
 
-        <Divider />
-
         {/* ── Notes ── */}
-        <Callout title="Note for Guys">
-          Audiences tend to root for the girls. Don&apos;t try to win the crowd by
-          being cocky or mean &mdash; it backfires every time. Charming, genuine,
-          and a little self-deprecating is what wins. Confident but humble.
-        </Callout>
-
-        <Callout title="Note for Girls">
-          You&apos;re allowed to not like someone. Say it. &ldquo;I&apos;m not
-          feeling this&rdquo; is great content. Don&apos;t fake chemistry.
-        </Callout>
+        <div className={styles.section}>
+          <Note title="Note for Guys">
+            Audiences tend to root for the girls. Don&apos;t try to win the crowd by
+            being cocky or mean &mdash; it backfires every time. Charming, genuine,
+            and a little self-deprecating is what wins. Confident but humble.
+          </Note>
+          <Note title="Note for Girls">
+            You&apos;re allowed to not like someone. Say it. &ldquo;I&apos;m not
+            feeling this&rdquo; is great content. Don&apos;t fake chemistry.
+          </Note>
+        </div>
 
         {/* ── Footer ── */}
         <div className={styles.footer}>
           <p className={styles.footerText}>See you on stage 🌶️</p>
         </div>
+
       </div>
     </div>
   );

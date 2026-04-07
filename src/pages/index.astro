@@ -96,7 +96,6 @@ const eventSchemas = buildEventSchemas(upcomingForSchema);
           <h2 class="popup-title">Want Cheaper Tickets?</h2>
           <p class="popup-subtitle">Join our list for exclusive discount codes and early access.</p>
           <form id="popup-email-form" class="popup-form">
-            <input type="text" id="popup-firstname" placeholder="Your first name" required aria-label="First name" />
             <input type="email" id="popup-email" placeholder="Your email" required aria-label="Email address" />
             <p id="popup-email-error" class="popup-error" hidden role="alert"></p>
             <button type="submit" class="popup-submit">Get My Discount Code</button>
@@ -146,13 +145,11 @@ const eventSchemas = buildEventSchemas(upcomingForSchema);
       if (e.target === popup) close();
     });
 
-    let savedFirstName = '';
     let savedEmail = '';
     let popupDocRef: DocumentReference | null = null;
 
     document.getElementById('popup-email-form')?.addEventListener('submit', async (e) => {
       e.preventDefault();
-      savedFirstName = (document.getElementById('popup-firstname') as HTMLInputElement).value.trim();
       savedEmail = (document.getElementById('popup-email') as HTMLInputElement).value;
       const errorEl = document.getElementById('popup-email-error');
       const submitBtn = (e.target as HTMLFormElement).querySelector<HTMLButtonElement>('[type="submit"]');
@@ -160,7 +157,6 @@ const eventSchemas = buildEventSchemas(upcomingForSchema);
       try {
         const db = getFirebaseDb();
         popupDocRef = await addDoc(collection(db, 'subscribers'), {
-          firstName: savedFirstName,
           email: savedEmail,
           source: 'popup',
           createdAt: new Date().toISOString(),
@@ -203,7 +199,6 @@ const eventSchemas = buildEventSchemas(upcomingForSchema);
           await updateDoc(popupDocRef, { phone: cleaned });
         } else {
           await addDoc(collection(db, 'subscribers'), {
-            firstName: savedFirstName,
             email: savedEmail,
             phone: cleaned,
             source: 'popup-phone',

@@ -2,12 +2,18 @@ import {
   useState,
   useEffect,
   useCallback,
+  useMemo,
   type ChangeEvent,
 } from "react";
 import { collection, addDoc, serverTimestamp } from "firebase/firestore";
 import { ref, uploadBytes, getDownloadURL, deleteObject, type StorageReference } from "firebase/storage";
 import { signInAnonymously } from "firebase/auth";
-import { useGeoData } from "@/hooks/useGeoData";
+import { useCitySearch } from "@/hooks/useCitySearch";
+import {
+  resolveCityOption,
+  searchCityOptions,
+  type CitySearchOption,
+} from "@/lib/citySearch";
 import {
   getFirebaseDb,
   getFirebaseStorage,
@@ -38,7 +44,7 @@ const INITIAL: FormState = {
   age: "",
   gender: "",
   orientation: "",
-  country: "US",
+  country: "",
   state: "",
   city: "",
   height: "",
@@ -88,38 +94,51 @@ export function useApplyForm() {
   }, [toast]);
 
   const [geoLoadTriggered, setGeoLoadTriggered] = useState(false);
+  const [placeQuery, setPlaceQuery] = useState("");
   const triggerGeoLoad = useCallback(() => setGeoLoadTriggered(true), []);
 
-  const geo = useGeoData(form.country, form.state, geoLoadTriggered);
+  const citySearch = useCitySearch(geoLoadTriggered);
+  const selectedPlace = useMemo(
+    () =>
+      citySearch.options.find(
+        (option) =>
+          option.city === form.city &&
+          option.state === form.state &&
+          option.countryCode === form.country,
+      ) ?? null,
+    [citySearch.options, form.city, form.state, form.country],
+  );
+  const placeOptions = useMemo(() => {
+    const results = searchCityOptions(placeQuery, citySearch.options, 5);
+    if (selectedPlace && !results.some((option) => option.value === selectedPlace.value)) {
+      return [selectedPlace, ...results].slice(0, 5);
+    }
+    return results;
+  }, [citySearch.options, placeQuery, selectedPlace]);
 
   function set(field: keyof FormState, value: string) {
     setForm((prev) => ({ ...prev, [field]: value }));
     setErrors((prev) => ({ ...prev, [field]: undefined }));
   }
 
-  function handleCountryChange(option: SelectOption | null) {
+  function handlePlaceInputChange(value: string) {
+    setPlaceQuery(value);
+  }
+
+  function handlePlaceChange(option: CitySearchOption | null) {
     setForm((prev) => ({
       ...prev,
-      country: option?.value ?? "",
-      state: "",
-      city: "",
+      city: option?.city ?? "",
+      state: option?.state ?? "",
+      country: option?.countryCode ?? "",
     }));
+    setPlaceQuery(option?.label ?? "");
     setErrors((prev) => ({
       ...prev,
       country: undefined,
       state: undefined,
       city: undefined,
     }));
-  }
-
-  function handleStateChange(option: SelectOption | null) {
-    setForm((prev) => ({ ...prev, state: option?.value ?? "", city: "" }));
-    setErrors((prev) => ({ ...prev, state: undefined, city: undefined }));
-  }
-
-  function handleCityChange(option: SelectOption | null) {
-    setForm((prev) => ({ ...prev, city: option?.value ?? "" }));
-    setErrors((prev) => ({ ...prev, city: undefined }));
   }
 
   function handlePhotoChange(e: ChangeEvent<HTMLInputElement>) {
@@ -169,9 +188,8 @@ export function useApplyForm() {
     if (!form.age || Number.isNaN(ageNum) || ageNum < 18) errs.age = "Must be 18 or older";
     if (!form.gender) errs.gender = "Required";
     if (!form.orientation) errs.orientation = "Required";
-    if (!form.country) errs.country = "Required";
-    if (!form.state) errs.state = "Required";
     if (!form.city) errs.city = "Required";
+    if (!form.country) errs.country = "Required";
     if (!form.instagram.trim()) errs.instagram = "Required";
     if (!photoFile) errs.photo = "A photo is required";
     if (form.applicationType === "Nomination" && !form.referrerName.trim()) {
@@ -192,6 +210,38 @@ export function useApplyForm() {
     }
     return true;
   }
+
+  useEffect(() => {
+    if (selectedPlace) {
+      setPlaceQuery(selectedPlace.label);
+      return;
+    }
+
+    if (form.city) {
+      const fallbackLabel = [form.city, form.state, form.country]
+        .filter(Boolean)
+        .join(", ");
+      setPlaceQuery(fallbackLabel);
+      return;
+    }
+
+    setPlaceQuery("");
+  }, [form.city, form.country, form.state, selectedPlace]);
+
+  useEffect(() => {
+    if (!citySearch.options.length || !form.city || form.country) return;
+
+    const seededValue = [form.city, form.state].filter(Boolean).join(", ");
+    const resolved = resolveCityOption(seededValue || form.city, citySearch.options);
+    if (!resolved) return;
+
+    setForm((prev) => ({
+      ...prev,
+      city: resolved.city,
+      state: resolved.state,
+      country: resolved.countryCode,
+    }));
+  }, [citySearch.options, form.city, form.country, form.state]);
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -276,12 +326,16 @@ export function useApplyForm() {
     canGoBack,
     toast,
     setToast,
-    geo,
+    geo: {
+      ...citySearch,
+      placeOptions,
+      placeQuery,
+      selectedPlace,
+    },
     triggerGeoLoad,
     set,
-    handleCountryChange,
-    handleStateChange,
-    handleCityChange,
+    handlePlaceInputChange,
+    handlePlaceChange,
     handlePhotoChange,
     handleTermsCheckbox,
     agreeToTerms,

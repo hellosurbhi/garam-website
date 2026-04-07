@@ -75,8 +75,12 @@ function parseDay(dateStr: string): string {
         <h2 class="modal-title">Request Your City</h2>
         <p class="modal-subtitle">Tell us where you want Garam Masala Dating and we'll make it happen.</p>
         <form id="city-form" class="modal-form">
-          <input type="text" id="city-name" placeholder="e.g., Austin, TX" required aria-label="City name" />
+          <input type="text" id="city-name" list="city-name-suggestions" placeholder="Start typing a city" required aria-label="City name" autocomplete="off" />
+          <datalist id="city-name-suggestions"></datalist>
+          <input type="hidden" id="city-state" />
+          <input type="hidden" id="city-country" />
           <input type="email" id="city-email" placeholder="Your email" required aria-label="Email address" />
+          <p id="city-form-error" class="modal-error" hidden role="alert"></p>
           <button type="submit" class="modal-submit">Submit Request</button>
         </form>
       </div>
@@ -90,18 +94,52 @@ function parseDay(dateStr: string): string {
 <script>
   import { getFirebaseDb } from '@/lib/firebase';
   import { collection, addDoc } from 'firebase/firestore';
+  import { loadCityOptions, resolveCityOption, searchCityOptions } from '@/lib/citySearch';
 
   // Request City modal
   const cityDialog = document.getElementById('request-city-modal') as HTMLDialogElement;
   if (cityDialog) {
+    const cityInput = document.getElementById('city-name') as HTMLInputElement | null;
+    const cityStateInput = document.getElementById('city-state') as HTMLInputElement | null;
+    const cityCountryInput = document.getElementById('city-country') as HTMLInputElement | null;
+    const citySuggestions = document.getElementById('city-name-suggestions') as HTMLDataListElement | null;
+    const errorEl = document.getElementById('city-form-error');
+    let cityOptions: import('@/lib/citySearch').CitySearchOption[] = [];
+    let selectedCity: import('@/lib/citySearch').CitySearchOption | null = null;
+
+    const syncSelectedCity = (option: import('@/lib/citySearch').CitySearchOption | null) => {
+      selectedCity = option;
+      if (cityStateInput) cityStateInput.value = option?.state ?? '';
+      if (cityCountryInput) cityCountryInput.value = option?.country ?? '';
+    };
+
+    const renderCitySuggestions = (query: string) => {
+      if (!citySuggestions) return;
+      citySuggestions.innerHTML = '';
+      const results = searchCityOptions(query, cityOptions, 5);
+      results.forEach((option) => {
+        const suggestion = document.createElement('option');
+        suggestion.value = option.label;
+        citySuggestions.appendChild(suggestion);
+      });
+    };
+
+    const ensureCityOptions = async () => {
+      if (cityOptions.length > 0) return;
+      cityOptions = await loadCityOptions();
+      renderCitySuggestions(cityInput?.value ?? '');
+    };
+
     document.getElementById('request-city-trigger')?.addEventListener('click', () => {
       // Reset to form state before opening
       document.getElementById('city-form-view')?.removeAttribute('hidden');
       document.getElementById('city-success')?.setAttribute('hidden', '');
-      const nameInput = document.getElementById('city-name') as HTMLInputElement;
       const emailInput = document.getElementById('city-email') as HTMLInputElement;
-      if (nameInput) nameInput.value = '';
+      if (cityInput) cityInput.value = '';
       if (emailInput) emailInput.value = '';
+      if (errorEl) { errorEl.textContent = ''; errorEl.setAttribute('hidden', ''); }
+      syncSelectedCity(null);
+      ensureCityOptions().catch(() => {});
       cityDialog.showModal();
     });
 
@@ -110,20 +148,51 @@ function parseDay(dateStr: string): string {
       if (e.target === cityDialog) cityDialog.close();
     });
 
+    cityInput?.addEventListener('focus', () => {
+      ensureCityOptions().catch(() => {});
+    });
+
+    cityInput?.addEventListener('input', async () => {
+      await ensureCityOptions();
+      renderCitySuggestions(cityInput.value);
+      syncSelectedCity(resolveCityOption(cityInput.value, cityOptions));
+    });
+
+    cityInput?.addEventListener('change', () => {
+      syncSelectedCity(resolveCityOption(cityInput.value, cityOptions));
+    });
+
     document.getElementById('city-form')?.addEventListener('submit', async (e) => {
       e.preventDefault();
-      const city = (document.getElementById('city-name') as HTMLInputElement).value;
+      await ensureCityOptions();
+      const resolvedCity = selectedCity ?? resolveCityOption(cityInput?.value ?? '', cityOptions);
+      const city = resolvedCity?.city ?? (cityInput?.value ?? '').trim();
       const email = (document.getElementById('city-email') as HTMLInputElement).value;
+      if (!city) {
+        if (errorEl) {
+          errorEl.textContent = 'Please enter a city.';
+          errorEl.removeAttribute('hidden');
+        }
+        return;
+      }
       try {
         const db = getFirebaseDb();
-        await addDoc(collection(db, 'city_requests'), {
+        const payload: Record<string, string> = {
           city,
           email,
           createdAt: new Date().toISOString(),
-        });
+        };
+        if (resolvedCity?.state) payload.state = resolvedCity.state;
+        if (resolvedCity?.country) payload.country = resolvedCity.country;
+        await addDoc(collection(db, 'city_requests'), payload);
         document.getElementById('city-form-view')?.setAttribute('hidden', '');
         document.getElementById('city-success')?.removeAttribute('hidden');
-      } catch { /* fail silently — form stays visible on error */ }
+      } catch {
+        if (errorEl) {
+          errorEl.textContent = 'Something went wrong. Please try again.';
+          errorEl.removeAttribute('hidden');
+        }
+      }
     });
   }
 </script>

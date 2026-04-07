@@ -195,7 +195,6 @@ const breadcrumbJsonLd = buildBreadcrumbJsonLd([
               <h3 class="city-notify__title">Stay in the Loop</h3>
               <p class="city-notify__desc">Get notified about future {city.displayName} shows, discount codes, and free ticket drops.</p>
               <form id="city-notify-email-form" class="city-notify__form">
-                <input type="text" id="city-notify-firstname" placeholder="Your first name" required aria-label="First name" />
                 <input type="email" id="city-notify-email" placeholder="Your email" required aria-label="Email address" />
                 <p id="city-notify-email-error" class="city-notify__error" hidden role="alert"></p>
                 <button type="submit">Get Notified</button>
@@ -282,14 +281,12 @@ const breadcrumbJsonLd = buildBreadcrumbJsonLd([
   }
 
   // City page email + phone signup
-  let cityNotifyFirstName = '';
   let cityNotifyEmail = '';
   let cityNotifyDocRef: DocumentReference | null = null;
   const cityName = document.querySelector('.city-eyebrow')?.textContent ?? '';
 
   document.getElementById('city-notify-email-form')?.addEventListener('submit', async (e) => {
     e.preventDefault();
-    cityNotifyFirstName = (document.getElementById('city-notify-firstname') as HTMLInputElement).value.trim();
     cityNotifyEmail = (document.getElementById('city-notify-email') as HTMLInputElement).value;
     const errorEl = document.getElementById('city-notify-email-error');
     const submitBtn = (e.target as HTMLFormElement).querySelector<HTMLButtonElement>('[type="submit"]');
@@ -297,7 +294,6 @@ const breadcrumbJsonLd = buildBreadcrumbJsonLd([
     try {
       const db = getFirebaseDb();
       cityNotifyDocRef = await addDoc(collection(db, 'subscribers'), {
-        firstName: cityNotifyFirstName,
         email: cityNotifyEmail,
         city: cityName,
         source: 'city-page',
@@ -344,7 +340,6 @@ const breadcrumbJsonLd = buildBreadcrumbJsonLd([
         await updateDoc(cityNotifyDocRef, { phone: cleaned });
       } else {
         await addDoc(collection(db, 'subscribers'), {
-          firstName: cityNotifyFirstName,
           email: cityNotifyEmail,
           phone: cleaned,
           city: cityName,

@@ -44,12 +44,21 @@ vi.mock("react-select", () => ({
   ),
 }));
 
-vi.mock("@/hooks/useGeoData", () => ({
-  useGeoData: () => ({
+vi.mock("@/hooks/useCitySearch", () => ({
+  useCitySearch: () => ({
     loading: false,
-    countryOptions: [{ value: "US", label: "United States" }],
-    stateOptions: [{ value: "NY", label: "New York" }],
-    cityOptions: [{ value: "NYC", label: "New York City" }],
+    failed: false,
+    retry: vi.fn(),
+    options: [
+      {
+        value: "New York City, New York, United States",
+        label: "New York City, New York, United States",
+        city: "New York City",
+        state: "New York",
+        country: "United States",
+        countryCode: "US",
+      },
+    ],
   }),
 }));
 

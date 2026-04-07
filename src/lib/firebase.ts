@@ -1,4 +1,4 @@
-import { initializeApp, getApps } from "firebase/app";
+import { initializeApp, getApps, type FirebaseOptions } from "firebase/app";
 import { getFirestore, type Firestore } from "firebase/firestore";
 import { getStorage, type FirebaseStorage } from "firebase/storage";
 import { getAuth, type Auth } from "firebase/auth";
@@ -16,9 +16,28 @@ const firebaseConfig = {
 let _db: Firestore | null = null;
 let _storage: FirebaseStorage | null = null;
 let _auth: Auth | null = null;
+let _configError: Error | null = null;
+
+function getValidatedConfig(): FirebaseOptions {
+  if (_configError) throw _configError;
+
+  const entries = Object.entries(firebaseConfig);
+  const missing = entries
+    .filter(([, value]) => !value)
+    .map(([key]) => `PUBLIC_FIREBASE_${key.replace(/[A-Z]/g, (match) => `_${match}`).toUpperCase()}`);
+
+  if (missing.length > 0) {
+    _configError = new Error(
+      `Missing Firebase client config: ${missing.join(", ")}`,
+    );
+    throw _configError;
+  }
+
+  return firebaseConfig as FirebaseOptions;
+}
 
 function getApp() {
-  return getApps().length ? getApps()[0] : initializeApp(firebaseConfig);
+  return getApps().length ? getApps()[0] : initializeApp(getValidatedConfig());
 }
 
 export function getFirebaseDb(): Firestore {

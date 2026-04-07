@@ -25,17 +25,17 @@ Create a `.env.local` file with the following:
 
 | Variable                            | Purpose                                        |
 | ----------------------------------- | ---------------------------------------------- |
-| `VITE_FIREBASE_API_KEY`             | Firebase client API key                        |
-| `VITE_FIREBASE_AUTH_DOMAIN`         | Firebase auth domain                           |
-| `VITE_FIREBASE_PROJECT_ID`          | Firestore project ID                           |
-| `VITE_FIREBASE_STORAGE_BUCKET`      | Cloud Storage bucket                           |
-| `VITE_FIREBASE_MESSAGING_SENDER_ID` | Firebase messaging sender ID                   |
-| `VITE_FIREBASE_APP_ID`              | Firebase app ID                                |
+| `PUBLIC_FIREBASE_API_KEY`             | Firebase client API key                        |
+| `PUBLIC_FIREBASE_AUTH_DOMAIN`         | Firebase auth domain                           |
+| `PUBLIC_FIREBASE_PROJECT_ID`          | Firestore project ID                           |
+| `PUBLIC_FIREBASE_STORAGE_BUCKET`      | Cloud Storage bucket                           |
+| `PUBLIC_FIREBASE_MESSAGING_SENDER_ID` | Firebase messaging sender ID                   |
+| `PUBLIC_FIREBASE_APP_ID`              | Firebase app ID                                |
 | `FIREBASE_ADMIN_CLIENT_EMAIL`       | Service account email (server-side only)       |
 | `FIREBASE_ADMIN_PRIVATE_KEY`        | Service account private key (server-side only) |
 | `CONTESTANT_PREP_SALT`              | Salt for weekly password rotation              |
 
-`VITE_`-prefixed variables are exposed to the client. `FIREBASE_ADMIN_*` variables are used only in Vercel serverless functions.
+`PUBLIC_`-prefixed variables are exposed to the client in Astro. `FIREBASE_ADMIN_*` variables are used only in Vercel serverless functions.
 
 ## Project Structure
 

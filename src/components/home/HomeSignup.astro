@@ -10,7 +10,6 @@
   <div class="nl-steps-wrapper" data-reveal>
     <div id="nl-step-1">
       <form id="nl-email-form" class="spicelist-form">
-        <input type="text" id="nl-firstname" placeholder="Your first name" required aria-label="First name" />
         <input type="email" id="nl-email" placeholder="Your email" required aria-label="Email address" />
         <p id="nl-email-error" class="spicelist-error" hidden role="alert"></p>
         <button type="submit">Get My Discount Code</button>
@@ -38,13 +37,11 @@
   import { getFirebaseDb } from '@/lib/firebase';
   import { collection, addDoc, updateDoc, type DocumentReference } from 'firebase/firestore';
 
-  let savedFirstName = '';
   let savedEmail = '';
   let nlDocRef: DocumentReference | null = null;
 
   document.getElementById('nl-email-form')?.addEventListener('submit', async (e) => {
     e.preventDefault();
-    savedFirstName = (document.getElementById('nl-firstname') as HTMLInputElement).value.trim();
     savedEmail = (document.getElementById('nl-email') as HTMLInputElement).value;
     const errorEl = document.getElementById('nl-email-error');
     const submitBtn = (e.target as HTMLFormElement).querySelector<HTMLButtonElement>('[type="submit"]');
@@ -52,7 +49,6 @@
     try {
       const db = getFirebaseDb();
       nlDocRef = await addDoc(collection(db, 'subscribers'), {
-        firstName: savedFirstName,
         email: savedEmail,
         source: 'spice-list',
         createdAt: new Date().toISOString(),
@@ -62,6 +58,7 @@
       document.getElementById('nl-step-1')?.setAttribute('hidden', '');
       document.getElementById('nl-step-2')?.removeAttribute('hidden');
     } catch (err) {
+      console.error('[HomeSignup email]', err);
       if (errorEl) {
         errorEl.textContent = 'Something went wrong. Please try again.';
         errorEl.removeAttribute('hidden');
@@ -100,7 +97,6 @@
         await updateDoc(nlDocRef, { phone: cleaned });
       } else {
         await addDoc(collection(db, 'subscribers'), {
-          firstName: savedFirstName,
           email: savedEmail,
           phone: cleaned,
           source: 'spice-list-phone',

@@ -16,7 +16,6 @@ const { source = '' } = Astro.props;
         <h2 id="notify-modal-title" class="modal-title">Get Notified</h2>
         <p class="modal-subtitle">We'll email you when tickets drop for <strong id="notify-city-name"></strong>.</p>
         <form id="notify-form" class="modal-form">
-          <input type="text" id="notify-firstname" placeholder="Your first name" required aria-label="First name" />
           <input type="email" id="notify-email" placeholder="Your email" required aria-label="Email address" />
           <input type="hidden" id="notify-city" />
           <p id="notify-error" class="modal-error" hidden aria-live="assertive"></p>
@@ -49,7 +48,6 @@ const { source = '' } = Astro.props;
     const source = (dialog as HTMLElement).dataset.source ?? '';
     let openerEl: HTMLElement | null = null;
     let notifyDocRef: DocumentReference | null = null;
-    let notifyFirstName = '';
     let notifyEmail = '';
 
     // Restore focus to the element that opened the modal
@@ -92,7 +90,6 @@ const { source = '' } = Astro.props;
     // Step 1: email form
     document.getElementById('notify-form')?.addEventListener('submit', async (e) => {
       e.preventDefault();
-      notifyFirstName = (document.getElementById('notify-firstname') as HTMLInputElement).value.trim();
       notifyEmail = (document.getElementById('notify-email') as HTMLInputElement).value;
       const city = (document.getElementById('notify-city') as HTMLInputElement).value;
       const submitBtn = (e.target as HTMLFormElement).querySelector<HTMLButtonElement>('[type="submit"]');
@@ -100,7 +97,7 @@ const { source = '' } = Astro.props;
       if (submitBtn) submitBtn.disabled = true;
       try {
         const db = getFirebaseDb();
-        const data: Record<string, string> = { firstName: notifyFirstName, email: notifyEmail, city, createdAt: new Date().toISOString() };
+        const data: Record<string, string> = { email: notifyEmail, city, createdAt: new Date().toISOString() };
         if (source) data.source = source;
         notifyDocRef = await addDoc(collection(db, 'notifications'), data);
         if (errorEl) { errorEl.textContent = ''; errorEl.setAttribute('hidden', ''); }
@@ -145,13 +142,14 @@ const { source = '' } = Astro.props;
         if (notifyDocRef) {
           await updateDoc(notifyDocRef, { phone: cleaned });
         } else {
-          await addDoc(collection(db, 'notifications'), {
-            firstName: notifyFirstName,
+          const data: Record<string, string> = {
             email: notifyEmail,
+            city: (document.getElementById('notify-city') as HTMLInputElement).value,
             phone: cleaned,
-            source,
             createdAt: new Date().toISOString(),
-          });
+          };
+          if (source) data.source = source;
+          await addDoc(collection(db, 'notifications'), data);
         }
         document.getElementById('notify-phone-view')?.setAttribute('hidden', '');
         const successEl = document.getElementById('notify-success') as HTMLElement | null;

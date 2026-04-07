@@ -4,34 +4,39 @@ service cloud.firestore {
 
     function validNotification() {
       let d = request.resource.data;
-      return d.keys().hasOnly(['firstName', 'email', 'city', 'source', 'createdAt'])
+      return d.keys().hasOnly(['email', 'city', 'state', 'country', 'phone', 'source', 'createdAt'])
         && d.keys().hasAll(['email', 'city', 'createdAt'])
         && d.email is string && d.email.size() > 0 && d.email.size() <= 320
         && d.city is string && d.city.size() > 0 && d.city.size() <= 100
         && d.createdAt is string && d.createdAt.size() > 0 && d.createdAt.size() <= 30
         && (!('source' in d.keys()) || (d.source is string && d.source.size() > 0 && d.source.size() <= 50))
-        && (!('firstName' in d.keys()) || (d.firstName is string && d.firstName.size() > 0 && d.firstName.size() <= 100));
+        && (!('phone' in d.keys()) || (d.phone is string && d.phone.size() > 0 && d.phone.size() <= 20))
+        && (!('state' in d.keys()) || (d.state is string && d.state.size() > 0 && d.state.size() <= 100))
+        && (!('country' in d.keys()) || (d.country is string && d.country.size() > 0 && d.country.size() <= 100));
     }
 
     function validCityRequest() {
       let d = request.resource.data;
-      return d.keys().hasOnly(['city', 'email', 'createdAt'])
+      return d.keys().hasOnly(['city', 'state', 'country', 'email', 'createdAt'])
         && d.keys().hasAll(['city', 'email', 'createdAt'])
         && d.city is string && d.city.size() > 0 && d.city.size() <= 100
         && d.email is string && d.email.size() > 0 && d.email.size() <= 320
-        && d.createdAt is string && d.createdAt.size() > 0 && d.createdAt.size() <= 30;
+        && d.createdAt is string && d.createdAt.size() > 0 && d.createdAt.size() <= 30
+        && (!('state' in d.keys()) || (d.state is string && d.state.size() > 0 && d.state.size() <= 100))
+        && (!('country' in d.keys()) || (d.country is string && d.country.size() > 0 && d.country.size() <= 100));
     }
 
     function validSubscriber() {
       let d = request.resource.data;
-      return d.keys().hasOnly(['firstName', 'email', 'phone', 'source', 'city', 'createdAt'])
+      return d.keys().hasOnly(['email', 'phone', 'source', 'city', 'state', 'country', 'createdAt'])
         && d.keys().hasAll(['email', 'source', 'createdAt'])
         && d.email is string && d.email.size() > 0 && d.email.size() <= 320
         && d.source is string && d.source.size() > 0 && d.source.size() <= 50
         && d.createdAt is string && d.createdAt.size() > 0 && d.createdAt.size() <= 30
-        && (!('firstName' in d.keys()) || (d.firstName is string && d.firstName.size() > 0 && d.firstName.size() <= 100))
         && (!('phone' in d.keys()) || (d.phone is string && d.phone.size() > 0 && d.phone.size() <= 20))
-        && (!('city' in d.keys()) || (d.city is string && d.city.size() > 0 && d.city.size() <= 100));
+        && (!('city' in d.keys()) || (d.city is string && d.city.size() > 0 && d.city.size() <= 100))
+        && (!('state' in d.keys()) || (d.state is string && d.state.size() > 0 && d.state.size() <= 100))
+        && (!('country' in d.keys()) || (d.country is string && d.country.size() > 0 && d.country.size() <= 100));
     }
 
     function validPhoneUpdate() {

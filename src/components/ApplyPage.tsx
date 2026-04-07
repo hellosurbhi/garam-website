@@ -8,7 +8,7 @@ import { FieldGroup, SectionTitle } from "./apply/FieldGroup";
 import { TermsModal } from "./apply/TermsModal";
 import { ApplySuccessPanel } from "./apply/ApplySuccessPanel";
 import { PhotoUploadField } from "./apply/PhotoUploadField";
-import { useApplyForm, type SelectOption } from "./apply/useApplyForm";
+import { useApplyForm } from "./apply/useApplyForm";
 
 export default function ApplyPage() {
   return (
@@ -34,16 +34,22 @@ function ApplyPageInner() {
     geo,
     triggerGeoLoad,
     set,
-    handleCountryChange,
-    handleStateChange,
-    handleCityChange,
+    handlePlaceInputChange,
+    handlePlaceChange,
     handlePhotoChange,
     handleTermsCheckbox,
     agreeToTerms,
     handleSubmit,
   } = useApplyForm();
 
-  const { loading: geoLoading, failed: geoFailed, retry: retryGeo, countryOptions, stateOptions, cityOptions } = geo;
+  const {
+    loading: geoLoading,
+    failed: geoFailed,
+    retry: retryGeo,
+    placeOptions,
+    placeQuery,
+    selectedPlace,
+  } = geo;
 
   return (
     <>
@@ -208,85 +214,48 @@ function ApplyPageInner() {
                     </FieldGroup>
                   </div>
 
-                  <div className={styles.gridThree}>
+                  <div className={styles.gridTwo}>
                     <FieldGroup
-                      label="Country"
+                      label="Place"
                       required
-                      error={errors.country}
-                      htmlFor="geo-country"
+                      error={errors.city || errors.country}
+                      htmlFor="geo-place"
                     >
                       {geoFailed ? (
                         <button
                           type="button"
-                          id="geo-country"
+                          id="geo-place"
                           onClick={retryGeo}
                           className={styles.retryButton}
                         >
-                          Failed to load countries — tap to retry
+                          Failed to load places — tap to retry
                         </button>
                       ) : (
-                        <Select<SelectOption>
-                          inputId="geo-country"
-                          options={countryOptions}
-                          value={
-                            countryOptions.find(
-                              (o) => o.value === form.country,
-                            ) ?? null
-                          }
-                          onChange={handleCountryChange}
+                        <Select
+                          inputId="geo-place"
+                          options={placeOptions}
+                          value={selectedPlace}
+                          onChange={(option) => handlePlaceChange(option)}
+                          onInputChange={(value, meta) => {
+                            if (meta.action === "input-change") {
+                              handlePlaceInputChange(value);
+                            }
+                            if (meta.action === "menu-close" && selectedPlace) {
+                              handlePlaceInputChange(selectedPlace.label);
+                            }
+                            return value;
+                          }}
                           onMenuOpen={triggerGeoLoad}
-                          placeholder={geoLoading ? "Loading…" : "Select…"}
+                          inputValue={placeQuery}
+                          placeholder={geoLoading ? "Loading…" : "Start typing a city…"}
                           styles={formSelectStyles}
                           isSearchable
                           isLoading={geoLoading}
                           isDisabled={geoLoading}
+                          noOptionsMessage={() => "No cities found"}
                         />
                       )}
                     </FieldGroup>
-
-                    {form.country && (
-                      <FieldGroup
-                        label="State"
-                        required
-                        error={errors.state}
-                        htmlFor="geo-state"
-                      >
-                        <Select<SelectOption>
-                          inputId="geo-state"
-                          options={stateOptions}
-                          value={
-                            stateOptions.find((o) => o.value === form.state) ??
-                            null
-                          }
-                          onChange={handleStateChange}
-                          placeholder="Select…"
-                          styles={formSelectStyles}
-                          isSearchable
-                        />
-                      </FieldGroup>
-                    )}
-
-                    {form.country && form.state && (
-                      <FieldGroup
-                        label="City"
-                        required
-                        error={errors.city}
-                        htmlFor="geo-city"
-                      >
-                        <Select<SelectOption>
-                          inputId="geo-city"
-                          options={cityOptions}
-                          value={
-                            cityOptions.find((o) => o.value === form.city) ??
-                            null
-                          }
-                          onChange={handleCityChange}
-                          placeholder="Select…"
-                          styles={formSelectStyles}
-                          isSearchable
-                        />
-                      </FieldGroup>
-                    )}
                   </div>
 
                   <div className={styles.gridTwo}>

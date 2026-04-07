@@ -5,21 +5,22 @@ interface Props {
 const { source = '' } = Astro.props;
 ---
 
-<dialog id="notify-modal" class="modal-dialog" data-source={source}>
+<dialog id="notify-modal" class="modal-dialog" role="dialog" aria-modal="true" aria-labelledby="notify-modal-title" data-source={source}>
   <div class="modal-inner">
     <button type="button" class="modal-close" aria-label="Close">
       <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
     </button>
     <div id="notify-form-view">
-      <h2 class="modal-title">Get Notified</h2>
+      <h2 id="notify-modal-title" class="modal-title">Get Notified</h2>
       <p class="modal-subtitle">We'll email you when tickets drop for <strong id="notify-city-name"></strong>.</p>
       <form id="notify-form" class="modal-form">
         <input type="email" id="notify-email" placeholder="Your email" required aria-label="Email address" />
         <input type="hidden" id="notify-city" />
+        <p id="notify-error" class="modal-error" hidden aria-live="assertive"></p>
         <button type="submit" class="modal-submit">Notify Me</button>
       </form>
     </div>
-    <div id="notify-success" class="modal-success" hidden>
+    <div id="notify-success" class="modal-success" role="status" aria-live="polite" hidden>
       <p>You're on the list! We'll let you know.</p>
     </div>
   </div>
@@ -32,6 +33,13 @@ const { source = '' } = Astro.props;
   const dialog = document.getElementById('notify-modal') as HTMLDialogElement;
   if (dialog) {
     const source = (dialog as HTMLElement).dataset.source ?? '';
+    let openerEl: HTMLElement | null = null;
+
+    // Restore focus to the element that opened the modal
+    dialog.addEventListener('close', () => {
+      openerEl?.focus();
+      openerEl = null;
+    });
 
     // Wire up any [data-notify-city] trigger elements on the page
     document.querySelectorAll<HTMLElement>('[data-notify-city]').forEach((el) => {
@@ -43,7 +51,11 @@ const { source = '' } = Astro.props;
         if (cityInput) cityInput.value = city;
         document.getElementById('notify-form-view')?.removeAttribute('hidden');
         document.getElementById('notify-success')?.setAttribute('hidden', '');
+        const errorEl = document.getElementById('notify-error');
+        if (errorEl) { errorEl.textContent = ''; errorEl.setAttribute('hidden', ''); }
+        openerEl = document.activeElement as HTMLElement;
         dialog.showModal();
+        (dialog.querySelector('.modal-close') as HTMLElement | null)?.focus();
       };
       el.addEventListener('click', open);
       el.addEventListener('keydown', (e) => {
@@ -62,14 +74,21 @@ const { source = '' } = Astro.props;
       e.preventDefault();
       const email = (document.getElementById('notify-email') as HTMLInputElement).value;
       const city = (document.getElementById('notify-city') as HTMLInputElement).value;
+      const submitBtn = (e.target as HTMLFormElement).querySelector<HTMLButtonElement>('[type="submit"]');
+      const errorEl = document.getElementById('notify-error');
+      if (submitBtn) submitBtn.disabled = true;
       try {
         const db = getFirebaseDb();
         const data: Record<string, string> = { email, city, createdAt: new Date().toISOString() };
         if (source) data.source = source;
         await addDoc(collection(db, 'notifications'), data);
-      } catch { /* fail silently */ }
-      document.getElementById('notify-form-view')?.setAttribute('hidden', '');
-      document.getElementById('notify-success')?.removeAttribute('hidden');
+        document.getElementById('notify-form-view')?.setAttribute('hidden', '');
+        document.getElementById('notify-success')?.removeAttribute('hidden');
+      } catch {
+        if (errorEl) { errorEl.textContent = 'Something went wrong. Please try again.'; errorEl.removeAttribute('hidden'); }
+      } finally {
+        if (submitBtn) submitBtn.disabled = false;
+      }
     });
   }
 </script>
@@ -118,7 +137,9 @@ const { source = '' } = Astro.props;
     border: none;
     color: var(--muted);
     cursor: pointer;
-    padding: 4px;
+    min-width: 48px;
+    min-height: 48px;
+    padding: 12px;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -154,6 +175,12 @@ const { source = '' } = Astro.props;
     min-height: 48px;
   }
   .modal-form input:focus { border-color: var(--brand-red); }
+  .modal-error {
+    font-size: 14px;
+    color: var(--brand-red);
+    margin: 0;
+    text-align: center;
+  }
   .modal-submit {
     background: var(--brand-red);
     color: white;
@@ -172,6 +199,7 @@ const { source = '' } = Astro.props;
     width: 100%;
   }
   .modal-submit:hover { background: var(--brand-red-dark); }
+  .modal-submit:disabled { opacity: 0.6; cursor: not-allowed; }
   .modal-success {
     text-align: center;
     padding: 24px 0;

@@ -53,7 +53,6 @@
   font-size: 16px;
   color: var(--text);
   background: #fff;
-  outline: none;
   box-sizing: border-box;
   margin-bottom: 8px;
   transition: border-color 0.2s;

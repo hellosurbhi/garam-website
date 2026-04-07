@@ -68,6 +68,8 @@
   border: none;
   border-radius: 100px;
   padding: 6px;
+  min-width: 44px;
+  min-height: 44px;
   cursor: pointer;
   display: flex;
   align-items: center;
@@ -200,7 +202,6 @@
   color: var(--text);
   background: #fff;
   cursor: pointer;
-  outline: none;
 }
 
 .notesTextarea {
@@ -213,7 +214,6 @@
   color: var(--text);
   background: #fff;
   resize: vertical;
-  outline: none;
   box-sizing: border-box;
   line-height: 1.5;
 }

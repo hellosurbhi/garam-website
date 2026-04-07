@@ -11,6 +11,9 @@ on:
     - cron: "0 12 1 * *" # 1st of each month, noon UTC
   workflow_dispatch: {} # Allow manual trigger
 
+permissions:
+  contents: write
+
 jobs:
   refresh:
     runs-on: ubuntu-latest

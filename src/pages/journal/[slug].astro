@@ -146,31 +146,49 @@ const pageTitle = `${post.title} | Garam Masala Dating`;
 
       <!-- Article body -->
       <article class="post-body">
-        {
-          post.body.map((block, i) => {
-            if (block.type === "h2") {
-              return (
+        {post.body.map((block, i) => {
+          const midCta = i === 3 ? (
+            <aside class="article-cta" aria-label="Show promotion">
+              <p class="article-cta__text">
+                We host a live dating show for South Asian singles — weekly in NYC, traveling to new cities.
+                <a href="/tickets">Get tickets</a> or <a href="/apply">apply to be on stage</a>.
+              </p>
+            </aside>
+          ) : null;
+
+          if (block.type === "h2") {
+            return (
+              <>
+                {midCta}
                 <h2
                   class="post-h2"
                   style={i === 0 ? "margin-top: 0;" : "margin-top: 16px;"}
                 >
                   {block.text}
                 </h2>
-              );
-            }
-            if (block.type === "h3") {
-              return (
+              </>
+            );
+          }
+          if (block.type === "h3") {
+            return (
+              <>
+                {midCta}
                 <h3
                   class="post-h3"
                   style={i === 0 ? "margin-top: 0;" : "margin-top: 12px;"}
                 >
                   {block.text}
                 </h3>
-              );
-            }
-            return <p class="post-p" set:html={block.text} />;
-          })
-        }
+              </>
+            );
+          }
+          return (
+            <>
+              {midCta}
+              <p class="post-p" set:html={block.text} />
+            </>
+          );
+        })}
       </article>
 
       <!-- Author bio -->
@@ -488,5 +506,29 @@ const pageTitle = `${post.title} | Garam Masala Dating`;
     font-weight: 500;
     color: var(--brand-red);
     text-decoration: none;
+  }
+
+  /* Mid-article CTA banner */
+  .article-cta {
+    background: rgba(var(--brand-red-rgb), 0.05);
+    border-left: 3px solid var(--brand-red);
+    border-radius: 0 8px 8px 0;
+    padding: 16px 20px;
+    margin: 24px 0;
+  }
+  .article-cta__text {
+    font-family: var(--font-body), sans-serif;
+    font-size: 15px;
+    line-height: 1.6;
+    color: var(--charcoal);
+    margin: 0;
+  }
+  .article-cta__text a {
+    color: var(--brand-red);
+    font-weight: 600;
+    text-decoration: none;
+  }
+  .article-cta__text a:hover {
+    text-decoration: underline;
   }
 </style>

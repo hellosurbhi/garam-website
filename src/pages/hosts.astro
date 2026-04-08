@@ -82,6 +82,7 @@ const personJsonLd = JSON.stringify([
             <span>Co-Creator & Producer</span>
             <span>NYC · LA · SF · SD</span>
           </div>
+          <p class="host-see-live"><a href="/tickets">See Surbhi live →</a></p>
         </div>
       </div>
 
@@ -107,6 +108,7 @@ const personJsonLd = JSON.stringify([
             <span>NYU Tisch</span>
             <span>Co-Host</span>
           </div>
+          <p class="host-see-live"><a href="/tickets">See Wyatt live →</a></p>
         </div>
       </div>
 
@@ -292,5 +294,20 @@ const personJsonLd = JSON.stringify([
     }
     .host-credits { justify-content: flex-start; }
     .hosts-cta { flex-direction: row; justify-content: center; }
+  }
+
+  .host-see-live {
+    margin-top: 16px;
+  }
+  .host-see-live a {
+    font-family: var(--font-body), sans-serif;
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--brand-red);
+    text-decoration: none;
+    transition: color 0.2s;
+  }
+  .host-see-live a:hover {
+    color: var(--brand-red-dark);
   }
 </style>

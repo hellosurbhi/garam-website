@@ -20,6 +20,7 @@ const breadcrumbJsonLd = buildBreadcrumbJsonLd([
 /* ── SVG icon markup ──────────────────────────────────────── */
 
 import { ICON_SVGS, SOCIAL_ICON_SVGS, type IconName } from "@/data/icons";
+import LeadCaptureModal from "@/components/LeadCaptureModal.astro";
 
 function iconSvg(name: IconName, isPrimary?: boolean): string {
   const cls = isPrimary ? "icon-primary" : "icon-glass";
@@ -38,29 +39,11 @@ interface LinkDef {
 }
 
 const links: LinkDef[] = [
-  {
-    label: "Apply to Be on the Show",
-    href: "/apply",
-    isPrimary: true,
-    icon: "heart",
-  },
-  {
-    label: "Short form content @ Instagram",
-    href: SOCIAL_URLS.instagram,
-    external: true,
-    icon: "instagram",
-  },
-  {
-    label: "Full episodes @ YouTube",
-    href: SOCIAL_URLS.youtube,
-    external: true,
-    icon: "youtube",
-  },
-  {
-    label: "Upcoming Shows & Tickets",
-    dialogTrigger: "events-trigger",
-    icon: "ticket",
-  },
+  { label: "Get on the List", dialogTrigger: "links-spice-trigger", isPrimary: true, icon: "mail" },
+  { label: "Apply to Be on the Show", href: "/apply", icon: "heart" },
+  { label: "Short form content @ Instagram", href: SOCIAL_URLS.instagram, external: true, icon: "instagram" },
+  { label: "Full episodes @ YouTube", href: SOCIAL_URLS.youtube, external: true, icon: "youtube" },
+  { label: "Upcoming Shows & Tickets", dialogTrigger: "events-trigger", icon: "ticket" },
   { label: "As Seen In", dialogTrigger: "press-trigger", icon: "mic" },
   {
     label: "Booking & Press Inquiries",
@@ -353,6 +336,15 @@ const reversedPress = [...pressItems].reverse();
       </div>
     </div>
   </dialog>
+
+  <LeadCaptureModal
+    id="links-spice-modal"
+    source="links-page"
+    heading="Get on the List"
+    subheading="Cheap and free tickets, exclusive discount codes, show announcements. No spam."
+    submitLabel="Count Me In"
+    successMessage="You're on the list! Deals incoming."
+  />
 </BaseLayout>
 
 <script>
@@ -369,8 +361,9 @@ const reversedPress = [...pressItems].reverse();
       if (e.target === dialog) dialog.close();
     });
   }
-  setupDialog("events-trigger", "events-modal");
-  setupDialog("press-trigger", "press-modal");
+  setupDialog('events-trigger', 'events-modal');
+  setupDialog('press-trigger', 'press-modal');
+  setupDialog('links-spice-trigger', 'links-spice-modal');
 </script>
 
 <style>

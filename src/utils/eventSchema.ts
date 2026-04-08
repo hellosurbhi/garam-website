@@ -41,10 +41,8 @@ export function buildEventSchemas(eventsList: EventEntry[]): string[] {
         eventStatus: "https://schema.org/EventScheduled",
         eventAttendanceMode: "https://schema.org/OfflineEventAttendanceMode",
         maximumAttendeeCapacity: 250,
-        performer: [
-          { "@type": "Person", name: "Surbhi" },
-          { "@type": "Person", name: "Wyatt Feegrado" },
-        ],
+        typicalAgeRange: "21-",
+        isAccessibleForFree: false,
         location: {
           "@type": "Place",
           name: venue.name,
@@ -56,6 +54,18 @@ export function buildEventSchemas(eventsList: EventEntry[]): string[] {
           name: "Garam Masala Dating",
           url: "https://garammasaladating.com",
         },
+        performer: [
+          {
+            "@type": "Person",
+            name: "Surbhi",
+            url: "https://www.instagram.com/lordmakemetaller/",
+          },
+          {
+            "@type": "Person",
+            name: "Wyatt Feegrado",
+            url: "https://www.instagram.com/wyattfeegrado/",
+          },
+        ],
         offers: {
           "@type": "Offer",
           url: e.url,

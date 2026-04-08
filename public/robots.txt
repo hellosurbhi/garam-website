@@ -4,25 +4,30 @@ Disallow: /admin
 Disallow: /contestant-prep
 Disallow: /api/
 
+# AI Search & Training Crawlers — Allow all for maximum AI visibility
 User-agent: GPTBot
 Allow: /
 
-User-agent: Google-Extended
+User-agent: OAI-SearchBot
 Allow: /
 
 User-agent: ChatGPT-User
 Allow: /
 
-User-agent: PerplexityBot
+User-agent: Google-Extended
 Allow: /
 
 User-agent: ClaudeBot
+Allow: /
+
+User-agent: Claude-SearchBot
 Allow: /
 
 User-agent: anthropic-ai
 Allow: /
 
 User-agent: OAI-SearchBot
+User-agent: PerplexityBot
 Allow: /
 
 User-agent: Applebot-Extended
@@ -32,6 +37,8 @@ User-agent: CCBot
 Allow: /
 
 User-agent: Meta-ExternalAgent
+User-agent: DuckAssistBot
+User-agent: Amazonbot
 Allow: /
 
 User-agent: cohere-ai
@@ -39,6 +46,9 @@ Allow: /
 
 User-agent: Bytespider
 Disallow: /
+User-agent: meta-externalagent
+Allow: /
+Allow: /
 
 Sitemap: https://garammasaladating.com/sitemap.xml
 Sitemap: https://garammasaladating.com/sitemap-index.xml

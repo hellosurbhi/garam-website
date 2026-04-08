@@ -3,7 +3,7 @@ import {
   loadCityOptions,
   resolveCityOption,
   searchCityOptions,
-} from "../src/lib/citySearch.js";
+} from "@/lib/citySearch";
 
 export default async function handler(req: VercelRequest, res: VercelResponse) {
   if (req.method !== "GET") {

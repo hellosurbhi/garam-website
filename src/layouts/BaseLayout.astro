@@ -7,6 +7,7 @@ import HomeFooter from "../components/home/HomeFooter.astro";
 import PageNav from "../components/layout/PageNav.astro";
 import { SITE } from "../data/copy";
 import LegalModal from "../components/LegalModal.astro";
+import SpiceListSection from "../components/SpiceListSection.astro";
 
 interface Props {
   title: string;
@@ -17,6 +18,7 @@ interface Props {
   noindex?: boolean;
   hideNav?: boolean;
   hideFooter?: boolean;
+  hideSpiceList?: boolean;
 }
 
 const {
@@ -30,6 +32,7 @@ const {
   noindex = false,
   hideNav = false,
   hideFooter = false,
+  hideSpiceList = false,
 } = Astro.props;
 ---
 
@@ -94,6 +97,7 @@ const {
     <div class="cursor-ring" id="cursorRing"></div>
     {!hideNav && <PageNav />}
     <slot />
+    {!hideSpiceList && !hideFooter && <SpiceListSection />}
     {!hideFooter && <HomeFooter />}
     <LegalModal />
     <script>

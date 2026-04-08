@@ -9,3 +9,7 @@ reviews:
     - "!**/*.md"
     - "!public/images/**"
     - "!src/assets/**"
+    - "!public/sitemap.xml"
+    - "!.firebaserc"
+    - "!.nvmrc"
+    - "!public/js/shader-app.js"

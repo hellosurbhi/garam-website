@@ -575,7 +575,7 @@
   min-width: var(--touch-target);
   min-height: var(--touch-target);
   cursor: pointer;
-  color: #888;
+  color: var(--muted);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -596,7 +596,7 @@
 .termsModalBody p {
   font-family: var(--font-body);
   font-size: 13px;
-  color: #555;
+  color: var(--text-secondary);
   line-height: 1.7;
   margin-bottom: 16px;
 }
@@ -727,7 +727,7 @@
 
 .successText {
   font-size: 16px;
-  color: #666;
+  color: var(--muted);
   margin: 0 0 32px;
   line-height: 1.5;
 }
@@ -751,7 +751,7 @@
 
 .successCardText {
   font-size: 15px;
-  color: #444;
+  color: var(--text-secondary);
   margin: 0;
   line-height: 1.5;
 }
@@ -771,7 +771,7 @@
   color: var(--charcoal);
   margin: 12px 0 0;
   padding: 10px 14px;
-  background: #fff8f0;
+  background: var(--off-white);
   border-radius: 8px;
   line-height: 1.4;
 }

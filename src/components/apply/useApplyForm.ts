@@ -11,7 +11,6 @@ import { signInAnonymously } from "firebase/auth";
 import { useCitySearch } from "@/hooks/useCitySearch";
 import {
   resolveCityOption,
-  searchCityOptions,
   type CitySearchOption,
 } from "@/lib/citySearch";
 import {
@@ -19,6 +18,8 @@ import {
   getFirebaseStorage,
   getFirebaseAuth,
 } from "@/lib/firebase";
+import { trackLeadEvent } from "@/lib/analytics";
+import { buildLeadAttribution } from "@/lib/leadAttribution";
 
 export interface FormState {
   applicationType: "Self" | "Nomination";
@@ -97,24 +98,16 @@ export function useApplyForm() {
   const [placeQuery, setPlaceQuery] = useState("");
   const triggerGeoLoad = useCallback(() => setGeoLoadTriggered(true), []);
 
-  const citySearch = useCitySearch(geoLoadTriggered);
-  const selectedPlace = useMemo(
+  const citySearch = useCitySearch(placeQuery, geoLoadTriggered);
+  const [selectedPlace, setSelectedPlace] = useState<CitySearchOption | null>(null);
+  const placeOptions = useMemo(
     () =>
-      citySearch.options.find(
-        (option) =>
-          option.city === form.city &&
-          option.state === form.state &&
-          option.countryCode === form.country,
-      ) ?? null,
-    [citySearch.options, form.city, form.state, form.country],
+      selectedPlace &&
+      !citySearch.options.some((option) => option.value === selectedPlace.value)
+        ? [selectedPlace, ...citySearch.options].slice(0, 5)
+        : citySearch.options,
+    [citySearch.options, selectedPlace],
   );
-  const placeOptions = useMemo(() => {
-    const results = searchCityOptions(placeQuery, citySearch.options, 5);
-    if (selectedPlace && !results.some((option) => option.value === selectedPlace.value)) {
-      return [selectedPlace, ...results].slice(0, 5);
-    }
-    return results;
-  }, [citySearch.options, placeQuery, selectedPlace]);
 
   function set(field: keyof FormState, value: string) {
     setForm((prev) => ({ ...prev, [field]: value }));
@@ -123,9 +116,13 @@ export function useApplyForm() {
 
   function handlePlaceInputChange(value: string) {
     setPlaceQuery(value);
+    if (selectedPlace && value !== selectedPlace.label) {
+      setSelectedPlace(null);
+    }
   }
 
   function handlePlaceChange(option: CitySearchOption | null) {
+    setSelectedPlace(option);
     setForm((prev) => ({
       ...prev,
       city: option?.city ?? "",
@@ -229,19 +226,20 @@ export function useApplyForm() {
   }, [form.city, form.country, form.state, selectedPlace]);
 
   useEffect(() => {
-    if (!citySearch.options.length || !form.city || form.country) return;
+    if (selectedPlace || !citySearch.options.length || !form.city) return;
 
     const seededValue = [form.city, form.state].filter(Boolean).join(", ");
     const resolved = resolveCityOption(seededValue || form.city, citySearch.options);
     if (!resolved) return;
 
+    setSelectedPlace(resolved);
     setForm((prev) => ({
       ...prev,
       city: resolved.city,
       state: resolved.state,
       country: resolved.countryCode,
     }));
-  }, [citySearch.options, form.city, form.country, form.state]);
+  }, [citySearch.options, form.city, form.state, selectedPlace]);
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -287,6 +285,14 @@ export function useApplyForm() {
         submittedAt: serverTimestamp(),
       });
       storageRef = null; // committed — no cleanup needed
+
+      const attribution = buildLeadAttribution({ source: "apply" });
+      trackLeadEvent("apply_submitted", {
+        ...attribution,
+        applicationType: form.applicationType,
+        city: form.city,
+        country: form.country,
+      });
 
       // Fire-and-forget: email notification (does not affect submission)
       fetch("/api/notify-application", {

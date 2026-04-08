@@ -94,7 +94,9 @@ function parseDay(dateStr: string): string {
 <script>
   import { getFirebaseDb } from '@/lib/firebase';
   import { collection, addDoc } from 'firebase/firestore';
-  import { loadCityOptions, resolveCityOption, searchCityOptions } from '@/lib/citySearch';
+  import { resolveCityOption } from '@/lib/citySearch';
+  import { identifyLead, trackLeadEvent } from '@/lib/analytics';
+  import { buildLeadAttribution } from '@/lib/leadAttribution';
 
   // Request City modal
   const cityDialog = document.getElementById('request-city-modal') as HTMLDialogElement;
@@ -113,10 +115,9 @@ function parseDay(dateStr: string): string {
       if (cityCountryInput) cityCountryInput.value = option?.country ?? '';
     };
 
-    const renderCitySuggestions = (query: string) => {
+    const renderCitySuggestions = (results: import('@/lib/citySearch').CitySearchOption[]) => {
       if (!citySuggestions) return;
       citySuggestions.innerHTML = '';
-      const results = searchCityOptions(query, cityOptions, 5);
       results.forEach((option) => {
         const suggestion = document.createElement('option');
         suggestion.value = option.label;
@@ -124,10 +125,12 @@ function parseDay(dateStr: string): string {
       });
     };
 
-    const ensureCityOptions = async () => {
-      if (cityOptions.length > 0) return;
-      cityOptions = await loadCityOptions();
-      renderCitySuggestions(cityInput?.value ?? '');
+    const searchCities = async (query: string) => {
+      const response = await fetch(`/api/city-search?q=${encodeURIComponent(query)}`);
+      if (!response.ok) throw new Error('Failed to search cities');
+      const data = await response.json() as { results?: import('@/lib/citySearch').CitySearchOption[] };
+      cityOptions = data.results ?? [];
+      renderCitySuggestions(cityOptions);
     };
 
     document.getElementById('request-city-trigger')?.addEventListener('click', () => {
@@ -139,7 +142,9 @@ function parseDay(dateStr: string): string {
       if (emailInput) emailInput.value = '';
       if (errorEl) { errorEl.textContent = ''; errorEl.setAttribute('hidden', ''); }
       syncSelectedCity(null);
-      ensureCityOptions().catch(() => {});
+      cityOptions = [];
+      renderCitySuggestions([]);
+      trackLeadEvent('request_city_opened', { source: 'request-city', sourcePage: window.location.pathname });
       cityDialog.showModal();
     });
 
@@ -149,12 +154,19 @@ function parseDay(dateStr: string): string {
     });
 
     cityInput?.addEventListener('focus', () => {
-      ensureCityOptions().catch(() => {});
+      if (cityInput.value.trim()) {
+        searchCities(cityInput.value).catch(() => {});
+      }
     });
 
     cityInput?.addEventListener('input', async () => {
-      await ensureCityOptions();
-      renderCitySuggestions(cityInput.value);
+      if (!cityInput.value.trim()) {
+        cityOptions = [];
+        renderCitySuggestions([]);
+        syncSelectedCity(null);
+        return;
+      }
+      await searchCities(cityInput.value);
       syncSelectedCity(resolveCityOption(cityInput.value, cityOptions));
     });
 
@@ -164,7 +176,9 @@ function parseDay(dateStr: string): string {
 
     document.getElementById('city-form')?.addEventListener('submit', async (e) => {
       e.preventDefault();
-      await ensureCityOptions();
+      if (cityInput?.value.trim()) {
+        await searchCities(cityInput.value);
+      }
       const resolvedCity = selectedCity ?? resolveCityOption(cityInput?.value ?? '', cityOptions);
       const city = resolvedCity?.city ?? (cityInput?.value ?? '').trim();
       const email = (document.getElementById('city-email') as HTMLInputElement).value;
@@ -177,14 +191,18 @@ function parseDay(dateStr: string): string {
       }
       try {
         const db = getFirebaseDb();
+        const attribution = buildLeadAttribution({ source: 'request-city' });
         const payload: Record<string, string> = {
           city,
           email,
+          ...attribution,
           createdAt: new Date().toISOString(),
         };
         if (resolvedCity?.state) payload.state = resolvedCity.state;
         if (resolvedCity?.country) payload.country = resolvedCity.country;
-        await addDoc(collection(db, 'city_requests'), payload);
+        await addDoc(collection(db, 'leads'), payload);
+        identifyLead(email, { ...attribution, city, state: resolvedCity?.state, country: resolvedCity?.country });
+        trackLeadEvent('lead_email_submitted', { ...attribution, city, state: resolvedCity?.state, country: resolvedCity?.country });
         document.getElementById('city-form-view')?.setAttribute('hidden', '');
         document.getElementById('city-success')?.removeAttribute('hidden');
       } catch {

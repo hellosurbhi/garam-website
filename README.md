@@ -23,17 +23,17 @@ npm run dev
 
 Create a `.env.local` file with the following:
 
-| Variable                            | Purpose                                        |
-| ----------------------------------- | ---------------------------------------------- |
+| Variable                              | Purpose                                        |
+| ------------------------------------- | ---------------------------------------------- |
 | `PUBLIC_FIREBASE_API_KEY`             | Firebase client API key                        |
 | `PUBLIC_FIREBASE_AUTH_DOMAIN`         | Firebase auth domain                           |
 | `PUBLIC_FIREBASE_PROJECT_ID`          | Firestore project ID                           |
 | `PUBLIC_FIREBASE_STORAGE_BUCKET`      | Cloud Storage bucket                           |
 | `PUBLIC_FIREBASE_MESSAGING_SENDER_ID` | Firebase messaging sender ID                   |
 | `PUBLIC_FIREBASE_APP_ID`              | Firebase app ID                                |
-| `FIREBASE_ADMIN_CLIENT_EMAIL`       | Service account email (server-side only)       |
-| `FIREBASE_ADMIN_PRIVATE_KEY`        | Service account private key (server-side only) |
-| `CONTESTANT_PREP_SALT`              | Salt for weekly password rotation              |
+| `FIREBASE_ADMIN_CLIENT_EMAIL`         | Service account email (server-side only)       |
+| `FIREBASE_ADMIN_PRIVATE_KEY`          | Service account private key (server-side only) |
+| `CONTESTANT_PREP_SALT`                | Salt for weekly password rotation              |
 
 `PUBLIC_`-prefixed variables are exposed to the client in Astro. `FIREBASE_ADMIN_*` variables are used only in Vercel serverless functions.
 
@@ -118,3 +118,23 @@ CONTESTANT_PREP_SALT=
 
 RESEND_API_KEY=
 NOTIFICATION_EMAIL=
+
+## Firestore Backups
+
+Automatic daily backups run at 2am via Cloud Scheduler + Cloud Function.
+
+- **Bucket:** gs://garam-masala-9f15b-firestore-backups/
+- **Schedule:** Daily at 2am UTC
+- **Function:** firestoreBackup (us-central1)
+
+### Manual backup
+
+gcloud firestore export gs://garam-masala-9f15b-firestore-backups/$(date +%F) --project=garam-masala-9f15b
+
+### Check recent backups
+
+gcloud storage ls gs://garam-masala-9f15b-firestore-backups/
+
+### Check function logs
+
+gcloud functions logs read firestoreBackup --project=garam-masala-9f15b --region=us-central1 --limit=10

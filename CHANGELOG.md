@@ -1,5 +1,30 @@
 # Changelog
 
+## fix: phone accepts international numbers, apply form analytics, code cleanup (2026-04-08)
+
+### What changed
+
+**Phone handling rewritten** — replaced `normalizeUsPhone` (US-only, rejected everything else) with `cleanPhone` in `src/lib/phone.ts`. US 10-digit numbers auto-format to `+1XXXXXXXXXX`. International numbers with `+` prefix are stored with digits cleaned. Anything with 7+ digits is accepted. Nobody gets blocked. Error message softened to "Please enter a valid phone number." Placeholder updated from `+1 (555) 123-4567` to `(555) 123-4567` and aria-label from "Phone number (include country code)" to "Phone number" across all 4 forms.
+
+**Apply form analytics** — added `trackLeadEvent('apply_submitted')` with `applicationType`, `city`, `country`, and full lead attribution to `useApplyForm.ts`. This was the only form without any PostHog/GTM tracking.
+
+**Bug fixes:**
+- `src/pages/cities/[slug].astro` — fixed try/catch indentation where `try` was nested inside `if (submitBtn)` but `catch` was at a different scope level
+- `src/components/home/HomeSignup.astro` — removed `console.error` left in catch block (violates project rule)
+
+**ENHANCEMENT.md** — added "Later Later" section with note on international phone input with country selector (packages like `react-phone-number-input`) for when we actually have international texting services.
+
+### Files changed
+- `src/lib/phone.ts` — rewritten (`normalizeUsPhone` → `cleanPhone`)
+- `src/components/NotifyModal.astro` — import, placeholder, aria-label, error message
+- `src/components/home/HomeSignup.astro` — import, placeholder, aria-label, error message, removed console.error
+- `src/pages/index.astro` — import, placeholder, aria-label, error message
+- `src/pages/cities/[slug].astro` — import, placeholder, aria-label, error message, try/catch indent fix
+- `src/components/apply/useApplyForm.ts` — added analytics tracking on submit
+- `ENHANCEMENT.md` — added Later Later section
+
+---
+
 ## feat: redesign all email forms — first name, phone step, proper error handling (2026-04-07)
 
 ### What changed

@@ -96,3 +96,23 @@ Audit of all Cumulative Layout Shift sources across the site. 13 instances ident
 ### Already fixed in this branch
 
 - Email form step transitions (HomeSignup, popup, NotifyModal, city notify) — wrapped in `min-height` containers (220–260px) so step 1→2 swap never shifts content below.
+
+---
+
+## Later Later
+
+Low-priority ideas that only make sense at significant scale. Revisit when the product warrants it.
+
+### International phone input with country selector
+
+**Logged:** 2026-04-08
+
+Right now we accept any phone number and auto-format US numbers to E.164 (`+1XXXXXXXXXX`). International numbers are stored as-is with basic digit cleanup. This works fine at current scale.
+
+When we start actually texting international numbers (via Twilio/MessageBird/etc.), add a proper country-code dropdown + phone input that validates per-country format. Packages like `react-phone-number-input` or `intl-tel-input` handle this well — country flag dropdown, auto-formatting, per-country length validation.
+
+**Why not now:**
+- We don't have an international texting service yet
+- No confirmed international show dates
+- The npm package adds bundle weight to every page with a phone field
+- Current approach (accept anything, clean up later) is good enough for lead capture

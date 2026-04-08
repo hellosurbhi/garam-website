@@ -2,7 +2,7 @@
 interface Props {
   source?: string;
 }
-const { source = '' } = Astro.props;
+const { source = 'notify-modal' } = Astro.props;
 ---
 
 <dialog id="notify-modal" class="modal-dialog" role="dialog" aria-modal="true" aria-labelledby="notify-modal-title" data-source={source}>
@@ -26,7 +26,7 @@ const { source = '' } = Astro.props;
         <h2 class="modal-title">One more thing…</h2>
         <p class="modal-subtitle">Add your number for text-only ticket drops.</p>
         <form id="notify-phone-form" class="modal-form">
-          <input type="tel" id="notify-phone" placeholder="+1 (555) 123-4567" aria-label="Phone number (include country code)" />
+          <input type="tel" id="notify-phone" placeholder="(555) 123-4567" aria-label="Phone number" />
           <p id="notify-phone-error" class="modal-error" hidden aria-live="assertive"></p>
           <button type="submit" class="modal-submit">Send Me Drops</button>
         </form>
@@ -42,10 +42,13 @@ const { source = '' } = Astro.props;
 <script>
   import { getFirebaseDb } from '@/lib/firebase';
   import { collection, addDoc, updateDoc, type DocumentReference } from 'firebase/firestore';
+  import { cleanPhone } from '@/lib/phone';
+  import { identifyLead, trackLeadEvent } from '@/lib/analytics';
+  import { buildLeadAttribution } from '@/lib/leadAttribution';
 
   const dialog = document.getElementById('notify-modal') as HTMLDialogElement;
   if (dialog) {
-    const source = (dialog as HTMLElement).dataset.source ?? '';
+    const source = (dialog as HTMLElement).dataset.source ?? 'notify-modal';
     let openerEl: HTMLElement | null = null;
     let notifyDocRef: DocumentReference | null = null;
     let notifyEmail = '';
@@ -72,6 +75,7 @@ const { source = '' } = Astro.props;
         if (errorEl) { errorEl.textContent = ''; errorEl.setAttribute('hidden', ''); }
         notifyDocRef = null;
         openerEl = document.activeElement as HTMLElement;
+        trackLeadEvent('notify_modal_opened', { source, sourcePage: window.location.pathname, city });
         dialog.showModal();
         (dialog.querySelector('.modal-close') as HTMLElement | null)?.focus();
       };
@@ -97,9 +101,11 @@ const { source = '' } = Astro.props;
       if (submitBtn) submitBtn.disabled = true;
       try {
         const db = getFirebaseDb();
-        const data: Record<string, string> = { email: notifyEmail, city, createdAt: new Date().toISOString() };
-        if (source) data.source = source;
-        notifyDocRef = await addDoc(collection(db, 'notifications'), data);
+        const attribution = buildLeadAttribution({ source });
+        const data: Record<string, string> = { email: notifyEmail, city, ...attribution, createdAt: new Date().toISOString() };
+        notifyDocRef = await addDoc(collection(db, 'leads'), data);
+        identifyLead(notifyEmail, { ...attribution, city });
+        trackLeadEvent('lead_email_submitted', { ...attribution, city });
         if (errorEl) { errorEl.textContent = ''; errorEl.setAttribute('hidden', ''); }
         document.getElementById('notify-form-view')?.setAttribute('hidden', '');
         document.getElementById('notify-phone-view')?.removeAttribute('hidden');
@@ -115,10 +121,10 @@ const { source = '' } = Astro.props;
     document.getElementById('notify-phone-form')?.addEventListener('submit', async (e) => {
       e.preventDefault();
       const raw = (document.getElementById('notify-phone') as HTMLInputElement).value;
-      const cleaned = raw.replace(/[\s\-().]/g, '');
+      const cleaned = cleanPhone(raw);
       const phoneErrorEl = document.getElementById('notify-phone-error');
 
-      if (!cleaned) {
+      if (!raw.trim()) {
         // Empty — show success
         document.getElementById('notify-phone-view')?.setAttribute('hidden', '');
         const successEl = document.getElementById('notify-success') as HTMLElement | null;
@@ -127,9 +133,9 @@ const { source = '' } = Astro.props;
         return;
       }
 
-      if (!/^\+\d{7,15}$/.test(cleaned)) {
+      if (!cleaned) {
         if (phoneErrorEl) {
-          phoneErrorEl.textContent = 'Include your country code, e.g. +1 555 123 4567';
+          phoneErrorEl.textContent = 'Please enter a valid phone number.';
           phoneErrorEl.removeAttribute('hidden');
         }
         return;
@@ -142,15 +148,17 @@ const { source = '' } = Astro.props;
         if (notifyDocRef) {
           await updateDoc(notifyDocRef, { phone: cleaned });
         } else {
+          const attribution = buildLeadAttribution({ source });
           const data: Record<string, string> = {
             email: notifyEmail,
             city: (document.getElementById('notify-city') as HTMLInputElement).value,
             phone: cleaned,
+            ...attribution,
             createdAt: new Date().toISOString(),
           };
-          if (source) data.source = source;
-          await addDoc(collection(db, 'notifications'), data);
+          await addDoc(collection(db, 'leads'), data);
         }
+        trackLeadEvent('lead_phone_submitted', { source, sourcePage: window.location.pathname });
         document.getElementById('notify-phone-view')?.setAttribute('hidden', '');
         const successEl = document.getElementById('notify-success') as HTMLElement | null;
         successEl?.removeAttribute('hidden');

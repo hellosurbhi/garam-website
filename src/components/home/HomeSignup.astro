@@ -20,7 +20,7 @@
     <div id="nl-step-2" hidden aria-live="polite">
       <p class="nl-step2-text">Add your number for text-only discounts and free ticket drops.</p>
       <form id="nl-phone-form" class="spicelist-form">
-        <input type="tel" id="nl-phone" placeholder="+1 (555) 123-4567" aria-label="Phone number (include country code)" />
+        <input type="tel" id="nl-phone" placeholder="(555) 123-4567" aria-label="Phone number" />
         <p id="nl-phone-error" class="spicelist-error" hidden role="alert"></p>
         <button type="submit">Send Me Deals</button>
       </form>
@@ -36,6 +36,9 @@
 <script>
   import { getFirebaseDb } from '@/lib/firebase';
   import { collection, addDoc, updateDoc, type DocumentReference } from 'firebase/firestore';
+  import { cleanPhone } from '@/lib/phone';
+  import { identifyLead, trackLeadEvent } from '@/lib/analytics';
+  import { buildLeadAttribution } from '@/lib/leadAttribution';
 
   let savedEmail = '';
   let nlDocRef: DocumentReference | null = null;
@@ -48,17 +51,19 @@
     if (submitBtn) submitBtn.disabled = true;
     try {
       const db = getFirebaseDb();
-      nlDocRef = await addDoc(collection(db, 'subscribers'), {
+      const attribution = buildLeadAttribution({ source: 'spice-list' });
+      nlDocRef = await addDoc(collection(db, 'leads'), {
         email: savedEmail,
-        source: 'spice-list',
+        ...attribution,
         createdAt: new Date().toISOString(),
       });
       localStorage.setItem('gmd-popup-subscribed', 'true');
+      identifyLead(savedEmail, attribution);
+      trackLeadEvent('lead_email_submitted', attribution);
       if (errorEl) { errorEl.textContent = ''; errorEl.setAttribute('hidden', ''); }
       document.getElementById('nl-step-1')?.setAttribute('hidden', '');
       document.getElementById('nl-step-2')?.removeAttribute('hidden');
     } catch (err) {
-      console.error('[HomeSignup email]', err);
       if (errorEl) {
         errorEl.textContent = 'Something went wrong. Please try again.';
         errorEl.removeAttribute('hidden');
@@ -71,19 +76,19 @@
   document.getElementById('nl-phone-form')?.addEventListener('submit', async (e) => {
     e.preventDefault();
     const raw = (document.getElementById('nl-phone') as HTMLInputElement).value;
-    const cleaned = raw.replace(/[\s\-().]/g, '');
+    const cleaned = cleanPhone(raw);
     const phoneErrorEl = document.getElementById('nl-phone-error');
 
-    if (!cleaned) {
+    if (!raw.trim()) {
       // Empty — treat as skip
       document.getElementById('nl-step-2')?.setAttribute('hidden', '');
       document.getElementById('nl-success')?.removeAttribute('hidden');
       return;
     }
 
-    if (!/^\+\d{7,15}$/.test(cleaned)) {
+    if (!cleaned) {
       if (phoneErrorEl) {
-        phoneErrorEl.textContent = 'Include your country code, e.g. +1 555 123 4567';
+        phoneErrorEl.textContent = 'Please enter a valid phone number.';
         phoneErrorEl.removeAttribute('hidden');
       }
       return;
@@ -96,13 +101,15 @@
       if (nlDocRef) {
         await updateDoc(nlDocRef, { phone: cleaned });
       } else {
-        await addDoc(collection(db, 'subscribers'), {
+        const attribution = buildLeadAttribution({ source: 'spice-list' });
+        await addDoc(collection(db, 'leads'), {
           email: savedEmail,
           phone: cleaned,
-          source: 'spice-list-phone',
+          ...attribution,
           createdAt: new Date().toISOString(),
         });
       }
+      trackLeadEvent('lead_phone_submitted', { source: 'spice-list', sourcePage: window.location.pathname });
       document.getElementById('nl-step-2')?.setAttribute('hidden', '');
       document.getElementById('nl-success')?.removeAttribute('hidden');
     } catch (err) {

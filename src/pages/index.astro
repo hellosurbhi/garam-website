@@ -107,7 +107,7 @@ const eventSchemas = buildEventSchemas(upcomingForSchema);
           <h2 class="popup-title">One more thing...</h2>
           <p class="popup-subtitle">Add your number for text-only discounts and free ticket drops.</p>
           <form id="popup-phone-form" class="popup-form">
-            <input type="tel" id="popup-phone" placeholder="+1 (555) 123-4567" aria-label="Phone number (include country code)" />
+            <input type="tel" id="popup-phone" placeholder="(555) 123-4567" aria-label="Phone number" />
             <p id="popup-phone-error" class="popup-error" hidden role="alert"></p>
             <button type="submit" class="popup-submit">Send Me Deals</button>
           </form>
@@ -121,6 +121,9 @@ const eventSchemas = buildEventSchemas(upcomingForSchema);
 <script>
   import { getFirebaseDb } from '@/lib/firebase';
   import { collection, addDoc, updateDoc, type DocumentReference } from 'firebase/firestore';
+  import { cleanPhone } from '@/lib/phone';
+  import { identifyLead, trackLeadEvent } from '@/lib/analytics';
+  import { buildLeadAttribution } from '@/lib/leadAttribution';
 
   // Email popup logic — only suppressed permanently after email submit
   const POPUP_KEY = 'gmd-popup-subscribed';
@@ -129,6 +132,7 @@ const eventSchemas = buildEventSchemas(upcomingForSchema);
   if (popup && !localStorage.getItem(POPUP_KEY)) {
     const timer = setTimeout(() => {
       if (!document.querySelector('dialog[open]')) {
+        trackLeadEvent('popup_opened', { source: 'popup', sourcePage: window.location.pathname });
         popup.showModal();
       }
     }, 30000);
@@ -156,12 +160,15 @@ const eventSchemas = buildEventSchemas(upcomingForSchema);
       if (submitBtn) submitBtn.disabled = true;
       try {
         const db = getFirebaseDb();
-        popupDocRef = await addDoc(collection(db, 'subscribers'), {
+        const attribution = buildLeadAttribution({ source: 'popup' });
+        popupDocRef = await addDoc(collection(db, 'leads'), {
           email: savedEmail,
-          source: 'popup',
+          ...attribution,
           createdAt: new Date().toISOString(),
         });
         localStorage.setItem(POPUP_KEY, 'true');
+        identifyLead(savedEmail, attribution);
+        trackLeadEvent('lead_email_submitted', attribution);
         if (errorEl) { errorEl.textContent = ''; errorEl.setAttribute('hidden', ''); }
         document.getElementById('popup-step-1')?.setAttribute('hidden', '');
         document.getElementById('popup-step-2')?.removeAttribute('hidden');
@@ -178,14 +185,14 @@ const eventSchemas = buildEventSchemas(upcomingForSchema);
     document.getElementById('popup-phone-form')?.addEventListener('submit', async (e) => {
       e.preventDefault();
       const raw = (document.getElementById('popup-phone') as HTMLInputElement).value;
-      const cleaned = raw.replace(/[\s\-().]/g, '');
+      const cleaned = cleanPhone(raw);
       const phoneErrorEl = document.getElementById('popup-phone-error');
 
-      if (!cleaned) { close(); return; }
+      if (!raw.trim()) { close(); return; }
 
-      if (!/^\+\d{7,15}$/.test(cleaned)) {
+      if (!cleaned) {
         if (phoneErrorEl) {
-          phoneErrorEl.textContent = 'Include your country code, e.g. +1 555 123 4567';
+          phoneErrorEl.textContent = 'Please enter a valid phone number.';
           phoneErrorEl.removeAttribute('hidden');
         }
         return;
@@ -198,13 +205,15 @@ const eventSchemas = buildEventSchemas(upcomingForSchema);
         if (popupDocRef) {
           await updateDoc(popupDocRef, { phone: cleaned });
         } else {
-          await addDoc(collection(db, 'subscribers'), {
+          const attribution = buildLeadAttribution({ source: 'popup' });
+          await addDoc(collection(db, 'leads'), {
             email: savedEmail,
             phone: cleaned,
-            source: 'popup-phone',
+            ...attribution,
             createdAt: new Date().toISOString(),
           });
         }
+        trackLeadEvent('lead_phone_submitted', { source: 'popup', sourcePage: window.location.pathname });
         close();
       } catch (err) {
         if (phoneErrorEl) {

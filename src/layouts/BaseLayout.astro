@@ -88,8 +88,10 @@ const {
     <script>
       import { inject } from '@vercel/analytics';
       import { injectSpeedInsights } from '@vercel/speed-insights';
+      import { bootstrapLeadAttribution } from '@/lib/leadAttribution';
       inject();
       injectSpeedInsights();
+      bootstrapLeadAttribution();
 
       // Custom cursor — desktop only (pointer: fine), off for prefers-reduced-motion
       if (window.matchMedia('(pointer: fine)').matches &&

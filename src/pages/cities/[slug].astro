@@ -203,7 +203,7 @@ const breadcrumbJsonLd = buildBreadcrumbJsonLd([
             <div id="city-notify-step2" hidden>
               <p class="city-notify__desc">Add your number for text-only discounts and free ticket drops.</p>
               <form id="city-notify-phone-form" class="city-notify__form">
-                <input type="tel" id="city-notify-phone" placeholder="+1 (555) 123-4567" aria-label="Phone number (include country code)" />
+                <input type="tel" id="city-notify-phone" placeholder="(555) 123-4567" aria-label="Phone number" />
                 <p id="city-notify-phone-error" class="city-notify__error" hidden role="alert"></p>
                 <button type="submit">Send Me Deals</button>
               </form>
@@ -244,11 +244,18 @@ const breadcrumbJsonLd = buildBreadcrumbJsonLd([
 <script>
   import { getFirebaseDb } from '@/lib/firebase';
   import { collection, addDoc, updateDoc, type DocumentReference } from 'firebase/firestore';
+  import { cleanPhone } from '@/lib/phone';
+  import { identifyLead, trackLeadEvent } from '@/lib/analytics';
+  import { buildLeadAttribution } from '@/lib/leadAttribution';
 
   const dialog = document.getElementById('waitlist-modal') as HTMLDialogElement;
+  const citySlug = window.location.pathname.split('/').filter(Boolean).at(-1) ?? '';
   if (dialog) {
     document.querySelectorAll('[data-waitlist-trigger]').forEach((btn) => {
-      btn.addEventListener('click', () => dialog.showModal());
+      btn.addEventListener('click', () => {
+        trackLeadEvent('waitlist_modal_opened', { source: 'city-waitlist', sourcePage: window.location.pathname, sourceCitySlug: citySlug });
+        dialog.showModal();
+      });
     });
     dialog.querySelector('.modal-close')?.addEventListener('click', () => dialog.close());
     dialog.addEventListener('click', (e) => {
@@ -264,12 +271,15 @@ const breadcrumbJsonLd = buildBreadcrumbJsonLd([
       if (submitBtn) submitBtn.disabled = true;
       try {
         const db = getFirebaseDb();
-        await addDoc(collection(db, 'notifications'), {
+        const attribution = buildLeadAttribution({ source: 'city-waitlist', sourceCitySlug: citySlug });
+        await addDoc(collection(db, 'leads'), {
           email,
           city,
-          source: 'city-waitlist',
+          ...attribution,
           createdAt: new Date().toISOString(),
         });
+        identifyLead(email, { ...attribution, city });
+        trackLeadEvent('lead_email_submitted', { ...attribution, city });
         document.getElementById('waitlist-form-view')?.setAttribute('hidden', '');
         document.getElementById('waitlist-success')?.removeAttribute('hidden');
       } catch {
@@ -293,12 +303,15 @@ const breadcrumbJsonLd = buildBreadcrumbJsonLd([
     if (submitBtn) submitBtn.disabled = true;
     try {
       const db = getFirebaseDb();
-      cityNotifyDocRef = await addDoc(collection(db, 'subscribers'), {
+      const attribution = buildLeadAttribution({ source: 'city-page', sourceCitySlug: citySlug });
+      cityNotifyDocRef = await addDoc(collection(db, 'leads'), {
         email: cityNotifyEmail,
         city: cityName,
-        source: 'city-page',
+        ...attribution,
         createdAt: new Date().toISOString(),
       });
+      identifyLead(cityNotifyEmail, { ...attribution, city: cityName });
+      trackLeadEvent('lead_email_submitted', { ...attribution, city: cityName });
       if (errorEl) { errorEl.textContent = ''; errorEl.setAttribute('hidden', ''); }
       document.getElementById('city-notify-step1')?.setAttribute('hidden', '');
       document.getElementById('city-notify-step2')?.removeAttribute('hidden');
@@ -315,18 +328,18 @@ const breadcrumbJsonLd = buildBreadcrumbJsonLd([
   document.getElementById('city-notify-phone-form')?.addEventListener('submit', async (e) => {
     e.preventDefault();
     const raw = (document.getElementById('city-notify-phone') as HTMLInputElement).value;
-    const cleaned = raw.replace(/[\s\-().]/g, '');
+    const cleaned = cleanPhone(raw);
     const phoneErrorEl = document.getElementById('city-notify-phone-error');
 
-    if (!cleaned) {
+    if (!raw.trim()) {
       document.getElementById('city-notify-step2')?.setAttribute('hidden', '');
       document.getElementById('city-notify-success')?.removeAttribute('hidden');
       return;
     }
 
-    if (!/^\+\d{7,15}$/.test(cleaned)) {
+    if (!cleaned) {
       if (phoneErrorEl) {
-        phoneErrorEl.textContent = 'Include your country code, e.g. +1 555 123 4567';
+        phoneErrorEl.textContent = 'Please enter a valid phone number.';
         phoneErrorEl.removeAttribute('hidden');
       }
       return;
@@ -339,14 +352,16 @@ const breadcrumbJsonLd = buildBreadcrumbJsonLd([
       if (cityNotifyDocRef) {
         await updateDoc(cityNotifyDocRef, { phone: cleaned });
       } else {
-        await addDoc(collection(db, 'subscribers'), {
+        const attribution = buildLeadAttribution({ source: 'city-page', sourceCitySlug: citySlug });
+        await addDoc(collection(db, 'leads'), {
           email: cityNotifyEmail,
           phone: cleaned,
           city: cityName,
-          source: 'city-page-phone',
+          ...attribution,
           createdAt: new Date().toISOString(),
         });
       }
+      trackLeadEvent('lead_phone_submitted', { source: 'city-page', sourcePage: window.location.pathname, sourceCitySlug: citySlug });
       document.getElementById('city-notify-step2')?.setAttribute('hidden', '');
       document.getElementById('city-notify-success')?.removeAttribute('hidden');
     } catch (err) {

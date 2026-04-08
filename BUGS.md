@@ -321,6 +321,32 @@
 - **What happened:** Email and password inputs used only placeholder text with no visible label. Placeholders disappear on typing.
 - **Fix:** Added `<label htmlFor="admin-email">` and `<label htmlFor="admin-password">` with styled `.label` CSS class. Removed redundant `aria-label` attributes.
 
+# From PR #11 — Site Rewrite
+
+### [LOW] Photo size validation off-by-one (client vs storage.rules)
+
+- **Date:** 2026-04-08
+- **File:** `src/components/apply/useApplyForm.ts:153`
+- **Source:** CodeRabbit PR #11
+- **Status:** Open
+- **Severity:** Low
+- **What's happening:** Client-side check uses `> 5 * 1024 * 1024` (allows exactly 5MB), but Firebase storage.rules uses `< 5 * 1024 * 1024` (rejects exactly 5MB). A file that is exactly 5,242,880 bytes passes client validation but fails on `uploadBytes()` with a generic error toast.
+- **What should happen:** Client check should use `>=` to match server rule.
+- **Fix:** Change `>` to `>=` in the size check on line 132.
+- **Link:** https://github.com/hellosurbhi/garam-website/pull/11#discussion_r3046995946
+
+### [MEDIUM] Instagram "@" alone passes validation, creates invalid Firestore doc
+
+- **Date:** 2026-04-08
+- **File:** `src/components/apply/useApplyForm.ts:190`
+- **Source:** CodeRabbit PR #11
+- **Status:** Open
+- **Severity:** Medium
+- **What's happening:** Instagram validation only checks the raw field is non-empty. Line 222 strips a leading `@` before persisting. So `"@"` passes validation, normalizes to `""`, creates a Firestore document without a handle, and `/api/notify-application` returns 400 because `instagram` is required.
+- **What should happen:** Validate Instagram after normalizing (stripping `@`), not before.
+- **Fix:** Normalize first, then validate that the result is non-empty.
+- **Link:** https://github.com/hellosurbhi/garam-website/pull/11#discussion_r3046995985
+
 ## Fixed
 
 ### [MEDIUM] FAQ page hero references deleted image (gmd-37.webp)

@@ -1,4 +1,13 @@
-type AnalyticsProps = Record<string, string | number | boolean | undefined>;
+type AnalyticsValue = string | number | boolean | undefined;
+type AnalyticsProps = object;
+
+function isAnalyticsValue(value: unknown): value is Exclude<AnalyticsValue, undefined> {
+  return (
+    typeof value === "string" ||
+    typeof value === "number" ||
+    typeof value === "boolean"
+  );
+}
 
 interface ErrorProperties {
   error_message: string;
@@ -35,7 +44,7 @@ export function trackError(properties: ErrorProperties) {
 
 export function trackLeadEvent(name: string, properties: AnalyticsProps = {}) {
   const cleanProps = Object.fromEntries(
-    Object.entries(properties).filter(([, value]) => value !== undefined),
+    Object.entries(properties).filter(([, value]) => isAnalyticsValue(value)),
   );
 
   window.posthog?.capture?.(name, cleanProps);
@@ -46,8 +55,14 @@ export function identifyLead(email: string, properties: AnalyticsProps = {}) {
   if (!email.trim()) return;
 
   const cleanProps = Object.fromEntries(
-    Object.entries(properties).filter(([, value]) => value !== undefined),
+    Object.entries(properties).filter(([, value]) => isAnalyticsValue(value)),
   );
 
+  // identify() merges the current anonymous session into the email-keyed profile.
+  // PostHog automatically aliases the anonymous distinct_id to the email so all
+  // prior anonymous events are attributed to this person.
   window.posthog?.identify?.(email, { email, ...cleanProps });
+
+  // Mirror identification to GTM dataLayer for GA4 / downstream tools
+  window.dataLayer?.push({ event: "identify", email, ...cleanProps });
 }

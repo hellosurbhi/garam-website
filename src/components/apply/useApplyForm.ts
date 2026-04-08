@@ -4,6 +4,7 @@ import {
   useCallback,
   useMemo,
   type ChangeEvent,
+  type FormEvent,
 } from "react";
 import { collection, addDoc, serverTimestamp } from "firebase/firestore";
 import {
@@ -24,7 +25,7 @@ import {
   getFirebaseStorage,
   getFirebaseAuth,
 } from "@/lib/firebase";
-import { trackError, trackLeadEvent } from "@/lib/analytics";
+import { trackError, trackLeadEvent, identifyLead } from "@/lib/analytics";
 import { buildLeadAttribution } from "@/lib/leadAttribution";
 
 export interface FormState {
@@ -262,7 +263,7 @@ export function useApplyForm() {
     }));
   }, [citySearch.options, form.city, form.state, selectedPlace]);
 
-  async function handleSubmit(e: React.FormEvent) {
+  async function handleSubmit(e: FormEvent<HTMLFormElement>) {
     e.preventDefault();
     if (!validate()) return;
 
@@ -308,6 +309,16 @@ export function useApplyForm() {
       storageRef = null; // committed — no cleanup needed
 
       const attribution = buildLeadAttribution({ source: "apply" });
+      const igHandle = form.instagram.trim().replace(/^@/, "");
+      if (igHandle) {
+        identifyLead(igHandle, {
+          name: form.name,
+          city: form.city,
+          country: form.country,
+          applicationType: form.applicationType,
+          instagram: igHandle,
+        });
+      }
       trackLeadEvent("apply_submitted", {
         ...attribution,
         applicationType: form.applicationType,

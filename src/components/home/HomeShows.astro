@@ -1,22 +1,13 @@
 ---
 import type { EventEntry } from "@/data/events";
 import NotifyModal from "@/components/NotifyModal.astro";
+import { parseMonth, parseDay } from "@/utils/eventDate";
 
 interface Props {
   events: EventEntry[];
 }
 
 const { events } = Astro.props;
-
-function parseMonth(dateStr: string): string {
-  return dateStr.split(" ")[0];
-}
-
-function parseDay(dateStr: string): string {
-  const parts = dateStr.split(" ");
-  const day = parts[1] ?? "—";
-  return /^\d{1,2}$/.test(day) ? day : "—";
-}
 ---
 
 <section class="shows" id="shows" aria-labelledby="shows-heading">

@@ -1,4 +1,4 @@
-import type { VercelRequest, VercelResponse } from "@vercel/node";
+import type { APIRoute } from "astro";
 import { createHmac, timingSafeEqual } from "crypto";
 
 const ISO_DATE_RE = /^\d{4}-\d{2}-\d{2}$/;
@@ -27,36 +27,49 @@ function getShowExpiryMs(isoDate: string): number {
   return Date.UTC(y, m - 1, d + 1, offsetHours, 0, 0);
 }
 
-export default function handler(req: VercelRequest, res: VercelResponse) {
-  if (req.method !== "POST") {
-    res.setHeader("Allow", "POST");
-    return res.status(405).json({ error: "Method not allowed" });
-  }
-
-  const salt = process.env.CONTESTANT_PREP_SALT;
+export const POST: APIRoute = async ({ request }) => {
+  const salt = import.meta.env.CONTESTANT_PREP_SALT;
   if (!salt) {
-    return res.status(500).json({ error: "Server misconfigured" });
+    return new Response(JSON.stringify({ error: "Server misconfigured" }), {
+      status: 500,
+      headers: { "Content-Type": "application/json" },
+    });
   }
 
-  const { date, sig } = req.body as { date?: string; sig?: string };
+  const { date, sig } = (await request.json()) as { date?: string; sig?: string };
 
   if (!date || !sig || typeof date !== "string" || typeof sig !== "string") {
-    return res.status(400).json({ error: "date and sig are required" });
+    return new Response(JSON.stringify({ error: "date and sig are required" }), {
+      status: 400,
+      headers: { "Content-Type": "application/json" },
+    });
   }
 
   if (!ISO_DATE_RE.test(date)) {
-    return res.status(400).json({ error: "Invalid date format" });
+    return new Response(JSON.stringify({ error: "Invalid date format" }), {
+      status: 400,
+      headers: { "Content-Type": "application/json" },
+    });
   }
 
   const expected = computeSig(salt, date);
   if (!timingSafeCompare(sig, expected)) {
-    return res.status(401).json({ error: "Invalid link" });
+    return new Response(JSON.stringify({ error: "Invalid link" }), {
+      status: 401,
+      headers: { "Content-Type": "application/json" },
+    });
   }
 
   const expiresAt = getShowExpiryMs(date);
   if (Date.now() >= expiresAt) {
-    return res.status(401).json({ error: "Link expired" });
+    return new Response(JSON.stringify({ error: "Link expired" }), {
+      status: 401,
+      headers: { "Content-Type": "application/json" },
+    });
   }
 
-  return res.status(200).json({ token: computeToken(salt, date), expiresAt });
-}
+  return new Response(JSON.stringify({ token: computeToken(salt, date), expiresAt }), {
+    status: 200,
+    headers: { "Content-Type": "application/json" },
+  });
+};

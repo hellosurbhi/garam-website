@@ -1,4 +1,4 @@
-import type { VercelRequest, VercelResponse } from "@vercel/node";
+import type { APIRoute } from "astro";
 import { Resend } from "resend";
 
 interface ApplicationNotification {
@@ -90,24 +90,22 @@ function buildEmailHtml(data: ApplicationNotification): string {
   </div>`;
 }
 
-export default async function handler(
-  req: VercelRequest,
-  res: VercelResponse,
-) {
-  if (req.method !== "POST") {
-    res.setHeader("Allow", "POST");
-    return res.status(405).json({ error: "Method not allowed" });
-  }
-
-  const apiKey = process.env.RESEND_API_KEY;
-  const notificationEmail = process.env.NOTIFICATION_EMAIL;
+export const POST: APIRoute = async ({ request }) => {
+  const apiKey = import.meta.env.RESEND_API_KEY;
+  const notificationEmail = import.meta.env.NOTIFICATION_EMAIL;
   if (!apiKey || !notificationEmail) {
-    return res.status(500).json({ error: "Server misconfigured" });
+    return new Response(JSON.stringify({ error: "Server misconfigured" }), {
+      status: 500,
+      headers: { "Content-Type": "application/json" },
+    });
   }
 
-  const body = req.body as ApplicationNotification;
+  const body = (await request.json()) as ApplicationNotification;
   if (!body.name || !body.instagram) {
-    return res.status(400).json({ error: "Missing required fields" });
+    return new Response(JSON.stringify({ error: "Missing required fields" }), {
+      status: 400,
+      headers: { "Content-Type": "application/json" },
+    });
   }
 
   const resend = new Resend(apiKey);
@@ -118,8 +116,14 @@ export default async function handler(
       subject: `New Application: ${body.name} (${body.applicationType === "Nomination" ? "Nomination" : "Self"})`,
       html: buildEmailHtml(body),
     });
-    return res.status(200).json({ sent: true });
+    return new Response(JSON.stringify({ sent: true }), {
+      status: 200,
+      headers: { "Content-Type": "application/json" },
+    });
   } catch {
-    return res.status(500).json({ error: "Failed to send notification" });
+    return new Response(JSON.stringify({ error: "Failed to send notification" }), {
+      status: 500,
+      headers: { "Content-Type": "application/json" },
+    });
   }
-}
+};

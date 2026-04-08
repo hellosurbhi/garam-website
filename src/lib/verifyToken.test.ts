@@ -22,7 +22,7 @@ describe("verifyIdToken", () => {
   beforeEach(async () => {
     vi.resetModules();
     vi.clearAllMocks();
-    const mod = await import("./_verify-token");
+    const mod = await import("@/lib/verifyToken");
     verifyIdToken = mod.verifyIdToken;
     process.env.VITE_FIREBASE_PROJECT_ID = TEST_PROJECT_ID;
     mockImportX509.mockResolvedValue("mock-key");

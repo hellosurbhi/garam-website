@@ -45,6 +45,14 @@ When adding new content (shows, press, FAQs, testimonials), update the data file
 
 ## Code rules
 
+## No band-aid fixes — ever
+
+Always implement the industry best-practice, sustainable fix. Never apply a short-term workaround that creates inconsistency, adds one-off config files, or patches around a platform limitation. If the proper solution requires a bigger change (restructuring, migrating to the correct API, etc.), do the bigger change.
+
+- If a tool/platform doesn't support something (e.g., path aliases), restructure to use the platform correctly — don't add workaround configs.
+- All imports, patterns, and conventions must be consistent across the entire codebase. One file doing something differently is not acceptable.
+- Ask "what would a senior engineer do for a production app?" not "what's the quickest fix?"
+
 ## Aesthetic choices — intentional, never revert
 
 This site was designed by a professional front-end designer. Every aesthetic decision is deliberate. Code review (CodeRabbit or otherwise) must **never** change these without explicit instruction:

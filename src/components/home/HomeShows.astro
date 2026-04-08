@@ -75,7 +75,7 @@ function parseDay(dateStr: string): string {
         <h2 class="modal-title">Request Your City</h2>
         <p class="modal-subtitle">Tell us where you want Garam Masala Dating and we'll make it happen.</p>
         <form id="city-form" class="modal-form">
-          <input type="text" id="city-name" list="city-name-suggestions" placeholder="Start typing a city" required aria-label="City name" autocomplete="off" />
+          <input type="text" id="city-name" list="city-name-suggestions" placeholder="Start typing a city" aria-label="City name" autocomplete="off" />
           <datalist id="city-name-suggestions"></datalist>
           <input type="hidden" id="city-state" />
           <input type="hidden" id="city-country" />
@@ -182,22 +182,15 @@ function parseDay(dateStr: string): string {
       const resolvedCity = selectedCity ?? resolveCityOption(cityInput?.value ?? '', cityOptions);
       const city = resolvedCity?.city ?? (cityInput?.value ?? '').trim();
       const email = (document.getElementById('city-email') as HTMLInputElement).value;
-      if (!city) {
-        if (errorEl) {
-          errorEl.textContent = 'Please enter a city.';
-          errorEl.removeAttribute('hidden');
-        }
-        return;
-      }
       try {
         const db = getFirebaseDb();
         const attribution = buildLeadAttribution({ source: 'request-city' });
         const payload: Record<string, string> = {
-          city,
           email,
           ...attribution,
           createdAt: new Date().toISOString(),
         };
+        if (city) payload.city = city;
         if (resolvedCity?.state) payload.state = resolvedCity.state;
         if (resolvedCity?.country) payload.country = resolvedCity.country;
         await addDoc(collection(db, 'leads'), payload);

@@ -161,8 +161,6 @@ const {
 </style>
 
 <script>
-  import { getFirebaseDb } from '@/lib/firebase';
-  import { collection, addDoc, updateDoc, type DocumentReference } from 'firebase/firestore';
   import { cleanPhone } from '@/lib/phone';
   import { identifyLead, trackLeadEvent } from '@/lib/analytics';
   import { buildLeadAttribution } from '@/lib/leadAttribution';
@@ -174,7 +172,7 @@ const {
 
     const source = root.dataset.lcSource ?? 'lead-capture';
     const isCityMode = root.dataset.lcCityMode === 'true';
-    let docRef: DocumentReference | null = null;
+    let leadDocId = '';
     let capturedEmail = '';
 
     function showStep(step: 'email' | 'phone' | 'success') {
@@ -197,14 +195,14 @@ const {
         el.textContent = '';
         el.setAttribute('hidden', '');
       });
-      docRef = null;
+      leadDocId = '';
       capturedEmail = '';
     }
 
     // Reset state when modal opens
     dialog.addEventListener('close', reset);
 
-    // Step 1: Email submit
+    // Step 1: Email submit — uses server endpoint (zero client Firebase)
     root.querySelector('[data-lc-form="email"]')?.addEventListener('submit', async (e) => {
       e.preventDefault();
       capturedEmail = (root.querySelector('[data-lc-email]') as HTMLInputElement).value;
@@ -216,15 +214,22 @@ const {
       if (submitBtn) submitBtn.disabled = true;
 
       try {
-        const db = getFirebaseDb();
         const attribution = buildLeadAttribution({ source });
-        const data: Record<string, string> = {
+        const payload: Record<string, string> = {
           email: capturedEmail,
           ...attribution,
-          createdAt: new Date().toISOString(),
         };
-        if (city) data.city = city;
-        docRef = await addDoc(collection(db, 'leads'), data);
+        if (city) payload.city = city;
+
+        const res = await fetch('/api/capture-lead', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload),
+        });
+        const result = await res.json();
+        if (!res.ok) throw new Error(result.error ?? 'Server error');
+        leadDocId = result.id ?? '';
+
         identifyLead(capturedEmail, { ...attribution, ...(city ? { city } : {}) });
         trackLeadEvent('lead_email_submitted', { ...attribution, ...(city ? { city } : {}) });
         if (errorEl) { errorEl.textContent = ''; errorEl.setAttribute('hidden', ''); }
@@ -240,7 +245,7 @@ const {
       }
     });
 
-    // Step 2: Phone submit
+    // Step 2: Phone submit — uses server endpoint
     root.querySelector('[data-lc-form="phone"]')?.addEventListener('submit', async (e) => {
       e.preventDefault();
       const raw = (root.querySelector('[data-lc-phone]') as HTMLInputElement).value;
@@ -260,16 +265,18 @@ const {
       const submitBtn = (e.target as HTMLFormElement).querySelector<HTMLButtonElement>('[type="submit"]');
       if (submitBtn) submitBtn.disabled = true;
       try {
-        const db = getFirebaseDb();
-        if (docRef) {
-          await updateDoc(docRef, { phone: cleaned });
+        if (leadDocId) {
+          await fetch('/api/update-lead', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ id: leadDocId, phone: cleaned }),
+          });
         } else {
           const attribution = buildLeadAttribution({ source });
-          await addDoc(collection(db, 'leads'), {
-            email: capturedEmail,
-            phone: cleaned,
-            ...attribution,
-            createdAt: new Date().toISOString(),
+          await fetch('/api/capture-lead', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ email: capturedEmail, phone: cleaned, ...attribution }),
           });
         }
         trackLeadEvent('lead_phone_submitted', { source, sourcePage: window.location.pathname });

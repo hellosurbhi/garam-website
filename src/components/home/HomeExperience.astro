@@ -1,0 +1,192 @@
+---
+import { EXPERIENCE_STEPS, SITE } from '@/data/copy';
+const steps = EXPERIENCE_STEPS;
+---
+
+<section class="experience" id="experience" aria-labelledby="exp-heading" data-reveal>
+  <div class="experience-inner">
+    <div class="experience-left">
+      <img class="exp-bg" src="/images/magic-moment.webp" alt="" width="800" height="1200" loading="lazy" aria-hidden="true" />
+      <div class="exp-content">
+        <h2 id="exp-heading">How the <em>Night</em> Works</h2>
+        <p class="lead">Imagine The Bachelor meets Indian Matchmaking, but live on stage in New York City, hosted by two comedians who are deeply unqualified and absolutely thriving.</p>
+        <p>{SITE.description}</p>
+        <p>Whether you're South Asian or not, curious, single, coupled up, or just need a Friday night story, this is the most fun you'll have watching two people fall in love (or spectacularly not) in real time.</p>
+        <div class="exp-cta">
+          <a href="/tickets" class="exp-cta-btn">Get Tickets</a>
+          <a href="/apply" class="exp-cta-link">or Apply for the Show →</a>
+        </div>
+      </div>
+    </div>
+    <div class="experience-right">
+      <img class="exp-bg exp-bg-zoom" src="/images/pure-chaos.webp" alt="" width="1200" height="800" loading="lazy" aria-hidden="true" />
+      <div class="exp-content">
+        <div class="experience-steps">
+          {steps.map((step, i) => (
+            <div class="exp-step">
+              <div class="exp-num">{String(i + 1).padStart(2, '0')}</div>
+              <div>
+                <h3>{step.title}</h3>
+                <p>{step.text}</p>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  .experience {
+    position: relative;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+  }
+  .experience-inner {
+    display: flex;
+    flex-direction: column;
+  }
+  .experience-left,
+  .experience-right {
+    position: relative;
+    overflow: hidden;
+  }
+  .exp-bg {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center 30%;
+    display: block;
+    z-index: 0;
+    opacity: 0.15;
+  }
+  .exp-bg-zoom {
+    inset: -10%;
+    width: 110%;
+    height: 140%;
+    object-position: 55% 60%;
+  }
+  @media (min-width: 768px) {
+    .exp-bg-zoom {
+      inset: -20%;
+      width: 120%;
+      height: 180%;
+      object-position: center 60%;
+    }
+  }
+  .exp-content {
+    position: relative;
+    z-index: 1;
+    padding: 80px 20px;
+  }
+
+  .experience-left h2 {
+    font-family: var(--font-playfair), serif;
+    font-size: clamp(32px, 5vw, 64px);
+    font-weight: 900;
+    line-height: 1.0;
+    color: var(--charcoal);
+    margin-bottom: 20px;
+    letter-spacing: -1px;
+  }
+  .experience-left h2 em { color: var(--brand-red); font-style: italic; }
+  .experience-left .lead {
+    font-family: var(--font-cormorant), serif;
+    font-size: 25px;
+    font-style: italic;
+    color: var(--text-secondary);
+    line-height: 1.65;
+    margin-bottom: 24px;
+  }
+  .experience-left p {
+    font-size: 18px;
+    color: #666;
+    line-height: 1.8;
+    margin-bottom: 16px;
+  }
+
+  .exp-cta {
+    margin-top: 32px;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 16px;
+  }
+  .exp-cta-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--brand-red);
+    color: white;
+    font-family: var(--font-body), sans-serif;
+    font-size: 14px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    padding: 14px 32px;
+    border-radius: 50px;
+    text-decoration: none;
+    min-height: var(--touch-target);
+    transition: background 0.2s;
+  }
+  .exp-cta-btn:hover { background: var(--brand-red-dark); }
+  .exp-cta-link {
+    font-family: var(--font-cormorant), serif;
+    font-size: 22px;
+    font-style: italic;
+    color: var(--brand-red);
+    text-decoration: none;
+    transition: color 0.2s;
+  }
+  .exp-cta-link:hover { color: var(--brand-red-dark); }
+
+  .experience-steps {
+    display: flex;
+    flex-direction: column;
+  }
+  .exp-step {
+    display: grid;
+    grid-template-columns: 48px 1fr;
+    gap: 16px;
+    padding: 24px 0;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+    align-items: start;
+  }
+  .exp-step:last-child { border-bottom: none; }
+  .exp-num {
+    font-family: var(--font-playfair), serif;
+    font-size: 36px;
+    font-weight: 900;
+    color: var(--electric-yellow);
+    line-height: 1;
+    -webkit-text-stroke: 1.5px var(--charcoal);
+  }
+  .exp-step h3 {
+    font-family: var(--font-playfair), serif;
+    font-size: 18px;
+    font-weight: 700;
+    margin-bottom: 6px;
+    color: var(--charcoal);
+  }
+  .exp-step p {
+    font-size: 15px;
+    color: var(--text-tertiary);
+    line-height: 1.65;
+  }
+
+  @media (min-width: 768px) {
+    .experience-inner {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+    }
+    .exp-content { padding: 120px 48px; }
+    .experience-left .lead { font-size: 25px; margin-bottom: 32px; }
+    .exp-step { grid-template-columns: 56px 1fr; gap: 20px; padding: 28px 0; }
+    .exp-num { font-size: 42px; }
+    .exp-step h3 { font-size: 20px; }
+  }
+</style>

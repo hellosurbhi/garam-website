@@ -1,0 +1,184 @@
+---
+import { YOUTUBE_VIDEO_ID, INSTAGRAM_REEL_URLS } from '@/lib/constants';
+---
+
+<section class="video" id="watch" aria-labelledby="video-heading">
+  <div class="video-inner">
+    <div class="video-header" data-reveal>
+      <div class="video-eyebrow">Watch</div>
+      <h2 id="video-heading">See What You're <em>Missing</em></h2>
+    </div>
+
+    <div class="video-main" data-reveal>
+      <button
+        class="video-facade"
+        aria-label="Play Garam Masala Dating show highlight"
+        data-youtube-id={YOUTUBE_VIDEO_ID}
+      >
+        <img
+          src={`https://i.ytimg.com/vi/${YOUTUBE_VIDEO_ID}/hqdefault.jpg`}
+          alt="Garam Masala Dating show video thumbnail"
+          loading="lazy"
+          width="480"
+          height="360"
+        />
+        <span class="play-icon" aria-hidden="true">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 68 48" width="68" height="48" aria-hidden="true">
+            <path d="M66.52 7.74c-.78-2.93-2.49-5.41-5.42-6.19C55.79.13 34 0 34 0S12.21.13 6.9 1.55c-2.93.78-4.63 3.26-5.42 6.19C.06 13.05 0 24 0 24s.06 10.95 1.48 16.26c.78 2.93 2.49 5.41 5.42 6.19C12.21 47.87 34 48 34 48s21.79-.13 27.1-1.55c2.93-.78 4.64-3.26 5.42-6.19C67.94 34.95 68 24 68 24s-.06-10.95-1.48-16.26z" fill="#f00"/>
+            <path d="M45 24 27 14v20" fill="#fff"/>
+          </svg>
+        </span>
+      </button>
+    </div>
+  </div>
+
+  <div class="reels-row" id="reels-row" data-reveal>
+    {INSTAGRAM_REEL_URLS.map((url, index) => (
+      <div class="reel-embed">
+        <blockquote
+          class="instagram-media"
+          data-instgrm-permalink={url}
+          data-instgrm-version="14"
+        ><a href={url} target="_blank" rel="noopener noreferrer" aria-label={`Watch Instagram reel ${index + 1}`}>Watch on Instagram</a></blockquote>
+      </div>
+    ))}
+  </div>
+</section>
+
+<script>
+  // YouTube: swap facade for iframe on click
+  document.querySelector<HTMLButtonElement>('.video-facade')?.addEventListener('click', (e) => {
+    const btn = e.currentTarget as HTMLButtonElement;
+    const id = btn.dataset.youtubeId;
+    if (!id) return;
+    const iframe = document.createElement('iframe');
+    iframe.src = `https://www.youtube-nocookie.com/embed/${id}?rel=0&autoplay=1`;
+    iframe.title = 'Garam Masala Dating show highlight';
+    iframe.allow = 'accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; fullscreen';
+    iframe.allowFullscreen = true;
+    iframe.style.cssText = 'width:100%;height:100%;border:none;display:block;';
+    btn.replaceWith(iframe);
+  });
+
+  // Instagram: load embed.js in idle time after page load (post-LCP)
+  function loadInstagramEmbed() {
+    const script = document.createElement('script');
+    script.src = 'https://www.instagram.com/embed.js';
+    script.async = true;
+    document.body.appendChild(script);
+  }
+
+  window.addEventListener('load', () => {
+    if ('requestIdleCallback' in window) {
+      requestIdleCallback(() => loadInstagramEmbed(), { timeout: 3000 });
+    } else {
+      setTimeout(loadInstagramEmbed, 1000);
+    }
+  }, { once: true });
+</script>
+
+<style>
+  .video {
+    padding: 56px 16px;
+    background: white;
+  }
+  .video-inner {
+    max-width: 900px;
+    margin: 0 auto;
+  }
+  .video-header {
+    text-align: center;
+    margin-bottom: 40px;
+  }
+  .video-eyebrow {
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: var(--brand-red);
+    margin-bottom: 12px;
+  }
+  .video-header h2 {
+    font-family: var(--font-playfair), serif;
+    font-size: clamp(32px, 5vw, 56px);
+    font-weight: 900;
+    color: var(--charcoal);
+    line-height: 1.05;
+  }
+  .video-header h2 em {
+    color: var(--brand-red);
+    font-style: italic;
+  }
+
+  .video-main {
+    border-radius: 20px;
+    overflow: hidden;
+    aspect-ratio: 16 / 9;
+    background: var(--charcoal);
+    position: relative;
+  }
+
+  .video-facade {
+    width: 100%;
+    height: 100%;
+    border: none;
+    padding: 0;
+    cursor: pointer;
+    background: var(--charcoal);
+    position: relative;
+    display: block;
+  }
+  .video-facade img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+  .play-icon {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: opacity 0.2s;
+  }
+  .video-facade:hover .play-icon {
+    opacity: 0.85;
+  }
+
+  /* Reels row sits outside video-inner so it can be wider than 900px */
+  .reels-row {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 16px;
+    margin-top: 32px;
+    max-width: 1100px;
+    margin-left: auto;
+    margin-right: auto;
+    padding: 0 16px;
+  }
+
+  .reel-embed {
+    display: flex;
+    justify-content: center;
+  }
+
+  .reel-embed .instagram-media {
+    margin: 0 !important;
+    min-width: 0 !important;
+    width: 100% !important;
+    max-width: 340px !important;
+  }
+
+  @media (min-width: 768px) {
+    .video { padding: 80px 48px; }
+    .video-header { margin-bottom: 48px; }
+    .reels-row {
+      grid-template-columns: repeat(3, 1fr);
+      padding: 0 48px;
+    }
+    .reel-embed .instagram-media {
+      max-width: 100% !important;
+    }
+  }
+</style>

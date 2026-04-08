@@ -44,12 +44,21 @@ vi.mock("react-select", () => ({
   ),
 }));
 
-vi.mock("@/hooks/useGeoData", () => ({
-  useGeoData: () => ({
+vi.mock("@/hooks/useCitySearch", () => ({
+  useCitySearch: () => ({
     loading: false,
-    countryOptions: [{ value: "US", label: "United States" }],
-    stateOptions: [{ value: "NY", label: "New York" }],
-    cityOptions: [{ value: "NYC", label: "New York City" }],
+    failed: false,
+    retry: vi.fn(),
+    options: [
+      {
+        value: "New York City, New York, United States",
+        label: "New York City, New York, United States",
+        city: "New York City",
+        state: "New York",
+        country: "United States",
+        countryCode: "US",
+      },
+    ],
   }),
 }));
 
@@ -82,7 +91,7 @@ describe("ApplyPage", () => {
 
   it("renders the subtitle", () => {
     render(<ApplyPage />);
-    expect(screen.getByText(/NYC's hottest live comedy dating show/)).toBeInTheDocument();
+    expect(screen.getByText(/NYC's hottest live South Asian dating show/)).toBeInTheDocument();
   });
 
   it("shows 'For myself' and 'For a friend' toggle buttons", () => {
@@ -111,7 +120,7 @@ describe("ApplyPage", () => {
 
   it("shows error text when submitting with empty required fields", async () => {
     render(<ApplyPage />);
-    fireEvent.click(screen.getByText("Submit Application 🌶️"));
+    fireEvent.click(screen.getByText("Submit Application"));
     await waitFor(() => {
       expect(screen.getByText("Please fill in all required fields")).toBeInTheDocument();
     });
@@ -119,7 +128,7 @@ describe("ApplyPage", () => {
 
   it("shows 'Required' error for empty name after submit", async () => {
     render(<ApplyPage />);
-    fireEvent.click(screen.getByText("Submit Application 🌶️"));
+    fireEvent.click(screen.getByText("Submit Application"));
     await waitFor(() => {
       const errors = screen.getAllByText("Required");
       expect(errors.length).toBeGreaterThan(0);
@@ -128,7 +137,7 @@ describe("ApplyPage", () => {
 
   it("renders the submit button", () => {
     render(<ApplyPage />);
-    expect(screen.getByText("Submit Application 🌶️")).toBeInTheDocument();
+    expect(screen.getByText("Submit Application")).toBeInTheDocument();
   });
 
   it("renders the disclaimer text", () => {

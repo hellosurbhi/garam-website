@@ -2,7 +2,10 @@
 import BaseLayout from '@/layouts/BaseLayout.astro';
 import { cities } from '@/data/cities';
 import type { CityData } from '@/data/cities';
+import { events } from '@/data/events';
+import { isEventPast } from '@/utils/eventDate';
 import { buildBreadcrumbJsonLd } from '@/utils/breadcrumbs';
+import { SHOW_IMAGES, slugToImageIndex } from '@/data/images';
 
 export function getStaticPaths() {
   return Object.keys(cities).map((slug) => ({
@@ -14,8 +17,27 @@ export function getStaticPaths() {
 interface Props { city: CityData; }
 const { city } = Astro.props;
 
+const heroImage = SHOW_IMAGES[slugToImageIndex(city.slug, SHOW_IMAGES.length)];
+
+// Nearby cities for cross-linking
+const nearbyCities = (city.nearbyCities ?? [])
+  .map((slug) => cities[slug])
+  .filter((c): c is CityData => c !== undefined)
+  .slice(0, 5);
+
 const title = city.titleTag;
 const description = city.metaDescription;
+
+// Upcoming events matching this city (for active cities with real shows)
+const cityEvents = city.status === "active"
+  ? events.filter((e) =>
+      !e.hidden &&
+      !isEventPast(e.date) &&
+      e.url !== "#" &&
+      e.url !== "" &&
+      (e.citySlug ? e.citySlug === city.slug : e.city.includes(city.displayName))
+    )
+  : [];
 
 /* ── City JSON-LD ─────────────────────────────────────────── */
 
@@ -82,22 +104,20 @@ const breadcrumbJsonLd = buildBreadcrumbJsonLd([
 ]);
 ---
 
-<BaseLayout title={title} description={description} overlayBg="rgba(13, 10, 8, 0.88)">
+<BaseLayout title={title} description={description}>
   <Fragment slot="head">
     <script type="application/ld+json" set:html={cityJsonLd} />
     <script type="application/ld+json" set:html={breadcrumbJsonLd} />
   </Fragment>
 
-  <div class="city-page">
+  <main id="main-content" class="city-page">
+    <img class="city-bg" src={heroImage} alt="" width="1200" height="675" aria-hidden="true" />
     <div class="city-container">
       {/* Eyebrow label */}
       <p class="city-eyebrow">{city.displayName}</p>
 
       {/* H1 */}
       <h1 class="city-h1">{city.h1}</h1>
-
-      {/* Divider */}
-      <div class="city-divider" />
 
       {/* Body */}
       <div class="city-body">
@@ -108,30 +128,108 @@ const breadcrumbJsonLd = buildBreadcrumbJsonLd([
 
       {/* CTAs */}
       <div class="city-ctas">
-        {city.ctas.map((cta, i) => (
+        {/* Per-event ticket buttons for active cities */}
+        {cityEvents.map((event) => (
           <a
-            href={cta.href}
-            class:list={["city-cta", i === 0 ? "city-cta--primary" : "city-cta--secondary"]}
+            href={event.url}
+            target="_blank"
+            rel="noopener noreferrer"
+            class="city-cta city-cta--primary"
           >
-            <span>{cta.label}</span>
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              width="16"
-              height="16"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              stroke-width="2"
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              class="city-cta__arrow"
-            >
-              <path d="M5 12h14" />
-              <path d="m12 5 7 7-7 7" />
-            </svg>
+            <span>{event.date} — Get Tickets</span>
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="city-cta__arrow"><path d="M5 12h14" /><path d="m12 5 7 7-7 7" /></svg>
           </a>
         ))}
+        {/* Static CTAs (apply, waitlist, etc.) */}
+        {city.ctas.map((cta, i) => {
+          const isWaitlist = cta.href === '#waitlist';
+          const isPrimary = cityEvents.length === 0 && i === 0;
+          return isWaitlist ? (
+            <button
+              type="button"
+              class:list={["city-cta", isPrimary ? "city-cta--primary" : "city-cta--secondary"]}
+              data-waitlist-trigger
+            >
+              <span>{cta.label}</span>
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="city-cta__arrow"><path d="M5 12h14" /><path d="m12 5 7 7-7 7" /></svg>
+            </button>
+          ) : (
+            <a
+              href={cta.href}
+              class:list={["city-cta", isPrimary ? "city-cta--primary" : "city-cta--secondary"]}
+            >
+              <span>{cta.label}</span>
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="city-cta__arrow"><path d="M5 12h14" /><path d="m12 5 7 7-7 7" /></svg>
+            </a>
+          );
+        })}
       </div>
+
+      {/* Waitlist modal */}
+      <dialog id="waitlist-modal" class="modal-dialog">
+        <div class="modal-inner">
+          <button type="button" class="modal-close" aria-label="Close">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
+          </button>
+          <div id="waitlist-form-view">
+            <h2 class="modal-title">Join the {city.displayName} Waitlist</h2>
+            <p class="modal-subtitle">We'll email you the moment tickets drop for {city.displayName}.</p>
+            <form id="waitlist-form" class="modal-form">
+              <input type="email" id="waitlist-email" placeholder="Your email" required aria-label="Email address" />
+              <p id="waitlist-error" class="modal-error" hidden role="alert"></p>
+              <button type="submit" class="modal-submit">Join the Waitlist</button>
+            </form>
+          </div>
+          <div id="waitlist-success" class="modal-success" hidden>
+            <p>You're on the list! We'll let you know.</p>
+          </div>
+        </div>
+      </dialog>
+
+      {/* Email + phone signup for cities with events */}
+      {cityEvents.length > 0 && (
+        <div class="city-notify">
+          <!-- min-height prevents CLS when switching between steps -->
+          <div class="city-notify__steps">
+            <div id="city-notify-step1">
+              <h3 class="city-notify__title">Stay in the Loop</h3>
+              <p class="city-notify__desc">Get notified about future {city.displayName} shows, discount codes, and free ticket drops.</p>
+              <form id="city-notify-email-form" class="city-notify__form">
+                <input type="email" id="city-notify-email" placeholder="Your email" required aria-label="Email address" />
+                <p id="city-notify-email-error" class="city-notify__error" hidden role="alert"></p>
+                <button type="submit">Get Notified</button>
+              </form>
+            </div>
+            <div id="city-notify-step2" hidden>
+              <p class="city-notify__desc">Add your number for text-only discounts and free ticket drops.</p>
+              <form id="city-notify-phone-form" class="city-notify__form">
+                <input type="tel" id="city-notify-phone" placeholder="(555) 123-4567" aria-label="Phone number" />
+                <p id="city-notify-phone-error" class="city-notify__error" hidden role="alert"></p>
+                <button type="submit">Send Me Deals</button>
+              </form>
+              <button type="button" id="city-notify-skip" class="city-notify__skip">Maybe later</button>
+            </div>
+            <div id="city-notify-success" hidden>
+              <p class="city-notify__done">You're on the list!</p>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Nearby cities */}
+      {nearbyCities.length > 0 && (
+        <div class="city-nearby">
+          <h3 class="city-nearby__title">Also coming to</h3>
+          <div class="city-nearby__list">
+            {nearbyCities.map((nc) => (
+              <a href={`/cities/${nc.slug}`} class="city-nearby__link">
+                {nc.displayName}
+                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
+              </a>
+            ))}
+          </div>
+        </div>
+      )}
 
       {/* Footer */}
       <div class="city-footer">
@@ -140,8 +238,147 @@ const breadcrumbJsonLd = buildBreadcrumbJsonLd([
         </a>
       </div>
     </div>
-  </div>
+  </main>
 </BaseLayout>
+
+<script>
+  import { getFirebaseDb } from '@/lib/firebase';
+  import { collection, addDoc, updateDoc, type DocumentReference } from 'firebase/firestore';
+  import { cleanPhone } from '@/lib/phone';
+  import { identifyLead, trackLeadEvent } from '@/lib/analytics';
+  import { buildLeadAttribution } from '@/lib/leadAttribution';
+
+  const dialog = document.getElementById('waitlist-modal') as HTMLDialogElement;
+  const citySlug = window.location.pathname.split('/').filter(Boolean).at(-1) ?? '';
+  if (dialog) {
+    document.querySelectorAll('[data-waitlist-trigger]').forEach((btn) => {
+      btn.addEventListener('click', () => {
+        trackLeadEvent('waitlist_modal_opened', { source: 'city-waitlist', sourcePage: window.location.pathname, sourceCitySlug: citySlug });
+        dialog.showModal();
+      });
+    });
+    dialog.querySelector('.modal-close')?.addEventListener('click', () => dialog.close());
+    dialog.addEventListener('click', (e) => {
+      if (e.target === dialog) dialog.close();
+    });
+
+    document.getElementById('waitlist-form')?.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const email = (document.getElementById('waitlist-email') as HTMLInputElement).value;
+      const city = document.querySelector('.city-eyebrow')?.textContent ?? '';
+      const submitBtn = (e.target as HTMLFormElement).querySelector<HTMLButtonElement>('[type="submit"]');
+      const errorEl = document.getElementById('waitlist-error');
+      if (submitBtn) submitBtn.disabled = true;
+      try {
+        const db = getFirebaseDb();
+        const attribution = buildLeadAttribution({ source: 'city-waitlist', sourceCitySlug: citySlug });
+        await addDoc(collection(db, 'leads'), {
+          email,
+          city,
+          ...attribution,
+          createdAt: new Date().toISOString(),
+        });
+        identifyLead(email, { ...attribution, city });
+        trackLeadEvent('lead_email_submitted', { ...attribution, city });
+        document.getElementById('waitlist-form-view')?.setAttribute('hidden', '');
+        document.getElementById('waitlist-success')?.removeAttribute('hidden');
+      } catch {
+        if (errorEl) { errorEl.textContent = 'Something went wrong. Please try again.'; errorEl.removeAttribute('hidden'); }
+      } finally {
+        if (submitBtn) submitBtn.disabled = false;
+      }
+    });
+  }
+
+  // City page email + phone signup
+  let cityNotifyEmail = '';
+  let cityNotifyDocRef: DocumentReference | null = null;
+  const cityName = document.querySelector('.city-eyebrow')?.textContent ?? '';
+
+  document.getElementById('city-notify-email-form')?.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    cityNotifyEmail = (document.getElementById('city-notify-email') as HTMLInputElement).value;
+    const errorEl = document.getElementById('city-notify-email-error');
+    const submitBtn = (e.target as HTMLFormElement).querySelector<HTMLButtonElement>('[type="submit"]');
+    if (submitBtn) submitBtn.disabled = true;
+    try {
+      const db = getFirebaseDb();
+      const attribution = buildLeadAttribution({ source: 'city-page', sourceCitySlug: citySlug });
+      cityNotifyDocRef = await addDoc(collection(db, 'leads'), {
+        email: cityNotifyEmail,
+        city: cityName,
+        ...attribution,
+        createdAt: new Date().toISOString(),
+      });
+      identifyLead(cityNotifyEmail, { ...attribution, city: cityName });
+      trackLeadEvent('lead_email_submitted', { ...attribution, city: cityName });
+      if (errorEl) { errorEl.textContent = ''; errorEl.setAttribute('hidden', ''); }
+      document.getElementById('city-notify-step1')?.setAttribute('hidden', '');
+      document.getElementById('city-notify-step2')?.removeAttribute('hidden');
+    } catch (err) {
+      if (errorEl) {
+        errorEl.textContent = 'Something went wrong. Please try again.';
+        errorEl.removeAttribute('hidden');
+      }
+    } finally {
+      if (submitBtn) submitBtn.disabled = false;
+    }
+  });
+
+  document.getElementById('city-notify-phone-form')?.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const raw = (document.getElementById('city-notify-phone') as HTMLInputElement).value;
+    const cleaned = cleanPhone(raw);
+    const phoneErrorEl = document.getElementById('city-notify-phone-error');
+
+    if (!raw.trim()) {
+      document.getElementById('city-notify-step2')?.setAttribute('hidden', '');
+      document.getElementById('city-notify-success')?.removeAttribute('hidden');
+      return;
+    }
+
+    if (!cleaned) {
+      if (phoneErrorEl) {
+        phoneErrorEl.textContent = 'Please enter a valid phone number.';
+        phoneErrorEl.removeAttribute('hidden');
+      }
+      return;
+    }
+
+    const submitBtn = (e.target as HTMLFormElement).querySelector<HTMLButtonElement>('[type="submit"]');
+    if (submitBtn) submitBtn.disabled = true;
+    try {
+      const db = getFirebaseDb();
+      if (cityNotifyDocRef) {
+        await updateDoc(cityNotifyDocRef, { phone: cleaned });
+      } else {
+        const attribution = buildLeadAttribution({ source: 'city-page', sourceCitySlug: citySlug });
+        await addDoc(collection(db, 'leads'), {
+          email: cityNotifyEmail,
+          phone: cleaned,
+          city: cityName,
+          ...attribution,
+          createdAt: new Date().toISOString(),
+        });
+      }
+      trackLeadEvent('lead_phone_submitted', { source: 'city-page', sourcePage: window.location.pathname, sourceCitySlug: citySlug });
+      document.getElementById('city-notify-step2')?.setAttribute('hidden', '');
+      document.getElementById('city-notify-success')?.removeAttribute('hidden');
+    } catch (err) {
+      if (phoneErrorEl) {
+        phoneErrorEl.textContent = 'Something went wrong. Please try again or skip.';
+        phoneErrorEl.removeAttribute('hidden');
+      }
+    } finally {
+      if (submitBtn) submitBtn.disabled = false;
+    }
+  });
+
+  document.getElementById('city-notify-skip')?.addEventListener('click', () => {
+    document.getElementById('city-notify-step2')?.setAttribute('hidden', '');
+    document.getElementById('city-notify-success')?.removeAttribute('hidden');
+  });
+</script>
 
 <style>
   @keyframes cityFadeIn {
@@ -150,25 +387,38 @@ const breadcrumbJsonLd = buildBreadcrumbJsonLd([
   }
 
   .city-page {
+    overflow: hidden;
     min-height: 100vh;
     position: relative;
     z-index: 1;
     animation: cityFadeIn 0.5s ease-out both;
   }
+  .city-bg {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+    z-index: 0;
+    opacity: 0.06;
+  }
 
   .city-container {
+    position: relative;
+    z-index: 1;
     max-width: 680px;
     margin: 0 auto;
-    padding: 48px 24px 80px;
+    padding: 24px;
   }
 
   .city-eyebrow {
-    font-family: var(--font-jetbrains);
+    font-family: var(--font-body);
     font-size: 11px;
     font-weight: 500;
     text-transform: uppercase;
     letter-spacing: 0.15em;
-    color: #C9A84C;
+    color: var(--brand-red);
     margin-bottom: 16px;
   }
 
@@ -176,16 +426,9 @@ const breadcrumbJsonLd = buildBreadcrumbJsonLd([
     font-family: var(--font-playfair);
     font-size: clamp(28px, 5vw, 40px);
     font-weight: 700;
-    color: var(--text-ivory);
+    color: var(--charcoal);
     line-height: 1.12;
     margin-bottom: 32px;
-  }
-
-  .city-divider {
-    width: 48px;
-    height: 1px;
-    background: rgba(201, 168, 76, 0.3);
-    margin-bottom: 36px;
   }
 
   .city-body {
@@ -196,8 +439,9 @@ const breadcrumbJsonLd = buildBreadcrumbJsonLd([
 
   .city-paragraph {
     font-family: var(--font-cormorant);
-    font-size: 18px;
-    color: rgba(245, 237, 228, 0.78);
+    font-style: italic;
+    font-size: 17px;
+    color: var(--text-secondary);
     line-height: 1.7;
     margin: 0;
   }
@@ -216,7 +460,7 @@ const breadcrumbJsonLd = buildBreadcrumbJsonLd([
     padding: 18px 22px;
     border-radius: 14px;
     border: 1px solid;
-    font-family: var(--font-dm-sans);
+    font-family: var(--font-body);
     font-size: 15px;
     font-weight: 500;
     text-decoration: none;
@@ -224,31 +468,291 @@ const breadcrumbJsonLd = buildBreadcrumbJsonLd([
   }
 
   .city-cta--primary {
-    border-color: rgba(201, 168, 76, 0.5);
-    background: rgba(201, 168, 76, 0.1);
-    color: #E2C97E;
+    border-color: rgba(var(--brand-red-rgb), 0.5);
+    background: rgba(var(--brand-red-rgb), 0.1);
+    color: var(--brand-red);
   }
 
   .city-cta--secondary {
-    border-color: rgba(245, 237, 228, 0.12);
-    background: rgba(255, 255, 255, 0.03);
-    color: rgba(245, 237, 228, 0.7);
+    border-color: rgba(0, 0, 0, 0.1);
+    background: white;
+    color: var(--text-secondary);
   }
 
   .city-cta__arrow {
     flex-shrink: 0;
   }
 
+  /* ─── Nearby Cities ───────────────────────────────── */
+
+  .city-nearby {
+    padding-top: 32px;
+  }
+
+  .city-nearby__title {
+    font-family: var(--font-body);
+    font-size: 11px;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.15em;
+    color: var(--muted);
+    margin-bottom: 16px;
+  }
+
+  .city-nearby__list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+
+  .city-nearby__link {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 10px 16px;
+    border: 1px solid rgba(0, 0, 0, 0.08);
+    border-radius: 50px;
+    font-family: var(--font-body);
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--text-secondary);
+    text-decoration: none;
+    transition: border-color 0.15s, color 0.15s;
+  }
+
+  .city-nearby__link:hover {
+    border-color: rgba(var(--brand-red-rgb), 0.3);
+    color: var(--brand-red);
+  }
+
   .city-footer {
-    margin-top: 64px;
     padding-top: 24px;
-    border-top: 1px solid rgba(245, 237, 228, 0.06);
   }
 
   .city-footer__link {
-    font-family: var(--font-dm-sans);
+    font-family: var(--font-body);
     font-size: 14px;
-    color: rgba(245, 237, 228, 0.35);
+    color: var(--muted);
     text-decoration: none;
+  }
+
+  /* ─── City Notify Signup ──────────────────────────── */
+
+  .city-notify {
+    margin-top: 48px;
+    padding: 32px 24px;
+    border: 1px solid rgba(0, 0, 0, 0.06);
+    border-radius: 16px;
+    background: rgba(var(--brand-red-rgb), 0.02);
+    text-align: center;
+  }
+
+  /* Prevent CLS when switching between steps */
+  .city-notify__steps {
+    min-height: 220px;
+  }
+
+  .city-notify__error {
+    font-size: 13px;
+    color: var(--brand-red);
+    text-align: center;
+    margin: 0;
+    font-family: var(--font-body), sans-serif;
+  }
+
+  .city-notify__title {
+    font-family: var(--font-playfair), serif;
+    font-size: 22px;
+    font-weight: 600;
+    color: var(--charcoal);
+    margin-bottom: 8px;
+  }
+
+  .city-notify__desc {
+    font-family: var(--font-cormorant), serif;
+    font-style: italic;
+    font-size: 16px;
+    color: var(--text-light);
+    line-height: 1.5;
+    margin-bottom: 20px;
+  }
+
+  .city-notify__form {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    max-width: 380px;
+    margin: 0 auto;
+  }
+
+  .city-notify__form input {
+    padding: 14px 20px;
+    border: 1.5px solid rgba(0, 0, 0, 0.1);
+    border-radius: 50px;
+    font-size: 16px;
+    font-family: var(--font-body), sans-serif;
+    outline: none;
+    transition: border-color 0.2s;
+    min-height: var(--touch-target);
+  }
+
+  .city-notify__form input:focus {
+    border-color: var(--brand-red);
+  }
+
+  .city-notify__form button {
+    background: var(--brand-red);
+    color: white;
+    border: none;
+    padding: 14px;
+    border-radius: 50px;
+    font-family: var(--font-body), sans-serif;
+    font-size: 14px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    transition: background 0.2s;
+    min-height: var(--touch-target);
+    white-space: nowrap;
+    cursor: pointer;
+  }
+
+  .city-notify__form button:hover {
+    background: var(--brand-red-dark);
+  }
+
+  .city-notify__skip {
+    background: none;
+    border: none;
+    color: var(--muted);
+    font-size: 14px;
+    font-family: var(--font-body), sans-serif;
+    margin-top: 12px;
+    transition: color 0.2s;
+    padding: 12px 16px;
+    min-height: var(--touch-target);
+    display: inline-flex;
+    align-items: center;
+    cursor: pointer;
+  }
+
+  .city-notify__skip:hover {
+    color: var(--charcoal);
+  }
+
+  .city-notify__done {
+    font-family: var(--font-cormorant), serif;
+    font-size: 20px;
+    font-style: italic;
+    color: var(--charcoal);
+    padding: 12px 0;
+  }
+
+  /* Waitlist modal */
+  .modal-dialog {
+    border: none;
+    background: transparent;
+    padding: 24px;
+    max-width: 100%;
+    max-height: 100vh;
+    width: 100%;
+    height: 100%;
+    overflow: visible;
+  }
+  .modal-dialog::backdrop { background: rgba(0, 0, 0, 0.5); }
+  .modal-dialog[open] {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .modal-inner {
+    width: 100%;
+    max-width: 400px;
+    max-height: 80vh;
+    overflow-y: auto;
+    background: white;
+    border: 1px solid rgba(0, 0, 0, 0.1);
+    border-radius: 20px;
+    padding: 32px 24px;
+    position: relative;
+    animation: modalIn 0.25s ease-out both;
+    text-align: center;
+  }
+  @keyframes modalIn {
+    from { opacity: 0; transform: scale(0.95) translateY(8px); }
+    to { opacity: 1; transform: scale(1) translateY(0); }
+  }
+  .modal-close {
+    position: absolute;
+    top: 16px;
+    right: 16px;
+    background: none;
+    border: none;
+    color: var(--muted);
+    padding: 12px;
+    min-width: var(--touch-target);
+    min-height: var(--touch-target);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: color 0.2s;
+    cursor: pointer;
+  }
+  .modal-close:hover { color: var(--charcoal); }
+  .modal-title {
+    font-family: var(--font-playfair), serif;
+    font-size: 22px;
+    font-weight: 600;
+    color: var(--charcoal);
+    margin-bottom: 8px;
+  }
+  .modal-subtitle {
+    font-size: 15px;
+    color: var(--text-light);
+    margin-bottom: 24px;
+    line-height: 1.5;
+  }
+  .modal-form {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+  .modal-form input {
+    padding: 14px 20px;
+    border: 1.5px solid rgba(0, 0, 0, 0.1);
+    border-radius: 50px;
+    font-size: 16px;
+    font-family: var(--font-body), sans-serif;
+    outline: none;
+    transition: border-color 0.2s;
+    min-height: var(--touch-target);
+  }
+  .modal-form input:focus { border-color: var(--brand-red); }
+  .modal-submit {
+    background: var(--brand-red);
+    color: white;
+    border: none;
+    padding: 14px;
+    border-radius: 50px;
+    font-family: var(--font-body), sans-serif;
+    font-size: 14px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    transition: background 0.2s;
+    min-height: var(--touch-target);
+    white-space: nowrap;
+    width: 100%;
+  }
+  .modal-submit:hover { background: var(--brand-red-dark); }
+  .modal-success {
+    text-align: center;
+    padding: 24px 0;
+  }
+  .modal-success p {
+    font-family: var(--font-cormorant), serif;
+    font-size: 18px;
+    font-style: italic;
+    color: var(--charcoal);
   }
 </style>

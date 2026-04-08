@@ -8,5 +8,5 @@
     "jsx": "react-jsx",
     "jsxImportSource": "react"
   },
-  "include": ["src", "api"]
+  "include": ["src"]
 }

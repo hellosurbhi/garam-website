@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { Check, Clock, Users, Shirt, Star } from "lucide-react";
+import styles from "./ContestantPrepPage.module.css";
 
 /* ─── Session helpers ──────────────────────────────────────────── */
 
@@ -29,30 +29,9 @@ function saveSession(token: string, expiresAt: number) {
 
 function PrepLoading() {
   return (
-    <>
-      <style>{`@keyframes prepSpin { to { transform: rotate(360deg); } }`}</style>
-      <div
-        style={{
-          minHeight: "100vh",
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "center",
-          position: "relative",
-          zIndex: 1,
-        }}
-      >
-        <div
-          style={{
-            width: "32px",
-            height: "32px",
-            border: "2px solid rgba(201, 168, 76, 0.2)",
-            borderTopColor: "#C9A84C",
-            borderRadius: "50%",
-            animation: "prepSpin 0.7s linear infinite",
-          }}
-        />
-      </div>
-    </>
+    <div className={styles.loadingWrapper}>
+      <div className={styles.spinner} />
+    </div>
   );
 }
 
@@ -60,536 +39,219 @@ function PrepLoading() {
 
 function PrepError() {
   return (
-    <>
-      <style>{`
-        @keyframes prepFadeIn {
-          from { opacity: 0; transform: translateY(12px); }
-          to   { opacity: 1; transform: translateY(0); }
-        }
-      `}</style>
-      <div
-        style={{
-          minHeight: "100vh",
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "center",
-          padding: "24px",
-          position: "relative",
-          zIndex: 1,
-          animation: "prepFadeIn 0.4s ease-out both",
-        }}
-      >
-        <div
-          style={{
-            background: "rgba(20, 16, 13, 0.95)",
-            border: "1px solid rgba(201, 168, 76, 0.2)",
-            borderRadius: "20px",
-            padding: "48px 36px",
-            width: "100%",
-            maxWidth: "380px",
-            backdropFilter: "blur(20px)",
-            WebkitBackdropFilter: "blur(20px)",
-            boxShadow: "0 8px 40px rgba(0, 0, 0, 0.3)",
-            textAlign: "center",
-          }}
-        >
-          <p style={{ fontSize: "2.2rem", marginBottom: "12px" }}>🌶️</p>
-          <h1
-            style={{
-              fontFamily: "var(--font-playfair)",
-              fontSize: "24px",
-              fontWeight: 700,
-              color: "var(--text-ivory)",
-              marginBottom: "12px",
-              lineHeight: 1.2,
-            }}
-          >
-            Link expired
-          </h1>
-          <p
-            style={{
-              fontFamily: "var(--font-cormorant)",
-              fontSize: "16px",
-              color: "rgba(245, 237, 228, 0.55)",
-              lineHeight: 1.55,
-            }}
-          >
-            This link has expired or is invalid. Ask your host for a new one.
-          </p>
-        </div>
-      </div>
-    </>
-  );
-}
-
-/* ─── Section divider ──────────────────────────────────────────── */
-
-function Divider() {
-  return (
-    <div
-      style={{
-        width: "48px",
-        height: "1px",
-        background: "rgba(201, 168, 76, 0.3)",
-        margin: "40px auto",
-      }}
-    />
-  );
-}
-
-/* ─── Section header ───────────────────────────────────────────── */
-
-function SectionHeader({
-  icon: Icon,
-  title,
-}: {
-  icon?: typeof Star;
-  title: string;
-}) {
-  return (
-    <div
-      style={{
-        display: "flex",
-        alignItems: "center",
-        gap: "10px",
-        marginBottom: "20px",
-      }}
-    >
-      {Icon && <Icon size={18} style={{ color: "#C9A84C", flexShrink: 0 }} />}
-      <h2
-        style={{
-          fontFamily: "var(--font-playfair)",
-          fontSize: "22px",
-          fontWeight: 600,
-          color: "var(--text-ivory)",
-          lineHeight: 1.2,
-        }}
-      >
-        {title}
-      </h2>
-    </div>
-  );
-}
-
-/* ─── Callout card ─────────────────────────────────────────────── */
-
-function Callout({
-  title,
-  children,
-}: {
-  title: string;
-  children: React.ReactNode;
-}) {
-  return (
-    <div
-      style={{
-        background: "rgba(201, 168, 76, 0.06)",
-        border: "1px solid rgba(201, 168, 76, 0.15)",
-        borderRadius: "14px",
-        padding: "20px 22px",
-        marginBottom: "16px",
-      }}
-    >
-      <p
-        style={{
-          fontFamily: "var(--font-jetbrains)",
-          fontSize: "11px",
-          fontWeight: 500,
-          textTransform: "uppercase",
-          letterSpacing: "0.15em",
-          color: "#C9A84C",
-          marginBottom: "8px",
-        }}
-      >
-        {title}
-      </p>
-      <div
-        style={{
-          fontFamily: "var(--font-cormorant)",
-          fontSize: "16px",
-          color: "rgba(245, 237, 228, 0.8)",
-          lineHeight: 1.55,
-        }}
-      >
-        {children}
+    <div className={styles.errorWrapper}>
+      <div className={styles.errorCard}>
+        <p className={styles.errorEmoji}>🌶️</p>
+        <h1 className={styles.errorTitle}>Link expired</h1>
+        <p className={styles.errorText}>
+          This link has expired or is invalid. Ask your host for a new one.
+        </p>
       </div>
     </div>
   );
 }
 
-/* ─── Prep guide content ───────────────────────────────────────── */
-
-const GOLDEN_RULES = [
-  "Give 20\u201330 second answers. Not one word. Not a monologue.",
-  "Be vulnerable over being funny. Honesty is funnier than forced jokes.",
-  "The audience is rooting for you. They WANT you to find love.",
-  "Don\u2019t try to \u201Cwin\u201D the audience. Focus on your date.",
-  "It\u2019s okay to say \u201CI don\u2019t like this person.\u201D Honesty is content.",
-  "2\u20133 drinks max before going on. Loose, not sloppy.",
-];
-
-const QUESTIONS = [
-  "What\u2019s your name, and what do you do?",
-  "What are you looking for in a partner?",
-  "What are your dealbreakers / red flags?",
-  "What are your green flags?",
-  "What\u2019s your biggest ick?",
-  "Why did your last relationship end?",
-  "Are you over your ex?",
-  "What\u2019s your best quality? Worst quality?",
-  "Where would you take someone on a first date in NYC?",
-  "How close are you to your family?",
-  "What do you do for fun?",
-  "How many serious relationships have you been in?",
-  "How much do you make? (this might come up)",
-];
-
-const PREPARED_WITH = [
-  {
-    title: "One thoughtful question to ask your date",
-    detail:
-      'Make it conversational. Good: \u201CIf we had one weekend anywhere, where are we going?\u201D Bad: \u201CWhat do you do for work?\u201D',
-  },
-  {
-    title: "One talent or party trick you can show in 30 seconds",
-    detail: "Dance, song, joke, impression \u2014 whatever you\u2019ve got.",
-  },
-  {
-    title: "One pickup line",
-    detail: "Cheesy is fine.",
-  },
-  {
-    title: "Your 30-second elevator pitch",
-    detail: "Who are you and why should someone date you?",
-  },
-];
+/* ─── Prep guide ───────────────────────────────────────────────── */
 
 function PrepGuide() {
+  const [gender, setGender] = useState<"female" | "male" | "">("");
+
   return (
-    <>
-      <style>{`
-        @keyframes guideFadeIn {
-          from { opacity: 0; transform: translateY(16px); }
-          to   { opacity: 1; transform: translateY(0); }
-        }
-      `}</style>
-
-      <div
-        style={{
-          minHeight: "100vh",
-          position: "relative",
-          zIndex: 1,
-          animation: "guideFadeIn 0.6s ease-out both",
-        }}
-      >
-        <div
-          style={{
-            maxWidth: "560px",
-            margin: "0 auto",
-            padding: "48px 24px 80px",
-          }}
-        >
-          {/* ── Header ── */}
-          <div style={{ textAlign: "center", marginBottom: "8px" }}>
-            <p style={{ fontSize: "2.5rem", marginBottom: "8px" }}>🌶️</p>
-            <h1
-              style={{
-                fontFamily: "var(--font-playfair)",
-                fontSize: "32px",
-                fontWeight: 700,
-                color: "var(--text-ivory)",
-                lineHeight: 1.15,
-                marginBottom: "12px",
-              }}
-            >
-              Welcome to Garam Mas
-              <em style={{ fontStyle: "italic", color: "var(--gold-accent)" }}>ala</em>{" "}
-              Dating!
-            </h1>
-            <p
-              style={{
-                fontFamily: "var(--font-cormorant)",
-                fontSize: "18px",
-                color: "rgba(245, 237, 228, 0.65)",
-                lineHeight: 1.5,
-                maxWidth: "440px",
-                margin: "0 auto",
-              }}
-            >
-              You&apos;re about to be on a live comedy dating show in front of 250
-              people. Here&apos;s the secret: we don&apos;t need you to be funny.{" "}
-              <strong style={{ color: "var(--text-ivory)" }}>We need you to be REAL.</strong>
-            </p>
-          </div>
-
-          <Divider />
-
-          {/* ── The Golden Rules ── */}
-          <SectionHeader icon={Star} title="The Golden Rules" />
-          <div style={{ display: "flex", flexDirection: "column", gap: "12px" }}>
-            {GOLDEN_RULES.map((rule, i) => (
-              <div
-                key={i}
-                style={{
-                  display: "flex",
-                  gap: "14px",
-                  alignItems: "flex-start",
-                  padding: "14px 16px",
-                  borderRadius: "12px",
-                  background: "rgba(255, 255, 255, 0.03)",
-                  border: "1px solid rgba(245, 237, 228, 0.06)",
-                }}
-              >
-                <span
-                  style={{
-                    fontFamily: "var(--font-cormorant)",
-                    fontSize: "18px",
-                    fontStyle: "italic",
-                    fontWeight: 600,
-                    color: "#C9A84C",
-                    lineHeight: "24px",
-                    flexShrink: 0,
-                    width: "20px",
-                    textAlign: "right",
-                  }}
-                >
-                  {i + 1}
-                </span>
-                <p
-                  style={{
-                    fontFamily: "var(--font-cormorant)",
-                    fontSize: "16px",
-                    color: "rgba(245, 237, 228, 0.8)",
-                    lineHeight: 1.5,
-                    margin: 0,
-                  }}
-                >
-                  {rule}
-                </p>
-              </div>
-            ))}
-          </div>
-
-          <Divider />
-
-          {/* ── Questions ── */}
-          <SectionHeader title="Questions You Will Be Asked" />
-          <div style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
-            {QUESTIONS.map((q, i) => (
-              <div
-                key={i}
-                style={{
-                  display: "flex",
-                  gap: "14px",
-                  alignItems: "flex-start",
-                }}
-              >
-                <span
-                  style={{
-                    fontFamily: "var(--font-cormorant)",
-                    fontSize: "15px",
-                    fontStyle: "italic",
-                    color: "#C9A84C",
-                    lineHeight: "24px",
-                    flexShrink: 0,
-                    width: "24px",
-                    textAlign: "right",
-                  }}
-                >
-                  {i + 1}.
-                </span>
-                <p
-                  style={{
-                    fontFamily: "var(--font-cormorant)",
-                    fontSize: "16px",
-                    color: "rgba(245, 237, 228, 0.75)",
-                    lineHeight: 1.5,
-                    margin: 0,
-                  }}
-                >
-                  {q}
-                </p>
-              </div>
-            ))}
-          </div>
-
-          <Divider />
-
-          {/* ── Come Prepared With ── */}
-          <SectionHeader icon={Check} title="Come Prepared With" />
-          <div style={{ display: "flex", flexDirection: "column", gap: "12px" }}>
-            {PREPARED_WITH.map((item, i) => (
-              <div
-                key={i}
-                style={{
-                  display: "flex",
-                  gap: "14px",
-                  alignItems: "flex-start",
-                  padding: "16px 18px",
-                  borderRadius: "12px",
-                  border: "1px solid rgba(201, 168, 76, 0.15)",
-                  background: "rgba(201, 168, 76, 0.04)",
-                }}
-              >
-                <div
-                  style={{
-                    width: "22px",
-                    height: "22px",
-                    borderRadius: "6px",
-                    border: "1.5px solid rgba(201, 168, 76, 0.4)",
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "center",
-                    flexShrink: 0,
-                    marginTop: "1px",
-                  }}
-                >
-                  <Check size={12} style={{ color: "#C9A84C", opacity: 0.6 }} />
-                </div>
-                <div>
-                  <p
-                    style={{
-                      fontFamily: "var(--font-cormorant)",
-                      fontSize: "16px",
-                      fontWeight: 600,
-                      color: "var(--text-ivory)",
-                      margin: 0,
-                      lineHeight: 1.4,
-                    }}
-                  >
-                    {item.title}
-                  </p>
-                  <p
-                    style={{
-                      fontFamily: "var(--font-cormorant)",
-                      fontSize: "15px",
-                      color: "rgba(245, 237, 228, 0.5)",
-                      margin: "4px 0 0",
-                      lineHeight: 1.45,
-                    }}
-                  >
-                    {item.detail}
-                  </p>
-                </div>
-              </div>
-            ))}
-          </div>
-
-          <Divider />
-
-          {/* ── What to Wear ── */}
-          <SectionHeader icon={Shirt} title="What to Wear" />
-          <p
-            style={{
-              fontFamily: "var(--font-cormorant)",
-              fontSize: "16px",
-              color: "rgba(245, 237, 228, 0.75)",
-              lineHeight: 1.6,
-            }}
-          >
-            This is a real date. Dress hot &mdash; bright colors, bold fits, sequins
-            welcome. No &ldquo;just came from the office&rdquo; energy.
+    <div className={styles.page}>
+      <div className={styles.container}>
+        {/* ── Cover ── */}
+        <header className={styles.cover}>
+          <h1 className={styles.coverTitle}>🌶️ Contestant Orientation</h1>
+          <p className={styles.coverShow}>Garam Masala Dating</p>
+          <p className={styles.coverIntro}>
+            You&apos;ve been selected as a contestant on a live South Asian
+            dating show. You&apos;ll be on stage, mic&apos;d up, matched with
+            someone you&apos;ve never met, in front of a full audience.
+            It&apos;s real, it&apos;s fast, and it&apos;s genuinely one of the
+            most fun things you&apos;ll do. Read this packet before you arrive.
           </p>
-
-          <Divider />
-
-          {/* ── Bring Your Friends ── */}
-          <SectionHeader icon={Users} title="Bring Your Friends" />
-          <p
-            style={{
-              fontFamily: "var(--font-cormorant)",
-              fontSize: "16px",
-              color: "rgba(245, 237, 228, 0.75)",
-              lineHeight: 1.6,
-            }}
-          >
-            Invite your friends to come support you. More energy in the room = better
-            show for everyone.
+          <p className={styles.coverCore}>
+            We don&apos;t need you to be funny. We need you to be{" "}
+            <strong>REAL</strong>.
           </p>
+        </header>
 
-          <Divider />
+        {/* ── Golden Rules ── */}
+        <section className={styles.section}>
+          <h2 className={styles.sectionTitle}>The Golden Rules</h2>
+          <p className={styles.lead}>
+            These apply to every contestant, every show. There are no
+            exceptions.
+          </p>
+          <ol className={styles.numberedList}>
+            <li>
+              <strong>Keep answers to 20–30 seconds.</strong> Not a one-word
+              answer. Not a five-minute story. The sweet spot is conversational
+              — enough to say something real without losing the room.
+            </li>
+            <li>
+              <strong>Vulnerable beats funny every time.</strong> A genuine
+              moment lands harder than a polished joke. You don&apos;t have to
+              be entertaining. You have to be honest.
+            </li>
+            <li>
+              <strong>The audience is on your side.</strong> They showed up
+              wanting to see a real connection. They are rooting for you — not
+              waiting for you to fail.
+            </li>
+            <li>
+              <strong>Focus on your date, not the crowd.</strong> The moment you
+              start playing to the room, you lose everything. Your date is the
+              only person that matters on that stage.
+            </li>
+            <li>
+              <strong>It&apos;s okay to not feel it.</strong> Saying
+              &ldquo;I&apos;m not feeling the chemistry&rdquo; is honest and it
+              makes for great television. Faking attraction is not. The audience
+              can always tell.
+            </li>
+            <li>
+              <strong>Two to three drinks before you go on — maximum.</strong>{" "}
+              Enough to be relaxed and loose. Not enough to be impaired. You
+              want your full self on stage, just without the nerves.
+            </li>
+          </ol>
+        </section>
 
-          {/* ── Arrival Times ── */}
-          <SectionHeader icon={Clock} title="Arrival Times" />
-          <div style={{ display: "flex", gap: "12px", flexWrap: "wrap" }}>
-            {[
-              { label: "Guys", time: "5:20 PM sharp" },
-              { label: "Girls", time: "5:30 PM sharp" },
-            ].map((item) => (
-              <div
-                key={item.label}
-                style={{
-                  flex: "1 1 140px",
-                  padding: "18px 20px",
-                  borderRadius: "12px",
-                  background: "rgba(255, 255, 255, 0.04)",
-                  border: "1px solid rgba(245, 237, 228, 0.08)",
-                  textAlign: "center",
-                }}
-              >
-                <p
-                  style={{
-                    fontFamily: "var(--font-jetbrains)",
-                    fontSize: "11px",
-                    textTransform: "uppercase",
-                    letterSpacing: "0.15em",
-                    color: "#C9A84C",
-                    marginBottom: "6px",
-                  }}
-                >
-                  {item.label}
-                </p>
-                <p
-                  style={{
-                    fontFamily: "var(--font-cormorant)",
-                    fontSize: "20px",
-                    fontWeight: 600,
-                    color: "var(--text-ivory)",
-                  }}
-                >
-                  {item.time}
-                </p>
-              </div>
-            ))}
-          </div>
+        {/* ── Questions ── */}
+        <section className={styles.section}>
+          <h2 className={styles.sectionTitle}>Questions You May Be Asked</h2>
+          <p className={styles.lead}>
+            Prepare a 30–60 second answer for every question on this list. You
+            won&apos;t be asked all of them, and the host may go off-script
+            based on your answers — but nothing on this list should catch you
+            off guard.
+          </p>
+          <ol className={styles.numberedList}>
+            <li>What&apos;s your name, and what do you do?</li>
+            <li>What are you actually looking for in a partner?</li>
+            <li>What are your dealbreakers?</li>
+            <li>What are your green flags?</li>
+            <li>What&apos;s your biggest ick?</li>
+            <li>Why did your last relationship end?</li>
+            <li>Are you over your ex?</li>
+            <li>What&apos;s your best quality? Your worst?</li>
+            <li>Where would you take someone on a first date?</li>
+            <li>How close are you to your family?</li>
+            <li>What do you do for fun outside of work?</li>
+            <li>How many serious relationships have you been in?</li>
+            <li>How much do you make? (Yes, this comes up.)</li>
+          </ol>
+        </section>
 
-          <Divider />
+        {/* ── Come Prepared With ── */}
+        <section className={styles.section}>
+          <h2 className={styles.sectionTitle}>Come Prepared With</h2>
+          <p className={styles.lead}>
+            These are not suggestions. Have all four ready before you arrive.
+          </p>
+          <ul className={styles.prepList}>
+            <li>
+              <strong>One thoughtful question to ask your date.</strong> Make it
+              conversational, not interview-style. Good example: &ldquo;If we
+              had one free weekend anywhere, where are we going?&rdquo; Bad
+              example: &ldquo;What do you do for work?&rdquo; The goal is to
+              learn something real about them, not run through a checklist.
+            </li>
+            <li>
+              <strong>
+                A talent or party trick you can perform in 30 seconds.
+              </strong>{" "}
+              A dance move, an impression, a joke, a magic trick — whatever
+              you&apos;ve got. The weirder and more specific to you, the better.
+            </li>
+            <li>
+              <strong>A pickup line.</strong> Cheesy is completely fine.
+              That&apos;s the point. Lean into it.
+            </li>
+            <li>
+              <strong>Your 30-second elevator pitch.</strong> Who are you, and
+              why should someone want to go on a date with you? Practice saying
+              this out loud before you come. It should feel natural, not
+              rehearsed.
+            </li>
+          </ul>
+        </section>
 
-          {/* ── Notes ── */}
-          <Callout title="Note for Guys">
-            Audiences tend to root for the girls. Don&apos;t try to win the crowd by
-            being cocky or mean &mdash; it backfires every time. Charming, genuine,
-            and a little self-deprecating is what wins. Confident but humble.
-          </Callout>
+        {/* ── What to Wear ── */}
+        <section className={styles.section}>
+          <h2 className={styles.sectionTitle}>What to Wear</h2>
+          <p className={styles.body}>
+            Dress like you&apos;re going on a real first date — because you are.
+            Bold colors, statement fits, sequins absolutely welcome. Think about
+            what you would wear if you were genuinely trying to impress someone,
+            and wear that. No &ldquo;just came from the office&rdquo; energy. No
+            gym clothes. You&apos;ll be on a lit stage in front of a full
+            audience, so whatever reads as confident and put-together in real
+            life will read even better up there.
+          </p>
+        </section>
 
-          <Callout title="Note for Girls">
-            You&apos;re allowed to not like someone. Say it. &ldquo;I&apos;m not
-            feeling this&rdquo; is great content. Don&apos;t fake chemistry.
-          </Callout>
+        {/* ── Day of ── */}
+        <section className={styles.section}>
+          <h2 className={styles.sectionTitle}>Day Of</h2>
+          <p className={styles.body}>
+            Bring your friends. The more people cheering for you in the
+            audience, the better the show — and honestly, the better your own
+            performance. Having friendly faces in the crowd makes a real
+            difference when you&apos;re up there. Tell your people to come.
+          </p>
+          <p className={styles.body}>
+            Your phone will be with you backstage. You can look at these notes
+            again before you go on. Take a breath. You&apos;re ready.
+          </p>
+        </section>
 
-          {/* ── Footer ── */}
+        {/* ── Arrival & Notes ── */}
+        <section className={styles.section}>
+          <h2 className={styles.sectionTitle}>Arrival &amp; Notes</h2>
+          <p className={styles.toggleLabel}>Intructions for:</p>
           <div
-            style={{
-              textAlign: "center",
-              marginTop: "48px",
-              paddingTop: "24px",
-              borderTop: "1px solid rgba(245, 237, 228, 0.06)",
-            }}
+            className={styles.genderToggle}
+            role="group"
+            aria-label="Select your contestant type"
           >
-            <p
-              style={{
-                fontFamily: "var(--font-cormorant)",
-                fontSize: "16px",
-                fontStyle: "italic",
-                color: "rgba(245, 237, 228, 0.25)",
-              }}
+            <button
+              type="button"
+              className={`${styles.genderBtn}${gender === "male" ? ` ${styles.genderBtnActive}` : ""}`}
+              onClick={() => setGender("male")}
             >
-              See you on stage 🌶️
-            </p>
+              Guys
+            </button>
+            <button
+              type="button"
+              className={`${styles.genderBtn}${gender === "female" ? ` ${styles.genderBtnActive}` : ""}`}
+              onClick={() => setGender("female")}
+            >
+              Girls
+            </button>
           </div>
-        </div>
+
+          {gender && (
+            <div className={styles.genderReveal}>
+              <p className={styles.arrivalTime}>
+                Arrive by {gender === "female" ? "5:30 PM" : "5:20 PM"} sharp.
+              </p>
+              <p className={styles.body}>
+                {gender === "female"
+                  ? "Arrive 15 minutes after the guys — we keep you separate so your first impression of each other happens on stage. You have full permission to not like someone. You don't owe anyone chemistry, and you don't need to perform it. \"I'm not really feeling the connection\" is great content. The girls who are remembered are the ones who said exactly what they thought. Don't fake it — the audience always knows."
+                  : "Arrive 15 minutes before the girls — we keep you separate so your first impression of each other happens on stage. Audiences on this show tend to root for the women. Don't compensate by playing up charm or confidence — it reads as cocky and always backfires. What actually works: being genuinely curious about your date, not taking yourself too seriously, and being a little self-deprecating. Confident but humble."}
+              </p>
+            </div>
+          )}
+        </section>
+
+        {/* ── Footer ── */}
+        <footer className={styles.footer}>
+          <p>See you on stage. 🌶️</p>
+        </footer>
       </div>
-    </>
+    </div>
   );
 }
 
@@ -597,7 +259,8 @@ function PrepGuide() {
 
 export default function ContestantPrepPage() {
   const [params] = useState(() => {
-    if (typeof window === "undefined") return { date: null as string | null, sig: null as string | null };
+    if (typeof window === "undefined")
+      return { date: null as string | null, sig: null as string | null };
     const sp = new URLSearchParams(window.location.search);
     return { date: sp.get("date"), sig: sp.get("sig") };
   });
@@ -619,7 +282,10 @@ export default function ContestantPrepPage() {
     })
       .then(async (res) => {
         if (res.ok) {
-          const data = (await res.json()) as { token: string; expiresAt: number };
+          const data = (await res.json()) as {
+            token: string;
+            expiresAt: number;
+          };
           saveSession(data.token, data.expiresAt);
           setState("authed");
         } else {

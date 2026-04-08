@@ -44,28 +44,38 @@
   margin-bottom: 32px;
 }
 
+.label {
+  display: block;
+  font-family: var(--font-body);
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text);
+  margin-bottom: 4px;
+  margin-top: 12px;
+  padding-left: 4px;
+}
+
 .input {
   width: 100%;
   padding: 12px 18px;
   border-radius: 100px;
   border: 1px solid var(--border);
-  font-family: var(--font-dm-sans);
-  font-size: 15px;
+  font-family: var(--font-body);
+  font-size: 16px;
   color: var(--text);
   background: #fff;
-  outline: none;
   box-sizing: border-box;
-  margin-bottom: 8px;
+  margin-bottom: 0;
   transition: border-color 0.2s;
 }
 
 .inputError {
   composes: input;
-  border-color: var(--crimson);
+  border-color: var(--brand-red);
 }
 
 .error {
-  color: var(--crimson);
+  color: var(--brand-red);
   font-size: 13px;
   margin-bottom: 12px;
   padding-left: 4px;
@@ -76,9 +86,9 @@
   padding: 13px;
   border-radius: 100px;
   border: none;
-  background: var(--crimson);
+  background: var(--brand-red);
   color: #fff;
-  font-family: var(--font-dm-sans);
+  font-family: var(--font-body);
   font-size: 15px;
   font-weight: 600;
   letter-spacing: 0.02em;
@@ -88,7 +98,7 @@
 }
 
 .submitButton:hover {
-  background: var(--crimson-dark);
+  background: var(--brand-red-dark);
 }
 
 .submitButtonWithError {

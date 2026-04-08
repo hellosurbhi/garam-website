@@ -1,23 +1,17 @@
-.overlay {
-  position: fixed;
-  inset: 0;
-  background: rgba(0, 0, 0, 0.5);
-  backdrop-filter: blur(4px);
-  z-index: 50;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 16px;
-}
-
-.modal {
+.dialog {
   background: #fff;
   border-radius: 16px;
   max-width: 640px;
-  width: 100%;
+  width: calc(100% - 2 * var(--dialog-gutter));
   max-height: 90vh;
   overflow-y: auto;
   position: relative;
+  border: none;
+  padding: 0;
+}
+
+.dialog::backdrop {
+  background: var(--backdrop);
 }
 
 .imageWrap {
@@ -69,6 +63,8 @@
   border: none;
   border-radius: 100px;
   padding: 6px;
+  min-width: var(--touch-target);
+  min-height: var(--touch-target);
   cursor: pointer;
   display: flex;
   align-items: center;
@@ -118,6 +114,8 @@
   border-radius: 100px;
   font-size: 12px;
   font-weight: 600;
+  background: color-mix(in srgb, var(--status-color) 13%, transparent);
+  color: var(--status-color);
 }
 
 .infoGrid {
@@ -144,11 +142,11 @@
 .igLink {
   font-size: 14px;
   font-weight: 500;
-  color: var(--crimson);
+  color: var(--brand-red);
 }
 
 .pitch {
-  border-left: 3px solid var(--crimson);
+  border-left: 3px solid var(--brand-red);
   padding-left: 16px;
   margin: 0 0 24px;
 }
@@ -196,12 +194,11 @@
   padding: 10px 14px;
   border-radius: 100px;
   border: 1px solid var(--border);
-  font-family: var(--font-dm-sans);
-  font-size: 14px;
+  font-family: var(--font-body);
+  font-size: 16px;
   color: var(--text);
   background: #fff;
   cursor: pointer;
-  outline: none;
 }
 
 .notesTextarea {
@@ -209,12 +206,11 @@
   padding: 12px 16px;
   border-radius: 12px;
   border: 1px solid var(--border);
-  font-family: var(--font-dm-sans);
-  font-size: 14px;
+  font-family: var(--font-body);
+  font-size: 16px;
   color: var(--text);
   background: #fff;
   resize: vertical;
-  outline: none;
   box-sizing: border-box;
   line-height: 1.5;
 }
@@ -230,12 +226,12 @@
   gap: 6px;
   padding: 10px 18px;
   border-radius: 100px;
-  border: 1px solid var(--crimson);
+  border: 1px solid var(--brand-red);
   background: transparent;
-  font-family: var(--font-dm-sans);
+  font-family: var(--font-body);
   font-size: 14px;
   font-weight: 600;
-  color: var(--crimson);
+  color: var(--brand-red);
   cursor: pointer;
   transition: background 0.15s;
 }
@@ -252,7 +248,7 @@
   border-radius: 100px;
   border: 1px solid var(--success);
   background: transparent;
-  font-family: var(--font-dm-sans);
+  font-family: var(--font-body);
   font-size: 14px;
   font-weight: 600;
   color: var(--success);

@@ -19,30 +19,12 @@ const breadcrumbJsonLd = buildBreadcrumbJsonLd([
 
 /* ── SVG icon markup ──────────────────────────────────────── */
 
-type IconName = "heart" | "instagram" | "tiktok" | "youtube" | "mic" | "ticket" | "mail";
-
-const ICON_SVGS: Record<IconName, string> = {
-  heart: `<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"/></svg>`,
-  instagram: `<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="20" height="20" x="2" y="2" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" x2="17.51" y1="6.5" y2="6.5"/></svg>`,
-  tiktok: `<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M16.6 5.82A4.278 4.278 0 0 1 15.54 3h-3.09v12.4a2.592 2.592 0 0 1-2.59 2.5c-1.42 0-2.6-1.16-2.6-2.6 0-1.72 1.66-3.01 3.37-2.48V9.66c-3.45-.46-6.47 2.22-6.47 5.64 0 3.33 2.76 5.7 5.69 5.7 3.14 0 5.69-2.55 5.69-5.7V9.01a7.35 7.35 0 0 0 4.3 1.38V7.3s-1.88.09-3.24-1.48Z"/></svg>`,
-  youtube: `<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2.5 17a24.12 24.12 0 0 1 0-10 2 2 0 0 1 1.4-1.4 49.56 49.56 0 0 1 16.2 0A2 2 0 0 1 21.5 7a24.12 24.12 0 0 1 0 10 2 2 0 0 1-1.4 1.4 49.55 49.55 0 0 1-16.2 0A2 2 0 0 1 2.5 17"/><path d="m10 15 5-3-5-3z"/></svg>`,
-  mic: `<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" x2="12" y1="19" y2="22"/></svg>`,
-  ticket: `<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 9a3 3 0 0 1 0 6v2a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-2a3 3 0 0 1 0-6V7a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2Z"/><path d="M13 5v2"/><path d="M13 17v2"/><path d="M13 11v2"/></svg>`,
-  mail: `<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="20" height="16" x="2" y="4" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg>`,
-};
+import { ICON_SVGS, SOCIAL_ICON_SVGS, type IconName } from '@/data/icons';
 
 function iconSvg(name: IconName, isPrimary?: boolean): string {
   const cls = isPrimary ? "icon-primary" : "icon-glass";
   return `<span class="${cls}">${ICON_SVGS[name]}</span>`;
 }
-
-/* Social icons reuse the same SVGs at 18px */
-const SOCIAL_ICON_SVGS: Record<string, string> = {
-  instagram: `<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="20" height="20" x="2" y="2" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" x2="17.51" y1="6.5" y2="6.5"/></svg>`,
-  tiktok: `<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M16.6 5.82A4.278 4.278 0 0 1 15.54 3h-3.09v12.4a2.592 2.592 0 0 1-2.59 2.5c-1.42 0-2.6-1.16-2.6-2.6 0-1.72 1.66-3.01 3.37-2.48V9.66c-3.45-.46-6.47 2.22-6.47 5.64 0 3.33 2.76 5.7 5.69 5.7 3.14 0 5.69-2.55 5.69-5.7V9.01a7.35 7.35 0 0 0 4.3 1.38V7.3s-1.88.09-3.24-1.48Z"/></svg>`,
-  youtube: `<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2.5 17a24.12 24.12 0 0 1 0-10 2 2 0 0 1 1.4-1.4 49.56 49.56 0 0 1 16.2 0A2 2 0 0 1 21.5 7a24.12 24.12 0 0 1 0 10 2 2 0 0 1-1.4 1.4 49.55 49.55 0 0 1-16.2 0A2 2 0 0 1 2.5 17"/><path d="m10 15 5-3-5-3z"/></svg>`,
-  mail: `<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="20" height="16" x="2" y="4" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg>`,
-};
 
 /* ── Link definitions ─────────────────────────────────────── */
 
@@ -57,11 +39,10 @@ interface LinkDef {
 
 const links: LinkDef[] = [
   { label: "Apply to Be on the Show", href: "/apply", isPrimary: true, icon: "heart" },
-  { label: "Instagram", href: SOCIAL_URLS.instagram, external: true, icon: "instagram" },
-  { label: "TikTok", href: SOCIAL_URLS.tiktok, external: true, icon: "tiktok" },
-  { label: "YouTube", href: SOCIAL_URLS.youtube, external: true, icon: "youtube" },
-  { label: "As Seen In", dialogTrigger: "press-trigger", icon: "mic" },
+  { label: "Short form content @ Instagram", href: SOCIAL_URLS.instagram, external: true, icon: "instagram" },
+  { label: "Full episodes @ YouTube", href: SOCIAL_URLS.youtube, external: true, icon: "youtube" },
   { label: "Upcoming Shows & Tickets", dialogTrigger: "events-trigger", icon: "ticket" },
+  { label: "As Seen In", dialogTrigger: "press-trigger", icon: "mic" },
   { label: "Booking & Press Inquiries", href: "mailto:press@garammasaladating.com", icon: "mail" },
 ];
 
@@ -69,27 +50,26 @@ const socials = [
   { href: SOCIAL_URLS.instagram, label: "Instagram", icon: "instagram" },
   { href: SOCIAL_URLS.tiktok, label: "TikTok", icon: "tiktok" },
   { href: SOCIAL_URLS.youtube, label: "YouTube", icon: "youtube" },
+  { href: SOCIAL_URLS.threads, label: "Threads", icon: "threads" },
+  { href: SOCIAL_URLS.x, label: "X", icon: "x" },
+  { href: SOCIAL_URLS.facebook, label: "Facebook", icon: "facebook" },
   { href: "mailto:hello@garammasaladating.com", label: "Email", icon: "mail" },
 ];
 
 const reversedPress = [...pressItems].reverse();
 ---
 
-<BaseLayout title={TITLE} description={DESC} overlayBg="rgba(13, 10, 8, 0.88)">
+<BaseLayout title={TITLE} description={DESC}>
   <Fragment slot="head">
     <script type="application/ld+json" set:html={breadcrumbJsonLd} />
   </Fragment>
 
-  <div class="page">
+  <main id="main-content" class="page">
+    <img class="page-bg" src="/images/hero.webp" alt="" width="1200" height="800" aria-hidden="true" />
     <div class="container">
       {/* Header */}
       <div class="header-wrap">
-        <a href="/" class="home-link">
-          <h1 class="title">
-            Garam Mas<em class="title-accent">ala</em> Dating
-          </h1>
-        </a>
-        <p class="subtitle">NYC&apos;s hottest live comedy dating show&nbsp;🌶️</p>
+        <h1 class="subtitle">NYC&apos;s hottest live South Asian dating show&nbsp;🌶️</h1>
         <div class="divider" />
       </div>
 
@@ -145,10 +125,10 @@ const reversedPress = [...pressItems].reverse();
       </div>
 
       <p class="footer-text">
-        Made with love and a lot of spice&nbsp;🌶️
+        Made with love and a lot of spice
       </p>
     </div>
-  </div>
+  </main>
 
   {/* ── Events modal ─────────────────────────────────────── */}
   <dialog id="events-modal" class="modal-dialog">
@@ -161,7 +141,7 @@ const reversedPress = [...pressItems].reverse();
       <div class="modal-divider" />
 
       {upcomingEvents.length === 0 ? (
-        <p class="no-events">No upcoming shows — stay tuned!</p>
+        <p class="no-events">No upcoming shows. Stay tuned!</p>
       ) : (
         <div class="event-list">
           {upcomingEvents.map((event) => {
@@ -176,7 +156,7 @@ const reversedPress = [...pressItems].reverse();
                 <span class="event-city">{event.city}</span>
                 <div class="event-date-group">
                   <span class="event-date">{event.date}</span>
-                  <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="ticket-icon"><path d="M2 9a3 3 0 0 1 0 6v2a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-2a3 3 0 0 1 0-6V7a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2Z"/><path d="M13 5v2"/><path d="M13 17v2"/><path d="M13 11v2"/></svg>
+                  <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="ticket-icon" aria-hidden="true"><path d="M2 9a3 3 0 0 1 0 6v2a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-2a3 3 0 0 1 0-6V7a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2Z"/><path d="M13 5v2"/><path d="M13 17v2"/><path d="M13 11v2"/></svg>
                 </div>
               </a>
             ) : (
@@ -202,29 +182,30 @@ const reversedPress = [...pressItems].reverse();
       <div class="modal-divider" />
 
       <div class="event-list">
-        {reversedPress.map((item) => (
-          <a
-            href={item.url}
-            target="_blank"
-            rel="noopener noreferrer"
-            class="press-item"
-          >
-            <div class="press-content">
-              <div class="press-badge-row">
-                <span class="press-badge">
-                  {item.type === "podcast" ? (
-                    <svg xmlns="http://www.w3.org/2000/svg" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" x2="12" y1="19" y2="22"/></svg>
-                  ) : (
-                    <svg xmlns="http://www.w3.org/2000/svg" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 22h16a2 2 0 0 0 2-2V4a2 2 0 0 0-2-2H8a2 2 0 0 0-2 2v16a2 2 0 0 1-2 2Zm0 0a2 2 0 0 1-2-2v-9c0-1.1.9-2 2-2h2"/><path d="M18 14h-8"/><path d="M15 18h-5"/><path d="M10 6h8v4h-8V6Z"/></svg>
-                  )}
-                  {item.type}
-                </span>
+        {reversedPress.map((item) => {
+          const inner = (
+            <>
+              <div class="press-content">
+                <div class="press-badge-row">
+                  <span class="press-badge">
+                    {item.type === "podcast" ? (
+                      <svg xmlns="http://www.w3.org/2000/svg" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" x2="12" y1="19" y2="22"/></svg>
+                    ) : (
+                      <svg xmlns="http://www.w3.org/2000/svg" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 22h16a2 2 0 0 0 2-2V4a2 2 0 0 0-2-2H8a2 2 0 0 0-2 2v16a2 2 0 0 1-2 2Zm0 0a2 2 0 0 1-2-2v-9c0-1.1.9-2 2-2h2"/><path d="M18 14h-8"/><path d="M15 18h-5"/><path d="M10 6h8v4h-8V6Z"/></svg>
+                    )}
+                    {item.type}
+                  </span>
+                  {!item.url && <span class="press-badge press-badge--soon">Coming Soon</span>}
+                </div>
+                <p class="press-source">{item.source}</p>
               </div>
-              <p class="press-source">{item.source}</p>
-            </div>
-            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="press-external-icon"><path d="M15 3h6v6"/><path d="M10 14 21 3"/><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/></svg>
-          </a>
-        ))}
+              {item.url && <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="press-external-icon" aria-hidden="true"><path d="M15 3h6v6"/><path d="M10 14 21 3"/><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/></svg>}
+            </>
+          );
+          return item.url
+            ? <a href={item.url} target="_blank" rel="noopener noreferrer" class="press-item">{inner}</a>
+            : <div class="press-item press-item--disabled">{inner}</div>;
+        })}
       </div>
     </div>
   </dialog>
@@ -265,8 +246,8 @@ const reversedPress = [...pressItems].reverse();
   }
 
   @keyframes pulseGlow {
-    0%, 100% { box-shadow: 0 2px 12px rgba(201, 168, 76, 0.25), 0 0 0 0 rgba(201, 168, 76, 0); }
-    50%       { box-shadow: 0 2px 12px rgba(201, 168, 76, 0.25), 0 0 0 8px rgba(201, 168, 76, 0.12); }
+    0%, 100% { box-shadow: 0 2px 12px rgba(var(--brand-red-rgb), 0.25), 0 0 0 0 rgba(var(--brand-red-rgb), 0); }
+    50%       { box-shadow: 0 2px 12px rgba(var(--brand-red-rgb), 0.25), 0 0 0 8px rgba(var(--brand-red-rgb), 0.12); }
   }
 
   @keyframes modalIn {
@@ -281,6 +262,18 @@ const reversedPress = [...pressItems].reverse();
     background: transparent;
     position: relative;
     animation: pageIn 0.3s ease-out both;
+    overflow: hidden;
+  }
+  .page-bg {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center 40%;
+    display: block;
+    z-index: 0;
+    opacity: 0.08;
   }
 
   .container {
@@ -288,7 +281,7 @@ const reversedPress = [...pressItems].reverse();
     z-index: 1;
     max-width: 420px;
     margin: 0 auto;
-    padding: 48px 24px 56px;
+    padding: 24px;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -307,31 +300,25 @@ const reversedPress = [...pressItems].reverse();
     cursor: pointer;
   }
 
-  .title {
-    font-family: var(--font-playfair);
-    font-size: 36px;
-    font-weight: 700;
-    color: #F5EDE4;
-    line-height: 1.15;
+  .links-logo {
+    height: 64px;
+    width: auto;
     margin-bottom: 10px;
   }
 
-  .title-accent {
-    font-style: italic;
-    color: #E2C97E;
-  }
-
   .subtitle {
-    font-family: var(--font-cormorant);
-    font-size: 17px;
-    color: rgba(245, 237, 228, 0.55);
-    line-height: 1.5;
+    font-family: var(--font-playfair);
+    font-size: 24px;
+    font-weight: 700;
+    color: var(--charcoal);
+    line-height: 1.3;
+    margin: 0;
   }
 
   .divider {
     width: 48px;
     height: 1px;
-    background: rgba(201, 168, 76, 0.3);
+    background: rgba(var(--brand-red-rgb), 0.3);
     margin: 18px auto 0;
   }
 
@@ -354,9 +341,9 @@ const reversedPress = [...pressItems].reverse();
     padding: 20px 24px;
     border-radius: 14px;
     border: none;
-    background: #C9A84C;
-    color: #0D0A08;
-    font-family: var(--font-cormorant);
+    background: var(--brand-red);
+    color: white;
+    font-family: var(--font-body);
     font-size: 17px;
     font-weight: 600;
     letter-spacing: 0.04em;
@@ -364,12 +351,14 @@ const reversedPress = [...pressItems].reverse();
     cursor: pointer;
     transition: transform 0.25s ease, box-shadow 0.25s ease;
     transform: scale(1);
-    box-shadow: 0 2px 12px rgba(201, 168, 76, 0.25);
+    box-shadow: 0 2px 12px rgba(var(--brand-red-rgb), 0.25);
+    white-space: normal;
+    overflow-wrap: anywhere;
   }
 
   .primary-link:hover {
     transform: scale(1.02);
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
   }
 
   /* ─── LinkButton — glass ──────────────────────────────────── */
@@ -380,73 +369,75 @@ const reversedPress = [...pressItems].reverse();
     gap: 12px;
     width: 100%;
     padding: 17px 22px;
-    border-radius: 14px;
-    border: 1px solid rgba(245, 237, 228, 0.1);
-    background: rgba(255, 255, 255, 0.05);
-    backdrop-filter: blur(12px);
-    -webkit-backdrop-filter: blur(12px);
-    color: #F5EDE4;
-    font-family: var(--font-cormorant);
+    border-radius: 12px;
+    border: 1px solid rgba(0, 0, 0, 0.06);
+    background: white;
+    color: var(--charcoal);
+    font-family: var(--font-body);
     font-size: 16px;
     font-weight: 500;
     text-decoration: none;
     cursor: pointer;
     transition: all 0.25s ease;
     transform: scale(1);
-    box-shadow: none;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
     text-align: left;
+    white-space: nowrap;
   }
 
   .glass-link:hover {
-    border-color: rgba(201, 168, 76, 0.35);
-    background: rgba(255, 255, 255, 0.08);
+    border-color: rgba(var(--brand-red-rgb), 0.35);
+    background: white;
     transform: scale(1.015);
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
   }
 
   /* icon-primary / icon-glass are injected via set:html, so need :global */
   :global(.icon-primary) {
     flex-shrink: 0;
-    color: #0D0A08;
+    color: white;
     display: inline-flex;
   }
 
   :global(.icon-glass) {
     flex-shrink: 0;
-    color: rgba(245, 237, 228, 0.5);
+    color: #888;
     display: inline-flex;
   }
 
   .link-label {
     flex: 1;
     text-align: center;
+    text-transform: uppercase;
   }
 
   /* ─── Social icons ────────────────────────────────────────── */
 
   .social-row {
     display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
     gap: 12px;
     margin-top: 36px;
     animation: headerFadeUp 0.5s ease-out 0.9s both;
   }
 
   .social-icon {
-    width: 40px;
-    height: 40px;
+    width: var(--touch-target);
+    height: var(--touch-target);
     border-radius: 50%;
     display: flex;
     align-items: center;
     justify-content: center;
-    background: rgba(245, 237, 228, 0.08);
-    color: rgba(245, 237, 228, 0.25);
+    background: rgba(0, 0, 0, 0.06);
+    color: #888;
     transition: background 0.2s, color 0.2s;
     text-decoration: none;
   }
 
   .social-icon:hover {
-    background: rgba(201, 168, 76, 0.15);
-    color: #C9A84C;
+    background: rgba(var(--brand-red-rgb), 0.15);
+    color: var(--brand-red);
   }
 
   /* ─── Footer ──────────────────────────────────────────────── */
@@ -454,9 +445,9 @@ const reversedPress = [...pressItems].reverse();
   .footer-text {
     margin-top: 32px;
     font-size: 14px;
-    font-family: var(--font-cormorant);
+    font-family: var(--font-body);
     font-style: italic;
-    color: rgba(245, 237, 228, 0.2);
+    color: var(--muted);
     text-align: center;
     animation: headerFadeUp 0.5s ease-out 1s both;
   }
@@ -467,7 +458,7 @@ const reversedPress = [...pressItems].reverse();
     border: none;
     background: transparent;
     padding: 24px;
-    max-width: 100vw;
+    max-width: 100%;
     max-height: 100vh;
     width: 100%;
     height: 100%;
@@ -475,9 +466,7 @@ const reversedPress = [...pressItems].reverse();
   }
 
   .modal-dialog::backdrop {
-    background: rgba(0, 0, 0, 0.7);
-    backdrop-filter: blur(8px);
-    -webkit-backdrop-filter: blur(8px);
+    background: rgba(0, 0, 0, 0.5);
   }
 
   .modal-dialog[open] {
@@ -489,17 +478,15 @@ const reversedPress = [...pressItems].reverse();
   .modal-inner {
     width: 100%;
     max-width: 400px;
-    background: rgba(20, 16, 13, 0.95);
-    border: 1px solid rgba(201, 168, 76, 0.2);
+    max-height: 80vh;
+    overflow-y: auto;
+    background: white;
+    border: 1px solid rgba(0, 0, 0, 0.1);
     border-radius: 20px;
     padding: 32px 24px;
     animation: modalIn 0.25s ease-out both;
     position: relative;
-  }
-
-  .modal-dialog--scrollable .modal-inner {
-    max-height: 80vh;
-    overflow-y: auto;
+    text-align: center;
   }
 
   .modal-close {
@@ -508,9 +495,11 @@ const reversedPress = [...pressItems].reverse();
     right: 16px;
     background: none;
     border: none;
-    color: rgba(245, 237, 228, 0.4);
+    color: #888;
     cursor: pointer;
-    padding: 4px;
+    min-width: var(--touch-target);
+    min-height: var(--touch-target);
+    padding: 12px;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -518,21 +507,21 @@ const reversedPress = [...pressItems].reverse();
   }
 
   .modal-close:hover {
-    color: #F5EDE4;
+    color: var(--charcoal);
   }
 
   .modal-title {
     font-family: var(--font-playfair);
     font-size: 22px;
     font-weight: 600;
-    color: #F5EDE4;
+    color: var(--charcoal);
     margin-bottom: 8px;
   }
 
   .modal-divider {
     width: 32px;
     height: 1px;
-    background: rgba(201, 168, 76, 0.3);
+    background: rgba(var(--brand-red-rgb), 0.3);
     margin-bottom: 24px;
   }
 
@@ -550,16 +539,16 @@ const reversedPress = [...pressItems].reverse();
     justify-content: space-between;
     padding: 14px 16px;
     border-radius: 12px;
-    border: 1px solid rgba(201, 168, 76, 0.15);
-    background: rgba(255, 255, 255, 0.04);
+    border: 1px solid rgba(0, 0, 0, 0.06);
+    background: white;
     text-decoration: none;
     transition: all 0.2s ease;
     cursor: pointer;
   }
 
   .event-link:hover {
-    background: rgba(201, 168, 76, 0.1);
-    border-color: rgba(201, 168, 76, 0.35);
+    background: rgba(var(--brand-red-rgb), 0.06);
+    border-color: rgba(var(--brand-red-rgb), 0.35);
   }
 
   .event-tba {
@@ -568,30 +557,30 @@ const reversedPress = [...pressItems].reverse();
     justify-content: space-between;
     padding: 14px 16px;
     border-radius: 12px;
-    border: 1px solid rgba(245, 237, 228, 0.06);
-    background: rgba(255, 255, 255, 0.02);
+    border: 1px solid rgba(0, 0, 0, 0.06);
+    background: white;
     opacity: 0.5;
   }
 
   .event-city {
-    font-family: var(--font-cormorant);
+    font-family: var(--font-body);
     font-size: 16px;
     font-weight: 500;
-    color: #F5EDE4;
+    color: var(--charcoal);
   }
 
   .event-date {
-    font-family: var(--font-dm-sans);
+    font-family: var(--font-body);
     font-size: 13px;
     font-weight: 600;
-    color: rgba(245, 237, 228, 0.6);
+    color: #666;
   }
 
   .event-date-muted {
-    font-family: var(--font-dm-sans);
+    font-family: var(--font-body);
     font-size: 13px;
     font-weight: 600;
-    color: rgba(245, 237, 228, 0.4);
+    color: #888;
   }
 
   .event-date-group {
@@ -601,13 +590,13 @@ const reversedPress = [...pressItems].reverse();
   }
 
   .ticket-icon {
-    color: #C9A84C;
+    color: var(--brand-red);
   }
 
   .no-events {
-    font-family: var(--font-cormorant);
+    font-family: var(--font-body);
     font-size: 16px;
-    color: rgba(245, 237, 228, 0.5);
+    color: #666;
     text-align: center;
     padding: 16px 0;
   }
@@ -620,8 +609,8 @@ const reversedPress = [...pressItems].reverse();
     justify-content: space-between;
     padding: 14px 16px;
     border-radius: 12px;
-    border: 1px solid rgba(201, 168, 76, 0.15);
-    background: rgba(255, 255, 255, 0.04);
+    border: 1px solid rgba(0, 0, 0, 0.06);
+    background: white;
     text-decoration: none;
     transition: all 0.2s ease;
     cursor: pointer;
@@ -629,8 +618,8 @@ const reversedPress = [...pressItems].reverse();
   }
 
   .press-item:hover {
-    background: rgba(201, 168, 76, 0.1);
-    border-color: rgba(201, 168, 76, 0.35);
+    background: rgba(var(--brand-red-rgb), 0.06);
+    border-color: rgba(var(--brand-red-rgb), 0.35);
   }
 
   .press-content {
@@ -651,26 +640,54 @@ const reversedPress = [...pressItems].reverse();
     gap: 4px;
     padding: 2px 8px;
     border-radius: 6px;
-    background: rgba(201, 168, 76, 0.12);
-    font-family: var(--font-dm-sans);
+    background: rgba(var(--brand-red-rgb), 0.12);
+    font-family: var(--font-body);
     font-size: 11px;
     font-weight: 600;
-    color: #C9A84C;
+    color: var(--brand-red);
     text-transform: uppercase;
     letter-spacing: 0.04em;
   }
 
   .press-source {
-    font-family: var(--font-cormorant);
+    font-family: var(--font-body);
     font-size: 16px;
     font-weight: 500;
-    color: #F5EDE4;
+    color: var(--charcoal);
     margin: 0;
     line-height: 1.3;
   }
 
   .press-external-icon {
     flex-shrink: 0;
-    color: #C9A84C;
+    color: var(--brand-red);
+  }
+
+  .press-item--disabled {
+    opacity: 0.5;
+    cursor: default;
+  }
+
+  .press-item--disabled:hover {
+    background: white;
+    border-color: rgba(0, 0, 0, 0.06);
+  }
+
+  .press-badge--soon {
+    background: rgba(0, 0, 0, 0.06);
+    color: #888;
+  }
+
+  @media (max-width: 767px) {
+    .primary-link,
+    .glass-link {
+      white-space: normal;
+    }
+    .link-label {
+      text-align: center;
+    }
+    .social-row {
+      flex-wrap: wrap;
+    }
   }
 </style>

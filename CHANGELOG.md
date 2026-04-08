@@ -1,5 +1,1106 @@
 # Changelog
 
+## fix: phone accepts international numbers, apply form analytics, code cleanup (2026-04-08)
+
+### What changed
+
+**Phone handling rewritten** — replaced `normalizeUsPhone` (US-only, rejected everything else) with `cleanPhone` in `src/lib/phone.ts`. US 10-digit numbers auto-format to `+1XXXXXXXXXX`. International numbers with `+` prefix are stored with digits cleaned. Anything with 7+ digits is accepted. Nobody gets blocked. Error message softened to "Please enter a valid phone number." Placeholder updated from `+1 (555) 123-4567` to `(555) 123-4567` and aria-label from "Phone number (include country code)" to "Phone number" across all 4 forms.
+
+**Apply form analytics** — added `trackLeadEvent('apply_submitted')` with `applicationType`, `city`, `country`, and full lead attribution to `useApplyForm.ts`. This was the only form without any PostHog/GTM tracking.
+
+**Bug fixes:**
+- `src/pages/cities/[slug].astro` — fixed try/catch indentation where `try` was nested inside `if (submitBtn)` but `catch` was at a different scope level
+- `src/components/home/HomeSignup.astro` — removed `console.error` left in catch block (violates project rule)
+
+**ENHANCEMENT.md** — added "Later Later" section with note on international phone input with country selector (packages like `react-phone-number-input`) for when we actually have international texting services.
+
+### Files changed
+- `src/lib/phone.ts` — rewritten (`normalizeUsPhone` → `cleanPhone`)
+- `src/components/NotifyModal.astro` — import, placeholder, aria-label, error message
+- `src/components/home/HomeSignup.astro` — import, placeholder, aria-label, error message, removed console.error
+- `src/pages/index.astro` — import, placeholder, aria-label, error message
+- `src/pages/cities/[slug].astro` — import, placeholder, aria-label, error message, try/catch indent fix
+- `src/components/apply/useApplyForm.ts` — added analytics tracking on submit
+- `ENHANCEMENT.md` — added Later Later section
+
+---
+
+## feat: redesign all email forms — first name, phone step, proper error handling (2026-04-07)
+
+### What changed
+
+**All four sign-up/notify forms** now share a consistent two-step flow with proper error handling, CLS prevention, and international phone support.
+
+**Files affected:** `src/components/home/HomeSignup.astro`, `src/pages/index.astro` (popup), `src/pages/cities/[slug].astro` (city notify), `src/components/NotifyModal.astro`
+
+**What changed in each:**
+- Added first name input to step 1 (all forms previously only asked for email)
+- Step 1 writes `{ firstName, email, source, createdAt }` to Firestore and stores `DocumentReference`
+- Step 2 is an optional phone number step — uses `updateDoc(docRef, { phone })` to update the same doc (fallback: `addDoc` with full data if ref lost)
+- Success state is only shown **after confirmed Firestore resolve** — never optimistically
+- Network errors show inline error messages; skip button remains available on phone step failure
+- Phone validation: strip autocorrect noise first (`replace(/[\s\-().]/g, '')`), then validate `/^\+\d{7,15}$/`; E.164 format required (+1...)
+- CLS fix: steps wrapped in container with `min-height` (220–260px) so step 1→2 swap doesn't shift content below
+
+**ENHANCEMENT.md:** Added full-site CLS audit documenting 13 instances (7 HIGH, 4 MEDIUM, 2 LOW) with specific files, triggers, and recommended fixes.
+
+---
+
+## fix: restore custom cursor, revert CodeRabbit padding regressions, fix shader pink (2026-04-07)
+
+### What changed
+
+**BaseLayout.astro:** Restored custom cursor (desktop-only, `pointer: fine` guard, `prefers-reduced-motion` accessibility guard). CodeRabbit had removed it in commit 7d30c7e. Cursor divs, JS animation loop, dark-section detection, and hover scale all restored. Added dialog observer so cursor moves inside `<dialog>` when modal is open.
+
+**shader-app.js:** Removed `fluid = mix(fluid, vec3(1.0), 0.3)` — this line was mixing 30% white into all fluid colors, turning the DC2626 red pink/washed out.
+
+**Section padding reverted** (CodeRabbit had increased all of these):
+- `HomeStats.astro` desktop: `120px 48px` → `100px 48px`
+- `HomeShows.astro` desktop: `80px 36px` → `75px 36px`
+- `HomeShows.astro` mobile: `56px 16px` → `55px 16px`
+- `HomePress.astro` desktop: `56px 48px` → `48px 48px`
+- `HomePress.astro` mobile: `40px 20px` → `36px 20px`
+
+**HomeSignup.astro:** Fixed `.spicelist-form button:hover` to use `white` background (was incorrectly changed to `charcoal/black`).
+
+**CLAUDE.md:** Added "Aesthetic choices — intentional, never revert" section documenting custom cursor, all padding/margin/gap values, color hex values, section backgrounds, font sizes/spacing, and the $2k WebGL shader. Rule: CodeRabbit comments on these must be dismissed with "intentional design choice".
+
+### Files changed
+- `src/layouts/BaseLayout.astro`
+- `public/js/shader-app.js`
+- `src/components/home/HomeStats.astro`
+- `src/components/home/HomeShows.astro`
+- `src/components/home/HomePress.astro`
+- `src/components/home/HomeSignup.astro` (hover fix)
+- `CLAUDE.md`
+
+---
+
+## fix: revert shader logo, fix Firebase Auth CSP, Instagram post-load (2026-04-07)
+
+### What changed
+
+**shader-app.js:** Reverted `img.src` from `/images/logo.svg` back to the blank 1×1 SVG data URI. The CodeRabbit commit (7d30c7e) had replaced the placeholder with the real logo, causing it to appear as a white watermark in the hero background and making the fluid animation look washed out/pink. The blank SVG restores the pure red/yellow fluid look. The `maskDirty` performance improvement (don't upload texture every RAF frame) is preserved.
+
+**vercel.json:** Added `https://identitytoolkit.googleapis.com` and `https://securetoken.googleapis.com` to `connect-src`. These are required for `signInAnonymously()` (Firebase Auth). Missing them caused the apply form to fail silently in production — the form appeared to submit but no data reached Firestore.
+
+**HomeVideo.astro:** Instagram `embed.js` now loads via `requestIdleCallback` after `window.load` instead of waiting for scroll intersection. This means embeds are populated before the user scrolls to the reels section. LCP is unaffected because the load is deferred until after `window.load`.
+
+### Files changed
+- `public/js/shader-app.js`
+- `vercel.json`
+- `src/components/home/HomeVideo.astro`
+
+## fix: address all remaining CodeRabbit PR #11 review comments (2026-04-07)
+
+### What changed
+Resolved all 15 unresolved CodeRabbit review threads on PR #11 (13 fixed, 2 dismissed).
+
+**Fixes:**
+- **scripts/optimize-images.js:** Missing source images now fail the run with non-zero exit instead of silently succeeding under VERBOSE-only logging.
+- **ApplicantModal.tsx:** Guarded `showModal()` against already-open dialogs and jsdom environments. Added `aria-labelledby` linking dialog to applicant name heading. Made photo preview keyboard-accessible with `role="button"`, `tabIndex`, and Enter/Space handling.
+- **ApplicantModal.module.css:** Replaced hardcoded `32px` and `rgba(0,0,0,0.5)` with new `--dialog-gutter` and `--backdrop` CSS tokens in `:root`.
+- **useApplyForm.ts:** Fixed age validation gap where non-numeric input (`"abc"`) passed validation because `NaN < 18` is `false`.
+- **ApplyPage.module.css:** Renamed `@keyframes toastIn` to `toast-in` for stylelint kebab-case. Added 48px touch targets to `.termsLink` and `.toastDismiss`. Replaced undefined `var(--font-heading)` with `var(--font-playfair)`.
+- **HomeVideo.astro:** Added unique `aria-label` per Instagram embed link. Added guard for missing `data-youtube-id`.
+- **PageNav.astro:** Initialized scroll state on page load (previously only updated after first scroll event).
+- **posthog.astro:** Removed invalid `defaults: '2026-01-30'` PostHog init option.
+- **index.css:** Added `--dialog-gutter: 16px` and `--backdrop: rgba(0,0,0,0.5)` tokens to `:root`.
+
+**Dismissed:**
+- BaseLayout.astro custom cursor — already removed in commit 7d30c7e.
+- organize-images.js `import.meta.dirname` — package.json already requires `>=20.11.0`.
+
+**Files affected:** `scripts/optimize-images.js`, `src/index.css`, `src/components/admin/ApplicantModal.tsx`, `src/components/admin/ApplicantModal.module.css`, `src/components/apply/useApplyForm.ts`, `src/components/ApplyPage.module.css`, `src/components/home/HomeVideo.astro`, `src/components/layout/PageNav.astro`, `src/components/posthog.astro`
+
+## perf: YouTube facade + lazy-load Instagram embed.js on scroll (2026-04-07)
+
+### What changed
+- **YouTube:** restored facade pattern (thumbnail → iframe on click). Uses the real YouTube play button SVG instead of a text ▶ character. iframe only loads when tapped/clicked — saves ~600KB on page load.
+- **Instagram:** `embed.js` (200KB) now deferred via Intersection Observer — only injected into the DOM when the reels row scrolls within 200px of the viewport. On bounce/quick visits, it may never load at all.
+
+**Files affected:** `src/components/home/HomeVideo.astro`
+
+## fix: popup email error feedback + HomeVideo background distinction (2026-04-07)
+
+### What changed
+- `src/pages/index.astro`: popup email form catch block was silently swallowing all errors. Added `#popup-email-error` element to markup, wired it in the catch block, added `.popup-error` style.
+- `src/components/home/HomeVideo.astro`: changed background from `var(--off-white)` to `white` so the "See What You're Missing" section is visually distinct from the Creators section above it (both were `#FFF8F0`).
+
+## feat: real YouTube iframe + Instagram embeds with fallbacks (2026-04-07)
+
+### What changed
+Replaced facade/link pattern with real embeds throughout, with proper fallbacks.
+
+**YouTube:** switched from click-to-load facade back to always-visible `<iframe>`. Fallback link (thumbnail + play icon) sits behind the iframe via `z-index`; visible only if the iframe fails to load.
+
+**Instagram:** `blockquote.instagram-media` embeds with `embed.js`. The `<a>` inside each blockquote is the native Instagram fallback if the script doesn't execute.
+
+**Files affected:** `src/components/home/HomeVideo.astro`
+
+## feat: restore Instagram reel embeds + fix CSP for YouTube, Instagram, pixels (2026-04-07)
+
+### What changed
+Restored Instagram blockquote embeds (removed in previous session for perf) and fixed all CSP violations blocking video/embed content.
+
+**HomeVideo.astro:** reverted Instagram reels from link buttons back to `blockquote.instagram-media` embeds with `embed.js` script. Removed dead `.reel-link` CSS, added `.reel-embed` centering styles.
+
+**vercel.json CSP additions:**
+- `script-src`: `https://www.instagram.com` (embed.js), TikTok, Twitter pixels
+- `frame-src`: `https://www.instagram.com`, `https://www.youtube-nocookie.com`, `https://vercel.live`
+- `img-src`: `https://i.ytimg.com`, `https://www.instagram.com`, `https://*.cdninstagram.com`, `https://*.fbcdn.net`
+- `connect-src`: `https://us-assets.i.posthog.com`, TikTok, Instagram
+
+**Files affected:** `src/components/home/HomeVideo.astro`, `vercel.json`
+
+## fix(csp): allow YouTube thumbnails, YouTube player, TikTok, Twitter pixels (2026-04-07)
+
+### What changed
+Updated CSP in `vercel.json` to unblock previously broken features:
+- `img-src` + `https://i.ytimg.com` — YouTube thumbnail was being blocked
+- `frame-src` + `https://www.youtube-nocookie.com` — YouTube player iframe was blocked on click
+- `frame-src` + `https://vercel.live` — Vercel dev toolbar was blocked
+- `script-src` + `https://analytics.tiktok.com` + `https://static.ads-twitter.com` — GTM-injected pixels were blocked
+- `connect-src` + `https://us-assets.i.posthog.com` + `https://analytics.tiktok.com` — PostHog source maps and TikTok network requests blocked
+
+**Files affected:** `vercel.json`
+
+## fix: CodeRabbit PR #11 review — a11y, error handling, touch targets, data (2026-04-07)
+
+### What changed
+Two atomic commits addressing all actionable CodeRabbit review comments on PR #11.
+
+**Touch targets (48px minimum)**
+- `index.astro` popup: close/dismiss/skip buttons from 4px → full 48px hit area
+- `HomeNav.astro`: logo link gets `min-height: var(--touch-target)`
+- `PageNav.astro`: added `:focus-visible` outline to pill links
+- `HomeFooter.astro`: desktop social icons 32px → 48px
+- `cities/index.astro`: region nav jump links min-height 48px
+- `cities/[slug].astro`: modal close button and "Maybe later" skip button both 48px
+
+**Contrast / ARIA**
+- `HomeCreators.astro`: subtitle opacity 0.5 → 0.7; bio text 0.6 → 0.75 (WCAG AA)
+- `404.astro`: canvas gets `aria-hidden="true"`; footer legal links get contrast override
+
+**Error handling**
+- `HomeSignup.astro`: email step shows inline error on Firestore failure; no longer silently advances
+- `cities/[slug].astro`: waitlist modal only flips to success after Firestore write succeeds
+- `HomeShows.astro`: Request City modal resets to form state before each open
+
+**Data integrity**
+- `index.astro`: popup email step stores `DocumentReference`; phone step calls `updateDoc` (no duplicate subscriber doc); localStorage key only set after successful write
+- `events.ts`: TBA entries get `tagline: 'Coming soon'` to prevent false "On sale now" label
+
+**Styling**
+- `links.astro`: removed `white-space: nowrap` from `.primary-link`; social row wraps on mobile
+- `index.css`: `"Nunito"` → `Nunito` (stylelint compliance)
+
+**Files changed:** `src/pages/index.astro`, `src/components/home/HomeSignup.astro`, `src/components/home/HomeNav.astro`, `src/components/home/HomeCreators.astro`, `src/components/home/HomeFooter.astro`, `src/components/home/HomeShows.astro`, `src/components/layout/PageNav.astro`, `src/pages/cities/[slug].astro`, `src/pages/cities/index.astro`, `src/pages/links.astro`, `src/pages/404.astro`, `src/data/events.ts`, `src/index.css`
+
+**Dismissed (already correct):** reveal effect (js-reveal scoping), ErrorBoundary (already CSS module + SOCIAL_URLS), NotifyModal (already has error display), AdminDashboard brand-red-rgb (already 220,38,38), cities/index.ts REGION_ORDER (South Asia present)
+
+**Deferred:** custom cursor (design decision), cross-component subscriber dedup (architectural), tagline in tickets page (feature), shader performance (separate pass)
+
+---
+
+## fix: CodeRabbit PR review fixes — bugs, a11y, performance, code quality (2026-04-07)
+
+### What changed
+Four atomic commits addressing CodeRabbit review comments on PR #11.
+
+**Bug fixes**
+- `formatTime` in `HomeHero.astro`: midnight (h=0) now correctly formats as "12 AM" instead of "0 AM"
+- `HomeShows.astro`: city-request modal success state only shows after `addDoc` resolves (not on error)
+- `NotifyModal.astro`: keyboard focus moves to `#notify-success` on reveal so users aren't stranded on a hidden submit button
+- `canada.ts`: fixed `city=London+ON` → `city=London&state=ON` and `city=St.+John%27s` → `city=St.+John%27s&state=NL` so apply form pre-selection matches the `country-state-city` library
+- `useApplyForm.ts`: orphaned photo in Firebase Storage is now deleted if `addDoc` fails after upload succeeds
+
+**Accessibility**
+- Marketing consent radios wrapped in `<fieldset>`/`<legend>` — screen readers now announce the question before each Yes/No option
+- Terms & Conditions button no longer accidentally toggles the checkbox (added `e.stopPropagation()`)
+- Fixed `.consentSection[data-error]` border — `border-color` alone was invisible on a `border:none` base
+- `termsAgreeButton` and `termsDismissButton` now have `min-height: var(--touch-target)` (48px)
+- `PhotoUploadField`: replaced inline `style={{ display:'none' }}` with CSS class; preview `<img>` now has `loading="lazy"`, `width`, `height`
+- `HomeCreators`: avatar images changed to `loading="lazy"` + `decoding="async"`; subtitle and bio contrast bumped to `rgba(26,26,26,0.87)` for WCAG AA
+
+**Performance**
+- Created `src/lib/constants.ts` for `YOUTUBE_VIDEO_ID` and `INSTAGRAM_REEL_URLS`
+- YouTube video uses facade pattern (thumbnail + play button) — iframe only loads on click, saving ~600KB of blocking resources
+- Instagram blockquote embeds + `embed.js` (~200KB) replaced with styled anchor links
+- Video section background tokenized: `#fff` → `var(--off-white)`
+
+**Code quality**
+- Added `--off-white-rgb: 255, 248, 240` to `:root`; `HomeNav` scrolled background now uses token
+- `HomeHero` `.line-accent` color: `#333` → `var(--charcoal)`
+- `scripts/organize-images.js`: `console.log` → `console.debug` in verbose helper
+- `package.json`: `engines.node` tightened to `>=20.11.0` (required for `import.meta.dirname`)
+- `ErrorBoundary`: added `componentDidCatch` for production error logging
+- `posthog.astro`: `window._phLoaded` → namespaced `window.__garamAnalytics.posthog`
+- `AdminDashboard.test.tsx`: extracted `makeTimestamp()` helper, replaced 130-char inline mock
+- `ApplicantModal`: inline `style={{ background, color }}` replaced with CSS custom property `--status-color` + `color-mix()`
+
+### Files affected
+`src/components/home/HomeHero.astro`, `src/components/home/HomeShows.astro`, `src/components/NotifyModal.astro`, `src/data/cities/canada.ts`, `src/components/apply/useApplyForm.ts`, `src/components/ApplyPage.tsx`, `src/components/ApplyPage.module.css`, `src/components/apply/PhotoUploadField.tsx`, `src/components/home/HomeCreators.astro`, `src/lib/constants.ts` (new), `src/components/home/HomeVideo.astro`, `src/index.css`, `src/components/home/HomeNav.astro`, `scripts/organize-images.js`, `package.json`, `src/components/ErrorBoundary.tsx`, `src/components/posthog.astro`, `src/components/admin/AdminDashboard.test.tsx`, `src/components/admin/ApplicantModal.tsx`, `src/components/admin/ApplicantModal.module.css`
+
+---
+
+## chore: remove unused shader export dir and gitignore it (2026-04-07)
+
+### What changed
+- Removed `surbhi-shader-export 4/` from git tracking — standalone dev artifact not referenced by any page, was deploying as dead weight to Vercel.
+- Added `surbhi-shader-export*/` to `.gitignore` to prevent re-tracking.
+
+### Files affected
+`.gitignore`
+
+---
+
+## fix(qa): resolve all critical and warning issues from QA pass (2026-04-07)
+
+### What changed
+- **F1 — `@astrojs/check` installed**: Added `@astrojs/check` to `devDependencies`. `npm run check` was hanging on an interactive install prompt, breaking any CI pipeline.
+- **F2 — `AdminDashboard.tsx` useRef type**: Changed `useRef<ReturnType<typeof setTimeout>>()` to `useRef<ReturnType<typeof setTimeout> | undefined>(undefined)` to satisfy React 19 strict types.
+- **W1 — Nav touch targets**: Added `min-height: var(--touch-target)` to `.nav-pill` (HomeNav.astro) and `.page-nav-pill` (PageNav.astro). Both were ~32px on mobile, below the 48px WCAG 2.5.5 requirement.
+- **W2 — Lazy-load country-state-city**: `useGeoData` now accepts `shouldLoad: boolean` (default `true`). `useApplyForm` defers loading until the user opens the country dropdown (`onMenuOpen`). The 8.3MB data chunk no longer loads on page mount.
+- **W3 — surbhi.png converted to WebP**: 595KB PNG → 25KB WebP (96% reduction). Updated references in HomeCreators.astro, AuthorBio.astro, and hosts.astro.
+- **W4 — Instagram embed fallback**: Added `<a href={url}>Watch on Instagram</a>` inside each `<blockquote>` embed so blocked/failed embeds show a working link instead of empty boxes.
+- **W5 — Replace hardcoded hex values**: `.experience-left .lead color: #555` → `var(--text-secondary)` (exact match). `.exp-step p color: #777` → `var(--text-tertiary)` (exact match). `.next-show-venue color: #888` → `var(--muted)` (contrast bug fix: #888 was the failing-contrast old value).
+- **W6 — Delete dead code**: Removed commented-out coverage configuration from `vitest.config.ts`.
+- **Bonus — TypeScript check now 0 errors**: Added `src/env.d.ts` with `@testing-library/jest-dom/vitest` reference. Fixed `TermsModal.tsx` `querySelectorAll<HTMLButtonElement>`. Fixed `useGeoData.test.ts` spread argument pattern. Fixed `AdminDashboard.test.tsx` Timestamp mock.
+
+### Files affected
+`package.json`, `package-lock.json`, `src/env.d.ts`, `test/setup.ts`, `vitest.config.ts`, `src/components/admin/AdminDashboard.tsx`, `src/components/admin/AdminDashboard.test.tsx`, `src/components/apply/TermsModal.tsx`, `src/components/apply/useApplyForm.ts`, `src/components/ApplyPage.tsx`, `src/hooks/useGeoData.ts`, `src/hooks/useGeoData.test.ts`, `src/components/home/HomeNav.astro`, `src/components/layout/PageNav.astro`, `src/components/home/HomeCreators.astro`, `src/components/AuthorBio.astro`, `src/pages/hosts.astro`, `src/components/home/HomeVideo.astro`, `src/components/home/HomeExperience.astro`, `src/components/home/HomeHero.astro`, `public/images/surbhi.webp`
+
+### Decisions
+The TypeScript errors from `npx tsc --noEmit` were mostly test-infrastructure issues (CSS module types, jest-dom matchers not typed for Vitest) rather than production bugs. The real failures were the missing `@astrojs/check` dependency and the AdminDashboard `useRef` strict-type error. The lazy-load approach for `country-state-city` defers the 8.3MB data chunk until the user actually opens the country dropdown — zero behavior change on the happy path, significant improvement for users who never touch the location fields. The `#888` hex fix in HomeHero is a color change (not just rename) because `#888 on #FFF8F0` was a known failing contrast ratio.
+
+---
+
+## design: taste-review fixes — mobile ticket labels, spacing scale, backdrop, tokens (2026-04-07)
+
+### What changed
+- **HomeShows**: Ticket/notify labels now visible on mobile (were `display:none` — a conversion issue). Grid updated to 3-column at all viewports. `shows-proof` opacity 0.4→0.6 and font-size 14→15px. Padding normalized to 56px/80px.
+- **HomeTestimonials**: Replaced inline `style` prop for `--quote-color` with `nth-child` CSS selectors (CLAUDE.md compliance). Card backdrop increased from 0.25→0.45 opacity with `backdrop-filter: blur(4px)` for legibility on light image areas.
+- **HomeStats**: Removed `-webkit-text-stroke` from h2 and stat numbers (text-shadow already handles legibility; stroke caused jagged edges at large sizes). Desktop padding normalized to 120px.
+- **HomePress**: Replaced hardcoded `#FFF0E2` with new `--cream-warm` design token. Padding normalized to 40px/56px.
+- **HomeHero**: Replaced generic `bounce` keyframe with asymmetric `scrollHint` — a double-dip spring pattern that reads as intentional rather than template.
+- **index.css**: Added `--cream-warm: #FFF0E2` to `:root`.
+
+### Files affected
+`src/index.css`, `src/components/home/HomeHero.astro`, `src/components/home/HomePress.astro`, `src/components/home/HomeShows.astro`, `src/components/home/HomeStats.astro`, `src/components/home/HomeTestimonials.astro`
+
+### Decisions
+Mobile ticket label was a silent conversion failure — users had no visual feedback distinguishing tap-to-buy from tap-to-notify. The `display:none` was likely left from an early mobile layout iteration. The inline style for `--quote-color` worked technically but violated project standards and made the Astro template harder to reason about. Spacing normalization targets 8px grid multiples (40, 56, 80, 120) to create visual rhythm across sections.
+
+---
+
+## fix: Instagram reels, YouTube embed, FAQ toggle size, hero spacing, section color separation (2026-04-07)
+
+### What changed
+- **HomeVideo — Instagram**: Replaced broken `embed/` iframes (Instagram blocked them, showed "photo or video may be broken") with 3 styled "Watch on Instagram" link cards using the Instagram gradient. No external JS, always works, links open the actual reels.
+- **HomeVideo — YouTube**: Replaced click-to-load facade (unreliable on mobile, perceived as non-embedded) with a direct `<iframe>` embed. YouTube player renders immediately, user presses play.
+- **HomeVideo — background**: Changed from `var(--off-white)` to `#fff` to create visual separation from the HomeCreators section above it (both were identical cream).
+- **HomeFAQ — toggle circle**: Increased from 48px to 60px, font-size 18px → 24px. Circle was too small and the +/× looked cramped.
+- **HomeHero — spacing**: Reduced hero top padding (80px → 64px mobile, 100px → 80px desktop), hero-content top padding (40px → 8px mobile, 60px → 32px desktop), and tightened margins between eyebrow/h1/sub/next-show. Reduces gap between the fixed nav and the pill badge, and brings the CTA buttons above the fold on mobile.
+
+### Files changed
+- `src/components/home/HomeVideo.astro`
+- `src/components/home/HomeFAQ.astro`
+- `src/components/home/HomeHero.astro`
+
+## Code review fixes — a11y, data integrity, SEO (2026-04-07)
+
+Post-audit code review pass. All findings were verified against current code before fixing.
+
+### What changed
+- **Data integrity**: Added `"South Asia"` to `REGION_ORDER` in `cities/index.ts` — cities with `region: "South Asia"` were silently dropped by `citiesByRegion()`. Removed `"lyon"` from Lausanne's `nearbyCities` (no Lyon entry exists).
+- **Touch targets**: Standardized from 44px → 48px across `links.astro` (social icons, modal close), `ApplicantModal.module.css` (close button), `ApplyPage.module.css` (back button, type buttons, terms close). CLAUDE.md requires 48px; previous audit used WCAG 2.5.8 minimum of 44px.
+- **BUGS.md corrections**: Fixed two contrast ratio errors (`#888` = 3.38:1 not 2.98:1; `#666` = 5.45:1 not 4.14:1 — the `#666` bug was a false positive, already passing AA). Updated touch target references to 48px.
+- **NotifyModal**: Submit success now only shown in `try` block; `catch` shows an error message. Submit button disabled during async call. Added `role="dialog" aria-modal="true" aria-labelledby` to `<dialog>`. Added `id` to h2. Focus moves to close button on open; restored to opener on close via dialog `close` event. Success div gets `role="status" aria-live="polite"`. Error paragraph uses `aria-live="assertive"`. Close button touch target: 4px → min 48×48px.
+- **ApplyPage — label/input association**: Country/State/City React Select fields now pass `inputId` matching `htmlFor` on the wrapping `FieldGroup`, so screen readers correctly associate labels with the Select's inner input. Removed now-redundant `aria-label` attributes.
+- **ApplyPage — terms modal focus management**: Escape closes the modal. Tab/Shift+Tab cycles through the 3 action buttons. Focus moves to close button on open; restored to the Terms link on close.
+- **seo-article-strategy.md**: Replaced doorway-page H1 template with guidance requiring unique city-specific H1s.
+
+### Files affected
+`src/data/cities/index.ts`, `src/data/cities/europe.ts`, `src/pages/links.astro`, `src/components/admin/ApplicantModal.module.css`, `src/components/ApplyPage.module.css`, `BUGS.md`, `src/components/NotifyModal.astro`, `src/components/ApplyPage.tsx`, `seo-article-strategy.md`
+
+---
+
+## Visual overhaul — CTAs, cursor, pages, photos, cleanup (2026-04-07)
+
+Batch of visual fixes, page improvements, and code cleanup based on direct user feedback.
+
+### What changed
+- **Cursor**: turns white on dark/red sections (was invisible on HomeShows/HomeSignup)
+- **Hero**: added "Next show" pill with date/city above CTA buttons
+- **Experience/FAQ CTAs**: now side by side (flex-row) instead of stacked, Apply text bigger
+- **HomeShows**: removed nested div for cleaner alignment, tightened proof line
+- **HomeFAQ**: added border-top on first item as visual divider
+- **Tickets page**: bumped h1 (32→36px), intro (17→19px), proof (12→14px) font sizes
+- **FAQ page**: replaced 2-image hero with higgs-field.webp bg at 6% opacity, tightened padding, bigger question/answer fonts
+- **Apply page**: bigger title (clamp 36-48px), removed white card panel (open layout on off-white), red labels, rounder inputs, bigger submit button
+- **Hosts page**: moved action shot below bios (important content above fold)
+- **Cities pages**: added object-position center 35% to bias toward faces, reduced max-height
+- **Journal**: tightened padding across index and article pages, reduced AuthorBio whitespace
+- **Images**: deleted hero.jpeg/hero-mobile.jpeg dupes (1.6MB saved), renamed /hf/ → /ai-art/, fixed HomePhotos gallery paths (removed nonexistent /gallery/ prefix), dropped missing dance-off entry
+- **Class names**: .ph → .photo, .ph-span → .photo--wide, .mo → .month, .dy → .day
+
+---
+
+## redesign(contestant-prep): simplify layout and unify visual language (2026-04-07)
+
+Complete visual overhaul of the `/contestant-prep` page — the private briefing guide sent to show contestants. The page had two core problems: a `max-width: 560px` container leaving excessive dead space at wider viewports, and six competing visual treatments (yellow text-stroked numbers, italic red numbers, red bullet dots, full card backgrounds, red-tinted callout cards, 40px yellow divider bars) all at the same visual weight making the content hard to scan quickly.
+
+### What changed
+- **Layout**: `max-width` 560→720px, desktop horizontal padding 48→64px. On a 1400px screen content fills ~720px instead of ~560px.
+- **Section spacing**: Removed all `<Divider />` components (yellow 40px horizontal bars). Replaced with `margin-top: 48px` via a `.section` wrapper class — cleaner vertical rhythm.
+- **Golden Rules**: Removed yellow text-stroke from numbers (replaced with plain bold red). Added yellow left-border accent to each rule card. Section header is now the primary/dominant heading (`clamp(22px, 5vw, 28px)` weight-900) to establish hierarchy.
+- **Questions**: Body font bumped 15→16px, color lightened to `--charcoal` (was `--text-light`), row gap 10→14px for breathing room.
+- **Come Prepared**: Replaced white card + red bullet dot pattern with simple ✓ checklist rows — less visual noise, same information.
+- **Day Of**: Merged "What to Wear" and "Bring Friends" (two identical-looking single-paragraph sections) into one "Day Of" section with a dash-list. Eliminates a redundant section header.
+- **Arrival times**: Added `border-top: 4px solid var(--electric-yellow)` accent to time cards.
+- **Notes (Guys/Girls)**: Replaced red-tinted background callout cards with left-border note style (`border-left: 4px solid var(--brand-red)`, no background). Both notes share one `.section` wrapper.
+- **Unused imports**: Removed `Clock`, `Users`, `Shirt` from Lucide import.
+
+### Files changed
+- `src/components/ContestantPrepPage.tsx`
+- `src/components/ContestantPrepPage.module.css`
+
+### Decisions
+Chose wider column over tabs — contestants read this linearly before going on stage, not as reference during. Tabs would add interaction complexity for no real benefit. Unified visual language (one accent color per element type, one size treatment per hierarchy level) rather than adding more variety.
+
+## Accessibility and security bug fixes (2026-04-07)
+
+Resolved 9 open bugs from BUGS.md — all were accessibility or security issues that didn't require external services.
+
+### What changed
+- **`cors.json`**: Restricted Firebase Storage CORS from wildcard origin to `garammasaladating.com` only. Removed DELETE, POST, HEAD methods (was allowing all methods on all origins).
+- **`src/index.css`**: Fixed WCAG AA color contrast failures. `--muted` updated from `#888` (2.98:1) to `#6b6b6b` (5.06:1). `--text-light` updated from `#666` (4.14:1) to `#595959` (6.65:1). Added global `:focus-visible` ring for keyboard navigation.
+- **`src/components/ApplyPage.module.css`**, **`AdminLogin.module.css`**, **`ApplicantModal.module.css`**: Removed `outline: none` from 4 CSS rules that were suppressing keyboard focus indicators with no replacement.
+- **`src/pages/links.astro`**: Social icons enlarged from 40×40px to 44×44px (WCAG 2.5.8). Modal close button padding increased to meet 44×44px minimum.
+- **`src/components/admin/ApplicantModal.module.css`**: Close button `min-width/height: 44px` added. Converted overlay+modal div structure to native `<dialog>::backdrop` pattern.
+- **`src/components/admin/ApplicantModal.tsx`**: Replaced custom `<div>` overlay with native `<dialog>` element using `.showModal()`. Provides built-in focus trap, `aria-modal` semantics, and scroll lock. Escape key now uses `cancel` event instead of window keydown listener.
+- **`src/components/layout/PageNav.astro`**, **`src/components/home/HomeNav.astro`**: Added `aria-current="page"` on active nav links using `Astro.url.pathname`.
+- **`src/components/home/HomeShows.astro`**: Replaced `<div role="button" tabindex="0">` with semantic `<button type="button">`. Added `width: 100%; font: inherit; text-align: left` to CSS reset.
+- **`src/components/admin/AdminLogin.tsx`**, **`AdminLogin.module.css`**: Added visible `<label>` elements for Email and Password inputs. Removed redundant `aria-label` attributes now that visible labels exist.
+
+### Not fixed (requires external services)
+- Rate limiting on API endpoints (needs Upstash or Vercel Edge)
+- CAPTCHA on apply form (needs Firebase App Check)
+- Server-side file-type validation (needs Firebase Cloud Function)
+- Admin pagination (low priority at current volume)
+
+## Enhancements batch — CTAs, perf, SEO, conversion, security (2026-04-07)
+
+Implemented 9 items from ENHANCEMENTS.md. Removed completed items from backlog.
+
+### What changed
+- **`src/layouts/BaseLayout.astro`**: Removed click-empty-space-to-go-home behavior (conversion risk). Removed unused hero.avif/hero-mobile.avif preloads (hero uses WebGL shader, not images). Cleaned up unused `isHome` variable.
+- **`src/components/home/HomeExperience.astro`**: Changed h2 from "NYC's #1 Live South Asian Dating Show" to "How the Night Works" to reduce tagline repetition. Added Get Tickets + Apply CTA below description.
+- **`src/components/home/HomeFAQ.astro`**: Converted from custom JS accordion to native `<details>/<summary>`. Fully indexable by Google when collapsed. Added Get Tickets + Apply CTA below FAQ list.
+- **`src/components/home/HomeCreators.astro`**: Shortened bios to 2-sentence teasers. Changed name links from external social URLs to internal `/hosts` page. Added "Meet the Hosts" CTA. Removed unused CREATOR_URLS import.
+- **`src/components/home/HomeShows.astro`**: Added social proof line ("40+ shows sold out · 2,000+ audience members · 13 couples matched").
+- **`src/pages/tickets.astro`**: Added social proof line near ticket cards.
+- **`src/components/gtm.astro`**: Deferred GTM loading via `requestIdleCallback` (3s timeout fallback).
+- **`src/components/posthog.astro`**: Deferred PostHog loading via `requestIdleCallback`.
+- **`src/components/meta-pixel.astro`**: Deferred Meta Pixel loading via `requestIdleCallback`.
+- **`vercel.json`**: Tightened CSP from wildcard `*` to explicit allow-list for GTM, GA, Meta, PostHog, Firebase, Vercel, Eventbrite.
+- **`src/components/ApplyPage.tsx`**: Fixed flaky test — replaced `setTimeout` with `requestAnimationFrame` for scroll-to-error.
+- **`ENHANCEMENTS.md`**: Removed 13 completed items. Backlog now has items needing content assets or external action.
+
+---
+
+## Site audit remediation — SEO, FAQ, sold-out display, broken images (2026-04-07)
+
+Reviewed the site audit against current codebase (~70 commits after the audit). Fixed remaining issues, deferred visual/home-page changes to ENHANCEMENTS.md.
+
+### What changed
+- **`src/pages/faq.astro`**: Fixed broken hero image (`gmd-37.webp` deleted, replaced with `on-stage.webp`). Changed footer email from `hello@` to `contact@` (matches Organization JSON-LD). Made FAQ answers linkable with `set:html` — added HTML links for /tickets, /apply, and press email. Added `stripHtml()` to keep JSON-LD text clean. Added `.faq-answer-text a` link styling.
+- **`src/pages/index.astro`**: Removed `<meta name="keywords">` (ignored by Google since 2009). Removed duplicate FAQPage JSON-LD (the /faq page owns the canonical schema). Visual HomeFAQ component unaffected — it uses `copy.ts` data.
+- **`astro.config.mjs`**: Added sitemap filter excluding `/admin` and `/contestant-prep` routes.
+- **`src/layouts/BaseLayout.astro`**: Added `og:image:alt` meta tag for social sharing accessibility.
+- **`src/pages/tickets.astro`**: Events with "Sold out" tagline now show muted "Sold Out" pill instead of active "Get Tickets" CTA. Link preserved for waitlist access.
+- **`src/components/home/HomeShows.astro`**: Same sold-out display logic (defensive — past sold-out events are already filtered by `isEventPast()`).
+- **`src/pages/journal/index.astro`**: Replaced hardcoded "First essays drop April 7" with evergreen fallback text and Instagram link.
+- **`BUGS.md`**: Added fixed entry for broken FAQ image.
+- **`ENHANCEMENTS.md`**: Added 7 deferred items: click-to-home removal, bio shortening, h2 variation, social proof near CTAs, hero preload cleanup, FAQ content unification.
+
+### Deferred (added to ENHANCEMENTS.md)
+- Remove "click empty space to go home" behavior (conversion risk)
+- Shorten HomeCreators bios + add /hosts link
+- Vary HomeExperience h2 to reduce tagline repetition
+- Add social proof stats near ticket CTAs
+- Clean up hero image preloads if unused
+- Unify FAQ content between home and /faq
+
+---
+
+## Code review fixes — bugs, accessibility, mobile-first, and docs (2026-04-07)
+
+Verified each finding against current code before applying. Skipped color token replacements where no exact token match exists (to avoid visual regressions) and the galleryImages path consolidation (requires moving image files on disk).
+
+### What changed
+- **`package.json`**: Lowered `engines.node` from `>=22` to `>=20` to match the `node-version: 20` used in `ci.yml` and `article-refresh.yml`. Eliminates engine check failures when running locally with Node 20.
+- **`scripts/optimize-images.js`**: Fixed OG image filename mismatch — script was writing `og-image-new.jpg` but `BaseLayout.astro` defaults to `og-image.jpg`. Also gated all `console.log`/`console.error` calls behind a `VERBOSE=1` env flag; fatal catch remains ungated.
+- **`src/components/ApplyPage.module.css`**: Added `min-height: 48px` to `.retryButton` (computed height was ~46px, below the 48px touch target minimum). Converted `.gridTwo`/`.gridThree` from desktop-first (`max-width: 600px`) to mobile-first (`min-width: 601px`). Replaced two `rgba(0,0,0,0.1)` border values with `var(--border)` and one hardcoded `rgba(220,38,38,0.3)` with `rgba(var(--brand-red-rgb),0.3)`.
+- **`src/components/home/HomeCreators.astro`**: Removed unused `.host-avatar` CSS rule — template only uses `.host-avatar-img`, the emoji-avatar rule was dead code.
+- **`CLAUDE.md`**: Added `plaintext` language specifier to the `src/` directory structure code fence. Rewrote the font-size "Never do" bullet to clearly express prohibition ("Do not use...").
+- **`CHANGELOG.md`**: Added blank line between `### Photo mapping` heading and the table below it for correct markdown rendering.
+
+### Skipped (with rationale)
+- `background: white` on `.panel` → `--off-white` is `#FFF8F0`, not `#fff`; replacement would change appearance
+- `rgba(0,0,0,0.08)` box-shadow → no shadow token in `:root`
+- HomeCreators hardcoded colors → no exact token matches; `--charcoal-rgb` doesn't exist
+- `galleryImages` path inconsistency → requires moving actual image files
+
+---
+
+## CodeRabbit review fixes — bugs and code quality (2026-04-07)
+
+Applied the valid subset of CodeRabbit suggestions after verifying each against current code. Skipped suggestions that don't apply (no stylelint in project, shader files are a different project, intentional design decisions).
+
+### What changed
+- **`.github/workflows/article-refresh.yml`**: Added `permissions: contents: write` so the monthly article refresh workflow can push commits. Without it the git push step fails with 403 when GITHUB_TOKEN defaults to read-only.
+- **`src/data/journal/bollywood.ts`**: Fixed factual error — Deepika Padukone plays Veronica in Cocktail (2012), not Meera. Diana Penty plays Meera. First paragraph had the characters swapped.
+- **`src/components/home/HomeMarquee.astro`**: Fixed invisible dot separators — `.dot` was `color: var(--brand-red)` on a red background. Changed to `white`.
+- **`src/data/events.ts`**: Changed `url: '#'` to `url: ''` for TBA cities — `'#'` was a sentinel hack.
+- **`src/components/home/HomeShows.astro`**: Simplified `isLive` check from `url && url !== '#'` to `Boolean(url)` now that the sentinel is gone.
+- **`src/components/ContestantPrepPage.module.css`**: Renamed keyframes from camelCase (`prepSpin`, `fadeIn`) to kebab-case (`prep-spin`, `fade-in`) per CSS convention. Updated all `animation` references.
+- **`src/data/cities/types.ts`**: Added `"South Asia"` to `CityRegion` union.
+- **`src/data/cities/southeast-asia.ts`**: Updated Colombo and Kandy `region` from `"Southeast Asia"` to `"South Asia"` (Sri Lanka is South Asia). Removed undefined city slugs `singapore` and `kuala-lumpur` from all nearbyCities arrays in the file.
+- **`src/data/cities/east-asia.ts`**: Removed undefined `singapore` from Seoul and Hong Kong nearbyCities.
+- **`src/data/cities/europe.ts`**: Removed undefined slugs `lyon` (Geneva), `strasbourg` (Basel), `venice` (Ljubljana), `belgrade` (Zagreb) from nearbyCities.
+- **`src/data/cities/uk.ts`**: Removed undefined `dundee` from Aberdeen nearbyCities.
+- **`src/components/ErrorBoundary.tsx`**: Extracted all inline `style={}` props into `ErrorBoundary.module.css` using CSS vars. Replaced hardcoded Instagram URL with `SOCIAL_URLS.instagram`.
+- **`src/components/ApplyPage.tsx`**: Replaced two hardcoded Instagram URLs with `SOCIAL_URLS.instagram` from `@/data/socials`.
+
+### Decisions
+- Did not add stylelint config — project has no stylelint dependency.
+- Did not fix popup localStorage order — intentional design to suppress re-show even on Firestore failure.
+- Did not change bollywood.ts "10 movies" title — content decision for the author.
+
+## Rework photo integration based on feedback (2026-04-07)
+
+Reverted experience step photos (too small, not impactful). Fixed testimonials to show the crowd photo clearly (0% background overlay, glass on cards). Swapped hosts page to sitting-down photo. Changed photo breaks from single full-bleed to two photos side by side. Added Event 2 photos throughout.
+
+### What changed
+- **`HomeExperience.astro`**: Reverted to original yellow numbers, no photos.
+- **`HomeTestimonials.astro`**: Removed dark background overlay — crowd photo now fully visible. Glass-morphism moved to individual quote cards (dark translucent + backdrop blur). Changed accent color on heading em to yellow for contrast on photo.
+- **`hosts.astro`**: Swapped action shot from standing (#1) to sitting-down posed photo (#117).
+- **`HomePhotoBreak.astro`**: Now takes `left` and `right` photo props instead of single `src`. Two photos side by side with 4px gap (mobile) / 6px gap (desktop). 3:2 mobile, 16:9 desktop.
+- **`index.astro`**: Updated photo break props with Event 2 photos (on-stage, journal-featured, the-match, dance-off, tickets-hero, pure-chaos).
+- **`src/data/copy.ts`**: Removed image/alt/pos fields from EXPERIENCE_STEPS.
+
+---
+
+## Fix CodeRabbit code review comments (2026-04-07)
+
+Resolved actionable CodeRabbit review comments on PR #11.
+
+### What changed
+- **`src/components/home/HomeCreators.astro`**: Added `image` field to each host data object; render uses `host.image` instead of `host.name === 'Surbhi'` ternary. Added `:focus-visible` outline on host name links for keyboard accessibility.
+- **`src/components/home/HomeHero.astro`**: Added `aria-hidden="true"` to the decorative WebGL canvas. Added `:focus-visible` styles for `.btn-hot` and `.btn-outline` so keyboard users get a visible focus ring.
+- **`src/pages/index.astro`**: Guarded `[data-reveal]` IntersectionObserver behind `'IntersectionObserver' in window` check and `prefers-reduced-motion` media query — content is immediately revealed when JS is unavailable or reduced motion is preferred. Added `<noscript>` CSS fallback and `@media (prefers-reduced-motion)` rule to ensure content is never hidden.
+- **`src/pages/south-asian-dating-tips/[slug].astro`**: Replaced inline `style={i === 0 ? "margin-top: 0" : "margin-top: 12px"}` with a `.tip-post-h3--spaced` CSS class toggled via `class:list`.
+- **`src/components/admin/ApplicantModal.module.css`**: Bumped `statusSelect` and `notesTextarea` from `font-size: 14px` to `16px` to prevent iOS auto-zoom on form inputs.
+
+### Decisions
+- `HomePress.astro` press items are already `<a>` tags — that review comment was stale, no change needed.
+- `tickets.astro` `opacity: 0.5` on TBA card was already removed in a prior commit — no change needed.
+
+---
+
+## Organic event photography across site (2026-04-07)
+
+Removed the dedicated photo gallery section. Integrated event photos organically into existing sections where they naturally belong.
+
+### What changed
+- **Killed `HomePhotos` gallery** from homepage — photos belong in context, not a portfolio grid.
+- **`HomeExperience.astro`**: Each of the 4 steps now shows a rounded photo thumbnail (72px mobile, 88px desktop) with the step number overlaid. Photos match the step content.
+- **`HomeTestimonials.astro`**: Dark cinematic treatment — crowd photo behind at ~85% dark overlay. Quote cards are now glass-morphism (translucent with backdrop blur). White text on dark.
+- **`HomePhotoBreak.astro`** (new): Full-bleed photo separator component. 3 placed between homepage sections (280px mobile, 420px desktop).
+- **`hosts.astro`**: Wide action shot of hosts on stage between intro and bios. Rounded corners, 3:2 aspect ratio.
+- **`src/data/copy.ts`**: Added `image`, `alt`, `pos` fields to `EXPERIENCE_STEPS`.
+
+### Photo mapping
+
+| Placement | Photo |
+|-----------|-------|
+| Experience Step 1 | after-party (crowd) |
+| Experience Step 2 | on-stage (blindfolded round) |
+| Experience Step 3 | testimonial-reaction (audience gasp) |
+| Experience Step 4 | pure-chaos (lifting moment) |
+| Testimonials BG | the-crowd (audience laughing) |
+| Photo break 1 | the-match (couple reveal) |
+| Photo break 2 | dance-off (final lineup) |
+| Photo break 3 | magic-moment (intimate) |
+| Hosts page | links-hero (both hosts on stage) |
+
+---
+
+## Add optimized event photos and image pipeline (2026-04-07)
+
+17 source photos from two Top Secret Comedy Club events optimized via sharp. DSLR files (12-27MB) compressed to 40-80KB AVIF. Created reusable optimization script.
+
+---
+
+## Code Review Fixes — PR #11 (2026-04-07)
+
+Resolved 5 of 6 issues flagged in automated code review of the ui-v3-seo-rewrite PR. The `console.log` in `scripts/refresh-articles.js` was intentionally kept as it provides useful progress output for GitHub Actions runs.
+
+### What changed
+- **`firestore.rules`**: Added `city` to `validSubscriber()` `hasOnly` allowlist + optional city field validation. City-page subscriber writes were being silently rejected because `cities/[slug].astro` writes a `city` field that was not in the validator's allowlist (critical functional bug).
+- **`src/index.css`**: Corrected `--brand-red-rgb` from `233, 30, 118` (old pink `#E91E76`) to `220, 38, 38` (correct for `--brand-red: #DC2626`). Affected 62+ `rgba()` usages rendering magenta instead of red.
+- **`src/index.css`**: Removed `--font-jetbrains: "Nunito"` backward-compat alias; replaced all 19 usages with `var(--font-body)`. Added `--text-secondary: #555` and `--text-tertiary: #777` design tokens.
+- **13 files**: Replaced scattered hardcoded hex grays (`#555`, `#666`, `#777`, `#888`, `#999`, `#b91c1c`, `#FFC400`) with CSS custom properties in all new/modified components and pages.
+- **`src/components/NotifyModal.astro`** (new): Extracted the notify modal HTML, script, and CSS that was duplicated in `HomeShows.astro` and `tickets.astro` into a shared component. Accepts optional `source` prop.
+
+### Files affected
+`firestore.rules`, `src/index.css`, `src/components/NotifyModal.astro` (new), `src/components/home/HomeShows.astro`, `src/pages/tickets.astro`, `src/components/home/HomeExperience.astro`, `src/components/home/HomeFAQ.astro`, `src/components/home/HomePress.astro`, `src/components/ContestantPrepPage.module.css`, `src/components/ApplyPage.module.css`, `src/components/AuthorBio.astro`, `src/pages/cities/[slug].astro`, `src/pages/cities/index.astro`, `src/pages/faq.astro`, `src/pages/privacy.astro`, `src/pages/terms.astro`
+
+---
+
+## 120 SEO Articles + Staggered Publishing System (2026-04-06)
+
+Major content expansion: 120 journal articles across 14 categories, publishing every 2 days from April 7 through December 2026 via automated daily rebuild.
+
+### What changed
+- **Refactored `src/data/journal.ts`** into `src/data/journal/` directory (16 files) mirroring the cities/ pattern
+- **Re-dated 10 existing articles** from fake backdates to honest future dates (Apr 7-25)
+- **Wrote 110 new SEO articles** targeting keywords with 500K+ monthly addressable search volume
+- **Added `relatedSlugs` field** to JournalPost for cross-linking ("You might also like" section)
+- **Added prev/next navigation** to article pages
+- **Enabled inline HTML** in article body text for natural cross-links between articles
+- **Removed Kampala** city page (not in Africa keep list)
+- **Added daily rebuild cron** (.github/workflows/daily-rebuild.yml) for scheduled article publishing
+- **Added monthly refresh cron** (.github/workflows/article-refresh.yml + scripts/refresh-articles.js) for dateModified freshness signals
+
+### Article categories (110 new)
+1. App Fatigue & Alternatives (8) — Dil Mil, Hinge, Muzz, Bumble reviews
+2. Dating Culture & Advice (15) — telling parents, red flags, rishta culture, ABCD/FOB
+3. Identity & Demographics (8) — third culture kids, NRI, LGBTQ, tech bros, divorce
+4. Comedy & Entertainment (5) — NYC comedy guide, Indian Love Is Blind
+5. Events & IRL Dating (5) — speed dating, meeting singles, date ideas
+6. Seasonal (5) — shaadi season, cuffing season, Diwali, Holi, Valentine's
+7. Matrimony Platforms (8) — Shaadi.com, BharatMatrimony, Jeevansathi, Betterhalf
+8. Community Singles (4) — Sikh, Gujarati, Punjabi, Jain events
+9. Bollywood & Dating (10) — gaslighting movies, breakup films, toxic heroes
+10. Cross-Cultural Intros (10) — introducing partners to Indian/Punjabi/Gujarati/Tamil/Bengali parents
+11. Toxic Dating Patterns (8) — gaslighting, breadcrumbing, love bombing, ghosting
+12. Caste, Class & Financial (8) — dating across castes, money dynamics, career pressure
+13. Arranged Marriage Deep Dives (8) — timelines, red flags, biodata, NRI complications
+14. Community Deep Dives (8) — South Indian, Bengali, Pakistani, Muslim, Hindu, Bangladeshi
+
+### Key decisions
+- Every 2 days publishing schedule (not backdated) with daily Vercel deploy hook
+- Articles only appear when their datePublished date arrives (SSG date filter)
+- Monthly cron refreshes dateModified on articles older than 60 days for Google freshness
+- Each article has 12-20 body blocks, 3-5 FAQs for JSON-LD, 2-3 inline cross-links, 2-3 relatedSlugs
+
+---
+
+## Add 8 SEO journal articles: Community Deep Dives
+
+Wrote full content for all 8 articles in `src/data/journal/community-deep-dives.ts`, replacing the empty array placeholder. Articles cover the "Community Deep Dives" category — South Indian, Marathi, Bengali, Pakistani, South Asian Muslim, Hindu, Bangladeshi, and vegetarian desi dating — with Surbhi's direct and culturally specific voice.
+
+### Articles added (slugs)
+1. `south-indian-dating-culture` — Nov 17 — Tamil/Telugu/Kannada/Malayalam perspectives, sambandhi culture, thali traditions
+2. `marathi-dating-practical-expectations` — Nov 19 — Maharashtrian pragmatism, Maharashtra Mandal, family dynamics
+3. `bengali-dating-culture` — Nov 21 — Adda culture, food as love language, progressive norms, West Bengali vs Bangladeshi split
+4. `pakistani-dating-america` — Nov 23 — Dual-world navigation, religion nuance, community judgment, hybrid app/rishta approach
+5. `muslim-dating-south-asian` — Nov 25 — Halal dating, Muzz/Salams landscape, wali question, interfaith stakes
+6. `hindu-dating-expectations` — Nov 27 — Caste dynamics, vegetarianism as religious practice, festival infrastructure, kundali matching
+7. `bangladeshi-dating-diaspora` — Nov 29 — Tight-knit community dynamics, Bangladeshi identity distinct from Bengali/Pakistani, Liberation War context
+8. `vegetarian-dating-desi` — Dec 1 — Jain vs Hindu vegetarianism, the 'will they eat my mom's food' test, non-vegetarian partner compatibility
+
+### Structure per article
+- 12–18 PostBlock items (h2/h3/p mix, always opens with p)
+- 3–5 FAQs for JSON-LD schema
+- metaDescription under 160 chars with primary keyword
+- 2–3 natural inline cross-links to related articles
+- CTA paragraph pointing to tickets page in final section
+- 2–3 relatedSlugs
+
+### Files affected
+- `src/data/journal/community-deep-dives.ts` — full content written from empty array
+
+---
+
+## Add 8 SEO journal articles: Toxic Dating Patterns in Desi Culture
+
+Wrote full content for all 8 articles in `src/data/journal/toxic-patterns.ts`, replacing the empty array placeholder. Articles cover the full "Toxic Dating Patterns in Desi Culture" category with Surbhi's voice, culturally specific analysis, and SEO-optimized structure.
+
+### Articles added (slugs)
+1. `gaslighting-desi-relationships` — Sep 30
+2. `breadcrumbing-desi-dating` — Oct 2
+3. `love-bombing-desi-culture` — Oct 4
+4. `desi-situationship-trap` — Oct 6
+5. `emotional-unavailability-desi-men` — Oct 8
+6. `ghosting-desi-dating` — Oct 10
+7. `weaponized-compatibility-family-pressure` — Oct 12
+8. `comparison-culture-toxic-desi-dating` — Oct 14
+
+### Structure per article
+- 12–18 PostBlock items (h2/h3/p mix, always opens with p)
+- 3–5 FAQs for JSON-LD schema
+- metaDescription under 160 chars with primary keyword
+- 2–3 natural inline cross-links to related articles
+- CTA to Garam Masala Dating at the close
+- 2–3 relatedSlugs for cross-linking
+
+### Files affected
+- `src/data/journal/toxic-patterns.ts` — full rewrite with all 8 articles
+
+---
+
+## Rewrite all US city H1s and titleTags to be unique (anti-doorway-page fix)
+
+Google treats templated city pages with identical "[City]'s Desi Dating Night Is Coming" H1s and "South Asian Singles Events [City] | Garam Masala Dating" titleTags as doorway pages. Rewrote every h1 and titleTag across 6 US city data files (75 cities total) so that no two cities share the same structure.
+
+### What changed
+- **active.ts (7 cities):** Replaced 5 templated H1s and all 7 templated titleTags. Preserved the 2 already-unique H1s (Salt Lake City, Denver).
+- **us-northeast.ts (15 cities):** All H1s and titleTags rewritten with unique, city-specific copy.
+- **us-southeast.ts (16 cities):** All H1s and titleTags rewritten.
+- **us-midwest.ts (18 cities):** All H1s and titleTags rewritten.
+- **us-south-texas.ts (7 cities):** All H1s and titleTags rewritten. Includes cultural references (Hillcroft, Aggies, Keep Austin Weird).
+- **us-west.ts (12 cities):** All H1s and titleTags rewritten.
+
+### H1 format variety includes
+- Questions: "Where Do Desi Singles Go in Chicago?"
+- Statements: "Boston Finally Gets a Live Dating Show Worth Showing Up For"
+- Cultural references: "Oak Tree Road Deserves a Dating Show" (Edison), "Green Street Has Enough Bars" (Champaign)
+- Direct/playful: "Troy, Michigan Has More Desi Singles Than Your Group Chat"
+- Imperative: "Stop Swiping, Seattle. Come Meet Someone in Person."
+- Data-driven: "130,000 South Asians in DFW and the Dating Scene Is Still Broken"
+
+### titleTag format variety includes
+- "[City] Desi Dating Show | Garam Masala Dating"
+- "[City] Indian Singles Mixer | Garam Masala Dating"
+- "Live Desi Dating Night [City] | Garam Masala Dating"
+- "[City] [State] Desi Singles Event | Garam Masala Dating"
+- "[University] Desi Dating Night | Garam Masala Dating"
+
+### Rules followed
+- No em dashes, no double dashes
+- Every H1 is unique across the entire site
+- Title tags kept under 60 characters where possible
+- No other fields changed (bodyParagraphs, ctas, slug, etc.)
+
+### Files affected
+- `src/data/cities/active.ts`
+- `src/data/cities/us-northeast.ts`
+- `src/data/cities/us-southeast.ts`
+- `src/data/cities/us-midwest.ts`
+- `src/data/cities/us-south-texas.ts`
+- `src/data/cities/us-west.ts`
+
+## Expand Europe cities and rewrite international-other.ts
+
+### europe.ts: added 47 new cities (73 total)
+
+New cities by country:
+- **Netherlands (4):** Eindhoven, Delft, Groningen, Leiden
+- **Germany (7):** Aachen, Stuttgart, Nuremberg, Darmstadt, Dresden, Cologne, Dusseldorf
+- **Belgium (2):** Leuven, Ghent
+- **Switzerland (2):** Lausanne, Basel
+- **Ireland (2):** Cork, Galway
+- **Portugal (2):** Porto, Braga
+- **Spain (2):** Valencia, Seville
+- **Italy (5):** Bologna, Turin, Padua, Naples, Florence
+- **Sweden (3):** Gothenburg, Uppsala, Lund
+- **Finland (2):** Tampere, Oulu
+- **Norway (1):** Trondheim
+- **Poland (2):** Krakow, Wroclaw
+- **Czech Republic (1):** Brno
+- **Hungary (1):** Budapest
+- **Romania (2):** Bucharest, Cluj-Napoca
+- **Bulgaria (1):** Sofia
+- **Lithuania (1):** Vilnius
+- **Latvia (1):** Riga
+- **Slovenia (1):** Ljubljana
+- **Croatia (1):** Zagreb
+- **Greece (2):** Athens, Thessaloniki
+- **Cyprus (2):** Nicosia, Limassol
+
+All 26 existing cities preserved unchanged.
+
+### international-other.ts: restructured and expanded (22 cities)
+
+**Removed (10 cities):**
+- Middle East (cut for legal/content): Dubai, Abu Dhabi, Doha, Muscat
+- Moved to separate files: Singapore, KL, Bangkok, Tokyo, Seoul, Hong Kong
+
+**Region updates:**
+- NZ cities (Auckland, Wellington, Christchurch): "Asia-Pacific" to "Pacific Islands"
+- Fiji/Suva: "Asia-Pacific" to "Pacific Islands"
+- Caribbean cities: "Caribbean & South America" to "Caribbean"
+- Africa cities: kept "Africa" (no change)
+
+**Added (7 cities):**
+- Pacific Islands: Nadi (FJ), Lautoka (FJ)
+- Africa: Mombasa (KE)
+- Caribbean: San Fernando (TT), Chaguanas (TT), New Amsterdam (GY), San Juan (PR)
+
+**Files modified:**
+- `src/data/cities/europe.ts`
+- `src/data/cities/international-other.ts`
+
+**Notes:**
+- All regions match valid CityRegion type values
+- No em dashes, double dashes, or AI slop in copy
+- TypeScript and ESLint pass clean
+- nearbyCities updated to reference new slugs where appropriate
+- Panama City nearbyCities updated to use new Caribbean slugs instead of old Middle East refs
+
+## Add city data for India, Southeast Asia, and East Asia
+
+Added three new TypeScript city data files for international expansion pages.
+
+### india.ts (46 cities)
+- **Tier 1 (9):** Mumbai, Delhi, Gurgaon, Noida, Bangalore, Hyderabad, Chennai, Pune, Kolkata
+- **Tier 2 (14):** Ahmedabad, Chandigarh, Jaipur, Lucknow, Kochi, Goa, Indore, Thiruvananthapuram, Coimbatore, Nagpur, Vadodara, Surat, Visakhapatnam, Bhopal
+- **Tier 3 (23):** Mysore, Dehradun, Mangalore, Manipal, Amritsar, Ludhiana, Patna, Ranchi, Bhubaneswar, Raipur, Guwahati, Shillong, Pondicherry, Jamshedpur, Trichy, Vellore, Warangal, Kanpur, Allahabad, Varanasi, Jodhpur, Udaipur, Kota
+- All cities: status "coming-soon", addressCountry "IN", region "India"
+- CTAs: waitlist + apply with city param only (no state)
+
+### southeast-asia.ts (6 cities)
+- Bangkok (TH), Chiang Mai (TH), Ho Chi Minh City (VN), Manila (PH), Colombo (LK), Kandy (LK)
+- Sri Lanka cities use "desi" framing, not "Indian"
+
+### east-asia.ts (7 cities)
+- Tokyo (JP), Osaka (JP), Nagoya (JP), Seoul (KR), Taipei (TW), Hsinchu (TW), Hong Kong (HK)
+- Each has unique, location-specific body copy (~400 words, 4-5 paragraphs)
+
+**Files created:**
+- `src/data/cities/india.ts`
+- `src/data/cities/southeast-asia.ts`
+- `src/data/cities/east-asia.ts`
+
+**Notes:**
+- index.ts already imported these files (wired up in a previous commit)
+- No em dashes, double dashes, or AI-sounding copy
+- TypeScript and ESLint pass clean
+
+## Audit implementation: SEO, conversion, mobile, resilience
+
+### SEO meta fixes
+- Fix logo URL in JSON-LD: `logo.png` (didn't exist) → `images/logo.svg`
+- Add `og:site_name="Garam Masala Dating"` to all pages
+- Add `twitter:site` and `twitter:creator` tags
+- Add `ogType` prop to BaseLayout (default "website", blog posts pass "article")
+- Blog posts get `article:published_time` and `article:modified_time` meta tags
+
+### Conversion: direct Eventbrite links
+- Show cards on homepage now link directly to each event's Eventbrite URL (was /tickets)
+- "Tickets" label → "Get Tickets" with `target="_blank"`
+- Removes one click from the purchase funnel
+
+### Mobile: iOS auto-zoom prevention
+- Hero `.btn`: 14px → 16px
+- HomeNav `.nav-pill`: 11px → 16px
+- PageNav `.page-nav-pill`: 11px → 16px
+- All interactive elements now ≥16px to prevent iOS Safari auto-zoom on focus
+
+### Resilience
+- New `ErrorBoundary.tsx` wraps ApplyPage — catches React crashes and shows friendly fallback with refresh button and Instagram DM link instead of white screen
+
+### Auto-generated sitemap
+- Install `@astrojs/sitemap` integration — sitemap auto-generated at build time
+- Delete stale `public/sitemap.xml` that was missing 5+ pages and had old dates
+
+### Backlog additions
+- Placeholder photo gallery, video section, section CTAs, press logos, testimonial badges, scarcity indicators, discount code preview logged in ENHANCEMENTS.md
+
+## WCAG accessibility audit — non-visual fixes
+
+Comprehensive accessibility pass across the entire site. Only changes that have zero visual impact on current layouts/responsiveness were applied. Visual-impact issues logged in BUGS.md.
+
+### Landmarks & navigation
+- `<main id="main-content">` added to all 15 pages (was only on index.astro)
+- Skip-to-content link in BaseLayout (sr-only, visible on keyboard focus)
+- `aria-label="Main navigation"` on HomeNav and PageNav
+
+### Apply page form (ApplyPage.tsx)
+- FieldGroup now links labels via `htmlFor` to matching input `id`s
+- Error messages get `role="alert"` and are linked to inputs via `aria-describedby`
+- Inputs get `aria-invalid` when in error state
+- Required fields get HTML `required` attribute
+- react-select components get `aria-label` (Country, State, City)
+- Toggle buttons ("For myself" / "For a friend") get `aria-pressed`
+- Success panel gets `role="status"` + `aria-live="polite"`
+- Toast notification gets `role="alert"` + `aria-live="assertive"`
+- Name/referrer inputs get `autocomplete="name"`
+- Instagram `@` prefix gets `aria-hidden="true"`
+
+### Admin components
+- Filter selects get `aria-label` ("Filter by gender", "Filter by city")
+- Deleted toggle button gets `aria-expanded` + `aria-controls`
+- Loading state gets `role="status"` + `aria-live="polite"`
+- Toast gets `role="alert"` + `aria-live="assertive"`
+- ApplicantCard: `tabindex=0`, `role="button"`, keyboard handler (Enter/Space)
+- AdminLogin: `aria-label` on inputs, `required`, `aria-invalid`, error `role="alert"`
+
+### Misc
+- Decorative SVGs in links page get `aria-hidden="true"`
+- Newsletter signup step-2 and success get `aria-live="polite"`
+
+### Logged in BUGS.md (visual-impact, deferred)
+- Color contrast: `#888` and `#666` on `#FFF8F0`
+- `outline:none` without focus replacement
+- Social icon / modal close button touch targets below 44px
+- ApplicantModal missing focus trap
+- HomeShows div-as-button
+- Missing `aria-current="page"` on nav
+- AdminLogin missing visible labels
+
+## Multi-page updates: apply form, tickets notify, journal/FAQ width, city signup
+
+### Apply form
+- Income ranges refined: split $100k–$200k into $100k–$150k and $150k–$200k
+- Community and income fields are now optional (no longer required for submission)
+- Added hint under Instagram handle: "Follow @garammasaladating and DM us for a faster response"
+
+### Tickets page
+- TBA event cards are no longer grayed out / disabled
+- TBA cards now show "Notify Me" button that opens a modal to collect email
+- Saves to Firebase `notifications` collection with source `tickets-notify`
+
+### Journal + FAQ pages
+- Journal card gap increased from 2px to 12px (sections were visually touching)
+- Both journal and FAQ containers widened from 560px to 680px to reduce empty side margins
+
+### City pages
+- Active city pages (with upcoming events) now show a two-step email + phone signup section after the CTAs
+- Pattern matches home page "Spice List" flow: email → phone → success
+- Saves to Firebase `subscribers` collection with city tracking
+
+**Files:** `src/types/application.ts`, `src/components/ApplyPage.tsx`, `src/components/ApplyPage.module.css`, `src/pages/tickets.astro`, `src/pages/journal/index.astro`, `src/pages/faq.astro`, `src/pages/cities/[slug].astro`, `test/application.test.ts`
+
+## Fix apply page hydration errors + country selector stuck on loading
+
+- **Hydration fix:** Changed `ApplyPage` from `client:load` to `client:only="react"` — the form uses browser APIs (`window.history`, `window.location`) that cause SSR/client mismatches. No SEO value in server-rendering a form, so skip SSR entirely.
+- **Country selector timeout:** Added 5-second timeout to `useGeoData` dynamic import. Previously, if the `country-state-city` chunk hung, the selector stayed disabled with "Loading..." forever.
+- **Retry on failure:** When geo data fails to load (timeout or network error), the country field now shows a "tap to retry" button instead of a permanently disabled dropdown.
+
+**Files:** `src/pages/apply.astro`, `src/hooks/useGeoData.ts`, `src/components/ApplyPage.tsx`, `src/components/ApplyPage.module.css`
+
+## Fix article authors, apply page polish, remove chili emoji
+
+- All article authors changed from "Garam Masala Dating" → "Surbhi" (journal.ts: 5 posts, tips.ts: 3 posts, AuthorBio component)
+- Submit button: removed chili emoji (invisible on red background), added white-space: nowrap, reduced padding
+- Country field: removed "Type your country" fallback placeholder, now always shows "Select..." like other dropdowns
+- Cleaned up unused `geoFailed` destructuring
+
+## Fix nav overflow on mobile: shrink logo + tighten pills
+
+Both navs (HomeNav, PageNav) overflowed on 320px because 160px logo + two pills + padding exceeded viewport. Shrunk mobile logo from 36px/160px to 28px/120px, pills from 13px/18px to 11px/14px padding, letter-spacing 1.5→1px. Desktop restored to full sizes via 768px breakpoint.
+
+## Fix nav pill overflow: revert to 13px, add nowrap, tighten padding
+
+Nav pills ("Apply" / "Get Tickets") were bumped to 16px in the mobile audit, but these are `<a>` links not form controls — iOS zoom only triggers on `<input>`/`<button>`, not anchors. Reverted to 13px, reduced horizontal padding from 22px to 18px, added `white-space: nowrap` to prevent "Get Tickets" wrapping to two lines on mobile.
+
+**Files:** HomeNav.astro, PageNav.astro
+
+## Mobile audit: add modal scroll support on small viewports
+
+Added `max-height: 80vh; overflow-y: auto` to all modal inner containers so forms are scrollable on small phones (especially with keyboard open).
+
+**Files:** index.astro (`.popup-inner`), links.astro (`.modal-inner` — consolidated from scrollable modifier), cities/[slug].astro (`.modal-inner`), HomeShows.astro (`.modal-inner` — notify + request city modals)
+
+## Mobile audit: fix overflow, iOS zoom, touch targets, and grid layouts
+
+Deep mobile audit fixing critical usability issues across the site (98% mobile traffic).
+
+**P0 — Overflow fix:**
+- `HomeStats.astro`: Changed stats grid from `flex-wrap: nowrap` (5 items crammed into one row) to `flex-wrap: wrap` with `flex: 0 1 33.33%` — stats now flow as 3+2 rows on mobile, single row on desktop
+- Desktop breakpoint corrected from orphaned `grid-template-columns` to `flex-wrap: nowrap; flex: 1`
+
+**P1 — iOS auto-zoom prevention (font-size < 16px on interactive elements):**
+- `HomeHero.astro`: CTA `.btn` 14px → 16px
+- `HomeNav.astro`: `.nav-pill` 12px → 16px
+- `PageNav.astro`: `.page-nav-pill` 12px → 16px
+- `HomeShows.astro`: `.ticket-label` 13px → 16px, `.modal-submit` 14px → 16px
+- `HomeSignup.astro`: `.spicelist-form button` 14px → 16px
+- `AdminLogin.module.css`: `.input` 15px → 16px
+
+**P2 — Touch target fixes:**
+- `HomeFAQ.astro`: `.faq-toggle` 32×32px → 48×48px (meets minimum touch target)
+- `HomeShows.astro`: Added `min-height: 48px` to `.request-city button`
+
+**P3 — Layout fixes:**
+- `ApplyPage.module.css`: Added `@media (max-width: 600px)` breakpoint — `.gridTwo` and `.gridThree` collapse to single column (was 107px per column on 320px, unusable)
+- `AdminDashboard.module.css`: Added mobile breakpoint — filter items go full width, header/main padding reduced, filter row wraps
+
+**Files changed:** HomeStats, HomeHero, HomeNav, PageNav, HomeShows, HomeSignup, HomeFAQ, ApplyPage.module.css, AdminDashboard.module.css, AdminLogin.module.css
+
+## Fix mobile horizontal overflow + update sitemap
+
+**Mobile right-side white border fixed:**
+- Added `overflow-x: hidden` to `html` selector in `src/index.css` — `body` alone doesn't prevent the root scroll container from overflowing
+- Changed `max-width: 100vw` → `max-width: 100%` on all modal dialog elements (HomeShows, index.astro popup, links.astro, cities/[slug].astro) — `100vw` includes scrollbar width and can push content past viewport edge on mobile
+
+**Sitemap updated (`public/sitemap.xml`):**
+- Added `/cities/san-francisco`, `/hosts`, `/privacy`, `/terms` (all missing since addition)
+
+## v3 UI rewrite — full design pass, new features, infrastructure cleanup
+
+Comprehensive UI overhaul across the entire site based on iterative design feedback.
+
+**Navigation & branding:**
+- Hot-pink logo nav (PageNav) added to every page linking back to home
+- Landing page nav transitions to white background with pink logo only after hero ends (pixel-perfect scroll threshold using marquee position)
+- Favicon replaced with actual logo SVG in hot pink, theme-color meta tag added
+- Custom cursor (hot-pink dot + trailing ring) on desktop, hidden on mobile. Enlarges on hover. Works inside dialog modals via MutationObserver. All default cursors killed site-wide with `cursor: none !important`
+
+**Social media:**
+- Added Threads, X (Twitter), Facebook URLs and SVG icons
+- All 6 social platforms show in footer icons and links page social row
+- JSON-LD sameAs includes all profiles for SEO
+
+**Shows & tickets:**
+- All "Get Tickets" buttons (nav, hero, show cards) link to /tickets instead of Eventbrite
+- TBA events auto-generated from coming-soon cities in cities.ts (single source of truth)
+- Notify Me buttons open email collection modal (Firestore)
+- "Don't see your city? Request it" opens city request modal (Firestore)
+- City page waitlist CTAs open email modal instead of linking to /links
+
+**Signup & conversion:**
+- Renamed HomeNewsletter to HomeSignup (not a newsletter, it's for ticket discounts)
+- Two-step email-then-phone flow with Firestore on the Spice List section
+- 30-second timed popup: shows every visit until email is submitted (localStorage only set after email, not on dismiss)
+- Newsletter copy updated to focus on discount codes, not "subscribers"
+
+**Pages:**
+- /hosts rewritten as standalone page with unique expanded bios (not a copy of landing page section)
+- Click empty background space navigates back to home (only when came from home, excluded on admin/contestant-prep)
+- Admin and contestant-prep pages hide nav and footer via hideFooter prop
+- Links page: removed duplicate logo, reordered links (Short form content - Instagram, Full episodes - YouTube), removed redundant social buttons
+
+**Design polish:**
+- FAQ: Cormorant Garamond font, all accordions start closed, cream callout box removed, grid transition, reduced padding
+- Creators: Cormorant names, wider cards on mobile (edge-to-edge), off-white background
+- Footer: increased text opacity for readability, SVG social icons
+- As Seen In: real press data from press.ts, charcoal text (not grey)
+- Marquee: removed "Apply Now"
+- Founding year fixed from 2023 to 2022 across bio, footer, JSON-LD
+- Spice List section: hot-pink background, yellow/charcoal button default, trust text spacing fixed
+
+**Firestore:**
+- New collections: notifications, city_requests, subscribers
+- Firestore rules updated for all three
+
+**Files changed:** 30+ files across components, pages, data, layouts, and public assets
+
+## Homepage feedback fixes — 13 changes across UX, copy, and conversion
+
+Addressed 13 pieces of user feedback from a homepage review session.
+
+**Copy & data fixes:**
+- Removed "Apply Now" from the marquee ticker
+- Fixed founding year from 2023 to 2022 across bio, footer, and JSON-LD schema
+- Replaced 5 fake press outlets (Time Out, Vulture, etc.) with 2 real press sources from press.ts
+- Ticket buttons now link to /tickets instead of Eventbrite
+
+**Footer improvements:**
+- Replaced text social labels (IG, TT, YT) with actual SVG icons
+- Increased all text opacity values for better readability on dark background
+- "Meet the Hosts" now links to /hosts page instead of #about anchor
+- Created shared SVG icon module (src/data/icons.ts) to deduplicate between footer and links page
+
+**New modals:**
+- Notify Me: collects email when tickets aren't yet available, auto-fills city from event card
+- Request City: replaces /cities link, collects city name + email
+- 30-second popup: two-step flow (email then phone), emphasizes discount codes, respects localStorage dismissal
+- All three write to new Firestore collections (notifications, city_requests, subscribers)
+
+**FAQ accordion cleanup:**
+- Removed cream background callout box and pink left-border from answers
+- Replaced max-height animation hack with CSS grid row transition for smoother expand/collapse
+
+**Newsletter redesign:**
+- Switched background from charcoal to hot-pink for visual separation from Creators section
+- Updated copy to emphasize exclusive discount codes as main value prop
+- Simplified form to email-only (popup handles phone collection)
+- Inverted CTA: white button with pink text, yellow on hover
+
+**New pages:**
+- /hosts — standalone hosts page reusing HomeCreators component
+
+**Files changed:**
+- `src/components/home/HomeMarquee.astro` — removed Apply Now
+- `src/components/home/HomeCreators.astro` — year fix
+- `src/components/home/HomeFooter.astro` — year, readability, SVG icons, hosts link
+- `src/components/home/HomePress.astro` — real press data with links
+- `src/components/home/HomeShows.astro` — /tickets links, notify + city request modals
+- `src/components/home/HomeFAQ.astro` — clean accordion styles
+- `src/components/home/HomeNewsletter.astro` — hot-pink bg, discount copy
+- `src/pages/index.astro` — founding year, 30s popup dialog
+- `src/pages/links.astro` — import icons from shared module
+- `src/pages/hosts.astro` — new hosts page
+- `src/data/icons.ts` — shared SVG icon module
+- `firestore.rules` — 3 new collections
+
+## fix: site copy — add SF city page, update SD/LA, position as NYC's #1
+
+Fixed nonsensical copy across the site: wrong cities in the hero eyebrow, inconsistent audience numbers, stale event references, and weak positioning.
+
+**Copy changes:**
+- Positioned the show as "NYC's #1 Live Dating Show" across hero eyebrow, experience section, FAQ, and marquee ticker
+- Replaced hard-coded audience numbers (150) with generic language ("a packed house", "a live audience") since capacity varies by venue — 250 stays only in NYC-specific city page copy
+- Hero eyebrow: "Season 2026 · NYC · Chicago · Edinburgh" → "NYC's #1 Live Dating Show · Now Expanding Nationwide"
+- Surbhi's credits: removed Edinburgh Fringe, added "NYC · LA · SF"
+
+**City pages:**
+- Added San Francisco as a new coming-soon city (`/cities/san-francisco`)
+- Updated San Diego from "past" → "coming-soon" with forward-looking copy (acknowledges sold-out March show)
+- Removed stale Netflix Is a Joke Fest reference from LA page, fixed `includeEventSchema` to `false`
+- Updated `citiesIndex` to include SF and SD
+
+**Footer & tickets:**
+- Replaced dead Edinburgh Fringe link with LA, SF, SD city page links
+- Updated tickets page meta description to mention expansion cities
+
+**Files changed:**
+- `src/data/cities.ts` — SD status/copy, LA copy fix, new SF entry, updated index
+- `src/data/cities.test.ts` — added SF to expected cities
+- `src/components/home/HomeHero.astro` — eyebrow text
+- `src/components/home/HomeExperience.astro` — h2, audience numbers, tone
+- `src/components/home/HomeFAQ.astro` — audience numbers, positioning
+- `src/components/home/HomeFooter.astro` — shows links
+- `src/components/home/HomeCreators.astro` — Surbhi credits
+- `src/components/home/HomeMarquee.astro` — first ticker phrase
+- `src/pages/tickets.astro` — meta description
+
+---
+
+## feat: redesign contestant-prep page to match v3 visual language
+
+Ported the contestant-prep page from the old dark/gold theme to the v3 light theme used on the home page.
+
+**Visual changes:**
+- Light theme: off-white background with charcoal text (was dark overlay with ivory text)
+- Hot-pink accents replace gold throughout (icons, numbers, callout tints, spinner)
+- Electric-yellow dividers and step numbers with text-stroke
+- DM Sans body text replaces Cormorant Garamond for readability
+- White cards with subtle borders replace translucent dark cards
+- Error state: clean white card instead of dark glassmorphism
+
+**Code quality:**
+- Extracted all inline React styles to CSS module (`ContestantPrepPage.module.css`)
+- Component reduced from 635 to ~270 lines
+- Added responsive breakpoint at 768px (desktop padding bumps)
+- Added `prefers-reduced-motion` support
+- Uses v3 CSS custom properties exclusively (no hardcoded colors)
+
+**Preserved exactly:** all auth logic, session management, content arrays, API integration.
+
+**Files changed:**
+- `src/pages/contestant-prep.astro` — `overlayBg` replaced with `bodyClass="home-v3"`
+- `src/components/ContestantPrepPage.module.css` — new CSS module with all styles
+- `src/components/ContestantPrepPage.tsx` — inline styles replaced with CSS module classNames
+
+---
+
 ## add: 5 SEO journal posts scheduled over next 5 weeks
 
 Added five blog posts targeting featured snippets, scheduled weekly Apr 11 through May 9:
@@ -113,6 +1214,47 @@ Removed the CSP header entirely rather than continuing to patch allowed origins 
 - `vercel.json` — removed `Content-Security-Policy` header; all other security headers (HSTS, X-Frame-Options, X-Content-Type-Options, Referrer-Policy, COOP) remain
 - `test/meta-pixel.test.ts` — removed the CSP validation test suite (3 tests); Meta Pixel component and BaseLayout tests unchanged
 - `BUGS.md` — removed the open "CSP blocks GTM and PostHog scripts" bug entry (resolved by this change)
+
+## feat: v3 SEO-optimized home page rewrite
+
+Complete redesign of the landing page from a minimal dark hero + event list to a 13-section light-themed marketing page.
+
+**New sections:**
+- Hero with gradient blobs, eyebrow badge, and dual CTAs (Get Tickets + Apply)
+- Scrolling marquee text strip
+- "The Experience" — 2-column SEO content with 4 numbered steps explaining the show format
+- Shows section with data-driven event cards (from events.ts) and ticket links
+- Stats section (12 shows, 2K+ audience, 3 couples matched, 500K views)
+- Photo grid with gradient placeholders (real images to be added)
+- "As Seen In" press section
+- Testimonials with 3 audience quote cards
+- Creators section with host bios and schema.org Person markup
+- Answer-first FAQ accordion with 5 questions
+- Newsletter signup (phone + email)
+- 4-column fat footer with navigation links
+
+**SEO additions:**
+- FAQPage JSON-LD schema for rich results
+- Keywords meta tag targeting NYC live dating show queries
+- Rich below-fold content for crawlers
+
+**Architecture:**
+- 13 Astro components in `src/components/home/` (one per section)
+- `bodyClass` prop added to BaseLayout for page-specific body overrides
+- v3 color palette tokens (--hot-pink, --electric-yellow, --charcoal, etc.) added to `:root`
+- All sections mobile-first responsive with 768px breakpoint
+- Scroll-reveal animations via IntersectionObserver
+- Sticky nav with scroll state detection
+- No React hydration — all interactivity via vanilla JS
+
+**Removed:**
+- Old Hero.astro (parallax photo background) — replaced by CSS gradient blobs
+- Old Nav.astro (dark glassmorphism) — replaced by light pill-button nav
+- Custom cursor stripped (banned for mobile-first site)
+
+**Files:** src/pages/index.astro, src/layouts/BaseLayout.astro, src/index.css, 13 new files in src/components/home/, 2 deleted components
+
+---
 
 ## fix: code review round — photo state, DST offsets, storage auth, toast cleanup, touch targets
 

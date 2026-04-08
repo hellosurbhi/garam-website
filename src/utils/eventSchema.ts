@@ -2,7 +2,7 @@ import type { EventEntry } from "@/data/events";
 import { nyOffset } from "@/utils/timezone";
 
 const EVENT_DESCRIPTION =
-  "NYC's live comedy dating show where two real singles go on a blind date in front of 250 people. Hosted by comedians Surbhi and Wyatt. Singles mixer follows every show.";
+  "NYC's live South Asian dating show where two real singles go on a blind date in front of 250 people. Hosted by comedians Surbhi and Wyatt. Singles mixer follows every show.";
 
 /**
  * Build an array of individual Event JSON-LD strings from a list of events.
@@ -27,7 +27,7 @@ export function buildEventSchemas(eventsList: EventEntry[]): string[] {
       return JSON.stringify({
         "@context": "https://schema.org",
         "@type": "Event",
-        name: "Garam Masala Dating — Live Comedy Dating Show",
+        name: "Garam Masala Dating | Live Comedy Dating Show",
         startDate: `${e.isoDate}T${start}:00${nyOffset(e.isoDate!, start)}`,
         endDate: `${e.isoDate}T${end}:00${nyOffset(e.isoDate!, end)}`,
         eventStatus: "https://schema.org/EventScheduled",

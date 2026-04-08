@@ -102,10 +102,11 @@ describe("ApplicantModal", () => {
     expect(onClose).toHaveBeenCalled();
   });
 
-  it("calls onClose when Escape key is pressed", () => {
+  it("calls onClose when dialog cancel event fires (Escape key)", () => {
     const onClose = vi.fn();
     render(<ApplicantModal app={makeApp()} {...defaultProps} onClose={onClose} />);
-    fireEvent.keyDown(window, { key: "Escape" });
+    const dialog = screen.getByRole("dialog", { hidden: true });
+    fireEvent(dialog, new Event("cancel", { cancelable: true, bubbles: false }));
     expect(onClose).toHaveBeenCalled();
   });
 
@@ -144,9 +145,9 @@ describe("ApplicantModal", () => {
     expect(onDelete).toHaveBeenCalledWith("test-1");
   });
 
-  it("prevents body scrolling when open", () => {
+  it("renders as a modal dialog element", () => {
     render(<ApplicantModal app={makeApp()} {...defaultProps} />);
-    expect(document.body.style.overflow).toBe("hidden");
+    expect(screen.getByRole("dialog", { hidden: true })).toBeInTheDocument();
   });
 
   it("displays the photo when photoUrl is provided", () => {

@@ -1,82 +1,115 @@
 ---
 import BaseLayout from '@/layouts/BaseLayout.astro';
-import { citiesIndex } from '@/data/cities';
+import { citiesByRegion } from '@/data/cities';
 import { buildBreadcrumbJsonLd } from '@/utils/breadcrumbs';
 
-const TITLE = "Cities | Garam Masala Dating";
+const TITLE = "South Asian Dating Events by City | Garam Masala Dating";
 const DESC =
-  "Find Garam Masala Dating near you — live comedy dating shows and South Asian singles mixers in cities across the US.";
+  "Find Garam Masala Dating near you. Live comedy dating shows and South Asian singles mixers in cities across the US, Canada, UK, Australia, and beyond.";
 
 const breadcrumbJsonLd = buildBreadcrumbJsonLd([
   { name: "Home", url: "https://garammasaladating.com/" },
   { name: "Cities" },
 ]);
+
+const regions = citiesByRegion();
 ---
 
-<BaseLayout title={TITLE} description={DESC} overlayBg="rgba(13, 10, 8, 0.88)">
+<BaseLayout title={TITLE} description={DESC}>
   <Fragment slot="head">
     <script type="application/ld+json" set:html={breadcrumbJsonLd} />
   </Fragment>
 
-  <div class="cities-page">
+  <main id="main-content" class="cities-page">
+    <div class="cities-hero">
+      <img src="/images/on-stage.webp" alt="" width="1200" height="800" aria-hidden="true" />
+    </div>
     <div class="cities-container">
       {/* Header */}
       <div class="cities-header">
         <p class="cities-eyebrow">Cities</p>
-        <h1 class="cities-h1">Where We Show Up</h1>
+        <h1 class="cities-h1">Where We Perform</h1>
         <p class="cities-desc">
-          Live comedy dating shows and South Asian singles mixers across the US.
+          Live comedy dating shows, singles mixers, and tour dates across
+          the US and around the world. Don't see your city? Join the waitlist
+          and we'll let you know when we're headed your way.
         </p>
       </div>
 
       {/* Divider */}
       <div class="cities-divider" />
 
-      {/* City cards */}
-      <div class="cities-list">
-        {citiesIndex.map((city, i) => (
-          <a
-            href={`/cities/${city.slug}`}
-            class:list={[
-              "city-card",
-              city.status === "active" ? "city-card--active" : "city-card--inactive",
-            ]}
-            style={`animation-delay: ${0.1 + i * 0.06}s`}
-          >
-            <div>
-              <h2 class="city-card__name">{city.displayName}</h2>
-              <span
+      {/* Jump nav */}
+      <nav class="region-nav" aria-label="Jump to region">
+        {regions.map((group) => {
+          const anchorId = group.region.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/-+$/, "");
+          return (
+            <a href={`#${anchorId}`} class="region-nav__link">{group.region}</a>
+          );
+        })}
+      </nav>
+
+      {/* Region sections */}
+      {regions.map((group) => {
+        const anchorId = group.region.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/-+$/, "");
+        return (
+        <div class="region-section" id={anchorId}>
+          <h2 class="region-title">{group.region}</h2>
+          <div class="cities-list">
+            {group.cities.map((city, i) => (
+              <a
+                href={`/cities/${city.slug}`}
                 class:list={[
-                  "city-card__badge",
-                  city.status === "active" ? "city-card__badge--active" : "city-card__badge--inactive",
+                  "city-card",
+                  city.status === "active" ? "city-card--active" : "city-card--inactive",
                 ]}
+                style={`animation-delay: ${0.05 + i * 0.03}s`}
               >
-                {city.badgeLabel}
-              </span>
-            </div>
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              width="16"
-              height="16"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              stroke-width="2"
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              class:list={[
-                "city-card__arrow",
-                city.status === "active" ? "city-card__arrow--active" : "city-card__arrow--inactive",
-              ]}
-            >
-              <path d="M5 12h14" />
-              <path d="m12 5 7 7-7 7" />
-            </svg>
-          </a>
-        ))}
+                <div>
+                  <h3 class="city-card__name">{city.displayName}</h3>
+                  <span
+                    class:list={[
+                      "city-card__badge",
+                      city.status === "active" ? "city-card__badge--active" : "city-card__badge--inactive",
+                    ]}
+                  >
+                    {city.badgeLabel}
+                  </span>
+                </div>
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="16"
+                  height="16"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  class:list={[
+                    "city-card__arrow",
+                    city.status === "active" ? "city-card__arrow--active" : "city-card__arrow--inactive",
+                  ]}
+                >
+                  <path d="M5 12h14" />
+                  <path d="m12 5 7 7-7 7" />
+                </svg>
+              </a>
+            ))}
+          </div>
+        </div>
+        );
+      })}
+
+      {/* Footer */}
+      <div class="cities-footer">
+        <a href="/" class="cities-footer__back">
+          <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5"/><path d="m12 19-7-7 7-7"/></svg>
+          Back to Home
+        </a>
       </div>
     </div>
-  </div>
+  </main>
 </BaseLayout>
 
 <style>
@@ -92,10 +125,26 @@ const breadcrumbJsonLd = buildBreadcrumbJsonLd([
     animation: citiesIdxFadeIn 0.5s ease-out both;
   }
 
+  .cities-hero {
+    width: 100%;
+    height: 280px;
+    overflow: hidden;
+  }
+  .cities-hero img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center 40%;
+    display: block;
+  }
+  @media (min-width: 768px) {
+    .cities-hero { height: 400px; }
+  }
+
   .cities-container {
-    max-width: 560px;
+    max-width: 800px;
     margin: 0 auto;
-    padding: 48px 24px 80px;
+    padding: 24px;
   }
 
   .cities-header {
@@ -103,12 +152,12 @@ const breadcrumbJsonLd = buildBreadcrumbJsonLd([
   }
 
   .cities-eyebrow {
-    font-family: var(--font-jetbrains);
+    font-family: var(--font-body);
     font-size: 11px;
     font-weight: 500;
     text-transform: uppercase;
     letter-spacing: 0.15em;
-    color: #C9A84C;
+    color: var(--brand-red);
     margin-bottom: 12px;
   }
 
@@ -116,38 +165,96 @@ const breadcrumbJsonLd = buildBreadcrumbJsonLd([
     font-family: var(--font-playfair);
     font-size: 32px;
     font-weight: 700;
-    color: var(--text-ivory);
+    color: var(--charcoal);
     line-height: 1.15;
     margin-bottom: 14px;
   }
 
   .cities-desc {
     font-family: var(--font-cormorant);
+    font-style: italic;
     font-size: 17px;
-    color: rgba(245, 237, 228, 0.6);
+    color: var(--text-light);
     line-height: 1.55;
   }
 
   .cities-divider {
     width: 48px;
     height: 1px;
-    background: rgba(201, 168, 76, 0.3);
-    margin-bottom: 32px;
+    background: rgba(var(--brand-red-rgb), 0.3);
+    margin-bottom: 40px;
+  }
+
+  /* ─── Jump nav ─────────────────────────────────────── */
+
+  .region-nav {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-bottom: 40px;
+  }
+
+  .region-nav__link {
+    display: inline-flex;
+    align-items: center;
+    padding: 6px 14px;
+    min-height: var(--touch-target);
+    border: 1px solid rgba(0, 0, 0, 0.08);
+    border-radius: 50px;
+    font-family: var(--font-body);
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--text-light);
+    text-decoration: none;
+    transition: border-color 0.15s, color 0.15s, background 0.15s;
+    white-space: nowrap;
+  }
+
+  .region-nav__link:hover {
+    border-color: rgba(var(--brand-red-rgb), 0.3);
+    color: var(--brand-red);
+    background: rgba(var(--brand-red-rgb), 0.03);
+  }
+
+  /* ─── Region sections ──────────────────────────────── */
+
+  .region-section {
+    scroll-margin-top: 24px;
+    margin-bottom: 24px;
+  }
+
+  .region-title {
+    font-family: var(--font-body);
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.15em;
+    color: var(--muted);
+    margin-bottom: 16px;
+    padding-bottom: 12px;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.06);
   }
 
   .cities-list {
-    display: flex;
-    flex-direction: column;
-    gap: 12px;
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 8px;
+  }
+
+  @media (min-width: 600px) {
+    .cities-list {
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+    }
   }
 
   .city-card {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    gap: 16px;
-    padding: 22px;
-    border-radius: 14px;
+    gap: 12px;
+    padding: 16px 18px;
+    border-radius: 12px;
     border: 1px solid;
     text-decoration: none;
     animation: citiesIdxFadeIn 0.5s ease-out both;
@@ -155,38 +262,47 @@ const breadcrumbJsonLd = buildBreadcrumbJsonLd([
   }
 
   .city-card--active {
-    border-color: rgba(201, 168, 76, 0.35);
-    background: rgba(201, 168, 76, 0.06);
+    border-color: rgba(var(--brand-red-rgb), 0.2);
+    background: white;
+  }
+
+  .city-card--active:hover {
+    border-color: rgba(var(--brand-red-rgb), 0.4);
+    background: rgba(var(--brand-red-rgb), 0.02);
   }
 
   .city-card--inactive {
-    border-color: rgba(245, 237, 228, 0.08);
-    background: rgba(255, 255, 255, 0.02);
+    border-color: rgba(0, 0, 0, 0.06);
+    background: white;
+  }
+
+  .city-card--inactive:hover {
+    border-color: rgba(0, 0, 0, 0.12);
   }
 
   .city-card__name {
     font-family: var(--font-playfair);
-    font-size: 20px;
+    font-size: 17px;
     font-weight: 600;
-    color: var(--text-ivory);
+    color: var(--charcoal);
     line-height: 1.25;
-    margin-bottom: 6px;
+    margin-bottom: 4px;
   }
 
   .city-card__badge {
-    font-family: var(--font-jetbrains);
-    font-size: 10px;
+    font-family: var(--font-body);
+    font-size: 9px;
     font-weight: 500;
     text-transform: uppercase;
     letter-spacing: 0.12em;
   }
 
   .city-card__badge--active {
-    color: #C9A84C;
+    color: var(--brand-red);
   }
 
   .city-card__badge--inactive {
-    color: rgba(245, 237, 228, 0.4);
+    color: var(--muted);
   }
 
   .city-card__arrow {
@@ -194,10 +310,29 @@ const breadcrumbJsonLd = buildBreadcrumbJsonLd([
   }
 
   .city-card__arrow--active {
-    color: #C9A84C;
+    color: var(--brand-red);
   }
 
   .city-card__arrow--inactive {
-    color: rgba(245, 237, 228, 0.3);
+    color: var(--muted);
+  }
+
+  /* ─── Footer ──────────────────────────────────────── */
+
+
+  .cities-footer__back {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-family: var(--font-body);
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--text-light);
+    text-decoration: none;
+    transition: color 0.15s;
+  }
+
+  .cities-footer__back:hover {
+    color: var(--charcoal);
   }
 </style>

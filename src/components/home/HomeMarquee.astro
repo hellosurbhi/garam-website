@@ -1,0 +1,53 @@
+---
+import { MARQUEE_ITEMS as phrases } from '@/data/copy';
+---
+
+<div class="marquee" aria-hidden="true">
+  <div class="marquee-inner">
+    {[...phrases, ...phrases].map((text) => (
+      <Fragment>
+        <span>{text}</span>
+        <span class="dot">✦</span>
+      </Fragment>
+    ))}
+  </div>
+</div>
+
+<style>
+  .marquee {
+    background: var(--brand-red);
+    padding: 14px 0;
+    overflow: hidden;
+    white-space: nowrap;
+    border-top: 3px solid var(--brand-red-dark);
+    border-bottom: 3px solid var(--brand-red-dark);
+  }
+  .marquee-inner {
+    display: inline-block;
+    animation: marquee 22s linear infinite;
+  }
+  .marquee-inner span {
+    font-family: var(--font-playfair), serif;
+    font-size: 15px;
+    font-weight: 700;
+    font-style: italic;
+    color: white;
+    padding: 0 32px;
+    letter-spacing: 0.5px;
+  }
+  .marquee-inner .dot {
+    color: white;
+    padding: 0 10px;
+    font-style: normal;
+  }
+  @keyframes marquee {
+    0% { transform: translateX(0); }
+    100% { transform: translateX(-50%); }
+  }
+  @media (min-width: 768px) {
+    .marquee-inner span { font-size: 17px; padding: 0 48px; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .marquee-inner { animation: none; }
+  }
+</style>

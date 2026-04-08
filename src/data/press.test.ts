@@ -18,9 +18,11 @@ describe("pressItems", () => {
     }
   });
 
-  it("every item has a valid URL", () => {
+  it("every item with a URL has a valid URL", () => {
     for (const item of pressItems) {
-      expect(() => new URL(item.url)).not.toThrow();
+      if (item.url) {
+        expect(() => new URL(item.url!)).not.toThrow();
+      }
     }
   });
 

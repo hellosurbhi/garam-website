@@ -2,8 +2,8 @@ import { describe, it, expect } from "vitest";
 import { SOCIAL_URLS, CREATOR_URLS } from "./socials";
 
 describe("SOCIAL_URLS", () => {
-  it("has exactly 4 entries", () => {
-    expect(Object.keys(SOCIAL_URLS)).toHaveLength(4);
+  it("has exactly 7 entries", () => {
+    expect(Object.keys(SOCIAL_URLS)).toHaveLength(7);
   });
 
   it("includes an instagram URL", () => {

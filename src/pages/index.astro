@@ -1,14 +1,29 @@
 ---
 import BaseLayout from '@/layouts/BaseLayout.astro';
-import Hero from '@/components/Hero.astro';
-import Nav from '@/components/Nav.astro';
-import { CREATOR_URLS } from '@/data/socials';
+import HomeNav from '@/components/home/HomeNav.astro';
+import HomeHero from '@/components/home/HomeHero.astro';
+import HomeMarquee from '@/components/home/HomeMarquee.astro';
+import HomeExperience from '@/components/home/HomeExperience.astro';
+import HomeShows from '@/components/home/HomeShows.astro';
+import HomeStats from '@/components/home/HomeStats.astro';
+import HomePress from '@/components/home/HomePress.astro';
+import HomeTestimonials from '@/components/home/HomeTestimonials.astro';
+import HomeCreators from '@/components/home/HomeCreators.astro';
+import HomeVideo from '@/components/home/HomeVideo.astro';
+import HomeFAQ from '@/components/home/HomeFAQ.astro';
+import HomeSignup from '@/components/home/HomeSignup.astro';
 import { SOCIAL_URLS } from '@/data/socials';
-import { events } from '@/data/events';
+import { events, allEvents } from '@/data/events';
 import { isEventPast } from '@/utils/eventDate';
 import { buildEventSchemas } from '@/utils/eventSchema';
 
-const upcomingEvents = events.filter((e) => !isEventPast(e.date) && !e.hidden);
+const HIDDEN_FROM_HOME = ['Salt Lake City', 'Denver'];
+const upcomingEvents = allEvents.filter((e) => !isEventPast(e.date) && !e.hidden && !HIDDEN_FROM_HOME.includes(e.city));
+const firstTicketUrl = '/tickets';
+const today = new Date().toISOString().slice(0, 10);
+const heroEvents = events
+  .filter((e) => !e.hidden && e.isoDate && e.isoDate >= today && e.url)
+  .slice(0, 5);
 
 // Organization JSON-LD
 const orgJsonLd = JSON.stringify({
@@ -16,10 +31,10 @@ const orgJsonLd = JSON.stringify({
   "@type": "Organization",
   name: "Garam Masala Dating",
   url: "https://garammasaladating.com",
-  logo: "https://garammasaladating.com/logo.png",
-  description: "Garam Masala Dating is a live comedy dating show and singles mixer in New York City. Real singles go on blind dates on stage in front of a 250-person live audience. Weekly in Manhattan, monthly in Jersey City.",
-  foundingDate: "2023",
-  sameAs: [SOCIAL_URLS.instagram, SOCIAL_URLS.tiktok, SOCIAL_URLS.youtube],
+  logo: "https://garammasaladating.com/images/logo.svg",
+  description: "Garam Masala Dating is a live South Asian dating show and singles mixer in New York City. Real singles go on blind dates on stage in front of a 250-person live audience. Weekly in Manhattan, monthly in Jersey City.",
+  foundingDate: "2022",
+  sameAs: [SOCIAL_URLS.instagram, SOCIAL_URLS.tiktok, SOCIAL_URLS.youtube, SOCIAL_URLS.threads, SOCIAL_URLS.x, SOCIAL_URLS.facebook],
   contactPoint: {
     "@type": "ContactPoint",
     email: "contact@garammasaladating.com",
@@ -35,49 +50,15 @@ const websiteJsonLd = JSON.stringify({
   url: "https://garammasaladating.com",
 });
 
-// FAQ data and JSON-LD
-const HOME_FAQS = [
-  {
-    q: "What is Garam Masala Dating?",
-    a: "Garam Masala Dating is a live comedy dating show in New York City where real singles go on blind dates on stage in front of a 250-person audience. Hosted by comedians Surbhi and Wyatt, the show runs weekly in Manhattan and monthly in Jersey City, followed by a singles mixer open to all attendees.",
-  },
-  {
-    q: "Do you have to be South Asian to come?",
-    a: "No. The show is open to everyone. The audience is a mix of South Asian, desi diaspora, and anyone who loves comedy and meeting new people.",
-  },
-  {
-    q: "Is Garam Masala Dating like Indian Matchmaking?",
-    a: "No. Garam Masala Dating is a live comedy show that happens in real time in front of 250 people in NYC. There are no producers, no editing, no second takes — just two real singles on a real first date on stage.",
-  },
-  {
-    q: "How do I get tickets?",
-    a: "Tickets are available on Eventbrite. Search \u2018Garam Masala Dating\u2019 or visit garammasaladating.com/tickets.",
-  },
-  {
-    q: "How do I apply to be on the show?",
-    a: "Fill out the contestant application at garammasaladating.com/apply. We cast based on personality and your answers, not looks.",
-  },
-];
-
-const faqJsonLd = JSON.stringify({
-  "@context": "https://schema.org",
-  "@type": "FAQPage",
-  mainEntity: HOME_FAQS.map(({ q, a }) => ({
-    "@type": "Question",
-    name: q,
-    acceptedAnswer: { "@type": "Answer", text: a },
-  })),
-});
-
 // Individual Event JSON-LD blocks (one per upcoming show)
-const today = new Date().toISOString().slice(0, 10);
 const upcomingForSchema = events.filter((e) => !e.hidden && e.isoDate && e.isoDate >= today);
 const eventSchemas = buildEventSchemas(upcomingForSchema);
 ---
 
 <BaseLayout
-  title="Garam Masala Dating | Desi Comedy Dating Show in NYC"
-  description="Garam Masala Dating is a live South Asian comedy dating show and singles mixer in New York City. Watch real desi singles compete for a date on stage. Tickets available now."
+  title="Garam Masala Dating | NYC's Live South Asian Dating Show"
+  description="Garam Masala Dating is New York City's hottest live South Asian dating show. Watch real South Asian singles find love on stage. Hosted by comedians Surbhi & Wyatt. Tickets available now."
+  hideNav={true}
 >
   <Fragment slot="head">
     <script type="application/ld+json" set:html={orgJsonLd} />
@@ -85,339 +66,327 @@ const eventSchemas = buildEventSchemas(upcomingForSchema);
     {eventSchemas.map((schema) => (
       <script type="application/ld+json" set:html={schema} />
     ))}
-    <script type="application/ld+json" set:html={faqJsonLd} />
   </Fragment>
 
-  <Hero />
-  <Nav />
+  <HomeNav ticketsUrl={firstTicketUrl} />
+  <main id="main-content">
+    <HomeHero ticketsUrl={firstTicketUrl} heroEvents={heroEvents} />
+    <HomeMarquee />
+    <HomeExperience />
+    <HomeShows events={upcomingEvents} />
+    <HomeStats />
+    <HomePress />
+    <HomeTestimonials />
+    <HomeCreators />
+    <HomeVideo />
+    <HomeFAQ />
+    <HomeSignup />
+  </main>
 
-  <!-- CenterBox -->
-  <div class="center-wrapper">
-    <div class="center-box">
-      <div class="title-area">
-        <h1 class="title">Garam Mas<em>ala</em> Dating</h1>
-        <p class="subtitle">
-          Come watch a desi couple find love, and if you're lucky, make out.
-          Made with love in New York by comedians
-          <a href={CREATOR_URLS.surbhi} target="_blank" rel="noopener noreferrer" class="subtitle-link">Surbhi</a>
-          {' '}and{' '}
-          <a href={CREATOR_URLS.wyatt} target="_blank" rel="noopener noreferrer" class="subtitle-link">Wyatt Feegrado</a>
-          {' '}at{' '}
-          <a href={CREATOR_URLS.venue} target="_blank" rel="noopener noreferrer" class="subtitle-link">Top Secret Comedy Club</a>.
-        </p>
-      </div>
+  <!-- 30-second email popup -->
+  <dialog id="email-popup" class="popup-dialog">
+    <div class="popup-inner">
+      <button type="button" class="popup-close" aria-label="Close">
+        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
+      </button>
 
-      <!-- TableOfContents -->
-      <div class="toc">
-        {upcomingEvents.map((event, i) => {
-          const isLive = event.url && event.url !== "#";
-          return isLive ? (
-            <a
-              href={event.url}
-              target="_blank"
-              rel="noopener noreferrer"
-              class="toc-row"
-              style={`animation-delay: ${1.0 + i * 0.12}s`}
-            >
-              <span class="toc-date">{event.date}</span>
-              <span class="toc-city">{event.city}</span>
-            </a>
-          ) : (
-            <div
-              class="toc-row toc-row-dimmed"
-              style={`animation-delay: ${1.0 + i * 0.12}s`}
-            >
-              <span class="toc-date">{event.date}</span>
-              <span class="toc-city">{event.city}</span>
-            </div>
-          );
-        })}
-      </div>
-    </div>
-  </div>
+      <!-- min-height prevents CLS when switching between steps -->
+      <div class="popup-steps-wrapper">
+        <div id="popup-step-1">
+          <h2 class="popup-title">Want Cheaper Tickets?</h2>
+          <p class="popup-subtitle">Join our list for exclusive discount codes and early access.</p>
+          <form id="popup-email-form" class="popup-form">
+            <input type="email" id="popup-email" placeholder="Your email" required aria-label="Email address" />
+            <p id="popup-email-error" class="popup-error" hidden role="alert"></p>
+            <button type="submit" class="popup-submit">Get My Discount Code</button>
+          </form>
+          <button type="button" class="popup-dismiss">No thanks</button>
+        </div>
 
-  <!-- ScrollIndicator -->
-  <div class="scroll-indicator">
-    <div class="scroll-line"></div>
-  </div>
-
-  <!-- FAQ Section -->
-  <section class="home-faq" id="faq" aria-labelledby="home-faq-heading">
-    <div class="home-faq-container">
-      <h2 id="home-faq-heading" class="home-faq-title">Frequently Asked Questions</h2>
-      <div class="home-faq-list">
-        {HOME_FAQS.map((item, i) => (
-          <div class:list={['home-faq-item', { 'is-open': i === 0 }]}>
-            <button
-              class="home-faq-toggle"
-              type="button"
-              aria-expanded={i === 0 ? 'true' : 'false'}
-            >
-              <span class="home-faq-question">{item.q}</span>
-              <svg class="home-faq-chevron" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg>
-            </button>
-            <div class="home-faq-answer">
-              <p class="home-faq-answer-text">{item.a}</p>
-            </div>
-          </div>
-        ))}
+        <div id="popup-step-2" hidden>
+          <h2 class="popup-title">One more thing...</h2>
+          <p class="popup-subtitle">Add your number for text-only discounts and free ticket drops.</p>
+          <form id="popup-phone-form" class="popup-form">
+            <input type="tel" id="popup-phone" placeholder="(555) 123-4567" aria-label="Phone number" />
+            <p id="popup-phone-error" class="popup-error" hidden role="alert"></p>
+            <button type="submit" class="popup-submit">Send Me Deals</button>
+          </form>
+          <button type="button" class="popup-skip">Maybe later</button>
+        </div>
       </div>
     </div>
-  </section>
+  </dialog>
 </BaseLayout>
 
-<style>
-  /* CenterBox */
-  .center-wrapper {
-    position: relative;
-    z-index: 10;
-    display: flex;
-    align-items: flex-end;
-    justify-content: flex-start;
-    min-height: 100vh;
-    padding: 0 60px 64px;
-    box-sizing: border-box;
-    width: 100%;
-    animation: fadeUp 1.2s ease-out both;
-    animation-delay: 0.3s;
-  }
-  @keyframes fadeUp {
-    from { opacity: 0; transform: translateY(30px); }
-    to { opacity: 1; transform: translateY(0); }
-  }
-  .center-box {
-    display: flex;
-    align-items: flex-end;
-    justify-content: space-between;
-    width: 100%;
-    gap: 48px;
-  }
-  .title-area {
-    flex: 0 0 auto;
-    max-width: 440px;
-  }
-  .title {
-    font-family: var(--font-cormorant), serif;
-    font-size: 3rem;
-    font-weight: 600;
-    color: var(--text-ivory);
-    line-height: 1.08;
-    margin: 0 0 16px 0;
-    letter-spacing: -0.01em;
-    text-shadow: 0 2px 12px rgba(0, 0, 0, 0.4);
-  }
-  .title em {
-    font-style: italic;
-    font-weight: 400;
-    color: var(--gold-accent);
-  }
-  .subtitle {
-    font-family: var(--font-dm-sans), sans-serif;
-    font-size: 0.95rem;
-    font-weight: 400;
-    color: rgba(245, 237, 228, 0.8);
-    line-height: 1.5;
-    margin: 0;
-    letter-spacing: 0.01em;
-    text-shadow: 0 2px 12px rgba(0, 0, 0, 0.4);
-  }
-  .subtitle-link {
-    color: var(--gold-accent);
-    text-decoration: none;
-    transition: color 0.2s ease;
-  }
-  .subtitle-link:hover {
-    color: var(--text-ivory);
-    text-decoration: underline;
-  }
-
-  /* TableOfContents */
-  .toc {
-    width: 100%;
-    display: flex;
-    flex-direction: column;
-    gap: 0;
-    flex-shrink: 0;
-    max-width: 280px;
-  }
-  .toc-row {
-    display: flex;
-    align-items: baseline;
-    justify-content: space-between;
-    padding: 6px 0;
-    text-decoration: none;
-    color: #F5EDE4;
-    cursor: pointer;
-    transition: color 0.3s ease;
-    animation: fadeRowIn 0.7s ease-out both;
-    text-shadow: 0 2px 12px rgba(0, 0, 0, 0.4);
-  }
-  @keyframes fadeRowIn {
-    from { opacity: 0; transform: translateY(10px); }
-    to { opacity: 1; transform: translateY(0); }
-  }
-  .toc-row:hover { color: #ff2d9b; }
-  .toc-row-dimmed {
-    opacity: 0.4;
-    cursor: default;
-    pointer-events: none;
-  }
-  .toc-date {
-    font-family: "DM Sans", sans-serif;
-    font-size: 0.78rem;
-    font-weight: 600;
-    letter-spacing: 0.02em;
-    color: #F5EDE4;
-  }
-  .toc-city {
-    font-family: "DM Sans", sans-serif;
-    font-size: 0.72rem;
-    font-weight: 400;
-    letter-spacing: 0.1em;
-    text-transform: uppercase;
-    color: rgba(245, 237, 228, 0.6);
-  }
-
-  /* ScrollIndicator */
-  .scroll-indicator {
-    position: fixed;
-    bottom: 28px;
-    left: 50%;
-    transform: translateX(-50%);
-    z-index: 60;
-    animation: indicatorFadeUp 1s ease-out 2s both;
-  }
-  @keyframes indicatorFadeUp {
-    from { opacity: 0; }
-    to { opacity: 1; }
-  }
-  .scroll-line {
-    width: 1px;
-    height: 36px;
-    background: rgba(255, 255, 255, 0.5);
-    animation: pulse 2s ease-in-out infinite;
-  }
-  @keyframes pulse {
-    0%, 100% { opacity: 0.25; transform: scaleY(0.7); }
-    50% { opacity: 0.8; transform: scaleY(1); }
-  }
-
-  @media (max-width: 768px) {
-    .center-wrapper { padding: 0 24px 24px; min-height: 100dvh; }
-    .center-box { flex-direction: column; align-items: flex-start; gap: 16px; }
-    .title-area { max-width: 100%; }
-    .title { font-size: 2rem; margin-bottom: 8px; }
-    .subtitle { font-size: 0.82rem; line-height: 1.4; }
-    .toc { max-width: 100%; }
-  }
-  @media (max-width: 600px) {
-    .toc-row { padding: 5px 0; }
-    .toc-date { font-size: 0.88rem; }
-    .toc-city { font-size: 0.82rem; }
-  }
-
-  /* FAQ Section */
-  .home-faq {
-    position: relative;
-    z-index: 10;
-    padding: 80px 24px;
-  }
-  .home-faq-container {
-    max-width: 620px;
-    margin: 0 auto;
-  }
-  .home-faq-title {
-    font-family: var(--font-playfair), serif;
-    font-size: 1.6rem;
-    font-weight: 700;
-    color: var(--text-ivory);
-    margin-bottom: 32px;
-    letter-spacing: -0.01em;
-  }
-  .home-faq-list {
-    display: flex;
-    flex-direction: column;
-    gap: 2px;
-  }
-  .home-faq-item {
-    border-radius: 12px;
-    border: 1px solid rgba(245, 237, 228, 0.07);
-    background: rgba(255, 255, 255, 0.02);
-    overflow: hidden;
-    transition: border-color 0.15s, background 0.15s;
-  }
-  .home-faq-item.is-open {
-    border-color: rgba(201, 168, 76, 0.25);
-    background: rgba(201, 168, 76, 0.05);
-  }
-  .home-faq-toggle {
-    width: 100%;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 16px;
-    padding: 18px 20px;
-    background: none;
-    border: none;
-    cursor: pointer;
-    text-align: left;
-    min-height: 48px;
-  }
-  .home-faq-question {
-    font-family: var(--font-cormorant), serif;
-    font-size: 17px;
-    font-weight: 600;
-    color: rgba(245, 237, 228, 0.85);
-    line-height: 1.4;
-    transition: color 0.15s;
-  }
-  .home-faq-item.is-open .home-faq-question {
-    color: var(--text-ivory);
-  }
-  .home-faq-chevron {
-    color: var(--gold-dark);
-    flex-shrink: 0;
-    transition: transform 0.2s;
-  }
-  .home-faq-item.is-open .home-faq-chevron {
-    transform: rotate(180deg);
-  }
-  .home-faq-answer {
-    max-height: 0;
-    overflow: hidden;
-    transition: max-height 0.35s cubic-bezier(0.4, 0, 0.2, 1);
-  }
-  .home-faq-item.is-open .home-faq-answer {
-    max-height: 300px;
-  }
-  .home-faq-answer-text {
-    font-family: var(--font-cormorant), serif;
-    font-size: 16px;
-    color: rgba(245, 237, 228, 0.7);
-    line-height: 1.65;
-    margin: 0;
-    padding: 0 20px 18px;
-  }
-  @media (min-width: 769px) {
-    .home-faq { padding: 100px 60px; }
-    .home-faq-title { font-size: 1.8rem; }
-  }
-</style>
-
 <script>
-  document.querySelectorAll('.home-faq-toggle').forEach((btn) => {
-    btn.addEventListener('click', () => {
-      const item = btn.closest('.home-faq-item');
-      if (!item) return;
-      const isOpen = item.classList.contains('is-open');
-      document.querySelectorAll('.home-faq-item').forEach((el) => {
-        el.classList.remove('is-open');
-        el.querySelector('.home-faq-toggle')?.setAttribute('aria-expanded', 'false');
-      });
-      if (!isOpen) {
-        item.classList.add('is-open');
-        btn.setAttribute('aria-expanded', 'true');
+  import { getFirebaseDb } from '@/lib/firebase';
+  import { collection, addDoc, updateDoc, type DocumentReference } from 'firebase/firestore';
+  import { cleanPhone } from '@/lib/phone';
+  import { identifyLead, trackLeadEvent } from '@/lib/analytics';
+  import { buildLeadAttribution } from '@/lib/leadAttribution';
+
+  // Email popup logic — only suppressed permanently after email submit
+  const POPUP_KEY = 'gmd-popup-subscribed';
+  const popup = document.getElementById('email-popup') as HTMLDialogElement;
+
+  if (popup && !localStorage.getItem(POPUP_KEY)) {
+    const timer = setTimeout(() => {
+      if (!document.querySelector('dialog[open]')) {
+        trackLeadEvent('popup_opened', { source: 'popup', sourcePage: window.location.pathname });
+        popup.showModal();
+      }
+    }, 30000);
+
+    const close = () => {
+      popup.close();
+      clearTimeout(timer);
+    };
+
+    popup.querySelector('.popup-close')?.addEventListener('click', close);
+    popup.querySelector('.popup-dismiss')?.addEventListener('click', close);
+    popup.querySelector('.popup-skip')?.addEventListener('click', close);
+    popup.addEventListener('click', (e) => {
+      if (e.target === popup) close();
+    });
+
+    let savedEmail = '';
+    let popupDocRef: DocumentReference | null = null;
+
+    document.getElementById('popup-email-form')?.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      savedEmail = (document.getElementById('popup-email') as HTMLInputElement).value;
+      const errorEl = document.getElementById('popup-email-error');
+      const submitBtn = (e.target as HTMLFormElement).querySelector<HTMLButtonElement>('[type="submit"]');
+      if (submitBtn) submitBtn.disabled = true;
+      try {
+        const db = getFirebaseDb();
+        const attribution = buildLeadAttribution({ source: 'popup' });
+        popupDocRef = await addDoc(collection(db, 'leads'), {
+          email: savedEmail,
+          ...attribution,
+          createdAt: new Date().toISOString(),
+        });
+        localStorage.setItem(POPUP_KEY, 'true');
+        identifyLead(savedEmail, attribution);
+        trackLeadEvent('lead_email_submitted', attribution);
+        if (errorEl) { errorEl.textContent = ''; errorEl.setAttribute('hidden', ''); }
+        document.getElementById('popup-step-1')?.setAttribute('hidden', '');
+        document.getElementById('popup-step-2')?.removeAttribute('hidden');
+      } catch (err) {
+        if (errorEl) {
+          errorEl.textContent = 'Something went wrong. Please try again.';
+          errorEl.removeAttribute('hidden');
+        }
+      } finally {
+        if (submitBtn) submitBtn.disabled = false;
       }
     });
-  });
+
+    document.getElementById('popup-phone-form')?.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const raw = (document.getElementById('popup-phone') as HTMLInputElement).value;
+      const cleaned = cleanPhone(raw);
+      const phoneErrorEl = document.getElementById('popup-phone-error');
+
+      if (!raw.trim()) { close(); return; }
+
+      if (!cleaned) {
+        if (phoneErrorEl) {
+          phoneErrorEl.textContent = 'Please enter a valid phone number.';
+          phoneErrorEl.removeAttribute('hidden');
+        }
+        return;
+      }
+
+      const submitBtn = (e.target as HTMLFormElement).querySelector<HTMLButtonElement>('[type="submit"]');
+      if (submitBtn) submitBtn.disabled = true;
+      try {
+        const db = getFirebaseDb();
+        if (popupDocRef) {
+          await updateDoc(popupDocRef, { phone: cleaned });
+        } else {
+          const attribution = buildLeadAttribution({ source: 'popup' });
+          await addDoc(collection(db, 'leads'), {
+            email: savedEmail,
+            phone: cleaned,
+            ...attribution,
+            createdAt: new Date().toISOString(),
+          });
+        }
+        trackLeadEvent('lead_phone_submitted', { source: 'popup', sourcePage: window.location.pathname });
+        close();
+      } catch (err) {
+        if (phoneErrorEl) {
+          phoneErrorEl.textContent = 'Something went wrong. Please try again or skip.';
+          phoneErrorEl.removeAttribute('hidden');
+        }
+      } finally {
+        if (submitBtn) submitBtn.disabled = false;
+      }
+    });
+  }
+
+  // Scroll reveal observer — progressive enhancement
+  const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  if ('IntersectionObserver' in window && !prefersReducedMotion) {
+    document.documentElement.classList.add('js-reveal');
+    const revealNodes = document.querySelectorAll('[data-reveal]');
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add('revealed');
+            observer.unobserve(entry.target);
+          }
+        });
+      },
+      { threshold: 0.12 }
+    );
+    revealNodes.forEach((el) => observer.observe(el));
+  }
 </script>
+
+<style is:global>
+  .js-reveal [data-reveal] {
+    opacity: 0;
+    transform: translateY(32px);
+    transition: opacity 0.7s ease, transform 0.7s cubic-bezier(0.22, 1, 0.36, 1);
+  }
+  .js-reveal [data-reveal].revealed {
+    opacity: 1;
+    transform: none;
+  }
+
+  /* Email popup */
+  .popup-dialog {
+    border: none;
+    background: transparent;
+    padding: 24px;
+    max-width: 100%;
+    max-height: 100vh;
+    width: 100%;
+    height: 100%;
+    overflow: visible;
+  }
+  .popup-dialog::backdrop {
+    background: rgba(0, 0, 0, 0.5);
+  }
+  .popup-dialog[open] {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .popup-inner {
+    width: 100%;
+    max-width: 400px;
+    max-height: 80vh;
+    overflow-y: auto;
+    background: white;
+    border: 1px solid rgba(0, 0, 0, 0.1);
+    border-radius: 20px;
+    padding: 32px 24px;
+    position: relative;
+    animation: popupIn 0.25s ease-out both;
+    text-align: center;
+  }
+  /* Prevent CLS when switching between steps */
+  .popup-steps-wrapper {
+    min-height: 240px;
+  }
+  @keyframes popupIn {
+    from { opacity: 0; transform: scale(0.95) translateY(8px); }
+    to { opacity: 1; transform: scale(1) translateY(0); }
+  }
+  .popup-close {
+    position: absolute;
+    top: 16px;
+    right: 16px;
+    background: none;
+    border: none;
+    color: #888;
+    cursor: pointer;
+    padding: 12px;
+    min-width: var(--touch-target);
+    min-height: var(--touch-target);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: color 0.2s;
+  }
+  .popup-close:hover { color: var(--charcoal); }
+  .popup-title {
+    font-family: var(--font-playfair), serif;
+    font-size: 24px;
+    font-weight: 700;
+    color: var(--charcoal);
+    margin-bottom: 8px;
+  }
+  .popup-subtitle {
+    font-size: 15px;
+    color: #666;
+    margin-bottom: 24px;
+    line-height: 1.5;
+  }
+  .popup-form {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+  .popup-form input {
+    padding: 14px 20px;
+    border: 1.5px solid rgba(0, 0, 0, 0.1);
+    border-radius: 50px;
+    font-size: 16px;
+    font-family: var(--font-body), sans-serif;
+    outline: none;
+    transition: border-color 0.2s;
+    min-height: var(--touch-target);
+  }
+  .popup-form input:focus {
+    border-color: var(--brand-red);
+  }
+  .popup-submit {
+    background: var(--brand-red);
+    color: white;
+    border: none;
+    padding: 14px;
+    border-radius: 50px;
+    font-family: var(--font-body), sans-serif;
+    font-size: 14px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    cursor: pointer;
+    transition: background 0.2s;
+    min-height: var(--touch-target);
+    white-space: nowrap;
+    width: 100%;
+  }
+  .popup-submit:hover { background: var(--brand-red-dark); }
+  .popup-error {
+    font-size: 13px;
+    color: var(--brand-red);
+    text-align: center;
+    margin: 0;
+    font-family: var(--font-body), sans-serif;
+  }
+  .popup-dismiss,
+  .popup-skip {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    margin-top: 16px;
+    background: none;
+    border: none;
+    color: #999;
+    font-size: 14px;
+    cursor: pointer;
+    font-family: var(--font-body), sans-serif;
+    transition: color 0.2s;
+    padding: 12px 16px;
+    min-height: var(--touch-target);
+  }
+  .popup-dismiss:hover,
+  .popup-skip:hover { color: #666; }
+</style>

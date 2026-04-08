@@ -16,16 +16,6 @@
   unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
 }
 
-/* DM Sans — body (variable font covers 400-600) */
-@font-face {
-  font-family: "DM Sans";
-  font-style: normal;
-  font-weight: 400 600;
-  font-display: swap;
-  src: url("/fonts/dm-sans-latin.woff2") format("woff2");
-  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
-}
-
 /* Cormorant Garamond — accent (variable font covers 400-500) */
 @font-face {
   font-family: "Cormorant Garamond";
@@ -44,35 +34,48 @@
   unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
 }
 
-/* JetBrains Mono — code/labels */
+/* Nunito — body (variable font 200-1000) */
 @font-face {
-  font-family: "JetBrains Mono";
+  font-family: "Nunito";
   font-style: normal;
-  font-weight: 400;
+  font-weight: 200 1000;
   font-display: swap;
-  src: url("/fonts/jetbrains-mono-latin-400.woff2") format("woff2");
+  src: url("/fonts/nunito-latin-var.woff2") format("woff2");
   unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
 }
 
 :root {
   --font-playfair: "Playfair Display";
-  --font-dm-sans: "DM Sans";
+  --font-body: "Nunito";
   --font-cormorant: "Cormorant Garamond";
-  --font-jetbrains: "JetBrains Mono";
-  --crimson: #C41E3A;
-  --crimson-dark: #9E1830;
-  --crimson-light: #E8435A;
-  --gold: #D4A843;
-  --gold-dark: #C9A84C;
+  /* legacy aliases — used only by admin components */
   --cream: #FFF8F0;
-  --text: #2D2420;
-  --text-light: #7A6F66;
-  --border: #E0D5C8;
+  --text: #1A1A1A;
+  --text-light: #595959;
+  --border: rgba(0, 0, 0, 0.1);
   --success: #22C55E;
-  --accent-pink: #ff2d9b;
-  --text-ivory: #F5EDE4;
-  --gold-accent: #E2C97E;
-  --surface-dark: #4A0E1B;
+
+  /* brand palette */
+  --brand-red: #DC2626;
+  --brand-red-rgb: 220, 38, 38;
+  --brand-red-dark: #b91c1c;
+  --electric-yellow: #FFD600;
+  --off-white: #FFF8F0;
+  --charcoal: #1A1A1A;
+  --ink: #111;
+  --spice-orange: #FF6D00;
+  --muted: #6b6b6b;
+  --text-secondary: #555;
+  --text-tertiary: #777;
+  --cream-warm: #FFF0E2;
+  --off-white-rgb: 255, 248, 240;
+
+  /* layout */
+  --dialog-gutter: 16px;
+  --backdrop: rgba(0, 0, 0, 0.5);
+
+  /* accessibility */
+  --touch-target: 48px;
 }
 
 *,
@@ -84,23 +87,30 @@
 }
 
 html {
+  background: var(--off-white);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   text-rendering: optimizeLegibility;
+  overflow-x: clip;
 }
 
 body {
   margin: 0;
-  background: #0a0a0a;
-  color: #fff;
-  font-family: "DM Sans", sans-serif;
+  background: var(--off-white);
+  color: var(--charcoal);
+  font-family: Nunito, sans-serif;
   overflow-x: hidden;
   min-width: 320px;
 }
 
 ::selection {
-  background: var(--accent-pink);
+  background: var(--brand-red);
   color: #fff;
+}
+
+:focus-visible {
+  outline: 2px solid var(--brand-red);
+  outline-offset: 2px;
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -109,4 +119,30 @@ body {
     animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;
   }
+}
+
+/* ─── Skip-to-content link (visible only on keyboard focus) ── */
+.sr-skip-link {
+  position: absolute;
+  left: -9999px;
+  top: auto;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  z-index: 9999;
+}
+.sr-skip-link:focus {
+  position: fixed;
+  top: 8px;
+  left: 8px;
+  width: auto;
+  height: auto;
+  padding: 12px 24px;
+  background: var(--charcoal);
+  color: #fff;
+  font-family: var(--font-body);
+  font-size: 14px;
+  font-weight: 600;
+  border-radius: 8px;
+  text-decoration: none;
 }

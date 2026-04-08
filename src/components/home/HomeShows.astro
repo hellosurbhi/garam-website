@@ -1,0 +1,456 @@
+---
+import type { EventEntry } from '@/data/events';
+import NotifyModal from '@/components/NotifyModal.astro';
+
+interface Props {
+  events: EventEntry[];
+}
+
+const { events } = Astro.props;
+
+function parseMonth(dateStr: string): string {
+  return dateStr.split(' ')[0];
+}
+
+function parseDay(dateStr: string): string {
+  const parts = dateStr.split(' ');
+  const day = parts[1] ?? '—';
+  return /^\d{1,2}$/.test(day) ? day : '—';
+}
+---
+
+<section class="shows" id="shows" aria-labelledby="shows-heading">
+  <div class="shows-header" data-reveal>
+    <h2 id="shows-heading">Grab Your Seat</h2>
+    <p>Tickets always sell out. You've been warned.</p>
+    <p class="shows-proof">40+ shows sold out · 2,000+ audience members · 13 couples matched</p>
+  </div>
+  <div class="shows-list">
+    {events.map((event) => {
+      const isLive = Boolean(event.url);
+      const isSoldOut = event.tagline?.toLowerCase().includes('sold out');
+      return isLive ? (
+        <a href={event.url} target="_blank" rel="noopener noreferrer" class="show-card show-card--live" data-reveal>
+          <div class="show-date-block">
+            <div class="month">{parseMonth(event.date)}</div>
+            <div class="day">{parseDay(event.date)}</div>
+          </div>
+          <div class="show-info">
+            <h3>{event.city}</h3>
+            <span>{event.tagline ?? 'On sale now'}</span>
+          </div>
+          <span class={`ticket-label${isSoldOut ? ' ticket-label--soldout' : ''}`}>{isSoldOut ? 'Sold Out' : 'Get Tickets'}</span>
+        </a>
+      ) : (
+        <button type="button" class="show-card show-card--notify" data-notify-city={event.city} data-reveal>
+          <div class="show-date-block">
+            {parseDay(event.date) !== '—' ? (
+              <><div class="month">{parseMonth(event.date)}</div><div class="day">{parseDay(event.date)}</div></>
+            ) : (
+              <div class="day day--tba">TBA</div>
+            )}
+          </div>
+          <div class="show-info">
+            <h3>{event.city}</h3>
+            <span>Dates to be announced</span>
+          </div>
+          <span class="ticket-label ticket-label--notify">Notify Me</span>
+        </button>
+      );
+    })}
+  </div>
+  <div class="request-city" data-reveal>
+    <button type="button" id="request-city-trigger">Don't see your city? Request it →</button>
+  </div>
+
+  <NotifyModal />
+
+  <!-- Request City Modal -->
+  <dialog id="request-city-modal" class="modal-dialog">
+    <div class="modal-inner">
+      <button type="button" class="modal-close" aria-label="Close">
+        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
+      </button>
+      <div id="city-form-view">
+        <h2 class="modal-title">Request Your City</h2>
+        <p class="modal-subtitle">Tell us where you want Garam Masala Dating and we'll make it happen.</p>
+        <form id="city-form" class="modal-form">
+          <input type="text" id="city-name" list="city-name-suggestions" placeholder="Start typing a city" aria-label="City name" autocomplete="off" />
+          <datalist id="city-name-suggestions"></datalist>
+          <input type="hidden" id="city-state" />
+          <input type="hidden" id="city-country" />
+          <input type="email" id="city-email" placeholder="Your email" required aria-label="Email address" />
+          <p id="city-form-error" class="modal-error" hidden role="alert"></p>
+          <button type="submit" class="modal-submit">Submit Request</button>
+        </form>
+      </div>
+      <div id="city-success" class="modal-success" hidden>
+        <p>Request received! We'll keep you posted.</p>
+      </div>
+    </div>
+  </dialog>
+</section>
+
+<script>
+  import { getFirebaseDb } from '@/lib/firebase';
+  import { collection, addDoc } from 'firebase/firestore';
+  import { resolveCityOption } from '@/lib/citySearch';
+  import { identifyLead, trackLeadEvent } from '@/lib/analytics';
+  import { buildLeadAttribution } from '@/lib/leadAttribution';
+
+  // Request City modal
+  const cityDialog = document.getElementById('request-city-modal') as HTMLDialogElement;
+  if (cityDialog) {
+    const cityInput = document.getElementById('city-name') as HTMLInputElement | null;
+    const cityStateInput = document.getElementById('city-state') as HTMLInputElement | null;
+    const cityCountryInput = document.getElementById('city-country') as HTMLInputElement | null;
+    const citySuggestions = document.getElementById('city-name-suggestions') as HTMLDataListElement | null;
+    const errorEl = document.getElementById('city-form-error');
+    let cityOptions: import('@/lib/citySearch').CitySearchOption[] = [];
+    let selectedCity: import('@/lib/citySearch').CitySearchOption | null = null;
+
+    const syncSelectedCity = (option: import('@/lib/citySearch').CitySearchOption | null) => {
+      selectedCity = option;
+      if (cityStateInput) cityStateInput.value = option?.state ?? '';
+      if (cityCountryInput) cityCountryInput.value = option?.country ?? '';
+    };
+
+    const renderCitySuggestions = (results: import('@/lib/citySearch').CitySearchOption[]) => {
+      if (!citySuggestions) return;
+      citySuggestions.innerHTML = '';
+      results.forEach((option) => {
+        const suggestion = document.createElement('option');
+        suggestion.value = option.label;
+        citySuggestions.appendChild(suggestion);
+      });
+    };
+
+    const searchCities = async (query: string) => {
+      const response = await fetch(`/api/city-search?q=${encodeURIComponent(query)}`);
+      if (!response.ok) throw new Error('Failed to search cities');
+      const data = await response.json() as { results?: import('@/lib/citySearch').CitySearchOption[] };
+      cityOptions = data.results ?? [];
+      renderCitySuggestions(cityOptions);
+    };
+
+    document.getElementById('request-city-trigger')?.addEventListener('click', () => {
+      // Reset to form state before opening
+      document.getElementById('city-form-view')?.removeAttribute('hidden');
+      document.getElementById('city-success')?.setAttribute('hidden', '');
+      const emailInput = document.getElementById('city-email') as HTMLInputElement;
+      if (cityInput) cityInput.value = '';
+      if (emailInput) emailInput.value = '';
+      if (errorEl) { errorEl.textContent = ''; errorEl.setAttribute('hidden', ''); }
+      syncSelectedCity(null);
+      cityOptions = [];
+      renderCitySuggestions([]);
+      trackLeadEvent('request_city_opened', { source: 'request-city', sourcePage: window.location.pathname });
+      cityDialog.showModal();
+    });
+
+    cityDialog.querySelector('.modal-close')?.addEventListener('click', () => cityDialog.close());
+    cityDialog.addEventListener('click', (e) => {
+      if (e.target === cityDialog) cityDialog.close();
+    });
+
+    cityInput?.addEventListener('focus', () => {
+      if (cityInput.value.trim()) {
+        searchCities(cityInput.value).catch(() => {});
+      }
+    });
+
+    cityInput?.addEventListener('input', async () => {
+      if (!cityInput.value.trim()) {
+        cityOptions = [];
+        renderCitySuggestions([]);
+        syncSelectedCity(null);
+        return;
+      }
+      await searchCities(cityInput.value);
+      syncSelectedCity(resolveCityOption(cityInput.value, cityOptions));
+    });
+
+    cityInput?.addEventListener('change', () => {
+      syncSelectedCity(resolveCityOption(cityInput.value, cityOptions));
+    });
+
+    document.getElementById('city-form')?.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      if (cityInput?.value.trim()) {
+        await searchCities(cityInput.value);
+      }
+      const resolvedCity = selectedCity ?? resolveCityOption(cityInput?.value ?? '', cityOptions);
+      const city = resolvedCity?.city ?? (cityInput?.value ?? '').trim();
+      const email = (document.getElementById('city-email') as HTMLInputElement).value;
+      try {
+        const db = getFirebaseDb();
+        const attribution = buildLeadAttribution({ source: 'request-city' });
+        const payload: Record<string, string> = {
+          email,
+          ...attribution,
+          createdAt: new Date().toISOString(),
+        };
+        if (city) payload.city = city;
+        if (resolvedCity?.state) payload.state = resolvedCity.state;
+        if (resolvedCity?.country) payload.country = resolvedCity.country;
+        await addDoc(collection(db, 'leads'), payload);
+        identifyLead(email, { ...attribution, city, state: resolvedCity?.state, country: resolvedCity?.country });
+        trackLeadEvent('lead_email_submitted', { ...attribution, city, state: resolvedCity?.state, country: resolvedCity?.country });
+        document.getElementById('city-form-view')?.setAttribute('hidden', '');
+        document.getElementById('city-success')?.removeAttribute('hidden');
+      } catch {
+        if (errorEl) {
+          errorEl.textContent = 'Something went wrong. Please try again.';
+          errorEl.removeAttribute('hidden');
+        }
+      }
+    });
+  }
+</script>
+
+<style>
+  .shows {
+    padding: 55px 16px;
+    background: var(--charcoal);
+    position: relative;
+  }
+  .shows-header {
+    max-width: 1200px;
+    margin: 0 auto 40px;
+  }
+  .shows-header h2 {
+    font-family: var(--font-playfair), serif;
+    font-size: clamp(32px, 5vw, 60px);
+    font-weight: 900;
+    color: white;
+    line-height: 1;
+  }
+  .shows-header p {
+    font-family: var(--font-cormorant), serif;
+    font-style: italic;
+    color: rgba(255, 255, 255, 0.7);
+    font-size: 18px;
+    margin-top: 8px;
+  }
+  .shows-proof {
+    font-family: var(--font-cormorant), serif;
+    font-style: italic;
+    font-size: 15px;
+    color: rgba(255, 255, 255, 0.6);
+    margin-top: 4px;
+    letter-spacing: 0.5px;
+  }
+  .shows-list {
+    max-width: 1200px;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+  }
+  .show-card {
+    background: none;
+    border: none;
+    border-top: 1px solid rgba(255, 255, 255, 0.2);
+    padding: 24px 0;
+    display: grid;
+    grid-template-columns: 48px 1fr auto;
+    gap: 16px;
+    align-items: center;
+    transition: opacity 0.2s;
+    text-decoration: none;
+    cursor: pointer;
+    color: white;
+    width: 100%;
+    font: inherit;
+    text-align: left;
+  }
+  .show-card:last-child {
+    border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+  }
+  .show-card:hover { opacity: 0.8; }
+  .show-date-block { text-align: center; }
+  .show-date-block .month {
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    color: var(--electric-yellow);
+  }
+  .show-date-block .day {
+    font-family: var(--font-playfair), serif;
+    font-size: 36px;
+    font-weight: 900;
+    line-height: 1;
+    color: white;
+  }
+  .show-date-block .day--tba {
+    font-size: 20px;
+    font-family: var(--font-body), sans-serif;
+    font-weight: 900;
+    color: var(--electric-yellow);
+    letter-spacing: 3px;
+  }
+  .show-info h3 {
+    font-family: var(--font-playfair), serif;
+    font-size: 18px;
+    font-weight: 700;
+    color: white;
+    margin-bottom: 2px;
+  }
+  .show-info span {
+    font-size: 13px;
+    color: rgba(255, 255, 255, 0.55);
+  }
+  .ticket-label {
+    background: none;
+    color: var(--electric-yellow);
+    border: none;
+    padding: 0;
+    font-family: var(--font-body), sans-serif;
+    font-weight: 700;
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    text-align: right;
+    white-space: nowrap;
+    display: inline-flex;
+    align-items: center;
+    pointer-events: none;
+  }
+  .ticket-label--notify {
+    color: rgba(255, 255, 255, 0.45);
+  }
+  .ticket-label--soldout {
+    color: rgba(255, 255, 255, 0.35);
+  }
+  .request-city {
+    text-align: center;
+    margin-top: 36px;
+  }
+  .request-city button {
+    color: var(--electric-yellow);
+    font-weight: bold;
+    font-size: 22px;
+    background: none;
+    border: none;
+    min-height: var(--touch-target);
+    border-bottom: 1px solid rgba(255, 214, 0, 0.4);
+    font-family: var(--font-cormorant), serif;
+    font-style: italic;
+    transition: border-color 0.2s;
+    padding: 0;
+  }
+  .request-city button:hover { border-color: var(--electric-yellow); }
+
+
+  @media (min-width: 768px) {
+    .shows { padding: 75px 36px; }
+    .shows-header { margin-bottom: 56px; }
+    .show-card {
+      grid-template-columns: 80px 1fr auto;
+      padding: 28px 0;
+    }
+    .show-date-block .day { font-size: 48px; }
+    .show-date-block .day--tba { font-size: 20px; }
+    .show-info h3 { font-size: 24px; margin-bottom: 4px; }
+    .ticket-label { font-size: 13px; }
+  }
+
+  /* ─── Request City Modal ─────────────────────────────────────── */
+  .modal-dialog {
+    border: none;
+    background: transparent;
+    padding: 24px;
+    max-width: 100%;
+    max-height: 100vh;
+    width: 100%;
+    height: 100%;
+    overflow: visible;
+  }
+  .modal-dialog::backdrop { background: rgba(0, 0, 0, 0.5); }
+  .modal-dialog[open] {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .modal-inner {
+    width: 100%;
+    max-width: 400px;
+    max-height: 80vh;
+    overflow-y: auto;
+    background: white;
+    border: 1px solid rgba(0, 0, 0, 0.1);
+    border-radius: 20px;
+    padding: 32px 24px;
+    position: relative;
+    animation: modalIn 0.25s ease-out both;
+    text-align: center;
+  }
+  @keyframes modalIn {
+    from { opacity: 0; transform: scale(0.95) translateY(8px); }
+    to   { opacity: 1; transform: scale(1) translateY(0); }
+  }
+  .modal-close {
+    position: absolute;
+    top: 16px;
+    right: 16px;
+    background: none;
+    border: none;
+    color: var(--muted);
+    cursor: pointer;
+    padding: 4px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: color 0.2s;
+  }
+  .modal-close:hover { color: var(--charcoal); }
+  .modal-title {
+    font-family: var(--font-playfair), serif;
+    font-size: 22px;
+    font-weight: 600;
+    color: var(--charcoal);
+    margin-bottom: 8px;
+  }
+  .modal-subtitle {
+    font-size: 15px;
+    color: var(--muted);
+    margin-bottom: 24px;
+    line-height: 1.5;
+  }
+  .modal-form { display: flex; flex-direction: column; gap: 12px; }
+  .modal-form input {
+    padding: 14px 20px;
+    border: 1.5px solid rgba(0, 0, 0, 0.1);
+    border-radius: 50px;
+    font-size: 16px;
+    font-family: var(--font-body), sans-serif;
+    outline: none;
+    transition: border-color 0.2s;
+    min-height: var(--touch-target);
+  }
+  .modal-form input:focus { border-color: var(--brand-red); }
+  .modal-submit {
+    background: var(--brand-red);
+    color: white;
+    border: none;
+    padding: 14px;
+    border-radius: 50px;
+    font-family: var(--font-body), sans-serif;
+    font-size: 16px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    cursor: pointer;
+    transition: background 0.2s;
+    min-height: var(--touch-target);
+    width: 100%;
+  }
+  .modal-submit:hover { background: var(--brand-red-dark); }
+  .modal-success { text-align: center; padding: 24px 0; }
+  .modal-success p {
+    font-family: var(--font-cormorant), serif;
+    font-size: 18px;
+    font-style: italic;
+    color: var(--charcoal);
+  }
+</style>

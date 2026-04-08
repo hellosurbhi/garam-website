@@ -71,6 +71,10 @@ export default function ApplicantCard({ app, onClick, onDelete, onRestore, dimme
   return (
     <article
       onClick={onClick}
+      onKeyDown={(e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); onClick?.(); } }}
+      tabIndex={0}
+      role="button"
+      aria-label={`View application from ${app.name}`}
       style={{
         background: "#fff",
         borderRadius: "12px",
@@ -155,7 +159,7 @@ export default function ApplicantCard({ app, onClick, onDelete, onRestore, dimme
           onClick={(e) => e.stopPropagation()}
           style={{
             fontSize: "13px",
-            color: "var(--crimson)",
+            color: "var(--brand-red)",
             textDecoration: "none",
             display: "block",
             marginBottom: "10px",

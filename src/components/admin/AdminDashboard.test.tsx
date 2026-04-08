@@ -1,7 +1,19 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import { render, screen, fireEvent, waitFor } from "@testing-library/react";
+import type { Timestamp } from "firebase/firestore";
 import type { Application } from "@/types/application";
 import AdminDashboard from "./AdminDashboard";
+
+function makeTimestamp(seconds: number): Timestamp {
+  return {
+    seconds,
+    nanoseconds: 0,
+    toDate: () => new Date(seconds * 1000),
+    toMillis: () => seconds * 1000,
+    isEqual: () => false,
+    toJSON: () => ({ seconds, nanoseconds: 0 }),
+  } as unknown as Timestamp;
+}
 
 function makeApp(overrides?: Partial<Application>): Application {
   return {
@@ -133,7 +145,7 @@ describe("AdminDashboard", () => {
     mockGetDocs.mockResolvedValue({
       docs: [
         { id: "1", data: () => ({ ...makeApp({ id: "1" }) }) },
-        { id: "2", data: () => ({ ...makeApp({ id: "2", deletedAt: { seconds: 100, toDate: () => new Date() } }) }) },
+        { id: "2", data: () => ({ ...makeApp({ id: "2", deletedAt: makeTimestamp(100) }) }) },
       ],
     });
     render(<AdminDashboard onLogout={onLogout} />);

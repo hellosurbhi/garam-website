@@ -1,0 +1,109 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import { buildBreadcrumbJsonLd } from '@/utils/breadcrumbs';
+
+const TITLE = "Terms of Service | Garam Masala Dating";
+const DESC = "Terms of service for Garam Masala Dating. Rules and guidelines for using our website and attending our shows.";
+
+const breadcrumbJsonLd = buildBreadcrumbJsonLd([
+  { name: "Home", url: "https://garammasaladating.com/" },
+  { name: "Terms of Service" },
+]);
+---
+
+<BaseLayout title={TITLE} description={DESC}>
+  <Fragment slot="head">
+    <script type="application/ld+json" set:html={breadcrumbJsonLd} />
+  </Fragment>
+
+  <main id="main-content" class="legal-page">
+    <div class="legal-container">
+      <h1>Terms of Service</h1>
+      <p class="legal-updated">Last updated: April 2026</p>
+
+      <h2>The basics</h2>
+      <p>By using garammasaladating.com or attending a Garam Masala Dating show, you agree to these terms. If you don't agree, that's fine, but you shouldn't use the site or attend the show.</p>
+
+      <h2>Tickets and events</h2>
+      <ul>
+        <li>Tickets are sold through Eventbrite and are subject to Eventbrite's terms and refund policies.</li>
+        <li>We reserve the right to refuse entry or remove anyone from an event for disruptive, disrespectful, or unsafe behavior.</li>
+        <li>Show dates, venues, and lineups are subject to change. We'll do our best to notify ticket holders of any changes.</li>
+      </ul>
+
+      <h2>Contestant applications</h2>
+      <ul>
+        <li>Submitting an application does not guarantee selection.</li>
+        <li>We may use your application responses internally to cast the show. We won't publish your answers without your consent.</li>
+        <li>If selected, you agree to participate in good faith and treat your date and the audience with respect.</li>
+      </ul>
+
+      <h2>Photography and recording</h2>
+      <p>By attending a Garam Masala Dating show, you acknowledge that the event may be photographed or recorded. These photos and videos may be used on our website, social media, and marketing materials. If you'd prefer not to be featured, let us know at the event or email us afterward.</p>
+
+      <h2>Content</h2>
+      <p>Everything on this site (text, design, photos, code) belongs to Garam Masala Dating unless otherwise noted. Don't copy it without permission.</p>
+
+      <h2>Liability</h2>
+      <p>We run a comedy dating show. We do our best to create a safe, fun environment, but we're not responsible for what happens between audience members or contestants outside of the show. Attend at your own risk, make good choices, and be kind to each other.</p>
+
+      <h2>Changes</h2>
+      <p>We may update these terms from time to time. If we make significant changes, we'll note the updated date at the top of this page.</p>
+
+      <h2>Contact</h2>
+      <p>Questions? Email <a href="mailto:contact@garammasaladating.com">contact@garammasaladating.com</a>.</p>
+    </div>
+  </main>
+</BaseLayout>
+
+<style>
+  .legal-page {
+    min-height: 100vh;
+    padding: 24px;
+  }
+  .legal-container {
+    max-width: 640px;
+    margin: 0 auto;
+  }
+  .legal-container h1 {
+    font-family: var(--font-playfair), serif;
+    font-size: 32px;
+    font-weight: 700;
+    color: var(--charcoal);
+    margin-bottom: 8px;
+  }
+  .legal-updated {
+    font-size: 13px;
+    color: var(--muted);
+    margin-bottom: 40px;
+  }
+  .legal-container h2 {
+    font-family: var(--font-playfair), serif;
+    font-size: 20px;
+    font-weight: 700;
+    color: var(--charcoal);
+    margin-top: 32px;
+    margin-bottom: 12px;
+  }
+  .legal-container p {
+    font-size: 15px;
+    color: var(--text-secondary);
+    line-height: 1.75;
+    margin-bottom: 16px;
+  }
+  .legal-container ul {
+    padding-left: 20px;
+    margin-bottom: 16px;
+  }
+  .legal-container li {
+    font-size: 15px;
+    color: var(--text-secondary);
+    line-height: 1.75;
+    margin-bottom: 6px;
+  }
+  .legal-container a {
+    color: var(--brand-red);
+    text-decoration: underline;
+    text-underline-offset: 3px;
+  }
+</style>

@@ -82,14 +82,15 @@ describe("COMMUNITY_OPTIONS", () => {
 });
 
 describe("INCOME_OPTIONS", () => {
-  it("has exactly 5 options", () => {
-    expect(INCOME_OPTIONS).toHaveLength(5);
+  it("has exactly 6 options", () => {
+    expect(INCOME_OPTIONS).toHaveLength(6);
   });
 
   it("includes expected bracket options", () => {
     expect(INCOME_OPTIONS).toContain("Under $50k");
     expect(INCOME_OPTIONS).toContain("$50k–$100k");
-    expect(INCOME_OPTIONS).toContain("$100k–$200k");
+    expect(INCOME_OPTIONS).toContain("$100k–$150k");
+    expect(INCOME_OPTIONS).toContain("$150k–$200k");
     expect(INCOME_OPTIONS).toContain("Over $200k");
     expect(INCOME_OPTIONS).toContain("Prefer not to say");
   });

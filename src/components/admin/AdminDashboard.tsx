@@ -39,7 +39,7 @@ export default function AdminDashboard({ onLogout }: AdminDashboardProps) {
   const today = new Date().toLocaleDateString("en-CA");
   const upcomingEvents = events.filter((e) => e.isoDate && e.isoDate > today && !e.hidden);
 
-  const toastTimerRef = useRef<ReturnType<typeof setTimeout>>();
+  const toastTimerRef = useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
   useEffect(() => () => { clearTimeout(toastTimerRef.current); }, []);
 
   function showToast(msg: string, ok: boolean) {
@@ -195,6 +195,7 @@ export default function AdminDashboard({ onLogout }: AdminDashboardProps) {
                 onChange={(v) => setGenderFilter(v)}
                 placeholder="Gender…"
                 styles={adminSelectStyles}
+                aria-label="Filter by gender"
               />
             </div>
             <div className={styles.filterItemWide}>
@@ -205,6 +206,7 @@ export default function AdminDashboard({ onLogout }: AdminDashboardProps) {
                 onChange={(v) => setCityFilter(v)}
                 placeholder="City…"
                 styles={adminSelectStyles}
+                aria-label="Filter by city"
               />
             </div>
             {hasActiveFilters && (
@@ -247,7 +249,7 @@ export default function AdminDashboard({ onLogout }: AdminDashboardProps) {
 
       <main className={styles.main}>
         {loading ? (
-          <div className={styles.loadingState}>Loading…</div>
+          <div className={styles.loadingState} role="status" aria-live="polite">Loading…</div>
         ) : fetchError ? (
           <div className={styles.errorState}>
             <p style={{ marginBottom: "12px" }}>Failed to load applications.</p>
@@ -282,13 +284,13 @@ export default function AdminDashboard({ onLogout }: AdminDashboardProps) {
 
             {deletedApps.length > 0 && (
               <div className={styles.deletedSection}>
-                <button onClick={() => setDeletedOpen((v) => !v)} className={styles.deletedToggle}>
+                <button onClick={() => setDeletedOpen((v) => !v)} className={styles.deletedToggle} aria-expanded={deletedOpen} aria-controls="deleted-apps-list">
                   {deletedOpen ? <ChevronDown size={16} /> : <ChevronRight size={16} />}
                   Deleted Applications ({deletedApps.length})
                 </button>
 
                 {deletedOpen && (
-                  <div className={styles.grid}>
+                  <div id="deleted-apps-list" className={styles.grid}>
                     {deletedApps.map((app) => (
                       <ApplicantCard
                         key={app.id}
@@ -319,7 +321,9 @@ export default function AdminDashboard({ onLogout }: AdminDashboardProps) {
       {toast && (
         <div
           className={styles.toast}
-          style={{ background: toast.ok ? "var(--success)" : "var(--crimson)" }}
+          style={{ background: toast.ok ? "var(--success)" : "var(--brand-red)" }}
+          role="alert"
+          aria-live="assertive"
         >
           {toast.msg}
         </div>

@@ -9,7 +9,7 @@ export const adminSelectStyles: BaseStyles = {
     borderRadius: "100px",
     border: "1px solid var(--border)",
     background: "#fff",
-    fontFamily: "var(--font-dm-sans)",
+    fontFamily: "var(--font-body)",
     fontSize: "13px",
     minHeight: "34px",
     boxShadow: "none",
@@ -22,7 +22,7 @@ export const adminSelectStyles: BaseStyles = {
   }),
   option: (base: CSSObjectWithLabel, state) => ({
     ...base,
-    fontFamily: "var(--font-dm-sans)",
+    fontFamily: "var(--font-body)",
     fontSize: "13px",
     color: "var(--text)",
     background: state.isSelected
@@ -39,7 +39,7 @@ export const adminSelectStyles: BaseStyles = {
   }),
   multiValueLabel: (base: CSSObjectWithLabel) => ({
     ...base,
-    fontFamily: "var(--font-dm-sans)",
+    fontFamily: "var(--font-body)",
     fontSize: "12px",
     color: "var(--text)",
   }),
@@ -54,29 +54,29 @@ export const formSelectStyles: BaseStyles = {
   control: (base: CSSObjectWithLabel, state) => ({
     ...base,
     borderRadius: "12px",
-    border: `1px solid ${state.isFocused ? "#C9A84C" : "#E0D5C8"}`,
-    boxShadow: state.isFocused ? "0 0 0 3px rgba(201, 168, 76, 0.1)" : "none",
-    fontFamily: "var(--font-cormorant)",
+    border: `1px solid ${state.isFocused ? "#DC2626" : "rgba(0, 0, 0, 0.1)"}`,
+    boxShadow: state.isFocused ? "0 0 0 3px rgba(220, 38, 38, 0.1)" : "none",
+    fontFamily: "var(--font-body)",
     fontSize: "16px",
     background: "#fff",
     padding: "6px 4px",
     minHeight: "48px",
     cursor: "pointer",
     transition: "border-color 0.2s, box-shadow 0.2s",
-    "&:hover": { borderColor: state.isFocused ? "#C9A84C" : "#d0c5b8" },
+    "&:hover": { borderColor: state.isFocused ? "#DC2626" : "rgba(0, 0, 0, 0.15)" },
   }),
   option: (base: CSSObjectWithLabel, state) => ({
     ...base,
-    fontFamily: "var(--font-cormorant)",
+    fontFamily: "var(--font-body)",
     fontSize: "16px",
     background: state.isSelected
-      ? "rgba(201, 168, 76, 0.15)"
+      ? "rgba(220, 38, 38, 0.15)"
       : state.isFocused
-        ? "rgba(201, 168, 76, 0.08)"
+        ? "rgba(220, 38, 38, 0.08)"
         : "transparent",
-    color: "#3D3532",
+    color: "var(--charcoal)",
     cursor: "pointer",
-    "&:active": { background: "rgba(201, 168, 76, 0.2)" },
+    "&:active": { background: "rgba(220, 38, 38, 0.2)" },
   }),
   placeholder: (base: CSSObjectWithLabel) => ({
     ...base,
@@ -84,7 +84,7 @@ export const formSelectStyles: BaseStyles = {
   }),
   singleValue: (base: CSSObjectWithLabel) => ({
     ...base,
-    color: "#3D3532",
+    color: "var(--charcoal)",
   }),
   menu: (base: CSSObjectWithLabel) => ({
     ...base,
@@ -100,14 +100,14 @@ export const formSelectStyles: BaseStyles = {
   }),
   input: (base: CSSObjectWithLabel) => ({
     ...base,
-    fontFamily: "var(--font-cormorant)",
+    fontFamily: "var(--font-body)",
     fontSize: "16px",
-    color: "#3D3532",
+    color: "var(--charcoal)",
   }),
   indicatorSeparator: () => ({ display: "none" }) as CSSObjectWithLabel,
   dropdownIndicator: (base: CSSObjectWithLabel) => ({
     ...base,
-    color: "#7A6F66",
-    "&:hover": { color: "#3D3532" },
+    color: "rgba(0, 0, 0, 0.3)",
+    "&:hover": { color: "var(--charcoal)" },
   }),
 };

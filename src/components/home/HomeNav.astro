@@ -1,0 +1,135 @@
+---
+interface Props {
+  ticketsUrl: string;
+}
+
+const { ticketsUrl } = Astro.props;
+const pathname = Astro.url.pathname;
+---
+
+<nav class="home-nav" id="home-nav" aria-label="Main navigation">
+  <a href="/" class="nav-logo" aria-label="Garam Masala Dating Home">
+    <img src="/images/logo.svg" alt="Garam Masala Dating Show" class="nav-logo-img" width="160" height="82" />
+    <div class="nav-logo-pink" role="img" aria-hidden="true"></div>
+  </a>
+  <div class="nav-right">
+    <a href="/apply" class="nav-pill" aria-current={pathname.startsWith('/apply') ? 'page' : undefined}>Apply</a>
+    <a href={ticketsUrl} class="nav-pill primary">Get Tickets</a>
+  </div>
+</nav>
+
+<script>
+  const nav = document.getElementById('home-nav');
+  const marquee = document.querySelector('.marquee') as HTMLElement;
+  if (nav && marquee) {
+    const updateScrolled = () => {
+      const navHeight = nav.offsetHeight;
+      const trigger = marquee.offsetTop - navHeight;
+      nav.classList.toggle('scrolled', window.scrollY >= trigger);
+    };
+    window.addEventListener('scroll', updateScrolled, { passive: true });
+    updateScrolled();
+  }
+</script>
+
+<style>
+  .home-nav {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 500;
+    padding: 16px 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    transition: background 0.4s, padding 0.4s, border-color 0.4s;
+    border-bottom: 2px solid transparent;
+  }
+  .home-nav.scrolled {
+    background: rgba(var(--off-white-rgb), 0.95);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    padding: 12px 20px;
+    border-bottom-color: var(--brand-red);
+  }
+  .nav-logo {
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    min-height: var(--touch-target);
+  }
+  .nav-logo-img {
+    height: 28px;
+    width: auto;
+    transition: opacity 0.4s;
+  }
+  .nav-logo-pink {
+    display: none;
+    height: 28px;
+    width: 120px;
+    background-color: var(--brand-red);
+    -webkit-mask-image: url(/images/logo.svg);
+    mask-image: url(/images/logo.svg);
+    -webkit-mask-size: contain;
+    mask-size: contain;
+    -webkit-mask-repeat: no-repeat;
+    mask-repeat: no-repeat;
+  }
+  .home-nav.scrolled .nav-logo-img {
+    display: none;
+  }
+  .home-nav.scrolled .nav-logo-pink {
+    display: block;
+  }
+  .nav-right {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .nav-pill {
+    font-family: var(--font-body), sans-serif;
+    font-size: 13px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    text-decoration: none;
+    color: var(--charcoal);
+    padding: 8px 14px;
+    border-radius: 50px;
+    border: 1.5px solid transparent;
+    transition: all 0.2s, color 0.4s;
+    display: inline-flex;
+    align-items: center;
+    white-space: nowrap;
+    min-height: var(--touch-target);
+  }
+  .nav-pill:hover {
+    border-color: rgba(26, 26, 26, 0.2);
+  }
+  .home-nav.scrolled .nav-pill {
+    color: var(--charcoal);
+  }
+  .home-nav.scrolled .nav-pill:hover {
+    border-color: var(--charcoal);
+  }
+  .nav-pill.primary {
+    background: var(--brand-red);
+    color: white;
+    border-color: var(--brand-red);
+  }
+  .home-nav.scrolled .nav-pill.primary {
+    color: white;
+  }
+  .nav-pill.primary:hover {
+    background: var(--brand-red-dark);
+    border-color: var(--brand-red-dark);
+  }
+  @media (min-width: 768px) {
+    .home-nav { padding: 20px 48px; }
+    .home-nav.scrolled { padding: 14px 48px; }
+    .nav-logo-img { height: 40px; }
+    .nav-logo-pink { height: 40px; width: 180px; }
+    .nav-pill { font-size: 13px; letter-spacing: 1.5px; padding: 12px 22px; }
+  }
+</style>

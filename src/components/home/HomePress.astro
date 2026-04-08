@@ -1,0 +1,60 @@
+---
+import { pressItems } from '@/data/press';
+---
+
+<section class="press" aria-label="Press coverage" data-reveal>
+  <div class="press-label">As Seen In</div>
+  <div class="press-logos">
+    {pressItems.map((item) => (
+      item.url
+        ? <a href={item.url} target="_blank" rel="noopener noreferrer" class="press-name">{item.source}</a>
+        : <span class="press-name press-name--coming-soon">{item.source}</span>
+    ))}
+  </div>
+</section>
+
+<style>
+  .press {
+    padding: 36px 20px;
+    background: var(--cream-warm);
+  }
+  .press-label {
+    text-align: center;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 28px;
+  }
+  .press-logos {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 24px;
+    flex-wrap: wrap;
+    max-width: 900px;
+    margin: 0 auto;
+  }
+  .press-name {
+    font-family: var(--font-playfair), serif;
+    font-size: 16px;
+    font-weight: 700;
+    color: var(--charcoal);
+    font-style: italic;
+    text-decoration: none;
+    transition: color 0.2s;
+  }
+  .press-name:hover { color: var(--brand-red); }
+  .press-name--coming-soon {
+    opacity: 0.4;
+    cursor: default;
+  }
+
+  @media (min-width: 768px) {
+    .press { padding: 48px 48px; }
+    .press-logos { gap: 52px; }
+    .press-name { font-size: 19px; }
+    .press-label { margin-bottom: 36px; }
+  }
+</style>

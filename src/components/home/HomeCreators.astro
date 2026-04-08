@@ -1,0 +1,198 @@
+---
+const hosts = [
+  {
+    name: 'Surbhi',
+    image: '/images/surbhi.webp',
+    role: 'Co-Creator & Host',
+    bio: "Surbhi is a stand-up comedian and the creative force behind Garam Masala Dating. She created the show in 2022, turning a one-off bar experiment into NYC's biggest live dating show — selling out 250-seat venues every week.",
+    credits: ['Stand-Up Comedian', 'Co-Creator', 'NYC · LA · SF'],
+  },
+  {
+    name: 'Wyatt',
+    image: '/images/wyatt.avif',
+    role: 'Co-Host & Actor',
+    bio: "Wyatt Feegrado is a stand-up comedian and actor who\u2019s starred in ESPN+\u2019s Bettor Days, Hulu\u2019s Chicano Squad, and the History Channel\u2019s Holy Marvels. On Garam Masala, he\u2019s the reason no awkward silence lasts longer than two seconds.",
+    credits: ['Stand-Up Comedian', 'Actor', 'NYU Tisch', 'Co-Host'],
+  },
+];
+---
+
+<section class="creators" id="about" aria-labelledby="creators-heading">
+  <div class="creators-header" data-reveal>
+    <h2 id="creators-heading">The Creators</h2>
+    <p>The comedians, matchmakers, and chaos agents behind the show.</p>
+  </div>
+  <div class="hosts-grid">
+    {hosts.map((host) => (
+      <article class="host-card" data-reveal>
+        <img
+          src={host.image}
+          alt={host.name}
+          class="host-avatar-img"
+          width="120"
+          height="120"
+          loading="lazy"
+          decoding="async"
+        />
+        <div class="host-info">
+          <h3>
+            <a href="/hosts">{host.name}</a>
+          </h3>
+          <div class="host-role">{host.role}</div>
+          <p class="host-bio">{host.bio}</p>
+          <div class="host-credits">
+            {host.credits.map((tag) => (
+              <span class="credit-tag">{tag}</span>
+            ))}
+          </div>
+        </div>
+      </article>
+    ))}
+  </div>
+  <div class="creators-cta" data-reveal>
+    <a href="/hosts" class="creators-cta-link">Meet the Hosts →</a>
+  </div>
+</section>
+
+<style>
+  .creators {
+    padding: 30px 20px;
+    background: var(--off-white);
+    position: relative;
+    overflow: hidden;
+  }
+  .creators-header {
+    text-align: center;
+    margin-bottom: 48px;
+  }
+  .creators-header h2 {
+    font-family: var(--font-playfair), serif;
+    font-size: clamp(32px, 5vw, 60px);
+    font-weight: 900;
+    color: var(--charcoal);
+    line-height: 1;
+    margin-bottom: 12px;
+  }
+  .creators-header p {
+    font-family: var(--font-cormorant), serif;
+    font-size: 18px;
+    font-style: italic;
+    color: rgba(26, 26, 26, 0.87);
+  }
+  .hosts-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    max-width: none;
+    margin: 0 auto;
+  }
+  .host-card {
+    background: rgba(26, 26, 26, 0.03);
+    border: 1px solid rgba(26, 26, 26, 0.08);
+    border-radius: 16px;
+    padding: 24px 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    align-items: center;
+    text-align: center;
+    transition: border-color 0.3s, background 0.3s;
+  }
+  .host-card:hover {
+    border-color: var(--brand-red);
+    background: rgba(var(--brand-red-rgb), 0.06);
+  }
+  .host-avatar-img {
+    width: 96px;
+    height: 96px;
+    border-radius: 50%;
+    border: 3px solid var(--brand-red);
+    object-fit: cover;
+    flex-shrink: 0;
+  }
+  .host-info h3 { margin-bottom: 4px; }
+  .host-info h3 a {
+    font-family: var(--font-cormorant), serif;
+    font-size: 28px;
+    font-weight: 700;
+    color: var(--charcoal);
+    text-decoration: none;
+    transition: color 0.2s;
+  }
+  .host-info h3 a:hover { color: var(--brand-red); }
+  .host-info h3 a:focus-visible {
+    color: var(--brand-red);
+    outline: 2px solid var(--brand-red);
+    outline-offset: 2px;
+    border-radius: 2px;
+  }
+  .host-role {
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    color: var(--brand-red);
+    margin-bottom: 12px;
+  }
+  .host-bio {
+    font-size: 15px;
+    color: rgba(26, 26, 26, 0.87);
+    line-height: 1.75;
+  }
+  .host-credits {
+    margin-top: 16px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    justify-content: center;
+  }
+  .credit-tag {
+    font-size: 11px;
+    font-weight: 600;
+    background: rgba(var(--brand-red-rgb), 0.1);
+    color: var(--brand-red);
+    padding: 4px 12px;
+    border-radius: 50px;
+    letter-spacing: 0.5px;
+  }
+
+  .creators-cta {
+    text-align: center;
+    margin-top: 40px;
+  }
+  .creators-cta-link {
+    font-family: var(--font-cormorant), serif;
+    font-size: 18px;
+    font-style: italic;
+    color: var(--brand-red);
+    text-decoration: none;
+    transition: color 0.2s;
+  }
+  .creators-cta-link:hover { color: var(--brand-red-dark); }
+
+  @media (min-width: 768px) {
+    .creators { padding: 60px 48px; overflow: visible; }
+    .creators-header { margin-bottom: 72px; }
+    .creators-header p { font-size: 20px; }
+    .hosts-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 24px;
+      max-width: 1100px;
+      margin: 0 auto;
+    }
+    .host-card {
+      border-radius: 20px;
+      padding: 28px 20px;
+      display: grid;
+      grid-template-columns: 96px 1fr;
+      gap: 16px;
+      align-items: start;
+      text-align: left;
+    }
+    .host-avatar-img { width: 96px; height: 96px; }
+    .host-info h3 a { font-size: 32px; }
+    .host-role { margin-bottom: 16px; }
+    .host-credits { justify-content: flex-start; }
+  }
+</style>

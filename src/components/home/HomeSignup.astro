@@ -1,0 +1,256 @@
+---
+
+---
+
+<section class="spicelist" aria-labelledby="spicelist-heading">
+  <h2 id="spicelist-heading" data-reveal>Join the Spice List</h2>
+  <p data-reveal>Get exclusive discount codes for cheaper (and sometimes free) tickets.</p>
+
+  <!-- min-height prevents CLS when switching between steps -->
+  <div class="nl-steps-wrapper" data-reveal>
+    <div id="nl-step-1">
+      <form id="nl-email-form" class="spicelist-form">
+        <input type="email" id="nl-email" placeholder="Your email" required aria-label="Email address" />
+        <p id="nl-email-error" class="spicelist-error" hidden role="alert"></p>
+        <button type="submit">Get My Discount Code</button>
+      </form>
+      <p class="spicelist-trust">Just discount codes and show announcements.</p>
+    </div>
+
+    <div id="nl-step-2" hidden aria-live="polite">
+      <p class="nl-step2-text">Add your number for text-only discounts and free ticket drops.</p>
+      <form id="nl-phone-form" class="spicelist-form">
+        <input type="tel" id="nl-phone" placeholder="(555) 123-4567" aria-label="Phone number" />
+        <p id="nl-phone-error" class="spicelist-error" hidden role="alert"></p>
+        <button type="submit">Send Me Deals</button>
+      </form>
+      <button type="button" id="nl-skip" class="spicelist-skip">Maybe later</button>
+    </div>
+
+    <div id="nl-success" hidden role="status" aria-live="polite">
+      <p class="nl-done-text">You're on the list!</p>
+    </div>
+  </div>
+</section>
+
+<script>
+  import { getFirebaseDb } from '@/lib/firebase';
+  import { collection, addDoc, updateDoc, type DocumentReference } from 'firebase/firestore';
+  import { cleanPhone } from '@/lib/phone';
+  import { identifyLead, trackLeadEvent } from '@/lib/analytics';
+  import { buildLeadAttribution } from '@/lib/leadAttribution';
+
+  let savedEmail = '';
+  let nlDocRef: DocumentReference | null = null;
+
+  document.getElementById('nl-email-form')?.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    savedEmail = (document.getElementById('nl-email') as HTMLInputElement).value;
+    const errorEl = document.getElementById('nl-email-error');
+    const submitBtn = (e.target as HTMLFormElement).querySelector<HTMLButtonElement>('[type="submit"]');
+    if (submitBtn) submitBtn.disabled = true;
+    try {
+      const db = getFirebaseDb();
+      const attribution = buildLeadAttribution({ source: 'spice-list' });
+      nlDocRef = await addDoc(collection(db, 'leads'), {
+        email: savedEmail,
+        ...attribution,
+        createdAt: new Date().toISOString(),
+      });
+      localStorage.setItem('gmd-popup-subscribed', 'true');
+      identifyLead(savedEmail, attribution);
+      trackLeadEvent('lead_email_submitted', attribution);
+      if (errorEl) { errorEl.textContent = ''; errorEl.setAttribute('hidden', ''); }
+      document.getElementById('nl-step-1')?.setAttribute('hidden', '');
+      document.getElementById('nl-step-2')?.removeAttribute('hidden');
+    } catch (err) {
+      if (errorEl) {
+        errorEl.textContent = 'Something went wrong. Please try again.';
+        errorEl.removeAttribute('hidden');
+      }
+    } finally {
+      if (submitBtn) submitBtn.disabled = false;
+    }
+  });
+
+  document.getElementById('nl-phone-form')?.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const raw = (document.getElementById('nl-phone') as HTMLInputElement).value;
+    const cleaned = cleanPhone(raw);
+    const phoneErrorEl = document.getElementById('nl-phone-error');
+
+    if (!raw.trim()) {
+      // Empty — treat as skip
+      document.getElementById('nl-step-2')?.setAttribute('hidden', '');
+      document.getElementById('nl-success')?.removeAttribute('hidden');
+      return;
+    }
+
+    if (!cleaned) {
+      if (phoneErrorEl) {
+        phoneErrorEl.textContent = 'Please enter a valid phone number.';
+        phoneErrorEl.removeAttribute('hidden');
+      }
+      return;
+    }
+
+    const submitBtn = (e.target as HTMLFormElement).querySelector<HTMLButtonElement>('[type="submit"]');
+    if (submitBtn) submitBtn.disabled = true;
+    try {
+      const db = getFirebaseDb();
+      if (nlDocRef) {
+        await updateDoc(nlDocRef, { phone: cleaned });
+      } else {
+        const attribution = buildLeadAttribution({ source: 'spice-list' });
+        await addDoc(collection(db, 'leads'), {
+          email: savedEmail,
+          phone: cleaned,
+          ...attribution,
+          createdAt: new Date().toISOString(),
+        });
+      }
+      trackLeadEvent('lead_phone_submitted', { source: 'spice-list', sourcePage: window.location.pathname });
+      document.getElementById('nl-step-2')?.setAttribute('hidden', '');
+      document.getElementById('nl-success')?.removeAttribute('hidden');
+    } catch (err) {
+      if (phoneErrorEl) {
+        phoneErrorEl.textContent = 'Something went wrong. Please try again or skip.';
+        phoneErrorEl.removeAttribute('hidden');
+      }
+    } finally {
+      if (submitBtn) submitBtn.disabled = false;
+    }
+  });
+
+  document.getElementById('nl-skip')?.addEventListener('click', () => {
+    document.getElementById('nl-step-2')?.setAttribute('hidden', '');
+    document.getElementById('nl-success')?.removeAttribute('hidden');
+  });
+</script>
+
+<style>
+  .spicelist {
+    padding: 40px 16px 35px;
+    background: var(--brand-red);
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+  }
+  .spicelist h2 {
+    font-family: var(--font-playfair), serif;
+    font-size: clamp(30px, 5vw, 60px);
+    font-weight: 900;
+    color: white;
+    margin-bottom: 12px;
+    position: relative;
+  }
+  .spicelist p {
+    color: rgba(255, 255, 255, 0.85);
+    font-size: 21px;
+    margin-bottom: 36px;
+    font-family: var(--font-cormorant), serif;
+    font-style: italic;
+    position: relative;
+  }
+  /* Prevent CLS when switching between steps */
+  .nl-steps-wrapper {
+    min-height: 220px;
+  }
+  .spicelist-form {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    max-width: 420px;
+    margin: 0 auto;
+    position: relative;
+  }
+  .spicelist-form input {
+    padding: 16px 24px;
+    border: 1.5px solid rgba(255, 255, 255, 0.4);
+    border-radius: 50px;
+    background: rgba(255, 255, 255, 0.15);
+    color: white;
+    font-size: 16px;
+    font-family: var(--font-body), sans-serif;
+    outline: none;
+    transition: border-color 0.2s;
+    min-height: var(--touch-target);
+  }
+  .spicelist-form input::placeholder {
+    color: rgba(255, 255, 255, 0.5);
+  }
+  .spicelist-form input:focus {
+    border-color: var(--electric-yellow);
+  }
+  .spicelist-form button {
+    background: var(--electric-yellow);
+    color: var(--charcoal);
+    border: none;
+    padding: 16px;
+    border-radius: 50px;
+    font-family: var(--font-body), sans-serif;
+    font-size: 16px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    transition: background 0.2s, color 0.2s;
+    min-height: var(--touch-target);
+    white-space: nowrap;
+  }
+  .spicelist-form button:hover {
+    background: white;
+    color: var(--charcoal);
+  }
+  .spicelist-form button:focus-visible {
+    outline: 2px solid white;
+    outline-offset: 2px;
+  }
+  .spicelist-error {
+    font-size: 13px;
+    color: var(--electric-yellow);
+    text-align: center;
+    margin: 0;
+    font-family: var(--font-body), sans-serif;
+    font-style: normal;
+  }
+  .spicelist-trust {
+    font-size: 13px;
+    color: rgba(255, 255, 255, 0.6);
+    margin-bottom: 0;
+    margin-top: 16px;
+    font-style: normal;
+    font-family: var(--font-body), sans-serif;
+  }
+
+  .nl-step2-text {
+    color: rgba(255, 255, 255, 0.85);
+    font-size: 16px;
+    margin-bottom: 20px;
+    font-family: var(--font-cormorant), serif;
+    font-style: italic;
+  }
+  .spicelist-skip {
+    background: none;
+    border: none;
+    color: rgba(255, 255, 255, 0.5);
+    font-size: 14px;
+    font-family: var(--font-body), sans-serif;
+    margin-top: 12px;
+    transition: color 0.2s;
+    padding: 4px;
+  }
+  .spicelist-skip:hover { color: white; }
+  .nl-done-text {
+    color: white;
+    font-family: var(--font-cormorant), serif;
+    font-size: 22px;
+    font-style: italic;
+  }
+
+  @media (min-width: 768px) {
+    .spicelist { padding: 56px 32px 51px; }
+    .spicelist p { font-size: 22px; margin-bottom: 48px; }
+    .spicelist-form input { padding: 18px 28px; }
+    .spicelist-form button { padding: 18px; }
+  }
+</style>

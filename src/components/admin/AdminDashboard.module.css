@@ -43,7 +43,7 @@
   border-radius: 100px;
   border: 1px solid var(--border);
   background: transparent;
-  font-family: var(--font-dm-sans);
+  font-family: var(--font-body);
   font-size: 13px;
   color: var(--text-light);
   cursor: pointer;
@@ -51,8 +51,8 @@
 }
 
 .logoutButton:hover {
-  border-color: var(--crimson);
-  color: var(--crimson);
+  border-color: var(--brand-red);
+  color: var(--brand-red);
 }
 
 .filterBar {
@@ -78,9 +78,9 @@
 .clearButton {
   background: none;
   border: none;
-  font-family: var(--font-dm-sans);
+  font-family: var(--font-body);
   font-size: 13px;
-  color: var(--crimson);
+  color: var(--brand-red);
   cursor: pointer;
   padding: 4px 0;
   flex-shrink: 0;
@@ -96,12 +96,12 @@
 .prepBox {
   padding: 16px 20px;
   border-radius: 12px;
-  background: rgba(201, 168, 76, 0.06);
-  border: 1px solid rgba(201, 168, 76, 0.15);
+  background: rgba(var(--brand-red-rgb), 0.06);
+  border: 1px solid rgba(var(--brand-red-rgb), 0.15);
 }
 
 .prepLabel {
-  font-family: var(--font-dm-sans);
+  font-family: var(--font-body);
   font-size: 12px;
   font-weight: 600;
   text-transform: uppercase;
@@ -124,7 +124,7 @@
 }
 
 .prepEventLabel {
-  font-family: var(--font-dm-sans);
+  font-family: var(--font-body);
   font-size: 14px;
   color: var(--text);
   flex: 1;
@@ -138,7 +138,7 @@
   border-radius: 100px;
   border: 1px solid var(--border);
   background: transparent;
-  font-family: var(--font-dm-sans);
+  font-family: var(--font-body);
   font-size: 13px;
   font-weight: 500;
   color: var(--text-light);
@@ -181,8 +181,8 @@
 .clearFiltersButton {
   background: none;
   border: none;
-  color: var(--crimson);
-  font-family: var(--font-dm-sans);
+  color: var(--brand-red);
+  font-family: var(--font-body);
   font-size: 14px;
   cursor: pointer;
   text-decoration: underline;
@@ -217,13 +217,22 @@
   gap: 6px;
   background: none;
   border: none;
-  font-family: var(--font-dm-sans);
+  font-family: var(--font-body);
   font-size: 14px;
   font-weight: 600;
   color: var(--text-light);
   cursor: pointer;
   padding: 8px 0;
   margin-bottom: 16px;
+}
+
+@media (max-width: 600px) {
+  .header { padding: 0 16px; }
+  .main { padding: 16px; }
+  .filterItem { min-width: 100%; }
+  .filterItemWide { min-width: 100%; }
+  .filterRow { flex-wrap: wrap; }
+  .prepSection { padding: 16px 16px 0; }
 }
 
 .toast {
@@ -233,7 +242,7 @@
   padding: 10px 20px;
   border-radius: 100px;
   color: #fff;
-  font-family: var(--font-dm-sans);
+  font-family: var(--font-body);
   font-size: 14px;
   font-weight: 600;
   box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);

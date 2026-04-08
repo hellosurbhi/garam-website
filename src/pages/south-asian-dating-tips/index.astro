@@ -25,13 +25,12 @@ const breadcrumbJsonLd = buildBreadcrumbJsonLd([
 <BaseLayout
   title={TITLE}
   description={DESC}
-  overlayBg="rgba(13, 10, 8, 0.88)"
 >
   <Fragment slot="head">
     <script type="application/ld+json" set:html={breadcrumbJsonLd} />
   </Fragment>
 
-  <div class="tips-page">
+  <main id="main-content" class="tips-page">
     <div class="tips-container">
       <!-- Header -->
       <div class="tips-header">
@@ -73,7 +72,7 @@ const breadcrumbJsonLd = buildBreadcrumbJsonLd([
         ))}
       </div>
     </div>
-  </div>
+  </main>
 </BaseLayout>
 
 <style>
@@ -92,7 +91,7 @@ const breadcrumbJsonLd = buildBreadcrumbJsonLd([
   .tips-container {
     max-width: 560px;
     margin: 0 auto;
-    padding: 48px 24px 80px;
+    padding: 24px;
   }
 
   .tips-header {
@@ -100,12 +99,12 @@ const breadcrumbJsonLd = buildBreadcrumbJsonLd([
   }
 
   .tips-eyebrow {
-    font-family: var(--font-jetbrains);
+    font-family: var(--font-body);
     font-size: 11px;
     font-weight: 500;
     text-transform: uppercase;
     letter-spacing: 0.15em;
-    color: #C9A84C;
+    color: var(--brand-red);
     margin-bottom: 12px;
   }
 
@@ -113,27 +112,28 @@ const breadcrumbJsonLd = buildBreadcrumbJsonLd([
     font-family: var(--font-playfair);
     font-size: 32px;
     font-weight: 700;
-    color: var(--text-ivory);
+    color: var(--charcoal);
     line-height: 1.15;
     margin-bottom: 14px;
   }
 
   .tips-title em {
     font-style: italic;
-    color: var(--gold-accent);
+    color: var(--brand-red);
   }
 
   .tips-desc {
     font-family: var(--font-cormorant);
+    font-style: italic;
     font-size: 17px;
-    color: rgba(245, 237, 228, 0.6);
+    color: #666;
     line-height: 1.55;
   }
 
   .tips-divider {
     width: 48px;
     height: 1px;
-    background: rgba(201, 168, 76, 0.3);
+    background: rgba(var(--brand-red-rgb), 0.3);
     margin-bottom: 36px;
   }
 
@@ -147,18 +147,18 @@ const breadcrumbJsonLd = buildBreadcrumbJsonLd([
     display: block;
     padding: 24px 20px;
     border-radius: 12px;
-    border: 1px solid rgba(245, 237, 228, 0.07);
-    background: rgba(255, 255, 255, 0.02);
+    border: 1px solid rgba(0, 0, 0, 0.06);
+    background: white;
     text-decoration: none;
     animation: tipsFadeIn 0.5s ease-out both;
   }
 
   .tips-card-date {
-    font-family: var(--font-jetbrains);
+    font-family: var(--font-body);
     font-size: 10px;
     text-transform: uppercase;
     letter-spacing: 0.12em;
-    color: rgba(201, 168, 76, 0.7);
+    color: var(--brand-red);
     margin-bottom: 10px;
   }
 
@@ -166,15 +166,16 @@ const breadcrumbJsonLd = buildBreadcrumbJsonLd([
     font-family: var(--font-playfair);
     font-size: 20px;
     font-weight: 600;
-    color: var(--text-ivory);
+    color: var(--charcoal);
     line-height: 1.25;
     margin-bottom: 10px;
   }
 
   .tips-card-excerpt {
     font-family: var(--font-cormorant);
-    font-size: 15px;
-    color: rgba(245, 237, 228, 0.55);
+    font-style: italic;
+    font-size: 17px;
+    color: #666;
     line-height: 1.6;
     margin: 0;
   }
@@ -184,9 +185,9 @@ const breadcrumbJsonLd = buildBreadcrumbJsonLd([
     align-items: center;
     gap: 6px;
     margin-top: 14px;
-    font-family: var(--font-dm-sans);
+    font-family: var(--font-body);
     font-size: 13px;
     font-weight: 500;
-    color: #C9A84C;
+    color: var(--brand-red);
   }
 </style>

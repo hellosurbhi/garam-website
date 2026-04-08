@@ -1,18 +1,23 @@
 import { describe, it, expect } from "vitest";
-import { cities, citiesIndex, getCityBySlug } from "./cities";
+import { cities, citiesIndex, getCityBySlug, citiesByRegion } from "./cities";
 
 const VALID_STATUSES = new Set(["active", "coming-soon", "past"]);
 
 describe("cities", () => {
   const allCities = Object.values(cities);
 
-  it("contains manhattan, san-diego, jersey-city, los-angeles, salt-lake-city, and denver", () => {
+  it("contains the original active cities", () => {
     expect(cities).toHaveProperty("manhattan");
     expect(cities).toHaveProperty("san-diego");
     expect(cities).toHaveProperty("jersey-city");
     expect(cities).toHaveProperty("los-angeles");
+    expect(cities).toHaveProperty("san-francisco");
     expect(cities).toHaveProperty("salt-lake-city");
     expect(cities).toHaveProperty("denver");
+  });
+
+  it("contains expansion cities", () => {
+    expect(allCities.length).toBeGreaterThan(50);
   });
 
   it("every city slug matches its object key", () => {
@@ -72,10 +77,21 @@ describe("cities", () => {
     }
   });
 
-  it("every city has a non-empty addressLocality and addressRegion", () => {
+  it("every city has a non-empty addressLocality", () => {
     for (const city of allCities) {
       expect(city.addressLocality.trim()).not.toBe("");
-      expect(city.addressRegion.trim()).not.toBe("");
+    }
+  });
+
+  it("every city has an addressCountry", () => {
+    for (const city of allCities) {
+      expect(city.addressCountry.trim()).not.toBe("");
+    }
+  });
+
+  it("every city has a region", () => {
+    for (const city of allCities) {
+      expect(city.region.trim()).not.toBe("");
     }
   });
 });
@@ -85,16 +101,24 @@ describe("citiesIndex", () => {
     expect(citiesIndex.length).toBeGreaterThan(0);
   });
 
-  it("does not include past cities", () => {
-    for (const city of citiesIndex) {
-      expect(city.status).not.toBe("past");
+  it("active cities come first", () => {
+    const firstInactive = citiesIndex.findIndex((c) => c.status !== "active");
+    const lastActive = citiesIndex.reduce(
+      (acc, c, i) => (c.status === "active" ? i : acc),
+      -1,
+    );
+    if (lastActive >= 0 && firstInactive >= 0) {
+      expect(lastActive).toBeLessThan(firstInactive);
     }
   });
+});
 
-  it("every entry is a valid CityData object with a slug", () => {
-    for (const city of citiesIndex) {
-      expect(city.slug.trim()).not.toBe("");
-      expect(city.displayName.trim()).not.toBe("");
+describe("citiesByRegion", () => {
+  it("returns non-empty region groups", () => {
+    const regions = citiesByRegion();
+    expect(regions.length).toBeGreaterThan(0);
+    for (const group of regions) {
+      expect(group.cities.length).toBeGreaterThan(0);
     }
   });
 });
@@ -105,6 +129,6 @@ describe("getCityBySlug", () => {
   });
 
   it("returns undefined for a non-existent slug", () => {
-    expect(getCityBySlug("chicago")).toBeUndefined();
+    expect(getCityBySlug("nonexistent-city-abc")).toBeUndefined();
   });
 });

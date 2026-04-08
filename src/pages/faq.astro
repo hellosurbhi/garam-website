@@ -2,14 +2,18 @@
 import BaseLayout from '@/layouts/BaseLayout.astro';
 import { buildBreadcrumbJsonLd } from '@/utils/breadcrumbs';
 
-const FAQ_TITLE = "FAQ \u2013 Garam Masala Dating | Live Comedy Dating Show NYC";
+const FAQ_TITLE = "FAQ \u2013 Garam Masala Dating | Live South Asian Dating Show NYC";
 const FAQ_DESC =
   "Everything you need to know about Garam Masala Dating \u2014 tickets, how the show works, who can apply, what to expect, and how to get on stage.";
+
+function stripHtml(str: string): string {
+  return str.replace(/<[^>]*>/g, '');
+}
 
 const FAQS = [
   {
     q: "What is Garam Masala Dating?",
-    a: "Garam Masala Dating is a live comedy dating show and singles mixer in NYC. Every week, real singles go on blind dates on stage in front of a 250-person audience. It\u2019s part comedy show, part actual matchmaking \u2014 and it\u2019s more fun than any app you\u2019ve ever been on.",
+    a: "Garam Masala Dating is a live South Asian dating show and singles mixer in NYC. Every week, real singles go on blind dates on stage in front of a 250-person audience. It\u2019s part comedy show, part actual matchmaking \u2014 and it\u2019s more fun than any app you\u2019ve ever been on.",
   },
   {
     q: "Do I have to be South Asian to come?",
@@ -17,11 +21,11 @@ const FAQS = [
   },
   {
     q: "How do I get tickets?",
-    a: "Tickets are available on Eventbrite. Search \u2018Garam Masala Dating\u2019 or visit garammasaladating.com/tickets. General admission includes entry to the show and the singles mixer before and after.",
+    a: 'Tickets are available on Eventbrite. Search \u2018Garam Masala Dating\u2019 or visit <a href="/tickets">garammasaladating.com/tickets</a>. General admission includes entry to the show and the singles mixer before and after.',
   },
   {
     q: "How do I apply to be a contestant?",
-    a: "Fill out the application on our website. We cast contestants based on personality, chemistry potential, and your answers \u2014 not looks. Being genuinely funny, honest, or a little chaotic helps.",
+    a: 'Fill out the <a href="/apply">application on our website</a>. We cast contestants based on personality, chemistry potential, and your answers \u2014 not looks. Being genuinely funny, honest, or a little chaotic helps.',
   },
   {
     q: "What actually happens at the show?",
@@ -41,7 +45,7 @@ const FAQS = [
   },
   {
     q: "How often does the show run?",
-    a: "Garam Masala Dating runs weekly in Manhattan and monthly in Jersey City, New Jersey. Visit garammasaladating.com for upcoming dates.",
+    a: 'Garam Masala Dating runs weekly in Manhattan and monthly in Jersey City, New Jersey. Visit <a href="/tickets">garammasaladating.com</a> for upcoming dates.',
   },
   {
     q: "Is Garam Masala Dating like Indian Matchmaking?",
@@ -49,15 +53,15 @@ const FAQS = [
   },
   {
     q: "What cities is Garam Masala Dating in?",
-    a: "Garam Masala Dating currently runs weekly in Manhattan, New York City and monthly in Jersey City, New Jersey. Check garammasaladating.com for upcoming show dates and locations.",
+    a: 'Garam Masala Dating currently runs weekly in Manhattan, New York City and monthly in Jersey City, New Jersey. Check <a href="/tickets">garammasaladating.com</a> for upcoming show dates and locations.',
   },
   {
     q: "Is Garam Masala Dating free?",
-    a: "No. Tickets are purchased on Eventbrite. Prices vary by show \u2014 check garammasaladating.com for current pricing and upcoming dates.",
+    a: 'No. Tickets are purchased on Eventbrite. Prices vary by show \u2014 check <a href="/tickets">garammasaladating.com</a> for current pricing and upcoming dates.',
   },
   {
     q: "I want to collaborate, sponsor, or book the show for a private event. Who do I contact?",
-    a: "Email press@garammasaladating.com. We do private events, brand partnerships, and media features.",
+    a: 'Email <a href="mailto:press@garammasaladating.com">press@garammasaladating.com</a>. We do private events, brand partnerships, and media features.',
   },
 ];
 
@@ -67,7 +71,7 @@ const faqJsonLd = JSON.stringify({
   mainEntity: FAQS.map(({ q, a }) => ({
     "@type": "Question",
     name: q,
-    acceptedAnswer: { "@type": "Answer", text: a },
+    acceptedAnswer: { "@type": "Answer", text: stripHtml(a) },
   })),
 });
 
@@ -80,14 +84,14 @@ const breadcrumbJsonLd = buildBreadcrumbJsonLd([
 <BaseLayout
   title={FAQ_TITLE}
   description={FAQ_DESC}
-  overlayBg="rgba(13, 10, 8, 0.88)"
 >
   <Fragment slot="head">
     <script type="application/ld+json" set:html={faqJsonLd} />
     <script type="application/ld+json" set:html={breadcrumbJsonLd} />
   </Fragment>
 
-  <div class="faq-page">
+  <main id="main-content" class="faq-page">
+    <img class="faq-bg" src="/images/higgs-field.webp" alt="" width="1200" height="800" aria-hidden="true" />
     <div class="faq-container">
       <!-- Header -->
       <div class="faq-header">
@@ -100,15 +104,12 @@ const breadcrumbJsonLd = buildBreadcrumbJsonLd([
         </p>
       </div>
 
-      <!-- Divider -->
-      <div class="faq-divider"></div>
-
       <!-- FAQ items -->
       <div class="faq-list">
         {FAQS.map((item, i) => (
           <div class="faq-item">
             <h2 class="faq-question">{item.q}</h2>
-            <p class="faq-answer-text">{item.a}</p>
+            <p class="faq-answer-text" set:html={item.a} />
           </div>
         ))}
       </div>
@@ -117,13 +118,13 @@ const breadcrumbJsonLd = buildBreadcrumbJsonLd([
       <div class="faq-footer">
         <p class="faq-footer-text">
           Still have questions? Reach out at{' '}
-          <a href="mailto:hello@garammasaladating.com" class="faq-footer-link">
-            hello@garammasaladating.com
+          <a href="mailto:contact@garammasaladating.com" class="faq-footer-link">
+            contact@garammasaladating.com
           </a>
         </p>
       </div>
     </div>
-  </div>
+  </main>
 </BaseLayout>
 
 
@@ -138,26 +139,40 @@ const breadcrumbJsonLd = buildBreadcrumbJsonLd([
     position: relative;
     z-index: 1;
     animation: faqFadeIn 0.5s ease-out both;
+    overflow: hidden;
+  }
+  .faq-bg {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center center;
+    display: block;
+    z-index: 0;
+    opacity: 0.06;
   }
 
   .faq-container {
-    max-width: 560px;
+    position: relative;
+    z-index: 1;
+    max-width: 680px;
     margin: 0 auto;
-    padding: 48px 24px 80px;
+    padding: 36px 24px;
   }
 
   /* Header */
   .faq-header {
-    margin-bottom: 40px;
+    margin-bottom: 20px;
   }
 
   .faq-label {
-    font-family: var(--font-jetbrains);
+    font-family: var(--font-body);
     font-size: 11px;
     font-weight: 500;
     text-transform: uppercase;
     letter-spacing: 0.15em;
-    color: #C9A84C;
+    color: var(--brand-red);
     margin-bottom: 12px;
   }
 
@@ -165,29 +180,22 @@ const breadcrumbJsonLd = buildBreadcrumbJsonLd([
     font-family: var(--font-playfair);
     font-size: 32px;
     font-weight: 700;
-    color: var(--text-ivory);
+    color: var(--charcoal);
     line-height: 1.15;
     margin-bottom: 14px;
   }
 
   .faq-title em {
     font-style: italic;
-    color: var(--gold-accent);
+    color: var(--brand-red);
   }
 
   .faq-intro {
     font-family: var(--font-cormorant);
+    font-style: italic;
     font-size: 17px;
-    color: rgba(245, 237, 228, 0.6);
+    color: var(--text-light);
     line-height: 1.55;
-  }
-
-  /* Divider */
-  .faq-divider {
-    width: 48px;
-    height: 1px;
-    background: rgba(201, 168, 76, 0.3);
-    margin-bottom: 36px;
   }
 
   /* FAQ list */
@@ -198,31 +206,31 @@ const breadcrumbJsonLd = buildBreadcrumbJsonLd([
   }
 
   .faq-item {
-    border-radius: 14px;
-    border: 1px solid rgba(201, 168, 76, 0.2);
-    background: rgba(201, 168, 76, 0.04);
+    border-radius: 12px;
+    border: 1px solid rgba(0, 0, 0, 0.06);
+    background: white;
     padding: 22px;
     transition: border-color 0.15s, background 0.15s;
   }
 
   .faq-item:hover {
-    border-color: rgba(201, 168, 76, 0.4);
-    background: rgba(201, 168, 76, 0.08);
+    border-color: rgba(var(--brand-red-rgb), 0.2);
+    background: white;
   }
 
   .faq-question {
-    font-family: var(--font-cormorant);
-    font-size: 18px;
+    font-family: var(--font-body);
+    font-size: 20px;
     font-weight: 600;
-    color: var(--text-ivory);
+    color: var(--charcoal);
     line-height: 1.4;
     margin: 0 0 10px;
   }
 
   .faq-answer-text {
-    font-family: var(--font-cormorant);
-    font-size: 16px;
-    color: rgba(245, 237, 228, 0.65);
+    font-family: var(--font-body);
+    font-size: 17px;
+    color: var(--text-secondary);
     line-height: 1.65;
     margin: 0;
   }
@@ -230,20 +238,24 @@ const breadcrumbJsonLd = buildBreadcrumbJsonLd([
   /* Footer */
   .faq-footer {
     text-align: center;
-    margin-top: 56px;
     padding-top: 24px;
-    border-top: 1px solid rgba(245, 237, 228, 0.06);
   }
 
   .faq-footer-text {
-    font-family: var(--font-cormorant);
+    font-family: var(--font-body);
     font-size: 15px;
     font-style: italic;
-    color: rgba(245, 237, 228, 0.25);
+    color: var(--muted);
+  }
+
+  .faq-answer-text a {
+    color: var(--brand-red);
+    text-decoration: underline;
+    text-underline-offset: 2px;
   }
 
   .faq-footer-link {
-    color: #C9A84C;
+    color: var(--brand-red);
     text-decoration: none;
   }
 </style>

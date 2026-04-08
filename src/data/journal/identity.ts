@@ -6,7 +6,7 @@ export const identityPosts: JournalPost[] = [
     title: "Third Culture Kid Dating: When You Don't Fit Any Box",
     metaDescription:
       "Third culture kid dating is uniquely complicated. You're too Western for your parents' world and too desi for mainstream apps. Here's how to navigate it.",
-    datePublished: "2026-06-12",
+    datePublished: "2026-05-10",
     dateModified: "2026-06-12",
     author: "Surbhi",
     excerpt:
@@ -127,7 +127,7 @@ export const identityPosts: JournalPost[] = [
     title: "The Indian Tech Bro's Guide to Dating in Silicon Valley",
     metaDescription:
       "Indian tech bro dating in Silicon Valley has a specific set of pitfalls. Here's what's actually going wrong — and how to fix it before your next date.",
-    datePublished: "2026-06-14",
+    datePublished: "2026-05-11",
     dateModified: "2026-06-14",
     author: "Surbhi",
     excerpt:
@@ -240,7 +240,7 @@ export const identityPosts: JournalPost[] = [
     title: "Dating as a First-Gen Indian American: Two Worlds, One Heart",
     metaDescription:
       "Dating as a first-gen Indian American means navigating two worlds at once. Here's how to stop performing for both and start actually connecting.",
-    datePublished: "2026-06-16",
+    datePublished: "2026-05-12",
     dateModified: "2026-06-16",
     author: "Surbhi",
     excerpt:
@@ -354,7 +354,7 @@ export const identityPosts: JournalPost[] = [
       "Indian and Single After 30: A Guide for Late Bloomers Who Aren't Actually Late",
     metaDescription:
       "Indian dating over 30 feels late — but it's not. The real guide for desi singles dealing with family pressure and finding love on their own timeline.",
-    datePublished: "2026-06-18",
+    datePublished: "2026-05-13",
     dateModified: "2026-06-18",
     author: "Surbhi",
     excerpt:
@@ -467,7 +467,7 @@ export const identityPosts: JournalPost[] = [
     title: "Indian Dating After Divorce: Starting Over Without the Stigma",
     metaDescription:
       "Indian dating after divorce carries real cultural stigma. Here's how to navigate starting over with honesty, clear boundaries, and actual hope.",
-    datePublished: "2026-06-20",
+    datePublished: "2026-05-14",
     dateModified: "2026-06-20",
     author: "Surbhi",
     excerpt:
@@ -580,7 +580,7 @@ export const identityPosts: JournalPost[] = [
     title: "Queer and Desi: Navigating Dating When Culture Says No",
     metaDescription:
       "LGBTQ South Asian dating means navigating two communities that only see half of you. Here's how queer desis can find their people without disappearing.",
-    datePublished: "2026-06-22",
+    datePublished: "2026-05-15",
     dateModified: "2026-06-22",
     author: "Surbhi",
     excerpt:
@@ -697,7 +697,7 @@ export const identityPosts: JournalPost[] = [
     title: "NRI Dating: The Unique Challenges of Finding Love Abroad",
     metaDescription:
       "NRI dating means finding someone who fits two worlds. Here's how to navigate cultural hybridity, long-distance family dynamics, and love abroad.",
-    datePublished: "2026-06-24",
+    datePublished: "2026-05-16",
     dateModified: "2026-06-24",
     author: "Surbhi",
     excerpt:
@@ -806,7 +806,7 @@ export const identityPosts: JournalPost[] = [
     title: "The Brown Tax in Dating: What It Is and Why It Matters",
     metaDescription:
       "The brown tax in dating is the extra effort, explanation, and emotional labor brown people pay just to exist in mainstream dating spaces. Let's name it.",
-    datePublished: "2026-06-26",
+    datePublished: "2026-05-17",
     dateModified: "2026-06-26",
     author: "Surbhi",
     excerpt:

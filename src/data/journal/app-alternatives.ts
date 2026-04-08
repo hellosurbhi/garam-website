@@ -6,7 +6,7 @@ export const appAlternativesPosts: JournalPost[] = [
     title: "Tired of Dating Apps? Why Desi Singles Are Choosing IRL Events",
     metaDescription:
       "Tired of dating apps and endless swiping? Here\u2019s why more desi singles are ditching Hinge and Dil Mil for IRL events \u2014 and what to do instead.",
-    datePublished: "2026-04-27",
+    datePublished: "2026-04-17",
     dateModified: "2026-04-27",
     author: "Surbhi",
     excerpt:
@@ -114,7 +114,7 @@ export const appAlternativesPosts: JournalPost[] = [
     title: "Best Dil Mil Alternatives for South Asian Singles in 2026",
     metaDescription:
       "Looking for a Dil Mil alternative? Here are the best options for South Asian singles in 2026, from Hinge to Muzz to live IRL events that actually work.",
-    datePublished: "2026-04-29",
+    datePublished: "2026-04-18",
     dateModified: "2026-04-29",
     author: "Surbhi",
     excerpt:
@@ -230,7 +230,7 @@ export const appAlternativesPosts: JournalPost[] = [
     title: "Is Dil Mil Worth It? An Honest Review for Desi Singles",
     metaDescription:
       "Is Dil Mil worth it in 2026? An honest Dil Mil review covering costs, user base, match quality, and whether it\u2019s the right app for South Asian singles.",
-    datePublished: "2026-05-01",
+    datePublished: "2026-04-19",
     dateModified: "2026-05-01",
     author: "Surbhi",
     excerpt:
@@ -342,7 +342,7 @@ export const appAlternativesPosts: JournalPost[] = [
     title: "Why Hinge Doesn\u2019t Work for Most Indians (And What Does)",
     metaDescription:
       "Hinge for Indians sounds good in theory but often falls short. Here\u2019s why the app struggles for South Asian users and what actually works better.",
-    datePublished: "2026-05-03",
+    datePublished: "2026-04-20",
     dateModified: "2026-05-03",
     author: "Surbhi",
     excerpt:
@@ -451,7 +451,7 @@ export const appAlternativesPosts: JournalPost[] = [
       "The Best Indian Dating Apps Ranked by Someone Who\u2019s Tried Them All",
     metaDescription:
       "The best Indian dating apps ranked honestly for 2026 \u2014 Dil Mil, Hinge, Aisle, Muzz, Ishq, Salams, and more. Which one is actually worth your time?",
-    datePublished: "2026-05-05",
+    datePublished: "2026-04-21",
     dateModified: "2026-05-05",
     author: "Surbhi",
     excerpt:
@@ -567,7 +567,7 @@ export const appAlternativesPosts: JournalPost[] = [
     title: "Muzz Alternative: Finding South Asian Love Beyond the Apps",
     metaDescription:
       "Looking for a Muzz alternative for South Asian Muslim singles? Here are the best options in 2026, from Salams to IRL community events that actually work.",
-    datePublished: "2026-05-07",
+    datePublished: "2026-04-22",
     dateModified: "2026-05-07",
     author: "Surbhi",
     excerpt:
@@ -679,7 +679,7 @@ export const appAlternativesPosts: JournalPost[] = [
     title: "Dating Apps for Brown People: What Actually Works in 2026",
     metaDescription:
       "Dating apps for brown people \u2014 what\u2019s worth your time in 2026? Honest breakdown of every major app and why IRL events are winning back South Asian singles.",
-    datePublished: "2026-05-09",
+    datePublished: "2026-04-23",
     dateModified: "2026-05-09",
     author: "Surbhi",
     excerpt:
@@ -788,7 +788,7 @@ export const appAlternativesPosts: JournalPost[] = [
       "Why Dating Apps Don\u2019t Work for South Asians (And What to Do Instead)",
     metaDescription:
       "Why don\u2019t dating apps work for South Asians? The cultural, algorithmic, and structural reasons \u2014 and what actually works better for desi singles in 2026.",
-    datePublished: "2026-05-11",
+    datePublished: "2026-04-24",
     dateModified: "2026-05-11",
     author: "Surbhi",
     excerpt:

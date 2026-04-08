@@ -6,7 +6,7 @@ export const arrangedMarriagePosts: JournalPost[] = [
     title: "Love Marriage vs Arranged Marriage: A 2026 Data-Driven Comparison",
     metaDescription:
       "Love marriage vs arranged marriage: what the data actually says about divorce rates, satisfaction, and how modern arranged marriages work in 2026.",
-    datePublished: "2026-11-01",
+    datePublished: "2026-07-20",
     dateModified: "2026-11-01",
     author: "Surbhi",
     excerpt:
@@ -126,7 +126,7 @@ export const arrangedMarriagePosts: JournalPost[] = [
     title: "The Arranged Marriage Timeline: What to Expect Month by Month",
     metaDescription:
       "A realistic month-by-month guide to the modern arranged marriage process: biodata, first meetings, courtship, and what actually happens at each stage.",
-    datePublished: "2026-11-03",
+    datePublished: "2026-07-21",
     dateModified: "2026-11-03",
     author: "Surbhi",
     excerpt:
@@ -246,7 +246,7 @@ export const arrangedMarriagePosts: JournalPost[] = [
     title: "Arranged Marriage Red Flags Your Parents Won't See",
     metaDescription:
       "Arranged marriage red flags that look fine on paper: rushed timelines, one-sided enthusiasm, family warning signs, and what to do when you spot them.",
-    datePublished: "2026-11-05",
+    datePublished: "2026-07-22",
     dateModified: "2026-11-05",
     author: "Surbhi",
     excerpt:
@@ -362,7 +362,7 @@ export const arrangedMarriagePosts: JournalPost[] = [
     title: "How to Say No to an Arranged Match Without Starting a Family War",
     metaDescription:
       "Practical scripts and strategies for declining an arranged marriage match respectfully — without lying, without guilt-tripping, and without a family crisis.",
-    datePublished: "2026-11-07",
+    datePublished: "2026-07-23",
     dateModified: "2026-11-07",
     author: "Surbhi",
     excerpt:
@@ -486,7 +486,7 @@ export const arrangedMarriagePosts: JournalPost[] = [
     title: "The Modern Biodata: How to Write One That Actually Represents You",
     metaDescription:
       "How to write a biodata for marriage that goes beyond height and horoscope — what to include, what to skip, and NRI-specific tips for 2026.",
-    datePublished: "2026-11-09",
+    datePublished: "2026-07-24",
     dateModified: "2026-11-09",
     author: "Surbhi",
     excerpt:
@@ -603,7 +603,7 @@ export const arrangedMarriagePosts: JournalPost[] = [
       "When Arranged Introductions Lead to Love: Real Stories No Netflix Edits",
     metaDescription:
       "Real stories of arranged introductions that became genuine love — what made them work, what almost derailed them, and what they have in common.",
-    datePublished: "2026-11-11",
+    datePublished: "2026-07-25",
     dateModified: "2026-11-11",
     author: "Surbhi",
     excerpt:
@@ -711,7 +711,7 @@ export const arrangedMarriagePosts: JournalPost[] = [
     title: "Arranged Marriage for NRIs: Why It's Twice as Complicated",
     metaDescription:
       "Arranged marriage for NRIs: the visa question, the 10-person matchmaking trip, cultural expectations gaps, and how to navigate the process from abroad.",
-    datePublished: "2026-11-13",
+    datePublished: "2026-07-26",
     dateModified: "2026-11-13",
     author: "Surbhi",
     excerpt:
@@ -831,7 +831,7 @@ export const arrangedMarriagePosts: JournalPost[] = [
     title: "The Uncomfortable Truth About Arranged Marriage Success Rates",
     metaDescription:
       "The arranged marriage divorce rate statistic is real — and nearly meaningless. Here is what it actually measures, and what success in marriage really means.",
-    datePublished: "2026-11-15",
+    datePublished: "2026-07-27",
     dateModified: "2026-11-15",
     author: "Surbhi",
     excerpt:

@@ -6,7 +6,7 @@ export const communityDeepDivesPosts: JournalPost[] = [
     title: "South Indian Dating Culture: What Non-South Indians Need to Know",
     metaDescription:
       "Tamil, Telugu, Kannada, Malayalam dating culture explained — family expectations, thali traditions, sambandhi networks, and why courtship looks different below the Vindhyas.",
-    datePublished: "2026-11-17",
+    datePublished: "2026-07-28",
     dateModified: "2026-11-17",
     author: "Surbhi",
     excerpt:
@@ -126,7 +126,7 @@ export const communityDeepDivesPosts: JournalPost[] = [
     title: "Marathi Dating: Finding Love in the Land of Practical Expectations",
     metaDescription:
       "Maharashtrian dating culture decoded — pragmatic family values, community dynamics, and how Marathi singles navigate love between tradition and modern life.",
-    datePublished: "2026-11-19",
+    datePublished: "2026-07-29",
     dateModified: "2026-11-19",
     author: "Surbhi",
     excerpt:
@@ -247,7 +247,7 @@ export const communityDeepDivesPosts: JournalPost[] = [
       "Bengali Dating Culture: Intellectuals, Foodies, and Fierce Independence",
     metaDescription:
       "Bengali dating culture explained — adda culture, food as love language, progressive norms, and why Bengali singles are some of the most interesting people to date.",
-    datePublished: "2026-11-21",
+    datePublished: "2026-07-30",
     dateModified: "2026-11-21",
     author: "Surbhi",
     excerpt:
@@ -363,7 +363,7 @@ export const communityDeepDivesPosts: JournalPost[] = [
     title: "Pakistani Dating in America: Between Two Worlds",
     metaDescription:
       "Pakistani dating in America decoded — navigating conservative family expectations, American dating norms, religious values, and community judgment with honesty.",
-    datePublished: "2026-11-23",
+    datePublished: "2026-07-31",
     dateModified: "2026-11-23",
     author: "Surbhi",
     excerpt:
@@ -488,7 +488,7 @@ export const communityDeepDivesPosts: JournalPost[] = [
       "Muslim Dating as a South Asian: Navigating Faith, Family, and Feelings",
     metaDescription:
       "Muslim dating as a South Asian explained — halal dating, Muzz and Salams apps, chaperoned meetings, interfaith relationships, and balancing deen with modern love.",
-    datePublished: "2026-11-25",
+    datePublished: "2026-08-01",
     dateModified: "2026-11-25",
     author: "Surbhi",
     excerpt:
@@ -612,7 +612,7 @@ export const communityDeepDivesPosts: JournalPost[] = [
     title: "Hindu Dating Expectations: When Religion Shapes Your Love Life",
     metaDescription:
       "Hindu dating expectations decoded — caste dynamics, vegetarian preferences, festival culture as dating context, and how Hinduism shapes South Asian love lives in America.",
-    datePublished: "2026-11-27",
+    datePublished: "2026-08-02",
     dateModified: "2026-11-27",
     author: "Surbhi",
     excerpt:
@@ -737,7 +737,7 @@ export const communityDeepDivesPosts: JournalPost[] = [
       "Bangladeshi Dating in the Diaspora: Building Community One Connection at a Time",
     metaDescription:
       "Bangladeshi dating in the diaspora — navigating a tight-knit community, distinct Bangladeshi identity, Islamic values, and finding love beyond the stereotype.",
-    datePublished: "2026-11-29",
+    datePublished: "2026-08-03",
     dateModified: "2026-11-29",
     author: "Surbhi",
     excerpt:
@@ -858,7 +858,7 @@ export const communityDeepDivesPosts: JournalPost[] = [
       "Vegetarian Dating as a Desi: Finding Someone Who Gets the Paneer Obsession",
     metaDescription:
       "Vegetarian dating as a desi explained — Jain and Hindu vegetarianism, the 'will they eat my mom's food' question, interfaith food dynamics, and finding vegetarian love.",
-    datePublished: "2026-12-01",
+    datePublished: "2026-08-04",
     dateModified: "2026-12-01",
     author: "Surbhi",
     excerpt:

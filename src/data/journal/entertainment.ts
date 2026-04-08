@@ -6,7 +6,7 @@ export const entertainmentPosts: JournalPost[] = [
     title: "Indian Comedy Shows in NYC: The Complete Guide for 2026",
     metaDescription:
       "The best Indian comedy shows in NYC for 2026 — from stand-up nights to the only live South Asian dating show in the city. Find your night out.",
-    datePublished: "2026-06-28",
+    datePublished: "2026-05-18",
     dateModified: "2026-06-28",
     author: "Surbhi",
     excerpt:
@@ -116,7 +116,7 @@ export const entertainmentPosts: JournalPost[] = [
       "Stop Waiting for Indian Love Is Blind — Join a Real Desi Dating Show",
     metaDescription:
       "An Indian Love Is Blind hasn't happened yet. But Garam Masala Dating — a live South Asian dating show in NYC — already exists. Here's why it's better.",
-    datePublished: "2026-06-30",
+    datePublished: "2026-05-19",
     dateModified: "2026-06-30",
     author: "Surbhi",
     excerpt:
@@ -225,7 +225,7 @@ export const entertainmentPosts: JournalPost[] = [
     title: "The Rise of South Asian Comedy in America",
     metaDescription:
       "South Asian comedy in America has exploded in the last decade. Here's how it happened, who made it happen, and what comes next for the scene.",
-    datePublished: "2026-07-02",
+    datePublished: "2026-05-20",
     dateModified: "2026-07-02",
     author: "Surbhi",
     excerpt:
@@ -334,7 +334,7 @@ export const entertainmentPosts: JournalPost[] = [
     title: "When Indian Matchmaking Meets Stand-Up Comedy",
     metaDescription:
       "Indian Matchmaking made desi dating a cultural moment. Garam Masala Dating made it live, unscripted, and funnier. Here's what happens when the two worlds collide.",
-    datePublished: "2026-07-04",
+    datePublished: "2026-05-21",
     dateModified: "2026-07-04",
     author: "Surbhi",
     excerpt:
@@ -455,7 +455,7 @@ export const entertainmentPosts: JournalPost[] = [
     title: "Desi Night Out: Beyond Bollywood Parties and Bar Crawls",
     metaDescription:
       "Done with the same Bollywood night at the same club? Here's what a real desi night out in NYC looks like in 2026 — and one option you won't find anywhere else.",
-    datePublished: "2026-07-06",
+    datePublished: "2026-05-22",
     dateModified: "2026-07-06",
     author: "Surbhi",
     excerpt:

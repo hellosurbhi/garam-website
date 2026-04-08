@@ -7,7 +7,7 @@ export const datingCulturePosts: JournalPost[] = [
       "How to Tell Your Indian Parents About Your Partner: A Step-by-Step Guide",
     metaDescription:
       "Dreading the \"how to tell Indian parents about boyfriend/girlfriend\" conversation? Here's a practical, honest guide from someone who's seen it all.",
-    datePublished: "2026-05-13",
+    datePublished: "2026-04-25",
     dateModified: "2026-05-13",
     author: "Surbhi",
     excerpt:
@@ -123,7 +123,7 @@ export const datingCulturePosts: JournalPost[] = [
     title: "The ABCD vs FOB Dating Divide and What Actually Bridges It",
     metaDescription:
       "The ABCD vs FOB tension is real in desi dating — but it's more complicated than it looks. Here's what actually bridges the gap, from someone who's seen both sides.",
-    datePublished: "2026-05-15",
+    datePublished: "2026-04-26",
     dateModified: "2026-05-15",
     author: "Surbhi",
     excerpt:
@@ -223,7 +223,7 @@ export const datingCulturePosts: JournalPost[] = [
     title: "Dating on an H-1B: Romance When Your Visa Status Is Complicated",
     metaDescription:
       "Dating on an H-1B visa adds real complications — timing, geography, family pressure, green card math. Here's how to navigate romance when your status is in flux.",
-    datePublished: "2026-05-17",
+    datePublished: "2026-04-27",
     dateModified: "2026-05-17",
     author: "Surbhi",
     excerpt:
@@ -319,7 +319,7 @@ export const datingCulturePosts: JournalPost[] = [
     title: "Desi Red Flags vs Green Flags: The Ultimate Dating Checklist",
     metaDescription:
       "Desi red flags and green flags aren't always the same as everyone else's. Here's the culturally specific checklist for brown daters that nobody made until now.",
-    datePublished: "2026-05-19",
+    datePublished: "2026-04-28",
     dateModified: "2026-05-19",
     author: "Surbhi",
     excerpt:
@@ -423,7 +423,7 @@ export const datingCulturePosts: JournalPost[] = [
     title: "Indian and Single at 30? You're Not Behind — You're Right on Time",
     metaDescription:
       "Indian and single at 30 with everyone asking questions? Here's the honest perspective on dating in your 30s as a South Asian — you are not behind.",
-    datePublished: "2026-05-21",
+    datePublished: "2026-04-29",
     dateModified: "2026-05-21",
     author: "Surbhi",
     excerpt:
@@ -523,7 +523,7 @@ export const datingCulturePosts: JournalPost[] = [
     title: "Modern Arranged Marriage: How It Actually Works in 2026",
     metaDescription:
       "Modern arranged marriage in 2026 looks nothing like the old version — and nothing like Indian Matchmaking either. Here's what it actually looks like now.",
-    datePublished: "2026-05-23",
+    datePublished: "2026-04-30",
     dateModified: "2026-05-23",
     author: "Surbhi",
     excerpt:
@@ -623,7 +623,7 @@ export const datingCulturePosts: JournalPost[] = [
     title: "The Complete Guide to Indian Dating Culture in America",
     metaDescription:
       "Indian dating culture in America is its own thing — shaped by two sets of rules, neither of which fully applies. Here's what you actually need to know.",
-    datePublished: "2026-05-25",
+    datePublished: "2026-05-01",
     dateModified: "2026-05-25",
     author: "Surbhi",
     excerpt:
@@ -719,7 +719,7 @@ export const datingCulturePosts: JournalPost[] = [
     title: "15 Desi Dating Problems Only Brown People Understand",
     metaDescription:
       "From family WhatsApp groups to the shaadi pressure spiral, these 15 desi dating problems are painfully real — and you are not alone in any of them.",
-    datePublished: "2026-05-27",
+    datePublished: "2026-05-02",
     dateModified: "2026-05-27",
     author: "Surbhi",
     excerpt:
@@ -827,7 +827,7 @@ export const datingCulturePosts: JournalPost[] = [
     title: "The Aunty Survival Guide: What to Say When They Ask About Marriage",
     metaDescription:
       "Aunties asking about marriage? Here are tested, polite, and occasionally devastating responses to the question every South Asian single dreads.",
-    datePublished: "2026-05-29",
+    datePublished: "2026-05-03",
     dateModified: "2026-05-29",
     author: "Surbhi",
     excerpt:
@@ -923,7 +923,7 @@ export const datingCulturePosts: JournalPost[] = [
     title: "Rishta Culture Decoded: What Millennials Need to Know",
     metaDescription:
       "Rishta culture in 2026 has evolved but still runs on rules nobody explains. Here's what South Asian millennials need to know to navigate it without losing their mind.",
-    datePublished: "2026-05-31",
+    datePublished: "2026-05-04",
     dateModified: "2026-05-31",
     author: "Surbhi",
     excerpt:
@@ -1023,7 +1023,7 @@ export const datingCulturePosts: JournalPost[] = [
     title: "Dating Outside Your Culture as a South Asian: An Honest Guide",
     metaDescription:
       "Interracial dating as a South Asian brings real rewards and real complications. Here's the honest guide to dating outside your culture without losing yourself.",
-    datePublished: "2026-06-02",
+    datePublished: "2026-05-05",
     dateModified: "2026-06-02",
     author: "Surbhi",
     excerpt:
@@ -1119,7 +1119,7 @@ export const datingCulturePosts: JournalPost[] = [
     title: "Brown Girl Dating: The Unspoken Rules Nobody Talks About",
     metaDescription:
       "Brown girl dating has a whole layer of unwritten rules that shape everything from who you date to when you tell your family. Here's the honest breakdown.",
-    datePublished: "2026-06-04",
+    datePublished: "2026-05-06",
     dateModified: "2026-06-04",
     author: "Surbhi",
     excerpt:
@@ -1211,7 +1211,7 @@ export const datingCulturePosts: JournalPost[] = [
     title: "Brown Guy Dating: Why It's Harder and What to Do About It",
     metaDescription:
       "Brown guy dating comes with specific challenges that mainstream dating advice doesn't address. Here's the honest breakdown — and what actually helps.",
-    datePublished: "2026-06-06",
+    datePublished: "2026-05-07",
     dateModified: "2026-06-06",
     author: "Surbhi",
     excerpt:
@@ -1308,7 +1308,7 @@ export const datingCulturePosts: JournalPost[] = [
       "Semi-Arranged Marriage: The Modern Middle Ground Nobody Talks About",
     metaDescription:
       "Semi-arranged marriage is how most modern desis actually end up married — a mix of family introduction and individual choice. Here's how it actually works.",
-    datePublished: "2026-06-08",
+    datePublished: "2026-05-08",
     dateModified: "2026-06-08",
     author: "Surbhi",
     excerpt:
@@ -1404,7 +1404,7 @@ export const datingCulturePosts: JournalPost[] = [
     title: "Situationships in Desi Culture: Why We Keep Getting Stuck",
     metaDescription:
       "Situationships in desi culture have a specific flavor — family pressure, secrecy, and the undefined middle that nobody knows how to name. Here's why we keep getting stuck.",
-    datePublished: "2026-06-10",
+    datePublished: "2026-05-09",
     dateModified: "2026-06-10",
     author: "Surbhi",
     excerpt:

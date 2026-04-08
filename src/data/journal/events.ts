@@ -6,7 +6,7 @@ export const eventsPosts: JournalPost[] = [
     title: "How to Meet Indian Singles Without Dating Apps",
     metaDescription:
       "Tired of Hinge and Dil Mil? Here's how to meet Indian singles in real life — events, shows, and spaces where desis actually connect.",
-    datePublished: "2026-07-08",
+    datePublished: "2026-05-23",
     dateModified: "2026-07-08",
     author: "Surbhi",
     excerpt:
@@ -114,7 +114,7 @@ export const eventsPosts: JournalPost[] = [
     title: "What to Expect at a Desi Speed Dating Event",
     metaDescription:
       "Going to Indian or desi speed dating? Here's exactly what happens, what to wear, what to say, and how to make it work for you.",
-    datePublished: "2026-07-10",
+    datePublished: "2026-05-24",
     dateModified: "2026-07-10",
     author: "Surbhi",
     excerpt:
@@ -226,7 +226,7 @@ export const eventsPosts: JournalPost[] = [
     title: "The IRL Dating Revival: Why In-Person Events Are Exploding",
     metaDescription:
       "In-person dating events are up 42% year-over-year as 79% of singles report app burnout. Here's why IRL is back and where to start.",
-    datePublished: "2026-07-12",
+    datePublished: "2026-05-25",
     dateModified: "2026-07-12",
     author: "Surbhi",
     excerpt:
@@ -334,7 +334,7 @@ export const eventsPosts: JournalPost[] = [
     title: "Where to Meet Indian Singles in NYC: Beyond the Apps",
     metaDescription:
       "Looking for Indian or desi singles in NYC? Here's where South Asians actually meet in person — from cultural events to live dating shows.",
-    datePublished: "2026-07-14",
+    datePublished: "2026-05-26",
     dateModified: "2026-07-14",
     author: "Surbhi",
     excerpt:
@@ -446,7 +446,7 @@ export const eventsPosts: JournalPost[] = [
     title: "Why a Live Comedy Dating Show Is the Most Unique Date Idea in 2026",
     metaDescription:
       "Looking for unique date ideas in 2026? A live comedy dating show beats dinner and a movie — here's why 250-person blind dates make the best first date.",
-    datePublished: "2026-07-16",
+    datePublished: "2026-05-27",
     dateModified: "2026-07-16",
     author: "Surbhi",
     excerpt:

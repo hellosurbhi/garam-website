@@ -7,7 +7,7 @@ export const corePosts: JournalPost[] = [
       "Indian Matchmaking, Hinge, and a Live Comedy Show: What 4 Years of Running One Taught Me About How Desis Actually Date",
     metaDescription:
       "After 4 years and 40+ live shows, Surbhi shares what Indian Matchmaking got right, what Hinge gets wrong, and what actually happens when desis date on stage in front of 250 people.",
-    datePublished: "2026-04-25",
+    datePublished: "2026-04-16",
     dateModified: "2026-04-25",
     relatedSlugs: [
       "desi-dating-show-vs-dating-apps",
@@ -146,7 +146,7 @@ export const corePosts: JournalPost[] = [
       "The Best Things to Do in NYC If You\u2019re Single and Bored of Bars",
     metaDescription:
       "Tired of the same bar scene? Here are the best things to do in NYC if you\u2019re single, from improv shows to rooftop mixers to a live comedy dating show with 250 people.",
-    datePublished: "2026-04-23",
+    datePublished: "2026-04-15",
     dateModified: "2026-04-23",
     relatedSlugs: [
       "south-asian-singles-events-nyc",
@@ -280,7 +280,7 @@ export const corePosts: JournalPost[] = [
       "How to Get Cast on a Live Dating Show (What We\u2019re Actually Looking For)",
     metaDescription:
       "Want to be on a live dating show? Here\u2019s exactly how casting works at Garam Masala Dating, what we look for in applications, and what to expect if you get picked.",
-    datePublished: "2026-04-21",
+    datePublished: "2026-04-14",
     dateModified: "2026-04-21",
     relatedSlugs: [
       "how-to-prepare-for-a-live-matchmaking-show",
@@ -421,7 +421,7 @@ export const corePosts: JournalPost[] = [
       "The Realest Way to Meet Desi Singles in NYC (That Isn\u2019t an App)",
     metaDescription:
       "Tired of swiping through the same desi profiles? Here\u2019s how to actually meet South Asian singles in NYC in person, at a live dating show with 250 people in the room.",
-    datePublished: "2026-04-19",
+    datePublished: "2026-04-13",
     dateModified: "2026-04-19",
     relatedSlugs: [
       "the-only-live-desi-dating-show-in-nyc",
@@ -556,7 +556,7 @@ export const corePosts: JournalPost[] = [
       "What Actually Happens at a Live Comedy Dating Show (From the Person Running It)",
     metaDescription:
       "Here\u2019s what actually happens at a live comedy dating show. Blind dates on stage, audience chaos, whiteboard reveals, and a singles mixer after. From the person who runs it.",
-    datePublished: "2026-04-17",
+    datePublished: "2026-04-12",
     dateModified: "2026-04-17",
     relatedSlugs: [
       "how-to-prepare-for-a-live-matchmaking-show",
@@ -686,7 +686,7 @@ export const corePosts: JournalPost[] = [
       "The Only Live Desi Dating Show in NYC (And What Actually Happens There)",
     metaDescription:
       "Garam Masala Dating is the only weekly live desi dating show in NYC. Here\u2019s what actually happens at the show, who can come, and how it compares to Indian Matchmaking.",
-    datePublished: "2026-04-15",
+    datePublished: "2026-04-11",
     dateModified: "2026-04-15",
     relatedSlugs: [
       "what-actually-happens-at-a-live-comedy-dating-show",
@@ -807,7 +807,7 @@ export const corePosts: JournalPost[] = [
       "South Asian Singles Events in NYC: What\u2019s Actually Worth Going To",
     metaDescription:
       "A guide to South Asian singles events in NYC, from desi mixers to live dating shows. What\u2019s actually worth your time and what to skip.",
-    datePublished: "2026-04-13",
+    datePublished: "2026-04-10",
     dateModified: "2026-04-13",
     relatedSlugs: [
       "the-realest-way-to-meet-desi-singles-in-nyc",
@@ -928,7 +928,7 @@ export const corePosts: JournalPost[] = [
       "Desi Dating Show vs. Dating Apps: What 4 Years of Running One Taught Me",
     metaDescription:
       "After four years of running Garam Masala Dating, here\u2019s what a live desi dating show taught me about chemistry, connection, and why apps can\u2019t replicate what happens on stage.",
-    datePublished: "2026-04-11",
+    datePublished: "2026-04-09",
     dateModified: "2026-04-11",
     relatedSlugs: [
       "what-we-learned-from-100-desi-blind-dates",
@@ -1056,7 +1056,7 @@ export const corePosts: JournalPost[] = [
     title: "What We Learned From 100 Desi Blind Dates",
     metaDescription:
       "After running Garam Masala Dating for over a year and watching hundreds of live blind dates unfold on stage, here's what we actually learned about South Asian dating.",
-    datePublished: "2026-04-09",
+    datePublished: "2026-04-08",
     dateModified: "2026-04-09",
     relatedSlugs: [
       "desi-dating-show-vs-dating-apps",

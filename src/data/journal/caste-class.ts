@@ -6,7 +6,7 @@ export const casteClassPosts: JournalPost[] = [
     title: "Caste and Dating in 2026: The Elephant in Every Desi Living Room",
     metaDescription:
       "Caste still shapes South Asian dating in 2026 — in parents' questions, app filters, and unspoken assumptions. Here's what's actually happening.",
-    datePublished: "2026-10-16",
+    datePublished: "2026-07-12",
     dateModified: "2026-10-16",
     author: "Surbhi",
     excerpt:
@@ -114,7 +114,7 @@ export const casteClassPosts: JournalPost[] = [
     title: "Dating Across Castes: What It's Really Like and How to Navigate It",
     metaDescription:
       "Cross-caste dating in South Asian communities comes with real friction. Here's what to expect, how to have the conversations, and when to hold your ground.",
-    datePublished: "2026-10-18",
+    datePublished: "2026-07-13",
     dateModified: "2026-10-18",
     author: "Surbhi",
     excerpt:
@@ -214,7 +214,7 @@ export const casteClassPosts: JournalPost[] = [
     title: "When Your Partner's Family Has a Different Financial Background",
     metaDescription:
       "Dating someone from a wealthier or poorer desi family creates friction most couples don't anticipate. Here's how to navigate the money gap honestly.",
-    datePublished: "2026-10-20",
+    datePublished: "2026-07-14",
     dateModified: "2026-10-20",
     author: "Surbhi",
     excerpt:
@@ -314,7 +314,7 @@ export const casteClassPosts: JournalPost[] = [
     title: "Rich Desi, Regular Desi: How Money Complicates South Asian Dating",
     metaDescription:
       "Class divides in South Asian dating go far beyond salary. Here's how money shapes who desis swipe on, what families approve, and what actually matters.",
-    datePublished: "2026-10-22",
+    datePublished: "2026-07-15",
     dateModified: "2026-10-22",
     author: "Surbhi",
     excerpt:
@@ -411,7 +411,7 @@ export const casteClassPosts: JournalPost[] = [
       "The Doctor-Engineer Pressure: When Your Career Defines Your Dateability",
     metaDescription:
       "South Asian dating culture links career to worth in ways that hurt everyone. Here's what the doctor-engineer pressure actually costs desi singles.",
-    datePublished: "2026-10-24",
+    datePublished: "2026-07-16",
     dateModified: "2026-10-24",
     author: "Surbhi",
     excerpt:
@@ -512,7 +512,7 @@ export const casteClassPosts: JournalPost[] = [
       "Does Your Last Name Still Matter? Caste Signals in Modern Desi Dating",
     metaDescription:
       "South Asian surnames still carry caste information — and many desi families still use them as a filter. Here's how last names function in modern desi dating.",
-    datePublished: "2026-10-26",
+    datePublished: "2026-07-17",
     dateModified: "2026-10-26",
     author: "Surbhi",
     excerpt:
@@ -608,7 +608,7 @@ export const casteClassPosts: JournalPost[] = [
     title: "Dating When Your Parents Measure Love in Salary and Status",
     metaDescription:
       "South Asian parents often evaluate partners through salary, career, and status. Here's how to navigate this without losing yourself or your relationship.",
-    datePublished: "2026-10-28",
+    datePublished: "2026-07-18",
     dateModified: "2026-10-28",
     author: "Surbhi",
     excerpt:
@@ -709,7 +709,7 @@ export const casteClassPosts: JournalPost[] = [
       "The Class Divide in South Asian Dating: From Biodata to Bank Balance",
     metaDescription:
       "Class shapes South Asian dating from biodata to bank balance — who gets considered, who gets filtered, and what actually matters when you build a life together.",
-    datePublished: "2026-10-30",
+    datePublished: "2026-07-19",
     dateModified: "2026-10-30",
     author: "Surbhi",
     excerpt:

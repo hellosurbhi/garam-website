@@ -6,7 +6,7 @@ export const bollywoodPosts: JournalPost[] = [
     title: "Bollywood Movies About Gaslighting You Probably Romanticized",
     metaDescription:
       "Darr, Raanjhanaa, Kabir Singh — Bollywood sold us obsession as love. Here's what those movies actually show about toxic relationships.",
-    datePublished: "2026-08-21",
+    datePublished: "2026-06-14",
     dateModified: "2026-08-21",
     author: "Surbhi",
     excerpt:
@@ -114,7 +114,7 @@ export const bollywoodPosts: JournalPost[] = [
     title: "Bollywood Movies That Actually Show What Dating Is Like in 2026",
     metaDescription:
       "Forget 90s fantasy. These modern Bollywood films actually get what dating looks like now — apps, independence, ambiguity, and choosing yourself.",
-    datePublished: "2026-08-23",
+    datePublished: "2026-06-15",
     dateModified: "2026-08-23",
     author: "Surbhi",
     excerpt:
@@ -214,7 +214,7 @@ export const bollywoodPosts: JournalPost[] = [
     title: "Just Got Your Heart Broken? These Bollywood Movies Get It",
     metaDescription:
       "Ae Dil Hai Mushkil, Devdas, Jab We Met — the best Bollywood movies for heartbreak that actually understand what grief over a person feels like.",
-    datePublished: "2026-08-25",
+    datePublished: "2026-06-16",
     dateModified: "2026-08-25",
     author: "Surbhi",
     excerpt:
@@ -322,7 +322,7 @@ export const bollywoodPosts: JournalPost[] = [
     title: "Bollywood Movies About Breadcrumbing and Toxic Situationships",
     metaDescription:
       "Cocktail, Love Aaj Kal, Wake Up Sid — Bollywood has been making films about situationships for decades. Here's what they actually show.",
-    datePublished: "2026-08-27",
+    datePublished: "2026-06-17",
     dateModified: "2026-08-27",
     author: "Surbhi",
     excerpt:
@@ -418,7 +418,7 @@ export const bollywoodPosts: JournalPost[] = [
     title: "10 Bollywood Movies That Nail the Arranged Marriage Dilemma",
     metaDescription:
       "DDLJ, 2 States, Hum Dil De Chuke Sanam — the best Bollywood films about the arranged marriage tension and what they actually get right.",
-    datePublished: "2026-08-29",
+    datePublished: "2026-06-18",
     dateModified: "2026-08-29",
     author: "Surbhi",
     excerpt:
@@ -522,7 +522,7 @@ export const bollywoodPosts: JournalPost[] = [
     title: "Bollywood\u2019s Best Breakup Movies for When You Need a Good Cry",
     metaDescription:
       "The best Bollywood breakup movies — from classic heartbreak films to modern endings that don't wrap up neatly. For when you need to feel it.",
-    datePublished: "2026-08-31",
+    datePublished: "2026-06-19",
     dateModified: "2026-08-31",
     author: "Surbhi",
     excerpt:
@@ -619,7 +619,7 @@ export const bollywoodPosts: JournalPost[] = [
       "Love Aaj Kal to Rocky Aur Rani: How Bollywood\u2019s Dating Stories Evolved",
     metaDescription:
       "From DDLJ's family approval to Gehraiyaan's moral ambiguity — how Bollywood's depiction of South Asian dating changed across three decades.",
-    datePublished: "2026-09-02",
+    datePublished: "2026-06-20",
     dateModified: "2026-09-02",
     author: "Surbhi",
     excerpt:
@@ -723,7 +723,7 @@ export const bollywoodPosts: JournalPost[] = [
     title: "Bollywood Red Flags: Movies Where the Hero Is Actually Toxic",
     metaDescription:
       "Raanjhanaa, Kabir Singh, Darr, Dabangg — Bollywood heroes with serious red flags we've been calling romance for decades. Let's name them.",
-    datePublished: "2026-09-04",
+    datePublished: "2026-06-21",
     dateModified: "2026-09-04",
     author: "Surbhi",
     excerpt:
@@ -827,7 +827,7 @@ export const bollywoodPosts: JournalPost[] = [
     title: "Bollywood Movies That Get Long-Distance Relationships Right",
     metaDescription:
       "Namastey London, Kal Ho Naa Ho, Ae Dil Hai Mushkil — Bollywood films that capture the particular grief and hope of loving someone far away.",
-    datePublished: "2026-09-06",
+    datePublished: "2026-06-22",
     dateModified: "2026-09-06",
     author: "Surbhi",
     excerpt:
@@ -931,7 +931,7 @@ export const bollywoodPosts: JournalPost[] = [
     title: "The Best Bollywood Movies About Finding Love on Your Own Terms",
     metaDescription:
       "Piku, Queen, Dil Dhadakne Do — Bollywood films where characters choose love on their own terms, without family pressure or the usual scripts.",
-    datePublished: "2026-09-08",
+    datePublished: "2026-06-23",
     dateModified: "2026-09-08",
     author: "Surbhi",
     excerpt:

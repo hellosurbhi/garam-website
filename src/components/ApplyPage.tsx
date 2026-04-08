@@ -1,6 +1,7 @@
 import { useEffect } from "react";
 import { ErrorBoundary } from "./ErrorBoundary";
 import Select from "react-select";
+import type { SingleValue } from "react-select";
 import { COMMUNITY_OPTIONS, INCOME_OPTIONS } from "@/types/application";
 import { formSelectStyles } from "@/utils/reactSelectStyles";
 import type { CitySearchOption } from "@/lib/citySearchShared";
@@ -307,7 +308,7 @@ function ApplyPageInner() {
                           options={placeOptions}
                           value={selectedPlace}
                           onChange={(option) =>
-                            handlePlaceChange(option as CitySearchOption | null)
+                            handlePlaceChange(option as SingleValue<CitySearchOption>)
                           }
                           onInputChange={(value, meta) => {
                             if (meta.action === "input-change") {
@@ -320,10 +321,8 @@ function ApplyPageInner() {
                           }}
                           onMenuOpen={triggerGeoLoad}
                           inputValue={placeQuery}
-                          placeholder={
-                            geoLoading ? "Loading…" : "Start typing a city…"
-                          }
-                          styles={formSelectStyles}
+                          placeholder={geoLoading ? "Loading…" : "Start typing a city…"}
+                          styles={formSelectStyles<CitySearchOption>()}
                           isSearchable
                           isLoading={geoLoading}
                           isDisabled={geoLoading}

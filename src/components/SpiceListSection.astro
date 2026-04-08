@@ -1,0 +1,74 @@
+---
+/**
+ * "Join the Spice List" section — sits above the footer on every page.
+ * Renders an inline email field that opens the LeadCaptureModal for the phone step.
+ * Added to BaseLayout so it appears globally.
+ */
+import LeadCaptureModal from '@/components/LeadCaptureModal.astro';
+---
+
+<section class="spice-section" aria-label="Join the Spice List">
+  <div class="spice-inner">
+    <h2 class="spice-heading">Join the Spice List</h2>
+    <p class="spice-sub">Get exclusive discount codes for cheaper (and sometimes free) tickets. No spam — just deals and show announcements.</p>
+    <button
+      type="button"
+      class="spice-cta"
+      data-open-modal="spice-list-modal"
+      aria-haspopup="dialog"
+    >
+      Get on the List
+    </button>
+  </div>
+</section>
+
+<LeadCaptureModal
+  id="spice-list-modal"
+  source="spice-list-footer"
+  heading="Join the Spice List"
+  subheading="Get exclusive discount codes for cheaper (and sometimes free) tickets."
+  submitLabel="Count Me In"
+  successMessage="You're on the list! Discount codes incoming."
+/>
+
+<style>
+  .spice-section {
+    background: var(--charcoal);
+    color: var(--off-white);
+    padding: 48px 24px;
+    text-align: center;
+  }
+  .spice-inner {
+    max-width: 480px;
+    margin: 0 auto;
+  }
+  .spice-heading {
+    font-family: var(--font-playfair), serif;
+    font-size: 28px;
+    font-weight: 600;
+    margin-bottom: 12px;
+    color: var(--electric-yellow);
+  }
+  .spice-sub {
+    font-size: 15px;
+    line-height: 1.6;
+    color: rgba(255, 248, 240, 0.8);
+    margin-bottom: 24px;
+  }
+  .spice-cta {
+    background: var(--brand-red);
+    color: white;
+    border: none;
+    padding: 14px 32px;
+    border-radius: 50px;
+    font-family: var(--font-body), sans-serif;
+    font-size: 16px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    cursor: pointer;
+    transition: background 0.2s;
+    min-height: var(--touch-target);
+  }
+  .spice-cta:hover { background: var(--brand-red-dark); }
+</style>

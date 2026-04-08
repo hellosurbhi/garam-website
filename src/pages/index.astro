@@ -35,12 +35,12 @@ const orgJsonLd = JSON.stringify({
   "@context": "https://schema.org",
   "@type": "Organization",
   name: "Garam Masala Dating",
+  alternateName: ["Garam Masala Dating Show", "GMS Dating"],
   url: "https://garammasaladating.com",
   logo: "https://garammasaladating.com/images/logo.svg",
   description:
     "Garam Masala Dating is a live South Asian dating show and singles mixer in New York City. Real singles go on blind dates on stage in front of a 250-person live audience. Weekly in Manhattan, monthly in Jersey City.",
   foundingDate: "2022",
-  alternateName: ["Garam Masala Dating Show", "GMS Dating"],
   sameAs: [
     SOCIAL_URLS.instagram,
     SOCIAL_URLS.tiktok,
@@ -83,6 +83,21 @@ const websiteJsonLd = JSON.stringify({
   "@type": "WebSite",
   name: "Garam Masala Dating",
   url: "https://garammasaladating.com",
+});
+
+// FAQPage JSON-LD (homepage FAQs — 2.7x higher AI citation rate)
+import { HOME_FAQS } from "@/data/copy";
+const faqJsonLd = JSON.stringify({
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  mainEntity: HOME_FAQS.map((faq) => ({
+    "@type": "Question",
+    name: faq.q,
+    acceptedAnswer: {
+      "@type": "Answer",
+      text: faq.short.replace(/<[^>]+>/g, ""),
+    },
+  })),
 });
 
 // Individual Event JSON-LD blocks (one per upcoming show)
@@ -171,6 +186,7 @@ const speakableJsonLd = JSON.stringify({
   <Fragment slot="head">
     <script type="application/ld+json" set:html={orgJsonLd} />
     <script type="application/ld+json" set:html={websiteJsonLd} />
+    <script type="application/ld+json" set:html={faqJsonLd} />
     <script type="application/ld+json" set:html={speakableJsonLd} />
     <script type="application/ld+json" set:html={videoJsonLd} />
     <script type="application/ld+json" set:html={eventSeriesJsonLd} />

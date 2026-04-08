@@ -439,6 +439,25 @@ Added 12 new test files and extended 3 existing test files to dramatically impro
 - Mocked country-state-city, @/data/cities, @/utils/timezone, window.posthog, sessionStorage
 - Cast minimal objects as Application type rather than mocking firebase/firestore
 
+## Production cleanup + revenue infrastructure (2026-04-08)
+**PostHog distinct ID fix** — Apply form now calls `identifyLead()` with Instagram handle before `trackLeadEvent('apply_submitted')`. Previously applicants stayed permanently anonymous in PostHog. Also added GTM dataLayer identification.
+**Image reorganization** — Restructured `public/images/` from 19 loose files into organized subfolders: `hero/`, `hosts/`, `promo/`, `journal/`. Deleted redundant `hosts.JPG` (315KB, already had webp+avif). Updated all 15 source files with new paths.
+**Unified modal system** — Created `ui/Modal.astro` (shared dialog chrome) and `LeadCaptureModal.astro` (reusable email→phone→success flow with configurable copy via props). Supports multiple instances per page, city mode, `data-open-modal` triggers.
+**Email capture on every page** — Added `SpiceListSection.astro` above footer on all pages via BaseLayout. Added "Get on the List" as primary CTA on links page, "Don't see your city?" section on tickets page, inline "See [host] live" CTAs on hosts page, mid-article CTA banner on journal pages.
+**Schema upgrades** — Event→ComedyEvent with performer, doorTime, maximumAttendeeCapacity. FAQPage schema on homepage. alternateName on Organization for entity disambiguation.
+**AI discoverability** — Created `/llms.txt`. Updated `robots.txt` with 8 missing AI crawlers (OAI-SearchBot, Claude-SearchBot, Applebot-Extended, DuckAssistBot, Amazonbot, cohere-ai, meta-externalagent, Bytespider). Added `<link rel="alternate">` for llms.txt.
+**CSS cleanup** — Replaced 13 hardcoded hex colors in ApplyPage.module.css with CSS variables. Added `--apply-brown`, `--border-light`, `--hover-subtle` tokens.
+**Housekeeping** — Created `.env.example`. Merged `ENHANCEMENT.md` into `ENHANCEMENTS.md`. Created 1,307-line `ROADMAP.md` with full growth plan, research, and actionable roadmap.
+- `src/components/apply/useApplyForm.ts`, `src/lib/analytics.ts` — PostHog fix
+- `public/images/` — reorganized into subfolders (21 files moved)
+- `src/components/ui/Modal.astro`, `src/components/LeadCaptureModal.astro`, `src/components/SpiceListSection.astro` — new
+- `src/layouts/BaseLayout.astro` — SpiceListSection, llms.txt link
+- `src/pages/links.astro`, `tickets.astro`, `hosts.astro`, `journal/[slug].astro` — email capture CTAs
+- `src/utils/eventSchema.ts` — ComedyEvent schema
+- `src/pages/index.astro` — FAQPage schema, alternateName
+- `public/llms.txt`, `public/robots.txt` — AI discoverability
+- `src/index.css`, `src/components/ApplyPage.module.css` — CSS variables
+- `.env.example`, `ROADMAP.md`, `ENHANCEMENTS.md` — docs
 ## fix: phone accepts international numbers, apply form analytics, code cleanup (2026-04-08)
 
 ### What changed

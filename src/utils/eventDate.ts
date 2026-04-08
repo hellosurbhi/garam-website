@@ -44,6 +44,24 @@ export function isEventPast(dateStr: string): boolean {
   return eventDate < today;
 }
 
+/**
+ * Extract the month abbreviation from a date string like "Feb 22".
+ * Returns "—" for "TBA" or unparseable strings.
+ */
+export function parseMonth(dateStr: string): string {
+  const parts = dateStr.trim().split(/\s+/);
+  return parts.length >= 2 && parts[0] in MONTHS ? parts[0] : "—";
+}
+
+/**
+ * Extract the day number from a date string like "Feb 22".
+ * Returns "—" for "TBA" or unparseable strings.
+ */
+export function parseDay(dateStr: string): string {
+  const parts = dateStr.trim().split(/\s+/);
+  return parts.length >= 2 && !isNaN(parseInt(parts[1], 10)) ? parts[1] : "—";
+}
+
 /** Milliseconds until the next midnight. */
 export function msUntilMidnight(): number {
   const now = new Date();

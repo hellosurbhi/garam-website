@@ -70,6 +70,10 @@
   --cream-warm: #FFF0E2;
   --off-white-rgb: 255, 248, 240;
 
+  /* apply form palette */
+  --apply-brown: #3d3532;
+  --border-light: #eee;
+
   /* layout */
   --dialog-gutter: 16px;
   --backdrop: rgba(0, 0, 0, 0.5);

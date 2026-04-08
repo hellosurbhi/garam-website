@@ -1,4 +1,4 @@
-import { citiesIndex } from "@/data/cities";
+import { citiesIndex } from "../data/cities";
 
 export interface CitySearchOption {
   value: string;

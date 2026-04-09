@@ -50,19 +50,10 @@ const speakableJsonLd = JSON.stringify({
   </Fragment>
 
   <main id="main-content" class="sp">
-    <!-- Hero with background image -->
+    <!-- Hero -->
     <section class="sp-hero" aria-labelledby="sp-heading">
-      <img
-        class="sp-hero-bg"
-        src="/images/pure-chaos.webp"
-        alt=""
-        width="1200"
-        height="800"
-        aria-hidden="true"
-      />
-      <div class="sp-hero-overlay"></div>
       <div class="sp-container sp-hero-inner">
-        <p class="sp-eyebrow sp-eyebrow--white">Brand Partnerships</p>
+        <p class="sp-eyebrow">Brand Partnerships</p>
         <h1 id="sp-heading">{SPONSORSHIP_COPY.heroHeadline}</h1>
         <p class="sp-hero-sub">{SPONSORSHIP_COPY.heroSub}</p>
         <div class="sp-email-block">
@@ -83,20 +74,22 @@ const speakableJsonLd = JSON.stringify({
       </div>
     </section>
 
-    <!-- Stats with image background -->
-    <section class="sp-stats" aria-labelledby="sp-stats-heading">
+    <!-- Photo -->
+    <div class="sp-photo">
       <img
-        class="sp-stats-bg"
-        src="/images/the-crowd.webp"
-        alt=""
-        width="800"
-        height="1200"
+        src="/images/pure-chaos.webp"
+        alt="High energy moment at Garam Masala Dating"
+        width="1200"
+        height="800"
         loading="lazy"
-        aria-hidden="true"
       />
-      <div class="sp-stats-overlay"></div>
-      <div class="sp-container sp-stats-inner">
-        <h2 id="sp-stats-heading">The Numbers</h2>
+    </div>
+
+    <!-- Stats -->
+    <section class="sp-stats" aria-labelledby="sp-stats-heading">
+      <div class="sp-container">
+        <p class="sp-eyebrow">By the Numbers</p>
+        <h2 id="sp-stats-heading">Why brands choose Garam Masala Dating</h2>
         <div class="sp-stats-grid">
           {
             MEDIA_KIT_STATS.map((stat) => (
@@ -111,6 +104,17 @@ const speakableJsonLd = JSON.stringify({
         <p class="sp-demo">{SPONSORSHIP_COPY.demoBlurb}</p>
       </div>
     </section>
+
+    <!-- Photo -->
+    <div class="sp-photo">
+      <img
+        src="/images/the-crowd.webp"
+        alt="Audience members laughing"
+        width="800"
+        height="1200"
+        loading="lazy"
+      />
+    </div>
 
     <!-- Sponsorship Tiers -->
     <section class="sp-tiers" aria-labelledby="sp-tiers-heading">
@@ -144,8 +148,8 @@ const speakableJsonLd = JSON.stringify({
       </div>
     </section>
 
-    <!-- Photo break -->
-    <section class="sp-photos" aria-hidden="true">
+    <!-- Photo -->
+    <div class="sp-photo">
       <img
         src="/images/on-stage.webp"
         alt="Contestants on stage at Garam Masala Dating"
@@ -153,7 +157,7 @@ const speakableJsonLd = JSON.stringify({
         height="800"
         loading="lazy"
       />
-    </section>
+    </div>
 
     <!-- Target brands -->
     <section class="sp-brands" aria-labelledby="sp-brands-heading">
@@ -173,6 +177,17 @@ const speakableJsonLd = JSON.stringify({
         </div>
       </div>
     </section>
+
+    <!-- Photo -->
+    <div class="sp-photo">
+      <img
+        src="/images/after-party.webp"
+        alt="Audience celebrating after the show"
+        width="1200"
+        height="800"
+        loading="lazy"
+      />
+    </div>
 
     <!-- FAQ -->
     <section class="sp-faq" aria-labelledby="sp-faq-heading">
@@ -221,9 +236,6 @@ const speakableJsonLd = JSON.stringify({
     color: var(--brand-red);
     margin-bottom: 14px;
   }
-  .sp-eyebrow--white {
-    color: rgba(255, 255, 255, 0.7);
-  }
 
   /* Email CTA */
   .sp-email-block {
@@ -231,7 +243,7 @@ const speakableJsonLd = JSON.stringify({
   }
   .sp-email-label {
     font-size: 14px;
-    color: rgba(255, 255, 255, 0.7);
+    color: var(--text-secondary);
     margin-bottom: 6px;
     font-weight: 600;
   }
@@ -240,7 +252,7 @@ const speakableJsonLd = JSON.stringify({
     align-items: center;
     font-size: clamp(18px, 2.5vw, 24px);
     font-weight: 800;
-    color: var(--electric-yellow);
+    color: var(--brand-red);
     text-decoration: underline;
     text-underline-offset: 4px;
     text-decoration-thickness: 2px;
@@ -249,11 +261,10 @@ const speakableJsonLd = JSON.stringify({
     padding: 4px 0;
   }
   .sp-email-link:hover {
-    color: white;
-    text-decoration-color: white;
+    color: var(--brand-red-dark);
   }
   .sp-email-link:focus-visible {
-    outline: 2px solid var(--electric-yellow);
+    outline: 2px solid var(--brand-red);
     outline-offset: 3px;
   }
   .sp-email-link--white {
@@ -267,133 +278,93 @@ const speakableJsonLd = JSON.stringify({
 
   /* Hero */
   .sp-hero {
-    position: relative;
-    overflow: hidden;
-    padding: 80px 0 72px;
+    background: var(--off-white);
+    padding: 56px 0 48px;
     text-align: center;
-  }
-  .sp-hero-bg {
-    position: absolute;
-    inset: 0;
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    object-position: center 30%;
-    z-index: 0;
-  }
-  .sp-hero-overlay {
-    position: absolute;
-    inset: 0;
-    z-index: 1;
-    background: linear-gradient(
-      180deg,
-      rgba(0, 0, 0, 0.7) 0%,
-      rgba(0, 0, 0, 0.55) 100%
-    );
-  }
-  .sp-hero-inner {
-    position: relative;
-    z-index: 2;
   }
   .sp-hero h1 {
     font-family: var(--font-playfair), serif;
     font-size: clamp(26px, 5vw, 52px);
     font-weight: 900;
-    color: white;
+    color: var(--charcoal);
     line-height: 1.08;
     margin-bottom: 20px;
-    text-shadow: 0 2px 16px rgba(0, 0, 0, 0.5);
   }
   .sp-hero-sub {
     font-family: var(--font-cormorant), serif;
     font-size: clamp(16px, 2.2vw, 20px);
     font-style: italic;
-    color: rgba(255, 255, 255, 0.85);
+    color: var(--text-secondary);
     line-height: 1.7;
     max-width: 640px;
     margin: 0 auto;
   }
 
-  /* Stats with image bg */
-  .sp-stats {
-    position: relative;
-    overflow: hidden;
-    padding: 80px 0;
-    text-align: center;
+  /* Standalone photos */
+  .sp-photo {
+    line-height: 0;
   }
-  .sp-stats-bg {
-    position: absolute;
-    inset: -10%;
-    width: 120%;
-    height: 120%;
+  .sp-photo img {
+    width: 100%;
+    height: auto;
     object-fit: cover;
-    object-position: center 35%;
-    z-index: 0;
+    max-height: 420px;
   }
-  .sp-stats-overlay {
-    position: absolute;
-    inset: 0;
-    z-index: 1;
-    background: rgba(0, 0, 0, 0.6);
-  }
-  .sp-stats-inner {
-    position: relative;
-    z-index: 2;
+
+  /* Stats */
+  .sp-stats {
+    background: var(--cream-warm);
+    padding: 56px 0;
   }
   .sp-stats h2 {
     font-family: var(--font-playfair), serif;
-    font-size: clamp(28px, 4vw, 48px);
-    font-weight: 900;
-    color: white;
-    margin-bottom: 40px;
-    text-shadow: 0 2px 16px rgba(0, 0, 0, 0.7);
+    font-size: clamp(22px, 3vw, 34px);
+    font-weight: 800;
+    color: var(--charcoal);
+    margin-bottom: 28px;
   }
   .sp-stats-grid {
     display: grid;
     grid-template-columns: 1fr 1fr;
-    gap: 16px;
-    margin-bottom: 32px;
+    gap: 12px;
+    margin-bottom: 28px;
   }
   .sp-stat {
-    background: rgba(255, 255, 255, 0.06);
-    backdrop-filter: blur(4px);
-    border: 1px solid rgba(255, 255, 255, 0.1);
+    background: white;
+    border: 1px solid rgba(0, 0, 0, 0.06);
     border-radius: 12px;
-    padding: 24px;
+    padding: 20px;
   }
   .sp-stat-num {
     font-family: var(--font-playfair), serif;
-    font-size: clamp(28px, 4vw, 48px);
+    font-size: clamp(28px, 4vw, 44px);
     font-weight: 900;
-    color: var(--electric-yellow);
+    color: var(--brand-red);
     line-height: 1;
     margin-bottom: 6px;
-    text-shadow: 0 2px 12px rgba(0, 0, 0, 0.5);
   }
   .sp-stat-label {
     font-size: 13px;
     font-weight: 700;
-    color: white;
+    color: var(--charcoal);
     margin-bottom: 4px;
-    text-shadow: 0 1px 6px rgba(0, 0, 0, 0.5);
   }
   .sp-stat-sub {
     font-size: 12px;
-    color: rgba(255, 255, 255, 0.5);
+    color: var(--muted);
     margin: 0;
   }
   .sp-demo {
     font-size: 15px;
     line-height: 1.7;
-    color: rgba(255, 255, 255, 0.7);
+    color: var(--text-secondary);
     max-width: 700px;
-    margin: 0 auto;
-    text-shadow: 0 1px 4px rgba(0, 0, 0, 0.3);
+    margin: 0;
   }
 
   /* Tiers */
   .sp-tiers {
-    background: var(--cream-warm);
+    background: var(--off-white);
     padding: 56px 0;
   }
   .sp-tiers h2 {
@@ -489,21 +460,9 @@ const speakableJsonLd = JSON.stringify({
     color: var(--electric-yellow);
   }
 
-  /* Photo break */
-  .sp-photos {
-    padding: 0;
-    line-height: 0;
-  }
-  .sp-photos img {
-    width: 100%;
-    height: auto;
-    object-fit: cover;
-    max-height: 400px;
-  }
-
   /* Target brands */
   .sp-brands {
-    background: var(--off-white);
+    background: var(--cream-warm);
     padding: 56px 0;
   }
   .sp-brands h2 {
@@ -547,7 +506,7 @@ const speakableJsonLd = JSON.stringify({
 
   /* FAQ */
   .sp-faq {
-    background: var(--cream-warm);
+    background: var(--off-white);
     padding: 56px 0;
   }
   .sp-faq-inner {
@@ -586,15 +545,13 @@ const speakableJsonLd = JSON.stringify({
 
   @media (min-width: 768px) {
     .sp-hero {
-      padding: 120px 0 100px;
+      padding: 80px 0 72px;
+    }
+    .sp-photo img {
+      max-height: 500px;
     }
     .sp-stats {
-      padding: 100px 0;
-    }
-    .sp-stats-bg {
-      inset: 0;
-      width: 100%;
-      height: 100%;
+      padding: 80px 0;
     }
     .sp-stats-grid {
       grid-template-columns: repeat(4, 1fr);
@@ -606,9 +563,6 @@ const speakableJsonLd = JSON.stringify({
       display: grid;
       grid-template-columns: repeat(2, 1fr);
     }
-    .sp-photos img {
-      max-height: 500px;
-    }
     .sp-brands {
       padding: 80px 0;
     }
@@ -619,7 +573,6 @@ const speakableJsonLd = JSON.stringify({
       padding: 80px 0;
     }
   }
-
   @media (min-width: 1024px) {
     .sp-tier-list {
       grid-template-columns: repeat(4, 1fr);

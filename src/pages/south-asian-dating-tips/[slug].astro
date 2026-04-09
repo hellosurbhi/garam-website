@@ -1,8 +1,9 @@
 ---
-import BaseLayout from '@/layouts/BaseLayout.astro';
-import AuthorBio from '@/components/AuthorBio.astro';
-import { tipPosts, type TipPost } from '@/data/tips';
-import { buildBreadcrumbJsonLd } from '@/utils/breadcrumbs';
+import BaseLayout from "@/layouts/BaseLayout.astro";
+import AuthorBio from "@/components/AuthorBio.astro";
+import { tipPosts, type TipPost } from "@/data/tips";
+import { buildBreadcrumbJsonLd } from "@/utils/breadcrumbs";
+import { gitDates } from "virtual:git-dates";
 
 export function getStaticPaths() {
   return tipPosts.map((post) => ({
@@ -27,12 +28,15 @@ function formatDate(iso: string): string {
 }
 
 const postUrl = `https://garammasaladating.com/south-asian-dating-tips/${post.slug}`;
+const gitDate = gitDates[post.slug];
+const dateModified =
+  gitDate && gitDate > post.dateModified ? gitDate : post.dateModified;
 const articleJsonLd = JSON.stringify({
   "@context": "https://schema.org",
   "@type": "Article",
   headline: post.title,
   datePublished: post.datePublished,
-  dateModified: post.dateModified,
+  dateModified,
   author: {
     "@type": "Person",
     name: "Surbhi",
@@ -56,7 +60,10 @@ const articleJsonLd = JSON.stringify({
 
 const breadcrumbJsonLd = buildBreadcrumbJsonLd([
   { name: "Home", url: "https://garammasaladating.com" },
-  { name: "Dating Tips", url: "https://garammasaladating.com/south-asian-dating-tips" },
+  {
+    name: "Dating Tips",
+    url: "https://garammasaladating.com/south-asian-dating-tips",
+  },
   { name: post.title },
 ]);
 
@@ -72,7 +79,11 @@ const remainingBlocks = post.body.slice(1);
 >
   <Fragment slot="head">
     <meta property="article:published_time" content={post.datePublished} />
-    {post.dateModified && <meta property="article:modified_time" content={post.dateModified} />}
+    {
+      dateModified && (
+        <meta property="article:modified_time" content={dateModified} />
+      )
+    }
     <meta property="article:author" content="Surbhi" />
     <script type="application/ld+json" set:html={articleJsonLd} />
     <script type="application/ld+json" set:html={breadcrumbJsonLd} />
@@ -81,7 +92,9 @@ const remainingBlocks = post.body.slice(1);
   <main id="main-content" class="tip-post-page">
     <div class="tip-post-container">
       <!-- Back link -->
-      <a href="/south-asian-dating-tips" class="tip-post-back">&larr; Dating Tips</a>
+      <a href="/south-asian-dating-tips" class="tip-post-back"
+        >&larr; Dating Tips</a
+      >
 
       <!-- Article header -->
       <header class="tip-post-header">
@@ -99,16 +112,20 @@ const remainingBlocks = post.body.slice(1);
         <!-- Lead paragraph: bolded summary for AEO scraping -->
         <p class="tip-post-lead">{firstBlock.text}</p>
 
-        {remainingBlocks.map((block, i) => {
-          if (block.type === "h3") {
-            return (
-              <h3 class:list={["tip-post-h3", i > 0 && "tip-post-h3--spaced"]}>
-                {block.text}
-              </h3>
-            );
-          }
-          return <p class="tip-post-p">{block.text}</p>;
-        })}
+        {
+          remainingBlocks.map((block, i) => {
+            if (block.type === "h3") {
+              return (
+                <h3
+                  class:list={["tip-post-h3", i > 0 && "tip-post-h3--spaced"]}
+                >
+                  {block.text}
+                </h3>
+              );
+            }
+            return <p class="tip-post-p">{block.text}</p>;
+          })
+        }
       </article>
 
       <!-- Author bio -->
@@ -116,8 +133,12 @@ const remainingBlocks = post.body.slice(1);
 
       <!-- Footer -->
       <div class="tip-post-footer">
-        <a href="/south-asian-dating-tips" class="tip-post-footer-back">&larr; All tips</a>
-        <a href="/apply" class="tip-post-footer-cta">Apply to be on the show &rarr;</a>
+        <a href="/south-asian-dating-tips" class="tip-post-footer-back"
+          >&larr; All tips</a
+        >
+        <a href="/apply" class="tip-post-footer-cta"
+          >Apply to be on the show &rarr;</a
+        >
       </div>
     </div>
   </main>
@@ -125,8 +146,14 @@ const remainingBlocks = post.body.slice(1);
 
 <style>
   @keyframes tipPostFadeIn {
-    from { opacity: 0; transform: translateY(16px); }
-    to   { opacity: 1; transform: translateY(0); }
+    from {
+      opacity: 0;
+      transform: translateY(16px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
   }
 
   .tip-post-page {

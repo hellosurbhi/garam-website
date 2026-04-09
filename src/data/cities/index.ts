@@ -80,12 +80,10 @@ export function citiesByRegion(): { region: CityRegion; cities: CityData[] }[] {
       return a.displayName.localeCompare(b.displayName);
     });
   }
-  return REGION_ORDER
-    .filter((r) => {
-      const list = grouped.get(r);
-      return list !== undefined && list.length > 0;
-    })
-    .map((region) => ({ region, cities: grouped.get(region)! }));
+  return REGION_ORDER.filter((r) => {
+    const list = grouped.get(r);
+    return list !== undefined && list.length > 0;
+  }).map((region) => ({ region, cities: grouped.get(region)! }));
 }
 
 /**

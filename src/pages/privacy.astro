@@ -1,62 +1,43 @@
 ---
-import BaseLayout from '@/layouts/BaseLayout.astro';
-import { buildBreadcrumbJsonLd } from '@/utils/breadcrumbs';
+import BaseLayout from "@/layouts/BaseLayout.astro";
+import { buildBreadcrumbJsonLd } from "@/utils/breadcrumbs";
+import { LEGAL_DOCS } from "@/data/legal";
 
-const TITLE = "Privacy Policy | Garam Masala Dating";
-const DESC = "Privacy policy for Garam Masala Dating. How we collect, use, and protect your information.";
+const doc = LEGAL_DOCS.privacy;
 
 const breadcrumbJsonLd = buildBreadcrumbJsonLd([
   { name: "Home", url: "https://garammasaladating.com/" },
-  { name: "Privacy Policy" },
+  { name: doc.title },
 ]);
 ---
 
-<BaseLayout title={TITLE} description={DESC}>
+<BaseLayout title={doc.metaTitle} description={doc.metaDescription}>
   <Fragment slot="head">
     <script type="application/ld+json" set:html={breadcrumbJsonLd} />
   </Fragment>
 
   <main id="main-content" class="legal-page">
     <div class="legal-container">
-      <h1>Privacy Policy</h1>
-      <p class="legal-updated">Last updated: April 2026</p>
-
-      <h2>What we collect</h2>
-      <p>When you use garammasaladating.com, we may collect:</p>
-      <ul>
-        <li>Email address (if you subscribe to our newsletter or apply to be a contestant)</li>
-        <li>Phone number (if you provide it via the newsletter form)</li>
-        <li>Name, age, and application responses (if you apply to be a contestant)</li>
-        <li>Basic analytics data (pages visited, device type, referral source)</li>
-      </ul>
-
-      <h2>How we use it</h2>
-      <ul>
-        <li>To send you show announcements, ticket links, and discount codes</li>
-        <li>To review contestant applications and contact selected applicants</li>
-        <li>To understand how people use the site so we can improve it</li>
-      </ul>
-
-      <h2>Third-party services</h2>
-      <p>We use the following services that may collect data:</p>
-      <ul>
-        <li><strong>Eventbrite</strong> for ticket sales and event management</li>
-        <li><strong>Firebase</strong> for storing contestant applications</li>
-        <li><strong>Vercel Analytics</strong> for website performance monitoring</li>
-        <li><strong>PostHog</strong> for product analytics</li>
-        <li><strong>Google Tag Manager</strong> for marketing analytics</li>
-        <li><strong>Meta Pixel</strong> for ad performance tracking</li>
-      </ul>
-      <p>Each of these services has its own privacy policy governing how they handle your data.</p>
-
-      <h2>Cookies</h2>
-      <p>We use cookies and similar technologies for analytics and marketing. You can disable cookies in your browser settings, though some site features may not work as expected.</p>
-
-      <h2>Your data</h2>
-      <p>We don't sell your data to anyone. If you want your information removed, email us at <a href="mailto:contact@garammasaladating.com">contact@garammasaladating.com</a> and we'll delete it.</p>
-
-      <h2>Contact</h2>
-      <p>Questions about this policy? Email <a href="mailto:contact@garammasaladating.com">contact@garammasaladating.com</a>.</p>
+      <h1>{doc.title}</h1>
+      <p class="legal-updated">Last updated: {doc.lastUpdated}</p>
+      {
+        doc.sections.map((section) => (
+          <Fragment>
+            <h2>{section.heading}</h2>
+            {section.blocks.map((block) =>
+              block.type === "p" ? (
+                <p set:html={block.text} />
+              ) : (
+                <ul>
+                  {block.items.map((item) => (
+                    <li set:html={item} />
+                  ))}
+                </ul>
+              ),
+            )}
+          </Fragment>
+        ))
+      }
     </div>
   </main>
 </BaseLayout>

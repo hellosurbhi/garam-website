@@ -38,7 +38,7 @@ export const bollywoodPosts: JournalPost[] = [
       },
       {
         type: "p",
-        text: "This is one of the most insidious things Bollywood does with toxic relationships: it makes the woman's refusal into the problem. If she had just said yes, all of this would have been avoided. The message to the audience is that persistence wins and boundaries are obstacles, not answers. I\u2019ve talked to women who applied to Garam Masala Dating who cited men with this exact playbook — showing up, being relentless, treating \"no\" as a negotiating position. They learned it somewhere.",
+        text: 'This is one of the most insidious things Bollywood does with toxic relationships: it makes the woman\'s refusal into the problem. If she had just said yes, all of this would have been avoided. The message to the audience is that persistence wins and boundaries are obstacles, not answers. I\u2019ve talked to women who applied to Garam Masala Dating who cited men with this exact playbook — showing up, being relentless, treating "no" as a negotiating position. They learned it somewhere.',
       },
       {
         type: "h2",
@@ -50,11 +50,11 @@ export const bollywoodPosts: JournalPost[] = [
       },
       {
         type: "p",
-        text: "The film made 379 crore. It won awards. Shahid Kapoor won a Filmfare for it. The audience rewarded a film that spent three hours telling them that controlling behavior equals love intensity, and that a woman's independent decision is a wound to the man who \"owned\" her first. If you want to understand why some desi men think possessiveness is romantic, watch this movie and then watch the reviews of it.",
+        text: 'The film made 379 crore. It won awards. Shahid Kapoor won a Filmfare for it. The audience rewarded a film that spent three hours telling them that controlling behavior equals love intensity, and that a woman\'s independent decision is a wound to the man who "owned" her first. If you want to understand why some desi men think possessiveness is romantic, watch this movie and then watch the reviews of it.',
       },
       {
         type: "p",
-        text: "If you\u2019ve been on the receiving end of any of this in real life, check out <a href='/journal/desi-red-flags-green-flags'>our breakdown of actual desi red flags vs green flags</a> — because the line between \"intense\" and \"controlling\" is much clearer off screen.",
+        text: 'If you\u2019ve been on the receiving end of any of this in real life, check out <a href=\'/journal/desi-red-flags-green-flags\'>our breakdown of actual desi red flags vs green flags</a> — because the line between "intense" and "controlling" is much clearer off screen.',
       },
       {
         type: "h2",
@@ -82,7 +82,7 @@ export const bollywoodPosts: JournalPost[] = [
       },
       {
         type: "p",
-        text: "If you\u2019ve been on a date where someone\u2019s \"intensity\" made you feel managed rather than wanted, come to a show. Watching two real people navigate an actual first date in real time — with no script, no background score, and 250 people watching — is the fastest way to recalibrate what genuine chemistry actually feels like.",
+        text: 'If you\u2019ve been on a date where someone\u2019s "intensity" made you feel managed rather than wanted, come to a show. Watching two real people navigate an actual first date in real time — with no script, no background score, and 250 people watching — is the fastest way to recalibrate what genuine chemistry actually feels like.',
       },
     ],
     faqs: [
@@ -92,7 +92,7 @@ export const bollywoodPosts: JournalPost[] = [
       },
       {
         q: "Why did Bollywood romanticize stalking?",
-        a: "Bollywood films like Darr and Raanjhanaa used cinematic framing — swelling soundtracks, intimate close-ups, tragic endings — to present stalking as extreme devotion rather than harassment. The cultural script of persistent love \"winning\" made these narratives feel romantic to audiences primed to see persistence as proof of feeling.",
+        a: 'Bollywood films like Darr and Raanjhanaa used cinematic framing — swelling soundtracks, intimate close-ups, tragic endings — to present stalking as extreme devotion rather than harassment. The cultural script of persistent love "winning" made these narratives feel romantic to audiences primed to see persistence as proof of feeling.',
       },
       {
         q: "Which Bollywood movies show gaslighting?",
@@ -330,7 +330,7 @@ export const bollywoodPosts: JournalPost[] = [
     body: [
       {
         type: "p",
-        text: "Bollywood figured out the situationship long before we had a word for it. The \"friend who is more than a friend,\" the person who shows up exactly enough to keep you hooked but never commits, the relationship that has all the feelings of a relationship and none of the structure. Here are the films that map that grey zone — sometimes accidentally, sometimes on purpose.",
+        text: 'Bollywood figured out the situationship long before we had a word for it. The "friend who is more than a friend," the person who shows up exactly enough to keep you hooked but never commits, the relationship that has all the feelings of a relationship and none of the structure. Here are the films that map that grey zone — sometimes accidentally, sometimes on purpose.',
       },
       {
         type: "h2",
@@ -466,7 +466,7 @@ export const bollywoodPosts: JournalPost[] = [
       },
       {
         type: "p",
-        text: "Dil Dhadakne Do is about a family on a cruise, and it\u2019s full of people who made the \"right\" choices and are quietly miserable. Ayesha is in an approved marriage that\u2019s stifling her. Her brother Kabir is being pushed toward an approved match while already in love with someone the family won\u2019t accept. The film\u2019s sharpest critique is that the arranged marriage system can work — but only if the people inside it have actual agency. When it\u2019s driven by family performance rather than genuine compatibility, it fails everyone.",
+        text: 'Dil Dhadakne Do is about a family on a cruise, and it\u2019s full of people who made the "right" choices and are quietly miserable. Ayesha is in an approved marriage that\u2019s stifling her. Her brother Kabir is being pushed toward an approved match while already in love with someone the family won\u2019t accept. The film\u2019s sharpest critique is that the arranged marriage system can work — but only if the people inside it have actual agency. When it\u2019s driven by family performance rather than genuine compatibility, it fails everyone.',
       },
       {
         type: "h2",
@@ -562,7 +562,7 @@ export const bollywoodPosts: JournalPost[] = [
       },
       {
         type: "p",
-        text: "Tara breaks up with the \"settled\" version of Ved — the one she can\u2019t recognize as the person she fell for — and the film treats this as the most compassionate thing she could do. She\u2019s not ending the relationship because she stopped loving him. She\u2019s ending it because continuing it would require both of them to live dishonestly. That\u2019s a harder breakup reason to explain than falling out of love, and Deepika Padukone plays it with a specificity that makes it completely real.",
+        text: 'Tara breaks up with the "settled" version of Ved — the one she can\u2019t recognize as the person she fell for — and the film treats this as the most compassionate thing she could do. She\u2019s not ending the relationship because she stopped loving him. She\u2019s ending it because continuing it would require both of them to live dishonestly. That\u2019s a harder breakup reason to explain than falling out of love, and Deepika Padukone plays it with a specificity that makes it completely real.',
       },
       {
         type: "h2",
@@ -586,7 +586,7 @@ export const bollywoodPosts: JournalPost[] = [
       },
       {
         type: "p",
-        text: "If you\u2019re in the early stage, watch Ae Dil Hai Mushkil. If you\u2019re in the \"why did this happen\" stage, watch Tamasha or Gehraiyaan. If you\u2019re in the \"I need to feel it fully\" stage, watch Devdas — but set a timer and stop after two hours. If you\u2019re starting to come out of it, watch Jab We Met. <a href='/journal/heart-broken-bollywood-movies'>We wrote a full guide to Bollywood comfort films for heartbreak</a> if you need more options.",
+        text: 'If you\u2019re in the early stage, watch Ae Dil Hai Mushkil. If you\u2019re in the "why did this happen" stage, watch Tamasha or Gehraiyaan. If you\u2019re in the "I need to feel it fully" stage, watch Devdas — but set a timer and stop after two hours. If you\u2019re starting to come out of it, watch Jab We Met. <a href=\'/journal/heart-broken-bollywood-movies\'>We wrote a full guide to Bollywood comfort films for heartbreak</a> if you need more options.',
       },
       {
         type: "p",
@@ -743,7 +743,7 @@ export const bollywoodPosts: JournalPost[] = [
       },
       {
         type: "p",
-        text: "This was 1995. The film was otherwise ahead of its time. But that scene is worth naming, because it established a template for \"lovable rogue\" behavior that subsequent films ran with in directions that were not benign.",
+        text: 'This was 1995. The film was otherwise ahead of its time. But that scene is worth naming, because it established a template for "lovable rogue" behavior that subsequent films ran with in directions that were not benign.',
       },
       {
         type: "h2",
@@ -928,8 +928,7 @@ export const bollywoodPosts: JournalPost[] = [
   },
   {
     slug: "bollywood-finding-love-own-terms",
-    title:
-      "The Best Bollywood Movies About Finding Love on Your Own Terms",
+    title: "The Best Bollywood Movies About Finding Love on Your Own Terms",
     metaDescription:
       "Piku, Queen, Dil Dhadakne Do — Bollywood films where characters choose love on their own terms, without family pressure or the usual scripts.",
     datePublished: "2026-09-08",

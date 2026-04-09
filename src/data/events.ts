@@ -119,13 +119,13 @@ export const events: EventEntry[] = [
 
 // Only show TBA entries for cities with active tour planning (not all 200+ expansion pages).
 // These slugs appear as TBA cards on the tickets page and home shows section.
-const TBA_CITIES = ['Los Angeles', 'San Francisco', 'San Diego'];
+const TBA_CITIES = ["Los Angeles", "San Francisco", "San Diego"];
 
 const comingSoonEvents: EventEntry[] = TBA_CITIES.map((city) => ({
-  date: 'TBA',
+  date: "TBA",
   city,
-  url: '',
-  tagline: 'Coming soon',
+  url: "",
+  tagline: "Coming soon",
 }));
 
 /** All events: confirmed shows + hand-picked TBA cities */

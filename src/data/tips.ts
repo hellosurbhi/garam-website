@@ -180,7 +180,7 @@ export const tipPosts: TipPost[] = [
 /** Sorted newest-first by datePublished. */
 export const tipPostsSorted = [...tipPosts].sort(
   (a, b) =>
-    new Date(b.datePublished).getTime() - new Date(a.datePublished).getTime()
+    new Date(b.datePublished).getTime() - new Date(a.datePublished).getTime(),
 );
 
 export function getTipBySlug(slug: string): TipPost | undefined {

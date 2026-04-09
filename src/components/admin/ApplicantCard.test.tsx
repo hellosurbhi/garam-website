@@ -20,7 +20,10 @@ function makeApp(overrides?: Partial<Application>): Application {
     photoUrl: "https://example.com/photo.jpg",
     status: "New",
     notes: "",
-    submittedAt: { toDate: () => new Date("2026-03-15"), seconds: 1742054400 } as unknown as Application["submittedAt"],
+    submittedAt: {
+      toDate: () => new Date("2026-03-15"),
+      seconds: 1742054400,
+    } as unknown as Application["submittedAt"],
     ...overrides,
   };
 }
@@ -44,11 +47,16 @@ describe("ApplicantCard", () => {
   it("renders the Instagram handle as a link", () => {
     render(<ApplicantCard app={makeApp()} onClick={vi.fn()} />);
     const link = screen.getByText("@priyasharma");
-    expect(link.closest("a")).toHaveAttribute("href", "https://instagram.com/priyasharma");
+    expect(link.closest("a")).toHaveAttribute(
+      "href",
+      "https://instagram.com/priyasharma",
+    );
   });
 
   it("renders the status badge", () => {
-    render(<ApplicantCard app={makeApp({ status: "Cast" })} onClick={vi.fn()} />);
+    render(
+      <ApplicantCard app={makeApp({ status: "Cast" })} onClick={vi.fn()} />,
+    );
     expect(screen.getByText("Cast")).toBeInTheDocument();
   });
 
@@ -62,7 +70,9 @@ describe("ApplicantCard", () => {
   it("renders delete button that calls onDelete", () => {
     const onDelete = vi.fn();
     const onClick = vi.fn();
-    render(<ApplicantCard app={makeApp()} onClick={onClick} onDelete={onDelete} />);
+    render(
+      <ApplicantCard app={makeApp()} onClick={onClick} onDelete={onDelete} />,
+    );
     const deleteBtn = screen.getByLabelText("Delete application");
     fireEvent.click(deleteBtn);
     expect(onDelete).toHaveBeenCalledOnce();
@@ -71,7 +81,9 @@ describe("ApplicantCard", () => {
   it("delete button does not trigger card onClick", () => {
     const onClick = vi.fn();
     const onDelete = vi.fn();
-    render(<ApplicantCard app={makeApp()} onClick={onClick} onDelete={onDelete} />);
+    render(
+      <ApplicantCard app={makeApp()} onClick={onClick} onDelete={onDelete} />,
+    );
     const deleteBtn = screen.getByLabelText("Delete application");
     fireEvent.click(deleteBtn);
     expect(onClick).not.toHaveBeenCalled();
@@ -79,7 +91,9 @@ describe("ApplicantCard", () => {
 
   it("renders restore button when onRestore is provided", () => {
     const onRestore = vi.fn();
-    render(<ApplicantCard app={makeApp()} onClick={vi.fn()} onRestore={onRestore} />);
+    render(
+      <ApplicantCard app={makeApp()} onClick={vi.fn()} onRestore={onRestore} />,
+    );
     const restoreBtn = screen.getByLabelText("Restore application");
     fireEvent.click(restoreBtn);
     expect(onRestore).toHaveBeenCalledOnce();
@@ -97,7 +111,12 @@ describe("ApplicantCard", () => {
   });
 
   it("strips leading @ from instagram handle", () => {
-    render(<ApplicantCard app={makeApp({ instagram: "@testuser" })} onClick={vi.fn()} />);
+    render(
+      <ApplicantCard
+        app={makeApp({ instagram: "@testuser" })}
+        onClick={vi.fn()}
+      />,
+    );
     expect(screen.getByText("@testuser")).toBeInTheDocument();
     const link = screen.getByText("@testuser").closest("a");
     expect(link).toHaveAttribute("href", "https://instagram.com/testuser");

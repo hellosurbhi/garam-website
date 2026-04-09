@@ -42,7 +42,7 @@ export const journalPosts: JournalPost[] = [
 /** Sorted newest-first by datePublished. */
 export const journalPostsSorted = [...journalPosts].sort(
   (a, b) =>
-    new Date(b.datePublished).getTime() - new Date(a.datePublished).getTime()
+    new Date(b.datePublished).getTime() - new Date(a.datePublished).getTime(),
 );
 
 /** Only posts whose datePublished is today or earlier. */
@@ -50,7 +50,7 @@ export const journalPostsPublished = journalPostsSorted.filter((p) => {
   const pub = new Date(p.datePublished + "T00:00:00Z");
   const now = new Date();
   const today = new Date(
-    Date.UTC(now.getFullYear(), now.getMonth(), now.getDate())
+    Date.UTC(now.getFullYear(), now.getMonth(), now.getDate()),
   );
   return pub <= today;
 });

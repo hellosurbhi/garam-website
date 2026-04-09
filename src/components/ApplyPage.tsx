@@ -1,7 +1,9 @@
+import { useEffect } from "react";
 import { ErrorBoundary } from "./ErrorBoundary";
 import Select from "react-select";
 import { COMMUNITY_OPTIONS, INCOME_OPTIONS } from "@/types/application";
 import { formSelectStyles } from "@/utils/reactSelectStyles";
+import type { CitySearchOption } from "@/lib/citySearchShared";
 import styles from "./ApplyPage.module.css";
 import { SOCIAL_URLS } from "@/data/socials";
 import { FieldGroup, SectionTitle } from "./apply/FieldGroup";
@@ -9,6 +11,12 @@ import { TermsModal } from "./apply/TermsModal";
 import { ApplySuccessPanel } from "./apply/ApplySuccessPanel";
 import { PhotoUploadField } from "./apply/PhotoUploadField";
 import { useApplyForm } from "./apply/useApplyForm";
+
+type NavWithMC = Navigator & {
+  modelContext: {
+    registerTool: (def: object) => { unregister?: () => void };
+  };
+};
 
 export default function ApplyPage() {
   return (
@@ -19,6 +27,69 @@ export default function ApplyPage() {
 }
 
 function ApplyPageInner() {
+  useEffect(() => {
+    if (typeof navigator === "undefined") return;
+    const mc =
+      "modelContext" in navigator
+        ? (navigator as unknown as NavWithMC).modelContext
+        : undefined;
+    if (typeof mc?.registerTool !== "function") return;
+    const tool = mc.registerTool({
+      name: "submit-contestant-application",
+      description:
+        "Submit an application to appear as a contestant on Garam Masala Dating, a live South Asian comedy dating show in NYC. Collects personal details, Instagram handle, location, and optional pitch.",
+      inputSchema: {
+        type: "object",
+        properties: {
+          applicationType: {
+            type: "string",
+            enum: ["self", "nomination"],
+            description: "Applying for yourself or nominating someone else",
+          },
+          fullName: {
+            type: "string",
+            description: "Full name of the contestant",
+          },
+          age: {
+            type: "integer",
+            minimum: 18,
+            maximum: 99,
+            description: "Age in years",
+          },
+          gender: { type: "string", description: "Gender identity" },
+          sexualOrientation: {
+            type: "string",
+            description: "Sexual orientation",
+          },
+          city: {
+            type: "string",
+            description: "City where the contestant lives",
+          },
+          instagram: {
+            type: "string",
+            description: "Instagram handle (without @)",
+          },
+          pitch: {
+            type: "string",
+            description: "Why they would be great on the show (optional)",
+          },
+        },
+        required: [
+          "applicationType",
+          "fullName",
+          "age",
+          "gender",
+          "sexualOrientation",
+          "city",
+          "instagram",
+        ],
+      },
+    });
+    return () => {
+      tool?.unregister?.();
+    };
+  }, []);
+
   const {
     form,
     photoPreview,
@@ -56,15 +127,14 @@ function ApplyPageInner() {
       <div className={styles.page} onClick={() => window.history.back()}>
         <div className={styles.container} onClick={(e) => e.stopPropagation()}>
           <div className={styles.headerArea}>
-            {canGoBack && (
-              <button
-                type="button"
-                onClick={() => window.history.back()}
-                className={styles.backButton}
-              >
-                ← Back
-              </button>
-            )}
+            <button
+              type="button"
+              onClick={() => window.history.back()}
+              className={styles.backButton}
+              disabled={!canGoBack}
+            >
+              ← Back
+            </button>
           </div>
 
           <div className={styles.titleArea}>
@@ -232,10 +302,13 @@ function ApplyPageInner() {
                         </button>
                       ) : (
                         <Select
+                          instanceId="geo-place"
                           inputId="geo-place"
                           options={placeOptions}
                           value={selectedPlace}
-                          onChange={(option) => handlePlaceChange(option)}
+                          onChange={(option) =>
+                            handlePlaceChange(option as CitySearchOption | null)
+                          }
                           onInputChange={(value, meta) => {
                             if (meta.action === "input-change") {
                               handlePlaceInputChange(value);
@@ -247,7 +320,9 @@ function ApplyPageInner() {
                           }}
                           onMenuOpen={triggerGeoLoad}
                           inputValue={placeQuery}
-                          placeholder={geoLoading ? "Loading…" : "Start typing a city…"}
+                          placeholder={
+                            geoLoading ? "Loading…" : "Start typing a city…"
+                          }
                           styles={formSelectStyles}
                           isSearchable
                           isLoading={geoLoading}
@@ -490,7 +565,10 @@ function ApplyPageInner() {
                       <button
                         type="button"
                         className={styles.termsLink}
-                        onClick={(e) => { e.stopPropagation(); setShowTermsModal(true); }}
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          setShowTermsModal(true);
+                        }}
                       >
                         Terms &amp; Conditions
                       </button>

@@ -19,7 +19,10 @@ export const usSoutheastCities: Record<string, CityData> = {
     ],
     ctas: [
       { label: "Join the DC Waitlist", href: "#waitlist" },
-      { label: "Apply to Be a Contestant", href: "/apply?city=Washington+DC&state=DC" },
+      {
+        label: "Apply to Be a Contestant",
+        href: "/apply?city=Washington+DC&state=DC",
+      },
     ],
     includeEventSchema: false,
     areaServed: "Washington DC, Virginia, Maryland",
@@ -27,7 +30,13 @@ export const usSoutheastCities: Record<string, CityData> = {
     addressRegion: "DC",
     addressCountry: "US",
     region: "US Southeast",
-    nearbyCities: ["baltimore", "philadelphia", "richmond", "charlotte", "raleigh-durham"],
+    nearbyCities: [
+      "baltimore",
+      "philadelphia",
+      "richmond",
+      "charlotte",
+      "raleigh-durham",
+    ],
   },
 
   atlanta: {
@@ -47,7 +56,10 @@ export const usSoutheastCities: Record<string, CityData> = {
     ],
     ctas: [
       { label: "Join the Atlanta Waitlist", href: "#waitlist" },
-      { label: "Apply to Be a Contestant", href: "/apply?city=Atlanta&state=GA" },
+      {
+        label: "Apply to Be a Contestant",
+        href: "/apply?city=Atlanta&state=GA",
+      },
     ],
     includeEventSchema: false,
     areaServed: "Atlanta, Georgia",
@@ -55,7 +67,13 @@ export const usSoutheastCities: Record<string, CityData> = {
     addressRegion: "GA",
     addressCountry: "US",
     region: "US Southeast",
-    nearbyCities: ["charlotte", "nashville", "raleigh-durham", "jacksonville", "savannah"],
+    nearbyCities: [
+      "charlotte",
+      "nashville",
+      "raleigh-durham",
+      "jacksonville",
+      "savannah",
+    ],
   },
 
   charlotte: {
@@ -75,7 +93,10 @@ export const usSoutheastCities: Record<string, CityData> = {
     ],
     ctas: [
       { label: "Join the Charlotte Waitlist", href: "#waitlist" },
-      { label: "Apply to Be a Contestant", href: "/apply?city=Charlotte&state=NC" },
+      {
+        label: "Apply to Be a Contestant",
+        href: "/apply?city=Charlotte&state=NC",
+      },
     ],
     includeEventSchema: false,
     areaServed: "Charlotte, North Carolina",
@@ -83,7 +104,13 @@ export const usSoutheastCities: Record<string, CityData> = {
     addressRegion: "NC",
     addressCountry: "US",
     region: "US Southeast",
-    nearbyCities: ["raleigh-durham", "atlanta", "washington-dc", "greenville-sc", "richmond"],
+    nearbyCities: [
+      "raleigh-durham",
+      "atlanta",
+      "washington-dc",
+      "greenville-sc",
+      "richmond",
+    ],
   },
 
   "raleigh-durham": {
@@ -103,7 +130,10 @@ export const usSoutheastCities: Record<string, CityData> = {
     ],
     ctas: [
       { label: "Join the Triangle Waitlist", href: "#waitlist" },
-      { label: "Apply to Be a Contestant", href: "/apply?city=Raleigh&state=NC" },
+      {
+        label: "Apply to Be a Contestant",
+        href: "/apply?city=Raleigh&state=NC",
+      },
     ],
     includeEventSchema: false,
     areaServed: "Raleigh-Durham, North Carolina",
@@ -111,7 +141,13 @@ export const usSoutheastCities: Record<string, CityData> = {
     addressRegion: "NC",
     addressCountry: "US",
     region: "US Southeast",
-    nearbyCities: ["charlotte", "washington-dc", "richmond", "atlanta", "knoxville"],
+    nearbyCities: [
+      "charlotte",
+      "washington-dc",
+      "richmond",
+      "atlanta",
+      "knoxville",
+    ],
   },
 
   tampa: {
@@ -159,7 +195,10 @@ export const usSoutheastCities: Record<string, CityData> = {
     ],
     ctas: [
       { label: "Join the Orlando Waitlist", href: "#waitlist" },
-      { label: "Apply to Be a Contestant", href: "/apply?city=Orlando&state=FL" },
+      {
+        label: "Apply to Be a Contestant",
+        href: "/apply?city=Orlando&state=FL",
+      },
     ],
     includeEventSchema: false,
     areaServed: "Orlando, Florida",
@@ -215,7 +254,10 @@ export const usSoutheastCities: Record<string, CityData> = {
     ],
     ctas: [
       { label: "Join the Jacksonville Waitlist", href: "#waitlist" },
-      { label: "Apply to Be a Contestant", href: "/apply?city=Jacksonville&state=FL" },
+      {
+        label: "Apply to Be a Contestant",
+        href: "/apply?city=Jacksonville&state=FL",
+      },
     ],
     includeEventSchema: false,
     areaServed: "Jacksonville, Florida",
@@ -243,7 +285,10 @@ export const usSoutheastCities: Record<string, CityData> = {
     ],
     ctas: [
       { label: "Join the Nashville Waitlist", href: "#waitlist" },
-      { label: "Apply to Be a Contestant", href: "/apply?city=Nashville&state=TN" },
+      {
+        label: "Apply to Be a Contestant",
+        href: "/apply?city=Nashville&state=TN",
+      },
     ],
     includeEventSchema: false,
     areaServed: "Nashville, Tennessee",
@@ -251,7 +296,13 @@ export const usSoutheastCities: Record<string, CityData> = {
     addressRegion: "TN",
     addressCountry: "US",
     region: "US Southeast",
-    nearbyCities: ["atlanta", "charlotte", "knoxville", "raleigh-durham", "jacksonville"],
+    nearbyCities: [
+      "atlanta",
+      "charlotte",
+      "knoxville",
+      "raleigh-durham",
+      "jacksonville",
+    ],
   },
 
   baltimore: {
@@ -271,7 +322,10 @@ export const usSoutheastCities: Record<string, CityData> = {
     ],
     ctas: [
       { label: "Join the Baltimore Waitlist", href: "#waitlist" },
-      { label: "Apply to Be a Contestant", href: "/apply?city=Baltimore&state=MD" },
+      {
+        label: "Apply to Be a Contestant",
+        href: "/apply?city=Baltimore&state=MD",
+      },
     ],
     includeEventSchema: false,
     areaServed: "Baltimore, Maryland",
@@ -279,7 +333,13 @@ export const usSoutheastCities: Record<string, CityData> = {
     addressRegion: "MD",
     addressCountry: "US",
     region: "US Southeast",
-    nearbyCities: ["washington-dc", "philadelphia", "richmond", "charlotte", "edison"],
+    nearbyCities: [
+      "washington-dc",
+      "philadelphia",
+      "richmond",
+      "charlotte",
+      "edison",
+    ],
   },
 
   richmond: {
@@ -299,7 +359,10 @@ export const usSoutheastCities: Record<string, CityData> = {
     ],
     ctas: [
       { label: "Join the Richmond Waitlist", href: "#waitlist" },
-      { label: "Apply to Be a Contestant", href: "/apply?city=Richmond&state=VA" },
+      {
+        label: "Apply to Be a Contestant",
+        href: "/apply?city=Richmond&state=VA",
+      },
     ],
     includeEventSchema: false,
     areaServed: "Richmond, Virginia",
@@ -307,7 +370,13 @@ export const usSoutheastCities: Record<string, CityData> = {
     addressRegion: "VA",
     addressCountry: "US",
     region: "US Southeast",
-    nearbyCities: ["washington-dc", "charlottesville", "raleigh-durham", "baltimore", "charlotte"],
+    nearbyCities: [
+      "washington-dc",
+      "charlottesville",
+      "raleigh-durham",
+      "baltimore",
+      "charlotte",
+    ],
   },
 
   charlottesville: {
@@ -327,7 +396,10 @@ export const usSoutheastCities: Record<string, CityData> = {
     ],
     ctas: [
       { label: "Join the Charlottesville Waitlist", href: "#waitlist" },
-      { label: "Apply to Be a Contestant", href: "/apply?city=Charlottesville&state=VA" },
+      {
+        label: "Apply to Be a Contestant",
+        href: "/apply?city=Charlottesville&state=VA",
+      },
     ],
     includeEventSchema: false,
     areaServed: "Charlottesville, Virginia",
@@ -335,7 +407,13 @@ export const usSoutheastCities: Record<string, CityData> = {
     addressRegion: "VA",
     addressCountry: "US",
     region: "US Southeast",
-    nearbyCities: ["richmond", "washington-dc", "blacksburg", "baltimore", "raleigh-durham"],
+    nearbyCities: [
+      "richmond",
+      "washington-dc",
+      "blacksburg",
+      "baltimore",
+      "raleigh-durham",
+    ],
   },
 
   blacksburg: {
@@ -355,7 +433,10 @@ export const usSoutheastCities: Record<string, CityData> = {
     ],
     ctas: [
       { label: "Join the Blacksburg Waitlist", href: "#waitlist" },
-      { label: "Apply to Be a Contestant", href: "/apply?city=Blacksburg&state=VA" },
+      {
+        label: "Apply to Be a Contestant",
+        href: "/apply?city=Blacksburg&state=VA",
+      },
     ],
     includeEventSchema: false,
     areaServed: "Blacksburg, Virginia",
@@ -363,7 +444,13 @@ export const usSoutheastCities: Record<string, CityData> = {
     addressRegion: "VA",
     addressCountry: "US",
     region: "US Southeast",
-    nearbyCities: ["charlottesville", "richmond", "raleigh-durham", "knoxville", "washington-dc"],
+    nearbyCities: [
+      "charlottesville",
+      "richmond",
+      "raleigh-durham",
+      "knoxville",
+      "washington-dc",
+    ],
   },
 
   knoxville: {
@@ -383,7 +470,10 @@ export const usSoutheastCities: Record<string, CityData> = {
     ],
     ctas: [
       { label: "Join the Knoxville Waitlist", href: "#waitlist" },
-      { label: "Apply to Be a Contestant", href: "/apply?city=Knoxville&state=TN" },
+      {
+        label: "Apply to Be a Contestant",
+        href: "/apply?city=Knoxville&state=TN",
+      },
     ],
     includeEventSchema: false,
     areaServed: "Knoxville, Tennessee",
@@ -391,7 +481,13 @@ export const usSoutheastCities: Record<string, CityData> = {
     addressRegion: "TN",
     addressCountry: "US",
     region: "US Southeast",
-    nearbyCities: ["nashville", "atlanta", "charlotte", "blacksburg", "raleigh-durham"],
+    nearbyCities: [
+      "nashville",
+      "atlanta",
+      "charlotte",
+      "blacksburg",
+      "raleigh-durham",
+    ],
   },
 
   "greenville-sc": {
@@ -411,7 +507,10 @@ export const usSoutheastCities: Record<string, CityData> = {
     ],
     ctas: [
       { label: "Join the Greenville Waitlist", href: "#waitlist" },
-      { label: "Apply to Be a Contestant", href: "/apply?city=Greenville&state=SC" },
+      {
+        label: "Apply to Be a Contestant",
+        href: "/apply?city=Greenville&state=SC",
+      },
     ],
     includeEventSchema: false,
     areaServed: "Greenville, South Carolina",
@@ -419,7 +518,13 @@ export const usSoutheastCities: Record<string, CityData> = {
     addressRegion: "SC",
     addressCountry: "US",
     region: "US Southeast",
-    nearbyCities: ["charlotte", "atlanta", "knoxville", "raleigh-durham", "savannah"],
+    nearbyCities: [
+      "charlotte",
+      "atlanta",
+      "knoxville",
+      "raleigh-durham",
+      "savannah",
+    ],
   },
 
   savannah: {
@@ -439,7 +544,10 @@ export const usSoutheastCities: Record<string, CityData> = {
     ],
     ctas: [
       { label: "Join the Savannah Waitlist", href: "#waitlist" },
-      { label: "Apply to Be a Contestant", href: "/apply?city=Savannah&state=GA" },
+      {
+        label: "Apply to Be a Contestant",
+        href: "/apply?city=Savannah&state=GA",
+      },
     ],
     includeEventSchema: false,
     areaServed: "Savannah, Georgia",
@@ -447,6 +555,12 @@ export const usSoutheastCities: Record<string, CityData> = {
     addressRegion: "GA",
     addressCountry: "US",
     region: "US Southeast",
-    nearbyCities: ["atlanta", "jacksonville", "charlotte", "orlando", "greenville-sc"],
+    nearbyCities: [
+      "atlanta",
+      "jacksonville",
+      "charlotte",
+      "orlando",
+      "greenville-sc",
+    ],
   },
 };

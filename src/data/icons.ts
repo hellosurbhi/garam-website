@@ -1,4 +1,14 @@
-export type IconName = "heart" | "instagram" | "tiktok" | "youtube" | "threads" | "x" | "facebook" | "mic" | "ticket" | "mail";
+export type IconName =
+  | "heart"
+  | "instagram"
+  | "tiktok"
+  | "youtube"
+  | "threads"
+  | "x"
+  | "facebook"
+  | "mic"
+  | "ticket"
+  | "mail";
 
 /** 20px icons for links page buttons */
 export const ICON_SVGS: Record<IconName, string> = {

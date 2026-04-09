@@ -5,6 +5,8 @@ import {
   searchCityOptions,
 } from "@/lib/citySearch";
 
+export const prerender = false;
+
 export const GET: APIRoute = async ({ request }) => {
   const url = new URL(request.url);
   const query = url.searchParams.get("q")?.trim() ?? "";
@@ -20,7 +22,12 @@ export const GET: APIRoute = async ({ request }) => {
     const options = await loadCityOptions();
     const exact = resolveCityOption(query, options);
     const results = exact
-      ? [exact, ...searchCityOptions(query, options, 5).filter((o) => o.value !== exact.value)].slice(0, 5)
+      ? [
+          exact,
+          ...searchCityOptions(query, options, 5).filter(
+            (o) => o.value !== exact.value,
+          ),
+        ].slice(0, 5)
       : searchCityOptions(query, options, 5);
 
     return new Response(JSON.stringify({ results }), {

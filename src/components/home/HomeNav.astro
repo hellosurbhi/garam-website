@@ -9,25 +9,42 @@ const pathname = Astro.url.pathname;
 
 <nav class="home-nav" id="home-nav" aria-label="Main navigation">
   <a href="/" class="nav-logo" aria-label="Garam Masala Dating Home">
-    <img src="/images/logo.svg" alt="Garam Masala Dating Show" class="nav-logo-img" width="160" height="82" />
+    <img
+      src="/images/logo.svg"
+      alt="Garam Masala Dating Show"
+      class="nav-logo-img"
+      width="160"
+      height="82"
+    />
     <div class="nav-logo-pink" role="img" aria-hidden="true"></div>
   </a>
   <div class="nav-right">
-    <a href="/apply" class="nav-pill" aria-current={pathname.startsWith('/apply') ? 'page' : undefined}>Apply</a>
-    <a href={ticketsUrl} class="nav-pill primary">Get Tickets</a>
+    <a
+      href="/apply"
+      class="nav-pill"
+      aria-current={pathname.startsWith("/apply") ? "page" : undefined}
+      data-ph-capture="nav_clicked"
+      data-ph-destination="/apply">Apply</a
+    >
+    <a
+      href={ticketsUrl}
+      class="nav-pill primary"
+      data-ph-capture="nav_clicked"
+      data-ph-destination="/tickets">Get Tickets</a
+    >
   </div>
 </nav>
 
 <script>
-  const nav = document.getElementById('home-nav');
-  const marquee = document.querySelector('.marquee') as HTMLElement;
+  const nav = document.getElementById("home-nav");
+  const marquee = document.querySelector(".marquee") as HTMLElement;
   if (nav && marquee) {
     const updateScrolled = () => {
       const navHeight = nav.offsetHeight;
       const trigger = marquee.offsetTop - navHeight;
-      nav.classList.toggle('scrolled', window.scrollY >= trigger);
+      nav.classList.toggle("scrolled", window.scrollY >= trigger);
     };
-    window.addEventListener('scroll', updateScrolled, { passive: true });
+    window.addEventListener("scroll", updateScrolled, { passive: true });
     updateScrolled();
   }
 </script>
@@ -43,7 +60,10 @@ const pathname = Astro.url.pathname;
     display: flex;
     justify-content: space-between;
     align-items: center;
-    transition: background 0.4s, padding 0.4s, border-color 0.4s;
+    transition:
+      background 0.4s,
+      padding 0.4s,
+      border-color 0.4s;
     border-bottom: 2px solid transparent;
   }
   .home-nav.scrolled {
@@ -98,7 +118,9 @@ const pathname = Astro.url.pathname;
     padding: 8px 14px;
     border-radius: 50px;
     border: 1.5px solid transparent;
-    transition: all 0.2s, color 0.4s;
+    transition:
+      all 0.2s,
+      color 0.4s;
     display: inline-flex;
     align-items: center;
     white-space: nowrap;
@@ -126,10 +148,23 @@ const pathname = Astro.url.pathname;
     border-color: var(--brand-red-dark);
   }
   @media (min-width: 768px) {
-    .home-nav { padding: 20px 48px; }
-    .home-nav.scrolled { padding: 14px 48px; }
-    .nav-logo-img { height: 40px; }
-    .nav-logo-pink { height: 40px; width: 180px; }
-    .nav-pill { font-size: 13px; letter-spacing: 1.5px; padding: 12px 22px; }
+    .home-nav {
+      padding: 20px 48px;
+    }
+    .home-nav.scrolled {
+      padding: 14px 48px;
+    }
+    .nav-logo-img {
+      height: 40px;
+    }
+    .nav-logo-pink {
+      height: 40px;
+      width: 180px;
+    }
+    .nav-pill {
+      font-size: 13px;
+      letter-spacing: 1.5px;
+      padding: 12px 22px;
+    }
   }
 </style>

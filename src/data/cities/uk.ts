@@ -11,9 +11,9 @@ export const ukCities: Record<string, CityData> = {
     status: "coming-soon",
     badgeLabel: "Coming Soon",
     bodyParagraphs: [
-      "Southall. Wembley. Tooting. East Ham. Hounslow. London doesn\u2019t just have a South Asian community, it has about fifteen of them, each with its own character and its own version of \"why are you still single.\" The British Asian population in London is enormous and deeply established, multiple generations deep, and somehow nobody has built a proper live dating show for this audience.",
+      'Southall. Wembley. Tooting. East Ham. Hounslow. London doesn\u2019t just have a South Asian community, it has about fifteen of them, each with its own character and its own version of "why are you still single." The British Asian population in London is enormous and deeply established, multiple generations deep, and somehow nobody has built a proper live dating show for this audience.',
       "Garam Masala Dating is a live South Asian dating show and singles mixer that has been selling out 250 person rooms in New York City. Real singles go on blind dates on stage. Two hosts keep it funny and honest. The whole audience mixes before and after. It\u2019s comedy, it\u2019s dating, and it\u2019s the best night out you\u2019ll have that month.",
-      "London\u2019s desi dating scene is weirdly segmented. You\u2019ve got the Imperial and UCL crowd in Zone 1, the LSE finance types, the King\u2019s College lot in Waterloo, and then the massive suburban populations in Harrow, Hounslow, and Ilford who never get catered to by the \"trendy\" events in Shoreditch. This show brings everyone to the same room regardless of postcode.",
+      'London\u2019s desi dating scene is weirdly segmented. You\u2019ve got the Imperial and UCL crowd in Zone 1, the LSE finance types, the King\u2019s College lot in Waterloo, and then the massive suburban populations in Harrow, Hounslow, and Ilford who never get catered to by the "trendy" events in Shoreditch. This show brings everyone to the same room regardless of postcode.',
       "The UK comedy circuit is world class and British Asian comedy has been having a moment for years. A live dating show that combines South Asian culture, stand up energy, and actual matchmaking fits this city better than almost anywhere outside New York.",
       "We\u2019re building the London waitlist and the numbers are already wild. Get on it for first access to tickets, or apply to be a contestant. Zone 1 through Zone 6, everyone\u2019s welcome.",
     ],
@@ -56,7 +56,13 @@ export const ukCities: Record<string, CityData> = {
     addressRegion: "West Midlands",
     addressCountry: "GB",
     region: "United Kingdom",
-    nearbyCities: ["wolverhampton", "coventry", "leicester", "nottingham", "london"],
+    nearbyCities: [
+      "wolverhampton",
+      "coventry",
+      "leicester",
+      "nottingham",
+      "london",
+    ],
   },
 
   leicester: {
@@ -85,7 +91,13 @@ export const ukCities: Record<string, CityData> = {
     addressRegion: "Leicestershire",
     addressCountry: "GB",
     region: "United Kingdom",
-    nearbyCities: ["nottingham", "coventry", "birmingham", "wolverhampton", "sheffield"],
+    nearbyCities: [
+      "nottingham",
+      "coventry",
+      "birmingham",
+      "wolverhampton",
+      "sheffield",
+    ],
   },
 
   manchester: {
@@ -143,7 +155,13 @@ export const ukCities: Record<string, CityData> = {
     addressRegion: "West Yorkshire",
     addressCountry: "GB",
     region: "United Kingdom",
-    nearbyCities: ["bradford", "manchester", "sheffield", "nottingham", "liverpool"],
+    nearbyCities: [
+      "bradford",
+      "manchester",
+      "sheffield",
+      "nottingham",
+      "liverpool",
+    ],
   },
 
   bradford: {
@@ -172,7 +190,13 @@ export const ukCities: Record<string, CityData> = {
     addressRegion: "West Yorkshire",
     addressCountry: "GB",
     region: "United Kingdom",
-    nearbyCities: ["leeds", "manchester", "sheffield", "nottingham", "birmingham"],
+    nearbyCities: [
+      "leeds",
+      "manchester",
+      "sheffield",
+      "nottingham",
+      "birmingham",
+    ],
   },
 
   coventry: {
@@ -201,7 +225,13 @@ export const ukCities: Record<string, CityData> = {
     addressRegion: "West Midlands",
     addressCountry: "GB",
     region: "United Kingdom",
-    nearbyCities: ["birmingham", "wolverhampton", "leicester", "nottingham", "london"],
+    nearbyCities: [
+      "birmingham",
+      "wolverhampton",
+      "leicester",
+      "nottingham",
+      "london",
+    ],
   },
 
   glasgow: {
@@ -317,7 +347,13 @@ export const ukCities: Record<string, CityData> = {
     addressRegion: "Merseyside",
     addressCountry: "GB",
     region: "United Kingdom",
-    nearbyCities: ["manchester", "leeds", "birmingham", "sheffield", "nottingham"],
+    nearbyCities: [
+      "manchester",
+      "leeds",
+      "birmingham",
+      "sheffield",
+      "nottingham",
+    ],
   },
 
   sheffield: {
@@ -346,7 +382,13 @@ export const ukCities: Record<string, CityData> = {
     addressRegion: "South Yorkshire",
     addressCountry: "GB",
     region: "United Kingdom",
-    nearbyCities: ["leeds", "nottingham", "manchester", "bradford", "birmingham"],
+    nearbyCities: [
+      "leeds",
+      "nottingham",
+      "manchester",
+      "bradford",
+      "birmingham",
+    ],
   },
 
   cambridge: {
@@ -491,7 +533,13 @@ export const ukCities: Record<string, CityData> = {
     addressRegion: "West Midlands",
     addressCountry: "GB",
     region: "United Kingdom",
-    nearbyCities: ["birmingham", "coventry", "leicester", "nottingham", "sheffield"],
+    nearbyCities: [
+      "birmingham",
+      "coventry",
+      "leicester",
+      "nottingham",
+      "sheffield",
+    ],
   },
 
   luton: {
@@ -607,7 +655,13 @@ export const ukCities: Record<string, CityData> = {
     addressRegion: "England",
     addressCountry: "GB",
     region: "United Kingdom",
-    nearbyCities: ["sunderland", "middlesbrough", "durham", "leeds", "manchester"],
+    nearbyCities: [
+      "sunderland",
+      "middlesbrough",
+      "durham",
+      "leeds",
+      "manchester",
+    ],
   },
 
   derby: {
@@ -636,7 +690,13 @@ export const ukCities: Record<string, CityData> = {
     addressRegion: "England",
     addressCountry: "GB",
     region: "United Kingdom",
-    nearbyCities: ["nottingham", "leicester", "birmingham", "sheffield", "stoke-on-trent"],
+    nearbyCities: [
+      "nottingham",
+      "leicester",
+      "birmingham",
+      "sheffield",
+      "stoke-on-trent",
+    ],
   },
 
   middlesbrough: {
@@ -810,7 +870,13 @@ export const ukCities: Record<string, CityData> = {
     addressRegion: "England",
     addressCountry: "GB",
     region: "United Kingdom",
-    nearbyCities: ["leeds", "sheffield", "newcastle", "manchester", "huddersfield"],
+    nearbyCities: [
+      "leeds",
+      "sheffield",
+      "newcastle",
+      "manchester",
+      "huddersfield",
+    ],
   },
 
   durham: {
@@ -868,7 +934,13 @@ export const ukCities: Record<string, CityData> = {
     addressRegion: "England",
     addressCountry: "GB",
     region: "United Kingdom",
-    nearbyCities: ["cambridge", "peterborough", "london", "nottingham", "leicester"],
+    nearbyCities: [
+      "cambridge",
+      "peterborough",
+      "london",
+      "nottingham",
+      "leicester",
+    ],
   },
 
   lancaster: {
@@ -911,7 +983,7 @@ export const ukCities: Record<string, CityData> = {
     badgeLabel: "Coming Soon",
     bodyParagraphs: [
       "University of Warwick has one of the highest South Asian student populations of any UK university. The WBS MBA, the computer science program, and the engineering school all pull heavily from India, and the British Asian intake from Birmingham and Leicester is massive. If you\u2019ve been to campus during Diwali, you know. The celebration fills the Piazza and spills into every building. The desi community here isn\u2019t a minority. It\u2019s a presence.",
-      "Garam Masala Dating is a live South Asian dating show and singles mixer from NYC. Real blind dates on stage, two hosts, a live audience, and a mixer. The format thrives in places where the community is concentrated but the social events are generic. Warwick Students\u2019 Union has plenty going on, but nothing that says \"this is specifically for South Asian singles.\"",
+      'Garam Masala Dating is a live South Asian dating show and singles mixer from NYC. Real blind dates on stage, two hosts, a live audience, and a mixer. The format thrives in places where the community is concentrated but the social events are generic. Warwick Students\u2019 Union has plenty going on, but nothing that says "this is specifically for South Asian singles."',
       "Leamington Spa is where the social life happens off campus. The bars on the Parade, the restaurants, the weekend markets. It\u2019s a surprisingly nice town that most international students discover with delight after expecting middle of nowhere Midlands. The desi crowd splits between campus and Leamington, and a show in the area captures both.",
       "Coventry is next door and has its own South Asian community, so the catchment extends beyond the university. Warwick graduates who stayed in the area for jobs in Coventry, Birmingham, or the Warwick Science Park are still connected to the university social scene. They\u2019d show up for something like this in a heartbeat.",
       "Waitlist is open. Warwick is one of our priority UK university cities. Get on the list, or apply to be a contestant.",
@@ -926,7 +998,13 @@ export const ukCities: Record<string, CityData> = {
     addressRegion: "England",
     addressCountry: "GB",
     region: "United Kingdom",
-    nearbyCities: ["coventry", "birmingham", "leicester", "nottingham", "oxford"],
+    nearbyCities: [
+      "coventry",
+      "birmingham",
+      "leicester",
+      "nottingham",
+      "oxford",
+    ],
   },
 
   loughborough: {
@@ -955,7 +1033,13 @@ export const ukCities: Record<string, CityData> = {
     addressRegion: "England",
     addressCountry: "GB",
     region: "United Kingdom",
-    nearbyCities: ["leicester", "nottingham", "derby", "coventry", "birmingham"],
+    nearbyCities: [
+      "leicester",
+      "nottingham",
+      "derby",
+      "coventry",
+      "birmingham",
+    ],
   },
 
   "stoke-on-trent": {
@@ -984,7 +1068,13 @@ export const ukCities: Record<string, CityData> = {
     addressRegion: "England",
     addressCountry: "GB",
     region: "United Kingdom",
-    nearbyCities: ["birmingham", "manchester", "derby", "nottingham", "wolverhampton"],
+    nearbyCities: [
+      "birmingham",
+      "manchester",
+      "derby",
+      "nottingham",
+      "wolverhampton",
+    ],
   },
 
   peterborough: {
@@ -1042,7 +1132,13 @@ export const ukCities: Record<string, CityData> = {
     addressRegion: "England",
     addressCountry: "GB",
     region: "United Kingdom",
-    nearbyCities: ["wolverhampton", "birmingham", "coventry", "stoke-on-trent", "leicester"],
+    nearbyCities: [
+      "wolverhampton",
+      "birmingham",
+      "coventry",
+      "stoke-on-trent",
+      "leicester",
+    ],
   },
 
   oldham: {
@@ -1071,7 +1167,13 @@ export const ukCities: Record<string, CityData> = {
     addressRegion: "England",
     addressCountry: "GB",
     region: "United Kingdom",
-    nearbyCities: ["manchester", "huddersfield", "bolton", "blackburn", "leeds"],
+    nearbyCities: [
+      "manchester",
+      "huddersfield",
+      "bolton",
+      "blackburn",
+      "leeds",
+    ],
   },
 
   blackburn: {
@@ -1129,7 +1231,13 @@ export const ukCities: Record<string, CityData> = {
     addressRegion: "England",
     addressCountry: "GB",
     region: "United Kingdom",
-    nearbyCities: ["manchester", "oldham", "blackburn", "huddersfield", "liverpool"],
+    nearbyCities: [
+      "manchester",
+      "oldham",
+      "blackburn",
+      "huddersfield",
+      "liverpool",
+    ],
   },
 
   huddersfield: {
@@ -1216,7 +1324,13 @@ export const ukCities: Record<string, CityData> = {
     addressRegion: "Northern Ireland",
     addressCountry: "GB",
     region: "United Kingdom",
-    nearbyCities: ["glasgow", "edinburgh", "manchester", "liverpool", "birmingham"],
+    nearbyCities: [
+      "glasgow",
+      "edinburgh",
+      "manchester",
+      "liverpool",
+      "birmingham",
+    ],
   },
 
   aberdeen: {

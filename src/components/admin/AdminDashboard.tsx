@@ -1,5 +1,11 @@
 import { useState, useEffect, useMemo, useRef } from "react";
-import { collection, getDocs, doc, updateDoc, Timestamp } from "firebase/firestore";
+import {
+  collection,
+  getDocs,
+  doc,
+  updateDoc,
+  Timestamp,
+} from "firebase/firestore";
 import { ChevronRight, ChevronDown, Copy, Check } from "lucide-react";
 import Select from "react-select";
 import { getFirebaseDb, getFirebaseAuth } from "@/lib/firebase";
@@ -37,10 +43,19 @@ export default function AdminDashboard({ onLogout }: AdminDashboardProps) {
   const [prepLinkCopied, setPrepLinkCopied] = useState<string | null>(null);
 
   const today = new Date().toLocaleDateString("en-CA");
-  const upcomingEvents = events.filter((e) => e.isoDate && e.isoDate > today && !e.hidden);
+  const upcomingEvents = events.filter(
+    (e) => e.isoDate && e.isoDate > today && !e.hidden,
+  );
 
-  const toastTimerRef = useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
-  useEffect(() => () => { clearTimeout(toastTimerRef.current); }, []);
+  const toastTimerRef = useRef<ReturnType<typeof setTimeout> | undefined>(
+    undefined,
+  );
+  useEffect(
+    () => () => {
+      clearTimeout(toastTimerRef.current);
+    },
+    [],
+  );
 
   function showToast(msg: string, ok: boolean) {
     clearTimeout(toastTimerRef.current);
@@ -66,7 +81,7 @@ export default function AdminDashboard({ onLogout }: AdminDashboardProps) {
       });
       let url: string;
       if (res.ok) {
-        ({ url } = await res.json() as { url: string });
+        ({ url } = (await res.json()) as { url: string });
       } else {
         url = `${window.location.origin}/contestant-prep`;
       }
@@ -99,7 +114,9 @@ export default function AdminDashboard({ onLogout }: AdminDashboardProps) {
     setFetchError(false);
     try {
       const snap = await getDocs(collection(getFirebaseDb(), "applications"));
-      const docs = snap.docs.map((d) => ({ id: d.id, ...d.data() } as Application));
+      const docs = snap.docs.map(
+        (d) => ({ id: d.id, ...d.data() }) as Application,
+      );
       setApplications(docs);
     } catch {
       setFetchError(true);
@@ -108,13 +125,22 @@ export default function AdminDashboard({ onLogout }: AdminDashboardProps) {
     }
   }
 
-  useEffect(() => { fetchApps(); }, []);
+  useEffect(() => {
+    fetchApps();
+  }, []);
 
-  async function handleUpdate(id: string, patch: Partial<Omit<Application, "id">>) {
+  async function handleUpdate(
+    id: string,
+    patch: Partial<Omit<Application, "id">>,
+  ) {
     try {
       await updateDoc(doc(getFirebaseDb(), "applications", id), patch);
-      setApplications((prev) => prev.map((a) => (a.id === id ? { ...a, ...patch } : a)));
-      setSelectedApp((prev) => (prev?.id === id ? { ...prev, ...patch } : prev));
+      setApplications((prev) =>
+        prev.map((a) => (a.id === id ? { ...a, ...patch } : a)),
+      );
+      setSelectedApp((prev) =>
+        prev?.id === id ? { ...prev, ...patch } : prev,
+      );
       showToast("Saved", true);
     } catch {
       showToast("Save failed", false);
@@ -122,7 +148,9 @@ export default function AdminDashboard({ onLogout }: AdminDashboardProps) {
   }
 
   async function handleDelete(id: string) {
-    await handleUpdate(id, { deletedAt: Timestamp.now() } as Partial<Omit<Application, "id">>);
+    await handleUpdate(id, { deletedAt: Timestamp.now() } as Partial<
+      Omit<Application, "id">
+    >);
     setSelectedApp(null);
   }
 
@@ -132,7 +160,9 @@ export default function AdminDashboard({ onLogout }: AdminDashboardProps) {
 
   const cityOptions = useMemo(() => {
     const cities = new Set(
-      applications.filter((a) => !a.deletedAt && a.city?.trim()).map((a) => a.city.trim())
+      applications
+        .filter((a) => !a.deletedAt && a.city?.trim())
+        .map((a) => a.city.trim()),
     );
     return [...cities].sort().map((c) => ({ value: c, label: c }));
   }, [applications]);
@@ -156,7 +186,9 @@ export default function AdminDashboard({ onLogout }: AdminDashboardProps) {
       result = result.filter((a) => selected.has(a.city?.trim()));
     }
 
-    result.sort((a, b) => (b.submittedAt?.seconds ?? 0) - (a.submittedAt?.seconds ?? 0));
+    result.sort(
+      (a, b) => (b.submittedAt?.seconds ?? 0) - (a.submittedAt?.seconds ?? 0),
+    );
     result.sort((a, b) => {
       const aRej = a.status === "Rejected" ? 1 : 0;
       const bRej = b.status === "Rejected" ? 1 : 0;
@@ -164,8 +196,10 @@ export default function AdminDashboard({ onLogout }: AdminDashboardProps) {
     });
 
     deleted.sort((a, b) => {
-      const aTime = a.deletedAt && "seconds" in a.deletedAt ? a.deletedAt.seconds : 0;
-      const bTime = b.deletedAt && "seconds" in b.deletedAt ? b.deletedAt.seconds : 0;
+      const aTime =
+        a.deletedAt && "seconds" in a.deletedAt ? a.deletedAt.seconds : 0;
+      const bTime =
+        b.deletedAt && "seconds" in b.deletedAt ? b.deletedAt.seconds : 0;
       return bTime - aTime;
     });
 
@@ -180,9 +214,13 @@ export default function AdminDashboard({ onLogout }: AdminDashboardProps) {
         <div className={styles.headerInner}>
           <div className={styles.titleGroup}>
             <h1 className={styles.title}>Applications</h1>
-            {!loading && <span className={styles.count}>{activeApps.length} active</span>}
+            {!loading && (
+              <span className={styles.count}>{activeApps.length} active</span>
+            )}
           </div>
-          <button onClick={onLogout} className={styles.logoutButton}>Logout</button>
+          <button onClick={onLogout} className={styles.logoutButton}>
+            Logout
+          </button>
         </div>
 
         <div className={styles.filterBar}>
@@ -210,7 +248,9 @@ export default function AdminDashboard({ onLogout }: AdminDashboardProps) {
               />
             </div>
             {hasActiveFilters && (
-              <button onClick={clearFilters} className={styles.clearButton}>Clear all</button>
+              <button onClick={clearFilters} className={styles.clearButton}>
+                Clear all
+              </button>
             )}
           </div>
         </div>
@@ -237,7 +277,11 @@ export default function AdminDashboard({ onLogout }: AdminDashboardProps) {
                       data-copied={isCopied || undefined}
                     >
                       {isCopied ? <Check size={14} /> : <Copy size={14} />}
-                      {isLoading ? "Generating…" : isCopied ? "Copied!" : "Copy Link"}
+                      {isLoading
+                        ? "Generating…"
+                        : isCopied
+                          ? "Copied!"
+                          : "Copy Link"}
                     </button>
                   </div>
                 );
@@ -249,18 +293,31 @@ export default function AdminDashboard({ onLogout }: AdminDashboardProps) {
 
       <main className={styles.main}>
         {loading ? (
-          <div className={styles.loadingState} role="status" aria-live="polite">Loading…</div>
+          <div className={styles.loadingState} role="status" aria-live="polite">
+            Loading…
+          </div>
         ) : fetchError ? (
           <div className={styles.errorState}>
             <p style={{ marginBottom: "12px" }}>Failed to load applications.</p>
-            <button onClick={fetchApps} className={styles.retryButton}>Try again</button>
+            <button onClick={fetchApps} className={styles.retryButton}>
+              Try again
+            </button>
           </div>
         ) : applications.length === 0 ? (
-          <div className={styles.emptyState}>No applications yet. Share the link! 🌶️</div>
+          <div className={styles.emptyState}>
+            No applications yet. Share the link! 🌶️
+          </div>
         ) : activeApps.length === 0 && deletedApps.length === 0 ? (
           <div className={styles.emptyState}>
-            <p style={{ marginBottom: "12px" }}>No applications match these filters.</p>
-            <button onClick={clearFilters} className={styles.clearFiltersButton}>Clear filters</button>
+            <p style={{ marginBottom: "12px" }}>
+              No applications match these filters.
+            </p>
+            <button
+              onClick={clearFilters}
+              className={styles.clearFiltersButton}
+            >
+              Clear filters
+            </button>
           </div>
         ) : (
           <>
@@ -284,8 +341,17 @@ export default function AdminDashboard({ onLogout }: AdminDashboardProps) {
 
             {deletedApps.length > 0 && (
               <div className={styles.deletedSection}>
-                <button onClick={() => setDeletedOpen((v) => !v)} className={styles.deletedToggle} aria-expanded={deletedOpen} aria-controls="deleted-apps-list">
-                  {deletedOpen ? <ChevronDown size={16} /> : <ChevronRight size={16} />}
+                <button
+                  onClick={() => setDeletedOpen((v) => !v)}
+                  className={styles.deletedToggle}
+                  aria-expanded={deletedOpen}
+                  aria-controls="deleted-apps-list"
+                >
+                  {deletedOpen ? (
+                    <ChevronDown size={16} />
+                  ) : (
+                    <ChevronRight size={16} />
+                  )}
                   Deleted Applications ({deletedApps.length})
                 </button>
 
@@ -321,7 +387,9 @@ export default function AdminDashboard({ onLogout }: AdminDashboardProps) {
       {toast && (
         <div
           className={styles.toast}
-          style={{ background: toast.ok ? "var(--success)" : "var(--brand-red)" }}
+          style={{
+            background: toast.ok ? "var(--success)" : "var(--brand-red)",
+          }}
           role="alert"
           aria-live="assertive"
         >

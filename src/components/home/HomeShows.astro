@@ -1,6 +1,6 @@
 ---
-import type { EventEntry } from '@/data/events';
-import NotifyModal from '@/components/NotifyModal.astro';
+import type { EventEntry } from "@/data/events";
+import NotifyModal from "@/components/NotifyModal.astro";
 
 interface Props {
   events: EventEntry[];
@@ -9,13 +9,13 @@ interface Props {
 const { events } = Astro.props;
 
 function parseMonth(dateStr: string): string {
-  return dateStr.split(' ')[0];
+  return dateStr.split(" ")[0];
 }
 
 function parseDay(dateStr: string): string {
-  const parts = dateStr.split(' ');
-  const day = parts[1] ?? '—';
-  return /^\d{1,2}$/.test(day) ? day : '—';
+  const parts = dateStr.split(" ");
+  const day = parts[1] ?? "—";
+  return /^\d{1,2}$/.test(day) ? day : "—";
 }
 ---
 
@@ -23,44 +23,82 @@ function parseDay(dateStr: string): string {
   <div class="shows-header" data-reveal>
     <h2 id="shows-heading">Grab Your Seat</h2>
     <p>Tickets always sell out. You've been warned.</p>
-    <p class="shows-proof">40+ shows sold out · 2,000+ audience members · 13 couples matched</p>
+    <p class="shows-proof">
+      40+ shows sold out · 2,000+ audience members · 13 couples matched
+    </p>
   </div>
   <div class="shows-list">
-    {events.map((event) => {
-      const isLive = Boolean(event.url);
-      const isSoldOut = event.tagline?.toLowerCase().includes('sold out');
-      return isLive ? (
-        <a href={event.url} target="_blank" rel="noopener noreferrer" class="show-card show-card--live" data-reveal>
-          <div class="show-date-block">
-            <div class="month">{parseMonth(event.date)}</div>
-            <div class="day">{parseDay(event.date)}</div>
-          </div>
-          <div class="show-info">
-            <h3>{event.city}</h3>
-            <span>{event.tagline ?? 'On sale now'}</span>
-          </div>
-          <span class={`ticket-label${isSoldOut ? ' ticket-label--soldout' : ''}`}>{isSoldOut ? 'Sold Out' : 'Get Tickets'}</span>
-        </a>
-      ) : (
-        <button type="button" class="show-card show-card--notify" data-notify-city={event.city} data-reveal>
-          <div class="show-date-block">
-            {parseDay(event.date) !== '—' ? (
-              <><div class="month">{parseMonth(event.date)}</div><div class="day">{parseDay(event.date)}</div></>
-            ) : (
-              <div class="day day--tba">TBA</div>
-            )}
-          </div>
-          <div class="show-info">
-            <h3>{event.city}</h3>
-            <span>Dates to be announced</span>
-          </div>
-          <span class="ticket-label ticket-label--notify">Notify Me</span>
-        </button>
-      );
-    })}
+    {
+      events.map((event) => {
+        const isLive = Boolean(event.url);
+        const isSoldOut = event.tagline?.toLowerCase().includes("sold out");
+        return isLive ? (
+          <a
+            href={event.url}
+            target="_blank"
+            rel="noopener noreferrer"
+            class="show-card show-card--live"
+            data-reveal
+            data-ph-capture="cta_clicked"
+            data-ph-cta="get_tickets"
+            data-ph-section="shows"
+            data-ph-city={event.city}
+            data-ph-event-date={event.date}
+            data-ph-price={event.price}
+          >
+            <div class="show-date-block">
+              <div class="month">{parseMonth(event.date)}</div>
+              <div class="day">{parseDay(event.date)}</div>
+            </div>
+            <div class="show-info">
+              <h3>{event.city}</h3>
+              <span>{event.tagline ?? "On sale now"}</span>
+            </div>
+            <span
+              class={`ticket-label${isSoldOut ? " ticket-label--soldout" : ""}`}
+            >
+              {isSoldOut ? "Sold Out" : "Get Tickets"}
+            </span>
+          </a>
+        ) : (
+          <button
+            type="button"
+            class="show-card show-card--notify"
+            data-notify-city={event.city}
+            data-reveal
+            data-ph-capture="cta_clicked"
+            data-ph-cta="notify_me"
+            data-ph-section="shows"
+            data-ph-city={event.city}
+          >
+            <div class="show-date-block">
+              {parseDay(event.date) !== "—" ? (
+                <>
+                  <div class="month">{parseMonth(event.date)}</div>
+                  <div class="day">{parseDay(event.date)}</div>
+                </>
+              ) : (
+                <div class="day day--tba">TBA</div>
+              )}
+            </div>
+            <div class="show-info">
+              <h3>{event.city}</h3>
+              <span>Dates to be announced</span>
+            </div>
+            <span class="ticket-label ticket-label--notify">Notify Me</span>
+          </button>
+        );
+      })
+    }
   </div>
   <div class="request-city" data-reveal>
-    <button type="button" id="request-city-trigger">Don't see your city? Request it →</button>
+    <button
+      type="button"
+      id="request-city-trigger"
+      data-ph-capture="cta_clicked"
+      data-ph-cta="request_city"
+      data-ph-section="shows">Don't see your city? Request it →</button
+    >
   </div>
 
   <NotifyModal />
@@ -69,17 +107,53 @@ function parseDay(dateStr: string): string {
   <dialog id="request-city-modal" class="modal-dialog">
     <div class="modal-inner">
       <button type="button" class="modal-close" aria-label="Close">
-        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          width="20"
+          height="20"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          aria-hidden="true"
+          ><path d="M18 6 6 18"></path><path d="m6 6 12 12"></path></svg
+        >
       </button>
       <div id="city-form-view">
         <h2 class="modal-title">Request Your City</h2>
-        <p class="modal-subtitle">Tell us where you want Garam Masala Dating and we'll make it happen.</p>
-        <form id="city-form" class="modal-form">
-          <input type="text" id="city-name" list="city-name-suggestions" placeholder="Start typing a city" aria-label="City name" autocomplete="off" />
+        <p class="modal-subtitle">
+          Tell us where you want Garam Masala Dating and we'll make it happen.
+        </p>
+        <form
+          id="city-form"
+          class="modal-form"
+          toolname="request-show-in-my-city"
+          tooldescription="Request Garam Masala Dating to bring a live show to your city. Provide city name and email address to join the city interest list."
+        >
+          <input
+            type="text"
+            id="city-name"
+            list="city-name-suggestions"
+            placeholder="Start typing a city"
+            aria-label="City name"
+            autocomplete="off"
+            required
+            toolparamdescription="Name of the city where you want Garam Masala Dating to perform"
+          />
           <datalist id="city-name-suggestions"></datalist>
           <input type="hidden" id="city-state" />
           <input type="hidden" id="city-country" />
-          <input type="email" id="city-email" placeholder="Your email" required aria-label="Email address" />
+          <input
+            type="email"
+            id="city-email"
+            class="ph-mask"
+            placeholder="Your email"
+            required
+            aria-label="Email address"
+            toolparamdescription="Email address to be notified when the show comes to your city"
+          />
           <p id="city-form-error" class="modal-error" hidden role="alert"></p>
           <button type="submit" class="modal-submit">Submit Request</button>
         </form>
@@ -92,74 +166,105 @@ function parseDay(dateStr: string): string {
 </section>
 
 <script>
-  import { getFirebaseDb } from '@/lib/firebase';
-  import { collection, addDoc } from 'firebase/firestore';
-  import { resolveCityOption } from '@/lib/citySearch';
-  import { identifyLead, trackLeadEvent } from '@/lib/analytics';
-  import { buildLeadAttribution } from '@/lib/leadAttribution';
+  import { getFirebaseDb } from "@/lib/firebase";
+  import { collection, addDoc } from "firebase/firestore";
+  import { resolveCityOption } from "@/lib/citySearchShared";
+  import { identifyLead, trackLeadEvent } from "@/lib/analytics";
+  import { buildLeadAttribution } from "@/lib/leadAttribution";
 
   // Request City modal
-  const cityDialog = document.getElementById('request-city-modal') as HTMLDialogElement;
+  const cityDialog = document.getElementById(
+    "request-city-modal",
+  ) as HTMLDialogElement;
   if (cityDialog) {
-    const cityInput = document.getElementById('city-name') as HTMLInputElement | null;
-    const cityStateInput = document.getElementById('city-state') as HTMLInputElement | null;
-    const cityCountryInput = document.getElementById('city-country') as HTMLInputElement | null;
-    const citySuggestions = document.getElementById('city-name-suggestions') as HTMLDataListElement | null;
-    const errorEl = document.getElementById('city-form-error');
-    let cityOptions: import('@/lib/citySearch').CitySearchOption[] = [];
-    let selectedCity: import('@/lib/citySearch').CitySearchOption | null = null;
+    const cityInput = document.getElementById(
+      "city-name",
+    ) as HTMLInputElement | null;
+    const cityStateInput = document.getElementById(
+      "city-state",
+    ) as HTMLInputElement | null;
+    const cityCountryInput = document.getElementById(
+      "city-country",
+    ) as HTMLInputElement | null;
+    const citySuggestions = document.getElementById(
+      "city-name-suggestions",
+    ) as HTMLDataListElement | null;
+    const errorEl = document.getElementById("city-form-error");
+    let cityOptions: import("@/lib/citySearchShared").CitySearchOption[] = [];
+    let selectedCity: import("@/lib/citySearchShared").CitySearchOption | null =
+      null;
 
-    const syncSelectedCity = (option: import('@/lib/citySearch').CitySearchOption | null) => {
+    const syncSelectedCity = (
+      option: import("@/lib/citySearchShared").CitySearchOption | null,
+    ) => {
       selectedCity = option;
-      if (cityStateInput) cityStateInput.value = option?.state ?? '';
-      if (cityCountryInput) cityCountryInput.value = option?.country ?? '';
+      if (cityStateInput) cityStateInput.value = option?.state ?? "";
+      if (cityCountryInput) cityCountryInput.value = option?.country ?? "";
     };
 
-    const renderCitySuggestions = (results: import('@/lib/citySearch').CitySearchOption[]) => {
+    const renderCitySuggestions = (
+      results: import("@/lib/citySearchShared").CitySearchOption[],
+    ) => {
       if (!citySuggestions) return;
-      citySuggestions.innerHTML = '';
+      citySuggestions.innerHTML = "";
       results.forEach((option) => {
-        const suggestion = document.createElement('option');
+        const suggestion = document.createElement("option");
         suggestion.value = option.label;
         citySuggestions.appendChild(suggestion);
       });
     };
 
     const searchCities = async (query: string) => {
-      const response = await fetch(`/api/city-search?q=${encodeURIComponent(query)}`);
-      if (!response.ok) throw new Error('Failed to search cities');
-      const data = await response.json() as { results?: import('@/lib/citySearch').CitySearchOption[] };
+      const response = await fetch(
+        `/api/city-search?q=${encodeURIComponent(query)}`,
+      );
+      if (!response.ok) throw new Error("Failed to search cities");
+      const data = (await response.json()) as {
+        results?: import("@/lib/citySearchShared").CitySearchOption[];
+      };
       cityOptions = data.results ?? [];
       renderCitySuggestions(cityOptions);
     };
 
-    document.getElementById('request-city-trigger')?.addEventListener('click', () => {
-      // Reset to form state before opening
-      document.getElementById('city-form-view')?.removeAttribute('hidden');
-      document.getElementById('city-success')?.setAttribute('hidden', '');
-      const emailInput = document.getElementById('city-email') as HTMLInputElement;
-      if (cityInput) cityInput.value = '';
-      if (emailInput) emailInput.value = '';
-      if (errorEl) { errorEl.textContent = ''; errorEl.setAttribute('hidden', ''); }
-      syncSelectedCity(null);
-      cityOptions = [];
-      renderCitySuggestions([]);
-      trackLeadEvent('request_city_opened', { source: 'request-city', sourcePage: window.location.pathname });
-      cityDialog.showModal();
-    });
+    document
+      .getElementById("request-city-trigger")
+      ?.addEventListener("click", () => {
+        // Reset to form state before opening
+        document.getElementById("city-form-view")?.removeAttribute("hidden");
+        document.getElementById("city-success")?.setAttribute("hidden", "");
+        const emailInput = document.getElementById(
+          "city-email",
+        ) as HTMLInputElement;
+        if (cityInput) cityInput.value = "";
+        if (emailInput) emailInput.value = "";
+        if (errorEl) {
+          errorEl.textContent = "";
+          errorEl.setAttribute("hidden", "");
+        }
+        syncSelectedCity(null);
+        cityOptions = [];
+        renderCitySuggestions([]);
+        trackLeadEvent("request_city_opened", {
+          source: "request-city",
+          sourcePage: window.location.pathname,
+        });
+        cityDialog.showModal();
+      });
 
-    cityDialog.querySelector('.modal-close')?.addEventListener('click', () => cityDialog.close());
-    cityDialog.addEventListener('click', (e) => {
+    cityDialog
+      .querySelector(".modal-close")
+      ?.addEventListener("click", () => cityDialog.close());
+    cityDialog.addEventListener("click", (e) => {
       if (e.target === cityDialog) cityDialog.close();
     });
 
-    cityInput?.addEventListener('focus', () => {
+    cityInput?.addEventListener("focus", () => {
       if (cityInput.value.trim()) {
         searchCities(cityInput.value).catch(() => {});
       }
     });
 
-    cityInput?.addEventListener('input', async () => {
+    cityInput?.addEventListener("input", async () => {
       if (!cityInput.value.trim()) {
         cityOptions = [];
         renderCitySuggestions([]);
@@ -170,41 +275,57 @@ function parseDay(dateStr: string): string {
       syncSelectedCity(resolveCityOption(cityInput.value, cityOptions));
     });
 
-    cityInput?.addEventListener('change', () => {
+    cityInput?.addEventListener("change", () => {
       syncSelectedCity(resolveCityOption(cityInput.value, cityOptions));
     });
 
-    document.getElementById('city-form')?.addEventListener('submit', async (e) => {
-      e.preventDefault();
-      if (cityInput?.value.trim()) {
-        await searchCities(cityInput.value);
-      }
-      const resolvedCity = selectedCity ?? resolveCityOption(cityInput?.value ?? '', cityOptions);
-      const city = resolvedCity?.city ?? (cityInput?.value ?? '').trim();
-      const email = (document.getElementById('city-email') as HTMLInputElement).value;
-      try {
-        const db = getFirebaseDb();
-        const attribution = buildLeadAttribution({ source: 'request-city' });
-        const payload: Record<string, string> = {
-          email,
-          ...attribution,
-          createdAt: new Date().toISOString(),
-        };
-        if (city) payload.city = city;
-        if (resolvedCity?.state) payload.state = resolvedCity.state;
-        if (resolvedCity?.country) payload.country = resolvedCity.country;
-        await addDoc(collection(db, 'leads'), payload);
-        identifyLead(email, { ...attribution, city, state: resolvedCity?.state, country: resolvedCity?.country });
-        trackLeadEvent('lead_email_submitted', { ...attribution, city, state: resolvedCity?.state, country: resolvedCity?.country });
-        document.getElementById('city-form-view')?.setAttribute('hidden', '');
-        document.getElementById('city-success')?.removeAttribute('hidden');
-      } catch {
-        if (errorEl) {
-          errorEl.textContent = 'Something went wrong. Please try again.';
-          errorEl.removeAttribute('hidden');
+    document
+      .getElementById("city-form")
+      ?.addEventListener("submit", async (e) => {
+        e.preventDefault();
+        try {
+          if (cityInput?.value.trim()) {
+            await searchCities(cityInput.value);
+          }
+          const resolvedCity =
+            selectedCity ??
+            resolveCityOption(cityInput?.value ?? "", cityOptions);
+          const city = resolvedCity?.city ?? (cityInput?.value ?? "").trim();
+          const email = (
+            document.getElementById("city-email") as HTMLInputElement
+          ).value;
+          const db = getFirebaseDb();
+          const attribution = buildLeadAttribution({ source: "request-city" });
+          const payload: Record<string, string> = {
+            email,
+            ...attribution,
+            createdAt: new Date().toISOString(),
+          };
+          if (city) payload.city = city;
+          if (resolvedCity?.state) payload.state = resolvedCity.state;
+          if (resolvedCity?.country) payload.country = resolvedCity.country;
+          await addDoc(collection(db, "leads"), payload);
+          identifyLead(email, {
+            ...attribution,
+            city,
+            state: resolvedCity?.state,
+            country: resolvedCity?.country,
+          });
+          trackLeadEvent("lead_email_submitted", {
+            ...attribution,
+            city,
+            state: resolvedCity?.state,
+            country: resolvedCity?.country,
+          });
+          document.getElementById("city-form-view")?.setAttribute("hidden", "");
+          document.getElementById("city-success")?.removeAttribute("hidden");
+        } catch {
+          if (errorEl) {
+            errorEl.textContent = "Something went wrong. Please try again.";
+            errorEl.removeAttribute("hidden");
+          }
         }
-      }
-    });
+      });
   }
 </script>
 
@@ -266,8 +387,12 @@ function parseDay(dateStr: string): string {
   .show-card:last-child {
     border-bottom: 1px solid rgba(255, 255, 255, 0.2);
   }
-  .show-card:hover { opacity: 0.8; }
-  .show-date-block { text-align: center; }
+  .show-card:hover {
+    opacity: 0.8;
+  }
+  .show-date-block {
+    text-align: center;
+  }
   .show-date-block .month {
     font-size: 11px;
     font-weight: 700;
@@ -339,20 +464,34 @@ function parseDay(dateStr: string): string {
     transition: border-color 0.2s;
     padding: 0;
   }
-  .request-city button:hover { border-color: var(--electric-yellow); }
-
+  .request-city button:hover {
+    border-color: var(--electric-yellow);
+  }
 
   @media (min-width: 768px) {
-    .shows { padding: 75px 36px; }
-    .shows-header { margin-bottom: 56px; }
+    .shows {
+      padding: 75px 36px;
+    }
+    .shows-header {
+      margin-bottom: 56px;
+    }
     .show-card {
       grid-template-columns: 80px 1fr auto;
       padding: 28px 0;
     }
-    .show-date-block .day { font-size: 48px; }
-    .show-date-block .day--tba { font-size: 20px; }
-    .show-info h3 { font-size: 24px; margin-bottom: 4px; }
-    .ticket-label { font-size: 13px; }
+    .show-date-block .day {
+      font-size: 48px;
+    }
+    .show-date-block .day--tba {
+      font-size: 20px;
+    }
+    .show-info h3 {
+      font-size: 24px;
+      margin-bottom: 4px;
+    }
+    .ticket-label {
+      font-size: 13px;
+    }
   }
 
   /* ─── Request City Modal ─────────────────────────────────────── */
@@ -366,7 +505,9 @@ function parseDay(dateStr: string): string {
     height: 100%;
     overflow: visible;
   }
-  .modal-dialog::backdrop { background: rgba(0, 0, 0, 0.5); }
+  .modal-dialog::backdrop {
+    background: rgba(0, 0, 0, 0.5);
+  }
   .modal-dialog[open] {
     display: flex;
     align-items: center;
@@ -386,8 +527,14 @@ function parseDay(dateStr: string): string {
     text-align: center;
   }
   @keyframes modalIn {
-    from { opacity: 0; transform: scale(0.95) translateY(8px); }
-    to   { opacity: 1; transform: scale(1) translateY(0); }
+    from {
+      opacity: 0;
+      transform: scale(0.95) translateY(8px);
+    }
+    to {
+      opacity: 1;
+      transform: scale(1) translateY(0);
+    }
   }
   .modal-close {
     position: absolute;
@@ -403,7 +550,9 @@ function parseDay(dateStr: string): string {
     justify-content: center;
     transition: color 0.2s;
   }
-  .modal-close:hover { color: var(--charcoal); }
+  .modal-close:hover {
+    color: var(--charcoal);
+  }
   .modal-title {
     font-family: var(--font-playfair), serif;
     font-size: 22px;
@@ -417,7 +566,11 @@ function parseDay(dateStr: string): string {
     margin-bottom: 24px;
     line-height: 1.5;
   }
-  .modal-form { display: flex; flex-direction: column; gap: 12px; }
+  .modal-form {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
   .modal-form input {
     padding: 14px 20px;
     border: 1.5px solid rgba(0, 0, 0, 0.1);
@@ -428,7 +581,9 @@ function parseDay(dateStr: string): string {
     transition: border-color 0.2s;
     min-height: var(--touch-target);
   }
-  .modal-form input:focus { border-color: var(--brand-red); }
+  .modal-form input:focus {
+    border-color: var(--brand-red);
+  }
   .modal-submit {
     background: var(--brand-red);
     color: white;
@@ -445,8 +600,13 @@ function parseDay(dateStr: string): string {
     min-height: var(--touch-target);
     width: 100%;
   }
-  .modal-submit:hover { background: var(--brand-red-dark); }
-  .modal-success { text-align: center; padding: 24px 0; }
+  .modal-submit:hover {
+    background: var(--brand-red-dark);
+  }
+  .modal-success {
+    text-align: center;
+    padding: 24px 0;
+  }
   .modal-success p {
     font-family: var(--font-cormorant), serif;
     font-size: 18px;

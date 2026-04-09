@@ -27,7 +27,13 @@ export const australiaCities: Record<string, CityData> = {
     addressRegion: "NSW",
     addressCountry: "AU",
     region: "Australia",
-    nearbyCities: ["melbourne", "brisbane", "canberra", "newcastle-au", "gold-coast"],
+    nearbyCities: [
+      "melbourne",
+      "brisbane",
+      "canberra",
+      "newcastle-au",
+      "gold-coast",
+    ],
   },
 
   melbourne: {
@@ -172,7 +178,13 @@ export const australiaCities: Record<string, CityData> = {
     addressRegion: "ACT",
     addressCountry: "AU",
     region: "Australia",
-    nearbyCities: ["sydney", "melbourne", "brisbane", "newcastle-au", "adelaide"],
+    nearbyCities: [
+      "sydney",
+      "melbourne",
+      "brisbane",
+      "newcastle-au",
+      "adelaide",
+    ],
   },
 
   "gold-coast": {
@@ -201,13 +213,20 @@ export const australiaCities: Record<string, CityData> = {
     addressRegion: "QLD",
     addressCountry: "AU",
     region: "Australia",
-    nearbyCities: ["brisbane", "sydney", "melbourne", "newcastle-au", "adelaide"],
+    nearbyCities: [
+      "brisbane",
+      "sydney",
+      "melbourne",
+      "newcastle-au",
+      "adelaide",
+    ],
   },
 
   "newcastle-au": {
     slug: "newcastle-au",
     displayName: "Newcastle",
-    titleTag: "South Asian Singles Events Newcastle Australia | Garam Masala Dating",
+    titleTag:
+      "South Asian Singles Events Newcastle Australia | Garam Masala Dating",
     metaDescription:
       "Garam Masala Dating is coming to Newcastle, Australia. A live South Asian dating show and singles mixer. University of Newcastle and the Hunter Valley\u2019s desi community.",
     h1: "Newcastle’s Campus Crowd Needs More Than Pub Trivia",

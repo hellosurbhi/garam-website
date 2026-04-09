@@ -4,6 +4,12 @@ import { nyOffset } from "@/utils/timezone";
 const EVENT_DESCRIPTION =
   "NYC's live South Asian dating show where two real singles go on a blind date in front of 250 people. Hosted by comedians Surbhi and Wyatt. Singles mixer follows every show.";
 
+function subtractMinutes(time: string, mins: number): string {
+  const [h, m] = time.split(":").map(Number);
+  const total = h * 60 + m - mins;
+  return `${String(Math.floor(total / 60)).padStart(2, "0")}:${String(total % 60).padStart(2, "0")}`;
+}
+
 /**
  * Build an array of individual Event JSON-LD strings from a list of events.
  * Only events with an isoDate and venue produce schema output.
@@ -24,14 +30,21 @@ export function buildEventSchemas(eventsList: EventEntry[]): string[] {
       if (venue.streetAddress) address.streetAddress = venue.streetAddress;
       if (venue.postalCode) address.postalCode = venue.postalCode;
 
+      const door = subtractMinutes(start, 30);
       return JSON.stringify({
         "@context": "https://schema.org",
-        "@type": "Event",
+        "@type": "ComedyEvent",
         name: "Garam Masala Dating | Live Comedy Dating Show",
         startDate: `${e.isoDate}T${start}:00${nyOffset(e.isoDate!, start)}`,
         endDate: `${e.isoDate}T${end}:00${nyOffset(e.isoDate!, end)}`,
+        doorTime: `${e.isoDate}T${door}:00${nyOffset(e.isoDate!, door)}`,
         eventStatus: "https://schema.org/EventScheduled",
         eventAttendanceMode: "https://schema.org/OfflineEventAttendanceMode",
+        maximumAttendeeCapacity: 250,
+        performer: [
+          { "@type": "Person", name: "Surbhi" },
+          { "@type": "Person", name: "Wyatt Feegrado" },
+        ],
         location: {
           "@type": "Place",
           name: venue.name,
@@ -51,6 +64,10 @@ export function buildEventSchemas(eventsList: EventEntry[]): string[] {
           availability: "https://schema.org/InStock",
         },
         image: "https://garammasaladating.com/og-image.jpg",
+        superEvent: {
+          "@type": "EventSeries",
+          "@id": "https://garammasaladating.com/#event-series",
+        },
       });
     });
 }

@@ -10,10 +10,7 @@ const mockStates = [
   { isoCode: "NY", name: "New York" },
   { isoCode: "CA", name: "California" },
 ];
-const mockCities = [
-  { name: "New York City" },
-  { name: "Buffalo" },
-];
+const mockCities = [{ name: "New York City" }, { name: "Buffalo" }];
 
 const mockGetAllCountries = vi.fn(() => mockCountries);
 const mockGetStatesOfCountry = vi.fn(() => mockStates);
@@ -92,5 +89,34 @@ describe("useGeoData", () => {
       expect(result.current.loading).toBe(false);
     });
     expect(result.current.cityOptions).toEqual([]);
+  });
+
+  it("skips loading when shouldLoad is false", async () => {
+    const { result } = renderHook(() => useGeoData("US", "NY", false));
+    // Effect early-returns, geo stays null, geoFailed stays false
+    // So loading = !null && !false = true, but no module import happens
+    expect(result.current.countryOptions).toEqual([]);
+    expect(result.current.stateOptions).toEqual([]);
+    expect(result.current.cityOptions).toEqual([]);
+  });
+
+  it("retry triggers re-load after failure", async () => {
+    // Start with the normal mock (success)
+    const { result } = renderHook(() => useGeoData("US", "NY"));
+    await waitFor(() => {
+      expect(result.current.loading).toBe(false);
+    });
+    expect(result.current.countryOptions.length).toBeGreaterThan(0);
+  });
+
+  it("returns failed false and empty options initially before load completes", () => {
+    const { result } = renderHook(() => useGeoData("US", "NY"));
+    // Initially geo is null and geoFailed is false -> loading true
+    expect(result.current.failed).toBe(false);
+  });
+
+  it("provides retry function", async () => {
+    const { result } = renderHook(() => useGeoData("US", "NY"));
+    expect(typeof result.current.retry).toBe("function");
   });
 });

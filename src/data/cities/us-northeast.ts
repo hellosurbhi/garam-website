@@ -19,7 +19,10 @@ export const usNortheastCities: Record<string, CityData> = {
     ],
     ctas: [
       { label: "Join the Edison Waitlist", href: "#waitlist" },
-      { label: "Apply to Be a Contestant", href: "/apply?city=Edison&state=NJ" },
+      {
+        label: "Apply to Be a Contestant",
+        href: "/apply?city=Edison&state=NJ",
+      },
     ],
     includeEventSchema: false,
     areaServed: "Edison, New Jersey",
@@ -27,7 +30,13 @@ export const usNortheastCities: Record<string, CityData> = {
     addressRegion: "NJ",
     addressCountry: "US",
     region: "US Northeast",
-    nearbyCities: ["manhattan", "jersey-city", "parsippany", "stony-brook", "philadelphia"],
+    nearbyCities: [
+      "manhattan",
+      "jersey-city",
+      "parsippany",
+      "stony-brook",
+      "philadelphia",
+    ],
   },
 
   parsippany: {
@@ -47,7 +56,10 @@ export const usNortheastCities: Record<string, CityData> = {
     ],
     ctas: [
       { label: "Join the Parsippany Waitlist", href: "#waitlist" },
-      { label: "Apply to Be a Contestant", href: "/apply?city=Parsippany&state=NJ" },
+      {
+        label: "Apply to Be a Contestant",
+        href: "/apply?city=Parsippany&state=NJ",
+      },
     ],
     includeEventSchema: false,
     areaServed: "Parsippany, New Jersey",
@@ -55,7 +67,13 @@ export const usNortheastCities: Record<string, CityData> = {
     addressRegion: "NJ",
     addressCountry: "US",
     region: "US Northeast",
-    nearbyCities: ["edison", "manhattan", "jersey-city", "stamford", "philadelphia"],
+    nearbyCities: [
+      "edison",
+      "manhattan",
+      "jersey-city",
+      "stamford",
+      "philadelphia",
+    ],
   },
 
   philadelphia: {
@@ -76,7 +94,10 @@ export const usNortheastCities: Record<string, CityData> = {
     ],
     ctas: [
       { label: "Join the Philly Waitlist", href: "#waitlist" },
-      { label: "Apply to Be a Contestant", href: "/apply?city=Philadelphia&state=PA" },
+      {
+        label: "Apply to Be a Contestant",
+        href: "/apply?city=Philadelphia&state=PA",
+      },
     ],
     includeEventSchema: false,
     areaServed: "Philadelphia, Pennsylvania",
@@ -84,7 +105,13 @@ export const usNortheastCities: Record<string, CityData> = {
     addressRegion: "PA",
     addressCountry: "US",
     region: "US Northeast",
-    nearbyCities: ["edison", "manhattan", "jersey-city", "baltimore", "pittsburgh"],
+    nearbyCities: [
+      "edison",
+      "manhattan",
+      "jersey-city",
+      "baltimore",
+      "pittsburgh",
+    ],
   },
 
   boston: {
@@ -105,7 +132,10 @@ export const usNortheastCities: Record<string, CityData> = {
     ],
     ctas: [
       { label: "Join the Boston Waitlist", href: "#waitlist" },
-      { label: "Apply to Be a Contestant", href: "/apply?city=Boston&state=MA" },
+      {
+        label: "Apply to Be a Contestant",
+        href: "/apply?city=Boston&state=MA",
+      },
     ],
     includeEventSchema: false,
     areaServed: "Boston, Massachusetts",
@@ -113,7 +143,13 @@ export const usNortheastCities: Record<string, CityData> = {
     addressRegion: "MA",
     addressCountry: "US",
     region: "US Northeast",
-    nearbyCities: ["manhattan", "providence", "new-haven", "stamford", "albany"],
+    nearbyCities: [
+      "manhattan",
+      "providence",
+      "new-haven",
+      "stamford",
+      "albany",
+    ],
   },
 
   stamford: {
@@ -133,7 +169,10 @@ export const usNortheastCities: Record<string, CityData> = {
     ],
     ctas: [
       { label: "Join the CT Waitlist", href: "#waitlist" },
-      { label: "Apply to Be a Contestant", href: "/apply?city=Stamford&state=CT" },
+      {
+        label: "Apply to Be a Contestant",
+        href: "/apply?city=Stamford&state=CT",
+      },
     ],
     includeEventSchema: false,
     areaServed: "Stamford, Connecticut",
@@ -141,7 +180,13 @@ export const usNortheastCities: Record<string, CityData> = {
     addressRegion: "CT",
     addressCountry: "US",
     region: "US Northeast",
-    nearbyCities: ["manhattan", "jersey-city", "new-haven", "boston", "parsippany"],
+    nearbyCities: [
+      "manhattan",
+      "jersey-city",
+      "new-haven",
+      "boston",
+      "parsippany",
+    ],
   },
 
   "new-haven": {
@@ -161,7 +206,10 @@ export const usNortheastCities: Record<string, CityData> = {
     ],
     ctas: [
       { label: "Join the New Haven Waitlist", href: "#waitlist" },
-      { label: "Apply to Be a Contestant", href: "/apply?city=New+Haven&state=CT" },
+      {
+        label: "Apply to Be a Contestant",
+        href: "/apply?city=New+Haven&state=CT",
+      },
     ],
     includeEventSchema: false,
     areaServed: "New Haven, Connecticut",
@@ -189,7 +237,10 @@ export const usNortheastCities: Record<string, CityData> = {
     ],
     ctas: [
       { label: "Join the Providence Waitlist", href: "#waitlist" },
-      { label: "Apply to Be a Contestant", href: "/apply?city=Providence&state=RI" },
+      {
+        label: "Apply to Be a Contestant",
+        href: "/apply?city=Providence&state=RI",
+      },
     ],
     includeEventSchema: false,
     areaServed: "Providence, Rhode Island",
@@ -218,7 +269,10 @@ export const usNortheastCities: Record<string, CityData> = {
     ],
     ctas: [
       { label: "Join the Pittsburgh Waitlist", href: "#waitlist" },
-      { label: "Apply to Be a Contestant", href: "/apply?city=Pittsburgh&state=PA" },
+      {
+        label: "Apply to Be a Contestant",
+        href: "/apply?city=Pittsburgh&state=PA",
+      },
     ],
     includeEventSchema: false,
     areaServed: "Pittsburgh, Pennsylvania",
@@ -226,7 +280,13 @@ export const usNortheastCities: Record<string, CityData> = {
     addressRegion: "PA",
     addressCountry: "US",
     region: "US Northeast",
-    nearbyCities: ["philadelphia", "state-college", "buffalo", "manhattan", "edison"],
+    nearbyCities: [
+      "philadelphia",
+      "state-college",
+      "buffalo",
+      "manhattan",
+      "edison",
+    ],
   },
 
   "state-college": {
@@ -246,7 +306,10 @@ export const usNortheastCities: Record<string, CityData> = {
     ],
     ctas: [
       { label: "Join the State College Waitlist", href: "#waitlist" },
-      { label: "Apply to Be a Contestant", href: "/apply?city=State+College&state=PA" },
+      {
+        label: "Apply to Be a Contestant",
+        href: "/apply?city=State+College&state=PA",
+      },
     ],
     includeEventSchema: false,
     areaServed: "State College, Pennsylvania",
@@ -254,7 +317,13 @@ export const usNortheastCities: Record<string, CityData> = {
     addressRegion: "PA",
     addressCountry: "US",
     region: "US Northeast",
-    nearbyCities: ["pittsburgh", "philadelphia", "buffalo", "syracuse", "albany"],
+    nearbyCities: [
+      "pittsburgh",
+      "philadelphia",
+      "buffalo",
+      "syracuse",
+      "albany",
+    ],
   },
 
   buffalo: {
@@ -274,7 +343,10 @@ export const usNortheastCities: Record<string, CityData> = {
     ],
     ctas: [
       { label: "Join the Buffalo Waitlist", href: "#waitlist" },
-      { label: "Apply to Be a Contestant", href: "/apply?city=Buffalo&state=NY" },
+      {
+        label: "Apply to Be a Contestant",
+        href: "/apply?city=Buffalo&state=NY",
+      },
     ],
     includeEventSchema: false,
     areaServed: "Buffalo, New York",
@@ -282,7 +354,13 @@ export const usNortheastCities: Record<string, CityData> = {
     addressRegion: "NY",
     addressCountry: "US",
     region: "US Northeast",
-    nearbyCities: ["rochester", "syracuse", "pittsburgh", "albany", "manhattan"],
+    nearbyCities: [
+      "rochester",
+      "syracuse",
+      "pittsburgh",
+      "albany",
+      "manhattan",
+    ],
   },
 
   syracuse: {
@@ -302,7 +380,10 @@ export const usNortheastCities: Record<string, CityData> = {
     ],
     ctas: [
       { label: "Join the Syracuse Waitlist", href: "#waitlist" },
-      { label: "Apply to Be a Contestant", href: "/apply?city=Syracuse&state=NY" },
+      {
+        label: "Apply to Be a Contestant",
+        href: "/apply?city=Syracuse&state=NY",
+      },
     ],
     includeEventSchema: false,
     areaServed: "Syracuse, New York",
@@ -330,7 +411,10 @@ export const usNortheastCities: Record<string, CityData> = {
     ],
     ctas: [
       { label: "Join the Ithaca Waitlist", href: "#waitlist" },
-      { label: "Apply to Be a Contestant", href: "/apply?city=Ithaca&state=NY" },
+      {
+        label: "Apply to Be a Contestant",
+        href: "/apply?city=Ithaca&state=NY",
+      },
     ],
     includeEventSchema: false,
     areaServed: "Ithaca, New York",
@@ -338,7 +422,13 @@ export const usNortheastCities: Record<string, CityData> = {
     addressRegion: "NY",
     addressCountry: "US",
     region: "US Northeast",
-    nearbyCities: ["syracuse", "rochester", "buffalo", "state-college", "albany"],
+    nearbyCities: [
+      "syracuse",
+      "rochester",
+      "buffalo",
+      "state-college",
+      "albany",
+    ],
   },
 
   rochester: {
@@ -358,7 +448,10 @@ export const usNortheastCities: Record<string, CityData> = {
     ],
     ctas: [
       { label: "Join the Rochester Waitlist", href: "#waitlist" },
-      { label: "Apply to Be a Contestant", href: "/apply?city=Rochester&state=NY" },
+      {
+        label: "Apply to Be a Contestant",
+        href: "/apply?city=Rochester&state=NY",
+      },
     ],
     includeEventSchema: false,
     areaServed: "Rochester, New York",
@@ -386,7 +479,10 @@ export const usNortheastCities: Record<string, CityData> = {
     ],
     ctas: [
       { label: "Join the Albany Waitlist", href: "#waitlist" },
-      { label: "Apply to Be a Contestant", href: "/apply?city=Albany&state=NY" },
+      {
+        label: "Apply to Be a Contestant",
+        href: "/apply?city=Albany&state=NY",
+      },
     ],
     includeEventSchema: false,
     areaServed: "Albany, New York",
@@ -414,7 +510,10 @@ export const usNortheastCities: Record<string, CityData> = {
     ],
     ctas: [
       { label: "Join the Stony Brook Waitlist", href: "#waitlist" },
-      { label: "Apply to Be a Contestant", href: "/apply?city=Stony+Brook&state=NY" },
+      {
+        label: "Apply to Be a Contestant",
+        href: "/apply?city=Stony+Brook&state=NY",
+      },
     ],
     includeEventSchema: false,
     areaServed: "Stony Brook, New York",
@@ -422,6 +521,12 @@ export const usNortheastCities: Record<string, CityData> = {
     addressRegion: "NY",
     addressCountry: "US",
     region: "US Northeast",
-    nearbyCities: ["manhattan", "jersey-city", "edison", "new-haven", "stamford"],
+    nearbyCities: [
+      "manhattan",
+      "jersey-city",
+      "edison",
+      "new-haven",
+      "stamford",
+    ],
   },
 };

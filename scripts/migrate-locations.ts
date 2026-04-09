@@ -10,7 +10,13 @@
 import { readFileSync } from "fs";
 import { resolve } from "path";
 import { initializeApp } from "firebase/app";
-import { getFirestore, collection, getDocs, doc, updateDoc } from "firebase/firestore";
+import {
+  getFirestore,
+  collection,
+  getDocs,
+  doc,
+  updateDoc,
+} from "firebase/firestore";
 import { City } from "country-state-city";
 
 // ---------------------------------------------------------------------------
@@ -66,7 +72,7 @@ const ALIASES: Record<string, string> = {
   "washington dc": "Washington",
   "washington d.c.": "Washington",
   chi: "Chicago",
-  "sd": "San Diego",
+  sd: "San Diego",
   atl: "Atlanta",
   hou: "Houston",
   dal: "Dallas",
@@ -79,13 +85,13 @@ const ALIASES: Record<string, string> = {
 /** For US cities that exist in multiple states, pick the well-known one. */
 const US_STATE_PREFERENCE: Record<string, string> = {
   "san diego": "CA",
-  "portland": "OR",
-  "springfield": "IL",
-  "columbus": "OH",
-  "richmond": "VA",
-  "jackson": "MS",
-  "arlington": "TX",
-  "burlington": "VT",
+  portland: "OR",
+  springfield: "IL",
+  columbus: "OH",
+  richmond: "VA",
+  jackson: "MS",
+  arlington: "TX",
+  burlington: "VT",
 };
 
 function buildCityIndex(): Map<string, CityMatch[]> {
@@ -153,7 +159,11 @@ function resolveCity(
 // ---------------------------------------------------------------------------
 async function migrate() {
   const execute = process.argv.includes("--execute");
-  console.log(execute ? "🔥 EXECUTE mode — writing to Firestore" : "👀 DRY RUN — no writes");
+  console.log(
+    execute
+      ? "🔥 EXECUTE mode — writing to Firestore"
+      : "👀 DRY RUN — no writes",
+  );
   console.log();
 
   const cityIndex = buildCityIndex();
@@ -202,7 +212,9 @@ async function migrate() {
     console.log("  (none)");
   } else {
     for (const m of migrated) {
-      console.log(`  ${m.id}: "${m.from}" → ${m.to.name}, ${m.to.stateCode}, ${m.to.countryCode}`);
+      console.log(
+        `  ${m.id}: "${m.from}" → ${m.to.name}, ${m.to.stateCode}, ${m.to.countryCode}`,
+      );
     }
   }
 
@@ -217,7 +229,9 @@ async function migrate() {
   }
 
   console.log();
-  console.log(`Summary: ${migrated.length} migrated, ${skipped.length} skipped, ${legacy.length} total legacy`);
+  console.log(
+    `Summary: ${migrated.length} migrated, ${skipped.length} skipped, ${legacy.length} total legacy`,
+  );
 
   if (!execute && migrated.length > 0) {
     console.log("\nRe-run with --execute to apply changes.");

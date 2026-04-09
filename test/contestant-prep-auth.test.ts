@@ -44,7 +44,9 @@ describe("contestant-prep-auth handler", () => {
 
   it("returns 500 when salt env var is missing", async () => {
     delete import.meta.env.CONTESTANT_PREP_SALT;
-    const res = await POST(makeContext(makeRequest({ date: "2026-06-15", sig: "abc" })));
+    const res = await POST(
+      makeContext(makeRequest({ date: "2026-06-15", sig: "abc" })),
+    );
     expect(res.status).toBe(500);
     const body = await res.json();
     expect(body.error).toBe("Server misconfigured");
@@ -68,35 +70,49 @@ describe("contestant-prep-auth handler", () => {
   });
 
   it("returns 400 for invalid date format (no dashes)", async () => {
-    const res = await POST(makeContext(makeRequest({
-      date: "20260615",
-      sig: computeSig(TEST_SALT, "20260615"),
-    })));
+    const res = await POST(
+      makeContext(
+        makeRequest({
+          date: "20260615",
+          sig: computeSig(TEST_SALT, "20260615"),
+        }),
+      ),
+    );
     expect(res.status).toBe(400);
     const body = await res.json();
     expect(body.error).toBe("Invalid date format");
   });
 
   it("returns 400 for invalid date format (slash-separated)", async () => {
-    const res = await POST(makeContext(makeRequest({
-      date: "2026/06/15",
-      sig: computeSig(TEST_SALT, "2026/06/15"),
-    })));
+    const res = await POST(
+      makeContext(
+        makeRequest({
+          date: "2026/06/15",
+          sig: computeSig(TEST_SALT, "2026/06/15"),
+        }),
+      ),
+    );
     expect(res.status).toBe(400);
   });
 
   it("returns 400 for short date format (MMM DD)", async () => {
-    const res = await POST(makeContext(makeRequest({
-      date: "Feb 22",
-      sig: computeSig(TEST_SALT, "Feb 22"),
-    })));
+    const res = await POST(
+      makeContext(
+        makeRequest({
+          date: "Feb 22",
+          sig: computeSig(TEST_SALT, "Feb 22"),
+        }),
+      ),
+    );
     expect(res.status).toBe(400);
   });
 
   it("returns 401 for wrong signature", async () => {
     vi.useFakeTimers();
     vi.setSystemTime(new Date("2026-06-15T10:00:00Z"));
-    const res = await POST(makeContext(makeRequest({ date: "2026-06-15", sig: "a".repeat(64) })));
+    const res = await POST(
+      makeContext(makeRequest({ date: "2026-06-15", sig: "a".repeat(64) })),
+    );
     expect(res.status).toBe(401);
     const body = await res.json();
     expect(body.error).toBe("Invalid link");
@@ -106,7 +122,9 @@ describe("contestant-prep-auth handler", () => {
     vi.useFakeTimers();
     vi.setSystemTime(new Date("2026-06-15T10:00:00Z"));
     const wrongSig = computeSig("wrong-salt", "2026-06-15");
-    const res = await POST(makeContext(makeRequest({ date: "2026-06-15", sig: wrongSig })));
+    const res = await POST(
+      makeContext(makeRequest({ date: "2026-06-15", sig: wrongSig })),
+    );
     expect(res.status).toBe(401);
   });
 
@@ -197,7 +215,9 @@ describe("contestant-prep-auth handler", () => {
   it("rejects sig with different length (timing-safe check)", async () => {
     vi.useFakeTimers();
     vi.setSystemTime(new Date("2026-06-15T10:00:00Z"));
-    const res = await POST(makeContext(makeRequest({ date: "2026-06-15", sig: "abc123" })));
+    const res = await POST(
+      makeContext(makeRequest({ date: "2026-06-15", sig: "abc123" })),
+    );
     expect(res.status).toBe(401);
   });
 });

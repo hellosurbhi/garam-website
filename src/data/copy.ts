@@ -14,6 +14,7 @@ export const SITE = {
   footerLine:
     "NYC's #1 live South Asian dating show. Hosted by Surbhi & Wyatt.",
   hosts: "Surbhi & Wyatt",
+  ogImageAlt: "Garam Masala Dating — NYC's live South Asian dating show",
 } as const;
 
 export const STATS = [

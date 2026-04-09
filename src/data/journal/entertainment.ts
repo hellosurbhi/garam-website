@@ -112,7 +112,8 @@ export const entertainmentPosts: JournalPost[] = [
 
   {
     slug: "stop-waiting-for-indian-love-is-blind",
-    title: "Stop Waiting for Indian Love Is Blind — Join a Real Desi Dating Show",
+    title:
+      "Stop Waiting for Indian Love Is Blind — Join a Real Desi Dating Show",
     metaDescription:
       "An Indian Love Is Blind hasn't happened yet. But Garam Masala Dating — a live South Asian dating show in NYC — already exists. Here's why it's better.",
     datePublished: "2026-06-30",

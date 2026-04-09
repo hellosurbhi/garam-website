@@ -2,6 +2,176 @@
 
 ## Open
 
+### [HIGH] Firestore applications collection has no field validation on create
+
+- **Date:** 2026-04-09
+- **File:** `firestore.rules:36, 40`
+- **Status:** Open
+- **Severity:** High
+- **What's happening:** `allow create: if true;` on the `applications` collection and its subcollections. Unlike the `leads` collection (which has thorough `validLead()` validation with `hasOnly`, `hasAll`, type checks, and length limits), applications accept any document shape from any unauthenticated user. This enables spam flooding, data poisoning, or arbitrary field injection.
+- **What should happen:** Applications should have a `validApplication()` function mirroring the `validLead()` pattern — restricting allowed fields, requiring key fields, and enforcing type/length constraints.
+- **Fix:** Add a `validApplication()` function to `firestore.rules` with field validation. Consider also requiring `request.auth != null` or adding Firebase App Check.
+
+### [MEDIUM] No runtime input validation on POST API routes
+
+- **Date:** 2026-04-09
+- **File:** `src/pages/api/notify-application.ts:105`
+- **Status:** Open
+- **Severity:** Medium
+- **What's happening:** `notify-application.ts` uses an unsafe `as ApplicationNotification` cast with no runtime validation. Only checks that `name` and `instagram` exist — doesn't validate types, lengths, or format of the other 12 fields. Similar pattern in other POST endpoints.
+- **What should happen:** All POST endpoints should validate request bodies at runtime using schema validation (e.g., Zod).
+- **Fix:** Add Zod schemas for `ApplicationNotification` and other request types. Validate before processing.
+
+### [LOW] Leads collection allows unauthenticated phone updates
+
+- **Date:** 2026-04-09
+- **File:** `firestore.rules:45`
+- **Status:** Open
+- **Severity:** Low
+- **What's happening:** `allow update: if validPhoneUpdate() || request.auth != null;` — the `validPhoneUpdate()` branch allows any unauthenticated user to update the `phone` field on existing lead documents. This is likely intentional for the phone capture flow but means anyone with a document ID can overwrite phone numbers.
+- **What should happen:** Verify this is the intended behavior. If the phone capture flow requires unauthenticated updates, document it. If not, add `request.auth != null &&` before `validPhoneUpdate()`.
+- **Fix:** Review whether the phone capture UX requires unauthenticated updates. If yes, add a comment in `firestore.rules` explaining why. If no, require auth.
+
+### [HIGH] Homepage still emits duplicate FAQPage schema
+
+- **Date:** 2026-04-08
+- **File:** `src/pages/index.astro`, `src/pages/faq.astro`
+- **Status:** Open
+- **Severity:** High
+- **What's happening:** The homepage still imports `HOME_FAQS`, builds `faqJsonLd`, and emits a `FAQPage` JSON-LD block. The dedicated FAQ page also emits its own `FAQPage` schema with overlapping questions and different answer wording.
+- **What should happen:** Only `/faq` should own the `FAQPage` schema. The homepage can keep the visible accordion, but should not emit competing FAQ structured data.
+- **Fix:** Remove the homepage FAQ JSON-LD block from `src/pages/index.astro`.
+
+### [MEDIUM] Home hero photo background from audit not implemented
+
+- **Date:** 2026-04-08
+- **File:** `src/components/home/HomeHero.astro`
+- **Status:** Open
+- **Severity:** Medium
+- **What's happening:** The hero still renders only the shader canvas and gradient background. The planned stage photo layer was never added.
+- **What should happen:** The hero should include the optimized show photo behind the shader for depth and stronger visual proof.
+- **Fix:** Add a `<picture>` background layer using the new hero asset, placed behind the canvas with reduced opacity.
+
+### [MEDIUM] Home creators avatars were not upgraded to larger host photos
+
+- **Date:** 2026-04-08
+- **File:** `src/components/home/HomeCreators.astro`
+- **Status:** Open
+- **Severity:** Medium
+- **What's happening:** Creator avatars are still rendered at 96x96 on mobile and desktop. The audit called for larger host photos and updated crops.
+- **What should happen:** Home creator cards should use larger images with stronger visual emphasis and updated source assets.
+- **Fix:** Increase avatar sizing to the planned 160-200px range and switch to the newer processed host images.
+
+### [MEDIUM] Hosts page still uses small individual avatar images
+
+- **Date:** 2026-04-08
+- **File:** `src/pages/hosts.astro`
+- **Status:** Open
+- **Severity:** Medium
+- **What's happening:** The hosts page uses a strong action shot banner, but the individual host avatars are still 96x96 and were not upgraded as planned.
+- **What should happen:** The hosts page should use larger individual photos to match the rest of the redesign.
+- **Fix:** Replace the small avatars with larger cropped host images and adjust layout spacing accordingly.
+
+### [MEDIUM] Experience section photo placement was missed
+
+- **Date:** 2026-04-08
+- **File:** `src/components/home/HomeExperience.astro`
+- **Status:** Open
+- **Severity:** Medium
+- **What's happening:** The Experience section still has only text plus ambient background images. The planned audience reaction photo in the left column was never added.
+- **What should happen:** The section should include the audience photo below the copy to add proof and break up the text block.
+- **Fix:** Add the planned `<picture>` element below the body copy and style it per the audit.
+
+### [MEDIUM] Testimonials accent photo was not added
+
+- **Date:** 2026-04-08
+- **File:** `src/components/home/HomeTestimonials.astro`
+- **Status:** Open
+- **Severity:** Medium
+- **What's happening:** The testimonial section still renders only the three quote cards over a background image. The planned desktop-only image card or accent treatment was not implemented.
+- **What should happen:** Testimonials should include the audience reaction photo as added visual proof on desktop.
+- **Fix:** Add the fourth desktop grid item or equivalent accent treatment using the processed image.
+
+### [MEDIUM] Journal decorative cupid artwork not implemented
+
+- **Date:** 2026-04-08
+- **File:** `src/pages/journal/index.astro`, `src/pages/journal/[slug].astro`
+- **Status:** Open
+- **Severity:** Medium
+- **What's happening:** The journal pages still use the generic background image only. The decorative cupid artwork from the audit was not added to the index header or article layout.
+- **What should happen:** Journal pages should include the subtle cupid art accents that were part of the visual refresh plan.
+- **Fix:** Add absolutely positioned decorative image elements with the planned opacity and positioning.
+
+### [MEDIUM] Spice List section still double-asks subscribed users for email
+
+- **Date:** 2026-04-08
+- **File:** `src/components/home/HomeSignup.astro`
+- **Status:** Open
+- **Severity:** Medium
+- **What's happening:** The section always renders the email signup prompt, even when `localStorage` already contains `gmd-popup-subscribed`. Users who subscribed through the popup still see another email ask at the bottom of the home page.
+- **What should happen:** Previously subscribed users should see an alternate CTA, not another email form.
+- **Fix:** Detect the subscription flag on load and swap the section content to a follow/apply state.
+
+### [LOW] Popup CTA copy still uses weaker pre-audit wording
+
+- **Date:** 2026-04-08
+- **File:** `src/pages/index.astro`
+- **Status:** Open
+- **Severity:** Low
+- **What's happening:** The popup still says "Want Cheaper Tickets?" and "Get My Discount Code" rather than the stronger offer-based copy proposed in the audit.
+- **What should happen:** Popup copy should use the updated conversion-focused wording once the actual offer is confirmed.
+- **Fix:** Replace the popup headline, supporting copy, and CTA with the finalized offer language.
+
+### [LOW] Home nav scrolled state does not emphasize the tickets CTA
+
+- **Date:** 2026-04-08
+- **File:** `src/components/home/HomeNav.astro`
+- **Status:** Open
+- **Severity:** Low
+- **What's happening:** The nav changes background and border on scroll, but the tickets button does not get the planned pulse or stronger emphasis.
+- **What should happen:** Once the user scrolls and shows intent, the tickets CTA should become more visually assertive.
+- **Fix:** Add the planned scrolled-state animation or alternate emphasis style to `.nav-pill.primary`.
+
+### [LOW] Contact email usage is still inconsistent across pages
+
+- **Date:** 2026-04-08
+- **File:** `src/pages/faq.astro`, `src/pages/links.astro`
+- **Status:** Open
+- **Severity:** Low
+- **What's happening:** The FAQ footer uses `contact@`, but the FAQ collaboration answer still uses `press@`. The links page also still exposes `hello@` and `press@`, so there is no single consistent public contact address.
+- **What should happen:** Public-facing pages should consistently use the chosen primary contact email, with exceptions only where a separate inbox is intentional.
+- **Fix:** Standardize all public contact references and keep `press@` only if it is a deliberate press-specific alias.
+
+### [LOW] New image optimization pipeline from the audit was not completed cleanly
+
+- **Date:** 2026-04-08
+- **File:** `scripts/optimize-images.js`
+- **Status:** Open
+- **Severity:** Low
+- **What's happening:** The repo has a JS image script instead of the planned shell script, and several source paths in the script point to files that do not exist. This makes the pipeline unreliable if rerun.
+- **What should happen:** The repo should contain a working, repeatable asset pipeline for the new show photos.
+- **Fix:** Correct the source paths or replace the script with the intended `optimize-new-photos` workflow, then verify it end-to-end.
+
+### [MEDIUM] SVG-only buttons missing aria-label (accessibility)
+
+- **Date:** 2026-04-08
+- **File:** Multiple components — found by Playwright smoke test on iPad/desktop viewports
+- **Status:** Open
+- **Severity:** Medium
+- **What's happening:** Some buttons contain only an SVG icon with no `aria-label`, `aria-labelledby`, or `title` attribute. `textContent` is empty for SVG-only buttons, so screen readers announce them as "button" with no context. The smoke test (`assertAllButtonsAccessible`) catches these — buttons that are visible but have no accessible name.
+- **What should happen:** Every visible button must have either text content, `aria-label`, `aria-labelledby`, or `title`.
+- **Fix:** Audit all `<button>` elements with SVG-only children across the site. Add `aria-label` to each one. Known pattern: close buttons (`.modal-close`), icon buttons, and any button that relies solely on a visual icon. Run `npx playwright test --grep "Static pages smoke"` to find all offending pages.
+
+### [LOW] Contestant-prep page has empty meta description
+
+- **Date:** 2026-04-08
+- **File:** `src/pages/contestant-prep.astro`
+- **Status:** Open
+- **Severity:** Low
+- **What's happening:** `description=""` is passed to BaseLayout, resulting in an empty meta description tag. While the page has `noindex={true}`, an empty description is still sloppy.
+- **What should happen:** Even noindex pages should have a meaningful description for anyone who lands on them.
+- **Fix:** Add a description like "Preparation guide for confirmed Garam Masala Dating contestants."
+
 ### [HIGH] Firebase Auth blocked by CSP in production — apply form silently fails
 
 - **Date:** 2026-04-07

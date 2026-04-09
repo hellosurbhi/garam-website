@@ -1,4 +1,5 @@
 export interface LeadAttribution {
+  [key: string]: string | undefined;
   source: string;
   sourcePage: string;
   landingPage: string;
@@ -10,6 +11,12 @@ export interface LeadAttribution {
   utmTerm?: string;
   posthogDistinctId?: string;
   sourceCitySlug?: string;
+  geoCity?: string;
+  geoRegion?: string;
+  geoCountry?: string;
+  geoLatitude?: string;
+  geoLongitude?: string;
+  geoTimezone?: string;
 }
 
 const LANDING_PAGE_KEY = "gmd-landing-page";
@@ -19,6 +26,13 @@ const UTM_MEDIUM_KEY = "gmd-utm-medium";
 const UTM_CAMPAIGN_KEY = "gmd-utm-campaign";
 const UTM_CONTENT_KEY = "gmd-utm-content";
 const UTM_TERM_KEY = "gmd-utm-term";
+const GEO_CITY_KEY = "gmd-geo-city";
+const GEO_REGION_KEY = "gmd-geo-region";
+const GEO_COUNTRY_KEY = "gmd-geo-country";
+const GEO_LATITUDE_KEY = "gmd-geo-latitude";
+const GEO_LONGITUDE_KEY = "gmd-geo-longitude";
+const GEO_TIMEZONE_KEY = "gmd-geo-timezone";
+const GEO_FETCHED_KEY = "gmd-geo-fetched";
 
 function getPathname(): string {
   return window.location.pathname || "/";
@@ -49,6 +63,34 @@ function getCurrentUtms() {
   };
 }
 
+interface GeoResponse {
+  city?: string;
+  region?: string;
+  country?: string;
+  latitude?: string;
+  longitude?: string;
+  timezone?: string;
+}
+
+function bootstrapGeoData() {
+  if (sessionStorage.getItem(GEO_FETCHED_KEY)) return;
+
+  fetch("/api/geo")
+    .then((res) => (res.ok ? (res.json() as Promise<GeoResponse>) : null))
+    .then((geo) => {
+      if (!geo) return;
+      if (geo.city) sessionStorage.setItem(GEO_CITY_KEY, geo.city);
+      if (geo.region) sessionStorage.setItem(GEO_REGION_KEY, geo.region);
+      if (geo.country) sessionStorage.setItem(GEO_COUNTRY_KEY, geo.country);
+      if (geo.latitude) sessionStorage.setItem(GEO_LATITUDE_KEY, geo.latitude);
+      if (geo.longitude)
+        sessionStorage.setItem(GEO_LONGITUDE_KEY, geo.longitude);
+      if (geo.timezone) sessionStorage.setItem(GEO_TIMEZONE_KEY, geo.timezone);
+      sessionStorage.setItem(GEO_FETCHED_KEY, "1");
+    })
+    .catch(console.error);
+}
+
 export function bootstrapLeadAttribution() {
   setIfMissing(LANDING_PAGE_KEY, getPathname());
   setIfMissing(REFERRER_HOST_KEY, getReferrerHost());
@@ -59,6 +101,8 @@ export function bootstrapLeadAttribution() {
   setIfMissing(UTM_CAMPAIGN_KEY, utms.utmCampaign);
   setIfMissing(UTM_CONTENT_KEY, utms.utmContent);
   setIfMissing(UTM_TERM_KEY, utms.utmTerm);
+
+  bootstrapGeoData();
 }
 
 export function buildLeadAttribution(params: {
@@ -99,6 +143,25 @@ export function buildLeadAttribution(params: {
   if (params.sourceCitySlug) {
     attribution.sourceCitySlug = params.sourceCitySlug;
   }
+
+  // Geo data from /api/geo (cached in sessionStorage)
+  const geoCity = sessionStorage.getItem(GEO_CITY_KEY) ?? undefined;
+  if (geoCity) attribution.geoCity = geoCity;
+
+  const geoRegion = sessionStorage.getItem(GEO_REGION_KEY) ?? undefined;
+  if (geoRegion) attribution.geoRegion = geoRegion;
+
+  const geoCountry = sessionStorage.getItem(GEO_COUNTRY_KEY) ?? undefined;
+  if (geoCountry) attribution.geoCountry = geoCountry;
+
+  const geoLatitude = sessionStorage.getItem(GEO_LATITUDE_KEY) ?? undefined;
+  if (geoLatitude) attribution.geoLatitude = geoLatitude;
+
+  const geoLongitude = sessionStorage.getItem(GEO_LONGITUDE_KEY) ?? undefined;
+  if (geoLongitude) attribution.geoLongitude = geoLongitude;
+
+  const geoTimezone = sessionStorage.getItem(GEO_TIMEZONE_KEY) ?? undefined;
+  if (geoTimezone) attribution.geoTimezone = geoTimezone;
 
   return attribution;
 }

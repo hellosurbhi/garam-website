@@ -1,0 +1,43 @@
+name: Link Check
+
+on:
+  # Run on every push to main
+  push:
+    branches: [main]
+  # Run on PRs
+  pull_request:
+    branches: [main]
+  # Run weekly to catch external links that died
+  schedule:
+    - cron: "0 9 * * 1" # Every Monday at 9am UTC
+
+jobs:
+  link-check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      - run: npm ci
+
+      - name: Check links on production
+        run: npx linkinator https://garammasaladating.com --recurse --timeout 30000 --retry --skip 'eventbrite.com|instagram.com|tiktok.com|facebook.com|twitter.com|x.com|youtube.com|linkedin.com' --format json > link-results.json || true
+
+      - name: Report results
+        if: always()
+        run: |
+          echo "## Link Check Results" >> $GITHUB_STEP_SUMMARY
+          node -e "
+            const r = require('./link-results.json');
+            const broken = r.links.filter(l => l.state === 'BROKEN');
+            if (broken.length > 0) {
+              console.log('BROKEN LINKS FOUND:');
+              broken.forEach(l => console.log(l.url + ' (found on: ' + l.parent + ') -> ' + l.status));
+              process.exit(1);
+            } else {
+              console.log('All links OK');
+            }
+          "

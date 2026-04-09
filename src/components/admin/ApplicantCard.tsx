@@ -30,48 +30,64 @@ function StatusBadge({ status }: { status: Application["status"] }) {
   );
 }
 
-export default function ApplicantCard({ app, onClick, onDelete, onRestore, dimmed }: ApplicantCardProps) {
+export default function ApplicantCard({
+  app,
+  onClick,
+  onDelete,
+  onRestore,
+  dimmed,
+}: ApplicantCardProps) {
   const handle = app.instagram.replace(/^@/, "");
 
-  const actionButton = (onDelete ?? onRestore) ? (
-    <button
-      onClick={(e) => {
-        e.stopPropagation();
-        if (onDelete) onDelete();
-        else onRestore?.();
-      }}
-      style={{
-        position: "absolute",
-        top: "8px",
-        right: "8px",
-        background: "rgba(0,0,0,0.45)",
-        border: "none",
-        borderRadius: "100px",
-        minWidth: "48px",
-        minHeight: "48px",
-        padding: "10px",
-        cursor: "pointer",
-        display: "flex",
-        alignItems: "center",
-        justifyContent: "center",
-        color: "#fff",
-        opacity: 0,
-        transition: "opacity 0.15s, background 0.15s",
-        zIndex: 2,
-      }}
-      onMouseEnter={(e) => (e.currentTarget.style.background = "rgba(0,0,0,0.65)")}
-      onMouseLeave={(e) => (e.currentTarget.style.background = "rgba(0,0,0,0.45)")}
-      aria-label={onDelete ? "Delete application" : "Restore application"}
-      className="card-action-btn"
-    >
-      {onDelete ? <Trash2 size={18} /> : <ArchiveRestore size={18} />}
-    </button>
-  ) : null;
+  const actionButton =
+    (onDelete ?? onRestore) ? (
+      <button
+        onClick={(e) => {
+          e.stopPropagation();
+          if (onDelete) onDelete();
+          else onRestore?.();
+        }}
+        style={{
+          position: "absolute",
+          top: "8px",
+          right: "8px",
+          background: "rgba(0,0,0,0.45)",
+          border: "none",
+          borderRadius: "100px",
+          minWidth: "48px",
+          minHeight: "48px",
+          padding: "10px",
+          cursor: "pointer",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          color: "#fff",
+          opacity: 0,
+          transition: "opacity 0.15s, background 0.15s",
+          zIndex: 2,
+        }}
+        onMouseEnter={(e) =>
+          (e.currentTarget.style.background = "rgba(0,0,0,0.65)")
+        }
+        onMouseLeave={(e) =>
+          (e.currentTarget.style.background = "rgba(0,0,0,0.45)")
+        }
+        aria-label={onDelete ? "Delete application" : "Restore application"}
+        className="card-action-btn"
+      >
+        {onDelete ? <Trash2 size={18} /> : <ArchiveRestore size={18} />}
+      </button>
+    ) : null;
 
   return (
     <article
       onClick={onClick}
-      onKeyDown={(e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); onClick?.(); } }}
+      onKeyDown={(e) => {
+        if (e.key === "Enter" || e.key === " ") {
+          e.preventDefault();
+          onClick?.();
+        }
+      }}
       tabIndex={0}
       role="button"
       aria-label={`View application from ${app.name}`}
@@ -88,13 +104,17 @@ export default function ApplicantCard({ app, onClick, onDelete, onRestore, dimme
       onMouseEnter={(e) => {
         e.currentTarget.style.transform = "translateY(-2px)";
         e.currentTarget.style.boxShadow = "0 6px 20px rgba(0,0,0,0.12)";
-        const btn = e.currentTarget.querySelector(".card-action-btn") as HTMLElement | null;
+        const btn = e.currentTarget.querySelector(
+          ".card-action-btn",
+        ) as HTMLElement | null;
         if (btn) btn.style.opacity = "1";
       }}
       onMouseLeave={(e) => {
         e.currentTarget.style.transform = "translateY(0)";
         e.currentTarget.style.boxShadow = "0 1px 6px rgba(0,0,0,0.07)";
-        const btn = e.currentTarget.querySelector(".card-action-btn") as HTMLElement | null;
+        const btn = e.currentTarget.querySelector(
+          ".card-action-btn",
+        ) as HTMLElement | null;
         if (btn) btn.style.opacity = "0";
       }}
     >
@@ -113,7 +133,12 @@ export default function ApplicantCard({ app, onClick, onDelete, onRestore, dimme
             src={app.photoUrl}
             alt={app.name}
             loading="lazy"
-            style={{ width: "100%", height: "100%", objectFit: "cover", display: "block" }}
+            style={{
+              width: "100%",
+              height: "100%",
+              objectFit: "cover",
+              display: "block",
+            }}
           />
         ) : (
           <div
@@ -142,13 +167,23 @@ export default function ApplicantCard({ app, onClick, onDelete, onRestore, dimme
             marginBottom: "2px",
           }}
         >
-          <span style={{ fontWeight: 600, fontSize: "16px", color: "var(--text)" }}>
+          <span
+            style={{ fontWeight: 600, fontSize: "16px", color: "var(--text)" }}
+          >
             {app.name}
           </span>
-          <span style={{ fontSize: "14px", color: "var(--text-light)" }}>{app.age}</span>
+          <span style={{ fontSize: "14px", color: "var(--text-light)" }}>
+            {app.age}
+          </span>
         </div>
 
-        <p style={{ fontSize: "13px", color: "var(--text-light)", marginBottom: "8px" }}>
+        <p
+          style={{
+            fontSize: "13px",
+            color: "var(--text-light)",
+            marginBottom: "8px",
+          }}
+        >
           {formatLocation(app)}
         </p>
 

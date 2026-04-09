@@ -670,8 +670,7 @@ export const matrimonyPosts: JournalPost[] = [
 
   {
     slug: "community-matrimony-sites-guide",
-    title:
-      "Community Matrimony Sites: From TamilMatrimony to PunjabiMatrimony",
+    title: "Community Matrimony Sites: From TamilMatrimony to PunjabiMatrimony",
     metaDescription:
       "Guide to community-specific matrimony sites: TamilMatrimony, PunjabiMatrimony, KeralaMatrimony, and more. Which community platforms are worth using in 2026?",
     datePublished: "2026-08-09",
@@ -788,7 +787,8 @@ export const matrimonyPosts: JournalPost[] = [
 
   {
     slug: "indian-matrimony-after-divorce-second-marriage",
-    title: "Indian Matrimony After Divorce: Second Marriage Platforms That Work",
+    title:
+      "Indian Matrimony After Divorce: Second Marriage Platforms That Work",
     metaDescription:
       "Guide to divorcee matrimony and second marriage options for Indian and South Asian singles. Which platforms, strategies, and mindsets actually work in 2026.",
     datePublished: "2026-08-11",

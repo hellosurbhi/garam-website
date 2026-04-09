@@ -1,11 +1,11 @@
 ---
-import BaseLayout from '@/layouts/BaseLayout.astro';
-import { cities } from '@/data/cities';
-import type { CityData } from '@/data/cities';
-import { events } from '@/data/events';
-import { isEventPast } from '@/utils/eventDate';
-import { buildBreadcrumbJsonLd } from '@/utils/breadcrumbs';
-import { SHOW_IMAGES, slugToImageIndex } from '@/data/images';
+import BaseLayout from "@/layouts/BaseLayout.astro";
+import { cities } from "@/data/cities";
+import type { CityData } from "@/data/cities";
+import { events } from "@/data/events";
+import { isEventPast } from "@/utils/eventDate";
+import { buildBreadcrumbJsonLd } from "@/utils/breadcrumbs";
+import { SHOW_IMAGES, slugToImageIndex } from "@/data/images";
 
 export function getStaticPaths() {
   return Object.keys(cities).map((slug) => ({
@@ -14,7 +14,9 @@ export function getStaticPaths() {
   }));
 }
 
-interface Props { city: CityData; }
+interface Props {
+  city: CityData;
+}
 const { city } = Astro.props;
 
 const heroImage = SHOW_IMAGES[slugToImageIndex(city.slug, SHOW_IMAGES.length)];
@@ -29,15 +31,19 @@ const title = city.titleTag;
 const description = city.metaDescription;
 
 // Upcoming events matching this city (for active cities with real shows)
-const cityEvents = city.status === "active"
-  ? events.filter((e) =>
-      !e.hidden &&
-      !isEventPast(e.date) &&
-      e.url !== "#" &&
-      e.url !== "" &&
-      (e.citySlug ? e.citySlug === city.slug : e.city.includes(city.displayName))
-    )
-  : [];
+const cityEvents =
+  city.status === "active"
+    ? events.filter(
+        (e) =>
+          !e.hidden &&
+          !isEventPast(e.date) &&
+          e.url !== "#" &&
+          e.url !== "" &&
+          (e.citySlug
+            ? e.citySlug === city.slug
+            : e.city.includes(city.displayName)),
+      )
+    : [];
 
 /* ── City JSON-LD ─────────────────────────────────────────── */
 
@@ -67,8 +73,16 @@ function buildCityJsonLd(c: CityData): string {
       url: "https://garammasaladating.com",
     },
     performer: [
-      { "@type": "Person", name: "Surbhi", url: "https://www.instagram.com/lordmakemetaller/" },
-      { "@type": "Person", name: "Wyatt Feegrado", url: "https://www.instagram.com/wyattfeegrado/" },
+      {
+        "@type": "Person",
+        name: "Surbhi",
+        url: "https://www.instagram.com/lordmakemetaller/",
+      },
+      {
+        "@type": "Person",
+        name: "Wyatt Feegrado",
+        url: "https://www.instagram.com/wyattfeegrado/",
+      },
     ],
     location: {
       "@type": "Place",
@@ -111,7 +125,15 @@ const breadcrumbJsonLd = buildBreadcrumbJsonLd([
   </Fragment>
 
   <main id="main-content" class="city-page">
-    <img class="city-bg" src={heroImage} alt="" width="1200" height="675" aria-hidden="true" />
+    <img
+      class="city-bg"
+      src={heroImage}
+      alt=""
+      width="1200"
+      height="675"
+      loading="lazy"
+      aria-hidden="true"
+    />
     <div class="city-container">
       {/* Eyebrow label */}
       <p class="city-eyebrow">{city.displayName}</p>
@@ -121,63 +143,155 @@ const breadcrumbJsonLd = buildBreadcrumbJsonLd([
 
       {/* Body */}
       <div class="city-body">
-        {city.bodyParagraphs.map((para) => (
-          <p class="city-paragraph">{para}</p>
-        ))}
+        {
+          city.bodyParagraphs.map((para) => (
+            <p class="city-paragraph">{para}</p>
+          ))
+        }
       </div>
 
       {/* CTAs */}
       <div class="city-ctas">
         {/* Per-event ticket buttons for active cities */}
-        {cityEvents.map((event) => (
-          <a
-            href={event.url}
-            target="_blank"
-            rel="noopener noreferrer"
-            class="city-cta city-cta--primary"
-          >
-            <span>{event.date} — Get Tickets</span>
-            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="city-cta__arrow"><path d="M5 12h14" /><path d="m12 5 7 7-7 7" /></svg>
-          </a>
-        ))}
-        {/* Static CTAs (apply, waitlist, etc.) */}
-        {city.ctas.map((cta, i) => {
-          const isWaitlist = cta.href === '#waitlist';
-          const isPrimary = cityEvents.length === 0 && i === 0;
-          return isWaitlist ? (
-            <button
-              type="button"
-              class:list={["city-cta", isPrimary ? "city-cta--primary" : "city-cta--secondary"]}
-              data-waitlist-trigger
-            >
-              <span>{cta.label}</span>
-              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="city-cta__arrow"><path d="M5 12h14" /><path d="m12 5 7 7-7 7" /></svg>
-            </button>
-          ) : (
+        {
+          cityEvents.map((event) => (
             <a
-              href={cta.href}
-              class:list={["city-cta", isPrimary ? "city-cta--primary" : "city-cta--secondary"]}
+              href={event.url}
+              target="_blank"
+              rel="noopener noreferrer"
+              class="city-cta city-cta--primary"
             >
-              <span>{cta.label}</span>
-              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="city-cta__arrow"><path d="M5 12h14" /><path d="m12 5 7 7-7 7" /></svg>
+              <span>{event.date} — Get Tickets</span>
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="16"
+                height="16"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                class="city-cta__arrow"
+                aria-hidden="true"
+              >
+                <>
+                  <path d="M5 12h14" />
+                  <path d="m12 5 7 7-7 7" />
+                </>
+              </svg>
             </a>
-          );
-        })}
+          ))
+        }
+        {/* Static CTAs (apply, waitlist, etc.) */}
+        {
+          city.ctas.map((cta, i) => {
+            const isWaitlist = cta.href === "#waitlist";
+            const isPrimary = cityEvents.length === 0 && i === 0;
+            return isWaitlist ? (
+              <button
+                type="button"
+                class:list={[
+                  "city-cta",
+                  isPrimary ? "city-cta--primary" : "city-cta--secondary",
+                ]}
+                data-waitlist-trigger
+              >
+                <span>{cta.label}</span>
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="16"
+                  height="16"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  class="city-cta__arrow"
+                >
+                  <>
+                    <path d="M5 12h14" />
+                    <path d="m12 5 7 7-7 7" />
+                  </>
+                </svg>
+              </button>
+            ) : (
+              <a
+                href={cta.href}
+                class:list={[
+                  "city-cta",
+                  isPrimary ? "city-cta--primary" : "city-cta--secondary",
+                ]}
+              >
+                <span>{cta.label}</span>
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="16"
+                  height="16"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  class="city-cta__arrow"
+                >
+                  <>
+                    <path d="M5 12h14" />
+                    <path d="m12 5 7 7-7 7" />
+                  </>
+                </svg>
+              </a>
+            );
+          })
+        }
       </div>
 
       {/* Waitlist modal */}
       <dialog id="waitlist-modal" class="modal-dialog">
         <div class="modal-inner">
           <button type="button" class="modal-close" aria-label="Close">
-            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="20"
+              height="20"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              aria-hidden="true"
+              ><path d="M18 6 6 18"></path><path d="m6 6 12 12"></path></svg
+            >
           </button>
           <div id="waitlist-form-view">
             <h2 class="modal-title">Join the {city.displayName} Waitlist</h2>
-            <p class="modal-subtitle">We'll email you the moment tickets drop for {city.displayName}.</p>
-            <form id="waitlist-form" class="modal-form">
-              <input type="email" id="waitlist-email" placeholder="Your email" required aria-label="Email address" />
-              <p id="waitlist-error" class="modal-error" hidden role="alert"></p>
-              <button type="submit" class="modal-submit">Join the Waitlist</button>
+            <p class="modal-subtitle">
+              We'll email you the moment tickets drop for {city.displayName}.
+            </p>
+            <form
+              id="waitlist-form"
+              class="modal-form"
+              toolname="join-city-show-waitlist"
+              tooldescription="Join the waitlist for Garam Masala Dating shows in this city. You will be notified when tickets go on sale."
+            >
+              <input
+                type="email"
+                id="waitlist-email"
+                class="ph-mask"
+                placeholder="Your email"
+                required
+                aria-label="Email address"
+                aria-describedby="waitlist-error"
+                toolparamdescription="Email address to be notified when show tickets go on sale in this city"
+              />
+              <p id="waitlist-error" class="modal-error" hidden role="alert">
+              </p>
+              <button type="submit" class="modal-submit"
+                >Join the Waitlist</button
+              >
             </form>
           </div>
           <div id="waitlist-success" class="modal-success" hidden>
@@ -187,203 +301,338 @@ const breadcrumbJsonLd = buildBreadcrumbJsonLd([
       </dialog>
 
       {/* Email + phone signup for cities with events */}
-      {cityEvents.length > 0 && (
-        <div class="city-notify">
-          <!-- min-height prevents CLS when switching between steps -->
-          <div class="city-notify__steps">
-            <div id="city-notify-step1">
-              <h3 class="city-notify__title">Stay in the Loop</h3>
-              <p class="city-notify__desc">Get notified about future {city.displayName} shows, discount codes, and free ticket drops.</p>
-              <form id="city-notify-email-form" class="city-notify__form">
-                <input type="email" id="city-notify-email" placeholder="Your email" required aria-label="Email address" />
-                <p id="city-notify-email-error" class="city-notify__error" hidden role="alert"></p>
-                <button type="submit">Get Notified</button>
-              </form>
-            </div>
-            <div id="city-notify-step2" hidden>
-              <p class="city-notify__desc">Add your number for text-only discounts and free ticket drops.</p>
-              <form id="city-notify-phone-form" class="city-notify__form">
-                <input type="tel" id="city-notify-phone" placeholder="(555) 123-4567" aria-label="Phone number" />
-                <p id="city-notify-phone-error" class="city-notify__error" hidden role="alert"></p>
-                <button type="submit">Send Me Deals</button>
-              </form>
-              <button type="button" id="city-notify-skip" class="city-notify__skip">Maybe later</button>
-            </div>
-            <div id="city-notify-success" hidden>
-              <p class="city-notify__done">You're on the list!</p>
+      {
+        cityEvents.length > 0 && (
+          <div class="city-notify">
+            <div class="city-notify__steps">
+              <div id="city-notify-step1">
+                <h3 class="city-notify__title">Stay in the Loop</h3>
+                <p class="city-notify__desc">
+                  Get notified about future {city.displayName} shows, discount
+                  codes, and free ticket drops.
+                </p>
+                <form
+                  id="city-notify-email-form"
+                  class="city-notify__form"
+                  toolname="subscribe-to-city-show-alerts"
+                  tooldescription="Subscribe to email notifications for upcoming Garam Masala Dating shows in this city, including discount codes and ticket drops."
+                >
+                  <input
+                    type="email"
+                    id="city-notify-email"
+                    class="ph-mask"
+                    placeholder="Your email"
+                    required
+                    aria-label="Email address"
+                    aria-describedby="city-notify-email-error"
+                    toolparamdescription="Email address for show announcements, discount codes, and ticket drops in this city"
+                  />
+                  <p
+                    id="city-notify-email-error"
+                    class="city-notify__error"
+                    hidden
+                    role="alert"
+                  />
+                  <button type="submit">Get Notified</button>
+                </form>
+              </div>
+              <div id="city-notify-step2" hidden>
+                <p class="city-notify__desc">
+                  Add your number for text-only discounts and free ticket drops.
+                </p>
+                <form
+                  id="city-notify-phone-form"
+                  class="city-notify__form"
+                  toolname="add-phone-to-city-show-alerts"
+                  tooldescription="Add a phone number for SMS notifications about upcoming Garam Masala Dating shows in this city (optional step after email signup)."
+                >
+                  <input
+                    type="tel"
+                    id="city-notify-phone"
+                    class="ph-mask"
+                    placeholder="(555) 123-4567"
+                    aria-label="Phone number"
+                    aria-describedby="city-notify-phone-error"
+                    toolparamdescription="Mobile phone number for SMS-only ticket drops and show alerts in this city (optional)"
+                  />
+                  <p
+                    id="city-notify-phone-error"
+                    class="city-notify__error"
+                    hidden
+                    role="alert"
+                  />
+                  <button type="submit">Send Me Deals</button>
+                </form>
+                <button
+                  type="button"
+                  id="city-notify-skip"
+                  class="city-notify__skip"
+                >
+                  Maybe later
+                </button>
+              </div>
+              <div id="city-notify-success" hidden>
+                <p class="city-notify__done">You're on the list!</p>
+              </div>
             </div>
           </div>
-        </div>
-      )}
+        )
+      }
 
       {/* Nearby cities */}
-      {nearbyCities.length > 0 && (
-        <div class="city-nearby">
-          <h3 class="city-nearby__title">Also coming to</h3>
-          <div class="city-nearby__list">
-            {nearbyCities.map((nc) => (
-              <a href={`/cities/${nc.slug}`} class="city-nearby__link">
-                {nc.displayName}
-                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
-              </a>
-            ))}
+      {
+        nearbyCities.length > 0 && (
+          <div class="city-nearby">
+            <h3 class="city-nearby__title">Also coming to</h3>
+            <div class="city-nearby__list">
+              {nearbyCities.map((nc) => (
+                <a href={`/cities/${nc.slug}`} class="city-nearby__link">
+                  {nc.displayName}
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="14"
+                    height="14"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                  >
+                    <path d="M5 12h14" />
+                    <path d="m12 5 7 7-7 7" />
+                  </svg>
+                </a>
+              ))}
+            </div>
           </div>
-        </div>
-      )}
+        )
+      }
 
       {/* Footer */}
       <div class="city-footer">
-        <a href="/cities" class="city-footer__link">
-          &larr; All cities
-        </a>
+        <a href="/cities" class="city-footer__link"> &larr; All cities </a>
       </div>
     </div>
   </main>
 </BaseLayout>
 
 <script>
-  import { getFirebaseDb } from '@/lib/firebase';
-  import { collection, addDoc, updateDoc, type DocumentReference } from 'firebase/firestore';
-  import { cleanPhone } from '@/lib/phone';
-  import { identifyLead, trackLeadEvent } from '@/lib/analytics';
-  import { buildLeadAttribution } from '@/lib/leadAttribution';
+  import { getFirebaseDb } from "@/lib/firebase";
+  import {
+    collection,
+    addDoc,
+    updateDoc,
+    type DocumentReference,
+  } from "firebase/firestore";
+  import { cleanPhone } from "@/lib/phone";
+  import { identifyLead, trackLeadEvent } from "@/lib/analytics";
+  import { buildLeadAttribution } from "@/lib/leadAttribution";
 
-  const dialog = document.getElementById('waitlist-modal') as HTMLDialogElement;
-  const citySlug = window.location.pathname.split('/').filter(Boolean).at(-1) ?? '';
+  const dialog = document.getElementById("waitlist-modal") as HTMLDialogElement;
+  const citySlug =
+    window.location.pathname.split("/").filter(Boolean).at(-1) ?? "";
   if (dialog) {
-    document.querySelectorAll('[data-waitlist-trigger]').forEach((btn) => {
-      btn.addEventListener('click', () => {
-        trackLeadEvent('waitlist_modal_opened', { source: 'city-waitlist', sourcePage: window.location.pathname, sourceCitySlug: citySlug });
+    document.querySelectorAll("[data-waitlist-trigger]").forEach((btn) => {
+      btn.addEventListener("click", () => {
+        trackLeadEvent("waitlist_modal_opened", {
+          source: "city-waitlist",
+          sourcePage: window.location.pathname,
+          sourceCitySlug: citySlug,
+        });
         dialog.showModal();
       });
     });
-    dialog.querySelector('.modal-close')?.addEventListener('click', () => dialog.close());
-    dialog.addEventListener('click', (e) => {
+    dialog
+      .querySelector(".modal-close")
+      ?.addEventListener("click", () => dialog.close());
+    dialog.addEventListener("click", (e) => {
       if (e.target === dialog) dialog.close();
     });
 
-    document.getElementById('waitlist-form')?.addEventListener('submit', async (e) => {
-      e.preventDefault();
-      const email = (document.getElementById('waitlist-email') as HTMLInputElement).value;
-      const city = document.querySelector('.city-eyebrow')?.textContent ?? '';
-      const submitBtn = (e.target as HTMLFormElement).querySelector<HTMLButtonElement>('[type="submit"]');
-      const errorEl = document.getElementById('waitlist-error');
-      if (submitBtn) submitBtn.disabled = true;
-      try {
-        const db = getFirebaseDb();
-        const attribution = buildLeadAttribution({ source: 'city-waitlist', sourceCitySlug: citySlug });
-        await addDoc(collection(db, 'leads'), {
-          email,
-          city,
-          ...attribution,
-          createdAt: new Date().toISOString(),
-        });
-        identifyLead(email, { ...attribution, city });
-        trackLeadEvent('lead_email_submitted', { ...attribution, city });
-        document.getElementById('waitlist-form-view')?.setAttribute('hidden', '');
-        document.getElementById('waitlist-success')?.removeAttribute('hidden');
-      } catch {
-        if (errorEl) { errorEl.textContent = 'Something went wrong. Please try again.'; errorEl.removeAttribute('hidden'); }
-      } finally {
-        if (submitBtn) submitBtn.disabled = false;
-      }
-    });
+    document
+      .getElementById("waitlist-form")
+      ?.addEventListener("submit", async (e) => {
+        e.preventDefault();
+        const email = (
+          document.getElementById("waitlist-email") as HTMLInputElement
+        ).value;
+        const city = document.querySelector(".city-eyebrow")?.textContent ?? "";
+        const submitBtn = (
+          e.target as HTMLFormElement
+        ).querySelector<HTMLButtonElement>('[type="submit"]');
+        const errorEl = document.getElementById("waitlist-error");
+        if (submitBtn) submitBtn.disabled = true;
+        try {
+          const db = getFirebaseDb();
+          const attribution = buildLeadAttribution({
+            source: "city-waitlist",
+            sourceCitySlug: citySlug,
+          });
+          await addDoc(collection(db, "leads"), {
+            email,
+            city,
+            ...attribution,
+            createdAt: new Date().toISOString(),
+          });
+          identifyLead(email, { ...attribution, city });
+          trackLeadEvent("lead_email_submitted", { ...attribution, city });
+          document
+            .getElementById("waitlist-form-view")
+            ?.setAttribute("hidden", "");
+          document
+            .getElementById("waitlist-success")
+            ?.removeAttribute("hidden");
+        } catch {
+          if (errorEl) {
+            errorEl.textContent = "Something went wrong. Please try again.";
+            errorEl.removeAttribute("hidden");
+          }
+        } finally {
+          if (submitBtn) submitBtn.disabled = false;
+        }
+      });
   }
 
   // City page email + phone signup
-  let cityNotifyEmail = '';
+  let cityNotifyEmail = "";
   let cityNotifyDocRef: DocumentReference | null = null;
-  const cityName = document.querySelector('.city-eyebrow')?.textContent ?? '';
+  const cityName = document.querySelector(".city-eyebrow")?.textContent ?? "";
 
-  document.getElementById('city-notify-email-form')?.addEventListener('submit', async (e) => {
-    e.preventDefault();
-    cityNotifyEmail = (document.getElementById('city-notify-email') as HTMLInputElement).value;
-    const errorEl = document.getElementById('city-notify-email-error');
-    const submitBtn = (e.target as HTMLFormElement).querySelector<HTMLButtonElement>('[type="submit"]');
-    if (submitBtn) submitBtn.disabled = true;
-    try {
-      const db = getFirebaseDb();
-      const attribution = buildLeadAttribution({ source: 'city-page', sourceCitySlug: citySlug });
-      cityNotifyDocRef = await addDoc(collection(db, 'leads'), {
-        email: cityNotifyEmail,
-        city: cityName,
-        ...attribution,
-        createdAt: new Date().toISOString(),
-      });
-      identifyLead(cityNotifyEmail, { ...attribution, city: cityName });
-      trackLeadEvent('lead_email_submitted', { ...attribution, city: cityName });
-      if (errorEl) { errorEl.textContent = ''; errorEl.setAttribute('hidden', ''); }
-      document.getElementById('city-notify-step1')?.setAttribute('hidden', '');
-      document.getElementById('city-notify-step2')?.removeAttribute('hidden');
-    } catch (err) {
-      if (errorEl) {
-        errorEl.textContent = 'Something went wrong. Please try again.';
-        errorEl.removeAttribute('hidden');
-      }
-    } finally {
-      if (submitBtn) submitBtn.disabled = false;
-    }
-  });
-
-  document.getElementById('city-notify-phone-form')?.addEventListener('submit', async (e) => {
-    e.preventDefault();
-    const raw = (document.getElementById('city-notify-phone') as HTMLInputElement).value;
-    const cleaned = cleanPhone(raw);
-    const phoneErrorEl = document.getElementById('city-notify-phone-error');
-
-    if (!raw.trim()) {
-      document.getElementById('city-notify-step2')?.setAttribute('hidden', '');
-      document.getElementById('city-notify-success')?.removeAttribute('hidden');
-      return;
-    }
-
-    if (!cleaned) {
-      if (phoneErrorEl) {
-        phoneErrorEl.textContent = 'Please enter a valid phone number.';
-        phoneErrorEl.removeAttribute('hidden');
-      }
-      return;
-    }
-
-    const submitBtn = (e.target as HTMLFormElement).querySelector<HTMLButtonElement>('[type="submit"]');
-    if (submitBtn) submitBtn.disabled = true;
-    try {
-      const db = getFirebaseDb();
-      if (cityNotifyDocRef) {
-        await updateDoc(cityNotifyDocRef, { phone: cleaned });
-      } else {
-        const attribution = buildLeadAttribution({ source: 'city-page', sourceCitySlug: citySlug });
-        await addDoc(collection(db, 'leads'), {
+  document
+    .getElementById("city-notify-email-form")
+    ?.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      cityNotifyEmail = (
+        document.getElementById("city-notify-email") as HTMLInputElement
+      ).value;
+      const errorEl = document.getElementById("city-notify-email-error");
+      const submitBtn = (
+        e.target as HTMLFormElement
+      ).querySelector<HTMLButtonElement>('[type="submit"]');
+      if (submitBtn) submitBtn.disabled = true;
+      try {
+        const db = getFirebaseDb();
+        const attribution = buildLeadAttribution({
+          source: "city-page",
+          sourceCitySlug: citySlug,
+        });
+        cityNotifyDocRef = await addDoc(collection(db, "leads"), {
           email: cityNotifyEmail,
-          phone: cleaned,
           city: cityName,
           ...attribution,
           createdAt: new Date().toISOString(),
         });
+        identifyLead(cityNotifyEmail, { ...attribution, city: cityName });
+        trackLeadEvent("lead_email_submitted", {
+          ...attribution,
+          city: cityName,
+        });
+        if (errorEl) {
+          errorEl.textContent = "";
+          errorEl.setAttribute("hidden", "");
+        }
+        document
+          .getElementById("city-notify-step1")
+          ?.setAttribute("hidden", "");
+        document.getElementById("city-notify-step2")?.removeAttribute("hidden");
+      } catch (err) {
+        if (errorEl) {
+          errorEl.textContent = "Something went wrong. Please try again.";
+          errorEl.removeAttribute("hidden");
+        }
+      } finally {
+        if (submitBtn) submitBtn.disabled = false;
       }
-      trackLeadEvent('lead_phone_submitted', { source: 'city-page', sourcePage: window.location.pathname, sourceCitySlug: citySlug });
-      document.getElementById('city-notify-step2')?.setAttribute('hidden', '');
-      document.getElementById('city-notify-success')?.removeAttribute('hidden');
-    } catch (err) {
-      if (phoneErrorEl) {
-        phoneErrorEl.textContent = 'Something went wrong. Please try again or skip.';
-        phoneErrorEl.removeAttribute('hidden');
-      }
-    } finally {
-      if (submitBtn) submitBtn.disabled = false;
-    }
-  });
+    });
 
-  document.getElementById('city-notify-skip')?.addEventListener('click', () => {
-    document.getElementById('city-notify-step2')?.setAttribute('hidden', '');
-    document.getElementById('city-notify-success')?.removeAttribute('hidden');
+  document
+    .getElementById("city-notify-phone-form")
+    ?.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const raw = (
+        document.getElementById("city-notify-phone") as HTMLInputElement
+      ).value;
+      const cleaned = cleanPhone(raw);
+      const phoneErrorEl = document.getElementById("city-notify-phone-error");
+
+      if (!raw.trim()) {
+        document
+          .getElementById("city-notify-step2")
+          ?.setAttribute("hidden", "");
+        document
+          .getElementById("city-notify-success")
+          ?.removeAttribute("hidden");
+        return;
+      }
+
+      if (!cleaned) {
+        if (phoneErrorEl) {
+          phoneErrorEl.textContent = "Please enter a valid phone number.";
+          phoneErrorEl.removeAttribute("hidden");
+        }
+        return;
+      }
+
+      const submitBtn = (
+        e.target as HTMLFormElement
+      ).querySelector<HTMLButtonElement>('[type="submit"]');
+      if (submitBtn) submitBtn.disabled = true;
+      try {
+        const db = getFirebaseDb();
+        if (cityNotifyDocRef) {
+          await updateDoc(cityNotifyDocRef, { phone: cleaned });
+        } else {
+          const attribution = buildLeadAttribution({
+            source: "city-page",
+            sourceCitySlug: citySlug,
+          });
+          await addDoc(collection(db, "leads"), {
+            email: cityNotifyEmail,
+            phone: cleaned,
+            city: cityName,
+            ...attribution,
+            createdAt: new Date().toISOString(),
+          });
+        }
+        trackLeadEvent("lead_phone_submitted", {
+          source: "city-page",
+          sourcePage: window.location.pathname,
+          sourceCitySlug: citySlug,
+        });
+        document
+          .getElementById("city-notify-step2")
+          ?.setAttribute("hidden", "");
+        document
+          .getElementById("city-notify-success")
+          ?.removeAttribute("hidden");
+      } catch (err) {
+        if (phoneErrorEl) {
+          phoneErrorEl.textContent =
+            "Something went wrong. Please try again or skip.";
+          phoneErrorEl.removeAttribute("hidden");
+        }
+      } finally {
+        if (submitBtn) submitBtn.disabled = false;
+      }
+    });
+
+  document.getElementById("city-notify-skip")?.addEventListener("click", () => {
+    document.getElementById("city-notify-step2")?.setAttribute("hidden", "");
+    document.getElementById("city-notify-success")?.removeAttribute("hidden");
   });
 </script>
 
 <style>
   @keyframes cityFadeIn {
-    from { opacity: 0; transform: translateY(16px); }
-    to   { opacity: 1; transform: translateY(0); }
+    from {
+      opacity: 0;
+      transform: translateY(16px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
   }
 
   .city-page {
@@ -464,7 +713,9 @@ const breadcrumbJsonLd = buildBreadcrumbJsonLd([
     font-size: 15px;
     font-weight: 500;
     text-decoration: none;
-    transition: background 0.15s, border-color 0.15s;
+    transition:
+      background 0.15s,
+      border-color 0.15s;
   }
 
   .city-cta--primary {
@@ -517,7 +768,9 @@ const breadcrumbJsonLd = buildBreadcrumbJsonLd([
     font-weight: 500;
     color: var(--text-secondary);
     text-decoration: none;
-    transition: border-color 0.15s, color 0.15s;
+    transition:
+      border-color 0.15s,
+      color 0.15s;
   }
 
   .city-nearby__link:hover {
@@ -659,7 +912,9 @@ const breadcrumbJsonLd = buildBreadcrumbJsonLd([
     height: 100%;
     overflow: visible;
   }
-  .modal-dialog::backdrop { background: rgba(0, 0, 0, 0.5); }
+  .modal-dialog::backdrop {
+    background: rgba(0, 0, 0, 0.5);
+  }
   .modal-dialog[open] {
     display: flex;
     align-items: center;
@@ -679,8 +934,14 @@ const breadcrumbJsonLd = buildBreadcrumbJsonLd([
     text-align: center;
   }
   @keyframes modalIn {
-    from { opacity: 0; transform: scale(0.95) translateY(8px); }
-    to { opacity: 1; transform: scale(1) translateY(0); }
+    from {
+      opacity: 0;
+      transform: scale(0.95) translateY(8px);
+    }
+    to {
+      opacity: 1;
+      transform: scale(1) translateY(0);
+    }
   }
   .modal-close {
     position: absolute;
@@ -698,7 +959,9 @@ const breadcrumbJsonLd = buildBreadcrumbJsonLd([
     transition: color 0.2s;
     cursor: pointer;
   }
-  .modal-close:hover { color: var(--charcoal); }
+  .modal-close:hover {
+    color: var(--charcoal);
+  }
   .modal-title {
     font-family: var(--font-playfair), serif;
     font-size: 22px;
@@ -727,7 +990,9 @@ const breadcrumbJsonLd = buildBreadcrumbJsonLd([
     transition: border-color 0.2s;
     min-height: var(--touch-target);
   }
-  .modal-form input:focus { border-color: var(--brand-red); }
+  .modal-form input:focus {
+    border-color: var(--brand-red);
+  }
   .modal-submit {
     background: var(--brand-red);
     color: white;
@@ -744,7 +1009,9 @@ const breadcrumbJsonLd = buildBreadcrumbJsonLd([
     white-space: nowrap;
     width: 100%;
   }
-  .modal-submit:hover { background: var(--brand-red-dark); }
+  .modal-submit:hover {
+    background: var(--brand-red-dark);
+  }
   .modal-success {
     text-align: center;
     padding: 24px 0;

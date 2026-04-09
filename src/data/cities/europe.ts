@@ -99,7 +99,7 @@ export const europeCities: Record<string, CityData> = {
     badgeLabel: "Coming Soon",
     bodyParagraphs: [
       "Berlin\u2019s Indian community has exploded alongside the city\u2019s tech boom. Indian engineers fill the offices at Zalando, N26, SoundCloud, and a hundred startups across Mitte and Kreuzberg. TU Berlin and HU Berlin pull in Indian students. The community is young, international, and mostly navigating dating in a city where the culture around relationships is radically different from what they grew up with.",
-      "Garam Masala Dating is a live South Asian dating show and singles mixer from NYC. Real blind dates on stage, two hosts, a live audience, and a mixer. The format cuts through the Berlin dating problem, which is that everyone is friendly but nobody makes the first move and everyone leaves the bar thinking \"that was nice\" without exchanging numbers.",
+      'Garam Masala Dating is a live South Asian dating show and singles mixer from NYC. Real blind dates on stage, two hosts, a live audience, and a mixer. The format cuts through the Berlin dating problem, which is that everyone is friendly but nobody makes the first move and everyone leaves the bar thinking "that was nice" without exchanging numbers.',
       "Sch\u00f6neberg, Neuk\u00f6lln, and the areas around Hauptbahnhof have growing Indian populations. The Indian restaurants on Kantstrasse in Charlottenburg have been there for decades, but the community has shifted from older diplomatic and business circles to a much younger, tech driven crowd.",
       "Berlin\u2019s comedy scene is mostly English language, which works perfectly for a show like this. The city is used to international events and mixed language crowds. The audience will get the references and the humour without needing a translator.",
       "Waitlist is open. Berlin is our top Germany target. Get on the list or apply to be a contestant.",
@@ -230,7 +230,13 @@ export const europeCities: Record<string, CityData> = {
     addressRegion: "Leinster",
     addressCountry: "IE",
     region: "Europe",
-    nearbyCities: ["london", "manchester", "edinburgh", "amsterdam", "birmingham"],
+    nearbyCities: [
+      "london",
+      "manchester",
+      "edinburgh",
+      "amsterdam",
+      "birmingham",
+    ],
   },
 
   paris: {
@@ -810,7 +816,13 @@ export const europeCities: Record<string, CityData> = {
     addressRegion: "South Holland",
     addressCountry: "NL",
     region: "Europe",
-    nearbyCities: ["the-hague", "rotterdam", "leiden", "amsterdam", "eindhoven"],
+    nearbyCities: [
+      "the-hague",
+      "rotterdam",
+      "leiden",
+      "amsterdam",
+      "eindhoven",
+    ],
   },
 
   groningen: {
@@ -911,7 +923,7 @@ export const europeCities: Record<string, CityData> = {
     badgeLabel: "Coming Soon",
     bodyParagraphs: [
       "Stuttgart is automotive Germany, and the automotive industry loves Indian engineers. Bosch's global headquarters is here. Daimler (Mercedes-Benz) is here. Porsche is here. The supply chain of parts manufacturers, tech vendors, and consulting firms around these companies stretches across the region and employs a significant number of Indian professionals. University of Stuttgart's mechanical and electrical engineering programmes feed the pipeline directly. This is a company town, and the companies happen to recruit heavily from India.",
-      "Garam Masala Dating is a live South Asian dating show and singles mixer from NYC. Real blind dates on stage, two hosts, a live audience, and a mixer. Stuttgart's Indian community is professional, well paid, and socially marooned. The Swabian culture is famously reserved, the city sprawls across hills and valleys that make casual socializing geographically annoying, and the dating apps are filled with people who open with \"So, which OEM do you work for?\"",
+      'Garam Masala Dating is a live South Asian dating show and singles mixer from NYC. Real blind dates on stage, two hosts, a live audience, and a mixer. Stuttgart\'s Indian community is professional, well paid, and socially marooned. The Swabian culture is famously reserved, the city sprawls across hills and valleys that make casual socializing geographically annoying, and the dating apps are filled with people who open with "So, which OEM do you work for?"',
       "The Indian community clusters in Bad Cannstatt, Vaihingen near the university, and in the suburbs along the S-Bahn lines. There are a few Indian restaurants in the city centre and a growing number of Indian grocery stores, but the social infrastructure is thin. The community events that exist are family oriented. Temple visits, Diwali dinners, Republic Day celebrations. Nothing for singles.",
       "Stuttgart's Kessel (basin) geography means the city feels smaller than it is. The advantage for a show is that everyone's close, even if they don't feel like it. A room full of South Asian singles in Stuttgart would draw from the entire metropolitan area, including Esslingen, Ludwigsburg, and Tubingen. The audience is ready.",
       "Waitlist is open. Stuttgart is part of our Germany expansion. Get on the list or apply to be a contestant.",
@@ -1058,7 +1070,7 @@ export const europeCities: Record<string, CityData> = {
       "Dusseldorf is Germany's business and fashion capital, and its international business community includes a notable South Asian contingent. The city is also home to the largest Japanese community in Europe (Immermannstrasse is Little Tokyo), which sets a precedent for how Asian communities can embed themselves in a German city. Indian professionals here work in consulting, finance, telecommunications (Vodafone's German HQ is here), and the trade fair industry that's central to Dusseldorf's economy.",
       "Garam Masala Dating is a live South Asian dating show and singles mixer from NYC. Real blind dates on stage, two hosts, a live audience, and a mixer. Dusseldorf is polished, professional, and a bit image conscious. The Konigsallee (Ko) is Germany's answer to Fifth Avenue. For South Asian professionals navigating that sleek corporate world during the day, a show that lets them be authentically desi at night is a release valve.",
       "Heinrich Heine University and the business schools attract Indian students, though fewer than in technical university cities like Aachen or Munich. The community here skews older and more professional than the typical university town desi scene. These are people with established careers who moved to Dusseldorf for work and found themselves in a city that's pleasant, expensive, and socially opaque.",
-      "The Altstadt's \"longest bar in the world\" (a strip of 260 pubs and bars) means Dusseldorf knows how to go out. The challenge is going out with purpose. A dating show creates that purpose. Cologne is thirty minutes away, Aachen is an hour, and the NRW corridor is one of the most populated regions in Europe. The audience is there.",
+      'The Altstadt\'s "longest bar in the world" (a strip of 260 pubs and bars) means Dusseldorf knows how to go out. The challenge is going out with purpose. A dating show creates that purpose. Cologne is thirty minutes away, Aachen is an hour, and the NRW corridor is one of the most populated regions in Europe. The audience is there.',
       "Waitlist is open. Dusseldorf is part of our NRW and Rhineland plans. Get on the list or apply to be a contestant.",
     ],
     ctas: [
@@ -1201,7 +1213,7 @@ export const europeCities: Record<string, CityData> = {
     badgeLabel: "Coming Soon",
     bodyParagraphs: [
       "Cork has been quietly building a South Asian community through its pharma and tech sectors. Pfizer, Johnson & Johnson, and Apple all have significant operations in the Cork region, and they've brought Indian professionals with them. University College Cork (UCC) adds students, and the Munster Technological University campus contributes to the pipeline. The community is smaller than Dublin's but growing, and it has the advantage of being in a city that's actually affordable by Irish standards.",
-      "Garam Masala Dating is a live South Asian dating show and singles mixer from NYC. Real blind dates on stage, two hosts, a live audience, and a mixer. Cork calls itself the \"real capital of Ireland\" and the people here believe it. That self-confidence and local pride creates a community that's tight and welcoming. A desi dating show would be embraced rather than observed.",
+      'Garam Masala Dating is a live South Asian dating show and singles mixer from NYC. Real blind dates on stage, two hosts, a live audience, and a mixer. Cork calls itself the "real capital of Ireland" and the people here believe it. That self-confidence and local pride creates a community that\'s tight and welcoming. A desi dating show would be embraced rather than observed.',
       "The Indian community in Cork is concentrated around the university area, the Mahon business park where tech companies cluster, and in the suburbs along the Lee Valley. There's a handful of Indian restaurants and an active cultural association, but the social programming for singles is nonexistent. The pub is the default social venue in Cork, and while pubs are wonderful, they're not exactly optimized for meeting a partner.",
       "Cork's comedy and live music scene is proportionally as good as Dublin's. The Everyman Theatre and the festival calendar prove the city appreciates performance. A dating show with comedy energy fits naturally into what Cork already loves.",
       "Waitlist is open. Cork is part of our Ireland expansion alongside Dublin. Get on the list or apply to be a contestant.",
@@ -1593,7 +1605,13 @@ export const europeCities: Record<string, CityData> = {
     addressRegion: "Skane",
     addressCountry: "SE",
     region: "Europe",
-    nearbyCities: ["copenhagen", "gothenburg", "stockholm", "uppsala", "hamburg"],
+    nearbyCities: [
+      "copenhagen",
+      "gothenburg",
+      "stockholm",
+      "uppsala",
+      "hamburg",
+    ],
   },
 
   tampere: {
@@ -1637,7 +1655,7 @@ export const europeCities: Record<string, CityData> = {
     bodyParagraphs: [
       "Oulu is the tech capital of northern Finland and the most unlikely place you'd expect to find an Indian community. Nokia's R&D operations here are significant, and the University of Oulu's wireless communications and IT programmes attract Indian researchers and students. The city sits near the Arctic Circle, which means winter days with about four hours of daylight and summer nights where the sun doesn't set. If you're an Indian engineer from Chennai, Oulu is culture shock of the most extreme variety.",
       "Garam Masala Dating is a live South Asian dating show and singles mixer from NYC. Real blind dates on stage, two hosts, a live audience, and a mixer. Oulu would be the most northern show we ever do, and the novelty factor alone makes it interesting. The community is tiny but tight, and a show here would be a genuine event for people who have zero social programming designed for them.",
-      "The Indian community in Oulu bonds over the shared absurdity of living in the Arctic. The darkness, the cold, the reindeer crossing signs, the fact that your nearest Indian grocery store might be a three hour drive. These shared experiences create a solidarity that bigger cities can't replicate. A dating show leverages that solidarity. Everyone in the room already has the ultimate icebreaker: \"So, why Oulu?\"",
+      'The Indian community in Oulu bonds over the shared absurdity of living in the Arctic. The darkness, the cold, the reindeer crossing signs, the fact that your nearest Indian grocery store might be a three hour drive. These shared experiences create a solidarity that bigger cities can\'t replicate. A dating show leverages that solidarity. Everyone in the room already has the ultimate icebreaker: "So, why Oulu?"',
       "Oulu's tech ecosystem extends to companies like MediaTek, Broadcom, and a handful of startups built on wireless technology IP. The community is small enough that a show of 50 people would feel packed. Sometimes the smallest shows are the most memorable.",
       "Waitlist is open. Oulu is part of our Finnish expansion. Get on the list or apply to be a contestant.",
     ],
@@ -1752,7 +1770,7 @@ export const europeCities: Record<string, CityData> = {
     badgeLabel: "Coming Soon",
     bodyParagraphs: [
       "Brno is the Czech Republic's second city and its university capital. Masaryk University and Brno University of Technology (BUT) together attract a substantial international student body, including Indian students in IT, engineering, and the sciences. The city's tech sector has grown significantly, with Red Hat, Kiwi.com, and a cluster of software companies establishing offices here. The cost of living is lower than Prague, the quality of life is arguably higher, and the Indian community is growing in parallel with the tech jobs.",
-      "Garam Masala Dating is a live South Asian dating show and singles mixer from NYC. Real blind dates on stage, two hosts, a live audience, and a mixer. Brno has a classic second city chip on its shoulder. Prague gets all the attention, all the tourists, and all the headlines. Brno quietly builds a better quality of life and a more authentic social scene. A dating show here would be received with the enthusiastic \"finally\" that only overlooked cities can produce.",
+      'Garam Masala Dating is a live South Asian dating show and singles mixer from NYC. Real blind dates on stage, two hosts, a live audience, and a mixer. Brno has a classic second city chip on its shoulder. Prague gets all the attention, all the tourists, and all the headlines. Brno quietly builds a better quality of life and a more authentic social scene. A dating show here would be received with the enthusiastic "finally" that only overlooked cities can produce.',
       "The Spilberk area, the Namesti Svobody square, and the student bars along Veselka Street make up the social geography. Moravian wine culture adds a sophistication that Prague's beer-only reputation doesn't capture. The Indian community here is younger and more academic than professional, which means the audience skews toward postgrads and early career professionals. That's a sweet spot for a dating show.",
       "Brno is two hours from Vienna, three from Budapest, and ninety minutes from Prague. The Central European positioning means a show here could draw curious attendees from three countries. The Brno Expat Centre actively helps internationals integrate, but dating events for specific communities don't exist. We're building what's missing.",
       "Waitlist is open. Brno is part of our Central European plans. Get on the list or apply to be a contestant.",
@@ -1838,7 +1856,7 @@ export const europeCities: Record<string, CityData> = {
     status: "coming-soon",
     badgeLabel: "Coming Soon",
     bodyParagraphs: [
-      "Cluj-Napoca is Romania's unofficial tech capital, and the scene here has earned it the nickname \"Silicon Forest of Transylvania\" (yes, really). Babes-Bolyai University and the Technical University of Cluj-Napoca attract Indian students, while the IT sector, anchored by companies like Bosch, Continental, and a thriving local startup ecosystem, employs Indian engineers. The city has more IT companies per capita than Bucharest and a younger, more dynamic energy.",
+      'Cluj-Napoca is Romania\'s unofficial tech capital, and the scene here has earned it the nickname "Silicon Forest of Transylvania" (yes, really). Babes-Bolyai University and the Technical University of Cluj-Napoca attract Indian students, while the IT sector, anchored by companies like Bosch, Continental, and a thriving local startup ecosystem, employs Indian engineers. The city has more IT companies per capita than Bucharest and a younger, more dynamic energy.',
       "Garam Masala Dating is a live South Asian dating show and singles mixer from NYC. Real blind dates on stage, two hosts, a live audience, and a mixer. Cluj is the kind of city where being new means you're interesting rather than invisible. The international community is growing, and the locals are genuinely curious about the people moving in. That openness extends to events. A desi dating show here would be welcomed, not just by the South Asian community but by a city that likes new things.",
       "The Centru neighbourhood and the area around Piata Unirii are where social life concentrates. The cafe culture is strong, the craft beer scene is surprisingly good, and UNTOLD Festival proves that Cluj can host tens of thousands of people and keep them happy. The city punches above its weight on every entertainment metric.",
       "For the Indian community in Cluj, which is small but concentrated, a dating show solves the fundamental problem of critical mass. You can't organically bump into enough South Asian singles in a city of 320,000 to build a dating life. You need someone to put everyone in a room. That's us.",
@@ -1883,7 +1901,13 @@ export const europeCities: Record<string, CityData> = {
     addressRegion: "Sofia-City",
     addressCountry: "BG",
     region: "Europe",
-    nearbyCities: ["bucharest", "thessaloniki", "budapest", "athens", "cluj-napoca"],
+    nearbyCities: [
+      "bucharest",
+      "thessaloniki",
+      "budapest",
+      "athens",
+      "cluj-napoca",
+    ],
   },
 
   vilnius: {
@@ -1898,7 +1922,7 @@ export const europeCities: Record<string, CityData> = {
     bodyParagraphs: [
       "Vilnius has been positioning itself as a fintech hub, and that sector, combined with Vilnius University's growing international programmes, has attracted a small but noticeable Indian community. The city's IT industry employs Indian professionals at companies like Danske Bank, Western Union, and a cluster of fintech startups that chose Vilnius for its regulatory friendliness and talent pool. The Old Town, a UNESCO World Heritage site, is compact, walkable, and beautiful in a way that catches first time visitors off guard.",
       "Garam Masala Dating is a live South Asian dating show and singles mixer from NYC. Real blind dates on stage, two hosts, a live audience, and a mixer. Vilnius is one of the smaller capitals in Europe but its ambition is outsized. The city actively courts international talent, and the South Asian professionals who've landed here often report surprise at how livable it is. Affordable, safe, with a genuinely good restaurant and bar scene.",
-      "The Uzupis neighbourhood (a self-declared \"republic\" with its own constitution, including the right for a cat to not love its owner) tells you everything about Vilnius's personality: quirky, artistic, and not taking itself too seriously. That energy pairs well with a comedy dating show. The audience here would get it.",
+      'The Uzupis neighbourhood (a self-declared "republic" with its own constitution, including the right for a cat to not love its owner) tells you everything about Vilnius\'s personality: quirky, artistic, and not taking itself too seriously. That energy pairs well with a comedy dating show. The audience here would get it.',
       "The Indian community in Vilnius is small enough that a show would feel like a genuine milestone. First desi dating show in Lithuania? That's the kind of thing that gets covered by local media and shared across Baltic WhatsApp groups. The novelty is a feature, not a limitation.",
       "Waitlist is open. Vilnius is part of our Baltic expansion. Get on the list or apply to be a contestant.",
     ],

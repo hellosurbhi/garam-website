@@ -15,11 +15,14 @@ function makeRequest(
   body: unknown = {},
   headers: Record<string, string> = { authorization: "Bearer test-token" },
 ): Request {
-  return new Request("https://garammasaladating.com/api/generate-contestant-link", {
-    method,
-    headers: { "Content-Type": "application/json", ...headers },
-    body: method !== "GET" ? JSON.stringify(body) : undefined,
-  });
+  return new Request(
+    "https://garammasaladating.com/api/generate-contestant-link",
+    {
+      method,
+      headers: { "Content-Type": "application/json", ...headers },
+      body: method !== "GET" ? JSON.stringify(body) : undefined,
+    },
+  );
 }
 
 function makeContext(request: Request) {
@@ -35,6 +38,7 @@ describe("generate-contestant-link handler", () => {
 
   afterEach(() => {
     delete import.meta.env.CONTESTANT_PREP_SALT;
+    vi.unstubAllEnvs();
   });
 
   it("returns 401 when not authenticated", async () => {
@@ -68,7 +72,11 @@ describe("generate-contestant-link handler", () => {
   });
 
   it("returns 200 with URL for valid request", async () => {
-    const req = makeRequest("POST", { showDate: "2026-06-15" }, { authorization: "Bearer test-token", host: "garammasaladating.com" });
+    const req = makeRequest(
+      "POST",
+      { showDate: "2026-06-15" },
+      { authorization: "Bearer test-token", host: "garammasaladating.com" },
+    );
     const res = await POST(makeContext(req));
     expect(res.status).toBe(200);
     const body = await res.json();
@@ -77,24 +85,27 @@ describe("generate-contestant-link handler", () => {
     expect(body.url).toContain("sig=");
   });
 
-  it("uses https for non-localhost hosts", async () => {
-    const req = makeRequest("POST", { showDate: "2026-06-15" }, { authorization: "Bearer test-token", host: "garammasaladating.com" });
+  it("uses fallback origin when SITE env var is not set", async () => {
+    delete (import.meta.env as Record<string, unknown>).SITE;
+    const req = makeRequest(
+      "POST",
+      { showDate: "2026-06-15" },
+      { authorization: "Bearer test-token", host: "garammasaladating.com" },
+    );
     const res = await POST(makeContext(req));
     const body = await res.json();
-    expect(body.url).toMatch(/^https:\/\//);
+    expect(body.url).toMatch(/^https:\/\/garammasaladating\.com\//);
   });
 
-  it("uses http for localhost", async () => {
-    const req = makeRequest("POST", { showDate: "2026-06-15" }, { authorization: "Bearer test-token", host: "localhost:3000" });
+  it("url uses origin from SITE env var", async () => {
+    vi.stubEnv("SITE", "https://custom-origin.example.com");
+    const req = makeRequest(
+      "POST",
+      { showDate: "2026-06-15" },
+      { authorization: "Bearer test-token", host: "localhost:3000" },
+    );
     const res = await POST(makeContext(req));
     const body = await res.json();
-    expect(body.url).toMatch(/^http:\/\//);
-  });
-
-  it("uses http for 127.0.0.1", async () => {
-    const req = makeRequest("POST", { showDate: "2026-06-15" }, { authorization: "Bearer test-token", host: "127.0.0.1:3000" });
-    const res = await POST(makeContext(req));
-    const body = await res.json();
-    expect(body.url).toMatch(/^http:\/\//);
+    expect(body.url).toMatch(/^https:\/\/custom-origin\.example\.com\//);
   });
 });

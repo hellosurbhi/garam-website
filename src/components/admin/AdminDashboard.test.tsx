@@ -32,7 +32,10 @@ function makeApp(overrides?: Partial<Application>): Application {
     photoUrl: "https://example.com/photo.jpg",
     status: "New",
     notes: "",
-    submittedAt: { toDate: () => new Date("2026-03-15"), seconds: 1742054400 } as unknown as Application["submittedAt"],
+    submittedAt: {
+      toDate: () => new Date("2026-03-15"),
+      seconds: 1742054400,
+    } as unknown as Application["submittedAt"],
     ...overrides,
   };
 }
@@ -45,19 +48,38 @@ vi.mock("firebase/firestore", () => ({
   getDocs: (...args: unknown[]) => mockGetDocs(...args),
   doc: vi.fn(),
   updateDoc: (...args: unknown[]) => mockUpdateDoc(...args),
-  Timestamp: { now: vi.fn(() => ({ seconds: 1742054400, toDate: () => new Date() })) },
+  Timestamp: {
+    now: vi.fn(() => ({ seconds: 1742054400, toDate: () => new Date() })),
+  },
 }));
 
 vi.mock("firebase/auth", () => ({}));
 
 vi.mock("@/lib/firebase", () => ({
   getFirebaseDb: vi.fn(() => "mock-db"),
-  getFirebaseAuth: vi.fn(() => ({ currentUser: { getIdToken: vi.fn().mockResolvedValue("tok") } })),
+  getFirebaseAuth: vi.fn(() => ({
+    currentUser: { getIdToken: vi.fn().mockResolvedValue("tok") },
+  })),
 }));
 
 vi.mock("react-select", () => ({
-  default: ({ placeholder, onChange }: { placeholder: string; onChange: (v: unknown) => void }) => (
-    <select data-testid={`select-${placeholder}`} onChange={(e) => onChange(e.target.value ? [{ value: e.target.value, label: e.target.value }] : [])}>
+  default: ({
+    placeholder,
+    onChange,
+  }: {
+    placeholder: string;
+    onChange: (v: unknown) => void;
+  }) => (
+    <select
+      data-testid={`select-${placeholder}`}
+      onChange={(e) =>
+        onChange(
+          e.target.value
+            ? [{ value: e.target.value, label: e.target.value }]
+            : [],
+        )
+      }
+    >
       <option value="">{placeholder}</option>
     </select>
   ),
@@ -85,7 +107,9 @@ describe("AdminDashboard", () => {
     mockGetDocs.mockRejectedValue(new Error("Network error"));
     render(<AdminDashboard onLogout={onLogout} />);
     await waitFor(() => {
-      expect(screen.getByText("Failed to load applications.")).toBeInTheDocument();
+      expect(
+        screen.getByText("Failed to load applications."),
+      ).toBeInTheDocument();
     });
   });
 
@@ -121,9 +145,7 @@ describe("AdminDashboard", () => {
 
   it("shows active count in header", async () => {
     mockGetDocs.mockResolvedValue({
-      docs: [
-        { id: "1", data: () => ({ ...makeApp({ id: "1" }) }) },
-      ],
+      docs: [{ id: "1", data: () => ({ ...makeApp({ id: "1" }) }) }],
     });
     render(<AdminDashboard onLogout={onLogout} />);
     await waitFor(() => {
@@ -145,12 +167,19 @@ describe("AdminDashboard", () => {
     mockGetDocs.mockResolvedValue({
       docs: [
         { id: "1", data: () => ({ ...makeApp({ id: "1" }) }) },
-        { id: "2", data: () => ({ ...makeApp({ id: "2", deletedAt: makeTimestamp(100) }) }) },
+        {
+          id: "2",
+          data: () => ({
+            ...makeApp({ id: "2", deletedAt: makeTimestamp(100) }),
+          }),
+        },
       ],
     });
     render(<AdminDashboard onLogout={onLogout} />);
     await waitFor(() => {
-      expect(screen.getByText(/Showing 1 active · 1 deleted/)).toBeInTheDocument();
+      expect(
+        screen.getByText(/Showing 1 active · 1 deleted/),
+      ).toBeInTheDocument();
     });
   });
 

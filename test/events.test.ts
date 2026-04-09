@@ -52,7 +52,7 @@ describe("events data", () => {
       if (SHORT_DATE_RE.test(event.date)) {
         expect(
           event.isoDate,
-          `Event "${event.city} on ${event.date}" should have isoDate`
+          `Event "${event.city} on ${event.date}" should have isoDate`,
         ).toBeDefined();
       }
     }

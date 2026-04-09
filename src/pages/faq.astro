@@ -1,13 +1,14 @@
 ---
-import BaseLayout from '@/layouts/BaseLayout.astro';
-import { buildBreadcrumbJsonLd } from '@/utils/breadcrumbs';
+import BaseLayout from "@/layouts/BaseLayout.astro";
+import { buildBreadcrumbJsonLd } from "@/utils/breadcrumbs";
 
-const FAQ_TITLE = "FAQ \u2013 Garam Masala Dating | Live South Asian Dating Show NYC";
+const FAQ_TITLE =
+  "FAQ \u2013 Garam Masala Dating | Live South Asian Dating Show NYC";
 const FAQ_DESC =
   "Everything you need to know about Garam Masala Dating \u2014 tickets, how the show works, who can apply, what to expect, and how to get on stage.";
 
 function stripHtml(str: string): string {
-  return str.replace(/<[^>]*>/g, '');
+  return str.replace(/<[^>]*>/g, "");
 }
 
 const FAQS = [
@@ -79,19 +80,34 @@ const breadcrumbJsonLd = buildBreadcrumbJsonLd([
   { name: "Home", url: "https://garammasaladating.com" },
   { name: "FAQ" },
 ]);
+
+const speakableJsonLd = JSON.stringify({
+  "@context": "https://schema.org",
+  "@type": "WebPage",
+  url: "https://garammasaladating.com/faq",
+  speakable: {
+    "@type": "SpeakableSpecification",
+    cssSelector: [".faq-answer-text"],
+  },
+});
 ---
 
-<BaseLayout
-  title={FAQ_TITLE}
-  description={FAQ_DESC}
->
+<BaseLayout title={FAQ_TITLE} description={FAQ_DESC}>
   <Fragment slot="head">
     <script type="application/ld+json" set:html={faqJsonLd} />
     <script type="application/ld+json" set:html={breadcrumbJsonLd} />
+    <script type="application/ld+json" set:html={speakableJsonLd} />
   </Fragment>
 
   <main id="main-content" class="faq-page">
-    <img class="faq-bg" src="/images/higgs-field.webp" alt="" width="1200" height="800" aria-hidden="true" />
+    <img
+      class="faq-bg"
+      src="/images/higgs-field.webp"
+      alt=""
+      width="1200"
+      height="800"
+      aria-hidden="true"
+    />
     <div class="faq-container">
       <!-- Header -->
       <div class="faq-header">
@@ -99,26 +115,29 @@ const breadcrumbJsonLd = buildBreadcrumbJsonLd([
         <h1 class="faq-title">
           Garam Mas<em>ala</em> Dating
         </h1>
-        <p class="faq-intro">
-          Everything you need to know before you show up.
-        </p>
+        <p class="faq-intro">Everything you need to know before you show up.</p>
       </div>
 
       <!-- FAQ items -->
       <div class="faq-list">
-        {FAQS.map((item, i) => (
-          <div class="faq-item">
-            <h2 class="faq-question">{item.q}</h2>
-            <p class="faq-answer-text" set:html={item.a} />
-          </div>
-        ))}
+        {
+          FAQS.map((item, i) => (
+            <div class="faq-item">
+              <h2 class="faq-question">{item.q}</h2>
+              <p class="faq-answer-text" set:html={item.a} />
+            </div>
+          ))
+        }
       </div>
 
       <!-- Footer -->
       <div class="faq-footer">
         <p class="faq-footer-text">
-          Still have questions? Reach out at{' '}
-          <a href="mailto:contact@garammasaladating.com" class="faq-footer-link">
+          Still have questions? Reach out at{" "}
+          <a
+            href="mailto:contact@garammasaladating.com"
+            class="faq-footer-link"
+          >
             contact@garammasaladating.com
           </a>
         </p>
@@ -127,11 +146,16 @@ const breadcrumbJsonLd = buildBreadcrumbJsonLd([
   </main>
 </BaseLayout>
 
-
 <style>
   @keyframes faqFadeIn {
-    from { opacity: 0; transform: translateY(16px); }
-    to   { opacity: 1; transform: translateY(0); }
+    from {
+      opacity: 0;
+      transform: translateY(16px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
   }
 
   .faq-page {
@@ -210,7 +234,9 @@ const breadcrumbJsonLd = buildBreadcrumbJsonLd([
     border: 1px solid rgba(0, 0, 0, 0.06);
     background: white;
     padding: 22px;
-    transition: border-color 0.15s, background 0.15s;
+    transition:
+      border-color 0.15s,
+      background 0.15s;
   }
 
   .faq-item:hover {

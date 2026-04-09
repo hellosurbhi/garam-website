@@ -1,26 +1,12 @@
 import { citiesIndex } from "@/data/cities";
-
-export interface CitySearchOption {
-  value: string;
-  label: string;
-  city: string;
-  state: string;
-  country: string;
-  countryCode: string;
-  searchText: string;
-  boost: number;
-}
+export {
+  type CitySearchOption,
+  normalize,
+  resolveCityOption,
+} from "./citySearchShared";
+import { normalize, type CitySearchOption } from "./citySearchShared";
 
 let cityOptionsPromise: Promise<CitySearchOption[]> | null = null;
-
-function normalize(value: string): string {
-  return value
-    .normalize("NFKD")
-    .replace(/[\u0300-\u036f]/g, "")
-    .toLowerCase()
-    .replace(/[^a-z0-9]+/g, " ")
-    .trim();
-}
 
 function createOption(params: {
   city: string;
@@ -62,7 +48,7 @@ export async function loadCityOptions(): Promise<CitySearchOption[]> {
           const states = State.getStatesOfCountry(country.isoCode);
 
           if (states.length === 0) {
-            for (const city of City.getCitiesOfCountry(country.isoCode)) {
+            for (const city of City.getCitiesOfCountry(country.isoCode) ?? []) {
               const option = createOption({
                 city: city.name,
                 country: country.name,
@@ -108,7 +94,10 @@ export async function loadCityOptions(): Promise<CitySearchOption[]> {
           });
           const key = `${normalize(option.city)}|${normalize(option.state)}|${option.countryCode}`;
           const existing = cityMap.get(key);
-          cityMap.set(key, existing ? { ...existing, boost: option.boost } : option);
+          cityMap.set(
+            key,
+            existing ? { ...existing, boost: option.boost } : option,
+          );
         }
 
         return Array.from(cityMap.values()).sort((a, b) =>
@@ -150,28 +139,17 @@ export function searchCityOptions(
   }
 
   return [...options]
-    .map((option) => ({ option, score: scoreCityOption(option, normalizedQuery) }))
+    .map((option) => ({
+      option,
+      score: scoreCityOption(option, normalizedQuery),
+    }))
     .filter(({ score }) => score > 0)
     .sort(
       (a, b) =>
-        b.score - a.score || b.option.boost - a.option.boost || a.option.label.localeCompare(b.option.label),
+        b.score - a.score ||
+        b.option.boost - a.option.boost ||
+        a.option.label.localeCompare(b.option.label),
     )
     .slice(0, limit)
     .map(({ option }) => option);
-}
-
-export function resolveCityOption(
-  value: string,
-  options: CitySearchOption[],
-): CitySearchOption | null {
-  const normalizedValue = normalize(value);
-  if (!normalizedValue) return null;
-
-  return (
-    options.find(
-      (option) =>
-        normalize(option.label) === normalizedValue ||
-        normalize(option.city) === normalizedValue,
-    ) ?? null
-  );
 }

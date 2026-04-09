@@ -210,7 +210,7 @@ function PrepGuide() {
         {/* ── Arrival & Notes ── */}
         <section className={styles.section}>
           <h2 className={styles.sectionTitle}>Arrival &amp; Notes</h2>
-          <p className={styles.toggleLabel}>Intructions for:</p>
+          <p className={styles.toggleLabel}>Instructions for:</p>
           <div
             className={styles.genderToggle}
             role="group"

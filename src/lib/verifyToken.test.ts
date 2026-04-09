@@ -11,7 +11,9 @@ vi.mock("jose", () => ({
 const TEST_PROJECT_ID = "test-project-123";
 
 function makeToken(kid: string, sub: string): string {
-  const header = Buffer.from(JSON.stringify({ kid, alg: "RS256" })).toString("base64url");
+  const header = Buffer.from(JSON.stringify({ kid, alg: "RS256" })).toString(
+    "base64url",
+  );
   const payload = Buffer.from(JSON.stringify({ sub })).toString("base64url");
   return `${header}.${payload}.fake-sig`;
 }
@@ -24,18 +26,24 @@ describe("verifyIdToken", () => {
     vi.clearAllMocks();
     const mod = await import("@/lib/verifyToken");
     verifyIdToken = mod.verifyIdToken;
-    process.env.VITE_FIREBASE_PROJECT_ID = TEST_PROJECT_ID;
+    import.meta.env.PUBLIC_FIREBASE_PROJECT_ID = TEST_PROJECT_ID;
     mockImportX509.mockResolvedValue("mock-key");
     // Mock global fetch for Google certs
     vi.spyOn(globalThis, "fetch").mockResolvedValue(
-      new Response(JSON.stringify({ "key-1": "-----BEGIN CERTIFICATE-----\nfake\n-----END CERTIFICATE-----" }), { status: 200 }),
+      new Response(
+        JSON.stringify({
+          "key-1":
+            "-----BEGIN CERTIFICATE-----\nfake\n-----END CERTIFICATE-----",
+        }),
+        { status: 200 },
+      ),
     );
     mockJwtVerify.mockResolvedValue({ payload: { sub: "user-123" } });
   });
 
   afterEach(() => {
     vi.restoreAllMocks();
-    delete process.env.VITE_FIREBASE_PROJECT_ID;
+    delete import.meta.env.PUBLIC_FIREBASE_PROJECT_ID;
   });
 
   it("returns null when auth header is undefined", async () => {
@@ -50,15 +58,19 @@ describe("verifyIdToken", () => {
     expect(await verifyIdToken("Basic abc123")).toBeNull();
   });
 
-  it("returns null when VITE_FIREBASE_PROJECT_ID is missing", async () => {
-    delete process.env.VITE_FIREBASE_PROJECT_ID;
+  it("returns null when PUBLIC_FIREBASE_PROJECT_ID is missing", async () => {
+    delete import.meta.env.PUBLIC_FIREBASE_PROJECT_ID;
     const token = makeToken("key-1", "user-123");
     expect(await verifyIdToken(`Bearer ${token}`)).toBeNull();
   });
 
   it("returns null when JWT header has no kid", async () => {
-    const header = Buffer.from(JSON.stringify({ alg: "RS256" })).toString("base64url");
-    const payload = Buffer.from(JSON.stringify({ sub: "user-123" })).toString("base64url");
+    const header = Buffer.from(JSON.stringify({ alg: "RS256" })).toString(
+      "base64url",
+    );
+    const payload = Buffer.from(JSON.stringify({ sub: "user-123" })).toString(
+      "base64url",
+    );
     const token = `${header}.${payload}.fake-sig`;
     expect(await verifyIdToken(`Bearer ${token}`)).toBeNull();
   });
@@ -90,5 +102,26 @@ describe("verifyIdToken", () => {
     mockJwtVerify.mockResolvedValue({ payload: { sub: 123 } });
     const token = makeToken("key-1", "user-123");
     expect(await verifyIdToken(`Bearer ${token}`)).toBeNull();
+  });
+
+  it("caches public keys on second call (fetch called once)", async () => {
+    const token = makeToken("key-1", "user-123");
+    await verifyIdToken(`Bearer ${token}`);
+    await verifyIdToken(`Bearer ${token}`);
+    // fetch should have been called only once for the cert endpoint
+    expect(globalThis.fetch).toHaveBeenCalledTimes(1);
+  });
+
+  it("passes correct issuer and audience to jwtVerify", async () => {
+    const token = makeToken("key-1", "user-123");
+    await verifyIdToken(`Bearer ${token}`);
+    expect(mockJwtVerify).toHaveBeenCalledWith(
+      token,
+      "mock-key",
+      expect.objectContaining({
+        issuer: `https://securetoken.google.com/${TEST_PROJECT_ID}`,
+        audience: TEST_PROJECT_ID,
+      }),
+    );
   });
 });

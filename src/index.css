@@ -5,7 +5,10 @@
   font-weight: 400 700;
   font-display: swap;
   src: url("/fonts/playfair-display-latin.woff2") format("woff2");
-  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+  unicode-range:
+    U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC,
+    U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212,
+    U+2215, U+FEFF, U+FFFD;
 }
 @font-face {
   font-family: "Playfair Display";
@@ -13,7 +16,10 @@
   font-weight: 400;
   font-display: swap;
   src: url("/fonts/playfair-display-latin-400i.woff2") format("woff2");
-  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+  unicode-range:
+    U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC,
+    U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212,
+    U+2215, U+FEFF, U+FFFD;
 }
 
 /* Cormorant Garamond — accent (variable font covers 400-500) */
@@ -23,7 +29,10 @@
   font-weight: 400 500;
   font-display: swap;
   src: url("/fonts/cormorant-garamond-latin.woff2") format("woff2");
-  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+  unicode-range:
+    U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC,
+    U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212,
+    U+2215, U+FEFF, U+FFFD;
 }
 @font-face {
   font-family: "Cormorant Garamond";
@@ -31,7 +40,10 @@
   font-weight: 400;
   font-display: swap;
   src: url("/fonts/cormorant-garamond-latin-400i.woff2") format("woff2");
-  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+  unicode-range:
+    U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC,
+    U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212,
+    U+2215, U+FEFF, U+FFFD;
 }
 
 /* Nunito — body (variable font 200-1000) */
@@ -41,7 +53,10 @@
   font-weight: 200 1000;
   font-display: swap;
   src: url("/fonts/nunito-latin-var.woff2") format("woff2");
-  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+  unicode-range:
+    U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC,
+    U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212,
+    U+2215, U+FEFF, U+FFFD;
 }
 
 :root {
@@ -49,26 +64,30 @@
   --font-body: "Nunito";
   --font-cormorant: "Cormorant Garamond";
   /* legacy aliases — used only by admin components */
-  --cream: #FFF8F0;
-  --text: #1A1A1A;
+  --cream: #fff8f0;
+  --text: #1a1a1a;
   --text-light: #595959;
   --border: rgba(0, 0, 0, 0.1);
-  --success: #22C55E;
+  --success: #22c55e;
 
   /* brand palette */
-  --brand-red: #DC2626;
+  --brand-red: #dc2626;
   --brand-red-rgb: 220, 38, 38;
   --brand-red-dark: #b91c1c;
-  --electric-yellow: #FFD600;
-  --off-white: #FFF8F0;
-  --charcoal: #1A1A1A;
+  --electric-yellow: #ffd600;
+  --off-white: #fff8f0;
+  --charcoal: #1a1a1a;
   --ink: #111;
-  --spice-orange: #FF6D00;
+  --spice-orange: #ff6d00;
   --muted: #6b6b6b;
   --text-secondary: #555;
   --text-tertiary: #777;
-  --cream-warm: #FFF0E2;
+  --cream-warm: #fff0e2;
   --off-white-rgb: 255, 248, 240;
+
+  /* apply form palette */
+  --apply-brown: #3d3532;
+  --border-light: #eee;
 
   /* layout */
   --dialog-gutter: 16px;
@@ -87,6 +106,7 @@
 }
 
 html {
+  height: 100%;
   background: var(--off-white);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
@@ -101,6 +121,14 @@ body {
   font-family: Nunito, sans-serif;
   overflow-x: hidden;
   min-width: 320px;
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  min-height: 100svh;
+}
+
+main {
+  flex: 1;
 }
 
 ::selection {
@@ -113,8 +141,15 @@ body {
   outline-offset: 2px;
 }
 
+button:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
 @media (prefers-reduced-motion: reduce) {
-  *, *::before, *::after {
+  *,
+  *::before,
+  *::after {
     animation-duration: 0.01ms !important;
     animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;

@@ -47,20 +47,20 @@ describe("buildBreadcrumbJsonLd", () => {
 
   it("includes item.item (URL) when url is provided", () => {
     const url = `${BASE}/cities`;
-    const result = JSON.parse(
-      buildBreadcrumbJsonLd([{ name: "Cities", url }])
-    );
+    const result = JSON.parse(buildBreadcrumbJsonLd([{ name: "Cities", url }]));
     expect(result.itemListElement[0].item).toBe(url);
   });
 
   it("omits item.item when url is not provided", () => {
-    const result = JSON.parse(buildBreadcrumbJsonLd([{ name: "Current Page" }]));
+    const result = JSON.parse(
+      buildBreadcrumbJsonLd([{ name: "Current Page" }]),
+    );
     expect(result.itemListElement[0].item).toBeUndefined();
   });
 
   it("preserves the crumb name correctly", () => {
     const result = JSON.parse(
-      buildBreadcrumbJsonLd([{ name: "South Asian Dating Tips" }])
+      buildBreadcrumbJsonLd([{ name: "South Asian Dating Tips" }]),
     );
     expect(result.itemListElement[0].name).toBe("South Asian Dating Tips");
   });
@@ -79,20 +79,18 @@ describe("buildBreadcrumbJsonLd", () => {
   });
 
   it("handles special characters in crumb names", () => {
-    const result = JSON.parse(
-      buildBreadcrumbJsonLd([{ name: "FAQ & Tips" }])
-    );
+    const result = JSON.parse(buildBreadcrumbJsonLd([{ name: "FAQ & Tips" }]));
     expect(result.itemListElement[0].name).toBe("FAQ & Tips");
   });
 
   it("produces consistent output (not including non-schema fields)", () => {
     const result = JSON.parse(
-      buildBreadcrumbJsonLd([{ name: "Home", url: BASE }])
+      buildBreadcrumbJsonLd([{ name: "Home", url: BASE }]),
     );
     const item = result.itemListElement[0];
     // Only expected keys should exist
     expect(Object.keys(item)).toEqual(
-      expect.arrayContaining(["@type", "position", "name", "item"])
+      expect.arrayContaining(["@type", "position", "name", "item"]),
     );
   });
 });

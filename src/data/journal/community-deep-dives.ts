@@ -243,7 +243,8 @@ export const communityDeepDivesPosts: JournalPost[] = [
   },
   {
     slug: "bengali-dating-culture",
-    title: "Bengali Dating Culture: Intellectuals, Foodies, and Fierce Independence",
+    title:
+      "Bengali Dating Culture: Intellectuals, Foodies, and Fierce Independence",
     metaDescription:
       "Bengali dating culture explained — adda culture, food as love language, progressive norms, and why Bengali singles are some of the most interesting people to date.",
     datePublished: "2026-11-21",
@@ -483,7 +484,8 @@ export const communityDeepDivesPosts: JournalPost[] = [
   },
   {
     slug: "muslim-dating-south-asian",
-    title: "Muslim Dating as a South Asian: Navigating Faith, Family, and Feelings",
+    title:
+      "Muslim Dating as a South Asian: Navigating Faith, Family, and Feelings",
     metaDescription:
       "Muslim dating as a South Asian explained — halal dating, Muzz and Salams apps, chaperoned meetings, interfaith relationships, and balancing deen with modern love.",
     datePublished: "2026-11-25",
@@ -731,7 +733,8 @@ export const communityDeepDivesPosts: JournalPost[] = [
   },
   {
     slug: "bangladeshi-dating-diaspora",
-    title: "Bangladeshi Dating in the Diaspora: Building Community One Connection at a Time",
+    title:
+      "Bangladeshi Dating in the Diaspora: Building Community One Connection at a Time",
     metaDescription:
       "Bangladeshi dating in the diaspora — navigating a tight-knit community, distinct Bangladeshi identity, Islamic values, and finding love beyond the stereotype.",
     datePublished: "2026-11-29",
@@ -851,7 +854,8 @@ export const communityDeepDivesPosts: JournalPost[] = [
   },
   {
     slug: "vegetarian-dating-desi",
-    title: "Vegetarian Dating as a Desi: Finding Someone Who Gets the Paneer Obsession",
+    title:
+      "Vegetarian Dating as a Desi: Finding Someone Who Gets the Paneer Obsession",
     metaDescription:
       "Vegetarian dating as a desi explained — Jain and Hindu vegetarianism, the 'will they eat my mom's food' question, interfaith food dynamics, and finding vegetarian love.",
     datePublished: "2026-12-01",

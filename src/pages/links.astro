@@ -1,10 +1,10 @@
 ---
-import BaseLayout from '@/layouts/BaseLayout.astro';
-import { events } from '@/data/events';
-import { isEventPast } from '@/utils/eventDate';
-import { pressItems } from '@/data/press';
-import { SOCIAL_URLS } from '@/data/socials';
-import { buildBreadcrumbJsonLd } from '@/utils/breadcrumbs';
+import BaseLayout from "@/layouts/BaseLayout.astro";
+import { events } from "@/data/events";
+import { isEventPast } from "@/utils/eventDate";
+import { pressItems } from "@/data/press";
+import { SOCIAL_URLS } from "@/data/socials";
+import { buildBreadcrumbJsonLd } from "@/utils/breadcrumbs";
 
 const TITLE = "Tickets, Shows & More | Garam Masala Dating";
 const DESC =
@@ -19,7 +19,7 @@ const breadcrumbJsonLd = buildBreadcrumbJsonLd([
 
 /* ── SVG icon markup ──────────────────────────────────────── */
 
-import { ICON_SVGS, SOCIAL_ICON_SVGS, type IconName } from '@/data/icons';
+import { ICON_SVGS, SOCIAL_ICON_SVGS, type IconName } from "@/data/icons";
 
 function iconSvg(name: IconName, isPrimary?: boolean): string {
   const cls = isPrimary ? "icon-primary" : "icon-glass";
@@ -38,12 +38,35 @@ interface LinkDef {
 }
 
 const links: LinkDef[] = [
-  { label: "Apply to Be on the Show", href: "/apply", isPrimary: true, icon: "heart" },
-  { label: "Short form content @ Instagram", href: SOCIAL_URLS.instagram, external: true, icon: "instagram" },
-  { label: "Full episodes @ YouTube", href: SOCIAL_URLS.youtube, external: true, icon: "youtube" },
-  { label: "Upcoming Shows & Tickets", dialogTrigger: "events-trigger", icon: "ticket" },
+  {
+    label: "Apply to Be on the Show",
+    href: "/apply",
+    isPrimary: true,
+    icon: "heart",
+  },
+  {
+    label: "Short form content @ Instagram",
+    href: SOCIAL_URLS.instagram,
+    external: true,
+    icon: "instagram",
+  },
+  {
+    label: "Full episodes @ YouTube",
+    href: SOCIAL_URLS.youtube,
+    external: true,
+    icon: "youtube",
+  },
+  {
+    label: "Upcoming Shows & Tickets",
+    dialogTrigger: "events-trigger",
+    icon: "ticket",
+  },
   { label: "As Seen In", dialogTrigger: "press-trigger", icon: "mic" },
-  { label: "Booking & Press Inquiries", href: "mailto:press@garammasaladating.com", icon: "mail" },
+  {
+    label: "Booking & Press Inquiries",
+    href: "mailto:press@garammasaladating.com",
+    icon: "mail",
+  },
 ];
 
 const socials = [
@@ -65,68 +88,84 @@ const reversedPress = [...pressItems].reverse();
   </Fragment>
 
   <main id="main-content" class="page">
-    <img class="page-bg" src="/images/hero.webp" alt="" width="1200" height="800" aria-hidden="true" />
+    <img
+      class="page-bg"
+      src="/images/hero.webp"
+      alt=""
+      width="1200"
+      height="800"
+      aria-hidden="true"
+    />
     <div class="container">
       {/* Header */}
       <div class="header-wrap">
-        <h1 class="subtitle">NYC&apos;s hottest live South Asian dating show&nbsp;🌶️</h1>
-        <div class="divider" />
+        <h1 class="subtitle">
+          NYC&apos;s hottest live South Asian dating show&nbsp;🌶️
+        </h1>
+        <div class="divider"></div>
       </div>
 
       {/* Link list */}
       <div class="link-list">
-        {links.map((link, i) => {
-          const delay = 0.1 + i * 0.1;
+        {
+          links.map((link, i) => {
+            const delay = 0.1 + i * 0.1;
 
-          if (link.dialogTrigger) {
+            if (link.dialogTrigger) {
+              return (
+                <button
+                  type="button"
+                  id={link.dialogTrigger}
+                  class="glass-link"
+                  style={`animation: fadeUp 0.5s ease-out ${delay}s both`}
+                >
+                  <Fragment set:html={iconSvg(link.icon, false)} />
+                  <span class="link-label">{link.label}</span>
+                </button>
+              );
+            }
+
             return (
-              <button
-                type="button"
-                id={link.dialogTrigger}
-                class="glass-link"
-                style={`animation: fadeUp 0.5s ease-out ${delay}s both`}
+              <a
+                href={link.href}
+                class:list={[link.isPrimary ? "primary-link" : "glass-link"]}
+                style={
+                  link.isPrimary
+                    ? `animation: fadeUp 0.5s ease-out ${delay}s both, pulseGlow 2.5s ease-in-out 1s infinite`
+                    : `animation: fadeUp 0.5s ease-out ${delay}s both`
+                }
+                target={link.external ? "_blank" : undefined}
+                rel={link.external ? "noopener noreferrer" : undefined}
+                data-ph-capture={link.isPrimary ? "cta_clicked" : undefined}
+                data-ph-cta={link.isPrimary ? "apply" : undefined}
+                data-ph-section={link.isPrimary ? "links" : undefined}
               >
-                <Fragment set:html={iconSvg(link.icon, false)} />
+                <Fragment set:html={iconSvg(link.icon, link.isPrimary)} />
                 <span class="link-label">{link.label}</span>
-              </button>
+              </a>
             );
-          }
-
-          return (
-            <a
-              href={link.href}
-              class:list={[link.isPrimary ? "primary-link" : "glass-link"]}
-              style={link.isPrimary
-                ? `animation: fadeUp 0.5s ease-out ${delay}s both, pulseGlow 2.5s ease-in-out 1s infinite`
-                : `animation: fadeUp 0.5s ease-out ${delay}s both`}
-              target={link.external ? "_blank" : undefined}
-              rel={link.external ? "noopener noreferrer" : undefined}
-            >
-              <Fragment set:html={iconSvg(link.icon, link.isPrimary)} />
-              <span class="link-label">{link.label}</span>
-            </a>
-          );
-        })}
+          })
+        }
       </div>
 
       {/* Social icons */}
       <div class="social-row">
-        {socials.map((s) => (
-          <a
-            href={s.href}
-            aria-label={s.label}
-            target="_blank"
-            rel="noopener noreferrer"
-            class="social-icon"
-          >
-            <Fragment set:html={SOCIAL_ICON_SVGS[s.icon]} />
-          </a>
-        ))}
+        {
+          socials.map((s) => (
+            <a
+              href={s.href}
+              aria-label={s.label}
+              target="_blank"
+              rel="noopener noreferrer"
+              class="social-icon"
+            >
+              <Fragment set:html={SOCIAL_ICON_SVGS[s.icon]} />
+            </a>
+          ))
+        }
       </div>
 
-      <p class="footer-text">
-        Made with love and a lot of spice
-      </p>
+      <p class="footer-text">Made with love and a lot of spice</p>
     </div>
   </main>
 
@@ -134,40 +173,70 @@ const reversedPress = [...pressItems].reverse();
   <dialog id="events-modal" class="modal-dialog">
     <div class="modal-inner">
       <button type="button" class="modal-close" aria-label="Close">
-        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          width="20"
+          height="20"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          ><path d="M18 6 6 18"></path><path d="m6 6 12 12"></path></svg
+        >
       </button>
 
       <h2 class="modal-title">Upcoming Shows</h2>
-      <div class="modal-divider" />
+      <div class="modal-divider"></div>
 
-      {upcomingEvents.length === 0 ? (
-        <p class="no-events">No upcoming shows. Stay tuned!</p>
-      ) : (
-        <div class="event-list">
-          {upcomingEvents.map((event) => {
-            const hasLink = event.url && event.url !== "#";
-            return hasLink ? (
-              <a
-                href={event.url}
-                target="_blank"
-                rel="noopener noreferrer"
-                class="event-link"
-              >
-                <span class="event-city">{event.city}</span>
-                <div class="event-date-group">
-                  <span class="event-date">{event.date}</span>
-                  <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="ticket-icon" aria-hidden="true"><path d="M2 9a3 3 0 0 1 0 6v2a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-2a3 3 0 0 1 0-6V7a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2Z"/><path d="M13 5v2"/><path d="M13 17v2"/><path d="M13 11v2"/></svg>
+      {
+        upcomingEvents.length === 0 ? (
+          <p class="no-events">No upcoming shows. Stay tuned!</p>
+        ) : (
+          <div class="event-list">
+            {upcomingEvents.map((event) => {
+              const hasLink = event.url && event.url !== "#";
+              return hasLink ? (
+                <a
+                  href={event.url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  class="event-link"
+                >
+                  <span class="event-city">{event.city}</span>
+                  <div class="event-date-group">
+                    <span class="event-date">{event.date}</span>
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      width="14"
+                      height="14"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      stroke-width="2"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      class="ticket-icon"
+                      aria-hidden="true"
+                    >
+                      <path d="M2 9a3 3 0 0 1 0 6v2a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-2a3 3 0 0 1 0-6V7a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2Z" />
+                      <path d="M13 5v2" />
+                      <path d="M13 17v2" />
+                      <path d="M13 11v2" />
+                    </svg>
+                  </div>
+                </a>
+              ) : (
+                <div class="event-tba">
+                  <span class="event-city">{event.city}</span>
+                  <span class="event-date-muted">{event.date}</span>
                 </div>
-              </a>
-            ) : (
-              <div class="event-tba">
-                <span class="event-city">{event.city}</span>
-                <span class="event-date-muted">{event.date}</span>
-              </div>
-            );
-          })}
-        </div>
-      )}
+              );
+            })}
+          </div>
+        )
+      }
     </div>
   </dialog>
 
@@ -175,37 +244,112 @@ const reversedPress = [...pressItems].reverse();
   <dialog id="press-modal" class="modal-dialog modal-dialog--scrollable">
     <div class="modal-inner">
       <button type="button" class="modal-close" aria-label="Close">
-        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          width="20"
+          height="20"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          ><path d="M18 6 6 18"></path><path d="m6 6 12 12"></path></svg
+        >
       </button>
 
       <h2 class="modal-title">As Seen In</h2>
-      <div class="modal-divider" />
+      <div class="modal-divider"></div>
 
       <div class="event-list">
-        {reversedPress.map((item) => {
-          const inner = (
-            <>
-              <div class="press-content">
-                <div class="press-badge-row">
-                  <span class="press-badge">
-                    {item.type === "podcast" ? (
-                      <svg xmlns="http://www.w3.org/2000/svg" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" x2="12" y1="19" y2="22"/></svg>
-                    ) : (
-                      <svg xmlns="http://www.w3.org/2000/svg" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 22h16a2 2 0 0 0 2-2V4a2 2 0 0 0-2-2H8a2 2 0 0 0-2 2v16a2 2 0 0 1-2 2Zm0 0a2 2 0 0 1-2-2v-9c0-1.1.9-2 2-2h2"/><path d="M18 14h-8"/><path d="M15 18h-5"/><path d="M10 6h8v4h-8V6Z"/></svg>
+        {
+          reversedPress.map((item) => {
+            const inner = (
+              <>
+                <div class="press-content">
+                  <div class="press-badge-row">
+                    <span class="press-badge">
+                      {item.type === "podcast" ? (
+                        <svg
+                          xmlns="http://www.w3.org/2000/svg"
+                          width="10"
+                          height="10"
+                          viewBox="0 0 24 24"
+                          fill="none"
+                          stroke="currentColor"
+                          stroke-width="2"
+                          stroke-linecap="round"
+                          stroke-linejoin="round"
+                          aria-hidden="true"
+                        >
+                          <path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z" />
+                          <path d="M19 10v2a7 7 0 0 1-14 0v-2" />
+                          <line x1="12" x2="12" y1="19" y2="22" />
+                        </svg>
+                      ) : (
+                        <svg
+                          xmlns="http://www.w3.org/2000/svg"
+                          width="10"
+                          height="10"
+                          viewBox="0 0 24 24"
+                          fill="none"
+                          stroke="currentColor"
+                          stroke-width="2"
+                          stroke-linecap="round"
+                          stroke-linejoin="round"
+                          aria-hidden="true"
+                        >
+                          <path d="M4 22h16a2 2 0 0 0 2-2V4a2 2 0 0 0-2-2H8a2 2 0 0 0-2 2v16a2 2 0 0 1-2 2Zm0 0a2 2 0 0 1-2-2v-9c0-1.1.9-2 2-2h2" />
+                          <path d="M18 14h-8" />
+                          <path d="M15 18h-5" />
+                          <path d="M10 6h8v4h-8V6Z" />
+                        </svg>
+                      )}
+                      {item.type}
+                    </span>
+                    {!item.url && (
+                      <span class="press-badge press-badge--soon">
+                        Coming Soon
+                      </span>
                     )}
-                    {item.type}
-                  </span>
-                  {!item.url && <span class="press-badge press-badge--soon">Coming Soon</span>}
+                  </div>
+                  <p class="press-source">{item.source}</p>
                 </div>
-                <p class="press-source">{item.source}</p>
-              </div>
-              {item.url && <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="press-external-icon" aria-hidden="true"><path d="M15 3h6v6"/><path d="M10 14 21 3"/><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/></svg>}
-            </>
-          );
-          return item.url
-            ? <a href={item.url} target="_blank" rel="noopener noreferrer" class="press-item">{inner}</a>
-            : <div class="press-item press-item--disabled">{inner}</div>;
-        })}
+                {item.url && (
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="14"
+                    height="14"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    class="press-external-icon"
+                    aria-hidden="true"
+                  >
+                    <path d="M15 3h6v6" />
+                    <path d="M10 14 21 3" />
+                    <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6" />
+                  </svg>
+                )}
+              </>
+            );
+            return item.url ? (
+              <a
+                href={item.url}
+                target="_blank"
+                rel="noopener noreferrer"
+                class="press-item"
+              >
+                {inner}
+              </a>
+            ) : (
+              <div class="press-item press-item--disabled">{inner}</div>
+            );
+          })
+        }
       </div>
     </div>
   </dialog>
@@ -217,42 +361,77 @@ const reversedPress = [...pressItems].reverse();
     const dialog = document.getElementById(dialogId) as HTMLDialogElement;
     if (!trigger || !dialog) return;
 
-    trigger.addEventListener('click', () => dialog.showModal());
-    dialog.querySelector('.modal-close')?.addEventListener('click', () => dialog.close());
-    dialog.addEventListener('click', (e) => {
+    trigger.addEventListener("click", () => dialog.showModal());
+    dialog
+      .querySelector(".modal-close")
+      ?.addEventListener("click", () => dialog.close());
+    dialog.addEventListener("click", (e) => {
       if (e.target === dialog) dialog.close();
     });
   }
-  setupDialog('events-trigger', 'events-modal');
-  setupDialog('press-trigger', 'press-modal');
+  setupDialog("events-trigger", "events-modal");
+  setupDialog("press-trigger", "press-modal");
 </script>
 
 <style>
   /* ─── Animations ──────────────────────────────────────────── */
 
   @keyframes pageIn {
-    from { opacity: 0; transform: translateY(8px); }
-    to   { opacity: 1; transform: translateY(0); }
+    from {
+      opacity: 0;
+      transform: translateY(8px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
   }
 
   @keyframes fadeUp {
-    from { opacity: 0; transform: translateY(16px); }
-    to   { opacity: 1; transform: translateY(0); }
+    from {
+      opacity: 0;
+      transform: translateY(16px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
   }
 
   @keyframes headerFadeUp {
-    from { opacity: 0; transform: translateY(12px); }
-    to   { opacity: 1; transform: translateY(0); }
+    from {
+      opacity: 0;
+      transform: translateY(12px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
   }
 
   @keyframes pulseGlow {
-    0%, 100% { box-shadow: 0 2px 12px rgba(var(--brand-red-rgb), 0.25), 0 0 0 0 rgba(var(--brand-red-rgb), 0); }
-    50%       { box-shadow: 0 2px 12px rgba(var(--brand-red-rgb), 0.25), 0 0 0 8px rgba(var(--brand-red-rgb), 0.12); }
+    0%,
+    100% {
+      box-shadow:
+        0 2px 12px rgba(var(--brand-red-rgb), 0.25),
+        0 0 0 0 rgba(var(--brand-red-rgb), 0);
+    }
+    50% {
+      box-shadow:
+        0 2px 12px rgba(var(--brand-red-rgb), 0.25),
+        0 0 0 8px rgba(var(--brand-red-rgb), 0.12);
+    }
   }
 
   @keyframes modalIn {
-    from { opacity: 0; transform: scale(0.95) translateY(8px); }
-    to   { opacity: 1; transform: scale(1) translateY(0); }
+    from {
+      opacity: 0;
+      transform: scale(0.95) translateY(8px);
+    }
+    to {
+      opacity: 1;
+      transform: scale(1) translateY(0);
+    }
   }
 
   /* ─── Page layout ─────────────────────────────────────────── */
@@ -349,7 +528,9 @@ const reversedPress = [...pressItems].reverse();
     letter-spacing: 0.04em;
     text-decoration: none;
     cursor: pointer;
-    transition: transform 0.25s ease, box-shadow 0.25s ease;
+    transition:
+      transform 0.25s ease,
+      box-shadow 0.25s ease;
     transform: scale(1);
     box-shadow: 0 2px 12px rgba(var(--brand-red-rgb), 0.25);
     white-space: normal;
@@ -431,7 +612,9 @@ const reversedPress = [...pressItems].reverse();
     justify-content: center;
     background: rgba(0, 0, 0, 0.06);
     color: #888;
-    transition: background 0.2s, color 0.2s;
+    transition:
+      background 0.2s,
+      color 0.2s;
     text-decoration: none;
   }
 

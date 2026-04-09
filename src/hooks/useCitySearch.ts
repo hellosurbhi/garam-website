@@ -1,8 +1,11 @@
 import { useCallback, useEffect, useState } from "react";
-import type { CitySearchOption } from "@/lib/citySearch";
+import type { CitySearchOption } from "@/lib/citySearchShared";
+import { trackError } from "@/lib/analytics";
 
 async function fetchCityOptions(query: string): Promise<CitySearchOption[]> {
-  const response = await fetch(`/api/city-search?q=${encodeURIComponent(query)}`);
+  const response = await fetch(
+    `/api/city-search?q=${encodeURIComponent(query)}`,
+  );
   if (!response.ok) {
     throw new Error("Failed to search cities");
   }
@@ -41,8 +44,16 @@ export function useCitySearch(query: string, shouldLoad: boolean = true) {
         if (cancelled) return;
         setOptions(loadedOptions);
         setLoading(false);
-      } catch {
+      } catch (err) {
         if (cancelled) return;
+        const error = err instanceof Error ? err : new Error(String(err));
+        trackError({
+          error_message: error.message,
+          error_stack: (error.stack ?? "").slice(0, 2000),
+          error_type: "api_error",
+          component: "useCitySearch",
+          api_endpoint: "/api/city-search",
+        });
         setFailed(true);
         setLoading(false);
       }

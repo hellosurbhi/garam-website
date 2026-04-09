@@ -1,6 +1,10 @@
 import type { CSSObjectWithLabel, GroupBase, StylesConfig } from "react-select";
 
-type BaseStyles = StylesConfig<{ value: string; label: string }, boolean, GroupBase<{ value: string; label: string }>>;
+type BaseStyles = StylesConfig<
+  { value: string; label: string },
+  boolean,
+  GroupBase<{ value: string; label: string }>
+>;
 
 /** Compact pill-shaped selects for the admin filter bar. */
 export const adminSelectStyles: BaseStyles = {
@@ -63,7 +67,9 @@ export const formSelectStyles: BaseStyles = {
     minHeight: "48px",
     cursor: "pointer",
     transition: "border-color 0.2s, box-shadow 0.2s",
-    "&:hover": { borderColor: state.isFocused ? "#DC2626" : "rgba(0, 0, 0, 0.15)" },
+    "&:hover": {
+      borderColor: state.isFocused ? "#DC2626" : "rgba(0, 0, 0, 0.15)",
+    },
   }),
   option: (base: CSSObjectWithLabel, state) => ({
     ...base,

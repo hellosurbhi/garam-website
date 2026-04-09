@@ -1,5 +1,5 @@
 ---
-import { HOME_FAQS as faqs } from '@/data/copy';
+import { HOME_FAQS as faqs } from "@/data/copy";
 ---
 
 <section class="faq" id="faq" aria-labelledby="faq-heading">
@@ -7,32 +7,58 @@ import { HOME_FAQS as faqs } from '@/data/copy';
     <div class="faq-eyebrow" data-reveal>Frequently Asked Questions</div>
     <h2 id="faq-heading" data-reveal>Everything You<br />Need to Know</h2>
     <div class="faq-list">
-      {faqs.map((faq) => (
-        <details class="faq-item" data-reveal>
-          <summary class="faq-q">
-            {faq.q}
-            <span class="faq-toggle">+</span>
-          </summary>
-          <div class="faq-answer">
-            <p class="faq-answer-summary" set:html={faq.short} />
-            <p class="faq-answer-detail" set:html={faq.long} />
-          </div>
-        </details>
-      ))}
+      {
+        faqs.map((faq) => (
+          <details class="faq-item" data-reveal>
+            <summary class="faq-q">
+              {faq.q}
+              <span class="faq-toggle">+</span>
+            </summary>
+            <div class="faq-answer">
+              <p class="faq-answer-summary" set:html={faq.short} />
+              <p class="faq-answer-detail" set:html={faq.long} />
+            </div>
+          </details>
+        ))
+      }
     </div>
     <div class="faq-cta" data-reveal>
-      <a href="/tickets" class="faq-cta-btn">Get Tickets</a>
-      <a href="/apply" class="faq-cta-link">or Apply for the Show →</a>
+      <a
+        href="/tickets"
+        class="faq-cta-btn"
+        data-ph-capture="cta_clicked"
+        data-ph-cta="get_tickets"
+        data-ph-section="faq">Get Tickets</a
+      >
+      <a
+        href="/apply"
+        class="faq-cta-link"
+        data-ph-capture="cta_clicked"
+        data-ph-cta="apply"
+        data-ph-section="faq">or Apply for the Show →</a
+      >
     </div>
   </div>
 </section>
 
 <script>
-  // Single-open: close siblings when one opens
-  document.querySelectorAll('.faq-item').forEach((details) => {
-    details.addEventListener('toggle', () => {
+  import { trackLeadEvent } from "@/lib/analytics";
+
+  // Single-open: close siblings when one opens, track FAQ interactions
+  document.querySelectorAll(".faq-item").forEach((details) => {
+    details.addEventListener("toggle", () => {
       if ((details as HTMLDetailsElement).open) {
-        document.querySelectorAll('.faq-item').forEach((other) => {
+        const question =
+          details
+            .querySelector(".faq-q")
+            ?.textContent?.replace(/\+$/, "")
+            .trim()
+            .slice(0, 100) ?? "";
+        trackLeadEvent("faq_opened", {
+          question,
+          page: window.location.pathname,
+        });
+        document.querySelectorAll(".faq-item").forEach((other) => {
           if (other !== details && (other as HTMLDetailsElement).open) {
             (other as HTMLDetailsElement).open = false;
           }
@@ -45,7 +71,7 @@ import { HOME_FAQS as faqs } from '@/data/copy';
 <style>
   .faq {
     padding: 56px 20px;
-    background: #FFF0E2;
+    background: #fff0e2;
   }
   .faq-inner {
     max-width: 800px;
@@ -67,9 +93,16 @@ import { HOME_FAQS as faqs } from '@/data/copy';
     margin-bottom: 48px;
     line-height: 1.05;
   }
-  .faq-list { display: flex; flex-direction: column; }
-  .faq-item { border-bottom: 1.5px solid #eee; }
-  .faq-item:first-child { border-top: 1.5px solid #eee; }
+  .faq-list {
+    display: flex;
+    flex-direction: column;
+  }
+  .faq-item {
+    border-bottom: 1.5px solid #eee;
+  }
+  .faq-item:first-child {
+    border-top: 1.5px solid #eee;
+  }
   .faq-q {
     font-family: var(--font-cormorant), serif;
     font-size: 25px;
@@ -87,29 +120,26 @@ import { HOME_FAQS as faqs } from '@/data/copy';
     list-style: none;
     min-height: var(--touch-target);
   }
-  .faq-q::-webkit-details-marker { display: none; }
-  .faq-q::marker { display: none; content: ''; }
-  .faq-q:hover { color: var(--brand-red); }
+  .faq-q::-webkit-details-marker {
+    display: none;
+  }
+  .faq-q::marker {
+    display: none;
+    content: "";
+  }
+  .faq-q:hover {
+    color: var(--brand-red);
+  }
   .faq-toggle {
-    width: 60px;
-    height: 60px;
-    border-radius: 50%;
-    background: var(--off-white);
-    border: 1.5px solid #ddd;
-    display: flex;
-    align-items: center;
-    justify-content: center;
     flex-shrink: 0;
     font-size: 24px;
+    font-weight: 400;
     color: var(--brand-red);
-    transition: transform 0.3s, background 0.3s;
+    transition: transform 0.2s;
     line-height: 1;
   }
   .faq-item[open] .faq-toggle {
     transform: rotate(45deg);
-    background: var(--brand-red);
-    color: white;
-    border-color: var(--brand-red);
   }
   .faq-answer {
     overflow: hidden;
@@ -165,7 +195,9 @@ import { HOME_FAQS as faqs } from '@/data/copy';
     min-height: var(--touch-target);
     transition: background 0.2s;
   }
-  .faq-cta-btn:hover { background: var(--brand-red-dark); }
+  .faq-cta-btn:hover {
+    background: var(--brand-red-dark);
+  }
   .faq-cta-link {
     font-family: var(--font-cormorant), serif;
     font-size: 22px;
@@ -174,13 +206,27 @@ import { HOME_FAQS as faqs } from '@/data/copy';
     text-decoration: none;
     transition: color 0.2s;
   }
-  .faq-cta-link:hover { color: var(--brand-red-dark); }
+  .faq-cta-link:hover {
+    color: var(--brand-red-dark);
+  }
 
   @media (min-width: 768px) {
-    .faq { padding: 80px 48px; }
-    .faq-inner > h2 { margin-bottom: 64px; }
-    .faq-q { font-size: 25px; padding: 28px 0; gap: 20px; }
-    .faq-answer-summary { font-size: 18px; }
-    .faq-answer-detail { padding-bottom: 28px; }
+    .faq {
+      padding: 80px 48px;
+    }
+    .faq-inner > h2 {
+      margin-bottom: 64px;
+    }
+    .faq-q {
+      font-size: 25px;
+      padding: 28px 0;
+      gap: 20px;
+    }
+    .faq-answer-summary {
+      font-size: 18px;
+    }
+    .faq-answer-detail {
+      padding-bottom: 28px;
+    }
   }
 </style>

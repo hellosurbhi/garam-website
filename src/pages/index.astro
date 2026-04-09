@@ -1,25 +1,30 @@
 ---
-import BaseLayout from '@/layouts/BaseLayout.astro';
-import HomeNav from '@/components/home/HomeNav.astro';
-import HomeHero from '@/components/home/HomeHero.astro';
-import HomeMarquee from '@/components/home/HomeMarquee.astro';
-import HomeExperience from '@/components/home/HomeExperience.astro';
-import HomeShows from '@/components/home/HomeShows.astro';
-import HomeStats from '@/components/home/HomeStats.astro';
-import HomePress from '@/components/home/HomePress.astro';
-import HomeTestimonials from '@/components/home/HomeTestimonials.astro';
-import HomeCreators from '@/components/home/HomeCreators.astro';
-import HomeVideo from '@/components/home/HomeVideo.astro';
-import HomeFAQ from '@/components/home/HomeFAQ.astro';
-import HomeSignup from '@/components/home/HomeSignup.astro';
-import { SOCIAL_URLS } from '@/data/socials';
-import { events, allEvents } from '@/data/events';
-import { isEventPast } from '@/utils/eventDate';
-import { buildEventSchemas } from '@/utils/eventSchema';
+import BaseLayout from "@/layouts/BaseLayout.astro";
+import HomeNav from "@/components/home/HomeNav.astro";
+import HomeHero from "@/components/home/HomeHero.astro";
+import HomeMarquee from "@/components/home/HomeMarquee.astro";
+import HomeExperience from "@/components/home/HomeExperience.astro";
+import HomeShows from "@/components/home/HomeShows.astro";
+import HomeStats from "@/components/home/HomeStats.astro";
+import HomePress from "@/components/home/HomePress.astro";
+import HomeTestimonials from "@/components/home/HomeTestimonials.astro";
+import HomeCreators from "@/components/home/HomeCreators.astro";
+import HomeVideo from "@/components/home/HomeVideo.astro";
+import HomeFAQ from "@/components/home/HomeFAQ.astro";
+import HomeSignup from "@/components/home/HomeSignup.astro";
+import { SOCIAL_URLS, CREATOR_URLS } from "@/data/socials";
+import { TESTIMONIALS } from "@/data/copy";
+import { YOUTUBE_VIDEO_ID, VIDEO_METADATA } from "@/lib/constants";
+import { events, allEvents } from "@/data/events";
+import { isEventPast } from "@/utils/eventDate";
+import { buildEventSchemas } from "@/utils/eventSchema";
 
-const HIDDEN_FROM_HOME = ['Salt Lake City', 'Denver'];
-const upcomingEvents = allEvents.filter((e) => !isEventPast(e.date) && !e.hidden && !HIDDEN_FROM_HOME.includes(e.city));
-const firstTicketUrl = '/tickets';
+const HIDDEN_FROM_HOME = ["Salt Lake City", "Denver"];
+const upcomingEvents = allEvents.filter(
+  (e) =>
+    !isEventPast(e.date) && !e.hidden && !HIDDEN_FROM_HOME.includes(e.city),
+);
+const firstTicketUrl = "/tickets";
 const today = new Date().toISOString().slice(0, 10);
 const heroEvents = events
   .filter((e) => !e.hidden && e.isoDate && e.isoDate >= today && e.url)
@@ -32,14 +37,44 @@ const orgJsonLd = JSON.stringify({
   name: "Garam Masala Dating",
   url: "https://garammasaladating.com",
   logo: "https://garammasaladating.com/images/logo.svg",
-  description: "Garam Masala Dating is a live South Asian dating show and singles mixer in New York City. Real singles go on blind dates on stage in front of a 250-person live audience. Weekly in Manhattan, monthly in Jersey City.",
+  description:
+    "Garam Masala Dating is a live South Asian dating show and singles mixer in New York City. Real singles go on blind dates on stage in front of a 250-person live audience. Weekly in Manhattan, monthly in Jersey City.",
   foundingDate: "2022",
-  sameAs: [SOCIAL_URLS.instagram, SOCIAL_URLS.tiktok, SOCIAL_URLS.youtube, SOCIAL_URLS.threads, SOCIAL_URLS.x, SOCIAL_URLS.facebook],
+  alternateName: ["Garam Masala Dating Show", "GMS Dating"],
+  sameAs: [
+    SOCIAL_URLS.instagram,
+    SOCIAL_URLS.tiktok,
+    SOCIAL_URLS.youtube,
+    SOCIAL_URLS.threads,
+    SOCIAL_URLS.x,
+    SOCIAL_URLS.facebook,
+  ],
   contactPoint: {
     "@type": "ContactPoint",
     email: "contact@garammasaladating.com",
     contactType: "customer support",
   },
+  aggregateRating: {
+    "@type": "AggregateRating",
+    ratingValue: 5,
+    bestRating: 5,
+    worstRating: 1,
+    ratingCount: 3,
+  },
+  review: TESTIMONIALS.map((t) => ({
+    "@type": "Review",
+    author: {
+      "@type": "Person",
+      name: t.author.includes(",") ? t.author.split(",")[0].trim() : t.author,
+    },
+    reviewBody: t.quote,
+    reviewRating: {
+      "@type": "Rating",
+      ratingValue: 5,
+      bestRating: 5,
+      worstRating: 1,
+    },
+  })),
 });
 
 // WebSite JSON-LD
@@ -51,8 +86,80 @@ const websiteJsonLd = JSON.stringify({
 });
 
 // Individual Event JSON-LD blocks (one per upcoming show)
-const upcomingForSchema = events.filter((e) => !e.hidden && e.isoDate && e.isoDate >= today);
+const upcomingForSchema = events.filter(
+  (e) => !e.hidden && e.isoDate && e.isoDate >= today,
+);
 const eventSchemas = buildEventSchemas(upcomingForSchema);
+
+// VideoObject JSON-LD
+const videoJsonLd = JSON.stringify({
+  "@context": "https://schema.org",
+  "@type": "VideoObject",
+  name: VIDEO_METADATA.title,
+  description: VIDEO_METADATA.description,
+  thumbnailUrl: `https://i.ytimg.com/vi/${YOUTUBE_VIDEO_ID}/maxresdefault.jpg`,
+  contentUrl: `https://www.youtube.com/watch?v=${YOUTUBE_VIDEO_ID}`,
+  embedUrl: `https://www.youtube.com/embed/${YOUTUBE_VIDEO_ID}`,
+  uploadDate: VIDEO_METADATA.uploadDate,
+  duration: VIDEO_METADATA.duration,
+  publisher: {
+    "@type": "Organization",
+    name: "Garam Masala Dating",
+    url: "https://garammasaladating.com",
+    logo: {
+      "@type": "ImageObject",
+      url: "https://garammasaladating.com/images/logo.svg",
+    },
+  },
+});
+
+// EventSeries JSON-LD
+const eventSeriesJsonLd = JSON.stringify({
+  "@context": "https://schema.org",
+  "@type": "EventSeries",
+  "@id": "https://garammasaladating.com/#event-series",
+  name: "Garam Masala Dating",
+  description:
+    "NYC's recurring live South Asian comedy dating show. Two real singles go on a blind date in front of a 250-person audience. Bi-weekly in Manhattan at Top Secret Comedy Club.",
+  url: "https://garammasaladating.com",
+  startDate: "2022",
+  organizer: {
+    "@type": "Organization",
+    name: "Garam Masala Dating",
+    url: "https://garammasaladating.com",
+  },
+  location: {
+    "@type": "Place",
+    name: "Top Secret Comedy Club",
+    address: {
+      "@type": "PostalAddress",
+      streetAddress: "44 Avenue A",
+      addressLocality: "New York",
+      addressRegion: "NY",
+      postalCode: "10009",
+      addressCountry: "US",
+    },
+  },
+  eventSchedule: {
+    "@type": "Schedule",
+    repeatFrequency: "P2W",
+  },
+  performer: [
+    { "@type": "Person", name: "Surbhi", url: CREATOR_URLS.surbhi },
+    { "@type": "Person", name: "Wyatt Feegrado", url: CREATOR_URLS.wyatt },
+  ],
+});
+
+// Speakable — targets hero description + HomeFAQ answer text
+const speakableJsonLd = JSON.stringify({
+  "@context": "https://schema.org",
+  "@type": "WebPage",
+  url: "https://garammasaladating.com",
+  speakable: {
+    "@type": "SpeakableSpecification",
+    cssSelector: [".hero-sub", ".faq-answer-summary", ".faq-answer-detail"],
+  },
+});
 ---
 
 <BaseLayout
@@ -63,9 +170,14 @@ const eventSchemas = buildEventSchemas(upcomingForSchema);
   <Fragment slot="head">
     <script type="application/ld+json" set:html={orgJsonLd} />
     <script type="application/ld+json" set:html={websiteJsonLd} />
-    {eventSchemas.map((schema) => (
-      <script type="application/ld+json" set:html={schema} />
-    ))}
+    <script type="application/ld+json" set:html={speakableJsonLd} />
+    <script type="application/ld+json" set:html={videoJsonLd} />
+    <script type="application/ld+json" set:html={eventSeriesJsonLd} />
+    {
+      eventSchemas.map((schema) => (
+        <script type="application/ld+json" set:html={schema} />
+      ))
+    }
   </Fragment>
 
   <HomeNav ticketsUrl={firstTicketUrl} />
@@ -87,28 +199,73 @@ const eventSchemas = buildEventSchemas(upcomingForSchema);
   <dialog id="email-popup" class="popup-dialog">
     <div class="popup-inner">
       <button type="button" class="popup-close" aria-label="Close">
-        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          width="20"
+          height="20"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          aria-hidden="true"
+          ><path d="M18 6 6 18"></path><path d="m6 6 12 12"></path></svg
+        >
       </button>
 
       <!-- min-height prevents CLS when switching between steps -->
       <div class="popup-steps-wrapper">
         <div id="popup-step-1">
           <h2 class="popup-title">Want Cheaper Tickets?</h2>
-          <p class="popup-subtitle">Join our list for exclusive discount codes and early access.</p>
-          <form id="popup-email-form" class="popup-form">
-            <input type="email" id="popup-email" placeholder="Your email" required aria-label="Email address" />
-            <p id="popup-email-error" class="popup-error" hidden role="alert"></p>
-            <button type="submit" class="popup-submit">Get My Discount Code</button>
+          <p class="popup-subtitle">
+            Join our list for exclusive discount codes and early access.
+          </p>
+          <form
+            id="popup-email-form"
+            class="popup-form"
+            toolname="subscribe-via-homepage-popup"
+            tooldescription="Subscribe to Garam Masala Dating discount codes and ticket drops via the homepage signup popup. Provide an email address."
+          >
+            <input
+              type="email"
+              id="popup-email"
+              class="ph-mask"
+              placeholder="Your email"
+              required
+              aria-label="Email address"
+              toolparamdescription="Email address to receive discount codes and show announcements"
+            />
+            <p id="popup-email-error" class="popup-error" hidden role="alert">
+            </p>
+            <button type="submit" class="popup-submit"
+              >Get My Discount Code</button
+            >
           </form>
           <button type="button" class="popup-dismiss">No thanks</button>
         </div>
 
         <div id="popup-step-2" hidden>
           <h2 class="popup-title">One more thing...</h2>
-          <p class="popup-subtitle">Add your number for text-only discounts and free ticket drops.</p>
-          <form id="popup-phone-form" class="popup-form">
-            <input type="tel" id="popup-phone" placeholder="(555) 123-4567" aria-label="Phone number" />
-            <p id="popup-phone-error" class="popup-error" hidden role="alert"></p>
+          <p class="popup-subtitle">
+            Add your number for text-only discounts and free ticket drops.
+          </p>
+          <form
+            id="popup-phone-form"
+            class="popup-form"
+            toolname="add-phone-via-homepage-popup"
+            tooldescription="Add a phone number for SMS-only ticket drops and deals (optional second step after email signup via homepage popup)."
+          >
+            <input
+              type="tel"
+              id="popup-phone"
+              class="ph-mask"
+              placeholder="(555) 123-4567"
+              aria-label="Phone number"
+              toolparamdescription="Mobile phone number for SMS-only deals (optional)"
+            />
+            <p id="popup-phone-error" class="popup-error" hidden role="alert">
+            </p>
             <button type="submit" class="popup-submit">Send Me Deals</button>
           </form>
           <button type="button" class="popup-skip">Maybe later</button>
@@ -119,20 +276,28 @@ const eventSchemas = buildEventSchemas(upcomingForSchema);
 </BaseLayout>
 
 <script>
-  import { getFirebaseDb } from '@/lib/firebase';
-  import { collection, addDoc, updateDoc, type DocumentReference } from 'firebase/firestore';
-  import { cleanPhone } from '@/lib/phone';
-  import { identifyLead, trackLeadEvent } from '@/lib/analytics';
-  import { buildLeadAttribution } from '@/lib/leadAttribution';
+  import { getFirebaseDb } from "@/lib/firebase";
+  import {
+    collection,
+    addDoc,
+    updateDoc,
+    type DocumentReference,
+  } from "firebase/firestore";
+  import { cleanPhone } from "@/lib/phone";
+  import { identifyLead, trackLeadEvent } from "@/lib/analytics";
+  import { buildLeadAttribution } from "@/lib/leadAttribution";
 
   // Email popup logic — only suppressed permanently after email submit
-  const POPUP_KEY = 'gmd-popup-subscribed';
-  const popup = document.getElementById('email-popup') as HTMLDialogElement;
+  const POPUP_KEY = "gmd-popup-subscribed";
+  const popup = document.getElementById("email-popup") as HTMLDialogElement;
 
   if (popup && !localStorage.getItem(POPUP_KEY)) {
     const timer = setTimeout(() => {
-      if (!document.querySelector('dialog[open]')) {
-        trackLeadEvent('popup_opened', { source: 'popup', sourcePage: window.location.pathname });
+      if (!document.querySelector("dialog[open]")) {
+        trackLeadEvent("popup_opened", {
+          source: "popup",
+          sourcePage: window.location.pathname,
+        });
         popup.showModal();
       }
     }, 30000);
@@ -142,106 +307,129 @@ const eventSchemas = buildEventSchemas(upcomingForSchema);
       clearTimeout(timer);
     };
 
-    popup.querySelector('.popup-close')?.addEventListener('click', close);
-    popup.querySelector('.popup-dismiss')?.addEventListener('click', close);
-    popup.querySelector('.popup-skip')?.addEventListener('click', close);
-    popup.addEventListener('click', (e) => {
+    popup.querySelector(".popup-close")?.addEventListener("click", close);
+    popup.querySelector(".popup-dismiss")?.addEventListener("click", close);
+    popup.querySelector(".popup-skip")?.addEventListener("click", close);
+    popup.addEventListener("click", (e) => {
       if (e.target === popup) close();
     });
 
-    let savedEmail = '';
+    let savedEmail = "";
     let popupDocRef: DocumentReference | null = null;
 
-    document.getElementById('popup-email-form')?.addEventListener('submit', async (e) => {
-      e.preventDefault();
-      savedEmail = (document.getElementById('popup-email') as HTMLInputElement).value;
-      const errorEl = document.getElementById('popup-email-error');
-      const submitBtn = (e.target as HTMLFormElement).querySelector<HTMLButtonElement>('[type="submit"]');
-      if (submitBtn) submitBtn.disabled = true;
-      try {
-        const db = getFirebaseDb();
-        const attribution = buildLeadAttribution({ source: 'popup' });
-        popupDocRef = await addDoc(collection(db, 'leads'), {
-          email: savedEmail,
-          ...attribution,
-          createdAt: new Date().toISOString(),
-        });
-        localStorage.setItem(POPUP_KEY, 'true');
-        identifyLead(savedEmail, attribution);
-        trackLeadEvent('lead_email_submitted', attribution);
-        if (errorEl) { errorEl.textContent = ''; errorEl.setAttribute('hidden', ''); }
-        document.getElementById('popup-step-1')?.setAttribute('hidden', '');
-        document.getElementById('popup-step-2')?.removeAttribute('hidden');
-      } catch (err) {
-        if (errorEl) {
-          errorEl.textContent = 'Something went wrong. Please try again.';
-          errorEl.removeAttribute('hidden');
-        }
-      } finally {
-        if (submitBtn) submitBtn.disabled = false;
-      }
-    });
-
-    document.getElementById('popup-phone-form')?.addEventListener('submit', async (e) => {
-      e.preventDefault();
-      const raw = (document.getElementById('popup-phone') as HTMLInputElement).value;
-      const cleaned = cleanPhone(raw);
-      const phoneErrorEl = document.getElementById('popup-phone-error');
-
-      if (!raw.trim()) { close(); return; }
-
-      if (!cleaned) {
-        if (phoneErrorEl) {
-          phoneErrorEl.textContent = 'Please enter a valid phone number.';
-          phoneErrorEl.removeAttribute('hidden');
-        }
-        return;
-      }
-
-      const submitBtn = (e.target as HTMLFormElement).querySelector<HTMLButtonElement>('[type="submit"]');
-      if (submitBtn) submitBtn.disabled = true;
-      try {
-        const db = getFirebaseDb();
-        if (popupDocRef) {
-          await updateDoc(popupDocRef, { phone: cleaned });
-        } else {
-          const attribution = buildLeadAttribution({ source: 'popup' });
-          await addDoc(collection(db, 'leads'), {
+    document
+      .getElementById("popup-email-form")
+      ?.addEventListener("submit", async (e) => {
+        e.preventDefault();
+        savedEmail = (
+          document.getElementById("popup-email") as HTMLInputElement
+        ).value;
+        const errorEl = document.getElementById("popup-email-error");
+        const submitBtn = (
+          e.target as HTMLFormElement
+        ).querySelector<HTMLButtonElement>('[type="submit"]');
+        if (submitBtn) submitBtn.disabled = true;
+        try {
+          const db = getFirebaseDb();
+          const attribution = buildLeadAttribution({ source: "popup" });
+          popupDocRef = await addDoc(collection(db, "leads"), {
             email: savedEmail,
-            phone: cleaned,
             ...attribution,
             createdAt: new Date().toISOString(),
           });
+          localStorage.setItem(POPUP_KEY, "true");
+          identifyLead(savedEmail, attribution);
+          trackLeadEvent("lead_email_submitted", attribution);
+          if (errorEl) {
+            errorEl.textContent = "";
+            errorEl.setAttribute("hidden", "");
+          }
+          document.getElementById("popup-step-1")?.setAttribute("hidden", "");
+          document.getElementById("popup-step-2")?.removeAttribute("hidden");
+        } catch (err) {
+          if (errorEl) {
+            errorEl.textContent = "Something went wrong. Please try again.";
+            errorEl.removeAttribute("hidden");
+          }
+        } finally {
+          if (submitBtn) submitBtn.disabled = false;
         }
-        trackLeadEvent('lead_phone_submitted', { source: 'popup', sourcePage: window.location.pathname });
-        close();
-      } catch (err) {
-        if (phoneErrorEl) {
-          phoneErrorEl.textContent = 'Something went wrong. Please try again or skip.';
-          phoneErrorEl.removeAttribute('hidden');
+      });
+
+    document
+      .getElementById("popup-phone-form")
+      ?.addEventListener("submit", async (e) => {
+        e.preventDefault();
+        const raw = (document.getElementById("popup-phone") as HTMLInputElement)
+          .value;
+        const cleaned = cleanPhone(raw);
+        const phoneErrorEl = document.getElementById("popup-phone-error");
+
+        if (!raw.trim()) {
+          close();
+          return;
         }
-      } finally {
-        if (submitBtn) submitBtn.disabled = false;
-      }
-    });
+
+        if (!cleaned) {
+          if (phoneErrorEl) {
+            phoneErrorEl.textContent = "Please enter a valid phone number.";
+            phoneErrorEl.removeAttribute("hidden");
+          }
+          return;
+        }
+
+        const submitBtn = (
+          e.target as HTMLFormElement
+        ).querySelector<HTMLButtonElement>('[type="submit"]');
+        if (submitBtn) submitBtn.disabled = true;
+        try {
+          const db = getFirebaseDb();
+          if (popupDocRef) {
+            await updateDoc(popupDocRef, { phone: cleaned });
+          } else {
+            const attribution = buildLeadAttribution({ source: "popup" });
+            await addDoc(collection(db, "leads"), {
+              email: savedEmail,
+              phone: cleaned,
+              ...attribution,
+              createdAt: new Date().toISOString(),
+            });
+          }
+          trackLeadEvent("lead_phone_submitted", {
+            source: "popup",
+            sourcePage: window.location.pathname,
+          });
+          close();
+        } catch (err) {
+          if (phoneErrorEl) {
+            phoneErrorEl.textContent =
+              "Something went wrong. Please try again or skip.";
+            phoneErrorEl.removeAttribute("hidden");
+          }
+        } finally {
+          if (submitBtn) submitBtn.disabled = false;
+        }
+      });
   }
 
   // Scroll reveal observer — progressive enhancement
-  const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const prefersReducedMotion = window.matchMedia(
+    "(prefers-reduced-motion: reduce)",
+  ).matches;
 
-  if ('IntersectionObserver' in window && !prefersReducedMotion) {
-    document.documentElement.classList.add('js-reveal');
-    const revealNodes = document.querySelectorAll('[data-reveal]');
+  if ("IntersectionObserver" in window && !prefersReducedMotion) {
+    document.documentElement.classList.add("js-reveal");
+    const revealNodes = document.querySelectorAll("[data-reveal]");
     const observer = new IntersectionObserver(
       (entries) => {
         entries.forEach((entry) => {
           if (entry.isIntersecting) {
-            entry.target.classList.add('revealed');
+            entry.target.classList.add("revealed");
             observer.unobserve(entry.target);
           }
         });
       },
-      { threshold: 0.12 }
+      { threshold: 0.12 },
     );
     revealNodes.forEach((el) => observer.observe(el));
   }
@@ -251,7 +439,9 @@ const eventSchemas = buildEventSchemas(upcomingForSchema);
   .js-reveal [data-reveal] {
     opacity: 0;
     transform: translateY(32px);
-    transition: opacity 0.7s ease, transform 0.7s cubic-bezier(0.22, 1, 0.36, 1);
+    transition:
+      opacity 0.7s ease,
+      transform 0.7s cubic-bezier(0.22, 1, 0.36, 1);
   }
   .js-reveal [data-reveal].revealed {
     opacity: 1;
@@ -295,8 +485,14 @@ const eventSchemas = buildEventSchemas(upcomingForSchema);
     min-height: 240px;
   }
   @keyframes popupIn {
-    from { opacity: 0; transform: scale(0.95) translateY(8px); }
-    to { opacity: 1; transform: scale(1) translateY(0); }
+    from {
+      opacity: 0;
+      transform: scale(0.95) translateY(8px);
+    }
+    to {
+      opacity: 1;
+      transform: scale(1) translateY(0);
+    }
   }
   .popup-close {
     position: absolute;
@@ -314,7 +510,9 @@ const eventSchemas = buildEventSchemas(upcomingForSchema);
     justify-content: center;
     transition: color 0.2s;
   }
-  .popup-close:hover { color: var(--charcoal); }
+  .popup-close:hover {
+    color: var(--charcoal);
+  }
   .popup-title {
     font-family: var(--font-playfair), serif;
     font-size: 24px;
@@ -363,7 +561,9 @@ const eventSchemas = buildEventSchemas(upcomingForSchema);
     white-space: nowrap;
     width: 100%;
   }
-  .popup-submit:hover { background: var(--brand-red-dark); }
+  .popup-submit:hover {
+    background: var(--brand-red-dark);
+  }
   .popup-error {
     font-size: 13px;
     color: var(--brand-red);
@@ -388,5 +588,7 @@ const eventSchemas = buildEventSchemas(upcomingForSchema);
     min-height: var(--touch-target);
   }
   .popup-dismiss:hover,
-  .popup-skip:hover { color: #666; }
+  .popup-skip:hover {
+    color: #666;
+  }
 </style>

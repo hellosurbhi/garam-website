@@ -46,7 +46,7 @@
   min-height: 100vh;
   background: transparent;
   position: relative;
-  animation: pageIn 0.3s ease-out both;
+  animation: pageIn 0.5s ease-out both;
 }
 
 .container {
@@ -61,6 +61,7 @@
 
 .headerArea {
   margin-bottom: 8px;
+  min-height: var(--touch-target);
 }
 
 .backButton {
@@ -172,7 +173,7 @@
   border: 1px solid var(--border);
   font-family: var(--font-body);
   font-size: 16px;
-  color: #3d3532;
+  color: var(--apply-brown);
   background: #fff;
   box-sizing: border-box;
   transition:
@@ -426,7 +427,6 @@
 
 .submitButton:disabled {
   background: rgba(var(--brand-red-rgb), 0.5);
-  cursor: not-allowed;
 }
 
 .submitButton:disabled:hover {
@@ -462,7 +462,7 @@
 .consentQuestion {
   font-family: var(--font-body);
   font-size: 15px;
-  color: #3d3532;
+  color: var(--apply-brown);
   margin-bottom: 14px;
   line-height: 1.5;
   font-weight: 500;
@@ -479,7 +479,7 @@
   gap: 8px;
   font-family: var(--font-body);
   font-size: 15px;
-  color: #3d3532;
+  color: var(--apply-brown);
   cursor: pointer;
   min-height: var(--touch-target);
 }
@@ -499,7 +499,7 @@
   cursor: pointer;
   font-family: var(--font-body);
   font-size: 15px;
-  color: #3d3532;
+  color: var(--apply-brown);
   line-height: 1.5;
   min-height: var(--touch-target);
 }
@@ -564,7 +564,7 @@
   font-family: var(--font-playfair);
   font-size: 17px;
   font-weight: 700;
-  color: #3d3532;
+  color: var(--apply-brown);
   margin: 0;
 }
 
@@ -634,7 +634,7 @@
   border-radius: 100px;
   border: 1px solid rgba(0, 0, 0, 0.15);
   background: white;
-  color: #3d3532;
+  color: var(--apply-brown);
   font-family: var(--font-body);
   font-size: 15px;
   cursor: pointer;
@@ -651,7 +651,7 @@
   text-align: center;
   font-family: var(--font-body);
   font-size: 14px;
-  color: #3d3532;
+  color: var(--apply-brown);
   opacity: 0.6;
   margin-top: 16px;
   line-height: 1.5;
@@ -734,7 +734,7 @@
 
 .successCard {
   background: #fff;
-  border: 1px solid #eee;
+  border: 1px solid var(--border-light);
   border-radius: 12px;
   padding: 20px 24px;
   margin-bottom: 16px;

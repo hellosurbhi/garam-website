@@ -47,7 +47,7 @@ When adding new content (shows, press, FAQs, testimonials), update the data file
 
 ## No band-aid fixes — ever
 
-Always implement the industry best-practice, sustainable fix. Never apply a short-term workaround that creates inconsistency, adds one-off config files, or patches around a platform limitation. If the proper solution requires a bigger change (restructuring, migrating to the correct API, etc.), do the bigger change.
+Always implement the industry best-practice, sustainable fix. Never apply a short-term workaround that creates inconsistency, adds one-off config files, or patches around a platform limitation. If the proper solution requires a bigger change (restructuring, migrating to the correct API, etc.), do the bigger change. Every fix should be industry best practice. Research best practices and justify why you are making any and all changes even if it is a one line change.
 
 - If a tool/platform doesn't support something (e.g., path aliases), restructure to use the platform correctly — don't add workaround configs.
 - All imports, patterns, and conventions must be consistent across the entire codebase. One file doing something differently is not acceptable.
@@ -64,7 +64,7 @@ This site was designed by a professional front-end designer. Every aesthetic dec
 - **Font sizes, letter-spacing, line-height** — typographic choices are intentional.
 - **WebGL shader** (`public/js/shader-app.js`) — $2,000 designer asset. Touch nothing. If there is a bug, report it; do not "fix" it aesthetically.
 
-**CodeRabbit rule:** Any review comment that suggests removing, changing, or "improving" the above should be dismissed with: `intentional design choice — not a bug`. You may offer alternative *implementations* (e.g., CSS var vs hex) but never alter the *result*.
+**CodeRabbit rule:** Any review comment that suggests removing, changing, or "improving" the above should be dismissed with: `intentional design choice — not a bug`. You may offer alternative _implementations_ (e.g., CSS var vs hex) but never alter the _result_.
 
 ### Never do
 
@@ -118,7 +118,7 @@ Fonts: Playfair Display (headings), Nunito (body), Cormorant Garamond (decorativ
 
 ## Environment variables
 
-- `PUBLIC_FIREBASE_*` — Firebase config (client-safe, Astro PUBLIC_ prefix)
+- `PUBLIC_FIREBASE_*` — Firebase config (client-safe, Astro PUBLIC\_ prefix)
 - `FIREBASE_ADMIN_CLIENT_EMAIL` / `FIREBASE_ADMIN_PRIVATE_KEY` — server-side only
 - `CONTESTANT_PREP_SALT` — weekly password rotation salt
 - `RESEND_API_KEY` / `NOTIFICATION_EMAIL` — email notifications

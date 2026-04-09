@@ -24,7 +24,10 @@ function getValidatedConfig(): FirebaseOptions {
   const entries = Object.entries(firebaseConfig);
   const missing = entries
     .filter(([, value]) => !value)
-    .map(([key]) => `PUBLIC_FIREBASE_${key.replace(/[A-Z]/g, (match) => `_${match}`).toUpperCase()}`);
+    .map(
+      ([key]) =>
+        `PUBLIC_FIREBASE_${key.replace(/[A-Z]/g, (match) => `_${match}`).toUpperCase()}`,
+    );
 
   if (missing.length > 0) {
     _configError = new Error(

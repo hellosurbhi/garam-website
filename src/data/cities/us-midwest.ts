@@ -19,7 +19,10 @@ export const usMidwestCities: Record<string, CityData> = {
     ],
     ctas: [
       { label: "Join the Chicago Waitlist", href: "#waitlist" },
-      { label: "Apply to Be a Contestant", href: "/apply?city=Chicago&state=IL" },
+      {
+        label: "Apply to Be a Contestant",
+        href: "/apply?city=Chicago&state=IL",
+      },
     ],
     includeEventSchema: false,
     areaServed: "Chicago, Illinois",
@@ -27,7 +30,13 @@ export const usMidwestCities: Record<string, CityData> = {
     addressRegion: "IL",
     addressCountry: "US",
     region: "US Midwest",
-    nearbyCities: ["champaign", "milwaukee", "madison-wi", "indianapolis", "detroit"],
+    nearbyCities: [
+      "champaign",
+      "milwaukee",
+      "madison-wi",
+      "indianapolis",
+      "detroit",
+    ],
   },
 
   champaign: {
@@ -47,7 +56,10 @@ export const usMidwestCities: Record<string, CityData> = {
     ],
     ctas: [
       { label: "Join the Champaign Waitlist", href: "#waitlist" },
-      { label: "Apply to Be a Contestant", href: "/apply?city=Champaign&state=IL" },
+      {
+        label: "Apply to Be a Contestant",
+        href: "/apply?city=Champaign&state=IL",
+      },
     ],
     includeEventSchema: false,
     areaServed: "Champaign, Illinois",
@@ -55,7 +67,13 @@ export const usMidwestCities: Record<string, CityData> = {
     addressRegion: "IL",
     addressCountry: "US",
     region: "US Midwest",
-    nearbyCities: ["chicago", "indianapolis", "bloomington-in", "st-louis", "columbus-oh"],
+    nearbyCities: [
+      "chicago",
+      "indianapolis",
+      "bloomington-in",
+      "st-louis",
+      "columbus-oh",
+    ],
   },
 
   detroit: {
@@ -76,7 +94,10 @@ export const usMidwestCities: Record<string, CityData> = {
     ],
     ctas: [
       { label: "Join the Detroit Waitlist", href: "#waitlist" },
-      { label: "Apply to Be a Contestant", href: "/apply?city=Detroit&state=MI" },
+      {
+        label: "Apply to Be a Contestant",
+        href: "/apply?city=Detroit&state=MI",
+      },
     ],
     includeEventSchema: false,
     areaServed: "Detroit, Michigan",
@@ -84,7 +105,13 @@ export const usMidwestCities: Record<string, CityData> = {
     addressRegion: "MI",
     addressCountry: "US",
     region: "US Midwest",
-    nearbyCities: ["ann-arbor", "chicago", "columbus-oh", "cleveland", "indianapolis"],
+    nearbyCities: [
+      "ann-arbor",
+      "chicago",
+      "columbus-oh",
+      "cleveland",
+      "indianapolis",
+    ],
   },
 
   "ann-arbor": {
@@ -104,7 +131,10 @@ export const usMidwestCities: Record<string, CityData> = {
     ],
     ctas: [
       { label: "Join the Ann Arbor Waitlist", href: "#waitlist" },
-      { label: "Apply to Be a Contestant", href: "/apply?city=Ann+Arbor&state=MI" },
+      {
+        label: "Apply to Be a Contestant",
+        href: "/apply?city=Ann+Arbor&state=MI",
+      },
     ],
     includeEventSchema: false,
     areaServed: "Ann Arbor, Michigan",
@@ -112,7 +142,13 @@ export const usMidwestCities: Record<string, CityData> = {
     addressRegion: "MI",
     addressCountry: "US",
     region: "US Midwest",
-    nearbyCities: ["detroit", "chicago", "columbus-oh", "cleveland", "west-lafayette"],
+    nearbyCities: [
+      "detroit",
+      "chicago",
+      "columbus-oh",
+      "cleveland",
+      "west-lafayette",
+    ],
   },
 
   "columbus-oh": {
@@ -133,7 +169,10 @@ export const usMidwestCities: Record<string, CityData> = {
     ],
     ctas: [
       { label: "Join the Columbus Waitlist", href: "#waitlist" },
-      { label: "Apply to Be a Contestant", href: "/apply?city=Columbus&state=OH" },
+      {
+        label: "Apply to Be a Contestant",
+        href: "/apply?city=Columbus&state=OH",
+      },
     ],
     includeEventSchema: false,
     areaServed: "Columbus, Ohio",
@@ -141,7 +180,13 @@ export const usMidwestCities: Record<string, CityData> = {
     addressRegion: "OH",
     addressCountry: "US",
     region: "US Midwest",
-    nearbyCities: ["cincinnati", "cleveland", "detroit", "indianapolis", "chicago"],
+    nearbyCities: [
+      "cincinnati",
+      "cleveland",
+      "detroit",
+      "indianapolis",
+      "chicago",
+    ],
   },
 
   cincinnati: {
@@ -161,7 +206,10 @@ export const usMidwestCities: Record<string, CityData> = {
     ],
     ctas: [
       { label: "Join the Cincinnati Waitlist", href: "#waitlist" },
-      { label: "Apply to Be a Contestant", href: "/apply?city=Cincinnati&state=OH" },
+      {
+        label: "Apply to Be a Contestant",
+        href: "/apply?city=Cincinnati&state=OH",
+      },
     ],
     includeEventSchema: false,
     areaServed: "Cincinnati, Ohio",
@@ -169,7 +217,13 @@ export const usMidwestCities: Record<string, CityData> = {
     addressRegion: "OH",
     addressCountry: "US",
     region: "US Midwest",
-    nearbyCities: ["columbus-oh", "indianapolis", "cleveland", "detroit", "st-louis"],
+    nearbyCities: [
+      "columbus-oh",
+      "indianapolis",
+      "cleveland",
+      "detroit",
+      "st-louis",
+    ],
   },
 
   cleveland: {
@@ -190,7 +244,10 @@ export const usMidwestCities: Record<string, CityData> = {
     ],
     ctas: [
       { label: "Join the Cleveland Waitlist", href: "#waitlist" },
-      { label: "Apply to Be a Contestant", href: "/apply?city=Cleveland&state=OH" },
+      {
+        label: "Apply to Be a Contestant",
+        href: "/apply?city=Cleveland&state=OH",
+      },
     ],
     includeEventSchema: false,
     areaServed: "Cleveland, Ohio",
@@ -198,7 +255,13 @@ export const usMidwestCities: Record<string, CityData> = {
     addressRegion: "OH",
     addressCountry: "US",
     region: "US Midwest",
-    nearbyCities: ["columbus-oh", "cincinnati", "detroit", "ann-arbor", "chicago"],
+    nearbyCities: [
+      "columbus-oh",
+      "cincinnati",
+      "detroit",
+      "ann-arbor",
+      "chicago",
+    ],
   },
 
   minneapolis: {
@@ -219,7 +282,10 @@ export const usMidwestCities: Record<string, CityData> = {
     ],
     ctas: [
       { label: "Join the Minneapolis Waitlist", href: "#waitlist" },
-      { label: "Apply to Be a Contestant", href: "/apply?city=Minneapolis&state=MN" },
+      {
+        label: "Apply to Be a Contestant",
+        href: "/apply?city=Minneapolis&state=MN",
+      },
     ],
     includeEventSchema: false,
     areaServed: "Minneapolis, Minnesota",
@@ -227,7 +293,13 @@ export const usMidwestCities: Record<string, CityData> = {
     addressRegion: "MN",
     addressCountry: "US",
     region: "US Midwest",
-    nearbyCities: ["chicago", "madison-wi", "milwaukee", "kansas-city", "omaha"],
+    nearbyCities: [
+      "chicago",
+      "madison-wi",
+      "milwaukee",
+      "kansas-city",
+      "omaha",
+    ],
   },
 
   indianapolis: {
@@ -248,7 +320,10 @@ export const usMidwestCities: Record<string, CityData> = {
     ],
     ctas: [
       { label: "Join the Indianapolis Waitlist", href: "#waitlist" },
-      { label: "Apply to Be a Contestant", href: "/apply?city=Indianapolis&state=IN" },
+      {
+        label: "Apply to Be a Contestant",
+        href: "/apply?city=Indianapolis&state=IN",
+      },
     ],
     includeEventSchema: false,
     areaServed: "Indianapolis, Indiana",
@@ -256,7 +331,13 @@ export const usMidwestCities: Record<string, CityData> = {
     addressRegion: "IN",
     addressCountry: "US",
     region: "US Midwest",
-    nearbyCities: ["chicago", "columbus-oh", "cincinnati", "west-lafayette", "bloomington-in"],
+    nearbyCities: [
+      "chicago",
+      "columbus-oh",
+      "cincinnati",
+      "west-lafayette",
+      "bloomington-in",
+    ],
   },
 
   "west-lafayette": {
@@ -276,7 +357,10 @@ export const usMidwestCities: Record<string, CityData> = {
     ],
     ctas: [
       { label: "Join the West Lafayette Waitlist", href: "#waitlist" },
-      { label: "Apply to Be a Contestant", href: "/apply?city=West+Lafayette&state=IN" },
+      {
+        label: "Apply to Be a Contestant",
+        href: "/apply?city=West+Lafayette&state=IN",
+      },
     ],
     includeEventSchema: false,
     areaServed: "West Lafayette, Indiana",
@@ -284,7 +368,13 @@ export const usMidwestCities: Record<string, CityData> = {
     addressRegion: "IN",
     addressCountry: "US",
     region: "US Midwest",
-    nearbyCities: ["indianapolis", "champaign", "bloomington-in", "chicago", "ann-arbor"],
+    nearbyCities: [
+      "indianapolis",
+      "champaign",
+      "bloomington-in",
+      "chicago",
+      "ann-arbor",
+    ],
   },
 
   "bloomington-in": {
@@ -304,7 +394,10 @@ export const usMidwestCities: Record<string, CityData> = {
     ],
     ctas: [
       { label: "Join the Bloomington Waitlist", href: "#waitlist" },
-      { label: "Apply to Be a Contestant", href: "/apply?city=Bloomington&state=IN" },
+      {
+        label: "Apply to Be a Contestant",
+        href: "/apply?city=Bloomington&state=IN",
+      },
     ],
     includeEventSchema: false,
     areaServed: "Bloomington, Indiana",
@@ -312,7 +405,13 @@ export const usMidwestCities: Record<string, CityData> = {
     addressRegion: "IN",
     addressCountry: "US",
     region: "US Midwest",
-    nearbyCities: ["indianapolis", "west-lafayette", "champaign", "columbus-oh", "cincinnati"],
+    nearbyCities: [
+      "indianapolis",
+      "west-lafayette",
+      "champaign",
+      "columbus-oh",
+      "cincinnati",
+    ],
   },
 
   milwaukee: {
@@ -332,7 +431,10 @@ export const usMidwestCities: Record<string, CityData> = {
     ],
     ctas: [
       { label: "Join the Milwaukee Waitlist", href: "#waitlist" },
-      { label: "Apply to Be a Contestant", href: "/apply?city=Milwaukee&state=WI" },
+      {
+        label: "Apply to Be a Contestant",
+        href: "/apply?city=Milwaukee&state=WI",
+      },
     ],
     includeEventSchema: false,
     areaServed: "Milwaukee, Wisconsin",
@@ -340,7 +442,13 @@ export const usMidwestCities: Record<string, CityData> = {
     addressRegion: "WI",
     addressCountry: "US",
     region: "US Midwest",
-    nearbyCities: ["chicago", "madison-wi", "minneapolis", "detroit", "indianapolis"],
+    nearbyCities: [
+      "chicago",
+      "madison-wi",
+      "minneapolis",
+      "detroit",
+      "indianapolis",
+    ],
   },
 
   "madison-wi": {
@@ -361,7 +469,10 @@ export const usMidwestCities: Record<string, CityData> = {
     ],
     ctas: [
       { label: "Join the Madison Waitlist", href: "#waitlist" },
-      { label: "Apply to Be a Contestant", href: "/apply?city=Madison&state=WI" },
+      {
+        label: "Apply to Be a Contestant",
+        href: "/apply?city=Madison&state=WI",
+      },
     ],
     includeEventSchema: false,
     areaServed: "Madison, Wisconsin",
@@ -369,7 +480,13 @@ export const usMidwestCities: Record<string, CityData> = {
     addressRegion: "WI",
     addressCountry: "US",
     region: "US Midwest",
-    nearbyCities: ["milwaukee", "chicago", "minneapolis", "iowa-city", "champaign"],
+    nearbyCities: [
+      "milwaukee",
+      "chicago",
+      "minneapolis",
+      "iowa-city",
+      "champaign",
+    ],
   },
 
   "kansas-city": {
@@ -390,7 +507,10 @@ export const usMidwestCities: Record<string, CityData> = {
     ],
     ctas: [
       { label: "Join the Kansas City Waitlist", href: "#waitlist" },
-      { label: "Apply to Be a Contestant", href: "/apply?city=Kansas+City&state=MO" },
+      {
+        label: "Apply to Be a Contestant",
+        href: "/apply?city=Kansas+City&state=MO",
+      },
     ],
     includeEventSchema: false,
     areaServed: "Kansas City, Missouri",
@@ -398,7 +518,13 @@ export const usMidwestCities: Record<string, CityData> = {
     addressRegion: "MO",
     addressCountry: "US",
     region: "US Midwest",
-    nearbyCities: ["st-louis", "omaha", "minneapolis", "chicago", "indianapolis"],
+    nearbyCities: [
+      "st-louis",
+      "omaha",
+      "minneapolis",
+      "chicago",
+      "indianapolis",
+    ],
   },
 
   "st-louis": {
@@ -418,7 +544,10 @@ export const usMidwestCities: Record<string, CityData> = {
     ],
     ctas: [
       { label: "Join the St. Louis Waitlist", href: "#waitlist" },
-      { label: "Apply to Be a Contestant", href: "/apply?city=St.+Louis&state=MO" },
+      {
+        label: "Apply to Be a Contestant",
+        href: "/apply?city=St.+Louis&state=MO",
+      },
     ],
     includeEventSchema: false,
     areaServed: "St. Louis, Missouri",
@@ -426,7 +555,13 @@ export const usMidwestCities: Record<string, CityData> = {
     addressRegion: "MO",
     addressCountry: "US",
     region: "US Midwest",
-    nearbyCities: ["kansas-city", "chicago", "indianapolis", "champaign", "columbus-oh"],
+    nearbyCities: [
+      "kansas-city",
+      "chicago",
+      "indianapolis",
+      "champaign",
+      "columbus-oh",
+    ],
   },
 
   "iowa-city": {
@@ -446,7 +581,10 @@ export const usMidwestCities: Record<string, CityData> = {
     ],
     ctas: [
       { label: "Join the Iowa City Waitlist", href: "#waitlist" },
-      { label: "Apply to Be a Contestant", href: "/apply?city=Iowa+City&state=IA" },
+      {
+        label: "Apply to Be a Contestant",
+        href: "/apply?city=Iowa+City&state=IA",
+      },
     ],
     includeEventSchema: false,
     areaServed: "Iowa City, Iowa",
@@ -482,7 +620,13 @@ export const usMidwestCities: Record<string, CityData> = {
     addressRegion: "IA",
     addressCountry: "US",
     region: "US Midwest",
-    nearbyCities: ["iowa-city", "omaha", "minneapolis", "kansas-city", "madison-wi"],
+    nearbyCities: [
+      "iowa-city",
+      "omaha",
+      "minneapolis",
+      "kansas-city",
+      "madison-wi",
+    ],
   },
 
   omaha: {

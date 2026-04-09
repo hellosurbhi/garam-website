@@ -1,1 +1,14 @@
-[{"origin":["https://garammasaladating.com"],"method":["GET","PUT"],"maxAgeSeconds":3600,"responseHeader":["Content-Type","Authorization","Content-Length","User-Agent","x-goog-resumable"]}]
+[
+  {
+    "origin": ["https://garammasaladating.com"],
+    "method": ["GET", "PUT"],
+    "maxAgeSeconds": 3600,
+    "responseHeader": [
+      "Content-Type",
+      "Authorization",
+      "Content-Length",
+      "User-Agent",
+      "x-goog-resumable"
+    ]
+  }
+]

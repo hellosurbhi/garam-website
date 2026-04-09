@@ -19,7 +19,10 @@ export const activeCities: Record<string, CityData> = {
       "If you\u2019re tired of apps and tired of manufactured mixers, this is the alternative. Come watch a few strangers try to fall in love on stage, then go find your own person at the bar.",
     ],
     ctas: [
-      { label: "Apply to Be a Contestant", href: "/apply?city=New+York&state=NY" },
+      {
+        label: "Apply to Be a Contestant",
+        href: "/apply?city=New+York&state=NY",
+      },
     ],
     includeEventSchema: true,
     areaServed: "Manhattan, New York",
@@ -28,7 +31,13 @@ export const activeCities: Record<string, CityData> = {
     addressCountry: "US",
     venueName: "Top Secret Comedy Club",
     region: "US Northeast",
-    nearbyCities: ["jersey-city", "edison", "philadelphia", "boston", "stamford"],
+    nearbyCities: [
+      "jersey-city",
+      "edison",
+      "philadelphia",
+      "boston",
+      "stamford",
+    ],
   },
 
   "jersey-city": {
@@ -48,7 +57,10 @@ export const activeCities: Record<string, CityData> = {
       "Monthly dates are posted on the events page. Tickets go fast because the room is smaller. Don\u2019t wait.",
     ],
     ctas: [
-      { label: "Apply to Be a Contestant", href: "/apply?city=Jersey+City&state=NJ" },
+      {
+        label: "Apply to Be a Contestant",
+        href: "/apply?city=Jersey+City&state=NJ",
+      },
     ],
     includeEventSchema: true,
     areaServed: "Jersey City, New Jersey",
@@ -58,7 +70,13 @@ export const activeCities: Record<string, CityData> = {
     venueName: "The Laugh Tour Comedy Club",
     eventScheduleFrequency: "P1M",
     region: "US Northeast",
-    nearbyCities: ["manhattan", "edison", "parsippany", "stony-brook", "philadelphia"],
+    nearbyCities: [
+      "manhattan",
+      "edison",
+      "parsippany",
+      "stony-brook",
+      "philadelphia",
+    ],
   },
 
   "san-diego": {
@@ -77,7 +95,10 @@ export const activeCities: Record<string, CityData> = {
     ],
     ctas: [
       { label: "Join the San Diego Waitlist", href: "#waitlist" },
-      { label: "Apply to Be a Contestant", href: "/apply?city=San+Diego&state=CA" },
+      {
+        label: "Apply to Be a Contestant",
+        href: "/apply?city=San+Diego&state=CA",
+      },
     ],
     includeEventSchema: false,
     areaServed: "San Diego, California",
@@ -85,7 +106,13 @@ export const activeCities: Record<string, CityData> = {
     addressRegion: "CA",
     addressCountry: "US",
     region: "US West",
-    nearbyCities: ["los-angeles", "irvine", "phoenix", "las-vegas", "sacramento"],
+    nearbyCities: [
+      "los-angeles",
+      "irvine",
+      "phoenix",
+      "las-vegas",
+      "sacramento",
+    ],
   },
 
   "los-angeles": {
@@ -104,7 +131,10 @@ export const activeCities: Record<string, CityData> = {
     ],
     ctas: [
       { label: "Join the LA Waitlist", href: "#waitlist" },
-      { label: "Apply to Be a Contestant", href: "/apply?city=Los+Angeles&state=CA" },
+      {
+        label: "Apply to Be a Contestant",
+        href: "/apply?city=Los+Angeles&state=CA",
+      },
     ],
     includeEventSchema: false,
     areaServed: "Los Angeles, California",
@@ -112,7 +142,13 @@ export const activeCities: Record<string, CityData> = {
     addressRegion: "CA",
     addressCountry: "US",
     region: "US West",
-    nearbyCities: ["san-diego", "irvine", "san-francisco", "phoenix", "las-vegas"],
+    nearbyCities: [
+      "san-diego",
+      "irvine",
+      "san-francisco",
+      "phoenix",
+      "las-vegas",
+    ],
   },
 
   "san-francisco": {
@@ -132,7 +168,10 @@ export const activeCities: Record<string, CityData> = {
     ],
     ctas: [
       { label: "Join the SF Waitlist", href: "#waitlist" },
-      { label: "Apply to Be a Contestant", href: "/apply?city=San+Francisco&state=CA" },
+      {
+        label: "Apply to Be a Contestant",
+        href: "/apply?city=San+Francisco&state=CA",
+      },
     ],
     includeEventSchema: false,
     areaServed: "San Francisco, California",
@@ -140,7 +179,13 @@ export const activeCities: Record<string, CityData> = {
     addressRegion: "CA",
     addressCountry: "US",
     region: "US West",
-    nearbyCities: ["san-jose", "sacramento", "los-angeles", "portland", "seattle"],
+    nearbyCities: [
+      "san-jose",
+      "sacramento",
+      "los-angeles",
+      "portland",
+      "seattle",
+    ],
   },
 
   "salt-lake-city": {
@@ -159,7 +204,10 @@ export const activeCities: Record<string, CityData> = {
     ],
     ctas: [
       { label: "Join the SLC Waitlist", href: "#waitlist" },
-      { label: "Apply to Be a Contestant", href: "/apply?city=Salt+Lake+City&state=UT" },
+      {
+        label: "Apply to Be a Contestant",
+        href: "/apply?city=Salt+Lake+City&state=UT",
+      },
     ],
     includeEventSchema: false,
     areaServed: "Salt Lake City, Utah",
@@ -186,7 +234,10 @@ export const activeCities: Record<string, CityData> = {
     ],
     ctas: [
       { label: "Join the Denver Waitlist", href: "#waitlist" },
-      { label: "Apply to Be a Contestant", href: "/apply?city=Denver&state=CO" },
+      {
+        label: "Apply to Be a Contestant",
+        href: "/apply?city=Denver&state=CO",
+      },
     ],
     includeEventSchema: false,
     areaServed: "Denver, Colorado",
@@ -194,6 +245,12 @@ export const activeCities: Record<string, CityData> = {
     addressRegion: "CO",
     addressCountry: "US",
     region: "US West",
-    nearbyCities: ["salt-lake-city", "phoenix", "albuquerque", "kansas-city", "minneapolis"],
+    nearbyCities: [
+      "salt-lake-city",
+      "phoenix",
+      "albuquerque",
+      "kansas-city",
+      "minneapolis",
+    ],
   },
 };

@@ -1,0 +1,637 @@
+---
+import BaseLayout from "@/layouts/BaseLayout.astro";
+import { buildBreadcrumbJsonLd } from "@/utils/breadcrumbs";
+import FaqAccordion from "@/components/ui/FaqAccordion.astro";
+import {
+  SPONSORSHIP_COPY,
+  SPONSOR_TIERS,
+  MEDIA_KIT_STATS,
+  TARGET_CATEGORIES,
+  SPONSORSHIP_FAQS,
+} from "@/data/sponsorship";
+
+const TITLE = "Sponsor Garam Masala Dating | South Asian Live Show NYC";
+const DESC =
+  "Reach NYC's most engaged South Asian audience. Presenting ($3K to $5K), Gold ($1.5K to $2.5K), Silver ($500 to $1K), and In-Kind packages. 40+ shows, 10M+ views, 70%+ South Asian professionals. Email caleb@garammasaladating.com.";
+
+const SITE_URL = "https://garammasaladating.com";
+
+const breadcrumbJsonLd = buildBreadcrumbJsonLd([
+  { name: "Home", url: `${SITE_URL}/` },
+  { name: "Sponsorship" },
+]);
+
+const serviceJsonLd = JSON.stringify({
+  "@context": "https://schema.org",
+  "@type": "Service",
+  name: "Brand Sponsorship — Garam Masala Dating",
+  description: DESC,
+  provider: {
+    "@type": "Organization",
+    name: "Garam Masala Dating",
+    url: SITE_URL,
+    logo: `${SITE_URL}/images/logo.svg`,
+  },
+  areaServed: { "@type": "City", name: "New York City" },
+  serviceType: "Event Sponsorship",
+  hasOfferCatalog: {
+    "@type": "OfferCatalog",
+    name: "Sponsorship Tiers",
+    itemListElement: SPONSOR_TIERS.map((tier) => ({
+      "@type": "Offer",
+      name: tier.name,
+      description: tier.tagline,
+      price: tier.priceRange,
+      priceCurrency: "USD",
+    })),
+  },
+});
+
+const faqJsonLd = JSON.stringify({
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  mainEntity: SPONSORSHIP_FAQS.map((faq) => ({
+    "@type": "Question",
+    name: faq.q,
+    acceptedAnswer: { "@type": "Answer", text: faq.a },
+  })),
+});
+
+const speakableJsonLd = JSON.stringify({
+  "@context": "https://schema.org",
+  "@type": "WebPage",
+  url: `${SITE_URL}/sponsorship`,
+  speakable: {
+    "@type": "SpeakableSpecification",
+    cssSelector: [".sponsor-faq-answer"],
+  },
+});
+---
+
+<BaseLayout title={TITLE} description={DESC}>
+  <Fragment slot="head">
+    <script type="application/ld+json" set:html={breadcrumbJsonLd} />
+    <script type="application/ld+json" set:html={serviceJsonLd} />
+    <script type="application/ld+json" set:html={faqJsonLd} />
+    <script type="application/ld+json" set:html={speakableJsonLd} />
+  </Fragment>
+
+  <main id="main-content" class="sp">
+    <!-- Hero -->
+    <section class="sp-hero" aria-labelledby="sp-heading">
+      <div class="sp-container sp-hero-inner">
+        <p class="sp-eyebrow">Brand Partnerships</p>
+        <h1 id="sp-heading">{SPONSORSHIP_COPY.heroHeadline}</h1>
+        <p class="sp-hero-sub">{SPONSORSHIP_COPY.heroSub}</p>
+        <div class="sp-email-block">
+          <p class="sp-email-label">
+            Email our {SPONSORSHIP_COPY.contactTitle}, {
+              SPONSORSHIP_COPY.contactName
+            }:
+          </p>
+          <a
+            href={`mailto:${SPONSORSHIP_COPY.contactEmail}?subject=Sponsorship%20Inquiry`}
+            class="sp-email-link"
+            data-ph-capture="cta_clicked"
+            data-ph-cta="email_hero"
+            data-ph-section="sponsorship_hero"
+            toolname="email-sponsorship-inquiry"
+            tooldescription="Email Caleb, the manager at Garam Masala Dating, to inquire about sponsoring a live South Asian dating show in NYC."
+            >{SPONSORSHIP_COPY.contactEmail}</a
+          >
+        </div>
+      </div>
+    </section>
+
+    <!-- Photo -->
+    <div class="sp-photo">
+      <img
+        src="/images/pure-chaos.webp"
+        alt="High energy moment at Garam Masala Dating"
+        width="1200"
+        height="800"
+        loading="lazy"
+      />
+    </div>
+
+    <!-- Stats -->
+    <section class="sp-stats" aria-labelledby="sp-stats-heading">
+      <div class="sp-container">
+        <p class="sp-eyebrow">By the Numbers</p>
+        <h2 id="sp-stats-heading">Why brands choose Garam Masala Dating</h2>
+        <div class="sp-stats-grid">
+          {
+            MEDIA_KIT_STATS.map((stat) => (
+              <div class="sp-stat">
+                <div class="sp-stat-num">{stat.num}</div>
+                <div class="sp-stat-label">{stat.label}</div>
+                <div class="sp-stat-sub">{stat.sub}</div>
+              </div>
+            ))
+          }
+        </div>
+        <p class="sp-demo">{SPONSORSHIP_COPY.demoBlurb}</p>
+      </div>
+    </section>
+
+    <!-- Photo -->
+    <div class="sp-photo">
+      <img
+        src="/images/the-crowd.webp"
+        alt="Audience members laughing"
+        width="800"
+        height="1200"
+        loading="lazy"
+      />
+    </div>
+
+    <!-- Sponsorship Tiers -->
+    <section class="sp-tiers" aria-labelledby="sp-tiers-heading">
+      <div class="sp-container">
+        <p class="sp-eyebrow">Sponsorship Packages</p>
+        <h2 id="sp-tiers-heading">Pick your level.</h2>
+        <p class="sp-tiers-sub">
+          All packages per show. Multi-show discounts available.
+        </p>
+        <div class="sp-tier-list">
+          {
+            SPONSOR_TIERS.map((tier) => (
+              <div
+                class={`sp-tier${tier.highlight ? " sp-tier--top" : ""}`}
+                aria-label={`${tier.name} tier`}
+              >
+                <div class="sp-tier-head">
+                  <div class="sp-tier-name">{tier.name}</div>
+                  <div class="sp-tier-price">{tier.priceRange}</div>
+                </div>
+                <p class="sp-tier-tag">{tier.tagline}</p>
+                <ul class="sp-tier-perks">
+                  {tier.perks.map((perk) => (
+                    <li>{perk}</li>
+                  ))}
+                </ul>
+              </div>
+            ))
+          }
+        </div>
+      </div>
+    </section>
+
+    <!-- Photo -->
+    <div class="sp-photo">
+      <img
+        src="/images/on-stage.webp"
+        alt="Contestants on stage at Garam Masala Dating"
+        width="1200"
+        height="800"
+        loading="lazy"
+      />
+    </div>
+
+    <!-- Target brands -->
+    <section class="sp-brands" aria-labelledby="sp-brands-heading">
+      <div class="sp-container">
+        <p class="sp-eyebrow">Who We Partner With</p>
+        <h2 id="sp-brands-heading">Brands that want to be in the room.</h2>
+        <div class="sp-categories">
+          {
+            TARGET_CATEGORIES.map((cat) => (
+              <div class="sp-cat">
+                <div class="sp-cat-name">{cat.category}</div>
+                <div class="sp-cat-brands">{cat.brands}</div>
+                <p class="sp-cat-why">{cat.why}</p>
+              </div>
+            ))
+          }
+        </div>
+      </div>
+    </section>
+
+    <!-- Photo -->
+    <div class="sp-photo">
+      <img
+        src="/images/after-party.webp"
+        alt="Audience celebrating after the show"
+        width="1200"
+        height="800"
+        loading="lazy"
+      />
+    </div>
+
+    <!-- FAQ -->
+    <section class="sp-faq" aria-labelledby="sp-faq-heading">
+      <div class="sp-container sp-faq-inner">
+        <p class="sp-eyebrow">Common Questions</p>
+        <h2 id="sp-faq-heading">FAQs</h2>
+        <FaqAccordion
+          items={SPONSORSHIP_FAQS}
+          groupId="sponsor-faq"
+          answerClass="sponsor-faq-answer"
+        />
+      </div>
+    </section>
+
+    <!-- CTA -->
+    <section class="sp-cta" aria-labelledby="sp-cta-heading">
+      <div class="sp-container sp-cta-inner">
+        <h2 id="sp-cta-heading">{SPONSORSHIP_COPY.ctaHeadline}</h2>
+        <p>{SPONSORSHIP_COPY.ctaBody}</p>
+        <a
+          href={`mailto:${SPONSORSHIP_COPY.contactEmail}?subject=Sponsorship%20Inquiry`}
+          class="sp-email-link sp-email-link--white"
+          data-ph-capture="cta_clicked"
+          data-ph-cta="email_footer"
+          data-ph-section="sponsorship_cta"
+          toolname="email-sponsorship-inquiry"
+          tooldescription="Email Caleb, the manager at Garam Masala Dating, to inquire about sponsoring a live South Asian dating show in NYC."
+          >{SPONSORSHIP_COPY.contactEmail}</a
+        >
+        <nav class="sp-cta-links" aria-label="Related pages">
+          <a href="/hosts">Meet the Hosts</a>
+          <a href="/tickets">Upcoming Shows</a>
+          <a href="/faq">More Questions</a>
+        </nav>
+      </div>
+    </section>
+  </main>
+</BaseLayout>
+
+<style>
+  .sp {
+    font-family: var(--font-body), sans-serif;
+  }
+  .sp-container {
+    max-width: 1000px;
+    margin: 0 auto;
+    padding: 0 20px;
+  }
+  .sp-eyebrow {
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: var(--brand-red);
+    margin-bottom: 14px;
+  }
+
+  /* Email CTA */
+  .sp-email-block {
+    margin-top: 28px;
+  }
+  .sp-email-label {
+    font-size: 14px;
+    color: var(--text-secondary);
+    margin-bottom: 6px;
+    font-weight: 600;
+  }
+  .sp-email-link {
+    display: inline-flex;
+    align-items: center;
+    font-size: clamp(18px, 2.5vw, 24px);
+    font-weight: 800;
+    color: var(--brand-red);
+    text-decoration: underline;
+    text-underline-offset: 4px;
+    text-decoration-thickness: 2px;
+    transition: color 0.2s;
+    min-height: var(--touch-target);
+    padding: 4px 0;
+  }
+  .sp-email-link:hover {
+    color: var(--brand-red-dark);
+  }
+  .sp-email-link:focus-visible {
+    outline: 2px solid var(--brand-red);
+    outline-offset: 3px;
+  }
+  .sp-email-link--white {
+    color: white;
+    text-decoration-color: white;
+  }
+  .sp-email-link--white:hover {
+    color: var(--electric-yellow);
+    text-decoration-color: var(--electric-yellow);
+  }
+
+  /* Hero */
+  .sp-hero {
+    background: var(--off-white);
+    padding: 56px 0 48px;
+    text-align: center;
+  }
+  .sp-hero h1 {
+    font-family: var(--font-playfair), serif;
+    font-size: clamp(26px, 5vw, 52px);
+    font-weight: 900;
+    color: var(--charcoal);
+    line-height: 1.08;
+    margin-bottom: 20px;
+  }
+  .sp-hero-sub {
+    font-family: var(--font-cormorant), serif;
+    font-size: clamp(16px, 2.2vw, 20px);
+    font-style: italic;
+    color: var(--text-secondary);
+    line-height: 1.7;
+    max-width: 640px;
+    margin: 0 auto;
+  }
+
+  /* Standalone photos */
+  .sp-photo {
+    line-height: 0;
+  }
+  .sp-photo img {
+    width: 100%;
+    height: auto;
+    object-fit: cover;
+    max-height: 240px;
+  }
+
+  /* Stats */
+  .sp-stats {
+    background: var(--cream-warm);
+    padding: 56px 0;
+    text-align: center;
+  }
+  .sp-stats h2 {
+    font-family: var(--font-playfair), serif;
+    font-size: clamp(22px, 3vw, 34px);
+    font-weight: 800;
+    color: var(--charcoal);
+    margin-bottom: 28px;
+  }
+  .sp-stats-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    margin-bottom: 28px;
+  }
+  .sp-stat {
+    background: white;
+    border: 1px solid rgba(0, 0, 0, 0.06);
+    border-radius: 12px;
+    padding: 20px;
+    text-align: left;
+  }
+  .sp-stat-num {
+    font-family: var(--font-playfair), serif;
+    font-size: clamp(28px, 4vw, 44px);
+    font-weight: 900;
+    color: var(--brand-red);
+    line-height: 1;
+    margin-bottom: 6px;
+  }
+  .sp-stat-label {
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--charcoal);
+    margin-bottom: 4px;
+  }
+  .sp-stat-sub {
+    font-size: 12px;
+    color: var(--muted);
+    margin: 0;
+  }
+  .sp-demo {
+    font-size: 15px;
+    line-height: 1.7;
+    color: var(--text-secondary);
+    max-width: 700px;
+    margin: 0 auto;
+    text-align: left;
+    margin: 0;
+  }
+
+  /* Tiers */
+  .sp-tiers {
+    background: var(--off-white);
+    padding: 56px 0;
+    text-align: center;
+  }
+  .sp-tiers h2 {
+    font-family: var(--font-playfair), serif;
+    font-size: clamp(24px, 3.5vw, 38px);
+    font-weight: 800;
+    color: var(--charcoal);
+    margin-bottom: 8px;
+  }
+  .sp-tiers-sub {
+    font-size: 14px;
+    color: var(--muted);
+    margin-bottom: 28px;
+  }
+  .sp-tier-list {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+  .sp-tier {
+    background: white;
+    border: 1px solid rgba(0, 0, 0, 0.06);
+    border-radius: 14px;
+    padding: 24px;
+    text-align: left;
+  }
+  .sp-tier--top {
+    background: var(--brand-red);
+    border-color: transparent;
+    box-shadow: 0 4px 24px rgba(220, 38, 38, 0.2);
+  }
+  .sp-tier-head {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-bottom: 8px;
+  }
+  .sp-tier-name {
+    font-family: var(--font-playfair), serif;
+    font-size: 20px;
+    font-weight: 900;
+    color: var(--charcoal);
+  }
+  .sp-tier--top .sp-tier-name {
+    color: white;
+  }
+  .sp-tier-price {
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--brand-red);
+    white-space: nowrap;
+  }
+  .sp-tier--top .sp-tier-price {
+    color: rgba(255, 255, 255, 0.8);
+  }
+  .sp-tier-tag {
+    font-size: 14px;
+    color: var(--text-secondary);
+    margin: 0 0 16px;
+    line-height: 1.5;
+  }
+  .sp-tier--top .sp-tier-tag {
+    color: rgba(255, 255, 255, 0.75);
+  }
+  .sp-tier-perks {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin: 0;
+    padding: 0;
+  }
+  .sp-tier-perks li {
+    font-size: 13px;
+    line-height: 1.5;
+    color: var(--text-secondary);
+    padding-left: 18px;
+    position: relative;
+  }
+  .sp-tier-perks li::before {
+    content: "\2713";
+    position: absolute;
+    left: 0;
+    color: var(--brand-red);
+    font-weight: 700;
+    font-size: 12px;
+  }
+  .sp-tier--top .sp-tier-perks li {
+    color: rgba(255, 255, 255, 0.8);
+  }
+  .sp-tier--top .sp-tier-perks li::before {
+    color: var(--electric-yellow);
+  }
+
+  /* Target brands */
+  .sp-brands {
+    background: var(--cream-warm);
+    padding: 56px 0;
+    text-align: center;
+  }
+  .sp-brands h2 {
+    font-family: var(--font-playfair), serif;
+    font-size: clamp(24px, 3.5vw, 38px);
+    font-weight: 800;
+    color: var(--charcoal);
+    margin-bottom: 28px;
+  }
+  .sp-categories {
+    display: flex;
+    flex-direction: column;
+  }
+  .sp-cat {
+    padding: 16px 0;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.07);
+    text-align: left;
+  }
+  .sp-cat:first-child {
+    border-top: 1px solid rgba(0, 0, 0, 0.07);
+  }
+  .sp-cat-name {
+    font-size: 12px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    color: var(--brand-red);
+    margin-bottom: 2px;
+  }
+  .sp-cat-brands {
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--charcoal);
+    margin-bottom: 4px;
+  }
+  .sp-cat-why {
+    font-size: 13px;
+    line-height: 1.5;
+    color: var(--muted);
+    margin: 0;
+  }
+
+  /* FAQ */
+  .sp-faq {
+    background: var(--off-white);
+    padding: 56px 0;
+  }
+  .sp-faq-inner {
+    max-width: 760px;
+  }
+  .sp-faq h2 {
+    font-family: var(--font-playfair), serif;
+    font-size: clamp(24px, 3.5vw, 38px);
+    font-weight: 800;
+    color: var(--charcoal);
+    margin-bottom: 28px;
+  }
+
+  /* CTA */
+  .sp-cta {
+    background: var(--brand-red);
+    padding: 56px 0;
+    text-align: center;
+  }
+  .sp-cta-inner {
+    max-width: 640px;
+  }
+  .sp-cta h2 {
+    font-family: var(--font-playfair), serif;
+    font-size: clamp(28px, 4vw, 44px);
+    font-weight: 900;
+    color: white;
+    margin-bottom: 16px;
+  }
+  .sp-cta p {
+    font-size: 16px;
+    line-height: 1.7;
+    color: rgba(255, 255, 255, 0.85);
+    margin-bottom: 24px;
+  }
+  .sp-cta-links {
+    display: flex;
+    gap: 24px;
+    justify-content: center;
+    margin-top: 28px;
+  }
+  .sp-cta-links a {
+    font-size: 14px;
+    color: rgba(255, 255, 255, 0.7);
+    text-decoration: underline;
+    text-underline-offset: 3px;
+    transition: color 0.2s;
+  }
+  .sp-cta-links a:hover {
+    color: white;
+  }
+
+  @media (min-width: 768px) {
+    .sp-hero {
+      padding: 80px 0 72px;
+    }
+    .sp-photo img {
+      max-height: 500px;
+    }
+    .sp-stats {
+      padding: 80px 0;
+    }
+    .sp-stats-grid {
+      grid-template-columns: repeat(4, 1fr);
+    }
+    .sp-tiers {
+      padding: 80px 0;
+    }
+    .sp-tier-list {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+    }
+    .sp-brands {
+      padding: 80px 0;
+    }
+    .sp-faq {
+      padding: 80px 0;
+    }
+    .sp-cta {
+      padding: 80px 0;
+    }
+  }
+</style>

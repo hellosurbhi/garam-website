@@ -6,19 +6,25 @@ import {
   type ChangeEvent,
 } from "react";
 import { collection, addDoc, serverTimestamp } from "firebase/firestore";
-import { ref, uploadBytes, getDownloadURL, deleteObject, type StorageReference } from "firebase/storage";
+import {
+  ref,
+  uploadBytes,
+  getDownloadURL,
+  deleteObject,
+  type StorageReference,
+} from "firebase/storage";
 import { signInAnonymously } from "firebase/auth";
 import { useCitySearch } from "@/hooks/useCitySearch";
 import {
   resolveCityOption,
   type CitySearchOption,
-} from "@/lib/citySearch";
+} from "@/lib/citySearchShared";
 import {
   getFirebaseDb,
   getFirebaseStorage,
   getFirebaseAuth,
 } from "@/lib/firebase";
-import { trackLeadEvent } from "@/lib/analytics";
+import { trackError, trackLeadEvent } from "@/lib/analytics";
 import { buildLeadAttribution } from "@/lib/leadAttribution";
 
 export interface FormState {
@@ -75,6 +81,7 @@ export function useApplyForm() {
   const [toast, setToast] = useState<{ msg: string; ok: boolean } | null>(null);
 
   useEffect(() => {
+    if (typeof window === "undefined") return;
     if (window.history.length > 1) setCanGoBack(true);
     const params = new URLSearchParams(window.location.search);
     const urlCity = params.get("city");
@@ -94,12 +101,15 @@ export function useApplyForm() {
     return () => clearTimeout(id);
   }, [toast]);
 
+  const [formStarted, setFormStarted] = useState(false);
   const [geoLoadTriggered, setGeoLoadTriggered] = useState(false);
   const [placeQuery, setPlaceQuery] = useState("");
   const triggerGeoLoad = useCallback(() => setGeoLoadTriggered(true), []);
 
   const citySearch = useCitySearch(placeQuery, geoLoadTriggered);
-  const [selectedPlace, setSelectedPlace] = useState<CitySearchOption | null>(null);
+  const [selectedPlace, setSelectedPlace] = useState<CitySearchOption | null>(
+    null,
+  );
   const placeOptions = useMemo(
     () =>
       selectedPlace &&
@@ -112,6 +122,13 @@ export function useApplyForm() {
   function set(field: keyof FormState, value: string) {
     setForm((prev) => ({ ...prev, [field]: value }));
     setErrors((prev) => ({ ...prev, [field]: undefined }));
+    if (!formStarted) {
+      setFormStarted(true);
+      trackLeadEvent("apply_form_started", {
+        application_type: form.applicationType,
+        page: typeof window !== "undefined" ? window.location.pathname : "/",
+      });
+    }
   }
 
   function handlePlaceInputChange(value: string) {
@@ -182,7 +199,8 @@ export function useApplyForm() {
     const errs: FormErrors = {};
     if (!form.name.trim()) errs.name = "Required";
     const ageNum = parseInt(form.age, 10);
-    if (!form.age || Number.isNaN(ageNum) || ageNum < 18) errs.age = "Must be 18 or older";
+    if (!form.age || Number.isNaN(ageNum) || ageNum < 18)
+      errs.age = "Must be 18 or older";
     if (!form.gender) errs.gender = "Required";
     if (!form.orientation) errs.orientation = "Required";
     if (!form.city) errs.city = "Required";
@@ -229,7 +247,10 @@ export function useApplyForm() {
     if (selectedPlace || !citySearch.options.length || !form.city) return;
 
     const seededValue = [form.city, form.state].filter(Boolean).join(", ");
-    const resolved = resolveCityOption(seededValue || form.city, citySearch.options);
+    const resolved = resolveCityOption(
+      seededValue || form.city,
+      citySearch.options,
+    );
     if (!resolved) return;
 
     setSelectedPlace(resolved);
@@ -299,7 +320,7 @@ export function useApplyForm() {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(applicationData),
-      }).catch(() => {});
+      }).catch(console.error);
 
       setForm(INITIAL);
       setTermsAgreed(false);
@@ -307,9 +328,18 @@ export function useApplyForm() {
       setPhotoPreview(null);
       setErrors({});
       setSubmitted(true);
-    } catch {
+    } catch (err) {
+      const error = err instanceof Error ? err : new Error(String(err));
       // Clean up orphaned photo if upload succeeded but Firestore write failed
       if (storageRef) deleteObject(storageRef).catch(() => {});
+      trackError({
+        error_message: error.message,
+        error_stack: (error.stack ?? "").slice(0, 2000),
+        error_type: "form_submission",
+        component: "useApplyForm",
+        form_step: storageRef ? "firestore_write" : "auth_or_upload",
+        application_type: form.applicationType,
+      });
       setToast({
         msg: "Sorry, the form isn't working right now. DM us on @garammasaladating on Instagram and we'll sort it out!",
         ok: false,

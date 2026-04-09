@@ -1,5 +1,6 @@
 import { Component, type ReactNode } from "react";
 import { SOCIAL_URLS } from "@/data/socials";
+import { trackError } from "@/lib/analytics";
 import styles from "./ErrorBoundary.module.css";
 
 interface Props {
@@ -18,7 +19,12 @@ export class ErrorBoundary extends Component<Props, State> {
   }
 
   componentDidCatch(error: Error, errorInfo: React.ErrorInfo) {
-    console.error('ErrorBoundary caught:', error, errorInfo);
+    trackError({
+      error_message: error.message,
+      error_stack: (error.stack ?? "").slice(0, 2000),
+      error_type: "react_boundary",
+      component: (errorInfo.componentStack ?? "").slice(0, 500),
+    });
   }
 
   render() {
@@ -28,8 +34,8 @@ export class ErrorBoundary extends Component<Props, State> {
           <p className={styles.emoji}>🌶️</p>
           <h1 className={styles.title}>Something went wrong</h1>
           <p className={styles.description}>
-            Please refresh the page and try again. If the problem persists,
-            DM us on{" "}
+            Please refresh the page and try again. If the problem persists, DM
+            us on{" "}
             <a
               href={SOCIAL_URLS.instagram}
               target="_blank"
@@ -37,7 +43,8 @@ export class ErrorBoundary extends Component<Props, State> {
               className={styles.link}
             >
               @garammasaladating
-            </a>.
+            </a>
+            .
           </p>
           <button
             onClick={() => window.location.reload()}

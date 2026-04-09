@@ -16,7 +16,7 @@ export const internationalOtherCities: Record<string, CityData> = {
       "Auckland is home to the largest South Asian community in New Zealand. The Indian population is concentrated in areas like Sandringham (nicknamed Saris and Samosas central by locals), Papatoetoe, and Manukau in South Auckland. The University of Auckland and AUT attract Indian students, and the tech and healthcare sectors retain them. The community has real depth.",
       "Garam Masala Dating is a live South Asian dating show and singles mixer from NYC. Real blind dates on stage, two hosts, a live audience, and a mixer. Auckland's desi community is big enough to fill a room and underserved enough that this show would be the first of its kind in the country.",
       "New Zealand's Indian population has more than doubled in recent census counts. Auckland absorbed most of that growth. But the social programming hasn't kept pace. Diwali in Aotea Square is great, but that's once a year and it's not exactly a singles event. The gap between cultural celebrations and actual dating events is wide.",
-      "Kiwi dating culture is laid back, which is nice until you realize \"laid back\" sometimes means nobody makes a move. For South Asians navigating that on top of family expectations, a show where the purpose is explicit and the vibe is fun is a welcome change.",
+      'Kiwi dating culture is laid back, which is nice until you realize "laid back" sometimes means nobody makes a move. For South Asians navigating that on top of family expectations, a show where the purpose is explicit and the vibe is fun is a welcome change.',
       "Waitlist is open. Auckland is our primary New Zealand target. Get on the list or apply to be a contestant.",
     ],
     ctas: [
@@ -292,7 +292,13 @@ export const internationalOtherCities: Record<string, CityData> = {
     addressRegion: "Gauteng",
     addressCountry: "ZA",
     region: "Africa",
-    nearbyCities: ["durban", "cape-town", "nairobi", "dar-es-salaam", "mauritius"],
+    nearbyCities: [
+      "durban",
+      "cape-town",
+      "nairobi",
+      "dar-es-salaam",
+      "mauritius",
+    ],
   },
 
   durban: {
@@ -321,7 +327,13 @@ export const internationalOtherCities: Record<string, CityData> = {
     addressRegion: "KwaZulu-Natal",
     addressCountry: "ZA",
     region: "Africa",
-    nearbyCities: ["johannesburg", "cape-town", "nairobi", "mauritius", "dar-es-salaam"],
+    nearbyCities: [
+      "johannesburg",
+      "cape-town",
+      "nairobi",
+      "mauritius",
+      "dar-es-salaam",
+    ],
   },
 
   "cape-town": {
@@ -379,7 +391,13 @@ export const internationalOtherCities: Record<string, CityData> = {
     addressRegion: "",
     addressCountry: "MU",
     region: "Africa",
-    nearbyCities: ["durban", "johannesburg", "nairobi", "dar-es-salaam", "cape-town"],
+    nearbyCities: [
+      "durban",
+      "johannesburg",
+      "nairobi",
+      "dar-es-salaam",
+      "cape-town",
+    ],
   },
 
   // ── Caribbean ───────────────────────────────────────────────────────
@@ -410,13 +428,20 @@ export const internationalOtherCities: Record<string, CityData> = {
     addressRegion: "",
     addressCountry: "TT",
     region: "Caribbean",
-    nearbyCities: ["san-fernando", "chaguanas", "georgetown", "paramaribo", "new-amsterdam"],
+    nearbyCities: [
+      "san-fernando",
+      "chaguanas",
+      "georgetown",
+      "paramaribo",
+      "new-amsterdam",
+    ],
   },
 
   "san-fernando": {
     slug: "san-fernando",
     displayName: "San Fernando",
-    titleTag: "South Asian Singles Events San Fernando Trinidad | Garam Masala Dating",
+    titleTag:
+      "South Asian Singles Events San Fernando Trinidad | Garam Masala Dating",
     metaDescription:
       "Garam Masala Dating is coming to San Fernando, Trinidad. A live South Asian dating show and singles mixer. Southern Trinidad's heavily South Asian city.",
     h1: "South Trinidad's Desi Heartland Deserves Its Own Night",
@@ -439,13 +464,20 @@ export const internationalOtherCities: Record<string, CityData> = {
     addressRegion: "",
     addressCountry: "TT",
     region: "Caribbean",
-    nearbyCities: ["chaguanas", "port-of-spain", "georgetown", "paramaribo", "new-amsterdam"],
+    nearbyCities: [
+      "chaguanas",
+      "port-of-spain",
+      "georgetown",
+      "paramaribo",
+      "new-amsterdam",
+    ],
   },
 
   chaguanas: {
     slug: "chaguanas",
     displayName: "Chaguanas",
-    titleTag: "South Asian Singles Events Chaguanas Trinidad | Garam Masala Dating",
+    titleTag:
+      "South Asian Singles Events Chaguanas Trinidad | Garam Masala Dating",
     metaDescription:
       "Garam Masala Dating is coming to Chaguanas, Trinidad. A live South Asian dating show and singles mixer. The most South Asian city in the Caribbean.",
     h1: "The Most South Asian City in the Caribbean Gets a Dating Show",
@@ -468,13 +500,20 @@ export const internationalOtherCities: Record<string, CityData> = {
     addressRegion: "",
     addressCountry: "TT",
     region: "Caribbean",
-    nearbyCities: ["port-of-spain", "san-fernando", "georgetown", "paramaribo", "new-amsterdam"],
+    nearbyCities: [
+      "port-of-spain",
+      "san-fernando",
+      "georgetown",
+      "paramaribo",
+      "new-amsterdam",
+    ],
   },
 
   georgetown: {
     slug: "georgetown",
     displayName: "Georgetown",
-    titleTag: "South Asian Singles Events Georgetown Guyana | Garam Masala Dating",
+    titleTag:
+      "South Asian Singles Events Georgetown Guyana | Garam Masala Dating",
     metaDescription:
       "Garam Masala Dating is coming to Georgetown, Guyana. A live South Asian dating show and singles mixer. Indo-Guyanese community and the Caribbean's second largest desi population.",
     h1: "40% Indo-Guyanese. Georgetown Gets a Night That Isn't a Fundraiser.",
@@ -497,13 +536,20 @@ export const internationalOtherCities: Record<string, CityData> = {
     addressRegion: "",
     addressCountry: "GY",
     region: "Caribbean",
-    nearbyCities: ["new-amsterdam", "paramaribo", "port-of-spain", "chaguanas", "san-fernando"],
+    nearbyCities: [
+      "new-amsterdam",
+      "paramaribo",
+      "port-of-spain",
+      "chaguanas",
+      "san-fernando",
+    ],
   },
 
   "new-amsterdam": {
     slug: "new-amsterdam",
     displayName: "New Amsterdam",
-    titleTag: "South Asian Singles Events New Amsterdam Guyana | Garam Masala Dating",
+    titleTag:
+      "South Asian Singles Events New Amsterdam Guyana | Garam Masala Dating",
     metaDescription:
       "Garam Masala Dating is coming to New Amsterdam, Guyana. A live South Asian dating show and singles mixer. Heavily Indo-Guyanese Berbice region.",
     h1: "Berbice's Indo-Guyanese Community Gets Its Own Night Out",
@@ -526,7 +572,13 @@ export const internationalOtherCities: Record<string, CityData> = {
     addressRegion: "East Berbice-Corentyne",
     addressCountry: "GY",
     region: "Caribbean",
-    nearbyCities: ["georgetown", "paramaribo", "port-of-spain", "chaguanas", "san-fernando"],
+    nearbyCities: [
+      "georgetown",
+      "paramaribo",
+      "port-of-spain",
+      "chaguanas",
+      "san-fernando",
+    ],
   },
 
   paramaribo: {
@@ -555,7 +607,13 @@ export const internationalOtherCities: Record<string, CityData> = {
     addressRegion: "",
     addressCountry: "SR",
     region: "Caribbean",
-    nearbyCities: ["georgetown", "new-amsterdam", "port-of-spain", "chaguanas", "amsterdam"],
+    nearbyCities: [
+      "georgetown",
+      "new-amsterdam",
+      "port-of-spain",
+      "chaguanas",
+      "amsterdam",
+    ],
   },
 
   "panama-city": {
@@ -584,13 +642,20 @@ export const internationalOtherCities: Record<string, CityData> = {
     addressRegion: "",
     addressCountry: "PA",
     region: "Caribbean",
-    nearbyCities: ["port-of-spain", "georgetown", "paramaribo", "san-fernando", "chaguanas"],
+    nearbyCities: [
+      "port-of-spain",
+      "georgetown",
+      "paramaribo",
+      "san-fernando",
+      "chaguanas",
+    ],
   },
 
   "san-juan": {
     slug: "san-juan",
     displayName: "San Juan",
-    titleTag: "South Asian Singles Events San Juan Puerto Rico | Garam Masala Dating",
+    titleTag:
+      "South Asian Singles Events San Juan Puerto Rico | Garam Masala Dating",
     metaDescription:
       "Garam Masala Dating is coming to San Juan, Puerto Rico. A live South Asian dating show and singles mixer. UPR, medical professionals, and the island's growing desi community.",
     h1: "San Juan Has Sun, Salsa, and a Surprising Desi Crowd",
@@ -613,6 +678,12 @@ export const internationalOtherCities: Record<string, CityData> = {
     addressRegion: "Puerto Rico",
     addressCountry: "PR",
     region: "Caribbean",
-    nearbyCities: ["port-of-spain", "chaguanas", "georgetown", "panama-city", "paramaribo"],
+    nearbyCities: [
+      "port-of-spain",
+      "chaguanas",
+      "georgetown",
+      "panama-city",
+      "paramaribo",
+    ],
   },
 };

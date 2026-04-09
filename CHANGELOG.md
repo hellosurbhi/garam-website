@@ -1,5 +1,38 @@
 # Changelog
 
+## refactor: unified modal architecture with shared CSS tokens (2026-04-09)
+
+### What changed
+
+Introduced a single CSS token file (`modal-tokens.css`) as the source of truth for all modal design values. Both `Modal.astro` and the new `Modal.tsx` React base import it — changing `--modal-radius`, `--modal-anim-duration`, or any other token propagates to every modal automatically.
+
+**New files:**
+
+- `src/components/ui/modal-tokens.css` — defines `--modal-radius`, `--modal-anim-duration/easing/scale/y`, `--modal-close-color/size`
+- `src/components/ui/Modal.tsx` — React base counterpart to `Modal.astro`; identical behavior (showModal, cancel event, backdrop click)
+- `src/components/ui/Modal.module.css` — React base CSS, imports modal-tokens.css
+- `src/components/apply/TermsModal.module.css` — extracted from ApplyPage.module.css
+
+**Refactored:**
+
+- `TermsModal.tsx` — now uses `Modal` base; removed manual overlay div, focus management, `open` prop; parent controls mounting
+- `ApplicantModal.tsx` — now uses `Modal` base; removed `dialogRef`, `showModal` effect, cancel event effect, `handleDialogClick`
+- `ApplyPage.tsx` — changed `<TermsModal open={...}>` to `{showTermsModal && <TermsModal ...>}`
+
+**Bug fixed:** Close button focus ring on modal open. Three call sites all focused the close button instead of the dialog container:
+
+- `TermsModal.tsx` — was calling `closeButton.focus()` via `requestAnimationFrame`
+- `ApplicantModal.tsx` — native `<dialog>` auto-focused first focusable child (close button)
+- `LeadCaptureModal.astro:317` — was calling `closeButton.focus()` explicitly
+
+All three now call `dialog.focus()` after `showModal()`. The dialog container has `outline: none`, so no ring is visible. Tab still moves to the close button for keyboard users; touch users never see a ring.
+
+**Close button CSS:** Added `:focus-visible` styles to all close buttons — focus ring appears for keyboard navigation only, suppressed for mouse/touch.
+
+**Cleaned up:** Removed ~120 lines of dead terms modal CSS from `ApplyPage.module.css`.
+
+**Files affected:** `modal-tokens.css`, `Modal.astro`, `Modal.tsx`, `Modal.module.css`, `LeadCaptureModal.astro`, `TermsModal.tsx`, `TermsModal.module.css`, `ApplyPage.tsx`, `ApplyPage.module.css`, `ApplicantModal.tsx`, `ApplicantModal.module.css`
+
 ## fix: address 9 CodeRabbit review items from PR #13 (2026-04-09)
 
 ### What changed
@@ -440,6 +473,7 @@ Added 12 new test files and extended 3 existing test files to dramatically impro
 - Cast minimal objects as Application type rather than mocking firebase/firestore
 
 ## Production cleanup + revenue infrastructure (2026-04-08)
+
 **PostHog distinct ID fix** — Apply form now calls `identifyLead()` with Instagram handle before `trackLeadEvent('apply_submitted')`. Previously applicants stayed permanently anonymous in PostHog. Also added GTM dataLayer identification.
 **Image reorganization** — Restructured `public/images/` from 19 loose files into organized subfolders: `hero/`, `hosts/`, `promo/`, `journal/`. Deleted redundant `hosts.JPG` (315KB, already had webp+avif). Updated all 15 source files with new paths.
 **Unified modal system** — Created `ui/Modal.astro` (shared dialog chrome) and `LeadCaptureModal.astro` (reusable email→phone→success flow with configurable copy via props). Supports multiple instances per page, city mode, `data-open-modal` triggers.
@@ -448,6 +482,7 @@ Added 12 new test files and extended 3 existing test files to dramatically impro
 **AI discoverability** — Created `/llms.txt`. Updated `robots.txt` with 8 missing AI crawlers (OAI-SearchBot, Claude-SearchBot, Applebot-Extended, DuckAssistBot, Amazonbot, cohere-ai, meta-externalagent, Bytespider). Added `<link rel="alternate">` for llms.txt.
 **CSS cleanup** — Replaced 13 hardcoded hex colors in ApplyPage.module.css with CSS variables. Added `--apply-brown`, `--border-light`, `--hover-subtle` tokens.
 **Housekeeping** — Created `.env.example`. Merged `ENHANCEMENT.md` into `ENHANCEMENTS.md`. Created 1,307-line `ROADMAP.md` with full growth plan, research, and actionable roadmap.
+
 - `src/components/apply/useApplyForm.ts`, `src/lib/analytics.ts` — PostHog fix
 - `public/images/` — reorganized into subfolders (21 files moved)
 - `src/components/ui/Modal.astro`, `src/components/LeadCaptureModal.astro`, `src/components/SpiceListSection.astro` — new
@@ -458,6 +493,7 @@ Added 12 new test files and extended 3 existing test files to dramatically impro
 - `public/llms.txt`, `public/robots.txt` — AI discoverability
 - `src/index.css`, `src/components/ApplyPage.module.css` — CSS variables
 - `.env.example`, `ROADMAP.md`, `ENHANCEMENTS.md` — docs
+
 ## fix: phone accepts international numbers, apply form analytics, code cleanup (2026-04-08)
 
 ### What changed

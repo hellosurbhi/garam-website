@@ -1,5 +1,59 @@
 # Changelog
 
+## fix: address CodeRabbit PR #13 review comments (2026-04-09)
+
+### What changed
+
+Worked through all 16 unresolved CodeRabbit threads on the cleanup PR. 13 fixed, 2 dismissed (already handled or intentional), 1 dismissed with explanation.
+
+**Security (generate-contestant-link.ts):**
+
+- Wrapped `request.json()` in try/catch — returns 400 on malformed JSON instead of 500
+- Replaced `Host` header URL construction with `import.meta.env.SITE` to prevent host-header spoofing
+
+**Lead attribution (leadAttribution.ts):**
+
+- Moved `GEO_FETCHED_KEY` write to after the successful geo API response — previously set before the fetch, which permanently blocked retries on network failures
+- Note: `geoLatitude`/`geoLongitude` are intentionally kept (geo enrichment is a deliberate product feature)
+
+**SSR safety (useApplyForm.ts):**
+
+- Added `typeof window !== 'undefined'` guards before `window.history`, `window.location.search`, and `window.location.pathname` accesses to prevent ReferenceError during SSG pre-render
+
+**Accessibility:**
+
+- `aria-hidden="true"` added to all decorative SVG close icons (HomeShows, LegalModal, cities/[slug], index)
+- `aria-hidden="true"` added to all decorative arrow SVGs in city CTA buttons
+- `required` added to city name input in HomeShows request form
+- `loading="lazy"` added to hero background image in cities/[slug].astro
+- `aria-describedby` linked to existing error elements on waitlist and notify form inputs
+
+**Config:**
+
+- Separated ESLint and Prettier lint-staged patterns — ESLint only runs on TS/JS files (no Astro plugin configured), Prettier covers all source files including `.astro`
+
+**Typo:**
+
+- Fixed "Intructions for:" → "Instructions for:" in `ContestantPrepPage.tsx` and its test
+
+### Files affected
+
+- `src/pages/api/generate-contestant-link.ts`
+- `src/lib/leadAttribution.ts` + `.test.ts`
+- `src/components/apply/useApplyForm.ts`
+- `src/components/home/HomeShows.astro`
+- `src/components/LegalModal.astro`
+- `src/pages/index.astro`
+- `src/pages/cities/[slug].astro`
+- `src/components/ContestantPrepPage.tsx` + `.test.tsx`
+- `package.json`
+
+### Decisions
+
+- `geoLatitude`/`geoLongitude` kept: intentionally added for Firebase lead enrichment
+- `client:load` on apply.astro kept: SSR guards added to the hook instead
+- "Close" aria-label and "Last updated:" prefix not moved to data layer: generic UI chrome, not content
+
 ## fix: codebase audit — verifyToken env var, prerender flags, dead code cleanup (2026-04-09)
 
 ### What changed

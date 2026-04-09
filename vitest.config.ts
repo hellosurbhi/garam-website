@@ -11,6 +11,13 @@ export default defineConfig({
     environment: "jsdom",
     globals: true,
     setupFiles: "./test/setup.ts",
-    exclude: ["node_modules/**", "tests/smoke/**"],
+    exclude: [
+      "node_modules/**",
+      "tests/smoke/**",
+      ".stryker-tmp/**",
+      "dist/**",
+      "playwright-report/**",
+      ".vercel/**",
+    ],
   },
 });

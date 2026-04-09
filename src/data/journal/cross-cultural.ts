@@ -471,7 +471,8 @@ export const crossCulturalPosts: JournalPost[] = [
   },
   {
     slug: "introduce-non-indian-partner-punjabi-parents",
-    title: "Introducing Your Non-Indian Partner to Punjabi Parents: A Survival Guide",
+    title:
+      "Introducing Your Non-Indian Partner to Punjabi Parents: A Survival Guide",
     metaDescription:
       "Punjabi parents are loud, warm, and have very strong opinions. Here\u2019s how to introduce your non-Indian partner to a Punjabi family and actually survive it.",
     datePublished: "2026-09-18",
@@ -579,7 +580,8 @@ export const crossCulturalPosts: JournalPost[] = [
   },
   {
     slug: "introduce-non-indian-partner-gujarati-parents",
-    title: "Introducing Your Non-Indian Partner to Gujarati Parents: A Survival Guide",
+    title:
+      "Introducing Your Non-Indian Partner to Gujarati Parents: A Survival Guide",
     metaDescription:
       "Gujarati parents have tight community networks and strong marriage opinions. Here\u2019s how to introduce your non-Indian partner and make it work.",
     datePublished: "2026-09-20",
@@ -687,7 +689,8 @@ export const crossCulturalPosts: JournalPost[] = [
   },
   {
     slug: "introduce-non-indian-partner-tamil-parents",
-    title: "Introducing Your Non-Indian Partner to Tamil Parents: A Survival Guide",
+    title:
+      "Introducing Your Non-Indian Partner to Tamil Parents: A Survival Guide",
     metaDescription:
       "Tamil parents prize education and cultural continuity. Here\u2019s how to introduce your non-Indian partner to a Tamil family and what to actually expect.",
     datePublished: "2026-09-22",
@@ -795,7 +798,8 @@ export const crossCulturalPosts: JournalPost[] = [
   },
   {
     slug: "introduce-non-indian-partner-bengali-parents",
-    title: "Introducing Your Non-Indian Partner to Bengali Parents: A Survival Guide",
+    title:
+      "Introducing Your Non-Indian Partner to Bengali Parents: A Survival Guide",
     metaDescription:
       "Bengali parents value intellect, adda, and cultural depth. Here\u2019s the survival guide for introducing your non-Indian partner to a Bengali family.",
     datePublished: "2026-09-24",
@@ -907,7 +911,8 @@ export const crossCulturalPosts: JournalPost[] = [
   },
   {
     slug: "dating-different-south-asian-culture",
-    title: "Dating Someone from a Different South Asian Culture: What Nobody Tells You",
+    title:
+      "Dating Someone from a Different South Asian Culture: What Nobody Tells You",
     metaDescription:
       "Dating another South Asian from a different culture? Here\u2019s what nobody tells you about intra-desi relationships \u2014 the food, families, and unspoken assumptions.",
     datePublished: "2026-09-26",
@@ -1019,7 +1024,8 @@ export const crossCulturalPosts: JournalPost[] = [
   },
   {
     slug: "interracial-relationship-family-expects-arranged",
-    title: "When Your Family Expects Arranged and You\u2019re in an Interracial Relationship",
+    title:
+      "When Your Family Expects Arranged and You\u2019re in an Interracial Relationship",
     metaDescription:
       "Your family expected an arranged match. You\u2019re in an interracial relationship. Here\u2019s how to navigate the gap between their expectations and your actual life.",
     datePublished: "2026-09-28",

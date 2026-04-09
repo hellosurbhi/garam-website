@@ -36,13 +36,19 @@ export const POST: APIRoute = async ({ request }) => {
     });
   }
 
-  const { date, sig } = (await request.json()) as { date?: string; sig?: string };
+  const { date, sig } = (await request.json()) as {
+    date?: string;
+    sig?: string;
+  };
 
   if (!date || !sig || typeof date !== "string" || typeof sig !== "string") {
-    return new Response(JSON.stringify({ error: "date and sig are required" }), {
-      status: 400,
-      headers: { "Content-Type": "application/json" },
-    });
+    return new Response(
+      JSON.stringify({ error: "date and sig are required" }),
+      {
+        status: 400,
+        headers: { "Content-Type": "application/json" },
+      },
+    );
   }
 
   if (!ISO_DATE_RE.test(date)) {
@@ -68,8 +74,11 @@ export const POST: APIRoute = async ({ request }) => {
     });
   }
 
-  return new Response(JSON.stringify({ token: computeToken(salt, date), expiresAt }), {
-    status: 200,
-    headers: { "Content-Type": "application/json" },
-  });
+  return new Response(
+    JSON.stringify({ token: computeToken(salt, date), expiresAt }),
+    {
+      status: 200,
+      headers: { "Content-Type": "application/json" },
+    },
+  );
 };

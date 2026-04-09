@@ -119,7 +119,8 @@ export const toxicPatternsPosts: JournalPost[] = [
   },
   {
     slug: "breadcrumbing-desi-dating",
-    title: "Breadcrumbing in Desi Dating: When They Keep You Around But Never Commit",
+    title:
+      "Breadcrumbing in Desi Dating: When They Keep You Around But Never Commit",
     metaDescription:
       "Breadcrumbing in desi dating looks like 'let's see where this goes' — indefinitely. Here's how to spot it and stop waiting for commitment that isn't coming.",
     datePublished: "2026-10-02",
@@ -235,7 +236,8 @@ export const toxicPatternsPosts: JournalPost[] = [
   },
   {
     slug: "love-bombing-desi-culture",
-    title: "Love Bombing in Desi Culture: The Fine Line Between Intensity and Manipulation",
+    title:
+      "Love Bombing in Desi Culture: The Fine Line Between Intensity and Manipulation",
     metaDescription:
       "Love bombing in desi culture is hard to spot because cultural intensity looks similar. Here's how to tell the difference between real passion and manipulation.",
     datePublished: "2026-10-04",
@@ -451,7 +453,8 @@ export const toxicPatternsPosts: JournalPost[] = [
   },
   {
     slug: "emotional-unavailability-desi-men",
-    title: "Emotional Unavailability in Desi Men: What's Cultural and What's a Red Flag",
+    title:
+      "Emotional Unavailability in Desi Men: What's Cultural and What's a Red Flag",
     metaDescription:
       "Emotional unavailability in desi men: how to tell the difference between cultural conditioning and a genuine red flag that won't change with time or patience.",
     datePublished: "2026-10-08",
@@ -563,7 +566,8 @@ export const toxicPatternsPosts: JournalPost[] = [
   },
   {
     slug: "ghosting-desi-dating",
-    title: "Ghosting in Desi Dating: When Cultural Avoidance Meets Modern Dating",
+    title:
+      "Ghosting in Desi Dating: When Cultural Avoidance Meets Modern Dating",
     metaDescription:
       "Ghosting in desi dating has cultural roots in conflict-avoidance — but understanding why it happens doesn't make disappearing acceptable. Here's what's really going on.",
     datePublished: "2026-10-10",
@@ -679,7 +683,8 @@ export const toxicPatternsPosts: JournalPost[] = [
   },
   {
     slug: "weaponized-compatibility-family-pressure",
-    title: "Weaponized Compatibility: When Families Use 'Good Match' to Pressure You",
+    title:
+      "Weaponized Compatibility: When Families Use 'Good Match' to Pressure You",
     metaDescription:
       "When families say 'good match,' they might mean it genuinely — or they might be using compatibility metrics as pressure. Here's how to tell the difference.",
     datePublished: "2026-10-12",
@@ -791,7 +796,8 @@ export const toxicPatternsPosts: JournalPost[] = [
   },
   {
     slug: "comparison-culture-toxic-desi-dating",
-    title: "The Toxic Desi Dating Pattern Nobody Talks About: Comparison Culture",
+    title:
+      "The Toxic Desi Dating Pattern Nobody Talks About: Comparison Culture",
     metaDescription:
       "Comparison culture in desi dating — 'Sharma ji ka beta' applied to your love life — creates impossible standards and undermines real connection. Here's how to stop it.",
     datePublished: "2026-10-14",

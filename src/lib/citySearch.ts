@@ -108,7 +108,10 @@ export async function loadCityOptions(): Promise<CitySearchOption[]> {
           });
           const key = `${normalize(option.city)}|${normalize(option.state)}|${option.countryCode}`;
           const existing = cityMap.get(key);
-          cityMap.set(key, existing ? { ...existing, boost: option.boost } : option);
+          cityMap.set(
+            key,
+            existing ? { ...existing, boost: option.boost } : option,
+          );
         }
 
         return Array.from(cityMap.values()).sort((a, b) =>
@@ -150,11 +153,16 @@ export function searchCityOptions(
   }
 
   return [...options]
-    .map((option) => ({ option, score: scoreCityOption(option, normalizedQuery) }))
+    .map((option) => ({
+      option,
+      score: scoreCityOption(option, normalizedQuery),
+    }))
     .filter(({ score }) => score > 0)
     .sort(
       (a, b) =>
-        b.score - a.score || b.option.boost - a.option.boost || a.option.label.localeCompare(b.option.label),
+        b.score - a.score ||
+        b.option.boost - a.option.boost ||
+        a.option.label.localeCompare(b.option.label),
     )
     .slice(0, limit)
     .map(({ option }) => option);

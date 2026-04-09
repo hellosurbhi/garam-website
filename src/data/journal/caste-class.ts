@@ -407,7 +407,8 @@ export const casteClassPosts: JournalPost[] = [
   },
   {
     slug: "doctor-engineer-pressure-dateability",
-    title: "The Doctor-Engineer Pressure: When Your Career Defines Your Dateability",
+    title:
+      "The Doctor-Engineer Pressure: When Your Career Defines Your Dateability",
     metaDescription:
       "South Asian dating culture links career to worth in ways that hurt everyone. Here's what the doctor-engineer pressure actually costs desi singles.",
     datePublished: "2026-10-24",
@@ -507,7 +508,8 @@ export const casteClassPosts: JournalPost[] = [
   },
   {
     slug: "last-name-caste-signals-modern-dating",
-    title: "Does Your Last Name Still Matter? Caste Signals in Modern Desi Dating",
+    title:
+      "Does Your Last Name Still Matter? Caste Signals in Modern Desi Dating",
     metaDescription:
       "South Asian surnames still carry caste information — and many desi families still use them as a filter. Here's how last names function in modern desi dating.",
     datePublished: "2026-10-26",
@@ -703,7 +705,8 @@ export const casteClassPosts: JournalPost[] = [
   },
   {
     slug: "class-divide-south-asian-dating",
-    title: "The Class Divide in South Asian Dating: From Biodata to Bank Balance",
+    title:
+      "The Class Divide in South Asian Dating: From Biodata to Bank Balance",
     metaDescription:
       "Class shapes South Asian dating from biodata to bank balance — who gets considered, who gets filtered, and what actually matters when you build a life together.",
     datePublished: "2026-10-30",

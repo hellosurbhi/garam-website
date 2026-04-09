@@ -4,18 +4,26 @@ export function nyOffset(isoDate: string, time: string): string {
   const [h, min] = time.split(":").map(Number);
   const fmt = new Intl.DateTimeFormat("en-US", {
     timeZone: "America/New_York",
-    year: "numeric", month: "2-digit", day: "2-digit",
-    hour: "2-digit", minute: "2-digit", second: "2-digit",
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit",
+    hour: "2-digit",
+    minute: "2-digit",
+    second: "2-digit",
     hourCycle: "h23",
   });
 
   function offsetAtUtcMs(utcMs: number): number {
     const parts = Object.fromEntries(
-      fmt.formatToParts(new Date(utcMs)).map((p) => [p.type, p.value])
+      fmt.formatToParts(new Date(utcMs)).map((p) => [p.type, p.value]),
     );
     const zonedAsUtc = Date.UTC(
-      Number(parts.year), Number(parts.month) - 1, Number(parts.day),
-      Number(parts.hour), Number(parts.minute), Number(parts.second)
+      Number(parts.year),
+      Number(parts.month) - 1,
+      Number(parts.day),
+      Number(parts.hour),
+      Number(parts.minute),
+      Number(parts.second),
     );
     return Math.round((zonedAsUtc - utcMs) / 60000);
   }

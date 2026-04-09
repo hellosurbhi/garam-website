@@ -42,18 +42,30 @@ describe("AdminLogin", () => {
 
   it("calls signInWithEmailAndPassword with entered credentials on submit", async () => {
     render(<AdminLogin onSuccess={onSuccess} />);
-    fireEvent.change(screen.getByLabelText("Email"), { target: { value: "admin@test.com" } });
-    fireEvent.change(screen.getByLabelText("Password"), { target: { value: "secret123" } });
+    fireEvent.change(screen.getByLabelText("Email"), {
+      target: { value: "admin@test.com" },
+    });
+    fireEvent.change(screen.getByLabelText("Password"), {
+      target: { value: "secret123" },
+    });
     fireEvent.click(screen.getByRole("button", { name: "Enter" }));
     await waitFor(() => {
-      expect(mockSignIn).toHaveBeenCalledWith("mock-auth", "admin@test.com", "secret123");
+      expect(mockSignIn).toHaveBeenCalledWith(
+        "mock-auth",
+        "admin@test.com",
+        "secret123",
+      );
     });
   });
 
   it("calls onSuccess after successful login", async () => {
     render(<AdminLogin onSuccess={onSuccess} />);
-    fireEvent.change(screen.getByLabelText("Email"), { target: { value: "admin@test.com" } });
-    fireEvent.change(screen.getByLabelText("Password"), { target: { value: "secret123" } });
+    fireEvent.change(screen.getByLabelText("Email"), {
+      target: { value: "admin@test.com" },
+    });
+    fireEvent.change(screen.getByLabelText("Password"), {
+      target: { value: "secret123" },
+    });
     fireEvent.click(screen.getByRole("button", { name: "Enter" }));
     await waitFor(() => {
       expect(onSuccess).toHaveBeenCalledOnce();
@@ -63,18 +75,26 @@ describe("AdminLogin", () => {
   it("shows error message on failed login", async () => {
     mockSignIn.mockRejectedValueOnce(new Error("auth/invalid-credential"));
     render(<AdminLogin onSuccess={onSuccess} />);
-    fireEvent.change(screen.getByLabelText("Email"), { target: { value: "bad@test.com" } });
-    fireEvent.change(screen.getByLabelText("Password"), { target: { value: "wrong" } });
+    fireEvent.change(screen.getByLabelText("Email"), {
+      target: { value: "bad@test.com" },
+    });
+    fireEvent.change(screen.getByLabelText("Password"), {
+      target: { value: "wrong" },
+    });
     fireEvent.click(screen.getByRole("button", { name: "Enter" }));
     await waitFor(() => {
-      expect(screen.getByText("Invalid email or password.")).toBeInTheDocument();
+      expect(
+        screen.getByText("Invalid email or password."),
+      ).toBeInTheDocument();
     });
   });
 
   it("clears password field on login error", async () => {
     mockSignIn.mockRejectedValueOnce(new Error("auth/invalid-credential"));
     render(<AdminLogin onSuccess={onSuccess} />);
-    fireEvent.change(screen.getByLabelText("Password"), { target: { value: "wrong" } });
+    fireEvent.change(screen.getByLabelText("Password"), {
+      target: { value: "wrong" },
+    });
     fireEvent.click(screen.getByRole("button", { name: "Enter" }));
     await waitFor(() => {
       expect(screen.getByLabelText("Password")).toHaveValue("");
@@ -86,10 +106,16 @@ describe("AdminLogin", () => {
     render(<AdminLogin onSuccess={onSuccess} />);
     fireEvent.click(screen.getByRole("button", { name: "Enter" }));
     await waitFor(() => {
-      expect(screen.getByText("Invalid email or password.")).toBeInTheDocument();
+      expect(
+        screen.getByText("Invalid email or password."),
+      ).toBeInTheDocument();
     });
-    fireEvent.change(screen.getByLabelText("Email"), { target: { value: "a" } });
-    expect(screen.queryByText("Invalid email or password.")).not.toBeInTheDocument();
+    fireEvent.change(screen.getByLabelText("Email"), {
+      target: { value: "a" },
+    });
+    expect(
+      screen.queryByText("Invalid email or password."),
+    ).not.toBeInTheDocument();
   });
 
   it("does not call onSuccess on failed login", async () => {
@@ -97,7 +123,9 @@ describe("AdminLogin", () => {
     render(<AdminLogin onSuccess={onSuccess} />);
     fireEvent.click(screen.getByRole("button", { name: "Enter" }));
     await waitFor(() => {
-      expect(screen.getByText("Invalid email or password.")).toBeInTheDocument();
+      expect(
+        screen.getByText("Invalid email or password."),
+      ).toBeInTheDocument();
     });
     expect(onSuccess).not.toHaveBeenCalled();
   });

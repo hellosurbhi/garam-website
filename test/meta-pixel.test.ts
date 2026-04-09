@@ -7,7 +7,7 @@ const PIXEL_ID = "1469248418329402";
 describe("Meta Pixel component", () => {
   const source = readFileSync(
     resolve(__dirname, "../src/components/meta-pixel.astro"),
-    "utf-8"
+    "utf-8",
   );
 
   it("initializes fbq with the correct pixel ID", () => {
@@ -19,14 +19,12 @@ describe("Meta Pixel component", () => {
   });
 
   it("loads fbevents.js from connect.facebook.net", () => {
-    expect(source).toContain(
-      "https://connect.facebook.net/en_US/fbevents.js"
-    );
+    expect(source).toContain("https://connect.facebook.net/en_US/fbevents.js");
   });
 
   it("includes noscript image beacon with correct pixel ID", () => {
     expect(source).toContain(
-      `https://www.facebook.com/tr?id=${PIXEL_ID}&ev=PageView&noscript=1`
+      `https://www.facebook.com/tr?id=${PIXEL_ID}&ev=PageView&noscript=1`,
     );
   });
 
@@ -38,12 +36,12 @@ describe("Meta Pixel component", () => {
 describe("BaseLayout includes MetaPixel", () => {
   const layout = readFileSync(
     resolve(__dirname, "../src/layouts/BaseLayout.astro"),
-    "utf-8"
+    "utf-8",
   );
 
   it("imports meta-pixel.astro", () => {
     expect(layout).toContain(
-      "import MetaPixel from '../components/meta-pixel.astro'"
+      "import MetaPixel from '../components/meta-pixel.astro'",
     );
   });
 

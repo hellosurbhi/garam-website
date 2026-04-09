@@ -9,7 +9,11 @@ export const corePosts: JournalPost[] = [
       "After 4 years and 40+ live shows, Surbhi shares what Indian Matchmaking got right, what Hinge gets wrong, and what actually happens when desis date on stage in front of 250 people.",
     datePublished: "2026-04-25",
     dateModified: "2026-04-25",
-    relatedSlugs: ["desi-dating-show-vs-dating-apps", "what-actually-happens-at-a-live-comedy-dating-show", "best-dil-mil-alternatives"],
+    relatedSlugs: [
+      "desi-dating-show-vs-dating-apps",
+      "what-actually-happens-at-a-live-comedy-dating-show",
+      "best-dil-mil-alternatives",
+    ],
     author: "Surbhi",
     excerpt:
       "South Asian dating in 2026 looks nothing like your parents\u2019 version and nothing like Netflix\u2019s version either. It\u2019s messier, funnier, and more honest than both.",
@@ -36,7 +40,10 @@ export const corePosts: JournalPost[] = [
         type: "p",
         text: "South Asian dating in 2026 looks nothing like your parents\u2019 version and nothing like Netflix\u2019s version either. It\u2019s messier, funnier, and more honest than both. I know because I\u2019ve watched it happen live, on stage, over 40 times.",
       },
-      { type: "h2", text: "What Indian Matchmaking got right that nobody talks about" },
+      {
+        type: "h2",
+        text: "What Indian Matchmaking got right that nobody talks about",
+      },
       {
         type: "p",
         text: "Indian Matchmaking understood something fundamental: desi singles are not just choosing a person. They\u2019re negotiating with an entire system of expectations that started before they were born. The show put that tension on camera, and millions of people recognized it immediately. That part was real.",
@@ -75,7 +82,10 @@ export const corePosts: JournalPost[] = [
         type: "p",
         text: "The whiteboard reveal is the clearest example. Both contestants write down a rating for the date. They flip the boards at the same time. The room erupts. Sometimes it\u2019s a perfect match. Sometimes one board says 9 and the other says 3. There\u2019s nowhere to hide. The audience sees everything. And that honesty, forced by the format, is what makes the connections that do happen feel earned.",
       },
-      { type: "h2", text: "The thing that surprises people most about our show" },
+      {
+        type: "h2",
+        text: "The thing that surprises people most about our show",
+      },
       {
         type: "p",
         text: "People expect the comedy. They expect the cringe. They expect to laugh at someone bombing on stage. What they do not expect is to get genuinely emotional. But it happens constantly. Someone says something vulnerable. The room goes quiet. 250 people hold their breath for a stranger\u2019s love life. That part catches everyone off guard, including me, and I\u2019ve seen it dozens of times.",
@@ -97,7 +107,10 @@ export const corePosts: JournalPost[] = [
         type: "p",
         text: "The best dates I\u2019ve seen at Garam Masala Dating had one thing in common. Both people stopped trying to impress and started trying to connect. That flip usually happens about three minutes in. One person says something real. The other person matches it. The audience leans forward. And for a few minutes, 250 people are rooting for two strangers to figure it out together. I built this show because I wanted that to exist. Four years later, it still gets me every time.",
       },
-      { type: "h2", text: "Frequently asked questions about South Asian dating shows" },
+      {
+        type: "h2",
+        text: "Frequently asked questions about South Asian dating shows",
+      },
       { type: "h3", text: "Is Garam Masala Dating like Indian Matchmaking?" },
       {
         type: "p",
@@ -113,7 +126,10 @@ export const corePosts: JournalPost[] = [
         type: "p",
         text: "Yes. Garam Masala Dating is a weekly live comedy dating show in NYC featuring South Asian singles on blind dates on stage. Hosted by Surbhi and Wyatt at Top Secret Comedy Club in Manhattan. Tickets at garammasaladating.com.",
       },
-      { type: "h3", text: "How is Garam Masala Dating different from a dating app?" },
+      {
+        type: "h3",
+        text: "How is Garam Masala Dating different from a dating app?",
+      },
       {
         type: "p",
         text: "Dating apps give you a photo and a bio. Garam Masala Dating puts two people on stage in front of 250 strangers with no script and no filter. You can\u2019t curate yourself live. Chemistry either happens or it doesn\u2019t, and the whole room knows immediately.",
@@ -132,7 +148,11 @@ export const corePosts: JournalPost[] = [
       "Tired of the same bar scene? Here are the best things to do in NYC if you\u2019re single, from improv shows to rooftop mixers to a live comedy dating show with 250 people.",
     datePublished: "2026-04-23",
     dateModified: "2026-04-23",
-    relatedSlugs: ["south-asian-singles-events-nyc", "the-realest-way-to-meet-desi-singles-in-nyc", "what-actually-happens-at-a-live-comedy-dating-show"],
+    relatedSlugs: [
+      "south-asian-singles-events-nyc",
+      "the-realest-way-to-meet-desi-singles-in-nyc",
+      "what-actually-happens-at-a-live-comedy-dating-show",
+    ],
     author: "Surbhi",
     excerpt:
       "You\u2019ve done the bar thing. You\u2019ve done the app thing. You\u2019ve stood in a loud room pretending to enjoy a conversation you couldn\u2019t hear. NYC has better options for single people.",
@@ -172,7 +192,10 @@ export const corePosts: JournalPost[] = [
         type: "p",
         text: "The catch with a regular comedy show is that there\u2019s no built-in social moment after. The lights come up and everyone leaves. You need the show plus something after. A bar next door. A plan with friends. Some reason to keep the night going. Otherwise it\u2019s just entertainment, not a singles activity.",
       },
-      { type: "h2", text: "Live events with built-in reasons to talk to each other" },
+      {
+        type: "h2",
+        text: "Live events with built-in reasons to talk to each other",
+      },
       {
         type: "p",
         text: "The best singles events give you something to do besides introduce yourself. Speed dating gives you structure. Rooftop mixers give you a view and a drink. Trivia nights give you a team. The format matters less than the principle: if you have a shared activity, conversations start without anyone having to cold-approach a stranger.",
@@ -185,7 +208,10 @@ export const corePosts: JournalPost[] = [
         type: "p",
         text: "Rooftop events and themed mixers pop up constantly in the summer. The good ones have a vibe. The bad ones are just an overpriced bar with a dress code and a Canva flyer. Look for events that cap attendance or include something beyond \u201Copen bar and a DJ.\u201D Small detail, but events that charge a real ticket price tend to attract people who actually want to be there.",
       },
-      { type: "h2", text: "How a live dating show is different from a bar night" },
+      {
+        type: "h2",
+        text: "How a live dating show is different from a bar night",
+      },
       {
         type: "p",
         text: "At a bar, you\u2019re on your own. You have to spot someone, approach them, start a conversation from nothing, and hope it goes somewhere. A live dating show skips all of that by putting connection at the center of the room instead of leaving it to chance.",
@@ -198,7 +224,10 @@ export const corePosts: JournalPost[] = [
         type: "p",
         text: "The show runs weekly at Top Secret Comedy Club in Manhattan and monthly in Jersey City. Over 40 shows in and the mixer is still the part that surprises people most. The energy after a live show is different from any bar you\u2019ve been to. People are open. They\u2019re in a good mood. Nobody is pretending to be too cool to talk to you.",
       },
-      { type: "h2", text: "Why watching other people date is oddly useful for your own love life" },
+      {
+        type: "h2",
+        text: "Why watching other people date is oddly useful for your own love life",
+      },
       {
         type: "p",
         text: "This sounds counterintuitive, but watching two strangers try to connect live on stage teaches you things about yourself that no dating app ever will. You see what works. You see what falls flat. You watch someone ask a boring question and feel the room deflate, and you think, okay, I do that too.",
@@ -215,7 +244,10 @@ export const corePosts: JournalPost[] = [
         type: "p",
         text: "If you\u2019re single in New York and you\u2019ve burned out on the same routine, try something that gives you a story. Not every night out has to end with a match. Some of the best ones just end with you laughing harder than you have in months and texting your friends about what you just saw.",
       },
-      { type: "h2", text: "Frequently asked questions about singles events in NYC" },
+      {
+        type: "h2",
+        text: "Frequently asked questions about singles events in NYC",
+      },
       { type: "h3", text: "What are the best singles events in NYC?" },
       {
         type: "p",
@@ -250,7 +282,11 @@ export const corePosts: JournalPost[] = [
       "Want to be on a live dating show? Here\u2019s exactly how casting works at Garam Masala Dating, what we look for in applications, and what to expect if you get picked.",
     datePublished: "2026-04-21",
     dateModified: "2026-04-21",
-    relatedSlugs: ["how-to-prepare-for-a-live-matchmaking-show", "what-actually-happens-at-a-live-comedy-dating-show", "the-only-live-desi-dating-show-in-nyc"],
+    relatedSlugs: [
+      "how-to-prepare-for-a-live-matchmaking-show",
+      "what-actually-happens-at-a-live-comedy-dating-show",
+      "the-only-live-desi-dating-show-in-nyc",
+    ],
     author: "Surbhi",
     excerpt:
       "You apply at garammasaladating.com/apply. We read every single application. Most of them are bad. Here\u2019s how to not be one of those.",
@@ -290,7 +326,10 @@ export const corePosts: JournalPost[] = [
         type: "p",
         text: "The best contestants we\u2019ve ever had were not the most conventionally impressive. They were the most themselves. The person who admitted they still live with their parents and made it funny. The person who said something so specific about what they want that the whole room went quiet. The person who had zero filter and somehow made it charming. That\u2019s what we\u2019re casting for.",
       },
-      { type: "h2", text: "The application question that eliminates 80% of people" },
+      {
+        type: "h2",
+        text: "The application question that eliminates 80% of people",
+      },
       {
         type: "p",
         text: "There is one question on the application that separates good candidates from forgettable ones. It\u2019s the one that asks you to describe yourself in a way that your friends would recognize. Most people answer with a resume. We need a personality.",
@@ -346,7 +385,10 @@ export const corePosts: JournalPost[] = [
         type: "p",
         text: "The contestants who get talked about for weeks after are never the smoothest ones. They\u2019re the ones who did something unexpected. Said something too honest. Had a reaction they couldn\u2019t control. That\u2019s the content. That\u2019s what makes someone memorable. You don\u2019t need to be perfect. You need to be present.",
       },
-      { type: "h2", text: "Frequently asked questions about getting on a live dating show" },
+      {
+        type: "h2",
+        text: "Frequently asked questions about getting on a live dating show",
+      },
       { type: "h3", text: "How do I apply to be on Garam Masala Dating?" },
       {
         type: "p",
@@ -381,7 +423,11 @@ export const corePosts: JournalPost[] = [
       "Tired of swiping through the same desi profiles? Here\u2019s how to actually meet South Asian singles in NYC in person, at a live dating show with 250 people in the room.",
     datePublished: "2026-04-19",
     dateModified: "2026-04-19",
-    relatedSlugs: ["the-only-live-desi-dating-show-in-nyc", "south-asian-singles-events-nyc", "how-to-get-cast-on-a-live-dating-show"],
+    relatedSlugs: [
+      "the-only-live-desi-dating-show-in-nyc",
+      "south-asian-singles-events-nyc",
+      "how-to-get-cast-on-a-live-dating-show",
+    ],
     author: "Surbhi",
     excerpt:
       "You meet desi singles in NYC by getting off the apps and into a room where people actually came to connect. I run that room every week.",
@@ -408,7 +454,10 @@ export const corePosts: JournalPost[] = [
         type: "p",
         text: "You meet desi singles in NYC by getting off the apps and into a room where people actually came to connect. I run that room every week. Here\u2019s what works.",
       },
-      { type: "h2", text: "Why apps are exhausting for South Asians specifically" },
+      {
+        type: "h2",
+        text: "Why apps are exhausting for South Asians specifically",
+      },
       {
         type: "p",
         text: "Dating apps are tiring for everyone, but they\u2019re a specific flavor of exhausting for South Asians. The filters don\u2019t capture what matters. The bios all sound the same. And you\u2019re trying to figure out cultural compatibility from four photos and a prompt about hiking.",
@@ -425,7 +474,10 @@ export const corePosts: JournalPost[] = [
         type: "p",
         text: "I\u2019ve watched this play out hundreds of times at Garam Masala Dating. Two people who would have swiped past each other end up having incredible chemistry on stage because the app version of them doesn\u2019t capture what actually makes them attractive. Confidence, humor, and the ability to roll with something unexpected. None of that shows up in a Hinge prompt.",
       },
-      { type: "h2", text: "What actually works about meeting people in person" },
+      {
+        type: "h2",
+        text: "What actually works about meeting people in person",
+      },
       {
         type: "p",
         text: "In-person connection gives you information that no profile ever will. You know within seconds if someone\u2019s energy matches yours. You can feel chemistry. You can\u2019t manufacture that through a screen, no matter how good the texting is.",
@@ -468,7 +520,10 @@ export const corePosts: JournalPost[] = [
         type: "p",
         text: "We run shows weekly at Top Secret Comedy Club in Manhattan and monthly in Jersey City. The mixer runs after every single one.",
       },
-      { type: "h2", text: "Frequently asked questions about meeting desi singles in NYC" },
+      {
+        type: "h2",
+        text: "Frequently asked questions about meeting desi singles in NYC",
+      },
       { type: "h3", text: "Where can I meet South Asian singles in NYC?" },
       {
         type: "p",
@@ -503,7 +558,11 @@ export const corePosts: JournalPost[] = [
       "Here\u2019s what actually happens at a live comedy dating show. Blind dates on stage, audience chaos, whiteboard reveals, and a singles mixer after. From the person who runs it.",
     datePublished: "2026-04-17",
     dateModified: "2026-04-17",
-    relatedSlugs: ["how-to-prepare-for-a-live-matchmaking-show", "desi-dating-show-vs-dating-apps", "the-only-live-desi-dating-show-in-nyc"],
+    relatedSlugs: [
+      "how-to-prepare-for-a-live-matchmaking-show",
+      "desi-dating-show-vs-dating-apps",
+      "the-only-live-desi-dating-show-in-nyc",
+    ],
     author: "Surbhi",
     excerpt:
       "A live comedy dating show puts real singles on blind dates in front of a live audience. No script. No safety net. I run one every week, and here\u2019s what actually goes down.",
@@ -591,7 +650,10 @@ export const corePosts: JournalPost[] = [
         type: "p",
         text: "Some of the best couples to come out of Garam Masala Dating didn\u2019t meet on stage. They met at the mixer. The show is the shared experience. The mixer is where it turns into something real.",
       },
-      { type: "h2", text: "Frequently asked questions about live comedy dating shows" },
+      {
+        type: "h2",
+        text: "Frequently asked questions about live comedy dating shows",
+      },
       { type: "h3", text: "What is a live comedy dating show?" },
       {
         type: "p",
@@ -626,7 +688,11 @@ export const corePosts: JournalPost[] = [
       "Garam Masala Dating is the only weekly live desi dating show in NYC. Here\u2019s what actually happens at the show, who can come, and how it compares to Indian Matchmaking.",
     datePublished: "2026-04-15",
     dateModified: "2026-04-15",
-    relatedSlugs: ["what-actually-happens-at-a-live-comedy-dating-show", "south-asian-singles-events-nyc", "desi-dating-show-vs-dating-apps"],
+    relatedSlugs: [
+      "what-actually-happens-at-a-live-comedy-dating-show",
+      "south-asian-singles-events-nyc",
+      "desi-dating-show-vs-dating-apps",
+    ],
     author: "Surbhi",
     excerpt:
       "Garam Masala Dating is a weekly live desi dating show in New York City. Real singles go on blind dates on stage in front of 250 people at a Manhattan comedy club.",
@@ -743,7 +809,11 @@ export const corePosts: JournalPost[] = [
       "A guide to South Asian singles events in NYC, from desi mixers to live dating shows. What\u2019s actually worth your time and what to skip.",
     datePublished: "2026-04-13",
     dateModified: "2026-04-13",
-    relatedSlugs: ["the-realest-way-to-meet-desi-singles-in-nyc", "desi-dating-show-vs-dating-apps", "what-we-learned-from-100-desi-blind-dates"],
+    relatedSlugs: [
+      "the-realest-way-to-meet-desi-singles-in-nyc",
+      "desi-dating-show-vs-dating-apps",
+      "what-we-learned-from-100-desi-blind-dates",
+    ],
     author: "Surbhi",
     excerpt:
       "Yes, there are South Asian singles events in NYC. And the options have gotten significantly better in the last few years.",
@@ -860,7 +930,11 @@ export const corePosts: JournalPost[] = [
       "After four years of running Garam Masala Dating, here\u2019s what a live desi dating show taught me about chemistry, connection, and why apps can\u2019t replicate what happens on stage.",
     datePublished: "2026-04-11",
     dateModified: "2026-04-11",
-    relatedSlugs: ["what-we-learned-from-100-desi-blind-dates", "how-to-prepare-for-a-live-matchmaking-show", "what-actually-happens-at-a-live-comedy-dating-show"],
+    relatedSlugs: [
+      "what-we-learned-from-100-desi-blind-dates",
+      "how-to-prepare-for-a-live-matchmaking-show",
+      "what-actually-happens-at-a-live-comedy-dating-show",
+    ],
     author: "Surbhi",
     excerpt:
       "A live desi dating show puts two people in front of a crowd and asks them to be real. Dating apps let you curate a version of yourself from behind a screen.",
@@ -984,7 +1058,11 @@ export const corePosts: JournalPost[] = [
       "After running Garam Masala Dating for over a year and watching hundreds of live blind dates unfold on stage, here's what we actually learned about South Asian dating.",
     datePublished: "2026-04-09",
     dateModified: "2026-04-09",
-    relatedSlugs: ["desi-dating-show-vs-dating-apps", "how-to-prepare-for-a-live-matchmaking-show", "indian-matchmaking-hinge-and-a-live-comedy-show"],
+    relatedSlugs: [
+      "desi-dating-show-vs-dating-apps",
+      "how-to-prepare-for-a-live-matchmaking-show",
+      "indian-matchmaking-hinge-and-a-live-comedy-show",
+    ],
     author: "Surbhi",
     excerpt:
       "We've watched a lot of first dates. Not through an app, not on a reality show set. Live, on stage, in front of a couple hundred people who have opinions and aren't shy about sharing them.",
@@ -1045,12 +1123,17 @@ export const corePosts: JournalPost[] = [
   },
   {
     slug: "how-to-prepare-for-a-live-matchmaking-show",
-    title: "How to Prepare for a Live Matchmaking Show (Without Psyching Yourself Out)",
+    title:
+      "How to Prepare for a Live Matchmaking Show (Without Psyching Yourself Out)",
     metaDescription:
       "You got cast on Garam Masala Dating. Here\u2019s exactly how to prepare \u2014 what to wear, what to expect on stage, and how to not be the person who chokes in front of 250 people.",
     datePublished: "2026-04-07",
     dateModified: "2026-04-07",
-    relatedSlugs: ["how-to-get-cast-on-a-live-dating-show", "what-actually-happens-at-a-live-comedy-dating-show", "what-we-learned-from-100-desi-blind-dates"],
+    relatedSlugs: [
+      "how-to-get-cast-on-a-live-dating-show",
+      "what-actually-happens-at-a-live-comedy-dating-show",
+      "what-we-learned-from-100-desi-blind-dates",
+    ],
     author: "Surbhi",
     excerpt:
       "So you applied, you got picked, and now you\u2019re going to go on a blind date in front of 250 strangers. Good.",
@@ -1122,4 +1205,3 @@ export const corePosts: JournalPost[] = [
     ],
   },
 ];
-

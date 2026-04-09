@@ -223,7 +223,8 @@ export const seasonalPosts: JournalPost[] = [
   },
   {
     slug: "diwali-singles-events-guide-2026",
-    title: "Diwali Singles Events Guide 2026: Where to Find Love This Festival Season",
+    title:
+      "Diwali Singles Events Guide 2026: Where to Find Love This Festival Season",
     metaDescription:
       "Looking for Diwali singles events in 2026? Here\u2019s where South Asian singles are actually meeting people this festival season, from NYC to London to your city.",
     datePublished: "2026-07-22",
@@ -455,7 +456,8 @@ export const seasonalPosts: JournalPost[] = [
   },
   {
     slug: "valentines-day-desi-singles",
-    title: "Valentine's Day for Desi Singles: Forget Couples. This Is Your Night.",
+    title:
+      "Valentine's Day for Desi Singles: Forget Couples. This Is Your Night.",
     metaDescription:
       "Valentine\u2019s Day for desi singles is a guilt trip with chocolate. Here\u2019s how to actually have a good February 14th when you\u2019re South Asian and unattached.",
     datePublished: "2026-07-26",

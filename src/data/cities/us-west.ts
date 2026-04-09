@@ -19,7 +19,10 @@ export const usWestCities: Record<string, CityData> = {
     ],
     ctas: [
       { label: "Join the San Jose Waitlist", href: "#waitlist" },
-      { label: "Apply to Be a Contestant", href: "/apply?city=San+Jose&state=CA" },
+      {
+        label: "Apply to Be a Contestant",
+        href: "/apply?city=San+Jose&state=CA",
+      },
     ],
     includeEventSchema: false,
     areaServed: "San Jose, California",
@@ -27,7 +30,13 @@ export const usWestCities: Record<string, CityData> = {
     addressRegion: "CA",
     addressCountry: "US",
     region: "US West",
-    nearbyCities: ["san-francisco", "sacramento", "davis", "los-angeles", "irvine"],
+    nearbyCities: [
+      "san-francisco",
+      "sacramento",
+      "davis",
+      "los-angeles",
+      "irvine",
+    ],
   },
 
   sacramento: {
@@ -48,7 +57,10 @@ export const usWestCities: Record<string, CityData> = {
     ],
     ctas: [
       { label: "Join the Sacramento Waitlist", href: "#waitlist" },
-      { label: "Apply to Be a Contestant", href: "/apply?city=Sacramento&state=CA" },
+      {
+        label: "Apply to Be a Contestant",
+        href: "/apply?city=Sacramento&state=CA",
+      },
     ],
     includeEventSchema: false,
     areaServed: "Sacramento, California",
@@ -56,7 +68,13 @@ export const usWestCities: Record<string, CityData> = {
     addressRegion: "CA",
     addressCountry: "US",
     region: "US West",
-    nearbyCities: ["san-francisco", "san-jose", "davis", "los-angeles", "portland"],
+    nearbyCities: [
+      "san-francisco",
+      "san-jose",
+      "davis",
+      "los-angeles",
+      "portland",
+    ],
   },
 
   davis: {
@@ -84,7 +102,13 @@ export const usWestCities: Record<string, CityData> = {
     addressRegion: "CA",
     addressCountry: "US",
     region: "US West",
-    nearbyCities: ["sacramento", "san-francisco", "san-jose", "los-angeles", "irvine"],
+    nearbyCities: [
+      "sacramento",
+      "san-francisco",
+      "san-jose",
+      "los-angeles",
+      "irvine",
+    ],
   },
 
   irvine: {
@@ -105,7 +129,10 @@ export const usWestCities: Record<string, CityData> = {
     ],
     ctas: [
       { label: "Join the Irvine Waitlist", href: "#waitlist" },
-      { label: "Apply to Be a Contestant", href: "/apply?city=Irvine&state=CA" },
+      {
+        label: "Apply to Be a Contestant",
+        href: "/apply?city=Irvine&state=CA",
+      },
     ],
     includeEventSchema: false,
     areaServed: "Irvine, California",
@@ -113,7 +140,13 @@ export const usWestCities: Record<string, CityData> = {
     addressRegion: "CA",
     addressCountry: "US",
     region: "US West",
-    nearbyCities: ["los-angeles", "san-diego", "san-jose", "san-francisco", "phoenix"],
+    nearbyCities: [
+      "los-angeles",
+      "san-diego",
+      "san-jose",
+      "san-francisco",
+      "phoenix",
+    ],
   },
 
   seattle: {
@@ -134,7 +167,10 @@ export const usWestCities: Record<string, CityData> = {
     ],
     ctas: [
       { label: "Join the Seattle Waitlist", href: "#waitlist" },
-      { label: "Apply to Be a Contestant", href: "/apply?city=Seattle&state=WA" },
+      {
+        label: "Apply to Be a Contestant",
+        href: "/apply?city=Seattle&state=WA",
+      },
     ],
     includeEventSchema: false,
     areaServed: "Seattle, Washington",
@@ -142,7 +178,13 @@ export const usWestCities: Record<string, CityData> = {
     addressRegion: "WA",
     addressCountry: "US",
     region: "US West",
-    nearbyCities: ["portland", "san-francisco", "san-jose", "boise", "sacramento"],
+    nearbyCities: [
+      "portland",
+      "san-francisco",
+      "san-jose",
+      "boise",
+      "sacramento",
+    ],
   },
 
   portland: {
@@ -163,7 +205,10 @@ export const usWestCities: Record<string, CityData> = {
     ],
     ctas: [
       { label: "Join the Portland Waitlist", href: "#waitlist" },
-      { label: "Apply to Be a Contestant", href: "/apply?city=Portland&state=OR" },
+      {
+        label: "Apply to Be a Contestant",
+        href: "/apply?city=Portland&state=OR",
+      },
     ],
     includeEventSchema: false,
     areaServed: "Portland, Oregon",
@@ -171,7 +216,13 @@ export const usWestCities: Record<string, CityData> = {
     addressRegion: "OR",
     addressCountry: "US",
     region: "US West",
-    nearbyCities: ["seattle", "san-francisco", "boise", "sacramento", "san-jose"],
+    nearbyCities: [
+      "seattle",
+      "san-francisco",
+      "boise",
+      "sacramento",
+      "san-jose",
+    ],
   },
 
   phoenix: {
@@ -192,7 +243,10 @@ export const usWestCities: Record<string, CityData> = {
     ],
     ctas: [
       { label: "Join the Phoenix Waitlist", href: "#waitlist" },
-      { label: "Apply to Be a Contestant", href: "/apply?city=Phoenix&state=AZ" },
+      {
+        label: "Apply to Be a Contestant",
+        href: "/apply?city=Phoenix&state=AZ",
+      },
     ],
     includeEventSchema: false,
     areaServed: "Phoenix, Arizona",
@@ -200,7 +254,13 @@ export const usWestCities: Record<string, CityData> = {
     addressRegion: "AZ",
     addressCountry: "US",
     region: "US West",
-    nearbyCities: ["tucson", "los-angeles", "san-diego", "las-vegas", "albuquerque"],
+    nearbyCities: [
+      "tucson",
+      "los-angeles",
+      "san-diego",
+      "las-vegas",
+      "albuquerque",
+    ],
   },
 
   tucson: {
@@ -220,7 +280,10 @@ export const usWestCities: Record<string, CityData> = {
     ],
     ctas: [
       { label: "Join the Tucson Waitlist", href: "#waitlist" },
-      { label: "Apply to Be a Contestant", href: "/apply?city=Tucson&state=AZ" },
+      {
+        label: "Apply to Be a Contestant",
+        href: "/apply?city=Tucson&state=AZ",
+      },
     ],
     includeEventSchema: false,
     areaServed: "Tucson, Arizona",
@@ -228,7 +291,13 @@ export const usWestCities: Record<string, CityData> = {
     addressRegion: "AZ",
     addressCountry: "US",
     region: "US West",
-    nearbyCities: ["phoenix", "albuquerque", "los-angeles", "san-diego", "las-vegas"],
+    nearbyCities: [
+      "phoenix",
+      "albuquerque",
+      "los-angeles",
+      "san-diego",
+      "las-vegas",
+    ],
   },
 
   "las-vegas": {
@@ -249,7 +318,10 @@ export const usWestCities: Record<string, CityData> = {
     ],
     ctas: [
       { label: "Join the Las Vegas Waitlist", href: "#waitlist" },
-      { label: "Apply to Be a Contestant", href: "/apply?city=Las+Vegas&state=NV" },
+      {
+        label: "Apply to Be a Contestant",
+        href: "/apply?city=Las+Vegas&state=NV",
+      },
     ],
     includeEventSchema: false,
     areaServed: "Las Vegas, Nevada",
@@ -257,7 +329,13 @@ export const usWestCities: Record<string, CityData> = {
     addressRegion: "NV",
     addressCountry: "US",
     region: "US West",
-    nearbyCities: ["phoenix", "los-angeles", "san-diego", "salt-lake-city", "albuquerque"],
+    nearbyCities: [
+      "phoenix",
+      "los-angeles",
+      "san-diego",
+      "salt-lake-city",
+      "albuquerque",
+    ],
   },
 
   albuquerque: {
@@ -277,7 +355,10 @@ export const usWestCities: Record<string, CityData> = {
     ],
     ctas: [
       { label: "Join the Albuquerque Waitlist", href: "#waitlist" },
-      { label: "Apply to Be a Contestant", href: "/apply?city=Albuquerque&state=NM" },
+      {
+        label: "Apply to Be a Contestant",
+        href: "/apply?city=Albuquerque&state=NM",
+      },
     ],
     includeEventSchema: false,
     areaServed: "Albuquerque, New Mexico",
@@ -313,7 +394,13 @@ export const usWestCities: Record<string, CityData> = {
     addressRegion: "ID",
     addressCountry: "US",
     region: "US West",
-    nearbyCities: ["salt-lake-city", "seattle", "portland", "denver", "phoenix"],
+    nearbyCities: [
+      "salt-lake-city",
+      "seattle",
+      "portland",
+      "denver",
+      "phoenix",
+    ],
   },
 
   honolulu: {
@@ -334,7 +421,10 @@ export const usWestCities: Record<string, CityData> = {
     ],
     ctas: [
       { label: "Join the Honolulu Waitlist", href: "#waitlist" },
-      { label: "Apply to Be a Contestant", href: "/apply?city=Honolulu&state=HI" },
+      {
+        label: "Apply to Be a Contestant",
+        href: "/apply?city=Honolulu&state=HI",
+      },
     ],
     includeEventSchema: false,
     areaServed: "Honolulu, Hawaii",
@@ -342,6 +432,12 @@ export const usWestCities: Record<string, CityData> = {
     addressRegion: "HI",
     addressCountry: "US",
     region: "US West",
-    nearbyCities: ["san-francisco", "los-angeles", "san-jose", "san-diego", "seattle"],
+    nearbyCities: [
+      "san-francisco",
+      "los-angeles",
+      "san-jose",
+      "san-diego",
+      "seattle",
+    ],
   },
 };

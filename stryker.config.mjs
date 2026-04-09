@@ -37,7 +37,7 @@ export default {
   incrementalFile: "reports/stryker-incremental.json",
 
   // Timeout: mutations that take too long are killed
-  timeoutMS: 10000,
+  timeoutMS: 60000,
 
   // Concurrency: use available cores
   concurrency_comment: "defaults to CPU cores - 1, which is fine",

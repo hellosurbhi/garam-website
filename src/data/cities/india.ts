@@ -13,9 +13,9 @@ export const indiaCities: Record<string, CityData> = {
     status: "coming-soon",
     badgeLabel: "Coming Soon",
     bodyParagraphs: [
-      "Mumbai has comedy clubs on every other block in Bandra, a standup scene that\u2019s basically a second film industry at this point, and somehow zero live dating shows. The city where half the country moves to \"make it\" has millions of single people packed into local trains every morning, brushing shoulders with someone they\u2019ll never speak to. That\u2019s the gap.",
+      'Mumbai has comedy clubs on every other block in Bandra, a standup scene that\u2019s basically a second film industry at this point, and somehow zero live dating shows. The city where half the country moves to "make it" has millions of single people packed into local trains every morning, brushing shoulders with someone they\u2019ll never speak to. That\u2019s the gap.',
       "Garam Masala Dating is a live dating show and singles mixer from NYC. Real singles go on blind dates on stage. Two hosts keep it honest and funny. The audience watches, reacts, and mixes before and after. It\u2019s been selling out 250 person rooms in New York for over a year. Mumbai is the obvious first stop in India.",
-      "The crowd we\u2019re building for: the IIT Bombay and NMIMS grads working at Bandra Kurla Complex, the Xavier\u2019s alumni who never left South Bombay, the Andheri tech workers who spend weekends at Versova beach pretending they\u2019ll \"go out tonight\" and then order in. Professionals in their mid 20s to early 30s who are done with Hinge but won\u2019t let their parents set them up on Shaadi.com either.",
+      'The crowd we\u2019re building for: the IIT Bombay and NMIMS grads working at Bandra Kurla Complex, the Xavier\u2019s alumni who never left South Bombay, the Andheri tech workers who spend weekends at Versova beach pretending they\u2019ll "go out tonight" and then order in. Professionals in their mid 20s to early 30s who are done with Hinge but won\u2019t let their parents set them up on Shaadi.com either.',
       "Lower Parel\u2019s comedy venues, the Bandra bar scene, Juhu\u2019s social crowd. Mumbai already has the nightlife infrastructure and the audience appetite for live entertainment. What it doesn\u2019t have is a singles event that\u2019s actually fun, culturally specific, and not a cringe corporate mixer with nametags.",
       "We\u2019re building the Mumbai waitlist. Get on it for first access when we announce, or apply to be a contestant. This city is going to be loud.",
     ],
@@ -45,7 +45,7 @@ export const indiaCities: Record<string, CityData> = {
       "Delhi is where half the country goes to study and the other half goes to work. DU North Campus, JNU, IIT Delhi, Jamia. Every autumn a new wave of 18 year olds arrives and by second year they\u2019re regulars at Hauz Khas Social. The dating pool is enormous but the scene is weirdly fragmented. South Delhi doesn\u2019t talk to East Delhi. Rohini doesn\u2019t mix with Dwarka. Gurgaon thinks it\u2019s a different city entirely.",
       "Garam Masala Dating is a live dating show and singles mixer from NYC. Real blind dates on stage, two hosts, a live audience, and a mixer. The format works best when you put people from different corners of the same city in one room and let them discover they actually get along. Delhi is built for that.",
       "Connaught Place still has the best energy for a night out, and the comedy scene in Delhi has exploded. Canvas Laugh Club, The Habitat, and a dozen basement venues in Shahpur Jat host standup every week. The audience for live, unscripted entertainment already exists. We\u2019re just adding romance to the mix.",
-      "The NCR dating problem is specific: too many options, too little follow through. Everyone\u2019s on Bumble, everyone\u2019s \"open to meeting someone,\" and nobody actually does anything about it because the city is so big that even getting to a date requires logistical planning. A show concentrates all that scattered energy into one room for one night.",
+      'The NCR dating problem is specific: too many options, too little follow through. Everyone\u2019s on Bumble, everyone\u2019s "open to meeting someone," and nobody actually does anything about it because the city is so big that even getting to a date requires logistical planning. A show concentrates all that scattered energy into one room for one night.',
       "Waitlist is open for Delhi NCR. Whether you\u2019re in Saket, CP, or commuting from Noida, get on the list. Or apply to be a contestant and let us do the matchmaking.",
     ],
     ctas: [
@@ -102,8 +102,8 @@ export const indiaCities: Record<string, CityData> = {
     bodyParagraphs: [
       "Noida is the other half of Delhi NCR\u2019s tech economy. Sector 18 has the nightlife, the tech parks in Sectors 62 and 63 have the workforce, and the entire stretch from Noida to Greater Noida is packed with young professionals who commute, work, eat, sleep, and repeat. Amity, Sharda, and a dozen other universities pump graduates into the local IT ecosystem every year.",
       "Garam Masala Dating is a live dating show and singles mixer from NYC. Real blind dates on stage, two hosts, a live audience, and a mixer. Noida\u2019s singles are stuck in the same loop as the rest of NCR: apps that go nowhere, office friendships that stay platonic, and weekends spent at malls because there\u2019s nothing else to do.",
-      "The Noida dating scene suffers from proximity to Delhi. Everyone assumes the good events are \"in Delhi\" and the Noida crowd gets treated as an afterthought. But the population here is young, employed, and desperately in need of social programming that isn\u2019t a film screening at a multiplex. This show is designed for exactly that audience.",
-      "Sector 18\u2019s bars and the emerging scene around Noida Expressway mean the venue options exist. The comedy scene has been growing too, with open mics popping up across the city. The infrastructure for live entertainment is catching up to the demand. A dating show fills the gap between \"there\u2019s nothing to do in Noida\" and the reality that a million single people live here.",
+      'The Noida dating scene suffers from proximity to Delhi. Everyone assumes the good events are "in Delhi" and the Noida crowd gets treated as an afterthought. But the population here is young, employed, and desperately in need of social programming that isn\u2019t a film screening at a multiplex. This show is designed for exactly that audience.',
+      'Sector 18\u2019s bars and the emerging scene around Noida Expressway mean the venue options exist. The comedy scene has been growing too, with open mics popping up across the city. The infrastructure for live entertainment is catching up to the demand. A dating show fills the gap between "there\u2019s nothing to do in Noida" and the reality that a million single people live here.',
       "Waitlist is open. Noida, Greater Noida, Ghaziabad, the whole east NCR belt. Get on the list or apply to be a contestant.",
     ],
     ctas: [
@@ -131,7 +131,7 @@ export const indiaCities: Record<string, CityData> = {
     bodyParagraphs: [
       "Bangalore is full of smart, single people who moved here for work and forgot to build a personal life. Koramangala, Indiranagar, and HSR Layout are packed with 26 year olds earning well, eating out every night, and swiping through the same profiles they saw last week. IISc grads, IIM Bangalore alumni, Christ University kids who stayed. The talent density is absurd and the dating scene is somehow still terrible.",
       "Garam Masala Dating is a live dating show and singles mixer from NYC. Real singles on blind dates on stage, two hosts, a live audience, and a mixer. Bangalore\u2019s comedy scene is already thriving. The Humming Tree, BFlat, and a dozen venues host standup regularly. The audience for live, unscripted entertainment is here. What\u2019s missing is a show that combines comedy energy with actual matchmaking.",
-      "The Bangalore dating problem is classic: everyone\u2019s \"too busy.\" Product launches, sprint deadlines, weekend hackathons. People treat their dating life like a backlog item that keeps getting deprioritized. A show that creates a single, high energy night where you meet people organically is the only format that works for this crowd.",
+      'The Bangalore dating problem is classic: everyone\u2019s "too busy." Product launches, sprint deadlines, weekend hackathons. People treat their dating life like a backlog item that keeps getting deprioritized. A show that creates a single, high energy night where you meet people organically is the only format that works for this crowd.',
       "The city\u2019s transplant culture means most people\u2019s friend circles are from work. Your coworkers are your social life. That\u2019s fine until you realize you\u2019re only meeting people from your company and maybe the startup next door. This show pulls from across the city: techies, creatives, founders, and anyone else who\u2019s tired of the algorithm deciding who they should talk to.",
       "Waitlist is live. Bangalore is our top priority in India alongside Mumbai. Get on the list, or apply to be a contestant.",
     ],
@@ -160,7 +160,7 @@ export const indiaCities: Record<string, CityData> = {
     bodyParagraphs: [
       "HITEC City turned Hyderabad into India\u2019s second tech capital almost overnight. Microsoft, Google, Amazon, and a hundred other companies set up shop and brought in tens of thousands of young professionals from across India. Jubilee Hills and Banjara Hills have the social scene. ISB produces a crop of MBA grads every year who stay in the city. BITS Hyderabad adds to the pipeline. The result is a massive, young, single population concentrated in west Hyderabad.",
       "Garam Masala Dating is a live dating show and singles mixer from NYC. Real blind dates on stage, two hosts, a live audience, and a mixer before and after. The show has been selling out in New York and Hyderabad is the kind of city where this format just works: a mix of locals and transplants, everyone curious, everyone a little frustrated with the apps.",
-      "Hyderabad\u2019s cultural identity is its secret weapon. This is the biryani capital, the city of nizami heritage and old world charm mixed with glass tower modernity. The crowd isn\u2019t just \"tech workers.\" It\u2019s people from Telugu, Urdu, Marathi, Tamil, and Hindi backgrounds all living in the same few neighborhoods. That diversity makes for a fascinating room.",
+      'Hyderabad\u2019s cultural identity is its secret weapon. This is the biryani capital, the city of nizami heritage and old world charm mixed with glass tower modernity. The crowd isn\u2019t just "tech workers." It\u2019s people from Telugu, Urdu, Marathi, Tamil, and Hindi backgrounds all living in the same few neighborhoods. That diversity makes for a fascinating room.',
       "The dating scene in Hyderabad is split: old city and new city might as well be different planets. But even in the new city, where the bars and cafes are, meeting someone outside your office requires either extreme luck or a dating app. A show that creates an intentional, fun, one night gathering solves the cold start problem.",
       "Waitlist is open. Hyderabad, we\u2019re coming. Get on the list or apply to be a contestant.",
     ],
@@ -203,7 +203,13 @@ export const indiaCities: Record<string, CityData> = {
     addressRegion: "Tamil Nadu",
     addressCountry: "IN",
     region: "India",
-    nearbyCities: ["bangalore", "hyderabad", "coimbatore", "pondicherry", "trichy"],
+    nearbyCities: [
+      "bangalore",
+      "hyderabad",
+      "coimbatore",
+      "pondicherry",
+      "trichy",
+    ],
   },
 
   pune: {
@@ -219,7 +225,7 @@ export const indiaCities: Record<string, CityData> = {
       "Pune has the best ratio of single, educated, interesting people per square kilometer in India. COEP, Symbiosis, Fergusson, MIT Pune, and a dozen other colleges produce graduates who stay because the city is livable, the rent is reasonable (compared to Mumbai), and there\u2019s enough of a social scene to keep things interesting. Koregaon Park on a Saturday night is proof enough.",
       "Garam Masala Dating is a live dating show and singles mixer from NYC. Real blind dates on stage, two hosts, a live audience, and a mixer. Pune\u2019s comedy scene has been growing fast, with venues in Koregaon Park and Viman Nagar hosting standup regularly. The appetite for live, unscripted entertainment is already proven. A dating show slots right in.",
       "FC Road, JM Road, and the entire Deccan area have been the social heart of student Pune for decades. But as the city expands toward Hinjewadi and Kharadi (where the IT parks are), the social energy gets diluted. People live in Baner, work in Hinjewadi, go out in KP, and somehow never overlap with the same person twice. This show concentrates the scattered crowd.",
-      "Pune\u2019s identity as a \"pensioners\u2019 city\" is ancient history. It\u2019s now one of India\u2019s youngest cities by median age, with a massive influx of workers from across the country. The dating scene suffers from the same problem as Bangalore: everyone\u2019s here, everyone\u2019s single, and nobody knows how to meet outside of work and the apps.",
+      'Pune\u2019s identity as a "pensioners\u2019 city" is ancient history. It\u2019s now one of India\u2019s youngest cities by median age, with a massive influx of workers from across the country. The dating scene suffers from the same problem as Bangalore: everyone\u2019s here, everyone\u2019s single, and nobody knows how to meet outside of work and the apps.',
       "Waitlist is open. Pune, you\u2019re next. Get on the list or apply to be a contestant.",
     ],
     ctas: [
@@ -363,7 +369,7 @@ export const indiaCities: Record<string, CityData> = {
     status: "coming-soon",
     badgeLabel: "Coming Soon",
     bodyParagraphs: [
-      "Lucknow is the city of tehzeeb, which roughly translates to \"we\u2019ll charm your socks off but never actually tell you how we feel.\" Hazratganj has the old world elegance, Gomti Nagar has the new money energy, and IIM Lucknow and BBAU produce graduates who could schmooze at a networking event but freeze at the idea of asking someone out. The city\u2019s famous politeness is both a gift and a curse for dating.",
+      'Lucknow is the city of tehzeeb, which roughly translates to "we\u2019ll charm your socks off but never actually tell you how we feel." Hazratganj has the old world elegance, Gomti Nagar has the new money energy, and IIM Lucknow and BBAU produce graduates who could schmooze at a networking event but freeze at the idea of asking someone out. The city\u2019s famous politeness is both a gift and a curse for dating.',
       "Garam Masala Dating is a live dating show and singles mixer from NYC. Real blind dates on stage, two hosts, a live audience, and a mixer. The format takes the pressure off individuals. You don\u2019t have to cold approach anyone. The show does the hard part on stage, and by the time the mixer starts, everyone\u2019s already warmed up and laughing.",
       "Lucknow\u2019s food scene is legendary: the kebabs, the biryanis, the chaat at Chowk. But there\u2019s no equivalent social gathering point for young singles. The university crowds stick to campus, the professionals stick to their office circles, and the broader social scene defaults to family gatherings. A dedicated event fills a real void.",
       "The city\u2019s cultural identity runs deep. Lucknow doesn\u2019t try to be Mumbai or Delhi. It has its own rhythm, its own sense of humor, and its own way of doing things. A dating show here would have a flavor you couldn\u2019t replicate anywhere else. The audience would be polite, witty, and absolutely merciless with the commentary.",
@@ -394,7 +400,7 @@ export const indiaCities: Record<string, CityData> = {
     bodyParagraphs: [
       "Kochi is Kerala\u2019s most cosmopolitan city and it wears that identity lightly. Fort Kochi has the art scene, Marine Drive has the evening social energy, and the tech corridor at Infopark and SmartCity has a young professional population that\u2019s growing every year. CUSAT is local, IIM Kozhikode is close enough to send graduates this way, and the startup ecosystem is quietly building.",
       "Garam Masala Dating is a live dating show and singles mixer from NYC. Real blind dates on stage, two hosts, a live audience, and a mixer. Kochi\u2019s cultural scene is surprisingly robust for its size. The Kochi Biennale put the city on the international art map, and the local appetite for creative events is high. A live dating show fits that energy.",
-      "Kerala\u2019s dating culture is complicated. High literacy, strong opinions, deep family ties, and a social environment where everyone\u2019s auntie has a \"suggestion.\" Young professionals in Kochi are caught between progressive personal values and a social structure that still expects family involvement in matchmaking. This show offers something those structures can\u2019t: genuine, spontaneous chemistry in a room full of strangers.",
+      'Kerala\u2019s dating culture is complicated. High literacy, strong opinions, deep family ties, and a social environment where everyone\u2019s auntie has a "suggestion." Young professionals in Kochi are caught between progressive personal values and a social structure that still expects family involvement in matchmaking. This show offers something those structures can\u2019t: genuine, spontaneous chemistry in a room full of strangers.',
       "The Malayalee community globally is tight knit and connected. A show in Kochi wouldn\u2019t just draw from the city; it would pull from Thrissur, Ernakulam district, and anyone visiting home from the Gulf. The audience pool is bigger than the city\u2019s population suggests.",
       "Waitlist is open. Kochi, this one\u2019s for you. Get on the list or apply to be a contestant.",
     ],
@@ -408,7 +414,13 @@ export const indiaCities: Record<string, CityData> = {
     addressRegion: "Kerala",
     addressCountry: "IN",
     region: "India",
-    nearbyCities: ["thiruvananthapuram", "coimbatore", "bangalore", "mangalore", "chennai"],
+    nearbyCities: [
+      "thiruvananthapuram",
+      "coimbatore",
+      "bangalore",
+      "mangalore",
+      "chennai",
+    ],
   },
 
   goa: {
@@ -422,8 +434,8 @@ export const indiaCities: Record<string, CityData> = {
     badgeLabel: "Coming Soon",
     bodyParagraphs: [
       "Goa is where everyone goes to let loose, and somehow the dating scene is still just people staring at each other across beach shacks hoping someone makes a move. The state has two speeds: the tourist and expat crowd in North Goa living like every weekend is their last, and the local Goan community in South Goa and Panjim living their actual lives. Both groups are underserved when it comes to dating events.",
-      "Garam Masala Dating is a live dating show and singles mixer from NYC. Real blind dates on stage, two hosts, a live audience, and a mixer. Goa already has world class nightlife and event infrastructure. What it lacks is anything targeted. Every party is for \"everyone,\" which means nobody\u2019s actually meeting anyone with intention.",
-      "Goa University and BITS Goa have student populations that stay for the vibes. The remote work migration brought in young professionals from Mumbai, Bangalore, and Delhi who are technically \"working from Goa\" but really just need an excuse to live somewhere beautiful. This crowd is single, social, and bored of the same Friday night.",
+      'Garam Masala Dating is a live dating show and singles mixer from NYC. Real blind dates on stage, two hosts, a live audience, and a mixer. Goa already has world class nightlife and event infrastructure. What it lacks is anything targeted. Every party is for "everyone," which means nobody\u2019s actually meeting anyone with intention.',
+      'Goa University and BITS Goa have student populations that stay for the vibes. The remote work migration brought in young professionals from Mumbai, Bangalore, and Delhi who are technically "working from Goa" but really just need an excuse to live somewhere beautiful. This crowd is single, social, and bored of the same Friday night.',
       "A dating show in Goa would have a vacation energy that no other city can match. People are already relaxed, already in a good mood, already wearing something they actually chose instead of their work clothes. The baseline mood is higher, which means the connections happen faster.",
       "Waitlist is open. Goa, let\u2019s turn a night out into something that matters. Get on the list or apply to be a contestant.",
     ],
@@ -452,7 +464,7 @@ export const indiaCities: Record<string, CityData> = {
     bodyParagraphs: [
       "Indore is India\u2019s cleanest city, its street food capital, and home to one of the most underrated social scenes in the country. IIM Indore and IIT Indore bring in academic talent. The Rajwada area has the heritage. Vijay Nagar has the college crowd and the cafes. Sarafa Bazaar at night is basically a street food festival that runs every single day. This city knows how to have a good time.",
       "Garam Masala Dating is a live dating show and singles mixer from NYC. Real blind dates on stage, two hosts, a live audience, and a mixer. Indore\u2019s live entertainment scene has been growing and the city punches well above its weight class for cultural events. The Comedy Factory and local standup shows get solid turnouts. The audience exists.",
-      "The Indore dating problem is the mid tier city trap: big enough to have plenty of single people, small enough that the apps run out of new profiles in a week. Everyone ends up at the same cafes in Vijay Nagar, sees the same faces at the same Sarafa joints, and never bridges the gap between \"I\u2019ve seen you around\" and \"let\u2019s actually talk.\" This show is the bridge.",
+      'The Indore dating problem is the mid tier city trap: big enough to have plenty of single people, small enough that the apps run out of new profiles in a week. Everyone ends up at the same cafes in Vijay Nagar, sees the same faces at the same Sarafa joints, and never bridges the gap between "I\u2019ve seen you around" and "let\u2019s actually talk." This show is the bridge.',
       "Madhya Pradesh culture values warmth and hospitality, and Indore exemplifies it. The audience here won\u2019t be detached or performatively cool. They\u2019ll be invested, vocal, and genuinely rooting for the people on stage. That makes for the best kind of show.",
       "Waitlist is open. Indore, the street food capital deserves a dating show worth showing up for. Get on the list or apply to be a contestant.",
     ],
@@ -487,7 +499,10 @@ export const indiaCities: Record<string, CityData> = {
     ],
     ctas: [
       { label: "Join the Trivandrum Waitlist", href: "#waitlist" },
-      { label: "Apply to Be a Contestant", href: "/apply?city=Thiruvananthapuram" },
+      {
+        label: "Apply to Be a Contestant",
+        href: "/apply?city=Thiruvananthapuram",
+      },
     ],
     includeEventSchema: false,
     areaServed: "Thiruvananthapuram, Kerala",
@@ -539,7 +554,7 @@ export const indiaCities: Record<string, CityData> = {
     bodyParagraphs: [
       "Nagpur is literally the geographic center of India and somehow gets overlooked in every conversation about Indian cities. VNIT and IIM Nagpur bring academic talent, MIHAN is developing into an economic hub, and the city\u2019s strategic location means it draws people from Maharashtra, Madhya Pradesh, and Chhattisgarh. Sitabuldi and Dharampeth have the social energy, and the Futala Lake area is where everyone goes on weekends to pretend they\u2019re not looking at who else showed up.",
       "Garam Masala Dating is a live dating show and singles mixer from NYC. Real blind dates on stage, two hosts, a live audience, and a mixer. Nagpur\u2019s live entertainment scene is growing. Comedy shows and cultural events are getting better attendance than ever. The audience wants more.",
-      "The Nagpur dating scene suffers from the \"everyone knows everyone\" problem that plagues mid size cities. The same groups go to the same places, and the dating apps run out of suggestions quickly. A curated live event that brings together people from across the city\u2019s scattered social circles creates exactly the kind of novelty this scene needs.",
+      'The Nagpur dating scene suffers from the "everyone knows everyone" problem that plagues mid size cities. The same groups go to the same places, and the dating apps run out of suggestions quickly. A curated live event that brings together people from across the city\u2019s scattered social circles creates exactly the kind of novelty this scene needs.',
       "Central India rarely gets toured by anyone. Nagpur is used to being skipped. We\u2019re not skipping it. The city has the population, the young professional base, and the cultural appetite. What it needs is someone to actually show up.",
       "Waitlist is open. Nagpur, get on the list or apply to be a contestant.",
     ],
@@ -597,7 +612,7 @@ export const indiaCities: Record<string, CityData> = {
     bodyParagraphs: [
       "Surat is one of India\u2019s fastest growing cities and the diamond capital of the world. Ninety percent of the world\u2019s diamonds pass through here, and the wealth it\u2019s created has transformed the city. SVNIT anchors the academic side. The textile industry adds another layer of young professionals. The result is a city with money, ambition, and a young population that\u2019s outpacing its social infrastructure.",
       "Garam Masala Dating is a live dating show and singles mixer from NYC. Real blind dates on stage, two hosts, a live audience, and a mixer. Surat\u2019s entertainment options are growing but the city is still playing catch up. Most social events cater to families and the business community. Young singles get overlooked.",
-      "The Surat crowd is entrepreneurial by nature. The diamond and textile trades create a culture of hustle and self reliance. People here work hard, earn early, and start thinking about \"settling down\" sooner than in Mumbai or Bangalore. But the path to finding someone is still limited to family networks, community introductions, and the occasional app match. A live event adds an option that didn\u2019t exist before.",
+      'The Surat crowd is entrepreneurial by nature. The diamond and textile trades create a culture of hustle and self reliance. People here work hard, earn early, and start thinking about "settling down" sooner than in Mumbai or Bangalore. But the path to finding someone is still limited to family networks, community introductions, and the occasional app match. A live event adds an option that didn\u2019t exist before.',
       "Surat\u2019s food scene is incredible and the city\u2019s social culture revolves around eating together. The Gopi Talav and Dutch Garden areas come alive in the evenings. A dating show that taps into that communal, food loving energy would feel natural here.",
       "Waitlist is open. Surat, let\u2019s build something. Get on the list or apply to be a contestant.",
     ],
@@ -640,7 +655,13 @@ export const indiaCities: Record<string, CityData> = {
     addressRegion: "Andhra Pradesh",
     addressCountry: "IN",
     region: "India",
-    nearbyCities: ["hyderabad", "chennai", "bhubaneswar", "kolkata", "bangalore"],
+    nearbyCities: [
+      "hyderabad",
+      "chennai",
+      "bhubaneswar",
+      "kolkata",
+      "bangalore",
+    ],
   },
 
   bhopal: {
@@ -994,7 +1015,7 @@ export const indiaCities: Record<string, CityData> = {
     bodyParagraphs: [
       "Shillong is one of India\u2019s most musically inclined cities. Live bands play in cafes, the local music scene is genuinely thriving, and the cultural appetite for performance is baked into the city\u2019s DNA. NEHU (North Eastern Hill University) anchors the student population, and the city\u2019s compact size means everyone is within twenty minutes of everyone else.",
       "Garam Masala Dating is a live dating show and singles mixer from NYC. Real blind dates on stage, two hosts, a live audience, and a mixer. A city that already loves live performance and has a young, socially active population is exactly the right place for this show.",
-      "Shillong\u2019s identity as the \"Scotland of the East\" comes with a laid back charm that translates perfectly to a dating show format. People here are genuine, expressive, and unafraid of being themselves in public. That authenticity is what makes the best shows.",
+      'Shillong\u2019s identity as the "Scotland of the East" comes with a laid back charm that translates perfectly to a dating show format. People here are genuine, expressive, and unafraid of being themselves in public. That authenticity is what makes the best shows.',
       "Waitlist is open. Shillong, get on the list or apply to be a contestant.",
     ],
     ctas: [
@@ -1091,7 +1112,13 @@ export const indiaCities: Record<string, CityData> = {
     addressRegion: "Tamil Nadu",
     addressCountry: "IN",
     region: "India",
-    nearbyCities: ["chennai", "coimbatore", "pondicherry", "bangalore", "kochi"],
+    nearbyCities: [
+      "chennai",
+      "coimbatore",
+      "pondicherry",
+      "bangalore",
+      "kochi",
+    ],
   },
 
   vellore: {
@@ -1119,7 +1146,13 @@ export const indiaCities: Record<string, CityData> = {
     addressRegion: "Tamil Nadu",
     addressCountry: "IN",
     region: "India",
-    nearbyCities: ["chennai", "bangalore", "pondicherry", "trichy", "coimbatore"],
+    nearbyCities: [
+      "chennai",
+      "bangalore",
+      "pondicherry",
+      "trichy",
+      "coimbatore",
+    ],
   },
 
   warangal: {
@@ -1147,7 +1180,13 @@ export const indiaCities: Record<string, CityData> = {
     addressRegion: "Telangana",
     addressCountry: "IN",
     region: "India",
-    nearbyCities: ["hyderabad", "visakhapatnam", "nagpur", "bangalore", "chennai"],
+    nearbyCities: [
+      "hyderabad",
+      "visakhapatnam",
+      "nagpur",
+      "bangalore",
+      "chennai",
+    ],
   },
 
   kanpur: {
@@ -1190,7 +1229,7 @@ export const indiaCities: Record<string, CityData> = {
     bodyParagraphs: [
       "Allahabad (Prayagraj) is where the rivers converge and so does a significant student population. University of Allahabad is one of the oldest in Asia. MNNIT brings in engineering students from across UP and beyond. Civil Lines has the colonial era charm and the social scene, and the broader city is steeped in literary and academic tradition.",
       "Garam Masala Dating is a live dating show and singles mixer from NYC. Real blind dates on stage, two hosts, a live audience, and a mixer. Allahabad\u2019s intellectual heritage means the audience would be sharp, articulate, and probably debate the contestants\u2019 choices out loud. That\u2019s the kind of room that makes the best shows.",
-      "The city\u2019s dating scene is dominated by college social circles and the preparation center ecosystem. Students studying for UPSC, judiciary exams, and SSC create a concentrated population of ambitious, serious young people who are \"too busy\" for dating but obviously not too busy to show up for a good time.",
+      'The city\u2019s dating scene is dominated by college social circles and the preparation center ecosystem. Students studying for UPSC, judiciary exams, and SSC create a concentrated population of ambitious, serious young people who are "too busy" for dating but obviously not too busy to show up for a good time.',
       "Waitlist is open. Allahabad, get on the list or apply to be a contestant.",
     ],
     ctas: [
@@ -1272,7 +1311,7 @@ export const indiaCities: Record<string, CityData> = {
     status: "coming-soon",
     badgeLabel: "Coming Soon",
     bodyParagraphs: [
-      "Udaipur is literally called the City of Lakes and regularly appears on \"most romantic cities in India\" lists. Mohanlal Sukhadia University and the IIM Udaipur campus bring in a student and academic population. The tourism industry employs young people from across Rajasthan. Fateh Sagar Lake, the City Palace area, and Hathi Pol Bazaar make this one of the most visually stunning places to host a dating show anywhere in the world.",
+      'Udaipur is literally called the City of Lakes and regularly appears on "most romantic cities in India" lists. Mohanlal Sukhadia University and the IIM Udaipur campus bring in a student and academic population. The tourism industry employs young people from across Rajasthan. Fateh Sagar Lake, the City Palace area, and Hathi Pol Bazaar make this one of the most visually stunning places to host a dating show anywhere in the world.',
       "Garam Masala Dating is a live dating show and singles mixer from NYC. Real blind dates on stage, two hosts, a live audience, and a mixer. If you had to design a city where a dating show would feel magical, you\u2019d design something that looks a lot like Udaipur. The romance is built into the architecture.",
       "The dating pool in Udaipur is modest in size but the destination factor changes the math. A show here wouldn\u2019t just draw locals. It would draw people from Jaipur, Ahmedabad, and even Mumbai who want to combine a weekend trip with a unique event. The vacation mentality makes people more open, more present, and more fun.",
       "Waitlist is open. Udaipur, get on the list or apply to be a contestant.",

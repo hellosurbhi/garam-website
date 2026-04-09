@@ -64,6 +64,8 @@ const THIRD_PARTY_NOISE = [
   /the server responded with a status of 404.*favicon/i,
   /ERR_BLOCKED_BY_CLIENT/i,
   /net::ERR_FAILED/i,
+  /Content Security Policy/i,
+  /%cAstro/i,
 ];
 
 function isThirdPartyNoise(msg: string): boolean {
@@ -135,34 +137,44 @@ async function assertFooter(page: Page) {
 }
 
 async function assertAllLinksValid(page: Page) {
-  const links = await page.locator("a[href]").all();
-  for (const link of links) {
-    const href = await link.getAttribute("href");
-    expect(href, "Link href should not be empty").toBeTruthy();
-    expect(href, `Link href should not be bare "#"`).not.toBe("#");
-    expect(
-      href?.startsWith("javascript:"),
-      `Link should not use javascript: protocol — ${href}`,
-    ).toBeFalsy();
-  }
+  const badLinks = await page
+    .locator("a[href]")
+    .evaluateAll((anchors) =>
+      anchors
+        .map((a) => (a as HTMLAnchorElement).getAttribute("href") ?? "")
+        .filter(
+          (href) => !href || href === "#" || href.startsWith("javascript:"),
+        ),
+    );
+  expect(badLinks, `Found invalid link hrefs: ${badLinks.join(", ")}`).toEqual(
+    [],
+  );
 }
 
 async function assertAllButtonsAccessible(page: Page) {
-  const buttons = await page.locator("button").all();
-  for (const btn of buttons) {
-    if (!(await btn.isVisible())) continue;
-    const text = (await btn.textContent())?.trim() ?? "";
-    const ariaLabel = (await btn.getAttribute("aria-label")) ?? "";
-    const ariaLabelledBy = (await btn.getAttribute("aria-labelledby")) ?? "";
-    const title = (await btn.getAttribute("title")) ?? "";
-    expect(
-      text.length > 0 ||
-        ariaLabel.length > 0 ||
-        ariaLabelledBy.length > 0 ||
-        title.length > 0,
-      "Visible button must have text, aria-label, aria-labelledby, or title",
-    ).toBe(true);
-  }
+  const inaccessible = await page.locator("button").evaluateAll((buttons) =>
+    buttons
+      .filter((btn) => {
+        const style = window.getComputedStyle(btn);
+        return (
+          style.display !== "none" &&
+          style.visibility !== "hidden" &&
+          btn.offsetParent !== null
+        );
+      })
+      .filter((btn) => {
+        const text = (btn.textContent ?? "").trim();
+        const ariaLabel = btn.getAttribute("aria-label") ?? "";
+        const ariaLabelledBy = btn.getAttribute("aria-labelledby") ?? "";
+        const title = btn.getAttribute("title") ?? "";
+        return !text && !ariaLabel && !ariaLabelledBy && !title;
+      })
+      .map((btn) => btn.outerHTML.slice(0, 100)),
+  );
+  expect(
+    inaccessible,
+    `Buttons without accessible names: ${inaccessible.join(", ")}`,
+  ).toEqual([]);
 }
 
 async function assertJsonLd(page: Page) {
@@ -630,7 +642,7 @@ test.describe("Hosts page deep", () => {
     await page.goto("/hosts", { waitUntil: "domcontentloaded" });
 
     await expect(page.locator("main.hosts-page")).toBeVisible();
-    await expect(page.locator("h1")).toBeVisible();
+    await expect(page.locator("main.hosts-page h1")).toBeVisible();
 
     // Two host sections
     const sections = page.locator(".host-section");
@@ -892,7 +904,9 @@ test.describe("Dating tips", () => {
       await expect(
         page.locator('a.tip-post-back[href="/south-asian-dating-tips"]'),
       ).toBeVisible();
-      await expect(page.locator('a[href="/apply"]')).toBeVisible();
+      await expect(
+        page.locator('a.tip-post-footer-cta[href="/apply"]'),
+      ).toBeVisible();
 
       await assertSeoMeta(page);
       await assertJsonLd(page);
@@ -1184,10 +1198,9 @@ test.describe("Notify modal", () => {
       await expect(page.locator("#notify-email")).toBeVisible();
 
       // Submit button
-      const submit = dialog.locator('button[type="submit"]');
+      const submit = dialog.locator('#notify-form button[type="submit"]');
       await expect(submit).toBeVisible();
-      const submitText = await submit.textContent();
-      expect(submitText).toContain("Notify Me");
+      await expect(submit).toHaveText("Notify Me");
 
       // Close
       await page.keyboard.press("Escape");

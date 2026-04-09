@@ -11,7 +11,9 @@ vi.mock("jose", () => ({
 const TEST_PROJECT_ID = "test-project-123";
 
 function makeToken(kid: string, sub: string): string {
-  const header = Buffer.from(JSON.stringify({ kid, alg: "RS256" })).toString("base64url");
+  const header = Buffer.from(JSON.stringify({ kid, alg: "RS256" })).toString(
+    "base64url",
+  );
   const payload = Buffer.from(JSON.stringify({ sub })).toString("base64url");
   return `${header}.${payload}.fake-sig`;
 }
@@ -28,7 +30,13 @@ describe("verifyIdToken", () => {
     mockImportX509.mockResolvedValue("mock-key");
     // Mock global fetch for Google certs
     vi.spyOn(globalThis, "fetch").mockResolvedValue(
-      new Response(JSON.stringify({ "key-1": "-----BEGIN CERTIFICATE-----\nfake\n-----END CERTIFICATE-----" }), { status: 200 }),
+      new Response(
+        JSON.stringify({
+          "key-1":
+            "-----BEGIN CERTIFICATE-----\nfake\n-----END CERTIFICATE-----",
+        }),
+        { status: 200 },
+      ),
     );
     mockJwtVerify.mockResolvedValue({ payload: { sub: "user-123" } });
   });
@@ -57,8 +65,12 @@ describe("verifyIdToken", () => {
   });
 
   it("returns null when JWT header has no kid", async () => {
-    const header = Buffer.from(JSON.stringify({ alg: "RS256" })).toString("base64url");
-    const payload = Buffer.from(JSON.stringify({ sub: "user-123" })).toString("base64url");
+    const header = Buffer.from(JSON.stringify({ alg: "RS256" })).toString(
+      "base64url",
+    );
+    const payload = Buffer.from(JSON.stringify({ sub: "user-123" })).toString(
+      "base64url",
+    );
     const token = `${header}.${payload}.fake-sig`;
     expect(await verifyIdToken(`Bearer ${token}`)).toBeNull();
   });

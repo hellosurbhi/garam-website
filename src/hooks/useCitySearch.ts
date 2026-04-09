@@ -2,7 +2,9 @@ import { useCallback, useEffect, useState } from "react";
 import type { CitySearchOption } from "@/lib/citySearch";
 
 async function fetchCityOptions(query: string): Promise<CitySearchOption[]> {
-  const response = await fetch(`/api/city-search?q=${encodeURIComponent(query)}`);
+  const response = await fetch(
+    `/api/city-search?q=${encodeURIComponent(query)}`,
+  );
   if (!response.ok) {
     throw new Error("Failed to search cities");
   }

@@ -6,13 +6,16 @@ import {
   type ChangeEvent,
 } from "react";
 import { collection, addDoc, serverTimestamp } from "firebase/firestore";
-import { ref, uploadBytes, getDownloadURL, deleteObject, type StorageReference } from "firebase/storage";
+import {
+  ref,
+  uploadBytes,
+  getDownloadURL,
+  deleteObject,
+  type StorageReference,
+} from "firebase/storage";
 import { signInAnonymously } from "firebase/auth";
 import { useCitySearch } from "@/hooks/useCitySearch";
-import {
-  resolveCityOption,
-  type CitySearchOption,
-} from "@/lib/citySearch";
+import { resolveCityOption, type CitySearchOption } from "@/lib/citySearch";
 import {
   getFirebaseDb,
   getFirebaseStorage,
@@ -99,7 +102,9 @@ export function useApplyForm() {
   const triggerGeoLoad = useCallback(() => setGeoLoadTriggered(true), []);
 
   const citySearch = useCitySearch(placeQuery, geoLoadTriggered);
-  const [selectedPlace, setSelectedPlace] = useState<CitySearchOption | null>(null);
+  const [selectedPlace, setSelectedPlace] = useState<CitySearchOption | null>(
+    null,
+  );
   const placeOptions = useMemo(
     () =>
       selectedPlace &&
@@ -182,7 +187,8 @@ export function useApplyForm() {
     const errs: FormErrors = {};
     if (!form.name.trim()) errs.name = "Required";
     const ageNum = parseInt(form.age, 10);
-    if (!form.age || Number.isNaN(ageNum) || ageNum < 18) errs.age = "Must be 18 or older";
+    if (!form.age || Number.isNaN(ageNum) || ageNum < 18)
+      errs.age = "Must be 18 or older";
     if (!form.gender) errs.gender = "Required";
     if (!form.orientation) errs.orientation = "Required";
     if (!form.city) errs.city = "Required";
@@ -229,7 +235,10 @@ export function useApplyForm() {
     if (selectedPlace || !citySearch.options.length || !form.city) return;
 
     const seededValue = [form.city, form.state].filter(Boolean).join(", ");
-    const resolved = resolveCityOption(seededValue || form.city, citySearch.options);
+    const resolved = resolveCityOption(
+      seededValue || form.city,
+      citySearch.options,
+    );
     if (!resolved) return;
 
     setSelectedPlace(resolved);

@@ -64,7 +64,7 @@ This site was designed by a professional front-end designer. Every aesthetic dec
 - **Font sizes, letter-spacing, line-height** — typographic choices are intentional.
 - **WebGL shader** (`public/js/shader-app.js`) — $2,000 designer asset. Touch nothing. If there is a bug, report it; do not "fix" it aesthetically.
 
-**CodeRabbit rule:** Any review comment that suggests removing, changing, or "improving" the above should be dismissed with: `intentional design choice — not a bug`. You may offer alternative *implementations* (e.g., CSS var vs hex) but never alter the *result*.
+**CodeRabbit rule:** Any review comment that suggests removing, changing, or "improving" the above should be dismissed with: `intentional design choice — not a bug`. You may offer alternative _implementations_ (e.g., CSS var vs hex) but never alter the _result_.
 
 ### Never do
 
@@ -118,7 +118,7 @@ Fonts: Playfair Display (headings), Nunito (body), Cormorant Garamond (decorativ
 
 ## Environment variables
 
-- `PUBLIC_FIREBASE_*` — Firebase config (client-safe, Astro PUBLIC_ prefix)
+- `PUBLIC_FIREBASE_*` — Firebase config (client-safe, Astro PUBLIC\_ prefix)
 - `FIREBASE_ADMIN_CLIENT_EMAIL` / `FIREBASE_ADMIN_PRIVATE_KEY` — server-side only
 - `CONTESTANT_PREP_SALT` — weekly password rotation salt
 - `RESEND_API_KEY` / `NOTIFICATION_EMAIL` — email notifications

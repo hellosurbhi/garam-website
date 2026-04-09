@@ -1,5 +1,9 @@
 import { describe, it, expect } from "vitest";
-import { journalPosts, journalPostsSorted, getPostBySlug } from "./journal/index";
+import {
+  journalPosts,
+  journalPostsSorted,
+  getPostBySlug,
+} from "./journal/index";
 
 const ISO_DATE_RE = /^\d{4}-\d{2}-\d{2}$/;
 
@@ -57,7 +61,10 @@ describe("journalPosts", () => {
       expect(post.relatedSlugs.length).toBeGreaterThanOrEqual(2);
       expect(post.relatedSlugs.length).toBeLessThanOrEqual(3);
       for (const s of post.relatedSlugs) {
-        expect(allSlugs.has(s), `"${s}" not found in catalog (referenced from "${post.slug}")`).toBe(true);
+        expect(
+          allSlugs.has(s),
+          `"${s}" not found in catalog (referenced from "${post.slug}")`,
+        ).toBe(true);
       }
       expect(new Set(post.relatedSlugs).size).toBe(post.relatedSlugs.length);
       expect(post.relatedSlugs).not.toContain(post.slug);

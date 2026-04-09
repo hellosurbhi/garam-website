@@ -460,7 +460,7 @@ describe("ContestantPrepPage", () => {
 
   it("shows toggle label text", () => {
     render(<ContestantPrepPage />);
-    expect(screen.getByText(/Intructions for:/)).toBeInTheDocument();
+    expect(screen.getByText(/Instructions for:/)).toBeInTheDocument();
   });
 
   /* ── Golden rules content ───────────────────────────── */

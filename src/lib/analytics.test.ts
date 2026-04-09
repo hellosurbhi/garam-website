@@ -1,20 +1,6 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
 import { trackError, trackLeadEvent, identifyLead } from "./analytics";
 
-declare global {
-  interface Window {
-    posthog?: {
-      capture?: (...args: unknown[]) => void;
-      identify?: (...args: unknown[]) => void;
-    };
-    dataLayer?: Array<Record<string, unknown>>;
-    __garamErrorQueue?: Array<{
-      event: string;
-      properties: Record<string, unknown>;
-    }>;
-  }
-}
-
 describe("trackLeadEvent", () => {
   let captureMock: ReturnType<typeof vi.fn>;
   let dataLayerPush: ReturnType<typeof vi.fn>;
@@ -22,7 +8,7 @@ describe("trackLeadEvent", () => {
   beforeEach(() => {
     captureMock = vi.fn();
     dataLayerPush = vi.fn();
-    window.posthog = { capture: captureMock };
+    window.posthog = { capture: captureMock } as typeof window.posthog;
     window.dataLayer = { push: dataLayerPush } as unknown as Array<
       Record<string, unknown>
     >;
@@ -113,7 +99,7 @@ describe("identifyLead", () => {
 
   beforeEach(() => {
     identifyMock = vi.fn();
-    window.posthog = { identify: identifyMock };
+    window.posthog = { identify: identifyMock } as typeof window.posthog;
   });
 
   afterEach(() => {
@@ -198,7 +184,7 @@ describe("trackError", () => {
 
   beforeEach(() => {
     captureMock = vi.fn();
-    window.posthog = { capture: captureMock };
+    window.posthog = { capture: captureMock } as typeof window.posthog;
     delete window.__garamErrorQueue;
     Object.defineProperty(window, "location", {
       value: { href: "https://garammasaladating.com/apply" },
@@ -298,7 +284,7 @@ describe("trackLeadEvent — filter precision", () => {
 
   beforeEach(() => {
     captureMock = vi.fn();
-    window.posthog = { capture: captureMock };
+    window.posthog = { capture: captureMock } as typeof window.posthog;
   });
 
   afterEach(() => {

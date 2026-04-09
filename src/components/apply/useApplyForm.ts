@@ -1,10 +1,10 @@
+import type React from "react";
 import {
   useState,
   useEffect,
   useCallback,
   useMemo,
   type ChangeEvent,
-  type FormEvent,
 } from "react";
 import { collection, addDoc, serverTimestamp } from "firebase/firestore";
 import {
@@ -263,7 +263,7 @@ export function useApplyForm() {
     }));
   }, [citySearch.options, form.city, form.state, selectedPlace]);
 
-  async function handleSubmit(e: FormEvent<HTMLFormElement>) {
+  async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
     if (!validate()) return;
 

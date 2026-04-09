@@ -2,6 +2,7 @@ import { ErrorBoundary } from "./ErrorBoundary";
 import Select from "react-select";
 import { COMMUNITY_OPTIONS, INCOME_OPTIONS } from "@/types/application";
 import { formSelectStyles } from "@/utils/reactSelectStyles";
+import type { CitySearchOption } from "@/lib/citySearch";
 import styles from "./ApplyPage.module.css";
 import { SOCIAL_URLS } from "@/data/socials";
 import { FieldGroup, SectionTitle } from "./apply/FieldGroup";
@@ -235,7 +236,9 @@ function ApplyPageInner() {
                           inputId="geo-place"
                           options={placeOptions}
                           value={selectedPlace}
-                          onChange={(option) => handlePlaceChange(option)}
+                          onChange={(option) =>
+                            handlePlaceChange(option as CitySearchOption | null)
+                          }
                           onInputChange={(value, meta) => {
                             if (meta.action === "input-change") {
                               handlePlaceInputChange(value);

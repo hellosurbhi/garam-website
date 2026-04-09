@@ -59,7 +59,7 @@ export const INCLUSIONS: InclusionItem[] = [
   {
     title: "Surbhi & Wyatt",
     description:
-      "Our hosts run the entire show. Stand-up, crowd work, matchmaking, and the post-date debrief. 40+ shows. Zero dead air. They customize every private show around your team, your inside jokes, and your event theme.",
+      "Our hosts run the entire show. Stand-up, crowd work, matchmaking, and the post-date debrief. 40+ shows. Zero dead air.",
   },
   {
     title: "Full Production",
@@ -75,6 +75,16 @@ export const INCLUSIONS: InclusionItem[] = [
     title: "Post-Show Mixer",
     description:
       "Structured mingling where people actually talk. Surbhi plays matchmaker, Wyatt keeps the energy up. The best networking your company has ever done.",
+  },
+  {
+    title: "Custom Show Elements",
+    description:
+      "We build custom segments around your team, your inside jokes, and your event theme. Diwali parties, company milestones, client nights. Every private show is different.",
+  },
+  {
+    title: "Contestant Casting",
+    description:
+      "We can cast contestants from your group or bring in singles we've vetted. Either way, the dates are real and the audience goes wild.",
   },
 ];
 

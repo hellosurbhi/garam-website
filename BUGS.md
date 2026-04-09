@@ -2,6 +2,126 @@
 
 ## Open
 
+### [HIGH] Homepage still emits duplicate FAQPage schema
+
+- **Date:** 2026-04-08
+- **File:** `src/pages/index.astro`, `src/pages/faq.astro`
+- **Status:** Open
+- **Severity:** High
+- **What's happening:** The homepage still imports `HOME_FAQS`, builds `faqJsonLd`, and emits a `FAQPage` JSON-LD block. The dedicated FAQ page also emits its own `FAQPage` schema with overlapping questions and different answer wording.
+- **What should happen:** Only `/faq` should own the `FAQPage` schema. The homepage can keep the visible accordion, but should not emit competing FAQ structured data.
+- **Fix:** Remove the homepage FAQ JSON-LD block from `src/pages/index.astro`.
+
+### [MEDIUM] Home hero photo background from audit not implemented
+
+- **Date:** 2026-04-08
+- **File:** `src/components/home/HomeHero.astro`
+- **Status:** Open
+- **Severity:** Medium
+- **What's happening:** The hero still renders only the shader canvas and gradient background. The planned stage photo layer was never added.
+- **What should happen:** The hero should include the optimized show photo behind the shader for depth and stronger visual proof.
+- **Fix:** Add a `<picture>` background layer using the new hero asset, placed behind the canvas with reduced opacity.
+
+### [MEDIUM] Home creators avatars were not upgraded to larger host photos
+
+- **Date:** 2026-04-08
+- **File:** `src/components/home/HomeCreators.astro`
+- **Status:** Open
+- **Severity:** Medium
+- **What's happening:** Creator avatars are still rendered at 96x96 on mobile and desktop. The audit called for larger host photos and updated crops.
+- **What should happen:** Home creator cards should use larger images with stronger visual emphasis and updated source assets.
+- **Fix:** Increase avatar sizing to the planned 160-200px range and switch to the newer processed host images.
+
+### [MEDIUM] Hosts page still uses small individual avatar images
+
+- **Date:** 2026-04-08
+- **File:** `src/pages/hosts.astro`
+- **Status:** Open
+- **Severity:** Medium
+- **What's happening:** The hosts page uses a strong action shot banner, but the individual host avatars are still 96x96 and were not upgraded as planned.
+- **What should happen:** The hosts page should use larger individual photos to match the rest of the redesign.
+- **Fix:** Replace the small avatars with larger cropped host images and adjust layout spacing accordingly.
+
+### [MEDIUM] Experience section photo placement was missed
+
+- **Date:** 2026-04-08
+- **File:** `src/components/home/HomeExperience.astro`
+- **Status:** Open
+- **Severity:** Medium
+- **What's happening:** The Experience section still has only text plus ambient background images. The planned audience reaction photo in the left column was never added.
+- **What should happen:** The section should include the audience photo below the copy to add proof and break up the text block.
+- **Fix:** Add the planned `<picture>` element below the body copy and style it per the audit.
+
+### [MEDIUM] Testimonials accent photo was not added
+
+- **Date:** 2026-04-08
+- **File:** `src/components/home/HomeTestimonials.astro`
+- **Status:** Open
+- **Severity:** Medium
+- **What's happening:** The testimonial section still renders only the three quote cards over a background image. The planned desktop-only image card or accent treatment was not implemented.
+- **What should happen:** Testimonials should include the audience reaction photo as added visual proof on desktop.
+- **Fix:** Add the fourth desktop grid item or equivalent accent treatment using the processed image.
+
+### [MEDIUM] Journal decorative cupid artwork not implemented
+
+- **Date:** 2026-04-08
+- **File:** `src/pages/journal/index.astro`, `src/pages/journal/[slug].astro`
+- **Status:** Open
+- **Severity:** Medium
+- **What's happening:** The journal pages still use the generic background image only. The decorative cupid artwork from the audit was not added to the index header or article layout.
+- **What should happen:** Journal pages should include the subtle cupid art accents that were part of the visual refresh plan.
+- **Fix:** Add absolutely positioned decorative image elements with the planned opacity and positioning.
+
+### [MEDIUM] Spice List section still double-asks subscribed users for email
+
+- **Date:** 2026-04-08
+- **File:** `src/components/home/HomeSignup.astro`
+- **Status:** Open
+- **Severity:** Medium
+- **What's happening:** The section always renders the email signup prompt, even when `localStorage` already contains `gmd-popup-subscribed`. Users who subscribed through the popup still see another email ask at the bottom of the home page.
+- **What should happen:** Previously subscribed users should see an alternate CTA, not another email form.
+- **Fix:** Detect the subscription flag on load and swap the section content to a follow/apply state.
+
+### [LOW] Popup CTA copy still uses weaker pre-audit wording
+
+- **Date:** 2026-04-08
+- **File:** `src/pages/index.astro`
+- **Status:** Open
+- **Severity:** Low
+- **What's happening:** The popup still says "Want Cheaper Tickets?" and "Get My Discount Code" rather than the stronger offer-based copy proposed in the audit.
+- **What should happen:** Popup copy should use the updated conversion-focused wording once the actual offer is confirmed.
+- **Fix:** Replace the popup headline, supporting copy, and CTA with the finalized offer language.
+
+### [LOW] Home nav scrolled state does not emphasize the tickets CTA
+
+- **Date:** 2026-04-08
+- **File:** `src/components/home/HomeNav.astro`
+- **Status:** Open
+- **Severity:** Low
+- **What's happening:** The nav changes background and border on scroll, but the tickets button does not get the planned pulse or stronger emphasis.
+- **What should happen:** Once the user scrolls and shows intent, the tickets CTA should become more visually assertive.
+- **Fix:** Add the planned scrolled-state animation or alternate emphasis style to `.nav-pill.primary`.
+
+### [LOW] Contact email usage is still inconsistent across pages
+
+- **Date:** 2026-04-08
+- **File:** `src/pages/faq.astro`, `src/pages/links.astro`
+- **Status:** Open
+- **Severity:** Low
+- **What's happening:** The FAQ footer uses `contact@`, but the FAQ collaboration answer still uses `press@`. The links page also still exposes `hello@` and `press@`, so there is no single consistent public contact address.
+- **What should happen:** Public-facing pages should consistently use the chosen primary contact email, with exceptions only where a separate inbox is intentional.
+- **Fix:** Standardize all public contact references and keep `press@` only if it is a deliberate press-specific alias.
+
+### [LOW] New image optimization pipeline from the audit was not completed cleanly
+
+- **Date:** 2026-04-08
+- **File:** `scripts/optimize-images.js`
+- **Status:** Open
+- **Severity:** Low
+- **What's happening:** The repo has a JS image script instead of the planned shell script, and several source paths in the script point to files that do not exist. This makes the pipeline unreliable if rerun.
+- **What should happen:** The repo should contain a working, repeatable asset pipeline for the new show photos.
+- **Fix:** Correct the source paths or replace the script with the intended `optimize-new-photos` workflow, then verify it end-to-end.
+
 ### [MEDIUM] SVG-only buttons missing aria-label (accessibility)
 
 - **Date:** 2026-04-08

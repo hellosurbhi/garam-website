@@ -1,0 +1,19 @@
+/* React base modal CSS.
+ * Astro counterpart: Modal.astro — keep styles identical.
+ * Design tokens: modal-tokens.css — change values there, not here.
+ *
+ * Each modal passes its own className for sizing, bg, border-radius, animation.
+ * This file only owns: border reset, transparent bg, outline suppression, backdrop.
+ */
+@import "./modal-tokens.css";
+
+.dialog {
+  border: none;
+  padding: 0;
+  background: transparent;
+  outline: none; /* no ring when dialog container is focused */
+}
+
+.dialog::backdrop {
+  background: var(--backdrop);
+}

@@ -1,17 +1,24 @@
+@import "@/components/ui/modal-tokens.css";
+
 .dialog {
   background: #fff;
-  border-radius: 16px;
+  border-radius: var(--modal-radius);
   max-width: 640px;
   width: calc(100% - 2 * var(--dialog-gutter));
   max-height: 90vh;
   overflow-y: auto;
-  position: relative;
-  border: none;
-  padding: 0;
+  animation: modalIn var(--modal-anim-duration) var(--modal-anim-easing) both;
 }
 
-.dialog::backdrop {
-  background: var(--backdrop);
+@keyframes modalIn {
+  from {
+    opacity: 0;
+    transform: scale(var(--modal-anim-scale)) translateY(var(--modal-anim-y));
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
 }
 
 .imageWrap {
@@ -63,8 +70,8 @@
   border: none;
   border-radius: 100px;
   padding: 6px;
-  min-width: var(--touch-target);
-  min-height: var(--touch-target);
+  min-width: var(--modal-close-size);
+  min-height: var(--modal-close-size);
   cursor: pointer;
   display: flex;
   align-items: center;
@@ -75,6 +82,13 @@
 
 .closeButton:hover {
   background: rgba(0, 0, 0, 0.65);
+}
+.closeButton:focus {
+  outline: none;
+}
+.closeButton:focus-visible {
+  outline: 2px solid #fff;
+  outline-offset: 2px;
 }
 
 .deletedBanner {

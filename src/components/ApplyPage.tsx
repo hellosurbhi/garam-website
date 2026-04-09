@@ -38,7 +38,7 @@ function ApplyPageInner() {
     const tool = mc.registerTool({
       name: "submit-contestant-application",
       description:
-        "Submit an application to appear as a contestant on Garam Masala Dating, a live South Asian comedy dating show in NYC. Collects personal details, Instagram handle, location, and optional pitch.",
+        "Submit an application to appear as a contestant on Garam Masala Dating, NYC's #1 live South Asian comedy dating show. Collects personal details, Instagram handle, location, and optional pitch.",
       inputSchema: {
         type: "object",
         properties: {
@@ -145,7 +145,7 @@ function ApplyPageInner() {
                   Apply to Be on Garam Masala Dating
                 </h1>
                 <p className={styles.subtitle}>
-                  NYC&apos;s hottest live South Asian dating show 🌶️
+                  NYC&apos;s #1 live South Asian dating show 🌶️
                 </p>
                 <div className={styles.divider} />
               </>
@@ -308,7 +308,9 @@ function ApplyPageInner() {
                           options={placeOptions}
                           value={selectedPlace}
                           onChange={(option) =>
-                            handlePlaceChange(option as SingleValue<CitySearchOption>)
+                            handlePlaceChange(
+                              option as SingleValue<CitySearchOption>,
+                            )
                           }
                           onInputChange={(value, meta) => {
                             if (meta.action === "input-change") {
@@ -321,7 +323,9 @@ function ApplyPageInner() {
                           }}
                           onMenuOpen={triggerGeoLoad}
                           inputValue={placeQuery}
-                          placeholder={geoLoading ? "Loading…" : "Start typing a city…"}
+                          placeholder={
+                            geoLoading ? "Loading…" : "Start typing a city…"
+                          }
                           styles={formSelectStyles<CitySearchOption>()}
                           isSearchable
                           isLoading={geoLoading}
@@ -610,11 +614,12 @@ function ApplyPageInner() {
         </div>
       </div>
 
-      <TermsModal
-        open={showTermsModal}
-        onClose={() => setShowTermsModal(false)}
-        onAgree={agreeToTerms}
-      />
+      {showTermsModal && (
+        <TermsModal
+          onClose={() => setShowTermsModal(false)}
+          onAgree={agreeToTerms}
+        />
+      )}
 
       {toast && (
         <div

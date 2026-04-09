@@ -1,6 +1,7 @@
 import { defineConfig } from "@playwright/test";
 
-const hasRemoteURL = !!process.env.BASE_URL;
+const remoteBaseURL = process.env.PLAYWRIGHT_BASE_URL;
+const hasRemoteURL = !!remoteBaseURL;
 
 export default defineConfig({
   testDir: "./tests/smoke",
@@ -16,7 +17,7 @@ export default defineConfig({
         },
       }),
   use: {
-    baseURL: process.env.BASE_URL || "http://localhost:4321",
+    baseURL: remoteBaseURL || "http://localhost:4321",
     screenshot: "only-on-failure",
     trace: "on-first-retry",
   },

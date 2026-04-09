@@ -21,7 +21,7 @@
     "test:links": "linkinator https://garammasaladating.com --recurse --timeout 30000 --retry --skip 'eventbrite.com|instagram.com|tiktok.com|facebook.com|twitter.com|x.com|youtube.com|linkedin.com'",
     "test:smoke": "playwright test",
     "test:smoke:headed": "playwright test --headed",
-    "test:smoke:preview": "BASE_URL=$VERCEL_PREVIEW_URL playwright test",
+    "test:smoke:preview": "PLAYWRIGHT_BASE_URL=$VERCEL_PREVIEW_URL playwright test",
     "test:mutate": "stryker run",
     "test:mutate:incremental": "stryker run --incremental"
   },

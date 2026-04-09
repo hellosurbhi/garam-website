@@ -3,6 +3,10 @@ import type { CSSObjectWithLabel } from "react-select";
 import { adminSelectStyles, formSelectStyles } from "./reactSelectStyles";
 
 const BASE: CSSObjectWithLabel = {} as CSSObjectWithLabel;
+const BASE_WITH_EXTRA: CSSObjectWithLabel = {
+  color: "red",
+  margin: "10px",
+} as CSSObjectWithLabel;
 
 describe("adminSelectStyles", () => {
   it("has a control style function", () => {
@@ -110,6 +114,93 @@ describe("adminSelectStyles", () => {
   it("control has cursor pointer", () => {
     const result = adminSelectStyles.control!(BASE, {} as never);
     expect(result.cursor).toBe("pointer");
+  });
+
+  it("control preserves base properties via spread", () => {
+    const result = adminSelectStyles.control!(BASE_WITH_EXTRA, {} as never);
+    expect(result.color).toBe("red");
+    expect(result.margin).toBe("10px");
+  });
+
+  it("control &:hover borderColor is var(--border)", () => {
+    const result = adminSelectStyles.control!(BASE, {} as never);
+    const hover = result["&:hover"] as Record<string, string>;
+    expect(hover.borderColor).toBe("var(--border)");
+  });
+
+  it("control fontFamily is var(--font-body)", () => {
+    const result = adminSelectStyles.control!(BASE, {} as never);
+    expect(result.fontFamily).toBe("var(--font-body)");
+  });
+
+  it("option fontFamily is var(--font-body)", () => {
+    const result = adminSelectStyles.option!(BASE, {
+      isSelected: false,
+      isFocused: false,
+    } as never);
+    expect(result.fontFamily).toBe("var(--font-body)");
+  });
+
+  it("option fontSize is 13px", () => {
+    const result = adminSelectStyles.option!(BASE, {
+      isSelected: false,
+      isFocused: false,
+    } as never);
+    expect(result.fontSize).toBe("13px");
+  });
+
+  it("option color is var(--text)", () => {
+    const result = adminSelectStyles.option!(BASE, {
+      isSelected: false,
+      isFocused: false,
+    } as never);
+    expect(result.color).toBe("var(--text)");
+  });
+
+  it("multiValue background is var(--cream)", () => {
+    const result = adminSelectStyles.multiValue!(BASE, {} as never);
+    expect(result.background).toBe("var(--cream)");
+  });
+
+  it("multiValueLabel fontFamily is var(--font-body)", () => {
+    const result = adminSelectStyles.multiValueLabel!(BASE, {} as never);
+    expect(result.fontFamily).toBe("var(--font-body)");
+  });
+
+  it("multiValueLabel color is var(--text)", () => {
+    const result = adminSelectStyles.multiValueLabel!(BASE, {} as never);
+    expect(result.color).toBe("var(--text)");
+  });
+
+  it("placeholder preserves base via spread", () => {
+    const result = adminSelectStyles.placeholder!(BASE_WITH_EXTRA, {} as never);
+    expect(result.margin).toBe("10px");
+  });
+
+  it("option preserves base via spread", () => {
+    const result = adminSelectStyles.option!(BASE_WITH_EXTRA, {
+      isSelected: false,
+      isFocused: false,
+    } as never);
+    expect(result.margin).toBe("10px");
+  });
+
+  it("multiValue preserves base via spread", () => {
+    const result = adminSelectStyles.multiValue!(BASE_WITH_EXTRA, {} as never);
+    expect(result.margin).toBe("10px");
+  });
+
+  it("multiValueLabel preserves base via spread", () => {
+    const result = adminSelectStyles.multiValueLabel!(
+      BASE_WITH_EXTRA,
+      {} as never,
+    );
+    expect(result.margin).toBe("10px");
+  });
+
+  it("menu preserves base via spread", () => {
+    const result = adminSelectStyles.menu!(BASE_WITH_EXTRA, {} as never);
+    expect(result.margin).toBe("10px");
   });
 });
 
@@ -286,5 +377,137 @@ describe("formSelectStyles", () => {
       isFocused: false,
     } as never);
     expect(result.transition).toBe("border-color 0.2s, box-shadow 0.2s");
+  });
+
+  it("control preserves base properties via spread", () => {
+    const result = formSelectStyles.control!(BASE_WITH_EXTRA, {
+      isFocused: false,
+    } as never);
+    expect(result.margin).toBe("10px");
+  });
+
+  it("control &:hover borderColor when focused is #DC2626", () => {
+    const result = formSelectStyles.control!(BASE, {
+      isFocused: true,
+    } as never);
+    const hover = result["&:hover"] as Record<string, string>;
+    expect(hover.borderColor).toBe("#DC2626");
+  });
+
+  it("control &:hover borderColor when not focused is rgba(0, 0, 0, 0.15)", () => {
+    const result = formSelectStyles.control!(BASE, {
+      isFocused: false,
+    } as never);
+    const hover = result["&:hover"] as Record<string, string>;
+    expect(hover.borderColor).toBe("rgba(0, 0, 0, 0.15)");
+  });
+
+  it("control background is #fff", () => {
+    const result = formSelectStyles.control!(BASE, {
+      isFocused: false,
+    } as never);
+    expect(result.background).toBe("#fff");
+  });
+
+  it("control fontFamily is var(--font-body)", () => {
+    const result = formSelectStyles.control!(BASE, {
+      isFocused: false,
+    } as never);
+    expect(result.fontFamily).toBe("var(--font-body)");
+  });
+
+  it("option &:active background is rgba(220, 38, 38, 0.2)", () => {
+    const result = formSelectStyles.option!(BASE, {
+      isSelected: false,
+      isFocused: false,
+    } as never);
+    const active = result["&:active"] as Record<string, string>;
+    expect(active.background).toBe("rgba(220, 38, 38, 0.2)");
+  });
+
+  it("option fontFamily is var(--font-body)", () => {
+    const result = formSelectStyles.option!(BASE, {
+      isSelected: false,
+      isFocused: false,
+    } as never);
+    expect(result.fontFamily).toBe("var(--font-body)");
+  });
+
+  it("option fontSize is 16px", () => {
+    const result = formSelectStyles.option!(BASE, {
+      isSelected: false,
+      isFocused: false,
+    } as never);
+    expect(result.fontSize).toBe("16px");
+  });
+
+  it("option cursor is pointer", () => {
+    const result = formSelectStyles.option!(BASE, {
+      isSelected: false,
+      isFocused: false,
+    } as never);
+    expect(result.cursor).toBe("pointer");
+  });
+
+  it("menu background is #fff", () => {
+    const result = formSelectStyles.menu!(BASE, {} as never);
+    expect(result.background).toBe("#fff");
+  });
+
+  it("menu boxShadow is '0 4px 20px rgba(0, 0, 0, 0.12)'", () => {
+    const result = formSelectStyles.menu!(BASE, {} as never);
+    expect(result.boxShadow).toBe("0 4px 20px rgba(0, 0, 0, 0.12)");
+  });
+
+  it("input fontFamily is var(--font-body)", () => {
+    const result = formSelectStyles.input!(BASE, {} as never);
+    expect(result.fontFamily).toBe("var(--font-body)");
+  });
+
+  it("dropdownIndicator &:hover color is var(--charcoal)", () => {
+    const result = formSelectStyles.dropdownIndicator!(BASE, {} as never);
+    const hover = result["&:hover"] as Record<string, string>;
+    expect(hover.color).toBe("var(--charcoal)");
+  });
+
+  it("dropdownIndicator preserves base via spread", () => {
+    const result = formSelectStyles.dropdownIndicator!(
+      BASE_WITH_EXTRA,
+      {} as never,
+    );
+    expect(result.margin).toBe("10px");
+  });
+
+  it("option preserves base via spread", () => {
+    const result = formSelectStyles.option!(BASE_WITH_EXTRA, {
+      isSelected: false,
+      isFocused: false,
+    } as never);
+    expect(result.margin).toBe("10px");
+  });
+
+  it("singleValue preserves base via spread", () => {
+    const result = formSelectStyles.singleValue!(BASE_WITH_EXTRA, {} as never);
+    expect(result.margin).toBe("10px");
+  });
+
+  it("menu preserves base via spread", () => {
+    const result = formSelectStyles.menu!(BASE_WITH_EXTRA, {} as never);
+    expect(result.margin).toBe("10px");
+  });
+
+  it("menuList preserves base via spread", () => {
+    const result = formSelectStyles.menuList!(BASE_WITH_EXTRA, {} as never);
+    expect(result.margin).toBe("10px");
+  });
+
+  it("input preserves base via spread", () => {
+    const result = formSelectStyles.input!(BASE_WITH_EXTRA, {} as never);
+    expect(result.margin).toBe("10px");
+  });
+
+  it("placeholder preserves base via spread", () => {
+    const result = formSelectStyles.placeholder!(BASE_WITH_EXTRA, {} as never);
+    expect(result.margin).toBe("10px");
   });
 });

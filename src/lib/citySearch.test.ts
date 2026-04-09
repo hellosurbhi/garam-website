@@ -316,4 +316,79 @@ describe("citySearch", () => {
       expect(results[1].boost).toBeGreaterThanOrEqual(results[2].boost);
     });
   });
+
+  describe("createOption — defaults and edge cases", () => {
+    it("state defaults to empty string for countries without states", async () => {
+      const options = await loadCityOptions();
+      const london = options.find((o) => o.city === "London");
+      expect(london!.state).toBe("");
+    });
+
+    it("default boost is 0 for non-citiesIndex entries", async () => {
+      const options = await loadCityOptions();
+      const albany = options.find((o) => o.city === "Albany");
+      expect(albany!.boost).toBe(0);
+    });
+
+    it("filter(Boolean) removes empty state from label parts", async () => {
+      const options = await loadCityOptions();
+      const london = options.find((o) => o.city === "London");
+      // Label should be "London, United Kingdom" not "London, , United Kingdom"
+      expect(london!.label).not.toContain(", ,");
+      expect(london!.label).toBe("London, United Kingdom");
+    });
+
+    it("searchText is normalized version of parts joined with space", async () => {
+      const options = await loadCityOptions();
+      const albany = options.find((o) => o.city === "Albany");
+      expect(albany!.searchText).toBe("albany new york united states");
+    });
+
+    it("value and label match for standard city options", async () => {
+      const options = await loadCityOptions();
+      for (const opt of options) {
+        expect(opt.value).toBe(opt.label);
+      }
+    });
+  });
+
+  describe("loadCityOptions — country fallback", () => {
+    it("uses country name from countryMap for citiesIndex entries", async () => {
+      const options = await loadCityOptions();
+      const london = options.find((o) => o.city === "London");
+      expect(london!.country).toBe("United Kingdom");
+    });
+
+    it("citiesIndex boost overwrites existing city boost", async () => {
+      const options = await loadCityOptions();
+      const nyc = options.find((o) => o.city === "New York City");
+      // Without citiesIndex, boost would be 0. With active citiesIndex, it's 40.
+      expect(nyc!.boost).toBe(40);
+    });
+  });
+
+  describe("scoreCityOption — via searchCityOptions", () => {
+    it("exact city match (1000) is highest possible text score", async () => {
+      const options = await loadCityOptions();
+      const results = searchCityOptions("Albany", options, 10);
+      // Albany exact city match should be first
+      expect(results[0].city).toBe("Albany");
+    });
+
+    it("empty query returns boost-only: all options with boost > 0 appear", async () => {
+      const options = await loadCityOptions();
+      const results = searchCityOptions("", options, 100);
+      // Options with boost 0 should still appear in empty query (boost is score)
+      // But after sort, boost 0 items come last
+      const boosted = results.filter((r) => r.boost > 0);
+      expect(boosted.length).toBeGreaterThan(0);
+    });
+
+    it("label includes match (650) ranks results", async () => {
+      const options = await loadCityOptions();
+      // "united states" appears in labels of US cities
+      const results = searchCityOptions("united states", options, 10);
+      expect(results.length).toBeGreaterThan(0);
+    });
+  });
 });

@@ -182,4 +182,158 @@ describe("buildEventSchemas", () => {
     const events = [makeEvent({ hidden: false, isoDate: undefined })];
     expect(buildEventSchemas(events)).toHaveLength(0);
   });
+
+  it("includes event with hidden: undefined (not explicitly hidden)", () => {
+    const events = [makeEvent({ hidden: undefined })];
+    expect(buildEventSchemas(events)).toHaveLength(1);
+  });
+
+  it("includes event with hidden: false", () => {
+    const events = [makeEvent({ hidden: false })];
+    expect(buildEventSchemas(events)).toHaveLength(1);
+  });
+
+  it("uses default startTime '20:00' when startTime is null", () => {
+    const schemas = buildEventSchemas([
+      makeEvent({ startTime: null as unknown as string }),
+    ]);
+    const parsed = JSON.parse(schemas[0]);
+    expect(parsed.startDate).toContain("T20:00:00");
+  });
+
+  it("uses default endTime '22:00' when endTime is null", () => {
+    const schemas = buildEventSchemas([
+      makeEvent({ endTime: null as unknown as string }),
+    ]);
+    const parsed = JSON.parse(schemas[0]);
+    expect(parsed.endDate).toContain("T22:00:00");
+  });
+
+  it("uses default price '15' when price is null", () => {
+    const schemas = buildEventSchemas([
+      makeEvent({ price: null as unknown as string }),
+    ]);
+    const parsed = JSON.parse(schemas[0]);
+    expect(parsed.offers.price).toBe("15");
+  });
+
+  it("uses price '0' when explicitly set", () => {
+    const schemas = buildEventSchemas([makeEvent({ price: "0" })]);
+    const parsed = JSON.parse(schemas[0]);
+    expect(parsed.offers.price).toBe("0");
+  });
+
+  it("omits streetAddress when venue streetAddress is empty string", () => {
+    const venue = { ...TEST_VENUE, streetAddress: "" };
+    const schemas = buildEventSchemas([makeEvent({ venue })]);
+    const parsed = JSON.parse(schemas[0]);
+    expect(parsed.location.address).not.toHaveProperty("streetAddress");
+  });
+
+  it("omits postalCode when venue postalCode is empty string", () => {
+    const venue = { ...TEST_VENUE, postalCode: "" };
+    const schemas = buildEventSchemas([makeEvent({ venue })]);
+    const parsed = JSON.parse(schemas[0]);
+    expect(parsed.location.address).not.toHaveProperty("postalCode");
+  });
+
+  it("includes correct eventStatus URL", () => {
+    const schemas = buildEventSchemas([makeEvent()]);
+    const parsed = JSON.parse(schemas[0]);
+    expect(parsed.eventStatus).toBe("https://schema.org/EventScheduled");
+  });
+
+  it("includes correct eventAttendanceMode URL", () => {
+    const schemas = buildEventSchemas([makeEvent()]);
+    const parsed = JSON.parse(schemas[0]);
+    expect(parsed.eventAttendanceMode).toBe(
+      "https://schema.org/OfflineEventAttendanceMode",
+    );
+  });
+
+  it("includes correct organizer name", () => {
+    const schemas = buildEventSchemas([makeEvent()]);
+    const parsed = JSON.parse(schemas[0]);
+    expect(parsed.organizer.name).toBe("Garam Masala Dating");
+  });
+
+  it("includes correct organizer url", () => {
+    const schemas = buildEventSchemas([makeEvent()]);
+    const parsed = JSON.parse(schemas[0]);
+    expect(parsed.organizer.url).toBe("https://garammasaladating.com");
+  });
+
+  it("includes correct priceCurrency 'USD'", () => {
+    const schemas = buildEventSchemas([makeEvent()]);
+    const parsed = JSON.parse(schemas[0]);
+    expect(parsed.offers.priceCurrency).toBe("USD");
+  });
+
+  it("includes correct availability URL", () => {
+    const schemas = buildEventSchemas([makeEvent()]);
+    const parsed = JSON.parse(schemas[0]);
+    expect(parsed.offers.availability).toBe("https://schema.org/InStock");
+  });
+
+  it("includes correct image URL", () => {
+    const schemas = buildEventSchemas([makeEvent()]);
+    const parsed = JSON.parse(schemas[0]);
+    expect(parsed.image).toBe("https://garammasaladating.com/og-image.jpg");
+  });
+
+  it("includes correct description constant", () => {
+    const schemas = buildEventSchemas([makeEvent()]);
+    const parsed = JSON.parse(schemas[0]);
+    expect(parsed.description).toContain("NYC's live South Asian dating show");
+    expect(parsed.description).toContain("250 people");
+  });
+
+  it("startDate has exact format YYYY-MM-DDTHH:MM:00±HH:MM", () => {
+    const schemas = buildEventSchemas([makeEvent()]);
+    const parsed = JSON.parse(schemas[0]);
+    expect(parsed.startDate).toBe("2026-05-10T20:00:00-04:00");
+  });
+
+  it("endDate has exact format YYYY-MM-DDTHH:MM:00±HH:MM", () => {
+    const schemas = buildEventSchemas([makeEvent()]);
+    const parsed = JSON.parse(schemas[0]);
+    expect(parsed.endDate).toBe("2026-05-10T22:00:00-04:00");
+  });
+
+  it("event name is 'Garam Masala Dating | Live Comedy Dating Show'", () => {
+    const schemas = buildEventSchemas([makeEvent()]);
+    const parsed = JSON.parse(schemas[0]);
+    expect(parsed.name).toBe("Garam Masala Dating | Live Comedy Dating Show");
+  });
+
+  it("location @type is 'Place'", () => {
+    const schemas = buildEventSchemas([makeEvent()]);
+    const parsed = JSON.parse(schemas[0]);
+    expect(parsed.location["@type"]).toBe("Place");
+  });
+
+  it("organizer @type is 'Organization'", () => {
+    const schemas = buildEventSchemas([makeEvent()]);
+    const parsed = JSON.parse(schemas[0]);
+    expect(parsed.organizer["@type"]).toBe("Organization");
+  });
+
+  it("offers @type is 'Offer'", () => {
+    const schemas = buildEventSchemas([makeEvent()]);
+    const parsed = JSON.parse(schemas[0]);
+    expect(parsed.offers["@type"]).toBe("Offer");
+  });
+
+  it("handles multiple events with different venues", () => {
+    const events = [
+      makeEvent({ venue: TEST_VENUE }),
+      makeEvent({ isoDate: "2026-06-15", venue: TEST_VENUE_MINIMAL }),
+    ];
+    const schemas = buildEventSchemas(events);
+    expect(schemas).toHaveLength(2);
+    const parsed0 = JSON.parse(schemas[0]);
+    const parsed1 = JSON.parse(schemas[1]);
+    expect(parsed0.location.address).toHaveProperty("streetAddress");
+    expect(parsed1.location.address).not.toHaveProperty("streetAddress");
+  });
 });

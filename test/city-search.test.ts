@@ -147,4 +147,86 @@ describe("GET /api/city-search", () => {
       5,
     );
   });
+
+  it("trims whitespace from q parameter before searching", async () => {
+    await GET({ request: makeRequest("  hello  ") } as never);
+    expect(mockResolveCityOption).toHaveBeenCalledWith(
+      "hello",
+      expect.anything(),
+    );
+  });
+
+  it("returns 500 when resolveCityOption throws", async () => {
+    mockResolveCityOption.mockImplementation(() => {
+      throw new Error("resolve error");
+    });
+    const response = await GET({ request: makeRequest("test") } as never);
+    expect(response.status).toBe(500);
+    const data = await response.json();
+    expect(data.error).toBe("Failed to search cities");
+  });
+
+  it("returns 500 when searchCityOptions throws", async () => {
+    mockSearchCityOptions.mockImplementation(() => {
+      throw new Error("search error");
+    });
+    const response = await GET({ request: makeRequest("test") } as never);
+    expect(response.status).toBe(500);
+    const data = await response.json();
+    expect(data.error).toBe("Failed to search cities");
+  });
+
+  it("exact match filtered from search results to avoid duplicates", async () => {
+    mockResolveCityOption.mockReturnValue(OPTION_A);
+    mockSearchCityOptions.mockReturnValue([OPTION_A, OPTION_B]);
+
+    const response = await GET({ request: makeRequest("A City") } as never);
+    const data = await response.json();
+    const aCount = data.results.filter(
+      (r: typeof OPTION_A) => r.value === OPTION_A.value,
+    ).length;
+    expect(aCount).toBe(1);
+    expect(data.results).toHaveLength(2); // exact + B (A filtered from search)
+  });
+
+  it("results sliced to 5 when exact + search exceed 5", async () => {
+    const manyOptions = Array.from({ length: 8 }, (_, i) => ({
+      ...OPTION_B,
+      value: `City${i}, ST, US`,
+      city: `City${i}`,
+    }));
+    mockResolveCityOption.mockReturnValue(OPTION_A);
+    mockSearchCityOptions.mockReturnValue(manyOptions);
+
+    const response = await GET({ request: makeRequest("City") } as never);
+    const data = await response.json();
+    expect(data.results).toHaveLength(5);
+    expect(data.results[0]).toEqual(OPTION_A);
+  });
+
+  it("empty results response has status 200", async () => {
+    const response = await GET({ request: makeRequest() } as never);
+    expect(response.status).toBe(200);
+  });
+
+  it("search results used directly when no exact match", async () => {
+    mockResolveCityOption.mockReturnValue(null);
+    mockSearchCityOptions.mockReturnValue([OPTION_B]);
+
+    const response = await GET({ request: makeRequest("B City") } as never);
+    const data = await response.json();
+    expect(data.results).toEqual([OPTION_B]);
+  });
+
+  it("prerender export is false", async () => {
+    const mod = await import("@/pages/api/city-search");
+    expect(mod.prerender).toBe(false);
+  });
+
+  it("500 response has Content-Type application/json", async () => {
+    mockLoadCityOptions.mockRejectedValue(new Error("fail"));
+    const response = await GET({ request: makeRequest("test") } as never);
+    expect(response.status).toBe(500);
+    expect(response.headers.get("Content-Type")).toBe("application/json");
+  });
 });

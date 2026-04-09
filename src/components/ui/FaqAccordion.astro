@@ -1,0 +1,102 @@
+---
+/**
+ * Shared FAQ accordion with single-open behavior.
+ * Pass an array of { q, a } items and a unique groupId.
+ */
+interface FaqItem {
+  q: string;
+  a: string;
+}
+interface Props {
+  items: FaqItem[];
+  groupId: string;
+  answerClass?: string;
+}
+
+const { items, groupId, answerClass = "" } = Astro.props;
+---
+
+<div class="faq-accordion" data-faq-group={groupId}>
+  {
+    items.map((faq) => (
+      <details class="faq-accordion__item">
+        <summary class="faq-accordion__q">
+          {faq.q}
+          <span class="faq-accordion__toggle" aria-hidden="true">
+            +
+          </span>
+        </summary>
+        <p class={`faq-accordion__a${answerClass ? ` ${answerClass}` : ""}`}>
+          {faq.a}
+        </p>
+      </details>
+    ))
+  }
+</div>
+
+<script>
+  document.querySelectorAll("[data-faq-group]").forEach((group) => {
+    const items = group.querySelectorAll<HTMLDetailsElement>(
+      ".faq-accordion__item",
+    );
+    items.forEach((item) => {
+      item.addEventListener("toggle", () => {
+        if (item.open) {
+          items.forEach((other) => {
+            if (other !== item && other.open) {
+              other.open = false;
+            }
+          });
+        }
+      });
+    });
+  });
+</script>
+
+<style>
+  .faq-accordion {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+  }
+  .faq-accordion__item {
+    border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+  }
+  .faq-accordion__item:first-child {
+    border-top: 1px solid rgba(0, 0, 0, 0.08);
+  }
+  .faq-accordion__q {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 16px;
+    padding: 18px 0;
+    font-size: 16px;
+    font-weight: 700;
+    color: var(--charcoal);
+    cursor: pointer;
+    list-style: none;
+    line-height: 1.4;
+  }
+  .faq-accordion__q::-webkit-details-marker {
+    display: none;
+  }
+  .faq-accordion__toggle {
+    flex-shrink: 0;
+    font-size: 22px;
+    font-weight: 400;
+    color: var(--brand-red);
+    transition: transform 0.2s;
+    line-height: 1;
+  }
+  .faq-accordion__item[open] .faq-accordion__toggle {
+    transform: rotate(45deg);
+  }
+  .faq-accordion__a {
+    font-size: 15px;
+    line-height: 1.75;
+    color: var(--text-secondary);
+    padding: 0 0 18px;
+    margin: 0;
+  }
+</style>

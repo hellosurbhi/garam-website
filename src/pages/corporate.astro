@@ -1,6 +1,7 @@
 ---
 import BaseLayout from "@/layouts/BaseLayout.astro";
 import { buildBreadcrumbJsonLd } from "@/utils/breadcrumbs";
+import FaqAccordion from "@/components/ui/FaqAccordion.astro";
 import {
   CORPORATE_COPY,
   AUDIENCE_TIERS,
@@ -105,9 +106,7 @@ const speakableJsonLd = JSON.stringify({
     <!-- ── What a Private Show Looks Like ───────────────────────── -->
     <section class="corp-format" aria-labelledby="corp-format-heading">
       <div class="corp-container">
-        <p class="corp-eyebrow corp-eyebrow--light">
-          What a Private Show Looks Like
-        </p>
+        <p class="corp-eyebrow">What a Private Show Looks Like</p>
         <h2 id="corp-format-heading">{CORPORATE_COPY.showFormatHeadline}</h2>
         {
           CORPORATE_COPY.showFormatBody.map((p) => (
@@ -188,21 +187,11 @@ const speakableJsonLd = JSON.stringify({
       <div class="corp-container corp-faq-inner">
         <p class="corp-eyebrow">Common Questions</p>
         <h2 id="corp-faq-heading">FAQs</h2>
-        <div class="corp-faq-list">
-          {
-            CORPORATE_FAQS.map((faq) => (
-              <details class="corp-faq-item">
-                <summary class="corp-faq-q">
-                  {faq.q}
-                  <span class="corp-faq-toggle" aria-hidden="true">
-                    +
-                  </span>
-                </summary>
-                <p class="corp-faq-answer">{faq.a}</p>
-              </details>
-            ))
-          }
-        </div>
+        <FaqAccordion
+          items={CORPORATE_FAQS}
+          groupId="corporate-faq"
+          answerClass="corp-faq-answer"
+        />
       </div>
     </section>
 
@@ -214,14 +203,14 @@ const speakableJsonLd = JSON.stringify({
         <div class="corp-email-cta corp-email-cta--dark">
           <a
             href={`mailto:${CORPORATE_COPY.agentEmail}?subject=Private%20Show%20Inquiry`}
-            class="corp-email-link corp-email-link--yellow"
+            class="corp-email-link corp-email-link--light"
             data-ph-capture="cta_clicked"
             data-ph-cta="email_footer"
             data-ph-section="corporate_cta"
           >
             {CORPORATE_COPY.agentEmail}
           </a>
-          <p class="corp-email-note corp-email-note--dark">
+          <p class="corp-email-note corp-email-note--light">
             {CORPORATE_COPY.ctaNote}
           </p>
         </div>
@@ -251,7 +240,7 @@ const speakableJsonLd = JSON.stringify({
     margin-bottom: 14px;
   }
   .corp-eyebrow--light {
-    color: rgba(255, 255, 255, 0.55);
+    color: var(--brand-red);
   }
 
   /* ── Email CTA (replaces fake buttons) ──────────────────── */
@@ -286,13 +275,13 @@ const speakableJsonLd = JSON.stringify({
     outline: 2px solid var(--brand-red);
     outline-offset: 3px;
   }
-  .corp-email-link--yellow {
-    color: var(--electric-yellow);
-    text-decoration-color: var(--electric-yellow);
-  }
-  .corp-email-link--yellow:hover {
+  .corp-email-link--light {
     color: white;
     text-decoration-color: white;
+  }
+  .corp-email-link--light:hover {
+    color: var(--electric-yellow);
+    text-decoration-color: var(--electric-yellow);
   }
   .corp-email-note {
     font-size: 14px;
@@ -301,8 +290,8 @@ const speakableJsonLd = JSON.stringify({
     line-height: 1.6;
     max-width: 560px;
   }
-  .corp-email-note--dark {
-    color: rgba(255, 255, 255, 0.45);
+  .corp-email-note--light {
+    color: rgba(255, 255, 255, 0.6);
   }
 
   /* ── Hero ─────────────────────────────────────────────────── */
@@ -341,22 +330,21 @@ const speakableJsonLd = JSON.stringify({
 
   /* ── Format / Show Description ───────────────────────────── */
   .corp-format {
-    background: var(--charcoal);
+    background: var(--cream-warm);
     padding: 56px 0;
-    color: white;
   }
   .corp-format h2 {
     font-family: var(--font-playfair), serif;
     font-size: clamp(24px, 3.5vw, 38px);
     font-weight: 800;
-    color: white;
+    color: var(--charcoal);
     line-height: 1.15;
     margin-bottom: 24px;
   }
   .corp-format-p {
     font-size: 16px;
     line-height: 1.8;
-    color: rgba(255, 255, 255, 0.82);
+    color: var(--text-secondary);
     margin-bottom: 16px;
   }
 
@@ -414,15 +402,14 @@ const speakableJsonLd = JSON.stringify({
 
   /* ── Inclusions ──────────────────────────────────────────── */
   .corp-inclusions {
-    background: var(--charcoal);
+    background: var(--cream-warm);
     padding: 56px 0;
-    color: white;
   }
   .corp-inclusions h2 {
     font-family: var(--font-playfair), serif;
     font-size: clamp(24px, 3.5vw, 38px);
     font-weight: 800;
-    color: white;
+    color: var(--charcoal);
     line-height: 1.15;
     margin-bottom: 36px;
   }
@@ -432,7 +419,7 @@ const speakableJsonLd = JSON.stringify({
     gap: 28px;
   }
   .corp-inc-item {
-    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    border-bottom: 1px solid rgba(0, 0, 0, 0.08);
     padding-bottom: 28px;
   }
   .corp-inc-item:last-child {
@@ -443,19 +430,19 @@ const speakableJsonLd = JSON.stringify({
     font-family: var(--font-playfair), serif;
     font-size: 20px;
     font-weight: 800;
-    color: var(--electric-yellow);
+    color: var(--brand-red);
     margin-bottom: 10px;
   }
   .corp-inc-item p {
     font-size: 15px;
     line-height: 1.8;
-    color: rgba(255, 255, 255, 0.78);
+    color: var(--text-secondary);
     margin: 0;
   }
 
   /* ── Testimonials ────────────────────────────────────────── */
   .corp-testimonials {
-    background: var(--cream-warm);
+    background: var(--off-white);
     padding: 56px 0;
   }
   .corp-testimonials-heading {
@@ -503,7 +490,7 @@ const speakableJsonLd = JSON.stringify({
 
   /* ── FAQ ─────────────────────────────────────────────────── */
   .corp-faq {
-    background: var(--off-white);
+    background: var(--cream-warm);
     padding: 56px 0;
   }
   .corp-faq-inner {
@@ -516,55 +503,11 @@ const speakableJsonLd = JSON.stringify({
     color: var(--charcoal);
     margin-bottom: 28px;
   }
-  .corp-faq-list {
-    display: flex;
-    flex-direction: column;
-    gap: 2px;
-  }
-  .corp-faq-item {
-    border-bottom: 1px solid rgba(0, 0, 0, 0.08);
-  }
-  .corp-faq-item:first-child {
-    border-top: 1px solid rgba(0, 0, 0, 0.08);
-  }
-  .corp-faq-q {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    gap: 16px;
-    padding: 18px 0;
-    font-size: 16px;
-    font-weight: 700;
-    color: var(--charcoal);
-    cursor: pointer;
-    list-style: none;
-    line-height: 1.4;
-  }
-  .corp-faq-q::-webkit-details-marker {
-    display: none;
-  }
-  .corp-faq-toggle {
-    flex-shrink: 0;
-    font-size: 22px;
-    font-weight: 400;
-    color: var(--brand-red);
-    transition: transform 0.2s;
-    line-height: 1;
-  }
-  .corp-faq-item[open] .corp-faq-toggle {
-    transform: rotate(45deg);
-  }
-  .corp-faq-answer {
-    font-size: 15px;
-    line-height: 1.75;
-    color: var(--text-secondary);
-    padding: 0 0 18px;
-    margin: 0;
-  }
+  /* FAQ styling handled by FaqAccordion component */
 
   /* ── Final CTA ───────────────────────────────────────────── */
   .corp-cta {
-    background: var(--charcoal);
+    background: var(--brand-red);
     padding: 56px 0;
     text-align: center;
   }
@@ -581,7 +524,7 @@ const speakableJsonLd = JSON.stringify({
   .corp-cta-body {
     font-size: 16px;
     line-height: 1.75;
-    color: rgba(255, 255, 255, 0.78);
+    color: rgba(255, 255, 255, 0.85);
     margin-bottom: 0;
   }
   .corp-cta .corp-email-cta {

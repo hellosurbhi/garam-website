@@ -6,6 +6,7 @@ import MetaPixel from "../components/meta-pixel.astro";
 import HomeFooter from "../components/home/HomeFooter.astro";
 import PageNav from "../components/layout/PageNav.astro";
 import { SITE } from "../data/copy";
+import LegalModal from "../components/LegalModal.astro";
 
 interface Props {
   title: string;
@@ -93,10 +94,12 @@ const {
     {!hideNav && <PageNav />}
     <slot />
     {!hideFooter && <HomeFooter />}
+    <LegalModal />
     <script>
       import { inject } from "@vercel/analytics";
       import { injectSpeedInsights } from "@vercel/speed-insights";
       import { bootstrapLeadAttribution } from "@/lib/leadAttribution";
+      import { trackLeadEvent } from "@/lib/analytics";
       const isLocalPreview = ["localhost", "127.0.0.1"].includes(
         window.location.hostname,
       );
@@ -105,6 +108,62 @@ const {
         injectSpeedInsights();
       }
       bootstrapLeadAttribution();
+
+      // Track elements with data-ph-capture attribute
+      document.addEventListener("click", (e) => {
+        const el = (e.target as HTMLElement).closest<HTMLElement>(
+          "[data-ph-capture]",
+        );
+        if (!el) return;
+        const eventName = el.dataset.phCapture!;
+        const props: Record<string, string> = {
+          page: window.location.pathname,
+        };
+        for (const [key, value] of Object.entries(el.dataset)) {
+          if (key.startsWith("ph") && key !== "phCapture" && value) {
+            const prop =
+              key.charAt(2).toLowerCase() +
+              key.slice(3).replace(/[A-Z]/g, (m) => "_" + m.toLowerCase());
+            props[prop] = value;
+          }
+        }
+        trackLeadEvent(eventName, props);
+      });
+
+      // Track outbound link clicks (Eventbrite, socials, press)
+      document.addEventListener("click", (e) => {
+        const link = (e.target as HTMLElement).closest<HTMLAnchorElement>(
+          "a[href]",
+        );
+        if (!link?.href) return;
+        try {
+          const url = new URL(link.href);
+          if (url.hostname === window.location.hostname) return;
+          const domain = url.hostname.replace("www.", "");
+          let linkType = "outbound";
+          if (domain.includes("eventbrite")) linkType = "eventbrite";
+          else if (
+            [
+              "instagram.com",
+              "tiktok.com",
+              "youtube.com",
+              "threads.net",
+              "x.com",
+              "facebook.com",
+            ].some((s) => domain.includes(s))
+          )
+            linkType = "social";
+          trackLeadEvent("outbound_link_clicked", {
+            url: link.href,
+            domain,
+            link_type: linkType,
+            link_text: (link.textContent ?? "").trim().slice(0, 80),
+            page: window.location.pathname,
+          });
+        } catch {
+          /* invalid URL */
+        }
+      });
 
       // Custom cursor — desktop only (pointer: fine), off for prefers-reduced-motion
       if (

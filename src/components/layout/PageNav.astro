@@ -4,21 +4,38 @@ const pathname = Astro.url.pathname;
 
 <div class="page-nav-spacer"></div>
 <nav class="page-nav" id="page-nav" aria-label="Main navigation">
-  <a href="/" class="page-nav-logo-link" aria-label="Garam Masala Dating — Home">
+  <a
+    href="/"
+    class="page-nav-logo-link"
+    aria-label="Garam Masala Dating — Home"
+  >
     <div class="page-nav-logo" role="img" aria-hidden="true"></div>
   </a>
   <div class="page-nav-right">
-    <a href="/apply" class="page-nav-pill" aria-current={pathname.startsWith('/apply') ? 'page' : undefined}>Apply</a>
-    <a href="/tickets" class="page-nav-pill page-nav-pill--primary" aria-current={pathname.startsWith('/tickets') ? 'page' : undefined}>Get Tickets</a>
+    <a
+      href="/apply"
+      class="page-nav-pill"
+      aria-current={pathname.startsWith("/apply") ? "page" : undefined}
+      data-ph-capture="nav_clicked"
+      data-ph-destination="/apply">Apply</a
+    >
+    <a
+      href="/tickets"
+      class="page-nav-pill page-nav-pill--primary"
+      aria-current={pathname.startsWith("/tickets") ? "page" : undefined}
+      data-ph-capture="nav_clicked"
+      data-ph-destination="/tickets">Get Tickets</a
+    >
   </div>
 </nav>
 
 <script>
-  const nav = document.getElementById('page-nav');
+  const nav = document.getElementById("page-nav");
   if (nav) {
-    const updateScrolled = () => nav.classList.toggle('scrolled', window.scrollY > 10);
+    const updateScrolled = () =>
+      nav.classList.toggle("scrolled", window.scrollY > 10);
     updateScrolled();
-    window.addEventListener('scroll', updateScrolled, { passive: true });
+    window.addEventListener("scroll", updateScrolled, { passive: true });
   }
 </script>
 
@@ -111,10 +128,23 @@ const pathname = Astro.url.pathname;
   }
 
   @media (min-width: 768px) {
-    .page-nav { padding: 20px 48px; }
-    .page-nav.scrolled { padding: 14px 48px; }
-    .page-nav-logo { height: 40px; width: 180px; }
-    .page-nav-pill { font-size: 13px; letter-spacing: 1.5px; padding: 12px 22px; }
-    .page-nav-spacer { height: 80px; }
+    .page-nav {
+      padding: 20px 48px;
+    }
+    .page-nav.scrolled {
+      padding: 14px 48px;
+    }
+    .page-nav-logo {
+      height: 40px;
+      width: 180px;
+    }
+    .page-nav-pill {
+      font-size: 13px;
+      letter-spacing: 1.5px;
+      padding: 12px 22px;
+    }
+    .page-nav-spacer {
+      height: 80px;
+    }
   }
 </style>

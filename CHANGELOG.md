@@ -1,5 +1,66 @@
 # Changelog
 
+## feat: PostHog full free tier integration + Firebase geo metadata (2026-04-09)
+
+### What changed
+
+Enabled every free PostHog feature and added comprehensive click tracking across the site. Fixed missing geolocation metadata on all Firebase lead documents.
+
+**PostHog features enabled:**
+
+- Session replay (5K recordings/month) with PII masking on all email/phone inputs
+- Heatmaps (click maps, scroll depth, rage click detection)
+- Dead click detection (tappable-looking elements that aren't interactive)
+- Pageleave tracking (time-on-page for every pageview)
+- Web Vitals capture (LCP, CLS, FCP, INP)
+- Autocapture with copied text detection
+- Admin/contestant-prep pages excluded from tracking
+
+**Click tracking added:**
+
+- `cta_clicked` events on all CTAs (Get Tickets, Apply, Notify Me, Request City) with section context
+- `nav_clicked` events on navigation pills (HomeNav + PageNav)
+- `outbound_link_clicked` for all external links (Eventbrite, social, press) with domain classification
+- `faq_opened` tracking which FAQ questions users expand
+- `video_played` when YouTube facade is clicked
+- `apply_form_started` for apply form funnel (started → submitted)
+- Centralized via delegated `[data-ph-capture]` listener in BaseLayout (fires to both PostHog + GTM)
+
+**Firebase geo metadata fix:**
+
+- New `/api/geo` endpoint reads Vercel's IP geolocation headers
+- `leadAttribution.ts` fetches + caches geo data in sessionStorage on page load
+- All Firebase lead documents now automatically include `geoCity`, `geoRegion`, `geoCountry`, `geoLatitude`, `geoLongitude`, `geoTimezone`
+- Zero changes needed in individual form handlers — attribution pipeline handles it
+
+### Files changed
+
+- `src/pages/api/geo.ts` — NEW (Vercel geo headers endpoint)
+- `src/lib/leadAttribution.ts` — added geo fields, fetch + cache logic
+- `src/components/posthog.astro` — full PostHog config with all free features
+- `src/layouts/BaseLayout.astro` — delegated click + outbound link trackers
+- `src/components/home/HomeHero.astro` — CTA tracking attributes
+- `src/components/home/HomeNav.astro` — nav tracking attributes
+- `src/components/layout/PageNav.astro` — nav tracking attributes
+- `src/components/home/HomeExperience.astro` — CTA tracking attributes
+- `src/components/home/HomeFAQ.astro` — CTA attributes + faq_opened tracking
+- `src/components/home/HomeShows.astro` — show card tracking + ph-mask on city-email
+- `src/components/home/HomeVideo.astro` — video_played tracking
+- `src/pages/tickets.astro` — ticket card tracking attributes
+- `src/pages/links.astro` — primary CTA tracking attribute
+- `src/components/apply/useApplyForm.ts` — apply_form_started event
+- `src/pages/index.astro` — ph-mask on popup inputs
+- `src/components/home/HomeSignup.astro` — ph-mask on newsletter inputs
+- `src/components/NotifyModal.astro` — ph-mask on notify inputs
+- `src/pages/cities/[slug].astro` — ph-mask on waitlist/city inputs
+
+### Decisions
+
+- Used `data-ph-capture` data attributes + a single delegated listener instead of scattering `posthog.capture()` calls across every component. Centralized, maintainable, and fires to both PostHog AND GTM via existing `trackLeadEvent()`.
+- `person_profiles: 'identified_only'` conserves event quota by only creating person profiles when `identifyLead()` is called (email submission), not for every anonymous visitor.
+- Geo data fetched once per session via `/api/geo` (Vercel edge headers), cached in sessionStorage. Non-blocking fire-and-forget fetch so it doesn't delay page load.
+- `.ph-mask` class on PII inputs ensures session replay masks email/phone values.
+
 ## test: kill surviving mutants + city-search API tests (2026-04-09)
 
 ### What changed

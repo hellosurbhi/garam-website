@@ -1,5 +1,5 @@
 ---
-import { YOUTUBE_VIDEO_ID, INSTAGRAM_REEL_URLS } from '@/lib/constants';
+import { YOUTUBE_VIDEO_ID, INSTAGRAM_REEL_URLS } from "@/lib/constants";
 ---
 
 <section class="video" id="watch" aria-labelledby="video-heading">
@@ -23,9 +23,17 @@ import { YOUTUBE_VIDEO_ID, INSTAGRAM_REEL_URLS } from '@/lib/constants';
           height="360"
         />
         <span class="play-icon" aria-hidden="true">
-          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 68 48" width="68" height="48" aria-hidden="true">
-            <path d="M66.52 7.74c-.78-2.93-2.49-5.41-5.42-6.19C55.79.13 34 0 34 0S12.21.13 6.9 1.55c-2.93.78-4.63 3.26-5.42 6.19C.06 13.05 0 24 0 24s.06 10.95 1.48 16.26c.78 2.93 2.49 5.41 5.42 6.19C12.21 47.87 34 48 34 48s21.79-.13 27.1-1.55c2.93-.78 4.64-3.26 5.42-6.19C67.94 34.95 68 24 68 24s-.06-10.95-1.48-16.26z" fill="#f00"/>
-            <path d="M45 24 27 14v20" fill="#fff"/>
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            viewBox="0 0 68 48"
+            width="68"
+            height="48"
+            aria-hidden="true"
+          >
+            <path
+              d="M66.52 7.74c-.78-2.93-2.49-5.41-5.42-6.19C55.79.13 34 0 34 0S12.21.13 6.9 1.55c-2.93.78-4.63 3.26-5.42 6.19C.06 13.05 0 24 0 24s.06 10.95 1.48 16.26c.78 2.93 2.49 5.41 5.42 6.19C12.21 47.87 34 48 34 48s21.79-.13 27.1-1.55c2.93-.78 4.64-3.26 5.42-6.19C67.94 34.95 68 24 68 24s-.06-10.95-1.48-16.26z"
+              fill="#f00"></path>
+            <path d="M45 24 27 14v20" fill="#fff"></path>
           </svg>
         </span>
       </button>
@@ -33,48 +41,73 @@ import { YOUTUBE_VIDEO_ID, INSTAGRAM_REEL_URLS } from '@/lib/constants';
   </div>
 
   <div class="reels-row" id="reels-row" data-reveal>
-    {INSTAGRAM_REEL_URLS.map((url, index) => (
-      <div class="reel-embed">
-        <blockquote
-          class="instagram-media"
-          data-instgrm-permalink={url}
-          data-instgrm-version="14"
-        ><a href={url} target="_blank" rel="noopener noreferrer" aria-label={`Watch Instagram reel ${index + 1}`}>Watch on Instagram</a></blockquote>
-      </div>
-    ))}
+    {
+      INSTAGRAM_REEL_URLS.map((url, index) => (
+        <div class="reel-embed">
+          <blockquote
+            class="instagram-media"
+            data-instgrm-permalink={url}
+            data-instgrm-version="14"
+          >
+            <a
+              href={url}
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label={`Watch Instagram reel ${index + 1}`}
+            >
+              Watch on Instagram
+            </a>
+          </blockquote>
+        </div>
+      ))
+    }
   </div>
 </section>
 
 <script>
+  import { trackLeadEvent } from "@/lib/analytics";
+
   // YouTube: swap facade for iframe on click
-  document.querySelector<HTMLButtonElement>('.video-facade')?.addEventListener('click', (e) => {
-    const btn = e.currentTarget as HTMLButtonElement;
-    const id = btn.dataset.youtubeId;
-    if (!id) return;
-    const iframe = document.createElement('iframe');
-    iframe.src = `https://www.youtube-nocookie.com/embed/${id}?rel=0&autoplay=1`;
-    iframe.title = 'Garam Masala Dating show highlight';
-    iframe.allow = 'accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; fullscreen';
-    iframe.allowFullscreen = true;
-    iframe.style.cssText = 'width:100%;height:100%;border:none;display:block;';
-    btn.replaceWith(iframe);
-  });
+  document
+    .querySelector<HTMLButtonElement>(".video-facade")
+    ?.addEventListener("click", (e) => {
+      const btn = e.currentTarget as HTMLButtonElement;
+      const id = btn.dataset.youtubeId;
+      if (!id) return;
+      trackLeadEvent("video_played", {
+        video_id: id,
+        page: window.location.pathname,
+      });
+      const iframe = document.createElement("iframe");
+      iframe.src = `https://www.youtube-nocookie.com/embed/${id}?rel=0&autoplay=1`;
+      iframe.title = "Garam Masala Dating show highlight";
+      iframe.allow =
+        "accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; fullscreen";
+      iframe.allowFullscreen = true;
+      iframe.style.cssText =
+        "width:100%;height:100%;border:none;display:block;";
+      btn.replaceWith(iframe);
+    });
 
   // Instagram: load embed.js in idle time after page load (post-LCP)
   function loadInstagramEmbed() {
-    const script = document.createElement('script');
-    script.src = 'https://www.instagram.com/embed.js';
+    const script = document.createElement("script");
+    script.src = "https://www.instagram.com/embed.js";
     script.async = true;
     document.body.appendChild(script);
   }
 
-  window.addEventListener('load', () => {
-    if ('requestIdleCallback' in window) {
-      requestIdleCallback(() => loadInstagramEmbed(), { timeout: 3000 });
-    } else {
-      setTimeout(loadInstagramEmbed, 1000);
-    }
-  }, { once: true });
+  window.addEventListener(
+    "load",
+    () => {
+      if ("requestIdleCallback" in window) {
+        requestIdleCallback(() => loadInstagramEmbed(), { timeout: 3000 });
+      } else {
+        setTimeout(loadInstagramEmbed, 1000);
+      }
+    },
+    { once: true },
+  );
 </script>
 
 <style>
@@ -171,8 +204,12 @@ import { YOUTUBE_VIDEO_ID, INSTAGRAM_REEL_URLS } from '@/lib/constants';
   }
 
   @media (min-width: 768px) {
-    .video { padding: 80px 48px; }
-    .video-header { margin-bottom: 48px; }
+    .video {
+      padding: 80px 48px;
+    }
+    .video-header {
+      margin-bottom: 48px;
+    }
     .reels-row {
       grid-template-columns: repeat(3, 1fr);
       padding: 0 48px;

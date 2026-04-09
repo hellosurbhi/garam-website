@@ -1,16 +1,18 @@
 ---
-import BaseLayout from '@/layouts/BaseLayout.astro';
-import NotifyModal from '@/components/NotifyModal.astro';
-import { buildBreadcrumbJsonLd } from '@/utils/breadcrumbs';
-import { events, allEvents } from '@/data/events';
-import { isEventPast } from '@/utils/eventDate';
-import { buildEventSchemas } from '@/utils/eventSchema';
+import BaseLayout from "@/layouts/BaseLayout.astro";
+import NotifyModal from "@/components/NotifyModal.astro";
+import { buildBreadcrumbJsonLd } from "@/utils/breadcrumbs";
+import { events, allEvents } from "@/data/events";
+import { isEventPast } from "@/utils/eventDate";
+import { buildEventSchemas } from "@/utils/eventSchema";
 
 const TITLE = "Tickets & Upcoming Shows | Garam Masala Dating";
 const DESC =
   "Get tickets to upcoming Garam Masala Dating shows. NYC's #1 live South Asian dating show and singles mixer, now in LA, SF, San Diego, and more.";
 
-const upcomingEvents = allEvents.filter((e) => !isEventPast(e.date) && !e.hidden);
+const upcomingEvents = allEvents.filter(
+  (e) => !isEventPast(e.date) && !e.hidden,
+);
 
 const breadcrumbJsonLd = buildBreadcrumbJsonLd([
   { name: "Home", url: "https://garammasaladating.com/" },
@@ -19,98 +21,171 @@ const breadcrumbJsonLd = buildBreadcrumbJsonLd([
 
 // Individual Event JSON-LD blocks (one per upcoming show)
 const today = new Date().toISOString().slice(0, 10);
-const upcomingForSchema = events.filter((e) => !e.hidden && e.isoDate && e.isoDate >= today);
+const upcomingForSchema = events.filter(
+  (e) => !e.hidden && e.isoDate && e.isoDate >= today,
+);
 const eventSchemas = buildEventSchemas(upcomingForSchema);
 ---
 
 <BaseLayout title={TITLE} description={DESC}>
   <Fragment slot="head">
     <script type="application/ld+json" set:html={breadcrumbJsonLd} />
-    {eventSchemas.map((schema) => (
-      <script type="application/ld+json" set:html={schema} />
-    ))}
+    {
+      eventSchemas.map((schema) => (
+        <script type="application/ld+json" set:html={schema} />
+      ))
+    }
   </Fragment>
 
   <main id="main-content" class="tickets-page">
-    <img class="tickets-bg" src="/images/higgs-field.webp" alt="" width="1200" height="800" aria-hidden="true" />
+    <img
+      class="tickets-bg"
+      src="/images/higgs-field.webp"
+      alt=""
+      width="1200"
+      height="800"
+      aria-hidden="true"
+    />
     <div class="tickets-container">
       {/* Header */}
       <div class="tickets-header">
         <p class="tickets-eyebrow">Tickets</p>
         <h1 class="tickets-h1">Upcoming Shows</h1>
         <p class="tickets-intro">
-          Garam Masala Dating is a live South Asian dating show and singles mixer.
-          Grab tickets on Eventbrite.
+          Garam Masala Dating is a live South Asian dating show and singles
+          mixer. Grab tickets on Eventbrite.
         </p>
-        <p class="tickets-proof">40+ shows sold out · 2,000+ audience members</p>
+        <p class="tickets-proof">
+          40+ shows sold out · 2,000+ audience members
+        </p>
       </div>
 
       {/* Divider */}
-      <div class="tickets-divider" />
+      <div class="tickets-divider"></div>
 
       {/* Event cards */}
-      {upcomingEvents.length > 0 ? (
-        <div class="tickets-list">
-          {upcomingEvents.map((event, i) => {
-            const isLive = event.url && event.url !== "#";
-            const isSoldOut = event.tagline?.toLowerCase().includes('sold out');
-            return isLive ? (
-              <a
-                href={event.url}
-                target="_blank"
-                rel="noopener noreferrer"
-                class={`ticket-card ticket-card--live${isSoldOut ? ' ticket-card--soldout' : ''}`}
-                style={`animation-delay: ${0.1 + i * 0.06}s`}
-              >
-                <div class="ticket-card__info">
-                  <span class="ticket-card__date">{event.date}</span>
-                  <span class="ticket-card__city">{event.city}</span>
-                  {event.tagline && !isSoldOut && (
-                    <span class="ticket-card__tagline">{event.tagline}</span>
-                  )}
-                </div>
-                <span class={`ticket-card__cta${isSoldOut ? ' ticket-card__cta--soldout' : ''}`}>
-                  {isSoldOut ? 'Sold Out' : 'Get Tickets'}
-                  {!isSoldOut && (
-                    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
-                  )}
-                </span>
-              </a>
-            ) : (
-              <button
-                type="button"
-                class="ticket-card ticket-card--tba"
-                style={`animation-delay: ${0.1 + i * 0.06}s`}
-                data-notify-city={event.city}
-              >
-                <div class="ticket-card__info">
-                  <span class="ticket-card__date ticket-card__date--tba">{event.date}</span>
-                  <span class="ticket-card__city ticket-card__city--tba">{event.city}</span>
-                </div>
-                <span class="ticket-card__cta ticket-card__cta--notify">
-                  Notify Me
-                  <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/></svg>
-                </span>
-              </button>
-            );
-          })}
-        </div>
-      ) : (
-        <p class="tickets-empty">
-          No upcoming shows. Follow us on{' '}
-          <a href="https://www.instagram.com/garammasaladating/" target="_blank" rel="noopener noreferrer" class="tickets-empty__link">
-            Instagram
-          </a>{' '}
-          for announcements.
-        </p>
-      )}
+      {
+        upcomingEvents.length > 0 ? (
+          <div class="tickets-list">
+            {upcomingEvents.map((event, i) => {
+              const isLive = event.url && event.url !== "#";
+              const isSoldOut = event.tagline
+                ?.toLowerCase()
+                .includes("sold out");
+              return isLive ? (
+                <a
+                  href={event.url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  class={`ticket-card ticket-card--live${isSoldOut ? " ticket-card--soldout" : ""}`}
+                  style={`animation-delay: ${0.1 + i * 0.06}s`}
+                  data-ph-capture="cta_clicked"
+                  data-ph-cta="get_tickets"
+                  data-ph-section="tickets"
+                  data-ph-city={event.city}
+                >
+                  <div class="ticket-card__info">
+                    <span class="ticket-card__date">{event.date}</span>
+                    <span class="ticket-card__city">{event.city}</span>
+                    {event.tagline && !isSoldOut && (
+                      <span class="ticket-card__tagline">{event.tagline}</span>
+                    )}
+                  </div>
+                  <span
+                    class={`ticket-card__cta${isSoldOut ? " ticket-card__cta--soldout" : ""}`}
+                  >
+                    {isSoldOut ? "Sold Out" : "Get Tickets"}
+                    {!isSoldOut && (
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        width="14"
+                        height="14"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-width="2"
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                      >
+                        <path d="M5 12h14" />
+                        <path d="m12 5 7 7-7 7" />
+                      </svg>
+                    )}
+                  </span>
+                </a>
+              ) : (
+                <button
+                  type="button"
+                  class="ticket-card ticket-card--tba"
+                  style={`animation-delay: ${0.1 + i * 0.06}s`}
+                  data-notify-city={event.city}
+                  data-ph-capture="cta_clicked"
+                  data-ph-cta="notify_me"
+                  data-ph-section="tickets"
+                  data-ph-city={event.city}
+                >
+                  <div class="ticket-card__info">
+                    <span class="ticket-card__date ticket-card__date--tba">
+                      {event.date}
+                    </span>
+                    <span class="ticket-card__city ticket-card__city--tba">
+                      {event.city}
+                    </span>
+                  </div>
+                  <span class="ticket-card__cta ticket-card__cta--notify">
+                    Notify Me
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      width="14"
+                      height="14"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      stroke-width="2"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                    >
+                      <path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9" />
+                      <path d="M10.3 21a1.94 1.94 0 0 0 3.4 0" />
+                    </svg>
+                  </span>
+                </button>
+              );
+            })}
+          </div>
+        ) : (
+          <p class="tickets-empty">
+            No upcoming shows. Follow us on{" "}
+            <a
+              href="https://www.instagram.com/garammasaladating/"
+              target="_blank"
+              rel="noopener noreferrer"
+              class="tickets-empty__link"
+            >
+              Instagram
+            </a>{" "}
+            for announcements.
+          </p>
+        )
+      }
 
       <NotifyModal source="tickets-notify" />
 
       {/* Footer */}
       <div class="tickets-footer">
         <a href="/" class="tickets-footer__back">
-          <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5"/><path d="m12 19-7-7 7-7"/></svg>
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="14"
+            height="14"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            ><path d="M19 12H5"></path><path d="m12 19-7-7 7-7"></path></svg
+          >
           Back to Home
         </a>
       </div>
@@ -118,11 +193,16 @@ const eventSchemas = buildEventSchemas(upcomingForSchema);
   </main>
 </BaseLayout>
 
-
 <style>
   @keyframes ticketsFadeIn {
-    from { opacity: 0; transform: translateY(16px); }
-    to   { opacity: 1; transform: translateY(0); }
+    from {
+      opacity: 0;
+      transform: translateY(16px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
   }
 
   .tickets-page {
@@ -218,7 +298,9 @@ const eventSchemas = buildEventSchemas(upcomingForSchema);
     border: 1px solid;
     text-decoration: none;
     animation: ticketsFadeIn 0.5s ease-out both;
-    transition: border-color 0.15s, background 0.15s;
+    transition:
+      border-color 0.15s,
+      background 0.15s;
   }
 
   .ticket-card--live {
@@ -297,7 +379,9 @@ const eventSchemas = buildEventSchemas(upcomingForSchema);
     border-radius: 8px;
     background: rgba(var(--brand-red-rgb), 0.08);
     white-space: nowrap;
-    transition: background 0.15s, border-color 0.15s;
+    transition:
+      background 0.15s,
+      border-color 0.15s;
   }
 
   .ticket-card--live:hover .ticket-card__cta {
@@ -366,5 +450,4 @@ const eventSchemas = buildEventSchemas(upcomingForSchema);
   .tickets-footer__back:hover {
     color: var(--charcoal);
   }
-
 </style>

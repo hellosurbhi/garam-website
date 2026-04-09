@@ -81,6 +81,7 @@ export function useApplyForm() {
   const [toast, setToast] = useState<{ msg: string; ok: boolean } | null>(null);
 
   useEffect(() => {
+    if (typeof window === "undefined") return;
     if (window.history.length > 1) setCanGoBack(true);
     const params = new URLSearchParams(window.location.search);
     const urlCity = params.get("city");
@@ -125,7 +126,7 @@ export function useApplyForm() {
       setFormStarted(true);
       trackLeadEvent("apply_form_started", {
         application_type: form.applicationType,
-        page: window.location.pathname,
+        page: typeof window !== "undefined" ? window.location.pathname : "/",
       });
     }
   }

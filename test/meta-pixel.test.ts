@@ -41,7 +41,7 @@ describe("BaseLayout includes MetaPixel", () => {
 
   it("imports meta-pixel.astro", () => {
     expect(layout).toContain(
-      "import MetaPixel from '../components/meta-pixel.astro'",
+      'import MetaPixel from "../components/meta-pixel.astro"',
     );
   });
 

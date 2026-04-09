@@ -11,7 +11,6 @@ import HomeTestimonials from "@/components/home/HomeTestimonials.astro";
 import HomeCreators from "@/components/home/HomeCreators.astro";
 import HomeVideo from "@/components/home/HomeVideo.astro";
 import HomeFAQ from "@/components/home/HomeFAQ.astro";
-import HomeSignup from "@/components/home/HomeSignup.astro";
 import { SOCIAL_URLS, CREATOR_URLS } from "@/data/socials";
 import { TESTIMONIALS } from "@/data/copy";
 import { YOUTUBE_VIDEO_ID, VIDEO_METADATA } from "@/lib/constants";
@@ -39,7 +38,7 @@ const orgJsonLd = JSON.stringify({
   url: "https://garammasaladating.com",
   logo: "https://garammasaladating.com/images/logo.svg",
   description:
-    "Garam Masala Dating is a live South Asian dating show and singles mixer in New York City. Real singles go on blind dates on stage in front of a 250-person live audience. Weekly in Manhattan, monthly in Jersey City.",
+    "Garam Masala Dating is the #1 live South Asian dating show and singles mixer in New York City. Real singles go on blind dates on stage in front of a 250-person live audience. Weekly in Manhattan, monthly in Jersey City.",
   foundingDate: "2022",
   sameAs: [
     SOCIAL_URLS.instagram,
@@ -135,7 +134,7 @@ const eventSeriesJsonLd = JSON.stringify({
   "@id": "https://garammasaladating.com/#event-series",
   name: "Garam Masala Dating",
   description:
-    "NYC's recurring live South Asian comedy dating show. Two real singles go on a blind date in front of a 250-person audience. Bi-weekly in Manhattan at Top Secret Comedy Club.",
+    "NYC's #1 recurring live South Asian comedy dating show. Two real singles go on a blind date in front of a 250-person audience. Bi-weekly in Manhattan at Top Secret Comedy Club.",
   url: "https://garammasaladating.com",
   startDate: "2022",
   organizer: {
@@ -178,10 +177,9 @@ const speakableJsonLd = JSON.stringify({
 ---
 
 <BaseLayout
-  title="Garam Masala Dating | NYC's Live South Asian Dating Show"
+  title="NYC's #1 Live South Asian Dating Show"
   description="Garam Masala Dating is New York City's hottest live South Asian dating show. Watch real South Asian singles find love on stage. Hosted by comedians Surbhi & Wyatt. Tickets available now."
   hideNav={true}
-  hideSpiceList={true}
 >
   <Fragment slot="head">
     <script type="application/ld+json" set:html={orgJsonLd} />
@@ -209,7 +207,6 @@ const speakableJsonLd = JSON.stringify({
     <HomeCreators />
     <HomeVideo />
     <HomeFAQ />
-    <HomeSignup />
   </main>
 
   <!-- 30-second email popup -->

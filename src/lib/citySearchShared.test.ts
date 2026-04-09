@@ -5,6 +5,10 @@ import {
   searchCityOptions,
   resolveCityOption,
 } from "./citySearch";
+import {
+  normalize as normalizeShared,
+  resolveCityOption as resolveShared,
+} from "./citySearchShared";
 
 function makeOption(
   overrides: Partial<CitySearchOption> & { city: string },
@@ -361,5 +365,89 @@ describe("searchCityOptions — additional", () => {
     const results = searchCityOptions("Alpha", opts);
     expect(results).toHaveLength(1);
     expect(results[0].city).toBe("Alpha");
+  });
+
+  it("boost=1 with no text match is included (score 1 > 0)", () => {
+    const opts = [makeOption({ city: "Zzzz", boost: 1 })];
+    const results = searchCityOptions("aaaa", opts);
+    expect(results).toHaveLength(1);
+    expect(results[0].city).toBe("Zzzz");
+  });
+
+  it("boost=0 with no text match is excluded (score 0 not > 0)", () => {
+    const opts = [makeOption({ city: "Zzzz", boost: 0 })];
+    const results = searchCityOptions("aaaa", opts);
+    expect(results).toHaveLength(0);
+  });
+});
+
+/* ── Direct citySearchShared tests ───────────────────────── */
+
+describe("normalize (citySearchShared direct)", () => {
+  it("handles NFKD normalization with combining characters", () => {
+    // e + combining accent → e
+    expect(normalizeShared("cafe\u0301")).toBe("cafe");
+  });
+
+  it("preserves digits in output", () => {
+    expect(normalizeShared("City 123")).toBe("city 123");
+  });
+
+  it("returns empty string for only special characters", () => {
+    expect(normalizeShared("---")).toBe("");
+  });
+
+  it("collapses consecutive non-alnum chars to single space", () => {
+    expect(normalizeShared("a!!!b")).toBe("a b");
+  });
+
+  it("trims result after replacing non-alnum chars", () => {
+    expect(normalizeShared("...hello...")).toBe("hello");
+  });
+
+  it("handles mixed unicode and ASCII", () => {
+    expect(normalizeShared("Zürich")).toBe("zurich");
+  });
+
+  it("normalizes full-width characters via NFKD", () => {
+    // full-width A (U+FF21) → A → a
+    expect(normalizeShared("\uFF21\uFF22\uFF23")).toBe("abc");
+  });
+});
+
+describe("resolveCityOption (citySearchShared direct)", () => {
+  const opts: CitySearchOption[] = [
+    makeOption({ city: "Portland", state: "OR", label: "Portland, OR, US" }),
+    makeOption({ city: "Portland", state: "ME", label: "Portland, ME, US" }),
+  ];
+
+  it("returns null when value is only special characters", () => {
+    expect(resolveShared("@#$%", opts)).toBeNull();
+  });
+
+  it("returns null when value normalizes to empty (whitespace + specials)", () => {
+    expect(resolveShared("  ---  ", opts)).toBeNull();
+  });
+
+  it("returns first match from find() when multiple options match", () => {
+    const result = resolveShared("Portland", opts);
+    expect(result).not.toBeNull();
+    // find() returns first match — OR appears before ME
+    expect(result!.state).toBe("OR");
+  });
+
+  it("matches by label when city does not match", () => {
+    const customOpts: CitySearchOption[] = [
+      makeOption({ city: "SomeCity", label: "Portland, OR, US", state: "OR" }),
+    ];
+    const result = resolveShared("Portland, OR, US", customOpts);
+    expect(result).not.toBeNull();
+    expect(result!.city).toBe("SomeCity");
+  });
+
+  it("returns null via ?? null when find returns undefined", () => {
+    const result = resolveShared("Atlantis", opts);
+    expect(result).toBeNull();
+    expect(result).not.toBeUndefined();
   });
 });

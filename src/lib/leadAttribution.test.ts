@@ -414,6 +414,61 @@ describe("buildLeadAttribution", () => {
     const result = buildLeadAttribution({ source: "apply" });
     expect(result.sourcePage).toBe("/tickets");
   });
+
+  it("excludes posthogDistinctId when get_distinct_id returns null", () => {
+    (window as Record<string, unknown>).posthog = {
+      get_distinct_id: () => null,
+    };
+    const result = buildLeadAttribution({ source: "apply" });
+    expect(result).not.toHaveProperty("posthogDistinctId");
+  });
+
+  it("excludes posthogDistinctId when get_distinct_id returns undefined", () => {
+    (window as Record<string, unknown>).posthog = {
+      get_distinct_id: () => undefined,
+    };
+    const result = buildLeadAttribution({ source: "apply" });
+    expect(result).not.toHaveProperty("posthogDistinctId");
+  });
+
+  it("excludes posthogDistinctId when get_distinct_id returns boolean true", () => {
+    (window as Record<string, unknown>).posthog = {
+      get_distinct_id: () => true,
+    };
+    const result = buildLeadAttribution({ source: "apply" });
+    expect(result).not.toHaveProperty("posthogDistinctId");
+  });
+
+  it("does not include sourceCitySlug when it is empty string", () => {
+    const result = buildLeadAttribution({
+      source: "apply",
+      sourceCitySlug: "",
+    });
+    expect(result).not.toHaveProperty("sourceCitySlug");
+  });
+
+  it("landingPage falls back to getPathname when sessionStorage has no landing page", () => {
+    // Do not pre-set gmd-landing-page; buildLeadAttribution calls bootstrap first,
+    // which sets it, then reads it. Confirm it reads the stored value.
+    const result = buildLeadAttribution({ source: "apply" });
+    expect(result.landingPage).toBe("/apply");
+    expect(typeof result.landingPage).toBe("string");
+  });
+
+  it("referrerHost is undefined type when not in sessionStorage", () => {
+    const result = buildLeadAttribution({ source: "apply" });
+    expect(result.referrerHost).toBeUndefined();
+  });
+
+  it("utmSource is undefined type when not in sessionStorage", () => {
+    const result = buildLeadAttribution({ source: "apply" });
+    expect(result.utmSource).toBeUndefined();
+  });
+
+  it("geoCity is undefined type when not in sessionStorage", () => {
+    const result = buildLeadAttribution({ source: "apply" });
+    expect(result.geoCity).toBeUndefined();
+  });
 });
 
 /* ── bootstrapGeoData ─────────────────────────────────── */
@@ -514,5 +569,118 @@ describe("bootstrapLeadAttribution — geo data", () => {
     );
     bootstrapLeadAttribution();
     expect(sessionStorage.getItem("gmd-geo-fetched")).toBe("1");
+  });
+
+  it("stores only region when response has only region field", async () => {
+    vi.spyOn(globalThis, "fetch").mockResolvedValue(
+      new Response(JSON.stringify({ region: "MA" }), { status: 200 }),
+    );
+    bootstrapLeadAttribution();
+    await new Promise((r) => setTimeout(r, 50));
+    expect(sessionStorage.getItem("gmd-geo-region")).toBe("MA");
+    expect(sessionStorage.getItem("gmd-geo-city")).toBeNull();
+    expect(sessionStorage.getItem("gmd-geo-country")).toBeNull();
+    expect(sessionStorage.getItem("gmd-geo-latitude")).toBeNull();
+    expect(sessionStorage.getItem("gmd-geo-longitude")).toBeNull();
+    expect(sessionStorage.getItem("gmd-geo-timezone")).toBeNull();
+  });
+
+  it("stores only country when response has only country field", async () => {
+    vi.spyOn(globalThis, "fetch").mockResolvedValue(
+      new Response(JSON.stringify({ country: "US" }), { status: 200 }),
+    );
+    bootstrapLeadAttribution();
+    await new Promise((r) => setTimeout(r, 50));
+    expect(sessionStorage.getItem("gmd-geo-country")).toBe("US");
+    expect(sessionStorage.getItem("gmd-geo-city")).toBeNull();
+    expect(sessionStorage.getItem("gmd-geo-region")).toBeNull();
+  });
+
+  it("stores only latitude when response has only latitude field", async () => {
+    vi.spyOn(globalThis, "fetch").mockResolvedValue(
+      new Response(JSON.stringify({ latitude: "40.71" }), { status: 200 }),
+    );
+    bootstrapLeadAttribution();
+    await new Promise((r) => setTimeout(r, 50));
+    expect(sessionStorage.getItem("gmd-geo-latitude")).toBe("40.71");
+    expect(sessionStorage.getItem("gmd-geo-city")).toBeNull();
+    expect(sessionStorage.getItem("gmd-geo-longitude")).toBeNull();
+  });
+
+  it("stores only longitude when response has only longitude field", async () => {
+    vi.spyOn(globalThis, "fetch").mockResolvedValue(
+      new Response(JSON.stringify({ longitude: "-74.00" }), { status: 200 }),
+    );
+    bootstrapLeadAttribution();
+    await new Promise((r) => setTimeout(r, 50));
+    expect(sessionStorage.getItem("gmd-geo-longitude")).toBe("-74.00");
+    expect(sessionStorage.getItem("gmd-geo-city")).toBeNull();
+    expect(sessionStorage.getItem("gmd-geo-latitude")).toBeNull();
+  });
+
+  it("stores only timezone when response has only timezone field", async () => {
+    vi.spyOn(globalThis, "fetch").mockResolvedValue(
+      new Response(JSON.stringify({ timezone: "America/New_York" }), {
+        status: 200,
+      }),
+    );
+    bootstrapLeadAttribution();
+    await new Promise((r) => setTimeout(r, 50));
+    expect(sessionStorage.getItem("gmd-geo-timezone")).toBe("America/New_York");
+    expect(sessionStorage.getItem("gmd-geo-city")).toBeNull();
+  });
+
+  it("does not store city when geo.city is empty string", async () => {
+    vi.spyOn(globalThis, "fetch").mockResolvedValue(
+      new Response(JSON.stringify({ city: "" }), { status: 200 }),
+    );
+    bootstrapLeadAttribution();
+    await new Promise((r) => setTimeout(r, 50));
+    expect(sessionStorage.getItem("gmd-geo-city")).toBeNull();
+  });
+
+  it("does not store latitude when geo.latitude is empty string", async () => {
+    vi.spyOn(globalThis, "fetch").mockResolvedValue(
+      new Response(JSON.stringify({ latitude: "" }), { status: 200 }),
+    );
+    bootstrapLeadAttribution();
+    await new Promise((r) => setTimeout(r, 50));
+    expect(sessionStorage.getItem("gmd-geo-latitude")).toBeNull();
+  });
+
+  it("does not store region when geo.region is empty string", async () => {
+    vi.spyOn(globalThis, "fetch").mockResolvedValue(
+      new Response(JSON.stringify({ region: "" }), { status: 200 }),
+    );
+    bootstrapLeadAttribution();
+    await new Promise((r) => setTimeout(r, 50));
+    expect(sessionStorage.getItem("gmd-geo-region")).toBeNull();
+  });
+
+  it("does not store country when geo.country is empty string", async () => {
+    vi.spyOn(globalThis, "fetch").mockResolvedValue(
+      new Response(JSON.stringify({ country: "" }), { status: 200 }),
+    );
+    bootstrapLeadAttribution();
+    await new Promise((r) => setTimeout(r, 50));
+    expect(sessionStorage.getItem("gmd-geo-country")).toBeNull();
+  });
+
+  it("does not store longitude when geo.longitude is empty string", async () => {
+    vi.spyOn(globalThis, "fetch").mockResolvedValue(
+      new Response(JSON.stringify({ longitude: "" }), { status: 200 }),
+    );
+    bootstrapLeadAttribution();
+    await new Promise((r) => setTimeout(r, 50));
+    expect(sessionStorage.getItem("gmd-geo-longitude")).toBeNull();
+  });
+
+  it("does not store timezone when geo.timezone is empty string", async () => {
+    vi.spyOn(globalThis, "fetch").mockResolvedValue(
+      new Response(JSON.stringify({ timezone: "" }), { status: 200 }),
+    );
+    bootstrapLeadAttribution();
+    await new Promise((r) => setTimeout(r, 50));
+    expect(sessionStorage.getItem("gmd-geo-timezone")).toBeNull();
   });
 });

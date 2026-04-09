@@ -371,4 +371,109 @@ describe("useCitySearch", () => {
       expect(call.error_stack.length).toBe(2000);
     });
   });
+
+  it("returns empty array when API response results is null", async () => {
+    vi.spyOn(globalThis, "fetch").mockResolvedValue(
+      new Response(JSON.stringify({ results: null }), { status: 200 }),
+    );
+    const { result } = renderHook(() => useCitySearch("test"));
+
+    await waitFor(() => {
+      expect(result.current.loading).toBe(false);
+      expect(globalThis.fetch).toHaveBeenCalled();
+    });
+    expect(result.current.options).toEqual([]);
+  });
+
+  it("error_stack is empty string when error has no stack property", async () => {
+    const noStackError = new Error("no stack");
+    delete noStackError.stack;
+    vi.spyOn(globalThis, "fetch").mockRejectedValue(noStackError);
+    renderHook(() => useCitySearch("test"));
+
+    await waitFor(() => {
+      const call = mockTrackError.mock.calls[0][0];
+      expect(call.error_stack).toBe("");
+    });
+  });
+
+  it("wraps thrown number in new Error", async () => {
+    vi.spyOn(globalThis, "fetch").mockRejectedValue(42);
+    renderHook(() => useCitySearch("test"));
+
+    await waitFor(() => {
+      expect(mockTrackError).toHaveBeenCalledWith(
+        expect.objectContaining({ error_message: "42" }),
+      );
+    });
+  });
+
+  it("wraps thrown null in new Error", async () => {
+    vi.spyOn(globalThis, "fetch").mockRejectedValue(null);
+    renderHook(() => useCitySearch("test"));
+
+    await waitFor(() => {
+      expect(mockTrackError).toHaveBeenCalledWith(
+        expect.objectContaining({ error_message: "null" }),
+      );
+    });
+  });
+
+  it("wraps thrown object in new Error", async () => {
+    vi.spyOn(globalThis, "fetch").mockRejectedValue({ msg: "oops" });
+    renderHook(() => useCitySearch("test"));
+
+    await waitFor(() => {
+      expect(mockTrackError).toHaveBeenCalledWith(
+        expect.objectContaining({
+          error_message: "[object Object]",
+        }),
+      );
+    });
+  });
+
+  it("does not fetch at 119ms (one ms before debounce)", () => {
+    vi.useFakeTimers();
+    mockFetchSuccess(MOCK_RESULTS);
+    renderHook(() => useCitySearch("test"));
+
+    vi.advanceTimersByTime(119);
+    expect(globalThis.fetch).not.toHaveBeenCalled();
+
+    vi.useRealTimers();
+  });
+
+  it("options are completely replaced on new fetch, not merged", async () => {
+    mockFetchSuccess([
+      { ...MOCK_RESULTS[0], city: "Boston", value: "Boston, MA, US" },
+    ]);
+    const { result, rerender } = renderHook(
+      ({ q }: { q: string }) => useCitySearch(q),
+      { initialProps: { q: "boston" } },
+    );
+
+    await waitFor(() => {
+      expect(result.current.options).toHaveLength(1);
+      expect(result.current.options[0].city).toBe("Boston");
+    });
+
+    vi.restoreAllMocks();
+    mockFetchSuccess(MOCK_RESULTS);
+    rerender({ q: "new york" });
+
+    await waitFor(() => {
+      expect(result.current.options).toHaveLength(1);
+      expect(result.current.options[0].city).toBe("New York");
+    });
+  });
+
+  it("loading is set to false after error", async () => {
+    mockFetchError();
+    const { result } = renderHook(() => useCitySearch("test"));
+
+    await waitFor(() => {
+      expect(result.current.failed).toBe(true);
+    });
+    expect(result.current.loading).toBe(false);
+  });
 });

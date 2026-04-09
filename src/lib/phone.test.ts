@@ -86,4 +86,35 @@ describe("cleanPhone", () => {
   it("returns null for single digit", () => {
     expect(cleanPhone("1")).toBeNull();
   });
+
+  it("returns null for 5 digits (below 7 threshold)", () => {
+    expect(cleanPhone("12345")).toBeNull();
+  });
+
+  it("returns +digits for + prefix with 8 digits (>= 7 boundary)", () => {
+    expect(cleanPhone("+12345678")).toBe("+12345678");
+  });
+
+  it("+ prefix with 11 digits starting with 1: US 11-digit branch takes priority", () => {
+    // +12125551234 → digits "12125551234" (11 digits, starts with "1") → US branch
+    expect(cleanPhone("+12125551234")).toBe("+12125551234");
+  });
+
+  it("returns null for 4 digits", () => {
+    expect(cleanPhone("1234")).toBeNull();
+  });
+
+  it("returns +digits for 9 digits (does NOT add +1 prefix)", () => {
+    const result = cleanPhone("123456789");
+    expect(result).toBe("+123456789");
+    expect(result).not.toBe("+1123456789");
+  });
+
+  it("strips non-digit characters from international format", () => {
+    expect(cleanPhone("+44 (0) 7911 123456")).toBe("+4407911123456");
+  });
+
+  it("handles tab and newline whitespace around digits", () => {
+    expect(cleanPhone("\t2125551234\n")).toBe("+12125551234");
+  });
 });

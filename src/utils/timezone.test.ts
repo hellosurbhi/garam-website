@@ -38,4 +38,22 @@ describe("nyOffset", () => {
     const result = nyOffset("2026-06-15", "00:00");
     expect(result).toBe("-04:00");
   });
+
+  it("summer offset hours are 04 and minutes are 00", () => {
+    const result = nyOffset("2026-07-01", "12:00");
+    expect(result).toBe("-04:00");
+    expect(result).toContain(":");
+    expect(result.startsWith("-")).toBe(true);
+  });
+
+  it("winter offset hours are 05 and minutes are 00", () => {
+    const result = nyOffset("2026-01-15", "12:00");
+    expect(result).toBe("-05:00");
+    expect(result.startsWith("-")).toBe(true);
+  });
+
+  it("offset contains colon separator between hours and minutes", () => {
+    const result = nyOffset("2026-06-15", "14:00");
+    expect(result.indexOf(":")).toBe(3); // +/-HH:MM → colon at index 3
+  });
 });

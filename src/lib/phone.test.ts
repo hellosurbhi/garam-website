@@ -69,4 +69,21 @@ describe("cleanPhone", () => {
   it("returns +digits for international with + and spaces", () => {
     expect(cleanPhone("+91 98765 43210")).toBe("+919876543210");
   });
+
+  it("returns +digits for 8 digits (between 7 and 10, >=7 branch)", () => {
+    expect(cleanPhone("12345678")).toBe("+12345678");
+  });
+
+  it("international +prefix with 10 digits: digits strip to 10, US branch wins", () => {
+    // +1234567890 → digits "1234567890" (10 digits) → US branch: "+11234567890"
+    expect(cleanPhone("+1234567890")).toBe("+11234567890");
+  });
+
+  it("11 digits starting with 2 falls to >=7 branch, not US branch", () => {
+    expect(cleanPhone("21234567890")).toBe("+21234567890");
+  });
+
+  it("returns null for single digit", () => {
+    expect(cleanPhone("1")).toBeNull();
+  });
 });

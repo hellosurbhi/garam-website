@@ -103,6 +103,60 @@ describe("bootstrapLeadAttribution", () => {
     bootstrapLeadAttribution();
     expect(sessionStorage.getItem("gmd-referrer-host")).toBeNull();
   });
+
+  it("falls back to / when pathname is empty", () => {
+    Object.defineProperty(window, "location", {
+      value: { pathname: "", search: "" },
+      writable: true,
+      configurable: true,
+    });
+    bootstrapLeadAttribution();
+    expect(sessionStorage.getItem("gmd-landing-page")).toBe("/");
+  });
+
+  it("does not store empty string UTM values", () => {
+    Object.defineProperty(window, "location", {
+      value: { pathname: "/apply", search: "?utm_source=" },
+      writable: true,
+      configurable: true,
+    });
+    bootstrapLeadAttribution();
+    // utm_source="" is falsy, should not be stored
+    expect(sessionStorage.getItem("gmd-utm-source")).toBeNull();
+  });
+
+  it("does not overwrite UTM values on second bootstrap call", () => {
+    Object.defineProperty(window, "location", {
+      value: {
+        pathname: "/apply",
+        search: "?utm_source=first&utm_medium=first",
+      },
+      writable: true,
+      configurable: true,
+    });
+    bootstrapLeadAttribution();
+    Object.defineProperty(window, "location", {
+      value: {
+        pathname: "/apply",
+        search: "?utm_source=second&utm_medium=second",
+      },
+      writable: true,
+      configurable: true,
+    });
+    bootstrapLeadAttribution();
+    expect(sessionStorage.getItem("gmd-utm-source")).toBe("first");
+    expect(sessionStorage.getItem("gmd-utm-medium")).toBe("first");
+  });
+
+  it("does not store referrer with empty hostname", () => {
+    Object.defineProperty(document, "referrer", {
+      value: "https://",
+      writable: true,
+      configurable: true,
+    });
+    bootstrapLeadAttribution();
+    expect(sessionStorage.getItem("gmd-referrer-host")).toBeNull();
+  });
 });
 
 describe("buildLeadAttribution", () => {
@@ -210,5 +264,21 @@ describe("buildLeadAttribution", () => {
   it("excludes sourceCitySlug when not provided", () => {
     const result = buildLeadAttribution({ source: "apply-page" });
     expect(result).not.toHaveProperty("sourceCitySlug");
+  });
+
+  it("excludes posthogDistinctId when posthog returns a number", () => {
+    (window as Record<string, unknown>).posthog = {
+      get_distinct_id: () => 12345,
+    };
+    const result = buildLeadAttribution({ source: "apply-page" });
+    expect(result).not.toHaveProperty("posthogDistinctId");
+  });
+
+  it("excludes posthogDistinctId when posthog returns empty string", () => {
+    (window as Record<string, unknown>).posthog = {
+      get_distinct_id: () => "",
+    };
+    const result = buildLeadAttribution({ source: "apply-page" });
+    expect(result).not.toHaveProperty("posthogDistinctId");
   });
 });

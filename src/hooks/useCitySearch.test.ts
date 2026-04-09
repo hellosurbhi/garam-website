@@ -157,4 +157,36 @@ describe("useCitySearch", () => {
     const { result } = renderHook(() => useCitySearch("test"));
     expect(typeof result.current.retry).toBe("function");
   });
+
+  it("shouldLoad=false with non-empty query does NOT call fetch", async () => {
+    mockFetchSuccess(MOCK_RESULTS);
+    renderHook(() => useCitySearch("new york", false));
+    // Wait a bit to ensure debounce would have fired
+    await waitFor(() => {
+      expect(globalThis.fetch).not.toHaveBeenCalled();
+    });
+  });
+
+  it("sets loading to true during fetch", async () => {
+    let resolveResponse!: (value: Response) => void;
+    vi.spyOn(globalThis, "fetch").mockReturnValue(
+      new Promise((resolve) => {
+        resolveResponse = resolve;
+      }),
+    );
+    const { result } = renderHook(() => useCitySearch("test query"));
+
+    await waitFor(() => {
+      expect(result.current.loading).toBe(true);
+    });
+
+    // Resolve the fetch
+    resolveResponse(
+      new Response(JSON.stringify({ results: MOCK_RESULTS }), { status: 200 }),
+    );
+
+    await waitFor(() => {
+      expect(result.current.loading).toBe(false);
+    });
+  });
 });

@@ -138,6 +138,82 @@ describe("searchCityOptions", () => {
     const results = searchCityOptions("ny", options);
     expect(results.length).toBeGreaterThan(0);
   });
+
+  it("exact city match (1000) ranks above exact label match (950)", () => {
+    // "portland" matches city exactly for first, label exactly for second
+    const opts = [
+      makeOption({
+        city: "Portland Metro",
+        label: "Portland",
+        state: "OR",
+        boost: 0,
+      }),
+      makeOption({ city: "Portland", state: "ME", boost: 0 }),
+    ];
+    const results = searchCityOptions("Portland", opts);
+    // City exact match (Portland, ME) should rank above label exact match
+    expect(results[0].state).toBe("ME");
+  });
+
+  it("city.startsWith (900) ranks above label.startsWith (850)", () => {
+    const opts = [
+      makeOption({
+        city: "Nowhere",
+        label: "Newville, ZZ, US",
+        state: "ZZ",
+        boost: 0,
+      }),
+      makeOption({ city: "Newville", state: "AA", boost: 0 }),
+    ];
+    const results = searchCityOptions("new", opts);
+    // city startsWith should rank higher
+    expect(results[0].city).toBe("Newville");
+  });
+
+  it("city.includes (700) ranks above label.includes (650)", () => {
+    const opts = [
+      makeOption({
+        city: "Abc",
+        label: "Xyzfoo, AA, US",
+        state: "AA",
+        boost: 0,
+      }),
+      makeOption({ city: "Xyzfoo", state: "BB", boost: 0 }),
+    ];
+    // "foo" is in city "Xyzfoo" (includes) and in label "Xyzfoo, AA, US" (includes)
+    const results = searchCityOptions("foo", opts);
+    expect(results[0].city).toBe("Xyzfoo"); // city.includes (700) > label.includes (650)
+  });
+
+  it("zero-boost items with no text match are excluded (score=0 filtered)", () => {
+    const opts = [
+      makeOption({ city: "Boston", boost: 0 }),
+      makeOption({ city: "Denver", boost: 0 }),
+    ];
+    const results = searchCityOptions("zzz", opts);
+    expect(results).toHaveLength(0);
+  });
+
+  it("empty query returns items in descending boost order", () => {
+    const opts = [
+      makeOption({ city: "A", boost: 5 }),
+      makeOption({ city: "B", boost: 50 }),
+      makeOption({ city: "C", boost: 25 }),
+    ];
+    const results = searchCityOptions("", opts, 10);
+    expect(results[0].boost).toBe(50);
+    expect(results[1].boost).toBe(25);
+    expect(results[2].boost).toBe(5);
+  });
+
+  it("first result is the highest-scored item (not skipped by slice)", () => {
+    const opts = [
+      makeOption({ city: "Zebra", boost: 0 }),
+      makeOption({ city: "Alpha", boost: 100 }),
+    ];
+    const results = searchCityOptions("", opts, 2);
+    expect(results[0].city).toBe("Alpha");
+  });
 });
 
 describe("resolveCityOption", () => {
@@ -174,5 +250,16 @@ describe("resolveCityOption", () => {
 
   it("returns null for whitespace-only value", () => {
     expect(resolveCityOption("   ", options)).toBeNull();
+  });
+
+  it("prefers label match over city match when label appears first in find", () => {
+    const opts = [
+      makeOption({ city: "Other", label: "Boston, MA, US", state: "MA" }),
+      makeOption({ city: "Boston", state: "XX" }),
+    ];
+    // "boston ma us" matches the first option's label
+    const result = resolveCityOption("Boston, MA, US", opts);
+    expect(result).not.toBeNull();
+    expect(result!.state).toBe("MA");
   });
 });

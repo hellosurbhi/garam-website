@@ -74,6 +74,34 @@ describe("trackLeadEvent", () => {
     expect(captureMock).toHaveBeenCalledWith("test_event", {});
     expect(dataLayerPush).toHaveBeenCalledWith({ event: "test_event" });
   });
+
+  it("calls posthog.capture exactly once per call", () => {
+    trackLeadEvent("evt");
+    expect(captureMock).toHaveBeenCalledTimes(1);
+  });
+
+  it("calls dataLayer.push exactly once per call", () => {
+    trackLeadEvent("evt");
+    expect(dataLayerPush).toHaveBeenCalledTimes(1);
+  });
+
+  it("passes all-undefined props as empty object to both", () => {
+    trackLeadEvent("evt", { a: undefined, b: undefined });
+    expect(captureMock).toHaveBeenCalledWith("evt", {});
+    expect(dataLayerPush).toHaveBeenCalledWith({ event: "evt" });
+  });
+
+  it("event name is passed as first argument to capture", () => {
+    trackLeadEvent("my_event", { x: 1 });
+    expect(captureMock.mock.calls[0][0]).toBe("my_event");
+  });
+
+  it("dataLayer push includes event key with event name", () => {
+    trackLeadEvent("my_event", { x: 1 });
+    const pushed = dataLayerPush.mock.calls[0][0];
+    expect(pushed.event).toBe("my_event");
+    expect(pushed.x).toBe(1);
+  });
 });
 
 describe("identifyLead", () => {
@@ -124,5 +152,10 @@ describe("identifyLead", () => {
   it("does not throw when posthog is undefined", () => {
     delete window.posthog;
     expect(() => identifyLead("test@example.com")).not.toThrow();
+  });
+
+  it("calls posthog.identify exactly once for valid email", () => {
+    identifyLead("test@example.com");
+    expect(identifyMock).toHaveBeenCalledTimes(1);
   });
 });

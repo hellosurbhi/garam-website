@@ -121,7 +121,12 @@ import { LEGAL_DOCS } from "@/data/legal";
     overflow: visible;
   }
   .legal-dialog::backdrop {
-    background: rgba(0, 0, 0, 0.5);
+    background: rgba(
+      0,
+      0,
+      0,
+      0.5
+    ); /* backdrop requires literal rgba — no token */
   }
   .legal-dialog[open] {
     display: flex;
@@ -134,7 +139,7 @@ import { LEGAL_DOCS } from "@/data/legal";
     max-height: 85vh;
     overflow-y: auto;
     -webkit-overflow-scrolling: touch;
-    background: white;
+    background: var(--off-white);
     border: 1px solid rgba(0, 0, 0, 0.1);
     border-radius: 20px;
     padding: 32px 24px;
@@ -212,6 +217,7 @@ import { LEGAL_DOCS } from "@/data/legal";
   }
   .legal-body :global(a) {
     color: var(--brand-red);
+    font-size: 16px;
     text-decoration: underline;
     text-underline-offset: 3px;
   }

@@ -102,6 +102,11 @@ describe("ContestantPrepPage", () => {
 
     render(<ContestantPrepPage />);
 
+    // Assert loading state appears before auth completes
+    expect(
+      document.querySelector('[class*="loadingWrapper"]'),
+    ).toBeInTheDocument();
+
     await waitFor(() => {
       expect(screen.getByText(/Contestant Orientation/)).toBeInTheDocument();
     });
@@ -439,9 +444,31 @@ describe("ContestantPrepPage", () => {
 
   it("renders all 13 prep questions", () => {
     render(<ContestantPrepPage />);
-    expect(screen.getByText(/What's your name/)).toBeInTheDocument();
+    expect(
+      screen.getByText(/What's your name, and what do you do/),
+    ).toBeInTheDocument();
+    expect(
+      screen.getByText(/What are you actually looking for/),
+    ).toBeInTheDocument();
+    expect(screen.getByText(/What are your dealbreakers/)).toBeInTheDocument();
+    expect(screen.getByText(/What are your green flags/)).toBeInTheDocument();
+    expect(screen.getByText(/What's your biggest ick/)).toBeInTheDocument();
     expect(
       screen.getByText(/Why did your last relationship end/),
+    ).toBeInTheDocument();
+    expect(screen.getByText(/Are you over your ex/)).toBeInTheDocument();
+    expect(screen.getByText(/What's your best quality/)).toBeInTheDocument();
+    expect(
+      screen.getByText(/Where would you take someone on a first date/),
+    ).toBeInTheDocument();
+    expect(
+      screen.getByText(/How close are you to your family/),
+    ).toBeInTheDocument();
+    expect(
+      screen.getByText(/What do you do for fun outside of work/),
+    ).toBeInTheDocument();
+    expect(
+      screen.getByText(/How many serious relationships/),
     ).toBeInTheDocument();
     expect(screen.getByText(/How much do you make/)).toBeInTheDocument();
   });

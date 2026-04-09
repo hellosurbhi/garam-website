@@ -1,73 +1,19 @@
 ---
-const photos = [
-  {
-    label: "On Stage",
-    src: "on-stage.webp",
-    w: 1200,
-    h: 800,
-    pos: "center 40%",
-    span: true,
-    alt: "Contestants and hosts laughing during a blindfolded dating round at Top Secret Comedy Club",
-  },
-  {
-    label: "The Match",
-    src: "the-match.webp",
-    w: 1200,
-    h: 800,
-    pos: "center 45%",
-    alt: "A matched couple laughing together on stage after the blindfold reveal",
-  },
-  {
-    label: "Hosts",
-    src: "hosts.webp",
-    w: 733,
-    h: 1200,
-    pos: "center 30%",
-    alt: "Hosts Surbhi and Wyatt sitting together on stage",
-  },
-  {
-    label: "The Crowd",
-    src: "the-crowd.webp",
-    w: 800,
-    h: 1200,
-    pos: "center 40%",
-    alt: "Audience members laughing together during a Garam Masala Dating show",
-  },
-  {
-    label: "Pure Chaos",
-    src: "pure-chaos.webp",
-    w: 1200,
-    h: 800,
-    pos: "center 35%",
-    alt: "A contestant lifting another person on stage during a high-energy moment",
-  },
-  {
-    label: "After Party",
-    src: "after-party.webp",
-    w: 1200,
-    h: 800,
-    pos: "center center",
-    alt: "Audience clapping and celebrating during the show",
-  },
-  {
-    label: "Magic Moment",
-    src: "magic-moment.webp",
-    w: 800,
-    h: 1200,
-    pos: "center 30%",
-    alt: "A contestant sharing an intimate moment with their date on stage",
-  },
-];
+import {
+  GALLERY_PHOTOS,
+  GALLERY_HEADING,
+  GALLERY_SUBHEADING,
+} from "@/data/gallery";
 ---
 
 <section class="photos" id="gallery" aria-label="Show gallery">
   <div class="photos-header" data-reveal>
-    <h2>The Vibes</h2>
-    <p>What happens when 250 strangers pick your date</p>
+    <h2>{GALLERY_HEADING}</h2>
+    <p>{GALLERY_SUBHEADING}</p>
   </div>
   <div class="photo-grid">
     {
-      photos.map((photo) => (
+      GALLERY_PHOTOS.map((photo) => (
         <div class:list={["photo", { "photo--wide": photo.span }]} data-reveal>
           <img
             src={`/images/${photo.src}`}
@@ -75,7 +21,7 @@ const photos = [
             width={photo.w}
             height={photo.h}
             loading="lazy"
-            style={`object-position: ${photo.pos};`}
+            style={`--photo-pos: ${photo.pos};`}
           />
           <div class="photo-label">{photo.label}</div>
         </div>
@@ -152,6 +98,7 @@ const photos = [
     width: 100%;
     height: 100%;
     object-fit: cover;
+    object-position: var(--photo-pos, center);
     display: block;
   }
   .photo:hover {

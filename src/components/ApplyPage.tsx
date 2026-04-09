@@ -28,9 +28,13 @@ export default function ApplyPage() {
 
 function ApplyPageInner() {
   useEffect(() => {
-    if (typeof navigator === "undefined" || !("modelContext" in navigator))
-      return;
-    const tool = (navigator as unknown as NavWithMC).modelContext.registerTool({
+    if (typeof navigator === "undefined") return;
+    const mc =
+      "modelContext" in navigator
+        ? (navigator as unknown as NavWithMC).modelContext
+        : undefined;
+    if (typeof mc?.registerTool !== "function") return;
+    const tool = mc.registerTool({
       name: "submit-contestant-application",
       description:
         "Submit an application to appear as a contestant on Garam Masala Dating, a live South Asian comedy dating show in NYC. Collects personal details, Instagram handle, location, and optional pitch.",

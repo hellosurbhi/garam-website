@@ -12,7 +12,7 @@ import {
 const TITLE =
   "Sponsor Garam Masala Dating | South Asian Live Show NYC — Media Kit";
 const DESC =
-  "Reach NYC's most engaged South Asian audience. Presenting ($3K–$5K), Gold ($1.5K–$2.5K), Silver ($500–$1K), and In-Kind sponsorship packages. 40+ shows, 10M+ views. Email partnerships@garammasaladating.com.";
+  "Reach NYC's most engaged South Asian audience. Presenting ($3K–$5K), Gold ($1.5K–$2.5K), Silver ($500–$1K), and In-Kind sponsorship packages. 40+ shows, 10M+ views, 70%+ South Asian professionals 22–40. Email partnerships@garammasaladating.com.";
 
 const SITE_URL = "https://garammasaladating.com";
 
@@ -57,22 +57,20 @@ const speakableJsonLd = JSON.stringify({
     <section class="sponsor-hero" aria-labelledby="sponsor-hero-heading">
       <div class="sponsor-container sponsor-hero-inner">
         <p class="sponsor-eyebrow">Brand Partnerships</p>
-        <h1 id="sponsor-hero-heading">
-          Reach NYC's Most Engaged South Asian Audience
-        </h1>
-        <p class="sponsor-hero-sub">
-          40+ shows. 250 people per night. 10M+ social views.<br />
-          A room full of people who actually pay attention.
-        </p>
-        <a
-          href={`mailto:${SPONSORSHIP_COPY.partnerEmail}?subject=Sponsorship%20Inquiry`}
-          class="sponsor-btn"
-          data-ph-capture="cta_clicked"
-          data-ph-cta="get_media_kit_hero"
-          data-ph-section="sponsorship_hero"
-        >
-          Get the Media Kit
-        </a>
+        <h1 id="sponsor-hero-heading">{SPONSORSHIP_COPY.heroHeadline}</h1>
+        <p class="sponsor-hero-sub">{SPONSORSHIP_COPY.heroSub}</p>
+        <div class="sponsor-email-cta">
+          <p class="sponsor-email-label">Sponsorship inquiries:</p>
+          <a
+            href={`mailto:${SPONSORSHIP_COPY.partnerEmail}?subject=Sponsorship%20Inquiry`}
+            class="sponsor-email-link"
+            data-ph-capture="cta_clicked"
+            data-ph-cta="email_hero"
+            data-ph-section="sponsorship_hero"
+          >
+            {SPONSORSHIP_COPY.partnerEmail}
+          </a>
+        </div>
       </div>
     </section>
 
@@ -89,18 +87,12 @@ const speakableJsonLd = JSON.stringify({
               <div class="sponsor-stat" role="listitem">
                 <div class="sponsor-stat-num">{stat.num}</div>
                 <div class="sponsor-stat-label">{stat.label}</div>
-                <div class="sponsor-stat-sub">{stat.sub}</div>
+                <p class="sponsor-stat-sub">{stat.sub}</p>
               </div>
             ))
           }
         </div>
-        <p class="sponsor-demo-blurb">
-          Our audience is South Asian, desi diaspora, and culturally engaged
-          non-South Asian guests — primarily in NYC, 22–40, high disposable
-          income, active on social media. They're not passive attendees. They're
-          the ones who share the clips, quote the hosts, and come back the next
-          month.
-        </p>
+        <p class="sponsor-demo-blurb">{SPONSORSHIP_COPY.demoBlurb}</p>
       </div>
     </section>
 
@@ -111,14 +103,14 @@ const speakableJsonLd = JSON.stringify({
         <h2 id="sponsor-tiers-heading">Pick your level of involvement.</h2>
         <p class="sponsor-tiers-sub">
           All packages are per-show. Multi-show season discounts available —
-          email us.
+          email us to discuss.
         </p>
-        <div class="sponsor-tier-grid">
+        <div class="sponsor-tier-list">
           {
             SPONSOR_TIERS.map((tier) => (
               <div
                 class={`sponsor-tier-card${tier.highlight ? " sponsor-tier-card--presenting" : ""}`}
-                aria-label={`${tier.name} sponsorship tier`}
+                aria-label={`${tier.name} tier`}
               >
                 <div class="sponsor-tier-header">
                   <div class="sponsor-tier-name">{tier.name}</div>
@@ -145,28 +137,25 @@ const speakableJsonLd = JSON.stringify({
       class="sponsor-partners"
       aria-labelledby="sponsor-partners-heading"
     >
-      <div class="sponsor-container sponsor-partners-inner">
-        <div>
-          <p class="sponsor-eyebrow">Who We Partner With</p>
-          <h2 id="sponsor-partners-heading">
-            Brands that want to be in the room.
-          </h2>
-          <p class="sponsor-partners-desc">
-            We're selective about who we partner with because our audience is
-            selective about what they pay attention to. The right brand in this
-            room feels like a natural fit — not an ad.
-          </p>
-        </div>
-        <div
-          class="sponsor-categories"
-          role="list"
-          aria-label="Target sponsor categories"
-        >
+      <div class="sponsor-container">
+        <p class="sponsor-eyebrow">Who We Partner With</p>
+        <h2 id="sponsor-partners-heading">
+          Brands that want to be in the room.
+        </h2>
+        <p class="sponsor-partners-intro">
+          We're selective about who we partner with because our audience is
+          selective about what they pay attention to. The right brand in this
+          room feels like a natural part of the night — not an interruption.
+        </p>
+        <div class="sponsor-categories">
           {
             TARGET_CATEGORIES.map((cat) => (
-              <div class="sponsor-category" role="listitem">
-                <div class="sponsor-cat-label">{cat.category}</div>
-                <div class="sponsor-cat-brands">{cat.brands}</div>
+              <div class="sponsor-category">
+                <div class="sponsor-cat-header">
+                  <div class="sponsor-cat-label">{cat.category}</div>
+                  <div class="sponsor-cat-brands">{cat.brands}</div>
+                </div>
+                <p class="sponsor-cat-why">{cat.why}</p>
               </div>
             ))
           }
@@ -200,21 +189,19 @@ const speakableJsonLd = JSON.stringify({
     <!-- ── Contact CTA ───────────────────────────────────────── -->
     <section class="sponsor-cta" aria-labelledby="sponsor-cta-heading">
       <div class="sponsor-container sponsor-cta-inner">
-        <p class="sponsor-eyebrow sponsor-eyebrow--light">Let's Talk</p>
-        <h2 id="sponsor-cta-heading">Ready to be in the room?</h2>
-        <p>
-          Tell us your brand, your goal, and your budget. We'll come back within
-          48 hours with the right package.
-        </p>
-        <a
-          href={`mailto:${SPONSORSHIP_COPY.partnerEmail}?subject=Sponsorship%20Inquiry`}
-          class="sponsor-btn sponsor-btn--dark"
-          data-ph-capture="cta_clicked"
-          data-ph-cta="contact_sponsor_footer"
-          data-ph-section="sponsorship_cta"
-        >
-          {SPONSORSHIP_COPY.partnerEmail}
-        </a>
+        <h2 id="sponsor-cta-heading">{SPONSORSHIP_COPY.ctaHeadline}</h2>
+        <p class="sponsor-cta-body">{SPONSORSHIP_COPY.ctaBody}</p>
+        <div class="sponsor-email-cta">
+          <a
+            href={`mailto:${SPONSORSHIP_COPY.partnerEmail}?subject=Sponsorship%20Inquiry`}
+            class="sponsor-email-link sponsor-email-link--dark"
+            data-ph-capture="cta_clicked"
+            data-ph-cta="email_footer"
+            data-ph-section="sponsorship_cta"
+          >
+            {SPONSORSHIP_COPY.partnerEmail}
+          </a>
+        </div>
       </div>
     </section>
   </main>
@@ -227,7 +214,7 @@ const speakableJsonLd = JSON.stringify({
   }
 
   .sponsor-container {
-    max-width: 1100px;
+    max-width: 860px;
     margin: 0 auto;
     padding: 0 20px;
   }
@@ -244,34 +231,43 @@ const speakableJsonLd = JSON.stringify({
     color: rgba(255, 255, 255, 0.55);
   }
 
-  .sponsor-btn {
+  /* ── Email CTA ──────────────────────────────────────────── */
+  .sponsor-email-cta {
+    margin-top: 28px;
+  }
+  .sponsor-email-label {
+    font-size: 14px;
+    color: var(--text-secondary);
+    margin-bottom: 6px;
+    font-weight: 600;
+  }
+  .sponsor-email-link {
     display: inline-flex;
     align-items: center;
-    background: var(--brand-red);
-    color: white;
     font-family: var(--font-body), sans-serif;
-    font-size: 16px;
-    font-weight: 700;
-    text-transform: uppercase;
-    letter-spacing: 1.5px;
-    padding: 16px 36px;
-    border-radius: 50px;
-    text-decoration: none;
-    transition: background 0.2s;
+    font-size: clamp(18px, 2.5vw, 24px);
+    font-weight: 800;
+    color: var(--brand-red);
+    text-decoration: underline;
+    text-underline-offset: 4px;
+    text-decoration-thickness: 2px;
+    transition: color 0.2s;
     min-height: var(--touch-target);
+    padding: 4px 0;
   }
-  .sponsor-btn:hover {
-    background: var(--brand-red-dark);
+  .sponsor-email-link:hover {
+    color: var(--brand-red-dark);
   }
-  .sponsor-btn:focus-visible {
+  .sponsor-email-link:focus-visible {
     outline: 2px solid var(--brand-red);
     outline-offset: 3px;
   }
-  .sponsor-btn--dark {
-    background: var(--charcoal);
+  .sponsor-email-link--dark {
+    color: var(--charcoal);
+    text-decoration-color: var(--charcoal);
   }
-  .sponsor-btn--dark:hover {
-    background: var(--ink);
+  .sponsor-email-link--dark:hover {
+    color: var(--ink);
   }
 
   /* ── Hero ─────────────────────────────────────────────── */
@@ -285,7 +281,7 @@ const speakableJsonLd = JSON.stringify({
   }
   .sponsor-hero h1 {
     font-family: var(--font-playfair), serif;
-    font-size: clamp(28px, 5vw, 54px);
+    font-size: clamp(26px, 5vw, 50px);
     font-weight: 900;
     color: var(--charcoal);
     line-height: 1.08;
@@ -293,12 +289,12 @@ const speakableJsonLd = JSON.stringify({
   }
   .sponsor-hero-sub {
     font-family: var(--font-cormorant), serif;
-    font-size: clamp(18px, 2.5vw, 22px);
+    font-size: clamp(16px, 2.2vw, 20px);
     font-style: italic;
     color: var(--text-secondary);
     line-height: 1.7;
-    max-width: 580px;
-    margin: 0 auto 32px;
+    max-width: 680px;
+    margin: 0 auto;
   }
 
   /* ── Stats ───────────────────────────────────────────── */
@@ -318,7 +314,7 @@ const speakableJsonLd = JSON.stringify({
   .sponsor-stats-grid {
     display: grid;
     grid-template-columns: 1fr 1fr;
-    gap: 24px;
+    gap: 16px;
     margin-bottom: 36px;
   }
   .sponsor-stat {
@@ -329,7 +325,7 @@ const speakableJsonLd = JSON.stringify({
   }
   .sponsor-stat-num {
     font-family: var(--font-playfair), serif;
-    font-size: clamp(30px, 4vw, 48px);
+    font-size: clamp(28px, 4vw, 44px);
     font-weight: 900;
     color: var(--electric-yellow);
     line-height: 1;
@@ -339,18 +335,19 @@ const speakableJsonLd = JSON.stringify({
     font-size: 14px;
     font-weight: 700;
     color: white;
-    margin-bottom: 4px;
+    margin-bottom: 8px;
     line-height: 1.3;
   }
   .sponsor-stat-sub {
-    font-size: 12px;
-    color: rgba(255, 255, 255, 0.45);
+    font-size: 13px;
+    line-height: 1.5;
+    color: rgba(255, 255, 255, 0.5);
+    margin: 0;
   }
   .sponsor-demo-blurb {
     font-size: 15px;
-    line-height: 1.75;
-    color: rgba(255, 255, 255, 0.7);
-    max-width: 760px;
+    line-height: 1.8;
+    color: rgba(255, 255, 255, 0.72);
     margin: 0;
   }
 
@@ -372,10 +369,10 @@ const speakableJsonLd = JSON.stringify({
     color: var(--text-secondary);
     margin-bottom: 36px;
   }
-  .sponsor-tier-grid {
-    display: grid;
-    grid-template-columns: 1fr;
-    gap: 16px;
+  .sponsor-tier-list {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
   }
   .sponsor-tier-card {
     background: white;
@@ -394,7 +391,7 @@ const speakableJsonLd = JSON.stringify({
     justify-content: space-between;
     flex-wrap: wrap;
     gap: 8px;
-    margin-bottom: 10px;
+    margin-bottom: 12px;
   }
   .sponsor-tier-name {
     font-family: var(--font-playfair), serif;
@@ -415,41 +412,39 @@ const speakableJsonLd = JSON.stringify({
     color: rgba(255, 255, 255, 0.75);
   }
   .sponsor-tier-tagline {
-    font-family: var(--font-cormorant), serif;
-    font-size: 16px;
-    font-style: italic;
+    font-size: 15px;
     color: var(--text-secondary);
-    margin: 0 0 18px;
-    line-height: 1.5;
+    margin: 0 0 20px;
+    line-height: 1.7;
   }
   .sponsor-tier-card--presenting .sponsor-tier-tagline {
-    color: rgba(255, 255, 255, 0.65);
+    color: rgba(255, 255, 255, 0.7);
   }
   .sponsor-tier-perks {
     list-style: none;
     display: flex;
     flex-direction: column;
-    gap: 8px;
+    gap: 10px;
     margin: 0;
     padding: 0;
   }
   .sponsor-tier-perks li {
     font-size: 14px;
-    line-height: 1.5;
+    line-height: 1.6;
     color: var(--text-secondary);
-    padding-left: 18px;
+    padding-left: 20px;
     position: relative;
   }
   .sponsor-tier-perks li::before {
-    content: "✓";
+    content: "\2713";
     position: absolute;
     left: 0;
     color: var(--brand-red);
     font-weight: 700;
-    font-size: 12px;
+    font-size: 13px;
   }
   .sponsor-tier-card--presenting .sponsor-tier-perks li {
-    color: rgba(255, 255, 255, 0.75);
+    color: rgba(255, 255, 255, 0.78);
   }
   .sponsor-tier-card--presenting .sponsor-tier-perks li::before {
     color: var(--electric-yellow);
@@ -460,11 +455,6 @@ const speakableJsonLd = JSON.stringify({
     background: var(--off-white);
     padding: 56px 0;
   }
-  .sponsor-partners-inner {
-    display: flex;
-    flex-direction: column;
-    gap: 36px;
-  }
   .sponsor-partners h2 {
     font-family: var(--font-playfair), serif;
     font-size: clamp(24px, 3.5vw, 38px);
@@ -473,27 +463,27 @@ const speakableJsonLd = JSON.stringify({
     margin-bottom: 12px;
     line-height: 1.15;
   }
-  .sponsor-partners-desc {
+  .sponsor-partners-intro {
     font-size: 15px;
     line-height: 1.75;
     color: var(--text-secondary);
-    max-width: 560px;
-    margin: 0;
+    max-width: 640px;
+    margin-bottom: 36px;
   }
   .sponsor-categories {
     display: flex;
     flex-direction: column;
-    gap: 2px;
+    gap: 0;
   }
   .sponsor-category {
-    display: flex;
-    flex-direction: column;
-    gap: 2px;
-    padding: 16px 0;
+    padding: 20px 0;
     border-bottom: 1px solid rgba(0, 0, 0, 0.07);
   }
   .sponsor-category:first-child {
     border-top: 1px solid rgba(0, 0, 0, 0.07);
+  }
+  .sponsor-cat-header {
+    margin-bottom: 6px;
   }
   .sponsor-cat-label {
     font-size: 13px;
@@ -501,11 +491,18 @@ const speakableJsonLd = JSON.stringify({
     text-transform: uppercase;
     letter-spacing: 1.5px;
     color: var(--brand-red);
+    margin-bottom: 2px;
   }
   .sponsor-cat-brands {
     font-size: 15px;
+    font-weight: 600;
+    color: var(--charcoal);
+  }
+  .sponsor-cat-why {
+    font-size: 14px;
+    line-height: 1.65;
     color: var(--text-secondary);
-    line-height: 1.5;
+    margin: 0;
   }
 
   /* ── FAQ ─────────────────────────────────────────────── */
@@ -576,20 +573,29 @@ const speakableJsonLd = JSON.stringify({
     text-align: center;
   }
   .sponsor-cta-inner {
-    max-width: 640px;
+    max-width: 680px;
   }
   .sponsor-cta h2 {
     font-family: var(--font-playfair), serif;
     font-size: clamp(28px, 4vw, 44px);
     font-weight: 900;
     color: white;
-    margin-bottom: 16px;
+    margin-bottom: 20px;
   }
-  .sponsor-cta p {
+  .sponsor-cta-body {
     font-size: 16px;
-    line-height: 1.7;
+    line-height: 1.75;
     color: rgba(255, 255, 255, 0.85);
-    margin-bottom: 28px;
+    margin-bottom: 0;
+  }
+  .sponsor-cta .sponsor-email-link {
+    color: white;
+    text-decoration-color: white;
+    font-size: clamp(20px, 3vw, 28px);
+  }
+  .sponsor-cta .sponsor-email-link:hover {
+    color: var(--electric-yellow);
+    text-decoration-color: var(--electric-yellow);
   }
 
   /* ── Desktop ─────────────────────────────────────────── */
@@ -606,42 +612,14 @@ const speakableJsonLd = JSON.stringify({
     .sponsor-tiers {
       padding: 80px 0;
     }
-    .sponsor-tier-grid {
-      grid-template-columns: repeat(2, 1fr);
-    }
     .sponsor-partners {
       padding: 80px 0;
-    }
-    .sponsor-partners-inner {
-      flex-direction: row;
-      gap: 64px;
-      align-items: flex-start;
-    }
-    .sponsor-partners-inner > div:first-child {
-      flex: 1;
-    }
-    .sponsor-categories {
-      flex: 1;
-    }
-    .sponsor-category {
-      flex-direction: row;
-      align-items: baseline;
-      gap: 20px;
-    }
-    .sponsor-cat-label {
-      min-width: 220px;
     }
     .sponsor-faq {
       padding: 80px 0;
     }
     .sponsor-cta {
       padding: 80px 0;
-    }
-  }
-
-  @media (min-width: 1024px) {
-    .sponsor-tier-grid {
-      grid-template-columns: repeat(4, 1fr);
     }
   }
 </style>

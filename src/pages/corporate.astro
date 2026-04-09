@@ -11,7 +11,7 @@ import {
 
 const TITLE = "Private & Corporate Events NYC | Garam Masala Dating";
 const DESC =
-  "Book Garam Masala Dating for your next corporate team event, Diwali party, or private show in NYC. 50–250 guests. Professional hosts, full production, venue coordination. Email caleb@garammasaladating.com to book.";
+  "Book Garam Masala Dating for your next corporate team event, Diwali party, or private show in NYC. 50–250 guests. Professional hosts, full production, venue coordination. Email our events agent Caleb at caleb@garammasaladating.com to book.";
 
 const SITE_URL = "https://garammasaladating.com";
 
@@ -44,10 +44,6 @@ const serviceJsonLd = JSON.stringify({
   offers: {
     "@type": "Offer",
     eligibleCustomerType: "Business",
-    seller: {
-      "@type": "Organization",
-      name: "Garam Masala Dating",
-    },
   },
 });
 
@@ -88,60 +84,54 @@ const speakableJsonLd = JSON.stringify({
     <section class="corp-hero" aria-labelledby="corp-hero-heading">
       <div class="corp-container corp-hero-inner">
         <p class="corp-eyebrow">Private &amp; Corporate Events</p>
-        <h1 id="corp-hero-heading">Your Team Deserves a Better Happy Hour</h1>
-        <p class="corp-hero-sub">
-          Most corporate events are forgettable. A live South Asian comedy
-          dating show in front of 80 of your colleagues is not.
-        </p>
-        <a
-          href={`mailto:${CORPORATE_COPY.agentEmail}?subject=Private%20Show%20Inquiry`}
-          class="corp-btn"
-          data-ph-capture="cta_clicked"
-          data-ph-cta="book_show_hero"
-          data-ph-section="corporate_hero"
-        >
-          Book a Show
-        </a>
-        <p class="corp-hero-note">
-          Email {CORPORATE_COPY.agentName} directly — usually responds within 24 hours.
-        </p>
+        <h1 id="corp-hero-heading">{CORPORATE_COPY.heroHeadline}</h1>
+        <p class="corp-hero-sub">{CORPORATE_COPY.heroSub}</p>
+        <div class="corp-email-cta">
+          <p class="corp-email-label">Email our {CORPORATE_COPY.agentTitle}:</p>
+          <a
+            href={`mailto:${CORPORATE_COPY.agentEmail}?subject=Private%20Show%20Inquiry`}
+            class="corp-email-link"
+            data-ph-capture="cta_clicked"
+            data-ph-cta="email_hero"
+            data-ph-section="corporate_hero"
+          >
+            {CORPORATE_COPY.agentEmail}
+          </a>
+          <p class="corp-email-note">{CORPORATE_COPY.heroNote}</p>
+        </div>
       </div>
     </section>
 
     <!-- ── What a Private Show Looks Like ───────────────────────── -->
     <section class="corp-format" aria-labelledby="corp-format-heading">
-      <div class="corp-container corp-format-inner">
-        <div class="corp-format-prose">
-          <p class="corp-eyebrow corp-eyebrow--light">
-            What a Private Show Looks Like
-          </p>
-          <h2 id="corp-format-heading">
-            Real singles. Real dates. Your crowd loses their minds.
-          </h2>
-          <p>
-            We bring the full Garam Masala Dating show to your event — real
-            singles from the audience go on blind dates on stage while Surbhi
-            and Wyatt run the whole thing: the comedy, the crowd work, the
-            chaos, and the matchmaking.
-          </p>
-          <p>
-            Guests don't have to do anything except show up and watch. But they
-            always end up participating anyway — that's the magic. The room
-            warms up in about four minutes flat.
-          </p>
-          <p>
-            Every show ends with a post-show mixer where the audience actually
-            meets each other. It's the best networking event your company will
-            ever accidentally throw.
-          </p>
-        </div>
-        <div class="corp-tiers" aria-label="Audience size options">
+      <div class="corp-container">
+        <p class="corp-eyebrow corp-eyebrow--light">
+          What a Private Show Looks Like
+        </p>
+        <h2 id="corp-format-heading">{CORPORATE_COPY.showFormatHeadline}</h2>
+        {
+          CORPORATE_COPY.showFormatBody.map((p) => (
+            <p class="corp-format-p">{p}</p>
+          ))
+        }
+      </div>
+    </section>
+
+    <!-- ── Audience Size Options ────────────────────────────────── -->
+    <section class="corp-sizes" aria-labelledby="corp-sizes-heading">
+      <div class="corp-container">
+        <p class="corp-eyebrow">Choose Your Format</p>
+        <h2 id="corp-sizes-heading">We scale the show to your group.</h2>
+        <div class="corp-tiers">
           {
             AUDIENCE_TIERS.map((tier) => (
               <div class="corp-tier">
                 <div class="corp-tier-range">{tier.range}</div>
                 <div class="corp-tier-label">{tier.label}</div>
                 <p class="corp-tier-desc">{tier.description}</p>
+                <p class="corp-tier-ideal">
+                  <strong>Ideal for:</strong> {tier.ideal}
+                </p>
               </div>
             ))
           }
@@ -152,12 +142,12 @@ const speakableJsonLd = JSON.stringify({
     <!-- ── What's Included ──────────────────────────────────────── -->
     <section class="corp-inclusions" aria-labelledby="corp-inc-heading">
       <div class="corp-container">
-        <p class="corp-eyebrow">What's Included</p>
+        <p class="corp-eyebrow corp-eyebrow--light">What's Included</p>
         <h2 id="corp-inc-heading">Everything handled. You just show up.</h2>
-        <div class="corp-inc-grid">
+        <div class="corp-inc-list">
           {
             INCLUSIONS.map((item) => (
-              <div class="corp-inc-card">
+              <div class="corp-inc-item">
                 <h3>{item.title}</h3>
                 <p>{item.description}</p>
               </div>
@@ -173,7 +163,7 @@ const speakableJsonLd = JSON.stringify({
       aria-labelledby="corp-testimonials-heading"
     >
       <div class="corp-container">
-        <p class="corp-eyebrow corp-eyebrow--light">What People Say</p>
+        <p class="corp-eyebrow">What People Say</p>
         <h2 id="corp-testimonials-heading" class="corp-testimonials-heading">
           "Still talking about it three months later."
         </h2>
@@ -219,24 +209,22 @@ const speakableJsonLd = JSON.stringify({
     <!-- ── Final CTA ─────────────────────────────────────────────── -->
     <section class="corp-cta" aria-labelledby="corp-cta-heading">
       <div class="corp-container corp-cta-inner">
-        <h2 id="corp-cta-heading">Ready to Book?</h2>
-        <p>
-          Email {CORPORATE_COPY.agentName} with your date, guest count, and any questions.
-          We'll figure out the rest.
-        </p>
-        <a
-          href={`mailto:${CORPORATE_COPY.agentEmail}?subject=Private%20Show%20Inquiry`}
-          class="corp-btn"
-          data-ph-capture="cta_clicked"
-          data-ph-cta="book_show_footer"
-          data-ph-section="corporate_cta"
-        >
-          {CORPORATE_COPY.agentEmail}
-        </a>
-        <p class="corp-cta-note">
-          Or use the subject line "Private Show Inquiry" and we'll route it
-          straight to Caleb.
-        </p>
+        <h2 id="corp-cta-heading">{CORPORATE_COPY.ctaHeadline}</h2>
+        <p class="corp-cta-body">{CORPORATE_COPY.ctaBody}</p>
+        <div class="corp-email-cta corp-email-cta--dark">
+          <a
+            href={`mailto:${CORPORATE_COPY.agentEmail}?subject=Private%20Show%20Inquiry`}
+            class="corp-email-link corp-email-link--yellow"
+            data-ph-capture="cta_clicked"
+            data-ph-cta="email_footer"
+            data-ph-section="corporate_cta"
+          >
+            {CORPORATE_COPY.agentEmail}
+          </a>
+          <p class="corp-email-note corp-email-note--dark">
+            {CORPORATE_COPY.ctaNote}
+          </p>
+        </div>
       </div>
     </section>
   </main>
@@ -249,7 +237,7 @@ const speakableJsonLd = JSON.stringify({
   }
 
   .corp-container {
-    max-width: 1100px;
+    max-width: 860px;
     margin: 0 auto;
     padding: 0 20px;
   }
@@ -266,29 +254,55 @@ const speakableJsonLd = JSON.stringify({
     color: rgba(255, 255, 255, 0.55);
   }
 
-  .corp-btn {
+  /* ── Email CTA (replaces fake buttons) ──────────────────── */
+  .corp-email-cta {
+    margin-top: 32px;
+  }
+  .corp-email-label {
+    font-size: 14px;
+    color: var(--text-secondary);
+    margin-bottom: 6px;
+    font-weight: 600;
+  }
+  .corp-email-link {
     display: inline-block;
-    background: var(--brand-red);
-    color: white;
     font-family: var(--font-body), sans-serif;
-    font-size: 16px;
-    font-weight: 700;
-    text-transform: uppercase;
-    letter-spacing: 1.5px;
-    padding: 16px 36px;
-    border-radius: 50px;
-    text-decoration: none;
-    transition: background 0.2s;
+    font-size: clamp(18px, 2.5vw, 24px);
+    font-weight: 800;
+    color: var(--brand-red);
+    text-decoration: underline;
+    text-underline-offset: 4px;
+    text-decoration-thickness: 2px;
+    transition: color 0.2s;
+    padding: 4px 0;
     min-height: var(--touch-target);
     display: inline-flex;
     align-items: center;
   }
-  .corp-btn:hover {
-    background: var(--brand-red-dark);
+  .corp-email-link:hover {
+    color: var(--brand-red-dark);
   }
-  .corp-btn:focus-visible {
+  .corp-email-link:focus-visible {
     outline: 2px solid var(--brand-red);
     outline-offset: 3px;
+  }
+  .corp-email-link--yellow {
+    color: var(--electric-yellow);
+    text-decoration-color: var(--electric-yellow);
+  }
+  .corp-email-link--yellow:hover {
+    color: white;
+    text-decoration-color: white;
+  }
+  .corp-email-note {
+    font-size: 14px;
+    color: var(--muted);
+    margin-top: 10px;
+    line-height: 1.6;
+    max-width: 560px;
+  }
+  .corp-email-note--dark {
+    color: rgba(255, 255, 255, 0.45);
   }
 
   /* ── Hero ─────────────────────────────────────────────────── */
@@ -302,7 +316,7 @@ const speakableJsonLd = JSON.stringify({
   }
   .corp-hero h1 {
     font-family: var(--font-playfair), serif;
-    font-size: clamp(30px, 5.5vw, 56px);
+    font-size: clamp(28px, 5vw, 52px);
     font-weight: 900;
     color: var(--charcoal);
     line-height: 1.08;
@@ -310,17 +324,19 @@ const speakableJsonLd = JSON.stringify({
   }
   .corp-hero-sub {
     font-family: var(--font-cormorant), serif;
-    font-size: clamp(18px, 2.5vw, 22px);
+    font-size: clamp(17px, 2.2vw, 21px);
     font-style: italic;
     color: var(--text-secondary);
-    line-height: 1.6;
-    max-width: 620px;
-    margin: 0 auto 32px;
+    line-height: 1.7;
+    max-width: 680px;
+    margin: 0 auto;
   }
-  .corp-hero-note {
-    margin-top: 14px;
-    font-size: 13px;
-    color: var(--muted);
+  .corp-hero .corp-email-cta {
+    margin-top: 36px;
+  }
+  .corp-hero .corp-email-note {
+    margin-left: auto;
+    margin-right: auto;
   }
 
   /* ── Format / Show Description ───────────────────────────── */
@@ -329,42 +345,50 @@ const speakableJsonLd = JSON.stringify({
     padding: 56px 0;
     color: white;
   }
-  .corp-format-inner {
-    display: flex;
-    flex-direction: column;
-    gap: 40px;
-  }
-  .corp-format-prose h2 {
+  .corp-format h2 {
     font-family: var(--font-playfair), serif;
     font-size: clamp(24px, 3.5vw, 38px);
     font-weight: 800;
     color: white;
     line-height: 1.15;
-    margin-bottom: 20px;
+    margin-bottom: 24px;
   }
-  .corp-format-prose p {
+  .corp-format-p {
     font-size: 16px;
-    line-height: 1.75;
-    color: rgba(255, 255, 255, 0.8);
-    margin-bottom: 14px;
+    line-height: 1.8;
+    color: rgba(255, 255, 255, 0.82);
+    margin-bottom: 16px;
   }
 
+  /* ── Audience Sizes ──────────────────────────────────────── */
+  .corp-sizes {
+    background: var(--off-white);
+    padding: 56px 0;
+  }
+  .corp-sizes h2 {
+    font-family: var(--font-playfair), serif;
+    font-size: clamp(24px, 3.5vw, 38px);
+    font-weight: 800;
+    color: var(--charcoal);
+    line-height: 1.15;
+    margin-bottom: 32px;
+  }
   .corp-tiers {
     display: flex;
     flex-direction: column;
-    gap: 12px;
+    gap: 16px;
   }
   .corp-tier {
-    background: rgba(255, 255, 255, 0.06);
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    border-radius: 12px;
-    padding: 20px 24px;
+    background: white;
+    border: 1px solid rgba(0, 0, 0, 0.06);
+    border-radius: 14px;
+    padding: 28px;
   }
   .corp-tier-range {
     font-family: var(--font-playfair), serif;
-    font-size: 28px;
+    font-size: 32px;
     font-weight: 900;
-    color: var(--electric-yellow);
+    color: var(--brand-red);
     line-height: 1;
     margin-bottom: 4px;
   }
@@ -373,64 +397,72 @@ const speakableJsonLd = JSON.stringify({
     font-weight: 700;
     letter-spacing: 2px;
     text-transform: uppercase;
-    color: rgba(255, 255, 255, 0.5);
-    margin-bottom: 10px;
+    color: var(--muted);
+    margin-bottom: 12px;
   }
   .corp-tier-desc {
-    font-size: 14px;
-    line-height: 1.6;
-    color: rgba(255, 255, 255, 0.7);
+    font-size: 15px;
+    line-height: 1.75;
+    color: var(--text-secondary);
+    margin: 0 0 10px;
+  }
+  .corp-tier-ideal {
+    font-size: 13px;
+    color: var(--muted);
     margin: 0;
   }
 
   /* ── Inclusions ──────────────────────────────────────────── */
   .corp-inclusions {
-    background: var(--cream-warm);
+    background: var(--charcoal);
     padding: 56px 0;
+    color: white;
   }
   .corp-inclusions h2 {
     font-family: var(--font-playfair), serif;
     font-size: clamp(24px, 3.5vw, 38px);
     font-weight: 800;
-    color: var(--charcoal);
+    color: white;
     line-height: 1.15;
     margin-bottom: 36px;
   }
-  .corp-inc-grid {
-    display: grid;
-    grid-template-columns: 1fr;
-    gap: 20px;
+  .corp-inc-list {
+    display: flex;
+    flex-direction: column;
+    gap: 28px;
   }
-  .corp-inc-card {
-    background: white;
-    border-radius: 12px;
-    padding: 28px;
-    border: 1px solid rgba(0, 0, 0, 0.06);
+  .corp-inc-item {
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    padding-bottom: 28px;
   }
-  .corp-inc-card h3 {
+  .corp-inc-item:last-child {
+    border-bottom: none;
+    padding-bottom: 0;
+  }
+  .corp-inc-item h3 {
     font-family: var(--font-playfair), serif;
     font-size: 20px;
     font-weight: 800;
-    color: var(--charcoal);
+    color: var(--electric-yellow);
     margin-bottom: 10px;
   }
-  .corp-inc-card p {
+  .corp-inc-item p {
     font-size: 15px;
-    line-height: 1.7;
-    color: var(--text-secondary);
+    line-height: 1.8;
+    color: rgba(255, 255, 255, 0.78);
     margin: 0;
   }
 
   /* ── Testimonials ────────────────────────────────────────── */
   .corp-testimonials {
-    background: var(--brand-red);
+    background: var(--cream-warm);
     padding: 56px 0;
   }
   .corp-testimonials-heading {
     font-family: var(--font-playfair), serif;
     font-size: clamp(22px, 3vw, 34px);
     font-weight: 800;
-    color: white;
+    color: var(--charcoal);
     margin-bottom: 36px;
     line-height: 1.2;
   }
@@ -440,18 +472,18 @@ const speakableJsonLd = JSON.stringify({
     gap: 24px;
   }
   .corp-quote {
-    background: rgba(255, 255, 255, 0.1);
-    border: 1px solid rgba(255, 255, 255, 0.15);
-    border-radius: 12px;
+    background: white;
+    border: 1px solid rgba(0, 0, 0, 0.06);
+    border-radius: 14px;
     padding: 28px;
     margin: 0;
   }
   .corp-quote-text {
     font-family: var(--font-cormorant), serif;
-    font-size: clamp(17px, 2.2vw, 20px);
+    font-size: clamp(16px, 2vw, 18px);
     font-style: italic;
-    color: white;
-    line-height: 1.6;
+    color: var(--charcoal);
+    line-height: 1.7;
     margin: 0 0 16px;
   }
   .corp-quote-attr {
@@ -460,14 +492,13 @@ const speakableJsonLd = JSON.stringify({
     gap: 2px;
   }
   .corp-quote-attr strong {
-    font-size: 13px;
+    font-size: 14px;
     font-weight: 700;
-    color: var(--electric-yellow);
-    letter-spacing: 0.5px;
+    color: var(--brand-red);
   }
   .corp-quote-attr span {
-    font-size: 12px;
-    color: rgba(255, 255, 255, 0.6);
+    font-size: 13px;
+    color: var(--muted);
   }
 
   /* ── FAQ ─────────────────────────────────────────────────── */
@@ -538,34 +569,23 @@ const speakableJsonLd = JSON.stringify({
     text-align: center;
   }
   .corp-cta-inner {
-    max-width: 640px;
+    max-width: 680px;
   }
   .corp-cta h2 {
     font-family: var(--font-playfair), serif;
     font-size: clamp(28px, 4vw, 44px);
     font-weight: 900;
     color: white;
-    margin-bottom: 16px;
+    margin-bottom: 20px;
   }
-  .corp-cta p {
+  .corp-cta-body {
     font-size: 16px;
-    line-height: 1.7;
-    color: rgba(255, 255, 255, 0.75);
-    margin-bottom: 28px;
-  }
-  .corp-cta .corp-btn {
-    background: var(--electric-yellow);
-    color: var(--charcoal);
-    font-size: 15px;
-  }
-  .corp-cta .corp-btn:hover {
-    background: white;
-  }
-  .corp-cta-note {
-    margin-top: 14px;
-    font-size: 13px;
-    color: rgba(255, 255, 255, 0.4);
+    line-height: 1.75;
+    color: rgba(255, 255, 255, 0.78);
     margin-bottom: 0;
+  }
+  .corp-cta .corp-email-cta {
+    margin-top: 28px;
   }
 
   /* ── Desktop ─────────────────────────────────────────────── */
@@ -576,31 +596,18 @@ const speakableJsonLd = JSON.stringify({
     .corp-format {
       padding: 80px 0;
     }
-    .corp-format-inner {
-      flex-direction: row;
-      align-items: flex-start;
-      gap: 64px;
-    }
-    .corp-format-prose {
-      flex: 1.1;
+    .corp-sizes {
+      padding: 80px 0;
     }
     .corp-tiers {
-      flex: 0.9;
-      gap: 16px;
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
     }
     .corp-inclusions {
       padding: 80px 0;
     }
-    .corp-inc-grid {
-      grid-template-columns: 1fr 1fr;
-    }
     .corp-testimonials {
       padding: 80px 0;
-    }
-    .corp-quotes {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 24px;
     }
     .corp-faq {
       padding: 80px 0;

@@ -97,6 +97,7 @@ export function useApplyForm() {
     return () => clearTimeout(id);
   }, [toast]);
 
+  const [formStarted, setFormStarted] = useState(false);
   const [geoLoadTriggered, setGeoLoadTriggered] = useState(false);
   const [placeQuery, setPlaceQuery] = useState("");
   const triggerGeoLoad = useCallback(() => setGeoLoadTriggered(true), []);
@@ -117,6 +118,13 @@ export function useApplyForm() {
   function set(field: keyof FormState, value: string) {
     setForm((prev) => ({ ...prev, [field]: value }));
     setErrors((prev) => ({ ...prev, [field]: undefined }));
+    if (!formStarted) {
+      setFormStarted(true);
+      trackLeadEvent("apply_form_started", {
+        application_type: form.applicationType,
+        page: window.location.pathname,
+      });
+    }
   }
 
   function handlePlaceInputChange(value: string) {

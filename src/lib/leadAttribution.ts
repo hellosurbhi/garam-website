@@ -88,7 +88,7 @@ function bootstrapGeoData() {
         sessionStorage.setItem(GEO_LONGITUDE_KEY, geo.longitude);
       if (geo.timezone) sessionStorage.setItem(GEO_TIMEZONE_KEY, geo.timezone);
     })
-    .catch(() => {});
+    .catch(console.error);
 }
 
 export function bootstrapLeadAttribution() {

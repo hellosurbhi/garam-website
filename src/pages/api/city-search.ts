@@ -5,6 +5,8 @@ import {
   searchCityOptions,
 } from "@/lib/citySearch";
 
+export const prerender = false;
+
 export const GET: APIRoute = async ({ request }) => {
   const url = new URL(request.url);
   const query = url.searchParams.get("q")?.trim() ?? "";

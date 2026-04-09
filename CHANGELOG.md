@@ -1,5 +1,58 @@
 # Changelog
 
+## fix: codebase audit — verifyToken env var, prerender flags, dead code cleanup (2026-04-09)
+
+### What changed
+
+Deep-dive codebase audit with targeted non-breaking fixes.
+
+**Bug fix — generate-contestant-link was broken:**
+
+- `src/lib/verifyToken.ts` used `process.env.VITE_FIREBASE_PROJECT_ID` which doesn't exist in `.env.local`. Changed to `import.meta.env.PUBLIC_FIREBASE_PROJECT_ID` to match the rest of the codebase. This was causing the admin contestant link endpoint to silently reject all requests.
+
+**Missing prerender flags on API routes:**
+
+- Added `export const prerender = false;` to `city-search.ts`, `contestant-prep-auth.ts`, `notify-application.ts`, `generate-contestant-link.ts`. Without this, the GET endpoint (`city-search`) was being prerendered as static JSON at build time.
+
+**Dead code removal:**
+
+- Deleted `src/lib/citySearchShared.ts` — identical duplicate of functions in `citySearch.ts`, only imported in tests. Updated test imports to use `citySearch.ts` and exported `normalize()`.
+- Moved `src/pages/api/city-search.test.ts` to `test/` — Astro was treating it as a page route, breaking builds.
+
+**Code quality:**
+
+- Replaced `StylesConfig<any>` with proper `BaseStyles` type in `reactSelectStyles.ts`
+- Added `console.error` to silent `.catch(() => {})` blocks in `useApplyForm.ts` and `leadAttribution.ts` for observability
+
+**Logged for later:**
+
+- 3 security issues added to BUGS.md (Firestore unauthenticated writes, no input validation on POST routes, leads phone update rule)
+- 10 enhancement items added to ENHANCEMENTS.md (large components, hardcoded colors, media queries, !important, error tracking, eslint security plugin, etc.)
+
+### Files affected
+
+- `src/lib/verifyToken.ts` — env var fix
+- `src/lib/verifyToken.test.ts` — updated test env var references
+- `src/pages/api/city-search.ts` — prerender flag
+- `src/pages/api/contestant-prep-auth.ts` — prerender flag
+- `src/pages/api/notify-application.ts` — prerender flag
+- `src/pages/api/generate-contestant-link.ts` — prerender flag
+- `src/lib/citySearch.ts` — exported `normalize()`
+- `src/lib/citySearchShared.ts` — deleted
+- `src/lib/citySearchShared.test.ts` — updated imports
+- `test/city-search.test.ts` — moved from `src/pages/api/`
+- `src/utils/reactSelectStyles.ts` — removed `any` type
+- `src/components/apply/useApplyForm.ts` — error logging
+- `src/lib/leadAttribution.ts` — error logging
+- `BUGS.md` — 3 new security entries
+- `ENHANCEMENTS.md` — 10 new enhancement entries
+
+### Decisions
+
+- Only implemented non-breaking changes that won't affect UI or functionality
+- Security issues (Firestore rules, input validation, CSP) logged in BUGS.md for separate review since they could affect form submission behavior
+- Component refactoring logged in ENHANCEMENTS.md since it's larger-scope work
+
 ## feat: PostHog full free tier integration + Firebase geo metadata (2026-04-09)
 
 ### What changed

@@ -316,7 +316,7 @@ export function useApplyForm() {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(applicationData),
-      }).catch(() => {});
+      }).catch(console.error);
 
       setForm(INITIAL);
       setTermsAgreed(false);

@@ -13,7 +13,7 @@ export interface CitySearchOption {
 
 let cityOptionsPromise: Promise<CitySearchOption[]> | null = null;
 
-function normalize(value: string): string {
+export function normalize(value: string): string {
   return value
     .normalize("NFKD")
     .replace(/[\u0300-\u036f]/g, "")

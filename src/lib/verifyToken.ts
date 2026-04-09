@@ -38,7 +38,7 @@ export async function verifyIdToken(
   if (!authHeader || !authHeader.startsWith("Bearer ")) return null;
 
   const token = authHeader.slice(7);
-  const projectId = process.env.VITE_FIREBASE_PROJECT_ID;
+  const projectId = import.meta.env.PUBLIC_FIREBASE_PROJECT_ID;
   if (!projectId) return null;
 
   try {

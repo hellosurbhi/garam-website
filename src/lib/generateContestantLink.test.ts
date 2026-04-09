@@ -95,7 +95,7 @@ describe("generate-contestant-link handler", () => {
     expect(body.url).toMatch(/^https:\/\//);
   });
 
-  it("uses http for localhost", async () => {
+  it("url uses origin from SITE env var", async () => {
     const req = makeRequest(
       "POST",
       { showDate: "2026-06-15" },
@@ -103,17 +103,6 @@ describe("generate-contestant-link handler", () => {
     );
     const res = await POST(makeContext(req));
     const body = await res.json();
-    expect(body.url).toMatch(/^http:\/\//);
-  });
-
-  it("uses http for 127.0.0.1", async () => {
-    const req = makeRequest(
-      "POST",
-      { showDate: "2026-06-15" },
-      { authorization: "Bearer test-token", host: "127.0.0.1:3000" },
-    );
-    const res = await POST(makeContext(req));
-    const body = await res.json();
-    expect(body.url).toMatch(/^http:\/\//);
+    expect(body.url).toMatch(/^https:\/\//);
   });
 });

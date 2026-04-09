@@ -14,8 +14,6 @@ export interface LeadAttribution {
   geoCity?: string;
   geoRegion?: string;
   geoCountry?: string;
-  geoLatitude?: string;
-  geoLongitude?: string;
   geoTimezone?: string;
 }
 
@@ -29,8 +27,6 @@ const UTM_TERM_KEY = "gmd-utm-term";
 const GEO_CITY_KEY = "gmd-geo-city";
 const GEO_REGION_KEY = "gmd-geo-region";
 const GEO_COUNTRY_KEY = "gmd-geo-country";
-const GEO_LATITUDE_KEY = "gmd-geo-latitude";
-const GEO_LONGITUDE_KEY = "gmd-geo-longitude";
 const GEO_TIMEZONE_KEY = "gmd-geo-timezone";
 const GEO_FETCHED_KEY = "gmd-geo-fetched";
 
@@ -67,14 +63,11 @@ interface GeoResponse {
   city?: string;
   region?: string;
   country?: string;
-  latitude?: string;
-  longitude?: string;
   timezone?: string;
 }
 
 function bootstrapGeoData() {
   if (sessionStorage.getItem(GEO_FETCHED_KEY)) return;
-  sessionStorage.setItem(GEO_FETCHED_KEY, "1");
 
   fetch("/api/geo")
     .then((res) => (res.ok ? (res.json() as Promise<GeoResponse>) : null))
@@ -83,10 +76,8 @@ function bootstrapGeoData() {
       if (geo.city) sessionStorage.setItem(GEO_CITY_KEY, geo.city);
       if (geo.region) sessionStorage.setItem(GEO_REGION_KEY, geo.region);
       if (geo.country) sessionStorage.setItem(GEO_COUNTRY_KEY, geo.country);
-      if (geo.latitude) sessionStorage.setItem(GEO_LATITUDE_KEY, geo.latitude);
-      if (geo.longitude)
-        sessionStorage.setItem(GEO_LONGITUDE_KEY, geo.longitude);
       if (geo.timezone) sessionStorage.setItem(GEO_TIMEZONE_KEY, geo.timezone);
+      sessionStorage.setItem(GEO_FETCHED_KEY, "1");
     })
     .catch(console.error);
 }
@@ -153,12 +144,6 @@ export function buildLeadAttribution(params: {
 
   const geoCountry = sessionStorage.getItem(GEO_COUNTRY_KEY) ?? undefined;
   if (geoCountry) attribution.geoCountry = geoCountry;
-
-  const geoLatitude = sessionStorage.getItem(GEO_LATITUDE_KEY) ?? undefined;
-  if (geoLatitude) attribution.geoLatitude = geoLatitude;
-
-  const geoLongitude = sessionStorage.getItem(GEO_LONGITUDE_KEY) ?? undefined;
-  if (geoLongitude) attribution.geoLongitude = geoLongitude;
 
   const geoTimezone = sessionStorage.getItem(GEO_TIMEZONE_KEY) ?? undefined;
   if (geoTimezone) attribution.geoTimezone = geoTimezone;

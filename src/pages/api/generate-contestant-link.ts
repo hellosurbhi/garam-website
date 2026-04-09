@@ -25,7 +25,16 @@ export const POST: APIRoute = async ({ request }) => {
     });
   }
 
-  const { showDate } = (await request.json()) as { showDate?: string };
+  let body: { showDate?: string };
+  try {
+    body = (await request.json()) as { showDate?: string };
+  } catch {
+    return new Response(JSON.stringify({ error: "Invalid JSON" }), {
+      status: 400,
+      headers: { "Content-Type": "application/json" },
+    });
+  }
+  const { showDate } = body;
   if (
     !showDate ||
     typeof showDate !== "string" ||
@@ -41,10 +50,8 @@ export const POST: APIRoute = async ({ request }) => {
   }
 
   const sig = createHmac("sha256", salt).update(showDate).digest("hex");
-  const host = request.headers.get("host") ?? "garammasaladating.com";
-  const protocol =
-    host.startsWith("localhost") || host.startsWith("127.") ? "http" : "https";
-  const url = `${protocol}://${host}/contestant-prep?date=${showDate}&sig=${sig}`;
+  const origin = import.meta.env.SITE ?? "https://garammasaladating.com";
+  const url = `${origin}/contestant-prep?date=${showDate}&sig=${sig}`;
 
   return new Response(JSON.stringify({ url }), {
     status: 200,

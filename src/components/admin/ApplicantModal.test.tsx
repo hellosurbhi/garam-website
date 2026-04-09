@@ -20,7 +20,10 @@ function makeApp(overrides?: Partial<Application>): Application {
     photoUrl: "https://example.com/photo.jpg",
     status: "New",
     notes: "",
-    submittedAt: { toDate: () => new Date("2026-03-15T12:00:00"), seconds: 1742054400 } as unknown as Application["submittedAt"],
+    submittedAt: {
+      toDate: () => new Date("2026-03-15T12:00:00"),
+      seconds: 1742054400,
+    } as unknown as Application["submittedAt"],
     ...overrides,
   };
 }
@@ -76,17 +79,29 @@ describe("ApplicantModal", () => {
   });
 
   it("shows pitch when present", () => {
-    render(<ApplicantModal app={makeApp({ pitch: "I love masala chai" })} {...defaultProps} />);
+    render(
+      <ApplicantModal
+        app={makeApp({ pitch: "I love masala chai" })}
+        {...defaultProps}
+      />,
+    );
     expect(screen.getByText("I love masala chai")).toBeInTheDocument();
   });
 
   it("hides pitch when not present", () => {
-    render(<ApplicantModal app={makeApp({ pitch: undefined })} {...defaultProps} />);
+    render(
+      <ApplicantModal app={makeApp({ pitch: undefined })} {...defaultProps} />,
+    );
     expect(screen.queryByText("I love masala chai")).not.toBeInTheDocument();
   });
 
   it("shows 'Referred by' for Nomination type", () => {
-    render(<ApplicantModal app={makeApp({ applicationType: "Nomination", referrerName: "Rahul" })} {...defaultProps} />);
+    render(
+      <ApplicantModal
+        app={makeApp({ applicationType: "Nomination", referrerName: "Rahul" })}
+        {...defaultProps}
+      />,
+    );
     expect(screen.getByText("Rahul")).toBeInTheDocument();
   });
 
@@ -97,29 +112,43 @@ describe("ApplicantModal", () => {
 
   it("calls onClose when close button is clicked", () => {
     const onClose = vi.fn();
-    render(<ApplicantModal app={makeApp()} {...defaultProps} onClose={onClose} />);
+    render(
+      <ApplicantModal app={makeApp()} {...defaultProps} onClose={onClose} />,
+    );
     fireEvent.click(screen.getByLabelText("Close"));
     expect(onClose).toHaveBeenCalled();
   });
 
   it("calls onClose when dialog cancel event fires (Escape key)", () => {
     const onClose = vi.fn();
-    render(<ApplicantModal app={makeApp()} {...defaultProps} onClose={onClose} />);
+    render(
+      <ApplicantModal app={makeApp()} {...defaultProps} onClose={onClose} />,
+    );
     const dialog = screen.getByRole("dialog", { hidden: true });
-    fireEvent(dialog, new Event("cancel", { cancelable: true, bubbles: false }));
+    fireEvent(
+      dialog,
+      new Event("cancel", { cancelable: true, bubbles: false }),
+    );
     expect(onClose).toHaveBeenCalled();
   });
 
   it("calls onUpdate when status is changed", () => {
     const onUpdate = vi.fn();
-    render(<ApplicantModal app={makeApp()} {...defaultProps} onUpdate={onUpdate} />);
-    fireEvent.change(screen.getByDisplayValue("New"), { target: { value: "Cast" } });
+    render(
+      <ApplicantModal app={makeApp()} {...defaultProps} onUpdate={onUpdate} />,
+    );
+    fireEvent.change(screen.getByDisplayValue("New"), {
+      target: { value: "Cast" },
+    });
     expect(onUpdate).toHaveBeenCalledWith("test-1", { status: "Cast" });
   });
 
   it("shows DELETED banner when deletedAt is set", () => {
     const app = makeApp({
-      deletedAt: { toDate: () => new Date(), seconds: 1742054400 } as unknown as Application["deletedAt"],
+      deletedAt: {
+        toDate: () => new Date(),
+        seconds: 1742054400,
+      } as unknown as Application["deletedAt"],
     });
     render(<ApplicantModal app={app} {...defaultProps} />);
     expect(screen.getByText("DELETED")).toBeInTheDocument();
@@ -132,7 +161,10 @@ describe("ApplicantModal", () => {
 
   it("shows restore button for deleted apps", () => {
     const app = makeApp({
-      deletedAt: { toDate: () => new Date(), seconds: 1742054400 } as unknown as Application["deletedAt"],
+      deletedAt: {
+        toDate: () => new Date(),
+        seconds: 1742054400,
+      } as unknown as Application["deletedAt"],
     });
     render(<ApplicantModal app={app} {...defaultProps} />);
     expect(screen.getByText("Restore")).toBeInTheDocument();
@@ -140,7 +172,9 @@ describe("ApplicantModal", () => {
 
   it("calls onDelete when delete button is clicked", () => {
     const onDelete = vi.fn();
-    render(<ApplicantModal app={makeApp()} {...defaultProps} onDelete={onDelete} />);
+    render(
+      <ApplicantModal app={makeApp()} {...defaultProps} onDelete={onDelete} />,
+    );
     fireEvent.click(screen.getByText("Move to Deleted"));
     expect(onDelete).toHaveBeenCalledWith("test-1");
   });
@@ -152,6 +186,9 @@ describe("ApplicantModal", () => {
 
   it("displays the photo when photoUrl is provided", () => {
     render(<ApplicantModal app={makeApp()} {...defaultProps} />);
-    expect(screen.getByAltText("Priya Sharma")).toHaveAttribute("src", "https://example.com/photo.jpg");
+    expect(screen.getByAltText("Priya Sharma")).toHaveAttribute(
+      "src",
+      "https://example.com/photo.jpg",
+    );
   });
 });

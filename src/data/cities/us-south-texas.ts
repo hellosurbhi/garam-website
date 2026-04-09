@@ -19,7 +19,10 @@ export const usSouthTexasCities: Record<string, CityData> = {
     ],
     ctas: [
       { label: "Join the Dallas Waitlist", href: "#waitlist" },
-      { label: "Apply to Be a Contestant", href: "/apply?city=Dallas&state=TX" },
+      {
+        label: "Apply to Be a Contestant",
+        href: "/apply?city=Dallas&state=TX",
+      },
     ],
     includeEventSchema: false,
     areaServed: "Dallas, Texas",
@@ -27,7 +30,13 @@ export const usSouthTexasCities: Record<string, CityData> = {
     addressRegion: "TX",
     addressCountry: "US",
     region: "US South & Texas",
-    nearbyCities: ["houston", "austin", "san-antonio", "college-station", "oklahoma-city"],
+    nearbyCities: [
+      "houston",
+      "austin",
+      "san-antonio",
+      "college-station",
+      "oklahoma-city",
+    ],
   },
 
   houston: {
@@ -48,7 +57,10 @@ export const usSouthTexasCities: Record<string, CityData> = {
     ],
     ctas: [
       { label: "Join the Houston Waitlist", href: "#waitlist" },
-      { label: "Apply to Be a Contestant", href: "/apply?city=Houston&state=TX" },
+      {
+        label: "Apply to Be a Contestant",
+        href: "/apply?city=Houston&state=TX",
+      },
     ],
     includeEventSchema: false,
     areaServed: "Houston, Texas",
@@ -56,7 +68,13 @@ export const usSouthTexasCities: Record<string, CityData> = {
     addressRegion: "TX",
     addressCountry: "US",
     region: "US South & Texas",
-    nearbyCities: ["dallas", "austin", "san-antonio", "college-station", "new-orleans"],
+    nearbyCities: [
+      "dallas",
+      "austin",
+      "san-antonio",
+      "college-station",
+      "new-orleans",
+    ],
   },
 
   austin: {
@@ -77,7 +95,10 @@ export const usSouthTexasCities: Record<string, CityData> = {
     ],
     ctas: [
       { label: "Join the Austin Waitlist", href: "#waitlist" },
-      { label: "Apply to Be a Contestant", href: "/apply?city=Austin&state=TX" },
+      {
+        label: "Apply to Be a Contestant",
+        href: "/apply?city=Austin&state=TX",
+      },
     ],
     includeEventSchema: false,
     areaServed: "Austin, Texas",
@@ -85,7 +106,13 @@ export const usSouthTexasCities: Record<string, CityData> = {
     addressRegion: "TX",
     addressCountry: "US",
     region: "US South & Texas",
-    nearbyCities: ["dallas", "houston", "san-antonio", "college-station", "oklahoma-city"],
+    nearbyCities: [
+      "dallas",
+      "houston",
+      "san-antonio",
+      "college-station",
+      "oklahoma-city",
+    ],
   },
 
   "san-antonio": {
@@ -106,7 +133,10 @@ export const usSouthTexasCities: Record<string, CityData> = {
     ],
     ctas: [
       { label: "Join the San Antonio Waitlist", href: "#waitlist" },
-      { label: "Apply to Be a Contestant", href: "/apply?city=San+Antonio&state=TX" },
+      {
+        label: "Apply to Be a Contestant",
+        href: "/apply?city=San+Antonio&state=TX",
+      },
     ],
     includeEventSchema: false,
     areaServed: "San Antonio, Texas",
@@ -114,7 +144,13 @@ export const usSouthTexasCities: Record<string, CityData> = {
     addressRegion: "TX",
     addressCountry: "US",
     region: "US South & Texas",
-    nearbyCities: ["austin", "houston", "dallas", "college-station", "new-orleans"],
+    nearbyCities: [
+      "austin",
+      "houston",
+      "dallas",
+      "college-station",
+      "new-orleans",
+    ],
   },
 
   "college-station": {
@@ -134,7 +170,10 @@ export const usSouthTexasCities: Record<string, CityData> = {
     ],
     ctas: [
       { label: "Join the College Station Waitlist", href: "#waitlist" },
-      { label: "Apply to Be a Contestant", href: "/apply?city=College+Station&state=TX" },
+      {
+        label: "Apply to Be a Contestant",
+        href: "/apply?city=College+Station&state=TX",
+      },
     ],
     includeEventSchema: false,
     areaServed: "College Station, Texas",
@@ -162,7 +201,10 @@ export const usSouthTexasCities: Record<string, CityData> = {
     ],
     ctas: [
       { label: "Join the OKC Waitlist", href: "#waitlist" },
-      { label: "Apply to Be a Contestant", href: "/apply?city=Oklahoma+City&state=OK" },
+      {
+        label: "Apply to Be a Contestant",
+        href: "/apply?city=Oklahoma+City&state=OK",
+      },
     ],
     includeEventSchema: false,
     areaServed: "Oklahoma City, Oklahoma",
@@ -191,7 +233,10 @@ export const usSouthTexasCities: Record<string, CityData> = {
     ],
     ctas: [
       { label: "Join the New Orleans Waitlist", href: "#waitlist" },
-      { label: "Apply to Be a Contestant", href: "/apply?city=New+Orleans&state=LA" },
+      {
+        label: "Apply to Be a Contestant",
+        href: "/apply?city=New+Orleans&state=LA",
+      },
     ],
     includeEventSchema: false,
     areaServed: "New Orleans, Louisiana",
@@ -199,6 +244,12 @@ export const usSouthTexasCities: Record<string, CityData> = {
     addressRegion: "LA",
     addressCountry: "US",
     region: "US South & Texas",
-    nearbyCities: ["houston", "dallas", "austin", "san-antonio", "college-station"],
+    nearbyCities: [
+      "houston",
+      "dallas",
+      "austin",
+      "san-antonio",
+      "college-station",
+    ],
   },
 };

@@ -44,22 +44,30 @@ describe("formSelectStyles", () => {
   });
 
   it("control returns fontSize 16px", () => {
-    const result = formSelectStyles.control!(BASE, { isFocused: false } as never);
+    const result = formSelectStyles.control!(BASE, {
+      isFocused: false,
+    } as never);
     expect(result.fontSize).toBe("16px");
   });
 
   it("control returns minHeight 48px", () => {
-    const result = formSelectStyles.control!(BASE, { isFocused: false } as never);
+    const result = formSelectStyles.control!(BASE, {
+      isFocused: false,
+    } as never);
     expect(result.minHeight).toBe("48px");
   });
 
   it("control uses brand-red border when focused", () => {
-    const result = formSelectStyles.control!(BASE, { isFocused: true } as never);
+    const result = formSelectStyles.control!(BASE, {
+      isFocused: true,
+    } as never);
     expect(result.border).toContain("#DC2626");
   });
 
   it("control uses neutral border when not focused", () => {
-    const result = formSelectStyles.control!(BASE, { isFocused: false } as never);
+    const result = formSelectStyles.control!(BASE, {
+      isFocused: false,
+    } as never);
     expect(result.border).toContain("rgba(0, 0, 0, 0.1)");
   });
 

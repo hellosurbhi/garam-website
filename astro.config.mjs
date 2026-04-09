@@ -11,7 +11,8 @@ export default defineConfig({
   integrations: [
     react(),
     sitemap({
-      filter: (page) => !page.includes('/admin') && !page.includes('/contestant-prep'),
+      filter: (page) =>
+        !page.includes("/admin") && !page.includes("/contestant-prep"),
     }),
   ],
   vite: {

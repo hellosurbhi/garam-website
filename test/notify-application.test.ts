@@ -65,14 +65,18 @@ describe("notify-application handler", () => {
   });
 
   it("returns 400 when name is missing", async () => {
-    const res = await POST(makeContext(makeRequest({ ...validBody, name: "" })));
+    const res = await POST(
+      makeContext(makeRequest({ ...validBody, name: "" })),
+    );
     expect(res.status).toBe(400);
     const body = await res.json();
     expect(body.error).toBe("Missing required fields");
   });
 
   it("returns 400 when instagram is missing", async () => {
-    const res = await POST(makeContext(makeRequest({ ...validBody, instagram: "" })));
+    const res = await POST(
+      makeContext(makeRequest({ ...validBody, instagram: "" })),
+    );
     expect(res.status).toBe(400);
   });
 
@@ -92,11 +96,15 @@ describe("notify-application handler", () => {
   });
 
   it("sends email with correct subject for nomination", async () => {
-    await POST(makeContext(makeRequest({
-      ...validBody,
-      applicationType: "Nomination",
-      referrerName: "Rahul Gupta",
-    })));
+    await POST(
+      makeContext(
+        makeRequest({
+          ...validBody,
+          applicationType: "Nomination",
+          referrerName: "Rahul Gupta",
+        }),
+      ),
+    );
     const callArgs = mockSend.mock.calls[0][0];
     expect(callArgs.subject).toContain("Nomination");
   });
@@ -121,20 +129,28 @@ describe("notify-application handler", () => {
   });
 
   it("email HTML escapes HTML special characters in name", async () => {
-    await POST(makeContext(makeRequest({
-      ...validBody,
-      name: "<script>alert('xss')</script>",
-    })));
+    await POST(
+      makeContext(
+        makeRequest({
+          ...validBody,
+          name: "<script>alert('xss')</script>",
+        }),
+      ),
+    );
     const html: string = mockSend.mock.calls[0][0].html;
     expect(html).not.toContain("<script>");
     expect(html).toContain("&lt;script&gt;");
   });
 
   it("email HTML includes pitch section when pitch is provided", async () => {
-    await POST(makeContext(makeRequest({
-      ...validBody,
-      pitch: "I am passionate about South Asian culture.",
-    })));
+    await POST(
+      makeContext(
+        makeRequest({
+          ...validBody,
+          pitch: "I am passionate about South Asian culture.",
+        }),
+      ),
+    );
     const html: string = mockSend.mock.calls[0][0].html;
     expect(html).toContain("Pitch");
     expect(html).toContain("I am passionate about South Asian culture.");
@@ -147,11 +163,15 @@ describe("notify-application handler", () => {
   });
 
   it("email HTML shows 'Nomination' heading for nominations", async () => {
-    await POST(makeContext(makeRequest({
-      ...validBody,
-      applicationType: "Nomination",
-      referrerName: "Rahul Gupta",
-    })));
+    await POST(
+      makeContext(
+        makeRequest({
+          ...validBody,
+          applicationType: "Nomination",
+          referrerName: "Rahul Gupta",
+        }),
+      ),
+    );
     const html: string = mockSend.mock.calls[0][0].html;
     expect(html).toContain("New Nomination");
     expect(html).not.toContain("Self-Application");
@@ -164,11 +184,15 @@ describe("notify-application handler", () => {
   });
 
   it("email HTML includes 'Nominated by' row for nominations", async () => {
-    await POST(makeContext(makeRequest({
-      ...validBody,
-      applicationType: "Nomination",
-      referrerName: "Rahul Gupta",
-    })));
+    await POST(
+      makeContext(
+        makeRequest({
+          ...validBody,
+          applicationType: "Nomination",
+          referrerName: "Rahul Gupta",
+        }),
+      ),
+    );
     const html: string = mockSend.mock.calls[0][0].html;
     expect(html).toContain("Nominated by");
     expect(html).toContain("Rahul Gupta");
@@ -196,13 +220,19 @@ describe("notify-application handler", () => {
   });
 
   it("email HTML omits photo link for non-https URL", async () => {
-    await POST(makeContext(makeRequest({ ...validBody, photoUrl: "http://example.com/photo.jpg" })));
+    await POST(
+      makeContext(
+        makeRequest({ ...validBody, photoUrl: "http://example.com/photo.jpg" }),
+      ),
+    );
     const html: string = mockSend.mock.calls[0][0].html;
     expect(html).not.toContain("View Photo");
   });
 
   it("email HTML omits photo link for invalid URL", async () => {
-    await POST(makeContext(makeRequest({ ...validBody, photoUrl: "not a url" })));
+    await POST(
+      makeContext(makeRequest({ ...validBody, photoUrl: "not a url" })),
+    );
     const html: string = mockSend.mock.calls[0][0].html;
     expect(html).not.toContain("View Photo");
   });

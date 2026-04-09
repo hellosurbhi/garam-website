@@ -27,7 +27,13 @@ export const canadaCities: Record<string, CityData> = {
     addressRegion: "ON",
     addressCountry: "CA",
     region: "Canada",
-    nearbyCities: ["hamilton", "waterloo-kitchener", "london-on", "ottawa", "montreal"],
+    nearbyCities: [
+      "hamilton",
+      "waterloo-kitchener",
+      "london-on",
+      "ottawa",
+      "montreal",
+    ],
   },
 
   vancouver: {
@@ -143,7 +149,13 @@ export const canadaCities: Record<string, CityData> = {
     addressRegion: "ON",
     addressCountry: "CA",
     region: "Canada",
-    nearbyCities: ["toronto", "montreal", "waterloo-kitchener", "hamilton", "london-on"],
+    nearbyCities: [
+      "toronto",
+      "montreal",
+      "waterloo-kitchener",
+      "hamilton",
+      "london-on",
+    ],
   },
 
   montreal: {
@@ -172,7 +184,13 @@ export const canadaCities: Record<string, CityData> = {
     addressRegion: "QC",
     addressCountry: "CA",
     region: "Canada",
-    nearbyCities: ["ottawa", "toronto", "halifax", "waterloo-kitchener", "hamilton"],
+    nearbyCities: [
+      "ottawa",
+      "toronto",
+      "halifax",
+      "waterloo-kitchener",
+      "hamilton",
+    ],
   },
 
   winnipeg: {
@@ -259,7 +277,13 @@ export const canadaCities: Record<string, CityData> = {
     addressRegion: "ON",
     addressCountry: "CA",
     region: "Canada",
-    nearbyCities: ["toronto", "waterloo-kitchener", "london-on", "windsor-on", "ottawa"],
+    nearbyCities: [
+      "toronto",
+      "waterloo-kitchener",
+      "london-on",
+      "windsor-on",
+      "ottawa",
+    ],
   },
 
   "london-on": {
@@ -280,7 +304,10 @@ export const canadaCities: Record<string, CityData> = {
     ],
     ctas: [
       { label: "Join the London ON Waitlist", href: "#waitlist" },
-      { label: "Apply to Be a Contestant", href: "/apply?city=London&state=ON" },
+      {
+        label: "Apply to Be a Contestant",
+        href: "/apply?city=London&state=ON",
+      },
     ],
     includeEventSchema: false,
     areaServed: "London, Ontario",
@@ -288,7 +315,13 @@ export const canadaCities: Record<string, CityData> = {
     addressRegion: "ON",
     addressCountry: "CA",
     region: "Canada",
-    nearbyCities: ["waterloo-kitchener", "hamilton", "toronto", "windsor-on", "ottawa"],
+    nearbyCities: [
+      "waterloo-kitchener",
+      "hamilton",
+      "toronto",
+      "windsor-on",
+      "ottawa",
+    ],
   },
 
   halifax: {
@@ -433,7 +466,13 @@ export const canadaCities: Record<string, CityData> = {
     addressRegion: "ON",
     addressCountry: "CA",
     region: "Canada",
-    nearbyCities: ["london-on", "hamilton", "toronto", "waterloo-kitchener", "ottawa"],
+    nearbyCities: [
+      "london-on",
+      "hamilton",
+      "toronto",
+      "waterloo-kitchener",
+      "ottawa",
+    ],
   },
 
   brampton: {
@@ -462,7 +501,13 @@ export const canadaCities: Record<string, CityData> = {
     addressRegion: "ON",
     addressCountry: "CA",
     region: "Canada",
-    nearbyCities: ["toronto", "mississauga", "hamilton", "waterloo-kitchener", "guelph"],
+    nearbyCities: [
+      "toronto",
+      "mississauga",
+      "hamilton",
+      "waterloo-kitchener",
+      "guelph",
+    ],
   },
 
   mississauga: {
@@ -491,7 +536,13 @@ export const canadaCities: Record<string, CityData> = {
     addressRegion: "ON",
     addressCountry: "CA",
     region: "Canada",
-    nearbyCities: ["toronto", "brampton", "hamilton", "waterloo-kitchener", "london-on"],
+    nearbyCities: [
+      "toronto",
+      "brampton",
+      "hamilton",
+      "waterloo-kitchener",
+      "london-on",
+    ],
   },
 
   surrey: {
@@ -599,7 +650,10 @@ export const canadaCities: Record<string, CityData> = {
     ],
     ctas: [
       { label: "Join the St. John\u2019s Waitlist", href: "#waitlist" },
-      { label: "Apply to Be a Contestant", href: "/apply?city=St.+John%27s&state=NL" },
+      {
+        label: "Apply to Be a Contestant",
+        href: "/apply?city=St.+John%27s&state=NL",
+      },
     ],
     includeEventSchema: false,
     areaServed: "St. John\u2019s, Newfoundland and Labrador",
@@ -607,7 +661,13 @@ export const canadaCities: Record<string, CityData> = {
     addressRegion: "NL",
     addressCountry: "CA",
     region: "Canada",
-    nearbyCities: ["halifax", "moncton", "charlottetown", "fredericton", "montreal"],
+    nearbyCities: [
+      "halifax",
+      "moncton",
+      "charlottetown",
+      "fredericton",
+      "montreal",
+    ],
   },
 
   moncton: {
@@ -636,7 +696,13 @@ export const canadaCities: Record<string, CityData> = {
     addressRegion: "NB",
     addressCountry: "CA",
     region: "Canada",
-    nearbyCities: ["halifax", "fredericton", "charlottetown", "st-johns", "montreal"],
+    nearbyCities: [
+      "halifax",
+      "fredericton",
+      "charlottetown",
+      "st-johns",
+      "montreal",
+    ],
   },
 
   charlottetown: {
@@ -680,7 +746,7 @@ export const canadaCities: Record<string, CityData> = {
     bodyParagraphs: [
       "University of New Brunswick in Fredericton has been pulling in South Asian students steadily, and the provincial immigration programs have added families and professionals to the mix. The community is still in its early chapters, but walk through the Regent Mall area or downtown King Street and you\u2019ll notice the shift. Indian restaurants, a growing Sikh community, and a student population that\u2019s reshaping the city\u2019s social fabric.",
       "Garam Masala Dating is a live South Asian dating show and singles mixer from NYC. The format: real singles on stage, live blind dates, two hosts, and a room full of people mixing. It\u2019s designed for communities that have the people but not the events. Fredericton fits that description exactly.",
-      "The social scene for young South Asians in Fredericton is basically UNB campus life and whatever you can cobble together on weekends. The city is beautiful but quiet, and the desi community is small enough that you end up seeing the same people everywhere. A dedicated event that says \"this is for single brown people\" is something nobody has done here yet.",
+      'The social scene for young South Asians in Fredericton is basically UNB campus life and whatever you can cobble together on weekends. The city is beautiful but quiet, and the desi community is small enough that you end up seeing the same people everywhere. A dedicated event that says "this is for single brown people" is something nobody has done here yet.',
       "St. Thomas University adds a small liberal arts crowd, and the government jobs in Fredericton as the provincial capital bring in professionals who stick around. The community is diverse within the South Asian spectrum, with Punjabi, Telugu, and Gujarati families all represented. The show puts all of them in one room.",
       "Waitlist is live. Fredericton is part of our New Brunswick expansion alongside Moncton. Get on the list, or apply now.",
     ],
@@ -694,7 +760,13 @@ export const canadaCities: Record<string, CityData> = {
     addressRegion: "NB",
     addressCountry: "CA",
     region: "Canada",
-    nearbyCities: ["moncton", "halifax", "charlottetown", "st-johns", "montreal"],
+    nearbyCities: [
+      "moncton",
+      "halifax",
+      "charlottetown",
+      "st-johns",
+      "montreal",
+    ],
   },
 
   "thunder-bay": {
@@ -752,7 +824,13 @@ export const canadaCities: Record<string, CityData> = {
     addressRegion: "ON",
     addressCountry: "CA",
     region: "Canada",
-    nearbyCities: ["waterloo-kitchener", "hamilton", "toronto", "brampton", "london-on"],
+    nearbyCities: [
+      "waterloo-kitchener",
+      "hamilton",
+      "toronto",
+      "brampton",
+      "london-on",
+    ],
   },
 
   kingston: {
@@ -781,6 +859,12 @@ export const canadaCities: Record<string, CityData> = {
     addressRegion: "ON",
     addressCountry: "CA",
     region: "Canada",
-    nearbyCities: ["ottawa", "toronto", "montreal", "hamilton", "waterloo-kitchener"],
+    nearbyCities: [
+      "ottawa",
+      "toronto",
+      "montreal",
+      "hamilton",
+      "waterloo-kitchener",
+    ],
   },
 };

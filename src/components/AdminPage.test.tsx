@@ -5,7 +5,10 @@ import AdminPage from "./AdminPage";
 let authCallback: (user: { uid: string } | null) => void;
 
 vi.mock("firebase/auth", () => ({
-  onAuthStateChanged: (_auth: unknown, cb: (user: { uid: string } | null) => void) => {
+  onAuthStateChanged: (
+    _auth: unknown,
+    cb: (user: { uid: string } | null) => void,
+  ) => {
     authCallback = cb;
     return vi.fn(); // unsubscribe
   },

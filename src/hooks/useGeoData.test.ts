@@ -10,10 +10,7 @@ const mockStates = [
   { isoCode: "NY", name: "New York" },
   { isoCode: "CA", name: "California" },
 ];
-const mockCities = [
-  { name: "New York City" },
-  { name: "Buffalo" },
-];
+const mockCities = [{ name: "New York City" }, { name: "Buffalo" }];
 
 const mockGetAllCountries = vi.fn(() => mockCountries);
 const mockGetStatesOfCountry = vi.fn(() => mockStates);

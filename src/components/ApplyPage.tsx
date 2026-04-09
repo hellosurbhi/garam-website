@@ -247,7 +247,9 @@ function ApplyPageInner() {
                           }}
                           onMenuOpen={triggerGeoLoad}
                           inputValue={placeQuery}
-                          placeholder={geoLoading ? "Loading…" : "Start typing a city…"}
+                          placeholder={
+                            geoLoading ? "Loading…" : "Start typing a city…"
+                          }
                           styles={formSelectStyles}
                           isSearchable
                           isLoading={geoLoading}
@@ -490,7 +492,10 @@ function ApplyPageInner() {
                       <button
                         type="button"
                         className={styles.termsLink}
-                        onClick={(e) => { e.stopPropagation(); setShowTermsModal(true); }}
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          setShowTermsModal(true);
+                        }}
                       >
                         Terms &amp; Conditions
                       </button>

@@ -75,7 +75,9 @@ function buildEmailHtml(data: ApplicationNotification): string {
       if (parsed.protocol === "https:") {
         photoSection = `<p style="margin-top:12px;"><a href="${escapeHtml(data.photoUrl)}" style="color:#DC2626;">View Photo</a></p>`;
       }
-    } catch { /* invalid URL — skip photo link */ }
+    } catch {
+      /* invalid URL — skip photo link */
+    }
   }
 
   return `<div style="font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;max-width:600px;margin:0 auto;padding:20px;">
@@ -121,9 +123,12 @@ export const POST: APIRoute = async ({ request }) => {
       headers: { "Content-Type": "application/json" },
     });
   } catch {
-    return new Response(JSON.stringify({ error: "Failed to send notification" }), {
-      status: 500,
-      headers: { "Content-Type": "application/json" },
-    });
+    return new Response(
+      JSON.stringify({ error: "Failed to send notification" }),
+      {
+        status: 500,
+        headers: { "Content-Type": "application/json" },
+      },
+    );
   }
 };

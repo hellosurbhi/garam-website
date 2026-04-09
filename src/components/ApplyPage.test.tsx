@@ -34,7 +34,13 @@ vi.mock("react-select", () => ({
     <select
       data-testid={`select-${placeholder}`}
       value={value?.value ?? ""}
-      onChange={(e) => onChange(e.target.value ? { value: e.target.value, label: e.target.value } : null)}
+      onChange={(e) =>
+        onChange(
+          e.target.value
+            ? { value: e.target.value, label: e.target.value }
+            : null,
+        )
+      }
     >
       <option value="">{placeholder}</option>
       <option value="US">United States</option>
@@ -64,7 +70,12 @@ vi.mock("@/hooks/useCitySearch", () => ({
 
 vi.mock("@/data/events", () => ({
   events: [
-    { date: "Apr 19", city: "Manhattan", url: "https://example.com/tickets", isoDate: "2099-04-19" },
+    {
+      date: "Apr 19",
+      city: "Manhattan",
+      url: "https://example.com/tickets",
+      isoDate: "2099-04-19",
+    },
   ],
 }));
 
@@ -81,17 +92,23 @@ describe("ApplyPage", () => {
     // Mock fetch for notify-application
     vi.spyOn(globalThis, "fetch").mockResolvedValue(new Response("{}"));
     // Mock crypto.randomUUID
-    vi.spyOn(crypto, "randomUUID").mockReturnValue("test-uuid" as `${string}-${string}-${string}-${string}-${string}`);
+    vi.spyOn(crypto, "randomUUID").mockReturnValue(
+      "test-uuid" as `${string}-${string}-${string}-${string}-${string}`,
+    );
   });
 
   it("renders the form title", () => {
     render(<ApplyPage />);
-    expect(screen.getByText("Apply to Be on Garam Masala Dating")).toBeInTheDocument();
+    expect(
+      screen.getByText("Apply to Be on Garam Masala Dating"),
+    ).toBeInTheDocument();
   });
 
   it("renders the subtitle", () => {
     render(<ApplyPage />);
-    expect(screen.getByText(/NYC's hottest live South Asian dating show/)).toBeInTheDocument();
+    expect(
+      screen.getByText(/NYC's hottest live South Asian dating show/),
+    ).toBeInTheDocument();
   });
 
   it("shows 'For myself' and 'For a friend' toggle buttons", () => {
@@ -113,16 +130,22 @@ describe("ApplyPage", () => {
 
   it("shows referrer name field only for Nomination type", () => {
     render(<ApplyPage />);
-    expect(screen.queryByPlaceholderText("So we know who nominated them")).not.toBeInTheDocument();
+    expect(
+      screen.queryByPlaceholderText("So we know who nominated them"),
+    ).not.toBeInTheDocument();
     fireEvent.click(screen.getByText("For a friend"));
-    expect(screen.getByPlaceholderText("So we know who nominated them")).toBeInTheDocument();
+    expect(
+      screen.getByPlaceholderText("So we know who nominated them"),
+    ).toBeInTheDocument();
   });
 
   it("shows error text when submitting with empty required fields", async () => {
     render(<ApplyPage />);
     fireEvent.click(screen.getByText("Submit Application"));
     await waitFor(() => {
-      expect(screen.getByText("Please fill in all required fields")).toBeInTheDocument();
+      expect(
+        screen.getByText("Please fill in all required fields"),
+      ).toBeInTheDocument();
     });
   });
 
@@ -142,6 +165,8 @@ describe("ApplyPage", () => {
 
   it("renders the disclaimer text", () => {
     render(<ApplyPage />);
-    expect(screen.getByText(/By submitting, you agree to be contacted/)).toBeInTheDocument();
+    expect(
+      screen.getByText(/By submitting, you agree to be contacted/),
+    ).toBeInTheDocument();
   });
 });

@@ -43,7 +43,9 @@ export default function AdminLogin({ onSuccess }: AdminLoginProps) {
             className={shaking ? styles.shake : undefined}
             onAnimationEnd={() => setShaking(false)}
           >
-            <label htmlFor="admin-email" className={styles.label}>Email</label>
+            <label htmlFor="admin-email" className={styles.label}>
+              Email
+            </label>
             <input
               ref={emailRef}
               id="admin-email"
@@ -60,7 +62,9 @@ export default function AdminLogin({ onSuccess }: AdminLoginProps) {
               aria-invalid={!!error}
               className={error ? styles.inputError : styles.input}
             />
-            <label htmlFor="admin-password" className={styles.label}>Password</label>
+            <label htmlFor="admin-password" className={styles.label}>
+              Password
+            </label>
             <input
               id="admin-password"
               type="password"
@@ -76,12 +80,18 @@ export default function AdminLogin({ onSuccess }: AdminLoginProps) {
             />
           </div>
 
-          {error && <p className={styles.error} role="alert">{error}</p>}
+          {error && (
+            <p className={styles.error} role="alert">
+              {error}
+            </p>
+          )}
 
           <button
             type="submit"
             disabled={loading}
-            className={error ? styles.submitButtonWithError : styles.submitButton}
+            className={
+              error ? styles.submitButtonWithError : styles.submitButton
+            }
           >
             {loading ? "..." : "Enter"}
           </button>

@@ -20,7 +20,12 @@ export const GET: APIRoute = async ({ request }) => {
     const options = await loadCityOptions();
     const exact = resolveCityOption(query, options);
     const results = exact
-      ? [exact, ...searchCityOptions(query, options, 5).filter((o) => o.value !== exact.value)].slice(0, 5)
+      ? [
+          exact,
+          ...searchCityOptions(query, options, 5).filter(
+            (o) => o.value !== exact.value,
+          ),
+        ].slice(0, 5)
       : searchCityOptions(query, options, 5);
 
     return new Response(JSON.stringify({ results }), {

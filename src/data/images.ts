@@ -17,24 +17,24 @@
 export const HF_IMAGES: readonly string[] = [
   ...Array.from(
     { length: 26 },
-    (_, i) => `/images/ai-art/hf-${String(i + 1).padStart(2, '0')}.webp`
+    (_, i) => `/images/ai-art/hf-${String(i + 1).padStart(2, "0")}.webp`,
   ),
-  '/images/higgs-field.webp',
+  "/images/higgs-field.webp",
 ];
 
 /** Real show photos for city page hero images */
 export const SHOW_IMAGES: readonly string[] = [
   ...Array.from(
     { length: 5 },
-    (_, i) => `/images/show/show-${String(i + 1).padStart(2, '0')}.webp`
+    (_, i) => `/images/show/show-${String(i + 1).padStart(2, "0")}.webp`,
   ),
-  '/images/on-stage.webp',
-  '/images/the-match.webp',
-  '/images/the-crowd.webp',
-  '/images/pure-chaos.webp',
-  '/images/after-party.webp',
-  '/images/magic-moment.webp',
-  '/images/testimonial-reaction.webp',
+  "/images/on-stage.webp",
+  "/images/the-match.webp",
+  "/images/the-crowd.webp",
+  "/images/pure-chaos.webp",
+  "/images/after-party.webp",
+  "/images/magic-moment.webp",
+  "/images/testimonial-reaction.webp",
 ];
 
 /**

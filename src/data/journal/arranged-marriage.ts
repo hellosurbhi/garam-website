@@ -599,7 +599,8 @@ export const arrangedMarriagePosts: JournalPost[] = [
   },
   {
     slug: "arranged-introductions-lead-to-love",
-    title: "When Arranged Introductions Lead to Love: Real Stories No Netflix Edits",
+    title:
+      "When Arranged Introductions Lead to Love: Real Stories No Netflix Edits",
     metaDescription:
       "Real stories of arranged introductions that became genuine love — what made them work, what almost derailed them, and what they have in common.",
     datePublished: "2026-11-11",

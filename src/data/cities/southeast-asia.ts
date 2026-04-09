@@ -77,7 +77,10 @@ export const southeastAsiaCities: Record<string, CityData> = {
     ],
     ctas: [
       { label: "Join the Saigon Waitlist", href: "#waitlist" },
-      { label: "Apply to Be a Contestant", href: "/apply?city=Ho+Chi+Minh+City" },
+      {
+        label: "Apply to Be a Contestant",
+        href: "/apply?city=Ho+Chi+Minh+City",
+      },
     ],
     includeEventSchema: false,
     areaServed: "Ho Chi Minh City, Vietnam",

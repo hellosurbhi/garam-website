@@ -9,10 +9,7 @@ export function trackLeadEvent(name: string, properties: AnalyticsProps = {}) {
   window.dataLayer?.push({ event: name, ...cleanProps });
 }
 
-export function identifyLead(
-  email: string,
-  properties: AnalyticsProps = {},
-) {
+export function identifyLead(email: string, properties: AnalyticsProps = {}) {
   if (!email.trim()) return;
 
   const cleanProps = Object.fromEntries(

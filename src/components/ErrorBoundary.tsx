@@ -18,7 +18,7 @@ export class ErrorBoundary extends Component<Props, State> {
   }
 
   componentDidCatch(error: Error, errorInfo: React.ErrorInfo) {
-    console.error('ErrorBoundary caught:', error, errorInfo);
+    console.error("ErrorBoundary caught:", error, errorInfo);
   }
 
   render() {
@@ -28,8 +28,8 @@ export class ErrorBoundary extends Component<Props, State> {
           <p className={styles.emoji}>🌶️</p>
           <h1 className={styles.title}>Something went wrong</h1>
           <p className={styles.description}>
-            Please refresh the page and try again. If the problem persists,
-            DM us on{" "}
+            Please refresh the page and try again. If the problem persists, DM
+            us on{" "}
             <a
               href={SOCIAL_URLS.instagram}
               target="_blank"
@@ -37,7 +37,8 @@ export class ErrorBoundary extends Component<Props, State> {
               className={styles.link}
             >
               @garammasaladating
-            </a>.
+            </a>
+            .
           </p>
           <button
             onClick={() => window.location.reload()}

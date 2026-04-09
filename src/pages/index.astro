@@ -66,6 +66,17 @@ const upcomingForSchema = events.filter(
   (e) => !e.hidden && e.isoDate && e.isoDate >= today,
 );
 const eventSchemas = buildEventSchemas(upcomingForSchema);
+
+// Speakable — targets HomeFAQ answer text (summary + detail paragraphs)
+const speakableJsonLd = JSON.stringify({
+  "@context": "https://schema.org",
+  "@type": "WebPage",
+  url: "https://garammasaladating.com",
+  speakable: {
+    "@type": "SpeakableSpecification",
+    cssSelector: [".faq-answer-summary", ".faq-answer-detail"],
+  },
+});
 ---
 
 <BaseLayout
@@ -76,6 +87,7 @@ const eventSchemas = buildEventSchemas(upcomingForSchema);
   <Fragment slot="head">
     <script type="application/ld+json" set:html={orgJsonLd} />
     <script type="application/ld+json" set:html={websiteJsonLd} />
+    <script type="application/ld+json" set:html={speakableJsonLd} />
     {
       eventSchemas.map((schema) => (
         <script type="application/ld+json" set:html={schema} />

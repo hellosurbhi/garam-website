@@ -2,6 +2,79 @@
 
 Items from the GMD website audit checklists (site audit, codebase cleanup, conversion audit, mobile audit) that need content, design decisions, or external work. Sorted by impact.
 
+---
+
+## Tracking Enhancements (2026-04-09)
+
+### `event_shared` — Add share buttons with Web Share API
+
+**Priority:** High
+**Status:** Needs implementation
+
+No share buttons exist on the site. Recommended approach for 98% mobile audience:
+
+- **Mobile (Web Share API):** Opens native OS share sheet (iMessage, WhatsApp, Instagram DMs). 95%+ support on iOS Safari and Chrome Android.
+- **Desktop fallback:** Copy event link to clipboard with toast confirmation.
+- **Placement:** Small share icon on each ticket/show card (non-sold-out only).
+- **Tracking:** Fire `event_shared` with `{ city, event_date, share_method: "native" | "clipboard" }`.
+
+```typescript
+async function shareEvent(event: EventEntry) {
+  const shareData = {
+    title: `Garam Masala Dating — ${event.city}`,
+    text: `Live dating show in ${event.city} on ${event.date}!`,
+    url: event.url || "https://garammasaladating.com/tickets",
+  };
+  if (navigator.share) {
+    await navigator.share(shareData);
+    trackLeadEvent("event_shared", {
+      city: event.city,
+      event_date: event.date,
+      share_method: "native",
+    });
+  } else {
+    await navigator.clipboard.writeText(shareData.url);
+    trackLeadEvent("event_shared", {
+      city: event.city,
+      event_date: event.date,
+      share_method: "clipboard",
+    });
+  }
+}
+```
+
+**Files to touch:**
+
+- `src/pages/tickets.astro` — add share button to each live ticket card
+- `src/components/home/HomeShows.astro` — add share button to each show card
+
+### `checkout_started` / `ticket_purchased` — Eventbrite conversion tracking
+
+**Priority:** Medium
+**Status:** Blocked — requires Eventbrite API access
+
+Checkout and purchase happen on Eventbrite's domain. Three options:
+
+**Option A: Eventbrite Webhook (recommended)**
+
+Set up an [Eventbrite webhook](https://www.eventbrite.com/platform/api#/reference/webhooks) for `order.placed` events. Create a serverless function at `/api/eventbrite-webhook` that:
+
+1. Receives the webhook payload (event ID, order details, attendee info)
+2. Forwards to PostHog server-side via `posthog-node` SDK
+3. Correlates with PostHog distinct ID via the `aff=garamsite` param or email match
+
+Requires: Eventbrite API key + Organization ID.
+
+**Option B: UTM attribution (passive, already working)**
+
+Eventbrite URLs already include `aff=garamsite`. Eventbrite's own analytics dashboard shows conversions by affiliate tag: Eventbrite dashboard → Marketing → Tracking Links.
+
+**Option C: Eventbrite Tracking Pixel**
+
+Eventbrite supports a [conversion tracking pixel](https://www.eventbrite.com/support/articles/en_US/How_To/how-to-use-conversion-tracking) for checkout page tracking. Limited — only shows someone started checkout from your site, not full purchase details.
+
+---
+
 ## Critical (Needs Content Assets)
 
 ### Add video section on homepage
@@ -400,11 +473,9 @@ Items flagged during the deep-dive codebase audit. Organized by impact.
 
 Start with `useApplyForm.ts` — it mixes form state, file upload, Firebase operations, and analytics. Extract into `usePhotoUpload`, `useFormValidation`, `useApplicationSubmit`.
 
-### Add centralized error tracking
+### ~~Add centralized error tracking~~ ✅ Done (2026-04-09)
 
-- No Sentry, no PostHog error capture, no error event tracking
-- Silent `.catch(() => {})` blocks throughout the codebase mean zero observability on failures
-- PostHog is already installed — enable its error capture feature, or add Sentry
+PostHog error tracking implemented: `client_error` event with `error_type` discriminator. Covers `uncaught` (window.onerror), `unhandled_rejection`, `react_boundary` (ErrorBoundary), `form_submission` (useApplyForm), and `api_error` (useCitySearch). Queue buffers errors before PostHog loads.
 
 ### Add ESLint security plugin
 

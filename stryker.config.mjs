@@ -4,18 +4,18 @@ export default {
   testRunner: "vitest",
 
   // Only mutate YOUR source code, not tests or config
-mutate: [
-  "src/**/*.ts",
-  "src/**/*.tsx",
-  "!src/**/data/cities/*.ts",
-  "!src/**/data/copy.ts",
-  "!src/**/data/footer.ts",
-  "!src/**/data/icons.ts",
-  "!src/**/data/images.ts",
-  "!src/**/data/legal.ts",
-  "!src/**/*.test.*",
-  "!src/**/*.spec.*"
-],
+  mutate: [
+    "src/**/*.ts",
+    "src/**/*.tsx",
+    "!src/**/data/cities/*.ts",
+    "!src/**/data/copy.ts",
+    "!src/**/data/footer.ts",
+    "!src/**/data/icons.ts",
+    "!src/**/data/images.ts",
+    "!src/**/data/legal.ts",
+    "!src/**/*.test.*",
+    "!src/**/*.spec.*",
+  ],
 
   // Start with a focused scope - don't mutate everything at once
   // Uncomment and adjust to target specific directories first:
@@ -30,8 +30,8 @@ mutate: [
   // Thresholds - start lenient, tighten over time
   thresholds: {
     high: 80,
-    low: 60,
-    break: 50, // CI fails if mutation score drops below 50%
+    low: 65,
+    break: 60, // CI fails if mutation score drops below 50%
   },
 
   // Performance: use incremental mode so re-runs only test changed files

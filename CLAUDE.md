@@ -47,7 +47,7 @@ When adding new content (shows, press, FAQs, testimonials), update the data file
 
 ## No band-aid fixes — ever
 
-Always implement the industry best-practice, sustainable fix. Never apply a short-term workaround that creates inconsistency, adds one-off config files, or patches around a platform limitation. If the proper solution requires a bigger change (restructuring, migrating to the correct API, etc.), do the bigger change.
+Always implement the industry best-practice, sustainable fix. Never apply a short-term workaround that creates inconsistency, adds one-off config files, or patches around a platform limitation. If the proper solution requires a bigger change (restructuring, migrating to the correct API, etc.), do the bigger change. Every fix should be industry best practice. Research best practices and justify why you are making any and all changes even if it is a one line change.
 
 - If a tool/platform doesn't support something (e.g., path aliases), restructure to use the platform correctly — don't add workaround configs.
 - All imports, patterns, and conventions must be consistent across the entire codebase. One file doing something differently is not acceptable.

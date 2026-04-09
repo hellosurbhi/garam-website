@@ -6,14 +6,13 @@
 export const CORPORATE_COPY = {
   agentEmail: "caleb@garammasaladating.com",
   agentName: "Caleb",
-  agentTitle: "Events Agent",
-  partnerEmail: "partnerships@garammasaladating.com",
+  agentTitle: "Manager",
   heroHeadline: "Your Team Deserves a Better Happy Hour",
   heroSub:
     "Most corporate events are forgettable. A live South Asian comedy dating show in front of your team is not. We've turned Diwali dinners, company anniversaries, client appreciation nights, and team offsites into the kind of event people still bring up months later.",
   heroCta: "Book a Private Show",
   heroNote:
-    "Caleb is our dedicated events agent. He handles all private bookings personally — expect a response within 24 hours with availability, pricing, and next steps.",
+    "Caleb is our dedicated manager. He handles all private bookings personally — expect a response within 24 hours with availability, pricing, and next steps.",
   showFormatHeadline: "Real singles. Real dates. Your crowd loses their minds.",
   showFormatBody: [
     "We bring the full Garam Masala Dating show to your event. That means real singles — either from your group or people we cast — go on blind dates on stage while our hosts Surbhi and Wyatt run the entire thing live: the comedy, the crowd work, the audience voting, and the real-time matchmaking.",
@@ -23,7 +22,7 @@ export const CORPORATE_COPY = {
   ],
   ctaHeadline: "Ready to Book?",
   ctaBody:
-    "Email Caleb — our events agent — with your date, approximate guest count, venue (or if you need venue help), and anything you want us to know about your group. He'll come back within 24 hours with availability, a custom quote, and ideas for how to make it unforgettable.",
+    "Email Caleb — our manager — with your date, approximate guest count, venue (or if you need venue help), and anything you want us to know about your group. He'll come back within 24 hours with availability, a custom quote, and ideas for how to make it unforgettable.",
   ctaNote:
     'Use the subject line "Private Show Inquiry" and it goes straight to Caleb.',
 } as const;
@@ -134,7 +133,7 @@ export const CORPORATE_FAQS: CorporateFaq[] = [
   },
   {
     q: "What venues work for a private show?",
-    a: "We've done shows in restaurant private rooms, rooftop bars, coworking event spaces, hotel ballrooms, and dedicated comedy venues. The minimum requirement is room for your guests seated plus a small open area for the stage — roughly 8×6 feet. We need basic sound (a mic and speaker) and some control over lighting. If your venue has AV, great. If not, we bring our own. If you don't have a venue yet, our events agent Caleb can recommend partner spaces in Manhattan, Brooklyn, and Jersey City that we know work perfectly for the show format.",
+    a: "We've done shows in restaurant private rooms, rooftop bars, coworking event spaces, hotel ballrooms, and dedicated comedy venues. The minimum requirement is room for your guests seated plus a small open area for the stage — roughly 8×6 feet. We need basic sound (a mic and speaker) and some control over lighting. If your venue has AV, great. If not, we bring our own. If you don't have a venue yet, our manager Caleb can recommend partner spaces in Manhattan, Brooklyn, and Jersey City that we know work perfectly for the show format.",
   },
   {
     q: "How far in advance do we need to book?",
@@ -142,7 +141,7 @@ export const CORPORATE_FAQS: CorporateFaq[] = [
   },
   {
     q: "How much does a private show cost?",
-    a: "Pricing depends on your audience size, venue, and any custom elements you want. Caleb — our events agent — will put together a custom quote based on your specific event. Email caleb@garammasaladating.com with your guest count, date, and any details about the event and he'll respond within 24 hours with pricing and availability.",
+    a: "Pricing depends on your audience size, venue, and any custom elements you want. Caleb — our manager — will put together a custom quote based on your specific event. Email caleb@garammasaladating.com with your guest count, date, and any details about the event and he'll respond within 24 hours with pricing and availability.",
   },
   {
     q: "Can we customize the show for our company or event theme?",

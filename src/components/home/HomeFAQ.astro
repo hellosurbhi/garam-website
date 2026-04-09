@@ -131,27 +131,15 @@ import { HOME_FAQS as faqs } from "@/data/copy";
     color: var(--brand-red);
   }
   .faq-toggle {
-    width: 60px;
-    height: 60px;
-    border-radius: 50%;
-    background: var(--off-white);
-    border: 1.5px solid #ddd;
-    display: flex;
-    align-items: center;
-    justify-content: center;
     flex-shrink: 0;
     font-size: 24px;
+    font-weight: 400;
     color: var(--brand-red);
-    transition:
-      transform 0.3s,
-      background 0.3s;
+    transition: transform 0.2s;
     line-height: 1;
   }
   .faq-item[open] .faq-toggle {
     transform: rotate(45deg);
-    background: var(--brand-red);
-    color: white;
-    border-color: var(--brand-red);
   }
   .faq-answer {
     overflow: hidden;

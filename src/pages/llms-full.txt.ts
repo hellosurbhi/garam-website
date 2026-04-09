@@ -281,7 +281,7 @@ ${CORPORATE_FAQS.map((f) => `Q: ${f.q}\nA: ${f.a}`).join("\n\n")}
 Garam Masala Dating offers sponsorship packages for brands seeking to reach NYC's South Asian professional audience.
 
 **URL:** https://garammasaladating.com/sponsorship
-**Contact:** ${CORPORATE_COPY.partnerEmail}
+**Contact:** ${CORPORATE_COPY.agentEmail}
 
 ### Audience Statistics
 

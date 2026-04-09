@@ -13,7 +13,7 @@ import {
 const TITLE =
   "Sponsor Garam Masala Dating | South Asian Live Show NYC — Media Kit";
 const DESC =
-  "Reach NYC's most engaged South Asian audience. Presenting ($3K–$5K), Gold ($1.5K–$2.5K), Silver ($500–$1K), and In-Kind sponsorship packages. 40+ shows, 10M+ views, 70%+ South Asian professionals 22–40. Email partnerships@garammasaladating.com.";
+  "Reach NYC's most engaged South Asian audience. Presenting ($3K–$5K), Gold ($1.5K–$2.5K), Silver ($500–$1K), and In-Kind sponsorship packages. 40+ shows, 10M+ views, 70%+ South Asian professionals 22–40. Email caleb@garammasaladating.com.";
 
 const SITE_URL = "https://garammasaladating.com";
 
@@ -61,15 +61,19 @@ const speakableJsonLd = JSON.stringify({
         <h1 id="sponsor-hero-heading">{SPONSORSHIP_COPY.heroHeadline}</h1>
         <p class="sponsor-hero-sub">{SPONSORSHIP_COPY.heroSub}</p>
         <div class="sponsor-email-cta">
-          <p class="sponsor-email-label">Sponsorship inquiries:</p>
+          <p class="sponsor-email-label">
+            Email our {SPONSORSHIP_COPY.contactTitle}, {
+              SPONSORSHIP_COPY.contactName
+            }:
+          </p>
           <a
-            href={`mailto:${SPONSORSHIP_COPY.partnerEmail}?subject=Sponsorship%20Inquiry`}
+            href={`mailto:${SPONSORSHIP_COPY.contactEmail}?subject=Sponsorship%20Inquiry`}
             class="sponsor-email-link"
             data-ph-capture="cta_clicked"
             data-ph-cta="email_hero"
             data-ph-section="sponsorship_hero"
           >
-            {SPONSORSHIP_COPY.partnerEmail}
+            {SPONSORSHIP_COPY.contactEmail}
           </a>
         </div>
       </div>
@@ -184,13 +188,13 @@ const speakableJsonLd = JSON.stringify({
         <p class="sponsor-cta-body">{SPONSORSHIP_COPY.ctaBody}</p>
         <div class="sponsor-email-cta">
           <a
-            href={`mailto:${SPONSORSHIP_COPY.partnerEmail}?subject=Sponsorship%20Inquiry`}
+            href={`mailto:${SPONSORSHIP_COPY.contactEmail}?subject=Sponsorship%20Inquiry`}
             class="sponsor-email-link sponsor-email-link--dark"
             data-ph-capture="cta_clicked"
             data-ph-cta="email_footer"
             data-ph-section="sponsorship_cta"
           >
-            {SPONSORSHIP_COPY.partnerEmail}
+            {SPONSORSHIP_COPY.contactEmail}
           </a>
         </div>
       </div>

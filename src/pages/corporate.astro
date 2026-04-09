@@ -340,19 +340,19 @@ const speakableJsonLd = JSON.stringify({
     width: 100%;
     height: auto;
     object-fit: cover;
-    max-height: 420px;
+    max-height: 240px;
   }
   .corp-photo-pair {
     display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 6px;
+    grid-template-columns: 1fr;
+    gap: 4px;
     line-height: 0;
   }
   .corp-photo-pair img {
     width: 100%;
-    height: 100%;
+    height: auto;
     object-fit: cover;
-    aspect-ratio: 3/2;
+    max-height: 240px;
   }
 
   /* Format section */
@@ -569,7 +569,11 @@ const speakableJsonLd = JSON.stringify({
       max-height: 500px;
     }
     .corp-photo-pair {
+      grid-template-columns: 1fr 1fr;
       gap: 10px;
+    }
+    .corp-photo-pair img {
+      max-height: 500px;
     }
     .corp-format {
       padding: 80px 0;

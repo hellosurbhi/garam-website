@@ -43,6 +43,8 @@ function parseDay(dateStr: string): string {
             data-ph-cta="get_tickets"
             data-ph-section="shows"
             data-ph-city={event.city}
+            data-ph-event-date={event.date}
+            data-ph-price={event.price}
           >
             <div class="show-date-block">
               <div class="month">{parseMonth(event.date)}</div>
@@ -115,6 +117,7 @@ function parseDay(dateStr: string): string {
           stroke-width="2"
           stroke-linecap="round"
           stroke-linejoin="round"
+          aria-hidden="true"
           ><path d="M18 6 6 18"></path><path d="m6 6 12 12"></path></svg
         >
       </button>
@@ -131,6 +134,7 @@ function parseDay(dateStr: string): string {
             placeholder="Start typing a city"
             aria-label="City name"
             autocomplete="off"
+            required
           />
           <datalist id="city-name-suggestions"></datalist>
           <input type="hidden" id="city-state" />

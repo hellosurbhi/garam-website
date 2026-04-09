@@ -131,6 +131,7 @@ const breadcrumbJsonLd = buildBreadcrumbJsonLd([
       alt=""
       width="1200"
       height="675"
+      loading="lazy"
       aria-hidden="true"
     />
     <div class="city-container">
@@ -172,6 +173,7 @@ const breadcrumbJsonLd = buildBreadcrumbJsonLd([
                 stroke-linecap="round"
                 stroke-linejoin="round"
                 class="city-cta__arrow"
+                aria-hidden="true"
               >
                 <>
                   <path d="M5 12h14" />
@@ -260,6 +262,7 @@ const breadcrumbJsonLd = buildBreadcrumbJsonLd([
               stroke-width="2"
               stroke-linecap="round"
               stroke-linejoin="round"
+              aria-hidden="true"
               ><path d="M18 6 6 18"></path><path d="m6 6 12 12"></path></svg
             >
           </button>
@@ -276,6 +279,7 @@ const breadcrumbJsonLd = buildBreadcrumbJsonLd([
                 placeholder="Your email"
                 required
                 aria-label="Email address"
+                aria-describedby="waitlist-error"
               />
               <p id="waitlist-error" class="modal-error" hidden role="alert">
               </p>
@@ -309,6 +313,7 @@ const breadcrumbJsonLd = buildBreadcrumbJsonLd([
                     placeholder="Your email"
                     required
                     aria-label="Email address"
+                    aria-describedby="city-notify-email-error"
                   />
                   <p
                     id="city-notify-email-error"
@@ -330,6 +335,7 @@ const breadcrumbJsonLd = buildBreadcrumbJsonLd([
                     class="ph-mask"
                     placeholder="(555) 123-4567"
                     aria-label="Phone number"
+                    aria-describedby="city-notify-phone-error"
                   />
                   <p
                     id="city-notify-phone-error"

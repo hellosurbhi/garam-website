@@ -4,7 +4,9 @@
  */
 
 export const SPONSORSHIP_COPY = {
-  partnerEmail: "partnerships@garammasaladating.com",
+  contactEmail: "caleb@garammasaladating.com",
+  contactName: "Caleb",
+  contactTitle: "Manager",
   heroHeadline: "Reach NYC's Most Engaged South Asian Audience",
   heroSub:
     "Garam Masala Dating puts 250 people in a room every two weeks — South Asian professionals aged 22–40, high income, high social engagement, and zero ad fatigue. They're not scrolling past your brand. They're watching a live show where your product is part of the experience. 40+ shows produced. 10M+ social media views. This is the room brands want to be in.",
@@ -156,7 +158,7 @@ export const SPONSORSHIP_FAQS: SponsorFaq[] = [
   },
   {
     q: "Can I sponsor multiple shows?",
-    a: "Yes — and it's the stronger play. Multi-show season packages are available at a per-show discount and give your brand recurring presence across an entire quarter or season rather than a single night. Repetition builds recognition, and our audience overlaps significantly show to show — they'll see your brand multiple times. Email partnerships@garammasaladating.com and we'll put together a season proposal.",
+    a: "Yes — and it's the stronger play. Multi-show season packages are available at a per-show discount and give your brand recurring presence across an entire quarter or season rather than a single night. Repetition builds recognition, and our audience overlaps significantly show to show — they'll see your brand multiple times. Email our manager Caleb at caleb@garammasaladating.com and we'll put together a season proposal.",
   },
   {
     q: "What does 'category exclusivity' mean for Presenting sponsors?",
@@ -168,6 +170,6 @@ export const SPONSORSHIP_FAQS: SponsorFaq[] = [
   },
   {
     q: "How do I get started?",
-    a: "Email partnerships@garammasaladating.com with your brand name, what you're hoping to achieve (awareness, sampling, content, direct acquisition), and your rough budget. We'll respond within 48 hours with tier options, custom activation ideas, and available dates. No commitment required to start the conversation.",
+    a: "Email our manager Caleb at caleb@garammasaladating.com with your brand name, what you're hoping to achieve (awareness, sampling, content, direct acquisition), and your rough budget. Caleb will respond within 48 hours with tier options, custom activation ideas, and available dates. No commitment required to start the conversation.",
   },
 ];

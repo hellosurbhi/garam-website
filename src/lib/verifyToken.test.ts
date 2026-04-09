@@ -103,4 +103,25 @@ describe("verifyIdToken", () => {
     const token = makeToken("key-1", "user-123");
     expect(await verifyIdToken(`Bearer ${token}`)).toBeNull();
   });
+
+  it("caches public keys on second call (fetch called once)", async () => {
+    const token = makeToken("key-1", "user-123");
+    await verifyIdToken(`Bearer ${token}`);
+    await verifyIdToken(`Bearer ${token}`);
+    // fetch should have been called only once for the cert endpoint
+    expect(globalThis.fetch).toHaveBeenCalledTimes(1);
+  });
+
+  it("passes correct issuer and audience to jwtVerify", async () => {
+    const token = makeToken("key-1", "user-123");
+    await verifyIdToken(`Bearer ${token}`);
+    expect(mockJwtVerify).toHaveBeenCalledWith(
+      token,
+      "mock-key",
+      expect.objectContaining({
+        issuer: `https://securetoken.google.com/${TEST_PROJECT_ID}`,
+        audience: TEST_PROJECT_ID,
+      }),
+    );
+  });
 });

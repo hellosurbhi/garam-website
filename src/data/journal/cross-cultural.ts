@@ -41,7 +41,7 @@ export const crossCulturalPosts: JournalPost[] = [
       },
       {
         type: "p",
-        text: "I run a live comedy dating show in NYC and I talk to South Asian singles every single week. The \u2018how do I tell my parents\u2019 conversation comes up constantly. So let\u2019s actually get into it.",
+        text: "I run the #1 live comedy dating show in NYC and I talk to South Asian singles every single week. The \u2018how do I tell my parents\u2019 conversation comes up constantly. So let\u2019s actually get into it.",
       },
       {
         type: "h2",
@@ -157,7 +157,7 @@ export const crossCulturalPosts: JournalPost[] = [
       },
       {
         type: "p",
-        text: "I run Garam Masala Dating, a live comedy dating show in NYC. I talk to South Asian singles constantly. And the \u2018my parents are going to lose their minds\u2019 conversation comes up often enough that it deserves a real answer instead of a gentle non-answer.",
+        text: "I run Garam Masala Dating, the #1 live comedy dating show in NYC. I talk to South Asian singles constantly. And the \u2018my parents are going to lose their minds\u2019 conversation comes up often enough that it deserves a real answer instead of a gentle non-answer.",
       },
       {
         type: "h2",
@@ -389,7 +389,7 @@ export const crossCulturalPosts: JournalPost[] = [
       },
       {
         type: "p",
-        text: "I\u2019ve hosted a live comedy dating show for South Asians in NYC for years, and this is a conversation I have versions of constantly. Let\u2019s get into the actual strategy.",
+        text: "I\u2019ve hosted the #1 live comedy dating show for South Asians in NYC for years, and this is a conversation I have versions of constantly. Let\u2019s get into the actual strategy.",
       },
       {
         type: "h2",
@@ -510,7 +510,7 @@ export const crossCulturalPosts: JournalPost[] = [
       },
       {
         type: "p",
-        text: "I\u2019m Punjabi. I run a live comedy dating show in NYC. I have both personal and professional experience with this exact scenario. Here\u2019s the survival guide.",
+        text: "I\u2019m Punjabi. I run the #1 live comedy dating show in NYC. I have both personal and professional experience with this exact scenario. Here\u2019s the survival guide.",
       },
       {
         type: "h2",

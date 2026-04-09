@@ -9,7 +9,7 @@ export const CORPORATE_COPY = {
   agentTitle: "Manager",
   heroHeadline: "Your Team Deserves a Better Happy Hour",
   heroSub:
-    "A live South Asian comedy dating show for your team, your clients, or your next milestone. 50 to 250 guests. We handle everything.",
+    "The #1 live South Asian comedy dating show for your team, your clients, or your next milestone. 50 to 250 guests. We handle everything.",
   heroNote:
     "Caleb is our manager. He handles all private bookings and responds within 24 hours.",
   showFormatBody: [

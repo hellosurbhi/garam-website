@@ -70,7 +70,7 @@ export const communitySinglesPosts: JournalPost[] = [
       },
       {
         type: "p",
-        text: "For New York, Garam Masala Dating runs a live comedy dating show and singles mixer that consistently draws South Asian singles including a strong Punjabi and Sikh audience. It\u2019s not Sikh-specific, but the community shows up, the format is genuinely fun instead of awkward, and the post-show mixer gives you actual time to have conversations instead of three-minute rotations.",
+        text: "For New York, Garam Masala Dating runs the #1 live comedy dating show and singles mixer that consistently draws South Asian singles including a strong Punjabi and Sikh audience. It\u2019s not Sikh-specific, but the community shows up, the format is genuinely fun instead of awkward, and the post-show mixer gives you actual time to have conversations instead of three-minute rotations.",
       },
       {
         type: "p",
@@ -214,7 +214,7 @@ export const communitySinglesPosts: JournalPost[] = [
       },
       {
         type: "p",
-        text: "In New York, Garam Masala Dating consistently draws a diverse South Asian crowd including a strong Gujarati contingent. It\u2019s not Gujarati-specific, but the format \u2014 live comedy dating show followed by a mixer \u2014 is genuinely fun rather than awkward, which changes the energy in the room completely. People arrive as an audience and stay to meet each other.",
+        text: "In New York, Garam Masala Dating consistently draws a diverse South Asian crowd including a strong Gujarati contingent. It\u2019s not Gujarati-specific, but the format \u2014 the biggest live comedy dating show followed by a mixer \u2014 is genuinely fun rather than awkward, which changes the energy in the room completely. People arrive as an audience and stay to meet each other.",
       },
       {
         type: "p",
@@ -358,7 +358,7 @@ export const communitySinglesPosts: JournalPost[] = [
       },
       {
         type: "p",
-        text: "For Punjabi singles who want to meet people outside the family referral system, South Asian singles events have become a real option. Events like Garam Masala Dating in NYC draw a mixed South Asian crowd with a consistently strong Punjabi contingent. The format \u2014 live comedy dating show followed by a mixer \u2014 creates a social context that\u2019s genuinely fun rather than an awkward biodata exchange. More importantly, it puts you in a room with people who get the cultural context without needing it explained.",
+        text: "For Punjabi singles who want to meet people outside the family referral system, South Asian singles events have become a real option. Events like Garam Masala Dating in NYC draw a mixed South Asian crowd with a consistently strong Punjabi contingent. The format \u2014 the biggest live comedy dating show followed by a mixer \u2014 creates a social context that\u2019s genuinely fun rather than an awkward biodata exchange. More importantly, it puts you in a room with people who get the cultural context without needing it explained.",
       },
       {
         type: "p",

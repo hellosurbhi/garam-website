@@ -18,7 +18,7 @@ export const casteClassPosts: JournalPost[] = [
       },
       {
         type: "p",
-        text: "I run a live comedy dating show for South Asians in New York. Over four years, I've talked to hundreds of desi singles about what they actually want versus what their families want versus what they quietly filter for themselves without fully admitting it. Caste comes up more than people want to say out loud. So let's say it out loud.",
+        text: "I run the #1 live comedy dating show for South Asians in New York. Over four years, I've talked to hundreds of desi singles about what they actually want versus what their families want versus what they quietly filter for themselves without fully admitting it. Caste comes up more than people want to say out loud. So let's say it out loud.",
       },
       {
         type: "h2",
@@ -78,7 +78,7 @@ export const casteClassPosts: JournalPost[] = [
       },
       {
         type: "p",
-        text: "Garam Masala Dating is a live comedy dating show in NYC where South Asian singles go on blind dates on stage in front of 250 people. Real people. Real conversations. Nothing scripted. If you want to see what modern desi dating actually looks like — caste conversations and all — come to a show. Or apply to be a contestant. Tickets and applications at garammasaladating.com.",
+        text: "Garam Masala Dating is the #1 live comedy dating show in NYC where South Asian singles go on blind dates on stage in front of 250 people. Real people. Real conversations. Nothing scripted. If you want to see what modern desi dating actually looks like — caste conversations and all — come to a show. Or apply to be a contestant. Tickets and applications at garammasaladating.com.",
       },
     ],
     faqs: [
@@ -182,7 +182,7 @@ export const casteClassPosts: JournalPost[] = [
       },
       {
         type: "p",
-        text: "Garam Masala Dating is a live comedy dating show in NYC where South Asian singles — from every background — go on real blind dates on stage. The show doesn't filter by caste. Neither do most of the contestants. If you want to be in a room full of desi people who are actively choosing a different way, come see us. Tickets and applications at garammasaladating.com.",
+        text: "Garam Masala Dating is the #1 live comedy dating show in NYC where South Asian singles — from every background — go on real blind dates on stage. The show doesn't filter by caste. Neither do most of the contestants. If you want to be in a room full of desi people who are actively choosing a different way, come see us. Tickets and applications at garammasaladating.com.",
       },
     ],
     faqs: [
@@ -282,7 +282,7 @@ export const casteClassPosts: JournalPost[] = [
       },
       {
         type: "p",
-        text: "Garam Masala Dating is a live comedy dating show in NYC where South Asian singles go on real blind dates on stage — no scripts, no filters, just actual people figuring it out in front of 250 strangers. Come see what compatibility actually looks like when you take away the checklist. Tickets and applications at garammasaladating.com.",
+        text: "Garam Masala Dating is the #1 live comedy dating show in NYC where South Asian singles go on real blind dates on stage — no scripts, no filters, just actual people figuring it out in front of 250 strangers. Come see what compatibility actually looks like when you take away the checklist. Tickets and applications at garammasaladating.com.",
       },
     ],
     faqs: [
@@ -672,7 +672,7 @@ export const casteClassPosts: JournalPost[] = [
       },
       {
         type: "p",
-        text: "Garam Masala Dating is a live comedy dating show in NYC where South Asian singles go on blind dates on stage. No profiles. No salary fields. No caste filters. Just two people in front of 250 strangers finding out if something is there. Come see it for yourself — or apply to be on stage. Tickets and applications at garammasaladating.com.",
+        text: "Garam Masala Dating is the #1 live comedy dating show in NYC where South Asian singles go on blind dates on stage. No profiles. No salary fields. No caste filters. Just two people in front of 250 strangers finding out if something is there. Come see it for yourself — or apply to be on stage. Tickets and applications at garammasaladating.com.",
       },
     ],
     faqs: [
@@ -769,7 +769,7 @@ export const casteClassPosts: JournalPost[] = [
       },
       {
         type: "p",
-        text: "Garam Masala Dating is a live comedy dating show in NYC — no profiles, no filters, no economic sorting before anyone walks on stage. Real South Asian singles, real blind dates, 250 people watching it unfold. If you want to see what desi dating looks like when the class calculation is taken out of the equation, come to a show. Or apply to be on stage yourself. Tickets and applications at garammasaladating.com.",
+        text: "Garam Masala Dating is the #1 live comedy dating show in NYC — no profiles, no filters, no economic sorting before anyone walks on stage. Real South Asian singles, real blind dates, 250 people watching it unfold. If you want to see what desi dating looks like when the class calculation is taken out of the equation, come to a show. Or apply to be on stage yourself. Tickets and applications at garammasaladating.com.",
       },
     ],
     faqs: [

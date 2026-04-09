@@ -1,9 +1,9 @@
 ---
-import BaseLayout from '@/layouts/BaseLayout.astro';
-import { CREATOR_URLS } from '@/data/socials';
-import { buildBreadcrumbJsonLd } from '@/utils/breadcrumbs';
+import BaseLayout from "@/layouts/BaseLayout.astro";
+import { CREATOR_URLS } from "@/data/socials";
+import { buildBreadcrumbJsonLd } from "@/utils/breadcrumbs";
 
-const TITLE = "Meet the Hosts — Surbhi & Wyatt | Garam Masala Dating";
+const TITLE = "Meet the Hosts — Surbhi & Wyatt";
 const DESC =
   "Meet Surbhi and Wyatt, the stand-up comedians behind Garam Masala Dating. Learn how a one-off downtown bar experiment became NYC's biggest live dating show.";
 
@@ -43,7 +43,10 @@ const personJsonLd = JSON.stringify([
       <p class="hosts-eyebrow">The Hosts</p>
       <h1>The Comedians Behind the Chaos</h1>
       <p class="hosts-intro">
-        Garam Masala Dating didn't come from a pitch deck or a production company. It started when two comedians decided that watching real people go on blind dates in front of a live audience was funnier than anything they could write.
+        Garam Masala Dating didn't come from a pitch deck or a production
+        company. It started when two comedians decided that watching real people
+        go on blind dates in front of a live audience was funnier than anything
+        they could write.
       </p>
 
       <div class="hosts-action-shot">
@@ -62,20 +65,44 @@ const personJsonLd = JSON.stringify([
       </div>
 
       <div class="host-section">
-        <img src="/images/hosts/surbhi.webp" alt="Surbhi" class="host-avatar" width="96" height="96" loading="lazy" />
+        <img
+          src="/images/hosts/surbhi.webp"
+          alt="Surbhi"
+          class="host-avatar"
+          width="96"
+          height="96"
+          loading="lazy"
+        />
         <div class="host-content">
           <h2>
-            <a href={CREATOR_URLS.surbhi} target="_blank" rel="noopener noreferrer">Surbhi</a>
+            <a
+              href={CREATOR_URLS.surbhi}
+              target="_blank"
+              rel="noopener noreferrer">Surbhi</a
+            >
           </h2>
           <p class="host-role">Co-Creator & Host</p>
           <p>
-            Surbhi is a New York-based stand-up comedian and the creative force behind Garam Masala Dating. She created the show in 2022 after noticing something missing in the South Asian comedy and dating scene — a space where desi singles could meet in real life, in a room full of energy, without the awkwardness of apps or the pressure of family setups.
+            Surbhi is a New York-based stand-up comedian and the creative force
+            behind Garam Masala Dating. She created the show in 2022 after
+            noticing something missing in the South Asian comedy and dating
+            scene — a space where desi singles could meet in real life, in a
+            room full of energy, without the awkwardness of apps or the pressure
+            of family setups.
           </p>
           <p>
-            What started as a one-off experiment in a downtown bar is now NYC's #1 live South Asian dating show. The show sells out 250-seat venues weekly in Manhattan, runs monthly in Jersey City, and has expanded to Los Angeles, San Francisco, and San Diego. Surbhi has performed at comedy venues across the US and UK, and has accidentally matched three real couples through the show — and counting.
+            What started as a one-off experiment in a downtown bar is now NYC's
+            #1 live South Asian dating show. The show sells out 250-seat venues
+            weekly in Manhattan, runs monthly in Jersey City, and has expanded
+            to Los Angeles, San Francisco, and San Diego. Surbhi has performed
+            at comedy venues across the US and UK, and has accidentally matched
+            three real couples through the show — and counting.
           </p>
           <p>
-            She handles everything from casting and producing to hosting the show itself, where her ability to make strangers comfortable on stage in front of hundreds of people is the reason contestants keep coming back.
+            She handles everything from casting and producing to hosting the
+            show itself, where her ability to make strangers comfortable on
+            stage in front of hundreds of people is the reason contestants keep
+            coming back.
           </p>
           <div class="host-credits">
             <span>Stand-Up Comedian</span>
@@ -87,20 +114,45 @@ const personJsonLd = JSON.stringify([
       </div>
 
       <div class="host-section">
-        <img src="/images/hosts/wyatt.avif" alt="Wyatt" class="host-avatar" width="96" height="96" loading="lazy" />
+        <img
+          src="/images/hosts/wyatt.avif"
+          alt="Wyatt"
+          class="host-avatar"
+          width="96"
+          height="96"
+          loading="lazy"
+        />
         <div class="host-content">
           <h2>
-            <a href={CREATOR_URLS.wyatt} target="_blank" rel="noopener noreferrer">Wyatt Feegrado</a>
+            <a
+              href={CREATOR_URLS.wyatt}
+              target="_blank"
+              rel="noopener noreferrer">Wyatt Feegrado</a
+            >
           </h2>
           <p class="host-role">Co-Host & Actor</p>
           <p>
-            Wyatt Feegrado is a stand-up comedian and actor who started sneaking out of his parents' house in Walnut Creek, California to do open mics at 16. He went on to attend NYU Tisch School of the Arts, then landed a starring role in ESPN+'s <em>Bettor Days</em>, followed by Hulu's <em>Chicano Squad</em> and the History Channel's <em>Holy Marvels</em>.
+            Wyatt Feegrado is a stand-up comedian and actor who started sneaking
+            out of his parents' house in Walnut Creek, California to do open
+            mics at 16. He went on to attend NYU Tisch School of the Arts, then
+            landed a starring role in ESPN+'s <em>Bettor Days</em>, followed by
+            Hulu's <em>Chicano Squad</em> and the History Channel's <em
+              >Holy Marvels</em
+            >.
           </p>
           <p>
-            He tours the US 11 months of the year and co-hosts the podcast <em>Gen Zenophobic</em> with his brother Luke. On Garam Masala Dating, Wyatt is the reason no awkward silence survives longer than two seconds. His improvisation keeps the energy high, the contestants laughing, and the audience on the edge of their seats.
+            He tours the US 11 months of the year and co-hosts the podcast <em
+              >Gen Zenophobic</em
+            > with his brother Luke. On Garam Masala Dating, Wyatt is the reason no
+            awkward silence survives longer than two seconds. His improvisation keeps
+            the energy high, the contestants laughing, and the audience on the edge
+            of their seats.
           </p>
           <p>
-            Together with Surbhi, he's built a show that feels less like a production and more like the best house party you've ever been to — except two strangers are falling in love on stage while 250 people lose their minds.
+            Together with Surbhi, he's built a show that feels less like a
+            production and more like the best house party you've ever been to —
+            except two strangers are falling in love on stage while 250 people
+            lose their minds.
           </p>
           <div class="host-credits">
             <span>Stand-Up Comedian</span>
@@ -201,7 +253,9 @@ const personJsonLd = JSON.stringify([
     text-decoration: none;
     transition: color 0.2s;
   }
-  .host-content h2 a:hover { color: var(--brand-red); }
+  .host-content h2 a:hover {
+    color: var(--brand-red);
+  }
   .host-role {
     font-size: 11px;
     font-weight: 700;
@@ -255,7 +309,9 @@ const personJsonLd = JSON.stringify([
     display: inline-flex;
     align-items: center;
   }
-  .btn-primary:hover { background: var(--brand-red-dark); }
+  .btn-primary:hover {
+    background: var(--brand-red-dark);
+  }
   .btn-outline {
     color: var(--charcoal);
     padding: 16px 36px;
@@ -277,9 +333,15 @@ const personJsonLd = JSON.stringify([
   }
 
   @media (min-width: 768px) {
-    .hosts-page { padding: 48px 48px; }
-    .hosts-container { max-width: 800px; }
-    .hosts-intro { font-size: 20px; }
+    .hosts-page {
+      padding: 48px 48px;
+    }
+    .hosts-container {
+      max-width: 800px;
+    }
+    .hosts-intro {
+      font-size: 20px;
+    }
     .host-section {
       flex-direction: row;
       text-align: left;
@@ -292,8 +354,13 @@ const personJsonLd = JSON.stringify([
       font-size: 52px;
       margin-bottom: 0;
     }
-    .host-credits { justify-content: flex-start; }
-    .hosts-cta { flex-direction: row; justify-content: center; }
+    .host-credits {
+      justify-content: flex-start;
+    }
+    .hosts-cta {
+      flex-direction: row;
+      justify-content: center;
+    }
   }
 
   .host-see-live {

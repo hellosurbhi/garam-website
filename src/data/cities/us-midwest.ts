@@ -4,15 +4,15 @@ export const usMidwestCities: Record<string, CityData> = {
   chicago: {
     slug: "chicago",
     displayName: "Chicago",
-    titleTag: "Chicago Desi Dating Show | Garam Masala Dating",
+    titleTag: "Chicago Desi Dating Show",
     metaDescription:
-      "Garam Masala Dating is coming to Chicago. A live South Asian dating show and singles mixer. Devon Avenue energy meets East Village chaos.",
+      "Garam Masala Dating is coming to Chicago. The #1 live South Asian dating show and singles mixer. Devon Avenue energy meets East Village chaos.",
     h1: "Where Do Desi Singles Go in Chicago? Devon Avenue Deserves a Dating Show.",
     status: "coming-soon",
     badgeLabel: "Coming Soon",
     bodyParagraphs: [
       "Chicago has the second largest South Asian population in America after the NYC/NJ corridor, and somehow nobody has built a proper desi dating night for this city. Devon Avenue alone could fill a venue twice over. Schaumburg, Naperville, Aurora, Bolingbrook. The suburbs are deep with desi families, which means there are thousands of single South Asians scattered across Chicagoland who are tired of the same rotation of apps and aunty setups.",
-      "Garam Masala Dating is a live South Asian dating show and singles mixer that sells out a 250 person room in New York City every other week. Real singles go on blind dates on stage. The audience watches, reacts, and picks favorites. Before and after, everyone mixes. It\u2019s the opposite of sitting alone on your phone hoping the algorithm blesses you.",
+      "Garam Masala Dating is the #1 live South Asian dating show and singles mixer that sells out a 250 person room in New York City every other week. Real singles go on blind dates on stage. The audience watches, reacts, and picks favorites. Before and after, everyone mixes. It\u2019s the opposite of sitting alone on your phone hoping the algorithm blesses you.",
       "The Chicago desi scene is massive but weirdly fragmented. You\u2019ve got the Northwestern crowd, the UChicago crowd, the UIC and IIT crowds, the downtown tech workers, the suburban professionals. Everyone knows other desi people, but the circles don\u2019t overlap enough. This show puts everyone in one room.",
       "We\u2019re building the Chicago waitlist now. When we announce a date, the waitlist gets first access to tickets. If you want to be on stage as a contestant, apply below and you\u2019ll be in the system when we arrive.",
       "If you\u2019ve ever said \u201Cthere\u2019s no way to meet people in this city\u201D while living in a metro area of 9 million, this is your sign to stop blaming the city and start showing up.",
@@ -42,15 +42,15 @@ export const usMidwestCities: Record<string, CityData> = {
   champaign: {
     slug: "champaign",
     displayName: "Champaign",
-    titleTag: "UIUC Desi Dating Night Champaign | Garam Masala Dating",
+    titleTag: "UIUC Desi Dating Night Champaign",
     metaDescription:
-      "Garam Masala Dating is coming to Champaign. A live South Asian dating show for the massive UIUC desi community. Join the waitlist.",
+      "Garam Masala Dating is coming to Champaign. The #1 live South Asian dating show for the massive UIUC desi community. Join the waitlist.",
     h1: "Green Street Has Enough Bars. It Needs a Dating Show.",
     status: "coming-soon",
     badgeLabel: "Coming Soon",
     bodyParagraphs: [
       "UIUC has one of the largest Indian and South Asian student bodies in the country. Walk through the engineering quad on any given Tuesday and you\u2019ll hear more Hindi and Telugu than you will in most American cities. The desi community here is enormous. The dating options? Not so much.",
-      "Garam Masala Dating is a live South Asian dating show and singles mixer from New York City. Real singles go on blind dates on stage in front of a live audience. Everyone watches, everyone reacts, and everyone mixes before and after the show. It\u2019s chaotic, it\u2019s fun, and it works better than whatever you\u2019re currently doing on Hinge.",
+      "Garam Masala Dating is the #1 live South Asian dating show and singles mixer from New York City. Real singles go on blind dates on stage in front of a live audience. Everyone watches, everyone reacts, and everyone mixes before and after the show. It\u2019s chaotic, it\u2019s fun, and it works better than whatever you\u2019re currently doing on Hinge.",
       "Champaign is a college town, which means the dating pool refreshes every year but also means everyone ends up in the same three bars on Green Street. This is different. A full room of people who showed up specifically because they want to meet someone. No ambiguity about why anyone is there.",
       "We\u2019re gauging interest for a Champaign show. Get on the waitlist and you\u2019ll hear about it before anyone else. If you want to be a contestant and go on a blind date in front of your classmates, apply below. We dare you.",
     ],
@@ -79,15 +79,15 @@ export const usMidwestCities: Record<string, CityData> = {
   detroit: {
     slug: "detroit",
     displayName: "Detroit",
-    titleTag: "Detroit Troy MI Indian Dating Night | Garam Masala Dating",
+    titleTag: "Detroit Troy MI Indian Dating Night",
     metaDescription:
-      "Garam Masala Dating is coming to the Detroit metro. Troy, Canton, Novi, Farmington Hills. A live South Asian dating show and singles mixer.",
+      "Garam Masala Dating is coming to the Detroit metro. Troy, Canton, Novi, Farmington Hills. The #1 live South Asian dating show and singles mixer.",
     h1: "Troy, Michigan Has More Desi Singles Than Your Group Chat",
     status: "coming-soon",
     badgeLabel: "Coming Soon",
     bodyParagraphs: [
       "Troy, Michigan is one of the most Indian suburbs in America, and if you grew up there you already know that. You also know that dating within the community here means either getting set up by someone\u2019s mom or running into the same twelve people at every garba and Diwali party. Canton, Novi, Farmington Hills, West Bloomfield. The desi footprint in metro Detroit is massive, but the social infrastructure for single people is basically nonexistent.",
-      "Garam Masala Dating is changing that. We run a live South Asian dating show and singles mixer in New York City that sells out every other week. Real singles go on blind dates on stage, the audience watches and reacts, and everyone mixes before and after. It\u2019s loud, it\u2019s fun, and nobody has to pretend they\u2019re not there to meet someone.",
+      "Garam Masala Dating is changing that. We run the #1 live South Asian dating show and singles mixer in New York City that sells out every other week. Real singles go on blind dates on stage, the audience watches and reacts, and everyone mixes before and after. It\u2019s loud, it\u2019s fun, and nobody has to pretend they\u2019re not there to meet someone.",
       "The Detroit metro desi community is heavily professional. Automotive engineers, healthcare workers, tech folks who chose Michigan over the coasts. There are also UMich grads who stuck around and Wayne State students who never left. The common thread is that everyone knows the community is here, but there\u2019s no single event that brings all the single people together in one place.",
       "That\u2019s what this is. We\u2019re building the Detroit area waitlist now. When we announce a show, the waitlist gets priority. Apply below if you want to be a contestant when we come to town.",
       "And yes, we\u2019ll probably do the show somewhere between Troy and downtown. We know nobody wants to drive to the other side of the metro on a weeknight.",
@@ -117,15 +117,15 @@ export const usMidwestCities: Record<string, CityData> = {
   "ann-arbor": {
     slug: "ann-arbor",
     displayName: "Ann Arbor",
-    titleTag: "Ann Arbor UMich Desi Dating Event | Garam Masala Dating",
+    titleTag: "Ann Arbor UMich Desi Dating Event",
     metaDescription:
-      "Garam Masala Dating is coming to Ann Arbor. A live South Asian dating show for the UMich desi community. Join the waitlist.",
+      "Garam Masala Dating is coming to Ann Arbor. The #1 live South Asian dating show for the UMich desi community. Join the waitlist.",
     h1: "A Fishbowl Town Needs Fresh Faces. We Bring Them.",
     status: "coming-soon",
     badgeLabel: "Coming Soon",
     bodyParagraphs: [
       "UMich is one of the biggest universities in the country, and the South Asian presence on campus and in the broader Ann Arbor area is hard to miss. Between undergrads, grad students, postdocs, and the professionals who stuck around after graduation, there\u2019s a sizable desi population here with limited options for meeting new people outside of their existing circles.",
-      "Garam Masala Dating is a live South Asian dating show and singles mixer from New York City. The format: real singles go on blind dates on stage, the audience watches and reacts, and everyone mixes before and after the show. It\u2019s been selling out in NYC and we\u2019re expanding.",
+      "Garam Masala Dating is the #1 live South Asian dating show and singles mixer from New York City. The format: real singles go on blind dates on stage, the audience watches and reacts, and everyone mixes before and after the show. It\u2019s been selling out in NYC and we\u2019re expanding.",
       "Ann Arbor is a town where everyone knows everyone. That\u2019s great for community, but it makes dating feel like a fishbowl. The beauty of this show is that it pulls people from across the area. You\u2019re not just running into the same group from your department or your intramural cricket team. You\u2019re in a room full of people you haven\u2019t met yet.",
       "We\u2019re building the Ann Arbor waitlist. Get on it and you\u2019ll know about the show before it\u2019s posted anywhere else. If you want to be a contestant, apply below. Going on a blind date in front of your college town is either brave or unhinged, and we respect both.",
     ],
@@ -154,15 +154,15 @@ export const usMidwestCities: Record<string, CityData> = {
   "columbus-oh": {
     slug: "columbus-oh",
     displayName: "Columbus",
-    titleTag: "Columbus OH Live Desi Dating Show | Garam Masala Dating",
+    titleTag: "Columbus OH Live Desi Dating Show",
     metaDescription:
-      "Garam Masala Dating is coming to Columbus, Ohio. A live South Asian dating show and singles mixer. Dublin, Westerville, Powell, and beyond.",
+      "Garam Masala Dating is coming to Columbus, Ohio. The #1 live South Asian dating show and singles mixer. Dublin, Westerville, Powell, and beyond.",
     h1: "Stop Hoping to Run Into Someone at Patel Brothers on Sawmill",
     status: "coming-soon",
     badgeLabel: "Coming Soon",
     bodyParagraphs: [
       "Columbus has been quietly building one of the fastest growing South Asian communities in the Midwest. Dublin, Westerville, Powell, New Albany. The suburbs are full of Indian tech workers and their families, and Ohio State pulls in a huge South Asian student body every year. The community is here. The dating infrastructure is not.",
-      "Garam Masala Dating is a live South Asian dating show and singles mixer that started in New York City. Real singles go on blind dates on stage in front of a live audience. The hosts keep it entertaining, the crowd picks favorites, and everyone mixes before and after. No swiping, no algorithms, no sitting across from a stranger at a speed dating table wondering when the bell will ring.",
+      "Garam Masala Dating is the #1 live South Asian dating show and singles mixer that started in New York City. Real singles go on blind dates on stage in front of a live audience. The hosts keep it entertaining, the crowd picks favorites, and everyone mixes before and after. No swiping, no algorithms, no sitting across from a stranger at a speed dating table wondering when the bell will ring.",
       "Columbus is a city that punches above its weight. Great food scene, affordable rent, real neighborhoods. But if you\u2019re South Asian and single here, the options are limited to apps, the occasional cultural event, or hoping you run into someone at Patel Brothers on Sawmill Road. This show creates a reason for every single desi person in the metro to be in one room on the same night.",
       "We\u2019re building the Columbus waitlist. First access to tickets when we announce. If you want to be a contestant and go on a live blind date on stage, apply below.",
       "Ohio State alumni, Dublin tech workers, healthcare professionals. We know you\u2019re out there. Stop waiting for the apps to work and come to the show.",
@@ -192,15 +192,15 @@ export const usMidwestCities: Record<string, CityData> = {
   cincinnati: {
     slug: "cincinnati",
     displayName: "Cincinnati",
-    titleTag: "Cincinnati Indian Singles Mixer | Garam Masala Dating",
+    titleTag: "Cincinnati Indian Singles Mixer",
     metaDescription:
-      "Garam Masala Dating is coming to Cincinnati. A live South Asian dating show and singles mixer. Mason, West Chester, and the whole tri-state area.",
+      "Garam Masala Dating is coming to Cincinnati. The #1 live South Asian dating show and singles mixer. Mason, West Chester, and the whole tri-state area.",
     h1: "Mason, West Chester, and a Room Full of Desi Singles. Finally.",
     status: "coming-soon",
     badgeLabel: "Coming Soon",
     bodyParagraphs: [
       "Mason and West Chester have become the quiet epicenter of South Asian life in the Cincinnati metro. Procter & Gamble, Kroger, and the broader corporate scene have drawn Indian professionals to the area for years, and the community has put down roots. Temples, grocery stores, weekend language schools. The infrastructure is there. What\u2019s missing is a social scene for single people that doesn\u2019t feel like a corporate mixer or an aunty\u2019s living room.",
-      "Garam Masala Dating is a live South Asian dating show and singles mixer that started in NYC. The format: real singles, live blind dates on stage, a real audience reacting in real time, and a mixer so everyone in the room can meet each other. It\u2019s been selling out in New York and we\u2019re bringing it to cities with strong desi communities.",
+      "Garam Masala Dating is the #1 live South Asian dating show and singles mixer that started in NYC. The format: real singles, live blind dates on stage, a real audience reacting in real time, and a mixer so everyone in the room can meet each other. It\u2019s been selling out in New York and we\u2019re bringing it to cities with strong desi communities.",
       "Cincinnati\u2019s South Asian population is concentrated but spread across the northern suburbs. Blue Ash, West Chester, Mason, Liberty Township. Everyone drives everywhere, which means organic run-ins are rare. You\u2019re not bumping into someone cute on the subway here. This show gives you a reason to be in the same room as two hundred other single South Asians on the same night.",
       "We\u2019re building the Cincinnati waitlist. Waitlist gets first access when we announce a date. If you want to go on a blind date on stage in the Queen City, apply below.",
     ],
@@ -229,15 +229,15 @@ export const usMidwestCities: Record<string, CityData> = {
   cleveland: {
     slug: "cleveland",
     displayName: "Cleveland",
-    titleTag: "Cleveland OH Desi Dating Night | Garam Masala Dating",
+    titleTag: "Cleveland OH Desi Dating Night",
     metaDescription:
-      "Garam Masala Dating is coming to Cleveland. A live South Asian dating show and singles mixer. Brecksville, Strongsville, and the whole metro.",
+      "Garam Masala Dating is coming to Cleveland. The #1 live South Asian dating show and singles mixer. Brecksville, Strongsville, and the whole metro.",
     h1: "CWRU Students, Clinic Residents, the Strongsville Crowd. We See You.",
     status: "coming-soon",
     badgeLabel: "Coming Soon",
     bodyParagraphs: [
       "Cleveland\u2019s South Asian community is smaller than Columbus or Chicago, but it\u2019s tight and it\u2019s loyal. Brecksville, Strongsville, Westlake. The medical corridor around the Cleveland Clinic and University Hospitals has drawn Indian doctors, researchers, and healthcare professionals for decades. Case Western brings in South Asian grad students every year. The people are here. The social scene for singles has just never caught up.",
-      "Garam Masala Dating is a live South Asian dating show and singles mixer from New York City. Real singles go on blind dates on stage while the audience watches and reacts. Before and after, everyone mixes. It\u2019s the most fun you can have while technically trying to find a life partner.",
+      "Garam Masala Dating is the #1 live South Asian dating show and singles mixer from New York City. Real singles go on blind dates on stage while the audience watches and reacts. Before and after, everyone mixes. It\u2019s the most fun you can have while technically trying to find a life partner.",
       "In smaller metros like Cleveland, the desi dating pool can feel limited. You went to the same Diwali events, you know the same families, you\u2019ve seen the same faces on every app within a 30 mile radius. This show is different because it creates a specific night where single South Asians from across the metro show up with the same intention. No pretense, no ambiguity.",
       "We\u2019re building the Cleveland waitlist. Get on it and you\u2019ll hear about the show before anyone else. Want to go on a live blind date on stage? Apply below.",
       "CWRU students, Clinic residents, the Strongsville crowd. We see you. Come out.",
@@ -267,15 +267,15 @@ export const usMidwestCities: Record<string, CityData> = {
   minneapolis: {
     slug: "minneapolis",
     displayName: "Minneapolis",
-    titleTag: "Minneapolis South Asian Dating Show | Garam Masala Dating",
+    titleTag: "Minneapolis South Asian Dating Show",
     metaDescription:
-      "Garam Masala Dating is coming to Minneapolis. A live South Asian dating show and singles mixer. Maple Grove, Plymouth, Eagan, and the Twin Cities.",
+      "Garam Masala Dating is coming to Minneapolis. The #1 live South Asian dating show and singles mixer. Maple Grove, Plymouth, Eagan, and the Twin Cities.",
     h1: "Minnesota Nice Won't Find You a Date. This Show Will.",
     status: "coming-soon",
     badgeLabel: "Coming Soon",
     bodyParagraphs: [
       "The Twin Cities desi community is bigger than most people outside Minnesota realize. Target, UnitedHealth Group, Medtronic, and the broader Fortune 500 presence in the metro have been pulling Indian professionals to Minneapolis for years. Maple Grove, Plymouth, Eagan, Eden Prairie. The suburbs are dotted with Indian families, temples, and grocery stores. But if you\u2019re single and South Asian in the Twin Cities, your options are roughly: apps, the annual Diwali gala, or waiting for your parents to find someone.",
-      "Garam Masala Dating is a live South Asian dating show and singles mixer that has been selling out in New York City. Real singles go on blind dates on stage, the audience reacts, and everyone mixes. It\u2019s the energy of a comedy show combined with the stakes of a first date, all in front of a crowd that\u2019s rooting for you.",
+      "Garam Masala Dating is the #1 live South Asian dating show and singles mixer that has been selling out in New York City. Real singles go on blind dates on stage, the audience reacts, and everyone mixes. It\u2019s the energy of a comedy show combined with the stakes of a first date, all in front of a crowd that\u2019s rooting for you.",
       "Minneapolis is a city where people are friendly but making real connections as an adult is notoriously hard. The \u201CMinnesota Nice\u201D thing is real and it cuts both ways. Everyone is polite, nobody makes the first move. This show removes that barrier entirely. You\u2019re in a room full of people who all showed up for the same reason.",
       "We\u2019re building the Minneapolis waitlist. UMN students, corporate folks, healthcare workers, everyone is welcome. Get on the list for first access to tickets, or apply to be a contestant below.",
       "Yes, we\u2019ll schedule it for a time when it\u2019s not negative twenty outside. We\u2019re not trying to test anyone\u2019s commitment that hard.",
@@ -305,15 +305,15 @@ export const usMidwestCities: Record<string, CityData> = {
   indianapolis: {
     slug: "indianapolis",
     displayName: "Indianapolis",
-    titleTag: "Indianapolis Desi Singles Night | Garam Masala Dating",
+    titleTag: "Indianapolis Desi Singles Night",
     metaDescription:
-      "Garam Masala Dating is coming to Indianapolis. A live South Asian dating show and singles mixer. Carmel, Fishers, and the whole Indy metro.",
+      "Garam Masala Dating is coming to Indianapolis. The #1 live South Asian dating show and singles mixer. Carmel, Fishers, and the whole Indy metro.",
     h1: "Hamilton County Desi Community, This Is Your Moment",
     status: "coming-soon",
     badgeLabel: "Coming Soon",
     bodyParagraphs: [
       "Carmel, Indiana is one of those suburbs where the South Asian community has built something genuinely impressive. Top schools, beautiful neighborhoods, a growing desi restaurant scene on the north side. Fishers, Westfield, and Zionsville are the same story. Eli Lilly and the broader pharma corridor have pulled Indian professionals to the Indy metro for years. The community is established. The dating scene for single people within it? Basically nonexistent.",
-      "Garam Masala Dating is a live South Asian dating show and singles mixer from New York City. The format is simple and it works: real singles go on blind dates on stage, the hosts ask questions, the audience picks favorites, and everyone mixes before and after. It sells out in NYC and we\u2019re expanding to cities where the desi community is strong but underserved.",
+      "Garam Masala Dating is the #1 live South Asian dating show and singles mixer from New York City. The format is simple and it works: real singles go on blind dates on stage, the hosts ask questions, the audience picks favorites, and everyone mixes before and after. It sells out in NYC and we\u2019re expanding to cities where the desi community is strong but underserved.",
       "Indianapolis is the kind of city where people settle down young, which makes being single in your late 20s or 30s feel like you missed a train that everyone else caught. You didn\u2019t. You just need better options than whatever the apps are serving you. This show puts you in a room with other South Asians who are actively looking to meet someone new.",
       "We\u2019re building the Indy waitlist. Carmel professionals, Purdue grads who moved down, IU transplants, Lilly scientists. Get on the list for first access, or apply to be a contestant below.",
       "Hamilton County desi community, this is your moment. Don\u2019t make us come find you at the Trader Joe\u2019s in Carmel.",
@@ -343,15 +343,15 @@ export const usMidwestCities: Record<string, CityData> = {
   "west-lafayette": {
     slug: "west-lafayette",
     displayName: "West Lafayette",
-    titleTag: "Purdue Desi Dating Night | Garam Masala Dating",
+    titleTag: "Purdue Desi Dating Night",
     metaDescription:
-      "Garam Masala Dating is coming to West Lafayette. A live South Asian dating show for Purdue\u2019s massive desi community. Join the waitlist.",
+      "Garam Masala Dating is coming to West Lafayette. The #1 live South Asian dating show for Purdue\u2019s massive desi community. Join the waitlist.",
     h1: "Swiping Through the Same 20 Profiles Near Purdue? There's a Better Way.",
     status: "coming-soon",
     badgeLabel: "Coming Soon",
     bodyParagraphs: [
       "Purdue has one of the largest Indian graduate student populations in the entire country. Walk through the engineering buildings or the grad student apartments off State Street and you\u2019ll hear it. The desi community here is enormous relative to the size of the town. The problem is that West Lafayette is a small college town with limited social venues, which means the same people end up at the same spots every weekend.",
-      "Garam Masala Dating is a live South Asian dating show and singles mixer that has been running in New York City. Real singles go on blind dates on stage while the audience watches. It\u2019s part comedy show, part social experiment, and 100% more effective than swiping through the same twenty profiles within a five mile radius.",
+      "Garam Masala Dating is the #1 live South Asian dating show and singles mixer that has been running in New York City. Real singles go on blind dates on stage while the audience watches. It\u2019s part comedy show, part social experiment, and 100% more effective than swiping through the same twenty profiles within a five mile radius.",
       "The grad school grind makes it easy to spend three years in West Lafayette without meeting anyone outside your lab or your apartment building. This show fixes that by putting everyone in one room with one purpose. No awkward department mixers, no forced small talk at a potluck. Just a fun night out where meeting someone new is the whole point.",
       "We\u2019re building the West Lafayette waitlist. Purdue grad students, postdocs, faculty, and anyone in the Lafayette area. Get on the list for first access to tickets, or apply to be a contestant and do something your labmates will talk about for the rest of the semester.",
     ],
@@ -380,15 +380,15 @@ export const usMidwestCities: Record<string, CityData> = {
   "bloomington-in": {
     slug: "bloomington-in",
     displayName: "Bloomington",
-    titleTag: "Bloomington IN Desi Event Near IU | Garam Masala Dating",
+    titleTag: "Bloomington IN Desi Event Near IU",
     metaDescription:
-      "Garam Masala Dating is coming to Bloomington, Indiana. A live South Asian dating show for the IU desi community. Join the waitlist.",
+      "Garam Masala Dating is coming to Bloomington, Indiana. The #1 live South Asian dating show for the IU desi community. Join the waitlist.",
     h1: "IU Desi Community, Let's See What You've Got",
     status: "coming-soon",
     badgeLabel: "Coming Soon",
     bodyParagraphs: [
       "Indiana University has a significant South Asian student population, and Bloomington is the kind of college town where everyone ends up at the same few places on Kirkwood Avenue every weekend. If you\u2019re desi and single here, you\u2019ve probably exhausted the obvious options. The cultural orgs are great for community but not designed for dating. The bars are fine but not exactly where you go to find a South Asian partner.",
-      "Garam Masala Dating is a live South Asian dating show and singles mixer from New York City. Real singles go on blind dates on stage in front of a live audience. The hosts keep things funny and honest, the crowd reacts, and everyone mixes before and after. It\u2019s a night out that actually produces results.",
+      "Garam Masala Dating is the #1 live South Asian dating show and singles mixer from New York City. Real singles go on blind dates on stage in front of a live audience. The hosts keep things funny and honest, the crowd reacts, and everyone mixes before and after. It\u2019s a night out that actually produces results.",
       "Bloomington\u2019s charm is that it\u2019s small enough to feel like home but big enough to have a real social scene. The IU campus brings in new people every year, and the town has a creative, open energy that most college towns wish they had. A desi dating show fits right into that.",
       "We\u2019re gauging interest for a Bloomington show. Join the waitlist and you\u2019ll be first to know when we announce. If you want to be a contestant and go on a blind date in front of your campus, apply below. IU desi community, let\u2019s see what you\u2019ve got.",
     ],
@@ -417,15 +417,15 @@ export const usMidwestCities: Record<string, CityData> = {
   milwaukee: {
     slug: "milwaukee",
     displayName: "Milwaukee",
-    titleTag: "Milwaukee Desi Dating Show | Garam Masala Dating",
+    titleTag: "Milwaukee Desi Dating Show",
     metaDescription:
-      "Garam Masala Dating is coming to Milwaukee. A live South Asian dating show and singles mixer. Brookfield, Wauwatosa, and the whole metro.",
+      "Garam Masala Dating is coming to Milwaukee. The #1 live South Asian dating show and singles mixer. Brookfield, Wauwatosa, and the whole metro.",
     h1: "Stop Driving to Chicago. MKE Gets Its Own Show.",
     status: "coming-soon",
     badgeLabel: "Coming Soon",
     bodyParagraphs: [
       "Milwaukee\u2019s South Asian community is small but fiercely loyal. Brookfield, Wauwatosa, Mequon. The families that have been here know each other, which is wonderful until you\u2019re single and realize that everyone you could date is someone your parents already know. The anonymity that bigger cities offer doesn\u2019t exist here, which makes the dating scene feel impossibly small.",
-      "Garam Masala Dating is a live South Asian dating show and singles mixer from New York City. Real singles, live blind dates on stage, an audience of 250, and a mixer where everyone actually talks to each other. It\u2019s been selling out in NYC and we\u2019re expanding to cities where the desi community deserves better than what the apps are offering.",
+      "Garam Masala Dating is the #1 live South Asian dating show and singles mixer from New York City. Real singles, live blind dates on stage, an audience of 250, and a mixer where everyone actually talks to each other. It\u2019s been selling out in NYC and we\u2019re expanding to cities where the desi community deserves better than what the apps are offering.",
       "Milwaukee is 90 minutes from Chicago, and plenty of MKE desi folks have made the drive for events down there. We think you deserve something in your own city. Marquette students, UWM grads, the Brookfield professionals, the Wauwatosa crowd. One room, one night, no commute.",
       "We\u2019re building the Milwaukee waitlist. Get on it for first access to tickets when we announce a date. Apply below if you want to be a contestant. In a smaller city, going on a blind date on stage is either the bravest or the most chaotic thing you can do. We\u2019re into it either way.",
     ],
@@ -454,15 +454,15 @@ export const usMidwestCities: Record<string, CityData> = {
   "madison-wi": {
     slug: "madison-wi",
     displayName: "Madison",
-    titleTag: "Madison WI Desi Dating Night | Garam Masala Dating",
+    titleTag: "Madison WI Desi Dating Night",
     metaDescription:
-      "Garam Masala Dating is coming to Madison, Wisconsin. A live South Asian dating show for the UW and Epic Systems desi community.",
+      "Garam Masala Dating is coming to Madison, Wisconsin. The #1 live South Asian dating show for the UW and Epic Systems desi community.",
     h1: "Epic Employees and UW Students, This One's for You",
     status: "coming-soon",
     badgeLabel: "Coming Soon",
     bodyParagraphs: [
       "Madison has a unique desi pipeline. UW\u2019s South Asian student body is significant, but the bigger story is Epic Systems in Verona. Epic has been hiring Indian engineers and consultants for years, and a large chunk of them are in their 20s and 30s, single, and living in a mid-sized Wisconsin city where the dating options are limited. If you know, you know.",
-      "Garam Masala Dating is a live South Asian dating show and singles mixer that started in New York City. Real singles go on blind dates on stage, the audience watches and reacts, and everyone mixes before and after. The show has been selling out in NYC and we\u2019re looking at cities where the community is concentrated enough to fill a room.",
+      "Garam Masala Dating is the #1 live South Asian dating show and singles mixer that started in New York City. Real singles go on blind dates on stage, the audience watches and reacts, and everyone mixes before and after. The show has been selling out in NYC and we\u2019re looking at cities where the community is concentrated enough to fill a room.",
       "Madison punches above its weight as a city. The food is good, the isthmus is beautiful, State Street has energy. But the dating pool for South Asians here is genuinely small, and if you work at Epic, your social circle can quickly become just other Epic employees. This show draws from the whole metro and puts you in a room with people you haven\u2019t already met at an onboarding event.",
       "We\u2019re building the Madison waitlist. UW students, Epic employees, healthcare workers, and anyone in the Dane County area. Get on the list for first access, or apply to be a contestant below.",
       "Verona commuters, this one\u2019s for you. No, it will not be held in a conference room at Epic\u2019s campus. We promise.",
@@ -492,15 +492,15 @@ export const usMidwestCities: Record<string, CityData> = {
   "kansas-city": {
     slug: "kansas-city",
     displayName: "Kansas City",
-    titleTag: "Kansas City Indian Singles Event | Garam Masala Dating",
+    titleTag: "Kansas City Indian Singles Event",
     metaDescription:
-      "Garam Masala Dating is coming to Kansas City. A live South Asian dating show and singles mixer. Overland Park, Lenexa, and the whole metro.",
+      "Garam Masala Dating is coming to Kansas City. The #1 live South Asian dating show and singles mixer. Overland Park, Lenexa, and the whole metro.",
     h1: "Missouri Side, Kansas Side. We Don't Care. Just Show Up.",
     status: "coming-soon",
     badgeLabel: "Coming Soon",
     bodyParagraphs: [
       "The Kansas City desi community is split across two states and about forty suburbs, which makes it feel smaller than it actually is. Overland Park, Lenexa, Olathe on the Kansas side. The T-Mobile campus (formerly Sprint) in Overland Park alone has drawn hundreds of Indian tech workers. Add in the broader tech and corporate presence on both sides of the state line, and you\u2019ve got a real community that just needs a reason to get in the same room.",
-      "Garam Masala Dating is a live South Asian dating show and singles mixer from New York City. Real singles go on blind dates on stage. The audience reacts. Everyone mixes. It\u2019s the kind of event that KC\u2019s South Asian singles have been asking for, whether they realized it or not.",
+      "Garam Masala Dating is the #1 live South Asian dating show and singles mixer from New York City. Real singles go on blind dates on stage. The audience reacts. Everyone mixes. It\u2019s the kind of event that KC\u2019s South Asian singles have been asking for, whether they realized it or not.",
       "Kansas City is a barbecue town, a jazz town, a football town. What it\u2019s not, traditionally, is a \u201Clive desi dating show\u201D town. That\u2019s what makes this interesting. The community here is close enough that people will actually show up, but big enough that you won\u2019t already know everyone in the room.",
       "We\u2019re building the KC waitlist. Overland Park families, UMKC and KU students, T-Mobile engineers, everyone. Get on the list for first access to tickets, or apply to be a contestant below.",
       "Missouri side, Kansas side, we don\u2019t care which state you\u2019re in. Just show up.",
@@ -530,15 +530,15 @@ export const usMidwestCities: Record<string, CityData> = {
   "st-louis": {
     slug: "st-louis",
     displayName: "St. Louis",
-    titleTag: "St. Louis Desi Singles Mixer | Garam Masala Dating",
+    titleTag: "St. Louis Desi Singles Mixer",
     metaDescription:
-      "Garam Masala Dating is coming to St. Louis. A live South Asian dating show and singles mixer. Chesterfield, Creve Coeur, and the metro.",
+      "Garam Masala Dating is coming to St. Louis. The #1 live South Asian dating show and singles mixer. Chesterfield, Creve Coeur, and the metro.",
     h1: "Same Hundred Faces at Every Desi Event in STL? Not Anymore.",
     status: "coming-soon",
     badgeLabel: "Coming Soon",
     bodyParagraphs: [
       "St. Louis has a concentrated South Asian community spread across Chesterfield, Creve Coeur, and Maryland Heights on the west side of the metro. WashU and SLU bring in South Asian students, and the healthcare and biotech corridors have drawn Indian professionals for years. The community is smaller than Chicago or the coasts, but the density in those west county suburbs is real.",
-      "Garam Masala Dating is a live South Asian dating show and singles mixer from New York City. The format works everywhere: real singles go on blind dates on stage, the audience watches and reacts, and everyone mixes before and after. It\u2019s been selling out in NYC and we\u2019re looking at cities where the desi community is concentrated and underserved.",
+      "Garam Masala Dating is the #1 live South Asian dating show and singles mixer from New York City. The format works everywhere: real singles go on blind dates on stage, the audience watches and reacts, and everyone mixes before and after. It\u2019s been selling out in NYC and we\u2019re looking at cities where the desi community is concentrated and underserved.",
       "If you\u2019re South Asian and single in St. Louis, you\u2019ve probably noticed that the dating pool feels smaller than it should. The metro has over 2.8 million people, but the desi social scene can feel like the same hundred faces at every cultural event. This show changes the math by giving single South Asians a specific night to show up, in one room, with the same goal.",
       "We\u2019re building the St. Louis waitlist now. WashU students, Chesterfield professionals, medical residents, everyone. Get on the list for first access to tickets, or apply to be a contestant below.",
     ],
@@ -567,15 +567,15 @@ export const usMidwestCities: Record<string, CityData> = {
   "iowa-city": {
     slug: "iowa-city",
     displayName: "Iowa City",
-    titleTag: "Iowa City Desi Event Near UIowa | Garam Masala Dating",
+    titleTag: "Iowa City Desi Event Near UIowa",
     metaDescription:
-      "Garam Masala Dating is coming to Iowa City. A live South Asian dating show for the University of Iowa desi community. Join the waitlist.",
+      "Garam Masala Dating is coming to Iowa City. The #1 live South Asian dating show for the University of Iowa desi community. Join the waitlist.",
     h1: "Your Dating Pool Is the Size of a Puddle. Let's Fix That, Iowa City.",
     status: "coming-soon",
     badgeLabel: "Coming Soon",
     bodyParagraphs: [
       "The University of Iowa has a solid South Asian student presence, particularly in the graduate and medical programs. Iowa City is small, walkable, and culturally interesting for a Midwest college town. But if you\u2019re desi and single here, you\u2019ve probably realized that the dating pool is the size of a puddle. Everyone in your program already knows everyone else, and the broader town doesn\u2019t exactly have a thriving desi singles scene.",
-      "Garam Masala Dating is a live South Asian dating show and singles mixer from New York City. Real singles go on blind dates on stage in front of a live audience, and everyone mixes before and after. It\u2019s fun, it\u2019s chaotic, and it\u2019s better than whatever you\u2019re doing on a Tuesday night in Iowa City.",
+      "Garam Masala Dating is the #1 live South Asian dating show and singles mixer from New York City. Real singles go on blind dates on stage in front of a live audience, and everyone mixes before and after. It\u2019s fun, it\u2019s chaotic, and it\u2019s better than whatever you\u2019re doing on a Tuesday night in Iowa City.",
       "College towns are tricky for dating because the population is transient and the circles are small. This show works in that environment because it concentrates everyone in one place at one time. No more hoping to run into someone at the Ped Mall or at a Hawkeyes game.",
       "We\u2019re gauging interest for Iowa City. Get on the waitlist to be first to know when we announce. If you want to be a contestant and go on a live blind date in front of your college town, apply below.",
     ],
@@ -598,15 +598,15 @@ export const usMidwestCities: Record<string, CityData> = {
   ames: {
     slug: "ames",
     displayName: "Ames",
-    titleTag: "Ames Iowa State Desi Dating Show | Garam Masala Dating",
+    titleTag: "Ames Iowa State Desi Dating Show",
     metaDescription:
-      "Garam Masala Dating is coming to Ames. A live South Asian dating show for the Iowa State desi community. Join the waitlist.",
+      "Garam Masala Dating is coming to Ames. The #1 live South Asian dating show for the Iowa State desi community. Join the waitlist.",
     h1: "Two Hours From Any Major City. Zero Excuses Not to Show Up.",
     status: "coming-soon",
     badgeLabel: "Coming Soon",
     bodyParagraphs: [
       "Iowa State has a strong Indian graduate student community, especially in engineering and computer science. Ames is a small town built around a big university, and if you\u2019re South Asian and single here, your world can feel very small very fast. The same lab, the same apartment complex, the same Hy-Vee grocery run. Meeting new people outside your program takes effort, and the town doesn\u2019t offer much help.",
-      "Garam Masala Dating is a live South Asian dating show and singles mixer from New York City. Real singles, live blind dates on stage, a crowd that\u2019s actually invested in the outcome, and a mixer where everyone talks to each other. It\u2019s the social event that small college towns need but never get.",
+      "Garam Masala Dating is the #1 live South Asian dating show and singles mixer from New York City. Real singles, live blind dates on stage, a crowd that\u2019s actually invested in the outcome, and a mixer where everyone talks to each other. It\u2019s the social event that small college towns need but never get.",
       "Ames is two and a half hours from any major city. That isolation can make dating feel impossible, but it also means that when something real comes to town, people actually show up. The ISU desi community is tight and enthusiastic. We think a show here would pack the room.",
       "We\u2019re gauging interest. Join the waitlist and you\u2019ll be the first to know when we announce a date. If you want to go on a blind date on stage in front of your classmates, apply to be a contestant below. That\u2019s either incredibly brave or deeply unhinged, and honestly we can\u2019t tell the difference anymore.",
     ],
@@ -632,15 +632,15 @@ export const usMidwestCities: Record<string, CityData> = {
   omaha: {
     slug: "omaha",
     displayName: "Omaha",
-    titleTag: "Omaha NE Indian Dating Night | Garam Masala Dating",
+    titleTag: "Omaha NE Indian Dating Night",
     metaDescription:
-      "Garam Masala Dating is coming to Omaha. A live South Asian dating show and singles mixer for Nebraska\u2019s growing desi community.",
+      "Garam Masala Dating is coming to Omaha. The #1 live South Asian dating show and singles mixer for Nebraska\u2019s growing desi community.",
     h1: "Nebraska Desi Community, Let's Make Some Noise",
     status: "coming-soon",
     badgeLabel: "Coming Soon",
     bodyParagraphs: [
       "Omaha and Lincoln have a small but growing South Asian community. UNL pulls in Indian graduate students, Creighton has its own contingent, and the broader Omaha tech and finance scene (this is Warren Buffett\u2019s city, after all) has been attracting Indian professionals quietly for years. It\u2019s not a city that comes up in conversations about desi hubs, but the people who are here know the community exists.",
-      "Garam Masala Dating is a live South Asian dating show and singles mixer that started in New York City. Real singles go on blind dates on stage in front of a live audience, and everyone mixes before and after. It\u2019s been selling out in NYC and we\u2019re bringing it to cities where the desi community, no matter the size, deserves better options than swiping alone in their apartment.",
+      "Garam Masala Dating is the #1 live South Asian dating show and singles mixer that started in New York City. Real singles go on blind dates on stage in front of a live audience, and everyone mixes before and after. It\u2019s been selling out in NYC and we\u2019re bringing it to cities where the desi community, no matter the size, deserves better options than swiping alone in their apartment.",
       "The reality of being South Asian and single in a smaller Midwestern city is that you sometimes feel like you\u2019re the only one. You\u2019re not. The community is here, it\u2019s just spread out and there hasn\u2019t been a catalyst to bring everyone together in one room. This show is that catalyst.",
       "We\u2019re building the Omaha and Lincoln waitlist. Get on it to be first in line when we announce a show. If you want to be a contestant, apply below. Nebraska desi community, let\u2019s make some noise.",
     ],

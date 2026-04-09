@@ -7,7 +7,7 @@ import { isEventPast } from "@/utils/eventDate";
 import { buildEventSchemas } from "@/utils/eventSchema";
 import LeadCaptureModal from "@/components/LeadCaptureModal.astro";
 
-const TITLE = "Tickets & Upcoming Shows | Garam Masala Dating";
+const TITLE = "Tickets & Upcoming Shows";
 const DESC =
   "Get tickets to upcoming Garam Masala Dating shows. NYC's #1 live South Asian dating show and singles mixer, now in LA, SF, San Diego, and more.";
 
@@ -34,7 +34,7 @@ const eventSeriesJsonLd = JSON.stringify({
   "@id": "https://garammasaladating.com/#event-series",
   name: "Garam Masala Dating",
   description:
-    "NYC's recurring live South Asian comedy dating show. Two real singles go on a blind date in front of a 250-person audience. Bi-weekly in Manhattan at Top Secret Comedy Club.",
+    "NYC's #1 recurring live South Asian comedy dating show. Two real singles go on a blind date in front of a 250-person audience. Bi-weekly in Manhattan at Top Secret Comedy Club.",
   url: "https://garammasaladating.com",
   startDate: "2022",
   organizer: {
@@ -87,7 +87,7 @@ const eventSeriesJsonLd = JSON.stringify({
         <p class="tickets-eyebrow">Tickets</p>
         <h1 class="tickets-h1">Upcoming Shows</h1>
         <p class="tickets-intro">
-          Garam Masala Dating is a live South Asian dating show and singles
+          Garam Masala Dating is the #1 live South Asian dating show and singles
           mixer. Grab tickets on Eventbrite.
         </p>
         <p class="tickets-proof">
@@ -210,7 +210,9 @@ const eventSeriesJsonLd = JSON.stringify({
 
       {/* Don't see your city? */}
       <div class="tickets-city-request" data-reveal>
-        <p class="tickets-city-request__text">Don't see your city? We're expanding fast.</p>
+        <p class="tickets-city-request__text">
+          Don't see your city? We're expanding fast.
+        </p>
         <button
           type="button"
           class="tickets-city-request__btn"
@@ -515,7 +517,9 @@ const eventSeriesJsonLd = JSON.stringify({
     font-size: 15px;
     font-weight: 600;
     cursor: pointer;
-    transition: background 0.2s, color 0.2s;
+    transition:
+      background 0.2s,
+      color 0.2s;
     min-height: var(--touch-target);
   }
 

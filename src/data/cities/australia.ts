@@ -4,15 +4,15 @@ export const australiaCities: Record<string, CityData> = {
   sydney: {
     slug: "sydney",
     displayName: "Sydney",
-    titleTag: "Sydney Desi Dating Show | Garam Masala Dating",
+    titleTag: "Sydney Desi Dating Show",
     metaDescription:
-      "Garam Masala Dating is coming to Sydney. A live South Asian dating show and singles mixer. Parramatta, Harris Park, UNSW, USyd, and Sydney\u2019s massive desi community.",
+      "Garam Masala Dating is coming to Sydney. The #1 live South Asian dating show and singles mixer. Parramatta, Harris Park, UNSW, USyd, and Sydney\u2019s massive desi community.",
     h1: "Harris Park to Parramatta, Sydney Gets a Live Dating Show",
     status: "coming-soon",
     badgeLabel: "Coming Soon",
     bodyParagraphs: [
       "Harris Park is literally called Little India. Walk down Wigram Street and it\u2019s all Indian restaurants, sweet shops, and grocery stores. Parramatta and the broader Western Sydney corridor from Blacktown to Westmead is home to one of the densest South Asian populations in the Southern Hemisphere. UNSW, USyd, and Macquarie all pull in huge Indian cohorts. The community is here and it\u2019s massive.",
-      "Garam Masala Dating is a live South Asian dating show and singles mixer from NYC. Real singles go on blind dates on stage in front of 250 people. Two hosts keep it funny and honest. Before and after the dates, everyone in the room mixes. It\u2019s a night out that actually works, not another Dil Mil meetup in a Surry Hills bar.",
+      "Garam Masala Dating is the #1 live South Asian dating show and singles mixer from NYC. Real singles go on blind dates on stage in front of 250 people. Two hosts keep it funny and honest. Before and after the dates, everyone in the room mixes. It\u2019s a night out that actually works, not another Dil Mil meetup in a Surry Hills bar.",
       "Sydney\u2019s desi dating scene is weird. The city is enormous and spread out, so the South Asian population in Parramatta rarely overlaps with the crowd in the CBD or the Eastern Suburbs. Students at UNSW don\u2019t cross paths with the IT professionals in North Sydney. This show puts everyone in the same room and that\u2019s half the battle.",
       "Australia\u2019s Indian population is one of the fastest growing in the country. The 2021 census showed India as the second largest country of birth for immigrants, and that number has only gone up. The audience isn\u2019t emerging. It\u2019s already here and waiting.",
       "Waitlist is open. Sydney is our top priority in Australia. Get on the list for first access to tickets, or apply to be a contestant when we arrive.",
@@ -39,17 +39,17 @@ export const australiaCities: Record<string, CityData> = {
   melbourne: {
     slug: "melbourne",
     displayName: "Melbourne",
-    titleTag: "Live Desi Dating Night Melbourne | Garam Masala Dating",
+    titleTag: "Live Desi Dating Night Melbourne",
     metaDescription:
-      "Garam Masala Dating is coming to Melbourne. A live South Asian dating show and singles mixer. Dandenong, Tarneit, Truganina, Monash, UniMelb, and Melbourne\u2019s desi scene.",
+      "Garam Masala Dating is coming to Melbourne. The #1 live South Asian dating show and singles mixer. Dandenong, Tarneit, Truganina, Monash, UniMelb, and Melbourne\u2019s desi scene.",
     h1: "Dandenong to Tarneit, Melbourne Has the Crowd. Now It Gets the Show.",
     status: "coming-soon",
     badgeLabel: "Coming Soon",
     bodyParagraphs: [
       "Dandenong. Cranbourne. Truganina. Tarneit. Melbourne\u2019s south and west have become home to one of Australia\u2019s largest South Asian communities. The growth in the last decade has been staggering. Entire suburbs have shifted demographics, with Indian grocery stores, restaurants, and temples opening faster than the city\u2019s public transport can keep up with.",
-      "Garam Masala Dating is a live South Asian dating show and singles mixer from New York City. Blind dates on stage, two hosts, a live audience, and a mixer where everyone meets. It\u2019s been selling out in NYC for over a year and we\u2019re expanding to the cities that deserve it. Melbourne is at the top.",
+      "Garam Masala Dating is the #1 live South Asian dating show and singles mixer from New York City. Blind dates on stage, two hosts, a live audience, and a mixer where everyone meets. It\u2019s been selling out in NYC for over a year and we\u2019re expanding to the cities that deserve it. Melbourne is at the top.",
       "Monash, UniMelb, RMIT, and Deakin all pull in enormous Indian student populations. Melbourne is consistently ranked as one of the top study destinations globally, and South Asian students make up a huge share of that. After graduation, many stay. The result is a young, professional, growing community that has plenty of cultural events but almost nothing designed specifically for singles.",
-      "Melbourne\u2019s comedy scene is strong. The Melbourne International Comedy Festival is one of the biggest in the world. The city\u2019s appetite for live, boundary pushing entertainment is well documented. A live dating show with comedy energy is a natural fit for this audience.",
+      "Melbourne\u2019s comedy scene is strong. The Melbourne International Comedy Festival is one of the biggest in the world. The city\u2019s appetite for live, boundary pushing entertainment is well documented. The #1 live dating show with comedy energy is a natural fit for this audience.",
       "Waitlist is open. Melbourne is neck and neck with Sydney for our first Australian show. Get on the list, or apply to be a contestant.",
     ],
     ctas: [
@@ -68,15 +68,15 @@ export const australiaCities: Record<string, CityData> = {
   brisbane: {
     slug: "brisbane",
     displayName: "Brisbane",
-    titleTag: "Brisbane South Asian Singles | Garam Masala Dating",
+    titleTag: "Brisbane South Asian Singles",
     metaDescription:
-      "Garam Masala Dating is coming to Brisbane. A live South Asian dating show and singles mixer. UQ, QUT, Griffith, and Queensland\u2019s growing desi community.",
+      "Garam Masala Dating is coming to Brisbane. The #1 live South Asian dating show and singles mixer. UQ, QUT, Griffith, and Queensland\u2019s growing desi community.",
     h1: "Brisbane’s Desi Scene Is Growing Faster Than Anyone Expected",
     status: "coming-soon",
     badgeLabel: "Coming Soon",
     bodyParagraphs: [
       "Brisbane\u2019s South Asian community has been growing quietly but significantly. UQ, QUT, and Griffith are all pulling in large Indian student cohorts, and the city\u2019s post Olympics infrastructure push is attracting professionals from across the subcontinent. The suburbs of Sunnybank, Eight Mile Plains, and Robertson have become hubs for South Asian families and young professionals.",
-      "Garam Masala Dating is a live South Asian dating show and singles mixer from NYC. Real singles on blind dates on stage, two hosts, and 250 people in the room watching, reacting, and mixing before and after. It\u2019s structured enough to work and social enough to feel like a party.",
+      "Garam Masala Dating is the #1 live South Asian dating show and singles mixer from NYC. Real singles on blind dates on stage, two hosts, and 250 people in the room watching, reacting, and mixing before and after. It\u2019s structured enough to work and social enough to feel like a party.",
       "Queensland has always been overshadowed by Sydney and Melbourne for South Asian cultural events. Brisbane gets skipped on tour dates, ignored by event promoters, and treated like the community isn\u2019t big enough. It is. The 2032 Olympics are already changing the city\u2019s profile and the South Asian population is growing faster than event programming can keep up.",
       "The weather helps too. Brisbane\u2019s outdoor lifestyle means people are genuinely social, not hibernating half the year like Melbourne. The energy of an audience that\u2019s already in a good mood makes the show better.",
       "Waitlist is live for Brisbane. Get on it for first access when we announce. Apply to be a contestant if you want to be part of Queensland\u2019s first live desi dating show.",
@@ -97,15 +97,15 @@ export const australiaCities: Record<string, CityData> = {
   perth: {
     slug: "perth",
     displayName: "Perth",
-    titleTag: "Desi Singles Night Perth | Garam Masala Dating",
+    titleTag: "Desi Singles Night Perth",
     metaDescription:
-      "Garam Masala Dating is coming to Perth. A live South Asian dating show and singles mixer. Canning Vale, UWA, Curtin, and Western Australia\u2019s desi community.",
+      "Garam Masala Dating is coming to Perth. The #1 live South Asian dating show and singles mixer. Canning Vale, UWA, Curtin, and Western Australia\u2019s desi community.",
     h1: "From Canning Vale to the City, Perth Gets a Night Worth Driving For",
     status: "coming-soon",
     badgeLabel: "Coming Soon",
     bodyParagraphs: [
       "Perth is the most isolated major city in the world and the South Asian community here knows it. Canning Vale and Harrisdale have become heavily Indian suburbs, with the kind of density where you can get authentic dosa at three different places within a five minute drive. UWA, Curtin, and Murdoch all recruit heavily from India, and the mining and tech sectors bring in professionals who plan to stay.",
-      "Garam Masala Dating is a live South Asian dating show and singles mixer from NYC. Real blind dates on stage, two hosts, a live audience, and a mixer. The format works everywhere but it might work best in cities like Perth where the dating pool feels smaller and the options are more limited.",
+      "Garam Masala Dating is the #1 live South Asian dating show and singles mixer from NYC. Real blind dates on stage, two hosts, a live audience, and a mixer. The format works everywhere but it might work best in cities like Perth where the dating pool feels smaller and the options are more limited.",
       "The isolation factor is real for dating. You can\u2019t just drive to the next city for a fresh scene. Perth is it. The apps recycle the same profiles, the community events are family oriented, and the social scene for young South Asian singles is genuinely lacking. A show that brings everyone together in one room isn\u2019t just nice to have here, it\u2019s necessary.",
       "Perth\u2019s Indian community skews toward professionals in mining, engineering, IT, and healthcare. Well educated, well employed, and too busy to figure out their personal lives. Sound familiar? That\u2019s the exact demographic that fills our NYC shows.",
       "Waitlist is open. Perth is on our Australia tour map. Get on the list or apply to be a contestant.",
@@ -126,15 +126,15 @@ export const australiaCities: Record<string, CityData> = {
   adelaide: {
     slug: "adelaide",
     displayName: "Adelaide",
-    titleTag: "Adelaide Desi Dating Show | Garam Masala Dating",
+    titleTag: "Adelaide Desi Dating Show",
     metaDescription:
-      "Garam Masala Dating is coming to Adelaide. A live South Asian dating show and singles mixer. University of Adelaide, Flinders, UniSA, and South Australia\u2019s booming desi community.",
+      "Garam Masala Dating is coming to Adelaide. The #1 live South Asian dating show and singles mixer. University of Adelaide, Flinders, UniSA, and South Australia\u2019s booming desi community.",
     h1: "Adelaide’s Desi Student Population Deserves More Than Lecture Halls",
     status: "coming-soon",
     badgeLabel: "Coming Soon",
     bodyParagraphs: [
       "Adelaide has had one of the most dramatic increases in Indian population of any Australian city. University of Adelaide, Flinders, and UniSA have all expanded their international student intake, and a huge share of those students are from India. The numbers have changed the city. Indian restaurants along Hindley Street, desi grocery stores in the northern suburbs, and a community that\u2019s growing faster than the social infrastructure can support.",
-      "Garam Masala Dating is a live South Asian dating show and singles mixer from New York City. Real blind dates on stage, two hosts, a live audience, and a mixer where everyone meets. It\u2019s designed for cities where the community has arrived but the events haven\u2019t caught up yet. That describes Adelaide perfectly.",
+      "Garam Masala Dating is the #1 live South Asian dating show and singles mixer from New York City. Real blind dates on stage, two hosts, a live audience, and a mixer where everyone meets. It\u2019s designed for cities where the community has arrived but the events haven\u2019t caught up yet. That describes Adelaide perfectly.",
       "The student pipeline means the audience skews younger here than in Sydney or Melbourne. But that\u2019s an advantage. The energy is different. People are more open, less jaded by years of bad apps, and genuinely excited about something new. First generation immigrants navigating dating in a new country? That\u2019s the show\u2019s sweet spot.",
       "Adelaide\u2019s Fringe Festival is the second largest in the world after Edinburgh\u2019s. The city has a proven appetite for experimental, live entertainment. A dating show with comedy woven in isn\u2019t a hard sell here.",
       "Waitlist is open. Adelaide is on our radar and the growth numbers make it impossible to ignore. Get on the list or apply to be a contestant.",
@@ -155,15 +155,15 @@ export const australiaCities: Record<string, CityData> = {
   canberra: {
     slug: "canberra",
     displayName: "Canberra",
-    titleTag: "Meet Desi Singles Canberra | Garam Masala Dating",
+    titleTag: "Meet Desi Singles Canberra",
     metaDescription:
-      "Garam Masala Dating is coming to Canberra. A live South Asian dating show and singles mixer. ANU, government workers, and the capital\u2019s desi community.",
+      "Garam Masala Dating is coming to Canberra. The #1 live South Asian dating show and singles mixer. ANU, government workers, and the capital\u2019s desi community.",
     h1: "Canberra Has the Diplomats. Now Give Them a Dating Night.",
     status: "coming-soon",
     badgeLabel: "Coming Soon",
     bodyParagraphs: [
       "Canberra has a significant South Asian population split between two worlds: the Australian National University crowd and the government sector. ANU attracts Indian students and researchers across every discipline, while the public service employs Indian professionals in policy, tech, and administration. It\u2019s an educated, stable community with a terrible dating scene.",
-      "Garam Masala Dating is a live South Asian dating show and singles mixer from NYC. Real blind dates on stage, two hosts, 250 people in the room, and a mixer before and after. It\u2019s the kind of event that Canberra desperately needs because the alternative is driving to Sydney for the weekend.",
+      "Garam Masala Dating is the #1 live South Asian dating show and singles mixer from NYC. Real blind dates on stage, two hosts, 250 people in the room, and a mixer before and after. It\u2019s the kind of event that Canberra desperately needs because the alternative is driving to Sydney for the weekend.",
       "Canberra has a reputation for being boring and that\u2019s not entirely fair, but the social scene for South Asian singles is genuinely limited. The city is small, the circles are tight, and everyone seems to know each other through work or through ANU. A show that brings in people from across the city and across those professional circles creates the kind of fresh energy that\u2019s hard to find here organically.",
       "The Belconnen and Gungahlin suburbs have growing Indian populations, and the city\u2019s tech sector (including the growing startup scene and major defence contractors) keeps attracting South Asian professionals. The audience is professional, engaged, and ready for something that isn\u2019t a pub trivia night.",
       "Waitlist is live for Canberra. We\u2019re looking at it as part of an Australia east coast run. Get on the list or apply to be a contestant.",
@@ -190,15 +190,15 @@ export const australiaCities: Record<string, CityData> = {
   "gold-coast": {
     slug: "gold-coast",
     displayName: "Gold Coast",
-    titleTag: "Gold Coast Desi Singles | Garam Masala Dating",
+    titleTag: "Gold Coast Desi Singles",
     metaDescription:
-      "Garam Masala Dating is coming to the Gold Coast. A live South Asian dating show and singles mixer. Griffith University and the Gold Coast\u2019s growing desi community.",
+      "Garam Masala Dating is coming to the Gold Coast. The #1 live South Asian dating show and singles mixer. Griffith University and the Gold Coast\u2019s growing desi community.",
     h1: "Gold Coast Gets a Night Out That Isn’t Just Surfers Paradise",
     status: "coming-soon",
     badgeLabel: "Coming Soon",
     bodyParagraphs: [
       "The Gold Coast isn\u2019t the first place you\u2019d think of for a South Asian dating event, but the numbers tell a different story. Griffith University\u2019s Gold Coast campus has significantly grown its Indian student enrollment, and the broader population shift in Southeast Queensland means more South Asian families and professionals are settling in Robina, Southport, and the surrounding suburbs.",
-      "Garam Masala Dating is a live South Asian dating show and singles mixer from NYC. Real blind dates on stage, two hosts, a live audience, and a mixer. The format works in any city where there are enough South Asian singles who want to meet someone in person. The Gold Coast qualifies.",
+      "Garam Masala Dating is the #1 live South Asian dating show and singles mixer from NYC. Real blind dates on stage, two hosts, a live audience, and a mixer. The format works in any city where there are enough South Asian singles who want to meet someone in person. The Gold Coast qualifies.",
       "The dating scene on the Gold Coast has always been beach bars and nightclubs, which doesn\u2019t exactly speak to everyone. If you\u2019re a South Asian student or professional who doesn\u2019t feel represented by the Surfers Paradise strip, the options for meeting people thin out fast. This show gives you a room full of people with shared context.",
       "The proximity to Brisbane means the Gold Coast show could draw from both cities. It\u2019s an hour between them and people already commute back and forth. A combined audience across Southeast Queensland makes this a bigger market than the Gold Coast alone.",
       "Waitlist is open. The Gold Coast is part of our Queensland plans. Get on the list or apply to be a contestant.",
@@ -225,16 +225,15 @@ export const australiaCities: Record<string, CityData> = {
   "newcastle-au": {
     slug: "newcastle-au",
     displayName: "Newcastle",
-    titleTag:
-      "South Asian Singles Events Newcastle Australia | Garam Masala Dating",
+    titleTag: "South Asian Singles Events Newcastle Australia",
     metaDescription:
-      "Garam Masala Dating is coming to Newcastle, Australia. A live South Asian dating show and singles mixer. University of Newcastle and the Hunter Valley\u2019s desi community.",
+      "Garam Masala Dating is coming to Newcastle, Australia. The #1 live South Asian dating show and singles mixer. University of Newcastle and the Hunter Valley\u2019s desi community.",
     h1: "Newcastle’s Campus Crowd Needs More Than Pub Trivia",
     status: "coming-soon",
     badgeLabel: "Coming Soon",
     bodyParagraphs: [
       "University of Newcastle has been quietly building one of the larger Indian student populations in New South Wales outside of Sydney. The campus draws students from across India, and the city\u2019s lower cost of living compared to Sydney makes it attractive for those who want to stay after graduation. The South Asian community is smaller but concentrated and growing.",
-      "Garam Masala Dating is a live South Asian dating show and singles mixer from NYC. Real blind dates on stage, two hosts, a live audience, and a mixer. It\u2019s the format that\u2019s been selling out in New York, adapted for cities where the community is real but the events haven\u2019t arrived yet.",
+      "Garam Masala Dating is the #1 live South Asian dating show and singles mixer from NYC. Real blind dates on stage, two hosts, a live audience, and a mixer. It\u2019s the format that\u2019s been selling out in New York, adapted for cities where the community is real but the events haven\u2019t arrived yet.",
       "Newcastle\u2019s dating scene for South Asians is almost nonexistent. The city is two hours from Sydney, which means people either make the drive for cultural events or go without. The Indian student population and the growing professional community in healthcare, engineering, and mining create a viable audience that just needs the right event.",
       "The Hunter Valley region adds to the catchment. There are South Asian professionals scattered across the area who don\u2019t have a single social event designed for them locally. A show in Newcastle gives the whole region a reason to show up.",
       "Waitlist is open. Newcastle is on our NSW expansion list. Get on it for first access or apply to be a contestant.",
@@ -255,15 +254,15 @@ export const australiaCities: Record<string, CityData> = {
   hobart: {
     slug: "hobart",
     displayName: "Hobart",
-    titleTag: "Hobart Desi Singles Night | Garam Masala Dating",
+    titleTag: "Hobart Desi Singles Night",
     metaDescription:
-      "Garam Masala Dating is coming to Hobart. A live South Asian dating show and singles mixer. UTAS and Tasmania\u2019s fastest growing community proportionally.",
+      "Garam Masala Dating is coming to Hobart. The #1 live South Asian dating show and singles mixer. UTAS and Tasmania\u2019s fastest growing community proportionally.",
     h1: "The Smallest Capital, the Fastest Growing Desi Community",
     status: "coming-soon",
     badgeLabel: "Coming Soon",
     bodyParagraphs: [
       "Hobart\u2019s Indian community is the fastest growing demographic on the island proportionally. The University of Tasmania has ramped up international recruitment, and many of those students are from India. The numbers are still small compared to Melbourne or Sydney, but the growth rate is dramatic. Five years ago there was barely a visible South Asian presence. Now there are Indian restaurants in the CBD, grocery stores in Sandy Bay, and a community that\u2019s forming in real time.",
-      "Garam Masala Dating is a live South Asian dating show and singles mixer from NYC. Real blind dates on stage, two hosts, a live audience, and a mixer. In a city like Hobart, the show would feel more intimate and personal, which honestly tends to produce the best energy.",
+      "Garam Masala Dating is the #1 live South Asian dating show and singles mixer from NYC. Real blind dates on stage, two hosts, a live audience, and a mixer. In a city like Hobart, the show would feel more intimate and personal, which honestly tends to produce the best energy.",
       "Tasmania is remote. That\u2019s the whole point for a lot of people who move there, but it also means the dating pool is tiny. For South Asian singles in Hobart, the apps show you maybe a dozen people and you\u2019ve probably already met half of them at the last community event. A show that gathers everyone in one room doesn\u2019t just help, it\u2019s transformative for a community this size.",
       "Hobart\u2019s arts scene punches above its weight. MONA, Dark Mofo, and a city that takes creative events seriously. The audience here knows how to show up for something different.",
       "Waitlist is open. Hobart would be a smaller show but that\u2019s part of the charm. Get on the list or apply to be a contestant.",

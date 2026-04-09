@@ -1,19 +1,28 @@
 ---
-import BaseLayout from '@/layouts/BaseLayout.astro';
-import HomeNav from '@/components/home/HomeNav.astro';
+import BaseLayout from "@/layouts/BaseLayout.astro";
+import HomeNav from "@/components/home/HomeNav.astro";
 ---
 
-<BaseLayout title="404 — Page Not Found | Garam Masala Dating" description="This page doesn't exist." hideNav={true}>
+<BaseLayout
+  title="Page Not Found"
+  description="This page doesn't exist."
+  hideNav={true}
+>
   <canvas id="glCanvas" class="not-found-shader" aria-hidden="true"></canvas>
   <HomeNav ticketsUrl="/tickets" />
   <main id="main-content" class="not-found">
     <div class="not-found-content">
       <div class="not-found-code">404</div>
       <h1>This Page Ghosted <em>You</em></h1>
-      <p>Just like your last Hinge match. But unlike them, we're still here. Let's find you somewhere better.</p>
+      <p>
+        Just like your last Hinge match. But unlike them, we're still here.
+        Let's find you somewhere better.
+      </p>
       <div class="not-found-links">
         <a href="/" class="not-found-btn not-found-btn--primary">Go Home</a>
-        <a href="/tickets" class="not-found-btn not-found-btn--outline">See Shows</a>
+        <a href="/tickets" class="not-found-btn not-found-btn--outline"
+          >See Shows</a
+        >
       </div>
     </div>
   </main>

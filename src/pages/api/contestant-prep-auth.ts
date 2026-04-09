@@ -1,6 +1,8 @@
 import type { APIRoute } from "astro";
 import { createHmac, timingSafeEqual } from "crypto";
 
+export const prerender = false;
+
 const ISO_DATE_RE = /^\d{4}-\d{2}-\d{2}$/;
 
 function computeSig(salt: string, date: string): string {

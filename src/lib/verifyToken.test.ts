@@ -26,7 +26,7 @@ describe("verifyIdToken", () => {
     vi.clearAllMocks();
     const mod = await import("@/lib/verifyToken");
     verifyIdToken = mod.verifyIdToken;
-    process.env.VITE_FIREBASE_PROJECT_ID = TEST_PROJECT_ID;
+    import.meta.env.PUBLIC_FIREBASE_PROJECT_ID = TEST_PROJECT_ID;
     mockImportX509.mockResolvedValue("mock-key");
     // Mock global fetch for Google certs
     vi.spyOn(globalThis, "fetch").mockResolvedValue(
@@ -43,7 +43,7 @@ describe("verifyIdToken", () => {
 
   afterEach(() => {
     vi.restoreAllMocks();
-    delete process.env.VITE_FIREBASE_PROJECT_ID;
+    delete import.meta.env.PUBLIC_FIREBASE_PROJECT_ID;
   });
 
   it("returns null when auth header is undefined", async () => {
@@ -58,8 +58,8 @@ describe("verifyIdToken", () => {
     expect(await verifyIdToken("Basic abc123")).toBeNull();
   });
 
-  it("returns null when VITE_FIREBASE_PROJECT_ID is missing", async () => {
-    delete process.env.VITE_FIREBASE_PROJECT_ID;
+  it("returns null when PUBLIC_FIREBASE_PROJECT_ID is missing", async () => {
+    delete import.meta.env.PUBLIC_FIREBASE_PROJECT_ID;
     const token = makeToken("key-1", "user-123");
     expect(await verifyIdToken(`Bearer ${token}`)).toBeNull();
   });

@@ -2,6 +2,36 @@
 
 ## Open
 
+### [HIGH] Firestore applications collection has no field validation on create
+
+- **Date:** 2026-04-09
+- **File:** `firestore.rules:36, 40`
+- **Status:** Open
+- **Severity:** High
+- **What's happening:** `allow create: if true;` on the `applications` collection and its subcollections. Unlike the `leads` collection (which has thorough `validLead()` validation with `hasOnly`, `hasAll`, type checks, and length limits), applications accept any document shape from any unauthenticated user. This enables spam flooding, data poisoning, or arbitrary field injection.
+- **What should happen:** Applications should have a `validApplication()` function mirroring the `validLead()` pattern — restricting allowed fields, requiring key fields, and enforcing type/length constraints.
+- **Fix:** Add a `validApplication()` function to `firestore.rules` with field validation. Consider also requiring `request.auth != null` or adding Firebase App Check.
+
+### [MEDIUM] No runtime input validation on POST API routes
+
+- **Date:** 2026-04-09
+- **File:** `src/pages/api/notify-application.ts:105`
+- **Status:** Open
+- **Severity:** Medium
+- **What's happening:** `notify-application.ts` uses an unsafe `as ApplicationNotification` cast with no runtime validation. Only checks that `name` and `instagram` exist — doesn't validate types, lengths, or format of the other 12 fields. Similar pattern in other POST endpoints.
+- **What should happen:** All POST endpoints should validate request bodies at runtime using schema validation (e.g., Zod).
+- **Fix:** Add Zod schemas for `ApplicationNotification` and other request types. Validate before processing.
+
+### [LOW] Leads collection allows unauthenticated phone updates
+
+- **Date:** 2026-04-09
+- **File:** `firestore.rules:45`
+- **Status:** Open
+- **Severity:** Low
+- **What's happening:** `allow update: if validPhoneUpdate() || request.auth != null;` — the `validPhoneUpdate()` branch allows any unauthenticated user to update the `phone` field on existing lead documents. This is likely intentional for the phone capture flow but means anyone with a document ID can overwrite phone numbers.
+- **What should happen:** Verify this is the intended behavior. If the phone capture flow requires unauthenticated updates, document it. If not, add `request.auth != null &&` before `validPhoneUpdate()`.
+- **Fix:** Review whether the phone capture UX requires unauthenticated updates. If yes, add a comment in `firestore.rules` explaining why. If no, require auth.
+
 ### [HIGH] Homepage still emits duplicate FAQPage schema
 
 - **Date:** 2026-04-08

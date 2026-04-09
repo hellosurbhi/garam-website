@@ -382,6 +382,85 @@ When we start actually texting international numbers (via Twilio/MessageBird/etc
 
 ---
 
+# Codebase Audit — 2026-04-09
+
+Items flagged during the deep-dive codebase audit. Organized by impact.
+
+## High Impact
+
+### Split large components (5 files exceed 150-line rule)
+
+| Component                | Lines | Path                                      |
+| ------------------------ | ----- | ----------------------------------------- |
+| `ApplyPage.tsx`          | 569   | `src/components/ApplyPage.tsx`            |
+| `AdminDashboard.tsx`     | 401   | `src/components/admin/AdminDashboard.tsx` |
+| `useApplyForm.ts`        | 367   | `src/components/apply/useApplyForm.ts`    |
+| `TermsModal.tsx`         | 356   | `src/components/apply/TermsModal.tsx`     |
+| `ContestantPrepPage.tsx` | 301   | `src/components/ContestantPrepPage.tsx`   |
+
+Start with `useApplyForm.ts` — it mixes form state, file upload, Firebase operations, and analytics. Extract into `usePhotoUpload`, `useFormValidation`, `useApplicationSubmit`.
+
+### Add centralized error tracking
+
+- No Sentry, no PostHog error capture, no error event tracking
+- Silent `.catch(() => {})` blocks throughout the codebase mean zero observability on failures
+- PostHog is already installed — enable its error capture feature, or add Sentry
+
+### Add ESLint security plugin
+
+- `eslint.config.js` only has `reactHooks` and `reactRefresh` plugins
+- Missing `eslint-plugin-security` to catch `eval()`, `dangerouslySetInnerHTML`, insecure randomness
+- Install: `npm i -D eslint-plugin-security`
+
+## Medium Impact
+
+### Refactor non-mobile-first media queries
+
+- `src/components/home/HomeHero.astro` — uses `max-width` queries at 430px, 390px, 340px, 1024px
+- `src/components/admin/AdminDashboard.module.css` — uses `max-width` at 900px, 600px
+- Should be `min-width` (mobile-first) per CLAUDE.md rules
+
+### Reduce `!important` usage
+
+- `src/components/home/HomeVideo.astro:170-174` — 5 instances (may be needed to override Instagram embed styles)
+- `src/pages/404.astro` — 15+ instances
+- `src/layouts/BaseLayout.astro:295` — cursor styles
+- Audit each; eliminate where CSS specificity can solve the problem instead
+
+### Migrate remaining hardcoded colors to CSS variables
+
+Beyond the PR #11 items already logged:
+
+- `src/pages/index.astro` — uses `#fff`, `#888`, `#999`, `rgba(0,0,0,...)`
+- `src/components/ErrorBoundary.module.css:25` — uses `#666`
+- `src/components/ApplyPage.module.css:177` — uses `#fff`
+
+### Add Stryker mutation testing coverage for API routes
+
+- `stryker.config.mjs` only mutates `src/**/*.ts` but API route tests have minimal edge case coverage
+- No adversarial tests (XSS payloads in form fields, malformed JSON, header spoofing)
+- Add API routes to mutation testing scope
+
+## Low Impact
+
+### Add preconnect for external domains
+
+Add to `BaseLayout.astro` `<head>`:
+
+```html
+<link rel="preconnect" href="https://www.youtube.com" />
+<link rel="preconnect" href="https://www.instagram.com" />
+<link rel="preconnect" href="https://www.eventbrite.com" />
+```
+
+### Fix low contrast text (WCAG)
+
+- `src/components/home/HomeFooter.astro:180` — `rgba(255,255,255,0.7)` on dark bg
+- `src/components/home/HomeShows.astro` — `rgba(255,255,255,0.55)` on dark bg
+- Run contrast checker; adjust where WCAG AA (4.5:1) requires it
+
+---
+
 # Codebase Audit — Review Later
 
 Items flagged during the 2026-04-08 cleanup audit. Not confirmed dead — may have been created for a reason. Check each one and either wire it in or delete it.

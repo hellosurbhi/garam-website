@@ -2,6 +2,8 @@ import type { APIRoute } from "astro";
 import { createHmac } from "crypto";
 import { verifyIdToken } from "@/lib/verifyToken";
 
+export const prerender = false;
+
 const ISO_DATE_RE = /^\d{4}-\d{2}-\d{2}$/;
 
 export const POST: APIRoute = async ({ request }) => {

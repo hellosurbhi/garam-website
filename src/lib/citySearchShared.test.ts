@@ -1,10 +1,10 @@
 import { describe, it, expect } from "vitest";
-import type { CitySearchOption } from "./citySearchShared";
+import type { CitySearchOption } from "./citySearch";
 import {
-  normalizeCitySearchValue,
+  normalize as normalizeCitySearchValue,
   searchCityOptions,
   resolveCityOption,
-} from "./citySearchShared";
+} from "./citySearch";
 
 function makeOption(
   overrides: Partial<CitySearchOption> & { city: string },

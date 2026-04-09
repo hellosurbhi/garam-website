@@ -10,7 +10,7 @@ vi.mock("@/lib/citySearch", () => ({
   searchCityOptions: (...args: unknown[]) => mockSearchCityOptions(...args),
 }));
 
-import { GET } from "./city-search";
+import { GET } from "@/pages/api/city-search";
 
 function makeRequest(query?: string): Request {
   const url = query

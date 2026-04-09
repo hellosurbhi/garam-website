@@ -6,7 +6,7 @@ import { pressItems } from "@/data/press";
 import { SOCIAL_URLS } from "@/data/socials";
 import { buildBreadcrumbJsonLd } from "@/utils/breadcrumbs";
 
-const TITLE = "Tickets, Shows & More | Garam Masala Dating";
+const TITLE = "Tickets, Shows & More";
 const DESC =
   "Get tickets to upcoming Garam Masala Dating shows, follow us on Instagram and TikTok, apply as a contestant, or reach out for booking and press.";
 
@@ -39,11 +39,30 @@ interface LinkDef {
 }
 
 const links: LinkDef[] = [
-  { label: "Get on the List", dialogTrigger: "links-spice-trigger", isPrimary: true, icon: "mail" },
+  {
+    label: "Get on the List",
+    dialogTrigger: "links-spice-trigger",
+    isPrimary: true,
+    icon: "mail",
+  },
   { label: "Apply to Be on the Show", href: "/apply", icon: "heart" },
-  { label: "Short form content @ Instagram", href: SOCIAL_URLS.instagram, external: true, icon: "instagram" },
-  { label: "Full episodes @ YouTube", href: SOCIAL_URLS.youtube, external: true, icon: "youtube" },
-  { label: "Upcoming Shows & Tickets", dialogTrigger: "events-trigger", icon: "ticket" },
+  {
+    label: "Short form content @ Instagram",
+    href: SOCIAL_URLS.instagram,
+    external: true,
+    icon: "instagram",
+  },
+  {
+    label: "Full episodes @ YouTube",
+    href: SOCIAL_URLS.youtube,
+    external: true,
+    icon: "youtube",
+  },
+  {
+    label: "Upcoming Shows & Tickets",
+    dialogTrigger: "events-trigger",
+    icon: "ticket",
+  },
   { label: "As Seen In", dialogTrigger: "press-trigger", icon: "mic" },
   {
     label: "Booking & Press Inquiries",
@@ -99,10 +118,17 @@ const reversedPress = [...pressItems].reverse();
                 <button
                   type="button"
                   id={link.dialogTrigger}
-                  class="glass-link"
-                  style={`animation: fadeUp 0.5s ease-out ${delay}s both`}
+                  class:list={[link.isPrimary ? "primary-link" : "glass-link"]}
+                  style={
+                    link.isPrimary
+                      ? `animation: fadeUp 0.5s ease-out ${delay}s both, pulseGlow 2.5s ease-in-out 1s infinite`
+                      : `animation: fadeUp 0.5s ease-out ${delay}s both`
+                  }
+                  data-ph-capture={link.isPrimary ? "cta_clicked" : undefined}
+                  data-ph-cta={link.isPrimary ? "get-on-list" : undefined}
+                  data-ph-section={link.isPrimary ? "links" : undefined}
                 >
-                  <Fragment set:html={iconSvg(link.icon, false)} />
+                  <Fragment set:html={iconSvg(link.icon, link.isPrimary)} />
                   <span class="link-label">{link.label}</span>
                 </button>
               );
@@ -361,9 +387,9 @@ const reversedPress = [...pressItems].reverse();
       if (e.target === dialog) dialog.close();
     });
   }
-  setupDialog('events-trigger', 'events-modal');
-  setupDialog('press-trigger', 'press-modal');
-  setupDialog('links-spice-trigger', 'links-spice-modal');
+  setupDialog("events-trigger", "events-modal");
+  setupDialog("press-trigger", "press-modal");
+  setupDialog("links-spice-trigger", "links-spice-modal");
 </script>
 
 <style>

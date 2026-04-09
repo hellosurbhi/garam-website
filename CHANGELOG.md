@@ -1,5 +1,38 @@
 # Changelog
 
+## feat: build /corporate and /sponsorship pages with full SEO (2026-04-09)
+
+### What changed
+
+Two new permanent SEO-catch pages targeting high-intent B2B queries.
+
+**`/corporate` — Private & Corporate Events:**
+Hero → Book a Show CTA → caleb@garammasaladating.com. Show format + 3 audience size tiers (Intimate 50–100, Mid-Size 100–175, Full House 175–250). "What's Included" 2×2 grid: Hosts, Production, Venue, Post-Show Mixer. 3 corporate testimonials. FAQ accordion.
+
+**`/sponsorship` — Brand Partnerships:**
+Media Kit stat grid (250/show, 10M+ views, 70%+ South Asian, 40+ shows). 4 sponsorship tiers with pricing: Presenting ($3K–$5K), Gold ($1.5K–$2.5K), Silver ($500–$1K), In-Kind. Target sponsor categories. FAQ accordion. CTA → partnerships@garammasaladating.com.
+
+**SEO on both pages:** BreadcrumbList + FAQPage + SpeakableSpecification JSON-LD. Service JSON-LD on /corporate. Keyword-targeted titles and descriptions. Footer links, sitemap 0.8 priority, LLM file entries.
+
+### Files created
+
+- `src/data/corporate.ts`, `src/data/sponsorship.ts`
+- `src/pages/corporate.astro`, `src/pages/sponsorship.astro`
+
+### Files modified
+
+- `src/data/footer.ts` — replaced `Brand Partnerships → mailto` with `Corporate Events → /corporate` and `Sponsorship → /sponsorship`
+- `astro.config.mjs` — added `corporate|sponsorship` to 0.8 sitemap priority
+- `src/pages/llms.txt.ts`, `src/pages/llms-full.txt.ts` — added both pages
+
+### Decisions
+
+- All copy in data files — zero text hardcoded in components
+- Presenting tier uses charcoal bg for visual hierarchy without new colors
+- Corporate testimonials are representative placeholders — replace with real quotes as they come in
+
+---
+
 ## feat: add VideoObject, EventSeries, AggregateRating, and Speakable extension JSON-LD schemas (2026-04-09)
 
 ### What changed

@@ -129,7 +129,7 @@ describe("buildEventSchemas", () => {
     const schemas = buildEventSchemas([makeEvent()]);
     const parsed = JSON.parse(schemas[0]);
     expect(parsed["@context"]).toBe("https://schema.org");
-    expect(parsed["@type"]).toBe("Event");
+    expect(parsed["@type"]).toBe("ComedyEvent");
   });
 
   it("includes venue name in location", () => {

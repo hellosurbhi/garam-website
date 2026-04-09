@@ -1,5 +1,39 @@
 # Changelog
 
+## test: comprehensive mutation-resistant tests for lib/, utils/, hooks/ (2026-04-08)
+
+### What changed
+
+Added 12 new test files and extended 3 existing test files to dramatically improve mutation testing coverage. Total: ~160 new tests covering every exported function in src/lib/, src/utils/, and src/hooks/.
+
+**New test files:**
+
+- `src/lib/phone.test.ts` — 17 tests covering all 5 branches with boundary values
+- `src/lib/constants.test.ts` — 3 tests for constant values
+- `src/lib/citySearchShared.test.ts` — 23 tests for normalize, search, resolve, scoring
+- `src/lib/analytics.test.ts` — 13 tests for trackLeadEvent + identifyLead with window mock
+- `src/lib/leadAttribution.test.ts` — 19 tests for bootstrap + build with sessionStorage/UTM
+- `src/lib/citySearch.test.ts` — 14 tests for loadCityOptions caching + search/resolve
+- `src/utils/breadcrumbs.test.ts` — 8 tests for JSON-LD schema generation
+- `src/utils/locationDisplay.test.ts` — 3 tests for formatLocation branches
+- `src/utils/eventDate.test.ts` — 15 tests for isEventPast guards + year heuristic + msUntilMidnight
+- `src/utils/timezone.test.ts` — 8 tests for nyOffset EDT/EST/DST boundaries
+- `src/utils/eventSchema.test.ts` — 19 tests for buildEventSchemas filtering + defaults + conditionals
+- `src/hooks/useCitySearch.test.ts` — 10 tests for debounce, fetch, error, retry
+
+**Extended test files:**
+
+- `src/lib/verifyToken.test.ts` — +2 tests for cache behavior + issuer/audience verification
+- `src/hooks/useGeoData.test.ts` — +4 tests for shouldLoad=false, retry, failed state
+- `src/utils/reactSelectStyles.test.ts` — +22 tests for option state branches, exact color/padding values
+
+### Decisions
+
+- Used real timers (not fake) for useCitySearch to avoid waitFor/fakeTimer deadlock
+- Used vi.resetModules() + dynamic import for citySearch.test.ts to reset module-level cache
+- Mocked country-state-city, @/data/cities, @/utils/timezone, window.posthog, sessionStorage
+- Cast minimal objects as Application type rather than mocking firebase/firestore
+
 ## fix: phone accepts international numbers, apply form analytics, code cleanup (2026-04-08)
 
 ### What changed

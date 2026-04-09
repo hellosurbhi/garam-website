@@ -10,10 +10,9 @@ import {
   SPONSORSHIP_FAQS,
 } from "@/data/sponsorship";
 
-const TITLE =
-  "Sponsor Garam Masala Dating | South Asian Live Show NYC — Media Kit";
+const TITLE = "Sponsor Garam Masala Dating | South Asian Live Show NYC";
 const DESC =
-  "Reach NYC's most engaged South Asian audience. Presenting ($3K–$5K), Gold ($1.5K–$2.5K), Silver ($500–$1K), and In-Kind sponsorship packages. 40+ shows, 10M+ views, 70%+ South Asian professionals 22–40. Email caleb@garammasaladating.com.";
+  "Reach NYC's most engaged South Asian audience. Presenting ($3K to $5K), Gold ($1.5K to $2.5K), Silver ($500 to $1K), and In-Kind packages. 40+ shows, 10M+ views, 70%+ South Asian professionals. Email caleb@garammasaladating.com.";
 
 const SITE_URL = "https://garammasaladating.com";
 
@@ -28,10 +27,7 @@ const faqJsonLd = JSON.stringify({
   mainEntity: SPONSORSHIP_FAQS.map((faq) => ({
     "@type": "Question",
     name: faq.q,
-    acceptedAnswer: {
-      "@type": "Answer",
-      text: faq.a,
-    },
+    acceptedAnswer: { "@type": "Answer", text: faq.a },
   })),
 });
 
@@ -53,79 +49,90 @@ const speakableJsonLd = JSON.stringify({
     <script type="application/ld+json" set:html={speakableJsonLd} />
   </Fragment>
 
-  <main id="main-content" class="sponsor-page">
-    <!-- ── Hero ─────────────────────────────────────────────── -->
-    <section class="sponsor-hero" aria-labelledby="sponsor-hero-heading">
-      <div class="sponsor-container sponsor-hero-inner">
-        <p class="sponsor-eyebrow">Brand Partnerships</p>
-        <h1 id="sponsor-hero-heading">{SPONSORSHIP_COPY.heroHeadline}</h1>
-        <p class="sponsor-hero-sub">{SPONSORSHIP_COPY.heroSub}</p>
-        <div class="sponsor-email-cta">
-          <p class="sponsor-email-label">
+  <main id="main-content" class="sp">
+    <!-- Hero with background image -->
+    <section class="sp-hero" aria-labelledby="sp-heading">
+      <img
+        class="sp-hero-bg"
+        src="/images/pure-chaos.webp"
+        alt=""
+        width="1200"
+        height="800"
+        aria-hidden="true"
+      />
+      <div class="sp-hero-overlay"></div>
+      <div class="sp-container sp-hero-inner">
+        <p class="sp-eyebrow sp-eyebrow--white">Brand Partnerships</p>
+        <h1 id="sp-heading">{SPONSORSHIP_COPY.heroHeadline}</h1>
+        <p class="sp-hero-sub">{SPONSORSHIP_COPY.heroSub}</p>
+        <div class="sp-email-block">
+          <p class="sp-email-label">
             Email our {SPONSORSHIP_COPY.contactTitle}, {
               SPONSORSHIP_COPY.contactName
             }:
           </p>
           <a
             href={`mailto:${SPONSORSHIP_COPY.contactEmail}?subject=Sponsorship%20Inquiry`}
-            class="sponsor-email-link"
+            class="sp-email-link"
             data-ph-capture="cta_clicked"
             data-ph-cta="email_hero"
             data-ph-section="sponsorship_hero"
+            >{SPONSORSHIP_COPY.contactEmail}</a
           >
-            {SPONSORSHIP_COPY.contactEmail}
-          </a>
         </div>
       </div>
     </section>
 
-    <!-- ── Media Kit Stats ───────────────────────────────────── -->
-    <section class="sponsor-stats" aria-labelledby="sponsor-stats-heading">
-      <div class="sponsor-container">
-        <p class="sponsor-eyebrow">By the Numbers</p>
-        <h2 id="sponsor-stats-heading" class="sponsor-stats-heading">
-          Why brands choose Garam Masala Dating
-        </h2>
-        <div class="sponsor-stats-grid" role="list">
+    <!-- Stats with image background -->
+    <section class="sp-stats" aria-labelledby="sp-stats-heading">
+      <img
+        class="sp-stats-bg"
+        src="/images/the-crowd.webp"
+        alt=""
+        width="800"
+        height="1200"
+        loading="lazy"
+        aria-hidden="true"
+      />
+      <div class="sp-stats-overlay"></div>
+      <div class="sp-container sp-stats-inner">
+        <h2 id="sp-stats-heading">The Numbers</h2>
+        <div class="sp-stats-grid">
           {
             MEDIA_KIT_STATS.map((stat) => (
-              <div class="sponsor-stat" role="listitem">
-                <div class="sponsor-stat-num">{stat.num}</div>
-                <div class="sponsor-stat-label">{stat.label}</div>
-                <p class="sponsor-stat-sub">{stat.sub}</p>
+              <div class="sp-stat">
+                <div class="sp-stat-num">{stat.num}</div>
+                <div class="sp-stat-label">{stat.label}</div>
+                <div class="sp-stat-sub">{stat.sub}</div>
               </div>
             ))
           }
         </div>
-        <p class="sponsor-demo-blurb">{SPONSORSHIP_COPY.demoBlurb}</p>
+        <p class="sp-demo">{SPONSORSHIP_COPY.demoBlurb}</p>
       </div>
     </section>
 
-    <!-- ── Sponsorship Tiers ─────────────────────────────────── -->
-    <section class="sponsor-tiers" aria-labelledby="sponsor-tiers-heading">
-      <div class="sponsor-container">
-        <p class="sponsor-eyebrow">Sponsorship Packages</p>
-        <h2 id="sponsor-tiers-heading">Pick your level of involvement.</h2>
-        <p class="sponsor-tiers-sub">
-          All packages are per-show. Multi-show season discounts available —
-          email us to discuss.
+    <!-- Sponsorship Tiers -->
+    <section class="sp-tiers" aria-labelledby="sp-tiers-heading">
+      <div class="sp-container">
+        <p class="sp-eyebrow">Sponsorship Packages</p>
+        <h2 id="sp-tiers-heading">Pick your level.</h2>
+        <p class="sp-tiers-sub">
+          All packages per show. Multi-show discounts available.
         </p>
-        <div class="sponsor-tier-list">
+        <div class="sp-tier-list">
           {
             SPONSOR_TIERS.map((tier) => (
               <div
-                class={`sponsor-tier-card${tier.highlight ? " sponsor-tier-card--presenting" : ""}`}
+                class={`sp-tier${tier.highlight ? " sp-tier--top" : ""}`}
                 aria-label={`${tier.name} tier`}
               >
-                <div class="sponsor-tier-header">
-                  <div class="sponsor-tier-name">{tier.name}</div>
-                  <div class="sponsor-tier-price">{tier.priceRange}</div>
+                <div class="sp-tier-head">
+                  <div class="sp-tier-name">{tier.name}</div>
+                  <div class="sp-tier-price">{tier.priceRange}</div>
                 </div>
-                <p class="sponsor-tier-tagline">{tier.tagline}</p>
-                <ul
-                  class="sponsor-tier-perks"
-                  aria-label={`${tier.name} tier perks`}
-                >
+                <p class="sp-tier-tag">{tier.tagline}</p>
+                <ul class="sp-tier-perks">
                   {tier.perks.map((perk) => (
                     <li>{perk}</li>
                   ))}
@@ -137,30 +144,29 @@ const speakableJsonLd = JSON.stringify({
       </div>
     </section>
 
-    <!-- ── Who We Partner With ───────────────────────────────── -->
-    <section
-      class="sponsor-partners"
-      aria-labelledby="sponsor-partners-heading"
-    >
-      <div class="sponsor-container">
-        <p class="sponsor-eyebrow">Who We Partner With</p>
-        <h2 id="sponsor-partners-heading">
-          Brands that want to be in the room.
-        </h2>
-        <p class="sponsor-partners-intro">
-          We're selective about who we partner with because our audience is
-          selective about what they pay attention to. The right brand in this
-          room feels like a natural part of the night — not an interruption.
-        </p>
-        <div class="sponsor-categories">
+    <!-- Photo break -->
+    <section class="sp-photos" aria-hidden="true">
+      <img
+        src="/images/on-stage.webp"
+        alt="Contestants on stage at Garam Masala Dating"
+        width="1200"
+        height="800"
+        loading="lazy"
+      />
+    </section>
+
+    <!-- Target brands -->
+    <section class="sp-brands" aria-labelledby="sp-brands-heading">
+      <div class="sp-container">
+        <p class="sp-eyebrow">Who We Partner With</p>
+        <h2 id="sp-brands-heading">Brands that want to be in the room.</h2>
+        <div class="sp-categories">
           {
             TARGET_CATEGORIES.map((cat) => (
-              <div class="sponsor-category">
-                <div class="sponsor-cat-header">
-                  <div class="sponsor-cat-label">{cat.category}</div>
-                  <div class="sponsor-cat-brands">{cat.brands}</div>
-                </div>
-                <p class="sponsor-cat-why">{cat.why}</p>
+              <div class="sp-cat">
+                <div class="sp-cat-name">{cat.category}</div>
+                <div class="sp-cat-brands">{cat.brands}</div>
+                <p class="sp-cat-why">{cat.why}</p>
               </div>
             ))
           }
@@ -168,11 +174,11 @@ const speakableJsonLd = JSON.stringify({
       </div>
     </section>
 
-    <!-- ── FAQ ──────────────────────────────────────────────── -->
-    <section class="sponsor-faq" aria-labelledby="sponsor-faq-heading">
-      <div class="sponsor-container sponsor-faq-inner">
-        <p class="sponsor-eyebrow">Common Questions</p>
-        <h2 id="sponsor-faq-heading">FAQs</h2>
+    <!-- FAQ -->
+    <section class="sp-faq" aria-labelledby="sp-faq-heading">
+      <div class="sp-container sp-faq-inner">
+        <p class="sp-eyebrow">Common Questions</p>
+        <h2 id="sp-faq-heading">FAQs</h2>
         <FaqAccordion
           items={SPONSORSHIP_FAQS}
           groupId="sponsor-faq"
@@ -181,40 +187,33 @@ const speakableJsonLd = JSON.stringify({
       </div>
     </section>
 
-    <!-- ── Contact CTA ───────────────────────────────────────── -->
-    <section class="sponsor-cta" aria-labelledby="sponsor-cta-heading">
-      <div class="sponsor-container sponsor-cta-inner">
-        <h2 id="sponsor-cta-heading">{SPONSORSHIP_COPY.ctaHeadline}</h2>
-        <p class="sponsor-cta-body">{SPONSORSHIP_COPY.ctaBody}</p>
-        <div class="sponsor-email-cta">
-          <a
-            href={`mailto:${SPONSORSHIP_COPY.contactEmail}?subject=Sponsorship%20Inquiry`}
-            class="sponsor-email-link sponsor-email-link--dark"
-            data-ph-capture="cta_clicked"
-            data-ph-cta="email_footer"
-            data-ph-section="sponsorship_cta"
-          >
-            {SPONSORSHIP_COPY.contactEmail}
-          </a>
-        </div>
+    <!-- CTA -->
+    <section class="sp-cta" aria-labelledby="sp-cta-heading">
+      <div class="sp-container sp-cta-inner">
+        <h2 id="sp-cta-heading">{SPONSORSHIP_COPY.ctaHeadline}</h2>
+        <p>{SPONSORSHIP_COPY.ctaBody}</p>
+        <a
+          href={`mailto:${SPONSORSHIP_COPY.contactEmail}?subject=Sponsorship%20Inquiry`}
+          class="sp-email-link sp-email-link--white"
+          data-ph-capture="cta_clicked"
+          data-ph-cta="email_footer"
+          data-ph-section="sponsorship_cta">{SPONSORSHIP_COPY.contactEmail}</a
+        >
       </div>
     </section>
   </main>
 </BaseLayout>
 
 <style>
-  /* ── Shared ─────────────────────────────────────────────── */
-  .sponsor-page {
+  .sp {
     font-family: var(--font-body), sans-serif;
   }
-
-  .sponsor-container {
-    max-width: 860px;
+  .sp-container {
+    max-width: 1000px;
     margin: 0 auto;
     padding: 0 20px;
   }
-
-  .sponsor-eyebrow {
+  .sp-eyebrow {
     font-size: 11px;
     font-weight: 700;
     letter-spacing: 3px;
@@ -222,27 +221,26 @@ const speakableJsonLd = JSON.stringify({
     color: var(--brand-red);
     margin-bottom: 14px;
   }
-  .sponsor-eyebrow--light {
-    color: rgba(255, 255, 255, 0.6);
+  .sp-eyebrow--white {
+    color: rgba(255, 255, 255, 0.7);
   }
 
-  /* ── Email CTA ──────────────────────────────────────────── */
-  .sponsor-email-cta {
+  /* Email CTA */
+  .sp-email-block {
     margin-top: 28px;
   }
-  .sponsor-email-label {
+  .sp-email-label {
     font-size: 14px;
-    color: var(--text-secondary);
+    color: rgba(255, 255, 255, 0.7);
     margin-bottom: 6px;
     font-weight: 600;
   }
-  .sponsor-email-link {
+  .sp-email-link {
     display: inline-flex;
     align-items: center;
-    font-family: var(--font-body), sans-serif;
     font-size: clamp(18px, 2.5vw, 24px);
     font-weight: 800;
-    color: var(--brand-red);
+    color: var(--electric-yellow);
     text-decoration: underline;
     text-underline-offset: 4px;
     text-decoration-thickness: 2px;
@@ -250,326 +248,381 @@ const speakableJsonLd = JSON.stringify({
     min-height: var(--touch-target);
     padding: 4px 0;
   }
-  .sponsor-email-link:hover {
-    color: var(--brand-red-dark);
+  .sp-email-link:hover {
+    color: white;
+    text-decoration-color: white;
   }
-  .sponsor-email-link:focus-visible {
-    outline: 2px solid var(--brand-red);
+  .sp-email-link:focus-visible {
+    outline: 2px solid var(--electric-yellow);
     outline-offset: 3px;
   }
-  .sponsor-email-link--dark {
-    color: var(--charcoal);
-    text-decoration-color: var(--charcoal);
+  .sp-email-link--white {
+    color: white;
+    text-decoration-color: white;
   }
-  .sponsor-email-link--dark:hover {
-    color: var(--ink);
+  .sp-email-link--white:hover {
+    color: var(--electric-yellow);
+    text-decoration-color: var(--electric-yellow);
   }
 
-  /* ── Hero ─────────────────────────────────────────────── */
-  .sponsor-hero {
-    background: var(--off-white);
-    padding: 56px 0 48px;
-    border-bottom: 1px solid rgba(0, 0, 0, 0.06);
-  }
-  .sponsor-hero-inner {
+  /* Hero */
+  .sp-hero {
+    position: relative;
+    overflow: hidden;
+    padding: 80px 0 72px;
     text-align: center;
   }
-  .sponsor-hero h1 {
+  .sp-hero-bg {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center 30%;
+    z-index: 0;
+  }
+  .sp-hero-overlay {
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+    background: linear-gradient(
+      180deg,
+      rgba(0, 0, 0, 0.7) 0%,
+      rgba(0, 0, 0, 0.55) 100%
+    );
+  }
+  .sp-hero-inner {
+    position: relative;
+    z-index: 2;
+  }
+  .sp-hero h1 {
     font-family: var(--font-playfair), serif;
-    font-size: clamp(26px, 5vw, 50px);
+    font-size: clamp(26px, 5vw, 52px);
     font-weight: 900;
-    color: var(--charcoal);
+    color: white;
     line-height: 1.08;
     margin-bottom: 20px;
+    text-shadow: 0 2px 16px rgba(0, 0, 0, 0.5);
   }
-  .sponsor-hero-sub {
+  .sp-hero-sub {
     font-family: var(--font-cormorant), serif;
     font-size: clamp(16px, 2.2vw, 20px);
     font-style: italic;
-    color: var(--text-secondary);
+    color: rgba(255, 255, 255, 0.85);
     line-height: 1.7;
-    max-width: 680px;
+    max-width: 640px;
     margin: 0 auto;
   }
 
-  /* ── Stats ───────────────────────────────────────────── */
-  .sponsor-stats {
-    background: var(--cream-warm);
-    padding: 56px 0;
+  /* Stats with image bg */
+  .sp-stats {
+    position: relative;
+    overflow: hidden;
+    padding: 80px 0;
+    text-align: center;
   }
-  .sponsor-stats-heading {
+  .sp-stats-bg {
+    position: absolute;
+    inset: -10%;
+    width: 120%;
+    height: 120%;
+    object-fit: cover;
+    object-position: center 35%;
+    z-index: 0;
+  }
+  .sp-stats-overlay {
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+    background: rgba(0, 0, 0, 0.6);
+  }
+  .sp-stats-inner {
+    position: relative;
+    z-index: 2;
+  }
+  .sp-stats h2 {
     font-family: var(--font-playfair), serif;
-    font-size: clamp(22px, 3vw, 34px);
-    font-weight: 800;
-    color: var(--charcoal);
-    margin-bottom: 36px;
-    line-height: 1.2;
+    font-size: clamp(28px, 4vw, 48px);
+    font-weight: 900;
+    color: white;
+    margin-bottom: 40px;
+    text-shadow: 0 2px 16px rgba(0, 0, 0, 0.7);
   }
-  .sponsor-stats-grid {
+  .sp-stats-grid {
     display: grid;
     grid-template-columns: 1fr 1fr;
     gap: 16px;
-    margin-bottom: 36px;
+    margin-bottom: 32px;
   }
-  .sponsor-stat {
-    background: white;
-    border: 1px solid rgba(0, 0, 0, 0.06);
+  .sp-stat {
+    background: rgba(255, 255, 255, 0.06);
+    backdrop-filter: blur(4px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
     border-radius: 12px;
     padding: 24px;
   }
-  .sponsor-stat-num {
+  .sp-stat-num {
     font-family: var(--font-playfair), serif;
-    font-size: clamp(28px, 4vw, 44px);
+    font-size: clamp(28px, 4vw, 48px);
     font-weight: 900;
-    color: var(--brand-red);
+    color: var(--electric-yellow);
     line-height: 1;
     margin-bottom: 6px;
+    text-shadow: 0 2px 12px rgba(0, 0, 0, 0.5);
   }
-  .sponsor-stat-label {
-    font-size: 14px;
-    font-weight: 700;
-    color: var(--charcoal);
-    margin-bottom: 8px;
-    line-height: 1.3;
-  }
-  .sponsor-stat-sub {
+  .sp-stat-label {
     font-size: 13px;
-    line-height: 1.5;
-    color: var(--muted);
+    font-weight: 700;
+    color: white;
+    margin-bottom: 4px;
+    text-shadow: 0 1px 6px rgba(0, 0, 0, 0.5);
+  }
+  .sp-stat-sub {
+    font-size: 12px;
+    color: rgba(255, 255, 255, 0.5);
     margin: 0;
   }
-  .sponsor-demo-blurb {
+  .sp-demo {
     font-size: 15px;
-    line-height: 1.8;
-    color: var(--text-secondary);
-    margin: 0;
+    line-height: 1.7;
+    color: rgba(255, 255, 255, 0.7);
+    max-width: 700px;
+    margin: 0 auto;
+    text-shadow: 0 1px 4px rgba(0, 0, 0, 0.3);
   }
 
-  /* ── Tiers ───────────────────────────────────────────── */
-  .sponsor-tiers {
-    background: var(--off-white);
+  /* Tiers */
+  .sp-tiers {
+    background: var(--cream-warm);
     padding: 56px 0;
   }
-  .sponsor-tiers h2 {
+  .sp-tiers h2 {
     font-family: var(--font-playfair), serif;
     font-size: clamp(24px, 3.5vw, 38px);
     font-weight: 800;
     color: var(--charcoal);
     margin-bottom: 8px;
-    line-height: 1.15;
   }
-  .sponsor-tiers-sub {
-    font-size: 15px;
-    color: var(--text-secondary);
-    margin-bottom: 36px;
+  .sp-tiers-sub {
+    font-size: 14px;
+    color: var(--muted);
+    margin-bottom: 28px;
   }
-  .sponsor-tier-list {
+  .sp-tier-list {
     display: flex;
     flex-direction: column;
-    gap: 20px;
+    gap: 16px;
   }
-  .sponsor-tier-card {
+  .sp-tier {
     background: white;
-    border: 1px solid rgba(0, 0, 0, 0.08);
+    border: 1px solid rgba(0, 0, 0, 0.06);
     border-radius: 14px;
-    padding: 28px;
+    padding: 24px;
   }
-  .sponsor-tier-card--presenting {
+  .sp-tier--top {
     background: var(--brand-red);
     border-color: transparent;
     box-shadow: 0 4px 24px rgba(220, 38, 38, 0.2);
   }
-  .sponsor-tier-header {
+  .sp-tier-head {
     display: flex;
     align-items: baseline;
     justify-content: space-between;
     flex-wrap: wrap;
     gap: 8px;
-    margin-bottom: 12px;
+    margin-bottom: 8px;
   }
-  .sponsor-tier-name {
+  .sp-tier-name {
     font-family: var(--font-playfair), serif;
-    font-size: 22px;
+    font-size: 20px;
     font-weight: 900;
     color: var(--charcoal);
   }
-  .sponsor-tier-card--presenting .sponsor-tier-name {
+  .sp-tier--top .sp-tier-name {
     color: white;
   }
-  .sponsor-tier-price {
-    font-size: 14px;
+  .sp-tier-price {
+    font-size: 13px;
     font-weight: 700;
     color: var(--brand-red);
     white-space: nowrap;
   }
-  .sponsor-tier-card--presenting .sponsor-tier-price {
+  .sp-tier--top .sp-tier-price {
+    color: rgba(255, 255, 255, 0.8);
+  }
+  .sp-tier-tag {
+    font-size: 14px;
+    color: var(--text-secondary);
+    margin: 0 0 16px;
+    line-height: 1.5;
+  }
+  .sp-tier--top .sp-tier-tag {
     color: rgba(255, 255, 255, 0.75);
   }
-  .sponsor-tier-tagline {
-    font-size: 15px;
-    color: var(--text-secondary);
-    margin: 0 0 20px;
-    line-height: 1.7;
-  }
-  .sponsor-tier-card--presenting .sponsor-tier-tagline {
-    color: rgba(255, 255, 255, 0.7);
-  }
-  .sponsor-tier-perks {
+  .sp-tier-perks {
     list-style: none;
     display: flex;
     flex-direction: column;
-    gap: 10px;
+    gap: 8px;
     margin: 0;
     padding: 0;
   }
-  .sponsor-tier-perks li {
-    font-size: 14px;
-    line-height: 1.6;
+  .sp-tier-perks li {
+    font-size: 13px;
+    line-height: 1.5;
     color: var(--text-secondary);
-    padding-left: 20px;
+    padding-left: 18px;
     position: relative;
   }
-  .sponsor-tier-perks li::before {
+  .sp-tier-perks li::before {
     content: "\2713";
     position: absolute;
     left: 0;
     color: var(--brand-red);
     font-weight: 700;
-    font-size: 13px;
+    font-size: 12px;
   }
-  .sponsor-tier-card--presenting .sponsor-tier-perks li {
-    color: rgba(255, 255, 255, 0.78);
+  .sp-tier--top .sp-tier-perks li {
+    color: rgba(255, 255, 255, 0.8);
   }
-  .sponsor-tier-card--presenting .sponsor-tier-perks li::before {
+  .sp-tier--top .sp-tier-perks li::before {
     color: var(--electric-yellow);
   }
 
-  /* ── Who We Partner With ─────────────────────────────── */
-  .sponsor-partners {
-    background: var(--cream-warm);
-    padding: 56px 0;
+  /* Photo break */
+  .sp-photos {
+    padding: 0;
+    line-height: 0;
   }
-  .sponsor-partners h2 {
-    font-family: var(--font-playfair), serif;
-    font-size: clamp(24px, 3.5vw, 38px);
-    font-weight: 800;
-    color: var(--charcoal);
-    margin-bottom: 12px;
-    line-height: 1.15;
-  }
-  .sponsor-partners-intro {
-    font-size: 15px;
-    line-height: 1.75;
-    color: var(--text-secondary);
-    max-width: 640px;
-    margin-bottom: 36px;
-  }
-  .sponsor-categories {
-    display: flex;
-    flex-direction: column;
-    gap: 0;
-  }
-  .sponsor-category {
-    padding: 20px 0;
-    border-bottom: 1px solid rgba(0, 0, 0, 0.07);
-  }
-  .sponsor-category:first-child {
-    border-top: 1px solid rgba(0, 0, 0, 0.07);
-  }
-  .sponsor-cat-header {
-    margin-bottom: 6px;
-  }
-  .sponsor-cat-label {
-    font-size: 13px;
-    font-weight: 700;
-    text-transform: uppercase;
-    letter-spacing: 1.5px;
-    color: var(--brand-red);
-    margin-bottom: 2px;
-  }
-  .sponsor-cat-brands {
-    font-size: 15px;
-    font-weight: 600;
-    color: var(--charcoal);
-  }
-  .sponsor-cat-why {
-    font-size: 14px;
-    line-height: 1.65;
-    color: var(--text-secondary);
-    margin: 0;
+  .sp-photos img {
+    width: 100%;
+    height: auto;
+    object-fit: cover;
+    max-height: 400px;
   }
 
-  /* ── FAQ ─────────────────────────────────────────────── */
-  .sponsor-faq {
+  /* Target brands */
+  .sp-brands {
     background: var(--off-white);
     padding: 56px 0;
   }
-  .sponsor-faq-inner {
-    max-width: 760px;
-  }
-  .sponsor-faq h2 {
+  .sp-brands h2 {
     font-family: var(--font-playfair), serif;
     font-size: clamp(24px, 3.5vw, 38px);
     font-weight: 800;
     color: var(--charcoal);
     margin-bottom: 28px;
   }
-  /* FAQ styling handled by FaqAccordion component */
+  .sp-categories {
+    display: flex;
+    flex-direction: column;
+  }
+  .sp-cat {
+    padding: 16px 0;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.07);
+  }
+  .sp-cat:first-child {
+    border-top: 1px solid rgba(0, 0, 0, 0.07);
+  }
+  .sp-cat-name {
+    font-size: 12px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    color: var(--brand-red);
+    margin-bottom: 2px;
+  }
+  .sp-cat-brands {
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--charcoal);
+    margin-bottom: 4px;
+  }
+  .sp-cat-why {
+    font-size: 13px;
+    line-height: 1.5;
+    color: var(--muted);
+    margin: 0;
+  }
 
-  /* ── CTA ─────────────────────────────────────────────── */
-  .sponsor-cta {
+  /* FAQ */
+  .sp-faq {
+    background: var(--cream-warm);
+    padding: 56px 0;
+  }
+  .sp-faq-inner {
+    max-width: 760px;
+  }
+  .sp-faq h2 {
+    font-family: var(--font-playfair), serif;
+    font-size: clamp(24px, 3.5vw, 38px);
+    font-weight: 800;
+    color: var(--charcoal);
+    margin-bottom: 28px;
+  }
+
+  /* CTA */
+  .sp-cta {
     background: var(--brand-red);
     padding: 56px 0;
     text-align: center;
   }
-  .sponsor-cta-inner {
-    max-width: 680px;
+  .sp-cta-inner {
+    max-width: 640px;
   }
-  .sponsor-cta h2 {
+  .sp-cta h2 {
     font-family: var(--font-playfair), serif;
     font-size: clamp(28px, 4vw, 44px);
     font-weight: 900;
     color: white;
-    margin-bottom: 20px;
+    margin-bottom: 16px;
   }
-  .sponsor-cta-body {
+  .sp-cta p {
     font-size: 16px;
-    line-height: 1.75;
+    line-height: 1.7;
     color: rgba(255, 255, 255, 0.85);
-    margin-bottom: 0;
-  }
-  .sponsor-cta .sponsor-email-link {
-    color: white;
-    text-decoration-color: white;
-    font-size: clamp(20px, 3vw, 28px);
-  }
-  .sponsor-cta .sponsor-email-link:hover {
-    color: var(--electric-yellow);
-    text-decoration-color: var(--electric-yellow);
+    margin-bottom: 24px;
   }
 
-  /* ── Desktop ─────────────────────────────────────────── */
   @media (min-width: 768px) {
-    .sponsor-hero {
-      padding: 80px 0 72px;
+    .sp-hero {
+      padding: 120px 0 100px;
     }
-    .sponsor-stats {
-      padding: 80px 0;
+    .sp-stats {
+      padding: 100px 0;
     }
-    .sponsor-stats-grid {
+    .sp-stats-bg {
+      inset: 0;
+      width: 100%;
+      height: 100%;
+    }
+    .sp-stats-grid {
       grid-template-columns: repeat(4, 1fr);
     }
-    .sponsor-tiers {
+    .sp-tiers {
       padding: 80px 0;
     }
-    .sponsor-partners {
+    .sp-tier-list {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+    }
+    .sp-photos img {
+      max-height: 500px;
+    }
+    .sp-brands {
       padding: 80px 0;
     }
-    .sponsor-faq {
+    .sp-faq {
       padding: 80px 0;
     }
-    .sponsor-cta {
+    .sp-cta {
       padding: 80px 0;
+    }
+  }
+
+  @media (min-width: 1024px) {
+    .sp-tier-list {
+      grid-template-columns: repeat(4, 1fr);
     }
   }
 </style>

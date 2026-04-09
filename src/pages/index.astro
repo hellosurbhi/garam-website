@@ -12,7 +12,9 @@ import HomeCreators from "@/components/home/HomeCreators.astro";
 import HomeVideo from "@/components/home/HomeVideo.astro";
 import HomeFAQ from "@/components/home/HomeFAQ.astro";
 import HomeSignup from "@/components/home/HomeSignup.astro";
-import { SOCIAL_URLS } from "@/data/socials";
+import { SOCIAL_URLS, CREATOR_URLS } from "@/data/socials";
+import { TESTIMONIALS } from "@/data/copy";
+import { YOUTUBE_VIDEO_ID, VIDEO_METADATA } from "@/lib/constants";
 import { events, allEvents } from "@/data/events";
 import { isEventPast } from "@/utils/eventDate";
 import { buildEventSchemas } from "@/utils/eventSchema";
@@ -38,6 +40,7 @@ const orgJsonLd = JSON.stringify({
   description:
     "Garam Masala Dating is a live South Asian dating show and singles mixer in New York City. Real singles go on blind dates on stage in front of a 250-person live audience. Weekly in Manhattan, monthly in Jersey City.",
   foundingDate: "2022",
+  alternateName: ["Garam Masala Dating Show", "GMS Dating"],
   sameAs: [
     SOCIAL_URLS.instagram,
     SOCIAL_URLS.tiktok,
@@ -51,6 +54,27 @@ const orgJsonLd = JSON.stringify({
     email: "contact@garammasaladating.com",
     contactType: "customer support",
   },
+  aggregateRating: {
+    "@type": "AggregateRating",
+    ratingValue: 5,
+    bestRating: 5,
+    worstRating: 1,
+    ratingCount: 3,
+  },
+  review: TESTIMONIALS.map((t) => ({
+    "@type": "Review",
+    author: {
+      "@type": "Person",
+      name: t.author.includes(",") ? t.author.split(",")[0].trim() : t.author,
+    },
+    reviewBody: t.quote,
+    reviewRating: {
+      "@type": "Rating",
+      ratingValue: 5,
+      bestRating: 5,
+      worstRating: 1,
+    },
+  })),
 });
 
 // WebSite JSON-LD
@@ -67,14 +91,73 @@ const upcomingForSchema = events.filter(
 );
 const eventSchemas = buildEventSchemas(upcomingForSchema);
 
-// Speakable — targets HomeFAQ answer text (summary + detail paragraphs)
+// VideoObject JSON-LD
+const videoJsonLd = JSON.stringify({
+  "@context": "https://schema.org",
+  "@type": "VideoObject",
+  name: VIDEO_METADATA.title,
+  description: VIDEO_METADATA.description,
+  thumbnailUrl: `https://i.ytimg.com/vi/${YOUTUBE_VIDEO_ID}/maxresdefault.jpg`,
+  contentUrl: `https://www.youtube.com/watch?v=${YOUTUBE_VIDEO_ID}`,
+  embedUrl: `https://www.youtube.com/embed/${YOUTUBE_VIDEO_ID}`,
+  uploadDate: VIDEO_METADATA.uploadDate,
+  duration: VIDEO_METADATA.duration,
+  publisher: {
+    "@type": "Organization",
+    name: "Garam Masala Dating",
+    url: "https://garammasaladating.com",
+    logo: {
+      "@type": "ImageObject",
+      url: "https://garammasaladating.com/images/logo.svg",
+    },
+  },
+});
+
+// EventSeries JSON-LD
+const eventSeriesJsonLd = JSON.stringify({
+  "@context": "https://schema.org",
+  "@type": "EventSeries",
+  "@id": "https://garammasaladating.com/#event-series",
+  name: "Garam Masala Dating",
+  description:
+    "NYC's recurring live South Asian comedy dating show. Two real singles go on a blind date in front of a 250-person audience. Bi-weekly in Manhattan at Top Secret Comedy Club.",
+  url: "https://garammasaladating.com",
+  startDate: "2022",
+  organizer: {
+    "@type": "Organization",
+    name: "Garam Masala Dating",
+    url: "https://garammasaladating.com",
+  },
+  location: {
+    "@type": "Place",
+    name: "Top Secret Comedy Club",
+    address: {
+      "@type": "PostalAddress",
+      streetAddress: "44 Avenue A",
+      addressLocality: "New York",
+      addressRegion: "NY",
+      postalCode: "10009",
+      addressCountry: "US",
+    },
+  },
+  eventSchedule: {
+    "@type": "Schedule",
+    repeatFrequency: "P2W",
+  },
+  performer: [
+    { "@type": "Person", name: "Surbhi", url: CREATOR_URLS.surbhi },
+    { "@type": "Person", name: "Wyatt Feegrado", url: CREATOR_URLS.wyatt },
+  ],
+});
+
+// Speakable — targets hero description + HomeFAQ answer text
 const speakableJsonLd = JSON.stringify({
   "@context": "https://schema.org",
   "@type": "WebPage",
   url: "https://garammasaladating.com",
   speakable: {
     "@type": "SpeakableSpecification",
-    cssSelector: [".faq-answer-summary", ".faq-answer-detail"],
+    cssSelector: [".hero-sub", ".faq-answer-summary", ".faq-answer-detail"],
   },
 });
 ---
@@ -88,6 +171,8 @@ const speakableJsonLd = JSON.stringify({
     <script type="application/ld+json" set:html={orgJsonLd} />
     <script type="application/ld+json" set:html={websiteJsonLd} />
     <script type="application/ld+json" set:html={speakableJsonLd} />
+    <script type="application/ld+json" set:html={videoJsonLd} />
+    <script type="application/ld+json" set:html={eventSeriesJsonLd} />
     {
       eventSchemas.map((schema) => (
         <script type="application/ld+json" set:html={schema} />

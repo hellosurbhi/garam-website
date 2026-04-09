@@ -1,5 +1,42 @@
 # Changelog
 
+## feat: add VideoObject, EventSeries, AggregateRating, and Speakable extension JSON-LD schemas (2026-04-09)
+
+### What changed
+
+Added four new JSON-LD schema types across `index.astro` and `tickets.astro` to improve AI/LLM discoverability and Google Rich Results coverage.
+
+**`src/pages/index.astro`**
+
+- Added `VideoObject` schema pointing to the YouTube highlight reel (`AXDhphHBUj4`) with thumbnailUrl, contentUrl, embedUrl, uploadDate, duration, and publisher
+- Added `EventSeries` schema with `@id` anchor (`#event-series`), repeatFrequency `P2W`, location (Top Secret Comedy Club), and performer array with CREATOR_URLS
+- Extended `orgJsonLd` (Organization) with `aggregateRating` (ratingValue: 5, ratingCount: 3) and `review` array built from live TESTIMONIALS data — name extracted via comma-split for "Priya, 27" → "Priya"
+- Extended `speakableJsonLd` cssSelector to include `.hero-sub` (hero description) alongside FAQ selectors
+- Imported `CREATOR_URLS`, `TESTIMONIALS`, `YOUTUBE_VIDEO_ID`, `VIDEO_METADATA`
+
+**`src/lib/constants.ts`**
+
+- Added `VIDEO_METADATA` export (title, description, uploadDate, duration) — TODOs inline to verify against YouTube Studio before launch
+
+**`src/utils/eventSchema.ts`**
+
+- Added `superEvent` field to each Event output, linking back to the EventSeries via `@id` anchor
+
+**`src/pages/tickets.astro`**
+
+- Added same `EventSeries` JSON-LD (inlined, no shared utility needed — only two pages use it)
+
+### Why
+
+VideoObject lets Google/AI index the highlight video without watching it. EventSeries signals recurring nature so search engines don't treat each show as a one-off. AggregateRating + Review surface star ratings in SERPs. Speakable extension on `.hero-sub` gives voice assistants the show description as a readable snippet.
+
+### Files affected
+
+- `src/pages/index.astro`
+- `src/pages/tickets.astro`
+- `src/lib/constants.ts`
+- `src/utils/eventSchema.ts`
+
 ## feat: add WebMCP tool annotations to all public forms (2026-04-09)
 
 ### What changed

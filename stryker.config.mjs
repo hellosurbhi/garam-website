@@ -4,16 +4,18 @@ export default {
   testRunner: "vitest",
 
   // Only mutate YOUR source code, not tests or config
-  mutate: [
-    "src/**/*.ts",
-    "src/**/*.tsx",
-    "src/**/*.js",
-    "src/**/*.jsx",
-    "!src/**/*.test.*",
-    "!src/**/*.spec.*",
-    "!src/**/*.d.ts",
-    "!src/env.d.ts",
-  ],
+mutate: [
+  "src/**/*.ts",
+  "src/**/*.tsx",
+  "!src/**/data/cities/*.ts",
+  "!src/**/data/copy.ts",
+  "!src/**/data/footer.ts",
+  "!src/**/data/icons.ts",
+  "!src/**/data/images.ts",
+  "!src/**/data/legal.ts",
+  "!src/**/*.test.*",
+  "!src/**/*.spec.*"
+],
 
   // Start with a focused scope - don't mutate everything at once
   // Uncomment and adjust to target specific directories first:
@@ -35,6 +37,9 @@ export default {
   // Performance: use incremental mode so re-runs only test changed files
   incremental: true,
   incrementalFile: "reports/stryker-incremental.json",
+
+  // Skip build artifacts and large dirs when copying to sandbox
+  ignorePaths: ["dist", ".astro", ".vercel", "playwright-report"],
 
   // Timeout: mutations that take too long are killed
   timeoutMS: 60000,

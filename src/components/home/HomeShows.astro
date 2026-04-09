@@ -157,7 +157,7 @@ function parseDay(dateStr: string): string {
 <script>
   import { getFirebaseDb } from "@/lib/firebase";
   import { collection, addDoc } from "firebase/firestore";
-  import { resolveCityOption } from "@/lib/citySearch";
+  import { resolveCityOption } from "@/lib/citySearchShared";
   import { identifyLead, trackLeadEvent } from "@/lib/analytics";
   import { buildLeadAttribution } from "@/lib/leadAttribution";
 
@@ -179,11 +179,12 @@ function parseDay(dateStr: string): string {
       "city-name-suggestions",
     ) as HTMLDataListElement | null;
     const errorEl = document.getElementById("city-form-error");
-    let cityOptions: import("@/lib/citySearch").CitySearchOption[] = [];
-    let selectedCity: import("@/lib/citySearch").CitySearchOption | null = null;
+    let cityOptions: import("@/lib/citySearchShared").CitySearchOption[] = [];
+    let selectedCity: import("@/lib/citySearchShared").CitySearchOption | null =
+      null;
 
     const syncSelectedCity = (
-      option: import("@/lib/citySearch").CitySearchOption | null,
+      option: import("@/lib/citySearchShared").CitySearchOption | null,
     ) => {
       selectedCity = option;
       if (cityStateInput) cityStateInput.value = option?.state ?? "";
@@ -191,7 +192,7 @@ function parseDay(dateStr: string): string {
     };
 
     const renderCitySuggestions = (
-      results: import("@/lib/citySearch").CitySearchOption[],
+      results: import("@/lib/citySearchShared").CitySearchOption[],
     ) => {
       if (!citySuggestions) return;
       citySuggestions.innerHTML = "";
@@ -208,7 +209,7 @@ function parseDay(dateStr: string): string {
       );
       if (!response.ok) throw new Error("Failed to search cities");
       const data = (await response.json()) as {
-        results?: import("@/lib/citySearch").CitySearchOption[];
+        results?: import("@/lib/citySearchShared").CitySearchOption[];
       };
       cityOptions = data.results ?? [];
       renderCitySuggestions(cityOptions);

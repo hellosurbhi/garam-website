@@ -106,6 +106,7 @@
 }
 
 html {
+  height: 100%;
   background: var(--off-white);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
@@ -120,6 +121,14 @@ body {
   font-family: Nunito, sans-serif;
   overflow-x: hidden;
   min-width: 320px;
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  min-height: 100svh;
+}
+
+main {
+  flex: 1;
 }
 
 ::selection {
@@ -130,6 +139,11 @@ body {
 :focus-visible {
   outline: 2px solid var(--brand-red);
   outline-offset: 2px;
+}
+
+button:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
 }
 
 @media (prefers-reduced-motion: reduce) {

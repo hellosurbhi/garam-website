@@ -2,7 +2,7 @@ import { ErrorBoundary } from "./ErrorBoundary";
 import Select from "react-select";
 import { COMMUNITY_OPTIONS, INCOME_OPTIONS } from "@/types/application";
 import { formSelectStyles } from "@/utils/reactSelectStyles";
-import type { CitySearchOption } from "@/lib/citySearch";
+import type { CitySearchOption } from "@/lib/citySearchShared";
 import styles from "./ApplyPage.module.css";
 import { SOCIAL_URLS } from "@/data/socials";
 import { FieldGroup, SectionTitle } from "./apply/FieldGroup";
@@ -57,15 +57,14 @@ function ApplyPageInner() {
       <div className={styles.page} onClick={() => window.history.back()}>
         <div className={styles.container} onClick={(e) => e.stopPropagation()}>
           <div className={styles.headerArea}>
-            {canGoBack && (
-              <button
-                type="button"
-                onClick={() => window.history.back()}
-                className={styles.backButton}
-              >
-                ← Back
-              </button>
-            )}
+            <button
+              type="button"
+              onClick={() => window.history.back()}
+              className={styles.backButton}
+              disabled={!canGoBack}
+            >
+              ← Back
+            </button>
           </div>
 
           <div className={styles.titleArea}>
@@ -233,6 +232,7 @@ function ApplyPageInner() {
                         </button>
                       ) : (
                         <Select
+                          instanceId="geo-place"
                           inputId="geo-place"
                           options={placeOptions}
                           value={selectedPlace}

@@ -15,13 +15,16 @@ import {
 } from "firebase/storage";
 import { signInAnonymously } from "firebase/auth";
 import { useCitySearch } from "@/hooks/useCitySearch";
-import { resolveCityOption, type CitySearchOption } from "@/lib/citySearch";
+import {
+  resolveCityOption,
+  type CitySearchOption,
+} from "@/lib/citySearchShared";
 import {
   getFirebaseDb,
   getFirebaseStorage,
   getFirebaseAuth,
 } from "@/lib/firebase";
-import { trackLeadEvent } from "@/lib/analytics";
+import { trackError, trackLeadEvent } from "@/lib/analytics";
 import { buildLeadAttribution } from "@/lib/leadAttribution";
 
 export interface FormState {
@@ -324,9 +327,18 @@ export function useApplyForm() {
       setPhotoPreview(null);
       setErrors({});
       setSubmitted(true);
-    } catch {
+    } catch (err) {
+      const error = err instanceof Error ? err : new Error(String(err));
       // Clean up orphaned photo if upload succeeded but Firestore write failed
       if (storageRef) deleteObject(storageRef).catch(() => {});
+      trackError({
+        error_message: error.message,
+        error_stack: (error.stack ?? "").slice(0, 2000),
+        error_type: "form_submission",
+        component: "useApplyForm",
+        form_step: storageRef ? "firestore_write" : "auth_or_upload",
+        application_type: form.applicationType,
+      });
       setToast({
         msg: "Sorry, the form isn't working right now. DM us on @garammasaladating on Instagram and we'll sort it out!",
         ok: false,

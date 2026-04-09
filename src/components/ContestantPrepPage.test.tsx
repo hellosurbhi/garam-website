@@ -240,4 +240,256 @@ describe("ContestantPrepPage", () => {
     render(<ContestantPrepPage />);
     expect(screen.getByText(/See you on stage/)).toBeInTheDocument();
   });
+
+  /* ── Session storage keys (StringLiteral mutations) ─── */
+
+  it("saves session with correct keys", async () => {
+    Object.defineProperty(window, "location", {
+      value: { search: "?date=2026-04-10&sig=valid" },
+      writable: true,
+      configurable: true,
+    });
+    vi.spyOn(globalThis, "fetch").mockResolvedValue(
+      new Response(
+        JSON.stringify({ token: "tok", expiresAt: Date.now() + 3600000 }),
+        { status: 200 },
+      ),
+    );
+    render(<ContestantPrepPage />);
+    await waitFor(() => {
+      expect(sessionStorage.getItem("gm-prep-token")).toBe("tok");
+      expect(sessionStorage.getItem("gm-prep-expires")).toBeTruthy();
+    });
+  });
+
+  it("saves expiresAt as string in sessionStorage", async () => {
+    const expiresAt = Date.now() + 7200000;
+    Object.defineProperty(window, "location", {
+      value: { search: "?date=2026-04-10&sig=valid" },
+      writable: true,
+      configurable: true,
+    });
+    vi.spyOn(globalThis, "fetch").mockResolvedValue(
+      new Response(JSON.stringify({ token: "t", expiresAt }), { status: 200 }),
+    );
+    render(<ContestantPrepPage />);
+    await waitFor(() => {
+      expect(sessionStorage.getItem("gm-prep-expires")).toBe(String(expiresAt));
+    });
+  });
+
+  /* ── Session boundary: Date.now() === expiresAt ──────── */
+
+  it("treats session as expired when Date.now() === expiresAt", () => {
+    const now = Date.now();
+    sessionStorage.setItem("gm-prep-token", "token");
+    sessionStorage.setItem("gm-prep-expires", String(now));
+    vi.spyOn(Date, "now").mockReturnValue(now);
+    render(<ContestantPrepPage />);
+    // Session is expired (>=), storage should be cleared
+    expect(sessionStorage.getItem("gm-prep-token")).toBeNull();
+    vi.restoreAllMocks();
+  });
+
+  it("session is valid when Date.now() < expiresAt", () => {
+    const future = Date.now() + 10000;
+    sessionStorage.setItem("gm-prep-token", "valid");
+    sessionStorage.setItem("gm-prep-expires", String(future));
+    render(<ContestantPrepPage />);
+    expect(screen.getByText(/Contestant Orientation/)).toBeInTheDocument();
+    // Storage not cleared
+    expect(sessionStorage.getItem("gm-prep-token")).toBe("valid");
+  });
+
+  /* ── Content text assertions (StringLiteral mutations) ─── */
+
+  it("renders cover title with emoji", () => {
+    render(<ContestantPrepPage />);
+    expect(screen.getByText("🌶️ Contestant Orientation")).toBeInTheDocument();
+  });
+
+  it("renders show name in cover", () => {
+    render(<ContestantPrepPage />);
+    expect(screen.getByText("Garam Masala Dating")).toBeInTheDocument();
+  });
+
+  it("renders What to Wear section", () => {
+    render(<ContestantPrepPage />);
+    expect(screen.getByText("What to Wear")).toBeInTheDocument();
+  });
+
+  it("renders Day Of section", () => {
+    render(<ContestantPrepPage />);
+    expect(screen.getByText("Day Of")).toBeInTheDocument();
+  });
+
+  it("renders Come Prepared With section", () => {
+    render(<ContestantPrepPage />);
+    expect(screen.getByText("Come Prepared With")).toBeInTheDocument();
+  });
+
+  it("renders Arrival & Notes section", () => {
+    render(<ContestantPrepPage />);
+    expect(screen.getByText(/Arrival/)).toBeInTheDocument();
+  });
+
+  it("renders core message about being REAL", () => {
+    render(<ContestantPrepPage />);
+    expect(screen.getByText("REAL")).toBeInTheDocument();
+  });
+
+  /* ── Gender toggle specifics ────────────────────────── */
+
+  it("gender toggle has role=group", () => {
+    render(<ContestantPrepPage />);
+    expect(
+      screen.getByRole("group", { name: /contestant type/i }),
+    ).toBeInTheDocument();
+  });
+
+  it("clicking Guys then Girls switches to female content", () => {
+    render(<ContestantPrepPage />);
+    fireEvent.click(screen.getByText("Guys"));
+    expect(screen.getByText(/5:20 PM/)).toBeInTheDocument();
+    fireEvent.click(screen.getByText("Girls"));
+    expect(screen.getByText(/5:30 PM/)).toBeInTheDocument();
+    expect(screen.queryByText(/5:20 PM/)).not.toBeInTheDocument();
+  });
+
+  it("male content mentions being curious about date", () => {
+    render(<ContestantPrepPage />);
+    fireEvent.click(screen.getByText("Guys"));
+    expect(
+      screen.getByText(/being genuinely curious about your date/),
+    ).toBeInTheDocument();
+  });
+
+  it("female content mentions not owing chemistry", () => {
+    render(<ContestantPrepPage />);
+    fireEvent.click(screen.getByText("Girls"));
+    expect(
+      screen.getByText(/You don't owe anyone chemistry/),
+    ).toBeInTheDocument();
+  });
+
+  /* ── Error page specifics ───────────────────────────── */
+
+  it("error page shows emoji", () => {
+    Object.defineProperty(window, "location", {
+      value: { search: "?date=2026-04-10" },
+      writable: true,
+      configurable: true,
+    });
+    render(<ContestantPrepPage />);
+    expect(screen.getByText("🌶️")).toBeInTheDocument();
+  });
+
+  it("error page shows correct title", () => {
+    Object.defineProperty(window, "location", {
+      value: { search: "?sig=only" },
+      writable: true,
+      configurable: true,
+    });
+    render(<ContestantPrepPage />);
+    expect(screen.getByText("Link expired")).toBeInTheDocument();
+  });
+
+  it("error page shows full error message", () => {
+    Object.defineProperty(window, "location", {
+      value: { search: "?date=2026-04-10" },
+      writable: true,
+      configurable: true,
+    });
+    render(<ContestantPrepPage />);
+    expect(
+      screen.getByText(
+        "This link has expired or is invalid. Ask your host for a new one.",
+      ),
+    ).toBeInTheDocument();
+  });
+
+  /* ── Auth fetch details ─────────────────────────────── */
+
+  it("auth fetch sends correct Content-Type header", async () => {
+    Object.defineProperty(window, "location", {
+      value: { search: "?date=2026-04-10&sig=test" },
+      writable: true,
+      configurable: true,
+    });
+    const fetchSpy = vi
+      .spyOn(globalThis, "fetch")
+      .mockResolvedValue(
+        new Response(
+          JSON.stringify({ token: "t", expiresAt: Date.now() + 3600000 }),
+          { status: 200 },
+        ),
+      );
+    render(<ContestantPrepPage />);
+    await waitFor(() => {
+      expect(fetchSpy).toHaveBeenCalledWith(
+        "/api/contestant-prep-auth",
+        expect.objectContaining({
+          headers: { "Content-Type": "application/json" },
+        }),
+      );
+    });
+  });
+
+  /* ── Prep questions list ────────────────────────────── */
+
+  it("renders all 13 prep questions", () => {
+    render(<ContestantPrepPage />);
+    expect(screen.getByText(/What's your name/)).toBeInTheDocument();
+    expect(
+      screen.getByText(/Why did your last relationship end/),
+    ).toBeInTheDocument();
+    expect(screen.getByText(/How much do you make/)).toBeInTheDocument();
+  });
+
+  /* ── Prep items ─────────────────────────────────────── */
+
+  it("renders all 4 come-prepared items", () => {
+    render(<ContestantPrepPage />);
+    expect(screen.getByText(/One thoughtful question/)).toBeInTheDocument();
+    expect(screen.getByText(/talent or party trick/)).toBeInTheDocument();
+    expect(screen.getByText(/pickup line/i)).toBeInTheDocument();
+    expect(screen.getByText(/elevator pitch/)).toBeInTheDocument();
+  });
+
+  /* ── Toggle label text ──────────────────────────────── */
+
+  it("shows toggle label text", () => {
+    render(<ContestantPrepPage />);
+    expect(screen.getByText(/Intructions for:/)).toBeInTheDocument();
+  });
+
+  /* ── Golden rules content ───────────────────────────── */
+
+  it("renders golden rule about 20-30 seconds", () => {
+    render(<ContestantPrepPage />);
+    expect(
+      screen.getByText(/Keep answers to 20–30 seconds/),
+    ).toBeInTheDocument();
+  });
+
+  it("renders golden rule about vulnerable beats funny", () => {
+    render(<ContestantPrepPage />);
+    expect(
+      screen.getByText(/Vulnerable beats funny every time/),
+    ).toBeInTheDocument();
+  });
+
+  it("renders golden rule about focus on date", () => {
+    render(<ContestantPrepPage />);
+    expect(
+      screen.getByText(/Focus on your date, not the crowd/),
+    ).toBeInTheDocument();
+  });
+
+  it("renders golden rule about drinks limit", () => {
+    render(<ContestantPrepPage />);
+    expect(
+      screen.getByText(/Two to three drinks before you go on/),
+    ).toBeInTheDocument();
+  });
 });

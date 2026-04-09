@@ -15,6 +15,10 @@ declare global {
     __garamAnalytics?: {
       posthog?: boolean;
     };
+    __garamErrorQueue?: Array<{
+      event: string;
+      properties: Record<string, unknown>;
+    }>;
     _gtmLoaded?: boolean;
     _fbLoaded?: boolean;
   }

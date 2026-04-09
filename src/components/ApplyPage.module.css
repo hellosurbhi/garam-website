@@ -46,7 +46,7 @@
   min-height: 100vh;
   background: transparent;
   position: relative;
-  animation: pageIn 0.3s ease-out both;
+  animation: pageIn 0.5s ease-out both;
 }
 
 .container {
@@ -61,6 +61,7 @@
 
 .headerArea {
   margin-bottom: 8px;
+  min-height: var(--touch-target);
 }
 
 .backButton {
@@ -426,7 +427,6 @@
 
 .submitButton:disabled {
   background: rgba(var(--brand-red-rgb), 0.5);
-  cursor: not-allowed;
 }
 
 .submitButton:disabled:hover {

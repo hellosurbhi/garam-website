@@ -262,4 +262,104 @@ describe("resolveCityOption", () => {
     expect(result).not.toBeNull();
     expect(result!.state).toBe("MA");
   });
+
+  it("matches by city when label does not match", () => {
+    const opts = [
+      makeOption({ city: "Portland", state: "OR", label: "Portland, OR, US" }),
+    ];
+    const result = resolveCityOption("Portland", opts);
+    expect(result).not.toBeNull();
+    expect(result!.city).toBe("Portland");
+  });
+
+  it("returns null for special characters only", () => {
+    const opts = [makeOption({ city: "Boston", state: "MA" })];
+    expect(resolveCityOption("@#$%", opts)).toBeNull();
+  });
+});
+
+describe("searchCityOptions — additional", () => {
+  it("label startsWith (850) ranks below city startsWith (900)", () => {
+    const opts = [
+      makeOption({
+        city: "Othercity",
+        label: "Newtown, ZZ, US",
+        state: "ZZ",
+        boost: 0,
+      }),
+      makeOption({ city: "Newtown", state: "AA", boost: 0 }),
+    ];
+    const results = searchCityOptions("New", opts);
+    // city startsWith = 900 beats label startsWith = 850
+    expect(results[0].city).toBe("Newtown");
+  });
+
+  it("label includes (650) ranks below city includes (700)", () => {
+    const opts = [
+      makeOption({
+        city: "Other",
+        label: "Other, Foocity, US",
+        state: "Foocity",
+        boost: 0,
+      }),
+      makeOption({ city: "Foocity", state: "AA", boost: 0 }),
+    ];
+    const results = searchCityOptions("foo", opts);
+    expect(results[0].city).toBe("Foocity");
+  });
+
+  it("exact label match (950) ranks below exact city match (1000)", () => {
+    const opts = [
+      makeOption({
+        city: "Othername",
+        label: "boston",
+        state: "",
+        boost: 0,
+        country: "",
+        countryCode: "US",
+      }),
+      makeOption({
+        city: "boston",
+        state: "",
+        boost: 0,
+        country: "",
+        countryCode: "US",
+      }),
+    ];
+    const results = searchCityOptions("boston", opts);
+    expect(results[0].city).toBe("boston");
+  });
+
+  it("empty query sorts by boost desc then label asc", () => {
+    const opts = [
+      makeOption({ city: "Zzz", boost: 10 }),
+      makeOption({ city: "Aaa", boost: 10 }),
+      makeOption({ city: "Mmm", boost: 20 }),
+    ];
+    const results = searchCityOptions("", opts, 10);
+    expect(results[0].city).toBe("Mmm"); // highest boost
+    expect(results[1].city).toBe("Aaa"); // same boost, alpha first
+    expect(results[2].city).toBe("Zzz");
+  });
+
+  it("slice limits results after sorting", () => {
+    const opts = Array.from({ length: 20 }, (_, i) =>
+      makeOption({ city: `City${String(i).padStart(2, "0")}`, boost: 20 - i }),
+    );
+    const results = searchCityOptions("", opts, 3);
+    expect(results).toHaveLength(3);
+    expect(results[0].boost).toBe(20);
+    expect(results[2].boost).toBe(18);
+  });
+
+  it("filter removes zero-score items before slicing", () => {
+    const opts = [
+      makeOption({ city: "Alpha", boost: 0 }),
+      makeOption({ city: "Zulu", boost: 0 }),
+    ];
+    // "Alpha" exact city match = 1000, "Zulu" has no text overlap with "Alpha" = 0
+    const results = searchCityOptions("Alpha", opts);
+    expect(results).toHaveLength(1);
+    expect(results[0].city).toBe("Alpha");
+  });
 });

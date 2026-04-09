@@ -38,6 +38,7 @@ describe("generate-contestant-link handler", () => {
 
   afterEach(() => {
     delete import.meta.env.CONTESTANT_PREP_SALT;
+    vi.unstubAllEnvs();
   });
 
   it("returns 401 when not authenticated", async () => {
@@ -85,7 +86,7 @@ describe("generate-contestant-link handler", () => {
   });
 
   it("uses fallback origin when SITE env var is not set", async () => {
-    delete import.meta.env.SITE;
+    delete (import.meta.env as Record<string, unknown>).SITE;
     const req = makeRequest(
       "POST",
       { showDate: "2026-06-15" },
@@ -97,7 +98,7 @@ describe("generate-contestant-link handler", () => {
   });
 
   it("url uses origin from SITE env var", async () => {
-    import.meta.env.SITE = "https://custom-origin.example.com";
+    vi.stubEnv("SITE", "https://custom-origin.example.com");
     const req = makeRequest(
       "POST",
       { showDate: "2026-06-15" },

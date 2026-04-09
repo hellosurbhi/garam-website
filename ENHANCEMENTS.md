@@ -20,6 +20,26 @@ Items from the GMD website audit checklists (site audit, codebase cleanup, conve
 
 ## Medium Impact
 
+### Finish full audit photo rollout
+
+- **Why:** The initial rewrite landed only part of the visual refresh. Key placements are still missing: hero background photo, Experience section proof image, testimonial accent image, upgraded creator portraits, and journal cupid art.
+- **How:** Use the optimized photo set from the audit and finish the remaining placements section by section, verifying desktop/mobile composition after each pass.
+
+### Add a tickets-page hero image strip or banner
+
+- **Why:** The tickets page is functional but visually flat compared with the homepage. The audit proposed a compact stage-photo banner to reinforce that the events are real and lively.
+- **How:** Add a small hero image at the top of `src/pages/tickets.astro` with a dark overlay and keep the copy legible.
+
+### Add city-specific hero imagery strategy
+
+- **Why:** City pages currently rotate through generic show and AI images. The audit proposed using real venue/show photos for active cities and clearer placeholders for speculative markets.
+- **How:** Create a per-city image mapping for active cities and reserve AI art only for placeholder markets where no real show asset exists yet.
+
+### Strengthen popup offer copy once the actual incentive is finalized
+
+- **Why:** The conversion audit recommended moving from generic "cheaper tickets" copy to a specific discount/value proposition.
+- **How:** Finalize the real offer or code, then update popup copy and CTA text to match that promise consistently across popup and confirmation flows.
+
 ### IMDb listing for the show
 
 - **Why:** Triggers Google Knowledge Panel recognition. Establishes GMD as a distinct entertainment entity.

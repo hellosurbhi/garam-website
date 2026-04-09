@@ -76,14 +76,18 @@ function isThirdPartyNoise(msg: string): boolean {
 // SHARED HELPERS
 // =============================================
 
-function setupConsoleCollector(page: Page): string[] {
+function setupConsoleCollector(page: Page): {
+  errors: string[];
+  cleanup: () => void;
+} {
   const errors: string[] = [];
-  page.on("console", (msg) => {
+  const handler = (msg: import("@playwright/test").ConsoleMessage) => {
     if (msg.type() === "error" && !isThirdPartyNoise(msg.text())) {
       errors.push(msg.text());
     }
-  });
-  return errors;
+  };
+  page.on("console", handler);
+  return { errors, cleanup: () => page.off("console", handler) };
 }
 
 async function assertSeoMeta(page: Page) {
@@ -200,55 +204,59 @@ async function assertJsonLd(page: Page) {
 test.describe("Static pages smoke", () => {
   for (const { path, label } of STATIC_PAGES) {
     test(`${label} (${path})`, async ({ page }) => {
-      const errors = setupConsoleCollector(page);
-      const response = await page.goto(path, {
-        waitUntil: "domcontentloaded",
-      });
-      expect(response?.status(), `${path} should return 200`).toBe(200);
+      const { errors, cleanup } = setupConsoleCollector(page);
+      try {
+        const response = await page.goto(path, {
+          waitUntil: "domcontentloaded",
+        });
+        expect(response?.status(), `${path} should return 200`).toBe(200);
 
-      // Main content landmark
-      const main = page.locator("main#main-content");
-      expect(
-        await main.count(),
-        "main#main-content should exist",
-      ).toBeGreaterThan(0);
+        // Main content landmark
+        const main = page.locator("main#main-content");
+        expect(
+          await main.count(),
+          "main#main-content should exist",
+        ).toBeGreaterThan(0);
 
-      // No horizontal overflow
-      await assertNoHorizontalOverflow(page);
+        // No horizontal overflow
+        await assertNoHorizontalOverflow(page);
 
-      // SEO meta tags (skip for contestant-prep which has empty description)
-      if (path !== "/contestant-prep") {
-        await assertSeoMeta(page);
+        // SEO meta tags (skip for contestant-prep which has empty description)
+        if (path !== "/contestant-prep") {
+          await assertSeoMeta(page);
+        }
+
+        // Skip link
+        await assertSkipLink(page);
+
+        // Nav (present on all static pages)
+        await assertNav(page);
+
+        // Footer (present on all except contestant-prep which may vary)
+        if (path !== "/contestant-prep") {
+          await assertFooter(page);
+        }
+
+        // All links valid
+        await assertAllLinksValid(page);
+
+        // All buttons accessible
+        await assertAllButtonsAccessible(page);
+
+        // JSON-LD (skip non-public pages that don't have structured data)
+        if (
+          path !== "/contestant-prep" &&
+          path !== "/privacy" &&
+          path !== "/terms"
+        ) {
+          await assertJsonLd(page);
+        }
+
+        // Console errors
+        expect(errors, `Console errors on ${path}`).toEqual([]);
+      } finally {
+        cleanup();
       }
-
-      // Skip link
-      await assertSkipLink(page);
-
-      // Nav (present on all static pages)
-      await assertNav(page);
-
-      // Footer (present on all except contestant-prep which may vary)
-      if (path !== "/contestant-prep") {
-        await assertFooter(page);
-      }
-
-      // All links valid
-      await assertAllLinksValid(page);
-
-      // All buttons accessible
-      await assertAllButtonsAccessible(page);
-
-      // JSON-LD (skip non-public pages that don't have structured data)
-      if (
-        path !== "/contestant-prep" &&
-        path !== "/privacy" &&
-        path !== "/terms"
-      ) {
-        await assertJsonLd(page);
-      }
-
-      // Console errors
-      expect(errors, `Console errors on ${path}`).toEqual([]);
     });
   }
 });
@@ -759,39 +767,43 @@ test.describe("Links page deep", () => {
 
 test.describe("Journal", () => {
   test("Journal index page", async ({ page }) => {
-    const errors = setupConsoleCollector(page);
-    await page.goto("/journal", { waitUntil: "domcontentloaded" });
+    const { errors, cleanup } = setupConsoleCollector(page);
+    try {
+      await page.goto("/journal", { waitUntil: "domcontentloaded" });
 
-    await expect(page.locator("main.journal-page")).toBeVisible();
-    await expect(page.locator("h1.journal-title")).toBeVisible();
+      await expect(page.locator("main.journal-page")).toBeVisible();
+      await expect(page.locator("h1.journal-title")).toBeVisible();
 
-    const cards = page.locator(".journal-list .journal-card");
-    expect(
-      await cards.count(),
-      "Journal should have post cards",
-    ).toBeGreaterThan(0);
-
-    // Each card is a link to /journal/{slug}
-    const allCards = await cards.all();
-    for (const card of allCards) {
-      const href = await card.getAttribute("href");
-      expect(href, "Journal card should link to a post").toMatch(
-        /^\/journal\/.+/,
-      );
-      // Card has title
-      const title = card.locator(".journal-card-title");
-      expect(await title.count()).toBe(1);
-      const titleText = await title.textContent();
+      const cards = page.locator(".journal-list .journal-card");
       expect(
-        titleText?.trim().length,
-        "Card title should not be empty",
+        await cards.count(),
+        "Journal should have post cards",
       ).toBeGreaterThan(0);
-      // Card has date
-      expect(await card.locator(".journal-card-date").count()).toBe(1);
-    }
 
-    await assertNoHorizontalOverflow(page);
-    expect(errors).toEqual([]);
+      // Each card is a link to /journal/{slug}
+      const allCards = await cards.all();
+      for (const card of allCards) {
+        const href = await card.getAttribute("href");
+        expect(href, "Journal card should link to a post").toMatch(
+          /^\/journal\/.+/,
+        );
+        // Card has title
+        const title = card.locator(".journal-card-title");
+        expect(await title.count()).toBe(1);
+        const titleText = await title.textContent();
+        expect(
+          titleText?.trim().length,
+          "Card title should not be empty",
+        ).toBeGreaterThan(0);
+        // Card has date
+        expect(await card.locator(".journal-card-date").count()).toBe(1);
+      }
+
+      await assertNoHorizontalOverflow(page);
+      expect(errors).toEqual([]);
+    } finally {
+      cleanup();
+    }
   });
 
   test("Every live journal post loads correctly", async ({ page }) => {
@@ -806,7 +818,7 @@ test.describe("Journal", () => {
     expect(hrefs.length, "Should have live journal posts").toBeGreaterThan(0);
 
     for (const href of hrefs) {
-      const errors = setupConsoleCollector(page);
+      const { errors, cleanup } = setupConsoleCollector(page);
       const response = await page.goto(href, { waitUntil: "domcontentloaded" });
       expect(response?.status(), `${href} should return 200`).toBe(200);
 
@@ -839,6 +851,7 @@ test.describe("Journal", () => {
       await assertJsonLd(page);
       await assertNoHorizontalOverflow(page);
       expect(errors, `Console errors on ${href}`).toEqual([]);
+      cleanup();
     }
   });
 });
@@ -849,28 +862,33 @@ test.describe("Journal", () => {
 
 test.describe("Dating tips", () => {
   test("Tips index page", async ({ page }) => {
-    const errors = setupConsoleCollector(page);
-    await page.goto("/south-asian-dating-tips", {
-      waitUntil: "domcontentloaded",
-    });
+    const { errors, cleanup } = setupConsoleCollector(page);
+    try {
+      await page.goto("/south-asian-dating-tips", {
+        waitUntil: "domcontentloaded",
+      });
 
-    await expect(page.locator("main.tips-page")).toBeVisible();
-    await expect(page.locator("h1.tips-title")).toBeVisible();
+      await expect(page.locator("main.tips-page")).toBeVisible();
+      await expect(page.locator("h1.tips-title")).toBeVisible();
 
-    const cards = page.locator(".tips-list .tips-card");
-    expect(await cards.count(), "Tips should have post cards").toBeGreaterThan(
-      0,
-    );
+      const cards = page.locator(".tips-list .tips-card");
+      expect(
+        await cards.count(),
+        "Tips should have post cards",
+      ).toBeGreaterThan(0);
 
-    // Each card links to a tip post
-    const allCards = await cards.all();
-    for (const card of allCards) {
-      const href = await card.getAttribute("href");
-      expect(href).toMatch(/^\/south-asian-dating-tips\/.+/);
+      // Each card links to a tip post
+      const allCards = await cards.all();
+      for (const card of allCards) {
+        const href = await card.getAttribute("href");
+        expect(href).toMatch(/^\/south-asian-dating-tips\/.+/);
+      }
+
+      await assertNoHorizontalOverflow(page);
+      expect(errors).toEqual([]);
+    } finally {
+      cleanup();
     }
-
-    await assertNoHorizontalOverflow(page);
-    expect(errors).toEqual([]);
   });
 
   test("Every live tip post loads correctly", async ({ page }) => {
@@ -887,7 +905,7 @@ test.describe("Dating tips", () => {
     expect(hrefs.length, "Should have live tip posts").toBeGreaterThan(0);
 
     for (const href of hrefs) {
-      const errors = setupConsoleCollector(page);
+      const { errors, cleanup } = setupConsoleCollector(page);
       const response = await page.goto(href, { waitUntil: "domcontentloaded" });
       expect(response?.status(), `${href} should return 200`).toBe(200);
 
@@ -912,6 +930,7 @@ test.describe("Dating tips", () => {
       await assertJsonLd(page);
       await assertNoHorizontalOverflow(page);
       expect(errors, `Console errors on ${href}`).toEqual([]);
+      cleanup();
     }
   });
 });
@@ -922,98 +941,108 @@ test.describe("Dating tips", () => {
 
 test.describe("Cities", () => {
   test("Cities hub page", async ({ page }) => {
-    const errors = setupConsoleCollector(page);
-    await page.goto("/cities", { waitUntil: "domcontentloaded" });
+    const { errors, cleanup } = setupConsoleCollector(page);
+    try {
+      await page.goto("/cities", { waitUntil: "domcontentloaded" });
 
-    await expect(page.locator("main.cities-page")).toBeVisible();
-    await expect(page.locator("h1.cities-h1")).toBeVisible();
+      await expect(page.locator("main.cities-page")).toBeVisible();
+      await expect(page.locator("h1.cities-h1")).toBeVisible();
 
-    // Region nav links
-    const regionLinks = page.locator("a.region-nav__link");
-    expect(
-      await regionLinks.count(),
-      "Should have region jump links",
-    ).toBeGreaterThan(0);
+      // Region nav links
+      const regionLinks = page.locator("a.region-nav__link");
+      expect(
+        await regionLinks.count(),
+        "Should have region jump links",
+      ).toBeGreaterThan(0);
 
-    // City cards
-    const cityCards = page.locator("a.city-card");
-    expect(await cityCards.count(), "Should have city cards").toBeGreaterThan(
-      10,
-    );
+      // City cards
+      const cityCards = page.locator("a.city-card");
+      expect(await cityCards.count(), "Should have city cards").toBeGreaterThan(
+        10,
+      );
 
-    // Cards link to /cities/{slug}
-    const allCards = await cityCards.all();
-    for (const card of allCards.slice(0, 20)) {
-      const href = await card.getAttribute("href");
-      expect(href).toMatch(/^\/cities\/.+/);
+      // Cards link to /cities/{slug}
+      const allCards = await cityCards.all();
+      for (const card of allCards.slice(0, 20)) {
+        const href = await card.getAttribute("href");
+        expect(href).toMatch(/^\/cities\/.+/);
+      }
+
+      // Back link
+      await expect(
+        page.locator('a.cities-footer__back[href="/"]'),
+      ).toBeVisible();
+
+      await assertNoHorizontalOverflow(page);
+      expect(errors).toEqual([]);
+    } finally {
+      cleanup();
     }
-
-    // Back link
-    await expect(page.locator('a.cities-footer__back[href="/"]')).toBeVisible();
-
-    await assertNoHorizontalOverflow(page);
-    expect(errors).toEqual([]);
   });
 
   for (const slug of ALL_CITIES) {
     test(`City page: ${slug}`, async ({ page }) => {
-      const errors = setupConsoleCollector(page);
-      const path = `/cities/${slug}`;
-      const response = await page.goto(path, {
-        waitUntil: "domcontentloaded",
-      });
-      expect(response?.status(), `${path} should return 200`).toBe(200);
+      const { errors, cleanup } = setupConsoleCollector(page);
+      try {
+        const path = `/cities/${slug}`;
+        const response = await page.goto(path, {
+          waitUntil: "domcontentloaded",
+        });
+        expect(response?.status(), `${path} should return 200`).toBe(200);
 
-      // Structure
-      await expect(page.locator("main.city-page")).toBeVisible();
+        // Structure
+        await expect(page.locator("main.city-page")).toBeVisible();
 
-      const h1 = page.locator("h1.city-h1");
-      await expect(h1).toBeVisible();
-      const h1Text = await h1.textContent();
-      expect(
-        h1Text?.trim().length,
-        "City h1 should not be empty",
-      ).toBeGreaterThan(0);
+        const h1 = page.locator("h1.city-h1");
+        await expect(h1).toBeVisible();
+        const h1Text = await h1.textContent();
+        expect(
+          h1Text?.trim().length,
+          "City h1 should not be empty",
+        ).toBeGreaterThan(0);
 
-      // Body paragraphs
-      const body = page.locator(".city-body");
-      await expect(body).toBeVisible();
-      const paragraphs = body.locator(".city-paragraph");
-      expect(
-        await paragraphs.count(),
-        "City should have body paragraphs",
-      ).toBeGreaterThan(0);
+        // Body paragraphs
+        const body = page.locator(".city-body");
+        await expect(body).toBeVisible();
+        const paragraphs = body.locator(".city-paragraph");
+        expect(
+          await paragraphs.count(),
+          "City should have body paragraphs",
+        ).toBeGreaterThan(0);
 
-      // CTAs
-      const ctas = page.locator(".city-ctas .city-cta");
-      expect(
-        await ctas.count(),
-        "City should have at least one CTA",
-      ).toBeGreaterThan(0);
+        // CTAs
+        const ctas = page.locator(".city-ctas .city-cta");
+        expect(
+          await ctas.count(),
+          "City should have at least one CTA",
+        ).toBeGreaterThan(0);
 
-      // CTA links/buttons are valid
-      const ctaLinks = await page.locator(".city-ctas a.city-cta").all();
-      for (const cta of ctaLinks) {
-        const href = await cta.getAttribute("href");
-        expect(href, "City CTA link should have href").toBeTruthy();
+        // CTA links/buttons are valid
+        const ctaLinks = await page.locator(".city-ctas a.city-cta").all();
+        for (const cta of ctaLinks) {
+          const href = await cta.getAttribute("href");
+          expect(href, "City CTA link should have href").toBeTruthy();
+        }
+
+        // Back to all cities
+        await expect(
+          page.locator('a.city-footer__link[href="/cities"]'),
+        ).toBeVisible();
+
+        // Nearby cities (if present) should be valid links
+        const nearbyLinks = await page.locator("a.city-nearby__link").all();
+        for (const link of nearbyLinks) {
+          const href = await link.getAttribute("href");
+          expect(href).toMatch(/^\/cities\/.+/);
+        }
+
+        await assertSeoMeta(page);
+        await assertJsonLd(page);
+        await assertNoHorizontalOverflow(page);
+        expect(errors).toEqual([]);
+      } finally {
+        cleanup();
       }
-
-      // Back to all cities
-      await expect(
-        page.locator('a.city-footer__link[href="/cities"]'),
-      ).toBeVisible();
-
-      // Nearby cities (if present) should be valid links
-      const nearbyLinks = await page.locator("a.city-nearby__link").all();
-      for (const link of nearbyLinks) {
-        const href = await link.getAttribute("href");
-        expect(href).toMatch(/^\/cities\/.+/);
-      }
-
-      await assertSeoMeta(page);
-      await assertJsonLd(page);
-      await assertNoHorizontalOverflow(page);
-      expect(errors).toEqual([]);
     });
   }
 

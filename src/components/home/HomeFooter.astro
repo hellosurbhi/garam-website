@@ -2,35 +2,11 @@
 import { SOCIAL_URLS } from "@/data/socials";
 import { SOCIAL_ICON_SVGS } from "@/data/icons";
 import { SITE } from "@/data/copy";
-
-const showLinks = [
-  { label: "New York City", href: "/cities/manhattan" },
-  { label: "Jersey City", href: "/cities/jersey-city" },
-  { label: "Los Angeles", href: "/cities/los-angeles" },
-  { label: "San Francisco", href: "/cities/san-francisco" },
-  { label: "San Diego", href: "/cities/san-diego" },
-  { label: "All Cities", href: "/cities" },
-];
-
-const involvedLinks = [
-  { label: "Apply to Date on Stage", href: "/apply" },
-  { label: "Buy Tickets", href: "/tickets" },
-  {
-    label: "Brand Partnerships",
-    href: `mailto:${SOCIAL_URLS.email.replace("mailto:", "")}`,
-  },
-  { label: "Follow Us", href: "/links" },
-];
-
-const exploreLinks = [
-  { label: "FAQ", href: "/faq" },
-  { label: "The Journal", href: "/journal" },
-  { label: "Meet the Hosts", href: "/hosts" },
-  {
-    label: "Contact",
-    href: `mailto:${SOCIAL_URLS.email.replace("mailto:", "")}`,
-  },
-];
+import {
+  FOOTER_EXPLORE_LINKS,
+  FOOTER_INVOLVED_LINKS,
+  FOOTER_SHOW_LINKS,
+} from "@/data/footer";
 
 const socials = [
   { icon: "instagram", aria: "Instagram", href: SOCIAL_URLS.instagram },
@@ -77,7 +53,7 @@ const socials = [
       <h4>Get Involved</h4>
       <ul>
         {
-          involvedLinks.map((link) => (
+          FOOTER_INVOLVED_LINKS.map((link) => (
             <li>
               <a href={link.href}>{link.label}</a>
             </li>
@@ -89,7 +65,7 @@ const socials = [
       <h4>Explore</h4>
       <ul>
         {
-          exploreLinks.map((link) => (
+          FOOTER_EXPLORE_LINKS.map((link) => (
             <li>
               <a href={link.href}>{link.label}</a>
             </li>
@@ -101,7 +77,7 @@ const socials = [
       <h4>Shows</h4>
       <ul class="footer-shows-list">
         {
-          showLinks.map((link) => (
+          FOOTER_SHOW_LINKS.map((link) => (
             <li>
               <a href={link.href}>{link.label}</a>
             </li>
@@ -302,9 +278,11 @@ const socials = [
       padding-top: 24px;
       gap: 0;
     }
-    .footer-copy,
-    .footer-legal a {
+    .footer-copy {
       font-size: 13px;
+    }
+    .footer-legal a {
+      font-size: 16px;
     }
   }
 </style>

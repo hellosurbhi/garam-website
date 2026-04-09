@@ -6,22 +6,152 @@ on:
     branches: [main]
   pull_request:
     branches: [main]
+  schedule:
+    - cron: "0 9 * * 1" # Monday 9am UTC - weekly link check catches external links that died
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
 
 jobs:
-  lint-and-test:
+  # ==========================================
+  # JOB 1: Lint + Type Check (fastest)
+  # ==========================================
+  lint:
+    name: Lint & Type Check
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-
       - uses: actions/setup-node@v4
         with:
           node-version: 20
           cache: npm
-
       - run: npm ci
+      - run: npm run lint
+      - run: npx astro check
 
-      - name: Lint
-        run: npm run lint
+  # ==========================================
+  # JOB 2: Unit Tests
+  # ==========================================
+  unit-tests:
+    name: Unit Tests
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+      - run: npm ci
+      - run: npm test
 
-      - name: Test
-        run: npm test
+  # ==========================================
+  # JOB 3: Build
+  # ==========================================
+  build:
+    name: Build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+      - run: npm ci
+      - run: npm run build
+
+  # ==========================================
+  # JOB 4: Playwright Smoke Tests (after build passes)
+  # ==========================================
+  smoke-tests:
+    name: Smoke Tests
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+      - run: npm ci
+      - name: Install Playwright
+        run: npx playwright install chromium --with-deps
+      - name: Run smoke tests
+        run: npx playwright test
+        env:
+          BASE_URL: https://garammasaladating.com
+      - name: Upload report on failure
+        uses: actions/upload-artifact@v4
+        if: failure()
+        with:
+          name: playwright-report
+          path: playwright-report/
+          retention-days: 7
+
+  # ==========================================
+  # JOB 5: Broken Link Check (after build passes)
+  # ==========================================
+  link-check:
+    name: Link Check
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+      - run: npm ci
+      - name: Crawl site for broken links
+        run: |
+          npx linkinator https://garammasaladating.com \
+            --recurse \
+            --timeout 30000 \
+            --retry \
+            --skip 'eventbrite.com|instagram.com|tiktok.com|facebook.com|twitter.com|x.com|youtube.com|linkedin.com' \
+            --format json > link-results.json || true
+      - name: Report broken links
+        run: |
+          node -e "
+            const r = require('./link-results.json');
+            const broken = r.links.filter(l => l.state === 'BROKEN');
+            console.log('Checked ' + r.links.length + ' links');
+            if (broken.length > 0) {
+              console.log('');
+              console.log('BROKEN LINKS:');
+              broken.forEach(l => console.log('  ' + l.url + ' (on page: ' + l.parent + ') -> ' + l.status));
+              process.exit(1);
+            } else {
+              console.log('All links OK');
+            }
+          "
+
+  # ==========================================
+  # JOB 6: Stryker Mutation Testing (after unit tests pass)
+  # ==========================================
+  mutation:
+    name: Mutation Testing
+    needs: unit-tests
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+      - run: npm ci
+      - name: Restore Stryker cache
+        uses: actions/cache@v4
+        with:
+          path: reports/stryker-incremental.json
+          key: stryker-${{ github.sha }}
+          restore-keys: stryker-
+      - name: Run Stryker
+        run: npx stryker run --incremental
+      - name: Upload mutation report
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: mutation-report
+          path: reports/mutation/
+          retention-days: 14

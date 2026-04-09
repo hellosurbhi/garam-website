@@ -17,7 +17,13 @@
     "test:coverage": "vitest run --coverage",
     "prepare": "husky",
     "images:organize": "node scripts/organize-images.js",
-    "images:organize:v": "VERBOSE=1 node scripts/organize-images.js"
+    "images:organize:v": "VERBOSE=1 node scripts/organize-images.js",
+    "test:links": "linkinator https://garammasaladating.com --recurse --timeout 30000 --retry --skip 'eventbrite.com|instagram.com|tiktok.com|facebook.com|twitter.com|x.com|youtube.com|linkedin.com'",
+    "test:smoke": "playwright test",
+    "test:smoke:headed": "playwright test --headed",
+    "test:smoke:preview": "BASE_URL=$VERCEL_PREVIEW_URL playwright test",
+    "test:mutate": "stryker run",
+    "test:mutate:incremental": "stryker run --incremental"
   },
   "dependencies": {
     "@astrojs/react": "^5.0.2",
@@ -38,6 +44,7 @@
   "devDependencies": {
     "@astrojs/check": "^0.9.8",
     "@eslint/js": "^9.39.1",
+    "@playwright/test": "^1.59.1",
     "@stryker-mutator/core": "^9.6.0",
     "@stryker-mutator/jest-runner": "^9.6.0",
     "@stryker-mutator/vitest-runner": "^9.6.0",
@@ -52,6 +59,7 @@
     "globals": "^16.5.0",
     "husky": "^9.1.7",
     "jsdom": "^29.0.1",
+    "linkinator": "^7.6.1",
     "lint-staged": "^16.4.0",
     "sharp": "^0.34.5",
     "typescript": "~5.9.3",
@@ -60,6 +68,12 @@
     "vitest": "^4.1.2"
   },
   "lint-staged": {
-    "*.{ts,tsx,js,jsx}": "eslint --fix"
+    "*.{ts,tsx,js,jsx,astro}": [
+      "eslint --fix --no-warn-ignored",
+      "prettier --write"
+    ],
+    "*.{css,md,json}": [
+      "prettier --write"
+    ]
   }
 }

@@ -168,7 +168,7 @@ const speakableJsonLd = JSON.stringify({
         loading="lazy"
       />
       <img
-        src="/images/the-crowd.webp"
+        src="/images/testimonial-reaction.webp"
         alt="Audience reacting at the show"
         width="800"
         height="1200"
@@ -350,8 +350,9 @@ const speakableJsonLd = JSON.stringify({
   }
   .corp-photo-pair img {
     width: 100%;
-    aspect-ratio: 3/2;
+    height: auto;
     object-fit: cover;
+    max-height: 240px;
   }
 
   /* Format section */
@@ -576,6 +577,10 @@ const speakableJsonLd = JSON.stringify({
     }
     .corp-photo-pair {
       grid-template-columns: 1fr 1fr;
+    }
+    .corp-photo-pair img {
+      height: 100%;
+      max-height: 400px;
     }
     .corp-format {
       padding: 80px 0;

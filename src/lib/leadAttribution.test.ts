@@ -563,11 +563,12 @@ describe("bootstrapLeadAttribution — geo data", () => {
     expect(sessionStorage.getItem("gmd-geo-city")).toBeNull();
   });
 
-  it("sets gmd-geo-fetched flag on bootstrap", () => {
+  it("sets gmd-geo-fetched flag on bootstrap", async () => {
     vi.spyOn(globalThis, "fetch").mockResolvedValue(
       new Response("{}", { status: 200 }),
     );
     bootstrapLeadAttribution();
+    await new Promise((r) => setTimeout(r, 50));
     expect(sessionStorage.getItem("gmd-geo-fetched")).toBe("1");
   });
 

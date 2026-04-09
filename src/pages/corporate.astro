@@ -1,0 +1,612 @@
+---
+import BaseLayout from "@/layouts/BaseLayout.astro";
+import { buildBreadcrumbJsonLd } from "@/utils/breadcrumbs";
+import {
+  CORPORATE_COPY,
+  AUDIENCE_TIERS,
+  INCLUSIONS,
+  CORPORATE_TESTIMONIALS,
+  CORPORATE_FAQS,
+} from "@/data/corporate";
+
+const TITLE = "Private & Corporate Events NYC | Garam Masala Dating";
+const DESC =
+  "Book Garam Masala Dating for your next corporate team event, Diwali party, or private show in NYC. 50–250 guests. Professional hosts, full production, venue coordination. Email caleb@garammasaladating.com to book.";
+
+const SITE_URL = "https://garammasaladating.com";
+
+const breadcrumbJsonLd = buildBreadcrumbJsonLd([
+  { name: "Home", url: `${SITE_URL}/` },
+  { name: "Corporate Events" },
+]);
+
+const serviceJsonLd = JSON.stringify({
+  "@context": "https://schema.org",
+  "@type": "Service",
+  name: "Private & Corporate Show — Garam Masala Dating",
+  description:
+    "A fully produced live South Asian comedy dating show for corporate teams, private parties, and client entertainment events in NYC. 50–250 guests. Includes professional hosts, production, venue coordination, and post-show mixer.",
+  provider: {
+    "@type": "Organization",
+    name: "Garam Masala Dating",
+    url: SITE_URL,
+    logo: `${SITE_URL}/images/logo.svg`,
+  },
+  areaServed: {
+    "@type": "City",
+    name: "New York City",
+  },
+  serviceType: "Live Entertainment",
+  audience: {
+    "@type": "Audience",
+    audienceType: "Corporate teams, private event organizers",
+  },
+  offers: {
+    "@type": "Offer",
+    eligibleCustomerType: "Business",
+    seller: {
+      "@type": "Organization",
+      name: "Garam Masala Dating",
+    },
+  },
+});
+
+const faqJsonLd = JSON.stringify({
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  mainEntity: CORPORATE_FAQS.map((faq) => ({
+    "@type": "Question",
+    name: faq.q,
+    acceptedAnswer: {
+      "@type": "Answer",
+      text: faq.a,
+    },
+  })),
+});
+
+const speakableJsonLd = JSON.stringify({
+  "@context": "https://schema.org",
+  "@type": "WebPage",
+  url: `${SITE_URL}/corporate`,
+  speakable: {
+    "@type": "SpeakableSpecification",
+    cssSelector: [".corp-faq-answer"],
+  },
+});
+---
+
+<BaseLayout title={TITLE} description={DESC}>
+  <Fragment slot="head">
+    <script type="application/ld+json" set:html={breadcrumbJsonLd} />
+    <script type="application/ld+json" set:html={serviceJsonLd} />
+    <script type="application/ld+json" set:html={faqJsonLd} />
+    <script type="application/ld+json" set:html={speakableJsonLd} />
+  </Fragment>
+
+  <main id="main-content" class="corp-page">
+    <!-- ── Hero ─────────────────────────────────────────────────── -->
+    <section class="corp-hero" aria-labelledby="corp-hero-heading">
+      <div class="corp-container corp-hero-inner">
+        <p class="corp-eyebrow">Private &amp; Corporate Events</p>
+        <h1 id="corp-hero-heading">Your Team Deserves a Better Happy Hour</h1>
+        <p class="corp-hero-sub">
+          Most corporate events are forgettable. A live South Asian comedy
+          dating show in front of 80 of your colleagues is not.
+        </p>
+        <a
+          href={`mailto:${CORPORATE_COPY.agentEmail}?subject=Private%20Show%20Inquiry`}
+          class="corp-btn"
+          data-ph-capture="cta_clicked"
+          data-ph-cta="book_show_hero"
+          data-ph-section="corporate_hero"
+        >
+          Book a Show
+        </a>
+        <p class="corp-hero-note">
+          Email {CORPORATE_COPY.agentName} directly — usually responds within 24 hours.
+        </p>
+      </div>
+    </section>
+
+    <!-- ── What a Private Show Looks Like ───────────────────────── -->
+    <section class="corp-format" aria-labelledby="corp-format-heading">
+      <div class="corp-container corp-format-inner">
+        <div class="corp-format-prose">
+          <p class="corp-eyebrow corp-eyebrow--light">
+            What a Private Show Looks Like
+          </p>
+          <h2 id="corp-format-heading">
+            Real singles. Real dates. Your crowd loses their minds.
+          </h2>
+          <p>
+            We bring the full Garam Masala Dating show to your event — real
+            singles from the audience go on blind dates on stage while Surbhi
+            and Wyatt run the whole thing: the comedy, the crowd work, the
+            chaos, and the matchmaking.
+          </p>
+          <p>
+            Guests don't have to do anything except show up and watch. But they
+            always end up participating anyway — that's the magic. The room
+            warms up in about four minutes flat.
+          </p>
+          <p>
+            Every show ends with a post-show mixer where the audience actually
+            meets each other. It's the best networking event your company will
+            ever accidentally throw.
+          </p>
+        </div>
+        <div class="corp-tiers" aria-label="Audience size options">
+          {
+            AUDIENCE_TIERS.map((tier) => (
+              <div class="corp-tier">
+                <div class="corp-tier-range">{tier.range}</div>
+                <div class="corp-tier-label">{tier.label}</div>
+                <p class="corp-tier-desc">{tier.description}</p>
+              </div>
+            ))
+          }
+        </div>
+      </div>
+    </section>
+
+    <!-- ── What's Included ──────────────────────────────────────── -->
+    <section class="corp-inclusions" aria-labelledby="corp-inc-heading">
+      <div class="corp-container">
+        <p class="corp-eyebrow">What's Included</p>
+        <h2 id="corp-inc-heading">Everything handled. You just show up.</h2>
+        <div class="corp-inc-grid">
+          {
+            INCLUSIONS.map((item) => (
+              <div class="corp-inc-card">
+                <h3>{item.title}</h3>
+                <p>{item.description}</p>
+              </div>
+            ))
+          }
+        </div>
+      </div>
+    </section>
+
+    <!-- ── Testimonials ─────────────────────────────────────────── -->
+    <section
+      class="corp-testimonials"
+      aria-labelledby="corp-testimonials-heading"
+    >
+      <div class="corp-container">
+        <p class="corp-eyebrow corp-eyebrow--light">What People Say</p>
+        <h2 id="corp-testimonials-heading" class="corp-testimonials-heading">
+          "Still talking about it three months later."
+        </h2>
+        <div class="corp-quotes">
+          {
+            CORPORATE_TESTIMONIALS.map((t) => (
+              <blockquote class="corp-quote">
+                <p class="corp-quote-text">"{t.quote}"</p>
+                <footer class="corp-quote-attr">
+                  <strong>{t.author}</strong>
+                  <span>{t.role}</span>
+                </footer>
+              </blockquote>
+            ))
+          }
+        </div>
+      </div>
+    </section>
+
+    <!-- ── FAQ ──────────────────────────────────────────────────── -->
+    <section class="corp-faq" aria-labelledby="corp-faq-heading">
+      <div class="corp-container corp-faq-inner">
+        <p class="corp-eyebrow">Common Questions</p>
+        <h2 id="corp-faq-heading">FAQs</h2>
+        <div class="corp-faq-list">
+          {
+            CORPORATE_FAQS.map((faq) => (
+              <details class="corp-faq-item">
+                <summary class="corp-faq-q">
+                  {faq.q}
+                  <span class="corp-faq-toggle" aria-hidden="true">
+                    +
+                  </span>
+                </summary>
+                <p class="corp-faq-answer">{faq.a}</p>
+              </details>
+            ))
+          }
+        </div>
+      </div>
+    </section>
+
+    <!-- ── Final CTA ─────────────────────────────────────────────── -->
+    <section class="corp-cta" aria-labelledby="corp-cta-heading">
+      <div class="corp-container corp-cta-inner">
+        <h2 id="corp-cta-heading">Ready to Book?</h2>
+        <p>
+          Email {CORPORATE_COPY.agentName} with your date, guest count, and any questions.
+          We'll figure out the rest.
+        </p>
+        <a
+          href={`mailto:${CORPORATE_COPY.agentEmail}?subject=Private%20Show%20Inquiry`}
+          class="corp-btn"
+          data-ph-capture="cta_clicked"
+          data-ph-cta="book_show_footer"
+          data-ph-section="corporate_cta"
+        >
+          {CORPORATE_COPY.agentEmail}
+        </a>
+        <p class="corp-cta-note">
+          Or use the subject line "Private Show Inquiry" and we'll route it
+          straight to Caleb.
+        </p>
+      </div>
+    </section>
+  </main>
+</BaseLayout>
+
+<style>
+  /* ── Shared ─────────────────────────────────────────────────── */
+  .corp-page {
+    font-family: var(--font-body), sans-serif;
+  }
+
+  .corp-container {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 0 20px;
+  }
+
+  .corp-eyebrow {
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: var(--brand-red);
+    margin-bottom: 14px;
+  }
+  .corp-eyebrow--light {
+    color: rgba(255, 255, 255, 0.55);
+  }
+
+  .corp-btn {
+    display: inline-block;
+    background: var(--brand-red);
+    color: white;
+    font-family: var(--font-body), sans-serif;
+    font-size: 16px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    padding: 16px 36px;
+    border-radius: 50px;
+    text-decoration: none;
+    transition: background 0.2s;
+    min-height: var(--touch-target);
+    display: inline-flex;
+    align-items: center;
+  }
+  .corp-btn:hover {
+    background: var(--brand-red-dark);
+  }
+  .corp-btn:focus-visible {
+    outline: 2px solid var(--brand-red);
+    outline-offset: 3px;
+  }
+
+  /* ── Hero ─────────────────────────────────────────────────── */
+  .corp-hero {
+    background: var(--off-white);
+    padding: 56px 0 48px;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+  }
+  .corp-hero-inner {
+    text-align: center;
+  }
+  .corp-hero h1 {
+    font-family: var(--font-playfair), serif;
+    font-size: clamp(30px, 5.5vw, 56px);
+    font-weight: 900;
+    color: var(--charcoal);
+    line-height: 1.08;
+    margin-bottom: 20px;
+  }
+  .corp-hero-sub {
+    font-family: var(--font-cormorant), serif;
+    font-size: clamp(18px, 2.5vw, 22px);
+    font-style: italic;
+    color: var(--text-secondary);
+    line-height: 1.6;
+    max-width: 620px;
+    margin: 0 auto 32px;
+  }
+  .corp-hero-note {
+    margin-top: 14px;
+    font-size: 13px;
+    color: var(--muted);
+  }
+
+  /* ── Format / Show Description ───────────────────────────── */
+  .corp-format {
+    background: var(--charcoal);
+    padding: 56px 0;
+    color: white;
+  }
+  .corp-format-inner {
+    display: flex;
+    flex-direction: column;
+    gap: 40px;
+  }
+  .corp-format-prose h2 {
+    font-family: var(--font-playfair), serif;
+    font-size: clamp(24px, 3.5vw, 38px);
+    font-weight: 800;
+    color: white;
+    line-height: 1.15;
+    margin-bottom: 20px;
+  }
+  .corp-format-prose p {
+    font-size: 16px;
+    line-height: 1.75;
+    color: rgba(255, 255, 255, 0.8);
+    margin-bottom: 14px;
+  }
+
+  .corp-tiers {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+  .corp-tier {
+    background: rgba(255, 255, 255, 0.06);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 12px;
+    padding: 20px 24px;
+  }
+  .corp-tier-range {
+    font-family: var(--font-playfair), serif;
+    font-size: 28px;
+    font-weight: 900;
+    color: var(--electric-yellow);
+    line-height: 1;
+    margin-bottom: 4px;
+  }
+  .corp-tier-label {
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: rgba(255, 255, 255, 0.5);
+    margin-bottom: 10px;
+  }
+  .corp-tier-desc {
+    font-size: 14px;
+    line-height: 1.6;
+    color: rgba(255, 255, 255, 0.7);
+    margin: 0;
+  }
+
+  /* ── Inclusions ──────────────────────────────────────────── */
+  .corp-inclusions {
+    background: var(--cream-warm);
+    padding: 56px 0;
+  }
+  .corp-inclusions h2 {
+    font-family: var(--font-playfair), serif;
+    font-size: clamp(24px, 3.5vw, 38px);
+    font-weight: 800;
+    color: var(--charcoal);
+    line-height: 1.15;
+    margin-bottom: 36px;
+  }
+  .corp-inc-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 20px;
+  }
+  .corp-inc-card {
+    background: white;
+    border-radius: 12px;
+    padding: 28px;
+    border: 1px solid rgba(0, 0, 0, 0.06);
+  }
+  .corp-inc-card h3 {
+    font-family: var(--font-playfair), serif;
+    font-size: 20px;
+    font-weight: 800;
+    color: var(--charcoal);
+    margin-bottom: 10px;
+  }
+  .corp-inc-card p {
+    font-size: 15px;
+    line-height: 1.7;
+    color: var(--text-secondary);
+    margin: 0;
+  }
+
+  /* ── Testimonials ────────────────────────────────────────── */
+  .corp-testimonials {
+    background: var(--brand-red);
+    padding: 56px 0;
+  }
+  .corp-testimonials-heading {
+    font-family: var(--font-playfair), serif;
+    font-size: clamp(22px, 3vw, 34px);
+    font-weight: 800;
+    color: white;
+    margin-bottom: 36px;
+    line-height: 1.2;
+  }
+  .corp-quotes {
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+  }
+  .corp-quote {
+    background: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    border-radius: 12px;
+    padding: 28px;
+    margin: 0;
+  }
+  .corp-quote-text {
+    font-family: var(--font-cormorant), serif;
+    font-size: clamp(17px, 2.2vw, 20px);
+    font-style: italic;
+    color: white;
+    line-height: 1.6;
+    margin: 0 0 16px;
+  }
+  .corp-quote-attr {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+  }
+  .corp-quote-attr strong {
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--electric-yellow);
+    letter-spacing: 0.5px;
+  }
+  .corp-quote-attr span {
+    font-size: 12px;
+    color: rgba(255, 255, 255, 0.6);
+  }
+
+  /* ── FAQ ─────────────────────────────────────────────────── */
+  .corp-faq {
+    background: var(--off-white);
+    padding: 56px 0;
+  }
+  .corp-faq-inner {
+    max-width: 760px;
+  }
+  .corp-faq h2 {
+    font-family: var(--font-playfair), serif;
+    font-size: clamp(24px, 3.5vw, 38px);
+    font-weight: 800;
+    color: var(--charcoal);
+    margin-bottom: 28px;
+  }
+  .corp-faq-list {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+  }
+  .corp-faq-item {
+    border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+  }
+  .corp-faq-item:first-child {
+    border-top: 1px solid rgba(0, 0, 0, 0.08);
+  }
+  .corp-faq-q {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 16px;
+    padding: 18px 0;
+    font-size: 16px;
+    font-weight: 700;
+    color: var(--charcoal);
+    cursor: pointer;
+    list-style: none;
+    line-height: 1.4;
+  }
+  .corp-faq-q::-webkit-details-marker {
+    display: none;
+  }
+  .corp-faq-toggle {
+    flex-shrink: 0;
+    font-size: 22px;
+    font-weight: 400;
+    color: var(--brand-red);
+    transition: transform 0.2s;
+    line-height: 1;
+  }
+  .corp-faq-item[open] .corp-faq-toggle {
+    transform: rotate(45deg);
+  }
+  .corp-faq-answer {
+    font-size: 15px;
+    line-height: 1.75;
+    color: var(--text-secondary);
+    padding: 0 0 18px;
+    margin: 0;
+  }
+
+  /* ── Final CTA ───────────────────────────────────────────── */
+  .corp-cta {
+    background: var(--charcoal);
+    padding: 56px 0;
+    text-align: center;
+  }
+  .corp-cta-inner {
+    max-width: 640px;
+  }
+  .corp-cta h2 {
+    font-family: var(--font-playfair), serif;
+    font-size: clamp(28px, 4vw, 44px);
+    font-weight: 900;
+    color: white;
+    margin-bottom: 16px;
+  }
+  .corp-cta p {
+    font-size: 16px;
+    line-height: 1.7;
+    color: rgba(255, 255, 255, 0.75);
+    margin-bottom: 28px;
+  }
+  .corp-cta .corp-btn {
+    background: var(--electric-yellow);
+    color: var(--charcoal);
+    font-size: 15px;
+  }
+  .corp-cta .corp-btn:hover {
+    background: white;
+  }
+  .corp-cta-note {
+    margin-top: 14px;
+    font-size: 13px;
+    color: rgba(255, 255, 255, 0.4);
+    margin-bottom: 0;
+  }
+
+  /* ── Desktop ─────────────────────────────────────────────── */
+  @media (min-width: 768px) {
+    .corp-hero {
+      padding: 80px 0 72px;
+    }
+    .corp-format {
+      padding: 80px 0;
+    }
+    .corp-format-inner {
+      flex-direction: row;
+      align-items: flex-start;
+      gap: 64px;
+    }
+    .corp-format-prose {
+      flex: 1.1;
+    }
+    .corp-tiers {
+      flex: 0.9;
+      gap: 16px;
+    }
+    .corp-inclusions {
+      padding: 80px 0;
+    }
+    .corp-inc-grid {
+      grid-template-columns: 1fr 1fr;
+    }
+    .corp-testimonials {
+      padding: 80px 0;
+    }
+    .corp-quotes {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 24px;
+    }
+    .corp-faq {
+      padding: 80px 0;
+    }
+    .corp-cta {
+      padding: 80px 0;
+    }
+  }
+</style>

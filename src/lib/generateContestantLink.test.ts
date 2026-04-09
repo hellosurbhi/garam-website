@@ -84,7 +84,8 @@ describe("generate-contestant-link handler", () => {
     expect(body.url).toContain("sig=");
   });
 
-  it("uses https for non-localhost hosts", async () => {
+  it("uses fallback origin when SITE env var is not set", async () => {
+    delete import.meta.env.SITE;
     const req = makeRequest(
       "POST",
       { showDate: "2026-06-15" },
@@ -92,7 +93,7 @@ describe("generate-contestant-link handler", () => {
     );
     const res = await POST(makeContext(req));
     const body = await res.json();
-    expect(body.url).toMatch(/^https:\/\//);
+    expect(body.url).toMatch(/^https:\/\/garammasaladating\.com\//);
   });
 
   it("url uses origin from SITE env var", async () => {

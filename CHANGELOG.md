@@ -1,5 +1,23 @@
 # Changelog
 
+## test: kill surviving mutants + city-search API tests (2026-04-09)
+
+### What changed
+
+Added ~54 targeted tests to kill specific surviving Stryker mutants across 9 existing test files, plus a new 11-test suite for the `src/pages/api/city-search.ts` API endpoint (previously 0% coverage).
+
+Key mutant-killing patterns:
+
+- **Operator boundaries**: exact city (1000) vs label (950) score hierarchy, descending vs ascending sort assertions, `>=` vs `>` boundary tests
+- **String literals**: exact offset values ("-04:00", "-05:00"), exact error messages, Content-Type headers
+- **Conditional branches**: isSelected precedence over isFocused in react-select, shouldLoad=false blocks fetch, pathname fallback to "/"
+- **Return values**: `null` vs `undefined` for type checks, empty string UTM skipping, number type exclusion for posthogDistinctId
+
+### Files changed
+
+- 9 existing test files edited with targeted additions
+- `src/pages/api/city-search.test.ts` — NEW (11 tests)
+
 ## test: comprehensive mutation-resistant tests for lib/, utils/, hooks/ (2026-04-08)
 
 ### What changed

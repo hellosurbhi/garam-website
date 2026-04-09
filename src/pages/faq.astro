@@ -120,7 +120,7 @@ const speakableJsonLd = JSON.stringify({
       <!-- FAQ items -->
       <div class="faq-list">
         {
-          FAQS.map((item, i) => (
+          FAQS.map((item) => (
             <div class="faq-item">
               <h2 class="faq-question">{item.q}</h2>
               <p class="faq-answer-text" set:html={item.a} />

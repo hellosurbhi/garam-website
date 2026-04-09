@@ -25,7 +25,7 @@ describe("bootstrapLeadAttribution", () => {
 
   afterEach(() => {
     sessionStorage.clear();
-    delete (window as Record<string, unknown>).posthog;
+    delete (window as unknown as Record<string, unknown>).posthog;
   });
 
   it("stores landing page in sessionStorage", () => {
@@ -172,12 +172,12 @@ describe("buildLeadAttribution", () => {
       writable: true,
       configurable: true,
     });
-    delete (window as Record<string, unknown>).posthog;
+    delete (window as unknown as Record<string, unknown>).posthog;
   });
 
   afterEach(() => {
     sessionStorage.clear();
-    delete (window as Record<string, unknown>).posthog;
+    delete (window as unknown as Record<string, unknown>).posthog;
   });
 
   it("returns required fields: source, sourcePage, landingPage", () => {
@@ -233,7 +233,7 @@ describe("buildLeadAttribution", () => {
   });
 
   it("includes posthogDistinctId when posthog returns non-empty string", () => {
-    (window as Record<string, unknown>).posthog = {
+    (window as unknown as Record<string, unknown>).posthog = {
       get_distinct_id: () => "ph-user-123",
     };
     const result = buildLeadAttribution({ source: "apply-page" });
@@ -241,7 +241,7 @@ describe("buildLeadAttribution", () => {
   });
 
   it("excludes posthogDistinctId when it is whitespace-only", () => {
-    (window as Record<string, unknown>).posthog = {
+    (window as unknown as Record<string, unknown>).posthog = {
       get_distinct_id: () => "   ",
     };
     const result = buildLeadAttribution({ source: "apply-page" });
@@ -267,7 +267,7 @@ describe("buildLeadAttribution", () => {
   });
 
   it("excludes posthogDistinctId when posthog returns a number", () => {
-    (window as Record<string, unknown>).posthog = {
+    (window as unknown as Record<string, unknown>).posthog = {
       get_distinct_id: () => 12345,
     };
     const result = buildLeadAttribution({ source: "apply-page" });
@@ -275,7 +275,7 @@ describe("buildLeadAttribution", () => {
   });
 
   it("excludes posthogDistinctId when posthog returns empty string", () => {
-    (window as Record<string, unknown>).posthog = {
+    (window as unknown as Record<string, unknown>).posthog = {
       get_distinct_id: () => "",
     };
     const result = buildLeadAttribution({ source: "apply-page" });
@@ -349,13 +349,13 @@ describe("buildLeadAttribution", () => {
   /* ── posthog edge cases ─────────────────────────────── */
 
   it("excludes posthogDistinctId when posthog has no get_distinct_id method", () => {
-    (window as Record<string, unknown>).posthog = {};
+    (window as unknown as Record<string, unknown>).posthog = {};
     const result = buildLeadAttribution({ source: "apply" });
     expect(result).not.toHaveProperty("posthogDistinctId");
   });
 
   it("includes posthogDistinctId with non-empty trimmed string", () => {
-    (window as Record<string, unknown>).posthog = {
+    (window as unknown as Record<string, unknown>).posthog = {
       get_distinct_id: () => "  user-abc  ",
     };
     const result = buildLeadAttribution({ source: "apply" });
@@ -416,7 +416,7 @@ describe("buildLeadAttribution", () => {
   });
 
   it("excludes posthogDistinctId when get_distinct_id returns null", () => {
-    (window as Record<string, unknown>).posthog = {
+    (window as unknown as Record<string, unknown>).posthog = {
       get_distinct_id: () => null,
     };
     const result = buildLeadAttribution({ source: "apply" });
@@ -424,7 +424,7 @@ describe("buildLeadAttribution", () => {
   });
 
   it("excludes posthogDistinctId when get_distinct_id returns undefined", () => {
-    (window as Record<string, unknown>).posthog = {
+    (window as unknown as Record<string, unknown>).posthog = {
       get_distinct_id: () => undefined,
     };
     const result = buildLeadAttribution({ source: "apply" });
@@ -432,7 +432,7 @@ describe("buildLeadAttribution", () => {
   });
 
   it("excludes posthogDistinctId when get_distinct_id returns boolean true", () => {
-    (window as Record<string, unknown>).posthog = {
+    (window as unknown as Record<string, unknown>).posthog = {
       get_distinct_id: () => true,
     };
     const result = buildLeadAttribution({ source: "apply" });
@@ -486,7 +486,7 @@ describe("bootstrapLeadAttribution — geo data", () => {
       writable: true,
       configurable: true,
     });
-    delete (window as Record<string, unknown>).posthog;
+    delete (window as unknown as Record<string, unknown>).posthog;
   });
 
   afterEach(() => {

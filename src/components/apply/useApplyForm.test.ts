@@ -53,25 +53,27 @@ vi.mock("@/hooks/useCitySearch", () => ({
   }),
 }));
 
-const mockResolveCityOption = vi.fn(() => null);
+const mockResolveCityOption = vi.fn().mockReturnValue(null);
 vi.mock("@/lib/citySearch", () => ({
   resolveCityOption: (...args: unknown[]) => mockResolveCityOption(...args),
 }));
 
 const mockTrackLeadEvent = vi.fn();
 const mockTrackError = vi.fn();
+const mockIdentifyLead = vi.fn();
 vi.mock("@/lib/analytics", () => ({
   trackLeadEvent: (...args: unknown[]) => mockTrackLeadEvent(...args),
   trackError: (...args: unknown[]) => mockTrackError(...args),
+  identifyLead: (...args: unknown[]) => mockIdentifyLead(...args),
 }));
 
-const mockBuildLeadAttribution = vi.fn(() => ({ source: "apply" }));
+const mockBuildLeadAttribution = vi.fn().mockReturnValue({ source: "apply" });
 vi.mock("@/lib/leadAttribution", () => ({
   buildLeadAttribution: (...args: unknown[]) =>
     mockBuildLeadAttribution(...args),
 }));
 
-import { useApplyForm } from "./useApplyForm";
+import { useApplyForm, type FormState } from "./useApplyForm";
 
 /* ─── Helpers ────────────────────────────────────────────────────── */
 
@@ -90,12 +92,14 @@ function makeChangeEvent(file?: File) {
 }
 
 function makeSubmitEvent() {
-  return { preventDefault: vi.fn() } as unknown as React.FormEvent;
+  return {
+    preventDefault: vi.fn(),
+  } as unknown as React.FormEvent<HTMLFormElement>;
 }
 
 /** Fill all required fields so validation passes. */
 function fillRequired(
-  set: (field: string, value: string) => void,
+  set: (field: keyof FormState, value: string) => void,
   handleTermsCheckbox: (v: boolean) => void,
   handlePhotoChange: (e: React.ChangeEvent<HTMLInputElement>) => void,
 ) {

@@ -21,6 +21,32 @@ const breadcrumbJsonLd = buildBreadcrumbJsonLd([
   { name: "Sponsorship" },
 ]);
 
+const serviceJsonLd = JSON.stringify({
+  "@context": "https://schema.org",
+  "@type": "Service",
+  name: "Brand Sponsorship — Garam Masala Dating",
+  description: DESC,
+  provider: {
+    "@type": "Organization",
+    name: "Garam Masala Dating",
+    url: SITE_URL,
+    logo: `${SITE_URL}/images/logo.svg`,
+  },
+  areaServed: { "@type": "City", name: "New York City" },
+  serviceType: "Event Sponsorship",
+  hasOfferCatalog: {
+    "@type": "OfferCatalog",
+    name: "Sponsorship Tiers",
+    itemListElement: SPONSOR_TIERS.map((tier) => ({
+      "@type": "Offer",
+      name: tier.name,
+      description: tier.tagline,
+      price: tier.priceRange,
+      priceCurrency: "USD",
+    })),
+  },
+});
+
 const faqJsonLd = JSON.stringify({
   "@context": "https://schema.org",
   "@type": "FAQPage",
@@ -45,6 +71,7 @@ const speakableJsonLd = JSON.stringify({
 <BaseLayout title={TITLE} description={DESC}>
   <Fragment slot="head">
     <script type="application/ld+json" set:html={breadcrumbJsonLd} />
+    <script type="application/ld+json" set:html={serviceJsonLd} />
     <script type="application/ld+json" set:html={faqJsonLd} />
     <script type="application/ld+json" set:html={speakableJsonLd} />
   </Fragment>
@@ -68,6 +95,8 @@ const speakableJsonLd = JSON.stringify({
             data-ph-capture="cta_clicked"
             data-ph-cta="email_hero"
             data-ph-section="sponsorship_hero"
+            toolname="email-sponsorship-inquiry"
+            tooldescription="Email Caleb, the manager at Garam Masala Dating, to inquire about sponsoring a live South Asian dating show in NYC."
             >{SPONSORSHIP_COPY.contactEmail}</a
           >
         </div>
@@ -212,8 +241,16 @@ const speakableJsonLd = JSON.stringify({
           class="sp-email-link sp-email-link--white"
           data-ph-capture="cta_clicked"
           data-ph-cta="email_footer"
-          data-ph-section="sponsorship_cta">{SPONSORSHIP_COPY.contactEmail}</a
+          data-ph-section="sponsorship_cta"
+          toolname="email-sponsorship-inquiry"
+          tooldescription="Email Caleb, the manager at Garam Masala Dating, to inquire about sponsoring a live South Asian dating show in NYC."
+          >{SPONSORSHIP_COPY.contactEmail}</a
         >
+        <nav class="sp-cta-links" aria-label="Related pages">
+          <a href="/hosts">Meet the Hosts</a>
+          <a href="/tickets">Upcoming Shows</a>
+          <a href="/faq">More Questions</a>
+        </nav>
       </div>
     </section>
   </main>
@@ -549,6 +586,22 @@ const speakableJsonLd = JSON.stringify({
     line-height: 1.7;
     color: rgba(255, 255, 255, 0.85);
     margin-bottom: 24px;
+  }
+  .sp-cta-links {
+    display: flex;
+    gap: 24px;
+    justify-content: center;
+    margin-top: 28px;
+  }
+  .sp-cta-links a {
+    font-size: 14px;
+    color: rgba(255, 255, 255, 0.7);
+    text-decoration: underline;
+    text-underline-offset: 3px;
+    transition: color 0.2s;
+  }
+  .sp-cta-links a:hover {
+    color: white;
   }
 
   @media (min-width: 768px) {

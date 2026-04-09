@@ -1,0 +1,23 @@
+/* ─── Modal design tokens ────────────────────────────────────────────────────
+ * Single source of truth for all modal styling.
+ * @import this file in Modal.astro <style> and Modal.module.css.
+ * Changes here propagate to every modal — Astro and React — automatically.
+ *
+ * Global tokens already available (defined in src/index.css):
+ *   --backdrop        backdrop overlay color
+ *   --touch-target    minimum tap target size (48px)
+ *   --border          border color
+ *   --muted           secondary/muted text color
+ *   --charcoal        primary text color
+ * ─────────────────────────────────────────────────────────────────────────── */
+
+:root {
+  --modal-radius: 20px;
+  --modal-anim-duration: 200ms;
+  --modal-anim-easing: ease-out;
+  --modal-anim-scale: 0.96;
+  --modal-anim-y: 8px;
+  --modal-close-color: var(--muted);
+  --modal-close-color-hover: var(--charcoal);
+  --modal-close-size: var(--touch-target); /* 48px */
+}

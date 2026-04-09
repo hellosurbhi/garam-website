@@ -65,7 +65,7 @@ jobs:
   # ==========================================
   smoke-tests:
     name: Smoke Tests
-    if: github.event_name == 'pull_request'
+    if: github.event_name == 'push'
     needs: build
     runs-on: ubuntu-latest
     steps:

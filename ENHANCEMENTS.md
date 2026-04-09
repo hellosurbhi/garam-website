@@ -567,3 +567,70 @@ Items flagged during the 2026-04-08 cleanup audit. Not confirmed dead — may ha
 - **What:** One-time Firestore migration — backfills legacy freetext city records with structured country/state/city fields
 - **Current state:** Referenced in package.json as `npm run migrate:locations`. Unknown if it's been run.
 - **Action:** Run `npm run migrate:locations` (dry run first, then `-- --execute`). Once done, delete the script and remove the npm script entry.
+
+---
+
+# From PR #13 — Site Rewrite
+
+## Test: loading state assertion missing
+
+- **File:** src/components/ContestantPrepPage.test.tsx:111
+- **Source:** CodeRabbit PR #13
+- **Comment:** Test named "shows loading state" never actually asserts the loading/checking UI — it only checks the final authed view. Either assert the loading state before `waitFor`, or rename the test.
+- **Link:** https://github.com/hellosurbhi/garam-website/pull/13#discussion_r3056004046
+
+## Test: "renders all 13 prep questions" only verifies 3
+
+- **File:** src/components/ContestantPrepPage.test.tsx:447
+- **Source:** CodeRabbit PR #13
+- **Comment:** Test claims to verify all 13 prep questions but only checks 3. Would still pass if 10 questions disappeared. Enumerate the full list or rename to indicate it's a smoke test.
+- **Link:** https://github.com/hellosurbhi/garam-website/pull/13#discussion_r3056004051
+
+## Move gallery copy to src/data/
+
+- **File:** src/components/home/HomePhotos.astro:59
+- **Source:** CodeRabbit PR #13
+- **Comment:** Photo `label`, `alt`, heading, and subheading are user-facing copy hardcoded in the component. Should live in `src/data/` per content architecture rules.
+- **Link:** https://github.com/hellosurbhi/garam-website/pull/13#discussion_r3056004057
+
+## Remove inline style prop from HomePhotos img
+
+- **File:** src/components/home/HomePhotos.astro:79
+- **Source:** CodeRabbit PR #13
+- **Comment:** Line 78 uses an inline `style={...}` prop on an Astro `<img>` element, which is disallowed by project rules. Should use a CSS class for `object-position`.
+- **Link:** https://github.com/hellosurbhi/garam-website/pull/13#discussion_r3056004063
+
+## Replace hardcoded colors in LegalModal with design tokens
+
+- **File:** src/components/LegalModal.astro:124
+- **Source:** CodeRabbit PR #13
+- **Comment:** Lines 124, 137, and 138 use literal colors (`rgba(...)`, `white`) instead of CSS custom properties from `:root`.
+- **Link:** https://github.com/hellosurbhi/garam-website/pull/13#discussion_r3056004071
+
+## Ensure legal-content links meet 16px minimum
+
+- **File:** src/components/LegalModal.astro:199
+- **Source:** CodeRabbit PR #13
+- **Comment:** Links inside legal paragraphs/lists inherit 15px body text size. Set explicit 16px minimum on `.legal-body :global(a)` for iOS zoom prevention.
+- **Link:** https://github.com/hellosurbhi/garam-website/pull/13#discussion_r3056004076
+
+## Test: SITE env var not actually verified
+
+- **File:** src/lib/generateContestantLink.test.ts:107
+- **Source:** CodeRabbit PR #13
+- **Comment:** Test says "url uses origin from SITE env var" but never sets `import.meta.env.SITE`. Only asserts `https://` prefix which can pass via fallback origin.
+- **Link:** https://github.com/hellosurbhi/garam-website/pull/13#discussion_r3056004082
+
+## Harden navigator.modelContext guard
+
+- **File:** src/components/ApplyPage.tsx:33
+- **Source:** CodeRabbit PR #13
+- **Comment:** Current check only verifies `modelContext` exists as a property. If `modelContext` is an object without `registerTool`, line 33 will throw. Add a `typeof registerTool === "function"` check.
+- **Link:** https://github.com/hellosurbhi/garam-website/pull/13#discussion_r3056485573
+
+## searchCities() can throw before try block
+
+- **File:** src/components/home/HomeShows.astro:296
+- **Source:** CodeRabbit PR #13
+- **Comment:** `searchCities()` is called at line 287, before the `try` block starts at line 296. If the fetch fails, the promise rejects unhandled and the modal error UI never shows.
+- **Link:** https://github.com/hellosurbhi/garam-website/pull/13#discussion_r3056485597

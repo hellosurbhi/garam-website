@@ -283,17 +283,17 @@ function parseDay(dateStr: string): string {
       .getElementById("city-form")
       ?.addEventListener("submit", async (e) => {
         e.preventDefault();
-        if (cityInput?.value.trim()) {
-          await searchCities(cityInput.value);
-        }
-        const resolvedCity =
-          selectedCity ??
-          resolveCityOption(cityInput?.value ?? "", cityOptions);
-        const city = resolvedCity?.city ?? (cityInput?.value ?? "").trim();
-        const email = (
-          document.getElementById("city-email") as HTMLInputElement
-        ).value;
         try {
+          if (cityInput?.value.trim()) {
+            await searchCities(cityInput.value);
+          }
+          const resolvedCity =
+            selectedCity ??
+            resolveCityOption(cityInput?.value ?? "", cityOptions);
+          const city = resolvedCity?.city ?? (cityInput?.value ?? "").trim();
+          const email = (
+            document.getElementById("city-email") as HTMLInputElement
+          ).value;
           const db = getFirebaseDb();
           const attribution = buildLeadAttribution({ source: "request-city" });
           const payload: Record<string, string> = {

@@ -1,5 +1,38 @@
 # Changelog
 
+## fix: address 9 CodeRabbit review items from PR #13 (2026-04-09)
+
+### What changed
+
+Resolved all 10 open CodeRabbit review threads on the site rewrite PR. 9 enhancements implemented, 1 dismissed (intentional MCP tool attributes).
+
+**Tests:**
+
+- `ContestantPrepPage.test.tsx`: Assert loading spinner before auth completes; enumerate all 13 prep questions instead of just 3.
+- `generateContestantLink.test.ts`: Set `import.meta.env.SITE` to a custom origin and assert the URL uses it.
+
+**Content architecture:**
+
+- Extracted gallery photo data from `HomePhotos.astro` into `src/data/gallery.ts` (heading, subheading, photo array).
+
+**Code quality:**
+
+- `HomePhotos.astro`: Replaced inline `style={object-position}` with CSS custom property `--photo-pos`.
+- `LegalModal.astro`: Replaced hardcoded `white` with `var(--off-white)`; set `font-size: 16px` on legal links for iOS zoom prevention.
+- `ApplyPage.tsx`: Hardened `navigator.modelContext` guard to verify `registerTool` is callable before invoking.
+- `HomeShows.astro`: Moved `searchCities()` call inside `try` block so fetch failures show the modal error UI.
+
+### Files changed
+
+- `src/data/gallery.ts` (new)
+- `src/components/home/HomePhotos.astro`
+- `src/components/LegalModal.astro`
+- `src/components/ApplyPage.tsx`
+- `src/components/home/HomeShows.astro`
+- `src/components/ContestantPrepPage.test.tsx`
+- `src/lib/generateContestantLink.test.ts`
+- `ENHANCEMENTS.md`
+
 ## feat: build /corporate and /sponsorship pages with full SEO (2026-04-09)
 
 ### What changed

@@ -96,6 +96,7 @@ describe("generate-contestant-link handler", () => {
   });
 
   it("url uses origin from SITE env var", async () => {
+    import.meta.env.SITE = "https://custom-origin.example.com";
     const req = makeRequest(
       "POST",
       { showDate: "2026-06-15" },
@@ -103,6 +104,6 @@ describe("generate-contestant-link handler", () => {
     );
     const res = await POST(makeContext(req));
     const body = await res.json();
-    expect(body.url).toMatch(/^https:\/\//);
+    expect(body.url).toMatch(/^https:\/\/custom-origin\.example\.com\//);
   });
 });

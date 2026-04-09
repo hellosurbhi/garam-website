@@ -66,21 +66,10 @@ const speakableJsonLd = JSON.stringify({
   </Fragment>
 
   <main id="main-content" class="corp">
-    <!-- Hero with background image -->
+    <!-- Hero -->
     <section class="corp-hero" aria-labelledby="corp-heading">
-      <img
-        class="corp-hero-bg"
-        src="/images/on-stage.webp"
-        alt=""
-        width="1200"
-        height="800"
-        aria-hidden="true"
-      />
-      <div class="corp-hero-overlay"></div>
       <div class="corp-container corp-hero-inner">
-        <p class="corp-eyebrow corp-eyebrow--white">
-          Private & Corporate Events
-        </p>
+        <p class="corp-eyebrow">Private & Corporate Events</p>
         <h1 id="corp-heading">{CORPORATE_COPY.heroHeadline}</h1>
         <p class="corp-hero-sub">{CORPORATE_COPY.heroSub}</p>
         <div class="corp-email-block">
@@ -98,6 +87,17 @@ const speakableJsonLd = JSON.stringify({
         </div>
       </div>
     </section>
+
+    <!-- Photo -->
+    <div class="corp-photo">
+      <img
+        src="/images/on-stage.webp"
+        alt="Contestants and hosts on stage at Garam Masala Dating"
+        width="1200"
+        height="800"
+        loading="lazy"
+      />
+    </div>
 
     <!-- What a Private Show Looks Like -->
     <section class="corp-format" aria-labelledby="corp-format-heading">
@@ -158,8 +158,8 @@ const speakableJsonLd = JSON.stringify({
       </div>
     </section>
 
-    <!-- Photo break -->
-    <section class="corp-photos" aria-hidden="true">
+    <!-- Photos -->
+    <div class="corp-photo-pair">
       <img
         src="/images/the-match.webp"
         alt="Matched couple laughing on stage"
@@ -169,27 +169,17 @@ const speakableJsonLd = JSON.stringify({
       />
       <img
         src="/images/the-crowd.webp"
-        alt="Audience reacting"
+        alt="Audience reacting at the show"
         width="800"
         height="1200"
         loading="lazy"
       />
-    </section>
+    </div>
 
     <!-- Testimonials -->
     <section class="corp-test" aria-labelledby="corp-test-heading">
-      <img
-        class="corp-test-bg"
-        src="/images/pure-chaos.webp"
-        alt=""
-        width="1200"
-        height="800"
-        loading="lazy"
-        aria-hidden="true"
-      />
-      <div class="corp-test-overlay"></div>
-      <div class="corp-container corp-test-inner">
-        <p class="corp-eyebrow corp-eyebrow--white">What People Say</p>
+      <div class="corp-container">
+        <p class="corp-eyebrow">What People Say</p>
         <h2 id="corp-test-heading">
           "The only company event anyone talks about."
         </h2>
@@ -208,6 +198,17 @@ const speakableJsonLd = JSON.stringify({
         </div>
       </div>
     </section>
+
+    <!-- Photo -->
+    <div class="corp-photo">
+      <img
+        src="/images/pure-chaos.webp"
+        alt="High energy moment on stage"
+        width="1200"
+        height="800"
+        loading="lazy"
+      />
+    </div>
 
     <!-- FAQ -->
     <section class="corp-faq" aria-labelledby="corp-faq-heading">
@@ -257,9 +258,6 @@ const speakableJsonLd = JSON.stringify({
     color: var(--brand-red);
     margin-bottom: 14px;
   }
-  .corp-eyebrow--white {
-    color: rgba(255, 255, 255, 0.7);
-  }
 
   /* Email CTA */
   .corp-email-block {
@@ -267,7 +265,7 @@ const speakableJsonLd = JSON.stringify({
   }
   .corp-email-label {
     font-size: 14px;
-    color: rgba(255, 255, 255, 0.7);
+    color: var(--text-secondary);
     margin-bottom: 6px;
     font-weight: 600;
   }
@@ -276,7 +274,7 @@ const speakableJsonLd = JSON.stringify({
     align-items: center;
     font-size: clamp(18px, 2.5vw, 24px);
     font-weight: 800;
-    color: var(--electric-yellow);
+    color: var(--brand-red);
     text-decoration: underline;
     text-underline-offset: 4px;
     text-decoration-thickness: 2px;
@@ -285,11 +283,10 @@ const speakableJsonLd = JSON.stringify({
     padding: 4px 0;
   }
   .corp-email-link:hover {
-    color: white;
-    text-decoration-color: white;
+    color: var(--brand-red-dark);
   }
   .corp-email-link:focus-visible {
-    outline: 2px solid var(--electric-yellow);
+    outline: 2px solid var(--brand-red);
     outline-offset: 3px;
   }
   .corp-email-link--white {
@@ -302,55 +299,30 @@ const speakableJsonLd = JSON.stringify({
   }
   .corp-email-note {
     font-size: 13px;
-    color: rgba(255, 255, 255, 0.5);
+    color: var(--muted);
     margin-top: 10px;
     max-width: 480px;
   }
 
   /* Hero */
   .corp-hero {
-    position: relative;
-    overflow: hidden;
-    padding: 80px 0 72px;
+    background: var(--off-white);
+    padding: 56px 0 48px;
     text-align: center;
-  }
-  .corp-hero-bg {
-    position: absolute;
-    inset: 0;
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    object-position: center 30%;
-    z-index: 0;
-  }
-  .corp-hero-overlay {
-    position: absolute;
-    inset: 0;
-    z-index: 1;
-    background: linear-gradient(
-      180deg,
-      rgba(0, 0, 0, 0.7) 0%,
-      rgba(0, 0, 0, 0.55) 100%
-    );
-  }
-  .corp-hero-inner {
-    position: relative;
-    z-index: 2;
   }
   .corp-hero h1 {
     font-family: var(--font-playfair), serif;
     font-size: clamp(28px, 5vw, 54px);
     font-weight: 900;
-    color: white;
+    color: var(--charcoal);
     line-height: 1.08;
     margin-bottom: 20px;
-    text-shadow: 0 2px 16px rgba(0, 0, 0, 0.5);
   }
   .corp-hero-sub {
     font-family: var(--font-cormorant), serif;
     font-size: clamp(17px, 2.2vw, 22px);
     font-style: italic;
-    color: rgba(255, 255, 255, 0.85);
+    color: var(--text-secondary);
     line-height: 1.7;
     max-width: 640px;
     margin: 0 auto;
@@ -358,6 +330,29 @@ const speakableJsonLd = JSON.stringify({
   .corp-hero .corp-email-note {
     margin-left: auto;
     margin-right: auto;
+  }
+
+  /* Standalone photos */
+  .corp-photo {
+    line-height: 0;
+  }
+  .corp-photo img {
+    width: 100%;
+    height: auto;
+    object-fit: cover;
+    max-height: 420px;
+  }
+  .corp-photo-pair {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 6px;
+    line-height: 0;
+  }
+  .corp-photo-pair img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    aspect-ratio: 3/2;
   }
 
   /* Format section */
@@ -475,53 +470,17 @@ const speakableJsonLd = JSON.stringify({
     margin: 0;
   }
 
-  /* Photo break */
-  .corp-photos {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 6px;
-    padding: 0;
-  }
-  .corp-photos img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    aspect-ratio: 3/2;
-  }
-
-  /* Testimonials with image bg */
+  /* Testimonials */
   .corp-test {
-    position: relative;
-    overflow: hidden;
+    background: var(--off-white);
     padding: 56px 0;
-    text-align: center;
-  }
-  .corp-test-bg {
-    position: absolute;
-    inset: 0;
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    object-position: center 40%;
-    z-index: 0;
-  }
-  .corp-test-overlay {
-    position: absolute;
-    inset: 0;
-    z-index: 1;
-    background: rgba(0, 0, 0, 0.65);
-  }
-  .corp-test-inner {
-    position: relative;
-    z-index: 2;
   }
   .corp-test h2 {
     font-family: var(--font-playfair), serif;
     font-size: clamp(22px, 3vw, 34px);
     font-weight: 800;
-    color: white;
-    margin-bottom: 32px;
-    text-shadow: 0 2px 12px rgba(0, 0, 0, 0.5);
+    color: var(--charcoal);
+    margin-bottom: 28px;
   }
   .corp-quotes {
     display: flex;
@@ -529,19 +488,17 @@ const speakableJsonLd = JSON.stringify({
     gap: 16px;
   }
   .corp-quote {
-    background: rgba(255, 255, 255, 0.08);
-    backdrop-filter: blur(4px);
-    border: 1px solid rgba(255, 255, 255, 0.12);
+    background: white;
+    border: 1px solid rgba(0, 0, 0, 0.06);
     border-radius: 14px;
     padding: 24px;
     margin: 0;
-    text-align: left;
   }
   .corp-quote p {
     font-family: var(--font-cormorant), serif;
     font-size: clamp(16px, 2vw, 18px);
     font-style: italic;
-    color: white;
+    color: var(--charcoal);
     line-height: 1.7;
     margin: 0 0 12px;
   }
@@ -552,16 +509,16 @@ const speakableJsonLd = JSON.stringify({
   }
   .corp-quote strong {
     font-size: 13px;
-    color: var(--electric-yellow);
+    color: var(--brand-red);
   }
   .corp-quote span {
     font-size: 12px;
-    color: rgba(255, 255, 255, 0.5);
+    color: var(--muted);
   }
 
   /* FAQ */
   .corp-faq {
-    background: var(--off-white);
+    background: var(--cream-warm);
     padding: 56px 0;
   }
   .corp-faq-inner {
@@ -606,7 +563,13 @@ const speakableJsonLd = JSON.stringify({
 
   @media (min-width: 768px) {
     .corp-hero {
-      padding: 120px 0 100px;
+      padding: 80px 0 72px;
+    }
+    .corp-photo img {
+      max-height: 500px;
+    }
+    .corp-photo-pair {
+      gap: 10px;
     }
     .corp-format {
       padding: 80px 0;
@@ -637,11 +600,8 @@ const speakableJsonLd = JSON.stringify({
     .corp-inc-grid {
       grid-template-columns: 1fr 1fr;
     }
-    .corp-photos {
-      gap: 10px;
-    }
     .corp-test {
-      padding: 100px 0;
+      padding: 80px 0;
     }
     .corp-quotes {
       display: grid;

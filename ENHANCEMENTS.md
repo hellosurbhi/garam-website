@@ -113,15 +113,29 @@ Eventbrite supports a [conversion tracking pixel](https://www.eventbrite.com/sup
 - **Why:** The conversion audit recommended moving from generic "cheaper tickets" copy to a specific discount/value proposition.
 - **How:** Finalize the real offer or code, then update popup copy and CTA text to match that promise consistently across popup and confirmation flows.
 
+### ~~llms.txt + llms-full.txt (dynamic, build-time)~~ ✅ Done (2026-04-09)
+
+The highest-leverage AEO item. Implemented as Astro endpoints that generate both files at build time from `src/data/` files. See `src/pages/llms.txt.ts` and `src/pages/llms-full.txt.ts`.
+
+`llms.txt` is the emerging standard for telling AI systems (ChatGPT, Perplexity, Claude, Gemini, voice assistants) what your site is about — a curated index updated on every deploy. `llms-full.txt` is a comprehensive content dump: full FAQ answers, host bios, show description, all tips posts in full body text, 12 most-recent journal articles, active city pages with body copy. When an AI system ingests `llms-full.txt`, it has everything needed to accurately answer "what is Garam Masala Dating?" without crawling any other page.
+
+**Why this matters for entity recognition:** Without `llms.txt`, AI systems must crawl the site, parse it correctly, and infer entity status — a process that takes 1–2 months. With `llms.txt`, you explicitly define the entity, making confident accurate answers possible within days of indexing. This is especially critical for GMD because "garam masala" is a globally recognized spice blend — AI systems need an explicit signal that "Garam Masala Dating" is a live comedy show, not a recipe brand.
+
+**Robots.txt** updated to explicitly allow all major AI crawlers (GPTBot, ClaudeBot, OAI-SearchBot, Applebot-Extended, CCBot, Meta-ExternalAgent, cohere-ai, PerplexityBot). Bytespider (low-quality scraper) blocked.
+
+**Remaining gap:** The `llms.txt` signal is only as strong as the external corroboration. Without Wikidata and IMDb, AI systems have no third-party authoritative source to anchor the entity. Complete those two items below to close the loop.
+
 ### IMDb listing for the show
 
-- **Why:** Triggers Google Knowledge Panel recognition. Establishes GMD as a distinct entertainment entity.
+- **Why:** Triggers Google Knowledge Panel recognition. Establishes GMD as a distinct entertainment entity. Wikipedia/Wikidata/IMDb are in every major AI system's training corpus — this is where entity recognition gets locked in.
 - **How:** Create IMDb listing with: show name, seasons, episodes, Surbhi and Wyatt as hosts.
+- **AEO impact:** Directly disambiguates "Garam Masala Dating" from "garam masala" (spice blend) in AI training data. High leverage.
 
 ### Wikidata entry
 
-- **Why:** Further reinforces entity recognition in Google Knowledge Graph. Disambiguates from the spice blend.
-- **How:** Create Wikidata entry for "Garam Masala Dating" as a live comedy dating show.
+- **Why:** The single most important remaining AEO item. Wikidata is the structured knowledge base that feeds Google's Knowledge Graph, Wikipedia, and most LLM training corpora. A Wikidata entry for GMD creates a machine-readable entity record that AI systems can anchor to with high confidence.
+- **How:** Create Wikidata entry for "Garam Masala Dating" as a live comedy dating show. Required fields: instance of (live performance/dating show), country (USA), founded (2022), host (Surbhi, Wyatt Feegrado), website (garammasaladating.com), venue (Top Secret Comedy Club).
+- **AEO impact:** Until this exists, AI systems have no external authoritative source. `llms.txt` tells them what you are; Wikidata confirms it.
 
 ### Google Business Profile
 

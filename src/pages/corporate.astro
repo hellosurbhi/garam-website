@@ -46,6 +46,30 @@ const faqJsonLd = JSON.stringify({
   })),
 });
 
+const reviewJsonLd = JSON.stringify({
+  "@context": "https://schema.org",
+  "@type": "Service",
+  name: "Private & Corporate Show — Garam Masala Dating",
+  aggregateRating: {
+    "@type": "AggregateRating",
+    ratingValue: 5,
+    bestRating: 5,
+    worstRating: 1,
+    ratingCount: CORPORATE_TESTIMONIALS.length,
+  },
+  review: CORPORATE_TESTIMONIALS.map((t) => ({
+    "@type": "Review",
+    author: { "@type": "Person", name: t.author },
+    reviewBody: t.quote,
+    reviewRating: {
+      "@type": "Rating",
+      ratingValue: 5,
+      bestRating: 5,
+      worstRating: 1,
+    },
+  })),
+});
+
 const speakableJsonLd = JSON.stringify({
   "@context": "https://schema.org",
   "@type": "WebPage",
@@ -63,6 +87,7 @@ const speakableJsonLd = JSON.stringify({
     <script type="application/ld+json" set:html={serviceJsonLd} />
     <script type="application/ld+json" set:html={faqJsonLd} />
     <script type="application/ld+json" set:html={speakableJsonLd} />
+    <script type="application/ld+json" set:html={reviewJsonLd} />
   </Fragment>
 
   <main id="main-content" class="corp">
@@ -81,7 +106,10 @@ const speakableJsonLd = JSON.stringify({
             class="corp-email-link"
             data-ph-capture="cta_clicked"
             data-ph-cta="email_hero"
-            data-ph-section="corporate_hero">{CORPORATE_COPY.agentEmail}</a
+            data-ph-section="corporate_hero"
+            toolname="email-corporate-booking"
+            tooldescription="Email Caleb, the manager at Garam Masala Dating, to book a private or corporate show in NYC."
+            >{CORPORATE_COPY.agentEmail}</a
           >
           <p class="corp-email-note">{CORPORATE_COPY.heroNote}</p>
         </div>
@@ -233,9 +261,17 @@ const speakableJsonLd = JSON.stringify({
           class="corp-email-link corp-email-link--white"
           data-ph-capture="cta_clicked"
           data-ph-cta="email_footer"
-          data-ph-section="corporate_cta">{CORPORATE_COPY.agentEmail}</a
+          data-ph-section="corporate_cta"
+          toolname="email-corporate-booking"
+          tooldescription="Email Caleb, the manager at Garam Masala Dating, to book a private or corporate show in NYC."
+          >{CORPORATE_COPY.agentEmail}</a
         >
         <p class="corp-cta-note">{CORPORATE_COPY.ctaNote}</p>
+        <nav class="corp-cta-links" aria-label="Related pages">
+          <a href="/hosts">Meet the Hosts</a>
+          <a href="/tickets">Upcoming Shows</a>
+          <a href="/faq">More Questions</a>
+        </nav>
       </div>
     </section>
   </main>
@@ -566,6 +602,22 @@ const speakableJsonLd = JSON.stringify({
     color: rgba(255, 255, 255, 0.5);
     margin-top: 10px;
     margin-bottom: 0;
+  }
+  .corp-cta-links {
+    display: flex;
+    gap: 24px;
+    justify-content: center;
+    margin-top: 28px;
+  }
+  .corp-cta-links a {
+    font-size: 14px;
+    color: rgba(255, 255, 255, 0.7);
+    text-decoration: underline;
+    text-underline-offset: 3px;
+    transition: color 0.2s;
+  }
+  .corp-cta-links a:hover {
+    color: white;
   }
 
   @media (min-width: 768px) {

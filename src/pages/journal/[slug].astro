@@ -1,13 +1,22 @@
 ---
-import BaseLayout from '@/layouts/BaseLayout.astro';
-import AuthorBio from '@/components/AuthorBio.astro';
-import { journalPostsPublished, getPostBySlug, type JournalPost, type JournalFaq } from '@/data/journal';
-import { buildBreadcrumbJsonLd } from '@/utils/breadcrumbs';
-import { HF_IMAGES, slugToImageIndex } from '@/data/images';
+import BaseLayout from "@/layouts/BaseLayout.astro";
+import AuthorBio from "@/components/AuthorBio.astro";
+import {
+  journalPostsPublished,
+  getPostBySlug,
+  type JournalPost,
+  type JournalFaq,
+} from "@/data/journal";
+import { buildBreadcrumbJsonLd } from "@/utils/breadcrumbs";
+import { HF_IMAGES, slugToImageIndex } from "@/data/images";
+import { gitDates } from "virtual:git-dates";
 
 export function getStaticPaths() {
   return journalPostsPublished.map((post, idx) => {
-    const prev = idx < journalPostsPublished.length - 1 ? journalPostsPublished[idx + 1] : null;
+    const prev =
+      idx < journalPostsPublished.length - 1
+        ? journalPostsPublished[idx + 1]
+        : null;
     const next = idx > 0 ? journalPostsPublished[idx - 1] : null;
     return {
       params: { slug: post.slug },
@@ -26,7 +35,9 @@ const { post, prev, next } = Astro.props;
 const publishedSlugs = new Set(journalPostsPublished.map((p) => p.slug));
 const related = post.relatedSlugs
   .map((s) => getPostBySlug(s))
-  .filter((p): p is JournalPost => p !== undefined && publishedSlugs.has(p.slug));
+  .filter(
+    (p): p is JournalPost => p !== undefined && publishedSlugs.has(p.slug),
+  );
 
 const heroImage = HF_IMAGES[slugToImageIndex(post.slug, HF_IMAGES.length)];
 
@@ -40,12 +51,15 @@ function formatDate(iso: string): string {
 }
 
 const postUrl = `https://garammasaladating.com/journal/${post.slug}`;
+const gitDate = gitDates[post.slug];
+const dateModified =
+  gitDate && gitDate > post.dateModified ? gitDate : post.dateModified;
 const articleJsonLd = JSON.stringify({
   "@context": "https://schema.org",
   "@type": "Article",
   headline: post.title,
   datePublished: post.datePublished,
-  dateModified: post.dateModified,
+  dateModified,
   author: {
     "@type": "Person",
     name: "Surbhi",
@@ -95,7 +109,11 @@ const pageTitle = `${post.title} | Garam Masala Dating`;
 >
   <Fragment slot="head">
     <meta property="article:published_time" content={post.datePublished} />
-    {post.dateModified && <meta property="article:modified_time" content={post.dateModified} />}
+    {
+      dateModified && (
+        <meta property="article:modified_time" content={dateModified} />
+      )
+    }
     <meta property="article:author" content="Surbhi" />
     <script type="application/ld+json" set:html={articleJsonLd} />
     <script type="application/ld+json" set:html={breadcrumbJsonLd} />
@@ -103,7 +121,14 @@ const pageTitle = `${post.title} | Garam Masala Dating`;
   </Fragment>
 
   <main id="main-content" class="post-page">
-    <img class="post-bg" src={heroImage} alt="" width="1200" height="800" aria-hidden="true" />
+    <img
+      class="post-bg"
+      src={heroImage}
+      alt=""
+      width="1200"
+      height="800"
+      aria-hidden="true"
+    />
     <div class="post-container">
       <!-- Back link -->
       <a href="/journal" class="post-back">&larr; Journal</a>
@@ -121,69 +146,89 @@ const pageTitle = `${post.title} | Garam Masala Dating`;
 
       <!-- Article body -->
       <article class="post-body">
-        {post.body.map((block, i) => {
-          if (block.type === "h2") {
-            return (
-              <h2
-                class="post-h2"
-                style={i === 0 ? "margin-top: 0;" : "margin-top: 16px;"}
-              >
-                {block.text}
-              </h2>
-            );
-          }
-          if (block.type === "h3") {
-            return (
-              <h3
-                class="post-h3"
-                style={i === 0 ? "margin-top: 0;" : "margin-top: 12px;"}
-              >
-                {block.text}
-              </h3>
-            );
-          }
-          return <p class="post-p" set:html={block.text} />;
-        })}
+        {
+          post.body.map((block, i) => {
+            if (block.type === "h2") {
+              return (
+                <h2
+                  class="post-h2"
+                  style={i === 0 ? "margin-top: 0;" : "margin-top: 16px;"}
+                >
+                  {block.text}
+                </h2>
+              );
+            }
+            if (block.type === "h3") {
+              return (
+                <h3
+                  class="post-h3"
+                  style={i === 0 ? "margin-top: 0;" : "margin-top: 12px;"}
+                >
+                  {block.text}
+                </h3>
+              );
+            }
+            return <p class="post-p" set:html={block.text} />;
+          })
+        }
       </article>
 
       <!-- Author bio -->
       <AuthorBio />
 
       <!-- Related articles -->
-      {related.length > 0 && (
-        <section class="related-section">
-          <h2 class="related-heading">You might also like</h2>
-          <div class="related-grid">
-            {related.map((r) => (
-              <a href={`/journal/${r.slug}`} class="related-card">
-                <span class="related-card-title">{r.title}</span>
-                <span class="related-card-arrow">&rarr;</span>
-              </a>
-            ))}
-          </div>
-        </section>
-      )}
+      {
+        related.length > 0 && (
+          <section class="related-section">
+            <h2 class="related-heading">You might also like</h2>
+            <div class="related-grid">
+              {related.map((r) => (
+                <a href={`/journal/${r.slug}`} class="related-card">
+                  <span class="related-card-title">{r.title}</span>
+                  <span class="related-card-arrow">&rarr;</span>
+                </a>
+              ))}
+            </div>
+          </section>
+        )
+      }
 
       <!-- Prev / Next navigation -->
       <nav class="post-nav" aria-label="Article navigation">
-        {prev ? (
-          <a href={`/journal/${prev.slug}`} class="post-nav-link post-nav-prev">
-            <span class="post-nav-label">&larr; Previous</span>
-            <span class="post-nav-title">{prev.title}</span>
-          </a>
-        ) : <span />}
-        {next ? (
-          <a href={`/journal/${next.slug}`} class="post-nav-link post-nav-next">
-            <span class="post-nav-label">Next &rarr;</span>
-            <span class="post-nav-title">{next.title}</span>
-          </a>
-        ) : <span />}
+        {
+          prev ? (
+            <a
+              href={`/journal/${prev.slug}`}
+              class="post-nav-link post-nav-prev"
+            >
+              <span class="post-nav-label">&larr; Previous</span>
+              <span class="post-nav-title">{prev.title}</span>
+            </a>
+          ) : (
+            <span />
+          )
+        }
+        {
+          next ? (
+            <a
+              href={`/journal/${next.slug}`}
+              class="post-nav-link post-nav-next"
+            >
+              <span class="post-nav-label">Next &rarr;</span>
+              <span class="post-nav-title">{next.title}</span>
+            </a>
+          ) : (
+            <span />
+          )
+        }
       </nav>
 
       <!-- Footer -->
       <div class="post-footer">
         <a href="/journal" class="post-footer-back">&larr; All posts</a>
-        <a href="/apply" class="post-footer-cta">Apply to be on the show &rarr;</a>
+        <a href="/apply" class="post-footer-cta"
+          >Apply to be on the show &rarr;</a
+        >
       </div>
     </div>
   </main>
@@ -191,8 +236,14 @@ const pageTitle = `${post.title} | Garam Masala Dating`;
 
 <style>
   @keyframes postFadeIn {
-    from { opacity: 0; transform: translateY(16px); }
-    to   { opacity: 1; transform: translateY(0); }
+    from {
+      opacity: 0;
+      transform: translateY(16px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
   }
 
   .post-page {
@@ -330,7 +381,9 @@ const pageTitle = `${post.title} | Garam Masala Dating`;
     border: 1px solid rgba(var(--brand-red-rgb), 0.1);
     border-radius: 8px;
     text-decoration: none;
-    transition: background 0.15s ease, border-color 0.15s ease;
+    transition:
+      background 0.15s ease,
+      border-color 0.15s ease;
   }
 
   .related-card:hover {

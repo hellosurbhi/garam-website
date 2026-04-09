@@ -1,6 +1,10 @@
 /// <reference types="astro/client" />
 /// <reference types="@testing-library/jest-dom/vitest" />
 
+declare module "virtual:git-dates" {
+  export const gitDates: Record<string, string>;
+}
+
 declare global {
   interface Window {
     dataLayer?: Array<Record<string, unknown>>;

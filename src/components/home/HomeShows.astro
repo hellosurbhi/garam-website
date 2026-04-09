@@ -126,7 +126,12 @@ function parseDay(dateStr: string): string {
         <p class="modal-subtitle">
           Tell us where you want Garam Masala Dating and we'll make it happen.
         </p>
-        <form id="city-form" class="modal-form">
+        <form
+          id="city-form"
+          class="modal-form"
+          toolname="request-show-in-my-city"
+          tooldescription="Request Garam Masala Dating to bring a live show to your city. Provide city name and email address to join the city interest list."
+        >
           <input
             type="text"
             id="city-name"
@@ -135,6 +140,7 @@ function parseDay(dateStr: string): string {
             aria-label="City name"
             autocomplete="off"
             required
+            toolparamdescription="Name of the city where you want Garam Masala Dating to perform"
           />
           <datalist id="city-name-suggestions"></datalist>
           <input type="hidden" id="city-state" />
@@ -146,6 +152,7 @@ function parseDay(dateStr: string): string {
             placeholder="Your email"
             required
             aria-label="Email address"
+            toolparamdescription="Email address to be notified when the show comes to your city"
           />
           <p id="city-form-error" class="modal-error" hidden role="alert"></p>
           <button type="submit" class="modal-submit">Submit Request</button>

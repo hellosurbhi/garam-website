@@ -1,5 +1,43 @@
 # Changelog
 
+## feat: add WebMCP tool annotations to all public forms (2026-04-09)
+
+### What changed
+
+Added Web Model Context Protocol (WebMCP) progressive enhancement to all public-facing forms. WebMCP (Chrome 145+, W3C incubation) lets AI agents discover and invoke HTML forms as tools. Zero impact on regular users — attributes are invisible on unsupported browsers.
+
+**Declarative API (HTML/Astro forms)** — added `toolname`, `tooldescription`, and `toolparamdescription` attributes:
+
+- `src/components/home/HomeSignup.astro` — `#nl-email-form` (`subscribe-to-spice-list`) + `#nl-phone-form` (`add-phone-to-spice-list`)
+- `src/components/home/HomeShows.astro` — `#city-form` (`request-show-in-my-city`)
+- `src/components/NotifyModal.astro` — `#notify-form` (`subscribe-to-ticket-drop-alerts`) + `#notify-phone-form` (`add-phone-to-ticket-alerts`)
+- `src/pages/cities/[slug].astro` — `#waitlist-form` (`join-city-show-waitlist`), `#city-notify-email-form` (`subscribe-to-city-show-alerts`), `#city-notify-phone-form` (`add-phone-to-city-show-alerts`)
+- `src/pages/index.astro` — `#popup-email-form` (`subscribe-via-homepage-popup`) + `#popup-phone-form` (`add-phone-via-homepage-popup`)
+
+**Imperative API (React island):**
+
+- `src/components/ApplyPage.tsx` — registers `submit-contestant-application` tool in a `useEffect` via `navigator.modelContext.registerTool()`. Full inputSchema covers applicationType, fullName, age, gender, sexualOrientation, city, instagram. Cleans up with `tool.unregister()` on unmount. Feature-detects `modelContext` in navigator — no-op on unsupported browsers.
+
+**Skipped:** Admin login — internal-only, no AI agent exposure needed.
+
+### Files modified
+
+- `src/components/home/HomeSignup.astro`
+- `src/components/home/HomeShows.astro`
+- `src/components/NotifyModal.astro`
+- `src/pages/cities/[slug].astro`
+- `src/pages/index.astro`
+- `src/components/ApplyPage.tsx`
+
+### Decisions + trade-offs
+
+- Declarative `toolname`/`tooldescription` on `<form>` elements lets the browser build JSON Schema automatically from input types and `required` constraints
+- `toolparamdescription` on individual inputs gives AI agents context for what value to provide
+- Imperative API used for the React apply form (client island, no traditional `form action`) — `useEffect` + feature detection is the correct pattern
+- `NavWithMC` local type avoids `any` while typing the draft browser API that has no official TypeScript declarations
+
+---
+
 ## fix: exclude .stryker-tmp from ESLint (2026-04-09)
 
 ### What changed

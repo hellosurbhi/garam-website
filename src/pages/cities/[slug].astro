@@ -271,7 +271,12 @@ const breadcrumbJsonLd = buildBreadcrumbJsonLd([
             <p class="modal-subtitle">
               We'll email you the moment tickets drop for {city.displayName}.
             </p>
-            <form id="waitlist-form" class="modal-form">
+            <form
+              id="waitlist-form"
+              class="modal-form"
+              toolname="join-city-show-waitlist"
+              tooldescription="Join the waitlist for Garam Masala Dating shows in this city. You will be notified when tickets go on sale."
+            >
               <input
                 type="email"
                 id="waitlist-email"
@@ -280,6 +285,7 @@ const breadcrumbJsonLd = buildBreadcrumbJsonLd([
                 required
                 aria-label="Email address"
                 aria-describedby="waitlist-error"
+                toolparamdescription="Email address to be notified when show tickets go on sale in this city"
               />
               <p id="waitlist-error" class="modal-error" hidden role="alert">
               </p>
@@ -305,7 +311,12 @@ const breadcrumbJsonLd = buildBreadcrumbJsonLd([
                   Get notified about future {city.displayName} shows, discount
                   codes, and free ticket drops.
                 </p>
-                <form id="city-notify-email-form" class="city-notify__form">
+                <form
+                  id="city-notify-email-form"
+                  class="city-notify__form"
+                  toolname="subscribe-to-city-show-alerts"
+                  tooldescription="Subscribe to email notifications for upcoming Garam Masala Dating shows in this city, including discount codes and ticket drops."
+                >
                   <input
                     type="email"
                     id="city-notify-email"
@@ -314,6 +325,7 @@ const breadcrumbJsonLd = buildBreadcrumbJsonLd([
                     required
                     aria-label="Email address"
                     aria-describedby="city-notify-email-error"
+                    toolparamdescription="Email address for show announcements, discount codes, and ticket drops in this city"
                   />
                   <p
                     id="city-notify-email-error"
@@ -328,7 +340,12 @@ const breadcrumbJsonLd = buildBreadcrumbJsonLd([
                 <p class="city-notify__desc">
                   Add your number for text-only discounts and free ticket drops.
                 </p>
-                <form id="city-notify-phone-form" class="city-notify__form">
+                <form
+                  id="city-notify-phone-form"
+                  class="city-notify__form"
+                  toolname="add-phone-to-city-show-alerts"
+                  tooldescription="Add a phone number for SMS notifications about upcoming Garam Masala Dating shows in this city (optional step after email signup)."
+                >
                   <input
                     type="tel"
                     id="city-notify-phone"
@@ -336,6 +353,7 @@ const breadcrumbJsonLd = buildBreadcrumbJsonLd([
                     placeholder="(555) 123-4567"
                     aria-label="Phone number"
                     aria-describedby="city-notify-phone-error"
+                    toolparamdescription="Mobile phone number for SMS-only ticket drops and show alerts in this city (optional)"
                   />
                   <p
                     id="city-notify-phone-error"

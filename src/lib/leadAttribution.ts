@@ -1,4 +1,5 @@
 export interface LeadAttribution {
+  [key: string]: string | undefined;
   source: string;
   sourcePage: string;
   landingPage: string;

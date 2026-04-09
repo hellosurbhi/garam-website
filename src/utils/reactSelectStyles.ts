@@ -54,7 +54,8 @@ export const adminSelectStyles: BaseStyles = {
 };
 
 /** Full-size form selects matching the Apply page design. */
-export const formSelectStyles: BaseStyles = {
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export const formSelectStyles: StylesConfig<any, boolean, GroupBase<any>> = {
   control: (base: CSSObjectWithLabel, state) => ({
     ...base,
     borderRadius: "12px",

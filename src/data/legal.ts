@@ -21,7 +21,7 @@ export const LEGAL_DOCS: Record<"privacy" | "terms", LegalDocument> = {
     id: "privacy",
     title: "Privacy Policy",
     lastUpdated: "April 2026",
-    metaTitle: "Privacy Policy | Garam Masala Dating",
+    metaTitle: "Privacy Policy",
     metaDescription:
       "Privacy policy for Garam Masala Dating. How we collect, use, and protect your information.",
     sections: [
@@ -113,7 +113,7 @@ export const LEGAL_DOCS: Record<"privacy" | "terms", LegalDocument> = {
     id: "terms",
     title: "Terms of Service",
     lastUpdated: "April 2026",
-    metaTitle: "Terms of Service | Garam Masala Dating",
+    metaTitle: "Terms of Service",
     metaDescription:
       "Terms of service for Garam Masala Dating. Rules and guidelines for using our website and attending our shows.",
     sections: [

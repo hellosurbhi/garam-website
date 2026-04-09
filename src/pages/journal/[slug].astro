@@ -99,7 +99,7 @@ const breadcrumbJsonLd = buildBreadcrumbJsonLd([
   { name: post.title },
 ]);
 
-const pageTitle = `${post.title} | Garam Masala Dating`;
+const pageTitle = post.title;
 ---
 
 <BaseLayout
@@ -146,49 +146,54 @@ const pageTitle = `${post.title} | Garam Masala Dating`;
 
       <!-- Article body -->
       <article class="post-body">
-        {post.body.map((block, i) => {
-          const midCta = i === 3 ? (
-            <aside class="article-cta" aria-label="Show promotion">
-              <p class="article-cta__text">
-                We host a live dating show for South Asian singles — weekly in NYC, traveling to new cities.
-                <a href="/tickets">Get tickets</a> or <a href="/apply">apply to be on stage</a>.
-              </p>
-            </aside>
-          ) : null;
+        {
+          post.body.map((block, i) => {
+            const midCta =
+              i === 3 ? (
+                <aside class="article-cta" aria-label="Show promotion">
+                  <p class="article-cta__text">
+                    We host the #1 live dating show for South Asian singles —
+                    weekly in NYC, traveling to new cities.
+                    <a href="/tickets">Get tickets</a> or{" "}
+                    <a href="/apply">apply to be on stage</a>.
+                  </p>
+                </aside>
+              ) : null;
 
-          if (block.type === "h2") {
+            if (block.type === "h2") {
+              return (
+                <>
+                  {midCta}
+                  <h2
+                    class="post-h2"
+                    style={i === 0 ? "margin-top: 0;" : "margin-top: 16px;"}
+                  >
+                    {block.text}
+                  </h2>
+                </>
+              );
+            }
+            if (block.type === "h3") {
+              return (
+                <>
+                  {midCta}
+                  <h3
+                    class="post-h3"
+                    style={i === 0 ? "margin-top: 0;" : "margin-top: 12px;"}
+                  >
+                    {block.text}
+                  </h3>
+                </>
+              );
+            }
             return (
               <>
                 {midCta}
-                <h2
-                  class="post-h2"
-                  style={i === 0 ? "margin-top: 0;" : "margin-top: 16px;"}
-                >
-                  {block.text}
-                </h2>
+                <p class="post-p" set:html={block.text} />
               </>
             );
-          }
-          if (block.type === "h3") {
-            return (
-              <>
-                {midCta}
-                <h3
-                  class="post-h3"
-                  style={i === 0 ? "margin-top: 0;" : "margin-top: 12px;"}
-                >
-                  {block.text}
-                </h3>
-              </>
-            );
-          }
-          return (
-            <>
-              {midCta}
-              <p class="post-p" set:html={block.text} />
-            </>
-          );
-        })}
+          })
+        }
       </article>
 
       <!-- Author bio -->

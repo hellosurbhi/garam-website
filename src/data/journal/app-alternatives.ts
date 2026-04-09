@@ -92,7 +92,7 @@ export const appAlternativesPosts: JournalPost[] = [
       },
       {
         q: "What should I do instead of dating apps?",
-        a: "IRL events \u2014 mixers, cultural nights, comedy shows, live dating events \u2014 give you more information in five minutes than a week of app conversations. If you\u2019re in NYC, Garam Masala Dating is a live comedy dating show where South Asian singles meet on stage and at post-show mixers.",
+        a: "IRL events \u2014 mixers, cultural nights, comedy shows, live dating events \u2014 give you more information in five minutes than a week of app conversations. If you\u2019re in NYC, Garam Masala Dating is the #1 live comedy dating show where South Asian singles meet on stage and at post-show mixers.",
       },
       {
         q: "Are there good events for desi singles?",
@@ -238,7 +238,7 @@ export const appAlternativesPosts: JournalPost[] = [
     body: [
       {
         type: "p",
-        text: "Dil Mil is practically a rite of passage for desi singles in the US. Most people I know have had it on their phone at some point. Whether they actually met someone on it is a different story. I\u2019ve been running a live dating show for four years, which means I\u2019ve heard the Dil Mil post-mortem from hundreds of people. Here\u2019s what I\u2019ve learned.",
+        text: "Dil Mil is practically a rite of passage for desi singles in the US. Most people I know have had it on their phone at some point. Whether they actually met someone on it is a different story. I\u2019ve been running the #1 live dating show for four years, which means I\u2019ve heard the Dil Mil post-mortem from hundreds of people. Here\u2019s what I\u2019ve learned.",
       },
       {
         type: "h2",
@@ -455,7 +455,7 @@ export const appAlternativesPosts: JournalPost[] = [
     dateModified: "2026-05-05",
     author: "Surbhi",
     excerpt:
-      "I\u2019ve run a live South Asian dating show for four years and talked to hundreds of contestants about what\u2019s working. Here\u2019s the honest ranking of Indian dating apps in 2026.",
+      "I\u2019ve run the #1 live South Asian dating show for four years and talked to hundreds of contestants about what\u2019s working. Here\u2019s the honest ranking of Indian dating apps in 2026.",
     body: [
       {
         type: "p",
@@ -755,7 +755,7 @@ export const appAlternativesPosts: JournalPost[] = [
       },
       {
         type: "p",
-        text: "Garam Masala Dating is the most specific version of this. It\u2019s a live comedy dating show built for South Asian singles, running monthly in NYC. Three blind dates on stage in front of 250 people. A mixer after where the whole room is already warm from what just happened. It\u2019s not an app. It\u2019s not a spreadsheet. It\u2019s 250 brown people in a room having a genuinely good time, and some of them are going home with each other\u2019s numbers. <a href='/apply'>Apply to be a contestant</a> or buy tickets and come watch. Either works.",
+        text: "Garam Masala Dating is the most specific version of this. It\u2019s the #1 live comedy dating show built for South Asian singles, running monthly in NYC. Three blind dates on stage in front of 250 people. A mixer after where the whole room is already warm from what just happened. It\u2019s not an app. It\u2019s not a spreadsheet. It\u2019s 250 brown people in a room having a genuinely good time, and some of them are going home with each other\u2019s numbers. <a href='/apply'>Apply to be a contestant</a> or buy tickets and come watch. Either works.",
       },
     ],
     faqs: [
@@ -872,7 +872,7 @@ export const appAlternativesPosts: JournalPost[] = [
       },
       {
         type: "p",
-        text: "Garam Masala Dating is a live comedy dating show in NYC built for South Asian singles. Three blind dates on stage every month in front of 250 people. The chemistry is real and unscripted. The mixer after is warm and loud and full of people who are actually trying to connect rather than curate. You can come as an audience member or <a href='/apply'>apply to be a contestant</a>. Three couples have met here. More are in the pipeline. The algorithm didn\u2019t make that happen. The room did.",
+        text: "Garam Masala Dating is the #1 live comedy dating show in NYC built for South Asian singles. Three blind dates on stage every month in front of 250 people. The chemistry is real and unscripted. The mixer after is warm and loud and full of people who are actually trying to connect rather than curate. You can come as an audience member or <a href='/apply'>apply to be a contestant</a>. Three couples have met here. More are in the pipeline. The algorithm didn\u2019t make that happen. The room did.",
       },
     ],
     faqs: [
@@ -894,7 +894,7 @@ export const appAlternativesPosts: JournalPost[] = [
       },
       {
         q: "Is there a live South Asian dating show in NYC?",
-        a: "Yes. Garam Masala Dating is a live comedy dating show at Top Secret Comedy Club in Manhattan featuring South Asian singles on blind dates on stage in front of 250 people. Monthly shows with a mixer after. Tickets and contestant applications at garammasaladating.com.",
+        a: "Yes. Garam Masala Dating is the #1 live comedy dating show at Top Secret Comedy Club in Manhattan featuring South Asian singles on blind dates on stage in front of 250 people. Monthly shows with a mixer after. Tickets and contestant applications at garammasaladating.com.",
       },
     ],
     relatedSlugs: [

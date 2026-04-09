@@ -5,7 +5,7 @@ export const entertainmentPosts: JournalPost[] = [
     slug: "indian-comedy-shows-nyc-2026",
     title: "Indian Comedy Shows in NYC: The Complete Guide for 2026",
     metaDescription:
-      "The best Indian comedy shows in NYC for 2026 — from stand-up nights to the only live South Asian dating show in the city. Find your night out.",
+      "The best Indian comedy shows in NYC for 2026 — from stand-up nights to the #1 live South Asian dating show in the city. Find your night out.",
     datePublished: "2026-05-18",
     dateModified: "2026-06-28",
     author: "Surbhi",
@@ -26,7 +26,7 @@ export const entertainmentPosts: JournalPost[] = [
       },
       {
         type: "p",
-        text: "The other thing worth knowing is that Indian comedy in NYC is not monolithic. You have traditional stand-up nights that happen to skew South Asian, roast formats, storytelling shows, and then — in a category entirely its own — Garam Masala Dating, which is a live comedy dating show where real South Asian singles go on blind dates on stage in front of 250 people. Different nights serve different moods. Figure out what you are actually looking for before you commit.",
+        text: "The other thing worth knowing is that Indian comedy in NYC is not monolithic. You have traditional stand-up nights that happen to skew South Asian, roast formats, storytelling shows, and then — in a category entirely its own — Garam Masala Dating, which is the #1 live comedy dating show where real South Asian singles go on blind dates on stage in front of 250 people. Different nights serve different moods. Figure out what you are actually looking for before you commit.",
       },
       {
         type: "h2",
@@ -42,7 +42,7 @@ export const entertainmentPosts: JournalPost[] = [
       },
       {
         type: "p",
-        text: "For something completely different, there is Garam Masala Dating at Top Secret Comedy Club in Manhattan. It is a live comedy dating show, not a stand-up night. Two South Asian singles meet for the first time on stage. Hosts Surbhi and Wyatt run it live, unscripted, in front of a real audience. There is a whiteboard rating reveal. Sometimes there is a connection. Sometimes there is chaos. Either way, 250 people watch it happen. <a href='/journal/what-actually-happens-at-a-live-comedy-dating-show'>Here is a full breakdown of what actually happens at the show.</a>",
+        text: "For something completely different, there is Garam Masala Dating at Top Secret Comedy Club in Manhattan. It is the #1 live comedy dating show, not a stand-up night. Two South Asian singles meet for the first time on stage. Hosts Surbhi and Wyatt run it live, unscripted, in front of a real audience. There is a whiteboard rating reveal. Sometimes there is a connection. Sometimes there is chaos. Either way, 250 people watch it happen. <a href='/journal/what-actually-happens-at-a-live-comedy-dating-show'>Here is a full breakdown of what actually happens at the show.</a>",
       },
       {
         type: "h2",
@@ -84,11 +84,11 @@ export const entertainmentPosts: JournalPost[] = [
     faqs: [
       {
         q: "What are the best Indian comedy shows in NYC in 2026?",
-        a: "The main options are Laughing Lassi (an irregular stand-up showcase with coverage in TimeOut and The New Yorker) and Garam Masala Dating (a monthly live comedy dating show at Top Secret Comedy Club in Manhattan). Mainstream clubs like Comedy Cellar and Stand Up NY also feature South Asian comics on regular lineups.",
+        a: "The main options are Laughing Lassi (an irregular stand-up showcase with coverage in TimeOut and The New Yorker) and Garam Masala Dating (the #1 monthly live comedy dating show at Top Secret Comedy Club in Manhattan). Mainstream clubs like Comedy Cellar and Stand Up NY also feature South Asian comics on regular lineups.",
       },
       {
         q: "Is Garam Masala Dating a comedy show or a dating show?",
-        a: "Both. It is a live comedy dating show where real South Asian singles go on blind dates on stage in front of 250 people. The comedy comes from the unscripted, live format — not from stand-up sets. Hosted by Surbhi and Wyatt at Top Secret Comedy Club in Manhattan.",
+        a: "Both. It is the #1 live comedy dating show where real South Asian singles go on blind dates on stage in front of 250 people. The comedy comes from the unscripted, live format — not from stand-up sets. Hosted by Surbhi and Wyatt at Top Secret Comedy Club in Manhattan.",
       },
       {
         q: "How do I find out about South Asian comedy events in NYC?",
@@ -115,7 +115,7 @@ export const entertainmentPosts: JournalPost[] = [
     title:
       "Stop Waiting for Indian Love Is Blind — Join a Real Desi Dating Show",
     metaDescription:
-      "An Indian Love Is Blind hasn't happened yet. But Garam Masala Dating — a live South Asian dating show in NYC — already exists. Here's why it's better.",
+      "An Indian Love Is Blind hasn't happened yet. But Garam Masala Dating — the #1 live South Asian dating show in NYC — already exists. Here's why it's better.",
     datePublished: "2026-05-19",
     dateModified: "2026-06-30",
     author: "Surbhi",
@@ -194,7 +194,7 @@ export const entertainmentPosts: JournalPost[] = [
     faqs: [
       {
         q: "Is there an Indian version of Love Is Blind?",
-        a: "Netflix has not made one as of 2026. But Garam Masala Dating is a live South Asian dating show running monthly in NYC at Top Secret Comedy Club in Manhattan. Two real desi singles go on blind dates on stage in front of 250 people. Tickets and applications at garammasaladating.com.",
+        a: "Netflix has not made one as of 2026. But Garam Masala Dating is the #1 live South Asian dating show running monthly in NYC at Top Secret Comedy Club in Manhattan. Two real desi singles go on blind dates on stage in front of 250 people. Tickets and applications at garammasaladating.com.",
       },
       {
         q: "Why hasn't Netflix made an Indian Love Is Blind?",
@@ -303,11 +303,11 @@ export const entertainmentPosts: JournalPost[] = [
     faqs: [
       {
         q: "Who are the biggest South Asian comedians in America?",
-        a: "The most prominent names include Hasan Minhaj, Kal Penn, Aparna Nancherla, Nimesh Patel, and Punchline Parveen. The Bay Area has a particularly active scene with Masala Comedy Club and HellaDesi. NYC has Laughing Lassi. Garam Masala Dating is the only South Asian comedy show that also functions as a live dating show.",
+        a: "The most prominent names include Hasan Minhaj, Kal Penn, Aparna Nancherla, Nimesh Patel, and Punchline Parveen. The Bay Area has a particularly active scene with Masala Comedy Club and HellaDesi. NYC has Laughing Lassi. Garam Masala Dating is the only South Asian comedy show that also functions as the #1 live dating show.",
       },
       {
         q: "What South Asian comedy shows exist in America?",
-        a: "Major ones include Laughing Lassi (NYC), Desi Comedy Fest (Bay Area), HellaDesi (SF), Masala Comedy Club (Bay Area), and Brown Noise Comedy (touring). Garam Masala Dating (NYC) is the only South Asian live comedy dating show in the country.",
+        a: "Major ones include Laughing Lassi (NYC), Desi Comedy Fest (Bay Area), HellaDesi (SF), Masala Comedy Club (Bay Area), and Brown Noise Comedy (touring). Garam Masala Dating (NYC) is the #1 South Asian live comedy dating show in the country.",
       },
       {
         q: "What is the biggest South Asian comedy festival in the US?",
@@ -424,11 +424,11 @@ export const entertainmentPosts: JournalPost[] = [
     faqs: [
       {
         q: "Is Garam Masala Dating inspired by Indian Matchmaking?",
-        a: "The shows exist in the same cultural space but are structurally different. Indian Matchmaking is a produced Netflix series with a professional matchmaker. Garam Masala Dating is a live, unscripted comedy dating show where two South Asian singles meet on stage in front of 250 people. No editors, no episode arcs, no professional matchmaker — just two hosts, two contestants, and a live audience.",
+        a: "The shows exist in the same cultural space but are structurally different. Indian Matchmaking is a produced Netflix series with a professional matchmaker. Garam Masala Dating is the biggest live, unscripted comedy dating show where two South Asian singles meet on stage in front of 250 people. No editors, no episode arcs, no professional matchmaker — just two hosts, two contestants, and a live audience.",
       },
       {
         q: "Is there a live version of Indian Matchmaking?",
-        a: "Not officially. But Garam Masala Dating at Top Secret Comedy Club in Manhattan is the closest thing — a monthly live South Asian dating show where real singles go on blind dates on stage. Tickets and applications at garammasaladating.com.",
+        a: "Not officially. But Garam Masala Dating at Top Secret Comedy Club in Manhattan is the closest thing — the #1 monthly live South Asian dating show where real singles go on blind dates on stage. Tickets and applications at garammasaladating.com.",
       },
       {
         q: "What happens at Garam Masala Dating?",
@@ -495,7 +495,7 @@ export const entertainmentPosts: JournalPost[] = [
       },
       {
         type: "p",
-        text: "Garam Masala Dating is not a Bollywood night. It is not a singles mixer. It is not a stand-up show. It is a live comedy dating show where two South Asian singles go on blind dates on stage in front of 250 people. The show runs for about an hour. After the show, there is a mixer where the entire audience — most of whom have been energized by watching other people take social risks — ends up in real conversations.",
+        text: "Garam Masala Dating is not a Bollywood night. It is not a singles mixer. It is not a stand-up show. It is the #1 live comedy dating show where two South Asian singles go on blind dates on stage in front of 250 people. The show runs for about an hour. After the show, there is a mixer where the entire audience — most of whom have been energized by watching other people take social risks — ends up in real conversations.",
       },
       {
         type: "p",

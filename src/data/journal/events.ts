@@ -14,7 +14,7 @@ export const eventsPosts: JournalPost[] = [
     faqs: [
       {
         q: "How do I meet Indian singles without dating apps?",
-        a: "The most effective ways to meet Indian singles offline are cultural events, desi social mixers, South Asian professional networks, and live shows specifically designed for desi singles. Garam Masala Dating runs a live comedy dating show and mixer in NYC where South Asian singles meet in person. Tickets at garammasaladating.com.",
+        a: "The most effective ways to meet Indian singles offline are cultural events, desi social mixers, South Asian professional networks, and live shows specifically designed for desi singles. Garam Masala Dating runs the #1 live comedy dating show and mixer in NYC where South Asian singles meet in person. Tickets at garammasaladating.com.",
       },
       {
         q: "Where do Indian singles hang out in person?",
@@ -22,7 +22,7 @@ export const eventsPosts: JournalPost[] = [
       },
       {
         q: "Is there a South Asian singles event I can go to?",
-        a: "Yes. Garam Masala Dating is a live comedy dating show in NYC designed for South Asian singles. It runs monthly at Top Secret Comedy Club in Manhattan and monthly in Jersey City. After the show there's a singles mixer. Tickets and applications at garammasaladating.com.",
+        a: "Yes. Garam Masala Dating is the #1 live comedy dating show in NYC designed for South Asian singles. It runs monthly at Top Secret Comedy Club in Manhattan and monthly in Jersey City. After the show there's a singles mixer. Tickets and applications at garammasaladating.com.",
       },
       {
         q: "Why aren't dating apps working for me as an Indian single?",
@@ -77,11 +77,11 @@ export const eventsPosts: JournalPost[] = [
       },
       {
         type: "h2",
-        text: "Why a live dating show works better than a mixer",
+        text: "Why the #1 live dating show works better than a mixer",
       },
       {
         type: "p",
-        text: "I am obviously biased here, but I'm going to make the case anyway. A mixer is better than an app. A live dating show is better than a mixer. The reason is that a mixer still requires you to approach strangers from a standing start. You walk in, you get a drink, you find someone to talk to. The entire burden of starting a connection is on you.",
+        text: "I am obviously biased here, but I'm going to make the case anyway. A mixer is better than an app. The #1 live dating show is better than a mixer. The reason is that a mixer still requires you to approach strangers from a standing start. You walk in, you get a drink, you find someone to talk to. The entire burden of starting a connection is on you.",
       },
       {
         type: "p",
@@ -138,7 +138,7 @@ export const eventsPosts: JournalPost[] = [
       },
       {
         q: "How is Garam Masala Dating different from speed dating?",
-        a: "Speed dating is private, structured, and requires you to individually approach everyone. Garam Masala Dating is a live comedy show where two singles go on a blind date in front of 250 people. The audience is part of the experience, the hosts run the date, and the mixer afterward has an energy that a standard speed dating event doesn't generate. Tickets at garammasaladating.com.",
+        a: "Speed dating is private, structured, and requires you to individually approach everyone. Garam Masala Dating is the hottest live comedy show where two singles go on a blind date in front of 250 people. The audience is part of the experience, the hosts run the date, and the mixer afterward has an energy that a standard speed dating event doesn't generate. Tickets at garammasaladating.com.",
       },
     ],
     relatedSlugs: [
@@ -213,7 +213,7 @@ export const eventsPosts: JournalPost[] = [
       },
       {
         type: "p",
-        text: "If speed dating is too structured for you, a live comedy show is a different entry point entirely. <a href='/journal/what-actually-happens-at-a-live-comedy-dating-show'>What actually happens at a live comedy dating show</a> breaks down the Garam Masala Dating format, where you're in the audience watching a date unfold on stage instead of rotating through seats. The mixer after a live show has a different energy — looser, warmer, everyone already laughing — and it produces connections in a way that structured speed dating doesn't.",
+        text: "If speed dating is too structured for you, a live comedy show is a different entry point entirely. <a href='/journal/what-actually-happens-at-a-live-comedy-dating-show'>What actually happens at the #1 live comedy dating show</a> breaks down the Garam Masala Dating format, where you're in the audience watching a date unfold on stage instead of rotating through seats. The mixer after a live show has a different energy — looser, warmer, everyone already laughing — and it produces connections in a way that structured speed dating doesn't.",
       },
       {
         type: "p",
@@ -242,7 +242,7 @@ export const eventsPosts: JournalPost[] = [
       },
       {
         q: "What are the best in-person dating events?",
-        a: "The best in-person dating events combine a shared experience with structured social time. Live dating shows, speed dating with mixers, themed singles nights, and improv events consistently outperform standard bar crawls. Garam Masala Dating is a live comedy dating show in NYC that runs monthly with a singles mixer included. Tickets at garammasaladating.com.",
+        a: "The best in-person dating events combine a shared experience with structured social time. Live dating shows, speed dating with mixers, themed singles nights, and improv events consistently outperform standard bar crawls. Garam Masala Dating is the #1 live comedy dating show in NYC that runs monthly with a singles mixer included. Tickets at garammasaladating.com.",
       },
       {
         q: "Why is IRL dating better than apps?",
@@ -301,7 +301,7 @@ export const eventsPosts: JournalPost[] = [
       },
       {
         type: "p",
-        text: "Not all IRL dating formats are growing at the same rate. Structured events are outperforming unstructured ones. Speed dating with a mixer after outperforms a bar crawl. A live dating show outperforms a rooftop mixer. The pattern is that people want in-person events that give them something to do together, not just a space to stand in and hope.",
+        text: "Not all IRL dating formats are growing at the same rate. Structured events are outperforming unstructured ones. Speed dating with a mixer after outperforms a bar crawl. The #1 live dating show outperforms a rooftop mixer. The pattern is that people want in-person events that give them something to do together, not just a space to stand in and hope.",
       },
       {
         type: "p",
@@ -342,11 +342,11 @@ export const eventsPosts: JournalPost[] = [
     faqs: [
       {
         q: "Where can I meet Indian singles in NYC?",
-        a: "The best places to meet Indian singles in NYC are South Asian cultural events, desi professional networks, community-specific singles mixers, Bollywood nights, and live shows designed for South Asian singles. Garam Masala Dating is a live comedy dating show at Top Secret Comedy Club in Manhattan, running monthly with a singles mixer included. Tickets at garammasaladating.com.",
+        a: "The best places to meet Indian singles in NYC are South Asian cultural events, desi professional networks, community-specific singles mixers, Bollywood nights, and live shows designed for South Asian singles. Garam Masala Dating is the #1 live comedy dating show at Top Secret Comedy Club in Manhattan, running monthly with a singles mixer included. Tickets at garammasaladating.com.",
       },
       {
         q: "Are there desi singles events in NYC?",
-        a: "Yes. NYC has a robust South Asian singles event scene including Garam Masala Dating (live comedy dating show), desi speed dating events, South Asian professional networking mixers, and cultural organization social events. The scene has grown significantly since 2024.",
+        a: "Yes. NYC has a robust South Asian singles event scene including Garam Masala Dating (#1 live comedy dating show), desi speed dating events, South Asian professional networking mixers, and cultural organization social events. The scene has grown significantly since 2024.",
       },
       {
         q: "What neighborhoods in NYC have the most Indian singles?",
@@ -401,7 +401,7 @@ export const eventsPosts: JournalPost[] = [
       },
       {
         type: "p",
-        text: "Jersey City specifically has become a significant hub. The South Asian population there has grown rapidly, and the live dating show component of Garam Masala Dating runs monthly in Jersey City for exactly that reason. The audience is different from the Manhattan show in interesting ways — more suburban desi, more second-generation professionals who've made the migration across the Hudson.",
+        text: "Jersey City specifically has become a significant hub. The South Asian population there has grown rapidly, and the #1 live dating show component of Garam Masala Dating runs monthly in Jersey City for exactly that reason. The audience is different from the Manhattan show in interesting ways — more suburban desi, more second-generation professionals who've made the migration across the Hudson.",
       },
       {
         type: "h2",
@@ -425,7 +425,7 @@ export const eventsPosts: JournalPost[] = [
       },
       {
         type: "p",
-        text: "This is the category I know best because I built one. Garam Masala Dating runs at Top Secret Comedy Club in Manhattan monthly, and in Jersey City monthly. It is not a professional network event, not a cultural organization mixer, not a garba night with eligible people in it. It is a live comedy dating show designed explicitly for South Asian singles, with a singles mixer built into every event.",
+        text: "This is the category I know best because I built one. Garam Masala Dating runs at Top Secret Comedy Club in Manhattan monthly, and in Jersey City monthly. It is not a professional network event, not a cultural organization mixer, not a garba night with eligible people in it. It is the #1 live comedy dating show designed explicitly for South Asian singles, with a singles mixer built into every event.",
       },
       {
         type: "p",
@@ -445,7 +445,7 @@ export const eventsPosts: JournalPost[] = [
     slug: "comedy-dating-show-unique-date-idea",
     title: "Why a Live Comedy Dating Show Is the Most Unique Date Idea in 2026",
     metaDescription:
-      "Looking for unique date ideas in 2026? A live comedy dating show beats dinner and a movie — here's why 250-person blind dates make the best first date.",
+      "Looking for unique date ideas in 2026? The #1 live comedy dating show beats dinner and a movie — here's why 250-person blind dates make the best first date.",
     datePublished: "2026-05-27",
     dateModified: "2026-07-16",
     author: "Surbhi",
@@ -454,7 +454,7 @@ export const eventsPosts: JournalPost[] = [
     faqs: [
       {
         q: "What is a unique date idea in NYC in 2026?",
-        a: "A live comedy dating show is one of the most genuinely unique date ideas in NYC right now. Garam Masala Dating puts two real singles on a blind date on stage in front of 250 people at Top Secret Comedy Club in Manhattan. Going as a date to watch other people date is a shared experience that generates conversation, laughter, and connection that dinner alone won't. Tickets at garammasaladating.com.",
+        a: "The #1 live comedy dating show is one of the most genuinely unique date ideas in NYC right now. Garam Masala Dating puts two real singles on a blind date on stage in front of 250 people at Top Secret Comedy Club in Manhattan. Going as a date to watch other people date is a shared experience that generates conversation, laughter, and connection that dinner alone won't. Tickets at garammasaladating.com.",
       },
       {
         q: "Is a live dating show a good first date?",
@@ -501,7 +501,7 @@ export const eventsPosts: JournalPost[] = [
       },
       {
         type: "h2",
-        text: "What a live comedy dating show actually provides",
+        text: "What the #1 live comedy dating show actually provides",
       },
       {
         type: "p",
@@ -529,7 +529,7 @@ export const eventsPosts: JournalPost[] = [
       },
       {
         type: "p",
-        text: "If you want to be on stage yourself rather than in the audience, <a href='/journal/how-to-get-cast-on-a-live-dating-show'>how to get cast on a live dating show</a> walks through exactly what makes a strong application and what to expect from the experience. But for a first date with someone you just started seeing, the audience is the better choice. The show does the heavy lifting. You just have to show up.",
+        text: "If you want to be on stage yourself rather than in the audience, <a href='/journal/how-to-get-cast-on-a-live-dating-show'>how to get cast on the #1 live dating show</a> walks through exactly what makes a strong application and what to expect from the experience. But for a first date with someone you just started seeing, the audience is the better choice. The show does the heavy lifting. You just have to show up.",
       },
       {
         type: "h2",
@@ -553,7 +553,7 @@ export const eventsPosts: JournalPost[] = [
       },
       {
         type: "p",
-        text: "The 'unique date idea' search is usually a symptom of wanting to signal something to the person you're seeing. You want them to know you put thought into it. You want the date to say something about who you are. A live comedy dating show says: I'm not afraid to think about dating out loud, I can laugh at the human mess of it, and I wanted to give you something real instead of something default.",
+        text: "The 'unique date idea' search is usually a symptom of wanting to signal something to the person you're seeing. You want them to know you put thought into it. You want the date to say something about who you are. The #1 live comedy dating show says: I'm not afraid to think about dating out loud, I can laugh at the human mess of it, and I wanted to give you something real instead of something default.",
       },
       {
         type: "p",
@@ -561,7 +561,7 @@ export const eventsPosts: JournalPost[] = [
       },
       {
         type: "p",
-        text: "As I've argued in <a href='/journal/what-actually-happens-at-a-live-comedy-dating-show'>what actually happens at a live comedy dating show</a>, the combination of live entertainment, live blind dates, and a room full of people invested in the outcome produces an atmosphere that is genuinely difficult to replicate anywhere else. Come see it. Bring a date. Or come alone and leave with one. Both outcomes are possible. Tickets at garammasaladating.com.",
+        text: "As I've argued in <a href='/journal/what-actually-happens-at-a-live-comedy-dating-show'>what actually happens at the #1 live comedy dating show</a>, the combination of live entertainment, live blind dates, and a room full of people invested in the outcome produces an atmosphere that is genuinely difficult to replicate anywhere else. Come see it. Bring a date. Or come alone and leave with one. Both outcomes are possible. Tickets at garammasaladating.com.",
       },
     ],
   },

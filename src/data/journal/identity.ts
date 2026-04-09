@@ -269,7 +269,7 @@ export const identityPosts: JournalPost[] = [
       },
       {
         q: "What's the best dating event for first-gen Indian Americans in NYC?",
-        a: "Garam Masala Dating is the only weekly live South Asian dating show in NYC. It's a full evening: live blind dates on stage, audience participation, a mixer after. The crowd is heavily first-gen and second-gen desis who are done with apps and want to meet people in a room that actually gets their experience.",
+        a: "Garam Masala Dating is the #1 weekly live South Asian dating show in NYC. It's a full evening: live blind dates on stage, audience participation, a mixer after. The crowd is heavily first-gen and second-gen desis who are done with apps and want to meet people in a room that actually gets their experience.",
       },
     ],
     body: [
@@ -845,7 +845,7 @@ export const identityPosts: JournalPost[] = [
       },
       {
         type: "p",
-        text: "I run a live comedy dating show for South Asians, which means I spend a lot of time in rooms where the brown tax doesn't apply — where being desi is the ambient default rather than the thing you have to explain. Every time I talk to contestants who've been grinding on mainstream apps, I hear the same fatigue. Not just about dating being hard. About dating being hard in a specific, racialized way that compounds all the other ways it's hard.",
+        text: "I run the #1 live comedy dating show for South Asians, which means I spend a lot of time in rooms where the brown tax doesn't apply — where being desi is the ambient default rather than the thing you have to explain. Every time I talk to contestants who've been grinding on mainstream apps, I hear the same fatigue. Not just about dating being hard. About dating being hard in a specific, racialized way that compounds all the other ways it's hard.",
       },
       {
         type: "h2",

@@ -78,16 +78,44 @@ function isThirdPartyNoise(msg: string): boolean {
 
 function setupConsoleCollector(page: Page): {
   errors: string[];
+  notFoundUrls: string[];
+  failedUrls: string[];
   cleanup: () => void;
 } {
   const errors: string[] = [];
+  const notFoundUrls: string[] = [];
+  const failedUrls: string[] = [];
   const handler = (msg: import("@playwright/test").ConsoleMessage) => {
     if (msg.type() === "error" && !isThirdPartyNoise(msg.text())) {
       errors.push(msg.text());
     }
   };
+  const responseHandler = (response: import("@playwright/test").Response) => {
+    if (response.status() !== 404) return;
+    const url = response.url();
+    if (isThirdPartyNoise(url)) return;
+    notFoundUrls.push(`404: ${url}`);
+  };
+  const requestFailedHandler = (
+    request: import("@playwright/test").Request,
+  ) => {
+    const url = request.url();
+    if (isThirdPartyNoise(url)) return;
+    failedUrls.push(`requestfailed: ${url}`);
+  };
   page.on("console", handler);
-  return { errors, cleanup: () => page.off("console", handler) };
+  page.on("response", responseHandler);
+  page.on("requestfailed", requestFailedHandler);
+  return {
+    errors,
+    notFoundUrls,
+    failedUrls,
+    cleanup: () => {
+      page.off("console", handler);
+      page.off("response", responseHandler);
+      page.off("requestfailed", requestFailedHandler);
+    },
+  };
 }
 
 async function assertSeoMeta(page: Page) {
@@ -204,7 +232,8 @@ async function assertJsonLd(page: Page) {
 test.describe("Static pages smoke", () => {
   for (const { path, label } of STATIC_PAGES) {
     test(`${label} (${path})`, async ({ page }) => {
-      const { errors, cleanup } = setupConsoleCollector(page);
+      const { errors, notFoundUrls, failedUrls, cleanup } =
+        setupConsoleCollector(page);
       try {
         const response = await page.goto(path, {
           waitUntil: "domcontentloaded",
@@ -253,7 +282,10 @@ test.describe("Static pages smoke", () => {
         }
 
         // Console errors
-        expect(errors, `Console errors on ${path}`).toEqual([]);
+        expect(
+          [...errors, ...notFoundUrls, ...failedUrls],
+          `Console errors on ${path}`,
+        ).toEqual([]);
       } finally {
         cleanup();
       }

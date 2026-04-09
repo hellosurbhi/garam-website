@@ -1,10 +1,10 @@
 ---
-import '../index.css';
-import PostHog from '../components/posthog.astro';
-import GTM from '../components/gtm.astro';
-import MetaPixel from '../components/meta-pixel.astro';
-import HomeFooter from '../components/home/HomeFooter.astro';
-import PageNav from '../components/layout/PageNav.astro';
+import "../index.css";
+import PostHog from "../components/posthog.astro";
+import GTM from "../components/gtm.astro";
+import MetaPixel from "../components/meta-pixel.astro";
+import HomeFooter from "../components/home/HomeFooter.astro";
+import PageNav from "../components/layout/PageNav.astro";
 
 interface Props {
   title: string;
@@ -20,14 +20,15 @@ interface Props {
 const {
   title,
   description,
-  ogImage = 'https://garammasaladating.com/og-image.jpg',
-  ogType = 'website',
-  canonicalUrl = Astro.site ? new URL(Astro.url.pathname, Astro.site).href : 'https://garammasaladating.com/',
+  ogImage = "https://garammasaladating.com/og-image.jpg",
+  ogType = "website",
+  canonicalUrl = Astro.site
+    ? new URL(Astro.url.pathname, Astro.site).href
+    : "https://garammasaladating.com/",
   noindex = false,
   hideNav = false,
   hideFooter = false,
 } = Astro.props;
-
 ---
 
 <!doctype html>
@@ -64,7 +65,10 @@ const {
     <meta property="og:image" content={ogImage} />
     <meta property="og:image:width" content="1200" />
     <meta property="og:image:height" content="630" />
-    <meta property="og:image:alt" content="Garam Masala Dating — NYC's live South Asian dating show" />
+    <meta
+      property="og:image:alt"
+      content="Garam Masala Dating — NYC's live South Asian dating show"
+    />
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:site" content="@garamdatingshow" />
     <meta name="twitter:creator" content="@garamdatingshow" />
@@ -78,7 +82,13 @@ const {
   </head>
   <body>
     <a href="#main-content" class="sr-skip-link">Skip to content</a>
-    <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-KQCBBL2W" height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+    <noscript
+      ><iframe
+        src="https://www.googletagmanager.com/ns.html?id=GTM-KQCBBL2W"
+        height="0"
+        width="0"
+        style="display:none;visibility:hidden"></iframe></noscript
+    >
     <div class="grain-overlay"></div>
     <div class="cursor" id="cursor"></div>
     <div class="cursor-ring" id="cursorRing"></div>
@@ -86,50 +96,71 @@ const {
     <slot />
     {!hideFooter && <HomeFooter />}
     <script>
-      import { inject } from '@vercel/analytics';
-      import { injectSpeedInsights } from '@vercel/speed-insights';
-      import { bootstrapLeadAttribution } from '@/lib/leadAttribution';
-      inject();
-      injectSpeedInsights();
+      import { inject } from "@vercel/analytics";
+      import { injectSpeedInsights } from "@vercel/speed-insights";
+      import { bootstrapLeadAttribution } from "@/lib/leadAttribution";
+      const isLocalPreview = ["localhost", "127.0.0.1"].includes(
+        window.location.hostname,
+      );
+      if (!isLocalPreview) {
+        inject();
+        injectSpeedInsights();
+      }
       bootstrapLeadAttribution();
 
       // Custom cursor — desktop only (pointer: fine), off for prefers-reduced-motion
-      if (window.matchMedia('(pointer: fine)').matches &&
-          !window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
-        const cursor = document.getElementById('cursor');
-        const ring = document.getElementById('cursorRing');
+      if (
+        window.matchMedia("(pointer: fine)").matches &&
+        !window.matchMedia("(prefers-reduced-motion: reduce)").matches
+      ) {
+        const cursor = document.getElementById("cursor");
+        const ring = document.getElementById("cursorRing");
         if (cursor && ring) {
-          let mx = 0, my = 0, rx = 0, ry = 0;
-          const darkSel = '.shows,.spicelist,.photo-break,.photos';
-          document.addEventListener('mousemove', (e) => {
-            mx = e.clientX; my = e.clientY;
+          let mx = 0,
+            my = 0,
+            rx = 0,
+            ry = 0;
+          const darkSel = ".shows,.spicelist,.photo-break,.photos";
+          document.addEventListener("mousemove", (e) => {
+            mx = e.clientX;
+            my = e.clientY;
             const el = document.elementFromPoint(mx, my);
             const onDark = el?.closest(darkSel);
-            cursor.classList.toggle('light', !!onDark);
-            ring.classList.toggle('light', !!onDark);
+            cursor.classList.toggle("light", !!onDark);
+            ring.classList.toggle("light", !!onDark);
           });
           (function loop() {
             rx += (mx - rx) * 0.12;
             ry += (my - ry) * 0.12;
-            cursor.style.left = mx + 'px'; cursor.style.top = my + 'px';
-            ring.style.left = rx + 'px'; ring.style.top = ry + 'px';
+            cursor.style.left = mx + "px";
+            cursor.style.top = my + "px";
+            ring.style.left = rx + "px";
+            ring.style.top = ry + "px";
             requestAnimationFrame(loop);
           })();
-          document.querySelectorAll('a,button,[role="button"]').forEach((el) => {
-            el.addEventListener('mouseenter', () => {
-              cursor.style.width = '20px'; cursor.style.height = '20px';
-              ring.style.width = '60px'; ring.style.height = '60px'; ring.style.opacity = '0.8';
+          document
+            .querySelectorAll('a,button,[role="button"]')
+            .forEach((el) => {
+              el.addEventListener("mouseenter", () => {
+                cursor.style.width = "20px";
+                cursor.style.height = "20px";
+                ring.style.width = "60px";
+                ring.style.height = "60px";
+                ring.style.opacity = "0.8";
+              });
+              el.addEventListener("mouseleave", () => {
+                cursor.style.width = "12px";
+                cursor.style.height = "12px";
+                ring.style.width = "40px";
+                ring.style.height = "40px";
+                ring.style.opacity = "0.5";
+              });
             });
-            el.addEventListener('mouseleave', () => {
-              cursor.style.width = '12px'; cursor.style.height = '12px';
-              ring.style.width = '40px'; ring.style.height = '40px'; ring.style.opacity = '0.5';
-            });
-          });
-          document.documentElement.classList.add('custom-cursor');
+          document.documentElement.classList.add("custom-cursor");
 
           // Keep custom cursor visible over <dialog> top-layer
           const observer = new MutationObserver(() => {
-            const openDialog = document.querySelector('dialog[open]');
+            const openDialog = document.querySelector("dialog[open]");
             if (openDialog && cursor.parentElement !== openDialog) {
               openDialog.appendChild(cursor);
               openDialog.appendChild(ring);
@@ -138,8 +169,16 @@ const {
               document.body.appendChild(ring);
             }
           });
-          observer.observe(document.body, { subtree: true, attributes: true, attributeFilter: ['open'] });
-          document.addEventListener('astro:before-swap', () => observer.disconnect(), { once: true });
+          observer.observe(document.body, {
+            subtree: true,
+            attributes: true,
+            attributeFilter: ["open"],
+          });
+          document.addEventListener(
+            "astro:before-swap",
+            () => observer.disconnect(),
+            { once: true },
+          );
         }
       }
     </script>
@@ -160,19 +199,33 @@ const {
   }
 
   @keyframes grainShift {
-    0% { transform: translate(0, 0); }
-    25% { transform: translate(-2px, 2px); }
-    50% { transform: translate(2px, -1px); }
-    75% { transform: translate(-1px, -2px); }
-    100% { transform: translate(0, 0); }
+    0% {
+      transform: translate(0, 0);
+    }
+    25% {
+      transform: translate(-2px, 2px);
+    }
+    50% {
+      transform: translate(2px, -1px);
+    }
+    75% {
+      transform: translate(-1px, -2px);
+    }
+    100% {
+      transform: translate(0, 0);
+    }
   }
 
   @media (max-width: 768px) {
-    .grain-overlay { display: none; animation: none; }
+    .grain-overlay {
+      display: none;
+      animation: none;
+    }
   }
 
   /* Custom cursor — only visible on desktop with mouse */
-  .cursor, .cursor-ring {
+  .cursor,
+  .cursor-ring {
     display: none;
   }
 
@@ -196,7 +249,9 @@ const {
     pointer-events: none;
     z-index: 99999;
     transform: translate(-50%, -50%);
-    transition: width 0.15s, height 0.15s;
+    transition:
+      width 0.15s,
+      height 0.15s;
   }
   :global(html.custom-cursor) .cursor.light {
     background: white;
@@ -213,10 +268,12 @@ const {
     z-index: 99998;
     transform: translate(-50%, -50%);
     opacity: 0.5;
-    transition: width 0.3s, height 0.3s, opacity 0.3s;
+    transition:
+      width 0.3s,
+      height 0.3s,
+      opacity 0.3s;
   }
   :global(html.custom-cursor) .cursor-ring.light {
     border-color: white;
   }
-
 </style>

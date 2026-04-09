@@ -136,7 +136,12 @@ const speakableJsonLd = JSON.stringify({
           <p class="popup-subtitle">
             Join our list for exclusive discount codes and early access.
           </p>
-          <form id="popup-email-form" class="popup-form">
+          <form
+            id="popup-email-form"
+            class="popup-form"
+            toolname="subscribe-via-homepage-popup"
+            tooldescription="Subscribe to Garam Masala Dating discount codes and ticket drops via the homepage signup popup. Provide an email address."
+          >
             <input
               type="email"
               id="popup-email"
@@ -144,6 +149,7 @@ const speakableJsonLd = JSON.stringify({
               placeholder="Your email"
               required
               aria-label="Email address"
+              toolparamdescription="Email address to receive discount codes and show announcements"
             />
             <p id="popup-email-error" class="popup-error" hidden role="alert">
             </p>
@@ -159,13 +165,19 @@ const speakableJsonLd = JSON.stringify({
           <p class="popup-subtitle">
             Add your number for text-only discounts and free ticket drops.
           </p>
-          <form id="popup-phone-form" class="popup-form">
+          <form
+            id="popup-phone-form"
+            class="popup-form"
+            toolname="add-phone-via-homepage-popup"
+            tooldescription="Add a phone number for SMS-only ticket drops and deals (optional second step after email signup via homepage popup)."
+          >
             <input
               type="tel"
               id="popup-phone"
               class="ph-mask"
               placeholder="(555) 123-4567"
               aria-label="Phone number"
+              toolparamdescription="Mobile phone number for SMS-only deals (optional)"
             />
             <p id="popup-phone-error" class="popup-error" hidden role="alert">
             </p>

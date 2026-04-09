@@ -1,3 +1,4 @@
+import { useEffect } from "react";
 import { ErrorBoundary } from "./ErrorBoundary";
 import Select from "react-select";
 import { COMMUNITY_OPTIONS, INCOME_OPTIONS } from "@/types/application";
@@ -11,6 +12,12 @@ import { ApplySuccessPanel } from "./apply/ApplySuccessPanel";
 import { PhotoUploadField } from "./apply/PhotoUploadField";
 import { useApplyForm } from "./apply/useApplyForm";
 
+type NavWithMC = Navigator & {
+  modelContext: {
+    registerTool: (def: object) => { unregister?: () => void };
+  };
+};
+
 export default function ApplyPage() {
   return (
     <ErrorBoundary>
@@ -20,6 +27,65 @@ export default function ApplyPage() {
 }
 
 function ApplyPageInner() {
+  useEffect(() => {
+    if (typeof navigator === "undefined" || !("modelContext" in navigator))
+      return;
+    const tool = (navigator as unknown as NavWithMC).modelContext.registerTool({
+      name: "submit-contestant-application",
+      description:
+        "Submit an application to appear as a contestant on Garam Masala Dating, a live South Asian comedy dating show in NYC. Collects personal details, Instagram handle, location, and optional pitch.",
+      inputSchema: {
+        type: "object",
+        properties: {
+          applicationType: {
+            type: "string",
+            enum: ["self", "nomination"],
+            description: "Applying for yourself or nominating someone else",
+          },
+          fullName: {
+            type: "string",
+            description: "Full name of the contestant",
+          },
+          age: {
+            type: "integer",
+            minimum: 18,
+            maximum: 99,
+            description: "Age in years",
+          },
+          gender: { type: "string", description: "Gender identity" },
+          sexualOrientation: {
+            type: "string",
+            description: "Sexual orientation",
+          },
+          city: {
+            type: "string",
+            description: "City where the contestant lives",
+          },
+          instagram: {
+            type: "string",
+            description: "Instagram handle (without @)",
+          },
+          pitch: {
+            type: "string",
+            description: "Why they would be great on the show (optional)",
+          },
+        },
+        required: [
+          "applicationType",
+          "fullName",
+          "age",
+          "gender",
+          "sexualOrientation",
+          "city",
+          "instagram",
+        ],
+      },
+    });
+    return () => {
+      tool?.unregister?.();
+    };
+  }, []);
+
   const {
     form,
     photoPreview,

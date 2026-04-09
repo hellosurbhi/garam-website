@@ -36,7 +36,12 @@ const { source = "notify-modal" } = Astro.props;
           We'll email you when tickets drop for <strong id="notify-city-name"
           ></strong>.
         </p>
-        <form id="notify-form" class="modal-form">
+        <form
+          id="notify-form"
+          class="modal-form"
+          toolname="subscribe-to-ticket-drop-alerts"
+          tooldescription="Get notified by email when tickets drop for Garam Masala Dating in a specific city. Provide email address."
+        >
           <input
             type="email"
             id="notify-email"
@@ -44,6 +49,7 @@ const { source = "notify-modal" } = Astro.props;
             placeholder="Your email"
             required
             aria-label="Email address"
+            toolparamdescription="Email address to receive ticket drop notifications for this city"
           />
           <input type="hidden" id="notify-city" />
           <p id="notify-error" class="modal-error" hidden aria-live="assertive">
@@ -56,13 +62,19 @@ const { source = "notify-modal" } = Astro.props;
         <p class="modal-subtitle">
           Add your number for text-only ticket drops.
         </p>
-        <form id="notify-phone-form" class="modal-form">
+        <form
+          id="notify-phone-form"
+          class="modal-form"
+          toolname="add-phone-to-ticket-alerts"
+          tooldescription="Add a phone number for SMS ticket drop alerts for a specific city (optional step after email signup)."
+        >
           <input
             type="tel"
             id="notify-phone"
             class="ph-mask"
             placeholder="(555) 123-4567"
             aria-label="Phone number"
+            toolparamdescription="Mobile phone number for SMS-only ticket drop alerts (optional)"
           />
           <p
             id="notify-phone-error"

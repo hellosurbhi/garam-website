@@ -11,7 +11,12 @@
   <!-- min-height prevents CLS when switching between steps -->
   <div class="nl-steps-wrapper" data-reveal>
     <div id="nl-step-1">
-      <form id="nl-email-form" class="spicelist-form">
+      <form
+        id="nl-email-form"
+        class="spicelist-form"
+        toolname="subscribe-to-spice-list"
+        tooldescription="Subscribe to the Garam Masala Dating Spice List for exclusive discount codes and free ticket drops. Provide an email address."
+      >
         <input
           type="email"
           id="nl-email"
@@ -19,6 +24,7 @@
           placeholder="Your email"
           required
           aria-label="Email address"
+          toolparamdescription="Email address to receive discount codes and show announcements"
         />
         <p id="nl-email-error" class="spicelist-error" hidden role="alert"></p>
         <button type="submit">Get My Discount Code</button>
@@ -30,13 +36,19 @@
       <p class="nl-step2-text">
         Add your number for text-only discounts and free ticket drops.
       </p>
-      <form id="nl-phone-form" class="spicelist-form">
+      <form
+        id="nl-phone-form"
+        class="spicelist-form"
+        toolname="add-phone-to-spice-list"
+        tooldescription="Add a mobile phone number to the Spice List subscription for SMS-only ticket drops and deals."
+      >
         <input
           type="tel"
           id="nl-phone"
           class="ph-mask"
           placeholder="(555) 123-4567"
           aria-label="Phone number"
+          toolparamdescription="Mobile phone number for SMS-only deals (optional, can be skipped)"
         />
         <p id="nl-phone-error" class="spicelist-error" hidden role="alert"></p>
         <button type="submit">Send Me Deals</button>

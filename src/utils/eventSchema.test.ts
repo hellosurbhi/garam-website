@@ -150,4 +150,36 @@ describe("buildEventSchemas", () => {
     expect(parsed.startDate).toContain("-04:00");
     expect(parsed.endDate).toContain("-04:00");
   });
+
+  it("returns 0 schemas for a list of only hidden events", () => {
+    const events = [makeEvent({ hidden: true })];
+    expect(buildEventSchemas(events)).toHaveLength(0);
+  });
+
+  it("startDate and endDate contain different times when custom", () => {
+    const schemas = buildEventSchemas([
+      makeEvent({ startTime: "19:00", endTime: "23:00" }),
+    ]);
+    const parsed = JSON.parse(schemas[0]);
+    expect(parsed.startDate).toContain("T19:00:00");
+    expect(parsed.endDate).toContain("T23:00:00");
+    expect(parsed.startDate).not.toContain("T23:00:00");
+  });
+
+  it("address always includes required fields", () => {
+    const schemas = buildEventSchemas([
+      makeEvent({ venue: TEST_VENUE_MINIMAL }),
+    ]);
+    const parsed = JSON.parse(schemas[0]);
+    const addr = parsed.location.address;
+    expect(addr["@type"]).toBe("PostalAddress");
+    expect(addr.addressLocality).toBe("New York");
+    expect(addr.addressRegion).toBe("NY");
+    expect(addr.addressCountry).toBe("US");
+  });
+
+  it("filters event without isoDate even when not hidden", () => {
+    const events = [makeEvent({ hidden: false, isoDate: undefined })];
+    expect(buildEventSchemas(events)).toHaveLength(0);
+  });
 });

@@ -154,5 +154,44 @@ describe("citySearch", () => {
       const options = await loadCityOptions();
       expect(resolveCityOption("Atlantis", options)).toBeNull();
     });
+
+    it("matches case-insensitively", async () => {
+      const options = await loadCityOptions();
+      const result = resolveCityOption("london", options);
+      expect(result).not.toBeNull();
+      expect(result!.city).toBe("London");
+    });
+  });
+
+  describe("loadCityOptions — boost values", () => {
+    it("active citiesIndex entry gets boost 40, not 20", async () => {
+      const options = await loadCityOptions();
+      const nyc = options.find((o) => o.city === "New York City");
+      expect(nyc!.boost).toBe(40);
+      expect(nyc!.boost).not.toBe(20);
+    });
+
+    it("non-active citiesIndex entry gets boost 20, not 40", async () => {
+      const options = await loadCityOptions();
+      const london = options.find((o) => o.city === "London");
+      expect(london!.boost).toBe(20);
+      expect(london!.boost).not.toBe(40);
+    });
+
+    it("options are sorted ascending by label", async () => {
+      const options = await loadCityOptions();
+      for (let i = 1; i < options.length; i++) {
+        expect(
+          options[i - 1].label.localeCompare(options[i].label),
+        ).toBeLessThanOrEqual(0);
+      }
+    });
+
+    it("empty query returns results in descending boost order", async () => {
+      const options = await loadCityOptions();
+      const results = searchCityOptions("", options, 3);
+      expect(results[0].boost).toBeGreaterThanOrEqual(results[1].boost);
+      expect(results[1].boost).toBeGreaterThanOrEqual(results[2].boost);
+    });
   });
 });

@@ -93,6 +93,24 @@ describe("adminSelectStyles", () => {
     } as never);
     expect(result.cursor).toBe("pointer");
   });
+
+  it("option isSelected takes precedence over isFocused", () => {
+    const result = adminSelectStyles.option!(BASE, {
+      isSelected: true,
+      isFocused: true,
+    } as never);
+    expect(result.background).toBe("rgba(0, 0, 0, 0.06)");
+  });
+
+  it("control has boxShadow none", () => {
+    const result = adminSelectStyles.control!(BASE, {} as never);
+    expect(result.boxShadow).toBe("none");
+  });
+
+  it("control has cursor pointer", () => {
+    const result = adminSelectStyles.control!(BASE, {} as never);
+    expect(result.cursor).toBe("pointer");
+  });
 });
 
 describe("formSelectStyles", () => {
@@ -246,5 +264,27 @@ describe("formSelectStyles", () => {
       isFocused: false,
     } as never);
     expect(result.cursor).toBe("pointer");
+  });
+
+  it("option isSelected takes precedence over isFocused", () => {
+    const result = formSelectStyles.option!(BASE, {
+      isSelected: true,
+      isFocused: true,
+    } as never);
+    expect(result.background).toBe("rgba(220, 38, 38, 0.15)");
+  });
+
+  it("control borderRadius is 12px", () => {
+    const result = formSelectStyles.control!(BASE, {
+      isFocused: false,
+    } as never);
+    expect(result.borderRadius).toBe("12px");
+  });
+
+  it("control has transition property", () => {
+    const result = formSelectStyles.control!(BASE, {
+      isFocused: false,
+    } as never);
+    expect(result.transition).toBe("border-color 0.2s, box-shadow 0.2s");
   });
 });

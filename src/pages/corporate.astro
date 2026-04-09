@@ -350,9 +350,8 @@ const speakableJsonLd = JSON.stringify({
   }
   .corp-photo-pair img {
     width: 100%;
-    height: auto;
+    aspect-ratio: 3/2;
     object-fit: cover;
-    max-height: 240px;
   }
 
   /* Format section */
@@ -391,6 +390,7 @@ const speakableJsonLd = JSON.stringify({
   .corp-sizes {
     background: var(--off-white);
     padding: 56px 0;
+    text-align: center;
   }
   .corp-sizes h2 {
     font-family: var(--font-playfair), serif;
@@ -398,6 +398,7 @@ const speakableJsonLd = JSON.stringify({
     font-weight: 800;
     color: var(--charcoal);
     margin-bottom: 28px;
+    text-align: center;
   }
   .corp-tiers {
     display: flex;
@@ -431,12 +432,14 @@ const speakableJsonLd = JSON.stringify({
     line-height: 1.6;
     color: var(--text-secondary);
     margin: 0;
+    text-align: left;
   }
 
   /* Inclusions */
   .corp-inc {
     background: var(--cream-warm);
     padding: 56px 0;
+    text-align: center;
   }
   .corp-inc h2 {
     font-family: var(--font-playfair), serif;
@@ -468,12 +471,14 @@ const speakableJsonLd = JSON.stringify({
     line-height: 1.65;
     color: var(--text-secondary);
     margin: 0;
+    text-align: left;
   }
 
   /* Testimonials */
   .corp-test {
     background: var(--off-white);
     padding: 56px 0;
+    text-align: center;
   }
   .corp-test h2 {
     font-family: var(--font-playfair), serif;
@@ -493,6 +498,7 @@ const speakableJsonLd = JSON.stringify({
     border-radius: 14px;
     padding: 24px;
     margin: 0;
+    text-align: left;
   }
   .corp-quote p {
     font-family: var(--font-cormorant), serif;
@@ -570,10 +576,6 @@ const speakableJsonLd = JSON.stringify({
     }
     .corp-photo-pair {
       grid-template-columns: 1fr 1fr;
-      gap: 0;
-    }
-    .corp-photo-pair img {
-      max-height: 500px;
     }
     .corp-format {
       padding: 80px 0;

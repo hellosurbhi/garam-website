@@ -6,8 +6,9 @@ import MetaPixel from "../components/meta-pixel.astro";
 import HomeFooter from "../components/home/HomeFooter.astro";
 import PageNav from "../components/layout/PageNav.astro";
 import { SITE } from "../data/copy";
+import { pageTitle, ogTitle } from "../utils/meta";
 import LegalModal from "../components/LegalModal.astro";
-import SpiceListSection from "../components/SpiceListSection.astro";
+import HomeSignup from "../components/home/HomeSignup.astro";
 
 interface Props {
   title: string;
@@ -42,7 +43,7 @@ const {
     <GTM />
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>{title}</title>
+    <title>{pageTitle(title)}</title>
     <meta name="description" content={description} />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
@@ -66,16 +67,16 @@ const {
     <meta property="og:type" content={ogType} />
     <meta property="og:site_name" content="Garam Masala Dating" />
     <meta property="og:url" content={canonicalUrl} />
-    <meta property="og:title" content={title} />
+    <meta property="og:title" content={ogTitle(title)} />
     <meta property="og:description" content={description} />
     <meta property="og:image" content={ogImage} />
-    <meta property="og:image:width" content="1200" />
-    <meta property="og:image:height" content="630" />
+    <meta property="og:image:width" content="800" />
+    <meta property="og:image:height" content="1200" />
     <meta property="og:image:alt" content={SITE.ogImageAlt} />
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:site" content="@garamdatingshow" />
     <meta name="twitter:creator" content="@garamdatingshow" />
-    <meta name="twitter:title" content={title} />
+    <meta name="twitter:title" content={ogTitle(title)} />
     <meta name="twitter:description" content={description} />
     <meta name="twitter:image" content={ogImage} />
     {noindex && <meta name="robots" content="noindex, nofollow" />}
@@ -97,7 +98,7 @@ const {
     <div class="cursor-ring" id="cursorRing"></div>
     {!hideNav && <PageNav />}
     <slot />
-    {!hideSpiceList && !hideFooter && <SpiceListSection />}
+    {!hideSpiceList && !hideFooter && <HomeSignup />}
     {!hideFooter && <HomeFooter />}
     <LegalModal />
     <script>

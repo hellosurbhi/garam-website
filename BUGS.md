@@ -2,6 +2,26 @@
 
 ## Open
 
+### [MEDIUM] SVG-only buttons missing aria-label (accessibility)
+
+- **Date:** 2026-04-08
+- **File:** Multiple components — found by Playwright smoke test on iPad/desktop viewports
+- **Status:** Open
+- **Severity:** Medium
+- **What's happening:** Some buttons contain only an SVG icon with no `aria-label`, `aria-labelledby`, or `title` attribute. `textContent` is empty for SVG-only buttons, so screen readers announce them as "button" with no context. The smoke test (`assertAllButtonsAccessible`) catches these — buttons that are visible but have no accessible name.
+- **What should happen:** Every visible button must have either text content, `aria-label`, `aria-labelledby`, or `title`.
+- **Fix:** Audit all `<button>` elements with SVG-only children across the site. Add `aria-label` to each one. Known pattern: close buttons (`.modal-close`), icon buttons, and any button that relies solely on a visual icon. Run `npx playwright test --grep "Static pages smoke"` to find all offending pages.
+
+### [LOW] Contestant-prep page has empty meta description
+
+- **Date:** 2026-04-08
+- **File:** `src/pages/contestant-prep.astro`
+- **Status:** Open
+- **Severity:** Low
+- **What's happening:** `description=""` is passed to BaseLayout, resulting in an empty meta description tag. While the page has `noindex={true}`, an empty description is still sloppy.
+- **What should happen:** Even noindex pages should have a meaningful description for anyone who lands on them.
+- **Fix:** Add a description like "Preparation guide for confirmed Garam Masala Dating contestants."
+
 ### [HIGH] Firebase Auth blocked by CSP in production — apply form silently fails
 
 - **Date:** 2026-04-07

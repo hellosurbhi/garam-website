@@ -42,3 +42,9 @@ SITE-AUDIT.md
 .gstack/
 seo-article-strategy.md
 surbhi-shader-export*/
+
+# Test reports
+playwright-report/
+test-results/
+reports/
+link-results.json

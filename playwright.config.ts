@@ -1,11 +1,22 @@
 import { defineConfig } from "@playwright/test";
 
+const hasRemoteURL = !!process.env.BASE_URL;
+
 export default defineConfig({
   testDir: "./tests/smoke",
   timeout: 30000,
   retries: 1,
+  ...(hasRemoteURL
+    ? {}
+    : {
+        webServer: {
+          command: "npm run build && npm run preview",
+          port: 4321,
+          reuseExistingServer: true,
+        },
+      }),
   use: {
-    baseURL: process.env.BASE_URL || "https://garammasaladating.com",
+    baseURL: process.env.BASE_URL || "http://localhost:4321",
     screenshot: "only-on-failure",
     trace: "on-first-retry",
   },

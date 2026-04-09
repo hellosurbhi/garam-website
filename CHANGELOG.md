@@ -1,5 +1,83 @@
 # Changelog
 
+## fix: exclude .stryker-tmp from ESLint (2026-04-09)
+
+### What changed
+
+`eslint.config.js` — added `.stryker-tmp` to `globalIgnores`. Stryker mutation testing creates sandboxes in `.stryker-tmp/` that include auto-generated files with `@ts-nocheck`, `any` types, and `var` declarations. ESLint was picking these up and failing `npm run lint` with ~100 false-positive errors in test sandbox files that are already in `.gitignore`.
+
+### Files modified
+
+- `eslint.config.js`
+
+### Decisions
+
+- `.stryker-tmp` is already in `.gitignore` — it should have been in `globalIgnores` from the start. This is the correct fix rather than adding `// eslint-disable` to generated files we don't control.
+
+---
+
+## feat: AI/LLM discoverability — llms.txt, AEO schema, sitemap optimization (2026-04-09)
+
+### What changed
+
+Full AEO (Answer Engine Optimization) pass: gave AI crawlers, LLMs, and RAG systems everything they need to understand and cite Garam Masala Dating accurately.
+
+**robots.txt — AI crawler permissions:**
+
+- Added 6 missing AI crawlers: `OAI-SearchBot`, `Applebot-Extended`, `CCBot`, `Meta-ExternalAgent`, `cohere-ai` (all `Allow: /`), `Bytespider` (`Disallow: /` — low-quality scraper)
+- Added `Sitemap: https://garammasaladating.com/sitemap-index.xml` and `Sitemap: https://garammasaladating.com/llms.txt` entries
+
+**llms.txt and llms-full.txt — dynamic Astro endpoints:**
+
+- `src/pages/llms.txt.ts` — concise AI index, generated at build time from data files. Includes upcoming shows (live from `events.ts`), active city pages, FAQ short answers (HTML-stripped), 20 most-recent journal titles, all tips post titles, and stats
+- `src/pages/llms-full.txt.ts` — comprehensive content dump for large-context AI systems. Includes full FAQ long answers, complete host bios, all experience steps, upcoming + past shows with venue details, active city pages with body paragraphs, all 3 tips posts in full body text, 12 most-recent journal posts in full body text + FAQs, remaining journal posts as title + excerpt, press, and all socials
+- Both files regenerate on every deploy from `src/data/` — no manual maintenance
+- Static `public/llms.txt` and `public/llms-full.txt` removed (replaced by endpoints)
+
+**Speakable JSON-LD — voice assistant targeting:**
+
+- `src/pages/faq.astro` — added `WebPage` + `SpeakableSpecification` with `cssSelector: [".faq-answer-text"]`. Targets actual DOM class on FAQ answer paragraphs
+- `src/pages/index.astro` — added `WebPage` + `SpeakableSpecification` with `cssSelector: [".faq-answer-summary", ".faq-answer-detail"]`. Targets HomeFAQ answer classes. Tells Google Assistant, Siri, Alexa which text to read when answering "what is Garam Masala Dating?"
+
+**Sitemap priority + lastmod:**
+
+- `astro.config.mjs` — added `serialize` callback to `@astrojs/sitemap` integration
+- Priority: homepage `1.0` → tickets/apply/faq/hosts `0.8` → content indexes `0.7` → journal/tips posts `0.6` → default `0.5` → city pages `0.4`
+- `lastmod`: journal posts use `dateModified` from post data; tips posts use `dateModified` from post data; all other pages use build timestamp
+- Imports `journalPostsPublished` and `tipPosts` at config load time to build a URL→Date map
+
+**Strategy documentation:**
+
+- `seo-article-strategy.md` — added Category 9 (AEO) covering: how AI systems discover content, why `llms.txt` accelerates entity recognition, implementation status table, content requirements for `llms-full.txt`, the "garam masala" disambiguation problem, and an AEO query target table with 7 high-priority queries
+- `ENHANCEMENTS.md` — marked `llms.txt` as done, added AEO context to the IMDb/Wikidata entity recognition items, explained the remaining gap (Wikidata = most important unfinished AEO item)
+
+### Files created
+
+- `src/pages/llms.txt.ts`
+- `src/pages/llms-full.txt.ts`
+
+### Files modified
+
+- `public/robots.txt`
+- `src/pages/faq.astro`
+- `src/pages/index.astro`
+- `astro.config.mjs`
+- `seo-article-strategy.md`
+- `ENHANCEMENTS.md`
+
+### Files deleted
+
+- `public/llms.txt` (replaced by endpoint)
+- `public/llms-full.txt` (replaced by endpoint)
+
+### Decisions + trade-offs
+
+- Used real CSS class names for Speakable selectors (`.faq-answer-text`, `.faq-answer-summary`, `.faq-answer-detail`) instead of adding new wrapper classes — Speakable silently ignores selectors that match nothing, making wrong class names a silent failure
+- `llms-full.txt` includes full body text for top 12 published journal posts and falls back to title + excerpt for the rest — balances comprehensiveness with the 100KB size target
+- Importing TypeScript data files directly in `astro.config.mjs` works because Astro's config is processed through Vite, which handles TypeScript natively
+
+---
+
 ## fix: address CodeRabbit PR #13 review comments (2026-04-09)
 
 ### What changed

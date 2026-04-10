@@ -125,7 +125,11 @@ function ApplyPageInner() {
 
   return (
     <>
-      <div className={styles.page} onClick={() => window.history.back()}>
+      <div
+        className={styles.page}
+        data-apply-root
+        onClick={() => window.history.back()}
+      >
         <div className={styles.container} onClick={(e) => e.stopPropagation()}>
           <div className={styles.headerArea}>
             <button

@@ -588,6 +588,11 @@ const { events } = Astro.props;
   .modal-close:hover {
     color: var(--charcoal);
   }
+  .modal-close:focus-visible {
+    outline: 2px solid var(--brand-red);
+    outline-offset: 2px;
+    color: var(--charcoal);
+  }
   .modal-title {
     font-family: var(--font-playfair), serif;
     font-size: 22px;
@@ -616,8 +621,10 @@ const { events } = Astro.props;
     transition: border-color 0.2s;
     min-height: var(--touch-target);
   }
-  .modal-form input:focus {
+  .modal-form input:focus-visible {
     border-color: var(--brand-red);
+    outline: 2px solid var(--brand-red);
+    outline-offset: -2px;
   }
   .modal-submit {
     background: var(--brand-red);

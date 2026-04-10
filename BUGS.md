@@ -527,7 +527,7 @@
 
 - **File:** `src/pages/sponsorship.astro:13`
 - **Source:** CodeRabbit PR #12
-- **Status:** Open
+- **Status:** Fixed — changed TITLE to `"Sponsorship"`; BaseLayout appends `| Garam Masala Dating` giving `Sponsorship | Garam Masala Dating`
 - **Comment:** The `TITLE` constant includes "Garam Masala Dating" and `BaseLayout` appends " | Garam Masala Dating" again, resulting in the SEO title "Sponsor Garam Masala Dating | Garam Masala Dating".
 - **Link:** https://github.com/hellosurbhi/garam-website/pull/12#discussion_r3061086478
 
@@ -535,7 +535,7 @@
 
 - **File:** `.husky/pre-commit:3`
 - **Source:** CodeRabbit PR #12
-- **Status:** Open
+- **Status:** Fixed — added `set -e` as first line of `.husky/pre-commit`
 - **Comment:** The hook runs `lint-staged`, `npm run check`, and `npm run test` without `set -e`. If `npm run check` fails but `npm run test` passes, the hook exits 0 and the commit proceeds despite type errors or lint failures.
 - **Link:** https://github.com/hellosurbhi/garam-website/pull/12#discussion_r3062105613
 
@@ -554,3 +554,31 @@
 - **Status:** Open
 - **Comment:** Only the fallback path runs through `toCitySlug()`. If a trigger carries `data-notify-city-slug="New York "` (trailing space or non-canonical value), the unsanitized value is stored and tracked.
 - **Link:** https://github.com/hellosurbhi/garam-website/pull/12#discussion_r3063506949
+
+---
+
+# From CodeRabbit batch 2 (2026-04-10)
+
+## Duplicate keyframes popupOut / modalOut in index.css
+
+- **File:** `src/index.css:222-241`
+- **Source:** CodeRabbit batch 2
+- **Status:** Open
+- **Comment:** `@keyframes popupOut` and `@keyframes modalOut` are identical. `index.astro` uses `popupOut`, unclear where `modalOut` is consumed. Should be consolidated into a single `@keyframes dialog-out` and all references updated.
+- **Link:** n/a
+
+## HomeFAQ.astro no transitionend timeout fallback
+
+- **File:** `src/components/home/HomeFAQ.astro:55-88`
+- **Source:** CodeRabbit batch 2
+- **Status:** Open
+- **Comment:** `animateOpen` and `animateClose` attach `{ once: true }` transitionend listeners but have no setTimeout fallback. If the transition never fires (e.g., reduced-motion OS override, display:none ancestor), the cleanup that resets `answer.style.height` never runs and the element is stuck with an inline height.
+- **Link:** n/a
+
+## HomeShows.astro empty city string passed to analytics
+
+- **File:** `src/components/home/HomeShows.astro:111-124`
+- **Source:** CodeRabbit batch 2
+- **Status:** Open
+- **Comment:** `identifyLead` and `trackLeadEvent` receive `city` which can be an empty string (`resolvedCity?.city ?? cityInput?.value.trim()`). Analytics calls should exclude the `city` property when it is falsy to avoid corrupting PostHog identity data.
+- **Link:** n/a

@@ -1,22 +1,13 @@
 ---
 import type { EventEntry } from "@/data/events";
 import NotifyModal from "@/components/NotifyModal.astro";
+import { parseMonth, parseDay } from "@/utils/eventDate";
 
 interface Props {
   events: EventEntry[];
 }
 
 const { events } = Astro.props;
-
-function parseMonth(dateStr: string): string {
-  return dateStr.split(" ")[0];
-}
-
-function parseDay(dateStr: string): string {
-  const parts = dateStr.split(" ");
-  const day = parts[1] ?? "—";
-  return /^\d{1,2}$/.test(day) ? day : "—";
-}
 ---
 
 <section class="shows" id="shows" aria-labelledby="shows-heading">
@@ -27,7 +18,7 @@ function parseDay(dateStr: string): string {
       40+ shows sold out · 2,000+ audience members · 13 couples matched
     </p>
   </div>
-  <div class="shows-list">
+  <div class="shows-list" data-reveal-stagger>
     {
       events.map((event) => {
         const isLive = Boolean(event.url);
@@ -72,7 +63,7 @@ function parseDay(dateStr: string): string {
             data-ph-city={event.city}
           >
             <div class="show-date-block">
-              {parseDay(event.date) !== "—" ? (
+              {parseDay(event.date) !== "" ? (
                 <>
                   <div class="month">{parseMonth(event.date)}</div>
                   <div class="day">{parseDay(event.date)}</div>
@@ -251,11 +242,41 @@ function parseDay(dateStr: string): string {
         cityDialog.showModal();
       });
 
+    let isClosing = false;
+    const closeCityDialog = () => {
+      if (isClosing) return;
+      const inner = cityDialog.querySelector(
+        ".modal-inner",
+      ) as HTMLElement | null;
+      const reduced = window.matchMedia(
+        "(prefers-reduced-motion: reduce)",
+      ).matches;
+      if (!inner || reduced) {
+        cityDialog.close();
+        return;
+      }
+      isClosing = true;
+      cityDialog.classList.add("closing");
+      inner.addEventListener(
+        "animationend",
+        () => {
+          cityDialog.classList.remove("closing");
+          isClosing = false;
+          cityDialog.close();
+        },
+        { once: true },
+      );
+    };
+
     cityDialog
       .querySelector(".modal-close")
-      ?.addEventListener("click", () => cityDialog.close());
+      ?.addEventListener("click", closeCityDialog);
     cityDialog.addEventListener("click", (e) => {
-      if (e.target === cityDialog) cityDialog.close();
+      if (e.target === cityDialog) closeCityDialog();
+    });
+    cityDialog.addEventListener("cancel", (e) => {
+      e.preventDefault();
+      closeCityDialog();
     });
 
     cityInput?.addEventListener("focus", () => {
@@ -376,7 +397,9 @@ function parseDay(dateStr: string): string {
     grid-template-columns: 48px 1fr auto;
     gap: 16px;
     align-items: center;
-    transition: opacity 0.2s;
+    transition:
+      background 0.25s ease,
+      transform 0.25s cubic-bezier(0.22, 1, 0.36, 1);
     text-decoration: none;
     cursor: pointer;
     color: white;
@@ -387,8 +410,20 @@ function parseDay(dateStr: string): string {
   .show-card:last-child {
     border-bottom: 1px solid rgba(255, 255, 255, 0.2);
   }
-  .show-card:hover {
-    opacity: 0.8;
+  .show-card:hover,
+  .show-card:focus-within {
+    background: rgba(255, 255, 255, 0.04);
+  }
+  .show-card:hover .ticket-label,
+  .show-card:focus-within .ticket-label {
+    letter-spacing: 2.5px;
+    color: white;
+  }
+  @media (prefers-reduced-motion: no-preference) {
+    .show-card:hover,
+    .show-card:focus-within {
+      transform: translateX(4px);
+    }
   }
   .show-date-block {
     text-align: center;
@@ -440,6 +475,9 @@ function parseDay(dateStr: string): string {
     display: inline-flex;
     align-items: center;
     pointer-events: none;
+    transition:
+      letter-spacing 0.25s ease,
+      color 0.25s ease;
   }
   .ticket-label--notify {
     color: rgba(255, 255, 255, 0.45);
@@ -536,6 +574,9 @@ function parseDay(dateStr: string): string {
       transform: scale(1) translateY(0);
     }
   }
+  .modal-dialog.closing .modal-inner {
+    animation: modalOut 0.2s ease-in forwards;
+  }
   .modal-close {
     position: absolute;
     top: 16px;
@@ -551,6 +592,11 @@ function parseDay(dateStr: string): string {
     transition: color 0.2s;
   }
   .modal-close:hover {
+    color: var(--charcoal);
+  }
+  .modal-close:focus-visible {
+    outline: 2px solid var(--brand-red);
+    outline-offset: 2px;
     color: var(--charcoal);
   }
   .modal-title {
@@ -581,8 +627,10 @@ function parseDay(dateStr: string): string {
     transition: border-color 0.2s;
     min-height: var(--touch-target);
   }
-  .modal-form input:focus {
+  .modal-form input:focus-visible {
     border-color: var(--brand-red);
+    outline: 2px solid var(--brand-red);
+    outline-offset: -2px;
   }
   .modal-submit {
     background: var(--brand-red);

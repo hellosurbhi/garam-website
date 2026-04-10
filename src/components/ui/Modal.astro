@@ -1,0 +1,157 @@
+---
+/**
+ * Shared base modal component (Astro).
+ * React counterpart: Modal.tsx — keep behavior identical.
+ * Design tokens: modal-tokens.css — change values there, not here.
+ *
+ * Usage:
+ *   <Modal id="my-modal" title="Hello">
+ *     <p>Modal content here</p>
+ *   </Modal>
+ *
+ * Open from JS:
+ *   const dialog = document.getElementById('my-modal') as HTMLDialogElement;
+ *   dialog.showModal();
+ *   firstFocusableEl.focus(); // focus first meaningful el (e.g. input), not dialog — prevents close btn focus on open
+ */
+interface Props {
+  id: string;
+  title?: string;
+  class?: string;
+}
+
+const { id, title, class: className } = Astro.props;
+const titleId = `${id}-title`;
+---
+
+<dialog
+  id={id}
+  class:list={["base-modal", className]}
+  role="dialog"
+  aria-modal="true"
+  aria-labelledby={title ? titleId : undefined}
+  tabindex="-1"
+>
+  <div class="base-modal-inner">
+    <button type="button" class="base-modal-close" aria-label="Close">
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        width="20"
+        height="20"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="2"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+        aria-hidden="true"
+        ><path d="M18 6 6 18"></path><path d="m6 6 12 12"></path></svg
+      >
+    </button>
+    {
+      title && (
+        <h2 id={titleId} class="base-modal-title">
+          {title}
+        </h2>
+      )
+    }
+    <slot />
+  </div>
+</dialog>
+
+<style>
+  @import "./modal-tokens.css";
+
+  .base-modal {
+    border: none;
+    background: transparent;
+    padding: 24px;
+    max-width: 100%;
+    max-height: 100vh;
+    width: 100%;
+    height: 100%;
+    overflow: visible;
+    outline: none; /* no ring when dialog container is focused */
+  }
+  .base-modal::backdrop {
+    background: var(--backdrop);
+  }
+  .base-modal[open] {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .base-modal-inner {
+    width: 100%;
+    max-width: 400px;
+    max-height: 80vh;
+    overflow-y: auto;
+    background: white;
+    border: 1px solid var(--border);
+    border-radius: var(--modal-radius);
+    padding: 32px 24px;
+    position: relative;
+    animation: baseModalIn var(--modal-anim-duration) var(--modal-anim-easing)
+      both;
+    text-align: center;
+  }
+  @keyframes baseModalIn {
+    from {
+      opacity: 0;
+      transform: scale(var(--modal-anim-scale)) translateY(var(--modal-anim-y));
+    }
+    to {
+      opacity: 1;
+      transform: scale(1) translateY(0);
+    }
+  }
+  .base-modal-close {
+    position: absolute;
+    top: 16px;
+    right: 16px;
+    background: none;
+    border: none;
+    color: var(--modal-close-color);
+    cursor: pointer;
+    min-width: var(--modal-close-size);
+    min-height: var(--modal-close-size);
+    padding: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: color 0.2s;
+    border-radius: 8px;
+  }
+  .base-modal-close:hover {
+    color: var(--modal-close-color-hover);
+  }
+  .base-modal-close:focus {
+    outline: none;
+  }
+  .base-modal-close:focus-visible {
+    outline: 2px solid var(--modal-close-color-hover);
+    outline-offset: 2px;
+  }
+  .base-modal-title {
+    font-family: var(--font-playfair), serif;
+    font-size: 22px;
+    font-weight: 600;
+    color: var(--charcoal);
+    margin-bottom: 8px;
+  }
+</style>
+
+<script>
+  // Wire up all base-modal instances: close button + backdrop click + escape.
+  // After showModal(), focus a meaningful element (e.g. an input) to prevent close btn focus ring on open.
+  document
+    .querySelectorAll<HTMLDialogElement>(".base-modal")
+    .forEach((dialog) => {
+      dialog
+        .querySelector(".base-modal-close")
+        ?.addEventListener("click", () => dialog.close());
+      dialog.addEventListener("click", (e) => {
+        if (e.target === dialog) dialog.close();
+      });
+    });
+</script>

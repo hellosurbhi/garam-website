@@ -2,7 +2,7 @@
 
 ## What this is
 
-Live comedy dating show in NYC (~250 audience). Public website + contestant application + admin dashboard. 98% mobile traffic. Three jobs: explain the show, find the next event, buy tickets via Eventbrite.
+#1 Live comedy dating show in NYC (~250/week audience + touring across USA and Intl.). Public website + contestant application + admin dashboard. 70% mobile traffic. Three jobs: explain the show, find the next event, buy tickets via Eventbrite.
 
 ## Tech stack
 
@@ -12,12 +12,12 @@ Astro SSG + React islands | Firebase Firestore + Auth | Vercel hosting | CSS cus
 
 ```plaintext
 src/
-  data/           # ALL content lives here — events, copy, press, socials, journal, tips, cities, icons
+  data/           # ALL content lives here: events, copy, press, socials, journal, tips, cities, icons
   components/
     home/         # landing page sections (HomeHero, HomeShows, HomeFAQ, etc.)
     admin/        # dashboard (AdminDashboard, ApplicantCard, ApplicantModal)
     layout/       # PageNav
-  layouts/        # BaseLayout.astro — wraps every page (meta, OG, nav, footer)
+  layouts/        # BaseLayout.astro: wraps every page (meta, OG, nav, footer)
   pages/          # file-based routing
   hooks/          # useGeoData (country/state/city for apply form)
   utils/          # breadcrumbs, eventSchema, reactSelectStyles, eventDate
@@ -34,44 +34,45 @@ Key pages: `/` `/tickets` `/apply` `/links` `/faq` `/hosts` `/journal` `/cities/
 
 **All user-facing text lives in `src/data/` files, never hardcoded in components.**
 
-- `data/copy.ts` — site taglines, stats, testimonials, FAQs, experience steps, marquee items
-- `data/events.ts` — show dates, venues, Eventbrite URLs, taglines
-- `data/press.ts` — press mentions
-- `data/socials.ts` — all social URLs
-- `data/journal.ts` / `data/tips.ts` — blog content
-- `data/cities/` — city landing page data
+- `data/copy.ts`: site taglines, stats, testimonials, FAQs, experience steps, marquee items
+- `data/events.ts`: show dates, venues, Eventbrite URLs, taglines
+- `data/press.ts`: press mentions
+- `data/socials.ts`: all social URLs
+- `data/journal.ts` / `data/tips.ts`: blog content
+- `data/cities/`: city landing page data
 
-When adding new content (shows, press, FAQs, testimonials), update the data file — never edit component HTML.
+When adding new content (shows, press, FAQs, testimonials), update the data file: never edit component HTML.
 
 ## Code rules
 
-## No band-aid fixes — ever
+## No band-aid fixes: ever
 
 Always implement the industry best-practice, sustainable fix. Never apply a short-term workaround that creates inconsistency, adds one-off config files, or patches around a platform limitation. If the proper solution requires a bigger change (restructuring, migrating to the correct API, etc.), do the bigger change. Every fix should be industry best practice. Research best practices and justify why you are making any and all changes even if it is a one line change.
 
-- If a tool/platform doesn't support something (e.g., path aliases), restructure to use the platform correctly — don't add workaround configs.
+- If a tool/platform doesn't support something (e.g., path aliases), restructure to use the platform correctly: don't add workaround configs.
 - All imports, patterns, and conventions must be consistent across the entire codebase. One file doing something differently is not acceptable.
 - Ask "what would a senior engineer do for a production app?" not "what's the quickest fix?"
 
-## Aesthetic choices — intentional, never revert
+## Aesthetic choices: intentional, never revert
 
 This site was designed by a professional front-end designer. Every aesthetic decision is deliberate. Code review (CodeRabbit or otherwise) must **never** change these without explicit instruction:
 
-- **Custom cursor** (`BaseLayout.astro`) — intentional desktop-only design. Do not remove for "performance" or "mobile-first" reasons. It is already gated to `pointer: fine` (no touch devices) and `prefers-reduced-motion: no-preference` (accessible).
-- **Padding, margin, gap values** — every spacing value was set deliberately. Do not increase padding "for breathing room" or decrease it "to tighten layout". Touch nothing.
-- **Color hex values** — do not change color implementations. You may suggest using a CSS variable instead of a hardcoded hex, but do not change the actual color.
-- **Section backgrounds** — dark/light section alternation is intentional contrast design.
-- **Font sizes, letter-spacing, line-height** — typographic choices are intentional.
-- **WebGL shader** (`public/js/shader-app.js`) — $2,000 designer asset. Touch nothing. If there is a bug, report it; do not "fix" it aesthetically.
+- **Custom cursor** (`BaseLayout.astro`): intentional desktop-only design. Do not remove for "performance" or "mobile-first" reasons. It is already gated to `pointer: fine` (no touch devices) and `prefers-reduced-motion: no-preference` (accessible).
+- **Padding, margin, gap values**: every spacing value was set deliberately. Do not increase padding "for breathing room". Touch nothing.
+- **Color hex values**: do not change color implementations. You may suggest using a CSS variable instead of a hardcoded hex, but do not change the actual color.
+- **Section backgrounds**: section background color alternation is intentional contrast design and MANDATORY when you createe any new sections/move anything around. No section color should match the color of the section above or below. NEVER BLACK OR DARK BACKGROUND.
+- **Font sizes, letter-spacing, line-height**: typographic choices are intentional.
+- **WebGL shader** (`public/js/shader-app.js`): $2,000 designer asset. Touch nothing. If there is a bug, report it; do not "fix" it aesthetically.
 
-**CodeRabbit rule:** Any review comment that suggests removing, changing, or "improving" the above should be dismissed with: `intentional design choice — not a bug`. You may offer alternative _implementations_ (e.g., CSS var vs hex) but never alter the _result_.
+**CodeRabbit rule:** Any review comment that suggests removing, changing, or "improving" the above should be discussed explicitly before ever implementing. You may offer alternative _implementations_ (e.g., CSS var vs hex) but never alter the _result_.
 
 ### Never do
 
 - Hardcode user-facing text in components. All copy goes in `src/data/`.
 - Hardcode colors, fonts, or spacing. Use CSS custom properties from `:root`.
 - Hardcode external URLs in JSX. Import from data files.
-- Do not use font-size below 16px on interactive elements (buttons, inputs, links) — iOS will auto-zoom.
+- **NEVER use em dashes (—), en dashes (–), or double dashes (--) in ANY user-facing copy, titles, meta descriptions, aria-labels, JSON-LD schemas, or written prose.** This includes journal articles, page titles, component text, testimonials, FAQs, and tips. The only acceptable dash is a hyphen that is literally part of a compound word (e.g., `mobile-first`, `stand-up`, `co-host`, `first-date`). Replace em dashes with commas, colons, periods, or parentheses depending on context. Replace en dashes in ranges with the word "to" (e.g., `20 to 30 seconds`, `$50k to $100k`). Replace double dashes the same way. This rule is NON-NEGOTIABLE: em dashes are a dead giveaway for AI-generated content and the user does not want them anywhere on the site.
+- Do not use font-size below 16px on interactive elements (buttons, inputs, links): iOS will auto-zoom.
 - Use `outline: none` without a visible `:focus-visible` replacement.
 - Add inline `style={}` props in Astro components. Use scoped `<style>` or CSS modules.
 - Use `any` type in TypeScript. Type everything.
@@ -101,7 +102,7 @@ Colors from `:root` in `src/index.css`:
 - `--off-white` #FFF8F0 (page background)
 - `--charcoal` #1A1A1A (body text)
 - `--spice-orange` #FF6D00 (secondary accent)
-- `--muted` #888 (secondary text — needs contrast fix, see BUGS.md)
+- `--muted` #888 (secondary text: needs contrast fix, see BUGS.md)
 
 Fonts: Playfair Display (headings), Nunito (body), Cormorant Garamond (decorative italic). Self-hosted woff2.
 
@@ -118,10 +119,10 @@ Fonts: Playfair Display (headings), Nunito (body), Cormorant Garamond (decorativ
 
 ## Environment variables
 
-- `PUBLIC_FIREBASE_*` — Firebase config (client-safe, Astro PUBLIC\_ prefix)
-- `FIREBASE_ADMIN_CLIENT_EMAIL` / `FIREBASE_ADMIN_PRIVATE_KEY` — server-side only
-- `CONTESTANT_PREP_SALT` — weekly password rotation salt
-- `RESEND_API_KEY` / `NOTIFICATION_EMAIL` — email notifications
+- `PUBLIC_FIREBASE_*`: Firebase config (client-safe, Astro PUBLIC\_ prefix)
+- `FIREBASE_ADMIN_CLIENT_EMAIL` / `FIREBASE_ADMIN_PRIVATE_KEY`: server-side only
+- `CONTESTANT_PREP_SALT`: weekly password rotation salt
+- `RESEND_API_KEY` / `NOTIFICATION_EMAIL`: email notifications
 - See `.env.example` for the full list. Never commit `.env.local`.
 
 ## JSON-LD schemas
@@ -130,8 +131,6 @@ Organization + WebSite on homepage. Event schema per upcoming show. FAQPage on h
 
 ## Performance budget
 
-- Total page weight: under 500KB
-- JavaScript: under 100KB gzipped (static pages should ship zero JS)
 - LCP: under 2.5s on mobile 4G
 - Lighthouse performance: 90+, accessibility: 90+
 

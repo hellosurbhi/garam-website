@@ -24,7 +24,7 @@ function makeApp(overrides: Partial<Application>): Application {
       toMillis: () => 0,
       isEqual: () => true,
       valueOf: () => "",
-      toJSON: () => ({ seconds: 0, nanoseconds: 0 }),
+      toJSON: () => ({ seconds: 0, nanoseconds: 0, type: "timestamp" }),
     } as Application["submittedAt"],
     ...overrides,
   };

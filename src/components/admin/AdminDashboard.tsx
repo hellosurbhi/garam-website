@@ -232,7 +232,7 @@ export default function AdminDashboard({ onLogout }: AdminDashboardProps) {
                 value={genderFilter}
                 onChange={(v) => setGenderFilter(v)}
                 placeholder="Gender…"
-                styles={adminSelectStyles}
+                styles={adminSelectStyles<FilterOption>()}
                 aria-label="Filter by gender"
               />
             </div>
@@ -243,7 +243,7 @@ export default function AdminDashboard({ onLogout }: AdminDashboardProps) {
                 value={cityFilter}
                 onChange={(v) => setCityFilter(v)}
                 placeholder="City…"
-                styles={adminSelectStyles}
+                styles={adminSelectStyles<FilterOption>()}
                 aria-label="Filter by city"
               />
             </div>
@@ -267,7 +267,7 @@ export default function AdminDashboard({ onLogout }: AdminDashboardProps) {
                 return (
                   <div key={event.isoDate} className={styles.prepRow}>
                     <span className={styles.prepEventLabel}>
-                      {event.date} — {event.city}
+                      {event.date}: {event.city}
                     </span>
                     <button
                       type="button"

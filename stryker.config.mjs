@@ -40,6 +40,7 @@ export default {
 
   // Skip build artifacts and large dirs when copying to sandbox
   ignorePaths: ["dist", ".astro", ".vercel", "playwright-report"],
+  ignorePatterns: [".claude", ".stryker-tmp"],
 
   // Timeout: mutations that take too long are killed
   timeoutMS: 60000,

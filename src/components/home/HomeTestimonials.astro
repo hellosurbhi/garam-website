@@ -1,18 +1,30 @@
 ---
-import { TESTIMONIALS as testimonials } from '@/data/copy';
+import { TESTIMONIALS as testimonials } from "@/data/copy";
 ---
 
 <section class="testimonials" aria-label="Audience reviews">
-  <img class="testi-bg" src="/images/after-party.webp" alt="" width="800" height="1200" loading="lazy" aria-hidden="true" />
+  <img
+    class="testi-bg"
+    src="/images/promo/after-party.webp"
+    alt=""
+    width="800"
+    height="1200"
+    loading="lazy"
+    aria-hidden="true"
+  />
   <div class="testimonials-inner">
     <h2 data-reveal>What They're <em>Saying</em></h2>
-    <div class="testi-grid">
-      {testimonials.map((t) => (
-        <div class="testi-card" data-reveal>
-          <div class="testi-quote">{t.quote}</div>
-          <div class="testi-author">{t.author} · {t.location}</div>
-        </div>
-      ))}
+    <div class="testi-grid" data-reveal-stagger>
+      {
+        testimonials.map((t) => (
+          <div class="testi-card" data-reveal>
+            <div class="testi-quote">{t.quote}</div>
+            <div class="testi-author">
+              {t.author} · {t.location}
+            </div>
+          </div>
+        ))
+      }
     </div>
   </div>
 </section>
@@ -34,7 +46,9 @@ import { TESTIMONIALS as testimonials } from '@/data/copy';
     z-index: 0;
   }
   @media (min-width: 768px) {
-    .testi-bg { object-position: center 55%; }
+    .testi-bg {
+      object-position: center 55%;
+    }
   }
   .testimonials-inner {
     max-width: 1200px;
@@ -51,7 +65,10 @@ import { TESTIMONIALS as testimonials } from '@/data/copy';
     line-height: 1;
     text-shadow: 0 2px 12px rgba(0, 0, 0, 0.5);
   }
-  .testimonials-inner > h2 em { color: var(--electric-yellow); font-style: italic; }
+  .testimonials-inner > h2 em {
+    color: var(--electric-yellow);
+    font-style: italic;
+  }
   .testi-grid {
     display: flex;
     flex-direction: column;
@@ -64,11 +81,17 @@ import { TESTIMONIALS as testimonials } from '@/data/copy';
     -webkit-backdrop-filter: blur(4px);
     border-radius: 16px;
   }
-  .testi-card:nth-child(1) { --quote-color: var(--electric-yellow); }
-  .testi-card:nth-child(2) { --quote-color: var(--brand-red); }
-  .testi-card:nth-child(3) { --quote-color: var(--spice-orange); }
+  .testi-card:nth-child(1) {
+    --quote-color: var(--electric-yellow);
+  }
+  .testi-card:nth-child(2) {
+    --quote-color: var(--brand-red);
+  }
+  .testi-card:nth-child(3) {
+    --quote-color: var(--spice-orange);
+  }
   .testi-card::before {
-    content: '\201C';
+    content: "\201C";
     font-family: var(--font-playfair), serif;
     font-size: 64px;
     color: var(--quote-color, var(--electric-yellow));
@@ -83,7 +106,9 @@ import { TESTIMONIALS as testimonials } from '@/data/copy';
     line-height: 1.5;
     color: white;
     margin-bottom: 20px;
-    text-shadow: 0 2px 12px rgba(0, 0, 0, 0.7), 0 0 40px rgba(0, 0, 0, 0.3);
+    text-shadow:
+      0 2px 12px rgba(0, 0, 0, 0.7),
+      0 0 40px rgba(0, 0, 0, 0.3);
   }
   .testi-author {
     font-size: 12px;
@@ -95,17 +120,31 @@ import { TESTIMONIALS as testimonials } from '@/data/copy';
   }
 
   @media (min-width: 768px) {
-    .testimonials { padding: 120px 48px; }
-    .testimonials-inner > h2 { margin-bottom: 60px; }
+    .testimonials {
+      padding: 120px 48px;
+    }
+    .testimonials-inner > h2 {
+      margin-bottom: 60px;
+    }
     .testi-grid {
       display: grid;
       grid-template-columns: repeat(3, 1fr);
       gap: 20px;
       align-items: start;
     }
-    .testi-card { padding: 36px; }
-    .testi-card:nth-child(2) { margin-top: 32px; }
-    .testi-card::before { font-size: 80px; margin-bottom: 16px; }
-    .testi-quote { font-size: 20px; margin-bottom: 24px; }
+    .testi-card {
+      padding: 36px;
+    }
+    .testi-card:nth-child(2) {
+      margin-top: 32px;
+    }
+    .testi-card::before {
+      font-size: 80px;
+      margin-bottom: 16px;
+    }
+    .testi-quote {
+      font-size: 20px;
+      margin-bottom: 24px;
+    }
   }
 </style>

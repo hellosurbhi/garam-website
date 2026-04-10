@@ -15,7 +15,7 @@ export const GALLERY_SUBHEADING =
 export const GALLERY_PHOTOS: readonly GalleryPhoto[] = [
   {
     label: "On Stage",
-    src: "on-stage.webp",
+    src: "promo/on-stage.webp",
     w: 1200,
     h: 800,
     pos: "center 40%",
@@ -24,7 +24,7 @@ export const GALLERY_PHOTOS: readonly GalleryPhoto[] = [
   },
   {
     label: "The Match",
-    src: "the-match.webp",
+    src: "promo/the-match.webp",
     w: 1200,
     h: 800,
     pos: "center 45%",
@@ -32,7 +32,7 @@ export const GALLERY_PHOTOS: readonly GalleryPhoto[] = [
   },
   {
     label: "Hosts",
-    src: "hosts.webp",
+    src: "hosts/hosts.webp",
     w: 733,
     h: 1200,
     pos: "center 30%",
@@ -40,7 +40,7 @@ export const GALLERY_PHOTOS: readonly GalleryPhoto[] = [
   },
   {
     label: "The Crowd",
-    src: "the-crowd.webp",
+    src: "promo/the-crowd.webp",
     w: 800,
     h: 1200,
     pos: "center 40%",
@@ -48,7 +48,7 @@ export const GALLERY_PHOTOS: readonly GalleryPhoto[] = [
   },
   {
     label: "Pure Chaos",
-    src: "pure-chaos.webp",
+    src: "promo/pure-chaos.webp",
     w: 1200,
     h: 800,
     pos: "center 35%",
@@ -56,7 +56,7 @@ export const GALLERY_PHOTOS: readonly GalleryPhoto[] = [
   },
   {
     label: "After Party",
-    src: "after-party.webp",
+    src: "promo/after-party.webp",
     w: 1200,
     h: 800,
     pos: "center center",
@@ -64,7 +64,7 @@ export const GALLERY_PHOTOS: readonly GalleryPhoto[] = [
   },
   {
     label: "Magic Moment",
-    src: "magic-moment.webp",
+    src: "promo/magic-moment.webp",
     w: 800,
     h: 1200,
     pos: "center 30%",

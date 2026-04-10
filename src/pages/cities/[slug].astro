@@ -14,9 +14,6 @@ export function getStaticPaths() {
   }));
 }
 
-interface Props {
-  city: CityData;
-}
 const { city } = Astro.props;
 
 const heroImage = SHOW_IMAGES[slugToImageIndex(city.slug, SHOW_IMAGES.length)];
@@ -161,7 +158,7 @@ const breadcrumbJsonLd = buildBreadcrumbJsonLd([
               rel="noopener noreferrer"
               class="city-cta city-cta--primary"
             >
-              <span>{event.date} — Get Tickets</span>
+              <span>{event.date}: Get Tickets</span>
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 width="16"

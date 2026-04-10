@@ -1,7 +1,8 @@
-import { useState, useEffect, useRef } from "react";
+import { useState } from "react";
 import { X, Trash2, ArchiveRestore } from "lucide-react";
 import { type Application, STATUS_COLORS } from "@/types/application";
 import { formatLocation } from "@/utils/locationDisplay";
+import { Modal } from "@/components/ui/Modal";
 import styles from "./ApplicantModal.module.css";
 
 interface ApplicantModalProps {
@@ -34,17 +35,6 @@ export default function ApplicantModal({
   const [lightbox, setLightbox] = useState(false);
   const handle = app.instagram.replace(/^@/, "");
   const isDeleted = !!app.deletedAt;
-  const dialogRef = useRef<HTMLDialogElement>(null);
-
-  useEffect(() => {
-    const dialog = dialogRef.current;
-    if (!dialog || dialog.open || typeof dialog.showModal !== "function")
-      return;
-    dialog.showModal();
-    return () => {
-      if (dialog.open) dialog.close();
-    };
-  }, []);
 
   function handleClose() {
     if (notes !== (app.notes ?? "")) {
@@ -52,21 +42,6 @@ export default function ApplicantModal({
     }
     onClose();
   }
-
-  const handleCloseRef = useRef(handleClose);
-  useEffect(() => {
-    handleCloseRef.current = handleClose;
-  });
-
-  useEffect(() => {
-    const dialog = dialogRef.current;
-    function onCancel(e: Event) {
-      e.preventDefault();
-      handleCloseRef.current();
-    }
-    dialog?.addEventListener("cancel", onCancel);
-    return () => dialog?.removeEventListener("cancel", onCancel);
-  }, []);
 
   function handleStatusChange(e: React.ChangeEvent<HTMLSelectElement>) {
     const next = e.target.value as Application["status"];
@@ -86,22 +61,15 @@ export default function ApplicantModal({
         hour: "numeric",
         minute: "2-digit",
       })
-    : "—";
+    : "N/A";
 
   const statusColor = STATUS_COLORS[status];
 
-  function handleDialogClick(e: React.MouseEvent<HTMLDialogElement>) {
-    if (e.target === e.currentTarget) handleClose();
-  }
-
   return (
-    <dialog
-      ref={dialogRef}
+    <Modal
+      onClose={handleClose}
+      ariaLabelledby="applicant-modal-title"
       className={styles.dialog}
-      role="dialog"
-      aria-modal="true"
-      aria-labelledby="applicant-modal-title"
-      onClick={handleDialogClick}
     >
       <div
         className={styles.imageWrap}
@@ -245,6 +213,6 @@ export default function ApplicantModal({
               )}
         </div>
       </div>
-    </dialog>
+    </Modal>
   );
 }

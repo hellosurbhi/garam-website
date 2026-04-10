@@ -10,7 +10,7 @@ const breadcrumbJsonLd = buildBreadcrumbJsonLd([
 ---
 
 <BaseLayout
-  title="Apply to Be a Contestant | Garam Masala Dating"
+  title="Apply to Be a Contestant"
   description="Think you've got what it takes to go on a blind date in front of 250 people? Apply to be a contestant on Garam Masala Dating."
 >
   <Fragment slot="head">
@@ -20,20 +20,84 @@ const breadcrumbJsonLd = buildBreadcrumbJsonLd([
   <main id="main-content" class="apply-main">
     <img
       class="apply-bg"
-      src="/images/cupid-garden.webp"
+      src="/images/promo/cupid-garden.webp"
       alt=""
       width="1200"
       height="800"
       aria-hidden="true"
+      loading="lazy"
     />
-    <ApplyPage client:load />
+
+    {
+      /*
+      Static skeleton that ships in initial HTML. Matches the above-the-fold
+      layout of ApplyPageInner so the page paints instantly (like every other
+      page). Hidden via CSS :has() once React mounts and [data-apply-root]
+      appears in the astro-island.
+    */
+    }
+    <div class="apply-skeleton" aria-hidden="true">
+      <div class="apply-skeleton-container">
+        <div class="apply-skeleton-header">
+          <span class="apply-skeleton-back">← Back</span>
+        </div>
+
+        <div class="apply-skeleton-title-area">
+          <h1 class="apply-skeleton-title">
+            Apply to Be on Garam Masala Dating
+          </h1>
+          <p class="apply-skeleton-subtitle">
+            NYC's #1 live South Asian dating show 🌶️
+          </p>
+        </div>
+
+        <div class="apply-skeleton-type">
+          <p class="apply-skeleton-type-label">I am applying…</p>
+          <div class="apply-skeleton-type-group">
+            <span class="apply-skeleton-type-btn apply-skeleton-type-btn-active"
+              >For myself</span
+            >
+            <span class="apply-skeleton-type-btn">For a friend</span>
+          </div>
+        </div>
+
+        <h2 class="apply-skeleton-section">About You</h2>
+
+        <div class="apply-skeleton-grid">
+          <div class="apply-skeleton-field"></div>
+          <div class="apply-skeleton-field"></div>
+        </div>
+        <div class="apply-skeleton-grid">
+          <div class="apply-skeleton-field"></div>
+          <div class="apply-skeleton-field"></div>
+        </div>
+        <div class="apply-skeleton-grid">
+          <div class="apply-skeleton-field"></div>
+          <div class="apply-skeleton-field"></div>
+        </div>
+        <div class="apply-skeleton-field apply-skeleton-field-full"></div>
+      </div>
+    </div>
+
+    <ApplyPage client:only="react" />
   </main>
 </BaseLayout>
+
+<style is:global>
+  /* React mount detection. [data-apply-root] is rendered by React inside
+     <astro-island>, so Astro's scoped selectors cannot match it (the React
+     DOM never receives the data-astro-cid-* attribute). This rule must be
+     global so the :has() check matches the React output. */
+  .apply-main:has([data-apply-root]) .apply-skeleton {
+    display: none;
+  }
+</style>
 
 <style>
   .apply-main {
     position: relative;
     overflow: hidden;
+    min-height: 100vh;
   }
   .apply-bg {
     position: absolute;
@@ -45,5 +109,141 @@ const breadcrumbJsonLd = buildBreadcrumbJsonLd([
     display: block;
     z-index: 0;
     opacity: 0.06;
+  }
+
+  /* Skeleton placeholder (static HTML, hidden once React mounts) */
+
+  .apply-skeleton {
+    position: relative;
+    z-index: 1;
+  }
+
+  .apply-skeleton-container {
+    position: relative;
+    z-index: 1;
+    max-width: 640px;
+    margin: 0 auto;
+    padding: 20px;
+  }
+
+  .apply-skeleton-header {
+    margin-bottom: 8px;
+    min-height: var(--touch-target);
+    display: flex;
+    align-items: center;
+  }
+
+  .apply-skeleton-back {
+    display: inline-flex;
+    align-items: center;
+    color: var(--charcoal);
+    font-family: var(--font-body);
+    font-size: 16px;
+    opacity: 0.4;
+  }
+
+  .apply-skeleton-title-area {
+    text-align: center;
+    margin-bottom: 24px;
+  }
+
+  .apply-skeleton-title {
+    font-family: var(--font-playfair);
+    font-size: clamp(36px, 5vw, 48px);
+    font-weight: 700;
+    color: var(--charcoal);
+    line-height: 1.1;
+    margin: 0 0 10px;
+  }
+
+  .apply-skeleton-subtitle {
+    font-family: var(--font-body);
+    font-size: 18px;
+    color: var(--text-secondary);
+    line-height: 1.5;
+    margin: 0;
+  }
+
+  .apply-skeleton-type {
+    margin-bottom: 36px;
+  }
+
+  .apply-skeleton-type-label {
+    font-family: var(--font-body);
+    font-size: 11px;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.2em;
+    color: var(--text-secondary);
+    margin: 0 0 12px;
+  }
+
+  .apply-skeleton-type-group {
+    display: flex;
+    gap: 10px;
+  }
+
+  .apply-skeleton-type-btn {
+    flex: 1;
+    padding: 12px 16px;
+    min-height: var(--touch-target);
+    border-radius: 100px;
+    border: 1px solid rgba(0, 0, 0, 0.15);
+    background: transparent;
+    color: var(--charcoal);
+    font-family: var(--font-body);
+    font-size: 15px;
+    font-weight: 500;
+    text-align: center;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .apply-skeleton-type-btn-active {
+    border: none;
+    background: var(--brand-red);
+    color: white;
+  }
+
+  .apply-skeleton-section {
+    font-family: var(--font-playfair);
+    font-size: 28px;
+    font-weight: 600;
+    color: var(--charcoal);
+    margin: 0 0 20px;
+    padding-bottom: 12px;
+  }
+  .apply-skeleton-section::after {
+    content: "";
+    display: block;
+    width: 48px;
+    height: 1px;
+    background: rgba(var(--brand-red-rgb), 0.3);
+    margin-top: 12px;
+  }
+
+  .apply-skeleton-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 18px 16px;
+    margin-bottom: 18px;
+  }
+
+  @media (min-width: 601px) {
+    .apply-skeleton-grid {
+      grid-template-columns: 1fr 1fr;
+    }
+  }
+
+  .apply-skeleton-field {
+    height: 54px;
+    border-radius: 16px;
+    border: 1px solid var(--border);
+    background: rgba(255, 255, 255, 0.6);
+  }
+
+  .apply-skeleton-field-full {
+    margin-bottom: 18px;
   }
 </style>

@@ -224,7 +224,11 @@ const { source = "notify-modal" } = Astro.props;
           e.target as HTMLFormElement
         ).querySelector<HTMLButtonElement>('[type="submit"]');
         const errorEl = document.getElementById("notify-error");
-        if (submitBtn) submitBtn.disabled = true;
+        const originalBtnText = submitBtn?.textContent ?? "";
+        if (submitBtn) {
+          submitBtn.disabled = true;
+          submitBtn.textContent = "Sending...";
+        }
         try {
           const db = getFirebaseDb();
           const citySlug = (
@@ -263,7 +267,10 @@ const { source = "notify-modal" } = Astro.props;
             errorEl.removeAttribute("hidden");
           }
         } finally {
-          if (submitBtn) submitBtn.disabled = false;
+          if (submitBtn) {
+            submitBtn.disabled = false;
+            submitBtn.textContent = originalBtnText;
+          }
         }
       });
 
@@ -302,7 +309,11 @@ const { source = "notify-modal" } = Astro.props;
         const submitBtn = (
           e.target as HTMLFormElement
         ).querySelector<HTMLButtonElement>('[type="submit"]');
-        if (submitBtn) submitBtn.disabled = true;
+        const originalBtnText = submitBtn?.textContent ?? "";
+        if (submitBtn) {
+          submitBtn.disabled = true;
+          submitBtn.textContent = "Sending...";
+        }
         try {
           const db = getFirebaseDb();
           const citySlug = (
@@ -346,7 +357,10 @@ const { source = "notify-modal" } = Astro.props;
             phoneErrorEl.removeAttribute("hidden");
           }
         } finally {
-          if (submitBtn) submitBtn.disabled = false;
+          if (submitBtn) {
+            submitBtn.disabled = false;
+            submitBtn.textContent = originalBtnText;
+          }
         }
       });
 

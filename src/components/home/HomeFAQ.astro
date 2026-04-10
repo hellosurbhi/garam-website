@@ -159,13 +159,13 @@ import { HOME_FAQS as faqs } from "@/data/copy";
     line-height: 1.8;
     padding-bottom: 24px;
   }
-  .faq-answer a {
+  .faq-answer :global(a) {
     color: var(--brand-red);
     text-decoration: underline;
     text-underline-offset: 2px;
     transition: color 0.2s;
   }
-  .faq-answer a:hover {
+  .faq-answer :global(a):hover {
     color: var(--brand-red-dark);
   }
 

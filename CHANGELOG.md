@@ -1,5 +1,28 @@
 # Changelog
 
+## fix(leads): forward geo fields from buildLeadAttribution to Firestore (2026-04-10)
+
+### What changed
+
+`buildLeadAttribution()` collects 6 geo fields from `/api/geo` (`geoCity`, `geoRegion`, `geoCountry`, `geoLatitude`, `geoLongitude`, `geoTimezone`) and spreads them into every lead payload. However `capture-lead.ts` did not declare them in its `LeadPayload` interface and did not write them to Firestore, so the data was silently dropped on every lead submission.
+
+Also deployed `firestore.rules` and `storage.rules` to Firebase production (had not been pushed previously).
+
+**Fixes:**
+
+1. Added 6 geo fields to `LeadPayload` interface in `capture-lead.ts`.
+2. Added conditional field writes for each geo field.
+3. Added the 6 geo keys to the `hasOnly()` allowlist in `validLead()` in `firestore.rules`.
+4. Added per-field optional validators for each geo field (string, non-empty, capped sizes).
+5. Deployed rules to Firebase (`garam-masala-9f15b`) via `firebase deploy --only firestore:rules,storage`.
+
+### Files affected
+
+- `src/pages/api/capture-lead.ts`
+- `firestore.rules`
+
+---
+
 ## polish: fix touch target and missing cursor on HomeShows modal close (2026-04-10)
 
 ### What changed

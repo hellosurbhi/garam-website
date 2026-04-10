@@ -1,5 +1,19 @@
 # Changelog
 
+## fix: apply page footer flash on load (2026-04-10)
+
+### What changed
+
+The `/apply` page flashed the footer briefly before the form appeared. Every other page loads beautifully without this flash. The root cause: ApplyPage uses `client:only="react"` (required — uses Firebase, `window.history`, `crypto`, `navigator.modelContext`), so no form HTML ships in the initial response. Until React downloaded and hydrated, `<main>` was empty and the footer was visible at the top of the viewport.
+
+**Fix:** ship a static HTML skeleton inside `apply.astro` that mirrors the form's above-the-fold layout — back button, title, subtitle, tab pills, "About You" section title, field boxes. The skeleton paints instantly (same as every other page). Once React mounts and renders `[data-apply-root]` inside the astro-island, CSS `:has()` hides the skeleton and the real form takes over seamlessly.
+
+Also added `min-height: 100vh` to `.apply-main` (matching the pattern in `faq.astro:161` and `tickets.astro:271`) as a safety net.
+
+**Why not refactor to `client:load`?** The SSR path would require SSR-proofing `analytics.ts`, `leadAttribution.ts`, `firebase.ts`, and configuring `react-select` for SSR — 4+ files with real risk of breaking analytics, Firebase init, or form submission across the whole site. The skeleton achieves the same visual goal with ~2% of the risk.
+
+**Files affected:** `src/pages/apply.astro`, `src/components/ApplyPage.tsx`
+
 ## design-review: fix FAQ link styling and CSP Twitter pixels (2026-04-09)
 
 ### What changed

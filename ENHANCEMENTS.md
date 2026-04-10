@@ -1045,3 +1045,98 @@ When we start actually texting international numbers (via Twilio/MessageBird/etc
 - **Source:** CodeRabbit PR #12
 - **Comment:** The logo link's effective mobile hit area is ~28px tall, below the 48px minimum touch-target requirement.
 - **Link:** https://github.com/hellosurbhi/garam-website/pull/12#discussion_r3063506921
+
+---
+
+# From CodeRabbit batch 2 (2026-04-10)
+
+## link-check.yml: add workflow_dispatch trigger
+
+- **File:** `.github/workflows/link-check.yml:3-6`
+- **Source:** CodeRabbit batch 2
+- **Comment:** The workflow only runs on a schedule. Adding `workflow_dispatch` allows on-demand runs after content changes without waiting for Monday.
+- **Link:** n/a
+
+## Modal.astro: background: white → var(--off-white)
+
+- **File:** `src/components/ui/Modal.astro:68-96`
+- **Source:** CodeRabbit batch 2
+- **Comment:** `.base-modal-inner` uses `background: white` instead of `var(--off-white)`. Should follow the design token system.
+- **Link:** n/a
+
+## HomeStats.astro: color: white → token
+
+- **File:** `src/components/home/HomeStats.astro:131`
+- **Source:** CodeRabbit batch 2
+- **Comment:** Two occurrences of `color: white` in `.stats h2` and `.stat-label` should use `var(--off-white)` or a dedicated token.
+- **Link:** n/a
+
+## analytics.test.ts: add dataLayer push coverage
+
+- **File:** `src/lib/analytics.test.ts:97-180`
+- **Source:** CodeRabbit batch 2
+- **Comment:** Tests for `identifyLead` do not cover the `window.dataLayer.push` call. Add tests mocking `window.dataLayer` and asserting correct push behavior including empty/whitespace inputs.
+- **Link:** n/a
+
+## southeast-asia.ts: "desi" → "South Asian" for consistency
+
+- **File:** `src/data/cities/southeast-asia.ts`
+- **Source:** CodeRabbit batch 2
+- **Comment:** The word "desi" (lowercase) appears in many user-facing strings across the city descriptions. "South Asian" is the canonical term used elsewhere in the codebase. Update all occurrences for consistency and SEO.
+- **Link:** n/a
+
+## robots.txt: consolidate redundant Anthropic user-agent entries
+
+- **File:** `public/robots.txt:20-27`
+- **Source:** CodeRabbit batch 2
+- **Comment:** Three Anthropic crawler entries (ClaudeBot, Claude-SearchBot, anthropic-ai) may be redundant. Review Anthropic documentation and consolidate if they are the same crawler.
+- **Link:** n/a
+
+## HomeCreators.astro: extract hosts array to src/data/
+
+- **File:** `src/components/home/HomeCreators.astro:2-17`
+- **Source:** CodeRabbit batch 2
+- **Comment:** The `hosts` array is hardcoded in the component. Should be extracted to a dedicated data module and imported, per the content architecture guidelines.
+- **Link:** n/a
+
+## HomePhotos.astro: extract photos array to src/data/
+
+- **File:** `src/components/home/HomePhotos.astro:2-17`
+- **Source:** CodeRabbit batch 2
+- **Comment:** The `photos` constant is hardcoded in the component including inline `pos` styles. Move the data to `src/data/` and replace inline position styles with CSS classes.
+- **Link:** n/a
+
+## SpiceListSection.astro CSS: replace hardcoded values with tokens
+
+- **File:** `src/components/SpiceListSection.astro:34-74`
+- **Source:** CodeRabbit batch 2
+- **Comment:** Component CSS uses hardcoded values for spacing, colors, and fonts. Replace with `:root` custom properties matching existing tokens.
+- **Link:** n/a
+
+## eventSchema.ts: hoist performers array to module-level constant
+
+- **File:** `src/utils/eventSchema.ts:55-66`
+- **Source:** CodeRabbit batch 2
+- **Comment:** The `performer` array is recreated for every event call. Should be hoisted to a module-level `PERFORMERS` constant.
+- **Link:** n/a
+
+## instagram.ts: normalize handles inside instagramUrl
+
+- **File:** `src/utils/instagram.ts:2-9`
+- **Source:** CodeRabbit batch 2
+- **Comment:** `instagramUrl` trusts caller input. Should self-normalize by trimming whitespace, stripping leading "@", lowercasing, and using `encodeURIComponent` so call sites don't need to do it manually.
+- **Link:** n/a
+
+## eventDate.ts: stricter validation in parseMonth/parseDay
+
+- **File:** `src/utils/eventDate.ts:37-53`
+- **Source:** CodeRabbit batch 2
+- **Comment:** `parseMonth` and `parseDay` accept partially parsed strings (e.g., "Feb 32", "Feb 3rd"). Add strict 2-token check, MONTHS key validation, and 1-31 integer-only day validation.
+- **Link:** n/a
+
+## HomeFAQ.astro: add transitionend timeout fallback
+
+- **File:** `src/components/home/HomeFAQ.astro:55-88`
+- **Source:** CodeRabbit batch 2
+- **Comment:** `animateOpen`/`animateClose` have no setTimeout safety net. Add a short timeout (e.g., 400ms) that runs cleanup if `transitionend` never fires, cleared if the event fires first.
+- **Link:** n/a

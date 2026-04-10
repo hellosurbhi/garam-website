@@ -1,5 +1,38 @@
 # Changelog
 
+## fix: accessibility and img loading pass — CodeRabbit batch 2 (2026-04-10)
+
+### What changed
+
+Applied 9 targeted fixes from the second CodeRabbit review batch. Verified ~70 comments against current code; most were already tracked in BUGS.md/ENHANCEMENTS.md from PR #12 triage. Net-new: 3 bugs and 13 enhancements added to tracking docs.
+
+**Code fixes:**
+
+- Added `loading="lazy"` to 6 decorative background images missing the attribute (apply, cities, faq, journal, links, tickets pages) — required by project guidelines
+- `sponsorship.astro` TITLE deduped: `"Sponsor Garam Masala Dating"` → `"Sponsorship"` (BaseLayout appends brand suffix)
+- `.husky/pre-commit`: added `set -e` fail-fast so a failed `npm run check` stops the hook instead of letting `npm run test` override the exit code
+- `HomeSignup.astro .spicelist-skip`: font-size 14px → 16px (interactive element minimum)
+- `HomeShows.astro .modal-close`: added `:focus-visible` outline for keyboard users
+- `HomeShows.astro .modal-form input`: changed `:focus` → `:focus-visible` with outline (was removing outline without a `:focus-visible` replacement)
+- `LeadCaptureModal.astro .lc-form input`: same `:focus` → `:focus-visible` fix
+- `faq.astro .faq-answer-text a`: added `:hover` rule matching HomeFAQ.astro behavior
+- `tickets.astro .tickets-city-request__btn`: font-size 15px → 16px
+
+**Also dismissed:** MCP TypeScript attr comments — already declared in `src/env.d.ts:29-35`.
+
+### Files affected
+
+- `src/pages/apply.astro`, `src/pages/cities/index.astro`, `src/pages/faq.astro`, `src/pages/journal/index.astro`, `src/pages/links.astro`, `src/pages/tickets.astro`
+- `src/pages/sponsorship.astro`
+- `.husky/pre-commit`
+- `src/components/home/HomeSignup.astro`
+- `src/components/home/HomeShows.astro`
+- `src/components/LeadCaptureModal.astro`
+- `BUGS.md` (2 marked fixed, 3 new entries)
+- `ENHANCEMENTS.md` (13 new entries)
+
+---
+
 ## fix(tickets): remove cityMode from generic city-request modal (2026-04-10)
 
 ### What changed

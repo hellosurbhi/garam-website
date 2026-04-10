@@ -106,6 +106,7 @@ const speakableJsonLd = JSON.stringify({
       width="1200"
       height="800"
       aria-hidden="true"
+      loading="lazy"
     />
     <div class="faq-container">
       <!-- Header -->
@@ -277,6 +278,10 @@ const speakableJsonLd = JSON.stringify({
     color: var(--brand-red);
     text-decoration: underline;
     text-underline-offset: 2px;
+  }
+  .faq-answer-text :global(a):hover {
+    color: var(--brand-red-dark);
+    text-decoration-thickness: 2px;
   }
 
   .faq-footer-link {

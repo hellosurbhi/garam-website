@@ -277,6 +277,7 @@ const leadSource = `spice-list-${pageName}`;
     font-weight: 700;
     text-transform: uppercase;
     letter-spacing: 1.5px;
+    cursor: pointer;
     transition:
       background 0.2s,
       color 0.2s;
@@ -323,7 +324,9 @@ const leadSource = `spice-list-${pageName}`;
     font-family: var(--font-body), sans-serif;
     margin-top: 12px;
     transition: color 0.2s;
-    padding: 4px;
+    padding: 12px 16px;
+    min-height: var(--touch-target);
+    cursor: pointer;
   }
   .spicelist-skip:hover,
   .spicelist-skip:focus-visible {

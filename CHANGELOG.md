@@ -1,5 +1,23 @@
 # Changelog
 
+## polish: fix touch target and cursor on HomeSignup skip button (2026-04-10)
+
+### What changed
+
+Same class of defect caught in the previous polish pass, now in `HomeSignup.astro`:
+
+1. **`.spicelist-skip` insufficient touch target**: The "Maybe later" skip button had `padding: 4px` with no `min-height`. Fixed to `padding: 12px 16px` + `min-height: var(--touch-target)` — matching the pattern in NotifyModal's `.modal-skip`.
+
+2. **`.spicelist-skip` missing `cursor: pointer`**: Button had no cursor declaration, defaulting to `cursor: default` in browsers.
+
+3. **`.spicelist-form button` missing `cursor: pointer`**: The email and phone submit buttons also lacked an explicit cursor. All other form submit buttons across the codebase (`modal-submit`, `popup-submit`) have it explicitly set.
+
+### Files affected
+
+- `src/components/home/HomeSignup.astro`
+
+---
+
 ## fix(leads): forward geo fields from buildLeadAttribution to Firestore (2026-04-10)
 
 ### What changed

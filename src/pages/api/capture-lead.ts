@@ -14,6 +14,12 @@ interface LeadPayload {
   utmContent?: string;
   utmTerm?: string;
   posthogDistinctId?: string;
+  geoCity?: string;
+  geoRegion?: string;
+  geoCountry?: string;
+  geoLatitude?: string;
+  geoLongitude?: string;
+  geoTimezone?: string;
 }
 
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -50,10 +56,13 @@ export const POST: APIRoute = async ({ request }) => {
   // Build Firestore document via REST API (no firebase-admin dependency)
   const projectId = import.meta.env.PUBLIC_FIREBASE_PROJECT_ID;
   if (!projectId) {
-    return new Response(JSON.stringify({ error: "Server configuration error" }), {
-      status: 500,
-      headers: { "Content-Type": "application/json" },
-    });
+    return new Response(
+      JSON.stringify({ error: "Server configuration error" }),
+      {
+        status: 500,
+        headers: { "Content-Type": "application/json" },
+      },
+    );
   }
 
   const now = new Date().toISOString();
@@ -68,13 +77,22 @@ export const POST: APIRoute = async ({ request }) => {
   if (body.source) fields.source = { stringValue: body.source };
   if (body.sourcePage) fields.sourcePage = { stringValue: body.sourcePage };
   if (body.landingPage) fields.landingPage = { stringValue: body.landingPage };
-  if (body.referrerHost) fields.referrerHost = { stringValue: body.referrerHost };
+  if (body.referrerHost)
+    fields.referrerHost = { stringValue: body.referrerHost };
   if (body.utmSource) fields.utmSource = { stringValue: body.utmSource };
   if (body.utmMedium) fields.utmMedium = { stringValue: body.utmMedium };
   if (body.utmCampaign) fields.utmCampaign = { stringValue: body.utmCampaign };
   if (body.utmContent) fields.utmContent = { stringValue: body.utmContent };
   if (body.utmTerm) fields.utmTerm = { stringValue: body.utmTerm };
-  if (body.posthogDistinctId) fields.posthogDistinctId = { stringValue: body.posthogDistinctId };
+  if (body.posthogDistinctId)
+    fields.posthogDistinctId = { stringValue: body.posthogDistinctId };
+  if (body.geoCity) fields.geoCity = { stringValue: body.geoCity };
+  if (body.geoRegion) fields.geoRegion = { stringValue: body.geoRegion };
+  if (body.geoCountry) fields.geoCountry = { stringValue: body.geoCountry };
+  if (body.geoLatitude) fields.geoLatitude = { stringValue: body.geoLatitude };
+  if (body.geoLongitude)
+    fields.geoLongitude = { stringValue: body.geoLongitude };
+  if (body.geoTimezone) fields.geoTimezone = { stringValue: body.geoTimezone };
 
   try {
     const url = `https://firestore.googleapis.com/v1/projects/${projectId}/databases/(default)/documents/leads`;
@@ -101,9 +119,9 @@ export const POST: APIRoute = async ({ request }) => {
       headers: { "Content-Type": "application/json" },
     });
   } catch {
-    return new Response(
-      JSON.stringify({ error: "Server error" }),
-      { status: 500, headers: { "Content-Type": "application/json" } },
-    );
+    return new Response(JSON.stringify({ error: "Server error" }), {
+      status: 500,
+      headers: { "Content-Type": "application/json" },
+    });
   }
 };

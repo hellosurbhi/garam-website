@@ -215,6 +215,31 @@ button:disabled {
   }
 }
 
+/* ─── Shared modal exit animations ───
+   Paired with the existing modalIn/popupIn keyframes defined in each
+   dialog's own scoped styles. To trigger: add `.closing` to the dialog
+   element in JS, wait for `animationend`, then call `dialog.close()`. */
+@keyframes popupOut {
+  from {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+  to {
+    opacity: 0;
+    transform: scale(0.95) translateY(8px);
+  }
+}
+@keyframes modalOut {
+  from {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+  to {
+    opacity: 0;
+    transform: scale(0.95) translateY(8px);
+  }
+}
+
 /* ─── Skip-to-content link (visible only on keyboard focus) ── */
 .sr-skip-link {
   position: absolute;

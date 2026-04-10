@@ -242,11 +242,33 @@ const { events } = Astro.props;
         cityDialog.showModal();
       });
 
+    const closeCityDialog = () => {
+      const inner = cityDialog.querySelector(
+        ".modal-inner",
+      ) as HTMLElement | null;
+      const reduced = window.matchMedia(
+        "(prefers-reduced-motion: reduce)",
+      ).matches;
+      if (!inner || reduced) {
+        cityDialog.close();
+        return;
+      }
+      cityDialog.classList.add("closing");
+      inner.addEventListener(
+        "animationend",
+        () => {
+          cityDialog.classList.remove("closing");
+          cityDialog.close();
+        },
+        { once: true },
+      );
+    };
+
     cityDialog
       .querySelector(".modal-close")
-      ?.addEventListener("click", () => cityDialog.close());
+      ?.addEventListener("click", closeCityDialog);
     cityDialog.addEventListener("click", (e) => {
-      if (e.target === cityDialog) cityDialog.close();
+      if (e.target === cityDialog) closeCityDialog();
     });
 
     cityInput?.addEventListener("focus", () => {
@@ -545,6 +567,9 @@ const { events } = Astro.props;
       opacity: 1;
       transform: scale(1) translateY(0);
     }
+  }
+  .modal-dialog.closing .modal-inner {
+    animation: modalOut 0.2s ease-in forwards;
   }
   .modal-close {
     position: absolute;

@@ -242,7 +242,9 @@ const { events } = Astro.props;
         cityDialog.showModal();
       });
 
+    let isClosing = false;
     const closeCityDialog = () => {
+      if (isClosing) return;
       const inner = cityDialog.querySelector(
         ".modal-inner",
       ) as HTMLElement | null;
@@ -253,11 +255,13 @@ const { events } = Astro.props;
         cityDialog.close();
         return;
       }
+      isClosing = true;
       cityDialog.classList.add("closing");
       inner.addEventListener(
         "animationend",
         () => {
           cityDialog.classList.remove("closing");
+          isClosing = false;
           cityDialog.close();
         },
         { once: true },
@@ -269,6 +273,10 @@ const { events } = Astro.props;
       ?.addEventListener("click", closeCityDialog);
     cityDialog.addEventListener("click", (e) => {
       if (e.target === cityDialog) closeCityDialog();
+    });
+    cityDialog.addEventListener("cancel", (e) => {
+      e.preventDefault();
+      closeCityDialog();
     });
 
     cityInput?.addEventListener("focus", () => {

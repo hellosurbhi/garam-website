@@ -1,5 +1,19 @@
 # Changelog
 
+## fix: arranged-marriage data corrections + HomeShows close guard (2026-04-10)
+
+### What changed
+
+- `src/data/journal/arranged-marriage.ts`: Fixed "H1-B" → "H-1B" (correct visa class notation). Fixed all 8 posts where `dateModified` was set to November 2026, months after `datePublished` (July 2026) — set `dateModified = datePublished` for each.
+- `src/components/home/HomeShows.astro`: Added `isClosing` re-entry guard to `closeCityDialog` so double-invocation during the close animation is a no-op. Added `cancel` event listener on the dialog so Escape routes through the same guarded, animated path instead of bypassing it and leaving `.closing` stuck on the element.
+
+### Files affected
+
+- `src/data/journal/arranged-marriage.ts`
+- `src/components/home/HomeShows.astro`
+
+---
+
 ## fix: accessibility and img loading pass — CodeRabbit batch 2 (2026-04-10)
 
 ### What changed

@@ -1,5 +1,25 @@
 # Changelog
 
+## arrange(stats): fix mobile layout overflow on narrow phones (2026-04-10)
+
+### What changed
+
+The stats section was using `flex: 0 1 33.33%` for all mobile widths, forcing 3 items per row even at 375px (where each column is only ~92px wide). The "One Night Stand Rate" label with `white-space: nowrap` was overflowing its column at every phone width below ~540px.
+
+**New 3-tier responsive layout:**
+
+- **<480px**: single column (`flex: 0 1 100%`) — 5 stats stacked vertically, each with full width.
+- **480–767px**: 2 columns (`flex: 0 1 50%`) — 5 items renders as 2 rows of 2 plus a centered final stat.
+- **>=768px**: unchanged 5-column row with white dividers.
+
+Also moved `white-space: nowrap` off the base `.stat-label` rule and into the desktop-only `@media (min-width: 768px)` block.
+
+### Files affected
+
+- `src/components/home/HomeStats.astro`
+
+---
+
 ## harden(forms): add loading state to all async form submit buttons (2026-04-10)
 
 ### What changed

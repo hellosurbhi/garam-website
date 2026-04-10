@@ -1,15 +1,17 @@
 ---
-import { MARQUEE_ITEMS as phrases } from '@/data/copy';
+import { MARQUEE_ITEMS as phrases } from "@/data/copy";
 ---
 
 <div class="marquee" aria-hidden="true">
   <div class="marquee-inner">
-    {[...phrases, ...phrases].map((text) => (
-      <Fragment>
-        <span>{text}</span>
-        <span class="dot">✦</span>
-      </Fragment>
-    ))}
+    {
+      [...phrases, ...phrases].map((text) => (
+        <Fragment>
+          <span>{text}</span>
+          <span class="dot">✦</span>
+        </Fragment>
+      ))
+    }
   </div>
 </div>
 
@@ -41,13 +43,25 @@ import { MARQUEE_ITEMS as phrases } from '@/data/copy';
     font-style: normal;
   }
   @keyframes marquee {
-    0% { transform: translateX(0); }
-    100% { transform: translateX(-50%); }
+    0% {
+      transform: translateX(0);
+    }
+    100% {
+      transform: translateX(-50%);
+    }
   }
   @media (min-width: 768px) {
-    .marquee-inner span { font-size: 17px; padding: 0 48px; }
+    .marquee-inner span {
+      font-size: 17px;
+      padding: 0 48px;
+    }
   }
   @media (prefers-reduced-motion: reduce) {
-    .marquee-inner { animation: none; }
+    /* Override the global reduced-motion rule so the text stays visible at
+       position 0 rather than jumping to translateX(-50%) and disappearing. */
+    .marquee-inner {
+      animation: none !important;
+      transform: none !important;
+    }
   }
 </style>

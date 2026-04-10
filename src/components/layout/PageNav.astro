@@ -50,10 +50,14 @@ const pathname = Astro.url.pathname;
     backdrop-filter: blur(16px);
     -webkit-backdrop-filter: blur(16px);
     border-bottom: 2px solid transparent;
-    transition: padding 0.4s;
+    /* Transition only border-bottom-color (compositor-friendly, no layout recalc).
+       The 4px padding snap is imperceptible — scrolling past 10px is already a
+       committed gesture, not a precise threshold. */
+    transition: border-bottom-color 0.3s ease-out;
   }
   .page-nav.scrolled {
     padding: 12px 20px;
+    border-bottom-color: rgba(26, 26, 26, 0.06);
   }
 
   /* Logo */

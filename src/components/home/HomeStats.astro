@@ -140,9 +140,16 @@ import { STATS as stats } from "@/data/copy";
     justify-content: center;
     gap: 32px 0;
   }
+  /* Single-column on the smallest phones (<480px) */
   .stat-item {
-    flex: 0 1 33.33%;
+    flex: 0 1 100%;
     padding: 0 10px;
+  }
+  /* 2-column on medium-sized phones (480px–767px) */
+  @media (min-width: 480px) and (max-width: 767px) {
+    .stat-item {
+      flex: 0 1 50%;
+    }
   }
   .stat-num {
     font-family: var(--font-playfair), serif;
@@ -160,7 +167,6 @@ import { STATS as stats } from "@/data/copy";
     color: white;
     margin-top: 8px;
     text-shadow: 0 1px 8px rgba(0, 0, 0, 0.6);
-    white-space: nowrap;
   }
 
   @media (min-width: 768px) {
@@ -187,6 +193,7 @@ import { STATS as stats } from "@/data/copy";
     }
     .stat-label {
       font-size: 13px;
+      white-space: nowrap;
     }
   }
 </style>

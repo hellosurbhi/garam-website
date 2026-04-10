@@ -367,7 +367,9 @@ const { events } = Astro.props;
     grid-template-columns: 48px 1fr auto;
     gap: 16px;
     align-items: center;
-    transition: opacity 0.2s;
+    transition:
+      background 0.25s ease,
+      transform 0.25s cubic-bezier(0.22, 1, 0.36, 1);
     text-decoration: none;
     cursor: pointer;
     color: white;
@@ -378,8 +380,25 @@ const { events } = Astro.props;
   .show-card:last-child {
     border-bottom: 1px solid rgba(255, 255, 255, 0.2);
   }
-  .show-card:hover {
-    opacity: 0.8;
+  .show-card:hover,
+  .show-card:focus-within {
+    background: rgba(255, 255, 255, 0.04);
+  }
+  .show-card:hover .ticket-label,
+  .show-card:focus-within .ticket-label {
+    letter-spacing: 2.5px;
+    color: white;
+  }
+  .ticket-label {
+    transition:
+      letter-spacing 0.25s ease,
+      color 0.25s ease;
+  }
+  @media (prefers-reduced-motion: no-preference) {
+    .show-card:hover,
+    .show-card:focus-within {
+      transform: translateX(4px);
+    }
   }
   .show-date-block {
     text-align: center;

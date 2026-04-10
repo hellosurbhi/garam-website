@@ -419,11 +419,6 @@ const { events } = Astro.props;
     letter-spacing: 2.5px;
     color: white;
   }
-  .ticket-label {
-    transition:
-      letter-spacing 0.25s ease,
-      color 0.25s ease;
-  }
   @media (prefers-reduced-motion: no-preference) {
     .show-card:hover,
     .show-card:focus-within {
@@ -480,6 +475,9 @@ const { events } = Astro.props;
     display: inline-flex;
     align-items: center;
     pointer-events: none;
+    transition:
+      letter-spacing 0.25s ease,
+      color 0.25s ease;
   }
   .ticket-label--notify {
     color: rgba(255, 255, 255, 0.45);

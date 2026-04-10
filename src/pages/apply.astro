@@ -82,6 +82,16 @@ const breadcrumbJsonLd = buildBreadcrumbJsonLd([
   </main>
 </BaseLayout>
 
+<style is:global>
+  /* React mount detection. [data-apply-root] is rendered by React inside
+     <astro-island>, so Astro's scoped selectors cannot match it (the React
+     DOM never receives the data-astro-cid-* attribute). This rule must be
+     global so the :has() check matches the React output. */
+  .apply-main:has([data-apply-root]) .apply-skeleton {
+    display: none;
+  }
+</style>
+
 <style>
   .apply-main {
     position: relative;
@@ -100,17 +110,11 @@ const breadcrumbJsonLd = buildBreadcrumbJsonLd([
     opacity: 0.06;
   }
 
-  /* ── Skeleton placeholder (static HTML, hidden once React mounts) ── */
+  /* Skeleton placeholder (static HTML, hidden once React mounts) */
 
   .apply-skeleton {
     position: relative;
     z-index: 1;
-  }
-
-  /* Once React mounts and renders [data-apply-root], hide the skeleton.
-     The astro-island wraps the React mount point. */
-  .apply-main:has([data-apply-root]) .apply-skeleton {
-    display: none;
   }
 
   .apply-skeleton-container {

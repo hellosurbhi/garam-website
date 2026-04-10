@@ -45,9 +45,9 @@ export const COMMUNITY_OPTIONS = [
 
 export const INCOME_OPTIONS = [
   "Under $50k",
-  "$50k–$100k",
-  "$100k–$150k",
-  "$150k–$200k",
+  "$50k to $100k",
+  "$100k to $150k",
+  "$150k to $200k",
   "Over $200k",
   "Prefer not to say",
 ];

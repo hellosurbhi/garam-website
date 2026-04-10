@@ -29,7 +29,7 @@ export const GET: APIRoute = () => {
       ? upcomingEvents
           .map(
             (e) =>
-              `- ${e.date} — ${e.city}${e.venue ? ` @ ${e.venue.name}` : ""}${e.tagline ? ` (${e.tagline})` : ""}`,
+              `- ${e.date}: ${e.city}${e.venue ? ` @ ${e.venue.name}` : ""}${e.tagline ? ` (${e.tagline})` : ""}`,
           )
           .join("\n")
       : "- Check https://garammasaladating.com/tickets for current dates";

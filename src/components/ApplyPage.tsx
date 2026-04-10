@@ -125,12 +125,8 @@ function ApplyPageInner() {
 
   return (
     <>
-      <div
-        className={styles.page}
-        data-apply-root
-        onClick={() => window.history.back()}
-      >
-        <div className={styles.container} onClick={(e) => e.stopPropagation()}>
+      <div className={styles.page} data-apply-root>
+        <div className={styles.container}>
           <div className={styles.headerArea}>
             <button
               type="button"
@@ -303,7 +299,7 @@ function ApplyPageInner() {
                           onClick={retryGeo}
                           className={styles.retryButton}
                         >
-                          Failed to load places — tap to retry
+                          Failed to load places. Tap to retry.
                         </button>
                       ) : (
                         <Select

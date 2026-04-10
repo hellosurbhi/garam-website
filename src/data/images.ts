@@ -19,7 +19,7 @@ export const HF_IMAGES: readonly string[] = [
     { length: 26 },
     (_, i) => `/images/ai-art/hf-${String(i + 1).padStart(2, "0")}.webp`,
   ),
-  "/images/promo/higgs-field.webp",
+  "/images/ai-art/hf-27.webp",
 ];
 
 /** Real show photos for city page hero images */

@@ -5,16 +5,16 @@ export const entertainmentPosts: JournalPost[] = [
     slug: "indian-comedy-shows-nyc-2026",
     title: "Indian Comedy Shows in NYC: The Complete Guide for 2026",
     metaDescription:
-      "The best Indian comedy shows in NYC for 2026 — from stand-up nights to the #1 live South Asian dating show in the city. Find your night out.",
+      "The best Indian comedy shows in NYC for 2026, from stand-up nights to the #1 live South Asian dating show in the city. Find your night out.",
     datePublished: "2026-05-18",
     dateModified: "2026-06-28",
     author: "Surbhi",
     excerpt:
-      "New York has a real South Asian comedy scene in 2026, and it is nothing like the one your parents accidentally ended up at because they thought it was a Diwali potluck. Here is every Indian comedy show worth knowing about — and one that is unlike anything else in the city.",
+      "New York has a real South Asian comedy scene in 2026, and it is nothing like the one your parents accidentally ended up at because they thought it was a Diwali potluck. Here is every Indian comedy show worth knowing about, and one that is unlike anything else in the city.",
     body: [
       {
         type: "p",
-        text: "New York has a real South Asian comedy scene in 2026, and it is nothing like the one your parents accidentally ended up at because they thought it was a Diwali potluck. There are actual rooms, actual lineups, actual audiences who show up because they want to laugh and not just because someone's cousin organized it on WhatsApp. Here is every Indian comedy show worth knowing about — and one that is unlike anything else in the city.",
+        text: "New York has a real South Asian comedy scene in 2026, and it is nothing like the one your parents accidentally ended up at because they thought it was a Diwali potluck. There are actual rooms, actual lineups, actual audiences who show up because they want to laugh and not just because someone's cousin organized it on WhatsApp. Here is every Indian comedy show worth knowing about, and one that is unlike anything else in the city.",
       },
       {
         type: "h2",
@@ -26,7 +26,7 @@ export const entertainmentPosts: JournalPost[] = [
       },
       {
         type: "p",
-        text: "The other thing worth knowing is that Indian comedy in NYC is not monolithic. You have traditional stand-up nights that happen to skew South Asian, roast formats, storytelling shows, and then — in a category entirely its own — Garam Masala Dating, which is the #1 live comedy dating show where real South Asian singles go on blind dates on stage in front of 250 people. Different nights serve different moods. Figure out what you are actually looking for before you commit.",
+        text: "The other thing worth knowing is that Indian comedy in NYC is not monolithic. You have traditional stand-up nights that happen to skew South Asian, roast formats, storytelling shows, and then, in a category entirely its own, Garam Masala Dating, which is the #1 live comedy dating show where real South Asian singles go on blind dates on stage in front of 250 people. Different nights serve different moods. Figure out what you are actually looking for before you commit.",
       },
       {
         type: "h2",
@@ -38,7 +38,7 @@ export const entertainmentPosts: JournalPost[] = [
       },
       {
         type: "p",
-        text: "Outside of dedicated South Asian nights, a number of desi comics have broken into the mainstream NYC club circuit — places like Comedy Cellar, Stand Up NY, and Gotham Comedy Club. These are not billed as Indian comedy nights, but if you know whose work you like, you can catch them on regular club lineups and get a much better seat than you would at a sold-out themed event.",
+        text: "Outside of dedicated South Asian nights, a number of desi comics have broken into the mainstream NYC club circuit, places like Comedy Cellar, Stand Up NY, and Gotham Comedy Club. These are not billed as Indian comedy nights, but if you know whose work you like, you can catch them on regular club lineups and get a much better seat than you would at a sold-out themed event.",
       },
       {
         type: "p",
@@ -50,7 +50,7 @@ export const entertainmentPosts: JournalPost[] = [
       },
       {
         type: "p",
-        text: "The comedy comes from the format, not from a lineup of stand-ups. The show is structured so that the dates themselves generate the laughs. Real people, real nerves, real reactions, live crowd. It lands differently than a night of prepared bits because nobody — not the contestants, not the hosts, not the audience — knows what is going to happen next.",
+        text: "The comedy comes from the format, not from a lineup of stand-ups. The show is structured so that the dates themselves generate the laughs. Real people, real nerves, real reactions, live crowd. It lands differently than a night of prepared bits because nobody, not the contestants, not the hosts, not the audience, knows what is going to happen next.",
       },
       {
         type: "p",
@@ -74,7 +74,7 @@ export const entertainmentPosts: JournalPost[] = [
       },
       {
         type: "p",
-        text: "If you want a curated stand-up night with polished sets, catch Laughing Lassi or hit a mainstream club on a night a desi comic you know is headlining. If you want something you genuinely cannot see anywhere else — a room full of South Asian energy, live dates on stage, comedy that comes from real human weirdness rather than rehearsed bits — Garam Masala Dating is the show. <a href='/journal/south-asian-singles-events-nyc'>See how it compares to other South Asian singles events in NYC.</a>",
+        text: "If you want a curated stand-up night with polished sets, catch Laughing Lassi or hit a mainstream club on a night a desi comic you know is headlining. If you want something you genuinely cannot see anywhere else, a room full of South Asian energy, live dates on stage, comedy that comes from real human weirdness rather than rehearsed bits, Garam Masala Dating is the show. <a href='/journal/south-asian-singles-events-nyc'>See how it compares to other South Asian singles events in NYC.</a>",
       },
       {
         type: "p",
@@ -88,7 +88,7 @@ export const entertainmentPosts: JournalPost[] = [
       },
       {
         q: "Is Garam Masala Dating a comedy show or a dating show?",
-        a: "Both. It is the #1 live comedy dating show where real South Asian singles go on blind dates on stage in front of 250 people. The comedy comes from the unscripted, live format — not from stand-up sets. Hosted by Surbhi and Wyatt at Top Secret Comedy Club in Manhattan.",
+        a: "Both. It is the #1 live comedy dating show where real South Asian singles go on blind dates on stage in front of 250 people. The comedy comes from the unscripted, live format, not from stand-up sets. Hosted by Surbhi and Wyatt at Top Secret Comedy Club in Manhattan.",
       },
       {
         q: "How do I find out about South Asian comedy events in NYC?",
@@ -96,11 +96,11 @@ export const entertainmentPosts: JournalPost[] = [
       },
       {
         q: "Do Indian comedy shows in NYC sell out?",
-        a: "Yes, the good ones do. Laughing Lassi sells out regularly. Garam Masala Dating sells out most months. Buy as soon as dates are announced — the popular seats (front section, couples' tables) go first.",
+        a: "Yes, the good ones do. Laughing Lassi sells out regularly. Garam Masala Dating sells out most months. Buy as soon as dates are announced, the popular seats (front section, couples' tables) go first.",
       },
       {
         q: "What is unique about Garam Masala Dating compared to other Indian comedy shows?",
-        a: "It is the only show that combines South Asian comedy with live dating. Two real singles meet on stage for the first time, hosted by Surbhi and Wyatt. Nothing is scripted. Nothing is edited. The audience watches attraction — or the lack of it — happen in real time.",
+        a: "It is the only show that combines South Asian comedy with live dating. Two real singles meet on stage for the first time, hosted by Surbhi and Wyatt. Nothing is scripted. Nothing is edited. The audience watches attraction, or the lack of it, happen in real time.",
       },
     ],
     relatedSlugs: [
@@ -113,9 +113,9 @@ export const entertainmentPosts: JournalPost[] = [
   {
     slug: "stop-waiting-for-indian-love-is-blind",
     title:
-      "Stop Waiting for Indian Love Is Blind — Join a Real Desi Dating Show",
+      "Stop Waiting for Indian Love Is Blind, Join a Real Desi Dating Show",
     metaDescription:
-      "An Indian Love Is Blind hasn't happened yet. But Garam Masala Dating — the #1 live South Asian dating show in NYC — already exists. Here's why it's better.",
+      "An Indian Love Is Blind hasn't happened yet. But Garam Masala Dating, the #1 live South Asian dating show in NYC, already exists. Here's why it's better.",
     datePublished: "2026-05-19",
     dateModified: "2026-06-30",
     author: "Surbhi",
@@ -132,7 +132,7 @@ export const entertainmentPosts: JournalPost[] = [
       },
       {
         type: "p",
-        text: "Netflix has not made an Indian Love Is Blind and the reason is not lack of interest. The interest is obviously there. The reason is that the South Asian community brings a set of complications that the format was not designed to handle. Family involvement is not a subplot — it is the main event. Caste, religion, region, skin tone, dietary restrictions, parental approval. These are not dramatic twists the show can manufacture. They are structural features of how desi dating actually works, and they are messy in ways that are genuinely hard to produce.",
+        text: "Netflix has not made an Indian Love Is Blind and the reason is not lack of interest. The interest is obviously there. The reason is that the South Asian community brings a set of complications that the format was not designed to handle. Family involvement is not a subplot, it is the main event. Caste, religion, region, skin tone, dietary restrictions, parental approval. These are not dramatic twists the show can manufacture. They are structural features of how desi dating actually works, and they are messy in ways that are genuinely hard to produce.",
       },
       {
         type: "p",
@@ -144,7 +144,7 @@ export const entertainmentPosts: JournalPost[] = [
       },
       {
         type: "p",
-        text: "Here is what I think people actually want when they say they want Indian Love Is Blind. They want to see South Asian people dating in a way that reflects how they actually date — navigating the dual pressure of personal chemistry and community expectations. They want to see that tension played out honestly, without it being a punchline or an afterthought. They want to root for people who look like them and share the specific kind of exhaustion that comes with desi dating in 2026.",
+        text: "Here is what I think people actually want when they say they want Indian Love Is Blind. They want to see South Asian people dating in a way that reflects how they actually date, navigating the dual pressure of personal chemistry and community expectations. They want to see that tension played out honestly, without it being a punchline or an afterthought. They want to root for people who look like them and share the specific kind of exhaustion that comes with desi dating in 2026.",
       },
       {
         type: "p",
@@ -176,7 +176,7 @@ export const entertainmentPosts: JournalPost[] = [
       },
       {
         type: "p",
-        text: "Three real couples have met at Garam Masala Dating over four years. Not all of them met on stage — some connected at the post-show mixer, riding the energy of what they just witnessed. The show functions as a dating event for the audience, not just the contestants. The live dates break the ice for the entire room. By the time the show ends, nobody is pretending to be on their phone.",
+        text: "Three real couples have met at Garam Masala Dating over four years. Not all of them met on stage, some connected at the post-show mixer, riding the energy of what they just witnessed. The show functions as a dating event for the audience, not just the contestants. The live dates break the ice for the entire room. By the time the show ends, nobody is pretending to be on their phone.",
       },
       {
         type: "h2",
@@ -184,7 +184,7 @@ export const entertainmentPosts: JournalPost[] = [
       },
       {
         type: "p",
-        text: "Apply at garammasaladating.com. It is a short application — no casting tape, no producer call, no waiting for a season to open. We read every application. Casting is rolling. If you are a South Asian single in the NYC area who is done with apps and done waiting for Netflix to do something, this is the move. <a href='/journal/how-to-get-cast-on-a-live-dating-show'>Here is exactly how the application and casting process works.</a>",
+        text: "Apply at garammasaladating.com. It is a short application, no casting tape, no producer call, no waiting for a season to open. We read every application. Casting is rolling. If you are a South Asian single in the NYC area who is done with apps and done waiting for Netflix to do something, this is the move. <a href='/journal/how-to-get-cast-on-a-live-dating-show'>Here is exactly how the application and casting process works.</a>",
       },
       {
         type: "p",
@@ -198,7 +198,7 @@ export const entertainmentPosts: JournalPost[] = [
       },
       {
         q: "Why hasn't Netflix made an Indian Love Is Blind?",
-        a: "The Love Is Blind format — pods, no contact, controlled environment — was not designed around the family dynamics and community expectations that define South Asian dating. Producing an Indian version that handles caste, religion, and parental approval authentically is a harder production challenge than the original format supports.",
+        a: "The Love Is Blind format, pods, no contact, controlled environment, was not designed around the family dynamics and community expectations that define South Asian dating. Producing an Indian version that handles caste, religion, and parental approval authentically is a harder production challenge than the original format supports.",
       },
       {
         q: "Can I actually be on a South Asian dating show?",
@@ -206,7 +206,7 @@ export const entertainmentPosts: JournalPost[] = [
       },
       {
         q: "What is the difference between Garam Masala Dating and a Netflix dating show?",
-        a: "Netflix shows are produced — filmed over weeks and edited into a narrative arc. Garam Masala Dating is unscripted, unedited, and live in front of 250 people. What happens on stage is what happened. Nothing is selected or shaped after the fact.",
+        a: "Netflix shows are produced, filmed over weeks and edited into a narrative arc. Garam Masala Dating is unscripted, unedited, and live in front of 250 people. What happens on stage is what happened. Nothing is selected or shaped after the fact.",
       },
       {
         q: "Is Garam Masala Dating just for singles?",
@@ -229,11 +229,11 @@ export const entertainmentPosts: JournalPost[] = [
     dateModified: "2026-07-02",
     author: "Surbhi",
     excerpt:
-      "Something shifted in American comedy about ten years ago, and South Asian voices were a big part of what shifted it. The scene looks genuinely different now — more cities, more formats, more willingness to be specific — and understanding how that happened makes the current moment easier to read.",
+      "Something shifted in American comedy about ten years ago, and South Asian voices were a big part of what shifted it. The scene looks genuinely different now, more cities, more formats, more willingness to be specific, and understanding how that happened makes the current moment easier to read.",
     body: [
       {
         type: "p",
-        text: "Something shifted in American comedy about ten years ago, and South Asian voices were a big part of what shifted it. The scene looks genuinely different now — more cities, more formats, more willingness to be specific — and understanding how that happened makes the current moment easier to read. I have been inside this scene for four years running a show. Here is what I see.",
+        text: "Something shifted in American comedy about ten years ago, and South Asian voices were a big part of what shifted it. The scene looks genuinely different now, more cities, more formats, more willingness to be specific, and understanding how that happened makes the current moment easier to read. I have been inside this scene for four years running a show. Here is what I see.",
       },
       {
         type: "h2",
@@ -241,11 +241,11 @@ export const entertainmentPosts: JournalPost[] = [
       },
       {
         type: "p",
-        text: "The first wave of South Asian comedy in America was about assimilation. The accent jokes. The arranged marriage jokes. The tiger mom jokes. These worked because they translated something specific into something universal — here is what being Indian looks like from the outside, and you can laugh at it even if you do not share it. Kal Penn and Russell Peters were doing this early and well. The format required making yourself legible to a non-desi audience.",
+        text: "The first wave of South Asian comedy in America was about assimilation. The accent jokes. The arranged marriage jokes. The tiger mom jokes. These worked because they translated something specific into something universal, here is what being Indian looks like from the outside, and you can laugh at it even if you do not share it. Kal Penn and Russell Peters were doing this early and well. The format required making yourself legible to a non-desi audience.",
       },
       {
         type: "p",
-        text: "The second wave stopped asking permission to be specific. Hasan Minhaj is the clearest example — Homecoming King was a show that did not explain South Asian culture to a white audience. It expected you to keep up. That shift changed what was possible. Once you demonstrate that specificity is commercially viable, the gatekeepers stop requiring you to sand the edges off.",
+        text: "The second wave stopped asking permission to be specific. Hasan Minhaj is the clearest example, Homecoming King was a show that did not explain South Asian culture to a white audience. It expected you to keep up. That shift changed what was possible. Once you demonstrate that specificity is commercially viable, the gatekeepers stop requiring you to sand the edges off.",
       },
       {
         type: "h2",
@@ -257,7 +257,7 @@ export const entertainmentPosts: JournalPost[] = [
       },
       {
         type: "p",
-        text: "Formats have diversified. It is not just stand-up anymore. There are roast nights, storytelling shows, improv troupes, podcasts that evolved into live events. And then there is Garam Masala Dating, which is its own format entirely — live comedy where the comedy is generated by real people trying to connect on stage, not by prepared material. Nobody else is doing the dating show format for South Asians. The gap existed and we walked into it.",
+        text: "Formats have diversified. It is not just stand-up anymore. There are roast nights, storytelling shows, improv troupes, podcasts that evolved into live events. And then there is Garam Masala Dating, which is its own format entirely, live comedy where the comedy is generated by real people trying to connect on stage, not by prepared material. Nobody else is doing the dating show format for South Asians. The gap existed and we walked into it.",
       },
       {
         type: "h2",
@@ -265,7 +265,7 @@ export const entertainmentPosts: JournalPost[] = [
       },
       {
         type: "p",
-        text: "It is actually surprising that nobody did this sooner, given how much desi culture runs on the intersection of romance and community judgment. South Asian dating has always been a spectator sport — your entire family has opinions, your aunties have candidates, your cousin's wedding is a networking event. The idea that an audience should watch two people try to figure each other out is just making the implicit explicit.",
+        text: "It is actually surprising that nobody did this sooner, given how much desi culture runs on the intersection of romance and community judgment. South Asian dating has always been a spectator sport, your entire family has opinions, your aunties have candidates, your cousin's wedding is a networking event. The idea that an audience should watch two people try to figure each other out is just making the implicit explicit.",
       },
       {
         type: "p",
@@ -277,7 +277,7 @@ export const entertainmentPosts: JournalPost[] = [
       },
       {
         type: "p",
-        text: "Indian Matchmaking and Never Have I Ever both came out in 2020. The timing matters. Both shows demonstrated that South Asian stories — specific ones, not flattened ones — could drive mainstream cultural conversation. That changed the investment calculus for everyone producing content adjacent to this community. The gatekeepers started believing the audience was real.",
+        text: "Indian Matchmaking and Never Have I Ever both came out in 2020. The timing matters. Both shows demonstrated that South Asian stories, specific ones, not flattened ones, could drive mainstream cultural conversation. That changed the investment calculus for everyone producing content adjacent to this community. The gatekeepers started believing the audience was real.",
       },
       {
         type: "p",
@@ -289,11 +289,11 @@ export const entertainmentPosts: JournalPost[] = [
       },
       {
         type: "p",
-        text: "The scene is still building infrastructure. There is no South Asian comedy club — a dedicated physical space that runs South Asian programming consistently, the way the Comedy Cellar runs its basement. That does not exist yet. When it does, it will change what is possible for the scene in the same way having a dedicated space changed what was possible for Latino comedy in the nineties.",
+        text: "The scene is still building infrastructure. There is no South Asian comedy club, a dedicated physical space that runs South Asian programming consistently, the way the Comedy Cellar runs its basement. That does not exist yet. When it does, it will change what is possible for the scene in the same way having a dedicated space changed what was possible for Latino comedy in the nineties.",
       },
       {
         type: "p",
-        text: "The formats will keep diversifying. Garam Masala Dating is one proof of concept that there is appetite for South Asian entertainment that is not just stand-up. The more the scene matures, the more it will be able to support experimentation. The only thing holding it back is scale — which is an audience problem, and the audience is already there. <a href='/journal/best-things-to-do-in-nyc-if-youre-single'>If you are a South Asian single in NYC, here is where to start.</a>",
+        text: "The formats will keep diversifying. Garam Masala Dating is one proof of concept that there is appetite for South Asian entertainment that is not just stand-up. The more the scene matures, the more it will be able to support experimentation. The only thing holding it back is scale, which is an audience problem, and the audience is already there. <a href='/journal/best-things-to-do-in-nyc-if-youre-single'>If you are a South Asian single in NYC, here is where to start.</a>",
       },
       {
         type: "p",
@@ -319,7 +319,7 @@ export const entertainmentPosts: JournalPost[] = [
       },
       {
         q: "Is there a South Asian comedy show in NYC?",
-        a: "Yes — Laughing Lassi runs stand-up showcases irregularly in NYC. Garam Masala Dating runs monthly at Top Secret Comedy Club in Manhattan and is the only show that combines South Asian comedy with a live dating format. Tickets at garammasaladating.com.",
+        a: "Yes, Laughing Lassi runs stand-up showcases irregularly in NYC. Garam Masala Dating runs monthly at Top Secret Comedy Club in Manhattan and is the only show that combines South Asian comedy with a live dating format. Tickets at garammasaladating.com.",
       },
     ],
     relatedSlugs: [
@@ -350,11 +350,11 @@ export const entertainmentPosts: JournalPost[] = [
       },
       {
         type: "p",
-        text: "The genius of Indian Matchmaking was not Sima Aunty, though she is genuinely fascinating television. The genius was that it treated the complexity of South Asian dating with a straight face. It did not reduce it to a punchline or a culture clash episode. It showed the whole architecture — parental expectations, caste considerations, the unspoken checklist that everyone has but nobody shows each other — and it let the audience sit with the discomfort.",
+        text: "The genius of Indian Matchmaking was not Sima Aunty, though she is genuinely fascinating television. The genius was that it treated the complexity of South Asian dating with a straight face. It did not reduce it to a punchline or a culture clash episode. It showed the whole architecture, parental expectations, caste considerations, the unspoken checklist that everyone has but nobody shows each other, and it let the audience sit with the discomfort.",
       },
       {
         type: "p",
-        text: "That honesty is why it resonated. South Asian singles recognized themselves in it. The anxiety of wanting to choose freely while carrying the weight of what everyone expects from your choices — that is real, and the show named it without judgment. The judgment came from the audience's group chats, which is its own kind of television.",
+        text: "That honesty is why it resonated. South Asian singles recognized themselves in it. The anxiety of wanting to choose freely while carrying the weight of what everyone expects from your choices, that is real, and the show named it without judgment. The judgment came from the audience's group chats, which is its own kind of television.",
       },
       {
         type: "p",
@@ -366,7 +366,7 @@ export const entertainmentPosts: JournalPost[] = [
       },
       {
         type: "p",
-        text: "Garam Masala Dating is not a stand-up show that has a dating segment. The show itself is the comedy. The structure creates the laughs — live blind date, two hosts managing the chaos, a live audience reacting in real time, a whiteboard rating reveal at the end. The comedy is not prepared material. It is what happens when you put two real people in an absurd situation and let the room watch.",
+        text: "Garam Masala Dating is not a stand-up show that has a dating segment. The show itself is the comedy. The structure creates the laughs, live blind date, two hosts managing the chaos, a live audience reacting in real time, a whiteboard rating reveal at the end. The comedy is not prepared material. It is what happens when you put two real people in an absurd situation and let the room watch.",
       },
       {
         type: "p",
@@ -382,7 +382,7 @@ export const entertainmentPosts: JournalPost[] = [
       },
       {
         type: "p",
-        text: "Indian Matchmaking never had a moment like that. The show built tension differently — slow reveals over multiple episodes, dramatic music, confessional interviews. We do it in under an hour. The compression changes the stakes. You feel it in the room.",
+        text: "Indian Matchmaking never had a moment like that. The show built tension differently, slow reveals over multiple episodes, dramatic music, confessional interviews. We do it in under an hour. The compression changes the stakes. You feel it in the room.",
       },
       {
         type: "h2",
@@ -390,11 +390,11 @@ export const entertainmentPosts: JournalPost[] = [
       },
       {
         type: "p",
-        text: "Comedy is a form of honesty. A good laugh comes from something true being said in a surprising way. Dating is a form of honesty too, when it is working — two people dropping enough of their performance to see if what is underneath fits together. When you put those two things in the same room, they reinforce each other. The comedy lowers the stakes enough that people can be real. The realness makes the comedy land harder.",
+        text: "Comedy is a form of honesty. A good laugh comes from something true being said in a surprising way. Dating is a form of honesty too, when it is working, two people dropping enough of their performance to see if what is underneath fits together. When you put those two things in the same room, they reinforce each other. The comedy lowers the stakes enough that people can be real. The realness makes the comedy land harder.",
       },
       {
         type: "p",
-        text: "This is something I did not fully understand when I started the show four years ago. I thought the comedy would be the draw and the dating would be the content. What I found is that the comedy and the dating are inseparable. The best moments on stage are both at once — genuinely funny and genuinely human. Audiences feel that. They do not laugh and then feel something. They laugh because they feel something. <a href='/journal/indian-matchmaking-hinge-and-a-live-comedy-show'>After four years and 40+ shows, here is what I know about how desis actually date.</a>",
+        text: "This is something I did not fully understand when I started the show four years ago. I thought the comedy would be the draw and the dating would be the content. What I found is that the comedy and the dating are inseparable. The best moments on stage are both at once, genuinely funny and genuinely human. Audiences feel that. They do not laugh and then feel something. They laugh because they feel something. <a href='/journal/indian-matchmaking-hinge-and-a-live-comedy-show'>After four years and 40+ shows, here is what I know about how desis actually date.</a>",
       },
       {
         type: "h2",
@@ -406,7 +406,7 @@ export const entertainmentPosts: JournalPost[] = [
       },
       {
         type: "p",
-        text: "The difference is that Indian Matchmaking includes those stakeholders in the narrative — the parents are on camera, the aunty is coordinating. Garam Masala Dating puts just the two singles on stage. No family, no background checks, no pre-screening by a professional. Two people, two whiteboards, one room full of strangers rooting for them to figure it out. That simplicity is a choice. Sometimes the best thing you can do for desi singles is give them a situation where nobody's family can intervene.",
+        text: "The difference is that Indian Matchmaking includes those stakeholders in the narrative, the parents are on camera, the aunty is coordinating. Garam Masala Dating puts just the two singles on stage. No family, no background checks, no pre-screening by a professional. Two people, two whiteboards, one room full of strangers rooting for them to figure it out. That simplicity is a choice. Sometimes the best thing you can do for desi singles is give them a situation where nobody's family can intervene.",
       },
       {
         type: "h2",
@@ -414,7 +414,7 @@ export const entertainmentPosts: JournalPost[] = [
       },
       {
         type: "p",
-        text: "Buy a ticket at garammasaladating.com. We are at Top Secret Comedy Club in Manhattan, monthly. If you want to be on stage, apply as a contestant — the application is short, casting is rolling, and you do not need a casting tape or a producer call. Just apply. <a href='/journal/how-to-prepare-for-a-live-matchmaking-show'>Here is how to prepare if you get cast.</a>",
+        text: "Buy a ticket at garammasaladating.com. We are at Top Secret Comedy Club in Manhattan, monthly. If you want to be on stage, apply as a contestant, the application is short, casting is rolling, and you do not need a casting tape or a producer call. Just apply. <a href='/journal/how-to-prepare-for-a-live-matchmaking-show'>Here is how to prepare if you get cast.</a>",
       },
       {
         type: "p",
@@ -424,11 +424,11 @@ export const entertainmentPosts: JournalPost[] = [
     faqs: [
       {
         q: "Is Garam Masala Dating inspired by Indian Matchmaking?",
-        a: "The shows exist in the same cultural space but are structurally different. Indian Matchmaking is a produced Netflix series with a professional matchmaker. Garam Masala Dating is the biggest live, unscripted comedy dating show where two South Asian singles meet on stage in front of 250 people. No editors, no episode arcs, no professional matchmaker — just two hosts, two contestants, and a live audience.",
+        a: "The shows exist in the same cultural space but are structurally different. Indian Matchmaking is a produced Netflix series with a professional matchmaker. Garam Masala Dating is the biggest live, unscripted comedy dating show where two South Asian singles meet on stage in front of 250 people. No editors, no episode arcs, no professional matchmaker, just two hosts, two contestants, and a live audience.",
       },
       {
         q: "Is there a live version of Indian Matchmaking?",
-        a: "Not officially. But Garam Masala Dating at Top Secret Comedy Club in Manhattan is the closest thing — the #1 monthly live South Asian dating show where real singles go on blind dates on stage. Tickets and applications at garammasaladating.com.",
+        a: "Not officially. But Garam Masala Dating at Top Secret Comedy Club in Manhattan is the closest thing, the #1 monthly live South Asian dating show where real singles go on blind dates on stage. Tickets and applications at garammasaladating.com.",
       },
       {
         q: "What happens at Garam Masala Dating?",
@@ -436,11 +436,11 @@ export const entertainmentPosts: JournalPost[] = [
       },
       {
         q: "How is Garam Masala Dating different from Indian Matchmaking?",
-        a: "Indian Matchmaking uses a professional matchmaker, films over weeks, and is edited into a narrative arc. Garam Masala Dating is unscripted, unedited, and live. What happens on stage is what happened — no post-production, no story shaping, no second takes.",
+        a: "Indian Matchmaking uses a professional matchmaker, films over weeks, and is edited into a narrative arc. Garam Masala Dating is unscripted, unedited, and live. What happens on stage is what happened, no post-production, no story shaping, no second takes.",
       },
       {
         q: "Can I apply to be on Garam Masala Dating?",
-        a: "Yes. Applications are open on a rolling basis at garammasaladating.com. South Asian singles in the NYC area are eligible. No casting tape needed — just a short application form.",
+        a: "Yes. Applications are open on a rolling basis at garammasaladating.com. South Asian singles in the NYC area are eligible. No casting tape needed, just a short application form.",
       },
     ],
     relatedSlugs: [
@@ -454,7 +454,7 @@ export const entertainmentPosts: JournalPost[] = [
     slug: "desi-night-out-beyond-bollywood",
     title: "Desi Night Out: Beyond Bollywood Parties and Bar Crawls",
     metaDescription:
-      "Done with the same Bollywood night at the same club? Here's what a real desi night out in NYC looks like in 2026 — and one option you won't find anywhere else.",
+      "Done with the same Bollywood night at the same club? Here's what a real desi night out in NYC looks like in 2026, and one option you won't find anywhere else.",
     datePublished: "2026-05-22",
     dateModified: "2026-07-06",
     author: "Surbhi",
@@ -483,7 +483,7 @@ export const entertainmentPosts: JournalPost[] = [
       },
       {
         type: "p",
-        text: "The options have genuinely expanded. South Asian comedy shows — Laughing Lassi in NYC, Desi Comedy Fest touring from the Bay Area — give you a night out that involves actual content to react to, which changes the social dynamic entirely. You are not standing around trying to manufacture a conversation from nothing. You are in a room full of people having a shared experience, and the conversations flow from that.",
+        text: "The options have genuinely expanded. South Asian comedy shows, Laughing Lassi in NYC, Desi Comedy Fest touring from the Bay Area, give you a night out that involves actual content to react to, which changes the social dynamic entirely. You are not standing around trying to manufacture a conversation from nothing. You are in a room full of people having a shared experience, and the conversations flow from that.",
       },
       {
         type: "p",
@@ -495,7 +495,7 @@ export const entertainmentPosts: JournalPost[] = [
       },
       {
         type: "p",
-        text: "Garam Masala Dating is not a Bollywood night. It is not a singles mixer. It is not a stand-up show. It is the #1 live comedy dating show where two South Asian singles go on blind dates on stage in front of 250 people. The show runs for about an hour. After the show, there is a mixer where the entire audience — most of whom have been energized by watching other people take social risks — ends up in real conversations.",
+        text: "Garam Masala Dating is not a Bollywood night. It is not a singles mixer. It is not a stand-up show. It is the #1 live comedy dating show where two South Asian singles go on blind dates on stage in front of 250 people. The show runs for about an hour. After the show, there is a mixer where the entire audience, most of whom have been energized by watching other people take social risks, ends up in real conversations.",
       },
       {
         type: "p",
@@ -507,7 +507,7 @@ export const entertainmentPosts: JournalPost[] = [
       },
       {
         type: "p",
-        text: "If you want to dance and the music matters more than the company, go to a Bollywood night. The good ones are genuinely fun if you do not have the expectation that you will meet anyone worth seeing again. If you want to meet people, you need an event with structure — something that creates conversation rather than just hoping it will emerge from proximity and alcohol.",
+        text: "If you want to dance and the music matters more than the company, go to a Bollywood night. The good ones are genuinely fun if you do not have the expectation that you will meet anyone worth seeing again. If you want to meet people, you need an event with structure, something that creates conversation rather than just hoping it will emerge from proximity and alcohol.",
       },
       {
         type: "p",
@@ -515,7 +515,7 @@ export const entertainmentPosts: JournalPost[] = [
       },
       {
         type: "p",
-        text: "Garam Masala Dating works best if you want something you will be talking about for weeks. It is the kind of event that people bring their non-desi partners to because it requires no setup — you can understand what is happening on stage without knowing anything about South Asian culture. And yet it is unmistakably South Asian in its texture, its humor, its emotional register. <a href='/journal/south-asian-singles-events-nyc'>Here is a full guide to South Asian singles events in NYC.</a>",
+        text: "Garam Masala Dating works best if you want something you will be talking about for weeks. It is the kind of event that people bring their non-desi partners to because it requires no setup, you can understand what is happening on stage without knowing anything about South Asian culture. And yet it is unmistakably South Asian in its texture, its humor, its emotional register. <a href='/journal/south-asian-singles-events-nyc'>Here is a full guide to South Asian singles events in NYC.</a>",
       },
       {
         type: "h2",
@@ -523,7 +523,7 @@ export const entertainmentPosts: JournalPost[] = [
       },
       {
         type: "p",
-        text: "The Bollywood night will never be where you meet the person. It is too loud, the lighting is wrong, and everyone is performing a version of themselves that is 30% more confident than they actually feel at 11pm after two cocktails. Events with structure — comedy shows, hosted mixers, anything with a beginning, middle, and end — create the conditions for real interaction.",
+        text: "The Bollywood night will never be where you meet the person. It is too loud, the lighting is wrong, and everyone is performing a version of themselves that is 30% more confident than they actually feel at 11pm after two cocktails. Events with structure, comedy shows, hosted mixers, anything with a beginning, middle, and end, create the conditions for real interaction.",
       },
       {
         type: "p",
@@ -535,7 +535,7 @@ export const entertainmentPosts: JournalPost[] = [
       },
       {
         type: "p",
-        text: "Tickets for Garam Masala Dating are at garammasaladating.com. We are at Top Secret Comedy Club in Manhattan, one Friday night a month. Come as an audience member first. See what it is. If you want to be on stage, apply as a contestant after you have seen it once — most people who apply have. The format makes more sense when you have felt the room.",
+        text: "Tickets for Garam Masala Dating are at garammasaladating.com. We are at Top Secret Comedy Club in Manhattan, one Friday night a month. Come as an audience member first. See what it is. If you want to be on stage, apply as a contestant after you have seen it once, most people who apply have. The format makes more sense when you have felt the room.",
       },
       {
         type: "p",
@@ -545,11 +545,11 @@ export const entertainmentPosts: JournalPost[] = [
     faqs: [
       {
         q: "What is a good desi night out in NYC in 2026?",
-        a: "The best options include Laughing Lassi (South Asian stand-up showcase), Garam Masala Dating (live comedy dating show at Top Secret Comedy Club), and South Asian cultural events that have become more specific and plentiful. For actually meeting people, events with structure — comedy shows, hosted mixers — work better than clubs.",
+        a: "The best options include Laughing Lassi (South Asian stand-up showcase), Garam Masala Dating (live comedy dating show at Top Secret Comedy Club), and South Asian cultural events that have become more specific and plentiful. For actually meeting people, events with structure, comedy shows, hosted mixers, work better than clubs.",
       },
       {
         q: "Are Bollywood nights worth going to?",
-        a: "For dancing, yes. For meeting people, typically no. Clubs are loud by design and do not create conditions for real conversation. Events with shared experiences — comedy shows, live performances, structured mixers — are significantly better for making connections.",
+        a: "For dancing, yes. For meeting people, typically no. Clubs are loud by design and do not create conditions for real conversation. Events with shared experiences, comedy shows, live performances, structured mixers, are significantly better for making connections.",
       },
       {
         q: "What makes Garam Masala Dating different from a South Asian singles mixer?",
@@ -557,7 +557,7 @@ export const entertainmentPosts: JournalPost[] = [
       },
       {
         q: "Is Garam Masala Dating a good date idea?",
-        a: "Yes — many couples come to watch rather than participate. The show is entertaining regardless of your relationship status. It is also a genuinely unusual date — not a dinner or a movie, something you will actually remember and talk about.",
+        a: "Yes, many couples come to watch rather than participate. The show is entertaining regardless of your relationship status. It is also a genuinely unusual date, not a dinner or a movie, something you will actually remember and talk about.",
       },
       {
         q: "How can I meet South Asian singles in NYC beyond apps?",

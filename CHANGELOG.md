@@ -1,5 +1,17 @@
 # Changelog
 
+## refactor(shows): merge duplicate .ticket-label CSS rules (2026-04-10)
+
+### What changed
+
+- `src/components/home/HomeShows.astro`: Removed orphaned `.ticket-label { transition: ... }` block that floated above the primary `.ticket-label` declaration. Merged its `transition` properties into the primary rule so all `.ticket-label` base styles live in a single block.
+
+### Files affected
+
+- `src/components/home/HomeShows.astro`
+
+---
+
 ## fix: arranged-marriage data corrections + HomeShows close guard (2026-04-10)
 
 ### What changed

@@ -454,3 +454,103 @@
 - **Status:** Fixed (2026-03-31)
 - **What happened:** 168 inline `style={{}}` objects across 5 files instead of CSS modules.
 - **Fix:** Migrated all 5 files to CSS modules. Created colocated `.module.css` files. Replaced JS hover state management (`useState` + `onMouseEnter`/`onMouseLeave`) with CSS `:hover` pseudo-classes. Moved inline `<style>` keyframes into CSS modules.
+
+---
+
+# From PR #12 — Site Rewrite
+
+## cityMode captures no city on tickets page
+
+- **File:** `src/pages/tickets.astro:233`
+- **Source:** CodeRabbit PR #12
+- **Status:** Fixed — removed `cityMode={true}` from the "Request Your City" LeadCaptureModal since the trigger has no `data-open-modal-city`. Lead is still captured with `source="tickets-city-request"`.
+- **Comment:** The "Request Your City" modal used `cityMode={true}` but the trigger button had no `data-open-modal-city` attribute, so the hidden city input was never populated. Users submitted the form thinking their city was sent, but no city data was ever captured.
+- **Link:** https://github.com/hellosurbhi/garam-website/pull/12#discussion_r3061086482
+
+## identifyLead() called with Instagram handle corrupts PostHog identity
+
+- **File:** `src/components/apply/useApplyForm.ts:320`
+- **Source:** CodeRabbit PR #12
+- **Status:** Open
+- **Comment:** `identifyLead(igHandle, {...})` passes the Instagram handle as the distinct ID in PostHog, which also sets it as the `email` field internally. This corrupts downstream identity data in PostHog. Either remove the `identifyLead` call from the apply flow or create a separate helper that sets `distinct_id` without populating `email`.
+- **Link:** https://github.com/hellosurbhi/garam-website/pull/12#discussion_r3054383967
+
+## Phone update API: non-2xx responses show false success
+
+- **File:** `src/components/LeadCaptureModal.astro:344`
+- **Source:** CodeRabbit PR #12
+- **Status:** Open
+- **Comment:** The phone submit handler calls `fetch("/api/update-lead")` but never checks `res.ok`. A 400 or 500 response falls through to `trackLeadEvent` and `showStep("success")`, so the modal confirms a phone save that never happened.
+- **Link:** https://github.com/hellosurbhi/garam-website/pull/12#discussion_r3054383980
+
+## Unauthenticated Firestore writes on capture-lead
+
+- **File:** `src/pages/api/capture-lead.ts:85`
+- **Source:** CodeRabbit PR #12
+- **Status:** Open
+- **Comment:** The route accepts unauthenticated public input with no rate limiting or CAPTCHA, forwarding directly to a writable `leads` collection. Vulnerable to scripted spam and cost amplification.
+- **Link:** https://github.com/hellosurbhi/garam-website/pull/12#discussion_r3054383999
+
+## No timeout on Firestore API request in capture-lead
+
+- **File:** `src/pages/api/capture-lead.ts:85`
+- **Source:** CodeRabbit PR #12
+- **Status:** Open
+- **Comment:** The outbound POST to Firestore REST API has no timeout, which can stall request handling during upstream latency incidents. A bounded timeout with controlled 5xx response is needed.
+- **Link:** https://github.com/hellosurbhi/garam-website/pull/12#discussion_r3054384003
+
+## Raw Firestore error text returned to clients
+
+- **File:** `src/pages/api/capture-lead.ts:92`
+- **Source:** CodeRabbit PR #12
+- **Status:** Open
+- **Comment:** `detail: errText` in error responses can leak internal Firestore/rules context. Should return a generic client error and log detailed text server-side only.
+- **Link:** https://github.com/hellosurbhi/garam-website/pull/12#discussion_r3054384008
+
+## update-lead allows phone overwrite without ownership proof
+
+- **File:** `src/pages/api/update-lead.ts:50`
+- **Source:** CodeRabbit PR #12
+- **Status:** Open
+- **Comment:** The route trusts a caller-supplied `id` with no ownership verification. Anyone who obtains a lead document ID can overwrite its phone number. Should require a signed update token tied to the original email capture session.
+- **Link:** https://github.com/hellosurbhi/garam-website/pull/12#discussion_r3054384013
+
+## Door time calculation can produce timestamp after show start time
+
+- **File:** `src/utils/eventSchema.ts`
+- **Source:** CodeRabbit PR #12
+- **Status:** Open
+- **Comment:** Minute clamping logic can generate a door time later than the show start (e.g., `20:00` becomes `20:30`), resulting in an incorrect `doorTime` in JSON-LD event schema which breaks event-time correctness.
+- **Link:** https://github.com/hellosurbhi/garam-website/pull/12#discussion_r3054384028
+
+## Duplicate brand name in sponsorship page title
+
+- **File:** `src/pages/sponsorship.astro:13`
+- **Source:** CodeRabbit PR #12
+- **Status:** Open
+- **Comment:** The `TITLE` constant includes "Garam Masala Dating" and `BaseLayout` appends " | Garam Masala Dating" again, resulting in the SEO title "Sponsor Garam Masala Dating | Garam Masala Dating".
+- **Link:** https://github.com/hellosurbhi/garam-website/pull/12#discussion_r3061086478
+
+## Pre-commit hook lacks fail-fast, checks can be silently bypassed
+
+- **File:** `.husky/pre-commit:3`
+- **Source:** CodeRabbit PR #12
+- **Status:** Open
+- **Comment:** The hook runs `lint-staged`, `npm run check`, and `npm run test` without `set -e`. If `npm run check` fails but `npm run test` passes, the hook exits 0 and the commit proceeds despite type errors or lint failures.
+- **Link:** https://github.com/hellosurbhi/garam-website/pull/12#discussion_r3062105613
+
+## Blank source prop produces malformed lead attribution
+
+- **File:** `src/components/NotifyModal.astro:137`
+- **Source:** CodeRabbit PR #12
+- **Status:** Open
+- **Comment:** `dataset.source ?? "notify-modal"` keeps empty strings, so `<NotifyModal source="" />` emits sources like `-manhattan` (leading hyphen). Source should be trimmed/fallback-guarded before composing attribution strings.
+- **Link:** https://github.com/hellosurbhi/garam-website/pull/12#discussion_r3063506928
+
+## Explicit city slugs in NotifyModal not sanitized
+
+- **File:** `src/components/NotifyModal.astro:170`
+- **Source:** CodeRabbit PR #12
+- **Status:** Open
+- **Comment:** Only the fallback path runs through `toCitySlug()`. If a trigger carries `data-notify-city-slug="New York "` (trailing space or non-canonical value), the unsanitized value is stored and tracked.
+- **Link:** https://github.com/hellosurbhi/garam-website/pull/12#discussion_r3063506949

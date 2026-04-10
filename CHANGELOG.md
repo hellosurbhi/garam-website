@@ -1,5 +1,41 @@
 # Changelog
 
+## fix(tickets): remove cityMode from generic city-request modal (2026-04-10)
+
+### What changed
+
+Removed `cityMode={true}` from the "Request Your City" `LeadCaptureModal` on the tickets page. The trigger button had no `data-open-modal-city` attribute, so the hidden city input was never populated and city data was silently dropped from every lead captured through this flow.
+
+### Files affected
+
+- `src/pages/tickets.astro`
+
+### Why
+
+The modal was telling users "Tell us where you are" but never recording a city. The fix removes `cityMode` so the form works as a standard email lead capture with `source="tickets-city-request"` for attribution. Identified via CodeRabbit PR #12 review.
+
+---
+
+## triage: CodeRabbit PR #12 review resolved (2026-04-10)
+
+### What changed
+
+Triaged all 36 open CodeRabbit review threads on PR #12 (site rewrite). Replied to and resolved every thread.
+
+### Files affected
+
+- `BUGS.md` (11 new entries logged under "From PR #12 — Site Rewrite")
+- `ENHANCEMENTS.md` (22 new entries logged under "From PR #12 — Site Rewrite")
+
+### Summary
+
+- 1 fix applied immediately (cityMode city capture bug)
+- 11 tracked as bugs in BUGS.md (analytics corruption, security improvements, SEO regressions, quality gate)
+- 22 tracked as enhancements in ENHANCEMENTS.md (a11y, copy-in-data, token usage, touch targets, etc.)
+- 1 dismissed (intentional branding choice)
+
+---
+
 ## analytics(tickets-notify): attribute lead source per city, document geo behavior (2026-04-10)
 
 ### What changed

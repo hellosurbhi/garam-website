@@ -18,7 +18,7 @@ const { events } = Astro.props;
       40+ shows sold out · 2,000+ audience members · 13 couples matched
     </p>
   </div>
-  <div class="shows-list">
+  <div class="shows-list" data-reveal-stagger>
     {
       events.map((event) => {
         const isLive = Boolean(event.url);

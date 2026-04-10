@@ -449,6 +449,20 @@ const speakableJsonLd = JSON.stringify({
 
   if ("IntersectionObserver" in window && !prefersReducedMotion) {
     document.documentElement.classList.add("js-reveal");
+
+    // Stagger pre-pass: any parent with [data-reveal-stagger] cascades its
+    // [data-reveal] children 60ms apart so the group reveals like a wave
+    // instead of snapping in together.
+    const STAGGER_STEP_MS = 60;
+    document
+      .querySelectorAll<HTMLElement>("[data-reveal-stagger]")
+      .forEach((parent) => {
+        const children = parent.querySelectorAll<HTMLElement>("[data-reveal]");
+        children.forEach((child, i) => {
+          child.style.transitionDelay = `${i * STAGGER_STEP_MS}ms`;
+        });
+      });
+
     const revealNodes = document.querySelectorAll("[data-reveal]");
     const observer = new IntersectionObserver(
       (entries) => {

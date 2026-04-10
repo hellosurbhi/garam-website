@@ -1,5 +1,18 @@
 # Changelog
 
+## fix(modal): focus email input on open, remove red ring on X button (2026-04-10)
+
+### What changed
+
+When the LeadCaptureModal opened, the X close button received focus and displayed a red focus ring. Two things combined to cause it: (1) Chrome routes `showModal()` auto-focus to the first focusable child (the close button) before the explicit `dialog.focus()` call runs, and (2) the global `:focus-visible { outline: 2px solid var(--brand-red); }` in `index.css` then paints it red.
+
+**Fix:** In `LeadCaptureModal.astro`, after `showModal()`, focus the email input directly instead of the dialog element. This means the close button never receives focus on open, and keyboard users get immediate access to the email field — better UX.
+
+**Files changed:**
+
+- `src/components/LeadCaptureModal.astro` — `dialog.focus()` → `dialog.querySelector("[data-lc-email]")?.focus()`
+- `src/components/ui/Modal.astro` — updated JSDoc and script comment to reflect correct focus pattern
+
 ## fix: apply page footer flash on load (2026-04-10)
 
 ### What changed

@@ -403,7 +403,9 @@ const {
       }
 
       dialog.showModal();
-      dialog.focus(); // focus container, not close button — prevents focus ring on open
+      (
+        dialog.querySelector<HTMLInputElement>("[data-lc-email]") ?? dialog
+      ).focus();
     };
     el.addEventListener("click", open);
     el.addEventListener("keydown", (e) => {

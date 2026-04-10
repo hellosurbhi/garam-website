@@ -12,7 +12,7 @@
  * Open from JS:
  *   const dialog = document.getElementById('my-modal') as HTMLDialogElement;
  *   dialog.showModal();
- *   dialog.focus(); // ← always call this after showModal() to suppress child auto-focus
+ *   firstFocusableEl.focus(); // focus first meaningful el (e.g. input), not dialog — prevents close btn focus on open
  */
 interface Props {
   id: string;
@@ -143,8 +143,7 @@ const titleId = `${id}-title`;
 
 <script>
   // Wire up all base-modal instances: close button + backdrop click + escape.
-  // After calling showModal() externally, always call dialog.focus() to prevent
-  // the close button from receiving auto-focus.
+  // After showModal(), focus a meaningful element (e.g. an input) to prevent close btn focus ring on open.
   document
     .querySelectorAll<HTMLDialogElement>(".base-modal")
     .forEach((dialog) => {

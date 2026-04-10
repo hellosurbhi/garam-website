@@ -15,8 +15,10 @@ import { HOME_FAQS as faqs } from "@/data/copy";
               <span class="faq-toggle">+</span>
             </summary>
             <div class="faq-answer">
-              <p class="faq-answer-summary" set:html={faq.short} />
-              <p class="faq-answer-detail" set:html={faq.long} />
+              <div class="faq-answer-inner">
+                <p class="faq-answer-summary" set:html={faq.short} />
+                <p class="faq-answer-detail" set:html={faq.long} />
+              </div>
             </div>
           </details>
         ))
@@ -48,40 +50,22 @@ import { HOME_FAQS as faqs } from "@/data/copy";
     "(prefers-reduced-motion: reduce)",
   ).matches;
 
-  // Smooth expand/collapse via height transition. We intercept the summary
-  // click, manage the open attribute ourselves, and animate height between
-  // 0 and scrollHeight. Native <details> remains the fallback for no-JS
-  // and reduced-motion users.
-  const animateOpen = (item: HTMLDetailsElement, answer: HTMLElement): void => {
-    item.open = true;
-    const target = answer.scrollHeight;
-    answer.style.height = "0px";
-    // Force a layout flush so the 0px start value is committed before
-    // we set the target — otherwise the browser coalesces both writes
-    // and the transition never fires.
-    void answer.offsetHeight;
-    answer.style.height = target + "px";
-    answer.addEventListener(
-      "transitionend",
-      () => {
-        answer.style.height = "";
-      },
-      { once: true },
-    );
-  };
+  // Smooth expand/collapse via grid-template-rows transition.
+  // Opening: set item.open = true → CSS handles 0fr → 1fr automatically.
+  // Closing: add .is-closing to trigger the 1fr → 0fr transition, then
+  //   remove open once transitionend fires. No forced layout flush needed.
+  // Native <details> remains the fallback for no-JS and reduced-motion users.
 
-  const animateClose = (
+  const closeAnimated = (
     item: HTMLDetailsElement,
     answer: HTMLElement,
   ): void => {
-    answer.style.height = answer.scrollHeight + "px";
-    void answer.offsetHeight;
-    answer.style.height = "0px";
+    answer.classList.add("is-closing");
     answer.addEventListener(
       "transitionend",
       () => {
+        answer.classList.remove("is-closing");
         item.open = false;
-        answer.style.height = "";
       },
       { once: true },
     );
@@ -95,9 +79,9 @@ import { HOME_FAQS as faqs } from "@/data/copy";
       summary.addEventListener("click", (e) => {
         e.preventDefault();
         if (item.open) {
-          animateClose(item, answer);
+          closeAnimated(item, answer);
         } else {
-          animateOpen(item, answer);
+          item.open = true;
         }
       });
     }
@@ -118,7 +102,7 @@ import { HOME_FAQS as faqs } from "@/data/copy";
               const otherAnswer =
                 other.querySelector<HTMLElement>(".faq-answer");
               if (otherAnswer && !prefersReducedMotion) {
-                animateClose(other, otherAnswer);
+                closeAnimated(other, otherAnswer);
               } else {
                 other.open = false;
               }
@@ -202,9 +186,21 @@ import { HOME_FAQS as faqs } from "@/data/copy";
   .faq-item[open] .faq-toggle {
     transform: rotate(45deg);
   }
+  /* grid-template-rows transition is compositor-friendly — no layout thrash.
+     Opening: [open] selector applies 1fr automatically via CSS.
+     Closing: JS adds .is-closing which takes precedence over [open],
+     pulling rows back to 0fr, then removes open after transitionend. */
   .faq-answer {
+    display: grid;
+    grid-template-rows: 0fr;
+    transition: grid-template-rows 0.3s cubic-bezier(0.22, 1, 0.36, 1);
+  }
+  .faq-item[open] .faq-answer:not(.is-closing) {
+    grid-template-rows: 1fr;
+  }
+  .faq-answer-inner {
+    min-height: 0;
     overflow: hidden;
-    transition: height 0.3s cubic-bezier(0.22, 1, 0.36, 1);
   }
   @media (prefers-reduced-motion: reduce) {
     .faq-answer {

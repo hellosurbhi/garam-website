@@ -1,5 +1,37 @@
 # Changelog
 
+## perf(animate): replace layout-property animations with compositor-friendly transitions (2026-04-10)
+
+### What changed
+
+Addressed five impeccable / performance audit findings:
+
+- **HomeFAQ** (`src/components/home/HomeFAQ.astro`): Replaced `transition: height` with the `grid-template-rows: 0fr → 1fr` pattern. This eliminates forced layout flushes (`scrollHeight` reads + inline `height` writes) on every open/close. Added `<div class="faq-answer-inner">` wrapper with `min-height: 0; overflow: hidden` as required by the grid-collapse technique. Simplified the JS from two animation functions (`animateOpen` / `animateClose`) to a single `closeAnimated()` that uses an `.is-closing` class toggle and `transitionend` — no more manual layout measurements.
+
+- **PageNav** (`src/components/layout/PageNav.astro`): Removed `transition: padding 0.4s` (a layout property that triggers reflow on every scroll-threshold crossing). Replaced with `transition: border-bottom-color 0.3s ease-out`, which is compositor-friendly. The 4px padding snap on scroll is imperceptible; the border-color now serves as the visual scroll-depth indicator.
+
+- **HomeHero** (`src/components/home/HomeHero.astro`): Replaced `cubic-bezier(0.34, 1.56, 0.64, 1)` (overshoot bounce) on the `.hero-eyebrow` pop entrance with `cubic-bezier(0.22, 1, 0.36, 1)` (ease-out-quint). The eyebrow now decelerates smoothly rather than springing past 1.0 scale.
+
+- **HomePhotos** (`src/components/home/HomePhotos.astro`): Replaced `cubic-bezier(0.34, 1.3, 0.64, 1)` on photo hover with `cubic-bezier(0.22, 1, 0.36, 1)`.
+
+- **HomeMarquee** (`src/components/home/HomeMarquee.astro`): Added `transform: none !important` to the `prefers-reduced-motion` override. Without it, the global `animation-duration: 0.01ms !important` rule caused the marquee to snap instantly to `translateX(-50%)`, making the text invisible. The override ensures the text is always visible, just static.
+
+### Files affected
+
+- `src/components/home/HomeFAQ.astro`
+- `src/components/layout/PageNav.astro`
+- `src/components/home/HomeHero.astro`
+- `src/components/home/HomePhotos.astro`
+- `src/components/home/HomeMarquee.astro`
+
+### Decisions / trade-offs
+
+- The `grid-template-rows` collapse pattern requires a single child element with `min-height: 0`. The added `faq-answer-inner` wrapper is minimal and scoped to this component.
+- Padding snapping vs. transitioning: the layout cost of `transition: padding` is real on scroll, but since it only fires at the `scrollY > 10` threshold (not every frame), it was low-priority. The border-color approach achieves a better visual signal (clear scrolled-state indicator) at zero layout cost.
+- Bounce easings: both flagged instances were subtle (1.3 and 1.56 overshoot) and arguably intentional design choices, but the impeccable standard is clear: real objects decelerate smoothly. Ease-out-quint preserves the snap of the pop animation while removing the artificial spring.
+
+---
+
 ## refactor(shows): merge duplicate .ticket-label CSS rules (2026-04-10)
 
 ### What changed

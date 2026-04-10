@@ -1,5 +1,20 @@
 # Changelog
 
+## design-review: fix FAQ link styling and CSP Twitter pixels (2026-04-09)
+
+### What changed
+
+Design audit of garammasaladating.com found 8 issues, fixed 2.
+
+**Fixed:**
+
+- FAQ answer links ("casting form", "buy a ticket", etc.) rendered as default browser blue instead of brand-red. Root cause: Astro scoped styles don't reach `<a>` tags injected via `set:html`. Fix: use `:global(a)` in both `HomeFAQ.astro` and `faq.astro`.
+- Twitter/X analytics tracking pixels blocked by Content-Security-Policy. The `img-src` directive was missing `https://t.co` and `https://analytics.twitter.com` — added both.
+
+**Files affected:** `src/components/home/HomeFAQ.astro`, `src/pages/faq.astro`, `vercel.json`
+
+**Design score:** B | **AI Slop score:** A | Full report: `.gstack/design-reports/design-audit-garammasaladating-2026-04-09.md`
+
 ## refactor: unified modal architecture with shared CSS tokens (2026-04-09)
 
 ### What changed

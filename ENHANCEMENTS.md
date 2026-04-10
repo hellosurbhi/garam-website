@@ -75,6 +75,143 @@ Eventbrite supports a [conversion tracking pixel](https://www.eventbrite.com/sup
 
 ---
 
+## Lead Attribution Follow-ups (2026-04-10)
+
+Surfaced while fixing the `tickets-notify` source-per-city attribution. Both items were deliberately deferred out of that change because their blast radius is larger than the one-file fix deserved. Execute these in their own atomic PRs.
+
+### Geo fetch race condition in `bootstrapGeoData()`
+
+**Priority:** Medium
+**Status:** Needs implementation
+
+`src/lib/leadAttribution.ts` (around lines 75 to 92) fires `fetch("/api/geo")` as a fire-and-forget call from `bootstrapGeoData()`, which is invoked by `bootstrapLeadAttribution()` on page load via `BaseLayout.astro` (around line 116 in the body-tail script). The response populates `sessionStorage` keys `gmd-geo-city`, `gmd-geo-region`, `gmd-geo-country`, `gmd-geo-latitude`, `gmd-geo-longitude`, `gmd-geo-timezone`, gated by `gmd-geo-fetched`. `buildLeadAttribution()` reads those keys synchronously (around lines 147 to 164) and silently omits any that are missing.
+
+**The bug:** a user who submits any lead form (Spice List on any page, tickets-notify modal on `/tickets`, apply page) within roughly 100 to 200 milliseconds of page load can win the race and write a Firestore lead before the geo response lands. Those leads end up with no `geoCity`, `geoRegion`, `geoCountry`, `geoLatitude`, `geoLongitude`, or `geoTimezone` fields even in production, which silently corrupts any funnel or attribution that depends on geo.
+
+**Fix:** track the in-flight fetch promise at module scope and let `buildLeadAttribution` await it. This makes `buildLeadAttribution` async, which ripples through the callers listed below.
+
+**Implementation steps:**
+
+1. In `src/lib/leadAttribution.ts`, add a module-level `let geoFetchPromise: Promise<void> | null = null;`.
+2. Rewrite `bootstrapGeoData()` to populate `geoFetchPromise` the first time it is called and return early on subsequent calls. Set it back to `null` only on error so a retry is possible.
+
+   ```ts
+   let geoFetchPromise: Promise<void> | null = null;
+
+   function bootstrapGeoData() {
+     if (sessionStorage.getItem(GEO_FETCHED_KEY)) return;
+     if (geoFetchPromise) return;
+
+     geoFetchPromise = fetch("/api/geo")
+       .then((res) => (res.ok ? (res.json() as Promise<GeoResponse>) : null))
+       .then((geo) => {
+         if (!geo) return;
+         if (geo.city) sessionStorage.setItem(GEO_CITY_KEY, geo.city);
+         if (geo.region) sessionStorage.setItem(GEO_REGION_KEY, geo.region);
+         if (geo.country) sessionStorage.setItem(GEO_COUNTRY_KEY, geo.country);
+         if (geo.latitude)
+           sessionStorage.setItem(GEO_LATITUDE_KEY, geo.latitude);
+         if (geo.longitude)
+           sessionStorage.setItem(GEO_LONGITUDE_KEY, geo.longitude);
+         if (geo.timezone)
+           sessionStorage.setItem(GEO_TIMEZONE_KEY, geo.timezone);
+         sessionStorage.setItem(GEO_FETCHED_KEY, "1");
+       })
+       .catch((err) => {
+         console.error(err);
+         geoFetchPromise = null; // allow a retry next time
+       });
+   }
+   ```
+
+3. Change `buildLeadAttribution` to `async` and await `geoFetchPromise` before reading the geo session-storage keys, capped by a timeout so a slow `/api/geo` never blocks lead writes forever:
+
+   ```ts
+   export async function buildLeadAttribution(params: {
+     source: string;
+     sourceCitySlug?: string;
+   }): Promise<LeadAttribution> {
+     bootstrapLeadAttribution();
+     if (geoFetchPromise) {
+       await Promise.race([
+         geoFetchPromise,
+         new Promise<void>((resolve) => setTimeout(resolve, 1500)),
+       ]);
+     }
+     // rest unchanged
+   }
+   ```
+
+4. Update all callers to `await` the new async function. As of 2026-04-10 these are:
+   - `src/components/home/HomeSignup.astro`: email and phone submit handlers. Both are already inside `async` submit callbacks, so add `await`.
+   - `src/components/NotifyModal.astro`: email and phone submit handlers. Both already `async`, add `await`.
+   - `src/components/ApplyPage.tsx`: search for `buildLeadAttribution(` in this file, wrap in `await`, and mark the containing React submit handler `async` if it is not already.
+   - Anywhere else `grep -rn "buildLeadAttribution(" src/` finds a caller.
+5. Update `src/lib/leadAttribution.test.ts`. The existing suite tests a synchronous `buildLeadAttribution`. Convert the relevant assertions to `await buildLeadAttribution(...)` and add one new test that mocks a slow `/api/geo` via `global.fetch = vi.fn().mockImplementation(() => new Promise((resolve) => setTimeout(() => resolve({ ok: true, json: () => Promise.resolve({ city: "NYC" }) }), 50)))` and asserts the awaited call returns `geoCity: "NYC"` instead of `undefined`. Add one more test asserting the 1500 ms timeout cap by making the mock never resolve and asserting the call still returns with geo fields absent rather than hanging.
+6. Verification: run `npm run test`. Hit `/tickets` in a production-like preview deploy, submit a notify lead immediately after page load, confirm the Firestore doc includes all six `geo*` fields.
+
+**Files to touch:**
+
+- `src/lib/leadAttribution.ts`: module-level promise, async `buildLeadAttribution`, `Promise.race` timeout.
+- `src/lib/leadAttribution.test.ts`: convert to async, add two new tests.
+- `src/components/home/HomeSignup.astro`: `await` both submit handlers.
+- `src/components/NotifyModal.astro`: `await` both submit handlers.
+- `src/components/ApplyPage.tsx`: `await` wherever `buildLeadAttribution` is called.
+
+### Dev-mode fallback for `/api/geo`
+
+**Priority:** Low
+**Status:** Needs implementation
+
+`src/pages/api/geo.ts` reads Vercel's `x-vercel-ip-*` headers, which do not exist on the local Astro dev server. As a result every localhost test of any lead form writes a Firestore doc with zero `geo*` fields, which makes it impossible to verify the geo plumbing end-to-end in dev and causes repeated confusion ("why is my lead doc missing metadata?"). This was the exact cause of the 2026-04-10 tickets-notify question.
+
+**Fix:** when running under `import.meta.env.DEV`, fall back to a static mock (or a public IP geolocation service) so the dev experience matches production.
+
+**Implementation steps:**
+
+1. In `src/pages/api/geo.ts`, after the header reads, detect the all-undefined case and check `import.meta.env.DEV`.
+2. When both conditions hold, pick one of:
+   - **Option A, preferred, no network dependency:** return a hardcoded static mock that mirrors the shape Vercel would return. Keeps the dev experience offline-friendly.
+
+     ```ts
+     const allEmpty = Object.values(geo).every((v) => !v);
+     if (allEmpty && import.meta.env.DEV) {
+       return new Response(
+         JSON.stringify({
+           city: "New York",
+           region: "NY",
+           country: "US",
+           latitude: "40.7128",
+           longitude: "-74.0060",
+           timezone: "America/New_York",
+         }),
+         {
+           status: 200,
+           headers: {
+             "Content-Type": "application/json",
+             "Cache-Control": "no-store",
+           },
+         },
+       );
+     }
+     ```
+
+   - **Option B, live data, needs network:** call `https://ipapi.co/json/` from the server, map the response fields to the existing shape, and return that. Free tier is rate-limited to 1000 per day, fine for dev. Add a fetch timeout so it does not hang the dev server if ipapi is down.
+
+3. Make sure the fallback is only active when `import.meta.env.DEV` is true, so production never accidentally reads a mock. Add a unit test, or at least a manual smoke step, that asserts the production path still returns the Vercel headers unchanged.
+4. Verification: `npm run dev`, open any page, submit a lead form, confirm the resulting Firestore doc now contains `geoCity: "New York"`, etc.
+
+**Files to touch:**
+
+- `src/pages/api/geo.ts`: add the DEV fallback branch.
+
+**Trade-offs:**
+
+- Option A is simpler and deterministic but always returns the same fake NYC values in dev, which can mask bugs where attribution uses the wrong field.
+- Option B is more realistic but adds a network dependency and rate limit. Pick A unless you specifically need real geo in dev.
+
+---
+
 ## Critical (Needs Content Assets)
 
 ### Add video section on homepage
@@ -634,3 +771,372 @@ Items flagged during the 2026-04-08 cleanup audit. Not confirmed dead — may ha
 - **Source:** CodeRabbit PR #13
 - **Comment:** `searchCities()` is called at line 287, before the `try` block starts at line 296. If the fetch fails, the promise rejects unhandled and the modal error UI never shows.
 - **Link:** https://github.com/hellosurbhi/garam-website/pull/13#discussion_r3056485597
+
+# Enhancements
+
+Future improvements that are logged but not currently prioritized.
+
+---
+
+## Prefetch/preload key pages + skeleton loaders to eliminate CLS
+
+**Priority:** High  
+**Logged:** 2026-04-07
+
+### Problem
+
+The Apply and Get Tickets pages take noticeable time to load on first navigation. There is no skeleton or placeholder UI, so the page jumps from blank → content (CLS). These are the two highest-traffic destinations from the homepage nav.
+
+### What to do
+
+**1. Prefetch Apply and Tickets on homepage load**
+
+Add `<link rel="prefetch">` tags in `BaseLayout.astro` (or the homepage `index.astro`) so the browser fetches those pages in the background while the user is on the homepage:
+
+```html
+<link rel="prefetch" href="/apply" /> <link rel="prefetch" href="/tickets" />
+```
+
+For Astro pages, `prefetch` is enough — no JS chunk prefetching needed since both pages are SSG.
+
+Alternatively, use Astro's built-in prefetch:
+
+- Enable `prefetch: true` in `astro.config.mjs`
+- Add `data-astro-prefetch` to the nav links in `HomeNav.astro` and `PageNav.astro`
+
+**2. Skeleton loaders on Apply page**
+
+The Apply page hydrates a React island (`ApplyPage.tsx`) — there's a gap between HTML arriving and the form being interactive. Add a CSS skeleton that matches the form layout:
+
+- Show the skeleton in the static Astro shell (`apply.astro`) until React hydrates
+- Use `client:visible` or `client:idle` directive instead of `client:load` to defer hydration if above-the-fold content doesn't need it immediately
+- Skeleton should reserve the exact height of the form to prevent CLS
+
+**3. Skeleton on Tickets page**
+
+Similar to Apply — if any dynamic content loads after HTML, add a skeleton placeholder that reserves layout space.
+
+### Files to touch
+
+- `src/layouts/BaseLayout.astro` — add prefetch link tags
+- `src/components/home/HomeNav.astro` and `src/components/layout/PageNav.astro` — add `data-astro-prefetch` to Apply and Tickets links
+- `src/pages/apply.astro` — add skeleton shell / adjust client directive
+- `src/pages/tickets.astro` — add skeleton shell if needed
+- `astro.config.mjs` — enable prefetch integration
+
+### Notes
+
+- Do NOT add `rel="preload"` (that's for critical resources on the current page). Use `rel="prefetch"` (background, lower priority).
+- Test that prefetch doesn't increase LCP on the homepage (it should be fine since prefetch is low-priority).
+- The goal is zero visible layout shift when navigating to Apply or Tickets from any page.
+
+---
+
+## Full-site CLS audit
+
+**Priority:** Medium  
+**Logged:** 2026-04-07
+
+Audit of all Cumulative Layout Shift sources across the site. 13 instances identified.
+
+### HIGH — Fix these first (user-visible, happens in primary flows)
+
+| 1 | `src/pages/apply.astro` + `ApplyPage.tsx` | React island hydrates after static HTML → form renders below a blank stub | Add height-reserving CSS skeleton in `apply.astro` Astro shell; switch to `client:visible` |
+| 2 | `src/components/admin/ApplicantModal.tsx` | Error message inserted above form fields when validation fires → shifts fields down | Reserve space with `min-height` on the error container; always render it (empty), toggle visibility only |
+| 3 | `src/pages/apply.astro` (photo upload) | Photo thumbnail appears after upload → section height changes | Pre-reserve thumbnail slot with a fixed-size placeholder div before upload completes |
+| 4 | `src/pages/apply.astro` (nomination section) | Nomination fields revealed via `data-reveal` / `hidden` toggle → content below shifts | Use `max-height` / `overflow: hidden` transition instead of `hidden` attribute; reserve max possible height |
+| 5 | `src/hooks/useGeoData.ts` → apply form geo dropdowns | State dropdown populates after country selected → city dropdown appears after state → double CLS cascade | Render all three dropdowns always (empty/disabled state); never insert new DOM nodes on selection |
+| 6 | Apply page terms modal | `document.body` scroll-lock (`overflow: hidden`) removes scrollbar → body shifts right | Add `padding-right: var(--scrollbar-width)` to body when locking; measure with `window.innerWidth - document.documentElement.clientWidth` |
+| 7 | Any `<dialog>` open (NotifyModal, RequestCity, etc.) | Same scroll-lock issue as above | Same fix — apply scrollbar-width compensation on `dialog.showModal()` |
+
+### MEDIUM — Address in next polish pass
+
+| 8 | `src/components/admin/AdminDashboard.tsx` | "Deleted" toggle reveals replacement text → row height changes | Reserve row height; use `opacity`/`pointer-events` toggle instead of content replacement |
+| 9 | `src/components/admin/AdminDashboard.tsx` | Loading spinner replaced by content on fetch complete → height jump | Render skeleton rows with fixed heights matching content rows |
+| 10 | `src/pages/contestant-prep.astro` | Gender-reveal section animates in via JS → pushes content below | Pre-reserve section height; use transform/opacity animation only (no height change) |
+| 11 | Any admin modal | Same scroll-lock body-shift as item 6 | Same scrollbar-width fix |
+
+### LOW — Nice to have
+
+| 12 | `src/layouts/BaseLayout.astro` skip-link | Skip-link rendered `position: absolute` shifts to `fixed` on focus → minor repaint | Use `position: fixed` always with negative `top` offset; transition `top` on focus |
+| 13 | `src/components/home/HomeShows.astro` + `HomeStats.astro` etc. | `data-reveal` adds `.revealed` class via IntersectionObserver → opacity + translateY transition | Already progressive-enhancement (only active if JS+IntersectionObserver available) but translateY can cause subpixel repaints on some browsers; switch to `will-change: transform` on observed elements |
+
+### Already fixed in this branch
+
+- Email form step transitions (HomeSignup, popup, NotifyModal, city notify) — wrapped in `min-height` containers (220–260px) so step 1→2 swap never shifts content below.
+
+---
+
+add A press page with design packet and photos and stuff for the press inquiry
+
+## Later Later
+
+Low-priority ideas that only make sense at significant scale. Revisit when the product warrants it.
+
+### International phone input with country selector
+
+**Logged:** 2026-04-08
+
+Right now we accept any phone number and auto-format US numbers to E.164 (`+1XXXXXXXXXX`). International numbers are stored as-is with basic digit cleanup. This works fine at current scale.
+
+When we start actually texting international numbers (via Twilio/MessageBird/etc.), add a proper country-code dropdown + phone input that validates per-country format. Packages like `react-phone-number-input` or `intl-tel-input` handle this well — country flag dropdown, auto-formatting, per-country length validation.
+
+**Why not now:**
+
+- We don't have an international texting service yet
+- No confirmed international show dates
+- The npm package adds bundle weight to every page with a phone field
+- Current approach (accept anything, clean up later) is good enough for lead capture
+
+---
+
+# From PR #12 — Site Rewrite
+
+## aria-describedby + role="alert" missing on form inputs (LeadCaptureModal)
+
+- **File:** `src/components/LeadCaptureModal.astro`
+- **Source:** CodeRabbit PR #12
+- **Comment:** Inputs don't reference their error elements via `aria-describedby`, and error nodes lack `role="alert"`. Screen-reader users won't reliably get field-level validation feedback.
+- **Link:** https://github.com/hellosurbhi/garam-website/pull/12#discussion_r3054383973
+
+## SpiceListSection copy should be in src/data
+
+- **File:** `src/components/SpiceListSection.astro`
+- **Source:** CodeRabbit PR #12
+- **Comment:** Section label, CTA text, and modal copy are hardcoded in JSX. Since this component renders site-wide, copy should live in `src/data/copy.ts` to avoid drift.
+- **Link:** https://github.com/hellosurbhi/garam-website/pull/12#discussion_r3054383984
+
+## Modal without title has no accessible name
+
+- **File:** `src/components/ui/Modal.astro:34`
+- **Source:** CodeRabbit PR #12
+- **Comment:** When `title` is omitted, the dialog renders without `aria-labelledby` or `aria-label`, making it unlabeled for assistive tech. A fallback accessible label prop should be enforced.
+- **Link:** https://github.com/hellosurbhi/garam-website/pull/12#discussion_r3054383986
+
+## aria-label="Close" hardcoded in Modal.astro
+
+- **File:** `src/components/ui/Modal.astro:36`
+- **Source:** CodeRabbit PR #12
+- **Comment:** The close button aria-label is user-facing copy hardcoded in the component. Should be sourced from `src/data/copy.ts` per project content guidelines.
+- **Link:** https://github.com/hellosurbhi/garam-website/pull/12#discussion_r3054383993
+
+## Journal CTA font sizes below 16px and missing touch targets
+
+- **File:** `src/pages/journal/[slug].astro`
+- **Source:** CodeRabbit PR #12
+- **Comment:** CTA styles at line 470 set 15px inherited by CTA links (line 475), below the 16px minimum for interactive elements. Inline text links also unlikely to meet 48x48 touch-target requirement.
+- **Link:** https://github.com/hellosurbhi/garam-website/pull/12#discussion_r3054384016
+
+## Inline style={} in journal slug.astro
+
+- **File:** `src/pages/journal/[slug].astro`
+- **Source:** CodeRabbit PR #12
+- **Comment:** Lines 140 and 153 use inline `style={...}` in an Astro file. Should be moved to named CSS classes in the `<style>` block.
+- **Link:** https://github.com/hellosurbhi/garam-website/pull/12#discussion_r3054384021
+
+## CTA animation via inline style in links.astro
+
+- **File:** `src/pages/links.astro`
+- **Source:** CodeRabbit PR #12
+- **Comment:** Animation variant/delay is applied via inline `style={...}` prop. Should use a CSS class or data attribute in the scoped stylesheet instead.
+- **Link:** https://github.com/hellosurbhi/garam-website/pull/12#discussion_r3054384025
+
+## Hardcoded colors and spacing in reactSelectStyles.ts
+
+- **File:** `src/utils/reactSelectStyles.ts:123`
+- **Source:** CodeRabbit PR #12
+- **Comment:** Style maps include hardcoded literals (`#fff`, `rgba(...)`, `12px`, `100px`). Replace with CSS custom properties from `:root` to align with the design token system.
+- **Link:** https://github.com/hellosurbhi/garam-website/pull/12#discussion_r3054384030
+
+## `modalIn` keyframe name trips Stylelint in ApplicantModal.module.css
+
+- **File:** `src/components/admin/ApplicantModal.module.css:20`
+- **Source:** CodeRabbit PR #12
+- **Comment:** `modalIn` should be renamed to kebab-case (e.g., `modal-in`) to pass the repo's `keyframes-name-pattern` Stylelint rule.
+- **Link:** https://github.com/hellosurbhi/garam-website/pull/12#discussion_r3061086433
+
+## Focus ring hardcodes #fff in ApplicantModal.module.css
+
+- **File:** `src/components/admin/ApplicantModal.module.css:91`
+- **Source:** CodeRabbit PR #12
+- **Comment:** The focus ring uses hardcoded `#fff` instead of `var(--off-white)` or a dedicated modal focus token.
+- **Link:** https://github.com/hellosurbhi/garam-website/pull/12#discussion_r3061086442
+
+## Raw colors instead of tokens in TermsModal.module.css
+
+- **File:** `src/components/apply/TermsModal.module.css:16`
+- **Source:** CodeRabbit PR #12
+- **Comment:** `white` and several `rgba(...)` values are hardcoded. Most can use existing root tokens (`--off-white`, `--border`, `--hover-subtle`) or a small addition to `modal-tokens.css`.
+- **Link:** https://github.com/hellosurbhi/garam-website/pull/12#discussion_r3061086447
+
+## `modalIn` keyframe name trips Stylelint in TermsModal.module.css
+
+- **File:** `src/components/apply/TermsModal.module.css:27`
+- **Source:** CodeRabbit PR #12
+- **Comment:** Same as ApplicantModal — rename `modalIn` to kebab-case to satisfy the `keyframes-name-pattern` Stylelint rule.
+- **Link:** https://github.com/hellosurbhi/garam-website/pull/12#discussion_r3061086453
+
+## Button font sizes at 15px in TermsModal.module.css
+
+- **File:** `src/components/apply/TermsModal.module.css:133`
+- **Source:** CodeRabbit PR #12
+- **Comment:** `.agreeBtn` and `.dismissBtn` are styled at `15px`, below the repo's 16px minimum for interactive elements (iOS auto-zoom prevention).
+- **Link:** https://github.com/hellosurbhi/garam-website/pull/12#discussion_r3061086458
+
+## TermsModal.tsx agreement copy should be in src/data
+
+- **File:** `src/components/apply/TermsModal.tsx:292`
+- **Source:** CodeRabbit PR #12
+- **Comment:** Full agreement text, section titles, and button copy are hardcoded in JSX, pushing the file past the 150-line limit. Should be a structured `src/data` export to keep TermsModal as a small renderer.
+- **Link:** https://github.com/hellosurbhi/garam-website/pull/12#discussion_r3061086463
+
+## ApplyPage subtitle hardcoded
+
+- **File:** `src/components/ApplyPage.tsx:41`
+- **Source:** CodeRabbit PR #12
+- **Comment:** The "#1" marketing subtitle is hardcoded in the component. Should live in `src/data/copy.ts` to have a single source of truth.
+- **Link:** https://github.com/hellosurbhi/garam-website/pull/12#discussion_r3061086466
+
+## LeadCaptureModal fallback copy hardcoded
+
+- **File:** `src/components/LeadCaptureModal.astro:47`
+- **Source:** CodeRabbit PR #12
+- **Comment:** Default heading, subheading, and other user-facing fallback copy are inline in the component. Should be imported from `src/data/` to maintain the content/data boundary.
+- **Link:** https://github.com/hellosurbhi/garam-website/pull/12#discussion_r3061086467
+
+## Unqualified "#1" claims in city data files
+
+- **File:** `src/data/cities/international-other.ts:11`, `src/data/cities/southeast-asia.ts:9`
+- **Source:** CodeRabbit PR #12
+- **Comment:** Unqualified "#1" assertions without a verifiable qualifier/source can create advertising/legal risk. Consider adding a qualifier like "NYC's #1 live comedy dating show" or linking to a citation.
+- **Link:** https://github.com/hellosurbhi/garam-website/pull/12#discussion_r3061086468
+
+## HomeSignup in BaseLayout should be opt-in per page
+
+- **File:** `src/layouts/BaseLayout.astro:101`
+- **Source:** CodeRabbit PR #12
+- **Comment:** `HomeSignup` renders on nearly every page unless explicitly opted out, adding extra JS to static content pages. Consider moving to per-page composition rather than opt-out.
+- **Link:** https://github.com/hellosurbhi/garam-website/pull/12#discussion_r3061086474
+
+## "See live" links below 16px and missing touch targets on hosts.astro
+
+- **File:** `src/pages/hosts.astro:112`
+- **Source:** CodeRabbit PR #12
+- **Comment:** New "See ... live" CTAs render at `15px` without a reliable 48x48 hit area. Should use `inline-flex` with `var(--touch-target)` sizing and 16px text.
+- **Link:** https://github.com/hellosurbhi/garam-website/pull/12#discussion_r3061086477
+
+## City-request button text below 16px on tickets.astro
+
+- **File:** `src/pages/tickets.astro:530`
+- **Source:** CodeRabbit PR #12
+- **Comment:** The "Tell Us Where You Are" button is styled at `15px`, below the minimum for interactive elements. Bump to 16px.
+- **Link:** https://github.com/hellosurbhi/garam-website/pull/12#discussion_r3061086483
+
+## HomeStats section heading hardcoded
+
+- **File:** `src/components/home/HomeStats.astro:16`
+- **Source:** CodeRabbit PR #12
+- **Comment:** "The Numbers Don't Lie" heading is hardcoded. Should be moved to `src/data/copy.ts` per project content guidelines.
+- **Link:** https://github.com/hellosurbhi/garam-website/pull/12#discussion_r3063506915
+
+## Logo nav link tap target below 48px
+
+- **File:** `src/components/layout/PageNav.astro:9`
+- **Source:** CodeRabbit PR #12
+- **Comment:** The logo link's effective mobile hit area is ~28px tall, below the 48px minimum touch-target requirement.
+- **Link:** https://github.com/hellosurbhi/garam-website/pull/12#discussion_r3063506921
+
+---
+
+# From CodeRabbit batch 2 (2026-04-10)
+
+## link-check.yml: add workflow_dispatch trigger
+
+- **File:** `.github/workflows/link-check.yml:3-6`
+- **Source:** CodeRabbit batch 2
+- **Comment:** The workflow only runs on a schedule. Adding `workflow_dispatch` allows on-demand runs after content changes without waiting for Monday.
+- **Link:** n/a
+
+## Modal.astro: background: white → var(--off-white)
+
+- **File:** `src/components/ui/Modal.astro:68-96`
+- **Source:** CodeRabbit batch 2
+- **Comment:** `.base-modal-inner` uses `background: white` instead of `var(--off-white)`. Should follow the design token system.
+- **Link:** n/a
+
+## HomeStats.astro: color: white → token
+
+- **File:** `src/components/home/HomeStats.astro:131`
+- **Source:** CodeRabbit batch 2
+- **Comment:** Two occurrences of `color: white` in `.stats h2` and `.stat-label` should use `var(--off-white)` or a dedicated token.
+- **Link:** n/a
+
+## analytics.test.ts: add dataLayer push coverage
+
+- **File:** `src/lib/analytics.test.ts:97-180`
+- **Source:** CodeRabbit batch 2
+- **Comment:** Tests for `identifyLead` do not cover the `window.dataLayer.push` call. Add tests mocking `window.dataLayer` and asserting correct push behavior including empty/whitespace inputs.
+- **Link:** n/a
+
+## southeast-asia.ts: "desi" → "South Asian" for consistency
+
+- **File:** `src/data/cities/southeast-asia.ts`
+- **Source:** CodeRabbit batch 2
+- **Comment:** The word "desi" (lowercase) appears in many user-facing strings across the city descriptions. "South Asian" is the canonical term used elsewhere in the codebase. Update all occurrences for consistency and SEO.
+- **Link:** n/a
+
+## robots.txt: consolidate redundant Anthropic user-agent entries
+
+- **File:** `public/robots.txt:20-27`
+- **Source:** CodeRabbit batch 2
+- **Comment:** Three Anthropic crawler entries (ClaudeBot, Claude-SearchBot, anthropic-ai) may be redundant. Review Anthropic documentation and consolidate if they are the same crawler.
+- **Link:** n/a
+
+## HomeCreators.astro: extract hosts array to src/data/
+
+- **File:** `src/components/home/HomeCreators.astro:2-17`
+- **Source:** CodeRabbit batch 2
+- **Comment:** The `hosts` array is hardcoded in the component. Should be extracted to a dedicated data module and imported, per the content architecture guidelines.
+- **Link:** n/a
+
+## HomePhotos.astro: extract photos array to src/data/
+
+- **File:** `src/components/home/HomePhotos.astro:2-17`
+- **Source:** CodeRabbit batch 2
+- **Comment:** The `photos` constant is hardcoded in the component including inline `pos` styles. Move the data to `src/data/` and replace inline position styles with CSS classes.
+- **Link:** n/a
+
+## SpiceListSection.astro CSS: replace hardcoded values with tokens
+
+- **File:** `src/components/SpiceListSection.astro:34-74`
+- **Source:** CodeRabbit batch 2
+- **Comment:** Component CSS uses hardcoded values for spacing, colors, and fonts. Replace with `:root` custom properties matching existing tokens.
+- **Link:** n/a
+
+## eventSchema.ts: hoist performers array to module-level constant
+
+- **File:** `src/utils/eventSchema.ts:55-66`
+- **Source:** CodeRabbit batch 2
+- **Comment:** The `performer` array is recreated for every event call. Should be hoisted to a module-level `PERFORMERS` constant.
+- **Link:** n/a
+
+## instagram.ts: normalize handles inside instagramUrl
+
+- **File:** `src/utils/instagram.ts:2-9`
+- **Source:** CodeRabbit batch 2
+- **Comment:** `instagramUrl` trusts caller input. Should self-normalize by trimming whitespace, stripping leading "@", lowercasing, and using `encodeURIComponent` so call sites don't need to do it manually.
+- **Link:** n/a
+
+## eventDate.ts: stricter validation in parseMonth/parseDay
+
+- **File:** `src/utils/eventDate.ts:37-53`
+- **Source:** CodeRabbit batch 2
+- **Comment:** `parseMonth` and `parseDay` accept partially parsed strings (e.g., "Feb 32", "Feb 3rd"). Add strict 2-token check, MONTHS key validation, and 1-31 integer-only day validation.
+- **Link:** n/a
+
+## HomeFAQ.astro: add transitionend timeout fallback
+
+- **File:** `src/components/home/HomeFAQ.astro:55-88`
+- **Source:** CodeRabbit batch 2
+- **Comment:** `animateOpen`/`animateClose` have no setTimeout safety net. Add a short timeout (e.g., 400ms) that runs cleanup if `transitionend` never fires, cleared if the event fires first.
+- **Link:** n/a

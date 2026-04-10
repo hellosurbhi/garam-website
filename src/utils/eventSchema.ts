@@ -2,7 +2,7 @@ import type { EventEntry } from "@/data/events";
 import { nyOffset } from "@/utils/timezone";
 
 const EVENT_DESCRIPTION =
-  "NYC's live South Asian dating show where two real singles go on a blind date in front of 250 people. Hosted by comedians Surbhi and Wyatt. Singles mixer follows every show.";
+  "NYC's #1 live South Asian dating show where two real singles go on a blind date in front of 250 people. Hosted by comedians Surbhi and Wyatt. Singles mixer follows every show.";
 
 function subtractMinutes(time: string, mins: number): string {
   const [h, m] = time.split(":").map(Number);
@@ -41,10 +41,8 @@ export function buildEventSchemas(eventsList: EventEntry[]): string[] {
         eventStatus: "https://schema.org/EventScheduled",
         eventAttendanceMode: "https://schema.org/OfflineEventAttendanceMode",
         maximumAttendeeCapacity: 250,
-        performer: [
-          { "@type": "Person", name: "Surbhi" },
-          { "@type": "Person", name: "Wyatt Feegrado" },
-        ],
+        typicalAgeRange: "21-",
+        isAccessibleForFree: false,
         location: {
           "@type": "Place",
           name: venue.name,
@@ -56,6 +54,18 @@ export function buildEventSchemas(eventsList: EventEntry[]): string[] {
           name: "Garam Masala Dating",
           url: "https://garammasaladating.com",
         },
+        performer: [
+          {
+            "@type": "Person",
+            name: "Surbhi",
+            url: "https://www.instagram.com/lordmakemetaller/",
+          },
+          {
+            "@type": "Person",
+            name: "Wyatt Feegrado",
+            url: "https://www.instagram.com/wyattfeegrado/",
+          },
+        ],
         offers: {
           "@type": "Offer",
           url: e.url,

@@ -6,7 +6,7 @@ import { HOME_FAQS as faqs } from "@/data/copy";
   <div class="faq-inner">
     <div class="faq-eyebrow" data-reveal>Frequently Asked Questions</div>
     <h2 id="faq-heading" data-reveal>Everything You<br />Need to Know</h2>
-    <div class="faq-list">
+    <div class="faq-list" data-reveal-stagger>
       {
         faqs.map((faq) => (
           <details class="faq-item" data-reveal>
@@ -44,25 +44,86 @@ import { HOME_FAQS as faqs } from "@/data/copy";
 <script>
   import { trackLeadEvent } from "@/lib/analytics";
 
-  // Single-open: close siblings when one opens, track FAQ interactions
-  document.querySelectorAll(".faq-item").forEach((details) => {
-    details.addEventListener("toggle", () => {
-      if ((details as HTMLDetailsElement).open) {
+  const prefersReducedMotion = window.matchMedia(
+    "(prefers-reduced-motion: reduce)",
+  ).matches;
+
+  // Smooth expand/collapse via height transition. We intercept the summary
+  // click, manage the open attribute ourselves, and animate height between
+  // 0 and scrollHeight. Native <details> remains the fallback for no-JS
+  // and reduced-motion users.
+  const animateOpen = (item: HTMLDetailsElement, answer: HTMLElement): void => {
+    item.open = true;
+    const target = answer.scrollHeight;
+    answer.style.height = "0px";
+    // Force a layout flush so the 0px start value is committed before
+    // we set the target — otherwise the browser coalesces both writes
+    // and the transition never fires.
+    void answer.offsetHeight;
+    answer.style.height = target + "px";
+    answer.addEventListener(
+      "transitionend",
+      () => {
+        answer.style.height = "";
+      },
+      { once: true },
+    );
+  };
+
+  const animateClose = (
+    item: HTMLDetailsElement,
+    answer: HTMLElement,
+  ): void => {
+    answer.style.height = answer.scrollHeight + "px";
+    void answer.offsetHeight;
+    answer.style.height = "0px";
+    answer.addEventListener(
+      "transitionend",
+      () => {
+        item.open = false;
+        answer.style.height = "";
+      },
+      { once: true },
+    );
+  };
+
+  document.querySelectorAll<HTMLDetailsElement>(".faq-item").forEach((item) => {
+    const summary = item.querySelector<HTMLElement>(".faq-q");
+    const answer = item.querySelector<HTMLElement>(".faq-answer");
+
+    if (summary && answer && !prefersReducedMotion) {
+      summary.addEventListener("click", (e) => {
+        e.preventDefault();
+        if (item.open) {
+          animateClose(item, answer);
+        } else {
+          animateOpen(item, answer);
+        }
+      });
+    }
+
+    // Single-open + analytics: fires on both native and intercepted toggles.
+    item.addEventListener("toggle", () => {
+      if (item.open) {
         const question =
-          details
-            .querySelector(".faq-q")
-            ?.textContent?.replace(/\+$/, "")
-            .trim()
-            .slice(0, 100) ?? "";
+          summary?.textContent?.replace(/\+$/, "").trim().slice(0, 100) ?? "";
         trackLeadEvent("faq_opened", {
           question,
           page: window.location.pathname,
         });
-        document.querySelectorAll(".faq-item").forEach((other) => {
-          if (other !== details && (other as HTMLDetailsElement).open) {
-            (other as HTMLDetailsElement).open = false;
-          }
-        });
+        document
+          .querySelectorAll<HTMLDetailsElement>(".faq-item")
+          .forEach((other) => {
+            if (other !== item && other.open) {
+              const otherAnswer =
+                other.querySelector<HTMLElement>(".faq-answer");
+              if (otherAnswer && !prefersReducedMotion) {
+                animateClose(other, otherAnswer);
+              } else {
+                other.open = false;
+              }
+            }
+          });
       }
     });
   });
@@ -71,7 +132,7 @@ import { HOME_FAQS as faqs } from "@/data/copy";
 <style>
   .faq {
     padding: 56px 20px;
-    background: #fff0e2;
+    background: var(--cream-warm);
   }
   .faq-inner {
     max-width: 800px;
@@ -98,10 +159,10 @@ import { HOME_FAQS as faqs } from "@/data/copy";
     flex-direction: column;
   }
   .faq-item {
-    border-bottom: 1.5px solid #eee;
+    border-bottom: 1.5px solid var(--border-light);
   }
   .faq-item:first-child {
-    border-top: 1.5px solid #eee;
+    border-top: 1.5px solid var(--border-light);
   }
   .faq-q {
     font-family: var(--font-cormorant), serif;
@@ -143,6 +204,12 @@ import { HOME_FAQS as faqs } from "@/data/copy";
   }
   .faq-answer {
     overflow: hidden;
+    transition: height 0.3s cubic-bezier(0.22, 1, 0.36, 1);
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .faq-answer {
+      transition: none;
+    }
   }
   .faq-answer-summary {
     font-family: var(--font-cormorant), serif;
@@ -159,13 +226,13 @@ import { HOME_FAQS as faqs } from "@/data/copy";
     line-height: 1.8;
     padding-bottom: 24px;
   }
-  .faq-answer a {
+  .faq-answer :global(a) {
     color: var(--brand-red);
     text-decoration: underline;
     text-underline-offset: 2px;
     transition: color 0.2s;
   }
-  .faq-answer a:hover {
+  .faq-answer :global(a):hover {
     color: var(--brand-red-dark);
   }
 

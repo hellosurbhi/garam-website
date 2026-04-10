@@ -1,18 +1,18 @@
 ---
 const hosts = [
   {
-    name: 'Surbhi',
-    image: '/images/surbhi.webp',
-    role: 'Co-Creator & Host',
-    bio: "Surbhi is a stand-up comedian and the creative force behind Garam Masala Dating. She created the show in 2022, turning a one-off bar experiment into NYC's biggest live dating show — selling out 250-seat venues every week.",
-    credits: ['Stand-Up Comedian', 'Co-Creator', 'NYC · LA · SF'],
+    name: "Surbhi",
+    image: "/images/hosts/surbhi.webp",
+    role: "Co-Creator & Host",
+    bio: "Surbhi is a stand-up comedian and the creative force behind Garam Masala Dating. She created the show in 2022, turning a one-off bar experiment into NYC's biggest live dating show, selling out 250-seat venues every week.",
+    credits: ["Stand-Up Comedian", "Co-Creator", "NYC · LA · SF"],
   },
   {
-    name: 'Wyatt',
-    image: '/images/wyatt.avif',
-    role: 'Co-Host & Actor',
+    name: "Wyatt",
+    image: "/images/hosts/wyatt.avif",
+    role: "Co-Host & Actor",
     bio: "Wyatt Feegrado is a stand-up comedian and actor who\u2019s starred in ESPN+\u2019s Bettor Days, Hulu\u2019s Chicano Squad, and the History Channel\u2019s Holy Marvels. On Garam Masala, he\u2019s the reason no awkward silence lasts longer than two seconds.",
-    credits: ['Stand-Up Comedian', 'Actor', 'NYU Tisch', 'Co-Host'],
+    credits: ["Stand-Up Comedian", "Actor", "NYU Tisch", "Co-Host"],
   },
 ];
 ---
@@ -23,31 +23,33 @@ const hosts = [
     <p>The comedians, matchmakers, and chaos agents behind the show.</p>
   </div>
   <div class="hosts-grid">
-    {hosts.map((host) => (
-      <article class="host-card" data-reveal>
-        <img
-          src={host.image}
-          alt={host.name}
-          class="host-avatar-img"
-          width="120"
-          height="120"
-          loading="lazy"
-          decoding="async"
-        />
-        <div class="host-info">
-          <h3>
-            <a href="/hosts">{host.name}</a>
-          </h3>
-          <div class="host-role">{host.role}</div>
-          <p class="host-bio">{host.bio}</p>
-          <div class="host-credits">
-            {host.credits.map((tag) => (
-              <span class="credit-tag">{tag}</span>
-            ))}
+    {
+      hosts.map((host) => (
+        <article class="host-card" data-reveal>
+          <img
+            src={host.image}
+            alt={host.name}
+            class="host-avatar-img"
+            width="120"
+            height="120"
+            loading="lazy"
+            decoding="async"
+          />
+          <div class="host-info">
+            <h3>
+              <a href="/hosts">{host.name}</a>
+            </h3>
+            <div class="host-role">{host.role}</div>
+            <p class="host-bio">{host.bio}</p>
+            <div class="host-credits">
+              {host.credits.map((tag) => (
+                <span class="credit-tag">{tag}</span>
+              ))}
+            </div>
           </div>
-        </div>
-      </article>
-    ))}
+        </article>
+      ))
+    }
   </div>
   <div class="creators-cta" data-reveal>
     <a href="/hosts" class="creators-cta-link">Meet the Hosts →</a>
@@ -96,7 +98,9 @@ const hosts = [
     gap: 20px;
     align-items: center;
     text-align: center;
-    transition: border-color 0.3s, background 0.3s;
+    transition:
+      border-color 0.3s,
+      background 0.3s;
   }
   .host-card:hover {
     border-color: var(--brand-red);
@@ -110,7 +114,9 @@ const hosts = [
     object-fit: cover;
     flex-shrink: 0;
   }
-  .host-info h3 { margin-bottom: 4px; }
+  .host-info h3 {
+    margin-bottom: 4px;
+  }
   .host-info h3 a {
     font-family: var(--font-cormorant), serif;
     font-size: 28px;
@@ -119,7 +125,9 @@ const hosts = [
     text-decoration: none;
     transition: color 0.2s;
   }
-  .host-info h3 a:hover { color: var(--brand-red); }
+  .host-info h3 a:hover {
+    color: var(--brand-red);
+  }
   .host-info h3 a:focus-visible {
     color: var(--brand-red);
     outline: 2px solid var(--brand-red);
@@ -168,12 +176,22 @@ const hosts = [
     text-decoration: none;
     transition: color 0.2s;
   }
-  .creators-cta-link:hover { color: var(--brand-red-dark); }
+  .creators-cta-link:hover,
+  .creators-cta-link:focus-visible {
+    color: var(--brand-red-dark);
+  }
 
   @media (min-width: 768px) {
-    .creators { padding: 60px 48px; overflow: visible; }
-    .creators-header { margin-bottom: 72px; }
-    .creators-header p { font-size: 20px; }
+    .creators {
+      padding: 60px 48px;
+      overflow: visible;
+    }
+    .creators-header {
+      margin-bottom: 72px;
+    }
+    .creators-header p {
+      font-size: 20px;
+    }
     .hosts-grid {
       display: grid;
       grid-template-columns: 1fr 1fr;
@@ -190,9 +208,18 @@ const hosts = [
       align-items: start;
       text-align: left;
     }
-    .host-avatar-img { width: 96px; height: 96px; }
-    .host-info h3 a { font-size: 32px; }
-    .host-role { margin-bottom: 16px; }
-    .host-credits { justify-content: flex-start; }
+    .host-avatar-img {
+      width: 96px;
+      height: 96px;
+    }
+    .host-info h3 a {
+      font-size: 32px;
+    }
+    .host-role {
+      margin-bottom: 16px;
+    }
+    .host-credits {
+      justify-content: flex-start;
+    }
   }
 </style>

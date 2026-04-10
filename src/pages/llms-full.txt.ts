@@ -63,7 +63,7 @@ export const GET: APIRoute = () => {
   const statsLine = STATS.map((s) => `${s.num} ${s.label}`).join(" · ");
 
   const testimonialSection = TESTIMONIALS.map(
-    (t) => `"${t.quote}"\n— ${t.author}, ${t.location}`,
+    (t) => `"${t.quote}"\n${t.author}, ${t.location}`,
   ).join("\n\n");
 
   const experienceSection = EXPERIENCE_STEPS.map(
@@ -78,13 +78,13 @@ export const GET: APIRoute = () => {
     upcomingEvents.length > 0
       ? upcomingEvents
           .map((e) => {
-            const lines = [`### ${e.date} — ${e.city}`];
+            const lines = [`### ${e.date}: ${e.city}`];
             if (e.venue)
               lines.push(
                 `Venue: ${e.venue.name}${e.venue.streetAddress ? `, ${e.venue.streetAddress}` : ""}, ${e.venue.addressLocality}, ${e.venue.addressRegion}`,
               );
             if (e.startTime)
-              lines.push(`Time: ${e.startTime} – ${e.endTime ?? "22:00"} ET`);
+              lines.push(`Time: ${e.startTime} to ${e.endTime ?? "22:00"} ET`);
             if (e.price) lines.push(`Tickets: $${e.price}`);
             if (e.tagline) lines.push(`Status: ${e.tagline}`);
             lines.push(`Ticket URL: ${e.url}`);
@@ -96,7 +96,7 @@ export const GET: APIRoute = () => {
   const pastSection = pastEvents
     .map(
       (e) =>
-        `- ${e.date}, ${e.city}${e.venue ? ` @ ${e.venue.name}` : ""}${e.tagline ? ` — ${e.tagline}` : ""}`,
+        `- ${e.date}, ${e.city}${e.venue ? ` @ ${e.venue.name}` : ""}${e.tagline ? `: ${e.tagline}` : ""}`,
     )
     .join("\n");
 
@@ -148,12 +148,12 @@ export const GET: APIRoute = () => {
     .join("\n\n");
 
   const pressSection = pressItems
-    .map((p) => `- ${p.title} [${p.type}]${p.url ? ` — ${p.url}` : ""}`)
+    .map((p) => `- ${p.title} [${p.type}]${p.url ? `: ${p.url}` : ""}`)
     .join("\n");
 
   // ── Assemble ──────────────────────────────────────────────────────────────
 
-  const content = `# Garam Masala Dating — Full Site Content for AI Indexing
+  const content = `# Garam Masala Dating: Full Site Content for AI Indexing
 
 > This file is generated at build time from garammasaladating.com data files. Intended for LLMs, RAG systems, and AI crawlers. All public content is freely accessible.
 
@@ -169,7 +169,7 @@ The show runs weekly in Manhattan at Top Secret Comedy Club (44 Avenue A, East V
 
 ---
 
-## The Experience — Step by Step
+## The Experience: Step by Step
 
 ${experienceSection}
 
@@ -177,24 +177,24 @@ ${experienceSection}
 
 ## The Hosts
 
-### Surbhi — Co-Creator & Host
+### Surbhi: Co-Creator & Host
 
-Surbhi is a New York-based stand-up comedian and the creative force behind Garam Masala Dating. She created the show in 2022 after noticing something missing in the South Asian comedy and dating scene — a space where desi singles could meet in real life, in a room full of energy, without the awkwardness of apps or the pressure of family setups.
+Surbhi is a New York-based stand-up comedian and the creative force behind Garam Masala Dating. She created the show in 2022 after noticing something missing in the South Asian comedy and dating scene: a space where desi singles could meet in real life, in a room full of energy, without the awkwardness of apps or the pressure of family setups.
 
-What started as a one-off experiment in a downtown bar is now NYC's #1 live South Asian dating show. The show sells out 250-seat venues weekly in Manhattan, runs monthly in Jersey City, and has expanded to Los Angeles, San Francisco, and San Diego. Surbhi has performed at comedy venues across the US and UK, and has matched three real couples through the show — and counting.
+What started as a one-off experiment in a downtown bar is now NYC's #1 live South Asian dating show. The show sells out 250-seat venues weekly in Manhattan, runs monthly in Jersey City, and has expanded to Los Angeles, San Francisco, and San Diego. Surbhi has performed at comedy venues across the US and UK, and has matched three real couples through the show: and counting.
 
 She handles everything from casting and producing to hosting the show itself. Her ability to make strangers comfortable on stage in front of hundreds of people is the reason contestants keep coming back.
 
 Credits: Stand-Up Comedian, Co-Creator & Producer, NYC · LA · SF · SD
 Instagram: ${CREATOR_URLS.surbhi}
 
-### Wyatt Feegrado — Co-Host & Actor
+### Wyatt Feegrado: Co-Host & Actor
 
 Wyatt Feegrado is a stand-up comedian and actor who started sneaking out of his parents' house in Walnut Creek, California to do open mics at 16. He attended NYU Tisch School of the Arts, then landed a starring role in ESPN+'s Bettor Days, followed by Hulu's Chicano Squad and the History Channel's Holy Marvels.
 
 He tours the US 11 months of the year and co-hosts the podcast Gen Zenophobic with his brother Luke. On Garam Masala Dating, Wyatt is the reason no awkward silence survives longer than two seconds. His improvisation keeps the energy high, the contestants laughing, and the audience on the edge of their seats.
 
-Credits: Stand-Up Comedian, Actor — ESPN+, Hulu, History Channel, NYU Tisch, Co-Host
+Credits: Stand-Up Comedian, Actor: ESPN+, Hulu, History Channel, NYU Tisch, Co-Host
 Instagram: ${CREATOR_URLS.wyatt}
 
 ---
@@ -243,13 +243,13 @@ ${tipsSection}
 
 ---
 
-## Journal — Featured Articles (Full Text)
+## Journal: Featured Articles (Full Text)
 
 ${journalFullSection}
 
 ---
 
-## Journal — Additional Articles
+## Journal: Additional Articles
 
 ${journalRestSection}
 
@@ -287,11 +287,11 @@ Garam Masala Dating offers sponsorship packages for brands seeking to reach NYC'
 
 ${MEDIA_KIT_STATS.map((s) => `- ${s.num} ${s.label}: ${s.sub}`).join("\n")}
 
-Audience demographic: 70%+ South Asian, 22–40 age range, NYC metro, high disposable income, high social media engagement.
+Audience demographic: 70%+ South Asian, 22 to 40 age range, NYC metro, high disposable income, high social media engagement.
 
 ### Sponsorship Tiers
 
-${SPONSOR_TIERS.map((t) => `**${t.name} — ${t.priceRange}**\n${t.tagline}\nPerks:\n${t.perks.map((p) => `- ${p}`).join("\n")}`).join("\n\n")}
+${SPONSOR_TIERS.map((t) => `**${t.name}: ${t.priceRange}**\n${t.tagline}\nPerks:\n${t.perks.map((p) => `- ${p}`).join("\n")}`).join("\n\n")}
 
 ### Target Partner Categories
 

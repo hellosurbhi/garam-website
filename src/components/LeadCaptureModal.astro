@@ -1,0 +1,420 @@
+---
+/**
+ * Reusable lead capture modal with configurable copy.
+ * 2-step flow: email → optional phone → success.
+ * Writes to Firestore 'leads' collection, tracks via PostHog + GTM.
+ *
+ * Usage:
+ *   <LeadCaptureModal
+ *     id="spice-modal"
+ *     source="links-page"
+ *     heading="Get on the List"
+ *     subheading="Cheap and free tickets, exclusive drops."
+ *   />
+ *
+ * Open from JS:
+ *   (document.getElementById('spice-modal') as HTMLDialogElement).showModal();
+ *
+ * Or use a trigger:
+ *   <button data-open-modal="spice-modal">Join</button>
+ */
+import Modal from "@/components/ui/Modal.astro";
+
+interface Props {
+  id: string;
+  source: string;
+  heading?: string;
+  subheading?: string;
+  submitLabel?: string;
+  phoneHeading?: string;
+  phoneSubheading?: string;
+  phoneSubmitLabel?: string;
+  successMessage?: string;
+  /** If true, includes a hidden city field and displays city name in subheading */
+  cityMode?: boolean;
+}
+
+const {
+  id,
+  source,
+  heading = "Join the Spice List",
+  subheading = "Get exclusive discount codes for cheaper (and sometimes free) tickets.",
+  submitLabel = "Count Me In",
+  phoneHeading = "One more thing…",
+  phoneSubheading = "Add your number for text-only ticket drops.",
+  phoneSubmitLabel = "Send Me Drops",
+  successMessage = "You're on the list! We'll let you know.",
+  cityMode = false,
+} = Astro.props;
+---
+
+<Modal id={id}>
+  <div
+    class="lc-steps"
+    data-lc-source={source}
+    data-lc-city-mode={cityMode ? "true" : undefined}
+  >
+    <!-- Step 1: Email -->
+    <div data-lc-step="email">
+      <h2 class="lc-title">{heading}</h2>
+      <p class="lc-subtitle">
+        {subheading}{cityMode && <strong data-lc-city-name />}{cityMode && "."}
+      </p>
+      <form data-lc-form="email" class="lc-form">
+        <input
+          type="email"
+          data-lc-email
+          placeholder="Your email"
+          required
+          aria-label="Email address"
+        />
+        {cityMode && <input type="hidden" data-lc-city />}
+        <p data-lc-error class="lc-error" hidden aria-live="assertive"></p>
+        <button type="submit" class="lc-submit">{submitLabel}</button>
+      </form>
+    </div>
+    <!-- Step 2: Phone (optional) -->
+    <div data-lc-step="phone" hidden>
+      <h2 class="lc-title">{phoneHeading}</h2>
+      <p class="lc-subtitle">{phoneSubheading}</p>
+      <form data-lc-form="phone" class="lc-form">
+        <input
+          type="tel"
+          data-lc-phone
+          placeholder="(555) 123-4567"
+          aria-label="Phone number"
+        />
+        <p data-lc-phone-error class="lc-error" hidden aria-live="assertive">
+        </p>
+        <button type="submit" class="lc-submit">{phoneSubmitLabel}</button>
+      </form>
+      <button type="button" data-lc-skip class="lc-skip">Maybe later</button>
+    </div>
+    <!-- Step 3: Success -->
+    <div
+      data-lc-step="success"
+      class="lc-success"
+      role="status"
+      aria-live="polite"
+      tabindex="-1"
+      hidden
+    >
+      <p>{successMessage}</p>
+    </div>
+  </div>
+</Modal>
+
+<style>
+  .lc-steps {
+    min-height: 260px;
+  }
+  .lc-title {
+    font-family: var(--font-playfair), serif;
+    font-size: 22px;
+    font-weight: 600;
+    color: var(--charcoal);
+    margin-bottom: 8px;
+  }
+  .lc-subtitle {
+    font-size: 15px;
+    color: var(--text-light);
+    margin-bottom: 24px;
+    line-height: 1.5;
+  }
+  .lc-form {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+  .lc-form input {
+    padding: 14px 20px;
+    border: 1.5px solid var(--border);
+    border-radius: 50px;
+    font-size: 16px;
+    font-family: var(--font-body), sans-serif;
+    outline: none;
+    transition: border-color 0.2s;
+    min-height: var(--touch-target);
+  }
+  .lc-form input:focus-visible {
+    border-color: var(--brand-red);
+    outline: 2px solid var(--brand-red);
+    outline-offset: -2px;
+  }
+  .lc-error {
+    font-size: 14px;
+    color: var(--brand-red);
+    margin: 0;
+    text-align: center;
+  }
+  .lc-submit {
+    background: var(--brand-red);
+    color: white;
+    border: none;
+    padding: 14px;
+    border-radius: 50px;
+    font-family: var(--font-body), sans-serif;
+    font-size: 16px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    cursor: pointer;
+    transition: background 0.2s;
+    min-height: var(--touch-target);
+    white-space: nowrap;
+    width: 100%;
+  }
+  .lc-submit:hover {
+    background: var(--brand-red-dark);
+  }
+  .lc-submit:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+  }
+  .lc-skip {
+    background: none;
+    border: none;
+    color: var(--muted);
+    font-size: 14px;
+    font-family: var(--font-body), sans-serif;
+    margin-top: 12px;
+    transition: color 0.2s;
+    padding: 12px 16px;
+    min-height: var(--touch-target);
+    cursor: pointer;
+  }
+  .lc-skip:hover {
+    color: var(--charcoal);
+  }
+  .lc-success {
+    text-align: center;
+    padding: 24px 0;
+  }
+  .lc-success p {
+    font-family: var(--font-cormorant), serif;
+    font-size: 18px;
+    font-style: italic;
+    color: var(--charcoal);
+  }
+</style>
+
+<script>
+  import { cleanPhone } from "@/lib/phone";
+  import { identifyLead, trackLeadEvent } from "@/lib/analytics";
+  import { buildLeadAttribution } from "@/lib/leadAttribution";
+
+  // Wire up all LeadCaptureModal instances on the page
+  document.querySelectorAll<HTMLElement>(".lc-steps").forEach((root) => {
+    const dialog = root.closest("dialog") as HTMLDialogElement;
+    if (!dialog) return;
+
+    const source = root.dataset.lcSource ?? "lead-capture";
+    const isCityMode = root.dataset.lcCityMode === "true";
+    let leadDocId = "";
+    let capturedEmail = "";
+
+    function showStep(step: "email" | "phone" | "success") {
+      root.querySelectorAll<HTMLElement>("[data-lc-step]").forEach((el) => {
+        if (el.dataset.lcStep === step) {
+          el.removeAttribute("hidden");
+        } else {
+          el.setAttribute("hidden", "");
+        }
+      });
+      if (step === "success") {
+        (
+          root.querySelector('[data-lc-step="success"]') as HTMLElement
+        )?.focus();
+      }
+    }
+
+    function reset() {
+      showStep("email");
+      const emailInput = root.querySelector(
+        "[data-lc-email]",
+      ) as HTMLInputElement | null;
+      if (emailInput) emailInput.value = "";
+      const phoneInput = root.querySelector(
+        "[data-lc-phone]",
+      ) as HTMLInputElement | null;
+      if (phoneInput) phoneInput.value = "";
+      root.querySelectorAll(".lc-error").forEach((el) => {
+        el.textContent = "";
+        el.setAttribute("hidden", "");
+      });
+      leadDocId = "";
+      capturedEmail = "";
+    }
+
+    // Reset state when modal opens
+    dialog.addEventListener("close", reset);
+
+    // Step 1: Email submit — uses server endpoint (zero client Firebase)
+    root
+      .querySelector('[data-lc-form="email"]')
+      ?.addEventListener("submit", async (e) => {
+        e.preventDefault();
+        capturedEmail = (
+          root.querySelector("[data-lc-email]") as HTMLInputElement
+        ).value;
+        const city = isCityMode
+          ? ((root.querySelector("[data-lc-city]") as HTMLInputElement)
+              ?.value ?? "")
+          : "";
+        const submitBtn = (
+          e.target as HTMLFormElement
+        ).querySelector<HTMLButtonElement>('[type="submit"]');
+        const errorEl = root.querySelector(
+          "[data-lc-error]",
+        ) as HTMLElement | null;
+        if (submitBtn) submitBtn.disabled = true;
+
+        try {
+          const attribution = buildLeadAttribution({ source });
+          const payload: Record<string, string> = {
+            email: capturedEmail,
+            ...attribution,
+          };
+          if (city) payload.city = city;
+
+          const res = await fetch("/api/capture-lead", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(payload),
+          });
+          const result = await res.json();
+          if (!res.ok) throw new Error(result.error ?? "Server error");
+          leadDocId = result.id ?? "";
+
+          identifyLead(capturedEmail, {
+            ...attribution,
+            ...(city ? { city } : {}),
+          });
+          trackLeadEvent("lead_email_submitted", {
+            ...attribution,
+            ...(city ? { city } : {}),
+          });
+          if (errorEl) {
+            errorEl.textContent = "";
+            errorEl.setAttribute("hidden", "");
+          }
+          showStep("phone");
+          (
+            root.querySelector("[data-lc-phone]") as HTMLInputElement | null
+          )?.focus();
+        } catch {
+          if (errorEl) {
+            errorEl.textContent = "Something went wrong. Please try again.";
+            errorEl.removeAttribute("hidden");
+          }
+        } finally {
+          if (submitBtn) submitBtn.disabled = false;
+        }
+      });
+
+    // Step 2: Phone submit — uses server endpoint
+    root
+      .querySelector('[data-lc-form="phone"]')
+      ?.addEventListener("submit", async (e) => {
+        e.preventDefault();
+        const raw = (root.querySelector("[data-lc-phone]") as HTMLInputElement)
+          .value;
+        const cleaned = cleanPhone(raw);
+        const phoneErrorEl = root.querySelector(
+          "[data-lc-phone-error]",
+        ) as HTMLElement | null;
+
+        if (!raw.trim()) {
+          showStep("success");
+          return;
+        }
+
+        if (!cleaned) {
+          if (phoneErrorEl) {
+            phoneErrorEl.textContent = "Please enter a valid phone number.";
+            phoneErrorEl.removeAttribute("hidden");
+          }
+          return;
+        }
+
+        const submitBtn = (
+          e.target as HTMLFormElement
+        ).querySelector<HTMLButtonElement>('[type="submit"]');
+        if (submitBtn) submitBtn.disabled = true;
+        try {
+          if (leadDocId) {
+            await fetch("/api/update-lead", {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({ id: leadDocId, phone: cleaned }),
+            });
+          } else {
+            const attribution = buildLeadAttribution({ source });
+            await fetch("/api/capture-lead", {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({
+                email: capturedEmail,
+                phone: cleaned,
+                ...attribution,
+              }),
+            });
+          }
+          trackLeadEvent("lead_phone_submitted", {
+            source,
+            sourcePage: window.location.pathname,
+          });
+          showStep("success");
+        } catch {
+          if (phoneErrorEl) {
+            phoneErrorEl.textContent =
+              "Something went wrong. Please try again or skip.";
+            phoneErrorEl.removeAttribute("hidden");
+          }
+        } finally {
+          if (submitBtn) submitBtn.disabled = false;
+        }
+      });
+
+    // Skip phone
+    root
+      .querySelector("[data-lc-skip]")
+      ?.addEventListener("click", () => showStep("success"));
+  });
+
+  // Wire up [data-open-modal] triggers anywhere on the page
+  document.querySelectorAll<HTMLElement>("[data-open-modal]").forEach((el) => {
+    const open = () => {
+      const targetId = el.dataset.openModal;
+      if (!targetId) return;
+      const dialog = document.getElementById(
+        targetId,
+      ) as HTMLDialogElement | null;
+      if (!dialog) return;
+
+      // If city mode, populate the city name
+      const city = el.dataset.openModalCity;
+      if (city) {
+        const root = dialog.querySelector(".lc-steps");
+        const nameEl = root?.querySelector("[data-lc-city-name]");
+        if (nameEl) nameEl.textContent = city;
+        const cityInput = root?.querySelector(
+          "[data-lc-city]",
+        ) as HTMLInputElement | null;
+        if (cityInput) cityInput.value = city;
+      }
+
+      dialog.showModal();
+      (
+        dialog.querySelector<HTMLInputElement>("[data-lc-email]") ?? dialog
+      ).focus();
+    };
+    el.addEventListener("click", open);
+    el.addEventListener("keydown", (e) => {
+      if (e.key === "Enter" || e.key === " ") {
+        e.preventDefault();
+        open();
+      }
+    });
+  });
+</script>

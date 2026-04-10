@@ -1,9 +1,9 @@
 ---
-import BaseLayout from '@/layouts/BaseLayout.astro';
-import { tipPostsSorted } from '@/data/tips';
-import { buildBreadcrumbJsonLd } from '@/utils/breadcrumbs';
+import BaseLayout from "@/layouts/BaseLayout.astro";
+import { tipPostsSorted } from "@/data/tips";
+import { buildBreadcrumbJsonLd } from "@/utils/breadcrumbs";
 
-const TITLE = "South Asian Dating Tips | Garam Masala Dating";
+const TITLE = "South Asian Dating Tips";
 const DESC =
   "Real, unfiltered advice for desi singles navigating modern dating, family pressure, and finding actual love.";
 
@@ -22,10 +22,7 @@ const breadcrumbJsonLd = buildBreadcrumbJsonLd([
 ]);
 ---
 
-<BaseLayout
-  title={TITLE}
-  description={DESC}
->
+<BaseLayout title={TITLE} description={DESC}>
   <Fragment slot="head">
     <script type="application/ld+json" set:html={breadcrumbJsonLd} />
   </Fragment>
@@ -49,27 +46,38 @@ const breadcrumbJsonLd = buildBreadcrumbJsonLd([
 
       <!-- Post list -->
       <div class="tips-list">
-        {tipPostsSorted.map((post, i) => (
-          <a
-            href={`/south-asian-dating-tips/${post.slug}`}
-            class="tips-card"
-            style={`animation-delay: ${0.1 + i * 0.08}s;`}
-          >
-            <p class="tips-card-date">
-              {formatDate(post.datePublished)}
-            </p>
-            <h2 class="tips-card-title">
-              {post.title}
-            </h2>
-            <p class="tips-card-excerpt">
-              {post.excerpt}
-            </p>
-            <div class="tips-card-read">
-              Read
-              <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
-            </div>
-          </a>
-        ))}
+        {
+          tipPostsSorted.map((post, i) => (
+            <a
+              href={`/south-asian-dating-tips/${post.slug}`}
+              class="tips-card"
+              style={`animation-delay: ${0.1 + i * 0.08}s;`}
+            >
+              <p class="tips-card-date">{formatDate(post.datePublished)}</p>
+              <h2 class="tips-card-title">{post.title}</h2>
+              <p class="tips-card-excerpt">{post.excerpt}</p>
+              <div class="tips-card-read">
+                Read
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="13"
+                  height="13"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                >
+                  <>
+                    <path d="M5 12h14" />
+                    <path d="m12 5 7 7-7 7" />
+                  </>
+                </svg>
+              </div>
+            </a>
+          ))
+        }
       </div>
     </div>
   </main>
@@ -77,8 +85,14 @@ const breadcrumbJsonLd = buildBreadcrumbJsonLd([
 
 <style>
   @keyframes tipsFadeIn {
-    from { opacity: 0; transform: translateY(16px); }
-    to   { opacity: 1; transform: translateY(0); }
+    from {
+      opacity: 0;
+      transform: translateY(16px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
   }
 
   .tips-page {

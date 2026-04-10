@@ -63,10 +63,8 @@ export async function loadCityOptions(): Promise<CitySearchOption[]> {
           }
 
           for (const state of states) {
-            for (const city of City.getCitiesOfState(
-              country.isoCode,
-              state.isoCode,
-            )) {
+            const cities = City.getCitiesOfState(country.isoCode, state.isoCode) ?? [];
+            for (const city of cities) {
               const option = createOption({
                 city: city.name,
                 state: state.name,

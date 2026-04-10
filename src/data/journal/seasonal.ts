@@ -6,7 +6,7 @@ export const seasonalPosts: JournalPost[] = [
     title: "Surviving Shaadi Season as a Single South Asian",
     metaDescription:
       "Shaadi season is relentless when you're single. Here's how to survive the aunties, the questions, and maybe even enjoy a desi wedding solo.",
-    datePublished: "2026-07-18",
+    datePublished: "2026-05-28",
     dateModified: "2026-07-18",
     author: "Surbhi",
     excerpt:
@@ -96,7 +96,7 @@ export const seasonalPosts: JournalPost[] = [
       },
       {
         q: "Where can South Asian singles meet people outside of weddings?",
-        a: "Garam Masala Dating is a live comedy dating show in NYC where South Asian singles go on blind dates on stage in front of 250 people. No aunties. No questions. Just a show, a mixer, and a room full of people who are actually trying to meet someone.",
+        a: "Garam Masala Dating is the #1 live comedy dating show in NYC where South Asian singles go on blind dates on stage in front of 250 people. No aunties. No questions. Just a show, a mixer, and a room full of people who are actually trying to meet someone.",
       },
       {
         q: "Are there South Asian singles events in NYC?",
@@ -114,7 +114,7 @@ export const seasonalPosts: JournalPost[] = [
     title: "Cuffing Season Desi Edition: Finding Your Winter Boo",
     metaDescription:
       "Cuffing season hits desi singles differently. Here\u2019s why the pressure doubles in winter and what to actually do about it before December panic sets in.",
-    datePublished: "2026-07-20",
+    datePublished: "2026-05-29",
     dateModified: "2026-07-20",
     author: "Surbhi",
     excerpt:
@@ -208,7 +208,7 @@ export const seasonalPosts: JournalPost[] = [
       },
       {
         q: "What are the best ways to meet South Asian singles in person?",
-        a: "Live events, community gatherings, and shows where the shared activity is the draw and any connection is a bonus. Garam Masala Dating runs weekly in NYC \u2014 a live comedy dating show followed by a singles mixer. It\u2019s low-stakes, high-energy, and full of people who are there to have fun, not to be desperate.",
+        a: "Live events, community gatherings, and shows where the shared activity is the draw and any connection is a bonus. Garam Masala Dating runs weekly in NYC \u2014 the #1 live comedy dating show followed by a singles mixer. It\u2019s low-stakes, high-energy, and full of people who are there to have fun, not to be desperate.",
       },
       {
         q: "Is Garam Masala Dating open year-round?",
@@ -227,7 +227,7 @@ export const seasonalPosts: JournalPost[] = [
       "Diwali Singles Events Guide 2026: Where to Find Love This Festival Season",
     metaDescription:
       "Looking for Diwali singles events in 2026? Here\u2019s where South Asian singles are actually meeting people this festival season, from NYC to London to your city.",
-    datePublished: "2026-07-22",
+    datePublished: "2026-05-30",
     dateModified: "2026-07-22",
     author: "Surbhi",
     excerpt:
@@ -329,7 +329,7 @@ export const seasonalPosts: JournalPost[] = [
       },
       {
         q: "What is the best South Asian singles event in NYC during Diwali?",
-        a: "Garam Masala Dating runs weekly at Top Secret Comedy Club in Manhattan through October and November. It\u2019s a live comedy dating show followed by a singles mixer. Over 40 shows in, 3 real couples out. Tickets and applications at garammasaladating.com.",
+        a: "Garam Masala Dating runs weekly at Top Secret Comedy Club in Manhattan through October and November. It\u2019s the #1 live comedy dating show followed by a singles mixer. Over 40 shows in, 3 real couples out. Tickets and applications at garammasaladating.com.",
       },
       {
         q: "How do I meet South Asian singles at a Diwali party?",
@@ -347,7 +347,7 @@ export const seasonalPosts: JournalPost[] = [
     title: "Holi Party Singles Guide: Color, Dance, and Maybe Love",
     metaDescription:
       "Holi is the one desi festival where strangers touch each other\u2019s faces and it\u2019s completely fine. Here\u2019s your guide to Holi parties as a single South Asian.",
-    datePublished: "2026-07-24",
+    datePublished: "2026-05-31",
     dateModified: "2026-07-24",
     author: "Surbhi",
     excerpt:
@@ -445,7 +445,7 @@ export const seasonalPosts: JournalPost[] = [
       },
       {
         q: "What is Garam Masala Dating?",
-        a: "Garam Masala Dating is a weekly live comedy dating show in NYC where South Asian singles go on blind dates on stage in front of 250 people. After the show there\u2019s a singles mixer. It runs at Top Secret Comedy Club in Manhattan. Three real couples have come out of it. Tickets and applications at garammasaladating.com.",
+        a: "Garam Masala Dating is the #1 weekly live comedy dating show in NYC where South Asian singles go on blind dates on stage in front of 250 people. After the show there\u2019s a singles mixer. It runs at Top Secret Comedy Club in Manhattan. Three real couples have come out of it. Tickets and applications at garammasaladating.com.",
       },
     ],
     relatedSlugs: [
@@ -460,7 +460,7 @@ export const seasonalPosts: JournalPost[] = [
       "Valentine's Day for Desi Singles: Forget Couples. This Is Your Night.",
     metaDescription:
       "Valentine\u2019s Day for desi singles is a guilt trip with chocolate. Here\u2019s how to actually have a good February 14th when you\u2019re South Asian and unattached.",
-    datePublished: "2026-07-26",
+    datePublished: "2026-06-01",
     dateModified: "2026-07-26",
     author: "Surbhi",
     excerpt:

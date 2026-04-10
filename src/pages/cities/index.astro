@@ -1,9 +1,9 @@
 ---
-import BaseLayout from '@/layouts/BaseLayout.astro';
-import { citiesByRegion } from '@/data/cities';
-import { buildBreadcrumbJsonLd } from '@/utils/breadcrumbs';
+import BaseLayout from "@/layouts/BaseLayout.astro";
+import { citiesByRegion } from "@/data/cities";
+import { buildBreadcrumbJsonLd } from "@/utils/breadcrumbs";
 
-const TITLE = "South Asian Dating Events by City | Garam Masala Dating";
+const TITLE = "South Asian Dating Events by City";
 const DESC =
   "Find Garam Masala Dating near you. Live comedy dating shows and South Asian singles mixers in cities across the US, Canada, UK, Australia, and beyond.";
 
@@ -22,7 +22,14 @@ const regions = citiesByRegion();
 
   <main id="main-content" class="cities-page">
     <div class="cities-hero">
-      <img src="/images/on-stage.webp" alt="" width="1200" height="800" aria-hidden="true" />
+      <img
+        src="/images/promo/on-stage.webp"
+        alt=""
+        width="1200"
+        height="800"
+        aria-hidden="true"
+        loading="lazy"
+      />
     </div>
     <div class="cities-container">
       {/* Header */}
@@ -30,81 +37,110 @@ const regions = citiesByRegion();
         <p class="cities-eyebrow">Cities</p>
         <h1 class="cities-h1">Where We Perform</h1>
         <p class="cities-desc">
-          Live comedy dating shows, singles mixers, and tour dates across
-          the US and around the world. Don't see your city? Join the waitlist
-          and we'll let you know when we're headed your way.
+          Live comedy dating shows, singles mixers, and tour dates across the US
+          and around the world. Don't see your city? Join the waitlist and we'll
+          let you know when we're headed your way.
         </p>
       </div>
 
       {/* Divider */}
-      <div class="cities-divider" />
+      <div class="cities-divider"></div>
 
       {/* Jump nav */}
       <nav class="region-nav" aria-label="Jump to region">
-        {regions.map((group) => {
-          const anchorId = group.region.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/-+$/, "");
-          return (
-            <a href={`#${anchorId}`} class="region-nav__link">{group.region}</a>
-          );
-        })}
+        {
+          regions.map((group) => {
+            const anchorId = group.region
+              .toLowerCase()
+              .replace(/[^a-z0-9]+/g, "-")
+              .replace(/-+$/, "");
+            return (
+              <a href={`#${anchorId}`} class="region-nav__link">
+                {group.region}
+              </a>
+            );
+          })
+        }
       </nav>
 
       {/* Region sections */}
-      {regions.map((group) => {
-        const anchorId = group.region.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/-+$/, "");
-        return (
-        <div class="region-section" id={anchorId}>
-          <h2 class="region-title">{group.region}</h2>
-          <div class="cities-list">
-            {group.cities.map((city, i) => (
-              <a
-                href={`/cities/${city.slug}`}
-                class:list={[
-                  "city-card",
-                  city.status === "active" ? "city-card--active" : "city-card--inactive",
-                ]}
-                style={`animation-delay: ${0.05 + i * 0.03}s`}
-              >
-                <div>
-                  <h3 class="city-card__name">{city.displayName}</h3>
-                  <span
+      {
+        regions.map((group) => {
+          const anchorId = group.region
+            .toLowerCase()
+            .replace(/[^a-z0-9]+/g, "-")
+            .replace(/-+$/, "");
+          return (
+            <div class="region-section" id={anchorId}>
+              <h2 class="region-title">{group.region}</h2>
+              <div class="cities-list">
+                {group.cities.map((city, i) => (
+                  <a
+                    href={`/cities/${city.slug}`}
                     class:list={[
-                      "city-card__badge",
-                      city.status === "active" ? "city-card__badge--active" : "city-card__badge--inactive",
+                      "city-card",
+                      city.status === "active"
+                        ? "city-card--active"
+                        : "city-card--inactive",
                     ]}
+                    style={`animation-delay: ${0.05 + i * 0.03}s`}
                   >
-                    {city.badgeLabel}
-                  </span>
-                </div>
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  width="16"
-                  height="16"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  stroke-width="2"
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  class:list={[
-                    "city-card__arrow",
-                    city.status === "active" ? "city-card__arrow--active" : "city-card__arrow--inactive",
-                  ]}
-                >
-                  <path d="M5 12h14" />
-                  <path d="m12 5 7 7-7 7" />
-                </svg>
-              </a>
-            ))}
-          </div>
-        </div>
-        );
-      })}
+                    <div>
+                      <h3 class="city-card__name">{city.displayName}</h3>
+                      <span
+                        class:list={[
+                          "city-card__badge",
+                          city.status === "active"
+                            ? "city-card__badge--active"
+                            : "city-card__badge--inactive",
+                        ]}
+                      >
+                        {city.badgeLabel}
+                      </span>
+                    </div>
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      width="16"
+                      height="16"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      stroke-width="2"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      class:list={[
+                        "city-card__arrow",
+                        city.status === "active"
+                          ? "city-card__arrow--active"
+                          : "city-card__arrow--inactive",
+                      ]}
+                    >
+                      <path d="M5 12h14" />
+                      <path d="m12 5 7 7-7 7" />
+                    </svg>
+                  </a>
+                ))}
+              </div>
+            </div>
+          );
+        })
+      }
 
       {/* Footer */}
       <div class="cities-footer">
         <a href="/" class="cities-footer__back">
-          <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5"/><path d="m12 19-7-7 7-7"/></svg>
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="14"
+            height="14"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            ><path d="M19 12H5"></path><path d="m12 19-7-7 7-7"></path></svg
+          >
           Back to Home
         </a>
       </div>
@@ -114,8 +150,14 @@ const regions = citiesByRegion();
 
 <style>
   @keyframes citiesIdxFadeIn {
-    from { opacity: 0; transform: translateY(16px); }
-    to   { opacity: 1; transform: translateY(0); }
+    from {
+      opacity: 0;
+      transform: translateY(16px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
   }
 
   .cities-page {
@@ -138,7 +180,9 @@ const regions = citiesByRegion();
     display: block;
   }
   @media (min-width: 768px) {
-    .cities-hero { height: 400px; }
+    .cities-hero {
+      height: 400px;
+    }
   }
 
   .cities-container {
@@ -208,7 +252,10 @@ const regions = citiesByRegion();
     font-weight: 500;
     color: var(--text-light);
     text-decoration: none;
-    transition: border-color 0.15s, color 0.15s, background 0.15s;
+    transition:
+      border-color 0.15s,
+      color 0.15s,
+      background 0.15s;
     white-space: nowrap;
   }
 
@@ -260,7 +307,9 @@ const regions = citiesByRegion();
     border: 1px solid;
     text-decoration: none;
     animation: citiesIdxFadeIn 0.5s ease-out both;
-    transition: border-color 0.15s, background 0.15s;
+    transition:
+      border-color 0.15s,
+      background 0.15s;
   }
 
   .city-card--active {
@@ -320,7 +369,6 @@ const regions = citiesByRegion();
   }
 
   /* ─── Footer ──────────────────────────────────────── */
-
 
   .cities-footer__back {
     display: inline-flex;

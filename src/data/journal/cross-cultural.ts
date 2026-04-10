@@ -6,7 +6,7 @@ export const crossCulturalPosts: JournalPost[] = [
     title: "How to Introduce Your East Asian Partner to Your Indian Parents",
     metaDescription:
       "Bringing your East Asian partner home to Indian parents? Practical advice on navigating expectations and the conversation no one prepares you for.",
-    datePublished: "2026-09-10",
+    datePublished: "2026-06-24",
     dateModified: "2026-09-10",
     author: "Surbhi",
     excerpt:
@@ -41,7 +41,7 @@ export const crossCulturalPosts: JournalPost[] = [
       },
       {
         type: "p",
-        text: "I run a live comedy dating show in NYC and I talk to South Asian singles every single week. The \u2018how do I tell my parents\u2019 conversation comes up constantly. So let\u2019s actually get into it.",
+        text: "I run the #1 live comedy dating show in NYC and I talk to South Asian singles every single week. The \u2018how do I tell my parents\u2019 conversation comes up constantly. So let\u2019s actually get into it.",
       },
       {
         type: "h2",
@@ -122,7 +122,7 @@ export const crossCulturalPosts: JournalPost[] = [
     title: "How to Introduce Your Black Partner to Your Indian Parents",
     metaDescription:
       "Introducing a Black partner to Indian parents is one of the harder conversations in cross-cultural dating. Here\u2019s honest advice that doesn\u2019t sugarcoat it.",
-    datePublished: "2026-09-12",
+    datePublished: "2026-06-25",
     dateModified: "2026-09-12",
     author: "Surbhi",
     excerpt:
@@ -157,7 +157,7 @@ export const crossCulturalPosts: JournalPost[] = [
       },
       {
         type: "p",
-        text: "I run Garam Masala Dating, a live comedy dating show in NYC. I talk to South Asian singles constantly. And the \u2018my parents are going to lose their minds\u2019 conversation comes up often enough that it deserves a real answer instead of a gentle non-answer.",
+        text: "I run Garam Masala Dating, the #1 live comedy dating show in NYC. I talk to South Asian singles constantly. And the \u2018my parents are going to lose their minds\u2019 conversation comes up often enough that it deserves a real answer instead of a gentle non-answer.",
       },
       {
         type: "h2",
@@ -238,7 +238,7 @@ export const crossCulturalPosts: JournalPost[] = [
     title: "How to Introduce Your Latino Partner to Your Indian Parents",
     metaDescription:
       "Bringing your Latino partner home to Indian parents? What to expect, how to prep both sides, and why this combo works better than your parents think.",
-    datePublished: "2026-09-14",
+    datePublished: "2026-06-26",
     dateModified: "2026-09-14",
     author: "Surbhi",
     excerpt:
@@ -354,7 +354,7 @@ export const crossCulturalPosts: JournalPost[] = [
     title: "How to Introduce Your White Partner to Your Indian Parents",
     metaDescription:
       "Bringing a white partner home to Indian parents? The honest guide for second-gen South Asians on making it go as well as it possibly can.",
-    datePublished: "2026-09-16",
+    datePublished: "2026-06-27",
     dateModified: "2026-09-16",
     author: "Surbhi",
     excerpt:
@@ -389,7 +389,7 @@ export const crossCulturalPosts: JournalPost[] = [
       },
       {
         type: "p",
-        text: "I\u2019ve hosted a live comedy dating show for South Asians in NYC for years, and this is a conversation I have versions of constantly. Let\u2019s get into the actual strategy.",
+        text: "I\u2019ve hosted the #1 live comedy dating show for South Asians in NYC for years, and this is a conversation I have versions of constantly. Let\u2019s get into the actual strategy.",
       },
       {
         type: "h2",
@@ -475,7 +475,7 @@ export const crossCulturalPosts: JournalPost[] = [
       "Introducing Your Non-Indian Partner to Punjabi Parents: A Survival Guide",
     metaDescription:
       "Punjabi parents are loud, warm, and have very strong opinions. Here\u2019s how to introduce your non-Indian partner to a Punjabi family and actually survive it.",
-    datePublished: "2026-09-18",
+    datePublished: "2026-06-28",
     dateModified: "2026-09-18",
     author: "Surbhi",
     excerpt:
@@ -510,7 +510,7 @@ export const crossCulturalPosts: JournalPost[] = [
       },
       {
         type: "p",
-        text: "I\u2019m Punjabi. I run a live comedy dating show in NYC. I have both personal and professional experience with this exact scenario. Here\u2019s the survival guide.",
+        text: "I\u2019m Punjabi. I run the #1 live comedy dating show in NYC. I have both personal and professional experience with this exact scenario. Here\u2019s the survival guide.",
       },
       {
         type: "h2",
@@ -584,7 +584,7 @@ export const crossCulturalPosts: JournalPost[] = [
       "Introducing Your Non-Indian Partner to Gujarati Parents: A Survival Guide",
     metaDescription:
       "Gujarati parents have tight community networks and strong marriage opinions. Here\u2019s how to introduce your non-Indian partner and make it work.",
-    datePublished: "2026-09-20",
+    datePublished: "2026-06-29",
     dateModified: "2026-09-20",
     author: "Surbhi",
     excerpt:
@@ -693,7 +693,7 @@ export const crossCulturalPosts: JournalPost[] = [
       "Introducing Your Non-Indian Partner to Tamil Parents: A Survival Guide",
     metaDescription:
       "Tamil parents prize education and cultural continuity. Here\u2019s how to introduce your non-Indian partner to a Tamil family and what to actually expect.",
-    datePublished: "2026-09-22",
+    datePublished: "2026-06-30",
     dateModified: "2026-09-22",
     author: "Surbhi",
     excerpt:
@@ -802,7 +802,7 @@ export const crossCulturalPosts: JournalPost[] = [
       "Introducing Your Non-Indian Partner to Bengali Parents: A Survival Guide",
     metaDescription:
       "Bengali parents value intellect, adda, and cultural depth. Here\u2019s the survival guide for introducing your non-Indian partner to a Bengali family.",
-    datePublished: "2026-09-24",
+    datePublished: "2026-07-01",
     dateModified: "2026-09-24",
     author: "Surbhi",
     excerpt:
@@ -915,7 +915,7 @@ export const crossCulturalPosts: JournalPost[] = [
       "Dating Someone from a Different South Asian Culture: What Nobody Tells You",
     metaDescription:
       "Dating another South Asian from a different culture? Here\u2019s what nobody tells you about intra-desi relationships \u2014 the food, families, and unspoken assumptions.",
-    datePublished: "2026-09-26",
+    datePublished: "2026-07-02",
     dateModified: "2026-09-26",
     author: "Surbhi",
     excerpt:
@@ -1028,7 +1028,7 @@ export const crossCulturalPosts: JournalPost[] = [
       "When Your Family Expects Arranged and You\u2019re in an Interracial Relationship",
     metaDescription:
       "Your family expected an arranged match. You\u2019re in an interracial relationship. Here\u2019s how to navigate the gap between their expectations and your actual life.",
-    datePublished: "2026-09-28",
+    datePublished: "2026-07-03",
     dateModified: "2026-09-28",
     author: "Surbhi",
     excerpt:

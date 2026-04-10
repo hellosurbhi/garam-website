@@ -6,7 +6,7 @@ export const appAlternativesPosts: JournalPost[] = [
     title: "Tired of Dating Apps? Why Desi Singles Are Choosing IRL Events",
     metaDescription:
       "Tired of dating apps and endless swiping? Here\u2019s why more desi singles are ditching Hinge and Dil Mil for IRL events \u2014 and what to do instead.",
-    datePublished: "2026-04-27",
+    datePublished: "2026-04-17",
     dateModified: "2026-04-27",
     author: "Surbhi",
     excerpt:
@@ -92,7 +92,7 @@ export const appAlternativesPosts: JournalPost[] = [
       },
       {
         q: "What should I do instead of dating apps?",
-        a: "IRL events \u2014 mixers, cultural nights, comedy shows, live dating events \u2014 give you more information in five minutes than a week of app conversations. If you\u2019re in NYC, Garam Masala Dating is a live comedy dating show where South Asian singles meet on stage and at post-show mixers.",
+        a: "IRL events \u2014 mixers, cultural nights, comedy shows, live dating events \u2014 give you more information in five minutes than a week of app conversations. If you\u2019re in NYC, Garam Masala Dating is the #1 live comedy dating show where South Asian singles meet on stage and at post-show mixers.",
       },
       {
         q: "Are there good events for desi singles?",
@@ -114,7 +114,7 @@ export const appAlternativesPosts: JournalPost[] = [
     title: "Best Dil Mil Alternatives for South Asian Singles in 2026",
     metaDescription:
       "Looking for a Dil Mil alternative? Here are the best options for South Asian singles in 2026, from Hinge to Muzz to live IRL events that actually work.",
-    datePublished: "2026-04-29",
+    datePublished: "2026-04-18",
     dateModified: "2026-04-29",
     author: "Surbhi",
     excerpt:
@@ -230,7 +230,7 @@ export const appAlternativesPosts: JournalPost[] = [
     title: "Is Dil Mil Worth It? An Honest Review for Desi Singles",
     metaDescription:
       "Is Dil Mil worth it in 2026? An honest Dil Mil review covering costs, user base, match quality, and whether it\u2019s the right app for South Asian singles.",
-    datePublished: "2026-05-01",
+    datePublished: "2026-04-19",
     dateModified: "2026-05-01",
     author: "Surbhi",
     excerpt:
@@ -238,7 +238,7 @@ export const appAlternativesPosts: JournalPost[] = [
     body: [
       {
         type: "p",
-        text: "Dil Mil is practically a rite of passage for desi singles in the US. Most people I know have had it on their phone at some point. Whether they actually met someone on it is a different story. I\u2019ve been running a live dating show for four years, which means I\u2019ve heard the Dil Mil post-mortem from hundreds of people. Here\u2019s what I\u2019ve learned.",
+        text: "Dil Mil is practically a rite of passage for desi singles in the US. Most people I know have had it on their phone at some point. Whether they actually met someone on it is a different story. I\u2019ve been running the #1 live dating show for four years, which means I\u2019ve heard the Dil Mil post-mortem from hundreds of people. Here\u2019s what I\u2019ve learned.",
       },
       {
         type: "h2",
@@ -342,7 +342,7 @@ export const appAlternativesPosts: JournalPost[] = [
     title: "Why Hinge Doesn\u2019t Work for Most Indians (And What Does)",
     metaDescription:
       "Hinge for Indians sounds good in theory but often falls short. Here\u2019s why the app struggles for South Asian users and what actually works better.",
-    datePublished: "2026-05-03",
+    datePublished: "2026-04-20",
     dateModified: "2026-05-03",
     author: "Surbhi",
     excerpt:
@@ -451,11 +451,11 @@ export const appAlternativesPosts: JournalPost[] = [
       "The Best Indian Dating Apps Ranked by Someone Who\u2019s Tried Them All",
     metaDescription:
       "The best Indian dating apps ranked honestly for 2026 \u2014 Dil Mil, Hinge, Aisle, Muzz, Ishq, Salams, and more. Which one is actually worth your time?",
-    datePublished: "2026-05-05",
+    datePublished: "2026-04-21",
     dateModified: "2026-05-05",
     author: "Surbhi",
     excerpt:
-      "I\u2019ve run a live South Asian dating show for four years and talked to hundreds of contestants about what\u2019s working. Here\u2019s the honest ranking of Indian dating apps in 2026.",
+      "I\u2019ve run the #1 live South Asian dating show for four years and talked to hundreds of contestants about what\u2019s working. Here\u2019s the honest ranking of Indian dating apps in 2026.",
     body: [
       {
         type: "p",
@@ -567,7 +567,7 @@ export const appAlternativesPosts: JournalPost[] = [
     title: "Muzz Alternative: Finding South Asian Love Beyond the Apps",
     metaDescription:
       "Looking for a Muzz alternative for South Asian Muslim singles? Here are the best options in 2026, from Salams to IRL community events that actually work.",
-    datePublished: "2026-05-07",
+    datePublished: "2026-04-22",
     dateModified: "2026-05-07",
     author: "Surbhi",
     excerpt:
@@ -679,7 +679,7 @@ export const appAlternativesPosts: JournalPost[] = [
     title: "Dating Apps for Brown People: What Actually Works in 2026",
     metaDescription:
       "Dating apps for brown people \u2014 what\u2019s worth your time in 2026? Honest breakdown of every major app and why IRL events are winning back South Asian singles.",
-    datePublished: "2026-05-09",
+    datePublished: "2026-04-23",
     dateModified: "2026-05-09",
     author: "Surbhi",
     excerpt:
@@ -755,7 +755,7 @@ export const appAlternativesPosts: JournalPost[] = [
       },
       {
         type: "p",
-        text: "Garam Masala Dating is the most specific version of this. It\u2019s a live comedy dating show built for South Asian singles, running monthly in NYC. Three blind dates on stage in front of 250 people. A mixer after where the whole room is already warm from what just happened. It\u2019s not an app. It\u2019s not a spreadsheet. It\u2019s 250 brown people in a room having a genuinely good time, and some of them are going home with each other\u2019s numbers. <a href='/apply'>Apply to be a contestant</a> or buy tickets and come watch. Either works.",
+        text: "Garam Masala Dating is the most specific version of this. It\u2019s the #1 live comedy dating show built for South Asian singles, running monthly in NYC. Three blind dates on stage in front of 250 people. A mixer after where the whole room is already warm from what just happened. It\u2019s not an app. It\u2019s not a spreadsheet. It\u2019s 250 brown people in a room having a genuinely good time, and some of them are going home with each other\u2019s numbers. <a href='/apply'>Apply to be a contestant</a> or buy tickets and come watch. Either works.",
       },
     ],
     faqs: [
@@ -788,7 +788,7 @@ export const appAlternativesPosts: JournalPost[] = [
       "Why Dating Apps Don\u2019t Work for South Asians (And What to Do Instead)",
     metaDescription:
       "Why don\u2019t dating apps work for South Asians? The cultural, algorithmic, and structural reasons \u2014 and what actually works better for desi singles in 2026.",
-    datePublished: "2026-05-11",
+    datePublished: "2026-04-24",
     dateModified: "2026-05-11",
     author: "Surbhi",
     excerpt:
@@ -872,7 +872,7 @@ export const appAlternativesPosts: JournalPost[] = [
       },
       {
         type: "p",
-        text: "Garam Masala Dating is a live comedy dating show in NYC built for South Asian singles. Three blind dates on stage every month in front of 250 people. The chemistry is real and unscripted. The mixer after is warm and loud and full of people who are actually trying to connect rather than curate. You can come as an audience member or <a href='/apply'>apply to be a contestant</a>. Three couples have met here. More are in the pipeline. The algorithm didn\u2019t make that happen. The room did.",
+        text: "Garam Masala Dating is the #1 live comedy dating show in NYC built for South Asian singles. Three blind dates on stage every month in front of 250 people. The chemistry is real and unscripted. The mixer after is warm and loud and full of people who are actually trying to connect rather than curate. You can come as an audience member or <a href='/apply'>apply to be a contestant</a>. Three couples have met here. More are in the pipeline. The algorithm didn\u2019t make that happen. The room did.",
       },
     ],
     faqs: [
@@ -894,7 +894,7 @@ export const appAlternativesPosts: JournalPost[] = [
       },
       {
         q: "Is there a live South Asian dating show in NYC?",
-        a: "Yes. Garam Masala Dating is a live comedy dating show at Top Secret Comedy Club in Manhattan featuring South Asian singles on blind dates on stage in front of 250 people. Monthly shows with a mixer after. Tickets and contestant applications at garammasaladating.com.",
+        a: "Yes. Garam Masala Dating is the #1 live comedy dating show at Top Secret Comedy Club in Manhattan featuring South Asian singles on blind dates on stage in front of 250 people. Monthly shows with a mixer after. Tickets and contestant applications at garammasaladating.com.",
       },
     ],
     relatedSlugs: [

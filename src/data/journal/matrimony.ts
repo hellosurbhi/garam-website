@@ -6,7 +6,7 @@ export const matrimonyPosts: JournalPost[] = [
     title: "Shaadi.com in 2026: Is It Still Worth It for Modern Desis?",
     metaDescription:
       "Honest Shaadi.com review for 2026. Is Shaadi.com legit? We break down what works, what doesn\u2019t, and who actually gets results on the platform.",
-    datePublished: "2026-07-28",
+    datePublished: "2026-06-02",
     dateModified: "2026-07-28",
     author: "Surbhi",
     excerpt:
@@ -115,7 +115,7 @@ export const matrimonyPosts: JournalPost[] = [
     title: "Best Shaadi.com Alternatives for South Asian Singles",
     metaDescription:
       "Looking for a Shaadi.com alternative? Here are the best South Asian matrimony and dating platforms in 2026, from BharatMatrimony to Dil Mil to live events.",
-    datePublished: "2026-07-30",
+    datePublished: "2026-06-03",
     dateModified: "2026-07-30",
     author: "Surbhi",
     excerpt:
@@ -229,7 +229,7 @@ export const matrimonyPosts: JournalPost[] = [
       "BharatMatrimony vs Shaadi.com vs Jeevansathi: Which Actually Works?",
     metaDescription:
       "BharatMatrimony vs Shaadi.com vs Jeevansathi \u2014 an honest comparison of the three biggest Indian matrimony platforms for 2026. Which one is worth your time?",
-    datePublished: "2026-08-01",
+    datePublished: "2026-06-04",
     dateModified: "2026-08-01",
     author: "Surbhi",
     excerpt:
@@ -342,7 +342,7 @@ export const matrimonyPosts: JournalPost[] = [
     title: "How to Use Indian Matrimony Sites Without Losing Your Mind",
     metaDescription:
       "Step-by-step guide to Indian matrimony sites and matrimonial biodata. How to write a profile that gets responses and avoid the mistakes most people make.",
-    datePublished: "2026-08-03",
+    datePublished: "2026-06-05",
     dateModified: "2026-08-03",
     author: "Surbhi",
     excerpt:
@@ -455,7 +455,7 @@ export const matrimonyPosts: JournalPost[] = [
     title: "Betterhalf App Review: Modern Matchmaking for Desi Professionals",
     metaDescription:
       "Honest Betterhalf dating app review for 2026. How does this AI matchmaking app compare to Shaadi.com for marriage-minded South Asian professionals?",
-    datePublished: "2026-08-05",
+    datePublished: "2026-06-06",
     dateModified: "2026-08-05",
     author: "Surbhi",
     excerpt:
@@ -560,7 +560,7 @@ export const matrimonyPosts: JournalPost[] = [
     title: "NRI Matrimony: Finding a Match Across Borders in 2026",
     metaDescription:
       "NRI matrimonial guide for 2026: which platforms work, how to handle visa and relocation talks, and how to run a cross-border South Asian marriage search.",
-    datePublished: "2026-08-07",
+    datePublished: "2026-06-07",
     dateModified: "2026-08-07",
     author: "Surbhi",
     excerpt:
@@ -658,7 +658,7 @@ export const matrimonyPosts: JournalPost[] = [
       },
       {
         q: "Can I find a South Asian match in NYC without using apps?",
-        a: "Yes. Live events, cultural organizations, South Asian professional networks, and community gatherings are all legitimate ways to meet South Asian singles in major metros. Garam Masala Dating in NYC is a monthly live comedy dating show specifically for South Asian singles. Many attendees are also using apps but appreciate having an in-person option.",
+        a: "Yes. Live events, cultural organizations, South Asian professional networks, and community gatherings are all legitimate ways to meet South Asian singles in major metros. Garam Masala Dating in NYC is the #1 monthly live comedy dating show specifically for South Asian singles. Many attendees are also using apps but appreciate having an in-person option.",
       },
     ],
     relatedSlugs: [
@@ -673,7 +673,7 @@ export const matrimonyPosts: JournalPost[] = [
     title: "Community Matrimony Sites: From TamilMatrimony to PunjabiMatrimony",
     metaDescription:
       "Guide to community-specific matrimony sites: TamilMatrimony, PunjabiMatrimony, KeralaMatrimony, and more. Which community platforms are worth using in 2026?",
-    datePublished: "2026-08-09",
+    datePublished: "2026-06-08",
     dateModified: "2026-08-09",
     author: "Surbhi",
     excerpt:
@@ -791,7 +791,7 @@ export const matrimonyPosts: JournalPost[] = [
       "Indian Matrimony After Divorce: Second Marriage Platforms That Work",
     metaDescription:
       "Guide to divorcee matrimony and second marriage options for Indian and South Asian singles. Which platforms, strategies, and mindsets actually work in 2026.",
-    datePublished: "2026-08-11",
+    datePublished: "2026-06-09",
     dateModified: "2026-08-11",
     author: "Surbhi",
     excerpt:

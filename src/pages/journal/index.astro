@@ -1,9 +1,9 @@
 ---
-import BaseLayout from '@/layouts/BaseLayout.astro';
-import { journalPostsPublished } from '@/data/journal';
-import { buildBreadcrumbJsonLd } from '@/utils/breadcrumbs';
+import BaseLayout from "@/layouts/BaseLayout.astro";
+import { journalPostsPublished } from "@/data/journal";
+import { buildBreadcrumbJsonLd } from "@/utils/breadcrumbs";
 
-const TITLE = "South Asian Dating & Relationships Journal | Garam Masala Dating";
+const TITLE = "South Asian Dating & Relationships Journal";
 const DESC =
   "Essays on South Asian dating, the live show, and what we\u2019ve learned from watching hundreds of blind dates unfold on stage.";
 
@@ -22,16 +22,21 @@ const breadcrumbJsonLd = buildBreadcrumbJsonLd([
 ]);
 ---
 
-<BaseLayout
-  title={TITLE}
-  description={DESC}
->
+<BaseLayout title={TITLE} description={DESC}>
   <Fragment slot="head">
     <script type="application/ld+json" set:html={breadcrumbJsonLd} />
   </Fragment>
 
   <main id="main-content" class="journal-page">
-    <img class="journal-bg" src="/images/higgs-field.webp" alt="" width="1200" height="800" aria-hidden="true" />
+    <img
+      class="journal-bg"
+      src="/images/ai-art/hf-27.webp"
+      alt=""
+      width="1200"
+      height="800"
+      aria-hidden="true"
+      loading="lazy"
+    />
     <div class="journal-container">
       <!-- Header -->
       <div class="journal-header">
@@ -40,8 +45,8 @@ const breadcrumbJsonLd = buildBreadcrumbJsonLd([
           Garam Mas<em>ala</em> Dating
         </h1>
         <p class="journal-desc">
-          Essays on desi dating, the live show, and what we've learned
-          from watching it all unfold on stage.
+          Essays on desi dating, the live show, and what we've learned from
+          watching it all unfold on stage.
         </p>
       </div>
 
@@ -50,29 +55,49 @@ const breadcrumbJsonLd = buildBreadcrumbJsonLd([
 
       <!-- Post list -->
       <div class="journal-list">
-        {journalPostsPublished.length === 0 ? (
-          <p class="journal-empty" set:html={'New essays coming soon — follow us on <a href="https://www.instagram.com/garammasaladating/" target="_blank" rel="noopener noreferrer">Instagram</a> for the latest.'} />
-        ) : journalPostsPublished.map((post, i) => (
-          <a
-            href={`/journal/${post.slug}`}
-            class="journal-card"
-            style={`animation-delay: ${0.1 + i * 0.08}s;`}
-          >
-            <p class="journal-card-date">
-              {formatDate(post.datePublished)}
-            </p>
-            <h2 class="journal-card-title">
-              {post.title}
-            </h2>
-            <p class="journal-card-excerpt">
-              {post.excerpt}
-            </p>
-            <div class="journal-card-read">
-              Read
-              <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
-            </div>
-          </a>
-        ))}
+        {
+          journalPostsPublished.length === 0 ? (
+            <p
+              class="journal-empty"
+              set:html={
+                'New essays coming soon. Follow us on <a href="https://www.instagram.com/garammasaladating/" target="_blank" rel="noopener noreferrer">Instagram</a> for the latest.'
+              }
+            />
+          ) : (
+            journalPostsPublished.map((post, i) => (
+              <a
+                href={`/journal/${post.slug}`}
+                class="journal-card"
+                style={`animation-delay: ${0.1 + i * 0.08}s;`}
+              >
+                <p class="journal-card-date">
+                  {formatDate(post.datePublished)}
+                </p>
+                <h2 class="journal-card-title">{post.title}</h2>
+                <p class="journal-card-excerpt">{post.excerpt}</p>
+                <div class="journal-card-read">
+                  Read
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="13"
+                    height="13"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                  >
+                    <>
+                      <path d="M5 12h14" />
+                      <path d="m12 5 7 7-7 7" />
+                    </>
+                  </svg>
+                </div>
+              </a>
+            ))
+          )
+        }
       </div>
     </div>
   </main>
@@ -80,8 +105,14 @@ const breadcrumbJsonLd = buildBreadcrumbJsonLd([
 
 <style>
   @keyframes journalFadeIn {
-    from { opacity: 0; transform: translateY(16px); }
-    to   { opacity: 1; transform: translateY(0); }
+    from {
+      opacity: 0;
+      transform: translateY(16px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
   }
 
   .journal-page {

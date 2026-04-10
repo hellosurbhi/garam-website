@@ -4,15 +4,15 @@ export const usWestCities: Record<string, CityData> = {
   "san-jose": {
     slug: "san-jose",
     displayName: "San Jose",
-    titleTag: "San Jose South Bay Desi Dating | Garam Masala Dating",
+    titleTag: "San Jose South Bay Desi Dating",
     metaDescription:
-      "Garam Masala Dating is coming to San Jose. A live South Asian dating show and singles mixer. Sunnyvale, Cupertino, Fremont, Santa Clara, and the whole South Bay.",
+      "Garam Masala Dating is coming to San Jose. The #1 live South Asian dating show and singles mixer. Sunnyvale, Cupertino, Fremont, Santa Clara, and the whole South Bay.",
     h1: "200,000 Indian Americans in Santa Clara County. Time for a Dating Show.",
     status: "coming-soon",
     badgeLabel: "Coming Soon",
     bodyParagraphs: [
       "The South Bay has the largest South Asian population of any metro area in the United States. That is not an exaggeration. Sunnyvale, Cupertino, Fremont, Santa Clara, Milpitas. Walk through any Apple, Google, or Meta campus and count. Drive down El Camino Real and you\u2019ll pass more Indian restaurants than you could eat at in a year. The desi presence here is so dense that it almost feels like the dating problem should solve itself. It doesn\u2019t.",
-      "Garam Masala Dating is a live South Asian dating show and singles mixer that started in New York City and has been selling out every other week. Real singles go on blind dates on stage, the audience watches and reacts, and everyone mixes before and after. It\u2019s the social event this community has been missing.",
+      "Garam Masala Dating is the #1 live South Asian dating show and singles mixer that started in New York City and has been selling out every other week. Real singles go on blind dates on stage, the audience watches and reacts, and everyone mixes before and after. It\u2019s the social event this community has been missing.",
       "The South Bay desi dating scene has a specific problem: everyone works at the same five companies, lives in the same cluster of apartment complexes, and has already matched with half the people on every app within a 20 mile radius. The social circles are enormous but they overlap completely. You need a room full of new faces with a shared reason to talk. That\u2019s what this show does.",
       "We\u2019re building the San Jose and South Bay waitlist now. Stanford grads, Berkeley alumni, SJSU students, every engineer at every tech company on Mathilda Avenue. Get on the list for first access, or apply to be a contestant below.",
       "Santa Clara County has over 200,000 Indian Americans. If even a fraction of the single ones show up, this will be the biggest desi dating event the Bay Area has ever seen.",
@@ -42,15 +42,15 @@ export const usWestCities: Record<string, CityData> = {
   sacramento: {
     slug: "sacramento",
     displayName: "Sacramento",
-    titleTag: "Sacramento CA Desi Singles Event | Garam Masala Dating",
+    titleTag: "Sacramento CA Desi Singles Event",
     metaDescription:
-      "Garam Masala Dating is coming to Sacramento. A live South Asian dating show and singles mixer. Folsom, Elk Grove, and the whole metro.",
+      "Garam Masala Dating is coming to Sacramento. The #1 live South Asian dating show and singles mixer. Folsom, Elk Grove, and the whole metro.",
     h1: "You Left the Bay for Better Rent. We're Bringing You Better Dating.",
     status: "coming-soon",
     badgeLabel: "Coming Soon",
     bodyParagraphs: [
       "Sacramento\u2019s South Asian community has been growing steadily, driven partly by Bay Area spillover and partly by its own strengths. Folsom, Elk Grove, and Rancho Cordova have become popular landing spots for Indian families. State government jobs, UC Davis proximity, and a cost of living that doesn\u2019t require selling a kidney have drawn a real desi population to the area. The community is here. The singles scene is playing catch up.",
-      "Garam Masala Dating is a live South Asian dating show and singles mixer from New York City. Real singles go on blind dates on stage, the audience reacts, and everyone mixes. It\u2019s been selling out in NYC and we\u2019re bringing it to cities where the community is growing fast and the social options haven\u2019t kept pace.",
+      "Garam Masala Dating is the #1 live South Asian dating show and singles mixer from New York City. Real singles go on blind dates on stage, the audience reacts, and everyone mixes. It\u2019s been selling out in NYC and we\u2019re bringing it to cities where the community is growing fast and the social options haven\u2019t kept pace.",
       "If you\u2019re South Asian and single in Sacramento, you\u2019ve probably noticed that the dating scene here doesn\u2019t match the Bay Area even though the communities are connected. People commute, people visit, but there\u2019s no anchor event in Sac itself that brings single desi people together. This show creates that anchor.",
       "We\u2019re building the Sacramento waitlist. Folsom professionals, Elk Grove families, state workers, Sac State students, anyone in the region. Get on the list for first access, or apply to be a contestant below.",
       "You moved here from the Bay for the quality of life. Let us bring one good thing from the other coast while we\u2019re at it.",
@@ -80,15 +80,15 @@ export const usWestCities: Record<string, CityData> = {
   davis: {
     slug: "davis",
     displayName: "Davis",
-    titleTag: "UC Davis Desi Dating Event | Garam Masala Dating",
+    titleTag: "UC Davis Desi Dating Event",
     metaDescription:
-      "Garam Masala Dating is coming to Davis. A live South Asian dating show for UC Davis\u2019s large desi community. Join the waitlist.",
+      "Garam Masala Dating is coming to Davis. The #1 live South Asian dating show for UC Davis\u2019s large desi community. Join the waitlist.",
     h1: "Three Square Miles of Bike Paths and the Same Twelve Profiles. We Can Do Better.",
     status: "coming-soon",
     badgeLabel: "Coming Soon",
     bodyParagraphs: [
       "UC Davis has a huge Indian student enrollment, and the town of Davis is basically the campus. If you\u2019re desi and single here, your dating radius is about three square miles of bike paths and study spots. The cultural organizations do good work building community, but the dating options in a small college town max out fast. You know everyone. Everyone knows you. The apps show you the same twelve people.",
-      "Garam Masala Dating is a live South Asian dating show and singles mixer from New York City. Real singles go on blind dates on stage in front of a live audience, and everyone mixes before and after. It\u2019s fun, it\u2019s social, and it beats whatever you were going to do on a Friday night in Davis.",
+      "Garam Masala Dating is the #1 live South Asian dating show and singles mixer from New York City. Real singles go on blind dates on stage in front of a live audience, and everyone mixes before and after. It\u2019s fun, it\u2019s social, and it beats whatever you were going to do on a Friday night in Davis.",
       "Davis is close enough to Sacramento that we\u2019d draw from both, which means a bigger room and more new faces than you\u2019d expect. The UC Davis desi community combined with the Sac metro South Asian population gives this show real numbers to work with.",
       "We\u2019re gauging interest for Davis. Join the waitlist and you\u2019ll hear about it first. Apply to be a contestant if you want to go on a live blind date in front of your college town. Your classmates will either respect you or never let you live it down. Probably both.",
     ],
@@ -114,15 +114,15 @@ export const usWestCities: Record<string, CityData> = {
   irvine: {
     slug: "irvine",
     displayName: "Irvine",
-    titleTag: "Irvine CA Indian Dating Show | Garam Masala Dating",
+    titleTag: "Irvine CA Indian Dating Show",
     metaDescription:
-      "Garam Masala Dating is coming to Irvine. A live South Asian dating show for UCI\u2019s massive desi community and the OC South Asian scene.",
+      "Garam Masala Dating is coming to Irvine. The #1 live South Asian dating show for UCI\u2019s massive desi community and the OC South Asian scene.",
     h1: "Irvine Was Designed for Families, Not Singles. We're Fixing That.",
     status: "coming-soon",
     badgeLabel: "Coming Soon",
     bodyParagraphs: [
       "Irvine has become one of the most South Asian cities in Southern California, and UCI\u2019s Indian student body is a big part of why. The campus, the tech companies along the 405 corridor, and the broader Orange County professional scene have created a desi community that\u2019s young, educated, and growing. The parks are pristine, the schools are ranked, and the master planned communities are immaculate. What\u2019s missing is a social scene for single people that doesn\u2019t require driving to LA.",
-      "Garam Masala Dating is a live South Asian dating show and singles mixer from New York City. Real singles go on blind dates on stage, the audience watches and reacts, and everyone mixes before and after. It has been selling out in NYC and we\u2019re expanding to communities that have the population but not the programming.",
+      "Garam Masala Dating is the #1 live South Asian dating show and singles mixer from New York City. Real singles go on blind dates on stage, the audience watches and reacts, and everyone mixes before and after. It has been selling out in NYC and we\u2019re expanding to communities that have the population but not the programming.",
       "The thing about Irvine is that it\u2019s designed for families, not singles. Everything closes early, the nightlife is limited, and the town\u2019s layout makes spontaneous social interaction nearly impossible. You drive to a parking structure, walk to your destination, and drive home. No wonder the apps feel like the only option. This show gives Irvine\u2019s South Asian singles something the city planners forgot to include: a reason to be in the same room on the same night.",
       "We\u2019re building the Irvine waitlist. UCI students, OC tech workers, anyone in the South County desi community. Get on the list for first access, or apply to be a contestant below.",
       "Yes, we\u2019ll find a venue that\u2019s not in a strip mall. No promises about the parking structure though. This is still Orange County.",
@@ -152,15 +152,15 @@ export const usWestCities: Record<string, CityData> = {
   seattle: {
     slug: "seattle",
     displayName: "Seattle",
-    titleTag: "Seattle Desi Dating Night | Garam Masala Dating",
+    titleTag: "Seattle Desi Dating Night",
     metaDescription:
-      "Garam Masala Dating is coming to Seattle. A live South Asian dating show and singles mixer. Bellevue, Redmond, Kirkland, and the Eastside.",
+      "Garam Masala Dating is coming to Seattle. The #1 live South Asian dating show and singles mixer. Bellevue, Redmond, Kirkland, and the Eastside.",
     h1: "Stop Swiping, Seattle. Come Meet Someone in Person.",
     status: "coming-soon",
     badgeLabel: "Coming Soon",
     bodyParagraphs: [
       "Seattle\u2019s South Asian community is enormous and almost entirely driven by tech. Amazon and Microsoft alone have hired tens of thousands of Indian engineers, and the spillover into Bellevue, Redmond, Kirkland, Sammamish, and Issaquah has turned the Eastside into one of the densest desi suburbs in the country. UW adds a student contingent. The community is massive, wealthy, and young. The dating scene? Somehow still stuck in 2015.",
-      "Garam Masala Dating is a live South Asian dating show and singles mixer from New York City. Real singles go on blind dates on stage, the audience watches and reacts, and everyone mixes before and after. It\u2019s been selling out in NYC and we\u2019re expanding to cities where the demand is obvious and the supply is zero.",
+      "Garam Masala Dating is the #1 live South Asian dating show and singles mixer from New York City. Real singles go on blind dates on stage, the audience watches and reacts, and everyone mixes before and after. It\u2019s been selling out in NYC and we\u2019re expanding to cities where the demand is obvious and the supply is zero.",
       "The Seattle Freeze is real and it hits harder when you\u2019re trying to date within the South Asian community. Everyone is friendly at work, nobody makes plans after. The Eastside is full of single desi tech workers who go from their apartment to the office to the gym and back. Weekends are spent at brunch with the same five friends. This show breaks that cycle by putting you in a room with hundreds of people who are all there for the same reason.",
       "We\u2019re building the Seattle and Eastside waitlist. Amazon L5s, Microsoft engineers, UW students, Bellevue professionals. Get on the list for first access, or apply to be a contestant below.",
       "We\u2019ll do the show somewhere between Seattle and Bellevue so nobody has to deal with the 520 bridge on a weekend. We respect your commute trauma.",
@@ -190,15 +190,15 @@ export const usWestCities: Record<string, CityData> = {
   portland: {
     slug: "portland",
     displayName: "Portland",
-    titleTag: "Portland OR Desi Singles Night | Garam Masala Dating",
+    titleTag: "Portland OR Desi Singles Night",
     metaDescription:
-      "Garam Masala Dating is coming to Portland. A live South Asian dating show and singles mixer. Beaverton, Hillsboro, and the whole metro.",
+      "Garam Masala Dating is coming to Portland. The #1 live South Asian dating show and singles mixer. Beaverton, Hillsboro, and the whole metro.",
     h1: "Portland Put a Bird on Everything. Let's Put a Desi Dating Show on It.",
     status: "coming-soon",
     badgeLabel: "Coming Soon",
     bodyParagraphs: [
       "Portland\u2019s South Asian community is concentrated on the west side, anchored by the Intel campus in Hillsboro and the broader tech presence in Beaverton. Indian engineers and their families have been settling in Washington County for years, building a community that includes temples, grocery stores, and a growing restaurant scene along the TV Highway corridor. The community is solid. The social infrastructure for singles is not.",
-      "Garam Masala Dating is a live South Asian dating show and singles mixer from New York City. Real singles go on blind dates on stage, the audience watches and reacts, and everyone mixes before and after. Portland is a city that already loves weird, creative events. A live desi dating show fits right in.",
+      "Garam Masala Dating is the #1 live South Asian dating show and singles mixer from New York City. Real singles go on blind dates on stage, the audience watches and reacts, and everyone mixes before and after. Portland is a city that already loves weird, creative events. The #1 live desi dating show fits right in.",
       "If you\u2019re South Asian and single in Portland, you know the landscape. The dating pool is smaller than Seattle, the apps recycle the same faces, and the Portland social scene, while charming, doesn\u2019t naturally create spaces for the desi community to connect romantically. Coffee shops and bookstores are great for the Portland aesthetic, not great for actually meeting someone with intention.",
       "We\u2019re building the Portland waitlist. Intel engineers, PSU students, OHSU residents, the Beaverton crowd. Get on the list for first access, or apply to be a contestant below.",
       "Portland, you already put a bird on everything. Let us put a desi dating show on it too.",
@@ -228,15 +228,15 @@ export const usWestCities: Record<string, CityData> = {
   phoenix: {
     slug: "phoenix",
     displayName: "Phoenix",
-    titleTag: "Phoenix AZ Live Desi Dating Event | Garam Masala Dating",
+    titleTag: "Phoenix AZ Live Desi Dating Event",
     metaDescription:
-      "Garam Masala Dating is coming to Phoenix. A live South Asian dating show and singles mixer. Chandler, Gilbert, Tempe, and the East Valley.",
+      "Garam Masala Dating is coming to Phoenix. The #1 live South Asian dating show and singles mixer. Chandler, Gilbert, Tempe, and the East Valley.",
     h1: "The East Valley's Desi Population Is Booming. The Dating Scene Isn't. Yet.",
     status: "coming-soon",
     badgeLabel: "Coming Soon",
     bodyParagraphs: [
       "The East Valley has quietly become one of the most South Asian corridors in the Southwest. Chandler, Gilbert, Tempe, Mesa. Intel\u2019s massive Chandler campus has been pulling Indian engineers for years, and the broader tech expansion in the area has accelerated the growth. ASU brings in thousands of South Asian students annually. The community is young, growing fast, and spread across a metro area that seems to stretch forever in every direction.",
-      "Garam Masala Dating is a live South Asian dating show and singles mixer from New York City. Real singles go on blind dates on stage, the audience watches and reacts, and everyone mixes before and after. We\u2019ve been selling out in NYC and we\u2019re bringing it to cities where the desi population is booming but the social programming hasn\u2019t caught up.",
+      "Garam Masala Dating is the #1 live South Asian dating show and singles mixer from New York City. Real singles go on blind dates on stage, the audience watches and reacts, and everyone mixes before and after. We\u2019ve been selling out in NYC and we\u2019re bringing it to cities where the desi population is booming but the social programming hasn\u2019t caught up.",
       "Phoenix is a car city, which means organic run-ins are basically impossible. Nobody is walking down the street and locking eyes with a stranger. You drive from your apartment to work to the gym to home. The social spaces are malls and chain restaurants. If you\u2019re South Asian and single here, meeting people requires deliberate effort, and the options are limited to apps, temple events, or hoping someone interesting shows up at the Curry Corner in Chandler.",
       "We\u2019re building the Phoenix waitlist. Intel workers, ASU students, the Chandler and Gilbert desi communities. Get on the list for first access, or apply to be a contestant below.",
       "We\u2019ll schedule it for a time when it\u2019s not 115 degrees outside. We want you to show up looking your best, not like you just ran a marathon from the parking lot.",
@@ -266,15 +266,15 @@ export const usWestCities: Record<string, CityData> = {
   tucson: {
     slug: "tucson",
     displayName: "Tucson",
-    titleTag: "Tucson AZ Desi Dating Near UofA | Garam Masala Dating",
+    titleTag: "Tucson AZ Desi Dating Near UofA",
     metaDescription:
-      "Garam Masala Dating is coming to Tucson. A live South Asian dating show for the U of Arizona desi community. Join the waitlist.",
+      "Garam Masala Dating is coming to Tucson. The #1 live South Asian dating show for the U of Arizona desi community. Join the waitlist.",
     h1: "Desert Town, Tight Community, One Night to Meet Everyone",
     status: "coming-soon",
     badgeLabel: "Coming Soon",
     bodyParagraphs: [
       "The University of Arizona pulls in a steady stream of South Asian graduate students, and the Tucson desi community, while small, is genuinely tight. The Indian grad students know each other, the families know each other, and the professionals in the area form a community that\u2019s close enough to feel like home. The problem, as always, is that tight knit communities make dating feel like a fishbowl.",
-      "Garam Masala Dating is a live South Asian dating show and singles mixer from New York City. Real singles, blind dates on stage, a live audience, and a mixer where everyone talks. It\u2019s the social event that small college cities need and never get.",
+      "Garam Masala Dating is the #1 live South Asian dating show and singles mixer from New York City. Real singles, blind dates on stage, a live audience, and a mixer where everyone talks. It\u2019s the social event that small college cities need and never get.",
       "Tucson has its own personality. It\u2019s not Phoenix. The desert energy is different, the pace is slower, and the town has a creative, laid back vibe that\u2019s genuinely appealing. A desi dating show here would have a different flavor than what we do in New York, and that\u2019s exactly the point. Every city gets its own version of the show.",
       "We\u2019re gauging interest for Tucson. U of A students, grad students, the broader Tucson desi community. Join the waitlist for first access, or apply to be a contestant below.",
     ],
@@ -303,15 +303,15 @@ export const usWestCities: Record<string, CityData> = {
   "las-vegas": {
     slug: "las-vegas",
     displayName: "Las Vegas",
-    titleTag: "Las Vegas Desi Dating Show | Garam Masala Dating",
+    titleTag: "Las Vegas Desi Dating Show",
     metaDescription:
-      "Garam Masala Dating is coming to Las Vegas. A live South Asian dating show and singles mixer. Henderson, Summerlin, and the whole valley.",
+      "Garam Masala Dating is coming to Las Vegas. The #1 live South Asian dating show and singles mixer. Henderson, Summerlin, and the whole valley.",
     h1: "Entertainment Capital of the World, and This Is the Show You Actually Need",
     status: "coming-soon",
     badgeLabel: "Coming Soon",
     bodyParagraphs: [
       "Las Vegas has a growing South Asian community that most people overlook because they\u2019re too busy thinking about the Strip. Henderson and Summerlin have become popular with Indian families and professionals. UNLV has a South Asian student presence. The hospitality, healthcare, and tech industries in the valley have all drawn desi workers. The community is small but growing, and the dating scene for South Asian singles here is practically nonexistent.",
-      "Garam Masala Dating is a live South Asian dating show and singles mixer from New York City. Real singles go on blind dates on stage, the audience watches and reacts, and everyone mixes. In a city built on entertainment, the irony that there\u2019s no good desi dating event is not lost on us.",
+      "Garam Masala Dating is the #1 live South Asian dating show and singles mixer from New York City. Real singles go on blind dates on stage, the audience watches and reacts, and everyone mixes. In a city built on entertainment, the irony that there\u2019s no good desi dating event is not lost on us.",
       "Vegas is a city where everyone is either passing through or locals who never go to the Strip. If you\u2019re desi and actually live here, your social life is the suburban side of the valley, not the tourist corridor. Henderson dinners, Summerlin weekends, the occasional temple event. The singles scene within the community is small and everyone has already exhausted the app options.",
       "We\u2019re building the Las Vegas waitlist. Henderson families, UNLV students, valley professionals. Get on the list for first access, or apply to be a contestant below.",
       "Yes, we get the irony. You live in the entertainment capital of the world and we\u2019re about to bring you the one show you actually need.",
@@ -341,15 +341,15 @@ export const usWestCities: Record<string, CityData> = {
   albuquerque: {
     slug: "albuquerque",
     displayName: "Albuquerque",
-    titleTag: "Albuquerque NM Indian Singles Event | Garam Masala Dating",
+    titleTag: "Albuquerque NM Indian Singles Event",
     metaDescription:
-      "Garam Masala Dating is coming to Albuquerque. A live South Asian dating show and singles mixer for New Mexico\u2019s desi community.",
+      "Garam Masala Dating is coming to Albuquerque. The #1 live South Asian dating show and singles mixer for New Mexico\u2019s desi community.",
     h1: "Before You Expand Your App Radius to Santa Fe, Try This",
     status: "coming-soon",
     badgeLabel: "Coming Soon",
     bodyParagraphs: [
       "Albuquerque\u2019s South Asian community is small but anchored by serious institutions. Sandia National Laboratories and the broader tech and defense corridor have drawn Indian scientists and engineers to the area for decades. UNM adds a graduate student contingent. The community is concentrated enough that people know each other, which makes it a perfect fit for a show that thrives on intimate, high energy rooms.",
-      "Garam Masala Dating is a live South Asian dating show and singles mixer from New York City. Real singles go on blind dates on stage, the audience watches, and everyone mixes. The format works in big cities and small ones. In smaller communities, the energy is actually more electric because the stakes feel higher and the connections are more personal.",
+      "Garam Masala Dating is the #1 live South Asian dating show and singles mixer from New York City. Real singles go on blind dates on stage, the audience watches, and everyone mixes. The format works in big cities and small ones. In smaller communities, the energy is actually more electric because the stakes feel higher and the connections are more personal.",
       "If you\u2019re South Asian and single in Albuquerque, you\u2019ve probably accepted that the dating pool is limited. Maybe you\u2019ve expanded your app radius to Santa Fe. Maybe you\u2019ve thought about moving. Before you do any of that, give this a shot. One night, one room, every single South Asian in the metro who\u2019s willing to show up.",
       "We\u2019re gauging interest for Albuquerque. Sandia Labs engineers, UNM students, the broader New Mexico desi community. Join the waitlist for first access, or apply to be a contestant below.",
     ],
@@ -372,15 +372,15 @@ export const usWestCities: Record<string, CityData> = {
   boise: {
     slug: "boise",
     displayName: "Boise",
-    titleTag: "Boise ID Desi Dating Night | Garam Masala Dating",
+    titleTag: "Boise ID Desi Dating Night",
     metaDescription:
-      "Garam Masala Dating is coming to Boise. A live South Asian dating show and singles mixer for Idaho\u2019s growing desi tech community.",
+      "Garam Masala Dating is coming to Boise. The #1 live South Asian dating show and singles mixer for Idaho\u2019s growing desi tech community.",
     h1: "Pioneer Energy, Desi Flavor. Boise Is Ready.",
     status: "coming-soon",
     badgeLabel: "Coming Soon",
     bodyParagraphs: [
       "Boise is one of the fastest growing cities in America, and the South Asian community is growing with it. Micron Technology and HP have been drawing Indian engineers to the Treasure Valley for years, and the broader tech expansion in Meridian and the surrounding area has accelerated the trend. Boise State adds a student presence. The desi community here is small but it\u2019s new, it\u2019s young, and it\u2019s building something from scratch.",
-      "Garam Masala Dating is a live South Asian dating show and singles mixer from New York City. Real singles go on blind dates on stage, the audience watches and reacts, and everyone mixes. The show works in cities of every size because the formula is universal: put single people in a room and give them a fun reason to talk to each other.",
+      "Garam Masala Dating is the #1 live South Asian dating show and singles mixer from New York City. Real singles go on blind dates on stage, the audience watches and reacts, and everyone mixes. The show works in cities of every size because the formula is universal: put single people in a room and give them a fun reason to talk to each other.",
       "Being South Asian and single in Boise can feel lonely. The community is small enough that you might know every other desi person within a 50 mile radius, and the apps are a wasteland once you filter by the preferences that matter to you. This show creates a specific night for the community to come together. Even if the room is smaller than our NYC shows, the energy will be real.",
       "We\u2019re gauging interest for Boise. Micron engineers, HP workers, Boise State students, and anyone in the Idaho desi community. Join the waitlist for first access, or apply to be a contestant below. Pioneer energy, desi flavor. Let\u2019s do this.",
     ],
@@ -406,15 +406,15 @@ export const usWestCities: Record<string, CityData> = {
   honolulu: {
     slug: "honolulu",
     displayName: "Honolulu",
-    titleTag: "Honolulu HI Desi Singles Event | Garam Masala Dating",
+    titleTag: "Honolulu HI Desi Singles Event",
     metaDescription:
-      "Garam Masala Dating is coming to Honolulu. A live South Asian dating show and singles mixer. Island desi energy, meet the mainland show.",
+      "Garam Masala Dating is coming to Honolulu. The #1 live South Asian dating show and singles mixer. Island desi energy, meet the mainland show.",
     h1: "A Desi Dating Show in Paradise. Your Mainland Friends Will Be Jealous.",
     status: "coming-soon",
     badgeLabel: "Coming Soon",
     bodyParagraphs: [
       "Honolulu\u2019s South Asian community is tiny, and that\u2019s exactly what makes this interesting. UH Manoa has an Indian student presence, there\u2019s a small professional community scattered across the island, and the broader Asian cultural fabric of Hawaii means that South Asians here exist in a unique context that mainland cities don\u2019t share. Being desi in Honolulu is its own experience, and the dating scene reflects the island\u2019s reality: beautiful place, small pool.",
-      "Garam Masala Dating is a live South Asian dating show and singles mixer from New York City. Real singles, blind dates on stage, a live audience, and a mixer. The show has been selling out a 250 person room in NYC and we\u2019re looking at bringing it to communities that are small but passionate.",
+      "Garam Masala Dating is the #1 live South Asian dating show and singles mixer from New York City. Real singles, blind dates on stage, a live audience, and a mixer. The show has been selling out a 250 person room in NYC and we\u2019re looking at bringing it to communities that are small but passionate.",
       "Living on an island means your dating radius has a hard boundary. You can\u2019t just expand the app to the next suburb. What you see is what you get. That constraint makes an event like this even more valuable. If every single South Asian person on Oahu who\u2019s looking to meet someone came to one room on one night, that\u2019s a room worth being in.",
       "We\u2019re gauging interest for Honolulu. UH students, professionals, military families, anyone in the Hawaii desi community. Join the waitlist for first access, or apply to be a contestant below.",
       "A desi dating show in paradise. Your mainland friends will be jealous of the venue, if nothing else.",

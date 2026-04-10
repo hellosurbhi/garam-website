@@ -1,12 +1,13 @@
 ---
-import BaseLayout from '@/layouts/BaseLayout.astro';
-import ContestantPrepPage from '@/components/ContestantPrepPage';
+import BaseLayout from "@/layouts/BaseLayout.astro";
+import ContestantPrepPage from "@/components/ContestantPrepPage";
 ---
 
 <BaseLayout
-  title="Contestant Prep | Garam Masala Dating"
+  title="Contestant Prep"
   description=""
   noindex={true}
+  hideSpiceList={true}
 >
   <main id="main-content">
     <ContestantPrepPage client:idle />

@@ -527,124 +527,6 @@
   cursor: pointer;
 }
 
-/* ─── Terms modal ─────────────────────────────────────────────── */
-
-.termsOverlay {
-  position: fixed;
-  inset: 0;
-  background: rgba(0, 0, 0, 0.6);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  z-index: 1000;
-  padding: 16px;
-}
-
-.termsModal {
-  background: white;
-  border-radius: 20px;
-  width: 100%;
-  max-width: 680px;
-  max-height: 90vh;
-  display: flex;
-  flex-direction: column;
-  overflow: hidden;
-}
-
-.termsModalHeader {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 20px 24px 16px;
-  border-bottom: 1px solid rgba(0, 0, 0, 0.08);
-  flex-shrink: 0;
-}
-
-.termsModalTitle {
-  font-family: var(--font-playfair);
-  font-size: 17px;
-  font-weight: 700;
-  color: var(--apply-brown);
-  margin: 0;
-}
-
-.termsModalClose {
-  background: none;
-  border: none;
-  padding: 8px;
-  min-width: var(--touch-target);
-  min-height: var(--touch-target);
-  cursor: pointer;
-  color: #888;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border-radius: 8px;
-  flex-shrink: 0;
-}
-
-.termsModalClose:hover {
-  background: rgba(0, 0, 0, 0.06);
-}
-
-.termsModalBody {
-  overflow-y: auto;
-  padding: 20px 24px;
-  flex: 1;
-}
-
-.termsModalBody p {
-  font-family: var(--font-body);
-  font-size: 13px;
-  color: #555;
-  line-height: 1.7;
-  margin-bottom: 16px;
-}
-
-.termsModalFooter {
-  display: flex;
-  gap: 12px;
-  padding: 16px 24px 20px;
-  border-top: 1px solid rgba(0, 0, 0, 0.08);
-  flex-shrink: 0;
-}
-
-.termsAgreeButton {
-  flex: 1;
-  padding: 14px 24px;
-  min-height: var(--touch-target);
-  border-radius: 100px;
-  border: none;
-  background: var(--brand-red);
-  color: white;
-  font-family: var(--font-body);
-  font-size: 15px;
-  font-weight: 600;
-  cursor: pointer;
-  transition: background 0.2s;
-}
-
-.termsAgreeButton:hover {
-  background: var(--brand-red-dark);
-}
-
-.termsDismissButton {
-  padding: 14px 24px;
-  min-height: var(--touch-target);
-  border-radius: 100px;
-  border: 1px solid rgba(0, 0, 0, 0.15);
-  background: white;
-  color: var(--apply-brown);
-  font-family: var(--font-body);
-  font-size: 15px;
-  cursor: pointer;
-  transition: background 0.2s;
-}
-
-.termsDismissButton:hover {
-  background: rgba(0, 0, 0, 0.04);
-}
-
 /* ─── Disclaimer ─────────────────────────────────────────────── */
 
 .disclaimer {
@@ -727,7 +609,7 @@
 
 .successText {
   font-size: 16px;
-  color: #666;
+  color: var(--muted);
   margin: 0 0 32px;
   line-height: 1.5;
 }
@@ -751,7 +633,7 @@
 
 .successCardText {
   font-size: 15px;
-  color: #444;
+  color: var(--text-secondary);
   margin: 0;
   line-height: 1.5;
 }
@@ -771,7 +653,7 @@
   color: var(--charcoal);
   margin: 12px 0 0;
   padding: 10px 14px;
-  background: #fff8f0;
+  background: var(--off-white);
   border-radius: 8px;
   line-height: 1.4;
 }

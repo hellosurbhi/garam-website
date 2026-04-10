@@ -6,7 +6,7 @@ import { pressItems } from "@/data/press";
 import { SOCIAL_URLS } from "@/data/socials";
 import { buildBreadcrumbJsonLd } from "@/utils/breadcrumbs";
 
-const TITLE = "Tickets, Shows & More | Garam Masala Dating";
+const TITLE = "Tickets, Shows & More";
 const DESC =
   "Get tickets to upcoming Garam Masala Dating shows, follow us on Instagram and TikTok, apply as a contestant, or reach out for booking and press.";
 
@@ -20,6 +20,7 @@ const breadcrumbJsonLd = buildBreadcrumbJsonLd([
 /* ── SVG icon markup ──────────────────────────────────────── */
 
 import { ICON_SVGS, SOCIAL_ICON_SVGS, type IconName } from "@/data/icons";
+import LeadCaptureModal from "@/components/LeadCaptureModal.astro";
 
 function iconSvg(name: IconName, isPrimary?: boolean): string {
   const cls = isPrimary ? "icon-primary" : "icon-glass";
@@ -39,11 +40,12 @@ interface LinkDef {
 
 const links: LinkDef[] = [
   {
-    label: "Apply to Be on the Show",
-    href: "/apply",
+    label: "Get on the List",
+    dialogTrigger: "links-spice-trigger",
     isPrimary: true,
-    icon: "heart",
+    icon: "mail",
   },
+  { label: "Apply to Be on the Show", href: "/apply", icon: "heart" },
   {
     label: "Short form content @ Instagram",
     href: SOCIAL_URLS.instagram,
@@ -90,11 +92,12 @@ const reversedPress = [...pressItems].reverse();
   <main id="main-content" class="page">
     <img
       class="page-bg"
-      src="/images/hero.webp"
+      src="/images/hero/hero.webp"
       alt=""
       width="1200"
       height="800"
       aria-hidden="true"
+      loading="lazy"
     />
     <div class="container">
       {/* Header */}
@@ -116,10 +119,17 @@ const reversedPress = [...pressItems].reverse();
                 <button
                   type="button"
                   id={link.dialogTrigger}
-                  class="glass-link"
-                  style={`animation: fadeUp 0.5s ease-out ${delay}s both`}
+                  class:list={[link.isPrimary ? "primary-link" : "glass-link"]}
+                  style={
+                    link.isPrimary
+                      ? `animation: fadeUp 0.5s ease-out ${delay}s both, pulseGlow 2.5s ease-in-out 1s infinite`
+                      : `animation: fadeUp 0.5s ease-out ${delay}s both`
+                  }
+                  data-ph-capture={link.isPrimary ? "cta_clicked" : undefined}
+                  data-ph-cta={link.isPrimary ? "get-on-list" : undefined}
+                  data-ph-section={link.isPrimary ? "links" : undefined}
                 >
-                  <Fragment set:html={iconSvg(link.icon, false)} />
+                  <Fragment set:html={iconSvg(link.icon, link.isPrimary)} />
                   <span class="link-label">{link.label}</span>
                 </button>
               );
@@ -353,6 +363,15 @@ const reversedPress = [...pressItems].reverse();
       </div>
     </div>
   </dialog>
+
+  <LeadCaptureModal
+    id="links-spice-modal"
+    source="links-page"
+    heading="Get on the List"
+    subheading="Cheap and free tickets, exclusive discount codes, show announcements. No spam."
+    submitLabel="Count Me In"
+    successMessage="You're on the list! Deals incoming."
+  />
 </BaseLayout>
 
 <script>
@@ -371,6 +390,7 @@ const reversedPress = [...pressItems].reverse();
   }
   setupDialog("events-trigger", "events-modal");
   setupDialog("press-trigger", "press-modal");
+  setupDialog("links-spice-trigger", "links-spice-modal");
 </script>
 
 <style>

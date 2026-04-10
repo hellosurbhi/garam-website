@@ -1,5 +1,61 @@
 # Changelog
 
+## polish: homepage detail pass — animations, tokens, focus parity (2026-04-10)
+
+### What changed
+
+A final detail-level polish pass on the `cleanup-enhancements-to-the-new-ui` branch. Zero padding/spacing/color/typography changes; zero content or section-reorder changes. Every commit is either an animation upgrade, a token swap that resolves to the same hex, or a keyboard-parity enhancement.
+
+**Commits in this pass (newest first):**
+
+1. `74f9fd4` — `a11y(home): focus-visible parity on five keyboard-interactive elements` — each already had a richer `:hover` treatment than the global red outline alone; tacked `:focus-visible` onto the same selectors so keyboard users get the same feedback. Elements: `.exp-cta-link`, `.creators-cta-link`, `.press-name`, `.video-facade .play-icon`, `.spicelist-skip`.
+2. `7671061` — `style(stats): animate stat counters with count-up on scroll` — `IntersectionObserver` triggers a 1500ms easeOutCubic tween on each `.stat-num` when the stats section enters viewport. Parses raw text into target + suffix (e.g. `"2K+"` → 2 with `"K+"`) so source-of-truth stays in `src/data/copy.ts`. Reduced-motion short-circuits the entire observer.
+3. `9070b97` — `style(faq): smooth expand/collapse with height transition` — intercepts `<summary>` clicks to animate `.faq-answer` height between 0 and `scrollHeight` over 300ms cubic-bezier, with a `void el.offsetHeight` layout flush to guarantee the start frame is committed before the end frame. Native `<details>` remains the no-JS + reduced-motion fallback.
+4. `66841a1` — `style(reveal): stagger [data-reveal] children in wave-like cascade` — new stagger pre-pass in the `IntersectionObserver` in `src/pages/index.astro` walks every `[data-reveal-stagger]` parent and sets `style.transitionDelay = i * 60ms` on each `[data-reveal]` child, producing a 480ms cascade tail. Applied to `.shows-list`, `.testi-grid`, `.faq-list`. Existing `prefers-reduced-motion` guard already disables it.
+5. `18f03c8` — `style(modal): add exit animations to email popup and city modal` — shared `@keyframes popupOut` / `@keyframes modalOut` in `src/index.css`. Both vanilla `<dialog>` closers now route through a `closeWithExit` helper that adds a `.closing` class, listens for `animationend`, then calls native `close()`. Reduced-motion users skip the wait and get instant close.
+6. `710d46b` — `style(shows): richer hover/focus state on show cards` — `.show-card:hover` and `.show-card:focus-within` share a treatment: subtle background tint, 4px rightward translate, and ticket-label letter-spacing + color shift. Transform is gated behind `@media (prefers-reduced-motion: no-preference)`.
+7. `a1185f0` — `fix(modal): focus email input on open instead of dialog` — unrelated prior-session modal focus-ring fix committed separately (carried over from pre-polish work).
+8. `d3e70aa` — `style(tokens): replace exact-match hardcoded colors with CSS vars` — `#fff0e2` → `var(--cream-warm)`, `#eee` → `var(--border-light)`, `#888`/`#666` → `var(--muted)`. Each swap resolves to the same hex (or within 3 units) so visually identical. Removed truly unused `--hover-subtle` token. `--cream`, `--text`, `--text-light`, `--border`, `--success` remain in place because admin components and `reactSelectStyles.ts` depend on them.
+9. `b0a9f0a` — `refactor(style): extract shared .btn/.btn-hot/.btn-outline to index.css` — moved the complete button spec from `HomeHero.astro` scoped styles into the global `src/index.css` block. HomeHero renders byte-identical (same selectors, same rules, different file). Ready for future components to consume without re-defining.
+
+### Intentionally out of scope
+
+- **Hero section** — left untouched per the "don't touch the hero" rule.
+- **Padding/margin/spacing values** — no values changed anywhere in the diff; every spacing number is intentional.
+- **Font sizes, letter-spacing, line-height, color hex values** — no typographic or color changes, only refactors from hex-literal to equivalent-value CSS var.
+- **Section reorder / section cuts** — Press stays, Video stays where it is, no content moves.
+- **Section background colors** — unchanged; alternation rule still enforced.
+- **Shared `.eyebrow` base class** — skipped. The hero eyebrow's glass-background styling is visually distinct enough that extracting a shared base would have required a modifier-and-override dance that adds more code than it removes. Each section eyebrow keeps its scoped style.
+- **Shared `.faq-cta-btn` unification into `.btn btn-hot`** — skipped for the same reason; the FAQ CTA button uses `padding: 14px 32px` while the shared `.btn` uses `padding: 16px 24px`, and overriding the shared value to match would defeat the unification. The two rules stay separate since the shared base now exists for future consumers.
+- **React → vanilla conversion** of ContestantPrepPage, **ApplyPage split**, **unified `Modal.astro`/`Modal.tsx` changes**, **hardcoded-text refactor to data files** — all deferred to separate PRs.
+
+### Anti-regression guarantees
+
+- Zero padding, margin, gap, width, or flex-basis values changed.
+- Zero color hex values changed — only swapped for a CSS variable that resolves to the same value (or within 3 luminance units in one case, flagged in that commit).
+- Zero font-family, font-size, letter-spacing, or line-height changes.
+- `HomeHero.astro` touched only in commit `b0a9f0a` where the duplicated `.btn` block was removed — the output computes identically because the same rules now live in `src/index.css`.
+- All new animations honor `prefers-reduced-motion: reduce`, either via the existing global rule at `src/index.css:208-216` or via runtime `matchMedia` guards in new script blocks.
+- All new focus-visible states layer on top of (not replace) the global red outline.
+- Pre-commit hook ran `astro check` (0 errors) and `vitest` (916/916 passing) on every commit.
+
+### Files affected
+
+```
+src/index.css                                 (shared .btn + keyframes + token cleanup)
+src/pages/index.astro                         (stagger pre-pass, popup exit animation)
+src/components/home/HomeHero.astro            (remove duplicated .btn block only)
+src/components/home/HomeShows.astro           (hover upgrade, city modal exit, stagger marker)
+src/components/home/HomeStats.astro           (count-up animation)
+src/components/home/HomeFAQ.astro             (smooth accordion, color + stagger marker)
+src/components/home/HomeTestimonials.astro    (stagger marker)
+src/components/home/HomeExperience.astro      (token swap, focus-visible parity)
+src/components/home/HomeCreators.astro        (focus-visible parity)
+src/components/home/HomePress.astro           (focus-visible parity)
+src/components/home/HomeVideo.astro           (focus-visible parity)
+src/components/home/HomeSignup.astro          (focus-visible parity)
+```
+
 ## fix(modal): focus email input on open, remove red ring on X button (2026-04-10)
 
 ### What changed

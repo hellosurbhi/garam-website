@@ -1,11 +1,14 @@
-type AnalyticsValue = string | number | boolean | undefined;
+type AnalyticsValue = string | number | boolean | null | undefined;
 type AnalyticsProps = object;
 
-function isAnalyticsValue(value: unknown): value is Exclude<AnalyticsValue, undefined> {
+function isAnalyticsValue(
+  value: unknown,
+): value is Exclude<AnalyticsValue, undefined> {
   return (
     typeof value === "string" ||
     typeof value === "number" ||
-    typeof value === "boolean"
+    typeof value === "boolean" ||
+    value === null
   );
 }
 
@@ -20,7 +23,7 @@ interface ErrorProperties {
     | "api_error";
   component?: string;
   page_url?: string;
-  [key: string]: string | number | boolean | undefined;
+  [key: string]: string | number | boolean | null | undefined;
 }
 
 export function trackError(properties: ErrorProperties) {

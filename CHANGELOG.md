@@ -1,5 +1,71 @@
 # Changelog
 
+## harden(forms): add loading state to all async form submit buttons (2026-04-10)
+
+### What changed
+
+All five lead-capture form submit handlers now disable their button and show "Sending..." during the async request, restoring the original label in the `finally` block. This prevents double-submission on slow connections and gives clear visual feedback that a network request is in flight.
+
+**Forms updated:**
+
+- **HomeSignup.astro** (inline Spice List section): email form and phone form
+- **index.astro** (popup): email form and phone form (done in previous harden commit)
+- **LeadCaptureModal.astro** (reusable 2-step modal): email form and phone form
+- **NotifyModal.astro** (city notification modal): email form and phone form
+
+**Pattern applied consistently across all handlers:**
+
+```typescript
+const originalBtnText = submitBtn?.textContent ?? "";
+if (submitBtn) {
+  submitBtn.disabled = true;
+  submitBtn.textContent = "Sending...";
+}
+try {
+  /* async work */
+} finally {
+  if (submitBtn) {
+    submitBtn.disabled = false;
+    submitBtn.textContent = originalBtnText;
+  }
+}
+```
+
+### Files affected
+
+- `src/components/home/HomeSignup.astro`
+- `src/components/LeadCaptureModal.astro`
+- `src/components/NotifyModal.astro`
+
+---
+
+## harden(popup): replace 30s timer with exit-intent + scroll-depth triggers (2026-04-10)
+
+### What changed
+
+Replaced the naïve 30-second `setTimeout` popup trigger with industry-standard behavioral signals. The popup now fires on exit-intent (cursor leaving the top of the viewport on desktop) or 65% scroll depth (all devices), subject to a 15-second minimum session gate.
+
+**Dismiss suppression:** closing the popup now writes a timestamp to `localStorage` (`gmd-popup-dismissed`). Re-opening is blocked for 7 days. Existing `gmd-popup-subscribed` key still provides permanent suppression after successful signup.
+
+**Key constants:**
+
+- `MIN_SESSION_MS = 15_000` — popup never shows within 15s of page load
+- `DISMISS_DURATION_MS = 7 * 24 * 60 * 60 * 1000` — 7-day cooldown after dismissal
+- Scroll threshold: 65% of document height
+- Exit-intent: `pointer: fine` media query gates it to desktop only (no mis-fires on mobile scroll)
+
+### Files affected
+
+- `src/pages/index.astro`
+
+### Decisions / trade-offs
+
+- Exit-intent (`clientY <= 0`) is the industry standard for high-intent desktop visitors; 65% scroll depth catches mobile users who have clearly engaged with the page.
+- The `{ once: true }` option on the mouseleave listener auto-cleans after first trigger, preventing accumulation across SPA navigations.
+- A guard against `dialog[open]` prevents stacking if another modal is already visible.
+
+---
+
 ## perf(animate): replace layout-property animations with compositor-friendly transitions (2026-04-10)
 
 ### What changed

@@ -267,7 +267,11 @@ const {
         const errorEl = root.querySelector(
           "[data-lc-error]",
         ) as HTMLElement | null;
-        if (submitBtn) submitBtn.disabled = true;
+        const originalBtnText = submitBtn?.textContent ?? "";
+        if (submitBtn) {
+          submitBtn.disabled = true;
+          submitBtn.textContent = "Sending...";
+        }
 
         try {
           const attribution = buildLeadAttribution({ source });
@@ -308,7 +312,10 @@ const {
             errorEl.removeAttribute("hidden");
           }
         } finally {
-          if (submitBtn) submitBtn.disabled = false;
+          if (submitBtn) {
+            submitBtn.disabled = false;
+            submitBtn.textContent = originalBtnText;
+          }
         }
       });
 
@@ -340,7 +347,11 @@ const {
         const submitBtn = (
           e.target as HTMLFormElement
         ).querySelector<HTMLButtonElement>('[type="submit"]');
-        if (submitBtn) submitBtn.disabled = true;
+        const originalBtnText = submitBtn?.textContent ?? "";
+        if (submitBtn) {
+          submitBtn.disabled = true;
+          submitBtn.textContent = "Sending...";
+        }
         try {
           if (leadDocId) {
             await fetch("/api/update-lead", {
@@ -372,7 +383,10 @@ const {
             phoneErrorEl.removeAttribute("hidden");
           }
         } finally {
-          if (submitBtn) submitBtn.disabled = false;
+          if (submitBtn) {
+            submitBtn.disabled = false;
+            submitBtn.textContent = originalBtnText;
+          }
         }
       });
 

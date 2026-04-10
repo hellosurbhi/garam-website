@@ -106,7 +106,11 @@ const leadSource = `spice-list-${pageName}`;
       const submitBtn = (
         e.target as HTMLFormElement
       ).querySelector<HTMLButtonElement>('[type="submit"]');
-      if (submitBtn) submitBtn.disabled = true;
+      const originalBtnText = submitBtn?.textContent ?? "";
+      if (submitBtn) {
+        submitBtn.disabled = true;
+        submitBtn.textContent = "Sending...";
+      }
       try {
         const db = getFirebaseDb();
         const attribution = buildLeadAttribution({ source: leadSource });
@@ -130,7 +134,10 @@ const leadSource = `spice-list-${pageName}`;
           errorEl.removeAttribute("hidden");
         }
       } finally {
-        if (submitBtn) submitBtn.disabled = false;
+        if (submitBtn) {
+          submitBtn.disabled = false;
+          submitBtn.textContent = originalBtnText;
+        }
       }
     });
 
@@ -161,7 +168,11 @@ const leadSource = `spice-list-${pageName}`;
       const submitBtn = (
         e.target as HTMLFormElement
       ).querySelector<HTMLButtonElement>('[type="submit"]');
-      if (submitBtn) submitBtn.disabled = true;
+      const originalBtnText = submitBtn?.textContent ?? "";
+      if (submitBtn) {
+        submitBtn.disabled = true;
+        submitBtn.textContent = "Sending...";
+      }
       try {
         const db = getFirebaseDb();
         if (nlDocRef) {
@@ -188,7 +199,10 @@ const leadSource = `spice-list-${pageName}`;
           phoneErrorEl.removeAttribute("hidden");
         }
       } finally {
-        if (submitBtn) submitBtn.disabled = false;
+        if (submitBtn) {
+          submitBtn.disabled = false;
+          submitBtn.textContent = originalBtnText;
+        }
       }
     });
 

@@ -317,8 +317,24 @@ const speakableJsonLd = JSON.stringify({
     }, 30000);
 
     const close = () => {
-      popup.close();
       clearTimeout(timer);
+      const inner = popup.querySelector(".popup-inner") as HTMLElement | null;
+      const reduced = window.matchMedia(
+        "(prefers-reduced-motion: reduce)",
+      ).matches;
+      if (!inner || reduced) {
+        popup.close();
+        return;
+      }
+      popup.classList.add("closing");
+      inner.addEventListener(
+        "animationend",
+        () => {
+          popup.classList.remove("closing");
+          popup.close();
+        },
+        { once: true },
+      );
     };
 
     popup.querySelector(".popup-close")?.addEventListener("click", close);
@@ -507,6 +523,9 @@ const speakableJsonLd = JSON.stringify({
       opacity: 1;
       transform: scale(1) translateY(0);
     }
+  }
+  .popup-dialog.closing .popup-inner {
+    animation: popupOut 0.2s ease-in forwards;
   }
   .popup-close {
     position: absolute;

@@ -1,0 +1,956 @@
+---
+import BaseLayout from "@/layouts/BaseLayout.astro";
+import AuthorBio from "@/components/AuthorBio.astro";
+import { masterclassPosts } from "@/data/masterclasses";
+import { buildBreadcrumbJsonLd } from "@/utils/breadcrumbs";
+
+const post = masterclassPosts[0];
+const postUrl = `https://garammasaladating.com/journal/${post.slug}`;
+
+const stepSlides = post.slides.filter((s) => s.type === "step");
+const scienceSlide = post.slides.find((s) => s.type === "science")!;
+const twistSlide = post.slides.find((s) => s.type === "twist")!;
+const bonusSlide = post.slides.find((s) => s.type === "bonus")!;
+const ctaSlide = post.slides.find((s) => s.type === "cta")!;
+
+function formatDate(iso: string): string {
+  return new Date(iso).toLocaleDateString("en-US", {
+    month: "long",
+    day: "numeric",
+    year: "numeric",
+    timeZone: "UTC",
+  });
+}
+
+const articleJsonLd = JSON.stringify({
+  "@context": "https://schema.org",
+  "@type": "Article",
+  headline: post.title,
+  datePublished: post.datePublished,
+  dateModified: post.dateModified,
+  author: {
+    "@type": "Person",
+    name: "Surbhi",
+    url: "https://garammasaladating.com",
+  },
+  publisher: {
+    "@type": "Organization",
+    name: "Garam Masala Dating",
+    url: "https://garammasaladating.com",
+    logo: {
+      "@type": "ImageObject",
+      url: "https://garammasaladating.com/images/logo.svg",
+    },
+  },
+  description: post.metaDescription,
+  mainEntityOfPage: {
+    "@type": "WebPage",
+    "@id": postUrl,
+  },
+});
+
+const faqJsonLd = JSON.stringify({
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  mainEntity: post.faqs.map(({ q, a }) => ({
+    "@type": "Question",
+    name: q,
+    acceptedAnswer: { "@type": "Answer", text: a },
+  })),
+});
+
+const breadcrumbJsonLd = buildBreadcrumbJsonLd([
+  { name: "Home", url: "https://garammasaladating.com" },
+  { name: "Journal", url: "https://garammasaladating.com/journal" },
+  { name: post.title },
+]);
+---
+
+<BaseLayout
+  title={post.title}
+  description={post.metaDescription}
+  ogType="article"
+>
+  <Fragment slot="head">
+    <meta property="article:published_time" content={post.datePublished} />
+    <meta property="article:modified_time" content={post.dateModified} />
+    <meta property="article:author" content="Surbhi" />
+    <script type="application/ld+json" set:html={articleJsonLd} />
+    <script type="application/ld+json" set:html={faqJsonLd} />
+    <script type="application/ld+json" set:html={breadcrumbJsonLd} />
+  </Fragment>
+
+  <main id="main-content" class="mc-page">
+    <!-- Reading progress bar -->
+    <div class="mc-progress" id="mc-progress" aria-hidden="true"></div>
+
+    <!-- COVER -->
+    <section class="mc-section mc-cover bg-light" aria-label="Introduction">
+      <a href="/journal" class="mc-back">&larr; Journal</a>
+      <div class="mc-content mc-cover-content">
+        <div class="mc-cover-emoji" aria-hidden="true">🫠🔥💀</div>
+        <p class="mc-eyebrow">
+          Masterclass &middot; {formatDate(post.datePublished)}
+        </p>
+        <h1 class="mc-cover-title">{post.slides[0].title}</h1>
+        <p class="mc-cover-sub">{post.slides[0].body}</p>
+      </div>
+      <div class="mc-scroll-hint" aria-hidden="true">
+        <span>scroll</span>
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          width="14"
+          height="14"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          aria-hidden="true"
+        >
+          <path d="M12 5v14"></path>
+          <path d="m19 12-7 7-7-7"></path>
+        </svg>
+      </div>
+    </section>
+
+    <!-- DISCLAIMER -->
+    <section class="mc-section mc-disclaimer bg-warm" aria-label="Disclaimer">
+      <div class="mc-content">
+        <div class="disclaimer-box">
+          <span class="warning-label">Surgeon General's Warning</span>
+          <h2 class="mc-step-title reveal" data-delay="0">
+            {post.slides[1].title}
+          </h2>
+          <div
+            class="mc-step-body reveal"
+            data-delay="150"
+            set:html={post.slides[1].body}
+          />
+        </div>
+      </div>
+    </section>
+
+    <!-- STEPS -->
+    {
+      stepSlides.map((slide, stepIdx) => {
+        const bgClass = stepIdx % 2 === 0 ? "bg-light" : "bg-warm";
+        return (
+          <>
+            <section
+              class={`mc-section mc-step ${bgClass}`}
+              aria-label={slide.stepLabel}
+            >
+              <div class="mc-content">
+                {slide.stepNumber && (
+                  <span class="step-ghost" aria-hidden="true">
+                    {slide.stepNumber}
+                  </span>
+                )}
+                <p class="mc-step-label reveal" data-delay="0">
+                  {slide.stepLabel}
+                </p>
+                <h2 class="mc-step-title reveal" data-delay="100">
+                  {slide.title}
+                </h2>
+                <div
+                  class="mc-step-body reveal"
+                  data-delay="200"
+                  set:html={slide.body}
+                />
+                {slide.hotTake && (
+                  <p class="hot-take reveal" data-delay="320">
+                    {slide.hotTake}
+                  </p>
+                )}
+              </div>
+            </section>
+            {slide.stepNumber === "04" && (
+              <aside class="mc-mid-cta" aria-label="Show promotion">
+                <p class="mc-mid-cta-text">
+                  We host the #1 live dating show for South Asian singles,
+                  weekly in NYC. <a href="/tickets">Get tickets</a> or{" "}
+                  <a href="/apply">apply to be on stage</a>.
+                </p>
+              </aside>
+            )}
+          </>
+        );
+      })
+    }
+
+    <!-- SCIENCE -->
+    <section
+      class="mc-section mc-science bg-warm"
+      aria-label={scienceSlide.stepLabel}
+    >
+      <div class="mc-content">
+        <span class="step-ghost step-ghost-emoji" aria-hidden="true">🧠</span>
+        <p class="mc-step-label reveal" data-delay="0">
+          {scienceSlide.stepLabel}
+        </p>
+        <h2 class="mc-step-title reveal" data-delay="100">
+          {scienceSlide.title}
+        </h2>
+        <div
+          class="mc-step-body reveal"
+          data-delay="200"
+          set:html={scienceSlide.body}
+        />
+        {
+          scienceSlide.hotTake && (
+            <p class="hot-take reveal" data-delay="320">
+              {scienceSlide.hotTake}
+            </p>
+          )
+        }
+      </div>
+    </section>
+
+    <!-- PLOT TWIST -->
+    <section class="mc-section mc-twist bg-light" aria-label="Plot twist">
+      <div class="mc-content mc-twist-content">
+        <span class="quote-mark reveal" data-delay="0" aria-hidden="true"
+          >&ldquo;</span
+        >
+        <h2 class="mc-step-title reveal" data-delay="100">
+          {twistSlide.title}
+        </h2>
+        <div
+          class="mc-step-body reveal"
+          data-delay="200"
+          set:html={twistSlide.body}
+        />
+      </div>
+    </section>
+
+    <!-- BONUS -->
+    <section
+      class="mc-section mc-bonus bg-warm"
+      aria-label={bonusSlide.stepLabel}
+    >
+      <div class="mc-content">
+        <span class="step-ghost step-ghost-emoji" aria-hidden="true">🌶️</span>
+        <p class="mc-step-label reveal" data-delay="0">
+          {bonusSlide.stepLabel}
+        </p>
+        <h2 class="mc-step-title reveal" data-delay="100">
+          {bonusSlide.title}
+        </h2>
+        <div
+          class="mc-step-body mc-step-body--bonus reveal"
+          data-delay="200"
+          set:html={bonusSlide.body}
+        />
+        {
+          bonusSlide.hotTake && (
+            <p class="hot-take reveal" data-delay="320">
+              {bonusSlide.hotTake}
+            </p>
+          )
+        }
+      </div>
+    </section>
+
+    <!-- FAQs + AUTHOR BIO -->
+    <section class="mc-faqs bg-light" aria-labelledby="faq-heading">
+      <div class="mc-content mc-content--narrow">
+        <h2 class="mc-faqs-heading" id="faq-heading">
+          Frequently Asked Questions
+        </h2>
+        <dl class="faq-list">
+          {
+            post.faqs.map(({ q, a }) => (
+              <div class="faq-item">
+                <dt class="faq-q">{q}</dt>
+                <dd class="faq-a">{a}</dd>
+              </div>
+            ))
+          }
+        </dl>
+        <AuthorBio />
+      </div>
+    </section>
+
+    <!-- CLOSING CTA -->
+    <section
+      class="mc-section mc-cta-final bg-red"
+      aria-label="Come to the show"
+    >
+      <div class="mc-content mc-cta-content">
+        <p class="mc-cta-eyebrow reveal" data-delay="0">
+          Tired of situationships?
+        </p>
+        <h2 class="mc-cta-title reveal" data-delay="100">{ctaSlide.title}</h2>
+        <div
+          class="mc-cta-body reveal"
+          data-delay="200"
+          set:html={ctaSlide.body}
+        />
+        <a href="/tickets" class="mc-cta-btn reveal" data-delay="320">
+          Get Tickets
+        </a>
+        <p class="mc-cta-ig reveal" data-delay="420">@garammasaladating</p>
+      </div>
+    </section>
+
+    <!-- PAGE FOOTER -->
+    <div class="mc-footer bg-light">
+      <a href="/journal" class="mc-footer-back">&larr; All journal posts</a>
+      <a href="/apply" class="mc-footer-apply">Apply to be on the show &rarr;</a
+      >
+    </div>
+  </main>
+</BaseLayout>
+
+<style>
+  /* ── Layout ──────────────────────────────────────────────── */
+
+  .mc-page {
+    position: relative;
+  }
+
+  .mc-section {
+    min-height: 100svh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    padding: 80px 0;
+  }
+
+  .mc-content {
+    position: relative;
+    max-width: 640px;
+    width: 100%;
+    padding: 0 24px;
+  }
+
+  .mc-content--narrow {
+    max-width: 640px;
+    margin: 0 auto;
+  }
+
+  /* ── Backgrounds ─────────────────────────────────────────── */
+
+  .bg-light {
+    background-color: var(--off-white);
+  }
+
+  .bg-warm {
+    background-color: var(--cream-warm);
+  }
+
+  .bg-red {
+    background-color: var(--brand-red);
+  }
+
+  /* ── Progress bar ────────────────────────────────────────── */
+
+  .mc-progress {
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 3px;
+    width: 0%;
+    background-color: var(--brand-red);
+    z-index: 1000;
+    transition: width 0.1s linear;
+  }
+
+  /* ── Back link ───────────────────────────────────────────── */
+
+  .mc-back {
+    position: absolute;
+    top: 24px;
+    left: 24px;
+    font-family: var(--font-body);
+    font-size: 13px;
+    color: #999;
+    text-decoration: none;
+    z-index: 10;
+    transition: color 0.15s ease;
+  }
+
+  .mc-back:hover {
+    color: var(--brand-red);
+  }
+
+  /* ── Cover ───────────────────────────────────────────────── */
+
+  .mc-cover {
+    background-image: radial-gradient(
+      circle,
+      rgba(220, 38, 38, 0.04) 1px,
+      transparent 1px
+    );
+    background-size: 24px 24px;
+    text-align: center;
+    flex-direction: column;
+  }
+
+  .mc-cover-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0;
+  }
+
+  .mc-cover-emoji {
+    font-size: clamp(2rem, 6vw, 3.5rem);
+    margin-bottom: 24px;
+    line-height: 1;
+    animation: mcPulse 3s ease-in-out infinite;
+  }
+
+  @keyframes mcPulse {
+    0%,
+    100% {
+      transform: scale(1);
+    }
+    50% {
+      transform: scale(1.06);
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .mc-cover-emoji {
+      animation: none;
+    }
+  }
+
+  .mc-eyebrow {
+    font-family: var(--font-body);
+    font-size: 11px;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.18em;
+    color: var(--brand-red);
+    margin-bottom: 20px;
+  }
+
+  .mc-cover-title {
+    font-family: var(--font-playfair);
+    font-size: clamp(2.25rem, 7vw, 5rem);
+    font-weight: 900;
+    line-height: 1.05;
+    color: var(--charcoal);
+    margin-bottom: 20px;
+    max-width: 560px;
+  }
+
+  .mc-cover-sub {
+    font-family: var(--font-cormorant);
+    font-style: italic;
+    font-size: clamp(1.1rem, 3vw, 1.5rem);
+    color: #888;
+    letter-spacing: 0.02em;
+  }
+
+  .mc-scroll-hint {
+    position: absolute;
+    bottom: 32px;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+    font-family: var(--font-body);
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.18em;
+    color: #bbb;
+    animation: mcBounce 2s ease-in-out infinite;
+  }
+
+  @keyframes mcBounce {
+    0%,
+    100% {
+      transform: translateX(-50%) translateY(0);
+    }
+    50% {
+      transform: translateX(-50%) translateY(5px);
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .mc-scroll-hint {
+      animation: none;
+    }
+  }
+
+  /* ── Disclaimer ──────────────────────────────────────────── */
+
+  .mc-disclaimer {
+    text-align: center;
+  }
+
+  .disclaimer-box {
+    border: 2px dashed rgba(220, 38, 38, 0.25);
+    border-radius: 16px;
+    padding: 40px 32px;
+    position: relative;
+    max-width: 560px;
+    margin: 0 auto;
+  }
+
+  .warning-label {
+    position: absolute;
+    top: -13px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: var(--brand-red);
+    color: white;
+    font-family: var(--font-body);
+    font-size: 10px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.2em;
+    padding: 3px 16px;
+    border-radius: 20px;
+    white-space: nowrap;
+  }
+
+  /* ── Step sections ───────────────────────────────────────── */
+
+  .mc-step .mc-content {
+    padding-top: 48px;
+    padding-bottom: 48px;
+  }
+
+  .step-ghost {
+    position: absolute;
+    top: 0;
+    left: -4px;
+    font-family: var(--font-playfair);
+    font-size: clamp(5rem, 14vw, 10rem);
+    font-weight: 900;
+    color: var(--charcoal);
+    opacity: 0.06;
+    line-height: 1;
+    pointer-events: none;
+    user-select: none;
+    z-index: 0;
+  }
+
+  .step-ghost-emoji {
+    font-size: clamp(4rem, 11vw, 8rem);
+    opacity: 0.1;
+  }
+
+  .mc-step-label {
+    position: relative;
+    z-index: 1;
+    font-family: var(--font-body);
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.2em;
+    color: var(--brand-red);
+    margin-bottom: 12px;
+    margin-top: 80px;
+  }
+
+  .mc-step-title {
+    position: relative;
+    z-index: 1;
+    font-family: var(--font-playfair);
+    font-size: clamp(1.75rem, 5vw, 3rem);
+    font-weight: 900;
+    color: var(--charcoal);
+    line-height: 1.12;
+    margin-bottom: 20px;
+  }
+
+  .mc-step-body {
+    position: relative;
+    z-index: 1;
+    font-family: var(--font-body);
+    font-size: clamp(1rem, 2.5vw, 1.125rem);
+    color: #555;
+    line-height: 1.75;
+    max-width: 55ch;
+  }
+
+  .mc-step-body :global(em) {
+    color: var(--brand-red);
+    font-style: italic;
+    font-weight: 600;
+  }
+
+  .mc-step-body :global(strong) {
+    color: var(--charcoal);
+    font-weight: 700;
+  }
+
+  .mc-step-body--bonus :global(strong) {
+    color: var(--charcoal);
+    font-weight: 700;
+    display: block;
+    margin-top: 16px;
+  }
+
+  .mc-step-body--bonus :global(strong:first-child) {
+    margin-top: 0;
+  }
+
+  .hot-take {
+    position: relative;
+    z-index: 1;
+    display: inline-block;
+    background: var(--brand-red);
+    color: white;
+    font-family: var(--font-body);
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.15em;
+    padding: 6px 14px;
+    border-radius: 50px;
+    margin-top: 20px;
+  }
+
+  /* ── Disclaimer text override ────────────────────────────── */
+
+  .mc-disclaimer .mc-step-title {
+    margin-top: 8px;
+    font-size: clamp(1.5rem, 4vw, 2.25rem);
+  }
+
+  .mc-disclaimer .mc-step-body {
+    margin-top: 16px;
+    text-align: left;
+  }
+
+  /* ── Science section ─────────────────────────────────────── */
+
+  .mc-science .mc-step-label {
+    margin-top: 72px;
+  }
+
+  /* ── Twist section ───────────────────────────────────────── */
+
+  .mc-twist-content {
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .quote-mark {
+    font-family: var(--font-playfair);
+    font-size: clamp(4rem, 10vw, 7rem);
+    color: var(--brand-red);
+    opacity: 0.15;
+    line-height: 0.6;
+    margin-bottom: 8px;
+    display: block;
+  }
+
+  .mc-twist .mc-step-title {
+    max-width: 480px;
+  }
+
+  .mc-twist .mc-step-body {
+    text-align: center;
+    max-width: 50ch;
+  }
+
+  /* ── Bonus section ───────────────────────────────────────── */
+
+  .mc-bonus .mc-step-label {
+    margin-top: 64px;
+  }
+
+  /* ── Mid-article CTA ─────────────────────────────────────── */
+
+  .mc-mid-cta {
+    background-color: var(--brand-red);
+    padding: 24px;
+    text-align: center;
+  }
+
+  .mc-mid-cta-text {
+    font-family: var(--font-body);
+    font-size: 15px;
+    line-height: 1.65;
+    color: white;
+    max-width: 520px;
+    margin: 0 auto;
+  }
+
+  .mc-mid-cta-text a {
+    color: var(--electric-yellow);
+    font-weight: 600;
+    text-decoration: none;
+  }
+
+  .mc-mid-cta-text a:hover {
+    text-decoration: underline;
+  }
+
+  /* ── FAQs ────────────────────────────────────────────────── */
+
+  .mc-faqs {
+    padding: 72px 24px;
+  }
+
+  .mc-faqs-heading {
+    font-family: var(--font-playfair);
+    font-size: clamp(1.5rem, 4vw, 2rem);
+    font-weight: 700;
+    color: var(--charcoal);
+    margin-bottom: 40px;
+  }
+
+  .faq-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+  }
+
+  .faq-item {
+    padding: 24px 0;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+  }
+
+  .faq-item:first-child {
+    border-top: 1px solid rgba(0, 0, 0, 0.06);
+  }
+
+  .faq-q {
+    font-family: var(--font-playfair);
+    font-size: 1.05rem;
+    font-weight: 700;
+    color: var(--charcoal);
+    margin-bottom: 10px;
+    line-height: 1.3;
+  }
+
+  .faq-a {
+    font-family: var(--font-body);
+    font-size: 1rem;
+    color: #555;
+    line-height: 1.75;
+    margin: 0;
+  }
+
+  /* ── Closing CTA section ─────────────────────────────────── */
+
+  .mc-cta-final {
+    text-align: center;
+    flex-direction: column;
+  }
+
+  .mc-cta-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0;
+  }
+
+  .mc-cta-eyebrow {
+    font-family: var(--font-body);
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.2em;
+    color: rgba(255, 255, 255, 0.65);
+    margin-bottom: 16px;
+  }
+
+  .mc-cta-title {
+    font-family: var(--font-playfair);
+    font-size: clamp(2rem, 6vw, 3.5rem);
+    font-weight: 900;
+    color: white;
+    line-height: 1.1;
+    margin-bottom: 20px;
+  }
+
+  .mc-cta-body {
+    font-family: var(--font-body);
+    font-size: clamp(1rem, 2.5vw, 1.125rem);
+    color: rgba(255, 255, 255, 0.88);
+    line-height: 1.7;
+    max-width: 50ch;
+    margin-bottom: 36px;
+  }
+
+  .mc-cta-body :global(em) {
+    color: white;
+    font-style: italic;
+    font-weight: 600;
+  }
+
+  .mc-cta-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background: white;
+    color: var(--brand-red);
+    font-family: var(--font-body);
+    font-size: 14px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.15em;
+    padding: 0 36px;
+    height: 52px;
+    border-radius: 50px;
+    text-decoration: none;
+    transition:
+      transform 0.2s ease-out,
+      box-shadow 0.2s ease-out;
+    margin-bottom: 20px;
+    min-width: 160px;
+  }
+
+  .mc-cta-btn:hover,
+  .mc-cta-btn:focus-visible {
+    transform: scale(1.04);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.22);
+    outline: none;
+  }
+
+  .mc-cta-btn:focus-visible {
+    outline: 3px solid white;
+    outline-offset: 3px;
+  }
+
+  .mc-cta-ig {
+    font-family: var(--font-body);
+    font-size: 12px;
+    color: rgba(255, 255, 255, 0.5);
+    letter-spacing: 0.08em;
+    margin: 0;
+  }
+
+  /* ── Footer ──────────────────────────────────────────────── */
+
+  .mc-footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 12px;
+    padding: 24px;
+    border-top: 1px solid rgba(0, 0, 0, 0.06);
+  }
+
+  .mc-footer-back,
+  .mc-footer-apply {
+    font-family: var(--font-body);
+    font-size: 14px;
+    text-decoration: none;
+    transition: color 0.15s ease;
+  }
+
+  .mc-footer-back {
+    color: #888;
+  }
+
+  .mc-footer-back:hover {
+    color: var(--charcoal);
+  }
+
+  .mc-footer-apply {
+    color: var(--brand-red);
+    font-weight: 500;
+  }
+
+  .mc-footer-apply:hover {
+    color: var(--brand-red-dark);
+  }
+
+  /* ── Scroll reveal ───────────────────────────────────────── */
+
+  .mc-section:not(.mc-cover) .reveal {
+    opacity: 0;
+    transform: translateY(20px);
+    transition:
+      opacity 0.55s ease-out,
+      transform 0.55s ease-out;
+  }
+
+  .mc-section:not(.mc-cover) .reveal.is-visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .mc-section:not(.mc-cover) .reveal {
+      opacity: 1;
+      transform: none;
+      transition: none;
+    }
+  }
+
+  /* ── Mobile ──────────────────────────────────────────────── */
+
+  @media (max-width: 480px) {
+    .mc-section {
+      padding: 64px 0;
+    }
+
+    .mc-back {
+      top: 16px;
+      left: 16px;
+    }
+
+    .disclaimer-box {
+      padding: 32px 20px;
+    }
+
+    .mc-step .mc-step-label {
+      margin-top: 64px;
+    }
+
+    .mc-footer {
+      padding: 20px 16px;
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 8px;
+    }
+  }
+</style>
+
+<script>
+  // Progress bar
+  const progressEl = document.getElementById("mc-progress");
+  if (progressEl) {
+    const bar = progressEl;
+    function updateProgress() {
+      const scrolled = window.scrollY;
+      const total = document.documentElement.scrollHeight - window.innerHeight;
+      const pct = total > 0 ? (scrolled / total) * 100 : 0;
+      bar.style.width = pct + "%";
+    }
+    window.addEventListener("scroll", updateProgress, { passive: true });
+    updateProgress();
+  }
+
+  // Scroll-triggered section reveals
+  if (!window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            const section = entry.target;
+            section.querySelectorAll<HTMLElement>(".reveal").forEach((el) => {
+              const delay = parseInt(el.dataset.delay ?? "0", 10);
+              setTimeout(() => el.classList.add("is-visible"), delay);
+            });
+            observer.unobserve(section);
+          }
+        });
+      },
+      { threshold: 0.05 },
+    );
+
+    document
+      .querySelectorAll(".mc-section:not(.mc-cover)")
+      .forEach((section) => observer.observe(section));
+  }
+</script>

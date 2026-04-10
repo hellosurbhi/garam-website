@@ -1,5 +1,47 @@
 # Changelog
 
+## feat(content): add Situationship Masterclass as new content type (2026-04-10)
+
+### What changed
+
+Published "The Situationship Conversion Playbook" as the first `MasterclassPost`, a new content type for long-form interactive pieces distinct from regular journal posts.
+
+**New content type: `MasterclassPost`**
+
+- `src/data/masterclasses.ts` defines `MasterclassSlide` and `MasterclassPost` interfaces. Slides have a richer `type` field (`title | disclaimer | step | science | twist | bonus | cta`) plus `stepNumber`, `stepLabel`, `hotTake` — not reducible to the flat `PostBlock[]` used by `JournalPost`.
+- The data file holds all 13 slides and 5 SEO-targeted FAQs (targeting: "convert situationship", "intermittent reinforcement dating", "stop being someone's situationship", etc.).
+
+**New page: `/journal/situationship-masterclass`**
+
+- Static Astro page (`src/pages/journal/situationship-masterclass.astro`) takes route priority over the dynamic `[slug].astro`. All content is rendered as HTML for full indexability.
+- **Full-viewport scroll sections**: each of the 13 slides is a `min-height: 100svh` section. Big Playfair ghost step numbers (opacity 0.06), hot-take badges, alternating `--off-white` and `--cream-warm` backgrounds.
+- **Scroll animations**: Intersection Observer (threshold 0.05) triggers staggered reveals per section. Label animates first (0ms), title (100ms), body (200ms), hot-take badge (320ms). Respects `prefers-reduced-motion`.
+- **Progress bar**: 3px red fixed bar at top of page, updated on scroll.
+- **Mid-scroll CTA** after Step 04 (brand-red band linking to tickets and apply).
+- **Closing CTA section**: full-viewport, `--brand-red` background, white text, pill button linking to `/tickets`.
+- **FAQs section**: 5 questions rendered as visible `<dl>` for AEO, plus `FAQPage` JSON-LD schema.
+- **JSON-LD**: Article + BreadcrumbList + FAQPage schemas.
+- **OG meta**: `article:published_time`, `article:modified_time`, `article:author`, `ogType="article"`.
+
+**Journal index updated**
+
+- `src/pages/journal/index.astro` now imports `masterclassPosts` and merges them with `journalPostsPublished` into a single `allPosts` array sorted newest-first.
+- Masterclass cards show a red "Masterclass" badge above the date.
+
+### Files affected
+
+- `src/data/masterclasses.ts` (new)
+- `src/pages/journal/situationship-masterclass.astro` (new)
+- `src/pages/journal/index.astro` (updated)
+
+### Design decisions
+
+- Separate content type rather than fitting into `PostBlock[]` — the rich slide data (step numbers, hot-take badges, slide types) requires a richer schema.
+- Static `.astro` page rather than extending `[slug].astro` — masterclasses need a fundamentally different template. Astro static routes take priority over dynamic routes, so no routing conflict.
+- All text rendered in DOM (not behind JS) for full SEO indexability even though the experience is visual-first.
+
+---
+
 ## polish: fix touch target and cursor on HomeSignup skip button (2026-04-10)
 
 ### What changed

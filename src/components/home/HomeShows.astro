@@ -501,6 +501,7 @@ const { events } = Astro.props;
     font-style: italic;
     transition: border-color 0.2s;
     padding: 0;
+    cursor: pointer;
   }
   .request-city button:hover {
     border-color: var(--electric-yellow);
@@ -585,7 +586,9 @@ const { events } = Astro.props;
     border: none;
     color: var(--muted);
     cursor: pointer;
-    padding: 4px;
+    padding: 12px;
+    min-width: var(--touch-target);
+    min-height: var(--touch-target);
     display: flex;
     align-items: center;
     justify-content: center;

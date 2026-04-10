@@ -1,5 +1,21 @@
 # Changelog
 
+## polish: fix touch target and missing cursor on HomeShows modal close (2026-04-10)
+
+### What changed
+
+Two real defects in `HomeShows.astro` that a polish pass caught:
+
+1. **`.modal-close` touch target too small**: The Request City modal close button had `padding: 4px` with no `min-width` or `min-height`. The 48x48px minimum touch target (set via `--touch-target`) was not met. Fixed to match the pattern used in NotifyModal: `padding: 12px`, `min-width: var(--touch-target)`, `min-height: var(--touch-target)`.
+
+2. **`.request-city button` missing `cursor: pointer`**: HTML buttons default to `cursor: default` in most browsers. The "Don't see your city? Request it" button had no explicit cursor declaration. Added `cursor: pointer` to match every other interactive button on the page.
+
+### Files affected
+
+- `src/components/home/HomeShows.astro`
+
+---
+
 ## arrange(stats): fix mobile layout overflow on narrow phones (2026-04-10)
 
 ### What changed

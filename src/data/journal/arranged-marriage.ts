@@ -7,7 +7,7 @@ export const arrangedMarriagePosts: JournalPost[] = [
     metaDescription:
       "Love marriage vs arranged marriage: what the data actually says about divorce rates, satisfaction, and how modern arranged marriages work in 2026.",
     datePublished: "2026-07-20",
-    dateModified: "2026-11-01",
+    dateModified: "2026-07-20",
     author: "Surbhi",
     excerpt:
       "The love marriage vs arranged marriage debate has been running for decades, and both sides have been using bad data. Here is what the research actually says, and what it cannot tell you.",
@@ -127,7 +127,7 @@ export const arrangedMarriagePosts: JournalPost[] = [
     metaDescription:
       "A realistic month-by-month guide to the modern arranged marriage process: biodata, first meetings, courtship, and what actually happens at each stage.",
     datePublished: "2026-07-21",
-    dateModified: "2026-11-03",
+    dateModified: "2026-07-21",
     author: "Surbhi",
     excerpt:
       "Nobody gives you a roadmap for the modern arranged marriage process. Here is a realistic month-by-month breakdown of what actually happens, and the pressure points nobody warns you about.",
@@ -247,7 +247,7 @@ export const arrangedMarriagePosts: JournalPost[] = [
     metaDescription:
       "Arranged marriage red flags that look fine on paper: rushed timelines, one-sided enthusiasm, family warning signs, and what to do when you spot them.",
     datePublished: "2026-07-22",
-    dateModified: "2026-11-05",
+    dateModified: "2026-07-22",
     author: "Surbhi",
     excerpt:
       "Some arranged marriage red flags show up on the biodata. Most do not. Here are the ones your parents will explain away, and why you should not let them.",
@@ -363,7 +363,7 @@ export const arrangedMarriagePosts: JournalPost[] = [
     metaDescription:
       "Practical scripts and strategies for declining an arranged marriage match respectfully, without lying, without guilt-tripping, and without a family crisis.",
     datePublished: "2026-07-23",
-    dateModified: "2026-11-07",
+    dateModified: "2026-07-23",
     author: "Surbhi",
     excerpt:
       "Saying no to an arranged match is supposed to be simple. In practice it triggers guilt, negotiation, and sometimes all-out family conflict. Here is how to do it without all of that.",
@@ -487,7 +487,7 @@ export const arrangedMarriagePosts: JournalPost[] = [
     metaDescription:
       "How to write a biodata for marriage that goes beyond height and horoscope, what to include, what to skip, and NRI-specific tips for 2026.",
     datePublished: "2026-07-24",
-    dateModified: "2026-11-09",
+    dateModified: "2026-07-24",
     author: "Surbhi",
     excerpt:
       "The marriage biodata has not changed much since the 1980s. Here is how to write one that tells the other person something real about who you are, without turning it into a dating app profile.",
@@ -573,7 +573,7 @@ export const arrangedMarriagePosts: JournalPost[] = [
       },
       {
         type: "p",
-        text: "If you are an NRI, your biodata needs to be more explicit about three things your Indian-based counterparts do not have to clarify: visa status, relocation openness, and cultural orientation. Visa status matters practically, a US citizen's situation is very different from someone on an H1-B, and leaving it ambiguous creates conversations that could have been avoided. Relocation openness cuts both ways: be clear about whether you are open to moving to India, whether you expect a partner to move to your country, or whether the question is genuinely open.",
+        text: "If you are an NRI, your biodata needs to be more explicit about three things your Indian-based counterparts do not have to clarify: visa status, relocation openness, and cultural orientation. Visa status matters practically, a US citizen's situation is very different from someone on an H-1B, and leaving it ambiguous creates conversations that could have been avoided. Relocation openness cuts both ways: be clear about whether you are open to moving to India, whether you expect a partner to move to your country, or whether the question is genuinely open.",
       },
       {
         type: "p",
@@ -604,7 +604,7 @@ export const arrangedMarriagePosts: JournalPost[] = [
     metaDescription:
       "Real stories of arranged introductions that became genuine love, what made them work, what almost derailed them, and what they have in common.",
     datePublished: "2026-07-25",
-    dateModified: "2026-11-11",
+    dateModified: "2026-07-25",
     author: "Surbhi",
     excerpt:
       "Arranged introductions that become real love stories are not a myth. They also do not look anything like the Netflix version. Here are the honest ones.",
@@ -712,7 +712,7 @@ export const arrangedMarriagePosts: JournalPost[] = [
     metaDescription:
       "Arranged marriage for NRIs: the visa question, the 10-person matchmaking trip, cultural expectations gaps, and how to navigate the process from abroad.",
     datePublished: "2026-07-26",
-    dateModified: "2026-11-13",
+    dateModified: "2026-07-26",
     author: "Surbhi",
     excerpt:
       "The arranged marriage process is complicated enough when you live in the same city as your parents. Add international distance, visa timelines, and a two-week 'meeting trip' to India, and it becomes something else entirely.",
@@ -832,7 +832,7 @@ export const arrangedMarriagePosts: JournalPost[] = [
     metaDescription:
       "The arranged marriage divorce rate statistic is real, and nearly meaningless. Here is what it actually measures, and what success in marriage really means.",
     datePublished: "2026-07-27",
-    dateModified: "2026-11-15",
+    dateModified: "2026-07-27",
     author: "Surbhi",
     excerpt:
       "The arranged marriage divorce rate statistic gets shared constantly. It is also one of the most misleading pieces of data in the entire debate. Here is what it actually means.",

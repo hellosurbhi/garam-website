@@ -5,7 +5,7 @@ export const bollywoodPosts: JournalPost[] = [
     slug: "bollywood-movies-gaslighting-romanticized",
     title: "Bollywood Movies About Gaslighting You Probably Romanticized",
     metaDescription:
-      "Darr, Raanjhanaa, Kabir Singh — Bollywood sold us obsession as love. Here's what those movies actually show about toxic relationships.",
+      "Darr, Raanjhanaa, Kabir Singh, Bollywood sold us obsession as love. Here's what those movies actually show about toxic relationships.",
     datePublished: "2026-06-14",
     dateModified: "2026-08-21",
     author: "Surbhi",
@@ -26,7 +26,7 @@ export const bollywoodPosts: JournalPost[] = [
       },
       {
         type: "p",
-        text: "The result is a generation of South Asian viewers who came out of that film with a complicated feeling about obsession — like maybe the problem wasn't that he was obsessed, just that he was obsessed with the wrong girl. That reframe is the exact logic gaslighters use. It\u2019s not that my behavior is wrong, it\u2019s that you\u2019re not seeing it clearly. Bollywood embedded that argument in a song-and-dance number.",
+        text: "The result is a generation of South Asian viewers who came out of that film with a complicated feeling about obsession, like maybe the problem wasn't that he was obsessed, just that he was obsessed with the wrong girl. That reframe is the exact logic gaslighters use. It\u2019s not that my behavior is wrong, it\u2019s that you\u2019re not seeing it clearly. Bollywood embedded that argument in a song-and-dance number.",
       },
       {
         type: "h2",
@@ -38,7 +38,7 @@ export const bollywoodPosts: JournalPost[] = [
       },
       {
         type: "p",
-        text: 'This is one of the most insidious things Bollywood does with toxic relationships: it makes the woman\'s refusal into the problem. If she had just said yes, all of this would have been avoided. The message to the audience is that persistence wins and boundaries are obstacles, not answers. I\u2019ve talked to women who applied to Garam Masala Dating who cited men with this exact playbook — showing up, being relentless, treating "no" as a negotiating position. They learned it somewhere.',
+        text: 'This is one of the most insidious things Bollywood does with toxic relationships: it makes the woman\'s refusal into the problem. If she had just said yes, all of this would have been avoided. The message to the audience is that persistence wins and boundaries are obstacles, not answers. I\u2019ve talked to women who applied to Garam Masala Dating who cited men with this exact playbook, showing up, being relentless, treating "no" as a negotiating position. They learned it somewhere.',
       },
       {
         type: "h2",
@@ -46,7 +46,7 @@ export const bollywoodPosts: JournalPost[] = [
       },
       {
         type: "p",
-        text: "Kabir Singh is the most recent and the most brazen example. Kabir introduces Preeti to their college by announcing she belongs to him — before they've had a real conversation. He decides who she can talk to, what she can wear, when she can leave. When she eventually marries someone else (her family's choice, not her own), Kabir's response is to spiral into self-destruction and the film presents this as love so powerful it literally broke him.",
+        text: "Kabir Singh is the most recent and the most brazen example. Kabir introduces Preeti to their college by announcing she belongs to him, before they've had a real conversation. He decides who she can talk to, what she can wear, when she can leave. When she eventually marries someone else (her family's choice, not her own), Kabir's response is to spiral into self-destruction and the film presents this as love so powerful it literally broke him.",
       },
       {
         type: "p",
@@ -54,7 +54,7 @@ export const bollywoodPosts: JournalPost[] = [
       },
       {
         type: "p",
-        text: 'If you\u2019ve been on the receiving end of any of this in real life, check out <a href=\'/journal/desi-red-flags-green-flags\'>our breakdown of actual desi red flags vs green flags</a> — because the line between "intense" and "controlling" is much clearer off screen.',
+        text: 'If you\u2019ve been on the receiving end of any of this in real life, check out <a href=\'/journal/desi-red-flags-green-flags\'>our breakdown of actual desi red flags vs green flags</a>, because the line between "intense" and "controlling" is much clearer off screen.',
       },
       {
         type: "h2",
@@ -62,7 +62,7 @@ export const bollywoodPosts: JournalPost[] = [
       },
       {
         type: "p",
-        text: "This isn't about blaming Bollywood and calling it a day. The reason these films worked is that the desi audience already had a cultural script that primed them for it. Joint family systems, arranged marriages with little room for individual preference, the idea that love is something that happens to you rather than something you choose — all of that created a fertile ground for stories where a man deciding a woman is his, before she agrees, reads as romantic rather than alarming.",
+        text: "This isn't about blaming Bollywood and calling it a day. The reason these films worked is that the desi audience already had a cultural script that primed them for it. Joint family systems, arranged marriages with little room for individual preference, the idea that love is something that happens to you rather than something you choose, all of that created a fertile ground for stories where a man deciding a woman is his, before she agrees, reads as romantic rather than alarming.",
       },
       {
         type: "p",
@@ -78,21 +78,21 @@ export const bollywoodPosts: JournalPost[] = [
       },
       {
         type: "p",
-        text: "The same goes for Raanjhanaa and Kabir Singh. These films are useful. They show you the exact aesthetics that get attached to controlling behavior in real life. Once you\u2019ve mapped it, you start noticing when someone is running the Kabir Singh playbook on you — and it stops feeling intense. It starts feeling like a pattern you\u2019ve seen before, on a screen, in slow motion.",
+        text: "The same goes for Raanjhanaa and Kabir Singh. These films are useful. They show you the exact aesthetics that get attached to controlling behavior in real life. Once you\u2019ve mapped it, you start noticing when someone is running the Kabir Singh playbook on you, and it stops feeling intense. It starts feeling like a pattern you\u2019ve seen before, on a screen, in slow motion.",
       },
       {
         type: "p",
-        text: 'If you\u2019ve been on a date where someone\u2019s "intensity" made you feel managed rather than wanted, come to a show. Watching two real people navigate an actual first date in real time — with no script, no background score, and 250 people watching — is the fastest way to recalibrate what genuine chemistry actually feels like.',
+        text: 'If you\u2019ve been on a date where someone\u2019s "intensity" made you feel managed rather than wanted, come to a show. Watching two real people navigate an actual first date in real time, with no script, no background score, and 250 people watching, is the fastest way to recalibrate what genuine chemistry actually feels like.',
       },
     ],
     faqs: [
       {
         q: "Is Kabir Singh a toxic love story?",
-        a: "Yes. Kabir Singh portrays controlling, possessive behavior — including publicly claiming ownership of Preeti before they're in a relationship, dictating her choices, and spiraling destructively when she makes an independent decision — as evidence of deep love. Relationship experts have widely identified the film's central dynamic as emotionally abusive.",
+        a: "Yes. Kabir Singh portrays controlling, possessive behavior, including publicly claiming ownership of Preeti before they're in a relationship, dictating her choices, and spiraling destructively when she makes an independent decision, as evidence of deep love. Relationship experts have widely identified the film's central dynamic as emotionally abusive.",
       },
       {
         q: "Why did Bollywood romanticize stalking?",
-        a: 'Bollywood films like Darr and Raanjhanaa used cinematic framing — swelling soundtracks, intimate close-ups, tragic endings — to present stalking as extreme devotion rather than harassment. The cultural script of persistent love "winning" made these narratives feel romantic to audiences primed to see persistence as proof of feeling.',
+        a: 'Bollywood films like Darr and Raanjhanaa used cinematic framing, swelling soundtracks, intimate close-ups, tragic endings, to present stalking as extreme devotion rather than harassment. The cultural script of persistent love "winning" made these narratives feel romantic to audiences primed to see persistence as proof of feeling.',
       },
       {
         q: "Which Bollywood movies show gaslighting?",
@@ -113,12 +113,12 @@ export const bollywoodPosts: JournalPost[] = [
     slug: "bollywood-movies-dating-2026",
     title: "Bollywood Movies That Actually Show What Dating Is Like in 2026",
     metaDescription:
-      "Forget 90s fantasy. These modern Bollywood films actually get what dating looks like now — apps, independence, ambiguity, and choosing yourself.",
+      "Forget 90s fantasy. These modern Bollywood films actually get what dating looks like now, apps, independence, ambiguity, and choosing yourself.",
     datePublished: "2026-06-15",
     dateModified: "2026-08-23",
     author: "Surbhi",
     excerpt:
-      "Most Bollywood dating content is a fantasy from a decade that no longer exists. But a handful of recent films get it right — the app fatigue, the blurry boundaries, the question of what you actually want.",
+      "Most Bollywood dating content is a fantasy from a decade that no longer exists. But a handful of recent films get it right, the app fatigue, the blurry boundaries, the question of what you actually want.",
     body: [
       {
         type: "p",
@@ -142,7 +142,7 @@ export const bollywoodPosts: JournalPost[] = [
       },
       {
         type: "p",
-        text: "Tamasha came out in 2015 but feels even more relevant now. Ved spends his whole life playing the role he\u2019s supposed to play — stable, sensible, professionally successful — and it hollows him out completely. When he meets Tara, he\u2019s on vacation and finally being himself. When they reconnect in the real world, she\u2019s in love with the vacation version, not the hollowed-out one.",
+        text: "Tamasha came out in 2015 but feels even more relevant now. Ved spends his whole life playing the role he\u2019s supposed to play, stable, sensible, professionally successful, and it hollows him out completely. When he meets Tara, he\u2019s on vacation and finally being himself. When they reconnect in the real world, she\u2019s in love with the vacation version, not the hollowed-out one.",
       },
       {
         type: "p",
@@ -158,7 +158,7 @@ export const bollywoodPosts: JournalPost[] = [
       },
       {
         type: "p",
-        text: "That balance — both people choosing, not one person pursuing while the other yields — is genuinely rare in Bollywood. It\u2019s also exactly what dating in 2026 looks like when it\u2019s working.",
+        text: "That balance, both people choosing, not one person pursuing while the other yields, is genuinely rare in Bollywood. It\u2019s also exactly what dating in 2026 looks like when it\u2019s working.",
       },
       {
         type: "h2",
@@ -182,7 +182,7 @@ export const bollywoodPosts: JournalPost[] = [
       },
       {
         type: "p",
-        text: "If you\u2019re curious what modern desi romance looks like off-screen, read about <a href='/journal/situationships-in-desi-culture'>how situationships actually play out in desi culture</a> — it\u2019s more Gehraiyaan than DDLJ, I promise.",
+        text: "If you\u2019re curious what modern desi romance looks like off-screen, read about <a href='/journal/situationships-in-desi-culture'>how situationships actually play out in desi culture</a>, it\u2019s more Gehraiyaan than DDLJ, I promise.",
       },
       {
         type: "p",
@@ -213,7 +213,7 @@ export const bollywoodPosts: JournalPost[] = [
     slug: "heart-broken-bollywood-movies",
     title: "Just Got Your Heart Broken? These Bollywood Movies Get It",
     metaDescription:
-      "Ae Dil Hai Mushkil, Devdas, Jab We Met — the best Bollywood movies for heartbreak that actually understand what grief over a person feels like.",
+      "Ae Dil Hai Mushkil, Devdas, Jab We Met, the best Bollywood movies for heartbreak that actually understand what grief over a person feels like.",
     datePublished: "2026-06-16",
     dateModified: "2026-08-25",
     author: "Surbhi",
@@ -230,11 +230,11 @@ export const bollywoodPosts: JournalPost[] = [
       },
       {
         type: "p",
-        text: "ADHM is the most accurate film ever made about loving someone who loves you back — just not like that. Ayan and Alizeh are real friends. They like each other genuinely. The film doesn\u2019t make her a villain for not feeling romantically what he feels. It just sits in the mess of that asymmetry for two and a half hours, which is exactly what unrequited love feels like from the inside: long, repetitive, and completely involuntary.",
+        text: "ADHM is the most accurate film ever made about loving someone who loves you back, just not like that. Ayan and Alizeh are real friends. They like each other genuinely. The film doesn\u2019t make her a villain for not feeling romantically what he feels. It just sits in the mess of that asymmetry for two and a half hours, which is exactly what unrequited love feels like from the inside: long, repetitive, and completely involuntary.",
       },
       {
         type: "p",
-        text: "The Ali Zafar subplot with Alizeh is underrated. She loves someone unavailable. Ayan loves her. She\u2019s not oblivious to his feelings — she just can\u2019t return them. Watching Alia Bhatt play that with actual empathy rather than guilt is the thing that makes the film worth rewatching.",
+        text: "The Ali Zafar subplot with Alizeh is underrated. She loves someone unavailable. Ayan loves her. She\u2019s not oblivious to his feelings, she just can\u2019t return them. Watching Alia Bhatt play that with actual empathy rather than guilt is the thing that makes the film worth rewatching.",
       },
       {
         type: "h2",
@@ -242,7 +242,7 @@ export const bollywoodPosts: JournalPost[] = [
       },
       {
         type: "p",
-        text: "Jab We Met opens with Aditya in full heartbreak spiral mode — on a train, no plan, going nowhere. Geet upends his entire trajectory. But what the film understands is that Aditya\u2019s grief is the thing that makes him open. He\u2019s so hollowed out by the end of his relationship that he has no defenses left. He\u2019s just a person, completely available to experience something new.",
+        text: "Jab We Met opens with Aditya in full heartbreak spiral mode, on a train, no plan, going nowhere. Geet upends his entire trajectory. But what the film understands is that Aditya\u2019s grief is the thing that makes him open. He\u2019s so hollowed out by the end of his relationship that he has no defenses left. He\u2019s just a person, completely available to experience something new.",
       },
       {
         type: "p",
@@ -254,7 +254,7 @@ export const bollywoodPosts: JournalPost[] = [
       },
       {
         type: "p",
-        text: "Devdas is a warning label. Shah Rukh\u2019s Devdas gets rejected (by circumstance, not by Paro\u2019s choice) and responds by dedicating the rest of his life to his own destruction. The film is gorgeous and absolutely miserable to watch, which is the point. Sanjay Leela Bhansali makes the self-indulgence of grief beautiful so that you feel the seduction of it — and then you watch where it leads.",
+        text: "Devdas is a warning label. Shah Rukh\u2019s Devdas gets rejected (by circumstance, not by Paro\u2019s choice) and responds by dedicating the rest of his life to his own destruction. The film is gorgeous and absolutely miserable to watch, which is the point. Sanjay Leela Bhansali makes the self-indulgence of grief beautiful so that you feel the seduction of it, and then you watch where it leads.",
       },
       {
         type: "p",
@@ -266,7 +266,7 @@ export const bollywoodPosts: JournalPost[] = [
       },
       {
         type: "p",
-        text: "The most underrated heartbreak in Dil Dhadakne Do is Priyanka Chopra\u2019s Ayesha — a woman who is professionally successful and personally trapped in a marriage where she is consistently sidelined. Her heartbreak isn\u2019t about a dramatic breakup. It\u2019s about the slow accumulation of being unseen. That particular grief — the kind where nothing catastrophic happens, you\u2019re just quietly miserable — is harder to name and harder to recover from.",
+        text: "The most underrated heartbreak in Dil Dhadakne Do is Priyanka Chopra\u2019s Ayesha, a woman who is professionally successful and personally trapped in a marriage where she is consistently sidelined. Her heartbreak isn\u2019t about a dramatic breakup. It\u2019s about the slow accumulation of being unseen. That particular grief, the kind where nothing catastrophic happens, you\u2019re just quietly miserable, is harder to name and harder to recover from.",
       },
       {
         type: "p",
@@ -290,7 +290,7 @@ export const bollywoodPosts: JournalPost[] = [
       },
       {
         type: "p",
-        text: "Watch the films. Cry if you need to. If you need more options, <a href='/journal/bollywood-breakup-movies'>the Bollywood breakup movies guide</a> covers what to watch at each stage of the process. But at some point, you\u2019re going to want to be in a room with real people again. Come to a show. Garam Masala Dating is genuinely one of the best things to do when you\u2019re newly single in NYC — not because you\u2019ll meet someone (though you might), but because watching two strangers take a real shot at connection in front of 250 people is the fastest cure for cynicism I know.",
+        text: "Watch the films. Cry if you need to. If you need more options, <a href='/journal/bollywood-breakup-movies'>the Bollywood breakup movies guide</a> covers what to watch at each stage of the process. But at some point, you\u2019re going to want to be in a room with real people again. Come to a show. Garam Masala Dating is genuinely one of the best things to do when you\u2019re newly single in NYC, not because you\u2019ll meet someone (though you might), but because watching two strangers take a real shot at connection in front of 250 people is the fastest cure for cynicism I know.",
       },
     ],
     faqs: [
@@ -308,7 +308,7 @@ export const bollywoodPosts: JournalPost[] = [
       },
       {
         q: "Do Bollywood movies help with heartbreak?",
-        a: "They can. Films that accurately name the specific feeling you\u2019re experiencing — rather than offering fantasy resolution — tend to help the most. ADHM, Jab We Met, and Tamasha all capture particular textures of grief that feel validating to watch when you\u2019re in them.",
+        a: "They can. Films that accurately name the specific feeling you\u2019re experiencing, rather than offering fantasy resolution, tend to help the most. ADHM, Jab We Met, and Tamasha all capture particular textures of grief that feel validating to watch when you\u2019re in them.",
       },
     ],
     relatedSlugs: [
@@ -321,16 +321,16 @@ export const bollywoodPosts: JournalPost[] = [
     slug: "bollywood-breadcrumbing-situationships",
     title: "Bollywood Movies About Breadcrumbing and Toxic Situationships",
     metaDescription:
-      "Cocktail, Love Aaj Kal, Wake Up Sid — Bollywood has been making films about situationships for decades. Here's what they actually show.",
+      "Cocktail, Love Aaj Kal, Wake Up Sid, Bollywood has been making films about situationships for decades. Here's what they actually show.",
     datePublished: "2026-06-17",
     dateModified: "2026-08-27",
     author: "Surbhi",
     excerpt:
-      "Bollywood figured out the situationship long before we had a word for it. Here are the films that map the grey zone between dating and a real relationship — sometimes accidentally, sometimes on purpose.",
+      "Bollywood figured out the situationship long before we had a word for it. Here are the films that map the grey zone between dating and a real relationship, sometimes accidentally, sometimes on purpose.",
     body: [
       {
         type: "p",
-        text: 'Bollywood figured out the situationship long before we had a word for it. The "friend who is more than a friend," the person who shows up exactly enough to keep you hooked but never commits, the relationship that has all the feelings of a relationship and none of the structure. Here are the films that map that grey zone — sometimes accidentally, sometimes on purpose.',
+        text: 'Bollywood figured out the situationship long before we had a word for it. The "friend who is more than a friend," the person who shows up exactly enough to keep you hooked but never commits, the relationship that has all the feelings of a relationship and none of the structure. Here are the films that map that grey zone, sometimes accidentally, sometimes on purpose.',
       },
       {
         type: "h2",
@@ -338,11 +338,11 @@ export const bollywoodPosts: JournalPost[] = [
       },
       {
         type: "p",
-        text: "Cocktail is the most complete situationship film Bollywood has made, and it\u2019s barely discussed as such because the film itself doesn\u2019t realize what it\u2019s doing. Veronica (Deepika Padukone in the early going) is in a full situationship with Gautam for the entire first half of the film. He\u2019s living with her, sleeping with her, letting her take care of him — and not labeling any of it, because the label would mean giving up his optionality.",
+        text: "Cocktail is the most complete situationship film Bollywood has made, and it\u2019s barely discussed as such because the film itself doesn\u2019t realize what it\u2019s doing. Veronica (Deepika Padukone in the early going) is in a full situationship with Gautam for the entire first half of the film. He\u2019s living with her, sleeping with her, letting her take care of him, and not labeling any of it, because the label would mean giving up his optionality.",
       },
       {
         type: "p",
-        text: "When Meera (Diana Penty) arrives and Gautam immediately wants to marry her, the dynamic snaps into clarity. He\u2019d been breadcrumbing Veronica with just enough affection to maintain the situation while keeping his actual emotional investment elsewhere. The film doesn\u2019t interrogate this — it celebrates it — which makes it one of the most accidentally honest portrayals of situationship dynamics in Bollywood\u2019s catalog.",
+        text: "When Meera (Diana Penty) arrives and Gautam immediately wants to marry her, the dynamic snaps into clarity. He\u2019d been breadcrumbing Veronica with just enough affection to maintain the situation while keeping his actual emotional investment elsewhere. The film doesn\u2019t interrogate this, it celebrates it, which makes it one of the most accidentally honest portrayals of situationship dynamics in Bollywood\u2019s catalog.",
       },
       {
         type: "h2",
@@ -350,7 +350,7 @@ export const bollywoodPosts: JournalPost[] = [
       },
       {
         type: "p",
-        text: "The 2009 Imtiaz Ali original puts situationship logic front and center. Jai and Meera break up by mutual agreement because they want different things — but they can\u2019t actually stop. They keep coming back. The film treats this as romantic ambiguity. In real life, it\u2019s what happens when two people are emotionally attached and unwilling to have the direct conversation that would either move things forward or end them cleanly.",
+        text: "The 2009 Imtiaz Ali original puts situationship logic front and center. Jai and Meera break up by mutual agreement because they want different things, but they can\u2019t actually stop. They keep coming back. The film treats this as romantic ambiguity. In real life, it\u2019s what happens when two people are emotionally attached and unwilling to have the direct conversation that would either move things forward or end them cleanly.",
       },
       {
         type: "p",
@@ -362,7 +362,7 @@ export const bollywoodPosts: JournalPost[] = [
       },
       {
         type: "p",
-        text: "Wake Up Sid doesn\u2019t present itself as a situationship film — it\u2019s a coming-of-age story — but the central relationship runs on situationship logic for most of its runtime. Sid moves into Aisha\u2019s apartment, relies on her emotionally, occupies her space and her time, and has no actual romantic commitment to offer. Aisha keeps giving because she wants the relationship to be what it isn\u2019t yet.",
+        text: "Wake Up Sid doesn\u2019t present itself as a situationship film, it\u2019s a coming-of-age story, but the central relationship runs on situationship logic for most of its runtime. Sid moves into Aisha\u2019s apartment, relies on her emotionally, occupies her space and her time, and has no actual romantic commitment to offer. Aisha keeps giving because she wants the relationship to be what it isn\u2019t yet.",
       },
       {
         type: "p",
@@ -374,7 +374,7 @@ export const bollywoodPosts: JournalPost[] = [
       },
       {
         type: "p",
-        text: "Nikhil and Meeta in Hasee Toh Phasee are in a situationship for the wrong reasons: he\u2019s engaged to someone else and she\u2019s completely checked out of normal life. The film\u2019s insight is that you can feel more real with someone you\u2019re not supposed to be with than you do with the person you\u2019ve officially chosen. That feeling — this person makes me feel like myself, but I can\u2019t have them — is the emotional engine of most situationships.",
+        text: "Nikhil and Meeta in Hasee Toh Phasee are in a situationship for the wrong reasons: he\u2019s engaged to someone else and she\u2019s completely checked out of normal life. The film\u2019s insight is that you can feel more real with someone you\u2019re not supposed to be with than you do with the person you\u2019ve officially chosen. That feeling, this person makes me feel like myself, but I can\u2019t have them, is the emotional engine of most situationships.",
       },
       {
         type: "p",
@@ -386,7 +386,7 @@ export const bollywoodPosts: JournalPost[] = [
       },
       {
         type: "p",
-        text: "Every one of these films eventually resolves the situationship into a real relationship. Bollywood can\u2019t leave it ambiguous — the industry needs a happy ending. Real situationships don\u2019t always resolve into something real. Sometimes they just... continue, indefinitely, until one person gets tired and leaves. <a href='/journal/situationships-in-desi-culture'>We wrote about how situationships play out specifically in desi culture</a>, and it\u2019s considerably messier than any film version.",
+        text: "Every one of these films eventually resolves the situationship into a real relationship. Bollywood can\u2019t leave it ambiguous, the industry needs a happy ending. Real situationships don\u2019t always resolve into something real. Sometimes they just... continue, indefinitely, until one person gets tired and leaves. <a href='/journal/situationships-in-desi-culture'>We wrote about how situationships play out specifically in desi culture</a>, and it\u2019s considerably messier than any film version.",
       },
       {
         type: "p",
@@ -400,7 +400,7 @@ export const bollywoodPosts: JournalPost[] = [
       },
       {
         q: "What is breadcrumbing in a relationship?",
-        a: "Breadcrumbing is giving someone just enough attention and affection to keep them emotionally invested without committing to a real relationship. It\u2019s intermittent reinforcement — the person shows up when it suits them, then disappears, creating an anxiety loop that keeps the other person hooked.",
+        a: "Breadcrumbing is giving someone just enough attention and affection to keep them emotionally invested without committing to a real relationship. It\u2019s intermittent reinforcement, the person shows up when it suits them, then disappears, creating an anxiety loop that keeps the other person hooked.",
       },
       {
         q: "Why do desi situationships last so long?",
@@ -417,7 +417,7 @@ export const bollywoodPosts: JournalPost[] = [
     slug: "bollywood-arranged-marriage-movies",
     title: "10 Bollywood Movies That Nail the Arranged Marriage Dilemma",
     metaDescription:
-      "DDLJ, 2 States, Hum Dil De Chuke Sanam — the best Bollywood films about the arranged marriage tension and what they actually get right.",
+      "DDLJ, 2 States, Hum Dil De Chuke Sanam, the best Bollywood films about the arranged marriage tension and what they actually get right.",
     datePublished: "2026-06-18",
     dateModified: "2026-08-29",
     author: "Surbhi",
@@ -426,7 +426,7 @@ export const bollywoodPosts: JournalPost[] = [
     body: [
       {
         type: "p",
-        text: "Bollywood has been wrestling with the arranged marriage question for 30 years. Some films romanticize it, some critique it, and a few actually capture the impossible tension of loving someone your family didn\u2019t choose — and what you do when those two things are in conflict. Here\u2019s the list, and what each film actually gets right.",
+        text: "Bollywood has been wrestling with the arranged marriage question for 30 years. Some films romanticize it, some critique it, and a few actually capture the impossible tension of loving someone your family didn\u2019t choose, and what you do when those two things are in conflict. Here\u2019s the list, and what each film actually gets right.",
       },
       {
         type: "h2",
@@ -434,11 +434,11 @@ export const bollywoodPosts: JournalPost[] = [
       },
       {
         type: "p",
-        text: "Dilwale Dulhania Le Jayenge (1995) is the founding document of the genre, and it\u2019s more complicated than its reputation suggests. Raj doesn\u2019t steal Simran away from her family\u2019s choice — he wins over her father. The film\u2019s famous final message is: love can only be valid if the family eventually agrees. That\u2019s not exactly progressive, but it was an honest reflection of what desi love looked like in 1995, and in a lot of households, it still is.",
+        text: "Dilwale Dulhania Le Jayenge (1995) is the founding document of the genre, and it\u2019s more complicated than its reputation suggests. Raj doesn\u2019t steal Simran away from her family\u2019s choice, he wins over her father. The film\u2019s famous final message is: love can only be valid if the family eventually agrees. That\u2019s not exactly progressive, but it was an honest reflection of what desi love looked like in 1995, and in a lot of households, it still is.",
       },
       {
         type: "p",
-        text: "Hum Dil De Chuke Sanam (1999) takes the harder path. Aishwarya Rai\u2019s Nandini marries Vanraj (Ajay Devgn) in an arranged match while still in love with Sameer (Salman Khan). The film spends its second half with her married to a good man who knows she loves someone else. SLB doesn\u2019t make Vanraj a villain — he\u2019s patient and decent — which makes the dilemma genuinely agonizing.",
+        text: "Hum Dil De Chuke Sanam (1999) takes the harder path. Aishwarya Rai\u2019s Nandini marries Vanraj (Ajay Devgn) in an arranged match while still in love with Sameer (Salman Khan). The film spends its second half with her married to a good man who knows she loves someone else. SLB doesn\u2019t make Vanraj a villain, he\u2019s patient and decent, which makes the dilemma genuinely agonizing.",
       },
       {
         type: "h2",
@@ -466,7 +466,7 @@ export const bollywoodPosts: JournalPost[] = [
       },
       {
         type: "p",
-        text: 'Dil Dhadakne Do is about a family on a cruise, and it\u2019s full of people who made the "right" choices and are quietly miserable. Ayesha is in an approved marriage that\u2019s stifling her. Her brother Kabir is being pushed toward an approved match while already in love with someone the family won\u2019t accept. The film\u2019s sharpest critique is that the arranged marriage system can work — but only if the people inside it have actual agency. When it\u2019s driven by family performance rather than genuine compatibility, it fails everyone.',
+        text: 'Dil Dhadakne Do is about a family on a cruise, and it\u2019s full of people who made the "right" choices and are quietly miserable. Ayesha is in an approved marriage that\u2019s stifling her. Her brother Kabir is being pushed toward an approved match while already in love with someone the family won\u2019t accept. The film\u2019s sharpest critique is that the arranged marriage system can work, but only if the people inside it have actual agency. When it\u2019s driven by family performance rather than genuine compatibility, it fails everyone.',
       },
       {
         type: "h2",
@@ -482,15 +482,15 @@ export const bollywoodPosts: JournalPost[] = [
       },
       {
         type: "p",
-        text: "Surinder marries Taani in an arranged match she agrees to out of obligation, and then spends the film trying to deserve her love. It\u2019s an unusual Bollywood setup because the marriage is the starting point, not the goal. The question isn\u2019t whether they\u2019ll end up together — they\u2019re already together — but whether genuine feeling can develop inside a structure that began without it. For many desi couples in arranged marriages, that is the actual question.",
+        text: "Surinder marries Taani in an arranged match she agrees to out of obligation, and then spends the film trying to deserve her love. It\u2019s an unusual Bollywood setup because the marriage is the starting point, not the goal. The question isn\u2019t whether they\u2019ll end up together, they\u2019re already together, but whether genuine feeling can develop inside a structure that began without it. For many desi couples in arranged marriages, that is the actual question.",
       },
       {
         type: "p",
-        text: "If you\u2019re navigating the arranged vs. love marriage question right now, read about <a href='/journal/modern-arranged-marriage-2026'>what modern arranged marriage actually looks like in 2026</a> — because it\u2019s changed significantly from what any of these films show.",
+        text: "If you\u2019re navigating the arranged vs. love marriage question right now, read about <a href='/journal/modern-arranged-marriage-2026'>what modern arranged marriage actually looks like in 2026</a>, because it\u2019s changed significantly from what any of these films show.",
       },
       {
         type: "p",
-        text: "And if you want to meet someone the old-fashioned new way — in person, on stage, with 250 people rooting for you — apply to be on Garam Masala Dating. garammasaladating.com.",
+        text: "And if you want to meet someone the old-fashioned new way, in person, on stage, with 250 people rooting for you, apply to be on Garam Masala Dating. garammasaladating.com.",
       },
     ],
     faqs: [
@@ -508,7 +508,7 @@ export const bollywoodPosts: JournalPost[] = [
       },
       {
         q: "Is DDLJ about arranged marriage or love marriage?",
-        a: "DDLJ is about a love relationship that seeks arranged-marriage-style family approval. Raj wins Simran\u2019s father\u2019s blessing rather than running away with her. The film\u2019s resolution endorses neither pure individual choice nor pure family arrangement — it asks for both, simultaneously, which is the tension most desi couples still navigate.",
+        a: "DDLJ is about a love relationship that seeks arranged-marriage-style family approval. Raj wins Simran\u2019s father\u2019s blessing rather than running away with her. The film\u2019s resolution endorses neither pure individual choice nor pure family arrangement, it asks for both, simultaneously, which is the tension most desi couples still navigate.",
       },
     ],
     relatedSlugs: [
@@ -521,16 +521,16 @@ export const bollywoodPosts: JournalPost[] = [
     slug: "bollywood-breakup-movies",
     title: "Bollywood\u2019s Best Breakup Movies for When You Need a Good Cry",
     metaDescription:
-      "The best Bollywood breakup movies — from classic heartbreak films to modern endings that don't wrap up neatly. For when you need to feel it.",
+      "The best Bollywood breakup movies, from classic heartbreak films to modern endings that don't wrap up neatly. For when you need to feel it.",
     datePublished: "2026-06-19",
     dateModified: "2026-08-31",
     author: "Surbhi",
     excerpt:
-      "Bollywood has a complicated relationship with breakups — it mostly refuses to let them stick. But the films that do let people actually end things are some of the most emotionally honest in the catalog.",
+      "Bollywood has a complicated relationship with breakups, it mostly refuses to let them stick. But the films that do let people actually end things are some of the most emotionally honest in the catalog.",
     body: [
       {
         type: "p",
-        text: "Bollywood has a complicated relationship with breakups. The industry\u2019s instinct is to resolve everything into togetherness — someone always runs after the other person, or a parent finally agrees, or a misunderstanding clears up in the last five minutes. But the films that actually let people break up, stay broken up, and survive it are some of the most honest things Bollywood has made.",
+        text: "Bollywood has a complicated relationship with breakups. The industry\u2019s instinct is to resolve everything into togetherness, someone always runs after the other person, or a parent finally agrees, or a misunderstanding clears up in the last five minutes. But the films that actually let people break up, stay broken up, and survive it are some of the most honest things Bollywood has made.",
       },
       {
         type: "h2",
@@ -538,7 +538,7 @@ export const bollywoodPosts: JournalPost[] = [
       },
       {
         type: "p",
-        text: "Anjali\u2019s quiet exit from Rahul\u2019s life in the first half of KKHH is the purest breakup in the film, even though it\u2019s not a breakup in the traditional sense — Rahul never knew she had feelings. She watches him fall for someone else, says nothing, and leaves. That particular brand of grief — the heartbreak that nobody around you acknowledges because the relationship never officially existed — is one of the sharpest things the film captures.",
+        text: "Anjali\u2019s quiet exit from Rahul\u2019s life in the first half of KKHH is the purest breakup in the film, even though it\u2019s not a breakup in the traditional sense, Rahul never knew she had feelings. She watches him fall for someone else, says nothing, and leaves. That particular brand of grief, the heartbreak that nobody around you acknowledges because the relationship never officially existed, is one of the sharpest things the film captures.",
       },
       {
         type: "p",
@@ -550,7 +550,7 @@ export const bollywoodPosts: JournalPost[] = [
       },
       {
         type: "p",
-        text: "Aman (Shah Rukh Khan) falls in love with Naina and then systematically engineers her relationship with Rohit, knowing he\u2019s dying. The breakup — or the rejection — is an act of love that she doesn\u2019t understand until it\u2019s too late. It\u2019s the most Bollywood-specific breakup type: the noble exit. The person who loves more steps aside so the person they love can have a better life.",
+        text: "Aman (Shah Rukh Khan) falls in love with Naina and then systematically engineers her relationship with Rohit, knowing he\u2019s dying. The breakup, or the rejection, is an act of love that she doesn\u2019t understand until it\u2019s too late. It\u2019s the most Bollywood-specific breakup type: the noble exit. The person who loves more steps aside so the person they love can have a better life.",
       },
       {
         type: "p",
@@ -562,7 +562,7 @@ export const bollywoodPosts: JournalPost[] = [
       },
       {
         type: "p",
-        text: 'Tara breaks up with the "settled" version of Ved — the one she can\u2019t recognize as the person she fell for — and the film treats this as the most compassionate thing she could do. She\u2019s not ending the relationship because she stopped loving him. She\u2019s ending it because continuing it would require both of them to live dishonestly. That\u2019s a harder breakup reason to explain than falling out of love, and Deepika Padukone plays it with a specificity that makes it completely real.',
+        text: 'Tara breaks up with the "settled" version of Ved, the one she can\u2019t recognize as the person she fell for, and the film treats this as the most compassionate thing she could do. She\u2019s not ending the relationship because she stopped loving him. She\u2019s ending it because continuing it would require both of them to live dishonestly. That\u2019s a harder breakup reason to explain than falling out of love, and Deepika Padukone plays it with a specificity that makes it completely real.',
       },
       {
         type: "h2",
@@ -570,7 +570,7 @@ export const bollywoodPosts: JournalPost[] = [
       },
       {
         type: "p",
-        text: "Gehraiyaan doesn\u2019t end with a clean breakup. It ends with consequences. Multiple relationships unravel, none of them tidily. The film\u2019s honesty is in refusing to identify a single moment where things broke down — the breakdown was cumulative, which is how most real breakups work. Nobody wakes up one day and decides to end things. The ending is usually the last step in a long process that both people watched happening and didn\u2019t stop.",
+        text: "Gehraiyaan doesn\u2019t end with a clean breakup. It ends with consequences. Multiple relationships unravel, none of them tidily. The film\u2019s honesty is in refusing to identify a single moment where things broke down, the breakdown was cumulative, which is how most real breakups work. Nobody wakes up one day and decides to end things. The ending is usually the last step in a long process that both people watched happening and didn\u2019t stop.",
       },
       {
         type: "h2",
@@ -578,7 +578,7 @@ export const bollywoodPosts: JournalPost[] = [
       },
       {
         type: "p",
-        text: "Ranbir Kapoor\u2019s Jordan doesn\u2019t recover from losing Heer. He converts it into music, which is not the same thing. Rockstar is honest about the kind of loss that doesn\u2019t resolve — it just transforms into something else you carry. Most breakup films are secretly about recovery. Rockstar is about what happens when recovery isn\u2019t available.",
+        text: "Ranbir Kapoor\u2019s Jordan doesn\u2019t recover from losing Heer. He converts it into music, which is not the same thing. Rockstar is honest about the kind of loss that doesn\u2019t resolve, it just transforms into something else you carry. Most breakup films are secretly about recovery. Rockstar is about what happens when recovery isn\u2019t available.",
       },
       {
         type: "h2",
@@ -586,7 +586,7 @@ export const bollywoodPosts: JournalPost[] = [
       },
       {
         type: "p",
-        text: 'If you\u2019re in the early stage, watch Ae Dil Hai Mushkil. If you\u2019re in the "why did this happen" stage, watch Tamasha or Gehraiyaan. If you\u2019re in the "I need to feel it fully" stage, watch Devdas — but set a timer and stop after two hours. If you\u2019re starting to come out of it, watch Jab We Met. <a href=\'/journal/heart-broken-bollywood-movies\'>We wrote a full guide to Bollywood comfort films for heartbreak</a> if you need more options.',
+        text: 'If you\u2019re in the early stage, watch Ae Dil Hai Mushkil. If you\u2019re in the "why did this happen" stage, watch Tamasha or Gehraiyaan. If you\u2019re in the "I need to feel it fully" stage, watch Devdas, but set a timer and stop after two hours. If you\u2019re starting to come out of it, watch Jab We Met. <a href=\'/journal/heart-broken-bollywood-movies\'>We wrote a full guide to Bollywood comfort films for heartbreak</a> if you need more options.',
       },
       {
         type: "p",
@@ -604,7 +604,7 @@ export const bollywoodPosts: JournalPost[] = [
       },
       {
         q: "Is there a Bollywood movie about staying broken up?",
-        a: "Rockstar (2011) comes closest — Jordan and Heer\u2019s situation is resolved by death rather than reconciliation. Most Bollywood films resist permanent breakups because the industry\u2019s commercial model favors resolution. The more honest portrayals tend to come from streaming originals and indie releases.",
+        a: "Rockstar (2011) comes closest, Jordan and Heer\u2019s situation is resolved by death rather than reconciliation. Most Bollywood films resist permanent breakups because the industry\u2019s commercial model favors resolution. The more honest portrayals tend to come from streaming originals and indie releases.",
       },
     ],
     relatedSlugs: [
@@ -618,7 +618,7 @@ export const bollywoodPosts: JournalPost[] = [
     title:
       "Love Aaj Kal to Rocky Aur Rani: How Bollywood\u2019s Dating Stories Evolved",
     metaDescription:
-      "From DDLJ's family approval to Gehraiyaan's moral ambiguity — how Bollywood's depiction of South Asian dating changed across three decades.",
+      "From DDLJ's family approval to Gehraiyaan's moral ambiguity, how Bollywood's depiction of South Asian dating changed across three decades.",
     datePublished: "2026-06-20",
     dateModified: "2026-09-02",
     author: "Surbhi",
@@ -627,7 +627,7 @@ export const bollywoodPosts: JournalPost[] = [
     body: [
       {
         type: "p",
-        text: "Bollywood dating films from the 90s and 2000s look almost nothing like the ones being made now. The settings changed. The female characters gained interiority. The endings got messier. Here\u2019s a decade-by-decade look at how Bollywood\u2019s depiction of South Asian dating evolved — what changed, what didn\u2019t, and what that tells us about how the culture is actually shifting.",
+        text: "Bollywood dating films from the 90s and 2000s look almost nothing like the ones being made now. The settings changed. The female characters gained interiority. The endings got messier. Here\u2019s a decade-by-decade look at how Bollywood\u2019s depiction of South Asian dating evolved, what changed, what didn\u2019t, and what that tells us about how the culture is actually shifting.",
       },
       {
         type: "h2",
@@ -635,11 +635,11 @@ export const bollywoodPosts: JournalPost[] = [
       },
       {
         type: "p",
-        text: "In 90s Bollywood, the question was never really whether the couple would end up together — it was whether the family would agree. DDLJ (1995), Hum Dil De Chuke Sanam (1999), Kuch Kuch Hota Hai (1998). The protagonists were essentially running a negotiation with the older generation, and the film\u2019s emotional payoff was parental approval, not personal choice.",
+        text: "In 90s Bollywood, the question was never really whether the couple would end up together, it was whether the family would agree. DDLJ (1995), Hum Dil De Chuke Sanam (1999), Kuch Kuch Hota Hai (1998). The protagonists were essentially running a negotiation with the older generation, and the film\u2019s emotional payoff was parental approval, not personal choice.",
       },
       {
         type: "p",
-        text: "The heroine in 90s Bollywood was almost always defined by her relationship to family. She was a good daughter first. She might have strong feelings, but those feelings were framed as burdens she carried quietly rather than preferences she pursued actively. Kajol\u2019s Anjali in KKHH, Aishwarya in HDDCS, Rani in DDLJ — all defined by loyalty and restraint.",
+        text: "The heroine in 90s Bollywood was almost always defined by her relationship to family. She was a good daughter first. She might have strong feelings, but those feelings were framed as burdens she carried quietly rather than preferences she pursued actively. Kajol\u2019s Anjali in KKHH, Aishwarya in HDDCS, Rani in DDLJ, all defined by loyalty and restraint.",
       },
       {
         type: "h2",
@@ -647,7 +647,7 @@ export const bollywoodPosts: JournalPost[] = [
       },
       {
         type: "p",
-        text: "The 2000s introduced the NRI protagonist as a way to explore the tension between Western individual choice and Indian family structure. Kal Ho Naa Ho (2003), Salaam Namaste (2005), Kabhi Alvida Naa Kehna (2006). These films could show characters living independently — living together before marriage, having affairs, prioritizing personal happiness — because setting it abroad gave them permission to explore choices that would have been too transgressive in a domestic Indian context.",
+        text: "The 2000s introduced the NRI protagonist as a way to explore the tension between Western individual choice and Indian family structure. Kal Ho Naa Ho (2003), Salaam Namaste (2005), Kabhi Alvida Naa Kehna (2006). These films could show characters living independently, living together before marriage, having affairs, prioritizing personal happiness, because setting it abroad gave them permission to explore choices that would have been too transgressive in a domestic Indian context.",
       },
       {
         type: "p",
@@ -691,7 +691,7 @@ export const bollywoodPosts: JournalPost[] = [
       },
       {
         type: "p",
-        text: "If you want to see where desi dating culture actually is right now — not the film version but the live version — <a href='/journal/what-actually-happens-at-a-live-comedy-dating-show'>read about what actually happens at a live Garam Masala Dating show</a>. Or just come. garammasaladating.com.",
+        text: "If you want to see where desi dating culture actually is right now, not the film version but the live version, <a href='/journal/what-actually-happens-at-a-live-comedy-dating-show'>read about what actually happens at a live Garam Masala Dating show</a>. Or just come. garammasaladating.com.",
       },
     ],
     faqs: [
@@ -722,7 +722,7 @@ export const bollywoodPosts: JournalPost[] = [
     slug: "bollywood-toxic-heroes-red-flags",
     title: "Bollywood Red Flags: Movies Where the Hero Is Actually Toxic",
     metaDescription:
-      "Raanjhanaa, Kabir Singh, Darr, Dabangg — Bollywood heroes with serious red flags we've been calling romance for decades. Let's name them.",
+      "Raanjhanaa, Kabir Singh, Darr, Dabangg, Bollywood heroes with serious red flags we've been calling romance for decades. Let's name them.",
     datePublished: "2026-06-21",
     dateModified: "2026-09-04",
     author: "Surbhi",
@@ -739,7 +739,7 @@ export const bollywoodPosts: JournalPost[] = [
       },
       {
         type: "p",
-        text: "Dilwale Dulhania Le Jayenge is the sacred cow and I\u2019m going to be gentle about it. Raj (Shah Rukh Khan) is genuinely charming for most of the film. But there\u2019s a pivotal scene on the train where he pretends to have kissed a drunk, sleeping Simran while she was unconscious, just to watch her reaction. He laughs when she\u2019s horrified. It\u2019s framed as a prank — ha ha, he didn\u2019t actually do it. But the prank requires her to believe, for a moment, that her unconscious body was violated. And the film uses her panic as comedy.",
+        text: "Dilwale Dulhania Le Jayenge is the sacred cow and I\u2019m going to be gentle about it. Raj (Shah Rukh Khan) is genuinely charming for most of the film. But there\u2019s a pivotal scene on the train where he pretends to have kissed a drunk, sleeping Simran while she was unconscious, just to watch her reaction. He laughs when she\u2019s horrified. It\u2019s framed as a prank, ha ha, he didn\u2019t actually do it. But the prank requires her to believe, for a moment, that her unconscious body was violated. And the film uses her panic as comedy.",
       },
       {
         type: "p",
@@ -755,7 +755,7 @@ export const bollywoodPosts: JournalPost[] = [
       },
       {
         type: "p",
-        text: "The film made 379 crore rupees. Shahid Kapoor won awards. When film critics pointed out that the protagonist\u2019s behavior was abusive, the filmmakers argued it was love. That\u2019s not a defense — that\u2019s the problem restated.",
+        text: "The film made 379 crore rupees. Shahid Kapoor won awards. When film critics pointed out that the protagonist\u2019s behavior was abusive, the filmmakers argued it was love. That\u2019s not a defense, that\u2019s the problem restated.",
       },
       {
         type: "h2",
@@ -763,11 +763,11 @@ export const bollywoodPosts: JournalPost[] = [
       },
       {
         type: "p",
-        text: "Raanjhanaa\u2019s Kundan (Dhanush) starts pursuing Zoya as a child and doesn\u2019t stop across multiple years and multiple explicit rejections. He slashes his wrists when she says no. He insinuates himself into her political life when she finally asks him to stop. And when he ultimately dies, the film frames it as her tragedy — her loss — rather than the endpoint of a pattern she was never responsible for.",
+        text: "Raanjhanaa\u2019s Kundan (Dhanush) starts pursuing Zoya as a child and doesn\u2019t stop across multiple years and multiple explicit rejections. He slashes his wrists when she says no. He insinuates himself into her political life when she finally asks him to stop. And when he ultimately dies, the film frames it as her tragedy, her loss, rather than the endpoint of a pattern she was never responsible for.",
       },
       {
         type: "p",
-        text: "This is the red flag Bollywood normalizes most effectively: the idea that intensity of feeling justifies persistence past consent. If you feel it strongly enough, the other person\u2019s no becomes a temporary obstacle rather than a final answer. <a href='/journal/desi-red-flags-green-flags'>We broke down actual desi red flags vs green flags in detail</a> — Kundan hits most of the red column.",
+        text: "This is the red flag Bollywood normalizes most effectively: the idea that intensity of feeling justifies persistence past consent. If you feel it strongly enough, the other person\u2019s no becomes a temporary obstacle rather than a final answer. <a href='/journal/desi-red-flags-green-flags'>We broke down actual desi red flags vs green flags in detail</a>, Kundan hits most of the red column.",
       },
       {
         type: "h2",
@@ -779,7 +779,7 @@ export const bollywoodPosts: JournalPost[] = [
       },
       {
         type: "p",
-        text: "Dabangg is a masala film and isn\u2019t aiming for psychological realism. But the masala genre is where cultural values are most unguarded — you\u2019re not analyzing while you\u2019re laughing — and the values embedded in Chulbul\u2019s romantic behavior are worth noting.",
+        text: "Dabangg is a masala film and isn\u2019t aiming for psychological realism. But the masala genre is where cultural values are most unguarded, you\u2019re not analyzing while you\u2019re laughing, and the values embedded in Chulbul\u2019s romantic behavior are worth noting.",
       },
       {
         type: "h2",
@@ -809,7 +809,7 @@ export const bollywoodPosts: JournalPost[] = [
       },
       {
         q: "Which Bollywood hero is the most toxic?",
-        a: "Kabir Singh from Kabir Singh (2019) is the most systematically toxic Bollywood hero in recent memory — the film catalogs controlling, possessive, and emotionally abusive behaviors across its full runtime and presents them as romantic. Kundan from Raanjhanaa (2013) and Rahul from Darr (1993) are close seconds.",
+        a: "Kabir Singh from Kabir Singh (2019) is the most systematically toxic Bollywood hero in recent memory, the film catalogs controlling, possessive, and emotionally abusive behaviors across its full runtime and presents them as romantic. Kundan from Raanjhanaa (2013) and Rahul from Darr (1993) are close seconds.",
       },
       {
         q: "Are there Bollywood films that critique toxic male behavior?",
@@ -826,7 +826,7 @@ export const bollywoodPosts: JournalPost[] = [
     slug: "bollywood-long-distance-relationships",
     title: "Bollywood Movies That Get Long-Distance Relationships Right",
     metaDescription:
-      "Namastey London, Kal Ho Naa Ho, Ae Dil Hai Mushkil — Bollywood films that capture the particular grief and hope of loving someone far away.",
+      "Namastey London, Kal Ho Naa Ho, Ae Dil Hai Mushkil, Bollywood films that capture the particular grief and hope of loving someone far away.",
     datePublished: "2026-06-22",
     dateModified: "2026-09-06",
     author: "Surbhi",
@@ -835,7 +835,7 @@ export const bollywoodPosts: JournalPost[] = [
     body: [
       {
         type: "p",
-        text: "Long-distance relationships have a very specific texture. The time zone math. The conversations that have to carry more weight than a single conversation should. The question of who, eventually, is going to move — and what they\u2019ll be giving up when they do. Bollywood has been making films about NRI relationships for decades, which means it\u2019s been making films about distance without always knowing it. Here\u2019s the ones that get it right.",
+        text: "Long-distance relationships have a very specific texture. The time zone math. The conversations that have to carry more weight than a single conversation should. The question of who, eventually, is going to move, and what they\u2019ll be giving up when they do. Bollywood has been making films about NRI relationships for decades, which means it\u2019s been making films about distance without always knowing it. Here\u2019s the ones that get it right.",
       },
       {
         type: "h2",
@@ -859,7 +859,7 @@ export const bollywoodPosts: JournalPost[] = [
       },
       {
         type: "p",
-        text: "The film\u2019s resolution is too neat — Jasmeet\u2019s British boyfriend turns out to be awful, which conveniently clears the path — but the central tension it sets up is real. When two people are separated not by miles but by the gap between the culture they grew up in and the culture their family is from, the reconciliation is never just logistics.",
+        text: "The film\u2019s resolution is too neat, Jasmeet\u2019s British boyfriend turns out to be awful, which conveniently clears the path, but the central tension it sets up is real. When two people are separated not by miles but by the gap between the culture they grew up in and the culture their family is from, the reconciliation is never just logistics.",
       },
       {
         type: "h2",
@@ -913,7 +913,7 @@ export const bollywoodPosts: JournalPost[] = [
       },
       {
         q: "What Bollywood film shows a failed long-distance relationship?",
-        a: "Bollywood rarely allows long-distance relationships to permanently fail — the genre convention requires reconciliation. Dil Se (1998) ends tragically without resolution. Gehraiyaan (2022) shows relationships that dissolve without clean reunion, though distance isn\u2019t the primary factor.",
+        a: "Bollywood rarely allows long-distance relationships to permanently fail, the genre convention requires reconciliation. Dil Se (1998) ends tragically without resolution. Gehraiyaan (2022) shows relationships that dissolve without clean reunion, though distance isn\u2019t the primary factor.",
       },
       {
         q: "How do desi couples handle long-distance relationships?",
@@ -930,16 +930,16 @@ export const bollywoodPosts: JournalPost[] = [
     slug: "bollywood-finding-love-own-terms",
     title: "The Best Bollywood Movies About Finding Love on Your Own Terms",
     metaDescription:
-      "Piku, Queen, Dil Dhadakne Do — Bollywood films where characters choose love on their own terms, without family pressure or the usual scripts.",
+      "Piku, Queen, Dil Dhadakne Do, Bollywood films where characters choose love on their own terms, without family pressure or the usual scripts.",
     datePublished: "2026-06-23",
     dateModified: "2026-09-08",
     author: "Surbhi",
     excerpt:
-      "Most Bollywood romance is about love winning despite obstacles — family, distance, fate. A smaller, better category of films is about characters who figure out what they actually want and choose accordingly. Those are the ones worth watching.",
+      "Most Bollywood romance is about love winning despite obstacles, family, distance, fate. A smaller, better category of films is about characters who figure out what they actually want and choose accordingly. Those are the ones worth watching.",
     body: [
       {
         type: "p",
-        text: "Most Bollywood romance is about love winning despite obstacles. Family won\u2019t agree, there\u2019s distance, timing is wrong, fate intervenes. The narrative is reactive — love is happening to these people and they\u2019re responding to external pressure. A smaller, better category of Bollywood films is about characters who take the time to figure out what they actually want and then choose it, on purpose. Those are the ones worth watching.",
+        text: "Most Bollywood romance is about love winning despite obstacles. Family won\u2019t agree, there\u2019s distance, timing is wrong, fate intervenes. The narrative is reactive, love is happening to these people and they\u2019re responding to external pressure. A smaller, better category of Bollywood films is about characters who take the time to figure out what they actually want and then choose it, on purpose. Those are the ones worth watching.",
       },
       {
         type: "h2",
@@ -947,7 +947,7 @@ export const bollywoodPosts: JournalPost[] = [
       },
       {
         type: "p",
-        text: "Queen is the most direct Bollywood film about a woman who finds herself before she finds love — and then realizes that finding herself changes what she\u2019s looking for. Rani\u2019s fianc\u00e9 calls off the wedding the day before it happens. She goes on the honeymoon alone. In Paris and Amsterdam, without anyone watching, she figures out who she is without the relationship.",
+        text: "Queen is the most direct Bollywood film about a woman who finds herself before she finds love, and then realizes that finding herself changes what she\u2019s looking for. Rani\u2019s fianc\u00e9 calls off the wedding the day before it happens. She goes on the honeymoon alone. In Paris and Amsterdam, without anyone watching, she figures out who she is without the relationship.",
       },
       {
         type: "p",
@@ -959,7 +959,7 @@ export const bollywoodPosts: JournalPost[] = [
       },
       {
         type: "p",
-        text: "Piku is the best Bollywood film about a woman in her 30s navigating love because love is not the main event. Piku\u2019s main event is caring for her demanding father and living her own life. The Irfan Khan dynamic develops slowly and naturally alongside all of that — because both of them are too busy being real humans to perform a romance.",
+        text: "Piku is the best Bollywood film about a woman in her 30s navigating love because love is not the main event. Piku\u2019s main event is caring for her demanding father and living her own life. The Irfan Khan dynamic develops slowly and naturally alongside all of that, because both of them are too busy being real humans to perform a romance.",
       },
       {
         type: "p",

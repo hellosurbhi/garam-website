@@ -10,7 +10,7 @@ export const arrangedMarriagePosts: JournalPost[] = [
     dateModified: "2026-11-01",
     author: "Surbhi",
     excerpt:
-      "The love marriage vs arranged marriage debate has been running for decades, and both sides have been using bad data. Here is what the research actually says — and what it cannot tell you.",
+      "The love marriage vs arranged marriage debate has been running for decades, and both sides have been using bad data. Here is what the research actually says, and what it cannot tell you.",
     relatedSlugs: [
       "arranged-marriage-success-rates-truth",
       "modern-biodata-guide",
@@ -31,11 +31,11 @@ export const arrangedMarriagePosts: JournalPost[] = [
       },
       {
         q: "How long do arranged marriages last on average?",
-        a: "There is no reliable global average. Duration varies enormously by country, caste, class, and generation. In South Asian diaspora communities in the US and UK, the data mirrors general population divorce rates — which is itself a sign of how much the modern version has changed.",
+        a: "There is no reliable global average. Duration varies enormously by country, caste, class, and generation. In South Asian diaspora communities in the US and UK, the data mirrors general population divorce rates, which is itself a sign of how much the modern version has changed.",
       },
       {
         q: "Is love marriage better than arranged marriage?",
-        a: "Neither structure guarantees a good marriage. What matters is whether both people are genuine partners in the decision, whether they share core values, and whether they have the tools to work through conflict. Those things can exist in both arranged and love marriages — and can be absent in both.",
+        a: "Neither structure guarantees a good marriage. What matters is whether both people are genuine partners in the decision, whether they share core values, and whether they have the tools to work through conflict. Those things can exist in both arranged and love marriages, and can be absent in both.",
       },
     ],
     body: [
@@ -45,7 +45,7 @@ export const arrangedMarriagePosts: JournalPost[] = [
       },
       {
         type: "p",
-        text: "I have watched hundreds of South Asian singles navigate this question at Garam Masala Dating — some running from the arranged marriage system, some inside it, some somewhere in between. What I notice is that most people are not actually arguing about data. They are arguing about control, about family, about what it means to choose for yourself. The statistics are just the ammunition.",
+        text: "I have watched hundreds of South Asian singles navigate this question at Garam Masala Dating, some running from the arranged marriage system, some inside it, some somewhere in between. What I notice is that most people are not actually arguing about data. They are arguing about control, about family, about what it means to choose for yourself. The statistics are just the ammunition.",
       },
       {
         type: "h2",
@@ -57,11 +57,11 @@ export const arrangedMarriagePosts: JournalPost[] = [
       },
       {
         type: "p",
-        text: "India ranks among the hardest countries in the world to get divorced. The legal process is slow, expensive, and adversarial. Social stigma around divorce — particularly for women — remains severe in most communities. Financial dependence, lack of housing alternatives, family pressure, and community exclusion all make staying in a bad marriage the rational choice for millions of people. A low divorce rate in that context is not a success metric. It is a measurement of how hard exit is.",
+        text: "India ranks among the hardest countries in the world to get divorced. The legal process is slow, expensive, and adversarial. Social stigma around divorce, particularly for women, remains severe in most communities. Financial dependence, lack of housing alternatives, family pressure, and community exclusion all make staying in a bad marriage the rational choice for millions of people. A low divorce rate in that context is not a success metric. It is a measurement of how hard exit is.",
       },
       {
         type: "p",
-        text: "When researchers control for these factors and look at South Asian diaspora communities in the US, UK, and Canada — where divorce is legally easy and socially more acceptable — the gap between arranged and love marriage divorce rates narrows dramatically. A 2022 study of British South Asians found no statistically significant difference in divorce rates between the two groups when controlling for religiosity and family involvement in both types of marriages.",
+        text: "When researchers control for these factors and look at South Asian diaspora communities in the US, UK, and Canada, where divorce is legally easy and socially more acceptable, the gap between arranged and love marriage divorce rates narrows dramatically. A 2022 study of British South Asians found no statistically significant difference in divorce rates between the two groups when controlling for religiosity and family involvement in both types of marriages.",
       },
       {
         type: "h2",
@@ -69,11 +69,11 @@ export const arrangedMarriagePosts: JournalPost[] = [
       },
       {
         type: "p",
-        text: "Satisfaction surveys are the second weapon in this debate, and they are equally complicated. Several studies — including a widely cited one from Robert Epstein at Harvard — found that arranged marriage couples reported higher love and satisfaction scores after ten years than love marriage couples. This gets shared as proof that arranged marriages are happier.",
+        text: "Satisfaction surveys are the second weapon in this debate, and they are equally complicated. Several studies, including a widely cited one from Robert Epstein at Harvard, found that arranged marriage couples reported higher love and satisfaction scores after ten years than love marriage couples. This gets shared as proof that arranged marriages are happier.",
       },
       {
         type: "p",
-        text: "The problem is what satisfaction surveys measure. If someone has built their entire social identity around their marriage being good, they will report it as good. Cognitive dissonance is real. Surveys in communities with high stigma around marital unhappiness systematically overreport satisfaction. The people who would report the lowest scores are often the same people who have already left — and are therefore no longer in the sample.",
+        text: "The problem is what satisfaction surveys measure. If someone has built their entire social identity around their marriage being good, they will report it as good. Cognitive dissonance is real. Surveys in communities with high stigma around marital unhappiness systematically overreport satisfaction. The people who would report the lowest scores are often the same people who have already left, and are therefore no longer in the sample.",
       },
       {
         type: "p",
@@ -89,7 +89,7 @@ export const arrangedMarriagePosts: JournalPost[] = [
       },
       {
         type: "p",
-        text: "That second version — sometimes called 'semi-arranged' or 'assisted marriage' — is structurally different from a love marriage in only one way: the introduction came through family rather than through an app, a bar, or a friend of a friend. Everything after the introduction — the dating period, the decision, the timeline — is increasingly in the couple's hands. Research that treats all arranged marriages as the same category is almost useless for understanding what modern South Asian diaspora dating actually looks like. If you want to go deeper on how the system has evolved, the piece on <a href='/journal/modern-arranged-marriage-2026'>modern arranged marriage in 2026</a> covers the full picture.",
+        text: "That second version, sometimes called 'semi-arranged' or 'assisted marriage', is structurally different from a love marriage in only one way: the introduction came through family rather than through an app, a bar, or a friend of a friend. Everything after the introduction, the dating period, the decision, the timeline, is increasingly in the couple's hands. Research that treats all arranged marriages as the same category is almost useless for understanding what modern South Asian diaspora dating actually looks like. If you want to go deeper on how the system has evolved, the piece on <a href='/journal/modern-arranged-marriage-2026'>modern arranged marriage in 2026</a> covers the full picture.",
       },
       {
         type: "h2",
@@ -97,11 +97,11 @@ export const arrangedMarriagePosts: JournalPost[] = [
       },
       {
         type: "p",
-        text: "Across multiple studies and cultures, the research consistently finds one thing: marriages where both partners reported feeling like active, willing participants — whether the introduction was arranged or organic — have better outcomes than marriages where one or both felt pressured. The structure matters less than the agency. That is not a surprising finding. But it is the finding that gets buried in the love marriage vs arranged marriage headline wars.",
+        text: "Across multiple studies and cultures, the research consistently finds one thing: marriages where both partners reported feeling like active, willing participants, whether the introduction was arranged or organic, have better outcomes than marriages where one or both felt pressured. The structure matters less than the agency. That is not a surprising finding. But it is the finding that gets buried in the love marriage vs arranged marriage headline wars.",
       },
       {
         type: "p",
-        text: "The question worth asking is not whether your marriage was arranged or a love marriage. It is whether both people genuinely chose each other. Those two things are not the same question, and confusing them is how a lot of people end up in marriages they did not actually consent to — while technically having a say in the process.",
+        text: "The question worth asking is not whether your marriage was arranged or a love marriage. It is whether both people genuinely chose each other. Those two things are not the same question, and confusing them is how a lot of people end up in marriages they did not actually consent to, while technically having a say in the process.",
       },
       {
         type: "h2",
@@ -117,7 +117,7 @@ export const arrangedMarriagePosts: JournalPost[] = [
       },
       {
         type: "p",
-        text: "If you are working through what compatibility actually means to you — apart from what your family's checklist says — come to Garam Masala Dating. Watch real South Asian singles figure it out live, on stage, in front of 250 people. It is more useful than any statistics.",
+        text: "If you are working through what compatibility actually means to you, apart from what your family's checklist says, come to Garam Masala Dating. Watch real South Asian singles figure it out live, on stage, in front of 250 people. It is more useful than any statistics.",
       },
     ],
   },
@@ -130,7 +130,7 @@ export const arrangedMarriagePosts: JournalPost[] = [
     dateModified: "2026-11-03",
     author: "Surbhi",
     excerpt:
-      "Nobody gives you a roadmap for the modern arranged marriage process. Here is a realistic month-by-month breakdown of what actually happens — and the pressure points nobody warns you about.",
+      "Nobody gives you a roadmap for the modern arranged marriage process. Here is a realistic month-by-month breakdown of what actually happens, and the pressure points nobody warns you about.",
     relatedSlugs: [
       "modern-biodata-guide",
       "arranged-marriage-red-flags",
@@ -147,7 +147,7 @@ export const arrangedMarriagePosts: JournalPost[] = [
       },
       {
         q: "How many people do you meet in an arranged marriage process?",
-        a: "It varies by how active the family is and how specific the criteria. Some people meet three candidates over a year. Others — particularly in NRI contexts where families treat visiting India as a matchmaking trip — meet ten or more in a few weeks.",
+        a: "It varies by how active the family is and how specific the criteria. Some people meet three candidates over a year. Others, particularly in NRI contexts where families treat visiting India as a matchmaking trip, meet ten or more in a few weeks.",
       },
       {
         q: "Can you say no after the first meeting in an arranged marriage?",
@@ -157,7 +157,7 @@ export const arrangedMarriagePosts: JournalPost[] = [
     body: [
       {
         type: "p",
-        text: "One of the strangest things about the modern arranged marriage process is that nobody actually explains how it works. You are expected to navigate it by instinct, by watching what happened to older cousins, and by tolerating a series of events that nobody formally names. The result is that a lot of people enter the process without understanding what they are agreeing to — and exit it confused about what went wrong.",
+        text: "One of the strangest things about the modern arranged marriage process is that nobody actually explains how it works. You are expected to navigate it by instinct, by watching what happened to older cousins, and by tolerating a series of events that nobody formally names. The result is that a lot of people enter the process without understanding what they are agreeing to, and exit it confused about what went wrong.",
       },
       {
         type: "p",
@@ -165,39 +165,39 @@ export const arrangedMarriagePosts: JournalPost[] = [
       },
       {
         type: "h2",
-        text: "Month 0–1: The family decides it is time",
+        text: "Month 0 to 1: The family decides it is time",
       },
       {
         type: "p",
-        text: "It usually starts not with a conversation but with a change in energy. Parents begin mentioning weddings more. Aunties start making pointed observations about your availability. A cousin's engagement announcement arrives and the family group chat suddenly becomes very interested in your timeline. The formal announcement — if there is one — is typically something like 'we want to start looking' or 'do you have any objection to us asking around.'",
+        text: "It usually starts not with a conversation but with a change in energy. Parents begin mentioning weddings more. Aunties start making pointed observations about your availability. A cousin's engagement announcement arrives and the family group chat suddenly becomes very interested in your timeline. The formal announcement, if there is one, is typically something like 'we want to start looking' or 'do you have any objection to us asking around.'",
       },
       {
         type: "p",
-        text: "The first pressure point arrives here. Many people nod along without establishing what they actually want from the process — how much input they expect to have, what their timeline looks like, what they will and will not compromise on. Having that conversation explicitly, before anything else happens, changes the entire dynamic. The families who skip it tend to generate the most conflict downstream.",
+        text: "The first pressure point arrives here. Many people nod along without establishing what they actually want from the process, how much input they expect to have, what their timeline looks like, what they will and will not compromise on. Having that conversation explicitly, before anything else happens, changes the entire dynamic. The families who skip it tend to generate the most conflict downstream.",
       },
       {
         type: "h2",
-        text: "Month 1–3: Biodata exchange and the pipeline",
+        text: "Month 1 to 3: Biodata exchange and the pipeline",
       },
       {
         type: "p",
-        text: "Biodata starts moving. Your family shares yours with their network. Other families share theirs. You receive profiles — sometimes as WhatsApp PDFs, sometimes via matrimony site messages, sometimes verbally from a relative who has already decided this person is perfect for you. The quality of what you receive varies wildly. Some biodatas are thoughtful and honest. Many are marketing documents.",
+        text: "Biodata starts moving. Your family shares yours with their network. Other families share theirs. You receive profiles, sometimes as WhatsApp PDFs, sometimes via matrimony site messages, sometimes verbally from a relative who has already decided this person is perfect for you. The quality of what you receive varies wildly. Some biodatas are thoughtful and honest. Many are marketing documents.",
       },
       {
         type: "p",
-        text: "You are expected to express interest or decline. Declines are supposed to be quick and polite. In practice they often become drawn-out negotiations where parents advocate for someone you already said no to. This is the stage where setting a clear norm — 'I need to feel a yes to meet someone, not just an absence of no' — matters. If you want to understand how to write a biodata that gives the other person something real to work with, the guide on <a href='/journal/modern-biodata-guide'>modern biodatas</a> covers exactly that.",
+        text: "You are expected to express interest or decline. Declines are supposed to be quick and polite. In practice they often become drawn-out negotiations where parents advocate for someone you already said no to. This is the stage where setting a clear norm, 'I need to feel a yes to meet someone, not just an absence of no', matters. If you want to understand how to write a biodata that gives the other person something real to work with, the guide on <a href='/journal/modern-biodata-guide'>modern biodatas</a> covers exactly that.",
       },
       {
         type: "p",
-        text: "The other thing happening in this phase is the informal background check. Your family is asking their network about the other family. Their family is asking theirs about you. Information flows in ways you cannot fully track. Assume that things you consider private — past relationships, health history, financial situation — may surface in these conversations whether you disclosed them or not.",
+        text: "The other thing happening in this phase is the informal background check. Your family is asking their network about the other family. Their family is asking theirs about you. Information flows in ways you cannot fully track. Assume that things you consider private, past relationships, health history, financial situation, may surface in these conversations whether you disclosed them or not.",
       },
       {
         type: "h2",
-        text: "Month 2–4: The first meeting",
+        text: "Month 2 to 4: The first meeting",
       },
       {
         type: "p",
-        text: "In traditional arranged marriages this is a formal event with both extended families present. In modern semi-arranged marriages it has evolved toward a much lower-stakes format — a video call, a coffee, a short in-person meeting with families stepping back entirely. Which version you experience depends heavily on how traditional your family is and how much you have negotiated beforehand.",
+        text: "In traditional arranged marriages this is a formal event with both extended families present. In modern semi-arranged marriages it has evolved toward a much lower-stakes format, a video call, a coffee, a short in-person meeting with families stepping back entirely. Which version you experience depends heavily on how traditional your family is and how much you have negotiated beforehand.",
       },
       {
         type: "p",
@@ -209,15 +209,15 @@ export const arrangedMarriagePosts: JournalPost[] = [
       },
       {
         type: "h2",
-        text: "Month 3–8: The courtship period",
+        text: "Month 3 to 8: The courtship period",
       },
       {
         type: "p",
-        text: "If the first meeting goes well, a courtship period follows. In modern semi-arranged marriages this looks increasingly like regular dating — calls, texts, in-person dates, eventually some integration with each other's friend groups. The formal difference is that both families know about it and are often tracking it with more attention than either party is comfortable with.",
+        text: "If the first meeting goes well, a courtship period follows. In modern semi-arranged marriages this looks increasingly like regular dating, calls, texts, in-person dates, eventually some integration with each other's friend groups. The formal difference is that both families know about it and are often tracking it with more attention than either party is comfortable with.",
       },
       {
         type: "p",
-        text: "The courtship period is where the timeline pressure usually intensifies. Families who were patient during the pipeline stage often become impatient once two people are talking. They want to know 'where this is going.' The couple is expected to arrive at a decision faster than two people who met organically would be expected to. This is the single biggest structural problem in the modern arranged marriage process — it compresses timelines in ways that push people toward premature decisions.",
+        text: "The courtship period is where the timeline pressure usually intensifies. Families who were patient during the pipeline stage often become impatient once two people are talking. They want to know 'where this is going.' The couple is expected to arrive at a decision faster than two people who met organically would be expected to. This is the single biggest structural problem in the modern arranged marriage process, it compresses timelines in ways that push people toward premature decisions.",
       },
       {
         type: "p",
@@ -225,19 +225,19 @@ export const arrangedMarriagePosts: JournalPost[] = [
       },
       {
         type: "h2",
-        text: "Month 6–12: Engagement, or ending the process",
+        text: "Month 6 to 12: Engagement, or ending the process",
       },
       {
         type: "p",
-        text: "If the courtship goes well, families move toward engagement. In many South Asian communities, the engagement is itself a significant event — a formal commitment that triggers wedding planning. This means the decision to get engaged carries more weight than it does in many Western contexts, where an engagement is sometimes more exploratory. Know what getting engaged means in your specific family culture before you say yes to it.",
+        text: "If the courtship goes well, families move toward engagement. In many South Asian communities, the engagement is itself a significant event, a formal commitment that triggers wedding planning. This means the decision to get engaged carries more weight than it does in many Western contexts, where an engagement is sometimes more exploratory. Know what getting engaged means in your specific family culture before you say yes to it.",
       },
       {
         type: "p",
-        text: "If the courtship does not go well, the process ends — ideally with a clear, direct conversation rather than a fade. Exiting the arranged marriage process cleanly is harder than people expect. There are feelings, expectations, and family reputations involved. For practical guidance on how to do it without setting off a family crisis, the piece on <a href='/journal/how-to-say-no-arranged-match'>how to say no to an arranged match</a> has specific language that works.",
+        text: "If the courtship does not go well, the process ends, ideally with a clear, direct conversation rather than a fade. Exiting the arranged marriage process cleanly is harder than people expect. There are feelings, expectations, and family reputations involved. For practical guidance on how to do it without setting off a family crisis, the piece on <a href='/journal/how-to-say-no-arranged-match'>how to say no to an arranged match</a> has specific language that works.",
       },
       {
         type: "p",
-        text: "If you have been through this process and found it exhausting and depersonalizing — many people do — come to a Garam Masala Dating show. Watching real people meet organically, with none of the family infrastructure, is a useful reminder that chemistry does not require a pipeline.",
+        text: "If you have been through this process and found it exhausting and depersonalizing, many people do, come to a Garam Masala Dating show. Watching real people meet organically, with none of the family infrastructure, is a useful reminder that chemistry does not require a pipeline.",
       },
     ],
   },
@@ -250,7 +250,7 @@ export const arrangedMarriagePosts: JournalPost[] = [
     dateModified: "2026-11-05",
     author: "Surbhi",
     excerpt:
-      "Some arranged marriage red flags show up on the biodata. Most do not. Here are the ones your parents will explain away — and why you should not let them.",
+      "Some arranged marriage red flags show up on the biodata. Most do not. Here are the ones your parents will explain away, and why you should not let them.",
     relatedSlugs: [
       "how-to-say-no-arranged-match",
       "weaponized-compatibility-family-pressure",
@@ -271,7 +271,7 @@ export const arrangedMarriagePosts: JournalPost[] = [
       },
       {
         q: "Is it a red flag if someone's arranged marriage negotiations have failed multiple times?",
-        a: "Not automatically — many thoughtful, selective people have been through multiple processes. The red flag is if the family is evasive about why previous matches ended, or if a pattern emerges (e.g., always the other party's fault, or the person has met 30 people with no explanation).",
+        a: "Not automatically, many thoughtful, selective people have been through multiple processes. The red flag is if the family is evasive about why previous matches ended, or if a pattern emerges (e.g., always the other party's fault, or the person has met 30 people with no explanation).",
       },
     ],
     body: [
@@ -289,11 +289,11 @@ export const arrangedMarriagePosts: JournalPost[] = [
       },
       {
         type: "p",
-        text: "Every legitimate arranged marriage process takes time. The meetings, the courtship, the conversations required to actually understand whether two people are compatible — none of that happens in three weeks. When a family is pushing hard to accelerate the timeline, there are usually only a few reasons: an external deadline (visa, a parent's health, family pressure from above), something they want decided before you have time to think clearly, or a cultural norm of fast commitment that both families share.",
+        text: "Every legitimate arranged marriage process takes time. The meetings, the courtship, the conversations required to actually understand whether two people are compatible, none of that happens in three weeks. When a family is pushing hard to accelerate the timeline, there are usually only a few reasons: an external deadline (visa, a parent's health, family pressure from above), something they want decided before you have time to think clearly, or a cultural norm of fast commitment that both families share.",
       },
       {
         type: "p",
-        text: "The first reason is legitimate and should be disclosed. The second is a red flag. The third is worth discussing openly with the other person — do they also feel rushed, or is this speed comfortable for them? If you feel rushed and they feel fine, you are not on the same page about how this decision should work. That gap matters.",
+        text: "The first reason is legitimate and should be disclosed. The second is a red flag. The third is worth discussing openly with the other person, do they also feel rushed, or is this speed comfortable for them? If you feel rushed and they feel fine, you are not on the same page about how this decision should work. That gap matters.",
       },
       {
         type: "p",
@@ -313,7 +313,7 @@ export const arrangedMarriagePosts: JournalPost[] = [
       },
       {
         type: "p",
-        text: "The one-sided enthusiasm flag goes the other way too. If you are not genuinely interested in this person and you are staying in the process to avoid disappointing your family, you are already doing harm — to them, and to yourself. The piece on <a href='/journal/weaponized-compatibility-family-pressure'>how family uses compatibility as pressure</a> is worth reading if you are in that position.",
+        text: "The one-sided enthusiasm flag goes the other way too. If you are not genuinely interested in this person and you are staying in the process to avoid disappointing your family, you are already doing harm, to them, and to yourself. The piece on <a href='/journal/weaponized-compatibility-family-pressure'>how family uses compatibility as pressure</a> is worth reading if you are in that position.",
       },
       {
         type: "h2",
@@ -325,7 +325,7 @@ export const arrangedMarriagePosts: JournalPost[] = [
       },
       {
         type: "p",
-        text: "This is especially important to watch for in conversations about where you will live, how much family involvement you want after marriage, and what your daily life will look like together. These are the questions where people's actual preferences most often diverge from family preferences. Someone who defers on all of them is either not going to advocate for your shared life, or has preferences they have not told their family about — which creates a different problem.",
+        text: "This is especially important to watch for in conversations about where you will live, how much family involvement you want after marriage, and what your daily life will look like together. These are the questions where people's actual preferences most often diverge from family preferences. Someone who defers on all of them is either not going to advocate for your shared life, or has preferences they have not told their family about, which creates a different problem.",
       },
       {
         type: "h2",
@@ -333,7 +333,7 @@ export const arrangedMarriagePosts: JournalPost[] = [
       },
       {
         type: "p",
-        text: "You are not just marrying this person. You are entering a relationship with their family structure. Some specific things worth paying attention to: How do the parents talk to each other? How does the family talk about the person's previous matches — with compassion or with contempt? How much does the person's family talk about your family's background compared to talking about you as an individual? How does the family handle a 'no' — with grace or with pressure?",
+        text: "You are not just marrying this person. You are entering a relationship with their family structure. Some specific things worth paying attention to: How do the parents talk to each other? How does the family talk about the person's previous matches, with compassion or with contempt? How much does the person's family talk about your family's background compared to talking about you as an individual? How does the family handle a 'no', with grace or with pressure?",
       },
       {
         type: "p",
@@ -361,7 +361,7 @@ export const arrangedMarriagePosts: JournalPost[] = [
     slug: "how-to-say-no-arranged-match",
     title: "How to Say No to an Arranged Match Without Starting a Family War",
     metaDescription:
-      "Practical scripts and strategies for declining an arranged marriage match respectfully — without lying, without guilt-tripping, and without a family crisis.",
+      "Practical scripts and strategies for declining an arranged marriage match respectfully, without lying, without guilt-tripping, and without a family crisis.",
     datePublished: "2026-07-23",
     dateModified: "2026-11-07",
     author: "Surbhi",
@@ -383,7 +383,7 @@ export const arrangedMarriagePosts: JournalPost[] = [
       },
       {
         q: "Is it rude to say no to an arranged match?",
-        a: "No. Saying no clearly and promptly is actually the respectful choice — it frees the other family to continue their process rather than waiting on an ambiguous maybe. The rude option is stringing someone along because you cannot face the conversation.",
+        a: "No. Saying no clearly and promptly is actually the respectful choice, it frees the other family to continue their process rather than waiting on an ambiguous maybe. The rude option is stringing someone along because you cannot face the conversation.",
       },
       {
         q: "How do I say no without hurting the other family?",
@@ -397,7 +397,7 @@ export const arrangedMarriagePosts: JournalPost[] = [
     body: [
       {
         type: "p",
-        text: "In theory, saying no to an arranged match is simple. You met them, you did not feel it, you decline. In practice it triggers a cascade: parents who invested emotional energy in the prospect, extended family who have already been told about the meeting, the other family's feelings, and the implicit message that your judgment and priorities are different from your parents' — which is the conversation everyone has been avoiding.",
+        text: "In theory, saying no to an arranged match is simple. You met them, you did not feel it, you decline. In practice it triggers a cascade: parents who invested emotional energy in the prospect, extended family who have already been told about the meeting, the other family's feelings, and the implicit message that your judgment and priorities are different from your parents', which is the conversation everyone has been avoiding.",
       },
       {
         type: "p",
@@ -425,7 +425,7 @@ export const arrangedMarriagePosts: JournalPost[] = [
       },
       {
         type: "p",
-        text: "To your parents: 'I met [name] and I do not think we are compatible. I appreciate you setting it up, and I want to keep going with the process — but this one is not right. Can we talk about what to look for next?' Ending with a forward-looking question shifts the frame from 'my child is rejecting my judgment' to 'my child is engaged in the process but knows their own mind.'",
+        text: "To your parents: 'I met [name] and I do not think we are compatible. I appreciate you setting it up, and I want to keep going with the process, but this one is not right. Can we talk about what to look for next?' Ending with a forward-looking question shifts the frame from 'my child is rejecting my judgment' to 'my child is engaged in the process but knows their own mind.'",
       },
       {
         type: "p",
@@ -441,7 +441,7 @@ export const arrangedMarriagePosts: JournalPost[] = [
       },
       {
         type: "p",
-        text: "Some parents treat a no as a negotiating position. They will come back with new arguments, new information about the other person, or emotional pressure — 'you are being too picky,' 'you will not find better,' 'we are only doing this for your happiness.' These responses are not information. They are pressure. You are allowed to not be moved by them.",
+        text: "Some parents treat a no as a negotiating position. They will come back with new arguments, new information about the other person, or emotional pressure, 'you are being too picky,' 'you will not find better,' 'we are only doing this for your happiness.' These responses are not information. They are pressure. You are allowed to not be moved by them.",
       },
       {
         type: "p",
@@ -469,11 +469,11 @@ export const arrangedMarriagePosts: JournalPost[] = [
       },
       {
         type: "p",
-        text: "How your family responds to your no tells you something important. A family that accepts your decision — maybe with disappointment, but without extended pressure campaigns — is a family that respects your autonomy. A family that treats your no as a problem to be solved is telling you something about what the marriage they are arranging will look like. How much of your life will be yours to decide?",
+        text: "How your family responds to your no tells you something important. A family that accepts your decision, maybe with disappointment, but without extended pressure campaigns, is a family that respects your autonomy. A family that treats your no as a problem to be solved is telling you something about what the marriage they are arranging will look like. How much of your life will be yours to decide?",
       },
       {
         type: "p",
-        text: "That is the real question underneath the arranged marriage process. Not 'will I like this person' but 'am I a participant in this decision or a subject of it?' The way you handle saying no — and the way your family handles hearing it — is the clearest data point you have on that question. For more on navigating the broader family dynamics, the piece on <a href='/journal/how-to-tell-indian-parents-about-partner'>telling Indian parents about a partner</a> covers a lot of the same territory from a different angle.",
+        text: "That is the real question underneath the arranged marriage process. Not 'will I like this person' but 'am I a participant in this decision or a subject of it?' The way you handle saying no, and the way your family handles hearing it, is the clearest data point you have on that question. For more on navigating the broader family dynamics, the piece on <a href='/journal/how-to-tell-indian-parents-about-partner'>telling Indian parents about a partner</a> covers a lot of the same territory from a different angle.",
       },
       {
         type: "p",
@@ -485,12 +485,12 @@ export const arrangedMarriagePosts: JournalPost[] = [
     slug: "modern-biodata-guide",
     title: "The Modern Biodata: How to Write One That Actually Represents You",
     metaDescription:
-      "How to write a biodata for marriage that goes beyond height and horoscope — what to include, what to skip, and NRI-specific tips for 2026.",
+      "How to write a biodata for marriage that goes beyond height and horoscope, what to include, what to skip, and NRI-specific tips for 2026.",
     datePublished: "2026-07-24",
     dateModified: "2026-11-09",
     author: "Surbhi",
     excerpt:
-      "The marriage biodata has not changed much since the 1980s. Here is how to write one that tells the other person something real about who you are — without turning it into a dating app profile.",
+      "The marriage biodata has not changed much since the 1980s. Here is how to write one that tells the other person something real about who you are, without turning it into a dating app profile.",
     relatedSlugs: [
       "arranged-marriage-timeline",
       "how-to-use-indian-matrimony-sites",
@@ -503,7 +503,7 @@ export const arrangedMarriagePosts: JournalPost[] = [
       },
       {
         q: "How long should a marriage biodata be?",
-        a: "One page. Two maximum if you are including a family section. Anyone who needs more than two pages has not edited ruthlessly enough. The goal is to give someone enough to decide if a conversation is worth having — not to replace the conversation.",
+        a: "One page. Two maximum if you are including a family section. Anyone who needs more than two pages has not edited ruthlessly enough. The goal is to give someone enough to decide if a conversation is worth having, not to replace the conversation.",
       },
       {
         q: "Should I include a photo in my biodata?",
@@ -511,7 +511,7 @@ export const arrangedMarriagePosts: JournalPost[] = [
       },
       {
         q: "What should NRIs include differently in their biodata?",
-        a: "Specify your visa status clearly. It matters enormously to both parties and leaving it vague creates problems. If you are open or not open to relocating, say so explicitly. NRI biodatas also benefit from explaining your cultural orientation more clearly than Indian-based biodatas — how observant are you, how much do you maintain ties to India, how do you navigate being between cultures.",
+        a: "Specify your visa status clearly. It matters enormously to both parties and leaving it vague creates problems. If you are open or not open to relocating, say so explicitly. NRI biodatas also benefit from explaining your cultural orientation more clearly than Indian-based biodatas, how observant are you, how much do you maintain ties to India, how do you navigate being between cultures.",
       },
       {
         q: "Can I write my own biodata or should my parents write it?",
@@ -521,7 +521,7 @@ export const arrangedMarriagePosts: JournalPost[] = [
     body: [
       {
         type: "p",
-        text: "The marriage biodata is one of the strangest documents in South Asian culture. It is a resume for a life partner — a format so familiar that most people reproduce it without questioning what it is actually for. The result is that most biodatas are nearly identical: a list of facts that tell the other person almost nothing useful about whether they would want to spend their life with you.",
+        text: "The marriage biodata is one of the strangest documents in South Asian culture. It is a resume for a life partner, a format so familiar that most people reproduce it without questioning what it is actually for. The result is that most biodatas are nearly identical: a list of facts that tell the other person almost nothing useful about whether they would want to spend their life with you.",
       },
       {
         type: "p",
@@ -533,11 +533,11 @@ export const arrangedMarriagePosts: JournalPost[] = [
       },
       {
         type: "p",
-        text: "The traditional format was built for a different kind of arranged marriage — one where the families were making most of the decision and the individuals' compatibility was assessed primarily through background, caste, and horoscope. The information that format captures (gotra, family village, parents' occupation, physical measurements) was functional for that system. It is not functional for a modern process where two people are expected to choose each other.",
+        text: "The traditional format was built for a different kind of arranged marriage, one where the families were making most of the decision and the individuals' compatibility was assessed primarily through background, caste, and horoscope. The information that format captures (gotra, family village, parents' occupation, physical measurements) was functional for that system. It is not functional for a modern process where two people are expected to choose each other.",
       },
       {
         type: "p",
-        text: "The specific problems with traditional biodata: physical descriptions written by parents that prioritize complexion and height in ways that are either inaccurate or uncomfortable. Salary ranges that create expectations and resentments. Vague personal descriptions ('family-oriented, likes to travel') that could apply to literally anyone. And a total absence of information about how this person actually lives — what they value, what they cannot compromise on, what kind of partnership they are looking for.",
+        text: "The specific problems with traditional biodata: physical descriptions written by parents that prioritize complexion and height in ways that are either inaccurate or uncomfortable. Salary ranges that create expectations and resentments. Vague personal descriptions ('family-oriented, likes to travel') that could apply to literally anyone. And a total absence of information about how this person actually lives, what they value, what they cannot compromise on, what kind of partnership they are looking for.",
       },
       {
         type: "h2",
@@ -545,11 +545,11 @@ export const arrangedMarriagePosts: JournalPost[] = [
       },
       {
         type: "p",
-        text: "Name, age, education, and profession are the minimum viable facts. Include them clearly. For location, be specific — not just 'US/NRI' but which city and whether you are open to relocating. This is especially important if you are navigating the matrimony site process; for more detail on how location affects matching on those platforms, the guide on <a href='/journal/how-to-use-indian-matrimony-sites'>using Indian matrimony sites effectively</a> covers it well.",
+        text: "Name, age, education, and profession are the minimum viable facts. Include them clearly. For location, be specific, not just 'US/NRI' but which city and whether you are open to relocating. This is especially important if you are navigating the matrimony site process; for more detail on how location affects matching on those platforms, the guide on <a href='/journal/how-to-use-indian-matrimony-sites'>using Indian matrimony sites effectively</a> covers it well.",
       },
       {
         type: "p",
-        text: "Family background: include the essentials (parents' background, siblings, whether family is in India or abroad) without turning it into an ancestry report. The goal here is to give the other family a sense of your cultural context — urban or rural, observant or secular, joint family or nuclear. That context matters. The specific village your grandfather came from does not.",
+        text: "Family background: include the essentials (parents' background, siblings, whether family is in India or abroad) without turning it into an ancestry report. The goal here is to give the other family a sense of your cultural context, urban or rural, observant or secular, joint family or nuclear. That context matters. The specific village your grandfather came from does not.",
       },
       {
         type: "p",
@@ -573,7 +573,7 @@ export const arrangedMarriagePosts: JournalPost[] = [
       },
       {
         type: "p",
-        text: "If you are an NRI, your biodata needs to be more explicit about three things your Indian-based counterparts do not have to clarify: visa status, relocation openness, and cultural orientation. Visa status matters practically — a US citizen's situation is very different from someone on an H1-B — and leaving it ambiguous creates conversations that could have been avoided. Relocation openness cuts both ways: be clear about whether you are open to moving to India, whether you expect a partner to move to your country, or whether the question is genuinely open.",
+        text: "If you are an NRI, your biodata needs to be more explicit about three things your Indian-based counterparts do not have to clarify: visa status, relocation openness, and cultural orientation. Visa status matters practically, a US citizen's situation is very different from someone on an H1-B, and leaving it ambiguous creates conversations that could have been avoided. Relocation openness cuts both ways: be clear about whether you are open to moving to India, whether you expect a partner to move to your country, or whether the question is genuinely open.",
       },
       {
         type: "p",
@@ -602,7 +602,7 @@ export const arrangedMarriagePosts: JournalPost[] = [
     title:
       "When Arranged Introductions Lead to Love: Real Stories No Netflix Edits",
     metaDescription:
-      "Real stories of arranged introductions that became genuine love — what made them work, what almost derailed them, and what they have in common.",
+      "Real stories of arranged introductions that became genuine love, what made them work, what almost derailed them, and what they have in common.",
     datePublished: "2026-07-25",
     dateModified: "2026-11-11",
     author: "Surbhi",
@@ -616,11 +616,11 @@ export const arrangedMarriagePosts: JournalPost[] = [
     faqs: [
       {
         q: "Can arranged marriages lead to love?",
-        a: "Yes, and it is more common than people expect. The mechanism is different from falling in love organically — it tends to be slower, more deliberate, and more consciously chosen. Many people who went through arranged introductions describe the love as something that grew rather than something that struck them.",
+        a: "Yes, and it is more common than people expect. The mechanism is different from falling in love organically, it tends to be slower, more deliberate, and more consciously chosen. Many people who went through arranged introductions describe the love as something that grew rather than something that struck them.",
       },
       {
         q: "What makes an arranged introduction turn into genuine love?",
-        a: "The most consistent factor is genuine choice — both people feeling like they were selecting each other rather than defaulting to the least-bad option. Other factors: enough time and space to develop honest communication, families that stepped back after the introduction, and both people being honest about who they actually are.",
+        a: "The most consistent factor is genuine choice, both people feeling like they were selecting each other rather than defaulting to the least-bad option. Other factors: enough time and space to develop honest communication, families that stepped back after the introduction, and both people being honest about who they actually are.",
       },
       {
         q: "Is love in an arranged marriage different from love in a love marriage?",
@@ -634,11 +634,11 @@ export const arrangedMarriagePosts: JournalPost[] = [
     body: [
       {
         type: "p",
-        text: "There is a version of the arranged marriage love story that gets told constantly — the Netflix version, the Instagram version, the one your parents' friends describe at dinner parties. In that version everything was arranged perfectly, both families got along immediately, and the couple knew from the first meeting that this was right. That version exists. It is just not most people's version.",
+        text: "There is a version of the arranged marriage love story that gets told constantly, the Netflix version, the Instagram version, the one your parents' friends describe at dinner parties. In that version everything was arranged perfectly, both families got along immediately, and the couple knew from the first meeting that this was right. That version exists. It is just not most people's version.",
       },
       {
         type: "p",
-        text: "What follows are composite stories drawn from conversations I have had with people in and around Garam Masala Dating — contestants, audience members, people who emailed after shows. They are real in the sense that all of the specific details came from real people, even where names and identifying details have been changed. The messiness is real. So is the love.",
+        text: "What follows are composite stories drawn from conversations I have had with people in and around Garam Masala Dating, contestants, audience members, people who emailed after shows. They are real in the sense that all of the specific details came from real people, even where names and identifying details have been changed. The messiness is real. So is the love.",
       },
       {
         type: "h2",
@@ -650,11 +650,11 @@ export const arrangedMarriagePosts: JournalPost[] = [
       },
       {
         type: "p",
-        text: "The first thirty minutes were exactly what she expected — a careful conversation where both of them answered the obvious questions correctly. Then Rohan said something she did not expect: he told her about a project he had recently abandoned. Not a success story. An actual failure he was still thinking through. She asked why he had failed. He told her honestly, including the part where his own stubbornness was responsible. She thought: I have never had this conversation with anyone I met through this process.",
+        text: "The first thirty minutes were exactly what she expected, a careful conversation where both of them answered the obvious questions correctly. Then Rohan said something she did not expect: he told her about a project he had recently abandoned. Not a success story. An actual failure he was still thinking through. She asked why he had failed. He told her honestly, including the part where his own stubbornness was responsible. She thought: I have never had this conversation with anyone I met through this process.",
       },
       {
         type: "p",
-        text: "They talked for three hours. She went home and told her mother the meeting had been 'okay.' It took her two weeks to admit to herself that she had thought about him every day since. They are married now. She says the love was not there at the first meeting — it arrived quietly over about six months, and she almost missed it because she was comparing the experience to a different feeling she had been told to look for.",
+        text: "They talked for three hours. She went home and told her mother the meeting had been 'okay.' It took her two weeks to admit to herself that she had thought about him every day since. They are married now. She says the love was not there at the first meeting, it arrived quietly over about six months, and she almost missed it because she was comparing the experience to a different feeling she had been told to look for.",
       },
       {
         type: "h2",
@@ -666,11 +666,11 @@ export const arrangedMarriagePosts: JournalPost[] = [
       },
       {
         type: "p",
-        text: "The turning point came when Dev and Ananya explicitly decided to stop reporting on the family negotiations to each other and just focus on whether they wanted to get married. They took a weekend trip together — chaperoned, technically, by a friend — and had the honest conversations they had been avoiding while managing everyone else's feelings. They realized they both wanted this and were going to have to present it to their families as a decision, not a proposal subject to parental approval.",
+        text: "The turning point came when Dev and Ananya explicitly decided to stop reporting on the family negotiations to each other and just focus on whether they wanted to get married. They took a weekend trip together, chaperoned, technically, by a friend, and had the honest conversations they had been avoiding while managing everyone else's feelings. They realized they both wanted this and were going to have to present it to their families as a decision, not a proposal subject to parental approval.",
       },
       {
         type: "p",
-        text: "The families came around. Not because Dev and Ananya convinced them, but because they stopped seeking approval and started communicating a decision. The love that was forming between them was real and had been building in parallel with all the family drama. The drama almost obscured it. The story is not unusual — family intervention in the arranged process can derail genuine connections if both people are not willing to protect what is forming between them.",
+        text: "The families came around. Not because Dev and Ananya convinced them, but because they stopped seeking approval and started communicating a decision. The love that was forming between them was real and had been building in parallel with all the family drama. The drama almost obscured it. The story is not unusual, family intervention in the arranged process can derail genuine connections if both people are not willing to protect what is forming between them.",
       },
       {
         type: "h2",
@@ -682,11 +682,11 @@ export const arrangedMarriagePosts: JournalPost[] = [
       },
       {
         type: "p",
-        text: "What changed was a conversation with a therapist who told her that looking for what was wrong was not the same as being discerning. Being discerning meant knowing what she actually needed and looking for evidence of that. She rewrote what she was screening for — not the absence of red flags but the presence of specific things she knew mattered to her: emotional honesty, the ability to sit with uncertainty, humor that was not at anyone's expense.",
+        text: "What changed was a conversation with a therapist who told her that looking for what was wrong was not the same as being discerning. Being discerning meant knowing what she actually needed and looking for evidence of that. She rewrote what she was screening for, not the absence of red flags but the presence of specific things she knew mattered to her: emotional honesty, the ability to sit with uncertainty, humor that was not at anyone's expense.",
       },
       {
         type: "p",
-        text: "She met someone six months later who had all three. The love was slower than anything she had expected — slower than her first marriage had been. She described it as trusting him first, then admiring him, then realizing at some point she did not want to be anywhere he was not. She said it felt less like falling and more like choosing, over and over, and being chosen back. For more on how the modern arranged process has changed for people navigating it later in life or after divorce, the piece on <a href='/journal/indian-dating-after-divorce'>Indian dating after divorce</a> covers that specific terrain.",
+        text: "She met someone six months later who had all three. The love was slower than anything she had expected, slower than her first marriage had been. She described it as trusting him first, then admiring him, then realizing at some point she did not want to be anywhere he was not. She said it felt less like falling and more like choosing, over and over, and being chosen back. For more on how the modern arranged process has changed for people navigating it later in life or after divorce, the piece on <a href='/journal/indian-dating-after-divorce'>Indian dating after divorce</a> covers that specific terrain.",
       },
       {
         type: "h2",
@@ -694,7 +694,7 @@ export const arrangedMarriagePosts: JournalPost[] = [
       },
       {
         type: "p",
-        text: "Every story like this involves a moment where the person stopped performing for the process and started actually engaging with the specific human in front of them. The families, the biodatas, the background checks, the meetings — all of that is the scaffolding. The connection happens when two people decide to stop being candidates and start being themselves.",
+        text: "Every story like this involves a moment where the person stopped performing for the process and started actually engaging with the specific human in front of them. The families, the biodatas, the background checks, the meetings, all of that is the scaffolding. The connection happens when two people decide to stop being candidates and start being themselves.",
       },
       {
         type: "p",
@@ -736,7 +736,7 @@ export const arrangedMarriagePosts: JournalPost[] = [
       },
       {
         q: "How do NRIs handle the arranged marriage 'meeting trip' to India?",
-        a: "The meeting trip — where an NRI visits India and meets multiple candidates in a short window — is a real phenomenon that most people find stressful and dehumanizing. The best approach is to use video calls to pre-screen seriously before the trip, limit the trip to a small number of genuine prospects, and resist the pressure to make a decision before returning.",
+        a: "The meeting trip, where an NRI visits India and meets multiple candidates in a short window, is a real phenomenon that most people find stressful and dehumanizing. The best approach is to use video calls to pre-screen seriously before the trip, limit the trip to a small number of genuine prospects, and resist the pressure to make a decision before returning.",
       },
     ],
     body: [
@@ -746,7 +746,7 @@ export const arrangedMarriagePosts: JournalPost[] = [
       },
       {
         type: "p",
-        text: "I have talked to enough NRIs in the Garam Masala Dating community — people who come to the show in NYC, people who apply as contestants, people who email after watching the show — to have a reasonably clear picture of how the process actually unfolds for people living abroad. Here is what makes it different.",
+        text: "I have talked to enough NRIs in the Garam Masala Dating community, people who come to the show in NYC, people who apply as contestants, people who email after watching the show, to have a reasonably clear picture of how the process actually unfolds for people living abroad. Here is what makes it different.",
       },
       {
         type: "h2",
@@ -758,7 +758,7 @@ export const arrangedMarriagePosts: JournalPost[] = [
       },
       {
         type: "p",
-        text: "The answer is not always binary. Some India-based candidates are genuinely interested in both — in the person and in the life opportunity that comes with them. That is a human and understandable position. What matters is whether it is disclosed and discussed honestly. An India-based candidate who is primarily motivated by immigration but presenting as purely romantically interested is a problem. A candidate who says 'yes, living abroad is something I want and I am also genuinely interested in knowing you' is being honest, and that honesty is workable.",
+        text: "The answer is not always binary. Some India-based candidates are genuinely interested in both, in the person and in the life opportunity that comes with them. That is a human and understandable position. What matters is whether it is disclosed and discussed honestly. An India-based candidate who is primarily motivated by immigration but presenting as purely romantically interested is a problem. A candidate who says 'yes, living abroad is something I want and I am also genuinely interested in knowing you' is being honest, and that honesty is workable.",
       },
       {
         type: "p",
@@ -770,15 +770,15 @@ export const arrangedMarriagePosts: JournalPost[] = [
       },
       {
         type: "p",
-        text: "One of the most specific and bizarre experiences in NRI arranged marriage culture is the meeting trip — a vacation to India that is nominally about seeing family but is structurally organized as a matchmaking gauntlet. The NRI arrives. The family has arranged meetings. Sometimes two or three meetings. Sometimes eight. Sometimes, in particularly aggressive family cultures, closer to fifteen.",
+        text: "One of the most specific and bizarre experiences in NRI arranged marriage culture is the meeting trip, a vacation to India that is nominally about seeing family but is structurally organized as a matchmaking gauntlet. The NRI arrives. The family has arranged meetings. Sometimes two or three meetings. Sometimes eight. Sometimes, in particularly aggressive family cultures, closer to fifteen.",
       },
       {
         type: "p",
-        text: "Every meeting is a performance under time pressure. The NRI is jet-lagged, emotionally managed by their family, and expected to make decisions on a timeline calibrated to their return flight rather than to any reasonable sense of how long it takes to assess compatibility. The candidates being met are in their own stressful positions — auditioning for someone they may have only seen on video once, often with both families present.",
+        text: "Every meeting is a performance under time pressure. The NRI is jet-lagged, emotionally managed by their family, and expected to make decisions on a timeline calibrated to their return flight rather than to any reasonable sense of how long it takes to assess compatibility. The candidates being met are in their own stressful positions, auditioning for someone they may have only seen on video once, often with both families present.",
       },
       {
         type: "p",
-        text: "The way to survive this without either making a bad decision or blowing up family relationships: do serious video call pre-screening before the trip so you are only meeting people you genuinely want to see in person. Limit the number of in-person meetings to three or four. Establish clearly before you go that you will not be making any decisions during the trip — only deciding if you want to continue a conversation. This framing removes the pressure to perform certainty you do not have.",
+        text: "The way to survive this without either making a bad decision or blowing up family relationships: do serious video call pre-screening before the trip so you are only meeting people you genuinely want to see in person. Limit the number of in-person meetings to three or four. Establish clearly before you go that you will not be making any decisions during the trip, only deciding if you want to continue a conversation. This framing removes the pressure to perform certainty you do not have.",
       },
       {
         type: "h2",
@@ -790,7 +790,7 @@ export const arrangedMarriagePosts: JournalPost[] = [
       },
       {
         type: "p",
-        text: "The specific expectations gap that causes the most damage: NRIs who have lived abroad for years, built fully Western-oriented lives, and are navigating the arranged process partly to satisfy parents — meeting India-based candidates who are expecting a traditional home structure, joint family proximity, and a certain kind of cultural observance that the NRI has long since moved away from. Both parties may be in the meeting in good faith and be entirely incompatible on the most fundamental questions about how daily life should work.",
+        text: "The specific expectations gap that causes the most damage: NRIs who have lived abroad for years, built fully Western-oriented lives, and are navigating the arranged process partly to satisfy parents, meeting India-based candidates who are expecting a traditional home structure, joint family proximity, and a certain kind of cultural observance that the NRI has long since moved away from. Both parties may be in the meeting in good faith and be entirely incompatible on the most fundamental questions about how daily life should work.",
       },
       {
         type: "p",
@@ -806,7 +806,7 @@ export const arrangedMarriagePosts: JournalPost[] = [
       },
       {
         type: "p",
-        text: "Managing this means being explicit about your own timeline early. Not 'I am not ready' — which invites debate. Something like: 'I am going through this process seriously. I am also going to take the time I need to make a good decision. I will not rush a decision that affects the rest of my life.' Said once, clearly, to whoever is managing the process on your behalf.",
+        text: "Managing this means being explicit about your own timeline early. Not 'I am not ready', which invites debate. Something like: 'I am going through this process seriously. I am also going to take the time I need to make a good decision. I will not rush a decision that affects the rest of my life.' Said once, clearly, to whoever is managing the process on your behalf.",
       },
       {
         type: "h2",
@@ -818,7 +818,7 @@ export const arrangedMarriagePosts: JournalPost[] = [
       },
       {
         type: "p",
-        text: "The process can work when both people are honest about who they are and what they need. The complication for NRIs is that there are more variables to be honest about — and more ways for those variables to be hidden or misrepresented on both sides. The transparency that makes any arranged introduction viable is harder to achieve across cultures and countries, but not impossible.",
+        text: "The process can work when both people are honest about who they are and what they need. The complication for NRIs is that there are more variables to be honest about, and more ways for those variables to be hidden or misrepresented on both sides. The transparency that makes any arranged introduction viable is harder to achieve across cultures and countries, but not impossible.",
       },
       {
         type: "p",
@@ -830,7 +830,7 @@ export const arrangedMarriagePosts: JournalPost[] = [
     slug: "arranged-marriage-success-rates-truth",
     title: "The Uncomfortable Truth About Arranged Marriage Success Rates",
     metaDescription:
-      "The arranged marriage divorce rate statistic is real — and nearly meaningless. Here is what it actually measures, and what success in marriage really means.",
+      "The arranged marriage divorce rate statistic is real, and nearly meaningless. Here is what it actually measures, and what success in marriage really means.",
     datePublished: "2026-07-27",
     dateModified: "2026-11-15",
     author: "Surbhi",
@@ -870,7 +870,7 @@ export const arrangedMarriagePosts: JournalPost[] = [
       },
       {
         type: "p",
-        text: "I am not anti-arranged-marriage. I have watched too many arranged introductions become real, functioning partnerships to dismiss the system. But the success rate argument is bad reasoning, and repeating it does harm — both to people inside bad marriages who have been told their marriage is successful by definition, and to people making decisions based on data that does not mean what they think it means.",
+        text: "I am not anti-arranged-marriage. I have watched too many arranged introductions become real, functioning partnerships to dismiss the system. But the success rate argument is bad reasoning, and repeating it does harm, both to people inside bad marriages who have been told their marriage is successful by definition, and to people making decisions based on data that does not mean what they think it means.",
       },
       {
         type: "h2",
@@ -882,7 +882,7 @@ export const arrangedMarriagePosts: JournalPost[] = [
       },
       {
         type: "p",
-        text: "India has some of the world's highest barriers to divorce. The legal process is adversarial and slow — contested divorces can take years. Social consequences for divorced individuals, especially women, remain severe in most communities: reduced marriage prospects, family shame, community exclusion, loss of social standing. Financial dependence — particularly in communities where women do not have independent income — makes exiting a marriage practically impossible regardless of the quality of the relationship.",
+        text: "India has some of the world's highest barriers to divorce. The legal process is adversarial and slow, contested divorces can take years. Social consequences for divorced individuals, especially women, remain severe in most communities: reduced marriage prospects, family shame, community exclusion, loss of social standing. Financial dependence, particularly in communities where women do not have independent income, makes exiting a marriage practically impossible regardless of the quality of the relationship.",
       },
       {
         type: "p",
@@ -894,7 +894,7 @@ export const arrangedMarriagePosts: JournalPost[] = [
       },
       {
         type: "p",
-        text: "When researchers study South Asian diaspora communities in the UK and US — where divorce is legally easy, financially accessible, and socially more accepted — the divorce rate for arranged marriages rises significantly. It does not reach the rates of the general Western population, but the gap is much smaller than the India comparison suggests. This is not because diaspora arranged marriages are less 'real.' It is because the exit barrier is lower, which means the statistic is measuring something closer to actual preference.",
+        text: "When researchers study South Asian diaspora communities in the UK and US, where divorce is legally easy, financially accessible, and socially more accepted, the divorce rate for arranged marriages rises significantly. It does not reach the rates of the general Western population, but the gap is much smaller than the India comparison suggests. This is not because diaspora arranged marriages are less 'real.' It is because the exit barrier is lower, which means the statistic is measuring something closer to actual preference.",
       },
       {
         type: "p",
@@ -906,7 +906,7 @@ export const arrangedMarriagePosts: JournalPost[] = [
       },
       {
         type: "p",
-        text: "Divorce stigma does not just keep people in bad marriages. It shapes what they report when asked about those marriages. Survey researchers have documented what is called social desirability bias — the tendency of respondents to report what they believe they should feel rather than what they actually feel. In communities with strong cultural narratives about arranged marriage success, this bias systematically inflates reported satisfaction.",
+        text: "Divorce stigma does not just keep people in bad marriages. It shapes what they report when asked about those marriages. Survey researchers have documented what is called social desirability bias, the tendency of respondents to report what they believe they should feel rather than what they actually feel. In communities with strong cultural narratives about arranged marriage success, this bias systematically inflates reported satisfaction.",
       },
       {
         type: "p",
@@ -914,7 +914,7 @@ export const arrangedMarriagePosts: JournalPost[] = [
       },
       {
         type: "p",
-        text: "There is also a population problem: surveys measure the people currently in marriages. They cannot measure the people who left. In communities with high divorce stigma, the people who would report the lowest satisfaction are disproportionately likely to have already exited — and they are not in the data. The survey captures the marriages that stayed, then uses the satisfaction of those marriages to argue that the system is successful. The logic is circular.",
+        text: "There is also a population problem: surveys measure the people currently in marriages. They cannot measure the people who left. In communities with high divorce stigma, the people who would report the lowest satisfaction are disproportionately likely to have already exited, and they are not in the data. The survey captures the marriages that stayed, then uses the satisfaction of those marriages to argue that the system is successful. The logic is circular.",
       },
       {
         type: "h2",
@@ -922,11 +922,11 @@ export const arrangedMarriagePosts: JournalPost[] = [
       },
       {
         type: "p",
-        text: "If we wanted to honestly assess whether a marriage structure produces good outcomes, we would measure things like: Do both partners report feeling genuinely chosen rather than circumstantially matched? Does each partner say they would enter the marriage again if they could re-decide? Has the marriage made both people's lives larger — more capability, more connection, more possibility — or smaller?",
+        text: "If we wanted to honestly assess whether a marriage structure produces good outcomes, we would measure things like: Do both partners report feeling genuinely chosen rather than circumstantially matched? Does each partner say they would enter the marriage again if they could re-decide? Has the marriage made both people's lives larger, more capability, more connection, more possibility, or smaller?",
       },
       {
         type: "p",
-        text: "These are harder to measure than divorce rates. They require honest self-reflection in contexts that often discourage it. But they are the right questions. A marriage that lasts fifty years while both people feel trapped is not a success. A marriage that ends after ten years because both people grew in different directions — but during which both people genuinely thrived — is arguably a better outcome. Duration is the worst proxy we have for success, and we keep using it because it is countable.",
+        text: "These are harder to measure than divorce rates. They require honest self-reflection in contexts that often discourage it. But they are the right questions. A marriage that lasts fifty years while both people feel trapped is not a success. A marriage that ends after ten years because both people grew in different directions, but during which both people genuinely thrived, is arguably a better outcome. Duration is the worst proxy we have for success, and we keep using it because it is countable.",
       },
       {
         type: "h2",

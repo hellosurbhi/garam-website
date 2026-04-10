@@ -75,6 +75,143 @@ Eventbrite supports a [conversion tracking pixel](https://www.eventbrite.com/sup
 
 ---
 
+## Lead Attribution Follow-ups (2026-04-10)
+
+Surfaced while fixing the `tickets-notify` source-per-city attribution. Both items were deliberately deferred out of that change because their blast radius is larger than the one-file fix deserved. Execute these in their own atomic PRs.
+
+### Geo fetch race condition in `bootstrapGeoData()`
+
+**Priority:** Medium
+**Status:** Needs implementation
+
+`src/lib/leadAttribution.ts` (around lines 75 to 92) fires `fetch("/api/geo")` as a fire-and-forget call from `bootstrapGeoData()`, which is invoked by `bootstrapLeadAttribution()` on page load via `BaseLayout.astro` (around line 116 in the body-tail script). The response populates `sessionStorage` keys `gmd-geo-city`, `gmd-geo-region`, `gmd-geo-country`, `gmd-geo-latitude`, `gmd-geo-longitude`, `gmd-geo-timezone`, gated by `gmd-geo-fetched`. `buildLeadAttribution()` reads those keys synchronously (around lines 147 to 164) and silently omits any that are missing.
+
+**The bug:** a user who submits any lead form (Spice List on any page, tickets-notify modal on `/tickets`, apply page) within roughly 100 to 200 milliseconds of page load can win the race and write a Firestore lead before the geo response lands. Those leads end up with no `geoCity`, `geoRegion`, `geoCountry`, `geoLatitude`, `geoLongitude`, or `geoTimezone` fields even in production, which silently corrupts any funnel or attribution that depends on geo.
+
+**Fix:** track the in-flight fetch promise at module scope and let `buildLeadAttribution` await it. This makes `buildLeadAttribution` async, which ripples through the callers listed below.
+
+**Implementation steps:**
+
+1. In `src/lib/leadAttribution.ts`, add a module-level `let geoFetchPromise: Promise<void> | null = null;`.
+2. Rewrite `bootstrapGeoData()` to populate `geoFetchPromise` the first time it is called and return early on subsequent calls. Set it back to `null` only on error so a retry is possible.
+
+   ```ts
+   let geoFetchPromise: Promise<void> | null = null;
+
+   function bootstrapGeoData() {
+     if (sessionStorage.getItem(GEO_FETCHED_KEY)) return;
+     if (geoFetchPromise) return;
+
+     geoFetchPromise = fetch("/api/geo")
+       .then((res) => (res.ok ? (res.json() as Promise<GeoResponse>) : null))
+       .then((geo) => {
+         if (!geo) return;
+         if (geo.city) sessionStorage.setItem(GEO_CITY_KEY, geo.city);
+         if (geo.region) sessionStorage.setItem(GEO_REGION_KEY, geo.region);
+         if (geo.country) sessionStorage.setItem(GEO_COUNTRY_KEY, geo.country);
+         if (geo.latitude)
+           sessionStorage.setItem(GEO_LATITUDE_KEY, geo.latitude);
+         if (geo.longitude)
+           sessionStorage.setItem(GEO_LONGITUDE_KEY, geo.longitude);
+         if (geo.timezone)
+           sessionStorage.setItem(GEO_TIMEZONE_KEY, geo.timezone);
+         sessionStorage.setItem(GEO_FETCHED_KEY, "1");
+       })
+       .catch((err) => {
+         console.error(err);
+         geoFetchPromise = null; // allow a retry next time
+       });
+   }
+   ```
+
+3. Change `buildLeadAttribution` to `async` and await `geoFetchPromise` before reading the geo session-storage keys, capped by a timeout so a slow `/api/geo` never blocks lead writes forever:
+
+   ```ts
+   export async function buildLeadAttribution(params: {
+     source: string;
+     sourceCitySlug?: string;
+   }): Promise<LeadAttribution> {
+     bootstrapLeadAttribution();
+     if (geoFetchPromise) {
+       await Promise.race([
+         geoFetchPromise,
+         new Promise<void>((resolve) => setTimeout(resolve, 1500)),
+       ]);
+     }
+     // rest unchanged
+   }
+   ```
+
+4. Update all callers to `await` the new async function. As of 2026-04-10 these are:
+   - `src/components/home/HomeSignup.astro`: email and phone submit handlers. Both are already inside `async` submit callbacks, so add `await`.
+   - `src/components/NotifyModal.astro`: email and phone submit handlers. Both already `async`, add `await`.
+   - `src/components/ApplyPage.tsx`: search for `buildLeadAttribution(` in this file, wrap in `await`, and mark the containing React submit handler `async` if it is not already.
+   - Anywhere else `grep -rn "buildLeadAttribution(" src/` finds a caller.
+5. Update `src/lib/leadAttribution.test.ts`. The existing suite tests a synchronous `buildLeadAttribution`. Convert the relevant assertions to `await buildLeadAttribution(...)` and add one new test that mocks a slow `/api/geo` via `global.fetch = vi.fn().mockImplementation(() => new Promise((resolve) => setTimeout(() => resolve({ ok: true, json: () => Promise.resolve({ city: "NYC" }) }), 50)))` and asserts the awaited call returns `geoCity: "NYC"` instead of `undefined`. Add one more test asserting the 1500 ms timeout cap by making the mock never resolve and asserting the call still returns with geo fields absent rather than hanging.
+6. Verification: run `npm run test`. Hit `/tickets` in a production-like preview deploy, submit a notify lead immediately after page load, confirm the Firestore doc includes all six `geo*` fields.
+
+**Files to touch:**
+
+- `src/lib/leadAttribution.ts`: module-level promise, async `buildLeadAttribution`, `Promise.race` timeout.
+- `src/lib/leadAttribution.test.ts`: convert to async, add two new tests.
+- `src/components/home/HomeSignup.astro`: `await` both submit handlers.
+- `src/components/NotifyModal.astro`: `await` both submit handlers.
+- `src/components/ApplyPage.tsx`: `await` wherever `buildLeadAttribution` is called.
+
+### Dev-mode fallback for `/api/geo`
+
+**Priority:** Low
+**Status:** Needs implementation
+
+`src/pages/api/geo.ts` reads Vercel's `x-vercel-ip-*` headers, which do not exist on the local Astro dev server. As a result every localhost test of any lead form writes a Firestore doc with zero `geo*` fields, which makes it impossible to verify the geo plumbing end-to-end in dev and causes repeated confusion ("why is my lead doc missing metadata?"). This was the exact cause of the 2026-04-10 tickets-notify question.
+
+**Fix:** when running under `import.meta.env.DEV`, fall back to a static mock (or a public IP geolocation service) so the dev experience matches production.
+
+**Implementation steps:**
+
+1. In `src/pages/api/geo.ts`, after the header reads, detect the all-undefined case and check `import.meta.env.DEV`.
+2. When both conditions hold, pick one of:
+   - **Option A, preferred, no network dependency:** return a hardcoded static mock that mirrors the shape Vercel would return. Keeps the dev experience offline-friendly.
+
+     ```ts
+     const allEmpty = Object.values(geo).every((v) => !v);
+     if (allEmpty && import.meta.env.DEV) {
+       return new Response(
+         JSON.stringify({
+           city: "New York",
+           region: "NY",
+           country: "US",
+           latitude: "40.7128",
+           longitude: "-74.0060",
+           timezone: "America/New_York",
+         }),
+         {
+           status: 200,
+           headers: {
+             "Content-Type": "application/json",
+             "Cache-Control": "no-store",
+           },
+         },
+       );
+     }
+     ```
+
+   - **Option B, live data, needs network:** call `https://ipapi.co/json/` from the server, map the response fields to the existing shape, and return that. Free tier is rate-limited to 1000 per day, fine for dev. Add a fetch timeout so it does not hang the dev server if ipapi is down.
+
+3. Make sure the fallback is only active when `import.meta.env.DEV` is true, so production never accidentally reads a mock. Add a unit test, or at least a manual smoke step, that asserts the production path still returns the Vercel headers unchanged.
+4. Verification: `npm run dev`, open any page, submit a lead form, confirm the resulting Firestore doc now contains `geoCity: "New York"`, etc.
+
+**Files to touch:**
+
+- `src/pages/api/geo.ts`: add the DEV fallback branch.
+
+**Trade-offs:**
+
+- Option A is simpler and deterministic but always returns the same fake NYC values in dev, which can mask bugs where attribution uses the wrong field.
+- Option B is more realistic but adds a network dependency and rate limit. Pick A unless you specifically need real geo in dev.
+
+---
+
 ## Critical (Needs Content Assets)
 
 ### Add video section on homepage
@@ -729,6 +866,8 @@ Audit of all Cumulative Layout Shift sources across the site. 13 instances ident
 - Email form step transitions (HomeSignup, popup, NotifyModal, city notify) — wrapped in `min-height` containers (220–260px) so step 1→2 swap never shifts content below.
 
 ---
+
+add A press page with design packet and photos and stuff for the press inquiry
 
 ## Later Later
 

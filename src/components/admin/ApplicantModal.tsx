@@ -61,7 +61,7 @@ export default function ApplicantModal({
         hour: "numeric",
         minute: "2-digit",
       })
-    : "—";
+    : "N/A";
 
   const statusColor = STATUS_COLORS[status];
 

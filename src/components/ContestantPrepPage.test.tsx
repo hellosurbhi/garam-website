@@ -495,7 +495,7 @@ describe("ContestantPrepPage", () => {
   it("renders golden rule about 20-30 seconds", () => {
     render(<ContestantPrepPage />);
     expect(
-      screen.getByText(/Keep answers to 20–30 seconds/),
+      screen.getByText(/Keep answers to 20 to 30 seconds/),
     ).toBeInTheDocument();
   });
 

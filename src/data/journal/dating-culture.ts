@@ -11,7 +11,7 @@ export const datingCulturePosts: JournalPost[] = [
     dateModified: "2026-05-13",
     author: "Surbhi",
     excerpt:
-      "There is no perfect script for telling your Indian parents about a partner, but there is a strategy — and most people skip all of it. Let's fix that.",
+      "There is no perfect script for telling your Indian parents about a partner, but there is a strategy, and most people skip all of it. Let's fix that.",
     relatedSlugs: [
       "modern-arranged-marriage-2026",
       "desi-red-flags-green-flags",
@@ -42,7 +42,7 @@ export const datingCulturePosts: JournalPost[] = [
     body: [
       {
         type: "p",
-        text: "There is no perfect script for telling your Indian parents about a partner, but there is a strategy — and most people skip all of it. They either blurt it out at the wrong moment and get a catastrophic reaction, or they wait so long that the secret itself becomes the problem. I've watched this play out at Garam Masala Dating in both directions. The good news is that with some preparation, this conversation is survivable. Even when it's hard.",
+        text: "There is no perfect script for telling your Indian parents about a partner, but there is a strategy, and most people skip all of it. They either blurt it out at the wrong moment and get a catastrophic reaction, or they wait so long that the secret itself becomes the problem. I've watched this play out at Garam Masala Dating in both directions. The good news is that with some preparation, this conversation is survivable. Even when it's hard.",
       },
       {
         type: "h2",
@@ -62,7 +62,7 @@ export const datingCulturePosts: JournalPost[] = [
       },
       {
         type: "p",
-        text: "Do not tell them at a family gathering. Do not tell them right before someone's wedding, funeral, or major holiday. Do not tell them when they've just gotten bad news or they're stressed about something else. Find a calm, private moment — ideally when the parent you're closest to is in a good mood and not rushed.",
+        text: "Do not tell them at a family gathering. Do not tell them right before someone's wedding, funeral, or major holiday. Do not tell them when they've just gotten bad news or they're stressed about something else. Find a calm, private moment, ideally when the parent you're closest to is in a good mood and not rushed.",
       },
       {
         type: "p",
@@ -78,7 +78,7 @@ export const datingCulturePosts: JournalPost[] = [
       },
       {
         type: "p",
-        text: "Then lead with the person, not the label. Not \"I'm dating someone\" but \"I've been getting to know someone I really care about and I want to tell you about them.\" Give them a human being first — their name, what they do, what they're like, what you value in them. The specific details your parents will fixate on (religion, ethnicity, whether they're desi) land much softer when they're attached to a real person your child clearly loves.",
+        text: "Then lead with the person, not the label. Not \"I'm dating someone\" but \"I've been getting to know someone I really care about and I want to tell you about them.\" Give them a human being first, their name, what they do, what they're like, what you value in them. The specific details your parents will fixate on (religion, ethnicity, whether they're desi) land much softer when they're attached to a real person your child clearly loves.",
       },
       {
         type: "h3",
@@ -94,7 +94,7 @@ export const datingCulturePosts: JournalPost[] = [
       },
       {
         type: "p",
-        text: "Assume the first reaction is not the final one. Indian parents, particularly older generations, often process big news through a stage of shock, then resistance, then (usually) gradual acceptance — especially if the relationship is stable and you remain close with them through it. The parents who come around fastest are the ones whose kids didn't go cold or combative after a bad initial reaction.",
+        text: "Assume the first reaction is not the final one. Indian parents, particularly older generations, often process big news through a stage of shock, then resistance, then (usually) gradual acceptance, especially if the relationship is stable and you remain close with them through it. The parents who come around fastest are the ones whose kids didn't go cold or combative after a bad initial reaction.",
       },
       {
         type: "p",
@@ -110,11 +110,11 @@ export const datingCulturePosts: JournalPost[] = [
       },
       {
         type: "p",
-        text: "I've seen this play out in our <a href='/journal/what-we-learned-from-100-desi-blind-dates'>research from 100 desi blind dates</a> — people who seem wildly mismatched on paper often surprise themselves and each other in person. The same principle applies to your parents meeting your partner. Get them in the same room. Let the real person replace the projection.",
+        text: "I've seen this play out in our <a href='/journal/what-we-learned-from-100-desi-blind-dates'>research from 100 desi blind dates</a>, people who seem wildly mismatched on paper often surprise themselves and each other in person. The same principle applies to your parents meeting your partner. Get them in the same room. Let the real person replace the projection.",
       },
       {
         type: "p",
-        text: "And if you're still in the earlier stages — figuring out who to date, building the confidence to pursue someone seriously — come to <a href='/journal/the-only-live-desi-dating-show-in-nyc'>Garam Masala Dating</a>. Sometimes seeing other desis take real risks in real time is exactly the push you need to stop playing it safe in your own life.",
+        text: "And if you're still in the earlier stages, figuring out who to date, building the confidence to pursue someone seriously, come to <a href='/journal/the-only-live-desi-dating-show-in-nyc'>Garam Masala Dating</a>. Sometimes seeing other desis take real risks in real time is exactly the push you need to stop playing it safe in your own life.",
       },
     ],
   },
@@ -122,7 +122,7 @@ export const datingCulturePosts: JournalPost[] = [
     slug: "abcd-vs-fob-dating-divide",
     title: "The ABCD vs FOB Dating Divide and What Actually Bridges It",
     metaDescription:
-      "The ABCD vs FOB tension is real in desi dating — but it's more complicated than it looks. Here's what actually bridges the gap, from someone who's seen both sides.",
+      "The ABCD vs FOB tension is real in desi dating, but it's more complicated than it looks. Here's what actually bridges the gap, from someone who's seen both sides.",
     datePublished: "2026-04-26",
     dateModified: "2026-05-15",
     author: "Surbhi",
@@ -136,11 +136,11 @@ export const datingCulturePosts: JournalPost[] = [
     faqs: [
       {
         q: "What does ABCD mean in dating?",
-        a: "ABCD stands for American-Born Confused Desi. It's a term — sometimes affectionate, sometimes loaded — for South Asians who grew up in the US and navigate the tension between their American upbringing and their desi heritage. In dating contexts, it often comes up when describing cultural mismatches between desis raised in the West and those who immigrated more recently.",
+        a: "ABCD stands for American-Born Confused Desi. It's a term, sometimes affectionate, sometimes loaded, for South Asians who grew up in the US and navigate the tension between their American upbringing and their desi heritage. In dating contexts, it often comes up when describing cultural mismatches between desis raised in the West and those who immigrated more recently.",
       },
       {
         q: "What does FOB mean in desi culture?",
-        a: "FOB stands for Fresh Off the Boat. It's slang — sometimes reclaimed, sometimes used dismissively — for South Asians who immigrated to the US more recently and are perceived as more culturally tied to their country of origin. Like ABCD, it's a shorthand that flattens a lot of complexity.",
+        a: "FOB stands for Fresh Off the Boat. It's slang, sometimes reclaimed, sometimes used dismissively, for South Asians who immigrated to the US more recently and are perceived as more culturally tied to their country of origin. Like ABCD, it's a shorthand that flattens a lot of complexity.",
       },
       {
         q: "Do ABCDs and FOBs date each other?",
@@ -194,11 +194,11 @@ export const datingCulturePosts: JournalPost[] = [
       },
       {
         type: "p",
-        text: "Curiosity. That's it. The couples I've seen work across this divide — and I've seen plenty at our show — are uniformly characterized by genuine interest in each other's different experiences rather than defensiveness about them. The ABCD who asks real questions about what it was like growing up in Chennai. The FOB who wants to understand what it's actually like to grow up brown in a mostly white suburb. That curiosity is the bridge.",
+        text: "Curiosity. That's it. The couples I've seen work across this divide, and I've seen plenty at our show, are uniformly characterized by genuine interest in each other's different experiences rather than defensiveness about them. The ABCD who asks real questions about what it was like growing up in Chennai. The FOB who wants to understand what it's actually like to grow up brown in a mostly white suburb. That curiosity is the bridge.",
       },
       {
         type: "p",
-        text: "Humor is the other one. When both people can laugh about the absurdity of navigating desi culture from different angles — the ABCD who butchers a Hindi phrase, the FOB who's baffled by the obsession with Trader Joe's — that's a sign of security. People who can laugh together at the weird middle ground they both occupy tend to stay there together.",
+        text: "Humor is the other one. When both people can laugh about the absurdity of navigating desi culture from different angles, the ABCD who butchers a Hindi phrase, the FOB who's baffled by the obsession with Trader Joe's, that's a sign of security. People who can laugh together at the weird middle ground they both occupy tend to stay there together.",
       },
       {
         type: "h2",
@@ -222,12 +222,12 @@ export const datingCulturePosts: JournalPost[] = [
     slug: "dating-on-h1b-visa",
     title: "Dating on an H-1B: Romance When Your Visa Status Is Complicated",
     metaDescription:
-      "Dating on an H-1B visa adds real complications — timing, geography, family pressure, green card math. Here's how to navigate romance when your status is in flux.",
+      "Dating on an H-1B visa adds real complications, timing, geography, family pressure, green card math. Here's how to navigate romance when your status is in flux.",
     datePublished: "2026-04-27",
     dateModified: "2026-05-17",
     author: "Surbhi",
     excerpt:
-      "Dating on an H-1B means every relationship question comes with a bonus immigration question. It's exhausting but navigable — here's how.",
+      "Dating on an H-1B means every relationship question comes with a bonus immigration question. It's exhausting but navigable, here's how.",
     relatedSlugs: [
       "abcd-vs-fob-dating-divide",
       "desi-dating-problems-brown-people",
@@ -240,7 +240,7 @@ export const datingCulturePosts: JournalPost[] = [
       },
       {
         q: "Should I tell someone I'm on an H-1B when dating?",
-        a: "It depends on how serious things are getting. In early dating, your visa status is your business. If things are heading somewhere real, your partner deserves to know the practical realities — timeline, location constraints, the eventual green card question. Bringing it up once things are genuinely serious is reasonable. Treating it as a disclosure on a first date is usually too much too soon.",
+        a: "It depends on how serious things are getting. In early dating, your visa status is your business. If things are heading somewhere real, your partner deserves to know the practical realities, timeline, location constraints, the eventual green card question. Bringing it up once things are genuinely serious is reasonable. Treating it as a disclosure on a first date is usually too much too soon.",
       },
       {
         q: "Can getting married speed up a green card for H-1B holders?",
@@ -262,7 +262,7 @@ export const datingCulturePosts: JournalPost[] = [
       },
       {
         type: "p",
-        text: "The clearest complication is timeline pressure. H-1B visas are issued in three-year increments, and the green card backlog for Indian nationals — thanks to per-country caps — can stretch decades. That means many H-1B holders are operating with a compressed sense of urgency that people born here simply don't have. The mental math of \"if I'm going to build a life here, I need to start building it\" gets applied to relationships in ways that can feel jarring to people who don't understand the underlying pressure.",
+        text: "The clearest complication is timeline pressure. H-1B visas are issued in three-year increments, and the green card backlog for Indian nationals, thanks to per-country caps, can stretch decades. That means many H-1B holders are operating with a compressed sense of urgency that people born here simply don't have. The mental math of \"if I'm going to build a life here, I need to start building it\" gets applied to relationships in ways that can feel jarring to people who don't understand the underlying pressure.",
       },
       {
         type: "p",
@@ -274,7 +274,7 @@ export const datingCulturePosts: JournalPost[] = [
       },
       {
         type: "p",
-        text: "Eventually, in any serious relationship involving an H-1B holder, the green card question comes up. Either as a practical consideration or as the shadow hanging over it. The uncomfortable version is when one person wonders — even briefly — whether the other's attachment is partly about immigration security. The honest answer is that most H-1B holders are deeply aware of how this looks and go out of their way to avoid it looking transactional, sometimes to the point of waiting too long to be honest about their situation.",
+        text: "Eventually, in any serious relationship involving an H-1B holder, the green card question comes up. Either as a practical consideration or as the shadow hanging over it. The uncomfortable version is when one person wonders, even briefly, whether the other's attachment is partly about immigration security. The honest answer is that most H-1B holders are deeply aware of how this looks and go out of their way to avoid it looking transactional, sometimes to the point of waiting too long to be honest about their situation.",
       },
       {
         type: "h2",
@@ -282,11 +282,11 @@ export const datingCulturePosts: JournalPost[] = [
       },
       {
         type: "p",
-        text: "For desis on H-1Bs, family pressure to find a partner often comes with an immigration overlay. Parents who want grandkids are also parents who want their kid settled before their visa expires. That combination creates a specific kind of anxiety — the feeling that you're simultaneously supposed to find real love and find it on a deadline. It's a terrible combination.",
+        text: "For desis on H-1Bs, family pressure to find a partner often comes with an immigration overlay. Parents who want grandkids are also parents who want their kid settled before their visa expires. That combination creates a specific kind of anxiety, the feeling that you're simultaneously supposed to find real love and find it on a deadline. It's a terrible combination.",
       },
       {
         type: "p",
-        text: "The people I've seen handle this best are the ones who mentally separate the two tracks. Your visa timeline is real. Your relationship timeline should not be artificially accelerated by it. A relationship entered into partly because of immigration anxiety is fragile in a specific way — the anxiety doesn't go away after the visa question is resolved, it just finds a new form.",
+        text: "The people I've seen handle this best are the ones who mentally separate the two tracks. Your visa timeline is real. Your relationship timeline should not be artificially accelerated by it. A relationship entered into partly because of immigration anxiety is fragile in a specific way, the anxiety doesn't go away after the visa question is resolved, it just finds a new form.",
       },
       {
         type: "h2",
@@ -298,7 +298,7 @@ export const datingCulturePosts: JournalPost[] = [
       },
       {
         type: "p",
-        text: "The solution isn't to perform normalcy and hide all of it. At some point — when things are serious enough to warrant it — explaining your actual situation is a form of respect. You're letting someone make a real decision about a real person, not a curated version of you without complications. Most people, when they genuinely like you, handle the complications better than you expect.",
+        text: "The solution isn't to perform normalcy and hide all of it. At some point, when things are serious enough to warrant it, explaining your actual situation is a form of respect. You're letting someone make a real decision about a real person, not a curated version of you without complications. Most people, when they genuinely like you, handle the complications better than you expect.",
       },
       {
         type: "h2",
@@ -310,7 +310,7 @@ export const datingCulturePosts: JournalPost[] = [
       },
       {
         type: "p",
-        text: "As I've written about in <a href='/journal/desi-dating-show-vs-dating-apps'>our comparison of dating shows vs apps</a>, there's real value in meeting people in contexts that already carry cultural fluency. If you're on an H-1B and feeling like the dating world doesn't quite understand your situation, start with people who might actually get it. <a href='/journal/south-asian-singles-events-nyc'>South Asian singles events in NYC</a> are worth your time — not because you have to date within your culture, but because starting from shared context is a lot less exhausting.",
+        text: "As I've written about in <a href='/journal/desi-dating-show-vs-dating-apps'>our comparison of dating shows vs apps</a>, there's real value in meeting people in contexts that already carry cultural fluency. If you're on an H-1B and feeling like the dating world doesn't quite understand your situation, start with people who might actually get it. <a href='/journal/south-asian-singles-events-nyc'>South Asian singles events in NYC</a> are worth your time, not because you have to date within your culture, but because starting from shared context is a lot less exhausting.",
       },
     ],
   },
@@ -323,7 +323,7 @@ export const datingCulturePosts: JournalPost[] = [
     dateModified: "2026-05-19",
     author: "Surbhi",
     excerpt:
-      "Dating as a desi means reading signals that have an extra cultural layer. Some things that look fine on the surface are disaster in disguise — and vice versa.",
+      "Dating as a desi means reading signals that have an extra cultural layer. Some things that look fine on the surface are disaster in disguise, and vice versa.",
     relatedSlugs: [
       "how-to-tell-indian-parents-about-partner",
       "desi-dating-problems-brown-people",
@@ -340,7 +340,7 @@ export const datingCulturePosts: JournalPost[] = [
       },
       {
         q: "Is family closeness a red flag in desi relationships?",
-        a: "Not by itself. Family closeness is a feature of South Asian culture that can be genuinely beautiful. The red flag version is when family closeness becomes family enmeshment — where a partner's family has veto power over relationship decisions, or where your partner consistently chooses family comfort over your partnership without discussion.",
+        a: "Not by itself. Family closeness is a feature of South Asian culture that can be genuinely beautiful. The red flag version is when family closeness becomes family enmeshment, where a partner's family has veto power over relationship decisions, or where your partner consistently chooses family comfort over your partnership without discussion.",
       },
       {
         q: "What does it mean if a desi person is very secretive about dating?",
@@ -350,7 +350,7 @@ export const datingCulturePosts: JournalPost[] = [
     body: [
       {
         type: "p",
-        text: "Dating as a desi means reading signals that have an extra cultural layer. Some things that look fine on the surface are disaster in disguise — and vice versa. The person who seems emotionally unavailable might just be terrified of what their parents will say. The person who moves fast might have been raised to see commitment as respect, not pressure. Context matters here in ways it doesn't always in mainstream dating advice. Here's the checklist I wish someone had given me.",
+        text: "Dating as a desi means reading signals that have an extra cultural layer. Some things that look fine on the surface are disaster in disguise, and vice versa. The person who seems emotionally unavailable might just be terrified of what their parents will say. The person who moves fast might have been raised to see commitment as respect, not pressure. Context matters here in ways it doesn't always in mainstream dating advice. Here's the checklist I wish someone had given me.",
       },
       {
         type: "h2",
@@ -358,7 +358,7 @@ export const datingCulturePosts: JournalPost[] = [
       },
       {
         type: "p",
-        text: "Never having told their parents about any past relationship — at age 30 or older. This isn't about whether you should have come out about every situationship. This is about someone who has actively hidden every romantic relationship they've ever had from their family, with no plan to change that. Unless there's a very specific reason (estrangement, safety concerns), this is a sign of someone who will be managing you as a secret indefinitely.",
+        text: "Never having told their parents about any past relationship, at age 30 or older. This isn't about whether you should have come out about every situationship. This is about someone who has actively hidden every romantic relationship they've ever had from their family, with no plan to change that. Unless there's a very specific reason (estrangement, safety concerns), this is a sign of someone who will be managing you as a secret indefinitely.",
       },
       {
         type: "p",
@@ -378,7 +378,7 @@ export const datingCulturePosts: JournalPost[] = [
       },
       {
         type: "p",
-        text: "Desi culture places enormous value on family harmony. The red flag version of this is a partner who has outsourced their opinions to their family — where every decision goes through a family committee, where their parents' disapproval is treated as a veto they themselves agree with, and where they expect you to do the emotional labor of getting their family to like you while they stay neutral. That's not closeness. That's avoidance.",
+        text: "Desi culture places enormous value on family harmony. The red flag version of this is a partner who has outsourced their opinions to their family, where every decision goes through a family committee, where their parents' disapproval is treated as a veto they themselves agree with, and where they expect you to do the emotional labor of getting their family to like you while they stay neutral. That's not closeness. That's avoidance.",
       },
       {
         type: "h2",
@@ -390,7 +390,7 @@ export const datingCulturePosts: JournalPost[] = [
       },
       {
         type: "p",
-        text: "They've had actual conversations about caste and religion rather than treating both as landmines. Whether they've worked through their own relationship to those things or have genuine, thoughtful views about them — either is fine. What's not fine is someone who refuses to engage with the conversation at all because it's \"complicated.\" Everything is complicated. That's what conversations are for.",
+        text: "They've had actual conversations about caste and religion rather than treating both as landmines. Whether they've worked through their own relationship to those things or have genuine, thoughtful views about them, either is fine. What's not fine is someone who refuses to engage with the conversation at all because it's \"complicated.\" Everything is complicated. That's what conversations are for.",
       },
       {
         type: "h3",
@@ -398,7 +398,7 @@ export const datingCulturePosts: JournalPost[] = [
       },
       {
         type: "p",
-        text: "You've met their friends within a reasonable timeframe and they talk about you naturally. Desi friend groups carry enormous social signaling weight — introducing someone to your friends is a real statement. If it happens, and if they're easy and warm about it rather than weird and evasive, that's meaningful.",
+        text: "You've met their friends within a reasonable timeframe and they talk about you naturally. Desi friend groups carry enormous social signaling weight, introducing someone to your friends is a real statement. If it happens, and if they're easy and warm about it rather than weird and evasive, that's meaningful.",
       },
       {
         type: "h2",
@@ -406,7 +406,7 @@ export const datingCulturePosts: JournalPost[] = [
       },
       {
         type: "p",
-        text: "Seeming \"too serious too fast\" is not automatically a red flag in desi dating. Some desis have been socialized to see directness about intentions as respect, not pressure. If someone tells you early on that they're looking for something real and asks if you are too, that's often not intensity — it's cultural communication style. Evaluate the warmth and the content, not just the speed.",
+        text: "Seeming \"too serious too fast\" is not automatically a red flag in desi dating. Some desis have been socialized to see directness about intentions as respect, not pressure. If someone tells you early on that they're looking for something real and asks if you are too, that's often not intensity, it's cultural communication style. Evaluate the warmth and the content, not just the speed.",
       },
       {
         type: "p",
@@ -414,15 +414,15 @@ export const datingCulturePosts: JournalPost[] = [
       },
       {
         type: "p",
-        text: "After running <a href='/journal/what-we-learned-from-100-desi-blind-dates'>100 desi blind dates on stage</a>, I can tell you that the couples who work are almost never the ones who scored perfectly on the checklist. They're the ones who had the conversations the checklist points to — openly, without defensiveness. That willingness to engage is the real green flag. If you want to practice reading the room in real time, come to <a href='/journal/what-actually-happens-at-a-live-comedy-dating-show'>a live show</a>. 250 people will help you calibrate.",
+        text: "After running <a href='/journal/what-we-learned-from-100-desi-blind-dates'>100 desi blind dates on stage</a>, I can tell you that the couples who work are almost never the ones who scored perfectly on the checklist. They're the ones who had the conversations the checklist points to, openly, without defensiveness. That willingness to engage is the real green flag. If you want to practice reading the room in real time, come to <a href='/journal/what-actually-happens-at-a-live-comedy-dating-show'>a live show</a>. 250 people will help you calibrate.",
       },
     ],
   },
   {
     slug: "indian-single-at-30-not-behind",
-    title: "Indian and Single at 30? You're Not Behind — You're Right on Time",
+    title: "Indian and Single at 30? You're Not Behind, You're Right on Time",
     metaDescription:
-      "Indian and single at 30 with everyone asking questions? Here's the honest perspective on dating in your 30s as a South Asian — you are not behind.",
+      "Indian and single at 30 with everyone asking questions? Here's the honest perspective on dating in your 30s as a South Asian, you are not behind.",
     datePublished: "2026-04-29",
     dateModified: "2026-05-21",
     author: "Surbhi",
@@ -440,11 +440,11 @@ export const datingCulturePosts: JournalPost[] = [
       },
       {
         q: "How do I deal with Indian parents pressuring me about marriage at 30?",
-        a: "Acknowledge the concern without accepting the premise. Something like: \"I know you want me to be happy and settled. I want that too. I'm being intentional about finding the right person rather than just finding someone.\" You're not dismissing them — you're redirecting the conversation toward the actual goal.",
+        a: "Acknowledge the concern without accepting the premise. Something like: \"I know you want me to be happy and settled. I want that too. I'm being intentional about finding the right person rather than just finding someone.\" You're not dismissing them, you're redirecting the conversation toward the actual goal.",
       },
       {
         q: "What are the advantages of dating in your 30s as an Indian person?",
-        a: "You know yourself much better than you did at 25. You're clearer on your actual dealbreakers versus the inherited ones. You're less likely to get into a relationship for the wrong reasons — parental pressure, social expectation, fear of being left behind. You're better at having direct conversations. All of that makes for much better relationships.",
+        a: "You know yourself much better than you did at 25. You're clearer on your actual dealbreakers versus the inherited ones. You're less likely to get into a relationship for the wrong reasons, parental pressure, social expectation, fear of being left behind. You're better at having direct conversations. All of that makes for much better relationships.",
       },
       {
         q: "Why do Indian parents want kids married before 30?",
@@ -474,7 +474,7 @@ export const datingCulturePosts: JournalPost[] = [
       },
       {
         type: "p",
-        text: "You know yourself. This sounds like a platitude but it isn't. The person you were at 23 had a wildly incomplete picture of what they actually needed in a partner versus what they thought they needed. They were still running the inherited checklist — the good profession, the right background, the parents'-friends'-kid type. By 30, most people have had enough experience to distinguish what they actually want from what they were told to want. That is enormously valuable in a partner search.",
+        text: "You know yourself. This sounds like a platitude but it isn't. The person you were at 23 had a wildly incomplete picture of what they actually needed in a partner versus what they thought they needed. They were still running the inherited checklist, the good profession, the right background, the parents'-friends'-kid type. By 30, most people have had enough experience to distinguish what they actually want from what they were told to want. That is enormously valuable in a partner search.",
       },
       {
         type: "p",
@@ -486,7 +486,7 @@ export const datingCulturePosts: JournalPost[] = [
       },
       {
         type: "p",
-        text: "In your twenties, you might have dated someone for a year before realizing you had fundamentally incompatible life goals. By 30, you can usually tell within a few dates whether the big things line up. That's not cynicism — it's efficiency. The relationships that do form in your 30s tend to be better because both people arrived with clearer knowledge of what they were actually looking for.",
+        text: "In your twenties, you might have dated someone for a year before realizing you had fundamentally incompatible life goals. By 30, you can usually tell within a few dates whether the big things line up. That's not cynicism, it's efficiency. The relationships that do form in your 30s tend to be better because both people arrived with clearer knowledge of what they were actually looking for.",
       },
       {
         type: "h2",
@@ -498,7 +498,7 @@ export const datingCulturePosts: JournalPost[] = [
       },
       {
         type: "p",
-        text: "The most useful reframe I've found: other people's anxiety about your relationship status is their anxiety, not your problem. They want you settled because it resolves their uncertainty, not yours. That doesn't make the concern malicious — most of it comes from genuine love — but recognizing it as their emotional need rather than an objective assessment of your situation gives you some distance from it.",
+        text: "The most useful reframe I've found: other people's anxiety about your relationship status is their anxiety, not your problem. They want you settled because it resolves their uncertainty, not yours. That doesn't make the concern malicious, most of it comes from genuine love, but recognizing it as their emotional need rather than an objective assessment of your situation gives you some distance from it.",
       },
       {
         type: "p",
@@ -510,11 +510,11 @@ export const datingCulturePosts: JournalPost[] = [
       },
       {
         type: "p",
-        text: "Stop waiting for the universe to deliver someone to your apartment. Dating in your 30s, especially as a desi, requires deliberate effort in the right places. Apps are fine but limited — as I've covered extensively in writing about <a href='/journal/why-dating-apps-dont-work-for-south-asians'>why dating apps don't work for South Asians</a>. In-person events, especially ones in your cultural community, compress the timeline dramatically.",
+        text: "Stop waiting for the universe to deliver someone to your apartment. Dating in your 30s, especially as a desi, requires deliberate effort in the right places. Apps are fine but limited, as I've covered extensively in writing about <a href='/journal/why-dating-apps-dont-work-for-south-asians'>why dating apps don't work for South Asians</a>. In-person events, especially ones in your cultural community, compress the timeline dramatically.",
       },
       {
         type: "p",
-        text: "Come to Garam Masala Dating. Apply to be a contestant or just come as an audience member. The room is full of South Asian singles in their late 20s and 30s who are serious about finding someone and completely done with the apps. That energy is very different from a bar or a swipe session. You belong there exactly as you are — no timeline required.",
+        text: "Come to Garam Masala Dating. Apply to be a contestant or just come as an audience member. The room is full of South Asian singles in their late 20s and 30s who are serious about finding someone and completely done with the apps. That energy is very different from a bar or a swipe session. You belong there exactly as you are, no timeline required.",
       },
     ],
   },
@@ -522,12 +522,12 @@ export const datingCulturePosts: JournalPost[] = [
     slug: "modern-arranged-marriage-2026",
     title: "Modern Arranged Marriage: How It Actually Works in 2026",
     metaDescription:
-      "Modern arranged marriage in 2026 looks nothing like the old version — and nothing like Indian Matchmaking either. Here's what it actually looks like now.",
+      "Modern arranged marriage in 2026 looks nothing like the old version, and nothing like Indian Matchmaking either. Here's what it actually looks like now.",
     datePublished: "2026-04-30",
     dateModified: "2026-05-23",
     author: "Surbhi",
     excerpt:
-      "Modern arranged marriage has been thoroughly misrepresented — by Netflix, by aunties, and by people who've never actually been through one. Here's the real version.",
+      "Modern arranged marriage has been thoroughly misrepresented, by Netflix, by aunties, and by people who've never actually been through one. Here's the real version.",
     relatedSlugs: [
       "rishta-culture-decoded",
       "semi-arranged-marriage-modern-middle-ground",
@@ -536,7 +536,7 @@ export const datingCulturePosts: JournalPost[] = [
     faqs: [
       {
         q: "What is modern arranged marriage?",
-        a: "Modern arranged marriage typically means families introduce compatible candidates, but the individuals make the final decision — usually after several meetings, video calls, and sometimes a dating period of months. It's more like a family-assisted introduction than a forced arrangement. The level of parental involvement varies enormously by family.",
+        a: "Modern arranged marriage typically means families introduce compatible candidates, but the individuals make the final decision, usually after several meetings, video calls, and sometimes a dating period of months. It's more like a family-assisted introduction than a forced arrangement. The level of parental involvement varies enormously by family.",
       },
       {
         q: "How is modern arranged marriage different from traditional arranged marriage?",
@@ -544,11 +544,11 @@ export const datingCulturePosts: JournalPost[] = [
       },
       {
         q: "Is modern arranged marriage common in 2026?",
-        a: "Very much so, particularly in South Asian communities globally. Surveys suggest that a significant percentage of South Asian marriages still involve family introductions of some kind — though the degree of family involvement varies widely between generations, geographies, and families.",
+        a: "Very much so, particularly in South Asian communities globally. Surveys suggest that a significant percentage of South Asian marriages still involve family introductions of some kind, though the degree of family involvement varies widely between generations, geographies, and families.",
       },
       {
         q: "Can you fall in love in an arranged marriage?",
-        a: "Yes, and many people do. Research on relationship satisfaction doesn't show a consistent advantage for love marriages over arranged marriages. What seems to matter more is mutual respect, shared values, and genuine compatibility — which can develop through either path.",
+        a: "Yes, and many people do. Research on relationship satisfaction doesn't show a consistent advantage for love marriages over arranged marriages. What seems to matter more is mutual respect, shared values, and genuine compatibility, which can develop through either path.",
       },
       {
         q: "How long does the modern arranged marriage process usually take?",
@@ -558,7 +558,7 @@ export const datingCulturePosts: JournalPost[] = [
     body: [
       {
         type: "p",
-        text: 'Modern arranged marriage has been thoroughly misrepresented — by Netflix, by aunties, and by people who\'ve never actually been through one. Indian Matchmaking showed you the aesthetic (nice houses, designer outfits, Sima in a saree telling someone to "compromise") but not the actual mechanics. The real version in 2026 is more nuanced, more individual, and in many ways more functional than either the romanticized version or the horror story version people default to.',
+        text: 'Modern arranged marriage has been thoroughly misrepresented, by Netflix, by aunties, and by people who\'ve never actually been through one. Indian Matchmaking showed you the aesthetic (nice houses, designer outfits, Sima in a saree telling someone to "compromise") but not the actual mechanics. The real version in 2026 is more nuanced, more individual, and in many ways more functional than either the romanticized version or the horror story version people default to.',
       },
       {
         type: "h2",
@@ -566,11 +566,11 @@ export const datingCulturePosts: JournalPost[] = [
       },
       {
         type: "p",
-        text: "The most common version today looks something like this: parents or extended family (sometimes a professional matchmaker, sometimes a family friend) identify someone with compatible background markers — religion, region, profession, values alignment. They make an introduction. The two individuals then meet — usually for coffee, video calls, or a meal — without any commitment attached. If there's interest, they meet more. If there's not, either side can exit without drama.",
+        text: "The most common version today looks something like this: parents or extended family (sometimes a professional matchmaker, sometimes a family friend) identify someone with compatible background markers, religion, region, profession, values alignment. They make an introduction. The two individuals then meet, usually for coffee, video calls, or a meal, without any commitment attached. If there's interest, they meet more. If there's not, either side can exit without drama.",
       },
       {
         type: "p",
-        text: "The key distinction from a generation ago is that veto power is real and expected. In most modern families — at least in diaspora communities — the individuals involved genuinely can say no at any stage. The pressure to say yes is social and emotional, not coercive. That's a meaningful difference, even when the social pressure is intense.",
+        text: "The key distinction from a generation ago is that veto power is real and expected. In most modern families, at least in diaspora communities, the individuals involved genuinely can say no at any stage. The pressure to say yes is social and emotional, not coercive. That's a meaningful difference, even when the social pressure is intense.",
       },
       {
         type: "h3",
@@ -586,11 +586,11 @@ export const datingCulturePosts: JournalPost[] = [
       },
       {
         type: "p",
-        text: "The compressed timeline of arranged introductions means couples need to have substantive conversations earlier than they would in a typical love marriage trajectory. Financial situation, family expectations, career plans, views on having children, where you want to live — things that come up naturally over a year of dating need to be explicitly discussed in a few months of arranged introductions. That forced directness can actually work in your favor.",
+        text: "The compressed timeline of arranged introductions means couples need to have substantive conversations earlier than they would in a typical love marriage trajectory. Financial situation, family expectations, career plans, views on having children, where you want to live, things that come up naturally over a year of dating need to be explicitly discussed in a few months of arranged introductions. That forced directness can actually work in your favor.",
       },
       {
         type: "p",
-        text: "The conversations that people most often skip, and most often regret not having: what does family involvement in your life actually look like day-to-day? What do you expect from your spouse in terms of career flexibility? What are your actual views on gender roles — not the answer you think sounds good, but what you actually believe? These are uncomfortable. Have them anyway.",
+        text: "The conversations that people most often skip, and most often regret not having: what does family involvement in your life actually look like day-to-day? What do you expect from your spouse in terms of career flexibility? What are your actual views on gender roles, not the answer you think sounds good, but what you actually believe? These are uncomfortable. Have them anyway.",
       },
       {
         type: "h2",
@@ -602,7 +602,7 @@ export const datingCulturePosts: JournalPost[] = [
       },
       {
         type: "p",
-        text: "The compatibility criteria are explicit. In love marriages, couples often discover after years together that they have fundamentally different values around money, children, religion, or family obligations. In arranged introductions, these things are screened for early — imperfectly, but deliberately. That's not nothing.",
+        text: "The compatibility criteria are explicit. In love marriages, couples often discover after years together that they have fundamentally different values around money, children, religion, or family obligations. In arranged introductions, these things are screened for early, imperfectly, but deliberately. That's not nothing.",
       },
       {
         type: "h2",
@@ -614,7 +614,7 @@ export const datingCulturePosts: JournalPost[] = [
       },
       {
         type: "p",
-        text: "If you're navigating this process right now, also read about <a href='/journal/semi-arranged-marriage-modern-middle-ground'>semi-arranged marriage</a> — the hybrid model that more and more desis are landing on. And if you want to understand what real desi chemistry looks like before committing to any process, coming to <a href='/journal/what-actually-happens-at-a-live-comedy-dating-show'>Garam Masala Dating</a> is a genuinely useful education.",
+        text: "If you're navigating this process right now, also read about <a href='/journal/semi-arranged-marriage-modern-middle-ground'>semi-arranged marriage</a>, the hybrid model that more and more desis are landing on. And if you want to understand what real desi chemistry looks like before committing to any process, coming to <a href='/journal/what-actually-happens-at-a-live-comedy-dating-show'>Garam Masala Dating</a> is a genuinely useful education.",
       },
     ],
   },
@@ -622,7 +622,7 @@ export const datingCulturePosts: JournalPost[] = [
     slug: "guide-to-indian-dating-culture-america",
     title: "The Complete Guide to Indian Dating Culture in America",
     metaDescription:
-      "Indian dating culture in America is its own thing — shaped by two sets of rules, neither of which fully applies. Here's what you actually need to know.",
+      "Indian dating culture in America is its own thing, shaped by two sets of rules, neither of which fully applies. Here's what you actually need to know.",
     datePublished: "2026-05-01",
     dateModified: "2026-05-25",
     author: "Surbhi",
@@ -636,7 +636,7 @@ export const datingCulturePosts: JournalPost[] = [
     faqs: [
       {
         q: "How does Indian dating culture differ in America vs India?",
-        a: "Indian dating in America involves more individual autonomy, longer timelines, a mix of apps and in-person meeting, and the complication of navigating two cultural frameworks simultaneously. Dating in India, particularly in metros, has evolved rapidly too, but the family integration dynamics are different when you're diaspora — you're often managing a physical and cultural distance from family that changes the equation.",
+        a: "Indian dating in America involves more individual autonomy, longer timelines, a mix of apps and in-person meeting, and the complication of navigating two cultural frameworks simultaneously. Dating in India, particularly in metros, has evolved rapidly too, but the family integration dynamics are different when you're diaspora, you're often managing a physical and cultural distance from family that changes the equation.",
       },
       {
         q: "Is dating taboo in Indian culture?",
@@ -678,7 +678,7 @@ export const datingCulturePosts: JournalPost[] = [
       },
       {
         type: "p",
-        text: "The timing of family introduction is a particular pressure point. Too early signals more seriousness than you might intend. Too late can feel like you're hiding something. The right timing is relationship-specific and doesn't have a universal rule — but the mistake most people make is waiting until they're ready for everyone to be on board rather than until the relationship warrants it.",
+        text: "The timing of family introduction is a particular pressure point. Too early signals more seriousness than you might intend. Too late can feel like you're hiding something. The right timing is relationship-specific and doesn't have a universal rule, but the mistake most people make is waiting until they're ready for everyone to be on board rather than until the relationship warrants it.",
       },
       {
         type: "h3",
@@ -686,7 +686,7 @@ export const datingCulturePosts: JournalPost[] = [
       },
       {
         type: "p",
-        text: "Even in liberal Indian American families, caste and religion often carry more weight than people admit. Many Indian Americans who explicitly say \"I don't care about caste\" still notice when a potential partner is from a different background, and still have families who do care. These conversations are often avoided until they can't be — which is rarely the right time. The more directly you can engage with your own actual views on this, the better your dating life will go.",
+        text: "Even in liberal Indian American families, caste and religion often carry more weight than people admit. Many Indian Americans who explicitly say \"I don't care about caste\" still notice when a potential partner is from a different background, and still have families who do care. These conversations are often avoided until they can't be, which is rarely the right time. The more directly you can engage with your own actual views on this, the better your dating life will go.",
       },
       {
         type: "h2",
@@ -698,7 +698,7 @@ export const datingCulturePosts: JournalPost[] = [
       },
       {
         type: "p",
-        text: "In-person events in the South Asian community tend to work better than apps for Indian Americans because the cultural translation work is already done. You walk into a room where people understand the dual operating system you're running. The <a href='/journal/the-realest-way-to-meet-desi-singles-in-nyc'>real advantage of community events</a> isn't just volume — it's that baseline of shared context that makes actual connection easier.",
+        text: "In-person events in the South Asian community tend to work better than apps for Indian Americans because the cultural translation work is already done. You walk into a room where people understand the dual operating system you're running. The <a href='/journal/the-realest-way-to-meet-desi-singles-in-nyc'>real advantage of community events</a> isn't just volume, it's that baseline of shared context that makes actual connection easier.",
       },
       {
         type: "h2",
@@ -710,7 +710,7 @@ export const datingCulturePosts: JournalPost[] = [
       },
       {
         type: "p",
-        text: "Finding community where you can meet people who get it. Garam Masala Dating exists specifically for this — a space where the cultural context is given rather than explained. Come to the show. Bring your Indian American brain, both operating systems running, and see what happens when you're in a room full of people running the same parallel processes. It's chaotic. It's funny. And it works.",
+        text: "Finding community where you can meet people who get it. Garam Masala Dating exists specifically for this, a space where the cultural context is given rather than explained. Come to the show. Bring your Indian American brain, both operating systems running, and see what happens when you're in a room full of people running the same parallel processes. It's chaotic. It's funny. And it works.",
       },
     ],
   },
@@ -718,7 +718,7 @@ export const datingCulturePosts: JournalPost[] = [
     slug: "desi-dating-problems-brown-people",
     title: "15 Desi Dating Problems Only Brown People Understand",
     metaDescription:
-      "From family WhatsApp groups to the shaadi pressure spiral, these 15 desi dating problems are painfully real — and you are not alone in any of them.",
+      "From family WhatsApp groups to the shaadi pressure spiral, these 15 desi dating problems are painfully real, and you are not alone in any of them.",
     datePublished: "2026-05-02",
     dateModified: "2026-05-27",
     author: "Surbhi",
@@ -736,11 +736,11 @@ export const datingCulturePosts: JournalPost[] = [
       },
       {
         q: "How do South Asian singles deal with family pressure while dating?",
-        a: "The most effective approach is separating the external pressure from your internal decision-making. Your family's timeline is theirs. Your relationship timeline is yours. Acknowledging their concerns without accepting their framing gives you some breathing room. Finding community with other South Asians who are navigating the same thing also helps enormously — you realize you're not uniquely broken.",
+        a: "The most effective approach is separating the external pressure from your internal decision-making. Your family's timeline is theirs. Your relationship timeline is yours. Acknowledging their concerns without accepting their framing gives you some breathing room. Finding community with other South Asians who are navigating the same thing also helps enormously, you realize you're not uniquely broken.",
       },
       {
         q: "What is the desi dating scene like in the US?",
-        a: "Active and growing. South Asian communities in major cities have developed a real social infrastructure for single desis — events, apps, community gatherings. The challenge is that the community can also be a rumor network, so there's social pressure to handle dating \"correctly\" even when everyone's definition of correctly differs.",
+        a: "Active and growing. South Asian communities in major cities have developed a real social infrastructure for single desis, events, apps, community gatherings. The challenge is that the community can also be a rumor network, so there's social pressure to handle dating \"correctly\" even when everyone's definition of correctly differs.",
       },
     ],
     body: [
@@ -750,7 +750,7 @@ export const datingCulturePosts: JournalPost[] = [
       },
       {
         type: "h2",
-        text: "Problems 1–5: The family and community layer",
+        text: "Problems 1 to 5: The family and community layer",
       },
       {
         type: "p",
@@ -774,7 +774,7 @@ export const datingCulturePosts: JournalPost[] = [
       },
       {
         type: "h2",
-        text: "Problems 6–10: The dating dynamic problems",
+        text: "Problems 6 to 10: The dating dynamic problems",
       },
       {
         type: "p",
@@ -782,7 +782,7 @@ export const datingCulturePosts: JournalPost[] = [
       },
       {
         type: "p",
-        text: "7. The ABCD-FOB translation problem. You grew up here; they grew up there. The cultural references don't fully overlap. The relationship expectations don't fully overlap. You like each other but keep accidentally misunderstanding each other in ways that feel bigger than they should. As I've written about in <a href='/journal/abcd-vs-fob-dating-divide'>the ABCD vs FOB dating divide</a>, the gap is real but bridgeable — it just takes actual conversation.",
+        text: "7. The ABCD-FOB translation problem. You grew up here; they grew up there. The cultural references don't fully overlap. The relationship expectations don't fully overlap. You like each other but keep accidentally misunderstanding each other in ways that feel bigger than they should. As I've written about in <a href='/journal/abcd-vs-fob-dating-divide'>the ABCD vs FOB dating divide</a>, the gap is real but bridgeable, it just takes actual conversation.",
       },
       {
         type: "p",
@@ -798,7 +798,7 @@ export const datingCulturePosts: JournalPost[] = [
       },
       {
         type: "h2",
-        text: "Problems 11–15: The internal ones nobody talks about",
+        text: "Problems 11 to 15: The internal ones nobody talks about",
       },
       {
         type: "p",
@@ -810,7 +810,7 @@ export const datingCulturePosts: JournalPost[] = [
       },
       {
         type: "p",
-        text: "13. Feeling like you're auditioning for a role rather than going on a date. The desi dating context sometimes turns first meetings into family-compatibility screenings. You're not figuring out if you like them — you're running them through a mental checklist of things your parents would want to know.",
+        text: "13. Feeling like you're auditioning for a role rather than going on a date. The desi dating context sometimes turns first meetings into family-compatibility screenings. You're not figuring out if you like them, you're running them through a mental checklist of things your parents would want to know.",
       },
       {
         type: "p",
@@ -818,7 +818,7 @@ export const datingCulturePosts: JournalPost[] = [
       },
       {
         type: "p",
-        text: "15. Wondering if you're too picky, too traditional, too modern, too busy, or somehow fundamentally undateable — when actually you just haven't been in the right room yet. That last one has a solution. Come to Garam Masala Dating. The right room exists and it shows up every month in Manhattan.",
+        text: "15. Wondering if you're too picky, too traditional, too modern, too busy, or somehow fundamentally undateable, when actually you just haven't been in the right room yet. That last one has a solution. Come to Garam Masala Dating. The right room exists and it shows up every month in Manhattan.",
       },
     ],
   },
@@ -840,7 +840,7 @@ export const datingCulturePosts: JournalPost[] = [
     faqs: [
       {
         q: "What do I say when relatives ask about marriage?",
-        a: 'The best responses acknowledge the question without inviting follow-up. Options range from warm deflection ("I\'m focused on being ready when the right person comes along") to cheerful redirection ("When there\'s something to share, you\'ll be among the first to know!") to the honest version ("I\'m actively dating and taking it seriously — just haven\'t found the right fit yet"). Avoid defensive or annoyed responses, which invite probing.',
+        a: 'The best responses acknowledge the question without inviting follow-up. Options range from warm deflection ("I\'m focused on being ready when the right person comes along") to cheerful redirection ("When there\'s something to share, you\'ll be among the first to know!") to the honest version ("I\'m actively dating and taking it seriously, just haven\'t found the right fit yet"). Avoid defensive or annoyed responses, which invite probing.',
       },
       {
         q: "Why do Indian aunties always ask about marriage?",
@@ -848,11 +848,11 @@ export const datingCulturePosts: JournalPost[] = [
       },
       {
         q: "How do I stop relatives from asking about my relationship status?",
-        a: "You probably can't stop it entirely — it's too culturally ingrained. What you can do is make the conversation short and unrewarding enough that it moves on quickly. Give a brief, positive answer and change the subject. Don't give enough information to generate follow-up questions. Prepare a redirect to something they care about: their kids, their garden, a recent trip.",
+        a: "You probably can't stop it entirely, it's too culturally ingrained. What you can do is make the conversation short and unrewarding enough that it moves on quickly. Give a brief, positive answer and change the subject. Don't give enough information to generate follow-up questions. Prepare a redirect to something they care about: their kids, their garden, a recent trip.",
       },
       {
         q: "Is it rude to tell aunties to mind their own business?",
-        a: "It's satisfying but usually costly. The social capital you spend on that response tends to outlast the satisfaction of saying it. Better to be warm, brief, and unrevealing — and save the direct boundary-setting for when someone is actually being harmful rather than just culturally annoying.",
+        a: "It's satisfying but usually costly. The social capital you spend on that response tends to outlast the satisfaction of saying it. Better to be warm, brief, and unrevealing, and save the direct boundary-setting for when someone is actually being harmful rather than just culturally annoying.",
       },
     ],
     body: [
@@ -878,11 +878,11 @@ export const datingCulturePosts: JournalPost[] = [
       },
       {
         type: "p",
-        text: "The warm deflection: \"I'm being really intentional about it — I want to make sure I find the right person, not just any person.\" This is the gold standard. It validates their concern (you're taking it seriously), signals maturity (intentional, not desperate), and contains zero actionable information for follow-up questions.",
+        text: "The warm deflection: \"I'm being really intentional about it, I want to make sure I find the right person, not just any person.\" This is the gold standard. It validates their concern (you're taking it seriously), signals maturity (intentional, not desperate), and contains zero actionable information for follow-up questions.",
       },
       {
         type: "p",
-        text: "The information diet: \"Nothing to report yet, but when there is something, you'll definitely hear about it!\" Enthusiastic, forward-looking, and deeply unrevealing. The exclamation point does a lot of work here — it signals you're not in distress, which is what they're probing for.",
+        text: "The information diet: \"Nothing to report yet, but when there is something, you'll definitely hear about it!\" Enthusiastic, forward-looking, and deeply unrevealing. The exclamation point does a lot of work here, it signals you're not in distress, which is what they're probing for.",
       },
       {
         type: "h3",
@@ -890,7 +890,7 @@ export const datingCulturePosts: JournalPost[] = [
       },
       {
         type: "p",
-        text: 'Some aunties are not satisfied with deflection. They want details. For these, you need a redirect. "Actually, I wanted to ask you about [thing they clearly care about] — I heard [something relevant] and wanted to get your perspective." Aunties who are asked for their opinion on something they know about will abandon the marriage interrogation immediately and with great enthusiasm.',
+        text: 'Some aunties are not satisfied with deflection. They want details. For these, you need a redirect. "Actually, I wanted to ask you about [thing they clearly care about], I heard [something relevant] and wanted to get your perspective." Aunties who are asked for their opinion on something they know about will abandon the marriage interrogation immediately and with great enthusiasm.',
       },
       {
         type: "p",
@@ -902,7 +902,7 @@ export const datingCulturePosts: JournalPost[] = [
       },
       {
         type: "p",
-        text: '"Are you seeing someone?" — you don\'t owe details about your actual relationship status to anyone you\'re not close to. A general positive response is enough. "What are you looking for?" — this is an invitation to have your preferences workshopped in public. Decline gracefully: "I know it when I meet them, I think." "Isn\'t it time?" — this one you can acknowledge with humor: "I\'m working on it!" and then move on.',
+        text: '"Are you seeing someone?", you don\'t owe details about your actual relationship status to anyone you\'re not close to. A general positive response is enough. "What are you looking for?", this is an invitation to have your preferences workshopped in public. Decline gracefully: "I know it when I meet them, I think." "Isn\'t it time?", this one you can acknowledge with humor: "I\'m working on it!" and then move on.',
       },
       {
         type: "h2",
@@ -910,11 +910,11 @@ export const datingCulturePosts: JournalPost[] = [
       },
       {
         type: "p",
-        text: "This is different and deserves a different kind of response. With aunties, deflection is appropriate. With your actual parents, consistent deflection builds a wall that becomes its own problem. Better to have one real conversation — where you tell them what you're actually doing about dating, what your timeline looks like, and what kind of support from them would be helpful versus unhelpful — than to deflect forever. That conversation is hard but it's a one-time hard, not a recurring hard.",
+        text: "This is different and deserves a different kind of response. With aunties, deflection is appropriate. With your actual parents, consistent deflection builds a wall that becomes its own problem. Better to have one real conversation, where you tell them what you're actually doing about dating, what your timeline looks like, and what kind of support from them would be helpful versus unhelpful, than to deflect forever. That conversation is hard but it's a one-time hard, not a recurring hard.",
       },
       {
         type: "p",
-        text: "If you're working through the bigger picture of what you actually want — and tired of doing it alone — come to Garam Masala Dating. The show itself is about real desi singles putting themselves out there, and the community that forms around it is full of people navigating the exact same family conversations you are. As covered in <a href='/journal/desi-dating-problems-brown-people'>the 15 desi dating problems</a>, the community aspect is genuinely part of the solution. You don't have to do this alone.",
+        text: "If you're working through the bigger picture of what you actually want, and tired of doing it alone, come to Garam Masala Dating. The show itself is about real desi singles putting themselves out there, and the community that forms around it is full of people navigating the exact same family conversations you are. As covered in <a href='/journal/desi-dating-problems-brown-people'>the 15 desi dating problems</a>, the community aspect is genuinely part of the solution. You don't have to do this alone.",
       },
     ],
   },
@@ -940,11 +940,11 @@ export const datingCulturePosts: JournalPost[] = [
       },
       {
         q: "How does the rishta process work?",
-        a: "Typically: families identify a potential match (through social networks, matrimonial sites, or family connections), share a biodata or profile, and arrange a formal meeting if both families are interested. The individuals meet — sometimes chaperoned, sometimes independently — and decide if they want to continue. Multiple meetings may follow before any commitment is discussed.",
+        a: "Typically: families identify a potential match (through social networks, matrimonial sites, or family connections), share a biodata or profile, and arrange a formal meeting if both families are interested. The individuals meet, sometimes chaperoned, sometimes independently, and decide if they want to continue. Multiple meetings may follow before any commitment is discussed.",
       },
       {
         q: "Is rishta culture still relevant for millennials?",
-        a: "Yes, for a significant portion of South Asian millennials — though the form has evolved. Many millennials engage with rishta culture on their own terms: using matrimonial apps independently, being more selective about family involvement, and taking longer courtship periods before any commitment. The framework exists but the rigidity has softened.",
+        a: "Yes, for a significant portion of South Asian millennials, though the form has evolved. Many millennials engage with rishta culture on their own terms: using matrimonial apps independently, being more selective about family involvement, and taking longer courtship periods before any commitment. The framework exists but the rigidity has softened.",
       },
       {
         q: "What should you include in a rishta biodata?",
@@ -952,7 +952,7 @@ export const datingCulturePosts: JournalPost[] = [
       },
       {
         q: "How do you reject a rishta politely?",
-        a: "The standard approach is to have your family communicate the decline rather than doing it directly, especially in the early stages. A family-to-family \"we don't think it's the right fit at this time\" is the norm. If you've met the person directly and want to be more honest, a brief, warm message — \"I appreciated meeting you but didn't feel the connection\" — is appropriate.",
+        a: "The standard approach is to have your family communicate the decline rather than doing it directly, especially in the early stages. A family-to-family \"we don't think it's the right fit at this time\" is the norm. If you've met the person directly and want to be more honest, a brief, warm message, \"I appreciated meeting you but didn't feel the connection\", is appropriate.",
       },
     ],
     body: [
@@ -970,7 +970,7 @@ export const datingCulturePosts: JournalPost[] = [
       },
       {
         type: "p",
-        text: "What the biodata actually signals is less about the literal content and more about how carefully it was constructed. A biodata that reads as authentic, specific, and human is a different message than one that reads as a checkbox exercise. The families who understand this are the ones whose people tend to get responses. The biodata is also a first impression document — it creates expectations that the actual person either confirms or complicates.",
+        text: "What the biodata actually signals is less about the literal content and more about how carefully it was constructed. A biodata that reads as authentic, specific, and human is a different message than one that reads as a checkbox exercise. The families who understand this are the ones whose people tend to get responses. The biodata is also a first impression document, it creates expectations that the actual person either confirms or complicates.",
       },
       {
         type: "h3",
@@ -986,11 +986,11 @@ export const datingCulturePosts: JournalPost[] = [
       },
       {
         type: "p",
-        text: "The initial rishta meeting is not a date. It's closer to a first interview — a chance for both parties to assess basic compatibility and decide if a second meeting makes sense. Going in expecting it to feel like a romantic first date is a setup for disappointment. Going in expecting to assess whether this person seems kind, interesting, and worth knowing better is more accurate.",
+        text: "The initial rishta meeting is not a date. It's closer to a first interview, a chance for both parties to assess basic compatibility and decide if a second meeting makes sense. Going in expecting it to feel like a romantic first date is a setup for disappointment. Going in expecting to assess whether this person seems kind, interesting, and worth knowing better is more accurate.",
       },
       {
         type: "p",
-        text: 'The common mistake is treating the first meeting as definitive. Either "I felt something" or "I didn\'t" and treating that as the final word. Chemistry in a formal rishta meeting is often muted — the stakes are high, the context is weird, and both people are performing slightly. Second and third meetings, where some of the formality has dropped, often tell a very different story.',
+        text: 'The common mistake is treating the first meeting as definitive. Either "I felt something" or "I didn\'t" and treating that as the final word. Chemistry in a formal rishta meeting is often muted, the stakes are high, the context is weird, and both people are performing slightly. Second and third meetings, where some of the formality has dropped, often tell a very different story.',
       },
       {
         type: "h2",
@@ -998,7 +998,7 @@ export const datingCulturePosts: JournalPost[] = [
       },
       {
         type: "p",
-        text: "The meetings your family stages — tea with parents, formal dinners — serve a family-compatibility function. The meetings you need to actually assess someone as a person are usually the informal ones: a walk, a casual coffee without a time pressure, a setting where you can be slightly more yourselves. Negotiating for both is reasonable. If someone is a genuine possibility, you need to see them outside the formal rishta format before making any serious decisions.",
+        text: "The meetings your family stages, tea with parents, formal dinners, serve a family-compatibility function. The meetings you need to actually assess someone as a person are usually the informal ones: a walk, a casual coffee without a time pressure, a setting where you can be slightly more yourselves. Negotiating for both is reasonable. If someone is a genuine possibility, you need to see them outside the formal rishta format before making any serious decisions.",
       },
       {
         type: "h2",
@@ -1006,7 +1006,7 @@ export const datingCulturePosts: JournalPost[] = [
       },
       {
         type: "p",
-        text: "Traditional rishta process involves families communicating with each other as the primary channel. Modern rishta process involves the individuals talking directly, often via WhatsApp, while families also communicate. Managing both communication tracks simultaneously requires some intentionality — making sure the messages you're sending directly align with what your family is communicating on your behalf.",
+        text: "Traditional rishta process involves families communicating with each other as the primary channel. Modern rishta process involves the individuals talking directly, often via WhatsApp, while families also communicate. Managing both communication tracks simultaneously requires some intentionality, making sure the messages you're sending directly align with what your family is communicating on your behalf.",
       },
       {
         type: "p",
@@ -1014,7 +1014,7 @@ export const datingCulturePosts: JournalPost[] = [
       },
       {
         type: "p",
-        text: "If you're navigating this process right now, the <a href='/journal/modern-arranged-marriage-2026'>modern arranged marriage guide</a> has more on the broader framework. And if you're trying to meet people outside the rishta system entirely, come to <a href='/journal/south-asian-singles-events-nyc'>a South Asian singles event</a> — sometimes the pressure of the formal process needs a counterbalance of low-stakes real-world meeting.",
+        text: "If you're navigating this process right now, the <a href='/journal/modern-arranged-marriage-2026'>modern arranged marriage guide</a> has more on the broader framework. And if you're trying to meet people outside the rishta system entirely, come to <a href='/journal/south-asian-singles-events-nyc'>a South Asian singles event</a>, sometimes the pressure of the formal process needs a counterbalance of low-stakes real-world meeting.",
       },
     ],
   },
@@ -1027,7 +1027,7 @@ export const datingCulturePosts: JournalPost[] = [
     dateModified: "2026-06-02",
     author: "Surbhi",
     excerpt:
-      "Dating outside your culture as a South Asian is more common than ever — and still more complicated than it looks from the outside. Here's the real guide.",
+      "Dating outside your culture as a South Asian is more common than ever, and still more complicated than it looks from the outside. Here's the real guide.",
     relatedSlugs: [
       "abcd-vs-fob-dating-divide",
       "guide-to-indian-dating-culture-america",
@@ -1044,7 +1044,7 @@ export const datingCulturePosts: JournalPost[] = [
       },
       {
         q: "How do I tell my Indian parents I'm dating someone who isn't Indian?",
-        a: "Lead with the person, not the difference. Describe who they are — their character, values, what you love about them — before the part your parents will fixate on. Give your parents time to process and assume the first reaction isn't the final one. Most parental resistance softens when they actually meet the person.",
+        a: "Lead with the person, not the difference. Describe who they are, their character, values, what you love about them, before the part your parents will fixate on. Give your parents time to process and assume the first reaction isn't the final one. Most parental resistance softens when they actually meet the person.",
       },
       {
         q: "What should non-South-Asian partners understand when dating a South Asian person?",
@@ -1054,7 +1054,7 @@ export const datingCulturePosts: JournalPost[] = [
     body: [
       {
         type: "p",
-        text: "Dating outside your culture as a South Asian is more common than ever and still more complicated than it looks from the outside. The complication isn't usually the relationship itself — it's the external architecture. Family. Community. The weight of being the first person in your family to do this. The specific exhaustion of translating your culture for someone who loves you but doesn't always understand it. Here's the honest guide.",
+        text: "Dating outside your culture as a South Asian is more common than ever and still more complicated than it looks from the outside. The complication isn't usually the relationship itself, it's the external architecture. Family. Community. The weight of being the first person in your family to do this. The specific exhaustion of translating your culture for someone who loves you but doesn't always understand it. Here's the honest guide.",
       },
       {
         type: "h2",
@@ -1062,7 +1062,7 @@ export const datingCulturePosts: JournalPost[] = [
       },
       {
         type: "p",
-        text: "The first complication is family acceptance, which varies wildly. Some South Asian families welcome non-desi partners warmly and quickly. Others resist strongly, initially or permanently. Most land somewhere in the middle — a period of adjustment and gradual acceptance that tests everyone's patience. Understanding which category your family falls into, and being honest with your partner about it, is necessary before things get serious.",
+        text: "The first complication is family acceptance, which varies wildly. Some South Asian families welcome non-desi partners warmly and quickly. Others resist strongly, initially or permanently. Most land somewhere in the middle, a period of adjustment and gradual acceptance that tests everyone's patience. Understanding which category your family falls into, and being honest with your partner about it, is necessary before things get serious.",
       },
       {
         type: "p",
@@ -1074,7 +1074,7 @@ export const datingCulturePosts: JournalPost[] = [
       },
       {
         type: "p",
-        text: "One of the specific exhaustions of interracial relationships as a South Asian is sometimes feeling responsible for representing and explaining your entire culture. Your partner asks genuine questions. You want to answer them but you also get tired of always being the one who explains. This is a real thing and worth naming — a good partner will notice the fatigue and not need you to perform cultural education at all times.",
+        text: "One of the specific exhaustions of interracial relationships as a South Asian is sometimes feeling responsible for representing and explaining your entire culture. Your partner asks genuine questions. You want to answer them but you also get tired of always being the one who explains. This is a real thing and worth naming, a good partner will notice the fatigue and not need you to perform cultural education at all times.",
       },
       {
         type: "h2",
@@ -1082,11 +1082,11 @@ export const datingCulturePosts: JournalPost[] = [
       },
       {
         type: "p",
-        text: "Family is a structural part of South Asian relationships, not background noise. When a South Asian person says \"I need to talk to my family about this\" or \"my family needs to meet you eventually,\" that's not a quirk — it's how their life is organized. A partner who treats this as an imposition rather than a feature of the person they're with will struggle. A partner who's genuinely curious about and respectful of the family dynamic will be much easier to bring home.",
+        text: "Family is a structural part of South Asian relationships, not background noise. When a South Asian person says \"I need to talk to my family about this\" or \"my family needs to meet you eventually,\" that's not a quirk, it's how their life is organized. A partner who treats this as an imposition rather than a feature of the person they're with will struggle. A partner who's genuinely curious about and respectful of the family dynamic will be much easier to bring home.",
       },
       {
         type: "p",
-        text: 'Curiosity is the killer feature in a non-desi partner. The ones who ask real questions about the culture, who want to learn, who approach the unfamiliar with interest rather than awkwardness — those are the partners who make it work over time. The ones who describe your background as "exotic" or who treat your family\'s expectations as obstacles rather than context are showing you something important early.',
+        text: 'Curiosity is the killer feature in a non-desi partner. The ones who ask real questions about the culture, who want to learn, who approach the unfamiliar with interest rather than awkwardness, those are the partners who make it work over time. The ones who describe your background as "exotic" or who treat your family\'s expectations as obstacles rather than context are showing you something important early.',
       },
       {
         type: "h2",
@@ -1106,11 +1106,11 @@ export const datingCulturePosts: JournalPost[] = [
       },
       {
         type: "p",
-        text: "Interracial relationships between South Asians and people from other backgrounds, when they work, work because both people are genuinely interested in who the other person actually is — not who they assumed they'd be based on their background. The cultural differences become a source of richness rather than friction. Both people learn. Both people expand.",
+        text: "Interracial relationships between South Asians and people from other backgrounds, when they work, work because both people are genuinely interested in who the other person actually is, not who they assumed they'd be based on their background. The cultural differences become a source of richness rather than friction. Both people learn. Both people expand.",
       },
       {
         type: "p",
-        text: "I've seen this at Garam Masala Dating — we've had couples from different backgrounds, and the ones who connect are always the ones whose curiosity about each other is bigger than their anxiety about the differences. Come see it live. It's a good reminder of what attraction in action actually looks like, across whatever lines you thought mattered.",
+        text: "I've seen this at Garam Masala Dating, we've had couples from different backgrounds, and the ones who connect are always the ones whose curiosity about each other is bigger than their anxiety about the differences. Come see it live. It's a good reminder of what attraction in action actually looks like, across whatever lines you thought mattered.",
       },
     ],
   },
@@ -1123,7 +1123,7 @@ export const datingCulturePosts: JournalPost[] = [
     dateModified: "2026-06-04",
     author: "Surbhi",
     excerpt:
-      "There's a whole set of unspoken rules that shape how brown girls date — most of which were never actually discussed, just absorbed. Let's talk about them.",
+      "There's a whole set of unspoken rules that shape how brown girls date, most of which were never actually discussed, just absorbed. Let's talk about them.",
     relatedSlugs: [
       "desi-dating-problems-brown-people",
       "dating-outside-culture-south-asian",
@@ -1140,11 +1140,11 @@ export const datingCulturePosts: JournalPost[] = [
       },
       {
         q: "How do brown girls handle family pressure while dating?",
-        a: "Most develop a parallel relationship track — their actual dating life and the version of it that's visible to family. The goal is eventually to collapse the two tracks when the relationship is serious enough to withstand the family scrutiny. Managing this dual track is exhausting, and the healthiest approach is compressing the gap as much as your specific family situation allows.",
+        a: "Most develop a parallel relationship track, their actual dating life and the version of it that's visible to family. The goal is eventually to collapse the two tracks when the relationship is serious enough to withstand the family scrutiny. Managing this dual track is exhausting, and the healthiest approach is compressing the gap as much as your specific family situation allows.",
       },
       {
         q: "Is it okay for Indian girls to date before marriage?",
-        a: "Yes, and the majority of Indian women in diaspora communities do. Cultural norms are shifting rapidly. The question isn't whether it's okay — it's how to navigate the specific family and community dynamics that make it complicated in your particular situation.",
+        a: "Yes, and the majority of Indian women in diaspora communities do. Cultural norms are shifting rapidly. The question isn't whether it's okay, it's how to navigate the specific family and community dynamics that make it complicated in your particular situation.",
       },
     ],
     body: [
@@ -1162,7 +1162,7 @@ export const datingCulturePosts: JournalPost[] = [
       },
       {
         type: "p",
-        text: "The cost of this rule is real. It can create a low-grade dishonesty in your relationship with your family that builds up over time. It also means your partners are often invisible — unintegrated into your real life — until the relationship reaches a certain threshold, which can feel dehumanizing to them and isolating to you.",
+        text: "The cost of this rule is real. It can create a low-grade dishonesty in your relationship with your family that builds up over time. It also means your partners are often invisible, unintegrated into your real life, until the relationship reaches a certain threshold, which can feel dehumanizing to them and isolating to you.",
       },
       {
         type: "h2",
@@ -1170,7 +1170,7 @@ export const datingCulturePosts: JournalPost[] = [
       },
       {
         type: "p",
-        text: "The community — in desi culture — sees and talks. Being seen as someone who \"dates around\" is a social liability for brown girls in a way that it simply isn't for brown guys. This creates a specific kind of self-monitoring: how you talk about your dating life, who you're seen with at community events, what you post on social media, what you tell the people who are three degrees from your parents.",
+        text: "The community, in desi culture, sees and talks. Being seen as someone who \"dates around\" is a social liability for brown girls in a way that it simply isn't for brown guys. This creates a specific kind of self-monitoring: how you talk about your dating life, who you're seen with at community events, what you post on social media, what you tell the people who are three degrees from your parents.",
       },
       {
         type: "p",
@@ -1190,7 +1190,7 @@ export const datingCulturePosts: JournalPost[] = [
       },
       {
         type: "p",
-        text: "Brown girls are often implicitly expected to be the emotional managers of the family's relationship with their romantic life. Getting the parents to like your partner. Handling the transition from private to visible. Managing both the relationship and the family's feelings about the relationship simultaneously. This is a lot. It's also not your job entirely — a partner worth having will participate in the family relationship work, not just benefit from it.",
+        text: "Brown girls are often implicitly expected to be the emotional managers of the family's relationship with their romantic life. Getting the parents to like your partner. Handling the transition from private to visible. Managing both the relationship and the family's feelings about the relationship simultaneously. This is a lot. It's also not your job entirely, a partner worth having will participate in the family relationship work, not just benefit from it.",
       },
       {
         type: "h2",
@@ -1198,11 +1198,11 @@ export const datingCulturePosts: JournalPost[] = [
       },
       {
         type: "p",
-        text: "The most important rule worth examining: that your romantic life is a liability to be managed rather than a part of your life you get to be fully present in. Brown girls who do best in dating are the ones who've decided that their happiness is the point — not managing the appearance of their happiness. That's a shift in orientation that sounds small and changes a lot.",
+        text: "The most important rule worth examining: that your romantic life is a liability to be managed rather than a part of your life you get to be fully present in. Brown girls who do best in dating are the ones who've decided that their happiness is the point, not managing the appearance of their happiness. That's a shift in orientation that sounds small and changes a lot.",
       },
       {
         type: "p",
-        text: "As I've observed in running Garam Masala Dating, the brown women who come to the show — as contestants or audience — almost uniformly describe the experience as a relief. A room full of people who get the context. A format that rewards authenticity over performance. A community of desi women who are done with the invisible labor and are just trying to find someone good. If that sounds like you, we're here. <a href='/journal/the-only-live-desi-dating-show-in-nyc'>Come to the show</a>.",
+        text: "As I've observed in running Garam Masala Dating, the brown women who come to the show, as contestants or audience, almost uniformly describe the experience as a relief. A room full of people who get the context. A format that rewards authenticity over performance. A community of desi women who are done with the invisible labor and are just trying to find someone good. If that sounds like you, we're here. <a href='/journal/the-only-live-desi-dating-show-in-nyc'>Come to the show</a>.",
       },
     ],
   },
@@ -1210,7 +1210,7 @@ export const datingCulturePosts: JournalPost[] = [
     slug: "brown-guy-dating-why-its-harder",
     title: "Brown Guy Dating: Why It's Harder and What to Do About It",
     metaDescription:
-      "Brown guy dating comes with specific challenges that mainstream dating advice doesn't address. Here's the honest breakdown — and what actually helps.",
+      "Brown guy dating comes with specific challenges that mainstream dating advice doesn't address. Here's the honest breakdown, and what actually helps.",
     datePublished: "2026-05-07",
     dateModified: "2026-06-06",
     author: "Surbhi",
@@ -1236,7 +1236,7 @@ export const datingCulturePosts: JournalPost[] = [
       },
       {
         q: "What should brown guys know about dating in the US?",
-        a: "That in-person presence matters more than profile optimization. That cultural confidence (rather than cultural apology) is attractive. That community events in the South Asian space tend to be better return on investment than general apps. And that the match gap on apps is real — don't use it as evidence of fundamental unattractiveness.",
+        a: "That in-person presence matters more than profile optimization. That cultural confidence (rather than cultural apology) is attractive. That community events in the South Asian space tend to be better return on investment than general apps. And that the match gap on apps is real, don't use it as evidence of fundamental unattractiveness.",
       },
     ],
     body: [
@@ -1254,7 +1254,7 @@ export const datingCulturePosts: JournalPost[] = [
       },
       {
         type: "p",
-        text: "The correct response to this is not to conclude you're undateable. The correct response is to recognize that apps are a particularly bad format for brown guys and to invest more in formats where that initial bias doesn't operate the same way. In-person events, social circles, community spaces — anywhere that a conversation happens before a judgment gets made.",
+        text: "The correct response to this is not to conclude you're undateable. The correct response is to recognize that apps are a particularly bad format for brown guys and to invest more in formats where that initial bias doesn't operate the same way. In-person events, social circles, community spaces, anywhere that a conversation happens before a judgment gets made.",
       },
       {
         type: "h3",
@@ -1262,7 +1262,7 @@ export const datingCulturePosts: JournalPost[] = [
       },
       {
         type: "p",
-        text: 'A lot of brown guys respond to poor app performance by trying to optimize their profile — better photos, wittier bios, more "universal" presentation that minimizes the Indianness. This is understandable and usually counterproductive. The people who will be into you are people who are into you. Optimizing your profile to appeal to people who have implicit bias against you is an exhausting and low-yield strategy.',
+        text: 'A lot of brown guys respond to poor app performance by trying to optimize their profile, better photos, wittier bios, more "universal" presentation that minimizes the Indianness. This is understandable and usually counterproductive. The people who will be into you are people who are into you. Optimizing your profile to appeal to people who have implicit bias against you is an exhausting and low-yield strategy.',
       },
       {
         type: "h2",
@@ -1274,7 +1274,7 @@ export const datingCulturePosts: JournalPost[] = [
       },
       {
         type: "p",
-        text: "The way through is not to preemptively address the stereotypes — that's exhausting and makes them a bigger presence than they need to be. It's to be fully yourself, confidently, from the first interaction. Cultural confidence — not performing Indianness and not apologizing for it — is what actually moves the needle.",
+        text: "The way through is not to preemptively address the stereotypes, that's exhausting and makes them a bigger presence than they need to be. It's to be fully yourself, confidently, from the first interaction. Cultural confidence, not performing Indianness and not apologizing for it, is what actually moves the needle.",
       },
       {
         type: "h2",
@@ -1282,7 +1282,7 @@ export const datingCulturePosts: JournalPost[] = [
       },
       {
         type: "p",
-        text: 'Brown guys often face a different family pressure timeline than brown women. Where brown women often feel the marriage pressure start in their mid-twenties, brown guys often hear "get settled financially first" until they\'re in their late twenties — at which point the switch flips and the pressure becomes intense and sudden. The expectation to be both the provider and the romantic lead is a real tension.',
+        text: 'Brown guys often face a different family pressure timeline than brown women. Where brown women often feel the marriage pressure start in their mid-twenties, brown guys often hear "get settled financially first" until they\'re in their late twenties, at which point the switch flips and the pressure becomes intense and sudden. The expectation to be both the provider and the romantic lead is a real tension.',
       },
       {
         type: "p",
@@ -1298,7 +1298,7 @@ export const datingCulturePosts: JournalPost[] = [
       },
       {
         type: "p",
-        text: "Garam Masala Dating has been a real corrective for a lot of brown guys who came in deflated from the app experience. The live show format rewards presence, humor, and authenticity — the things brown guys actually have. Come as a contestant. Come as an audience member. See what dating looks like when the playing field is actually level. The <a href='/journal/how-to-get-cast-on-a-live-dating-show'>application process</a> is straightforward, and the room will change how you see what's possible.",
+        text: "Garam Masala Dating has been a real corrective for a lot of brown guys who came in deflated from the app experience. The live show format rewards presence, humor, and authenticity, the things brown guys actually have. Come as a contestant. Come as an audience member. See what dating looks like when the playing field is actually level. The <a href='/journal/how-to-get-cast-on-a-live-dating-show'>application process</a> is straightforward, and the room will change how you see what's possible.",
       },
     ],
   },
@@ -1307,12 +1307,12 @@ export const datingCulturePosts: JournalPost[] = [
     title:
       "Semi-Arranged Marriage: The Modern Middle Ground Nobody Talks About",
     metaDescription:
-      "Semi-arranged marriage is how most modern desis actually end up married — a mix of family introduction and individual choice. Here's how it actually works.",
+      "Semi-arranged marriage is how most modern desis actually end up married, a mix of family introduction and individual choice. Here's how it actually works.",
     datePublished: "2026-05-08",
     dateModified: "2026-06-08",
     author: "Surbhi",
     excerpt:
-      "Semi-arranged marriage is the model most modern South Asians actually use — and almost nobody talks about it honestly. Here's the real breakdown.",
+      "Semi-arranged marriage is the model most modern South Asians actually use, and almost nobody talks about it honestly. Here's the real breakdown.",
     relatedSlugs: [
       "modern-arranged-marriage-2026",
       "rishta-culture-decoded",
@@ -1321,7 +1321,7 @@ export const datingCulturePosts: JournalPost[] = [
     faqs: [
       {
         q: "What is semi-arranged marriage?",
-        a: "Semi-arranged marriage refers to a model where families are involved in the introduction process but individuals have full autonomy over the decision. It's neither a fully self-directed love marriage nor a traditional arranged marriage where families make the decision. The individual meets the proposed partner, makes their own assessment, and chooses whether to proceed — with family support throughout.",
+        a: "Semi-arranged marriage refers to a model where families are involved in the introduction process but individuals have full autonomy over the decision. It's neither a fully self-directed love marriage nor a traditional arranged marriage where families make the decision. The individual meets the proposed partner, makes their own assessment, and chooses whether to proceed, with family support throughout.",
       },
       {
         q: "Is semi-arranged marriage common?",
@@ -1333,7 +1333,7 @@ export const datingCulturePosts: JournalPost[] = [
       },
       {
         q: "How do you make semi-arranged marriage work in practice?",
-        a: "Be clear upfront about what your autonomy looks like — you need family to understand that introduction doesn't equal obligation. Insist on genuine one-on-one time with the person outside formal family settings before making any decisions. Don't let timeline pressure from family compress the courtship period below what you actually need.",
+        a: "Be clear upfront about what your autonomy looks like, you need family to understand that introduction doesn't equal obligation. Insist on genuine one-on-one time with the person outside formal family settings before making any decisions. Don't let timeline pressure from family compress the courtship period below what you actually need.",
       },
     ],
     body: [
@@ -1359,7 +1359,7 @@ export const datingCulturePosts: JournalPost[] = [
       },
       {
         type: "p",
-        text: "The distinction from love marriage with family approval can be subtle. The functional difference is in origin and process. In a love marriage, two people find each other independently and then seek family acceptance. In semi-arranged, the family is the originating force and the individuals assess from there. In practice, the outcomes often look similar after a few months — the couple is getting to know each other, the families know about it, everyone is waiting to see what develops.",
+        text: "The distinction from love marriage with family approval can be subtle. The functional difference is in origin and process. In a love marriage, two people find each other independently and then seek family acceptance. In semi-arranged, the family is the originating force and the individuals assess from there. In practice, the outcomes often look similar after a few months, the couple is getting to know each other, the families know about it, everyone is waiting to see what develops.",
       },
       {
         type: "h2",
@@ -1371,7 +1371,7 @@ export const datingCulturePosts: JournalPost[] = [
       },
       {
         type: "p",
-        text: "Background compatibility screening. This isn't romantic but it's real. Going into a semi-arranged introduction means that someone has already assessed that your backgrounds, values, and life goals are compatible enough to warrant a meeting. You're not starting from zero. That doesn't mean chemistry is guaranteed — it absolutely isn't — but it does mean fewer early-stage dealbreaker discoveries.",
+        text: "Background compatibility screening. This isn't romantic but it's real. Going into a semi-arranged introduction means that someone has already assessed that your backgrounds, values, and life goals are compatible enough to warrant a meeting. You're not starting from zero. That doesn't mean chemistry is guaranteed, it absolutely isn't, but it does mean fewer early-stage dealbreaker discoveries.",
       },
       {
         type: "h2",
@@ -1383,7 +1383,7 @@ export const datingCulturePosts: JournalPost[] = [
       },
       {
         type: "p",
-        text: "The second risk is confusing family compatibility with personal compatibility. Two families liking each other very much is a good sign but not sufficient. Two people whose backgrounds align perfectly on paper can have no real chemistry or incompatible personalities. Get genuine one-on-one time — not chaperoned, not with the families watching — before you make any serious assessments.",
+        text: "The second risk is confusing family compatibility with personal compatibility. Two families liking each other very much is a good sign but not sufficient. Two people whose backgrounds align perfectly on paper can have no real chemistry or incompatible personalities. Get genuine one-on-one time, not chaperoned, not with the families watching, before you make any serious assessments.",
       },
       {
         type: "h2",
@@ -1395,7 +1395,7 @@ export const datingCulturePosts: JournalPost[] = [
       },
       {
         type: "p",
-        text: "For the bigger picture on how arranged marriage has evolved, read <a href='/journal/modern-arranged-marriage-2026'>the modern arranged marriage guide</a>. And if you want to experience what genuine, unfiltered desi chemistry looks like — before committing to any process — come to <a href='/journal/what-actually-happens-at-a-live-comedy-dating-show'>Garam Masala Dating</a>. See what sparks, unscripted. It will recalibrate your sense of what you're actually looking for.",
+        text: "For the bigger picture on how arranged marriage has evolved, read <a href='/journal/modern-arranged-marriage-2026'>the modern arranged marriage guide</a>. And if you want to experience what genuine, unfiltered desi chemistry looks like, before committing to any process, come to <a href='/journal/what-actually-happens-at-a-live-comedy-dating-show'>Garam Masala Dating</a>. See what sparks, unscripted. It will recalibrate your sense of what you're actually looking for.",
       },
     ],
   },
@@ -1403,12 +1403,12 @@ export const datingCulturePosts: JournalPost[] = [
     slug: "situationships-in-desi-culture",
     title: "Situationships in Desi Culture: Why We Keep Getting Stuck",
     metaDescription:
-      "Situationships in desi culture have a specific flavor — family pressure, secrecy, and the undefined middle that nobody knows how to name. Here's why we keep getting stuck.",
+      "Situationships in desi culture have a specific flavor, family pressure, secrecy, and the undefined middle that nobody knows how to name. Here's why we keep getting stuck.",
     datePublished: "2026-05-09",
     dateModified: "2026-06-10",
     author: "Surbhi",
     excerpt:
-      "Desi situationships are real and they have their own specific flavor — shaped by family dynamics, secrecy, and the cultural awkwardness of defining things. Let's name it.",
+      "Desi situationships are real and they have their own specific flavor, shaped by family dynamics, secrecy, and the cultural awkwardness of defining things. Let's name it.",
     relatedSlugs: [
       "desi-red-flags-green-flags",
       "brown-girl-dating-unspoken-rules",
@@ -1417,7 +1417,7 @@ export const datingCulturePosts: JournalPost[] = [
     faqs: [
       {
         q: "What is a situationship?",
-        a: "A situationship is a romantic or quasi-romantic relationship that has the emotional texture of a relationship but no formal definition or commitment. Both people are behaving like a couple in some ways but haven't had — or have actively avoided — the conversation that would make it official.",
+        a: "A situationship is a romantic or quasi-romantic relationship that has the emotional texture of a relationship but no formal definition or commitment. Both people are behaving like a couple in some ways but haven't had, or have actively avoided, the conversation that would make it official.",
       },
       {
         q: "Why are situationships common in desi dating culture?",
@@ -1425,7 +1425,7 @@ export const datingCulturePosts: JournalPost[] = [
       },
       {
         q: "How do you get out of a desi situationship?",
-        a: "The same way you get out of any situationship: have the direct conversation you've been avoiding. In the desi context, this sometimes requires acknowledging the family and community layer explicitly — \"I like you but I can't keep doing this in a way that goes nowhere because of what that means for my family situation.\" Naming the actual obstacle is usually more effective than hoping things resolve themselves.",
+        a: "The same way you get out of any situationship: have the direct conversation you've been avoiding. In the desi context, this sometimes requires acknowledging the family and community layer explicitly, \"I like you but I can't keep doing this in a way that goes nowhere because of what that means for my family situation.\" Naming the actual obstacle is usually more effective than hoping things resolve themselves.",
       },
       {
         q: "Is it okay to be in a situationship as a South Asian?",
@@ -1443,7 +1443,7 @@ export const datingCulturePosts: JournalPost[] = [
       },
       {
         type: "p",
-        text: 'The first reason is the secrecy pressure. Brown dating often involves keeping the relationship private until it\'s serious enough to withstand family scrutiny. The problem is that "serious enough" is a moving target. When making the relationship official has social consequences — telling family, managing community perception, starting a whole conversation — the undefined middle becomes a permanent address rather than a temporary stop.',
+        text: 'The first reason is the secrecy pressure. Brown dating often involves keeping the relationship private until it\'s serious enough to withstand family scrutiny. The problem is that "serious enough" is a moving target. When making the relationship official has social consequences, telling family, managing community perception, starting a whole conversation, the undefined middle becomes a permanent address rather than a temporary stop.',
       },
       {
         type: "p",
@@ -1455,7 +1455,7 @@ export const datingCulturePosts: JournalPost[] = [
       },
       {
         type: "p",
-        text: "A specific desi situationship type: the relationship that both people know is real, where both people have genuine feelings, but which can't move forward because of a perceived or actual family veto. The religion difference. The caste difference. The family that \"would never accept\" this person. Sometimes the family veto is real and non-negotiable. More often it's a projection — an assumed obstacle that neither person has actually tested. Situationships that exist because of imagined family vetoes are the saddest variety because they're the most avoidable.",
+        text: "A specific desi situationship type: the relationship that both people know is real, where both people have genuine feelings, but which can't move forward because of a perceived or actual family veto. The religion difference. The caste difference. The family that \"would never accept\" this person. Sometimes the family veto is real and non-negotiable. More often it's a projection, an assumed obstacle that neither person has actually tested. Situationships that exist because of imagined family vetoes are the saddest variety because they're the most avoidable.",
       },
       {
         type: "h2",
@@ -1463,11 +1463,11 @@ export const datingCulturePosts: JournalPost[] = [
       },
       {
         type: "p",
-        text: "Situationships have costs that compound over time. The emotional cost of caring about someone whose level of commitment is unclear. The time cost of investing in something that might not be real. The social cost — in desi communities particularly — of being in a relationship that has no official status and therefore no protection from community rumor or parental override.",
+        text: "Situationships have costs that compound over time. The emotional cost of caring about someone whose level of commitment is unclear. The time cost of investing in something that might not be real. The social cost, in desi communities particularly, of being in a relationship that has no official status and therefore no protection from community rumor or parental override.",
       },
       {
         type: "p",
-        text: "There's also the identity cost. Staying in an undefined situation to avoid the discomfort of having a direct conversation is practice in prioritizing other people's comfort over your own clarity. That habit compounds. The brown people who are best at dating — who have the most functional, honest, direct relationships — are the ones who got over the fear of the defining conversation early.",
+        text: "There's also the identity cost. Staying in an undefined situation to avoid the discomfort of having a direct conversation is practice in prioritizing other people's comfort over your own clarity. That habit compounds. The brown people who are best at dating, who have the most functional, honest, direct relationships, are the ones who got over the fear of the defining conversation early.",
       },
       {
         type: "h2",

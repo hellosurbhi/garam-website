@@ -86,9 +86,9 @@ function PrepGuide() {
           </p>
           <ol className={styles.numberedList}>
             <li>
-              <strong>Keep answers to 20–30 seconds.</strong> Not a one-word
-              answer. Not a five-minute story. The sweet spot is conversational
-              — enough to say something real without losing the room.
+              <strong>Keep answers to 20 to 30 seconds.</strong> Not a one-word
+              answer. Not a five-minute story. The sweet spot is conversational,
+              enough to say something real without losing the room.
             </li>
             <li>
               <strong>Vulnerable beats funny every time.</strong> A genuine
@@ -97,7 +97,7 @@ function PrepGuide() {
             </li>
             <li>
               <strong>The audience is on your side.</strong> They showed up
-              wanting to see a real connection. They are rooting for you — not
+              wanting to see a real connection. They are rooting for you, not
               waiting for you to fail.
             </li>
             <li>
@@ -112,7 +112,7 @@ function PrepGuide() {
               can always tell.
             </li>
             <li>
-              <strong>Two to three drinks before you go on — maximum.</strong>{" "}
+              <strong>Two to three drinks before you go on. Maximum.</strong>{" "}
               Enough to be relaxed and loose. Not enough to be impaired. You
               want your full self on stage, just without the nerves.
             </li>
@@ -123,10 +123,10 @@ function PrepGuide() {
         <section className={styles.section}>
           <h2 className={styles.sectionTitle}>Questions You May Be Asked</h2>
           <p className={styles.lead}>
-            Prepare a 30–60 second answer for every question on this list. You
-            won&apos;t be asked all of them, and the host may go off-script
-            based on your answers — but nothing on this list should catch you
-            off guard.
+            Prepare a 30 to 60 second answer for every question on this list.
+            You won&apos;t be asked all of them, and the host may go off-script
+            based on your answers, but nothing on this list should catch you off
+            guard.
           </p>
           <ol className={styles.numberedList}>
             <li>What&apos;s your name, and what do you do?</li>
@@ -163,7 +163,7 @@ function PrepGuide() {
               <strong>
                 A talent or party trick you can perform in 30 seconds.
               </strong>{" "}
-              A dance move, an impression, a joke, a magic trick — whatever
+              A dance move, an impression, a joke, a magic trick: whatever
               you&apos;ve got. The weirder and more specific to you, the better.
             </li>
             <li>
@@ -183,7 +183,7 @@ function PrepGuide() {
         <section className={styles.section}>
           <h2 className={styles.sectionTitle}>What to Wear</h2>
           <p className={styles.body}>
-            Dress like you&apos;re going on a real first date — because you are.
+            Dress like you&apos;re going on a real first date. Because you are.
             Bold colors, statement fits, sequins absolutely welcome. Think about
             what you would wear if you were genuinely trying to impress someone,
             and wear that. No &ldquo;just came from the office&rdquo; energy. No
@@ -198,7 +198,7 @@ function PrepGuide() {
           <h2 className={styles.sectionTitle}>Day Of</h2>
           <p className={styles.body}>
             Bring your friends. The more people cheering for you in the
-            audience, the better the show — and honestly, the better your own
+            audience, the better the show, and honestly, the better your own
             performance. Having friendly faces in the crowd makes a real
             difference when you&apos;re up there. Tell your people to come.
           </p>
@@ -240,8 +240,8 @@ function PrepGuide() {
               </p>
               <p className={styles.body}>
                 {gender === "female"
-                  ? "Arrive 15 minutes after the guys — we keep you separate so your first impression of each other happens on stage. You have full permission to not like someone. You don't owe anyone chemistry, and you don't need to perform it. \"I'm not really feeling the connection\" is great content. The girls who are remembered are the ones who said exactly what they thought. Don't fake it — the audience always knows."
-                  : "Arrive 15 minutes before the girls — we keep you separate so your first impression of each other happens on stage. Audiences on this show tend to root for the women. Don't compensate by playing up charm or confidence — it reads as cocky and always backfires. What actually works: being genuinely curious about your date, not taking yourself too seriously, and being a little self-deprecating. Confident but humble."}
+                  ? "Arrive 15 minutes after the guys. We keep you separate so your first impression of each other happens on stage. You have full permission to not like someone. You don't owe anyone chemistry, and you don't need to perform it. \"I'm not really feeling the connection\" is great content. The girls who are remembered are the ones who said exactly what they thought. Don't fake it. The audience always knows."
+                  : "Arrive 15 minutes before the girls. We keep you separate so your first impression of each other happens on stage. Audiences on this show tend to root for the women. Don't compensate by playing up charm or confidence. It reads as cocky and always backfires. What actually works: being genuinely curious about your date, not taking yourself too seriously, and being a little self-deprecating. Confident but humble."}
               </p>
             </div>
           )}

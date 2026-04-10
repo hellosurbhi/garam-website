@@ -5,7 +5,7 @@ export const eventsPosts: JournalPost[] = [
     slug: "how-to-meet-indian-singles-without-apps",
     title: "How to Meet Indian Singles Without Dating Apps",
     metaDescription:
-      "Tired of Hinge and Dil Mil? Here's how to meet Indian singles in real life — events, shows, and spaces where desis actually connect.",
+      "Tired of Hinge and Dil Mil? Here's how to meet Indian singles in real life, events, shows, and spaces where desis actually connect.",
     datePublished: "2026-05-23",
     dateModified: "2026-07-08",
     author: "Surbhi",
@@ -65,7 +65,7 @@ export const eventsPosts: JournalPost[] = [
       },
       {
         type: "p",
-        text: "Cultural events are the most obvious starting point and also the most underused. Diwali parties, Holi events, Navratri garba — these pull large crowds of South Asians into the same space with a shared experience as the built-in icebreaker. The problem is that most of them are not explicitly singles events, so the social dynamic is mixed. You'll meet people, but you'll also spend a lot of time talking to someone's aunt.",
+        text: "Cultural events are the most obvious starting point and also the most underused. Diwali parties, Holi events, Navratri garba, these pull large crowds of South Asians into the same space with a shared experience as the built-in icebreaker. The problem is that most of them are not explicitly singles events, so the social dynamic is mixed. You'll meet people, but you'll also spend a lot of time talking to someone's aunt.",
       },
       {
         type: "p",
@@ -97,7 +97,7 @@ export const eventsPosts: JournalPost[] = [
       },
       {
         type: "p",
-        text: "The practical reality is that offline meeting requires consistency in a way apps don't. You have to show up to things. Not once — regularly. The first time you go to a South Asian event you'll know nobody. The fifth time you'll recognize faces. The tenth time you'll have friends there. The connections that turn into something happen in the context of regular presence, not a one-time appearance.",
+        text: "The practical reality is that offline meeting requires consistency in a way apps don't. You have to show up to things. Not once, regularly. The first time you go to a South Asian event you'll know nobody. The fifth time you'll recognize faces. The tenth time you'll have friends there. The connections that turn into something happen in the context of regular presence, not a one-time appearance.",
       },
       {
         type: "p",
@@ -105,7 +105,7 @@ export const eventsPosts: JournalPost[] = [
       },
       {
         type: "p",
-        text: "If you want to start with something that combines the show, the mixer, and the community — <a href='/journal/south-asian-singles-events-nyc'>the best South Asian singles events in NYC</a> covers the full landscape. And if you're ready to try a live show specifically built for desi singles, buy tickets to Garam Masala Dating at garammasaladating.com or apply to be on stage.",
+        text: "If you want to start with something that combines the show, the mixer, and the community, <a href='/journal/south-asian-singles-events-nyc'>the best South Asian singles events in NYC</a> covers the full landscape. And if you're ready to try a live show specifically built for desi singles, buy tickets to Garam Masala Dating at garammasaladating.com or apply to be on stage.",
       },
     ],
   },
@@ -122,11 +122,11 @@ export const eventsPosts: JournalPost[] = [
     faqs: [
       {
         q: "What is desi speed dating like?",
-        a: "Desi speed dating events put South Asian singles in a structured setting where you have short timed conversations with multiple people in one evening. Organizers vary — some are casual bar settings, some are more formal. Most include a mixer after the speed dating rounds so you can follow up with anyone you connected with.",
+        a: "Desi speed dating events put South Asian singles in a structured setting where you have short timed conversations with multiple people in one evening. Organizers vary, some are casual bar settings, some are more formal. Most include a mixer after the speed dating rounds so you can follow up with anyone you connected with.",
       },
       {
         q: "What should I wear to Indian speed dating?",
-        a: "Smart casual is the universal answer. You want to look like you made an effort without looking like you're trying too hard. A nice outfit you'd wear to a dinner with friends is right. Avoid anything that requires constant adjustment — you'll be moving between seats and having conversations, not sitting still.",
+        a: "Smart casual is the universal answer. You want to look like you made an effort without looking like you're trying too hard. A nice outfit you'd wear to a dinner with friends is right. Avoid anything that requires constant adjustment, you'll be moving between seats and having conversations, not sitting still.",
       },
       {
         q: "What do you talk about at speed dating?",
@@ -157,7 +157,7 @@ export const eventsPosts: JournalPost[] = [
       },
       {
         type: "p",
-        text: "Most Indian and South Asian speed dating events follow a variation of the same structure. You arrive, check in, and get a name tag and a scorecard. The organizer explains the format. Rounds begin — usually three to five minutes per conversation depending on the event. One group rotates, the other stays seated. You talk, the timer goes, you move on. At the end you mark your card with who you'd like to see again. Matches get each other's contact info.",
+        text: "Most Indian and South Asian speed dating events follow a variation of the same structure. You arrive, check in, and get a name tag and a scorecard. The organizer explains the format. Rounds begin, usually three to five minutes per conversation depending on the event. One group rotates, the other stays seated. You talk, the timer goes, you move on. At the end you mark your card with who you'd like to see again. Matches get each other's contact info.",
       },
       {
         type: "p",
@@ -213,7 +213,7 @@ export const eventsPosts: JournalPost[] = [
       },
       {
         type: "p",
-        text: "If speed dating is too structured for you, a live comedy show is a different entry point entirely. <a href='/journal/what-actually-happens-at-a-live-comedy-dating-show'>What actually happens at the #1 live comedy dating show</a> breaks down the Garam Masala Dating format, where you're in the audience watching a date unfold on stage instead of rotating through seats. The mixer after a live show has a different energy — looser, warmer, everyone already laughing — and it produces connections in a way that structured speed dating doesn't.",
+        text: "If speed dating is too structured for you, a live comedy show is a different entry point entirely. <a href='/journal/what-actually-happens-at-a-live-comedy-dating-show'>What actually happens at the #1 live comedy dating show</a> breaks down the Garam Masala Dating format, where you're in the audience watching a date unfold on stage instead of rotating through seats. The mixer after a live show has a different energy, looser, warmer, everyone already laughing, and it produces connections in a way that structured speed dating doesn't.",
       },
       {
         type: "p",
@@ -269,7 +269,7 @@ export const eventsPosts: JournalPost[] = [
       },
       {
         type: "p",
-        text: "Seventy-nine percent. That's the share of active dating app users who reported significant burnout with the format in 2025 research. Not mild frustration. Burnout — the kind that comes from sustained high-volume activity with consistently low return. Nearly four in five people still using dating apps are burned out while using them. They haven't quit yet because quitting feels like giving up. But they're exhausted.",
+        text: "Seventy-nine percent. That's the share of active dating app users who reported significant burnout with the format in 2025 research. Not mild frustration. Burnout, the kind that comes from sustained high-volume activity with consistently low return. Nearly four in five people still using dating apps are burned out while using them. They haven't quit yet because quitting feels like giving up. But they're exhausted.",
       },
       {
         type: "p",
@@ -277,7 +277,7 @@ export const eventsPosts: JournalPost[] = [
       },
       {
         type: "p",
-        text: "The 79% burnout rate is the number behind the 42% IRL growth. When enough people hit their limit simultaneously, the event calendar fills up. New organizers enter the market. Old formats get updated. What you're seeing now is not a fad — it's a correction.",
+        text: "The 79% burnout rate is the number behind the 42% IRL growth. When enough people hit their limit simultaneously, the event calendar fills up. New organizers enter the market. Old formats get updated. What you're seeing now is not a fad, it's a correction.",
       },
       {
         type: "h2",
@@ -285,11 +285,11 @@ export const eventsPosts: JournalPost[] = [
       },
       {
         type: "p",
-        text: "The post-pandemic behavioral reset is real and it's still playing out. Three years of forced isolation followed by two years of cautious re-entry changed how people think about in-person experience. What used to feel ordinary — a room full of people who are all willing to be present with each other — now feels like something worth showing up for.",
+        text: "The post-pandemic behavioral reset is real and it's still playing out. Three years of forced isolation followed by two years of cautious re-entry changed how people think about in-person experience. What used to feel ordinary, a room full of people who are all willing to be present with each other, now feels like something worth showing up for.",
       },
       {
         type: "p",
-        text: "The rise of live events culture has amplified this. Concerts, comedy shows, sporting events, immersive experiences — all of them are drawing bigger crowds than they were pre-2020. Singles events are part of the same trend. People are choosing experiences over digital content across the board, and dating is following.",
+        text: "The rise of live events culture has amplified this. Concerts, comedy shows, sporting events, immersive experiences, all of them are drawing bigger crowds than they were pre-2020. Singles events are part of the same trend. People are choosing experiences over digital content across the board, and dating is following.",
       },
       {
         type: "p",
@@ -309,7 +309,7 @@ export const eventsPosts: JournalPost[] = [
       },
       {
         type: "p",
-        text: "Community-specific events are also growing faster than generic ones. Desi speed dating, queer mixers, Black singles events, event series for specific age brackets — the specificity makes them more useful because the pool is more relevant. Generic singles events put you in a room of people who technically might be your match. Community events put you in a room of people who are much more likely to be.",
+        text: "Community-specific events are also growing faster than generic ones. Desi speed dating, queer mixers, Black singles events, event series for specific age brackets, the specificity makes them more useful because the pool is more relevant. Generic singles events put you in a room of people who technically might be your match. Community events put you in a room of people who are much more likely to be.",
       },
       {
         type: "h2",
@@ -317,7 +317,7 @@ export const eventsPosts: JournalPost[] = [
       },
       {
         type: "p",
-        text: "For desi singles, the IRL revival is particularly significant because the app experience has historically been worse than average. The mainstream apps have thin South Asian representation. The community-specific apps have smaller pools. The cultural complexity of desi dating — the family expectations, the layered identities, the question of what you're actually looking for versus what you've been told to look for — doesn't compress well into a profile.",
+        text: "For desi singles, the IRL revival is particularly significant because the app experience has historically been worse than average. The mainstream apps have thin South Asian representation. The community-specific apps have smaller pools. The cultural complexity of desi dating, the family expectations, the layered identities, the question of what you're actually looking for versus what you've been told to look for, doesn't compress well into a profile.",
       },
       {
         type: "p",
@@ -325,7 +325,7 @@ export const eventsPosts: JournalPost[] = [
       },
       {
         type: "p",
-        text: "The IRL wave is not going back. The 42% growth is a signal, not a spike. The 79% burnout rate means there's a large and growing population of people who are ready for a different approach. The question is whether you're going to wait for the apps to fix themselves — which they won't, the incentives won't change — or whether you're going to walk into a room. We make it easy. Tickets to Garam Masala Dating are at garammasaladating.com.",
+        text: "The IRL wave is not going back. The 42% growth is a signal, not a spike. The 79% burnout rate means there's a large and growing population of people who are ready for a different approach. The question is whether you're going to wait for the apps to fix themselves, which they won't, the incentives won't change, or whether you're going to walk into a room. We make it easy. Tickets to Garam Masala Dating are at garammasaladating.com.",
       },
     ],
   },
@@ -333,7 +333,7 @@ export const eventsPosts: JournalPost[] = [
     slug: "where-to-meet-indian-singles-nyc",
     title: "Where to Meet Indian Singles in NYC: Beyond the Apps",
     metaDescription:
-      "Looking for Indian or desi singles in NYC? Here's where South Asians actually meet in person — from cultural events to live dating shows.",
+      "Looking for Indian or desi singles in NYC? Here's where South Asians actually meet in person, from cultural events to live dating shows.",
     datePublished: "2026-05-26",
     dateModified: "2026-07-14",
     author: "Surbhi",
@@ -381,7 +381,7 @@ export const eventsPosts: JournalPost[] = [
       },
       {
         type: "p",
-        text: "The challenge with cultural events is that they're not explicitly singles events. You're surrounded by Indian people of all ages, relationship statuses, and family units. You can absolutely meet someone at a Diwali party — it happens — but you're doing it without the social infrastructure that tells both of you it's okay to be looking. The signal-to-noise ratio requires more effort.",
+        text: "The challenge with cultural events is that they're not explicitly singles events. You're surrounded by Indian people of all ages, relationship statuses, and family units. You can absolutely meet someone at a Diwali party, it happens, but you're doing it without the social infrastructure that tells both of you it's okay to be looking. The signal-to-noise ratio requires more effort.",
       },
       {
         type: "p",
@@ -397,11 +397,11 @@ export const eventsPosts: JournalPost[] = [
       },
       {
         type: "p",
-        text: "That said, Jackson Heights is a family neighborhood as much as a singles neighborhood. It's more useful for cultural immersion than for actively meeting single people your own age. The South Asian singles who live in NYC and are actively looking to meet someone tend to be concentrated in Manhattan's east side, Astoria, Long Island City, and Jersey City — places with younger demographic profiles and proximity to the professional centers of the city.",
+        text: "That said, Jackson Heights is a family neighborhood as much as a singles neighborhood. It's more useful for cultural immersion than for actively meeting single people your own age. The South Asian singles who live in NYC and are actively looking to meet someone tend to be concentrated in Manhattan's east side, Astoria, Long Island City, and Jersey City, places with younger demographic profiles and proximity to the professional centers of the city.",
       },
       {
         type: "p",
-        text: "Jersey City specifically has become a significant hub. The South Asian population there has grown rapidly, and the #1 live dating show component of Garam Masala Dating runs monthly in Jersey City for exactly that reason. The audience is different from the Manhattan show in interesting ways — more suburban desi, more second-generation professionals who've made the migration across the Hudson.",
+        text: "Jersey City specifically has become a significant hub. The South Asian population there has grown rapidly, and the #1 live dating show component of Garam Masala Dating runs monthly in Jersey City for exactly that reason. The audience is different from the Manhattan show in interesting ways, more suburban desi, more second-generation professionals who've made the migration across the Hudson.",
       },
       {
         type: "h2",
@@ -429,7 +429,7 @@ export const eventsPosts: JournalPost[] = [
       },
       {
         type: "p",
-        text: "Two South Asian singles go on a blind date on stage in front of 250 people. Surbhi and Wyatt host. The date unfolds in real time. The audience watches everything. Then the mixer starts, and the room is already warm. I've seen people meet at our show who met on stage. I've seen people meet at our show who were both in the audience. The format works because it removes the worst part of in-person singles events — the cold start — and replaces it with a shared experience that gives everyone something to talk about.",
+        text: "Two South Asian singles go on a blind date on stage in front of 250 people. Surbhi and Wyatt host. The date unfolds in real time. The audience watches everything. Then the mixer starts, and the room is already warm. I've seen people meet at our show who met on stage. I've seen people meet at our show who were both in the audience. The format works because it removes the worst part of in-person singles events, the cold start, and replaces it with a shared experience that gives everyone something to talk about.",
       },
       {
         type: "p",
@@ -445,7 +445,7 @@ export const eventsPosts: JournalPost[] = [
     slug: "comedy-dating-show-unique-date-idea",
     title: "Why a Live Comedy Dating Show Is the Most Unique Date Idea in 2026",
     metaDescription:
-      "Looking for unique date ideas in 2026? The #1 live comedy dating show beats dinner and a movie — here's why 250-person blind dates make the best first date.",
+      "Looking for unique date ideas in 2026? The #1 live comedy dating show beats dinner and a movie, here's why 250-person blind dates make the best first date.",
     datePublished: "2026-05-27",
     dateModified: "2026-07-16",
     author: "Surbhi",
@@ -458,7 +458,7 @@ export const eventsPosts: JournalPost[] = [
       },
       {
         q: "Is a live dating show a good first date?",
-        a: "It's an excellent first date. A live show gives you something to watch together, react to together, and talk about before, during, and after. You learn how your date thinks about relationships, what makes them laugh, and how they handle awkward moments — all without either of you being the awkward one on stage. Much better than a dinner where you have to carry the conversation from zero.",
+        a: "It's an excellent first date. A live show gives you something to watch together, react to together, and talk about before, during, and after. You learn how your date thinks about relationships, what makes them laugh, and how they handle awkward moments, all without either of you being the awkward one on stage. Much better than a dinner where you have to carry the conversation from zero.",
       },
       {
         q: "What makes a good unique date idea?",
@@ -505,11 +505,11 @@ export const eventsPosts: JournalPost[] = [
       },
       {
         type: "p",
-        text: "When you go to Garam Masala Dating on a date, you're watching two other people be on a date. Two real South Asian singles, blind date, on stage, in front of 250 people. The hosts — Surbhi and Wyatt — run the date live. The audience watches everything in real time. Awkward moments, funny moments, the occasional moment where 250 people collectively hold their breath.",
+        text: "When you go to Garam Masala Dating on a date, you're watching two other people be on a date. Two real South Asian singles, blind date, on stage, in front of 250 people. The hosts, Surbhi and Wyatt, run the date live. The audience watches everything in real time. Awkward moments, funny moments, the occasional moment where 250 people collectively hold their breath.",
       },
       {
         type: "p",
-        text: "The effect on your own date is remarkable. You have a shared focal point that isn't each other. You laugh at the same moments. You cringe at the same moments. You form opinions and immediately want to share them with the person next to you. The conversation generates itself. You learn things about your date — what they think is funny, how they react to vulnerability, whether they're the kind of person who rooted for the couple on stage or found reasons to be critical — without either of you having to perform.",
+        text: "The effect on your own date is remarkable. You have a shared focal point that isn't each other. You laugh at the same moments. You cringe at the same moments. You form opinions and immediately want to share them with the person next to you. The conversation generates itself. You learn things about your date, what they think is funny, how they react to vulnerability, whether they're the kind of person who rooted for the couple on stage or found reasons to be critical, without either of you having to perform.",
       },
       {
         type: "p",

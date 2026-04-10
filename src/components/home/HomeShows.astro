@@ -63,7 +63,7 @@ const { events } = Astro.props;
             data-ph-city={event.city}
           >
             <div class="show-date-block">
-              {parseDay(event.date) !== "—" ? (
+              {parseDay(event.date) !== "" ? (
                 <>
                   <div class="month">{parseMonth(event.date)}</div>
                   <div class="day">{parseDay(event.date)}</div>

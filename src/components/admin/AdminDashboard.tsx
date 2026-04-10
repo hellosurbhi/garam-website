@@ -267,7 +267,7 @@ export default function AdminDashboard({ onLogout }: AdminDashboardProps) {
                 return (
                   <div key={event.isoDate} className={styles.prepRow}>
                     <span className={styles.prepEventLabel}>
-                      {event.date} — {event.city}
+                      {event.date}: {event.city}
                     </span>
                     <button
                       type="button"

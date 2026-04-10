@@ -1,8 +1,18 @@
 ---
-
+// Derive a readable page name from the current URL so every Spice List
+// submission is attributed to the page it came from (e.g. "home", "apply",
+// "cities-nyc"). The Spice List is rendered by BaseLayout on every page, so
+// this is the single source of truth for that attribution.
+const rawPath = Astro.url.pathname.replace(/^\/+|\/+$/g, "");
+const pageName = rawPath === "" ? "home" : rawPath.replace(/\//g, "-");
+const leadSource = `spice-list-${pageName}`;
 ---
 
-<section class="spicelist" aria-labelledby="spicelist-heading">
+<section
+  class="spicelist"
+  aria-labelledby="spicelist-heading"
+  data-lead-source={leadSource}
+>
   <h2 id="spicelist-heading" data-reveal>Join the Spice List</h2>
   <p data-reveal>
     Get exclusive discount codes for cheaper (and sometimes free) tickets.
@@ -79,6 +89,13 @@
   let savedEmail = "";
   let nlDocRef: DocumentReference | null = null;
 
+  // Per-page source set by the Astro frontmatter (e.g. "spice-list-home",
+  // "spice-list-apply"). Falls back to the bare component name only if the
+  // data attribute is missing, which should never happen in practice.
+  const leadSource =
+    document.querySelector<HTMLElement>(".spicelist[data-lead-source]")?.dataset
+      .leadSource ?? "spice-list";
+
   document
     .getElementById("nl-email-form")
     ?.addEventListener("submit", async (e) => {
@@ -92,7 +109,7 @@
       if (submitBtn) submitBtn.disabled = true;
       try {
         const db = getFirebaseDb();
-        const attribution = buildLeadAttribution({ source: "spice-list" });
+        const attribution = buildLeadAttribution({ source: leadSource });
         nlDocRef = await addDoc(collection(db, "leads"), {
           email: savedEmail,
           ...attribution,
@@ -150,7 +167,7 @@
         if (nlDocRef) {
           await updateDoc(nlDocRef, { phone: cleaned });
         } else {
-          const attribution = buildLeadAttribution({ source: "spice-list" });
+          const attribution = buildLeadAttribution({ source: leadSource });
           await addDoc(collection(db, "leads"), {
             email: savedEmail,
             phone: cleaned,
@@ -159,7 +176,7 @@
           });
         }
         trackLeadEvent("lead_phone_submitted", {
-          source: "spice-list",
+          source: leadSource,
           sourcePage: window.location.pathname,
         });
         document.getElementById("nl-step-2")?.setAttribute("hidden", "");

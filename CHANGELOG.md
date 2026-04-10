@@ -1,6 +1,161 @@
 # Changelog
 
-## polish: homepage detail pass — animations, tokens, focus parity (2026-04-10)
+## analytics(tickets-notify): attribute lead source per city, document geo behavior (2026-04-10)
+
+### What changed
+
+Follow-up to the spice-list per-page attribution. The "Notify Me" flow for TBA events on `/tickets` (`src/components/NotifyModal.astro`, rendered there as `<NotifyModal source="tickets-notify" />`) used to submit every lead with a flat `source: "tickets-notify"`. Every city collapsed into one bucket even though the user had explicitly selected a city inside the modal, and `sourceCitySlug` (which already exists on the `LeadAttribution` type in `src/lib/leadAttribution.ts`) was never passed.
+
+Now the source is composed per-city: `tickets-notify-<citySlug>` (e.g. `tickets-notify-manhattan`, `tickets-notify-san-diego`), and the same slug is forwarded as `sourceCitySlug` so both the flat source field and the dedicated slug field agree. The slug is taken from `EventEntry.citySlug` in `src/data/events.ts`, piped through a new `data-notify-city-slug` attribute on the TBA notify button, stashed in a hidden input when the modal opens, and read by both the email and phone submit handlers at send time.
+
+Two small helpers landed inside the existing hoisted `<script>` in `NotifyModal.astro`:
+
+- `toCitySlug(value)`: client-side fallback slugifier (lowercase, strip non-word, collapse whitespace into dashes, collapse repeat dashes) used only when a trigger button forgot to set `data-notify-city-slug`. Guarantees no future event ever writes a flat `tickets-notify` source.
+- `composeSource(slug)`: returns `${baseSource}-${slug}` when slug is non-empty, falls back to `baseSource` otherwise.
+
+The existing `const source = ...` in the modal script was renamed to `const baseSource = ...` so the distinction between the component-level prefix and the per-city composed value is obvious at every call site. Both submit handlers and the `notify_modal_opened` `trackLeadEvent` call now use `composeSource(citySlug)` consistently, and `trackLeadEvent("lead_phone_submitted", ...)` also carries the new `sourceCitySlug` field so PostHog sees the same shape as Firestore.
+
+### Why the Firestore doc looked "sparse" on localhost
+
+The work was triggered by a question: after submitting a tickets-notify from `/tickets` on the dev server, the Firestore `leads` doc only contained `city`, `createdAt`, `email`, `landingPage`, `posthogDistinctId`, `referrerHost`, `source`, `sourcePage`. No `geoCity` / `geoRegion` / `geoCountry` / `geoLatitude` / `geoLongitude` / `geoTimezone`. That is the expected behavior: `src/pages/api/geo.ts` reads Vercel's `x-vercel-ip-*` headers which only exist on the Vercel edge in production. On the local Astro dev server those headers are absent, `/api/geo` returns an object full of `undefined`, `bootstrapGeoData()` in `src/lib/leadAttribution.ts` only writes a sessionStorage key when the corresponding field is truthy, and `buildLeadAttribution` only appends a geo field to the attribution when its sessionStorage key exists. Net result: localhost will never produce `geo*` fields on lead docs, period. Testing on a deployed preview URL will populate all six.
+
+### Files affected
+
+- `src/pages/tickets.astro`: added `data-notify-city-slug={event.citySlug}` on the TBA "Notify Me" button. Astro omits the attribute automatically when `citySlug` is undefined, so events missing a slug fall through to the runtime slugification path.
+- `src/components/NotifyModal.astro`: added `<input type="hidden" id="notify-city-slug" />` alongside the existing `notify-city` input, added `toCitySlug` / `composeSource` helpers, renamed `source` to `baseSource`, threaded `citySlug` and `finalSource` through the email submit handler, phone submit fallback branch, and both `trackLeadEvent` calls (`notify_modal_opened` and `lead_phone_submitted`). Also forwarded `sourceCitySlug: citySlug || undefined` to `buildLeadAttribution` in both submit paths so the dedicated attribution field is populated.
+- `ENHANCEMENTS.md`: new `## Lead Attribution Follow-ups (2026-04-10)` section with two deferred backlog items, both with full implementation steps, code snippets, and file lists so a future session can execute them without re-researching. The items are: (1) the geo fetch race condition in `bootstrapGeoData()` (fire-and-forget, can lose geo fields on fast submits), and (2) a dev-mode fallback for `/api/geo` so localhost lead docs stop looking sparse.
+
+### Decisions and trade-offs
+
+- **Why keep the `source="tickets-notify"` prop on `<NotifyModal>` instead of dropping it?** The modal is a generic, reusable component. Keeping the component-level base as a prefix means a future caller (e.g. a city page "notify me" card) can pass `source="city-notify"` and automatically get `city-notify-<slug>` without changing any shared code. The prefix is the component's identity; the slug is the per-instance detail.
+- **Why stash the slug in a hidden input instead of a module-level variable or data attribute on the dialog?** Two reasons. First, it keeps the data-flow parallel to the existing `notify-city` display-name hidden input, so the submit handlers read both pieces of state from the same place. Second, a `<dialog>` element can be re-opened for a different city without a full remount, so persisting via DOM (not closure state) avoids subtle bugs where a stale slug from a previous open would leak into the next submission.
+- **Why client-side slugification as a fallback instead of requiring every event to have `citySlug`?** The type in `src/data/events.ts` already marks `citySlug` as optional, and I did not want this change to also become a data-model enforcement change. The fallback guarantees analytics never regress to a flat source string even if a future event is added in a hurry without the slug. When the slug is present it wins, so production events keep their curated slugs (`manhattan`, `san-diego`) rather than getting re-derived into less readable ones.
+- **Why defer the geo race condition and dev fallback to `ENHANCEMENTS.md` instead of bundling them?** The race-condition fix converts `buildLeadAttribution` to `async` and touches every lead form on the site plus the Vitest suite; that is a cross-cutting atomic change that deserves its own PR and its own commit boundary. The dev-mode `/api/geo` fallback is a developer-experience nicety, not a production bug. Bundling either with the per-city source fix would muddy the commit and make `git blame` harder. Both are captured in `ENHANCEMENTS.md` with full implementation instructions so no research gets repeated.
+- **Why `citySlug || undefined` when forwarding to `buildLeadAttribution`?** `buildLeadAttribution` uses `if (params.sourceCitySlug)` before attaching the field to the attribution payload, so passing an empty string would already be harmless. Passing `undefined` explicitly makes the intent obvious at the call site and keeps the Firestore doc clean (no empty-string `sourceCitySlug` field).
+
+## analytics(spice-list): attribute lead source per page the form was submitted from (2026-04-10)
+
+### What changed
+
+The Spice List signup (`src/components/home/HomeSignup.astro`) is rendered by `BaseLayout.astro` on every page, so it is effectively a shared/common component. Previously every submission was attributed with a single static `source: "spice-list"`, which meant Firestore `leads` records and PostHog `lead_email_submitted` / `lead_phone_submitted` events could not distinguish a homepage signup from an apply-page signup or a city-page signup. `sourcePage` already captured `window.location.pathname`, but the flat `source` field was what most of the downstream filters and funnels keyed off, so the page-level signal was effectively lost.
+
+Now the component computes a page name at build time from `Astro.url.pathname` and produces a per-page source string in the form `spice-list-<pageName>`:
+
+- `/` becomes `spice-list-home`
+- `/apply` becomes `spice-list-apply`
+- `/tickets` becomes `spice-list-tickets`
+- `/cities/nyc` becomes `spice-list-cities-nyc`
+- `/journal/bollywood` becomes `spice-list-journal-bollywood`
+
+The derived value is written into a `data-lead-source` attribute on the `.spicelist` section element. The hoisted `<script>` reads that attribute once at module init and passes it into every `buildLeadAttribution({ source })` call and the `trackLeadEvent("lead_phone_submitted", { source })` call, replacing the three hardcoded `"spice-list"` literals.
+
+### Files affected
+
+- `src/components/home/HomeSignup.astro`: added frontmatter that derives `pageName` from `Astro.url.pathname` (strip leading/trailing slashes, replace internal `/` with `-`, fall back to `"home"` for root), composes `leadSource = \`spice-list-${pageName}\``, renders it as `data-lead-source`on the`.spicelist`section, and reads it in the script via`document.querySelector<HTMLElement>(".spicelist[data-lead-source]")?.dataset.leadSource`. Replaced three hardcoded `source: "spice-list"`references in the email submit, phone submit, and phone-tracking paths with`leadSource`.
+
+### Decisions and trade-offs
+
+- **Why compute in Astro frontmatter instead of deriving in the client script?** The page name is known at build time for every static page, so computing it once in Astro gives us a stable identifier that matches the rendered URL, is not affected by client-side history/SPA transitions, and lives alongside the markup it describes. Deriving from `window.location.pathname` in the script would work too but would duplicate normalization logic that Astro already handles via `Astro.url`.
+- **Why a `data-*` attribute instead of a prop on the component?** Astro `<script>` tags are hoisted module scripts and cannot directly consume component props. The DOM data attribute is the canonical bridge from the server-rendered markup to the client script, and `.dataset.leadSource` gives us type-safe access without any JSON parsing or window globals.
+- **Why `spice-list-<pageName>` instead of a new `sourcePageName` field?** The downstream analytics filters and Firestore queries already key off `source` as the primary dimension. Keeping the `spice-list-` prefix means existing `source STARTS WITH "spice-list"` queries still work, while appending the page name gives the per-page granularity we need without adding a new field that every consumer has to learn about.
+- **Why join multi-segment paths with `-` (e.g. `cities-nyc`) instead of only the first segment?** A city landing page and the `/cities` index would otherwise collapse into the same source. Full-path-dash gives each unique URL a unique source string, and `sourceCitySlug` / `sourcePage` in the attribution payload remain available for finer slicing when needed.
+- **Fallback to the bare `"spice-list"` string if the data attribute is missing.** Defensive only; the attribute is always rendered. Kept as a safety net so a future refactor of the markup cannot silently break lead attribution by dropping submissions on the floor.
+
+## fix(apply): unbreak the apply form (skeleton stuck, page-wide back-click bug) (2026-04-10)
+
+### What changed
+
+Two fixes that made the apply page completely broken for users.
+
+**Bug 1: Static skeleton never hides, real form never shows.**
+
+Commit 4f28eaf added a static HTML skeleton to prevent footer flash on load, with a CSS rule meant to hide it once React mounts:
+
+```css
+.apply-main:has([data-apply-root]) .apply-skeleton {
+  display: none;
+}
+```
+
+The problem: Astro 6 auto-scopes every compound selector inside `<style>` blocks by appending a `data-astro-cid-*` attribute requirement. The `[data-apply-root]` element is rendered by React inside `<astro-island>`, so it never receives the scope attribute. The `:has()` check could never match, and the skeleton stayed visible forever. Users saw the "About You" header, empty field boxes, and non-interactive `<span>` pills ("For myself" / "For a friend") with no working form.
+
+Fix: moved that one rule into a `<style is:global>` block at the top of `src/pages/apply.astro`. Global rules skip Astro's scoping pass, so both `.apply-main`, `.apply-skeleton`, and `[data-apply-root]` resolve against the real DOM regardless of where they were rendered. The rest of the skeleton styles stay scoped.
+
+**Bug 2: Clicking anywhere on the apply page sent users backward in history.**
+
+`src/components/ApplyPage.tsx` had `onClick={() => window.history.back()}` on the root `.page` div, with `e.stopPropagation()` on the inner `.container` as a containment hack. Any click that landed on padding, margin, or the area around the 640px-wide form triggered a back navigation. This was a pre-existing click-outside-to-dismiss pattern that does not belong on a form page. Removed both handlers. The explicit "Back" button in the header is the correct way to navigate back.
+
+### Files affected
+
+- `src/pages/apply.astro`: added `<style is:global>` block for the `.apply-main:has([data-apply-root]) .apply-skeleton` hide rule; removed the same rule from the scoped `<style>` block.
+- `src/components/ApplyPage.tsx`: removed `onClick={() => window.history.back()}` from the root `.page` div and the now-unnecessary `onClick={(e) => e.stopPropagation()}` from the `.container` div.
+
+### Decisions and trade-offs
+
+- **Why `<style is:global>` instead of `:global(...)` per-selector?** Astro supports both, but a dedicated global block for the one rule is more explicit about intent. Future readers immediately see "this rule bridges scoped and unscoped DOM" without having to know `:global()` syntax. The class names `.apply-main` and `.apply-skeleton` are unique to this file, so there is no cross-file leakage risk.
+- **Why remove `onClick={window.history.back}` entirely instead of scoping it?** There is no defensible reason for a form page to behave like a dismissable modal. The explicit "Back" button already exists and is the correct affordance. Click-outside-to-dismiss belongs on lightboxes and modals, not on multi-field forms where the user is mid-input.
+- **The ErrorBoundary fallback (`src/components/ErrorBoundary.tsx`) does not render `[data-apply-root]`.** If React mounts and then throws, the skeleton will still be visible underneath the error UI. This is not actively broken (the error UI overlays correctly), but could be cleaned up later by adding `data-apply-root` to the fallback wrapper.
+
+## content: purge all em dashes, en dashes, and double dashes from user-facing content (2026-04-10)
+
+### What changed
+
+Removed every em dash (—), en dash (–), and double dash (--) from user-facing content across the entire site. Em dashes are a dead giveaway for AI-generated content and Surbhi flagged them as "seeing em dashes everywhere." The only acceptable dash is a hyphen that is literally part of a compound word (e.g., `mobile-first`, `stand-up`, `co-host`).
+
+**Replacement rules applied:**
+
+- Em dash (—) in prose → comma, period, or colon depending on context
+- Em dash (—) in titles (`Title — Subtitle`) → colon (`Title: Subtitle`) or pipe (`Title | Subtitle`) for schema names
+- En dash (–) in numeric/price/time ranges → the word "to" (e.g., `20–30 seconds` → `20 to 30 seconds`, `$50k–$100k` → `$50k to $100k`)
+- Attribution format (`\n— Author`) → bare author line
+
+**Files changed (user-facing only; code comments deliberately untouched):**
+
+- `src/data/copy.ts`: OG image alt text
+- `src/data/journal/arranged-marriage.ts`, `bollywood.ts`, `caste-class.ts`, `community-deep-dives.ts`, `dating-culture.ts`, `entertainment.ts`, `events.ts`, `identity.ts`, `toxic-patterns.ts`: ~780 em dashes replaced with commas via bulk `sed` (all space-surrounded em dashes) plus en dashes in section headings (`Month 0–1` → `Month 0 to 1`, `Problems 1–5` → `Problems 1 to 5`).
+- `src/components/ContestantPrepPage.tsx`: 9 em dashes across list items, arrival instructions, and inline prose; plus 2 en dashes in `20–30 seconds` / `30–60 second` ranges.
+- `src/components/ApplyPage.tsx`: `Failed to load places — tap to retry` → `Failed to load places. Tap to retry.`
+- `src/components/admin/AdminDashboard.tsx`: `{event.date} — {event.city}` → `{event.date}: {event.city}` in prep-row label.
+- `src/components/admin/ApplicantModal.tsx`: `"—"` placeholder for empty timestamp → `"N/A"`.
+- `src/components/home/HomeShows.astro`: `parseDay(event.date) !== "—"` → `parseDay(event.date) !== ""` to match the new sentinel value.
+- `src/components/layout/PageNav.astro`: logo `aria-label="Garam Masala Dating — Home"` → `aria-label="Garam Masala Dating: Home"`.
+- `src/utils/eventDate.ts`: `parseMonth()` and `parseDay()` return `""` instead of `"—"` for TBA/unparseable dates. Doc comments updated.
+- `src/pages/hosts.astro`: page title, bio prose (`scene — a space`, `the show — and counting`, `best house party — except`), and credit spans (`Actor — ESPN+` → `Actor: ESPN+`).
+- `src/pages/journal/index.astro`: empty-state message (`New essays coming soon — follow us` → `New essays coming soon. Follow us`).
+- `src/pages/journal/[slug].astro`: mid-article CTA sentence (`for South Asian singles — weekly in NYC` → `for South Asian singles, weekly in NYC`).
+- `src/pages/cities/[slug].astro`: hero ticket CTA `{event.date} — Get Tickets` → `{event.date}: Get Tickets`.
+- `src/pages/corporate.astro`: JSON-LD service name `Private & Corporate Show — Garam Masala Dating` → `... | Garam Masala Dating`.
+- `src/pages/sponsorship.astro`: JSON-LD service name `Brand Sponsorship — Garam Masala Dating` → `... | Garam Masala Dating`.
+- `src/pages/llms.txt.ts`: upcoming-events list format string.
+- `src/pages/llms-full.txt.ts`: testimonial attribution (`\n— ${author}` → `\n${author}`), every heading em dash (`## The Experience — Step by Step` → `## The Experience: Step by Step`, `### Surbhi — Co-Creator & Host` → `: Co-Creator & Host`, etc.), bio prose in embedded Surbhi/Wyatt bios, pressLine template, and the `22–40 age range` en dash.
+- `src/lib/constants.ts`: video title `Garam Masala Dating — NYC's #1 Live...` → `Garam Masala Dating: NYC's #1 Live...`.
+- `src/types/application.ts`: `INCOME_OPTIONS` en dashes (`$50k–$100k` etc.) → `$50k to $100k` etc.
+
+**Also updated:**
+
+- `CLAUDE.md`: Added the no-dashes rule to the "Never do" list as a non-negotiable. Also replaced every em dash in CLAUDE.md itself (most in the "Aesthetic choices" and "Never do" / "Environment variables" sections) with colons, because the file was dogfooding exactly the pattern being banned.
+- `MEMORY.md`: Added a pointer to the new `feedback_no_dashes.md` entry. Replaced existing em dashes in the index with colons.
+- Auto-memory: Created `feedback_no_dashes.md` with the full rule, replacement guidance, scope exceptions, and reasoning.
+
+### Why
+
+Em dashes are the single most obvious giveaway that copy was written or auto-polished by an LLM. Surbhi is going full-time with the show in 2026 and wants the voice on the site to read as distinctly human. Scrubbing every em/en dash in one sweep prevents drift and gives future sessions a codified rule to follow.
+
+### Out of scope
+
+- **Code comments and JSDoc blocks**: em dashes inside `//`, `/* */`, `/** */`, and HTML `<!-- -->` comments are untouched. They are never rendered to users and cleaning them adds noise to an already large diff.
+- **Box-drawing characters** (`──`, U+2500) in section-separator comments: distinct from em dash (U+2014), left alone.
+- **Test descriptions** inside `describe()` / `it()` strings: dev-only output, not user-facing.
+- **En dashes in `.ts` test fixtures**: same reason.
+
+### Decisions and trade-offs
+
+- **Bulk sed vs. case-by-case edits for journal articles**: journal files contain ~780 prose em dashes. Replacing `" — "` (space em dash space) with `", "` as a bulk substitution produced grammatically sound results in every spot-checked case, because all em dashes in those files were mid-sentence parentheticals. Hand-editing 780 instances would have been slower and no better.
+- **Colon vs. pipe for JSON-LD service names**: used `|` for schema.org service names (`Private & Corporate Show | Garam Masala Dating`) to match SEO title convention, and `:` elsewhere for prose-style titles.
+- **"N/A" vs. blank for ApplicantModal placeholder**: chose `"N/A"` because the admin table column needs a visible value and blank would collapse the row height.
+- **`parseDay`/`parseMonth` returning `""` instead of `"—"`**: the sentinel value is an implementation detail. Switching to empty string is the cleanest fix since it lets the existing TBA fallback branch in `HomeShows.astro` handle the empty case without a magic em-dash literal.
+
+## polish: homepage detail pass: animations, tokens, focus parity (2026-04-10)
 
 ### What changed
 

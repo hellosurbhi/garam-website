@@ -1,21 +1,97 @@
 ---
-import { STATS as stats } from '@/data/copy';
+import { STATS as stats } from "@/data/copy";
 ---
 
 <section class="stats" aria-label="Show statistics" data-reveal>
-  <img class="stats-bg" src="/images/promo/testimonial-reaction.webp" alt="" width="800" height="1200" loading="lazy" aria-hidden="true" />
+  <img
+    class="stats-bg"
+    src="/images/promo/testimonial-reaction.webp"
+    alt=""
+    width="800"
+    height="1200"
+    loading="lazy"
+    aria-hidden="true"
+  />
   <div class="stats-inner">
     <h2>The Numbers Don't Lie</h2>
     <div class="stats-grid">
-      {stats.map((stat) => (
-        <div class="stat-item">
-          <div class="stat-num">{stat.num}</div>
-          <div class="stat-label">{stat.label}</div>
-        </div>
-      ))}
+      {
+        stats.map((stat) => (
+          <div class="stat-item">
+            <div class="stat-num" data-countup={stat.num}>
+              {stat.num}
+            </div>
+            <div class="stat-label">{stat.label}</div>
+          </div>
+        ))
+      }
     </div>
   </div>
 </section>
+
+<script>
+  // Count-up animation triggered when the stats section enters viewport.
+  // Parses each .stat-num's text into a numeric target + suffix (e.g.
+  // "2K+" → 2 with "K+"), then runs a rAF easeOutCubic tween over 1500ms.
+  // Native static text is the SSR fallback; JS only replaces on scroll-in.
+  const prefersReducedMotion = window.matchMedia(
+    "(prefers-reduced-motion: reduce)",
+  ).matches;
+
+  if (!prefersReducedMotion && "IntersectionObserver" in window) {
+    const nums = document.querySelectorAll<HTMLElement>(
+      ".stat-num[data-countup]",
+    );
+    if (nums.length === 0) {
+      // nothing to animate
+    } else {
+      const parse = (raw: string): { target: number; suffix: string } => {
+        const match = raw.match(/^(\d+)(.*)$/);
+        if (!match) return { target: 0, suffix: raw };
+        return { target: parseInt(match[1], 10), suffix: match[2] };
+      };
+
+      const easeOutCubic = (t: number): number => 1 - Math.pow(1 - t, 3);
+
+      const animate = (el: HTMLElement): void => {
+        const raw = el.dataset.countup ?? el.textContent ?? "0";
+        const { target, suffix } = parse(raw);
+        if (target === 0) {
+          el.textContent = raw;
+          return;
+        }
+        const duration = 1500;
+        const start = performance.now();
+        const tick = (now: number): void => {
+          const elapsed = now - start;
+          const progress = Math.min(elapsed / duration, 1);
+          const value = Math.round(target * easeOutCubic(progress));
+          el.textContent = value + suffix;
+          if (progress < 1) {
+            requestAnimationFrame(tick);
+          }
+        };
+        el.textContent = "0" + suffix;
+        requestAnimationFrame(tick);
+      };
+
+      const observer = new IntersectionObserver(
+        (entries) => {
+          entries.forEach((entry) => {
+            if (entry.isIntersecting) {
+              nums.forEach(animate);
+              observer.disconnect();
+            }
+          });
+        },
+        { threshold: 0.4 },
+      );
+
+      const section = document.querySelector(".stats");
+      if (section) observer.observe(section);
+    }
+  }
+</script>
 
 <style>
   .stats {
@@ -54,7 +130,9 @@ import { STATS as stats } from '@/data/copy';
     font-weight: 900;
     color: white;
     margin-bottom: 48px;
-    text-shadow: 0 2px 16px rgba(0, 0, 0, 0.7), 0 0 40px rgba(0, 0, 0, 0.3);
+    text-shadow:
+      0 2px 16px rgba(0, 0, 0, 0.7),
+      0 0 40px rgba(0, 0, 0, 0.3);
   }
   .stats-grid {
     display: flex;
@@ -86,16 +164,29 @@ import { STATS as stats } from '@/data/copy';
   }
 
   @media (min-width: 768px) {
-    .stats { padding: 100px 48px; }
-    .stats h2 { margin-bottom: 64px; }
-    .stats-grid { flex-wrap: nowrap; gap: 0; }
+    .stats {
+      padding: 100px 48px;
+    }
+    .stats h2 {
+      margin-bottom: 64px;
+    }
+    .stats-grid {
+      flex-wrap: nowrap;
+      gap: 0;
+    }
     .stat-item {
       flex: 1;
       padding: 0 40px;
       border-right: 1px solid rgba(255, 255, 255, 0.2);
     }
-    .stat-item:last-child { border-right: none; }
-    .stat-num { font-size: 72px; }
-    .stat-label { font-size: 13px; }
+    .stat-item:last-child {
+      border-right: none;
+    }
+    .stat-num {
+      font-size: 72px;
+    }
+    .stat-label {
+      font-size: 13px;
+    }
   }
 </style>

@@ -887,3 +887,161 @@ When we start actually texting international numbers (via Twilio/MessageBird/etc
 - No confirmed international show dates
 - The npm package adds bundle weight to every page with a phone field
 - Current approach (accept anything, clean up later) is good enough for lead capture
+
+---
+
+# From PR #12 — Site Rewrite
+
+## aria-describedby + role="alert" missing on form inputs (LeadCaptureModal)
+
+- **File:** `src/components/LeadCaptureModal.astro`
+- **Source:** CodeRabbit PR #12
+- **Comment:** Inputs don't reference their error elements via `aria-describedby`, and error nodes lack `role="alert"`. Screen-reader users won't reliably get field-level validation feedback.
+- **Link:** https://github.com/hellosurbhi/garam-website/pull/12#discussion_r3054383973
+
+## SpiceListSection copy should be in src/data
+
+- **File:** `src/components/SpiceListSection.astro`
+- **Source:** CodeRabbit PR #12
+- **Comment:** Section label, CTA text, and modal copy are hardcoded in JSX. Since this component renders site-wide, copy should live in `src/data/copy.ts` to avoid drift.
+- **Link:** https://github.com/hellosurbhi/garam-website/pull/12#discussion_r3054383984
+
+## Modal without title has no accessible name
+
+- **File:** `src/components/ui/Modal.astro:34`
+- **Source:** CodeRabbit PR #12
+- **Comment:** When `title` is omitted, the dialog renders without `aria-labelledby` or `aria-label`, making it unlabeled for assistive tech. A fallback accessible label prop should be enforced.
+- **Link:** https://github.com/hellosurbhi/garam-website/pull/12#discussion_r3054383986
+
+## aria-label="Close" hardcoded in Modal.astro
+
+- **File:** `src/components/ui/Modal.astro:36`
+- **Source:** CodeRabbit PR #12
+- **Comment:** The close button aria-label is user-facing copy hardcoded in the component. Should be sourced from `src/data/copy.ts` per project content guidelines.
+- **Link:** https://github.com/hellosurbhi/garam-website/pull/12#discussion_r3054383993
+
+## Journal CTA font sizes below 16px and missing touch targets
+
+- **File:** `src/pages/journal/[slug].astro`
+- **Source:** CodeRabbit PR #12
+- **Comment:** CTA styles at line 470 set 15px inherited by CTA links (line 475), below the 16px minimum for interactive elements. Inline text links also unlikely to meet 48x48 touch-target requirement.
+- **Link:** https://github.com/hellosurbhi/garam-website/pull/12#discussion_r3054384016
+
+## Inline style={} in journal slug.astro
+
+- **File:** `src/pages/journal/[slug].astro`
+- **Source:** CodeRabbit PR #12
+- **Comment:** Lines 140 and 153 use inline `style={...}` in an Astro file. Should be moved to named CSS classes in the `<style>` block.
+- **Link:** https://github.com/hellosurbhi/garam-website/pull/12#discussion_r3054384021
+
+## CTA animation via inline style in links.astro
+
+- **File:** `src/pages/links.astro`
+- **Source:** CodeRabbit PR #12
+- **Comment:** Animation variant/delay is applied via inline `style={...}` prop. Should use a CSS class or data attribute in the scoped stylesheet instead.
+- **Link:** https://github.com/hellosurbhi/garam-website/pull/12#discussion_r3054384025
+
+## Hardcoded colors and spacing in reactSelectStyles.ts
+
+- **File:** `src/utils/reactSelectStyles.ts:123`
+- **Source:** CodeRabbit PR #12
+- **Comment:** Style maps include hardcoded literals (`#fff`, `rgba(...)`, `12px`, `100px`). Replace with CSS custom properties from `:root` to align with the design token system.
+- **Link:** https://github.com/hellosurbhi/garam-website/pull/12#discussion_r3054384030
+
+## `modalIn` keyframe name trips Stylelint in ApplicantModal.module.css
+
+- **File:** `src/components/admin/ApplicantModal.module.css:20`
+- **Source:** CodeRabbit PR #12
+- **Comment:** `modalIn` should be renamed to kebab-case (e.g., `modal-in`) to pass the repo's `keyframes-name-pattern` Stylelint rule.
+- **Link:** https://github.com/hellosurbhi/garam-website/pull/12#discussion_r3061086433
+
+## Focus ring hardcodes #fff in ApplicantModal.module.css
+
+- **File:** `src/components/admin/ApplicantModal.module.css:91`
+- **Source:** CodeRabbit PR #12
+- **Comment:** The focus ring uses hardcoded `#fff` instead of `var(--off-white)` or a dedicated modal focus token.
+- **Link:** https://github.com/hellosurbhi/garam-website/pull/12#discussion_r3061086442
+
+## Raw colors instead of tokens in TermsModal.module.css
+
+- **File:** `src/components/apply/TermsModal.module.css:16`
+- **Source:** CodeRabbit PR #12
+- **Comment:** `white` and several `rgba(...)` values are hardcoded. Most can use existing root tokens (`--off-white`, `--border`, `--hover-subtle`) or a small addition to `modal-tokens.css`.
+- **Link:** https://github.com/hellosurbhi/garam-website/pull/12#discussion_r3061086447
+
+## `modalIn` keyframe name trips Stylelint in TermsModal.module.css
+
+- **File:** `src/components/apply/TermsModal.module.css:27`
+- **Source:** CodeRabbit PR #12
+- **Comment:** Same as ApplicantModal — rename `modalIn` to kebab-case to satisfy the `keyframes-name-pattern` Stylelint rule.
+- **Link:** https://github.com/hellosurbhi/garam-website/pull/12#discussion_r3061086453
+
+## Button font sizes at 15px in TermsModal.module.css
+
+- **File:** `src/components/apply/TermsModal.module.css:133`
+- **Source:** CodeRabbit PR #12
+- **Comment:** `.agreeBtn` and `.dismissBtn` are styled at `15px`, below the repo's 16px minimum for interactive elements (iOS auto-zoom prevention).
+- **Link:** https://github.com/hellosurbhi/garam-website/pull/12#discussion_r3061086458
+
+## TermsModal.tsx agreement copy should be in src/data
+
+- **File:** `src/components/apply/TermsModal.tsx:292`
+- **Source:** CodeRabbit PR #12
+- **Comment:** Full agreement text, section titles, and button copy are hardcoded in JSX, pushing the file past the 150-line limit. Should be a structured `src/data` export to keep TermsModal as a small renderer.
+- **Link:** https://github.com/hellosurbhi/garam-website/pull/12#discussion_r3061086463
+
+## ApplyPage subtitle hardcoded
+
+- **File:** `src/components/ApplyPage.tsx:41`
+- **Source:** CodeRabbit PR #12
+- **Comment:** The "#1" marketing subtitle is hardcoded in the component. Should live in `src/data/copy.ts` to have a single source of truth.
+- **Link:** https://github.com/hellosurbhi/garam-website/pull/12#discussion_r3061086466
+
+## LeadCaptureModal fallback copy hardcoded
+
+- **File:** `src/components/LeadCaptureModal.astro:47`
+- **Source:** CodeRabbit PR #12
+- **Comment:** Default heading, subheading, and other user-facing fallback copy are inline in the component. Should be imported from `src/data/` to maintain the content/data boundary.
+- **Link:** https://github.com/hellosurbhi/garam-website/pull/12#discussion_r3061086467
+
+## Unqualified "#1" claims in city data files
+
+- **File:** `src/data/cities/international-other.ts:11`, `src/data/cities/southeast-asia.ts:9`
+- **Source:** CodeRabbit PR #12
+- **Comment:** Unqualified "#1" assertions without a verifiable qualifier/source can create advertising/legal risk. Consider adding a qualifier like "NYC's #1 live comedy dating show" or linking to a citation.
+- **Link:** https://github.com/hellosurbhi/garam-website/pull/12#discussion_r3061086468
+
+## HomeSignup in BaseLayout should be opt-in per page
+
+- **File:** `src/layouts/BaseLayout.astro:101`
+- **Source:** CodeRabbit PR #12
+- **Comment:** `HomeSignup` renders on nearly every page unless explicitly opted out, adding extra JS to static content pages. Consider moving to per-page composition rather than opt-out.
+- **Link:** https://github.com/hellosurbhi/garam-website/pull/12#discussion_r3061086474
+
+## "See live" links below 16px and missing touch targets on hosts.astro
+
+- **File:** `src/pages/hosts.astro:112`
+- **Source:** CodeRabbit PR #12
+- **Comment:** New "See ... live" CTAs render at `15px` without a reliable 48x48 hit area. Should use `inline-flex` with `var(--touch-target)` sizing and 16px text.
+- **Link:** https://github.com/hellosurbhi/garam-website/pull/12#discussion_r3061086477
+
+## City-request button text below 16px on tickets.astro
+
+- **File:** `src/pages/tickets.astro:530`
+- **Source:** CodeRabbit PR #12
+- **Comment:** The "Tell Us Where You Are" button is styled at `15px`, below the minimum for interactive elements. Bump to 16px.
+- **Link:** https://github.com/hellosurbhi/garam-website/pull/12#discussion_r3061086483
+
+## HomeStats section heading hardcoded
+
+- **File:** `src/components/home/HomeStats.astro:16`
+- **Source:** CodeRabbit PR #12
+- **Comment:** "The Numbers Don't Lie" heading is hardcoded. Should be moved to `src/data/copy.ts` per project content guidelines.
+- **Link:** https://github.com/hellosurbhi/garam-website/pull/12#discussion_r3063506915
+
+## Logo nav link tap target below 48px
+
+- **File:** `src/components/layout/PageNav.astro:9`
+- **Source:** CodeRabbit PR #12
+- **Comment:** The logo link's effective mobile hit area is ~28px tall, below the 48px minimum touch-target requirement.
+- **Link:** https://github.com/hellosurbhi/garam-website/pull/12#discussion_r3063506921

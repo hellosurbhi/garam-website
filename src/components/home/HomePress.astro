@@ -1,15 +1,26 @@
 ---
-import { pressItems } from '@/data/press';
+import { pressItems } from "@/data/press";
 ---
 
 <section class="press" aria-label="Press coverage" data-reveal>
   <div class="press-label">As Seen In</div>
   <div class="press-logos">
-    {pressItems.map((item) => (
-      item.url
-        ? <a href={item.url} target="_blank" rel="noopener noreferrer" class="press-name">{item.source}</a>
-        : <span class="press-name press-name--coming-soon">{item.source}</span>
-    ))}
+    {
+      pressItems.map((item) =>
+        item.url ? (
+          <a
+            href={item.url}
+            target="_blank"
+            rel="noopener noreferrer"
+            class="press-name"
+          >
+            {item.source}
+          </a>
+        ) : (
+          <span class="press-name press-name--coming-soon">{item.source}</span>
+        ),
+      )
+    }
   </div>
 </section>
 
@@ -45,16 +56,27 @@ import { pressItems } from '@/data/press';
     text-decoration: none;
     transition: color 0.2s;
   }
-  .press-name:hover { color: var(--brand-red); }
+  .press-name:hover,
+  .press-name:focus-visible {
+    color: var(--brand-red);
+  }
   .press-name--coming-soon {
     opacity: 0.4;
     cursor: default;
   }
 
   @media (min-width: 768px) {
-    .press { padding: 48px 48px; }
-    .press-logos { gap: 52px; }
-    .press-name { font-size: 19px; }
-    .press-label { margin-bottom: 36px; }
+    .press {
+      padding: 48px 48px;
+    }
+    .press-logos {
+      gap: 52px;
+    }
+    .press-name {
+      font-size: 19px;
+    }
+    .press-label {
+      margin-bottom: 36px;
+    }
   }
 </style>

@@ -303,21 +303,77 @@ const speakableJsonLd = JSON.stringify({
 
   // Email popup logic — only suppressed permanently after email submit
   const POPUP_KEY = "gmd-popup-subscribed";
+  // Separate key for dismiss cooldown — stores the timestamp of last dismiss.
+  // Does not suppress forever; user will see the popup again after 7 days.
+  const POPUP_DISMISS_KEY = "gmd-popup-dismissed";
+  const DISMISS_DURATION_MS = 7 * 24 * 60 * 60 * 1000;
+  // Popup won't fire until user has been on the page for at least this long,
+  // regardless of how quickly they scroll or move the cursor to exit.
+  const MIN_SESSION_MS = 15_000;
+
   const popup = document.getElementById("email-popup") as HTMLDialogElement;
 
   if (popup && !localStorage.getItem(POPUP_KEY)) {
-    const timer = setTimeout(() => {
-      if (!document.querySelector("dialog[open]")) {
-        trackLeadEvent("popup_opened", {
-          source: "popup",
-          sourcePage: window.location.pathname,
-        });
-        popup.showModal();
-      }
-    }, 30000);
+    const sessionStart = Date.now();
+    let popupShown = false;
 
-    const close = () => {
-      clearTimeout(timer);
+    function canShowPopup(): boolean {
+      const dismissed = localStorage.getItem(POPUP_DISMISS_KEY);
+      if (dismissed && Date.now() - Number(dismissed) < DISMISS_DURATION_MS)
+        return false;
+      return true;
+    }
+
+    function tryShowPopup(): void {
+      if (popupShown) return;
+      if (!canShowPopup()) return;
+      if (Date.now() - sessionStart < MIN_SESSION_MS) return;
+      if (document.querySelector("dialog[open]")) return;
+      popupShown = true;
+      trackLeadEvent("popup_opened", {
+        source: "popup",
+        sourcePage: window.location.pathname,
+      });
+      popup.showModal();
+    }
+
+    // Exit-intent trigger (desktop only) — fires when cursor leaves through
+    // the top of the viewport (user moving toward the browser's back button
+    // or address bar, the highest-intent exit signal available).
+    if (window.matchMedia("(pointer: fine)").matches) {
+      document.addEventListener(
+        "mouseleave",
+        (e) => {
+          if (e.clientY <= 0) tryShowPopup();
+        },
+        { once: true },
+      );
+    }
+
+    // Scroll-depth trigger — fires once user has read past 65% of the page.
+    // By this point they've seen the hero, stats, testimonials, and FAQ —
+    // enough social proof to make the email ask feel earned rather than pushy.
+    function onScrollDepth(): void {
+      if (popupShown) {
+        window.removeEventListener("scroll", onScrollDepth);
+        return;
+      }
+      const scrolledPct =
+        (window.scrollY + window.innerHeight) /
+        document.documentElement.scrollHeight;
+      if (scrolledPct >= 0.65) {
+        tryShowPopup();
+        if (popupShown) window.removeEventListener("scroll", onScrollDepth);
+      }
+    }
+    window.addEventListener("scroll", onScrollDepth, { passive: true });
+
+    const close = (): void => {
+      // Save dismiss timestamp so the popup respects a 7-day cooldown.
+      // Only set if user hasn't already subscribed (POPUP_KEY).
+      if (!localStorage.getItem(POPUP_KEY)) {
+        localStorage.setItem(POPUP_DISMISS_KEY, String(Date.now()));
+      }
       const inner = popup.querySelector(".popup-inner") as HTMLElement | null;
       const reduced = window.matchMedia(
         "(prefers-reduced-motion: reduce)",
@@ -358,7 +414,11 @@ const speakableJsonLd = JSON.stringify({
         const submitBtn = (
           e.target as HTMLFormElement
         ).querySelector<HTMLButtonElement>('[type="submit"]');
-        if (submitBtn) submitBtn.disabled = true;
+        const originalBtnText = submitBtn?.textContent ?? "";
+        if (submitBtn) {
+          submitBtn.disabled = true;
+          submitBtn.textContent = "Sending...";
+        }
         try {
           const db = getFirebaseDb();
           const attribution = buildLeadAttribution({ source: "popup" });
@@ -382,7 +442,10 @@ const speakableJsonLd = JSON.stringify({
             errorEl.removeAttribute("hidden");
           }
         } finally {
-          if (submitBtn) submitBtn.disabled = false;
+          if (submitBtn) {
+            submitBtn.disabled = false;
+            submitBtn.textContent = originalBtnText;
+          }
         }
       });
 
@@ -411,7 +474,11 @@ const speakableJsonLd = JSON.stringify({
         const submitBtn = (
           e.target as HTMLFormElement
         ).querySelector<HTMLButtonElement>('[type="submit"]');
-        if (submitBtn) submitBtn.disabled = true;
+        const originalBtnText = submitBtn?.textContent ?? "";
+        if (submitBtn) {
+          submitBtn.disabled = true;
+          submitBtn.textContent = "Sending...";
+        }
         try {
           const db = getFirebaseDb();
           if (popupDocRef) {
@@ -437,7 +504,10 @@ const speakableJsonLd = JSON.stringify({
             phoneErrorEl.removeAttribute("hidden");
           }
         } finally {
-          if (submitBtn) submitBtn.disabled = false;
+          if (submitBtn) {
+            submitBtn.disabled = false;
+            submitBtn.textContent = originalBtnText;
+          }
         }
       });
   }

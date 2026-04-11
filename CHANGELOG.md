@@ -1,5 +1,26 @@
 # Changelog
 
+## refactor(apply): replace city search API with plain text input (2026-04-10)
+
+### What changed
+
+The "Place" field on the apply page was stuck in a disabled loading skeleton while a Vercel serverless function cold-started to load the `country-state-city` npm package (~18,000 cities). Replaced the entire React Select dropdown plus `/api/city-search` API combo with a plain `<input type="text">`. Also deleted the now-unused `useCitySearch` and `useGeoData` hooks and all associated tests (1,200+ lines removed).
+
+### Files affected
+
+- `src/components/ApplyPage.tsx` — React Select removed, plain text input added
+- `src/components/apply/useApplyForm.ts` — all geo/city-search state removed, `cityInput` + `handleCityInputChange` added
+- `src/components/ApplyPage.test.tsx` — updated tests, removed React Select mock
+- `src/components/apply/useApplyForm.test.ts` — removed all geo-related tests
+- Deleted: `src/hooks/useCitySearch.ts`, `src/hooks/useGeoData.ts`, and their test files
+
+### Decisions
+
+- The `/api/city-search` route and `citySearchShared.ts` are kept untouched since `HomeShows.astro` still uses them for the "request a city" modal
+- `autoComplete="address-level2"` on the new input lets the browser suggest the user's saved city from autofill
+- Validation now checks `form.city.trim()` (set by the input) rather than requiring a structured `country` field
+- URL seeding (`/apply?city=Manhattan&state=NY`) sets the input text directly as `"Manhattan, NY"`
+
 ## feat(content): add Situationship Masterclass as new content type (2026-04-10)
 
 ### What changed

@@ -1,10 +1,6 @@
 import { useEffect } from "react";
 import { ErrorBoundary } from "./ErrorBoundary";
-import Select from "react-select";
-import type { SingleValue } from "react-select";
 import { COMMUNITY_OPTIONS, INCOME_OPTIONS } from "@/types/application";
-import { formSelectStyles } from "@/utils/reactSelectStyles";
-import type { CitySearchOption } from "@/lib/citySearchShared";
 import styles from "./ApplyPage.module.css";
 import { SOCIAL_URLS } from "@/data/socials";
 import { FieldGroup, SectionTitle } from "./apply/FieldGroup";
@@ -103,25 +99,14 @@ function ApplyPageInner() {
     canGoBack,
     toast,
     setToast,
-    geo,
-    triggerGeoLoad,
+    cityInput,
+    handleCityInputChange,
     set,
-    handlePlaceInputChange,
-    handlePlaceChange,
     handlePhotoChange,
     handleTermsCheckbox,
     agreeToTerms,
     handleSubmit,
   } = useApplyForm();
-
-  const {
-    loading: geoLoading,
-    failed: geoFailed,
-    retry: retryGeo,
-    placeOptions,
-    placeQuery,
-    selectedPlace,
-  } = geo;
 
   return (
     <>
@@ -289,50 +274,23 @@ function ApplyPageInner() {
                     <FieldGroup
                       label="Place"
                       required
-                      error={errors.city || errors.country}
+                      error={errors.city}
                       htmlFor="geo-place"
                     >
-                      {geoFailed ? (
-                        <button
-                          type="button"
-                          id="geo-place"
-                          onClick={retryGeo}
-                          className={styles.retryButton}
-                        >
-                          Failed to load places. Tap to retry.
-                        </button>
-                      ) : (
-                        <Select
-                          instanceId="geo-place"
-                          inputId="geo-place"
-                          options={placeOptions}
-                          value={selectedPlace}
-                          onChange={(option) =>
-                            handlePlaceChange(
-                              option as SingleValue<CitySearchOption>,
-                            )
-                          }
-                          onInputChange={(value, meta) => {
-                            if (meta.action === "input-change") {
-                              handlePlaceInputChange(value);
-                            }
-                            if (meta.action === "menu-close" && selectedPlace) {
-                              handlePlaceInputChange(selectedPlace.label);
-                            }
-                            return value;
-                          }}
-                          onMenuOpen={triggerGeoLoad}
-                          inputValue={placeQuery}
-                          placeholder={
-                            geoLoading ? "Loading…" : "Start typing a city…"
-                          }
-                          styles={formSelectStyles<CitySearchOption>()}
-                          isSearchable
-                          isLoading={geoLoading}
-                          isDisabled={geoLoading}
-                          noOptionsMessage={() => "No cities found"}
-                        />
-                      )}
+                      <input
+                        id="geo-place"
+                        type="text"
+                        value={cityInput}
+                        onChange={handleCityInputChange}
+                        placeholder="City or town"
+                        className={styles.input}
+                        required
+                        autoComplete="address-level2"
+                        aria-invalid={!!errors.city}
+                        aria-describedby={
+                          errors.city ? "geo-place-error" : undefined
+                        }
+                      />
                     </FieldGroup>
                   </div>
 

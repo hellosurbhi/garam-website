@@ -1,11 +1,5 @@
 import type React from "react";
-import {
-  useState,
-  useEffect,
-  useCallback,
-  useMemo,
-  type ChangeEvent,
-} from "react";
+import { useState, useEffect, type ChangeEvent } from "react";
 import { collection, addDoc, serverTimestamp } from "firebase/firestore";
 import {
   ref,
@@ -15,11 +9,6 @@ import {
   type StorageReference,
 } from "firebase/storage";
 import { signInAnonymously } from "firebase/auth";
-import { useCitySearch } from "@/hooks/useCitySearch";
-import {
-  resolveCityOption,
-  type CitySearchOption,
-} from "@/lib/citySearchShared";
 import {
   getFirebaseDb,
   getFirebaseStorage,
@@ -87,11 +76,14 @@ export function useApplyForm() {
     const params = new URLSearchParams(window.location.search);
     const urlCity = params.get("city");
     const urlState = params.get("state");
-    if (urlCity || urlState) {
+    if (urlCity) {
+      const label = urlState ? `${urlCity}, ${urlState}` : urlCity;
+      setCityInput(label);
       setForm((prev) => ({
         ...prev,
-        ...(urlState ? { state: urlState } : {}),
-        ...(urlCity ? { city: urlCity } : {}),
+        city: urlCity,
+        state: urlState ?? "",
+        country: "",
       }));
     }
   }, []);
@@ -103,22 +95,7 @@ export function useApplyForm() {
   }, [toast]);
 
   const [formStarted, setFormStarted] = useState(false);
-  const [geoLoadTriggered, setGeoLoadTriggered] = useState(false);
-  const [placeQuery, setPlaceQuery] = useState("");
-  const triggerGeoLoad = useCallback(() => setGeoLoadTriggered(true), []);
-
-  const citySearch = useCitySearch(placeQuery, geoLoadTriggered);
-  const [selectedPlace, setSelectedPlace] = useState<CitySearchOption | null>(
-    null,
-  );
-  const placeOptions = useMemo(
-    () =>
-      selectedPlace &&
-      !citySearch.options.some((option) => option.value === selectedPlace.value)
-        ? [selectedPlace, ...citySearch.options].slice(0, 5)
-        : citySearch.options,
-    [citySearch.options, selectedPlace],
-  );
+  const [cityInput, setCityInput] = useState("");
 
   function set(field: keyof FormState, value: string) {
     setForm((prev) => ({ ...prev, [field]: value }));
@@ -132,28 +109,18 @@ export function useApplyForm() {
     }
   }
 
-  function handlePlaceInputChange(value: string) {
-    setPlaceQuery(value);
-    if (selectedPlace && value !== selectedPlace.label) {
-      setSelectedPlace(null);
+  function handleCityInputChange(e: ChangeEvent<HTMLInputElement>) {
+    const value = e.target.value;
+    setCityInput(value);
+    setForm((prev) => ({ ...prev, city: value, state: "", country: "" }));
+    setErrors((prev) => ({ ...prev, city: undefined, country: undefined }));
+    if (!formStarted) {
+      setFormStarted(true);
+      trackLeadEvent("apply_form_started", {
+        application_type: form.applicationType,
+        page: typeof window !== "undefined" ? window.location.pathname : "/",
+      });
     }
-  }
-
-  function handlePlaceChange(option: CitySearchOption | null) {
-    setSelectedPlace(option);
-    setForm((prev) => ({
-      ...prev,
-      city: option?.city ?? "",
-      state: option?.state ?? "",
-      country: option?.countryCode ?? "",
-    }));
-    setPlaceQuery(option?.label ?? "");
-    setErrors((prev) => ({
-      ...prev,
-      country: undefined,
-      state: undefined,
-      city: undefined,
-    }));
   }
 
   function handlePhotoChange(e: ChangeEvent<HTMLInputElement>) {
@@ -204,8 +171,7 @@ export function useApplyForm() {
       errs.age = "Must be 18 or older";
     if (!form.gender) errs.gender = "Required";
     if (!form.orientation) errs.orientation = "Required";
-    if (!form.city) errs.city = "Required";
-    if (!form.country) errs.country = "Required";
+    if (!form.city.trim()) errs.city = "Required";
     if (!form.instagram.trim()) errs.instagram = "Required";
     if (!photoFile) errs.photo = "A photo is required";
     if (form.applicationType === "Nomination" && !form.referrerName.trim()) {
@@ -226,42 +192,6 @@ export function useApplyForm() {
     }
     return true;
   }
-
-  useEffect(() => {
-    if (selectedPlace) {
-      setPlaceQuery(selectedPlace.label);
-      return;
-    }
-
-    if (form.city) {
-      const fallbackLabel = [form.city, form.state, form.country]
-        .filter(Boolean)
-        .join(", ");
-      setPlaceQuery(fallbackLabel);
-      return;
-    }
-
-    setPlaceQuery("");
-  }, [form.city, form.country, form.state, selectedPlace]);
-
-  useEffect(() => {
-    if (selectedPlace || !citySearch.options.length || !form.city) return;
-
-    const seededValue = [form.city, form.state].filter(Boolean).join(", ");
-    const resolved = resolveCityOption(
-      seededValue || form.city,
-      citySearch.options,
-    );
-    if (!resolved) return;
-
-    setSelectedPlace(resolved);
-    setForm((prev) => ({
-      ...prev,
-      city: resolved.city,
-      state: resolved.state,
-      country: resolved.countryCode,
-    }));
-  }, [citySearch.options, form.city, form.state, selectedPlace]);
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -334,6 +264,7 @@ export function useApplyForm() {
       }).catch(console.error);
 
       setForm(INITIAL);
+      setCityInput("");
       setTermsAgreed(false);
       setPhotoFile(null);
       setPhotoPreview(null);
@@ -373,16 +304,9 @@ export function useApplyForm() {
     canGoBack,
     toast,
     setToast,
-    geo: {
-      ...citySearch,
-      placeOptions,
-      placeQuery,
-      selectedPlace,
-    },
-    triggerGeoLoad,
+    cityInput,
+    handleCityInputChange,
     set,
-    handlePlaceInputChange,
-    handlePlaceChange,
     handlePhotoChange,
     handleTermsCheckbox,
     agreeToTerms,

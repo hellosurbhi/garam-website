@@ -23,51 +23,6 @@ vi.mock("@/lib/firebase", () => ({
   getFirebaseStorage: vi.fn(() => "mock-storage"),
 }));
 
-interface MockSelectProps {
-  placeholder: string;
-  onChange: (v: { value: string; label: string } | null) => void;
-  value: { value: string; label: string } | null;
-}
-
-vi.mock("react-select", () => ({
-  default: ({ placeholder, onChange, value }: MockSelectProps) => (
-    <select
-      data-testid={`select-${placeholder}`}
-      value={value?.value ?? ""}
-      onChange={(e) =>
-        onChange(
-          e.target.value
-            ? { value: e.target.value, label: e.target.value }
-            : null,
-        )
-      }
-    >
-      <option value="">{placeholder}</option>
-      <option value="US">United States</option>
-      <option value="NY">New York</option>
-      <option value="NYC">New York City</option>
-    </select>
-  ),
-}));
-
-vi.mock("@/hooks/useCitySearch", () => ({
-  useCitySearch: () => ({
-    loading: false,
-    failed: false,
-    retry: vi.fn(),
-    options: [
-      {
-        value: "New York City, New York, United States",
-        label: "New York City, New York, United States",
-        city: "New York City",
-        state: "New York",
-        country: "United States",
-        countryCode: "US",
-      },
-    ],
-  }),
-}));
-
 vi.mock("@/data/events", () => ({
   events: [
     {
@@ -403,6 +358,24 @@ describe("ApplyPage", () => {
   it("height input has correct placeholder", () => {
     render(<ApplyPage />);
     expect(screen.getByPlaceholderText(`5'8"`)).toBeInTheDocument();
+  });
+
+  it("city input updates on typing", () => {
+    render(<ApplyPage />);
+    const input = screen.getByPlaceholderText(
+      "City or town",
+    ) as HTMLInputElement;
+    fireEvent.change(input, { target: { value: "Mumbai" } });
+    expect(input.value).toBe("Mumbai");
+  });
+
+  it("city input has aria-invalid true after validation failure", async () => {
+    render(<ApplyPage />);
+    fireEvent.click(screen.getByText("Submit Application"));
+    await waitFor(() => {
+      const cityInput = screen.getByPlaceholderText("City or town");
+      expect(cityInput).toHaveAttribute("aria-invalid", "true");
+    });
   });
 
   /* ── Referrer field for Nomination (onChange handler) ─────── */

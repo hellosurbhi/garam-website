@@ -363,7 +363,7 @@ describe("ApplyPage", () => {
   it("city input updates on typing", () => {
     render(<ApplyPage />);
     const input = screen.getByPlaceholderText(
-      "City or town",
+      "(Ex. Chicago)",
     ) as HTMLInputElement;
     fireEvent.change(input, { target: { value: "Mumbai" } });
     expect(input.value).toBe("Mumbai");
@@ -373,7 +373,7 @@ describe("ApplyPage", () => {
     render(<ApplyPage />);
     fireEvent.click(screen.getByText("Submit Application"));
     await waitFor(() => {
-      const cityInput = screen.getByPlaceholderText("City or town");
+      const cityInput = screen.getByPlaceholderText("(Ex. Chicago)");
       expect(cityInput).toHaveAttribute("aria-invalid", "true");
     });
   });

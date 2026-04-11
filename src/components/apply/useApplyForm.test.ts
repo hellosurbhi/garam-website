@@ -84,6 +84,7 @@ function fillRequired(
   set("gender", "Woman");
   set("orientation", "Straight");
   set("city", "New York");
+  set("email", "jane@example.com");
   set("instagram", "janedoe");
   set("marketingConsent", "yes");
   handleTermsCheckbox(true);
@@ -269,6 +270,7 @@ describe("useApplyForm", () => {
     expect(result.current.errors.gender).toBe("Required");
     expect(result.current.errors.orientation).toBe("Required");
     expect(result.current.errors.city).toBe("Required");
+    expect(result.current.errors.email).toBe("Required");
     expect(result.current.errors.instagram).toBe("Required");
     expect(result.current.errors.photo).toBe("A photo is required");
     expect(result.current.errors.marketingConsent).toBe(
@@ -924,6 +926,7 @@ describe("useApplyForm", () => {
     expect(docData.gender).toBe("Woman");
     expect(docData.orientation).toBe("Bisexual");
     expect(docData.city).toBe("New York");
+    expect(docData.email).toBe("jane@example.com");
     expect(docData.state).toBe("");
     expect(docData.country).toBe("");
     expect(docData.community).toBe("South Asian");

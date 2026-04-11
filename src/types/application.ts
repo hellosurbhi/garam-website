@@ -9,6 +9,7 @@ export interface Application {
   city: string;
   country?: string;
   state?: string;
+  email?: string;
   height: string;
   instagram: string;
   community: string;

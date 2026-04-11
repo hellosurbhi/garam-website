@@ -272,7 +272,7 @@ function ApplyPageInner() {
 
                   <div className={styles.gridTwo}>
                     <FieldGroup
-                      label="Place"
+                      label="Metropolitan Area"
                       required
                       error={errors.city}
                       htmlFor="geo-place"
@@ -282,7 +282,7 @@ function ApplyPageInner() {
                         type="text"
                         value={cityInput}
                         onChange={handleCityInputChange}
-                        placeholder="City or town"
+                        placeholder="(Ex. Chicago)"
                         className={styles.input}
                         required
                         autoComplete="address-level2"
@@ -353,6 +353,29 @@ function ApplyPageInner() {
                       </a>{" "}
                       and DM us for a faster response.
                     </p>
+                  </FieldGroup>
+
+                  <FieldGroup
+                    label="Email"
+                    required
+                    error={errors.email}
+                    htmlFor="field-email"
+                  >
+                    <input
+                      id="field-email"
+                      type="email"
+                      value={form.email}
+                      onChange={(e) => set("email", e.target.value)}
+                      placeholder="you@example.com"
+                      className={styles.input}
+                      required
+                      autoComplete="email"
+                      inputMode="email"
+                      aria-invalid={!!errors.email}
+                      aria-describedby={
+                        errors.email ? "field-email-error" : undefined
+                      }
+                    />
                   </FieldGroup>
 
                   <div className={styles.gridTwo}>

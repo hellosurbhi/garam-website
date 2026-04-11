@@ -11,6 +11,7 @@ interface ApplicationNotification {
   city: string;
   state: string;
   country: string;
+  email: string;
   instagram: string;
   community: string;
   income: string;
@@ -41,6 +42,12 @@ function buildEmailHtml(data: ApplicationNotification): string {
     ["Gender", escapeHtml(data.gender)],
     ["Orientation", escapeHtml(data.orientation)],
     ["Location", location],
+    [
+      "Email",
+      data.email
+        ? `<a href="mailto:${escapeHtml(data.email)}" style="color:#DC2626;">${escapeHtml(data.email)}</a>`
+        : "",
+    ],
     [
       "Instagram",
       `<a href="https://instagram.com/${escapeHtml(data.instagram)}" style="color:#DC2626;">@${escapeHtml(data.instagram)}</a>`,

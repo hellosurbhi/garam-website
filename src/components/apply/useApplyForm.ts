@@ -26,6 +26,7 @@ export interface FormState {
   country: string;
   state: string;
   city: string;
+  email: string;
   height: string;
   instagram: string;
   community: string;
@@ -44,6 +45,7 @@ const INITIAL: FormState = {
   country: "",
   state: "",
   city: "",
+  email: "",
   height: "",
   instagram: "",
   community: "",
@@ -172,6 +174,8 @@ export function useApplyForm() {
     if (!form.gender) errs.gender = "Required";
     if (!form.orientation) errs.orientation = "Required";
     if (!form.city.trim()) errs.city = "Required";
+    if (!form.email.trim() || !form.email.includes("@"))
+      errs.email = "Required";
     if (!form.instagram.trim()) errs.instagram = "Required";
     if (!photoFile) errs.photo = "A photo is required";
     if (form.applicationType === "Nomination" && !form.referrerName.trim()) {
@@ -218,6 +222,7 @@ export function useApplyForm() {
         country: form.country,
         state: form.state,
         city: form.city,
+        email: form.email.trim().toLowerCase(),
         height: form.height.trim(),
         instagram: form.instagram.trim().replace(/^@/, ""),
         community: form.community,

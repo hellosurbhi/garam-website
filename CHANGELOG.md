@@ -1,5 +1,76 @@
 # Changelog
 
+## fix(modals): remove X button focus ring on open across all modals (2026-04-13)
+
+### What changed
+
+When any modal opened, the X (close) button immediately showed the focus ring. Persistent across NotifyModal, LegalModal, and the inline dialogs on the /links page.
+
+**Root cause:** Two separate bugs with the same symptom.
+
+1. `NotifyModal.astro` and `LegalModal.astro` were explicitly calling `.focus()` on the close button immediately after `showModal()`. Calling `element.focus()` in JS is treated as a keyboard-initiated focus heuristic by browsers, triggering `:focus-visible` and showing the global `outline: 2px solid var(--brand-red)` rule.
+
+2. `links.astro` inline dialogs had no `tabindex="-1"` and no explicit `dialog.focus()` call, so `showModal()` auto-focused the first focusable descendant (the close button). Non-deterministic `:focus-visible` depending on prior keyboard activity.
+
+**Fix:** All modal open handlers now call `dialog.focus()` (where the dialog has `tabindex="-1"`) instead of focusing the close button. Focusing a `tabindex="-1"` element is consistently treated as non-keyboard by all browsers, so `:focus-visible` never triggers. Added `outline: none` to dialog elements as a belt-and-suspenders guard. Keyboard users who Tab to the close button still get the ring (correct a11y).
+
+### Files affected
+
+- `src/components/NotifyModal.astro`
+- `src/components/LegalModal.astro`
+- `src/pages/links.astro`
+
+### Decisions
+
+Avoided suppressing `:focus-visible` on the close button via CSS (e.g. `button:focus { outline: none }`) because that would also kill keyboard focus rings for users navigating by Tab — a serious a11y regression. The correct fix is to not focus the close button in the first place.
+
+## refactor(links): reorder link sequence for conversion optimization (2026-04-13)
+
+### What changed
+
+Reordered the 7 links on the `/links` page to prioritize revenue and reduce choice paralysis. Also removed the "Short form content @ Instagram" button — it sent visitors back to the platform they just came from, adding zero conversion value. The social icons row at the bottom already covers all social platforms.
+
+**New sequence:**
+
+1. Upcoming Shows & Tickets (red primary)
+2. Get on the List
+3. Apply to Be on the Show
+4. Full episodes @ YouTube
+5. As Seen In
+6. Booking & Press Inquiries
+
+**Previous sequence:** Get on the List (primary), Apply, Instagram, YouTube, Tickets, Press, Booking
+
+**Why:** Ticket sales are the most direct revenue action, yet they were buried at position #5. The email capture (always important) is now the immediate fallback at #2 for visitors who cannot attend current shows. "As Seen In" was moved up from #6 to #5 so social proof lands while visitors are still deciding. Updated PostHog `data-ph-cta` on the primary button from `"get-on-list"` to `"tickets"`.
+
+### Files affected
+
+- `src/pages/links.astro`
+
+### Decisions
+
+Kept the email capture ("Get on the List") at #2 rather than removing it or pushing it lower — it serves a different intent than tickets (nurture vs. immediate purchase) and should stay in the top half. 7 links reduced to 6 by removing the Instagram standalone button; fewer choices = less paralysis.
+
+## feat(links): add Eventbrite embedded checkout to /links page, modal-in-modal safe (2026-04-13)
+
+### What changed
+
+The `/links` page (Instagram bio entry point) was the only surface on the site still opening Eventbrite in a new tab. All other ticket CTAs (home hero, home shows section, tickets page, city pages) already use the embedded checkout modal. This change brings `/links` into parity.
+
+**Modal-in-modal problem:** The event list on `/links` lives inside a native `<dialog>` element. Naively embedding the EB widget would create two failure modes: (1) the browser's top-layer mechanism for `showModal()` would visually block or z-index-conflict with Eventbrite's injected overlay, and (2) the outside-click handlers for both modals would fire simultaneously on a backdrop click, creating a stuck state. The fix is to close the `<dialog>` synchronously before the EB widget processes the click.
+
+**Implementation:**
+
+- `src/pages/links.astro`: Added `EventbriteWidgetInit` import and render (placed outside the dialog). Updated event list to use the same 3-way conditional as every other page: `eventbriteId && !isSoldOut` renders a modal trigger button; events without an ID or sold-out events still render as `<a href>` fallback links. Added `button.event-link` CSS resets to match the existing anchor style. Added a capture-phase click listener on `#events-modal` that closes the dialog when an EB trigger button is clicked — `capture: true` ensures it fires before the EB widget's own bubble-phase listener, so the top layer is clear when checkout opens.
+
+### Files affected
+
+- `src/pages/links.astro`
+
+### Decisions
+
+Closed the native dialog before opening EB checkout rather than attempting to manage z-index or stacking context. This is the only approach that avoids both the top-layer conflict and the handler collision — two modals competing for the same top layer is a browser-level constraint, not something solvable with CSS.
+
 ## fix(apply): email validation, photo preview, upload timeout (2026-04-13)
 
 ### What changed

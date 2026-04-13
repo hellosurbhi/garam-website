@@ -1,5 +1,94 @@
 # Changelog
 
+## feat(tickets): add Eventbrite modal checkout widget and update CTA to "Grab My Spot" (2026-04-12)
+
+### What changed
+
+Added Eventbrite's modal checkout widget to the tickets page so users can complete ticket purchase without leaving the site. Non-soldout events with an `eventbriteId` now render as buttons that trigger an Eventbrite checkout modal overlay instead of opening Eventbrite in a new tab.
+
+Changed "Get Tickets" to "Grab My Spot" across all conversion CTAs on the site. First-person language ("My"), action verb ("Grab"), and "Spot" over "Ticket" all reduce friction and match the show's energy. Nav links keep "Get Tickets" since they serve a navigational, not conversion, purpose.
+
+Also fixed a dash-rule violation in the Apr 19 event tagline ("Low tickets, grab yours now" replaces the banned em dash form).
+
+### Files affected
+
+- `src/data/events.ts` — added `eventbriteId` and `promoCode` fields to `EventEntry` interface; populated both for Apr 26 Jersey City; `eventbriteId` for Apr 19 Manhattan; fixed em dash in Apr 19 tagline
+- `src/pages/tickets.astro` — non-soldout events with widget ID render as `<button>` with Eventbrite trigger; async script loads `eb_widgets.js` and initializes modal per event; `onerror` fallback opens Eventbrite in new tab; noscript fallback links for SEO; PostHog `order_complete` event on purchase; "Grab My Spot" CTA
+- `src/components/home/HomeShows.astro` — "Grab My Spot" CTA
+- `src/components/home/HomeHero.astro` — "Grab My Spot" CTA
+- `src/components/home/HomeExperience.astro` — "Grab My Spot" CTA
+- `src/components/home/HomeFAQ.astro` — "Grab My Spot" CTA
+- `src/pages/cities/[slug].astro` — "Grab My Spot" CTA
+
+### Decisions
+
+- Modal over inline embed: 70% mobile traffic makes inline iframes a UX trap (scroll-within-scroll). Modal works correctly on mobile as full-screen overlay.
+- Widget scoped to tickets page only: homepage show cards link to the tickets page, which is the dedicated conversion destination.
+- `eb_widgets.js` loaded async via dynamic script injection, not a blocking `<script src>` in the head, so it does not affect LCP.
+- Sold-out events stay as `<a>` links to Eventbrite (widget is irrelevant for sold-out inventory).
+- `promoCode` stored per-event in data so it auto-applies to Jersey City's existing discount.
+
+## feat(masterclass): add Steps 9 and 10, split Steps 8-10 into sub-slides (2026-04-10)
+
+### What changed
+
+Added Steps 9 ("Become Their Ex (But Better)") and 10 ("When They Finally Ask 'What Are We?'... Hesitate.") to the masterclass. Steps 8, 9, and 10 each contain multiple natural sub-sections, so each was split into 2-3 consecutive full-height slides (continuation slides) rather than one very tall scroll block. Every beat now gets its own visual weight.
+
+Continuation slides use the same `type: "step"` but omit `stepNumber` and `stepLabel`. The page template was updated to conditionally render the step label paragraph and to add an `mc-step--cont` class for proper top spacing. Background alternation is automatic across all step slides.
+
+### Files affected
+
+- `src/data/masterclasses.ts` — step 08 split into 3 slides, steps 09 and 10 added as 3 slides each (9 new slides total)
+- `src/pages/journal/situationship-masterclass.astro` — step label made conditional, aria-label fallback added, `mc-step--cont` CSS class added
+
+### Decisions
+
+- Continuation slides identified by absence of `stepNumber`/`stepLabel` — no new type field needed
+- Background alternates across all step slides including continuations, maintaining the site's contrast pattern
+- Mid-CTA still fires after step 04 slide (keyed on `slide.stepNumber === "04"`, unchanged)
+
+---
+
+## feat(masterclass): add Step 8 to Situationship Masterclass (2026-04-10)
+
+### What changed
+
+Added Step Eight ("Give Them the Best Sex of Their Life, Then Leave") to the Situationship Conversion Playbook masterclass. The step covers the power move of going all in for your partner then leaving without reciprocating, with practical gender-split advice and a hot take badge. Used the cleaner second draft the user provided, discarding the duplicate first draft.
+
+### Files affected
+
+- `src/data/masterclasses.ts` — new step slide object inserted after step 07, before the science slide
+
+### Decisions
+
+- Step renders automatically via the existing `stepSlides.map()` in the page template; no template changes needed
+- Background alternates correctly: step 08 is index 7 (odd) so it gets `bg-warm`, matching the alternating pattern
+- No separator dashes in copy per site rule
+
+---
+
+## feat(apply): add email field and rename Place to Metropolitan Area (2026-04-10)
+
+### What changed
+
+Added a required email field to the apply form (positioned below Instagram). Changed the "Place" label to "Metropolitan Area" with placeholder "(Ex. Chicago)". Email is stored lowercase in Firestore, included in the admin notification email as a clickable mailto link, and validated client-side for presence and `@` character.
+
+### Files affected
+
+- `src/components/apply/useApplyForm.ts` — added `email` to `FormState`/`INITIAL`, email validation, email in `applicationData`
+- `src/components/ApplyPage.tsx` — new email `<FieldGroup>`, updated Metropolitan Area label and placeholder
+- `src/types/application.ts` — added `email?: string` to `Application` interface
+- `src/pages/api/notify-application.ts` — added `email` to `ApplicationNotification`, rendered as mailto link in email HTML
+- `src/components/ApplyPage.test.tsx` — updated city placeholder, added email field tests
+- `src/components/apply/useApplyForm.test.ts` — added email to `fillRequired` helper, added email field tests
+
+### Decisions
+
+- Email stored as `form.email.trim().toLowerCase()` before writing to Firestore for consistency
+- `type="email"` + `inputMode="email"` + `autoComplete="email"` for mobile keyboard and browser autofill
+- Email rendered as a mailto anchor in the admin notification so the reviewer can reply in one click
+- `email?: string` (optional) in the `Application` type so existing Firestore documents without email remain valid
+
 ## refactor(apply): replace city search API with plain text input (2026-04-10)
 
 ### What changed

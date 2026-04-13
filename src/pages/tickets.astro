@@ -15,6 +15,18 @@ const upcomingEvents = allEvents.filter(
   (e) => !isEventPast(e.date) && !e.hidden,
 );
 
+const widgetEvents = upcomingEvents
+  .filter(
+    (e) => e.eventbriteId && !e.tagline?.toLowerCase().includes("sold out"),
+  )
+  .map((e) => ({
+    eventId: e.eventbriteId!,
+    triggerId: `eventbrite-widget-modal-trigger-${e.eventbriteId}`,
+    promoCode: e.promoCode ?? null,
+    fallbackUrl: e.url,
+    city: e.city,
+  }));
+
 const breadcrumbJsonLd = buildBreadcrumbJsonLd([
   { name: "Home", url: "https://garammasaladating.com/" },
   { name: "Tickets" },
@@ -108,7 +120,48 @@ const eventSeriesJsonLd = JSON.stringify({
               const isSoldOut = event.tagline
                 ?.toLowerCase()
                 .includes("sold out");
-              return isLive ? (
+              const hasWidget =
+                isLive && !isSoldOut && Boolean(event.eventbriteId);
+              return hasWidget ? (
+                <button
+                  type="button"
+                  id={`eventbrite-widget-modal-trigger-${event.eventbriteId}`}
+                  class="ticket-card ticket-card--live ticket-card--widget"
+                  style={`animation-delay: ${0.1 + i * 0.06}s`}
+                  data-eb-url={event.url}
+                  data-ph-capture="cta_clicked"
+                  data-ph-cta="get_tickets"
+                  data-ph-section="tickets"
+                  data-ph-city={event.city}
+                  data-ph-event-date={event.date}
+                  data-ph-price={event.price}
+                >
+                  <div class="ticket-card__info">
+                    <span class="ticket-card__date">{event.date}</span>
+                    <span class="ticket-card__city">{event.city}</span>
+                    {event.tagline && (
+                      <span class="ticket-card__tagline">{event.tagline}</span>
+                    )}
+                  </div>
+                  <span class="ticket-card__cta">
+                    Grab My Spot
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      width="14"
+                      height="14"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      stroke-width="2"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                    >
+                      <path d="M5 12h14" />
+                      <path d="m12 5 7 7-7 7" />
+                    </svg>
+                  </span>
+                </button>
+              ) : isLive ? (
                 <a
                   href={event.url}
                   target="_blank"
@@ -132,7 +185,7 @@ const eventSeriesJsonLd = JSON.stringify({
                   <span
                     class={`ticket-card__cta${isSoldOut ? " ticket-card__cta--soldout" : ""}`}
                   >
-                    {isSoldOut ? "Sold Out" : "Get Tickets"}
+                    {isSoldOut ? "Sold Out" : "Grab My Spot"}
                     {!isSoldOut && (
                       <svg
                         xmlns="http://www.w3.org/2000/svg"
@@ -254,6 +307,58 @@ const eventSeriesJsonLd = JSON.stringify({
       </div>
     </div>
   </main>
+
+  <script is:inline define:vars={{ widgetEvents }}>
+    (function () {
+      if (!widgetEvents.length) return;
+
+      function initWidgets() {
+        widgetEvents.forEach(function (ev) {
+          var config = {
+            widgetType: "checkout",
+            eventId: ev.eventId,
+            modal: true,
+            modalTriggerElementId: ev.triggerId,
+            themeSettings: {
+              brandColor: "#DC2626",
+              fontColor: "#000000",
+              background: "#FFFFFF",
+            },
+            onOrderComplete: function () {
+              if (window.posthog) {
+                window.posthog.capture("order_complete", {
+                  event_id: ev.eventId,
+                  city: ev.city,
+                });
+              }
+            },
+          };
+          if (ev.promoCode) {
+            config.promoCode = ev.promoCode;
+          }
+          window.EBWidgets.createWidget(config);
+        });
+      }
+
+      function applyFallbacks() {
+        widgetEvents.forEach(function (ev) {
+          var el = document.getElementById(ev.triggerId);
+          if (el) {
+            el.addEventListener("click", function () {
+              window.open(ev.fallbackUrl, "_blank", "noopener,noreferrer");
+            });
+          }
+        });
+      }
+
+      var script = document.createElement("script");
+      script.src = "https://www.eventbrite.com/static/widgets/eb_widgets.js";
+      script.async = true;
+      script.onload = initWidgets;
+      script.onerror = applyFallbacks;
+      document.head.appendChild(script);
+    })();
+  </script>
 </BaseLayout>
 
 <style>
@@ -382,6 +487,13 @@ const eventSeriesJsonLd = JSON.stringify({
     cursor: pointer;
     text-align: left;
     font: inherit;
+  }
+
+  .ticket-card--widget {
+    cursor: pointer;
+    text-align: left;
+    font: inherit;
+    width: 100%;
   }
 
   .ticket-card--tba:hover {

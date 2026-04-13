@@ -43,16 +43,19 @@ function getApp() {
   return getApps().length ? getApps()[0] : initializeApp(getValidatedConfig());
 }
 
+/** Return the singleton Firestore instance, initialising the Firebase app on first call. */
 export function getFirebaseDb(): Firestore {
   if (!_db) _db = getFirestore(getApp());
   return _db;
 }
 
+/** Return the singleton Firebase Storage instance, initialising the Firebase app on first call. */
 export function getFirebaseStorage(): FirebaseStorage {
   if (!_storage) _storage = getStorage(getApp());
   return _storage;
 }
 
+/** Return the singleton Firebase Auth instance, initialising the Firebase app on first call. */
 export function getFirebaseAuth(): Auth {
   if (!_auth) _auth = getAuth(getApp());
   return _auth;

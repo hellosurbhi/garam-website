@@ -270,7 +270,7 @@ describe("useApplyForm", () => {
     expect(result.current.errors.gender).toBe("Required");
     expect(result.current.errors.orientation).toBe("Required");
     expect(result.current.errors.city).toBe("Required");
-    expect(result.current.errors.email).toBe("Required");
+    expect(result.current.errors.email).toBe("Email is required");
     expect(result.current.errors.instagram).toBe("Required");
     expect(result.current.errors.photo).toBe("A photo is required");
     expect(result.current.errors.marketingConsent).toBe(

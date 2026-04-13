@@ -359,12 +359,25 @@
   border-color: var(--brand-red);
 }
 
+.photoDropzoneWithPreview {
+  composes: photoDropzone;
+  padding: 0;
+  border-style: solid;
+  border-color: rgba(var(--brand-red-rgb), 0.2);
+  overflow: hidden;
+}
+
+.photoDropzoneWithPreview:hover {
+  border-color: var(--brand-red);
+}
+
 .photoPreview {
   width: 100%;
-  max-height: 280px;
-  object-fit: cover;
+  height: 280px;
+  object-fit: contain;
   border-radius: 8px;
   display: block;
+  background: var(--off-white);
 }
 
 .photoEmoji {

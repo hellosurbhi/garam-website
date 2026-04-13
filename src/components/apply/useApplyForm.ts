@@ -16,6 +16,7 @@ import {
 } from "@/lib/firebase";
 import { trackError, trackLeadEvent, identifyLead } from "@/lib/analytics";
 import { buildLeadAttribution } from "@/lib/leadAttribution";
+import { validateEmail } from "@/utils/validateEmail";
 
 export interface FormState {
   applicationType: "Self" | "Nomination";
@@ -174,8 +175,8 @@ export function useApplyForm() {
     if (!form.gender) errs.gender = "Required";
     if (!form.orientation) errs.orientation = "Required";
     if (!form.city.trim()) errs.city = "Required";
-    if (!form.email.trim() || !form.email.includes("@"))
-      errs.email = "Required";
+    const emailErr = validateEmail(form.email);
+    if (emailErr) errs.email = emailErr;
     if (!form.instagram.trim()) errs.instagram = "Required";
     if (!photoFile) errs.photo = "A photo is required";
     if (form.applicationType === "Nomination" && !form.referrerName.trim()) {
@@ -210,7 +211,13 @@ export function useApplyForm() {
         getFirebaseStorage(),
         `photos/${crypto.randomUUID()}.${ext}`,
       );
-      await uploadBytes(storageRef, photoFile!);
+      const timeoutPromise = new Promise<never>((_, reject) =>
+        setTimeout(
+          () => reject(new Error("Upload timed out after 30 seconds")),
+          30_000,
+        ),
+      );
+      await Promise.race([uploadBytes(storageRef, photoFile!), timeoutPromise]);
       const photoUrl = await getDownloadURL(storageRef);
 
       const applicationData = {

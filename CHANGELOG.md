@@ -1,5 +1,30 @@
 # Changelog
 
+## fix(apply): email validation, photo preview, upload timeout (2026-04-13)
+
+### What changed
+
+Three bugs fixed on the `/apply` form page:
+
+**1. Shared email validation utility**
+Created `src/utils/validateEmail.ts` as the single source of truth for email validation across the app. The apply form previously used a weak `includes("@")` check with a generic "Required" message. The `capture-lead` API had its own inline `EMAIL_RE` regex. Both now import from the shared utility, which returns distinct messages: "Email is required" (empty) vs "Please enter a valid email address" (malformed).
+
+**2. Photo preview shows full photo**
+Changed `object-fit: cover` to `object-fit: contain` in `.photoPreview` so the entire photo is visible instead of cropped. Added `.photoDropzoneWithPreview` CSS class that removes padding and switches from dashed to solid border when a photo is loaded. Removed incorrect `width={200} height={200}` attributes from the preview `<img>` element (container height is fixed at 280px via CSS).
+
+**3. Upload timeout prevents stuck submit button**
+Wrapped `uploadBytes` in a `Promise.race` with a 30-second timeout. Firebase Storage SDK retries `ERR_FILE_NOT_FOUND` with exponential backoff, which previously kept the submit button in a loading state indefinitely. The timeout ensures the error surfaces within 30s and the button resets.
+
+**Root cause note:** The Firebase Storage `ERR_FILE_NOT_FOUND` error is a configuration issue. Firebase Storage must be enabled in the Firebase Console and `PUBLIC_FIREBASE_STORAGE_BUCKET` in `.env.local` must match the actual bucket (`garam-masala-9f15b.firebasestorage.app`). Storage rules must be deployed via `firebase deploy --only storage`.
+
+**Files changed:**
+
+- `src/utils/validateEmail.ts` — new shared utility
+- `src/components/apply/useApplyForm.ts` — use `validateEmail`, add upload timeout
+- `src/pages/api/capture-lead.ts` — import from shared utility, remove local `EMAIL_RE`
+- `src/components/ApplyPage.module.css` — fix `.photoPreview`, add `.photoDropzoneWithPreview`
+- `src/components/apply/PhotoUploadField.tsx` — conditional dropzone class, fix img attributes
+
 ## feat(tickets): replace all external Eventbrite links with embedded checkout modal (2026-04-13)
 
 ### What changed

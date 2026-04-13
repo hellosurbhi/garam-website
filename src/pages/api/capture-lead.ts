@@ -1,4 +1,5 @@
 import type { APIRoute } from "astro";
+import { validateEmail } from "@/utils/validateEmail";
 
 interface LeadPayload {
   email: string;
@@ -22,8 +23,6 @@ interface LeadPayload {
   geoTimezone?: string;
 }
 
-const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-
 export const POST: APIRoute = async ({ request }) => {
   // Validate content type
   const contentType = request.headers.get("content-type");
@@ -46,7 +45,7 @@ export const POST: APIRoute = async ({ request }) => {
 
   // Validate email
   const email = body.email?.trim().toLowerCase();
-  if (!email || !EMAIL_RE.test(email)) {
+  if (!email || validateEmail(email)) {
     return new Response(JSON.stringify({ error: "Valid email required" }), {
       status: 400,
       headers: { "Content-Type": "application/json" },

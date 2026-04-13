@@ -1,5 +1,44 @@
 # Changelog
 
+## feat(tracking): per-page, per-section, per-device Eventbrite UTM tracking (2026-04-13)
+
+### What changed
+
+Replaced the flat `?aff=garamsite` parameter (and stale Eventbrite-generated UTMs) on all ticket links with structured UTM tracking that identifies exactly which page and section drove each ticket sale.
+
+New parameter scheme: `?aff=garamsite&utm_source=garamsite&utm_medium=web&utm_campaign={page}&utm_content={section}`
+
+**Link inventory after change:**
+
+| Page             | Section       | `utm_campaign` | `utm_content`               |
+| ---------------- | ------------- | -------------- | --------------------------- |
+| `/`              | Hero pill     | `home`         | `hero`                      |
+| `/`              | Shows section | `home`         | `shows`                     |
+| `/tickets`       | Event cards   | `tickets`      | `listing`                   |
+| `/cities/[slug]` | City CTA      | `cities`       | `{slug}` (e.g. `manhattan`) |
+| `/links`         | Events modal  | `links`        | `modal`                     |
+
+Mobile visitors automatically get `utm_medium=mobile` via a client-side script in BaseLayout that detects viewport width on page load.
+
+### Why
+
+All Eventbrite links previously looked identical in Eventbrite's Traffic and Sales report. This made it impossible to know whether ticket sales were coming from the home page, the tickets page, city landing pages, or the links page. With per-section UTMs, each traffic source is now distinguishable in Eventbrite's reports and PostHog.
+
+### Architecture decision
+
+Event URLs in `data/events.ts` now store clean base URLs with no tracking parameters. Tracking is applied at render time via `buildTicketUrl()` in each component. This is the correct pattern: the data layer stays canonical, attribution belongs to the presentation layer. The schema.org JSON-LD (which also uses `e.url`) automatically benefits from the clean URL.
+
+### Files affected
+
+- `src/utils/eventUrl.ts` (new): `buildTicketUrl(baseUrl, campaign, content)` helper
+- `src/data/events.ts`: stripped all tracking params from 6 event URLs
+- `src/components/home/HomeHero.astro`: `buildTicketUrl(event.url, "home", "hero")`
+- `src/components/home/HomeShows.astro`: `buildTicketUrl(event.url, "home", "shows")`
+- `src/pages/tickets.astro`: `buildTicketUrl(event.url, "tickets", "listing")` on href, data-eb-url, and fallbackUrl
+- `src/pages/cities/[slug].astro`: `buildTicketUrl(event.url, "cities", city.slug)`
+- `src/pages/links.astro`: `buildTicketUrl(event.url, "links", "modal")`
+- `src/layouts/BaseLayout.astro`: mobile `utm_medium` upgrade script
+
 ## fix(csp): allow Eventbrite script-src to unblock checkout widget (2026-04-13)
 
 ### What changed

@@ -6,6 +6,7 @@ import { events } from "@/data/events";
 import { isEventPast } from "@/utils/eventDate";
 import { buildBreadcrumbJsonLd } from "@/utils/breadcrumbs";
 import { SHOW_IMAGES, slugToImageIndex } from "@/data/images";
+import { buildTicketUrl } from "@/utils/eventUrl";
 
 export function getStaticPaths() {
   return Object.keys(cities).map((slug) => ({
@@ -153,7 +154,7 @@ const breadcrumbJsonLd = buildBreadcrumbJsonLd([
         {
           cityEvents.map((event) => (
             <a
-              href={event.url}
+              href={buildTicketUrl(event.url, "cities", city.slug)}
               target="_blank"
               rel="noopener noreferrer"
               class="city-cta city-cta--primary"

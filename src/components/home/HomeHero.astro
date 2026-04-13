@@ -1,5 +1,6 @@
 ---
 import type { EventEntry } from "@/data/events";
+import { buildTicketUrl } from "@/utils/eventUrl";
 
 interface Props {
   ticketsUrl: string;
@@ -46,7 +47,7 @@ function getHeroCity(city: string): string {
     {
       heroEvents.map((event) => (
         <a
-          href={event.url}
+          href={buildTicketUrl(event.url, "home", "hero")}
           target="_blank"
           rel="noopener noreferrer"
           class="next-show-pill"

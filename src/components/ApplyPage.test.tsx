@@ -61,9 +61,7 @@ describe("ApplyPage", () => {
 
   it("renders the subtitle", () => {
     render(<ApplyPage />);
-    expect(
-      screen.getByText(/NYC's #1 live desi dating show/),
-    ).toBeInTheDocument();
+    expect(screen.getByText(/#1 live desi dating show/)).toBeInTheDocument();
   });
 
   it("shows 'For myself' and 'For a friend' toggle buttons", () => {

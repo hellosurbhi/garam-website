@@ -1,5 +1,29 @@
 # Changelog
 
+## seo: optimize for desi dating show keyword (2026-04-13)
+
+### What changed
+
+Added "desi dating show" and "desi dating show New York" as primary SEO targets. Previously the site used "South Asian dating show" exclusively in all title tags, meta descriptions, and structured data, with zero "desi" signals in any high-weight SEO field.
+
+Files affected: `src/pages/index.astro`, `src/pages/faq.astro`, `src/pages/tickets.astro`, `src/data/copy.ts`
+
+### Changes
+
+- Homepage `<title>`: "NYC's #1 Live South Asian Dating Show" changed to "NYC's #1 Live Desi Dating Show" (highest-weight signal for target keyword)
+- Homepage meta description: now leads with "desi dating show" while keeping "South Asian singles" to preserve existing signals
+- Organization JSON-LD `alternateName`: added "Desi Dating Show NYC", "Desi Dating Show New York", "NYC Desi Dating Show"
+- Organization and EventSeries JSON-LD descriptions: swapped "South Asian" to "desi" as primary descriptor; "South Asian" remains in supporting context
+- FAQ page `<title>`: "FAQ: Desi Dating Show NYC" (also removed a banned em dash separator)
+- Tickets page meta description: includes "desi dating show New York" and "South Asian singles mixer"
+- `SITE.tagline` and `SITE.description` in `copy.ts`: "desi" as primary descriptor (used in HomeExperience body copy and llms.txt)
+
+### Decisions
+
+"South Asian" is preserved in descriptions and all body copy so existing ranking signals are not removed. The title tag change is intentional: Google weights the `<title>` tag heavily, and leading with "desi" is the fastest path to ranking for the new keyword while the body copy continues to signal "south asian" contextually. "Desi dating show New York" appears naturally in the Tickets meta description because that page targets intent-to-attend searches where geography matters.
+
+---
+
 ## fix(favicon): replace wordmark SVG with proper square icon (2026-04-12)
 
 ### What changed

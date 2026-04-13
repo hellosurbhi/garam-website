@@ -1,5 +1,44 @@
 # Changelog
 
+## seo(desi): fix 6 missed South Asian dating show instances in audit (2026-04-13)
+
+### What changed
+
+Comprehensive audit after the main rollout found 6 files that still had "South Asian dating show" describing the show itself. All fixed.
+
+**Files updated:**
+
+- `src/pages/faq.astro:16`: FAQ first answer body text
+- `src/pages/tickets.astro:50`: EventSeries JSON-LD description
+- `src/pages/llms-full.txt.ts:184`: AI-readable site content (hosts section)
+- `src/components/ApplyPage.tsx:37`: MCP tool description
+- `src/pages/hosts.astro:94`: Hosts page narrative about the show's growth
+- `src/pages/sponsorship.astro:99,246`: Two MCP tool descriptions (hero + footer email links)
+
+**Intentionally excluded:**
+
+- `src/components/ContestantPrepPage.tsx:68`: Kept as "South Asian dating show" per explicit user instruction
+
+### Reasoning
+
+These instances slipped through the original rollout because they were in JSON-LD metadata, AI-indexing files, and MCP tool descriptions rather than visible component copy. The audit used grep across all `.ts`, `.tsx`, and `.astro` files to find remaining violations.
+
+---
+
+## seo(desi): revert "drop NYC's from taglines" — geographic specificity increases conversion (2026-04-13)
+
+### What changed
+
+Reverted commit `78c13c1` which had removed "NYC's" from eyebrows and taglines. CRO research confirmed geographic specificity gives 10-35% conversion lift: "NYC's #1 Live Desi Dating Show" is the correct final form.
+
+**What reverted:** `src/data/copy.ts`, `src/components/home/HomeHero.astro`, `src/pages/index.astro`
+
+### Reasoning
+
+"NYC's" is a trust signal. Local audiences recognize their city name in the headline. "#1" is legitimate (no live in-person desi dating show competition in the US). "Live" differentiates from online content. Reverting was the right call.
+
+---
+
 ## seo(desi): roll out desi dating show keyword across site (2026-04-13)
 
 ### What changed

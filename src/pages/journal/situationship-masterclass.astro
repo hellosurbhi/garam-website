@@ -96,7 +96,7 @@ const breadcrumbJsonLd = buildBreadcrumbJsonLd([
         <p class="mc-cover-sub">{post.slides[0].body}</p>
       </div>
       <div class="mc-scroll-hint" aria-hidden="true">
-        <span>scroll</span>
+        <span>scroll or ↓</span>
         <svg
           xmlns="http://www.w3.org/2000/svg"
           width="14"
@@ -137,35 +137,35 @@ const breadcrumbJsonLd = buildBreadcrumbJsonLd([
       stepSlides.map((slide, stepIdx) => {
         const bgClass = stepIdx % 2 === 0 ? "bg-light" : "bg-warm";
         return (
-          <>
-            <section
-              class={`mc-section mc-step ${bgClass}`}
-              aria-label={slide.stepLabel}
-            >
-              <div class="mc-content">
-                {slide.stepNumber && (
-                  <span class="step-ghost" aria-hidden="true">
-                    {slide.stepNumber}
-                  </span>
-                )}
+          <section
+            class={`mc-section mc-step ${slide.stepNumber ? "" : "mc-step--cont"} ${slide.stepNumber === "04" ? "mc-step--has-cta" : ""} ${bgClass}`}
+            aria-label={slide.stepLabel ?? slide.title}
+          >
+            <div class="mc-content">
+              {slide.stepNumber && (
+                <span class="step-ghost" aria-hidden="true">
+                  {slide.stepNumber}
+                </span>
+              )}
+              {slide.stepLabel && (
                 <p class="mc-step-label reveal" data-delay="0">
                   {slide.stepLabel}
                 </p>
-                <h2 class="mc-step-title reveal" data-delay="100">
-                  {slide.title}
-                </h2>
-                <div
-                  class="mc-step-body reveal"
-                  data-delay="200"
-                  set:html={slide.body}
-                />
-                {slide.hotTake && (
-                  <p class="hot-take reveal" data-delay="320">
-                    {slide.hotTake}
-                  </p>
-                )}
-              </div>
-            </section>
+              )}
+              <h2 class="mc-step-title reveal" data-delay="100">
+                {slide.title}
+              </h2>
+              <div
+                class="mc-step-body reveal"
+                data-delay="200"
+                set:html={slide.body}
+              />
+              {slide.hotTake && (
+                <p class="hot-take reveal" data-delay="320">
+                  {slide.hotTake}
+                </p>
+              )}
+            </div>
             {slide.stepNumber === "04" && (
               <aside class="mc-mid-cta" aria-label="Show promotion">
                 <p class="mc-mid-cta-text">
@@ -175,7 +175,7 @@ const breadcrumbJsonLd = buildBreadcrumbJsonLd([
                 </p>
               </aside>
             )}
-          </>
+          </section>
         );
       })
     }
@@ -624,6 +624,12 @@ const breadcrumbJsonLd = buildBreadcrumbJsonLd([
     text-align: left;
   }
 
+  /* ── Continuation slides (no step label/number) ─────────── */
+
+  .mc-step--cont .mc-step-title {
+    margin-top: 80px;
+  }
+
   /* ── Science section ─────────────────────────────────────── */
 
   .mc-science .mc-step-label {
@@ -665,6 +671,13 @@ const breadcrumbJsonLd = buildBreadcrumbJsonLd([
   }
 
   /* ── Mid-article CTA ─────────────────────────────────────── */
+
+  .mc-step--has-cta .mc-mid-cta {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+  }
 
   .mc-mid-cta {
     background-color: var(--brand-red);
@@ -930,6 +943,52 @@ const breadcrumbJsonLd = buildBreadcrumbJsonLd([
     window.addEventListener("scroll", updateProgress, { passive: true });
     updateProgress();
   }
+
+  // Keyboard arrow navigation between sections
+  (function () {
+    const navSections = Array.from(
+      document.querySelectorAll<HTMLElement>(".mc-section, .mc-faqs"),
+    );
+    const reducedMotion = window.matchMedia(
+      "(prefers-reduced-motion: reduce)",
+    ).matches;
+
+    function getCurrentIndex(): number {
+      const center = window.scrollY + window.innerHeight / 2;
+      let bestIdx = 0;
+      let bestDist = Infinity;
+      navSections.forEach((section, i) => {
+        const mid = section.offsetTop + section.offsetHeight / 2;
+        const dist = Math.abs(center - mid);
+        if (dist < bestDist) {
+          bestDist = dist;
+          bestIdx = i;
+        }
+      });
+      return bestIdx;
+    }
+
+    document.addEventListener("keydown", (e) => {
+      const tag = (document.activeElement?.tagName ?? "").toLowerCase();
+      if (tag === "input" || tag === "textarea" || tag === "select") return;
+
+      if (e.key === "ArrowDown" || e.key === "ArrowRight") {
+        e.preventDefault();
+        const next = Math.min(getCurrentIndex() + 1, navSections.length - 1);
+        navSections[next].scrollIntoView({
+          behavior: reducedMotion ? "instant" : "smooth",
+          block: "start",
+        });
+      } else if (e.key === "ArrowUp" || e.key === "ArrowLeft") {
+        e.preventDefault();
+        const prev = Math.max(getCurrentIndex() - 1, 0);
+        navSections[prev].scrollIntoView({
+          behavior: reducedMotion ? "instant" : "smooth",
+          block: "start",
+        });
+      }
+    });
+  })();
 
   // Scroll-triggered section reveals
   if (!window.matchMedia("(prefers-reduced-motion: reduce)").matches) {

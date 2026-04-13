@@ -66,6 +66,11 @@ function ApplyPageInner() {
             type: "string",
             description: "Instagram handle (without @)",
           },
+          email: {
+            type: "string",
+            format: "email",
+            description: "Email address for the contestant",
+          },
           pitch: {
             type: "string",
             description: "Why they would be great on the show (optional)",
@@ -79,6 +84,7 @@ function ApplyPageInner() {
           "sexualOrientation",
           "city",
           "instagram",
+          "email",
         ],
       },
     });

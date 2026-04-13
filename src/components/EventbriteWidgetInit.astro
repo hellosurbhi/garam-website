@@ -79,28 +79,27 @@
     script.onerror = applyFallbacks;
     document.head.appendChild(script);
 
-    // Close EB modal on outside click by dispatching Escape when the user
-    // clicks the overlay backdrop (not the inner iframe content).
-    // The EB widget injects a container div into <body>; we watch for it once.
+    // Close EB modal on outside click.
+    // The widget injects `div.eds-structure_main` into <body> as the full-screen
+    // backdrop. The actual dialog is nested inside as `div.eds-modal`.
+    // Clicking eds-structure_main outside the dialog area triggers the close button.
     const modalObserver = new MutationObserver(() => {
-      const ebOverlay = document.querySelector<HTMLElement>(
-        'div[id^="eventbrite-widget-container-"]',
+      const ebStructure = document.querySelector<HTMLElement>(
+        "div.eds-structure_main",
       );
-      if (!ebOverlay) return;
+      if (!ebStructure) return;
 
-      ebOverlay.addEventListener("click", (e) => {
-        if (e.target === ebOverlay) {
-          document.dispatchEvent(
-            new KeyboardEvent("keydown", {
-              key: "Escape",
-              bubbles: true,
-              cancelable: true,
-            }),
+      ebStructure.addEventListener("click", (e) => {
+        const target = e.target as HTMLElement;
+        if (!target.closest(".eds-modal")) {
+          const closeBtn = document.querySelector<HTMLButtonElement>(
+            ".eds-modal__close-button button",
           );
+          closeBtn?.click();
         }
       });
       modalObserver.disconnect();
     });
-    modalObserver.observe(document.body, { childList: true, subtree: false });
+    modalObserver.observe(document.body, { childList: true, subtree: true });
   })();
 </script>

@@ -19,6 +19,8 @@ export interface EventEntry {
   venue?: EventVenue;
   price?: string; // USD amount, e.g. "15"
   tagline?: string; // Short status line shown on the card (e.g. "Selling fast")
+  eventbriteId?: string; // Numeric Eventbrite event ID — enables modal checkout widget
+  promoCode?: string; // Auto-applied Eventbrite promo/discount code for this event
 }
 
 const VENUE_TOP_SECRET: EventVenue = {
@@ -101,7 +103,8 @@ export const events: EventEntry[] = [
     endTime: "20:00",
     venue: VENUE_TOP_SECRET,
     price: "15",
-    tagline: "Low tickets \u2014 don\u2019t wait",
+    tagline: "Low tickets, grab yours now",
+    eventbriteId: "1985330936274",
   },
   {
     date: "Apr 26",
@@ -114,6 +117,8 @@ export const events: EventEntry[] = [
     venue: VENUE_LAUGH_TOUR,
     price: "15",
     tagline: "Just announced",
+    eventbriteId: "1986100570270",
+    promoCode: "AutomaticDiscount_1768496886850",
   },
 ];
 

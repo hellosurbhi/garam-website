@@ -720,6 +720,11 @@ const reversedPress = [...pressItems].reverse();
     outline: none;
   }
 
+  .modal-dialog:focus-visible {
+    outline: 2px solid var(--brand-red);
+    outline-offset: 2px;
+  }
+
   .modal-dialog::backdrop {
     background: rgba(0, 0, 0, 0.5);
   }

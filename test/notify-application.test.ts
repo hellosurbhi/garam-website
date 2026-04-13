@@ -33,6 +33,7 @@ const validBody = {
   city: "New York",
   state: "NY",
   country: "USA",
+  email: "priya@example.com",
   instagram: "priyasharma",
   community: "Hindu",
   income: "$50k–$100k",
@@ -76,6 +77,20 @@ describe("notify-application handler", () => {
   it("returns 400 when instagram is missing", async () => {
     const res = await POST(
       makeContext(makeRequest({ ...validBody, instagram: "" })),
+    );
+    expect(res.status).toBe(400);
+  });
+
+  it("returns 400 when email is missing", async () => {
+    const res = await POST(
+      makeContext(makeRequest({ ...validBody, email: "" })),
+    );
+    expect(res.status).toBe(400);
+  });
+
+  it("returns 400 when email is malformed", async () => {
+    const res = await POST(
+      makeContext(makeRequest({ ...validBody, email: "notanemail" })),
     );
     expect(res.status).toBe(400);
   });

@@ -6,9 +6,9 @@
 
 export const SITE = {
   name: "Garam Masala Dating",
-  tagline: "NYC's #1 Live South Asian Dating Show",
+  tagline: "NYC's #1 Live Desi Dating Show",
   description:
-    "Garam Masala Dating is NYC's #1 live South Asian dating show where South Asian singles go on a date in front of a packed house. Our hosts Surbhi and Wyatt guide the chaos with stand-up, crowd work, and genuine matchmaking instincts. Every show ends with a singles mixer where the audience gets to continue the experiment.",
+    "Garam Masala Dating is NYC's #1 live desi dating show where South Asian singles go on a blind date in front of a packed house. Our hosts Surbhi and Wyatt guide the chaos with stand-up, crowd work, and genuine matchmaking instincts. Every show ends with a singles mixer where the audience gets to continue the experiment.",
   shortDescription:
     "New York City's #1 live South Asian comedy dating show. Real singles. Real dates. 250-person audience. Bi-weekly in Manhattan.",
   footerLine:

@@ -10,7 +10,7 @@ import { buildTicketUrl } from "@/utils/eventUrl";
 
 const TITLE = "Tickets & Upcoming Shows";
 const DESC =
-  "Get tickets to Garam Masala Dating shows in New York and beyond. The #1 live desi dating show and South Asian singles mixer. Now touring LA, SF, and San Diego.";
+  "Get tickets to Garam Masala Dating shows in New York and beyond. NYC's #1 live desi dating show and South Asian singles mixer. Now touring LA, SF, and San Diego.";
 
 const upcomingEvents = allEvents.filter(
   (e) => !isEventPast(e.date) && !e.hidden,
@@ -47,7 +47,7 @@ const eventSeriesJsonLd = JSON.stringify({
   "@id": "https://garammasaladating.com/#event-series",
   name: "Garam Masala Dating",
   description:
-    "The #1 recurring live South Asian comedy dating show. Two real singles go on a blind date in front of a 250-person audience. Bi-weekly in Manhattan at Top Secret Comedy Club.",
+    "NYC's #1 recurring live South Asian comedy dating show. Two real singles go on a blind date in front of a 250-person audience. Bi-weekly in Manhattan at Top Secret Comedy Club.",
   url: "https://garammasaladating.com",
   startDate: "2022",
   organizer: {

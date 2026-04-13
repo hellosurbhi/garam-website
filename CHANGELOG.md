@@ -1,5 +1,71 @@
 # Changelog
 
+## CodeRabbit PR #14 full review pass (2026-04-13)
+
+### What changed
+
+Addressed all 30 CodeRabbit review comments on the `design-updates` branch (PR #14). 29 resolved in this pass; 1 was already resolved before this session.
+
+**Phase 1 — Security and server validation**
+
+- `src/pages/api/capture-lead.ts`: Sanitize geo fields before writing to Firestore. Cap string fields to 255 chars; validate lat/lng with a coordinate regex to prevent Firestore rule rejection from malformed input.
+- `src/pages/api/notify-application.ts`: Add server-side email validation (`email` was checked on the client but not the server endpoint). Add `|| !body.email || validateEmail(body.email)` to the validation guard.
+- `test/notify-application.test.ts`: Add `email` to the valid body fixture; add two new tests for missing and malformed email.
+
+**Phase 2 — Real bugs**
+
+- `src/pages/index.astro`: Remove `{ once: true }` from exit-intent mouseleave listener. The once flag permanently removed the listener even when the popup did not show (timing or cooldown guard returned early).
+- `src/components/ApplyPage.tsx`: Add `email` field (type string, format email) to the MCP `registerTool` schema. The form required email but the tool schema omitted it entirely.
+- `src/pages/journal/situationship-masterclass.astro`: Guard the arrow-key navigation handler against modifier keys (Alt/Ctrl/Meta) and interactive elements (buttons, anchors, contenteditable). Previously stole arrow keys from focused links and blocked Alt+Left/Right browser history.
+
+**Phase 3 — soldOut boolean field**
+
+- `src/data/events.ts`: Add `soldOut?: boolean` to `EventEntry` interface. Mark 4 sold-out events with `soldOut: true`.
+- `src/pages/tickets.astro`, `src/components/home/HomeHero.astro`: Replace all `tagline?.toLowerCase().includes("sold out")` control flow with `event.soldOut ?? false`. Tagline stays for display only.
+
+**Phase 4 — Widget resilience**
+
+- `src/pages/tickets.astro`, `src/components/home/HomeHero.astro`: Convert Eventbrite widget trigger `<button>` elements to `<a href={url} target="_blank">` so the browser provides native navigation if the widget script fails or init throws.
+- `src/components/EventbriteWidgetInit.astro`: Update CSS selector from `button[id^="..."]` to `[id^="..."]` to match anchor triggers. Get fallback URL from `getAttribute("href")` instead of `data-eb-url`.
+- Both files: Read widget theme colors (`brandColor`, `fontColor`, `background`) from CSS custom properties via `getComputedStyle` at runtime instead of hardcoded hex literals.
+- Both files: Wrap `EBWidgets.createWidget()` in `try/catch`. Remove `applyFallbacks` and `console.warn/error` calls.
+- `src/pages/tickets.astro`: Change stagger delay from `style={\`animation-delay: ...\`}`to`style={\`--stagger-delay: ...\`}`with`animation-delay: var(--stagger-delay, 0.1s)` in CSS.
+- `src/pages/tickets.astro`: Add `aria-hidden="true"` to both decorative arrow SVGs.
+
+**Phase 5 — Design tokens**
+
+- `src/index.css`: Add `--white: #ffffff`, `--white-rgb: 255, 255, 255`, `--gray-light: #999`, `--gray-mid: #888`, `--black-rgb: 0, 0, 0` to `:root`.
+- `src/pages/journal/situationship-masterclass.astro`: Replace all hardcoded color literals (`#888`, `#999`, `#555`, `white`, `rgba(220,38,38,...)`, `rgba(0,0,0,...)`, `rgba(255,255,255,...)`) with CSS custom property references.
+
+**Phase 6 — Accessibility**
+
+- `src/components/LegalModal.astro`: Add `.legal-dialog:focus-visible` outline to replace the invisible `outline: none` on programmatic focus.
+- `src/pages/links.astro`: Same pattern for `.modal-dialog:focus-visible`.
+- `src/pages/journal/situationship-masterclass.astro`: Raise font sizes to 16px minimum on `.mc-back`, `.mc-mid-cta-text`, `.mc-cta-btn`, `.mc-footer-back`, `.mc-footer-apply`. Add `min-height: 48px` and flex alignment to back link and footer links for touch target compliance.
+
+**Phase 7 — Content to data files and date-gating fix**
+
+- `src/data/copy.ts`: Add `PAGES.home.description`, `PAGES.tickets.intro`, `PAGES.links.subtitle`, `APPLY_PAGE.subtitle`.
+- `src/data/masterclasses.ts`: Add `promoText` field to `MasterclassPost` interface; set it on the situationship masterclass entry.
+- Update `src/pages/index.astro`, `src/pages/tickets.astro`, `src/pages/links.astro`, `src/components/ApplyPage.tsx`, `src/pages/journal/situationship-masterclass.astro` to reference data constants instead of hardcoded strings.
+- `src/pages/journal/index.astro`: Replace UTC `toISOString().slice(0,10)` masterclass date filter with the same local-date approach used by `journalPostsPublished` to prevent timezone-boundary mismatches.
+
+**Phase 8 — GitHub dismissals**
+
+- 6 threads dismissed with explanatory replies: hero copy (once-only strings), tickets TITLE/DESC (codebase-wide pattern), JSON-LD descriptions (SEO metadata, not content copy), photo upload dimensions (client-side render, unknown intrinsic size), CSS composes pattern (already used at line 354).
+- All 29 unresolved threads resolved via GitHub GraphQL API.
+
+### Files affected
+
+`src/data/events.ts`, `src/data/copy.ts`, `src/data/masterclasses.ts`, `src/index.css`, `src/pages/tickets.astro`, `src/pages/index.astro`, `src/pages/links.astro`, `src/pages/journal/index.astro`, `src/pages/journal/situationship-masterclass.astro`, `src/components/EventbriteWidgetInit.astro`, `src/components/home/HomeHero.astro`, `src/components/LegalModal.astro`, `src/components/ApplyPage.tsx`, `src/pages/api/capture-lead.ts`, `src/pages/api/notify-application.ts`, `test/notify-application.test.ts`
+
+### Decisions
+
+- Widget trigger buttons converted to anchors rather than adding JS fallback listeners. Anchors provide browser-native fallback (including `target="_blank"` behavior) when JS fails, and BaseLayout's existing `a[href*="eventbrite.com"]` mutation automatically handles mobile UTM attribution — resolving Comments 22, 25, and 13 in one move.
+- `soldOut` boolean added to `EventEntry` rather than parsing tagline strings. Tagline stays as display-only copy.
+- TITLE/DESC page-level constants left as inline pattern (consistent with all other pages). Only marketing/content copy strings were moved to data files.
+- JSON-LD descriptions left inline as established pattern across all pages (they are schema.org-specific metadata, not user-facing content strings).
+
 ## fix(modals): remove X button focus ring on open across all modals (2026-04-13)
 
 ### What changed

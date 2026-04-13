@@ -62,7 +62,7 @@ describe("ApplyPage", () => {
   it("renders the subtitle", () => {
     render(<ApplyPage />);
     expect(
-      screen.getByText(/NYC's #1 live South Asian dating show/),
+      screen.getByText(/NYC's #1 live desi dating show/),
     ).toBeInTheDocument();
   });
 

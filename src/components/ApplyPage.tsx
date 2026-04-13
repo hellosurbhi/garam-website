@@ -130,7 +130,7 @@ function ApplyPageInner() {
                   Apply to Be on Garam Masala Dating
                 </h1>
                 <p className={styles.subtitle}>
-                  NYC&apos;s #1 live South Asian dating show 🌶️
+                  NYC&apos;s #1 live desi dating show 🌶️
                 </p>
                 <div className={styles.divider} />
               </>

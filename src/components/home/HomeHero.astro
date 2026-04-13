@@ -46,8 +46,7 @@ function getHeroCity(city: string): string {
 
     {
       heroEvents.map((event) => {
-        const isSoldOut =
-          event.tagline?.toLowerCase().includes("sold out") ?? false;
+        const isSoldOut = event.soldOut ?? false;
         const pillInner = (
           <>
             <span class="next-show-pill-date">

@@ -17,9 +17,7 @@ const upcomingEvents = allEvents.filter(
 );
 
 const widgetEvents = upcomingEvents
-  .filter(
-    (e) => e.eventbriteId && !e.tagline?.toLowerCase().includes("sold out"),
-  )
+  .filter((e) => e.eventbriteId && !e.soldOut)
   .map((e) => ({
     eventId: e.eventbriteId!,
     triggerId: `eventbrite-widget-modal-trigger-${e.eventbriteId}`,
@@ -118,9 +116,7 @@ const eventSeriesJsonLd = JSON.stringify({
           <div class="tickets-list">
             {upcomingEvents.map((event, i) => {
               const isLive = event.url && event.url !== "#";
-              const isSoldOut = event.tagline
-                ?.toLowerCase()
-                .includes("sold out");
+              const isSoldOut = event.soldOut ?? false;
               const hasWidget =
                 isLive && !isSoldOut && Boolean(event.eventbriteId);
               return hasWidget ? (

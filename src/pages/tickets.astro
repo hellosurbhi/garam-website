@@ -120,12 +120,13 @@ const eventSeriesJsonLd = JSON.stringify({
               const hasWidget =
                 isLive && !isSoldOut && Boolean(event.eventbriteId);
               return hasWidget ? (
-                <button
-                  type="button"
+                <a
+                  href={buildTicketUrl(event.url, "tickets", "listing")}
+                  target="_blank"
+                  rel="noopener noreferrer"
                   id={`eventbrite-widget-modal-trigger-${event.eventbriteId}`}
                   class="ticket-card ticket-card--live ticket-card--widget"
-                  style={`animation-delay: ${0.1 + i * 0.06}s`}
-                  data-eb-url={buildTicketUrl(event.url, "tickets", "listing")}
+                  style={`--stagger-delay: ${0.1 + i * 0.06}s`}
                   data-ph-capture="cta_clicked"
                   data-ph-cta="get_tickets"
                   data-ph-section="tickets"
@@ -152,19 +153,21 @@ const eventSeriesJsonLd = JSON.stringify({
                       stroke-width="2"
                       stroke-linecap="round"
                       stroke-linejoin="round"
+                      aria-hidden="true"
+                      focusable="false"
                     >
                       <path d="M5 12h14" />
                       <path d="m12 5 7 7-7 7" />
                     </svg>
                   </span>
-                </button>
+                </a>
               ) : isLive ? (
                 <a
                   href={buildTicketUrl(event.url, "tickets", "listing")}
                   target="_blank"
                   rel="noopener noreferrer"
                   class={`ticket-card ticket-card--live${isSoldOut ? " ticket-card--soldout" : ""}`}
-                  style={`animation-delay: ${0.1 + i * 0.06}s`}
+                  style={`--stagger-delay: ${0.1 + i * 0.06}s`}
                   data-ph-capture="cta_clicked"
                   data-ph-cta="get_tickets"
                   data-ph-section="tickets"
@@ -194,6 +197,8 @@ const eventSeriesJsonLd = JSON.stringify({
                         stroke-width="2"
                         stroke-linecap="round"
                         stroke-linejoin="round"
+                        aria-hidden="true"
+                        focusable="false"
                       >
                         <path d="M5 12h14" />
                         <path d="m12 5 7 7-7 7" />
@@ -205,7 +210,7 @@ const eventSeriesJsonLd = JSON.stringify({
                 <button
                   type="button"
                   class="ticket-card ticket-card--tba"
-                  style={`animation-delay: ${0.1 + i * 0.06}s`}
+                  style={`--stagger-delay: ${0.1 + i * 0.06}s`}
                   data-notify-city={event.city}
                   data-notify-city-slug={event.citySlug}
                   data-ph-capture="cta_clicked"
@@ -333,12 +338,32 @@ const eventSeriesJsonLd = JSON.stringify({
           if (ev.promoCode) {
             config.promoCode = ev.promoCode;
           }
-          window.EBWidgets.createWidget(config);
+          try {
+            window.EBWidgets.createWidget(config);
+          } catch (err) {
+            console.error(
+              "[tickets] EBWidgets.createWidget failed for event " +
+                ev.eventId +
+                ":",
+              err,
+            );
+            if (ev.fallbackUrl) {
+              window.open(ev.fallbackUrl, "_blank", "noopener,noreferrer");
+            }
+          }
         });
       }
 
       function applyFallbacks() {
         widgetEvents.forEach(function (ev) {
+          if (!ev.fallbackUrl) {
+            console.warn(
+              '[tickets] No fallbackUrl for trigger "' +
+                ev.triggerId +
+                '"; skipping fallback listener.',
+            );
+            return;
+          }
           var el = document.getElementById(ev.triggerId);
           if (el) {
             el.addEventListener("click", function () {
@@ -463,6 +488,7 @@ const eventSeriesJsonLd = JSON.stringify({
     border: 1px solid;
     text-decoration: none;
     animation: ticketsFadeIn 0.5s ease-out both;
+    animation-delay: var(--stagger-delay, 0.1s);
     transition:
       border-color 0.15s,
       background 0.15s;

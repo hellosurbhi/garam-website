@@ -66,6 +66,12 @@
 
     function applyFallbacks(): void {
       configs.forEach((ev) => {
+        if (!ev.fallbackUrl) {
+          console.warn(
+            `[EventbriteWidgetInit] No fallbackUrl for trigger "${ev.triggerId}"; skipping fallback listener.`,
+          );
+          return;
+        }
         document.getElementById(ev.triggerId)?.addEventListener("click", () => {
           window.open(ev.fallbackUrl, "_blank", "noopener,noreferrer");
         });
@@ -83,6 +89,7 @@
     // The widget injects `div.eds-structure_main` into <body> as the full-screen
     // backdrop. The actual dialog is nested inside as `div.eds-modal`.
     // Clicking eds-structure_main outside the dialog area triggers the close button.
+    let modalObserverTimeout: ReturnType<typeof setTimeout>;
     const modalObserver = new MutationObserver(() => {
       const ebStructure = document.querySelector<HTMLElement>(
         "div.eds-structure_main",
@@ -98,8 +105,19 @@
           closeBtn?.click();
         }
       });
+      clearTimeout(modalObserverTimeout);
       modalObserver.disconnect();
     });
     modalObserver.observe(document.body, { childList: true, subtree: true });
+    modalObserverTimeout = setTimeout(() => {
+      modalObserver.disconnect();
+      console.warn(
+        "[EventbriteWidgetInit] MutationObserver timed out waiting for EB modal.",
+      );
+    }, 30_000);
+    window.addEventListener("beforeunload", () => {
+      clearTimeout(modalObserverTimeout);
+      modalObserver.disconnect();
+    });
   })();
 </script>

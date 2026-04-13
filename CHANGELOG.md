@@ -1,5 +1,32 @@
 # Changelog
 
+## feat(tickets): replace all external Eventbrite links with embedded checkout modal (2026-04-13)
+
+### What changed
+
+Every ticket CTA on the site now opens the Eventbrite checkout modal in-page instead of a new tab. Checkout friction eliminated at the most critical conversion point.
+
+**Architecture:**
+
+- New shared `src/components/EventbriteWidgetInit.astro`: zero-visual component that loads the Eventbrite widget script once per page, finds all `button[id^="eventbrite-widget-modal-trigger-"]` elements by scanning the DOM, and initializes the checkout modal for each. Handles script load failure by attaching click handlers that open the external URL as a fallback.
+- Added `MutationObserver` pattern to close the EB modal when user clicks the overlay backdrop (dispatches `Escape` keydown to EB's overlay container div).
+
+**Files changed:**
+
+- `src/components/EventbriteWidgetInit.astro` — new shared component
+- `src/components/home/HomeHero.astro` — pill renders as `<button>` with EB trigger ID when event has `eventbriteId` and is not sold out; otherwise keeps existing `<a>` tag. Added `appearance/border/cursor` button resets to `.next-show-pill`.
+- `src/components/home/HomeShows.astro` — show cards: three-way conditional (widget button / live link / notify button). `.show-card` already had full button resets so no style changes needed.
+- `src/pages/cities/[slug].astro` — city CTAs conditional button vs anchor; added `appearance/cursor` reset to `.city-cta`; added `<EventbriteWidgetInit />`.
+- `src/pages/index.astro` — added `<EventbriteWidgetInit />` after main content (handles both HomeHero pill and HomeShows cards in one init pass).
+
+**Skipped:** `links.astro` — events list is inside a native `<dialog>` opened with `showModal()`, which enters the browser top layer. The EB widget's fixed-position iframe would render below the dialog backdrop, making it invisible. External links preserved there.
+
+**Fallback behavior:** Events without `eventbriteId` or with "sold out" tagline continue to open Eventbrite externally via `<a>` tags.
+
+### Decisions / trade-offs
+
+The shared component pattern avoids duplicating the 100-line init script across three pages. Widget configs are read entirely from DOM `data-*` attributes on the trigger buttons, so no server-side `define:vars` is needed. The outside-click close via `MutationObserver` + `Escape` dispatch is the only programmatic way to close the EB modal since the widget API has no `close()` method; the selector `div[id^="eventbrite-widget-container-"]` must be verified against the actual DOM the EB widget injects in devtools.
+
 ## seo(desi): fix 6 missed South Asian dating show instances in audit (2026-04-13)
 
 ### What changed

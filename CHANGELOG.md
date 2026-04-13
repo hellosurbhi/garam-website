@@ -1,5 +1,36 @@
 # Changelog
 
+## seo(desi): roll out desi dating show keyword across site (2026-04-13)
+
+### What changed
+
+Strategic keyword rollout targeting "desi dating show NYC" — a keyword with zero live in-person competition. Changed "South Asian dating show" to "desi dating show" in 11 files wherever copy describes THE SHOW ITSELF. Kept "South Asian" everywhere it describes the audience, community, or culture, and on dedicated south-asian keyword pages.
+
+**Files updated:**
+
+- `src/utils/eventSchema.ts`: EVENT_DESCRIPTION (every event's JSON-LD — highest-volume signal)
+- `src/lib/constants.ts`: VIDEO_METADATA title + description (VideoObject JSON-LD)
+- `src/data/copy.ts`: shortDescription, footerLine, ogImageAlt, HOME_FAQS[0].short, MARQUEE_ITEMS[0]
+- `src/pages/tickets.astro`: visible intro paragraph
+- `src/components/home/HomeFooter.astro`: hardcoded footer tagline
+- `src/components/AuthorBio.astro`: author bio on all journal articles
+- `src/components/ApplyPage.tsx`: apply form subtitle
+- `src/pages/apply.astro`: skeleton subtitle (server-rendered fallback)
+- `src/pages/links.astro`: H1
+- `src/components/ApplyPage.test.tsx` + `src/utils/eventSchema.test.ts`: updated assertions to match new copy
+
+**What was intentionally NOT changed:**
+
+- Hero sub-copy ("New York City's #1 live South Asian comedy dating show") — paired with "desi" eyebrow above it, provides both signals
+- FAQ "Is the show only for South Asian people?" — factually accurate
+- Journal/tips/cities pages — dedicated south-asian keyword pages
+- `SITE.tagline` — brand tagline in llms.txt, kept as-is
+- Sponsorship/corporate demographic copy — "70%+ South Asian professionals" is factual
+
+### Reasoning
+
+Title tag already targeting "Desi Dating Show NYC" (from prior session). This rollout propagates the keyword consistently across on-page copy, JSON-LD schemas, and UI strings while maintaining the "south asian" signal where it serves SEO on dedicated pages or is factually accurate.
+
 ## fix(seo): remove nonexistent sitemap.xml and invalid llms.txt from robots.txt Sitemap directives (2026-04-13)
 
 ### What changed

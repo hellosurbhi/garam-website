@@ -18,6 +18,7 @@ export interface EventEntry {
   endTime?: string; // HH:MM 24h format, ET (default: "22:00")
   venue?: EventVenue;
   price?: string; // USD amount, e.g. "15"
+  soldOut?: boolean; // Machine-readable sold-out flag; do not use tagline for control flow
   tagline?: string; // Short status line shown on the card (e.g. "Selling fast")
   eventbriteId?: string; // Numeric Eventbrite event ID — enables modal checkout widget
   promoCode?: string; // Auto-applied Eventbrite promo/discount code for this event
@@ -50,6 +51,7 @@ export const events: EventEntry[] = [
     isoDate: "2026-02-22",
     venue: VENUE_TOP_SECRET,
     price: "15",
+    soldOut: true,
     tagline: "Sold out",
   },
   {
@@ -65,6 +67,7 @@ export const events: EventEntry[] = [
       addressCountry: "US",
     },
     price: "15",
+    soldOut: true,
     tagline: "Sold out",
   },
   {
@@ -75,6 +78,7 @@ export const events: EventEntry[] = [
     isoDate: "2026-03-15",
     venue: VENUE_TOP_SECRET,
     price: "15",
+    soldOut: true,
     tagline: "Sold out",
   },
   {
@@ -91,6 +95,7 @@ export const events: EventEntry[] = [
       addressCountry: "US",
     },
     price: "15",
+    soldOut: true,
     tagline: "Sold out",
   },
   {

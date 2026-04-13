@@ -18,8 +18,8 @@ interface LeadPayload {
   geoCity?: string;
   geoRegion?: string;
   geoCountry?: string;
-  geoLatitude?: string;
-  geoLongitude?: string;
+  geoLatitude?: number | string;
+  geoLongitude?: number | string;
   geoTimezone?: string;
 }
 
@@ -65,10 +65,11 @@ export const POST: APIRoute = async ({ request }) => {
   }
 
   const now = new Date().toISOString();
-  const fields: Record<string, { stringValue: string }> = {
-    email: { stringValue: email },
-    createdAt: { stringValue: now },
-  };
+  const fields: Record<string, { stringValue?: string; doubleValue?: number }> =
+    {
+      email: { stringValue: email },
+      createdAt: { stringValue: now },
+    };
 
   // Add optional fields
   if (body.phone) fields.phone = { stringValue: body.phone };
@@ -85,21 +86,38 @@ export const POST: APIRoute = async ({ request }) => {
   if (body.utmTerm) fields.utmTerm = { stringValue: body.utmTerm };
   if (body.posthogDistinctId)
     fields.posthogDistinctId = { stringValue: body.posthogDistinctId };
-  const GEO_COORD_RE = /^-?\d{1,3}\.?\d{0,8}$/;
-  if (body.geoCity)
-    fields.geoCity = { stringValue: String(body.geoCity).slice(0, 255) };
-  if (body.geoRegion)
-    fields.geoRegion = { stringValue: String(body.geoRegion).slice(0, 255) };
-  if (body.geoCountry)
-    fields.geoCountry = { stringValue: String(body.geoCountry).slice(0, 255) };
-  if (body.geoTimezone)
-    fields.geoTimezone = {
-      stringValue: String(body.geoTimezone).slice(0, 255),
-    };
-  const lat = String(body.geoLatitude ?? "").slice(0, 20);
-  if (lat && GEO_COORD_RE.test(lat)) fields.geoLatitude = { stringValue: lat };
-  const lng = String(body.geoLongitude ?? "").slice(0, 20);
-  if (lng && GEO_COORD_RE.test(lng)) fields.geoLongitude = { stringValue: lng };
+  const geoCity =
+    typeof body.geoCity === "string" ? body.geoCity.trim().slice(0, 100) : "";
+  if (geoCity) fields.geoCity = { stringValue: geoCity };
+  const geoRegion =
+    typeof body.geoRegion === "string"
+      ? body.geoRegion.trim().slice(0, 100)
+      : "";
+  if (geoRegion) fields.geoRegion = { stringValue: geoRegion };
+  const geoCountry =
+    typeof body.geoCountry === "string"
+      ? body.geoCountry.trim().slice(0, 100)
+      : "";
+  if (geoCountry) fields.geoCountry = { stringValue: geoCountry };
+  const geoTimezone =
+    typeof body.geoTimezone === "string"
+      ? body.geoTimezone.trim().slice(0, 100)
+      : "";
+  if (geoTimezone) fields.geoTimezone = { stringValue: geoTimezone };
+  const lat =
+    typeof body.geoLatitude === "number"
+      ? body.geoLatitude
+      : parseFloat(String(body.geoLatitude ?? ""));
+  if (isFinite(lat) && lat >= -90 && lat <= 90) {
+    fields.geoLatitude = { doubleValue: lat };
+  }
+  const lng =
+    typeof body.geoLongitude === "number"
+      ? body.geoLongitude
+      : parseFloat(String(body.geoLongitude ?? ""));
+  if (isFinite(lng) && lng >= -180 && lng <= 180) {
+    fields.geoLongitude = { doubleValue: lng };
+  }
 
   try {
     const url = `https://firestore.googleapis.com/v1/projects/${projectId}/databases/(default)/documents/leads`;

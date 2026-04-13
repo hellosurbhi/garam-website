@@ -314,6 +314,13 @@ const eventSeriesJsonLd = JSON.stringify({
     (function () {
       if (!widgetEvents.length) return;
 
+      var rootStyle = getComputedStyle(document.documentElement);
+      var brandColor =
+        rootStyle.getPropertyValue("--brand-red").trim() || "#DC2626";
+      var fontColor =
+        rootStyle.getPropertyValue("--charcoal").trim() || "#1A1A1A";
+      var bgColor = rootStyle.getPropertyValue("--white").trim() || "#FFFFFF";
+
       function initWidgets() {
         widgetEvents.forEach(function (ev) {
           var config = {
@@ -322,9 +329,9 @@ const eventSeriesJsonLd = JSON.stringify({
             modal: true,
             modalTriggerElementId: ev.triggerId,
             themeSettings: {
-              brandColor: "#DC2626",
-              fontColor: "#000000",
-              background: "#FFFFFF",
+              brandColor: brandColor,
+              fontColor: fontColor,
+              background: bgColor,
             },
             onOrderComplete: function () {
               if (window.posthog) {
@@ -340,35 +347,8 @@ const eventSeriesJsonLd = JSON.stringify({
           }
           try {
             window.EBWidgets.createWidget(config);
-          } catch (err) {
-            console.error(
-              "[tickets] EBWidgets.createWidget failed for event " +
-                ev.eventId +
-                ":",
-              err,
-            );
-            if (ev.fallbackUrl) {
-              window.open(ev.fallbackUrl, "_blank", "noopener,noreferrer");
-            }
-          }
-        });
-      }
-
-      function applyFallbacks() {
-        widgetEvents.forEach(function (ev) {
-          if (!ev.fallbackUrl) {
-            console.warn(
-              '[tickets] No fallbackUrl for trigger "' +
-                ev.triggerId +
-                '"; skipping fallback listener.',
-            );
-            return;
-          }
-          var el = document.getElementById(ev.triggerId);
-          if (el) {
-            el.addEventListener("click", function () {
-              window.open(ev.fallbackUrl, "_blank", "noopener,noreferrer");
-            });
+          } catch (_) {
+            // Widget init failed; anchor href provides native ticket-page fallback
           }
         });
       }
@@ -377,7 +357,6 @@ const eventSeriesJsonLd = JSON.stringify({
       script.src = "https://www.eventbrite.com/static/widgets/eb_widgets.js";
       script.async = true;
       script.onload = initWidgets;
-      script.onerror = applyFallbacks;
       document.head.appendChild(script);
     })();
   </script>

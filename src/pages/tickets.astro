@@ -7,6 +7,7 @@ import { isEventPast } from "@/utils/eventDate";
 import { buildEventSchemas } from "@/utils/eventSchema";
 import LeadCaptureModal from "@/components/LeadCaptureModal.astro";
 import { buildTicketUrl } from "@/utils/eventUrl";
+import { PAGES } from "@/data/copy";
 
 const TITLE = "Tickets & Upcoming Shows";
 const DESC =
@@ -98,10 +99,7 @@ const eventSeriesJsonLd = JSON.stringify({
       <div class="tickets-header">
         <p class="tickets-eyebrow">Tickets</p>
         <h1 class="tickets-h1">Upcoming Shows</h1>
-        <p class="tickets-intro">
-          Garam Masala Dating is the #1 live desi dating show and South Asian
-          singles mixer. Grab tickets on Eventbrite.
-        </p>
+        <p class="tickets-intro">{PAGES.tickets.intro}</p>
         <p class="tickets-proof">
           40+ shows sold out · 2,000+ audience members
         </p>

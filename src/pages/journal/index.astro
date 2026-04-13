@@ -17,7 +17,17 @@ function formatDate(iso: string): string {
   });
 }
 
-const today = new Date().toISOString().slice(0, 10);
+// Mirror the same local-date approach used by journalPostsPublished to avoid
+// timezone boundary mismatches (UTC toISOString vs. local date).
+function isMasterclassPublished(dateStr: string): boolean {
+  const pub = new Date(dateStr + "T00:00:00Z");
+  const now = new Date();
+  const localToday = new Date(
+    Date.UTC(now.getFullYear(), now.getMonth(), now.getDate()),
+  );
+  return pub <= localToday;
+}
+
 const allPosts = [
   ...journalPostsPublished.map((p) => ({
     slug: p.slug,
@@ -27,7 +37,7 @@ const allPosts = [
     category: undefined as "masterclass" | undefined,
   })),
   ...masterclassPosts
-    .filter((p) => p.datePublished <= today)
+    .filter((p) => isMasterclassPublished(p.datePublished))
     .map((p) => ({
       slug: p.slug,
       title: p.title,

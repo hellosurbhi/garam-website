@@ -99,6 +99,25 @@ export const MARQUEE_ITEMS = [
   "Free Singles Mixer After Every Show",
 ];
 
+/** Page-level content strings that aren't tied to a data model. */
+export const PAGES = {
+  home: {
+    description:
+      "Garam Masala Dating is New York City's #1 live desi dating show. Watch real South Asian singles go on blind dates on stage in front of 250 people. Hosted by comedians Surbhi & Wyatt. Tickets available now.",
+  },
+  tickets: {
+    intro:
+      "Garam Masala Dating is the #1 live desi dating show and South Asian singles mixer. Grab tickets on Eventbrite.",
+  },
+  links: {
+    subtitle: "NYC's hottest live desi dating show 🌶️",
+  },
+} as const;
+
+export const APPLY_PAGE = {
+  subtitle: "NYC's #1 live desi dating show 🌶️",
+} as const;
+
 export const EXPERIENCE_STEPS = [
   {
     title: "Arrive & Settle In",

@@ -6,6 +6,7 @@ import { events, allEvents } from "@/data/events";
 import { isEventPast } from "@/utils/eventDate";
 import { buildEventSchemas } from "@/utils/eventSchema";
 import LeadCaptureModal from "@/components/LeadCaptureModal.astro";
+import { buildTicketUrl } from "@/utils/eventUrl";
 
 const TITLE = "Tickets & Upcoming Shows";
 const DESC =
@@ -23,7 +24,7 @@ const widgetEvents = upcomingEvents
     eventId: e.eventbriteId!,
     triggerId: `eventbrite-widget-modal-trigger-${e.eventbriteId}`,
     promoCode: e.promoCode ?? null,
-    fallbackUrl: e.url,
+    fallbackUrl: buildTicketUrl(e.url, "tickets", "listing"),
     city: e.city,
   }));
 
@@ -128,7 +129,7 @@ const eventSeriesJsonLd = JSON.stringify({
                   id={`eventbrite-widget-modal-trigger-${event.eventbriteId}`}
                   class="ticket-card ticket-card--live ticket-card--widget"
                   style={`animation-delay: ${0.1 + i * 0.06}s`}
-                  data-eb-url={event.url}
+                  data-eb-url={buildTicketUrl(event.url, "tickets", "listing")}
                   data-ph-capture="cta_clicked"
                   data-ph-cta="get_tickets"
                   data-ph-section="tickets"
@@ -163,7 +164,7 @@ const eventSeriesJsonLd = JSON.stringify({
                 </button>
               ) : isLive ? (
                 <a
-                  href={event.url}
+                  href={buildTicketUrl(event.url, "tickets", "listing")}
                   target="_blank"
                   rel="noopener noreferrer"
                   class={`ticket-card ticket-card--live${isSoldOut ? " ticket-card--soldout" : ""}`}

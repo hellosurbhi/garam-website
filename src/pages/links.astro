@@ -5,6 +5,7 @@ import { isEventPast } from "@/utils/eventDate";
 import { pressItems } from "@/data/press";
 import { SOCIAL_URLS } from "@/data/socials";
 import { buildBreadcrumbJsonLd } from "@/utils/breadcrumbs";
+import { buildTicketUrl } from "@/utils/eventUrl";
 
 const TITLE = "Tickets, Shows & More";
 const DESC =
@@ -209,7 +210,7 @@ const reversedPress = [...pressItems].reverse();
               const hasLink = event.url && event.url !== "#";
               return hasLink ? (
                 <a
-                  href={event.url}
+                  href={buildTicketUrl(event.url, "links", "modal")}
                   target="_blank"
                   rel="noopener noreferrer"
                   class="event-link"

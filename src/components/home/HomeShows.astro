@@ -1,6 +1,7 @@
 ---
 import type { EventEntry } from "@/data/events";
 import NotifyModal from "@/components/NotifyModal.astro";
+import { buildTicketUrl } from "@/utils/eventUrl";
 import { parseMonth, parseDay } from "@/utils/eventDate";
 
 interface Props {
@@ -25,7 +26,7 @@ const { events } = Astro.props;
         const isSoldOut = event.tagline?.toLowerCase().includes("sold out");
         return isLive ? (
           <a
-            href={event.url}
+            href={buildTicketUrl(event.url, "home", "shows")}
             target="_blank"
             rel="noopener noreferrer"
             class="show-card show-card--live"

@@ -244,6 +244,21 @@ const {
           );
         }
       }
+
+      // Upgrade utm_medium from "web" to "mobile" on all Eventbrite links for mobile visitors
+      if (window.innerWidth < 768) {
+        document
+          .querySelectorAll<HTMLAnchorElement>("a[href*='eventbrite.com']")
+          .forEach((a) => {
+            try {
+              const u = new URL(a.href);
+              u.searchParams.set("utm_medium", "mobile");
+              a.href = u.toString();
+            } catch {
+              /* invalid URL — skip */
+            }
+          });
+      }
     </script>
   </body>
 </html>

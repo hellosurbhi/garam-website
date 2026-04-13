@@ -332,26 +332,33 @@ const speakableJsonLd = JSON.stringify({
       return true;
     }
 
-    function tryShowPopup(): void {
-      if (popupShown) return;
-      if (!canShowPopup()) return;
-      if (Date.now() - sessionStart < MIN_SESSION_MS) return;
-      if (document.querySelector("dialog[open]")) return;
+    function tryShowPopup(): boolean {
+      if (popupShown) return false;
+      if (!canShowPopup()) return false;
+      if (Date.now() - sessionStart < MIN_SESSION_MS) return false;
+      if (document.querySelector("dialog[open]")) return false;
       popupShown = true;
       trackLeadEvent("popup_opened", {
         source: "popup",
         sourcePage: window.location.pathname,
       });
       popup.showModal();
+      return true;
     }
 
     // Exit-intent trigger (desktop only) — fires when cursor leaves through
     // the top of the viewport (user moving toward the browser's back button
     // or address bar, the highest-intent exit signal available).
     if (window.matchMedia("(pointer: fine)").matches) {
-      document.addEventListener("mouseleave", (e) => {
-        if (e.clientY <= 0) tryShowPopup();
-      });
+      function handleExitIntent(e: MouseEvent): void {
+        if (e.clientY <= 0) {
+          const shown = tryShowPopup();
+          if (shown) {
+            document.removeEventListener("mouseleave", handleExitIntent);
+          }
+        }
+      }
+      document.addEventListener("mouseleave", handleExitIntent);
     }
 
     // Scroll-depth trigger — fires once user has read past 65% of the page.

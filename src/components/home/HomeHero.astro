@@ -45,33 +45,57 @@ function getHeroCity(city: string): string {
     </p>
 
     {
-      heroEvents.map((event) => (
-        <a
-          href={buildTicketUrl(event.url, "home", "hero")}
-          target="_blank"
-          rel="noopener noreferrer"
-          class="next-show-pill"
-          hidden
-          data-iso-date={event.isoDate}
-          data-start-time={event.startTime ?? "20:00"}
-          data-end-time={event.endTime ?? "22:00"}
-        >
-          <span class="next-show-pill-date">
-            {event.date.split(" ")[0]} {event.date.split(" ")[1]}
-          </span>
-          <span class="next-show-pill-sep" aria-hidden="true">
-            ·
-          </span>
-          <span>{getHeroCity(event.city)}</span>
-          <span class="next-show-pill-sep" aria-hidden="true">
-            ·
-          </span>
-          <span>{formatTime(event.startTime ?? "20:00")}</span>
-          <span class="next-show-pill-cta" aria-hidden="true">
-            →
-          </span>
-        </a>
-      ))
+      heroEvents.map((event) => {
+        const isSoldOut =
+          event.tagline?.toLowerCase().includes("sold out") ?? false;
+        const pillInner = (
+          <>
+            <span class="next-show-pill-date">
+              {event.date.split(" ")[0]} {event.date.split(" ")[1]}
+            </span>
+            <span class="next-show-pill-sep" aria-hidden="true">
+              ·
+            </span>
+            <span>{getHeroCity(event.city)}</span>
+            <span class="next-show-pill-sep" aria-hidden="true">
+              ·
+            </span>
+            <span>{formatTime(event.startTime ?? "20:00")}</span>
+            <span class="next-show-pill-cta" aria-hidden="true">
+              →
+            </span>
+          </>
+        );
+        return event.eventbriteId && !isSoldOut ? (
+          <button
+            type="button"
+            id={`eventbrite-widget-modal-trigger-${event.eventbriteId}`}
+            class="next-show-pill"
+            hidden
+            data-iso-date={event.isoDate}
+            data-start-time={event.startTime ?? "20:00"}
+            data-end-time={event.endTime ?? "22:00"}
+            data-eb-url={buildTicketUrl(event.url, "home", "hero")}
+            data-promo-code={event.promoCode ?? ""}
+            data-city={event.city}
+          >
+            {pillInner}
+          </button>
+        ) : (
+          <a
+            href={buildTicketUrl(event.url, "home", "hero")}
+            target="_blank"
+            rel="noopener noreferrer"
+            class="next-show-pill"
+            hidden
+            data-iso-date={event.isoDate}
+            data-start-time={event.startTime ?? "20:00"}
+            data-end-time={event.endTime ?? "22:00"}
+          >
+            {pillInner}
+          </a>
+        );
+      })
     }
 
     <div class="hero-ctas">
@@ -284,9 +308,11 @@ function getHeroCity(city: string): string {
     display: inline-flex;
     align-items: center;
     gap: 8px;
+    appearance: none;
     background: rgba(220, 38, 38, 0.08);
     backdrop-filter: blur(8px);
     -webkit-backdrop-filter: blur(8px);
+    border: 1px solid rgba(220, 38, 38, 0.2);
     color: var(--charcoal);
     font-family: var(--font-body), sans-serif;
     font-size: 13px;
@@ -295,6 +321,7 @@ function getHeroCity(city: string): string {
     border-radius: 50px;
     text-decoration: none;
     margin-bottom: 20px;
+    cursor: pointer;
     transition:
       background 0.2s,
       border-color 0.2s;

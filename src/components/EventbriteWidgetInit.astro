@@ -1,0 +1,106 @@
+---
+// Zero-visual component: loads the Eventbrite checkout widget script and
+// initializes modal checkout for every EB trigger button on the page.
+// Drop <EventbriteWidgetInit /> once per page that contains EB modal buttons.
+---
+
+<script>
+  interface EBWidgetConfig {
+    widgetType: string;
+    eventId: string;
+    modal: boolean;
+    modalTriggerElementId: string;
+    themeSettings?: Record<string, string>;
+    promoCode?: string;
+    onOrderComplete?: () => void;
+  }
+
+  (function initEBWidgets(): void {
+    const buttons = Array.from(
+      document.querySelectorAll<HTMLButtonElement>(
+        'button[id^="eventbrite-widget-modal-trigger-"]',
+      ),
+    );
+    if (!buttons.length) return;
+
+    type EBWidgetsAPI = { createWidget: (config: EBWidgetConfig) => void };
+    type PostHogAPI = {
+      capture: (event: string, props: Record<string, unknown>) => void;
+    };
+    const w = window as typeof window & {
+      EBWidgets: EBWidgetsAPI;
+      posthog?: PostHogAPI;
+    };
+
+    const configs = buttons.map((btn) => ({
+      eventId: btn.id.replace("eventbrite-widget-modal-trigger-", ""),
+      triggerId: btn.id,
+      promoCode: btn.dataset.promoCode || null,
+      fallbackUrl: btn.dataset.ebUrl ?? "",
+      city: btn.dataset.city ?? "",
+    }));
+
+    function initWidgets(): void {
+      configs.forEach((ev) => {
+        const config: EBWidgetConfig = {
+          widgetType: "checkout",
+          eventId: ev.eventId,
+          modal: true,
+          modalTriggerElementId: ev.triggerId,
+          themeSettings: {
+            brandColor: "#DC2626",
+            fontColor: "#000000",
+            background: "#FFFFFF",
+          },
+          onOrderComplete() {
+            w.posthog?.capture("order_complete", {
+              event_id: ev.eventId,
+              city: ev.city,
+            });
+          },
+        };
+        if (ev.promoCode) config.promoCode = ev.promoCode;
+        w.EBWidgets.createWidget(config);
+      });
+    }
+
+    function applyFallbacks(): void {
+      configs.forEach((ev) => {
+        document.getElementById(ev.triggerId)?.addEventListener("click", () => {
+          window.open(ev.fallbackUrl, "_blank", "noopener,noreferrer");
+        });
+      });
+    }
+
+    const script = document.createElement("script");
+    script.src = "https://www.eventbrite.com/static/widgets/eb_widgets.js";
+    script.async = true;
+    script.onload = initWidgets;
+    script.onerror = applyFallbacks;
+    document.head.appendChild(script);
+
+    // Close EB modal on outside click by dispatching Escape when the user
+    // clicks the overlay backdrop (not the inner iframe content).
+    // The EB widget injects a container div into <body>; we watch for it once.
+    const modalObserver = new MutationObserver(() => {
+      const ebOverlay = document.querySelector<HTMLElement>(
+        'div[id^="eventbrite-widget-container-"]',
+      );
+      if (!ebOverlay) return;
+
+      ebOverlay.addEventListener("click", (e) => {
+        if (e.target === ebOverlay) {
+          document.dispatchEvent(
+            new KeyboardEvent("keydown", {
+              key: "Escape",
+              bubbles: true,
+              cancelable: true,
+            }),
+          );
+        }
+      });
+      modalObserver.disconnect();
+    });
+    modalObserver.observe(document.body, { childList: true, subtree: false });
+  })();
+</script>

@@ -24,20 +24,9 @@ const { events } = Astro.props;
       events.map((event) => {
         const isLive = Boolean(event.url);
         const isSoldOut = event.tagline?.toLowerCase().includes("sold out");
-        return isLive ? (
-          <a
-            href={buildTicketUrl(event.url, "home", "shows")}
-            target="_blank"
-            rel="noopener noreferrer"
-            class="show-card show-card--live"
-            data-reveal
-            data-ph-capture="cta_clicked"
-            data-ph-cta="get_tickets"
-            data-ph-section="shows"
-            data-ph-city={event.city}
-            data-ph-event-date={event.date}
-            data-ph-price={event.price}
-          >
+        const hasWidget = isLive && Boolean(event.eventbriteId) && !isSoldOut;
+        const cardInner = (
+          <>
             <div class="show-date-block">
               <div class="month">{parseMonth(event.date)}</div>
               <div class="day">{parseDay(event.date)}</div>
@@ -51,6 +40,41 @@ const { events } = Astro.props;
             >
               {isSoldOut ? "Sold Out" : "Grab My Spot"}
             </span>
+          </>
+        );
+        return hasWidget ? (
+          <button
+            type="button"
+            id={`eventbrite-widget-modal-trigger-${event.eventbriteId}`}
+            class="show-card show-card--live"
+            data-reveal
+            data-ph-capture="cta_clicked"
+            data-ph-cta="get_tickets"
+            data-ph-section="shows"
+            data-ph-city={event.city}
+            data-ph-event-date={event.date}
+            data-ph-price={event.price}
+            data-eb-url={buildTicketUrl(event.url, "home", "shows")}
+            data-promo-code={event.promoCode ?? ""}
+            data-city={event.city}
+          >
+            {cardInner}
+          </button>
+        ) : isLive ? (
+          <a
+            href={buildTicketUrl(event.url, "home", "shows")}
+            target="_blank"
+            rel="noopener noreferrer"
+            class="show-card show-card--live"
+            data-reveal
+            data-ph-capture="cta_clicked"
+            data-ph-cta="get_tickets"
+            data-ph-section="shows"
+            data-ph-city={event.city}
+            data-ph-event-date={event.date}
+            data-ph-price={event.price}
+          >
+            {cardInner}
           </a>
         ) : (
           <button

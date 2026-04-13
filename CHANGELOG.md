@@ -1,5 +1,23 @@
 # Changelog
 
+## fix(csp): allow Eventbrite script-src to unblock checkout widget (2026-04-13)
+
+### What changed
+
+Added `https://www.eventbrite.com` to the `script-src` directive in `vercel.json`. The tickets page dynamically injects `eb_widgets.js` from Eventbrite to power the embedded checkout modal. `frame-src` already listed Eventbrite (for the checkout iframe), but `script-src` was missing the domain, causing the browser to block the script with a CSP violation.
+
+Files affected: `vercel.json`
+
+### Why
+
+The Eventbrite checkout modal was silently broken for all users on the live site. The widget script load was blocked before it could attach to any "Get Tickets" button. Fallback behavior (direct Eventbrite link on error) would have kicked in, but the modal experience was completely unavailable.
+
+### Trade-offs
+
+Minimal trust expansion: `https://www.eventbrite.com` is a first-party dependency we already trust for iframes; adding it to `script-src` is consistent with that trust level.
+
+---
+
 ## seo: optimize for desi dating show keyword (2026-04-13)
 
 ### What changed

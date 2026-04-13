@@ -627,54 +627,63 @@ describe("useApplyForm", () => {
 
   it("seeds form.city and cityInput from ?city URL param", () => {
     const original = window.location.search;
-    Object.defineProperty(window, "location", {
-      value: { ...window.location, search: "?city=Brooklyn", pathname: "/" },
-      writable: true,
-    });
-    const { result } = renderHook(() => useApplyForm());
-    expect(result.current.form.city).toBe("Brooklyn");
-    expect(result.current.cityInput).toBe("Brooklyn");
-    expect(result.current.form.state).toBe("");
-    Object.defineProperty(window, "location", {
-      value: { ...window.location, search: original, pathname: "/" },
-      writable: true,
-    });
+    try {
+      Object.defineProperty(window, "location", {
+        value: { ...window.location, search: "?city=Brooklyn", pathname: "/" },
+        writable: true,
+      });
+      const { result } = renderHook(() => useApplyForm());
+      expect(result.current.form.city).toBe("Brooklyn");
+      expect(result.current.cityInput).toBe("Brooklyn");
+      expect(result.current.form.state).toBe("");
+    } finally {
+      Object.defineProperty(window, "location", {
+        value: { ...window.location, search: original, pathname: "/" },
+        writable: true,
+      });
+    }
   });
 
   it("does not seed when only ?state URL param present (city required)", () => {
     const original = window.location.search;
-    Object.defineProperty(window, "location", {
-      value: { ...window.location, search: "?state=NY", pathname: "/" },
-      writable: true,
-    });
-    const { result } = renderHook(() => useApplyForm());
-    expect(result.current.form.state).toBe("");
-    expect(result.current.form.city).toBe("");
-    expect(result.current.cityInput).toBe("");
-    Object.defineProperty(window, "location", {
-      value: { ...window.location, search: original, pathname: "/" },
-      writable: true,
-    });
+    try {
+      Object.defineProperty(window, "location", {
+        value: { ...window.location, search: "?state=NY", pathname: "/" },
+        writable: true,
+      });
+      const { result } = renderHook(() => useApplyForm());
+      expect(result.current.form.state).toBe("");
+      expect(result.current.form.city).toBe("");
+      expect(result.current.cityInput).toBe("");
+    } finally {
+      Object.defineProperty(window, "location", {
+        value: { ...window.location, search: original, pathname: "/" },
+        writable: true,
+      });
+    }
   });
 
   it("seeds city, state, and cityInput from ?city&state URL params", () => {
     const original = window.location.search;
-    Object.defineProperty(window, "location", {
-      value: {
-        ...window.location,
-        search: "?city=Brooklyn&state=NY",
-        pathname: "/",
-      },
-      writable: true,
-    });
-    const { result } = renderHook(() => useApplyForm());
-    expect(result.current.form.city).toBe("Brooklyn");
-    expect(result.current.form.state).toBe("NY");
-    expect(result.current.cityInput).toBe("Brooklyn, NY");
-    Object.defineProperty(window, "location", {
-      value: { ...window.location, search: original, pathname: "/" },
-      writable: true,
-    });
+    try {
+      Object.defineProperty(window, "location", {
+        value: {
+          ...window.location,
+          search: "?city=Brooklyn&state=NY",
+          pathname: "/",
+        },
+        writable: true,
+      });
+      const { result } = renderHook(() => useApplyForm());
+      expect(result.current.form.city).toBe("Brooklyn");
+      expect(result.current.form.state).toBe("NY");
+      expect(result.current.cityInput).toBe("Brooklyn, NY");
+    } finally {
+      Object.defineProperty(window, "location", {
+        value: { ...window.location, search: original, pathname: "/" },
+        writable: true,
+      });
+    }
   });
 
   /* ── Group 3: History back navigation ────────────────── */

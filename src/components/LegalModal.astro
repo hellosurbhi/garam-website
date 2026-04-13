@@ -8,6 +8,7 @@ import { LEGAL_DOCS } from "@/data/legal";
   role="dialog"
   aria-modal="true"
   aria-labelledby="legal-modal-title"
+  tabindex="-1"
 >
   <div class="legal-inner">
     <button type="button" class="legal-close" aria-label="Close">
@@ -83,7 +84,7 @@ import { LEGAL_DOCS } from "@/data/legal";
 
       openerEl = document.activeElement as HTMLElement;
       dialog.showModal();
-      (dialog.querySelector(".legal-close") as HTMLElement | null)?.focus();
+      dialog.focus();
     }
 
     dialog.addEventListener("close", () => {
@@ -119,6 +120,7 @@ import { LEGAL_DOCS } from "@/data/legal";
     width: 100%;
     height: 100%;
     overflow: visible;
+    outline: none;
   }
   .legal-dialog::backdrop {
     background: rgba(

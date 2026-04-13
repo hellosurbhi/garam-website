@@ -12,6 +12,7 @@ const { source = "notify-modal" } = Astro.props;
   aria-modal="true"
   aria-labelledby="notify-modal-title"
   data-source={source}
+  tabindex="-1"
 >
   <div class="modal-inner">
     <button type="button" class="modal-close" aria-label="Close">
@@ -190,7 +191,7 @@ const { source = "notify-modal" } = Astro.props;
             city,
           });
           dialog.showModal();
-          (dialog.querySelector(".modal-close") as HTMLElement | null)?.focus();
+          dialog.focus();
         };
         el.addEventListener("click", open);
         el.addEventListener("keydown", (e) => {
@@ -386,6 +387,7 @@ const { source = "notify-modal" } = Astro.props;
     width: 100%;
     height: 100%;
     overflow: visible;
+    outline: none;
   }
   .modal-dialog::backdrop {
     background: rgba(0, 0, 0, 0.5);

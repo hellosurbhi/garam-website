@@ -1,5 +1,23 @@
 # Changelog
 
+## fix(favicon): replace wordmark SVG with proper square icon (2026-04-12)
+
+### What changed
+
+Replaced `public/favicon.svg` with a proper 64x64 square icon (red `#DC2626` background, off-white "G" centered). The previous file was the full "GARAM MASALA DATING" wordmark (663x340 viewBox), which rendered as a blurry pink pixel at 16px favicon size in browser tabs and Google Search.
+
+Also identified that `favicon.ico` and `apple-touch-icon.png` are broken 563-byte placeholder stubs that have never worked. These must be regenerated manually via realfavicongenerator.net using the new SVG and dropped into `public/`.
+
+### Files affected
+
+- `public/favicon.svg` (replaced wordmark with square icon)
+
+### Trade-offs
+
+Used a system serif font stack (`Georgia, 'Times New Roman', serif`) for the "G" rather than embedding Playfair Display, so the icon renders consistently in every browser and Google's crawler without a font dependency. The visual result is nearly identical since Georgia is also a classical serif.
+
+---
+
 ## feat(tickets): add Eventbrite modal checkout widget and update CTA to "Grab My Spot" (2026-04-12)
 
 ### What changed

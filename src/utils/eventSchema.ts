@@ -2,7 +2,7 @@ import type { EventEntry } from "@/data/events";
 import { nyOffset } from "@/utils/timezone";
 
 const EVENT_DESCRIPTION =
-  "The #1 live desi dating show where two real South Asian singles go on a blind date in front of 250 people. Hosted by comedians Surbhi and Wyatt. Singles mixer follows every show.";
+  "NYC's #1 live desi dating show where two real South Asian singles go on a blind date in front of 250 people. Hosted by comedians Surbhi and Wyatt. Singles mixer follows every show.";
 
 function subtractMinutes(time: string, mins: number): string {
   const [h, m] = time.split(":").map(Number);

@@ -2,6 +2,16 @@
 
 ## Open
 
+### [LOW] Missing image: cupid-garden.webp causes 404 on every apply page load
+
+- **Date:** 2026-04-13
+- **File:** `src/pages/apply.astro:23`
+- **Status:** Open
+- **Severity:** Low
+- **What's happening:** `apply.astro` references `/images/promo/cupid-garden.webp` as a decorative background image (aria-hidden). The file does not exist in `public/images/promo/`. Every apply page load emits a 404 in the browser console.
+- **What should happen:** The file should either be added to `public/images/promo/` or the reference should be removed/replaced with an existing image.
+- **Fix:** Add the correct `cupid-garden.webp` image to `public/images/promo/`, or swap the `src` to an existing promo image (e.g., `pure-chaos.webp`).
+
 ### [HIGH] Firestore applications collection has no field validation on create
 
 - **Date:** 2026-04-09

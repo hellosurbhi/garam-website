@@ -1,3 +1,4 @@
+/** Attribution data collected from the visitor's session and stored on each lead submission. */
 export interface LeadAttribution {
   [key: string]: string | undefined;
   source: string;
@@ -91,6 +92,10 @@ function bootstrapGeoData() {
     .catch(console.error);
 }
 
+/**
+ * Capture the visitor's landing page, referrer, UTM params, and geo data into sessionStorage.
+ * Safe to call multiple times; each value is written only once per session (first-touch).
+ */
 export function bootstrapLeadAttribution() {
   setIfMissing(LANDING_PAGE_KEY, getPathname());
   setIfMissing(REFERRER_HOST_KEY, getReferrerHost());
@@ -105,6 +110,13 @@ export function bootstrapLeadAttribution() {
   bootstrapGeoData();
 }
 
+/**
+ * Assemble a full `LeadAttribution` object from sessionStorage for attachment to a Firestore submission.
+ * Calls `bootstrapLeadAttribution` internally so it is safe to call without a prior bootstrap.
+ *
+ * @param params.source Identifies which form or CTA triggered the lead (e.g. "apply-page").
+ * @param params.sourceCitySlug Optional city slug when the lead originated from a city landing page.
+ */
 export function buildLeadAttribution(params: {
   source: string;
   sourceCitySlug?: string;

@@ -26,6 +26,10 @@ interface ErrorProperties {
   [key: string]: string | number | boolean | null | undefined;
 }
 
+/**
+ * Fire a `client_error` event to PostHog (or queue it if PostHog has not loaded yet).
+ * Automatically enriches the event with the current page URL if not supplied.
+ */
 export function trackError(properties: ErrorProperties) {
   const enriched = {
     ...properties,
@@ -45,6 +49,10 @@ export function trackError(properties: ErrorProperties) {
   }
 }
 
+/**
+ * Send a named lead event to PostHog and the GTM dataLayer.
+ * Strips any properties with non-serialisable values before forwarding.
+ */
 export function trackLeadEvent(name: string, properties: AnalyticsProps = {}) {
   const cleanProps = Object.fromEntries(
     Object.entries(properties).filter(([, value]) => isAnalyticsValue(value)),
@@ -54,6 +62,10 @@ export function trackLeadEvent(name: string, properties: AnalyticsProps = {}) {
   window.dataLayer?.push({ event: name, ...cleanProps });
 }
 
+/**
+ * Merge the current anonymous session into an email-keyed profile in PostHog and GTM.
+ * PostHog aliases the anonymous `distinct_id` to the email so prior events are attributed.
+ */
 export function identifyLead(email: string, properties: AnalyticsProps = {}) {
   if (!email.trim()) return;
 

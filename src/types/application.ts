@@ -1,5 +1,6 @@
 import type { Timestamp } from "firebase/firestore";
 
+/** Firestore document shape for a contestant application. */
 export interface Application {
   id: string;
   name: string;
@@ -24,6 +25,7 @@ export interface Application {
   submittedAt: Timestamp;
 }
 
+/** Hex colour for each application status, used in admin UI status badges. */
 export const STATUS_COLORS: Record<Application["status"], string> = {
   New: "#D4A843",
   Contacted: "#3B82F6",
@@ -31,6 +33,7 @@ export const STATUS_COLORS: Record<Application["status"], string> = {
   Rejected: "#9CA3AF",
 };
 
+/** Ordered list of South Asian community identifiers shown in the apply form community dropdown. */
 export const COMMUNITY_OPTIONS = [
   "Hindu",
   "Muslim",
@@ -44,6 +47,7 @@ export const COMMUNITY_OPTIONS = [
   "Other",
 ];
 
+/** Income bracket choices shown in the apply form income dropdown. */
 export const INCOME_OPTIONS = [
   "Under $50k",
   "$50k to $100k",

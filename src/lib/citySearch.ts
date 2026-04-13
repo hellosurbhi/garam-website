@@ -32,6 +32,11 @@ function createOption(params: {
   };
 }
 
+/**
+ * Lazily build and cache the full city autocomplete list from the `country-state-city` package.
+ * Known site cities (from `citiesIndex`) are boosted so they rank first in search results.
+ * The promise is memoised so the expensive build runs at most once per page load.
+ */
 export async function loadCityOptions(): Promise<CitySearchOption[]> {
   if (!cityOptionsPromise) {
     cityOptionsPromise = import("country-state-city").then(
@@ -63,7 +68,8 @@ export async function loadCityOptions(): Promise<CitySearchOption[]> {
           }
 
           for (const state of states) {
-            const cities = City.getCitiesOfState(country.isoCode, state.isoCode) ?? [];
+            const cities =
+              City.getCitiesOfState(country.isoCode, state.isoCode) ?? [];
             for (const city of cities) {
               const option = createOption({
                 city: city.name,
@@ -124,6 +130,15 @@ function scoreCityOption(option: CitySearchOption, query: string): number {
   return option.boost;
 }
 
+/**
+ * Score and filter a city option list by a freeform query string.
+ * Ranks exact city matches highest, then prefix matches, then substring matches.
+ * Returns the top `limit` results sorted by score then boost then label.
+ *
+ * @param query The user's typed search string.
+ * @param options Full list of city options (from `loadCityOptions`).
+ * @param limit Maximum number of results to return (default 5).
+ */
 export function searchCityOptions(
   query: string,
   options: CitySearchOption[],

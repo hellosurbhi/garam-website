@@ -34,7 +34,7 @@ function ApplyPageInner() {
     const tool = mc.registerTool({
       name: "submit-contestant-application",
       description:
-        "Submit an application to appear as a contestant on Garam Masala Dating, NYC's #1 live South Asian comedy dating show. Collects personal details, Instagram handle, location, and optional pitch.",
+        "Submit an application to appear as a contestant on Garam Masala Dating, the #1 live South Asian comedy dating show. Collects personal details, Instagram handle, location, and optional pitch.",
       inputSchema: {
         type: "object",
         properties: {
@@ -129,9 +129,7 @@ function ApplyPageInner() {
                 <h1 className={styles.title}>
                   Apply to Be on Garam Masala Dating
                 </h1>
-                <p className={styles.subtitle}>
-                  NYC&apos;s #1 live desi dating show 🌶️
-                </p>
+                <p className={styles.subtitle}>#1 live desi dating show 🌶️</p>
                 <div className={styles.divider} />
               </>
             )}

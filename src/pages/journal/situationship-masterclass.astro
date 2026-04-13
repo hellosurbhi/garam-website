@@ -969,8 +969,18 @@ const breadcrumbJsonLd = buildBreadcrumbJsonLd([
     }
 
     document.addEventListener("keydown", (e) => {
-      const tag = (document.activeElement?.tagName ?? "").toLowerCase();
-      if (tag === "input" || tag === "textarea" || tag === "select") return;
+      if (e.altKey || e.ctrlKey || e.metaKey) return;
+      const el = document.activeElement as HTMLElement | null;
+      const tag = (el?.tagName ?? "").toLowerCase();
+      if (
+        tag === "input" ||
+        tag === "textarea" ||
+        tag === "select" ||
+        tag === "button" ||
+        tag === "a" ||
+        el?.isContentEditable
+      )
+        return;
 
       if (e.key === "ArrowDown" || e.key === "ArrowRight") {
         e.preventDefault();

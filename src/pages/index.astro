@@ -349,13 +349,9 @@ const speakableJsonLd = JSON.stringify({
     // the top of the viewport (user moving toward the browser's back button
     // or address bar, the highest-intent exit signal available).
     if (window.matchMedia("(pointer: fine)").matches) {
-      document.addEventListener(
-        "mouseleave",
-        (e) => {
-          if (e.clientY <= 0) tryShowPopup();
-        },
-        { once: true },
-      );
+      document.addEventListener("mouseleave", (e) => {
+        if (e.clientY <= 0) tryShowPopup();
+      });
     }
 
     // Scroll-depth trigger — fires once user has read past 65% of the page.

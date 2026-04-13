@@ -1,5 +1,6 @@
 ---
 import BaseLayout from "@/layouts/BaseLayout.astro";
+import EventbriteWidgetInit from "@/components/EventbriteWidgetInit.astro";
 import { cities } from "@/data/cities";
 import type { CityData } from "@/data/cities";
 import { events } from "@/data/events";
@@ -152,14 +153,10 @@ const breadcrumbJsonLd = buildBreadcrumbJsonLd([
       <div class="city-ctas">
         {/* Per-event ticket buttons for active cities */}
         {
-          cityEvents.map((event) => (
-            <a
-              href={buildTicketUrl(event.url, "cities", city.slug)}
-              target="_blank"
-              rel="noopener noreferrer"
-              class="city-cta city-cta--primary"
-            >
-              <span>{event.date}: Grab My Spot</span>
+          cityEvents.map((event) => {
+            const isSoldOut =
+              event.tagline?.toLowerCase().includes("sold out") ?? false;
+            const arrowSvg = (
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 width="16"
@@ -178,8 +175,31 @@ const breadcrumbJsonLd = buildBreadcrumbJsonLd([
                   <path d="m12 5 7 7-7 7" />
                 </>
               </svg>
-            </a>
-          ))
+            );
+            return event.eventbriteId && !isSoldOut ? (
+              <button
+                type="button"
+                id={`eventbrite-widget-modal-trigger-${event.eventbriteId}`}
+                class="city-cta city-cta--primary"
+                data-eb-url={buildTicketUrl(event.url, "cities", city.slug)}
+                data-promo-code={event.promoCode ?? ""}
+                data-city={event.city}
+              >
+                <span>{event.date}: Grab My Spot</span>
+                {arrowSvg}
+              </button>
+            ) : (
+              <a
+                href={buildTicketUrl(event.url, "cities", city.slug)}
+                target="_blank"
+                rel="noopener noreferrer"
+                class="city-cta city-cta--primary"
+              >
+                <span>{event.date}: Grab My Spot</span>
+                {arrowSvg}
+              </a>
+            );
+          })
         }
         {/* Static CTAs (apply, waitlist, etc.) */}
         {
@@ -413,6 +433,7 @@ const breadcrumbJsonLd = buildBreadcrumbJsonLd([
       </div>
     </div>
   </main>
+  <EventbriteWidgetInit />
 </BaseLayout>
 
 <script>
@@ -711,6 +732,8 @@ const breadcrumbJsonLd = buildBreadcrumbJsonLd([
     font-size: 15px;
     font-weight: 500;
     text-decoration: none;
+    appearance: none;
+    cursor: pointer;
     transition:
       background 0.15s,
       border-color 0.15s;

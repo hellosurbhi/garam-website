@@ -15,6 +15,8 @@ export interface MasterclassPost {
   dateModified: string;
   author: string;
   excerpt: string;
+  /** Prose text for the mid-article CTA banner (links are added by the template). */
+  promoText?: string;
   slides: MasterclassSlide[];
   faqs: { q: string; a: string }[];
   relatedSlugs: string[];
@@ -34,6 +36,8 @@ export const masterclassPosts: MasterclassPost[] = [
       "Yes, this is toxic. No, I don't care. A 7-step playbook for converting your situationship, ending with the one plot twist nobody sees coming.",
     relatedSlugs: [],
     category: "masterclass",
+    promoText:
+      "We host the #1 live dating show for South Asian singles, weekly in NYC.",
     faqs: [
       {
         q: "How do I convert a situationship into a relationship?",

@@ -6,6 +6,7 @@ import { pressItems } from "@/data/press";
 import { SOCIAL_URLS } from "@/data/socials";
 import { buildBreadcrumbJsonLd } from "@/utils/breadcrumbs";
 import { buildTicketUrl } from "@/utils/eventUrl";
+import { PAGES } from "@/data/copy";
 
 const TITLE = "Tickets, Shows & More";
 const DESC =
@@ -98,9 +99,7 @@ const reversedPress = [...pressItems].reverse();
     <div class="container">
       {/* Header */}
       <div class="header-wrap">
-        <h1 class="subtitle">
-          NYC&apos;s hottest live desi dating show&nbsp;🌶️
-        </h1>
+        <h1 class="subtitle">{PAGES.links.subtitle}</h1>
         <div class="divider"></div>
       </div>
 

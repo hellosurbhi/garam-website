@@ -3,6 +3,7 @@ import { ErrorBoundary } from "./ErrorBoundary";
 import { COMMUNITY_OPTIONS, INCOME_OPTIONS } from "@/types/application";
 import styles from "./ApplyPage.module.css";
 import { SOCIAL_URLS } from "@/data/socials";
+import { APPLY_PAGE } from "@/data/copy";
 import { FieldGroup, SectionTitle } from "./apply/FieldGroup";
 import { TermsModal } from "./apply/TermsModal";
 import { ApplySuccessPanel } from "./apply/ApplySuccessPanel";
@@ -135,9 +136,7 @@ function ApplyPageInner() {
                 <h1 className={styles.title}>
                   Apply to Be on Garam Masala Dating
                 </h1>
-                <p className={styles.subtitle}>
-                  NYC&apos;s #1 live desi dating show 🌶️
-                </p>
+                <p className={styles.subtitle}>{APPLY_PAGE.subtitle}</p>
                 <div className={styles.divider} />
               </>
             )}

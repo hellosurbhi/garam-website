@@ -176,11 +176,10 @@ const breadcrumbJsonLd = buildBreadcrumbJsonLd([
                 </p>
               )}
             </div>
-            {slide.stepNumber === "04" && (
+            {slide.stepNumber === "04" && post.promoText && (
               <aside class="mc-mid-cta" aria-label="Show promotion">
                 <p class="mc-mid-cta-text">
-                  We host the #1 live dating show for South Asian singles,
-                  weekly in NYC. <a href="/tickets">Get tickets</a> or{" "}
+                  {post.promoText} <a href="/tickets">Get tickets</a> or{" "}
                   <a href="/apply">apply to be on stage</a>.
                 </p>
               </aside>

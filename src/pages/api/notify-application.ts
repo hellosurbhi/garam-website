@@ -1,5 +1,6 @@
 import type { APIRoute } from "astro";
 import { Resend } from "resend";
+import { validateEmail } from "@/utils/validateEmail";
 
 export const prerender = false;
 
@@ -112,7 +113,12 @@ export const POST: APIRoute = async ({ request }) => {
   }
 
   const body = (await request.json()) as ApplicationNotification;
-  if (!body.name || !body.instagram) {
+  if (
+    !body.name ||
+    !body.instagram ||
+    !body.email ||
+    validateEmail(body.email)
+  ) {
     return new Response(JSON.stringify({ error: "Missing required fields" }), {
       status: 400,
       headers: { "Content-Type": "application/json" },

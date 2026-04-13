@@ -85,13 +85,21 @@ export const POST: APIRoute = async ({ request }) => {
   if (body.utmTerm) fields.utmTerm = { stringValue: body.utmTerm };
   if (body.posthogDistinctId)
     fields.posthogDistinctId = { stringValue: body.posthogDistinctId };
-  if (body.geoCity) fields.geoCity = { stringValue: body.geoCity };
-  if (body.geoRegion) fields.geoRegion = { stringValue: body.geoRegion };
-  if (body.geoCountry) fields.geoCountry = { stringValue: body.geoCountry };
-  if (body.geoLatitude) fields.geoLatitude = { stringValue: body.geoLatitude };
-  if (body.geoLongitude)
-    fields.geoLongitude = { stringValue: body.geoLongitude };
-  if (body.geoTimezone) fields.geoTimezone = { stringValue: body.geoTimezone };
+  const GEO_COORD_RE = /^-?\d{1,3}\.?\d{0,8}$/;
+  if (body.geoCity)
+    fields.geoCity = { stringValue: String(body.geoCity).slice(0, 255) };
+  if (body.geoRegion)
+    fields.geoRegion = { stringValue: String(body.geoRegion).slice(0, 255) };
+  if (body.geoCountry)
+    fields.geoCountry = { stringValue: String(body.geoCountry).slice(0, 255) };
+  if (body.geoTimezone)
+    fields.geoTimezone = {
+      stringValue: String(body.geoTimezone).slice(0, 255),
+    };
+  const lat = String(body.geoLatitude ?? "").slice(0, 20);
+  if (lat && GEO_COORD_RE.test(lat)) fields.geoLatitude = { stringValue: lat };
+  const lng = String(body.geoLongitude ?? "").slice(0, 20);
+  if (lng && GEO_COORD_RE.test(lng)) fields.geoLongitude = { stringValue: lng };
 
   try {
     const url = `https://firestore.googleapis.com/v1/projects/${projectId}/databases/(default)/documents/leads`;

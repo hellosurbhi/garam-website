@@ -1,5 +1,47 @@
 # Changelog
 
+## fix(seo): remove nonexistent sitemap.xml and invalid llms.txt from robots.txt Sitemap directives (2026-04-13)
+
+### What changed
+
+Removed two incorrect `Sitemap:` entries from `public/robots.txt`:
+
+- `sitemap.xml` — this file does not exist. `@astrojs/sitemap` generates `sitemap-index.xml` + `sitemap-0.xml`, never a bare `sitemap.xml`. Advertising it was causing the Google Search Console 404 error.
+- `llms.txt` — per the official llmstxt.org spec, llms.txt is discovered by convention (AI crawlers look for `/llms.txt` at the domain root, no advertisement needed). Listing it under `Sitemap:` would cause Google to attempt parsing it as a plain-text sitemap; since it's markdown, Google would either fail or produce errors. The file itself is unchanged and still accessible.
+
+`robots.txt` now has a single correct Sitemap directive: `sitemap-index.xml`.
+
+### Files affected
+
+- `public/robots.txt`
+
+### Reasoning
+
+Both entries were incorrect per their respective specs. The `sitemap.xml` 404 was the direct cause of the Google Search Console error. The `llms.txt` entry was removed because the llms.txt spec defines no robots.txt mechanism — convention-based discovery is sufficient and correct.
+
+---
+
+## fix(favicon): replace placeholder icons with actual logo wordmark (2026-04-13)
+
+### What changed
+
+Replaced all three favicon assets with the real logo, matching the header exactly (red wordmark on transparent background):
+
+- `public/favicon.svg` — rewritten with all logo path data from `logo.svg`, fill set to `#DC2626` (brand red), transparent background. Same technique as the CSS mask in PageNav.
+- `public/apple-touch-icon.png` — regenerated as 180x180 PNG using sharp from the new favicon.svg (previously a broken 563-byte stub).
+- `public/favicon.ico` — regenerated as a real 32x32 ICO using ImageMagick (previously a broken 563-byte pink pixel stub).
+- `public/asset-3.svg` — moved to `public/images/asset-3.svg` (source reference file, not served at root).
+
+### Files affected
+
+`public/favicon.svg`, `public/apple-touch-icon.png`, `public/favicon.ico`, `public/images/asset-3.svg`
+
+### Why
+
+The old favicon.svg was an invented "G" on a red square — not the logo. The ICO and PNG were broken stubs from a previous generator run. Google search results show the favicon next to the site URL; having the real wordmark there is part of brand recognition.
+
+---
+
 ## feat(tracking): per-page, per-section, per-device Eventbrite UTM tracking (2026-04-13)
 
 ### What changed

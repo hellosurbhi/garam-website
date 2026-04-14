@@ -1,6 +1,6 @@
 /** Attribution data collected from the visitor's session and stored on each lead submission. */
 export interface LeadAttribution {
-  [key: string]: string | undefined;
+  [key: string]: string | number | undefined;
   source: string;
   sourcePage: string;
   landingPage: string;
@@ -15,8 +15,8 @@ export interface LeadAttribution {
   geoCity?: string;
   geoRegion?: string;
   geoCountry?: string;
-  geoLatitude?: string;
-  geoLongitude?: string;
+  geoLatitude?: number;
+  geoLongitude?: number;
   geoTimezone?: string;
 }
 
@@ -166,11 +166,18 @@ export function buildLeadAttribution(params: {
   const geoCountry = sessionStorage.getItem(GEO_COUNTRY_KEY) ?? undefined;
   if (geoCountry) attribution.geoCountry = geoCountry;
 
-  const geoLatitude = sessionStorage.getItem(GEO_LATITUDE_KEY) ?? undefined;
-  if (geoLatitude) attribution.geoLatitude = geoLatitude;
+  const latStr = sessionStorage.getItem(GEO_LATITUDE_KEY);
+  if (latStr) {
+    const lat = parseFloat(latStr);
+    if (isFinite(lat) && lat >= -90 && lat <= 90) attribution.geoLatitude = lat;
+  }
 
-  const geoLongitude = sessionStorage.getItem(GEO_LONGITUDE_KEY) ?? undefined;
-  if (geoLongitude) attribution.geoLongitude = geoLongitude;
+  const lngStr = sessionStorage.getItem(GEO_LONGITUDE_KEY);
+  if (lngStr) {
+    const lng = parseFloat(lngStr);
+    if (isFinite(lng) && lng >= -180 && lng <= 180)
+      attribution.geoLongitude = lng;
+  }
 
   const geoTimezone = sessionStorage.getItem(GEO_TIMEZONE_KEY) ?? undefined;
   if (geoTimezone) attribution.geoTimezone = geoTimezone;

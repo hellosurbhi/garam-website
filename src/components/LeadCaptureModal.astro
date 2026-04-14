@@ -275,7 +275,7 @@ const {
 
         try {
           const attribution = buildLeadAttribution({ source });
-          const payload: Record<string, string> = {
+          const payload: Record<string, string | number | undefined> = {
             email: capturedEmail,
             ...attribution,
           };

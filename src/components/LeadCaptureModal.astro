@@ -159,13 +159,18 @@ const {
     text-transform: uppercase;
     letter-spacing: 1px;
     cursor: pointer;
-    transition: background 0.2s;
+    transition:
+      background 0.2s,
+      transform 0.06s;
     min-height: var(--touch-target);
     white-space: nowrap;
     width: 100%;
   }
   .lc-submit:hover {
     background: var(--brand-red-dark);
+  }
+  .lc-submit:active {
+    transform: scale(0.97);
   }
   .lc-submit:disabled {
     opacity: 0.6;

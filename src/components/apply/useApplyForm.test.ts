@@ -4,7 +4,9 @@ import { renderHook, act } from "@testing-library/react";
 /* ─── Mocks ──────────────────────────────────────────────────────── */
 
 const mockAddDoc = vi.fn().mockResolvedValue({ id: "doc-1" });
-const mockUploadBytes = vi.fn().mockResolvedValue({});
+const mockUploadBytesResumable = vi
+  .fn()
+  .mockReturnValue(Object.assign(Promise.resolve({}), { cancel: vi.fn() }));
 const mockGetDownloadURL = vi
   .fn()
   .mockResolvedValue("https://example.com/photo.jpg");
@@ -19,7 +21,8 @@ vi.mock("firebase/firestore", () => ({
 
 vi.mock("firebase/storage", () => ({
   ref: vi.fn(() => "mock-ref"),
-  uploadBytes: (...args: unknown[]) => mockUploadBytes(...args),
+  uploadBytesResumable: (...args: unknown[]) =>
+    mockUploadBytesResumable(...args),
   getDownloadURL: (...args: unknown[]) => mockGetDownloadURL(...args),
   deleteObject: (...args: unknown[]) => mockDeleteObject(...args),
 }));
@@ -395,7 +398,7 @@ describe("useApplyForm", () => {
     expect(result.current.submitted).toBe(true);
     expect(result.current.submitting).toBe(false);
     expect(mockSignInAnonymously).toHaveBeenCalledWith("mock-auth");
-    expect(mockUploadBytes).toHaveBeenCalled();
+    expect(mockUploadBytesResumable).toHaveBeenCalled();
     expect(mockGetDownloadURL).toHaveBeenCalled();
     expect(mockAddDoc).toHaveBeenCalled();
     expect(mockTrackLeadEvent).toHaveBeenCalledWith(
@@ -626,63 +629,41 @@ describe("useApplyForm", () => {
   /* ── Group 2: URL parameter seeding ──────────────────── */
 
   it("seeds form.city and cityInput from ?city URL param", () => {
-    const original = window.location.search;
+    const originalHref = window.location.pathname + window.location.search;
     try {
-      Object.defineProperty(window, "location", {
-        value: { ...window.location, search: "?city=Brooklyn", pathname: "/" },
-        writable: true,
-      });
+      history.replaceState(null, "", "?city=Brooklyn");
       const { result } = renderHook(() => useApplyForm());
       expect(result.current.form.city).toBe("Brooklyn");
       expect(result.current.cityInput).toBe("Brooklyn");
       expect(result.current.form.state).toBe("");
     } finally {
-      Object.defineProperty(window, "location", {
-        value: { ...window.location, search: original, pathname: "/" },
-        writable: true,
-      });
+      history.replaceState(null, "", originalHref);
     }
   });
 
   it("does not seed when only ?state URL param present (city required)", () => {
-    const original = window.location.search;
+    const originalHref = window.location.pathname + window.location.search;
     try {
-      Object.defineProperty(window, "location", {
-        value: { ...window.location, search: "?state=NY", pathname: "/" },
-        writable: true,
-      });
+      history.replaceState(null, "", "?state=NY");
       const { result } = renderHook(() => useApplyForm());
       expect(result.current.form.state).toBe("");
       expect(result.current.form.city).toBe("");
       expect(result.current.cityInput).toBe("");
     } finally {
-      Object.defineProperty(window, "location", {
-        value: { ...window.location, search: original, pathname: "/" },
-        writable: true,
-      });
+      history.replaceState(null, "", originalHref);
     }
   });
 
   it("seeds city, state, and cityInput from ?city&state URL params", () => {
-    const original = window.location.search;
+    const originalHref = window.location.pathname + window.location.search;
     try {
-      Object.defineProperty(window, "location", {
-        value: {
-          ...window.location,
-          search: "?city=Brooklyn&state=NY",
-          pathname: "/",
-        },
-        writable: true,
-      });
+      history.replaceState(null, "", "?city=Brooklyn&state=NY");
       const { result } = renderHook(() => useApplyForm());
       expect(result.current.form.city).toBe("Brooklyn");
       expect(result.current.form.state).toBe("NY");
       expect(result.current.cityInput).toBe("Brooklyn, NY");
     } finally {
-      Object.defineProperty(window, "location", {
-        value: { ...window.location, search: original, pathname: "/" },
-        writable: true,
-      });
+      history.replaceState(null, "", originalHref);
     }
   });
 

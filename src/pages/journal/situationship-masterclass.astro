@@ -993,15 +993,20 @@ const breadcrumbJsonLd = buildBreadcrumbJsonLd([
     }
 
     document.addEventListener("keydown", (e) => {
-      if (e.altKey || e.ctrlKey || e.metaKey) return;
+      if (e.altKey || e.ctrlKey || e.metaKey || e.shiftKey) return;
       const el = document.activeElement as HTMLElement | null;
       const tag = (el?.tagName ?? "").toLowerCase();
+      const role = el?.getAttribute("role") ?? "";
       if (
         tag === "input" ||
         tag === "textarea" ||
         tag === "select" ||
         tag === "button" ||
         tag === "a" ||
+        role === "button" ||
+        role === "link" ||
+        (el?.hasAttribute("tabindex") &&
+          el.getAttribute("tabindex") !== "-1") ||
         el?.isContentEditable
       )
         return;

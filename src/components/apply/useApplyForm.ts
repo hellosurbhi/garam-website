@@ -3,7 +3,7 @@ import { useState, useEffect, type ChangeEvent } from "react";
 import { collection, addDoc, serverTimestamp } from "firebase/firestore";
 import {
   ref,
-  uploadBytes,
+  uploadBytesResumable,
   getDownloadURL,
   deleteObject,
   type StorageReference,
@@ -216,13 +216,22 @@ export function useApplyForm() {
         getFirebaseStorage(),
         `photos/${crypto.randomUUID()}.${ext}`,
       );
-      const timeoutPromise = new Promise<never>((_, reject) =>
-        setTimeout(
-          () => reject(new Error("Upload timed out after 30 seconds")),
-          30_000,
-        ),
-      );
-      await Promise.race([uploadBytes(storageRef, photoFile!), timeoutPromise]);
+      const task = uploadBytesResumable(storageRef, photoFile!);
+      await new Promise<void>((resolve, reject) => {
+        const timer = setTimeout(() => {
+          task.cancel();
+          reject(new Error("Upload timed out after 30 seconds"));
+        }, 30_000);
+        task
+          .then(() => {
+            clearTimeout(timer);
+            resolve();
+          })
+          .catch((err: unknown) => {
+            clearTimeout(timer);
+            reject(err);
+          });
+      });
       const photoUrl = await getDownloadURL(storageRef);
 
       const applicationData = {
@@ -242,12 +251,12 @@ export function useApplyForm() {
         referrerName:
           form.applicationType === "Nomination" ? form.referrerName.trim() : "",
         pitch: form.pitch.trim(),
+        type: form.type.trim(),
         photoUrl,
       };
 
       await addDoc(collection(getFirebaseDb(), "applications"), {
         ...applicationData,
-        ...(form.type.trim() && { type: form.type.trim() }),
         marketingConsent: form.marketingConsent,
         termsAgreedAt: serverTimestamp(),
         status: "New",

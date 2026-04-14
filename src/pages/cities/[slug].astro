@@ -8,6 +8,7 @@ import { isEventPast } from "@/utils/eventDate";
 import { buildBreadcrumbJsonLd } from "@/utils/breadcrumbs";
 import { SHOW_IMAGES, slugToImageIndex } from "@/data/images";
 import { buildTicketUrl } from "@/utils/eventUrl";
+import { EVENTS } from "@/data/copy";
 
 export function getStaticPaths() {
   return Object.keys(cities).map((slug) => ({
@@ -184,7 +185,9 @@ const breadcrumbJsonLd = buildBreadcrumbJsonLd([
                 data-promo-code={event.promoCode ?? ""}
                 data-city={event.city}
               >
-                <span>{event.date}: Grab My Spot</span>
+                <span>
+                  {event.date}: {EVENTS.ticketCta}
+                </span>
                 {arrowSvg}
               </button>
             ) : (
@@ -194,7 +197,9 @@ const breadcrumbJsonLd = buildBreadcrumbJsonLd([
                 rel="noopener noreferrer"
                 class="city-cta city-cta--primary"
               >
-                <span>{event.date}: Grab My Spot</span>
+                <span>
+                  {event.date}: {EVENTS.ticketCta}
+                </span>
                 {arrowSvg}
               </a>
             );
@@ -728,14 +733,19 @@ const breadcrumbJsonLd = buildBreadcrumbJsonLd([
     border-radius: 14px;
     border: 1px solid;
     font-family: var(--font-body);
-    font-size: 15px;
+    font-size: 16px;
     font-weight: 500;
     text-decoration: none;
     appearance: none;
     cursor: pointer;
     transition:
       background 0.15s,
-      border-color 0.15s;
+      border-color 0.15s,
+      transform 0.15s;
+  }
+
+  .city-cta:active {
+    transform: scale(0.97);
   }
 
   .city-cta--primary {

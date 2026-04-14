@@ -127,6 +127,10 @@ export const APPLY_PAGE = {
     "Selecting No means you will not be considered. You must be okay going viral to apply.",
 } as const;
 
+export const EVENTS = {
+  ticketCta: "Grab My Spot",
+} as const;
+
 export const EXPERIENCE_STEPS = [
   {
     title: "Arrive & Settle In",

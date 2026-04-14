@@ -370,6 +370,20 @@ describe("buildLeadAttribution", () => {
     expect(result.geoTimezone).toBe("America/New_York");
   });
 
+  it("accepts boundary values for latitude and longitude", () => {
+    sessionStorage.setItem("gmd-geo-latitude", "-90");
+    sessionStorage.setItem("gmd-geo-longitude", "-180");
+    let result = buildLeadAttribution({ source: "apply" });
+    expect(result.geoLatitude).toBe(-90);
+    expect(result.geoLongitude).toBe(-180);
+
+    sessionStorage.setItem("gmd-geo-latitude", "90");
+    sessionStorage.setItem("gmd-geo-longitude", "180");
+    result = buildLeadAttribution({ source: "apply" });
+    expect(result.geoLatitude).toBe(90);
+    expect(result.geoLongitude).toBe(180);
+  });
+
   /* ── posthog edge cases ─────────────────────────────── */
 
   it("excludes posthogDistinctId when posthog has no get_distinct_id method", () => {

@@ -108,7 +108,6 @@ function ApplyPageInner() {
     termsAgreed,
     showTermsModal,
     setShowTermsModal,
-    canGoBack,
     toast,
     setToast,
     cityInput,
@@ -128,29 +127,6 @@ function ApplyPageInner() {
         data-submitted={submitted || undefined}
       >
         <div className={styles.container}>
-          <div className={styles.headerArea}>
-            <button
-              type="button"
-              onClick={() => window.history.back()}
-              className={styles.backButton}
-              disabled={!canGoBack}
-            >
-              ← Back
-            </button>
-          </div>
-
-          <div className={styles.titleArea}>
-            {!submitted && (
-              <>
-                <h1 className={styles.title}>
-                  Apply to Be on Garam Masala Dating
-                </h1>
-                <p className={styles.subtitle}>{APPLY_PAGE.subtitle}</p>
-                <div className={styles.divider} />
-              </>
-            )}
-          </div>
-
           {submitted ? (
             <ApplySuccessPanel />
           ) : (

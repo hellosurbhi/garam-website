@@ -52,20 +52,6 @@ describe("ApplyPage", () => {
     );
   });
 
-  it("renders the form title", () => {
-    render(<ApplyPage />);
-    expect(
-      screen.getByText("Apply to Be on Garam Masala Dating"),
-    ).toBeInTheDocument();
-  });
-
-  it("renders the subtitle", () => {
-    render(<ApplyPage />);
-    expect(
-      screen.getByText(/NYC's #1 live desi dating show/),
-    ).toBeInTheDocument();
-  });
-
   it("shows 'For myself' and 'For a friend' toggle buttons", () => {
     render(<ApplyPage />);
     expect(screen.getByText("For myself")).toBeInTheDocument();

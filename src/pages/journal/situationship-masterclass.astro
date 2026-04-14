@@ -274,9 +274,7 @@ const breadcrumbJsonLd = buildBreadcrumbJsonLd([
     <!-- FAQs + AUTHOR BIO -->
     <section class="mc-faqs bg-light" aria-labelledby="faq-heading">
       <div class="mc-content mc-content--narrow">
-        <h2 class="mc-faqs-heading" id="faq-heading">
-          Frequently Asked Questions
-        </h2>
+        <h2 class="mc-faqs-heading" id="faq-heading">{post.faqHeading}</h2>
         <dl class="faq-list">
           {
             post.faqs.map(({ q, a }) => (

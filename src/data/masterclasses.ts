@@ -17,6 +17,8 @@ export interface MasterclassPost {
   excerpt: string;
   /** Prose text for the mid-article CTA banner (links are added by the template). */
   promoText?: string;
+  /** Heading rendered above the FAQ list. */
+  faqHeading: string;
   slides: MasterclassSlide[];
   faqs: { q: string; a: string }[];
   relatedSlugs: string[];
@@ -38,6 +40,7 @@ export const masterclassPosts: MasterclassPost[] = [
     category: "masterclass",
     promoText:
       "We host the #1 live dating show for South Asian singles, weekly in NYC.",
+    faqHeading: "Frequently Asked Questions",
     faqs: [
       {
         q: "How do I convert a situationship into a relationship?",

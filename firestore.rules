@@ -26,8 +26,8 @@ service cloud.firestore {
         && (!('geoCity' in d.keys()) || (d.geoCity is string && d.geoCity.size() > 0 && d.geoCity.size() <= 100))
         && (!('geoRegion' in d.keys()) || (d.geoRegion is string && d.geoRegion.size() > 0 && d.geoRegion.size() <= 100))
         && (!('geoCountry' in d.keys()) || (d.geoCountry is string && d.geoCountry.size() > 0 && d.geoCountry.size() <= 100))
-        && (!('geoLatitude' in d.keys()) || (d.geoLatitude is number && d.geoLatitude >= -90 && d.geoLatitude <= 90))
-        && (!('geoLongitude' in d.keys()) || (d.geoLongitude is number && d.geoLongitude >= -180 && d.geoLongitude <= 180))
+        && (!('geoLatitude' in d.keys()) || (d.geoLatitude is float && d.geoLatitude >= -90 && d.geoLatitude <= 90))
+        && (!('geoLongitude' in d.keys()) || (d.geoLongitude is float && d.geoLongitude >= -180 && d.geoLongitude <= 180))
         && (!('geoTimezone' in d.keys()) || (d.geoTimezone is string && d.geoTimezone.size() > 0 && d.geoTimezone.size() <= 100));
     }
 

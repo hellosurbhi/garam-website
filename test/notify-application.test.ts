@@ -86,6 +86,8 @@ describe("notify-application handler", () => {
       makeContext(makeRequest({ ...validBody, email: "" })),
     );
     expect(res.status).toBe(400);
+    const body = await res.json();
+    expect(body.error).toBe("Missing required fields");
   });
 
   it("returns 400 when email is malformed", async () => {
@@ -93,6 +95,8 @@ describe("notify-application handler", () => {
       makeContext(makeRequest({ ...validBody, email: "notanemail" })),
     );
     expect(res.status).toBe(400);
+    const body = await res.json();
+    expect(body.error).toBe("Missing required fields");
   });
 
   it("returns 200 and sends email for valid self-application", async () => {

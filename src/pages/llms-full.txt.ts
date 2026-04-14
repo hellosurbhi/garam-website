@@ -6,7 +6,7 @@ import {
   TESTIMONIALS,
   EXPERIENCE_STEPS,
 } from "@/data/copy";
-import { events } from "@/data/events";
+import { events, getEventDisplayStatus } from "@/data/events";
 import { pressItems } from "@/data/press";
 import { SOCIAL_URLS, CREATOR_URLS } from "@/data/socials";
 import { journalPostsPublished } from "@/data/journal";
@@ -86,7 +86,8 @@ export const GET: APIRoute = () => {
             if (e.startTime)
               lines.push(`Time: ${e.startTime} to ${e.endTime ?? "22:00"} ET`);
             if (e.price) lines.push(`Tickets: $${e.price}`);
-            if (e.tagline) lines.push(`Status: ${e.tagline}`);
+            const status = getEventDisplayStatus(e);
+            if (status) lines.push(`Status: ${status}`);
             lines.push(`Ticket URL: ${e.url}`);
             return lines.join("\n");
           })

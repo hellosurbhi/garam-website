@@ -1,5 +1,19 @@
 # Changelog
 
+## fix(tickets): prevent anchor navigation when EB widget modal is active (2026-04-13)
+
+### What changed
+
+`EBWidgets.createWidget()` attaches its own click handler to the trigger element but never calls `preventDefault`. When trigger elements were `<button>` this was harmless. After PR #14 converted them to `<a target="_blank">` for native fallback, both the widget modal AND a new tab opened on every click.
+
+**Fix:** After each successful `createWidget()` call, immediately attach a `click` listener that calls `e.preventDefault()`. This suppresses anchor navigation only when the widget is confirmed active. If `createWidget` throws or the EB script fails to load, no listener is added — the anchor's native `href` + `target="_blank"` handle navigation as intended.
+
+Also removed the now-redundant `applyFallbacks()` function and `script.onerror = applyFallbacks` from `EventbriteWidgetInit.astro`. The `onerror` path no longer needs an explicit handler because the unchanged anchor default behavior is identical.
+
+**Files affected:** `src/components/EventbriteWidgetInit.astro`, `src/pages/tickets.astro`
+
+---
+
 ## CodeRabbit PR #14 full review pass (2026-04-13)
 
 ### What changed

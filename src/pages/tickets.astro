@@ -365,6 +365,37 @@ const eventSeriesJsonLd = JSON.stringify({
       script.async = true;
       script.onload = initWidgets;
       document.head.appendChild(script);
+
+      // Close the Eventbrite modal when clicking outside it.
+      // tickets.astro uses is:inline define:vars and cannot import EventbriteWidgetInit.astro,
+      // so the MutationObserver is duplicated here. dataset.listenerAttached guards against
+      // double-registration if the observer fires more than once before disconnecting.
+      var modalObserverTimeout;
+      var modalObserver = new MutationObserver(function () {
+        var ebStructure = document.querySelector("div.eds-structure_main");
+        if (!ebStructure) return;
+        if (!ebStructure.dataset.listenerAttached) {
+          ebStructure.dataset.listenerAttached = "1";
+          ebStructure.addEventListener("click", function (e) {
+            if (!e.target.closest(".eds-modal")) {
+              var closeBtn = document.querySelector(
+                ".eds-modal__close-button button",
+              );
+              if (closeBtn) closeBtn.click();
+            }
+          });
+        }
+        clearTimeout(modalObserverTimeout);
+        modalObserver.disconnect();
+      });
+      modalObserver.observe(document.body, { childList: true, subtree: true });
+      modalObserverTimeout = setTimeout(function () {
+        modalObserver.disconnect();
+      }, 30000);
+      window.addEventListener("beforeunload", function () {
+        clearTimeout(modalObserverTimeout);
+        modalObserver.disconnect();
+      });
     })();
   </script>
 </BaseLayout>

@@ -1,5 +1,35 @@
 # Changelog
 
+## Code review fixes: part 4 (CTA data layer, press feedback, font-size, test mock) (2026-04-14)
+
+### What changed
+
+**"Grab My Spot" moved to data layer** (`src/data/copy.ts`, `src/pages/cities/[slug].astro`) — The literal string was hardcoded twice in the city template. Added `EVENTS.ticketCta` to `copy.ts` and replaced both instances. No visual change; text stays "Grab My Spot". Aligns with the rule that all user-facing copy lives in `src/data/`.
+
+**`.city-cta` font-size raised from 15px to 16px** (`src/pages/cities/[slug].astro`) — Interactive CTAs must be at or above 16px to prevent iOS auto-zoom on focus.
+
+**`.city-cta` press feedback added** (`src/pages/cities/[slug].astro`) — Added `transform 0.15s` to the transition list and `.city-cta:active { transform: scale(0.97) }` so all ticket/apply CTAs on city pages produce the required scale press feedback.
+
+**`.event-link:active` press feedback added** (`src/pages/links.astro`) — Both `a.event-link` and `button.event-link` now scale on press. Added to the base `.event-link:active` rule; the existing `transition: all 0.2s ease` already covered transform.
+
+**`.lc-skip:active` press feedback added** (`src/components/LeadCaptureModal.astro`) — Skip button in the lead capture modal now scales on press. Added `transform` to the transition list and `.lc-skip:active { transform: scale(0.97) }`.
+
+**Test mock corrected** (`src/components/apply/useApplyForm.test.ts`) — `mockUploadBytesResumable` changed from `mockReturnValue` to `mockImplementation`. With `mockReturnValue`, every call shared the same `cancel: vi.fn()` instance; `mockImplementation` ensures each call gets a fresh spy, preventing cross-test state leakage.
+
+### Skipped finding
+
+`journal-card-badge` font-size (`src/pages/journal/index.astro:281`) remains at 11px. The badge is a decorative pill inside a card — it is not itself interactive. The 16px rule applies to buttons, inputs, and links per CLAUDE.md, not to text nested inside them. Font sizes are also explicitly called out as intentional typographic choices.
+
+### Files affected
+
+- `src/data/copy.ts`
+- `src/pages/cities/[slug].astro`
+- `src/pages/links.astro`
+- `src/components/LeadCaptureModal.astro`
+- `src/components/apply/useApplyForm.test.ts`
+
+---
+
 ## Code review fixes: part 3 (badge, press-feedback, soldOut, isPublished) (2026-04-13)
 
 ### What changed

@@ -11,13 +11,22 @@ if (!post) return Astro.redirect("/404");
 
 const postUrl = `https://garammasaladating.com/journal/${post.slug}`;
 
+const titleSlide = post.slides.find((s) => s.type === "title");
+const disclaimerSlide = post.slides.find((s) => s.type === "disclaimer");
 const stepSlides = post.slides.filter((s) => s.type === "step");
 const scienceSlide = post.slides.find((s) => s.type === "science");
 const twistSlide = post.slides.find((s) => s.type === "twist");
 const bonusSlide = post.slides.find((s) => s.type === "bonus");
 const ctaSlide = post.slides.find((s) => s.type === "cta");
 
-if (!scienceSlide || !twistSlide || !bonusSlide || !ctaSlide) {
+if (
+  !titleSlide ||
+  !disclaimerSlide ||
+  !scienceSlide ||
+  !twistSlide ||
+  !bonusSlide ||
+  !ctaSlide
+) {
   throw new Error(
     "situationship-masterclass: missing required slide type(s). Check src/data/masterclasses.ts.",
   );
@@ -102,8 +111,8 @@ const breadcrumbJsonLd = buildBreadcrumbJsonLd([
         <p class="mc-eyebrow">
           Masterclass &middot; {formatDate(post.datePublished)}
         </p>
-        <h1 class="mc-cover-title">{post.slides[0].title}</h1>
-        <p class="mc-cover-sub">{post.slides[0].body}</p>
+        <h1 class="mc-cover-title">{titleSlide.title}</h1>
+        <p class="mc-cover-sub">{titleSlide.body}</p>
       </div>
       <div class="mc-scroll-hint" aria-hidden="true">
         <span>scroll or ↓</span>
@@ -131,12 +140,12 @@ const breadcrumbJsonLd = buildBreadcrumbJsonLd([
         <div class="disclaimer-box">
           <span class="warning-label">Surgeon General's Warning</span>
           <h2 class="mc-step-title reveal" data-delay="0">
-            {post.slides[1].title}
+            {disclaimerSlide.title}
           </h2>
           <div
             class="mc-step-body reveal"
             data-delay="150"
-            set:html={post.slides[1].body}
+            set:html={disclaimerSlide.body}
           />
         </div>
       </div>

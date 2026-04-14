@@ -1,6 +1,6 @@
 import type { APIRoute } from "astro";
 import { SITE, HOME_FAQS, STATS } from "@/data/copy";
-import { events } from "@/data/events";
+import { events, getEventDisplayStatus } from "@/data/events";
 import { SOCIAL_URLS } from "@/data/socials";
 import { journalPostsPublished } from "@/data/journal";
 import { tipPosts } from "@/data/tips";
@@ -29,7 +29,7 @@ export const GET: APIRoute = () => {
       ? upcomingEvents
           .map(
             (e) =>
-              `- ${e.date}: ${e.city}${e.venue ? ` @ ${e.venue.name}` : ""}${e.tagline ? ` (${e.tagline})` : ""}`,
+              `- ${e.date}: ${e.city}${e.venue ? ` @ ${e.venue.name}` : ""}${((s) => (s ? ` (${s})` : ""))(getEventDisplayStatus(e))}`,
           )
           .join("\n")
       : "- Check https://garammasaladating.com/tickets for current dates";

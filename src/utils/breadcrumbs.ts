@@ -5,6 +5,11 @@ interface Crumb {
   url?: string;
 }
 
+/**
+ * Serialise a BreadcrumbList JSON-LD string for use in structured data `<script>` tags.
+ *
+ * @param crumbs Ordered list of breadcrumb entries; omit `url` on the last (current) item.
+ */
 export function buildBreadcrumbJsonLd(crumbs: Crumb[]): string {
   return JSON.stringify({
     "@context": "https://schema.org",
@@ -21,4 +26,5 @@ export function buildBreadcrumbJsonLd(crumbs: Crumb[]): string {
   });
 }
 
+/** Canonical base URL for the site, used when building absolute breadcrumb item URLs. */
 export { BASE };

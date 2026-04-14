@@ -50,6 +50,4 @@ User-agent: meta-externalagent
 Allow: /
 Allow: /
 
-Sitemap: https://garammasaladating.com/sitemap.xml
 Sitemap: https://garammasaladating.com/sitemap-index.xml
-Sitemap: https://garammasaladating.com/llms.txt

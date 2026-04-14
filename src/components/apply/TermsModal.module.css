@@ -1,17 +1,19 @@
 @import "@/components/ui/modal-tokens.css";
 
-/* ─── Dialog container ─────────────────────────────────────────────────────── */
-/* Passed as className to Modal base. Owns sizing, bg, enter animation. */
+/* ─── Inner box ──────────────────────────────────────────────────────────────
+ * Passed as className to Modal. Modal's <dialog> owns the transparent overlay
+ * and centering. This class styles the visible white box.
+ * ─────────────────────────────────────────────────────────────────────────── */
 
 .dialog {
-  background: white;
-  border-radius: var(--modal-radius);
-  width: calc(100% - 32px);
+  width: 100%;
   max-width: 680px;
-  max-height: 90vh;
+  max-height: 85vh;
   display: flex;
   flex-direction: column;
   overflow: hidden;
+  background: var(--white);
+  border-radius: var(--modal-radius);
   animation: modalIn var(--modal-anim-duration) var(--modal-anim-easing) both;
 }
 
@@ -39,7 +41,7 @@
 
 .title {
   font-family: var(--font-playfair);
-  font-size: 17px;
+  font-size: 20px;
   font-weight: 700;
   color: var(--apply-brown);
   margin: 0;
@@ -84,9 +86,9 @@
 
 .body p {
   font-family: var(--font-body);
-  font-size: 13px;
+  font-size: 15px;
   color: var(--text-secondary);
-  line-height: 1.7;
+  line-height: 1.75;
   margin-bottom: 16px;
 }
 
@@ -124,7 +126,7 @@
   min-height: var(--touch-target);
   border-radius: 100px;
   border: 1px solid rgba(0, 0, 0, 0.15);
-  background: white;
+  background: var(--white);
   color: var(--apply-brown);
   font-family: var(--font-body);
   font-size: 15px;

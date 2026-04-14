@@ -1,14 +1,3 @@
-@keyframes pageIn {
-  from {
-    opacity: 0;
-    transform: translateY(8px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
 @keyframes toast-in {
   from {
     opacity: 0;
@@ -17,12 +6,6 @@
   to {
     opacity: 1;
     transform: translateY(0);
-  }
-}
-
-@keyframes spin {
-  to {
-    transform: rotate(360deg);
   }
 }
 
@@ -43,10 +26,8 @@
 /* ─── Layout ─────────────────────────────────────────────────── */
 
 .page {
-  min-height: 100vh;
   background: transparent;
   position: relative;
-  animation: pageIn 0.5s ease-out both;
 }
 
 .container {
@@ -54,7 +35,7 @@
   z-index: 1;
   max-width: 640px;
   margin: 0 auto;
-  padding: 20px;
+  padding: 0 20px 20px;
 }
 
 /* ─── Header ─────────────────────────────────────────────────── */
@@ -133,7 +114,6 @@
 
 .requiredMark {
   color: var(--brand-red);
-  margin-left: 3px;
 }
 
 .errorText {
@@ -359,12 +339,25 @@
   border-color: var(--brand-red);
 }
 
+.photoDropzoneWithPreview {
+  composes: photoDropzone;
+  padding: 0;
+  border-style: solid;
+  border-color: rgba(var(--brand-red-rgb), 0.2);
+  overflow: hidden;
+}
+
+.photoDropzoneWithPreview:hover {
+  border-color: var(--brand-red);
+}
+
 .photoPreview {
   width: 100%;
-  max-height: 280px;
-  object-fit: cover;
+  height: 280px;
+  object-fit: contain;
   border-radius: 8px;
   display: block;
+  background: var(--off-white);
 }
 
 .photoEmoji {
@@ -434,16 +427,6 @@
   box-shadow: none;
 }
 
-.spinner {
-  width: 16px;
-  height: 16px;
-  border: 2px solid rgba(255, 255, 255, 0.3);
-  border-top-color: white;
-  border-radius: 50%;
-  display: inline-block;
-  animation: spin 0.7s linear infinite;
-}
-
 /* ─── Consent sections ───────────────────────────────────────── */
 
 .consentSection {
@@ -494,7 +477,7 @@
 
 .checkRow {
   display: flex;
-  align-items: flex-start;
+  align-items: center;
   gap: 12px;
   cursor: pointer;
   font-family: var(--font-body);
@@ -510,7 +493,6 @@
   accent-color: var(--brand-red);
   cursor: pointer;
   flex-shrink: 0;
-  margin-top: 2px;
 }
 
 .termsLink {
@@ -519,12 +501,23 @@
   min-height: var(--touch-target);
   background: none;
   border: none;
-  padding: 0 8px;
+  padding: 0;
   color: var(--brand-red);
   font-family: var(--font-body);
   font-size: 15px;
   text-decoration: underline;
   cursor: pointer;
+}
+
+/* ─── No-consent warning ─────────────────────────────────────── */
+
+.noConsentWarning {
+  font-family: var(--font-body);
+  font-size: 13px;
+  color: var(--brand-red);
+  font-weight: 600;
+  margin-top: 6px;
+  padding-left: 4px;
 }
 
 /* ─── Disclaimer ─────────────────────────────────────────────── */
@@ -664,7 +657,8 @@
 }
 
 .successTicketButton {
-  display: inline-block;
+  display: block;
+  width: 100%;
   margin-top: 16px;
   padding: 14px 28px;
   background: var(--brand-red);
@@ -674,10 +668,18 @@
   font-weight: 700;
   border-radius: 100px;
   text-decoration: none;
-  transition: background 0.2s ease-out;
+  text-align: center;
+  transition:
+    background 200ms ease-out,
+    transform 160ms ease-out;
   min-height: var(--touch-target);
+  box-sizing: border-box;
 }
 
 .successTicketButton:hover {
   background: var(--brand-red-dark);
+}
+
+.successTicketButton:active {
+  transform: scale(0.97);
 }

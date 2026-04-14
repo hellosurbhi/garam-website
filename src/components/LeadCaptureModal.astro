@@ -159,13 +159,18 @@ const {
     text-transform: uppercase;
     letter-spacing: 1px;
     cursor: pointer;
-    transition: background 0.2s;
+    transition:
+      background 0.2s,
+      transform 0.06s;
     min-height: var(--touch-target);
     white-space: nowrap;
     width: 100%;
   }
   .lc-submit:hover {
     background: var(--brand-red-dark);
+  }
+  .lc-submit:active {
+    transform: scale(0.97);
   }
   .lc-submit:disabled {
     opacity: 0.6;
@@ -178,13 +183,18 @@ const {
     font-size: 14px;
     font-family: var(--font-body), sans-serif;
     margin-top: 12px;
-    transition: color 0.2s;
+    transition:
+      color 0.2s,
+      transform 0.15s;
     padding: 12px 16px;
     min-height: var(--touch-target);
     cursor: pointer;
   }
   .lc-skip:hover {
     color: var(--charcoal);
+  }
+  .lc-skip:active {
+    transform: scale(0.97);
   }
   .lc-success {
     text-align: center;
@@ -267,11 +277,15 @@ const {
         const errorEl = root.querySelector(
           "[data-lc-error]",
         ) as HTMLElement | null;
-        if (submitBtn) submitBtn.disabled = true;
+        const originalBtnText = submitBtn?.textContent ?? "";
+        if (submitBtn) {
+          submitBtn.disabled = true;
+          submitBtn.textContent = "Sending...";
+        }
 
         try {
           const attribution = buildLeadAttribution({ source });
-          const payload: Record<string, string> = {
+          const payload: Record<string, string | number | undefined> = {
             email: capturedEmail,
             ...attribution,
           };
@@ -308,7 +322,10 @@ const {
             errorEl.removeAttribute("hidden");
           }
         } finally {
-          if (submitBtn) submitBtn.disabled = false;
+          if (submitBtn) {
+            submitBtn.disabled = false;
+            submitBtn.textContent = originalBtnText;
+          }
         }
       });
 
@@ -340,7 +357,11 @@ const {
         const submitBtn = (
           e.target as HTMLFormElement
         ).querySelector<HTMLButtonElement>('[type="submit"]');
-        if (submitBtn) submitBtn.disabled = true;
+        const originalBtnText = submitBtn?.textContent ?? "";
+        if (submitBtn) {
+          submitBtn.disabled = true;
+          submitBtn.textContent = "Sending...";
+        }
         try {
           if (leadDocId) {
             await fetch("/api/update-lead", {
@@ -372,7 +393,10 @@ const {
             phoneErrorEl.removeAttribute("hidden");
           }
         } finally {
-          if (submitBtn) submitBtn.disabled = false;
+          if (submitBtn) {
+            submitBtn.disabled = false;
+            submitBtn.textContent = originalBtnText;
+          }
         }
       });
 

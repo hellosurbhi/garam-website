@@ -4,6 +4,7 @@
  */
 export type { PostBlock, JournalFaq, JournalPost } from "./types";
 import type { JournalPost } from "./types";
+import { isPublished } from "../../utils/date";
 import { corePosts } from "./core";
 import { appAlternativesPosts } from "./app-alternatives";
 import { datingCulturePosts } from "./dating-culture";
@@ -46,14 +47,9 @@ export const journalPostsSorted = [...journalPosts].sort(
 );
 
 /** Only posts whose datePublished is today or earlier. */
-export const journalPostsPublished = journalPostsSorted.filter((p) => {
-  const pub = new Date(p.datePublished + "T00:00:00Z");
-  const now = new Date();
-  const today = new Date(
-    Date.UTC(now.getFullYear(), now.getMonth(), now.getDate()),
-  );
-  return pub <= today;
-});
+export const journalPostsPublished = journalPostsSorted.filter((p) =>
+  isPublished(p.datePublished),
+);
 
 export function getPostBySlug(slug: string): JournalPost | undefined {
   return journalPosts.find((p) => p.slug === slug);

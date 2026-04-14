@@ -2,16 +2,25 @@
  * Astro counterpart: Modal.astro — keep styles identical.
  * Design tokens: modal-tokens.css — change values there, not here.
  *
- * Each modal passes its own className for sizing, bg, border-radius, animation.
- * This file only owns: border reset, transparent bg, outline suppression, backdrop.
+ * The <dialog> is a transparent full-screen centering overlay.
+ * Each modal passes className for its own white-box inner div sizing/styling.
  */
 @import "./modal-tokens.css";
 
 .dialog {
   border: none;
-  padding: 0;
   background: transparent;
+  padding: 24px;
+  margin: 0;
+  width: 100vw;
+  height: 100dvh;
+  max-width: 100%;
+  max-height: 100dvh;
+  overflow: visible;
   outline: none; /* no ring when dialog container is focused */
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .dialog::backdrop {

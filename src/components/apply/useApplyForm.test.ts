@@ -4,7 +4,11 @@ import { renderHook, act } from "@testing-library/react";
 /* ─── Mocks ──────────────────────────────────────────────────────── */
 
 const mockAddDoc = vi.fn().mockResolvedValue({ id: "doc-1" });
-const mockUploadBytes = vi.fn().mockResolvedValue({});
+const mockUploadBytesResumable = vi
+  .fn()
+  .mockImplementation(() =>
+    Object.assign(Promise.resolve({}), { cancel: vi.fn() }),
+  );
 const mockGetDownloadURL = vi
   .fn()
   .mockResolvedValue("https://example.com/photo.jpg");
@@ -19,7 +23,8 @@ vi.mock("firebase/firestore", () => ({
 
 vi.mock("firebase/storage", () => ({
   ref: vi.fn(() => "mock-ref"),
-  uploadBytes: (...args: unknown[]) => mockUploadBytes(...args),
+  uploadBytesResumable: (...args: unknown[]) =>
+    mockUploadBytesResumable(...args),
   getDownloadURL: (...args: unknown[]) => mockGetDownloadURL(...args),
   deleteObject: (...args: unknown[]) => mockDeleteObject(...args),
 }));
@@ -32,30 +37,6 @@ vi.mock("@/lib/firebase", () => ({
   getFirebaseDb: vi.fn(() => "mock-db"),
   getFirebaseStorage: vi.fn(() => "mock-storage"),
   getFirebaseAuth: vi.fn(() => "mock-auth"),
-}));
-
-let mockCitySearchOptions: Array<{
-  value: string;
-  label: string;
-  city: string;
-  state: string;
-  country: string;
-  countryCode: string;
-  searchText: string;
-  boost: number;
-}> = [];
-vi.mock("@/hooks/useCitySearch", () => ({
-  useCitySearch: () => ({
-    loading: false,
-    failed: false,
-    retry: vi.fn(),
-    options: mockCitySearchOptions,
-  }),
-}));
-
-const mockResolveCityOption = vi.fn().mockReturnValue(null);
-vi.mock("@/lib/citySearch", () => ({
-  resolveCityOption: (...args: unknown[]) => mockResolveCityOption(...args),
 }));
 
 const mockTrackLeadEvent = vi.fn();
@@ -108,7 +89,7 @@ function fillRequired(
   set("gender", "Woman");
   set("orientation", "Straight");
   set("city", "New York");
-  set("country", "US");
+  set("email", "jane@example.com");
   set("instagram", "janedoe");
   set("marketingConsent", "yes");
   handleTermsCheckbox(true);
@@ -121,8 +102,6 @@ describe("useApplyForm", () => {
   beforeEach(() => {
     vi.clearAllMocks();
     sessionStorage.clear();
-    mockCitySearchOptions = [];
-    mockResolveCityOption.mockReturnValue(null);
     vi.spyOn(globalThis, "fetch").mockResolvedValue(new Response("{}"));
     vi.spyOn(crypto, "randomUUID").mockReturnValue(
       "test-uuid" as `${string}-${string}-${string}-${string}-${string}`,
@@ -178,54 +157,48 @@ describe("useApplyForm", () => {
     expect(result.current.errors.name).toBeUndefined();
   });
 
-  /* ── handlePlaceChange ────────────────────────────────── */
+  /* ── handleCityInputChange ────────────────────────────── */
 
-  it("handlePlaceChange updates city/state/country from option", () => {
+  it("handleCityInputChange updates cityInput and form.city", () => {
     const { result } = renderHook(() => useApplyForm());
-    const option = {
-      value: "NYC, NY, US",
-      label: "NYC, NY, US",
-      city: "NYC",
-      state: "NY",
-      country: "United States",
-      countryCode: "US",
-      searchText: "nyc ny us",
-      boost: 40,
-    };
-    act(() => result.current.handlePlaceChange(option));
-    expect(result.current.form.city).toBe("NYC");
-    expect(result.current.form.state).toBe("NY");
-    expect(result.current.form.country).toBe("US");
+    act(() =>
+      result.current.handleCityInputChange({
+        target: { value: "Mumbai" },
+      } as React.ChangeEvent<HTMLInputElement>),
+    );
+    expect(result.current.cityInput).toBe("Mumbai");
+    expect(result.current.form.city).toBe("Mumbai");
   });
 
-  it("handlePlaceChange with null clears city/state/country", () => {
+  it("handleCityInputChange clears state and country", () => {
     const { result } = renderHook(() => useApplyForm());
-    act(() => result.current.handlePlaceChange(null));
-    expect(result.current.form.city).toBe("");
+    act(() => {
+      result.current.set("state", "NY");
+      result.current.set("country", "US");
+    });
+    act(() =>
+      result.current.handleCityInputChange({
+        target: { value: "Mumbai" },
+      } as React.ChangeEvent<HTMLInputElement>),
+    );
     expect(result.current.form.state).toBe("");
     expect(result.current.form.country).toBe("");
   });
 
-  it("handlePlaceChange clears city/country/state errors", async () => {
+  it("handleCityInputChange clears city error without touching other errors", async () => {
     const { result } = renderHook(() => useApplyForm());
     await act(async () => {
       await result.current.handleSubmit(makeSubmitEvent());
     });
     expect(result.current.errors.city).toBe("Required");
-    const option = {
-      value: "NYC, NY, US",
-      label: "NYC, NY, US",
-      city: "NYC",
-      state: "NY",
-      country: "US",
-      countryCode: "US",
-      searchText: "nyc",
-      boost: 0,
-    };
-    act(() => result.current.handlePlaceChange(option));
+    expect(result.current.errors.name).toBe("Required");
+    act(() =>
+      result.current.handleCityInputChange({
+        target: { value: "NYC" },
+      } as React.ChangeEvent<HTMLInputElement>),
+    );
     expect(result.current.errors.city).toBeUndefined();
-    expect(result.current.errors.country).toBeUndefined();
-    expect(result.current.errors.state).toBeUndefined();
+    expect(result.current.errors.name).toBe("Required");
   });
 
   /* ── handlePhotoChange ────────────────────────────────── */
@@ -304,11 +277,11 @@ describe("useApplyForm", () => {
     expect(result.current.errors.gender).toBe("Required");
     expect(result.current.errors.orientation).toBe("Required");
     expect(result.current.errors.city).toBe("Required");
-    expect(result.current.errors.country).toBe("Required");
+    expect(result.current.errors.email).toBe("Email is required");
     expect(result.current.errors.instagram).toBe("Required");
     expect(result.current.errors.photo).toBe("A photo is required");
     expect(result.current.errors.marketingConsent).toBe(
-      "Please select Yes or No",
+      "Please select Yes or No.",
     );
     expect(result.current.errors.termsAgreed).toBe(
       "You must agree to the Terms & Conditions",
@@ -376,7 +349,7 @@ describe("useApplyForm", () => {
       await result.current.handleSubmit(makeSubmitEvent());
     });
     expect(result.current.errors.marketingConsent).toBe(
-      "Please select Yes or No",
+      "Please select Yes or No.",
     );
   });
 
@@ -429,7 +402,7 @@ describe("useApplyForm", () => {
     expect(result.current.submitted).toBe(true);
     expect(result.current.submitting).toBe(false);
     expect(mockSignInAnonymously).toHaveBeenCalledWith("mock-auth");
-    expect(mockUploadBytes).toHaveBeenCalled();
+    expect(mockUploadBytesResumable).toHaveBeenCalled();
     expect(mockGetDownloadURL).toHaveBeenCalled();
     expect(mockAddDoc).toHaveBeenCalled();
     expect(mockTrackLeadEvent).toHaveBeenCalledWith(
@@ -437,7 +410,6 @@ describe("useApplyForm", () => {
       expect.objectContaining({
         applicationType: "Self",
         city: "New York",
-        country: "US",
       }),
     );
   });
@@ -653,65 +625,50 @@ describe("useApplyForm", () => {
     expect(result.current.photoPreview).toBeNull();
   });
 
-  it("starts with geo.selectedPlace null", () => {
+  it("starts with cityInput empty", () => {
     const { result } = renderHook(() => useApplyForm());
-    expect(result.current.geo.selectedPlace).toBeNull();
-  });
-
-  it("starts with geo.placeQuery empty", () => {
-    const { result } = renderHook(() => useApplyForm());
-    expect(result.current.geo.placeQuery).toBe("");
+    expect(result.current.cityInput).toBe("");
   });
 
   /* ── Group 2: URL parameter seeding ──────────────────── */
 
-  it("seeds form.city from ?city URL param", () => {
-    const original = window.location.search;
-    Object.defineProperty(window, "location", {
-      value: { ...window.location, search: "?city=Brooklyn", pathname: "/" },
-      writable: true,
-    });
-    const { result } = renderHook(() => useApplyForm());
-    expect(result.current.form.city).toBe("Brooklyn");
-    expect(result.current.form.state).toBe("");
-    Object.defineProperty(window, "location", {
-      value: { ...window.location, search: original, pathname: "/" },
-      writable: true,
-    });
+  it("seeds form.city and cityInput from ?city URL param", () => {
+    const originalHref = window.location.pathname + window.location.search;
+    try {
+      history.replaceState(null, "", "?city=Brooklyn");
+      const { result } = renderHook(() => useApplyForm());
+      expect(result.current.form.city).toBe("Brooklyn");
+      expect(result.current.cityInput).toBe("Brooklyn");
+      expect(result.current.form.state).toBe("");
+    } finally {
+      history.replaceState(null, "", originalHref);
+    }
   });
 
-  it("seeds form.state from ?state URL param", () => {
-    const original = window.location.search;
-    Object.defineProperty(window, "location", {
-      value: { ...window.location, search: "?state=NY", pathname: "/" },
-      writable: true,
-    });
-    const { result } = renderHook(() => useApplyForm());
-    expect(result.current.form.state).toBe("NY");
-    expect(result.current.form.city).toBe("");
-    Object.defineProperty(window, "location", {
-      value: { ...window.location, search: original, pathname: "/" },
-      writable: true,
-    });
+  it("does not seed when only ?state URL param present (city required)", () => {
+    const originalHref = window.location.pathname + window.location.search;
+    try {
+      history.replaceState(null, "", "?state=NY");
+      const { result } = renderHook(() => useApplyForm());
+      expect(result.current.form.state).toBe("");
+      expect(result.current.form.city).toBe("");
+      expect(result.current.cityInput).toBe("");
+    } finally {
+      history.replaceState(null, "", originalHref);
+    }
   });
 
-  it("seeds both city and state from URL params", () => {
-    const original = window.location.search;
-    Object.defineProperty(window, "location", {
-      value: {
-        ...window.location,
-        search: "?city=Brooklyn&state=NY",
-        pathname: "/",
-      },
-      writable: true,
-    });
-    const { result } = renderHook(() => useApplyForm());
-    expect(result.current.form.city).toBe("Brooklyn");
-    expect(result.current.form.state).toBe("NY");
-    Object.defineProperty(window, "location", {
-      value: { ...window.location, search: original, pathname: "/" },
-      writable: true,
-    });
+  it("seeds city, state, and cityInput from ?city&state URL params", () => {
+    const originalHref = window.location.pathname + window.location.search;
+    try {
+      history.replaceState(null, "", "?city=Brooklyn&state=NY");
+      const { result } = renderHook(() => useApplyForm());
+      expect(result.current.form.city).toBe("Brooklyn");
+      expect(result.current.form.state).toBe("NY");
+      expect(result.current.cityInput).toBe("Brooklyn, NY");
+    } finally {
+      history.replaceState(null, "", originalHref);
+    }
   });
 
   /* ── Group 3: History back navigation ────────────────── */
@@ -828,148 +785,6 @@ describe("useApplyForm", () => {
     );
   });
 
-  /* ── Group 6: handlePlaceInputChange ─────────────────── */
-
-  it("handlePlaceInputChange updates placeQuery", () => {
-    const { result } = renderHook(() => useApplyForm());
-    act(() => result.current.handlePlaceInputChange("New Y"));
-    expect(result.current.geo.placeQuery).toBe("New Y");
-  });
-
-  it("handlePlaceInputChange clears selectedPlace when value differs from label", () => {
-    const option = {
-      value: "NYC, NY, US",
-      label: "NYC, NY, US",
-      city: "NYC",
-      state: "NY",
-      country: "United States",
-      countryCode: "US",
-      searchText: "nyc ny us",
-      boost: 40,
-    };
-    const { result } = renderHook(() => useApplyForm());
-    act(() => result.current.handlePlaceChange(option));
-    expect(result.current.geo.selectedPlace).toEqual(option);
-    act(() => result.current.handlePlaceInputChange("different"));
-    expect(result.current.geo.selectedPlace).toBeNull();
-  });
-
-  it("handlePlaceInputChange keeps selectedPlace when value matches label", () => {
-    const option = {
-      value: "NYC, NY, US",
-      label: "NYC, NY, US",
-      city: "NYC",
-      state: "NY",
-      country: "United States",
-      countryCode: "US",
-      searchText: "nyc ny us",
-      boost: 40,
-    };
-    const { result } = renderHook(() => useApplyForm());
-    act(() => result.current.handlePlaceChange(option));
-    act(() => result.current.handlePlaceInputChange("NYC, NY, US"));
-    expect(result.current.geo.selectedPlace).toEqual(option);
-  });
-
-  /* ── Group 7: placeOptions memo ──────────────────────── */
-
-  it("placeOptions returns citySearch options when no selectedPlace", () => {
-    const opts = [
-      {
-        value: "NYC, NY, US",
-        label: "NYC, NY, US",
-        city: "NYC",
-        state: "NY",
-        country: "US",
-        countryCode: "US",
-        searchText: "nyc",
-        boost: 40,
-      },
-    ];
-    mockCitySearchOptions = opts;
-    const { result } = renderHook(() => useApplyForm());
-    expect(result.current.geo.placeOptions).toEqual(opts);
-  });
-
-  it("placeOptions prepends selectedPlace when not in options", () => {
-    const opt1 = {
-      value: "LA, CA, US",
-      label: "LA, CA, US",
-      city: "LA",
-      state: "CA",
-      country: "US",
-      countryCode: "US",
-      searchText: "la",
-      boost: 0,
-    };
-    mockCitySearchOptions = [opt1];
-    const selected = {
-      value: "NYC, NY, US",
-      label: "NYC, NY, US",
-      city: "NYC",
-      state: "NY",
-      country: "US",
-      countryCode: "US",
-      searchText: "nyc",
-      boost: 40,
-    };
-    const { result } = renderHook(() => useApplyForm());
-    act(() => result.current.handlePlaceChange(selected));
-    expect(result.current.geo.placeOptions[0]).toEqual(selected);
-    expect(result.current.geo.placeOptions[1]).toEqual(opt1);
-  });
-
-  it("placeOptions does not duplicate selectedPlace when already in options", () => {
-    const option = {
-      value: "NYC, NY, US",
-      label: "NYC, NY, US",
-      city: "NYC",
-      state: "NY",
-      country: "US",
-      countryCode: "US",
-      searchText: "nyc",
-      boost: 40,
-    };
-    mockCitySearchOptions = [option];
-    const { result } = renderHook(() => useApplyForm());
-    act(() => result.current.handlePlaceChange(option));
-    expect(result.current.geo.placeOptions).toEqual([option]);
-  });
-
-  it("placeOptions caps result at 5 when selectedPlace prepended", () => {
-    const makeOpt = (i: number) => ({
-      value: `City${i}`,
-      label: `City${i}`,
-      city: `City${i}`,
-      state: "ST",
-      country: "US",
-      countryCode: "US",
-      searchText: `city${i}`,
-      boost: 0,
-    });
-    mockCitySearchOptions = [
-      makeOpt(1),
-      makeOpt(2),
-      makeOpt(3),
-      makeOpt(4),
-      makeOpt(5),
-    ];
-    const selected = {
-      value: "Selected",
-      label: "Selected",
-      city: "Selected",
-      state: "ST",
-      country: "US",
-      countryCode: "US",
-      searchText: "selected",
-      boost: 0,
-    };
-    const { result } = renderHook(() => useApplyForm());
-    act(() => result.current.handlePlaceChange(selected));
-    expect(result.current.geo.placeOptions).toHaveLength(5);
-    expect(result.current.geo.placeOptions[0]).toEqual(selected);
-  });
-
   /* ── Group 8: File size boundary ─────────────────────── */
 
   it("handlePhotoChange accepts file exactly 5MB", () => {
@@ -1044,121 +859,6 @@ describe("useApplyForm", () => {
     }
   });
 
-  /* ── Group 10: placeQuery sync effect ────────────────── */
-
-  it("placeQuery shows selectedPlace label when selectedPlace is set", () => {
-    const option = {
-      value: "NYC, NY, US",
-      label: "NYC, NY, US",
-      city: "NYC",
-      state: "NY",
-      country: "United States",
-      countryCode: "US",
-      searchText: "nyc",
-      boost: 40,
-    };
-    const { result } = renderHook(() => useApplyForm());
-    act(() => result.current.handlePlaceChange(option));
-    expect(result.current.geo.placeQuery).toBe("NYC, NY, US");
-  });
-
-  it("placeQuery builds fallback from city/state/country when no selectedPlace", () => {
-    const { result } = renderHook(() => useApplyForm());
-    act(() => {
-      result.current.set("city", "NYC");
-      result.current.set("state", "NY");
-      result.current.set("country", "US");
-    });
-    // The selectedPlace is null, so fallback label should be built
-    // Need to clear selectedPlace by not using handlePlaceChange
-    expect(result.current.geo.placeQuery).toBe("NYC, NY, US");
-  });
-
-  it("placeQuery is empty when no city and no selectedPlace", () => {
-    const { result } = renderHook(() => useApplyForm());
-    expect(result.current.geo.placeQuery).toBe("");
-  });
-
-  it("placeQuery fallback filters out empty parts", () => {
-    const { result } = renderHook(() => useApplyForm());
-    act(() => {
-      result.current.set("city", "NYC");
-      // state and country remain ""
-    });
-    expect(result.current.geo.placeQuery).toBe("NYC");
-  });
-
-  /* ── Group 11: City resolution effect ────────────────── */
-
-  it("resolves city option when options available and form.city set", () => {
-    const resolved = {
-      value: "Brooklyn, NY, US",
-      label: "Brooklyn, NY, US",
-      city: "Brooklyn",
-      state: "NY",
-      country: "United States",
-      countryCode: "US",
-      searchText: "brooklyn",
-      boost: 30,
-    };
-    mockResolveCityOption.mockReturnValue(resolved);
-    mockCitySearchOptions = [resolved];
-
-    const original = window.location.search;
-    Object.defineProperty(window, "location", {
-      value: { ...window.location, search: "?city=Brooklyn", pathname: "/" },
-      writable: true,
-    });
-
-    const { result } = renderHook(() => useApplyForm());
-    // The effect should auto-resolve
-    expect(result.current.form.city).toBe("Brooklyn");
-    expect(result.current.form.country).toBe("US");
-    expect(result.current.geo.selectedPlace).toEqual(resolved);
-
-    Object.defineProperty(window, "location", {
-      value: { ...window.location, search: original, pathname: "/" },
-      writable: true,
-    });
-  });
-
-  it("does not resolve when selectedPlace already exists", () => {
-    const option = {
-      value: "NYC, NY, US",
-      label: "NYC, NY, US",
-      city: "NYC",
-      state: "NY",
-      country: "US",
-      countryCode: "US",
-      searchText: "nyc",
-      boost: 40,
-    };
-    mockCitySearchOptions = [option];
-    const { result } = renderHook(() => useApplyForm());
-    act(() => result.current.handlePlaceChange(option));
-    mockResolveCityOption.mockClear();
-    // Re-render doesn't call resolve since selectedPlace exists
-    expect(mockResolveCityOption).not.toHaveBeenCalled();
-  });
-
-  it("does not resolve when no form.city", () => {
-    mockCitySearchOptions = [
-      {
-        value: "NYC, NY, US",
-        label: "NYC, NY, US",
-        city: "NYC",
-        state: "NY",
-        country: "US",
-        countryCode: "US",
-        searchText: "nyc",
-        boost: 0,
-      },
-    ];
-    const { result } = renderHook(() => useApplyForm());
-    expect(result.current.form.city).toBe("");
-    expect(mockResolveCityOption).not.toHaveBeenCalled();
-  });
-
   /* ── Group 12: Submit data fields ────────────────────── */
 
   it("submit trims name, height, and pitch in doc", async () => {
@@ -1220,8 +920,9 @@ describe("useApplyForm", () => {
     expect(docData.gender).toBe("Woman");
     expect(docData.orientation).toBe("Bisexual");
     expect(docData.city).toBe("New York");
+    expect(docData.email).toBe("jane@example.com");
     expect(docData.state).toBe("");
-    expect(docData.country).toBe("US");
+    expect(docData.country).toBe("");
     expect(docData.community).toBe("South Asian");
     expect(docData.income).toBe("100k+");
     expect(docData.applicationType).toBe("Self");
@@ -1413,28 +1114,6 @@ describe("useApplyForm", () => {
     expect(body.photoUrl).toBe("https://example.com/photo.jpg");
   });
 
-  it("handlePlaceChange sets placeQuery to option label", () => {
-    const option = {
-      value: "NYC, NY, US",
-      label: "NYC, NY, US",
-      city: "NYC",
-      state: "NY",
-      country: "US",
-      countryCode: "US",
-      searchText: "nyc",
-      boost: 0,
-    };
-    const { result } = renderHook(() => useApplyForm());
-    act(() => result.current.handlePlaceChange(option));
-    expect(result.current.geo.placeQuery).toBe("NYC, NY, US");
-  });
-
-  it("handlePlaceChange with null sets placeQuery to empty", () => {
-    const { result } = renderHook(() => useApplyForm());
-    act(() => result.current.handlePlaceChange(null));
-    expect(result.current.geo.placeQuery).toBe("");
-  });
-
   it("set() clears specific field error without affecting others", async () => {
     const { result } = renderHook(() => useApplyForm());
     await act(async () => {
@@ -1445,13 +1124,6 @@ describe("useApplyForm", () => {
     act(() => result.current.set("name", "Jane"));
     expect(result.current.errors.name).toBeUndefined();
     expect(result.current.errors.gender).toBe("Required");
-  });
-
-  it("triggerGeoLoad sets geoLoadTriggered", () => {
-    const { result } = renderHook(() => useApplyForm());
-    // Just verify it's callable — it triggers useCitySearch lazy loading
-    act(() => result.current.triggerGeoLoad());
-    // No crash = success; the effect is internal to useCitySearch mock
   });
 
   it("submit sets submitting true during execution", async () => {
@@ -1500,6 +1172,7 @@ describe("useApplyForm", () => {
       result.current.set("orientation", "Straight");
       result.current.set("city", "NYC");
       result.current.set("country", "US");
+      result.current.set("email", "valid@example.com");
       result.current.set("instagram", "jane");
       result.current.set("marketingConsent", "yes");
       result.current.handlePhotoChange(makeChangeEvent(makeFile()));

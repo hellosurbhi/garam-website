@@ -62,7 +62,7 @@ This site was designed by a professional front-end designer. Every aesthetic dec
 - **Color hex values**: do not change color implementations. You may suggest using a CSS variable instead of a hardcoded hex, but do not change the actual color.
 - **Section backgrounds**: section background color alternation is intentional contrast design and MANDATORY when you createe any new sections/move anything around. No section color should match the color of the section above or below. NEVER BLACK OR DARK BACKGROUND.
 - **Font sizes, letter-spacing, line-height**: typographic choices are intentional.
-- **WebGL shader** (`public/js/shader-app.js`): $2,000 designer asset. Touch nothing. If there is a bug, report it; do not "fix" it aesthetically.
+- **WebGL shader / hero gradient** (`public/js/shader-app.js`): $2,000 designer asset. This is the ONLY thing in the hero section that cannot be touched. All other hero content (text, eyebrow, subheading, CTAs) is fair game to edit. If there is a bug in the shader, report it; do not "fix" it aesthetically.
 
 **CodeRabbit rule:** Any review comment that suggests removing, changing, or "improving" the above should be discussed explicitly before ever implementing. You may offer alternative _implementations_ (e.g., CSS var vs hex) but never alter the _result_.
 
@@ -71,7 +71,7 @@ This site was designed by a professional front-end designer. Every aesthetic dec
 - Hardcode user-facing text in components. All copy goes in `src/data/`.
 - Hardcode colors, fonts, or spacing. Use CSS custom properties from `:root`.
 - Hardcode external URLs in JSX. Import from data files.
-- **NEVER use em dashes (—), en dashes (–), or double dashes (--) in ANY user-facing copy, titles, meta descriptions, aria-labels, JSON-LD schemas, or written prose.** This includes journal articles, page titles, component text, testimonials, FAQs, and tips. The only acceptable dash is a hyphen that is literally part of a compound word (e.g., `mobile-first`, `stand-up`, `co-host`, `first-date`). Replace em dashes with commas, colons, periods, or parentheses depending on context. Replace en dashes in ranges with the word "to" (e.g., `20 to 30 seconds`, `$50k to $100k`). Replace double dashes the same way. This rule is NON-NEGOTIABLE: em dashes are a dead giveaway for AI-generated content and the user does not want them anywhere on the site.
+- **NEVER use any form of dash as a separator in ANY user-facing copy, titles, meta descriptions, aria-labels, JSON-LD schemas, or written prose.** This covers all four forms: em dash (—), en dash (–), double dash (--), and standalone single dash used as a separator (word - word or word- word). This includes journal articles, masterclass slides, page titles, component text, testimonials, FAQs, tips, and hot-take badges. The ONLY acceptable hyphen is one that is literally part of a compound word with no spaces (e.g., `mobile-first`, `stand-up`, `co-host`, `first-date`). Replace all separator dashes with commas, colons, periods, or parentheses depending on context. Replace range dashes with the word "to" (e.g., `20 to 30 seconds`, `$50k to $100k`). This rule is NON-NEGOTIABLE: dashes are a dead giveaway for AI-generated content and must never appear on this site.
 - Do not use font-size below 16px on interactive elements (buttons, inputs, links): iOS will auto-zoom.
 - Use `outline: none` without a visible `:focus-visible` replacement.
 - Add inline `style={}` props in Astro components. Use scoped `<style>` or CSS modules.
@@ -142,3 +142,35 @@ Organization + WebSite on homepage. Event schema per upcoming show. FAQPage on h
 - If a component is over 150 lines, split it.
 - Ship the smallest working version first, then iterate.
 - If a fix feels hacky, step back and do it right.
+
+## Design rules (MANDATORY)
+
+**Every design decision, no matter how small, must look intentional and polished.**
+
+- CTAs inside cards must be full-width (`display: block; width: 100%`), never `inline-block` left-floating
+- Buttons always need `:active { transform: scale(0.97) }` press feedback
+- Multi-line body text in cards: left-align is correct. Single-line headings and standalone CTAs: center-align
+- Before writing any UI code that touches layout, spacing, alignment, or visual treatment: invoke the `emil-design-eng` skill to validate the approach
+- When in doubt about any visual choice: ask "would this look embarrassing next to Linear or Vercel?" If yes, rethink it
+
+## Skill routing
+
+When the user's request matches an available skill, ALWAYS invoke it using the Skill
+tool as your FIRST action. Do NOT answer directly, do NOT use other tools first.
+The skill has specialized workflows that produce better results than ad-hoc answers.
+
+Key routing rules:
+
+- Product ideas, "is this worth building", brainstorming → invoke office-hours
+- Bugs, errors, "why is this broken", 500 errors → invoke investigate
+- Ship, deploy, push, create PR → invoke ship
+- QA, test the site, find bugs → invoke qa
+- Code review, check my diff → invoke review
+- Update docs after shipping → invoke document-release
+- Weekly retro → invoke retro
+- Design system, brand → invoke design-consultation
+- Visual audit, design polish → invoke design-review
+- Any UI change, layout, spacing, alignment, animation → invoke emil-design-eng FIRST
+- Architecture review → invoke plan-eng-review
+- Save progress, checkpoint, resume → invoke checkpoint
+- Code quality, health check → invoke health

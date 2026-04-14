@@ -32,6 +32,14 @@ async function getPublicKeys(): Promise<Record<string, CryptoKey>> {
   return keys;
 }
 
+/**
+ * Verify a Firebase ID token from an `Authorization: Bearer <token>` header.
+ * Fetches Google's public X.509 certs (cached for 1 hour) and verifies the JWT signature,
+ * issuer, and audience against the configured Firebase project.
+ *
+ * @param authHeader The raw `Authorization` header value.
+ * @returns The Firebase `uid` (`sub` claim) on success, or `null` if invalid or missing.
+ */
 export async function verifyIdToken(
   authHeader: string | undefined,
 ): Promise<string | null> {

@@ -2,6 +2,16 @@
 
 ## Open
 
+### [LOW] Missing image: cupid-garden.webp causes 404 on every apply page load
+
+- **Date:** 2026-04-13
+- **File:** `src/pages/apply.astro:23`
+- **Status:** Open
+- **Severity:** Low
+- **What's happening:** `apply.astro` references `/images/promo/cupid-garden.webp` as a decorative background image (aria-hidden). The file does not exist in `public/images/promo/`. Every apply page load emits a 404 in the browser console.
+- **What should happen:** The file should either be added to `public/images/promo/` or the reference should be removed/replaced with an existing image.
+- **Fix:** Add the correct `cupid-garden.webp` image to `public/images/promo/`, or swap the `src` to an existing promo image (e.g., `pure-chaos.webp`).
+
 ### [HIGH] Firestore applications collection has no field validation on create
 
 - **Date:** 2026-04-09
@@ -582,3 +592,34 @@
 - **Status:** Open
 - **Comment:** `identifyLead` and `trackLeadEvent` receive `city` which can be an empty string (`resolvedCity?.city ?? cityInput?.value.trim()`). Analytics calls should exclude the `city` property when it is falsy to avoid corrupting PostHog identity data.
 - **Link:** n/a
+
+---
+
+# Dead public assets (2026-04-13)
+
+### [LOW] Confirmed unused files in public/
+
+- **Date:** 2026-04-13
+- **Files:**
+  - `public/images/asset-3.svg`
+  - `public/images/journal/journal-featured.webp`
+  - `public/images/promo/links-hero.webp`
+  - `public/images/promo/tickets-hero.webp`
+- **Status:** Open
+- **Severity:** Low
+- **What's happening:** No references to these files exist anywhere in the codebase. They are dead assets bloating the public directory and the deployed bundle.
+- **What should happen:** Files should be deleted to keep the public directory clean.
+- **Fix:** Delete all four files.
+
+### [LOW] Hero variant files may be orphaned
+
+- **Date:** 2026-04-13
+- **Files:**
+  - `public/images/hero/hero.avif`
+  - `public/images/hero/hero-mobile.webp`
+  - `public/images/hero/hero-mobile.avif`
+- **Status:** Open
+- **Severity:** Low
+- **What's happening:** CLAUDE.md states "Hero images preloaded (AVIF, conditional on viewport size)" but no `<picture>` sources or `<link rel="preload">` tags reference these files anywhere in the codebase. Only `hero.webp` is used (in `links.astro`). These were likely dropped during a past refactor without cleaning up the assets.
+- **What should happen:** Either restore the AVIF/mobile preload tags in `BaseLayout.astro` and `HomeHero.astro`, or delete the orphaned files and update the CLAUDE.md architecture note.
+- **Fix:** Check `BaseLayout.astro` and `HomeHero.astro` for any preload or `<picture>` usage. If none found, delete the three files and remove the stale CLAUDE.md note about AVIF preloading.

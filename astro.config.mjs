@@ -113,6 +113,13 @@ export default defineConfig({
     }),
   ],
   vite: {
+    optimizeDeps: {
+      esbuildOptions: {
+        define: {
+          "process.env.NODE_ENV": '"development"',
+        },
+      },
+    },
     plugins: [gitDatesPlugin()],
     resolve: {
       alias: {

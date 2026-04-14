@@ -1,4 +1,5 @@
 import type { APIRoute } from "astro";
+import { validateEmail } from "@/utils/validateEmail";
 
 interface LeadPayload {
   email: string;
@@ -14,9 +15,13 @@ interface LeadPayload {
   utmContent?: string;
   utmTerm?: string;
   posthogDistinctId?: string;
+  geoCity?: string;
+  geoRegion?: string;
+  geoCountry?: string;
+  geoLatitude?: number | string;
+  geoLongitude?: number | string;
+  geoTimezone?: string;
 }
-
-const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 export const POST: APIRoute = async ({ request }) => {
   // Validate content type
@@ -40,7 +45,7 @@ export const POST: APIRoute = async ({ request }) => {
 
   // Validate email
   const email = body.email?.trim().toLowerCase();
-  if (!email || !EMAIL_RE.test(email)) {
+  if (!email || validateEmail(email)) {
     return new Response(JSON.stringify({ error: "Valid email required" }), {
       status: 400,
       headers: { "Content-Type": "application/json" },
@@ -50,17 +55,21 @@ export const POST: APIRoute = async ({ request }) => {
   // Build Firestore document via REST API (no firebase-admin dependency)
   const projectId = import.meta.env.PUBLIC_FIREBASE_PROJECT_ID;
   if (!projectId) {
-    return new Response(JSON.stringify({ error: "Server configuration error" }), {
-      status: 500,
-      headers: { "Content-Type": "application/json" },
-    });
+    return new Response(
+      JSON.stringify({ error: "Server configuration error" }),
+      {
+        status: 500,
+        headers: { "Content-Type": "application/json" },
+      },
+    );
   }
 
   const now = new Date().toISOString();
-  const fields: Record<string, { stringValue: string }> = {
-    email: { stringValue: email },
-    createdAt: { stringValue: now },
-  };
+  const fields: Record<string, { stringValue?: string; doubleValue?: number }> =
+    {
+      email: { stringValue: email },
+      createdAt: { stringValue: now },
+    };
 
   // Add optional fields
   if (body.phone) fields.phone = { stringValue: body.phone };
@@ -68,13 +77,47 @@ export const POST: APIRoute = async ({ request }) => {
   if (body.source) fields.source = { stringValue: body.source };
   if (body.sourcePage) fields.sourcePage = { stringValue: body.sourcePage };
   if (body.landingPage) fields.landingPage = { stringValue: body.landingPage };
-  if (body.referrerHost) fields.referrerHost = { stringValue: body.referrerHost };
+  if (body.referrerHost)
+    fields.referrerHost = { stringValue: body.referrerHost };
   if (body.utmSource) fields.utmSource = { stringValue: body.utmSource };
   if (body.utmMedium) fields.utmMedium = { stringValue: body.utmMedium };
   if (body.utmCampaign) fields.utmCampaign = { stringValue: body.utmCampaign };
   if (body.utmContent) fields.utmContent = { stringValue: body.utmContent };
   if (body.utmTerm) fields.utmTerm = { stringValue: body.utmTerm };
-  if (body.posthogDistinctId) fields.posthogDistinctId = { stringValue: body.posthogDistinctId };
+  if (body.posthogDistinctId)
+    fields.posthogDistinctId = { stringValue: body.posthogDistinctId };
+  const geoCity =
+    typeof body.geoCity === "string" ? body.geoCity.trim().slice(0, 100) : "";
+  if (geoCity) fields.geoCity = { stringValue: geoCity };
+  const geoRegion =
+    typeof body.geoRegion === "string"
+      ? body.geoRegion.trim().slice(0, 100)
+      : "";
+  if (geoRegion) fields.geoRegion = { stringValue: geoRegion };
+  const geoCountry =
+    typeof body.geoCountry === "string"
+      ? body.geoCountry.trim().slice(0, 100)
+      : "";
+  if (geoCountry) fields.geoCountry = { stringValue: geoCountry };
+  const geoTimezone =
+    typeof body.geoTimezone === "string"
+      ? body.geoTimezone.trim().slice(0, 100)
+      : "";
+  if (geoTimezone) fields.geoTimezone = { stringValue: geoTimezone };
+  const lat =
+    typeof body.geoLatitude === "number"
+      ? body.geoLatitude
+      : Number(String(body.geoLatitude ?? "").trim());
+  if (Number.isFinite(lat) && lat >= -90 && lat <= 90) {
+    fields.geoLatitude = { doubleValue: lat };
+  }
+  const lng =
+    typeof body.geoLongitude === "number"
+      ? body.geoLongitude
+      : Number(String(body.geoLongitude ?? "").trim());
+  if (Number.isFinite(lng) && lng >= -180 && lng <= 180) {
+    fields.geoLongitude = { doubleValue: lng };
+  }
 
   try {
     const url = `https://firestore.googleapis.com/v1/projects/${projectId}/databases/(default)/documents/leads`;
@@ -101,9 +144,9 @@ export const POST: APIRoute = async ({ request }) => {
       headers: { "Content-Type": "application/json" },
     });
   } catch {
-    return new Response(
-      JSON.stringify({ error: "Server error" }),
-      { status: 500, headers: { "Content-Type": "application/json" } },
-    );
+    return new Response(JSON.stringify({ error: "Server error" }), {
+      status: 500,
+      headers: { "Content-Type": "application/json" },
+    });
   }
 };

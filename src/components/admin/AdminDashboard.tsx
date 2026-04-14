@@ -12,6 +12,7 @@ import { getFirebaseDb, getFirebaseAuth } from "@/lib/firebase";
 import { type Application } from "@/types/application";
 import { adminSelectStyles } from "@/utils/reactSelectStyles";
 import { events } from "@/data/events";
+import Skeleton from "../ui/Skeleton";
 import ApplicantCard from "./ApplicantCard";
 import ApplicantModal from "./ApplicantModal";
 import styles from "./AdminDashboard.module.css";
@@ -293,8 +294,12 @@ export default function AdminDashboard({ onLogout }: AdminDashboardProps) {
 
       <main className={styles.main}>
         {loading ? (
-          <div className={styles.loadingState} role="status" aria-live="polite">
-            Loading…
+          <div
+            role="status"
+            aria-live="polite"
+            aria-label="Loading applications"
+          >
+            <Skeleton count={5} />
           </div>
         ) : fetchError ? (
           <div className={styles.errorState}>

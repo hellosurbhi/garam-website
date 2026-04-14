@@ -1,5 +1,979 @@
 # Changelog
 
+## fix(coderabbit): address all 11 unresolved PR comments (2026-04-14)
+
+### What changed
+
+11 fixes across 13 files in response to CodeRabbit review on PR #14. 4 threads dismissed with explanation (already fixed / new-file typography / wrong rule application).
+
+**TermsModal.module.css** — Replaced both `background: white` literals with `var(--white)`. The `.dialog` and secondary button background were both hardcoded; both now use the design token.
+
+**AuthorBio.astro / copy.ts** — Moved the author bio paragraph ("Co-creator and host...") from inline JSX into `AUTHOR_BIO.surbhi` in `src/data/copy.ts`. All user-facing text now lives in the data layer.
+
+**HomeShows.astro + HomeHero.astro + EventbriteWidgetInit.astro** — Fixed duplicate DOM IDs: HomeShows and HomeHero were both rendering `eventbrite-widget-modal-trigger-{id}` for the same event when co-rendered on index.astro. HomeShows now uses `eventbrite-widget-modal-trigger-home-shows-{id}`. Both triggers now carry `data-eb-event-id` attribute. EventbriteWidgetInit prefers `dataset.ebEventId` for extraction and falls back to parsing the DOM id for any legacy triggers.
+
+**HomeStats.astro** — Replaced en dash in CSS comment `(480px–767px)` with `(480px to 767px)`.
+
+**capture-lead.ts** — Switched geo coordinate parsing from `parseFloat()` + `isFinite()` to `Number()` + `Number.isFinite()`. `parseFloat("40.7abc")` silently returns `40.7`; `Number("40.7abc")` returns `NaN` and is correctly rejected. Prevents malformed coordinate strings from being persisted to Firestore.
+
+**faq.astro** — Replaced em dash separator in FAQ answer with a comma: `"matchmaking — and"` → `"matchmaking, and"`.
+
+**situationship-masterclass.astro** — Added `.mc-cta-btn:active { transform: scale(0.97); }` per the mandatory press-feedback rule for all CTA buttons.
+
+**llms-full.txt.ts** — Fixed malformed sentence: `"through the show: and counting"` → `"through the show, and counting"`. CodeRabbit suggested an em dash, but that violates the no-dash rule; comma used instead.
+
+**links.astro** — Added `hasLink &&` guard to the Eventbrite branch condition. Without it, `buildTicketUrl(event.url, ...)` could throw at render time if `event.url` is empty or `"#"`.
+
+**waiver.astro** — Hardened `postMessage` handler: now checks `e.origin` against a JotForm allowlist before processing, and validates `data.formID === "261031391833047"` to prevent unrelated cross-origin messages from hiding the loader early.
+
+**copy.ts** — Fixed `shortDescription`: `"Bi-weekly in Manhattan"` → `"Weekly in Manhattan"` to match the show's actual cadence and align with the full description which says "every week."
+
+### Files affected
+
+- `src/components/apply/TermsModal.module.css`
+- `src/components/AuthorBio.astro`
+- `src/components/EventbriteWidgetInit.astro`
+- `src/components/home/HomeHero.astro`
+- `src/components/home/HomeShows.astro`
+- `src/components/home/HomeStats.astro`
+- `src/data/copy.ts`
+- `src/pages/api/capture-lead.ts`
+- `src/pages/faq.astro`
+- `src/pages/journal/situationship-masterclass.astro`
+- `src/pages/links.astro`
+- `src/pages/llms-full.txt.ts`
+- `src/pages/waiver.astro`
+
+### Decisions
+
+- Dismissed 4 threads: journal badge (already fixed + rule targets iOS input zoom, not decorative spans), TermsModal font-size threads (new file, not a modification), cities/[slug] soldOut (already fixed in bd0bbcf).
+- Used comma (not em dash) for the llms-full.txt.ts sentence fix — em dash would violate the no-dash rule.
+
+## fix(apply): clear jsxDEV prod cache + fix hero image path (2026-04-14)
+
+### What changed
+
+**Vite dep cache poison fixed** (`astro.config.mjs`) — After running `astro build`, Vite's esbuild pre-bundler was caching `react/jsx-dev-runtime` with `NODE_ENV=production`. The production variant of that module explicitly sets `exports.jsxDEV = void 0`, so every subsequent `astro dev` session threw `TypeError: jsxDEV is not a function` and the apply page crashed on load. Root cause: esbuild constant-folded `process.env.NODE_ENV === 'production'` to `true` during dep optimization, and Vite's cache invalidation only watches config/lockfile hashes, not NODE_ENV changes. Fix: added `optimizeDeps.esbuildOptions.define['process.env.NODE_ENV'] = '"development"'` to `astro.config.mjs`. The `optimizeDeps` section only runs during `astro dev`, never during `astro build`, so hardcoding `development` here is correct. Also cleared the stale `node_modules/.vite/` cache. This is the standard Vite fix for CJS packages that branch on NODE_ENV at bundle time.
+
+**Apply page background image path corrected** (`src/pages/apply.astro`) — The decorative background image was referencing `/images/promo/cupid-garden.webp`, which does not exist in that directory. Updated to `/images/hero/hero.webp`, which exists and is the appropriate hero photo for this page.
+
+### Files affected
+
+- `astro.config.mjs` — added `optimizeDeps.esbuildOptions.define`
+- `src/pages/apply.astro` — fixed background image path
+
+### Decisions
+
+The permanent fix for the jsxDEV issue is the `optimizeDeps.esbuildOptions.define` config, not just clearing the cache. Without it, the next `astro build` run would re-poison the cache. The `define` ensures dev-mode React is always used during dep pre-bundling regardless of how the cache was last built.
+
+---
+
+## Code review fixes: part 4 (CTA data layer, press feedback, font-size, test mock) (2026-04-14)
+
+### What changed
+
+**"Grab My Spot" moved to data layer** (`src/data/copy.ts`, `src/pages/cities/[slug].astro`) — The literal string was hardcoded twice in the city template. Added `EVENTS.ticketCta` to `copy.ts` and replaced both instances. No visual change; text stays "Grab My Spot". Aligns with the rule that all user-facing copy lives in `src/data/`.
+
+**`.city-cta` font-size raised from 15px to 16px** (`src/pages/cities/[slug].astro`) — Interactive CTAs must be at or above 16px to prevent iOS auto-zoom on focus.
+
+**`.city-cta` press feedback added** (`src/pages/cities/[slug].astro`) — Added `transform 0.15s` to the transition list and `.city-cta:active { transform: scale(0.97) }` so all ticket/apply CTAs on city pages produce the required scale press feedback.
+
+**`.event-link:active` press feedback added** (`src/pages/links.astro`) — Both `a.event-link` and `button.event-link` now scale on press. Added to the base `.event-link:active` rule; the existing `transition: all 0.2s ease` already covered transform.
+
+**`.lc-skip:active` press feedback added** (`src/components/LeadCaptureModal.astro`) — Skip button in the lead capture modal now scales on press. Added `transform` to the transition list and `.lc-skip:active { transform: scale(0.97) }`.
+
+**Test mock corrected** (`src/components/apply/useApplyForm.test.ts`) — `mockUploadBytesResumable` changed from `mockReturnValue` to `mockImplementation`. With `mockReturnValue`, every call shared the same `cancel: vi.fn()` instance; `mockImplementation` ensures each call gets a fresh spy, preventing cross-test state leakage.
+
+### Skipped finding
+
+`journal-card-badge` font-size (`src/pages/journal/index.astro:281`) remains at 11px. The badge is a decorative pill inside a card — it is not itself interactive. The 16px rule applies to buttons, inputs, and links per CLAUDE.md, not to text nested inside them. Font sizes are also explicitly called out as intentional typographic choices.
+
+### Files affected
+
+- `src/data/copy.ts`
+- `src/pages/cities/[slug].astro`
+- `src/pages/links.astro`
+- `src/components/LeadCaptureModal.astro`
+- `src/components/apply/useApplyForm.test.ts`
+
+---
+
+## Code review fixes: part 3 (badge, press-feedback, soldOut, isPublished) (2026-04-13)
+
+### What changed
+
+**Journal badge font-size** (`src/pages/journal/index.astro`) — `.journal-card-badge` raised from 9px to 11px for improved readability. Previous value was below the project minimum for text inside interactive elements.
+
+**Animation-delay inline style removed** (`src/pages/journal/index.astro`) — `style={animation-delay: ...}` on `.journal-card` replaced with `data-index={i}` + 15 scoped CSS attribute-selector rules (`.journal-card[data-index="N"]`). Inline style props are banned by project rules.
+
+**:active press feedback on modal buttons** (`HomeShows.astro`, `LeadCaptureModal.astro`, `NotifyModal.astro`) — Added `transform: scale(0.97)` on `:active` and extended `transition` to include `transform 0.06s` on `.modal-submit` (all three files), `.lc-submit`, and `.modal-skip`. Required by the CLAUDE.md design rule that every button must have `:active` press feedback.
+
+**Sold-out detection unified** (`HomeShows.astro`, `links.astro`, `cities/[slug].astro`) — Replaced `tagline?.toLowerCase().includes("sold out")` with `event.soldOut ?? false` in three files. `tickets.astro` already used the boolean; these were the remaining outliers. Tagline parsing is fragile; `EventEntry.soldOut` is the canonical machine-readable field.
+
+**`isPublished` utility extracted** (`src/utils/date.ts` new, `src/data/journal/index.ts`, `src/pages/journal/index.astro`) — Identical UTC-normalized publish-date logic existed in both `journalPostsPublished` (data layer) and `isMasterclassPublished` (page layer). Consolidated into a single exported `isPublished(dateStr)` function in `src/utils/date.ts`. Both consumers now import the shared helper; local function removed.
+
+**termsAgreed test ambiguity fixed** (`src/components/apply/useApplyForm.test.ts`) — The `"validation requires termsAgreed"` test was missing an `email` field. Without it, `errors.email` would also be truthy after submit, making the assertion that `submitted === false` ambiguous. Added `set("email", "valid@example.com")` so the only missing required field is `termsAgreed`.
+
+### Files affected
+
+- `src/pages/journal/index.astro`
+- `src/components/home/HomeShows.astro`
+- `src/components/LeadCaptureModal.astro`
+- `src/components/NotifyModal.astro`
+- `src/utils/date.ts` (new)
+- `src/data/journal/index.ts`
+- `src/pages/links.astro`
+- `src/pages/cities/[slug].astro`
+- `src/components/apply/useApplyForm.test.ts`
+
+---
+
+## Code review fixes: part 2 (tests, tokens, events, tickets) (2026-04-13)
+
+### What changed
+
+**City error-clear test strengthened** (`src/components/apply/useApplyForm.test.ts`) — `handleCityInputChange clears city error` now also asserts `errors.name` stays "Required" before and after the call, proving the handler is surgical and does not wipe the whole error map.
+
+**Journal badge color token** (`src/pages/journal/index.astro`) — `.journal-card-badge` `color: white` replaced with `color: var(--white)`. CHANGELOG Phase 5 did this in masterclass.astro; journal/index was not in scope. No visual change.
+
+**Email test body assertions** (`test/notify-application.test.ts`) — The `email missing` and `email malformed` tests now assert `body.error === "Missing required fields"`, consistent with the `name missing` test and the actual API response.
+
+**`getEventDisplayStatus` helper** (`src/data/events.ts`) — New exported helper returns `"Sold out"` when `event.soldOut` is true, otherwise returns `event.tagline`. CHANGELOG Phase 3 added `soldOut` as a machine-readable flag distinct from `tagline`; both llms pages were not updated in that pass and only used `tagline`, silently dropping sold-out shows with no tagline text.
+
+**llms pages updated** (`src/pages/llms.txt.ts`, `src/pages/llms-full.txt.ts`) — Upcoming event status now calls `getEventDisplayStatus` instead of reading `tagline` directly.
+
+**Eventbrite outside-click close on `/tickets`** (`src/pages/tickets.astro`) — Added MutationObserver that wires an outside-click handler on the Eventbrite modal container once it appears in the DOM. `EventbriteWidgetInit.astro` has the same pattern but `tickets.astro` uses `is:inline define:vars` and cannot import that component, so the observer is added inline. Uses the same `dataset.listenerAttached` guard to prevent double-registration.
+
+### Files affected
+
+- `src/components/apply/useApplyForm.test.ts`
+- `src/pages/journal/index.astro`
+- `test/notify-application.test.ts`
+- `src/data/events.ts`
+- `src/pages/llms.txt.ts`
+- `src/pages/llms-full.txt.ts`
+- `src/pages/tickets.astro`
+
+---
+
+## Code review fixes: upload, a11y, schema, CSS token, tests (2026-04-13)
+
+### What changed
+
+**Cancellable photo upload** (`src/components/apply/useApplyForm.ts`) — Replaced `uploadBytes` + `Promise.race` with `uploadBytesResumable`. On a 30-second timeout the `UploadTask.cancel()` method is now called before rejecting, which actually stops the in-flight request. The existing catch-block cleanup (`deleteObject`) then runs correctly. Test mock updated from `uploadBytes` to `uploadBytesResumable` using `.mockReturnValue` to keep the type compatible with `...args` spread.
+
+**`type` included in `applicationData`** (`src/components/apply/useApplyForm.ts`) — `type: form.type.trim()` is now part of the `applicationData` object so the fire-and-forget notify fetch receives it. The conditional spread in `addDoc` was removed since the field is already present in the spread.
+
+**MCP `inputSchema` gets optional `type`** (`src/components/ApplyPage.tsx`) — `type` added to `inputSchema.properties` (not `required`) so AI-driven and web-form submissions serialize the same data shape.
+
+**NotifyModal keyboard focus ring** (`src/components/NotifyModal.astro`) — Removed unconditional `outline: none` on `.modal-dialog`. Added `.modal-dialog:focus-visible` with `outline: 3px solid var(--brand-red)` so keyboard users see a focus indicator when the modal opens.
+
+**CSS token for castingIntro** (`src/components/ApplyPage.module.css`) — `rgba(220, 38, 38, 0.04)` replaced with `rgba(var(--brand-red-rgb), 0.04)` to stay in sync with the brand token.
+
+**Boundary-value geo tests** (`src/lib/leadAttribution.test.ts`) — New test case verifies -90/90 lat and -180/180 lng are accepted and preserved, guarding against future range-clamping regressions.
+
+**Stable URL-param tests** (`src/components/apply/useApplyForm.test.ts`) — Replaced `Object.defineProperty(window, "location", ...)` with `history.replaceState` in three URL-seeding tests to prevent brittle property-descriptor conflicts between runs.
+
+### Files affected
+
+- `src/components/apply/useApplyForm.ts`
+- `src/components/apply/useApplyForm.test.ts`
+- `src/components/ApplyPage.tsx`
+- `src/components/ApplyPage.module.css`
+- `src/components/NotifyModal.astro`
+- `src/lib/leadAttribution.test.ts`
+
+---
+
+## feat(apply): casting intro, consent gate, instagram label, type field (2026-04-13)
+
+### What changed
+
+**Casting intro block** — A styled blurb now appears at the top of the apply form (before the type selector) with the show description and three eligibility bullets. Copy lives in `APPLY_PAGE` in `src/data/copy.ts`.
+
+**Consent gate on submit button** — Submit is disabled until the applicant selects Yes on the marketing consent radio AND checks the Terms box. Selecting No shows an immediate inline warning ("Selecting No means you will not be considered. You must be okay going viral to apply.") with `role="alert"`. The validate() function also defensively rejects `marketingConsent === "no"` to block server-side bypasses.
+
+**Instagram label** — Updated from "Instagram Handle" to "Instagram handle @ (we wanna stalk you 👀)" to match the show's tone.
+
+**"What's your type" optional field** — New text field after gender/orientation. No validation, saves to Firestore only if non-empty. Helps the show match contestants.
+
+**Tests updated** — 15 tests updated: string-match fixes for the new validation message (period added), submit-click tests now unlock the gate first, and 4 tests rewritten to verify the new disabled-button UX instead of testing validation-error display for consent/terms.
+
+### Files affected
+
+`src/data/copy.ts`, `src/components/ApplyPage.tsx`, `src/components/apply/useApplyForm.ts`, `src/components/ApplyPage.module.css`, `src/components/ApplyPage.test.tsx`, `src/components/apply/useApplyForm.test.ts`
+
+### Decisions
+
+- Button disabled state chosen over showing validation errors on click, because a disabled button communicates the prerequisite clearly before any attempt — no wasted click, no confusion.
+- `type` field written to Firestore only if non-empty to keep documents clean for applicants who skip it.
+
+---
+
+## fix(leads): parse geoLatitude/geoLongitude as numbers before Firestore writes (2026-04-13)
+
+### What changed
+
+Firestore rules were updated (in a prior commit) to require `geoLatitude` and `geoLongitude` as `float` type. The server-side `/api/capture-lead` was updated alongside and was already safe. But three client-side Firestore SDK write paths were still sending strings, causing permission denied errors that swallowed silently in try/catch.
+
+**Root cause**: `buildLeadAttribution()` read lat/lng from sessionStorage (always a string) and returned them as `string`. The Firestore JS SDK sends JavaScript strings as Firestore `string` type, which fails the `is float` rule check.
+
+**Fix**: `LeadAttribution` interface now types `geoLatitude`/`geoLongitude` as `number`. `buildLeadAttribution()` now parses them from sessionStorage and validates range (`-90 to 90`, `-180 to 180`), omitting the field if out of range or NaN. All consumers that spread attribution into Firestore payloads now receive numbers that the SDK sends as the correct Firestore float type.
+
+### Files affected
+
+- `src/lib/leadAttribution.ts` — interface type change + parse logic
+- `src/components/NotifyModal.astro` — payload type widened at 2 addDoc call sites
+- `src/components/home/HomeShows.astro` — payload type widened at addDoc call site
+- `src/components/LeadCaptureModal.astro` — payload type widened for fetch body
+- `src/lib/leadAttribution.test.ts` — updated assertions + added invalid/out-of-range tests
+
+### Affected write paths
+
+- NotifyModal (email step): `/tickets`, `/` (HomeShows) — was broken
+- NotifyModal (phone create fallback): same pages — was broken
+- HomeShows city request form — was broken
+- LeadCaptureModal: was already safe (API converts server-side), type fix only
+
+## fix(modals): make Modal.tsx a transparent centering overlay, fix all React modal positioning (2026-04-13)
+
+### What changed
+
+`Modal.tsx` was relying on browser UA stylesheet centering for `<dialog>`, which broke when combined with custom `display` or `overflow` styles on the dialog element. Both `TermsModal` (apply page) and `ApplicantModal` (admin) were opening in the top-left corner or rendering incorrectly.
+
+**Root cause:** `Modal.tsx` applied the caller's `className` directly to the `<dialog>` element, creating CSS cascade conflicts between `Modal.module.css` defaults and each modal's own styles. The Astro counterpart (`Modal.astro`) already used the correct pattern.
+
+**Fix:** Aligned `Modal.tsx` with `Modal.astro`'s established pattern:
+
+- `<dialog>` is now a transparent full-screen centering overlay (`display: flex; align-items: center; justify-content: center`) owned by `Modal.module.css`
+- `className` is applied to an inner `<div>` — each modal uses it to style the visible white box
+- `TermsModal.tsx` simplified (removed manual inner wrapper, now provided by Modal)
+- `TermsModal.module.css` cleaned up (`.dialog` is now the white box only, no overlay styles)
+- Body text increased 13px → 15px, title 17px → 20px for readability
+
+**Files:** `src/components/ui/Modal.tsx`, `src/components/ui/Modal.module.css`, `src/components/apply/TermsModal.tsx`, `src/components/apply/TermsModal.module.css`
+
+## fix(apply): remove extra spacing around terms checkbox button (2026-04-13)
+
+### What changed
+
+The "I agree to the Terms & Conditions \*" label had visible extra whitespace around the button text. `.termsLink` had `padding: 0 8px` which added 8px of space on each side of the button, and `.requiredMark` had `margin-left: 3px`. Together these made the inline sentence look broken.
+
+**Fix:** Set `padding: 0` on `.termsLink` (the `min-height: var(--touch-target)` already satisfies vertical touch target). Removed `margin-left: 3px` from `.requiredMark` — the text flows naturally with the surrounding sentence now.
+
+**Files affected:** `src/components/ApplyPage.module.css`
+
+---
+
+## fix(tickets): prevent anchor navigation when EB widget modal is active (2026-04-13)
+
+### What changed
+
+`EBWidgets.createWidget()` attaches its own click handler to the trigger element but never calls `preventDefault`. When trigger elements were `<button>` this was harmless. After PR #14 converted them to `<a target="_blank">` for native fallback, both the widget modal AND a new tab opened on every click.
+
+**Fix:** After each successful `createWidget()` call, immediately attach a `click` listener that calls `e.preventDefault()`. This suppresses anchor navigation only when the widget is confirmed active. If `createWidget` throws or the EB script fails to load, no listener is added — the anchor's native `href` + `target="_blank"` handle navigation as intended.
+
+Also removed the now-redundant `applyFallbacks()` function and `script.onerror = applyFallbacks` from `EventbriteWidgetInit.astro`. The `onerror` path no longer needs an explicit handler because the unchanged anchor default behavior is identical.
+
+**Files affected:** `src/components/EventbriteWidgetInit.astro`, `src/pages/tickets.astro`
+
+---
+
+## CodeRabbit PR #14 full review pass (2026-04-13)
+
+### What changed
+
+Addressed all 30 CodeRabbit review comments on the `design-updates` branch (PR #14). 29 resolved in this pass; 1 was already resolved before this session.
+
+**Phase 1 — Security and server validation**
+
+- `src/pages/api/capture-lead.ts`: Sanitize geo fields before writing to Firestore. Cap string fields to 255 chars; validate lat/lng with a coordinate regex to prevent Firestore rule rejection from malformed input.
+- `src/pages/api/notify-application.ts`: Add server-side email validation (`email` was checked on the client but not the server endpoint). Add `|| !body.email || validateEmail(body.email)` to the validation guard.
+- `test/notify-application.test.ts`: Add `email` to the valid body fixture; add two new tests for missing and malformed email.
+
+**Phase 2 — Real bugs**
+
+- `src/pages/index.astro`: Remove `{ once: true }` from exit-intent mouseleave listener. The once flag permanently removed the listener even when the popup did not show (timing or cooldown guard returned early).
+- `src/components/ApplyPage.tsx`: Add `email` field (type string, format email) to the MCP `registerTool` schema. The form required email but the tool schema omitted it entirely.
+- `src/pages/journal/situationship-masterclass.astro`: Guard the arrow-key navigation handler against modifier keys (Alt/Ctrl/Meta) and interactive elements (buttons, anchors, contenteditable). Previously stole arrow keys from focused links and blocked Alt+Left/Right browser history.
+
+**Phase 3 — soldOut boolean field**
+
+- `src/data/events.ts`: Add `soldOut?: boolean` to `EventEntry` interface. Mark 4 sold-out events with `soldOut: true`.
+- `src/pages/tickets.astro`, `src/components/home/HomeHero.astro`: Replace all `tagline?.toLowerCase().includes("sold out")` control flow with `event.soldOut ?? false`. Tagline stays for display only.
+
+**Phase 4 — Widget resilience**
+
+- `src/pages/tickets.astro`, `src/components/home/HomeHero.astro`: Convert Eventbrite widget trigger `<button>` elements to `<a href={url} target="_blank">` so the browser provides native navigation if the widget script fails or init throws.
+- `src/components/EventbriteWidgetInit.astro`: Update CSS selector from `button[id^="..."]` to `[id^="..."]` to match anchor triggers. Get fallback URL from `getAttribute("href")` instead of `data-eb-url`.
+- Both files: Read widget theme colors (`brandColor`, `fontColor`, `background`) from CSS custom properties via `getComputedStyle` at runtime instead of hardcoded hex literals.
+- Both files: Wrap `EBWidgets.createWidget()` in `try/catch`. Remove `applyFallbacks` and `console.warn/error` calls.
+- `src/pages/tickets.astro`: Change stagger delay from `style={\`animation-delay: ...\`}`to`style={\`--stagger-delay: ...\`}`with`animation-delay: var(--stagger-delay, 0.1s)` in CSS.
+- `src/pages/tickets.astro`: Add `aria-hidden="true"` to both decorative arrow SVGs.
+
+**Phase 5 — Design tokens**
+
+- `src/index.css`: Add `--white: #ffffff`, `--white-rgb: 255, 255, 255`, `--gray-light: #999`, `--gray-mid: #888`, `--black-rgb: 0, 0, 0` to `:root`.
+- `src/pages/journal/situationship-masterclass.astro`: Replace all hardcoded color literals (`#888`, `#999`, `#555`, `white`, `rgba(220,38,38,...)`, `rgba(0,0,0,...)`, `rgba(255,255,255,...)`) with CSS custom property references.
+
+**Phase 6 — Accessibility**
+
+- `src/components/LegalModal.astro`: Add `.legal-dialog:focus-visible` outline to replace the invisible `outline: none` on programmatic focus.
+- `src/pages/links.astro`: Same pattern for `.modal-dialog:focus-visible`.
+- `src/pages/journal/situationship-masterclass.astro`: Raise font sizes to 16px minimum on `.mc-back`, `.mc-mid-cta-text`, `.mc-cta-btn`, `.mc-footer-back`, `.mc-footer-apply`. Add `min-height: 48px` and flex alignment to back link and footer links for touch target compliance.
+
+**Phase 7 — Content to data files and date-gating fix**
+
+- `src/data/copy.ts`: Add `PAGES.home.description`, `PAGES.tickets.intro`, `PAGES.links.subtitle`, `APPLY_PAGE.subtitle`.
+- `src/data/masterclasses.ts`: Add `promoText` field to `MasterclassPost` interface; set it on the situationship masterclass entry.
+- Update `src/pages/index.astro`, `src/pages/tickets.astro`, `src/pages/links.astro`, `src/components/ApplyPage.tsx`, `src/pages/journal/situationship-masterclass.astro` to reference data constants instead of hardcoded strings.
+- `src/pages/journal/index.astro`: Replace UTC `toISOString().slice(0,10)` masterclass date filter with the same local-date approach used by `journalPostsPublished` to prevent timezone-boundary mismatches.
+
+**Phase 8 — GitHub dismissals**
+
+- 6 threads dismissed with explanatory replies: hero copy (once-only strings), tickets TITLE/DESC (codebase-wide pattern), JSON-LD descriptions (SEO metadata, not content copy), photo upload dimensions (client-side render, unknown intrinsic size), CSS composes pattern (already used at line 354).
+- All 29 unresolved threads resolved via GitHub GraphQL API.
+
+### Files affected
+
+`src/data/events.ts`, `src/data/copy.ts`, `src/data/masterclasses.ts`, `src/index.css`, `src/pages/tickets.astro`, `src/pages/index.astro`, `src/pages/links.astro`, `src/pages/journal/index.astro`, `src/pages/journal/situationship-masterclass.astro`, `src/components/EventbriteWidgetInit.astro`, `src/components/home/HomeHero.astro`, `src/components/LegalModal.astro`, `src/components/ApplyPage.tsx`, `src/pages/api/capture-lead.ts`, `src/pages/api/notify-application.ts`, `test/notify-application.test.ts`
+
+### Decisions
+
+- Widget trigger buttons converted to anchors rather than adding JS fallback listeners. Anchors provide browser-native fallback (including `target="_blank"` behavior) when JS fails, and BaseLayout's existing `a[href*="eventbrite.com"]` mutation automatically handles mobile UTM attribution — resolving Comments 22, 25, and 13 in one move.
+- `soldOut` boolean added to `EventEntry` rather than parsing tagline strings. Tagline stays as display-only copy.
+- TITLE/DESC page-level constants left as inline pattern (consistent with all other pages). Only marketing/content copy strings were moved to data files.
+- JSON-LD descriptions left inline as established pattern across all pages (they are schema.org-specific metadata, not user-facing content strings).
+
+## fix(modals): remove X button focus ring on open across all modals (2026-04-13)
+
+### What changed
+
+When any modal opened, the X (close) button immediately showed the focus ring. Persistent across NotifyModal, LegalModal, and the inline dialogs on the /links page.
+
+**Root cause:** Two separate bugs with the same symptom.
+
+1. `NotifyModal.astro` and `LegalModal.astro` were explicitly calling `.focus()` on the close button immediately after `showModal()`. Calling `element.focus()` in JS is treated as a keyboard-initiated focus heuristic by browsers, triggering `:focus-visible` and showing the global `outline: 2px solid var(--brand-red)` rule.
+
+2. `links.astro` inline dialogs had no `tabindex="-1"` and no explicit `dialog.focus()` call, so `showModal()` auto-focused the first focusable descendant (the close button). Non-deterministic `:focus-visible` depending on prior keyboard activity.
+
+**Fix:** All modal open handlers now call `dialog.focus()` (where the dialog has `tabindex="-1"`) instead of focusing the close button. Focusing a `tabindex="-1"` element is consistently treated as non-keyboard by all browsers, so `:focus-visible` never triggers. Added `outline: none` to dialog elements as a belt-and-suspenders guard. Keyboard users who Tab to the close button still get the ring (correct a11y).
+
+### Files affected
+
+- `src/components/NotifyModal.astro`
+- `src/components/LegalModal.astro`
+- `src/pages/links.astro`
+
+### Decisions
+
+Avoided suppressing `:focus-visible` on the close button via CSS (e.g. `button:focus { outline: none }`) because that would also kill keyboard focus rings for users navigating by Tab — a serious a11y regression. The correct fix is to not focus the close button in the first place.
+
+## refactor(links): reorder link sequence for conversion optimization (2026-04-13)
+
+### What changed
+
+Reordered the 7 links on the `/links` page to prioritize revenue and reduce choice paralysis. Also removed the "Short form content @ Instagram" button — it sent visitors back to the platform they just came from, adding zero conversion value. The social icons row at the bottom already covers all social platforms.
+
+**New sequence:**
+
+1. Upcoming Shows & Tickets (red primary)
+2. Get on the List
+3. Apply to Be on the Show
+4. Full episodes @ YouTube
+5. As Seen In
+6. Booking & Press Inquiries
+
+**Previous sequence:** Get on the List (primary), Apply, Instagram, YouTube, Tickets, Press, Booking
+
+**Why:** Ticket sales are the most direct revenue action, yet they were buried at position #5. The email capture (always important) is now the immediate fallback at #2 for visitors who cannot attend current shows. "As Seen In" was moved up from #6 to #5 so social proof lands while visitors are still deciding. Updated PostHog `data-ph-cta` on the primary button from `"get-on-list"` to `"tickets"`.
+
+### Files affected
+
+- `src/pages/links.astro`
+
+### Decisions
+
+Kept the email capture ("Get on the List") at #2 rather than removing it or pushing it lower — it serves a different intent than tickets (nurture vs. immediate purchase) and should stay in the top half. 7 links reduced to 6 by removing the Instagram standalone button; fewer choices = less paralysis.
+
+## feat(links): add Eventbrite embedded checkout to /links page, modal-in-modal safe (2026-04-13)
+
+### What changed
+
+The `/links` page (Instagram bio entry point) was the only surface on the site still opening Eventbrite in a new tab. All other ticket CTAs (home hero, home shows section, tickets page, city pages) already use the embedded checkout modal. This change brings `/links` into parity.
+
+**Modal-in-modal problem:** The event list on `/links` lives inside a native `<dialog>` element. Naively embedding the EB widget would create two failure modes: (1) the browser's top-layer mechanism for `showModal()` would visually block or z-index-conflict with Eventbrite's injected overlay, and (2) the outside-click handlers for both modals would fire simultaneously on a backdrop click, creating a stuck state. The fix is to close the `<dialog>` synchronously before the EB widget processes the click.
+
+**Implementation:**
+
+- `src/pages/links.astro`: Added `EventbriteWidgetInit` import and render (placed outside the dialog). Updated event list to use the same 3-way conditional as every other page: `eventbriteId && !isSoldOut` renders a modal trigger button; events without an ID or sold-out events still render as `<a href>` fallback links. Added `button.event-link` CSS resets to match the existing anchor style. Added a capture-phase click listener on `#events-modal` that closes the dialog when an EB trigger button is clicked — `capture: true` ensures it fires before the EB widget's own bubble-phase listener, so the top layer is clear when checkout opens.
+
+### Files affected
+
+- `src/pages/links.astro`
+
+### Decisions
+
+Closed the native dialog before opening EB checkout rather than attempting to manage z-index or stacking context. This is the only approach that avoids both the top-layer conflict and the handler collision — two modals competing for the same top layer is a browser-level constraint, not something solvable with CSS.
+
+## fix(apply): email validation, photo preview, upload timeout (2026-04-13)
+
+### What changed
+
+Three bugs fixed on the `/apply` form page:
+
+**1. Shared email validation utility**
+Created `src/utils/validateEmail.ts` as the single source of truth for email validation across the app. The apply form previously used a weak `includes("@")` check with a generic "Required" message. The `capture-lead` API had its own inline `EMAIL_RE` regex. Both now import from the shared utility, which returns distinct messages: "Email is required" (empty) vs "Please enter a valid email address" (malformed).
+
+**2. Photo preview shows full photo**
+Changed `object-fit: cover` to `object-fit: contain` in `.photoPreview` so the entire photo is visible instead of cropped. Added `.photoDropzoneWithPreview` CSS class that removes padding and switches from dashed to solid border when a photo is loaded. Removed incorrect `width={200} height={200}` attributes from the preview `<img>` element (container height is fixed at 280px via CSS).
+
+**3. Upload timeout prevents stuck submit button**
+Wrapped `uploadBytes` in a `Promise.race` with a 30-second timeout. Firebase Storage SDK retries `ERR_FILE_NOT_FOUND` with exponential backoff, which previously kept the submit button in a loading state indefinitely. The timeout ensures the error surfaces within 30s and the button resets.
+
+**Root cause note:** The Firebase Storage `ERR_FILE_NOT_FOUND` error is a configuration issue. Firebase Storage must be enabled in the Firebase Console and `PUBLIC_FIREBASE_STORAGE_BUCKET` in `.env.local` must match the actual bucket (`garam-masala-9f15b.firebasestorage.app`). Storage rules must be deployed via `firebase deploy --only storage`.
+
+**Files changed:**
+
+- `src/utils/validateEmail.ts` — new shared utility
+- `src/components/apply/useApplyForm.ts` — use `validateEmail`, add upload timeout
+- `src/pages/api/capture-lead.ts` — import from shared utility, remove local `EMAIL_RE`
+- `src/components/ApplyPage.module.css` — fix `.photoPreview`, add `.photoDropzoneWithPreview`
+- `src/components/apply/PhotoUploadField.tsx` — conditional dropzone class, fix img attributes
+
+## feat(tickets): replace all external Eventbrite links with embedded checkout modal (2026-04-13)
+
+### What changed
+
+Every ticket CTA on the site now opens the Eventbrite checkout modal in-page instead of a new tab. Checkout friction eliminated at the most critical conversion point.
+
+**Architecture:**
+
+- New shared `src/components/EventbriteWidgetInit.astro`: zero-visual component that loads the Eventbrite widget script once per page, finds all `button[id^="eventbrite-widget-modal-trigger-"]` elements by scanning the DOM, and initializes the checkout modal for each. Handles script load failure by attaching click handlers that open the external URL as a fallback.
+- Added `MutationObserver` pattern to close the EB modal when user clicks the overlay backdrop (dispatches `Escape` keydown to EB's overlay container div).
+
+**Files changed:**
+
+- `src/components/EventbriteWidgetInit.astro` — new shared component
+- `src/components/home/HomeHero.astro` — pill renders as `<button>` with EB trigger ID when event has `eventbriteId` and is not sold out; otherwise keeps existing `<a>` tag. Added `appearance/border/cursor` button resets to `.next-show-pill`.
+- `src/components/home/HomeShows.astro` — show cards: three-way conditional (widget button / live link / notify button). `.show-card` already had full button resets so no style changes needed.
+- `src/pages/cities/[slug].astro` — city CTAs conditional button vs anchor; added `appearance/cursor` reset to `.city-cta`; added `<EventbriteWidgetInit />`.
+- `src/pages/index.astro` — added `<EventbriteWidgetInit />` after main content (handles both HomeHero pill and HomeShows cards in one init pass).
+
+**Skipped:** `links.astro` — events list is inside a native `<dialog>` opened with `showModal()`, which enters the browser top layer. The EB widget's fixed-position iframe would render below the dialog backdrop, making it invisible. External links preserved there.
+
+**Fallback behavior:** Events without `eventbriteId` or with "sold out" tagline continue to open Eventbrite externally via `<a>` tags.
+
+### Decisions / trade-offs
+
+The shared component pattern avoids duplicating the 100-line init script across three pages. Widget configs are read entirely from DOM `data-*` attributes on the trigger buttons, so no server-side `define:vars` is needed. The outside-click close via `MutationObserver` + `Escape` dispatch is the only programmatic way to close the EB modal since the widget API has no `close()` method; the selector `div[id^="eventbrite-widget-container-"]` must be verified against the actual DOM the EB widget injects in devtools.
+
+## seo(desi): fix 6 missed South Asian dating show instances in audit (2026-04-13)
+
+### What changed
+
+Comprehensive audit after the main rollout found 6 files that still had "South Asian dating show" describing the show itself. All fixed.
+
+**Files updated:**
+
+- `src/pages/faq.astro:16`: FAQ first answer body text
+- `src/pages/tickets.astro:50`: EventSeries JSON-LD description
+- `src/pages/llms-full.txt.ts:184`: AI-readable site content (hosts section)
+- `src/components/ApplyPage.tsx:37`: MCP tool description
+- `src/pages/hosts.astro:94`: Hosts page narrative about the show's growth
+- `src/pages/sponsorship.astro:99,246`: Two MCP tool descriptions (hero + footer email links)
+
+**Intentionally excluded:**
+
+- `src/components/ContestantPrepPage.tsx:68`: Kept as "South Asian dating show" per explicit user instruction
+
+### Reasoning
+
+These instances slipped through the original rollout because they were in JSON-LD metadata, AI-indexing files, and MCP tool descriptions rather than visible component copy. The audit used grep across all `.ts`, `.tsx`, and `.astro` files to find remaining violations.
+
+---
+
+## seo(desi): revert "drop NYC's from taglines" — geographic specificity increases conversion (2026-04-13)
+
+### What changed
+
+Reverted commit `78c13c1` which had removed "NYC's" from eyebrows and taglines. CRO research confirmed geographic specificity gives 10-35% conversion lift: "NYC's #1 Live Desi Dating Show" is the correct final form.
+
+**What reverted:** `src/data/copy.ts`, `src/components/home/HomeHero.astro`, `src/pages/index.astro`
+
+### Reasoning
+
+"NYC's" is a trust signal. Local audiences recognize their city name in the headline. "#1" is legitimate (no live in-person desi dating show competition in the US). "Live" differentiates from online content. Reverting was the right call.
+
+---
+
+## seo(desi): roll out desi dating show keyword across site (2026-04-13)
+
+### What changed
+
+Strategic keyword rollout targeting "desi dating show NYC" — a keyword with zero live in-person competition. Changed "South Asian dating show" to "desi dating show" in 11 files wherever copy describes THE SHOW ITSELF. Kept "South Asian" everywhere it describes the audience, community, or culture, and on dedicated south-asian keyword pages.
+
+**Files updated:**
+
+- `src/utils/eventSchema.ts`: EVENT_DESCRIPTION (every event's JSON-LD — highest-volume signal)
+- `src/lib/constants.ts`: VIDEO_METADATA title + description (VideoObject JSON-LD)
+- `src/data/copy.ts`: shortDescription, footerLine, ogImageAlt, HOME_FAQS[0].short, MARQUEE_ITEMS[0]
+- `src/pages/tickets.astro`: visible intro paragraph
+- `src/components/home/HomeFooter.astro`: hardcoded footer tagline
+- `src/components/AuthorBio.astro`: author bio on all journal articles
+- `src/components/ApplyPage.tsx`: apply form subtitle
+- `src/pages/apply.astro`: skeleton subtitle (server-rendered fallback)
+- `src/pages/links.astro`: H1
+- `src/components/ApplyPage.test.tsx` + `src/utils/eventSchema.test.ts`: updated assertions to match new copy
+
+**What was intentionally NOT changed:**
+
+- Hero sub-copy ("New York City's #1 live South Asian comedy dating show") — paired with "desi" eyebrow above it, provides both signals
+- FAQ "Is the show only for South Asian people?" — factually accurate
+- Journal/tips/cities pages — dedicated south-asian keyword pages
+- `SITE.tagline` — brand tagline in llms.txt, kept as-is
+- Sponsorship/corporate demographic copy — "70%+ South Asian professionals" is factual
+
+### Reasoning
+
+Title tag already targeting "Desi Dating Show NYC" (from prior session). This rollout propagates the keyword consistently across on-page copy, JSON-LD schemas, and UI strings while maintaining the "south asian" signal where it serves SEO on dedicated pages or is factually accurate.
+
+## fix(seo): remove nonexistent sitemap.xml and invalid llms.txt from robots.txt Sitemap directives (2026-04-13)
+
+### What changed
+
+Removed two incorrect `Sitemap:` entries from `public/robots.txt`:
+
+- `sitemap.xml` — this file does not exist. `@astrojs/sitemap` generates `sitemap-index.xml` + `sitemap-0.xml`, never a bare `sitemap.xml`. Advertising it was causing the Google Search Console 404 error.
+- `llms.txt` — per the official llmstxt.org spec, llms.txt is discovered by convention (AI crawlers look for `/llms.txt` at the domain root, no advertisement needed). Listing it under `Sitemap:` would cause Google to attempt parsing it as a plain-text sitemap; since it's markdown, Google would either fail or produce errors. The file itself is unchanged and still accessible.
+
+`robots.txt` now has a single correct Sitemap directive: `sitemap-index.xml`.
+
+### Files affected
+
+- `public/robots.txt`
+
+### Reasoning
+
+Both entries were incorrect per their respective specs. The `sitemap.xml` 404 was the direct cause of the Google Search Console error. The `llms.txt` entry was removed because the llms.txt spec defines no robots.txt mechanism — convention-based discovery is sufficient and correct.
+
+---
+
+## fix(favicon): replace placeholder icons with actual logo wordmark (2026-04-13)
+
+### What changed
+
+Replaced all three favicon assets with the real logo, matching the header exactly (red wordmark on transparent background):
+
+- `public/favicon.svg` — rewritten with all logo path data from `logo.svg`, fill set to `#DC2626` (brand red), transparent background. Same technique as the CSS mask in PageNav.
+- `public/apple-touch-icon.png` — regenerated as 180x180 PNG using sharp from the new favicon.svg (previously a broken 563-byte stub).
+- `public/favicon.ico` — regenerated as a real 32x32 ICO using ImageMagick (previously a broken 563-byte pink pixel stub).
+- `public/asset-3.svg` — moved to `public/images/asset-3.svg` (source reference file, not served at root).
+
+### Files affected
+
+`public/favicon.svg`, `public/apple-touch-icon.png`, `public/favicon.ico`, `public/images/asset-3.svg`
+
+### Why
+
+The old favicon.svg was an invented "G" on a red square — not the logo. The ICO and PNG were broken stubs from a previous generator run. Google search results show the favicon next to the site URL; having the real wordmark there is part of brand recognition.
+
+---
+
+## feat(tracking): per-page, per-section, per-device Eventbrite UTM tracking (2026-04-13)
+
+### What changed
+
+Replaced the flat `?aff=garamsite` parameter (and stale Eventbrite-generated UTMs) on all ticket links with structured UTM tracking that identifies exactly which page and section drove each ticket sale.
+
+New parameter scheme: `?aff=garamsite&utm_source=garamsite&utm_medium=web&utm_campaign={page}&utm_content={section}`
+
+**Link inventory after change:**
+
+| Page             | Section       | `utm_campaign` | `utm_content`               |
+| ---------------- | ------------- | -------------- | --------------------------- |
+| `/`              | Hero pill     | `home`         | `hero`                      |
+| `/`              | Shows section | `home`         | `shows`                     |
+| `/tickets`       | Event cards   | `tickets`      | `listing`                   |
+| `/cities/[slug]` | City CTA      | `cities`       | `{slug}` (e.g. `manhattan`) |
+| `/links`         | Events modal  | `links`        | `modal`                     |
+
+Mobile visitors automatically get `utm_medium=mobile` via a client-side script in BaseLayout that detects viewport width on page load.
+
+### Why
+
+All Eventbrite links previously looked identical in Eventbrite's Traffic and Sales report. This made it impossible to know whether ticket sales were coming from the home page, the tickets page, city landing pages, or the links page. With per-section UTMs, each traffic source is now distinguishable in Eventbrite's reports and PostHog.
+
+### Architecture decision
+
+Event URLs in `data/events.ts` now store clean base URLs with no tracking parameters. Tracking is applied at render time via `buildTicketUrl()` in each component. This is the correct pattern: the data layer stays canonical, attribution belongs to the presentation layer. The schema.org JSON-LD (which also uses `e.url`) automatically benefits from the clean URL.
+
+### Files affected
+
+- `src/utils/eventUrl.ts` (new): `buildTicketUrl(baseUrl, campaign, content)` helper
+- `src/data/events.ts`: stripped all tracking params from 6 event URLs
+- `src/components/home/HomeHero.astro`: `buildTicketUrl(event.url, "home", "hero")`
+- `src/components/home/HomeShows.astro`: `buildTicketUrl(event.url, "home", "shows")`
+- `src/pages/tickets.astro`: `buildTicketUrl(event.url, "tickets", "listing")` on href, data-eb-url, and fallbackUrl
+- `src/pages/cities/[slug].astro`: `buildTicketUrl(event.url, "cities", city.slug)`
+- `src/pages/links.astro`: `buildTicketUrl(event.url, "links", "modal")`
+- `src/layouts/BaseLayout.astro`: mobile `utm_medium` upgrade script
+
+## fix(csp): allow Eventbrite script-src to unblock checkout widget (2026-04-13)
+
+### What changed
+
+Added `https://www.eventbrite.com` to the `script-src` directive in `vercel.json`. The tickets page dynamically injects `eb_widgets.js` from Eventbrite to power the embedded checkout modal. `frame-src` already listed Eventbrite (for the checkout iframe), but `script-src` was missing the domain, causing the browser to block the script with a CSP violation.
+
+Files affected: `vercel.json`
+
+### Why
+
+The Eventbrite checkout modal was silently broken for all users on the live site. The widget script load was blocked before it could attach to any "Get Tickets" button. Fallback behavior (direct Eventbrite link on error) would have kicked in, but the modal experience was completely unavailable.
+
+### Trade-offs
+
+Minimal trust expansion: `https://www.eventbrite.com` is a first-party dependency we already trust for iframes; adding it to `script-src` is consistent with that trust level.
+
+---
+
+## seo: optimize for desi dating show keyword (2026-04-13)
+
+### What changed
+
+Added "desi dating show" and "desi dating show New York" as primary SEO targets. Previously the site used "South Asian dating show" exclusively in all title tags, meta descriptions, and structured data, with zero "desi" signals in any high-weight SEO field.
+
+Files affected: `src/pages/index.astro`, `src/pages/faq.astro`, `src/pages/tickets.astro`, `src/data/copy.ts`
+
+### Changes
+
+- Homepage `<title>`: "NYC's #1 Live South Asian Dating Show" changed to "NYC's #1 Live Desi Dating Show" (highest-weight signal for target keyword)
+- Homepage meta description: now leads with "desi dating show" while keeping "South Asian singles" to preserve existing signals
+- Organization JSON-LD `alternateName`: added "Desi Dating Show NYC", "Desi Dating Show New York", "NYC Desi Dating Show"
+- Organization and EventSeries JSON-LD descriptions: swapped "South Asian" to "desi" as primary descriptor; "South Asian" remains in supporting context
+- FAQ page `<title>`: "FAQ: Desi Dating Show NYC" (also removed a banned em dash separator)
+- Tickets page meta description: includes "desi dating show New York" and "South Asian singles mixer"
+- `SITE.tagline` and `SITE.description` in `copy.ts`: "desi" as primary descriptor (used in HomeExperience body copy and llms.txt)
+
+### Decisions
+
+"South Asian" is preserved in descriptions and all body copy so existing ranking signals are not removed. The title tag change is intentional: Google weights the `<title>` tag heavily, and leading with "desi" is the fastest path to ranking for the new keyword while the body copy continues to signal "south asian" contextually. "Desi dating show New York" appears naturally in the Tickets meta description because that page targets intent-to-attend searches where geography matters.
+
+---
+
+## fix(favicon): replace wordmark SVG with proper square icon (2026-04-12)
+
+### What changed
+
+Replaced `public/favicon.svg` with a proper 64x64 square icon (red `#DC2626` background, off-white "G" centered). The previous file was the full "GARAM MASALA DATING" wordmark (663x340 viewBox), which rendered as a blurry pink pixel at 16px favicon size in browser tabs and Google Search.
+
+Also identified that `favicon.ico` and `apple-touch-icon.png` are broken 563-byte placeholder stubs that have never worked. These must be regenerated manually via realfavicongenerator.net using the new SVG and dropped into `public/`.
+
+### Files affected
+
+- `public/favicon.svg` (replaced wordmark with square icon)
+
+### Trade-offs
+
+Used a system serif font stack (`Georgia, 'Times New Roman', serif`) for the "G" rather than embedding Playfair Display, so the icon renders consistently in every browser and Google's crawler without a font dependency. The visual result is nearly identical since Georgia is also a classical serif.
+
+---
+
+## feat(tickets): add Eventbrite modal checkout widget and update CTA to "Grab My Spot" (2026-04-12)
+
+### What changed
+
+Added Eventbrite's modal checkout widget to the tickets page so users can complete ticket purchase without leaving the site. Non-soldout events with an `eventbriteId` now render as buttons that trigger an Eventbrite checkout modal overlay instead of opening Eventbrite in a new tab.
+
+Changed "Get Tickets" to "Grab My Spot" across all conversion CTAs on the site. First-person language ("My"), action verb ("Grab"), and "Spot" over "Ticket" all reduce friction and match the show's energy. Nav links keep "Get Tickets" since they serve a navigational, not conversion, purpose.
+
+Also fixed a dash-rule violation in the Apr 19 event tagline ("Low tickets, grab yours now" replaces the banned em dash form).
+
+### Files affected
+
+- `src/data/events.ts` — added `eventbriteId` and `promoCode` fields to `EventEntry` interface; populated both for Apr 26 Jersey City; `eventbriteId` for Apr 19 Manhattan; fixed em dash in Apr 19 tagline
+- `src/pages/tickets.astro` — non-soldout events with widget ID render as `<button>` with Eventbrite trigger; async script loads `eb_widgets.js` and initializes modal per event; `onerror` fallback opens Eventbrite in new tab; noscript fallback links for SEO; PostHog `order_complete` event on purchase; "Grab My Spot" CTA
+- `src/components/home/HomeShows.astro` — "Grab My Spot" CTA
+- `src/components/home/HomeHero.astro` — "Grab My Spot" CTA
+- `src/components/home/HomeExperience.astro` — "Grab My Spot" CTA
+- `src/components/home/HomeFAQ.astro` — "Grab My Spot" CTA
+- `src/pages/cities/[slug].astro` — "Grab My Spot" CTA
+
+### Decisions
+
+- Modal over inline embed: 70% mobile traffic makes inline iframes a UX trap (scroll-within-scroll). Modal works correctly on mobile as full-screen overlay.
+- Widget scoped to tickets page only: homepage show cards link to the tickets page, which is the dedicated conversion destination.
+- `eb_widgets.js` loaded async via dynamic script injection, not a blocking `<script src>` in the head, so it does not affect LCP.
+- Sold-out events stay as `<a>` links to Eventbrite (widget is irrelevant for sold-out inventory).
+- `promoCode` stored per-event in data so it auto-applies to Jersey City's existing discount.
+
+## feat(masterclass): add Steps 9 and 10, split Steps 8-10 into sub-slides (2026-04-10)
+
+### What changed
+
+Added Steps 9 ("Become Their Ex (But Better)") and 10 ("When They Finally Ask 'What Are We?'... Hesitate.") to the masterclass. Steps 8, 9, and 10 each contain multiple natural sub-sections, so each was split into 2-3 consecutive full-height slides (continuation slides) rather than one very tall scroll block. Every beat now gets its own visual weight.
+
+Continuation slides use the same `type: "step"` but omit `stepNumber` and `stepLabel`. The page template was updated to conditionally render the step label paragraph and to add an `mc-step--cont` class for proper top spacing. Background alternation is automatic across all step slides.
+
+### Files affected
+
+- `src/data/masterclasses.ts` — step 08 split into 3 slides, steps 09 and 10 added as 3 slides each (9 new slides total)
+- `src/pages/journal/situationship-masterclass.astro` — step label made conditional, aria-label fallback added, `mc-step--cont` CSS class added
+
+### Decisions
+
+- Continuation slides identified by absence of `stepNumber`/`stepLabel` — no new type field needed
+- Background alternates across all step slides including continuations, maintaining the site's contrast pattern
+- Mid-CTA still fires after step 04 slide (keyed on `slide.stepNumber === "04"`, unchanged)
+
+---
+
+## feat(masterclass): add Step 8 to Situationship Masterclass (2026-04-10)
+
+### What changed
+
+Added Step Eight ("Give Them the Best Sex of Their Life, Then Leave") to the Situationship Conversion Playbook masterclass. The step covers the power move of going all in for your partner then leaving without reciprocating, with practical gender-split advice and a hot take badge. Used the cleaner second draft the user provided, discarding the duplicate first draft.
+
+### Files affected
+
+- `src/data/masterclasses.ts` — new step slide object inserted after step 07, before the science slide
+
+### Decisions
+
+- Step renders automatically via the existing `stepSlides.map()` in the page template; no template changes needed
+- Background alternates correctly: step 08 is index 7 (odd) so it gets `bg-warm`, matching the alternating pattern
+- No separator dashes in copy per site rule
+
+---
+
+## feat(apply): add email field and rename Place to Metropolitan Area (2026-04-10)
+
+### What changed
+
+Added a required email field to the apply form (positioned below Instagram). Changed the "Place" label to "Metropolitan Area" with placeholder "(Ex. Chicago)". Email is stored lowercase in Firestore, included in the admin notification email as a clickable mailto link, and validated client-side for presence and `@` character.
+
+### Files affected
+
+- `src/components/apply/useApplyForm.ts` — added `email` to `FormState`/`INITIAL`, email validation, email in `applicationData`
+- `src/components/ApplyPage.tsx` — new email `<FieldGroup>`, updated Metropolitan Area label and placeholder
+- `src/types/application.ts` — added `email?: string` to `Application` interface
+- `src/pages/api/notify-application.ts` — added `email` to `ApplicationNotification`, rendered as mailto link in email HTML
+- `src/components/ApplyPage.test.tsx` — updated city placeholder, added email field tests
+- `src/components/apply/useApplyForm.test.ts` — added email to `fillRequired` helper, added email field tests
+
+### Decisions
+
+- Email stored as `form.email.trim().toLowerCase()` before writing to Firestore for consistency
+- `type="email"` + `inputMode="email"` + `autoComplete="email"` for mobile keyboard and browser autofill
+- Email rendered as a mailto anchor in the admin notification so the reviewer can reply in one click
+- `email?: string` (optional) in the `Application` type so existing Firestore documents without email remain valid
+
+## refactor(apply): replace city search API with plain text input (2026-04-10)
+
+### What changed
+
+The "Place" field on the apply page was stuck in a disabled loading skeleton while a Vercel serverless function cold-started to load the `country-state-city` npm package (~18,000 cities). Replaced the entire React Select dropdown plus `/api/city-search` API combo with a plain `<input type="text">`. Also deleted the now-unused `useCitySearch` and `useGeoData` hooks and all associated tests (1,200+ lines removed).
+
+### Files affected
+
+- `src/components/ApplyPage.tsx` — React Select removed, plain text input added
+- `src/components/apply/useApplyForm.ts` — all geo/city-search state removed, `cityInput` + `handleCityInputChange` added
+- `src/components/ApplyPage.test.tsx` — updated tests, removed React Select mock
+- `src/components/apply/useApplyForm.test.ts` — removed all geo-related tests
+- Deleted: `src/hooks/useCitySearch.ts`, `src/hooks/useGeoData.ts`, and their test files
+
+### Decisions
+
+- The `/api/city-search` route and `citySearchShared.ts` are kept untouched since `HomeShows.astro` still uses them for the "request a city" modal
+- `autoComplete="address-level2"` on the new input lets the browser suggest the user's saved city from autofill
+- Validation now checks `form.city.trim()` (set by the input) rather than requiring a structured `country` field
+- URL seeding (`/apply?city=Manhattan&state=NY`) sets the input text directly as `"Manhattan, NY"`
+
+## feat(content): add Situationship Masterclass as new content type (2026-04-10)
+
+### What changed
+
+Published "The Situationship Conversion Playbook" as the first `MasterclassPost`, a new content type for long-form interactive pieces distinct from regular journal posts.
+
+**New content type: `MasterclassPost`**
+
+- `src/data/masterclasses.ts` defines `MasterclassSlide` and `MasterclassPost` interfaces. Slides have a richer `type` field (`title | disclaimer | step | science | twist | bonus | cta`) plus `stepNumber`, `stepLabel`, `hotTake` — not reducible to the flat `PostBlock[]` used by `JournalPost`.
+- The data file holds all 13 slides and 5 SEO-targeted FAQs (targeting: "convert situationship", "intermittent reinforcement dating", "stop being someone's situationship", etc.).
+
+**New page: `/journal/situationship-masterclass`**
+
+- Static Astro page (`src/pages/journal/situationship-masterclass.astro`) takes route priority over the dynamic `[slug].astro`. All content is rendered as HTML for full indexability.
+- **Full-viewport scroll sections**: each of the 13 slides is a `min-height: 100svh` section. Big Playfair ghost step numbers (opacity 0.06), hot-take badges, alternating `--off-white` and `--cream-warm` backgrounds.
+- **Scroll animations**: Intersection Observer (threshold 0.05) triggers staggered reveals per section. Label animates first (0ms), title (100ms), body (200ms), hot-take badge (320ms). Respects `prefers-reduced-motion`.
+- **Progress bar**: 3px red fixed bar at top of page, updated on scroll.
+- **Mid-scroll CTA** after Step 04 (brand-red band linking to tickets and apply).
+- **Closing CTA section**: full-viewport, `--brand-red` background, white text, pill button linking to `/tickets`.
+- **FAQs section**: 5 questions rendered as visible `<dl>` for AEO, plus `FAQPage` JSON-LD schema.
+- **JSON-LD**: Article + BreadcrumbList + FAQPage schemas.
+- **OG meta**: `article:published_time`, `article:modified_time`, `article:author`, `ogType="article"`.
+
+**Journal index updated**
+
+- `src/pages/journal/index.astro` now imports `masterclassPosts` and merges them with `journalPostsPublished` into a single `allPosts` array sorted newest-first.
+- Masterclass cards show a red "Masterclass" badge above the date.
+
+### Files affected
+
+- `src/data/masterclasses.ts` (new)
+- `src/pages/journal/situationship-masterclass.astro` (new)
+- `src/pages/journal/index.astro` (updated)
+
+### Design decisions
+
+- Separate content type rather than fitting into `PostBlock[]` — the rich slide data (step numbers, hot-take badges, slide types) requires a richer schema.
+- Static `.astro` page rather than extending `[slug].astro` — masterclasses need a fundamentally different template. Astro static routes take priority over dynamic routes, so no routing conflict.
+- All text rendered in DOM (not behind JS) for full SEO indexability even though the experience is visual-first.
+
+---
+
+## polish: fix touch target and cursor on HomeSignup skip button (2026-04-10)
+
+### What changed
+
+Same class of defect caught in the previous polish pass, now in `HomeSignup.astro`:
+
+1. **`.spicelist-skip` insufficient touch target**: The "Maybe later" skip button had `padding: 4px` with no `min-height`. Fixed to `padding: 12px 16px` + `min-height: var(--touch-target)` — matching the pattern in NotifyModal's `.modal-skip`.
+
+2. **`.spicelist-skip` missing `cursor: pointer`**: Button had no cursor declaration, defaulting to `cursor: default` in browsers.
+
+3. **`.spicelist-form button` missing `cursor: pointer`**: The email and phone submit buttons also lacked an explicit cursor. All other form submit buttons across the codebase (`modal-submit`, `popup-submit`) have it explicitly set.
+
+### Files affected
+
+- `src/components/home/HomeSignup.astro`
+
+---
+
+## fix(leads): forward geo fields from buildLeadAttribution to Firestore (2026-04-10)
+
+### What changed
+
+`buildLeadAttribution()` collects 6 geo fields from `/api/geo` (`geoCity`, `geoRegion`, `geoCountry`, `geoLatitude`, `geoLongitude`, `geoTimezone`) and spreads them into every lead payload. However `capture-lead.ts` did not declare them in its `LeadPayload` interface and did not write them to Firestore, so the data was silently dropped on every lead submission.
+
+Also deployed `firestore.rules` and `storage.rules` to Firebase production (had not been pushed previously).
+
+**Fixes:**
+
+1. Added 6 geo fields to `LeadPayload` interface in `capture-lead.ts`.
+2. Added conditional field writes for each geo field.
+3. Added the 6 geo keys to the `hasOnly()` allowlist in `validLead()` in `firestore.rules`.
+4. Added per-field optional validators for each geo field (string, non-empty, capped sizes).
+5. Deployed rules to Firebase (`garam-masala-9f15b`) via `firebase deploy --only firestore:rules,storage`.
+
+### Files affected
+
+- `src/pages/api/capture-lead.ts`
+- `firestore.rules`
+
+---
+
+## polish: fix touch target and missing cursor on HomeShows modal close (2026-04-10)
+
+### What changed
+
+Two real defects in `HomeShows.astro` that a polish pass caught:
+
+1. **`.modal-close` touch target too small**: The Request City modal close button had `padding: 4px` with no `min-width` or `min-height`. The 48x48px minimum touch target (set via `--touch-target`) was not met. Fixed to match the pattern used in NotifyModal: `padding: 12px`, `min-width: var(--touch-target)`, `min-height: var(--touch-target)`.
+
+2. **`.request-city button` missing `cursor: pointer`**: HTML buttons default to `cursor: default` in most browsers. The "Don't see your city? Request it" button had no explicit cursor declaration. Added `cursor: pointer` to match every other interactive button on the page.
+
+### Files affected
+
+- `src/components/home/HomeShows.astro`
+
+---
+
+## arrange(stats): fix mobile layout overflow on narrow phones (2026-04-10)
+
+### What changed
+
+The stats section was using `flex: 0 1 33.33%` for all mobile widths, forcing 3 items per row even at 375px (where each column is only ~92px wide). The "One Night Stand Rate" label with `white-space: nowrap` was overflowing its column at every phone width below ~540px.
+
+**New 3-tier responsive layout:**
+
+- **<480px**: single column (`flex: 0 1 100%`) — 5 stats stacked vertically, each with full width.
+- **480–767px**: 2 columns (`flex: 0 1 50%`) — 5 items renders as 2 rows of 2 plus a centered final stat.
+- **>=768px**: unchanged 5-column row with white dividers.
+
+Also moved `white-space: nowrap` off the base `.stat-label` rule and into the desktop-only `@media (min-width: 768px)` block.
+
+### Files affected
+
+- `src/components/home/HomeStats.astro`
+
+---
+
+## harden(forms): add loading state to all async form submit buttons (2026-04-10)
+
+### What changed
+
+All five lead-capture form submit handlers now disable their button and show "Sending..." during the async request, restoring the original label in the `finally` block. This prevents double-submission on slow connections and gives clear visual feedback that a network request is in flight.
+
+**Forms updated:**
+
+- **HomeSignup.astro** (inline Spice List section): email form and phone form
+- **index.astro** (popup): email form and phone form (done in previous harden commit)
+- **LeadCaptureModal.astro** (reusable 2-step modal): email form and phone form
+- **NotifyModal.astro** (city notification modal): email form and phone form
+
+**Pattern applied consistently across all handlers:**
+
+```typescript
+const originalBtnText = submitBtn?.textContent ?? "";
+if (submitBtn) {
+  submitBtn.disabled = true;
+  submitBtn.textContent = "Sending...";
+}
+try {
+  /* async work */
+} finally {
+  if (submitBtn) {
+    submitBtn.disabled = false;
+    submitBtn.textContent = originalBtnText;
+  }
+}
+```
+
+### Files affected
+
+- `src/components/home/HomeSignup.astro`
+- `src/components/LeadCaptureModal.astro`
+- `src/components/NotifyModal.astro`
+
+---
+
+## harden(popup): replace 30s timer with exit-intent + scroll-depth triggers (2026-04-10)
+
+### What changed
+
+Replaced the naïve 30-second `setTimeout` popup trigger with industry-standard behavioral signals. The popup now fires on exit-intent (cursor leaving the top of the viewport on desktop) or 65% scroll depth (all devices), subject to a 15-second minimum session gate.
+
+**Dismiss suppression:** closing the popup now writes a timestamp to `localStorage` (`gmd-popup-dismissed`). Re-opening is blocked for 7 days. Existing `gmd-popup-subscribed` key still provides permanent suppression after successful signup.
+
+**Key constants:**
+
+- `MIN_SESSION_MS = 15_000` — popup never shows within 15s of page load
+- `DISMISS_DURATION_MS = 7 * 24 * 60 * 60 * 1000` — 7-day cooldown after dismissal
+- Scroll threshold: 65% of document height
+- Exit-intent: `pointer: fine` media query gates it to desktop only (no mis-fires on mobile scroll)
+
+### Files affected
+
+- `src/pages/index.astro`
+
+### Decisions / trade-offs
+
+- Exit-intent (`clientY <= 0`) is the industry standard for high-intent desktop visitors; 65% scroll depth catches mobile users who have clearly engaged with the page.
+- The `{ once: true }` option on the mouseleave listener auto-cleans after first trigger, preventing accumulation across SPA navigations.
+- A guard against `dialog[open]` prevents stacking if another modal is already visible.
+
+---
+
 ## perf(animate): replace layout-property animations with compositor-friendly transitions (2026-04-10)
 
 ### What changed

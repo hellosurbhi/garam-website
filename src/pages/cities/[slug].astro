@@ -1,11 +1,14 @@
 ---
 import BaseLayout from "@/layouts/BaseLayout.astro";
+import EventbriteWidgetInit from "@/components/EventbriteWidgetInit.astro";
 import { cities } from "@/data/cities";
 import type { CityData } from "@/data/cities";
 import { events } from "@/data/events";
 import { isEventPast } from "@/utils/eventDate";
 import { buildBreadcrumbJsonLd } from "@/utils/breadcrumbs";
 import { SHOW_IMAGES, slugToImageIndex } from "@/data/images";
+import { buildTicketUrl } from "@/utils/eventUrl";
+import { EVENTS } from "@/data/copy";
 
 export function getStaticPaths() {
   return Object.keys(cities).map((slug) => ({
@@ -151,14 +154,9 @@ const breadcrumbJsonLd = buildBreadcrumbJsonLd([
       <div class="city-ctas">
         {/* Per-event ticket buttons for active cities */}
         {
-          cityEvents.map((event) => (
-            <a
-              href={event.url}
-              target="_blank"
-              rel="noopener noreferrer"
-              class="city-cta city-cta--primary"
-            >
-              <span>{event.date}: Get Tickets</span>
+          cityEvents.map((event) => {
+            const isSoldOut = event.soldOut ?? false;
+            const arrowSvg = (
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 width="16"
@@ -177,8 +175,35 @@ const breadcrumbJsonLd = buildBreadcrumbJsonLd([
                   <path d="m12 5 7 7-7 7" />
                 </>
               </svg>
-            </a>
-          ))
+            );
+            return event.eventbriteId && !isSoldOut ? (
+              <button
+                type="button"
+                id={`eventbrite-widget-modal-trigger-${event.eventbriteId}`}
+                class="city-cta city-cta--primary"
+                data-eb-url={buildTicketUrl(event.url, "cities", city.slug)}
+                data-promo-code={event.promoCode ?? ""}
+                data-city={event.city}
+              >
+                <span>
+                  {event.date}: {EVENTS.ticketCta}
+                </span>
+                {arrowSvg}
+              </button>
+            ) : (
+              <a
+                href={buildTicketUrl(event.url, "cities", city.slug)}
+                target="_blank"
+                rel="noopener noreferrer"
+                class="city-cta city-cta--primary"
+              >
+                <span>
+                  {event.date}: {EVENTS.ticketCta}
+                </span>
+                {arrowSvg}
+              </a>
+            );
+          })
         }
         {/* Static CTAs (apply, waitlist, etc.) */}
         {
@@ -412,6 +437,7 @@ const breadcrumbJsonLd = buildBreadcrumbJsonLd([
       </div>
     </div>
   </main>
+  <EventbriteWidgetInit />
 </BaseLayout>
 
 <script>
@@ -707,12 +733,19 @@ const breadcrumbJsonLd = buildBreadcrumbJsonLd([
     border-radius: 14px;
     border: 1px solid;
     font-family: var(--font-body);
-    font-size: 15px;
+    font-size: 16px;
     font-weight: 500;
     text-decoration: none;
+    appearance: none;
+    cursor: pointer;
     transition:
       background 0.15s,
-      border-color 0.15s;
+      border-color 0.15s,
+      transform 0.15s;
+  }
+
+  .city-cta:active {
+    transform: scale(0.97);
   }
 
   .city-cta--primary {

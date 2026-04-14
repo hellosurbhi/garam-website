@@ -3,8 +3,12 @@
  * Astro counterpart: Modal.astro — keep behavior identical.
  * Design tokens: modal-tokens.css — change values there, not here.
  *
+ * The <dialog> is a transparent full-screen centering overlay.
+ * `className` is applied to the inner wrapper div — use it to size/style
+ * the visible white box (background, max-width, max-height, border-radius, etc.).
+ *
  * Usage:
- *   <Modal onClose={onClose} ariaLabelledby="my-title-id" className={styles.dialog}>
+ *   <Modal onClose={onClose} ariaLabelledby="my-title-id" className={styles.inner}>
  *     <div>content</div>
  *   </Modal>
  *
@@ -67,13 +71,13 @@ export function Modal({
     <dialog
       ref={dialogRef}
       tabIndex={-1}
-      className={[styles.dialog, className].filter(Boolean).join(" ")}
+      className={styles.dialog}
       role="dialog"
       aria-modal="true"
       aria-labelledby={ariaLabelledby}
       onClick={handleBackdropClick}
     >
-      {children}
+      <div className={className}>{children}</div>
     </dialog>
   );
 }

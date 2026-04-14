@@ -1,5 +1,54 @@
 # Changelog
 
+## fix(coderabbit): address all 11 unresolved PR comments (2026-04-14)
+
+### What changed
+
+11 fixes across 13 files in response to CodeRabbit review on PR #14. 4 threads dismissed with explanation (already fixed / new-file typography / wrong rule application).
+
+**TermsModal.module.css** — Replaced both `background: white` literals with `var(--white)`. The `.dialog` and secondary button background were both hardcoded; both now use the design token.
+
+**AuthorBio.astro / copy.ts** — Moved the author bio paragraph ("Co-creator and host...") from inline JSX into `AUTHOR_BIO.surbhi` in `src/data/copy.ts`. All user-facing text now lives in the data layer.
+
+**HomeShows.astro + HomeHero.astro + EventbriteWidgetInit.astro** — Fixed duplicate DOM IDs: HomeShows and HomeHero were both rendering `eventbrite-widget-modal-trigger-{id}` for the same event when co-rendered on index.astro. HomeShows now uses `eventbrite-widget-modal-trigger-home-shows-{id}`. Both triggers now carry `data-eb-event-id` attribute. EventbriteWidgetInit prefers `dataset.ebEventId` for extraction and falls back to parsing the DOM id for any legacy triggers.
+
+**HomeStats.astro** — Replaced en dash in CSS comment `(480px–767px)` with `(480px to 767px)`.
+
+**capture-lead.ts** — Switched geo coordinate parsing from `parseFloat()` + `isFinite()` to `Number()` + `Number.isFinite()`. `parseFloat("40.7abc")` silently returns `40.7`; `Number("40.7abc")` returns `NaN` and is correctly rejected. Prevents malformed coordinate strings from being persisted to Firestore.
+
+**faq.astro** — Replaced em dash separator in FAQ answer with a comma: `"matchmaking — and"` → `"matchmaking, and"`.
+
+**situationship-masterclass.astro** — Added `.mc-cta-btn:active { transform: scale(0.97); }` per the mandatory press-feedback rule for all CTA buttons.
+
+**llms-full.txt.ts** — Fixed malformed sentence: `"through the show: and counting"` → `"through the show, and counting"`. CodeRabbit suggested an em dash, but that violates the no-dash rule; comma used instead.
+
+**links.astro** — Added `hasLink &&` guard to the Eventbrite branch condition. Without it, `buildTicketUrl(event.url, ...)` could throw at render time if `event.url` is empty or `"#"`.
+
+**waiver.astro** — Hardened `postMessage` handler: now checks `e.origin` against a JotForm allowlist before processing, and validates `data.formID === "261031391833047"` to prevent unrelated cross-origin messages from hiding the loader early.
+
+**copy.ts** — Fixed `shortDescription`: `"Bi-weekly in Manhattan"` → `"Weekly in Manhattan"` to match the show's actual cadence and align with the full description which says "every week."
+
+### Files affected
+
+- `src/components/apply/TermsModal.module.css`
+- `src/components/AuthorBio.astro`
+- `src/components/EventbriteWidgetInit.astro`
+- `src/components/home/HomeHero.astro`
+- `src/components/home/HomeShows.astro`
+- `src/components/home/HomeStats.astro`
+- `src/data/copy.ts`
+- `src/pages/api/capture-lead.ts`
+- `src/pages/faq.astro`
+- `src/pages/journal/situationship-masterclass.astro`
+- `src/pages/links.astro`
+- `src/pages/llms-full.txt.ts`
+- `src/pages/waiver.astro`
+
+### Decisions
+
+- Dismissed 4 threads: journal badge (already fixed + rule targets iOS input zoom, not decorative spans), TermsModal font-size threads (new file, not a modification), cities/[slug] soldOut (already fixed in bd0bbcf).
+- Used comma (not em dash) for the llms-full.txt.ts sentence fix — em dash would violate the no-dash rule.
+
 ## fix(apply): clear jsxDEV prod cache + fix hero image path (2026-04-14)
 
 ### What changed

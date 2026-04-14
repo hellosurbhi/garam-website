@@ -1,5 +1,30 @@
 # Changelog
 
+## fix(leads): parse geoLatitude/geoLongitude as numbers before Firestore writes (2026-04-13)
+
+### What changed
+
+Firestore rules were updated (in a prior commit) to require `geoLatitude` and `geoLongitude` as `float` type. The server-side `/api/capture-lead` was updated alongside and was already safe. But three client-side Firestore SDK write paths were still sending strings, causing permission denied errors that swallowed silently in try/catch.
+
+**Root cause**: `buildLeadAttribution()` read lat/lng from sessionStorage (always a string) and returned them as `string`. The Firestore JS SDK sends JavaScript strings as Firestore `string` type, which fails the `is float` rule check.
+
+**Fix**: `LeadAttribution` interface now types `geoLatitude`/`geoLongitude` as `number`. `buildLeadAttribution()` now parses them from sessionStorage and validates range (`-90 to 90`, `-180 to 180`), omitting the field if out of range or NaN. All consumers that spread attribution into Firestore payloads now receive numbers that the SDK sends as the correct Firestore float type.
+
+### Files affected
+
+- `src/lib/leadAttribution.ts` — interface type change + parse logic
+- `src/components/NotifyModal.astro` — payload type widened at 2 addDoc call sites
+- `src/components/home/HomeShows.astro` — payload type widened at addDoc call site
+- `src/components/LeadCaptureModal.astro` — payload type widened for fetch body
+- `src/lib/leadAttribution.test.ts` — updated assertions + added invalid/out-of-range tests
+
+### Affected write paths
+
+- NotifyModal (email step): `/tickets`, `/` (HomeShows) — was broken
+- NotifyModal (phone create fallback): same pages — was broken
+- HomeShows city request form — was broken
+- LeadCaptureModal: was already safe (API converts server-side), type fix only
+
 ## fix(modals): make Modal.tsx a transparent centering overlay, fix all React modal positioning (2026-04-13)
 
 ### What changed

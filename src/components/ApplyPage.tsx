@@ -76,6 +76,10 @@ function ApplyPageInner() {
             type: "string",
             description: "Why they would be great on the show (optional)",
           },
+          type: {
+            type: "string",
+            description: "Application channel or type (e.g. casting, organic)",
+          },
         },
         required: [
           "applicationType",

@@ -6,7 +6,9 @@ import { renderHook, act } from "@testing-library/react";
 const mockAddDoc = vi.fn().mockResolvedValue({ id: "doc-1" });
 const mockUploadBytesResumable = vi
   .fn()
-  .mockReturnValue(Object.assign(Promise.resolve({}), { cancel: vi.fn() }));
+  .mockImplementation(() =>
+    Object.assign(Promise.resolve({}), { cancel: vi.fn() }),
+  );
 const mockGetDownloadURL = vi
   .fn()
   .mockResolvedValue("https://example.com/photo.jpg");

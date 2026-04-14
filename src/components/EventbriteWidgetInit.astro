@@ -100,15 +100,19 @@
       );
       if (!ebStructure) return;
 
-      ebStructure.addEventListener("click", (e) => {
-        const target = e.target as HTMLElement;
-        if (!target.closest(".eds-modal")) {
-          const closeBtn = document.querySelector<HTMLButtonElement>(
-            ".eds-modal__close-button button",
-          );
-          closeBtn?.click();
-        }
-      });
+      if (!ebStructure.dataset.listenerAttached) {
+        ebStructure.dataset.listenerAttached = "1";
+        const onEBSClick = (e: MouseEvent): void => {
+          const target = e.target as HTMLElement;
+          if (!target.closest(".eds-modal")) {
+            const closeBtn = document.querySelector<HTMLButtonElement>(
+              ".eds-modal__close-button button",
+            );
+            closeBtn?.click();
+          }
+        };
+        ebStructure.addEventListener("click", onEBSClick);
+      }
       clearTimeout(modalObserverTimeout);
       modalObserver.disconnect();
     });

@@ -140,3 +140,13 @@ const comingSoonEvents: EventEntry[] = TBA_CITIES.map((city) => ({
 
 /** All events: confirmed shows + hand-picked TBA cities */
 export const allEvents: EventEntry[] = [...events, ...comingSoonEvents];
+
+/**
+ * Returns the canonical display status for an event.
+ * Prefers the machine-readable soldOut flag over the tagline so that
+ * sold-out shows with no tagline are still surfaced correctly.
+ */
+export function getEventDisplayStatus(event: EventEntry): string | undefined {
+  if (event.soldOut) return "Sold out";
+  return event.tagline;
+}

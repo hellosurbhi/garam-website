@@ -1,5 +1,23 @@
 # Changelog
 
+## fix(modals): make Modal.tsx a transparent centering overlay, fix all React modal positioning (2026-04-13)
+
+### What changed
+
+`Modal.tsx` was relying on browser UA stylesheet centering for `<dialog>`, which broke when combined with custom `display` or `overflow` styles on the dialog element. Both `TermsModal` (apply page) and `ApplicantModal` (admin) were opening in the top-left corner or rendering incorrectly.
+
+**Root cause:** `Modal.tsx` applied the caller's `className` directly to the `<dialog>` element, creating CSS cascade conflicts between `Modal.module.css` defaults and each modal's own styles. The Astro counterpart (`Modal.astro`) already used the correct pattern.
+
+**Fix:** Aligned `Modal.tsx` with `Modal.astro`'s established pattern:
+
+- `<dialog>` is now a transparent full-screen centering overlay (`display: flex; align-items: center; justify-content: center`) owned by `Modal.module.css`
+- `className` is applied to an inner `<div>` — each modal uses it to style the visible white box
+- `TermsModal.tsx` simplified (removed manual inner wrapper, now provided by Modal)
+- `TermsModal.module.css` cleaned up (`.dialog` is now the white box only, no overlay styles)
+- Body text increased 13px → 15px, title 17px → 20px for readability
+
+**Files:** `src/components/ui/Modal.tsx`, `src/components/ui/Modal.module.css`, `src/components/apply/TermsModal.tsx`, `src/components/apply/TermsModal.module.css`
+
 ## fix(apply): remove extra spacing around terms checkbox button (2026-04-13)
 
 ### What changed

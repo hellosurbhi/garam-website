@@ -1,5 +1,24 @@
 # Changelog
 
+## fix(apply): clear jsxDEV prod cache + fix hero image path (2026-04-14)
+
+### What changed
+
+**Vite dep cache poison fixed** (`astro.config.mjs`) — After running `astro build`, Vite's esbuild pre-bundler was caching `react/jsx-dev-runtime` with `NODE_ENV=production`. The production variant of that module explicitly sets `exports.jsxDEV = void 0`, so every subsequent `astro dev` session threw `TypeError: jsxDEV is not a function` and the apply page crashed on load. Root cause: esbuild constant-folded `process.env.NODE_ENV === 'production'` to `true` during dep optimization, and Vite's cache invalidation only watches config/lockfile hashes, not NODE_ENV changes. Fix: added `optimizeDeps.esbuildOptions.define['process.env.NODE_ENV'] = '"development"'` to `astro.config.mjs`. The `optimizeDeps` section only runs during `astro dev`, never during `astro build`, so hardcoding `development` here is correct. Also cleared the stale `node_modules/.vite/` cache. This is the standard Vite fix for CJS packages that branch on NODE_ENV at bundle time.
+
+**Apply page background image path corrected** (`src/pages/apply.astro`) — The decorative background image was referencing `/images/promo/cupid-garden.webp`, which does not exist in that directory. Updated to `/images/hero/hero.webp`, which exists and is the appropriate hero photo for this page.
+
+### Files affected
+
+- `astro.config.mjs` — added `optimizeDeps.esbuildOptions.define`
+- `src/pages/apply.astro` — fixed background image path
+
+### Decisions
+
+The permanent fix for the jsxDEV issue is the `optimizeDeps.esbuildOptions.define` config, not just clearing the cache. Without it, the next `astro build` run would re-poison the cache. The `define` ensures dev-mode React is always used during dep pre-bundling regardless of how the cache was last built.
+
+---
+
 ## Code review fixes: part 4 (CTA data layer, press feedback, font-size, test mock) (2026-04-14)
 
 ### What changed

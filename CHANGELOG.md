@@ -1,5 +1,34 @@
 # Changelog
 
+## Code review fixes: upload, a11y, schema, CSS token, tests (2026-04-13)
+
+### What changed
+
+**Cancellable photo upload** (`src/components/apply/useApplyForm.ts`) — Replaced `uploadBytes` + `Promise.race` with `uploadBytesResumable`. On a 30-second timeout the `UploadTask.cancel()` method is now called before rejecting, which actually stops the in-flight request. The existing catch-block cleanup (`deleteObject`) then runs correctly. Test mock updated from `uploadBytes` to `uploadBytesResumable` using `.mockReturnValue` to keep the type compatible with `...args` spread.
+
+**`type` included in `applicationData`** (`src/components/apply/useApplyForm.ts`) — `type: form.type.trim()` is now part of the `applicationData` object so the fire-and-forget notify fetch receives it. The conditional spread in `addDoc` was removed since the field is already present in the spread.
+
+**MCP `inputSchema` gets optional `type`** (`src/components/ApplyPage.tsx`) — `type` added to `inputSchema.properties` (not `required`) so AI-driven and web-form submissions serialize the same data shape.
+
+**NotifyModal keyboard focus ring** (`src/components/NotifyModal.astro`) — Removed unconditional `outline: none` on `.modal-dialog`. Added `.modal-dialog:focus-visible` with `outline: 3px solid var(--brand-red)` so keyboard users see a focus indicator when the modal opens.
+
+**CSS token for castingIntro** (`src/components/ApplyPage.module.css`) — `rgba(220, 38, 38, 0.04)` replaced with `rgba(var(--brand-red-rgb), 0.04)` to stay in sync with the brand token.
+
+**Boundary-value geo tests** (`src/lib/leadAttribution.test.ts`) — New test case verifies -90/90 lat and -180/180 lng are accepted and preserved, guarding against future range-clamping regressions.
+
+**Stable URL-param tests** (`src/components/apply/useApplyForm.test.ts`) — Replaced `Object.defineProperty(window, "location", ...)` with `history.replaceState` in three URL-seeding tests to prevent brittle property-descriptor conflicts between runs.
+
+### Files affected
+
+- `src/components/apply/useApplyForm.ts`
+- `src/components/apply/useApplyForm.test.ts`
+- `src/components/ApplyPage.tsx`
+- `src/components/ApplyPage.module.css`
+- `src/components/NotifyModal.astro`
+- `src/lib/leadAttribution.test.ts`
+
+---
+
 ## feat(apply): casting intro, consent gate, instagram label, type field (2026-04-13)
 
 ### What changed

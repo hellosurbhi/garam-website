@@ -183,18 +183,20 @@ describe("useApplyForm", () => {
     expect(result.current.form.country).toBe("");
   });
 
-  it("handleCityInputChange clears city error", async () => {
+  it("handleCityInputChange clears city error without touching other errors", async () => {
     const { result } = renderHook(() => useApplyForm());
     await act(async () => {
       await result.current.handleSubmit(makeSubmitEvent());
     });
     expect(result.current.errors.city).toBe("Required");
+    expect(result.current.errors.name).toBe("Required");
     act(() =>
       result.current.handleCityInputChange({
         target: { value: "NYC" },
       } as React.ChangeEvent<HTMLInputElement>),
     );
     expect(result.current.errors.city).toBeUndefined();
+    expect(result.current.errors.name).toBe("Required");
   });
 
   /* ── handlePhotoChange ────────────────────────────────── */

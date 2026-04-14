@@ -1,5 +1,33 @@
 # Changelog
 
+## Code review fixes: part 2 (tests, tokens, events, tickets) (2026-04-13)
+
+### What changed
+
+**City error-clear test strengthened** (`src/components/apply/useApplyForm.test.ts`) — `handleCityInputChange clears city error` now also asserts `errors.name` stays "Required" before and after the call, proving the handler is surgical and does not wipe the whole error map.
+
+**Journal badge color token** (`src/pages/journal/index.astro`) — `.journal-card-badge` `color: white` replaced with `color: var(--white)`. CHANGELOG Phase 5 did this in masterclass.astro; journal/index was not in scope. No visual change.
+
+**Email test body assertions** (`test/notify-application.test.ts`) — The `email missing` and `email malformed` tests now assert `body.error === "Missing required fields"`, consistent with the `name missing` test and the actual API response.
+
+**`getEventDisplayStatus` helper** (`src/data/events.ts`) — New exported helper returns `"Sold out"` when `event.soldOut` is true, otherwise returns `event.tagline`. CHANGELOG Phase 3 added `soldOut` as a machine-readable flag distinct from `tagline`; both llms pages were not updated in that pass and only used `tagline`, silently dropping sold-out shows with no tagline text.
+
+**llms pages updated** (`src/pages/llms.txt.ts`, `src/pages/llms-full.txt.ts`) — Upcoming event status now calls `getEventDisplayStatus` instead of reading `tagline` directly.
+
+**Eventbrite outside-click close on `/tickets`** (`src/pages/tickets.astro`) — Added MutationObserver that wires an outside-click handler on the Eventbrite modal container once it appears in the DOM. `EventbriteWidgetInit.astro` has the same pattern but `tickets.astro` uses `is:inline define:vars` and cannot import that component, so the observer is added inline. Uses the same `dataset.listenerAttached` guard to prevent double-registration.
+
+### Files affected
+
+- `src/components/apply/useApplyForm.test.ts`
+- `src/pages/journal/index.astro`
+- `test/notify-application.test.ts`
+- `src/data/events.ts`
+- `src/pages/llms.txt.ts`
+- `src/pages/llms-full.txt.ts`
+- `src/pages/tickets.astro`
+
+---
+
 ## Code review fixes: upload, a11y, schema, CSS token, tests (2026-04-13)
 
 ### What changed

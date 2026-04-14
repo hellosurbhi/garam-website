@@ -107,15 +107,15 @@ export const POST: APIRoute = async ({ request }) => {
   const lat =
     typeof body.geoLatitude === "number"
       ? body.geoLatitude
-      : parseFloat(String(body.geoLatitude ?? ""));
-  if (isFinite(lat) && lat >= -90 && lat <= 90) {
+      : Number(String(body.geoLatitude ?? "").trim());
+  if (Number.isFinite(lat) && lat >= -90 && lat <= 90) {
     fields.geoLatitude = { doubleValue: lat };
   }
   const lng =
     typeof body.geoLongitude === "number"
       ? body.geoLongitude
-      : parseFloat(String(body.geoLongitude ?? ""));
-  if (isFinite(lng) && lng >= -180 && lng <= 180) {
+      : Number(String(body.geoLongitude ?? "").trim());
+  if (Number.isFinite(lng) && lng >= -180 && lng <= 180) {
     fields.geoLongitude = { doubleValue: lng };
   }
 

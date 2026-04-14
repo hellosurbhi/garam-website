@@ -45,7 +45,8 @@ const { events } = Astro.props;
         return hasWidget ? (
           <button
             type="button"
-            id={`eventbrite-widget-modal-trigger-${event.eventbriteId}`}
+            id={`eventbrite-widget-modal-trigger-home-shows-${event.eventbriteId}`}
+            data-eb-event-id={event.eventbriteId}
             class="show-card show-card--live"
             data-reveal
             data-ph-capture="cta_clicked"

@@ -1,5 +1,35 @@
 # Changelog
 
+## Code review fixes: part 3 (badge, press-feedback, soldOut, isPublished) (2026-04-13)
+
+### What changed
+
+**Journal badge font-size** (`src/pages/journal/index.astro`) — `.journal-card-badge` raised from 9px to 11px for improved readability. Previous value was below the project minimum for text inside interactive elements.
+
+**Animation-delay inline style removed** (`src/pages/journal/index.astro`) — `style={animation-delay: ...}` on `.journal-card` replaced with `data-index={i}` + 15 scoped CSS attribute-selector rules (`.journal-card[data-index="N"]`). Inline style props are banned by project rules.
+
+**:active press feedback on modal buttons** (`HomeShows.astro`, `LeadCaptureModal.astro`, `NotifyModal.astro`) — Added `transform: scale(0.97)` on `:active` and extended `transition` to include `transform 0.06s` on `.modal-submit` (all three files), `.lc-submit`, and `.modal-skip`. Required by the CLAUDE.md design rule that every button must have `:active` press feedback.
+
+**Sold-out detection unified** (`HomeShows.astro`, `links.astro`, `cities/[slug].astro`) — Replaced `tagline?.toLowerCase().includes("sold out")` with `event.soldOut ?? false` in three files. `tickets.astro` already used the boolean; these were the remaining outliers. Tagline parsing is fragile; `EventEntry.soldOut` is the canonical machine-readable field.
+
+**`isPublished` utility extracted** (`src/utils/date.ts` new, `src/data/journal/index.ts`, `src/pages/journal/index.astro`) — Identical UTC-normalized publish-date logic existed in both `journalPostsPublished` (data layer) and `isMasterclassPublished` (page layer). Consolidated into a single exported `isPublished(dateStr)` function in `src/utils/date.ts`. Both consumers now import the shared helper; local function removed.
+
+**termsAgreed test ambiguity fixed** (`src/components/apply/useApplyForm.test.ts`) — The `"validation requires termsAgreed"` test was missing an `email` field. Without it, `errors.email` would also be truthy after submit, making the assertion that `submitted === false` ambiguous. Added `set("email", "valid@example.com")` so the only missing required field is `termsAgreed`.
+
+### Files affected
+
+- `src/pages/journal/index.astro`
+- `src/components/home/HomeShows.astro`
+- `src/components/LeadCaptureModal.astro`
+- `src/components/NotifyModal.astro`
+- `src/utils/date.ts` (new)
+- `src/data/journal/index.ts`
+- `src/pages/links.astro`
+- `src/pages/cities/[slug].astro`
+- `src/components/apply/useApplyForm.test.ts`
+
+---
+
 ## Code review fixes: part 2 (tests, tokens, events, tickets) (2026-04-13)
 
 ### What changed

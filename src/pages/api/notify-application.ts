@@ -1,5 +1,6 @@
 import type { APIRoute } from "astro";
 import { Resend } from "resend";
+import { validateEmail } from "@/utils/validateEmail";
 
 export const prerender = false;
 
@@ -11,6 +12,7 @@ interface ApplicationNotification {
   city: string;
   state: string;
   country: string;
+  email: string;
   instagram: string;
   community: string;
   income: string;
@@ -41,6 +43,12 @@ function buildEmailHtml(data: ApplicationNotification): string {
     ["Gender", escapeHtml(data.gender)],
     ["Orientation", escapeHtml(data.orientation)],
     ["Location", location],
+    [
+      "Email",
+      data.email
+        ? `<a href="mailto:${escapeHtml(data.email)}" style="color:#DC2626;">${escapeHtml(data.email)}</a>`
+        : "",
+    ],
     [
       "Instagram",
       `<a href="https://instagram.com/${escapeHtml(data.instagram)}" style="color:#DC2626;">@${escapeHtml(data.instagram)}</a>`,
@@ -105,7 +113,12 @@ export const POST: APIRoute = async ({ request }) => {
   }
 
   const body = (await request.json()) as ApplicationNotification;
-  if (!body.name || !body.instagram) {
+  if (
+    !body.name ||
+    !body.instagram ||
+    !body.email ||
+    validateEmail(body.email)
+  ) {
     return new Response(JSON.stringify({ error: "Missing required fields" }), {
       status: 400,
       headers: { "Content-Type": "application/json" },

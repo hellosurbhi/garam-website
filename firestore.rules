@@ -4,7 +4,7 @@ service cloud.firestore {
 
     function validLead() {
       let d = request.resource.data;
-      return d.keys().hasOnly(['email', 'city', 'state', 'country', 'phone', 'source', 'sourcePage', 'landingPage', 'referrerHost', 'utmSource', 'utmMedium', 'utmCampaign', 'utmContent', 'utmTerm', 'posthogDistinctId', 'sourceCitySlug', 'createdAt'])
+      return d.keys().hasOnly(['email', 'city', 'state', 'country', 'phone', 'source', 'sourcePage', 'landingPage', 'referrerHost', 'utmSource', 'utmMedium', 'utmCampaign', 'utmContent', 'utmTerm', 'posthogDistinctId', 'sourceCitySlug', 'createdAt', 'geoCity', 'geoRegion', 'geoCountry', 'geoLatitude', 'geoLongitude', 'geoTimezone'])
         && d.keys().hasAll(['email', 'source', 'sourcePage', 'createdAt'])
         && d.email is string && d.email.size() > 0 && d.email.size() <= 320
         && d.source is string && d.source.size() > 0 && d.source.size() <= 50
@@ -22,7 +22,13 @@ service cloud.firestore {
         && (!('utmContent' in d.keys()) || (d.utmContent is string && d.utmContent.size() > 0 && d.utmContent.size() <= 150))
         && (!('utmTerm' in d.keys()) || (d.utmTerm is string && d.utmTerm.size() > 0 && d.utmTerm.size() <= 150))
         && (!('posthogDistinctId' in d.keys()) || (d.posthogDistinctId is string && d.posthogDistinctId.size() > 0 && d.posthogDistinctId.size() <= 200))
-        && (!('sourceCitySlug' in d.keys()) || (d.sourceCitySlug is string && d.sourceCitySlug.size() > 0 && d.sourceCitySlug.size() <= 100));
+        && (!('sourceCitySlug' in d.keys()) || (d.sourceCitySlug is string && d.sourceCitySlug.size() > 0 && d.sourceCitySlug.size() <= 100))
+        && (!('geoCity' in d.keys()) || (d.geoCity is string && d.geoCity.size() > 0 && d.geoCity.size() <= 100))
+        && (!('geoRegion' in d.keys()) || (d.geoRegion is string && d.geoRegion.size() > 0 && d.geoRegion.size() <= 100))
+        && (!('geoCountry' in d.keys()) || (d.geoCountry is string && d.geoCountry.size() > 0 && d.geoCountry.size() <= 100))
+        && (!('geoLatitude' in d.keys()) || (d.geoLatitude is number && d.geoLatitude >= -90 && d.geoLatitude <= 90))
+        && (!('geoLongitude' in d.keys()) || (d.geoLongitude is number && d.geoLongitude >= -180 && d.geoLongitude <= 180))
+        && (!('geoTimezone' in d.keys()) || (d.geoTimezone is string && d.geoTimezone.size() > 0 && d.geoTimezone.size() <= 100));
     }
 
     function validPhoneUpdate() {

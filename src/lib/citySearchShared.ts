@@ -1,3 +1,4 @@
+/** A single option in the city autocomplete, pre-normalised for fast search scoring. */
 export interface CitySearchOption {
   value: string;
   label: string;
@@ -9,6 +10,10 @@ export interface CitySearchOption {
   boost: number;
 }
 
+/**
+ * Strip diacritics, lowercase, and collapse non-alphanumeric characters to single spaces.
+ * Used to produce consistent search keys for city matching.
+ */
 export function normalize(value: string): string {
   return value
     .normalize("NFKD")
@@ -18,6 +23,10 @@ export function normalize(value: string): string {
     .trim();
 }
 
+/**
+ * Find the first `CitySearchOption` whose normalised label or city matches `value`.
+ * Returns `null` if no match is found or if `value` normalises to an empty string.
+ */
 export function resolveCityOption(
   value: string,
   options: CitySearchOption[],

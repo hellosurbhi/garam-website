@@ -6,14 +6,26 @@ import { events, allEvents } from "@/data/events";
 import { isEventPast } from "@/utils/eventDate";
 import { buildEventSchemas } from "@/utils/eventSchema";
 import LeadCaptureModal from "@/components/LeadCaptureModal.astro";
+import { buildTicketUrl } from "@/utils/eventUrl";
+import { PAGES } from "@/data/copy";
 
 const TITLE = "Tickets & Upcoming Shows";
 const DESC =
-  "Get tickets to upcoming Garam Masala Dating shows. NYC's #1 live South Asian dating show and singles mixer, now in LA, SF, San Diego, and more.";
+  "Get tickets to Garam Masala Dating shows in New York and beyond. NYC's #1 live desi dating show and South Asian singles mixer. Now touring LA, SF, and San Diego.";
 
 const upcomingEvents = allEvents.filter(
   (e) => !isEventPast(e.date) && !e.hidden,
 );
+
+const widgetEvents = upcomingEvents
+  .filter((e) => e.eventbriteId && !e.soldOut)
+  .map((e) => ({
+    eventId: e.eventbriteId!,
+    triggerId: `eventbrite-widget-modal-trigger-${e.eventbriteId}`,
+    promoCode: e.promoCode ?? null,
+    fallbackUrl: buildTicketUrl(e.url, "tickets", "listing"),
+    city: e.city,
+  }));
 
 const breadcrumbJsonLd = buildBreadcrumbJsonLd([
   { name: "Home", url: "https://garammasaladating.com/" },
@@ -34,7 +46,7 @@ const eventSeriesJsonLd = JSON.stringify({
   "@id": "https://garammasaladating.com/#event-series",
   name: "Garam Masala Dating",
   description:
-    "NYC's #1 recurring live South Asian comedy dating show. Two real singles go on a blind date in front of a 250-person audience. Bi-weekly in Manhattan at Top Secret Comedy Club.",
+    "NYC's #1 recurring live desi comedy dating show. Two real singles go on a blind date in front of a 250-person audience. Bi-weekly in Manhattan at Top Secret Comedy Club.",
   url: "https://garammasaladating.com",
   startDate: "2022",
   organizer: {
@@ -87,10 +99,7 @@ const eventSeriesJsonLd = JSON.stringify({
       <div class="tickets-header">
         <p class="tickets-eyebrow">Tickets</p>
         <h1 class="tickets-h1">Upcoming Shows</h1>
-        <p class="tickets-intro">
-          Garam Masala Dating is the #1 live South Asian dating show and singles
-          mixer. Grab tickets on Eventbrite.
-        </p>
+        <p class="tickets-intro">{PAGES.tickets.intro}</p>
         <p class="tickets-proof">
           40+ shows sold out · 2,000+ audience members
         </p>
@@ -105,16 +114,58 @@ const eventSeriesJsonLd = JSON.stringify({
           <div class="tickets-list">
             {upcomingEvents.map((event, i) => {
               const isLive = event.url && event.url !== "#";
-              const isSoldOut = event.tagline
-                ?.toLowerCase()
-                .includes("sold out");
-              return isLive ? (
+              const isSoldOut = event.soldOut ?? false;
+              const hasWidget =
+                isLive && !isSoldOut && Boolean(event.eventbriteId);
+              return hasWidget ? (
                 <a
-                  href={event.url}
+                  href={buildTicketUrl(event.url, "tickets", "listing")}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  id={`eventbrite-widget-modal-trigger-${event.eventbriteId}`}
+                  class="ticket-card ticket-card--live ticket-card--widget"
+                  style={`--stagger-delay: ${0.1 + i * 0.06}s`}
+                  data-ph-capture="cta_clicked"
+                  data-ph-cta="get_tickets"
+                  data-ph-section="tickets"
+                  data-ph-city={event.city}
+                  data-ph-event-date={event.date}
+                  data-ph-price={event.price}
+                >
+                  <div class="ticket-card__info">
+                    <span class="ticket-card__date">{event.date}</span>
+                    <span class="ticket-card__city">{event.city}</span>
+                    {event.tagline && (
+                      <span class="ticket-card__tagline">{event.tagline}</span>
+                    )}
+                  </div>
+                  <span class="ticket-card__cta">
+                    Grab My Spot
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      width="14"
+                      height="14"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      stroke-width="2"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      aria-hidden="true"
+                      focusable="false"
+                    >
+                      <path d="M5 12h14" />
+                      <path d="m12 5 7 7-7 7" />
+                    </svg>
+                  </span>
+                </a>
+              ) : isLive ? (
+                <a
+                  href={buildTicketUrl(event.url, "tickets", "listing")}
                   target="_blank"
                   rel="noopener noreferrer"
                   class={`ticket-card ticket-card--live${isSoldOut ? " ticket-card--soldout" : ""}`}
-                  style={`animation-delay: ${0.1 + i * 0.06}s`}
+                  style={`--stagger-delay: ${0.1 + i * 0.06}s`}
                   data-ph-capture="cta_clicked"
                   data-ph-cta="get_tickets"
                   data-ph-section="tickets"
@@ -132,7 +183,7 @@ const eventSeriesJsonLd = JSON.stringify({
                   <span
                     class={`ticket-card__cta${isSoldOut ? " ticket-card__cta--soldout" : ""}`}
                   >
-                    {isSoldOut ? "Sold Out" : "Get Tickets"}
+                    {isSoldOut ? "Sold Out" : "Grab My Spot"}
                     {!isSoldOut && (
                       <svg
                         xmlns="http://www.w3.org/2000/svg"
@@ -144,6 +195,8 @@ const eventSeriesJsonLd = JSON.stringify({
                         stroke-width="2"
                         stroke-linecap="round"
                         stroke-linejoin="round"
+                        aria-hidden="true"
+                        focusable="false"
                       >
                         <path d="M5 12h14" />
                         <path d="m12 5 7 7-7 7" />
@@ -155,7 +208,7 @@ const eventSeriesJsonLd = JSON.stringify({
                 <button
                   type="button"
                   class="ticket-card ticket-card--tba"
-                  style={`animation-delay: ${0.1 + i * 0.06}s`}
+                  style={`--stagger-delay: ${0.1 + i * 0.06}s`}
                   data-notify-city={event.city}
                   data-notify-city-slug={event.citySlug}
                   data-ph-capture="cta_clicked"
@@ -254,6 +307,97 @@ const eventSeriesJsonLd = JSON.stringify({
       </div>
     </div>
   </main>
+
+  <script is:inline define:vars={{ widgetEvents }}>
+    (function () {
+      if (!widgetEvents.length) return;
+
+      var rootStyle = getComputedStyle(document.documentElement);
+      var brandColor =
+        rootStyle.getPropertyValue("--brand-red").trim() || "#DC2626";
+      var fontColor =
+        rootStyle.getPropertyValue("--charcoal").trim() || "#1A1A1A";
+      var bgColor = rootStyle.getPropertyValue("--white").trim() || "#FFFFFF";
+
+      function initWidgets() {
+        widgetEvents.forEach(function (ev) {
+          var config = {
+            widgetType: "checkout",
+            eventId: ev.eventId,
+            modal: true,
+            modalTriggerElementId: ev.triggerId,
+            themeSettings: {
+              brandColor: brandColor,
+              fontColor: fontColor,
+              background: bgColor,
+            },
+            onOrderComplete: function () {
+              if (window.posthog) {
+                window.posthog.capture("order_complete", {
+                  event_id: ev.eventId,
+                  city: ev.city,
+                });
+              }
+            },
+          };
+          if (ev.promoCode) {
+            config.promoCode = ev.promoCode;
+          }
+          try {
+            window.EBWidgets.createWidget(config);
+            // Widget bound successfully. Prevent the anchor's native navigation so
+            // only the modal fires. If createWidget threw, the anchor href + target="_blank"
+            // provide the native fallback without any preventDefault.
+            var trigger = document.getElementById(ev.triggerId);
+            if (trigger) {
+              trigger.addEventListener("click", function (e) {
+                e.preventDefault();
+              });
+            }
+          } catch (_) {
+            // Widget init failed; anchor href + target="_blank" provide native fallback
+          }
+        });
+      }
+
+      var script = document.createElement("script");
+      script.src = "https://www.eventbrite.com/static/widgets/eb_widgets.js";
+      script.async = true;
+      script.onload = initWidgets;
+      document.head.appendChild(script);
+
+      // Close the Eventbrite modal when clicking outside it.
+      // tickets.astro uses is:inline define:vars and cannot import EventbriteWidgetInit.astro,
+      // so the MutationObserver is duplicated here. dataset.listenerAttached guards against
+      // double-registration if the observer fires more than once before disconnecting.
+      var modalObserverTimeout;
+      var modalObserver = new MutationObserver(function () {
+        var ebStructure = document.querySelector("div.eds-structure_main");
+        if (!ebStructure) return;
+        if (!ebStructure.dataset.listenerAttached) {
+          ebStructure.dataset.listenerAttached = "1";
+          ebStructure.addEventListener("click", function (e) {
+            if (!e.target.closest(".eds-modal")) {
+              var closeBtn = document.querySelector(
+                ".eds-modal__close-button button",
+              );
+              if (closeBtn) closeBtn.click();
+            }
+          });
+        }
+        clearTimeout(modalObserverTimeout);
+        modalObserver.disconnect();
+      });
+      modalObserver.observe(document.body, { childList: true, subtree: true });
+      modalObserverTimeout = setTimeout(function () {
+        modalObserver.disconnect();
+      }, 30000);
+      window.addEventListener("beforeunload", function () {
+        clearTimeout(modalObserverTimeout);
+        modalObserver.disconnect();
+      });
+    })();
+  </script>
 </BaseLayout>
 
 <style>
@@ -361,6 +505,7 @@ const eventSeriesJsonLd = JSON.stringify({
     border: 1px solid;
     text-decoration: none;
     animation: ticketsFadeIn 0.5s ease-out both;
+    animation-delay: var(--stagger-delay, 0.1s);
     transition:
       border-color 0.15s,
       background 0.15s;
@@ -382,6 +527,13 @@ const eventSeriesJsonLd = JSON.stringify({
     cursor: pointer;
     text-align: left;
     font: inherit;
+  }
+
+  .ticket-card--widget {
+    cursor: pointer;
+    text-align: left;
+    font: inherit;
+    width: 100%;
   }
 
   .ticket-card--tba:hover {

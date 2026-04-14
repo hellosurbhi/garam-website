@@ -1,5 +1,6 @@
+/** Attribution data collected from the visitor's session and stored on each lead submission. */
 export interface LeadAttribution {
-  [key: string]: string | undefined;
+  [key: string]: string | number | undefined;
   source: string;
   sourcePage: string;
   landingPage: string;
@@ -14,8 +15,8 @@ export interface LeadAttribution {
   geoCity?: string;
   geoRegion?: string;
   geoCountry?: string;
-  geoLatitude?: string;
-  geoLongitude?: string;
+  geoLatitude?: number;
+  geoLongitude?: number;
   geoTimezone?: string;
 }
 
@@ -91,6 +92,10 @@ function bootstrapGeoData() {
     .catch(console.error);
 }
 
+/**
+ * Capture the visitor's landing page, referrer, UTM params, and geo data into sessionStorage.
+ * Safe to call multiple times; each value is written only once per session (first-touch).
+ */
 export function bootstrapLeadAttribution() {
   setIfMissing(LANDING_PAGE_KEY, getPathname());
   setIfMissing(REFERRER_HOST_KEY, getReferrerHost());
@@ -105,6 +110,13 @@ export function bootstrapLeadAttribution() {
   bootstrapGeoData();
 }
 
+/**
+ * Assemble a full `LeadAttribution` object from sessionStorage for attachment to a Firestore submission.
+ * Calls `bootstrapLeadAttribution` internally so it is safe to call without a prior bootstrap.
+ *
+ * @param params.source Identifies which form or CTA triggered the lead (e.g. "apply-page").
+ * @param params.sourceCitySlug Optional city slug when the lead originated from a city landing page.
+ */
 export function buildLeadAttribution(params: {
   source: string;
   sourceCitySlug?: string;
@@ -154,11 +166,18 @@ export function buildLeadAttribution(params: {
   const geoCountry = sessionStorage.getItem(GEO_COUNTRY_KEY) ?? undefined;
   if (geoCountry) attribution.geoCountry = geoCountry;
 
-  const geoLatitude = sessionStorage.getItem(GEO_LATITUDE_KEY) ?? undefined;
-  if (geoLatitude) attribution.geoLatitude = geoLatitude;
+  const latStr = sessionStorage.getItem(GEO_LATITUDE_KEY);
+  if (latStr) {
+    const lat = parseFloat(latStr);
+    if (isFinite(lat) && lat >= -90 && lat <= 90) attribution.geoLatitude = lat;
+  }
 
-  const geoLongitude = sessionStorage.getItem(GEO_LONGITUDE_KEY) ?? undefined;
-  if (geoLongitude) attribution.geoLongitude = geoLongitude;
+  const lngStr = sessionStorage.getItem(GEO_LONGITUDE_KEY);
+  if (lngStr) {
+    const lng = parseFloat(lngStr);
+    if (isFinite(lng) && lng >= -180 && lng <= 180)
+      attribution.geoLongitude = lng;
+  }
 
   const geoTimezone = sessionStorage.getItem(GEO_TIMEZONE_KEY) ?? undefined;
   if (geoTimezone) attribution.geoTimezone = geoTimezone;

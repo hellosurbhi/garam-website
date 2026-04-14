@@ -1,6 +1,7 @@
 ---
 import type { EventEntry } from "@/data/events";
 import NotifyModal from "@/components/NotifyModal.astro";
+import { buildTicketUrl } from "@/utils/eventUrl";
 import { parseMonth, parseDay } from "@/utils/eventDate";
 
 interface Props {
@@ -22,21 +23,10 @@ const { events } = Astro.props;
     {
       events.map((event) => {
         const isLive = Boolean(event.url);
-        const isSoldOut = event.tagline?.toLowerCase().includes("sold out");
-        return isLive ? (
-          <a
-            href={event.url}
-            target="_blank"
-            rel="noopener noreferrer"
-            class="show-card show-card--live"
-            data-reveal
-            data-ph-capture="cta_clicked"
-            data-ph-cta="get_tickets"
-            data-ph-section="shows"
-            data-ph-city={event.city}
-            data-ph-event-date={event.date}
-            data-ph-price={event.price}
-          >
+        const isSoldOut = event.soldOut ?? false;
+        const hasWidget = isLive && Boolean(event.eventbriteId) && !isSoldOut;
+        const cardInner = (
+          <>
             <div class="show-date-block">
               <div class="month">{parseMonth(event.date)}</div>
               <div class="day">{parseDay(event.date)}</div>
@@ -48,8 +38,44 @@ const { events } = Astro.props;
             <span
               class={`ticket-label${isSoldOut ? " ticket-label--soldout" : ""}`}
             >
-              {isSoldOut ? "Sold Out" : "Get Tickets"}
+              {isSoldOut ? "Sold Out" : "Grab My Spot"}
             </span>
+          </>
+        );
+        return hasWidget ? (
+          <button
+            type="button"
+            id={`eventbrite-widget-modal-trigger-home-shows-${event.eventbriteId}`}
+            data-eb-event-id={event.eventbriteId}
+            class="show-card show-card--live"
+            data-reveal
+            data-ph-capture="cta_clicked"
+            data-ph-cta="get_tickets"
+            data-ph-section="shows"
+            data-ph-city={event.city}
+            data-ph-event-date={event.date}
+            data-ph-price={event.price}
+            data-eb-url={buildTicketUrl(event.url, "home", "shows")}
+            data-promo-code={event.promoCode ?? ""}
+            data-city={event.city}
+          >
+            {cardInner}
+          </button>
+        ) : isLive ? (
+          <a
+            href={buildTicketUrl(event.url, "home", "shows")}
+            target="_blank"
+            rel="noopener noreferrer"
+            class="show-card show-card--live"
+            data-reveal
+            data-ph-capture="cta_clicked"
+            data-ph-cta="get_tickets"
+            data-ph-section="shows"
+            data-ph-city={event.city}
+            data-ph-event-date={event.date}
+            data-ph-price={event.price}
+          >
+            {cardInner}
           </a>
         ) : (
           <button
@@ -127,7 +153,7 @@ const { events } = Astro.props;
             type="text"
             id="city-name"
             list="city-name-suggestions"
-            placeholder="Start typing a city"
+            placeholder="Your city"
             aria-label="City name"
             autocomplete="off"
             required
@@ -317,7 +343,7 @@ const { events } = Astro.props;
           ).value;
           const db = getFirebaseDb();
           const attribution = buildLeadAttribution({ source: "request-city" });
-          const payload: Record<string, string> = {
+          const payload: Record<string, string | number | undefined> = {
             email,
             ...attribution,
             createdAt: new Date().toISOString(),
@@ -501,6 +527,7 @@ const { events } = Astro.props;
     font-style: italic;
     transition: border-color 0.2s;
     padding: 0;
+    cursor: pointer;
   }
   .request-city button:hover {
     border-color: var(--electric-yellow);
@@ -585,7 +612,9 @@ const { events } = Astro.props;
     border: none;
     color: var(--muted);
     cursor: pointer;
-    padding: 4px;
+    padding: 12px;
+    min-width: var(--touch-target);
+    min-height: var(--touch-target);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -644,12 +673,17 @@ const { events } = Astro.props;
     text-transform: uppercase;
     letter-spacing: 1px;
     cursor: pointer;
-    transition: background 0.2s;
+    transition:
+      background 0.2s,
+      transform 0.06s;
     min-height: var(--touch-target);
     width: 100%;
   }
   .modal-submit:hover {
     background: var(--brand-red-dark);
+  }
+  .modal-submit:active {
+    transform: scale(0.97);
   }
   .modal-success {
     text-align: center;

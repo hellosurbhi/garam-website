@@ -6,7 +6,7 @@ import {
   TESTIMONIALS,
   EXPERIENCE_STEPS,
 } from "@/data/copy";
-import { events } from "@/data/events";
+import { events, getEventDisplayStatus } from "@/data/events";
 import { pressItems } from "@/data/press";
 import { SOCIAL_URLS, CREATOR_URLS } from "@/data/socials";
 import { journalPostsPublished } from "@/data/journal";
@@ -86,7 +86,8 @@ export const GET: APIRoute = () => {
             if (e.startTime)
               lines.push(`Time: ${e.startTime} to ${e.endTime ?? "22:00"} ET`);
             if (e.price) lines.push(`Tickets: $${e.price}`);
-            if (e.tagline) lines.push(`Status: ${e.tagline}`);
+            const status = getEventDisplayStatus(e);
+            if (status) lines.push(`Status: ${status}`);
             lines.push(`Ticket URL: ${e.url}`);
             return lines.join("\n");
           })
@@ -181,7 +182,7 @@ ${experienceSection}
 
 Surbhi is a New York-based stand-up comedian and the creative force behind Garam Masala Dating. She created the show in 2022 after noticing something missing in the South Asian comedy and dating scene: a space where desi singles could meet in real life, in a room full of energy, without the awkwardness of apps or the pressure of family setups.
 
-What started as a one-off experiment in a downtown bar is now NYC's #1 live South Asian dating show. The show sells out 250-seat venues weekly in Manhattan, runs monthly in Jersey City, and has expanded to Los Angeles, San Francisco, and San Diego. Surbhi has performed at comedy venues across the US and UK, and has matched three real couples through the show: and counting.
+What started as a one-off experiment in a downtown bar is now NYC's #1 live desi dating show. The show sells out 250-seat venues weekly in Manhattan, runs monthly in Jersey City, and has expanded to Los Angeles, San Francisco, and San Diego. Surbhi has performed at comedy venues across the US and UK, and has matched three real couples through the show, and counting.
 
 She handles everything from casting and producing to hosting the show itself. Her ability to make strangers comfortable on stage in front of hundreds of people is the reason contestants keep coming back.
 

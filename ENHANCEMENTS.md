@@ -73,6 +73,66 @@ Eventbrite URLs already include `aff=garamsite`. Eventbrite's own analytics dash
 
 Eventbrite supports a [conversion tracking pixel](https://www.eventbrite.com/support/articles/en_US/How_To/how-to-use-conversion-tracking) for checkout page tracking. Limited — only shows someone started checkout from your site, not full purchase details.
 
+### Twitter/X pixel: move from GTM-only to direct code
+
+**Priority:** Medium
+**Status:** Needs implementation
+
+The Twitter/X pixel currently fires only through GTM (`GTM-KQCBBL2W`). Chrome's Enhanced Tracking Protection blocks `static.ads-twitter.com` client-side regardless of whether the script tag comes from GTM or direct code, but moving it to a dedicated `twitter-pixel.astro` component (same deferred `requestIdleCallback` pattern as `meta-pixel.astro`) gives:
+
+- Reliable PageView on every page load independent of GTM initialization timing
+- A `twq('event', 'Purchase', {...})` call in the Eventbrite `onOrderComplete` callback in `tickets.astro` (hook already exists)
+- Source of truth in version control rather than GTM UI
+
+**Files to touch:**
+
+- `src/components/twitter-pixel.astro` — new component, same shape as `meta-pixel.astro`
+- `src/layouts/BaseLayout.astro` — import and render alongside PostHog/GTM/Meta
+- `src/pages/tickets.astro` — add `twq('event', 'Purchase', { value, currency, event_id })` in `onOrderComplete`
+
+Requires: Twitter Ads pixel ID (found in Twitter Ads dashboard under Tools > Conversion Tracking).
+
+### Twitter/X Conversions API (server-side pixel)
+
+**Priority:** High
+**Status:** Needs implementation
+
+Client-side Twitter pixel is blocked by Chrome Enhanced Tracking Protection, Brave, uBlock Origin, and any DNS-level blocker (Pi-hole, NextDNS). The only reliable way to capture purchase conversions is server-side via the [Twitter Ads Conversions API](https://developer.twitter.com/en/docs/twitter-ads-api/measurement/api-reference/conversions).
+
+Same concept as Meta's CAPI — send events directly from your server to Twitter's API, bypassing the browser entirely.
+
+**Implementation:**
+
+1. Create a Vercel serverless function at `api/twitter-conversion.ts`
+2. On Eventbrite `order.placed` webhook (already planned above), call the Twitter Conversions API with the purchase event
+3. Pass `event_id` for deduplication against the client-side pixel so Twitter doesn't double-count
+
+```typescript
+// api/twitter-conversion.ts
+export async function POST(req: Request) {
+  const { eventId, email, value } = await req.json();
+  await fetch("https://ads-api.twitter.com/12/measurement/conversions", {
+    method: "POST",
+    headers: {
+      Authorization: `Bearer ${process.env.TWITTER_ADS_BEARER_TOKEN}`,
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      conversions: [
+        {
+          conversion_time: new Date().toISOString(),
+          event_id: eventId,
+          identifiers: [{ hashed_email: sha256(email.toLowerCase().trim()) }],
+          value: { num: value, currency_code: "USD" },
+        },
+      ],
+    }),
+  });
+}
+```
+
+Requires: Twitter Ads API access token, pixel ID, and event type IDs from Twitter Ads dashboard.
+
 ---
 
 ## Lead Attribution Follow-ups (2026-04-10)

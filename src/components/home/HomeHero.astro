@@ -1,5 +1,6 @@
 ---
 import type { EventEntry } from "@/data/events";
+import { buildTicketUrl } from "@/utils/eventUrl";
 
 interface Props {
   ticketsUrl: string;
@@ -32,7 +33,7 @@ function getHeroCity(city: string): string {
   <canvas id="glCanvas" class="hero-shader" aria-hidden="true"></canvas>
 
   <div class="hero-content">
-    <div class="hero-eyebrow">NYC's #1 Live South Asian Dating Show</div>
+    <div class="hero-eyebrow">NYC's #1 Live Desi Dating Show</div>
     <h1>
       Garam<br />
       Mas<em>ala</em><br />
@@ -44,33 +45,58 @@ function getHeroCity(city: string): string {
     </p>
 
     {
-      heroEvents.map((event) => (
-        <a
-          href={event.url}
-          target="_blank"
-          rel="noopener noreferrer"
-          class="next-show-pill"
-          hidden
-          data-iso-date={event.isoDate}
-          data-start-time={event.startTime ?? "20:00"}
-          data-end-time={event.endTime ?? "22:00"}
-        >
-          <span class="next-show-pill-date">
-            {event.date.split(" ")[0]} {event.date.split(" ")[1]}
-          </span>
-          <span class="next-show-pill-sep" aria-hidden="true">
-            ·
-          </span>
-          <span>{getHeroCity(event.city)}</span>
-          <span class="next-show-pill-sep" aria-hidden="true">
-            ·
-          </span>
-          <span>{formatTime(event.startTime ?? "20:00")}</span>
-          <span class="next-show-pill-cta" aria-hidden="true">
-            →
-          </span>
-        </a>
-      ))
+      heroEvents.map((event) => {
+        const isSoldOut = event.soldOut ?? false;
+        const pillInner = (
+          <>
+            <span class="next-show-pill-date">
+              {event.date.split(" ")[0]} {event.date.split(" ")[1]}
+            </span>
+            <span class="next-show-pill-sep" aria-hidden="true">
+              ·
+            </span>
+            <span>{getHeroCity(event.city)}</span>
+            <span class="next-show-pill-sep" aria-hidden="true">
+              ·
+            </span>
+            <span>{formatTime(event.startTime ?? "20:00")}</span>
+            <span class="next-show-pill-cta" aria-hidden="true">
+              →
+            </span>
+          </>
+        );
+        return event.eventbriteId && !isSoldOut ? (
+          <a
+            href={buildTicketUrl(event.url, "home", "hero")}
+            target="_blank"
+            rel="noopener noreferrer"
+            id={`eventbrite-widget-modal-trigger-${event.eventbriteId}`}
+            data-eb-event-id={event.eventbriteId}
+            class="next-show-pill"
+            hidden
+            data-iso-date={event.isoDate}
+            data-start-time={event.startTime ?? "20:00"}
+            data-end-time={event.endTime ?? "22:00"}
+            data-promo-code={event.promoCode ?? ""}
+            data-city={event.city}
+          >
+            {pillInner}
+          </a>
+        ) : (
+          <a
+            href={buildTicketUrl(event.url, "home", "hero")}
+            target="_blank"
+            rel="noopener noreferrer"
+            class="next-show-pill"
+            hidden
+            data-iso-date={event.isoDate}
+            data-start-time={event.startTime ?? "20:00"}
+            data-end-time={event.endTime ?? "22:00"}
+          >
+            {pillInner}
+          </a>
+        );
+      })
     }
 
     <div class="hero-ctas">
@@ -79,7 +105,7 @@ function getHeroCity(city: string): string {
         class="btn btn-hot"
         data-ph-capture="cta_clicked"
         data-ph-cta="get_tickets"
-        data-ph-section="hero">Get Tickets</a
+        data-ph-section="hero">Grab My Spot</a
       >
       <a
         href="/apply"
@@ -283,9 +309,11 @@ function getHeroCity(city: string): string {
     display: inline-flex;
     align-items: center;
     gap: 8px;
-    background: rgba(220, 38, 38, 0.08);
+    appearance: none;
+    background: rgba(var(--brand-red-rgb), 0.08);
     backdrop-filter: blur(8px);
     -webkit-backdrop-filter: blur(8px);
+    border: 1px solid rgba(var(--brand-red-rgb), 0.2);
     color: var(--charcoal);
     font-family: var(--font-body), sans-serif;
     font-size: 13px;
@@ -294,6 +322,7 @@ function getHeroCity(city: string): string {
     border-radius: 50px;
     text-decoration: none;
     margin-bottom: 20px;
+    cursor: pointer;
     transition:
       background 0.2s,
       border-color 0.2s;
@@ -301,8 +330,8 @@ function getHeroCity(city: string): string {
     max-width: 100%;
   }
   .next-show-pill:hover {
-    background: rgba(220, 38, 38, 0.14);
-    border-color: rgba(220, 38, 38, 0.35);
+    background: rgba(var(--brand-red-rgb), 0.14);
+    border-color: rgba(var(--brand-red-rgb), 0.35);
   }
   .next-show-pill-date {
     color: var(--brand-red);

@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import styles from "./ContestantPrepPage.module.css";
+import Skeleton from "./ui/Skeleton";
 
 /* ─── Session helpers ──────────────────────────────────────────── */
 
@@ -30,7 +31,7 @@ function saveSession(token: string, expiresAt: number) {
 function PrepLoading() {
   return (
     <div className={styles.loadingWrapper}>
-      <div className={styles.spinner} />
+      <Skeleton count={4} />
     </div>
   );
 }

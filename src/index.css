@@ -84,6 +84,12 @@
   --text-tertiary: #777;
   --cream-warm: #fff0e2;
   --off-white-rgb: 255, 248, 240;
+  --white: #ffffff;
+  --white-rgb: 255, 255, 255;
+  --gray-light: #999;
+  --gray-lighter: #bbb;
+  --gray-mid: #888;
+  --black-rgb: 0, 0, 0;
 
   /* apply form palette */
   --apply-brown: #3d3532;

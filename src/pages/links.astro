@@ -5,6 +5,8 @@ import { isEventPast } from "@/utils/eventDate";
 import { pressItems } from "@/data/press";
 import { SOCIAL_URLS } from "@/data/socials";
 import { buildBreadcrumbJsonLd } from "@/utils/breadcrumbs";
+import { buildTicketUrl } from "@/utils/eventUrl";
+import { PAGES } from "@/data/copy";
 
 const TITLE = "Tickets, Shows & More";
 const DESC =
@@ -21,6 +23,7 @@ const breadcrumbJsonLd = buildBreadcrumbJsonLd([
 
 import { ICON_SVGS, SOCIAL_ICON_SVGS, type IconName } from "@/data/icons";
 import LeadCaptureModal from "@/components/LeadCaptureModal.astro";
+import EventbriteWidgetInit from "@/components/EventbriteWidgetInit.astro";
 
 function iconSvg(name: IconName, isPrimary?: boolean): string {
   const cls = isPrimary ? "icon-primary" : "icon-glass";
@@ -40,28 +43,22 @@ interface LinkDef {
 
 const links: LinkDef[] = [
   {
+    label: "Upcoming Shows & Tickets",
+    dialogTrigger: "events-trigger",
+    isPrimary: true,
+    icon: "ticket",
+  },
+  {
     label: "Get on the List",
     dialogTrigger: "links-spice-trigger",
-    isPrimary: true,
     icon: "mail",
   },
   { label: "Apply to Be on the Show", href: "/apply", icon: "heart" },
-  {
-    label: "Short form content @ Instagram",
-    href: SOCIAL_URLS.instagram,
-    external: true,
-    icon: "instagram",
-  },
   {
     label: "Full episodes @ YouTube",
     href: SOCIAL_URLS.youtube,
     external: true,
     icon: "youtube",
-  },
-  {
-    label: "Upcoming Shows & Tickets",
-    dialogTrigger: "events-trigger",
-    icon: "ticket",
   },
   { label: "As Seen In", dialogTrigger: "press-trigger", icon: "mic" },
   {
@@ -102,9 +99,7 @@ const reversedPress = [...pressItems].reverse();
     <div class="container">
       {/* Header */}
       <div class="header-wrap">
-        <h1 class="subtitle">
-          NYC&apos;s hottest live South Asian dating show&nbsp;🌶️
-        </h1>
+        <h1 class="subtitle">{PAGES.links.subtitle}</h1>
         <div class="divider"></div>
       </div>
 
@@ -126,7 +121,7 @@ const reversedPress = [...pressItems].reverse();
                       : `animation: fadeUp 0.5s ease-out ${delay}s both`
                   }
                   data-ph-capture={link.isPrimary ? "cta_clicked" : undefined}
-                  data-ph-cta={link.isPrimary ? "get-on-list" : undefined}
+                  data-ph-cta={link.isPrimary ? "tickets" : undefined}
                   data-ph-section={link.isPrimary ? "links" : undefined}
                 >
                   <Fragment set:html={iconSvg(link.icon, link.isPrimary)} />
@@ -180,7 +175,7 @@ const reversedPress = [...pressItems].reverse();
   </main>
 
   {/* ── Events modal ─────────────────────────────────────── */}
-  <dialog id="events-modal" class="modal-dialog">
+  <dialog id="events-modal" class="modal-dialog" tabindex="-1">
     <div class="modal-inner">
       <button type="button" class="modal-close" aria-label="Close">
         <svg
@@ -207,9 +202,48 @@ const reversedPress = [...pressItems].reverse();
           <div class="event-list">
             {upcomingEvents.map((event) => {
               const hasLink = event.url && event.url !== "#";
+              const isSoldOut = event.soldOut ?? false;
+              const ticketIcon = (
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="14"
+                  height="14"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  class="ticket-icon"
+                  aria-hidden="true"
+                >
+                  <path d="M2 9a3 3 0 0 1 0 6v2a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-2a3 3 0 0 1 0-6V7a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2Z" />
+                  <path d="M13 5v2" />
+                  <path d="M13 17v2" />
+                  <path d="M13 11v2" />
+                </svg>
+              );
+              if (event.eventbriteId && hasLink && !isSoldOut) {
+                return (
+                  <button
+                    type="button"
+                    id={`eventbrite-widget-modal-trigger-${event.eventbriteId}`}
+                    class="event-link"
+                    data-eb-url={buildTicketUrl(event.url, "links", "modal")}
+                    data-promo-code={event.promoCode ?? undefined}
+                    data-city={event.city}
+                  >
+                    <span class="event-city">{event.city}</span>
+                    <div class="event-date-group">
+                      <span class="event-date">{event.date}</span>
+                      {ticketIcon}
+                    </div>
+                  </button>
+                );
+              }
               return hasLink ? (
                 <a
-                  href={event.url}
+                  href={buildTicketUrl(event.url, "links", "modal")}
                   target="_blank"
                   rel="noopener noreferrer"
                   class="event-link"
@@ -217,24 +251,7 @@ const reversedPress = [...pressItems].reverse();
                   <span class="event-city">{event.city}</span>
                   <div class="event-date-group">
                     <span class="event-date">{event.date}</span>
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      width="14"
-                      height="14"
-                      viewBox="0 0 24 24"
-                      fill="none"
-                      stroke="currentColor"
-                      stroke-width="2"
-                      stroke-linecap="round"
-                      stroke-linejoin="round"
-                      class="ticket-icon"
-                      aria-hidden="true"
-                    >
-                      <path d="M2 9a3 3 0 0 1 0 6v2a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-2a3 3 0 0 1 0-6V7a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2Z" />
-                      <path d="M13 5v2" />
-                      <path d="M13 17v2" />
-                      <path d="M13 11v2" />
-                    </svg>
+                    {ticketIcon}
                   </div>
                 </a>
               ) : (
@@ -250,8 +267,14 @@ const reversedPress = [...pressItems].reverse();
     </div>
   </dialog>
 
+  <EventbriteWidgetInit />
+
   {/* ── Press modal ──────────────────────────────────────── */}
-  <dialog id="press-modal" class="modal-dialog modal-dialog--scrollable">
+  <dialog
+    id="press-modal"
+    class="modal-dialog modal-dialog--scrollable"
+    tabindex="-1"
+  >
     <div class="modal-inner">
       <button type="button" class="modal-close" aria-label="Close">
         <svg
@@ -380,7 +403,10 @@ const reversedPress = [...pressItems].reverse();
     const dialog = document.getElementById(dialogId) as HTMLDialogElement;
     if (!trigger || !dialog) return;
 
-    trigger.addEventListener("click", () => dialog.showModal());
+    trigger.addEventListener("click", () => {
+      dialog.showModal();
+      dialog.focus();
+    });
     dialog
       .querySelector(".modal-close")
       ?.addEventListener("click", () => dialog.close());
@@ -391,6 +417,28 @@ const reversedPress = [...pressItems].reverse();
   setupDialog("events-trigger", "events-modal");
   setupDialog("press-trigger", "press-modal");
   setupDialog("links-spice-trigger", "links-spice-modal");
+
+  // Close the events dialog before the EB checkout modal opens.
+  // Native <dialog> opened via showModal() sits in the browser top layer — if it
+  // stays open while the EB widget injects its own modal into <body>, the dialog
+  // backdrop blocks EB and outside-click handlers collide. Closing synchronously
+  // in the capture phase (before the EB widget's bubble-phase listener fires)
+  // ensures only one modal is ever in the top layer at a time.
+  const eventsModal = document.getElementById(
+    "events-modal",
+  ) as HTMLDialogElement | null;
+  if (eventsModal) {
+    eventsModal.addEventListener(
+      "click",
+      (e) => {
+        const target = e.target as HTMLElement;
+        if (target.closest('[id^="eventbrite-widget-modal-trigger-"]')) {
+          eventsModal.close();
+        }
+      },
+      { capture: true },
+    );
+  }
 </script>
 
 <style>
@@ -666,6 +714,12 @@ const reversedPress = [...pressItems].reverse();
     width: 100%;
     height: 100%;
     overflow: visible;
+    outline: none;
+  }
+
+  .modal-dialog:focus-visible {
+    outline: 2px solid var(--brand-red);
+    outline-offset: 2px;
   }
 
   .modal-dialog::backdrop {
@@ -752,6 +806,21 @@ const reversedPress = [...pressItems].reverse();
   .event-link:hover {
     background: rgba(var(--brand-red-rgb), 0.06);
     border-color: rgba(var(--brand-red-rgb), 0.35);
+  }
+
+  .event-link:active {
+    transform: scale(0.97);
+  }
+
+  button.event-link {
+    background: white;
+    border: 1px solid rgba(0, 0, 0, 0.06);
+    font-family: inherit;
+    font-size: inherit;
+    font-weight: inherit;
+    color: inherit;
+    width: 100%;
+    text-align: left;
   }
 
   .event-tba {

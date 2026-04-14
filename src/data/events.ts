@@ -18,7 +18,10 @@ export interface EventEntry {
   endTime?: string; // HH:MM 24h format, ET (default: "22:00")
   venue?: EventVenue;
   price?: string; // USD amount, e.g. "15"
+  soldOut?: boolean; // Machine-readable sold-out flag; do not use tagline for control flow
   tagline?: string; // Short status line shown on the card (e.g. "Selling fast")
+  eventbriteId?: string; // Numeric Eventbrite event ID — enables modal checkout widget
+  promoCode?: string; // Auto-applied Eventbrite promo/discount code for this event
 }
 
 const VENUE_TOP_SECRET: EventVenue = {
@@ -44,17 +47,18 @@ export const events: EventEntry[] = [
     date: "Feb 22",
     city: "Manhattan, New York",
     citySlug: "manhattan",
-    url: "https://www.eventbrite.com/e/garam-masala-dating-a-belated-valentines-day-tickets-1982103088695?aff=ebdsshcopyurl&utm-campaign=social&utm-content=attendeeshare&utm-medium=discovery&utm-term=",
+    url: "https://www.eventbrite.com/e/garam-masala-dating-a-belated-valentines-day-tickets-1982103088695",
     isoDate: "2026-02-22",
     venue: VENUE_TOP_SECRET,
     price: "15",
+    soldOut: true,
     tagline: "Sold out",
   },
   {
     date: "Mar 7",
     city: "San Diego",
     citySlug: "san-diego",
-    url: "https://www.eventbrite.com/e/garam-masala-dating-live-in-san-diego-tickets-1983622967694?lid=ipmjzd9i2ysd&utm_source=braze&utm_medium=ebml&utm_campaign=clpo_ceex_lcm_fad_mec_mc_mum_0_0_eventpublished&utm_term=Main_EventPublishedSubPaid_HeroSummary_other%20feature%20usage&utm_content=d83bc845-0544-4274-a9dd-e152eac1a1f7__699895f399367e11f0839776e4c4c33f__f605d558-54e9-4fbc-aef1-2c09bcef5c27",
+    url: "https://www.eventbrite.com/e/garam-masala-dating-live-in-san-diego-tickets-1983622967694",
     isoDate: "2026-03-07",
     venue: {
       name: "San Diego Venue",
@@ -63,23 +67,25 @@ export const events: EventEntry[] = [
       addressCountry: "US",
     },
     price: "15",
+    soldOut: true,
     tagline: "Sold out",
   },
   {
     date: "Mar 15",
     city: "Manhattan, New York",
     citySlug: "manhattan",
-    url: "https://www.eventbrite.com/e/garam-masala-dating-st-patricks-day-tickets-1982103088695?aff=garamsite",
+    url: "https://www.eventbrite.com/e/garam-masala-dating-st-patricks-day-tickets-1982103088695",
     isoDate: "2026-03-15",
     venue: VENUE_TOP_SECRET,
     price: "15",
+    soldOut: true,
     tagline: "Sold out",
   },
   {
     date: "Apr 4",
     city: "Chicago",
     citySlug: "chicago",
-    url: "https://www.eventbrite.com/e/saturday-april-4-garam-masala-dating-tickets-1983144430376?aff=oddtdtcreator",
+    url: "https://www.eventbrite.com/e/saturday-april-4-garam-masala-dating-tickets-1983144430376",
     hidden: true,
     isoDate: "2026-04-04",
     venue: {
@@ -89,31 +95,35 @@ export const events: EventEntry[] = [
       addressCountry: "US",
     },
     price: "15",
+    soldOut: true,
     tagline: "Sold out",
   },
   {
     date: "Apr 19",
     city: "Manhattan, New York",
     citySlug: "manhattan",
-    url: "https://www.eventbrite.com/e/garam-masala-dating-420-blazin-in-love-tickets-1985330936274?aff=garamsite",
+    url: "https://www.eventbrite.com/e/garam-masala-dating-420-blazin-in-love-tickets-1985330936274",
     isoDate: "2026-04-19",
     startTime: "18:00",
     endTime: "20:00",
     venue: VENUE_TOP_SECRET,
     price: "15",
-    tagline: "Low tickets \u2014 don\u2019t wait",
+    tagline: "Low tickets, grab yours now",
+    eventbriteId: "1985330936274",
   },
   {
     date: "Apr 26",
     city: "Jersey City, New Jersey",
     citySlug: "jersey-city",
-    url: "https://www.eventbrite.com/e/garam-masala-dating-jersey-city-tickets-1986100570270?aff=garamsite",
+    url: "https://www.eventbrite.com/e/garam-masala-dating-jersey-city-tickets-1986100570270",
     isoDate: "2026-04-26",
     startTime: "18:00",
     endTime: "20:00",
     venue: VENUE_LAUGH_TOUR,
     price: "15",
     tagline: "Just announced",
+    eventbriteId: "1986100570270",
+    promoCode: "AutomaticDiscount_1768496886850",
   },
 ];
 
@@ -130,3 +140,13 @@ const comingSoonEvents: EventEntry[] = TBA_CITIES.map((city) => ({
 
 /** All events: confirmed shows + hand-picked TBA cities */
 export const allEvents: EventEntry[] = [...events, ...comingSoonEvents];
+
+/**
+ * Returns the canonical display status for an event.
+ * Prefers the machine-readable soldOut flag over the tagline so that
+ * sold-out shows with no tagline are still surfaced correctly.
+ */
+export function getEventDisplayStatus(event: EventEntry): string | undefined {
+  if (event.soldOut) return "Sold out";
+  return event.tagline;
+}

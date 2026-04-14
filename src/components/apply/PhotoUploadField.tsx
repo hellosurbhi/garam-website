@@ -30,7 +30,13 @@ export function PhotoUploadField({
 
       <label
         htmlFor="photo-input"
-        className={error ? styles.photoDropzoneError : styles.photoDropzone}
+        className={
+          photoPreview
+            ? styles.photoDropzoneWithPreview
+            : error
+              ? styles.photoDropzoneError
+              : styles.photoDropzone
+        }
       >
         {photoPreview ? (
           <img
@@ -38,8 +44,6 @@ export function PhotoUploadField({
             alt="Photo preview"
             className={styles.photoPreview}
             loading="lazy"
-            width={200}
-            height={200}
           />
         ) : (
           <>

@@ -224,7 +224,13 @@ export function TermsModal({ onClose, onAgree }: TermsModalProps) {
           manner the production, distribution, exhibition, advertising or any
           other exploitation of the Program. In no event shall Producer be
           liable for consequential, exemplary or punitive damages, or lost or
-          anticipated profits.
+          anticipated profits. I further acknowledge that photos, videos,
+          recordings, and other materials I submit as part of my application, as
+          well as any Content derived from them, may remain published, archived,
+          and exploited by Producer indefinitely. To the fullest extent
+          permitted by law, I waive any right to demand removal, deletion,
+          suppression, or takedown of any such submitted materials or any
+          Content derived from them.
         </p>
 
         <p>
@@ -271,7 +277,26 @@ export function TermsModal({ onClose, onAgree }: TermsModalProps) {
         </p>
 
         <p>
-          15. This is the complete and binding agreement between Producer and
+          15. I agree not to make, publish, or cause to be published any false,
+          misleading, or disparaging statements about the Show, the Producer, or
+          any of the Released Parties, in any medium or format, including
+          without limitation social media posts, interviews, reviews, blogs, or
+          public commentary, at any time before or after my participation.
+          Nothing in this provision prohibits truthful statements required by
+          applicable law.
+        </p>
+
+        <p>
+          16. To the fullest extent permitted by law, I waive any right to
+          participate in a class action, collective action, representative
+          action, or similar proceeding against Producer or the Released
+          Parties. I also knowingly and voluntarily waive any right to trial by
+          jury in any action or proceeding arising out of or relating to this
+          Agreement, the Show, or my participation.
+        </p>
+
+        <p>
+          17. This is the complete and binding agreement between Producer and
           me, and it supersedes all prior understandings and communications with
           respect to its subject matter. The illegality, invalidity or
           unenforceability of any provision shall in no way affect the validity

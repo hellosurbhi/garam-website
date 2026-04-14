@@ -33,7 +33,9 @@
     };
 
     const configs = buttons.map((btn) => ({
-      eventId: btn.id.replace("eventbrite-widget-modal-trigger-", ""),
+      eventId:
+        btn.dataset.ebEventId ??
+        btn.id.replace("eventbrite-widget-modal-trigger-", ""),
       triggerId: btn.id,
       promoCode: btn.dataset.promoCode || null,
       fallbackUrl: btn.getAttribute("href") ?? btn.dataset.ebUrl ?? "",

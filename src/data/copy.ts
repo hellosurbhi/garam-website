@@ -10,7 +10,7 @@ export const SITE = {
   description:
     "Garam Masala Dating is NYC's #1 live desi dating show where South Asian singles go on a blind date in front of a packed house. Our hosts Surbhi and Wyatt guide the chaos with stand-up, crowd work, and genuine matchmaking instincts. Every show ends with a singles mixer where the audience gets to continue the experiment.",
   shortDescription:
-    "New York City's #1 live desi comedy dating show. Real singles. Real dates. 250-person audience. Bi-weekly in Manhattan.",
+    "New York City's #1 live desi comedy dating show. Real singles. Real dates. 250-person audience. Weekly in Manhattan.",
   footerLine: "NYC's #1 live desi dating show. Hosted by Surbhi & Wyatt.",
   hosts: "Surbhi & Wyatt",
   ogImageAlt: "Garam Masala Dating: NYC's #1 live desi dating show",
@@ -149,3 +149,8 @@ export const EXPERIENCE_STEPS = [
     text: "After the show, the venue transforms into a singles mixer. Same room, live DJ, and the energy from the show carries everyone forward. Included with your ticket.",
   },
 ];
+
+export const AUTHOR_BIO = {
+  surbhi:
+    "Co-creator and host of Garam Masala Dating, NYC's #1 live desi dating show. Stand-up comedian. Accidentally matched three couples and counting.",
+} as const;

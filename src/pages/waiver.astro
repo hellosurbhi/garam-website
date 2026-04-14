@@ -45,12 +45,19 @@ const PAGE_DESC = "Garam Masala Dating show waiver";
     }
 
     // JotForm sends postMessage events (setHeight, etc.) once the form renders
+    var JOTFORM_ORIGINS = new Set([
+      "https://form.jotform.com",
+      "https://www.jotform.com",
+    ]);
+    var JOTFORM_FORM_ID = "261031391833047";
     window.addEventListener("message", function (e) {
+      if (!JOTFORM_ORIGINS.has(e.origin)) return;
       try {
         var data = typeof e.data === "string" ? JSON.parse(e.data) : e.data;
         if (
           data &&
-          (data.action === "setHeight" || data.formID || data.fromJotForm)
+          (data.action === "setHeight" || data.fromJotForm) &&
+          String(data.formID || "") === JOTFORM_FORM_ID
         ) {
           hideLoader();
         }

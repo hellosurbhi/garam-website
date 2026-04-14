@@ -223,7 +223,7 @@ const reversedPress = [...pressItems].reverse();
                   <path d="M13 11v2" />
                 </svg>
               );
-              if (event.eventbriteId && !isSoldOut) {
+              if (event.eventbriteId && hasLink && !isSoldOut) {
                 return (
                   <button
                     type="button"

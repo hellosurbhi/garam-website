@@ -56,7 +56,7 @@ const breadcrumbJsonLd = buildBreadcrumbJsonLd([
         <div class="apply-intro-static">
           <div class="apply-skeleton-intro">
             <p>{APPLY_PAGE.introText}</p>
-            <p class="apply-skeleton-must-be">Must be:</p>
+            <p class="apply-skeleton-must-be">The ideal candidate:</p>
             <ul class="apply-skeleton-reqs">
               {APPLY_PAGE.requirements.map((r) => <li>{r}</li>)}
             </ul>
@@ -85,9 +85,11 @@ const breadcrumbJsonLd = buildBreadcrumbJsonLd([
           </div>
         </div>
       </div>
-    </div>
 
-    <ApplyPage client:only="react" />
+      <!-- React form lives inside the wrapper so it occupies the same
+           vertical space as the skeleton — no layout shift when skeleton hides. -->
+      <ApplyPage client:only="react" />
+    </div>
   </main>
 </BaseLayout>
 
@@ -111,11 +113,10 @@ const breadcrumbJsonLd = buildBreadcrumbJsonLd([
   }
 
   .apply-bg {
-    position: absolute;
-    top: 0;
-    left: 0;
+    position: fixed;
+    inset: 0;
     width: 100%;
-    height: 100vh;
+    height: 100%;
     object-fit: cover;
     object-position: center 40%;
     display: block;

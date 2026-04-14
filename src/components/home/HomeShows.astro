@@ -342,7 +342,7 @@ const { events } = Astro.props;
           ).value;
           const db = getFirebaseDb();
           const attribution = buildLeadAttribution({ source: "request-city" });
-          const payload: Record<string, string> = {
+          const payload: Record<string, string | number | undefined> = {
             email,
             ...attribution,
             createdAt: new Date().toISOString(),

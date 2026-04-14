@@ -240,7 +240,7 @@ const { source = "notify-modal" } = Astro.props;
             source: finalSource,
             sourceCitySlug: citySlug || undefined,
           });
-          const data: Record<string, string> = {
+          const data: Record<string, string | number | undefined> = {
             email: notifyEmail,
             city,
             ...attribution,
@@ -328,7 +328,7 @@ const { source = "notify-modal" } = Astro.props;
               source: finalSource,
               sourceCitySlug: citySlug || undefined,
             });
-            const data: Record<string, string> = {
+            const data: Record<string, string | number | undefined> = {
               email: notifyEmail,
               city: (document.getElementById("notify-city") as HTMLInputElement)
                 .value,

@@ -1,11 +1,5 @@
 /* ─── Animations ──────────────────────────────────────────────── */
 
-@keyframes prep-spin {
-  to {
-    transform: rotate(360deg);
-  }
-}
-
 @keyframes fade-in {
   from {
     opacity: 0;
@@ -21,18 +15,9 @@
 
 .loadingWrapper {
   min-height: 100vh;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.spinner {
-  width: 32px;
-  height: 32px;
-  border: 2px solid rgba(0, 0, 0, 0.08);
-  border-top-color: var(--brand-red);
-  border-radius: 50%;
-  animation: prep-spin 0.7s linear infinite;
+  max-width: 640px;
+  margin: 0 auto;
+  padding: 48px 24px;
 }
 
 /* ─── Error ───────────────────────────────────────────────────── */
@@ -281,9 +266,5 @@
   .errorWrapper {
     animation: none;
     opacity: 1;
-  }
-
-  .spinner {
-    animation: none;
   }
 }

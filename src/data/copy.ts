@@ -117,11 +117,11 @@ export const PAGES = {
 export const APPLY_PAGE = {
   subtitle: "NYC's #1 live desi dating show 🌶️",
   introText:
-    "Garam Masala is a dating show where sparks fly, secrets slip, and one person chooses between two potential matches… without seeing them 👀📞 We're casting bold, funny, attractive personalities who are down to flirt, overshare, and maybe fall in love… or at least cause chaos. Whether you're straight, queer, unsure, or just here for the plot, we want personality.",
+    "Garam Masala is a dating show where sparks fly, secrets slip, and matches are made. We're casting bold, funny, attractive personalities who are down to flirt, overshare, and maybe fall in love… or at least cause chaos. Whether you're straight, queer, unsure, or just here for the plot, we want personality!",
   requirements: [
     "18+",
     "Comfortable on camera",
-    "Single (or… let's talk 👀)",
+    "Single (for the night 👀)",
   ] as readonly string[],
   noConsentWarning:
     "Selecting No means you will not be considered. You must be okay going viral to apply.",

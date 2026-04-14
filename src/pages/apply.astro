@@ -2,6 +2,7 @@
 import BaseLayout from "@/layouts/BaseLayout.astro";
 import { buildBreadcrumbJsonLd } from "@/utils/breadcrumbs";
 import ApplyPage from "@/components/ApplyPage";
+import { APPLY_PAGE } from "@/data/copy";
 
 const breadcrumbJsonLd = buildBreadcrumbJsonLd([
   { name: "Home", url: "https://garammasaladating.com/" },
@@ -25,18 +26,10 @@ const breadcrumbJsonLd = buildBreadcrumbJsonLd([
       width="1200"
       height="800"
       aria-hidden="true"
-      loading="lazy"
+      loading="eager"
     />
 
-    {
-      /*
-      Static skeleton that ships in initial HTML. Matches the above-the-fold
-      layout of ApplyPageInner so the page paints instantly (like every other
-      page). Hidden via CSS :has() once React mounts and [data-apply-root]
-      appears in the astro-island.
-    */
-    }
-    <div class="apply-skeleton" aria-hidden="true">
+    <div class="apply-skeleton-top" aria-hidden="true">
       <div class="apply-skeleton-container">
         <div class="apply-skeleton-header">
           <span class="apply-skeleton-back">← Back</span>
@@ -47,14 +40,30 @@ const breadcrumbJsonLd = buildBreadcrumbJsonLd([
             Apply to Be on Garam Masala Dating
           </h1>
           <p class="apply-skeleton-subtitle">
-            NYC's #1 live desi dating show 🌶️
+            {APPLY_PAGE.subtitle}
           </p>
         </div>
+      </div>
+    </div>
 
+    <div class="apply-intro-static">
+      <div class="apply-skeleton-container">
+        <div class="apply-skeleton-intro">
+          <p>{APPLY_PAGE.introText}</p>
+          <p class="apply-skeleton-must-be">Must be:</p>
+          <ul class="apply-skeleton-reqs">
+            {APPLY_PAGE.requirements.map((r) => <li>{r}</li>)}
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <div class="apply-skeleton-form" aria-hidden="true">
+      <div class="apply-skeleton-container">
         <div class="apply-skeleton-type">
           <p class="apply-skeleton-type-label">I am applying…</p>
           <div class="apply-skeleton-type-group">
-            <span class="apply-skeleton-type-btn apply-skeleton-type-btn-active"
+            <span class="apply-skeleton-type-btn apply-skeleton-type-active"
               >For myself</span
             >
             <span class="apply-skeleton-type-btn">For a friend</span>
@@ -63,19 +72,12 @@ const breadcrumbJsonLd = buildBreadcrumbJsonLd([
 
         <h2 class="apply-skeleton-section">About You</h2>
 
-        <div class="apply-skeleton-grid">
-          <div class="apply-skeleton-field"></div>
-          <div class="apply-skeleton-field"></div>
+        <div class="apply-skeleton-shimmer">
+          <div class="shimmer-bar"></div>
+          <div class="shimmer-bar shimmer-bar--medium"></div>
+          <div class="shimmer-bar"></div>
+          <div class="shimmer-bar shimmer-bar--short"></div>
         </div>
-        <div class="apply-skeleton-grid">
-          <div class="apply-skeleton-field"></div>
-          <div class="apply-skeleton-field"></div>
-        </div>
-        <div class="apply-skeleton-grid">
-          <div class="apply-skeleton-field"></div>
-          <div class="apply-skeleton-field"></div>
-        </div>
-        <div class="apply-skeleton-field apply-skeleton-field-full"></div>
       </div>
     </div>
 
@@ -84,11 +86,11 @@ const breadcrumbJsonLd = buildBreadcrumbJsonLd([
 </BaseLayout>
 
 <style is:global>
-  /* React mount detection. [data-apply-root] is rendered by React inside
-     <astro-island>, so Astro's scoped selectors cannot match it (the React
-     DOM never receives the data-astro-cid-* attribute). This rule must be
-     global so the :has() check matches the React output. */
-  .apply-main:has([data-apply-root]) .apply-skeleton {
+  .apply-main:has([data-apply-root]) .apply-skeleton-top,
+  .apply-main:has([data-apply-root]) .apply-skeleton-form {
+    display: none;
+  }
+  .apply-main:has([data-submitted]) .apply-intro-static {
     display: none;
   }
 </style>
@@ -101,9 +103,10 @@ const breadcrumbJsonLd = buildBreadcrumbJsonLd([
   }
   .apply-bg {
     position: absolute;
-    inset: 0;
+    top: 0;
+    left: 0;
     width: 100%;
-    height: 100%;
+    height: 100vh;
     object-fit: cover;
     object-position: center 40%;
     display: block;
@@ -111,9 +114,9 @@ const breadcrumbJsonLd = buildBreadcrumbJsonLd([
     opacity: 0.06;
   }
 
-  /* Skeleton placeholder (static HTML, hidden once React mounts) */
-
-  .apply-skeleton {
+  .apply-skeleton-top,
+  .apply-intro-static,
+  .apply-skeleton-form {
     position: relative;
     z-index: 1;
   }
@@ -126,13 +129,13 @@ const breadcrumbJsonLd = buildBreadcrumbJsonLd([
     padding: 20px;
   }
 
+  /* Header */
   .apply-skeleton-header {
     margin-bottom: 8px;
     min-height: var(--touch-target);
     display: flex;
     align-items: center;
   }
-
   .apply-skeleton-back {
     display: inline-flex;
     align-items: center;
@@ -142,11 +145,11 @@ const breadcrumbJsonLd = buildBreadcrumbJsonLd([
     opacity: 0.4;
   }
 
+  /* Title */
   .apply-skeleton-title-area {
     text-align: center;
     margin-bottom: 24px;
   }
-
   .apply-skeleton-title {
     font-family: var(--font-playfair);
     font-size: clamp(36px, 5vw, 48px);
@@ -155,7 +158,6 @@ const breadcrumbJsonLd = buildBreadcrumbJsonLd([
     line-height: 1.1;
     margin: 0 0 10px;
   }
-
   .apply-skeleton-subtitle {
     font-family: var(--font-body);
     font-size: 18px;
@@ -164,10 +166,41 @@ const breadcrumbJsonLd = buildBreadcrumbJsonLd([
     margin: 0;
   }
 
+  /* Casting intro — matches .castingIntro in ApplyPage.module.css */
+  .apply-skeleton-intro {
+    margin-bottom: 32px;
+    font-family: var(--font-body);
+    font-size: 15px;
+    color: #3d3532;
+    line-height: 1.6;
+    text-align: center;
+  }
+  .apply-skeleton-intro p {
+    margin: 0 0 12px;
+  }
+  .apply-skeleton-must-be {
+    font-weight: 700;
+    margin-bottom: 4px;
+  }
+  .apply-skeleton-reqs {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+  }
+  .apply-skeleton-reqs li::before {
+    content: "• ";
+    color: var(--brand-red);
+    font-weight: 700;
+  }
+
+  /* Type selector — matches .typeSection in ApplyPage.module.css */
   .apply-skeleton-type {
     margin-bottom: 36px;
   }
-
   .apply-skeleton-type-label {
     font-family: var(--font-body);
     font-size: 11px;
@@ -177,12 +210,10 @@ const breadcrumbJsonLd = buildBreadcrumbJsonLd([
     color: var(--text-secondary);
     margin: 0 0 12px;
   }
-
   .apply-skeleton-type-group {
     display: flex;
     gap: 10px;
   }
-
   .apply-skeleton-type-btn {
     flex: 1;
     padding: 12px 16px;
@@ -199,13 +230,13 @@ const breadcrumbJsonLd = buildBreadcrumbJsonLd([
     align-items: center;
     justify-content: center;
   }
-
-  .apply-skeleton-type-btn-active {
+  .apply-skeleton-type-active {
     border: none;
     background: var(--brand-red);
     color: white;
   }
 
+  /* Section heading — matches .sectionTitle in ApplyPage.module.css */
   .apply-skeleton-section {
     font-family: var(--font-playfair);
     font-size: 28px;
@@ -223,27 +254,49 @@ const breadcrumbJsonLd = buildBreadcrumbJsonLd([
     margin-top: 12px;
   }
 
-  .apply-skeleton-grid {
-    display: grid;
-    grid-template-columns: 1fr;
-    gap: 18px 16px;
-    margin-bottom: 18px;
-  }
-
-  @media (min-width: 601px) {
-    .apply-skeleton-grid {
-      grid-template-columns: 1fr 1fr;
+  /* Shimmer bars — only for the field area */
+  @keyframes shimmer-sweep {
+    0% {
+      background-position: -400px 0;
+    }
+    100% {
+      background-position: 400px 0;
     }
   }
 
-  .apply-skeleton-field {
-    height: 54px;
-    border-radius: 16px;
-    border: 1px solid var(--border);
-    background: rgba(255, 255, 255, 0.6);
+  .apply-skeleton-shimmer {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
   }
 
-  .apply-skeleton-field-full {
-    margin-bottom: 18px;
+  .shimmer-bar {
+    height: 52px;
+    width: 100%;
+    border-radius: 12px;
+    background-color: #ebebeb;
+    background-image: linear-gradient(
+      90deg,
+      #ebebeb 0px,
+      #f5f5f5 40px,
+      #ebebeb 80px
+    );
+    background-size: 400px 100%;
+    background-repeat: no-repeat;
+    animation: shimmer-sweep 1.4s ease-in-out infinite;
+  }
+
+  .shimmer-bar--medium {
+    width: 75%;
+  }
+  .shimmer-bar--short {
+    width: 55%;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .shimmer-bar {
+      animation: none;
+      background-image: none;
+    }
   }
 </style>

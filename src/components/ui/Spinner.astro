@@ -1,0 +1,19 @@
+---
+/**
+ * Shared loading spinner.
+ * size="sm"  → 16px white border (button loading states)
+ * size="md"  → 32px brand-red (page/section loading states, default)
+ */
+import styles from "./Spinner.module.css";
+
+interface Props {
+  size?: "sm" | "md";
+  label?: string;
+}
+const { size = "md", label = "Loading..." } = Astro.props;
+---
+
+<span
+  class:list={[styles.spinner, styles[size]]}
+  role="status"
+  aria-label={label}></span>

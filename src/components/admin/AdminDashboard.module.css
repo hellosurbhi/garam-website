@@ -161,17 +161,12 @@
   padding: 32px;
 }
 
-.loadingState,
 .errorState,
 .emptyState {
   text-align: center;
   padding: 80px 0;
   color: var(--text-light);
   font-size: 16px;
-}
-
-.loadingState {
-  font-size: inherit;
 }
 
 .retryButton,

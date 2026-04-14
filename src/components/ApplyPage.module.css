@@ -544,7 +544,7 @@
 .castingIntro {
   margin-bottom: 32px;
   padding: 20px 24px;
-  background: rgba(220, 38, 38, 0.04);
+  background: rgba(var(--brand-red-rgb), 0.04);
   border-left: 3px solid var(--brand-red);
   border-radius: 4px;
   font-family: var(--font-body);

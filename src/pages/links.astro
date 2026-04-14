@@ -202,9 +202,7 @@ const reversedPress = [...pressItems].reverse();
           <div class="event-list">
             {upcomingEvents.map((event) => {
               const hasLink = event.url && event.url !== "#";
-              const isSoldOut = event.tagline
-                ?.toLowerCase()
-                .includes("sold out");
+              const isSoldOut = event.soldOut ?? false;
               const ticketIcon = (
                 <svg
                   xmlns="http://www.w3.org/2000/svg"

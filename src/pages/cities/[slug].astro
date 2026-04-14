@@ -154,8 +154,7 @@ const breadcrumbJsonLd = buildBreadcrumbJsonLd([
         {/* Per-event ticket buttons for active cities */}
         {
           cityEvents.map((event) => {
-            const isSoldOut =
-              event.tagline?.toLowerCase().includes("sold out") ?? false;
+            const isSoldOut = event.soldOut ?? false;
             const arrowSvg = (
               <svg
                 xmlns="http://www.w3.org/2000/svg"

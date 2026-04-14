@@ -3,6 +3,7 @@ import BaseLayout from "@/layouts/BaseLayout.astro";
 import { journalPostsPublished } from "@/data/journal";
 import { masterclassPosts } from "@/data/masterclasses";
 import { buildBreadcrumbJsonLd } from "@/utils/breadcrumbs";
+import { isPublished } from "@/utils/date";
 
 const TITLE = "South Asian Dating & Relationships Journal";
 const DESC =
@@ -17,17 +18,6 @@ function formatDate(iso: string): string {
   });
 }
 
-// Mirror the same local-date approach used by journalPostsPublished to avoid
-// timezone boundary mismatches (UTC toISOString vs. local date).
-function isMasterclassPublished(dateStr: string): boolean {
-  const pub = new Date(dateStr + "T00:00:00Z");
-  const now = new Date();
-  const localToday = new Date(
-    Date.UTC(now.getFullYear(), now.getMonth(), now.getDate()),
-  );
-  return pub <= localToday;
-}
-
 const allPosts = [
   ...journalPostsPublished.map((p) => ({
     slug: p.slug,
@@ -37,7 +27,7 @@ const allPosts = [
     category: undefined as "masterclass" | undefined,
   })),
   ...masterclassPosts
-    .filter((p) => isMasterclassPublished(p.datePublished))
+    .filter((p) => isPublished(p.datePublished))
     .map((p) => ({
       slug: p.slug,
       title: p.title,

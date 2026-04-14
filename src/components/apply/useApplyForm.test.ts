@@ -1170,6 +1170,7 @@ describe("useApplyForm", () => {
       result.current.set("orientation", "Straight");
       result.current.set("city", "NYC");
       result.current.set("country", "US");
+      result.current.set("email", "valid@example.com");
       result.current.set("instagram", "jane");
       result.current.set("marketingConsent", "yes");
       result.current.handlePhotoChange(makeChangeEvent(makeFile()));

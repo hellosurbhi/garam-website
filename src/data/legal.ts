@@ -112,7 +112,7 @@ export const LEGAL_DOCS: Record<"privacy" | "terms", LegalDocument> = {
   terms: {
     id: "terms",
     title: "Terms of Service",
-    lastUpdated: "April 2026",
+    lastUpdated: "April 14, 2026",
     metaTitle: "Terms of Service",
     metaDescription:
       "Terms of service for Garam Masala Dating. Rules and guidelines for using our website and attending our shows.",
@@ -195,6 +195,10 @@ export const LEGAL_DOCS: Record<"privacy" | "terms", LegalDocument> = {
             type: "p",
             text: "If you participate as a contestant, your rights grant is broader. By applying and appearing in the show, you grant Garam Masala Dating the right to capture and use your name, likeness, photographs, voice, personal characteristics, and any information shared during the show, in connection with the production, distribution, and promotion of the event across all media now known or developed in the future, without monetary compensation. We may edit or modify this material as we see fit. You understand that the publicity associated with the show is the consideration for this grant.",
           },
+          {
+            type: "p",
+            text: "Photos, videos, recordings, and other materials you submit as part of your application, and any content derived from them, may remain published, archived, and used by Garam Masala Dating indefinitely. To the fullest extent permitted by law, you waive any right to demand removal, deletion, or takedown of such submitted materials or any content derived from them.",
+          },
         ],
       },
       {
@@ -207,6 +211,19 @@ export const LEGAL_DOCS: Record<"privacy" | "terms", LegalDocument> = {
           {
             type: "p",
             text: "We understand that you may share things with close friends and family, but public posts, media appearances, and social media disclosures about the show before it happens may affect other participants and the integrity of the event. Breaching this may cause us real harm, and we reserve the right to seek appropriate relief.",
+          },
+        ],
+      },
+      {
+        heading: "Non-disparagement",
+        blocks: [
+          {
+            type: "p",
+            text: "Whether or not you are selected to appear in the show, you agree not to make, publish, or cause to be published any false, misleading, or disparaging statements about Garam Masala Dating, its producers, hosts, staff, sponsors, partners, or cast, in any medium or format, including social media, interviews, reviews, or public commentary.",
+          },
+          {
+            type: "p",
+            text: "Nothing in this section prevents you from making truthful statements required by law. This provision applies to applicants regardless of whether they are selected, and to contestants before, during, and after the show.",
           },
         ],
       },
@@ -233,11 +250,15 @@ export const LEGAL_DOCS: Record<"privacy" | "terms", LegalDocument> = {
         ],
       },
       {
-        heading: "Governing law",
+        heading: "Governing law and dispute resolution",
         blocks: [
           {
             type: "p",
-            text: "These terms are governed by the laws of the State of New York. Any disputes arising from these terms or your participation in the show shall be resolved under New York law.",
+            text: "These terms are governed by the laws of the State of New York, without regard to conflict-of-law principles. Any disputes arising from these terms or your participation in the show shall be resolved exclusively in the state or federal courts located in New York County, New York, or by binding arbitration in New York County under rules selected by Garam Masala Dating, at our election.",
+          },
+          {
+            type: "p",
+            text: "To the fullest extent permitted by law, you waive any right to participate in a class action, collective action, or representative proceeding against Garam Masala Dating or its affiliates. You also waive any right to trial by jury in any dispute arising from these terms or your participation.",
           },
         ],
       },

@@ -1,14 +1,3 @@
-@keyframes pageIn {
-  from {
-    opacity: 0;
-    transform: translateY(8px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
 @keyframes toast-in {
   from {
     opacity: 0;
@@ -17,12 +6,6 @@
   to {
     opacity: 1;
     transform: translateY(0);
-  }
-}
-
-@keyframes spin {
-  to {
-    transform: rotate(360deg);
   }
 }
 
@@ -46,7 +29,6 @@
   min-height: 100vh;
   background: transparent;
   position: relative;
-  animation: pageIn 0.5s ease-out both;
 }
 
 .container {
@@ -446,16 +428,6 @@
   box-shadow: none;
 }
 
-.spinner {
-  width: 16px;
-  height: 16px;
-  border: 2px solid rgba(255, 255, 255, 0.3);
-  border-top-color: white;
-  border-radius: 50%;
-  display: inline-block;
-  animation: spin 0.7s linear infinite;
-}
-
 /* ─── Consent sections ───────────────────────────────────────── */
 
 .consentSection {
@@ -506,7 +478,7 @@
 
 .checkRow {
   display: flex;
-  align-items: flex-start;
+  align-items: center;
   gap: 12px;
   cursor: pointer;
   font-family: var(--font-body);
@@ -522,7 +494,6 @@
   accent-color: var(--brand-red);
   cursor: pointer;
   flex-shrink: 0;
-  margin-top: 2px;
 }
 
 .termsLink {
@@ -537,44 +508,6 @@
   font-size: 15px;
   text-decoration: underline;
   cursor: pointer;
-}
-
-/* ─── Casting intro ──────────────────────────────────────────── */
-
-.castingIntro {
-  margin-bottom: 32px;
-  padding: 20px 24px;
-  background: rgba(var(--brand-red-rgb), 0.04);
-  border-left: 3px solid var(--brand-red);
-  border-radius: 4px;
-  font-family: var(--font-body);
-  font-size: 15px;
-  color: var(--apply-brown);
-  line-height: 1.6;
-}
-
-.castingIntro p {
-  margin: 0 0 12px;
-}
-
-.mustBe {
-  font-weight: 700;
-  margin-bottom: 4px;
-}
-
-.castingReqs {
-  list-style: none;
-  padding: 0;
-  margin: 0;
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
-}
-
-.castingReqs li::before {
-  content: "• ";
-  color: var(--brand-red);
-  font-weight: 700;
 }
 
 /* ─── No-consent warning ─────────────────────────────────────── */

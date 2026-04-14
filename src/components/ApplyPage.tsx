@@ -3,6 +3,7 @@ import { ErrorBoundary } from "./ErrorBoundary";
 import { COMMUNITY_OPTIONS, INCOME_OPTIONS } from "@/types/application";
 import styles from "./ApplyPage.module.css";
 import { SOCIAL_URLS } from "@/data/socials";
+import Spinner from "./ui/Spinner";
 import { APPLY_PAGE } from "@/data/copy";
 import { FieldGroup, SectionTitle } from "./apply/FieldGroup";
 import { TermsModal } from "./apply/TermsModal";
@@ -121,7 +122,11 @@ function ApplyPageInner() {
 
   return (
     <>
-      <div className={styles.page} data-apply-root>
+      <div
+        className={styles.page}
+        data-apply-root
+        data-submitted={submitted || undefined}
+      >
         <div className={styles.container}>
           <div className={styles.headerArea}>
             <button
@@ -151,16 +156,6 @@ function ApplyPageInner() {
           ) : (
             <div className={styles.panel}>
               <form onSubmit={handleSubmit} noValidate>
-                <div className={styles.castingIntro}>
-                  <p>{APPLY_PAGE.introText}</p>
-                  <p className={styles.mustBe}>Must be:</p>
-                  <ul className={styles.castingReqs}>
-                    {APPLY_PAGE.requirements.map((req) => (
-                      <li key={req}>{req}</li>
-                    ))}
-                  </ul>
-                </div>
-
                 <div className={styles.typeSection}>
                   <p className={styles.typeLabel}>I am applying…</p>
                   <div className={styles.typeButtonGroup}>
@@ -288,21 +283,6 @@ function ApplyPageInner() {
                       </select>
                     </FieldGroup>
                   </div>
-
-                  <FieldGroup
-                    label="What's your type... (we will do our best to match you)"
-                    htmlFor="field-type"
-                  >
-                    <input
-                      id="field-type"
-                      type="text"
-                      value={form.type}
-                      onChange={(e) => set("type", e.target.value)}
-                      placeholder="e.g. funny, ambitious, loves spice"
-                      className={styles.input}
-                      maxLength={200}
-                    />
-                  </FieldGroup>
 
                   <div className={styles.gridTwo}>
                     <FieldGroup
@@ -495,6 +475,20 @@ function ApplyPageInner() {
                     Anything else?
                   </SectionTitle>
                   <FieldGroup
+                    label="What's your type... (we will do our best to match you)"
+                    htmlFor="field-type"
+                  >
+                    <input
+                      id="field-type"
+                      type="text"
+                      value={form.type}
+                      onChange={(e) => set("type", e.target.value)}
+                      placeholder="e.g. funny, ambitious, loves spice"
+                      className={styles.input}
+                      maxLength={200}
+                    />
+                  </FieldGroup>
+                  <FieldGroup
                     label={
                       form.applicationType === "Self"
                         ? "Why would you be a great fit? (optional)"
@@ -620,7 +614,7 @@ function ApplyPageInner() {
                 >
                   {submitting ? (
                     <>
-                      <span className={styles.spinner} />
+                      <Spinner size="sm" label="Submitting..." />
                       Submitting…
                     </>
                   ) : (

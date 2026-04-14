@@ -100,7 +100,9 @@ describe("AdminDashboard", () => {
   it("shows loading state while fetching", () => {
     mockGetDocs.mockReturnValue(new Promise(() => {})); // never resolves
     render(<AdminDashboard onLogout={onLogout} />);
-    expect(screen.getByText("Loading…")).toBeInTheDocument();
+    expect(
+      screen.getByRole("status", { name: "Loading applications" }),
+    ).toBeInTheDocument();
   });
 
   it("shows error state when fetch fails", async () => {

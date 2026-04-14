@@ -1,0 +1,35 @@
+.spinner {
+  display: inline-block;
+  border-radius: 50%;
+  border-style: solid;
+  animation: spinner-spin 0.7s linear infinite;
+  flex-shrink: 0;
+}
+
+.md {
+  width: 32px;
+  height: 32px;
+  border-width: 2px;
+  border-color: rgba(0, 0, 0, 0.08);
+  border-top-color: var(--brand-red);
+}
+
+.sm {
+  width: 16px;
+  height: 16px;
+  border-width: 2px;
+  border-color: rgba(255, 255, 255, 0.3);
+  border-top-color: #fff;
+}
+
+@keyframes spinner-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .spinner {
+    animation: none;
+  }
+}

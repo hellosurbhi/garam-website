@@ -1,5 +1,33 @@
 # Changelog
 
+## ci: enforce branch protection and fix smoke test placement (2026-04-14)
+
+### What changed
+
+Fixed two compounding problems that allowed broken code to merge into main.
+
+**Problem 1: Branch protection was never configured.** All CI jobs ran on PRs but GitHub was never told to require them. The merge button stayed green regardless of CI status.
+
+**Problem 2: Smoke tests were post-merge and tested a local build.** Running Playwright after a merge can't block anything. And without `PLAYWRIGHT_BASE_URL` set, the job just rebuilt locally — catching nothing that the `build` job didn't already catch.
+
+**Fixes:**
+
+`.github/workflows/ci.yml` — Added `smoke` job (Job 5). Playwright runs pre-merge, builds locally, tests all routes across 4 viewports (iPhone, iPad, iPad landscape, desktop). All 5 jobs must pass before merge is allowed once branch protection is configured.
+
+`.github/workflows/smoke-tests.yml` — Repurposed as a **production health check**. Now sets `PLAYWRIGHT_BASE_URL: https://garammasaladating.com` so it hits the live site, not a local build. Adds a 90-second wait for Vercel to finish deploying. This is not a merge gate — it tells you if the deploy itself broke production.
+
+`scripts/setup-branch-protection.sh` — New one-time setup script. Uses `gh api` to require all 5 checks (Lint and Type Check, Unit Tests, Build, Mutation Testing, Smoke Tests) plus `strict: true` (branch must be up-to-date) and `enforce_admins: true` (admins cannot bypass). Run once: `chmod +x scripts/setup-branch-protection.sh && ./scripts/setup-branch-protection.sh`
+
+### Files affected
+
+- `.github/workflows/ci.yml`
+- `.github/workflows/smoke-tests.yml`
+- `scripts/setup-branch-protection.sh` (new)
+
+### Why
+
+A branch merged into main despite CI failures because GitHub branch protection was never set up. The safety gates existed but had no teeth.
+
 ## fix(coderabbit): address all 11 unresolved PR comments (2026-04-14)
 
 ### What changed

@@ -1,5 +1,7 @@
-# Smoke tests run after code lands on main (post-merge)
-name: Smoke Tests
+# Production health check — runs after code lands on main and Vercel deploys.
+# Tests the actual live site, not a local build.
+# This is NOT a merge gate — it tells you if the deploy broke production.
+name: Production Health Check
 
 on:
   push:
@@ -11,7 +13,7 @@ concurrency:
 
 jobs:
   smoke-tests:
-    name: Playwright Smoke Tests
+    name: Production Health Check
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -22,8 +24,12 @@ jobs:
       - run: npm ci
       - name: Install Playwright
         run: npx playwright install chromium --with-deps
-      - name: Run smoke tests
+      - name: Wait for Vercel deployment
+        run: sleep 90
+      - name: Run smoke tests against production
         run: npx playwright test
+        env:
+          PLAYWRIGHT_BASE_URL: https://garammasaladating.com
       - name: Upload report on failure
         uses: actions/upload-artifact@v4
         if: failure()

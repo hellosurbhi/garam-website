@@ -345,8 +345,17 @@ const eventSeriesJsonLd = JSON.stringify({
           }
           try {
             window.EBWidgets.createWidget(config);
+            // Widget bound successfully. Prevent the anchor's native navigation so
+            // only the modal fires. If createWidget threw, the anchor href + target="_blank"
+            // provide the native fallback without any preventDefault.
+            var trigger = document.getElementById(ev.triggerId);
+            if (trigger) {
+              trigger.addEventListener("click", function (e) {
+                e.preventDefault();
+              });
+            }
           } catch (_) {
-            // Widget init failed; anchor href provides native ticket-page fallback
+            // Widget init failed; anchor href + target="_blank" provide native fallback
           }
         });
       }

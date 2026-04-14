@@ -23,7 +23,7 @@ const { events } = Astro.props;
     {
       events.map((event) => {
         const isLive = Boolean(event.url);
-        const isSoldOut = event.tagline?.toLowerCase().includes("sold out");
+        const isSoldOut = event.soldOut ?? false;
         const hasWidget = isLive && Boolean(event.eventbriteId) && !isSoldOut;
         const cardInner = (
           <>

@@ -143,6 +143,16 @@ Organization + WebSite on homepage. Event schema per upcoming show. FAQPage on h
 - Ship the smallest working version first, then iterate.
 - If a fix feels hacky, step back and do it right.
 
+## Design rules (MANDATORY)
+
+**Every design decision, no matter how small, must look intentional and polished.**
+
+- CTAs inside cards must be full-width (`display: block; width: 100%`), never `inline-block` left-floating
+- Buttons always need `:active { transform: scale(0.97) }` press feedback
+- Multi-line body text in cards: left-align is correct. Single-line headings and standalone CTAs: center-align
+- Before writing any UI code that touches layout, spacing, alignment, or visual treatment: invoke the `emil-design-eng` skill to validate the approach
+- When in doubt about any visual choice: ask "would this look embarrassing next to Linear or Vercel?" If yes, rethink it
+
 ## Skill routing
 
 When the user's request matches an available skill, ALWAYS invoke it using the Skill
@@ -160,6 +170,7 @@ Key routing rules:
 - Weekly retro → invoke retro
 - Design system, brand → invoke design-consultation
 - Visual audit, design polish → invoke design-review
+- Any UI change, layout, spacing, alignment, animation → invoke emil-design-eng FIRST
 - Architecture review → invoke plan-eng-review
 - Save progress, checkpoint, resume → invoke checkpoint
 - Code quality, health check → invoke health

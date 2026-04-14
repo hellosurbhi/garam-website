@@ -676,7 +676,8 @@
 }
 
 .successTicketButton {
-  display: inline-block;
+  display: block;
+  width: 100%;
   margin-top: 16px;
   padding: 14px 28px;
   background: var(--brand-red);
@@ -686,10 +687,18 @@
   font-weight: 700;
   border-radius: 100px;
   text-decoration: none;
-  transition: background 0.2s ease-out;
+  text-align: center;
+  transition:
+    background 200ms ease-out,
+    transform 160ms ease-out;
   min-height: var(--touch-target);
+  box-sizing: border-box;
 }
 
 .successTicketButton:hover {
   background: var(--brand-red-dark);
+}
+
+.successTicketButton:active {
+  transform: scale(0.97);
 }

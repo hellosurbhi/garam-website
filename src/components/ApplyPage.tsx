@@ -147,6 +147,16 @@ function ApplyPageInner() {
           ) : (
             <div className={styles.panel}>
               <form onSubmit={handleSubmit} noValidate>
+                <div className={styles.castingIntro}>
+                  <p>{APPLY_PAGE.introText}</p>
+                  <p className={styles.mustBe}>Must be:</p>
+                  <ul className={styles.castingReqs}>
+                    {APPLY_PAGE.requirements.map((req) => (
+                      <li key={req}>{req}</li>
+                    ))}
+                  </ul>
+                </div>
+
                 <div className={styles.typeSection}>
                   <p className={styles.typeLabel}>I am applying…</p>
                   <div className={styles.typeButtonGroup}>
@@ -275,6 +285,21 @@ function ApplyPageInner() {
                     </FieldGroup>
                   </div>
 
+                  <FieldGroup
+                    label="What's your type... (we will do our best to match you)"
+                    htmlFor="field-type"
+                  >
+                    <input
+                      id="field-type"
+                      type="text"
+                      value={form.type}
+                      onChange={(e) => set("type", e.target.value)}
+                      placeholder="e.g. funny, ambitious, loves spice"
+                      className={styles.input}
+                      maxLength={200}
+                    />
+                  </FieldGroup>
+
                   <div className={styles.gridTwo}>
                     <FieldGroup
                       label="Metropolitan Area"
@@ -317,7 +342,7 @@ function ApplyPageInner() {
                   </div>
 
                   <FieldGroup
-                    label="Instagram Handle"
+                    label="Instagram handle @ (we wanna stalk you 👀)"
                     required
                     error={errors.instagram}
                     htmlFor="field-instagram"
@@ -532,6 +557,11 @@ function ApplyPageInner() {
                       {errors.marketingConsent}
                     </p>
                   )}
+                  {form.marketingConsent === "no" && (
+                    <p className={styles.noConsentWarning} role="alert">
+                      {APPLY_PAGE.noConsentWarning}
+                    </p>
+                  )}
                 </fieldset>
 
                 {/* ─── Terms & Conditions ─────────────────────── */}
@@ -577,7 +607,11 @@ function ApplyPageInner() {
 
                 <button
                   type="submit"
-                  disabled={submitting}
+                  disabled={
+                    submitting ||
+                    form.marketingConsent !== "yes" ||
+                    !termsAgreed
+                  }
                   className={styles.submitButton}
                 >
                   {submitting ? (

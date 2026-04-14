@@ -1,5 +1,17 @@
 # Changelog
 
+## fix(apply): remove extra spacing around terms checkbox button (2026-04-13)
+
+### What changed
+
+The "I agree to the Terms & Conditions \*" label had visible extra whitespace around the button text. `.termsLink` had `padding: 0 8px` which added 8px of space on each side of the button, and `.requiredMark` had `margin-left: 3px`. Together these made the inline sentence look broken.
+
+**Fix:** Set `padding: 0` on `.termsLink` (the `min-height: var(--touch-target)` already satisfies vertical touch target). Removed `margin-left: 3px` from `.requiredMark` — the text flows naturally with the surrounding sentence now.
+
+**Files affected:** `src/components/ApplyPage.module.css`
+
+---
+
 ## fix(tickets): prevent anchor navigation when EB widget modal is active (2026-04-13)
 
 ### What changed

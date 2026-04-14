@@ -539,6 +539,55 @@
   cursor: pointer;
 }
 
+/* ─── Casting intro ──────────────────────────────────────────── */
+
+.castingIntro {
+  margin-bottom: 32px;
+  padding: 20px 24px;
+  background: rgba(220, 38, 38, 0.04);
+  border-left: 3px solid var(--brand-red);
+  border-radius: 4px;
+  font-family: var(--font-body);
+  font-size: 15px;
+  color: var(--apply-brown);
+  line-height: 1.6;
+}
+
+.castingIntro p {
+  margin: 0 0 12px;
+}
+
+.mustBe {
+  font-weight: 700;
+  margin-bottom: 4px;
+}
+
+.castingReqs {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.castingReqs li::before {
+  content: "• ";
+  color: var(--brand-red);
+  font-weight: 700;
+}
+
+/* ─── No-consent warning ─────────────────────────────────────── */
+
+.noConsentWarning {
+  font-family: var(--font-body);
+  font-size: 13px;
+  color: var(--brand-red);
+  font-weight: 600;
+  margin-top: 6px;
+  padding-left: 4px;
+}
+
 /* ─── Disclaimer ─────────────────────────────────────────────── */
 
 .disclaimer {

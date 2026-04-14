@@ -1,5 +1,30 @@
 # Changelog
 
+## feat(apply): casting intro, consent gate, instagram label, type field (2026-04-13)
+
+### What changed
+
+**Casting intro block** — A styled blurb now appears at the top of the apply form (before the type selector) with the show description and three eligibility bullets. Copy lives in `APPLY_PAGE` in `src/data/copy.ts`.
+
+**Consent gate on submit button** — Submit is disabled until the applicant selects Yes on the marketing consent radio AND checks the Terms box. Selecting No shows an immediate inline warning ("Selecting No means you will not be considered. You must be okay going viral to apply.") with `role="alert"`. The validate() function also defensively rejects `marketingConsent === "no"` to block server-side bypasses.
+
+**Instagram label** — Updated from "Instagram Handle" to "Instagram handle @ (we wanna stalk you 👀)" to match the show's tone.
+
+**"What's your type" optional field** — New text field after gender/orientation. No validation, saves to Firestore only if non-empty. Helps the show match contestants.
+
+**Tests updated** — 15 tests updated: string-match fixes for the new validation message (period added), submit-click tests now unlock the gate first, and 4 tests rewritten to verify the new disabled-button UX instead of testing validation-error display for consent/terms.
+
+### Files affected
+
+`src/data/copy.ts`, `src/components/ApplyPage.tsx`, `src/components/apply/useApplyForm.ts`, `src/components/ApplyPage.module.css`, `src/components/ApplyPage.test.tsx`, `src/components/apply/useApplyForm.test.ts`
+
+### Decisions
+
+- Button disabled state chosen over showing validation errors on click, because a disabled button communicates the prerequisite clearly before any attempt — no wasted click, no confusion.
+- `type` field written to Firestore only if non-empty to keep documents clean for applicants who skip it.
+
+---
+
 ## fix(leads): parse geoLatitude/geoLongitude as numbers before Firestore writes (2026-04-13)
 
 ### What changed

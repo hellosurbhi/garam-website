@@ -96,6 +96,9 @@ describe("ApplyPage", () => {
 
   it("shows error text when submitting with empty required fields", async () => {
     render(<ApplyPage />);
+    // Unlock submit gate: Yes consent + Terms checked
+    fireEvent.click(screen.getByRole("radio", { name: /yes/i }));
+    fireEvent.click(screen.getByRole("checkbox"));
     fireEvent.click(screen.getByText("Submit Application"));
     await waitFor(() => {
       expect(
@@ -106,6 +109,9 @@ describe("ApplyPage", () => {
 
   it("shows 'Required' error for empty name after submit", async () => {
     render(<ApplyPage />);
+    // Unlock submit gate: Yes consent + Terms checked
+    fireEvent.click(screen.getByRole("radio", { name: /yes/i }));
+    fireEvent.click(screen.getByRole("checkbox"));
     fireEvent.click(screen.getByText("Submit Application"));
     await waitFor(() => {
       const errors = screen.getAllByText("Required");
@@ -275,6 +281,9 @@ describe("ApplyPage", () => {
 
   it("inputs have aria-invalid true after validation failure", async () => {
     render(<ApplyPage />);
+    // Unlock submit gate: Yes consent + Terms checked
+    fireEvent.click(screen.getByRole("radio", { name: /yes/i }));
+    fireEvent.click(screen.getByRole("checkbox"));
     fireEvent.click(screen.getByText("Submit Application"));
     await waitFor(() => {
       const nameInput = screen.getByPlaceholderText("Name");
@@ -284,6 +293,9 @@ describe("ApplyPage", () => {
 
   it("age input has aria-invalid true after validation failure", async () => {
     render(<ApplyPage />);
+    // Unlock submit gate: Yes consent + Terms checked
+    fireEvent.click(screen.getByRole("radio", { name: /yes/i }));
+    fireEvent.click(screen.getByRole("checkbox"));
     fireEvent.click(screen.getByText("Submit Application"));
     await waitFor(() => {
       const ageInput = screen.getByPlaceholderText("Age");
@@ -293,48 +305,37 @@ describe("ApplyPage", () => {
 
   /* ── Error display (ConditionalExpression mutations) ──────── */
 
-  it("marketing consent error shows role=alert", async () => {
+  it("marketing consent no selection shows inline warning with role=alert", () => {
     render(<ApplyPage />);
-    fireEvent.click(screen.getByText("Submit Application"));
-    await waitFor(() => {
-      expect(screen.getByText("Please select Yes or No")).toHaveAttribute(
-        "role",
-        "alert",
-      );
-    });
+    fireEvent.click(screen.getByRole("radio", { name: /no/i }));
+    const alerts = screen.getAllByRole("alert");
+    const warning = alerts.find((el) =>
+      el.textContent?.includes("will not be considered"),
+    );
+    expect(warning).toBeInTheDocument();
   });
 
-  it("terms error shows when terms not agreed", async () => {
+  it("submit button is disabled when terms not agreed", () => {
     render(<ApplyPage />);
-    fireEvent.click(screen.getByText("Submit Application"));
-    await waitFor(() => {
-      expect(
-        screen.getByText("You must agree to the Terms & Conditions"),
-      ).toBeInTheDocument();
-    });
+    // Consent Yes, but no terms → button stays disabled
+    fireEvent.click(screen.getByRole("radio", { name: /yes/i }));
+    expect(screen.getByText("Submit Application")).toBeDisabled();
   });
 
-  it("terms error has role=alert", async () => {
+  it("submit button enables when Yes consent and terms both satisfied", () => {
     render(<ApplyPage />);
-    fireEvent.click(screen.getByText("Submit Application"));
-    await waitFor(() => {
-      expect(
-        screen.getByText("You must agree to the Terms & Conditions"),
-      ).toHaveAttribute("role", "alert");
-    });
+    fireEvent.click(screen.getByRole("radio", { name: /yes/i }));
+    fireEvent.click(screen.getByRole("checkbox"));
+    expect(screen.getByText("Submit Application")).not.toBeDisabled();
   });
 
   /* ── data-error attribute (ObjectLiteral mutations) ──────── */
 
-  it("marketing consent fieldset gets data-error on validation failure", async () => {
+  it("submit button is disabled when marketing consent not selected", () => {
     render(<ApplyPage />);
-    fireEvent.click(screen.getByText("Submit Application"));
-    await waitFor(() => {
-      const fieldset = screen
-        .getByText("Please select Yes or No")
-        .closest("fieldset");
-      expect(fieldset).toHaveAttribute("data-error", "true");
-    });
+    // Terms checked but no consent → button stays disabled
+    fireEvent.click(screen.getByRole("checkbox"));
+    expect(screen.getByText("Submit Application")).toBeDisabled();
   });
 
   /* ── Gender/orientation options (ArrayDeclaration mutations) ── */
@@ -371,6 +372,9 @@ describe("ApplyPage", () => {
 
   it("city input has aria-invalid true after validation failure", async () => {
     render(<ApplyPage />);
+    // Unlock submit gate: Yes consent + Terms checked
+    fireEvent.click(screen.getByRole("radio", { name: /yes/i }));
+    fireEvent.click(screen.getByRole("checkbox"));
     fireEvent.click(screen.getByText("Submit Application"));
     await waitFor(() => {
       const cityInput = screen.getByPlaceholderText("(Ex. Chicago)");
@@ -429,6 +433,9 @@ describe("ApplyPage", () => {
 
   it("toast shows error message after failed validation", async () => {
     render(<ApplyPage />);
+    // Unlock submit gate: Yes consent + Terms checked
+    fireEvent.click(screen.getByRole("radio", { name: /yes/i }));
+    fireEvent.click(screen.getByRole("checkbox"));
     fireEvent.click(screen.getByText("Submit Application"));
     await waitFor(() => {
       const toast = screen.getByText("Please fill in all required fields");
@@ -438,6 +445,9 @@ describe("ApplyPage", () => {
 
   it("toast has dismiss button", async () => {
     render(<ApplyPage />);
+    // Unlock submit gate: Yes consent + Terms checked
+    fireEvent.click(screen.getByRole("radio", { name: /yes/i }));
+    fireEvent.click(screen.getByRole("checkbox"));
     fireEvent.click(screen.getByText("Submit Application"));
     await waitFor(() => {
       expect(screen.getByLabelText("Dismiss")).toBeInTheDocument();
@@ -446,6 +456,9 @@ describe("ApplyPage", () => {
 
   it("toast dismiss button removes toast", async () => {
     render(<ApplyPage />);
+    // Unlock submit gate: Yes consent + Terms checked
+    fireEvent.click(screen.getByRole("radio", { name: /yes/i }));
+    fireEvent.click(screen.getByRole("checkbox"));
     fireEvent.click(screen.getByText("Submit Application"));
     await waitFor(() => {
       expect(
@@ -464,6 +477,9 @@ describe("ApplyPage", () => {
 
   it("name input gets aria-describedby pointing to error when error exists", async () => {
     render(<ApplyPage />);
+    // Unlock submit gate: Yes consent + Terms checked
+    fireEvent.click(screen.getByRole("radio", { name: /yes/i }));
+    fireEvent.click(screen.getByRole("checkbox"));
     fireEvent.click(screen.getByText("Submit Application"));
     await waitFor(() => {
       const nameInput = screen.getByPlaceholderText("Name");

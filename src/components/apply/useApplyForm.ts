@@ -34,6 +34,7 @@ export interface FormState {
   income: string;
   referrerName: string;
   pitch: string;
+  type: string;
   marketingConsent: "yes" | "no" | "";
 }
 
@@ -53,6 +54,7 @@ const INITIAL: FormState = {
   income: "",
   referrerName: "",
   pitch: "",
+  type: "",
   marketingConsent: "",
 };
 
@@ -182,8 +184,11 @@ export function useApplyForm() {
     if (form.applicationType === "Nomination" && !form.referrerName.trim()) {
       errs.referrerName = "Required";
     }
-    if (!form.marketingConsent)
-      errs.marketingConsent = "Please select Yes or No";
+    if (!form.marketingConsent) {
+      errs.marketingConsent = "Please select Yes or No.";
+    } else if (form.marketingConsent === "no") {
+      errs.marketingConsent = "You must select Yes to apply.";
+    }
     if (!termsAgreed)
       errs.termsAgreed = "You must agree to the Terms & Conditions";
     setErrors(errs);
@@ -242,6 +247,7 @@ export function useApplyForm() {
 
       await addDoc(collection(getFirebaseDb(), "applications"), {
         ...applicationData,
+        ...(form.type.trim() && { type: form.type.trim() }),
         marketingConsent: form.marketingConsent,
         termsAgreedAt: serverTimestamp(),
         status: "New",

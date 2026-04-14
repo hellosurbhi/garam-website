@@ -274,7 +274,7 @@ describe("useApplyForm", () => {
     expect(result.current.errors.instagram).toBe("Required");
     expect(result.current.errors.photo).toBe("A photo is required");
     expect(result.current.errors.marketingConsent).toBe(
-      "Please select Yes or No",
+      "Please select Yes or No.",
     );
     expect(result.current.errors.termsAgreed).toBe(
       "You must agree to the Terms & Conditions",
@@ -342,7 +342,7 @@ describe("useApplyForm", () => {
       await result.current.handleSubmit(makeSubmitEvent());
     });
     expect(result.current.errors.marketingConsent).toBe(
-      "Please select Yes or No",
+      "Please select Yes or No.",
     );
   });
 

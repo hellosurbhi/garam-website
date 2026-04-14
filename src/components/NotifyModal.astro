@@ -495,13 +495,18 @@ const { source = "notify-modal" } = Astro.props;
     text-transform: uppercase;
     letter-spacing: 1px;
     cursor: pointer;
-    transition: background 0.2s;
+    transition:
+      background 0.2s,
+      transform 0.06s;
     min-height: var(--touch-target);
     white-space: nowrap;
     width: 100%;
   }
   .modal-submit:hover {
     background: var(--brand-red-dark);
+  }
+  .modal-submit:active {
+    transform: scale(0.97);
   }
   .modal-skip {
     background: none;
@@ -510,13 +515,18 @@ const { source = "notify-modal" } = Astro.props;
     font-size: 14px;
     font-family: var(--font-body), sans-serif;
     margin-top: 12px;
-    transition: color 0.2s;
+    transition:
+      color 0.2s,
+      transform 0.06s;
     padding: 12px 16px;
     min-height: var(--touch-target);
     cursor: pointer;
   }
   .modal-skip:hover {
     color: var(--charcoal);
+  }
+  .modal-skip:active {
+    transform: scale(0.97);
   }
   .modal-success {
     text-align: center;

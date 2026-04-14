@@ -672,12 +672,17 @@ const { events } = Astro.props;
     text-transform: uppercase;
     letter-spacing: 1px;
     cursor: pointer;
-    transition: background 0.2s;
+    transition:
+      background 0.2s,
+      transform 0.06s;
     min-height: var(--touch-target);
     width: 100%;
   }
   .modal-submit:hover {
     background: var(--brand-red-dark);
+  }
+  .modal-submit:active {
+    transform: scale(0.97);
   }
   .modal-success {
     text-align: center;

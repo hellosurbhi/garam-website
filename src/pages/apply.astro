@@ -29,54 +29,60 @@ const breadcrumbJsonLd = buildBreadcrumbJsonLd([
       loading="eager"
     />
 
-    <div class="apply-skeleton-top" aria-hidden="true">
+    <!--
+      One shared container for all static + skeleton content.
+      Individual sections hide via :has() — no double-padding between them.
+    -->
+    <div class="apply-static-wrapper">
       <div class="apply-skeleton-container">
-        <div class="apply-skeleton-header">
-          <span class="apply-skeleton-back">← Back</span>
-        </div>
-
-        <div class="apply-skeleton-title-area">
-          <h1 class="apply-skeleton-title">
-            Apply to Be on Garam Masala Dating
-          </h1>
-          <p class="apply-skeleton-subtitle">
-            {APPLY_PAGE.subtitle}
-          </p>
-        </div>
-      </div>
-    </div>
-
-    <div class="apply-intro-static">
-      <div class="apply-skeleton-container">
-        <div class="apply-skeleton-intro">
-          <p>{APPLY_PAGE.introText}</p>
-          <p class="apply-skeleton-must-be">Must be:</p>
-          <ul class="apply-skeleton-reqs">
-            {APPLY_PAGE.requirements.map((r) => <li>{r}</li>)}
-          </ul>
-        </div>
-      </div>
-    </div>
-
-    <div class="apply-skeleton-form" aria-hidden="true">
-      <div class="apply-skeleton-container">
-        <div class="apply-skeleton-type">
-          <p class="apply-skeleton-type-label">I am applying…</p>
-          <div class="apply-skeleton-type-group">
-            <span class="apply-skeleton-type-btn apply-skeleton-type-active"
-              >For myself</span
+        <!-- Back + title: permanent. Hides on form submission. -->
+        <div class="apply-static-header">
+          <div class="apply-skeleton-header">
+            <button class="apply-back-btn" onclick="history.back()"
+              >← Back</button
             >
-            <span class="apply-skeleton-type-btn">For a friend</span>
+          </div>
+          <div class="apply-skeleton-title-area">
+            <h1 class="apply-skeleton-title">
+              Apply to Be on Garam Masala Dating
+            </h1>
+            <p class="apply-skeleton-subtitle">
+              {APPLY_PAGE.subtitle}
+            </p>
           </div>
         </div>
 
-        <h2 class="apply-skeleton-section">About You</h2>
+        <!-- Intro: permanent. Hides on form submission. -->
+        <div class="apply-intro-static">
+          <div class="apply-skeleton-intro">
+            <p>{APPLY_PAGE.introText}</p>
+            <p class="apply-skeleton-must-be">Must be:</p>
+            <ul class="apply-skeleton-reqs">
+              {APPLY_PAGE.requirements.map((r) => <li>{r}</li>)}
+            </ul>
+          </div>
+        </div>
 
-        <div class="apply-skeleton-shimmer">
-          <div class="shimmer-bar"></div>
-          <div class="shimmer-bar shimmer-bar--medium"></div>
-          <div class="shimmer-bar"></div>
-          <div class="shimmer-bar shimmer-bar--short"></div>
+        <!-- Skeleton form: type toggle + shimmer. Hides when React mounts. -->
+        <div class="apply-skeleton-form" aria-hidden="true">
+          <div class="apply-skeleton-type">
+            <p class="apply-skeleton-type-label">I am applying…</p>
+            <div class="apply-skeleton-type-group">
+              <span class="apply-skeleton-type-btn apply-skeleton-type-active"
+                >For myself</span
+              >
+              <span class="apply-skeleton-type-btn">For a friend</span>
+            </div>
+          </div>
+
+          <h2 class="apply-skeleton-section">About You</h2>
+
+          <div class="apply-skeleton-shimmer">
+            <div class="shimmer-bar"></div>
+            <div class="shimmer-bar shimmer-bar--medium"></div>
+            <div class="shimmer-bar"></div>
+            <div class="shimmer-bar shimmer-bar--short"></div>
+          </div>
         </div>
       </div>
     </div>
@@ -86,10 +92,12 @@ const breadcrumbJsonLd = buildBreadcrumbJsonLd([
 </BaseLayout>
 
 <style is:global>
-  .apply-main:has([data-apply-root]) .apply-skeleton-top,
+  /* Hide skeleton form when React has mounted */
   .apply-main:has([data-apply-root]) .apply-skeleton-form {
     display: none;
   }
+  /* Hide static header + intro when form is submitted (success panel takes over) */
+  .apply-main:has([data-submitted]) .apply-static-header,
   .apply-main:has([data-submitted]) .apply-intro-static {
     display: none;
   }
@@ -101,6 +109,7 @@ const breadcrumbJsonLd = buildBreadcrumbJsonLd([
     overflow: hidden;
     min-height: 100vh;
   }
+
   .apply-bg {
     position: absolute;
     top: 0;
@@ -114,35 +123,42 @@ const breadcrumbJsonLd = buildBreadcrumbJsonLd([
     opacity: 0.06;
   }
 
-  .apply-skeleton-top,
-  .apply-intro-static,
-  .apply-skeleton-form {
+  /* Single wrapper: positioning only, sections own their vertical spacing */
+  .apply-static-wrapper {
     position: relative;
     z-index: 1;
   }
 
   .apply-skeleton-container {
-    position: relative;
-    z-index: 1;
     max-width: 640px;
     margin: 0 auto;
-    padding: 20px;
+    padding: 0 20px;
   }
 
-  /* Header */
+  /* Header provides the top breathing room for the whole page */
+  .apply-static-header {
+    padding-top: 20px;
+  }
+
   .apply-skeleton-header {
     margin-bottom: 8px;
     min-height: var(--touch-target);
     display: flex;
     align-items: center;
   }
-  .apply-skeleton-back {
+
+  .apply-back-btn {
     display: inline-flex;
     align-items: center;
+    gap: 6px;
     color: var(--charcoal);
     font-family: var(--font-body);
     font-size: 16px;
-    opacity: 0.4;
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 0;
+    min-height: var(--touch-target);
   }
 
   /* Title */
@@ -166,7 +182,7 @@ const breadcrumbJsonLd = buildBreadcrumbJsonLd([
     margin: 0;
   }
 
-  /* Casting intro — matches .castingIntro in ApplyPage.module.css */
+  /* Casting intro */
   .apply-skeleton-intro {
     margin-bottom: 32px;
     font-family: var(--font-body);
@@ -254,7 +270,7 @@ const breadcrumbJsonLd = buildBreadcrumbJsonLd([
     margin-top: 12px;
   }
 
-  /* Shimmer bars — only for the field area */
+  /* Shimmer bars */
   @keyframes shimmer-sweep {
     0% {
       background-position: -400px 0;

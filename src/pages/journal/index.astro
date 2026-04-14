@@ -102,7 +102,7 @@ const breadcrumbJsonLd = buildBreadcrumbJsonLd([
               <a
                 href={`/journal/${post.slug}`}
                 class="journal-card"
-                style={`animation-delay: ${0.1 + i * 0.08}s;`}
+                data-index={i}
               >
                 {post.category === "masterclass" && (
                   <span class="journal-card-badge">Masterclass</span>
@@ -237,12 +237,58 @@ const breadcrumbJsonLd = buildBreadcrumbJsonLd([
     animation: journalFadeIn 0.5s ease-out both;
   }
 
+  .journal-card[data-index="0"] {
+    animation-delay: 0.1s;
+  }
+  .journal-card[data-index="1"] {
+    animation-delay: 0.18s;
+  }
+  .journal-card[data-index="2"] {
+    animation-delay: 0.26s;
+  }
+  .journal-card[data-index="3"] {
+    animation-delay: 0.34s;
+  }
+  .journal-card[data-index="4"] {
+    animation-delay: 0.42s;
+  }
+  .journal-card[data-index="5"] {
+    animation-delay: 0.5s;
+  }
+  .journal-card[data-index="6"] {
+    animation-delay: 0.58s;
+  }
+  .journal-card[data-index="7"] {
+    animation-delay: 0.66s;
+  }
+  .journal-card[data-index="8"] {
+    animation-delay: 0.74s;
+  }
+  .journal-card[data-index="9"] {
+    animation-delay: 0.82s;
+  }
+  .journal-card[data-index="10"] {
+    animation-delay: 0.9s;
+  }
+  .journal-card[data-index="11"] {
+    animation-delay: 0.98s;
+  }
+  .journal-card[data-index="12"] {
+    animation-delay: 1.06s;
+  }
+  .journal-card[data-index="13"] {
+    animation-delay: 1.14s;
+  }
+  .journal-card[data-index="14"] {
+    animation-delay: 1.22s;
+  }
+
   .journal-card-badge {
     display: inline-block;
     background: var(--brand-red);
     color: var(--white);
     font-family: var(--font-body);
-    font-size: 9px;
+    font-size: 11px;
     font-weight: 700;
     text-transform: uppercase;
     letter-spacing: 0.15em;

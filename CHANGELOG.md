@@ -1,5 +1,23 @@
 # Changelog
 
+## feat: success panel EB widget + Instagram DM + scroll/back-button fix (2026-04-15)
+
+### What changed
+
+**Bug 11 (ApplySuccessPanel):** The "Get Tickets" button in the apply success panel now opens the Eventbrite checkout widget inline (same modal as the tickets/shows pages) with the STEALER promo code pre-applied, rather than opening a new tab. The component loads the EB script lazily via `useEffect` and falls back to an external `<a>` link if the next show has no `eventbriteId`. Instagram card copy updated to "Follow and DM @garammasaladating" — more actionable for applicants who just submitted. Added `border: none; cursor: pointer` to `.successTicketButton` so the style applies identically whether the element is rendered as `<button>` or `<a>`.
+
+**Bug 6 (Eventbrite scroll preservation):** Eventbrite's SDK calls `window.scrollTo(0,0)` when it opens its checkout modal, jumping the viewport to the top. `EventbriteWidgetInit.astro` now saves `window.scrollY` on each trigger button click and restores it via `requestAnimationFrame` once `eds-structure_main` is injected into the DOM.
+
+**Bug 10 (Mobile back button):** On mobile, pressing the hardware back button while the Eventbrite modal was open navigated away from the page. The fix uses the History API: a dummy entry `{ ebModal: true }` is pushed when the modal opens; a `popstate` listener intercepts the back gesture and clicks the modal's close button instead. A `MutationObserver` detects when `eds-structure_main` is removed (modal closed normally) and calls `history.back()` to clean up the dummy entry, keeping the browser history consistent.
+
+### Files affected
+
+- `src/components/apply/ApplySuccessPanel.tsx`
+- `src/components/ApplyPage.module.css`
+- `src/components/EventbriteWidgetInit.astro`
+
+---
+
 ## ci: fix smoke test placement and add production health check (2026-04-15)
 
 ### What changed

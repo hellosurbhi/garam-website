@@ -674,9 +674,11 @@
   font-family: var(--font-body);
   font-size: 16px;
   font-weight: 700;
+  border: none;
   border-radius: 100px;
   text-decoration: none;
   text-align: center;
+  cursor: pointer;
   transition:
     background 200ms ease-out,
     transform 160ms ease-out;

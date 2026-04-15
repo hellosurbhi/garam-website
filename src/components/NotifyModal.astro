@@ -99,7 +99,9 @@ const { source = "notify-modal" } = Astro.props;
         tabindex="-1"
         hidden
       >
-        <p>You're on the list! We'll let you know.</p>
+        <p id="notify-success-text">
+          You're on the list! Check your email when tickets drop.
+        </p>
       </div>
     </div>
   </div>
@@ -287,13 +289,17 @@ const { source = "notify-modal" } = Astro.props;
         const phoneErrorEl = document.getElementById("notify-phone-error");
 
         if (!raw.trim()) {
-          // Empty — show success
+          // Empty — show success (email-only message)
           document
             .getElementById("notify-phone-view")
             ?.setAttribute("hidden", "");
           const successEl = document.getElementById(
             "notify-success",
           ) as HTMLElement | null;
+          const successText = document.getElementById("notify-success-text");
+          if (successText)
+            successText.textContent =
+              "You're on the list! Check your email when tickets drop.";
           successEl?.removeAttribute("hidden");
           successEl?.focus();
           return;
@@ -349,6 +355,10 @@ const { source = "notify-modal" } = Astro.props;
           const successEl = document.getElementById(
             "notify-success",
           ) as HTMLElement | null;
+          const successText = document.getElementById("notify-success-text");
+          if (successText)
+            successText.textContent =
+              "You're on the list! We'll text you when tickets drop.";
           successEl?.removeAttribute("hidden");
           successEl?.focus();
         } catch (err) {
@@ -371,6 +381,10 @@ const { source = "notify-modal" } = Astro.props;
       const successEl = document.getElementById(
         "notify-success",
       ) as HTMLElement | null;
+      const successText = document.getElementById("notify-success-text");
+      if (successText)
+        successText.textContent =
+          "You're on the list! Check your email when tickets drop.";
       successEl?.removeAttribute("hidden");
       successEl?.focus();
     });
@@ -426,6 +440,10 @@ const { source = "notify-modal" } = Astro.props;
   /* Prevent CLS when switching between steps */
   .notify-steps-wrapper {
     min-height: 260px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
   }
   .modal-close {
     position: absolute;

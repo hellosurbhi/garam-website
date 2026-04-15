@@ -1,4 +1,10 @@
 # .github/workflows/ci.yml
+#
+# NOTE: These checks run on every PR but do NOT block merges yet.
+# Blocking requires branch protection, which requires GitHub Pro (private repo)
+# or making the repo public. When you're ready:
+#   → Run scripts/setup-branch-protection.sh (instructions inside)
+#
 name: CI
 
 on:

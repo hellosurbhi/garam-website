@@ -691,3 +691,64 @@
 .successTicketButton:active {
   transform: scale(0.97);
 }
+
+/* ─── Seen show nudge ────────────────────────────────────────── */
+
+.seenShowSection {
+  border: none;
+  margin: 0 0 18px;
+  padding: 0;
+  min-width: 0;
+}
+
+.seenYes {
+  font-family: var(--font-body);
+  font-size: 13px;
+  color: var(--muted);
+  margin-top: 8px;
+  font-style: italic;
+}
+
+.seenNudge {
+  margin-top: 12px;
+  padding: 14px 16px;
+  background: var(--off-white);
+  border-left: 3px solid var(--brand-red);
+  border-radius: 8px;
+  font-family: var(--font-body);
+  font-size: 14px;
+  color: var(--apply-brown);
+  line-height: 1.55;
+}
+
+.seenNudge p {
+  margin: 0;
+}
+
+.seenNudgeButton {
+  display: block;
+  width: 100%;
+  margin-top: 12px;
+  padding: 12px 20px;
+  background: var(--brand-red);
+  color: #fff;
+  font-family: var(--font-body);
+  font-size: 15px;
+  font-weight: 700;
+  border-radius: 100px;
+  text-decoration: none;
+  text-align: center;
+  transition:
+    background 200ms ease-out,
+    transform 160ms ease-out;
+  min-height: var(--touch-target);
+  box-sizing: border-box;
+}
+
+.seenNudgeButton:hover {
+  background: var(--brand-red-dark);
+}
+
+.seenNudgeButton:active {
+  transform: scale(0.97);
+}

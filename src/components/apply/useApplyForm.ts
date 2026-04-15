@@ -36,6 +36,7 @@ export interface FormState {
   pitch: string;
   type: string;
   marketingConsent: "yes" | "no" | "";
+  seenShowBefore: "" | "yes" | "no";
 }
 
 const INITIAL: FormState = {
@@ -56,6 +57,7 @@ const INITIAL: FormState = {
   pitch: "",
   type: "",
   marketingConsent: "",
+  seenShowBefore: "",
 };
 
 export type FormErrors = Partial<
@@ -253,6 +255,9 @@ export function useApplyForm() {
         pitch: form.pitch.trim(),
         type: form.type.trim(),
         photoUrl,
+        ...(form.seenShowBefore !== ""
+          ? { seenShowBefore: form.seenShowBefore === "yes" }
+          : {}),
       };
 
       await addDoc(collection(getFirebaseDb(), "applications"), {

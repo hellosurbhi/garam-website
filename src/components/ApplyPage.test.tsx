@@ -52,6 +52,17 @@ describe("ApplyPage", () => {
     );
   });
 
+  // Get marketing consent radio by name attribute to avoid ambiguity
+  // with the optional seenShowBefore Yes/No radios
+  function getConsentRadio(value: "yes" | "no") {
+    const radios = screen.getAllByRole("radio", {
+      name: new RegExp(`^${value}$`, "i"),
+    });
+    return radios.find(
+      (r) => (r as HTMLInputElement).name === "marketingConsent",
+    )!;
+  }
+
   it("shows 'For myself' and 'For a friend' toggle buttons", () => {
     render(<ApplyPage />);
     expect(screen.getByText("For myself")).toBeInTheDocument();
@@ -83,7 +94,7 @@ describe("ApplyPage", () => {
   it("shows error text when submitting with empty required fields", async () => {
     render(<ApplyPage />);
     // Unlock submit gate: Yes consent + Terms checked
-    fireEvent.click(screen.getByRole("radio", { name: /yes/i }));
+    fireEvent.click(getConsentRadio("yes"));
     fireEvent.click(screen.getByRole("checkbox"));
     fireEvent.click(screen.getByText("Submit Application"));
     await waitFor(() => {
@@ -96,7 +107,7 @@ describe("ApplyPage", () => {
   it("shows 'Required' error for empty name after submit", async () => {
     render(<ApplyPage />);
     // Unlock submit gate: Yes consent + Terms checked
-    fireEvent.click(screen.getByRole("radio", { name: /yes/i }));
+    fireEvent.click(getConsentRadio("yes"));
     fireEvent.click(screen.getByRole("checkbox"));
     fireEvent.click(screen.getByText("Submit Application"));
     await waitFor(() => {
@@ -187,18 +198,14 @@ describe("ApplyPage", () => {
 
   it("marketing consent yes radio selects correctly", () => {
     render(<ApplyPage />);
-    const yesRadio = screen.getByRole("radio", {
-      name: /yes/i,
-    }) as HTMLInputElement;
+    const yesRadio = getConsentRadio("yes") as HTMLInputElement;
     fireEvent.click(yesRadio);
     expect(yesRadio.checked).toBe(true);
   });
 
   it("marketing consent no radio selects correctly", () => {
     render(<ApplyPage />);
-    const noRadio = screen.getByRole("radio", {
-      name: /no/i,
-    }) as HTMLInputElement;
+    const noRadio = getConsentRadio("no") as HTMLInputElement;
     fireEvent.click(noRadio);
     expect(noRadio.checked).toBe(true);
   });
@@ -268,7 +275,7 @@ describe("ApplyPage", () => {
   it("inputs have aria-invalid true after validation failure", async () => {
     render(<ApplyPage />);
     // Unlock submit gate: Yes consent + Terms checked
-    fireEvent.click(screen.getByRole("radio", { name: /yes/i }));
+    fireEvent.click(getConsentRadio("yes"));
     fireEvent.click(screen.getByRole("checkbox"));
     fireEvent.click(screen.getByText("Submit Application"));
     await waitFor(() => {
@@ -280,7 +287,7 @@ describe("ApplyPage", () => {
   it("age input has aria-invalid true after validation failure", async () => {
     render(<ApplyPage />);
     // Unlock submit gate: Yes consent + Terms checked
-    fireEvent.click(screen.getByRole("radio", { name: /yes/i }));
+    fireEvent.click(getConsentRadio("yes"));
     fireEvent.click(screen.getByRole("checkbox"));
     fireEvent.click(screen.getByText("Submit Application"));
     await waitFor(() => {
@@ -293,7 +300,7 @@ describe("ApplyPage", () => {
 
   it("marketing consent no selection shows inline warning with role=alert", () => {
     render(<ApplyPage />);
-    fireEvent.click(screen.getByRole("radio", { name: /no/i }));
+    fireEvent.click(getConsentRadio("no"));
     const alerts = screen.getAllByRole("alert");
     const warning = alerts.find((el) =>
       el.textContent?.includes("will not be considered"),
@@ -304,13 +311,13 @@ describe("ApplyPage", () => {
   it("submit button is disabled when terms not agreed", () => {
     render(<ApplyPage />);
     // Consent Yes, but no terms → button stays disabled
-    fireEvent.click(screen.getByRole("radio", { name: /yes/i }));
+    fireEvent.click(getConsentRadio("yes"));
     expect(screen.getByText("Submit Application")).toBeDisabled();
   });
 
   it("submit button enables when Yes consent and terms both satisfied", () => {
     render(<ApplyPage />);
-    fireEvent.click(screen.getByRole("radio", { name: /yes/i }));
+    fireEvent.click(getConsentRadio("yes"));
     fireEvent.click(screen.getByRole("checkbox"));
     expect(screen.getByText("Submit Application")).not.toBeDisabled();
   });
@@ -359,7 +366,7 @@ describe("ApplyPage", () => {
   it("city input has aria-invalid true after validation failure", async () => {
     render(<ApplyPage />);
     // Unlock submit gate: Yes consent + Terms checked
-    fireEvent.click(screen.getByRole("radio", { name: /yes/i }));
+    fireEvent.click(getConsentRadio("yes"));
     fireEvent.click(screen.getByRole("checkbox"));
     fireEvent.click(screen.getByText("Submit Application"));
     await waitFor(() => {
@@ -420,7 +427,7 @@ describe("ApplyPage", () => {
   it("toast shows error message after failed validation", async () => {
     render(<ApplyPage />);
     // Unlock submit gate: Yes consent + Terms checked
-    fireEvent.click(screen.getByRole("radio", { name: /yes/i }));
+    fireEvent.click(getConsentRadio("yes"));
     fireEvent.click(screen.getByRole("checkbox"));
     fireEvent.click(screen.getByText("Submit Application"));
     await waitFor(() => {
@@ -432,7 +439,7 @@ describe("ApplyPage", () => {
   it("toast has dismiss button", async () => {
     render(<ApplyPage />);
     // Unlock submit gate: Yes consent + Terms checked
-    fireEvent.click(screen.getByRole("radio", { name: /yes/i }));
+    fireEvent.click(getConsentRadio("yes"));
     fireEvent.click(screen.getByRole("checkbox"));
     fireEvent.click(screen.getByText("Submit Application"));
     await waitFor(() => {
@@ -443,7 +450,7 @@ describe("ApplyPage", () => {
   it("toast dismiss button removes toast", async () => {
     render(<ApplyPage />);
     // Unlock submit gate: Yes consent + Terms checked
-    fireEvent.click(screen.getByRole("radio", { name: /yes/i }));
+    fireEvent.click(getConsentRadio("yes"));
     fireEvent.click(screen.getByRole("checkbox"));
     fireEvent.click(screen.getByText("Submit Application"));
     await waitFor(() => {
@@ -464,7 +471,7 @@ describe("ApplyPage", () => {
   it("name input gets aria-describedby pointing to error when error exists", async () => {
     render(<ApplyPage />);
     // Unlock submit gate: Yes consent + Terms checked
-    fireEvent.click(screen.getByRole("radio", { name: /yes/i }));
+    fireEvent.click(getConsentRadio("yes"));
     fireEvent.click(screen.getByRole("checkbox"));
     fireEvent.click(screen.getByText("Submit Application"));
     await waitFor(() => {

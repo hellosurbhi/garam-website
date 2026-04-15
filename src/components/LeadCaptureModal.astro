@@ -99,7 +99,9 @@ const {
       tabindex="-1"
       hidden
     >
-      <p>{successMessage}</p>
+      <p data-lc-success-msg data-lc-default-msg={successMessage}>
+        {successMessage}
+      </p>
     </div>
   </div>
 </Modal>
@@ -107,6 +109,10 @@ const {
 <style>
   .lc-steps {
     min-height: 260px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
   }
   .lc-title {
     font-family: var(--font-playfair), serif;
@@ -252,6 +258,12 @@ const {
         el.textContent = "";
         el.setAttribute("hidden", "");
       });
+      // Restore default success message text for next open
+      const successMsg = root.querySelector<HTMLElement>(
+        "[data-lc-success-msg]",
+      );
+      if (successMsg)
+        successMsg.textContent = successMsg.dataset.lcDefaultMsg ?? "";
       leadDocId = "";
       capturedEmail = "";
     }
@@ -385,6 +397,11 @@ const {
             source,
             sourcePage: window.location.pathname,
           });
+          const successMsg = root.querySelector<HTMLElement>(
+            "[data-lc-success-msg]",
+          );
+          if (successMsg)
+            successMsg.textContent = "You're on the list! Deals incoming.";
           showStep("success");
         } catch {
           if (phoneErrorEl) {

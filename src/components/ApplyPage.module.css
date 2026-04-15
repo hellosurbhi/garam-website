@@ -1,7 +1,7 @@
 @keyframes toast-in {
   from {
     opacity: 0;
-    transform: translateY(8px);
+    transform: translateY(-8px);
   }
   to {
     opacity: 1;
@@ -24,6 +24,14 @@
 }
 
 /* ─── Layout ─────────────────────────────────────────────────── */
+
+/* Wraps all form content; disabled={submitting} locks every input/select/button */
+.formFieldset {
+  border: none;
+  margin: 0;
+  padding: 0;
+  min-width: 0;
+}
 
 .page {
   background: transparent;
@@ -536,7 +544,7 @@
 
 .toast {
   position: fixed;
-  bottom: 24px;
+  top: 24px;
   left: 24px;
   right: 24px;
   display: flex;
@@ -584,7 +592,7 @@
 
 .successPanel {
   text-align: center;
-  padding: 40px 20px 60px;
+  padding: 32px 20px 32px;
 }
 
 .successEmoji {
@@ -603,7 +611,7 @@
 .successText {
   font-size: 16px;
   color: var(--muted);
-  margin: 0 0 32px;
+  margin: 0 0 24px;
   line-height: 1.5;
 }
 

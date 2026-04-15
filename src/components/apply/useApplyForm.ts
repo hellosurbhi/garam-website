@@ -297,6 +297,7 @@ export function useApplyForm() {
       setPhotoPreview(null);
       setErrors({});
       setSubmitted(true);
+      window.scrollTo({ top: 0, behavior: "smooth" });
     } catch (err) {
       const error = err instanceof Error ? err : new Error(String(err));
       // Clean up orphaned photo if upload succeeded but Firestore write failed

@@ -132,476 +132,484 @@ function ApplyPageInner() {
           ) : (
             <div className={styles.panel}>
               <form onSubmit={handleSubmit} noValidate>
-                <div className={styles.typeSection}>
-                  <p className={styles.typeLabel}>I am applying…</p>
-                  <div className={styles.typeButtonGroup}>
-                    {(["Self", "Nomination"] as const).map((type) => (
-                      <button
-                        key={type}
-                        type="button"
-                        onClick={() => set("applicationType", type)}
-                        className={styles.typeButton}
-                        data-active={form.applicationType === type || undefined}
-                        aria-pressed={form.applicationType === type}
-                      >
-                        {type === "Self" ? "For myself" : "For a friend"}
-                      </button>
-                    ))}
-                  </div>
-                </div>
-
-                <div className={styles.section}>
-                  <SectionTitle>
-                    {form.applicationType === "Self"
-                      ? "About You"
-                      : "About Your Friend"}
-                  </SectionTitle>
-
-                  <div className={styles.gridTwo}>
-                    <FieldGroup
-                      label="Full Name"
-                      required
-                      error={errors.name}
-                      htmlFor="field-name"
-                    >
-                      <input
-                        id="field-name"
-                        type="text"
-                        value={form.name}
-                        onChange={(e) => set("name", e.target.value)}
-                        placeholder="Name"
-                        className={styles.input}
-                        required
-                        autoComplete="name"
-                        aria-invalid={!!errors.name}
-                        aria-describedby={
-                          errors.name ? "field-name-error" : undefined
-                        }
-                      />
-                    </FieldGroup>
-
-                    <FieldGroup
-                      label="Age"
-                      required
-                      error={errors.age}
-                      htmlFor="field-age"
-                    >
-                      <input
-                        id="field-age"
-                        type="number"
-                        value={form.age}
-                        onChange={(e) => set("age", e.target.value)}
-                        placeholder="Age"
-                        min={18}
-                        max={99}
-                        className={styles.input}
-                        required
-                        aria-invalid={!!errors.age}
-                        aria-describedby={
-                          errors.age ? "field-age-error" : undefined
-                        }
-                      />
-                    </FieldGroup>
-                  </div>
-
-                  <div className={styles.gridTwo}>
-                    <FieldGroup
-                      label="Gender"
-                      required
-                      error={errors.gender}
-                      htmlFor="field-gender"
-                    >
-                      <select
-                        id="field-gender"
-                        value={form.gender}
-                        onChange={(e) => set("gender", e.target.value)}
-                        className={styles.select}
-                        required
-                        aria-invalid={!!errors.gender}
-                        aria-describedby={
-                          errors.gender ? "field-gender-error" : undefined
-                        }
-                      >
-                        <option value="">Select…</option>
-                        {["Man", "Woman", "Non-binary", "Other"].map((g) => (
-                          <option key={g} value={g}>
-                            {g}
-                          </option>
-                        ))}
-                      </select>
-                    </FieldGroup>
-
-                    <FieldGroup
-                      label="Orientation"
-                      required
-                      error={errors.orientation}
-                      htmlFor="field-orientation"
-                    >
-                      <select
-                        id="field-orientation"
-                        value={form.orientation}
-                        onChange={(e) => set("orientation", e.target.value)}
-                        className={styles.select}
-                        required
-                        aria-invalid={!!errors.orientation}
-                        aria-describedby={
-                          errors.orientation
-                            ? "field-orientation-error"
-                            : undefined
-                        }
-                      >
-                        <option value="">Select…</option>
-                        {["Straight", "Gay", "Bisexual", "Other"].map((o) => (
-                          <option key={o} value={o}>
-                            {o}
-                          </option>
-                        ))}
-                      </select>
-                    </FieldGroup>
-                  </div>
-
-                  <div className={styles.gridTwo}>
-                    <FieldGroup
-                      label="Metropolitan Area"
-                      required
-                      error={errors.city}
-                      htmlFor="geo-place"
-                    >
-                      <input
-                        id="geo-place"
-                        type="text"
-                        value={cityInput}
-                        onChange={handleCityInputChange}
-                        placeholder="(Ex. Chicago)"
-                        className={styles.input}
-                        required
-                        autoComplete="address-level2"
-                        aria-invalid={!!errors.city}
-                        aria-describedby={
-                          errors.city ? "geo-place-error" : undefined
-                        }
-                      />
-                    </FieldGroup>
-                  </div>
-
-                  <div className={styles.gridTwo}>
-                    <FieldGroup
-                      label="Height"
-                      error={errors.height}
-                      htmlFor="field-height"
-                    >
-                      <input
-                        id="field-height"
-                        type="text"
-                        value={form.height}
-                        onChange={(e) => set("height", e.target.value)}
-                        placeholder={`5'8"`}
-                        className={styles.input}
-                      />
-                    </FieldGroup>
-                  </div>
-
-                  <FieldGroup
-                    label="Instagram handle @ (we wanna stalk you 👀)"
-                    required
-                    error={errors.instagram}
-                    htmlFor="field-instagram"
-                  >
-                    <div className={styles.igWrapper}>
-                      <span className={styles.igPrefix} aria-hidden="true">
-                        @
-                      </span>
-                      <input
-                        id="field-instagram"
-                        type="text"
-                        value={form.instagram}
-                        onChange={(e) =>
-                          set("instagram", e.target.value.replace(/^@/, ""))
-                        }
-                        placeholder={
-                          form.applicationType === "Nomination"
-                            ? "yourfriendshandle"
-                            : "yourhandle"
-                        }
-                        className={styles.igInput}
-                        required
-                        aria-invalid={!!errors.instagram}
-                        aria-describedby={
-                          errors.instagram ? "field-instagram-error" : undefined
-                        }
-                      />
+                <fieldset disabled={submitting} className={styles.formFieldset}>
+                  <div className={styles.typeSection}>
+                    <p className={styles.typeLabel}>I am applying…</p>
+                    <div className={styles.typeButtonGroup}>
+                      {(["Self", "Nomination"] as const).map((type) => (
+                        <button
+                          key={type}
+                          type="button"
+                          onClick={() => set("applicationType", type)}
+                          className={styles.typeButton}
+                          data-active={
+                            form.applicationType === type || undefined
+                          }
+                          aria-pressed={form.applicationType === type}
+                        >
+                          {type === "Self" ? "For myself" : "For a friend"}
+                        </button>
+                      ))}
                     </div>
-                    <p className={styles.igHint}>
-                      Follow{" "}
-                      <a
-                        href={SOCIAL_URLS.instagram}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className={styles.igHintLink}
-                      >
-                        @garammasaladating
-                      </a>{" "}
-                      and DM us for a faster response.
-                    </p>
-                  </FieldGroup>
-
-                  <FieldGroup
-                    label="Email"
-                    required
-                    error={errors.email}
-                    htmlFor="field-email"
-                  >
-                    <input
-                      id="field-email"
-                      type="email"
-                      value={form.email}
-                      onChange={(e) => set("email", e.target.value)}
-                      placeholder="you@example.com"
-                      className={styles.input}
-                      required
-                      autoComplete="email"
-                      inputMode="email"
-                      aria-invalid={!!errors.email}
-                      aria-describedby={
-                        errors.email ? "field-email-error" : undefined
-                      }
-                    />
-                  </FieldGroup>
-
-                  <div className={styles.gridTwo}>
-                    <FieldGroup
-                      label="Community"
-                      error={errors.community}
-                      htmlFor="field-community"
-                    >
-                      <select
-                        id="field-community"
-                        value={form.community}
-                        onChange={(e) => set("community", e.target.value)}
-                        className={styles.select}
-                      >
-                        <option value="">Select…</option>
-                        {COMMUNITY_OPTIONS.map((c) => (
-                          <option key={c} value={c}>
-                            {c}
-                          </option>
-                        ))}
-                      </select>
-                    </FieldGroup>
-
-                    <FieldGroup
-                      label="Income"
-                      error={errors.income}
-                      htmlFor="field-income"
-                    >
-                      <select
-                        id="field-income"
-                        value={form.income}
-                        onChange={(e) => set("income", e.target.value)}
-                        className={styles.select}
-                      >
-                        <option value="">Select…</option>
-                        {INCOME_OPTIONS.map((i) => (
-                          <option key={i} value={i}>
-                            {i}
-                          </option>
-                        ))}
-                      </select>
-                    </FieldGroup>
                   </div>
-                </div>
 
-                {form.applicationType === "Nomination" && (
                   <div className={styles.section}>
-                    <SectionTitle>Your Info</SectionTitle>
+                    <SectionTitle>
+                      {form.applicationType === "Self"
+                        ? "About You"
+                        : "About Your Friend"}
+                    </SectionTitle>
+
+                    <div className={styles.gridTwo}>
+                      <FieldGroup
+                        label="Full Name"
+                        required
+                        error={errors.name}
+                        htmlFor="field-name"
+                      >
+                        <input
+                          id="field-name"
+                          type="text"
+                          value={form.name}
+                          onChange={(e) => set("name", e.target.value)}
+                          placeholder="Name"
+                          className={styles.input}
+                          required
+                          autoComplete="name"
+                          aria-invalid={!!errors.name}
+                          aria-describedby={
+                            errors.name ? "field-name-error" : undefined
+                          }
+                        />
+                      </FieldGroup>
+
+                      <FieldGroup
+                        label="Age"
+                        required
+                        error={errors.age}
+                        htmlFor="field-age"
+                      >
+                        <input
+                          id="field-age"
+                          type="number"
+                          value={form.age}
+                          onChange={(e) => set("age", e.target.value)}
+                          placeholder="Age"
+                          min={18}
+                          max={99}
+                          className={styles.input}
+                          required
+                          aria-invalid={!!errors.age}
+                          aria-describedby={
+                            errors.age ? "field-age-error" : undefined
+                          }
+                        />
+                      </FieldGroup>
+                    </div>
+
+                    <div className={styles.gridTwo}>
+                      <FieldGroup
+                        label="Gender"
+                        required
+                        error={errors.gender}
+                        htmlFor="field-gender"
+                      >
+                        <select
+                          id="field-gender"
+                          value={form.gender}
+                          onChange={(e) => set("gender", e.target.value)}
+                          className={styles.select}
+                          required
+                          aria-invalid={!!errors.gender}
+                          aria-describedby={
+                            errors.gender ? "field-gender-error" : undefined
+                          }
+                        >
+                          <option value="">Select…</option>
+                          {["Man", "Woman", "Non-binary", "Other"].map((g) => (
+                            <option key={g} value={g}>
+                              {g}
+                            </option>
+                          ))}
+                        </select>
+                      </FieldGroup>
+
+                      <FieldGroup
+                        label="Orientation"
+                        required
+                        error={errors.orientation}
+                        htmlFor="field-orientation"
+                      >
+                        <select
+                          id="field-orientation"
+                          value={form.orientation}
+                          onChange={(e) => set("orientation", e.target.value)}
+                          className={styles.select}
+                          required
+                          aria-invalid={!!errors.orientation}
+                          aria-describedby={
+                            errors.orientation
+                              ? "field-orientation-error"
+                              : undefined
+                          }
+                        >
+                          <option value="">Select…</option>
+                          {["Straight", "Gay", "Bisexual", "Other"].map((o) => (
+                            <option key={o} value={o}>
+                              {o}
+                            </option>
+                          ))}
+                        </select>
+                      </FieldGroup>
+                    </div>
+
+                    <div className={styles.gridTwo}>
+                      <FieldGroup
+                        label="Metropolitan Area"
+                        required
+                        error={errors.city}
+                        htmlFor="geo-place"
+                      >
+                        <input
+                          id="geo-place"
+                          type="text"
+                          value={cityInput}
+                          onChange={handleCityInputChange}
+                          placeholder="(Ex. Chicago)"
+                          className={styles.input}
+                          required
+                          autoComplete="address-level2"
+                          aria-invalid={!!errors.city}
+                          aria-describedby={
+                            errors.city ? "geo-place-error" : undefined
+                          }
+                        />
+                      </FieldGroup>
+                    </div>
+
+                    <div className={styles.gridTwo}>
+                      <FieldGroup
+                        label="Height"
+                        error={errors.height}
+                        htmlFor="field-height"
+                      >
+                        <input
+                          id="field-height"
+                          type="text"
+                          value={form.height}
+                          onChange={(e) => set("height", e.target.value)}
+                          placeholder={`5'8"`}
+                          className={styles.input}
+                        />
+                      </FieldGroup>
+                    </div>
+
                     <FieldGroup
-                      label="Your Name"
+                      label="Instagram handle @ (we wanna stalk you 👀)"
                       required
-                      error={errors.referrerName}
-                      htmlFor="field-referrer"
+                      error={errors.instagram}
+                      htmlFor="field-instagram"
+                    >
+                      <div className={styles.igWrapper}>
+                        <span className={styles.igPrefix} aria-hidden="true">
+                          @
+                        </span>
+                        <input
+                          id="field-instagram"
+                          type="text"
+                          value={form.instagram}
+                          onChange={(e) =>
+                            set("instagram", e.target.value.replace(/^@/, ""))
+                          }
+                          placeholder={
+                            form.applicationType === "Nomination"
+                              ? "yourfriendshandle"
+                              : "yourhandle"
+                          }
+                          className={styles.igInput}
+                          required
+                          aria-invalid={!!errors.instagram}
+                          aria-describedby={
+                            errors.instagram
+                              ? "field-instagram-error"
+                              : undefined
+                          }
+                        />
+                      </div>
+                      <p className={styles.igHint}>
+                        Follow{" "}
+                        <a
+                          href={SOCIAL_URLS.instagram}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className={styles.igHintLink}
+                        >
+                          @garammasaladating
+                        </a>{" "}
+                        and DM us for a faster response.
+                      </p>
+                    </FieldGroup>
+
+                    <FieldGroup
+                      label="Email"
+                      required
+                      error={errors.email}
+                      htmlFor="field-email"
                     >
                       <input
-                        id="field-referrer"
-                        type="text"
-                        value={form.referrerName}
-                        onChange={(e) => set("referrerName", e.target.value)}
-                        placeholder="So we know who nominated them"
+                        id="field-email"
+                        type="email"
+                        value={form.email}
+                        onChange={(e) => set("email", e.target.value)}
+                        placeholder="you@example.com"
                         className={styles.input}
                         required
-                        autoComplete="name"
-                        aria-invalid={!!errors.referrerName}
+                        autoComplete="email"
+                        inputMode="email"
+                        aria-invalid={!!errors.email}
                         aria-describedby={
-                          errors.referrerName
-                            ? "field-referrer-error"
-                            : undefined
+                          errors.email ? "field-email-error" : undefined
                         }
                       />
                     </FieldGroup>
+
+                    <div className={styles.gridTwo}>
+                      <FieldGroup
+                        label="Community"
+                        error={errors.community}
+                        htmlFor="field-community"
+                      >
+                        <select
+                          id="field-community"
+                          value={form.community}
+                          onChange={(e) => set("community", e.target.value)}
+                          className={styles.select}
+                        >
+                          <option value="">Select…</option>
+                          {COMMUNITY_OPTIONS.map((c) => (
+                            <option key={c} value={c}>
+                              {c}
+                            </option>
+                          ))}
+                        </select>
+                      </FieldGroup>
+
+                      <FieldGroup
+                        label="Income"
+                        error={errors.income}
+                        htmlFor="field-income"
+                      >
+                        <select
+                          id="field-income"
+                          value={form.income}
+                          onChange={(e) => set("income", e.target.value)}
+                          className={styles.select}
+                        >
+                          <option value="">Select…</option>
+                          {INCOME_OPTIONS.map((i) => (
+                            <option key={i} value={i}>
+                              {i}
+                            </option>
+                          ))}
+                        </select>
+                      </FieldGroup>
+                    </div>
                   </div>
-                )}
 
-                <PhotoUploadField
-                  photoPreview={photoPreview}
-                  error={errors.photo}
-                  onChange={handlePhotoChange}
-                />
+                  {form.applicationType === "Nomination" && (
+                    <div className={styles.section}>
+                      <SectionTitle>Your Info</SectionTitle>
+                      <FieldGroup
+                        label="Your Name"
+                        required
+                        error={errors.referrerName}
+                        htmlFor="field-referrer"
+                      >
+                        <input
+                          id="field-referrer"
+                          type="text"
+                          value={form.referrerName}
+                          onChange={(e) => set("referrerName", e.target.value)}
+                          placeholder="So we know who nominated them"
+                          className={styles.input}
+                          required
+                          autoComplete="name"
+                          aria-invalid={!!errors.referrerName}
+                          aria-describedby={
+                            errors.referrerName
+                              ? "field-referrer-error"
+                              : undefined
+                          }
+                        />
+                      </FieldGroup>
+                    </div>
+                  )}
 
-                <div className={styles.sectionLarge}>
-                  <SectionTitle className={styles.anythingElse}>
-                    Anything else?
-                  </SectionTitle>
-                  <FieldGroup
-                    label="What's your type... (we will do our best to match you)"
-                    htmlFor="field-type"
-                  >
-                    <input
-                      id="field-type"
-                      type="text"
-                      value={form.type}
-                      onChange={(e) => set("type", e.target.value)}
-                      placeholder="e.g. funny, ambitious, loves spice"
-                      className={styles.input}
-                      maxLength={200}
-                    />
-                  </FieldGroup>
-                  <FieldGroup
-                    label={
-                      form.applicationType === "Self"
-                        ? "Why would you be a great fit? (optional)"
-                        : "Why would your friend be a great fit? (optional)"
+                  <PhotoUploadField
+                    photoPreview={photoPreview}
+                    error={errors.photo}
+                    onChange={handlePhotoChange}
+                  />
+
+                  <div className={styles.sectionLarge}>
+                    <SectionTitle className={styles.anythingElse}>
+                      Anything else?
+                    </SectionTitle>
+                    <FieldGroup
+                      label="What's your type... (we will do our best to match you)"
+                      htmlFor="field-type"
+                    >
+                      <input
+                        id="field-type"
+                        type="text"
+                        value={form.type}
+                        onChange={(e) => set("type", e.target.value)}
+                        placeholder="e.g. funny, ambitious, loves spice"
+                        className={styles.input}
+                        maxLength={200}
+                      />
+                    </FieldGroup>
+                    <FieldGroup
+                      label={
+                        form.applicationType === "Self"
+                          ? "Why would you be a great fit? (optional)"
+                          : "Why would your friend be a great fit? (optional)"
+                      }
+                    >
+                      <textarea
+                        id="field-pitch"
+                        value={form.pitch}
+                        onChange={(e) => set("pitch", e.target.value)}
+                        placeholder="Tell us something fun, bold, or irresistible…"
+                        className={styles.textarea}
+                      />
+                    </FieldGroup>
+                  </div>
+
+                  {/* ─── Marketing consent ──────────────────────── */}
+                  <fieldset
+                    className={styles.consentSection}
+                    {...(errors.marketingConsent
+                      ? { "data-error": "true" }
+                      : {})}
+                    aria-describedby={
+                      errors.marketingConsent
+                        ? "marketing-consent-error"
+                        : undefined
                     }
                   >
-                    <textarea
-                      id="field-pitch"
-                      value={form.pitch}
-                      onChange={(e) => set("pitch", e.target.value)}
-                      placeholder="Tell us something fun, bold, or irresistible…"
-                      className={styles.textarea}
-                    />
-                  </FieldGroup>
-                </div>
-
-                {/* ─── Marketing consent ──────────────────────── */}
-                <fieldset
-                  className={styles.consentSection}
-                  {...(errors.marketingConsent ? { "data-error": "true" } : {})}
-                  aria-describedby={
-                    errors.marketingConsent
-                      ? "marketing-consent-error"
-                      : undefined
-                  }
-                >
-                  <legend className={styles.consentQuestion}>
-                    I grant Garam Masala Dating permission to use any of these
-                    responses and casting submissions for marketing purposes.
-                    <span className={styles.requiredMark}>*</span>
-                  </legend>
-                  <div className={styles.radioGroup}>
-                    <label className={styles.radioLabel}>
-                      <input
-                        type="radio"
-                        name="marketingConsent"
-                        value="yes"
-                        checked={form.marketingConsent === "yes"}
-                        onChange={() => set("marketingConsent", "yes")}
-                        className={styles.radioInput}
-                        aria-invalid={!!errors.marketingConsent}
-                      />
-                      Yes
-                    </label>
-                    <label className={styles.radioLabel}>
-                      <input
-                        type="radio"
-                        name="marketingConsent"
-                        value="no"
-                        checked={form.marketingConsent === "no"}
-                        onChange={() => set("marketingConsent", "no")}
-                        className={styles.radioInput}
-                        aria-invalid={!!errors.marketingConsent}
-                      />
-                      No
-                    </label>
-                  </div>
-                  {errors.marketingConsent && (
-                    <p
-                      id="marketing-consent-error"
-                      className={styles.errorText}
-                      role="alert"
-                    >
-                      {errors.marketingConsent}
-                    </p>
-                  )}
-                  {form.marketingConsent === "no" && (
-                    <p className={styles.noConsentWarning} role="alert">
-                      {APPLY_PAGE.noConsentWarning}
-                    </p>
-                  )}
-                </fieldset>
-
-                {/* ─── Terms & Conditions ─────────────────────── */}
-                <div
-                  className={styles.consentSection}
-                  {...(errors.termsAgreed ? { "data-error": "true" } : {})}
-                >
-                  <label className={styles.checkRow}>
-                    <input
-                      type="checkbox"
-                      checked={termsAgreed}
-                      onChange={(e) => handleTermsCheckbox(e.target.checked)}
-                      className={styles.checkInput}
-                      aria-describedby={
-                        errors.termsAgreed ? "terms-error" : undefined
-                      }
-                    />
-                    <span>
-                      I agree to the{" "}
-                      <button
-                        type="button"
-                        className={styles.termsLink}
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          setShowTermsModal(true);
-                        }}
-                      >
-                        Terms &amp; Conditions
-                      </button>
+                    <legend className={styles.consentQuestion}>
+                      I grant Garam Masala Dating permission to use any of these
+                      responses and casting submissions for marketing purposes.
                       <span className={styles.requiredMark}>*</span>
-                    </span>
-                  </label>
-                  {errors.termsAgreed && (
-                    <p
-                      id="terms-error"
-                      className={styles.errorText}
-                      role="alert"
-                    >
-                      {errors.termsAgreed}
-                    </p>
-                  )}
-                </div>
+                    </legend>
+                    <div className={styles.radioGroup}>
+                      <label className={styles.radioLabel}>
+                        <input
+                          type="radio"
+                          name="marketingConsent"
+                          value="yes"
+                          checked={form.marketingConsent === "yes"}
+                          onChange={() => set("marketingConsent", "yes")}
+                          className={styles.radioInput}
+                          aria-invalid={!!errors.marketingConsent}
+                        />
+                        Yes
+                      </label>
+                      <label className={styles.radioLabel}>
+                        <input
+                          type="radio"
+                          name="marketingConsent"
+                          value="no"
+                          checked={form.marketingConsent === "no"}
+                          onChange={() => set("marketingConsent", "no")}
+                          className={styles.radioInput}
+                          aria-invalid={!!errors.marketingConsent}
+                        />
+                        No
+                      </label>
+                    </div>
+                    {errors.marketingConsent && (
+                      <p
+                        id="marketing-consent-error"
+                        className={styles.errorText}
+                        role="alert"
+                      >
+                        {errors.marketingConsent}
+                      </p>
+                    )}
+                    {form.marketingConsent === "no" && (
+                      <p className={styles.noConsentWarning} role="alert">
+                        {APPLY_PAGE.noConsentWarning}
+                      </p>
+                    )}
+                  </fieldset>
 
-                <button
-                  type="submit"
-                  disabled={
-                    submitting ||
-                    form.marketingConsent !== "yes" ||
-                    !termsAgreed
-                  }
-                  className={styles.submitButton}
-                >
-                  {submitting ? (
-                    <>
-                      <Spinner size="sm" label="Submitting..." />
-                      Submitting…
-                    </>
-                  ) : (
-                    "Submit Application"
-                  )}
-                </button>
+                  {/* ─── Terms & Conditions ─────────────────────── */}
+                  <div
+                    className={styles.consentSection}
+                    {...(errors.termsAgreed ? { "data-error": "true" } : {})}
+                  >
+                    <label className={styles.checkRow}>
+                      <input
+                        type="checkbox"
+                        checked={termsAgreed}
+                        onChange={(e) => handleTermsCheckbox(e.target.checked)}
+                        className={styles.checkInput}
+                        aria-describedby={
+                          errors.termsAgreed ? "terms-error" : undefined
+                        }
+                      />
+                      <span>
+                        I agree to the{" "}
+                        <button
+                          type="button"
+                          className={styles.termsLink}
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            setShowTermsModal(true);
+                          }}
+                        >
+                          Terms &amp; Conditions
+                        </button>
+                        <span className={styles.requiredMark}>*</span>
+                      </span>
+                    </label>
+                    {errors.termsAgreed && (
+                      <p
+                        id="terms-error"
+                        className={styles.errorText}
+                        role="alert"
+                      >
+                        {errors.termsAgreed}
+                      </p>
+                    )}
+                  </div>
 
-                <p className={styles.disclaimer}>
-                  By submitting, you agree to be contacted by the Garam Masala
-                  Dating team.
-                </p>
+                  <button
+                    type="submit"
+                    disabled={
+                      submitting ||
+                      form.marketingConsent !== "yes" ||
+                      !termsAgreed
+                    }
+                    className={styles.submitButton}
+                  >
+                    {submitting ? (
+                      <>
+                        <Spinner size="sm" label="Submitting..." />
+                        Submitting…
+                      </>
+                    ) : (
+                      "Submit Application"
+                    )}
+                  </button>
+
+                  <p className={styles.disclaimer}>
+                    By submitting, you agree to be contacted by the Garam Masala
+                    Dating team.
+                  </p>
+                </fieldset>
               </form>
             </div>
           )}

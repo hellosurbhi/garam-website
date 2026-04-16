@@ -1443,5 +1443,77 @@ The system should also send a day-before confirmation email automatically so the
 - `src/emails/InviteEmail.tsx`
 - `src/emails/ContestantConfirmationEmail.tsx` (new)
 - Scheduled email endpoint/job configuration
+## Parked from BUGS.md triage (2026-04-16)
+
+Items declined during triage because they are aesthetic / nice-to-have, not bugs. Decisions preserved so the reasoning isn't lost.
+
+### Home hero stage photo layer (M10)
+
+- **Originally:** BUGS.md `[MEDIUM] Home hero photo background from audit not implemented` (2026-04-08)
+- **File:** `src/components/home/HomeHero.astro`
+- **Proposal:** Add a `<picture>` background layer using an optimized show photo, placed behind the WebGL canvas with reduced opacity.
+- **Decision:** User doesn't want a photo behind the shader. Current hero (shader + gradient) is the intended look. Revisit only if the hero is redesigned.
+
+### Home creators avatars at 160–200px (M11)
+
+- **Originally:** BUGS.md `[MEDIUM] Home creators avatars were not upgraded to larger host photos` (2026-04-08)
+- **File:** `src/components/home/HomeCreators.astro`
+- **Proposal:** Increase avatar sizing to 160–200px and switch to newer processed host images.
+- **Decision:** User likes current 96×96. Revisit during a future redesign.
+
+### Hosts page larger individual avatars (M12)
+
+- **Originally:** BUGS.md `[MEDIUM] Hosts page still uses small individual avatar images` (2026-04-08)
+- **File:** `src/pages/hosts.astro`
+- **Proposal:** Replace 96×96 avatars with larger cropped host images; adjust layout spacing.
+- **Decision:** User likes current look. Revisit during a future redesign only.
+
+### Experience section audience photo
+
+- **Originally:** BUGS.md `[MEDIUM] Experience section photo placement was missed` (2026-04-08)
+- **File:** `src/components/home/HomeExperience.astro`
+- **Proposal:** Add audience reaction photo below the body copy on the left column.
+- **Decision:** An audience photo is already present in the section. Keep as an enhancement note only.
+
+### Testimonials accent photo
+
+- **Originally:** BUGS.md `[MEDIUM] Testimonials accent photo was not added` (2026-04-08)
+- **File:** `src/components/home/HomeTestimonials.astro`
+- **Proposal:** Add a desktop-only 4th grid item / accent photo for added visual proof.
+- **Decision:** Section already has a photo. Enhancement only.
+
+### Journal decorative cupid artwork (J1)
+
+- **Originally:** BUGS.md `[MEDIUM] Journal decorative cupid artwork not implemented` (2026-04-08)
+- **Files:** `src/pages/journal/index.astro`, `src/pages/journal/[slug].astro`
+- **Proposal:** Add small absolutely-positioned low-opacity cupid art accents (corner flourishes / watermark style) to journal index and article pages.
+- **Decision:** Never built; user prefers to leave journal pages alone. Enhancement only.
+
+### Popup CTA offer-based copy
+
+- **Originally:** BUGS.md `[LOW] Popup CTA copy still uses weaker pre-audit wording` (2026-04-08)
+- **File:** `src/pages/index.astro`
+- **Proposal:** Replace "Want Cheaper Tickets?" / "Get My Discount Code" with stronger offer-based wording once the discount offer is confirmed.
+- **Decision:** Current copy works. Revisit as a future A/B test candidate.
+
+### Contestant-prep page meta description
+
+- **Originally:** BUGS.md `[LOW] Contestant-prep page has empty meta description` (2026-04-08)
+- **File:** `src/pages/contestant-prep.astro`
+- **Proposal:** Add a meaningful meta description.
+- **Decision:** Page is `noindex`; empty description has no SEO cost. Enhancement only.
+
+### Dead public assets + orphaned hero variants
+
+- **Originally:** BUGS.md `[LOW] Confirmed unused files in public/` + `[LOW] Hero variant files may be orphaned` (2026-04-13)
+- **Files:**
+  - `public/images/journal/journal-featured.webp`
+  - `public/images/promo/links-hero.webp`
+  - `public/images/promo/tickets-hero.webp`
+  - `public/images/hero/hero.avif`
+  - `public/images/hero/hero-mobile.webp`
+  - `public/images/hero/hero-mobile.avif`
+- **Proposal:** Delete unreferenced files; either restore hero AVIF preload tags or delete the variants and update the CLAUDE.md note.
+- **Decision:** Low upside, non-trivial risk of breaking something. Document as a future audit-sprint cleanup candidate. Confirm absence of references via `rg` before any deletion.
 
 ## Skipped reviews (pending retry)

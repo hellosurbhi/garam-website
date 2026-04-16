@@ -843,6 +843,50 @@ Note: enforcing these as hard merge blockers requires GitHub Pro (branch protect
 - `.github/workflows/ci.yml`
 - `.github/workflows/smoke-tests.yml`
 
+## docs(bugs): triage — move declined items to ENHANCEMENTS, close out verified fixes (2026-04-16)
+
+### What changed
+
+Triaged every open entry in `BUGS.md` against the current codebase. Organized the result into three buckets so the file reflects reality:
+
+**Moved to `ENHANCEMENTS.md`** (9 items declined as future aesthetic / nice-to-have work, not bugs):
+
+- `[MEDIUM] Home hero photo background from audit not implemented`
+- `[MEDIUM] Home creators avatars were not upgraded to larger host photos`
+- `[MEDIUM] Hosts page still uses small individual avatar images`
+- `[MEDIUM] Experience section photo placement was missed`
+- `[MEDIUM] Testimonials accent photo was not added`
+- `[MEDIUM] Journal decorative cupid artwork not implemented`
+- `[LOW] Popup CTA copy still uses weaker pre-audit wording`
+- `[LOW] Contestant-prep page has empty meta description`
+- `[LOW] Confirmed unused files in public/` + `[LOW] Hero variant files may be orphaned` (combined)
+
+Each entry was copied verbatim into a new "Parked from BUGS.md triage (2026-04-16)" section in `ENHANCEMENTS.md` with the decision rationale preserved, then removed from `BUGS.md`'s Open section.
+
+**Closed as verified fixed** (5 items whose fixes were confirmed in code during triage):
+
+- `[LOW] cupid-garden.webp 404` — reference no longer present in `src/pages/apply.astro`.
+- `[MEDIUM] SVG-only buttons missing aria-label` — modal close buttons all carry `aria-label="Close"`.
+- `[PR#12] Door time calculation` — `subtractMinutes()` no longer has the bad clamp.
+- `[batch 2] Duplicate keyframes popupOut / modalOut` — only one of each keyframe in `src/index.css`.
+- `[batch 2] HomeFAQ transitionend fallback` — current impl uses CSS `grid-template-rows` transition; no JS listener with inline-height cleanup to strand.
+
+Status flipped inline with a note explaining verification.
+
+**Remaining open bugs** are now the actionable list for the next fix wave: 3 HIGH (Firestore rules, update-lead ownership token, homepage duplicate FAQPage JSON-LD), 9 MEDIUM (input validation, rate limiting, App Check, file-type validation, PostHog identity, phone-update false success, Instagram validation ordering), and 11 LOW (Spice List flag check, photo size off-by-one, leads rule removal, nav emphasis, email consolidation, NotifyModal source/slug, HomeShows empty city, capture-lead error text, AdminDashboard pagination, CSP nonce migration, image script cleanup).
+
+### Files affected
+
+- `BUGS.md` — 9 entries removed from Open, 5 marked Fixed inline, dead-asset block replaced with a pointer note.
+- `ENHANCEMENTS.md` — new "Parked from BUGS.md triage (2026-04-16)" section appended.
+- `CHANGELOG.md` — this entry.
+
+### Decisions
+
+- Did not physically move fixed entries to a separate `## Fixed` section because the existing file already mixes inline-Fixed and end-of-file-Fixed entries; matching the more common inline pattern was less disruptive.
+- Did not touch the asset files on disk (per user request — low upside, real breakage risk).
+- Preserved the full original BUGS.md text for each parked entry so the reasoning behind each declined item remains recoverable.
+
 ## fix(bugs): apply scroll, city phone step, modal focus ring, homepage CTAs (2026-04-16)
 
 ### What changed

@@ -1,5 +1,37 @@
 # Changelog
 
+## fix: smoke-test SHA poll, seenNo CSS selector, modal token extraction (2026-04-16)
+
+### What changed
+
+**smoke-tests.yml:** Reverted the broken SHA-based polling loop. Astro SSG builds static HTML and never embeds `GITHUB_SHA` in page content, so `grep -q "${GITHUB_SHA}"` always timed out after 300 seconds and the Playwright tests never ran. Replaced with `sleep 90` and added a comment pointing to the Vercel Deployments API as the correct upgrade path when a `VERCEL_TOKEN` secret is available.
+
+**ApplyPage.module.css:** Fixed a CSS selector mismatch in `.seenNo`. The JSX renders `<p className={styles.seenNo}>` directly, so `.seenNo p {}` never matched. Merged `margin-top: 10px` and the font/color/line-height styles into a single `.seenNo {}` rule so brand-red text color, 13px size, and 1.55 line-height all apply correctly.
+
+**Modal.astro + modal-tokens.css:** Extracted the two hardcoded `padding: 24px` values in Modal.astro into `--modal-inner-padding` and `--modal-content-padding` tokens in modal-tokens.css. Both default to 24px, matching prior behavior exactly.
+
+**LeadCaptureModal.astro:** Added `phoneSuccessMessage` prop so the success message text is configurable per-channel. The phone submission path now reads `data-lc-phone-success-msg` instead of hardcoding the string "You're on the list! Deals incoming."
+
+**EventbriteWidgetInit.astro:** Switched the `popstate` guard from `e.state?.ebModal` to the `historyEntryPushed` boolean flag. More reliable because it does not depend on the state object surviving serialization.
+
+**ApplyPage.tsx:** Moved the hardcoded disclaimer text to `copy.ts` as `submissionDisclaimer`.
+
+**scripts/setup-branch-protection.sh:** Added `gh` CLI availability and auth prerequisite checks so the script fails fast with an actionable message instead of silently erroring mid-run.
+
+### Files affected
+
+- `.github/workflows/smoke-tests.yml`
+- `src/components/ApplyPage.module.css`
+- `src/components/ui/Modal.astro`
+- `src/components/ui/modal-tokens.css`
+- `src/components/LeadCaptureModal.astro`
+- `src/components/EventbriteWidgetInit.astro`
+- `src/components/ApplyPage.tsx`
+- `src/data/copy.ts`
+- `scripts/setup-branch-protection.sh`
+
+---
+
 ## feat: success panel EB widget + Instagram DM + scroll/back-button fix (2026-04-15)
 
 ### What changed

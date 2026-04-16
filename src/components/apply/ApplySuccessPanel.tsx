@@ -9,7 +9,6 @@ interface EBWidgetConfig {
   modal: boolean;
   modalTriggerElementId: string;
   themeSettings?: Record<string, string>;
-  promoCode?: string;
   onOrderComplete?: () => void;
 }
 
@@ -51,7 +50,6 @@ export function ApplySuccessPanel() {
             eventId: show.eventbriteId!,
             modal: true,
             modalTriggerElementId: tid,
-            promoCode: "STEALER",
             themeSettings: { brandColor, fontColor, background: bgColor },
           });
           // Prevent native click behavior once widget is bound
@@ -131,7 +129,6 @@ export function ApplySuccessPanel() {
                       type="button"
                       id={tid}
                       data-eb-event-id={show.eventbriteId}
-                      data-promo-code="STEALER"
                       className={styles.successTicketButton}
                     >
                       Get Tickets | {show.date} in {show.city}

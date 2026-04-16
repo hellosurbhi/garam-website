@@ -29,6 +29,7 @@ interface Props {
   phoneHeading?: string;
   phoneSubheading?: string;
   phoneSubmitLabel?: string;
+  phoneSuccessMessage?: string;
   successMessage?: string;
   /** If true, includes a hidden city field and displays city name in subheading */
   cityMode?: boolean;
@@ -44,6 +45,7 @@ const {
   phoneSubheading = "Add your number for text-only ticket drops.",
   phoneSubmitLabel = "Send Me Drops",
   successMessage = "You're on the list! We'll let you know.",
+  phoneSuccessMessage = "You're on the list! Deals incoming.",
   cityMode = false,
 } = Astro.props;
 ---
@@ -99,7 +101,11 @@ const {
       tabindex="-1"
       hidden
     >
-      <p data-lc-success-msg data-lc-default-msg={successMessage}>
+      <p
+        data-lc-success-msg
+        data-lc-default-msg={successMessage}
+        data-lc-phone-success-msg={phoneSuccessMessage}
+      >
         {successMessage}
       </p>
     </div>
@@ -401,7 +407,10 @@ const {
             "[data-lc-success-msg]",
           );
           if (successMsg)
-            successMsg.textContent = "You're on the list! Deals incoming.";
+            successMsg.textContent =
+              successMsg.dataset.lcPhoneSuccessMsg ??
+              successMsg.dataset.lcDefaultMsg ??
+              "You're on the list! Deals incoming.";
           showStep("success");
         } catch {
           if (phoneErrorEl) {

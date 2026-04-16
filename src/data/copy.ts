@@ -127,6 +127,9 @@ export const APPLY_PAGE = {
     "Selecting No means you will not be considered. You must be okay going viral to apply.",
 } as const;
 
+export const submissionDisclaimer =
+  "By submitting, you agree to be contacted by the Garam Masala Dating team.";
+
 export const EVENTS = {
   ticketCta: "Grab My Spot",
 } as const;

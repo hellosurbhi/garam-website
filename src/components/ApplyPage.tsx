@@ -4,7 +4,7 @@ import { COMMUNITY_OPTIONS, INCOME_OPTIONS } from "@/types/application";
 import styles from "./ApplyPage.module.css";
 import { SOCIAL_URLS } from "@/data/socials";
 import Spinner from "./ui/Spinner";
-import { APPLY_PAGE } from "@/data/copy";
+import { APPLY_PAGE, submissionDisclaimer } from "@/data/copy";
 import { FieldGroup, SectionTitle } from "./apply/FieldGroup";
 import { TermsModal } from "./apply/TermsModal";
 import { ApplySuccessPanel } from "./apply/ApplySuccessPanel";
@@ -651,10 +651,7 @@ function ApplyPageInner() {
                     )}
                   </button>
 
-                  <p className={styles.disclaimer}>
-                    By submitting, you agree to be contacted by the Garam Masala
-                    Dating team.
-                  </p>
+                  <p className={styles.disclaimer}>{submissionDisclaimer}</p>
                 </fieldset>
               </form>
             </div>

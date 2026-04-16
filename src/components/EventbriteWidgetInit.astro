@@ -102,8 +102,8 @@
 
     // popstate fires when the user presses the hardware/browser back button.
     // If our dummy entry is active, close the EB modal instead of leaving the page.
-    window.addEventListener("popstate", (e: PopStateEvent) => {
-      if ((e.state as Record<string, unknown> | null)?.ebModal) {
+    window.addEventListener("popstate", (_e: PopStateEvent) => {
+      if (historyEntryPushed) {
         historyEntryPushed = false;
         const closeBtn = document.querySelector<HTMLButtonElement>(
           ".eds-modal__close-button button",

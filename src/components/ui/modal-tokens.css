@@ -20,4 +20,6 @@
   --modal-close-color: var(--muted);
   --modal-close-color-hover: var(--charcoal);
   --modal-close-size: var(--touch-target); /* 48px */
+  --modal-inner-padding: 24px;
+  --modal-content-padding: 24px;
 }

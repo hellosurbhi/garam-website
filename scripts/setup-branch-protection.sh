@@ -28,7 +28,34 @@
 
 # set -euo pipefail
 #
+# NOTE: This script is intentionally commented out by default. To enable it,
+# uncomment the following block and run the script. The block includes
+# prerequisite checks that will abort with actionable messages if `gh` is
+# missing or not authenticated for the target repository.
+#
 # REPO=$(gh repo view --json nameWithOwner -q .nameWithOwner)
+#
+# echo "Preparing to configure branch protection for main on ${REPO}..."
+#
+# # -- Prerequisite checks --------------------------------------------------
+# if ! command -v gh >/dev/null 2>&1; then
+#   echo "Error: GitHub CLI 'gh' is not installed or not in PATH." >&2
+#   echo "Install it from https://cli.github.com/ and authenticate with 'gh auth login'." >&2
+#   exit 1
+# fi
+#
+# if ! gh auth status >/dev/null 2>&1; then
+#   echo "Error: 'gh' appears to be unauthenticated." >&2
+#   echo "Run 'gh auth login' to authenticate, or 'gh auth status' for details." >&2
+#   exit 1
+# fi
+#
+# # Validate access to the target repository and get canonical name
+# if ! REPO=$(gh repo view --json nameWithOwner -q .nameWithOwner 2>/dev/null); then
+#   echo "Error: unable to access the repository via 'gh'." >&2
+#   echo "Confirm you have permission and that the repository exists: 'gh repo view <owner>/<repo>'" >&2
+#   exit 1
+# fi
 #
 # echo "Configuring branch protection for main on ${REPO}..."
 #

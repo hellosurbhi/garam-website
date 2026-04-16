@@ -725,15 +725,11 @@
 }
 
 .seenNo {
-  margin-top: 10px;
-}
-
-.seenNo p {
   font-family: var(--font-body);
   font-size: 13px;
   color: var(--brand-red);
   line-height: 1.55;
-  margin: 0;
+  margin: 10px 0 0;
 }
 
 .seenNudgeLink {

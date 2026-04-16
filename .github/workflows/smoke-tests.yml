@@ -25,6 +25,12 @@ jobs:
       - name: Install Playwright
         run: npx playwright install chromium --with-deps
       - name: Wait for Vercel deployment
+        # Astro SSG builds static HTML — the commit SHA is never embedded in page
+        # content, so SHA-based polling can't confirm which deploy is live.
+        # A fixed wait is the honest approach without a Vercel API token.
+        # Upgrade path: add VERCEL_TOKEN secret + poll the Vercel Deployments API
+        # (https://vercel.com/docs/rest-api/endpoints/deployments) to detect when
+        # the deployment matching this commit reaches READY state.
         run: sleep 90
       - name: Run smoke tests against production
         run: npx playwright test

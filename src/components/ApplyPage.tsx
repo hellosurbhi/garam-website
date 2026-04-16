@@ -311,8 +311,7 @@ function ApplyPageInner() {
                             few months, and we mostly select from past audience
                             members (Stealers). Coming to a show first seriously
                             increases your chances. Use code{" "}
-                            <strong>STEALER</strong> for 20% off your first
-                            ticket.
+                            <strong>STEALER</strong> for 20% off your order.
                           </p>
                           {nextShow && (
                             <a

@@ -724,25 +724,12 @@
 }
 
 .seenNudgeLink {
-  display: inline-block;
-  padding: 9px 20px;
-  background: var(--charcoal);
-  color: #fff;
-  font-family: var(--font-body);
-  font-size: 13px;
+  color: var(--brand-red);
   font-weight: 700;
-  letter-spacing: 0.03em;
-  border-radius: 100px;
   text-decoration: none;
-  transition:
-    opacity 160ms ease-out,
-    transform 160ms ease-out;
+  transition: opacity 160ms ease-out;
 }
 
 .seenNudgeLink:hover {
-  opacity: 0.8;
-}
-
-.seenNudgeLink:active {
-  transform: scale(0.97);
+  opacity: 0.7;
 }

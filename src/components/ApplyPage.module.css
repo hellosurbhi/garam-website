@@ -664,6 +664,19 @@
   letter-spacing: 0.5px;
 }
 
+.successShowList {
+  list-style: none;
+  margin: 16px 0 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.successShowList .successTicketButton {
+  margin-top: 0;
+}
+
 .successTicketButton {
   display: block;
   width: 100%;

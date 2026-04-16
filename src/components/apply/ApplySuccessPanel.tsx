@@ -20,42 +20,47 @@ declare global {
 }
 
 export function ApplySuccessPanel() {
-  const nextShow = useMemo(() => {
+  const upcomingShows = useMemo(() => {
     const today = new Date().toLocaleDateString("en-CA");
-    return (
-      events.find((e) => !e.hidden && e.isoDate && e.isoDate >= today) ?? null
+    return events.filter(
+      (e) =>
+        !e.hidden && !e.soldOut && e.isoDate && e.isoDate >= today && e.url,
     );
   }, []);
 
-  const triggerId = nextShow?.eventbriteId
-    ? `eventbrite-widget-modal-trigger-success-${nextShow.eventbriteId}`
-    : null;
+  const showsWithWidget = useMemo(
+    () => upcomingShows.filter((e) => e.eventbriteId),
+    [upcomingShows],
+  );
 
   useEffect(() => {
-    if (!triggerId || !nextShow?.eventbriteId) return;
+    if (showsWithWidget.length === 0) return;
 
-    function initWidget() {
+    function initWidgets() {
       const rootStyle = getComputedStyle(document.documentElement);
       const brandColor =
         rootStyle.getPropertyValue("--brand-red").trim() || "#DC2626";
       const fontColor =
         rootStyle.getPropertyValue("--charcoal").trim() || "#1A1A1A";
       const bgColor = rootStyle.getPropertyValue("--white").trim() || "#FFFFFF";
-      try {
-        window.EBWidgets?.createWidget({
-          widgetType: "checkout",
-          eventId: nextShow!.eventbriteId!,
-          modal: true,
-          modalTriggerElementId: triggerId!,
-          promoCode: "STEALER",
-          themeSettings: { brandColor, fontColor, background: bgColor },
-        });
-        // Prevent native click behavior once widget is bound
-        document
-          .getElementById(triggerId!)
-          ?.addEventListener("click", (e) => e.preventDefault());
-      } catch {
-        // Widget init failed; button stays inert (no navigation needed)
+      for (const show of showsWithWidget) {
+        const tid = `eventbrite-widget-modal-trigger-success-${show.eventbriteId}`;
+        try {
+          window.EBWidgets?.createWidget({
+            widgetType: "checkout",
+            eventId: show.eventbriteId!,
+            modal: true,
+            modalTriggerElementId: tid,
+            promoCode: "STEALER",
+            themeSettings: { brandColor, fontColor, background: bgColor },
+          });
+          // Prevent native click behavior once widget is bound
+          document
+            .getElementById(tid)
+            ?.addEventListener("click", (e) => e.preventDefault());
+        } catch {
+          // Widget init failed; button stays inert (no navigation needed)
+        }
       }
     }
 
@@ -65,18 +70,18 @@ export function ApplySuccessPanel() {
     if (existingScript) {
       // Script already in DOM — may or may not have fired onload yet
       if (window.EBWidgets) {
-        initWidget();
+        initWidgets();
       } else {
-        existingScript.addEventListener("load", initWidget, { once: true });
+        existingScript.addEventListener("load", initWidgets, { once: true });
       }
     } else {
       const script = document.createElement("script");
       script.src = "https://www.eventbrite.com/static/widgets/eb_widgets.js";
       script.async = true;
-      script.onload = initWidget;
+      script.onload = initWidgets;
       document.head.appendChild(script);
     }
-  }, [triggerId, nextShow]);
+  }, [showsWithWidget]);
 
   return (
     <div className={styles.successPanel} role="status" aria-live="polite">
@@ -103,37 +108,50 @@ export function ApplySuccessPanel() {
         </p>
       </div>
 
-      <div className={styles.successCard}>
-        <h3 className={styles.successCardTitle}>Come steal the show</h3>
-        <p className={styles.successCardText}>
-          Most of our contestants started as audience members. Come to a show,
-          be a Stealer, and show us what you&apos;ve got. It seriously increases
-          your odds.
-        </p>
-        <p className={styles.successCoupon}>
-          Use code <strong>STEALER</strong> for 20% off your next ticket.
-        </p>
-        {nextShow && triggerId ? (
-          <button
-            type="button"
-            id={triggerId}
-            data-eb-event-id={nextShow.eventbriteId}
-            data-promo-code="STEALER"
-            className={styles.successTicketButton}
-          >
-            Get Tickets | {nextShow.date} in {nextShow.city}
-          </button>
-        ) : nextShow ? (
-          <a
-            href={nextShow.url}
-            target="_blank"
-            rel="noopener noreferrer"
-            className={styles.successTicketButton}
-          >
-            Get Tickets | {nextShow.date} in {nextShow.city}
-          </a>
-        ) : null}
-      </div>
+      {upcomingShows.length > 0 && (
+        <div className={styles.successCard}>
+          <h3 className={styles.successCardTitle}>Come steal the show</h3>
+          <p className={styles.successCardText}>
+            Most of our contestants started as audience members. Come to a show,
+            be a Stealer, and show us what you&apos;ve got. It seriously
+            increases your odds.
+          </p>
+          <p className={styles.successCoupon}>
+            Use code <strong>STEALER</strong> for 20% off your next ticket.
+          </p>
+          <ul className={styles.successShowList}>
+            {upcomingShows.map((show) => {
+              const tid = show.eventbriteId
+                ? `eventbrite-widget-modal-trigger-success-${show.eventbriteId}`
+                : null;
+              return (
+                <li key={`${show.isoDate}-${show.city}`}>
+                  {tid ? (
+                    <button
+                      type="button"
+                      id={tid}
+                      data-eb-event-id={show.eventbriteId}
+                      data-promo-code="STEALER"
+                      className={styles.successTicketButton}
+                    >
+                      Get Tickets | {show.date} in {show.city}
+                    </button>
+                  ) : (
+                    <a
+                      href={show.url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className={styles.successTicketButton}
+                    >
+                      Get Tickets | {show.date} in {show.city}
+                    </a>
+                  )}
+                </li>
+              );
+            })}
+          </ul>
+        </div>
+      )}
     </div>
   );
 }

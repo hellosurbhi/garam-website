@@ -724,6 +724,8 @@
 }
 
 .seenNudgeLink {
+  display: block;
+  text-align: center;
   color: var(--brand-red);
   font-weight: 700;
   text-decoration: none;

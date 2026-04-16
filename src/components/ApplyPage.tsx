@@ -297,17 +297,15 @@ function ApplyPageInner() {
                         </p>
                       )}
                       {form.seenShowBefore === "no" && (
-                        <div className={styles.seenNo}>
-                          <p>
-                            Almost every contestant we cast came to a show as a
-                            Stealer first. Without that, your application will
-                            likely wait. Use code <strong>STEALER</strong> for
-                            20% off.
-                          </p>
+                        <p className={styles.seenNo}>
+                          Almost every contestant we cast came to a show as a
+                          Stealer first. Without that, your application will
+                          likely wait. Use code <strong>STEALER</strong> for 20%
+                          off.{" "}
                           <a href="/tickets" className={styles.seenNudgeLink}>
                             Come Steal &rarr;
                           </a>
-                        </div>
+                        </p>
                       )}
                     </fieldset>
 

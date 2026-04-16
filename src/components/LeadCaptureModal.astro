@@ -29,6 +29,7 @@ interface Props {
   phoneHeading?: string;
   phoneSubheading?: string;
   phoneSubmitLabel?: string;
+  phoneSuccessMessage?: string;
   successMessage?: string;
   /** If true, includes a hidden city field and displays city name in subheading */
   cityMode?: boolean;
@@ -44,6 +45,7 @@ const {
   phoneSubheading = "Add your number for text-only ticket drops.",
   phoneSubmitLabel = "Send Me Drops",
   successMessage = "You're on the list! We'll let you know.",
+  phoneSuccessMessage = "You're on the list! Deals incoming.",
   cityMode = false,
 } = Astro.props;
 ---
@@ -99,7 +101,13 @@ const {
       tabindex="-1"
       hidden
     >
-      <p>{successMessage}</p>
+      <p
+        data-lc-success-msg
+        data-lc-default-msg={successMessage}
+        data-lc-phone-success-msg={phoneSuccessMessage}
+      >
+        {successMessage}
+      </p>
     </div>
   </div>
 </Modal>
@@ -107,6 +115,10 @@ const {
 <style>
   .lc-steps {
     min-height: 260px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
   }
   .lc-title {
     font-family: var(--font-playfair), serif;
@@ -252,6 +264,12 @@ const {
         el.textContent = "";
         el.setAttribute("hidden", "");
       });
+      // Restore default success message text for next open
+      const successMsg = root.querySelector<HTMLElement>(
+        "[data-lc-success-msg]",
+      );
+      if (successMsg)
+        successMsg.textContent = successMsg.dataset.lcDefaultMsg ?? "";
       leadDocId = "";
       capturedEmail = "";
     }
@@ -385,6 +403,14 @@ const {
             source,
             sourcePage: window.location.pathname,
           });
+          const successMsg = root.querySelector<HTMLElement>(
+            "[data-lc-success-msg]",
+          );
+          if (successMsg)
+            successMsg.textContent =
+              successMsg.dataset.lcPhoneSuccessMsg ??
+              successMsg.dataset.lcDefaultMsg ??
+              "You're on the list! Deals incoming.";
           showStep("success");
         } catch {
           if (phoneErrorEl) {

@@ -15,6 +15,7 @@ export default defineConfig({
             "npm run build && npm run preview -- --host 127.0.0.1 --port 4321",
           port: 4321,
           reuseExistingServer: true,
+          timeout: 180000, // 3 min — Astro build in CI can take 60-90s
         },
       }),
   use: {

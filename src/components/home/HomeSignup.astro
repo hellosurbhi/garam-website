@@ -14,13 +14,13 @@ const leadSource = `spice-list-${pageName}`;
   data-lead-source={leadSource}
 >
   <h2 id="spicelist-heading" data-reveal>Join the Spice List</h2>
-  <p data-reveal>
-    Get exclusive discount codes for cheaper (and sometimes free) tickets.
-  </p>
 
   <!-- min-height prevents CLS when switching between steps -->
   <div class="nl-steps-wrapper" data-reveal>
     <div id="nl-step-1">
+      <p>
+        Get exclusive discount codes for cheaper (and sometimes free) tickets.
+      </p>
       <form
         id="nl-email-form"
         class="spicelist-form"
@@ -153,7 +153,12 @@ const leadSource = `spice-list-${pageName}`;
       if (!raw.trim()) {
         // Empty — treat as skip
         document.getElementById("nl-step-2")?.setAttribute("hidden", "");
-        document.getElementById("nl-success")?.removeAttribute("hidden");
+        const successEl = document.getElementById("nl-success");
+        const doneText = successEl?.querySelector(".nl-done-text");
+        if (doneText)
+          doneText.textContent =
+            "You're on the list! Check your email for discount codes.";
+        successEl?.removeAttribute("hidden");
         return;
       }
 
@@ -191,7 +196,12 @@ const leadSource = `spice-list-${pageName}`;
           sourcePage: window.location.pathname,
         });
         document.getElementById("nl-step-2")?.setAttribute("hidden", "");
-        document.getElementById("nl-success")?.removeAttribute("hidden");
+        const successEl = document.getElementById("nl-success");
+        const doneText = successEl?.querySelector(".nl-done-text");
+        if (doneText)
+          doneText.textContent =
+            "You're on the list! We'll text you exclusive ticket drops.";
+        successEl?.removeAttribute("hidden");
       } catch (err) {
         if (phoneErrorEl) {
           phoneErrorEl.textContent =
@@ -208,13 +218,18 @@ const leadSource = `spice-list-${pageName}`;
 
   document.getElementById("nl-skip")?.addEventListener("click", () => {
     document.getElementById("nl-step-2")?.setAttribute("hidden", "");
-    document.getElementById("nl-success")?.removeAttribute("hidden");
+    const successEl = document.getElementById("nl-success");
+    const doneText = successEl?.querySelector(".nl-done-text");
+    if (doneText)
+      doneText.textContent =
+        "You're on the list! Check your email for discount codes.";
+    successEl?.removeAttribute("hidden");
   });
 </script>
 
 <style>
   .spicelist {
-    padding: 40px 16px 35px;
+    padding: 24px 16px 24px;
     background: var(--brand-red);
     text-align: center;
     position: relative;
@@ -231,14 +246,20 @@ const leadSource = `spice-list-${pageName}`;
   .spicelist p {
     color: rgba(255, 255, 255, 0.85);
     font-size: 21px;
-    margin-bottom: 36px;
+    margin-bottom: 20px;
     font-family: var(--font-cormorant), serif;
     font-style: italic;
     position: relative;
   }
-  /* Prevent CLS when switching between steps */
+  /* Prevent CLS when switching between steps.
+     min-height must cover the tallest step (step 2: ~230px) so the
+     wrapper never grows or shrinks between transitions. */
   .nl-steps-wrapper {
-    min-height: 220px;
+    min-height: 240px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
   }
   .spicelist-form {
     display: flex;
@@ -332,20 +353,47 @@ const leadSource = `spice-list-${pageName}`;
   .spicelist-skip:focus-visible {
     color: white;
   }
+  @keyframes stepIn {
+    0% {
+      opacity: 0;
+      transform: translateY(6px);
+    }
+    100% {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+  #nl-step-2 {
+    animation: stepIn 0.3s ease-out both;
+  }
+  @keyframes spiceSuccess {
+    0% {
+      opacity: 0;
+      transform: scale(0.95) translateY(6px);
+    }
+    70% {
+      transform: scale(1.03) translateY(0);
+    }
+    100% {
+      opacity: 1;
+      transform: scale(1);
+    }
+  }
   .nl-done-text {
     color: white;
     font-family: var(--font-cormorant), serif;
     font-size: 22px;
     font-style: italic;
+    animation: spiceSuccess 0.45s ease-out both;
   }
 
   @media (min-width: 768px) {
     .spicelist {
-      padding: 56px 32px 51px;
+      padding: 40px 32px 36px;
     }
     .spicelist p {
       font-size: 22px;
-      margin-bottom: 48px;
+      margin-bottom: 28px;
     }
     .spicelist-form input {
       padding: 18px 28px;

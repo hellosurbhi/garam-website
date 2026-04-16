@@ -1,4 +1,10 @@
 # .github/workflows/ci.yml
+#
+# NOTE: These checks run on every PR but do NOT block merges yet.
+# Blocking requires branch protection, which requires GitHub Pro (private repo)
+# or making the repo public. When you're ready:
+#   → Run scripts/setup-branch-protection.sh (instructions inside)
+#
 name: CI
 
 on:
@@ -87,3 +93,30 @@ jobs:
           name: mutation-report
           path: reports/mutation/
           retention-days: 14
+
+  # ==========================================
+  # JOB 5: Playwright Smoke Tests (pre-merge gate)
+  # Builds the site locally and runs smoke tests across 4 viewports.
+  # Catches 404s, JS crashes, and broken routes before they land on main.
+  # ==========================================
+  smoke:
+    name: Smoke Tests
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - name: Install Playwright
+        run: npx playwright install chromium --with-deps
+      - name: Run smoke tests (local build)
+        run: npx playwright test
+      - name: Upload report on failure
+        uses: actions/upload-artifact@v4
+        if: failure()
+        with:
+          name: playwright-report
+          path: playwright-report/
+          retention-days: 7

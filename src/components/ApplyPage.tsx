@@ -1,4 +1,4 @@
-import { useEffect, useMemo } from "react";
+import { useEffect } from "react";
 import { ErrorBoundary } from "./ErrorBoundary";
 import { COMMUNITY_OPTIONS, INCOME_OPTIONS } from "@/types/application";
 import styles from "./ApplyPage.module.css";
@@ -10,7 +10,6 @@ import { TermsModal } from "./apply/TermsModal";
 import { ApplySuccessPanel } from "./apply/ApplySuccessPanel";
 import { PhotoUploadField } from "./apply/PhotoUploadField";
 import { useApplyForm } from "./apply/useApplyForm";
-import { events } from "@/data/events";
 
 type NavWithMC = Navigator & {
   modelContext: {
@@ -98,13 +97,6 @@ function ApplyPageInner() {
     return () => {
       tool?.unregister?.();
     };
-  }, []);
-
-  const nextShow = useMemo(() => {
-    const today = new Date().toLocaleDateString("en-CA");
-    return (
-      events.find((e) => !e.hidden && e.isoDate && e.isoDate >= today) ?? null
-    );
   }, []);
 
   const {
@@ -305,25 +297,15 @@ function ApplyPageInner() {
                         </p>
                       )}
                       {form.seenShowBefore === "no" && (
-                        <div className={styles.seenNudge}>
-                          <p>
-                            Good to know! The cast is already set for the next
-                            few months, and we mostly select from past audience
-                            members (Stealers). Coming to a show first seriously
-                            increases your chances. Use code{" "}
-                            <strong>STEALER</strong> for 20% off your order.
-                          </p>
-                          {nextShow && (
-                            <a
-                              href={nextShow.url}
-                              target="_blank"
-                              rel="noopener noreferrer"
-                              className={styles.seenNudgeButton}
-                            >
-                              Come Steal
-                            </a>
-                          )}
-                        </div>
+                        <p className={styles.seenNo}>
+                          Good to know! We mostly select from past audience
+                          members (Stealers). Coming to a show first seriously
+                          increases your chances. Use code{" "}
+                          <strong>STEALER</strong> for 20% off.{" "}
+                          <a href="/tickets" className={styles.seenNudgeLink}>
+                            Come Steal &rarr;
+                          </a>
+                        </p>
                       )}
                     </fieldset>
 

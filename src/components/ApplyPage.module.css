@@ -711,48 +711,23 @@
   font-style: italic;
 }
 
-.seenNudge {
-  margin-top: 12px;
-  padding: 14px 16px;
-  background: var(--off-white);
-  border-radius: 8px;
+.seenNo {
+  margin-top: 8px;
   font-family: var(--font-body);
-  font-size: 14px;
-  color: var(--brand-red);
+  font-size: 13px;
+  color: var(--text-secondary);
   line-height: 1.55;
 }
 
-.seenNudge p {
-  margin: 0;
+.seenNudgeLink {
+  color: var(--brand-red);
+  font-weight: 600;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+  white-space: nowrap;
+  transition: opacity 160ms ease-out;
 }
 
-.seenNudgeButton {
-  display: block;
-  width: 100%;
-  margin-top: 12px;
-  padding: 12px 20px;
-  background: var(--electric-yellow);
-  color: var(--charcoal);
-  border: none;
-  font-family: var(--font-body);
-  font-size: 15px;
-  font-weight: 700;
-  border-radius: 100px;
-  text-decoration: none;
-  text-align: center;
-  transition:
-    background 160ms ease-out,
-    color 160ms ease-out,
-    transform 160ms ease-out;
-  min-height: var(--touch-target);
-  box-sizing: border-box;
-}
-
-.seenNudgeButton:hover {
-  background: var(--charcoal);
-  color: var(--electric-yellow);
-}
-
-.seenNudgeButton:active {
-  transform: scale(0.97);
+.seenNudgeLink:hover {
+  opacity: 0.75;
 }

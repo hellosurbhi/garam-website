@@ -21,7 +21,6 @@ export interface EventEntry {
   soldOut?: boolean; // Machine-readable sold-out flag; do not use tagline for control flow
   tagline?: string; // Short status line shown on the card (e.g. "Selling fast")
   eventbriteId?: string; // Numeric Eventbrite event ID — enables modal checkout widget
-  promoCode?: string; // Auto-applied Eventbrite promo/discount code for this event
 }
 
 const VENUE_TOP_SECRET: EventVenue = {
@@ -123,7 +122,6 @@ export const events: EventEntry[] = [
     price: "15",
     tagline: "Just announced",
     eventbriteId: "1986100570270",
-    promoCode: "AutomaticDiscount_1768496886850",
   },
 ];
 

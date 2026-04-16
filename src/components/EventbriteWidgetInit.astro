@@ -11,7 +11,6 @@
     modal: boolean;
     modalTriggerElementId: string;
     themeSettings?: Record<string, string>;
-    promoCode?: string;
     onOrderComplete?: () => void;
   }
 
@@ -37,7 +36,6 @@
         btn.dataset.ebEventId ??
         btn.id.replace("eventbrite-widget-modal-trigger-", ""),
       triggerId: btn.id,
-      promoCode: btn.dataset.promoCode || null,
       fallbackUrl: btn.getAttribute("href") ?? btn.dataset.ebUrl ?? "",
       city: btn.dataset.city ?? "",
     }));
@@ -68,7 +66,6 @@
             });
           },
         };
-        if (ev.promoCode) config.promoCode = ev.promoCode;
         try {
           w.EBWidgets.createWidget(config);
           // Widget bound successfully. Prevent the anchor's native navigation so

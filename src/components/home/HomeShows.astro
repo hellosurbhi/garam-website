@@ -56,7 +56,6 @@ const { events } = Astro.props;
             data-ph-event-date={event.date}
             data-ph-price={event.price}
             data-eb-url={buildTicketUrl(event.url, "home", "shows")}
-            data-promo-code={event.promoCode ?? ""}
             data-city={event.city}
           >
             {cardInner}

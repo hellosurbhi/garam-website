@@ -22,7 +22,6 @@ const widgetEvents = upcomingEvents
   .map((e) => ({
     eventId: e.eventbriteId!,
     triggerId: `eventbrite-widget-modal-trigger-${e.eventbriteId}`,
-    promoCode: e.promoCode ?? null,
     fallbackUrl: buildTicketUrl(e.url, "tickets", "listing"),
     city: e.city,
   }));
@@ -340,9 +339,6 @@ const eventSeriesJsonLd = JSON.stringify({
               }
             },
           };
-          if (ev.promoCode) {
-            config.promoCode = ev.promoCode;
-          }
           try {
             window.EBWidgets.createWidget(config);
             // Widget bound successfully. Prevent the anchor's native navigation so

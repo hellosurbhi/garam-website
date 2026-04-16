@@ -731,9 +731,9 @@
   width: 100%;
   margin-top: 12px;
   padding: 12px 20px;
-  background: transparent;
-  color: var(--brand-red);
-  border: 1.5px solid var(--brand-red);
+  background: var(--electric-yellow);
+  color: var(--charcoal);
+  border: none;
   font-family: var(--font-body);
   font-size: 15px;
   font-weight: 700;
@@ -741,16 +741,16 @@
   text-decoration: none;
   text-align: center;
   transition:
-    background 200ms ease-out,
-    color 200ms ease-out,
+    background 160ms ease-out,
+    color 160ms ease-out,
     transform 160ms ease-out;
   min-height: var(--touch-target);
   box-sizing: border-box;
 }
 
 .seenNudgeButton:hover {
-  background: var(--brand-red);
-  color: #fff;
+  background: var(--charcoal);
+  color: var(--electric-yellow);
 }
 
 .seenNudgeButton:active {

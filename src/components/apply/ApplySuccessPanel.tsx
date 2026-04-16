@@ -115,6 +115,7 @@ export function ApplySuccessPanel() {
         </p>
         {nextShow && triggerId ? (
           <button
+            type="button"
             id={triggerId}
             data-eb-event-id={nextShow.eventbriteId}
             data-promo-code="STEALER"

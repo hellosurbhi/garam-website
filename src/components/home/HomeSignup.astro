@@ -353,6 +353,19 @@ const leadSource = `spice-list-${pageName}`;
   .spicelist-skip:focus-visible {
     color: white;
   }
+  @keyframes stepIn {
+    0% {
+      opacity: 0;
+      transform: translateY(6px);
+    }
+    100% {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+  #nl-step-2 {
+    animation: stepIn 0.3s ease-out both;
+  }
   @keyframes spiceSuccess {
     0% {
       opacity: 0;

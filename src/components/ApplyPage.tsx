@@ -297,15 +297,17 @@ function ApplyPageInner() {
                         </p>
                       )}
                       {form.seenShowBefore === "no" && (
-                        <p className={styles.seenNo}>
-                          Good to know! We mostly select from past audience
-                          members (Stealers). Coming to a show first seriously
-                          increases your chances. Use code{" "}
-                          <strong>STEALER</strong> for 20% off.{" "}
+                        <div className={styles.seenNo}>
+                          <p>
+                            Almost every contestant we cast came to a show as a
+                            Stealer first. Without that, your application will
+                            likely wait. Use code <strong>STEALER</strong> for
+                            20% off.
+                          </p>
                           <a href="/tickets" className={styles.seenNudgeLink}>
                             Come Steal &rarr;
                           </a>
-                        </p>
+                        </div>
                       )}
                     </fieldset>
 
@@ -351,7 +353,7 @@ function ApplyPageInner() {
                     </div>
 
                     <FieldGroup
-                      label="Instagram handle @ (we wanna stalk you 👀)"
+                      label="Instagram handle @ we wanna stalk you 👀"
                       required
                       error={errors.instagram}
                       htmlFor="field-instagram"

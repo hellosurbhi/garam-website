@@ -712,22 +712,37 @@
 }
 
 .seenNo {
-  margin-top: 8px;
+  margin-top: 10px;
+}
+
+.seenNo p {
   font-family: var(--font-body);
   font-size: 13px;
-  color: var(--text-secondary);
+  color: var(--brand-red);
   line-height: 1.55;
+  margin: 0 0 10px;
 }
 
 .seenNudgeLink {
-  color: var(--brand-red);
-  font-weight: 600;
-  text-decoration: underline;
-  text-underline-offset: 2px;
-  white-space: nowrap;
-  transition: opacity 160ms ease-out;
+  display: inline-block;
+  padding: 9px 20px;
+  background: var(--charcoal);
+  color: #fff;
+  font-family: var(--font-body);
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.03em;
+  border-radius: 100px;
+  text-decoration: none;
+  transition:
+    opacity 160ms ease-out,
+    transform 160ms ease-out;
 }
 
 .seenNudgeLink:hover {
-  opacity: 0.75;
+  opacity: 0.8;
+}
+
+.seenNudgeLink:active {
+  transform: scale(0.97);
 }

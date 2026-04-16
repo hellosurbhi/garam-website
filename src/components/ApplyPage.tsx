@@ -320,7 +320,7 @@ function ApplyPageInner() {
                               rel="noopener noreferrer"
                               className={styles.seenNudgeButton}
                             >
-                              Come Steal the Show
+                              Come Steal
                             </a>
                           )}
                         </div>

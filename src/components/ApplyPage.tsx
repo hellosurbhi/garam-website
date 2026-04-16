@@ -299,8 +299,8 @@ function ApplyPageInner() {
                       {form.seenShowBefore === "no" && (
                         <p className={styles.seenNo}>
                           Almost every contestant we cast came to a show as a
-                          Stealer first. Without that, your application will
-                          likely wait. Use code <strong>STEALER</strong> for 20%
+                          Stealer first. Without that, you likely won't be
+                          selected. Use code <strong>STEALER</strong> for 20%
                           off.{" "}
                           <a href="/tickets" className={styles.seenNudgeLink}>
                             Come Steal &rarr;

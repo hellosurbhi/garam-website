@@ -56,7 +56,6 @@ const { events } = Astro.props;
             data-ph-event-date={event.date}
             data-ph-price={event.price}
             data-eb-url={buildTicketUrl(event.url, "home", "shows")}
-            data-promo-code={event.promoCode ?? ""}
             data-city={event.city}
           >
             {cardInner}
@@ -152,16 +151,12 @@ const { events } = Astro.props;
           <input
             type="text"
             id="city-name"
-            list="city-name-suggestions"
             placeholder="Your city"
             aria-label="City name"
             autocomplete="off"
             required
             toolparamdescription="Name of the city where you want Garam Masala Dating to perform"
           />
-          <datalist id="city-name-suggestions"></datalist>
-          <input type="hidden" id="city-state" />
-          <input type="hidden" id="city-country" />
           <input
             type="email"
             id="city-email"
@@ -185,7 +180,6 @@ const { events } = Astro.props;
 <script>
   import { getFirebaseDb } from "@/lib/firebase";
   import { collection, addDoc } from "firebase/firestore";
-  import { resolveCityOption } from "@/lib/citySearchShared";
   import { identifyLead, trackLeadEvent } from "@/lib/analytics";
   import { buildLeadAttribution } from "@/lib/leadAttribution";
 
@@ -197,51 +191,7 @@ const { events } = Astro.props;
     const cityInput = document.getElementById(
       "city-name",
     ) as HTMLInputElement | null;
-    const cityStateInput = document.getElementById(
-      "city-state",
-    ) as HTMLInputElement | null;
-    const cityCountryInput = document.getElementById(
-      "city-country",
-    ) as HTMLInputElement | null;
-    const citySuggestions = document.getElementById(
-      "city-name-suggestions",
-    ) as HTMLDataListElement | null;
     const errorEl = document.getElementById("city-form-error");
-    let cityOptions: import("@/lib/citySearchShared").CitySearchOption[] = [];
-    let selectedCity: import("@/lib/citySearchShared").CitySearchOption | null =
-      null;
-
-    const syncSelectedCity = (
-      option: import("@/lib/citySearchShared").CitySearchOption | null,
-    ) => {
-      selectedCity = option;
-      if (cityStateInput) cityStateInput.value = option?.state ?? "";
-      if (cityCountryInput) cityCountryInput.value = option?.country ?? "";
-    };
-
-    const renderCitySuggestions = (
-      results: import("@/lib/citySearchShared").CitySearchOption[],
-    ) => {
-      if (!citySuggestions) return;
-      citySuggestions.innerHTML = "";
-      results.forEach((option) => {
-        const suggestion = document.createElement("option");
-        suggestion.value = option.label;
-        citySuggestions.appendChild(suggestion);
-      });
-    };
-
-    const searchCities = async (query: string) => {
-      const response = await fetch(
-        `/api/city-search?q=${encodeURIComponent(query)}`,
-      );
-      if (!response.ok) throw new Error("Failed to search cities");
-      const data = (await response.json()) as {
-        results?: import("@/lib/citySearchShared").CitySearchOption[];
-      };
-      cityOptions = data.results ?? [];
-      renderCitySuggestions(cityOptions);
-    };
 
     document
       .getElementById("request-city-trigger")
@@ -258,9 +208,6 @@ const { events } = Astro.props;
           errorEl.textContent = "";
           errorEl.setAttribute("hidden", "");
         }
-        syncSelectedCity(null);
-        cityOptions = [];
-        renderCitySuggestions([]);
         trackLeadEvent("request_city_opened", {
           source: "request-city",
           sourcePage: window.location.pathname,
@@ -305,39 +252,20 @@ const { events } = Astro.props;
       closeCityDialog();
     });
 
-    cityInput?.addEventListener("focus", () => {
-      if (cityInput.value.trim()) {
-        searchCities(cityInput.value).catch(() => {});
-      }
-    });
-
-    cityInput?.addEventListener("input", async () => {
-      if (!cityInput.value.trim()) {
-        cityOptions = [];
-        renderCitySuggestions([]);
-        syncSelectedCity(null);
-        return;
-      }
-      await searchCities(cityInput.value);
-      syncSelectedCity(resolveCityOption(cityInput.value, cityOptions));
-    });
-
-    cityInput?.addEventListener("change", () => {
-      syncSelectedCity(resolveCityOption(cityInput.value, cityOptions));
-    });
-
     document
       .getElementById("city-form")
       ?.addEventListener("submit", async (e) => {
         e.preventDefault();
+        const submitBtn = (
+          e.target as HTMLFormElement
+        ).querySelector<HTMLButtonElement>('[type="submit"]');
+        const originalBtnText = submitBtn?.textContent ?? "";
+        if (submitBtn) {
+          submitBtn.disabled = true;
+          submitBtn.textContent = "Submitting...";
+        }
         try {
-          if (cityInput?.value.trim()) {
-            await searchCities(cityInput.value);
-          }
-          const resolvedCity =
-            selectedCity ??
-            resolveCityOption(cityInput?.value ?? "", cityOptions);
-          const city = resolvedCity?.city ?? (cityInput?.value ?? "").trim();
+          const city = (cityInput?.value ?? "").trim();
           const email = (
             document.getElementById("city-email") as HTMLInputElement
           ).value;
@@ -349,27 +277,20 @@ const { events } = Astro.props;
             createdAt: new Date().toISOString(),
           };
           if (city) payload.city = city;
-          if (resolvedCity?.state) payload.state = resolvedCity.state;
-          if (resolvedCity?.country) payload.country = resolvedCity.country;
           await addDoc(collection(db, "leads"), payload);
-          identifyLead(email, {
-            ...attribution,
-            city,
-            state: resolvedCity?.state,
-            country: resolvedCity?.country,
-          });
-          trackLeadEvent("lead_email_submitted", {
-            ...attribution,
-            city,
-            state: resolvedCity?.state,
-            country: resolvedCity?.country,
-          });
+          identifyLead(email, { ...attribution, city });
+          trackLeadEvent("lead_email_submitted", { ...attribution, city });
           document.getElementById("city-form-view")?.setAttribute("hidden", "");
           document.getElementById("city-success")?.removeAttribute("hidden");
         } catch {
           if (errorEl) {
             errorEl.textContent = "Something went wrong. Please try again.";
             errorEl.removeAttribute("hidden");
+          }
+        } finally {
+          if (submitBtn) {
+            submitBtn.disabled = false;
+            submitBtn.textContent = originalBtnText;
           }
         }
       });
@@ -586,7 +507,7 @@ const { events } = Astro.props;
     background: white;
     border: 1px solid rgba(0, 0, 0, 0.1);
     border-radius: 20px;
-    padding: 32px 24px;
+    padding: 24px;
     position: relative;
     animation: modalIn 0.25s ease-out both;
     text-align: center;

@@ -1,7 +1,7 @@
 @keyframes toast-in {
   from {
     opacity: 0;
-    transform: translateY(8px);
+    transform: translateY(-8px);
   }
   to {
     opacity: 1;
@@ -24,6 +24,14 @@
 }
 
 /* ─── Layout ─────────────────────────────────────────────────── */
+
+/* Wraps all form content; disabled={submitting} locks every input/select/button */
+.formFieldset {
+  border: none;
+  margin: 0;
+  padding: 0;
+  min-width: 0;
+}
 
 .page {
   background: transparent;
@@ -536,7 +544,7 @@
 
 .toast {
   position: fixed;
-  bottom: 24px;
+  top: 24px;
   left: 24px;
   right: 24px;
   display: flex;
@@ -584,7 +592,7 @@
 
 .successPanel {
   text-align: center;
-  padding: 40px 20px 60px;
+  padding: 32px 20px 32px;
 }
 
 .successEmoji {
@@ -603,7 +611,7 @@
 .successText {
   font-size: 16px;
   color: var(--muted);
-  margin: 0 0 32px;
+  margin: 0 0 24px;
   line-height: 1.5;
 }
 
@@ -656,6 +664,19 @@
   letter-spacing: 0.5px;
 }
 
+.successShowList {
+  list-style: none;
+  margin: 16px 0 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.successShowList .successTicketButton {
+  margin-top: 0;
+}
+
 .successTicketButton {
   display: block;
   width: 100%;
@@ -666,9 +687,11 @@
   font-family: var(--font-body);
   font-size: 16px;
   font-weight: 700;
+  border: none;
   border-radius: 100px;
   text-decoration: none;
   text-align: center;
+  cursor: pointer;
   transition:
     background 200ms ease-out,
     transform 160ms ease-out;
@@ -682,4 +705,41 @@
 
 .successTicketButton:active {
   transform: scale(0.97);
+}
+
+/* ─── Seen show nudge ────────────────────────────────────────── */
+
+.seenShowSection {
+  border: none;
+  margin: 0 0 18px;
+  padding: 0;
+  min-width: 0;
+}
+
+.seenYes {
+  font-family: var(--font-body);
+  font-size: 13px;
+  color: var(--muted);
+  margin-top: 8px;
+  font-style: italic;
+}
+
+.seenNo {
+  font-family: var(--font-body);
+  font-size: 13px;
+  color: var(--brand-red);
+  line-height: 1.55;
+  margin: 10px 0 0;
+}
+
+.seenNudgeLink {
+  color: var(--brand-red);
+  font-weight: 700;
+  text-decoration: none;
+  white-space: nowrap;
+  transition: opacity 160ms ease-out;
+}
+
+.seenNudgeLink:hover {
+  opacity: 0.7;
 }

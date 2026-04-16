@@ -36,6 +36,7 @@ export interface FormState {
   pitch: string;
   type: string;
   marketingConsent: "yes" | "no" | "";
+  seenShowBefore: "" | "yes" | "no";
 }
 
 const INITIAL: FormState = {
@@ -56,6 +57,7 @@ const INITIAL: FormState = {
   pitch: "",
   type: "",
   marketingConsent: "",
+  seenShowBefore: "",
 };
 
 export type FormErrors = Partial<
@@ -253,6 +255,9 @@ export function useApplyForm() {
         pitch: form.pitch.trim(),
         type: form.type.trim(),
         photoUrl,
+        ...(form.seenShowBefore !== ""
+          ? { seenShowBefore: form.seenShowBefore === "yes" }
+          : {}),
       };
 
       await addDoc(collection(getFirebaseDb(), "applications"), {
@@ -297,6 +302,7 @@ export function useApplyForm() {
       setPhotoPreview(null);
       setErrors({});
       setSubmitted(true);
+      window.scrollTo({ top: 0, behavior: "smooth" });
     } catch (err) {
       const error = err instanceof Error ? err : new Error(String(err));
       // Clean up orphaned photo if upload succeeded but Firestore write failed

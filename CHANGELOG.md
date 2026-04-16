@@ -1,5 +1,78 @@
 # Changelog
 
+## fix: smoke-test SHA poll, seenNo CSS selector, modal token extraction (2026-04-16)
+
+### What changed
+
+**smoke-tests.yml:** Reverted the broken SHA-based polling loop. Astro SSG builds static HTML and never embeds `GITHUB_SHA` in page content, so `grep -q "${GITHUB_SHA}"` always timed out after 300 seconds and the Playwright tests never ran. Replaced with `sleep 90` and added a comment pointing to the Vercel Deployments API as the correct upgrade path when a `VERCEL_TOKEN` secret is available.
+
+**ApplyPage.module.css:** Fixed a CSS selector mismatch in `.seenNo`. The JSX renders `<p className={styles.seenNo}>` directly, so `.seenNo p {}` never matched. Merged `margin-top: 10px` and the font/color/line-height styles into a single `.seenNo {}` rule so brand-red text color, 13px size, and 1.55 line-height all apply correctly.
+
+**Modal.astro + modal-tokens.css:** Extracted the two hardcoded `padding: 24px` values in Modal.astro into `--modal-inner-padding` and `--modal-content-padding` tokens in modal-tokens.css. Both default to 24px, matching prior behavior exactly.
+
+**LeadCaptureModal.astro:** Added `phoneSuccessMessage` prop so the success message text is configurable per-channel. The phone submission path now reads `data-lc-phone-success-msg` instead of hardcoding the string "You're on the list! Deals incoming."
+
+**EventbriteWidgetInit.astro:** Switched the `popstate` guard from `e.state?.ebModal` to the `historyEntryPushed` boolean flag. More reliable because it does not depend on the state object surviving serialization.
+
+**ApplyPage.tsx:** Moved the hardcoded disclaimer text to `copy.ts` as `submissionDisclaimer`.
+
+**scripts/setup-branch-protection.sh:** Added `gh` CLI availability and auth prerequisite checks so the script fails fast with an actionable message instead of silently erroring mid-run.
+
+### Files affected
+
+- `.github/workflows/smoke-tests.yml`
+- `src/components/ApplyPage.module.css`
+- `src/components/ui/Modal.astro`
+- `src/components/ui/modal-tokens.css`
+- `src/components/LeadCaptureModal.astro`
+- `src/components/EventbriteWidgetInit.astro`
+- `src/components/ApplyPage.tsx`
+- `src/data/copy.ts`
+- `scripts/setup-branch-protection.sh`
+
+---
+
+## feat: success panel EB widget + Instagram DM + scroll/back-button fix (2026-04-15)
+
+### What changed
+
+**Bug 11 (ApplySuccessPanel):** The "Get Tickets" button in the apply success panel now opens the Eventbrite checkout widget inline (same modal as the tickets/shows pages) with the STEALER promo code pre-applied, rather than opening a new tab. The component loads the EB script lazily via `useEffect` and falls back to an external `<a>` link if the next show has no `eventbriteId`. Instagram card copy updated to "Follow and DM @garammasaladating" — more actionable for applicants who just submitted. Added `border: none; cursor: pointer` to `.successTicketButton` so the style applies identically whether the element is rendered as `<button>` or `<a>`.
+
+**Bug 6 (Eventbrite scroll preservation):** Eventbrite's SDK calls `window.scrollTo(0,0)` when it opens its checkout modal, jumping the viewport to the top. `EventbriteWidgetInit.astro` now saves `window.scrollY` on each trigger button click and restores it via `requestAnimationFrame` once `eds-structure_main` is injected into the DOM.
+
+**Bug 10 (Mobile back button):** On mobile, pressing the hardware back button while the Eventbrite modal was open navigated away from the page. The fix uses the History API: a dummy entry `{ ebModal: true }` is pushed when the modal opens; a `popstate` listener intercepts the back gesture and clicks the modal's close button instead. A `MutationObserver` detects when `eds-structure_main` is removed (modal closed normally) and calls `history.back()` to clean up the dummy entry, keeping the browser history consistent.
+
+### Files affected
+
+- `src/components/apply/ApplySuccessPanel.tsx`
+- `src/components/ApplyPage.module.css`
+- `src/components/EventbriteWidgetInit.astro`
+
+---
+
+## ci: fix smoke test placement and add production health check (2026-04-15)
+
+### What changed
+
+Fixed two compounding problems with the smoke test setup.
+
+**Problem 1: Smoke tests were post-merge.** Running Playwright after a merge can't block anything.
+
+**Problem 2: Smoke tests tested a local build, not production.** Without `PLAYWRIGHT_BASE_URL` set, the post-merge job just rebuilt locally — catching nothing that the `build` job in ci.yml didn't already catch.
+
+**Fixes:**
+
+`.github/workflows/ci.yml` — Added `smoke` job (Job 5). Playwright runs pre-merge, builds locally, tests all routes across 4 viewports (iPhone, iPad, iPad landscape, desktop). Results are visible on every PR so broken builds are obvious before merging.
+
+`.github/workflows/smoke-tests.yml` — Repurposed as a **production health check**. Now sets `PLAYWRIGHT_BASE_URL: https://garammasaladating.com` so it hits the live site after deploy. Adds a 90-second wait for Vercel to finish. Tells you if the deploy itself broke production.
+
+Note: enforcing these as hard merge blockers requires GitHub Pro (branch protection on private repos). The checks run and are visible; blocking requires upgrading when ready.
+
+### Files affected
+
+- `.github/workflows/ci.yml`
+- `.github/workflows/smoke-tests.yml`
+
 ## fix(coderabbit): address all 11 unresolved PR comments (2026-04-14)
 
 ### What changed

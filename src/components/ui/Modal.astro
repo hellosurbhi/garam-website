@@ -128,9 +128,11 @@ const titleId = `${id}-title`;
   .base-modal-close:focus {
     outline: none;
   }
-  .base-modal-close:focus-visible {
-    outline: 2px solid var(--modal-close-color-hover);
-    outline-offset: 2px;
+  @media (pointer: fine) {
+    .base-modal-close:focus-visible {
+      outline: 2px solid var(--modal-close-color-hover);
+      outline-offset: 2px;
+    }
   }
   .base-modal-title {
     font-family: var(--font-playfair), serif;

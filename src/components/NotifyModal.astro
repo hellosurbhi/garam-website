@@ -502,6 +502,15 @@ const { source = "notify-modal" } = Astro.props;
   .modal-close:hover {
     color: var(--charcoal);
   }
+  .modal-close:focus {
+    outline: none;
+  }
+  @media (pointer: fine) {
+    .modal-close:focus-visible {
+      outline: 2px solid var(--charcoal);
+      outline-offset: 2px;
+    }
+  }
   .modal-title {
     font-family: var(--font-playfair), serif;
     font-size: 22px;

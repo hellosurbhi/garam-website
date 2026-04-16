@@ -843,6 +843,44 @@ Note: enforcing these as hard merge blockers requires GitHub Pro (branch protect
 - `.github/workflows/ci.yml`
 - `.github/workflows/smoke-tests.yml`
 
+## fix(bugs): apply scroll, city phone step, modal focus ring, homepage CTAs (2026-04-16)
+
+### What changed
+
+Four recurring bugs that had been reported verbally multiple times without being fully resolved.
+
+**Apply success now scrolls to top on mobile** (`src/components/apply/ApplySuccessPanel.tsx`) — Added a mount-only `useEffect` that runs `window.scrollTo({ top: 0, behavior: reduced ? "auto" : "smooth" })` respecting `prefers-reduced-motion`. The effect lives in the success panel itself (not in `useApplyForm`) so it fires only after React commits the success DOM, guaranteeing the scroll hits the rendered success state. Previously the user submitted the form mid-page and stayed mid-scroll even though the success screen was underneath.
+
+**"Don't see your city" modal now captures phone as step 2** (`src/components/home/HomeShows.astro`) — Restructured the single-step modal (city + email → thank you) to a three-step flow (city + email → optional phone → thank you) matching the established pattern in `NotifyModal.astro` and `LeadCaptureModal.astro`. The email submit returns a Firestore doc reference which the phone step uses to `updateDoc` with the cleaned phone. Skip button is available. Reused `cleanPhone()` from `src/lib/phone.ts` for validation. Thank-you copy adapts: text message promise when phone was captured, generic reach-out copy when skipped. This aligns with the standing rule that every lead-capture modal asks for phone at step 2.
+
+**Modal close button focus ring suppressed on touch** (6 files) — The red `:focus-visible` outline on modal X buttons appeared on mobile because opening a modal programmatically focuses an element, which browsers treat as `:focus-visible`. Wrapped every modal close `:focus-visible` rule inside `@media (pointer: fine)` so the outline only renders on precise-pointer (mouse/trackpad) devices. On touch devices the ring vanishes. Keyboard accessibility on desktop is preserved. Matches the existing codebase pattern of gating the custom cursor on `pointer: fine`. Also switched the color from `var(--brand-red)` to `var(--charcoal)` on the close buttons that were explicitly red — charcoal is consistent with the other modal close buttons that already used it, and avoids the red on red brand tension.
+
+**Homepage CTAs varied per section** (3 files) — "Grab My Spot" was hardcoded across 4 homepage CTAs. Kept as the hero's primary CTA (user preference), changed the others so each section has distinct, context-appropriate copy:
+
+- `HomeShows` event card badges → `Get Tickets` (clearest for the decision moment, per prior conversion research)
+- `HomeExperience` → `Book My Seat` (commitment verb, matches the "here's what it's like" framing)
+- `HomeFAQ` → `I'm In` (casual, confident, lands after objections are handled)
+- Nav already said `Get Tickets` — unchanged
+
+### Files affected
+
+- `src/components/apply/ApplySuccessPanel.tsx` — mount-only scroll-to-top effect
+- `src/components/home/HomeShows.astro` — phone step + skip + focus ring gate + CTA text
+- `src/components/NotifyModal.astro` — focus ring gate (added scoped charcoal rule)
+- `src/components/ui/Modal.astro` — focus ring gate
+- `src/components/apply/TermsModal.module.css` — focus ring gate
+- `src/components/admin/ApplicantModal.module.css` — focus ring gate
+- `src/components/home/HomeExperience.astro` — CTA text
+- `src/components/home/HomeFAQ.astro` — CTA text
+- `CHANGELOG.md`, `BUGS.md`
+
+### Decisions
+
+- Scoped the `pointer: fine` gate to modal close buttons only, not the global `:focus-visible` rule in `src/index.css`. Keyboard users on all other interactive elements continue to see focus rings as before.
+- For the city modal phone step, updated the same Firestore document instead of creating a second write. If the user submits email but closes the modal before submitting phone, we still have the lead captured.
+- Didn't touch the hero's "Grab My Spot" — user explicitly said "looks nice in one place" and the hero is sacred.
+- Chose `Get Tickets`, `Book My Seat`, `I'm In` as the varied CTAs: all first-person where applicable, action verbs, and each calibrated to the emotional weight of its section (decision / commitment / objection-handled).
+
 ## fix(coderabbit): address all 11 unresolved PR comments (2026-04-14)
 
 ### What changed

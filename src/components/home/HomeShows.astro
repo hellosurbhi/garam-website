@@ -52,7 +52,7 @@ const taglineMap = buildTaglineMap(events);
             <span
               class={`ticket-label${isSoldOut ? " ticket-label--soldout" : ""}`}
             >
-              {isSoldOut ? "Sold Out" : "Grab My Spot"}
+              {isSoldOut ? "Sold Out" : "Get Tickets"}
             </span>
           </>
         );
@@ -208,12 +208,16 @@ const taglineMap = buildTaglineMap(events);
           <input
             type="text"
             id="city-name"
+            list="city-name-suggestions"
             placeholder="Your city"
             aria-label="City name"
             autocomplete="off"
             required
             toolparamdescription="Name of the city where you want Garam Masala Dating to perform"
           />
+          <datalist id="city-name-suggestions"></datalist>
+          <input type="hidden" id="city-state" />
+          <input type="hidden" id="city-country" />
           <input
             type="email"
             id="city-email"
@@ -227,8 +231,48 @@ const taglineMap = buildTaglineMap(events);
           <button type="submit" class="modal-submit">Submit Request</button>
         </form>
       </div>
-      <div id="city-success" class="modal-success" hidden>
-        <p>Request received! We'll keep you posted.</p>
+      <div id="city-phone-view" hidden>
+        <h2 class="modal-title">One more thing…</h2>
+        <p class="modal-subtitle">
+          Add your number so we can text you the second we announce a date.
+        </p>
+        <form
+          id="city-phone-form"
+          class="modal-form"
+          toolname="add-phone-to-city-request"
+          tooldescription="Add a phone number for SMS alerts when the show comes to your requested city (optional)."
+        >
+          <input
+            type="tel"
+            id="city-phone"
+            class="ph-mask"
+            placeholder="(555) 123-4567"
+            aria-label="Phone number"
+            toolparamdescription="Mobile phone number for SMS alerts when the show comes to your city (optional)"
+          />
+          <p
+            id="city-phone-error"
+            class="modal-error"
+            hidden
+            aria-live="assertive"
+          >
+          </p>
+          <button type="submit" class="modal-submit">Send Me Updates</button>
+        </form>
+        <button type="button" id="city-phone-skip" class="modal-skip"
+          >Maybe later</button
+        >
+      </div>
+      <div
+        id="city-success"
+        class="modal-success"
+        role="status"
+        aria-live="polite"
+        hidden
+      >
+        <p id="city-success-msg">
+          Request received. We'll text you when we bring the show to your city.
+        </p>
       </div>
     </div>
   </dialog>
@@ -239,10 +283,13 @@ const taglineMap = buildTaglineMap(events);
 </script>
 
 <script>
+  import { cleanPhone } from "@/lib/phone";
+  import { resolveCityOption } from "@/lib/citySearchShared";
   import { identifyLead, trackLeadEvent } from "@/lib/analytics";
   import { buildLeadAttribution } from "@/lib/leadAttribution";
   import {
     captureLead,
+    updateLeadPhone,
     type LeadSubmissionPayload,
   } from "@/lib/leadSubmission";
 
@@ -254,23 +301,82 @@ const taglineMap = buildTaglineMap(events);
     const cityInput = document.getElementById(
       "city-name",
     ) as HTMLInputElement | null;
+    const cityStateInput = document.getElementById(
+      "city-state",
+    ) as HTMLInputElement | null;
+    const cityCountryInput = document.getElementById(
+      "city-country",
+    ) as HTMLInputElement | null;
+    const citySuggestions = document.getElementById(
+      "city-name-suggestions",
+    ) as HTMLDataListElement | null;
     const errorEl = document.getElementById("city-form-error");
+    let cityOptions: import("@/lib/citySearchShared").CitySearchOption[] = [];
+    let selectedCity: import("@/lib/citySearchShared").CitySearchOption | null =
+      null;
+    let cityLeadId: string | null = null;
+
+    const syncSelectedCity = (
+      option: import("@/lib/citySearchShared").CitySearchOption | null,
+    ) => {
+      selectedCity = option;
+      if (cityStateInput) cityStateInput.value = option?.state ?? "";
+      if (cityCountryInput) cityCountryInput.value = option?.country ?? "";
+    };
+
+    const renderCitySuggestions = (
+      results: import("@/lib/citySearchShared").CitySearchOption[],
+    ) => {
+      if (!citySuggestions) return;
+      citySuggestions.innerHTML = "";
+      results.forEach((option) => {
+        const suggestion = document.createElement("option");
+        suggestion.value = option.label;
+        citySuggestions.appendChild(suggestion);
+      });
+    };
+
+    const searchCities = async (query: string) => {
+      const response = await fetch(
+        `/api/city-search?q=${encodeURIComponent(query)}`,
+      );
+      if (!response.ok) throw new Error("Failed to search cities");
+      const data = (await response.json()) as {
+        results?: import("@/lib/citySearchShared").CitySearchOption[];
+      };
+      cityOptions = data.results ?? [];
+      renderCitySuggestions(cityOptions);
+    };
 
     document
       .getElementById("request-city-trigger")
       ?.addEventListener("click", () => {
         // Reset to form state before opening
         document.getElementById("city-form-view")?.removeAttribute("hidden");
+        document.getElementById("city-phone-view")?.setAttribute("hidden", "");
         document.getElementById("city-success")?.setAttribute("hidden", "");
         const emailInput = document.getElementById(
           "city-email",
         ) as HTMLInputElement;
+        const phoneInput = document.getElementById(
+          "city-phone",
+        ) as HTMLInputElement | null;
+        const phoneErrorEl = document.getElementById("city-phone-error");
         if (cityInput) cityInput.value = "";
         if (emailInput) emailInput.value = "";
+        if (phoneInput) phoneInput.value = "";
         if (errorEl) {
           errorEl.textContent = "";
           errorEl.setAttribute("hidden", "");
         }
+        if (phoneErrorEl) {
+          phoneErrorEl.textContent = "";
+          phoneErrorEl.setAttribute("hidden", "");
+        }
+        syncSelectedCity(null);
+        cityOptions = [];
+        renderCitySuggestions([]);
+        cityLeadId = null;
         trackLeadEvent("request_city_opened", {
           source: "request-city",
           sourcePage: window.location.pathname,
@@ -315,6 +421,27 @@ const taglineMap = buildTaglineMap(events);
       closeCityDialog();
     });
 
+    cityInput?.addEventListener("focus", () => {
+      if (cityInput.value.trim()) {
+        searchCities(cityInput.value).catch(() => {});
+      }
+    });
+
+    cityInput?.addEventListener("input", async () => {
+      if (!cityInput.value.trim()) {
+        cityOptions = [];
+        renderCitySuggestions([]);
+        syncSelectedCity(null);
+        return;
+      }
+      await searchCities(cityInput.value);
+      syncSelectedCity(resolveCityOption(cityInput.value, cityOptions));
+    });
+
+    cityInput?.addEventListener("change", () => {
+      syncSelectedCity(resolveCityOption(cityInput.value, cityOptions));
+    });
+
     document
       .getElementById("city-form")
       ?.addEventListener("submit", async (e) => {
@@ -325,10 +452,16 @@ const taglineMap = buildTaglineMap(events);
         const originalBtnText = submitBtn?.textContent ?? "";
         if (submitBtn) {
           submitBtn.disabled = true;
-          submitBtn.textContent = "Submitting...";
+          submitBtn.textContent = "Sending...";
         }
         try {
-          const city = (cityInput?.value ?? "").trim();
+          if (cityInput?.value.trim()) {
+            await searchCities(cityInput.value);
+          }
+          const resolvedCity =
+            selectedCity ??
+            resolveCityOption(cityInput?.value ?? "", cityOptions);
+          const city = resolvedCity?.city ?? (cityInput?.value ?? "").trim();
           const email = (
             document.getElementById("city-email") as HTMLInputElement
           ).value;
@@ -340,17 +473,33 @@ const taglineMap = buildTaglineMap(events);
             ...attribution,
           };
           if (city) payload.city = city;
-          await captureLead(payload);
+          if (resolvedCity?.state) payload.state = resolvedCity.state;
+          if (resolvedCity?.country) payload.country = resolvedCity.country;
+          cityLeadId = await captureLead(payload);
           const cityProp = city ? { city } : {};
-          identifyLead(email, { ...attribution, ...cityProp });
+          identifyLead(email, {
+            ...attribution,
+            city,
+            state: resolvedCity?.state,
+            country: resolvedCity?.country,
+          });
           trackLeadEvent("lead_email_submitted", {
             ...attribution,
-            ...cityProp,
+            city,
+            state: resolvedCity?.state,
+            country: resolvedCity?.country,
           });
           trackLeadEvent("email_signup", { ...attribution, ...cityProp });
           trackLeadEvent("waitlist_submit", { ...attribution, ...cityProp });
+          if (errorEl) {
+            errorEl.textContent = "";
+            errorEl.setAttribute("hidden", "");
+          }
           document.getElementById("city-form-view")?.setAttribute("hidden", "");
-          document.getElementById("city-success")?.removeAttribute("hidden");
+          document.getElementById("city-phone-view")?.removeAttribute("hidden");
+          (
+            document.getElementById("city-phone") as HTMLInputElement | null
+          )?.focus();
         } catch {
           if (errorEl) {
             errorEl.textContent = "Something went wrong. Please try again.";
@@ -362,6 +511,83 @@ const taglineMap = buildTaglineMap(events);
             submitBtn.textContent = originalBtnText;
           }
         }
+      });
+
+    const showCitySuccess = (withPhone: boolean) => {
+      document.getElementById("city-phone-view")?.setAttribute("hidden", "");
+      const successEl = document.getElementById(
+        "city-success",
+      ) as HTMLElement | null;
+      const msgEl = document.getElementById("city-success-msg");
+      if (msgEl) {
+        msgEl.textContent = withPhone
+          ? "Got it. We'll text you the moment we lock a date in your city."
+          : "Request received. We'll reach out when the show hits your city.";
+      }
+      successEl?.removeAttribute("hidden");
+    };
+
+    document
+      .getElementById("city-phone-form")
+      ?.addEventListener("submit", async (e) => {
+        e.preventDefault();
+        const raw = (document.getElementById("city-phone") as HTMLInputElement)
+          .value;
+        const phoneErrorEl = document.getElementById("city-phone-error");
+
+        if (!raw.trim()) {
+          showCitySuccess(false);
+          return;
+        }
+
+        const cleaned = cleanPhone(raw);
+        if (!cleaned) {
+          if (phoneErrorEl) {
+            phoneErrorEl.textContent = "Please enter a valid phone number.";
+            phoneErrorEl.removeAttribute("hidden");
+          }
+          return;
+        }
+
+        const submitBtn = (
+          e.target as HTMLFormElement
+        ).querySelector<HTMLButtonElement>('[type="submit"]');
+        const originalBtnText = submitBtn?.textContent ?? "";
+        if (submitBtn) {
+          submitBtn.disabled = true;
+          submitBtn.textContent = "Sending...";
+        }
+        try {
+          if (cityLeadId) {
+            await updateLeadPhone(cityLeadId, cleaned);
+          }
+          trackLeadEvent("lead_phone_submitted", {
+            source: "request-city",
+            sourcePage: window.location.pathname,
+          });
+          if (phoneErrorEl) {
+            phoneErrorEl.textContent = "";
+            phoneErrorEl.setAttribute("hidden", "");
+          }
+          showCitySuccess(true);
+        } catch {
+          if (phoneErrorEl) {
+            phoneErrorEl.textContent =
+              "Something went wrong. Please try again or skip.";
+            phoneErrorEl.removeAttribute("hidden");
+          }
+        } finally {
+          if (submitBtn) {
+            submitBtn.disabled = false;
+            submitBtn.textContent = originalBtnText;
+          }
+        }
+      });
+
+    document
+      .getElementById("city-phone-skip")
+      ?.addEventListener("click", () => {
+        showCitySuccess(false);
       });
   }
 </script>
@@ -579,7 +805,7 @@ const taglineMap = buildTaglineMap(events);
     background: white;
     border: 1px solid rgba(0, 0, 0, 0.1);
     border-radius: 20px;
-    padding: 24px;
+    padding: 32px 24px;
     position: relative;
     animation: modalIn 0.25s ease-out both;
     text-align: center;
@@ -616,10 +842,15 @@ const taglineMap = buildTaglineMap(events);
   .modal-close:hover {
     color: var(--charcoal);
   }
-  .modal-close:focus-visible {
-    outline: 2px solid var(--brand-red);
-    outline-offset: 2px;
-    color: var(--charcoal);
+  .modal-close:focus {
+    outline: none;
+  }
+  @media (pointer: fine) {
+    .modal-close:focus-visible {
+      outline: 2px solid var(--charcoal);
+      outline-offset: 2px;
+      color: var(--charcoal);
+    }
   }
   .modal-title {
     font-family: var(--font-playfair), serif;
@@ -677,6 +908,32 @@ const taglineMap = buildTaglineMap(events);
   }
   .modal-submit:active {
     transform: scale(0.97);
+  }
+  .modal-skip {
+    background: none;
+    border: none;
+    color: var(--muted);
+    font-size: 14px;
+    font-family: var(--font-body), sans-serif;
+    margin-top: 12px;
+    transition:
+      color 0.2s,
+      transform 0.06s;
+    padding: 12px 16px;
+    min-height: var(--touch-target);
+    cursor: pointer;
+  }
+  .modal-skip:hover {
+    color: var(--charcoal);
+  }
+  .modal-skip:active {
+    transform: scale(0.97);
+  }
+  .modal-error {
+    font-size: 14px;
+    color: var(--brand-red);
+    margin: 0;
+    text-align: center;
   }
   .modal-success {
     text-align: center;

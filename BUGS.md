@@ -347,6 +347,38 @@
 
 ## Fixed
 
+### [MEDIUM] Apply form success state did not scroll to top on mobile
+
+- **Date:** 2026-04-16
+- **File:** `src/components/apply/ApplySuccessPanel.tsx`
+- **Status:** Fixed (2026-04-16)
+- **What happened:** On mobile, after submitting the application, the success panel mounted but the viewport stayed wherever the user was scrolled. The thank-you content was visible only if they manually scrolled up.
+- **Fix:** Added a mount-only `useEffect` in `ApplySuccessPanel` that runs `window.scrollTo({ top: 0, behavior })` with behavior set to `auto` under `prefers-reduced-motion: reduce` and `smooth` otherwise. Lives in the success panel (not the form hook) so it fires after React commits the new DOM.
+
+### [MEDIUM] "Don't see your city" modal skipped the phone-number step
+
+- **Date:** 2026-04-16
+- **File:** `src/components/home/HomeShows.astro`
+- **Status:** Fixed (2026-04-16)
+- **What happened:** The city-request modal was single-step (city + email, then a thank-you message). The standing product rule is every lead-capture modal asks for a phone number as step 2. `NotifyModal` and `LeadCaptureModal` already followed this; the city-request modal was the outlier.
+- **Fix:** Restructured to three states — `form` → `phone` → `done` — matching `NotifyModal`. The email submit returns a Firestore `DocumentReference`; the phone step `updateDoc`s that same doc with the cleaned phone (`cleanPhone()` from `src/lib/phone.ts`). Skip button routes straight to the thank-you. Thank-you copy changes based on whether phone was submitted.
+
+### [LOW] Modal close (X) button showed red focus ring on mobile
+
+- **Date:** 2026-04-16
+- **Files:** `src/components/home/HomeShows.astro`, `src/components/NotifyModal.astro`, `src/components/ui/Modal.astro`, `src/components/apply/TermsModal.module.css`, `src/components/admin/ApplicantModal.module.css`
+- **Status:** Fixed (2026-04-16)
+- **What happened:** Opening a modal programmatically focuses an element, which modern browsers treat as `:focus-visible`. On touch devices the focus ring then renders on the X button where it is visually ugly and carries no accessibility benefit (no keyboard on the device). In two places the ring also used `var(--brand-red)`, clashing with the red-heavy modal chrome.
+- **Fix:** Wrapped every modal close `:focus-visible` rule in `@media (pointer: fine)` — keyboard users on desktop still see a focus ring, touch users do not. Switched the two red-outline variants to `var(--charcoal)` for consistency with the other modal close buttons that already used charcoal. Global `:focus-visible` in `src/index.css` left alone — the fix is scoped to modal close buttons only.
+
+### [LOW] Homepage CTAs all said "Grab My Spot"
+
+- **Date:** 2026-04-16
+- **Files:** `src/components/home/HomeShows.astro`, `src/components/home/HomeExperience.astro`, `src/components/home/HomeFAQ.astro`
+- **Status:** Fixed (2026-04-16)
+- **What happened:** Four homepage CTAs all hardcoded the same string, reducing readability and undermining the clarity test users go through scrolling the page. Not all users know what "Grab My Spot" means at a glance; "Get Tickets" is the clearer, conversion-proven primary.
+- **Fix:** Kept the hero's "Grab My Spot" (deliberate, user preference). Event-card badges now say "Get Tickets", `HomeExperience` says "Book My Seat", `HomeFAQ` says "I'm In". Each CTA on the homepage is now distinct and context-appropriate.
+
 ### [MEDIUM] FAQ page hero references deleted image (gmd-37.webp)
 
 - **Date:** 2026-04-07

@@ -22,6 +22,7 @@ export function ApplySuccessPanel() {
     );
   }, []);
 
+<<<<<<< HEAD
   const showsWithWidget = useMemo(
     () => upcomingShows.filter((e) => e.eventbriteId),
     [upcomingShows],
@@ -219,6 +220,13 @@ export function ApplySuccessPanel() {
       modalObserver.disconnect();
     };
   }, [showsWithWidget]);
+
+  useEffect(() => {
+    const reduced = window.matchMedia(
+      "(prefers-reduced-motion: reduce)",
+    ).matches;
+    window.scrollTo({ top: 0, behavior: reduced ? "auto" : "smooth" });
+  }, []);
 
   return (
     <div className={styles.successPanel} role="status" aria-live="polite">

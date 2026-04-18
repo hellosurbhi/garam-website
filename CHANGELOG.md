@@ -842,6 +842,26 @@ Note: enforcing these as hard merge blockers requires GitHub Pro (branch protect
 
 - `.github/workflows/ci.yml`
 - `.github/workflows/smoke-tests.yml`
+## fix(modal): phone submit checks res.ok before showing success (2026-04-18)
+
+### What changed
+
+`LeadCaptureModal.astro`'s phone submit handler called `fetch("/api/update-lead")` (or `/api/capture-lead` if no lead doc existed yet) and never inspected the response status. A 400 or 500 fell through to `trackLeadEvent` + `showStep("success")`, confirming a save that never happened.
+
+Consolidated the two fetch branches into a single `res` variable, added `if (!res.ok) { throw new Error(...) }`, and left the existing `catch` handler (which already renders an inline error via `phoneErrorEl`) to do the rest. The finally block still re-enables the submit button.
+
+Net effect: 2xx → tracks and shows success. Non-2xx → the user sees "Something went wrong. Please try again or skip." and can retry or skip.
+
+### Files affected
+
+- `src/components/LeadCaptureModal.astro` — consolidated fetch, added `res.ok` guard.
+- `BUGS.md` — PR #12 "Phone update API: non-2xx responses show false success" marked Fixed.
+- `CHANGELOG.md` — this entry.
+
+### Decisions
+
+- Kept the same copy ("Something went wrong. Please try again or skip.") — no reason to distinguish HTTP error from network error to the user.
+- Did not add status-specific retry logic. The skip button is always available; forcing retry on transient 5xx would worsen UX.
 
 ## fix(seo): remove duplicate FAQPage JSON-LD from homepage (2026-04-18)
 

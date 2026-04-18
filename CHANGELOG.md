@@ -843,6 +843,27 @@ Note: enforcing these as hard merge blockers requires GitHub Pro (branch protect
 - `.github/workflows/ci.yml`
 - `.github/workflows/smoke-tests.yml`
 
+## fix(seo): remove duplicate FAQPage JSON-LD from homepage (2026-04-18)
+
+### What changed
+
+The homepage emitted a `FAQPage` JSON-LD built from `HOME_FAQS`, and `/faq` emitted another `FAQPage` built from the full `FAQS` list. Both included the question "What is Garam Masala Dating?" with different answer wording, plus several other topic-overlapping questions phrased differently. Google's guidance is one canonical `FAQPage` per question set — overlap with divergent answers risks rich-result suppression.
+
+Deleted the `faqJsonLd` constant and its `<script type="application/ld+json">` tag from `src/pages/index.astro`. `/faq` remains the canonical owner of the `FAQPage` schema. The visible homepage FAQ accordion is untouched.
+
+The homepage's deliberate AI-citation investment is preserved: `HOME_FAQS` still feeds `src/pages/llms.txt.ts` and `src/pages/llms-full.txt.ts` (the LLM manifest endpoints that AI search engines consume), which is the actual AI-citation surface — the homepage JSON-LD was a redundant signal, not the primary one.
+
+### Files affected
+
+- `src/pages/index.astro` — removed `HOME_FAQS` import, `faqJsonLd` constant, and one `<script>` emission (9 lines).
+- `BUGS.md` — marked the `[HIGH] Homepage still emits duplicate FAQPage schema` entry as Fixed.
+- `CHANGELOG.md` — this entry.
+
+### Decisions
+
+- Did not restructure into a shared FAQPage source of truth. `/faq` is the longer, canonical version; deleting the homepage one is the simplest correct fix. If duplicate visible FAQ accordions become a concern separately, that's a content-architecture discussion.
+- Did not touch the visible `HomeFAQ` accordion on the homepage — only the structured data.
+
 ## docs(bugs): triage — move declined items to ENHANCEMENTS, close out verified fixes (2026-04-16)
 
 ### What changed

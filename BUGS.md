@@ -72,9 +72,10 @@
 
 - **Date:** 2026-04-08
 - **File:** `src/pages/index.astro`, `src/pages/faq.astro`
-- **Status:** Fixed (prior session)
+- **Status:** Fixed (2026-04-18)
 - **Severity:** High
-- **What happened:** The `faqJsonLd` block was removed from `src/pages/index.astro`. Only `/faq` emits `FAQPage` structured data.
+- **What happened:** Both `/` and `/faq` emitted `FAQPage` JSON-LD with overlapping questions and different answer wording, which risks Google suppressing rich results.
+- **Fix:** Removed the `faqJsonLd` build and the `<script type="application/ld+json">` tag from `src/pages/index.astro`. `/faq` remains the canonical owner. The visible homepage accordion is untouched, and `HOME_FAQS` continues to feed `llms.txt` / `llms-full.txt` (AI manifest), which is the actual AI-citation vector.
 
 ### [MEDIUM] Spice List section still double-asks subscribed users for email
 

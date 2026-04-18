@@ -842,6 +842,32 @@ Note: enforcing these as hard merge blockers requires GitHub Pro (branch protect
 
 - `.github/workflows/ci.yml`
 - `.github/workflows/smoke-tests.yml`
+## fix(apply): Instagram normalization + photo size boundary match server (2026-04-18)
+
+### What changed
+
+Two input-validation edge cases in the apply form that both caused the client to accept values the server rejects.
+
+**Instagram "@" alone passes validation.** Validation checked `form.instagram.trim()` directly, but submission stripped a leading `@` before writing. An input of `"@"` (or `"  @  "`) passed validation, normalized to `""` on submit, produced a handleless Firestore document, and then `/api/notify-application` returned 400 because `instagram` is required. Confusing silent failure for the user and a noisy 400 in logs.
+
+Added `normalizeInstagramHandle()` to `src/utils/instagram.ts` (trim, then strip leading `@`). `useApplyForm` now calls it at all three usage sites: validation, the persisted payload, and the PostHog `identifyLead` call. Regression tests cover `"@"` and `"  @  "` — both now surface `"Required"` immediately instead of silently creating a bad doc.
+
+**Photo size check off by one byte vs storage.rules.** Client used `> 5 * 1024 * 1024`; `storage.rules` uses `< 5 * 1024 * 1024`. An exactly-5MB photo passed client validation and failed on `uploadBytes()` with a generic toast. Changed the client to `>= 5 * 1024 * 1024` so both sides reject at the same byte count. Boundary tests updated to match: exact-5MB now asserts rejection, and the accept case uses 5MB − 1 byte.
+
+### Files affected
+
+- `src/utils/instagram.ts` — added `normalizeInstagramHandle()`.
+- `src/components/apply/useApplyForm.ts` — replaced three `.trim().replace(/^@/, "")` call sites with the helper; changed size check from `>` to `>=`.
+- `src/components/apply/useApplyForm.test.ts` — flipped the 5MB boundary tests; added two regression tests for Instagram `"@"` input.
+- `BUGS.md` — PR #11 "Instagram @ alone" and "Photo size off-by-one" marked Fixed.
+- `CHANGELOG.md` — this entry.
+
+### Decisions
+
+- Added `normalizeInstagramHandle()` rather than fixing inline to avoid a fourth drift point creeping in later — the logic is now a single source of truth, imported where used.
+- Kept `cleanInstagramHandle()` as-is even though `normalizeInstagramHandle()` supersedes it for most cases, because other call sites may deliberately want the `@`-strip without the trim.
+- Left error copy unchanged ("Photo must be under 5 MB") — "under" already reads as strict less-than, matching the new behavior.
+
 ## fix(modal): phone submit checks res.ok before showing success (2026-04-18)
 
 ### What changed

@@ -358,6 +358,24 @@ describe("useApplyForm", () => {
     expect(result.current.errors.instagram).toBe("Required");
   });
 
+  it("validation rejects instagram with only an @ sign as Required", async () => {
+    const { result } = renderHook(() => useApplyForm());
+    act(() => result.current.set("instagram", "@"));
+    await act(async () => {
+      await result.current.handleSubmit(makeSubmitEvent());
+    });
+    expect(result.current.errors.instagram).toBe("Required");
+  });
+
+  it("validation rejects instagram with @ plus whitespace as Required", async () => {
+    const { result } = renderHook(() => useApplyForm());
+    act(() => result.current.set("instagram", "  @  "));
+    await act(async () => {
+      await result.current.handleSubmit(makeSubmitEvent());
+    });
+    expect(result.current.errors.instagram).toBe("Required");
+  });
+
   /* ── handleSubmit calls preventDefault ─────────────────── */
 
   it("handleSubmit calls preventDefault", async () => {

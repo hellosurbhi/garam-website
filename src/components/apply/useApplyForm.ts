@@ -9,6 +9,7 @@ import {
 import { trackError, trackLeadEvent, identifyLead } from "@/lib/analytics";
 import { buildLeadAttribution } from "@/lib/leadAttribution";
 import { validateEmail } from "@/utils/validateEmail";
+import { normalizeInstagramHandle } from "@/utils/instagram";
 
 export interface FormState {
   applicationType: "Self" | "Nomination";
@@ -433,7 +434,7 @@ export function useApplyForm() {
         email: form.email.trim().toLowerCase(),
         ...(form.phone.trim() ? { phone: form.phone.trim() } : {}),
         height: form.height.trim(),
-        instagram: form.instagram.trim().replace(/^@/, ""),
+        instagram: normalizeInstagramHandle(form.instagram),
         community: form.community,
         income: form.income,
         referrerName:

@@ -26,6 +26,7 @@ export interface EventEntry {
   tagline?: string; // Short status line shown on the card (e.g. "Selling fast")
   eventbriteId?: string; // Numeric Eventbrite event ID — enables modal checkout widget
   onSaleAt?: string; // ISO 8601 UTC datetime — card shows pre-sale notify state until this moment
+  promoCode?: string; // Auto-applied Eventbrite promo/discount code for this event
   timezone?: string; // IANA timezone identifier, e.g. "America/New_York" (default: "America/New_York")
 }
 
@@ -128,6 +129,7 @@ export const events: EventEntry[] = [
     citySlug: "san-diego",
     url: "https://www.eventbrite.com/e/garam-masala-dating-live-in-san-diego-tickets-1983622967694",
     isoDate: "2026-03-07",
+    timezone: "America/Los_Angeles",
     venue: {
       name: "San Diego Venue",
       addressLocality: "San Diego",
@@ -160,6 +162,7 @@ export const events: EventEntry[] = [
     url: "https://www.eventbrite.com/e/saturday-april-4-garam-masala-dating-tickets-1983144430376",
     hidden: true,
     isoDate: "2026-04-04",
+    timezone: "America/Chicago",
     venue: {
       name: "Chicago Venue",
       addressLocality: "Chicago",

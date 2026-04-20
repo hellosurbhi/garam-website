@@ -8,6 +8,7 @@ interface UpdatePayload {
   id?: string;
   token?: string;
   phone: string;
+  updateToken: string;
 }
 
 export const POST: APIRoute = async ({ request }) => {
@@ -71,10 +72,7 @@ export const POST: APIRoute = async ({ request }) => {
   if (!projectId) {
     return new Response(
       JSON.stringify({ error: "Server configuration error" }),
-      {
-        status: 500,
-        headers: { "Content-Type": "application/json" },
-      },
+      { status: 500, headers: { "Content-Type": "application/json" } },
     );
   }
 
@@ -102,7 +100,14 @@ export const POST: APIRoute = async ({ request }) => {
       status: 200,
       headers: { "Content-Type": "application/json" },
     });
-  } catch {
+  } catch (err) {
+    if (err instanceof Error && err.name === "AbortError") {
+      console.error("[update-lead] Firestore request timed out (5s)");
+      return new Response(JSON.stringify({ error: "Upstream timeout" }), {
+        status: 503,
+        headers: { "Content-Type": "application/json" },
+      });
+    }
     return new Response(JSON.stringify({ error: "Server error" }), {
       status: 500,
       headers: { "Content-Type": "application/json" },

@@ -180,6 +180,7 @@ export const POST: APIRoute = async ({ request }) => {
 
     const doc = await res.json();
     const docId = doc.name?.split("/").pop() ?? "";
+    const updateToken = issueLeadToken(docId);
 
     // Sync to Kit — fire-and-forget, never blocks the response
     const kitTags: string[] = ["website-lead"];
@@ -195,11 +196,6 @@ export const POST: APIRoute = async ({ request }) => {
     addKitSubscriber(email, kitTags, kitFields).catch(() => {
       // Kit errors are already logged inside addKitSubscriber
     });
-
-    // Ownership proof for the step-2 phone update. Null while
-    // LEAD_UPDATE_SECRET is unset (feature off), in which case the key is
-    // omitted and clients keep using the bare doc id.
-    const updateToken = docId ? issueLeadToken(docId) : null;
 
     return new Response(
       JSON.stringify({

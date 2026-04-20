@@ -842,6 +842,38 @@ Note: enforcing these as hard merge blockers requires GitHub Pro (branch protect
 
 - `.github/workflows/ci.yml`
 - `.github/workflows/smoke-tests.yml`
+## fix(security): signed token for lead phone updates, closes ownership bypass (2026-04-18)
+
+### What changed
+
+`/api/update-lead` previously accepted a raw Firestore document ID from the caller with no ownership check. Anyone who obtained or guessed a lead doc ID could overwrite the phone number.
+
+Created `src/lib/leadToken.ts` with `issueLeadToken(docId)` and `verifyLeadToken(token)`. Token is HMAC-SHA256 of `docId:base36-timestamp`, signed with `LEAD_UPDATE_SECRET`, base64url-encoded, and expires after 10 minutes. Verification uses timing-safe comparison.
+
+`/api/capture-lead` now returns `{ ok, id, updateToken }`. `/api/update-lead` no longer accepts `id` — it requires `{ phone, updateToken }`, verifies the token, extracts the doc ID server-side, and rejects expired or forged tokens with 401.
+
+Client side: `LeadCaptureModal.astro` stores the `updateToken` from the capture response and threads it to the phone submit. If no token is available (edge case: capture happened client-side), falls back to a fresh `capture-lead` call with both email + phone.
+
+Also applied the same timeout (5s AbortController) and error-text-scrubbing fixes to `update-lead.ts` that were already applied to `capture-lead.ts`.
+
+### Setup required
+
+Add `LEAD_UPDATE_SECRET` to `.env.local` and Vercel environment variables. Generate with `openssl rand -base64 32`. Without this env var, the token functions throw and phone updates will fail.
+
+### Files affected
+
+- `src/lib/leadToken.ts` — new: token issue/verify utility.
+- `src/pages/api/capture-lead.ts` — issues token in response.
+- `src/pages/api/update-lead.ts` — rewritten: requires + verifies token, 5s timeout, no raw error leaks.
+- `src/components/LeadCaptureModal.astro` — threads updateToken from capture to update.
+- `.env.example` — added `LEAD_UPDATE_SECRET`.
+- `BUGS.md` — PR #12 "update-lead allows phone overwrite" marked Fixed.
+- `CHANGELOG.md` — this entry.
+
+### Note
+
+Client-side `updateDoc` calls (in `NotifyModal.astro`, `HomeShows.astro`, `HomeSignup.astro`) still go directly through Firestore rules, not this API. Those are protected by `validPhoneUpdate()` in `firestore.rules`. Full migration of those paths to the server endpoint is tracked as a future improvement.
+
 ## fix(api+analytics): capture-lead hardening, PostHog identity fix, NotifyModal sanitization (2026-04-18)
 
 ### What changed

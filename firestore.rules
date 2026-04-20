@@ -151,5 +151,63 @@ service cloud.firestore {
     match /systemConfig/{docId} {
       allow read, write: if isAdmin();
     }
+
+    function validContestant() {
+      let d = request.resource.data;
+      return d.keys().hasOnly(['inviteId', 'firstName', 'lastName', 'email', 'phone', 'role', 'showId', 'showCity', 'showDate', 'showTimezone', 'waiverVersion', 'waiverText', 'waiverTextHash', 'signature', 'signedAtIso', 'ip', 'userAgent', 'mailingListOptIn', 'postShowEmailSentAt', 'createdAt'])
+        && d.keys().hasAll(['inviteId', 'firstName', 'lastName', 'email', 'phone', 'role', 'showId', 'showCity', 'showDate', 'showTimezone', 'waiverVersion', 'waiverText', 'waiverTextHash', 'signature', 'signedAtIso', 'ip', 'userAgent', 'mailingListOptIn', 'createdAt'])
+        && d.firstName is string && d.firstName.size() > 0 && d.firstName.size() <= 50
+        && d.lastName is string && d.lastName.size() > 0 && d.lastName.size() <= 50
+        && d.email is string && d.email.size() > 0 && d.email.size() <= 320
+        && d.phone is string && d.phone.size() >= 7 && d.phone.size() <= 20
+        && d.role is string && d.role in ['female', 'male', 'stealer']
+        && d.showId is string && d.showId.size() > 0 && d.showId.size() <= 100
+        && d.showCity is string && d.showCity.size() > 0 && d.showCity.size() <= 100
+        && d.showDate is string && d.showDate.size() == 10
+        && d.showTimezone is string && d.showTimezone.size() > 0 && d.showTimezone.size() <= 50
+        && d.waiverVersion is string && d.waiverVersion.size() > 0 && d.waiverVersion.size() <= 30
+        && d.waiverText is string && d.waiverText.size() > 0 && d.waiverText.size() <= 50000
+        && d.waiverTextHash is string && d.waiverTextHash.size() == 64
+        && d.signature is string && d.signature.size() > 0 && d.signature.size() <= 100
+        && d.signedAtIso is string && d.signedAtIso.size() > 0 && d.signedAtIso.size() <= 30
+        && d.ip is string && d.ip.size() <= 45
+        && d.userAgent is string && d.userAgent.size() <= 500
+        && d.mailingListOptIn is bool
+        && d.inviteId is string && d.inviteId.size() > 0 && d.inviteId.size() <= 50
+        && d.createdAt is string && d.createdAt.size() > 0 && d.createdAt.size() <= 30
+        && (!('postShowEmailSentAt' in d.keys()) || (d.postShowEmailSentAt is string && d.postShowEmailSentAt.size() <= 30));
+    }
+
+    function validStageWaiver() {
+      let d = request.resource.data;
+      return d.keys().hasOnly(['firstName', 'lastName', 'email', 'phone', 'showId', 'waiverVersion', 'waiverText', 'waiverTextHash', 'signature', 'signedAtIso', 'ip', 'userAgent', 'mailingListOptIn', 'createdAt'])
+        && d.keys().hasAll(['firstName', 'lastName', 'email', 'phone', 'waiverVersion', 'waiverText', 'waiverTextHash', 'signature', 'signedAtIso', 'ip', 'userAgent', 'mailingListOptIn', 'createdAt'])
+        && d.firstName is string && d.firstName.size() > 0 && d.firstName.size() <= 50
+        && d.lastName is string && d.lastName.size() > 0 && d.lastName.size() <= 50
+        && d.email is string && d.email.size() > 0 && d.email.size() <= 320
+        && d.phone is string && d.phone.size() >= 7 && d.phone.size() <= 20
+        && d.waiverVersion is string && d.waiverVersion.size() > 0 && d.waiverVersion.size() <= 30
+        && d.waiverText is string && d.waiverText.size() > 0 && d.waiverText.size() <= 50000
+        && d.waiverTextHash is string && d.waiverTextHash.size() == 64
+        && d.signature is string && d.signature.size() > 0 && d.signature.size() <= 100
+        && d.signedAtIso is string && d.signedAtIso.size() > 0 && d.signedAtIso.size() <= 30
+        && d.ip is string && d.ip.size() <= 45
+        && d.userAgent is string && d.userAgent.size() <= 500
+        && d.mailingListOptIn is bool
+        && d.createdAt is string && d.createdAt.size() > 0 && d.createdAt.size() <= 30
+        && (!('showId' in d.keys()) || (d.showId is string && d.showId.size() > 0 && d.showId.size() <= 100));
+    }
+
+    match /invites/{doc} {
+      allow read, write: if request.auth != null;
+    }
+    match /contestants/{doc} {
+      allow create: if validContestant();
+      allow read, update, delete: if request.auth != null;
+    }
+    match /stage_waivers/{doc} {
+      allow create: if validStageWaiver();
+      allow read, update, delete: if request.auth != null;
+    }
   }
 }

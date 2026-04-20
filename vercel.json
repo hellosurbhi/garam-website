@@ -96,5 +96,8 @@
       "source": "/ingest/:path(.*)",
       "destination": "https://us.i.posthog.com/:path"
     }
+  ],
+  "redirects": [
+    { "source": "/waiver", "destination": "/stage-waiver", "permanent": true }
   ]
 }

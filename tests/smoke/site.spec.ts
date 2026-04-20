@@ -19,7 +19,8 @@ const STATIC_PAGES = [
   { path: "/cities", label: "Cities Hub" },
   { path: "/privacy", label: "Privacy Policy" },
   { path: "/terms", label: "Terms of Service" },
-  { path: "/contestant-prep", label: "Contestant Prep" },
+  { path: "/contestant-portal", label: "Contestant Portal" },
+  { path: "/stage-waiver", label: "Stage Waiver" },
 ];
 
 // Journal and tips slugs are discovered at runtime by scraping
@@ -268,7 +269,7 @@ test.describe("Static pages smoke", () => {
         await assertNoHorizontalOverflow(page);
 
         // SEO meta tags (skip for contestant-prep which has empty description)
-        if (path !== "/contestant-prep") {
+        if (path !== "/contestant-portal" && path !== "/stage-waiver") {
           await assertSeoMeta(page);
         }
 
@@ -279,7 +280,7 @@ test.describe("Static pages smoke", () => {
         await assertNav(page);
 
         // Footer (present on all except contestant-prep which may vary)
-        if (path !== "/contestant-prep") {
+        if (path !== "/contestant-portal" && path !== "/stage-waiver") {
           await assertFooter(page);
         }
 
@@ -294,7 +295,8 @@ test.describe("Static pages smoke", () => {
 
         // JSON-LD (skip non-public pages that don't have structured data)
         if (
-          path !== "/contestant-prep" &&
+          path !== "/contestant-portal" &&
+          path !== "/stage-waiver" &&
           path !== "/privacy" &&
           path !== "/terms"
         ) {

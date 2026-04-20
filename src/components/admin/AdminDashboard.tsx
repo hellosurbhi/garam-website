@@ -40,6 +40,7 @@ interface AdminDashboardProps {
 }
 
 type FilterOption = { value: string; label: string };
+type DashboardTab = "applications" | "analytics" | "contestants";
 
 const GENDER_OPTIONS: FilterOption[] = [
   { value: "Man", label: "Man" },
@@ -146,6 +147,7 @@ export default function AdminDashboard({ onLogout }: AdminDashboardProps) {
   const [inboxLoading, setInboxLoading] = useState(true);
   const [inboxError, setInboxError] = useState(false);
   const [selectedApp, setSelectedApp] = useState<Application | null>(null);
+  const [inviteApp, setInviteApp] = useState<Application | null>(null);
   const [toast, setToast] = useState<{ msg: string; ok: boolean } | null>(null);
   const [deletedOpen, setDeletedOpen] = useState(false);
   const [participatedOpen, setParticipatedOpen] = useState(false);
@@ -447,7 +449,34 @@ export default function AdminDashboard({ onLogout }: AdminDashboardProps) {
           </button>
         </div>
 
-        {activeTab === "applicants" && (
+        <nav className={styles.tabBar} aria-label="Dashboard sections">
+          <button
+            className={styles.tab}
+            data-active={activeTab === "applications" || undefined}
+            onClick={() => setActiveTab("applications")}
+            aria-current={activeTab === "applications" ? "page" : undefined}
+          >
+            Applications
+          </button>
+          <button
+            className={styles.tab}
+            data-active={activeTab === "analytics" || undefined}
+            onClick={() => setActiveTab("analytics")}
+            aria-current={activeTab === "analytics" ? "page" : undefined}
+          >
+            Analytics
+          </button>
+          <button
+            className={styles.tab}
+            data-active={activeTab === "contestants" || undefined}
+            onClick={() => setActiveTab("contestants")}
+            aria-current={activeTab === "contestants" ? "page" : undefined}
+          >
+            Contestants
+          </button>
+        </nav>
+
+        {activeTab === "applications" && (
           <div className={styles.filterBar}>
             <div className={styles.filterRow}>
               <div className={styles.searchWrapper}>
@@ -673,42 +702,101 @@ export default function AdminDashboard({ onLogout }: AdminDashboardProps) {
                     </div>
                   )}
                 </div>
-              )}
-
-              {deletedApps.length > 0 && (
-                <div className={styles.deletedSection}>
-                  <button
-                    onClick={() => setDeletedOpen((v) => !v)}
-                    className={styles.deletedToggle}
-                    aria-expanded={deletedOpen}
-                    aria-controls="deleted-apps-list"
-                  >
-                    {deletedOpen ? (
-                      <ChevronDown size={16} />
-                    ) : (
-                      <ChevronRight size={16} />
-                    )}
-                    Deleted Applications ({deletedApps.length})
-                  </button>
-
-                  {deletedOpen && (
-                    <div id="deleted-apps-list" className={styles.grid}>
-                      {deletedApps.map((app) => (
-                        <ApplicantCard
-                          key={app.id}
-                          app={app}
-                          onClick={() => setSelectedApp(app)}
-                          onRestore={() => handleRestore(app.id)}
-                          dimmed
-                        />
-                      ))}
-                    </div>
-                  )}
-                </div>
-              )}
-            </>
+              </div>
+            </div>
           )}
-        </main>
+
+          <main className={styles.main}>
+            {loading ? (
+              <div
+                role="status"
+                aria-live="polite"
+                aria-label="Loading applications"
+              >
+                <Skeleton count={5} />
+              </div>
+            ) : fetchError ? (
+              <div className={styles.errorState}>
+                <p style={{ marginBottom: "12px" }}>
+                  Failed to load applications.
+                </p>
+                <button onClick={fetchApps} className={styles.retryButton}>
+                  Try again
+                </button>
+              </div>
+            ) : applications.length === 0 ? (
+              <div className={styles.emptyState}>
+                No applications yet. Share the link! 🌶️
+              </div>
+            ) : activeApps.length === 0 && deletedApps.length === 0 ? (
+              <div className={styles.emptyState}>
+                <p style={{ marginBottom: "12px" }}>
+                  No applications match these filters.
+                </p>
+                <button
+                  onClick={clearFilters}
+                  className={styles.clearFiltersButton}
+                >
+                  Clear filters
+                </button>
+              </div>
+            ) : (
+              <>
+                <p className={styles.summary}>
+                  Showing {activeApps.length} active · {deletedApps.length}{" "}
+                  deleted
+                </p>
+
+                {activeApps.length > 0 && (
+                  <div className={styles.grid}>
+                    {activeApps.map((app) => (
+                      <ApplicantCard
+                        key={app.id}
+                        app={app}
+                        onClick={() => setSelectedApp(app)}
+                        onDelete={() => handleDelete(app.id)}
+                        onSelectContestant={() => setInviteApp(app)}
+                        dimmed={app.status === "Rejected"}
+                      />
+                    ))}
+                  </div>
+                )}
+
+                {deletedApps.length > 0 && (
+                  <div className={styles.deletedSection}>
+                    <button
+                      onClick={() => setDeletedOpen((v) => !v)}
+                      className={styles.deletedToggle}
+                      aria-expanded={deletedOpen}
+                      aria-controls="deleted-apps-list"
+                    >
+                      {deletedOpen ? (
+                        <ChevronDown size={16} />
+                      ) : (
+                        <ChevronRight size={16} />
+                      )}
+                      Deleted Applications ({deletedApps.length})
+                    </button>
+
+                    {deletedOpen && (
+                      <div id="deleted-apps-list" className={styles.grid}>
+                        {deletedApps.map((app) => (
+                          <ApplicantCard
+                            key={app.id}
+                            app={app}
+                            onClick={() => setSelectedApp(app)}
+                            onRestore={() => handleRestore(app.id)}
+                            dimmed
+                          />
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                )}
+              </>
+            )}
+          </main>
+        </>
       )}
 
       {selectedApp && (

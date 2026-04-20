@@ -1,0 +1,171 @@
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 32px;
+}
+
+.filterRow {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 24px;
+}
+
+.filterLabel {
+  font-family: var(--font-body);
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--text-light);
+}
+
+.filterSelect {
+  padding: 8px 14px;
+  border-radius: 100px;
+  border: 1px solid var(--border);
+  font-family: var(--font-body);
+  font-size: 14px;
+  color: var(--text);
+  background: #fff;
+  cursor: pointer;
+}
+
+.filterSelect:focus {
+  outline: none;
+  border-color: var(--brand-red);
+}
+
+.errorState {
+  text-align: center;
+  padding: 60px 0;
+  color: var(--text-light);
+  font-size: 16px;
+}
+
+.retryButton {
+  background: none;
+  border: none;
+  color: var(--brand-red);
+  font-family: var(--font-body);
+  font-size: 14px;
+  cursor: pointer;
+  text-decoration: underline;
+  margin-top: 12px;
+}
+
+.emptyState {
+  text-align: center;
+  padding: 60px 0;
+  color: var(--text-light);
+  font-family: var(--font-body);
+  font-size: 16px;
+}
+
+.tableWrap {
+  overflow-x: auto;
+  border-radius: 12px;
+  border: 1px solid var(--border);
+  background: #fff;
+}
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  font-family: var(--font-body);
+}
+
+.th {
+  text-align: left;
+  padding: 12px 16px;
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--text-light);
+  border-bottom: 1px solid var(--border);
+  white-space: nowrap;
+}
+
+.row {
+  transition: background 0.15s;
+}
+
+.row:hover {
+  background: rgba(0, 0, 0, 0.02);
+}
+
+.row:not(:last-child) .td {
+  border-bottom: 1px solid var(--border);
+}
+
+.td {
+  padding: 14px 16px;
+  vertical-align: middle;
+}
+
+.nameCell {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.inviteName {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text);
+}
+
+.inviteEmail {
+  font-size: 12px;
+  color: var(--text-light);
+}
+
+.roleTag {
+  display: inline-block;
+  padding: 3px 10px;
+  border-radius: 100px;
+  font-size: 12px;
+  font-weight: 500;
+  background: rgba(var(--brand-red-rgb), 0.08);
+  color: var(--brand-red);
+  white-space: nowrap;
+}
+
+.showLabel {
+  font-size: 13px;
+  color: var(--text);
+  white-space: nowrap;
+}
+
+.statusBadge {
+  display: inline-block;
+  padding: 3px 10px;
+  border-radius: 100px;
+  font-size: 11px;
+  font-weight: 600;
+  background: color-mix(in srgb, var(--status-color) 13%, transparent);
+  color: var(--status-color);
+  text-transform: capitalize;
+}
+
+.countLabel {
+  font-family: var(--font-body);
+  font-size: 13px;
+  color: var(--text-light);
+  margin-top: 16px;
+}
+
+@media (max-width: 600px) {
+  .container {
+    padding: 16px;
+  }
+
+  .th,
+  .td {
+    padding: 10px 12px;
+    font-size: 12px;
+  }
+
+  .inviteName {
+    font-size: 13px;
+  }
+}

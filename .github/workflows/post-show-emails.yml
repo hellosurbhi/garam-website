@@ -1,0 +1,28 @@
+# Post-show email automation — sends "thanks for being on the show" emails
+# the morning after each show. Runs daily, idempotent (won't re-send).
+name: Post-Show Emails
+
+on:
+  schedule:
+    - cron: "0 14 * * *" # 2pm UTC = 9am ET daily
+  workflow_dispatch: {} # Manual trigger from Actions tab
+
+jobs:
+  send-emails:
+    name: Send Post-Show Emails
+    runs-on: ubuntu-latest
+    env:
+      FIREBASE_ADMIN_CLIENT_EMAIL: ${{ secrets.FIREBASE_ADMIN_CLIENT_EMAIL }}
+      FIREBASE_ADMIN_PRIVATE_KEY: ${{ secrets.FIREBASE_ADMIN_PRIVATE_KEY }}
+      VITE_FIREBASE_PROJECT_ID: ${{ secrets.VITE_FIREBASE_PROJECT_ID }}
+      RESEND_API_KEY: ${{ secrets.RESEND_API_KEY }}
+      UNSUBSCRIBE_SECRET: ${{ secrets.UNSUBSCRIBE_SECRET }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - name: Send post-show emails
+        run: npx tsx scripts/send-post-show-emails.ts

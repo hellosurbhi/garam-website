@@ -842,6 +842,26 @@ Note: enforcing these as hard merge blockers requires GitHub Pro (branch protect
 
 - `.github/workflows/ci.yml`
 - `.github/workflows/smoke-tests.yml`
+## fix(security): Firestore applications collection field validation + auth requirement (2026-04-18)
+
+### What changed
+
+`firestore.rules` had `allow create: if true;` on the `applications` collection, accepting any document shape from any unauthenticated user. Added `validApplication()` mirroring the existing `validLead()` pattern.
+
+The function enforces: `hasOnly` whitelist of 22 allowed fields, `hasAll` for 12 required fields, type constraints (`applicationType` must be `'Self'` or `'Nomination'`, `age` must be int 18-99, `status` must be `'New'`, `marketingConsent` must be `'yes'`/`'no'`/`''`), and length limits on all string fields. Creates now also require `request.auth != null` (anonymous sign-in is already called before form submission in the client flow).
+
+Subcollection creates also now require auth (but no field validation since subcollection shape varies).
+
+### Deploy required
+
+Run `firebase deploy --only firestore:rules` to ship this change. Test with the Firebase emulator first if available: `firebase emulators:start --only firestore`.
+
+### Files affected
+
+- `firestore.rules` — added `validApplication()` function, updated `applications` create rule.
+- `BUGS.md` — `[HIGH] Firestore applications collection has no field validation on create` marked Fixed.
+- `CHANGELOG.md` — this entry.
+
 ## fix(security): signed token for lead phone updates, closes ownership bypass (2026-04-18)
 
 ### What changed

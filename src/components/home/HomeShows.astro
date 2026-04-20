@@ -477,17 +477,15 @@ const taglineMap = buildTaglineMap(events);
           if (resolvedCity?.country) payload.country = resolvedCity.country;
           cityLeadId = await captureLead(payload);
           const cityProp = city ? { city } : {};
-          identifyLead(email, {
-            ...attribution,
-            city,
-            state: resolvedCity?.state,
-            country: resolvedCity?.country,
-          });
+          const geoProps = {
+            ...(city ? { city } : {}),
+            ...(resolvedCity?.state ? { state: resolvedCity.state } : {}),
+            ...(resolvedCity?.country ? { country: resolvedCity.country } : {}),
+          };
+          identifyLead(email, { ...attribution, ...geoProps });
           trackLeadEvent("lead_email_submitted", {
             ...attribution,
-            city,
-            state: resolvedCity?.state,
-            country: resolvedCity?.country,
+            ...geoProps,
           });
           trackLeadEvent("email_signup", { ...attribution, ...cityProp });
           trackLeadEvent("waitlist_submit", { ...attribution, ...cityProp });

@@ -6,7 +6,7 @@ import {
   getFirebaseStorage,
   getFirebaseAuth,
 } from "@/lib/firebase";
-import { trackError, trackLeadEvent, identifyLead } from "@/lib/analytics";
+import { trackError, trackLeadEvent } from "@/lib/analytics";
 import { buildLeadAttribution } from "@/lib/leadAttribution";
 import { validateEmail } from "@/utils/validateEmail";
 import { normalizeInstagramHandle } from "@/utils/instagram";
@@ -483,6 +483,7 @@ export function useApplyForm() {
         applicationType: form.applicationType,
         city: form.city,
         country: form.country,
+        instagram: normalizeInstagramHandle(form.instagram),
       });
 
       // Fire-and-forget: email notification (does not affect submission)

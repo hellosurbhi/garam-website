@@ -842,6 +842,31 @@ Note: enforcing these as hard merge blockers requires GitHub Pro (branch protect
 
 - `.github/workflows/ci.yml`
 - `.github/workflows/smoke-tests.yml`
+## fix(api+analytics): capture-lead hardening, PostHog identity fix, NotifyModal sanitization (2026-04-18)
+
+### What changed
+
+Five correctness and security fixes across the lead-capture and analytics paths.
+
+**M2 — identifyLead(igHandle) corrupted PostHog identity:** The apply form passed the Instagram handle as `distinct_id` to PostHog, which also set it as `email` internally. This produced identity merges that broke downstream analytics. Removed `identifyLead` entirely from the apply flow (lead identity is already established during email capture). The Instagram handle is now sent as a property on the `apply_submitted` event instead.
+
+**M5 — capture-lead outbound timeout:** The Firestore REST POST had no timeout. Added `AbortController` with a 5-second limit; on abort returns 503 "Upstream timeout" and logs server-side.
+
+**L6 — NotifyModal blank source + unsanitized city slugs:** Empty `data-source` strings fell through `??` and produced malformed attribution like `-manhattan`. Changed to `?.trim() || "notify-modal"`. Also: explicit `data-notify-city-slug` values now route through `toCitySlug()` same as the fallback path, so trailing spaces and non-canonical casing are normalized before storage.
+
+**L7 — HomeShows empty city passed to analytics:** Geo properties (city, state, country) are now conditionally spread — only included when truthy. Empty strings no longer corrupt PostHog identity or event data.
+
+**L8 — capture-lead raw Firestore error text leaked to clients:** Removed `detail: errText` from the client-facing 500 response. Raw error is `console.error`'d server-side only.
+
+### Files affected
+
+- `src/components/apply/useApplyForm.ts` — removed `identifyLead` import + call; added `instagram` to trackLeadEvent props.
+- `src/pages/api/capture-lead.ts` — AbortController timeout, removed detail from error response, added server-side logging.
+- `src/components/NotifyModal.astro` — source trim+fallback; city slug always through `toCitySlug()`.
+- `src/components/home/HomeShows.astro` — conditional geo props.
+- `BUGS.md` — 5 entries marked Fixed.
+- `CHANGELOG.md` — this entry.
+
 ## fix(apply): Instagram normalization + photo size boundary match server (2026-04-18)
 
 ### What changed

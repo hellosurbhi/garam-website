@@ -179,7 +179,6 @@ export const POST: APIRoute = async ({ request }) => {
     }
 
     const doc = await res.json();
-    // Extract document ID from the name field (projects/.../documents/leads/DOC_ID)
     const docId = doc.name?.split("/").pop() ?? "";
 
     // Sync to Kit — fire-and-forget, never blocks the response
@@ -213,7 +212,14 @@ export const POST: APIRoute = async ({ request }) => {
         headers: { "Content-Type": "application/json" },
       },
     );
-  } catch {
+  } catch (err) {
+    if (err instanceof Error && err.name === "AbortError") {
+      console.error("[capture-lead] Firestore request timed out (5s)");
+      return new Response(JSON.stringify({ error: "Upstream timeout" }), {
+        status: 503,
+        headers: { "Content-Type": "application/json" },
+      });
+    }
     return new Response(JSON.stringify({ error: "Server error" }), {
       status: 500,
       headers: { "Content-Type": "application/json" },

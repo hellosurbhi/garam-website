@@ -28,17 +28,5 @@ export default defineConfig({
       name: "iphone",
       use: { viewport: { width: 375, height: 812 } },
     },
-    {
-      name: "ipad",
-      use: { viewport: { width: 768, height: 1024 } },
-    },
-    {
-      name: "ipad-landscape",
-      use: { viewport: { width: 1024, height: 768 } },
-    },
-    {
-      name: "desktop",
-      use: { viewport: { width: 1440, height: 900 } },
-    },
   ],
 });

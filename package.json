@@ -50,6 +50,7 @@
     "astro": "^7.0.3",
     "country-state-city": "^3.2.1",
     "firebase": "^12.15.0",
+    "firebase-admin": "^13.8.0",
     "jose": "^6.2.3",
     "lucide-react": "^1.22.0",
     "nodemailer": "^9.0.3",

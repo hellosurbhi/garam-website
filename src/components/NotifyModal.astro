@@ -53,6 +53,7 @@ const { source = "notify-modal" } = Astro.props;
             class="ph-mask"
             placeholder="Your email"
             required
+            autofocus
             aria-label="Email address"
             toolparamdescription="Email address to receive ticket drop notifications for this city"
           />
@@ -225,7 +226,9 @@ const { source = "notify-modal" } = Astro.props;
             city,
           });
           dialog.showModal();
-          dialog.focus();
+          (
+            document.getElementById("notify-email") as HTMLInputElement | null
+          )?.focus();
         };
         el.addEventListener("click", open);
         el.addEventListener("keydown", (e) => {
@@ -501,15 +504,6 @@ const { source = "notify-modal" } = Astro.props;
   }
   .modal-close:hover {
     color: var(--charcoal);
-  }
-  .modal-close:focus {
-    outline: none;
-  }
-  @media (pointer: fine) {
-    .modal-close:focus-visible {
-      outline: 2px solid var(--charcoal);
-      outline-offset: 2px;
-    }
   }
   .modal-title {
     font-family: var(--font-playfair), serif;

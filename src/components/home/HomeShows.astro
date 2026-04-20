@@ -210,6 +210,7 @@ const taglineMap = buildTaglineMap(events);
             id="city-name"
             list="city-name-suggestions"
             placeholder="Your city"
+            autofocus
             aria-label="City name"
             autocomplete="off"
             required
@@ -382,6 +383,7 @@ const taglineMap = buildTaglineMap(events);
           sourcePage: window.location.pathname,
         });
         cityDialog.showModal();
+        cityInput?.focus();
       });
 
     let isClosing = false;
@@ -840,15 +842,10 @@ const taglineMap = buildTaglineMap(events);
   .modal-close:hover {
     color: var(--charcoal);
   }
-  .modal-close:focus {
-    outline: none;
-  }
-  @media (pointer: fine) {
-    .modal-close:focus-visible {
-      outline: 2px solid var(--charcoal);
-      outline-offset: 2px;
-      color: var(--charcoal);
-    }
+  .modal-close:focus-visible {
+    outline: 2px solid var(--brand-red);
+    outline-offset: 2px;
+    color: var(--charcoal);
   }
   .modal-title {
     font-family: var(--font-playfair), serif;

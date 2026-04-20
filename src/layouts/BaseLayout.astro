@@ -98,7 +98,7 @@ const {
     <PostHog />
     <MetaPixel />
   </head>
-  <body data-no-cursor={noCursor ? "true" : undefined}>
+  <body data-no-cursor={noCursor ? "true" : undefined} data-noindex={noindex ? "true" : undefined}>
     <a href="#main-content" class="sr-skip-link">Skip to content</a>
     <noscript
       ><iframe
@@ -342,6 +342,7 @@ const {
 
       // Custom cursor — desktop only (pointer: fine), off for prefers-reduced-motion, off if noCursor
       if (
+        document.body.dataset.noindex !== "true" &&
         window.matchMedia("(pointer: fine)").matches &&
         !window.matchMedia("(prefers-reduced-motion: reduce)").matches &&
         document.body.dataset.noCursor !== "true"

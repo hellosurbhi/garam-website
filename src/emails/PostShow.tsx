@@ -10,6 +10,7 @@ import {
   Img,
 } from "@react-email/components";
 import type { FC } from "react";
+import { BRAND_LOGO_URL } from "@/data/brand";
 
 interface PostShowProps {
   firstName: string;
@@ -46,7 +47,7 @@ const PostShow: FC<PostShowProps> = ({
         style={{ maxWidth: 600, margin: "0 auto", padding: "40px 24px" }}
       >
         <Img
-          src="https://garammasaladating.com/images/logo.svg"
+          src={BRAND_LOGO_URL}
           alt="Garam Masala Dating"
           width={180}
           height={40}
@@ -99,7 +100,7 @@ const PostShow: FC<PostShowProps> = ({
             you want to be added to.
           </Text>
         </Section>
-        {nextShowCity && nextShowUrl && (
+        {nextShowCity && nextShowUrl && nextShowDate && (
           <Section style={{ textAlign: "center" as const, marginBottom: 32 }}>
             <Text style={{ fontSize: 14, color: "#666", marginBottom: 12 }}>
               Next show: {nextShowCity} · {nextShowDate}

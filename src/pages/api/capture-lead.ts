@@ -1,6 +1,8 @@
 import type { APIRoute } from "astro";
 import { addKitSubscriber, type KitSubscriberFields } from "@/lib/kit";
 import { enforceRateLimit, RATE_LIMITS } from "@/lib/rateLimit";
+import { jsonResponse, parseJsonRequest } from "@/lib/http";
+import { LeadPayloadSchema } from "@/lib/schemas";
 import { issueLeadToken } from "@/lib/leadToken";
 
 export const prerender = false;
@@ -155,6 +157,10 @@ export const POST: APIRoute = async ({ request }) => {
 
     const doc = await res.json();
     const docId = doc.name?.split("/").pop() ?? "";
+    if (!docId) {
+      console.error("[capture-lead] Missing docId in Firestore response");
+      return jsonResponse({ error: "Failed to create lead" }, 500);
+    }
     const updateToken = issueLeadToken(docId);
 
     // Sync to Kit — fire-and-forget, never blocks the response

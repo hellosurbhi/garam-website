@@ -89,11 +89,17 @@
   --gray-light: #999;
   --gray-lighter: #bbb;
   --gray-mid: #888;
+  --gray-600: #666;
   --black-rgb: 0, 0, 0;
 
   /* apply form palette */
   --apply-brown: #3d3532;
   --border-light: #eee;
+
+  /* status badge colors — used by ContestantsTab */
+  --color-status-pending: #d4a843;
+  --color-status-claimed: #22c55e;
+  --color-status-expired: #9ca3af;
 
   /* layout */
   --dialog-gutter: 16px;

@@ -9,6 +9,7 @@ import {
   Img,
 } from "@react-email/components";
 import type { FC } from "react";
+import { BRAND_LOGO_URL } from "@/data/brand";
 
 interface WaiverReceiptProps {
   firstName: string;
@@ -40,7 +41,7 @@ const WaiverReceipt: FC<WaiverReceiptProps> = ({
         style={{ maxWidth: 600, margin: "0 auto", padding: "40px 24px" }}
       >
         <Img
-          src="https://garammasaladating.com/images/logo.svg"
+          src={BRAND_LOGO_URL}
           alt="Garam Masala Dating"
           width={180}
           height={40}

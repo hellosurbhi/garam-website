@@ -24,7 +24,11 @@ if (getApps().length === 0) {
 const db = getFirestore();
 const resend = new Resend(process.env.RESEND_API_KEY);
 const SITE = process.env.SITE ?? "https://garammasaladating.com";
-const UNSUB_SECRET = process.env.UNSUBSCRIBE_SECRET ?? "";
+const UNSUB_SECRET = process.env.UNSUBSCRIBE_SECRET;
+if (!UNSUB_SECRET) {
+  console.error("Fatal: UNSUBSCRIBE_SECRET is not set");
+  process.exit(1);
+}
 
 function makeUnsubUrl(email: string): string {
   const sig = createHmac("sha256", UNSUB_SECRET).update(email).digest("hex");
@@ -47,12 +51,14 @@ function yesterdayIso(tz: string): string {
 
 async function main() {
   // Find all contestants whose show was yesterday (in their show's timezone)
-  const allContestants = await db.collection("contestants").get();
+  const allContestants = await db
+    .collection("contestants")
+    .where("postShowEmailSentAt", "==", null)
+    .get();
   const toSend: FirebaseFirestore.QueryDocumentSnapshot[] = [];
 
   for (const doc of allContestants.docs) {
     const data = doc.data();
-    if (data.postShowEmailSentAt) continue;
     const tz = (data.showTimezone as string) || "America/New_York";
     const yesterday = yesterdayIso(tz);
     if (data.showDate === yesterday) {

@@ -268,7 +268,7 @@ test.describe("Static pages smoke", () => {
         // No horizontal overflow
         await assertNoHorizontalOverflow(page);
 
-        // SEO meta tags (skip for contestant-prep which has empty description)
+        // SEO meta tags (skip for /contestant-portal and /stage-waiver which have empty description)
         if (path !== "/contestant-portal" && path !== "/stage-waiver") {
           await assertSeoMeta(page);
         }
@@ -279,7 +279,7 @@ test.describe("Static pages smoke", () => {
         // Nav (present on all static pages)
         await assertNav(page);
 
-        // Footer (present on all except contestant-prep which may vary)
+        // Footer (present on all pages except /contestant-portal and /stage-waiver)
         if (path !== "/contestant-portal" && path !== "/stage-waiver") {
           await assertFooter(page);
         }

@@ -69,11 +69,11 @@ export default function ContestantsTab() {
   function getStatusColor(status: Invite["status"]): string {
     switch (status) {
       case "pending":
-        return "#D4A843";
+        return "var(--color-status-pending)";
       case "claimed":
-        return "#22C55E";
+        return "var(--color-status-claimed)";
       case "expired":
-        return "#9CA3AF";
+        return "var(--color-status-expired)";
     }
   }
 

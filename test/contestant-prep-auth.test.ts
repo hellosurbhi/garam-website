@@ -1,6 +1,12 @@
 import { describe, it, expect, beforeEach, afterEach, vi } from "vitest";
 import { createHmac } from "crypto";
 
+vi.mock("@/lib/rateLimit", () => ({
+  checkRateLimit: vi.fn().mockResolvedValue(null),
+  contestantPrepLimiter: {},
+  getClientIp: vi.fn(() => "127.0.0.1"),
+}));
+
 const { POST } = await import("@/pages/api/contestant-prep-auth");
 
 const TEST_SALT = "test-secret-salt-12345";
@@ -66,7 +72,7 @@ describe("contestant-prep-auth handler", () => {
     const res = await POST(makeContext(makeRequest({})));
     expect(res.status).toBe(400);
     const body = await res.json();
-    expect(body.error).toBe("date and sig are required");
+    expect(body.error).toBe("Invalid request");
   });
 
   it("returns 400 for invalid date format (no dashes)", async () => {
@@ -80,7 +86,7 @@ describe("contestant-prep-auth handler", () => {
     );
     expect(res.status).toBe(400);
     const body = await res.json();
-    expect(body.error).toBe("Invalid date format");
+    expect(body.error).toBe("Invalid request");
   });
 
   it("returns 400 for invalid date format (slash-separated)", async () => {
@@ -212,12 +218,10 @@ describe("contestant-prep-auth handler", () => {
     expect(res.status).toBe(200);
   });
 
-  it("rejects sig with different length (timing-safe check)", async () => {
-    vi.useFakeTimers();
-    vi.setSystemTime(new Date("2026-06-15T10:00:00Z"));
+  it("rejects sig with invalid length (fails schema validation)", async () => {
     const res = await POST(
       makeContext(makeRequest({ date: "2026-06-15", sig: "abc123" })),
     );
-    expect(res.status).toBe(401);
+    expect(res.status).toBe(400);
   });
 });

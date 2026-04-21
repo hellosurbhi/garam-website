@@ -42,6 +42,8 @@ interface AdminDashboardProps {
 type FilterOption = { value: string; label: string };
 type DashboardTab = "applications" | "analytics" | "contestants";
 
+const PAGE_SIZE = 24;
+
 const GENDER_OPTIONS: FilterOption[] = [
   { value: "Man", label: "Man" },
   { value: "Woman", label: "Woman" },
@@ -142,6 +144,7 @@ export default function AdminDashboard({ onLogout }: AdminDashboardProps) {
   >("today");
   const [applications, setApplications] = useState<Application[]>([]);
   const [loading, setLoading] = useState(true);
+  const [loadingMore, setLoadingMore] = useState(false);
   const [fetchError, setFetchError] = useState(false);
   const [inboxApps, setInboxApps] = useState<Application[]>([]);
   const [inboxLoading, setInboxLoading] = useState(true);
@@ -717,10 +720,13 @@ export default function AdminDashboard({ onLogout }: AdminDashboardProps) {
               </div>
             ) : fetchError ? (
               <div className={styles.errorState}>
-                <p style={{ marginBottom: "12px" }}>
+                <p className={styles.stateMessage}>
                   Failed to load applications.
                 </p>
-                <button onClick={fetchApps} className={styles.retryButton}>
+                <button
+                  onClick={() => fetchApps()}
+                  className={styles.retryButton}
+                >
                   Try again
                 </button>
               </div>
@@ -730,7 +736,7 @@ export default function AdminDashboard({ onLogout }: AdminDashboardProps) {
               </div>
             ) : activeApps.length === 0 && deletedApps.length === 0 ? (
               <div className={styles.emptyState}>
-                <p style={{ marginBottom: "12px" }}>
+                <p className={styles.stateMessage}>
                   No applications match these filters.
                 </p>
                 <button
@@ -793,6 +799,19 @@ export default function AdminDashboard({ onLogout }: AdminDashboardProps) {
                     )}
                   </div>
                 )}
+
+                {hasMore && (
+                  <div className={styles.loadMoreRow}>
+                    <button
+                      type="button"
+                      onClick={() => fetchApps(true)}
+                      className={styles.loadMoreButton}
+                      disabled={loadingMore}
+                    >
+                      {loadingMore ? "Loading…" : "Load more"}
+                    </button>
+                  </div>
+                )}
               </>
             )}
           </main>
@@ -824,10 +843,7 @@ export default function AdminDashboard({ onLogout }: AdminDashboardProps) {
 
       {toast && (
         <div
-          className={styles.toast}
-          style={{
-            background: toast.ok ? "var(--success)" : "var(--brand-red)",
-          }}
+          className={`${styles.toast} ${toast.ok ? styles.toastSuccess : styles.toastError}`}
           role="alert"
           aria-live="assertive"
         >

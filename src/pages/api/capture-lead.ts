@@ -1,5 +1,4 @@
 import type { APIRoute } from "astro";
-import { validateEmail } from "@/utils/validateEmail";
 import { addKitSubscriber, type KitSubscriberFields } from "@/lib/kit";
 import { enforceRateLimit, RATE_LIMITS } from "@/lib/rateLimit";
 import { issueLeadToken } from "@/lib/leadToken";
@@ -77,51 +76,28 @@ export const POST: APIRoute = async ({ request }) => {
   const limited = await enforceRateLimit(request, RATE_LIMITS.captureLead);
   if (limited) return limited;
 
-  // Validate content type
-  const contentType = request.headers.get("content-type");
-  if (!contentType?.includes("application/json")) {
-    return new Response(JSON.stringify({ error: "Invalid content type" }), {
-      status: 400,
-      headers: { "Content-Type": "application/json" },
-    });
-  }
+  const parsed = await parseJsonRequest(request, LeadPayloadSchema);
+  if (!parsed.success) return parsed.response;
+  const body = parsed.data;
 
-  let body: LeadPayload;
-  try {
-    body = await request.json();
-  } catch {
-    return new Response(JSON.stringify({ error: "Invalid JSON" }), {
-      status: 400,
-      headers: { "Content-Type": "application/json" },
-    });
+  if (body.company) {
+    // Silently succeed so basic bots do not learn the honeypot field name.
+    return jsonResponse({ ok: true });
   }
-
-  // Validate email
-  const email = body.email?.trim().toLowerCase();
-  if (!email || validateEmail(email)) {
-    return new Response(JSON.stringify({ error: "Valid email required" }), {
-      status: 400,
-      headers: { "Content-Type": "application/json" },
-    });
-  }
+  const email = body.email.toLowerCase();
 
   // Build Firestore document via REST API (no firebase-admin dependency)
   const projectId = import.meta.env.PUBLIC_FIREBASE_PROJECT_ID;
   if (!projectId) {
-    return new Response(
-      JSON.stringify({ error: "Server configuration error" }),
-      {
-        status: 500,
-        headers: { "Content-Type": "application/json" },
-      },
-    );
+    return jsonResponse({ error: "Server configuration error" }, 500);
   }
 
   const now = new Date().toISOString();
-  const fields: FirestoreFields = {
-    email: { stringValue: email },
-    createdAt: { stringValue: now },
-  };
+  const fields: Record<string, { stringValue?: string; doubleValue?: number }> =
+    {
+      email: { stringValue: email },
+      createdAt: { stringValue: now },
+    };
 
   // Add optional fields
   addStringField(fields, "phone", body.phone, 20);
@@ -160,22 +136,21 @@ export const POST: APIRoute = async ({ request }) => {
   );
 
   try {
-    let res = await createLeadDocument(projectId, fields);
-
-    if (!res.ok && (fields.fbclid || fields.gclid)) {
-      const fallbackFields = { ...fields };
-      delete fallbackFields.fbclid;
-      delete fallbackFields.gclid;
-      res = await createLeadDocument(projectId, fallbackFields);
-    }
+    const url = `https://firestore.googleapis.com/v1/projects/${projectId}/databases/(default)/documents/leads`;
+    const controller = new AbortController();
+    const timeout = setTimeout(() => controller.abort(), 5000);
+    const res = await fetch(url, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ fields }),
+      signal: controller.signal,
+    });
+    clearTimeout(timeout);
 
     if (!res.ok) {
       const errText = await res.text();
       console.error("[capture-lead] Firestore write failed:", errText);
-      return new Response(JSON.stringify({ error: "Failed to save lead" }), {
-        status: 500,
-        headers: { "Content-Type": "application/json" },
-      });
+      return jsonResponse({ error: "Failed to save lead" }, 500);
     }
 
     const doc = await res.json();
@@ -197,28 +172,16 @@ export const POST: APIRoute = async ({ request }) => {
       // Kit errors are already logged inside addKitSubscriber
     });
 
-    return new Response(
-      JSON.stringify({
-        ok: true,
-        id: docId,
-        ...(updateToken ? { updateToken } : {}),
-      }),
-      {
-        status: 200,
-        headers: { "Content-Type": "application/json" },
-      },
-    );
+    return jsonResponse({
+      ok: true,
+      id: docId,
+      ...(updateToken ? { updateToken } : {}),
+    });
   } catch (err) {
     if (err instanceof Error && err.name === "AbortError") {
       console.error("[capture-lead] Firestore request timed out (5s)");
-      return new Response(JSON.stringify({ error: "Upstream timeout" }), {
-        status: 503,
-        headers: { "Content-Type": "application/json" },
-      });
+      return jsonResponse({ error: "Upstream timeout" }, 503);
     }
-    return new Response(JSON.stringify({ error: "Server error" }), {
-      status: 500,
-      headers: { "Content-Type": "application/json" },
-    });
+    return jsonResponse({ error: "Server error" }, 500);
   }
 };

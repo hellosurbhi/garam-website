@@ -78,6 +78,14 @@ const showCityInput = collectCity && !cityMode;
           required
           aria-label="Email address"
         />
+        <input
+          type="text"
+          data-lc-company
+          class="lc-honeypot"
+          autocomplete="organization"
+          tabindex="-1"
+          aria-hidden="true"
+        />
         {cityMode && <input type="hidden" data-lc-city />}
         {
           showCityInput && (
@@ -178,6 +186,12 @@ const showCityInput = collectCity && !cityMode;
     color: var(--brand-red);
     margin: 0;
     text-align: center;
+  }
+  .lc-honeypot {
+    position: absolute;
+    left: -9999px;
+    opacity: 0;
+    pointer-events: none;
   }
   .lc-submit {
     background: var(--brand-red);
@@ -324,6 +338,9 @@ const showCityInput = collectCity && !cityMode;
           (
             root.querySelector("[data-lc-city]") as HTMLInputElement | null
           )?.value.trim() ?? "";
+        const company = (
+          root.querySelector("[data-lc-company]") as HTMLInputElement | null
+        )?.value;
         const submitBtn = (
           e.target as HTMLFormElement
         ).querySelector<HTMLButtonElement>('[type="submit"]');
@@ -341,6 +358,7 @@ const showCityInput = collectCity && !cityMode;
           const payload: LeadSubmissionPayload = {
             email: capturedEmail,
             ...attribution,
+            company,
           };
           if (city) payload.city = city;
 

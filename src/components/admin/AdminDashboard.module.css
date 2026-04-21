@@ -261,6 +261,10 @@
   text-decoration: underline;
 }
 
+.stateMessage {
+  margin-bottom: 12px;
+}
+
 .summary {
   font-size: 13px;
   color: var(--text-light);
@@ -381,6 +385,43 @@
   margin-top: 40px;
 }
 
+.loadMoreRow {
+  display: flex;
+  justify-content: center;
+  margin-top: 28px;
+}
+
+.loadMoreButton {
+  min-height: var(--touch-target);
+  padding: 12px 22px;
+  border-radius: 100px;
+  border: 1px solid var(--border);
+  background: #fff;
+  color: var(--text);
+  font-family: var(--font-body);
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+  transition:
+    border-color 0.2s,
+    color 0.2s,
+    transform 0.06s;
+}
+
+.loadMoreButton:hover {
+  border-color: var(--brand-red);
+  color: var(--brand-red);
+}
+
+.loadMoreButton:active {
+  transform: scale(0.97);
+}
+
+.loadMoreButton:disabled {
+  cursor: wait;
+  opacity: 0.65;
+}
+
 .deletedToggle {
   display: inline-flex;
   align-items: center;
@@ -430,4 +471,12 @@
   box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
   z-index: 100;
   pointer-events: none;
+}
+
+.toastSuccess {
+  background: var(--success);
+}
+
+.toastError {
+  background: var(--brand-red);
 }

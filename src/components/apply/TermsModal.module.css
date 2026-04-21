@@ -71,9 +71,11 @@
 .closeBtn:focus {
   outline: none;
 }
-.closeBtn:focus-visible {
-  outline: 2px solid var(--modal-close-color-hover);
-  outline-offset: 2px;
+@media (pointer: fine) {
+  .closeBtn:focus-visible {
+    outline: 2px solid var(--modal-close-color-hover);
+    outline-offset: 2px;
+  }
 }
 
 /* ─── Body ───────────────────────────────────────────────────────────────── */

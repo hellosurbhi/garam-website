@@ -121,8 +121,11 @@ const pathname = Astro.url.pathname;
     border-radius: 50px;
     border: 1.5px solid transparent;
     transition:
-      all 0.2s,
-      color 0.4s;
+      background 0.2s,
+      border-color 0.2s,
+      box-shadow 0.2s,
+      color 0.4s,
+      transform 0.12s ease-out;
     display: inline-flex;
     align-items: center;
     white-space: nowrap;
@@ -160,6 +163,9 @@ const pathname = Astro.url.pathname;
     background: var(--brand-red-dark);
     border-color: var(--brand-red-dark);
   }
+  .nav-pill:active {
+    transform: scale(0.97);
+  }
   @media (min-width: 768px) {
     .home-nav {
       padding: 20px 48px;
@@ -178,6 +184,18 @@ const pathname = Astro.url.pathname;
       font-size: 13px;
       letter-spacing: 1.5px;
       padding: 12px 22px;
+    }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .nav-pill {
+      transition:
+        background 0.2s,
+        border-color 0.2s,
+        box-shadow 0.2s,
+        color 0.2s;
+    }
+    .nav-pill:active {
+      transform: none;
     }
   }
 </style>

@@ -70,10 +70,7 @@ export const POST: APIRoute = async ({ request }) => {
 
   const projectId = import.meta.env.PUBLIC_FIREBASE_PROJECT_ID;
   if (!projectId) {
-    return new Response(
-      JSON.stringify({ error: "Server configuration error" }),
-      { status: 500, headers: { "Content-Type": "application/json" } },
-    );
+    return jsonResponse({ error: "Server configuration error" }, 500);
   }
 
   try {
@@ -82,7 +79,7 @@ export const POST: APIRoute = async ({ request }) => {
       method: "PATCH",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
-        fields: { phone: { stringValue: phone } },
+        fields: { phone: { stringValue: body.phone } },
       }),
       signal: AbortSignal.timeout(8000),
     });
@@ -90,27 +87,15 @@ export const POST: APIRoute = async ({ request }) => {
     if (!res.ok) {
       const errText = await res.text();
       console.error("[update-lead] Firestore update failed:", errText);
-      return new Response(JSON.stringify({ error: "Failed to update lead" }), {
-        status: 500,
-        headers: { "Content-Type": "application/json" },
-      });
+      return jsonResponse({ error: "Failed to update lead" }, 500);
     }
 
-    return new Response(JSON.stringify({ ok: true }), {
-      status: 200,
-      headers: { "Content-Type": "application/json" },
-    });
+    return jsonResponse({ ok: true });
   } catch (err) {
     if (err instanceof Error && err.name === "AbortError") {
       console.error("[update-lead] Firestore request timed out (5s)");
-      return new Response(JSON.stringify({ error: "Upstream timeout" }), {
-        status: 503,
-        headers: { "Content-Type": "application/json" },
-      });
+      return jsonResponse({ error: "Upstream timeout" }, 503);
     }
-    return new Response(JSON.stringify({ error: "Server error" }), {
-      status: 500,
-      headers: { "Content-Type": "application/json" },
-    });
+    return jsonResponse({ error: "Server error" }, 500);
   }
 };

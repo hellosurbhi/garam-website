@@ -4,8 +4,6 @@ import { enforceRateLimit, RATE_LIMITS } from "@/lib/rateLimit";
 
 export const prerender = false;
 
-const ISO_DATE_RE = /^\d{4}-\d{2}-\d{2}$/;
-
 function computeSig(salt: string, date: string): string {
   return createHmac("sha256", salt).update(date).digest("hex");
 }
@@ -39,55 +37,22 @@ export const POST: APIRoute = async ({ request }) => {
 
   const salt = import.meta.env.CONTESTANT_PREP_SALT;
   if (!salt) {
-    return new Response(JSON.stringify({ error: "Server misconfigured" }), {
-      status: 500,
-      headers: { "Content-Type": "application/json" },
-    });
+    return jsonResponse({ error: "Server misconfigured" }, 500);
   }
 
-  const { date, sig } = (await request.json()) as {
-    date?: string;
-    sig?: string;
-  };
-
-  if (!date || !sig || typeof date !== "string" || typeof sig !== "string") {
-    return new Response(
-      JSON.stringify({ error: "date and sig are required" }),
-      {
-        status: 400,
-        headers: { "Content-Type": "application/json" },
-      },
-    );
-  }
-
-  if (!ISO_DATE_RE.test(date)) {
-    return new Response(JSON.stringify({ error: "Invalid date format" }), {
-      status: 400,
-      headers: { "Content-Type": "application/json" },
-    });
-  }
+  const parsed = await parseJsonRequest(request, ContestantPrepAuthSchema);
+  if (!parsed.success) return parsed.response;
+  const { date, sig } = parsed.data;
 
   const expected = computeSig(salt, date);
   if (!timingSafeCompare(sig, expected)) {
-    return new Response(JSON.stringify({ error: "Invalid link" }), {
-      status: 401,
-      headers: { "Content-Type": "application/json" },
-    });
+    return jsonResponse({ error: "Invalid link" }, 401);
   }
 
   const expiresAt = getShowExpiryMs(date);
   if (Date.now() >= expiresAt) {
-    return new Response(JSON.stringify({ error: "Link expired" }), {
-      status: 401,
-      headers: { "Content-Type": "application/json" },
-    });
+    return jsonResponse({ error: "Link expired" }, 401);
   }
 
-  return new Response(
-    JSON.stringify({ token: computeToken(salt, date), expiresAt }),
-    {
-      status: 200,
-      headers: { "Content-Type": "application/json" },
-    },
-  );
+  return jsonResponse({ token: computeToken(salt, date), expiresAt });
 };

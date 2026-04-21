@@ -1,5 +1,11 @@
 # Bugs
 
+This file tracks active issues only.
+
+Full repo audit completed on 2026-04-20. Closed, stale, and superseded items now live in [BUGS_ARCHIVE.md](BUGS_ARCHIVE.md).
+
+Second pass completed on 2026-04-20 (Codex + Claude). All backlog items resolved except the two Firebase-provisioning-dependent items below.
+
 ## Open
 
 ### [HIGH] Dev server cannot transform TypeScript in astro component scripts
@@ -169,7 +175,7 @@
 - **Severity:** Medium
 - **What happened:** `storage.rules` enforces auth, a contentType allowlist (jpeg, png, webp, heic) and the size cap server-side (PR #87). The client validates MIME type against the same allowlist before upload (PR #100). SVG is not on the allowlist. Residual gap: contentType is client-declared, so true magic-byte inspection would need a Cloud Function on `storage.object.finalize`; tracked in ENHANCEMENTS.md.
 
-### [MEDIUM] No CAPTCHA or rate limiting on application form
+### [MEDIUM] No CAPTCHA or App Check on application form
 
 - **Date:** 2026-04-04
 - **File:** `src/components/ApplyPage.tsx`

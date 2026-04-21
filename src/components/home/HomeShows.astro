@@ -842,10 +842,12 @@ const taglineMap = buildTaglineMap(events);
   .modal-close:hover {
     color: var(--charcoal);
   }
-  .modal-close:focus-visible {
-    outline: 2px solid var(--brand-red);
-    outline-offset: 2px;
-    color: var(--charcoal);
+  @media (pointer: fine) {
+    .modal-close:focus-visible {
+      outline: 2px solid var(--brand-red);
+      outline-offset: 2px;
+      color: var(--charcoal);
+    }
   }
   .modal-title {
     font-family: var(--font-playfair), serif;

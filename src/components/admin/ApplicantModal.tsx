@@ -346,6 +346,8 @@ export default function ApplicantModal({
           </h2>
           <span
             className={styles.statusBadge}
+            // Runtime status colors stay inline so CSS can consume a single
+            // custom property without exploding the module into status variants.
             style={{ "--status-color": statusColor } as React.CSSProperties}
           >
             {status}

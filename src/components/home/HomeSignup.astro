@@ -1,4 +1,7 @@
 ---
+import { SPICE_LIST } from "@/data/copy";
+import { SOCIAL_URLS } from "@/data/socials";
+
 // Derive a readable page name from the current URL so every Spice List
 // submission is attributed to the page it came from (e.g. "home", "apply",
 // "cities-nyc"). The Spice List is rendered by BaseLayout on every page, so
@@ -13,7 +16,10 @@ const leadSource = `spice-list-${pageName}`;
   aria-labelledby="spicelist-heading"
   data-lead-source={leadSource}
 >
-  <h2 id="spicelist-heading" data-reveal>Join the Spice List</h2>
+  <h2 id="spicelist-heading" data-reveal>{SPICE_LIST.heading}</h2>
+  <p data-reveal>
+    {SPICE_LIST.intro}
+  </p>
 
   <!-- min-height prevents CLS when switching between steps -->
   <div class="nl-steps-wrapper" data-reveal>
@@ -35,7 +41,7 @@ const leadSource = `spice-list-${pageName}`;
           type="email"
           id="nl-email"
           class="ph-mask"
-          placeholder="Your email"
+          placeholder={SPICE_LIST.emailPlaceholder}
           required
           aria-label="Email address"
           toolparamdescription="Email address to receive discount codes and show announcements"
@@ -50,14 +56,14 @@ const leadSource = `spice-list-${pageName}`;
           toolparamdescription="City the subscriber lives in, used to alert them when a show comes near them (optional)"
         />
         <p id="nl-email-error" class="spicelist-error" hidden role="alert"></p>
-        <button type="submit">Get My Discount Code</button>
+        <button type="submit">{SPICE_LIST.emailCta}</button>
       </form>
-      <p class="spicelist-trust">Just discount codes and show announcements.</p>
+      <p class="spicelist-trust">{SPICE_LIST.trust}</p>
     </div>
 
     <div id="nl-step-2" hidden aria-live="polite">
       <p class="nl-step2-text">
-        Add your number for text-only discounts and free ticket drops.
+        {SPICE_LIST.phonePrompt}
       </p>
       <form
         id="nl-phone-form"
@@ -69,20 +75,38 @@ const leadSource = `spice-list-${pageName}`;
           type="tel"
           id="nl-phone"
           class="ph-mask"
-          placeholder="(555) 123-4567"
+          placeholder={SPICE_LIST.phonePlaceholder}
           aria-label="Phone number"
           toolparamdescription="Mobile phone number for SMS-only deals (optional, can be skipped)"
         />
         <p id="nl-phone-error" class="spicelist-error" hidden role="alert"></p>
-        <button type="submit">Send Me Deals</button>
+        <button type="submit">{SPICE_LIST.phoneCta}</button>
       </form>
       <button type="button" id="nl-skip" class="spicelist-skip"
-        >Maybe later</button
+        >{SPICE_LIST.skip}</button
       >
     </div>
 
     <div id="nl-success" hidden role="status" aria-live="polite">
-      <p class="nl-done-text">You're on the list!</p>
+      <p class="nl-done-text">{SPICE_LIST.success}</p>
+    </div>
+
+    <div id="nl-subscribed" hidden role="status" aria-live="polite">
+      <p class="nl-done-text">{SPICE_LIST.subscribedTitle}</p>
+      <p class="nl-subscribed-copy">{SPICE_LIST.subscribedBody}</p>
+      <div class="spicelist-alt-actions">
+        <a href="/tickets" class="spicelist-alt-cta">
+          {SPICE_LIST.subscribedPrimaryCta}
+        </a>
+        <a
+          href={SOCIAL_URLS.instagram}
+          class="spicelist-alt-link"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          {SPICE_LIST.subscribedSecondaryCta}
+        </a>
+      </div>
     </div>
   </div>
 </section>
@@ -160,6 +184,7 @@ const leadSource = `spice-list-${pageName}`;
           email: savedEmail,
           ...(nlCity ? { city: nlCity } : {}),
           ...attribution,
+          createdAt: new Date().toISOString(),
         });
         nlDocId = captured.id ? captured : null;
         localStorage.setItem("gmd-popup-subscribed", "true");
@@ -261,10 +286,6 @@ const leadSource = `spice-list-${pageName}`;
     });
 
   document.getElementById("nl-skip")?.addEventListener("click", () => {
-    trackLeadEvent("lead_phone_skipped", {
-      source: leadSource,
-      sourcePage: window.location.pathname,
-    });
     document.getElementById("nl-step-2")?.setAttribute("hidden", "");
     const successEl = document.getElementById("nl-success");
     const doneText = successEl?.querySelector(".nl-done-text");
@@ -461,6 +482,63 @@ const leadSource = `spice-list-${pageName}`;
     font-size: 22px;
     font-style: italic;
     animation: spiceSuccess 0.45s ease-out both;
+  }
+  .nl-subscribed-copy {
+    margin: 12px auto 24px;
+    max-width: 420px;
+    font-family: var(--font-body), sans-serif;
+    font-size: 15px;
+    font-style: normal;
+    color: rgba(255, 255, 255, 0.82);
+  }
+  .spicelist-alt-actions {
+    max-width: 420px;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+  .spicelist-alt-cta,
+  .spicelist-alt-link {
+    display: block;
+    width: 100%;
+    min-height: var(--touch-target);
+    border-radius: 50px;
+    font-family: var(--font-body), sans-serif;
+    font-size: 16px;
+    font-weight: 700;
+    text-decoration: none;
+    transition:
+      background 0.2s,
+      color 0.2s,
+      transform 0.06s,
+      border-color 0.2s;
+  }
+  .spicelist-alt-cta {
+    background: var(--electric-yellow);
+    color: var(--charcoal);
+    padding: 16px 24px;
+  }
+  .spicelist-alt-cta:hover {
+    background: white;
+  }
+  .spicelist-alt-link {
+    border: 1.5px solid rgba(255, 255, 255, 0.35);
+    color: white;
+    padding: 15px 24px;
+  }
+  .spicelist-alt-link:hover {
+    border-color: white;
+    background: rgba(255, 255, 255, 0.08);
+  }
+  .spicelist-alt-cta:active,
+  .spicelist-alt-link:active {
+    transform: scale(0.97);
+  }
+  .spicelist-alt-cta:focus-visible,
+  .spicelist-alt-link:focus-visible {
+    outline: 2px solid white;
+    outline-offset: 2px;
   }
 
   @media (min-width: 768px) {

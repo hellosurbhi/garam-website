@@ -8,6 +8,12 @@ vi.mock("@/lib/zohoMailer", () => ({
   sendMail: mockSend,
 }));
 
+vi.mock("@/lib/rateLimit", () => ({
+  checkRateLimit: vi.fn().mockResolvedValue(null),
+  notifyApplicationLimiter: {},
+  getClientIp: vi.fn(() => "127.0.0.1"),
+}));
+
 // Import handler after mocking
 const { POST } = await import("@/pages/api/notify-application");
 

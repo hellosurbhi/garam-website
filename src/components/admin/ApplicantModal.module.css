@@ -86,9 +86,11 @@
 .closeButton:focus {
   outline: none;
 }
-.closeButton:focus-visible {
-  outline: 2px solid #fff;
-  outline-offset: 2px;
+@media (pointer: fine) {
+  .closeButton:focus-visible {
+    outline: 2px solid #fff;
+    outline-offset: 2px;
+  }
 }
 
 .deletedBanner {

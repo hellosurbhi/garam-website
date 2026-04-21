@@ -842,6 +842,73 @@ Note: enforcing these as hard merge blockers requires GitHub Pro (branch protect
 
 - `.github/workflows/ci.yml`
 - `.github/workflows/smoke-tests.yml`
+## fix(security+bugs): rate limiting, Zod validation, pagination, UI fixes — full backlog pass (2026-04-20)
+
+### What changed
+
+Full resolution of the open bugs backlog. 11 bugs closed in one pass:
+
+- **Rate limiting** on all 6 POST API routes via `@upstash/ratelimit`. New `src/lib/rateLimit.ts` exports per-route limiter instances and `getClientIp`. Honeypot field added to `capture-lead` for bot filtering.
+- **Zod schema validation** at all API boundaries. New `src/lib/schemas.ts` defines `ApplicationNotificationSchema`, `LeadPayloadSchema`, `ContestantPrepAuthSchema`, `ContestantClaimSchema`, `StageWaiverSchema`. New `src/lib/http.ts` provides `parseJsonRequest` (parses + validates JSON body) and `jsonResponse` utilities. All 6 routes now validate input before processing.
+- **Admin pagination** via Firestore cursor-based `query/orderBy/limit/startAfter` replacing unbounded `getDocs(collection(...))`. `PAGE_SIZE = 24` with load-more button.
+- **Admin inline styles removed** — CSS modules applied across `AdminDashboard`, `ApplicantModal`, and `TermsModal` components.
+- **HomeSignup subscribed state** reads `localStorage` to show already-subscribed state on revisit.
+- **HomeNav scrolled CTA box-shadow emphasis** — visual feedback on scroll.
+- **Modal focus ring scoped** to `pointer: fine` (no focus ring on touch devices).
+- **Contact email** standardized to `contact@garammasaladating.com` in `links.astro`.
+- Test suite updated: mocked `@/lib/rateLimit` in API tests to avoid Upstash Redis timeout; updated error message assertions from legacy strings to Zod-standard `"Invalid request"`; fixed `AdminDashboard.test.tsx` firestore mock to include `query/orderBy/limit/startAfter`.
+
+### Files affected
+
+- `src/lib/http.ts` — new: JSON parsing + response utilities
+- `src/lib/rateLimit.ts` — rate limiters for all 6 routes
+- `src/lib/schemas.ts` — new: Zod schemas for all API inputs
+- `src/pages/api/capture-lead.ts`, `contestant-claim.ts`, `contestant-prep-auth.ts`, `notify-application.ts`, `stage-waiver.ts`, `update-lead.ts` — rate limit + schema validation wired in
+- `src/components/LeadCaptureModal.astro` — honeypot field
+- `src/components/admin/AdminDashboard.tsx`, `AdminDashboard.module.css` — cursor pagination + CSS modules
+- `src/components/admin/ApplicantModal.tsx`, `ApplicantModal.module.css` — CSS modules
+- `src/components/apply/TermsModal.module.css` — CSS modules
+- `src/components/home/HomeNav.astro`, `HomeShows.astro`, `HomeSignup.astro` — UI bug fixes
+- `src/components/ui/Modal.astro` — focus ring scope
+- `src/pages/links.astro` — contact email
+- `src/data/copy.ts` — copy fixes
+- `BUGS.md` / `BUGS_ARCHIVE.md` — 11 bugs archived as fixed
+- `test/contestant-prep-auth.test.ts`, `test/notify-application.test.ts`, `src/components/admin/AdminDashboard.test.tsx` — test repairs
+
+## fix(security): remove unsafe-inline from CSP via external script migration (2026-04-20)
+
+### What changed
+
+`'unsafe-inline'` removed from `script-src` in `vercel.json`. All three analytics `is:inline` components (`gtm.astro`, `posthog.astro`, `meta-pixel.astro`) migrated to external files under `public/js/`. The `tickets.astro` Eventbrite widget — previously inline via `define:vars` — refactored to pass data through a `<script type="application/json" id="gmd-widget-events">` element and load logic from `public/js/tickets-widget.js`. This removes all `is:inline` scripts from the codebase without changing analytics behavior (all loaders use `requestIdleCallback` / `defer`, unchanged).
+
+### Why
+
+`unsafe-inline` in `script-src` defeats XSS protection: any injected inline script would execute. Moving to external origin-scoped scripts means only files served from the same origin (or allowlisted CDNs) can run.
+
+### Files affected
+
+- `src/components/gtm.astro` — replaced inline block with `<script src="/js/gtm.js" defer>`
+- `src/components/posthog.astro` — replaced inline block with `<script src="/js/posthog.js" defer>`
+- `src/components/meta-pixel.astro` — replaced inline block with `<script src="/js/meta-pixel.js" defer>`
+- `src/pages/tickets.astro` — replaced `is:inline define:vars` with JSON data element + `<script src="/js/tickets-widget.js" defer>`
+- `public/js/gtm.js` — new external file (GTM deferred loader)
+- `public/js/posthog.js` — new external file (PostHog deferred init)
+- `public/js/meta-pixel.js` — new external file (Meta Pixel deferred init)
+- `public/js/tickets-widget.js` — new external file (Eventbrite widget init)
+- `vercel.json` — removed `'unsafe-inline'` from `script-src`
+- `BUGS.md` / `BUGS_ARCHIVE.md` — `[LOW] CSP uses unsafe-inline` archived as fixed
+
+## fix(scripts): repair optimize-images.js source manifest and add pre-run validation (2026-04-20)
+
+### What changed
+
+`scripts/optimize-images.js` rewritten with a clean source manifest pointing to a documented `source-images/` directory at the repo root. Previous version referenced stale paths like `src/data/Garammasaladating-117.jpg` and bare filenames that never existed in the repo. New version: validates `source-images/` exists before processing (exits non-zero with a clear message if not); uses explicit output directories matching the current `public/images/` layout (`promo/`, `hosts/`, `hero/`, `journal/`); produces WebP and AVIF only (removed JPG fallback, all current images are WebP/AVIF); adds header documentation explaining expected workflow.
+
+### Files affected
+
+- `scripts/optimize-images.js` — rewritten
+- `BUGS.md` / `BUGS_ARCHIVE.md` — `[LOW] Image optimization pipeline` archived as fixed
+
 ## fix(security): Firestore applications collection field validation + auth requirement (2026-04-18)
 
 ### What changed

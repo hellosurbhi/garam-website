@@ -135,6 +135,25 @@ export const PAGES = {
   },
 } as const;
 
+export const SPICE_LIST = {
+  heading: "Join the Spice List",
+  intro:
+    "Get exclusive discount codes for cheaper (and sometimes free) tickets.",
+  emailPlaceholder: "Your email",
+  emailCta: "Get My Discount Code",
+  trust: "Just discount codes and show announcements.",
+  phonePrompt: "Add your number for text-only discounts and free ticket drops.",
+  phonePlaceholder: "(555) 123-4567",
+  phoneCta: "Send Me Deals",
+  skip: "Maybe later",
+  success: "You're on the list!",
+  subscribedTitle: "You're already on the Spice List",
+  subscribedBody:
+    "Skip the signup, grab tickets or follow us on Instagram for the next ticket drop.",
+  subscribedPrimaryCta: "See Upcoming Shows",
+  subscribedSecondaryCta: "Follow on Instagram",
+} as const;
+
 export const APPLY_PAGE = {
   title: "Apply to Be on Garam Masala Dating",
   subtitle: "America's #1 live desi comedy dating show 🌶️",

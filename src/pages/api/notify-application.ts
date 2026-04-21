@@ -45,7 +45,7 @@ type ApplicationNotification = z.infer<typeof ApplicationSchema>;
 function buildAdminEmailHtml(data: ApplicationNotification): string {
   const isNomination = data.applicationType === "Nomination";
   const location = [data.city, data.state, data.country]
-    .filter(Boolean)
+    .filter((v): v is string => !!v)
     .map(escapeHtml)
     .join(", ");
 
@@ -65,8 +65,8 @@ function buildAdminEmailHtml(data: ApplicationNotification): string {
       "Instagram",
       `<a href="https://instagram.com/${escapeHtml(data.instagram)}" style="color:#DC2626;">@${escapeHtml(data.instagram)}</a>`,
     ],
-    ["Community", escapeHtml(data.community)],
-    ["Income", escapeHtml(data.income)],
+    ["Community", data.community ? escapeHtml(data.community) : ""],
+    ["Income", data.income ? escapeHtml(data.income) : ""],
   ];
 
   if (data.phone) {
@@ -220,12 +220,6 @@ export const POST: APIRoute = async ({ request }) => {
       headers: { "Content-Type": "application/json" },
     });
   } catch {
-    return new Response(
-      JSON.stringify({ error: "Failed to send notification" }),
-      {
-        status: 500,
-        headers: { "Content-Type": "application/json" },
-      },
-    );
+    return jsonResponse({ error: "Failed to send notification" }, 500);
   }
 };

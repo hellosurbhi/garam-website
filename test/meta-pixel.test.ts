@@ -4,9 +4,9 @@ import { resolve } from "path";
 
 const PIXEL_ID = "1469248418329402";
 
-describe("Meta Pixel component", () => {
+describe("Meta Pixel external script (public/js/meta-pixel.js)", () => {
   const source = readFileSync(
-    resolve(__dirname, "../src/components/meta-pixel.astro"),
+    resolve(__dirname, "../public/js/meta-pixel.js"),
     "utf-8",
   );
 
@@ -21,15 +21,24 @@ describe("Meta Pixel component", () => {
   it("loads fbevents.js from connect.facebook.net", () => {
     expect(source).toContain("https://connect.facebook.net/en_US/fbevents.js");
   });
+});
+
+describe("Meta Pixel component (src/components/meta-pixel.astro)", () => {
+  const source = readFileSync(
+    resolve(__dirname, "../src/components/meta-pixel.astro"),
+    "utf-8",
+  );
+
+  it("loads external script with is:inline and defer", () => {
+    expect(source).toContain(
+      '<script is:inline src="/js/meta-pixel.js" defer>',
+    );
+  });
 
   it("includes noscript image beacon with correct pixel ID", () => {
     expect(source).toContain(
       `https://www.facebook.com/tr?id=${PIXEL_ID}&ev=PageView&noscript=1`,
     );
-  });
-
-  it("uses is:inline directive so script is not bundled", () => {
-    expect(source).toContain("<script is:inline>");
   });
 });
 

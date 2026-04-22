@@ -499,7 +499,7 @@ function ApplyPageInner() {
 
                   <div className={styles.sectionLarge}>
                     <SectionTitle className={styles.anythingElse}>
-                      Anything else?
+                      Make Your Case
                     </SectionTitle>
                     <FieldGroup
                       label="What's your type... (we will do our best to match you)"

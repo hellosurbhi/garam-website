@@ -107,7 +107,7 @@ export const PAGES = {
   },
   tickets: {
     intro:
-      "Garam Masala Dating is the #1 live desi dating show and South Asian singles mixer. Grab tickets on Eventbrite.",
+      "Two real singles. One blind date on stage. 250 people watching. Pick your show below.",
   },
   links: {
     subtitle: "NYC's hottest live desi dating show 🌶️",
@@ -115,6 +115,7 @@ export const PAGES = {
 } as const;
 
 export const APPLY_PAGE = {
+  title: "Apply to Be on Garam Masala Dating",
   subtitle: "NYC's #1 live desi dating show 🌶️",
   introText:
     "Garam Masala is a dating show where sparks fly, secrets slip, and matches are made. We're casting bold, funny, attractive personalities who are down to flirt, overshare, and maybe fall in love… or at least cause chaos. Whether you're straight, queer, unsure, or just here for the plot, we want personality!",
@@ -134,10 +135,16 @@ export const EVENTS = {
   ticketCta: "Grab My Spot",
 } as const;
 
+export const EVENT_TAGLINES = {
+  almostSoldOut: "Almost sold out",
+  justAnnounced: "Just announced",
+  cycle: ["On sale now", "Book early", "Grab your spot"],
+} as const;
+
 export const EXPERIENCE_STEPS = [
   {
     title: "Arrive & Settle In",
-    text: "Doors open 30 minutes early. Grab a drink, find your seat, and settle into the energy. The venue is intimate  with 250 seats, come early to grab one with the best view.",
+    text: "Doors open 30 minutes early. Grab a drink, find your seat, and settle into the energy. The venue is intimate with 250 seats, come early to grab one with the best view.",
   },
   {
     title: "The Main Event",

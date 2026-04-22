@@ -1,5 +1,82 @@
 # Changelog
 
+## refactor(content): consolidate /south-asian-dating-tips into /journal with 301 redirects (2026-04-21)
+
+### What changed
+
+Merged the 3 standalone `/south-asian-dating-tips` articles into the `/journal` section. The separate section had only 3 posts against 116 journal posts, split SEO authority, and used an identical content format.
+
+**Content moved**: Created `src/data/journal/tips.ts` holding the 3 tip posts as `JournalPost` objects with appropriate `relatedSlugs`. Added the new category to `src/data/journal/index.ts`. Each article now renders with the full journal template (related articles, prev/next navigation, mid-article CTA, hero background).
+
+**301 redirects**: Added 4 permanent redirects in `astro.config.mjs` via Astro's `redirects` config, which the `@astrojs/vercel` adapter compiles to native Vercel redirects at build time. Confirmed all 4 rules appear with `"status": 301` in `.vercel/output/config.json`.
+
+**Sitemap cleaned**: Removed all `tipPosts` / `south-asian-dating-tips` references from `astro.config.mjs` (import, `contentLastmod` map, `buildGitDatesMap`, `getPriority`, `getChangefreq`, sitemap filter). The 3 articles now appear in the sitemap under `/journal/*` with priority 0.6. Zero `/south-asian-dating-tips` URLs remain in the sitemap.
+
+**Routes deleted**: Removed `src/pages/south-asian-dating-tips/index.astro` and `[slug].astro`. Removed old `src/data/tips.ts`.
+
+**Footer link updated**: Removed the "Dating Tips" link pointing to `/south-asian-dating-tips` from `FOOTER_EXPLORE_LINKS` in `src/data/footer.ts`.
+
+**LLM feeds updated**: Removed `tipPosts` imports from `llms.txt.ts` and `llms-full.txt.ts`. The 3 articles now appear naturally in the journal section of both feeds.
+
+### Before/After URLs
+
+| Old                                                                                      | New                                                                      | Status |
+| ---------------------------------------------------------------------------------------- | ------------------------------------------------------------------------ | ------ |
+| `/south-asian-dating-tips`                                                               | `/journal`                                                               | 301    |
+| `/south-asian-dating-tips/how-to-find-love-as-a-desi-in-new-york`                        | `/journal/how-to-find-love-as-a-desi-in-new-york`                        | 301    |
+| `/south-asian-dating-tips/how-to-find-someone-before-your-parents-arrange-marry-you-off` | `/journal/how-to-find-someone-before-your-parents-arrange-marry-you-off` | 301    |
+| `/south-asian-dating-tips/why-going-with-the-flow-is-ruining-your-dating-life`           | `/journal/why-going-with-the-flow-is-ruining-your-dating-life`           | 301    |
+
+### Files changed
+
+- `src/data/journal/tips.ts` — new category file with 3 posts
+- `src/data/journal/index.ts` — added import and spread
+- `src/data/tips.ts` — deleted
+- `src/pages/south-asian-dating-tips/index.astro` — deleted
+- `src/pages/south-asian-dating-tips/[slug].astro` — deleted
+- `astro.config.mjs` — redirects added, tipPosts references removed
+- `src/data/footer.ts` — removed Dating Tips link
+- `src/pages/llms.txt.ts` — removed tipPosts reference
+- `src/pages/llms-full.txt.ts` — removed tipPosts reference and tips section
+
+---
+
+## fix(seo): fix sitemap lastmod, future-post exclusion, priority, changefreq, and footer hub link (2026-04-21)
+
+### What changed
+
+Six sitemap/SEO fixes across two files (`astro.config.mjs`, `src/data/footer.ts`).
+
+**Root cause fixed — `const buildDate = new Date()`**: Every static page (homepage, all cities, all static pages) was falling through to `buildDate`, producing identical timestamps on every build. Google treats this as machine-generated noise and deprioritizes crawling. Removed `buildDate` entirely.
+
+**Static page lastmod via git dates**: Added `STATIC_PAGE_FILES` map (URL → source file path) and `staticLastmod` object that calls the existing `getGitDate()` for each page's source `.astro` file. Each static page now gets a real, distinct lastmod that auto-updates when the file is modified in git. No hardcoded dates that go stale.
+
+**City page lastmod via git dates**: Added `getCityLastmod()` that scans all `src/data/cities/*.ts` files and returns the most recent git modification date across all of them. City pages now reflect actual data changes rather than build time.
+
+**Future `dateModified` clamped at today**: `effectiveDate()` now caps its result at `TODAY_STR`. A post with `dateModified: "2026-05-05"` was previously emitting `<lastmod>2026-05-05</lastmod>` in the sitemap even if the post was live. Now capped to the build date.
+
+**`tipPosts` filtered by `isPublished()`**: `tipPosts` was not filtered before being added to `contentLastmod`. Added `tipPostsPublished = tipPosts.filter(p => isPublished(p.datePublished))`, matching the existing pattern for journal posts.
+
+**Belt-and-suspenders sitemap filter**: The sitemap `filter` function now explicitly excludes any `/journal/` or `/south-asian-dating-tips/` URL not present in `contentLastmod`. This catches future-dated posts that somehow got rendered as pages before `isPublished` was enforced.
+
+**Priority tuning**: `/cities` hub page: 0.5 (default) → 0.7. `/cities/[slug]`: 0.4 → 0.5. `/links`: 0.7 → 0.3. `/privacy`, `/terms`, `/waiver`: 0.5 → 0.3.
+
+**`changefreq` added**: New `getChangefreq()` function added to `serialize()`. Homepage: `daily`. Hub pages (`/journal`, `/south-asian-dating-tips`, `/cities`): `weekly`. All posts and city pages: `monthly`. All static pages: `monthly`.
+
+**Footer hub link for `/south-asian-dating-tips`**: This hub page had zero internal links from the homepage, nav, or footer. Added `{ label: "Dating Tips", href: "/south-asian-dating-tips" }` to `FOOTER_EXPLORE_LINKS` in `src/data/footer.ts`. `/journal` and `/cities` were already present in the footer.
+
+### Files changed
+
+- `astro.config.mjs` — all sitemap logic
+- `src/data/footer.ts` — added Dating Tips footer link
+
+### Decisions
+
+- Used git dates for static pages rather than hardcoded dates: self-updating, uses existing `getGitDate()` infrastructure, never goes stale.
+- `effectiveDate` cap is intentional: a future `dateModified` is a planned refresh date, not a signal that content has already changed. Capping prevents false freshness signals to Google.
+
+---
+
 ## fix: smoke-test SHA poll, seenNo CSS selector, modal token extraction (2026-04-16)
 
 ### What changed

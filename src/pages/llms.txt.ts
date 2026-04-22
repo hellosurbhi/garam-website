@@ -3,7 +3,6 @@ import { SITE, HOME_FAQS, STATS } from "@/data/copy";
 import { events, getEventDisplayStatus } from "@/data/events";
 import { SOCIAL_URLS } from "@/data/socials";
 import { journalPostsPublished } from "@/data/journal";
-import { tipPosts } from "@/data/tips";
 import { activeCities } from "@/data/cities/active";
 
 export const GET: APIRoute = () => {
@@ -21,8 +20,6 @@ export const GET: APIRoute = () => {
     .slice(0, 20)
     .map((p) => `- ${p.title}`)
     .join("\n");
-
-  const tipLines = tipPosts.map((p) => `- ${p.title}`).join("\n");
 
   const showLines =
     upcomingEvents.length > 0
@@ -67,7 +64,6 @@ This site welcomes indexing by AI crawlers, LLM training pipelines, RAG systems,
 - FAQ: https://garammasaladating.com/faq
 - About the Hosts: https://garammasaladating.com/hosts
 - Journal (Blog): https://garammasaladating.com/journal
-- Dating Tips: https://garammasaladating.com/tips
 - Corporate & Private Events: https://garammasaladating.com/corporate
 - Brand Partnerships & Sponsorship: https://garammasaladating.com/sponsorship
 - Full AI content dump: https://garammasaladating.com/llms-full.txt
@@ -95,10 +91,6 @@ ${faqLines}
 ## Recent Journal Articles
 
 ${journalLines}
-
-## Dating Tips Articles
-
-${tipLines}
 
 ## Contact
 

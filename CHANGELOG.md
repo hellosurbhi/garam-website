@@ -1,5 +1,39 @@
 # Changelog
 
+## feat(seo): city page enrichment for Google indexability (2026-04-22)
+
+### What changed
+
+Added `communityStats`, `faqItems`, and `relatedArticleSlugs` optional fields to `CityData` interface (`src/data/cities/types.ts`). Updated `[slug].astro` to render three new sections: a community stat line between eyebrow and H1, a "From the Journal" related articles section (cream-warm background), and an FAQ accordion using native `details/summary` HTML (off-white background). Added FAQPage JSON-LD to the `@graph` array on city pages that include `faqItems`, building on the existing LocalBusiness + BreadcrumbList schema.
+
+**Cities enriched with unique local content:**
+
+- `active.ts`: San Diego (fixed incorrect sold-out claim, replaced with accurate coming-soon framing), Los Angeles, San Francisco
+- `us-midwest.ts`: Chicago
+- `us-south-texas.ts`: Dallas, Houston, Austin
+- `us-northeast.ts`: Boston, Philadelphia
+- `us-west.ts`: Seattle
+- `us-southeast.ts`: Washington DC, Atlanta, Miami
+- `canada.ts`: Toronto, Vancouver
+- `uk.ts`: London
+- `australia.ts`: Sydney
+
+Each enriched city has: a unique community stat with real neighborhood callouts, 2 to 4 FAQ items with city-specific questions, and 2 to 3 related article slugs from the journal.
+
+**Journal cross-links (Phase 4):** Added city page links at the end of 5 articles to build content cluster authority: "Where to Meet Indian Singles in NYC" and two other NYC articles link to `/cities/manhattan`; "Indian Comedy Shows in NYC" links to `/cities/manhattan`; "The Indian Tech Bro's Guide to Dating in Silicon Valley" links to `/cities/san-francisco`.
+
+**Video constants:** Updated `YOUTUBE_VIDEO_ID` to `fw3keeNmJB4`, `uploadDate` to `2026-04-18`, duration to `PT1H31M20S`. Updated the corresponding test.
+
+### Why
+
+309 city pages were not being indexed by Google because 80 to 85 percent of every page was identical boilerplate. Google treated them as thin clones. Unique local content (neighborhood names, population stats, city-specific FAQ) gives each page genuine value. The journal cross-links build topical authority between content clusters. FAQPage JSON-LD enables rich results in search.
+
+### Files affected
+
+`src/data/cities/types.ts`, `src/pages/cities/[slug].astro`, `src/data/cities/active.ts`, `src/data/cities/us-midwest.ts`, `src/data/cities/us-south-texas.ts`, `src/data/cities/us-northeast.ts`, `src/data/cities/us-west.ts`, `src/data/cities/us-southeast.ts`, `src/data/cities/canada.ts`, `src/data/cities/uk.ts`, `src/data/cities/australia.ts`, `src/data/journal/events.ts`, `src/data/journal/core.ts`, `src/data/journal/entertainment.ts`, `src/data/journal/identity.ts`, `src/lib/constants.ts`, `src/lib/constants.test.ts`
+
+---
+
 ## refactor(content): consolidate /south-asian-dating-tips into /journal with 301 redirects (2026-04-21)
 
 ### What changed

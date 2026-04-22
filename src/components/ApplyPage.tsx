@@ -518,7 +518,7 @@ function ApplyPageInner() {
                     <FieldGroup
                       label={
                         form.applicationType === "Self"
-                          ? "Why would you be a great fit? (optional)"
+                          ? "Why would you be a great fit?"
                           : "Why would your friend be a great fit? (optional)"
                       }
                     >

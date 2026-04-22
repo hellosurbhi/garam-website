@@ -34,6 +34,27 @@ export const australiaCities: Record<string, CityData> = {
       "newcastle-au",
       "gold-coast",
     ],
+    communityStats:
+      "Sydney has one of the largest Indian communities in Australia, concentrated in Parramatta, Harris Park, and Western Sydney",
+    relatedArticleSlugs: [
+      "irl-dating-revival",
+      "what-actually-happens-at-a-live-comedy-dating-show",
+      "tired-of-dating-apps-desi-singles-irl-events",
+    ],
+    faqItems: [
+      {
+        q: "When is Garam Masala Dating coming to Sydney?",
+        a: "No date confirmed yet. Sydney is our top priority in Australia. Join the waitlist for presale access and casting priority.",
+      },
+      {
+        q: "Where will the Sydney show be held?",
+        a: "TBD. We are looking at venues accessible from Parramatta and Western Sydney as well as the CBD. Waitlist members will be first to know.",
+      },
+      {
+        q: "Can I apply to be a contestant before a date is announced?",
+        a: "Yes. Apply now. Applications stay active for 12 months and Sydney applicants will be prioritized when we confirm a date.",
+      },
+    ],
   },
 
   melbourne: {

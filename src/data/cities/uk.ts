@@ -28,6 +28,27 @@ export const ukCities: Record<string, CityData> = {
     addressCountry: "GB",
     region: "United Kingdom",
     nearbyCities: ["slough", "luton", "reading", "southampton", "birmingham"],
+    communityStats:
+      "Over 1.5 million South Asians live in London, making it one of the largest desi populations in the world outside South Asia",
+    relatedArticleSlugs: [
+      "irl-dating-revival",
+      "what-actually-happens-at-a-live-comedy-dating-show",
+      "tired-of-dating-apps-desi-singles-irl-events",
+    ],
+    faqItems: [
+      {
+        q: "When is Garam Masala Dating coming to London?",
+        a: "No date confirmed yet. London is at the top of our international expansion list. Join the waitlist for presale access and casting priority when a venue is confirmed.",
+      },
+      {
+        q: "Where will the London show be held?",
+        a: "TBD. We are evaluating venues accessible from Southall, Wembley, East Ham, and the city centre. Waitlist members will be first to know.",
+      },
+      {
+        q: "Is the show open to attendees from outside Zone 1?",
+        a: "Yes. We are specifically looking at venues accessible to the full London South Asian community, not just the city centre crowd.",
+      },
+    ],
   },
 
   birmingham: {

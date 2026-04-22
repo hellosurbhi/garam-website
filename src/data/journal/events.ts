@@ -439,6 +439,10 @@ export const eventsPosts: JournalPost[] = [
         type: "p",
         text: "If you're in NYC and want to actually meet desi singles, stop waiting for the app to deliver. Come to a show. Buy tickets at garammasaladating.com or apply to be on stage. The room is better than your phone.",
       },
+      {
+        type: "p" as const,
+        text: "The show runs every two to three weeks in Manhattan and monthly in Jersey City. <a href='/cities/manhattan'>See the Manhattan show page</a> for upcoming dates, venue details, and the contestant application.",
+      },
     ],
   },
   {

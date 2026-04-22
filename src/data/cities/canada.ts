@@ -34,6 +34,27 @@ export const canadaCities: Record<string, CityData> = {
       "ottawa",
       "montreal",
     ],
+    communityStats:
+      "Over 700,000 South Asians live in the Greater Toronto Area, making it one of the largest desi populations outside South Asia",
+    relatedArticleSlugs: [
+      "irl-dating-revival",
+      "what-actually-happens-at-a-live-comedy-dating-show",
+      "tired-of-dating-apps-desi-singles-irl-events",
+    ],
+    faqItems: [
+      {
+        q: "When is Garam Masala Dating coming to Toronto?",
+        a: "No date confirmed yet. Toronto is at the top of our international tour list for fall 2026. Join the waitlist to be notified first.",
+      },
+      {
+        q: "Will the show be downtown or in Brampton?",
+        a: "Venue TBD. We want to serve the whole GTA. Venue will be announced to waitlist members first.",
+      },
+      {
+        q: "Is the show open to non-South Asian attendees?",
+        a: "Yes. The audience is open to everyone. Our NYC shows draw South Asian professionals, diaspora, and anyone who shows up curious.",
+      },
+    ],
   },
 
   vancouver: {
@@ -63,6 +84,23 @@ export const canadaCities: Record<string, CityData> = {
     addressCountry: "CA",
     region: "Canada",
     nearbyCities: ["victoria", "calgary", "edmonton", "seattle", "toronto"],
+    communityStats:
+      "Over 300,000 South Asians live in Metro Vancouver, with Surrey home to one of the largest Punjabi Sikh communities outside of South Asia",
+    relatedArticleSlugs: [
+      "irl-dating-revival",
+      "what-actually-happens-at-a-live-comedy-dating-show",
+      "tired-of-dating-apps-desi-singles-irl-events",
+    ],
+    faqItems: [
+      {
+        q: "When is Garam Masala Dating coming to Vancouver?",
+        a: "No date confirmed yet. Vancouver is a top priority for our Canada tour in fall 2026. Join the waitlist for presale access and casting priority.",
+      },
+      {
+        q: "Will the show be in downtown Vancouver or Surrey?",
+        a: "Venue TBD. We are evaluating locations accessible to both the city and the Lower Mainland suburbs. Waitlist members will be first to know.",
+      },
+    ],
   },
 
   calgary: {

@@ -37,6 +37,23 @@ export const usSoutheastCities: Record<string, CityData> = {
       "charlotte",
       "raleigh-durham",
     ],
+    communityStats:
+      "The DC metro area ranks among the highest South Asian population densities in the US, concentrated in Fairfax County, Tysons Corner, and Rockville",
+    relatedArticleSlugs: [
+      "what-actually-happens-at-a-live-comedy-dating-show",
+      "tired-of-dating-apps-desi-singles-irl-events",
+      "how-to-get-cast-on-a-live-dating-show",
+    ],
+    faqItems: [
+      {
+        q: "When is Garam Masala Dating coming to DC?",
+        a: "No date confirmed yet. DC is a top priority for fall 2026. Join the waitlist to be first in line for presale and casting.",
+      },
+      {
+        q: "Will the show be in DC or Northern Virginia?",
+        a: "TBD. We are looking at venues that serve both the DC and NoVA communities. Waitlist members will get venue details first.",
+      },
+    ],
   },
 
   atlanta: {
@@ -73,6 +90,23 @@ export const usSoutheastCities: Record<string, CityData> = {
       "raleigh-durham",
       "jacksonville",
       "savannah",
+    ],
+    communityStats:
+      "The Atlanta metro has one of the fastest growing South Asian populations in the Southeast, with over 120,000 Indian Americans across Alpharetta, Johns Creek, Duluth, and Suwanee",
+    relatedArticleSlugs: [
+      "what-actually-happens-at-a-live-comedy-dating-show",
+      "tired-of-dating-apps-desi-singles-irl-events",
+      "irl-dating-revival",
+    ],
+    faqItems: [
+      {
+        q: "When is Garam Masala Dating coming to Atlanta?",
+        a: "No date confirmed yet. Atlanta is a priority for fall 2026. Join the waitlist for presale access and casting priority.",
+      },
+      {
+        q: "Where in Atlanta will the show be held?",
+        a: "Venue TBD. We are aware of the spread across Alpharetta, Johns Creek, Midtown, and Decatur and are looking at central venues accessible to the whole metro. Waitlist members will be first to know.",
+      },
     ],
   },
 
@@ -235,6 +269,22 @@ export const usSoutheastCities: Record<string, CityData> = {
     addressCountry: "US",
     region: "US Southeast",
     nearbyCities: ["tampa", "orlando", "jacksonville", "atlanta", "charlotte"],
+    communityStats:
+      "Miami's South Asian community is centered in Weston, Plantation, and Davie, with a strong presence in healthcare, finance, and tech",
+    relatedArticleSlugs: [
+      "what-actually-happens-at-a-live-comedy-dating-show",
+      "tired-of-dating-apps-desi-singles-irl-events",
+    ],
+    faqItems: [
+      {
+        q: "When is Garam Masala Dating coming to Miami?",
+        a: "No date confirmed yet. Miami is on our Southeast tour radar for fall 2026. Join the waitlist for presale access and casting priority.",
+      },
+      {
+        q: "Where in Miami will the show be held?",
+        a: "TBD. We are evaluating venues accessible from Weston, Plantation, and the broader South Florida desi community. Waitlist members will be first to know.",
+      },
+    ],
   },
 
   jacksonville: {

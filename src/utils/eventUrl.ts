@@ -10,7 +10,10 @@ export function buildTicketUrl(
 ): string {
   if (!baseUrl) return baseUrl;
   const url = new URL(baseUrl);
-  url.searchParams.set("aff", `garamsite${campaign}`);
+  // "home" has two distinct sections (hero pill vs shows list) worth splitting
+  // in Eventbrite tracking links. All other campaigns map 1:1 to a tracking link.
+  const affSuffix = campaign === "home" ? content : "";
+  url.searchParams.set("aff", `garamsite${campaign}${affSuffix}`);
   url.searchParams.set("utm_source", "garamsite");
   url.searchParams.set("utm_medium", "web");
   url.searchParams.set("utm_campaign", campaign);

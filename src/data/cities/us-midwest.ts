@@ -37,6 +37,30 @@ export const usMidwestCities: Record<string, CityData> = {
       "indianapolis",
       "detroit",
     ],
+    communityStats: "175,000 South Asians in the Chicago metro area",
+    relatedArticleSlugs: [
+      "what-actually-happens-at-a-live-comedy-dating-show",
+      "how-to-get-cast-on-a-live-dating-show",
+      "irl-dating-revival",
+    ],
+    faqItems: [
+      {
+        q: "When is Garam Masala Dating coming to Chicago?",
+        a: "No date is confirmed yet. Chicago is a top priority for fall 2026. Join the waitlist and you will hear from us as soon as a venue and date are locked.",
+      },
+      {
+        q: "How do I get on the Chicago waitlist?",
+        a: "Click the waitlist button on this page and enter your email. We will send you presale access and casting opportunities before tickets go public.",
+      },
+      {
+        q: "Can I apply to be on the show before a Chicago date is announced?",
+        a: "Yes. Apply now. Applications stay active for 12 months. Chicago applicants will be prioritized when we confirm a Chicago date.",
+      },
+      {
+        q: "How many people attend a Garam Masala Dating show?",
+        a: "Our NYC shows sell out at 250 people. Touring shows typically run 100 to 200 depending on the venue.",
+      },
+    ],
   },
 
   champaign: {

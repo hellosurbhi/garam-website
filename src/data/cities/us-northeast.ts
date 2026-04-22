@@ -112,6 +112,27 @@ export const usNortheastCities: Record<string, CityData> = {
       "baltimore",
       "pittsburgh",
     ],
+    communityStats:
+      "Philadelphia's South Asian community spans Penn, Drexel, Temple, and the Main Line suburbs out to King of Prussia and Cherry Hill",
+    relatedArticleSlugs: [
+      "what-actually-happens-at-a-live-comedy-dating-show",
+      "tired-of-dating-apps-desi-singles-irl-events",
+      "how-to-get-cast-on-a-live-dating-show",
+    ],
+    faqItems: [
+      {
+        q: "When is Garam Masala Dating coming to Philadelphia?",
+        a: "No date confirmed yet. Philly is a priority market for fall 2026. Join the waitlist for presale access and casting priority.",
+      },
+      {
+        q: "Will the show be in Center City or the suburbs?",
+        a: "Venue TBD. We are looking at spaces accessible to both the city and the Main Line. Waitlist members will be first to know.",
+      },
+      {
+        q: "Can I apply to be on the show before a Philly date is announced?",
+        a: "Yes. Apply now. Applications stay active for 12 months and Philadelphia applicants will be prioritized when we confirm a date.",
+      },
+    ],
   },
 
   boston: {
@@ -149,6 +170,27 @@ export const usNortheastCities: Record<string, CityData> = {
       "new-haven",
       "stamford",
       "albany",
+    ],
+    communityStats:
+      "120,000 South Asians in Greater Boston, concentrated around MIT, Harvard, and the Route 128 corridor",
+    relatedArticleSlugs: [
+      "irl-dating-revival",
+      "what-actually-happens-at-a-live-comedy-dating-show",
+      "how-to-get-cast-on-a-live-dating-show",
+    ],
+    faqItems: [
+      {
+        q: "When is Garam Masala Dating coming to Boston?",
+        a: "No date confirmed yet. Boston is a priority for fall 2026. Join the waitlist for presale access and casting priority.",
+      },
+      {
+        q: "Will the show be near MIT or Harvard?",
+        a: "Venue TBD. We are looking at spaces in the Boston metro area. Waitlist members will be first to know.",
+      },
+      {
+        q: "Can I apply to be on the show before a Boston date is announced?",
+        a: "Yes. Apply now. Applications stay active for 12 months. Boston applicants will be prioritized when we confirm a date.",
+      },
     ],
   },
 

@@ -5,9 +5,9 @@ export const tipsPosts: JournalPost[] = [
     slug: "how-to-find-love-as-a-desi-in-new-york",
     title: "How to Find Love as a Desi in New York",
     metaDescription:
-      "Finding love as a South Asian in NYC means getting off the apps and tapping into high-intent, real-world networks. Here’s how to actually cut through the noise.",
-    datePublished: "2026-03-31",
-    dateModified: "2026-03-31",
+      "Finding love as a South Asian in NYC means getting off the apps and tapping into high-intent, real-world networks. Here\u2019s how to actually cut through the noise.",
+    datePublished: "2026-04-01",
+    dateModified: "2026-04-01",
     author: "Surbhi",
     excerpt:
       "The apps are exhausting, the aunties are hovering, and the city is massive. Here is how to actually meet people.",
@@ -22,11 +22,11 @@ export const tipsPosts: JournalPost[] = [
       },
       {
         type: "p",
-        text: "Dating in New York is already an extreme sport. When you add South Asian cultural expectations to the mix, it feels like an impossible puzzle. You are dealing with a dating pool full of people suffering from Peter Pan syndrome—always looking for the next best thing in a city of millions—while simultaneously fielding calls from your mom asking if you’ve met anyone nice yet.",
+        text: "Dating in New York is already an extreme sport. When you add South Asian cultural expectations to the mix, it feels like an impossible puzzle. You are dealing with a dating pool full of people suffering from Peter Pan syndrome\u2014always looking for the next best thing in a city of millions\u2014while simultaneously fielding calls from your mom asking if you\u2019ve met anyone nice yet.",
       },
       {
         type: "p",
-        text: "The apps are exhausting. You match, you have three days of witty banter, you grab a $20 cocktail in the West Village, and then you realize they are emotionally unavailable and “just seeing where things go.”",
+        text: "The apps are exhausting. You match, you have three days of witty banter, you grab a $20 cocktail in the West Village, and then you realize they are emotionally unavailable and \u201Cjust seeing where things go.\u201D",
       },
       {
         type: "p",
@@ -34,11 +34,11 @@ export const tipsPosts: JournalPost[] = [
       },
       {
         type: "h3",
-        text: "1. Stop being the “chill” date.",
+        text: "1. Stop being the \u201Cchill\u201D date.",
       },
       {
         type: "p",
-        text: "If you are dating with the goal of finding a husband or a long-term partner in the next couple of years, you have to stop pretending you are okay with a situationship. “Going with the flow” is a trap. State your intentions early. If someone is scared off by you knowing what you want, they are doing you a favor by leaving.",
+        text: "If you are dating with the goal of finding a husband or a long-term partner in the next couple of years, you have to stop pretending you are okay with a situationship. \u201CGoing with the flow\u201D is a trap. State your intentions early. If someone is scared off by you knowing what you want, they are doing you a favor by leaving.",
       },
       {
         type: "h3",
@@ -54,7 +54,7 @@ export const tipsPosts: JournalPost[] = [
       },
       {
         type: "p",
-        text: "You aren’t going to find your future spouse at a crowded, sticky-floored club at 2 AM, and you probably won’t find them swiping at 11 PM on your couch. Put yourself in rooms where people are actively, intentionally looking to connect. Live events, curated matchmaking mixers, and community gatherings act as a natural filter for people who are serious enough to show up in real life.",
+        text: "You aren\u2019t going to find your future spouse at a crowded, sticky-floored club at 2 AM, and you probably won\u2019t find them swiping at 11 PM on your couch. Put yourself in rooms where people are actively, intentionally looking to connect. Live events, curated matchmaking mixers, and community gatherings act as a natural filter for people who are serious enough to show up in real life.",
       },
     ],
     relatedSlugs: [
@@ -67,9 +67,9 @@ export const tipsPosts: JournalPost[] = [
     slug: "how-to-find-someone-before-your-parents-arrange-marry-you-off",
     title: "How to Find Someone Before Your Parents Arrange Marry You Off",
     metaDescription:
-      "To find a partner before an arranged marriage, treat your dating life with the same urgency your parents treat your biodata. Here’s how to take control of your timeline.",
-    datePublished: "2026-03-31",
-    dateModified: "2026-03-31",
+      "To find a partner before an arranged marriage, treat your dating life with the same urgency your parents treat your biodata. Here\u2019s how to take control of your timeline.",
+    datePublished: "2026-04-02",
+    dateModified: "2026-04-02",
     author: "Surbhi",
     excerpt:
       "The clock is ticking and the biodatas are piling up. A survival guide to taking control of your own timeline.",
@@ -92,11 +92,11 @@ export const tipsPosts: JournalPost[] = [
       },
       {
         type: "h3",
-        text: "1. The “Give Me Two Years” Conversation",
+        text: "1. The \u201CGive Me Two Years\u201D Conversation",
       },
       {
         type: "p",
-        text: "You have to set a firm boundary. Sit your parents down and negotiate a timeline. Tell them, “I am actively looking for a serious relationship, but I need you to give me the next two to three years to find my person on my own terms. If you back off the pressure, I promise I am prioritizing this.” Buying yourself this breathing room changes your dating energy from desperate to intentional.",
+        text: "You have to set a firm boundary. Sit your parents down and negotiate a timeline. Tell them, \u201CI am actively looking for a serious relationship, but I need you to give me the next two to three years to find my person on my own terms. If you back off the pressure, I promise I am prioritizing this.\u201D Buying yourself this breathing room changes your dating energy from desperate to intentional.",
       },
       {
         type: "h3",
@@ -104,7 +104,7 @@ export const tipsPosts: JournalPost[] = [
       },
       {
         type: "p",
-        text: "When the clock is ticking, you cannot afford to waste six months on someone you know doesn’t align with your core values. Stop dating for “potential” and start dating for reality. Do your life goals align? How do they handle family conflict? Do they respect your career? Vet heavily and vet early.",
+        text: "When the clock is ticking, you cannot afford to waste six months on someone you know doesn\u2019t align with your core values. Stop dating for \u201Cpotential\u201D and start dating for reality. Do your life goals align? How do they handle family conflict? Do they respect your career? Vet heavily and vet early.",
       },
       {
         type: "h3",
@@ -112,7 +112,7 @@ export const tipsPosts: JournalPost[] = [
       },
       {
         type: "p",
-        text: "If you are hiding from your parents’ matchmaking, your own matchmaking needs to be better. Endless swiping on generic apps isn’t going to cut it. You need to seek out platforms and spaces designed specifically for South Asians who are exhausted by casual dating and are ready to actually build a life with someone.",
+        text: "If you are hiding from your parents\u2019 matchmaking, your own matchmaking needs to be better. Endless swiping on generic apps isn\u2019t going to cut it. You need to seek out platforms and spaces designed specifically for South Asians who are exhausted by casual dating and are ready to actually build a life with someone.",
       },
     ],
     relatedSlugs: [
@@ -123,30 +123,30 @@ export const tipsPosts: JournalPost[] = [
   },
   {
     slug: "why-going-with-the-flow-is-ruining-your-dating-life",
-    title: "Why “Going With the Flow” is Ruining Your Dating Life",
+    title: "Why \u201CGoing With the Flow\u201D is Ruining Your Dating Life",
     metaDescription:
-      "“Going with the flow” is a dating trap that leads directly to dead-end situationships. Replace passive dating with active vetting to find real commitment.",
-    datePublished: "2026-03-31",
-    dateModified: "2026-03-31",
+      "\u201CGoing with the flow\u201D is a dating trap that leads directly to dead-end situationships. Replace passive dating with active vetting to find real commitment.",
+    datePublished: "2026-04-03",
+    dateModified: "2026-04-03",
     author: "Surbhi",
     excerpt:
       "Getting offline and into a room with people who are actually serious about dating.",
     body: [
       {
         type: "p",
-        text: "“Going with the flow” is a dating trap that leads directly to dead-end situationships. If you want a serious commitment and marriage in the near future, you must replace passive dating with active vetting. Ask the hard questions early to quickly filter out people who are not ready to build a life together.",
+        text: "\u201CGoing with the flow\u201D is a dating trap that leads directly to dead-end situationships. If you want a serious commitment and marriage in the near future, you must replace passive dating with active vetting. Ask the hard questions early to quickly filter out people who are not ready to build a life together.",
       },
       {
         type: "h3",
-        text: "The Trap of the “Chill” Persona",
+        text: "The Trap of the \u201CChill\u201D Persona",
       },
       {
         type: "p",
-        text: "Modern dating culture has convinced us that caring too much is uncool. We are told to play games, wait three hours to text back, and never admit that we actually want a ring, a house, and a life partner. We just “go with the flow.”",
+        text: "Modern dating culture has convinced us that caring too much is uncool. We are told to play games, wait three hours to text back, and never admit that we actually want a ring, a house, and a life partner. We just \u201Cgo with the flow.\u201D",
       },
       {
         type: "p",
-        text: "But when you go with the flow, you usually end up exactly where the other person wants you—which is often in a low-effort situationship that wastes your best years.",
+        text: "But when you go with the flow, you usually end up exactly where the other person wants you\u2014which is often in a low-effort situationship that wastes your best years.",
       },
       {
         type: "h3",
@@ -162,7 +162,7 @@ export const tipsPosts: JournalPost[] = [
       },
       {
         type: "p",
-        text: "By the third date, you should be asking the structural questions. You don’t need to ask them to marry you, but you do need to ask: What are you actually looking for right now? How do you envision your life in five years? If their answer is vague, hesitant, or completely misaligned with yours, you pay the check and you walk away.",
+        text: "By the third date, you should be asking the structural questions. You don\u2019t need to ask them to marry you, but you do need to ask: What are you actually looking for right now? How do you envision your life in five years? If their answer is vague, hesitant, or completely misaligned with yours, you pay the check and you walk away.",
       },
       {
         type: "h3",

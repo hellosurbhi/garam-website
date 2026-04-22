@@ -214,6 +214,9 @@ const relatedPosts = (city.relatedArticleSlugs ?? [])
                 class="city-cta city-cta--primary"
                 data-eb-url={buildTicketUrl(event.url, "cities", city.slug)}
                 data-city={event.city}
+                data-ph-section="cities"
+                data-ph-price={event.price}
+                data-ph-event-date={event.date}
               >
                 <span>
                   {event.date}: {EVENTS.ticketCta}

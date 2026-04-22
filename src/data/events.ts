@@ -134,18 +134,6 @@ export const events: EventEntry[] = [
     price: "15",
     eventbriteId: "1987763579375",
   },
-  {
-    date: "Jun 14",
-    city: "Manhattan, New York",
-    citySlug: "manhattan",
-    url: "https://www.eventbrite.com/e/garam-masala-dating-show-pride-edition-tickets-1987763579375",
-    isoDate: "2026-06-14",
-    startTime: "18:00",
-    endTime: "20:00",
-    venue: VENUE_TOP_SECRET,
-    price: "15",
-    eventbriteId: "1987763579375",
-  },
 ];
 
 // Only show TBA entries for cities with active tour planning (not all 200+ expansion pages).

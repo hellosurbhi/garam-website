@@ -3,12 +3,14 @@ import type { EventEntry } from "@/data/events";
 import NotifyModal from "@/components/NotifyModal.astro";
 import { buildTicketUrl } from "@/utils/eventUrl";
 import { parseMonth, parseDay } from "@/utils/eventDate";
+import { buildTaglineMap } from "@/utils/eventTaglines";
 
 interface Props {
   events: EventEntry[];
 }
 
 const { events } = Astro.props;
+const taglineMap = buildTaglineMap(events);
 ---
 
 <section class="shows" id="shows" aria-labelledby="shows-heading">
@@ -33,7 +35,11 @@ const { events } = Astro.props;
             </div>
             <div class="show-info">
               <h3>{event.city}</h3>
-              <span>{event.tagline ?? "On sale now"}</span>
+              <span>
+                {isSoldOut
+                  ? (event.tagline ?? "Sold out")
+                  : (taglineMap.get(event.url) ?? "On sale now")}
+              </span>
             </div>
             <span
               class={`ticket-label${isSoldOut ? " ticket-label--soldout" : ""}`}

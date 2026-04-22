@@ -1,5 +1,45 @@
 # Changelog
 
+## fix(seo): resolve Bing Webmaster alt-attribute and title-length warnings (2026-04-22)
+
+### What changed
+
+**Meta Pixel alt attribute** (`src/components/meta-pixel.astro`): Added `alt=""` to the noscript `<img>` tracking pixel. The pixel loads on every page via BaseLayout, which is why Bing flagged 629 pages. One-character fix, zero functional change.
+
+**Journal index title** (`src/pages/journal/index.astro`): Shortened `"South Asian Dating & Relationships Journal"` to `"Desi Dating & Relationships Journal"` (67 total chars → 61). Fixes the one static page Bing flagged for exceeding its 65-char limit.
+
+**`deriveSeoTitle` utility** (`src/utils/meta.ts`): New exported function that shortens a display title for use in the HTML `<title>` tag. Strategy: split at the first colon if within the 43-char limit, otherwise truncate at the last word boundary before 43 chars. 43 + " | Garam Masala Dating" (22) = 65 exactly. This is a pure function with no side effects and is reusable for any future content type.
+
+**Journal post SEO titles** (`src/pages/journal/[slug].astro`, `src/data/journal/types.ts`): Journal posts use their full display title as `<h1>` (for readability and keyword density), but the `<title>` tag now uses `post.seoTitle ?? deriveSeoTitle(post.title)`. Added optional `seoTitle?: string` to `JournalPost` for manual per-post overrides when needed. 79 of 124 posts had display titles exceeding 43 chars — all now resolve cleanly without touching any data files.
+
+### Files affected
+
+- `src/components/meta-pixel.astro`
+- `src/pages/journal/index.astro`
+- `src/utils/meta.ts`
+- `src/pages/journal/[slug].astro`
+- `src/data/journal/types.ts`
+
+## feat(analytics): hero/shows aff split + full session attribution on purchases (2026-04-22)
+
+### What changed
+
+**Hero vs shows tracking split** (`src/utils/eventUrl.ts`): Homepage hero pill and shows section now generate separate Eventbrite tracking link values (`garamsitehomehero` vs `garamsitehomeshows`). Previously both sent `garamsitehome`. All other pages unchanged.
+
+**Full session attribution on every purchase** (`EventbriteWidgetInit.astro`, `tickets.astro`, `ApplySuccessPanel.tsx`): Every `order_complete` event (PostHog + dataLayer) now includes `landing_page`, `referrer_host`, `utm_source`, `utm_campaign`, `utm_medium`, `utm_content` from the existing `leadAttribution.ts` system. Reuses `buildLeadAttribution()` in TypeScript-capable scripts and reads `gmd-*` sessionStorage keys directly in `is:inline` scripts.
+
+**Eventbrite tracking links to create** (6 total):
+`garamsitehomehero` · `garamsitehomeshows` · `garamsitetickets` · `garamsitelinks` · `garamsitecities` · `garamsiteapply`
+
+### Files affected
+
+- `src/utils/eventUrl.ts` — aff suffix includes content for "home" campaign only
+- `src/components/EventbriteWidgetInit.astro` — imports `buildLeadAttribution`, adds attribution to PostHog + dataLayer
+- `src/pages/tickets.astro` — reads `gmd-*` sessionStorage keys directly, adds attribution
+- `src/components/apply/ApplySuccessPanel.tsx` — imports `buildLeadAttribution`, adds attribution
+
+---
+
 ## feat(analytics): track conversion source and push purchase events to dataLayer (2026-04-22)
 
 ### What changed

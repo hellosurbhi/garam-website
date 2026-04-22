@@ -2,6 +2,7 @@ import { useMemo, useEffect } from "react";
 import { events } from "@/data/events";
 import { SOCIAL_URLS } from "@/data/socials";
 import { buildTicketUrl } from "@/utils/eventUrl";
+import { buildLeadAttribution } from "@/lib/leadAttribution";
 import styles from "@/components/ApplyPage.module.css";
 
 interface EBWidgetConfig {
@@ -72,12 +73,19 @@ export function ApplySuccessPanel() {
                 ? JSON.parse(raw)
                 : null;
               sessionStorage.removeItem("eb_cta_source");
+              const attr = buildLeadAttribution({ source: "ticket_purchase" });
               window.posthog?.capture?.("order_complete", {
                 event_id: show.eventbriteId,
                 city: show.city,
                 source_section: src?.section ?? "apply_success",
                 source_page: src?.page ?? "/apply",
                 price: src?.price ?? show.price ?? "",
+                landing_page: attr.landingPage,
+                referrer_host: attr.referrerHost,
+                utm_source: attr.utmSource,
+                utm_campaign: attr.utmCampaign,
+                utm_medium: attr.utmMedium,
+                utm_content: attr.utmContent,
               });
               const price = parseFloat(
                 (src?.price ?? show.price ?? "").replace(/[^0-9.]/g, "") || "0",
@@ -100,6 +108,10 @@ export function ApplySuccessPanel() {
                 },
                 source_section: "apply_success",
                 source_page: src?.page ?? "/apply",
+                landing_page: attr.landingPage,
+                referrer_host: attr.referrerHost,
+                utm_source: attr.utmSource,
+                utm_campaign: attr.utmCampaign,
               });
             },
           });

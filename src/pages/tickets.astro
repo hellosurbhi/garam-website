@@ -339,6 +339,15 @@ const eventSeriesJsonLd = JSON.stringify({
               var raw = sessionStorage.getItem("eb_cta_source");
               var src = raw ? JSON.parse(raw) : null;
               sessionStorage.removeItem("eb_cta_source");
+              var entry = {
+                landing_page: sessionStorage.getItem("gmd-landing-page") || "",
+                referrer_host:
+                  sessionStorage.getItem("gmd-referrer-host") || "",
+                utm_source: sessionStorage.getItem("gmd-utm-source") || "",
+                utm_campaign: sessionStorage.getItem("gmd-utm-campaign") || "",
+                utm_medium: sessionStorage.getItem("gmd-utm-medium") || "",
+                utm_content: sessionStorage.getItem("gmd-utm-content") || "",
+              };
               if (window.posthog) {
                 window.posthog.capture("order_complete", {
                   event_id: ev.eventId,
@@ -346,6 +355,12 @@ const eventSeriesJsonLd = JSON.stringify({
                   source_section: (src && src.section) || "tickets",
                   source_page: (src && src.page) || "/tickets",
                   price: (src && src.price) || ev.price || "",
+                  landing_page: entry.landing_page,
+                  referrer_host: entry.referrer_host,
+                  utm_source: entry.utm_source,
+                  utm_campaign: entry.utm_campaign,
+                  utm_medium: entry.utm_medium,
+                  utm_content: entry.utm_content,
                 });
               }
               var price = parseFloat(
@@ -372,6 +387,10 @@ const eventSeriesJsonLd = JSON.stringify({
                 },
                 source_section: (src && src.section) || "tickets",
                 source_page: (src && src.page) || "/tickets",
+                landing_page: entry.landing_page,
+                referrer_host: entry.referrer_host,
+                utm_source: entry.utm_source,
+                utm_campaign: entry.utm_campaign,
               });
             },
           };

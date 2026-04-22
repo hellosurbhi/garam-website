@@ -5,6 +5,8 @@
 ---
 
 <script>
+  import { buildLeadAttribution } from "@/lib/leadAttribution";
+
   interface EBWidgetConfig {
     widgetType: string;
     eventId: string;
@@ -69,12 +71,19 @@
               ? (JSON.parse(raw) as Record<string, string>)
               : null;
             sessionStorage.removeItem("eb_cta_source");
+            const attr = buildLeadAttribution({ source: "ticket_purchase" });
             w.posthog?.capture("order_complete", {
               event_id: ev.eventId,
               city: ev.city,
               source_section: src?.section ?? ev.section,
               source_page: src?.page ?? "",
               price: src?.price ?? ev.price,
+              landing_page: attr.landingPage,
+              referrer_host: attr.referrerHost,
+              utm_source: attr.utmSource,
+              utm_campaign: attr.utmCampaign,
+              utm_medium: attr.utmMedium,
+              utm_content: attr.utmContent,
             });
             const price = parseFloat(
               (src?.price ?? ev.price ?? "").replace(/[^0-9.]/g, "") || "0",
@@ -97,6 +106,10 @@
               },
               source_section: src?.section ?? ev.section,
               source_page: src?.page ?? "",
+              landing_page: attr.landingPage,
+              referrer_host: attr.referrerHost,
+              utm_source: attr.utmSource,
+              utm_campaign: attr.utmCampaign,
             });
           },
         };

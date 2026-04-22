@@ -80,6 +80,10 @@ export const entertainmentPosts: JournalPost[] = [
         type: "p",
         text: "Tickets and contestant applications are at garammasaladating.com. We run monthly in Manhattan. Come see what happens when the comedy and the dating are the same thing.",
       },
+      {
+        type: "p" as const,
+        text: "Find the next show date, the venue, and everything else on <a href='/cities/manhattan'>the Manhattan city page</a>.",
+      },
     ],
     faqs: [
       {

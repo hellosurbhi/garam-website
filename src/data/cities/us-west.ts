@@ -185,6 +185,23 @@ export const usWestCities: Record<string, CityData> = {
       "boise",
       "sacramento",
     ],
+    communityStats:
+      "Over 100,000 South Asians in the Seattle metro, concentrated in Bellevue, Redmond, and Kirkland",
+    relatedArticleSlugs: [
+      "indian-tech-bro-guide-dating-silicon-valley",
+      "what-actually-happens-at-a-live-comedy-dating-show",
+      "tired-of-dating-apps-desi-singles-irl-events",
+    ],
+    faqItems: [
+      {
+        q: "When is Garam Masala Dating coming to Seattle?",
+        a: "No date confirmed yet. Seattle is a priority market for fall 2026. Join the waitlist for presale access and casting priority.",
+      },
+      {
+        q: "Will the show be in Seattle or the Eastside?",
+        a: "Venue TBD. We are evaluating spaces in both Seattle and the Eastside. Waitlist members will be first to know.",
+      },
+    ],
   },
 
   portland: {

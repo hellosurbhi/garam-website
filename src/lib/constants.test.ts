@@ -3,7 +3,7 @@ import { YOUTUBE_VIDEO_ID, INSTAGRAM_REEL_URLS } from "./constants";
 
 describe("constants", () => {
   it("YOUTUBE_VIDEO_ID has the correct value", () => {
-    expect(YOUTUBE_VIDEO_ID).toBe("AXDhphHBUj4");
+    expect(YOUTUBE_VIDEO_ID).toBe("fw3keeNmJB4");
   });
 
   it("INSTAGRAM_REEL_URLS has exactly 3 entries", () => {

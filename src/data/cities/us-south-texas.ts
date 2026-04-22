@@ -37,6 +37,27 @@ export const usSouthTexasCities: Record<string, CityData> = {
       "college-station",
       "oklahoma-city",
     ],
+    communityStats:
+      "130,000 South Asians call the Dallas-Fort Worth metro home",
+    relatedArticleSlugs: [
+      "what-actually-happens-at-a-live-comedy-dating-show",
+      "how-to-get-cast-on-a-live-dating-show",
+      "irl-dating-revival",
+    ],
+    faqItems: [
+      {
+        q: "When is Garam Masala Dating coming to Dallas?",
+        a: "No date confirmed yet. DFW is a priority market for fall 2026. Join the waitlist and you will be first in line for presale tickets and casting.",
+      },
+      {
+        q: "Where in DFW will the show be?",
+        a: "We are looking at venues in Dallas and Plano. Waitlist members get presale access and casting priority when a venue is confirmed.",
+      },
+      {
+        q: "Can people in Plano, Irving, and Richardson attend?",
+        a: "Yes. The Dallas show is built for the entire metro South Asian community, including the suburbs.",
+      },
+    ],
   },
 
   houston: {
@@ -75,6 +96,25 @@ export const usSouthTexasCities: Record<string, CityData> = {
       "college-station",
       "new-orleans",
     ],
+    communityStats: "160,000 South Asians live in the Houston metro area",
+    relatedArticleSlugs: [
+      "what-actually-happens-at-a-live-comedy-dating-show",
+      "tired-of-dating-apps-desi-singles-irl-events",
+    ],
+    faqItems: [
+      {
+        q: "When is Garam Masala Dating coming to Houston?",
+        a: "No date confirmed yet. Houston is a top priority for fall 2026. Join the waitlist to hear first when a date and venue are locked.",
+      },
+      {
+        q: "Will the show be near the Hillcroft corridor or Sugar Land?",
+        a: "Venue TBD. We are aware of the desi communities in Sugar Land, Hillcroft, and Katy and are looking at accessible central venues.",
+      },
+      {
+        q: "How do I get on the Houston waitlist?",
+        a: "Click the waitlist button and enter your email. You will receive presale access and casting opportunities before tickets go public.",
+      },
+    ],
   },
 
   austin: {
@@ -112,6 +152,27 @@ export const usSouthTexasCities: Record<string, CityData> = {
       "san-antonio",
       "college-station",
       "oklahoma-city",
+    ],
+    communityStats:
+      "Austin's South Asian community has grown rapidly with tech migration, concentrated in Round Rock, Cedar Park, and the Domain area",
+    relatedArticleSlugs: [
+      "indian-tech-bro-guide-dating-silicon-valley",
+      "what-actually-happens-at-a-live-comedy-dating-show",
+      "tired-of-dating-apps-desi-singles-irl-events",
+    ],
+    faqItems: [
+      {
+        q: "When is Garam Masala Dating coming to Austin?",
+        a: "No date confirmed yet. Austin is a priority for fall 2026. Join the waitlist for presale access and casting priority.",
+      },
+      {
+        q: "Is this show only for South Asian people?",
+        a: "The show focuses on the South Asian singles experience but the audience is open to everyone. Our NYC crowd is desi, culturally adjacent, or genuinely curious.",
+      },
+      {
+        q: "Can I apply to be on the show before an Austin date is announced?",
+        a: "Yes. Apply now. Applications stay active for 12 months. Austin applicants will be prioritized when we confirm a date.",
+      },
     ],
   },
 

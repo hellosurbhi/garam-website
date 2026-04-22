@@ -7,6 +7,7 @@ import { isEventPast } from "@/utils/eventDate";
 import { buildEventSchemas } from "@/utils/eventSchema";
 import LeadCaptureModal from "@/components/LeadCaptureModal.astro";
 import { buildTicketUrl } from "@/utils/eventUrl";
+import { buildTaglineMap } from "@/utils/eventTaglines";
 import { PAGES } from "@/data/copy";
 
 const TITLE = "Tickets & Upcoming Shows";
@@ -16,6 +17,8 @@ const DESC =
 const upcomingEvents = allEvents.filter(
   (e) => !isEventPast(e.date) && !e.hidden,
 );
+
+const taglineMap = buildTaglineMap(upcomingEvents);
 
 const widgetEvents = upcomingEvents
   .filter((e) => e.eventbriteId && !e.soldOut)
@@ -116,6 +119,7 @@ const eventSeriesJsonLd = JSON.stringify({
               const isSoldOut = event.soldOut ?? false;
               const hasWidget =
                 isLive && !isSoldOut && Boolean(event.eventbriteId);
+              const tagline = taglineMap.get(event.url);
               return hasWidget ? (
                 <a
                   href={buildTicketUrl(event.url, "tickets", "listing")}
@@ -134,8 +138,8 @@ const eventSeriesJsonLd = JSON.stringify({
                   <div class="ticket-card__info">
                     <span class="ticket-card__date">{event.date}</span>
                     <span class="ticket-card__city">{event.city}</span>
-                    {event.tagline && (
-                      <span class="ticket-card__tagline">{event.tagline}</span>
+                    {tagline && (
+                      <span class="ticket-card__tagline">{tagline}</span>
                     )}
                   </div>
                   <span class="ticket-card__cta">
@@ -175,8 +179,8 @@ const eventSeriesJsonLd = JSON.stringify({
                   <div class="ticket-card__info">
                     <span class="ticket-card__date">{event.date}</span>
                     <span class="ticket-card__city">{event.city}</span>
-                    {event.tagline && !isSoldOut && (
-                      <span class="ticket-card__tagline">{event.tagline}</span>
+                    {tagline && (
+                      <span class="ticket-card__tagline">{tagline}</span>
                     )}
                   </div>
                   <span

@@ -499,7 +499,7 @@ function ApplyPageInner() {
 
                   <div className={styles.sectionLarge}>
                     <SectionTitle className={styles.anythingElse}>
-                      Anything else?
+                      Make Your Case
                     </SectionTitle>
                     <FieldGroup
                       label="What's your type... (we will do our best to match you)"
@@ -518,7 +518,7 @@ function ApplyPageInner() {
                     <FieldGroup
                       label={
                         form.applicationType === "Self"
-                          ? "Why would you be a great fit? (optional)"
+                          ? "Why would you be a great fit?"
                           : "Why would your friend be a great fit? (optional)"
                       }
                     >

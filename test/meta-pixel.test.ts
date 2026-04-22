@@ -11,11 +11,11 @@ describe("Meta Pixel component", () => {
   );
 
   it("initializes fbq with the correct pixel ID", () => {
-    expect(source).toContain(`fbq('init', '${PIXEL_ID}')`);
+    expect(source).toContain(`fbq("init", "${PIXEL_ID}")`);
   });
 
   it("tracks PageView event", () => {
-    expect(source).toContain("fbq('track', 'PageView')");
+    expect(source).toContain('fbq("track", "PageView")');
   });
 
   it("loads fbevents.js from connect.facebook.net", () => {

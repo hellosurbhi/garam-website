@@ -20,6 +20,7 @@ import { toxicPatternsPosts } from "./toxic-patterns";
 import { casteClassPosts } from "./caste-class";
 import { arrangedMarriagePosts } from "./arranged-marriage";
 import { communityDeepDivesPosts } from "./community-deep-dives";
+import { tipsPosts } from "./tips";
 
 /** All journal posts combined */
 export const journalPosts: JournalPost[] = [
@@ -38,6 +39,7 @@ export const journalPosts: JournalPost[] = [
   ...casteClassPosts,
   ...arrangedMarriagePosts,
   ...communityDeepDivesPosts,
+  ...tipsPosts,
 ];
 
 /** Sorted newest-first by datePublished. */

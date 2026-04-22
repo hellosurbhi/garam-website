@@ -58,9 +58,8 @@ export const tipsPosts: JournalPost[] = [
       },
     ],
     relatedSlugs: [
-      "south-asian-singles-events-nyc",
-      "tired-of-dating-apps-desi-singles-irl-events",
-      "the-realest-way-to-meet-desi-singles-in-nyc",
+      "how-to-find-someone-before-your-parents-arrange-marry-you-off",
+      "why-going-with-the-flow-is-ruining-your-dating-life",
     ],
   },
   {
@@ -116,9 +115,8 @@ export const tipsPosts: JournalPost[] = [
       },
     ],
     relatedSlugs: [
-      "arranged-marriage-timeline",
-      "modern-arranged-marriage-2026",
-      "how-to-say-no-arranged-match",
+      "how-to-find-love-as-a-desi-in-new-york",
+      "why-going-with-the-flow-is-ruining-your-dating-life",
     ],
   },
   {
@@ -130,7 +128,7 @@ export const tipsPosts: JournalPost[] = [
     dateModified: "2026-04-03",
     author: "Surbhi",
     excerpt:
-      "Getting offline and into a room with people who are actually serious about dating.",
+      "Stop pretending you're okay with a situationship. Here's how to date with intention and filter out time-wasters.",
     body: [
       {
         type: "p",
@@ -174,9 +172,8 @@ export const tipsPosts: JournalPost[] = [
       },
     ],
     relatedSlugs: [
-      "desi-situationship-trap",
-      "desi-red-flags-green-flags",
-      "breadcrumbing-desi-dating",
+      "how-to-find-love-as-a-desi-in-new-york",
+      "how-to-find-someone-before-your-parents-arrange-marry-you-off",
     ],
   },
 ];

@@ -71,6 +71,15 @@ describe("tipsPosts", () => {
     }
   });
 
+  it("relatedSlugs reference existing posts", () => {
+    const allSlugs = new Set(tipsPosts.map((p) => p.slug));
+    for (const post of tipsPosts) {
+      for (const slug of post.relatedSlugs) {
+        expect(allSlugs.has(slug)).toBe(true);
+      }
+    }
+  });
+
   it("slugs are unique across all posts", () => {
     const slugs = tipsPosts.map((p) => p.slug);
     expect(new Set(slugs).size).toBe(slugs.length);

@@ -15,6 +15,7 @@ interface EBWidgetConfig {
 declare global {
   interface Window {
     EBWidgets?: { createWidget: (config: EBWidgetConfig) => void };
+    dataLayer?: Record<string, unknown>[];
   }
 }
 
@@ -44,6 +45,19 @@ export function ApplySuccessPanel() {
       const bgColor = rootStyle.getPropertyValue("--white").trim() || "#FFFFFF";
       for (const show of showsWithWidget) {
         const tid = `eventbrite-widget-modal-trigger-success-${show.eventbriteId}`;
+        const btn = document.getElementById(tid);
+        btn?.addEventListener("click", () => {
+          sessionStorage.setItem(
+            "eb_cta_source",
+            JSON.stringify({
+              section: "apply_success",
+              page: window.location.pathname,
+              city: show.city,
+              price: show.price ?? "",
+              event_date: show.date,
+            }),
+          );
+        });
         try {
           window.EBWidgets?.createWidget({
             widgetType: "checkout",
@@ -51,11 +65,45 @@ export function ApplySuccessPanel() {
             modal: true,
             modalTriggerElementId: tid,
             themeSettings: { brandColor, fontColor, background: bgColor },
+            onOrderComplete() {
+              const raw = sessionStorage.getItem("eb_cta_source");
+              const src: Record<string, string> | null = raw
+                ? JSON.parse(raw)
+                : null;
+              sessionStorage.removeItem("eb_cta_source");
+              window.posthog?.capture?.("order_complete", {
+                event_id: show.eventbriteId,
+                city: show.city,
+                source_section: src?.section ?? "apply_success",
+                source_page: src?.page ?? "/apply",
+                price: src?.price ?? show.price ?? "",
+              });
+              const price = parseFloat(
+                (src?.price ?? show.price ?? "").replace(/[^0-9.]/g, "") || "0",
+              );
+              window.dataLayer = window.dataLayer ?? [];
+              window.dataLayer.push({ ecommerce: null });
+              window.dataLayer.push({
+                event: "purchase",
+                ecommerce: {
+                  currency: "USD",
+                  value: price,
+                  items: [
+                    {
+                      item_name: `Garam Masala Dating - ${show.city}`,
+                      item_id: String(show.eventbriteId),
+                      price,
+                      quantity: 1,
+                    },
+                  ],
+                },
+                source_section: "apply_success",
+                source_page: src?.page ?? "/apply",
+              });
+            },
           });
           // Prevent native click behavior once widget is bound
-          document
-            .getElementById(tid)
-            ?.addEventListener("click", (e) => e.preventDefault());
+          btn?.addEventListener("click", (e) => e.preventDefault());
         } catch {
           // Widget init failed; button stays inert (no navigation needed)
         }

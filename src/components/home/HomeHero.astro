@@ -78,6 +78,9 @@ function getHeroCity(city: string): string {
             data-start-time={event.startTime ?? "20:00"}
             data-end-time={event.endTime ?? "22:00"}
             data-city={event.city}
+            data-ph-section="hero"
+            data-ph-price={event.price}
+            data-ph-event-date={event.date}
           >
             {pillInner}
           </a>

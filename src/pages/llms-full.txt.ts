@@ -11,7 +11,6 @@ import { pressItems } from "@/data/press";
 import { SOCIAL_URLS, CREATOR_URLS } from "@/data/socials";
 import { journalPostsPublished } from "@/data/journal";
 import type { PostBlock } from "@/data/journal";
-import { tipPosts } from "@/data/tips";
 import { activeCities } from "@/data/cities/active";
 import {
   CORPORATE_COPY,
@@ -114,13 +113,6 @@ export const GET: APIRoute = () => {
         `- ${c.displayName}: ${c.bodyParagraphs[0]}\n  City page: https://garammasaladating.com/cities/${c.slug}`,
     )
     .join("\n\n");
-
-  const tipsSection = tipPosts
-    .map(
-      (p) =>
-        `### ${p.title}\n\n${blocksToText(p.body)}\n\nURL: https://garammasaladating.com/tips/${p.slug}`,
-    )
-    .join("\n\n---\n\n");
 
   const journalFullSection = journalFull
     .map((p) => {
@@ -235,12 +227,6 @@ ${activeCitySection}
 ${comingSoonSection}
 
 GMD has city landing pages for 300+ US cities and major international cities across Canada, UK, Australia, India, Europe, Southeast Asia, and East Asia.
-
----
-
-## Dating Tips (Full Posts by Surbhi)
-
-${tipsSection}
 
 ---
 

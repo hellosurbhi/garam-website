@@ -3,7 +3,6 @@ import BaseLayout from "@/layouts/BaseLayout.astro";
 import { buildBreadcrumbJsonLd } from "@/utils/breadcrumbs";
 import ApplyPage from "@/components/ApplyPage";
 import { APPLY_PAGE } from "@/data/copy";
-import { events } from "@/data/events";
 
 const breadcrumbJsonLd = buildBreadcrumbJsonLd([
   { name: "Home", url: "https://garammasaladating.com/" },
@@ -45,7 +44,7 @@ const breadcrumbJsonLd = buildBreadcrumbJsonLd([
           </div>
           <div class="apply-skeleton-title-area">
             <h1 class="apply-skeleton-title">
-              Apply to Be on Garam Masala Dating
+              {APPLY_PAGE.title}
             </h1>
             <p class="apply-skeleton-subtitle">
               {APPLY_PAGE.subtitle}

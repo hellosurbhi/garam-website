@@ -1,24 +1,13 @@
-import type { PostBlock } from "./journal/types";
+import type { JournalPost } from "./types";
 
-export interface TipPost {
-  slug: string;
-  title: string;
-  metaDescription: string;
-  datePublished: string;
-  dateModified: string;
-  author: string;
-  excerpt: string;
-  body: PostBlock[];
-}
-
-export const tipPosts: TipPost[] = [
+export const tipsPosts: JournalPost[] = [
   {
     slug: "how-to-find-love-as-a-desi-in-new-york",
     title: "How to Find Love as a Desi in New York",
     metaDescription:
       "Finding love as a South Asian in NYC means getting off the apps and tapping into high-intent, real-world networks. Here\u2019s how to actually cut through the noise.",
-    datePublished: "2026-03-31",
-    dateModified: "2026-03-31",
+    datePublished: "2026-04-01",
+    dateModified: "2026-04-01",
     author: "Surbhi",
     excerpt:
       "The apps are exhausting, the aunties are hovering, and the city is massive. Here is how to actually meet people.",
@@ -68,14 +57,18 @@ export const tipPosts: TipPost[] = [
         text: "You aren\u2019t going to find your future spouse at a crowded, sticky-floored club at 2 AM, and you probably won\u2019t find them swiping at 11 PM on your couch. Put yourself in rooms where people are actively, intentionally looking to connect. Live events, curated matchmaking mixers, and community gatherings act as a natural filter for people who are serious enough to show up in real life.",
       },
     ],
+    relatedSlugs: [
+      "how-to-find-someone-before-your-parents-arrange-marry-you-off",
+      "why-going-with-the-flow-is-ruining-your-dating-life",
+    ],
   },
   {
     slug: "how-to-find-someone-before-your-parents-arrange-marry-you-off",
     title: "How to Find Someone Before Your Parents Arrange Marry You Off",
     metaDescription:
       "To find a partner before an arranged marriage, treat your dating life with the same urgency your parents treat your biodata. Here\u2019s how to take control of your timeline.",
-    datePublished: "2026-03-31",
-    dateModified: "2026-03-31",
+    datePublished: "2026-04-02",
+    dateModified: "2026-04-02",
     author: "Surbhi",
     excerpt:
       "The clock is ticking and the biodatas are piling up. A survival guide to taking control of your own timeline.",
@@ -121,17 +114,21 @@ export const tipPosts: TipPost[] = [
         text: "If you are hiding from your parents\u2019 matchmaking, your own matchmaking needs to be better. Endless swiping on generic apps isn\u2019t going to cut it. You need to seek out platforms and spaces designed specifically for South Asians who are exhausted by casual dating and are ready to actually build a life with someone.",
       },
     ],
+    relatedSlugs: [
+      "how-to-find-love-as-a-desi-in-new-york",
+      "why-going-with-the-flow-is-ruining-your-dating-life",
+    ],
   },
   {
     slug: "why-going-with-the-flow-is-ruining-your-dating-life",
     title: "Why \u201CGoing With the Flow\u201D is Ruining Your Dating Life",
     metaDescription:
       "\u201CGoing with the flow\u201D is a dating trap that leads directly to dead-end situationships. Replace passive dating with active vetting to find real commitment.",
-    datePublished: "2026-03-31",
-    dateModified: "2026-03-31",
+    datePublished: "2026-04-03",
+    dateModified: "2026-04-03",
     author: "Surbhi",
     excerpt:
-      "Getting offline and into a room with people who are actually serious about dating.",
+      "Stop pretending you're okay with a situationship. Here's how to date with intention and filter out time-wasters.",
     body: [
       {
         type: "p",
@@ -174,15 +171,9 @@ export const tipPosts: TipPost[] = [
         text: "Real commitment starts with how they treat the dating process. If they are willing to dress up, show up on time to a curated event, and engage in real conversation without hiding behind a screen, they are showing you they are serious. Look for the people who are putting in the work.",
       },
     ],
+    relatedSlugs: [
+      "how-to-find-love-as-a-desi-in-new-york",
+      "how-to-find-someone-before-your-parents-arrange-marry-you-off",
+    ],
   },
 ];
-
-/** Sorted newest-first by datePublished. */
-export const tipPostsSorted = [...tipPosts].sort(
-  (a, b) =>
-    new Date(b.datePublished).getTime() - new Date(a.datePublished).getTime(),
-);
-
-export function getTipBySlug(slug: string): TipPost | undefined {
-  return tipPosts.find((p) => p.slug === slug);
-}

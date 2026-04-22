@@ -10,7 +10,7 @@ export function buildTicketUrl(
 ): string {
   if (!baseUrl) return baseUrl;
   const url = new URL(baseUrl);
-  url.searchParams.set("aff", "garamsite");
+  url.searchParams.set("aff", `garamsite${campaign}`);
   url.searchParams.set("utm_source", "garamsite");
   url.searchParams.set("utm_medium", "web");
   url.searchParams.set("utm_campaign", campaign);

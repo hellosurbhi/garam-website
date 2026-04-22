@@ -1,6 +1,7 @@
 import { useMemo, useEffect } from "react";
 import { events } from "@/data/events";
 import { SOCIAL_URLS } from "@/data/socials";
+import { buildTicketUrl } from "@/utils/eventUrl";
 import styles from "@/components/ApplyPage.module.css";
 
 interface EBWidgetConfig {
@@ -183,7 +184,7 @@ export function ApplySuccessPanel() {
                     </button>
                   ) : (
                     <a
-                      href={show.url}
+                      href={buildTicketUrl(show.url, "apply", "success")}
                       target="_blank"
                       rel="noopener noreferrer"
                       className={styles.successTicketButton}

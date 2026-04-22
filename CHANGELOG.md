@@ -1,5 +1,29 @@
 # Changelog
 
+## feat(analytics): track conversion source and push purchase events to dataLayer (2026-04-22)
+
+### What changed
+
+**Eventbrite tracking link differentiation** (`src/utils/eventUrl.ts`): Changed `aff` param from static `garamsite` to `garamsite{campaign}` so each page generates its own Eventbrite tracking link value. Add these 4 entries in Eventbrite → Manage → Tracking Links: `garamsitehome` (homepage), `garamsitetickets` (/tickets), `garamsitelinks` (/links), `garamsitecities` (city pages). Eventbrite will now attribute ticket sales and revenue per page source natively.
+
+**Conversion source attribution** (`src/components/EventbriteWidgetInit.astro`, `src/pages/tickets.astro`): On every "Get Tickets" button click, the CTA's section, page path, city, and price are written to `sessionStorage` under `eb_cta_source`. The `onOrderComplete` callback reads this context and includes `source_section` and `source_page` in the PostHog `order_complete` event, so PostHog now shows which page/section drove each purchase. Key cleared from `sessionStorage` immediately after reading.
+
+**GA4 purchase events** (same files): `onOrderComplete` now pushes a GA4-compatible ecommerce `purchase` event to `window.dataLayer` with currency, value, item name/ID, and source context. GTM can pick this up with a Custom Event trigger on `purchase` + GA4 Enhanced Ecommerce tag — enabling GA4 to track revenue and conversions.
+
+### Files affected
+
+- `src/utils/eventUrl.ts` — `aff` param now includes campaign name
+- `src/components/EventbriteWidgetInit.astro` — sessionStorage write on click, enriched `onOrderComplete` with PostHog + dataLayer events
+- `src/pages/tickets.astro` — same enrichment in inline widget script, added `price` to `widgetEvents`
+
+### Decisions
+
+- Tracking link values use no separators (alphanumeric only) per Eventbrite's constraints
+- `sessionStorage` chosen over `localStorage` so context clears on tab close and doesn't bleed across sessions
+- Fallback values (`"tickets"` / `"/tickets"`) ensure `order_complete` always has a source even if sessionStorage was somehow missed
+
+---
+
 ## feat(seo): city page enrichment for Google indexability (2026-04-22)
 
 ### What changed

@@ -10,6 +10,7 @@ import { SHOW_IMAGES, slugToImageIndex } from "@/data/images";
 import { buildTicketUrl } from "@/utils/eventUrl";
 import { EVENTS } from "@/data/copy";
 import { getPostBySlug } from "@/data/journal";
+import { SOCIAL_URLS } from "@/data/socials";
 
 export function getStaticPaths() {
   return Object.keys(cities).map((slug) => ({
@@ -127,6 +128,26 @@ const breadcrumbJsonLd = buildBreadcrumbJsonLd([
 const relatedPosts = (city.relatedArticleSlugs ?? [])
   .map((slug) => getPostBySlug(slug))
   .filter((p) => p !== undefined);
+
+const applyHref =
+  city.ctas.find((c) => c.href !== "#waitlist")?.href ?? "/apply";
+
+const staticPrimaryCta =
+  cityEvents.length === 0 ? (city.ctas[0] ?? null) : null;
+const staticSecondaryCtas =
+  cityEvents.length === 0 ? city.ctas.slice(1) : city.ctas;
+
+function renderCityText(text: string, href: string): string {
+  return text
+    .replace(
+      /get on the list|join the waitlist/gi,
+      `<button class="city-inline-cta" data-waitlist-trigger>$&</button>`,
+    )
+    .replace(
+      /apply to be a contestant|apply now/gi,
+      `<a class="city-inline-link" href="${href}">$&</a>`,
+    );
+}
 ---
 
 <BaseLayout title={title} description={description}>
@@ -149,17 +170,43 @@ const relatedPosts = (city.relatedArticleSlugs ?? [])
       {/* Eyebrow label */}
       <p class="city-eyebrow">{city.displayName}</p>
 
-      {/* Community stats */}
-      {city.communityStats && <p class="city-stat">{city.communityStats}</p>}
-
       {/* H1 */}
       <h1 class="city-h1">{city.h1}</h1>
 
       {/* Body */}
       <div class="city-body">
         {
-          city.bodyParagraphs.map((para) => (
-            <p class="city-paragraph">{para}</p>
+          city.bodyParagraphs.map((para, i) => (
+            <>
+              <p
+                class="city-paragraph"
+                set:html={renderCityText(para, applyHref)}
+              />
+              {i === 0 && (
+                <aside class="city-social-cta" aria-label="Follow us">
+                  <p class="city-social-cta__text">
+                    We sell out every week in NYC.{" "}
+                    <a
+                      href={SOCIAL_URLS.instagram}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                    >
+                      Instagram
+                    </a>{" "}
+                    has the best moments, and{" "}
+                    <a
+                      href={SOCIAL_URLS.youtube}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                    >
+                      YouTube
+                    </a>{" "}
+                    has full episodes. Watch while we make our way to{" "}
+                    {city.displayName}.
+                  </p>
+                </aside>
+              )}
+            </>
           ))
         }
       </div>
@@ -172,8 +219,8 @@ const relatedPosts = (city.relatedArticleSlugs ?? [])
             <div class="city-articles__list">
               {relatedPosts.map((post) => (
                 <a href={`/journal/${post.slug}`} class="city-articles__card">
-                  <p class="city-articles__card-title">{post.title}</p>
-                  <p class="city-articles__card-excerpt">{post.excerpt}</p>
+                  <span class="city-articles__card-title">{post.title}</span>
+                  <span class="city-articles__card-arrow">&rarr;</span>
                 </a>
               ))}
             </div>
@@ -238,21 +285,16 @@ const relatedPosts = (city.relatedArticleSlugs ?? [])
             );
           })
         }
-        {/* Static CTAs (apply, waitlist, etc.) */}
+        {/* Primary static CTA */}
         {
-          city.ctas.map((cta, i) => {
-            const isWaitlist = cta.href === "#waitlist";
-            const isPrimary = cityEvents.length === 0 && i === 0;
-            return isWaitlist ? (
+          staticPrimaryCta &&
+            (staticPrimaryCta.href === "#waitlist" ? (
               <button
                 type="button"
-                class:list={[
-                  "city-cta",
-                  isPrimary ? "city-cta--primary" : "city-cta--secondary",
-                ]}
+                class="city-cta city-cta--primary"
                 data-waitlist-trigger
               >
-                <span>{cta.label}</span>
+                <span>{staticPrimaryCta.label}</span>
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
                   width="16"
@@ -264,22 +306,18 @@ const relatedPosts = (city.relatedArticleSlugs ?? [])
                   stroke-linecap="round"
                   stroke-linejoin="round"
                   class="city-cta__arrow"
+                  aria-hidden="true"
                 >
-                  <>
-                    <path d="M5 12h14" />
-                    <path d="m12 5 7 7-7 7" />
-                  </>
+                  <path d="M5 12h14" />
+                  <path d="m12 5 7 7-7 7" />
                 </svg>
               </button>
             ) : (
               <a
-                href={cta.href}
-                class:list={[
-                  "city-cta",
-                  isPrimary ? "city-cta--primary" : "city-cta--secondary",
-                ]}
+                href={staticPrimaryCta.href}
+                class="city-cta city-cta--primary"
               >
-                <span>{cta.label}</span>
+                <span>{staticPrimaryCta.label}</span>
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
                   width="16"
@@ -291,15 +329,31 @@ const relatedPosts = (city.relatedArticleSlugs ?? [])
                   stroke-linecap="round"
                   stroke-linejoin="round"
                   class="city-cta__arrow"
+                  aria-hidden="true"
                 >
-                  <>
-                    <path d="M5 12h14" />
-                    <path d="m12 5 7 7-7 7" />
-                  </>
+                  <path d="M5 12h14" />
+                  <path d="m12 5 7 7-7 7" />
                 </svg>
               </a>
-            );
-          })
+            ))
+        }
+        {/* Secondary CTAs as text links */}
+        {
+          staticSecondaryCtas.map((cta) =>
+            cta.href === "#waitlist" ? (
+              <button
+                type="button"
+                class="city-cta--tertiary"
+                data-waitlist-trigger
+              >
+                {cta.label} &rarr;
+              </button>
+            ) : (
+              <a href={cta.href} class="city-cta--tertiary">
+                {cta.label} &rarr;
+              </a>
+            ),
+          )
         }
       </div>
 
@@ -445,7 +499,10 @@ const relatedPosts = (city.relatedArticleSlugs ?? [])
               {city.faqItems.map((item) => (
                 <details class="city-faq__item">
                   <summary class="city-faq__question">{item.q}</summary>
-                  <p class="city-faq__answer">{item.a}</p>
+                  <p
+                    class="city-faq__answer"
+                    set:html={renderCityText(item.a, applyHref)}
+                  />
                 </details>
               ))}
             </div>
@@ -456,30 +513,19 @@ const relatedPosts = (city.relatedArticleSlugs ?? [])
       {/* Nearby cities */}
       {
         nearbyCities.length > 0 && (
-          <div class="city-nearby">
-            <h3 class="city-nearby__title">Also coming to</h3>
-            <div class="city-nearby__list">
-              {nearbyCities.map((nc) => (
+          <p class="city-nearby">
+            <span class="city-nearby__label">Also coming to: </span>
+            {nearbyCities.map((nc, i) => (
+              <>
                 <a href={`/cities/${nc.slug}`} class="city-nearby__link">
                   {nc.displayName}
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    width="14"
-                    height="14"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    stroke-width="2"
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                  >
-                    <path d="M5 12h14" />
-                    <path d="m12 5 7 7-7 7" />
-                  </svg>
                 </a>
-              ))}
-            </div>
-          </div>
+                {i < nearbyCities.length - 1 && (
+                  <span class="city-nearby__sep">, </span>
+                )}
+              </>
+            ))}
+          </p>
         )
       }
 
@@ -746,6 +792,15 @@ const relatedPosts = (city.relatedArticleSlugs ?? [])
     margin-bottom: 16px;
   }
 
+  .city-stat {
+    font-family: var(--font-cormorant);
+    font-style: italic;
+    font-size: 15px;
+    color: var(--muted);
+    line-height: 1.6;
+    margin-bottom: 20px;
+  }
+
   .city-h1 {
     font-family: var(--font-playfair);
     font-size: clamp(28px, 5vw, 40px);
@@ -770,11 +825,56 @@ const relatedPosts = (city.relatedArticleSlugs ?? [])
     margin: 0;
   }
 
+  /* set:html content bypasses Astro scoping — must use :global() */
+  :global(.city-inline-cta) {
+    background: none;
+    border: none;
+    font-family: var(--font-cormorant), serif;
+    font-style: italic;
+    font-size: inherit;
+    color: var(--brand-red);
+    text-decoration: underline;
+    cursor: pointer;
+    padding: 0;
+    display: inline;
+  }
+
+  :global(.city-inline-link) {
+    color: var(--brand-red);
+    text-decoration: underline;
+    font-style: italic;
+  }
+
+  .city-social-cta {
+    background: rgba(var(--brand-red-rgb), 0.05);
+    border-left: 3px solid var(--brand-red);
+    border-radius: 0 8px 8px 0;
+    padding: 14px 18px;
+  }
+
+  .city-social-cta__text {
+    font-family: var(--font-body), sans-serif;
+    font-size: 15px;
+    line-height: 1.6;
+    color: var(--charcoal);
+    margin: 0;
+  }
+
+  .city-social-cta__text a {
+    color: var(--brand-red);
+    font-weight: 600;
+    text-decoration: none;
+  }
+
+  .city-social-cta__text a:hover {
+    text-decoration: underline;
+  }
+
   .city-ctas {
     display: flex;
     flex-direction: column;
     gap: 12px;
-    margin-top: 44px;
+    margin-top: 32px;
   }
 
   .city-cta {
@@ -806,10 +906,24 @@ const relatedPosts = (city.relatedArticleSlugs ?? [])
     color: var(--brand-red);
   }
 
-  .city-cta--secondary {
-    border-color: rgba(0, 0, 0, 0.1);
-    background: white;
+  .city-cta--tertiary {
+    display: block;
+    text-align: center;
+    font-family: var(--font-body);
+    font-size: 14px;
+    font-weight: 500;
     color: var(--text-secondary);
+    text-decoration: none;
+    padding: 8px 0;
+    transition: color 0.15s;
+    background: none;
+    border: none;
+    cursor: pointer;
+    width: 100%;
+  }
+
+  .city-cta--tertiary:hover {
+    color: var(--brand-red);
   }
 
   .city-cta__arrow {
@@ -819,45 +933,31 @@ const relatedPosts = (city.relatedArticleSlugs ?? [])
   /* ─── Nearby Cities ───────────────────────────────── */
 
   .city-nearby {
-    padding-top: 32px;
-  }
-
-  .city-nearby__title {
+    padding-top: 20px;
     font-family: var(--font-body);
-    font-size: 11px;
-    font-weight: 500;
-    text-transform: uppercase;
-    letter-spacing: 0.15em;
+    font-size: 13px;
     color: var(--muted);
-    margin-bottom: 16px;
+    line-height: 1.6;
+    margin: 0;
   }
 
-  .city-nearby__list {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 10px;
+  .city-nearby__label {
+    color: var(--muted);
   }
 
   .city-nearby__link {
-    display: inline-flex;
-    align-items: center;
-    gap: 6px;
-    padding: 10px 16px;
-    border: 1px solid rgba(0, 0, 0, 0.08);
-    border-radius: 50px;
-    font-family: var(--font-body);
-    font-size: 14px;
-    font-weight: 500;
     color: var(--text-secondary);
+    font-weight: 500;
     text-decoration: none;
-    transition:
-      border-color 0.15s,
-      color 0.15s;
+    transition: color 0.15s;
   }
 
   .city-nearby__link:hover {
-    border-color: rgba(var(--brand-red-rgb), 0.3);
     color: var(--brand-red);
+  }
+
+  .city-nearby__sep {
+    color: var(--muted);
   }
 
   .city-footer {
@@ -1105,84 +1205,67 @@ const relatedPosts = (city.relatedArticleSlugs ?? [])
     color: var(--charcoal);
   }
 
-  /* ─── Community Stat ──────────────────────────────── */
-
-  .city-stat {
-    font-family: var(--font-body);
-    font-size: 11px;
-    font-weight: 500;
-    text-transform: uppercase;
-    letter-spacing: 0.12em;
-    color: var(--brand-red);
-    margin-bottom: 20px;
-    opacity: 0.8;
-  }
-
   /* ─── Related Journal Articles ────────────────────── */
 
   .city-articles {
-    margin-top: 48px;
-    padding: 28px 24px;
-    background: var(--cream-warm);
-    border-radius: 16px;
+    margin-top: 28px;
+    padding-top: 20px;
+    border-top: 1px solid rgba(0, 0, 0, 0.06);
   }
 
   .city-articles__title {
-    font-family: var(--font-body);
-    font-size: 11px;
-    font-weight: 500;
-    text-transform: uppercase;
-    letter-spacing: 0.15em;
-    color: var(--muted);
+    font-family: var(--font-playfair);
+    font-size: 20px;
+    font-weight: 700;
+    color: var(--charcoal);
     margin-bottom: 16px;
   }
 
   .city-articles__list {
     display: flex;
     flex-direction: column;
-    gap: 12px;
+    gap: 10px;
   }
 
   .city-articles__card {
-    display: block;
-    padding: 16px;
-    background: #fff;
-    border: 1px solid rgba(0, 0, 0, 0.06);
-    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 14px 18px;
+    background: rgba(var(--brand-red-rgb), 0.04);
+    border: 1px solid rgba(var(--brand-red-rgb), 0.1);
+    border-radius: 8px;
     text-decoration: none;
-    transition: border-color 0.15s;
+    transition:
+      background 0.15s ease,
+      border-color 0.15s ease;
   }
 
   .city-articles__card:hover {
-    border-color: rgba(var(--brand-red-rgb), 0.25);
+    background: rgba(var(--brand-red-rgb), 0.08);
+    border-color: rgba(var(--brand-red-rgb), 0.2);
   }
 
   .city-articles__card-title {
-    font-family: var(--font-playfair);
-    font-size: 15px;
-    font-weight: 600;
+    font-family: var(--font-body);
+    font-size: 14px;
+    font-weight: 500;
     color: var(--charcoal);
-    margin: 0 0 6px;
     line-height: 1.35;
   }
 
-  .city-articles__card-excerpt {
-    font-family: var(--font-body);
-    font-size: 13px;
-    color: var(--text-secondary);
-    margin: 0;
-    line-height: 1.5;
-    display: -webkit-box;
-    -webkit-line-clamp: 2;
-    -webkit-box-orient: vertical;
-    overflow: hidden;
+  .city-articles__card-arrow {
+    color: var(--brand-red);
+    font-size: 16px;
+    flex-shrink: 0;
   }
 
   /* ─── FAQ Section ─────────────────────────────────── */
 
   .city-faq {
-    margin-top: 48px;
-    padding-top: 32px;
+    margin-top: 20px;
+    padding-top: 28px;
     border-top: 1px solid rgba(0, 0, 0, 0.06);
   }
 

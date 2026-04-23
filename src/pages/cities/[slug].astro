@@ -185,8 +185,7 @@ function renderCityText(text: string, href: string): string {
               {i === 0 && (
                 <aside class="city-social-cta" aria-label="Follow us">
                   <p class="city-social-cta__text">
-                    While we work on bringing the show to {city.displayName},
-                    check us out on{" "}
+                    We sell out every week in NYC.{" "}
                     <a
                       href={SOCIAL_URLS.instagram}
                       target="_blank"
@@ -194,16 +193,16 @@ function renderCityText(text: string, href: string): string {
                     >
                       Instagram
                     </a>{" "}
-                    for short clips and behind-the-scenes, or watch full
-                    episodes on{" "}
+                    has the best moments, and{" "}
                     <a
                       href={SOCIAL_URLS.youtube}
                       target="_blank"
                       rel="noopener noreferrer"
                     >
                       YouTube
-                    </a>
-                    .
+                    </a>{" "}
+                    has full episodes — watch while we make our way to{" "}
+                    {city.displayName}.
                   </p>
                 </aside>
               )}

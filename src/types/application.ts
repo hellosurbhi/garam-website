@@ -18,6 +18,10 @@ export interface Application {
   applicationType: string;
   referrerName?: string;
   pitch?: string;
+  type?: string;
+  seenShowBefore?: boolean;
+  marketingConsent?: "yes" | "no";
+  termsAgreedAt?: Timestamp;
   photoUrl: string;
   deletedAt?: Timestamp | null;
   status: "New" | "Contacted" | "Cast" | "Rejected";

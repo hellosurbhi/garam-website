@@ -6,15 +6,15 @@ export const ukCities: Record<string, CityData> = {
     displayName: "London",
     titleTag: "London South Asian Singles",
     metaDescription:
-      "Garam Masala Dating is coming to London. The #1 live South Asian dating show and singles mixer. Southall, Wembley, Tooting, East Ham, and the rest of London\u2019s massive desi scene.",
+      "Garam Masala Dating is coming to London. Live South Asian dating show and mixer. Southall, Wembley, Tooting, East Ham, and the rest of London\u2019s.",
     h1: "From Southall to Shoreditch, London Gets a Live Dating Show",
     status: "coming-soon",
     badgeLabel: "Coming Soon",
     bodyParagraphs: [
       'Southall. Wembley. Tooting. East Ham. Hounslow. London doesn\u2019t just have a South Asian community, it has about fifteen of them, each with its own character and its own version of "why are you still single." The British Asian population in London is enormous and deeply established, multiple generations deep, and somehow nobody has built a proper live dating show for this audience yet.',
-      "Garam Masala Dating is the #1 live South Asian dating show and singles mixer that has been selling out 250 person rooms in New York City. Real singles go on blind dates on stage. Two hosts keep it funny and honest. The whole audience mixes before and after. It\u2019s comedy, it\u2019s dating, and it\u2019s the best night out you\u2019ll have that month.",
+      "The format from New York: real contestants go on live dates on stage while the room watches and reacts. Afterward, the whole crowd mingles. In London, where the desi community has depth but no dedicated singles programming, this format creates exactly the concentrated energy the city needs.",
       'London\u2019s desi dating scene is weirdly segmented. You\u2019ve got the Imperial and UCL crowd in Zone 1, the LSE finance types, the King\u2019s College lot in Waterloo, and then the massive suburban populations in Harrow, Hounslow, and Ilford who never get catered to by the "trendy" events in Shoreditch. This show brings everyone to the same room regardless of postcode.',
-      "The UK comedy circuit is world class and British Asian comedy has been having a moment for years. The #1 live dating show that combines South Asian culture, stand up energy, and actual matchmaking fits this city better than almost anywhere outside New York.",
+      "The UK comedy circuit is world class and British Asian comedy has been having a moment for years. The live live dating show that combines South Asian culture, stand up energy, and actual matchmaking fits this city better than almost anywhere outside New York.",
       "We\u2019re building the London waitlist and the numbers are already wild. Get on it for first access to tickets, or apply to be a contestant. Zone 1 through Zone 6, everyone\u2019s welcome.",
     ],
     ctas: [
@@ -28,6 +28,27 @@ export const ukCities: Record<string, CityData> = {
     addressCountry: "GB",
     region: "United Kingdom",
     nearbyCities: ["slough", "luton", "reading", "southampton", "birmingham"],
+    communityStats:
+      "Over 1.5 million South Asians live in London, making it one of the largest desi populations in the world outside South Asia",
+    relatedArticleSlugs: [
+      "irl-dating-revival",
+      "what-actually-happens-at-a-live-comedy-dating-show",
+      "tired-of-dating-apps-desi-singles-irl-events",
+    ],
+    faqItems: [
+      {
+        q: "When is Garam Masala Dating coming to London?",
+        a: "No date confirmed yet. London is at the top of our international expansion list. Join the waitlist for presale access and casting priority when a venue is confirmed.",
+      },
+      {
+        q: "Where will the London show be held?",
+        a: "TBD. We are evaluating venues accessible from Southall, Wembley, East Ham, and the city centre. Waitlist members will be first to know.",
+      },
+      {
+        q: "Is the show open to attendees from outside Zone 1?",
+        a: "Yes. We are specifically looking at venues accessible to the full London South Asian community, not just the city centre crowd.",
+      },
+    ],
   },
 
   birmingham: {
@@ -35,13 +56,13 @@ export const ukCities: Record<string, CityData> = {
     displayName: "Birmingham",
     titleTag: "Live Dating Show Birmingham UK",
     metaDescription:
-      "Garam Masala Dating is coming to Birmingham. The #1 live South Asian dating show and singles mixer. Handsworth, Sparkhill, and the UK\u2019s largest South Asian community outside London.",
+      "Garam Masala Dating is coming to Birmingham. Live South Asian dating show and mixer. Handsworth, Sparkhill, and the UK\u2019s largest South Asian.",
     h1: "The Balti Triangle Built a Food Legacy. Now Brum Gets a Dating One.",
     status: "coming-soon",
     badgeLabel: "Coming Soon",
     bodyParagraphs: [
       "Birmingham has the largest South Asian population of any UK city outside London. Handsworth and Sparkhill have been the anchors for decades, with thriving Pakistani, Bangladeshi, and Indian communities that have shaped the city\u2019s culture from the food to the music to the politics. The Balti Triangle alone tells you everything about how deep desi culture runs here.",
-      "Garam Masala Dating is the #1 live South Asian dating show and singles mixer from NYC. Real singles on blind dates, on stage, in front of a live audience. Two hosts keep the energy up. Everyone mixes before and after. No swiping, no nametags, no speed dating timers going off in your ear.",
+      "The format from New York: real contestants go on live dates on stage while the room watches and reacts. Afterward, the whole crowd mingles. In Birmingham, where the desi community has depth but no dedicated singles programming, this format creates exactly the concentrated energy the city needs.",
       "Brum\u2019s dating scene for South Asians has the same problem as most UK cities: community events are family oriented, the apps recycle the same faces, and the nights out are either too mainstream or too niche. Young British Asians in Birmingham are caught between tradition and modern dating in a way that\u2019s very specific and very relatable. This show speaks to that tension.",
       "The University of Birmingham and Aston University feed a steady stream of South Asian graduates into the city. Couple that with the established multigenerational communities and you\u2019ve got a room that\u2019s going to have a fascinating mix of backgrounds, accents, and stories.",
       "Waitlist is open. Birmingham is one of our top priority UK cities. Get on the list for first access, or apply to be a contestant.",
@@ -63,6 +84,27 @@ export const ukCities: Record<string, CityData> = {
       "nottingham",
       "london",
     ],
+    communityStats:
+      "Birmingham's South Asian community is established and growing, contributing to the city's multicultural identity",
+    relatedArticleSlugs: [
+      "nri-dating-challenges",
+      "third-culture-kid-dating",
+      "desi-night-out-beyond-bollywood",
+    ],
+    faqItems: [
+      {
+        q: "When is Garam Masala Dating coming to Birmingham?",
+        a: "No date confirmed yet. Birmingham is on our UK expansion radar. Join the waitlist to be notified first.",
+      },
+      {
+        q: "Will the show be in English?",
+        a: "Yes. The show runs in English. The format is the same as our New York shows adapted for the local community.",
+      },
+      {
+        q: "Can I apply to be a contestant?",
+        a: "Yes. Apply now. Applications stay active for 12 months. Birmingham applicants will be prioritized when we confirm a date.",
+      },
+    ],
   },
 
   leicester: {
@@ -70,13 +112,13 @@ export const ukCities: Record<string, CityData> = {
     displayName: "Leicester",
     titleTag: "Desi Dating Night Leicester",
     metaDescription:
-      "Garam Masala Dating is coming to Leicester. The #1 live South Asian dating show and singles mixer. The UK\u2019s first ethnic minority majority city. Belgrave Road and beyond.",
+      "Garam Masala Dating is coming to Leicester. Live South Asian dating show and mixer. The UK\u2019s first ethnic minority majority city. Belgrave Road.",
     h1: "Belgrave Road\u2019s Golden Mile Gets a Golden Night Out",
     status: "coming-soon",
     badgeLabel: "Coming Soon",
     bodyParagraphs: [
       "Leicester became the first city in the UK where ethnic minorities form the majority population. The Gujarati community here is one of the largest outside of Gujarat itself. Belgrave Road is the heart of it: jewellers, sari shops, sweet shops, and restaurants that have been there for fifty years. If you\u2019ve been to Leicester\u2019s Diwali celebrations, you know this city goes harder for it than anywhere else in Europe.",
-      "Garam Masala Dating is the #1 live South Asian dating show and singles mixer from New York. Blind dates on stage, two hosts, a live audience, and a mixer before and after. The show has been selling out in NYC and we\u2019re bringing it to the cities that deserve it most. Leicester is at the top of that list.",
+      "The format from New York: real contestants go on live dates on stage while the room watches and reacts. Afterward, the whole crowd mingles. In Leicester, where the desi community has depth but no dedicated singles programming, this format creates exactly the concentrated energy the city needs.",
       "The dating situation for South Asians in Leicester is unique. The community is so established that everyone\u2019s families know each other, which makes casual dating either very easy or impossibly complicated depending on who your mum talks to. A live show gives people a way to meet outside the usual family and community networks.",
       "University of Leicester and De Montfort attract a good number of South Asian students, but the real audience here is the settled British Asian population that\u2019s been in this city for generations. Second gen, third gen, and a worldview that\u2019s distinctly Leicester.",
       "We\u2019d be shocked if this isn\u2019t one of the best rooms on the UK tour. Waitlist is open. Get on it, or apply to be a contestant.",
@@ -98,6 +140,27 @@ export const ukCities: Record<string, CityData> = {
       "wolverhampton",
       "sheffield",
     ],
+    communityStats:
+      "Leicester's South Asian community is established and growing, contributing to the city's multicultural identity",
+    relatedArticleSlugs: [
+      "punjabi-dating-culture-beyond-bollywood",
+      "sikh-speed-dating-events",
+      "irl-dating-revival",
+    ],
+    faqItems: [
+      {
+        q: "When is Garam Masala Dating coming to Leicester?",
+        a: "No date confirmed yet. Leicester is on our UK expansion radar. Join the waitlist to be notified first.",
+      },
+      {
+        q: "Will the show be in English?",
+        a: "Yes. The show runs in English. The format is the same as our New York shows adapted for the local community.",
+      },
+      {
+        q: "Can I apply to be a contestant?",
+        a: "Yes. Apply now. Applications stay active for 12 months. Leicester applicants will be prioritized when we confirm a date.",
+      },
+    ],
   },
 
   manchester: {
@@ -105,13 +168,13 @@ export const ukCities: Record<string, CityData> = {
     displayName: "Manchester",
     titleTag: "Desi Singles Night Manchester",
     metaDescription:
-      "Garam Masala Dating is coming to Manchester. The #1 live South Asian dating show and singles mixer. Rusholme, Longsight, Curry Mile, and Manchester\u2019s massive desi scene.",
+      "Garam Masala Dating is coming to Manchester. Live South Asian dating show and mixer. Rusholme, Longsight, Curry Mile, and Manchester\u2019s massive.",
     h1: "Curry Mile Meets Comedy. Manchester, You\u2019re Welcome.",
     status: "coming-soon",
     badgeLabel: "Coming Soon",
     bodyParagraphs: [
       "Rusholme\u2019s Curry Mile is iconic but Manchester\u2019s South Asian community extends way beyond one stretch of Wilmslow Road. Longsight, Levenshulme, Cheetham Hill, and out into Oldham and Rochdale. The Pakistani and Indian populations here are massive, multigenerational, and culturally distinct from London\u2019s desi scene in ways that matter for a dating show.",
-      "Garam Masala Dating is the #1 live South Asian dating show and singles mixer from NYC. The format: real singles go on blind dates on stage, two hosts keep it funny, and 250 people in the room watch, react, and mix with each other. It\u2019s loud, it\u2019s chaotic in the best way, and people actually connect.",
+      "The format from New York: real contestants go on live dates on stage while the room watches and reacts. Afterward, the whole crowd mingles. In Manchester, where the desi community has depth but no dedicated singles programming, this format creates exactly the concentrated energy the city needs.",
       "University of Manchester is one of the biggest universities in the UK and its South Asian student population is significant. Add Manchester Met, Salford, and the young professional crowd, and you\u2019ve got a city full of people who are done with the apps but haven\u2019t found an alternative that speaks to their experience.",
       "Manchester\u2019s nightlife and comedy scene are already top tier. This city understands live entertainment. A dating show with comedy energy isn\u2019t a stretch here, it\u2019s overdue. The Frog and Bucket, the Comedy Store, and a hundred other rooms have trained this audience to show up for a good time.",
       "Waitlist is live. Manchester is one of our top targets in the UK. Get on it, or apply to be on stage when we arrive.",
@@ -127,6 +190,27 @@ export const ukCities: Record<string, CityData> = {
     addressCountry: "GB",
     region: "United Kingdom",
     nearbyCities: ["leeds", "bradford", "liverpool", "sheffield", "nottingham"],
+    communityStats:
+      "Manchester's South Asian community is established and growing, contributing to the city's multicultural identity",
+    relatedArticleSlugs: [
+      "bengali-dating-culture",
+      "muslim-dating-south-asian",
+      "comedy-dating-show-unique-date-idea",
+    ],
+    faqItems: [
+      {
+        q: "When is Garam Masala Dating coming to Manchester?",
+        a: "No date confirmed yet. Manchester is on our UK expansion radar. Join the waitlist to be notified first.",
+      },
+      {
+        q: "Will the show be in English?",
+        a: "Yes. The show runs in English. The format is the same as our New York shows adapted for the local community.",
+      },
+      {
+        q: "Can I apply to be a contestant?",
+        a: "Yes. Apply now. Applications stay active for 12 months. Manchester applicants will be prioritized when we confirm a date.",
+      },
+    ],
   },
 
   leeds: {
@@ -134,13 +218,13 @@ export const ukCities: Record<string, CityData> = {
     displayName: "Leeds",
     titleTag: "South Asian Dating Night Leeds",
     metaDescription:
-      "Garam Masala Dating is coming to Leeds. The #1 live South Asian dating show and singles mixer. Harehills, University of Leeds, and Yorkshire\u2019s desi community.",
+      "Garam Masala Dating is coming to Leeds. Live South Asian dating show and mixer. Harehills, University of Leeds, and Yorkshire\u2019s desi community.",
     h1: "Best Curry in the UK and Nobody to Share It With. Leeds, We\u2019re Fixing That.",
     status: "coming-soon",
     badgeLabel: "Coming Soon",
     bodyParagraphs: [
       "Leeds has a large and growing South Asian population concentrated in areas like Harehills, Chapeltown, and Beeston. The Pakistani and Indian communities have deep roots here, and the University of Leeds brings in a constant stream of new arrivals. It\u2019s a city where the desi scene is big enough to support a dedicated event but rarely gets one.",
-      "Garam Masala Dating is the #1 live South Asian dating show and singles mixer from NYC. Real singles on stage, live blind dates, two hosts, and a room full of people mixing before and after. It\u2019s not a club night with a South Asian DJ. It\u2019s a structured, funny, social event where people actually meet.",
+      "The format from New York: real contestants go on live dates on stage while the room watches and reacts. Afterward, the whole crowd mingles. In Leeds, where the desi community has depth but no dedicated singles programming, this format creates exactly the concentrated energy the city needs.",
       "Yorkshire\u2019s South Asian community has a distinct identity. The food is different (Leeds does some of the best curry in the UK and that\u2019s not up for debate), the culture is a blend of northern English and South Asian in a way that doesn\u2019t exist anywhere else, and the dating scene reflects that. People here want something that gets them, not a London event copy pasted into a Leeds venue.",
       "Leeds Beckett, the medical schools, and the growing tech and finance sectors keep the young professional population flush. The challenge is that social events for South Asian singles are rare, usually community organized, and tend to feel more like a formal gathering than a night out.",
       "We\u2019re bringing the show to Yorkshire. Get on the waitlist for Leeds, or apply to be a contestant.",
@@ -162,6 +246,27 @@ export const ukCities: Record<string, CityData> = {
       "nottingham",
       "liverpool",
     ],
+    communityStats:
+      "Leeds's South Asian community is established and growing, contributing to the city's multicultural identity",
+    relatedArticleSlugs: [
+      "pakistani-dating-america",
+      "how-to-meet-indian-singles-without-apps",
+      "rise-of-south-asian-comedy-america",
+    ],
+    faqItems: [
+      {
+        q: "When is Garam Masala Dating coming to Leeds?",
+        a: "No date confirmed yet. Leeds is on our UK expansion radar. Join the waitlist to be notified first.",
+      },
+      {
+        q: "Will the show be in English?",
+        a: "Yes. The show runs in English. The format is the same as our New York shows adapted for the local community.",
+      },
+      {
+        q: "Can I apply to be a contestant?",
+        a: "Yes. Apply now. Applications stay active for 12 months. Leeds applicants will be prioritized when we confirm a date.",
+      },
+    ],
   },
 
   bradford: {
@@ -169,13 +274,13 @@ export const ukCities: Record<string, CityData> = {
     displayName: "Bradford",
     titleTag: "Desi Dating Show Bradford UK",
     metaDescription:
-      "Garam Masala Dating is coming to Bradford. The #1 live South Asian dating show and singles mixer. One of the highest South Asian populations in the UK. Join the waitlist.",
+      "Garam Masala Dating is coming to Bradford. Live South Asian dating show and mixer. One of the highest South Asian populations in the UK. Join the waitlist.",
     h1: "Everyone\u2019s Parents Know Each Other. Bradford Needs a New Way to Date.",
     status: "coming-soon",
     badgeLabel: "Coming Soon",
     bodyParagraphs: [
       "Bradford has one of the highest proportions of South Asian residents of any city in the UK. The Pakistani community in particular is deeply established, going back to the textile mill era. Manningham, Great Horton, and Toller Lane are the heartlands. Everyone knows everyone, or at least their parents do, which makes dating either very connected or very complicated.",
-      "Garam Masala Dating is the #1 live South Asian dating show and singles mixer from New York City. Blind dates on stage, two hosts, a live audience, and a mixer. It\u2019s designed for communities where the traditional routes to meeting someone (family introductions, community events, religious gatherings) are well established but the casual, social routes are missing.",
+      "The format from New York: real contestants go on live dates on stage while the room watches and reacts. Afterward, the whole crowd mingles. In Bradford, where the desi community has depth but no dedicated singles programming, this format creates exactly the concentrated energy the city needs.",
       "University of Bradford pulls in a diverse student crowd, but the core audience here is the settled British Pakistani community. Young people who grew up in Bradford, understand the culture intimately, and want something fun and social that doesn\u2019t come with the weight of a formal introduction.",
       "Bradford has been underserved for cultural events that cater to young South Asian adults. The comedy and entertainment scene has grown but dating events haven\u2019t kept pace. This show fills that gap with something that\u2019s genuinely fun, not just functional.",
       "Waitlist is open. Bradford is a natural fit for this show. Get on the list or apply to be a contestant.",
@@ -197,6 +302,27 @@ export const ukCities: Record<string, CityData> = {
       "nottingham",
       "birmingham",
     ],
+    communityStats:
+      "Bradford's South Asian community is established and growing, contributing to the city's multicultural identity",
+    relatedArticleSlugs: [
+      "desi-dating-show-vs-dating-apps",
+      "brown-girl-dating-unspoken-rules",
+      "dating-after-30-desi-guide",
+    ],
+    faqItems: [
+      {
+        q: "When is Garam Masala Dating coming to Bradford?",
+        a: "No date confirmed yet. Bradford is on our UK expansion radar. Join the waitlist to be notified first.",
+      },
+      {
+        q: "Will the show be in English?",
+        a: "Yes. The show runs in English. The format is the same as our New York shows adapted for the local community.",
+      },
+      {
+        q: "Can I apply to be a contestant?",
+        a: "Yes. Apply now. Applications stay active for 12 months. Bradford applicants will be prioritized when we confirm a date.",
+      },
+    ],
   },
 
   coventry: {
@@ -204,15 +330,15 @@ export const ukCities: Record<string, CityData> = {
     displayName: "Coventry",
     titleTag: "South Asian Singles Coventry",
     metaDescription:
-      "Garam Masala Dating is coming to Coventry. The #1 live South Asian dating show and singles mixer. Warwick University, Foleshill Road, and the Midlands desi scene.",
+      "Garam Masala Dating is coming to Coventry. Live South Asian dating show and mixer. Warwick University, Foleshill Road, and the Midlands desi scene.",
     h1: "UK City of Culture. Biggest Indian Student Intake. Zero Dating Shows. Until Now.",
     status: "coming-soon",
     badgeLabel: "Coming Soon",
     bodyParagraphs: [
       "Foleshill Road is Coventry\u2019s South Asian main street. Sari shops, Indian jewellers, sweet shops, and restaurants serving everything from Punjabi to Sri Lankan. The community is multigenerational and well established, and then you add Warwick University\u2019s massive Indian student intake and Coventry University\u2019s international programs and the desi population gets even bigger.",
-      "Garam Masala Dating is the #1 live South Asian dating show and singles mixer from NYC. The format: real singles, live blind dates on stage, two hosts who keep it entertaining, and a mixer where everyone in the audience meets each other. It\u2019s the kind of event Coventry has been missing.",
+      "The format from New York: real contestants go on live dates on stage while the room watches and reacts. Afterward, the whole crowd mingles. In Coventry, where the desi community has depth but no dedicated singles programming, this format creates exactly the concentrated energy the city needs.",
       "Warwick pulls in one of the largest Indian student cohorts of any UK university. A lot of those students end up staying in the Midlands after graduation. Between the campus crowd and the established community in Foleshill and Stoke, Coventry has a deep South Asian population that crosses age groups and backgrounds.",
-      "Coventry was the UK City of Culture in 2021, which brought new venues and a renewed appetite for cultural programming. The #1 live dating show that speaks to the city\u2019s biggest minority community fits that trajectory perfectly.",
+      "Coventry was the UK City of Culture in 2021, which brought new venues and a renewed appetite for cultural programming. The live live dating show that speaks to the city\u2019s biggest minority community fits that trajectory perfectly.",
       "Get on the waitlist for Coventry, or apply to be a contestant. The Midlands is getting this show and Coventry is a prime stop.",
     ],
     ctas: [
@@ -232,6 +358,27 @@ export const ukCities: Record<string, CityData> = {
       "nottingham",
       "london",
     ],
+    communityStats:
+      "Coventry's South Asian community is established and growing, contributing to the city's multicultural identity",
+    relatedArticleSlugs: [
+      "indian-single-at-30-not-behind",
+      "why-dating-apps-dont-work-for-south-asians",
+      "desi-dating-problems-brown-people",
+    ],
+    faqItems: [
+      {
+        q: "When is Garam Masala Dating coming to Coventry?",
+        a: "No date confirmed yet. Coventry is on our UK expansion radar. Join the waitlist to be notified first.",
+      },
+      {
+        q: "Will the show be in English?",
+        a: "Yes. The show runs in English. The format is the same as our New York shows adapted for the local community.",
+      },
+      {
+        q: "Can I apply to be a contestant?",
+        a: "Yes. Apply now. Applications stay active for 12 months. Coventry applicants will be prioritized when we confirm a date.",
+      },
+    ],
   },
 
   glasgow: {
@@ -239,15 +386,15 @@ export const ukCities: Record<string, CityData> = {
     displayName: "Glasgow",
     titleTag: "Desi Dating Night Glasgow",
     metaDescription:
-      "Garam Masala Dating is coming to Glasgow. The #1 live South Asian dating show and singles mixer. Southside, University of Glasgow, and Scotland\u2019s largest desi community.",
+      "Garam Masala Dating is coming to Glasgow. Live South Asian dating show and mixer. Southside, University of Glasgow, and Scotland\u2019s largest desi.",
     h1: "Pollokshields Raised Three Generations of British Asians. Time for a Proper Night Out.",
     status: "coming-soon",
     badgeLabel: "Coming Soon",
     bodyParagraphs: [
       "Glasgow\u2019s Southside has been the home of Scotland\u2019s South Asian community for decades. Pollokshields, Govanhill, and the surrounding areas have a concentration of Pakistani, Indian, and Bangladeshi families that\u2019s shaped Glasgow\u2019s culture in ways the city is genuinely proud of. The food scene alone tells the story. This isn\u2019t a new community. It\u2019s one of the most established in the UK.",
-      "Garam Masala Dating is the #1 live South Asian dating show and singles mixer from New York. Real blind dates on stage, two hosts, 250 people in the room, and a mixer before and after. We\u2019re bringing it to Glasgow because the audience is here and the event doesn\u2019t exist yet.",
+      "The format from New York: real contestants go on live dates on stage while the room watches and reacts. Afterward, the whole crowd mingles. In Glasgow, where the desi community has depth but no dedicated singles programming, this format creates exactly the concentrated energy the city needs.",
       "University of Glasgow and Strathclyde bring in South Asian students, but Glasgow\u2019s real desi dating audience is the second and third generation British Asians who grew up on the Southside. They know the community, they love the community, and they\u2019d like to find someone without their auntie being involved at every stage.",
-      "Glasgow\u2019s comedy scene is legendary. The Stand Comedy Club, the Comedy Festival, and a city that just fundamentally appreciates a good night out with sharp humour. The #1 live dating show with comedy energy is basically what Glasgow was built for.",
+      "Glasgow\u2019s comedy scene is legendary. The Stand Comedy Club, the Comedy Festival, and a city that just fundamentally appreciates a good night out with sharp humour. The live live dating show with comedy energy is basically what Glasgow was built for.",
       "Waitlist is open. Glasgow is going to be one of the best shows on the UK tour and we\u2019re not being polite about that, we mean it. Get on the list or apply to be a contestant.",
     ],
     ctas: [
@@ -261,6 +408,27 @@ export const ukCities: Record<string, CityData> = {
     addressCountry: "GB",
     region: "United Kingdom",
     nearbyCities: ["edinburgh", "manchester", "leeds", "birmingham", "london"],
+    communityStats:
+      "Glasgow's South Asian community is established and growing, contributing to the city's multicultural identity",
+    relatedArticleSlugs: [
+      "gujarati-singles-events-beyond-garba",
+      "south-indian-dating-culture",
+      "indian-matchmaking-meets-standup-comedy",
+    ],
+    faqItems: [
+      {
+        q: "When is Garam Masala Dating coming to Glasgow?",
+        a: "No date confirmed yet. Glasgow is on our UK expansion radar. Join the waitlist to be notified first.",
+      },
+      {
+        q: "Will the show be in English?",
+        a: "Yes. The show runs in English. The format is the same as our New York shows adapted for the local community.",
+      },
+      {
+        q: "Can I apply to be a contestant?",
+        a: "Yes. Apply now. Applications stay active for 12 months. Glasgow applicants will be prioritized when we confirm a date.",
+      },
+    ],
   },
 
   edinburgh: {
@@ -268,13 +436,13 @@ export const ukCities: Record<string, CityData> = {
     displayName: "Edinburgh",
     titleTag: "South Asian Dating Show Edinburgh",
     metaDescription:
-      "Garam Masala Dating is coming to Edinburgh. The #1 live South Asian dating show and singles mixer. University of Edinburgh, Festival Fringe comedy connection. Join the waitlist.",
+      "Garam Masala Dating is coming to Edinburgh. Live South Asian dating show and mixer. University of Edinburgh, Festival Fringe comedy connection. Join.",
     h1: "The Fringe Capital Gets a Live Dating Format That Actually Fits",
     status: "coming-soon",
     badgeLabel: "Coming Soon",
     bodyParagraphs: [
-      "Edinburgh is a city that already understands live entertainment better than almost anywhere in the world. The Fringe Festival makes it the global capital of comedy every August, and the appetite for new, boundary pushing live formats is baked into the city\u2019s DNA. The #1 live South Asian dating show with comedy woven in? Edinburgh gets it.",
-      "Garam Masala Dating is the #1 live South Asian dating show and singles mixer from NYC. Real blind dates on stage, two hosts, 250 people, and a mixer before and after. The show started in New York and we\u2019re expanding to cities where the audience and the cultural appetite align. Edinburgh is both.",
+      "Edinburgh is a city that already understands live entertainment better than almost anywhere in the world. The Fringe Festival makes it the global capital of comedy every August, and the appetite for new, boundary pushing live formats is baked into the city\u2019s DNA. The live South Asian dating show with comedy woven in? Edinburgh gets it.",
+      "The format from New York: real contestants go on live dates on stage while the room watches and reacts. Afterward, the whole crowd mingles. In Edinburgh, where the desi community has depth but no dedicated singles programming, this format creates exactly the concentrated energy the city needs.",
       "University of Edinburgh has a significant South Asian student population, and the city\u2019s tech and finance sectors (particularly around the Quartermile and the Exchange District) attract Indian professionals. The community is smaller than Glasgow\u2019s but educated, engaged, and absolutely underserved when it comes to social events for singles.",
       "Edinburgh\u2019s dating scene is polite, which is a nice way of saying it\u2019s hard to break through the surface. People are friendly but guarded. This show removes the guessing game. Everyone in the room is there for the same reason, and the stage portion gives you something to talk about at the mixer.",
       "We\u2019re looking at Edinburgh as a Fringe activation and a regular tour stop. Waitlist is open. Apply to be a contestant if you want to go on a blind date in one of the most beautiful cities on earth.",
@@ -290,6 +458,27 @@ export const ukCities: Record<string, CityData> = {
     addressCountry: "GB",
     region: "United Kingdom",
     nearbyCities: ["glasgow", "leeds", "manchester", "birmingham", "london"],
+    communityStats:
+      "Edinburgh's South Asian community is established and growing, contributing to the city's multicultural identity",
+    relatedArticleSlugs: [
+      "what-actually-happens-at-a-live-comedy-dating-show",
+      "first-gen-indian-american-dating",
+      "dating-outside-culture-south-asian",
+    ],
+    faqItems: [
+      {
+        q: "When is Garam Masala Dating coming to Edinburgh?",
+        a: "No date confirmed yet. Edinburgh is on our UK expansion radar. Join the waitlist to be notified first.",
+      },
+      {
+        q: "Will the show be in English?",
+        a: "Yes. The show runs in English. The format is the same as our New York shows adapted for the local community.",
+      },
+      {
+        q: "Can I apply to be a contestant?",
+        a: "Yes. Apply now. Applications stay active for 12 months. Edinburgh applicants will be prioritized when we confirm a date.",
+      },
+    ],
   },
 
   nottingham: {
@@ -297,15 +486,15 @@ export const ukCities: Record<string, CityData> = {
     displayName: "Nottingham",
     titleTag: "Desi Dating Event Nottingham",
     metaDescription:
-      "Garam Masala Dating is coming to Nottingham. The #1 live South Asian dating show and singles mixer. Hyson Green, University of Nottingham, and the East Midlands desi scene.",
+      "Garam Masala Dating is coming to Nottingham. Live South Asian dating show and mixer. Hyson Green, University of Nottingham, and the East Midlands.",
     h1: "More Than Ocean Nightclub. Nottingham\u2019s Desi Scene Gets a Real Event.",
     status: "coming-soon",
     badgeLabel: "Coming Soon",
     bodyParagraphs: [
       "Hyson Green and the Radford area have been Nottingham\u2019s South Asian centre for years. The University of Nottingham has also been recruiting heavily from India, making it one of the top UK destinations for Indian students. Between the established community and the university pipeline, Nottingham\u2019s desi population is bigger than the city\u2019s reputation suggests.",
-      "Garam Masala Dating is the #1 live South Asian dating show and singles mixer from NYC. Real singles go on blind dates on stage in front of a live audience. Two hosts keep things moving. The audience mixes before and after. It\u2019s a night out that actually leads somewhere, not just another Thursday at Ocean.",
+      "The format from New York: real contestants go on live dates on stage while the room watches and reacts. Afterward, the whole crowd mingles. In Nottingham, where the desi community has depth but no dedicated singles programming, this format creates exactly the concentrated energy the city needs.",
       "Nottingham Trent adds to the student population, and the city\u2019s emerging tech and creative sectors are retaining more young professionals than they used to. The problem is the same one every mid sized UK city has: the South Asian community is there but the events designed for young singles are not.",
-      "The comedy scene in Nottingham is strong. Glee Club, Just the Tonic, and a rotation of touring acts mean this city knows how to be an audience. The #1 live dating show plays perfectly into that culture.",
+      "The comedy scene in Nottingham is strong. Glee Club, Just the Tonic, and a rotation of touring acts mean this city knows how to be an audience. The live live dating show plays perfectly into that culture.",
       "Waitlist is open for Nottingham. Get on it for first access to tickets, or apply to be a contestant.",
     ],
     ctas: [
@@ -319,6 +508,27 @@ export const ukCities: Record<string, CityData> = {
     addressCountry: "GB",
     region: "United Kingdom",
     nearbyCities: ["leicester", "birmingham", "sheffield", "coventry", "leeds"],
+    communityStats:
+      "Nottingham's South Asian community is established and growing, contributing to the city's multicultural identity",
+    relatedArticleSlugs: [
+      "nri-dating-challenges",
+      "third-culture-kid-dating",
+      "desi-night-out-beyond-bollywood",
+    ],
+    faqItems: [
+      {
+        q: "When is Garam Masala Dating coming to Nottingham?",
+        a: "No date confirmed yet. Nottingham is on our UK expansion radar. Join the waitlist to be notified first.",
+      },
+      {
+        q: "Will the show be in English?",
+        a: "Yes. The show runs in English. The format is the same as our New York shows adapted for the local community.",
+      },
+      {
+        q: "Can I apply to be a contestant?",
+        a: "Yes. Apply now. Applications stay active for 12 months. Nottingham applicants will be prioritized when we confirm a date.",
+      },
+    ],
   },
 
   liverpool: {
@@ -326,14 +536,14 @@ export const ukCities: Record<string, CityData> = {
     displayName: "Liverpool",
     titleTag: "Desi Dating Night Liverpool UK",
     metaDescription:
-      "Garam Masala Dating is coming to Liverpool. The #1 live South Asian dating show and singles mixer. University of Liverpool and Merseyside\u2019s growing desi community.",
+      "Garam Masala Dating is coming to Liverpool. Live South Asian dating show and mixer. University of Liverpool and Merseyside\u2019s growing desi community.",
     h1: "Scousers Don\u2019t Just Watch. They Participate. Liverpool Gets the Show.",
     status: "coming-soon",
     badgeLabel: "Coming Soon",
     bodyParagraphs: [
       "Liverpool\u2019s South Asian community is smaller than Manchester\u2019s or Birmingham\u2019s, but it\u2019s growing fast. The University of Liverpool and Liverpool John Moores have significantly increased their Indian student recruitment, and the Toxteth and Wavertree areas have established Pakistani and Bangladeshi populations. The city is at a tipping point where dedicated South Asian events make sense.",
-      "Garam Masala Dating is the #1 live South Asian dating show and singles mixer from NYC. Real blind dates on stage, two hosts who are actually funny, a live audience, and a mixer where people meet. The format has been proven in New York and we\u2019re bringing it to cities across the UK.",
-      "Liverpool is one of the great entertainment cities. The music heritage, the comedy scene, the nightlife. Scousers know how to have a good time and they\u2019re not shy about it. The #1 live dating show fits the city\u2019s personality perfectly. The audience won\u2019t just watch, they\u2019ll participate.",
+      "The format from New York: real contestants go on live dates on stage while the room watches and reacts. Afterward, the whole crowd mingles. In Liverpool, where the desi community has depth but no dedicated singles programming, this format creates exactly the concentrated energy the city needs.",
+      "Liverpool is one of the great entertainment cities. The music heritage, the comedy scene, the nightlife. Scousers know how to have a good time and they\u2019re not shy about it. The live live dating show fits the city\u2019s personality perfectly. The audience won\u2019t just watch, they\u2019ll participate.",
       "The growing Indian student population means there\u2019s a fresh influx every year of people who need to meet others outside their course cohort. Combined with the working professionals and established families, you\u2019ve got a room with real range.",
       "Waitlist is open. Liverpool is part of our North West UK plans alongside Manchester. Get on the list or apply to be a contestant.",
     ],
@@ -354,6 +564,27 @@ export const ukCities: Record<string, CityData> = {
       "sheffield",
       "nottingham",
     ],
+    communityStats:
+      "Liverpool's South Asian community is established and growing, contributing to the city's multicultural identity",
+    relatedArticleSlugs: [
+      "punjabi-dating-culture-beyond-bollywood",
+      "sikh-speed-dating-events",
+      "irl-dating-revival",
+    ],
+    faqItems: [
+      {
+        q: "When is Garam Masala Dating coming to Liverpool?",
+        a: "No date confirmed yet. Liverpool is on our UK expansion radar. Join the waitlist to be notified first.",
+      },
+      {
+        q: "Will the show be in English?",
+        a: "Yes. The show runs in English. The format is the same as our New York shows adapted for the local community.",
+      },
+      {
+        q: "Can I apply to be a contestant?",
+        a: "Yes. Apply now. Applications stay active for 12 months. Liverpool applicants will be prioritized when we confirm a date.",
+      },
+    ],
   },
 
   sheffield: {
@@ -361,13 +592,13 @@ export const ukCities: Record<string, CityData> = {
     displayName: "Sheffield",
     titleTag: "South Asian Singles Sheffield",
     metaDescription:
-      "Garam Masala Dating is coming to Sheffield. The #1 live South Asian dating show and singles mixer. Page Hall, University of Sheffield, and South Yorkshire\u2019s desi community.",
+      "Garam Masala Dating is coming to Sheffield. Live South Asian dating show and mixer. Page Hall, University of Sheffield, and South Yorkshire\u2019s.",
     h1: "Sheffield Is the Friendliest City in the UK. That Energy Belongs on Stage.",
     status: "coming-soon",
     badgeLabel: "Coming Soon",
     bodyParagraphs: [
       "Sheffield\u2019s South Asian community is centred around Page Hall, Darnall, and the Abbeydale Road corridor. The Pakistani and Yemeni communities have deep roots, and the Indian population has been growing through university recruitment and professional migration. University of Sheffield is a major draw for Indian postgraduate students, particularly in engineering and computer science.",
-      "Garam Masala Dating is the #1 live South Asian dating show and singles mixer from New York. The format: real blind dates on stage, two hosts, a live audience, and a mixer before and after. It\u2019s been selling out in NYC and we\u2019re expanding to cities where the community is ready.",
+      "The format from New York: real contestants go on live dates on stage while the room watches and reacts. Afterward, the whole crowd mingles. In Sheffield, where the desi community has depth but no dedicated singles programming, this format creates exactly the concentrated energy the city needs.",
       "Sheffield has a reputation as a friendly city and that matters for a show like this. The audience energy in cities where people are naturally warm and unguarded tends to be the best. Nobody\u2019s too cool to react when something funny or sweet happens on stage.",
       "Sheffield Hallam adds to the student numbers, and the city\u2019s growing tech sector is keeping more graduates around. The Sharrow and Nether Edge areas have become hubs for young professionals who chose Sheffield over the higher cost alternatives. That\u2019s exactly the demographic that shows up to this show.",
       "Waitlist is open. Sheffield is part of our Yorkshire tour plans. Get on the list or apply to be a contestant.",
@@ -389,6 +620,27 @@ export const ukCities: Record<string, CityData> = {
       "bradford",
       "birmingham",
     ],
+    communityStats:
+      "Sheffield's South Asian community is established and growing, contributing to the city's multicultural identity",
+    relatedArticleSlugs: [
+      "bengali-dating-culture",
+      "muslim-dating-south-asian",
+      "comedy-dating-show-unique-date-idea",
+    ],
+    faqItems: [
+      {
+        q: "When is Garam Masala Dating coming to Sheffield?",
+        a: "No date confirmed yet. Sheffield is on our UK expansion radar. Join the waitlist to be notified first.",
+      },
+      {
+        q: "Will the show be in English?",
+        a: "Yes. The show runs in English. The format is the same as our New York shows adapted for the local community.",
+      },
+      {
+        q: "Can I apply to be a contestant?",
+        a: "Yes. Apply now. Applications stay active for 12 months. Sheffield applicants will be prioritized when we confirm a date.",
+      },
+    ],
   },
 
   cambridge: {
@@ -396,13 +648,13 @@ export const ukCities: Record<string, CityData> = {
     displayName: "Cambridge",
     titleTag: "Desi Dating Show Cambridge UK",
     metaDescription:
-      "Garam Masala Dating is coming to Cambridge. The #1 live South Asian dating show and singles mixer. University of Cambridge, Indian academics, and the biotech corridor.",
+      "Garam Masala Dating is coming to Cambridge. Live South Asian dating show and mixer. University of Cambridge, Indian academics, and the biotech corridor.",
     h1: "Smartest People in Britain. Still Can\u2019t Figure Out Dating.",
     status: "coming-soon",
     badgeLabel: "Coming Soon",
     bodyParagraphs: [
       "Cambridge has a high concentration of South Asian academics, researchers, and tech professionals. The university draws Indian postdocs and PhD candidates from across the world, and the biotech and pharma corridor (AstraZeneca, Arm, and a constellation of startups) attracts Indian engineers and scientists. The crowd is educated, ambitious, and has terrible work life balance, which doesn\u2019t exactly help with dating.",
-      "Garam Masala Dating is the #1 live South Asian dating show and singles mixer from NYC. Real singles on stage, live blind dates, two hosts, and an audience that mixes before and after. It\u2019s the opposite of a college formal. Nobody\u2019s wearing a gown and nobody\u2019s pretending to be above wanting to meet someone.",
+      "The format from New York: real contestants go on live dates on stage while the room watches and reacts. Afterward, the whole crowd mingles. In Cambridge, where the desi community has depth but no dedicated singles programming, this format creates exactly the concentrated energy the city needs.",
       "The Cambridge social scene is notoriously insular. College networks, department circles, and the occasional pub quiz don\u2019t really cut it when you\u2019re trying to meet South Asian singles. The Indian Society events are fun but they\u2019re social, not romantic. This show is explicitly for people who want to meet someone.",
       "There\u2019s something funny about a city full of the smartest people in the country still not being able to figure out dating. We\u2019re not solving the problem, but we\u2019re putting 250 of you in a room and hoping for the best. It tends to work.",
       "Waitlist is open. Cambridge is part of our southeast England plans. Get on the list or apply to be a contestant.",
@@ -418,6 +670,27 @@ export const ukCities: Record<string, CityData> = {
     addressCountry: "GB",
     region: "United Kingdom",
     nearbyCities: ["london", "oxford", "nottingham", "birmingham", "reading"],
+    communityStats:
+      "Cambridge's South Asian community is established and growing, contributing to the city's multicultural identity",
+    relatedArticleSlugs: [
+      "pakistani-dating-america",
+      "how-to-meet-indian-singles-without-apps",
+      "rise-of-south-asian-comedy-america",
+    ],
+    faqItems: [
+      {
+        q: "When is Garam Masala Dating coming to Cambridge?",
+        a: "No date confirmed yet. Cambridge is on our UK expansion radar. Join the waitlist to be notified first.",
+      },
+      {
+        q: "Will the show be in English?",
+        a: "Yes. The show runs in English. The format is the same as our New York shows adapted for the local community.",
+      },
+      {
+        q: "Can I apply to be a contestant?",
+        a: "Yes. Apply now. Applications stay active for 12 months. Cambridge applicants will be prioritized when we confirm a date.",
+      },
+    ],
   },
 
   oxford: {
@@ -425,13 +698,13 @@ export const ukCities: Record<string, CityData> = {
     displayName: "Oxford",
     titleTag: "South Asian Dating Night Oxford",
     metaDescription:
-      "Garam Masala Dating is coming to Oxford. The #1 live South Asian dating show and singles mixer. University of Oxford, Cowley Road, and the city\u2019s South Asian professionals.",
+      "Garam Masala Dating is coming to Oxford. Live South Asian dating show and mixer. University of Oxford, Cowley Road, and the city\u2019s South Asian.",
     h1: "Cowley Road Has the Culture. Oxford Gets the Dating Show to Match.",
     status: "coming-soon",
     badgeLabel: "Coming Soon",
     bodyParagraphs: [
       "Oxford shares the same dynamic as Cambridge but with its own flavour. The university pulls in South Asian students and academics, but it\u2019s the broader Oxford population that makes this interesting. Cowley Road has a genuine multicultural streak, and the city\u2019s tech and biotech sectors (the Oxford Science Park, Harwell Campus) attract Indian professionals who settle in the area.",
-      "Garam Masala Dating is the #1 live South Asian dating show and singles mixer from NYC. Real blind dates on stage, two hosts, a live audience, and a mixer. It\u2019s a night out designed for people who are actually trying to meet someone, not just collect LinkedIn connections at a networking event.",
+      "The format from New York: real contestants go on live dates on stage while the room watches and reacts. Afterward, the whole crowd mingles. In Oxford, where the desi community has depth but no dedicated singles programming, this format creates exactly the concentrated energy the city needs.",
       "The Oxford social scene can feel exclusive and cliquey. College life dominates for students, and after graduation, people tend to stick to their circles. If you\u2019re South Asian and single in Oxford, your best bet has been driving to London for the evening, which is a two hour round trip of hope and uncertainty.",
       "Oxford Brookes adds to the student population, and the teaching hospitals and research centres keep a steady flow of Indian professionals in the area. The show works because it takes people out of their usual bubbles and puts them in a room where the only thing everyone has in common is being there.",
       "Waitlist is open for Oxford. Get on it for first access, or apply to be a contestant.",
@@ -447,6 +720,27 @@ export const ukCities: Record<string, CityData> = {
     addressCountry: "GB",
     region: "United Kingdom",
     nearbyCities: ["london", "cambridge", "reading", "southampton", "bristol"],
+    communityStats:
+      "Oxford's South Asian community is established and growing, contributing to the city's multicultural identity",
+    relatedArticleSlugs: [
+      "desi-dating-show-vs-dating-apps",
+      "brown-girl-dating-unspoken-rules",
+      "dating-after-30-desi-guide",
+    ],
+    faqItems: [
+      {
+        q: "When is Garam Masala Dating coming to Oxford?",
+        a: "No date confirmed yet. Oxford is on our UK expansion radar. Join the waitlist to be notified first.",
+      },
+      {
+        q: "Will the show be in English?",
+        a: "Yes. The show runs in English. The format is the same as our New York shows adapted for the local community.",
+      },
+      {
+        q: "Can I apply to be a contestant?",
+        a: "Yes. Apply now. Applications stay active for 12 months. Oxford applicants will be prioritized when we confirm a date.",
+      },
+    ],
   },
 
   southampton: {
@@ -454,13 +748,13 @@ export const ukCities: Record<string, CityData> = {
     displayName: "Southampton",
     titleTag: "Desi Dating Event Southampton",
     metaDescription:
-      "Garam Masala Dating is coming to Southampton. The #1 live South Asian dating show and singles mixer. University of Southampton and the south coast\u2019s growing desi community.",
+      "Garam Masala Dating is coming to Southampton. Live South Asian dating show and mixer. University of Southampton and the south coast\u2019s growing.",
     h1: "South Coast Desi Singles Keep Taking the Train to London. Not Anymore.",
     status: "coming-soon",
     badgeLabel: "Coming Soon",
     bodyParagraphs: [
       "University of Southampton has seen a major increase in Indian student enrollment over the past few years, and the ripple effects are reshaping the city. Indian restaurants and grocery stores have multiplied around Portswood and the Highfield area, and the community is becoming more visible every year.",
-      "Garam Masala Dating is the #1 live South Asian dating show and singles mixer from NYC. Blind dates on stage, two hosts, a live audience, and a mixer. It\u2019s a format that\u2019s been proven in New York and works especially well in university cities where the population is young, concentrated, and looking for something social.",
+      "The format from New York: real contestants go on live dates on stage while the room watches and reacts. Afterward, the whole crowd mingles. In Southampton, where the desi community has depth but no dedicated singles programming, this format creates exactly the concentrated energy the city needs.",
       "The south coast doesn\u2019t get the cultural programming that London or Birmingham does, but the South Asian population is there and growing. Southampton, along with nearby Portsmouth and Bournemouth, forms a corridor with enough desi residents and students to fill a room easily.",
       "If you\u2019re an Indian student or young professional in Southampton, your social options are the university societies, the occasional Bollywood night at a club, or the train to London. This show gives you a reason to stay in your own city on a Saturday night.",
       "Waitlist is open for Southampton. First access to tickets when we announce. Apply to be a contestant if you want to be on stage.",
@@ -476,6 +770,27 @@ export const ukCities: Record<string, CityData> = {
     addressCountry: "GB",
     region: "United Kingdom",
     nearbyCities: ["london", "reading", "oxford", "bristol", "birmingham"],
+    communityStats:
+      "Southampton's South Asian community is established and growing, contributing to the city's multicultural identity",
+    relatedArticleSlugs: [
+      "indian-single-at-30-not-behind",
+      "why-dating-apps-dont-work-for-south-asians",
+      "desi-dating-problems-brown-people",
+    ],
+    faqItems: [
+      {
+        q: "When is Garam Masala Dating coming to Southampton?",
+        a: "No date confirmed yet. Southampton is on our UK expansion radar. Join the waitlist to be notified first.",
+      },
+      {
+        q: "Will the show be in English?",
+        a: "Yes. The show runs in English. The format is the same as our New York shows adapted for the local community.",
+      },
+      {
+        q: "Can I apply to be a contestant?",
+        a: "Yes. Apply now. Applications stay active for 12 months. Southampton applicants will be prioritized when we confirm a date.",
+      },
+    ],
   },
 
   bristol: {
@@ -483,14 +798,14 @@ export const ukCities: Record<string, CityData> = {
     displayName: "Bristol",
     titleTag: "Desi Singles Night Bristol UK",
     metaDescription:
-      "Garam Masala Dating is coming to Bristol. The #1 live South Asian dating show and singles mixer. Easton, University of Bristol, UWE, and the West Country desi scene.",
+      "Garam Masala Dating is coming to Bristol. Live South Asian dating show and mixer. Easton, University of Bristol, UWE, and the West Country desi scene.",
     h1: "Easton\u2019s Stapleton Road Meets Live Comedy Dating. Bristol Is Ready.",
     status: "coming-soon",
     badgeLabel: "Coming Soon",
     bodyParagraphs: [
       "Bristol\u2019s Easton neighbourhood has been the heart of the city\u2019s South Asian community for decades. Stapleton Road has the restaurants, the grocery shops, and the community centres that keep the culture alive. University of Bristol and UWE both attract significant South Asian student populations, and the city\u2019s growing tech and creative sectors are pulling in more Indian professionals.",
-      "Garam Masala Dating is the #1 live South Asian dating show and singles mixer from NYC. Real blind dates on stage, two hosts, and a full room of people who came to actually meet someone. The mixer before and after is where most of the connections happen. The stage portion gives everyone something to laugh about and talk about.",
-      "Bristol is a famously progressive, creative city with a strong live entertainment culture. The comedy scene punches above its weight. St Pauls Carnival shows the city\u2019s multicultural energy. The #1 live dating show for the South Asian community fits naturally into what Bristol already does well.",
+      "The format from New York: real contestants go on live dates on stage while the room watches and reacts. Afterward, the whole crowd mingles. In Bristol, where the desi community has depth but no dedicated singles programming, this format creates exactly the concentrated energy the city needs.",
+      "Bristol is a famously progressive, creative city with a strong live entertainment culture. The comedy scene punches above its weight. St Pauls Carnival shows the city\u2019s multicultural energy. The live live dating show for the South Asian community fits naturally into what Bristol already does well.",
       "The challenge with being South Asian and single in Bristol is that the community, while present, feels scattered. People are in Easton, or Clifton, or out in Bradley Stoke, and there\u2019s no single event that brings everyone together. This show creates that moment.",
       "Waitlist is open for Bristol. Get on it, or apply to be a contestant.",
     ],
@@ -505,6 +820,27 @@ export const ukCities: Record<string, CityData> = {
     addressCountry: "GB",
     region: "United Kingdom",
     nearbyCities: ["southampton", "oxford", "birmingham", "london", "reading"],
+    communityStats:
+      "Bristol's South Asian community is established and growing, contributing to the city's multicultural identity",
+    relatedArticleSlugs: [
+      "gujarati-singles-events-beyond-garba",
+      "south-indian-dating-culture",
+      "indian-matchmaking-meets-standup-comedy",
+    ],
+    faqItems: [
+      {
+        q: "When is Garam Masala Dating coming to Bristol?",
+        a: "No date confirmed yet. Bristol is on our UK expansion radar. Join the waitlist to be notified first.",
+      },
+      {
+        q: "Will the show be in English?",
+        a: "Yes. The show runs in English. The format is the same as our New York shows adapted for the local community.",
+      },
+      {
+        q: "Can I apply to be a contestant?",
+        a: "Yes. Apply now. Applications stay active for 12 months. Bristol applicants will be prioritized when we confirm a date.",
+      },
+    ],
   },
 
   wolverhampton: {
@@ -512,13 +848,13 @@ export const ukCities: Record<string, CityData> = {
     displayName: "Wolverhampton",
     titleTag: "South Asian Dating Wolverhampton",
     metaDescription:
-      "Garam Masala Dating is coming to Wolverhampton. The #1 live South Asian dating show and singles mixer. One of the highest South Asian populations in the West Midlands.",
+      "Garam Masala Dating is coming to Wolverhampton. Live South Asian dating show and mixer. One of the highest South Asian populations in the West Midlands.",
     h1: "Wolves Has the Desi Density. It Just Needs the Event.",
     status: "coming-soon",
     badgeLabel: "Coming Soon",
     bodyParagraphs: [
       "Wolverhampton has a significant South Asian population, particularly in areas like Heath Town, Whitmore Reans, and the Penn Fields corridor. The Indian and Pakistani communities are long established, and the Sikh population is one of the largest in the West Midlands. The gurdwaras, the temples, the community centres: the infrastructure is there. What\u2019s missing is social programming for young singles.",
-      "Garam Masala Dating is the #1 live South Asian dating show and singles mixer from NYC. Real blind dates on stage, two hosts, a live audience, and a mixer. It\u2019s the kind of event that fills the gap between formal community gatherings and generic nightlife.",
+      "The format from New York: real contestants go on live dates on stage while the room watches and reacts. Afterward, the whole crowd mingles. In Wolverhampton, where the desi community has depth but no dedicated singles programming, this format creates exactly the concentrated energy the city needs.",
       "Wolverhampton sits in the heart of the Black Country and the broader West Midlands corridor. Birmingham is twenty minutes away, Walsall and Dudley are even closer. The catchment area for a show here is huge, drawing from a South Asian population that spans multiple towns and cities that all share the same problem: nothing built specifically for young desi singles.",
       "University of Wolverhampton brings in students, but the real audience here is the established community. Second and third generation British Asians who grew up in Wolves, know the city inside out, and want to meet someone without the full auntie network getting involved.",
       "Waitlist is open. Wolverhampton is part of our West Midlands tour plans. Get on the list or apply to be a contestant.",
@@ -540,6 +876,27 @@ export const ukCities: Record<string, CityData> = {
       "nottingham",
       "sheffield",
     ],
+    communityStats:
+      "Wolverhampton's South Asian community is established and growing, contributing to the city's multicultural identity",
+    relatedArticleSlugs: [
+      "what-actually-happens-at-a-live-comedy-dating-show",
+      "first-gen-indian-american-dating",
+      "dating-outside-culture-south-asian",
+    ],
+    faqItems: [
+      {
+        q: "When is Garam Masala Dating coming to Wolverhampton?",
+        a: "No date confirmed yet. Wolverhampton is on our UK expansion radar. Join the waitlist to be notified first.",
+      },
+      {
+        q: "Will the show be in English?",
+        a: "Yes. The show runs in English. The format is the same as our New York shows adapted for the local community.",
+      },
+      {
+        q: "Can I apply to be a contestant?",
+        a: "Yes. Apply now. Applications stay active for 12 months. Wolverhampton applicants will be prioritized when we confirm a date.",
+      },
+    ],
   },
 
   luton: {
@@ -547,13 +904,13 @@ export const ukCities: Record<string, CityData> = {
     displayName: "Luton",
     titleTag: "Desi Dating Night Luton UK",
     metaDescription:
-      "Garam Masala Dating is coming to Luton. The #1 live South Asian dating show and singles mixer. Large South Asian community just north of London. Join the waitlist.",
+      "Garam Masala Dating is coming to Luton. Live South Asian dating show and mixer. Large South Asian community just north of London. Join the waitlist.",
     h1: "Bury Park\u2019s Desi Scene Rivals Areas Ten Times the Size. Where\u2019s the Singles Event?",
     status: "coming-soon",
     badgeLabel: "Coming Soon",
     bodyParagraphs: [
       "Luton has one of the largest South Asian communities in the southeast. The Pakistani and Bangladeshi populations in Bury Park have been the backbone of the town for decades, and the Indian community has grown alongside them. Bury Park Road is the cultural centre: restaurants, fabric shops, halal butchers, and a density of desi life that rivals areas ten times the size.",
-      "Garam Masala Dating is the #1 live South Asian dating show and singles mixer from NYC. Real blind dates on stage, two hosts, 250 people in the room, and a mixer built into the night. The format works in cities where the community is big but the dating events are nonexistent. That\u2019s Luton.",
+      "The format from New York: real contestants go on live dates on stage while the room watches and reacts. Afterward, the whole crowd mingles. In Luton, where the desi community has depth but no dedicated singles programming, this format creates exactly the concentrated energy the city needs.",
       "Being just north of London means Luton has a weird relationship with the capital. Close enough to commute, far enough to feel like its own place. Young South Asians in Luton often look to London for social events, which means the local scene gets neglected. This show brings something to Luton instead of making people travel for it.",
       "The University of Bedfordshire campus is here, adding students to the mix. But the core audience is the working professionals and established families whose kids are in their twenties and thirties and need something better than what the apps are offering.",
       "Waitlist is open. Luton is close enough to London that we could run it as part of the same tour leg. Get on the list or apply to be a contestant.",
@@ -569,6 +926,27 @@ export const ukCities: Record<string, CityData> = {
     addressCountry: "GB",
     region: "United Kingdom",
     nearbyCities: ["london", "slough", "reading", "cambridge", "birmingham"],
+    communityStats:
+      "Luton's South Asian community is established and growing, contributing to the city's multicultural identity",
+    relatedArticleSlugs: [
+      "nri-dating-challenges",
+      "third-culture-kid-dating",
+      "desi-night-out-beyond-bollywood",
+    ],
+    faqItems: [
+      {
+        q: "When is Garam Masala Dating coming to Luton?",
+        a: "No date confirmed yet. Luton is on our UK expansion radar. Join the waitlist to be notified first.",
+      },
+      {
+        q: "Will the show be in English?",
+        a: "Yes. The show runs in English. The format is the same as our New York shows adapted for the local community.",
+      },
+      {
+        q: "Can I apply to be a contestant?",
+        a: "Yes. Apply now. Applications stay active for 12 months. Luton applicants will be prioritized when we confirm a date.",
+      },
+    ],
   },
 
   slough: {
@@ -576,13 +954,13 @@ export const ukCities: Record<string, CityData> = {
     displayName: "Slough",
     titleTag: "South Asian Singles Night Slough",
     metaDescription:
-      "Garam Masala Dating is coming to Slough. The #1 live South Asian dating show and singles mixer. Massive South Asian suburb west of London. Join the waitlist.",
+      "Garam Masala Dating is coming to Slough. Live South Asian dating show and mixer. Massive South Asian suburb west of London. Join the waitlist.",
     h1: "More Punjabi Than English on the High Street. Slough Gets Its Own Show.",
     status: "coming-soon",
     badgeLabel: "Coming Soon",
     bodyParagraphs: [
       "Slough has one of the highest proportions of South Asian residents of any town in England. The Indian, Pakistani, and Sikh communities here are enormous relative to the population. Walk through the High Street or the Farnham Road area and you\u2019ll hear Punjabi, Hindi, and Urdu as commonly as English. This isn\u2019t a pocket of diversity, it\u2019s the town\u2019s identity.",
-      "Garam Masala Dating is the #1 live South Asian dating show and singles mixer from New York City. Real singles on stage, live blind dates, two hosts, and a mixer where the audience meets each other. It\u2019s designed for exactly the kind of concentration that Slough has.",
+      "The format from New York: real contestants go on live dates on stage while the room watches and reacts. Afterward, the whole crowd mingles. In Slough, where the desi community has depth but no dedicated singles programming, this format creates exactly the concentrated energy the city needs.",
       "The proximity to London means a lot of Slough\u2019s young professionals commute into the city for work. They spend their social energy in London too, which leaves Slough itself underserved for evening events. A show in Slough means people don\u2019t have to take the Elizabeth Line into town and deal with the last train anxiety. The audience is right here.",
       "The Heathrow corridor brings Indian tech and airline industry workers to the area, and the established communities in Chalvey and Langley add depth. The mix of new arrivals and multigenerational families creates a room that\u2019s diverse within the desi spectrum.",
       "Waitlist is open. Slough is a natural fit and it\u2019s on our list. Get on the waitlist or apply to be a contestant.",
@@ -598,6 +976,27 @@ export const ukCities: Record<string, CityData> = {
     addressCountry: "GB",
     region: "United Kingdom",
     nearbyCities: ["london", "reading", "luton", "southampton", "oxford"],
+    communityStats:
+      "Slough's South Asian community is established and growing, contributing to the city's multicultural identity",
+    relatedArticleSlugs: [
+      "punjabi-dating-culture-beyond-bollywood",
+      "sikh-speed-dating-events",
+      "irl-dating-revival",
+    ],
+    faqItems: [
+      {
+        q: "When is Garam Masala Dating coming to Slough?",
+        a: "No date confirmed yet. Slough is on our UK expansion radar. Join the waitlist to be notified first.",
+      },
+      {
+        q: "Will the show be in English?",
+        a: "Yes. The show runs in English. The format is the same as our New York shows adapted for the local community.",
+      },
+      {
+        q: "Can I apply to be a contestant?",
+        a: "Yes. Apply now. Applications stay active for 12 months. Slough applicants will be prioritized when we confirm a date.",
+      },
+    ],
   },
 
   reading: {
@@ -605,13 +1004,13 @@ export const ukCities: Record<string, CityData> = {
     displayName: "Reading",
     titleTag: "Desi Dating Show Reading UK",
     metaDescription:
-      "Garam Masala Dating is coming to Reading. The #1 live South Asian dating show and singles mixer. University of Reading, Indian tech workers, Thames Valley corridor.",
+      "Garam Masala Dating is coming to Reading. Live South Asian dating show and mixer. University of Reading, Indian tech workers, Thames Valley corridor.",
     h1: "Thames Valley Tech Corridor Is Full of Indian Engineers. Time They Met Each Other.",
     status: "coming-soon",
     badgeLabel: "Coming Soon",
     bodyParagraphs: [
       "Reading sits in the Thames Valley tech corridor and has attracted a significant Indian professional population. Microsoft, Oracle, Cisco, and a cluster of smaller tech companies all have offices in the area, and the workforce skews heavily South Asian. University of Reading adds to the numbers with its international student programs. The result is a town with a substantial desi community that\u2019s professionally established but socially underserved.",
-      "Garam Masala Dating is the #1 live South Asian dating show and singles mixer from NYC. Real blind dates on stage, two hosts who keep it entertaining, 250 people in the room, and a mixer before and after the stage portion. It\u2019s designed for people who want to meet someone in person, not through an algorithm.",
+      "The format from New York: real contestants go on live dates on stage while the room watches and reacts. Afterward, the whole crowd mingles. In Reading, where the desi community has depth but no dedicated singles programming, this format creates exactly the concentrated energy the city needs.",
       "Reading\u2019s South Asian population tends to be well educated, professional, and spread across the surrounding areas including Woodley, Earley, and Wokingham. They commute into London or work locally in tech, and their social lives are an afterthought. The apps are stale, the London trek is tiring, and nobody has built anything locally that speaks to this audience.",
       "The proximity to Slough means the catchment overlaps with another massive South Asian population. A show in Reading could easily draw from both towns plus Windsor, Maidenhead, and Bracknell.",
       "Waitlist is live. Reading is part of our Thames Valley and London commuter belt plans. Get on the list or apply to be a contestant.",
@@ -627,6 +1026,27 @@ export const ukCities: Record<string, CityData> = {
     addressCountry: "GB",
     region: "United Kingdom",
     nearbyCities: ["slough", "london", "oxford", "southampton", "luton"],
+    communityStats:
+      "Reading's South Asian community is established and growing, contributing to the city's multicultural identity",
+    relatedArticleSlugs: [
+      "bengali-dating-culture",
+      "muslim-dating-south-asian",
+      "comedy-dating-show-unique-date-idea",
+    ],
+    faqItems: [
+      {
+        q: "When is Garam Masala Dating coming to Reading?",
+        a: "No date confirmed yet. Reading is on our UK expansion radar. Join the waitlist to be notified first.",
+      },
+      {
+        q: "Will the show be in English?",
+        a: "Yes. The show runs in English. The format is the same as our New York shows adapted for the local community.",
+      },
+      {
+        q: "Can I apply to be a contestant?",
+        a: "Yes. Apply now. Applications stay active for 12 months. Reading applicants will be prioritized when we confirm a date.",
+      },
+    ],
   },
 
   newcastle: {
@@ -634,13 +1054,13 @@ export const ukCities: Record<string, CityData> = {
     displayName: "Newcastle",
     titleTag: "South Asian Dating Newcastle",
     metaDescription:
-      "Garam Masala Dating is coming to Newcastle. The #1 live South Asian dating show and singles mixer. Newcastle University, Northumbria, and the Tyneside desi community.",
+      "Garam Masala Dating is coming to Newcastle. Live South Asian dating show and mixer. Newcastle University, Northumbria, and the Tyneside desi community.",
     h1: "Geordie Warmth Plus Desi Energy. Newcastle Is Going to Be Electric.",
     status: "coming-soon",
     badgeLabel: "Coming Soon",
     bodyParagraphs: [
       "Newcastle has two major universities pulling in South Asian students year after year. Newcastle University\u2019s business and engineering schools have large Indian cohorts, and Northumbria has been growing its international intake aggressively. The result is a Tyneside desi community that\u2019s younger and more student heavy than some other UK cities, but it\u2019s growing into something permanent. The restaurants along the Bigg Market area and out towards Fenham tell the story.",
-      "Garam Masala Dating is the #1 live South Asian dating show and singles mixer from NYC. Real singles go on blind dates on stage while 250 people watch. Two hosts keep things funny and moving. The whole audience mixes before and after. It\u2019s loud, it\u2019s fun, and people actually meet each other.",
+      "The format from New York: real contestants go on live dates on stage while the room watches and reacts. Afterward, the whole crowd mingles. In Newcastle, where the desi community has depth but no dedicated singles programming, this format creates exactly the concentrated energy the city needs.",
       "Newcastle\u2019s nightlife reputation is legendary. The Toon knows how to go out. But the South Asian community here has never had something built specifically for them. You\u2019ve got Bollywood nights at clubs that are really just regular club nights with a different playlist, and that\u2019s about it. A proper dating show with comedy and real matchmaking energy is a completely different proposition.",
       "The Geordie warmth is a real thing and it makes for incredible audience energy. People in Newcastle don\u2019t hold back. They react, they cheer, they shout advice at the people on stage. If you\u2019ve ever been to a comedy show in Newcastle, you know the crowd makes it. That\u2019s exactly what this show needs.",
       "Waitlist is open. Newcastle is part of our North East England plans. Get on the list, or apply to be a contestant.",
@@ -662,6 +1082,27 @@ export const ukCities: Record<string, CityData> = {
       "leeds",
       "manchester",
     ],
+    communityStats:
+      "Newcastle's South Asian community is established and growing, contributing to the city's multicultural identity",
+    relatedArticleSlugs: [
+      "pakistani-dating-america",
+      "how-to-meet-indian-singles-without-apps",
+      "rise-of-south-asian-comedy-america",
+    ],
+    faqItems: [
+      {
+        q: "When is Garam Masala Dating coming to Newcastle?",
+        a: "No date confirmed yet. Newcastle is on our UK expansion radar. Join the waitlist to be notified first.",
+      },
+      {
+        q: "Will the show be in English?",
+        a: "Yes. The show runs in English. The format is the same as our New York shows adapted for the local community.",
+      },
+      {
+        q: "Can I apply to be a contestant?",
+        a: "Yes. Apply now. Applications stay active for 12 months. Newcastle applicants will be prioritized when we confirm a date.",
+      },
+    ],
   },
 
   derby: {
@@ -669,13 +1110,13 @@ export const ukCities: Record<string, CityData> = {
     displayName: "Derby",
     titleTag: "Desi Dating Night Derby UK",
     metaDescription:
-      "Garam Masala Dating is coming to Derby. The #1 live South Asian dating show and singles mixer. Rolls-Royce engineering families, University of Derby, and Normanton Road.",
+      "Garam Masala Dating is coming to Derby. Live South Asian dating show and mixer. Rolls-Royce engineering families, University of Derby, and Normanton Road.",
     h1: "Normanton Road\u2019s Been Desi for Decades. The Singles Scene Hasn\u2019t Kept Up.",
     status: "coming-soon",
     badgeLabel: "Coming Soon",
     bodyParagraphs: [
       "Normanton Road is Derby\u2019s South Asian heartland and has been for decades. The Indian, Pakistani, and Sikh communities here trace back to the engineering and manufacturing boom, and Rolls-Royce in particular has employed generations of desi families. Walk down Normanton Road and it\u2019s sari shops, sweet centres, halal butchers, and jewellers as far as you can see. This community isn\u2019t new. It\u2019s embedded.",
-      "Garam Masala Dating is the #1 live South Asian dating show and singles mixer from NYC. Real singles on stage, live blind dates, two hosts, and an audience of 250 mixing before and after. The format has been selling out in New York and we\u2019re bringing it to cities where the community deserves better than what\u2019s currently on offer.",
+      "The format from New York: real contestants go on live dates on stage while the room watches and reacts. Afterward, the whole crowd mingles. In Derby, where the desi community has depth but no dedicated singles programming, this format creates exactly the concentrated energy the city needs.",
       "University of Derby has been growing its international student intake, but the core desi audience in Derby is the established families. Second and third generation British Asians who grew up here, work in engineering or healthcare, and are navigating the gap between what their parents expect and what modern dating actually looks like. The apps are stale, the community events are family affairs, and nobody has built anything fun for singles.",
       "Derby sits between Birmingham, Nottingham, and Leicester, three cities with massive South Asian populations. But Derby has its own identity and its own community that doesn\u2019t want to drive an hour for a night out. A show here serves the local crowd and pulls from the surrounding East Midlands too.",
       "Waitlist is open. Derby is part of our Midlands expansion. Get on the list, or apply to be a contestant.",
@@ -697,6 +1138,27 @@ export const ukCities: Record<string, CityData> = {
       "sheffield",
       "stoke-on-trent",
     ],
+    communityStats:
+      "Derby's South Asian community is established and growing, contributing to the city's multicultural identity",
+    relatedArticleSlugs: [
+      "desi-dating-show-vs-dating-apps",
+      "brown-girl-dating-unspoken-rules",
+      "dating-after-30-desi-guide",
+    ],
+    faqItems: [
+      {
+        q: "When is Garam Masala Dating coming to Derby?",
+        a: "No date confirmed yet. Derby is on our UK expansion radar. Join the waitlist to be notified first.",
+      },
+      {
+        q: "Will the show be in English?",
+        a: "Yes. The show runs in English. The format is the same as our New York shows adapted for the local community.",
+      },
+      {
+        q: "Can I apply to be a contestant?",
+        a: "Yes. Apply now. Applications stay active for 12 months. Derby applicants will be prioritized when we confirm a date.",
+      },
+    ],
   },
 
   middlesbrough: {
@@ -704,13 +1166,13 @@ export const ukCities: Record<string, CityData> = {
     displayName: "Middlesbrough",
     titleTag: "Desi Singles Night Middlesbrough",
     metaDescription:
-      "Garam Masala Dating is coming to Middlesbrough. The #1 live South Asian dating show and singles mixer. Teesside University and the growing desi community on Teesside.",
+      "Garam Masala Dating is coming to Middlesbrough. Live South Asian dating show and mixer. Teesside University and the growing desi community on Teesside.",
     h1: "The North East Forgot Middlesbrough. We Didn\u2019t. Teesside Gets the Show.",
     status: "coming-soon",
     badgeLabel: "Coming Soon",
     bodyParagraphs: [
       "Teesside University has been one of the more affordable entry points for Indian international students in the North East, and Middlesbrough\u2019s South Asian community has grown alongside it. The Linthorpe Road area has seen Indian and Pakistani restaurants and businesses multiply over the last few years. It\u2019s a community that\u2019s building in real time, and the social infrastructure hasn\u2019t caught up yet.",
-      "Garam Masala Dating is the #1 live South Asian dating show and singles mixer from NYC. Real blind dates on stage, two hosts who keep the energy moving, and a room where everyone mixes before and after. The format is built for cities where the community exists but the events don\u2019t. Middlesbrough fits that description perfectly.",
+      "The format from New York: real contestants go on live dates on stage while the room watches and reacts. Afterward, the whole crowd mingles. In Middlesbrough, where the desi community has depth but no dedicated singles programming, this format creates exactly the concentrated energy the city needs.",
       "The North East can feel overlooked when it comes to cultural programming for South Asian audiences. Newcastle gets some attention, but Middlesbrough and the wider Teesside area are left to fend for themselves. The Pakistani community in areas like Gresham and North Ormesby has been here for decades, and the newer Indian student arrivals add a different energy. Putting both groups in the same room is what makes the show interesting.",
       "Middlesbrough\u2019s cost of living means the professionals who stay here have disposable income and time. They\u2019re not burning three hours a day commuting like their London counterparts. What they lack is something worth going out for on a Friday night that speaks to their background. This show is that thing.",
       "Waitlist is open. Middlesbrough is part of our North East tour. Get on the list, or apply to be a contestant.",
@@ -726,6 +1188,27 @@ export const ukCities: Record<string, CityData> = {
     addressCountry: "GB",
     region: "United Kingdom",
     nearbyCities: ["newcastle", "sunderland", "durham", "york", "leeds"],
+    communityStats:
+      "Middlesbrough's South Asian community is established and growing, contributing to the city's multicultural identity",
+    relatedArticleSlugs: [
+      "indian-single-at-30-not-behind",
+      "why-dating-apps-dont-work-for-south-asians",
+      "desi-dating-problems-brown-people",
+    ],
+    faqItems: [
+      {
+        q: "When is Garam Masala Dating coming to Middlesbrough?",
+        a: "No date confirmed yet. Middlesbrough is on our UK expansion radar. Join the waitlist to be notified first.",
+      },
+      {
+        q: "Will the show be in English?",
+        a: "Yes. The show runs in English. The format is the same as our New York shows adapted for the local community.",
+      },
+      {
+        q: "Can I apply to be a contestant?",
+        a: "Yes. Apply now. Applications stay active for 12 months. Middlesbrough applicants will be prioritized when we confirm a date.",
+      },
+    ],
   },
 
   sunderland: {
@@ -733,13 +1216,13 @@ export const ukCities: Record<string, CityData> = {
     displayName: "Sunderland",
     titleTag: "South Asian Dating Sunderland",
     metaDescription:
-      "Garam Masala Dating is coming to Sunderland. The #1 live South Asian dating show and singles mixer. University of Sunderland and the North East\u2019s desi community.",
+      "Garam Masala Dating is coming to Sunderland. Live South Asian dating show and mixer. University of Sunderland and the North East\u2019s desi community.",
     h1: "Working Class Energy, Zero Pretence. Sunderland\u2019s Crowd Will Make This Show.",
     status: "coming-soon",
     badgeLabel: "Coming Soon",
     bodyParagraphs: [
       "University of Sunderland has been growing its Indian student enrollment significantly, and the city has started to feel the effects. New Indian restaurants near St Peter\u2019s Campus, grocery stores stocking spices that weren\u2019t available five years ago, and a South Asian student community that\u2019s visible in a city that wasn\u2019t traditionally known for diversity. The change is recent but real.",
-      "Garam Masala Dating is the #1 live South Asian dating show and singles mixer from NYC. Real singles go on blind dates on stage in front of a live audience. Two hosts keep things honest and funny. Before and after the dates, the whole room mixes. It\u2019s the event Sunderland\u2019s desi community didn\u2019t know it needed.",
+      "The format from New York: real contestants go on live dates on stage while the room watches and reacts. Afterward, the whole crowd mingles. In Sunderland, where the desi community has depth but no dedicated singles programming, this format creates exactly the concentrated energy the city needs.",
       "The dating pool for South Asians in Sunderland is small by any measure. Newcastle is a short metro ride away and has a bigger scene, but Sunderland\u2019s own community deserves something that doesn\u2019t require crossing the Tyne. The students who come here for two or three year programs are looking to meet people now, not after they\u2019ve graduated and moved south.",
       "Sunderland has a working class energy that translates well to live entertainment. The audience won\u2019t be polite and reserved. They\u2019ll be loud, invested, and genuinely rooting for the people on stage. That\u2019s the kind of room that makes this show electric.",
       "Waitlist is open. Sunderland is part of our North East plans alongside Newcastle. Get on the list, or apply to be a contestant.",
@@ -755,6 +1238,27 @@ export const ukCities: Record<string, CityData> = {
     addressCountry: "GB",
     region: "United Kingdom",
     nearbyCities: ["newcastle", "durham", "middlesbrough", "leeds", "york"],
+    communityStats:
+      "Sunderland's South Asian community is established and growing, contributing to the city's multicultural identity",
+    relatedArticleSlugs: [
+      "gujarati-singles-events-beyond-garba",
+      "south-indian-dating-culture",
+      "indian-matchmaking-meets-standup-comedy",
+    ],
+    faqItems: [
+      {
+        q: "When is Garam Masala Dating coming to Sunderland?",
+        a: "No date confirmed yet. Sunderland is on our UK expansion radar. Join the waitlist to be notified first.",
+      },
+      {
+        q: "Will the show be in English?",
+        a: "Yes. The show runs in English. The format is the same as our New York shows adapted for the local community.",
+      },
+      {
+        q: "Can I apply to be a contestant?",
+        a: "Yes. Apply now. Applications stay active for 12 months. Sunderland applicants will be prioritized when we confirm a date.",
+      },
+    ],
   },
 
   swansea: {
@@ -762,13 +1266,13 @@ export const ukCities: Record<string, CityData> = {
     displayName: "Swansea",
     titleTag: "Desi Dating Night Swansea Wales",
     metaDescription:
-      "Garam Masala Dating is coming to Swansea. The #1 live South Asian dating show and singles mixer. Swansea University and South Wales\u2019s desi community. Join the waitlist.",
+      "Garam Masala Dating is coming to Swansea. Live South Asian dating show and mixer. Swansea University and South Wales\u2019s desi community. Join the.",
     h1: "Cardiff Gets Everything. Swansea\u2019s Desi Community Gets Something of Its Own.",
     status: "coming-soon",
     badgeLabel: "Coming Soon",
     bodyParagraphs: [
       "Swansea University has been pulling in South Asian students with competitive tuition and strong engineering programs, and the city\u2019s Bay Campus has added a modern draw. The South Asian community in Swansea isn\u2019t as established as some English cities, but it\u2019s concentrated around the university area and the High Street corridor, and it\u2019s growing faster than most people in Cardiff realize.",
-      "Garam Masala Dating is the #1 live South Asian dating show and singles mixer from NYC. Real blind dates on stage, two hosts, a live audience, and a mixer where everyone meets each other. The format works in cities where the community is emerging and hungry for social events that don\u2019t exist yet.",
+      "The format from New York: real contestants go on live dates on stage while the room watches and reacts. Afterward, the whole crowd mingles. In Swansea, where the desi community has depth but no dedicated singles programming, this format creates exactly the concentrated energy the city needs.",
       "Wales has a small but meaningful South Asian population, and most of the cultural events and social programming happen in Cardiff. Swansea gets forgotten despite having a real desi presence. If you\u2019re a South Asian student or young professional in Swansea, your options for meeting other single brown people are the university societies, the occasional house party, or driving to Cardiff and hoping for the best.",
       "The coastline, the Mumbles, the market. Swansea has a personality that people who live here genuinely love. The desi community that\u2019s forming here tends to stay because the quality of life is high and the cost of living is reasonable. They just need somewhere to meet each other.",
       "Waitlist is open. Swansea is part of our Wales expansion alongside Cardiff. Get on the list, or apply to be a contestant.",
@@ -784,6 +1288,27 @@ export const ukCities: Record<string, CityData> = {
     addressCountry: "GB",
     region: "United Kingdom",
     nearbyCities: ["cardiff", "bristol", "birmingham", "exeter", "bath"],
+    communityStats:
+      "Swansea's South Asian community is established and growing, contributing to the city's multicultural identity",
+    relatedArticleSlugs: [
+      "what-actually-happens-at-a-live-comedy-dating-show",
+      "first-gen-indian-american-dating",
+      "dating-outside-culture-south-asian",
+    ],
+    faqItems: [
+      {
+        q: "When is Garam Masala Dating coming to Swansea?",
+        a: "No date confirmed yet. Swansea is on our UK expansion radar. Join the waitlist to be notified first.",
+      },
+      {
+        q: "Will the show be in English?",
+        a: "Yes. The show runs in English. The format is the same as our New York shows adapted for the local community.",
+      },
+      {
+        q: "Can I apply to be a contestant?",
+        a: "Yes. Apply now. Applications stay active for 12 months. Swansea applicants will be prioritized when we confirm a date.",
+      },
+    ],
   },
 
   bath: {
@@ -791,13 +1316,13 @@ export const ukCities: Record<string, CityData> = {
     displayName: "Bath",
     titleTag: "Desi Dating Show Bath UK",
     metaDescription:
-      "Garam Masala Dating is coming to Bath. The #1 live South Asian dating show and singles mixer. University of Bath and the city\u2019s South Asian professionals. Join the waitlist.",
+      "Garam Masala Dating is coming to Bath. Live South Asian dating show and mixer. University of Bath and the city\u2019s South Asian professionals. Join.",
     h1: "Georgian Architecture, Roman Baths, and Terrible Dating Options. Let\u2019s Fix One.",
     status: "coming-soon",
     badgeLabel: "Coming Soon",
     bodyParagraphs: [
       "University of Bath punches well above its weight for attracting South Asian students, particularly in engineering, management, and the sciences. The campus sits on Claverton Down overlooking one of the most beautiful cities in England, and the students who come here tend to be high achieving and career focused. The South Asian community in Bath is small but affluent, professional, and concentrated enough that a focused event can bring everyone together.",
-      "Garam Masala Dating is the #1 live South Asian dating show and singles mixer from NYC. Real blind dates on stage, two hosts, and a room full of people who showed up to actually meet someone. The mixer before and after the stage portion is where most of the real connections happen. It\u2019s not a formal dinner. It\u2019s a night out with structure.",
+      "The format from New York: real contestants go on live dates on stage while the room watches and reacts. Afterward, the whole crowd mingles. In Bath, where the desi community has depth but no dedicated singles programming, this format creates exactly the concentrated energy the city needs.",
       "The challenge with Bath is that it\u2019s a small city with high social expectations. People here are used to nice things. The wine bars, the Georgian architecture, the Roman Baths. A dating event in Bath needs to match that energy without being stuffy. This show threads that needle because the comedy keeps it loose and the format keeps it real.",
       "Bath sits close enough to Bristol that the catchment overlaps, but the two cities have very different vibes. Bath\u2019s desi community tends to be more academic and professional, while Bristol\u2019s is more arts and community driven. Both are valid audiences, but they\u2019re not the same audience.",
       "Waitlist is open. Bath is part of our West Country plans. Get on the list, or apply to be a contestant.",
@@ -813,6 +1338,27 @@ export const ukCities: Record<string, CityData> = {
     addressCountry: "GB",
     region: "United Kingdom",
     nearbyCities: ["bristol", "southampton", "oxford", "cardiff", "exeter"],
+    communityStats:
+      "Bath's South Asian community is established and growing, contributing to the city's multicultural identity",
+    relatedArticleSlugs: [
+      "nri-dating-challenges",
+      "third-culture-kid-dating",
+      "desi-night-out-beyond-bollywood",
+    ],
+    faqItems: [
+      {
+        q: "When is Garam Masala Dating coming to Bath?",
+        a: "No date confirmed yet. Bath is on our UK expansion radar. Join the waitlist to be notified first.",
+      },
+      {
+        q: "Will the show be in English?",
+        a: "Yes. The show runs in English. The format is the same as our New York shows adapted for the local community.",
+      },
+      {
+        q: "Can I apply to be a contestant?",
+        a: "Yes. Apply now. Applications stay active for 12 months. Bath applicants will be prioritized when we confirm a date.",
+      },
+    ],
   },
 
   exeter: {
@@ -820,13 +1366,13 @@ export const ukCities: Record<string, CityData> = {
     displayName: "Exeter",
     titleTag: "South Asian Singles Exeter UK",
     metaDescription:
-      "Garam Masala Dating is coming to Exeter. The #1 live South Asian dating show and singles mixer. University of Exeter and Devon\u2019s growing desi community. Join the waitlist.",
+      "Garam Masala Dating is coming to Exeter. Live South Asian dating show and mixer. University of Exeter and Devon\u2019s growing desi community. Join.",
     h1: "The Apps Show You People in Bristol Because Exeter Runs Out. That Changes Now.",
     status: "coming-soon",
     badgeLabel: "Coming Soon",
     bodyParagraphs: [
       "University of Exeter is a Russell Group university with a growing South Asian student population, and the city\u2019s desi community, while small, has been building steadily. The business school and engineering departments attract Indian students who might not have considered Devon five years ago but are now drawn by the university\u2019s rising reputation and the quality of life that comes with living in the South West.",
-      "Garam Masala Dating is the #1 live South Asian dating show and singles mixer from NYC. Real singles go on blind dates on stage in front of a live audience. Two hosts keep the energy up. The whole room mixes before and after. It\u2019s a format that works especially well in smaller cities where the room feels personal and every connection matters.",
+      "The format from New York: real contestants go on live dates on stage while the room watches and reacts. Afterward, the whole crowd mingles. In Exeter, where the desi community has depth but no dedicated singles programming, this format creates exactly the concentrated energy the city needs.",
       "If you\u2019re South Asian and single in Exeter, you know the dating pool is shallow. The apps show you people in Bristol or Plymouth because there aren\u2019t enough local profiles. Community events are sparse. The university societies are fun but not designed for matchmaking. A live dating event that brings the whole desi community into one room changes the equation entirely.",
       "Exeter\u2019s charm is real. The cathedral, the quay, the Northernhay Gardens. It\u2019s a beautiful city with a strong student culture and a growing professional scene. The South Asians who end up here tend to love it. They just wish there were more of them, and specifically more single ones.",
       "Waitlist is open. Exeter is part of our South West England plans. Get on the list, or apply to be a contestant.",
@@ -842,6 +1388,27 @@ export const ukCities: Record<string, CityData> = {
     addressCountry: "GB",
     region: "United Kingdom",
     nearbyCities: ["bristol", "bath", "southampton", "cardiff", "oxford"],
+    communityStats:
+      "Exeter's South Asian community is established and growing, contributing to the city's multicultural identity",
+    relatedArticleSlugs: [
+      "punjabi-dating-culture-beyond-bollywood",
+      "sikh-speed-dating-events",
+      "irl-dating-revival",
+    ],
+    faqItems: [
+      {
+        q: "When is Garam Masala Dating coming to Exeter?",
+        a: "No date confirmed yet. Exeter is on our UK expansion radar. Join the waitlist to be notified first.",
+      },
+      {
+        q: "Will the show be in English?",
+        a: "Yes. The show runs in English. The format is the same as our New York shows adapted for the local community.",
+      },
+      {
+        q: "Can I apply to be a contestant?",
+        a: "Yes. Apply now. Applications stay active for 12 months. Exeter applicants will be prioritized when we confirm a date.",
+      },
+    ],
   },
 
   york: {
@@ -849,13 +1416,13 @@ export const ukCities: Record<string, CityData> = {
     displayName: "York",
     titleTag: "Desi Dating Night York UK",
     metaDescription:
-      "Garam Masala Dating is coming to York. The #1 live South Asian dating show and singles mixer. University of York and one of England\u2019s most visited cities. Join the waitlist.",
+      "Garam Masala Dating is coming to York. Live South Asian dating show and mixer. University of York and one of England\u2019s most visited cities. Join.",
     h1: "The Shambles Is Great for Tourists. It Won\u2019t Solve Your Love Life.",
     status: "coming-soon",
     badgeLabel: "Coming Soon",
     bodyParagraphs: [
       "University of York has a significant South Asian student population across its computer science, management, and healthcare programs. The campus at Heslington is its own world, and the students who come here from India and across the British Asian diaspora find a city that\u2019s gorgeous but socially limited if you\u2019re looking to meet other desi singles. The Shambles is great for tourists but it doesn\u2019t exactly solve your love life.",
-      "Garam Masala Dating is the #1 live South Asian dating show and singles mixer from NYC. Real blind dates on stage, two hosts, a live audience, and a mixer. The format has been proven in New York and we\u2019re expanding to cities where the community is ready. York has the people. It just needs the event.",
+      "The format from New York: real contestants go on live dates on stage while the room watches and reacts. Afterward, the whole crowd mingles. In York, where the desi community has depth but no dedicated singles programming, this format creates exactly the concentrated energy the city needs.",
       "York sits between Leeds and the coast, and its South Asian community is smaller than the big West Yorkshire cities but distinct. The tourist economy brings a transient element, but the university and the healthcare sector (York Hospital is a major employer) create a stable base of desi professionals and students who stick around.",
       "The city\u2019s cultural calendar is packed with festivals, theatre, and food events, but nothing specifically targets South Asian singles. Given how many desi students and professionals are here, that\u2019s a gap that\u2019s overdue for filling. A show in York also naturally draws from the surrounding area, pulling people from Harrogate, Selby, and even the East Riding.",
       "Waitlist is live. York is part of our Yorkshire expansion. Get on the list, or apply to be a contestant.",
@@ -877,6 +1444,27 @@ export const ukCities: Record<string, CityData> = {
       "manchester",
       "huddersfield",
     ],
+    communityStats:
+      "York's South Asian community is established and growing, contributing to the city's multicultural identity",
+    relatedArticleSlugs: [
+      "bengali-dating-culture",
+      "muslim-dating-south-asian",
+      "comedy-dating-show-unique-date-idea",
+    ],
+    faqItems: [
+      {
+        q: "When is Garam Masala Dating coming to York?",
+        a: "No date confirmed yet. York is on our UK expansion radar. Join the waitlist to be notified first.",
+      },
+      {
+        q: "Will the show be in English?",
+        a: "Yes. The show runs in English. The format is the same as our New York shows adapted for the local community.",
+      },
+      {
+        q: "Can I apply to be a contestant?",
+        a: "Yes. Apply now. Applications stay active for 12 months. York applicants will be prioritized when we confirm a date.",
+      },
+    ],
   },
 
   durham: {
@@ -884,13 +1472,13 @@ export const ukCities: Record<string, CityData> = {
     displayName: "Durham",
     titleTag: "Desi Singles Event Durham UK",
     metaDescription:
-      "Garam Masala Dating is coming to Durham. The #1 live South Asian dating show and singles mixer. Durham University and the North East\u2019s academic desi community.",
+      "Garam Masala Dating is coming to Durham. Live South Asian dating show and mixer. Durham University and the North East\u2019s academic desi community.",
     h1: "Durham\u2019s Collegiate System Builds Great Friends. Terrible Dating Pool.",
     status: "coming-soon",
     badgeLabel: "Coming Soon",
     bodyParagraphs: [
       "Durham University is one of the most prestigious in the UK, and its South Asian student body reflects that. The business school, the engineering department, and the sciences attract Indian and British Asian students who chose Durham over Oxbridge alternatives. The collegiate system creates tight social circles, which is great for friendship but limiting when you want to date outside your college\u2019s dining hall.",
-      "Garam Masala Dating is the #1 live South Asian dating show and singles mixer from NYC. Real singles on stage, live blind dates, two hosts, and a room of people who came to meet someone new. The format breaks through the social barriers that collegiate life accidentally builds. No porters, no formal halls, just 250 people and two hours of genuine interaction.",
+      "The format from New York: real contestants go on live dates on stage while the room watches and reacts. Afterward, the whole crowd mingles. In Durham, where the desi community has depth but no dedicated singles programming, this format creates exactly the concentrated energy the city needs.",
       "Durham is a small city, and the desi dating pool reflects that. The apps cycle through the same profiles fast. The university societies are social but not romantic. And driving to Newcastle for a night out means dealing with the last train back or an expensive taxi through the county. A show in Durham keeps the evening local and gives the community a reason to stay put.",
       "The PhD and postdoc population at Durham extends the age range beyond typical undergraduate events. You\u2019re getting a mix of 21 year old finalists, 28 year old researchers, and young professionals working in the city. That age diversity makes the room more interesting and the connections more likely to lead somewhere real.",
       "Waitlist is open. Durham is part of our North East plans. Get on the list, or apply to be a contestant.",
@@ -906,6 +1494,27 @@ export const ukCities: Record<string, CityData> = {
     addressCountry: "GB",
     region: "United Kingdom",
     nearbyCities: ["newcastle", "sunderland", "middlesbrough", "york", "leeds"],
+    communityStats:
+      "Durham's South Asian community is established and growing, contributing to the city's multicultural identity",
+    relatedArticleSlugs: [
+      "pakistani-dating-america",
+      "how-to-meet-indian-singles-without-apps",
+      "rise-of-south-asian-comedy-america",
+    ],
+    faqItems: [
+      {
+        q: "When is Garam Masala Dating coming to Durham?",
+        a: "No date confirmed yet. Durham is on our UK expansion radar. Join the waitlist to be notified first.",
+      },
+      {
+        q: "Will the show be in English?",
+        a: "Yes. The show runs in English. The format is the same as our New York shows adapted for the local community.",
+      },
+      {
+        q: "Can I apply to be a contestant?",
+        a: "Yes. Apply now. Applications stay active for 12 months. Durham applicants will be prioritized when we confirm a date.",
+      },
+    ],
   },
 
   norwich: {
@@ -913,13 +1522,13 @@ export const ukCities: Record<string, CityData> = {
     displayName: "Norwich",
     titleTag: "South Asian Dating Night Norwich",
     metaDescription:
-      "Garam Masala Dating is coming to Norwich. The #1 live South Asian dating show and singles mixer. UEA and Norfolk\u2019s growing desi community. Join the waitlist.",
+      "Garam Masala Dating is coming to Norwich. Live South Asian dating show and mixer. UEA and Norfolk\u2019s growing desi community. Join the waitlist.",
     h1: "Nobody Passes Through Norwich. The People Here Committed. So Did We.",
     status: "coming-soon",
     badgeLabel: "Coming Soon",
     bodyParagraphs: [
       "University of East Anglia has been quietly building a solid South Asian student population, especially in pharmacy, medicine, and the Norwich Research Park connected programs. The campus is a self contained world on the western edge of the city, and the desi students who land here often find Norwich charming but socially isolating if you\u2019re looking to meet people outside your course.",
-      "Garam Masala Dating is the #1 live South Asian dating show and singles mixer from NYC. Real blind dates on stage, two hosts, a live audience, and a mixer built into the evening. It\u2019s a format designed for cities where the South Asian community is present but the dedicated social events are nonexistent. That\u2019s Norwich.",
+      "The format from New York: real contestants go on live dates on stage while the room watches and reacts. Afterward, the whole crowd mingles. In Norwich, where the desi community has depth but no dedicated singles programming, this format creates exactly the concentrated energy the city needs.",
       "Norwich is geographically isolated by UK standards. It\u2019s not on the way to anywhere. You don\u2019t pass through Norwich. You go to Norwich on purpose. That isolation means the people who are here have committed to being here, and the South Asian community, while small, is concentrated enough that a focused event can reach everyone.",
       "The Norwich Lanes, the market, the cathedral quarter. It\u2019s a city with genuine character and a cultural scene that punches above its weight. The literary festival, the comedy shows at The Playhouse, and the UEA arts scene all suggest an audience that appreciates live, creative events. This show fits that culture.",
       "Waitlist is open. Norwich is part of our East Anglia plans. Get on the list, or apply to be a contestant.",
@@ -941,6 +1550,27 @@ export const ukCities: Record<string, CityData> = {
       "nottingham",
       "leicester",
     ],
+    communityStats:
+      "Norwich's South Asian community is established and growing, contributing to the city's multicultural identity",
+    relatedArticleSlugs: [
+      "desi-dating-show-vs-dating-apps",
+      "brown-girl-dating-unspoken-rules",
+      "dating-after-30-desi-guide",
+    ],
+    faqItems: [
+      {
+        q: "When is Garam Masala Dating coming to Norwich?",
+        a: "No date confirmed yet. Norwich is on our UK expansion radar. Join the waitlist to be notified first.",
+      },
+      {
+        q: "Will the show be in English?",
+        a: "Yes. The show runs in English. The format is the same as our New York shows adapted for the local community.",
+      },
+      {
+        q: "Can I apply to be a contestant?",
+        a: "Yes. Apply now. Applications stay active for 12 months. Norwich applicants will be prioritized when we confirm a date.",
+      },
+    ],
   },
 
   lancaster: {
@@ -948,13 +1578,13 @@ export const ukCities: Record<string, CityData> = {
     displayName: "Lancaster",
     titleTag: "Desi Dating Event Lancaster UK",
     metaDescription:
-      "Garam Masala Dating is coming to Lancaster. The #1 live South Asian dating show and singles mixer. Lancaster University and North West England\u2019s desi community.",
+      "Garam Masala Dating is coming to Lancaster. Live South Asian dating show and mixer. Lancaster University and North West England\u2019s desi community.",
     h1: "Top 15 University, Middle of Nowhere Dating. Lancaster Needs a Shake Up.",
     status: "coming-soon",
     badgeLabel: "Coming Soon",
     bodyParagraphs: [
       "Lancaster University is a top 15 UK university that\u2019s been attracting South Asian students to a city most people outside the North West couldn\u2019t place on a map. The management school is particularly popular with Indian students, and the campus up on the hill has its own social ecosystem. But when the students want to meet desi singles beyond their seminar groups, the options in Lancaster are essentially zero.",
-      "Garam Masala Dating is the #1 live South Asian dating show and singles mixer from NYC. Real singles go on blind dates on stage, two hosts keep the energy honest and funny, and the whole room mixes before and after. It\u2019s built for cities where the community is real but the events haven\u2019t caught up.",
+      "The format from New York: real contestants go on live dates on stage while the room watches and reacts. Afterward, the whole crowd mingles. In Lancaster, where the desi community has depth but no dedicated singles programming, this format creates exactly the concentrated energy the city needs.",
       "Lancaster is sandwiched between the Lake District and the Lancashire coast, which makes it beautiful and isolated in equal measure. Manchester and Preston are the nearest cities with meaningful South Asian populations, and neither is exactly next door. The desi students and professionals in Lancaster are stuck in a bubble unless someone creates a reason to pop it.",
       "The university\u2019s collegiate system means social life is structured around colleges, which is great for freshers but limiting by second year. If you\u2019re South Asian and want to meet other South Asian singles, you need something that cuts across those college boundaries. A show that puts 150 to 200 desi people in one room in Lancaster would be unprecedented.",
       "Waitlist is open. Lancaster is part of our North West expansion. Get on the list, or apply to be a contestant.",
@@ -970,6 +1600,27 @@ export const ukCities: Record<string, CityData> = {
     addressCountry: "GB",
     region: "United Kingdom",
     nearbyCities: ["manchester", "leeds", "liverpool", "bolton", "blackburn"],
+    communityStats:
+      "Lancaster's South Asian community is established and growing, contributing to the city's multicultural identity",
+    relatedArticleSlugs: [
+      "indian-single-at-30-not-behind",
+      "why-dating-apps-dont-work-for-south-asians",
+      "desi-dating-problems-brown-people",
+    ],
+    faqItems: [
+      {
+        q: "When is Garam Masala Dating coming to Lancaster?",
+        a: "No date confirmed yet. Lancaster is on our UK expansion radar. Join the waitlist to be notified first.",
+      },
+      {
+        q: "Will the show be in English?",
+        a: "Yes. The show runs in English. The format is the same as our New York shows adapted for the local community.",
+      },
+      {
+        q: "Can I apply to be a contestant?",
+        a: "Yes. Apply now. Applications stay active for 12 months. Lancaster applicants will be prioritized when we confirm a date.",
+      },
+    ],
   },
 
   "warwick-leamington-spa": {
@@ -977,13 +1628,13 @@ export const ukCities: Record<string, CityData> = {
     displayName: "Warwick/Leamington Spa",
     titleTag: "Desi Dating Warwick Leamington",
     metaDescription:
-      "Garam Masala Dating is coming to Warwick and Leamington Spa. The #1 live South Asian dating show and singles mixer. University of Warwick\u2019s massive desi student population.",
+      "Garam Masala Dating is coming to Warwick and Leamington Spa. Live South Asian dating show and mixer. University of Warwick\u2019s massive desi.",
     h1: "Warwick\u2019s Diwali Fills the Piazza. Now Fill a Room with Singles.",
     status: "coming-soon",
     badgeLabel: "Coming Soon",
     bodyParagraphs: [
       "University of Warwick has one of the highest South Asian student populations of any UK university. The WBS MBA, the computer science program, and the engineering school all pull heavily from India, and the British Asian intake from Birmingham and Leicester is massive. If you\u2019ve been to campus during Diwali, you know. The celebration fills the Piazza and spills into every building. The desi community here isn\u2019t a minority. It\u2019s a presence.",
-      'Garam Masala Dating is the #1 live South Asian dating show and singles mixer from NYC. Real blind dates on stage, two hosts, a live audience, and a mixer. The format thrives in places where the community is concentrated but the social events are generic. Warwick Students\u2019 Union has plenty going on, but nothing that says "this is specifically for South Asian singles."',
+      "The format from New York: real contestants go on live dates on stage while the room watches and reacts. Afterward, the whole crowd mingles. In Warwick/Leamington Spa, where the desi community has depth but no dedicated singles programming, this format creates exactly the concentrated energy the city needs.",
       "Leamington Spa is where the social life happens off campus. The bars on the Parade, the restaurants, the weekend markets. It\u2019s a surprisingly nice town that most international students discover with delight after expecting middle of nowhere Midlands. The desi crowd splits between campus and Leamington, and a show in the area captures both.",
       "Coventry is next door and has its own South Asian community, so the catchment extends beyond the university. Warwick graduates who stayed in the area for jobs in Coventry, Birmingham, or the Warwick Science Park are still connected to the university social scene. They\u2019d show up for something like this in a heartbeat.",
       "Waitlist is open. Warwick is one of our priority UK university cities. Get on the list, or apply to be a contestant.",
@@ -1005,6 +1656,27 @@ export const ukCities: Record<string, CityData> = {
       "nottingham",
       "oxford",
     ],
+    communityStats:
+      "Warwick/Leamington Spa's South Asian community is established and growing, contributing to the city's multicultural identity",
+    relatedArticleSlugs: [
+      "gujarati-singles-events-beyond-garba",
+      "south-indian-dating-culture",
+      "indian-matchmaking-meets-standup-comedy",
+    ],
+    faqItems: [
+      {
+        q: "When is Garam Masala Dating coming to Warwick/Leamington Spa?",
+        a: "No date confirmed yet. Warwick/Leamington Spa is on our UK expansion radar. Join the waitlist to be notified first.",
+      },
+      {
+        q: "Will the show be in English?",
+        a: "Yes. The show runs in English. The format is the same as our New York shows adapted for the local community.",
+      },
+      {
+        q: "Can I apply to be a contestant?",
+        a: "Yes. Apply now. Applications stay active for 12 months. Warwick/Leamington Spa applicants will be prioritized when we confirm a date.",
+      },
+    ],
   },
 
   loughborough: {
@@ -1012,15 +1684,15 @@ export const ukCities: Record<string, CityData> = {
     displayName: "Loughborough",
     titleTag: "South Asian Dating Loughborough",
     metaDescription:
-      "Garam Masala Dating is coming to Loughborough. The #1 live South Asian dating show and singles mixer. Loughborough University and the East Midlands desi community.",
+      "Garam Masala Dating is coming to Loughborough. Live South Asian dating show and mixer. Loughborough University and the East Midlands desi community.",
     h1: "Loughborough Trains Athletes to Perform. This Crowd\u2019s Going to Bring Energy.",
     status: "coming-soon",
     badgeLabel: "Coming Soon",
     bodyParagraphs: [
       "Loughborough University is famous for sport, but its engineering, business, and science programs have been attracting South Asian students for years. The campus dominates the town in a way that\u2019s unusual even for UK university cities. If you\u2019re a student here, the university is your whole world, which means your dating pool is whoever else walked through the same campus gates.",
-      "Garam Masala Dating is the #1 live South Asian dating show and singles mixer from NYC. Real singles on stage, live blind dates, two hosts, and a room of people mixing. The format works in university towns because it breaks the campus bubble. You\u2019re not just meeting someone from your lab. You\u2019re meeting people from across the community.",
+      "The format from New York: real contestants go on live dates on stage while the room watches and reacts. Afterward, the whole crowd mingles. In Loughborough, where the desi community has depth but no dedicated singles programming, this format creates exactly the concentrated energy the city needs.",
       "Loughborough sits between Leicester and Nottingham, both cities with substantial South Asian populations. The town itself has a small but growing desi community beyond the university, with Indian takeaways and grocery stores appearing on the high street that weren\u2019t there a decade ago. The proximity to Leicester\u2019s massive Gujarati community means the cultural support system is close even if Loughborough itself is small.",
-      "The sports culture at Loughborough creates a specific social dynamic. Everyone is fit, competitive, and used to performing in front of crowds. That translates well to the #1 live dating show. The audience here would have energy that other university towns might not match.",
+      "The sports culture at Loughborough creates a specific social dynamic. Everyone is fit, competitive, and used to performing in front of crowds. That translates well to the live live dating show. The audience here would have energy that other university towns might not match.",
       "Waitlist is open. Loughborough is part of our East Midlands plans. Get on the list, or apply to be a contestant.",
     ],
     ctas: [
@@ -1040,6 +1712,27 @@ export const ukCities: Record<string, CityData> = {
       "coventry",
       "birmingham",
     ],
+    communityStats:
+      "Loughborough's South Asian community is established and growing, contributing to the city's multicultural identity",
+    relatedArticleSlugs: [
+      "what-actually-happens-at-a-live-comedy-dating-show",
+      "first-gen-indian-american-dating",
+      "dating-outside-culture-south-asian",
+    ],
+    faqItems: [
+      {
+        q: "When is Garam Masala Dating coming to Loughborough?",
+        a: "No date confirmed yet. Loughborough is on our UK expansion radar. Join the waitlist to be notified first.",
+      },
+      {
+        q: "Will the show be in English?",
+        a: "Yes. The show runs in English. The format is the same as our New York shows adapted for the local community.",
+      },
+      {
+        q: "Can I apply to be a contestant?",
+        a: "Yes. Apply now. Applications stay active for 12 months. Loughborough applicants will be prioritized when we confirm a date.",
+      },
+    ],
   },
 
   "stoke-on-trent": {
@@ -1047,13 +1740,13 @@ export const ukCities: Record<string, CityData> = {
     displayName: "Stoke-on-Trent",
     titleTag: "Desi Dating Night Stoke on Trent",
     metaDescription:
-      "Garam Masala Dating is coming to Stoke-on-Trent. The #1 live South Asian dating show and singles mixer. Staffordshire University and the Potteries\u2019 South Asian community.",
+      "Garam Masala Dating is coming to Stoke-on-Trent. Live South Asian dating show and mixer. Staffordshire University and the Potteries\u2019 South Asian.",
     h1: "The Potteries Built an Industry. Now Build a Dating Scene.",
     status: "coming-soon",
     badgeLabel: "Coming Soon",
     bodyParagraphs: [
       "Stoke-on-Trent has a South Asian community that\u2019s been here since the pottery industry days and has deepened through Staffordshire University\u2019s growing international intake. The Shelton and Hanley areas have established Pakistani and Indian populations, and the student influx has added a younger dimension. It\u2019s a city that flies under the radar for desi culture but has more going on than outsiders realize.",
-      "Garam Masala Dating is the #1 live South Asian dating show and singles mixer from NYC. Real blind dates on stage, two hosts who keep things funny, and a room where the audience mixes before and after. It\u2019s built for cities that have the community but lack the events. Stoke is a textbook example.",
+      "The format from New York: real contestants go on live dates on stage while the room watches and reacts. Afterward, the whole crowd mingles. In Stoke-on-Trent, where the desi community has depth but no dedicated singles programming, this format creates exactly the concentrated energy the city needs.",
       "The Potteries can feel overlooked. Manchester and Birmingham get the cultural investment and the headlines, and Stoke sits between them without the same attention. But the South Asian families here have built real lives. The restaurants on Stoke Road, the community centres, the gurdwara in Tunstall. The infrastructure exists. What\u2019s missing is social programming for young singles.",
       "Keele University on the outskirts adds to the student population, and the healthcare sector employs South Asian professionals across the North Staffordshire hospitals. The audience is wider than just students, which is exactly what makes a dating show work. You need a mix of ages, backgrounds, and life stages to fill a room with interesting potential matches.",
       "Waitlist is open. Stoke is part of our Midlands expansion. Get on the list, or apply to be a contestant.",
@@ -1075,6 +1768,27 @@ export const ukCities: Record<string, CityData> = {
       "nottingham",
       "wolverhampton",
     ],
+    communityStats:
+      "Stoke-on-Trent's South Asian community is established and growing, contributing to the city's multicultural identity",
+    relatedArticleSlugs: [
+      "nri-dating-challenges",
+      "third-culture-kid-dating",
+      "desi-night-out-beyond-bollywood",
+    ],
+    faqItems: [
+      {
+        q: "When is Garam Masala Dating coming to Stoke-on-Trent?",
+        a: "No date confirmed yet. Stoke-on-Trent is on our UK expansion radar. Join the waitlist to be notified first.",
+      },
+      {
+        q: "Will the show be in English?",
+        a: "Yes. The show runs in English. The format is the same as our New York shows adapted for the local community.",
+      },
+      {
+        q: "Can I apply to be a contestant?",
+        a: "Yes. Apply now. Applications stay active for 12 months. Stoke-on-Trent applicants will be prioritized when we confirm a date.",
+      },
+    ],
   },
 
   peterborough: {
@@ -1082,13 +1796,13 @@ export const ukCities: Record<string, CityData> = {
     displayName: "Peterborough",
     titleTag: "Desi Dating Event Peterborough",
     metaDescription:
-      "Garam Masala Dating is coming to Peterborough. The #1 live South Asian dating show and singles mixer. Significant South Asian community in the heart of England.",
+      "Garam Masala Dating is coming to Peterborough. Live South Asian dating show and mixer. Significant South Asian community in the heart of England.",
     h1: "Lincoln Road Has Been Desi for Thirty Years. The Singles Night Is Overdue.",
     status: "coming-soon",
     badgeLabel: "Coming Soon",
     bodyParagraphs: [
       "Peterborough has a significant South Asian community that\u2019s been rooted in the city for decades. The Pakistani population in areas like Gladstone and New England has shaped the city\u2019s identity, and the Indian and Bangladeshi communities have added to the mix. Lincoln Road and Cromwell Road are the commercial centres for desi life: restaurants, fabric shops, travel agents, and sweet shops that have been there for thirty years.",
-      "Garam Masala Dating is the #1 live South Asian dating show and singles mixer from NYC. Real singles on blind dates on stage, two hosts, a live audience, and a mixer. The show has been selling out in New York and we\u2019re expanding to cities where the community is established and underserved. Peterborough checks both boxes.",
+      "The format from New York: real contestants go on live dates on stage while the room watches and reacts. Afterward, the whole crowd mingles. In Peterborough, where the desi community has depth but no dedicated singles programming, this format creates exactly the concentrated energy the city needs.",
       "The city\u2019s location makes it interesting. Peterborough is a major rail hub, just under an hour from London Kings Cross, with Cambridge and Leicester both within reach. The South Asian population draws from the surrounding Fenland area too. A show here captures a catchment that extends well beyond the city limits.",
       "Young South Asians in Peterborough face the same issue as most mid sized English cities: the community events are family oriented, the nightlife is generic, and the apps recycle the same local profiles. The train to London is tempting but exhausting. A proper event in Peterborough that\u2019s built for desi singles means people can stay local and still have a good night.",
       "Waitlist is open. Peterborough is part of our Eastern England plans. Get on the list, or apply to be a contestant.",
@@ -1104,6 +1818,27 @@ export const ukCities: Record<string, CityData> = {
     addressCountry: "GB",
     region: "United Kingdom",
     nearbyCities: ["cambridge", "leicester", "nottingham", "norwich", "london"],
+    communityStats:
+      "Peterborough's South Asian community is established and growing, contributing to the city's multicultural identity",
+    relatedArticleSlugs: [
+      "punjabi-dating-culture-beyond-bollywood",
+      "sikh-speed-dating-events",
+      "irl-dating-revival",
+    ],
+    faqItems: [
+      {
+        q: "When is Garam Masala Dating coming to Peterborough?",
+        a: "No date confirmed yet. Peterborough is on our UK expansion radar. Join the waitlist to be notified first.",
+      },
+      {
+        q: "Will the show be in English?",
+        a: "Yes. The show runs in English. The format is the same as our New York shows adapted for the local community.",
+      },
+      {
+        q: "Can I apply to be a contestant?",
+        a: "Yes. Apply now. Applications stay active for 12 months. Peterborough applicants will be prioritized when we confirm a date.",
+      },
+    ],
   },
 
   walsall: {
@@ -1111,13 +1846,13 @@ export const ukCities: Record<string, CityData> = {
     displayName: "Walsall",
     titleTag: "South Asian Singles Walsall UK",
     metaDescription:
-      "Garam Masala Dating is coming to Walsall. The #1 live South Asian dating show and singles mixer. One of the West Midlands\u2019 most concentrated desi communities.",
+      "Garam Masala Dating is coming to Walsall. Live South Asian dating show and mixer. One of the West Midlands\u2019 most concentrated desi communities.",
     h1: "Caldmore\u2019s Auntie Network Knows Everything. This Show Gives You Cover.",
     status: "coming-soon",
     badgeLabel: "Coming Soon",
     bodyParagraphs: [
       "Walsall has one of the highest South Asian population percentages in the West Midlands. The Caldmore and Palfrey areas are the heart of it. Indian, Pakistani, and Bangladeshi families have been here for generations, and the community infrastructure is deep: temples, mosques, gurdwaras, community centres, and a high street on Caldmore Road that\u2019s entirely South Asian businesses. The culture isn\u2019t a layer on top of Walsall. It is Walsall.",
-      "Garam Masala Dating is the #1 live South Asian dating show and singles mixer from NYC. Real blind dates on stage, two hosts who actually know what they\u2019re doing, and a room full of people who showed up to meet someone. The mixer is where the magic happens. It\u2019s social, it\u2019s fun, and it\u2019s the thing this community has been missing.",
+      "The format from New York: real contestants go on live dates on stage while the room watches and reacts. Afterward, the whole crowd mingles. In Walsall, where the desi community has depth but no dedicated singles programming, this format creates exactly the concentrated energy the city needs.",
       "The problem with heavily South Asian areas like Caldmore is that everybody knows everybody. Your auntie knows his mum who knows your cousin\u2019s wife. Privacy doesn\u2019t exist. A dating show gives people permission to be openly looking in a way that the community grapevine doesn\u2019t allow. The stage provides cover. You\u2019re there for the show, and whatever happens at the mixer is your business.",
       "Birmingham and Wolverhampton are right next door, extending the catchment significantly. But Walsall\u2019s community doesn\u2019t need Birmingham to fill a room. The density here is more than enough. The audience is ready. Someone just needs to build the event.",
       "Waitlist is open. Walsall is part of our Black Country and West Midlands tour. Get on the list, or apply to be a contestant.",
@@ -1139,6 +1874,27 @@ export const ukCities: Record<string, CityData> = {
       "stoke-on-trent",
       "leicester",
     ],
+    communityStats:
+      "Walsall's South Asian community is established and growing, contributing to the city's multicultural identity",
+    relatedArticleSlugs: [
+      "bengali-dating-culture",
+      "muslim-dating-south-asian",
+      "comedy-dating-show-unique-date-idea",
+    ],
+    faqItems: [
+      {
+        q: "When is Garam Masala Dating coming to Walsall?",
+        a: "No date confirmed yet. Walsall is on our UK expansion radar. Join the waitlist to be notified first.",
+      },
+      {
+        q: "Will the show be in English?",
+        a: "Yes. The show runs in English. The format is the same as our New York shows adapted for the local community.",
+      },
+      {
+        q: "Can I apply to be a contestant?",
+        a: "Yes. Apply now. Applications stay active for 12 months. Walsall applicants will be prioritized when we confirm a date.",
+      },
+    ],
   },
 
   oldham: {
@@ -1146,13 +1902,13 @@ export const ukCities: Record<string, CityData> = {
     displayName: "Oldham",
     titleTag: "Desi Dating Night Oldham UK",
     metaDescription:
-      "Garam Masala Dating is coming to Oldham. The #1 live South Asian dating show and singles mixer. Large South Asian community in Greater Manchester. Join the waitlist.",
+      "Garam Masala Dating is coming to Oldham. Live South Asian dating show and mixer. Large South Asian community in Greater Manchester. Join the waitlist.",
     h1: "Second Gen Energy in Oldham Is Strong. It Deserves a Stage.",
     status: "coming-soon",
     badgeLabel: "Coming Soon",
     bodyParagraphs: [
       "Oldham has one of the largest South Asian populations in Greater Manchester, particularly the Pakistani and Bangladeshi communities centred around Glodwick, Werneth, and Coppice. The community here is deeply rooted, going back to the textile mill era, and it\u2019s shaped the town\u2019s culture in fundamental ways. Friday prayers are standing room only, the food is outstanding, and everyone\u2019s nan still makes the best roti you\u2019ve ever had.",
-      "Garam Masala Dating is the #1 live South Asian dating show and singles mixer from NYC. Real singles on stage, live blind dates, two hosts, and a room of 250 people mixing. The show has been selling out in New York and we\u2019re bringing it to communities that have been overlooked by mainstream event programming for years. Oldham is high on that list.",
+      "The format from New York: real contestants go on live dates on stage while the room watches and reacts. Afterward, the whole crowd mingles. In Oldham, where the desi community has depth but no dedicated singles programming, this format creates exactly the concentrated energy the city needs.",
       "Young British Asians in Oldham face a specific tension. The community is tight, the expectations are traditional, and the options for meeting someone casually are thin. Manchester is a tram ride away, but the events there aren\u2019t built for this audience. You end up in a generic bar hoping to bump into someone from a similar background. This show removes the guesswork. Everyone in the room is South Asian. Everyone is there for the same reason.",
       "The established families in Oldham mean you\u2019re not just getting students or recent immigrants. You\u2019re getting people who grew up speaking Urdu and English in the same sentence, who understand the culture from the inside, and who want a social event that reflects that. Second gen energy in Oldham is strong and it deserves a stage.",
       "Waitlist is open. Oldham is part of our Greater Manchester expansion. Get on the list, or apply to be a contestant.",
@@ -1174,6 +1930,27 @@ export const ukCities: Record<string, CityData> = {
       "blackburn",
       "leeds",
     ],
+    communityStats:
+      "Oldham's South Asian community is established and growing, contributing to the city's multicultural identity",
+    relatedArticleSlugs: [
+      "pakistani-dating-america",
+      "how-to-meet-indian-singles-without-apps",
+      "rise-of-south-asian-comedy-america",
+    ],
+    faqItems: [
+      {
+        q: "When is Garam Masala Dating coming to Oldham?",
+        a: "No date confirmed yet. Oldham is on our UK expansion radar. Join the waitlist to be notified first.",
+      },
+      {
+        q: "Will the show be in English?",
+        a: "Yes. The show runs in English. The format is the same as our New York shows adapted for the local community.",
+      },
+      {
+        q: "Can I apply to be a contestant?",
+        a: "Yes. Apply now. Applications stay active for 12 months. Oldham applicants will be prioritized when we confirm a date.",
+      },
+    ],
   },
 
   blackburn: {
@@ -1181,13 +1958,13 @@ export const ukCities: Record<string, CityData> = {
     displayName: "Blackburn",
     titleTag: "South Asian Dating Blackburn UK",
     metaDescription:
-      "Garam Masala Dating is coming to Blackburn. The #1 live South Asian dating show and singles mixer. One of Lancashire\u2019s largest South Asian communities. Join the waitlist.",
+      "Garam Masala Dating is coming to Blackburn. Live South Asian dating show and mixer. One of Lancashire\u2019s largest South Asian communities. Join.",
     h1: "Lancashire Mill Towns Have Deep Roots. Blackburn\u2019s Desi Singles Need Something New.",
     status: "coming-soon",
     badgeLabel: "Coming Soon",
     bodyParagraphs: [
       "Blackburn with Darwen has one of the highest proportions of South Asian residents in Lancashire. The Indian and Pakistani communities, particularly concentrated in the Bastwell, Audley Range, and Brookhouse areas, have been here since the cotton mill era. Generations deep, culturally rich, and underserved when it comes to social events for young singles. The mosques and community centres are thriving. The dating scene is not.",
-      "Garam Masala Dating is the #1 live South Asian dating show and singles mixer from NYC. Real blind dates on stage, two hosts, and a room full of people who came to actually meet someone. The mixer before and after the stage dates is where most connections start. It\u2019s a night out with purpose, not another generic event.",
+      "The format from New York: real contestants go on live dates on stage while the room watches and reacts. Afterward, the whole crowd mingles. In Blackburn, where the desi community has depth but no dedicated singles programming, this format creates exactly the concentrated energy the city needs.",
       "The challenge in Blackburn is the same one facing a lot of Lancashire mill towns. The South Asian community is large and established, but the events designed for young people are nonexistent. You either go to Manchester or Preston for a night out, or you stay in and scroll through the apps again. A show in Blackburn means the community gets something built for them, in their own town.",
       "Blackburn\u2019s proximity to Bolton, Burnley, and Accrington means the catchment extends across East Lancashire. The South Asian populations in all those towns share cultural and family connections. A show here draws from the whole corridor, creating a room that\u2019s bigger and more diverse than any single town could produce alone.",
       "Waitlist is open. Blackburn is part of our Lancashire plans. Get on the list, or apply to be a contestant.",
@@ -1203,6 +1980,27 @@ export const ukCities: Record<string, CityData> = {
     addressCountry: "GB",
     region: "United Kingdom",
     nearbyCities: ["bolton", "manchester", "oldham", "lancaster", "bradford"],
+    communityStats:
+      "Blackburn's South Asian community is established and growing, contributing to the city's multicultural identity",
+    relatedArticleSlugs: [
+      "desi-dating-show-vs-dating-apps",
+      "brown-girl-dating-unspoken-rules",
+      "dating-after-30-desi-guide",
+    ],
+    faqItems: [
+      {
+        q: "When is Garam Masala Dating coming to Blackburn?",
+        a: "No date confirmed yet. Blackburn is on our UK expansion radar. Join the waitlist to be notified first.",
+      },
+      {
+        q: "Will the show be in English?",
+        a: "Yes. The show runs in English. The format is the same as our New York shows adapted for the local community.",
+      },
+      {
+        q: "Can I apply to be a contestant?",
+        a: "Yes. Apply now. Applications stay active for 12 months. Blackburn applicants will be prioritized when we confirm a date.",
+      },
+    ],
   },
 
   bolton: {
@@ -1210,13 +2008,13 @@ export const ukCities: Record<string, CityData> = {
     displayName: "Bolton",
     titleTag: "Desi Dating Show Bolton UK",
     metaDescription:
-      "Garam Masala Dating is coming to Bolton. The #1 live South Asian dating show and singles mixer. South Asian community and University of Bolton. Join the waitlist.",
+      "Garam Masala Dating is coming to Bolton. Live South Asian dating show and mixer. South Asian community and University of Bolton. Join the waitlist.",
     h1: "Bolton Has the Albert Halls and the Octagon. Now It Gets a Proper Desi Night.",
     status: "coming-soon",
     badgeLabel: "Coming Soon",
     bodyParagraphs: [
       "Bolton\u2019s South Asian community is centred around the Deane, Daubhill, and Great Lever areas, where Indian and Pakistani families have been settled for decades. The gurdwara on Derby Street, the mosques in Great Lever, and the Indian restaurants scattered across town all tell the story of a community that\u2019s woven into Bolton\u2019s identity. University of Bolton has added an international student element, but the foundation here is multigenerational British Asian families.",
-      "Garam Masala Dating is the #1 live South Asian dating show and singles mixer from NYC. Real singles go on blind dates on stage while two hosts keep things moving and funny. The audience mixes before and after. It\u2019s designed for communities where people know the culture, understand the expectations, and just want a fun way to meet someone new without the full family production.",
+      "The format from New York: real contestants go on live dates on stage while the room watches and reacts. Afterward, the whole crowd mingles. In Bolton, where the desi community has depth but no dedicated singles programming, this format creates exactly the concentrated energy the city needs.",
       "Bolton sits in the Greater Manchester orbit, and a lot of young South Asians here end up looking to Manchester for social events. But the commute back is a pain, the events aren\u2019t tailored to this audience, and Bolton\u2019s own community is big enough to sustain something homegrown. The catchment also extends to Bury, Wigan, and Chorley, all of which have South Asian residents who\u2019d drive twenty minutes for something worth attending.",
       "The comedy culture in Greater Manchester is strong, and Bolton\u2019s own entertainment venues (the Albert Halls, the Octagon Theatre) can handle a live show with real production value. This isn\u2019t a corner of a pub. It\u2019s a proper event in a proper venue.",
       "Waitlist is open. Bolton is part of our Greater Manchester expansion. Get on the list, or apply to be a contestant.",
@@ -1238,6 +2036,27 @@ export const ukCities: Record<string, CityData> = {
       "huddersfield",
       "liverpool",
     ],
+    communityStats:
+      "Bolton's South Asian community is established and growing, contributing to the city's multicultural identity",
+    relatedArticleSlugs: [
+      "indian-single-at-30-not-behind",
+      "why-dating-apps-dont-work-for-south-asians",
+      "desi-dating-problems-brown-people",
+    ],
+    faqItems: [
+      {
+        q: "When is Garam Masala Dating coming to Bolton?",
+        a: "No date confirmed yet. Bolton is on our UK expansion radar. Join the waitlist to be notified first.",
+      },
+      {
+        q: "Will the show be in English?",
+        a: "Yes. The show runs in English. The format is the same as our New York shows adapted for the local community.",
+      },
+      {
+        q: "Can I apply to be a contestant?",
+        a: "Yes. Apply now. Applications stay active for 12 months. Bolton applicants will be prioritized when we confirm a date.",
+      },
+    ],
   },
 
   huddersfield: {
@@ -1245,13 +2064,13 @@ export const ukCities: Record<string, CityData> = {
     displayName: "Huddersfield",
     titleTag: "Desi Singles Night Huddersfield",
     metaDescription:
-      "Garam Masala Dating is coming to Huddersfield. The #1 live South Asian dating show and singles mixer. University of Huddersfield and West Yorkshire\u2019s desi community.",
+      "Garam Masala Dating is coming to Huddersfield. Live South Asian dating show and mixer. University of Huddersfield and West Yorkshire\u2019s desi community.",
     h1: "Not Bradford. Not Leeds. Huddersfield Has Its Own Identity and Its Own Singles.",
     status: "coming-soon",
     badgeLabel: "Coming Soon",
     bodyParagraphs: [
       "Huddersfield has a concentrated South Asian community, particularly Pakistani families in the Lockwood, Birkby, and Paddock areas. The textile heritage runs deep here, and the families that came during the mill era have put down roots that span three generations. University of Huddersfield adds a student dimension with growing South Asian enrollment, particularly in health sciences and engineering.",
-      "Garam Masala Dating is the #1 live South Asian dating show and singles mixer from NYC. Real blind dates on stage, two hosts, a live audience, and a mixer where the real connections happen. It\u2019s a format that thrives in towns with established communities and limited social programming for young singles. Huddersfield is exactly that.",
+      "The format from New York: real contestants go on live dates on stage while the room watches and reacts. Afterward, the whole crowd mingles. In Huddersfield, where the desi community has depth but no dedicated singles programming, this format creates exactly the concentrated energy the city needs.",
       "Sitting between Leeds, Bradford, and Manchester, Huddersfield sometimes gets treated as a place people pass through on the M62. But the community here has its own identity. The food is different from Bradford\u2019s, the social dynamics are distinct from Leeds, and the people who grew up here have a specific pride in the town that doesn\u2019t defer to the bigger cities nearby.",
       "The dating options for South Asian singles in Huddersfield are basically the apps and hoping you meet someone at a family function. The occasional bhangra night at a local venue doesn\u2019t count as a dating event. This show is specifically designed to put single people in the same room with a structure that makes meeting someone natural, not forced.",
       "Waitlist is open. Huddersfield is part of our West Yorkshire tour. Get on the list, or apply to be a contestant.",
@@ -1267,6 +2086,27 @@ export const ukCities: Record<string, CityData> = {
     addressCountry: "GB",
     region: "United Kingdom",
     nearbyCities: ["leeds", "bradford", "manchester", "oldham", "sheffield"],
+    communityStats:
+      "Huddersfield's South Asian community is established and growing, contributing to the city's multicultural identity",
+    relatedArticleSlugs: [
+      "gujarati-singles-events-beyond-garba",
+      "south-indian-dating-culture",
+      "indian-matchmaking-meets-standup-comedy",
+    ],
+    faqItems: [
+      {
+        q: "When is Garam Masala Dating coming to Huddersfield?",
+        a: "No date confirmed yet. Huddersfield is on our UK expansion radar. Join the waitlist to be notified first.",
+      },
+      {
+        q: "Will the show be in English?",
+        a: "Yes. The show runs in English. The format is the same as our New York shows adapted for the local community.",
+      },
+      {
+        q: "Can I apply to be a contestant?",
+        a: "Yes. Apply now. Applications stay active for 12 months. Huddersfield applicants will be prioritized when we confirm a date.",
+      },
+    ],
   },
 
   cardiff: {
@@ -1274,15 +2114,15 @@ export const ukCities: Record<string, CityData> = {
     displayName: "Cardiff",
     titleTag: "Desi Dating Night Cardiff Wales",
     metaDescription:
-      "Garam Masala Dating is coming to Cardiff. The #1 live South Asian dating show and singles mixer. Cardiff University, Riverside, and the capital of Wales\u2019s desi community.",
+      "Garam Masala Dating is coming to Cardiff. Live South Asian dating show and mixer. Cardiff University, Riverside, and the capital of Wales\u2019s desi.",
     h1: "All of South Wales Looks to Cardiff. Time the Capital Delivered a Dating Night.",
     status: "coming-soon",
     badgeLabel: "Coming Soon",
     bodyParagraphs: [
       "Cardiff\u2019s Riverside neighbourhood has been the anchor for the city\u2019s South Asian community for decades. The restaurants on City Road and Cowbridge Road East, the mosques and temples, and the businesses that serve the community are all concentrated there. Cardiff University pulls in a significant South Asian student population across medicine, business, and engineering, and the city\u2019s status as the Welsh capital brings in professionals too.",
-      "Garam Masala Dating is the #1 live South Asian dating show and singles mixer from NYC. Real singles on blind dates on stage, two hosts, a live audience, and a mixer. It\u2019s the kind of event that doesn\u2019t exist in Cardiff yet, despite the community being large enough and vocal enough to fill a room immediately.",
+      "The format from New York: real contestants go on live dates on stage while the room watches and reacts. Afterward, the whole crowd mingles. In Cardiff, where the desi community has depth but no dedicated singles programming, this format creates exactly the concentrated energy the city needs.",
       "Wales\u2019s South Asian social scene is centred in Cardiff because there\u2019s nowhere else. Swansea has a smaller community, and the valleys don\u2019t have the density. That means Cardiff absorbs the demand from all over South Wales, and the potential audience for a dedicated desi dating event is bigger than the city\u2019s population alone suggests.",
-      "The comedy scene in Cardiff has grown significantly. The Glee Club, the Gate, and a rotation of touring shows mean the city understands live entertainment. The #1 dating show with comedy energy fits the culture here. Welsh hospitality is warm, the rugby fans know how to fill a room with energy, and the South Asian community in Cardiff has been waiting for something that\u2019s theirs.",
+      "The comedy scene in Cardiff has grown significantly. The Glee Club, the Gate, and a rotation of touring shows mean the city understands live entertainment. The live dating show with comedy energy fits the culture here. Welsh hospitality is warm, the rugby fans know how to fill a room with energy, and the South Asian community in Cardiff has been waiting for something that\u2019s theirs.",
       "Waitlist is open. Cardiff is our primary Wales stop. Get on the list, or apply to be a contestant.",
     ],
     ctas: [
@@ -1296,6 +2136,27 @@ export const ukCities: Record<string, CityData> = {
     addressCountry: "GB",
     region: "United Kingdom",
     nearbyCities: ["bristol", "swansea", "birmingham", "bath", "exeter"],
+    communityStats:
+      "Cardiff's South Asian community is established and growing, contributing to the city's multicultural identity",
+    relatedArticleSlugs: [
+      "what-actually-happens-at-a-live-comedy-dating-show",
+      "first-gen-indian-american-dating",
+      "dating-outside-culture-south-asian",
+    ],
+    faqItems: [
+      {
+        q: "When is Garam Masala Dating coming to Cardiff?",
+        a: "No date confirmed yet. Cardiff is on our UK expansion radar. Join the waitlist to be notified first.",
+      },
+      {
+        q: "Will the show be in English?",
+        a: "Yes. The show runs in English. The format is the same as our New York shows adapted for the local community.",
+      },
+      {
+        q: "Can I apply to be a contestant?",
+        a: "Yes. Apply now. Applications stay active for 12 months. Cardiff applicants will be prioritized when we confirm a date.",
+      },
+    ],
   },
 
   belfast: {
@@ -1303,15 +2164,15 @@ export const ukCities: Record<string, CityData> = {
     displayName: "Belfast",
     titleTag: "South Asian Dating Belfast NI",
     metaDescription:
-      "Garam Masala Dating is coming to Belfast. The #1 live South Asian dating show and singles mixer. Queen\u2019s University Belfast and Northern Ireland\u2019s growing desi community.",
+      "Garam Masala Dating is coming to Belfast. Live South Asian dating show and mixer. Queen\u2019s University Belfast and Northern Ireland\u2019s growing.",
     h1: "Belfast\u2019s Desi Community Is New and Growing Fast. The Social Scene Needs to Catch Up.",
     status: "coming-soon",
     badgeLabel: "Coming Soon",
     bodyParagraphs: [
       "Belfast\u2019s South Asian community is small compared to English cities, but it\u2019s growing fast. Queen\u2019s University Belfast has been recruiting Indian students aggressively, and the Ormeau Road and Botanic Avenue areas have developed a visible desi presence. Indian restaurants, grocery stores, and a student community that\u2019s added a new dimension to a city that\u2019s been reinventing itself for two decades.",
-      "Garam Masala Dating is the #1 live South Asian dating show and singles mixer from NYC. Real blind dates on stage, two hosts, and a room full of people mixing before and after. It\u2019s designed for cities where the community is present but the events haven\u2019t materialized yet. Belfast is a perfect example of a city that\u2019s ready for this.",
+      "The format from New York: real contestants go on live dates on stage while the room watches and reacts. Afterward, the whole crowd mingles. In Belfast, where the desi community has depth but no dedicated singles programming, this format creates exactly the concentrated energy the city needs.",
       "Northern Ireland\u2019s immigration story is newer than England\u2019s or Scotland\u2019s, which means the South Asian community here is predominantly first generation students and young professionals. They\u2019ve left their social networks behind and are building new ones from scratch. The dating apps are nearly useless in a city where the desi population is still growing. A live event that puts everyone in the same room is the most efficient way to meet people.",
-      "Belfast\u2019s personality helps. It\u2019s a city that\u2019s friendly, has a strong pub and live entertainment culture, and doesn\u2019t do pretentious. The Cathedral Quarter and the comedy scene at the Black Box and the Empire Music Hall show that this city knows how to be an audience. The #1 dating show with comedy energy would get one of the most genuine, unguarded crowds in the UK.",
+      "Belfast\u2019s personality helps. It\u2019s a city that\u2019s friendly, has a strong pub and live entertainment culture, and doesn\u2019t do pretentious. The Cathedral Quarter and the comedy scene at the Black Box and the Empire Music Hall show that this city knows how to be an audience. The live dating show with comedy energy would get one of the most genuine, unguarded crowds in the UK.",
       "Waitlist is open. Belfast is our Northern Ireland stop. Get on the list, or apply to be a contestant.",
     ],
     ctas: [
@@ -1331,6 +2192,27 @@ export const ukCities: Record<string, CityData> = {
       "liverpool",
       "birmingham",
     ],
+    communityStats:
+      "Belfast's South Asian community is established and growing, contributing to the city's multicultural identity",
+    relatedArticleSlugs: [
+      "nri-dating-challenges",
+      "third-culture-kid-dating",
+      "desi-night-out-beyond-bollywood",
+    ],
+    faqItems: [
+      {
+        q: "When is Garam Masala Dating coming to Belfast?",
+        a: "No date confirmed yet. Belfast is on our UK expansion radar. Join the waitlist to be notified first.",
+      },
+      {
+        q: "Will the show be in English?",
+        a: "Yes. The show runs in English. The format is the same as our New York shows adapted for the local community.",
+      },
+      {
+        q: "Can I apply to be a contestant?",
+        a: "Yes. Apply now. Applications stay active for 12 months. Belfast applicants will be prioritized when we confirm a date.",
+      },
+    ],
   },
 
   aberdeen: {
@@ -1338,14 +2220,14 @@ export const ukCities: Record<string, CityData> = {
     displayName: "Aberdeen",
     titleTag: "Desi Dating Show Aberdeen UK",
     metaDescription:
-      "Garam Masala Dating is coming to Aberdeen. The #1 live South Asian dating show and singles mixer. University of Aberdeen, oil industry professionals, and the Granite City.",
+      "Garam Masala Dating is coming to Aberdeen. Live South Asian dating show and mixer. University of Aberdeen, oil industry professionals, and the.",
     h1: "Three Hours to Glasgow. Three Hours to Edinburgh. Aberdeen\u2019s Desi Singles Are on Their Own.",
     status: "coming-soon",
     badgeLabel: "Coming Soon",
     bodyParagraphs: [
       "Aberdeen\u2019s South Asian community has two distinct threads. University of Aberdeen and Robert Gordon University bring in Indian students, particularly for engineering, computing, and healthcare programs. And then there\u2019s the oil and gas industry, which has attracted South Asian professionals for decades. The energy sector may be transitioning, but the people who built careers here have stayed, and their families are now part of the city\u2019s fabric.",
-      "Garam Masala Dating is the #1 live South Asian dating show and singles mixer from NYC. Real singles go on blind dates on stage, two hosts keep things funny and honest, and the whole room mixes before and after. It\u2019s designed for cities where the community is real but small enough that organic meeting is difficult. Aberdeen fits that exactly.",
-      "The Granite City has a reputation for being grey and reserved, but anyone who\u2019s been to a night out on Belmont Street knows that reputation is only half true. Aberdeen goes out properly when it has a reason to. The comedy scene at the Lemon Tree and the university social culture show there\u2019s appetite for live, interactive events. The #1 desi dating show gives the community a reason to show up that doesn\u2019t exist right now.",
+      "The format from New York: real contestants go on live dates on stage while the room watches and reacts. Afterward, the whole crowd mingles. In Aberdeen, where the desi community has depth but no dedicated singles programming, this format creates exactly the concentrated energy the city needs.",
+      "The Granite City has a reputation for being grey and reserved, but anyone who\u2019s been to a night out on Belmont Street knows that reputation is only half true. Aberdeen goes out properly when it has a reason to. The comedy scene at the Lemon Tree and the university social culture show there\u2019s appetite for live, interactive events. The live desi dating show gives the community a reason to show up that doesn\u2019t exist right now.",
       "Aberdeen\u2019s geographic isolation from the Central Belt means you can\u2019t just pop down to Edinburgh or Glasgow for a night out. It\u2019s three hours to either city. The desi population here is self contained by necessity, which means a local event has outsized impact. Every person in the room matters because there are no other options within driving distance.",
       "Waitlist is open. Aberdeen is part of our Scotland expansion. Get on the list, or apply to be a contestant.",
     ],
@@ -1360,5 +2242,26 @@ export const ukCities: Record<string, CityData> = {
     addressCountry: "GB",
     region: "United Kingdom",
     nearbyCities: ["edinburgh", "glasgow", "newcastle", "durham"],
+    communityStats:
+      "Aberdeen's South Asian community is established and growing, contributing to the city's multicultural identity",
+    relatedArticleSlugs: [
+      "punjabi-dating-culture-beyond-bollywood",
+      "sikh-speed-dating-events",
+      "irl-dating-revival",
+    ],
+    faqItems: [
+      {
+        q: "When is Garam Masala Dating coming to Aberdeen?",
+        a: "No date confirmed yet. Aberdeen is on our UK expansion radar. Join the waitlist to be notified first.",
+      },
+      {
+        q: "Will the show be in English?",
+        a: "Yes. The show runs in English. The format is the same as our New York shows adapted for the local community.",
+      },
+      {
+        q: "Can I apply to be a contestant?",
+        a: "Yes. Apply now. Applications stay active for 12 months. Aberdeen applicants will be prioritized when we confirm a date.",
+      },
+    ],
   },
 };

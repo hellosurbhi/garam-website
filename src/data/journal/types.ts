@@ -11,6 +11,8 @@ export interface JournalFaq {
 export interface JournalPost {
   slug: string;
   title: string;
+  /** Optional override for the HTML <title> tag when the display title exceeds 65 chars. */
+  seoTitle?: string;
   metaDescription: string;
   datePublished: string;
   dateModified: string;

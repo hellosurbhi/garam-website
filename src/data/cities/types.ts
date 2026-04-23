@@ -53,4 +53,10 @@ export interface CityData {
   region: CityRegion;
   /** Slugs of 3-5 nearby cities for cross-linking */
   nearbyCities: string[];
+  /** One-line community stat shown between eyebrow and H1 (e.g. "175,000 South Asians in the Chicago metro area") */
+  communityStats?: string;
+  /** Slugs of 2-3 journal articles to cross-link in the "From the Journal" section */
+  relatedArticleSlugs?: string[];
+  /** City-specific Q&A for the FAQ section and FAQPage JSON-LD schema */
+  faqItems?: Array<{ q: string; a: string }>;
 }

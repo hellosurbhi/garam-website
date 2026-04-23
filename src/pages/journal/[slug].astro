@@ -8,6 +8,7 @@ import {
   type JournalFaq,
 } from "@/data/journal";
 import { buildBreadcrumbJsonLd } from "@/utils/breadcrumbs";
+import { deriveSeoTitle } from "@/utils/meta";
 import { HF_IMAGES, slugToImageIndex } from "@/data/images";
 import { gitDates } from "virtual:git-dates";
 
@@ -99,11 +100,11 @@ const breadcrumbJsonLd = buildBreadcrumbJsonLd([
   { name: post.title },
 ]);
 
-const pageTitle = post.title;
+const seoTitle = post.seoTitle ?? deriveSeoTitle(post.title);
 ---
 
 <BaseLayout
-  title={pageTitle}
+  title={seoTitle}
   description={post.metaDescription}
   ogType="article"
 >

@@ -61,6 +61,9 @@ type PortalState =
       showId: string;
       showCity: string;
       showDate: string;
+      showDisplayDate: string;
+      startTime: string | null;
+      venueName: string | null;
       role: string;
     }
   | { type: "error"; message: string };

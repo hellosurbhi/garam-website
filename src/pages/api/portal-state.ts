@@ -80,11 +80,20 @@ export const GET: APIRoute = async ({ request }) => {
     if (event.isoDate < todayInShowTz) {
       return json({ state: "expired" });
     }
+    const displayTime = event.startTime
+      ? new Date(`2000-01-01T${event.startTime}`).toLocaleTimeString("en-US", {
+          hour: "numeric",
+          minute: "2-digit",
+        })
+      : null;
     return json({
       state: "show-invite",
       showId,
       showCity: event.city,
       showDate: event.isoDate,
+      showDisplayDate: event.date,
+      startTime: displayTime,
+      venueName: event.venue?.name ?? null,
       role: roleParam,
     });
   }

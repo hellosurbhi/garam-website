@@ -55,6 +55,7 @@ type PortalState =
       venueName?: string | null;
     }
   | { type: "expired" }
+  | { type: "no-access" }
   | { type: "error"; message: string };
 
 type PortalSignupData = {
@@ -247,6 +248,7 @@ export default function ContestantPortal() {
     return <div className="portal-loading">Loading...</div>;
   }
   if (state.type === "error") return <ErrorView message={state.message} />;
+  if (state.type === "no-access") return <NoAccessView />;
   if (state.type === "expired") return <ExpiredView />;
   if (state.type === "open") {
     return (
@@ -391,6 +393,25 @@ function ErrorView({ message }: { message: string }) {
         {ERROR_VIEW.supportLabel}{" "}
         <a href={SOCIAL_URLS.email} className="portal-link">
           {PORTAL_CONTACT_EMAIL}
+        </a>
+      </p>
+    </div>
+  );
+}
+
+function NoAccessView() {
+  return (
+    <div className="portal-center">
+      <p className="portal-emoji">🌶️</p>
+      <h1 className="portal-heading">Contestant Portal</h1>
+      <p className="portal-body">
+        This page is for selected contestants only. You need an invite link from
+        your host to access it.
+      </p>
+      <p className="portal-muted">
+        Questions? Email{" "}
+        <a href="mailto:contact@garammasaladating.com" className="portal-link">
+          contact@garammasaladating.com
         </a>
       </p>
     </div>

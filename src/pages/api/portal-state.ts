@@ -114,7 +114,7 @@ export const GET: APIRoute = async ({ request }) => {
   const cookies = parseCookies(request.headers.get("cookie"));
   const token = cookies.portal_session;
   if (!token) {
-    return json({ state: "open" });
+    return json({ state: "no-access" });
   }
 
   try {

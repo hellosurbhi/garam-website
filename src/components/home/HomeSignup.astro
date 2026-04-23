@@ -17,7 +17,7 @@ const leadSource = `spice-list-${pageName}`;
   data-lead-source={leadSource}
 >
   <h2 id="spicelist-heading" data-reveal>{SPICE_LIST.heading}</h2>
-  <p data-reveal>
+  <p id="spicelist-intro" data-reveal>
     {SPICE_LIST.intro}
   </p>
 
@@ -28,9 +28,6 @@ const leadSource = `spice-list-${pageName}`;
       <a href="/apply" class="spicelist-alt-btn">Apply to Be on Stage</a>
     </div>
     <div id="nl-step-1">
-      <p>
-        Get exclusive discount codes for cheaper (and sometimes free) tickets.
-      </p>
       <form
         id="nl-email-form"
         class="spicelist-form"
@@ -122,12 +119,7 @@ const leadSource = `spice-list-${pageName}`;
   } from "@/lib/leadSubmission";
 
   if (localStorage.getItem("gmd-popup-subscribed")) {
-    const altCta = document.getElementById("nl-already-subscribed");
-    const step1 = document.getElementById("nl-step-1");
-    if (altCta && step1) {
-      step1.setAttribute("hidden", "");
-      altCta.removeAttribute("hidden");
-    }
+    showSubscribedState();
   }
 
   let savedEmail = "";
@@ -139,6 +131,16 @@ const leadSource = `spice-list-${pageName}`;
   const leadSource =
     document.querySelector<HTMLElement>(".spicelist[data-lead-source]")?.dataset
       .leadSource ?? "spice-list";
+
+  function showSubscribedState() {
+    document.getElementById("nl-step-1")?.setAttribute("hidden", "");
+    document.getElementById("nl-step-2")?.setAttribute("hidden", "");
+    document.getElementById("nl-success")?.setAttribute("hidden", "");
+    document.getElementById("nl-subscribed")?.removeAttribute("hidden");
+    document.getElementById("spicelist-intro")?.setAttribute("hidden", "");
+    const heading = document.getElementById("spicelist-heading");
+    if (heading) heading.textContent = "See You at the Show";
+  }
 
   // Prefill the optional city from IP geo once it resolves. The geo fetch is
   // fired on page load; poll briefly so the value appears without the user

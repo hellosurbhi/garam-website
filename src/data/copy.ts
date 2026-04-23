@@ -147,9 +147,10 @@ export const SPICE_LIST = {
   phoneCta: "Send Me Deals",
   skip: "Maybe later",
   success: "You're on the list!",
-  subscribedTitle: "You're already on the Spice List",
+  subscribedHeading: "See You at the Show",
+  subscribedTitle: "Next date drops soon.",
   subscribedBody:
-    "Skip the signup, grab tickets or follow us on Instagram for the next ticket drop.",
+    "Grab tickets before they sell out, or follow us on Instagram.",
   subscribedPrimaryCta: "See Upcoming Shows",
   subscribedSecondaryCta: "Follow on Instagram",
 } as const;

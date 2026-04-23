@@ -192,8 +192,8 @@ function renderCityText(text: string, href: string): string {
             <div class="city-articles__list">
               {relatedPosts.map((post) => (
                 <a href={`/journal/${post.slug}`} class="city-articles__card">
-                  <p class="city-articles__card-title">{post.title}</p>
-                  <p class="city-articles__card-excerpt">{post.excerpt}</p>
+                  <span class="city-articles__card-title">{post.title}</span>
+                  <span class="city-articles__card-arrow">&rarr;</span>
                 </a>
               ))}
             </div>
@@ -486,30 +486,19 @@ function renderCityText(text: string, href: string): string {
       {/* Nearby cities */}
       {
         nearbyCities.length > 0 && (
-          <div class="city-nearby">
-            <h3 class="city-nearby__title">Also coming to</h3>
-            <div class="city-nearby__list">
-              {nearbyCities.map((nc) => (
+          <p class="city-nearby">
+            <span class="city-nearby__label">Also coming to: </span>
+            {nearbyCities.map((nc, i) => (
+              <>
                 <a href={`/cities/${nc.slug}`} class="city-nearby__link">
                   {nc.displayName}
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    width="14"
-                    height="14"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    stroke-width="2"
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                  >
-                    <path d="M5 12h14" />
-                    <path d="m12 5 7 7-7 7" />
-                  </svg>
                 </a>
-              ))}
-            </div>
-          </div>
+                {i < nearbyCities.length - 1 && (
+                  <span class="city-nearby__sep">, </span>
+                )}
+              </>
+            ))}
+          </p>
         )
       }
 
@@ -893,44 +882,30 @@ function renderCityText(text: string, href: string): string {
 
   .city-nearby {
     padding-top: 20px;
-  }
-
-  .city-nearby__title {
     font-family: var(--font-body);
-    font-size: 11px;
-    font-weight: 500;
-    text-transform: uppercase;
-    letter-spacing: 0.15em;
+    font-size: 13px;
     color: var(--muted);
-    margin-bottom: 16px;
+    line-height: 1.6;
+    margin: 0;
   }
 
-  .city-nearby__list {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 10px;
+  .city-nearby__label {
+    color: var(--muted);
   }
 
   .city-nearby__link {
-    display: inline-flex;
-    align-items: center;
-    gap: 6px;
-    padding: 10px 16px;
-    border: 1px solid rgba(0, 0, 0, 0.08);
-    border-radius: 50px;
-    font-family: var(--font-body);
-    font-size: 14px;
-    font-weight: 500;
     color: var(--text-secondary);
+    font-weight: 500;
     text-decoration: none;
-    transition:
-      border-color 0.15s,
-      color 0.15s;
+    transition: color 0.15s;
   }
 
   .city-nearby__link:hover {
-    border-color: rgba(var(--brand-red-rgb), 0.3);
     color: var(--brand-red);
+  }
+
+  .city-nearby__sep {
+    color: var(--muted);
   }
 
   .city-footer {
@@ -1181,61 +1156,57 @@ function renderCityText(text: string, href: string): string {
   /* ─── Related Journal Articles ────────────────────── */
 
   .city-articles {
-    margin-top: 36px;
-    padding: 24px 20px;
-    background: var(--cream-warm);
-    border-radius: 16px;
+    margin-top: 28px;
+    padding-top: 20px;
+    border-top: 1px solid rgba(0, 0, 0, 0.06);
   }
 
   .city-articles__title {
-    font-family: var(--font-body);
-    font-size: 11px;
-    font-weight: 500;
-    text-transform: uppercase;
-    letter-spacing: 0.15em;
-    color: var(--muted);
+    font-family: var(--font-playfair);
+    font-size: 20px;
+    font-weight: 700;
+    color: var(--charcoal);
     margin-bottom: 16px;
   }
 
   .city-articles__list {
     display: flex;
     flex-direction: column;
-    gap: 12px;
+    gap: 10px;
   }
 
   .city-articles__card {
-    display: block;
-    padding: 16px;
-    background: #fff;
-    border: 1px solid rgba(0, 0, 0, 0.06);
-    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 14px 18px;
+    background: rgba(var(--brand-red-rgb), 0.04);
+    border: 1px solid rgba(var(--brand-red-rgb), 0.1);
+    border-radius: 8px;
     text-decoration: none;
-    transition: border-color 0.15s;
+    transition:
+      background 0.15s ease,
+      border-color 0.15s ease;
   }
 
   .city-articles__card:hover {
-    border-color: rgba(var(--brand-red-rgb), 0.25);
+    background: rgba(var(--brand-red-rgb), 0.08);
+    border-color: rgba(var(--brand-red-rgb), 0.2);
   }
 
   .city-articles__card-title {
-    font-family: var(--font-playfair);
-    font-size: 15px;
-    font-weight: 600;
+    font-family: var(--font-body);
+    font-size: 14px;
+    font-weight: 500;
     color: var(--charcoal);
-    margin: 0 0 6px;
     line-height: 1.35;
   }
 
-  .city-articles__card-excerpt {
-    font-family: var(--font-body);
-    font-size: 13px;
-    color: var(--text-secondary);
-    margin: 0;
-    line-height: 1.5;
-    display: -webkit-box;
-    -webkit-line-clamp: 2;
-    -webkit-box-orient: vertical;
-    overflow: hidden;
+  .city-articles__card-arrow {
+    color: var(--brand-red);
+    font-size: 16px;
+    flex-shrink: 0;
   }
 
   /* ─── FAQ Section ─────────────────────────────────── */

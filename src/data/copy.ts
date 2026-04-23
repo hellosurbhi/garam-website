@@ -148,8 +148,7 @@ export const SPICE_LIST = {
   skip: "Maybe later",
   success: "You're on the list!",
   subscribedHeading: "See You at the Show",
-  subscribedBody:
-    "Grab tickets before they sell out, or follow us on Instagram.",
+  subscribedBody: "Get tickets before they sell out.",
   subscribedPrimaryCta: "See Upcoming Shows",
   subscribedSecondaryCta: "Follow on Instagram",
 } as const;

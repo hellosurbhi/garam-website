@@ -169,9 +169,6 @@ function renderCityText(text: string, href: string): string {
       {/* Eyebrow label */}
       <p class="city-eyebrow">{city.displayName}</p>
 
-      {/* Community stats */}
-      {city.communityStats && <p class="city-stat">{city.communityStats}</p>}
-
       {/* H1 */}
       <h1 class="city-h1">{city.h1}</h1>
 
@@ -836,7 +833,7 @@ function renderCityText(text: string, href: string): string {
     display: flex;
     flex-direction: column;
     gap: 12px;
-    margin-top: 44px;
+    margin-top: 32px;
   }
 
   .city-cta {
@@ -895,7 +892,7 @@ function renderCityText(text: string, href: string): string {
   /* ─── Nearby Cities ───────────────────────────────── */
 
   .city-nearby {
-    padding-top: 32px;
+    padding-top: 20px;
   }
 
   .city-nearby__title {
@@ -1184,8 +1181,8 @@ function renderCityText(text: string, href: string): string {
   /* ─── Related Journal Articles ────────────────────── */
 
   .city-articles {
-    margin-top: 48px;
-    padding: 28px 24px;
+    margin-top: 36px;
+    padding: 24px 20px;
     background: var(--cream-warm);
     border-radius: 16px;
   }
@@ -1244,8 +1241,8 @@ function renderCityText(text: string, href: string): string {
   /* ─── FAQ Section ─────────────────────────────────── */
 
   .city-faq {
-    margin-top: 48px;
-    padding-top: 32px;
+    margin-top: 20px;
+    padding-top: 28px;
     border-top: 1px solid rgba(0, 0, 0, 0.06);
   }
 

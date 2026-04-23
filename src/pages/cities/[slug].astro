@@ -10,6 +10,7 @@ import { SHOW_IMAGES, slugToImageIndex } from "@/data/images";
 import { buildTicketUrl } from "@/utils/eventUrl";
 import { EVENTS } from "@/data/copy";
 import { getPostBySlug } from "@/data/journal";
+import { SOCIAL_URLS } from "@/data/socials";
 
 export function getStaticPaths() {
   return Object.keys(cities).map((slug) => ({
@@ -175,11 +176,37 @@ function renderCityText(text: string, href: string): string {
       {/* Body */}
       <div class="city-body">
         {
-          city.bodyParagraphs.map((para) => (
-            <p
-              class="city-paragraph"
-              set:html={renderCityText(para, applyHref)}
-            />
+          city.bodyParagraphs.map((para, i) => (
+            <>
+              <p
+                class="city-paragraph"
+                set:html={renderCityText(para, applyHref)}
+              />
+              {i === 0 && (
+                <aside class="city-social-cta" aria-label="Follow us">
+                  <p class="city-social-cta__text">
+                    Not in {city.displayName} yet? Follow along on{" "}
+                    <a
+                      href={SOCIAL_URLS.instagram}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                    >
+                      Instagram
+                    </a>{" "}
+                    for short clips and behind-the-scenes, or catch full
+                    episodes on{" "}
+                    <a
+                      href={SOCIAL_URLS.youtube}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                    >
+                      YouTube
+                    </a>
+                    .
+                  </p>
+                </aside>
+              )}
+            </>
           ))
         }
       </div>
@@ -816,6 +843,31 @@ function renderCityText(text: string, href: string): string {
     color: var(--brand-red);
     text-decoration: underline;
     font-style: italic;
+  }
+
+  .city-social-cta {
+    background: rgba(var(--brand-red-rgb), 0.05);
+    border-left: 3px solid var(--brand-red);
+    border-radius: 0 8px 8px 0;
+    padding: 14px 18px;
+  }
+
+  .city-social-cta__text {
+    font-family: var(--font-body), sans-serif;
+    font-size: 15px;
+    line-height: 1.6;
+    color: var(--charcoal);
+    margin: 0;
+  }
+
+  .city-social-cta__text a {
+    color: var(--brand-red);
+    font-weight: 600;
+    text-decoration: none;
+  }
+
+  .city-social-cta__text a:hover {
+    text-decoration: underline;
   }
 
   .city-ctas {

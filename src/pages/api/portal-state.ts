@@ -7,6 +7,8 @@ import { enforceRateLimit, RATE_LIMITS } from "@/lib/rateLimit";
 
 export const prerender = false;
 
+export const prerender = false;
+
 const VALID_ROLES = ["female", "male", "stealer"] as const;
 type ValidRole = (typeof VALID_ROLES)[number];
 

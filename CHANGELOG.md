@@ -1,5 +1,17 @@
 # Changelog
 
+## content(instagram): update third reel URL to latest post (2026-04-22)
+
+### What changed
+
+Updated the third entry in `INSTAGRAM_REEL_URLS` in `src/lib/constants.ts` from `https://www.instagram.com/reel/DWuAL_REcJD/` to `https://www.instagram.com/p/DXCWVUpPsDl/`.
+
+### Files affected
+
+- `src/lib/constants.ts`
+
+---
+
 ## fix(seo): resolve Bing Webmaster alt-attribute and title-length warnings (2026-04-22)
 
 ### What changed

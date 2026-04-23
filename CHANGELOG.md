@@ -169,14 +169,21 @@ Purely additive change. No new origins introduced: `t.co` and `analytics.twitter
 
 ### What changed
 
-- Added confirmed Los Angeles show: July 19 at Lyric Hyperion Theater & Cafe (2106 Hyperion Ave, Silver Lake), 6:30 to 8:30 PM, with Eventbrite modal checkout widget.
-- Updated TBA cities to Chicago and Houston (top South Asian population metros without upcoming confirmed shows), replacing San Diego.
-- LA stays in TBA_CITIES so it automatically reverts to a "Coming soon" card after the July 19 show passes on next deploy.
-- Added dedup logic to `allEvents`: TBA city cards are suppressed at build time when that city already has an upcoming confirmed event, preventing duplicate cards.
+Completed the route rename from `/contestant-prep` to `/contestant-portal` across the entire codebase. The page file `contestant-portal.astro` was already renamed; this commit updates everything else.
 
 ### Files affected
 
-- `src/data/events.ts`
+- `src/pages/api/contestant-prep-auth.ts` → renamed to `contestant-portal-auth.ts`
+- `test/contestant-prep-auth.test.ts` → renamed to `contestant-portal-auth.test.ts`
+- `src/lib/rateLimit.ts` — renamed export `contestantPrepLimiter` → `contestantPortalLimiter`, updated comment and Redis key prefix
+- `src/components/ContestantPrepPage.tsx` — updated fetch URL
+- `src/components/ContestantPrepPage.test.tsx` — updated mock URL assertions
+- `src/components/admin/AdminDashboard.tsx` — updated fallback URL in invite copy flow
+- `public/js/posthog.js` — updated analytics exclusion filter
+- `public/robots.txt` — updated `Disallow` rule
+- `astro.config.mjs` — updated sitemap SKIP set and filter
+- `README.md` — updated route table; added missing routes (/tickets, /hosts, /privacy, /terms, /journal/[slug], API routes)
+- `CLAUDE.md` — updated key pages list
 
 ### Decisions
 
@@ -842,6 +849,7 @@ Note: enforcing these as hard merge blockers requires GitHub Pro (branch protect
 
 - `.github/workflows/ci.yml`
 - `.github/workflows/smoke-tests.yml`
+
 ## fix(security+bugs): rate limiting, Zod validation, pagination, UI fixes — full backlog pass (2026-04-20)
 
 ### What changed

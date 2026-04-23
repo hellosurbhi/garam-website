@@ -1,5 +1,23 @@
 # Changelog
 
+## design(cities): clean up CTA hierarchy and remove redundant red stat label (2026-04-23)
+
+### What changed
+
+Cleaned up three visual problems on all city landing pages via a single template change. No city data files were touched.
+
+1. Removed the `communityStats` render entirely. The field was a generic sentence ("X has a growing South Asian community...") styled as a tiny red uppercase label, which looked like a broken UI element rather than editorial content.
+2. Made inline CTA phrases in body paragraphs clickable. Text like "Get on the list" and "apply to be a contestant" was previously plain italic text. The template now regex-replaces those phrases with a `<button data-waitlist-trigger>` (opens the waitlist modal) and an `<a>` link to the apply page respectively. Applies to all city pages automatically.
+3. Replaced the equal-weight two-button CTA stack with a primary button + small text link. The "Join Waitlist" button keeps the full bordered style; the "Apply to Be a Contestant" action is now a lightweight text link underneath, creating clear visual hierarchy instead of two identical-looking rows.
+
+### Files affected
+
+- `src/pages/cities/[slug].astro`
+
+### Decisions
+
+Template-only fix: using `set:html` with regex replacement is safe here because the data source is hardcoded TypeScript, not user input. Avoided touching any of the 300+ city data files by handling the transformation at render time.
+
 ## content(instagram): update third reel URL to latest post (2026-04-22)
 
 ### What changed

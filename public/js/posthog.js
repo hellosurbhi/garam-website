@@ -1,6 +1,7 @@
 function loadPostHog() {
   var path = window.location.pathname;
-  if (path.startsWith("/admin") || path.startsWith("/contestant-prep")) return;
+  if (path.startsWith("/admin") || path.startsWith("/contestant-portal"))
+    return;
 
   window.__garamErrorQueue = window.__garamErrorQueue || [];
 

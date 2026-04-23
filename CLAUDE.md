@@ -22,13 +22,13 @@ src/
   hooks/          # useGeoData (country/state/city for apply form)
   utils/          # breadcrumbs, eventSchema, reactSelectStyles, eventDate
   types/          # application.ts (Firestore types)
-api/              # Vercel serverless (notify-application, contestant-prep-auth)
+api/              # Vercel serverless (notify-application, contestant-portal-auth)
 public/
   fonts/          # self-hosted woff2 (Playfair, Nunito, Cormorant, JetBrains)
   images/         # all images (logo.svg, hero.webp, host photos)
 ```
 
-Key pages: `/` `/tickets` `/apply` `/links` `/faq` `/hosts` `/journal` `/cities/[slug]` `/admin` `/contestant-prep` `/privacy` `/terms`
+Key pages: `/` `/tickets` `/apply` `/links` `/faq` `/hosts` `/journal` `/cities/[slug]` `/admin` `/contestant-portal` `/privacy` `/terms`
 
 ## Content architecture
 

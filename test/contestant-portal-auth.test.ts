@@ -3,11 +3,11 @@ import { createHmac } from "crypto";
 
 vi.mock("@/lib/rateLimit", () => ({
   checkRateLimit: vi.fn().mockResolvedValue(null),
-  contestantPrepLimiter: {},
+  contestantPortalLimiter: {},
   getClientIp: vi.fn(() => "127.0.0.1"),
 }));
 
-const { POST } = await import("@/pages/api/contestant-prep-auth");
+const { POST } = await import("@/pages/api/contestant-portal-auth");
 
 const TEST_SALT = "test-secret-salt-12345";
 
@@ -26,18 +26,21 @@ function getShowExpiryMs(isoDate: string): number {
 }
 
 function makeRequest(body: unknown): Request {
-  return new Request("https://garammasaladating.com/api/contestant-prep-auth", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(body),
-  });
+  return new Request(
+    "https://garammasaladating.com/api/contestant-portal-auth",
+    {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(body),
+    },
+  );
 }
 
 function makeContext(request: Request) {
   return { request } as Parameters<typeof POST>[0];
 }
 
-describe("contestant-prep-auth handler", () => {
+describe("contestant-portal-auth handler", () => {
   beforeEach(() => {
     import.meta.env.CONTESTANT_PREP_SALT = TEST_SALT;
     vi.useRealTimers();

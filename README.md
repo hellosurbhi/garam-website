@@ -23,17 +23,17 @@ npm run dev
 
 Create a `.env.local` file with the following:
 
-| Variable                              | Purpose                                        |
-| ------------------------------------- | ---------------------------------------------- |
-| `PUBLIC_FIREBASE_API_KEY`             | Firebase client API key                        |
-| `PUBLIC_FIREBASE_AUTH_DOMAIN`         | Firebase auth domain                           |
-| `PUBLIC_FIREBASE_PROJECT_ID`          | Firestore project ID                           |
-| `PUBLIC_FIREBASE_STORAGE_BUCKET`      | Cloud Storage bucket                           |
-| `PUBLIC_FIREBASE_MESSAGING_SENDER_ID` | Firebase messaging sender ID                   |
-| `PUBLIC_FIREBASE_APP_ID`              | Firebase app ID                                |
-| `FIREBASE_ADMIN_CLIENT_EMAIL`         | Service account email (server-side only)       |
-| `FIREBASE_ADMIN_PRIVATE_KEY`          | Service account private key (server-side only) |
-| `CONTESTANT_PREP_SALT`                | Salt for weekly password rotation              |
+| Variable                              | Purpose                                                        |
+| ------------------------------------- | -------------------------------------------------------------- |
+| `PUBLIC_FIREBASE_API_KEY`             | Firebase client API key                                        |
+| `PUBLIC_FIREBASE_AUTH_DOMAIN`         | Firebase auth domain                                           |
+| `PUBLIC_FIREBASE_PROJECT_ID`          | Firestore project ID                                           |
+| `PUBLIC_FIREBASE_STORAGE_BUCKET`      | Cloud Storage bucket                                           |
+| `PUBLIC_FIREBASE_MESSAGING_SENDER_ID` | Firebase messaging sender ID                                   |
+| `PUBLIC_FIREBASE_APP_ID`              | Firebase app ID                                                |
+| `FIREBASE_ADMIN_CLIENT_EMAIL`         | Service account email (server-side only)                       |
+| `FIREBASE_ADMIN_PRIVATE_KEY`          | Service account private key (server-side only)                 |
+| `CONTESTANT_PREP_SALT`                | Salt for weekly password rotation (gates `/contestant-portal`) |
 
 `PUBLIC_`-prefixed variables are exposed to the client in Astro. `FIREBASE_ADMIN_*` variables are used only in Vercel serverless functions.
 
@@ -59,17 +59,24 @@ scripts/          # Build-time scripts (prerender, data migration)
 
 ## Pages
 
-| Route                      | What it does                                                  |
-| -------------------------- | ------------------------------------------------------------- |
-| `/`                        | Landing page — hero, next show, social proof, FAQ, newsletter |
-| `/links`                   | Linktree replacement for Instagram bio                        |
-| `/apply`                   | Contestant application form (writes to Firestore)             |
-| `/admin`                   | Protected dashboard to review applications (Firebase Auth)    |
-| `/contestant-prep`         | Password-protected prep guide for selected contestants        |
-| `/faq`                     | Frequently asked questions                                    |
-| `/cities`                  | Events directory by city                                      |
-| `/journal`                 | Blog / articles                                               |
-| `/south-asian-dating-tips` | Dating tips content hub                                       |
+| Route                         | What it does                                                 |
+| ----------------------------- | ------------------------------------------------------------ |
+| `/`                           | Landing page: hero, next show, social proof, FAQ, newsletter |
+| `/tickets`                    | Quick-buy page linking to Eventbrite                         |
+| `/apply`                      | Contestant application form (writes to Firestore)            |
+| `/faq`                        | Frequently asked questions                                   |
+| `/hosts`                      | Host bios and backstory                                      |
+| `/links`                      | Linktree replacement for Instagram bio                       |
+| `/journal`                    | Blog / articles index                                        |
+| `/journal/[slug]`             | Individual blog post                                         |
+| `/cities/[slug]`              | City landing page (NYC, Chicago, etc.)                       |
+| `/south-asian-dating-tips`    | Dating tips content hub                                      |
+| `/admin`                      | Protected dashboard to review applications (Firebase Auth)   |
+| `/contestant-portal`          | Password-protected prep guide for selected contestants       |
+| `/privacy`                    | Privacy policy                                               |
+| `/terms`                      | Terms of service                                             |
+| `/api/contestant-portal-auth` | Server: validates contestant portal password                 |
+| `/api/notify-application`     | Server: sends email on new application                       |
 
 ## Scripts
 

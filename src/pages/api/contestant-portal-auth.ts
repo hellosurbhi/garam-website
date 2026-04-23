@@ -1,6 +1,8 @@
 import type { APIRoute } from "astro";
 import { createHmac, timingSafeEqual } from "crypto";
 import { enforceRateLimit, RATE_LIMITS } from "@/lib/rateLimit";
+import { jsonResponse, parseJsonRequest } from "@/lib/http";
+import { ContestantPrepAuthSchema } from "@/lib/schemas";
 
 export const prerender = false;
 

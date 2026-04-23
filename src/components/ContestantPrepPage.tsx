@@ -277,7 +277,7 @@ export default function ContestantPrepPage() {
   useEffect(() => {
     if (state !== "checking") return;
 
-    fetch("/api/contestant-prep-auth", {
+    fetch("/api/contestant-portal-auth", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ date: params.date, sig: params.sig }),

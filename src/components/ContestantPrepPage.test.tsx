@@ -167,7 +167,7 @@ describe("ContestantPrepPage", () => {
 
     await waitFor(() => {
       expect(fetchSpy).toHaveBeenCalledWith(
-        "/api/contestant-prep-auth",
+        "/api/contestant-portal-auth",
         expect.objectContaining({
           method: "POST",
           body: JSON.stringify({ date: "2026-04-10", sig: "test-sig" }),
@@ -432,7 +432,7 @@ describe("ContestantPrepPage", () => {
     render(<ContestantPrepPage />);
     await waitFor(() => {
       expect(fetchSpy).toHaveBeenCalledWith(
-        "/api/contestant-prep-auth",
+        "/api/contestant-portal-auth",
         expect.objectContaining({
           headers: { "Content-Type": "application/json" },
         }),

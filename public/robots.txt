@@ -2,7 +2,7 @@ User-agent: *
 Allow: /
 Allow: /api/geo
 Disallow: /admin
-Disallow: /contestant-prep
+Disallow: /contestant-portal
 Disallow: /api/
 
 # AI Search & Training Crawlers — Allow all for maximum AI visibility

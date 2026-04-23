@@ -272,6 +272,10 @@ export const corePosts: JournalPost[] = [
         type: "p",
         text: "Stop doing the same thing every weekend. Get tickets to Garam Masala Dating at garammasaladating.com.",
       },
+      {
+        type: "p" as const,
+        text: "The Manhattan show runs at Top Secret Comedy Club in the East Village. <a href='/cities/manhattan'>Get full Manhattan show details</a> including upcoming dates, venue info, and how to apply.",
+      },
     ],
   },
   {
@@ -547,6 +551,10 @@ export const corePosts: JournalPost[] = [
       {
         type: "p",
         text: "Stop swiping. Buy tickets at garammasaladating.com.",
+      },
+      {
+        type: "p" as const,
+        text: "For show dates, venue details, and the contestant application, visit <a href='/cities/manhattan'>the Manhattan show page</a>.",
       },
     ],
   },

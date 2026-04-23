@@ -19,7 +19,6 @@ export const FOOTER_INVOLVED_LINKS: FooterLink[] = [
   { label: "Buy Tickets", href: "/tickets" },
   { label: "Corporate Events", href: "/corporate" },
   { label: "Sponsorship", href: "/sponsorship" },
-  { label: "Follow Us", href: "/links" },
 ];
 
 export const FOOTER_EXPLORE_LINKS: FooterLink[] = [

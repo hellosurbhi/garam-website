@@ -27,6 +27,7 @@ const widgetEvents = upcomingEvents
     triggerId: `eventbrite-widget-modal-trigger-${e.eventbriteId}`,
     fallbackUrl: buildTicketUrl(e.url, "tickets", "listing"),
     city: e.city,
+    price: e.price ?? "",
   }));
 
 const breadcrumbJsonLd = buildBreadcrumbJsonLd([
@@ -335,12 +336,62 @@ const eventSeriesJsonLd = JSON.stringify({
               background: bgColor,
             },
             onOrderComplete: function () {
+              var raw = sessionStorage.getItem("eb_cta_source");
+              var src = raw ? JSON.parse(raw) : null;
+              sessionStorage.removeItem("eb_cta_source");
+              var entry = {
+                landing_page: sessionStorage.getItem("gmd-landing-page") || "",
+                referrer_host:
+                  sessionStorage.getItem("gmd-referrer-host") || "",
+                utm_source: sessionStorage.getItem("gmd-utm-source") || "",
+                utm_campaign: sessionStorage.getItem("gmd-utm-campaign") || "",
+                utm_medium: sessionStorage.getItem("gmd-utm-medium") || "",
+                utm_content: sessionStorage.getItem("gmd-utm-content") || "",
+              };
               if (window.posthog) {
                 window.posthog.capture("order_complete", {
                   event_id: ev.eventId,
                   city: ev.city,
+                  source_section: (src && src.section) || "tickets",
+                  source_page: (src && src.page) || "/tickets",
+                  price: (src && src.price) || ev.price || "",
+                  landing_page: entry.landing_page,
+                  referrer_host: entry.referrer_host,
+                  utm_source: entry.utm_source,
+                  utm_campaign: entry.utm_campaign,
+                  utm_medium: entry.utm_medium,
+                  utm_content: entry.utm_content,
                 });
               }
+              var price = parseFloat(
+                ((src && src.price) || ev.price || "").replace(
+                  /[^0-9.]/g,
+                  "",
+                ) || "0",
+              );
+              window.dataLayer = window.dataLayer || [];
+              window.dataLayer.push({ ecommerce: null });
+              window.dataLayer.push({
+                event: "purchase",
+                ecommerce: {
+                  currency: "USD",
+                  value: price,
+                  items: [
+                    {
+                      item_name: "Garam Masala Dating - " + ev.city,
+                      item_id: String(ev.eventId),
+                      price: price,
+                      quantity: 1,
+                    },
+                  ],
+                },
+                source_section: (src && src.section) || "tickets",
+                source_page: (src && src.page) || "/tickets",
+                landing_page: entry.landing_page,
+                referrer_host: entry.referrer_host,
+                utm_source: entry.utm_source,
+                utm_campaign: entry.utm_campaign,
+              });
             },
           };
           try {
@@ -352,6 +403,16 @@ const eventSeriesJsonLd = JSON.stringify({
             if (trigger) {
               trigger.addEventListener("click", function (e) {
                 e.preventDefault();
+                sessionStorage.setItem(
+                  "eb_cta_source",
+                  JSON.stringify({
+                    section: trigger.dataset.phSection || "tickets",
+                    page: window.location.pathname,
+                    city: ev.city,
+                    price: trigger.dataset.phPrice || ev.price || "",
+                    event_date: trigger.dataset.phEventDate || "",
+                  }),
+                );
               });
             }
           } catch (_) {

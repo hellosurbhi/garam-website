@@ -9,6 +9,7 @@ import { buildBreadcrumbJsonLd } from "@/utils/breadcrumbs";
 import { SHOW_IMAGES, slugToImageIndex } from "@/data/images";
 import { buildTicketUrl } from "@/utils/eventUrl";
 import { EVENTS } from "@/data/copy";
+import { getPostBySlug } from "@/data/journal";
 
 export function getStaticPaths() {
   return Object.keys(cities).map((slug) => ({
@@ -48,65 +49,71 @@ const cityEvents =
 /* ── City JSON-LD ─────────────────────────────────────────── */
 
 function buildCityJsonLd(c: CityData): string {
-  const localBusiness = {
-    "@type": "LocalBusiness" as const,
-    name: "Garam Masala Dating",
-    url: "https://garammasaladating.com",
-    areaServed: c.areaServed,
-  };
+  const graph: Record<string, unknown>[] = [
+    {
+      "@type": "LocalBusiness",
+      name: "Garam Masala Dating",
+      url: "https://garammasaladating.com",
+      areaServed: c.areaServed,
+    },
+  ];
 
-  if (!c.includeEventSchema) {
-    return JSON.stringify({
-      "@context": "https://schema.org",
-      ...localBusiness,
+  if (c.includeEventSchema) {
+    const event: Record<string, unknown> = {
+      "@type": "Event",
+      name: `Garam Masala Dating \u2013 ${c.displayName}`,
+      eventAttendanceMode: "https://schema.org/OfflineEventAttendanceMode",
+      eventStatus: "https://schema.org/EventScheduled",
+      organizer: {
+        "@type": "Organization",
+        name: "Garam Masala Dating",
+        url: "https://garammasaladating.com",
+      },
+      performer: [
+        {
+          "@type": "Person",
+          name: "Surbhi",
+          url: "https://www.instagram.com/lordmakemetaller/",
+        },
+        {
+          "@type": "Person",
+          name: "Wyatt Feegrado",
+          url: "https://www.instagram.com/wyattfeegrado/",
+        },
+      ],
+      location: {
+        "@type": "Place",
+        name: c.venueName ?? c.displayName,
+        address: {
+          "@type": "PostalAddress",
+          addressLocality: c.addressLocality,
+          addressRegion: c.addressRegion,
+          addressCountry: "US",
+        },
+      },
+    };
+
+    if (c.eventScheduleFrequency) {
+      event.eventSchedule = {
+        "@type": "Schedule",
+        repeatFrequency: c.eventScheduleFrequency,
+      };
+    }
+    graph.push(event);
+  }
+
+  if (c.faqItems && c.faqItems.length > 0) {
+    graph.push({
+      "@type": "FAQPage",
+      mainEntity: c.faqItems.map((item) => ({
+        "@type": "Question",
+        name: item.q,
+        acceptedAnswer: { "@type": "Answer", text: item.a },
+      })),
     });
   }
 
-  const event: Record<string, unknown> = {
-    "@type": "Event",
-    name: `Garam Masala Dating \u2013 ${c.displayName}`,
-    eventAttendanceMode: "https://schema.org/OfflineEventAttendanceMode",
-    eventStatus: "https://schema.org/EventScheduled",
-    organizer: {
-      "@type": "Organization",
-      name: "Garam Masala Dating",
-      url: "https://garammasaladating.com",
-    },
-    performer: [
-      {
-        "@type": "Person",
-        name: "Surbhi",
-        url: "https://www.instagram.com/lordmakemetaller/",
-      },
-      {
-        "@type": "Person",
-        name: "Wyatt Feegrado",
-        url: "https://www.instagram.com/wyattfeegrado/",
-      },
-    ],
-    location: {
-      "@type": "Place",
-      name: c.venueName ?? c.displayName,
-      address: {
-        "@type": "PostalAddress",
-        addressLocality: c.addressLocality,
-        addressRegion: c.addressRegion,
-        addressCountry: "US",
-      },
-    },
-  };
-
-  if (c.eventScheduleFrequency) {
-    event.eventSchedule = {
-      "@type": "Schedule",
-      repeatFrequency: c.eventScheduleFrequency,
-    };
-  }
-
-  return JSON.stringify({
-    "@context": "https://schema.org",
-    "@graph": [localBusiness, event],
-  });
+  return JSON.stringify({ "@context": "https://schema.org", "@graph": graph });
 }
 
 const cityJsonLd = buildCityJsonLd(city);
@@ -116,6 +123,10 @@ const breadcrumbJsonLd = buildBreadcrumbJsonLd([
   { name: "Cities", url: "https://garammasaladating.com/cities" },
   { name: city.displayName },
 ]);
+
+const relatedPosts = (city.relatedArticleSlugs ?? [])
+  .map((slug) => getPostBySlug(slug))
+  .filter((p) => p !== undefined);
 ---
 
 <BaseLayout title={title} description={description}>
@@ -138,6 +149,9 @@ const breadcrumbJsonLd = buildBreadcrumbJsonLd([
       {/* Eyebrow label */}
       <p class="city-eyebrow">{city.displayName}</p>
 
+      {/* Community stats */}
+      {city.communityStats && <p class="city-stat">{city.communityStats}</p>}
+
       {/* H1 */}
       <h1 class="city-h1">{city.h1}</h1>
 
@@ -149,6 +163,23 @@ const breadcrumbJsonLd = buildBreadcrumbJsonLd([
           ))
         }
       </div>
+
+      {/* Related journal articles */}
+      {
+        relatedPosts.length > 0 && (
+          <div class="city-articles">
+            <h3 class="city-articles__title">From the Journal</h3>
+            <div class="city-articles__list">
+              {relatedPosts.map((post) => (
+                <a href={`/journal/${post.slug}`} class="city-articles__card">
+                  <p class="city-articles__card-title">{post.title}</p>
+                  <p class="city-articles__card-excerpt">{post.excerpt}</p>
+                </a>
+              ))}
+            </div>
+          </div>
+        )
+      }
 
       {/* CTAs */}
       <div class="city-ctas">
@@ -183,6 +214,9 @@ const breadcrumbJsonLd = buildBreadcrumbJsonLd([
                 class="city-cta city-cta--primary"
                 data-eb-url={buildTicketUrl(event.url, "cities", city.slug)}
                 data-city={event.city}
+                data-ph-section="cities"
+                data-ph-price={event.price}
+                data-ph-event-date={event.date}
               >
                 <span>
                   {event.date}: {EVENTS.ticketCta}
@@ -395,6 +429,25 @@ const breadcrumbJsonLd = buildBreadcrumbJsonLd([
               <div id="city-notify-success" hidden>
                 <p class="city-notify__done">You're on the list!</p>
               </div>
+            </div>
+          </div>
+        )
+      }
+
+      {/* FAQ section */}
+      {
+        city.faqItems && city.faqItems.length > 0 && (
+          <div class="city-faq">
+            <h3 class="city-faq__title">
+              Questions About {city.displayName} Shows
+            </h3>
+            <div class="city-faq__list">
+              {city.faqItems.map((item) => (
+                <details class="city-faq__item">
+                  <summary class="city-faq__question">{item.q}</summary>
+                  <p class="city-faq__answer">{item.a}</p>
+                </details>
+              ))}
             </div>
           </div>
         )
@@ -1050,5 +1103,147 @@ const breadcrumbJsonLd = buildBreadcrumbJsonLd([
     font-size: 18px;
     font-style: italic;
     color: var(--charcoal);
+  }
+
+  /* ─── Community Stat ──────────────────────────────── */
+
+  .city-stat {
+    font-family: var(--font-body);
+    font-size: 11px;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    color: var(--brand-red);
+    margin-bottom: 20px;
+    opacity: 0.8;
+  }
+
+  /* ─── Related Journal Articles ────────────────────── */
+
+  .city-articles {
+    margin-top: 48px;
+    padding: 28px 24px;
+    background: var(--cream-warm);
+    border-radius: 16px;
+  }
+
+  .city-articles__title {
+    font-family: var(--font-body);
+    font-size: 11px;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.15em;
+    color: var(--muted);
+    margin-bottom: 16px;
+  }
+
+  .city-articles__list {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .city-articles__card {
+    display: block;
+    padding: 16px;
+    background: #fff;
+    border: 1px solid rgba(0, 0, 0, 0.06);
+    border-radius: 10px;
+    text-decoration: none;
+    transition: border-color 0.15s;
+  }
+
+  .city-articles__card:hover {
+    border-color: rgba(var(--brand-red-rgb), 0.25);
+  }
+
+  .city-articles__card-title {
+    font-family: var(--font-playfair);
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--charcoal);
+    margin: 0 0 6px;
+    line-height: 1.35;
+  }
+
+  .city-articles__card-excerpt {
+    font-family: var(--font-body);
+    font-size: 13px;
+    color: var(--text-secondary);
+    margin: 0;
+    line-height: 1.5;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+
+  /* ─── FAQ Section ─────────────────────────────────── */
+
+  .city-faq {
+    margin-top: 48px;
+    padding-top: 32px;
+    border-top: 1px solid rgba(0, 0, 0, 0.06);
+  }
+
+  .city-faq__title {
+    font-family: var(--font-playfair);
+    font-size: 20px;
+    font-weight: 600;
+    color: var(--charcoal);
+    margin-bottom: 20px;
+  }
+
+  .city-faq__list {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+  }
+
+  .city-faq__item {
+    border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+    padding: 0;
+  }
+
+  .city-faq__question {
+    font-family: var(--font-body);
+    font-size: 15px;
+    font-weight: 500;
+    color: var(--charcoal);
+    padding: 16px 0;
+    cursor: pointer;
+    list-style: none;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 12px;
+    min-height: var(--touch-target);
+  }
+
+  .city-faq__question::-webkit-details-marker {
+    display: none;
+  }
+
+  .city-faq__question::after {
+    content: "+";
+    font-size: 18px;
+    font-weight: 300;
+    color: var(--brand-red);
+    flex-shrink: 0;
+    transition: transform 0.2s;
+  }
+
+  details[open] .city-faq__question::after {
+    transform: rotate(45deg);
+  }
+
+  .city-faq__answer {
+    font-family: var(--font-cormorant);
+    font-style: italic;
+    font-size: 16px;
+    color: var(--text-secondary);
+    line-height: 1.65;
+    margin: 0 0 16px;
+    padding-right: 24px;
   }
 </style>

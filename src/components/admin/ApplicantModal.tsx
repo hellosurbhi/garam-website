@@ -139,6 +139,19 @@ export default function ApplicantModal({
           {app.applicationType === "Nomination" && (
             <InfoRow label="Referred by" value={app.referrerName} />
           )}
+          {app.seenShowBefore !== undefined && (
+            <InfoRow
+              label="Seen Show Before"
+              value={app.seenShowBefore ? "Yes" : "No"}
+            />
+          )}
+          {app.type && <InfoRow label="Their Type" value={app.type} />}
+          {app.marketingConsent && (
+            <InfoRow
+              label="Marketing Consent"
+              value={app.marketingConsent === "yes" ? "Yes" : "No"}
+            />
+          )}
           <div>
             <p className={styles.infoLabel}>Instagram</p>
             <a

@@ -1,5 +1,103 @@
 # Changelog
 
+## fix(seo): resolve Bing Webmaster alt-attribute and title-length warnings (2026-04-22)
+
+### What changed
+
+**Meta Pixel alt attribute** (`src/components/meta-pixel.astro`): Added `alt=""` to the noscript `<img>` tracking pixel. The pixel loads on every page via BaseLayout, which is why Bing flagged 629 pages. One-character fix, zero functional change.
+
+**Journal index title** (`src/pages/journal/index.astro`): Shortened `"South Asian Dating & Relationships Journal"` to `"Desi Dating & Relationships Journal"` (67 total chars → 61). Fixes the one static page Bing flagged for exceeding its 65-char limit.
+
+**`deriveSeoTitle` utility** (`src/utils/meta.ts`): New exported function that shortens a display title for use in the HTML `<title>` tag. Strategy: split at the first colon if within the 43-char limit, otherwise truncate at the last word boundary before 43 chars. 43 + " | Garam Masala Dating" (22) = 65 exactly. This is a pure function with no side effects and is reusable for any future content type.
+
+**Journal post SEO titles** (`src/pages/journal/[slug].astro`, `src/data/journal/types.ts`): Journal posts use their full display title as `<h1>` (for readability and keyword density), but the `<title>` tag now uses `post.seoTitle ?? deriveSeoTitle(post.title)`. Added optional `seoTitle?: string` to `JournalPost` for manual per-post overrides when needed. 79 of 124 posts had display titles exceeding 43 chars — all now resolve cleanly without touching any data files.
+
+### Files affected
+
+- `src/components/meta-pixel.astro`
+- `src/pages/journal/index.astro`
+- `src/utils/meta.ts`
+- `src/pages/journal/[slug].astro`
+- `src/data/journal/types.ts`
+
+## feat(analytics): hero/shows aff split + full session attribution on purchases (2026-04-22)
+
+### What changed
+
+**Hero vs shows tracking split** (`src/utils/eventUrl.ts`): Homepage hero pill and shows section now generate separate Eventbrite tracking link values (`garamsitehomehero` vs `garamsitehomeshows`). Previously both sent `garamsitehome`. All other pages unchanged.
+
+**Full session attribution on every purchase** (`EventbriteWidgetInit.astro`, `tickets.astro`, `ApplySuccessPanel.tsx`): Every `order_complete` event (PostHog + dataLayer) now includes `landing_page`, `referrer_host`, `utm_source`, `utm_campaign`, `utm_medium`, `utm_content` from the existing `leadAttribution.ts` system. Reuses `buildLeadAttribution()` in TypeScript-capable scripts and reads `gmd-*` sessionStorage keys directly in `is:inline` scripts.
+
+**Eventbrite tracking links to create** (6 total):
+`garamsitehomehero` · `garamsitehomeshows` · `garamsitetickets` · `garamsitelinks` · `garamsitecities` · `garamsiteapply`
+
+### Files affected
+
+- `src/utils/eventUrl.ts` — aff suffix includes content for "home" campaign only
+- `src/components/EventbriteWidgetInit.astro` — imports `buildLeadAttribution`, adds attribution to PostHog + dataLayer
+- `src/pages/tickets.astro` — reads `gmd-*` sessionStorage keys directly, adds attribution
+- `src/components/apply/ApplySuccessPanel.tsx` — imports `buildLeadAttribution`, adds attribution
+
+---
+
+## feat(analytics): track conversion source and push purchase events to dataLayer (2026-04-22)
+
+### What changed
+
+**Eventbrite tracking link differentiation** (`src/utils/eventUrl.ts`): Changed `aff` param from static `garamsite` to `garamsite{campaign}` so each page generates its own Eventbrite tracking link value. Add these 4 entries in Eventbrite → Manage → Tracking Links: `garamsitehome` (homepage), `garamsitetickets` (/tickets), `garamsitelinks` (/links), `garamsitecities` (city pages). Eventbrite will now attribute ticket sales and revenue per page source natively.
+
+**Conversion source attribution** (`src/components/EventbriteWidgetInit.astro`, `src/pages/tickets.astro`): On every "Get Tickets" button click, the CTA's section, page path, city, and price are written to `sessionStorage` under `eb_cta_source`. The `onOrderComplete` callback reads this context and includes `source_section` and `source_page` in the PostHog `order_complete` event, so PostHog now shows which page/section drove each purchase. Key cleared from `sessionStorage` immediately after reading.
+
+**GA4 purchase events** (same files): `onOrderComplete` now pushes a GA4-compatible ecommerce `purchase` event to `window.dataLayer` with currency, value, item name/ID, and source context. GTM can pick this up with a Custom Event trigger on `purchase` + GA4 Enhanced Ecommerce tag — enabling GA4 to track revenue and conversions.
+
+### Files affected
+
+- `src/utils/eventUrl.ts` — `aff` param now includes campaign name
+- `src/components/EventbriteWidgetInit.astro` — sessionStorage write on click, enriched `onOrderComplete` with PostHog + dataLayer events
+- `src/pages/tickets.astro` — same enrichment in inline widget script, added `price` to `widgetEvents`
+
+### Decisions
+
+- Tracking link values use no separators (alphanumeric only) per Eventbrite's constraints
+- `sessionStorage` chosen over `localStorage` so context clears on tab close and doesn't bleed across sessions
+- Fallback values (`"tickets"` / `"/tickets"`) ensure `order_complete` always has a source even if sessionStorage was somehow missed
+
+---
+
+## feat(seo): city page enrichment for Google indexability (2026-04-22)
+
+### What changed
+
+Added `communityStats`, `faqItems`, and `relatedArticleSlugs` optional fields to `CityData` interface (`src/data/cities/types.ts`). Updated `[slug].astro` to render three new sections: a community stat line between eyebrow and H1, a "From the Journal" related articles section (cream-warm background), and an FAQ accordion using native `details/summary` HTML (off-white background). Added FAQPage JSON-LD to the `@graph` array on city pages that include `faqItems`, building on the existing LocalBusiness + BreadcrumbList schema.
+
+**Cities enriched with unique local content:**
+
+- `active.ts`: San Diego (fixed incorrect sold-out claim, replaced with accurate coming-soon framing), Los Angeles, San Francisco
+- `us-midwest.ts`: Chicago
+- `us-south-texas.ts`: Dallas, Houston, Austin
+- `us-northeast.ts`: Boston, Philadelphia
+- `us-west.ts`: Seattle
+- `us-southeast.ts`: Washington DC, Atlanta, Miami
+- `canada.ts`: Toronto, Vancouver
+- `uk.ts`: London
+- `australia.ts`: Sydney
+
+Each enriched city has: a unique community stat with real neighborhood callouts, 2 to 4 FAQ items with city-specific questions, and 2 to 3 related article slugs from the journal.
+
+**Journal cross-links (Phase 4):** Added city page links at the end of 5 articles to build content cluster authority: "Where to Meet Indian Singles in NYC" and two other NYC articles link to `/cities/manhattan`; "Indian Comedy Shows in NYC" links to `/cities/manhattan`; "The Indian Tech Bro's Guide to Dating in Silicon Valley" links to `/cities/san-francisco`.
+
+**Video constants:** Updated `YOUTUBE_VIDEO_ID` to `fw3keeNmJB4`, `uploadDate` to `2026-04-18`, duration to `PT1H31M20S`. Updated the corresponding test.
+
+### Why
+
+309 city pages were not being indexed by Google because 80 to 85 percent of every page was identical boilerplate. Google treated them as thin clones. Unique local content (neighborhood names, population stats, city-specific FAQ) gives each page genuine value. The journal cross-links build topical authority between content clusters. FAQPage JSON-LD enables rich results in search.
+
+### Files affected
+
+`src/data/cities/types.ts`, `src/pages/cities/[slug].astro`, `src/data/cities/active.ts`, `src/data/cities/us-midwest.ts`, `src/data/cities/us-south-texas.ts`, `src/data/cities/us-northeast.ts`, `src/data/cities/us-west.ts`, `src/data/cities/us-southeast.ts`, `src/data/cities/canada.ts`, `src/data/cities/uk.ts`, `src/data/cities/australia.ts`, `src/data/journal/events.ts`, `src/data/journal/core.ts`, `src/data/journal/entertainment.ts`, `src/data/journal/identity.ts`, `src/lib/constants.ts`, `src/lib/constants.test.ts`
+
+---
+
 ## refactor(content): consolidate /south-asian-dating-tips into /journal with 301 redirects (2026-04-21)
 
 ### What changed

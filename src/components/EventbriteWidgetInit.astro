@@ -5,6 +5,8 @@
 ---
 
 <script>
+  import { buildLeadAttribution } from "@/lib/leadAttribution";
+
   interface EBWidgetConfig {
     widgetType: string;
     eventId: string;
@@ -29,6 +31,7 @@
     const w = window as typeof window & {
       EBWidgets: EBWidgetsAPI;
       posthog?: PostHogAPI;
+      dataLayer?: Record<string, unknown>[];
     };
 
     const configs = buttons.map((btn) => ({
@@ -37,7 +40,10 @@
         btn.id.replace("eventbrite-widget-modal-trigger-", ""),
       triggerId: btn.id,
       fallbackUrl: btn.getAttribute("href") ?? btn.dataset.ebUrl ?? "",
-      city: btn.dataset.city ?? "",
+      city: btn.dataset.city ?? btn.dataset.phCity ?? "",
+      section: btn.dataset.phSection ?? "",
+      price: btn.dataset.phPrice ?? "",
+      eventDate: btn.dataset.phEventDate ?? "",
     }));
 
     const rootStyle = getComputedStyle(document.documentElement);
@@ -60,9 +66,50 @@
             background: bgColor,
           },
           onOrderComplete() {
+            const raw = sessionStorage.getItem("eb_cta_source");
+            const src = raw
+              ? (JSON.parse(raw) as Record<string, string>)
+              : null;
+            sessionStorage.removeItem("eb_cta_source");
+            const attr = buildLeadAttribution({ source: "ticket_purchase" });
             w.posthog?.capture("order_complete", {
               event_id: ev.eventId,
               city: ev.city,
+              source_section: src?.section ?? ev.section,
+              source_page: src?.page ?? "",
+              price: src?.price ?? ev.price,
+              landing_page: attr.landingPage,
+              referrer_host: attr.referrerHost,
+              utm_source: attr.utmSource,
+              utm_campaign: attr.utmCampaign,
+              utm_medium: attr.utmMedium,
+              utm_content: attr.utmContent,
+            });
+            const price = parseFloat(
+              (src?.price ?? ev.price ?? "").replace(/[^0-9.]/g, "") || "0",
+            );
+            w.dataLayer = w.dataLayer ?? [];
+            w.dataLayer.push({ ecommerce: null });
+            w.dataLayer.push({
+              event: "purchase",
+              ecommerce: {
+                currency: "USD",
+                value: price,
+                items: [
+                  {
+                    item_name: `Garam Masala Dating - ${ev.city}`,
+                    item_id: String(ev.eventId),
+                    price,
+                    quantity: 1,
+                  },
+                ],
+              },
+              source_section: src?.section ?? ev.section,
+              source_page: src?.page ?? "",
+              landing_page: attr.landingPage,
+              referrer_host: attr.referrerHost,
+              utm_source: attr.utmSource,
+              utm_campaign: attr.utmCampaign,
             });
           },
         };
@@ -94,6 +141,17 @@
     buttons.forEach((btn) => {
       btn.addEventListener("click", () => {
         savedScrollY = window.scrollY;
+        const cfg = configs.find((c) => c.triggerId === btn.id);
+        sessionStorage.setItem(
+          "eb_cta_source",
+          JSON.stringify({
+            section: cfg?.section ?? btn.dataset.phSection ?? "",
+            page: window.location.pathname,
+            city: cfg?.city ?? "",
+            price: cfg?.price ?? "",
+            event_date: cfg?.eventDate ?? "",
+          }),
+        );
       });
     });
 

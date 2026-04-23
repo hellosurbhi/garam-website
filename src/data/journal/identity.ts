@@ -232,6 +232,10 @@ export const identityPosts: JournalPost[] = [
         type: "p",
         text: "That's the whole game. Not performance. Presence. If you want to practice that in the highest-stakes possible environment, apply as a contestant at <a href='/'>Garam Masala Dating</a>. Nothing will recalibrate you faster than a live crowd deciding in real time whether you're actually interesting.",
       },
+      {
+        type: "p" as const,
+        text: "Garam Masala Dating is also planning its first San Francisco show. <a href='/cities/san-francisco'>Join the SF waitlist</a> for presale access and casting priority when we announce the Bay Area date.",
+      },
     ],
   },
 

@@ -11,7 +11,6 @@ interface Props {
 }
 
 const { events } = Astro.props;
-const taglineMap = buildTaglineMap(events);
 ---
 
 <section class="shows" id="shows" aria-labelledby="shows-heading">
@@ -42,12 +41,8 @@ const taglineMap = buildTaglineMap(events);
               <div class="day">{parseDay(event.date)}</div>
             </div>
             <div class="show-info">
-              <h3>{cityLabel}</h3>
-              <span>
-                {isSoldOut
-                  ? (event.tagline ?? "Sold out")
-                  : (taglineMap.get(event.url) ?? "On sale now")}
-              </span>
+              <h3>{event.city}</h3>
+              <span>{event.tagline ?? "On sale now"}</span>
             </div>
             <span
               class={`ticket-label${isSoldOut ? " ticket-label--soldout" : ""}`}
@@ -66,11 +61,12 @@ const taglineMap = buildTaglineMap(events);
             data-ph-capture="cta_clicked"
             data-ph-cta="get_tickets"
             data-ph-section="shows"
-            data-ph-city={cityLabel}
+            data-ph-city={event.city}
             data-ph-event-date={event.date}
             data-ph-price={event.price}
             data-eb-url={buildTicketUrl(event.url, "home", "shows")}
-            data-city={cityLabel}
+            data-promo-code={event.promoCode ?? ""}
+            data-city={event.city}
           >
             {cardInner}
           </button>
@@ -126,7 +122,7 @@ const taglineMap = buildTaglineMap(events);
             data-ph-capture="cta_clicked"
             data-ph-cta="get_tickets"
             data-ph-section="shows"
-            data-ph-city={cityLabel}
+            data-ph-city={event.city}
             data-ph-event-date={event.date}
             data-ph-price={event.price}
           >
@@ -136,13 +132,12 @@ const taglineMap = buildTaglineMap(events);
           <button
             type="button"
             class="show-card show-card--notify"
-            data-notify-city={cityLabel}
-            data-notify-city-slug={event.citySlug}
+            data-notify-city={event.city}
             data-reveal
             data-ph-capture="cta_clicked"
             data-ph-cta="notify_me"
             data-ph-section="shows"
-            data-ph-city={cityLabel}
+            data-ph-city={event.city}
           >
             <div class="show-date-block">
               {parseDay(event.date) !== "" ? (
@@ -155,7 +150,7 @@ const taglineMap = buildTaglineMap(events);
               )}
             </div>
             <div class="show-info">
-              <h3>{cityLabel}</h3>
+              <h3>{event.city}</h3>
               <span>Dates to be announced</span>
             </div>
             <span class="ticket-label ticket-label--notify">Notify Me</span>
@@ -208,7 +203,6 @@ const taglineMap = buildTaglineMap(events);
           <input
             type="text"
             id="city-name"
-            list="city-name-suggestions"
             placeholder="Your city"
             autofocus
             aria-label="City name"
@@ -216,9 +210,6 @@ const taglineMap = buildTaglineMap(events);
             required
             toolparamdescription="Name of the city where you want Garam Masala Dating to perform"
           />
-          <datalist id="city-name-suggestions"></datalist>
-          <input type="hidden" id="city-state" />
-          <input type="hidden" id="city-country" />
           <input
             type="email"
             id="city-email"
@@ -285,14 +276,8 @@ const taglineMap = buildTaglineMap(events);
 
 <script>
   import { cleanPhone } from "@/lib/phone";
-  import { resolveCityOption } from "@/lib/citySearchShared";
   import { identifyLead, trackLeadEvent } from "@/lib/analytics";
   import { buildLeadAttribution } from "@/lib/leadAttribution";
-  import {
-    captureLead,
-    updateLeadPhone,
-    type LeadSubmissionPayload,
-  } from "@/lib/leadSubmission";
 
   // Request City modal
   const cityDialog = document.getElementById(
@@ -302,52 +287,8 @@ const taglineMap = buildTaglineMap(events);
     const cityInput = document.getElementById(
       "city-name",
     ) as HTMLInputElement | null;
-    const cityStateInput = document.getElementById(
-      "city-state",
-    ) as HTMLInputElement | null;
-    const cityCountryInput = document.getElementById(
-      "city-country",
-    ) as HTMLInputElement | null;
-    const citySuggestions = document.getElementById(
-      "city-name-suggestions",
-    ) as HTMLDataListElement | null;
     const errorEl = document.getElementById("city-form-error");
-    let cityOptions: import("@/lib/citySearchShared").CitySearchOption[] = [];
-    let selectedCity: import("@/lib/citySearchShared").CitySearchOption | null =
-      null;
-    let cityLeadId: string | null = null;
-
-    const syncSelectedCity = (
-      option: import("@/lib/citySearchShared").CitySearchOption | null,
-    ) => {
-      selectedCity = option;
-      if (cityStateInput) cityStateInput.value = option?.state ?? "";
-      if (cityCountryInput) cityCountryInput.value = option?.country ?? "";
-    };
-
-    const renderCitySuggestions = (
-      results: import("@/lib/citySearchShared").CitySearchOption[],
-    ) => {
-      if (!citySuggestions) return;
-      citySuggestions.innerHTML = "";
-      results.forEach((option) => {
-        const suggestion = document.createElement("option");
-        suggestion.value = option.label;
-        citySuggestions.appendChild(suggestion);
-      });
-    };
-
-    const searchCities = async (query: string) => {
-      const response = await fetch(
-        `/api/city-search?q=${encodeURIComponent(query)}`,
-      );
-      if (!response.ok) throw new Error("Failed to search cities");
-      const data = (await response.json()) as {
-        results?: import("@/lib/citySearchShared").CitySearchOption[];
-      };
-      cityOptions = data.results ?? [];
-      renderCitySuggestions(cityOptions);
-    };
+    let cityDocRef: DocumentReference | null = null;
 
     document
       .getElementById("request-city-trigger")
@@ -374,10 +315,7 @@ const taglineMap = buildTaglineMap(events);
           phoneErrorEl.textContent = "";
           phoneErrorEl.setAttribute("hidden", "");
         }
-        syncSelectedCity(null);
-        cityOptions = [];
-        renderCitySuggestions([]);
-        cityLeadId = null;
+        cityDocRef = null;
         trackLeadEvent("request_city_opened", {
           source: "request-city",
           sourcePage: window.location.pathname,
@@ -423,27 +361,6 @@ const taglineMap = buildTaglineMap(events);
       closeCityDialog();
     });
 
-    cityInput?.addEventListener("focus", () => {
-      if (cityInput.value.trim()) {
-        searchCities(cityInput.value).catch(() => {});
-      }
-    });
-
-    cityInput?.addEventListener("input", async () => {
-      if (!cityInput.value.trim()) {
-        cityOptions = [];
-        renderCitySuggestions([]);
-        syncSelectedCity(null);
-        return;
-      }
-      await searchCities(cityInput.value);
-      syncSelectedCity(resolveCityOption(cityInput.value, cityOptions));
-    });
-
-    cityInput?.addEventListener("change", () => {
-      syncSelectedCity(resolveCityOption(cityInput.value, cityOptions));
-    });
-
     document
       .getElementById("city-form")
       ?.addEventListener("submit", async (e) => {
@@ -457,13 +374,7 @@ const taglineMap = buildTaglineMap(events);
           submitBtn.textContent = "Sending...";
         }
         try {
-          if (cityInput?.value.trim()) {
-            await searchCities(cityInput.value);
-          }
-          const resolvedCity =
-            selectedCity ??
-            resolveCityOption(cityInput?.value ?? "", cityOptions);
-          const city = resolvedCity?.city ?? (cityInput?.value ?? "").trim();
+          const city = (cityInput?.value ?? "").trim();
           const email = (
             document.getElementById("city-email") as HTMLInputElement
           ).value;
@@ -473,6 +384,7 @@ const taglineMap = buildTaglineMap(events);
           const payload: LeadSubmissionPayload = {
             email,
             ...attribution,
+            createdAt: new Date().toISOString(),
           };
           if (city) payload.city = city;
           if (resolvedCity?.state) payload.state = resolvedCity.state;
@@ -487,7 +399,7 @@ const taglineMap = buildTaglineMap(events);
           identifyLead(email, { ...attribution, ...geoProps });
           trackLeadEvent("lead_email_submitted", {
             ...attribution,
-            ...geoProps,
+            ...(city ? { city } : {}),
           });
           trackLeadEvent("email_signup", { ...attribution, ...cityProp });
           trackLeadEvent("waitlist_submit", { ...attribution, ...cityProp });
@@ -558,8 +470,8 @@ const taglineMap = buildTaglineMap(events);
           submitBtn.textContent = "Sending...";
         }
         try {
-          if (cityLeadId) {
-            await updateLeadPhone(cityLeadId, cleaned);
+          if (cityDocRef) {
+            await updateDoc(cityDocRef, { phone: cleaned });
           }
           trackLeadEvent("lead_phone_submitted", {
             source: "request-city",

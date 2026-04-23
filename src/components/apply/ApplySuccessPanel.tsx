@@ -22,7 +22,6 @@ export function ApplySuccessPanel() {
     );
   }, []);
 
-<<<<<<< HEAD
   const showsWithWidget = useMemo(
     () => upcomingShows.filter((e) => e.eventbriteId),
     [upcomingShows],

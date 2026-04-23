@@ -7,6 +7,9 @@ import { enforceRateLimit, RATE_LIMITS } from "@/lib/rateLimit";
 
 export const prerender = false;
 
+const VALID_ROLES = ["female", "male", "stealer"] as const;
+type ValidRole = (typeof VALID_ROLES)[number];
+
 function json(data: Record<string, unknown>, status = 200) {
   return new Response(JSON.stringify(data), {
     status,
@@ -55,6 +58,34 @@ export const GET: APIRoute = async ({ request }) => {
   const url = new URL(request.url);
   const inviteId = url.searchParams.get("invite");
   const showId = url.searchParams.get("show");
+  const roleParam = url.searchParams.get("role");
+
+  if (showId && roleParam) {
+    if (!VALID_ROLES.includes(roleParam as ValidRole)) {
+      return json({ state: "error", message: "Invalid role." }, 400);
+    }
+    const event = events.find(
+      (e) =>
+        e.citySlug && e.isoDate && `${e.citySlug}-${e.isoDate}` === showId,
+    );
+    if (!event || !event.isoDate) {
+      return json({ state: "error", message: "Show not found." }, 404);
+    }
+    const tz = event.timezone ?? "America/New_York";
+    const todayInShowTz = new Intl.DateTimeFormat("en-CA", {
+      timeZone: tz,
+    }).format(new Date());
+    if (event.isoDate < todayInShowTz) {
+      return json({ state: "expired" });
+    }
+    return json({
+      state: "show-invite",
+      showId,
+      showCity: event.city,
+      showDate: event.isoDate,
+      role: roleParam,
+    });
+  }
 
   if (showId) {
     const event = events.find(

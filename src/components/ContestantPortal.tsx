@@ -56,6 +56,13 @@ type PortalState =
     }
   | { type: "expired" }
   | { type: "no-access" }
+  | {
+      type: "show-invite";
+      showId: string;
+      showCity: string;
+      showDate: string;
+      role: string;
+    }
   | { type: "error"; message: string };
 
 type PortalSignupData = {

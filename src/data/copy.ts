@@ -148,7 +148,6 @@ export const SPICE_LIST = {
   skip: "Maybe later",
   success: "You're on the list!",
   subscribedHeading: "See You at the Show",
-  subscribedTitle: "Next date drops soon.",
   subscribedBody:
     "Grab tickets before they sell out, or follow us on Instagram.",
   subscribedPrimaryCta: "See Upcoming Shows",

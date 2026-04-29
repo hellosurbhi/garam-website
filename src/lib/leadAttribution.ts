@@ -10,6 +10,8 @@ export interface LeadAttribution {
   utmCampaign?: string;
   utmContent?: string;
   utmTerm?: string;
+  fbclid?: string;
+  gclid?: string;
   posthogDistinctId?: string;
   sourceCitySlug?: string;
   geoCity?: string;
@@ -34,6 +36,8 @@ const GEO_LATITUDE_KEY = "gmd-geo-latitude";
 const GEO_LONGITUDE_KEY = "gmd-geo-longitude";
 const GEO_TIMEZONE_KEY = "gmd-geo-timezone";
 const GEO_FETCHED_KEY = "gmd-geo-fetched";
+const FBCLID_KEY = "gmd-fbclid";
+const GCLID_KEY = "gmd-gclid";
 
 function getPathname(): string {
   return window.location.pathname || "/";
@@ -61,6 +65,8 @@ function getCurrentUtms() {
     utmCampaign: params.get("utm_campaign") ?? undefined,
     utmContent: params.get("utm_content") ?? undefined,
     utmTerm: params.get("utm_term") ?? undefined,
+    fbclid: params.get("fbclid") ?? undefined,
+    gclid: params.get("gclid") ?? undefined,
   };
 }
 
@@ -106,6 +112,8 @@ export function bootstrapLeadAttribution() {
   setIfMissing(UTM_CAMPAIGN_KEY, utms.utmCampaign);
   setIfMissing(UTM_CONTENT_KEY, utms.utmContent);
   setIfMissing(UTM_TERM_KEY, utms.utmTerm);
+  setIfMissing(FBCLID_KEY, utms.fbclid);
+  setIfMissing(GCLID_KEY, utms.gclid);
 
   bootstrapGeoData();
 }
@@ -147,6 +155,12 @@ export function buildLeadAttribution(params: {
 
   const utmTerm = sessionStorage.getItem(UTM_TERM_KEY) ?? undefined;
   if (utmTerm) attribution.utmTerm = utmTerm;
+
+  const fbclid = sessionStorage.getItem(FBCLID_KEY) ?? undefined;
+  if (fbclid) attribution.fbclid = fbclid;
+
+  const gclid = sessionStorage.getItem(GCLID_KEY) ?? undefined;
+  if (gclid) attribution.gclid = gclid;
 
   if (typeof posthogDistinctId === "string" && posthogDistinctId.trim()) {
     attribution.posthogDistinctId = posthogDistinctId;

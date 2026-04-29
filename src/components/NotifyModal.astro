@@ -377,6 +377,13 @@ const { source = "notify-modal" } = Astro.props;
 
     // Skip phone step
     document.getElementById("notify-skip")?.addEventListener("click", () => {
+      const citySlug =
+        (document.getElementById("notify-city-slug") as HTMLInputElement)
+          ?.value ?? "";
+      trackLeadEvent("lead_phone_skipped", {
+        source: composeSource(citySlug),
+        sourcePage: window.location.pathname,
+      });
       document.getElementById("notify-phone-view")?.setAttribute("hidden", "");
       const successEl = document.getElementById(
         "notify-success",

@@ -396,6 +396,13 @@ const eventSeriesJsonLd = JSON.stringify({
                 utm_source: entry.utm_source,
                 utm_campaign: entry.utm_campaign,
               });
+              if (window.fbq) {
+                window.fbq("track", "Purchase", {
+                  value: price,
+                  currency: "USD",
+                  content_ids: [String(ev.eventId)],
+                });
+              }
             },
           };
           try {
@@ -463,6 +470,17 @@ const eventSeriesJsonLd = JSON.stringify({
               source_page:
                 (openData && openData.page) || window.location.pathname,
               price: (openData && openData.price) || "",
+            });
+          }
+          if (window.fbq) {
+            window.fbq("track", "InitiateCheckout", {
+              content_ids: [(openData && openData.event_id) || ""],
+              city: (openData && openData.city) || "",
+              value: parseFloat(
+                ((openData && openData.price) || "").replace(/[^0-9.]/g, "") ||
+                  "0",
+              ),
+              currency: "USD",
             });
           }
 

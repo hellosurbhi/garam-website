@@ -272,13 +272,15 @@ export function useApplyForm() {
 
       const attribution = buildLeadAttribution({ source: "apply" });
       const igHandle = form.instagram.trim().replace(/^@/, "");
-      if (igHandle) {
-        identifyLead(igHandle, {
+      const identifier = form.email.trim() || igHandle;
+      if (identifier) {
+        identifyLead(identifier, {
           name: form.name,
           city: form.city,
           country: form.country,
           applicationType: form.applicationType,
-          instagram: igHandle,
+          ...(igHandle ? { instagram: igHandle } : {}),
+          ...attribution,
         });
       }
       trackLeadEvent("apply_submitted", {

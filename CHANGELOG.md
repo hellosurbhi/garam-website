@@ -1,5 +1,25 @@
 # Changelog
 
+## fix(analytics): proxy PostHog through Vercel to bypass ad blockers (2026-04-29)
+
+### What changed
+
+- `vercel.json`: Added 3 Vercel rewrite rules that proxy all PostHog traffic through the site's own domain (`/ingest/*`) instead of loading directly from `us.i.posthog.com`. Ad blockers (uBlock Origin, Brave, Safari content blockers) cannot block first-party paths on the same domain.
+- `vercel.json`: Added `https://us.posthog.com` to `script-src` and `connect-src` CSP directives for PostHog toolbar and survey compatibility.
+- `src/components/posthog.astro`: Changed `api_host` from `"https://us.i.posthog.com"` to `"/ingest"`. Added `ui_host: "https://us.posthog.com"` so the PostHog toolbar and session replay player still link correctly to the PostHog UI.
+
+### Why
+
+PostHog was loading directly from external PostHog domains, which ad blockers block by default. With 70% mobile traffic and growing iOS Safari content blocker adoption, a significant portion of visitors were invisible. The reverse proxy routes all PostHog requests through the same domain as the site, making them indistinguishable from first-party requests.
+
+The SDK's script URL self-adapts: the bootstrap snippet's string replace finds no match on `"/ingest"`, so it produces `/ingest/static/array.js`, which Vercel routes to PostHog's CDN.
+
+### Decisions
+
+- Kept existing PostHog CDN domains in CSP for cached-page transition safety.
+- No changes to `EventbriteWidgetInit.astro` or `tickets.astro`: confirmed via Eventbrite docs that `EBWidgets.createWidget()` has no `affiliateCode` parameter. The `onOrderComplete` PostHog callback already captures richer attribution than Eventbrite's `aff` param would provide.
+- Kept deferred loading strategy (`requestIdleCallback`) to avoid LCP impact.
+
 ## data(events): add SF show May 10, update NYC Pride to Jun 21 (2026-04-29)
 
 ### What changed

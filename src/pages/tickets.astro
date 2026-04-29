@@ -323,6 +323,9 @@ const eventSeriesJsonLd = JSON.stringify({
         rootStyle.getPropertyValue("--charcoal").trim() || "#1A1A1A";
       var bgColor = rootStyle.getPropertyValue("--white").trim() || "#FFFFFF";
 
+      var orderCompleted = false;
+      var modalOpenedAt = 0;
+
       function initWidgets() {
         widgetEvents.forEach(function (ev) {
           var config = {
@@ -336,6 +339,7 @@ const eventSeriesJsonLd = JSON.stringify({
               background: bgColor,
             },
             onOrderComplete: function () {
+              orderCompleted = true;
               var raw = sessionStorage.getItem("eb_cta_source");
               var src = raw ? JSON.parse(raw) : null;
               sessionStorage.removeItem("eb_cta_source");
@@ -406,6 +410,7 @@ const eventSeriesJsonLd = JSON.stringify({
                 sessionStorage.setItem(
                   "eb_cta_source",
                   JSON.stringify({
+                    event_id: ev.eventId,
                     section: trigger.dataset.phSection || "tickets",
                     page: window.location.pathname,
                     city: ev.city,
@@ -417,6 +422,13 @@ const eventSeriesJsonLd = JSON.stringify({
             }
           } catch (_) {
             // Widget init failed; anchor href + target="_blank" provide native fallback
+            if (window.posthog) {
+              window.posthog.capture("widget_load_failed", {
+                event_id: ev.eventId,
+                city: ev.city,
+                page: window.location.pathname,
+              });
+            }
           }
         });
       }
@@ -437,6 +449,23 @@ const eventSeriesJsonLd = JSON.stringify({
         if (!ebStructure) return;
         if (!ebStructure.dataset.listenerAttached) {
           ebStructure.dataset.listenerAttached = "1";
+
+          // Track modal open and reset purchase flag for this session.
+          orderCompleted = false;
+          modalOpenedAt = Date.now();
+          var openRaw = sessionStorage.getItem("eb_cta_source");
+          var openData = openRaw ? JSON.parse(openRaw) : null;
+          if (window.posthog) {
+            window.posthog.capture("checkout_opened", {
+              event_id: (openData && openData.event_id) || "",
+              city: (openData && openData.city) || "",
+              source_section: (openData && openData.section) || "",
+              source_page:
+                (openData && openData.page) || window.location.pathname,
+              price: (openData && openData.price) || "",
+            });
+          }
+
           ebStructure.addEventListener("click", function (e) {
             if (!e.target.closest(".eds-modal")) {
               var closeBtn = document.querySelector(
@@ -444,6 +473,33 @@ const eventSeriesJsonLd = JSON.stringify({
               );
               if (closeBtn) closeBtn.click();
             }
+          });
+
+          // Watch for the modal being removed from the DOM (user closed it).
+          var closeObserver = new MutationObserver(function () {
+            if (!document.querySelector("div.eds-structure_main")) {
+              closeObserver.disconnect();
+              if (!orderCompleted) {
+                var durationMs = modalOpenedAt ? Date.now() - modalOpenedAt : 0;
+                var closeRaw = sessionStorage.getItem("eb_cta_source");
+                var closeData = closeRaw ? JSON.parse(closeRaw) : null;
+                if (window.posthog) {
+                  window.posthog.capture("checkout_abandoned", {
+                    event_id: (closeData && closeData.event_id) || "",
+                    city: (closeData && closeData.city) || "",
+                    source_section: (closeData && closeData.section) || "",
+                    source_page:
+                      (closeData && closeData.page) || window.location.pathname,
+                    price: (closeData && closeData.price) || "",
+                    duration_seconds: Math.round(durationMs / 1000),
+                  });
+                }
+              }
+            }
+          });
+          closeObserver.observe(document.body, {
+            childList: true,
+            subtree: false,
           });
         }
         clearTimeout(modalObserverTimeout);

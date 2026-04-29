@@ -113,7 +113,8 @@
         (e.__SV = 1));
     })(document, window.posthog || []);
     posthog.init("phc_qqPeeEMxGcVmknbpgvkgbNUbMEaBMQu2fXWyPV6kAmxD", {
-      api_host: "https://us.i.posthog.com",
+      api_host: "/ingest",
+      ui_host: "https://us.posthog.com",
       person_profiles: "identified_only",
       capture_pageview: true,
       capture_pageleave: true,

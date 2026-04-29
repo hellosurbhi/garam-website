@@ -123,11 +123,28 @@ export const events: EventEntry[] = [
     eventbriteId: "1986100570270",
   },
   {
-    date: "Jun 14",
+    date: "May 10",
+    city: "San Francisco",
+    citySlug: "san-francisco",
+    url: "https://www.eventbrite.com/e/garam-masala-dating-show-san-francisco-tickets-1988516311818",
+    isoDate: "2026-05-10",
+    startTime: "18:30",
+    endTime: "20:30",
+    venue: {
+      name: "The Faight Collective",
+      addressLocality: "San Francisco",
+      addressRegion: "CA",
+      addressCountry: "US",
+    },
+    price: "15",
+    eventbriteId: "1988516311818",
+  },
+  {
+    date: "Jun 21",
     city: "Manhattan, New York",
     citySlug: "manhattan",
     url: "https://www.eventbrite.com/e/garam-masala-dating-show-pride-edition-tickets-1987763579375",
-    isoDate: "2026-06-14",
+    isoDate: "2026-06-21",
     startTime: "18:00",
     endTime: "20:00",
     venue: VENUE_TOP_SECRET,
@@ -138,7 +155,7 @@ export const events: EventEntry[] = [
 
 // Only show TBA entries for cities with active tour planning (not all 200+ expansion pages).
 // These slugs appear as TBA cards on the tickets page and home shows section.
-const TBA_CITIES = ["Los Angeles", "San Francisco", "San Diego"];
+const TBA_CITIES = ["Los Angeles", "San Diego"];
 
 const comingSoonEvents: EventEntry[] = TBA_CITIES.map((city) => ({
   date: "TBA",

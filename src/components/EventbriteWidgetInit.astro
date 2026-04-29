@@ -53,6 +53,9 @@
       rootStyle.getPropertyValue("--charcoal").trim() || "#1A1A1A";
     const bgColor = rootStyle.getPropertyValue("--white").trim() || "#FFFFFF";
 
+    let orderCompleted = false;
+    let modalOpenedAt = 0;
+
     function initWidgets(): void {
       configs.forEach((ev) => {
         const config: EBWidgetConfig = {
@@ -66,6 +69,7 @@
             background: bgColor,
           },
           onOrderComplete() {
+            orderCompleted = true;
             const raw = sessionStorage.getItem("eb_cta_source");
             const src = raw
               ? (JSON.parse(raw) as Record<string, string>)
@@ -125,6 +129,11 @@
             });
         } catch (_) {
           // Widget init failed; anchor href + target="_blank" provide native fallback
+          w.posthog?.capture("widget_load_failed", {
+            event_id: ev.eventId,
+            city: ev.city,
+            page: window.location.pathname,
+          });
         }
       });
     }
@@ -145,6 +154,7 @@
         sessionStorage.setItem(
           "eb_cta_source",
           JSON.stringify({
+            event_id: cfg?.eventId ?? "",
             section: cfg?.section ?? btn.dataset.phSection ?? "",
             page: window.location.pathname,
             city: cfg?.city ?? "",
@@ -187,6 +197,21 @@
       if (ebStructure && !ebStructure.dataset.listenerAttached) {
         ebStructure.dataset.listenerAttached = "1";
 
+        // Track modal open and reset purchase flag for this session.
+        orderCompleted = false;
+        modalOpenedAt = Date.now();
+        const openSrc = sessionStorage.getItem("eb_cta_source");
+        const openData = openSrc
+          ? (JSON.parse(openSrc) as Record<string, string>)
+          : null;
+        w.posthog?.capture("checkout_opened", {
+          event_id: openData?.event_id ?? "",
+          city: openData?.city ?? "",
+          source_section: openData?.section ?? "",
+          source_page: openData?.page ?? window.location.pathname,
+          price: openData?.price ?? "",
+        });
+
         // Restore scroll position after EB's internal scrollTo(0,0) fires.
         requestAnimationFrame(() => {
           if (savedScrollY > 0) window.scrollTo({ top: savedScrollY });
@@ -214,6 +239,22 @@
         const closeObserver = new MutationObserver(() => {
           if (!document.querySelector("div.eds-structure_main")) {
             closeObserver.disconnect();
+            // Fire abandonment event if purchase didn't complete.
+            if (!orderCompleted) {
+              const durationMs = modalOpenedAt ? Date.now() - modalOpenedAt : 0;
+              const closeSrc = sessionStorage.getItem("eb_cta_source");
+              const closeData = closeSrc
+                ? (JSON.parse(closeSrc) as Record<string, string>)
+                : null;
+              w.posthog?.capture("checkout_abandoned", {
+                event_id: closeData?.event_id ?? "",
+                city: closeData?.city ?? "",
+                source_section: closeData?.section ?? "",
+                source_page: closeData?.page ?? window.location.pathname,
+                price: closeData?.price ?? "",
+                duration_seconds: Math.round(durationMs / 1000),
+              });
+            }
             // Clean up the dummy history entry only if it's still active.
             if (historyEntryPushed) {
               historyEntryPushed = false;

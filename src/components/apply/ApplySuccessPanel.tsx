@@ -38,6 +38,9 @@ export function ApplySuccessPanel() {
   useEffect(() => {
     if (showsWithWidget.length === 0) return;
 
+    let orderCompleted = false;
+    let modalOpenedAt = 0;
+
     function initWidgets() {
       const rootStyle = getComputedStyle(document.documentElement);
       const brandColor =
@@ -52,6 +55,7 @@ export function ApplySuccessPanel() {
           sessionStorage.setItem(
             "eb_cta_source",
             JSON.stringify({
+              event_id: show.eventbriteId ?? "",
               section: "apply_success",
               page: window.location.pathname,
               city: show.city,
@@ -68,6 +72,7 @@ export function ApplySuccessPanel() {
             modalTriggerElementId: tid,
             themeSettings: { brandColor, fontColor, background: bgColor },
             onOrderComplete() {
+              orderCompleted = true;
               const raw = sessionStorage.getItem("eb_cta_source");
               const src: Record<string, string> | null = raw
                 ? JSON.parse(raw)
@@ -119,6 +124,11 @@ export function ApplySuccessPanel() {
           btn?.addEventListener("click", (e) => e.preventDefault());
         } catch {
           // Widget init failed; button stays inert (no navigation needed)
+          window.posthog?.capture?.("widget_load_failed", {
+            event_id: show.eventbriteId ?? "",
+            city: show.city,
+            page: window.location.pathname,
+          });
         }
       }
     }
@@ -140,6 +150,65 @@ export function ApplySuccessPanel() {
       script.onload = initWidgets;
       document.head.appendChild(script);
     }
+
+    // Track modal open/close for checkout funnel visibility.
+    // Set up at useEffect level so the cleanup can be returned directly.
+    const modalObserver = new MutationObserver(() => {
+      const ebStructure = document.querySelector<HTMLElement>(
+        "div.eds-structure_main",
+      );
+      if (!ebStructure || ebStructure.dataset.listenerAttached) return;
+      ebStructure.dataset.listenerAttached = "1";
+
+      orderCompleted = false;
+      modalOpenedAt = Date.now();
+      const openRaw = sessionStorage.getItem("eb_cta_source");
+      const openData = openRaw
+        ? (JSON.parse(openRaw) as Record<string, string>)
+        : null;
+      window.posthog?.capture?.("checkout_opened", {
+        event_id: openData?.event_id ?? "",
+        city: openData?.city ?? "",
+        source_section: openData?.section ?? "",
+        source_page: openData?.page ?? window.location.pathname,
+        price: openData?.price ?? "",
+      });
+
+      const closeObserver = new MutationObserver(() => {
+        if (!document.querySelector("div.eds-structure_main")) {
+          closeObserver.disconnect();
+          if (!orderCompleted) {
+            const durationMs = modalOpenedAt ? Date.now() - modalOpenedAt : 0;
+            const closeRaw = sessionStorage.getItem("eb_cta_source");
+            const closeData = closeRaw
+              ? (JSON.parse(closeRaw) as Record<string, string>)
+              : null;
+            window.posthog?.capture?.("checkout_abandoned", {
+              event_id: closeData?.event_id ?? "",
+              city: closeData?.city ?? "",
+              source_section: closeData?.section ?? "",
+              source_page: closeData?.page ?? window.location.pathname,
+              price: closeData?.price ?? "",
+              duration_seconds: Math.round(durationMs / 1000),
+            });
+          }
+        }
+      });
+      closeObserver.observe(document.body, { childList: true, subtree: false });
+
+      clearTimeout(modalObserverTimeout);
+      modalObserver.disconnect();
+    });
+    const modalObserverTimeout = setTimeout(
+      () => modalObserver.disconnect(),
+      30_000,
+    );
+    modalObserver.observe(document.body, { childList: true, subtree: true });
+
+    return () => {
+      clearTimeout(modalObserverTimeout);
+      modalObserver.disconnect();
+    };
   }, [showsWithWidget]);
 
   return (

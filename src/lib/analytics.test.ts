@@ -108,10 +108,11 @@ describe("identifyLead", () => {
 
   it("calls posthog.identify with email and merged props", () => {
     identifyLead("test@example.com", { source: "apply" });
-    expect(identifyMock).toHaveBeenCalledWith("test@example.com", {
-      email: "test@example.com",
-      source: "apply",
-    });
+    expect(identifyMock).toHaveBeenCalledWith(
+      "test@example.com",
+      { email: "test@example.com" },
+      { source: "apply" },
+    );
   });
 
   it("returns early for empty string — identify not called", () => {
@@ -126,17 +127,20 @@ describe("identifyLead", () => {
 
   it("filters undefined properties", () => {
     identifyLead("test@example.com", { source: "web", extra: undefined });
-    expect(identifyMock).toHaveBeenCalledWith("test@example.com", {
-      email: "test@example.com",
-      source: "web",
-    });
+    expect(identifyMock).toHaveBeenCalledWith(
+      "test@example.com",
+      { email: "test@example.com" },
+      { source: "web" },
+    );
   });
 
   it("includes email in identify properties by default", () => {
     identifyLead("test@example.com");
-    expect(identifyMock).toHaveBeenCalledWith("test@example.com", {
-      email: "test@example.com",
-    });
+    expect(identifyMock).toHaveBeenCalledWith(
+      "test@example.com",
+      { email: "test@example.com" },
+      {},
+    );
   });
 
   it("does not throw when posthog is undefined", () => {
@@ -170,12 +174,11 @@ describe("identifyLead", () => {
       b: false,
       c: 0,
     });
-    expect(identifyMock).toHaveBeenCalledWith("test@example.com", {
-      email: "test@example.com",
-      a: null,
-      b: false,
-      c: 0,
-    });
+    expect(identifyMock).toHaveBeenCalledWith(
+      "test@example.com",
+      { email: "test@example.com" },
+      { a: null, b: false, c: 0 },
+    );
   });
 });
 

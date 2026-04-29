@@ -1,6 +1,13 @@
 type AnalyticsValue = string | number | boolean | null | undefined;
 type AnalyticsProps = object;
 
+const META_EVENT_MAP: Record<string, string> = {
+  lead_email_submitted: "Lead",
+  apply_submitted: "CompleteRegistration",
+  checkout_opened: "InitiateCheckout",
+  order_complete: "Purchase",
+};
+
 function isAnalyticsValue(
   value: unknown,
 ): value is Exclude<AnalyticsValue, undefined> {
@@ -60,6 +67,9 @@ export function trackLeadEvent(name: string, properties: AnalyticsProps = {}) {
 
   window.posthog?.capture?.(name, cleanProps);
   window.dataLayer?.push({ event: name, ...cleanProps });
+
+  const metaEvent = META_EVENT_MAP[name];
+  if (metaEvent) window.fbq?.("track", metaEvent, cleanProps);
 }
 
 /**
@@ -76,7 +86,8 @@ export function identifyLead(email: string, properties: AnalyticsProps = {}) {
   // identify() merges the current anonymous session into the email-keyed profile.
   // PostHog automatically aliases the anonymous distinct_id to the email so all
   // prior anonymous events are attributed to this person.
-  window.posthog?.identify?.(email, { email, ...cleanProps });
+  // $set: email always stays current. $set_once: attribution data locked to first-touch.
+  window.posthog?.identify?.(email, { email }, cleanProps);
 
   // Mirror identification to GTM dataLayer for GA4 / downstream tools
   window.dataLayer?.push({ event: "identify", email, ...cleanProps });

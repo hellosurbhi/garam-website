@@ -12,9 +12,15 @@ interface Window {
     identify?: (
       distinctId: string,
       properties?: Record<string, unknown>,
+      propertiesSetOnce?: Record<string, unknown>,
     ) => void;
     get_distinct_id?: () => string | undefined;
   };
+  fbq?: (
+    action: string,
+    eventName: string,
+    parameters?: Record<string, unknown>,
+  ) => void;
   __garamAnalytics?: {
     posthog?: boolean;
   };

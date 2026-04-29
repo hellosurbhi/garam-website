@@ -118,6 +118,11 @@ export function ApplySuccessPanel() {
                 utm_source: attr.utmSource,
                 utm_campaign: attr.utmCampaign,
               });
+              window.fbq?.("track", "Purchase", {
+                value: price,
+                currency: "USD",
+                content_ids: [String(show.eventbriteId)],
+              });
             },
           });
           // Prevent native click behavior once widget is bound
@@ -172,6 +177,14 @@ export function ApplySuccessPanel() {
         source_section: openData?.section ?? "",
         source_page: openData?.page ?? window.location.pathname,
         price: openData?.price ?? "",
+      });
+      window.fbq?.("track", "InitiateCheckout", {
+        content_ids: [openData?.event_id ?? ""],
+        city: openData?.city ?? "",
+        value: parseFloat(
+          (openData?.price ?? "").replace(/[^0-9.]/g, "") || "0",
+        ),
+        currency: "USD",
       });
 
       const closeObserver = new MutationObserver(() => {

@@ -217,6 +217,10 @@ const leadSource = `spice-list-${pageName}`;
     });
 
   document.getElementById("nl-skip")?.addEventListener("click", () => {
+    trackLeadEvent("lead_phone_skipped", {
+      source: leadSource,
+      sourcePage: window.location.pathname,
+    });
     document.getElementById("nl-step-2")?.setAttribute("hidden", "");
     const successEl = document.getElementById("nl-success");
     const doneText = successEl?.querySelector(".nl-done-text");

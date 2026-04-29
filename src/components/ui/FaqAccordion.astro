@@ -35,6 +35,8 @@ const { items, groupId, answerClass = "" } = Astro.props;
 </div>
 
 <script>
+  import { trackLeadEvent } from "@/lib/analytics";
+
   document.querySelectorAll("[data-faq-group]").forEach((group) => {
     const items = group.querySelectorAll<HTMLDetailsElement>(
       ".faq-accordion__item",
@@ -42,6 +44,16 @@ const { items, groupId, answerClass = "" } = Astro.props;
     items.forEach((item) => {
       item.addEventListener("toggle", () => {
         if (item.open) {
+          const question =
+            item
+              .querySelector(".faq-accordion__q")
+              ?.textContent?.replace(/\+$/, "")
+              .trim()
+              .slice(0, 100) ?? "";
+          trackLeadEvent("faq_opened", {
+            question,
+            page: window.location.pathname,
+          });
           items.forEach((other) => {
             if (other !== item && other.open) {
               other.open = false;

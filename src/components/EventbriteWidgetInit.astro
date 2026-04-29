@@ -115,6 +115,11 @@
               utm_source: attr.utmSource,
               utm_campaign: attr.utmCampaign,
             });
+            window.fbq?.("track", "Purchase", {
+              value: price,
+              currency: "USD",
+              content_ids: [String(ev.eventId)],
+            });
           },
         };
         try {
@@ -210,6 +215,14 @@
           source_section: openData?.section ?? "",
           source_page: openData?.page ?? window.location.pathname,
           price: openData?.price ?? "",
+        });
+        window.fbq?.("track", "InitiateCheckout", {
+          content_ids: [openData?.event_id ?? ""],
+          city: openData?.city ?? "",
+          value: parseFloat(
+            (openData?.price ?? "").replace(/[^0-9.]/g, "") || "0",
+          ),
+          currency: "USD",
         });
 
         // Restore scroll position after EB's internal scrollTo(0,0) fires.

@@ -427,9 +427,13 @@ const {
       });
 
     // Skip phone
-    root
-      .querySelector("[data-lc-skip]")
-      ?.addEventListener("click", () => showStep("success"));
+    root.querySelector("[data-lc-skip]")?.addEventListener("click", () => {
+      trackLeadEvent("lead_phone_skipped", {
+        source,
+        sourcePage: window.location.pathname,
+      });
+      showStep("success");
+    });
   });
 
   // Wire up [data-open-modal] triggers anywhere on the page
@@ -454,6 +458,14 @@ const {
         if (cityInput) cityInput.value = city;
       }
 
+      const root = dialog.querySelector<HTMLElement>(".lc-steps");
+      const modalSource = root?.dataset.lcSource ?? "lead-capture";
+      const modalCity = el.dataset.openModalCity;
+      trackLeadEvent("lead_capture_modal_opened", {
+        source: modalSource,
+        sourcePage: window.location.pathname,
+        ...(modalCity ? { city: modalCity } : {}),
+      });
       dialog.showModal();
       (
         dialog.querySelector<HTMLInputElement>("[data-lc-email]") ?? dialog

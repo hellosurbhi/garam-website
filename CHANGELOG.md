@@ -1,5 +1,21 @@
 # Changelog
 
+## feat(analytics): add checkout_opened, checkout_abandoned, widget_load_failed events (2026-04-29)
+
+### What changed
+
+- `src/components/EventbriteWidgetInit.astro`: Added `checkout_opened` (fires when EB modal renders), `checkout_abandoned` (fires on close if no purchase, includes `duration_seconds`), and `widget_load_failed` (fires when `createWidget()` throws). Added `event_id` to `eb_cta_source` sessionStorage.
+- `src/pages/tickets.astro`: Same three events. Also added the missing `closeObserver` MutationObserver that watches for modal removal — tickets.astro previously had no close detection at all.
+- `src/components/apply/ApplySuccessPanel.tsx`: Same three events. Added a MutationObserver (none existed) at the `useEffect` level with proper cleanup returned from the effect.
+
+### Why
+
+The checkout funnel had a black hole between `cta_clicked` and `order_complete`. We can't track inside the Eventbrite iframe (browser same-origin policy), but we CAN detect when the modal appears and disappears. `duration_seconds` on `checkout_abandoned` distinguishes fast bounces (price friction, under ~10s) from slow abandons (form friction, over ~60s). `widget_load_failed` shows how many users fall through to the external link fallback.
+
+### PostHog funnel to build
+
+Insights > Funnels: `cta_clicked` → `checkout_opened` → `order_complete`. Breakdown by `city` or `utm_source`.
+
 ## fix(analytics): proxy PostHog through Vercel to bypass ad blockers (2026-04-29)
 
 ### What changed

@@ -1,5 +1,22 @@
 # Changelog
 
+## data(events): add SF show May 10, update NYC Pride to Jun 21 (2026-04-29)
+
+### What changed
+
+- Added San Francisco show at The Faight Collective on May 10 (6:30 to 8:30 PM) with Eventbrite ID 1988516311818
+- Updated NYC Pride Edition date from Jun 14 to Jun 21 (same URL and venue, corrected date)
+- Removed San Francisco from TBA_CITIES since it now has a confirmed show
+
+### Files affected
+
+- `src/data/events.ts`
+
+### Decisions
+
+- SF entry inserted in chronological order between Jersey City (May 3) and NYC (Jun 21)
+- startTime/endTime set to 18:30/20:30 matching the 6:30 to 8:30 PM window on the Eventbrite listing
+
 ## design(cities): clean up CTA hierarchy and remove redundant red stat label (2026-04-23)
 
 ### What changed

@@ -1,5 +1,32 @@
 # Changelog
 
+## feat(analytics): complete event tracking coverage (2026-04-29)
+
+### What changed
+
+- `src/lib/analytics.ts`: Added Meta Pixel standard event mapping (`Lead`, `CompleteRegistration`, `InitiateCheckout`, `Purchase`) — fires via `fbq("track", ...)` inside `trackLeadEvent()` for all mapped events. Changed `identifyLead()` to use PostHog's third `$set_once` argument for attribution properties, keeping `email` as the only `$set` field so first-touch UTM/referrer data is never overwritten by later interactions.
+- `src/lib/leadAttribution.ts`: Added `fbclid` and `gclid` capture to `LeadAttribution` interface and sessionStorage. Both are captured first-touch via `setIfMissing()` and included in every attribution object, tying Facebook and Google ad clicks to Firestore lead documents.
+- `src/env.d.ts`: Added `fbq` to the `Window` interface. Updated `posthog.identify` signature to include the optional third `$set_once` properties argument.
+- `src/components/EventbriteWidgetInit.astro`: Added `fbq("track", "InitiateCheckout")` when checkout modal opens, `fbq("track", "Purchase", { value, currency })` on order complete.
+- `src/pages/tickets.astro`: Same two Meta Pixel calls.
+- `src/components/apply/ApplySuccessPanel.tsx`: Same two Meta Pixel calls.
+- `src/components/apply/useApplyForm.ts`: Apply form now identifies by email (primary) with IG handle as fallback, matching all other lead forms. This eliminates split person profiles in PostHog where applicants were identified by `@ighandle` and lead-form submitters by email.
+- `src/components/ui/FaqAccordion.astro`: Added `faq_opened` tracking via `trackLeadEvent()` inside the existing toggle listener. Component script changed from plain to module script to support the import.
+- `src/components/LeadCaptureModal.astro`: Added `lead_phone_skipped` event on "Maybe later" button, and `lead_capture_modal_opened` event when any `[data-open-modal]` trigger opens the dialog.
+- `src/components/NotifyModal.astro`: Added `lead_phone_skipped` event with city-slug-aware source.
+- `src/components/home/HomeSignup.astro`: Added `lead_phone_skipped` event on skip button.
+- `src/lib/analytics.test.ts`: Updated 4 `identifyLead` tests to match new 3-argument `posthog.identify` signature.
+
+### Why
+
+Meta Pixel was firing zero conversion events, making it impossible for Facebook/Instagram ad campaigns to optimize for conversions or build lookalike audiences from purchasers and applicants. The `fbclid`/`gclid` gap meant paid ad clicks couldn't be attributed to Firestore leads. The apply form's IG-handle identity created split PostHog person profiles. The `$set` overwrite on identify meant a user's original referral source could be replaced if they returned from a different channel. City-page FAQ interactions (via `FaqAccordion`) were invisible while homepage FAQ was fully tracked. Phone skip rate and lead modal open events were untracked, making funnel analysis of the email-to-phone step impossible.
+
+### Decisions
+
+- Meta Pixel standard events follow Meta's recommended naming (`Lead`, `CompleteRegistration`, `InitiateCheckout`, `Purchase`) rather than custom events, so they're immediately usable for ad optimization without additional pixel configuration.
+- `InitiateCheckout` and `Purchase` are added inline in the 3 Eventbrite widget files rather than routing through `trackLeadEvent()`, because those files use different JS contexts (Astro module, Astro inline, React) and the existing code can't be shared.
+- `$set_once` is used for all properties except `email` in `identifyLead()`. Email is always `$set` so it stays current if someone updates their address. Everything else (UTMs, landing page, referrer) is first-touch only.
+
 ## feat(analytics): add checkout_opened, checkout_abandoned, widget_load_failed events (2026-04-29)
 
 ### What changed

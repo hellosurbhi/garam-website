@@ -1,5 +1,17 @@
 # Changelog
 
+## fix(seo): suppress /api/geo robots.txt warning + fix deriveSeoTitle dangling prepositions (2026-05-01)
+
+### What changed
+
+- `public/robots.txt`: Added `Allow: /api/geo` before the blanket `Disallow: /api/` rule. Googlebot's renderer calls the geo endpoint on every page load (used by lead attribution) and was getting blocked, producing a Search Console "Googlebot blocked by robots.txt" warning for a resource that contains no indexable content. The more specific path wins per robots.txt precedence rules.
+- `src/utils/meta.ts`: Fixed `deriveSeoTitle()` to strip trailing function words after word-boundary truncation. Previously, titles like "The Realest Way to Meet Desi Singles in NYC (That Isn't an App)" produced "The Realest Way to Meet Desi Singles in" which Google considers low-quality and replaces with the raw URL in search results. The fix adds a `DANGLING` set of prepositions, articles, conjunctions, and possessives. After truncation, any trailing function words are popped until the title ends on a meaningful word. 22 posts across 6 journal files were affected. The safety guard prevents the loop from emptying the entire word array.
+- `src/utils/meta.test.ts`: Created new test file with 12 test cases for `deriveSeoTitle`, plus coverage for `pageTitle` and `ogTitle`.
+
+### Why
+
+Google Search Console showed the `the-realest-way-to-meet-desi-singles-in-nyc` journal post appearing as a raw URL instead of a title. Investigation revealed the `deriveSeoTitle` function was systematically producing dangling prepositions across 22 posts.
+
 ## feat(analytics): complete event tracking coverage (2026-04-29)
 
 ### What changed

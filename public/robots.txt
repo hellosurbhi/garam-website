@@ -1,5 +1,6 @@
 User-agent: *
 Allow: /
+Allow: /api/geo
 Disallow: /admin
 Disallow: /contestant-prep
 Disallow: /api/

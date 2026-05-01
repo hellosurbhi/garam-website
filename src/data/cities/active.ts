@@ -256,22 +256,22 @@ export const activeCities: Record<string, CityData> = {
     displayName: "San Francisco",
     titleTag: "SF Bay Area Desi Dating Show",
     metaDescription:
-      "The live desi dating show is coming to the Bay Area. 400,000 South Asian residents, one live dating night. Join the SF waitlist for presale tickets.",
-    h1: "The Bay Area Has 400K South Asians and No Dating Show. Until Now.",
+      "The live South Asian dating show has arrived in the Bay Area. Real dates on stage, real people in the room. Grab tickets for the next San Francisco show.",
+    h1: "The Bay Area Has 400K South Asians. The Dating Show Has Finally Arrived.",
     status: "coming-soon",
     badgeLabel: "Coming Soon",
     bodyParagraphs: [
-      "New York has been doing this for over a year. The Bay Area is next.",
+      "New York has been doing this for over a year. Now it is the Bay Area's turn.",
       "The Bay Area has more South Asian professionals per square mile than almost anywhere outside of South Asia. The dating scene looks exactly like you would expect: everyone is on the apps, everyone is also always working, and the one IRL event you attended was a networking mixer that should have been an email.",
-      "We are planning our first Bay Area show. Join the waitlist and we will reach out with presale tickets and casting opportunities when a venue is confirmed.",
-      "Get on the list to be notified first. If you want to be a contestant when we come to your city, apply below.",
+      "Garam Masala Dating is bringing its live format to San Francisco. Real singles volunteer for live dates on stage while a packed room watches it unfold. Before and after, the whole crowd mingles. It is part comedy, part dating show, part social event. The format that sells out in New York every few weeks.",
+      "Shows are at The Faight Collective in San Francisco. Grab tickets for the next one below. If you want to be on stage instead of in the audience, apply to be a contestant.",
     ],
     ctas: [
-      { label: "Join the SF Waitlist", href: "#waitlist" },
       {
         label: "Apply to Be a Contestant",
         href: "/apply?city=San+Francisco&state=CA",
       },
+      { label: "Join the SF Waitlist", href: "#waitlist" },
     ],
     includeEventSchema: false,
     areaServed: "San Francisco, California",

@@ -1,7 +1,9 @@
 ---
 import BaseLayout from "@/layouts/BaseLayout.astro";
 import { citiesByRegion } from "@/data/cities";
+import type { CityData } from "@/data/cities";
 import { buildBreadcrumbJsonLd } from "@/utils/breadcrumbs";
+import { citySlugsWithUpcomingEvents } from "@/utils/cityEvents";
 
 const TITLE = "South Asian Dating Events by City";
 const DESC =
@@ -11,6 +13,15 @@ const breadcrumbJsonLd = buildBreadcrumbJsonLd([
   { name: "Home", url: "https://garammasaladating.com/" },
   { name: "Cities" },
 ]);
+
+const announcedSlugs = new Set(citySlugsWithUpcomingEvents());
+
+function getHubBadge(city: CityData): { label: string; isActive: boolean } {
+  if (announcedSlugs.has(city.slug)) {
+    return { label: "Tickets Available", isActive: true };
+  }
+  return { label: city.badgeLabel, isActive: city.status === "active" };
+}
 
 const regions = citiesByRegion();
 ---
@@ -74,52 +85,55 @@ const regions = citiesByRegion();
             <div class="region-section" id={anchorId}>
               <h2 class="region-title">{group.region}</h2>
               <div class="cities-list">
-                {group.cities.map((city, i) => (
-                  <a
-                    href={`/cities/${city.slug}`}
-                    class:list={[
-                      "city-card",
-                      city.status === "active"
-                        ? "city-card--active"
-                        : "city-card--inactive",
-                    ]}
-                    style={`animation-delay: ${0.05 + i * 0.03}s`}
-                  >
-                    <div>
-                      <h3 class="city-card__name">{city.displayName}</h3>
-                      <span
+                {group.cities.map((city, i) => {
+                  const badge = getHubBadge(city);
+                  return (
+                    <a
+                      href={`/cities/${city.slug}`}
+                      class:list={[
+                        "city-card",
+                        badge.isActive
+                          ? "city-card--active"
+                          : "city-card--inactive",
+                      ]}
+                      style={`animation-delay: ${0.05 + i * 0.03}s`}
+                    >
+                      <div>
+                        <h3 class="city-card__name">{city.displayName}</h3>
+                        <span
+                          class:list={[
+                            "city-card__badge",
+                            badge.isActive
+                              ? "city-card__badge--active"
+                              : "city-card__badge--inactive",
+                          ]}
+                        >
+                          {badge.label}
+                        </span>
+                      </div>
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        width="16"
+                        height="16"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-width="2"
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
                         class:list={[
-                          "city-card__badge",
-                          city.status === "active"
-                            ? "city-card__badge--active"
-                            : "city-card__badge--inactive",
+                          "city-card__arrow",
+                          badge.isActive
+                            ? "city-card__arrow--active"
+                            : "city-card__arrow--inactive",
                         ]}
                       >
-                        {city.badgeLabel}
-                      </span>
-                    </div>
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      width="16"
-                      height="16"
-                      viewBox="0 0 24 24"
-                      fill="none"
-                      stroke="currentColor"
-                      stroke-width="2"
-                      stroke-linecap="round"
-                      stroke-linejoin="round"
-                      class:list={[
-                        "city-card__arrow",
-                        city.status === "active"
-                          ? "city-card__arrow--active"
-                          : "city-card__arrow--inactive",
-                      ]}
-                    >
-                      <path d="M5 12h14" />
-                      <path d="m12 5 7 7-7 7" />
-                    </svg>
-                  </a>
-                ))}
+                        <path d="M5 12h14" />
+                        <path d="m12 5 7 7-7 7" />
+                      </svg>
+                    </a>
+                  );
+                })}
               </div>
             </div>
           );

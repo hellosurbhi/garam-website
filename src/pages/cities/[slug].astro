@@ -3,8 +3,7 @@ import BaseLayout from "@/layouts/BaseLayout.astro";
 import EventbriteWidgetInit from "@/components/EventbriteWidgetInit.astro";
 import { cities } from "@/data/cities";
 import type { CityData } from "@/data/cities";
-import { events } from "@/data/events";
-import { isEventPast } from "@/utils/eventDate";
+import { getUpcomingEventsForCity } from "@/utils/cityEvents";
 import { buildBreadcrumbJsonLd } from "@/utils/breadcrumbs";
 import { SHOW_IMAGES, slugToImageIndex } from "@/data/images";
 import { buildTicketUrl } from "@/utils/eventUrl";
@@ -32,24 +31,12 @@ const nearbyCities = (city.nearbyCities ?? [])
 const title = city.titleTag;
 const description = city.metaDescription;
 
-// Upcoming events matching this city (for active cities with real shows)
-const cityEvents =
-  city.status === "active"
-    ? events.filter(
-        (e) =>
-          !e.hidden &&
-          !isEventPast(e.date) &&
-          e.url !== "#" &&
-          e.url !== "" &&
-          (e.citySlug
-            ? e.citySlug === city.slug
-            : e.city.includes(city.displayName)),
-      )
-    : [];
+// Upcoming events for this city — derived from events data, not city.status
+const cityEvents = getUpcomingEventsForCity(city.slug);
 
 /* ── City JSON-LD ─────────────────────────────────────────── */
 
-function buildCityJsonLd(c: CityData): string {
+function buildCityJsonLd(c: CityData, hasEvents: boolean): string {
   const graph: Record<string, unknown>[] = [
     {
       "@type": "LocalBusiness",
@@ -59,7 +46,7 @@ function buildCityJsonLd(c: CityData): string {
     },
   ];
 
-  if (c.includeEventSchema) {
+  if (c.includeEventSchema || hasEvents) {
     const event: Record<string, unknown> = {
       "@type": "Event",
       name: `Garam Masala Dating \u2013 ${c.displayName}`,
@@ -117,7 +104,7 @@ function buildCityJsonLd(c: CityData): string {
   return JSON.stringify({ "@context": "https://schema.org", "@graph": graph });
 }
 
-const cityJsonLd = buildCityJsonLd(city);
+const cityJsonLd = buildCityJsonLd(city, cityEvents.length > 0);
 
 const breadcrumbJsonLd = buildBreadcrumbJsonLd([
   { name: "Home", url: "https://garammasaladating.com/" },
@@ -134,8 +121,11 @@ const applyHref =
 
 const staticPrimaryCta =
   cityEvents.length === 0 ? (city.ctas[0] ?? null) : null;
+// When events exist, exclude #waitlist CTAs — the contextual prompt handles them
 const staticSecondaryCtas =
-  cityEvents.length === 0 ? city.ctas.slice(1) : city.ctas;
+  cityEvents.length === 0
+    ? city.ctas.slice(1)
+    : city.ctas.filter((c) => c.href !== "#waitlist");
 
 function renderCityText(text: string, href: string): string {
   return text
@@ -182,7 +172,7 @@ function renderCityText(text: string, href: string): string {
                 class="city-paragraph"
                 set:html={renderCityText(para, applyHref)}
               />
-              {i === 0 && (
+              {i === 0 && cityEvents.length === 0 && (
                 <aside class="city-social-cta" aria-label="Follow us">
                   <p class="city-social-cta__text">
                     We sell out every week in NYC.{" "}
@@ -284,6 +274,23 @@ function renderCityText(text: string, href: string): string {
               </a>
             );
           })
+        }
+        {/* Contextual waitlist prompt for cities with events */}
+        {
+          cityEvents.length > 0 && (
+            <p class="city-waitlist-prompt">
+              {cityEvents.length === 1
+                ? `Can't make it ${cityEvents[0].date}?`
+                : "None of these dates work?"}{" "}
+              <button
+                type="button"
+                class="city-waitlist-prompt__btn"
+                data-waitlist-trigger
+              >
+                Add your name to the waitlist for future shows.
+              </button>
+            </p>
+          )
         }
         {/* Primary static CTA */}
         {
@@ -1203,6 +1210,28 @@ function renderCityText(text: string, href: string): string {
     font-size: 18px;
     font-style: italic;
     color: var(--charcoal);
+  }
+
+  /* ─── Waitlist Prompt (cities with events) ───────── */
+
+  .city-waitlist-prompt {
+    font-family: var(--font-body);
+    font-size: 14px;
+    color: var(--text-secondary);
+    margin: 0;
+    text-align: center;
+  }
+
+  .city-waitlist-prompt__btn {
+    background: none;
+    border: none;
+    font-family: var(--font-body);
+    font-size: 14px;
+    color: var(--brand-red);
+    text-decoration: underline;
+    cursor: pointer;
+    padding: 0;
+    display: inline;
   }
 
   /* ─── Related Journal Articles ────────────────────── */

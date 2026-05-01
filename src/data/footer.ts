@@ -1,18 +1,44 @@
 import { SOCIAL_URLS } from "@/data/socials";
+import { activeCities } from "@/data/cities/active";
+import { cities } from "@/data/cities";
+import type { CityData } from "@/data/cities";
+import { citySlugsWithUpcomingEvents } from "@/utils/cityEvents";
 
 export interface FooterLink {
   label: string;
   href: string;
 }
 
-export const FOOTER_SHOW_LINKS: FooterLink[] = [
-  { label: "New York City", href: "/cities/manhattan" },
-  { label: "Jersey City", href: "/cities/jersey-city" },
-  { label: "Los Angeles", href: "/cities/los-angeles" },
-  { label: "San Francisco", href: "/cities/san-francisco" },
-  { label: "San Diego", href: "/cities/san-diego" },
-  { label: "All Cities", href: "/cities" },
-];
+function cityLabel(c: CityData): string {
+  return c.slug === "manhattan" ? "New York City" : c.displayName;
+}
+
+function buildFooterShowLinks(): FooterLink[] {
+  const announcedSlugs = citySlugsWithUpcomingEvents();
+  const announcedSet = new Set(announcedSlugs);
+
+  const announcedLinks: FooterLink[] = announcedSlugs
+    .map((slug) => cities[slug])
+    .filter((c): c is CityData => c !== undefined)
+    .map((c) => ({ label: cityLabel(c), href: `/cities/${c.slug}` }));
+
+  const links: FooterLink[] = [...announcedLinks];
+
+  // Backfill from featured active.ts cities (insertion order = priority)
+  if (links.length < 5) {
+    for (const slug of Object.keys(activeCities)) {
+      if (links.length >= 5) break;
+      if (announcedSet.has(slug)) continue;
+      const c = activeCities[slug];
+      links.push({ label: cityLabel(c), href: `/cities/${c.slug}` });
+    }
+  }
+
+  links.push({ label: "All Cities", href: "/cities" });
+  return links;
+}
+
+export const FOOTER_SHOW_LINKS: FooterLink[] = buildFooterShowLinks();
 
 export const FOOTER_INVOLVED_LINKS: FooterLink[] = [
   { label: "Apply to Date on Stage", href: "/apply" },

@@ -12,6 +12,7 @@ import HomeTestimonials from "@/components/home/HomeTestimonials.astro";
 import HomeCreators from "@/components/home/HomeCreators.astro";
 import HomeVideo from "@/components/home/HomeVideo.astro";
 import HomeFAQ from "@/components/home/HomeFAQ.astro";
+import HomeJournal from "@/components/home/HomeJournal.astro";
 import { SOCIAL_URLS, CREATOR_URLS } from "@/data/socials";
 import { TESTIMONIALS, PAGES } from "@/data/copy";
 import { YOUTUBE_VIDEO_ID, VIDEO_METADATA } from "@/lib/constants";
@@ -214,6 +215,7 @@ const speakableJsonLd = JSON.stringify({
     <HomeCreators />
     <HomeVideo />
     <HomeFAQ />
+    <HomeJournal />
   </main>
   <EventbriteWidgetInit />
 

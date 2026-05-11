@@ -1,0 +1,202 @@
+---
+import { journalPostsPublished } from "@/data/journal/index";
+
+const posts = journalPostsPublished.slice(0, 3);
+---
+
+<section class="home-journal" aria-labelledby="journal-heading">
+  <div class="journal-inner">
+    <div class="journal-header" data-reveal>
+      <div class="journal-eyebrow">From the Journal</div>
+      <h2 id="journal-heading">
+        Essays on Desi Dating, <em>Real</em> Stories
+      </h2>
+    </div>
+    <div class="journal-grid" data-reveal-stagger>
+      {
+        posts.map((post) => (
+          <a href={`/journal/${post.slug}`} class="journal-card" data-reveal>
+            <div class="journal-card-body">
+              <h3 class="journal-card-title">{post.title}</h3>
+              <p class="journal-card-excerpt">{post.excerpt}</p>
+            </div>
+            <div class="journal-card-read" aria-hidden="true">
+              Read
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="13"
+                height="13"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              >
+                <path d="M5 12h14" />
+                <path d="m12 5 7 7-7 7" />
+              </svg>
+            </div>
+          </a>
+        ))
+      }
+    </div>
+    <div class="journal-cta" data-reveal>
+      <a href="/journal" class="journal-cta-link">Read more essays</a>
+    </div>
+  </div>
+</section>
+
+<style>
+  .home-journal {
+    background: var(--off-white);
+    padding: 64px 20px;
+  }
+
+  .journal-inner {
+    max-width: 1100px;
+    margin: 0 auto;
+  }
+
+  .journal-header {
+    text-align: center;
+    margin-bottom: 48px;
+  }
+
+  .journal-eyebrow {
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 3px;
+    color: var(--brand-red);
+    margin-bottom: 12px;
+  }
+
+  .journal-header h2 {
+    font-family: var(--font-playfair), serif;
+    font-size: clamp(28px, 5vw, 52px);
+    font-weight: 900;
+    color: var(--charcoal);
+    line-height: 1.1;
+  }
+
+  .journal-header h2 em {
+    font-style: italic;
+  }
+
+  .journal-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+
+  .journal-card {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    gap: 16px;
+    background: rgba(26, 26, 26, 0.03);
+    border: 1px solid rgba(26, 26, 26, 0.08);
+    border-radius: 16px;
+    padding: 24px 20px;
+    text-decoration: none;
+    color: var(--charcoal);
+    transition:
+      border-color 0.2s,
+      background 0.2s,
+      transform 0.2s;
+  }
+
+  .journal-card:hover {
+    border-color: var(--brand-red);
+    background: rgba(220, 38, 38, 0.04);
+    transform: translateY(-2px);
+  }
+
+  .journal-card:focus-visible {
+    outline: 2px solid var(--brand-red);
+    outline-offset: 3px;
+    border-radius: 16px;
+  }
+
+  .journal-card:active {
+    transform: scale(0.97);
+  }
+
+  .journal-card-title {
+    font-family: var(--font-playfair), serif;
+    font-size: 20px;
+    font-weight: 700;
+    color: var(--charcoal);
+    line-height: 1.3;
+    margin-bottom: 8px;
+  }
+
+  .journal-card-excerpt {
+    font-size: 15px;
+    color: rgba(26, 26, 26, 0.7);
+    line-height: 1.65;
+  }
+
+  .journal-card-read {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 12px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    color: var(--brand-red);
+    margin-top: 4px;
+  }
+
+  .journal-cta {
+    text-align: center;
+    margin-top: 40px;
+  }
+
+  .journal-cta-link {
+    font-family: var(--font-cormorant), serif;
+    font-size: 19px;
+    font-style: italic;
+    color: var(--brand-red);
+    text-decoration: none;
+    transition: color 0.2s;
+  }
+
+  .journal-cta-link:hover,
+  .journal-cta-link:focus-visible {
+    color: var(--brand-red-dark);
+  }
+
+  .journal-cta-link:focus-visible {
+    outline: 2px solid var(--brand-red);
+    outline-offset: 3px;
+    border-radius: 2px;
+  }
+
+  @media (min-width: 768px) {
+    .home-journal {
+      padding: 88px 48px;
+    }
+
+    .journal-header {
+      margin-bottom: 64px;
+    }
+
+    .journal-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 20px;
+    }
+
+    .journal-card {
+      border-radius: 20px;
+      padding: 28px 24px;
+    }
+
+    .journal-card-title {
+      font-size: 22px;
+    }
+  }
+</style>

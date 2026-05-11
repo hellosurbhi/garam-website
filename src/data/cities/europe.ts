@@ -306,7 +306,7 @@ export const europeCities: Record<string, CityData> = {
     displayName: "Hamburg",
     titleTag: "Live Dating Show Hamburg",
     metaDescription:
-      "Garam Masala Dating is coming to Hamburg. Live South Asian dating show and mixer. Indian tech workers, University of Hamburg, and northern.",
+      "Garam Masala Dating is coming to Hamburg. Live South Asian dating show and mixer for the desi community in Hamburg, Eimsbüttel, and Altona. Join the waitlist.",
     h1: "From the Reeperbahn to the Alster, Hamburg Gets a Desi Night",
     status: "coming-soon",
     badgeLabel: "Coming Soon",

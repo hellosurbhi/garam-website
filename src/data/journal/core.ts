@@ -415,7 +415,7 @@ export const corePosts: JournalPost[] = [
       },
       {
         type: "p",
-        text: "Think you\u2019d be good on stage? Apply at garammasaladating.com/apply.",
+        text: "Think you\u2019d be good on stage? <a href='/apply'>Apply here</a>. The show runs in <a href='/cities/manhattan'>Manhattan</a> and <a href='/cities/jersey-city'>Jersey City</a>, with more cities on the way.",
       },
     ],
   },
@@ -1208,7 +1208,7 @@ export const corePosts: JournalPost[] = [
       },
       {
         type: "p",
-        text: "The rest is just showing up. You\u2019ll be fine.",
+        text: "The rest is just showing up. You\u2019ll be fine. The show is at Top Secret Comedy Club in the East Village. Full show details and upcoming dates are on the <a href='/cities/manhattan'>Manhattan show page</a>. Not cast yet? <a href='/apply'>Apply here</a>.",
       },
     ],
   },

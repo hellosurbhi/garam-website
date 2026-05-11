@@ -158,7 +158,11 @@ export default defineConfig({
     react(),
     sitemap({
       filter: (page) => {
-        if (page.includes("/admin") || page.includes("/contestant-prep"))
+        if (
+          page.includes("/admin") ||
+          page.includes("/contestant-prep") ||
+          page.includes("/waiver")
+        )
           return false;
         if (page.includes("/journal/")) {
           if (page.includes("situationship-masterclass")) return true;

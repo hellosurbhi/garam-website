@@ -1,5 +1,35 @@
 # Changelog
 
+## fix(seo): Google indexing recovery for 328 discovered-not-indexed pages (2026-05-11)
+
+### What changed
+
+Root cause: Google discovered 328 URLs via the sitemap but wasn't crawling them due to weak internal link signals, a noindex/sitemap contradiction on /waiver, and thin cross-linking on the two crawled-not-indexed journal articles.
+
+- `src/components/home/HomeJournal.astro` (new): "From the Journal" section added as the last section on the homepage, before the email signup and footer. Shows the 3 most recently published journal articles with title, excerpt, and Read link. Uses `var(--off-white)` background to maintain section color alternation (HomeFAQ above is cream-warm, HomeSignup below is brand-red). Cards are full-width on mobile, 3-column grid on desktop. This creates direct homepage-to-article links, the strongest possible internal signal for crawl prioritization.
+- `src/pages/index.astro`: Imports and renders `HomeJournal` after `HomeFAQ`.
+- `astro.config.mjs`: Added `/waiver` to the sitemap filter exclusion list (alongside `/admin` and `/contestant-prep`). The waiver page has `noindex` but was leaking into the sitemap, sending Google a contradictory signal.
+- `src/pages/faq.astro`: Updated the "What cities is Garam Masala Dating in?" answer to link to `/cities` instead of just `/tickets`. Adds a crawlable internal link from a high-value FAQ page to the cities hub, and now mentions LA, SF, and San Diego expansion.
+- `src/data/journal/core.ts`: Added city cross-links to both crawled-not-indexed journal articles. The casting article closing paragraph now links to `/apply`, `/cities/manhattan`, and `/cities/jersey-city`. The prep article closing paragraph now links to `/cities/manhattan` and `/apply`. Both previously had zero outbound links to the rest of the site.
+- `src/data/cities/europe.ts`: Fixed Hamburg metaDescription which was truncated mid-sentence ("...and northern."). A cut-off meta description is a direct content quality signal Google uses to deprioritize indexing.
+- `public/llms.txt`: Removed stale `/south-asian-dating-tips` entry (that route redirects to `/journal`) and updated the Journal entry description.
+
+### Why
+
+Google's "Discovered - currently not indexed" status means URLs were found in the sitemap but not crawled. Google rations crawl budget based on how prominently a site's own pages link to its content. The homepage had zero body links to journal articles or city pages. After this change, every homepage visitor (and Googlebot's homepage crawl) will encounter direct links to 3 journal articles. The FAQ and journal cross-links further distribute link equity from high-value pages.
+
+### Files affected
+
+`src/components/home/HomeJournal.astro`, `src/pages/index.astro`, `astro.config.mjs`, `src/pages/faq.astro`, `src/data/journal/core.ts`, `src/data/cities/europe.ts`, `public/llms.txt`
+
+### Post-deploy manual actions required
+
+1. Resubmit `sitemap-index.xml` in Google Search Console after deploy.
+2. Use URL Inspection to request indexing for: `/journal`, `/cities`, the top 5 city pages, and the 2 previously crawled-not-indexed journal articles. Limit is ~10-20 requests per day.
+3. Share journal article URLs directly on social media (not linktree) to generate organic traffic signals that raise Google's crawl demand estimate.
+
+---
+
 ## fix(seo): suppress /api/geo robots.txt warning + fix deriveSeoTitle dangling prepositions (2026-05-01)
 
 ### What changed

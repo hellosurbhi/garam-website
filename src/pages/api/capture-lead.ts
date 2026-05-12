@@ -1,5 +1,6 @@
 import type { APIRoute } from "astro";
 import { validateEmail } from "@/utils/validateEmail";
+import { addKitSubscriber, type KitSubscriberFields } from "@/lib/kit";
 
 interface LeadPayload {
   email: string;
@@ -145,6 +146,21 @@ export const POST: APIRoute = async ({ request }) => {
     const doc = await res.json();
     // Extract document ID from the name field (projects/.../documents/leads/DOC_ID)
     const docId = doc.name?.split("/").pop() ?? "";
+
+    // Sync to Kit — fire-and-forget, never blocks the response
+    const kitTags: string[] = ["website-lead"];
+    if (body.city) kitTags.push(body.city.toLowerCase().replace(/\s+/g, "-"));
+    if (body.utmSource) kitTags.push(body.utmSource.toLowerCase());
+    const kitFields: KitSubscriberFields = {};
+    if (body.city) kitFields.city = body.city;
+    if (body.sourcePage) kitFields.source_page = body.sourcePage;
+    if (body.landingPage) kitFields.landing_page = body.landingPage;
+    if (body.utmSource) kitFields.utm_source = body.utmSource;
+    if (body.utmMedium) kitFields.utm_medium = body.utmMedium;
+    if (body.utmCampaign) kitFields.utm_campaign = body.utmCampaign;
+    addKitSubscriber(email, kitTags, kitFields).catch(() => {
+      // Kit errors are already logged inside addKitSubscriber
+    });
 
     return new Response(JSON.stringify({ ok: true, id: docId }), {
       status: 200,

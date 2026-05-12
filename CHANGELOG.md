@@ -1,5 +1,33 @@
 # Changelog
 
+## feat(analytics): add analytics dashboard UI with revenue charts and lead funnel (2026-05-12)
+
+### What changed
+
+Added the analytics tab to the admin dashboard and built the full `AnalyticsDashboard` React component backed by the `/api/analytics` endpoint.
+
+- `src/components/admin/AdminDashboard.tsx`: Added `activeTab` state (`"applicants" | "analytics"`), tab switcher UI in the header, and conditional rendering so the filters, prep links, applicant list, and modal only appear when the Applicants tab is active. Analytics tab renders `<AnalyticsDashboard />`.
+- `src/components/admin/AdminDashboard.module.css`: Added `.tabs`, `.tab`, `.tab[data-active]`, `.tab:active`, `.tabCount` classes for the tab switcher.
+- `src/components/admin/AdminDashboard.test.tsx`: Updated tests for the new tab UI, including a test that the applicant count badge appears in the tab.
+- `src/components/admin/AnalyticsDashboard.tsx` (new): Full analytics view. Gets Firebase ID token, fetches `/api/analytics?period=7d|30d|90d|all`, shows skeleton loading state, shows period selector and Sync Now button. Renders: KPI metric cards (net revenue, tickets sold, avg ticket price, conversion rate), revenue over time line chart, revenue by show bar chart, revenue by city table, lead funnel with visual bars and source breakdown, recent leads list, channel attribution table, application status breakdown, sync error list.
+- `src/components/admin/AnalyticsDashboard.module.css` (new): Full CSS Module for the analytics dashboard. All static styles extracted here. No inline styles except for dynamic width values on funnel bar fills.
+
+### Why
+
+Task 9 of the analytics dashboard feature wave. The backend endpoints (analytics, sync-orders) were already built. This is the UI layer that makes the data visible to the operator.
+
+### Design decisions
+
+- Recharts v3 `Tooltip.formatter` and `labelFormatter` prop types use intersection types that are difficult to satisfy directly. Used `NonNullable<TooltipProps["formatter"]>` type aliases with inferred parameters to satisfy the type system without using `any`.
+- Tab switcher uses `data-active` attribute pattern (same as `AdminDashboard`'s existing `data-copied` pattern) rather than separate active/inactive class names for conciseness.
+- All static inline styles moved to CSS Modules classes per project rules.
+
+### Files affected
+
+`src/components/admin/AdminDashboard.tsx`, `src/components/admin/AdminDashboard.module.css`, `src/components/admin/AdminDashboard.test.tsx`, `src/components/admin/AnalyticsDashboard.tsx` (new), `src/components/admin/AnalyticsDashboard.module.css` (new), `package.json`, `package-lock.json`
+
+---
+
 ## fix(seo): Google indexing recovery for 328 discovered-not-indexed pages (2026-05-11)
 
 ### What changed

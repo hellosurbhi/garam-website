@@ -1,5 +1,41 @@
 # Changelog
 
+## feat(analytics): full analytics platform: Eventbrite sync, Kit email integration, revenue API (2026-05-12)
+
+### What changed
+
+Complete analytics platform spanning infrastructure, API, and UI. Surbhi can now see revenue, lead-to-ticket conversion, and channel attribution in one place without opening Eventbrite, PostHog, or Firestore separately.
+
+**Backend infrastructure (commits e4a971c through 79fd750):**
+
+- `src/types/analytics.ts`: TypeScript interfaces for the full data model (Order, SyncMeta, AnalyticsSnapshot, RevenueByShow, RevenueByCity, LeadFunnel, ChannelAttribution, ApplicationMetrics, RevenuePoint, RecentLead). Single source of truth shared between API endpoint and dashboard UI.
+- `src/lib/firestoreAdmin.ts`: Google OAuth2 service account auth via jose JWT signing. Exchanges a signed service-account JWT for a short-lived access token scoped to Firestore. Token is cached in memory with a 60s buffer before expiry. Needed because Firestore security rules block unauthenticated server writes.
+- `src/lib/eventbrite.ts`: Paginated Eventbrite API v3 client. Fetches all order pages via continuation tokens, maps to typed Order objects, handles incremental sync via `changed_since`, warns when rate limit drops below 100 remaining.
+- `src/lib/kit.ts`: Kit (ConvertKit) v4 API client. Graceful no-op when `KIT_API_SECRET` is not set. Never throws (lead capture must not fail because of Kit).
+- `src/pages/api/sync-orders.ts`: Vercel Cron endpoint (4-hour schedule). Supports both CRON_SECRET Bearer auth and Firebase ID token auth. Reads syncMeta to get last sync timestamp for incremental fetching, fetches orders for all events that have an `eventbriteId`, matches buyer email against Firestore leads collection to populate `matchedLeadId`, upserts each order to `orders/{orderId}` via Firestore REST PATCH, writes updated syncMeta.
+- `src/pages/api/analytics.ts`: GET endpoint protected by Firebase auth. Period parameter (7d/30d/90d/all). Reads orders, leads, applications, and syncMeta in parallel. Computes: total revenue, per-show revenue, per-city revenue, revenue time series, lead funnel with conversion rate, channel attribution by UTM source, application pipeline status.
+- `src/pages/api/capture-lead.ts`: After Firestore write succeeds, fire-and-forget call to `addKitSubscriber()`. Tags: `website-lead`, city slug, UTM source. Custom fields: city, source page, landing page, UTM params. Kit failure never blocks the response.
+- `src/pages/api/sync-leads-to-kit.ts`: One-time backfill endpoint (CRON_SECRET auth). Paginates all Firestore leads and syncs each to Kit with a `backfill` tag. Returns `{synced, errors}`.
+- Lead capture consolidation: `NotifyModal.astro`, `HomeSignup.astro`, `HomeShows.astro`, `index.astro`, `cities/[slug].astro` — all 8 client-side `addDoc` call sites migrated to fetch `/api/capture-lead`. Every lead now guaranteed to go through Kit sync.
+- `firestore.rules`: `orders` and `syncMeta` collections added — authenticated read, no client write.
+- `vercel.json`: crons config added for `/api/sync-orders` every 4 hours.
+- `.env.example`: `EVENTBRITE_API_TOKEN`, `KIT_API_SECRET`, `CRON_SECRET` documented.
+
+### Files affected
+
+`src/types/analytics.ts`, `src/lib/firestoreAdmin.ts`, `src/lib/eventbrite.ts`, `src/lib/kit.ts`, `src/pages/api/sync-orders.ts`, `src/pages/api/analytics.ts`, `src/pages/api/capture-lead.ts`, `src/pages/api/sync-leads-to-kit.ts`, `src/components/NotifyModal.astro`, `src/components/home/HomeSignup.astro`, `src/components/home/HomeShows.astro`, `src/pages/index.astro`, `src/pages/cities/[slug].astro`, `firestore.rules`, `vercel.json`, `.env.example`
+
+### Actions required before this feature goes live
+
+1. Eventbrite: generate a private API token in your Eventbrite account settings. Verify with `https://www.eventbriteapi.com/v3/users/me/?token=YOUR_TOKEN`.
+2. Add `eventbriteId` to each event in `src/data/events.ts` (the numeric ID from the Eventbrite event URL).
+3. Kit: get your API secret from Kit account settings.
+4. Set in Vercel: `EVENTBRITE_API_TOKEN`, `KIT_API_SECRET`, `CRON_SECRET` (any secret, e.g. `openssl rand -hex 32`), plus `FIREBASE_ADMIN_CLIENT_EMAIL` and `FIREBASE_ADMIN_PRIVATE_KEY` from the Firebase service account JSON.
+5. First sync: click Sync Now in the admin Analytics tab.
+6. Kit backfill: `POST /api/sync-leads-to-kit` with `Authorization: Bearer YOUR_CRON_SECRET`.
+
+---
+
 ## feat(analytics): add analytics dashboard UI with revenue charts and lead funnel (2026-05-12)
 
 ### What changed

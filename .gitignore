@@ -37,6 +37,9 @@ SITE-AUDIT.md
 # bv (beads viewer) local config and caches
 .bv/
 
+# Git worktrees
+.worktrees/
+
 # stryker temp files
 .stryker-tmp
 .gstack/

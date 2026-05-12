@@ -7,6 +7,7 @@ interface LeadPayload {
   city?: string;
   source?: string;
   sourcePage?: string;
+  sourceCitySlug?: string;
   landingPage?: string;
   referrerHost?: string;
   utmSource?: string;
@@ -14,6 +15,8 @@ interface LeadPayload {
   utmCampaign?: string;
   utmContent?: string;
   utmTerm?: string;
+  fbclid?: string;
+  gclid?: string;
   posthogDistinctId?: string;
   geoCity?: string;
   geoRegion?: string;
@@ -84,6 +87,10 @@ export const POST: APIRoute = async ({ request }) => {
   if (body.utmCampaign) fields.utmCampaign = { stringValue: body.utmCampaign };
   if (body.utmContent) fields.utmContent = { stringValue: body.utmContent };
   if (body.utmTerm) fields.utmTerm = { stringValue: body.utmTerm };
+  if (body.sourceCitySlug)
+    fields.sourceCitySlug = { stringValue: body.sourceCitySlug };
+  if (body.fbclid) fields.fbclid = { stringValue: body.fbclid };
+  if (body.gclid) fields.gclid = { stringValue: body.gclid };
   if (body.posthogDistinctId)
     fields.posthogDistinctId = { stringValue: body.posthogDistinctId };
   const geoCity =

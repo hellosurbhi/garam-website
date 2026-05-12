@@ -75,19 +75,11 @@ const leadSource = `spice-list-${pageName}`;
 </section>
 
 <script>
-  import { getFirebaseDb } from "@/lib/firebase";
-  import {
-    collection,
-    addDoc,
-    updateDoc,
-    type DocumentReference,
-  } from "firebase/firestore";
   import { cleanPhone } from "@/lib/phone";
   import { identifyLead, trackLeadEvent } from "@/lib/analytics";
   import { buildLeadAttribution } from "@/lib/leadAttribution";
 
   let savedEmail = "";
-  let nlDocRef: DocumentReference | null = null;
 
   // Per-page source set by the Astro frontmatter (e.g. "spice-list-home",
   // "spice-list-apply"). Falls back to the bare component name only if the
@@ -112,13 +104,17 @@ const leadSource = `spice-list-${pageName}`;
         submitBtn.textContent = "Sending...";
       }
       try {
-        const db = getFirebaseDb();
         const attribution = buildLeadAttribution({ source: leadSource });
-        nlDocRef = await addDoc(collection(db, "leads"), {
-          email: savedEmail,
-          ...attribution,
-          createdAt: new Date().toISOString(),
+        const res = await fetch("/api/capture-lead", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            email: savedEmail,
+            ...attribution,
+            createdAt: new Date().toISOString(),
+          }),
         });
+        if (!res.ok) throw new Error("capture-lead failed");
         localStorage.setItem("gmd-popup-subscribed", "true");
         identifyLead(savedEmail, attribution);
         trackLeadEvent("lead_email_submitted", attribution);
@@ -179,18 +175,18 @@ const leadSource = `spice-list-${pageName}`;
         submitBtn.textContent = "Sending...";
       }
       try {
-        const db = getFirebaseDb();
-        if (nlDocRef) {
-          await updateDoc(nlDocRef, { phone: cleaned });
-        } else {
-          const attribution = buildLeadAttribution({ source: leadSource });
-          await addDoc(collection(db, "leads"), {
+        const attribution = buildLeadAttribution({ source: leadSource });
+        const res = await fetch("/api/capture-lead", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
             email: savedEmail,
             phone: cleaned,
             ...attribution,
             createdAt: new Date().toISOString(),
-          });
-        }
+          }),
+        });
+        if (!res.ok) throw new Error("capture-lead failed");
         trackLeadEvent("lead_phone_submitted", {
           source: leadSource,
           sourcePage: window.location.pathname,

@@ -300,13 +300,6 @@ const speakableJsonLd = JSON.stringify({
 </BaseLayout>
 
 <script>
-  import { getFirebaseDb } from "@/lib/firebase";
-  import {
-    collection,
-    addDoc,
-    updateDoc,
-    type DocumentReference,
-  } from "firebase/firestore";
   import { cleanPhone } from "@/lib/phone";
   import { identifyLead, trackLeadEvent } from "@/lib/analytics";
   import { buildLeadAttribution } from "@/lib/leadAttribution";
@@ -414,7 +407,6 @@ const speakableJsonLd = JSON.stringify({
     });
 
     let savedEmail = "";
-    let popupDocRef: DocumentReference | null = null;
 
     document
       .getElementById("popup-email-form")
@@ -433,13 +425,17 @@ const speakableJsonLd = JSON.stringify({
           submitBtn.textContent = "Sending...";
         }
         try {
-          const db = getFirebaseDb();
           const attribution = buildLeadAttribution({ source: "popup" });
-          popupDocRef = await addDoc(collection(db, "leads"), {
-            email: savedEmail,
-            ...attribution,
-            createdAt: new Date().toISOString(),
+          const res = await fetch("/api/capture-lead", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              email: savedEmail,
+              ...attribution,
+              createdAt: new Date().toISOString(),
+            }),
           });
+          if (!res.ok) throw new Error("capture-lead failed");
           localStorage.setItem(POPUP_KEY, "true");
           identifyLead(savedEmail, attribution);
           trackLeadEvent("lead_email_submitted", attribution);
@@ -493,18 +489,18 @@ const speakableJsonLd = JSON.stringify({
           submitBtn.textContent = "Sending...";
         }
         try {
-          const db = getFirebaseDb();
-          if (popupDocRef) {
-            await updateDoc(popupDocRef, { phone: cleaned });
-          } else {
-            const attribution = buildLeadAttribution({ source: "popup" });
-            await addDoc(collection(db, "leads"), {
+          const attribution = buildLeadAttribution({ source: "popup" });
+          const res = await fetch("/api/capture-lead", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
               email: savedEmail,
               phone: cleaned,
               ...attribution,
               createdAt: new Date().toISOString(),
-            });
-          }
+            }),
+          });
+          if (!res.ok) throw new Error("capture-lead failed");
           trackLeadEvent("lead_phone_submitted", {
             source: "popup",
             sourcePage: window.location.pathname,

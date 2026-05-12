@@ -546,13 +546,6 @@ function renderCityText(text: string, href: string): string {
 </BaseLayout>
 
 <script>
-  import { getFirebaseDb } from "@/lib/firebase";
-  import {
-    collection,
-    addDoc,
-    updateDoc,
-    type DocumentReference,
-  } from "firebase/firestore";
   import { cleanPhone } from "@/lib/phone";
   import { identifyLead, trackLeadEvent } from "@/lib/analytics";
   import { buildLeadAttribution } from "@/lib/leadAttribution";
@@ -592,17 +585,21 @@ function renderCityText(text: string, href: string): string {
         const errorEl = document.getElementById("waitlist-error");
         if (submitBtn) submitBtn.disabled = true;
         try {
-          const db = getFirebaseDb();
           const attribution = buildLeadAttribution({
             source: "city-waitlist",
             sourceCitySlug: citySlug,
           });
-          await addDoc(collection(db, "leads"), {
-            email,
-            city,
-            ...attribution,
-            createdAt: new Date().toISOString(),
+          const res = await fetch("/api/capture-lead", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              email,
+              city,
+              ...attribution,
+              createdAt: new Date().toISOString(),
+            }),
           });
+          if (!res.ok) throw new Error("capture-lead failed");
           identifyLead(email, { ...attribution, city });
           trackLeadEvent("lead_email_submitted", { ...attribution, city });
           document
@@ -624,7 +621,6 @@ function renderCityText(text: string, href: string): string {
 
   // City page email + phone signup
   let cityNotifyEmail = "";
-  let cityNotifyDocRef: DocumentReference | null = null;
   const cityName = document.querySelector(".city-eyebrow")?.textContent ?? "";
 
   document
@@ -640,17 +636,21 @@ function renderCityText(text: string, href: string): string {
       ).querySelector<HTMLButtonElement>('[type="submit"]');
       if (submitBtn) submitBtn.disabled = true;
       try {
-        const db = getFirebaseDb();
         const attribution = buildLeadAttribution({
           source: "city-page",
           sourceCitySlug: citySlug,
         });
-        cityNotifyDocRef = await addDoc(collection(db, "leads"), {
-          email: cityNotifyEmail,
-          city: cityName,
-          ...attribution,
-          createdAt: new Date().toISOString(),
+        const res = await fetch("/api/capture-lead", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            email: cityNotifyEmail,
+            city: cityName,
+            ...attribution,
+            createdAt: new Date().toISOString(),
+          }),
         });
+        if (!res.ok) throw new Error("capture-lead failed");
         identifyLead(cityNotifyEmail, { ...attribution, city: cityName });
         trackLeadEvent("lead_email_submitted", {
           ...attribution,
@@ -707,22 +707,22 @@ function renderCityText(text: string, href: string): string {
       ).querySelector<HTMLButtonElement>('[type="submit"]');
       if (submitBtn) submitBtn.disabled = true;
       try {
-        const db = getFirebaseDb();
-        if (cityNotifyDocRef) {
-          await updateDoc(cityNotifyDocRef, { phone: cleaned });
-        } else {
-          const attribution = buildLeadAttribution({
-            source: "city-page",
-            sourceCitySlug: citySlug,
-          });
-          await addDoc(collection(db, "leads"), {
+        const attribution = buildLeadAttribution({
+          source: "city-page",
+          sourceCitySlug: citySlug,
+        });
+        const res = await fetch("/api/capture-lead", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
             email: cityNotifyEmail,
             phone: cleaned,
             city: cityName,
             ...attribution,
             createdAt: new Date().toISOString(),
-          });
-        }
+          }),
+        });
+        if (!res.ok) throw new Error("capture-lead failed");
         trackLeadEvent("lead_phone_submitted", {
           source: "city-page",
           sourcePage: window.location.pathname,

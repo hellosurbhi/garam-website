@@ -63,6 +63,7 @@
       ]
     }
   ],
+  "crons": [{ "path": "/api/sync-orders", "schedule": "0 */4 * * *" }],
   "rewrites": [
     {
       "source": "/ingest/static/:path(.*)",

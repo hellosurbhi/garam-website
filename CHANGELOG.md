@@ -109,7 +109,7 @@ End-to-end contestant pipeline management built into the admin dashboard. Replac
 
 - `src/data/events.ts`
 
-### Decisions
+---
 
 - Used existing `VENUE_TOP_SECRET` constant. Matches pattern of all other Top Secret Comedy Club NYC events.
 
@@ -169,21 +169,227 @@ Purely additive change. No new origins introduced: `t.co` and `analytics.twitter
 
 ### What changed
 
-Completed the route rename from `/contestant-prep` to `/contestant-portal` across the entire codebase. The page file `contestant-portal.astro` was already renamed; this commit updates everything else.
+- Added the admin Analytics tab with revenue KPIs, charts, lead funnel metrics, channel attribution, application status metrics, and a manual Eventbrite sync action.
+- Added Firestore-backed analytics infrastructure: Eventbrite order sync, order and sync metadata types, service-account Firestore access, analytics API aggregation, and authenticated sync endpoints for manual or external scheduled runs.
+- Added Kit subscriber sync after successful lead capture, plus a CRON_SECRET-protected backfill endpoint that reads Firestore leads with service-account credentials.
+- Preserved current `main` lead-capture hardening, click-id support, IndexNow deploy pings, city/event content, smoke-test setup, and Firebase tooling while integrating the analytics branch.
+- Restricted analytics and manual order sync Firebase-token access to UIDs listed in `ADMIN_UIDS`; external job access still uses `CRON_SECRET`.
 
 ### Files affected
 
-- `src/pages/api/contestant-prep-auth.ts` → renamed to `contestant-portal-auth.ts`
-- `test/contestant-prep-auth.test.ts` → renamed to `contestant-portal-auth.test.ts`
-- `src/lib/rateLimit.ts` — renamed export `contestantPrepLimiter` → `contestantPortalLimiter`, updated comment and Redis key prefix
-- `src/components/ContestantPrepPage.tsx` — updated fetch URL
-- `src/components/ContestantPrepPage.test.tsx` — updated mock URL assertions
-- `src/components/admin/AdminDashboard.tsx` — updated fallback URL in invite copy flow
-- `public/js/posthog.js` — updated analytics exclusion filter
-- `public/robots.txt` — updated `Disallow` rule
-- `astro.config.mjs` — updated sitemap SKIP set and filter
-- `README.md` — updated route table; added missing routes (/tickets, /hosts, /privacy, /terms, /journal/[slug], API routes)
-- `CLAUDE.md` — updated key pages list
+- `src/components/admin/AnalyticsDashboard.tsx`
+- `src/pages/api/analytics.ts`
+- `src/pages/api/sync-orders.ts`
+- `src/pages/api/sync-leads-to-kit.ts`
+- `src/pages/api/capture-lead.ts`
+- `src/lib/eventbrite.ts`
+- `src/lib/firestoreAdmin.ts`
+- `src/lib/kit.ts`
+- `src/types/analytics.ts`
+- `firestore.rules`
+- `vercel.json`
+- `.env.example`
+
+### Required environment
+
+- `ADMIN_UIDS`: comma-separated Firebase Auth UIDs allowed to view analytics and manually sync orders.
+- `EVENTBRITE_API_TOKEN`: Eventbrite private API token for order sync.
+- `KIT_API_SECRET`: Kit API secret for lead subscriber sync.
+- `CRON_SECRET`: bearer token for external scheduled jobs and Kit backfill endpoints.
+
+---
+
+## feat(seo): IndexNow sitemap ping after every deploy (2026-05-15)
+
+### What changed
+
+- Added `scripts/ping-indexnow.mjs`: reads all URLs from the generated sitemap XML and POSTs them to IndexNow after every build. Bing and other IndexNow-compatible engines are notified immediately on deploy.
+- Added `public/053daf33e1f144f28143394db082d4b7.txt`: IndexNow key verification file served at `garammasaladating.com/053daf33e1f144f28143394db082d4b7.txt`.
+- Added `postbuild` npm script so the ping runs automatically after `astro build`.
+- Changed `vercel.json` `buildCommand` from `astro build` to `npm run build` so Vercel triggers the `postbuild` hook.
+- Handles Vercel's generated sitemap location under `dist/client` so the postbuild hook pings the deployed sitemap instead of skipping.
+- Limits automatic pings to production Vercel builds, with `INDEXNOW_DRY_RUN=1` available for local verification.
+
+### Why
+
+Google deprecated their sitemap ping endpoint in January 2023. No search engine was being notified when new articles were published. Sitemap was regenerated on every deploy but search engines only discovered new URLs on their own crawl schedule. IndexNow provides an automated post-deploy notification path.
+
+### Note on Google
+
+Google does not officially support IndexNow. For Google indexing, the sitemap at `https://garammasaladating.com/sitemap-index.xml` must be submitted once in Google Search Console. After that, Google re-crawls it on its own schedule. IndexNow data shared by Bing may also benefit Google indirectly.
+
+### Files affected
+
+- `scripts/ping-indexnow.mjs` (new)
+- `public/053daf33e1f144f28143394db082d4b7.txt` (new)
+- `package.json`
+- `vercel.json`
+- `CHANGELOG.md`
+
+---
+
+## fix(api): keep lead capture routes server-side (2026-05-15)
+
+### What changed
+
+- Marked the lead capture and phone update API routes as non-prerendered so Vercel deploys them as server handlers.
+- Fixes production `405 Method Not Allowed` responses from `/api/capture-lead`.
+
+### Files affected
+
+- `src/pages/api/capture-lead.ts`
+- `src/pages/api/update-lead.ts`
+- `CHANGELOG.md`
+
+---
+
+## fix(footer): keep featured city links visible (2026-05-15)
+
+### What changed
+
+- Updated footer show-link generation so featured market links like Los Angeles, San Francisco, and San Diego stay visible even as announced event inventory changes.
+- Preserves announced show links and de-dupes featured cities already present from upcoming events.
+
+### Files affected
+
+- `src/data/footer.ts`
+- `CHANGELOG.md`
+
+---
+
+## chore(firebase): add local Firebase CLI for rules deploys (2026-05-15)
+
+### What changed
+
+- Added `firebase-tools` as a dev dependency so `npx firebase ...` resolves to the deploy CLI instead of the Firebase app SDK.
+- Reauthenticated the Firebase CLI and deployed `firestore.rules` to project `garam-masala-9f15b`.
+
+### Files affected
+
+- `package.json`
+- `package-lock.json`
+- `CHANGELOG.md`
+
+---
+
+## content(events): normalize event city and state labels (2026-05-15)
+
+### What changed
+
+- Split event location data into `city`, full `state`, and `stateAbbr` fields.
+- Added a shared event location formatter so public event cards render `City, State`.
+- Updated tickets, home shows, links, city ticket buttons, apply success tickets, and admin prep labels to use the shared formatter.
+- Added tests that preserve existing labels like `Manhattan, New York`, `Jersey City, New Jersey`, and `Philadelphia, Pennsylvania` while fixing California labels.
+
+### Files affected
+
+- `src/data/events.ts`
+- `src/utils/eventCity.ts`
+- `src/pages/tickets.astro`
+- `src/components/home/HomeShows.astro`
+- `src/components/home/HomeHero.astro`
+- `src/components/apply/ApplySuccessPanel.tsx`
+- `src/components/admin/AdminDashboard.tsx`
+- `src/pages/cities/[slug].astro`
+- `src/pages/links.astro`
+
+---
+
+## content(events): expand San Francisco city label on event cards (2026-05-15)
+
+### What changed
+
+- Updated the San Francisco event entries to display `San Francisco, California` on tickets and show cards.
+
+### Files affected
+
+- `src/data/events.ts`
+- `CHANGELOG.md`
+
+---
+
+## content(copy): restore almost sold out and remove new dates announced (2026-05-15)
+
+### What changed
+
+- Restored `Almost sold out` for the first event subtitle.
+- Replaced `New dates announced` with a sales-focused line so the event copy stays useful without sounding awkward.
+
+### Files affected
+
+- `src/data/copy.ts`
+- `CHANGELOG.md`
+
+---
+
+## content(copy): make event card subtitles more sales focused (2026-05-15)
+
+### What changed
+
+- Replaced the awkward event subtitle sequence with clearer sales-focused copy in `EVENT_TAGLINES`.
+- Kept the event card CTA text unchanged and only updated the supporting submessage line.
+
+### Files affected
+
+- `src/data/copy.ts`
+- `CHANGELOG.md`
+
+---
+
+## docs(process): add branch safety rule to agent instructions (2026-05-15)
+
+### What changed
+
+- Added a root `AGENTS.md` with an explicit branch safety rule.
+- Updated `CLAUDE.md` to forbid committing or pushing on `main` or `master`.
+- Added a lessons note so the branch mistake is recorded and not repeated.
+
+### Files affected
+
+- `AGENTS.md`
+- `CLAUDE.md`
+- `LESSONS.md`
+- `CHANGELOG.md`
+
+---
+
+## docs(enhancements): expand admin event management plan (2026-05-15)
+
+### What changed
+
+- Expanded the Admin Event Management backlog item with a rollout plan, acceptance criteria, and open implementation decisions.
+- Added a planning note that this item should stay documentation-only until implementation is explicitly requested.
+- Recorded the correction in `LESSONS.md` so enhancement backlog items are not treated as build requests.
+
+### Files affected
+
+- `ENHANCEMENTS.md`
+- `LESSONS.md`
+- `CHANGELOG.md`
+
+---
+
+## data(events): add SF Seed Round and Philadelphia shows, fix city page lifecycle (2026-05-15)
+
+### What changed
+
+- Added SF Seed Round show at The Faight Collective on Jun 25, 6:30 to 8:30 PM (eventbriteId 1989633237573)
+- Added Philadelphia show at Next In Line Comedy on Jul 12, 7:30 to 9:30 PM (eventbriteId 1989618938805)
+- Extracted VENUE_FAIGHT_COLLECTIVE and VENUE_NEXT_IN_LINE constants; backfilled streetAddress and postalCode for the existing May 10 SF event
+- Updated SF and Philadelphia city pages: present-tense body copy, venue-specific FAQs, venueName, includeEventSchema enabled
+- Moved Philadelphia from us-northeast.ts to active.ts (spread order in index.ts requires this to avoid us-northeast overwriting active entries)
+- Restored status: "coming-soon" and waitlist CTAs for both SF and Philadelphia after incorrectly setting them to "active" — city page rendering is already event-driven via getUpcomingEventsForCity(), so the status field and hub badge auto-update based on event presence without any manual change
+- Added caveat to STEALER discount code text in apply form and success panel: only valid for Garam Masala produced events, not external promoter events like Next In Line Comedy
+- Added Admin Event Management CRUD feature to ENHANCEMENTS.md
+
+### Files affected
+
+- `src/data/events.ts`
+- `src/data/cities/active.ts`
+- `src/data/cities/us-northeast.ts`
+- `src/components/apply/ApplySuccessPanel.tsx`
+- `src/components/ApplyPage.tsx`
+- `ENHANCEMENTS.md`
 
 ### Decisions
 
@@ -849,300 +1055,6 @@ Note: enforcing these as hard merge blockers requires GitHub Pro (branch protect
 
 - `.github/workflows/ci.yml`
 - `.github/workflows/smoke-tests.yml`
-
-## fix(security+bugs): rate limiting, Zod validation, pagination, UI fixes — full backlog pass (2026-04-20)
-
-### What changed
-
-Full resolution of the open bugs backlog. 11 bugs closed in one pass:
-
-- **Rate limiting** on all 6 POST API routes via `@upstash/ratelimit`. New `src/lib/rateLimit.ts` exports per-route limiter instances and `getClientIp`. Honeypot field added to `capture-lead` for bot filtering.
-- **Zod schema validation** at all API boundaries. New `src/lib/schemas.ts` defines `ApplicationNotificationSchema`, `LeadPayloadSchema`, `ContestantPrepAuthSchema`, `ContestantClaimSchema`, `StageWaiverSchema`. New `src/lib/http.ts` provides `parseJsonRequest` (parses + validates JSON body) and `jsonResponse` utilities. All 6 routes now validate input before processing.
-- **Admin pagination** via Firestore cursor-based `query/orderBy/limit/startAfter` replacing unbounded `getDocs(collection(...))`. `PAGE_SIZE = 24` with load-more button.
-- **Admin inline styles removed** — CSS modules applied across `AdminDashboard`, `ApplicantModal`, and `TermsModal` components.
-- **HomeSignup subscribed state** reads `localStorage` to show already-subscribed state on revisit.
-- **HomeNav scrolled CTA box-shadow emphasis** — visual feedback on scroll.
-- **Modal focus ring scoped** to `pointer: fine` (no focus ring on touch devices).
-- **Contact email** standardized to `contact@garammasaladating.com` in `links.astro`.
-- Test suite updated: mocked `@/lib/rateLimit` in API tests to avoid Upstash Redis timeout; updated error message assertions from legacy strings to Zod-standard `"Invalid request"`; fixed `AdminDashboard.test.tsx` firestore mock to include `query/orderBy/limit/startAfter`.
-
-### Files affected
-
-- `src/lib/http.ts` — new: JSON parsing + response utilities
-- `src/lib/rateLimit.ts` — rate limiters for all 6 routes
-- `src/lib/schemas.ts` — new: Zod schemas for all API inputs
-- `src/pages/api/capture-lead.ts`, `contestant-claim.ts`, `contestant-prep-auth.ts`, `notify-application.ts`, `stage-waiver.ts`, `update-lead.ts` — rate limit + schema validation wired in
-- `src/components/LeadCaptureModal.astro` — honeypot field
-- `src/components/admin/AdminDashboard.tsx`, `AdminDashboard.module.css` — cursor pagination + CSS modules
-- `src/components/admin/ApplicantModal.tsx`, `ApplicantModal.module.css` — CSS modules
-- `src/components/apply/TermsModal.module.css` — CSS modules
-- `src/components/home/HomeNav.astro`, `HomeShows.astro`, `HomeSignup.astro` — UI bug fixes
-- `src/components/ui/Modal.astro` — focus ring scope
-- `src/pages/links.astro` — contact email
-- `src/data/copy.ts` — copy fixes
-- `BUGS.md` / `BUGS_ARCHIVE.md` — 11 bugs archived as fixed
-- `test/contestant-prep-auth.test.ts`, `test/notify-application.test.ts`, `src/components/admin/AdminDashboard.test.tsx` — test repairs
-
-## fix(security): remove unsafe-inline from CSP via external script migration (2026-04-20)
-
-### What changed
-
-`'unsafe-inline'` removed from `script-src` in `vercel.json`. All three analytics `is:inline` components (`gtm.astro`, `posthog.astro`, `meta-pixel.astro`) migrated to external files under `public/js/`. The `tickets.astro` Eventbrite widget — previously inline via `define:vars` — refactored to pass data through a `<script type="application/json" id="gmd-widget-events">` element and load logic from `public/js/tickets-widget.js`. This removes all `is:inline` scripts from the codebase without changing analytics behavior (all loaders use `requestIdleCallback` / `defer`, unchanged).
-
-### Why
-
-`unsafe-inline` in `script-src` defeats XSS protection: any injected inline script would execute. Moving to external origin-scoped scripts means only files served from the same origin (or allowlisted CDNs) can run.
-
-### Files affected
-
-- `src/components/gtm.astro` — replaced inline block with `<script src="/js/gtm.js" defer>`
-- `src/components/posthog.astro` — replaced inline block with `<script src="/js/posthog.js" defer>`
-- `src/components/meta-pixel.astro` — replaced inline block with `<script src="/js/meta-pixel.js" defer>`
-- `src/pages/tickets.astro` — replaced `is:inline define:vars` with JSON data element + `<script src="/js/tickets-widget.js" defer>`
-- `public/js/gtm.js` — new external file (GTM deferred loader)
-- `public/js/posthog.js` — new external file (PostHog deferred init)
-- `public/js/meta-pixel.js` — new external file (Meta Pixel deferred init)
-- `public/js/tickets-widget.js` — new external file (Eventbrite widget init)
-- `vercel.json` — removed `'unsafe-inline'` from `script-src`
-- `BUGS.md` / `BUGS_ARCHIVE.md` — `[LOW] CSP uses unsafe-inline` archived as fixed
-
-## fix(scripts): repair optimize-images.js source manifest and add pre-run validation (2026-04-20)
-
-### What changed
-
-`scripts/optimize-images.js` rewritten with a clean source manifest pointing to a documented `source-images/` directory at the repo root. Previous version referenced stale paths like `src/data/Garammasaladating-117.jpg` and bare filenames that never existed in the repo. New version: validates `source-images/` exists before processing (exits non-zero with a clear message if not); uses explicit output directories matching the current `public/images/` layout (`promo/`, `hosts/`, `hero/`, `journal/`); produces WebP and AVIF only (removed JPG fallback, all current images are WebP/AVIF); adds header documentation explaining expected workflow.
-
-### Files affected
-
-- `scripts/optimize-images.js` — rewritten
-- `BUGS.md` / `BUGS_ARCHIVE.md` — `[LOW] Image optimization pipeline` archived as fixed
-
-## fix(security): Firestore applications collection field validation + auth requirement (2026-04-18)
-
-### What changed
-
-`firestore.rules` had `allow create: if true;` on the `applications` collection, accepting any document shape from any unauthenticated user. Added `validApplication()` mirroring the existing `validLead()` pattern.
-
-The function enforces: `hasOnly` whitelist of 22 allowed fields, `hasAll` for 12 required fields, type constraints (`applicationType` must be `'Self'` or `'Nomination'`, `age` must be int 18-99, `status` must be `'New'`, `marketingConsent` must be `'yes'`/`'no'`/`''`), and length limits on all string fields. Creates now also require `request.auth != null` (anonymous sign-in is already called before form submission in the client flow).
-
-Subcollection creates also now require auth (but no field validation since subcollection shape varies).
-
-### Deploy required
-
-Run `firebase deploy --only firestore:rules` to ship this change. Test with the Firebase emulator first if available: `firebase emulators:start --only firestore`.
-
-### Files affected
-
-- `firestore.rules` — added `validApplication()` function, updated `applications` create rule.
-- `BUGS.md` — `[HIGH] Firestore applications collection has no field validation on create` marked Fixed.
-- `CHANGELOG.md` — this entry.
-
-## fix(security): signed token for lead phone updates, closes ownership bypass (2026-04-18)
-
-### What changed
-
-`/api/update-lead` previously accepted a raw Firestore document ID from the caller with no ownership check. Anyone who obtained or guessed a lead doc ID could overwrite the phone number.
-
-Created `src/lib/leadToken.ts` with `issueLeadToken(docId)` and `verifyLeadToken(token)`. Token is HMAC-SHA256 of `docId:base36-timestamp`, signed with `LEAD_UPDATE_SECRET`, base64url-encoded, and expires after 10 minutes. Verification uses timing-safe comparison.
-
-`/api/capture-lead` now returns `{ ok, id, updateToken }`. `/api/update-lead` no longer accepts `id` — it requires `{ phone, updateToken }`, verifies the token, extracts the doc ID server-side, and rejects expired or forged tokens with 401.
-
-Client side: `LeadCaptureModal.astro` stores the `updateToken` from the capture response and threads it to the phone submit. If no token is available (edge case: capture happened client-side), falls back to a fresh `capture-lead` call with both email + phone.
-
-Also applied the same timeout (5s AbortController) and error-text-scrubbing fixes to `update-lead.ts` that were already applied to `capture-lead.ts`.
-
-### Setup required
-
-Add `LEAD_UPDATE_SECRET` to `.env.local` and Vercel environment variables. Generate with `openssl rand -base64 32`. Without this env var, the token functions throw and phone updates will fail.
-
-### Files affected
-
-- `src/lib/leadToken.ts` — new: token issue/verify utility.
-- `src/pages/api/capture-lead.ts` — issues token in response.
-- `src/pages/api/update-lead.ts` — rewritten: requires + verifies token, 5s timeout, no raw error leaks.
-- `src/components/LeadCaptureModal.astro` — threads updateToken from capture to update.
-- `.env.example` — added `LEAD_UPDATE_SECRET`.
-- `BUGS.md` — PR #12 "update-lead allows phone overwrite" marked Fixed.
-- `CHANGELOG.md` — this entry.
-
-### Note
-
-Client-side `updateDoc` calls (in `NotifyModal.astro`, `HomeShows.astro`, `HomeSignup.astro`) still go directly through Firestore rules, not this API. Those are protected by `validPhoneUpdate()` in `firestore.rules`. Full migration of those paths to the server endpoint is tracked as a future improvement.
-
-## fix(api+analytics): capture-lead hardening, PostHog identity fix, NotifyModal sanitization (2026-04-18)
-
-### What changed
-
-Five correctness and security fixes across the lead-capture and analytics paths.
-
-**M2 — identifyLead(igHandle) corrupted PostHog identity:** The apply form passed the Instagram handle as `distinct_id` to PostHog, which also set it as `email` internally. This produced identity merges that broke downstream analytics. Removed `identifyLead` entirely from the apply flow (lead identity is already established during email capture). The Instagram handle is now sent as a property on the `apply_submitted` event instead.
-
-**M5 — capture-lead outbound timeout:** The Firestore REST POST had no timeout. Added `AbortController` with a 5-second limit; on abort returns 503 "Upstream timeout" and logs server-side.
-
-**L6 — NotifyModal blank source + unsanitized city slugs:** Empty `data-source` strings fell through `??` and produced malformed attribution like `-manhattan`. Changed to `?.trim() || "notify-modal"`. Also: explicit `data-notify-city-slug` values now route through `toCitySlug()` same as the fallback path, so trailing spaces and non-canonical casing are normalized before storage.
-
-**L7 — HomeShows empty city passed to analytics:** Geo properties (city, state, country) are now conditionally spread — only included when truthy. Empty strings no longer corrupt PostHog identity or event data.
-
-**L8 — capture-lead raw Firestore error text leaked to clients:** Removed `detail: errText` from the client-facing 500 response. Raw error is `console.error`'d server-side only.
-
-### Files affected
-
-- `src/components/apply/useApplyForm.ts` — removed `identifyLead` import + call; added `instagram` to trackLeadEvent props.
-- `src/pages/api/capture-lead.ts` — AbortController timeout, removed detail from error response, added server-side logging.
-- `src/components/NotifyModal.astro` — source trim+fallback; city slug always through `toCitySlug()`.
-- `src/components/home/HomeShows.astro` — conditional geo props.
-- `BUGS.md` — 5 entries marked Fixed.
-- `CHANGELOG.md` — this entry.
-
-## fix(apply): Instagram normalization + photo size boundary match server (2026-04-18)
-
-### What changed
-
-Two input-validation edge cases in the apply form that both caused the client to accept values the server rejects.
-
-**Instagram "@" alone passes validation.** Validation checked `form.instagram.trim()` directly, but submission stripped a leading `@` before writing. An input of `"@"` (or `"  @  "`) passed validation, normalized to `""` on submit, produced a handleless Firestore document, and then `/api/notify-application` returned 400 because `instagram` is required. Confusing silent failure for the user and a noisy 400 in logs.
-
-Added `normalizeInstagramHandle()` to `src/utils/instagram.ts` (trim, then strip leading `@`). `useApplyForm` now calls it at all three usage sites: validation, the persisted payload, and the PostHog `identifyLead` call. Regression tests cover `"@"` and `"  @  "` — both now surface `"Required"` immediately instead of silently creating a bad doc.
-
-**Photo size check off by one byte vs storage.rules.** Client used `> 5 * 1024 * 1024`; `storage.rules` uses `< 5 * 1024 * 1024`. An exactly-5MB photo passed client validation and failed on `uploadBytes()` with a generic toast. Changed the client to `>= 5 * 1024 * 1024` so both sides reject at the same byte count. Boundary tests updated to match: exact-5MB now asserts rejection, and the accept case uses 5MB − 1 byte.
-
-### Files affected
-
-- `src/utils/instagram.ts` — added `normalizeInstagramHandle()`.
-- `src/components/apply/useApplyForm.ts` — replaced three `.trim().replace(/^@/, "")` call sites with the helper; changed size check from `>` to `>=`.
-- `src/components/apply/useApplyForm.test.ts` — flipped the 5MB boundary tests; added two regression tests for Instagram `"@"` input.
-- `BUGS.md` — PR #11 "Instagram @ alone" and "Photo size off-by-one" marked Fixed.
-- `CHANGELOG.md` — this entry.
-
-### Decisions
-
-- Added `normalizeInstagramHandle()` rather than fixing inline to avoid a fourth drift point creeping in later — the logic is now a single source of truth, imported where used.
-- Kept `cleanInstagramHandle()` as-is even though `normalizeInstagramHandle()` supersedes it for most cases, because other call sites may deliberately want the `@`-strip without the trim.
-- Left error copy unchanged ("Photo must be under 5 MB") — "under" already reads as strict less-than, matching the new behavior.
-
-## fix(modal): phone submit checks res.ok before showing success (2026-04-18)
-
-### What changed
-
-`LeadCaptureModal.astro`'s phone submit handler called `fetch("/api/update-lead")` (or `/api/capture-lead` if no lead doc existed yet) and never inspected the response status. A 400 or 500 fell through to `trackLeadEvent` + `showStep("success")`, confirming a save that never happened.
-
-Consolidated the two fetch branches into a single `res` variable, added `if (!res.ok) { throw new Error(...) }`, and left the existing `catch` handler (which already renders an inline error via `phoneErrorEl`) to do the rest. The finally block still re-enables the submit button.
-
-Net effect: 2xx → tracks and shows success. Non-2xx → the user sees "Something went wrong. Please try again or skip." and can retry or skip.
-
-### Files affected
-
-- `src/components/LeadCaptureModal.astro` — consolidated fetch, added `res.ok` guard.
-- `BUGS.md` — PR #12 "Phone update API: non-2xx responses show false success" marked Fixed.
-- `CHANGELOG.md` — this entry.
-
-### Decisions
-
-- Kept the same copy ("Something went wrong. Please try again or skip.") — no reason to distinguish HTTP error from network error to the user.
-- Did not add status-specific retry logic. The skip button is always available; forcing retry on transient 5xx would worsen UX.
-
-## fix(seo): remove duplicate FAQPage JSON-LD from homepage (2026-04-18)
-
-### What changed
-
-The homepage emitted a `FAQPage` JSON-LD built from `HOME_FAQS`, and `/faq` emitted another `FAQPage` built from the full `FAQS` list. Both included the question "What is Garam Masala Dating?" with different answer wording, plus several other topic-overlapping questions phrased differently. Google's guidance is one canonical `FAQPage` per question set — overlap with divergent answers risks rich-result suppression.
-
-Deleted the `faqJsonLd` constant and its `<script type="application/ld+json">` tag from `src/pages/index.astro`. `/faq` remains the canonical owner of the `FAQPage` schema. The visible homepage FAQ accordion is untouched.
-
-The homepage's deliberate AI-citation investment is preserved: `HOME_FAQS` still feeds `src/pages/llms.txt.ts` and `src/pages/llms-full.txt.ts` (the LLM manifest endpoints that AI search engines consume), which is the actual AI-citation surface — the homepage JSON-LD was a redundant signal, not the primary one.
-
-### Files affected
-
-- `src/pages/index.astro` — removed `HOME_FAQS` import, `faqJsonLd` constant, and one `<script>` emission (9 lines).
-- `BUGS.md` — marked the `[HIGH] Homepage still emits duplicate FAQPage schema` entry as Fixed.
-- `CHANGELOG.md` — this entry.
-
-### Decisions
-
-- Did not restructure into a shared FAQPage source of truth. `/faq` is the longer, canonical version; deleting the homepage one is the simplest correct fix. If duplicate visible FAQ accordions become a concern separately, that's a content-architecture discussion.
-- Did not touch the visible `HomeFAQ` accordion on the homepage — only the structured data.
-
-## docs(bugs): triage — move declined items to ENHANCEMENTS, close out verified fixes (2026-04-16)
-
-### What changed
-
-Triaged every open entry in `BUGS.md` against the current codebase. Organized the result into three buckets so the file reflects reality:
-
-**Moved to `ENHANCEMENTS.md`** (9 items declined as future aesthetic / nice-to-have work, not bugs):
-
-- `[MEDIUM] Home hero photo background from audit not implemented`
-- `[MEDIUM] Home creators avatars were not upgraded to larger host photos`
-- `[MEDIUM] Hosts page still uses small individual avatar images`
-- `[MEDIUM] Experience section photo placement was missed`
-- `[MEDIUM] Testimonials accent photo was not added`
-- `[MEDIUM] Journal decorative cupid artwork not implemented`
-- `[LOW] Popup CTA copy still uses weaker pre-audit wording`
-- `[LOW] Contestant-prep page has empty meta description`
-- `[LOW] Confirmed unused files in public/` + `[LOW] Hero variant files may be orphaned` (combined)
-
-Each entry was copied verbatim into a new "Parked from BUGS.md triage (2026-04-16)" section in `ENHANCEMENTS.md` with the decision rationale preserved, then removed from `BUGS.md`'s Open section.
-
-**Closed as verified fixed** (5 items whose fixes were confirmed in code during triage):
-
-- `[LOW] cupid-garden.webp 404` — reference no longer present in `src/pages/apply.astro`.
-- `[MEDIUM] SVG-only buttons missing aria-label` — modal close buttons all carry `aria-label="Close"`.
-- `[PR#12] Door time calculation` — `subtractMinutes()` no longer has the bad clamp.
-- `[batch 2] Duplicate keyframes popupOut / modalOut` — only one of each keyframe in `src/index.css`.
-- `[batch 2] HomeFAQ transitionend fallback` — current impl uses CSS `grid-template-rows` transition; no JS listener with inline-height cleanup to strand.
-
-Status flipped inline with a note explaining verification.
-
-**Remaining open bugs** are now the actionable list for the next fix wave: 3 HIGH (Firestore rules, update-lead ownership token, homepage duplicate FAQPage JSON-LD), 9 MEDIUM (input validation, rate limiting, App Check, file-type validation, PostHog identity, phone-update false success, Instagram validation ordering), and 11 LOW (Spice List flag check, photo size off-by-one, leads rule removal, nav emphasis, email consolidation, NotifyModal source/slug, HomeShows empty city, capture-lead error text, AdminDashboard pagination, CSP nonce migration, image script cleanup).
-
-### Files affected
-
-- `BUGS.md` — 9 entries removed from Open, 5 marked Fixed inline, dead-asset block replaced with a pointer note.
-- `ENHANCEMENTS.md` — new "Parked from BUGS.md triage (2026-04-16)" section appended.
-- `CHANGELOG.md` — this entry.
-
-### Decisions
-
-- Did not physically move fixed entries to a separate `## Fixed` section because the existing file already mixes inline-Fixed and end-of-file-Fixed entries; matching the more common inline pattern was less disruptive.
-- Did not touch the asset files on disk (per user request — low upside, real breakage risk).
-- Preserved the full original BUGS.md text for each parked entry so the reasoning behind each declined item remains recoverable.
-
-## fix(bugs): apply scroll, city phone step, modal focus ring, homepage CTAs (2026-04-16)
-
-### What changed
-
-Four recurring bugs that had been reported verbally multiple times without being fully resolved.
-
-**Apply success now scrolls to top on mobile** (`src/components/apply/ApplySuccessPanel.tsx`) — Added a mount-only `useEffect` that runs `window.scrollTo({ top: 0, behavior: reduced ? "auto" : "smooth" })` respecting `prefers-reduced-motion`. The effect lives in the success panel itself (not in `useApplyForm`) so it fires only after React commits the success DOM, guaranteeing the scroll hits the rendered success state. Previously the user submitted the form mid-page and stayed mid-scroll even though the success screen was underneath.
-
-**"Don't see your city" modal now captures phone as step 2** (`src/components/home/HomeShows.astro`) — Restructured the single-step modal (city + email → thank you) to a three-step flow (city + email → optional phone → thank you) matching the established pattern in `NotifyModal.astro` and `LeadCaptureModal.astro`. The email submit returns a Firestore doc reference which the phone step uses to `updateDoc` with the cleaned phone. Skip button is available. Reused `cleanPhone()` from `src/lib/phone.ts` for validation. Thank-you copy adapts: text message promise when phone was captured, generic reach-out copy when skipped. This aligns with the standing rule that every lead-capture modal asks for phone at step 2.
-
-**Modal close button focus ring suppressed on touch** (6 files) — The red `:focus-visible` outline on modal X buttons appeared on mobile because opening a modal programmatically focuses an element, which browsers treat as `:focus-visible`. Wrapped every modal close `:focus-visible` rule inside `@media (pointer: fine)` so the outline only renders on precise-pointer (mouse/trackpad) devices. On touch devices the ring vanishes. Keyboard accessibility on desktop is preserved. Matches the existing codebase pattern of gating the custom cursor on `pointer: fine`. Also switched the color from `var(--brand-red)` to `var(--charcoal)` on the close buttons that were explicitly red — charcoal is consistent with the other modal close buttons that already used it, and avoids the red on red brand tension.
-
-**Homepage CTAs varied per section** (3 files) — "Grab My Spot" was hardcoded across 4 homepage CTAs. Kept as the hero's primary CTA (user preference), changed the others so each section has distinct, context-appropriate copy:
-
-- `HomeShows` event card badges → `Get Tickets` (clearest for the decision moment, per prior conversion research)
-- `HomeExperience` → `Book My Seat` (commitment verb, matches the "here's what it's like" framing)
-- `HomeFAQ` → `I'm In` (casual, confident, lands after objections are handled)
-- Nav already said `Get Tickets` — unchanged
-
-### Files affected
-
-- `src/components/apply/ApplySuccessPanel.tsx` — mount-only scroll-to-top effect
-- `src/components/home/HomeShows.astro` — phone step + skip + focus ring gate + CTA text
-- `src/components/NotifyModal.astro` — focus ring gate (added scoped charcoal rule)
-- `src/components/ui/Modal.astro` — focus ring gate
-- `src/components/apply/TermsModal.module.css` — focus ring gate
-- `src/components/admin/ApplicantModal.module.css` — focus ring gate
-- `src/components/home/HomeExperience.astro` — CTA text
-- `src/components/home/HomeFAQ.astro` — CTA text
-- `CHANGELOG.md`, `BUGS.md`
-
-### Decisions
-
-- Scoped the `pointer: fine` gate to modal close buttons only, not the global `:focus-visible` rule in `src/index.css`. Keyboard users on all other interactive elements continue to see focus rings as before.
-- For the city modal phone step, updated the same Firestore document instead of creating a second write. If the user submits email but closes the modal before submitting phone, we still have the lead captured.
-- Didn't touch the hero's "Grab My Spot" — user explicitly said "looks nice in one place" and the hero is sacred.
-- Chose `Get Tickets`, `Book My Seat`, `I'm In` as the varied CTAs: all first-person where applicable, action verbs, and each calibrated to the emotional weight of its section (decision / commitment / objection-handled).
 
 ## fix(coderabbit): address all 11 unresolved PR comments (2026-04-14)
 

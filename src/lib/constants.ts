@@ -12,7 +12,7 @@ export const VIDEO_METADATA = {
 
 /** Curated Instagram reel URLs displayed in the social proof section of the homepage. */
 export const INSTAGRAM_REEL_URLS = [
-  "https://www.instagram.com/p/C79Pohcxu4j/",
-  "https://www.instagram.com/p/DWeM47lkTXS/",
+  "https://www.instagram.com/reel/C79Pohcxu4j/",
+  "https://www.instagram.com/p/DXrSIS9vb40/",
   "https://www.instagram.com/p/DXCWVUpPsDl/",
 ];

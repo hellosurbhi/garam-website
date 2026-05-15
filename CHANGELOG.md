@@ -1,5 +1,21 @@
 # Changelog
 
+## docs(enhancements): expand admin event management plan (2026-05-15)
+
+### What changed
+
+- Expanded the Admin Event Management backlog item with a rollout plan, acceptance criteria, and open implementation decisions.
+- Added a planning note that this item should stay documentation-only until implementation is explicitly requested.
+- Recorded the correction in `LESSONS.md` so enhancement backlog items are not treated as build requests.
+
+### Files affected
+
+- `ENHANCEMENTS.md`
+- `LESSONS.md`
+- `CHANGELOG.md`
+
+---
+
 ## data(events): add SF Seed Round and Philadelphia shows, fix city page lifecycle (2026-05-15)
 
 ### What changed

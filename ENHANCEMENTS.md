@@ -15,6 +15,37 @@ Currently, adding a new show requires editing `src/data/events.ts` directly, cre
 
 Build a CRUD interface in the admin dashboard at `/admin` that lets the operator create, edit, and archive events without touching the codebase. Events would be stored in Firestore and fetched at build time so the existing SSG performance model is preserved. The static `events.ts` array becomes the seeded fallback; the Firestore collection is the source of truth going forward.
 
+**Planning note:** This is a backlog plan only. Do not start implementation until the operator explicitly asks to build admin event management.
+
+**Rollout plan:**
+
+1. Confirm the operator workflow before code: who edits shows, whether draft events are needed, whether venue reuse matters, and whether hard delete is actually required.
+2. Define the managed event schema from `EventEntry`, adding only operational fields that are truly needed: `createdAt`, `updatedAt`, `archived`, and optional `archivedAt`.
+3. Create a one-time seed script that writes the existing static `events.ts` entries into Firestore with stable document IDs based on city slug and ISO date.
+4. Add Firestore rules that allow authenticated admins to read and write the managed `events` collection while keeping public unauthenticated writes blocked.
+5. Build the admin Events tab in small pieces: first list and archive, then create, then edit. Keep validation shared between create and edit so event rules do not drift.
+6. Preserve the static site model by loading Firestore events at build time, falling back to `events.ts` if Firestore credentials are missing or the fetch fails during local development.
+7. Keep `events.ts` as the emergency fallback until the Firestore event workflow has been used successfully for several real show updates.
+8. Add tests at the data boundary and admin UI boundary: schema validation, duplicate city plus date rejection, archive behavior, and fallback behavior.
+9. Document the operator process after launch: how to add a show, archive a show, mark sold out, and recover if Firestore is unavailable.
+
+**Acceptance criteria:**
+
+1. A logged-in admin can create, edit, archive, and restore events without touching code.
+2. Public pages, city pages, Eventbrite widgets, JSON-LD, `llms.txt`, and `/links` all read the same managed event source after build.
+3. Static fallback still produces a valid production build when Firestore is unavailable.
+4. Validation prevents malformed dates, non-numeric Eventbrite IDs, invalid URLs, missing city slugs, and duplicate live events for the same city and ISO date.
+5. Archived events are hidden from public pages but remain recoverable from the admin dashboard.
+6. The implementation passes lint, type-check, unit tests, smoke tests for tickets and city pages, and a production build.
+
+**Open decisions:**
+
+1. Whether event management should use client SDK writes protected by Firestore rules or server-side API routes protected by Firebase ID token verification.
+2. Whether venues should stay embedded on each event or become reusable managed venue records.
+3. Whether hard delete should exist in the UI or remain a script-only maintenance operation.
+4. Whether build-time Firestore failures should fail production builds or warn and use static fallback.
+5. Whether an event draft state is needed before a show is ready to publish.
+
 **Implementation steps:**
 
 1. Create a `events` Firestore collection with a schema matching the `EventEntry` interface in `src/data/events.ts` (plus a `createdAt` timestamp and an `archived` flag)

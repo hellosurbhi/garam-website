@@ -212,6 +212,7 @@ export const casteClassPosts: JournalPost[] = [
   {
     slug: "partner-different-financial-background",
     title: "When Your Partner's Family Has a Different Financial Background",
+    seoTitle: "Dating Across Different Financial Classes",
     metaDescription:
       "Dating someone from a wealthier or poorer desi family creates friction most couples don't anticipate. Here's how to navigate the money gap honestly.",
     datePublished: "2026-07-14",
@@ -510,6 +511,7 @@ export const casteClassPosts: JournalPost[] = [
     slug: "last-name-caste-signals-modern-dating",
     title:
       "Does Your Last Name Still Matter? Caste Signals in Modern Desi Dating",
+    seoTitle: "Does Your Last Name Still Matter for Dating",
     metaDescription:
       "South Asian surnames still carry caste information, and many desi families still use them as a filter. Here's how last names function in modern desi dating.",
     datePublished: "2026-07-17",
@@ -606,6 +608,7 @@ export const casteClassPosts: JournalPost[] = [
   {
     slug: "parents-measure-love-salary-status",
     title: "Dating When Your Parents Measure Love in Salary and Status",
+    seoTitle: "When Desi Parents Measure Love by Salary",
     metaDescription:
       "South Asian parents often evaluate partners through salary, career, and status. Here's how to navigate this without losing yourself or your relationship.",
     datePublished: "2026-07-18",

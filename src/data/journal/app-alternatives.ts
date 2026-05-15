@@ -4,6 +4,7 @@ export const appAlternativesPosts: JournalPost[] = [
   {
     slug: "tired-of-dating-apps-desi-singles-irl-events",
     title: "Tired of Dating Apps? Why Desi Singles Are Choosing IRL Events",
+    seoTitle: "Tired of Dating Apps? IRL Events for Desis",
     metaDescription:
       "Tired of dating apps and endless swiping? Here\u2019s why more desi singles are ditching Hinge and Dil Mil for IRL events \u2014 and what to do instead.",
     datePublished: "2026-04-17",
@@ -112,6 +113,7 @@ export const appAlternativesPosts: JournalPost[] = [
   {
     slug: "best-dil-mil-alternatives",
     title: "Best Dil Mil Alternatives for South Asian Singles in 2026",
+    seoTitle: "Best Dil Mil Alternatives for Desis 2026",
     metaDescription:
       "Looking for a Dil Mil alternative? Here are the best options for South Asian singles in 2026, from Hinge to Muzz to live IRL events that actually work.",
     datePublished: "2026-04-18",
@@ -565,6 +567,7 @@ export const appAlternativesPosts: JournalPost[] = [
   {
     slug: "muzz-alternative-south-asian-love",
     title: "Muzz Alternative: Finding South Asian Love Beyond the Apps",
+    seoTitle: "Muzz Alternative for South Asian Singles",
     metaDescription:
       "Looking for a Muzz alternative for South Asian Muslim singles? Here are the best options in 2026, from Salams to IRL community events that actually work.",
     datePublished: "2026-04-22",

@@ -4,6 +4,7 @@ export const communitySinglesPosts: JournalPost[] = [
   {
     slug: "sikh-speed-dating-events",
     title: "Sikh Speed Dating: Where to Find Sikh Singles Events in 2026",
+    seoTitle: "Sikh Speed Dating Events 2026",
     metaDescription:
       "Looking for Sikh speed dating or Sikh singles events? Here\u2019s where to actually find them, what to expect, and why live events beat apps for Sikh dating.",
     datePublished: "2026-06-10",
@@ -436,6 +437,7 @@ export const communitySinglesPosts: JournalPost[] = [
   {
     slug: "jain-singles-finding-match-shared-values",
     title: "Jain Singles: Finding a Match Who Shares Your Values",
+    seoTitle: "Jain Singles: Dating With Shared Values",
     metaDescription:
       "For Jain singles, shared values aren\u2019t a nice-to-have \u2014 they\u2019re foundational. Here\u2019s where to find Jain dating events and what actually matters when matching within the community.",
     datePublished: "2026-06-13",

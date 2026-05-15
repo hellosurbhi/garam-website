@@ -4,6 +4,7 @@ export const matrimonyPosts: JournalPost[] = [
   {
     slug: "shaadi-com-review-2026",
     title: "Shaadi.com in 2026: Is It Still Worth It for Modern Desis?",
+    seoTitle: "Shaadi.com Review 2026: Is It Worth It",
     metaDescription:
       "Honest Shaadi.com review for 2026. Is Shaadi.com legit? We break down what works, what doesn\u2019t, and who actually gets results on the platform.",
     datePublished: "2026-06-02",
@@ -113,6 +114,7 @@ export const matrimonyPosts: JournalPost[] = [
   {
     slug: "best-shaadi-com-alternatives",
     title: "Best Shaadi.com Alternatives for South Asian Singles",
+    seoTitle: "Best Shaadi.com Alternatives in 2026",
     metaDescription:
       "Looking for a Shaadi.com alternative? Here are the best South Asian matrimony and dating platforms in 2026, from BharatMatrimony to Dil Mil to live events.",
     datePublished: "2026-06-03",
@@ -227,6 +229,7 @@ export const matrimonyPosts: JournalPost[] = [
     slug: "bharatmatrimony-vs-shaadi-vs-jeevansathi",
     title:
       "BharatMatrimony vs Shaadi.com vs Jeevansathi: Which Actually Works?",
+    seoTitle: "BharatMatrimony vs Shaadi vs Jeevansathi",
     metaDescription:
       "BharatMatrimony vs Shaadi.com vs Jeevansathi \u2014 an honest comparison of the three biggest Indian matrimony platforms for 2026. Which one is worth your time?",
     datePublished: "2026-06-04",
@@ -340,6 +343,7 @@ export const matrimonyPosts: JournalPost[] = [
   {
     slug: "how-to-use-indian-matrimony-sites",
     title: "How to Use Indian Matrimony Sites Without Losing Your Mind",
+    seoTitle: "How to Use Indian Matrimony Sites Well",
     metaDescription:
       "Step-by-step guide to Indian matrimony sites and matrimonial biodata. How to write a profile that gets responses and avoid the mistakes most people make.",
     datePublished: "2026-06-05",
@@ -558,6 +562,7 @@ export const matrimonyPosts: JournalPost[] = [
   {
     slug: "nri-matrimony-finding-match-across-borders",
     title: "NRI Matrimony: Finding a Match Across Borders in 2026",
+    seoTitle: "NRI Matrimony: Cross-Border Matches in 2026",
     metaDescription:
       "NRI matrimonial guide for 2026: which platforms work, how to handle visa and relocation talks, and how to run a cross-border South Asian marriage search.",
     datePublished: "2026-06-07",

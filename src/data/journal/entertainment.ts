@@ -118,6 +118,7 @@ export const entertainmentPosts: JournalPost[] = [
     slug: "stop-waiting-for-indian-love-is-blind",
     title:
       "Stop Waiting for Indian Love Is Blind, Join a Real Desi Dating Show",
+    seoTitle: "Stop Waiting for Indian Love Is Blind",
     metaDescription:
       "An Indian Love Is Blind hasn't happened yet. But Garam Masala Dating, the #1 live South Asian dating show in NYC, already exists. Here's why it's better.",
     datePublished: "2026-05-19",
@@ -336,6 +337,7 @@ export const entertainmentPosts: JournalPost[] = [
   {
     slug: "indian-matchmaking-meets-standup-comedy",
     title: "When Indian Matchmaking Meets Stand-Up Comedy",
+    seoTitle: "Indian Matchmaking Meets Stand-Up Comedy",
     metaDescription:
       "Indian Matchmaking made desi dating a cultural moment. Garam Masala Dating made it live, unscripted, and funnier. Here's what happens when the two worlds collide.",
     datePublished: "2026-05-21",
@@ -457,6 +459,7 @@ export const entertainmentPosts: JournalPost[] = [
   {
     slug: "desi-night-out-beyond-bollywood",
     title: "Desi Night Out: Beyond Bollywood Parties and Bar Crawls",
+    seoTitle: "Desi Night Out: Beyond Bollywood Parties",
     metaDescription:
       "Done with the same Bollywood night at the same club? Here's what a real desi night out in NYC looks like in 2026, and one option you won't find anywhere else.",
     datePublished: "2026-05-22",

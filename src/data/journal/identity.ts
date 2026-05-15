@@ -125,6 +125,7 @@ export const identityPosts: JournalPost[] = [
   {
     slug: "indian-tech-bro-guide-dating-silicon-valley",
     title: "The Indian Tech Bro's Guide to Dating in Silicon Valley",
+    seoTitle: "Indian Tech Bro Dating in Silicon Valley",
     metaDescription:
       "Indian tech bro dating in Silicon Valley has a specific set of pitfalls. Here's what's actually going wrong, and how to fix it before your next date.",
     datePublished: "2026-05-11",
@@ -582,6 +583,7 @@ export const identityPosts: JournalPost[] = [
   {
     slug: "queer-desi-dating",
     title: "Queer and Desi: Navigating Dating When Culture Says No",
+    seoTitle: "Queer Desi Dating: Navigating Both Worlds",
     metaDescription:
       "LGBTQ South Asian dating means navigating two communities that only see half of you. Here's how queer desis can find their people without disappearing.",
     datePublished: "2026-05-15",
@@ -699,6 +701,7 @@ export const identityPosts: JournalPost[] = [
   {
     slug: "nri-dating-challenges",
     title: "NRI Dating: The Unique Challenges of Finding Love Abroad",
+    seoTitle: "NRI Dating: Love Abroad as a South Asian",
     metaDescription:
       "NRI dating means finding someone who fits two worlds. Here's how to navigate cultural hybridity, long-distance family dynamics, and love abroad.",
     datePublished: "2026-05-16",

@@ -1,5 +1,19 @@
 # Changelog
 
+## content(copy): make event card subtitles more sales focused (2026-05-15)
+
+### What changed
+
+- Replaced the awkward event subtitle sequence with clearer sales-focused copy in `EVENT_TAGLINES`.
+- Kept the event card CTA text unchanged and only updated the supporting submessage line.
+
+### Files affected
+
+- `src/data/copy.ts`
+- `CHANGELOG.md`
+
+---
+
 ## docs(process): add branch safety rule to agent instructions (2026-05-15)
 
 ### What changed

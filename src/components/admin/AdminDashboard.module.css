@@ -28,9 +28,60 @@
 
 .title {
   font-family: var(--font-playfair);
-  font-size: 22px;
+  font-size: 20px;
   font-weight: 700;
   color: var(--text);
+}
+
+.tabs {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  margin-left: 16px;
+}
+
+.tab {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 14px;
+  border-radius: 100px;
+  border: none;
+  background: transparent;
+  font-family: var(--font-body);
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--text-light);
+  cursor: pointer;
+  transition: all 0.15s;
+}
+
+.tab[data-active] {
+  background: var(--charcoal);
+  color: #fff;
+}
+
+.tab:hover:not([data-active]) {
+  background: rgba(0, 0, 0, 0.05);
+  color: var(--text);
+}
+
+.tab:active {
+  transform: scale(0.97);
+}
+
+.tabCount {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 18px;
+  height: 18px;
+  padding: 0 5px;
+  border-radius: 100px;
+  background: rgba(255, 255, 255, 0.2);
+  font-size: 11px;
+  font-weight: 700;
+  line-height: 1;
 }
 
 .count {

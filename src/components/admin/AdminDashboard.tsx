@@ -16,6 +16,7 @@ import { formatEventLocation } from "@/utils/eventCity";
 import Skeleton from "../ui/Skeleton";
 import ApplicantCard from "./ApplicantCard";
 import ApplicantModal from "./ApplicantModal";
+import AnalyticsDashboard from "./AnalyticsDashboard";
 import styles from "./AdminDashboard.module.css";
 
 interface AdminDashboardProps {
@@ -32,6 +33,9 @@ const GENDER_OPTIONS: FilterOption[] = [
 ];
 
 export default function AdminDashboard({ onLogout }: AdminDashboardProps) {
+  const [activeTab, setActiveTab] = useState<"applicants" | "analytics">(
+    "applicants",
+  );
   const [applications, setApplications] = useState<Application[]>([]);
   const [loading, setLoading] = useState(true);
   const [fetchError, setFetchError] = useState(false);
@@ -215,50 +219,70 @@ export default function AdminDashboard({ onLogout }: AdminDashboardProps) {
       <header className={styles.header}>
         <div className={styles.headerInner}>
           <div className={styles.titleGroup}>
-            <h1 className={styles.title}>Applications</h1>
-            {!loading && (
-              <span className={styles.count}>{activeApps.length} active</span>
-            )}
+            <h1 className={styles.title}>Admin</h1>
+            <div className={styles.tabs}>
+              <button
+                className={styles.tab}
+                data-active={activeTab === "applicants" || undefined}
+                onClick={() => setActiveTab("applicants")}
+              >
+                Applicants
+                {!loading && activeTab === "applicants" && (
+                  <span className={styles.tabCount}>{activeApps.length}</span>
+                )}
+              </button>
+              <button
+                className={styles.tab}
+                data-active={activeTab === "analytics" || undefined}
+                onClick={() => setActiveTab("analytics")}
+              >
+                Analytics
+              </button>
+            </div>
           </div>
           <button onClick={onLogout} className={styles.logoutButton}>
             Logout
           </button>
         </div>
 
-        <div className={styles.filterBar}>
-          <div className={styles.filterRow}>
-            <div className={styles.filterItem}>
-              <Select
-                isMulti
-                options={GENDER_OPTIONS}
-                value={genderFilter}
-                onChange={(v) => setGenderFilter(v)}
-                placeholder="Gender…"
-                styles={adminSelectStyles<FilterOption>()}
-                aria-label="Filter by gender"
-              />
+        {activeTab === "applicants" && (
+          <div className={styles.filterBar}>
+            <div className={styles.filterRow}>
+              <div className={styles.filterItem}>
+                <Select
+                  isMulti
+                  options={GENDER_OPTIONS}
+                  value={genderFilter}
+                  onChange={(v) => setGenderFilter(v)}
+                  placeholder="Gender…"
+                  styles={adminSelectStyles<FilterOption>()}
+                  aria-label="Filter by gender"
+                />
+              </div>
+              <div className={styles.filterItemWide}>
+                <Select
+                  isMulti
+                  options={cityOptions}
+                  value={cityFilter}
+                  onChange={(v) => setCityFilter(v)}
+                  placeholder="City…"
+                  styles={adminSelectStyles<FilterOption>()}
+                  aria-label="Filter by city"
+                />
+              </div>
+              {hasActiveFilters && (
+                <button onClick={clearFilters} className={styles.clearButton}>
+                  Clear all
+                </button>
+              )}
             </div>
-            <div className={styles.filterItemWide}>
-              <Select
-                isMulti
-                options={cityOptions}
-                value={cityFilter}
-                onChange={(v) => setCityFilter(v)}
-                placeholder="City…"
-                styles={adminSelectStyles<FilterOption>()}
-                aria-label="Filter by city"
-              />
-            </div>
-            {hasActiveFilters && (
-              <button onClick={clearFilters} className={styles.clearButton}>
-                Clear all
-              </button>
-            )}
           </div>
-        </div>
+        )}
       </header>
 
-      {upcomingEvents.length > 0 && (
+      {activeTab === "analytics" && <AnalyticsDashboard />}
+
+      {activeTab === "applicants" && upcomingEvents.length > 0 && (
         <div className={styles.prepSection}>
           <div className={styles.prepBox}>
             <span className={styles.prepLabel}>Contestant Prep Links</span>
@@ -293,94 +317,99 @@ export default function AdminDashboard({ onLogout }: AdminDashboardProps) {
         </div>
       )}
 
-      <main className={styles.main}>
-        {loading ? (
-          <div
-            role="status"
-            aria-live="polite"
-            aria-label="Loading applications"
-          >
-            <Skeleton count={5} />
-          </div>
-        ) : fetchError ? (
-          <div className={styles.errorState}>
-            <p style={{ marginBottom: "12px" }}>Failed to load applications.</p>
-            <button onClick={fetchApps} className={styles.retryButton}>
-              Try again
-            </button>
-          </div>
-        ) : applications.length === 0 ? (
-          <div className={styles.emptyState}>
-            No applications yet. Share the link! 🌶️
-          </div>
-        ) : activeApps.length === 0 && deletedApps.length === 0 ? (
-          <div className={styles.emptyState}>
-            <p style={{ marginBottom: "12px" }}>
-              No applications match these filters.
-            </p>
-            <button
-              onClick={clearFilters}
-              className={styles.clearFiltersButton}
+      {activeTab === "applicants" && (
+        <main className={styles.main}>
+          {loading ? (
+            <div
+              role="status"
+              aria-live="polite"
+              aria-label="Loading applications"
             >
-              Clear filters
-            </button>
-          </div>
-        ) : (
-          <>
-            <p className={styles.summary}>
-              Showing {activeApps.length} active · {deletedApps.length} deleted
-            </p>
+              <Skeleton count={5} />
+            </div>
+          ) : fetchError ? (
+            <div className={styles.errorState}>
+              <p style={{ marginBottom: "12px" }}>
+                Failed to load applications.
+              </p>
+              <button onClick={fetchApps} className={styles.retryButton}>
+                Try again
+              </button>
+            </div>
+          ) : applications.length === 0 ? (
+            <div className={styles.emptyState}>
+              No applications yet. Share the link! 🌶️
+            </div>
+          ) : activeApps.length === 0 && deletedApps.length === 0 ? (
+            <div className={styles.emptyState}>
+              <p style={{ marginBottom: "12px" }}>
+                No applications match these filters.
+              </p>
+              <button
+                onClick={clearFilters}
+                className={styles.clearFiltersButton}
+              >
+                Clear filters
+              </button>
+            </div>
+          ) : (
+            <>
+              <p className={styles.summary}>
+                Showing {activeApps.length} active · {deletedApps.length}{" "}
+                deleted
+              </p>
 
-            {activeApps.length > 0 && (
-              <div className={styles.grid}>
-                {activeApps.map((app) => (
-                  <ApplicantCard
-                    key={app.id}
-                    app={app}
-                    onClick={() => setSelectedApp(app)}
-                    onDelete={() => handleDelete(app.id)}
-                    dimmed={app.status === "Rejected"}
-                  />
-                ))}
-              </div>
-            )}
+              {activeApps.length > 0 && (
+                <div className={styles.grid}>
+                  {activeApps.map((app) => (
+                    <ApplicantCard
+                      key={app.id}
+                      app={app}
+                      onClick={() => setSelectedApp(app)}
+                      onDelete={() => handleDelete(app.id)}
+                      dimmed={app.status === "Rejected"}
+                    />
+                  ))}
+                </div>
+              )}
 
-            {deletedApps.length > 0 && (
-              <div className={styles.deletedSection}>
-                <button
-                  onClick={() => setDeletedOpen((v) => !v)}
-                  className={styles.deletedToggle}
-                  aria-expanded={deletedOpen}
-                  aria-controls="deleted-apps-list"
-                >
-                  {deletedOpen ? (
-                    <ChevronDown size={16} />
-                  ) : (
-                    <ChevronRight size={16} />
+              {deletedApps.length > 0 && (
+                <div className={styles.deletedSection}>
+                  <button
+                    onClick={() => setDeletedOpen((v) => !v)}
+                    className={styles.deletedToggle}
+                    aria-expanded={deletedOpen}
+                    aria-controls="deleted-apps-list"
+                  >
+                    {deletedOpen ? (
+                      <ChevronDown size={16} />
+                    ) : (
+                      <ChevronRight size={16} />
+                    )}
+                    Deleted Applications ({deletedApps.length})
+                  </button>
+
+                  {deletedOpen && (
+                    <div id="deleted-apps-list" className={styles.grid}>
+                      {deletedApps.map((app) => (
+                        <ApplicantCard
+                          key={app.id}
+                          app={app}
+                          onClick={() => setSelectedApp(app)}
+                          onRestore={() => handleRestore(app.id)}
+                          dimmed
+                        />
+                      ))}
+                    </div>
                   )}
-                  Deleted Applications ({deletedApps.length})
-                </button>
+                </div>
+              )}
+            </>
+          )}
+        </main>
+      )}
 
-                {deletedOpen && (
-                  <div id="deleted-apps-list" className={styles.grid}>
-                    {deletedApps.map((app) => (
-                      <ApplicantCard
-                        key={app.id}
-                        app={app}
-                        onClick={() => setSelectedApp(app)}
-                        onRestore={() => handleRestore(app.id)}
-                        dimmed
-                      />
-                    ))}
-                  </div>
-                )}
-              </div>
-            )}
-          </>
-        )}
-      </main>
-
-      {selectedApp && (
+      {activeTab === "applicants" && selectedApp && (
         <ApplicantModal
           app={selectedApp}
           onClose={() => setSelectedApp(null)}

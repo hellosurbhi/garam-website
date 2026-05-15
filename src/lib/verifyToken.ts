@@ -76,3 +76,18 @@ export async function verifyIdToken(
     return null;
   }
 }
+
+export async function verifyAdminToken(
+  authHeader: string | undefined,
+): Promise<string | null> {
+  const uid = await verifyIdToken(authHeader);
+  if (!uid) return null;
+
+  const allowedUids = String(import.meta.env.ADMIN_UIDS ?? "")
+    .split(",")
+    .map((value) => value.trim())
+    .filter(Boolean);
+
+  if (allowedUids.length === 0) return null;
+  return allowedUids.includes(uid) ? uid : null;
+}

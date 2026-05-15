@@ -41,6 +41,7 @@
     "react-dom": "^19.2.0",
     "react-loading-skeleton": "^3.5.0",
     "react-select": "^5.10.2",
+    "recharts": "^3.8.1",
     "resend": "^6.10.0"
   },
   "devDependencies": {

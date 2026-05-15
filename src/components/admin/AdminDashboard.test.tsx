@@ -145,13 +145,14 @@ describe("AdminDashboard", () => {
     expect(screen.getByText("Anika")).toBeInTheDocument();
   });
 
-  it("shows active count in header", async () => {
+  it("shows active count in tab badge", async () => {
     mockGetDocs.mockResolvedValue({
       docs: [{ id: "1", data: () => ({ ...makeApp({ id: "1" }) }) }],
     });
     render(<AdminDashboard onLogout={onLogout} />);
     await waitFor(() => {
-      expect(screen.getByText("1 active")).toBeInTheDocument();
+      const tab = screen.getByRole("button", { name: /applicants/i });
+      expect(tab).toHaveTextContent("1");
     });
   });
 

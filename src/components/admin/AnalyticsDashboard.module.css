@@ -1,0 +1,368 @@
+.dashboard {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 32px;
+}
+
+.toolbar {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 28px;
+  flex-wrap: wrap;
+}
+
+.periodGroup {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  background: #fff;
+  border: 1px solid var(--border);
+  border-radius: 100px;
+  padding: 4px;
+}
+
+.periodButton {
+  padding: 5px 14px;
+  border-radius: 100px;
+  border: none;
+  background: transparent;
+  font-family: var(--font-body);
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--text-light);
+  cursor: pointer;
+  transition: all 0.15s;
+}
+
+.periodButton[data-active] {
+  background: var(--charcoal);
+  color: #fff;
+}
+
+.syncButton {
+  margin-left: auto;
+  padding: 7px 18px;
+  border-radius: 100px;
+  border: 1px solid var(--border);
+  background: #fff;
+  font-family: var(--font-body);
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--text-light);
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.syncButton:hover:not(:disabled) {
+  border-color: var(--brand-red);
+  color: var(--brand-red);
+}
+
+.syncButton:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.syncMeta {
+  font-size: 12px;
+  color: var(--text-light);
+  margin-left: 4px;
+}
+
+.metricsGrid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 16px;
+  margin-bottom: 28px;
+}
+
+@media (max-width: 900px) {
+  .metricsGrid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 500px) {
+  .metricsGrid {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+.metricCard {
+  background: #fff;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 20px;
+}
+
+.metricLabel {
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--text-light);
+  margin-bottom: 8px;
+}
+
+.metricValue {
+  font-family: var(--font-playfair);
+  font-size: 28px;
+  font-weight: 700;
+  color: var(--text);
+  line-height: 1.1;
+}
+
+.metricSub {
+  font-size: 12px;
+  color: var(--text-light);
+  margin-top: 4px;
+}
+
+.section {
+  background: #fff;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 24px;
+  margin-bottom: 20px;
+}
+
+.sectionTitle {
+  font-family: var(--font-playfair);
+  font-size: 17px;
+  font-weight: 700;
+  color: var(--text);
+  margin-bottom: 20px;
+}
+
+.chartWrap {
+  height: 220px;
+}
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.table th {
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.07em;
+  color: var(--text-light);
+  text-align: left;
+  padding: 0 12px 10px 0;
+  border-bottom: 1px solid var(--border);
+}
+
+.table th:last-child {
+  text-align: right;
+  padding-right: 0;
+}
+
+.table td {
+  font-size: 14px;
+  color: var(--text);
+  padding: 11px 12px 11px 0;
+  border-bottom: 1px solid var(--border);
+  vertical-align: middle;
+}
+
+.table td:last-child {
+  text-align: right;
+  padding-right: 0;
+}
+
+.table tr:last-child td {
+  border-bottom: none;
+}
+
+.pill {
+  display: inline-block;
+  padding: 2px 10px;
+  border-radius: 100px;
+  font-size: 12px;
+  font-weight: 600;
+  background: rgba(var(--brand-red-rgb), 0.08);
+  color: var(--brand-red);
+}
+
+.funnelRow {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 8px;
+}
+
+.funnelBar {
+  flex: 1;
+  height: 8px;
+  background: var(--border);
+  border-radius: 100px;
+  overflow: hidden;
+}
+
+.funnelFill {
+  height: 100%;
+  background: var(--brand-red);
+  border-radius: 100px;
+  transition: width 0.4s ease;
+}
+
+.funnelLabel {
+  font-size: 13px;
+  color: var(--text);
+  min-width: 100px;
+}
+
+.funnelCount {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text);
+  min-width: 40px;
+  text-align: right;
+}
+
+.twoCol {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+}
+
+@media (max-width: 700px) {
+  .twoCol {
+    grid-template-columns: 1fr;
+  }
+  .dashboard {
+    padding: 16px;
+  }
+}
+
+.emptyHint {
+  text-align: center;
+  color: var(--text-light);
+  font-size: 14px;
+  padding: 40px 0;
+}
+
+.loadingState {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 200px;
+  color: var(--text-light);
+  font-size: 14px;
+}
+
+.errorState {
+  text-align: center;
+  padding: 60px 0;
+  color: var(--text-light);
+  font-size: 14px;
+}
+
+.conversionBig {
+  font-family: var(--font-playfair);
+  font-size: 40px;
+  font-weight: 700;
+  color: var(--brand-red);
+  line-height: 1;
+  margin-bottom: 4px;
+}
+
+.conversionSub {
+  font-size: 13px;
+  color: var(--text-light);
+}
+
+.recentLeadRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 0;
+  border-bottom: 1px solid var(--border);
+  font-size: 13px;
+  gap: 12px;
+}
+
+.recentLeadRow:last-child {
+  border-bottom: none;
+}
+
+.recentEmail {
+  color: var(--text);
+  font-weight: 500;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.recentMeta {
+  color: var(--text-light);
+  font-size: 12px;
+  flex-shrink: 0;
+}
+
+.purchasedBadge {
+  display: inline-block;
+  padding: 2px 8px;
+  border-radius: 100px;
+  font-size: 11px;
+  font-weight: 600;
+  background: rgba(34, 197, 94, 0.1);
+  color: #16a34a;
+}
+
+.syncErrorList {
+  margin-top: 8px;
+  padding: 12px 16px;
+  background: rgba(var(--brand-red-rgb), 0.05);
+  border-radius: 8px;
+  border: 1px solid rgba(var(--brand-red-rgb), 0.2);
+}
+
+.syncErrorItem {
+  font-size: 12px;
+  color: var(--brand-red);
+  margin-bottom: 4px;
+}
+
+.syncErrorItem:last-child {
+  margin-bottom: 0;
+}
+
+.retryButton {
+  background: none;
+  border: none;
+  color: var(--brand-red);
+  font-family: var(--font-body);
+  font-size: 14px;
+  cursor: pointer;
+  text-decoration: underline;
+}
+
+.funnelSources {
+  margin-top: 20px;
+}
+
+.funnelSourcesLabel {
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--text-light);
+  margin-bottom: 10px;
+}
+
+.funnelSteps {
+  margin-top: 24px;
+}
+
+.syncErrorLabel {
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--brand-red);
+  margin-bottom: 6px;
+}

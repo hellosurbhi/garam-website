@@ -20,12 +20,16 @@ function makeToken(kid: string, sub: string): string {
 
 describe("verifyIdToken", () => {
   let verifyIdToken: (authHeader: string | undefined) => Promise<string | null>;
+  let verifyAdminToken: (
+    authHeader: string | undefined,
+  ) => Promise<string | null>;
 
   beforeEach(async () => {
     vi.resetModules();
     vi.clearAllMocks();
     const mod = await import("@/lib/verifyToken");
     verifyIdToken = mod.verifyIdToken;
+    verifyAdminToken = mod.verifyAdminToken;
     import.meta.env.PUBLIC_FIREBASE_PROJECT_ID = TEST_PROJECT_ID;
     mockImportX509.mockResolvedValue("mock-key");
     // Mock global fetch for Google certs
@@ -44,6 +48,7 @@ describe("verifyIdToken", () => {
   afterEach(() => {
     vi.restoreAllMocks();
     delete import.meta.env.PUBLIC_FIREBASE_PROJECT_ID;
+    delete import.meta.env.ADMIN_UIDS;
   });
 
   it("returns null when auth header is undefined", async () => {
@@ -123,5 +128,25 @@ describe("verifyIdToken", () => {
         audience: TEST_PROJECT_ID,
       }),
     );
+  });
+
+  it("returns admin uid when token uid is allowlisted", async () => {
+    import.meta.env.ADMIN_UIDS = "other-user,user-123";
+    const token = makeToken("key-1", "user-123");
+
+    await expect(verifyAdminToken(`Bearer ${token}`)).resolves.toBe("user-123");
+  });
+
+  it("returns null for valid non-admin token", async () => {
+    import.meta.env.ADMIN_UIDS = "other-user";
+    const token = makeToken("key-1", "user-123");
+
+    await expect(verifyAdminToken(`Bearer ${token}`)).resolves.toBeNull();
+  });
+
+  it("returns null when admin uid allowlist is missing", async () => {
+    const token = makeToken("key-1", "user-123");
+
+    await expect(verifyAdminToken(`Bearer ${token}`)).resolves.toBeNull();
   });
 });

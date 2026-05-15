@@ -52,13 +52,23 @@ export function deriveSeoTitle(title: string): string {
   if (colonIdx > 0 && colonIdx <= TITLE_LIMIT)
     return title.slice(0, colonIdx).trimEnd();
   const truncated = title.slice(0, TITLE_LIMIT);
+  // If the slice lands exactly on a word boundary (next char is space/punct),
+  // use it as-is rather than backing up and losing the last word.
+  const atWordBoundary =
+    title.length === TITLE_LIMIT || /[\s([,;]/.test(title[TITLE_LIMIT]);
   const lastSpace = truncated.lastIndexOf(" ");
-  const words = (
-    lastSpace > 0 ? truncated.slice(0, lastSpace) : truncated
-  ).split(" ");
+  const base = (
+    atWordBoundary
+      ? truncated
+      : lastSpace > 0
+        ? truncated.slice(0, lastSpace)
+        : truncated
+  ).trimEnd();
+  const words = base.split(" ");
   while (
     words.length > 1 &&
-    DANGLING.has(words[words.length - 1].toLowerCase())
+    (DANGLING.has(words[words.length - 1].toLowerCase()) ||
+      words[words.length - 1].startsWith("("))
   ) {
     words.pop();
   }

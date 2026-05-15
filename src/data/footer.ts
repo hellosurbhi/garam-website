@@ -9,6 +9,14 @@ export interface FooterLink {
   href: string;
 }
 
+const FEATURED_FOOTER_CITY_SLUGS = [
+  "manhattan",
+  "jersey-city",
+  "los-angeles",
+  "san-francisco",
+  "san-diego",
+];
+
 function cityLabel(c: CityData): string {
   return c.slug === "manhattan" ? "New York City" : c.displayName;
 }
@@ -24,14 +32,12 @@ function buildFooterShowLinks(): FooterLink[] {
 
   const links: FooterLink[] = [...announcedLinks];
 
-  // Backfill from featured active.ts cities (insertion order = priority)
-  if (links.length < 5) {
-    for (const slug of Object.keys(activeCities)) {
-      if (links.length >= 5) break;
-      if (announcedSet.has(slug)) continue;
-      const c = activeCities[slug];
-      links.push({ label: cityLabel(c), href: `/cities/${c.slug}` });
-    }
+  // Keep the core market links visible even as announced show inventory changes.
+  for (const slug of FEATURED_FOOTER_CITY_SLUGS) {
+    if (announcedSet.has(slug)) continue;
+    const c = activeCities[slug];
+    if (!c) continue;
+    links.push({ label: cityLabel(c), href: `/cities/${c.slug}` });
   }
 
   links.push({ label: "All Cities", href: "/cities" });

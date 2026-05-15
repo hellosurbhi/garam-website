@@ -1,5 +1,19 @@
 # Changelog
 
+## fix(footer): keep featured city links visible (2026-05-15)
+
+### What changed
+
+- Updated footer show-link generation so featured market links like Los Angeles, San Francisco, and San Diego stay visible even as announced event inventory changes.
+- Preserves announced show links and de-dupes featured cities already present from upcoming events.
+
+### Files affected
+
+- `src/data/footer.ts`
+- `CHANGELOG.md`
+
+---
+
 ## chore(firebase): add local Firebase CLI for rules deploys (2026-05-15)
 
 ### What changed

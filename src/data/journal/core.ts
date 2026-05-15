@@ -144,6 +144,7 @@ export const corePosts: JournalPost[] = [
     slug: "best-things-to-do-in-nyc-if-youre-single",
     title:
       "The Best Things to Do in NYC If You\u2019re Single and Bored of Bars",
+    seoTitle: "Best Things to Do in NYC If You're Single",
     metaDescription:
       "Tired of the same bar scene? Here are the best things to do in NYC if you\u2019re single, from improv shows to rooftop mixers to the #1 live comedy dating show with 250 people.",
     datePublished: "2026-04-15",
@@ -282,6 +283,7 @@ export const corePosts: JournalPost[] = [
     slug: "how-to-get-cast-on-a-live-dating-show",
     title:
       "How to Get Cast on a Live Dating Show (What We\u2019re Actually Looking For)",
+    seoTitle: "How to Get Cast on a Live Dating Show",
     metaDescription:
       "Want to be on the #1 live dating show? Here\u2019s exactly how casting works at Garam Masala Dating, what we look for in applications, and what to expect if you get picked.",
     datePublished: "2026-04-14",
@@ -562,6 +564,7 @@ export const corePosts: JournalPost[] = [
     slug: "what-actually-happens-at-a-live-comedy-dating-show",
     title:
       "What Actually Happens at a Live Comedy Dating Show (From the Person Running It)",
+    seoTitle: "What Happens at a Live Comedy Dating Show",
     metaDescription:
       "Here\u2019s what actually happens at the #1 live comedy dating show. Blind dates on stage, audience chaos, whiteboard reveals, and a singles mixer after. From the person who runs it.",
     datePublished: "2026-04-12",
@@ -692,6 +695,7 @@ export const corePosts: JournalPost[] = [
     slug: "the-only-live-desi-dating-show-in-nyc",
     title:
       "The Only Live Desi Dating Show in NYC (And What Actually Happens There)",
+    seoTitle: "The Only Live Desi Dating Show in NYC",
     metaDescription:
       "Garam Masala Dating is the #1 weekly live desi dating show in NYC. Here\u2019s what actually happens at the show, who can come, and how it compares to Indian Matchmaking.",
     datePublished: "2026-04-11",

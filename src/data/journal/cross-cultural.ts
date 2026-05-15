@@ -4,6 +4,7 @@ export const crossCulturalPosts: JournalPost[] = [
   {
     slug: "introduce-asian-partner-indian-parents",
     title: "How to Introduce Your East Asian Partner to Your Indian Parents",
+    seoTitle: "East Asian Partner: Meet Indian Parents",
     metaDescription:
       "Bringing your East Asian partner home to Indian parents? Practical advice on navigating expectations and the conversation no one prepares you for.",
     datePublished: "2026-06-24",
@@ -120,6 +121,7 @@ export const crossCulturalPosts: JournalPost[] = [
   {
     slug: "introduce-black-partner-indian-parents",
     title: "How to Introduce Your Black Partner to Your Indian Parents",
+    seoTitle: "Black Partner: Meet Indian Parents",
     metaDescription:
       "Introducing a Black partner to Indian parents is one of the harder conversations in cross-cultural dating. Here\u2019s honest advice that doesn\u2019t sugarcoat it.",
     datePublished: "2026-06-25",
@@ -236,6 +238,7 @@ export const crossCulturalPosts: JournalPost[] = [
   {
     slug: "introduce-latino-partner-indian-parents",
     title: "How to Introduce Your Latino Partner to Your Indian Parents",
+    seoTitle: "Latino Partner: Meet Indian Parents",
     metaDescription:
       "Bringing your Latino partner home to Indian parents? What to expect, how to prep both sides, and why this combo works better than your parents think.",
     datePublished: "2026-06-26",
@@ -352,6 +355,7 @@ export const crossCulturalPosts: JournalPost[] = [
   {
     slug: "introduce-white-partner-indian-parents",
     title: "How to Introduce Your White Partner to Your Indian Parents",
+    seoTitle: "White Partner: Meet Indian Parents",
     metaDescription:
       "Bringing a white partner home to Indian parents? The honest guide for second-gen South Asians on making it go as well as it possibly can.",
     datePublished: "2026-06-27",
@@ -473,6 +477,7 @@ export const crossCulturalPosts: JournalPost[] = [
     slug: "introduce-non-indian-partner-punjabi-parents",
     title:
       "Introducing Your Non-Indian Partner to Punjabi Parents: A Survival Guide",
+    seoTitle: "Non-Indian Partner: Punjabi Parents Guide",
     metaDescription:
       "Punjabi parents are loud, warm, and have very strong opinions. Here\u2019s how to introduce your non-Indian partner to a Punjabi family and actually survive it.",
     datePublished: "2026-06-28",
@@ -582,6 +587,7 @@ export const crossCulturalPosts: JournalPost[] = [
     slug: "introduce-non-indian-partner-gujarati-parents",
     title:
       "Introducing Your Non-Indian Partner to Gujarati Parents: A Survival Guide",
+    seoTitle: "Non-Indian Partner: Gujarati Parents Guide",
     metaDescription:
       "Gujarati parents have tight community networks and strong marriage opinions. Here\u2019s how to introduce your non-Indian partner and make it work.",
     datePublished: "2026-06-29",
@@ -691,6 +697,7 @@ export const crossCulturalPosts: JournalPost[] = [
     slug: "introduce-non-indian-partner-tamil-parents",
     title:
       "Introducing Your Non-Indian Partner to Tamil Parents: A Survival Guide",
+    seoTitle: "Non-Indian Partner: Tamil Parents Guide",
     metaDescription:
       "Tamil parents prize education and cultural continuity. Here\u2019s how to introduce your non-Indian partner to a Tamil family and what to actually expect.",
     datePublished: "2026-06-30",
@@ -800,6 +807,7 @@ export const crossCulturalPosts: JournalPost[] = [
     slug: "introduce-non-indian-partner-bengali-parents",
     title:
       "Introducing Your Non-Indian Partner to Bengali Parents: A Survival Guide",
+    seoTitle: "Non-Indian Partner: Bengali Parents Guide",
     metaDescription:
       "Bengali parents value intellect, adda, and cultural depth. Here\u2019s the survival guide for introducing your non-Indian partner to a Bengali family.",
     datePublished: "2026-07-01",
@@ -1026,6 +1034,7 @@ export const crossCulturalPosts: JournalPost[] = [
     slug: "interracial-relationship-family-expects-arranged",
     title:
       "When Your Family Expects Arranged and You\u2019re in an Interracial Relationship",
+    seoTitle: "Interracial Love When Family Wants Arranged",
     metaDescription:
       "Your family expected an arranged match. You\u2019re in an interracial relationship. Here\u2019s how to navigate the gap between their expectations and your actual life.",
     datePublished: "2026-07-03",

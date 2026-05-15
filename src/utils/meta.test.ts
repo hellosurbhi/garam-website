@@ -23,12 +23,33 @@ describe("deriveSeoTitle", () => {
     ).toBe("What We Learned From 100 Desi Blind Dates");
   });
 
-  it("removes a trailing preposition (in)", () => {
+  it("preserves a trailing word when truncation lands exactly on a word boundary", () => {
+    // "The Realest Way to Meet Desi Singles in NYC" is exactly 43 chars.
+    // The algorithm must not back up past "NYC" just because "in" would dangle.
     expect(
       deriveSeoTitle(
         "The Realest Way to Meet Desi Singles in NYC (That Isn't an App)",
       ),
-    ).toBe("The Realest Way to Meet Desi Singles");
+    ).toBe("The Realest Way to Meet Desi Singles in NYC");
+  });
+
+  it("strips trailing open-parenthesis fragment when it lands at word boundary", () => {
+    // title[43] is a space, but the last word before the next token is "(What"
+    // which is an unclosed parenthetical — strip it.
+    expect(
+      deriveSeoTitle(
+        "How to Get Cast on a Live Dating Show (What We're Actually Looking For)",
+      ),
+    ).toBe("How to Get Cast on a Live Dating Show");
+  });
+
+  it("trims trailing space when truncation lands on a space boundary", () => {
+    // title[43] is "(" so atWordBoundary=true, but truncated ends with space.
+    expect(
+      deriveSeoTitle(
+        "How to Prepare for a Live Matchmaking Show (Without Psyching Yourself Out)",
+      ),
+    ).toBe("How to Prepare for a Live Matchmaking Show");
   });
 
   it("removes a trailing conjunction (and)", () => {

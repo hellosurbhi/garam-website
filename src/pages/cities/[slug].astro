@@ -7,6 +7,7 @@ import { getUpcomingEventsForCity } from "@/utils/cityEvents";
 import { buildBreadcrumbJsonLd } from "@/utils/breadcrumbs";
 import { SHOW_IMAGES, slugToImageIndex } from "@/data/images";
 import { buildTicketUrl } from "@/utils/eventUrl";
+import { formatEventLocation } from "@/utils/eventCity";
 import { EVENTS } from "@/data/copy";
 import { getPostBySlug } from "@/data/journal";
 import { SOCIAL_URLS } from "@/data/socials";
@@ -224,6 +225,7 @@ function renderCityText(text: string, href: string): string {
         {
           cityEvents.map((event) => {
             const isSoldOut = event.soldOut ?? false;
+            const eventLocation = formatEventLocation(event);
             const arrowSvg = (
               <svg
                 xmlns="http://www.w3.org/2000/svg"
@@ -250,7 +252,7 @@ function renderCityText(text: string, href: string): string {
                 id={`eventbrite-widget-modal-trigger-${event.eventbriteId}`}
                 class="city-cta city-cta--primary"
                 data-eb-url={buildTicketUrl(event.url, "cities", city.slug)}
-                data-city={event.city}
+                data-city={eventLocation}
                 data-ph-section="cities"
                 data-ph-price={event.price}
                 data-ph-event-date={event.date}

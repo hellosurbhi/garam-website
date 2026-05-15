@@ -4,6 +4,40 @@ Items from the GMD website audit checklists (site audit, codebase cleanup, conve
 
 ---
 
+## Admin Event Management (2026-05-15)
+
+### Admin Event Management: CRUD events from the dashboard
+
+**Priority:** High
+**Status:** Needs implementation
+
+Currently, adding a new show requires editing `src/data/events.ts` directly, creating a commit, and redeploying the entire site. Every new city, venue, or date change is a code change. This is a blocker for non-engineers and creates unnecessary deploy cycles for pure data updates.
+
+Build a CRUD interface in the admin dashboard at `/admin` that lets the operator create, edit, and archive events without touching the codebase. Events would be stored in Firestore and fetched at build time so the existing SSG performance model is preserved. The static `events.ts` array becomes the seeded fallback; the Firestore collection is the source of truth going forward.
+
+**Implementation steps:**
+
+1. Create a `events` Firestore collection with a schema matching the `EventEntry` interface in `src/data/events.ts` (plus a `createdAt` timestamp and an `archived` flag)
+2. Migrate existing `events.ts` entries into Firestore as the seed data (one-time script)
+3. Update Firestore security rules to allow admin-authenticated reads and writes on the `events` collection
+4. Add a build-time fetch in the Astro data layer that reads from Firestore and replaces the static array (use a Vercel serverless function or the Firestore REST API with a service account)
+5. Add an Events tab to `AdminDashboard.tsx` alongside the existing applicants view
+6. Build an event list view showing: date, city, venue, price, Eventbrite ID, status (upcoming, sold out, archived)
+7. Build a create or edit form with fields for all `EventEntry` fields: date, isoDate, startTime, endTime, city, citySlug, venue fields, url, eventbriteId, price, soldOut, tagline, hidden
+8. Add a delete flow: soft delete sets `archived: true` (removes from site), hard delete removes the Firestore document
+9. Add client-side validation: isoDate must match the short date month and day, eventbriteId must be numeric, no duplicate city and isoDate combinations
+
+**Files to touch:**
+
+- `src/data/events.ts` (add Firestore fetch, keep static array as fallback)
+- `src/components/admin/AdminDashboard.tsx` (add Events tab)
+- `src/components/admin/EventForm.tsx` (new, create and edit form)
+- `src/components/admin/EventList.tsx` (new, list with edit and delete actions)
+- `firestore.rules` (add events collection rules)
+- `src/pages/api/events.ts` (new, authenticated CRUD endpoints)
+
+---
+
 ## Tracking Enhancements (2026-04-09)
 
 ### `event_shared` — Add share buttons with Web Share API

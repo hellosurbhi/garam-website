@@ -75,19 +75,13 @@ const leadSource = `spice-list-${pageName}`;
 </section>
 
 <script>
-  import { getFirebaseDb } from "@/lib/firebase";
-  import {
-    collection,
-    addDoc,
-    updateDoc,
-    type DocumentReference,
-  } from "firebase/firestore";
   import { cleanPhone } from "@/lib/phone";
   import { identifyLead, trackLeadEvent } from "@/lib/analytics";
   import { buildLeadAttribution } from "@/lib/leadAttribution";
+  import { captureLead, updateLeadPhone } from "@/lib/leadSubmission";
 
   let savedEmail = "";
-  let nlDocRef: DocumentReference | null = null;
+  let nlDocId = "";
 
   // Per-page source set by the Astro frontmatter (e.g. "spice-list-home",
   // "spice-list-apply"). Falls back to the bare component name only if the
@@ -112,12 +106,10 @@ const leadSource = `spice-list-${pageName}`;
         submitBtn.textContent = "Sending...";
       }
       try {
-        const db = getFirebaseDb();
         const attribution = buildLeadAttribution({ source: leadSource });
-        nlDocRef = await addDoc(collection(db, "leads"), {
+        nlDocId = await captureLead({
           email: savedEmail,
           ...attribution,
-          createdAt: new Date().toISOString(),
         });
         localStorage.setItem("gmd-popup-subscribed", "true");
         identifyLead(savedEmail, attribution);
@@ -179,16 +171,14 @@ const leadSource = `spice-list-${pageName}`;
         submitBtn.textContent = "Sending...";
       }
       try {
-        const db = getFirebaseDb();
-        if (nlDocRef) {
-          await updateDoc(nlDocRef, { phone: cleaned });
+        if (nlDocId) {
+          await updateLeadPhone(nlDocId, cleaned);
         } else {
           const attribution = buildLeadAttribution({ source: leadSource });
-          await addDoc(collection(db, "leads"), {
+          await captureLead({
             email: savedEmail,
             phone: cleaned,
             ...attribution,
-            createdAt: new Date().toISOString(),
           });
         }
         trackLeadEvent("lead_phone_submitted", {

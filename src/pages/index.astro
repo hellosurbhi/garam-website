@@ -300,16 +300,10 @@ const speakableJsonLd = JSON.stringify({
 </BaseLayout>
 
 <script>
-  import { getFirebaseDb } from "@/lib/firebase";
-  import {
-    collection,
-    addDoc,
-    updateDoc,
-    type DocumentReference,
-  } from "firebase/firestore";
   import { cleanPhone } from "@/lib/phone";
   import { identifyLead, trackLeadEvent } from "@/lib/analytics";
   import { buildLeadAttribution } from "@/lib/leadAttribution";
+  import { captureLead, updateLeadPhone } from "@/lib/leadSubmission";
 
   // Email popup logic — only suppressed permanently after email submit
   const POPUP_KEY = "gmd-popup-subscribed";
@@ -414,7 +408,7 @@ const speakableJsonLd = JSON.stringify({
     });
 
     let savedEmail = "";
-    let popupDocRef: DocumentReference | null = null;
+    let popupDocId = "";
 
     document
       .getElementById("popup-email-form")
@@ -433,12 +427,10 @@ const speakableJsonLd = JSON.stringify({
           submitBtn.textContent = "Sending...";
         }
         try {
-          const db = getFirebaseDb();
           const attribution = buildLeadAttribution({ source: "popup" });
-          popupDocRef = await addDoc(collection(db, "leads"), {
+          popupDocId = await captureLead({
             email: savedEmail,
             ...attribution,
-            createdAt: new Date().toISOString(),
           });
           localStorage.setItem(POPUP_KEY, "true");
           identifyLead(savedEmail, attribution);
@@ -493,16 +485,14 @@ const speakableJsonLd = JSON.stringify({
           submitBtn.textContent = "Sending...";
         }
         try {
-          const db = getFirebaseDb();
-          if (popupDocRef) {
-            await updateDoc(popupDocRef, { phone: cleaned });
+          if (popupDocId) {
+            await updateLeadPhone(popupDocId, cleaned);
           } else {
             const attribution = buildLeadAttribution({ source: "popup" });
-            await addDoc(collection(db, "leads"), {
+            await captureLead({
               email: savedEmail,
               phone: cleaned,
               ...attribution,
-              createdAt: new Date().toISOString(),
             });
           }
           trackLeadEvent("lead_phone_submitted", {

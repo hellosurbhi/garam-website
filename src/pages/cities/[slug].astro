@@ -546,16 +546,10 @@ function renderCityText(text: string, href: string): string {
 </BaseLayout>
 
 <script>
-  import { getFirebaseDb } from "@/lib/firebase";
-  import {
-    collection,
-    addDoc,
-    updateDoc,
-    type DocumentReference,
-  } from "firebase/firestore";
   import { cleanPhone } from "@/lib/phone";
   import { identifyLead, trackLeadEvent } from "@/lib/analytics";
   import { buildLeadAttribution } from "@/lib/leadAttribution";
+  import { captureLead, updateLeadPhone } from "@/lib/leadSubmission";
 
   const dialog = document.getElementById("waitlist-modal") as HTMLDialogElement;
   const citySlug =
@@ -592,16 +586,14 @@ function renderCityText(text: string, href: string): string {
         const errorEl = document.getElementById("waitlist-error");
         if (submitBtn) submitBtn.disabled = true;
         try {
-          const db = getFirebaseDb();
           const attribution = buildLeadAttribution({
             source: "city-waitlist",
             sourceCitySlug: citySlug,
           });
-          await addDoc(collection(db, "leads"), {
+          await captureLead({
             email,
             city,
             ...attribution,
-            createdAt: new Date().toISOString(),
           });
           identifyLead(email, { ...attribution, city });
           trackLeadEvent("lead_email_submitted", { ...attribution, city });
@@ -624,7 +616,7 @@ function renderCityText(text: string, href: string): string {
 
   // City page email + phone signup
   let cityNotifyEmail = "";
-  let cityNotifyDocRef: DocumentReference | null = null;
+  let cityNotifyDocId = "";
   const cityName = document.querySelector(".city-eyebrow")?.textContent ?? "";
 
   document
@@ -640,16 +632,14 @@ function renderCityText(text: string, href: string): string {
       ).querySelector<HTMLButtonElement>('[type="submit"]');
       if (submitBtn) submitBtn.disabled = true;
       try {
-        const db = getFirebaseDb();
         const attribution = buildLeadAttribution({
           source: "city-page",
           sourceCitySlug: citySlug,
         });
-        cityNotifyDocRef = await addDoc(collection(db, "leads"), {
+        cityNotifyDocId = await captureLead({
           email: cityNotifyEmail,
           city: cityName,
           ...attribution,
-          createdAt: new Date().toISOString(),
         });
         identifyLead(cityNotifyEmail, { ...attribution, city: cityName });
         trackLeadEvent("lead_email_submitted", {
@@ -707,20 +697,18 @@ function renderCityText(text: string, href: string): string {
       ).querySelector<HTMLButtonElement>('[type="submit"]');
       if (submitBtn) submitBtn.disabled = true;
       try {
-        const db = getFirebaseDb();
-        if (cityNotifyDocRef) {
-          await updateDoc(cityNotifyDocRef, { phone: cleaned });
+        if (cityNotifyDocId) {
+          await updateLeadPhone(cityNotifyDocId, cleaned);
         } else {
           const attribution = buildLeadAttribution({
             source: "city-page",
             sourceCitySlug: citySlug,
           });
-          await addDoc(collection(db, "leads"), {
+          await captureLead({
             email: cityNotifyEmail,
             phone: cleaned,
             city: cityName,
             ...attribution,
-            createdAt: new Date().toISOString(),
           });
         }
         trackLeadEvent("lead_phone_submitted", {

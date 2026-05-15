@@ -184,10 +184,12 @@ const taglineMap = buildTaglineMap(events);
 </section>
 
 <script>
-  import { getFirebaseDb } from "@/lib/firebase";
-  import { collection, addDoc } from "firebase/firestore";
   import { identifyLead, trackLeadEvent } from "@/lib/analytics";
   import { buildLeadAttribution } from "@/lib/leadAttribution";
+  import {
+    captureLead,
+    type LeadSubmissionPayload,
+  } from "@/lib/leadSubmission";
 
   // Request City modal
   const cityDialog = document.getElementById(
@@ -275,15 +277,13 @@ const taglineMap = buildTaglineMap(events);
           const email = (
             document.getElementById("city-email") as HTMLInputElement
           ).value;
-          const db = getFirebaseDb();
           const attribution = buildLeadAttribution({ source: "request-city" });
-          const payload: Record<string, string | number | undefined> = {
+          const payload: LeadSubmissionPayload = {
             email,
             ...attribution,
-            createdAt: new Date().toISOString(),
           };
           if (city) payload.city = city;
-          await addDoc(collection(db, "leads"), payload);
+          await captureLead(payload);
           identifyLead(email, { ...attribution, city });
           trackLeadEvent("lead_email_submitted", { ...attribution, city });
           document.getElementById("city-form-view")?.setAttribute("hidden", "");

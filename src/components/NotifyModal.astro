@@ -108,16 +108,14 @@ const { source = "notify-modal" } = Astro.props;
 </dialog>
 
 <script>
-  import { getFirebaseDb } from "@/lib/firebase";
-  import {
-    collection,
-    addDoc,
-    updateDoc,
-    type DocumentReference,
-  } from "firebase/firestore";
   import { cleanPhone } from "@/lib/phone";
   import { identifyLead, trackLeadEvent } from "@/lib/analytics";
   import { buildLeadAttribution } from "@/lib/leadAttribution";
+  import {
+    captureLead,
+    updateLeadPhone,
+    type LeadSubmissionPayload,
+  } from "@/lib/leadSubmission";
 
   const dialog = document.getElementById("notify-modal") as HTMLDialogElement;
   if (dialog) {
@@ -141,7 +139,7 @@ const { source = "notify-modal" } = Astro.props;
     }
 
     let openerEl: HTMLElement | null = null;
-    let notifyDocRef: DocumentReference | null = null;
+    let notifyDocId = "";
     let notifyEmail = "";
 
     // Restore focus to the element that opened the modal
@@ -184,7 +182,7 @@ const { source = "notify-modal" } = Astro.props;
             errorEl.textContent = "";
             errorEl.setAttribute("hidden", "");
           }
-          notifyDocRef = null;
+          notifyDocId = "";
           openerEl = document.activeElement as HTMLElement;
           trackLeadEvent("notify_modal_opened", {
             source: composeSource(citySlug),
@@ -233,7 +231,6 @@ const { source = "notify-modal" } = Astro.props;
           submitBtn.textContent = "Sending...";
         }
         try {
-          const db = getFirebaseDb();
           const citySlug = (
             document.getElementById("notify-city-slug") as HTMLInputElement
           ).value;
@@ -242,13 +239,12 @@ const { source = "notify-modal" } = Astro.props;
             source: finalSource,
             sourceCitySlug: citySlug || undefined,
           });
-          const data: Record<string, string | number | undefined> = {
+          const data: LeadSubmissionPayload = {
             email: notifyEmail,
             city,
             ...attribution,
-            createdAt: new Date().toISOString(),
           };
-          notifyDocRef = await addDoc(collection(db, "leads"), data);
+          notifyDocId = await captureLead(data);
           identifyLead(notifyEmail, { ...attribution, city });
           trackLeadEvent("lead_email_submitted", { ...attribution, city });
           if (errorEl) {
@@ -322,27 +318,25 @@ const { source = "notify-modal" } = Astro.props;
           submitBtn.textContent = "Sending...";
         }
         try {
-          const db = getFirebaseDb();
           const citySlug = (
             document.getElementById("notify-city-slug") as HTMLInputElement
           ).value;
           const finalSource = composeSource(citySlug);
-          if (notifyDocRef) {
-            await updateDoc(notifyDocRef, { phone: cleaned });
+          if (notifyDocId) {
+            await updateLeadPhone(notifyDocId, cleaned);
           } else {
             const attribution = buildLeadAttribution({
               source: finalSource,
               sourceCitySlug: citySlug || undefined,
             });
-            const data: Record<string, string | number | undefined> = {
+            const data: LeadSubmissionPayload = {
               email: notifyEmail,
               city: (document.getElementById("notify-city") as HTMLInputElement)
                 .value,
               phone: cleaned,
               ...attribution,
-              createdAt: new Date().toISOString(),
             };
-            await addDoc(collection(db, "leads"), data);
+            await captureLead(data);
           }
           trackLeadEvent("lead_phone_submitted", {
             source: finalSource,

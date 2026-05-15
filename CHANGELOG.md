@@ -1,5 +1,22 @@
 # Changelog
 
+## docs(process): add branch safety rule to agent instructions (2026-05-15)
+
+### What changed
+
+- Added a root `AGENTS.md` with an explicit branch safety rule.
+- Updated `CLAUDE.md` to forbid committing or pushing on `main` or `master`.
+- Added a lessons note so the branch mistake is recorded and not repeated.
+
+### Files affected
+
+- `AGENTS.md`
+- `CLAUDE.md`
+- `LESSONS.md`
+- `CHANGELOG.md`
+
+---
+
 ## docs(enhancements): expand admin event management plan (2026-05-15)
 
 ### What changed

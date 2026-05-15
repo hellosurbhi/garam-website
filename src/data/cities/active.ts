@@ -360,6 +360,64 @@ export const activeCities: Record<string, CityData> = {
     ],
   },
 
+  philadelphia: {
+    slug: "philadelphia",
+    displayName: "Philadelphia",
+    titleTag: "Philly Desi Singles Night",
+    metaDescription:
+      "Garam Masala Dating is now in Philly. Live desi dating show and mixer at Next In Line Comedy. Penn, Drexel, Main Line, Cherry Hill. Grab tickets.",
+    h1: "Live Comedy Dating for South Asian Singles in Philly",
+    status: "active",
+    badgeLabel: "Tickets Available",
+    bodyParagraphs: [
+      "Philadelphia has four major universities, a massive medical community, and a South Asian population that stretches from Center City out to King of Prussia, Exton, and across the bridge into Cherry Hill. Penn, Drexel, Temple, Villanova. The talent pool is deep. The dating scene for desi singles? Not so much.",
+      "Garam Masala Dating is now running shows in Philadelphia. Real contestants go on live dates on stage while a packed room watches, reacts, and picks favorites. Before and after, the entire crowd mingles. The format that sells out in New York every few weeks, now in your city.",
+      "Shows are at Next In Line Comedy, 1025 Hamilton Street in Philadelphia. Grab tickets for the next one below. The King of Prussia and Main Line suburbs, Cherry Hill, University City, Center City: everyone is welcome and the room is exactly what you think it is.",
+      "If you want to be on stage instead of in the audience, apply to be a contestant. You already know how to rep your city.",
+    ],
+    ctas: [
+      {
+        label: "Apply to Be a Contestant",
+        href: "/apply?city=Philadelphia&state=PA",
+      },
+    ],
+    includeEventSchema: true,
+    areaServed: "Philadelphia, Pennsylvania",
+    addressLocality: "Philadelphia",
+    addressRegion: "PA",
+    addressCountry: "US",
+    venueName: "Next In Line Comedy",
+    region: "US Northeast",
+    nearbyCities: [
+      "edison",
+      "manhattan",
+      "jersey-city",
+      "baltimore",
+      "pittsburgh",
+    ],
+    communityStats:
+      "Philadelphia's South Asian community spans Penn, Drexel, Temple, and the Main Line suburbs out to King of Prussia and Cherry Hill",
+    relatedArticleSlugs: [
+      "guide-to-indian-dating-culture-america",
+      "comedy-dating-show-unique-date-idea",
+      "first-gen-indian-american-dating",
+    ],
+    faqItems: [
+      {
+        q: "Where is the Philadelphia show held?",
+        a: "At Next In Line Comedy, 1025 Hamilton Street, Philadelphia, PA 19123. Check the tickets section on this page for the latest show dates.",
+      },
+      {
+        q: "Will the show be in Center City or the suburbs?",
+        a: "Next In Line Comedy on Hamilton Street is accessible from Center City, University City, and the surrounding neighborhoods. The Main Line and Cherry Hill are a short drive.",
+      },
+      {
+        q: "How do I apply to be a contestant for the Philly show?",
+        a: "Apply on our apply page and select Philadelphia as your preferred city. Philadelphia applicants are prioritized for Philly show dates.",
+      },
+    ],
+  },
+
   denver: {
     slug: "denver",
     displayName: "Denver",

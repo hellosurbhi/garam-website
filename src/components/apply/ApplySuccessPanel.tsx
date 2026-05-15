@@ -259,7 +259,8 @@ export function ApplySuccessPanel() {
             increases your odds.
           </p>
           <p className={styles.successCoupon}>
-            Use code <strong>STEALER</strong> for 20% off your next ticket.
+            Use code <strong>STEALER</strong> for 20% off your next ticket. Only
+            valid for Garam Masala produced events.
           </p>
           <ul className={styles.successShowList}>
             {upcomingShows.map((show) => {

@@ -1,6 +1,7 @@
 export const prerender = false;
 
 import type { APIRoute } from "astro";
+import { getFirestoreAccessToken } from "@/lib/firestoreAdmin";
 import { addKitSubscriber, type KitSubscriberFields } from "@/lib/kit";
 
 interface FirestoreStringValue {
@@ -40,7 +41,7 @@ export const POST: APIRoute = async ({ request }) => {
     );
   }
 
-  const auth = request.headers.get("Authorization");
+  const auth = request.headers.get("authorization");
   if (auth !== `Bearer ${cronSecret}`) {
     return new Response(JSON.stringify({ error: "Unauthorized" }), {
       status: 401,
@@ -63,6 +64,17 @@ export const POST: APIRoute = async ({ request }) => {
   let errors = 0;
   let pageToken: string | undefined;
 
+  let accessToken: string;
+  try {
+    accessToken = await getFirestoreAccessToken();
+  } catch (err) {
+    const detail = err instanceof Error ? err.message : String(err);
+    return new Response(
+      JSON.stringify({ error: "Firestore auth failed", detail }),
+      { status: 500, headers: { "Content-Type": "application/json" } },
+    );
+  }
+
   do {
     const url = new URL(
       `https://firestore.googleapis.com/v1/projects/${projectId}/databases/(default)/documents/leads`,
@@ -70,7 +82,9 @@ export const POST: APIRoute = async ({ request }) => {
     url.searchParams.set("pageSize", "300");
     if (pageToken) url.searchParams.set("pageToken", pageToken);
 
-    const res = await fetch(url.toString());
+    const res = await fetch(url.toString(), {
+      headers: { Authorization: `Bearer ${accessToken}` },
+    });
     if (!res.ok) {
       const body = await res.text();
       return new Response(

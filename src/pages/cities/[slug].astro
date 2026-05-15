@@ -7,6 +7,7 @@ import { getUpcomingEventsForCity } from "@/utils/cityEvents";
 import { buildBreadcrumbJsonLd } from "@/utils/breadcrumbs";
 import { SHOW_IMAGES, slugToImageIndex } from "@/data/images";
 import { buildTicketUrl } from "@/utils/eventUrl";
+import { formatEventLocation } from "@/utils/eventCity";
 import { EVENTS } from "@/data/copy";
 import { getPostBySlug } from "@/data/journal";
 import { SOCIAL_URLS } from "@/data/socials";
@@ -224,6 +225,7 @@ function renderCityText(text: string, href: string): string {
         {
           cityEvents.map((event) => {
             const isSoldOut = event.soldOut ?? false;
+            const eventLocation = formatEventLocation(event);
             const arrowSvg = (
               <svg
                 xmlns="http://www.w3.org/2000/svg"
@@ -250,7 +252,7 @@ function renderCityText(text: string, href: string): string {
                 id={`eventbrite-widget-modal-trigger-${event.eventbriteId}`}
                 class="city-cta city-cta--primary"
                 data-eb-url={buildTicketUrl(event.url, "cities", city.slug)}
-                data-city={event.city}
+                data-city={eventLocation}
                 data-ph-section="cities"
                 data-ph-price={event.price}
                 data-ph-event-date={event.date}
@@ -549,6 +551,7 @@ function renderCityText(text: string, href: string): string {
   import { cleanPhone } from "@/lib/phone";
   import { identifyLead, trackLeadEvent } from "@/lib/analytics";
   import { buildLeadAttribution } from "@/lib/leadAttribution";
+  import { captureLead, updateLeadPhone } from "@/lib/leadSubmission";
 
   const dialog = document.getElementById("waitlist-modal") as HTMLDialogElement;
   const citySlug =
@@ -589,17 +592,11 @@ function renderCityText(text: string, href: string): string {
             source: "city-waitlist",
             sourceCitySlug: citySlug,
           });
-          const res = await fetch("/api/capture-lead", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({
-              email,
-              city,
-              ...attribution,
-              createdAt: new Date().toISOString(),
-            }),
+          await captureLead({
+            email,
+            city,
+            ...attribution,
           });
-          if (!res.ok) throw new Error("capture-lead failed");
           identifyLead(email, { ...attribution, city });
           trackLeadEvent("lead_email_submitted", { ...attribution, city });
           document
@@ -621,6 +618,7 @@ function renderCityText(text: string, href: string): string {
 
   // City page email + phone signup
   let cityNotifyEmail = "";
+  let cityNotifyDocId = "";
   const cityName = document.querySelector(".city-eyebrow")?.textContent ?? "";
 
   document
@@ -640,17 +638,11 @@ function renderCityText(text: string, href: string): string {
           source: "city-page",
           sourceCitySlug: citySlug,
         });
-        const res = await fetch("/api/capture-lead", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            email: cityNotifyEmail,
-            city: cityName,
-            ...attribution,
-            createdAt: new Date().toISOString(),
-          }),
+        cityNotifyDocId = await captureLead({
+          email: cityNotifyEmail,
+          city: cityName,
+          ...attribution,
         });
-        if (!res.ok) throw new Error("capture-lead failed");
         identifyLead(cityNotifyEmail, { ...attribution, city: cityName });
         trackLeadEvent("lead_email_submitted", {
           ...attribution,
@@ -707,22 +699,20 @@ function renderCityText(text: string, href: string): string {
       ).querySelector<HTMLButtonElement>('[type="submit"]');
       if (submitBtn) submitBtn.disabled = true;
       try {
-        const attribution = buildLeadAttribution({
-          source: "city-page",
-          sourceCitySlug: citySlug,
-        });
-        const res = await fetch("/api/capture-lead", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
+        if (cityNotifyDocId) {
+          await updateLeadPhone(cityNotifyDocId, cleaned);
+        } else {
+          const attribution = buildLeadAttribution({
+            source: "city-page",
+            sourceCitySlug: citySlug,
+          });
+          await captureLead({
             email: cityNotifyEmail,
             phone: cleaned,
             city: cityName,
             ...attribution,
-            createdAt: new Date().toISOString(),
-          }),
-        });
-        if (!res.ok) throw new Error("capture-lead failed");
+          });
+        }
         trackLeadEvent("lead_phone_submitted", {
           source: "city-page",
           sourcePage: window.location.pathname,

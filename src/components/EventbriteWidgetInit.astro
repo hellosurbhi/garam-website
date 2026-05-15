@@ -23,6 +23,7 @@
       ),
     );
     if (!buttons.length) return;
+    if (["localhost", "127.0.0.1"].includes(window.location.hostname)) return;
 
     type EBWidgetsAPI = { createWidget: (config: EBWidgetConfig) => void };
     type PostHogAPI = {

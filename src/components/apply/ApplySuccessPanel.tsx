@@ -2,6 +2,7 @@ import { useMemo, useEffect } from "react";
 import { events } from "@/data/events";
 import { SOCIAL_URLS } from "@/data/socials";
 import { buildTicketUrl } from "@/utils/eventUrl";
+import { formatEventLocation } from "@/utils/eventCity";
 import { buildLeadAttribution } from "@/lib/leadAttribution";
 import styles from "@/components/ApplyPage.module.css";
 
@@ -34,9 +35,18 @@ export function ApplySuccessPanel() {
     () => upcomingShows.filter((e) => e.eventbriteId),
     [upcomingShows],
   );
+  const upcomingShowLabels = useMemo(
+    () =>
+      upcomingShows.map((show) => ({
+        show,
+        cityLabel: formatEventLocation(show),
+      })),
+    [upcomingShows],
+  );
 
   useEffect(() => {
     if (showsWithWidget.length === 0) return;
+    if (["localhost", "127.0.0.1"].includes(window.location.hostname)) return;
 
     let orderCompleted = false;
     let modalOpenedAt = 0;
@@ -49,6 +59,7 @@ export function ApplySuccessPanel() {
         rootStyle.getPropertyValue("--charcoal").trim() || "#1A1A1A";
       const bgColor = rootStyle.getPropertyValue("--white").trim() || "#FFFFFF";
       for (const show of showsWithWidget) {
+        const cityLabel = formatEventLocation(show);
         const tid = `eventbrite-widget-modal-trigger-success-${show.eventbriteId}`;
         const btn = document.getElementById(tid);
         btn?.addEventListener("click", () => {
@@ -58,7 +69,7 @@ export function ApplySuccessPanel() {
               event_id: show.eventbriteId ?? "",
               section: "apply_success",
               page: window.location.pathname,
-              city: show.city,
+              city: cityLabel,
               price: show.price ?? "",
               event_date: show.date,
             }),
@@ -81,7 +92,7 @@ export function ApplySuccessPanel() {
               const attr = buildLeadAttribution({ source: "ticket_purchase" });
               window.posthog?.capture?.("order_complete", {
                 event_id: show.eventbriteId,
-                city: show.city,
+                city: cityLabel,
                 source_section: src?.section ?? "apply_success",
                 source_page: src?.page ?? "/apply",
                 price: src?.price ?? show.price ?? "",
@@ -104,7 +115,7 @@ export function ApplySuccessPanel() {
                   value: price,
                   items: [
                     {
-                      item_name: `Garam Masala Dating - ${show.city}`,
+                      item_name: `Garam Masala Dating - ${cityLabel}`,
                       item_id: String(show.eventbriteId),
                       price,
                       quantity: 1,
@@ -131,7 +142,7 @@ export function ApplySuccessPanel() {
           // Widget init failed; button stays inert (no navigation needed)
           window.posthog?.capture?.("widget_load_failed", {
             event_id: show.eventbriteId ?? "",
-            city: show.city,
+            city: cityLabel,
             page: window.location.pathname,
           });
         }
@@ -258,15 +269,16 @@ export function ApplySuccessPanel() {
             increases your odds.
           </p>
           <p className={styles.successCoupon}>
-            Use code <strong>STEALER</strong> for 20% off your next ticket.
+            Use code <strong>STEALER</strong> for 20% off your next ticket. Only
+            valid for Garam Masala produced events.
           </p>
           <ul className={styles.successShowList}>
-            {upcomingShows.map((show) => {
+            {upcomingShowLabels.map(({ show, cityLabel }) => {
               const tid = show.eventbriteId
                 ? `eventbrite-widget-modal-trigger-success-${show.eventbriteId}`
                 : null;
               return (
-                <li key={`${show.isoDate}-${show.city}`}>
+                <li key={`${show.isoDate}-${cityLabel}`}>
                   {tid ? (
                     <button
                       type="button"
@@ -274,7 +286,7 @@ export function ApplySuccessPanel() {
                       data-eb-event-id={show.eventbriteId}
                       className={styles.successTicketButton}
                     >
-                      Get Tickets | {show.date} in {show.city}
+                      Get Tickets | {show.date} in {cityLabel}
                     </button>
                   ) : (
                     <a
@@ -283,7 +295,7 @@ export function ApplySuccessPanel() {
                       rel="noopener noreferrer"
                       className={styles.successTicketButton}
                     >
-                      Get Tickets | {show.date} in {show.city}
+                      Get Tickets | {show.date} in {cityLabel}
                     </a>
                   )}
                 </li>

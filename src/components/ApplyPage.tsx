@@ -301,7 +301,7 @@ function ApplyPageInner() {
                           Almost every contestant we cast came to a show as a
                           Stealer first. Without that, you likely won't be
                           selected. Use code <strong>STEALER</strong> for 20%
-                          off.{" "}
+                          off (only valid for Garam Masala produced events).{" "}
                           <a href="/tickets" className={styles.seenNudgeLink}>
                             Come Steal &rarr;
                           </a>

@@ -303,6 +303,7 @@ const speakableJsonLd = JSON.stringify({
   import { cleanPhone } from "@/lib/phone";
   import { identifyLead, trackLeadEvent } from "@/lib/analytics";
   import { buildLeadAttribution } from "@/lib/leadAttribution";
+  import { captureLead, updateLeadPhone } from "@/lib/leadSubmission";
 
   // Email popup logic — only suppressed permanently after email submit
   const POPUP_KEY = "gmd-popup-subscribed";
@@ -407,6 +408,7 @@ const speakableJsonLd = JSON.stringify({
     });
 
     let savedEmail = "";
+    let popupDocId = "";
 
     document
       .getElementById("popup-email-form")
@@ -426,16 +428,10 @@ const speakableJsonLd = JSON.stringify({
         }
         try {
           const attribution = buildLeadAttribution({ source: "popup" });
-          const res = await fetch("/api/capture-lead", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({
-              email: savedEmail,
-              ...attribution,
-              createdAt: new Date().toISOString(),
-            }),
+          popupDocId = await captureLead({
+            email: savedEmail,
+            ...attribution,
           });
-          if (!res.ok) throw new Error("capture-lead failed");
           localStorage.setItem(POPUP_KEY, "true");
           identifyLead(savedEmail, attribution);
           trackLeadEvent("lead_email_submitted", attribution);
@@ -489,18 +485,16 @@ const speakableJsonLd = JSON.stringify({
           submitBtn.textContent = "Sending...";
         }
         try {
-          const attribution = buildLeadAttribution({ source: "popup" });
-          const res = await fetch("/api/capture-lead", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({
+          if (popupDocId) {
+            await updateLeadPhone(popupDocId, cleaned);
+          } else {
+            const attribution = buildLeadAttribution({ source: "popup" });
+            await captureLead({
               email: savedEmail,
               phone: cleaned,
               ...attribution,
-              createdAt: new Date().toISOString(),
-            }),
-          });
-          if (!res.ok) throw new Error("capture-lead failed");
+            });
+          }
           trackLeadEvent("lead_phone_submitted", {
             source: "popup",
             sourcePage: window.location.pathname,

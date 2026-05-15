@@ -224,6 +224,11 @@ const {
   import { cleanPhone } from "@/lib/phone";
   import { identifyLead, trackLeadEvent } from "@/lib/analytics";
   import { buildLeadAttribution } from "@/lib/leadAttribution";
+  import {
+    captureLead,
+    updateLeadPhone,
+    type LeadSubmissionPayload,
+  } from "@/lib/leadSubmission";
 
   // Wire up all LeadCaptureModal instances on the page
   document.querySelectorAll<HTMLElement>(".lc-steps").forEach((root) => {
@@ -303,20 +308,13 @@ const {
 
         try {
           const attribution = buildLeadAttribution({ source });
-          const payload: Record<string, string | number | undefined> = {
+          const payload: LeadSubmissionPayload = {
             email: capturedEmail,
             ...attribution,
           };
           if (city) payload.city = city;
 
-          const res = await fetch("/api/capture-lead", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify(payload),
-          });
-          const result = await res.json();
-          if (!res.ok) throw new Error(result.error ?? "Server error");
-          leadDocId = result.id ?? "";
+          leadDocId = await captureLead(payload);
 
           identifyLead(capturedEmail, {
             ...attribution,
@@ -382,21 +380,13 @@ const {
         }
         try {
           if (leadDocId) {
-            await fetch("/api/update-lead", {
-              method: "POST",
-              headers: { "Content-Type": "application/json" },
-              body: JSON.stringify({ id: leadDocId, phone: cleaned }),
-            });
+            await updateLeadPhone(leadDocId, cleaned);
           } else {
             const attribution = buildLeadAttribution({ source });
-            await fetch("/api/capture-lead", {
-              method: "POST",
-              headers: { "Content-Type": "application/json" },
-              body: JSON.stringify({
-                email: capturedEmail,
-                phone: cleaned,
-                ...attribution,
-              }),
+            await captureLead({
+              email: capturedEmail,
+              phone: cleaned,
+              ...attribution,
             });
           }
           trackLeadEvent("lead_phone_submitted", {

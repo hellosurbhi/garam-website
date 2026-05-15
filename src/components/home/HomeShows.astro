@@ -4,6 +4,7 @@ import NotifyModal from "@/components/NotifyModal.astro";
 import { buildTicketUrl } from "@/utils/eventUrl";
 import { parseMonth, parseDay } from "@/utils/eventDate";
 import { buildTaglineMap } from "@/utils/eventTaglines";
+import { formatEventLocation } from "@/utils/eventCity";
 
 interface Props {
   events: EventEntry[];
@@ -27,6 +28,7 @@ const taglineMap = buildTaglineMap(events);
         const isLive = Boolean(event.url);
         const isSoldOut = event.soldOut ?? false;
         const hasWidget = isLive && Boolean(event.eventbriteId) && !isSoldOut;
+        const cityLabel = formatEventLocation(event);
         const cardInner = (
           <>
             <div class="show-date-block">
@@ -34,7 +36,7 @@ const taglineMap = buildTaglineMap(events);
               <div class="day">{parseDay(event.date)}</div>
             </div>
             <div class="show-info">
-              <h3>{event.city}</h3>
+              <h3>{cityLabel}</h3>
               <span>
                 {isSoldOut
                   ? (event.tagline ?? "Sold out")
@@ -58,11 +60,11 @@ const taglineMap = buildTaglineMap(events);
             data-ph-capture="cta_clicked"
             data-ph-cta="get_tickets"
             data-ph-section="shows"
-            data-ph-city={event.city}
+            data-ph-city={cityLabel}
             data-ph-event-date={event.date}
             data-ph-price={event.price}
             data-eb-url={buildTicketUrl(event.url, "home", "shows")}
-            data-city={event.city}
+            data-city={cityLabel}
           >
             {cardInner}
           </button>
@@ -76,7 +78,7 @@ const taglineMap = buildTaglineMap(events);
             data-ph-capture="cta_clicked"
             data-ph-cta="get_tickets"
             data-ph-section="shows"
-            data-ph-city={event.city}
+            data-ph-city={cityLabel}
             data-ph-event-date={event.date}
             data-ph-price={event.price}
           >
@@ -86,12 +88,13 @@ const taglineMap = buildTaglineMap(events);
           <button
             type="button"
             class="show-card show-card--notify"
-            data-notify-city={event.city}
+            data-notify-city={cityLabel}
+            data-notify-city-slug={event.citySlug}
             data-reveal
             data-ph-capture="cta_clicked"
             data-ph-cta="notify_me"
             data-ph-section="shows"
-            data-ph-city={event.city}
+            data-ph-city={cityLabel}
           >
             <div class="show-date-block">
               {parseDay(event.date) !== "" ? (
@@ -104,7 +107,7 @@ const taglineMap = buildTaglineMap(events);
               )}
             </div>
             <div class="show-info">
-              <h3>{event.city}</h3>
+              <h3>{cityLabel}</h3>
               <span>Dates to be announced</span>
             </div>
             <span class="ticket-label ticket-label--notify">Notify Me</span>
@@ -186,6 +189,10 @@ const taglineMap = buildTaglineMap(events);
 <script>
   import { identifyLead, trackLeadEvent } from "@/lib/analytics";
   import { buildLeadAttribution } from "@/lib/leadAttribution";
+  import {
+    captureLead,
+    type LeadSubmissionPayload,
+  } from "@/lib/leadSubmission";
 
   // Request City modal
   const cityDialog = document.getElementById(
@@ -274,18 +281,12 @@ const taglineMap = buildTaglineMap(events);
             document.getElementById("city-email") as HTMLInputElement
           ).value;
           const attribution = buildLeadAttribution({ source: "request-city" });
-          const payload: Record<string, string | number | undefined> = {
+          const payload: LeadSubmissionPayload = {
             email,
             ...attribution,
-            createdAt: new Date().toISOString(),
           };
           if (city) payload.city = city;
-          const res = await fetch("/api/capture-lead", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify(payload),
-          });
-          if (!res.ok) throw new Error("capture-lead failed");
+          await captureLead(payload);
           identifyLead(email, { ...attribution, city });
           trackLeadEvent("lead_email_submitted", { ...attribution, city });
           document.getElementById("city-form-view")?.setAttribute("hidden", "");

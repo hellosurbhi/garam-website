@@ -1,5 +1,13 @@
 # Lessons
 
+## Never work or push directly on `main` or `master`
+
+**What went wrong:** The branch was used for commits and pushes while it was still named `main`.
+
+**Why:** That makes it too easy to publish incomplete or risky work from the default branch.
+
+**Rule:** Always create or switch to a feature branch before committing or pushing implementation work. Check the current branch first, and stop if it is `main` or `master`.
+
 ## Keep enhancement backlog items as documentation until explicitly asked to build
 
 **What went wrong:** After being asked to continue, I treated a high-priority `ENHANCEMENTS.md` backlog item as permission to start implementation work.

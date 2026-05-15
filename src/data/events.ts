@@ -174,6 +174,7 @@ export const events: EventEntry[] = [
     endTime: "20:30",
     venue: VENUE_FAIGHT_COLLECTIVE,
     price: "15",
+    tagline: "Going Public",
     eventbriteId: "1989633237573",
   },
   {

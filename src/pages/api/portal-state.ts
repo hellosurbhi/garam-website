@@ -7,8 +7,6 @@ import { enforceRateLimit, RATE_LIMITS } from "@/lib/rateLimit";
 
 export const prerender = false;
 
-export const prerender = false;
-
 const VALID_ROLES = ["female", "male", "stealer"] as const;
 type ValidRole = (typeof VALID_ROLES)[number];
 
@@ -52,6 +50,7 @@ function normalizeRole(
   if (role === "stealer") return "spectator";
   return null;
 }
+
 
 export const GET: APIRoute = async ({ request }) => {
   const limited = await enforceRateLimit(request, RATE_LIMITS.contestantClaim);

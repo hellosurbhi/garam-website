@@ -52,6 +52,21 @@ function PrepError() {
   );
 }
 
+function PrepLocked() {
+  return (
+    <div className={styles.errorWrapper}>
+      <div className={styles.errorCard}>
+        <p className={styles.errorEmoji}>🌶️</p>
+        <h1 className={styles.errorTitle}>Waiver required</h1>
+        <p className={styles.errorText}>
+          Sign your waiver through your contestant portal link to access the
+          prep guide.
+        </p>
+      </div>
+    </div>
+  );
+}
+
 /* ─── Prep guide ───────────────────────────────────────────────── */
 
 function PrepGuide() {
@@ -267,9 +282,11 @@ export default function ContestantPrepPage() {
     return { date: sp.get("date"), sig: sp.get("sig") };
   });
 
-  const [state, setState] = useState<"checking" | "authed" | "error">(() => {
+  const [state, setState] = useState<
+    "checking" | "authed" | "error" | "locked"
+  >(() => {
     if (getSession() !== null) return "authed";
-    if (!params.date && !params.sig) return "authed";
+    if (!params.date && !params.sig) return "locked";
     if (!params.date || !params.sig) return "error";
     return "checking";
   });
@@ -299,5 +316,6 @@ export default function ContestantPrepPage() {
 
   if (state === "authed") return <PrepGuide />;
   if (state === "checking") return <PrepLoading />;
+  if (state === "locked") return <PrepLocked />;
   return <PrepError />;
 }

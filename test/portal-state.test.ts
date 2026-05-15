@@ -136,11 +136,11 @@ describe("portal-state GET /api/portal-state", () => {
   });
 
   describe("cookie / portal session", () => {
-    it("returns open when no cookie is present", async () => {
+    it("returns no-access when no cookie is present", async () => {
       const req = makeRequest();
       const res = await GET({ request: req } as Parameters<typeof GET>[0]);
       const body = await res.json();
-      expect(body.state).toBe("open");
+      expect(body.state).toBe("no-access");
     });
 
     it("returns active state for valid session with waiver", async () => {

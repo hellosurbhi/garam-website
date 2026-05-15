@@ -7,6 +7,11 @@ vi.mock("./ContestantPrepPage.module.css", () => ({
 
 import ContestantPrepPage from "./ContestantPrepPage";
 
+function seedValidPrepSession() {
+  sessionStorage.setItem("gm-prep-token", "valid-token");
+  sessionStorage.setItem("gm-prep-expires", String(Date.now() + 3600000));
+}
+
 describe("ContestantPrepPage", () => {
   beforeEach(() => {
     vi.clearAllMocks();
@@ -16,6 +21,7 @@ describe("ContestantPrepPage", () => {
       writable: true,
       configurable: true,
     });
+    seedValidPrepSession();
   });
 
   afterEach(() => {
@@ -23,11 +29,15 @@ describe("ContestantPrepPage", () => {
     sessionStorage.clear();
   });
 
-  /* ── No params, no session → authed (open access) ────── */
+  /* ── No params, no session → locked ──────────────────── */
 
-  it("renders prep guide when no params and no session", () => {
+  it("blocks prep guide when no params and no session", () => {
+    sessionStorage.clear();
     render(<ContestantPrepPage />);
-    expect(screen.getByText(/Contestant Orientation/)).toBeInTheDocument();
+    expect(screen.getByText("Waiver required")).toBeInTheDocument();
+    expect(
+      screen.queryByText(/Contestant Orientation/),
+    ).not.toBeInTheDocument();
   });
 
   it("renders golden rules section in prep guide", () => {
@@ -49,20 +59,21 @@ describe("ContestantPrepPage", () => {
     expect(screen.getByText(/Contestant Orientation/)).toBeInTheDocument();
   });
 
-  /* ── Expired session → no session, falls through ──────── */
+  /* ── Expired session → no session, locked ─────────────── */
 
-  it("clears expired session from storage", () => {
+  it("clears expired session from storage and blocks prep access", () => {
     sessionStorage.setItem("gm-prep-token", "old-token");
     sessionStorage.setItem("gm-prep-expires", String(Date.now() - 1000));
-    // Expired session → getSession() returns null → no params → "authed"
     render(<ContestantPrepPage />);
     expect(sessionStorage.getItem("gm-prep-token")).toBeNull();
     expect(sessionStorage.getItem("gm-prep-expires")).toBeNull();
+    expect(screen.getByText("Waiver required")).toBeInTheDocument();
   });
 
   /* ── Incomplete params → error ─────────────────────────── */
 
   it("shows error when only date param is present (no sig)", () => {
+    sessionStorage.clear();
     Object.defineProperty(window, "location", {
       value: { search: "?date=2026-04-10" },
       writable: true,
@@ -73,6 +84,7 @@ describe("ContestantPrepPage", () => {
   });
 
   it("shows error when only sig param is present (no date)", () => {
+    sessionStorage.clear();
     Object.defineProperty(window, "location", {
       value: { search: "?sig=abc123" },
       writable: true,
@@ -85,6 +97,7 @@ describe("ContestantPrepPage", () => {
   /* ── Both params → checking → authed on success ────────── */
 
   it("shows loading then authed on successful auth", async () => {
+    sessionStorage.clear();
     Object.defineProperty(window, "location", {
       value: { search: "?date=2026-04-10&sig=valid-sig" },
       writable: true,
@@ -116,6 +129,7 @@ describe("ContestantPrepPage", () => {
   });
 
   it("shows error on failed auth response", async () => {
+    sessionStorage.clear();
     Object.defineProperty(window, "location", {
       value: { search: "?date=2026-04-10&sig=bad-sig" },
       writable: true,
@@ -133,6 +147,7 @@ describe("ContestantPrepPage", () => {
   });
 
   it("shows error on network failure", async () => {
+    sessionStorage.clear();
     Object.defineProperty(window, "location", {
       value: { search: "?date=2026-04-10&sig=valid" },
       writable: true,
@@ -148,6 +163,7 @@ describe("ContestantPrepPage", () => {
   });
 
   it("calls auth endpoint with correct params", async () => {
+    sessionStorage.clear();
     Object.defineProperty(window, "location", {
       value: { search: "?date=2026-04-10&sig=test-sig" },
       writable: true,
@@ -220,6 +236,7 @@ describe("ContestantPrepPage", () => {
   /* ── Error page content ──────────────────────────────── */
 
   it("error page shows contact message", () => {
+    sessionStorage.clear();
     Object.defineProperty(window, "location", {
       value: { search: "?date=2026-04-10" },
       writable: true,
@@ -234,9 +251,9 @@ describe("ContestantPrepPage", () => {
   it("treats NaN expires as expired session", () => {
     sessionStorage.setItem("gm-prep-token", "token");
     sessionStorage.setItem("gm-prep-expires", "not-a-number");
-    // NaN expires → getSession() returns null → cleans up → no params → authed
     render(<ContestantPrepPage />);
     expect(sessionStorage.getItem("gm-prep-token")).toBeNull();
+    expect(screen.getByText("Waiver required")).toBeInTheDocument();
   });
 
   /* ── PrepGuide footer ───────────────────────────────── */
@@ -249,6 +266,7 @@ describe("ContestantPrepPage", () => {
   /* ── Session storage keys (StringLiteral mutations) ─── */
 
   it("saves session with correct keys", async () => {
+    sessionStorage.clear();
     Object.defineProperty(window, "location", {
       value: { search: "?date=2026-04-10&sig=valid" },
       writable: true,
@@ -268,6 +286,7 @@ describe("ContestantPrepPage", () => {
   });
 
   it("saves expiresAt as string in sessionStorage", async () => {
+    sessionStorage.clear();
     const expiresAt = Date.now() + 7200000;
     Object.defineProperty(window, "location", {
       value: { search: "?date=2026-04-10&sig=valid" },
@@ -293,6 +312,7 @@ describe("ContestantPrepPage", () => {
     render(<ContestantPrepPage />);
     // Session is expired (>=), storage should be cleared
     expect(sessionStorage.getItem("gm-prep-token")).toBeNull();
+    expect(screen.getByText("Waiver required")).toBeInTheDocument();
     vi.restoreAllMocks();
   });
 
@@ -380,6 +400,7 @@ describe("ContestantPrepPage", () => {
   /* ── Error page specifics ───────────────────────────── */
 
   it("error page shows emoji", () => {
+    sessionStorage.clear();
     Object.defineProperty(window, "location", {
       value: { search: "?date=2026-04-10" },
       writable: true,
@@ -390,6 +411,7 @@ describe("ContestantPrepPage", () => {
   });
 
   it("error page shows correct title", () => {
+    sessionStorage.clear();
     Object.defineProperty(window, "location", {
       value: { search: "?sig=only" },
       writable: true,
@@ -400,6 +422,7 @@ describe("ContestantPrepPage", () => {
   });
 
   it("error page shows full error message", () => {
+    sessionStorage.clear();
     Object.defineProperty(window, "location", {
       value: { search: "?date=2026-04-10" },
       writable: true,
@@ -416,6 +439,7 @@ describe("ContestantPrepPage", () => {
   /* ── Auth fetch details ─────────────────────────────── */
 
   it("auth fetch sends correct Content-Type header", async () => {
+    sessionStorage.clear();
     Object.defineProperty(window, "location", {
       value: { search: "?date=2026-04-10&sig=test" },
       writable: true,

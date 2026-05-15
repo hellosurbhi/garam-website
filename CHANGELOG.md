@@ -8,6 +8,8 @@
 - Added `public/053daf33e1f144f28143394db082d4b7.txt`: IndexNow key verification file served at `garammasaladating.com/053daf33e1f144f28143394db082d4b7.txt`.
 - Added `postbuild` npm script so the ping runs automatically after `astro build`.
 - Changed `vercel.json` `buildCommand` from `astro build` to `npm run build` so Vercel triggers the `postbuild` hook.
+- Handles Vercel's generated sitemap location under `dist/client` so the postbuild hook pings the deployed sitemap instead of skipping.
+- Limits automatic pings to production Vercel builds, with `INDEXNOW_DRY_RUN=1` available for local verification.
 
 ### Why
 

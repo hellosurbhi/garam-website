@@ -1,5 +1,115 @@
 # Changelog
 
+## fix(footer): keep featured city links visible (2026-05-15)
+
+### What changed
+
+- Updated footer show-link generation so featured market links like Los Angeles, San Francisco, and San Diego stay visible even as announced event inventory changes.
+- Preserves announced show links and de-dupes featured cities already present from upcoming events.
+
+### Files affected
+
+- `src/data/footer.ts`
+- `CHANGELOG.md`
+
+---
+
+## chore(firebase): add local Firebase CLI for rules deploys (2026-05-15)
+
+### What changed
+
+- Added `firebase-tools` as a dev dependency so `npx firebase ...` resolves to the deploy CLI instead of the Firebase app SDK.
+- Reauthenticated the Firebase CLI and deployed `firestore.rules` to project `garam-masala-9f15b`.
+
+### Files affected
+
+- `package.json`
+- `package-lock.json`
+- `CHANGELOG.md`
+
+---
+
+## content(events): normalize event city and state labels (2026-05-15)
+
+### What changed
+
+- Split event location data into `city`, full `state`, and `stateAbbr` fields.
+- Added a shared event location formatter so public event cards render `City, State`.
+- Updated tickets, home shows, links, city ticket buttons, apply success tickets, and admin prep labels to use the shared formatter.
+- Added tests that preserve existing labels like `Manhattan, New York`, `Jersey City, New Jersey`, and `Philadelphia, Pennsylvania` while fixing California labels.
+
+### Files affected
+
+- `src/data/events.ts`
+- `src/utils/eventCity.ts`
+- `src/pages/tickets.astro`
+- `src/components/home/HomeShows.astro`
+- `src/components/home/HomeHero.astro`
+- `src/components/apply/ApplySuccessPanel.tsx`
+- `src/components/admin/AdminDashboard.tsx`
+- `src/pages/cities/[slug].astro`
+- `src/pages/links.astro`
+
+---
+
+## content(events): expand San Francisco city label on event cards (2026-05-15)
+
+### What changed
+
+- Updated the San Francisco event entries to display `San Francisco, California` on tickets and show cards.
+
+### Files affected
+
+- `src/data/events.ts`
+- `CHANGELOG.md`
+
+---
+
+## content(copy): restore almost sold out and remove new dates announced (2026-05-15)
+
+### What changed
+
+- Restored `Almost sold out` for the first event subtitle.
+- Replaced `New dates announced` with a sales-focused line so the event copy stays useful without sounding awkward.
+
+### Files affected
+
+- `src/data/copy.ts`
+- `CHANGELOG.md`
+
+---
+
+## content(copy): make event card subtitles more sales focused (2026-05-15)
+
+### What changed
+
+- Replaced the awkward event subtitle sequence with clearer sales-focused copy in `EVENT_TAGLINES`.
+- Kept the event card CTA text unchanged and only updated the supporting submessage line.
+
+### Files affected
+
+- `src/data/copy.ts`
+- `CHANGELOG.md`
+
+---
+
+## docs(process): add branch safety rule to agent instructions (2026-05-15)
+
+### What changed
+
+- Added a root `AGENTS.md` with an explicit branch safety rule.
+- Updated `CLAUDE.md` to forbid committing or pushing on `main` or `master`.
+- Added a lessons note so the branch mistake is recorded and not repeated.
+
+### Files affected
+
+- `AGENTS.md`
+- `CLAUDE.md`
+- `LESSONS.md`
+- `CHANGELOG.md`
+
+---
+
 ## docs(enhancements): expand admin event management plan (2026-05-15)
 
 ### What changed

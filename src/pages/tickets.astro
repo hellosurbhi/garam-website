@@ -8,6 +8,7 @@ import { buildEventSchemas } from "@/utils/eventSchema";
 import LeadCaptureModal from "@/components/LeadCaptureModal.astro";
 import { buildTicketUrl } from "@/utils/eventUrl";
 import { buildTaglineMap } from "@/utils/eventTaglines";
+import { formatEventLocation } from "@/utils/eventCity";
 import { PAGES } from "@/data/copy";
 
 const TITLE = "Tickets & Upcoming Shows";
@@ -26,7 +27,7 @@ const widgetEvents = upcomingEvents
     eventId: e.eventbriteId!,
     triggerId: `eventbrite-widget-modal-trigger-${e.eventbriteId}`,
     fallbackUrl: buildTicketUrl(e.url, "tickets", "listing"),
-    city: e.city,
+    city: formatEventLocation(e),
     price: e.price ?? "",
   }));
 
@@ -121,6 +122,7 @@ const eventSeriesJsonLd = JSON.stringify({
               const hasWidget =
                 isLive && !isSoldOut && Boolean(event.eventbriteId);
               const tagline = taglineMap.get(event.url);
+              const cityLabel = formatEventLocation(event);
               return hasWidget ? (
                 <a
                   href={buildTicketUrl(event.url, "tickets", "listing")}
@@ -132,13 +134,13 @@ const eventSeriesJsonLd = JSON.stringify({
                   data-ph-capture="cta_clicked"
                   data-ph-cta="get_tickets"
                   data-ph-section="tickets"
-                  data-ph-city={event.city}
+                  data-ph-city={cityLabel}
                   data-ph-event-date={event.date}
                   data-ph-price={event.price}
                 >
                   <div class="ticket-card__info">
                     <span class="ticket-card__date">{event.date}</span>
-                    <span class="ticket-card__city">{event.city}</span>
+                    <span class="ticket-card__city">{cityLabel}</span>
                     {tagline && (
                       <span class="ticket-card__tagline">{tagline}</span>
                     )}
@@ -173,13 +175,13 @@ const eventSeriesJsonLd = JSON.stringify({
                   data-ph-capture="cta_clicked"
                   data-ph-cta="get_tickets"
                   data-ph-section="tickets"
-                  data-ph-city={event.city}
+                  data-ph-city={cityLabel}
                   data-ph-event-date={event.date}
                   data-ph-price={event.price}
                 >
                   <div class="ticket-card__info">
                     <span class="ticket-card__date">{event.date}</span>
-                    <span class="ticket-card__city">{event.city}</span>
+                    <span class="ticket-card__city">{cityLabel}</span>
                     {tagline && (
                       <span class="ticket-card__tagline">{tagline}</span>
                     )}
@@ -213,19 +215,19 @@ const eventSeriesJsonLd = JSON.stringify({
                   type="button"
                   class="ticket-card ticket-card--tba"
                   style={`--stagger-delay: ${0.1 + i * 0.06}s`}
-                  data-notify-city={event.city}
+                  data-notify-city={cityLabel}
                   data-notify-city-slug={event.citySlug}
                   data-ph-capture="cta_clicked"
                   data-ph-cta="notify_me"
                   data-ph-section="tickets"
-                  data-ph-city={event.city}
+                  data-ph-city={cityLabel}
                 >
                   <div class="ticket-card__info">
                     <span class="ticket-card__date ticket-card__date--tba">
                       {event.date}
                     </span>
                     <span class="ticket-card__city ticket-card__city--tba">
-                      {event.city}
+                      {cityLabel}
                     </span>
                   </div>
                   <span class="ticket-card__cta ticket-card__cta--notify">

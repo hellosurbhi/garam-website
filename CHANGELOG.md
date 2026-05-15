@@ -1,5 +1,20 @@
 # Changelog
 
+## chore(firebase): add local Firebase CLI for rules deploys (2026-05-15)
+
+### What changed
+
+- Added `firebase-tools` as a dev dependency so `npx firebase ...` resolves to the deploy CLI instead of the Firebase app SDK.
+- Reauthenticated the Firebase CLI and deployed `firestore.rules` to project `garam-masala-9f15b`.
+
+### Files affected
+
+- `package.json`
+- `package-lock.json`
+- `CHANGELOG.md`
+
+---
+
 ## content(events): normalize event city and state labels (2026-05-15)
 
 ### What changed

@@ -1,5 +1,20 @@
 # Changelog
 
+## fix(api): keep lead capture routes server-side (2026-05-15)
+
+### What changed
+
+- Marked the lead capture and phone update API routes as non-prerendered so Vercel deploys them as server handlers.
+- Fixes production `405 Method Not Allowed` responses from `/api/capture-lead`.
+
+### Files affected
+
+- `src/pages/api/capture-lead.ts`
+- `src/pages/api/update-lead.ts`
+- `CHANGELOG.md`
+
+---
+
 ## fix(footer): keep featured city links visible (2026-05-15)
 
 ### What changed

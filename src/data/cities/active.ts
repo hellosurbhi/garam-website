@@ -258,8 +258,8 @@ export const activeCities: Record<string, CityData> = {
     metaDescription:
       "The live South Asian dating show is now in the Bay Area. Real dates on stage, real people in the room. Grab tickets for the next San Francisco show.",
     h1: "The Bay Area Has 400K South Asians. The Dating Show Has Finally Arrived.",
-    status: "active",
-    badgeLabel: "Tickets Available",
+    status: "coming-soon",
+    badgeLabel: "Coming Soon",
     bodyParagraphs: [
       "The Bay Area has more South Asian professionals per square mile than almost anywhere outside of South Asia. The dating scene looks exactly like you would expect: everyone is on the apps, everyone is also always working, and the one IRL event you attended was a networking mixer that should have been an email.",
       "Garam Masala Dating is now running shows in San Francisco. Real singles volunteer for live dates on stage while a packed room watches it unfold. Before and after, the whole crowd mingles. It is part comedy, part dating show, part social event. The format that sells out in New York every few weeks.",
@@ -270,6 +270,7 @@ export const activeCities: Record<string, CityData> = {
         label: "Apply to Be a Contestant",
         href: "/apply?city=San+Francisco&state=CA",
       },
+      { label: "Join the SF Waitlist", href: "#waitlist" },
     ],
     includeEventSchema: true,
     areaServed: "San Francisco, California",
@@ -367,8 +368,8 @@ export const activeCities: Record<string, CityData> = {
     metaDescription:
       "Garam Masala Dating is now in Philly. Live desi dating show and mixer at Next In Line Comedy. Penn, Drexel, Main Line, Cherry Hill. Grab tickets.",
     h1: "Live Comedy Dating for South Asian Singles in Philly",
-    status: "active",
-    badgeLabel: "Tickets Available",
+    status: "coming-soon",
+    badgeLabel: "Coming Soon",
     bodyParagraphs: [
       "Philadelphia has four major universities, a massive medical community, and a South Asian population that stretches from Center City out to King of Prussia, Exton, and across the bridge into Cherry Hill. Penn, Drexel, Temple, Villanova. The talent pool is deep. The dating scene for desi singles? Not so much.",
       "Garam Masala Dating is now running shows in Philadelphia. Real contestants go on live dates on stage while a packed room watches, reacts, and picks favorites. Before and after, the entire crowd mingles. The format that sells out in New York every few weeks, now in your city.",
@@ -376,6 +377,7 @@ export const activeCities: Record<string, CityData> = {
       "If you want to be on stage instead of in the audience, apply to be a contestant. You already know how to rep your city.",
     ],
     ctas: [
+      { label: "Join the Philly Waitlist", href: "#waitlist" },
       {
         label: "Apply to Be a Contestant",
         href: "/apply?city=Philadelphia&state=PA",

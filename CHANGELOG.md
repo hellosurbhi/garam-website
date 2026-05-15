@@ -1,18 +1,5 @@
 # Changelog
 
-## content(events): add Going Public tagline to SF Jun 25 show (2026-05-15)
-
-### What changed
-
-- Added `tagline: "Going Public"` to the San Francisco Jun 25 event entry. The Eventbrite listing was renamed from "Seed Round" to "Going Public in San Francisco" and this surfaces the branding on event cards across the site (home shows section, tickets page).
-- The Eventbrite URL and event ID are unchanged; the tagline field is the correct place to show event subtitle branding since `EventEntry` has no name/title field.
-
-### Files affected
-
-- `src/data/events.ts`
-
----
-
 ## docs(enhancements): expand admin event management plan (2026-05-15)
 
 ### What changed

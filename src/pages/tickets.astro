@@ -315,6 +315,8 @@ const eventSeriesJsonLd = JSON.stringify({
   <script is:inline define:vars={{ widgetEvents }}>
     (function () {
       if (!widgetEvents.length) return;
+      if (["localhost", "127.0.0.1"].indexOf(window.location.hostname) !== -1)
+        return;
 
       var rootStyle = getComputedStyle(document.documentElement);
       var brandColor =

@@ -48,6 +48,7 @@ export const FOOTER_INVOLVED_LINKS: FooterLink[] = [
 ];
 
 export const FOOTER_EXPLORE_LINKS: FooterLink[] = [
+  { label: "Links", href: "/links" },
   { label: "FAQ", href: "/faq" },
   { label: "The Journal", href: "/journal" },
   { label: "Meet the Hosts", href: "/hosts" },

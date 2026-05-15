@@ -37,6 +37,7 @@ export function ApplySuccessPanel() {
 
   useEffect(() => {
     if (showsWithWidget.length === 0) return;
+    if (["localhost", "127.0.0.1"].includes(window.location.hostname)) return;
 
     let orderCompleted = false;
     let modalOpenedAt = 0;

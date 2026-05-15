@@ -1,0 +1,129 @@
+import { describe, it, expect, beforeEach, afterEach, vi } from "vitest";
+
+const { POST } = await import("@/pages/api/capture-lead");
+
+function makeRequest(body: unknown, contentType = "application/json"): Request {
+  return new Request("https://garammasaladating.com/api/capture-lead", {
+    method: "POST",
+    headers: { "Content-Type": contentType },
+    body: JSON.stringify(body),
+  });
+}
+
+function makeContext(request: Request) {
+  return { request } as Parameters<typeof POST>[0];
+}
+
+function firestoreBody(fetchSpy: ReturnType<typeof vi.spyOn>, callIndex = 0) {
+  const init = fetchSpy.mock.calls[callIndex][1] as RequestInit;
+  return JSON.parse(String(init.body)) as {
+    fields: Record<string, { stringValue?: string; doubleValue?: number }>;
+  };
+}
+
+describe("capture-lead handler", () => {
+  beforeEach(() => {
+    vi.restoreAllMocks();
+    import.meta.env.PUBLIC_FIREBASE_PROJECT_ID = "test-project";
+  });
+
+  afterEach(() => {
+    vi.restoreAllMocks();
+    delete import.meta.env.PUBLIC_FIREBASE_PROJECT_ID;
+  });
+
+  it("writes sanitized lead fields including click ids", async () => {
+    const fetchSpy = vi.spyOn(globalThis, "fetch").mockResolvedValue(
+      new Response(
+        JSON.stringify({
+          name: "projects/test-project/databases/(default)/documents/leads/lead123",
+        }),
+        { status: 200 },
+      ),
+    );
+
+    const res = await POST(
+      makeContext(
+        makeRequest({
+          email: " Person@Example.com ",
+          city: " Manhattan ",
+          source: "x".repeat(60),
+          sourcePage: "/cities/manhattan",
+          landingPage: "/",
+          fbclid: "fb-click-id",
+          gclid: "g-click-id",
+          sourceCitySlug: "manhattan",
+          geoLatitude: "40.7128",
+          geoLongitude: "-74.0060",
+        }),
+      ),
+    );
+
+    expect(res.status).toBe(200);
+    expect(await res.json()).toEqual({ ok: true, id: "lead123" });
+
+    const { fields } = firestoreBody(fetchSpy);
+    expect(fields.email.stringValue).toBe("person@example.com");
+    expect(fields.city.stringValue).toBe("Manhattan");
+    expect(fields.source.stringValue).toHaveLength(50);
+    expect(fields.sourcePage.stringValue).toBe("/cities/manhattan");
+    expect(fields.fbclid.stringValue).toBe("fb-click-id");
+    expect(fields.gclid.stringValue).toBe("g-click-id");
+    expect(fields.sourceCitySlug.stringValue).toBe("manhattan");
+    expect(fields.geoLatitude.doubleValue).toBe(40.7128);
+    expect(fields.geoLongitude.doubleValue).toBe(-74.006);
+  });
+
+  it("retries without click ids when deployed Firestore rules reject them", async () => {
+    const fetchSpy = vi
+      .spyOn(globalThis, "fetch")
+      .mockResolvedValueOnce(new Response("rules reject", { status: 403 }))
+      .mockResolvedValueOnce(
+        new Response(
+          JSON.stringify({
+            name: "projects/test-project/databases/(default)/documents/leads/lead456",
+          }),
+          { status: 200 },
+        ),
+      );
+
+    const res = await POST(
+      makeContext(
+        makeRequest({
+          email: "person@example.com",
+          source: "popup",
+          sourcePage: "/",
+          fbclid: "fb-click-id",
+          gclid: "g-click-id",
+        }),
+      ),
+    );
+
+    expect(res.status).toBe(200);
+    expect(await res.json()).toEqual({ ok: true, id: "lead456" });
+    expect(fetchSpy).toHaveBeenCalledTimes(2);
+
+    expect(firestoreBody(fetchSpy, 0).fields.fbclid.stringValue).toBe(
+      "fb-click-id",
+    );
+    expect(firestoreBody(fetchSpy, 1).fields).not.toHaveProperty("fbclid");
+    expect(firestoreBody(fetchSpy, 1).fields).not.toHaveProperty("gclid");
+  });
+
+  it("returns 400 for malformed email before writing to Firestore", async () => {
+    const fetchSpy = vi.spyOn(globalThis, "fetch");
+
+    const res = await POST(
+      makeContext(
+        makeRequest({
+          email: "not-an-email",
+          source: "popup",
+          sourcePage: "/",
+        }),
+      ),
+    );
+
+    expect(res.status).toBe(400);
+    expect(fetchSpy).not.toHaveBeenCalled();
+  });
+});

@@ -82,6 +82,20 @@ describe("bootstrapLeadAttribution", () => {
     expect(sessionStorage.getItem("gmd-utm-term")).toBe("dating");
   });
 
+  it("stores paid click ids from URL", () => {
+    Object.defineProperty(window, "location", {
+      value: {
+        pathname: "/apply",
+        search: "?fbclid=fb-click-id&gclid=g-click-id",
+      },
+      writable: true,
+      configurable: true,
+    });
+    bootstrapLeadAttribution();
+    expect(sessionStorage.getItem("gmd-fbclid")).toBe("fb-click-id");
+    expect(sessionStorage.getItem("gmd-gclid")).toBe("g-click-id");
+  });
+
   it("skips UTM parameters that are not present", () => {
     Object.defineProperty(window, "location", {
       value: { pathname: "/apply", search: "?utm_source=ig" },
@@ -221,6 +235,14 @@ describe("buildLeadAttribution", () => {
     expect(result.utmCampaign).toBe("spring");
     expect(result.utmContent).toBe("bio");
     expect(result.utmTerm).toBe("dating");
+  });
+
+  it("includes paid click ids when present in sessionStorage", () => {
+    sessionStorage.setItem("gmd-fbclid", "fb-click-id");
+    sessionStorage.setItem("gmd-gclid", "g-click-id");
+    const result = buildLeadAttribution({ source: "apply-page" });
+    expect(result.fbclid).toBe("fb-click-id");
+    expect(result.gclid).toBe("g-click-id");
   });
 
   it("omits UTM fields when not in sessionStorage", () => {
@@ -591,6 +613,19 @@ describe("bootstrapLeadAttribution — geo data", () => {
     bootstrapLeadAttribution();
     await new Promise((r) => setTimeout(r, 50));
     expect(sessionStorage.getItem("gmd-geo-city")).toBeNull();
+  });
+
+  it("handles non-json geo response gracefully", async () => {
+    vi.spyOn(globalThis, "fetch").mockResolvedValue(
+      new Response("<!DOCTYPE html>", {
+        status: 200,
+        headers: { "content-type": "text/html" },
+      }),
+    );
+    bootstrapLeadAttribution();
+    await new Promise((r) => setTimeout(r, 50));
+    expect(sessionStorage.getItem("gmd-geo-city")).toBeNull();
+    expect(sessionStorage.getItem("gmd-geo-fetched")).toBe("1");
   });
 
   it("handles geo fetch failure gracefully", async () => {

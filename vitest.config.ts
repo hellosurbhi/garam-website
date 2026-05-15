@@ -15,6 +15,7 @@ export default defineConfig({
       "node_modules/**",
       "tests/smoke/**",
       ".stryker-tmp/**",
+      ".worktrees/**",
       "dist/**",
       "playwright-report/**",
       ".vercel/**",

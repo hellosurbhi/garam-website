@@ -1,5 +1,24 @@
 # Changelog
 
+## fix(leads): route signup forms through hardened lead API (2026-05-14)
+
+### What changed
+
+- Moved the homepage Spice List, homepage popup, city waitlist, city notify, tickets notify, reusable lead modal, and request-city flows off direct client Firestore lead writes and onto `/api/capture-lead` plus `/api/update-lead`.
+- Hardened `/api/capture-lead` to trim and cap submitted fields to the same limits enforced by Firestore rules, including the 50-character `source` limit that can be exceeded by page-specific Spice List attribution.
+- Added `fbclid` and `gclid` support to `/api/capture-lead` and `firestore.rules`, with a server fallback that retries without those click IDs if currently deployed Firestore rules have not been updated yet.
+- Excluded local `.worktrees/**` directories from Vitest and ESLint so auxiliary worktrees and their `node_modules` are not treated as part of this app.
+- Updated Playwright smoke tests to preview `dist/client` with a local static server that preserves extensionless route lookup and redirect behavior.
+- Restored the `/links` destination in the shared footer link data so the public links page remains reachable from the site footer.
+- Hardened best-effort geo attribution against non-JSON responses and stopped local preview from loading PostHog/Eventbrite scripts that cannot run correctly on localhost.
+- Added focused tests for capture-lead sanitization, click-ID fallback, malformed email rejection, and lead attribution click-ID capture.
+
+### Why
+
+Lead submissions could fail with a generic "Something went wrong" when the client payload included attribution fields not accepted by Firestore rules, especially paid click IDs from Facebook/Google traffic. Centralizing writes through the server endpoint keeps popup, waitlist, and Spice List submissions consistent and prevents oversized attribution fields from causing permission-denied errors.
+
+---
+
 ## fix(seo): Google indexing recovery for 328 discovered-not-indexed pages (2026-05-11)
 
 ### What changed

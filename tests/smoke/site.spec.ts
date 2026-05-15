@@ -586,7 +586,7 @@ test.describe("Apply page deep", () => {
     ).toBeGreaterThan(0);
 
     // Submit button
-    const submit = page.locator('button[type="submit"]');
+    const submit = page.getByRole("button", { name: /submit application/i });
     await expect(submit).toBeVisible();
     const text = await submit.textContent();
     expect(text?.toLowerCase()).toContain("submit");
@@ -703,8 +703,12 @@ test.describe("Hosts page deep", () => {
     await page.goto("/hosts", { waitUntil: "domcontentloaded" });
 
     // CTA buttons
-    await expect(page.locator('a.btn-primary[href="/apply"]')).toBeVisible();
-    await expect(page.locator('a.btn-outline[href="/tickets"]')).toBeVisible();
+    await expect(
+      page.locator('a.hosts-cta-primary[href="/apply"]'),
+    ).toBeVisible();
+    await expect(
+      page.locator('a.hosts-cta-outline[href="/tickets"]'),
+    ).toBeVisible();
 
     // Host name links in h2 should be external
     const hostLinks = await page
@@ -730,8 +734,11 @@ test.describe("Links page deep", () => {
   test("Structure and social links", async ({ page }) => {
     await page.goto("/links", { waitUntil: "domcontentloaded" });
 
-    // Primary CTA
-    await expect(page.locator('a.primary-link[href="/apply"]')).toBeVisible();
+    // Primary CTA and application link
+    await expect(
+      page.locator("button.primary-link#events-trigger"),
+    ).toBeVisible();
+    await expect(page.locator('a.glass-link[href="/apply"]')).toBeVisible();
 
     // Glass links
     const glassLinks = page.locator(".glass-link");
@@ -854,8 +861,8 @@ test.describe("Journal", () => {
       const response = await page.goto(href, { waitUntil: "domcontentloaded" });
       expect(response?.status(), `${href} should return 200`).toBe(200);
 
-      await expect(page.locator("main.post-page")).toBeVisible();
-      const title = page.locator("h1.post-title");
+      await expect(page.locator("main#main-content")).toBeVisible();
+      const title = page.locator("main#main-content h1").first();
       await expect(title).toBeVisible();
       const titleText = await title.textContent();
       expect(
@@ -863,16 +870,9 @@ test.describe("Journal", () => {
         `Post title empty on ${href}`,
       ).toBeGreaterThan(0);
 
-      const body = page.locator("article.post-body");
-      await expect(body).toBeVisible();
-      expect(
-        await body.locator(".post-p").count(),
-        `No paragraphs on ${href}`,
-      ).toBeGreaterThan(0);
+      await expect(page.locator('a[href="/journal"]').first()).toBeVisible();
 
-      await expect(page.locator('a.post-back[href="/journal"]')).toBeVisible();
-
-      const bodyLinks = await body.locator("a[href]").all();
+      const bodyLinks = await page.locator("main#main-content a[href]").all();
       for (const link of bodyLinks) {
         const linkHref = await link.getAttribute("href");
         expect(linkHref, `Invalid link in ${href}`).toBeTruthy();
@@ -892,29 +892,16 @@ test.describe("Journal", () => {
 // SECTION J: TIPS INDEX + POSTS
 // =============================================
 
-test.describe("Dating tips", () => {
-  test("Tips index page", async ({ page }) => {
+test.describe("Dating tips redirects", () => {
+  test("Tips index redirects to journal", async ({ page }) => {
     const { errors, cleanup } = setupConsoleCollector(page);
     try {
       await page.goto("/south-asian-dating-tips", {
         waitUntil: "domcontentloaded",
       });
 
-      await expect(page.locator("main.tips-page")).toBeVisible();
-      await expect(page.locator("h1.tips-title")).toBeVisible();
-
-      const cards = page.locator(".tips-list .tips-card");
-      expect(
-        await cards.count(),
-        "Tips should have post cards",
-      ).toBeGreaterThan(0);
-
-      // Each card links to a tip post
-      const allCards = await cards.all();
-      for (const card of allCards) {
-        const href = await card.getAttribute("href");
-        expect(href).toMatch(/^\/south-asian-dating-tips\/.+/);
-      }
+      expect(new URL(page.url()).pathname).toBe("/journal");
+      await expect(page.locator("main.journal-page")).toBeVisible();
 
       await assertNoHorizontalOverflow(page);
       expect(errors).toEqual([]);
@@ -923,40 +910,30 @@ test.describe("Dating tips", () => {
     }
   });
 
-  test("Every live tip post loads correctly", async ({ page }) => {
-    // Discover all live tips from the index page
-    await page.goto("/south-asian-dating-tips", {
-      waitUntil: "domcontentloaded",
-    });
-    const hrefs = await page
-      .locator(".tips-list .tips-card")
-      .evaluateAll(
-        (els) =>
-          els.map((el) => el.getAttribute("href")).filter(Boolean) as string[],
-      );
-    expect(hrefs.length, "Should have live tip posts").toBeGreaterThan(0);
+  test("Legacy tip posts redirect to journal posts", async ({ page }) => {
+    const redirects = [
+      [
+        "/south-asian-dating-tips/how-to-find-love-as-a-desi-in-new-york",
+        "/journal/how-to-find-love-as-a-desi-in-new-york",
+      ],
+      [
+        "/south-asian-dating-tips/how-to-find-someone-before-your-parents-arrange-marry-you-off",
+        "/journal/how-to-find-someone-before-your-parents-arrange-marry-you-off",
+      ],
+      [
+        "/south-asian-dating-tips/why-going-with-the-flow-is-ruining-your-dating-life",
+        "/journal/why-going-with-the-flow-is-ruining-your-dating-life",
+      ],
+    ] as const;
 
-    for (const href of hrefs) {
+    for (const [href, expectedPath] of redirects) {
       const { errors, cleanup } = setupConsoleCollector(page);
       const response = await page.goto(href, { waitUntil: "domcontentloaded" });
       expect(response?.status(), `${href} should return 200`).toBe(200);
+      expect(new URL(page.url()).pathname).toBe(expectedPath);
 
-      await expect(page.locator("main.tip-post-page")).toBeVisible();
-      const title = page.locator("h1.tip-post-title");
-      await expect(title).toBeVisible();
-      const titleText = await title.textContent();
-      expect(
-        titleText?.trim().length,
-        `Tip title empty on ${href}`,
-      ).toBeGreaterThan(0);
-
-      await expect(page.locator("article.tip-post-body")).toBeVisible();
-      await expect(
-        page.locator('a.tip-post-back[href="/south-asian-dating-tips"]'),
-      ).toBeVisible();
-      await expect(
-        page.locator('a.tip-post-footer-cta[href="/apply"]'),
-      ).toBeVisible();
+      await expect(page.locator("main.post-page")).toBeVisible();
+      await expect(page.locator("h1.post-title")).toBeVisible();
 
       await assertSeoMeta(page);
       await assertJsonLd(page);

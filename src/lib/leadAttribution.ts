@@ -79,11 +79,24 @@ interface GeoResponse {
   timezone?: string;
 }
 
+async function readGeoResponse(res: Response): Promise<GeoResponse | null> {
+  if (!res.ok) return null;
+
+  const contentType = res.headers.get("content-type") ?? "";
+  if (contentType.includes("text/html")) return null;
+
+  try {
+    return (await res.json()) as GeoResponse;
+  } catch {
+    return null;
+  }
+}
+
 function bootstrapGeoData() {
   if (sessionStorage.getItem(GEO_FETCHED_KEY)) return;
 
   fetch("/api/geo")
-    .then((res) => (res.ok ? (res.json() as Promise<GeoResponse>) : null))
+    .then(readGeoResponse)
     .then((geo) => {
       if (!geo) return;
       if (geo.city) sessionStorage.setItem(GEO_CITY_KEY, geo.city);
@@ -93,9 +106,13 @@ function bootstrapGeoData() {
       if (geo.longitude)
         sessionStorage.setItem(GEO_LONGITUDE_KEY, geo.longitude);
       if (geo.timezone) sessionStorage.setItem(GEO_TIMEZONE_KEY, geo.timezone);
-      sessionStorage.setItem(GEO_FETCHED_KEY, "1");
     })
-    .catch(console.error);
+    .catch(() => {
+      // Geo attribution is best-effort; lead capture should never surface it.
+    })
+    .finally(() => {
+      sessionStorage.setItem(GEO_FETCHED_KEY, "1");
+    });
 }
 
 /**

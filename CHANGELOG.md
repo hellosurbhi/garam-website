@@ -1,5 +1,19 @@
 # Changelog
 
+## content(copy): restore almost sold out and remove new dates announced (2026-05-15)
+
+### What changed
+
+- Restored `Almost sold out` for the first event subtitle.
+- Replaced `New dates announced` with a sales-focused line so the event copy stays useful without sounding awkward.
+
+### Files affected
+
+- `src/data/copy.ts`
+- `CHANGELOG.md`
+
+---
+
 ## content(copy): make event card subtitles more sales focused (2026-05-15)
 
 ### What changed

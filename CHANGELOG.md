@@ -1,5 +1,34 @@
 # Changelog
 
+## feat(seo): IndexNow sitemap ping after every deploy (2026-05-15)
+
+### What changed
+
+- Added `scripts/ping-indexnow.mjs`: reads all URLs from the generated sitemap XML and POSTs them to IndexNow after every build. Bing and other IndexNow-compatible engines are notified immediately on deploy.
+- Added `public/053daf33e1f144f28143394db082d4b7.txt`: IndexNow key verification file served at `garammasaladating.com/053daf33e1f144f28143394db082d4b7.txt`.
+- Added `postbuild` npm script so the ping runs automatically after `astro build`.
+- Changed `vercel.json` `buildCommand` from `astro build` to `npm run build` so Vercel triggers the `postbuild` hook.
+- Handles Vercel's generated sitemap location under `dist/client` so the postbuild hook pings the deployed sitemap instead of skipping.
+- Limits automatic pings to production Vercel builds, with `INDEXNOW_DRY_RUN=1` available for local verification.
+
+### Why
+
+Google deprecated their sitemap ping endpoint in January 2023. No search engine was being notified when new articles were published. Sitemap was regenerated on every deploy but search engines only discovered new URLs on their own crawl schedule. IndexNow provides an automated post-deploy notification path.
+
+### Note on Google
+
+Google does not officially support IndexNow. For Google indexing, the sitemap at `https://garammasaladating.com/sitemap-index.xml` must be submitted once in Google Search Console. After that, Google re-crawls it on its own schedule. IndexNow data shared by Bing may also benefit Google indirectly.
+
+### Files affected
+
+- `scripts/ping-indexnow.mjs` (new)
+- `public/053daf33e1f144f28143394db082d4b7.txt` (new)
+- `package.json`
+- `vercel.json`
+- `CHANGELOG.md`
+
+---
+
 ## fix(api): keep lead capture routes server-side (2026-05-15)
 
 ### What changed

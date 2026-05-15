@@ -53,6 +53,13 @@ Always implement the industry best-practice, sustainable fix. Never apply a shor
 - All imports, patterns, and conventions must be consistent across the entire codebase. One file doing something differently is not acceptable.
 - Ask "what would a senior engineer do for a production app?" not "what's the quickest fix?"
 
+## Branch safety
+
+- Never commit or push while on `main` or `master`.
+- Before `git add`, `git commit`, or `git push`, check `git branch --show-current`.
+- If the current branch is `main` or `master`, create or switch to a feature branch first.
+- Do not use `main` or `master` as a working branch for implementation work.
+
 ## Aesthetic choices: intentional, never revert
 
 This site was designed by a professional front-end designer. Every aesthetic decision is deliberate. Code review (CodeRabbit or otherwise) must **never** change these without explicit instruction:

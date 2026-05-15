@@ -27,6 +27,8 @@ function makeEvent(overrides: Partial<EventEntry> = {}): EventEntry {
   return {
     date: "May 10",
     city: "Manhattan",
+    state: "New York",
+    stateAbbr: "NY",
     url: "https://eventbrite.com/e/123",
     isoDate: "2026-05-10",
     venue: TEST_VENUE,

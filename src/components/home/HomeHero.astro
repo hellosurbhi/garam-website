@@ -1,6 +1,7 @@
 ---
 import type { EventEntry } from "@/data/events";
 import { buildTicketUrl } from "@/utils/eventUrl";
+import { formatEventLocation } from "@/utils/eventCity";
 
 interface Props {
   ticketsUrl: string;
@@ -47,6 +48,7 @@ function getHeroCity(city: string): string {
     {
       heroEvents.map((event) => {
         const isSoldOut = event.soldOut ?? false;
+        const cityLabel = formatEventLocation(event);
         const pillInner = (
           <>
             <span class="next-show-pill-date">
@@ -55,7 +57,7 @@ function getHeroCity(city: string): string {
             <span class="next-show-pill-sep" aria-hidden="true">
               ·
             </span>
-            <span>{getHeroCity(event.city)}</span>
+            <span>{getHeroCity(cityLabel)}</span>
             <span class="next-show-pill-sep" aria-hidden="true">
               ·
             </span>
@@ -77,7 +79,7 @@ function getHeroCity(city: string): string {
             data-iso-date={event.isoDate}
             data-start-time={event.startTime ?? "20:00"}
             data-end-time={event.endTime ?? "22:00"}
-            data-city={event.city}
+            data-city={cityLabel}
             data-ph-section="hero"
             data-ph-price={event.price}
             data-ph-event-date={event.date}
@@ -94,6 +96,7 @@ function getHeroCity(city: string): string {
             data-iso-date={event.isoDate}
             data-start-time={event.startTime ?? "20:00"}
             data-end-time={event.endTime ?? "22:00"}
+            data-city={cityLabel}
           >
             {pillInner}
           </a>

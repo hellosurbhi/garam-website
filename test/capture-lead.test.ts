@@ -110,6 +110,64 @@ describe("capture-lead handler", () => {
     expect(firestoreBody(fetchSpy, 1).fields).not.toHaveProperty("gclid");
   });
 
+  it("syncs successful leads to Kit without changing the response", async () => {
+    import.meta.env.KIT_API_SECRET = "kit-secret";
+    const fetchSpy = vi
+      .spyOn(globalThis, "fetch")
+      .mockResolvedValueOnce(
+        new Response(
+          JSON.stringify({
+            name: "projects/test-project/databases/(default)/documents/leads/lead789",
+          }),
+          { status: 200 },
+        ),
+      )
+      .mockResolvedValueOnce(new Response("{}", { status: 200 }));
+
+    const res = await POST(
+      makeContext(
+        makeRequest({
+          email: "person@example.com",
+          city: "San Francisco",
+          source: "city-page",
+          sourcePage: "/cities/san-francisco",
+          landingPage: "/",
+          utmSource: "instagram",
+          utmMedium: "social",
+          utmCampaign: "spring",
+        }),
+      ),
+    );
+
+    expect(res.status).toBe(200);
+    expect(await res.json()).toEqual({ ok: true, id: "lead789" });
+    expect(fetchSpy).toHaveBeenCalledTimes(2);
+
+    expect(fetchSpy.mock.calls[1][0]).toBe(
+      "https://api.kit.com/v4/subscribers",
+    );
+    const kitInit = fetchSpy.mock.calls[1][1] as RequestInit;
+    const kitBody = JSON.parse(String(kitInit.body)) as {
+      email_address: string;
+      tags: string[];
+      fields: Record<string, string>;
+    };
+    expect(kitBody.email_address).toBe("person@example.com");
+    expect(kitBody.tags).toEqual([
+      "website-lead",
+      "san-francisco",
+      "instagram",
+    ]);
+    expect(kitBody.fields).toMatchObject({
+      city: "San Francisco",
+      source_page: "/cities/san-francisco",
+      landing_page: "/",
+      utm_source: "instagram",
+      utm_medium: "social",
+      utm_campaign: "spring",
+    });
+  });
+
   it("returns 400 for malformed email before writing to Firestore", async () => {
     const fetchSpy = vi.spyOn(globalThis, "fetch");
 

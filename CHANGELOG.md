@@ -1,5 +1,39 @@
 # Changelog
 
+## feat(analytics): merge revenue dashboard with current main (2026-05-15)
+
+### What changed
+
+- Added the admin Analytics tab with revenue KPIs, charts, lead funnel metrics, channel attribution, application status metrics, and a manual Eventbrite sync action.
+- Added Firestore-backed analytics infrastructure: Eventbrite order sync, order and sync metadata types, service-account Firestore access, analytics API aggregation, and authenticated sync endpoints for manual or external scheduled runs.
+- Added Kit subscriber sync after successful lead capture, plus a CRON_SECRET-protected backfill endpoint that reads Firestore leads with service-account credentials.
+- Preserved current `main` lead-capture hardening, click-id support, IndexNow deploy pings, city/event content, smoke-test setup, and Firebase tooling while integrating the analytics branch.
+- Restricted analytics and manual order sync Firebase-token access to UIDs listed in `ADMIN_UIDS`; external job access still uses `CRON_SECRET`.
+
+### Files affected
+
+- `src/components/admin/AnalyticsDashboard.tsx`
+- `src/pages/api/analytics.ts`
+- `src/pages/api/sync-orders.ts`
+- `src/pages/api/sync-leads-to-kit.ts`
+- `src/pages/api/capture-lead.ts`
+- `src/lib/eventbrite.ts`
+- `src/lib/firestoreAdmin.ts`
+- `src/lib/kit.ts`
+- `src/types/analytics.ts`
+- `firestore.rules`
+- `vercel.json`
+- `.env.example`
+
+### Required environment
+
+- `ADMIN_UIDS`: comma-separated Firebase Auth UIDs allowed to view analytics and manually sync orders.
+- `EVENTBRITE_API_TOKEN`: Eventbrite private API token for order sync.
+- `KIT_API_SECRET`: Kit API secret for lead subscriber sync.
+- `CRON_SECRET`: bearer token for external scheduled jobs and Kit backfill endpoints.
+
+---
+
 ## feat(seo): IndexNow sitemap ping after every deploy (2026-05-15)
 
 ### What changed

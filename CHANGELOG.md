@@ -1,5 +1,17 @@
 # Changelog
 
+## content: add Gen Zenophobic podcast URL (2026-05-15)
+
+### What changed
+
+- Added YouTube URL to the Gen Zenophobic press entry in `src/data/press.ts` so the podcast is now a clickable link in the press section.
+
+### Files affected
+
+- `src/data/press.ts`
+
+---
+
 ## feat(analytics): merge revenue dashboard with current main (2026-05-15)
 
 ### What changed

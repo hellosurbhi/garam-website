@@ -1,6 +1,8 @@
 import type { APIRoute } from "astro";
 import { validateEmail } from "@/utils/validateEmail";
 
+export const prerender = false;
+
 interface LeadPayload {
   email: string;
   phone?: string;

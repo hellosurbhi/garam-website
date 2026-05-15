@@ -1,7 +1,7 @@
 export const prerender = false;
 
 import type { APIRoute } from "astro";
-import { verifyIdToken } from "@/lib/verifyToken";
+import { verifyAdminToken } from "@/lib/verifyToken";
 import { getFirestoreAccessToken } from "@/lib/firestoreAdmin";
 import { events } from "@/data/events";
 import type {
@@ -190,7 +190,7 @@ function computeCutoff(period: AnalyticsSnapshot["period"]): Date | null {
 
 export const GET: APIRoute = async ({ request, url }) => {
   const authHeader = request.headers.get("authorization") ?? "";
-  const uid = await verifyIdToken(authHeader);
+  const uid = await verifyAdminToken(authHeader);
 
   if (!uid) {
     return new Response(JSON.stringify({ error: "Unauthorized" }), {

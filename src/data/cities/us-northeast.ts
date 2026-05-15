@@ -118,65 +118,6 @@ export const usNortheastCities: Record<string, CityData> = {
     ],
   },
 
-  philadelphia: {
-    slug: "philadelphia",
-    displayName: "Philadelphia",
-    titleTag: "Philly Desi Singles Night",
-    metaDescription:
-      "Garam Masala Dating is coming to Philly. Live desi dating show and mixer. Penn, Drexel, Main Line, Cherry Hill. Join the waitlist.",
-    h1: "Live Comedy Dating for South Asian Singles in Philly",
-    status: "coming-soon",
-    badgeLabel: "Coming Soon",
-    bodyParagraphs: [
-      "Philadelphia has four major universities, a massive medical community, and a South Asian population that stretches from Center City out to King of Prussia, Exton, and across the bridge into Cherry Hill. Penn, Drexel, Temple, Villanova. The talent pool is deep. The dating scene for desi singles? Not so much.",
-      "The show that sells out in New York every few weeks: real contestants go on live dates on stage while a packed room watches, reacts, and picks favorites. Before and after, the entire crowd mingles. People actually meet. It works, and Philly is getting its own version.",
-      "Philly is a train ride from NYC, and plenty of people from the area have already made the trip to see the show. But you shouldn't have to take Amtrak to find a room full of single South Asians who are actually looking to meet someone. The community here is big enough and concentrated enough to support its own show.",
-      "The King of Prussia and Main Line suburbs are full of young Indian professionals. Cherry Hill on the Jersey side has had a South Asian community for decades. And the university crowd in West Philly and University City turns over every year, which means there are always new people who need a way in.",
-      "We're putting together the Philly show. Join the waitlist for first access to tickets, or apply to be a contestant. You already know how to rep your city. Now do it on stage.",
-    ],
-    ctas: [
-      { label: "Join the Philly Waitlist", href: "#waitlist" },
-      {
-        label: "Apply to Be a Contestant",
-        href: "/apply?city=Philadelphia&state=PA",
-      },
-    ],
-    includeEventSchema: false,
-    areaServed: "Philadelphia, Pennsylvania",
-    addressLocality: "Philadelphia",
-    addressRegion: "PA",
-    addressCountry: "US",
-    region: "US Northeast",
-    nearbyCities: [
-      "edison",
-      "manhattan",
-      "jersey-city",
-      "baltimore",
-      "pittsburgh",
-    ],
-    communityStats:
-      "Philadelphia's South Asian community spans Penn, Drexel, Temple, and the Main Line suburbs out to King of Prussia and Cherry Hill",
-    relatedArticleSlugs: [
-      "guide-to-indian-dating-culture-america",
-      "comedy-dating-show-unique-date-idea",
-      "first-gen-indian-american-dating",
-    ],
-    faqItems: [
-      {
-        q: "When is Garam Masala Dating coming to Philadelphia?",
-        a: "No date confirmed yet. Philly is a priority market for fall 2026. Join the waitlist for presale access and casting priority.",
-      },
-      {
-        q: "Will the show be in Center City or the suburbs?",
-        a: "Venue TBD. We are looking at spaces accessible to both the city and the Main Line. Waitlist members will be first to know.",
-      },
-      {
-        q: "Can I apply to be on the show before a Philly date is announced?",
-        a: "Yes. Apply now. Applications stay active for 12 months and Philadelphia applicants will be prioritized when we confirm a date.",
-      },
-    ],
-  },
-
   boston: {
     slug: "boston",
     displayName: "Boston",

@@ -2,6 +2,8 @@ import type { APIRoute } from "astro";
 import { validateEmail } from "@/utils/validateEmail";
 import { addKitSubscriber, type KitSubscriberFields } from "@/lib/kit";
 
+export const prerender = false;
+
 interface LeadPayload {
   email: string;
   phone?: string;
@@ -25,6 +27,35 @@ interface LeadPayload {
   geoLatitude?: number | string;
   geoLongitude?: number | string;
   geoTimezone?: string;
+}
+
+type FirestoreValue = { stringValue?: string; doubleValue?: number };
+type FirestoreFields = Record<string, FirestoreValue>;
+
+function normalizedString(value: unknown, maxLength: number): string {
+  return typeof value === "string" ? value.trim().slice(0, maxLength) : "";
+}
+
+function addStringField(
+  fields: FirestoreFields,
+  key: string,
+  value: unknown,
+  maxLength: number,
+) {
+  const normalized = normalizedString(value, maxLength);
+  if (normalized) fields[key] = { stringValue: normalized };
+}
+
+async function createLeadDocument(
+  projectId: string,
+  fields: FirestoreFields,
+): Promise<Response> {
+  const url = `https://firestore.googleapis.com/v1/projects/${projectId}/databases/(default)/documents/leads`;
+  return fetch(url, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ fields }),
+  });
 }
 
 export const POST: APIRoute = async ({ request }) => {
@@ -69,49 +100,31 @@ export const POST: APIRoute = async ({ request }) => {
   }
 
   const now = new Date().toISOString();
-  const fields: Record<string, { stringValue?: string; doubleValue?: number }> =
-    {
-      email: { stringValue: email },
-      createdAt: { stringValue: now },
-    };
+  const fields: FirestoreFields = {
+    email: { stringValue: email },
+    createdAt: { stringValue: now },
+  };
 
   // Add optional fields
-  if (body.phone) fields.phone = { stringValue: body.phone };
-  if (body.city) fields.city = { stringValue: body.city };
-  if (body.source) fields.source = { stringValue: body.source };
-  if (body.sourcePage) fields.sourcePage = { stringValue: body.sourcePage };
-  if (body.landingPage) fields.landingPage = { stringValue: body.landingPage };
-  if (body.referrerHost)
-    fields.referrerHost = { stringValue: body.referrerHost };
-  if (body.utmSource) fields.utmSource = { stringValue: body.utmSource };
-  if (body.utmMedium) fields.utmMedium = { stringValue: body.utmMedium };
-  if (body.utmCampaign) fields.utmCampaign = { stringValue: body.utmCampaign };
-  if (body.utmContent) fields.utmContent = { stringValue: body.utmContent };
-  if (body.utmTerm) fields.utmTerm = { stringValue: body.utmTerm };
-  if (body.sourceCitySlug)
-    fields.sourceCitySlug = { stringValue: body.sourceCitySlug };
-  if (body.fbclid) fields.fbclid = { stringValue: body.fbclid };
-  if (body.gclid) fields.gclid = { stringValue: body.gclid };
-  if (body.posthogDistinctId)
-    fields.posthogDistinctId = { stringValue: body.posthogDistinctId };
-  const geoCity =
-    typeof body.geoCity === "string" ? body.geoCity.trim().slice(0, 100) : "";
-  if (geoCity) fields.geoCity = { stringValue: geoCity };
-  const geoRegion =
-    typeof body.geoRegion === "string"
-      ? body.geoRegion.trim().slice(0, 100)
-      : "";
-  if (geoRegion) fields.geoRegion = { stringValue: geoRegion };
-  const geoCountry =
-    typeof body.geoCountry === "string"
-      ? body.geoCountry.trim().slice(0, 100)
-      : "";
-  if (geoCountry) fields.geoCountry = { stringValue: geoCountry };
-  const geoTimezone =
-    typeof body.geoTimezone === "string"
-      ? body.geoTimezone.trim().slice(0, 100)
-      : "";
-  if (geoTimezone) fields.geoTimezone = { stringValue: geoTimezone };
+  addStringField(fields, "phone", body.phone, 20);
+  addStringField(fields, "city", body.city, 100);
+  addStringField(fields, "source", body.source ?? "lead-capture", 50);
+  addStringField(fields, "sourcePage", body.sourcePage ?? "/", 200);
+  addStringField(fields, "landingPage", body.landingPage, 200);
+  addStringField(fields, "referrerHost", body.referrerHost, 255);
+  addStringField(fields, "utmSource", body.utmSource, 100);
+  addStringField(fields, "utmMedium", body.utmMedium, 100);
+  addStringField(fields, "utmCampaign", body.utmCampaign, 150);
+  addStringField(fields, "utmContent", body.utmContent, 150);
+  addStringField(fields, "utmTerm", body.utmTerm, 150);
+  addStringField(fields, "fbclid", body.fbclid, 500);
+  addStringField(fields, "gclid", body.gclid, 500);
+  addStringField(fields, "posthogDistinctId", body.posthogDistinctId, 200);
+  addStringField(fields, "sourceCitySlug", body.sourceCitySlug, 100);
+  addStringField(fields, "geoCity", body.geoCity, 100);
+  addStringField(fields, "geoRegion", body.geoRegion, 100);
+  addStringField(fields, "geoCountry", body.geoCountry, 100);
+  addStringField(fields, "geoTimezone", body.geoTimezone, 100);
   const lat =
     typeof body.geoLatitude === "number"
       ? body.geoLatitude
@@ -128,12 +141,14 @@ export const POST: APIRoute = async ({ request }) => {
   }
 
   try {
-    const url = `https://firestore.googleapis.com/v1/projects/${projectId}/databases/(default)/documents/leads`;
-    const res = await fetch(url, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ fields }),
-    });
+    let res = await createLeadDocument(projectId, fields);
+
+    if (!res.ok && (fields.fbclid || fields.gclid)) {
+      const fallbackFields = { ...fields };
+      delete fallbackFields.fbclid;
+      delete fallbackFields.gclid;
+      res = await createLeadDocument(projectId, fallbackFields);
+    }
 
     if (!res.ok) {
       const errText = await res.text();

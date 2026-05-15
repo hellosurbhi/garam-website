@@ -6,6 +6,7 @@ import { pressItems } from "@/data/press";
 import { SOCIAL_URLS } from "@/data/socials";
 import { buildBreadcrumbJsonLd } from "@/utils/breadcrumbs";
 import { buildTicketUrl } from "@/utils/eventUrl";
+import { formatEventLocation } from "@/utils/eventCity";
 import { PAGES } from "@/data/copy";
 
 const TITLE = "Tickets, Shows & More";
@@ -203,6 +204,7 @@ const reversedPress = [...pressItems].reverse();
             {upcomingEvents.map((event) => {
               const hasLink = event.url && event.url !== "#";
               const isSoldOut = event.soldOut ?? false;
+              const cityLabel = formatEventLocation(event);
               const ticketIcon = (
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
@@ -230,9 +232,9 @@ const reversedPress = [...pressItems].reverse();
                     id={`eventbrite-widget-modal-trigger-${event.eventbriteId}`}
                     class="event-link"
                     data-eb-url={buildTicketUrl(event.url, "links", "modal")}
-                    data-city={event.city}
+                    data-city={cityLabel}
                   >
-                    <span class="event-city">{event.city}</span>
+                    <span class="event-city">{cityLabel}</span>
                     <div class="event-date-group">
                       <span class="event-date">{event.date}</span>
                       {ticketIcon}
@@ -247,7 +249,7 @@ const reversedPress = [...pressItems].reverse();
                   rel="noopener noreferrer"
                   class="event-link"
                 >
-                  <span class="event-city">{event.city}</span>
+                  <span class="event-city">{cityLabel}</span>
                   <div class="event-date-group">
                     <span class="event-date">{event.date}</span>
                     {ticketIcon}
@@ -255,7 +257,7 @@ const reversedPress = [...pressItems].reverse();
                 </a>
               ) : (
                 <div class="event-tba">
-                  <span class="event-city">{event.city}</span>
+                  <span class="event-city">{cityLabel}</span>
                   <span class="event-date-muted">{event.date}</span>
                 </div>
               );

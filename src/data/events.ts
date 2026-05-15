@@ -10,6 +10,8 @@ export interface EventVenue {
 export interface EventEntry {
   date: string;
   city: string;
+  state: string;
+  stateAbbr: string;
   citySlug?: string; // Stable slug matching src/data/cities key (e.g. "manhattan")
   url: string;
   hidden?: boolean;
@@ -41,10 +43,30 @@ const VENUE_LAUGH_TOUR: EventVenue = {
   addressCountry: "US",
 };
 
+const VENUE_FAIGHT_COLLECTIVE: EventVenue = {
+  name: "The Faight Collective",
+  streetAddress: "473A Haight St",
+  addressLocality: "San Francisco",
+  addressRegion: "CA",
+  postalCode: "94117",
+  addressCountry: "US",
+};
+
+const VENUE_NEXT_IN_LINE: EventVenue = {
+  name: "Next In Line Comedy",
+  streetAddress: "1025 Hamilton Street",
+  addressLocality: "Philadelphia",
+  addressRegion: "PA",
+  postalCode: "19123",
+  addressCountry: "US",
+};
+
 export const events: EventEntry[] = [
   {
     date: "Feb 22",
-    city: "Manhattan, New York",
+    city: "Manhattan",
+    state: "New York",
+    stateAbbr: "NY",
     citySlug: "manhattan",
     url: "https://www.eventbrite.com/e/garam-masala-dating-a-belated-valentines-day-tickets-1982103088695",
     isoDate: "2026-02-22",
@@ -56,6 +78,8 @@ export const events: EventEntry[] = [
   {
     date: "Mar 7",
     city: "San Diego",
+    state: "California",
+    stateAbbr: "CA",
     citySlug: "san-diego",
     url: "https://www.eventbrite.com/e/garam-masala-dating-live-in-san-diego-tickets-1983622967694",
     isoDate: "2026-03-07",
@@ -71,7 +95,9 @@ export const events: EventEntry[] = [
   },
   {
     date: "Mar 15",
-    city: "Manhattan, New York",
+    city: "Manhattan",
+    state: "New York",
+    stateAbbr: "NY",
     citySlug: "manhattan",
     url: "https://www.eventbrite.com/e/garam-masala-dating-st-patricks-day-tickets-1982103088695",
     isoDate: "2026-03-15",
@@ -83,6 +109,8 @@ export const events: EventEntry[] = [
   {
     date: "Apr 4",
     city: "Chicago",
+    state: "Illinois",
+    stateAbbr: "IL",
     citySlug: "chicago",
     url: "https://www.eventbrite.com/e/saturday-april-4-garam-masala-dating-tickets-1983144430376",
     hidden: true,
@@ -99,7 +127,9 @@ export const events: EventEntry[] = [
   },
   {
     date: "Apr 19",
-    city: "Manhattan, New York",
+    city: "Manhattan",
+    state: "New York",
+    stateAbbr: "NY",
     citySlug: "manhattan",
     url: "https://www.eventbrite.com/e/garam-masala-dating-420-blazin-in-love-tickets-1985330936274",
     isoDate: "2026-04-19",
@@ -112,7 +142,9 @@ export const events: EventEntry[] = [
   },
   {
     date: "May 3",
-    city: "Jersey City, New Jersey",
+    city: "Jersey City",
+    state: "New Jersey",
+    stateAbbr: "NJ",
     citySlug: "jersey-city",
     url: "https://www.eventbrite.com/e/garam-masala-dating-show-jersey-city-edition-tickets-1986100570270",
     isoDate: "2026-05-03",
@@ -125,23 +157,22 @@ export const events: EventEntry[] = [
   {
     date: "May 10",
     city: "San Francisco",
+    state: "California",
+    stateAbbr: "CA",
     citySlug: "san-francisco",
     url: "https://www.eventbrite.com/e/garam-masala-dating-show-san-francisco-tickets-1988516311818",
     isoDate: "2026-05-10",
     startTime: "18:30",
     endTime: "20:30",
-    venue: {
-      name: "The Faight Collective",
-      addressLocality: "San Francisco",
-      addressRegion: "CA",
-      addressCountry: "US",
-    },
+    venue: VENUE_FAIGHT_COLLECTIVE,
     price: "15",
     eventbriteId: "1988516311818",
   },
   {
     date: "Jun 21",
-    city: "Manhattan, New York",
+    city: "Manhattan",
+    state: "New York",
+    stateAbbr: "NY",
     citySlug: "manhattan",
     url: "https://www.eventbrite.com/e/garam-masala-dating-show-pride-edition-tickets-1987763579375",
     isoDate: "2026-06-21",
@@ -151,15 +182,59 @@ export const events: EventEntry[] = [
     price: "15",
     eventbriteId: "1987763579375",
   },
+  {
+    date: "Jun 25",
+    city: "San Francisco",
+    state: "California",
+    stateAbbr: "CA",
+    citySlug: "san-francisco",
+    url: "https://www.eventbrite.com/e/garam-masala-comedy-dating-show-san-francisco-seed-round-tickets-1989633237573",
+    isoDate: "2026-06-25",
+    startTime: "18:30",
+    endTime: "20:30",
+    venue: VENUE_FAIGHT_COLLECTIVE,
+    price: "15",
+    eventbriteId: "1989633237573",
+  },
+  {
+    date: "Jul 12",
+    city: "Philadelphia",
+    state: "Pennsylvania",
+    stateAbbr: "PA",
+    citySlug: "philadelphia",
+    url: "https://www.eventbrite.com/e/garam-masala-1-desi-dating-show-tickets-1989618938805",
+    isoDate: "2026-07-12",
+    startTime: "19:30",
+    endTime: "21:30",
+    venue: VENUE_NEXT_IN_LINE,
+    price: "15",
+    eventbriteId: "1989618938805",
+  },
 ];
 
 // Only show TBA entries for cities with active tour planning (not all 200+ expansion pages).
 // These slugs appear as TBA cards on the tickets page and home shows section.
-const TBA_CITIES = ["Los Angeles", "San Diego"];
+const TBA_CITIES = [
+  {
+    city: "Los Angeles",
+    state: "California",
+    stateAbbr: "CA",
+    citySlug: "los-angeles",
+  },
+  {
+    city: "San Diego",
+    state: "California",
+    stateAbbr: "CA",
+    citySlug: "san-diego",
+  },
+];
 
 const comingSoonEvents: EventEntry[] = TBA_CITIES.map((city) => ({
   date: "TBA",
-  city,
+  city: city.city,
+  state: city.state,
+  stateAbbr: city.stateAbbr,
+  citySlug: city.citySlug,
   url: "",
   tagline: "Coming soon",
 }));

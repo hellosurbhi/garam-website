@@ -1,5 +1,7 @@
 import type { APIRoute } from "astro";
 
+export const prerender = false;
+
 interface UpdatePayload {
   id: string;
   phone: string;
@@ -24,7 +26,11 @@ export const POST: APIRoute = async ({ request }) => {
     });
   }
 
-  if (!body.id || !body.phone) {
+  const id = typeof body.id === "string" ? body.id.trim() : "";
+  const phone =
+    typeof body.phone === "string" ? body.phone.trim().slice(0, 20) : "";
+
+  if (!id || !phone) {
     return new Response(JSON.stringify({ error: "id and phone required" }), {
       status: 400,
       headers: { "Content-Type": "application/json" },
@@ -33,19 +39,22 @@ export const POST: APIRoute = async ({ request }) => {
 
   const projectId = import.meta.env.PUBLIC_FIREBASE_PROJECT_ID;
   if (!projectId) {
-    return new Response(JSON.stringify({ error: "Server configuration error" }), {
-      status: 500,
-      headers: { "Content-Type": "application/json" },
-    });
+    return new Response(
+      JSON.stringify({ error: "Server configuration error" }),
+      {
+        status: 500,
+        headers: { "Content-Type": "application/json" },
+      },
+    );
   }
 
   try {
-    const url = `https://firestore.googleapis.com/v1/projects/${projectId}/databases/(default)/documents/leads/${body.id}?updateMask.fieldPaths=phone`;
+    const url = `https://firestore.googleapis.com/v1/projects/${projectId}/databases/(default)/documents/leads/${id}?updateMask.fieldPaths=phone`;
     const res = await fetch(url, {
       method: "PATCH",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
-        fields: { phone: { stringValue: body.phone } },
+        fields: { phone: { stringValue: phone } },
       }),
     });
 
@@ -62,9 +71,9 @@ export const POST: APIRoute = async ({ request }) => {
       headers: { "Content-Type": "application/json" },
     });
   } catch {
-    return new Response(
-      JSON.stringify({ error: "Server error" }),
-      { status: 500, headers: { "Content-Type": "application/json" } },
-    );
+    return new Response(JSON.stringify({ error: "Server error" }), {
+      status: 500,
+      headers: { "Content-Type": "application/json" },
+    });
   }
 };

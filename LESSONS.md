@@ -1,5 +1,21 @@
 # Lessons
 
+## Never work or push directly on `main` or `master`
+
+**What went wrong:** The branch was used for commits and pushes while it was still named `main`.
+
+**Why:** That makes it too easy to publish incomplete or risky work from the default branch.
+
+**Rule:** Always create or switch to a feature branch before committing or pushing implementation work. Check the current branch first, and stop if it is `main` or `master`.
+
+## Keep enhancement backlog items as documentation until explicitly asked to build
+
+**What went wrong:** After being asked to continue, I treated a high-priority `ENHANCEMENTS.md` backlog item as permission to start implementation work.
+
+**Why:** A backlog item marked "Needs implementation" describes future work, but it is not the same as a direct build request.
+
+**Rule:** When the visible task is an enhancement plan, update the planning document only unless the user explicitly asks to implement the feature. If the request is ambiguous, confirm the intended scope before starting code changes.
+
 ## Never focus the close button when opening a modal
 
 **What went wrong:** `NotifyModal.astro` and `LegalModal.astro` called `.focus()` on the close button immediately after `showModal()`. This triggered `:focus-visible` and showed the brand-red focus ring on the X button every time a modal opened.

@@ -256,15 +256,14 @@ export const activeCities: Record<string, CityData> = {
     displayName: "San Francisco",
     titleTag: "SF Bay Area Desi Dating Show",
     metaDescription:
-      "The live South Asian dating show has arrived in the Bay Area. Real dates on stage, real people in the room. Grab tickets for the next San Francisco show.",
+      "The live South Asian dating show is now in the Bay Area. Real dates on stage, real people in the room. Grab tickets for the next San Francisco show.",
     h1: "The Bay Area Has 400K South Asians. The Dating Show Has Finally Arrived.",
     status: "coming-soon",
     badgeLabel: "Coming Soon",
     bodyParagraphs: [
-      "New York has been doing this for over a year. Now it is the Bay Area's turn.",
       "The Bay Area has more South Asian professionals per square mile than almost anywhere outside of South Asia. The dating scene looks exactly like you would expect: everyone is on the apps, everyone is also always working, and the one IRL event you attended was a networking mixer that should have been an email.",
-      "Garam Masala Dating is bringing its live format to San Francisco. Real singles volunteer for live dates on stage while a packed room watches it unfold. Before and after, the whole crowd mingles. It is part comedy, part dating show, part social event. The format that sells out in New York every few weeks.",
-      "Shows are at The Faight Collective in San Francisco. Grab tickets for the next one below. If you want to be on stage instead of in the audience, apply to be a contestant.",
+      "Garam Masala Dating is now running shows in San Francisco. Real singles volunteer for live dates on stage while a packed room watches it unfold. Before and after, the whole crowd mingles. It is part comedy, part dating show, part social event. The format that sells out in New York every few weeks.",
+      "Shows are at The Faight Collective on Haight Street in San Francisco. Grab tickets for the next one below. If you want to be on stage instead of in the audience, apply to be a contestant.",
     ],
     ctas: [
       {
@@ -273,11 +272,12 @@ export const activeCities: Record<string, CityData> = {
       },
       { label: "Join the SF Waitlist", href: "#waitlist" },
     ],
-    includeEventSchema: false,
+    includeEventSchema: true,
     areaServed: "San Francisco, California",
     addressLocality: "San Francisco",
     addressRegion: "CA",
     addressCountry: "US",
+    venueName: "The Faight Collective",
     region: "US West",
     nearbyCities: [
       "san-jose",
@@ -295,16 +295,16 @@ export const activeCities: Record<string, CityData> = {
     ],
     faqItems: [
       {
-        q: "When is Garam Masala Dating coming to San Francisco?",
-        a: "We are actively planning our Bay Area debut. Join the waitlist for presale access and casting priority when a date is confirmed.",
+        q: "How often does Garam Masala Dating run in San Francisco?",
+        a: "We are actively adding SF show dates. Check the tickets section on this page for the latest dates at The Faight Collective on Haight Street.",
       },
       {
-        q: "Will the show be in SF or the South Bay?",
-        a: "TBD. We are evaluating venues across SF, the South Bay, and the East Bay. Waitlist members will be first to know.",
+        q: "Where is the San Francisco show held?",
+        a: "At The Faight Collective, 473A Haight St, San Francisco. Doors open 30 minutes before showtime.",
       },
       {
         q: "I work in tech. Can I apply to be on the show?",
-        a: "Absolutely. Apply now. Bay Area applicants will be prioritized for the Bay Area show.",
+        a: "Absolutely. Apply now and select San Francisco as your preferred city. Bay Area applicants are prioritized for SF show dates.",
       },
     ],
   },
@@ -357,6 +357,65 @@ export const activeCities: Record<string, CityData> = {
       {
         q: "Can I apply to be a contestant before a date is announced?",
         a: "Yes. Apply now. Applications stay active for 12 months and SLC applicants will be prioritized when we confirm a date.",
+      },
+    ],
+  },
+
+  philadelphia: {
+    slug: "philadelphia",
+    displayName: "Philadelphia",
+    titleTag: "Philly Desi Singles Night",
+    metaDescription:
+      "Garam Masala Dating is now in Philly. Live desi dating show and mixer at Next In Line Comedy. Penn, Drexel, Main Line, Cherry Hill. Grab tickets.",
+    h1: "Live Comedy Dating for South Asian Singles in Philly",
+    status: "coming-soon",
+    badgeLabel: "Coming Soon",
+    bodyParagraphs: [
+      "Philadelphia has four major universities, a massive medical community, and a South Asian population that stretches from Center City out to King of Prussia, Exton, and across the bridge into Cherry Hill. Penn, Drexel, Temple, Villanova. The talent pool is deep. The dating scene for desi singles? Not so much.",
+      "Garam Masala Dating is now running shows in Philadelphia. Real contestants go on live dates on stage while a packed room watches, reacts, and picks favorites. Before and after, the entire crowd mingles. The format that sells out in New York every few weeks, now in your city.",
+      "Shows are at Next In Line Comedy, 1025 Hamilton Street in Philadelphia. Grab tickets for the next one below. The King of Prussia and Main Line suburbs, Cherry Hill, University City, Center City: everyone is welcome and the room is exactly what you think it is.",
+      "If you want to be on stage instead of in the audience, apply to be a contestant. You already know how to rep your city.",
+    ],
+    ctas: [
+      { label: "Join the Philly Waitlist", href: "#waitlist" },
+      {
+        label: "Apply to Be a Contestant",
+        href: "/apply?city=Philadelphia&state=PA",
+      },
+    ],
+    includeEventSchema: true,
+    areaServed: "Philadelphia, Pennsylvania",
+    addressLocality: "Philadelphia",
+    addressRegion: "PA",
+    addressCountry: "US",
+    venueName: "Next In Line Comedy",
+    region: "US Northeast",
+    nearbyCities: [
+      "edison",
+      "manhattan",
+      "jersey-city",
+      "baltimore",
+      "pittsburgh",
+    ],
+    communityStats:
+      "Philadelphia's South Asian community spans Penn, Drexel, Temple, and the Main Line suburbs out to King of Prussia and Cherry Hill",
+    relatedArticleSlugs: [
+      "guide-to-indian-dating-culture-america",
+      "comedy-dating-show-unique-date-idea",
+      "first-gen-indian-american-dating",
+    ],
+    faqItems: [
+      {
+        q: "Where is the Philadelphia show held?",
+        a: "At Next In Line Comedy, 1025 Hamilton Street, Philadelphia, PA 19123. Check the tickets section on this page for the latest show dates.",
+      },
+      {
+        q: "Will the show be in Center City or the suburbs?",
+        a: "Next In Line Comedy on Hamilton Street is accessible from Center City, University City, and the surrounding neighborhoods. The Main Line and Cherry Hill are a short drive.",
+      },
+      {
+        q: "How do I apply to be a contestant for the Philly show?",
+        a: "Apply on our apply page and select Philadelphia as your preferred city. Philadelphia applicants are prioritized for Philly show dates.",
       },
     ],
   },

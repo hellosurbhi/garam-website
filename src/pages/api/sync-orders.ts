@@ -1,7 +1,7 @@
 export const prerender = false;
 
 import type { APIRoute } from "astro";
-import { verifyIdToken } from "@/lib/verifyToken";
+import { verifyAdminToken } from "@/lib/verifyToken";
 import { getFirestoreAccessToken } from "@/lib/firestoreAdmin";
 import { fetchEventOrders } from "@/lib/eventbrite";
 import { events } from "@/data/events";
@@ -265,7 +265,7 @@ export const POST: APIRoute = async ({ request }) => {
   }
 
   if (!isAuthorized) {
-    const uid = await verifyIdToken(authHeader);
+    const uid = await verifyAdminToken(authHeader);
     if (uid) isAuthorized = true;
   }
 

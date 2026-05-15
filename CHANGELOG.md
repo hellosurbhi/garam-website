@@ -1,66 +1,252 @@
 # Changelog
 
-## feat(analytics): full analytics platform: Eventbrite sync, Kit email integration, revenue API (2026-05-12)
+## feat(analytics): merge revenue dashboard with current main (2026-05-15)
 
 ### What changed
 
-Complete analytics platform spanning infrastructure, API, and UI. Surbhi can now see revenue, lead-to-ticket conversion, and channel attribution in one place without opening Eventbrite, PostHog, or Firestore separately.
-
-**Backend infrastructure (commits e4a971c through 79fd750):**
-
-- `src/types/analytics.ts`: TypeScript interfaces for the full data model (Order, SyncMeta, AnalyticsSnapshot, RevenueByShow, RevenueByCity, LeadFunnel, ChannelAttribution, ApplicationMetrics, RevenuePoint, RecentLead). Single source of truth shared between API endpoint and dashboard UI.
-- `src/lib/firestoreAdmin.ts`: Google OAuth2 service account auth via jose JWT signing. Exchanges a signed service-account JWT for a short-lived access token scoped to Firestore. Token is cached in memory with a 60s buffer before expiry. Needed because Firestore security rules block unauthenticated server writes.
-- `src/lib/eventbrite.ts`: Paginated Eventbrite API v3 client. Fetches all order pages via continuation tokens, maps to typed Order objects, handles incremental sync via `changed_since`, warns when rate limit drops below 100 remaining.
-- `src/lib/kit.ts`: Kit (ConvertKit) v4 API client. Graceful no-op when `KIT_API_SECRET` is not set. Never throws (lead capture must not fail because of Kit).
-- `src/pages/api/sync-orders.ts`: Vercel Cron endpoint (4-hour schedule). Supports both CRON_SECRET Bearer auth and Firebase ID token auth. Reads syncMeta to get last sync timestamp for incremental fetching, fetches orders for all events that have an `eventbriteId`, matches buyer email against Firestore leads collection to populate `matchedLeadId`, upserts each order to `orders/{orderId}` via Firestore REST PATCH, writes updated syncMeta.
-- `src/pages/api/analytics.ts`: GET endpoint protected by Firebase auth. Period parameter (7d/30d/90d/all). Reads orders, leads, applications, and syncMeta in parallel. Computes: total revenue, per-show revenue, per-city revenue, revenue time series, lead funnel with conversion rate, channel attribution by UTM source, application pipeline status.
-- `src/pages/api/capture-lead.ts`: After Firestore write succeeds, fire-and-forget call to `addKitSubscriber()`. Tags: `website-lead`, city slug, UTM source. Custom fields: city, source page, landing page, UTM params. Kit failure never blocks the response.
-- `src/pages/api/sync-leads-to-kit.ts`: One-time backfill endpoint (CRON_SECRET auth). Paginates all Firestore leads and syncs each to Kit with a `backfill` tag. Returns `{synced, errors}`.
-- Lead capture consolidation: `NotifyModal.astro`, `HomeSignup.astro`, `HomeShows.astro`, `index.astro`, `cities/[slug].astro` — all 8 client-side `addDoc` call sites migrated to fetch `/api/capture-lead`. Every lead now guaranteed to go through Kit sync.
-- `firestore.rules`: `orders` and `syncMeta` collections added — authenticated read, no client write.
-- `vercel.json`: crons config added for `/api/sync-orders` every 4 hours.
-- `.env.example`: `EVENTBRITE_API_TOKEN`, `KIT_API_SECRET`, `CRON_SECRET` documented.
+- Added the admin Analytics tab with revenue KPIs, charts, lead funnel metrics, channel attribution, application status metrics, and a manual Eventbrite sync action.
+- Added Firestore-backed analytics infrastructure: Eventbrite order sync, order and sync metadata types, service-account Firestore access, analytics API aggregation, and Vercel cron config for scheduled syncs.
+- Added Kit subscriber sync after successful lead capture, plus a CRON_SECRET-protected backfill endpoint that reads Firestore leads with service-account credentials.
+- Preserved current `main` lead-capture hardening, click-id support, IndexNow deploy pings, city/event content, smoke-test setup, and Firebase tooling while integrating the analytics branch.
+- Restricted analytics and manual order sync Firebase-token access to UIDs listed in `ADMIN_UIDS`; cron access still uses `CRON_SECRET`.
 
 ### Files affected
 
-`src/types/analytics.ts`, `src/lib/firestoreAdmin.ts`, `src/lib/eventbrite.ts`, `src/lib/kit.ts`, `src/pages/api/sync-orders.ts`, `src/pages/api/analytics.ts`, `src/pages/api/capture-lead.ts`, `src/pages/api/sync-leads-to-kit.ts`, `src/components/NotifyModal.astro`, `src/components/home/HomeSignup.astro`, `src/components/home/HomeShows.astro`, `src/pages/index.astro`, `src/pages/cities/[slug].astro`, `firestore.rules`, `vercel.json`, `.env.example`
+- `src/components/admin/AnalyticsDashboard.tsx`
+- `src/pages/api/analytics.ts`
+- `src/pages/api/sync-orders.ts`
+- `src/pages/api/sync-leads-to-kit.ts`
+- `src/pages/api/capture-lead.ts`
+- `src/lib/eventbrite.ts`
+- `src/lib/firestoreAdmin.ts`
+- `src/lib/kit.ts`
+- `src/types/analytics.ts`
+- `firestore.rules`
+- `vercel.json`
+- `.env.example`
 
-### Actions required before this feature goes live
+### Required environment
 
-1. Eventbrite: generate a private API token in your Eventbrite account settings. Verify with `https://www.eventbriteapi.com/v3/users/me/?token=YOUR_TOKEN`.
-2. Add `eventbriteId` to each event in `src/data/events.ts` (the numeric ID from the Eventbrite event URL).
-3. Kit: get your API secret from Kit account settings.
-4. Set in Vercel: `EVENTBRITE_API_TOKEN`, `KIT_API_SECRET`, `CRON_SECRET` (any secret, e.g. `openssl rand -hex 32`), plus `FIREBASE_ADMIN_CLIENT_EMAIL` and `FIREBASE_ADMIN_PRIVATE_KEY` from the Firebase service account JSON.
-5. First sync: click Sync Now in the admin Analytics tab.
-6. Kit backfill: `POST /api/sync-leads-to-kit` with `Authorization: Bearer YOUR_CRON_SECRET`.
+- `ADMIN_UIDS`: comma-separated Firebase Auth UIDs allowed to view analytics and manually sync orders.
+- `EVENTBRITE_API_TOKEN`: Eventbrite private API token for order sync.
+- `KIT_API_SECRET`: Kit API secret for lead subscriber sync.
+- `CRON_SECRET`: bearer token for Vercel cron and Kit backfill endpoints.
 
 ---
 
-## feat(analytics): add analytics dashboard UI with revenue charts and lead funnel (2026-05-12)
+## feat(seo): IndexNow sitemap ping after every deploy (2026-05-15)
 
 ### What changed
 
-Added the analytics tab to the admin dashboard and built the full `AnalyticsDashboard` React component backed by the `/api/analytics` endpoint.
-
-- `src/components/admin/AdminDashboard.tsx`: Added `activeTab` state (`"applicants" | "analytics"`), tab switcher UI in the header, and conditional rendering so the filters, prep links, applicant list, and modal only appear when the Applicants tab is active. Analytics tab renders `<AnalyticsDashboard />`.
-- `src/components/admin/AdminDashboard.module.css`: Added `.tabs`, `.tab`, `.tab[data-active]`, `.tab:active`, `.tabCount` classes for the tab switcher.
-- `src/components/admin/AdminDashboard.test.tsx`: Updated tests for the new tab UI, including a test that the applicant count badge appears in the tab.
-- `src/components/admin/AnalyticsDashboard.tsx` (new): Full analytics view. Gets Firebase ID token, fetches `/api/analytics?period=7d|30d|90d|all`, shows skeleton loading state, shows period selector and Sync Now button. Renders: KPI metric cards (net revenue, tickets sold, avg ticket price, conversion rate), revenue over time line chart, revenue by show bar chart, revenue by city table, lead funnel with visual bars and source breakdown, recent leads list, channel attribution table, application status breakdown, sync error list.
-- `src/components/admin/AnalyticsDashboard.module.css` (new): Full CSS Module for the analytics dashboard. All static styles extracted here. No inline styles except for dynamic width values on funnel bar fills.
+- Added `scripts/ping-indexnow.mjs`: reads all URLs from the generated sitemap XML and POSTs them to IndexNow after every build. Bing and other IndexNow-compatible engines are notified immediately on deploy.
+- Added `public/053daf33e1f144f28143394db082d4b7.txt`: IndexNow key verification file served at `garammasaladating.com/053daf33e1f144f28143394db082d4b7.txt`.
+- Added `postbuild` npm script so the ping runs automatically after `astro build`.
+- Changed `vercel.json` `buildCommand` from `astro build` to `npm run build` so Vercel triggers the `postbuild` hook.
+- Handles Vercel's generated sitemap location under `dist/client` so the postbuild hook pings the deployed sitemap instead of skipping.
+- Limits automatic pings to production Vercel builds, with `INDEXNOW_DRY_RUN=1` available for local verification.
 
 ### Why
 
-Task 9 of the analytics dashboard feature wave. The backend endpoints (analytics, sync-orders) were already built. This is the UI layer that makes the data visible to the operator.
+Google deprecated their sitemap ping endpoint in January 2023. No search engine was being notified when new articles were published. Sitemap was regenerated on every deploy but search engines only discovered new URLs on their own crawl schedule. IndexNow provides an automated post-deploy notification path.
 
-### Design decisions
+### Note on Google
 
-- Recharts v3 `Tooltip.formatter` and `labelFormatter` prop types use intersection types that are difficult to satisfy directly. Used `NonNullable<TooltipProps["formatter"]>` type aliases with inferred parameters to satisfy the type system without using `any`.
-- Tab switcher uses `data-active` attribute pattern (same as `AdminDashboard`'s existing `data-copied` pattern) rather than separate active/inactive class names for conciseness.
-- All static inline styles moved to CSS Modules classes per project rules.
+Google does not officially support IndexNow. For Google indexing, the sitemap at `https://garammasaladating.com/sitemap-index.xml` must be submitted once in Google Search Console. After that, Google re-crawls it on its own schedule. IndexNow data shared by Bing may also benefit Google indirectly.
 
 ### Files affected
 
-`src/components/admin/AdminDashboard.tsx`, `src/components/admin/AdminDashboard.module.css`, `src/components/admin/AdminDashboard.test.tsx`, `src/components/admin/AnalyticsDashboard.tsx` (new), `src/components/admin/AnalyticsDashboard.module.css` (new), `package.json`, `package-lock.json`
+- `scripts/ping-indexnow.mjs` (new)
+- `public/053daf33e1f144f28143394db082d4b7.txt` (new)
+- `package.json`
+- `vercel.json`
+- `CHANGELOG.md`
+
+---
+
+## fix(api): keep lead capture routes server-side (2026-05-15)
+
+### What changed
+
+- Marked the lead capture and phone update API routes as non-prerendered so Vercel deploys them as server handlers.
+- Fixes production `405 Method Not Allowed` responses from `/api/capture-lead`.
+
+### Files affected
+
+- `src/pages/api/capture-lead.ts`
+- `src/pages/api/update-lead.ts`
+- `CHANGELOG.md`
+
+---
+
+## fix(footer): keep featured city links visible (2026-05-15)
+
+### What changed
+
+- Updated footer show-link generation so featured market links like Los Angeles, San Francisco, and San Diego stay visible even as announced event inventory changes.
+- Preserves announced show links and de-dupes featured cities already present from upcoming events.
+
+### Files affected
+
+- `src/data/footer.ts`
+- `CHANGELOG.md`
+
+---
+
+## chore(firebase): add local Firebase CLI for rules deploys (2026-05-15)
+
+### What changed
+
+- Added `firebase-tools` as a dev dependency so `npx firebase ...` resolves to the deploy CLI instead of the Firebase app SDK.
+- Reauthenticated the Firebase CLI and deployed `firestore.rules` to project `garam-masala-9f15b`.
+
+### Files affected
+
+- `package.json`
+- `package-lock.json`
+- `CHANGELOG.md`
+
+---
+
+## content(events): normalize event city and state labels (2026-05-15)
+
+### What changed
+
+- Split event location data into `city`, full `state`, and `stateAbbr` fields.
+- Added a shared event location formatter so public event cards render `City, State`.
+- Updated tickets, home shows, links, city ticket buttons, apply success tickets, and admin prep labels to use the shared formatter.
+- Added tests that preserve existing labels like `Manhattan, New York`, `Jersey City, New Jersey`, and `Philadelphia, Pennsylvania` while fixing California labels.
+
+### Files affected
+
+- `src/data/events.ts`
+- `src/utils/eventCity.ts`
+- `src/pages/tickets.astro`
+- `src/components/home/HomeShows.astro`
+- `src/components/home/HomeHero.astro`
+- `src/components/apply/ApplySuccessPanel.tsx`
+- `src/components/admin/AdminDashboard.tsx`
+- `src/pages/cities/[slug].astro`
+- `src/pages/links.astro`
+
+---
+
+## content(events): expand San Francisco city label on event cards (2026-05-15)
+
+### What changed
+
+- Updated the San Francisco event entries to display `San Francisco, California` on tickets and show cards.
+
+### Files affected
+
+- `src/data/events.ts`
+- `CHANGELOG.md`
+
+---
+
+## content(copy): restore almost sold out and remove new dates announced (2026-05-15)
+
+### What changed
+
+- Restored `Almost sold out` for the first event subtitle.
+- Replaced `New dates announced` with a sales-focused line so the event copy stays useful without sounding awkward.
+
+### Files affected
+
+- `src/data/copy.ts`
+- `CHANGELOG.md`
+
+---
+
+## content(copy): make event card subtitles more sales focused (2026-05-15)
+
+### What changed
+
+- Replaced the awkward event subtitle sequence with clearer sales-focused copy in `EVENT_TAGLINES`.
+- Kept the event card CTA text unchanged and only updated the supporting submessage line.
+
+### Files affected
+
+- `src/data/copy.ts`
+- `CHANGELOG.md`
+
+---
+
+## docs(process): add branch safety rule to agent instructions (2026-05-15)
+
+### What changed
+
+- Added a root `AGENTS.md` with an explicit branch safety rule.
+- Updated `CLAUDE.md` to forbid committing or pushing on `main` or `master`.
+- Added a lessons note so the branch mistake is recorded and not repeated.
+
+### Files affected
+
+- `AGENTS.md`
+- `CLAUDE.md`
+- `LESSONS.md`
+- `CHANGELOG.md`
+
+---
+
+## docs(enhancements): expand admin event management plan (2026-05-15)
+
+### What changed
+
+- Expanded the Admin Event Management backlog item with a rollout plan, acceptance criteria, and open implementation decisions.
+- Added a planning note that this item should stay documentation-only until implementation is explicitly requested.
+- Recorded the correction in `LESSONS.md` so enhancement backlog items are not treated as build requests.
+
+### Files affected
+
+- `ENHANCEMENTS.md`
+- `LESSONS.md`
+- `CHANGELOG.md`
+
+---
+
+## data(events): add SF Seed Round and Philadelphia shows, fix city page lifecycle (2026-05-15)
+
+### What changed
+
+- Added SF Seed Round show at The Faight Collective on Jun 25, 6:30 to 8:30 PM (eventbriteId 1989633237573)
+- Added Philadelphia show at Next In Line Comedy on Jul 12, 7:30 to 9:30 PM (eventbriteId 1989618938805)
+- Extracted VENUE_FAIGHT_COLLECTIVE and VENUE_NEXT_IN_LINE constants; backfilled streetAddress and postalCode for the existing May 10 SF event
+- Updated SF and Philadelphia city pages: present-tense body copy, venue-specific FAQs, venueName, includeEventSchema enabled
+- Moved Philadelphia from us-northeast.ts to active.ts (spread order in index.ts requires this to avoid us-northeast overwriting active entries)
+- Restored status: "coming-soon" and waitlist CTAs for both SF and Philadelphia after incorrectly setting them to "active" — city page rendering is already event-driven via getUpcomingEventsForCity(), so the status field and hub badge auto-update based on event presence without any manual change
+- Added caveat to STEALER discount code text in apply form and success panel: only valid for Garam Masala produced events, not external promoter events like Next In Line Comedy
+- Added Admin Event Management CRUD feature to ENHANCEMENTS.md
+
+### Files affected
+
+- `src/data/events.ts`
+- `src/data/cities/active.ts`
+- `src/data/cities/us-northeast.ts`
+- `src/components/apply/ApplySuccessPanel.tsx`
+- `src/components/ApplyPage.tsx`
+- `ENHANCEMENTS.md`
+
+### Decisions
+
+- SF and Philadelphia keep status: "coming-soon" because they are touring cities, not recurring venues like Manhattan or Jersey City. The hub page already auto-overrides the badge to "Tickets Available" when events exist, and auto-reverts to "Coming Soon" when they expire via isEventPast().
+- Admin CRUD enhancement logged in ENHANCEMENTS.md as the long-term solution for code-free event management.
+
+## fix(leads): route signup forms through hardened lead API (2026-05-14)
+
+### What changed
+
+- Moved the homepage Spice List, homepage popup, city waitlist, city notify, tickets notify, reusable lead modal, and request-city flows off direct client Firestore lead writes and onto `/api/capture-lead` plus `/api/update-lead`.
+- Hardened `/api/capture-lead` to trim and cap submitted fields to the same limits enforced by Firestore rules, including the 50-character `source` limit that can be exceeded by page-specific Spice List attribution.
+- Added `fbclid` and `gclid` support to `/api/capture-lead` and `firestore.rules`, with a server fallback that retries without those click IDs if currently deployed Firestore rules have not been updated yet.
+- Excluded local `.worktrees/**` directories from Vitest and ESLint so auxiliary worktrees and their `node_modules` are not treated as part of this app.
+- Updated Playwright smoke tests to preview `dist/client` with a local static server that preserves extensionless route lookup and redirect behavior.
+- Restored the `/links` destination in the shared footer link data so the public links page remains reachable from the site footer.
+- Hardened best-effort geo attribution against non-JSON responses and stopped local preview from loading PostHog/Eventbrite scripts that cannot run correctly on localhost.
+- Added focused tests for capture-lead sanitization, click-ID fallback, malformed email rejection, and lead attribution click-ID capture.
+
+### Why
+
+Lead submissions could fail with a generic "Something went wrong" when the client payload included attribution fields not accepted by Firestore rules, especially paid click IDs from Facebook/Google traffic. Centralizing writes through the server endpoint keeps popup, waitlist, and Spice List submissions consistent and prevents oversized attribution fields from causing permission-denied errors.
 
 ---
 

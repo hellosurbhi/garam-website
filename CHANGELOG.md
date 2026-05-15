@@ -1,5 +1,18 @@
 # Changelog
 
+## content(events): expand San Francisco city label on event cards (2026-05-15)
+
+### What changed
+
+- Updated the San Francisco event entries to display `San Francisco, California` on tickets and show cards.
+
+### Files affected
+
+- `src/data/events.ts`
+- `CHANGELOG.md`
+
+---
+
 ## content(copy): restore almost sold out and remove new dates announced (2026-05-15)
 
 ### What changed

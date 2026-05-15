@@ -142,7 +142,7 @@ export const events: EventEntry[] = [
   },
   {
     date: "May 10",
-    city: "San Francisco",
+    city: "San Francisco, California",
     citySlug: "san-francisco",
     url: "https://www.eventbrite.com/e/garam-masala-dating-show-san-francisco-tickets-1988516311818",
     isoDate: "2026-05-10",
@@ -166,7 +166,7 @@ export const events: EventEntry[] = [
   },
   {
     date: "Jun 25",
-    city: "San Francisco",
+    city: "San Francisco, California",
     citySlug: "san-francisco",
     url: "https://www.eventbrite.com/e/garam-masala-comedy-dating-show-san-francisco-seed-round-tickets-1989633237573",
     isoDate: "2026-06-25",

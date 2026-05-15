@@ -136,9 +136,9 @@ export const EVENTS = {
 } as const;
 
 export const EVENT_TAGLINES = {
-  almostSoldOut: "Almost sold out",
-  justAnnounced: "Just announced",
-  cycle: ["On sale now", "Book early", "Grab your spot"],
+  almostSoldOut: "Buy soon, prices go up",
+  justAnnounced: "New dates announced",
+  cycle: ["Tickets on sale now", "Book early", "Grab your spot"],
 } as const;
 
 export const EXPERIENCE_STEPS = [

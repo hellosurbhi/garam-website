@@ -1,5 +1,32 @@
 # Changelog
 
+## data(events): add SF Seed Round and Philadelphia shows, fix city page lifecycle (2026-05-15)
+
+### What changed
+
+- Added SF Seed Round show at The Faight Collective on Jun 25, 6:30 to 8:30 PM (eventbriteId 1989633237573)
+- Added Philadelphia show at Next In Line Comedy on Jul 12, 7:30 to 9:30 PM (eventbriteId 1989618938805)
+- Extracted VENUE_FAIGHT_COLLECTIVE and VENUE_NEXT_IN_LINE constants; backfilled streetAddress and postalCode for the existing May 10 SF event
+- Updated SF and Philadelphia city pages: present-tense body copy, venue-specific FAQs, venueName, includeEventSchema enabled
+- Moved Philadelphia from us-northeast.ts to active.ts (spread order in index.ts requires this to avoid us-northeast overwriting active entries)
+- Restored status: "coming-soon" and waitlist CTAs for both SF and Philadelphia after incorrectly setting them to "active" — city page rendering is already event-driven via getUpcomingEventsForCity(), so the status field and hub badge auto-update based on event presence without any manual change
+- Added caveat to STEALER discount code text in apply form and success panel: only valid for Garam Masala produced events, not external promoter events like Next In Line Comedy
+- Added Admin Event Management CRUD feature to ENHANCEMENTS.md
+
+### Files affected
+
+- `src/data/events.ts`
+- `src/data/cities/active.ts`
+- `src/data/cities/us-northeast.ts`
+- `src/components/apply/ApplySuccessPanel.tsx`
+- `src/components/ApplyPage.tsx`
+- `ENHANCEMENTS.md`
+
+### Decisions
+
+- SF and Philadelphia keep status: "coming-soon" because they are touring cities, not recurring venues like Manhattan or Jersey City. The hub page already auto-overrides the badge to "Tickets Available" when events exist, and auto-reverts to "Coming Soon" when they expire via isEventPast().
+- Admin CRUD enhancement logged in ENHANCEMENTS.md as the long-term solution for code-free event management.
+
 ## fix(leads): route signup forms through hardened lead API (2026-05-14)
 
 ### What changed

@@ -1,5 +1,31 @@
 # Changelog
 
+## fix(seo): fix deriveSeoTitle word boundary bug and add explicit seoTitle overrides (2026-05-15)
+
+### What changed
+
+Fixed three bugs in the `deriveSeoTitle()` algorithm that were causing Google to show raw URLs instead of page titles in search results:
+
+1. **Word boundary detection**: The algorithm always backed up to the previous space boundary even when `title.slice(0,43)` landed exactly on a clean word boundary. This caused "The Realest Way to Meet Desi Singles in NYC" (exactly 43 chars) to lose "NYC" — a critical geo keyword. Fix: check if `title[43]` is a space/paren/punctuation; if so, use the slice as-is.
+2. **Trailing space bug**: When the boundary character was a space, the truncated slice included a trailing space which produced `"Title Word ".split(" ")` = `["Title", "Word", ""]`. Fix: `.trimEnd()` the base before splitting.
+3. **Unclosed parenthetical**: Titles like "How to Get Cast on a Live Dating Show (What We're Looking For)" were producing "How to Get Cast on a Live Dating Show (What" with an unclosed paren. Fix: also strip trailing words starting with "(" in the dangling-word loop.
+
+Added explicit `seoTitle` overrides to 47+ articles across 14 journal data files where the algorithm still could not preserve critical keywords (geo terms, year keywords, important descriptors).
+
+### Files affected
+
+- `src/utils/meta.ts` — three algorithm fixes
+- `src/utils/meta.test.ts` — new test cases for word boundary and paren cases
+- `src/data/journal/core.ts` — 4 seoTitle additions
+- `src/data/journal/cross-cultural.ts` — 9 seoTitle additions
+- `src/data/journal/dating-culture.ts`, `entertainment.ts`, `bollywood.ts`, `seasonal.ts`, `identity.ts`, `matrimony.ts`, `community-singles.ts`, `community-deep-dives.ts`, `caste-class.ts`, `arranged-marriage.ts`, `app-alternatives.ts`, `tips.ts`, `events.ts`, `toxic-patterns.ts` — 38 total seoTitle additions
+
+### Why
+
+The `/journal/the-realest-way-to-meet-desi-singles-in-nyc` article was showing as a raw URL in Google Search Console with no title — caused by the original `deriveSeoTitle` bug producing "The Realest Way to Meet Desi Singles in" (dangling "in"), which Google's quality heuristic replaced with the URL. The May 1 dangling-word fix then stripped "in" but also dropped "NYC". This fix restores "NYC" and addresses the same class of issue across the entire journal.
+
+---
+
 ## fix(footer): keep featured city links visible (2026-05-15)
 
 ### What changed

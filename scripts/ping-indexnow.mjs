@@ -1,18 +1,27 @@
 /**
- * Runs after astro build to notify search engines (Bing/IndexNow) that
- * the sitemap was updated. Reads URLs from the generated sitemap XML so
- * the list is always authoritative. Non-blocking: failures only warn.
+ * Runs after production Vercel builds to notify search engines
+ * (Bing/IndexNow) that the sitemap was updated. Reads URLs from the
+ * generated sitemap XML so the list is always authoritative.
+ * Non-blocking: failures only warn.
  *
  * Bing processes IndexNow submissions and shares data with other engines.
  * Google requires manual sitemap submission in Google Search Console.
  */
 
-import { readFileSync } from "fs";
-import { resolve } from "path";
+import { existsSync, readdirSync, readFileSync } from "fs";
+import { join, resolve } from "path";
 
 const SITE = "https://garammasaladating.com";
 const KEY = "053daf33e1f144f28143394db082d4b7";
 const KEY_LOCATION = `${SITE}/${KEY}.txt`;
+
+function shouldPingIndexNow() {
+  return (
+    process.env.VERCEL_ENV === "production" ||
+    process.env.INDEXNOW_FORCE === "1" ||
+    process.env.INDEXNOW_DRY_RUN === "1"
+  );
+}
 
 function extractUrls(xml) {
   const urls = [];
@@ -26,16 +35,29 @@ function extractUrls(xml) {
   return urls;
 }
 
-async function readSitemap() {
-  const candidates = ["sitemap-0.xml", "sitemap.xml"];
-  for (const name of candidates) {
+function readGeneratedSitemaps() {
+  const outputDirs = [resolve("dist", "client"), resolve("dist")];
+  const sitemapXml = [];
+
+  for (const dir of outputDirs) {
+    if (!existsSync(dir)) {
+      continue;
+    }
+
     try {
-      return readFileSync(resolve("dist", name), "utf8");
+      const sitemapFiles = readdirSync(dir)
+        .filter((name) => /^sitemap(?:-\d+)?\.xml$/.test(name))
+        .sort();
+
+      for (const file of sitemapFiles) {
+        sitemapXml.push(readFileSync(join(dir, file), "utf8"));
+      }
     } catch {
-      // try next
+      // Try the next generated output location.
     }
   }
-  return null;
+
+  return sitemapXml;
 }
 
 async function pingIndexNow(urls) {
@@ -54,19 +76,29 @@ async function pingIndexNow(urls) {
 }
 
 async function main() {
-  const xml = await readSitemap();
-  if (!xml) {
-    console.log("[sitemap-ping] dist/sitemap-0.xml not found — skipping");
+  if (!shouldPingIndexNow()) {
+    console.log("[sitemap-ping] Non-production build — skipping");
     return;
   }
 
-  const urls = extractUrls(xml);
+  const sitemaps = readGeneratedSitemaps();
+  if (sitemaps.length === 0) {
+    console.log("[sitemap-ping] Generated sitemap XML not found — skipping");
+    return;
+  }
+
+  const urls = [...new Set(sitemaps.flatMap(extractUrls))];
   if (urls.length === 0) {
     console.log("[sitemap-ping] No URLs parsed from sitemap — skipping");
     return;
   }
 
   console.log(`[sitemap-ping] Pinging ${urls.length} URLs via IndexNow…`);
+
+  if (process.env.INDEXNOW_DRY_RUN === "1") {
+    console.log("[sitemap-ping] Dry run enabled — not sending request");
+    return;
+  }
 
   try {
     const status = await pingIndexNow(urls);

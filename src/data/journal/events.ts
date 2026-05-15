@@ -4,6 +4,7 @@ export const eventsPosts: JournalPost[] = [
   {
     slug: "how-to-meet-indian-singles-without-apps",
     title: "How to Meet Indian Singles Without Dating Apps",
+    seoTitle: "How to Meet Indian Singles Without Apps",
     metaDescription:
       "Tired of Hinge and Dil Mil? Here's how to meet Indian singles in real life, events, shows, and spaces where desis actually connect.",
     datePublished: "2026-05-23",
@@ -448,6 +449,7 @@ export const eventsPosts: JournalPost[] = [
   {
     slug: "comedy-dating-show-unique-date-idea",
     title: "Why a Live Comedy Dating Show Is the Most Unique Date Idea in 2026",
+    seoTitle: "Live Comedy Dating Show: Best Date Idea",
     metaDescription:
       "Looking for unique date ideas in 2026? The #1 live comedy dating show beats dinner and a movie, here's why 250-person blind dates make the best first date.",
     datePublished: "2026-05-27",

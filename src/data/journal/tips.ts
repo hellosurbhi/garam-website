@@ -65,6 +65,7 @@ export const tipsPosts: JournalPost[] = [
   {
     slug: "how-to-find-someone-before-your-parents-arrange-marry-you-off",
     title: "How to Find Someone Before Your Parents Arrange Marry You Off",
+    seoTitle: "How to Find Love Before Arranged Marriage",
     metaDescription:
       "To find a partner before an arranged marriage, treat your dating life with the same urgency your parents treat your biodata. Here\u2019s how to take control of your timeline.",
     datePublished: "2026-04-02",

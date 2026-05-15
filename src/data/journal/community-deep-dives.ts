@@ -124,6 +124,7 @@ export const communityDeepDivesPosts: JournalPost[] = [
   {
     slug: "marathi-dating-practical-expectations",
     title: "Marathi Dating: Finding Love in the Land of Practical Expectations",
+    seoTitle: "Marathi Dating Culture and Expectations",
     metaDescription:
       "Maharashtrian dating culture decoded, pragmatic family values, community dynamics, and how Marathi singles navigate love between tradition and modern life.",
     datePublished: "2026-07-29",

@@ -112,6 +112,7 @@ export const bollywoodPosts: JournalPost[] = [
   {
     slug: "bollywood-movies-dating-2026",
     title: "Bollywood Movies That Actually Show What Dating Is Like in 2026",
+    seoTitle: "Bollywood Movies About Modern Dating 2026",
     metaDescription:
       "Forget 90s fantasy. These modern Bollywood films actually get what dating looks like now, apps, independence, ambiguity, and choosing yourself.",
     datePublished: "2026-06-15",
@@ -617,6 +618,7 @@ export const bollywoodPosts: JournalPost[] = [
     slug: "bollywood-dating-evolution",
     title:
       "Love Aaj Kal to Rocky Aur Rani: How Bollywood\u2019s Dating Stories Evolved",
+    seoTitle: "Bollywood Dating Stories: How They Evolved",
     metaDescription:
       "From DDLJ's family approval to Gehraiyaan's moral ambiguity, how Bollywood's depiction of South Asian dating changed across three decades.",
     datePublished: "2026-06-20",
@@ -721,6 +723,7 @@ export const bollywoodPosts: JournalPost[] = [
   {
     slug: "bollywood-toxic-heroes-red-flags",
     title: "Bollywood Red Flags: Movies Where the Hero Is Actually Toxic",
+    seoTitle: "Bollywood Red Flags: Toxic Movie Heroes",
     metaDescription:
       "Raanjhanaa, Kabir Singh, Darr, Dabangg, Bollywood heroes with serious red flags we've been calling romance for decades. Let's name them.",
     datePublished: "2026-06-21",
@@ -929,6 +932,7 @@ export const bollywoodPosts: JournalPost[] = [
   {
     slug: "bollywood-finding-love-own-terms",
     title: "The Best Bollywood Movies About Finding Love on Your Own Terms",
+    seoTitle: "Bollywood Films: Finding Love on Your Terms",
     metaDescription:
       "Piku, Queen, Dil Dhadakne Do, Bollywood films where characters choose love on their own terms, without family pressure or the usual scripts.",
     datePublished: "2026-06-23",

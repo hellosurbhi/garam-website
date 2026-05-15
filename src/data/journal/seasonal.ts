@@ -4,6 +4,7 @@ export const seasonalPosts: JournalPost[] = [
   {
     slug: "surviving-shaadi-season-single",
     title: "Surviving Shaadi Season as a Single South Asian",
+    seoTitle: "Surviving Shaadi Season While Single",
     metaDescription:
       "Shaadi season is relentless when you're single. Here's how to survive the aunties, the questions, and maybe even enjoy a desi wedding solo.",
     datePublished: "2026-05-28",

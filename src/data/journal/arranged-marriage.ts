@@ -244,6 +244,7 @@ export const arrangedMarriagePosts: JournalPost[] = [
   {
     slug: "arranged-marriage-red-flags",
     title: "Arranged Marriage Red Flags Your Parents Won't See",
+    seoTitle: "Arranged Marriage Red Flags to Watch For",
     metaDescription:
       "Arranged marriage red flags that look fine on paper: rushed timelines, one-sided enthusiasm, family warning signs, and what to do when you spot them.",
     datePublished: "2026-07-22",
@@ -360,6 +361,7 @@ export const arrangedMarriagePosts: JournalPost[] = [
   {
     slug: "how-to-say-no-arranged-match",
     title: "How to Say No to an Arranged Match Without Starting a Family War",
+    seoTitle: "How to Say No to an Arranged Match",
     metaDescription:
       "Practical scripts and strategies for declining an arranged marriage match respectfully, without lying, without guilt-tripping, and without a family crisis.",
     datePublished: "2026-07-23",
@@ -484,6 +486,7 @@ export const arrangedMarriagePosts: JournalPost[] = [
   {
     slug: "modern-biodata-guide",
     title: "The Modern Biodata: How to Write One That Actually Represents You",
+    seoTitle: "The Modern Biodata: How to Write One",
     metaDescription:
       "How to write a biodata for marriage that goes beyond height and horoscope, what to include, what to skip, and NRI-specific tips for 2026.",
     datePublished: "2026-07-24",
@@ -829,6 +832,7 @@ export const arrangedMarriagePosts: JournalPost[] = [
   {
     slug: "arranged-marriage-success-rates-truth",
     title: "The Uncomfortable Truth About Arranged Marriage Success Rates",
+    seoTitle: "The Truth About Arranged Marriage Success",
     metaDescription:
       "The arranged marriage divorce rate statistic is real, and nearly meaningless. Here is what it actually measures, and what success in marriage really means.",
     datePublished: "2026-07-27",

@@ -5,6 +5,7 @@ export const datingCulturePosts: JournalPost[] = [
     slug: "how-to-tell-indian-parents-about-partner",
     title:
       "How to Tell Your Indian Parents About Your Partner: A Step-by-Step Guide",
+    seoTitle: "Tell Indian Parents About Your Partner",
     metaDescription:
       "Dreading the \"how to tell Indian parents about boyfriend/girlfriend\" conversation? Here's a practical, honest guide from someone who's seen it all.",
     datePublished: "2026-04-25",
@@ -221,6 +222,7 @@ export const datingCulturePosts: JournalPost[] = [
   {
     slug: "dating-on-h1b-visa",
     title: "Dating on an H-1B: Romance When Your Visa Status Is Complicated",
+    seoTitle: "Dating on an H-1B Visa in America",
     metaDescription:
       "Dating on an H-1B visa adds real complications, timing, geography, family pressure, green card math. Here's how to navigate romance when your status is in flux.",
     datePublished: "2026-04-27",
@@ -421,6 +423,7 @@ export const datingCulturePosts: JournalPost[] = [
   {
     slug: "indian-single-at-30-not-behind",
     title: "Indian and Single at 30? You're Not Behind, You're Right on Time",
+    seoTitle: "Indian and Single at 30: Not Behind",
     metaDescription:
       "Indian and single at 30 with everyone asking questions? Here's the honest perspective on dating in your 30s as a South Asian, you are not behind.",
     datePublished: "2026-04-29",
@@ -1021,6 +1024,7 @@ export const datingCulturePosts: JournalPost[] = [
   {
     slug: "dating-outside-culture-south-asian",
     title: "Dating Outside Your Culture as a South Asian: An Honest Guide",
+    seoTitle: "Dating Outside Your Culture as a Desi",
     metaDescription:
       "Interracial dating as a South Asian brings real rewards and real complications. Here's the honest guide to dating outside your culture without losing yourself.",
     datePublished: "2026-05-05",
@@ -1117,6 +1121,7 @@ export const datingCulturePosts: JournalPost[] = [
   {
     slug: "brown-girl-dating-unspoken-rules",
     title: "Brown Girl Dating: The Unspoken Rules Nobody Talks About",
+    seoTitle: "Brown Girl Dating: The Unspoken Rules",
     metaDescription:
       "Brown girl dating has a whole layer of unwritten rules that shape everything from who you date to when you tell your family. Here's the honest breakdown.",
     datePublished: "2026-05-06",
@@ -1209,6 +1214,7 @@ export const datingCulturePosts: JournalPost[] = [
   {
     slug: "brown-guy-dating-why-its-harder",
     title: "Brown Guy Dating: Why It's Harder and What to Do About It",
+    seoTitle: "Brown Guy Dating: Why It's Harder",
     metaDescription:
       "Brown guy dating comes with specific challenges that mainstream dating advice doesn't address. Here's the honest breakdown, and what actually helps.",
     datePublished: "2026-05-07",

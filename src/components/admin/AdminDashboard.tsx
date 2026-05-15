@@ -12,6 +12,7 @@ import { getFirebaseDb, getFirebaseAuth } from "@/lib/firebase";
 import { type Application } from "@/types/application";
 import { adminSelectStyles } from "@/utils/reactSelectStyles";
 import { events } from "@/data/events";
+import { formatEventLocation } from "@/utils/eventCity";
 import Skeleton from "../ui/Skeleton";
 import ApplicantCard from "./ApplicantCard";
 import ApplicantModal from "./ApplicantModal";
@@ -268,7 +269,7 @@ export default function AdminDashboard({ onLogout }: AdminDashboardProps) {
                 return (
                   <div key={event.isoDate} className={styles.prepRow}>
                     <span className={styles.prepEventLabel}>
-                      {event.date}: {event.city}
+                      {event.date}: {formatEventLocation(event)}
                     </span>
                     <button
                       type="button"

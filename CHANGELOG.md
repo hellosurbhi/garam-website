@@ -1,5 +1,28 @@
 # Changelog
 
+## content(events): normalize event city and state labels (2026-05-15)
+
+### What changed
+
+- Split event location data into `city`, full `state`, and `stateAbbr` fields.
+- Added a shared event location formatter so public event cards render `City, State`.
+- Updated tickets, home shows, links, city ticket buttons, apply success tickets, and admin prep labels to use the shared formatter.
+- Added tests that preserve existing labels like `Manhattan, New York`, `Jersey City, New Jersey`, and `Philadelphia, Pennsylvania` while fixing California labels.
+
+### Files affected
+
+- `src/data/events.ts`
+- `src/utils/eventCity.ts`
+- `src/pages/tickets.astro`
+- `src/components/home/HomeShows.astro`
+- `src/components/home/HomeHero.astro`
+- `src/components/apply/ApplySuccessPanel.tsx`
+- `src/components/admin/AdminDashboard.tsx`
+- `src/pages/cities/[slug].astro`
+- `src/pages/links.astro`
+
+---
+
 ## content(events): expand San Francisco city label on event cards (2026-05-15)
 
 ### What changed

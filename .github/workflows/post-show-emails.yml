@@ -5,7 +5,6 @@ name: Post-Show Emails
 on:
   schedule:
     - cron: "0 14 * * *" # 2pm UTC = 9am ET daily
-  workflow_dispatch: {} # Manual trigger from Actions tab
 
 jobs:
   send-emails:

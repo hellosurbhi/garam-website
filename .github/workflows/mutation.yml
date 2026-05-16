@@ -1,13 +1,12 @@
-# Stryker Mutation Testing — manual + monthly
+# Stryker Mutation Testing — monthly
 #
-# Moved off the CI hot path to save GitHub Actions minutes.
-# Run manually from the Actions tab or wait for the monthly cron.
+# Mutation testing is valuable for risky refactors, but it is too expensive for
+# every PR update on a personal-account budget.
 name: Mutation Testing
 
 on:
   schedule:
-    - cron: "0 14 1 * *" # 1st of each month, 2pm UTC
-  workflow_dispatch: {} # Manual trigger from Actions tab
+    - cron: "0 14 1 * *" # 1st of each month, 14:00 UTC
 
 concurrency:
   group: mutation-${{ github.sha }}

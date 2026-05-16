@@ -1,15 +1,13 @@
 # Monthly Article Refresh — updates dateModified for Google freshness signals
 #
-# On the 1st of each month, this workflow updates the dateModified field
-# for published articles whose dateModified is older than 60 days.
-# The commit triggers a Vercel redeploy with fresh structured data.
+# Runs monthly so SEO metadata maintenance is automated, but not tied to every
+# commit or push.
 
 name: Monthly Article Refresh
 
 on:
   schedule:
-    - cron: "0 12 1 * *" # 1st of each month, noon UTC
-  workflow_dispatch: {} # Allow manual trigger
+    - cron: "0 12 1 * *" # 1st of each month, 12:00 UTC
 
 permissions:
   contents: write

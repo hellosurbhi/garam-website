@@ -1,10 +1,3 @@
-# .github/workflows/ci.yml
-#
-# NOTE: These checks run on every PR but do NOT block merges yet.
-# Blocking requires branch protection, which requires GitHub Pro (private repo)
-# or making the repo public. When you're ready:
-#   → Run scripts/setup-branch-protection.sh (instructions inside)
-#
 name: CI
 
 on:
@@ -24,13 +17,7 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  # ==========================================
-  # JOB 1: Lint + Type Check + Tests + Build
-  # One npm ci. Fast fail order: lint → types → tests → build → audit.
-  # ==========================================
-  check:
-    name: Lint, Types, Test, Build
-    runs-on: ubuntu-latest
+  # ===================================    runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v6

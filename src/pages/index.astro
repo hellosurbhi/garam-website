@@ -154,7 +154,7 @@ const speakableJsonLd = JSON.stringify({
   <EventbriteWidgetInit />
 
   <!-- 30-second email popup -->
-  <dialog id="email-popup" class="popup-dialog">
+  <dialog id="email-popup" class="popup-dialog" tabindex="-1">
     <div class="popup-inner">
       <button type="button" class="popup-close" aria-label="Close">
         <svg
@@ -294,6 +294,7 @@ const speakableJsonLd = JSON.stringify({
         sourcePage: window.location.pathname,
       });
       popup.showModal();
+      popup.focus();
       return true;
     }
 
@@ -547,6 +548,9 @@ const speakableJsonLd = JSON.stringify({
     align-items: center;
     justify-content: center;
   }
+  .popup-dialog:focus-visible {
+    outline: none;
+  }
   .popup-inner {
     width: 100%;
     max-width: 400px;
@@ -591,10 +595,15 @@ const speakableJsonLd = JSON.stringify({
     display: flex;
     align-items: center;
     justify-content: center;
-    transition: color 0.2s;
+    transition:
+      color 0.2s,
+      transform 0.06s;
   }
   .popup-close:hover {
     color: var(--charcoal);
+  }
+  .popup-close:active {
+    transform: scale(0.94);
   }
   .popup-title {
     font-family: var(--font-playfair), serif;

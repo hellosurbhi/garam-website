@@ -422,6 +422,46 @@ test.describe("Homepage deep", () => {
     ).toBe(1);
   });
 
+  test("Email popup does not focus the close button on open", async ({
+    page,
+  }) => {
+    await page.addInitScript(() => {
+      let now = 1_000_000;
+      Date.now = () => now;
+      window.localStorage.removeItem("gmd-popup-subscribed");
+      window.localStorage.removeItem("gmd-popup-dismissed");
+      (
+        window as typeof window & { __gmdAdvancePopupClock?: () => void }
+      ).__gmdAdvancePopupClock = () => {
+        now += 16_000;
+      };
+    });
+    await page.goto("/", { waitUntil: "domcontentloaded" });
+
+    await page.evaluate(() => {
+      (
+        window as typeof window & { __gmdAdvancePopupClock?: () => void }
+      ).__gmdAdvancePopupClock?.();
+      window.scrollTo(0, document.documentElement.scrollHeight);
+      window.dispatchEvent(new Event("scroll"));
+    });
+
+    const dialog = page.locator("dialog#email-popup");
+    await expect(dialog).toHaveAttribute("open", { timeout: 3000 });
+
+    const focusedElement = await page.evaluate(() => ({
+      id: document.activeElement?.id,
+      className: document.activeElement?.className,
+      closeButtonFocusVisible:
+        document.querySelector(".popup-close")?.matches(":focus-visible") ??
+        false,
+    }));
+
+    expect(focusedElement.id).toBe("email-popup");
+    expect(focusedElement.className).not.toContain("popup-close");
+    expect(focusedElement.closeButtonFocusVisible).toBe(false);
+  });
+
   test("Nav links are all valid", async ({ page }) => {
     await page.goto("/", { waitUntil: "domcontentloaded" });
 

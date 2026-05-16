@@ -44,6 +44,28 @@ type DashboardTab = "applications" | "analytics" | "contestants";
 
 const PAGE_SIZE = 24;
 
+async function getApplicationsPage(
+  cursor: QueryDocumentSnapshot<DocumentData> | null,
+) {
+  const applicationsRef = collection(getFirebaseDb(), "applications");
+  const appQuery = cursor
+    ? query(
+        applicationsRef,
+        orderBy("submittedAt", "desc"),
+        startAfter(cursor),
+        limit(PAGE_SIZE),
+      )
+    : query(applicationsRef, orderBy("submittedAt", "desc"), limit(PAGE_SIZE));
+  const snap = await getDocs(appQuery);
+  const docs = snap.docs.map((d) => ({ id: d.id, ...d.data() }) as Application);
+
+  return {
+    docs,
+    lastDoc: snap.docs.at(-1) ?? null,
+    hasMore: snap.docs.length === PAGE_SIZE,
+  };
+}
+
 const GENDER_OPTIONS: FilterOption[] = [
   { value: "Man", label: "Man" },
   { value: "Woman", label: "Woman" },
@@ -724,7 +746,7 @@ export default function AdminDashboard({ onLogout }: AdminDashboardProps) {
                   Failed to load applications.
                 </p>
                 <button
-                  onClick={() => fetchApps()}
+                  onClick={() => fetchInitialApps()}
                   className={styles.retryButton}
                 >
                   Try again
@@ -804,7 +826,7 @@ export default function AdminDashboard({ onLogout }: AdminDashboardProps) {
                   <div className={styles.loadMoreRow}>
                     <button
                       type="button"
-                      onClick={() => fetchApps(true)}
+                      onClick={fetchMoreApps}
                       className={styles.loadMoreButton}
                       disabled={loadingMore}
                     >

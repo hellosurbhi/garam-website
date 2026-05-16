@@ -22,6 +22,8 @@ const InviteSchema = z.object({
   role: z.enum(["female", "male"]),
 });
 
+export const prerender = false;
+
 function json(data: Record<string, unknown>, status = 200) {
   return new Response(JSON.stringify(data), {
     status,

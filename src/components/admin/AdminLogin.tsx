@@ -1,5 +1,4 @@
-import type React from "react";
-import { useState, useRef } from "react";
+import { useState, useRef, type SyntheticEvent } from "react";
 import { signInWithEmailAndPassword } from "firebase/auth";
 import { getFirebaseAuth } from "@/lib/firebase";
 import styles from "./AdminLogin.module.css";
@@ -16,7 +15,7 @@ export default function AdminLogin({ onSuccess }: AdminLoginProps) {
   const [loading, setLoading] = useState(false);
   const emailRef = useRef<HTMLInputElement>(null);
 
-  async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
+  async function handleSubmit(e: SyntheticEvent<HTMLFormElement>) {
     e.preventDefault();
     setLoading(true);
     setError("");

@@ -12,6 +12,8 @@ import { ContestantClaimSchema } from "@/lib/schemas";
 
 export const prerender = false;
 
+export const prerender = false;
+
 export const POST: APIRoute = async ({ request }) => {
   const limited = await enforceRateLimit(request, RATE_LIMITS.contestantClaim);
   if (limited) return limited;
@@ -51,7 +53,6 @@ export const POST: APIRoute = async ({ request }) => {
   if (invite.claimed) {
     return jsonResponse({ error: "This invite has already been used" }, 409);
   }
-
   const showDate = typeof invite.showDate === "string" ? invite.showDate : "";
   const showTimezone =
     typeof invite.showTimezone === "string"

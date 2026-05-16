@@ -24,6 +24,15 @@ vi.mock("@/data/events", () => ({
       startTime: "20:00",
       venue: { name: "Test Venue" },
     },
+    {
+      hidden: true,
+      citySlug: "secret",
+      isoDate: "2099-12-31",
+      city: "Secret City",
+      date: "December 31, 2099",
+      startTime: "20:00",
+      venue: { name: "Hidden Venue" },
+    },
   ],
 }));
 
@@ -208,6 +217,37 @@ describe("portal-state GET /api/portal-state", () => {
       const body = await res.json();
       expect(body.state).toBe("error");
       errorSpy.mockRestore();
+    });
+  });
+
+  it("allows per-show links only for visible events", async () => {
+    const res = await GET(
+      makeContext(
+        "",
+        "https://garammasaladating.com/api/portal-state?show=manhattan-2026-06-01&role=female",
+      ),
+    );
+
+    expect(res.status).toBe(200);
+    expect(await readJson(res)).toMatchObject({
+      state: "show-invite",
+      showId: "manhattan-2026-06-01",
+      role: "female",
+    });
+  });
+
+  it("does not expose hidden events through per-show links", async () => {
+    const res = await GET(
+      makeContext(
+        "",
+        "https://garammasaladating.com/api/portal-state?show=secret-city-2026-06-02&role=female",
+      ),
+    );
+
+    expect(res.status).toBe(404);
+    expect(await readJson(res)).toEqual({
+      state: "error",
+      message: "Show not found.",
     });
   });
 });

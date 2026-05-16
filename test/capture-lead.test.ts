@@ -6,6 +6,11 @@ vi.mock("@/lib/rateLimit", async (importOriginal) => {
 });
 
 const { enforceRateLimit } = await import("@/lib/rateLimit");
+
+vi.mock("@/lib/firestoreAdmin", () => ({
+  getFirestoreAccessToken: vi.fn().mockResolvedValue("access-token"),
+}));
+
 const { POST } = await import("@/pages/api/capture-lead");
 
 function makeRequest(
@@ -35,11 +40,14 @@ describe("capture-lead handler", () => {
   beforeEach(() => {
     vi.restoreAllMocks();
     import.meta.env.PUBLIC_FIREBASE_PROJECT_ID = "test-project";
+    import.meta.env.LEAD_UPDATE_SECRET = "test-secret";
   });
 
   afterEach(() => {
     vi.restoreAllMocks();
     delete import.meta.env.PUBLIC_FIREBASE_PROJECT_ID;
+    delete import.meta.env.LEAD_UPDATE_SECRET;
+    delete import.meta.env.KIT_API_SECRET;
   });
 
   it("writes sanitized lead fields including click ids", async () => {
@@ -75,9 +83,17 @@ describe("capture-lead handler", () => {
     );
 
     expect(res.status).toBe(200);
-    expect(await res.json()).toEqual({ ok: true, id: "lead123" });
+    expect(await res.json()).toMatchObject({
+      ok: true,
+      id: "lead123",
+      updateToken: expect.any(String),
+    });
 
     const { fields } = firestoreBody(fetchSpy);
+    expect(fetchSpy.mock.calls[0][1]?.headers).toMatchObject({
+      "Content-Type": "application/json",
+      Authorization: "Bearer access-token",
+    });
     expect(fields.email.stringValue).toBe("person@example.com");
     expect(fields.city.stringValue).toBe("Manhattan");
     expect(fields.source.stringValue).toHaveLength(50);
@@ -106,6 +122,7 @@ describe("capture-lead handler", () => {
           email: "person@example.com",
           source: "popup",
           sourcePage: "/",
+          landingPage: "/",
           fbclid: "fb-click-id",
           gclid: "g-click-id",
         }),
@@ -113,7 +130,11 @@ describe("capture-lead handler", () => {
     );
 
     expect(res.status).toBe(200);
-    expect(await res.json()).toEqual({ ok: true, id: "lead456" });
+    expect(await res.json()).toMatchObject({
+      ok: true,
+      id: "lead456",
+      updateToken: expect.any(String),
+    });
     expect(fetchSpy).toHaveBeenCalledTimes(2);
 
     expect(firestoreBody(fetchSpy, 0).fields.fbclid.stringValue).toBe(
@@ -153,7 +174,11 @@ describe("capture-lead handler", () => {
     );
 
     expect(res.status).toBe(200);
-    expect(await res.json()).toEqual({ ok: true, id: "lead789" });
+    expect(await res.json()).toMatchObject({
+      ok: true,
+      id: "lead789",
+      updateToken: expect.any(String),
+    });
     expect(fetchSpy).toHaveBeenCalledTimes(2);
 
     expect(fetchSpy.mock.calls[1][0]).toBe(

@@ -4,6 +4,7 @@ import { enforceRateLimit, RATE_LIMITS } from "@/lib/rateLimit";
 import { jsonResponse, parseJsonRequest } from "@/lib/http";
 import { LeadPayloadSchema } from "@/lib/schemas";
 import { issueLeadToken } from "@/lib/leadToken";
+import { getFirestoreAccessToken } from "@/lib/firestoreAdmin";
 
 export const prerender = false;
 
@@ -64,11 +65,15 @@ function addNumericHeaderField(
 async function createLeadDocument(
   projectId: string,
   fields: FirestoreFields,
+  accessToken: string,
 ): Promise<Response> {
   const url = `https://firestore.googleapis.com/v1/projects/${projectId}/databases/(default)/documents/leads`;
   return fetch(url, {
     method: "POST",
-    headers: { "Content-Type": "application/json" },
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${accessToken}`,
+    },
     body: JSON.stringify({ fields }),
     signal: AbortSignal.timeout(8000),
   });
@@ -86,20 +91,18 @@ export const POST: APIRoute = async ({ request }) => {
     // Silently succeed so basic bots do not learn the honeypot field name.
     return jsonResponse({ ok: true });
   }
-  const email = body.email.toLowerCase();
 
-  // Build Firestore document via REST API (no firebase-admin dependency)
   const projectId = import.meta.env.PUBLIC_FIREBASE_PROJECT_ID;
   if (!projectId) {
     return jsonResponse({ error: "Server configuration error" }, 500);
   }
 
+  const email = body.email.toLowerCase();
   const now = new Date().toISOString();
-  const fields: Record<string, { stringValue?: string; doubleValue?: number }> =
-    {
-      email: { stringValue: email },
-      createdAt: { stringValue: now },
-    };
+  const fields: FirestoreFields = {
+    email: { stringValue: email },
+    createdAt: { stringValue: now },
+  };
 
   // Add optional fields
   addStringField(fields, "phone", body.phone, 20);
@@ -138,16 +141,15 @@ export const POST: APIRoute = async ({ request }) => {
   );
 
   try {
-    const url = `https://firestore.googleapis.com/v1/projects/${projectId}/databases/(default)/documents/leads`;
-    const controller = new AbortController();
-    const timeout = setTimeout(() => controller.abort(), 5000);
-    const res = await fetch(url, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ fields }),
-      signal: controller.signal,
-    });
-    clearTimeout(timeout);
+    const accessToken = await getFirestoreAccessToken();
+    let res = await createLeadDocument(projectId, fields, accessToken);
+
+    if (!res.ok && (fields.fbclid || fields.gclid)) {
+      const fallbackFields = { ...fields };
+      delete fallbackFields.fbclid;
+      delete fallbackFields.gclid;
+      res = await createLeadDocument(projectId, fallbackFields, accessToken);
+    }
 
     if (!res.ok) {
       const errText = await res.text();
@@ -155,12 +157,13 @@ export const POST: APIRoute = async ({ request }) => {
       return jsonResponse({ error: "Failed to save lead" }, 500);
     }
 
-    const doc = await res.json();
+    const doc = (await res.json()) as { name?: string };
     const docId = doc.name?.split("/").pop() ?? "";
     if (!docId) {
       console.error("[capture-lead] Missing docId in Firestore response");
       return jsonResponse({ error: "Failed to create lead" }, 500);
     }
+
     const updateToken = issueLeadToken(docId);
 
     // Sync to Kit — fire-and-forget, never blocks the response

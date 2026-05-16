@@ -12,6 +12,8 @@ import { StageWaiverSchema } from "@/lib/schemas";
 import { verifyPortalToken } from "@/lib/portalToken";
 import { fsGet, fsAdd, fsPatch } from "@/lib/firestoreRest";
 
+export const prerender = false;
+
 export const POST: APIRoute = async ({ request }) => {
   const limited = await enforceRateLimit(request, RATE_LIMITS.stageWaiver);
   if (limited) return limited;

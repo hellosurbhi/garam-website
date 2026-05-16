@@ -1,5 +1,6 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
 import { renderHook, act } from "@testing-library/react";
+import type { ChangeEvent, SyntheticEvent } from "react";
 
 /* ─── Mocks ──────────────────────────────────────────────────────── */
 
@@ -69,13 +70,13 @@ function makeChangeEvent(file?: File) {
       files: file ? [file] : [],
       value: file ? "C:\\fake\\photo.jpg" : "",
     },
-  } as unknown as React.ChangeEvent<HTMLInputElement>;
+  } as unknown as ChangeEvent<HTMLInputElement>;
 }
 
 function makeSubmitEvent() {
   return {
     preventDefault: vi.fn(),
-  } as unknown as React.FormEvent<HTMLFormElement>;
+  } as unknown as SyntheticEvent<HTMLFormElement>;
 }
 
 /** Fill all required fields so validation passes. */
@@ -164,7 +165,7 @@ describe("useApplyForm", () => {
     act(() =>
       result.current.handleCityInputChange({
         target: { value: "Mumbai" },
-      } as React.ChangeEvent<HTMLInputElement>),
+      } as ChangeEvent<HTMLInputElement>),
     );
     expect(result.current.cityInput).toBe("Mumbai");
     expect(result.current.form.city).toBe("Mumbai");
@@ -179,7 +180,7 @@ describe("useApplyForm", () => {
     act(() =>
       result.current.handleCityInputChange({
         target: { value: "Mumbai" },
-      } as React.ChangeEvent<HTMLInputElement>),
+      } as ChangeEvent<HTMLInputElement>),
     );
     expect(result.current.form.state).toBe("");
     expect(result.current.form.country).toBe("");
@@ -195,7 +196,7 @@ describe("useApplyForm", () => {
     act(() =>
       result.current.handleCityInputChange({
         target: { value: "NYC" },
-      } as React.ChangeEvent<HTMLInputElement>),
+      } as ChangeEvent<HTMLInputElement>),
     );
     expect(result.current.errors.city).toBeUndefined();
     expect(result.current.errors.name).toBe("Required");

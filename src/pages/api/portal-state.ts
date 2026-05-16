@@ -67,7 +67,10 @@ export const GET: APIRoute = async ({ request }) => {
     }
     const event = events.find(
       (e) =>
-        e.citySlug && e.isoDate && `${e.citySlug}-${e.isoDate}` === showId,
+        !e.hidden &&
+        e.citySlug &&
+        e.isoDate &&
+        `${e.citySlug}-${e.isoDate}` === showId,
     );
     if (!event || !event.isoDate) {
       return json({ state: "error", message: "Show not found." }, 404);

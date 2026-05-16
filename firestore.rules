@@ -140,6 +140,17 @@ service cloud.firestore {
       allow update: if validPhoneUpdate() || isAdmin();
       allow read, delete: if isAdmin();
     }
+    match /invites/{doc} {
+      allow read, write: if request.auth != null;
+    }
+    match /contestants/{doc} {
+      allow create: if false; // server-only via Admin SDK claim endpoints
+      allow read, update, delete: if request.auth != null;
+    }
+    match /stage_waivers/{doc} {
+      allow create: if false; // server-only via Admin SDK stage-waiver endpoint
+      allow read, update, delete: if request.auth != null;
+    }
     match /orders/{orderId} {
       allow read: if isAdmin();
       allow write: if false; // server-only via REST API with service account

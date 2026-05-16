@@ -11,11 +11,13 @@ interface Invite {
   applicantName: string;
   applicantEmail: string;
   showId: string;
+  showDate?: string;
   role: string;
-  status: "pending" | "claimed" | "expired";
+  claimed?: boolean;
   createdAt?: { seconds: number };
-  portalLink?: string;
 }
+
+type InviteStatus = "pending" | "claimed" | "expired";
 
 export default function ContestantsTab() {
   const [invites, setInvites] = useState<Invite[]>([]);
@@ -66,7 +68,13 @@ export default function ContestantsTab() {
     return showId;
   }
 
-  function getStatusColor(status: Invite["status"]): string {
+  function getInviteStatus(invite: Invite): InviteStatus {
+    if (invite.claimed) return "claimed";
+    if (invite.showDate && invite.showDate < today) return "expired";
+    return "pending";
+  }
+
+  function getStatusColor(status: InviteStatus): string {
     switch (status) {
       case "pending":
         return "var(--color-status-pending)";
@@ -146,42 +154,45 @@ export default function ContestantsTab() {
               </tr>
             </thead>
             <tbody>
-              {filteredInvites.map((invite) => (
-                <tr key={invite.id} className={styles.row}>
-                  <td className={styles.td}>
-                    <div className={styles.nameCell}>
-                      <span className={styles.inviteName}>
-                        {invite.applicantName}
-                      </span>
-                      {invite.applicantEmail && (
-                        <span className={styles.inviteEmail}>
-                          {invite.applicantEmail}
+              {filteredInvites.map((invite) => {
+                const status = getInviteStatus(invite);
+                return (
+                  <tr key={invite.id} className={styles.row}>
+                    <td className={styles.td}>
+                      <div className={styles.nameCell}>
+                        <span className={styles.inviteName}>
+                          {invite.applicantName}
                         </span>
-                      )}
-                    </div>
-                  </td>
-                  <td className={styles.td}>
-                    <span className={styles.roleTag}>{invite.role}</span>
-                  </td>
-                  <td className={styles.td}>
-                    <span className={styles.showLabel}>
-                      {getShowLabel(invite.showId)}
-                    </span>
-                  </td>
-                  <td className={styles.td}>
-                    <span
-                      className={styles.statusBadge}
-                      style={
-                        {
-                          "--status-color": getStatusColor(invite.status),
-                        } as React.CSSProperties
-                      }
-                    >
-                      {invite.status}
-                    </span>
-                  </td>
-                </tr>
-              ))}
+                        {invite.applicantEmail && (
+                          <span className={styles.inviteEmail}>
+                            {invite.applicantEmail}
+                          </span>
+                        )}
+                      </div>
+                    </td>
+                    <td className={styles.td}>
+                      <span className={styles.roleTag}>{invite.role}</span>
+                    </td>
+                    <td className={styles.td}>
+                      <span className={styles.showLabel}>
+                        {getShowLabel(invite.showId)}
+                      </span>
+                    </td>
+                    <td className={styles.td}>
+                      <span
+                        className={styles.statusBadge}
+                        style={
+                          {
+                            "--status-color": getStatusColor(status),
+                          } as React.CSSProperties
+                        }
+                      >
+                        {status}
+                      </span>
+                    </td>
+                  </tr>
+                );
+              })}
             </tbody>
           </table>
         </div>

@@ -91,6 +91,7 @@ function fillRequired(
   set("orientation", "Straight");
   set("city", "New York");
   set("email", "jane@example.com");
+  set("phone", "(212) 555-1234");
   set("instagram", "janedoe");
   set("marketingConsent", "yes");
   handleTermsCheckbox(true);
@@ -277,6 +278,7 @@ describe("useApplyForm", () => {
     expect(result.current.errors.orientation).toBe("Required");
     expect(result.current.errors.city).toBe("Required");
     expect(result.current.errors.email).toBe("Email is required");
+    expect(result.current.errors.phone).toBe("Enter a valid phone number");
     expect(result.current.errors.instagram).toBe("Required");
     expect(result.current.errors.photo).toBe("A photo is required");
     expect(result.current.errors.marketingConsent).toBe(
@@ -551,6 +553,25 @@ describe("useApplyForm", () => {
     expect(docData.photoUrls).toEqual(["https://example.com/photo.jpg"]);
   });
 
+  it("submit stores normalized phone in Firestore doc", async () => {
+    const { result } = renderHook(() => useApplyForm());
+
+    act(() =>
+      fillRequired(
+        result.current.set,
+        result.current.handleTermsCheckbox,
+        result.current.handlePhotoChange,
+      ),
+    );
+
+    await act(async () => {
+      await result.current.handleSubmit(makeSubmitEvent());
+    });
+
+    const docData = mockAddDoc.mock.calls[0][1];
+    expect(docData.phone).toBe("+12125551234");
+  });
+
   /* ── handleSubmit error flow ──────────────────────────── */
 
   it("submit failure shows error toast", async () => {
@@ -726,6 +747,7 @@ describe("useApplyForm", () => {
     expect(form.country).toBe("");
     expect(form.state).toBe("");
     expect(form.city).toBe("");
+    expect(form.phone).toBe("");
     expect(form.height).toBe("");
     expect(form.instagram).toBe("");
     expect(form.community).toBe("");
@@ -1058,6 +1080,7 @@ describe("useApplyForm", () => {
     expect(docData.orientation).toBe("Bisexual");
     expect(docData.city).toBe("New York");
     expect(docData.email).toBe("jane@example.com");
+    expect(docData.phone).toBe("+12125551234");
     expect(docData.state).toBe("");
     expect(docData.country).toBe("");
     expect(docData.community).toBe("South Asian");
@@ -1298,6 +1321,7 @@ describe("useApplyForm", () => {
       result.current.set("city", "NYC");
       result.current.set("country", "US");
       result.current.set("email", "valid@example.com");
+      result.current.set("phone", "2125551234");
       result.current.set("instagram", "jane");
       result.current.set("marketingConsent", "yes");
       result.current.handleAddPhotos(makeChangeEvent(makeFile()));

@@ -149,6 +149,13 @@ describe("notify-application handler", () => {
     expect(html).toContain("instagram.com/applicant_fixture_1");
   });
 
+  it("email HTML includes the phone number when provided", async () => {
+    await POST(makeContext(makeRequest(validBody)));
+    const html: string = mockSend.mock.calls[0][0].html;
+    expect(html).toContain("Phone");
+    expect(html).toContain("+12125551234");
+  });
+
   it("email HTML escapes HTML special characters in name", async () => {
     await POST(
       makeContext(

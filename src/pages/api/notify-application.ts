@@ -61,6 +61,7 @@ function buildAdminEmailHtml(data: ApplicationNotification): string {
         ? `<a href="mailto:${escapeHtml(data.email)}" style="color:#DC2626;">${escapeHtml(data.email)}</a>`
         : "",
     ],
+    ["Phone", data.phone ? escapeHtml(data.phone) : ""],
     [
       "Instagram",
       `<a href="https://instagram.com/${escapeHtml(data.instagram)}" style="color:#DC2626;">@${escapeHtml(data.instagram)}</a>`,

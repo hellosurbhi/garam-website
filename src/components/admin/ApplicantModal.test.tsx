@@ -37,6 +37,8 @@ function makeApp(overrides?: Partial<Application>): Application {
     orientation: "Straight",
     city: "New York",
     state: "NY",
+    email: "priya@example.com",
+    phone: "+12125551234",
     height: "5'6\"",
     instagram: "applicant_fixture_1",
     community: "Hindu",
@@ -95,6 +97,12 @@ describe("ApplicantModal", () => {
     render(<ApplicantModal app={makeApp()} {...defaultProps} />);
     expect(screen.getByText("Hindu")).toBeInTheDocument();
     expect(screen.getByText("$50k–$100k")).toBeInTheDocument();
+  });
+
+  it("displays email and phone", () => {
+    render(<ApplicantModal app={makeApp()} {...defaultProps} />);
+    expect(screen.getByText("priya@example.com")).toBeInTheDocument();
+    expect(screen.getByText("+12125551234")).toBeInTheDocument();
   });
 
   it("renders Instagram handle as a link", () => {

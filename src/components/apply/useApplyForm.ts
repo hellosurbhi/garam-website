@@ -10,6 +10,7 @@ import { trackError, trackLeadEvent } from "@/lib/analytics";
 import { buildLeadAttribution } from "@/lib/leadAttribution";
 import { validateEmail } from "@/utils/validateEmail";
 import { normalizeInstagramHandle } from "@/utils/instagram";
+import { cleanPhone } from "@/lib/phone";
 
 export interface FormState {
   applicationType: "Self" | "Nomination";

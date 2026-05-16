@@ -150,6 +150,53 @@ async function claimPortal(endpoint: string, body: Record<string, unknown>) {
   }
 }
 
+type PortalResponseData = {
+  state?: string;
+  inviteId?: string;
+  showId?: string;
+  showCity?: string;
+  showDate?: string;
+  showDisplayDate?: string;
+  startTime?: string | null;
+  venueName?: string | null;
+  role?: string;
+  firstName?: string;
+  message?: string;
+  error?: string;
+};
+
+const CLAIM_ERROR_MESSAGE =
+  "Could not finish signup. Please try again or email contact@garammasaladating.com.";
+
+async function readPortalResponse(
+  response: Response,
+): Promise<PortalResponseData> {
+  const text = await response.text();
+  if (!text.trim()) return {};
+  try {
+    return JSON.parse(text) as PortalResponseData;
+  } catch {
+    return {};
+  }
+}
+
+function responseErrorMessage(data: PortalResponseData, fallback: string) {
+  return data.error ?? data.message ?? fallback;
+}
+
+async function claimPortal(endpoint: string, body: Record<string, unknown>) {
+  const response = await fetch(endpoint, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    credentials: "same-origin",
+    body: JSON.stringify(body),
+  });
+  const data = await readPortalResponse(response);
+  if (!response.ok) {
+    throw new Error(responseErrorMessage(data, CLAIM_ERROR_MESSAGE));
+  }
+}
+
 export default function ContestantPortal() {
   const [state, setState] = useState<PortalState>({ type: "loading" });
   const [formPhase, setFormPhase] = useState<FormPhase>("form");

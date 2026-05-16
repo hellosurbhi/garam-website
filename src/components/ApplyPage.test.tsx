@@ -242,6 +242,15 @@ describe("ApplyPage", () => {
     expect(textarea.value).toBe("I love comedy");
   });
 
+  it("phone input updates on typing", () => {
+    render(<ApplyPage />);
+    const input = screen.getByRole("textbox", {
+      name: /phone number/i,
+    }) as HTMLInputElement;
+    fireEvent.change(input, { target: { value: "(212) 555-1234" } });
+    expect(input.value).toBe("(212) 555-1234");
+  });
+
   it("marketing consent yes radio selects correctly", () => {
     render(<ApplyPage />);
     const yesRadio = getConsentRadio("yes") as HTMLInputElement;
@@ -435,6 +444,19 @@ describe("ApplyPage", () => {
     await waitFor(() => {
       const cityInput = screen.getByPlaceholderText("(Ex. Chicago)");
       expect(cityInput).toHaveAttribute("aria-invalid", "true");
+    });
+  });
+
+  it("phone input has aria-invalid true after validation failure", async () => {
+    render(<ApplyPage />);
+    fireEvent.click(getConsentRadio("yes"));
+    fireEvent.click(screen.getByRole("checkbox"));
+    fireEvent.click(screen.getByText("Submit Application"));
+    await waitFor(() => {
+      expect(screen.getByLabelText(/phone number/i)).toHaveAttribute(
+        "aria-invalid",
+        "true",
+      );
     });
   });
 

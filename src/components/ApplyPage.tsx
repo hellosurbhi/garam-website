@@ -99,6 +99,10 @@ function ApplyPageInner() {
             format: "email",
             description: "Email address for the contestant",
           },
+          phone: {
+            type: "string",
+            description: "Phone number for contestant coordination",
+          },
           pitch: {
             type: "string",
             description: "Why they would be great on the show (optional)",
@@ -117,6 +121,7 @@ function ApplyPageInner() {
           "city",
           "instagram",
           "email",
+          "phone",
         ],
       },
     });

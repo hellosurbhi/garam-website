@@ -72,7 +72,7 @@ const cityLastmodMap = buildCityLastmodMap();
  * New pages are picked up automatically — no manual registration needed.
  */
 function buildStaticLastmod() {
-  const SKIP = new Set(["404.astro", "admin.astro", "contestant-portal.astro"]);
+  const SKIP = new Set(["404.astro", "admin.astro", "consent.astro", "contestant-portal.astro"]);
   const files = readdirSync("src/pages", { recursive: true })
     .map((f) => f.toString())
     .filter((f) => f.endsWith(".astro") && !f.includes("[") && !SKIP.has(f.split("/").pop()));

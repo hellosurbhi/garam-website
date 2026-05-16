@@ -19,6 +19,7 @@ const STATIC_PAGES = [
   { path: "/cities", label: "Cities Hub" },
   { path: "/privacy", label: "Privacy Policy" },
   { path: "/terms", label: "Terms of Service" },
+  { path: "/consent", label: "Filming and Recording Consent" },
   { path: "/contestant-portal", label: "Contestant Portal" },
   { path: "/stage-waiver", label: "Stage Waiver" },
 ];

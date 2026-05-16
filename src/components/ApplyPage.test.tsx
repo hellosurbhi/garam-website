@@ -479,7 +479,14 @@ describe("ApplyPage", () => {
     const termsLink = screen.getByText("Terms & Conditions");
     // Click should open modal (just verify no crash and the click handler ran)
     fireEvent.click(termsLink);
-    // The TermsModal component should render — we just verify no errors
+    expect(
+      screen.getByText(
+        "Contestant Waiver, Media Release, and Participation Agreement",
+      ),
+    ).toBeInTheDocument();
+    expect(
+      screen.getByText(/This Agreement applies to performances/),
+    ).toBeInTheDocument();
   });
 
   /* ── Community and Income selects ────────────────────────── */

@@ -1,6 +1,5 @@
 ---
 import BaseLayout from "@/layouts/BaseLayout.astro";
-import EventbriteWidgetInit from "@/components/EventbriteWidgetInit.astro";
 import HomeNav from "@/components/home/HomeNav.astro";
 import HomeHero from "@/components/home/HomeHero.astro";
 import HomeMarquee from "@/components/home/HomeMarquee.astro";
@@ -151,8 +150,6 @@ const speakableJsonLd = JSON.stringify({
     <HomeFAQ />
     <HomeJournal />
   </main>
-  <EventbriteWidgetInit />
-
   <!-- 30-second email popup -->
   <dialog id="email-popup" class="popup-dialog" tabindex="-1">
     <div class="popup-inner">

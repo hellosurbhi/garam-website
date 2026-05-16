@@ -29,6 +29,10 @@ function getHeroCity(city: string): string {
   ];
   return nycBoroughs.includes(primary) ? "NYC" : primary;
 }
+
+function buildTicketsCheckoutUrl(eventbriteId: string): string {
+  return `${ticketsUrl}?event=${encodeURIComponent(eventbriteId)}`;
+}
 ---
 
 <section class="hero" aria-label="Hero">

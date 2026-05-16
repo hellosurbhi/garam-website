@@ -151,6 +151,56 @@ async function assertSkipLink(page: Page) {
   expect(await skipLink.count(), "Skip link should exist").toBeGreaterThan(0);
 }
 
+async function installFakeEventbriteWidget(page: Page) {
+  await page.addInitScript(() => {
+    type EBWidgetConfig = { modalTriggerElementId: string };
+    const w = window as typeof window & {
+      EBWidgets?: { createWidget: (config: EBWidgetConfig) => void };
+    };
+    w.EBWidgets = {
+      createWidget(config: EBWidgetConfig) {
+        const trigger = document.getElementById(config.modalTriggerElementId);
+        if (!trigger || trigger.dataset.ebTestBound === "1") return;
+        trigger.dataset.ebTestBound = "1";
+        trigger.addEventListener("click", (event) => {
+          event.preventDefault();
+          if (document.querySelector("div.eds-structure_main")) return;
+
+          const structure = document.createElement("div");
+          structure.className = "eds-structure_main";
+          Object.assign(structure.style, {
+            position: "fixed",
+            inset: "0",
+            zIndex: "9999",
+            background: "rgba(0, 0, 0, 0.35)",
+          });
+
+          const modal = document.createElement("div");
+          modal.className = "eds-modal";
+          Object.assign(modal.style, {
+            width: "260px",
+            minHeight: "160px",
+            margin: "48px auto",
+            padding: "16px",
+            background: "#fff",
+          });
+
+          const closeWrap = document.createElement("div");
+          closeWrap.className = "eds-modal__close-button";
+          const close = document.createElement("button");
+          close.type = "button";
+          close.textContent = "Close checkout";
+          close.addEventListener("click", () => structure.remove());
+          closeWrap.append(close);
+          modal.append(closeWrap);
+          structure.append(modal);
+          document.body.append(structure);
+        });
+      },
+    };
+  });
+}
+
 async function assertNav(page: Page) {
   const nav = page.locator("nav");
   await expect(nav.first()).toBeVisible();
@@ -342,6 +392,20 @@ test.describe("Homepage deep", () => {
     // Apply CTA
     const applyCta = page.locator('a.btn.btn-outline[href="/apply"]');
     await expect(applyCta).toBeVisible();
+  });
+
+  test("Hero next-show pill routes checkout through tickets page", async ({
+    page,
+  }) => {
+    await page.goto("/", { waitUntil: "domcontentloaded" });
+
+    const pill = page.locator('.next-show-pill[href^="/tickets?event="]');
+    await expect(pill.first()).toBeVisible();
+
+    const href = await pill.first().getAttribute("href");
+    expect(href).toMatch(/^\/tickets\?event=[^&]+$/);
+    expect(await pill.first().getAttribute("target")).toBeNull();
+    expect(await pill.first().getAttribute("id")).toBeNull();
   });
 
   test("Shows section with event cards", async ({ page }) => {
@@ -730,6 +794,39 @@ test.describe("Tickets page deep", () => {
       await back.count(),
       "Back to home link should exist",
     ).toBeGreaterThan(0);
+  });
+
+  test("Eventbrite checkout opens from query, closes outside, and back returns to tickets", async ({
+    page,
+  }) => {
+    await installFakeEventbriteWidget(page);
+    await page.goto("/tickets", { waitUntil: "domcontentloaded" });
+
+    const firstWidgetCard = page.locator("a.ticket-card--widget").first();
+    if ((await firstWidgetCard.count()) === 0) {
+      test.skip(true, "No live Eventbrite ticket cards to test");
+    }
+
+    const triggerId = await firstWidgetCard.getAttribute("id");
+    expect(triggerId).toBeTruthy();
+    const eventId = triggerId!.replace("eventbrite-widget-modal-trigger-", "");
+
+    await page.goto(`/tickets?event=${eventId}`, {
+      waitUntil: "domcontentloaded",
+    });
+    const modalShell = page.locator("div.eds-structure_main");
+    await expect(modalShell).toBeVisible();
+    await expect(page).toHaveURL(/\/tickets$/);
+
+    await page.evaluate(() => window.history.back());
+    await expect(modalShell).toHaveCount(0);
+    await expect(page).toHaveURL(/\/tickets$/);
+
+    await page.locator(`#${triggerId}`).click();
+    await expect(modalShell).toBeVisible();
+    await modalShell.click({ position: { x: 8, y: 8 } });
+    await expect(modalShell).toHaveCount(0);
+    await expect(page).toHaveURL(/\/tickets$/);
   });
 });
 

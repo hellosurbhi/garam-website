@@ -385,7 +385,6 @@
     //   - restore scroll after EB scrolls to top (Bug 6)
     //   - push a dummy history entry so the back button closes the modal (Bug 10)
     //   - pop that history entry when the modal closes
-    let modalObserverTimeout: ReturnType<typeof setTimeout>;
     const modalObserver = new MutationObserver(() => {
       const ebStructure = document.querySelector<HTMLElement>(
         "div.eds-structure_main",
@@ -478,11 +477,6 @@
           childList: true,
           subtree: false,
         });
-      }
-
-      if (ebStructure) {
-        clearTimeout(modalObserverTimeout);
-        modalObserver.disconnect();
       }
     });
     modalObserver.observe(document.body, { childList: true, subtree: true });

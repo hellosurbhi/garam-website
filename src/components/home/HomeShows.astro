@@ -11,6 +11,11 @@ interface Props {
 }
 
 const { events } = Astro.props;
+const taglineMap = buildTaglineMap(events);
+
+function buildTicketsCheckoutUrl(eventbriteId: string): string {
+  return `/tickets?event=${encodeURIComponent(eventbriteId)}`;
+}
 ---
 
 <section class="shows" id="shows" aria-labelledby="shows-heading">
@@ -41,8 +46,12 @@ const { events } = Astro.props;
               <div class="day">{parseDay(event.date)}</div>
             </div>
             <div class="show-info">
-              <h3>{event.city}</h3>
-              <span>{event.tagline ?? "On sale now"}</span>
+              <h3>{cityLabel}</h3>
+              <span>
+                {isSoldOut
+                  ? (event.tagline ?? "Sold out")
+                  : (taglineMap.get(event.url) ?? "On sale now")}
+              </span>
             </div>
             <span
               class={`ticket-label${isSoldOut ? " ticket-label--soldout" : ""}`}
@@ -52,21 +61,17 @@ const { events } = Astro.props;
           </>
         );
         return hasWidget ? (
-          <button
-            type="button"
-            id={`eventbrite-widget-modal-trigger-home-shows-${event.eventbriteId}`}
-            data-eb-event-id={event.eventbriteId}
+          <a
+            href={buildTicketsCheckoutUrl(event.eventbriteId!)}
             class="show-card show-card--live"
             data-reveal
             data-ph-capture="cta_clicked"
             data-ph-cta="get_tickets"
             data-ph-section="shows"
-            data-ph-city={event.city}
+            data-ph-city={cityLabel}
             data-ph-event-date={event.date}
             data-ph-price={event.price}
-            data-eb-url={buildTicketUrl(event.url, "home", "shows")}
-            data-promo-code={event.promoCode ?? ""}
-            data-city={event.city}
+            data-city={cityLabel}
           >
             {cardInner}
           </button>
@@ -122,7 +127,7 @@ const { events } = Astro.props;
             data-ph-capture="cta_clicked"
             data-ph-cta="get_tickets"
             data-ph-section="shows"
-            data-ph-city={event.city}
+            data-ph-city={cityLabel}
             data-ph-event-date={event.date}
             data-ph-price={event.price}
           >
@@ -132,12 +137,13 @@ const { events } = Astro.props;
           <button
             type="button"
             class="show-card show-card--notify"
-            data-notify-city={event.city}
+            data-notify-city={cityLabel}
+            data-notify-city-slug={event.citySlug}
             data-reveal
             data-ph-capture="cta_clicked"
             data-ph-cta="notify_me"
             data-ph-section="shows"
-            data-ph-city={event.city}
+            data-ph-city={cityLabel}
           >
             <div class="show-date-block">
               {parseDay(event.date) !== "" ? (
@@ -150,7 +156,7 @@ const { events } = Astro.props;
               )}
             </div>
             <div class="show-info">
-              <h3>{event.city}</h3>
+              <h3>{cityLabel}</h3>
               <span>Dates to be announced</span>
             </div>
             <span class="ticket-label ticket-label--notify">Notify Me</span>
@@ -278,6 +284,11 @@ const { events } = Astro.props;
   import { cleanPhone } from "@/lib/phone";
   import { identifyLead, trackLeadEvent } from "@/lib/analytics";
   import { buildLeadAttribution } from "@/lib/leadAttribution";
+  import {
+    captureLead,
+    updateLeadPhone,
+    type LeadSubmissionPayload,
+  } from "@/lib/leadSubmission";
 
   // Request City modal
   const cityDialog = document.getElementById(
@@ -288,7 +299,7 @@ const { events } = Astro.props;
       "city-name",
     ) as HTMLInputElement | null;
     const errorEl = document.getElementById("city-form-error");
-    let cityDocRef: DocumentReference | null = null;
+    let cityUpdateToken = "";
 
     document
       .getElementById("request-city-trigger")
@@ -315,7 +326,7 @@ const { events } = Astro.props;
           phoneErrorEl.textContent = "";
           phoneErrorEl.setAttribute("hidden", "");
         }
-        cityDocRef = null;
+        cityUpdateToken = "";
         trackLeadEvent("request_city_opened", {
           source: "request-city",
           sourcePage: window.location.pathname,
@@ -384,7 +395,6 @@ const { events } = Astro.props;
           const payload: LeadSubmissionPayload = {
             email,
             ...attribution,
-            createdAt: new Date().toISOString(),
           };
           if (city) payload.city = city;
           if (resolvedCity?.state) payload.state = resolvedCity.state;
@@ -470,8 +480,8 @@ const { events } = Astro.props;
           submitBtn.textContent = "Sending...";
         }
         try {
-          if (cityDocRef) {
-            await updateDoc(cityDocRef, { phone: cleaned });
+          if (cityUpdateToken) {
+            await updateLeadPhone(cityUpdateToken, cleaned);
           }
           trackLeadEvent("lead_phone_submitted", {
             source: "request-city",

@@ -36,6 +36,7 @@ function buildFooterShowLinks(): FooterLink[] {
     .slice(0, MAX_FOOTER_CITY_LINKS)
     .map((slug) => cities[slug])
     .filter((c): c is CityData => c !== undefined)
+    .slice(0, MAX_FOOTER_CITY_LINKS)
     .map((c) => ({ label: cityLabel(c), href: `/cities/${c.slug}` }));
 
   // Fill remaining slots from the same TBA city list used on the tickets page.
@@ -62,7 +63,6 @@ export const FOOTER_INVOLVED_LINKS: FooterLink[] = [
 ];
 
 export const FOOTER_EXPLORE_LINKS: FooterLink[] = [
-  { label: "Links", href: "/links" },
   { label: "FAQ", href: "/faq" },
   { label: "The Journal", href: "/journal" },
   { label: "Meet the Hosts", href: "/hosts" },

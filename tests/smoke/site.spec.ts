@@ -1138,6 +1138,21 @@ test.describe("Admin page", () => {
       const content = await robots.getAttribute("content");
       expect(content).toContain("noindex");
     }
+
+    expect(
+      await page.locator("#cursor").count(),
+      "Noindex pages should not render custom cursor nodes",
+    ).toBe(0);
+    expect(
+      await page.locator("#cursorRing").count(),
+      "Noindex pages should not render custom cursor ring nodes",
+    ).toBe(0);
+    expect(
+      await page.evaluate(() =>
+        document.documentElement.classList.contains("custom-cursor"),
+      ),
+      "Noindex pages should not enable the custom cursor class",
+    ).toBe(false);
   });
 });
 
@@ -1176,7 +1191,7 @@ test.describe("Footer deep", () => {
     expect(await footer.locator('a[href="/tickets"]').count()).toBeGreaterThan(
       0,
     );
-    expect(await footer.locator('a[href="/links"]').count()).toBeGreaterThan(0);
+    await expect(footer.locator('a[href="/links"]')).toHaveCount(0);
 
     // Explore column
     expect(await footer.locator('a[href="/faq"]').count()).toBeGreaterThan(0);
@@ -1185,25 +1200,14 @@ test.describe("Footer deep", () => {
     );
     expect(await footer.locator('a[href="/hosts"]').count()).toBeGreaterThan(0);
 
-    // Shows column
-    expect(
-      await footer.locator('a[href="/cities/manhattan"]').count(),
-    ).toBeGreaterThan(0);
-    expect(
-      await footer.locator('a[href="/cities/jersey-city"]').count(),
-    ).toBeGreaterThan(0);
-    expect(
-      await footer.locator('a[href="/cities/los-angeles"]').count(),
-    ).toBeGreaterThan(0);
-    expect(
-      await footer.locator('a[href="/cities/san-francisco"]').count(),
-    ).toBeGreaterThan(0);
-    expect(
-      await footer.locator('a[href="/cities/san-diego"]').count(),
-    ).toBeGreaterThan(0);
-    expect(await footer.locator('a[href="/cities"]').count()).toBeGreaterThan(
-      0,
-    );
+    // Shows column: five city pages plus one All Cities link, no matter how event data changes.
+    await expect(footer.locator(".footer-shows-list a")).toHaveCount(6);
+    await expect(
+      footer.locator('.footer-shows-list a[href="/cities"]'),
+    ).toHaveCount(1);
+    await expect(
+      footer.locator('.footer-shows-list a[href^="/cities/"]'),
+    ).toHaveCount(5);
 
     // Legal links
     expect(await footer.locator('a[href="/privacy"]').count()).toBeGreaterThan(

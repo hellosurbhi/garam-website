@@ -108,8 +108,14 @@ const {
         style="display:none;visibility:hidden"></iframe></noscript
     >
     <div class="grain-overlay"></div>
-    <div class="cursor" id="cursor"></div>
-    <div class="cursor-ring" id="cursorRing"></div>
+    {
+      !noindex && (
+        <>
+          <div class="cursor" id="cursor" />
+          <div class="cursor-ring" id="cursorRing" />
+        </>
+      )
+    }
     {!hideNav && <PageNav />}
     <slot />
     {!hideSpiceList && !hideFooter && <HomeSignup />}

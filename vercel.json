@@ -85,6 +85,11 @@
   ],
   "rewrites": [],
   "redirects": [
-    { "source": "/waiver", "destination": "/stage-waiver", "permanent": true }
+    { "source": "/stage-waiver", "destination": "/waiver", "permanent": true },
+    {
+      "source": "/contestant-prep",
+      "destination": "/contestant-portal",
+      "permanent": true
+    }
   ]
 }

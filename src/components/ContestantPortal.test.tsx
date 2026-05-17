@@ -12,6 +12,9 @@ function mockPortalState() {
           inviteId: "invite-1",
           showCity: "Manhattan",
           showDate: "2026-06-01",
+          showDisplayDate: "Jun 1",
+          startTime: "18:00",
+          venueName: "Top Secret Comedy Club",
           role: "female",
         }),
         { headers: { "Content-Type": "application/json" } },
@@ -22,7 +25,14 @@ function mockPortalState() {
   });
 }
 
-function fillPortalSignupForm() {
+function fillPortalSignupForm(role?: "female" | "male") {
+  if (role) {
+    fireEvent.click(
+      screen.getByRole("radio", {
+        name: role === "female" ? /^female contestant$/i : /^male contestant$/i,
+      }),
+    );
+  }
   fireEvent.change(screen.getByLabelText(/legal first name/i), {
     target: { value: "Priya" },
   });
@@ -143,6 +153,9 @@ describe("ContestantPortal", () => {
             inviteId: "invite-1",
             showCity: "Manhattan",
             showDate: "2026-06-01",
+            showDisplayDate: "Jun 1",
+            startTime: "18:00",
+            venueName: "Top Secret Comedy Club",
             role: "female",
           }),
           { headers: { "Content-Type": "application/json" } },
@@ -164,6 +177,9 @@ describe("ContestantPortal", () => {
     ).toBeInTheDocument();
     expect(screen.queryByText(/choose your role/i)).not.toBeInTheDocument();
     expect(
+      screen.queryByRole("radio", { name: /female contestant/i }),
+    ).not.toBeInTheDocument();
+    expect(
       screen.queryByLabelText(/Spectator going on stage/i),
     ).not.toBeInTheDocument();
     fillPortalSignupForm();
@@ -172,6 +188,8 @@ describe("ContestantPortal", () => {
     );
 
     expect(await screen.findByText("The Golden Rules")).toBeInTheDocument();
+    expect(screen.getByText(/Call time: 5:15 PM sharp/i)).toBeInTheDocument();
+    expect(screen.getByText(/Top Secret Comedy Club/i)).toBeInTheDocument();
     await waitFor(() => {
       const [, init] = vi
         .mocked(fetch)
@@ -182,6 +200,70 @@ describe("ContestantPortal", () => {
         inviteId: "invite-1",
         firstName: "Priya",
         lastName: "Shah",
+        signature: "Priya Shah",
+      });
+    });
+  });
+
+  it("treats legacy show and role URLs as the single direct portal packet", async () => {
+    history.replaceState(
+      null,
+      "",
+      "/contestant-portal?show=manhattan-2026-06-21&role=female",
+    );
+    vi.spyOn(globalThis, "fetch").mockImplementation(async (input) => {
+      const requestUrl = input instanceof Request ? input.url : String(input);
+      if (requestUrl.includes("/api/portal-state")) {
+        expect(requestUrl).not.toContain("show=");
+        expect(requestUrl).not.toContain("role=");
+        return new Response(JSON.stringify({ state: "open" }), {
+          headers: { "Content-Type": "application/json" },
+        });
+      }
+      if (requestUrl.includes("/api/contestant-open-claim")) {
+        return new Response(JSON.stringify({ ok: true }), {
+          headers: { "Content-Type": "application/json" },
+        });
+      }
+
+      return new Response("", { status: 500 });
+    });
+
+    render(<ContestantPortal />);
+
+    expect(
+      await screen.findByText("Your Contestant Packet"),
+    ).toBeInTheDocument();
+    expect(window.location.pathname).toBe("/contestant-portal");
+    expect(window.location.search).toBe("");
+    expect(screen.getByText(/exact show date/i)).toBeInTheDocument();
+    expect(screen.getByText(/Confirm your casting track/i)).toBeInTheDocument();
+    expect(
+      screen.getByRole("radio", { name: /^Female contestant$/i }),
+    ).toBeInTheDocument();
+    expect(
+      screen.getByRole("radio", { name: /^Male contestant$/i }),
+    ).toBeInTheDocument();
+    expect(screen.queryByText(/private packet link/i)).not.toBeInTheDocument();
+    fillPortalSignupForm("female");
+    fireEvent.click(
+      screen.getByRole("button", { name: /complete packet & open prep/i }),
+    );
+
+    expect(await screen.findByText("The Golden Rules")).toBeInTheDocument();
+    expect(
+      screen.getByText(/You don't owe anyone chemistry/i),
+    ).toBeInTheDocument();
+    await waitFor(() => {
+      const [, init] = vi
+        .mocked(fetch)
+        .mock.calls.find(([url]) =>
+          String(url).includes("/api/contestant-open-claim"),
+        )!;
+      expect(JSON.parse(String(init?.body))).toMatchObject({
+        firstName: "Priya",
+        lastName: "Shah",
+        role: "female",
         signature: "Priya Shah",
       });
     });
@@ -203,6 +285,12 @@ describe("ContestantPortal", () => {
     expect(screen.getAllByText(/You've been selected/i).length).toBeGreaterThan(
       0,
     );
+    expect(
+      screen.getByRole("radio", { name: /^Female contestant$/i }),
+    ).toBeInTheDocument();
+    expect(
+      screen.getByRole("radio", { name: /^Male contestant$/i }),
+    ).toBeInTheDocument();
     expect(screen.queryByText(/private packet link/i)).not.toBeInTheDocument();
     expect(screen.getByText(/exact show date/i)).toBeInTheDocument();
     expect(
@@ -233,13 +321,16 @@ describe("ContestantPortal", () => {
     expect(
       await screen.findByText("Your Contestant Packet"),
     ).toBeInTheDocument();
-    fillPortalSignupForm();
+    fillPortalSignupForm("male");
     fireEvent.click(
       screen.getByRole("button", { name: /complete packet & open prep/i }),
     );
 
     expect(await screen.findByText("The Golden Rules")).toBeInTheDocument();
     expect(screen.getByText(/Access stays open/i)).toBeInTheDocument();
+    expect(
+      screen.getByText(/Audiences on this show tend to root for the women/i),
+    ).toBeInTheDocument();
     await waitFor(() => {
       const [, init] = vi
         .mocked(fetch)
@@ -249,6 +340,7 @@ describe("ContestantPortal", () => {
       expect(JSON.parse(String(init?.body))).toMatchObject({
         firstName: "Priya",
         lastName: "Shah",
+        role: "male",
         signature: "Priya Shah",
       });
     });

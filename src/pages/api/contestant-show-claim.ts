@@ -43,7 +43,7 @@ export const POST: APIRoute = async ({ request }) => {
     );
   if (role === "spectator")
     return jsonResponse(
-      { error: "Spectators only need to sign the stage waiver." },
+      { error: "Spectators only need the standalone waiver at /waiver." },
       400,
     );
   const expectedSig = `${firstName.trim()} ${lastName.trim()}`;

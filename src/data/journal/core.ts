@@ -1214,7 +1214,7 @@ export const corePosts: JournalPost[] = [
       },
       {
         type: "p",
-        text: "Guys arrive at 5:20. Women arrive at 5:30. We go through logistics before the show starts and if you\u2019re late, you skip the briefing and go on cold. Don\u2019t do that to yourself.",
+        text: "Contestants get a call time 45 minutes before the listed showtime. We go through logistics before the show starts and if you\u2019re late, you skip the briefing and go on cold. Don\u2019t do that to yourself.",
       },
       {
         type: "p",

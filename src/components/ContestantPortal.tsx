@@ -20,7 +20,7 @@ import {
 } from "@/data/contestantPortal";
 import { WaiverDocument } from "@/components/WaiverDocument";
 
-type ContestantRole = "female" | "male" | "contestant";
+type ContestantRole = "female" | "male";
 
 type PortalState =
   | { type: "loading" }
@@ -159,7 +159,7 @@ const CLAIM_ERROR_MESSAGE =
   "Could not finish signup. Please try again or email contact@garammasaladating.com.";
 
 function normalizeRole(role?: string | null): ContestantRole | null {
-  if (role === "female" || role === "male" || role === "contestant") {
+  if (role === "female" || role === "male") {
     return role;
   }
   return null;
@@ -179,6 +179,22 @@ async function readPortalResponse(
 
 function responseErrorMessage(data: PortalResponseData, fallback: string) {
   return data.error ?? data.message ?? fallback;
+}
+
+function formatCallTime(startTime?: string | null): string | null {
+  if (!startTime) return null;
+  const match = /^(\d{1,2}):(\d{2})$/.exec(startTime.trim());
+  if (!match) return null;
+  const hours = Number(match[1]);
+  const minutes = Number(match[2]);
+  if (hours > 23 || minutes > 59) return null;
+
+  const totalMinutes = (hours * 60 + minutes - 45 + 24 * 60) % (24 * 60);
+  const callHours = Math.floor(totalMinutes / 60);
+  const callMinutes = totalMinutes % 60;
+  const suffix = callHours >= 12 ? "PM" : "AM";
+  const hour12 = callHours % 12 || 12;
+  return `${hour12}:${String(callMinutes).padStart(2, "0")} ${suffix}`;
 }
 
 async function claimPortal(endpoint: string, body: Record<string, unknown>) {

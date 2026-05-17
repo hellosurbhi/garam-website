@@ -9,6 +9,7 @@ const root = path.resolve(__dirname, "../..", process.argv[3] ?? "dist/client");
 const host = "127.0.0.1";
 
 const redirects = new Map([
+  ["/stage-waiver", "/waiver"],
   ["/south-asian-dating-tips", "/journal"],
   [
     "/south-asian-dating-tips/how-to-find-love-as-a-desi-in-new-york",
@@ -49,7 +50,9 @@ function sendJson(res, status, body) {
 
 function normalizeUrlPath(reqUrl) {
   try {
-    return decodeURIComponent(new URL(reqUrl ?? "/", `http://${host}`).pathname);
+    return decodeURIComponent(
+      new URL(reqUrl ?? "/", `http://${host}`).pathname,
+    );
   } catch {
     return "/";
   }

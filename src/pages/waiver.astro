@@ -59,7 +59,7 @@ const showId = Astro.url.searchParams.get("show")?.trim() ?? "";
           <p id="waiver-scroll-note" class="waiver-note">
             Scroll through the full waiver to enable agreement.
           </p>
-          <div>
+          <div class="waiver-signature-field">
             <label class="waiver-label" for="waiver-sig"
               >Type your full legal name as your signature</label
             >
@@ -71,10 +71,6 @@ const showId = Astro.url.searchParams.get("show")?.trim() ?? "";
               aria-label="Signature"
             />
           </div>
-          <label class="waiver-checkbox waiver-checkbox-muted">
-            <input type="checkbox" id="waiver-optin" />
-            <span>Email me about future shows</span>
-          </label>
           <input type="hidden" id="waiver-version" value={WAIVER_VERSION} />
           {showId && <input type="hidden" id="waiver-show-id" value={showId} />}
           <p id="waiver-error" class="waiver-error" hidden role="alert"></p>
@@ -174,9 +170,7 @@ const showId = Astro.url.searchParams.get("show")?.trim() ?? "";
             waiverVersion: (
               document.getElementById("waiver-version") as HTMLInputElement
             ).value,
-            mailingListOptIn: (
-              document.getElementById("waiver-optin") as HTMLInputElement
-            ).checked,
+            mailingListOptIn: false,
             showId:
               (
                 document.getElementById(
@@ -218,12 +212,13 @@ const showId = Astro.url.searchParams.get("show")?.trim() ?? "";
 <style>
   .waiver-page {
     min-height: 100vh;
-    padding: 40px 16px;
+    padding: 40px 16px 56px;
     background: var(--off-white);
   }
   .waiver-container {
     max-width: 520px;
     margin: 0 auto;
+    width: 100%;
   }
   .waiver-title {
     font-family: var(--font-playfair), serif;
@@ -231,12 +226,14 @@ const showId = Astro.url.searchParams.get("show")?.trim() ?? "";
     font-weight: 900;
     color: var(--charcoal);
     margin-bottom: 8px;
+    text-align: center;
   }
   .waiver-subtitle {
     font-size: 16px;
     color: var(--muted);
     margin-bottom: 32px;
     line-height: 1.5;
+    text-align: center;
   }
   .waiver-form {
     display: flex;
@@ -281,6 +278,9 @@ const showId = Astro.url.searchParams.get("show")?.trim() ?? "";
     color: var(--charcoal);
     font-size: 15px;
     line-height: 1.5;
+    width: 100%;
+    max-width: 420px;
+    margin: 0 auto;
   }
   .waiver-checkbox input {
     min-width: 20px;
@@ -288,8 +288,10 @@ const showId = Astro.url.searchParams.get("show")?.trim() ?? "";
     margin-top: 3px;
     accent-color: var(--brand-red);
   }
-  .waiver-checkbox-muted {
-    color: var(--gray-mid);
+  .waiver-signature-field {
+    width: 100%;
+    max-width: 420px;
+    margin: 0 auto;
   }
   .waiver-label {
     display: block;
@@ -300,12 +302,18 @@ const showId = Astro.url.searchParams.get("show")?.trim() ?? "";
   .waiver-note {
     color: var(--gray-mid);
     font-size: 14px;
+    margin: -6px auto 0;
+    max-width: 420px;
+    text-align: center;
   }
   .waiver-error {
     color: var(--brand-red);
     font-size: 14px;
   }
   .waiver-submit {
+    width: 100%;
+    max-width: 420px;
+    margin: 8px auto 0;
     min-height: 48px;
     border: 0;
     border-radius: 50px;

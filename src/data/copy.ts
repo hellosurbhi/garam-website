@@ -151,6 +151,7 @@ export const SPICE_LIST = {
   subscribedBody: "Get tickets before they sell out.",
   subscribedPrimaryCta: "See Upcoming Shows",
   subscribedSecondaryCta: "Follow on Instagram",
+  subscribedTertiaryCta: "Watch Full Episodes on YouTube",
 } as const;
 
 export const APPLY_PAGE = {

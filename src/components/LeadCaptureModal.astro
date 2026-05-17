@@ -38,6 +38,9 @@ interface Props {
    * captured outside a city page still carry geography for tour routing.
    */
   collectCity?: boolean;
+  /** If true, asks the visitor to type their city/location before email */
+  cityInput?: boolean;
+  cityPlaceholder?: string;
 }
 
 const {
@@ -53,6 +56,8 @@ const {
   phoneSuccessMessage = "You're on the list! Deals incoming.",
   cityMode = false,
   collectCity = false,
+  cityInput = false,
+  cityPlaceholder = "City or neighborhood",
 } = Astro.props;
 const showCityInput = collectCity && !cityMode;
 ---
@@ -61,7 +66,7 @@ const showCityInput = collectCity && !cityMode;
   <div
     class="lc-steps"
     data-lc-source={source}
-    data-lc-city-mode={cityMode ? "true" : undefined}
+    data-lc-city-mode={cityMode || cityInput ? "true" : undefined}
   >
     <!-- Step 1: Email -->
     <div data-lc-step="email">
@@ -70,10 +75,24 @@ const showCityInput = collectCity && !cityMode;
         {subheading}{cityMode && <strong data-lc-city-name />}{cityMode && "."}
       </p>
       <form data-lc-form="email" class="lc-form">
+        {
+          cityInput && (
+            <input
+              type="text"
+              data-lc-city
+              placeholder={cityPlaceholder}
+              required
+              autofocus={cityInput}
+              autocomplete="address-level2"
+              aria-label="City or location"
+              toolparamdescription="City or location where you want Garam Masala Dating to come next"
+            />
+          )
+        }
         <input
           type="email"
           data-lc-email
-          autofocus
+          autofocus={!cityInput}
           placeholder="Your email"
           required
           aria-label="Email address"
@@ -86,9 +105,9 @@ const showCityInput = collectCity && !cityMode;
           tabindex="-1"
           aria-hidden="true"
         />
-        {cityMode && <input type="hidden" data-lc-city />}
+        {cityMode && !cityInput && <input type="hidden" data-lc-city />}
         {
-          showCityInput && (
+          showCityInput && !cityInput && (
             <input
               type="text"
               data-lc-city
@@ -301,10 +320,8 @@ const showCityInput = collectCity && !cityMode;
         "[data-lc-phone]",
       ) as HTMLInputElement | null;
       if (phoneInput) phoneInput.value = "";
-      // Clear the visible optional city input (collectCity). The hidden
-      // cityMode input is re-populated on open, so leave it alone.
       const cityInput = root.querySelector(
-        'input[type="text"][data-lc-city]',
+        "[data-lc-city]",
       ) as HTMLInputElement | null;
       if (cityInput) cityInput.value = "";
       root.querySelectorAll(".lc-error").forEach((el) => {
@@ -332,8 +349,6 @@ const showCityInput = collectCity && !cityMode;
         capturedEmail = (
           root.querySelector("[data-lc-email]") as HTMLInputElement
         ).value;
-        // Reads from the hidden city input (cityMode) or the visible optional
-        // city input (collectCity). Either way, geography rides along.
         const city =
           (
             root.querySelector("[data-lc-city]") as HTMLInputElement | null
@@ -524,7 +539,9 @@ const showCityInput = collectCity && !cityMode;
       }
       dialog.showModal();
       (
-        dialog.querySelector<HTMLInputElement>("[data-lc-email]") ?? dialog
+        dialog.querySelector<HTMLInputElement>("[data-lc-city]") ??
+        dialog.querySelector<HTMLInputElement>("[data-lc-email]") ??
+        dialog
       ).focus();
     };
     el.addEventListener("click", open);

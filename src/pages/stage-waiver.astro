@@ -59,7 +59,7 @@ const showId = Astro.url.searchParams.get("show")?.trim() ?? "";
           <p id="sw-scroll-note" class="sw-note">
             Scroll through the full waiver to enable agreement.
           </p>
-          <div>
+          <div class="sw-signature-field">
             <label class="sw-label" for="sw-sig"
               >Type your full legal name as your signature</label
             >
@@ -71,10 +71,6 @@ const showId = Astro.url.searchParams.get("show")?.trim() ?? "";
               aria-label="Signature"
             />
           </div>
-          <label class="sw-checkbox sw-checkbox-muted">
-            <input type="checkbox" id="sw-optin" />
-            <span>Email me about future shows</span>
-          </label>
           <input type="hidden" id="sw-version" value={WAIVER_VERSION} />
           {showId && <input type="hidden" id="sw-show-id" value={showId} />}
           <p id="sw-error" class="sw-error" hidden role="alert"></p>
@@ -176,9 +172,7 @@ const showId = Astro.url.searchParams.get("show")?.trim() ?? "";
             waiverVersion: (
               document.getElementById("sw-version") as HTMLInputElement
             ).value,
-            mailingListOptIn: (
-              document.getElementById("sw-optin") as HTMLInputElement
-            ).checked,
+            mailingListOptIn: false,
             showId:
               (document.getElementById("sw-show-id") as HTMLInputElement | null)
                 ?.value ?? "",
@@ -217,12 +211,13 @@ const showId = Astro.url.searchParams.get("show")?.trim() ?? "";
 <style>
   .stage-waiver-page {
     min-height: 100vh;
-    padding: 40px 16px;
+    padding: 40px 16px 56px;
     background: var(--off-white);
   }
   .sw-container {
     max-width: 520px;
     margin: 0 auto;
+    width: 100%;
   }
   .sw-title {
     font-family: var(--font-playfair), serif;
@@ -230,12 +225,14 @@ const showId = Astro.url.searchParams.get("show")?.trim() ?? "";
     font-weight: 900;
     color: var(--charcoal);
     margin-bottom: 8px;
+    text-align: center;
   }
   .sw-subtitle {
     font-size: 16px;
     color: var(--muted);
     margin-bottom: 32px;
     line-height: 1.5;
+    text-align: center;
   }
   .sw-form {
     display: flex;
@@ -250,6 +247,8 @@ const showId = Astro.url.searchParams.get("show")?.trim() ?? "";
   .sw-form input[type="text"],
   .sw-form input[type="email"],
   .sw-form input[type="tel"] {
+    width: 100%;
+    box-sizing: border-box;
     padding: 14px 20px;
     border: 1.5px solid rgba(0, 0, 0, 0.1);
     border-radius: 12px;
@@ -280,6 +279,9 @@ const showId = Astro.url.searchParams.get("show")?.trim() ?? "";
     color: var(--charcoal);
     line-height: 1.4;
     cursor: pointer;
+    width: 100%;
+    max-width: 420px;
+    margin: 0 auto;
   }
   .sw-checkbox input[type="checkbox"] {
     margin-top: 3px;
@@ -287,15 +289,18 @@ const showId = Astro.url.searchParams.get("show")?.trim() ?? "";
     min-height: 20px;
     accent-color: var(--brand-red);
   }
-  .sw-checkbox-muted {
-    color: var(--muted);
-    font-size: 14px;
-  }
   .sw-note {
-    margin: -8px 0 0;
+    margin: -6px auto 0;
+    max-width: 420px;
     color: var(--muted);
     font-size: 13px;
     line-height: 1.4;
+    text-align: center;
+  }
+  .sw-signature-field {
+    width: 100%;
+    max-width: 420px;
+    margin: 0 auto;
   }
   .sw-label {
     display: block;
@@ -310,6 +315,9 @@ const showId = Astro.url.searchParams.get("show")?.trim() ?? "";
     margin: 0;
   }
   .sw-submit {
+    width: 100%;
+    max-width: 420px;
+    margin: 8px auto 0;
     background: var(--brand-red);
     color: #fff;
     border: none;
@@ -325,7 +333,6 @@ const showId = Astro.url.searchParams.get("show")?.trim() ?? "";
       background 0.2s,
       transform 0.06s;
     min-height: var(--touch-target);
-    width: 100%;
   }
   .sw-submit:hover {
     background: var(--brand-red-dark);

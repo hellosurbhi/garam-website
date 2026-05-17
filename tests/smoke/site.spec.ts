@@ -815,6 +815,21 @@ test.describe("Tickets page deep", () => {
     ).toBeGreaterThan(0);
   });
 
+  test("Tickets city request asks for location", async ({ page }) => {
+    await page.goto("/tickets", { waitUntil: "domcontentloaded" });
+
+    await page.getByRole("button", { name: "Tell Us Where You Are" }).click();
+
+    const dialog = page.locator("dialog#tickets-city-modal");
+    await expect(dialog).toHaveAttribute("open", { timeout: 3000 });
+    await expect(dialog.locator("[data-lc-city]")).toBeVisible();
+    await expect(dialog.getByLabel("City or location")).toBeVisible();
+    await expect(dialog.getByLabel("Email address")).toBeVisible();
+
+    await page.keyboard.press("Escape");
+    await expect(dialog).not.toHaveAttribute("open", { timeout: 3000 });
+  });
+
   test("Eventbrite checkout opens from query, closes outside, and back returns to tickets", async ({
     page,
   }) => {
@@ -1185,6 +1200,12 @@ test.describe("Cities", () => {
           await ctas.count(),
           "City should have at least one CTA",
         ).toBeGreaterThan(0);
+
+        if (slug === "jersey-city") {
+          await expect(
+            page.locator(".city-ctas [data-waitlist-trigger]").first(),
+          ).toBeVisible();
+        }
 
         // CTA links/buttons are valid
         const ctaLinks = await page.locator(".city-ctas a.city-cta").all();

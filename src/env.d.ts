@@ -6,6 +6,17 @@ declare module "virtual:git-dates" {
 }
 
 interface Window {
+  EBWidgets?: {
+    createWidget: (config: {
+      widgetType: string;
+      eventId: string;
+      modal: boolean;
+      modalTriggerElementId: string;
+      themeSettings?: Record<string, string>;
+      onOrderComplete?: () => void;
+      onWidgetModalClose?: () => void;
+    }) => void;
+  };
   dataLayer?: Array<Record<string, unknown>>;
   EBWidgets?: {
     createWidget: (config: {

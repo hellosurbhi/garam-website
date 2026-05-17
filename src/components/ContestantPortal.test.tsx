@@ -125,6 +125,8 @@ describe("ContestantPortal", () => {
     ).toBeInTheDocument();
 
     const waiver = screen.getByLabelText(/waiver text/i);
+    expect(waiver).toHaveAttribute("tabindex", "0");
+    expect(waiver).toHaveAttribute("role", "region");
     Object.defineProperty(waiver, "clientHeight", {
       configurable: true,
       value: 100,

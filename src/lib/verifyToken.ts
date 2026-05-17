@@ -121,14 +121,6 @@ export async function verifyAdminToken(
   if (verified.email && allowedEmails.includes(verified.email)) {
     return verified.uid;
   }
-  if (
-    allowedUids.length === 0 &&
-    allowedEmails.length === 0 &&
-    verified.email &&
-    verified.signInProvider !== "anonymous"
-  ) {
-    return verified.uid;
-  }
   return null;
 }
 

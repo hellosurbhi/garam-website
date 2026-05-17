@@ -529,14 +529,20 @@ export function ApplySuccessPanel() {
               return (
                 <li key={`${show.isoDate}-${cityLabel}`}>
                   {tid ? (
-                    <button
-                      type="button"
+                    <a
+                      href={buildTicketUrl(show.url, "apply", "success")}
+                      target="_blank"
+                      rel="noopener noreferrer"
                       id={tid}
                       data-eb-event-id={show.eventbriteId}
+                      data-ph-section="apply_success"
+                      data-ph-city={cityLabel}
+                      data-ph-event-date={show.date}
+                      data-ph-price={show.price}
                       className={styles.successTicketButton}
                     >
                       Get Tickets | {show.date} in {cityLabel}
-                    </button>
+                    </a>
                   ) : (
                     <a
                       href={buildTicketUrl(show.url, "apply", "success")}

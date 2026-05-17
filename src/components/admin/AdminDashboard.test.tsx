@@ -1,4 +1,4 @@
-import { describe, it, expect, vi, beforeEach } from "vitest";
+import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
 import { render, screen, fireEvent, waitFor } from "@testing-library/react";
 import type { Timestamp } from "firebase/firestore";
 import type { Application } from "@/types/application";
@@ -62,7 +62,6 @@ vi.mock("firebase/firestore", () => ({
 vi.mock("firebase/auth", () => ({}));
 
 vi.mock("@/lib/firebase", () => ({
-  getFirebaseDb: vi.fn(() => "mock-db"),
   getFirebaseAuth: vi.fn(() => ({
     currentUser: { getIdToken: vi.fn().mockResolvedValue("tok") },
   })),
@@ -102,16 +101,34 @@ vi.mock("@/data/events", () => ({
   events: [],
 }));
 
+function applicationsResponse(applications: Application[]) {
+  return new Response(
+    JSON.stringify({
+      applications,
+      cursor: null,
+      hasMore: false,
+    }),
+    {
+      status: 200,
+      headers: { "Content-Type": "application/json" },
+    },
+  );
+}
+
 describe("AdminDashboard", () => {
   const onLogout = vi.fn();
 
   beforeEach(() => {
     vi.clearAllMocks();
-    mockUpdateDoc.mockResolvedValue(undefined);
+    vi.stubGlobal("fetch", mockFetch);
+  });
+
+  afterEach(() => {
+    vi.unstubAllGlobals();
   });
 
   it("shows loading state while fetching", () => {
-    mockGetDocs.mockReturnValue(new Promise(() => {})); // never resolves
+    mockFetch.mockReturnValue(new Promise(() => {})); // never resolves
     render(<AdminDashboard onLogout={onLogout} />);
     // The Today tab is shown by default; it uses inboxLoading state
     expect(
@@ -120,7 +137,7 @@ describe("AdminDashboard", () => {
   });
 
   it("shows error state when fetch fails", async () => {
-    mockGetDocs.mockRejectedValue(new Error("Network error"));
+    mockFetch.mockRejectedValue(new Error("Network error"));
     render(<AdminDashboard onLogout={onLogout} />);
     await waitFor(() => {
       expect(
@@ -130,7 +147,7 @@ describe("AdminDashboard", () => {
   });
 
   it("shows retry button on error", async () => {
-    mockGetDocs.mockRejectedValue(new Error("Network error"));
+    mockFetch.mockRejectedValue(new Error("Network error"));
     render(<AdminDashboard onLogout={onLogout} />);
     await waitFor(() => {
       expect(screen.getByText("Try again")).toBeInTheDocument();
@@ -138,7 +155,7 @@ describe("AdminDashboard", () => {
   });
 
   it("shows empty state when no applications exist", async () => {
-    mockGetDocs.mockResolvedValue({ docs: [] });
+    mockFetch.mockResolvedValue(applicationsResponse([]));
     render(<AdminDashboard onLogout={onLogout} />);
     // Today tab shows TaskInbox empty state when inboxApps is empty
     await waitFor(() => {
@@ -147,12 +164,12 @@ describe("AdminDashboard", () => {
   });
 
   it("renders applicant cards when applications are loaded", async () => {
-    mockGetDocs.mockResolvedValue({
-      docs: [
-        { id: "1", data: () => ({ ...makeApp({ id: "1", name: "Priya" }) }) },
-        { id: "2", data: () => ({ ...makeApp({ id: "2", name: "Anika" }) }) },
-      ],
-    });
+    mockFetch.mockResolvedValue(
+      applicationsResponse([
+        makeApp({ id: "1", name: "Priya" }),
+        makeApp({ id: "2", name: "Anika" }),
+      ]),
+    );
     render(<AdminDashboard onLogout={onLogout} />);
     await waitFor(() => {
       expect(screen.getByText("Priya")).toBeInTheDocument();
@@ -161,9 +178,7 @@ describe("AdminDashboard", () => {
   });
 
   it("shows active count in tab badge", async () => {
-    mockGetDocs.mockResolvedValue({
-      docs: [{ id: "1", data: () => ({ ...makeApp({ id: "1" }) }) }],
-    });
+    mockFetch.mockResolvedValue(applicationsResponse([makeApp({ id: "1" })]));
     render(<AdminDashboard onLogout={onLogout} />);
     // Badge only renders when Applicants tab is active — click it first
     fireEvent.click(screen.getByRole("button", { name: /applicants/i }));
@@ -174,7 +189,7 @@ describe("AdminDashboard", () => {
   });
 
   it("renders logout button that calls onLogout", async () => {
-    mockGetDocs.mockResolvedValue({ docs: [] });
+    mockFetch.mockResolvedValue(applicationsResponse([]));
     render(<AdminDashboard onLogout={onLogout} />);
     await waitFor(() => {
       expect(screen.getByText("Logout")).toBeInTheDocument();
@@ -184,17 +199,12 @@ describe("AdminDashboard", () => {
   });
 
   it("shows summary with active and deleted counts", async () => {
-    mockGetDocs.mockResolvedValue({
-      docs: [
-        { id: "1", data: () => ({ ...makeApp({ id: "1" }) }) },
-        {
-          id: "2",
-          data: () => ({
-            ...makeApp({ id: "2", deletedAt: makeTimestamp(100) }),
-          }),
-        },
-      ],
-    });
+    mockFetch.mockResolvedValue(
+      applicationsResponse([
+        makeApp({ id: "1" }),
+        makeApp({ id: "2", deletedAt: makeTimestamp(100) }),
+      ]),
+    );
     render(<AdminDashboard onLogout={onLogout} />);
     // Summary is only rendered when the Applicants tab is active
     fireEvent.click(screen.getByRole("button", { name: /applicants/i }));
@@ -224,20 +234,12 @@ describe("AdminDashboard", () => {
   });
 
   it("filters applicants by sexuality", async () => {
-    mockGetDocs.mockResolvedValue({
-      docs: [
-        {
-          id: "1",
-          data: () =>
-            makeApp({ id: "1", name: "Priya", orientation: "Straight" }),
-        },
-        {
-          id: "2",
-          data: () =>
-            makeApp({ id: "2", name: "Anika", orientation: "Bisexual" }),
-        },
-      ],
-    });
+    mockFetch.mockResolvedValue(
+      applicationsResponse([
+        makeApp({ id: "1", name: "Priya", orientation: "Straight" }),
+        makeApp({ id: "2", name: "Anika", orientation: "Bisexual" }),
+      ]),
+    );
     render(<AdminDashboard onLogout={onLogout} />);
 
     await waitFor(() => {

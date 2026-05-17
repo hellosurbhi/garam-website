@@ -61,6 +61,7 @@ describe("ContestantInviteModal", () => {
           ok: true,
           inviteUrl:
             "https://garammasaladating.com/contestant-portal?invite=invite-1",
+          emailSent: true,
         }),
         { status: 200 },
       ),
@@ -103,6 +104,57 @@ describe("ContestantInviteModal", () => {
     expect(onSuccess).toHaveBeenCalledWith(
       "priya@example.com",
       "https://garammasaladating.com/contestant-portal?invite=invite-1",
+      true,
+      undefined,
+    );
+    expect(screen.getByLabelText("Packet link")).toHaveValue(
+      "https://garammasaladating.com/contestant-portal?invite=invite-1",
+    );
+  });
+
+  it("surfaces invite links when email delivery fails", async () => {
+    vi.mocked(fetch).mockResolvedValueOnce(
+      new Response(
+        JSON.stringify({
+          ok: true,
+          inviteUrl:
+            "https://garammasaladating.com/contestant-portal?invite=invite-2",
+          emailSent: false,
+          emailError: "Email service is not configured.",
+        }),
+        { status: 200 },
+      ),
+    );
+    const onSuccess = vi.fn();
+
+    render(
+      <ContestantInviteModal
+        app={application}
+        onClose={vi.fn()}
+        onSuccess={onSuccess}
+      />,
+    );
+
+    fireEvent.change(screen.getByLabelText("Select contestant role"), {
+      target: { value: "female" },
+    });
+    fireEvent.change(screen.getByLabelText("Select show"), {
+      target: { value: "manhattan-2026-06-01" },
+    });
+    fireEvent.click(screen.getByRole("button", { name: "Send Packet" }));
+
+    await waitFor(() => {
+      expect(screen.getByText(/Email was not sent/)).toBeInTheDocument();
+    });
+
+    expect(screen.getByLabelText("Packet link")).toHaveValue(
+      "https://garammasaladating.com/contestant-portal?invite=invite-2",
+    );
+    expect(onSuccess).toHaveBeenCalledWith(
+      "priya@example.com",
+      "https://garammasaladating.com/contestant-portal?invite=invite-2",
+      false,
+      "Email service is not configured.",
     );
   });
 });

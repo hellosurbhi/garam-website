@@ -42,28 +42,129 @@ interface AdminDashboardProps {
 type FilterOption = { value: string; label: string };
 type DashboardTab = "applications" | "analytics" | "contestants";
 
-const PAGE_SIZE = 24;
+type SerializedTimestamp =
+  | string
+  | {
+      seconds?: number;
+      nanoseconds?: number;
+      _seconds?: number;
+      _nanoseconds?: number;
+    }
+  | null
+  | undefined;
 
-async function getApplicationsPage(
-  cursor: QueryDocumentSnapshot<DocumentData> | null,
-) {
-  const applicationsRef = collection(getFirebaseDb(), "applications");
-  const appQuery = cursor
-    ? query(
-        applicationsRef,
-        orderBy("submittedAt", "desc"),
-        startAfter(cursor),
-        limit(PAGE_SIZE),
-      )
-    : query(applicationsRef, orderBy("submittedAt", "desc"), limit(PAGE_SIZE));
-  const snap = await getDocs(appQuery);
-  const docs = snap.docs.map((d) => ({ id: d.id, ...d.data() }) as Application);
+type ApplicationPatch = {
+  status?: Application["status"];
+  notes?: string;
+  deletedAt?: "now" | null;
+};
+
+interface ApplicationsPageResponse {
+  applications: Array<Application & Record<string, unknown>>;
+  cursor: string | null;
+  hasMore: boolean;
+}
+
+interface ApplicationPatchResponse {
+  application: Application & Record<string, unknown>;
+}
+
+function hydrateTimestamp(
+  value: SerializedTimestamp,
+): Application["submittedAt"] | null {
+  if (value === null || value === undefined) return null;
+
+  let millis: number | null = null;
+  let seconds = 0;
+  let nanoseconds = 0;
+
+  if (typeof value === "string") {
+    const parsed = Date.parse(value);
+    if (Number.isNaN(parsed)) return null;
+    millis = parsed;
+    seconds = Math.floor(parsed / 1000);
+  } else {
+    seconds =
+      typeof value.seconds === "number" ? value.seconds : (value._seconds ?? 0);
+    nanoseconds =
+      typeof value.nanoseconds === "number"
+        ? value.nanoseconds
+        : (value._nanoseconds ?? 0);
+    millis = seconds * 1000 + Math.floor(nanoseconds / 1_000_000);
+  }
+
+  return {
+    seconds,
+    nanoseconds,
+    toDate: () => new Date(millis ?? seconds * 1000),
+    toMillis: () => millis ?? seconds * 1000,
+    isEqual: (other: unknown) => {
+      const otherTime = hydrateTimestamp(other as SerializedTimestamp);
+      return otherTime?.toMillis() === (millis ?? seconds * 1000);
+    },
+    toJSON: () => ({ seconds, nanoseconds }),
+  } as Application["submittedAt"];
+}
+
+function hydrateApplication(
+  app: Application & Record<string, unknown>,
+): Application {
+  return {
+    ...app,
+    submittedAt: hydrateTimestamp(
+      app.submittedAt as SerializedTimestamp,
+    ) as Application["submittedAt"],
+    termsAgreedAt:
+      hydrateTimestamp(app.termsAgreedAt as SerializedTimestamp) ?? undefined,
+    deletedAt: hydrateTimestamp(app.deletedAt as SerializedTimestamp),
+  };
+}
+
+async function getAdminIdToken(): Promise<string> {
+  const user = getFirebaseAuth().currentUser;
+  if (!user || user.isAnonymous) {
+    throw new Error("Admin authentication required");
+  }
+  return user.getIdToken();
+}
+
+async function getApplicationsPage(cursor: string | null) {
+  const token = await getAdminIdToken();
+  const url = new URL("/api/applications", window.location.origin);
+  if (cursor) url.searchParams.set("cursor", cursor);
+
+  const res = await fetch(url.toString(), {
+    headers: { Authorization: `Bearer ${token}` },
+  });
+  if (!res.ok) {
+    throw new Error("Failed to load applications");
+  }
+
+  const data = (await res.json()) as ApplicationsPageResponse;
+  const docs = data.applications.map(hydrateApplication);
 
   return {
     docs,
-    lastDoc: snap.docs.at(-1) ?? null,
-    hasMore: snap.docs.length === PAGE_SIZE,
+    cursor: data.cursor,
+    hasMore: data.hasMore,
   };
+}
+
+async function updateApplication(id: string, patch: ApplicationPatch) {
+  const token = await getAdminIdToken();
+  const res = await fetch("/api/applications", {
+    method: "PATCH",
+    headers: {
+      Authorization: `Bearer ${token}`,
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({ id, patch }),
+  });
+  if (!res.ok) {
+    throw new Error("Failed to update application");
+  }
+  const data = (await res.json()) as ApplicationPatchResponse;
+  return hydrateApplication(data.application);
 }
 
 const GENDER_OPTIONS: FilterOption[] = [
@@ -299,10 +400,14 @@ export default function AdminDashboard({ onLogout }: AdminDashboardProps) {
   }
 
   async function handleDelete(id: string) {
-    await handleUpdate(id, { deletedAt: Timestamp.now() } as Partial<
-      Omit<Application, "id">
-    >);
-    setSelectedApp(null);
+    try {
+      const updated = await updateApplication(id, { deletedAt: "now" });
+      setApplications((prev) => prev.map((a) => (a.id === id ? updated : a)));
+      setSelectedApp(null);
+      showToast("Saved", true);
+    } catch {
+      showToast("Save failed", false);
+    }
   }
 
   function handleRestore(id: string) {

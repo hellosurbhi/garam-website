@@ -149,7 +149,7 @@ describe("verifyIdToken", () => {
     await expect(verifyAdminToken(`Bearer ${token}`)).resolves.toBe("user-123");
   });
 
-  it("allows a verified non-anonymous email login when no allowlist is configured", async () => {
+  it("returns null for a verified email login when no allowlist is configured", async () => {
     mockJwtVerify.mockResolvedValue({
       payload: {
         sub: "user-123",
@@ -159,7 +159,7 @@ describe("verifyIdToken", () => {
     });
     const token = makeToken("key-1", "user-123");
 
-    await expect(verifyAdminToken(`Bearer ${token}`)).resolves.toBe("user-123");
+    await expect(verifyAdminToken(`Bearer ${token}`)).resolves.toBeNull();
   });
 
   it("does not allow anonymous tokens when no allowlist is configured", async () => {

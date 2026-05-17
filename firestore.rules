@@ -141,15 +141,15 @@ service cloud.firestore {
       allow read, delete: if isAdmin();
     }
     match /invites/{doc} {
-      allow read, write: if request.auth != null;
+      allow read, write: if false; // server-only via invite/portal APIs
     }
     match /contestants/{doc} {
       allow create: if false; // server-only via Admin SDK claim endpoints
-      allow read, update, delete: if request.auth != null;
+      allow read, update, delete: if false; // server-only
     }
     match /stage_waivers/{doc} {
       allow create: if false; // server-only via Admin SDK stage-waiver endpoint
-      allow read, update, delete: if request.auth != null;
+      allow read, update, delete: if false; // server-only
     }
     match /orders/{orderId} {
       allow read: if isAdmin();

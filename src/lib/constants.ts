@@ -1,5 +1,7 @@
 /** YouTube video ID for the show highlight reel embedded on the homepage. */
-export const YOUTUBE_VIDEO_ID = "fw3keeNmJB4";
+export const YOUTUBE_VIDEO_ID = "aNpdJVOOczk";
+export const YOUTUBE_VIDEO_URL = `https://www.youtube.com/watch?v=${YOUTUBE_VIDEO_ID}`;
+export const YOUTUBE_THUMBNAIL_SRC = "/images/promo/youtube-thumbnail.jpg";
 
 /** JSON-LD ready metadata for the show highlight reel used in VideoObject structured data. */
 export const VIDEO_METADATA = {

@@ -1,5 +1,9 @@
 ---
-import { YOUTUBE_VIDEO_ID, INSTAGRAM_REEL_URLS } from "@/lib/constants";
+import {
+  YOUTUBE_THUMBNAIL_SRC,
+  YOUTUBE_VIDEO_ID,
+  INSTAGRAM_REEL_URLS,
+} from "@/lib/constants";
 ---
 
 <section class="video" id="watch" aria-labelledby="video-heading">
@@ -16,11 +20,11 @@ import { YOUTUBE_VIDEO_ID, INSTAGRAM_REEL_URLS } from "@/lib/constants";
         data-youtube-id={YOUTUBE_VIDEO_ID}
       >
         <img
-          src={`https://i.ytimg.com/vi/${YOUTUBE_VIDEO_ID}/hqdefault.jpg`}
+          src={YOUTUBE_THUMBNAIL_SRC}
           alt="Garam Masala Dating show video thumbnail"
           loading="lazy"
-          width="480"
-          height="360"
+          width="1280"
+          height="720"
         />
         <span class="play-icon" aria-hidden="true">
           <svg

@@ -33,6 +33,9 @@ const EVENTBRITE_OVERLAY_ID = "eventbrite-widget-modal-overlay";
 const EVENTBRITE_IFRAME_SELECTOR =
   'iframe[id^="eventbrite-widget-modal-"], iframe[src*="checkout-external"][src*="eventbrite"]';
 const OUTSIDE_CLOSE_ID = "gmd-eventbrite-outside-close";
+const AUTO_OPEN_INITIAL_DELAY_MS = 150;
+const AUTO_OPEN_RETRY_DELAY_MS = 750;
+const AUTO_OPEN_MAX_ATTEMPTS = 4;
 
 function getEventId(trigger: HTMLElement): string {
   return (
@@ -249,6 +252,7 @@ export function initEventbriteCheckout(
   let modalSessionActive = false;
   let suppressNextPopstate = false;
   let pendingModalTimer: number | undefined;
+  let pendingAutoOpenTimer: number | undefined;
   let bodyState: { overflow: string; position: string } | null = null;
   let autoOpenEventId = options.autoOpenQueryParam
     ? (new URLSearchParams(window.location.search).get(
@@ -413,11 +417,35 @@ export function initEventbriteCheckout(
       autoOpenEventId = "";
       return;
     }
-    window.setTimeout(() => {
-      autoOpenEventId = "";
-      prepareCheckoutOpen(requestedEvent, trigger);
-      trigger.click();
-    }, 0);
+    clickRequestedCheckout(requestedEvent, trigger);
+  }
+
+  function clickRequestedCheckout(
+    eventConfig: EventbriteTriggerConfig,
+    trigger: HTMLElement,
+    attempt = 1,
+  ): void {
+    autoOpenEventId = "";
+    window.clearTimeout(pendingAutoOpenTimer);
+    pendingAutoOpenTimer = window.setTimeout(
+      () => {
+        if (isEventbriteModalPresent() || modalSessionActive) return;
+        prepareCheckoutOpen(eventConfig, trigger);
+        trigger.click();
+
+        pendingAutoOpenTimer = window.setTimeout(() => {
+          if (isEventbriteModalPresent() || modalSessionActive) return;
+          if (attempt < AUTO_OPEN_MAX_ATTEMPTS) {
+            clickRequestedCheckout(eventConfig, trigger, attempt + 1);
+            return;
+          }
+          if (eventConfig.fallbackUrl) {
+            window.location.href = eventConfig.fallbackUrl;
+          }
+        }, AUTO_OPEN_RETRY_DELAY_MS);
+      },
+      attempt === 1 ? AUTO_OPEN_INITIAL_DELAY_MS : 0,
+    );
   }
 
   function scheduleRequestedCheckoutOpen(): void {
@@ -577,6 +605,7 @@ export function initEventbriteCheckout(
 
   return () => {
     window.clearTimeout(pendingModalTimer);
+    window.clearTimeout(pendingAutoOpenTimer);
     cleanupCallbacks.splice(0).forEach((cleanup) => cleanup());
   };
 }

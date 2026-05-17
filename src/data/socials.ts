@@ -1,3 +1,5 @@
+import { YOUTUBE_VIDEO_URL } from "@/lib/constants";
+
 export const SOCIAL_URLS = {
   instagram: "https://www.instagram.com/garammasaladating",
   youtube: "https://www.youtube.com/@GaramMasalaDating",

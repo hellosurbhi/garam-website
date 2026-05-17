@@ -164,50 +164,52 @@ async function installFakeEventbriteWidget(page: Page) {
     };
     w.EBWidgets = {
       createWidget(config: EBWidgetConfig) {
-        const trigger = document.getElementById(config.modalTriggerElementId);
-        if (!trigger || trigger.dataset.ebTestBound === "1") return;
-        trigger.dataset.ebTestBound = "1";
-        trigger.addEventListener("click", (event) => {
-          event.preventDefault();
-          if (
-            document.querySelector('iframe[id^="eventbrite-widget-modal-"]')
-          ) {
-            return;
-          }
+        window.setTimeout(() => {
+          const trigger = document.getElementById(config.modalTriggerElementId);
+          if (!trigger || trigger.dataset.ebTestBound === "1") return;
+          trigger.dataset.ebTestBound = "1";
+          trigger.addEventListener("click", (event) => {
+            event.preventDefault();
+            if (
+              document.querySelector('iframe[id^="eventbrite-widget-modal-"]')
+            ) {
+              return;
+            }
 
-          let overlay = document.getElementById(
-            "eventbrite-widget-modal-overlay",
-          );
-          if (!overlay) {
-            overlay = document.createElement("div");
-            overlay.id = "eventbrite-widget-modal-overlay";
-            document.body.append(overlay);
-          }
-          Object.assign(overlay.style, {
-            position: "fixed",
-            inset: "0",
-            zIndex: "2147483647",
-            opacity: "1",
-            width: "100%",
-            height: "100%",
-            background: "rgba(0, 0, 0, 0.8)",
-          });
+            let overlay = document.getElementById(
+              "eventbrite-widget-modal-overlay",
+            );
+            if (!overlay) {
+              overlay = document.createElement("div");
+              overlay.id = "eventbrite-widget-modal-overlay";
+              document.body.append(overlay);
+            }
+            Object.assign(overlay.style, {
+              position: "fixed",
+              inset: "0",
+              zIndex: "2147483647",
+              opacity: "1",
+              width: "100%",
+              height: "100%",
+              background: "rgba(0, 0, 0, 0.8)",
+            });
 
-          const iframe = document.createElement("iframe");
-          iframe.id = `eventbrite-widget-modal-${String(config.eventId ?? "test")}`;
-          iframe.src = "about:blank";
-          iframe.title = "Eventbrite checkout";
-          Object.assign(iframe.style, {
-            position: "fixed",
-            inset: "0",
-            width: "100%",
-            height: "100%",
-            border: "0",
-            zIndex: "2147483647",
-            background: "transparent",
+            const iframe = document.createElement("iframe");
+            iframe.id = `eventbrite-widget-modal-${String(config.eventId ?? "test")}`;
+            iframe.src = "about:blank";
+            iframe.title = "Eventbrite checkout";
+            Object.assign(iframe.style, {
+              position: "fixed",
+              inset: "0",
+              width: "100%",
+              height: "100%",
+              border: "0",
+              zIndex: "2147483647",
+              background: "transparent",
+            });
+            document.body.append(iframe);
           });
-          document.body.append(iframe);
-        });
+        }, 75);
       },
     };
   });
@@ -406,22 +408,23 @@ test.describe("Homepage deep", () => {
     await expect(applyCta).toBeVisible();
   });
 
-  test("Hero next-show pill routes checkout through tickets page", async ({
+  test("Hero next-show pill opens checkout on the homepage", async ({
     page,
   }) => {
     await installFakeEventbriteWidget(page);
     await page.goto("/", { waitUntil: "domcontentloaded" });
 
-    const pill = page.locator('.next-show-pill[href^="/tickets?event="]');
+    const pill = page.locator(
+      '.next-show-pill[id^="eventbrite-widget-modal-trigger-home-hero-"]',
+    );
     await expect(pill.first()).toBeVisible();
 
     const href = await pill.first().getAttribute("href");
-    expect(href).toMatch(/^\/tickets\?event=[^&]+$/);
-    expect(await pill.first().getAttribute("target")).toBeNull();
-    expect(await pill.first().getAttribute("id")).toBeNull();
+    expect(href).toContain("eventbrite.com");
+    expect(await pill.first().getAttribute("data-eb-event-id")).toBeTruthy();
 
     await pill.first().click();
-    await expect(page).toHaveURL(/\/tickets$/);
+    await expect(page).toHaveURL(/\/$/);
     await expect(
       page.locator('iframe[id^="eventbrite-widget-modal-"]'),
     ).toBeVisible();

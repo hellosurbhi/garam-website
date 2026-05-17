@@ -53,8 +53,8 @@ const videoJsonLd = JSON.stringify({
   "@type": "VideoObject",
   name: VIDEO_METADATA.title,
   description: VIDEO_METADATA.description,
-  thumbnailUrl: `https://i.ytimg.com/vi/${YOUTUBE_VIDEO_ID}/maxresdefault.jpg`,
-  contentUrl: `https://www.youtube.com/watch?v=${YOUTUBE_VIDEO_ID}`,
+  thumbnailUrl: `https://garammasaladating.com${YOUTUBE_THUMBNAIL_SRC}`,
+  contentUrl: YOUTUBE_VIDEO_URL,
   embedUrl: `https://www.youtube.com/embed/${YOUTUBE_VIDEO_ID}`,
   uploadDate: VIDEO_METADATA.uploadDate,
   duration: VIDEO_METADATA.duration,
@@ -150,6 +150,7 @@ const speakableJsonLd = JSON.stringify({
     <HomeFAQ />
     <HomeJournal />
   </main>
+  <EventbriteWidgetInit />
   <!-- 30-second email popup -->
   <dialog id="email-popup" class="popup-dialog" tabindex="-1">
     <div class="popup-inner">

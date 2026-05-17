@@ -18,6 +18,12 @@ describe("SOCIAL_URLS", () => {
     expect(SOCIAL_URLS.youtube).toContain("youtube.com");
   });
 
+  it("points youtube links to the current episode", () => {
+    expect(SOCIAL_URLS.youtube).toBe(
+      "https://www.youtube.com/watch?v=aNpdJVOOczk",
+    );
+  });
+
   it("includes a mailto email", () => {
     expect(SOCIAL_URLS.email).toMatch(/^mailto:/);
   });

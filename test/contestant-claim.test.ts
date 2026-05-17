@@ -200,4 +200,5 @@ describe("contestant-claim POST", () => {
     } as Parameters<typeof POST>[0]);
     expect(res.status).toBe(200);
   });
+
 });

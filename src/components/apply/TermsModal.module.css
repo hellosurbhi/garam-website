@@ -86,13 +86,8 @@
   flex: 1;
 }
 
-.waiverText {
-  font-family: var(--font-body);
-  font-size: 15px;
-  color: var(--text-secondary);
-  line-height: 1.75;
-  white-space: pre-wrap;
-  margin: 0;
+.waiverDocument {
+  min-height: 100%;
 }
 
 /* ─── Footer ─────────────────────────────────────────────────────────────── */

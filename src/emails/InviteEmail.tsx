@@ -59,7 +59,7 @@ const InviteEmail: FC<InviteEmailProps> = ({
             textAlign: "center" as const,
           }}
         >
-          Congratulations, {firstName}!
+          You&apos;re cast, {firstName}.
         </Text>
         <Text
           style={{
@@ -70,8 +70,8 @@ const InviteEmail: FC<InviteEmailProps> = ({
             marginBottom: 8,
           }}
         >
-          You&apos;ve been selected to participate in NYC&apos;s #1 reality
-          dating show.
+          You&apos;ve been selected for Garam Masala Dating. This is your
+          contestant packet.
         </Text>
         <Text
           style={{
@@ -98,7 +98,7 @@ const InviteEmail: FC<InviteEmailProps> = ({
               textDecoration: "none",
             }}
           >
-            Get Started
+            Open Contestant Packet
           </Button>
         </Section>
         <Text
@@ -109,8 +109,19 @@ const InviteEmail: FC<InviteEmailProps> = ({
             marginBottom: 8,
           }}
         >
-          Click the button above to sign your waiver and access your show prep
-          guide. The link expires at midnight on show day.
+          Sign your waiver first. After that, your prep guide opens with
+          everything you need before showtime.
+        </Text>
+        <Text
+          style={{
+            fontSize: 14,
+            color: "#666",
+            lineHeight: "1.6",
+            marginBottom: 8,
+          }}
+        >
+          Please read it before arriving. This is the packet for your appearance
+          on stage.
         </Text>
         <Text style={{ fontSize: 13, color: "#999", marginBottom: 32 }}>
           If the button doesn&apos;t work, copy this URL: {portalUrl}

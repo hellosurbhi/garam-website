@@ -2,13 +2,9 @@ import type { APIRoute } from "astro";
 import { fsGet } from "@/lib/firestoreRest";
 import { verifyPortalToken } from "@/lib/portalToken";
 import { events } from "@/data/events";
-import { isEventPast } from "@/utils/eventDate";
 import { enforceRateLimit, RATE_LIMITS } from "@/lib/rateLimit";
 
 export const prerender = false;
-
-const VALID_ROLES = ["female", "male", "stealer"] as const;
-type ValidRole = (typeof VALID_ROLES)[number];
 
 function json(data: Record<string, unknown>, status = 200) {
   return new Response(JSON.stringify(data), {
@@ -51,6 +47,51 @@ function normalizeRole(
   return null;
 }
 
+function showIsUpcoming(
+  isoDate: string,
+  timezone: string | undefined,
+): boolean {
+  const todayInShowTz = new Intl.DateTimeFormat("en-CA", {
+    timeZone: timezone ?? "America/New_York",
+  }).format(new Date());
+  return isoDate >= todayInShowTz;
+}
+
+function formatDisplayTime(startTime: string | undefined): string | null {
+  return startTime
+    ? new Date(`2000-01-01T${startTime}`).toLocaleTimeString("en-US", {
+        hour: "numeric",
+        minute: "2-digit",
+      })
+    : null;
+}
+
+function currentVisibleShow() {
+  return events.find(
+    (e) =>
+      !e.hidden &&
+      e.citySlug &&
+      e.isoDate &&
+      showIsUpcoming(e.isoDate, e.timezone),
+  );
+}
+
+function showInviteState(
+  event: NonNullable<ReturnType<typeof currentVisibleShow>>,
+  showId: string,
+  role: "female" | "male" | "spectator" | null,
+) {
+  return {
+    state: "show-invite",
+    showId,
+    showCity: event.city,
+    showDate: event.isoDate,
+    showDisplayDate: event.date,
+    startTime: formatDisplayTime(event.startTime),
+    venueName: event.venue?.name ?? null,
+    role,
+  };
+}
 
 export const GET: APIRoute = async ({ request }) => {
   const limited = await enforceRateLimit(request, RATE_LIMITS.contestantClaim);
@@ -61,8 +102,9 @@ export const GET: APIRoute = async ({ request }) => {
   const showId = url.searchParams.get("show");
   const roleParam = url.searchParams.get("role");
 
-  if (showId && roleParam) {
-    if (!VALID_ROLES.includes(roleParam as ValidRole)) {
+  if (showId) {
+    const role = normalizeRole(roleParam);
+    if (roleParam && !role) {
       return json({ state: "error", message: "Invalid role." }, 400);
     }
     const event = events.find(
@@ -75,57 +117,10 @@ export const GET: APIRoute = async ({ request }) => {
     if (!event || !event.isoDate) {
       return json({ state: "error", message: "Show not found." }, 404);
     }
-    const tz = event.timezone ?? "America/New_York";
-    const todayInShowTz = new Intl.DateTimeFormat("en-CA", {
-      timeZone: tz,
-    }).format(new Date());
-    if (event.isoDate < todayInShowTz) {
-      return json({ state: "expired" });
+    if (!showIsUpcoming(event.isoDate, event.timezone)) {
+      return json({ state: "error", message: "This show has already passed." });
     }
-    const displayTime = event.startTime
-      ? new Date(`2000-01-01T${event.startTime}`).toLocaleTimeString("en-US", {
-          hour: "numeric",
-          minute: "2-digit",
-        })
-      : null;
-    return json({
-      state: "show-invite",
-      showId,
-      showCity: event.city,
-      showDate: event.isoDate,
-      showDisplayDate: event.date,
-      startTime: displayTime,
-      venueName: event.venue?.name ?? null,
-      role: roleParam,
-    });
-  }
-
-  if (showId) {
-    const event = events.find(
-      (e) =>
-        !e.hidden &&
-        e.citySlug &&
-        e.isoDate &&
-        `${e.citySlug}-${e.isoDate}` === showId,
-    );
-    if (!event || !event.isoDate) {
-      return json({ state: "error", message: "Invalid show link." }, 404);
-    }
-    if (isEventPast(event.date)) {
-      return json({
-        state: "error",
-        message: "This show has already passed.",
-      });
-    }
-    return json({
-      state: "show",
-      showId,
-      showCity: event.city,
-      showDate: event.isoDate,
-      showDisplayDate: event.date,
-      startTime: event.startTime ?? null,
-      venueName: event.venue?.name ?? null,
-    });
+    return json(showInviteState(event, showId, role));
   }
 
   if (inviteId) {
@@ -158,7 +153,13 @@ export const GET: APIRoute = async ({ request }) => {
   const cookies = parseCookies(request.headers.get("cookie"));
   const token = cookies.portal_session;
   if (!token) {
-    return json({ state: "no-access" });
+    const event = currentVisibleShow();
+    if (!event?.citySlug || !event.isoDate) {
+      return json({ state: "no-access" });
+    }
+    return json(
+      showInviteState(event, `${event.citySlug}-${event.isoDate}`, null),
+    );
   }
 
   try {

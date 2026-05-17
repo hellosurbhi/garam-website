@@ -154,7 +154,11 @@ async function assertSkipLink(page: Page) {
 
 async function installFakeEventbriteWidget(page: Page) {
   await page.addInitScript(() => {
-    type EBWidgetConfig = { modalTriggerElementId: string };
+    type EBWidgetConfig = {
+      eventId?: string | number;
+      modalTriggerElementId: string;
+      onWidgetModalClose?: () => void;
+    };
     const w = window as typeof window & {
       EBWidgets?: { createWidget: (config: EBWidgetConfig) => void };
     };
@@ -165,37 +169,44 @@ async function installFakeEventbriteWidget(page: Page) {
         trigger.dataset.ebTestBound = "1";
         trigger.addEventListener("click", (event) => {
           event.preventDefault();
-          if (document.querySelector("div.eds-structure_main")) return;
+          if (
+            document.querySelector('iframe[id^="eventbrite-widget-modal-"]')
+          ) {
+            return;
+          }
 
-          const structure = document.createElement("div");
-          structure.className = "eds-structure_main";
-          Object.assign(structure.style, {
+          let overlay = document.getElementById(
+            "eventbrite-widget-modal-overlay",
+          );
+          if (!overlay) {
+            overlay = document.createElement("div");
+            overlay.id = "eventbrite-widget-modal-overlay";
+            document.body.append(overlay);
+          }
+          Object.assign(overlay.style, {
             position: "fixed",
             inset: "0",
-            zIndex: "9999",
-            background: "rgba(0, 0, 0, 0.35)",
+            zIndex: "2147483647",
+            opacity: "1",
+            width: "100%",
+            height: "100%",
+            background: "rgba(0, 0, 0, 0.8)",
           });
 
-          const modal = document.createElement("div");
-          modal.className = "eds-modal";
-          Object.assign(modal.style, {
-            width: "260px",
-            minHeight: "160px",
-            margin: "48px auto",
-            padding: "16px",
-            background: "#fff",
+          const iframe = document.createElement("iframe");
+          iframe.id = `eventbrite-widget-modal-${String(config.eventId ?? "test")}`;
+          iframe.src = "about:blank";
+          iframe.title = "Eventbrite checkout";
+          Object.assign(iframe.style, {
+            position: "fixed",
+            inset: "0",
+            width: "100%",
+            height: "100%",
+            border: "0",
+            zIndex: "2147483647",
+            background: "transparent",
           });
-
-          const closeWrap = document.createElement("div");
-          closeWrap.className = "eds-modal__close-button";
-          const close = document.createElement("button");
-          close.type = "button";
-          close.textContent = "Close checkout";
-          close.addEventListener("click", () => structure.remove());
-          closeWrap.append(close);
-          modal.append(closeWrap);
-          structure.append(modal);
-          document.body.append(structure);
+          document.body.append(iframe);
         });
       },
     };
@@ -398,6 +409,7 @@ test.describe("Homepage deep", () => {
   test("Hero next-show pill routes checkout through tickets page", async ({
     page,
   }) => {
+    await installFakeEventbriteWidget(page);
     await page.goto("/", { waitUntil: "domcontentloaded" });
 
     const pill = page.locator('.next-show-pill[href^="/tickets?event="]');
@@ -407,6 +419,12 @@ test.describe("Homepage deep", () => {
     expect(href).toMatch(/^\/tickets\?event=[^&]+$/);
     expect(await pill.first().getAttribute("target")).toBeNull();
     expect(await pill.first().getAttribute("id")).toBeNull();
+
+    await pill.first().click();
+    await expect(page).toHaveURL(/\/tickets$/);
+    await expect(
+      page.locator('iframe[id^="eventbrite-widget-modal-"]'),
+    ).toBeVisible();
   });
 
   test("Shows section with event cards", async ({ page }) => {
@@ -815,18 +833,18 @@ test.describe("Tickets page deep", () => {
     await page.goto(`/tickets?event=${eventId}`, {
       waitUntil: "domcontentloaded",
     });
-    const modalShell = page.locator("div.eds-structure_main");
-    await expect(modalShell).toBeVisible();
+    const modalFrame = page.locator('iframe[id^="eventbrite-widget-modal-"]');
+    await expect(modalFrame).toBeVisible();
     await expect(page).toHaveURL(/\/tickets$/);
 
     await page.evaluate(() => window.history.back());
-    await expect(modalShell).toHaveCount(0);
+    await expect(modalFrame).toHaveCount(0);
     await expect(page).toHaveURL(/\/tickets$/);
 
     await page.locator(`#${triggerId}`).click();
-    await expect(modalShell).toBeVisible();
-    await modalShell.click({ position: { x: 8, y: 8 } });
-    await expect(modalShell).toHaveCount(0);
+    await expect(modalFrame).toBeVisible();
+    await page.locator("[data-eb-outside-close-zone]").first().click();
+    await expect(modalFrame).toHaveCount(0);
     await expect(page).toHaveURL(/\/tickets$/);
   });
 });

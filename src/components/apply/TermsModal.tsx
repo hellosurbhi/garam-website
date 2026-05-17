@@ -1,4 +1,5 @@
 import { WAIVER_TEXT } from "@/data/waiver";
+import { WaiverDocument } from "@/components/WaiverDocument";
 import { Modal } from "@/components/ui/Modal";
 import styles from "./TermsModal.module.css";
 
@@ -43,7 +44,7 @@ export function TermsModal({ onClose, onAgree }: TermsModalProps) {
       </div>
 
       <div className={styles.body}>
-        <pre className={styles.waiverText}>{WAIVER_TEXT}</pre>
+        <WaiverDocument text={WAIVER_TEXT} className={styles.waiverDocument} />
       </div>
 
       <div className={styles.footer}>

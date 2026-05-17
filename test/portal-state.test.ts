@@ -3,16 +3,14 @@ import { describe, it, expect, vi, beforeEach } from "vitest";
 const mocks = vi.hoisted(() => {
   const fsGet = vi.fn();
   const verifyPortalToken = vi.fn();
-  const isEventPast = vi.fn();
 
-  return { fsGet, verifyPortalToken, isEventPast };
+  return { fsGet, verifyPortalToken };
 });
 
 vi.mock("@/lib/firestoreRest", () => ({ fsGet: mocks.fsGet }));
 vi.mock("@/lib/portalToken", () => ({
   verifyPortalToken: mocks.verifyPortalToken,
 }));
-vi.mock("@/utils/eventDate", () => ({ isEventPast: mocks.isEventPast }));
 vi.mock("@/data/events", () => ({
   events: [
     {
@@ -22,6 +20,7 @@ vi.mock("@/data/events", () => ({
       city: "New York",
       date: "December 31, 2099",
       startTime: "20:00",
+      timezone: "America/New_York",
       venue: { name: "Test Venue" },
     },
     {
@@ -31,7 +30,18 @@ vi.mock("@/data/events", () => ({
       city: "Secret City",
       date: "December 31, 2099",
       startTime: "20:00",
+      timezone: "America/New_York",
       venue: { name: "Hidden Venue" },
+    },
+    {
+      hidden: false,
+      citySlug: "past",
+      isoDate: "2000-01-01",
+      city: "Past City",
+      date: "January 1, 2000",
+      startTime: "20:00",
+      timezone: "America/New_York",
+      venue: { name: "Past Venue" },
     },
   ],
 }));
@@ -51,18 +61,35 @@ function makeRequestWithCookie(cookie: string): Request {
 describe("portal-state GET /api/portal-state", () => {
   beforeEach(() => {
     vi.clearAllMocks();
-    mocks.isEventPast.mockReturnValue(false);
   });
 
   describe("show param", () => {
-    it("returns show state for a valid upcoming show", async () => {
+    it("returns show-invite state for a valid upcoming show", async () => {
       const req = makeRequest("/api/portal-state?show=nyc-2099-12-31");
       const res = await GET({ request: req } as Parameters<typeof GET>[0]);
       expect(res.status).toBe(200);
       const body = await res.json();
-      expect(body.state).toBe("show");
+      expect(body.state).toBe("show-invite");
       expect(body.showId).toBe("nyc-2099-12-31");
       expect(body.showCity).toBe("New York");
+      expect(body.role).toBeNull();
+    });
+
+    it("returns show-invite with role when role param is provided", async () => {
+      const req = makeRequest("/api/portal-state?show=nyc-2099-12-31&role=female");
+      const res = await GET({ request: req } as Parameters<typeof GET>[0]);
+      expect(res.status).toBe(200);
+      const body = await res.json();
+      expect(body.state).toBe("show-invite");
+      expect(body.role).toBe("female");
+    });
+
+    it("returns 400 for an invalid role", async () => {
+      const req = makeRequest("/api/portal-state?show=nyc-2099-12-31&role=wizard");
+      const res = await GET({ request: req } as Parameters<typeof GET>[0]);
+      expect(res.status).toBe(400);
+      const body = await res.json();
+      expect(body.state).toBe("error");
     });
 
     it("returns 404 for an unknown showId", async () => {
@@ -74,12 +101,17 @@ describe("portal-state GET /api/portal-state", () => {
     });
 
     it("returns error when show has already passed", async () => {
-      mocks.isEventPast.mockReturnValue(true);
-      const req = makeRequest("/api/portal-state?show=nyc-2099-12-31");
+      const req = makeRequest("/api/portal-state?show=past-2000-01-01");
       const res = await GET({ request: req } as Parameters<typeof GET>[0]);
       const body = await res.json();
       expect(body.state).toBe("error");
       expect(body.message).toMatch(/passed/i);
+    });
+
+    it("returns 404 for a hidden show accessed via show param", async () => {
+      const req = makeRequest("/api/portal-state?show=secret-2099-12-31");
+      const res = await GET({ request: req } as Parameters<typeof GET>[0]);
+      expect(res.status).toBe(404);
     });
   });
 
@@ -145,11 +177,13 @@ describe("portal-state GET /api/portal-state", () => {
   });
 
   describe("cookie / portal session", () => {
-    it("returns no-access when no cookie is present", async () => {
+    it("returns show-invite for the current show when no cookie is present", async () => {
       const req = makeRequest();
       const res = await GET({ request: req } as Parameters<typeof GET>[0]);
       const body = await res.json();
-      expect(body.state).toBe("no-access");
+      expect(body.state).toBe("show-invite");
+      expect(body.showId).toBe("nyc-2099-12-31");
+      expect(body.role).toBeNull();
     });
 
     it("returns active state for valid session with waiver", async () => {
@@ -190,7 +224,6 @@ describe("portal-state GET /api/portal-state", () => {
         firstName: "Bob",
         lastName: "Smith",
         role: "male",
-        // no waiver fields
       });
       const req = makeRequestWithCookie("portal_session=no-waiver-token");
       const res = await GET({ request: req } as Parameters<typeof GET>[0]);
@@ -217,37 +250,6 @@ describe("portal-state GET /api/portal-state", () => {
       const body = await res.json();
       expect(body.state).toBe("error");
       errorSpy.mockRestore();
-    });
-  });
-
-  it("allows per-show links only for visible events", async () => {
-    const res = await GET(
-      makeContext(
-        "",
-        "https://garammasaladating.com/api/portal-state?show=manhattan-2026-06-01&role=female",
-      ),
-    );
-
-    expect(res.status).toBe(200);
-    expect(await readJson(res)).toMatchObject({
-      state: "show-invite",
-      showId: "manhattan-2026-06-01",
-      role: "female",
-    });
-  });
-
-  it("does not expose hidden events through per-show links", async () => {
-    const res = await GET(
-      makeContext(
-        "",
-        "https://garammasaladating.com/api/portal-state?show=secret-city-2026-06-02&role=female",
-      ),
-    );
-
-    expect(res.status).toBe(404);
-    expect(await readJson(res)).toEqual({
-      state: "error",
-      message: "Show not found.",
     });
   });
 });

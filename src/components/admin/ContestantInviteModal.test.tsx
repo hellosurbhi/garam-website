@@ -84,7 +84,7 @@ describe("ContestantInviteModal", () => {
     fireEvent.change(screen.getByLabelText("Select show"), {
       target: { value: "manhattan-2026-06-01" },
     });
-    fireEvent.click(screen.getByRole("button", { name: "Send Invite" }));
+    fireEvent.click(screen.getByRole("button", { name: "Send Packet" }));
 
     await waitFor(() => expect(fetch).toHaveBeenCalledOnce());
 

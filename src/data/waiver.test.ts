@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { WAIVER_TEXT, WAIVER_VERSION } from "./waiver";
+import { WAIVER_SOURCE_TEXT, WAIVER_TEXT, WAIVER_VERSION } from "./waiver";
 
 describe("contestant waiver copy", () => {
   it("uses the merged v3 contestant waiver", () => {
@@ -14,5 +14,11 @@ describe("contestant waiver copy", () => {
       "I am signing this Agreement while sober and of sound mind",
     );
     expect(WAIVER_TEXT).toContain("Electronic Signature Consent");
+    expect(WAIVER_TEXT).toContain(
+      "my typed name below constitutes my legal electronic signature",
+    );
+    expect(WAIVER_TEXT).toContain("Contestant Signature:");
+    expect(WAIVER_SOURCE_TEXT).toContain("IMPORTANT NOTE FOR PRODUCER");
+    expect(WAIVER_TEXT).not.toContain("IMPORTANT NOTE FOR PRODUCER");
   });
 });

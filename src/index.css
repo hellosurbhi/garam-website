@@ -161,6 +161,92 @@ button:disabled {
   cursor: not-allowed;
 }
 
+/* ─── Waiver document renderer ───────────────────────────────────────────── */
+.waiver-doc {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 24px;
+  background: #fffdf9;
+  color: var(--charcoal);
+  box-shadow: inset 0 0 0 1px rgba(61, 53, 50, 0.1);
+  font-family: var(--font-body), sans-serif;
+}
+
+.waiver-doc-title {
+  margin: 0 0 6px;
+  color: var(--apply-brown);
+  font-family: var(--font-playfair), serif;
+  font-size: 22px;
+  font-weight: 700;
+  line-height: 1.2;
+}
+
+.waiver-doc-section {
+  margin: 16px 0 0;
+  padding-top: 14px;
+  border-top: 1px solid rgba(61, 53, 50, 0.12);
+  color: var(--apply-brown);
+  font-family: var(--font-body), sans-serif;
+  font-size: 14px;
+  font-weight: 800;
+  line-height: 1.35;
+  letter-spacing: 0;
+}
+
+.waiver-doc-paragraph {
+  margin: 0;
+  color: #3d3532;
+  font-size: 13px;
+  line-height: 1.72;
+}
+
+.waiver-doc-signature-heading {
+  margin: 18px 0 2px;
+  padding-top: 14px;
+  border-top: 1px solid rgba(61, 53, 50, 0.14);
+  color: var(--apply-brown);
+  font-family: var(--font-playfair), serif;
+  font-size: 18px;
+  line-height: 1.25;
+}
+
+.waiver-doc-signature-field {
+  display: grid;
+  grid-template-columns: minmax(132px, 176px) 1fr;
+  gap: 16px;
+  align-items: end;
+  min-height: 34px;
+}
+
+.waiver-doc-signature-label {
+  color: var(--text-secondary);
+  font-size: 12px;
+  font-weight: 800;
+  line-height: 1.25;
+}
+
+.waiver-doc-signature-line {
+  display: block;
+  min-height: 22px;
+  border-bottom: 1px solid rgba(61, 53, 50, 0.34);
+}
+
+@media (max-width: 520px) {
+  .waiver-doc {
+    padding: 18px;
+  }
+
+  .waiver-doc-title {
+    font-size: 19px;
+  }
+
+  .waiver-doc-signature-field {
+    grid-template-columns: 1fr;
+    gap: 4px;
+  }
+}
+
 /* ─── Shared pill buttons (homepage + home-adjacent pages) ───
    Extracted from HomeHero so HomeFAQ/HomeExperience/etc. can reuse
    the same base without redefining. Page-specific overrides use

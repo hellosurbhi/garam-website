@@ -1,6 +1,5 @@
 import { useState, useEffect, useMemo } from "react";
-import { collection, getDocs, query, orderBy } from "firebase/firestore";
-import { getFirebaseDb } from "@/lib/firebase";
+import { getFirebaseAuth } from "@/lib/firebase";
 import { events } from "@/data/events";
 import Skeleton from "../ui/Skeleton";
 import styles from "./ContestantsTab.module.css";
@@ -14,15 +13,32 @@ interface Invite {
   showDate?: string;
   role: string;
   claimed?: boolean;
-  createdAt?: { seconds: number };
+  createdAt?: string | { seconds: number } | null;
 }
 
 type InviteStatus = "pending" | "claimed" | "expired";
 
+interface ContestantsResponse {
+  invites?: Invite[];
+  error?: string;
+}
+
+async function readContestantsError(res: Response): Promise<string> {
+  try {
+    const body = (await res.json()) as ContestantsResponse;
+    if (body.error === "Unauthorized") {
+      return "This account is not allowlisted for contestant admin access.";
+    }
+    return body.error ?? "Failed to load contestants.";
+  } catch {
+    return "Failed to load contestants.";
+  }
+}
+
 export default function ContestantsTab() {
   const [invites, setInvites] = useState<Invite[]>([]);
   const [loading, setLoading] = useState(true);
-  const [fetchError, setFetchError] = useState(false);
+  const [fetchError, setFetchError] = useState<string | null>(null);
   const [showFilter, setShowFilter] = useState("all");
 
   const today = new Date().toLocaleDateString("en-CA");
@@ -32,17 +48,27 @@ export default function ContestantsTab() {
 
   async function fetchInvites() {
     setLoading(true);
-    setFetchError(false);
+    setFetchError(null);
     try {
-      const q = query(
-        collection(getFirebaseDb(), "invites"),
-        orderBy("createdAt", "desc"),
-      );
-      const snap = await getDocs(q);
-      const docs = snap.docs.map((d) => ({ id: d.id, ...d.data() }) as Invite);
-      setInvites(docs);
+      const user = getFirebaseAuth().currentUser;
+      if (!user || user.isAnonymous) {
+        setFetchError("Please log in with the admin account.");
+        return;
+      }
+
+      const idToken = await user.getIdToken();
+      const res = await fetch("/api/contestants", {
+        headers: { Authorization: `Bearer ${idToken}` },
+      });
+      if (!res.ok) {
+        setFetchError(await readContestantsError(res));
+        return;
+      }
+
+      const body = (await res.json()) as ContestantsResponse;
+      setInvites(body.invites ?? []);
     } catch {
-      setFetchError(true);
+      setFetchError("Failed to load contestants.");
     } finally {
       setLoading(false);
     }
@@ -102,7 +128,7 @@ export default function ContestantsTab() {
     return (
       <div className={styles.container}>
         <div className={styles.errorState}>
-          <p>Failed to load contestants.</p>
+          <p>{fetchError}</p>
           <button onClick={fetchInvites} className={styles.retryButton}>
             Try again
           </button>

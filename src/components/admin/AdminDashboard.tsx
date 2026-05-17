@@ -342,6 +342,18 @@ export default function AdminDashboard({ onLogout }: AdminDashboardProps) {
     return [...cities].sort().map((c) => ({ value: c, label: c }));
   }, [applications]);
 
+  const sexualityOptions = useMemo(() => {
+    const values = new Set(
+      applications
+        .filter((a) => !a.deletedAt && a.orientation?.trim())
+        .map((a) => a.orientation.trim()),
+    );
+    return [
+      ...SEXUALITY_ORDER.filter((value) => values.delete(value)),
+      ...[...values].sort(),
+    ].map((value) => ({ value, label: value }));
+  }, [applications]);
+
   function clearFilters() {
     setGenderFilter([]);
     setOrientationFilter([]);

@@ -150,14 +150,17 @@
 .filterRow {
   display: flex;
   align-items: center;
+  flex-wrap: wrap;
   gap: 10px;
 }
 
 .filterItem {
+  flex: 1 1 180px;
   min-width: 180px;
 }
 
 .filterItemWide {
+  flex: 1.2 1 220px;
   min-width: 220px;
 }
 

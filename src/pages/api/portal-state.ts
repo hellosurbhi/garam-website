@@ -1,7 +1,6 @@
 import type { APIRoute } from "astro";
 import { fsGet } from "@/lib/firestoreRest";
 import { verifyPortalToken } from "@/lib/portalToken";
-import { events } from "@/data/events";
 import { enforceRateLimit, RATE_LIMITS } from "@/lib/rateLimit";
 
 export const prerender = false;
@@ -47,80 +46,23 @@ function normalizeRole(
   return null;
 }
 
-function showIsUpcoming(
-  isoDate: string,
-  timezone: string | undefined,
-): boolean {
-  const todayInShowTz = new Intl.DateTimeFormat("en-CA", {
-    timeZone: timezone ?? "America/New_York",
-  }).format(new Date());
-  return isoDate >= todayInShowTz;
-}
-
-function formatDisplayTime(startTime: string | undefined): string | null {
-  return startTime
-    ? new Date(`2000-01-01T${startTime}`).toLocaleTimeString("en-US", {
-        hour: "numeric",
-        minute: "2-digit",
-      })
-    : null;
-}
-
-function currentVisibleShow() {
-  return events.find(
-    (e) =>
-      !e.hidden &&
-      e.citySlug &&
-      e.isoDate &&
-      showIsUpcoming(e.isoDate, e.timezone),
-  );
-}
-
-function showInviteState(
-  event: NonNullable<ReturnType<typeof currentVisibleShow>>,
-  showId: string,
-  role: "female" | "male" | "spectator" | null,
-) {
-  return {
-    state: "show-invite",
-    showId,
-    showCity: event.city,
-    showDate: event.isoDate,
-    showDisplayDate: event.date,
-    startTime: formatDisplayTime(event.startTime),
-    venueName: event.venue?.name ?? null,
-    role,
-  };
-}
-
 export const GET: APIRoute = async ({ request }) => {
   const limited = await enforceRateLimit(request, RATE_LIMITS.contestantClaim);
   if (limited) return limited;
 
   const url = new URL(request.url);
   const inviteId = url.searchParams.get("invite");
-  const showId = url.searchParams.get("show");
-  const roleParam = url.searchParams.get("role");
+  const showParam = url.searchParams.get("show");
 
-  if (showId) {
-    const role = normalizeRole(roleParam);
-    if (roleParam && !role) {
-      return json({ state: "error", message: "Invalid role." }, 400);
-    }
-    const event = events.find(
-      (e) =>
-        !e.hidden &&
-        e.citySlug &&
-        e.isoDate &&
-        `${e.citySlug}-${e.isoDate}` === showId,
+  if (showParam) {
+    return json(
+      {
+        state: "error",
+        message:
+          "Contestant packet links are private. Standalone waivers live at /waiver.",
+      },
+      400,
     );
-    if (!event || !event.isoDate) {
-      return json({ state: "error", message: "Show not found." }, 404);
-    }
-    if (!showIsUpcoming(event.isoDate, event.timezone)) {
-      return json({ state: "error", message: "This show has already passed." });
-    }
-    return json(showInviteState(event, showId, role));
   }
 
   if (inviteId) {
@@ -153,13 +95,7 @@ export const GET: APIRoute = async ({ request }) => {
   const cookies = parseCookies(request.headers.get("cookie"));
   const token = cookies.portal_session;
   if (!token) {
-    const event = currentVisibleShow();
-    if (!event?.citySlug || !event.isoDate) {
-      return json({ state: "no-access" });
-    }
-    return json(
-      showInviteState(event, `${event.citySlug}-${event.isoDate}`, null),
-    );
+    return json({ state: "no-access" });
   }
 
   try {

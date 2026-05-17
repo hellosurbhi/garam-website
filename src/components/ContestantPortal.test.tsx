@@ -8,11 +8,10 @@ function mockPortalState() {
     if (requestUrl.includes("/api/portal-state")) {
       return new Response(
         JSON.stringify({
-          state: "show-invite",
-          showId: "manhattan-2026-06-01",
+          state: "invite",
+          inviteId: "invite-1",
           showCity: "Manhattan",
           showDate: "2026-06-01",
-          showDisplayDate: "June 1, 2026",
           role: "female",
         }),
         { headers: { "Content-Type": "application/json" } },
@@ -77,18 +76,18 @@ describe("ContestantPortal", () => {
   });
 
   it("shows a friendly signup error when the claim API returns an empty error body", async () => {
-    history.replaceState(
-      null,
-      "",
-      "/contestant-portal?show=manhattan-2026-06-01&role=female",
-    );
+    history.replaceState(null, "", "/contestant-portal?invite=invite-1");
     mockPortalState();
 
     render(<ContestantPortal />);
 
-    expect(await screen.findByText("Sign your waiver")).toBeInTheDocument();
+    expect(
+      await screen.findByText("Your Contestant Packet"),
+    ).toBeInTheDocument();
     fillPortalSignupForm();
-    fireEvent.click(screen.getByRole("button", { name: /sign & open prep/i }));
+    fireEvent.click(
+      screen.getByRole("button", { name: /complete packet & open prep/i }),
+    );
 
     await waitFor(() => {
       expect(screen.getByRole("alert")).toHaveTextContent(
@@ -101,16 +100,14 @@ describe("ContestantPortal", () => {
   });
 
   it("requires scrolling through the waiver before agreement is enabled", async () => {
-    history.replaceState(
-      null,
-      "",
-      "/contestant-portal?show=manhattan-2026-06-01&role=female",
-    );
+    history.replaceState(null, "", "/contestant-portal?invite=invite-1");
     mockPortalState();
 
     render(<ContestantPortal />);
 
-    expect(await screen.findByText("Sign your waiver")).toBeInTheDocument();
+    expect(
+      await screen.findByText("Your Contestant Packet"),
+    ).toBeInTheDocument();
     const agree = screen.getByLabelText(/I have read and agree/i);
     expect(agree).toBeDisabled();
     expect(
@@ -135,28 +132,23 @@ describe("ContestantPortal", () => {
     expect(agree).not.toBeDisabled();
   });
 
-  it("lets a spectator sign the waiver without opening contestant prep", async () => {
-    history.replaceState(
-      null,
-      "",
-      "/contestant-portal?show=manhattan-2026-06-01",
-    );
+  it("submits selected contestants through the private packet link", async () => {
+    history.replaceState(null, "", "/contestant-portal?invite=invite-1");
     vi.spyOn(globalThis, "fetch").mockImplementation(async (input) => {
       const requestUrl = input instanceof Request ? input.url : String(input);
       if (requestUrl.includes("/api/portal-state")) {
         return new Response(
           JSON.stringify({
-            state: "show-invite",
-            showId: "manhattan-2026-06-01",
+            state: "invite",
+            inviteId: "invite-1",
             showCity: "Manhattan",
             showDate: "2026-06-01",
-            showDisplayDate: "June 1, 2026",
-            role: null,
+            role: "female",
           }),
           { headers: { "Content-Type": "application/json" } },
         );
       }
-      if (requestUrl.includes("/api/stage-waiver")) {
+      if (requestUrl.includes("/api/contestant-claim")) {
         return new Response(JSON.stringify({ ok: true }), {
           headers: { "Content-Type": "application/json" },
         });
@@ -167,23 +159,48 @@ describe("ContestantPortal", () => {
 
     render(<ContestantPortal />);
 
-    expect(await screen.findByText("Sign your waiver")).toBeInTheDocument();
-    fireEvent.click(screen.getByLabelText(/Spectator going on stage/i));
+    expect(
+      await screen.findByText("Your Contestant Packet"),
+    ).toBeInTheDocument();
+    expect(screen.queryByText(/choose your role/i)).not.toBeInTheDocument();
+    expect(
+      screen.queryByLabelText(/Spectator going on stage/i),
+    ).not.toBeInTheDocument();
     fillPortalSignupForm();
-    fireEvent.click(screen.getByRole("button", { name: /^sign waiver$/i }));
+    fireEvent.click(
+      screen.getByRole("button", { name: /complete packet & open prep/i }),
+    );
 
-    expect(await screen.findByText("You're signed.")).toBeInTheDocument();
+    expect(await screen.findByText("The Golden Rules")).toBeInTheDocument();
     await waitFor(() => {
       const [, init] = vi
         .mocked(fetch)
-        .mock.calls.find(([url]) => String(url).includes("/api/stage-waiver"))!;
+        .mock.calls.find(([url]) =>
+          String(url).includes("/api/contestant-claim"),
+        )!;
       expect(JSON.parse(String(init?.body))).toMatchObject({
+        inviteId: "invite-1",
         firstName: "Priya",
         lastName: "Shah",
         signature: "Priya Shah",
-        showId: "manhattan-2026-06-01",
       });
     });
-    expect(screen.queryByText(/The Golden Rules/i)).not.toBeInTheDocument();
+  });
+
+  it("does not expose a random show waiver from the contestant portal", async () => {
+    history.replaceState(null, "", "/contestant-portal");
+    vi.spyOn(globalThis, "fetch").mockResolvedValue(
+      new Response(JSON.stringify({ state: "no-access" }), {
+        headers: { "Content-Type": "application/json" },
+      }),
+    );
+
+    render(<ContestantPortal />);
+
+    expect(await screen.findByText("Contestant Packet")).toBeInTheDocument();
+    expect(screen.getByText(/private packet link/i)).toBeInTheDocument();
+    expect(
+      screen.queryByText(/Your Contestant Packet/i),
+    ).not.toBeInTheDocument();
   });
 });

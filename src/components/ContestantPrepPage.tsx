@@ -59,8 +59,8 @@ function PrepLocked() {
         <p className={styles.errorEmoji}>🌶️</p>
         <h1 className={styles.errorTitle}>Waiver required</h1>
         <p className={styles.errorText}>
-          Sign your waiver through your contestant portal link to access the
-          prep guide.
+          Complete your contestant packet through your private casting link to
+          access the prep guide.
         </p>
       </div>
     </div>

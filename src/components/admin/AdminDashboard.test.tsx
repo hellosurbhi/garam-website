@@ -71,9 +71,11 @@ vi.mock("@/lib/firebase", () => ({
 vi.mock("react-select", () => ({
   default: ({
     placeholder,
+    options,
     onChange,
   }: {
     placeholder: string;
+    options: Array<{ value: string; label: string }>;
     onChange: (v: unknown) => void;
   }) => (
     <select
@@ -87,6 +89,11 @@ vi.mock("react-select", () => ({
       }
     >
       <option value="">{placeholder}</option>
+      {options.map((option) => (
+        <option key={option.value} value={option.value}>
+          {option.label}
+        </option>
+      ))}
     </select>
   ),
 }));
@@ -214,5 +221,33 @@ describe("AdminDashboard", () => {
     await waitFor(() => {
       expect(screen.getByText(/You're all caught up/)).toBeInTheDocument();
     });
+  });
+
+  it("filters applicants by sexuality", async () => {
+    mockGetDocs.mockResolvedValue({
+      docs: [
+        {
+          id: "1",
+          data: () =>
+            makeApp({ id: "1", name: "Priya", orientation: "Straight" }),
+        },
+        {
+          id: "2",
+          data: () =>
+            makeApp({ id: "2", name: "Anika", orientation: "Bisexual" }),
+        },
+      ],
+    });
+    render(<AdminDashboard onLogout={onLogout} />);
+
+    await waitFor(() => {
+      expect(screen.getByText("Priya")).toBeInTheDocument();
+    });
+    fireEvent.change(screen.getByTestId("select-Sexuality…"), {
+      target: { value: "Bisexual" },
+    });
+
+    expect(screen.queryByText("Priya")).not.toBeInTheDocument();
+    expect(screen.getByText("Anika")).toBeInTheDocument();
   });
 });

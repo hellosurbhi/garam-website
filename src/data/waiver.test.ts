@@ -17,7 +17,11 @@ describe("contestant waiver copy", () => {
     expect(WAIVER_TEXT).toContain(
       "my typed name below constitutes my legal electronic signature",
     );
-    expect(WAIVER_TEXT).toContain("Contestant Signature:");
+    expect(WAIVER_SOURCE_TEXT).toContain("Contestant Signature:");
+    expect(WAIVER_TEXT).not.toContain("Contestant Signature:");
+    expect(WAIVER_TEXT).not.toContain("Name (printed):");
+    expect(WAIVER_TEXT).not.toContain("Date of signature:");
+    expect(WAIVER_TEXT).not.toContain("Show date (if known):");
     expect(WAIVER_SOURCE_TEXT).toContain("IMPORTANT NOTE FOR PRODUCER");
     expect(WAIVER_TEXT).not.toContain("IMPORTANT NOTE FOR PRODUCER");
   });

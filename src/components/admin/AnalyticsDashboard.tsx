@@ -59,6 +59,21 @@ const revenueFormatter: TooltipFormatter = (value) => [
 const dateLabelFormatter: TooltipLabelFormatter = (label) =>
   fmtDate(String(label));
 
+async function readErrorMessage(
+  res: Response,
+  fallback: string,
+): Promise<string> {
+  try {
+    const body = (await res.json()) as { error?: string };
+    if (body.error === "Unauthorized") {
+      return "This account is not allowlisted for admin analytics.";
+    }
+    return body.error ?? fallback;
+  } catch {
+    return fallback;
+  }
+}
+
 export default function AnalyticsDashboard() {
   const [period, setPeriod] = useState<Period>("30d");
   const [data, setData] = useState<AnalyticsSnapshot | null>(null);
@@ -76,12 +91,12 @@ export default function AnalyticsDashboard() {
         setError("Session expired. Please log in again.");
         return;
       }
+      const idToken = await user.getIdToken();
       const res = await fetch(`/api/analytics?period=${p}`, {
         headers: { Authorization: `Bearer ${idToken}` },
       });
       if (!res.ok) {
-        const body = (await res.json()) as { error?: string };
-        setError(body.error ?? "Failed to load analytics.");
+        setError(await readErrorMessage(res, "Failed to load analytics."));
         return;
       }
       const json = (await res.json()) as AnalyticsSnapshot;
@@ -108,11 +123,12 @@ export default function AnalyticsDashboard() {
         setSyncMsg("Session expired.");
         return;
       }
+      const idToken = await user.getIdToken();
       const res = await fetch("/api/sync-orders", {
         method: "POST",
         headers: { Authorization: `Bearer ${idToken}` },
       });
-      const body = (await res.json()) as {
+      const body = (await res.json().catch(() => ({}))) as {
         ok?: boolean;
         ordersProcessed?: number;
         error?: string;
@@ -121,7 +137,11 @@ export default function AnalyticsDashboard() {
         setSyncMsg(`Synced ${body.ordersProcessed ?? 0} orders`);
         fetchData(period);
       } else {
-        setSyncMsg(body.error ?? "Sync failed.");
+        setSyncMsg(
+          body.error === "Unauthorized"
+            ? "This account is not allowlisted for admin sync."
+            : (body.error ?? "Sync failed."),
+        );
       }
     } catch {
       setSyncMsg("Sync failed.");

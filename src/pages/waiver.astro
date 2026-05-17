@@ -7,29 +7,29 @@ const showId = Astro.url.searchParams.get("show")?.trim() ?? "";
 ---
 
 <BaseLayout
-  title="Stage Waiver"
-  description="Quick waiver for audience participants going on stage."
+  title="Waiver"
+  description="Standalone Garam Masala Dating waiver signing page."
   noindex={true}
 >
-  <main id="main-content" class="stage-waiver-page">
-    <div class="sw-container">
+  <main id="main-content" class="waiver-page">
+    <div class="waiver-container">
       <div id="waiver-form-view">
-        <h1 class="sw-title">Stage Waiver</h1>
-        <p class="sw-subtitle">
-          Quick sign before you go on. Takes 30 seconds.
+        <h1 class="waiver-title">Waiver</h1>
+        <p class="waiver-subtitle">
+          Complete this release before going on stage.
         </p>
-        <form id="stage-waiver-form" class="sw-form">
-          <div class="sw-field-row">
+        <form id="waiver-form" class="waiver-form">
+          <div class="waiver-field-row">
             <input
               type="text"
-              id="sw-first"
+              id="waiver-first"
               placeholder="First name"
               required
               aria-label="First name"
             />
             <input
               type="text"
-              id="sw-last"
+              id="waiver-last"
               placeholder="Last name"
               required
               aria-label="Last name"
@@ -37,56 +37,56 @@ const showId = Astro.url.searchParams.get("show")?.trim() ?? "";
           </div>
           <input
             type="email"
-            id="sw-email"
+            id="waiver-email"
             placeholder="Email"
             required
             aria-label="Email"
           />
           <input
             type="tel"
-            id="sw-phone"
+            id="waiver-phone"
             placeholder="Phone (555) 123-4567"
             required
             aria-label="Phone number"
           />
-          <div class="sw-waiver-scroll" aria-label="Waiver text" tabindex="0">
+          <div class="waiver-scroll" aria-label="Waiver text" tabindex="0">
             <WaiverDocument text={WAIVER_TEXT} />
           </div>
-          <label class="sw-checkbox">
-            <input type="checkbox" id="sw-agree" required disabled />
+          <label class="waiver-checkbox">
+            <input type="checkbox" id="waiver-agree" required disabled />
             <span>I have read and agree to the terms and waiver above</span>
           </label>
-          <p id="sw-scroll-note" class="sw-note">
+          <p id="waiver-scroll-note" class="waiver-note">
             Scroll through the full waiver to enable agreement.
           </p>
           <div>
-            <label class="sw-label" for="sw-sig"
+            <label class="waiver-label" for="waiver-sig"
               >Type your full legal name as your signature</label
             >
             <input
               type="text"
-              id="sw-sig"
+              id="waiver-sig"
               placeholder="First Last"
               required
               aria-label="Signature"
             />
           </div>
-          <label class="sw-checkbox sw-checkbox-muted">
-            <input type="checkbox" id="sw-optin" />
+          <label class="waiver-checkbox waiver-checkbox-muted">
+            <input type="checkbox" id="waiver-optin" />
             <span>Email me about future shows</span>
           </label>
-          <input type="hidden" id="sw-version" value={WAIVER_VERSION} />
-          {showId && <input type="hidden" id="sw-show-id" value={showId} />}
-          <p id="sw-error" class="sw-error" hidden role="alert"></p>
-          <button type="submit" class="sw-submit">Sign Waiver</button>
+          <input type="hidden" id="waiver-version" value={WAIVER_VERSION} />
+          {showId && <input type="hidden" id="waiver-show-id" value={showId} />}
+          <p id="waiver-error" class="waiver-error" hidden role="alert"></p>
+          <button type="submit" class="waiver-submit">Sign Waiver</button>
         </form>
       </div>
       <div id="waiver-success" hidden>
-        <div class="sw-success">
-          <div class="sw-success-emoji">🌶️</div>
-          <h2 class="sw-success-title">You're all set!</h2>
-          <p class="sw-success-text">
-            Have fun out there. The audience is rooting for you.
+        <div class="waiver-success">
+          <div class="waiver-success-emoji">🌶️</div>
+          <h2 class="waiver-success-title">You're all set.</h2>
+          <p class="waiver-success-text">
+            Your waiver is complete. The host will take it from here.
           </p>
         </div>
       </div>
@@ -95,15 +95,12 @@ const showId = Astro.url.searchParams.get("show")?.trim() ?? "";
 </BaseLayout>
 
 <script>
-  const form = document.getElementById(
-    "stage-waiver-form",
-  ) as HTMLFormElement | null;
-  const waiverScroll =
-    document.querySelector<HTMLDivElement>(".sw-waiver-scroll");
+  const form = document.getElementById("waiver-form") as HTMLFormElement | null;
+  const waiverScroll = document.querySelector<HTMLDivElement>(".waiver-scroll");
   const agreeInput = document.getElementById(
-    "sw-agree",
+    "waiver-agree",
   ) as HTMLInputElement | null;
-  const scrollNote = document.getElementById("sw-scroll-note");
+  const scrollNote = document.getElementById("waiver-scroll-note");
   let waiverScrolled = false;
 
   function updateWaiverScrolled(el: HTMLDivElement) {
@@ -124,19 +121,20 @@ const showId = Astro.url.searchParams.get("show")?.trim() ?? "";
   if (form) {
     form.addEventListener("submit", async (e) => {
       e.preventDefault();
-      const errorEl = document.getElementById("sw-error");
+      const errorEl = document.getElementById("waiver-error");
       const submitBtn =
         form.querySelector<HTMLButtonElement>('[type="submit"]');
       const originalText = submitBtn?.textContent ?? "";
       const firstName = (
-        document.getElementById("sw-first") as HTMLInputElement
+        document.getElementById("waiver-first") as HTMLInputElement
       ).value.trim();
       const lastName = (
-        document.getElementById("sw-last") as HTMLInputElement
+        document.getElementById("waiver-last") as HTMLInputElement
       ).value.trim();
       const sig = (
-        document.getElementById("sw-sig") as HTMLInputElement
+        document.getElementById("waiver-sig") as HTMLInputElement
       ).value.trim();
+
       if (!waiverScrolled) {
         if (errorEl) {
           errorEl.textContent =
@@ -164,24 +162,27 @@ const showId = Astro.url.searchParams.get("show")?.trim() ?? "";
             firstName,
             lastName,
             email: (
-              document.getElementById("sw-email") as HTMLInputElement
+              document.getElementById("waiver-email") as HTMLInputElement
             ).value.trim(),
             phone: (
-              document.getElementById("sw-phone") as HTMLInputElement
+              document.getElementById("waiver-phone") as HTMLInputElement
             ).value.trim(),
             waiverAgreed: (
-              document.getElementById("sw-agree") as HTMLInputElement
+              document.getElementById("waiver-agree") as HTMLInputElement
             ).checked,
             signature: sig,
             waiverVersion: (
-              document.getElementById("sw-version") as HTMLInputElement
+              document.getElementById("waiver-version") as HTMLInputElement
             ).value,
             mailingListOptIn: (
-              document.getElementById("sw-optin") as HTMLInputElement
+              document.getElementById("waiver-optin") as HTMLInputElement
             ).checked,
             showId:
-              (document.getElementById("sw-show-id") as HTMLInputElement | null)
-                ?.value ?? "",
+              (
+                document.getElementById(
+                  "waiver-show-id",
+                ) as HTMLInputElement | null
+              )?.value ?? "",
           }),
         });
         const text = await res.text();
@@ -215,142 +216,134 @@ const showId = Astro.url.searchParams.get("show")?.trim() ?? "";
 </script>
 
 <style>
-  .stage-waiver-page {
+  .waiver-page {
     min-height: 100vh;
     padding: 40px 16px;
     background: var(--off-white);
   }
-  .sw-container {
+  .waiver-container {
     max-width: 520px;
     margin: 0 auto;
   }
-  .sw-title {
+  .waiver-title {
     font-family: var(--font-playfair), serif;
     font-size: clamp(28px, 5vw, 40px);
     font-weight: 900;
     color: var(--charcoal);
     margin-bottom: 8px;
   }
-  .sw-subtitle {
+  .waiver-subtitle {
     font-size: 16px;
     color: var(--muted);
     margin-bottom: 32px;
     line-height: 1.5;
   }
-  .sw-form {
+  .waiver-form {
     display: flex;
     flex-direction: column;
     gap: 16px;
   }
-  .sw-field-row {
+  .waiver-field-row {
     display: grid;
     grid-template-columns: 1fr 1fr;
     gap: 12px;
   }
-  .sw-form input[type="text"],
-  .sw-form input[type="email"],
-  .sw-form input[type="tel"] {
-    padding: 14px 20px;
-    border: 1.5px solid rgba(0, 0, 0, 0.1);
-    border-radius: 12px;
-    font-size: 16px;
-    font-family: var(--font-body), sans-serif;
-    outline: none;
-    transition: border-color 0.2s;
+  .waiver-form input[type="text"],
+  .waiver-form input[type="email"],
+  .waiver-form input[type="tel"] {
+    width: 100%;
+    box-sizing: border-box;
     min-height: var(--touch-target);
+    padding: 14px 20px;
+    border: 1.5px solid rgba(0, 0, 0, 0.12);
+    border-radius: 12px;
+    background: var(--white);
+    color: var(--charcoal);
+    font-family: var(--font-body), sans-serif;
+    font-size: 16px;
   }
-  .sw-form input:focus-visible {
+  .waiver-form input:focus-visible {
     border-color: var(--brand-red);
     outline: 2px solid var(--brand-red);
     outline-offset: -2px;
   }
-  .sw-waiver-scroll {
-    max-height: 200px;
+  .waiver-scroll {
+    max-height: 220px;
     overflow-y: auto;
     border: 1px solid rgba(0, 0, 0, 0.1);
     border-radius: 12px;
-    padding: 0;
     background: #f7f1e8;
   }
-  .sw-checkbox {
+  .waiver-checkbox {
     display: flex;
     align-items: flex-start;
     gap: 12px;
-    font-size: 15px;
     color: var(--charcoal);
-    line-height: 1.4;
-    cursor: pointer;
+    font-size: 15px;
+    line-height: 1.5;
   }
-  .sw-checkbox input[type="checkbox"] {
-    margin-top: 3px;
+  .waiver-checkbox input {
     min-width: 20px;
     min-height: 20px;
+    margin-top: 3px;
     accent-color: var(--brand-red);
   }
-  .sw-checkbox-muted {
-    color: var(--muted);
-    font-size: 14px;
+  .waiver-checkbox-muted {
+    color: var(--gray-mid);
   }
-  .sw-note {
-    margin: -8px 0 0;
-    color: var(--muted);
-    font-size: 13px;
-    line-height: 1.4;
-  }
-  .sw-label {
+  .waiver-label {
     display: block;
-    font-size: 14px;
-    color: var(--muted);
     margin-bottom: 8px;
+    color: var(--gray-mid);
+    font-size: 14px;
   }
-  .sw-error {
+  .waiver-note {
+    color: var(--gray-mid);
+    font-size: 14px;
+  }
+  .waiver-error {
     color: var(--brand-red);
     font-size: 14px;
-    text-align: center;
-    margin: 0;
   }
-  .sw-submit {
-    background: var(--brand-red);
-    color: #fff;
-    border: none;
-    padding: 16px;
+  .waiver-submit {
+    min-height: 48px;
+    border: 0;
     border-radius: 50px;
+    background: var(--brand-red);
+    color: var(--white);
+    cursor: pointer;
     font-family: var(--font-body), sans-serif;
     font-size: 16px;
-    font-weight: 700;
+    font-weight: 800;
+    letter-spacing: 0.08em;
     text-transform: uppercase;
-    letter-spacing: 1px;
-    cursor: pointer;
-    transition:
-      background 0.2s,
-      transform 0.06s;
-    min-height: var(--touch-target);
-    width: 100%;
   }
-  .sw-submit:hover {
-    background: var(--brand-red-dark);
+  .waiver-submit:disabled {
+    cursor: wait;
+    opacity: 0.65;
   }
-  .sw-submit:active {
-    transform: scale(0.97);
-  }
-  .sw-success {
+  .waiver-success {
+    padding: 72px 0;
     text-align: center;
-    padding: 60px 0;
   }
-  .sw-success-emoji {
+  .waiver-success-emoji {
     font-size: 48px;
     margin-bottom: 16px;
   }
-  .sw-success-title {
-    font-family: var(--font-playfair), serif;
-    font-size: 28px;
-    font-weight: 700;
-    color: var(--charcoal);
+  .waiver-success-title {
     margin-bottom: 12px;
+    color: var(--charcoal);
+    font-family: var(--font-playfair), serif;
+    font-size: clamp(28px, 5vw, 40px);
   }
-  .sw-success-text {
+  .waiver-success-text {
+    color: var(--gray-mid);
     font-size: 16px;
-    color: var(--muted);
     line-height: 1.6;
+  }
+  @media (max-width: 520px) {
+    .waiver-field-row {
+      grid-template-columns: 1fr;
+    }
   }
 </style>

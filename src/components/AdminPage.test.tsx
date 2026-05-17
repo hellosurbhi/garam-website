@@ -5,14 +5,11 @@ import AdminPage from "./AdminPage";
 let authCallback: ((user: { uid: string } | null) => void) | undefined;
 
 vi.mock("firebase/auth", () => ({
-  onAuthStateChanged: (
-    _auth: unknown,
-    cb: (user: { uid: string } | null) => void,
-  ) => {
+  onAuthStateChanged: (_auth: unknown, cb: (user: MockUser | null) => void) => {
     authCallback = cb;
     return vi.fn(); // unsubscribe
   },
-  signOut: vi.fn(),
+  signOut: (...args: unknown[]) => signOut(...args),
 }));
 
 vi.mock("@/lib/firebase", () => ({
@@ -63,5 +60,17 @@ describe("AdminPage", () => {
     await waitFor(() => {
       expect(screen.getByTestId("admin-dashboard")).toBeInTheDocument();
     });
+  });
+
+  it("does not treat an anonymous public-form session as admin access", async () => {
+    render(<AdminPage />);
+    await act(async () => {
+      authCallback({ uid: "anon-1", isAnonymous: true });
+    });
+
+    await waitFor(() => {
+      expect(screen.getByTestId("admin-login")).toBeInTheDocument();
+    });
+    expect(signOut).toHaveBeenCalledWith("mock-auth");
   });
 });

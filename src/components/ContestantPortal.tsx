@@ -54,22 +54,6 @@ type PortalState =
       startTime?: string | null;
       venueName?: string | null;
     }
-  | {
-      type: "show-invite";
-      showId: string;
-      showCity: string;
-      showDate: string;
-      showDisplayDate: string;
-      startTime: string | null;
-      venueName: string | null;
-      role: PortalRole | null;
-    }
-  | {
-      type: "signed-spectator";
-      firstName: string;
-      showCity: string;
-      showDate: string;
-    }
   | { type: "expired" }
   | { type: "no-access" }
   | { type: "error"; message: string };
@@ -174,38 +158,11 @@ type PortalResponseData = {
 const CLAIM_ERROR_MESSAGE =
   "Could not finish signup. Please try again or email contact@garammasaladating.com.";
 
-const ROLE_OPTIONS: {
-  value: PortalRole;
-  label: string;
-  description: string;
-}[] = [
-  {
-    value: "female",
-    label: "Female contestant",
-    description: "Sign the waiver and open the contestant prep guide.",
-  },
-  {
-    value: "male",
-    label: "Male contestant",
-    description: "Sign the waiver and open the contestant prep guide.",
-  },
-  {
-    value: "spectator",
-    label: "Spectator going on stage",
-    description: "Sign the waiver only. No prep guide needed.",
-  },
-];
-
-function normalizeRole(role?: string | null): PortalRole | null {
-  if (role === "female" || role === "male" || role === "spectator") {
+function normalizeRole(role?: string | null): ContestantRole | null {
+  if (role === "female" || role === "male") {
     return role;
   }
-  if (role === "stealer") return "spectator";
   return null;
-}
-
-function isContestantRole(role: PortalRole): role is ContestantRole {
-  return role === "female" || role === "male";
 }
 
 async function readPortalResponse(
@@ -401,20 +358,6 @@ export default function ContestantPortal() {
           setFormPhase("submitting");
           setFormError("");
           try {
-            if (role === "spectator") {
-              await claimPortal("/api/stage-waiver", {
-                ...data,
-                showId: state.showDate,
-              });
-              setState({
-                type: "signed-spectator",
-                firstName: data.firstName,
-                showCity: state.showCity,
-                showDate: state.showDate,
-              });
-              return;
-            }
-
             await claimPortal("/api/contestant-claim", {
               ...data,
               inviteId: state.inviteId,
@@ -514,12 +457,17 @@ function NoAccessView() {
   return (
     <div className="portal-center">
       <p className="portal-emoji">🌶️</p>
-      <h1 className="portal-heading">Contestant Portal</h1>
+      <h1 className="portal-heading">Contestant Packet</h1>
       <p className="portal-body">
-        There are no upcoming show waivers available right now.
+        This page is for selected contestants. Use the private packet link from
+        your casting email.
       </p>
       <p className="portal-muted">
-        Questions? Email{" "}
+        Need the general waiver? Go to{" "}
+        <a href="/waiver" className="portal-link">
+          garammasaladating.com/waiver
+        </a>
+        . Questions? Email{" "}
         <a href="mailto:contact@garammasaladating.com" className="portal-link">
           contact@garammasaladating.com
         </a>

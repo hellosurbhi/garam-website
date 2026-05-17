@@ -109,8 +109,8 @@ const InviteEmail: FC<InviteEmailProps> = ({
             marginBottom: 8,
           }}
         >
-          Sign your waiver first. After that, your prep guide opens with
-          everything you need before showtime.
+          Complete your production release first. After that, your prep guide
+          opens with everything you need before showtime.
         </Text>
         <Text
           style={{

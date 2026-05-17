@@ -11,40 +11,6 @@ vi.mock("@/lib/firestoreRest", () => ({ fsGet: mocks.fsGet }));
 vi.mock("@/lib/portalToken", () => ({
   verifyPortalToken: mocks.verifyPortalToken,
 }));
-vi.mock("@/data/events", () => ({
-  events: [
-    {
-      hidden: false,
-      citySlug: "nyc",
-      isoDate: "2099-12-31",
-      city: "New York",
-      date: "December 31, 2099",
-      startTime: "20:00",
-      timezone: "America/New_York",
-      venue: { name: "Test Venue" },
-    },
-    {
-      hidden: true,
-      citySlug: "secret",
-      isoDate: "2099-12-31",
-      city: "Secret City",
-      date: "December 31, 2099",
-      startTime: "20:00",
-      timezone: "America/New_York",
-      venue: { name: "Hidden Venue" },
-    },
-    {
-      hidden: false,
-      citySlug: "past",
-      isoDate: "2000-01-01",
-      city: "Past City",
-      date: "January 1, 2000",
-      startTime: "20:00",
-      timezone: "America/New_York",
-      venue: { name: "Past Venue" },
-    },
-  ],
-}));
 
 const { GET } = await import("@/pages/api/portal-state");
 
@@ -63,55 +29,14 @@ describe("portal-state GET /api/portal-state", () => {
     vi.clearAllMocks();
   });
 
-  describe("show param", () => {
-    it("returns show-invite state for a valid upcoming show", async () => {
+  describe("show param (blocked)", () => {
+    it("returns 400 error for a ?show= param (contestant packet links are private)", async () => {
       const req = makeRequest("/api/portal-state?show=nyc-2099-12-31");
-      const res = await GET({ request: req } as Parameters<typeof GET>[0]);
-      expect(res.status).toBe(200);
-      const body = await res.json();
-      expect(body.state).toBe("show-invite");
-      expect(body.showId).toBe("nyc-2099-12-31");
-      expect(body.showCity).toBe("New York");
-      expect(body.role).toBeNull();
-    });
-
-    it("returns show-invite with role when role param is provided", async () => {
-      const req = makeRequest("/api/portal-state?show=nyc-2099-12-31&role=female");
-      const res = await GET({ request: req } as Parameters<typeof GET>[0]);
-      expect(res.status).toBe(200);
-      const body = await res.json();
-      expect(body.state).toBe("show-invite");
-      expect(body.role).toBe("female");
-    });
-
-    it("returns 400 for an invalid role", async () => {
-      const req = makeRequest("/api/portal-state?show=nyc-2099-12-31&role=wizard");
       const res = await GET({ request: req } as Parameters<typeof GET>[0]);
       expect(res.status).toBe(400);
       const body = await res.json();
       expect(body.state).toBe("error");
-    });
-
-    it("returns 404 for an unknown showId", async () => {
-      const req = makeRequest("/api/portal-state?show=unknown-2099-12-31");
-      const res = await GET({ request: req } as Parameters<typeof GET>[0]);
-      expect(res.status).toBe(404);
-      const body = await res.json();
-      expect(body.state).toBe("error");
-    });
-
-    it("returns error when show has already passed", async () => {
-      const req = makeRequest("/api/portal-state?show=past-2000-01-01");
-      const res = await GET({ request: req } as Parameters<typeof GET>[0]);
-      const body = await res.json();
-      expect(body.state).toBe("error");
-      expect(body.message).toMatch(/passed/i);
-    });
-
-    it("returns 404 for a hidden show accessed via show param", async () => {
-      const req = makeRequest("/api/portal-state?show=secret-2099-12-31");
-      const res = await GET({ request: req } as Parameters<typeof GET>[0]);
-      expect(res.status).toBe(404);
+      expect(body.message).toMatch(/private/i);
     });
   });
 
@@ -177,13 +102,11 @@ describe("portal-state GET /api/portal-state", () => {
   });
 
   describe("cookie / portal session", () => {
-    it("returns show-invite for the current show when no cookie is present", async () => {
+    it("returns no-access when no cookie is present", async () => {
       const req = makeRequest();
       const res = await GET({ request: req } as Parameters<typeof GET>[0]);
       const body = await res.json();
-      expect(body.state).toBe("show-invite");
-      expect(body.showId).toBe("nyc-2099-12-31");
-      expect(body.role).toBeNull();
+      expect(body.state).toBe("no-access");
     });
 
     it("returns active state for valid session with waiver", async () => {

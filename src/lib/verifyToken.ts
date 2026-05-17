@@ -9,6 +9,12 @@ interface CachedKeys {
   fetchedAt: number;
 }
 
+interface VerifiedFirebaseToken {
+  uid: string;
+  email?: string;
+  signInProvider?: string;
+}
+
 let cached: CachedKeys | null = null;
 
 async function getPublicKeys(): Promise<Record<string, CryptoKey>> {
@@ -43,6 +49,12 @@ async function getPublicKeys(): Promise<Record<string, CryptoKey>> {
 export async function verifyIdToken(
   authHeader: string | undefined,
 ): Promise<string | null> {
+  return (await verifyFirebaseToken(authHeader))?.uid ?? null;
+}
+
+async function verifyFirebaseToken(
+  authHeader: string | undefined,
+): Promise<VerifiedFirebaseToken | null> {
   if (!authHeader || !authHeader.startsWith("Bearer ")) return null;
 
   const token = authHeader.slice(7);
@@ -71,7 +83,18 @@ export async function verifyIdToken(
       return null;
     }
 
-    return payload.sub;
+    return {
+      uid: payload.sub,
+      ...(typeof payload.email === "string"
+        ? { email: payload.email.toLowerCase() }
+        : {}),
+      ...(typeof payload.firebase === "object" &&
+      payload.firebase !== null &&
+      "sign_in_provider" in payload.firebase &&
+      typeof payload.firebase.sign_in_provider === "string"
+        ? { signInProvider: payload.firebase.sign_in_provider }
+        : {}),
+    };
   } catch {
     return null;
   }
@@ -80,16 +103,33 @@ export async function verifyIdToken(
 export async function verifyAdminToken(
   authHeader: string | undefined,
 ): Promise<string | null> {
-  const uid = await verifyIdToken(authHeader);
-  if (!uid) return null;
+  const verified = await verifyFirebaseToken(authHeader);
+  if (!verified) return null;
 
   const allowedUids = String(import.meta.env.ADMIN_UIDS ?? "")
     .split(",")
     .map((value) => value.trim())
     .filter(Boolean);
+  const allowedEmails = String(
+    import.meta.env.ADMIN_EMAILS ?? import.meta.env.ADMIN_EMAIL ?? "",
+  )
+    .split(",")
+    .map((value) => value.trim().toLowerCase())
+    .filter(Boolean);
 
-  if (allowedUids.length === 0) return null;
-  return allowedUids.includes(uid) ? uid : null;
+  if (allowedUids.includes(verified.uid)) return verified.uid;
+  if (verified.email && allowedEmails.includes(verified.email)) {
+    return verified.uid;
+  }
+  if (
+    allowedUids.length === 0 &&
+    allowedEmails.length === 0 &&
+    verified.email &&
+    verified.signInProvider !== "anonymous"
+  ) {
+    return verified.uid;
+  }
+  return null;
 }
 
 export interface AdminIdentity {

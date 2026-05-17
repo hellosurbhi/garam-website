@@ -12,11 +12,13 @@ function getApp(): App {
   }
   const clientEmail = import.meta.env.FIREBASE_ADMIN_CLIENT_EMAIL;
   const privateKeyRaw = import.meta.env.FIREBASE_ADMIN_PRIVATE_KEY;
-  const projectId = import.meta.env.VITE_FIREBASE_PROJECT_ID;
+  const projectId =
+    import.meta.env.PUBLIC_FIREBASE_PROJECT_ID ??
+    import.meta.env.VITE_FIREBASE_PROJECT_ID;
 
   if (!clientEmail || !privateKeyRaw || !projectId) {
     throw new Error(
-      "Firebase Admin env vars missing: FIREBASE_ADMIN_CLIENT_EMAIL, FIREBASE_ADMIN_PRIVATE_KEY, VITE_FIREBASE_PROJECT_ID",
+      "Firebase Admin env vars missing: FIREBASE_ADMIN_CLIENT_EMAIL, FIREBASE_ADMIN_PRIVATE_KEY, PUBLIC_FIREBASE_PROJECT_ID",
     );
   }
 

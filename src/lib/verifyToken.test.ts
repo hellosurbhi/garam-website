@@ -49,6 +49,8 @@ describe("verifyIdToken", () => {
     vi.restoreAllMocks();
     delete import.meta.env.PUBLIC_FIREBASE_PROJECT_ID;
     delete import.meta.env.ADMIN_UIDS;
+    delete import.meta.env.ADMIN_EMAILS;
+    delete import.meta.env.ADMIN_EMAIL;
   });
 
   it("returns null when auth header is undefined", async () => {
@@ -135,6 +137,41 @@ describe("verifyIdToken", () => {
     const token = makeToken("key-1", "user-123");
 
     await expect(verifyAdminToken(`Bearer ${token}`)).resolves.toBe("user-123");
+  });
+
+  it("returns admin uid when token email is allowlisted", async () => {
+    import.meta.env.ADMIN_EMAILS = "admin@example.com";
+    mockJwtVerify.mockResolvedValue({
+      payload: { sub: "user-123", email: "Admin@Example.com" },
+    });
+    const token = makeToken("key-1", "user-123");
+
+    await expect(verifyAdminToken(`Bearer ${token}`)).resolves.toBe("user-123");
+  });
+
+  it("allows a verified non-anonymous email login when no allowlist is configured", async () => {
+    mockJwtVerify.mockResolvedValue({
+      payload: {
+        sub: "user-123",
+        email: "admin@example.com",
+        firebase: { sign_in_provider: "password" },
+      },
+    });
+    const token = makeToken("key-1", "user-123");
+
+    await expect(verifyAdminToken(`Bearer ${token}`)).resolves.toBe("user-123");
+  });
+
+  it("does not allow anonymous tokens when no allowlist is configured", async () => {
+    mockJwtVerify.mockResolvedValue({
+      payload: {
+        sub: "anon-123",
+        firebase: { sign_in_provider: "anonymous" },
+      },
+    });
+    const token = makeToken("key-1", "anon-123");
+
+    await expect(verifyAdminToken(`Bearer ${token}`)).resolves.toBeNull();
   });
 
   it("returns null for valid non-admin token", async () => {

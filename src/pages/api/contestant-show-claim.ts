@@ -111,6 +111,7 @@ export const POST: APIRoute = async ({ request }) => {
     showDate,
     showTimezone,
   );
+  await contestantRef.set(contestantData);
 
   try {
     const template = waiverReceiptWithText({

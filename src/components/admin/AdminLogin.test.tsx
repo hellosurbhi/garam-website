@@ -17,7 +17,9 @@ describe("AdminLogin", () => {
 
   beforeEach(() => {
     vi.clearAllMocks();
-    mockSignIn.mockResolvedValue({ user: { uid: "admin-1" } });
+    mockSignIn.mockResolvedValue({
+      user: { uid: "admin-1", getIdToken: vi.fn().mockResolvedValue("token") },
+    });
   });
 
   it("renders the email input", () => {

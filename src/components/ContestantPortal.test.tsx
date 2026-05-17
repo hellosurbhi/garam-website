@@ -187,20 +187,70 @@ describe("ContestantPortal", () => {
     });
   });
 
-  it("does not expose a random show waiver from the contestant portal", async () => {
+  it("opens the contestant packet from the direct portal URL", async () => {
     history.replaceState(null, "", "/contestant-portal");
     vi.spyOn(globalThis, "fetch").mockResolvedValue(
-      new Response(JSON.stringify({ state: "no-access" }), {
+      new Response(JSON.stringify({ state: "open" }), {
         headers: { "Content-Type": "application/json" },
       }),
     );
 
     render(<ContestantPortal />);
 
-    expect(await screen.findByText("Contestant Packet")).toBeInTheDocument();
-    expect(screen.getByText(/private packet link/i)).toBeInTheDocument();
     expect(
-      screen.queryByText(/Your Contestant Packet/i),
+      await screen.findByText("Your Contestant Packet"),
+    ).toBeInTheDocument();
+    expect(screen.getAllByText(/You've been selected/i).length).toBeGreaterThan(
+      0,
+    );
+    expect(screen.queryByText(/private packet link/i)).not.toBeInTheDocument();
+    expect(screen.getByText(/exact show date/i)).toBeInTheDocument();
+    expect(
+      screen.queryByText(/Your show details are attached/i),
     ).not.toBeInTheDocument();
+  });
+
+  it("submits direct portal packets through the open claim endpoint", async () => {
+    history.replaceState(null, "", "/contestant-portal");
+    vi.spyOn(globalThis, "fetch").mockImplementation(async (input) => {
+      const requestUrl = input instanceof Request ? input.url : String(input);
+      if (requestUrl.includes("/api/portal-state")) {
+        return new Response(JSON.stringify({ state: "open" }), {
+          headers: { "Content-Type": "application/json" },
+        });
+      }
+      if (requestUrl.includes("/api/contestant-open-claim")) {
+        return new Response(JSON.stringify({ ok: true }), {
+          headers: { "Content-Type": "application/json" },
+        });
+      }
+
+      return new Response("", { status: 500 });
+    });
+
+    render(<ContestantPortal />);
+
+    expect(
+      await screen.findByText("Your Contestant Packet"),
+    ).toBeInTheDocument();
+    fillPortalSignupForm();
+    fireEvent.click(
+      screen.getByRole("button", { name: /complete packet & open prep/i }),
+    );
+
+    expect(await screen.findByText("The Golden Rules")).toBeInTheDocument();
+    expect(screen.getByText(/Access stays open/i)).toBeInTheDocument();
+    await waitFor(() => {
+      const [, init] = vi
+        .mocked(fetch)
+        .mock.calls.find(([url]) =>
+          String(url).includes("/api/contestant-open-claim"),
+        )!;
+      expect(JSON.parse(String(init?.body))).toMatchObject({
+        firstName: "Priya",
+        lastName: "Shah",
+        signature: "Priya Shah",
+      });
+    });
   });
 });

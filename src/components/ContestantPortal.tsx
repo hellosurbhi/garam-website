@@ -20,7 +20,7 @@ import {
 } from "@/data/contestantPortal";
 import { WaiverDocument } from "@/components/WaiverDocument";
 
-type ContestantRole = "female" | "male";
+type ContestantRole = "female" | "male" | "contestant";
 
 type PortalState =
   | { type: "loading" }
@@ -159,7 +159,7 @@ const CLAIM_ERROR_MESSAGE =
   "Could not finish signup. Please try again or email contact@garammasaladating.com.";
 
 function normalizeRole(role?: string | null): ContestantRole | null {
-  if (role === "female" || role === "male") {
+  if (role === "female" || role === "male" || role === "contestant") {
     return role;
   }
   return null;

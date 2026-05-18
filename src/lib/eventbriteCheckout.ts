@@ -36,7 +36,6 @@ const OUTSIDE_CLOSE_ID = "gmd-eventbrite-outside-close";
 const AUTO_OPEN_INITIAL_DELAY_MS = 150;
 const AUTO_OPEN_RETRY_DELAY_MS = 750;
 const AUTO_OPEN_MAX_ATTEMPTS = 4;
-const CHECKOUT_OPEN_FALLBACK_DELAY_MS = 2500;
 
 function getEventId(trigger: HTMLElement): string {
   return (
@@ -254,9 +253,6 @@ export function initEventbriteCheckout(
   let suppressNextPopstate = false;
   let pendingModalTimer: number | undefined;
   let pendingAutoOpenTimer: number | undefined;
-  let pendingClickFallbackTimer: number | undefined;
-  let checkoutAttemptId = 0;
-  let openedCheckoutAttemptId = 0;
   let bodyState: { overflow: string; position: string } | null = null;
   let autoOpenEventId = options.autoOpenQueryParam
     ? (new URLSearchParams(window.location.search).get(
@@ -360,7 +356,6 @@ export function initEventbriteCheckout(
   function beginModalSession(): void {
     if (modalSessionActive) return;
     window.clearTimeout(pendingModalTimer);
-    openedCheckoutAttemptId = checkoutAttemptId;
     installOutsideCloseFallback(closeEventbriteModal);
     pushModalHistoryEntry();
     modalSessionActive = true;
@@ -406,41 +401,6 @@ export function initEventbriteCheckout(
     finishModalSession({ fromPopstate: closeOptions.fromPopstate });
   }
 
-  function openFallbackUrl(
-    eventConfig: EventbriteTriggerConfig,
-    trigger?: HTMLElement,
-  ): void {
-    const fallbackUrl =
-      trigger?.getAttribute("href") ?? eventConfig.fallbackUrl;
-    if (fallbackUrl) {
-      window.location.href = fallbackUrl;
-    }
-  }
-
-  function scheduleClickFallback(
-    eventConfig: EventbriteTriggerConfig,
-    trigger: HTMLElement,
-    attemptId: number,
-  ): void {
-    window.clearTimeout(pendingClickFallbackTimer);
-    pendingClickFallbackTimer = window.setTimeout(() => {
-      if (attemptId !== checkoutAttemptId) return;
-      if (openedCheckoutAttemptId >= attemptId) return;
-      if (isEventbriteModalPresent() || modalSessionActive) return;
-      openFallbackUrl(eventConfig, trigger);
-    }, CHECKOUT_OPEN_FALLBACK_DELAY_MS);
-  }
-
-  function registerCheckoutAttempt(
-    eventConfig: EventbriteTriggerConfig,
-    trigger: HTMLElement,
-  ): void {
-    const attemptId = checkoutAttemptId + 1;
-    checkoutAttemptId = attemptId;
-    prepareCheckoutOpen(eventConfig, trigger);
-    scheduleClickFallback(eventConfig, trigger, attemptId);
-  }
-
   function openRequestedCheckout(): void {
     if (!autoOpenEventId) return;
     const requestedEvent = configs.find(
@@ -479,7 +439,9 @@ export function initEventbriteCheckout(
             clickRequestedCheckout(eventConfig, trigger, attempt + 1);
             return;
           }
-          openFallbackUrl(eventConfig, trigger);
+          if (eventConfig.fallbackUrl) {
+            window.location.href = eventConfig.fallbackUrl;
+          }
         }, AUTO_OPEN_RETRY_DELAY_MS);
       },
       attempt === 1 ? AUTO_OPEN_INITIAL_DELAY_MS : 0,
@@ -577,7 +539,7 @@ export function initEventbriteCheckout(
         const onClick = (event: MouseEvent): void => {
           event.preventDefault();
           if (trigger) {
-            registerCheckoutAttempt(eventConfig, trigger);
+            prepareCheckoutOpen(eventConfig, trigger);
           }
         };
         trigger?.addEventListener("click", onClick);
@@ -646,7 +608,6 @@ export function initEventbriteCheckout(
   return () => {
     window.clearTimeout(pendingModalTimer);
     window.clearTimeout(pendingAutoOpenTimer);
-    window.clearTimeout(pendingClickFallbackTimer);
     cleanupCallbacks.splice(0).forEach((cleanup) => cleanup());
   };
 }

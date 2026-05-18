@@ -415,12 +415,13 @@ test.describe("Homepage deep", () => {
     await page.goto("/", { waitUntil: "domcontentloaded" });
 
     const pill = page.locator(
-      '.next-show-pill[id^="eventbrite-widget-modal-trigger-home-hero-"]',
+      '.next-show-pill[id^="eventbrite-widget-modal-trigger-"]',
     );
     await expect(pill.first()).toBeVisible();
 
     const href = await pill.first().getAttribute("href");
     expect(href).toContain("eventbrite.com");
+    await expect(pill.first()).toHaveAttribute("target", "_blank");
     expect(await pill.first().getAttribute("data-eb-event-id")).toBeTruthy();
 
     await pill.first().click();

@@ -1,6 +1,8 @@
 import type { APIRoute } from "astro";
 import { enforceRateLimit, RATE_LIMITS } from "@/lib/rateLimit";
 import { isLeadTokenEnabled, verifyLeadToken } from "@/lib/leadToken";
+import { jsonResponse } from "@/lib/http";
+import { getFirebaseProjectId } from "@/lib/env";
 
 export const prerender = false;
 
@@ -68,7 +70,7 @@ export const POST: APIRoute = async ({ request }) => {
     }
   }
 
-  const projectId = import.meta.env.PUBLIC_FIREBASE_PROJECT_ID;
+  const projectId = getFirebaseProjectId();
   if (!projectId) {
     return jsonResponse({ error: "Server configuration error" }, 500);
   }

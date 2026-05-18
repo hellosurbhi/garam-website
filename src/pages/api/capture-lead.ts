@@ -92,7 +92,7 @@ export const POST: APIRoute = async ({ request }) => {
     return jsonResponse({ ok: true });
   }
 
-  const projectId = import.meta.env.PUBLIC_FIREBASE_PROJECT_ID;
+  const projectId = getFirebaseProjectId();
   if (!projectId) {
     return jsonResponse({ error: "Server configuration error" }, 500);
   }

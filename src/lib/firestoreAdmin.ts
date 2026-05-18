@@ -1,4 +1,5 @@
 import { SignJWT, importPKCS8 } from "jose";
+import { readPrivateKeyEnv, readTrimmedEnv } from "@/lib/env";
 
 // Module-level token cache
 let cachedToken: string | null = null;
@@ -19,17 +20,16 @@ export async function getFirestoreAccessToken(): Promise<string> {
     return cachedToken;
   }
 
-  const email = import.meta.env.FIREBASE_ADMIN_CLIENT_EMAIL;
-  const rawKey = import.meta.env.FIREBASE_ADMIN_PRIVATE_KEY;
+  const email = readTrimmedEnv(import.meta.env.FIREBASE_ADMIN_CLIENT_EMAIL);
+  const privateKey = readPrivateKeyEnv(
+    import.meta.env.FIREBASE_ADMIN_PRIVATE_KEY,
+  );
 
-  if (!email || !rawKey) {
+  if (!email || !privateKey) {
     throw new Error(
       "FIREBASE_ADMIN_CLIENT_EMAIL or FIREBASE_ADMIN_PRIVATE_KEY not configured",
     );
   }
-
-  // Firebase private keys come with literal \n that need to be actual newlines
-  const privateKey = rawKey.replace(/\\n/g, "\n");
 
   const now = Math.floor(Date.now() / 1000);
   const privateKeyObj = await importPKCS8(privateKey, "RS256");

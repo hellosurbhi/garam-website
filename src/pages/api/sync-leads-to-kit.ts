@@ -2,6 +2,7 @@ export const prerender = false;
 
 import type { APIRoute } from "astro";
 import { getFirestoreAccessToken } from "@/lib/firestoreAdmin";
+import { getFirebaseProjectId } from "@/lib/env";
 import { addKitSubscriber, type KitSubscriberFields } from "@/lib/kit";
 import { enforceRateLimit, RATE_LIMITS } from "@/lib/rateLimit";
 
@@ -55,7 +56,7 @@ export const POST: APIRoute = async ({ request }) => {
     });
   }
 
-  const projectId = import.meta.env.PUBLIC_FIREBASE_PROJECT_ID;
+  const projectId = getFirebaseProjectId();
   if (!projectId) {
     return new Response(
       JSON.stringify({ error: "Server configuration error" }),

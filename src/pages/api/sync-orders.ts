@@ -5,6 +5,7 @@ import { enforceRateLimit, RATE_LIMITS } from "@/lib/rateLimit";
 import { verifyAdminToken } from "@/lib/verifyToken";
 import { getFirestoreAccessToken } from "@/lib/firestoreAdmin";
 import { fetchEventOrders } from "@/lib/eventbrite";
+import { getFirebaseProjectId } from "@/lib/env";
 import { events } from "@/data/events";
 import type { Order, SyncMeta } from "@/types/analytics";
 
@@ -282,7 +283,7 @@ export const POST: APIRoute = async ({ request }) => {
     });
   }
 
-  const projectId = import.meta.env.PUBLIC_FIREBASE_PROJECT_ID;
+  const projectId = getFirebaseProjectId();
   const eventbriteToken = import.meta.env.EVENTBRITE_API_TOKEN;
 
   if (!projectId) {

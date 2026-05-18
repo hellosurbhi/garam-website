@@ -48,6 +48,7 @@ describe("verifyIdToken", () => {
   afterEach(() => {
     vi.restoreAllMocks();
     delete import.meta.env.PUBLIC_FIREBASE_PROJECT_ID;
+    delete import.meta.env.VITE_FIREBASE_PROJECT_ID;
     delete import.meta.env.ADMIN_UIDS;
     delete import.meta.env.ADMIN_EMAILS;
     delete import.meta.env.ADMIN_EMAIL;
@@ -67,6 +68,7 @@ describe("verifyIdToken", () => {
 
   it("returns null when PUBLIC_FIREBASE_PROJECT_ID is missing", async () => {
     delete import.meta.env.PUBLIC_FIREBASE_PROJECT_ID;
+    delete import.meta.env.VITE_FIREBASE_PROJECT_ID;
     const token = makeToken("key-1", "user-123");
     expect(await verifyIdToken(`Bearer ${token}`)).toBeNull();
   });
@@ -122,6 +124,22 @@ describe("verifyIdToken", () => {
   it("passes correct issuer and audience to jwtVerify", async () => {
     const token = makeToken("key-1", "user-123");
     await verifyIdToken(`Bearer ${token}`);
+    expect(mockJwtVerify).toHaveBeenCalledWith(
+      token,
+      "mock-key",
+      expect.objectContaining({
+        issuer: `https://securetoken.google.com/${TEST_PROJECT_ID}`,
+        audience: TEST_PROJECT_ID,
+      }),
+    );
+  });
+
+  it("trims the configured Firebase project ID before verifying claims", async () => {
+    import.meta.env.PUBLIC_FIREBASE_PROJECT_ID = ` ${TEST_PROJECT_ID} `;
+    const token = makeToken("key-1", "user-123");
+
+    await verifyIdToken(`Bearer ${token}`);
+
     expect(mockJwtVerify).toHaveBeenCalledWith(
       token,
       "mock-key",

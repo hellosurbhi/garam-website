@@ -1,5 +1,10 @@
 import { initializeApp, cert, getApps, type App } from "firebase-admin/app";
 import { getFirestore, type Firestore } from "firebase-admin/firestore";
+import {
+  getFirebaseProjectId,
+  readPrivateKeyEnv,
+  readTrimmedEnv,
+} from "@/lib/env";
 
 let app: App | undefined;
 
@@ -10,19 +15,19 @@ function getApp(): App {
     app = existing[0];
     return app;
   }
-  const clientEmail = import.meta.env.FIREBASE_ADMIN_CLIENT_EMAIL;
-  const privateKeyRaw = import.meta.env.FIREBASE_ADMIN_PRIVATE_KEY;
-  const projectId =
-    import.meta.env.PUBLIC_FIREBASE_PROJECT_ID ??
-    import.meta.env.VITE_FIREBASE_PROJECT_ID;
+  const clientEmail = readTrimmedEnv(
+    import.meta.env.FIREBASE_ADMIN_CLIENT_EMAIL,
+  );
+  const privateKey = readPrivateKeyEnv(
+    import.meta.env.FIREBASE_ADMIN_PRIVATE_KEY,
+  );
+  const projectId = getFirebaseProjectId();
 
-  if (!clientEmail || !privateKeyRaw || !projectId) {
+  if (!clientEmail || !privateKey || !projectId) {
     throw new Error(
       "Firebase Admin env vars missing: FIREBASE_ADMIN_CLIENT_EMAIL, FIREBASE_ADMIN_PRIVATE_KEY, PUBLIC_FIREBASE_PROJECT_ID",
     );
   }
-
-  const privateKey = privateKeyRaw.replace(/\\n/g, "\n");
 
   app = initializeApp({
     credential: cert({ projectId, clientEmail, privateKey }),

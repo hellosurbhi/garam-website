@@ -1,4 +1,5 @@
 import { jwtVerify, importX509 } from "jose";
+import { getFirebaseProjectId } from "@/lib/env";
 
 const CERTS_URL =
   "https://www.googleapis.com/robot/v1/metadata/x509/securetoken@system.gserviceaccount.com";
@@ -58,7 +59,7 @@ async function verifyFirebaseToken(
   if (!authHeader || !authHeader.startsWith("Bearer ")) return null;
 
   const token = authHeader.slice(7);
-  const projectId = import.meta.env.PUBLIC_FIREBASE_PROJECT_ID;
+  const projectId = getFirebaseProjectId();
   if (!projectId) return null;
 
   try {

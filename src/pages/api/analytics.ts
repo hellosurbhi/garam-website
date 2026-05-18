@@ -3,6 +3,7 @@ export const prerender = false;
 import type { APIRoute } from "astro";
 import { verifyAdminToken } from "@/lib/verifyToken";
 import { getFirestoreAccessToken } from "@/lib/firestoreAdmin";
+import { getFirebaseProjectId } from "@/lib/env";
 import { events } from "@/data/events";
 import type {
   AnalyticsSnapshot,
@@ -213,7 +214,7 @@ export const GET: APIRoute = async ({ request, url }) => {
     ? (rawPeriod as AnalyticsSnapshot["period"])
     : "30d";
 
-  const projectId = import.meta.env.PUBLIC_FIREBASE_PROJECT_ID;
+  const projectId = getFirebaseProjectId();
   if (!projectId) {
     return new Response(
       JSON.stringify({

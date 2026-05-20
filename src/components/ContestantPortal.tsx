@@ -55,7 +55,6 @@ type PortalState =
       venueName?: string | null;
     }
   | { type: "expired" }
-  | { type: "no-access" }
   | { type: "error"; message: string };
 
 type PortalSignupData = {
@@ -318,7 +317,6 @@ export default function ContestantPortal() {
     return <div className="portal-loading">Loading...</div>;
   }
   if (state.type === "error") return <ErrorView message={state.message} />;
-  if (state.type === "no-access") return <NoAccessView />;
   if (state.type === "expired") return <ExpiredView />;
   if (state.type === "open") {
     return (
@@ -463,29 +461,6 @@ function ErrorView({ message }: { message: string }) {
         {ERROR_VIEW.supportLabel}{" "}
         <a href={SOCIAL_URLS.email} className="portal-link">
           {PORTAL_CONTACT_EMAIL}
-        </a>
-      </p>
-    </div>
-  );
-}
-
-function NoAccessView() {
-  return (
-    <div className="portal-center">
-      <p className="portal-emoji">🌶️</p>
-      <h1 className="portal-heading">Contestant Packet</h1>
-      <p className="portal-body">
-        This page is for selected contestants. Use the private packet link from
-        your casting email.
-      </p>
-      <p className="portal-muted">
-        Need the general waiver? Go to{" "}
-        <a href="/waiver" className="portal-link">
-          garammasaladating.com/waiver
-        </a>
-        . Questions? Email{" "}
-        <a href="mailto:contact@garammasaladating.com" className="portal-link">
-          contact@garammasaladating.com
         </a>
       </p>
     </div>

@@ -1,7 +1,8 @@
 import type { APIRoute } from "astro";
 import { fsGet } from "@/lib/firestoreRest";
 import { verifyPortalToken } from "@/lib/portalToken";
-import { enforceRateLimit, RATE_LIMITS } from "@/lib/rateLimit";
+import { events } from "@/data/events";
+import { isEventPast } from "@/utils/eventDate";
 
 export const prerender = false;
 
@@ -47,22 +48,36 @@ function normalizeRole(
 }
 
 export const GET: APIRoute = async ({ request }) => {
-  const limited = await enforceRateLimit(request, RATE_LIMITS.contestantClaim);
-  if (limited) return limited;
-
   const url = new URL(request.url);
   const inviteId = url.searchParams.get("invite");
-  const showParam = url.searchParams.get("show");
+  const showId = url.searchParams.get("show");
 
-  if (showParam) {
-    return json(
-      {
-        state: "error",
-        message:
-          "Contestant packet links are private. Standalone waivers live at /waiver.",
-      },
-      400,
+  if (showId) {
+    const event = events.find(
+      (e) =>
+        !e.hidden &&
+        e.citySlug &&
+        e.isoDate &&
+        `${e.citySlug}-${e.isoDate}` === showId,
     );
+    if (!event || !event.isoDate) {
+      return json({ state: "error", message: "Invalid show link." }, 404);
+    }
+    if (isEventPast(event.date)) {
+      return json({
+        state: "error",
+        message: "This show has already passed.",
+      });
+    }
+    return json({
+      state: "show",
+      showId,
+      showCity: event.city,
+      showDate: event.isoDate,
+      showDisplayDate: event.date,
+      startTime: event.startTime ?? null,
+      venueName: event.venue?.name ?? null,
+    });
   }
 
   if (inviteId) {

@@ -3,13 +3,29 @@ import { describe, it, expect, vi, beforeEach } from "vitest";
 const mocks = vi.hoisted(() => {
   const fsGet = vi.fn();
   const verifyPortalToken = vi.fn();
+  const isEventPast = vi.fn();
 
-  return { fsGet, verifyPortalToken };
+  return { fsGet, verifyPortalToken, isEventPast };
 });
 
 vi.mock("@/lib/firestoreRest", () => ({ fsGet: mocks.fsGet }));
 vi.mock("@/lib/portalToken", () => ({
   verifyPortalToken: mocks.verifyPortalToken,
+}));
+vi.mock("@/utils/eventDate", () => ({ isEventPast: mocks.isEventPast }));
+vi.mock("@/data/events", () => ({
+  events: [
+    {
+      city: "New York",
+      citySlug: "nyc",
+      isoDate: "2099-12-31",
+      date: "Dec 31, 2099",
+      startTime: "20:00",
+      timezone: "America/New_York",
+      venue: { name: "Test Venue", streetAddress: "123 Test St" },
+      hidden: false,
+    },
+  ],
 }));
 
 const { GET } = await import("@/pages/api/portal-state");
@@ -27,16 +43,34 @@ function makeRequestWithCookie(cookie: string): Request {
 describe("portal-state GET /api/portal-state", () => {
   beforeEach(() => {
     vi.clearAllMocks();
+    mocks.isEventPast.mockReturnValue(false);
   });
 
-  describe("show param (blocked)", () => {
-    it("returns 400 error for a ?show= param (contestant packet links are private)", async () => {
+  describe("show param", () => {
+    it("returns show state for a valid upcoming show", async () => {
       const req = makeRequest("/api/portal-state?show=nyc-2099-12-31");
       const res = await GET({ request: req } as Parameters<typeof GET>[0]);
-      expect(res.status).toBe(400);
+      expect(res.status).toBe(200);
+      const body = await res.json();
+      expect(body.state).toBe("show");
+      expect(body.showCity).toBe("New York");
+    });
+
+    it("returns 404 for an unknown show id", async () => {
+      const req = makeRequest("/api/portal-state?show=unknown-2099-01-01");
+      const res = await GET({ request: req } as Parameters<typeof GET>[0]);
+      expect(res.status).toBe(404);
       const body = await res.json();
       expect(body.state).toBe("error");
-      expect(body.message).toMatch(/private/i);
+    });
+
+    it("returns error when show has already passed", async () => {
+      mocks.isEventPast.mockReturnValue(true);
+      const req = makeRequest("/api/portal-state?show=nyc-2099-12-31");
+      const res = await GET({ request: req } as Parameters<typeof GET>[0]);
+      const body = await res.json();
+      expect(body.state).toBe("error");
+      expect(body.message).toMatch(/passed/i);
     });
   });
 

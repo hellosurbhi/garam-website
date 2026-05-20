@@ -417,6 +417,9 @@ export const allEvents: EventEntry[] = [
   ),
 ];
 
+/** City slugs used for TBA "Coming soon" cards on the tickets page. */
+export const TBA_CITY_SLUGS: string[] = TBA_CITIES.map((c) => c.citySlug);
+
 /**
  * Returns the canonical display status for an event.
  * Prefers the machine-readable soldOut flag over the tagline so that

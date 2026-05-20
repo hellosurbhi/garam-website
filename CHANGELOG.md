@@ -18,6 +18,16 @@
 - Importing `isEventPast` into `events.ts` keeps the dedup co-located with the data — no changes needed in tickets.astro or index.astro.
 - TBA city selection based on South Asian population density: Chicago and Houston are the largest distinct metros without shows after NYC, SF, Philly, and LA.
 
+## content: add Gen Zenophobic podcast URL (2026-05-15)
+
+### What changed
+
+- Added YouTube URL to the Gen Zenophobic press entry in `src/data/press.ts` so the podcast is now a clickable link in the press section.
+
+### Files affected
+
+- `src/data/press.ts`
+
 ## feat(analytics): merge revenue dashboard with current main (2026-05-15)
 
 ### What changed

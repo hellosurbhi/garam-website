@@ -15,6 +15,7 @@ export const pressItems: PressItem[] = [
   {
     title: "Garam Masala Dating on Gen Zenophobic",
     source: "Gen Zenophobic",
+    url: "https://www.youtube.com/watch?v=Es04TqhwkmY",
     type: "podcast",
   },
   {

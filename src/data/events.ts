@@ -1,3 +1,5 @@
+import { isEventPast } from "../utils/eventDate";
+
 export interface EventVenue {
   name: string;
   streetAddress?: string;
@@ -58,6 +60,15 @@ const VENUE_NEXT_IN_LINE: EventVenue = {
   addressLocality: "Philadelphia",
   addressRegion: "PA",
   postalCode: "19123",
+  addressCountry: "US",
+};
+
+const VENUE_LYRIC_HYPERION: EventVenue = {
+  name: "Lyric Hyperion Theater & Cafe",
+  streetAddress: "2106 Hyperion Ave",
+  addressLocality: "Los Angeles",
+  addressRegion: "CA",
+  postalCode: "90027",
   addressCountry: "US",
 };
 
@@ -210,6 +221,20 @@ export const events: EventEntry[] = [
     price: "15",
     eventbriteId: "1989618938805",
   },
+  {
+    date: "Jul 19",
+    city: "Los Angeles",
+    state: "California",
+    stateAbbr: "CA",
+    citySlug: "los-angeles",
+    url: "https://www.eventbrite.com/e/garam-masala-tickets-1989799702474",
+    isoDate: "2026-07-19",
+    startTime: "18:30",
+    endTime: "20:30",
+    venue: VENUE_LYRIC_HYPERION,
+    price: "15",
+    eventbriteId: "1989799702474",
+  },
 ];
 
 // Only show TBA entries for cities with active tour planning (not all 200+ expansion pages).
@@ -222,10 +247,16 @@ const TBA_CITIES = [
     citySlug: "los-angeles",
   },
   {
-    city: "San Diego",
-    state: "California",
-    stateAbbr: "CA",
-    citySlug: "san-diego",
+    city: "Chicago",
+    state: "Illinois",
+    stateAbbr: "IL",
+    citySlug: "chicago",
+  },
+  {
+    city: "Houston",
+    state: "Texas",
+    stateAbbr: "TX",
+    citySlug: "houston",
   },
 ];
 
@@ -239,8 +270,14 @@ const comingSoonEvents: EventEntry[] = TBA_CITIES.map((city) => ({
   tagline: "Coming soon",
 }));
 
-/** All events: confirmed shows + hand-picked TBA cities */
-export const allEvents: EventEntry[] = [...events, ...comingSoonEvents];
+/** All events: confirmed shows + TBA cities (suppressed when city has an upcoming confirmed show) */
+export const allEvents: EventEntry[] = [
+  ...events,
+  ...comingSoonEvents.filter(
+    (tba) =>
+      !events.some((e) => e.citySlug === tba.citySlug && !isEventPast(e.date)),
+  ),
+];
 
 /**
  * Returns the canonical display status for an event.

@@ -1,5 +1,23 @@
 # Changelog
 
+## feat(events): add LA show July 19 at Lyric Hyperion, update TBA cities (2026-05-20)
+
+### What changed
+
+- Added confirmed Los Angeles show: July 19 at Lyric Hyperion Theater & Cafe (2106 Hyperion Ave, Silver Lake), 6:30 to 8:30 PM, with Eventbrite modal checkout widget.
+- Updated TBA cities to Chicago and Houston (top South Asian population metros without upcoming confirmed shows), replacing San Diego.
+- LA stays in TBA_CITIES so it automatically reverts to a "Coming soon" card after the July 19 show passes on next deploy.
+- Added dedup logic to `allEvents`: TBA city cards are suppressed at build time when that city already has an upcoming confirmed event, preventing duplicate cards.
+
+### Files affected
+
+- `src/data/events.ts`
+
+### Decisions
+
+- Importing `isEventPast` into `events.ts` keeps the dedup co-located with the data — no changes needed in tickets.astro or index.astro.
+- TBA city selection based on South Asian population density: Chicago and Houston are the largest distinct metros without shows after NYC, SF, Philly, and LA.
+
 ## content: add Gen Zenophobic podcast URL (2026-05-15)
 
 ### What changed
@@ -9,8 +27,6 @@
 ### Files affected
 
 - `src/data/press.ts`
-
----
 
 ## feat(analytics): merge revenue dashboard with current main (2026-05-15)
 

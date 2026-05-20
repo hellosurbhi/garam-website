@@ -12,8 +12,6 @@ import { ContestantClaimSchema } from "@/lib/schemas";
 
 export const prerender = false;
 
-export const prerender = false;
-
 export const POST: APIRoute = async ({ request }) => {
   const limited = await enforceRateLimit(request, RATE_LIMITS.contestantClaim);
   if (limited) return limited;

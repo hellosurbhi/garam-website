@@ -103,6 +103,24 @@
 
 - No manual tagline set — the positional auto-tagline system assigns one at runtime based on event position.
 
+## fix(csp): allow Twitter/X tracking endpoints in connect-src (2026-05-20)
+
+### What changed
+
+- Added `https://t.co` and `https://analytics.twitter.com` to the CSP `connect-src` directive in `vercel.json`.
+
+### Why
+
+Twitter's Universal Website Tag (`uwt.js`), loaded via GTM, POSTs conversion data to four endpoints (`t.co/1/i/adsctp`, `analytics.twitter.com/1/i/adsctp`, etc.). These domains were already in `script-src` and `img-src` but missing from `connect-src`, causing CSP violations that silently dropped all Twitter conversion tracking.
+
+### Files affected
+
+- `vercel.json`
+
+### Decisions
+
+Purely additive change. No new origins introduced: `t.co` and `analytics.twitter.com` were already trusted in `img-src`. This just extends the allowlist to `connect-src` for XHR/fetch requests from the same trusted domains.
+
 ## feat(events): add LA show July 19 at Lyric Hyperion, update TBA cities (2026-05-20)
 
 ### What changed

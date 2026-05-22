@@ -1,5 +1,20 @@
 # Changelog
 
+## feat(events): add May 31 NYC show at Top Secret Comedy Club (2026-05-22)
+
+### What changed
+
+- Added confirmed Manhattan show: May 31 at Top Secret Comedy Club, 6:30 to 8:30 PM, with Eventbrite modal checkout widget (ID: 1990168950906).
+- Inserted chronologically between the May 10 San Francisco show and the Jun 21 Manhattan Pride show.
+
+### Files affected
+
+- `src/data/events.ts`
+
+### Decisions
+
+- No manual tagline set — the positional auto-tagline system assigns one at runtime based on event position.
+
 ## feat(events): add LA show July 19 at Lyric Hyperion, update TBA cities (2026-05-20)
 
 ### What changed

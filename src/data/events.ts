@@ -249,6 +249,20 @@ export const events: EventEntry[] = [
     price: "15",
     eventbriteId: "1989799702474",
   },
+  {
+    date: "Aug 2",
+    city: "Manhattan",
+    state: "New York",
+    stateAbbr: "NY",
+    citySlug: "manhattan",
+    url: "https://www.eventbrite.com/e/garam-masala-comedy-dating-show-cuffing-season-coming-tickets-1990583884985",
+    isoDate: "2026-08-02",
+    startTime: "18:30",
+    endTime: "20:30",
+    venue: VENUE_TOP_SECRET,
+    price: "15",
+    eventbriteId: "1990583884985",
+  },
 ];
 
 // Only show TBA entries for cities with active tour planning (not all 200+ expansion pages).

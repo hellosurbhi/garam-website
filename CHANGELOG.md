@@ -1,5 +1,22 @@
 # Changelog
 
+## feat(events): add Aug 2 NYC show at Top Secret Comedy Club (2026-05-30)
+
+### What changed
+
+- Added confirmed Manhattan show: Aug 2 "Cuffing Season Coming" at Top Secret Comedy Club, 6:30 to 8:30 PM, with Eventbrite modal checkout widget (ID: 1990583884985).
+- Inserted chronologically after the Jul 19 Los Angeles show.
+
+### Files affected
+
+- `src/data/events.ts`
+
+### Decisions
+
+- Used existing `VENUE_TOP_SECRET` constant. Matches pattern of all other Top Secret Comedy Club NYC events.
+
+---
+
 ## feat(events): add May 31 NYC show at Top Secret Comedy Club (2026-05-22)
 
 ### What changed

@@ -32,6 +32,13 @@ const GENDER_OPTIONS: FilterOption[] = [
   { value: "Other", label: "Other" },
 ];
 
+const ORIENTATION_OPTIONS: FilterOption[] = [
+  { value: "Straight", label: "Straight" },
+  { value: "Gay", label: "Gay" },
+  { value: "Bisexual", label: "Bisexual" },
+  { value: "Other", label: "Other" },
+];
+
 export default function AdminDashboard({ onLogout }: AdminDashboardProps) {
   const [activeTab, setActiveTab] = useState<"applicants" | "analytics">(
     "applicants",
@@ -44,6 +51,9 @@ export default function AdminDashboard({ onLogout }: AdminDashboardProps) {
   const [deletedOpen, setDeletedOpen] = useState(false);
 
   const [genderFilter, setGenderFilter] = useState<readonly FilterOption[]>([]);
+  const [orientationFilter, setOrientationFilter] = useState<
+    readonly FilterOption[]
+  >([]);
   const [cityFilter, setCityFilter] = useState<readonly FilterOption[]>([]);
   const [prepLinkLoading, setPrepLinkLoading] = useState<string | null>(null);
   const [prepLinkCopied, setPrepLinkCopied] = useState<string | null>(null);
@@ -175,6 +185,7 @@ export default function AdminDashboard({ onLogout }: AdminDashboardProps) {
 
   function clearFilters() {
     setGenderFilter([]);
+    setOrientationFilter([]);
     setCityFilter([]);
   }
 
@@ -186,6 +197,10 @@ export default function AdminDashboard({ onLogout }: AdminDashboardProps) {
     if (genderFilter.length > 0) {
       const selected = new Set(genderFilter.map((o) => o.value));
       result = result.filter((a) => selected.has(a.gender));
+    }
+    if (orientationFilter.length > 0) {
+      const selected = new Set(orientationFilter.map((o) => o.value));
+      result = result.filter((a) => selected.has(a.orientation));
     }
     if (cityFilter.length > 0) {
       const selected = new Set(cityFilter.map((o) => o.value));
@@ -210,9 +225,12 @@ export default function AdminDashboard({ onLogout }: AdminDashboardProps) {
     });
 
     return { activeApps: result, deletedApps: deleted };
-  }, [applications, genderFilter, cityFilter]);
+  }, [applications, genderFilter, orientationFilter, cityFilter]);
 
-  const hasActiveFilters = genderFilter.length > 0 || cityFilter.length > 0;
+  const hasActiveFilters =
+    genderFilter.length > 0 ||
+    orientationFilter.length > 0 ||
+    cityFilter.length > 0;
 
   return (
     <div className={styles.page}>
@@ -257,6 +275,17 @@ export default function AdminDashboard({ onLogout }: AdminDashboardProps) {
                   placeholder="Gender…"
                   styles={adminSelectStyles<FilterOption>()}
                   aria-label="Filter by gender"
+                />
+              </div>
+              <div className={styles.filterItem}>
+                <Select
+                  isMulti
+                  options={ORIENTATION_OPTIONS}
+                  value={orientationFilter}
+                  onChange={(v) => setOrientationFilter(v)}
+                  placeholder="Orientation…"
+                  styles={adminSelectStyles<FilterOption>()}
+                  aria-label="Filter by orientation"
                 />
               </div>
               <div className={styles.filterItemWide}>

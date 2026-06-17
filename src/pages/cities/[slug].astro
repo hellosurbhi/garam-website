@@ -116,7 +116,10 @@ const breadcrumbJsonLd = buildBreadcrumbJsonLd([
 
 const relatedPosts = (city.relatedArticleSlugs ?? [])
   .map((slug) => getPostBySlug(slug))
-  .filter((p) => p !== undefined && isPublished(p.datePublished));
+  .filter(
+    (p): p is NonNullable<typeof p> =>
+      p !== undefined && isPublished(p.datePublished),
+  );
 
 const applyHref =
   city.ctas.find((c) => c.href !== "#waitlist")?.href ?? "/apply";

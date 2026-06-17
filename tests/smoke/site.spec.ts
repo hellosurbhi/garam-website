@@ -1,4 +1,5 @@
 import { test, expect, type Page } from "@playwright/test";
+import AxeBuilder from "@axe-core/playwright";
 
 // =============================================
 // ROUTE LISTS
@@ -209,6 +210,16 @@ async function assertAllButtonsAccessible(page: Page) {
   ).toEqual([]);
 }
 
+async function assertAxeClean(page: Page) {
+  const results = await new AxeBuilder({ page })
+    .withTags(["wcag2a", "wcag2aa"])
+    .analyze();
+  const violations = results.violations.map(
+    (v) => `${v.id}: ${v.help} (${v.nodes.length} instance(s))`,
+  );
+  expect(violations, "Accessibility violations found").toEqual([]);
+}
+
 async function assertJsonLd(page: Page) {
   const scripts = page.locator('script[type="application/ld+json"]');
   expect(
@@ -271,6 +282,9 @@ test.describe("Static pages smoke", () => {
 
         // All buttons accessible
         await assertAllButtonsAccessible(page);
+
+        // Axe accessibility (WCAG 2.0 A + AA)
+        await assertAxeClean(page);
 
         // JSON-LD (skip non-public pages that don't have structured data)
         if (
@@ -846,6 +860,7 @@ test.describe("Journal", () => {
   });
 
   test("Every live journal post loads correctly", async ({ page }) => {
+    test.setTimeout(180_000); // iterates all published posts with SEO/overflow checks per post
     // Discover all live posts from the index page
     await page.goto("/journal", { waitUntil: "domcontentloaded" });
     const hrefs = await page

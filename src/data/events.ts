@@ -72,6 +72,15 @@ const VENUE_LYRIC_HYPERION: EventVenue = {
   addressCountry: "US",
 };
 
+const VENUE_CITY_WINERY_NYC: EventVenue = {
+  name: "The Loft at City Winery NYC",
+  streetAddress: "25 11th Ave",
+  addressLocality: "New York",
+  addressRegion: "NY",
+  postalCode: "10011",
+  addressCountry: "US",
+};
+
 export const events: EventEntry[] = [
   {
     date: "Feb 22",
@@ -264,13 +273,26 @@ export const events: EventEntry[] = [
     eventbriteId: "1989799702474",
   },
   {
-    date: "Aug 2",
+    date: "Jul 26",
+    city: "Manhattan",
+    state: "New York",
+    stateAbbr: "NY",
+    citySlug: "manhattan",
+    url: "https://tickets.citywinery.com/event/garam-masala-comedy-dating-show-all-stars-editio-ownqgw",
+    isoDate: "2026-07-26",
+    startTime: "19:00",
+    endTime: "21:00",
+    venue: VENUE_CITY_WINERY_NYC,
+    price: "15",
+  },
+  {
+    date: "Aug 16",
     city: "Manhattan",
     state: "New York",
     stateAbbr: "NY",
     citySlug: "manhattan",
     url: "https://www.eventbrite.com/e/garam-masala-comedy-dating-show-cuffing-season-coming-tickets-1990583884985",
-    isoDate: "2026-08-02",
+    isoDate: "2026-08-16",
     startTime: "18:30",
     endTime: "20:30",
     venue: VENUE_TOP_SECRET,

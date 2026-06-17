@@ -6,13 +6,11 @@ import {
   updateDoc,
   Timestamp,
 } from "firebase/firestore";
-import { ChevronRight, ChevronDown, Copy, Check } from "lucide-react";
+import { ChevronRight, ChevronDown } from "lucide-react";
 import Select from "react-select";
-import { getFirebaseDb, getFirebaseAuth } from "@/lib/firebase";
+import { getFirebaseDb } from "@/lib/firebase";
 import { type Application } from "@/types/application";
 import { adminSelectStyles } from "@/utils/reactSelectStyles";
-import { events } from "@/data/events";
-import { formatEventLocation } from "@/utils/eventCity";
 import Skeleton from "../ui/Skeleton";
 import ApplicantCard from "./ApplicantCard";
 import ApplicantModal from "./ApplicantModal";
@@ -55,13 +53,6 @@ export default function AdminDashboard({ onLogout }: AdminDashboardProps) {
     readonly FilterOption[]
   >([]);
   const [cityFilter, setCityFilter] = useState<readonly FilterOption[]>([]);
-  const [prepLinkLoading, setPrepLinkLoading] = useState<string | null>(null);
-  const [prepLinkCopied, setPrepLinkCopied] = useState<string | null>(null);
-
-  const today = new Date().toLocaleDateString("en-CA");
-  const upcomingEvents = events.filter(
-    (e) => e.isoDate && e.isoDate > today && !e.hidden,
-  );
 
   const toastTimerRef = useRef<ReturnType<typeof setTimeout> | undefined>(
     undefined,
@@ -77,52 +68,6 @@ export default function AdminDashboard({ onLogout }: AdminDashboardProps) {
     clearTimeout(toastTimerRef.current);
     setToast({ msg, ok });
     toastTimerRef.current = setTimeout(() => setToast(null), 2500);
-  }
-
-  async function handleCopyPrepLink(isoDate: string) {
-    setPrepLinkLoading(isoDate);
-    try {
-      const idToken = await getFirebaseAuth().currentUser?.getIdToken();
-      if (!idToken) {
-        showToast("Session expired. Please log in again.", false);
-        return;
-      }
-      const res = await fetch("/api/generate-contestant-link", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${idToken}`,
-        },
-        body: JSON.stringify({ showDate: isoDate }),
-      });
-      let url: string;
-      if (res.ok) {
-        ({ url } = (await res.json()) as { url: string });
-      } else {
-        url = `${window.location.origin}/contestant-prep`;
-      }
-      try {
-        await navigator.clipboard.writeText(url);
-      } catch {
-        const ta = document.createElement("textarea");
-        ta.value = url;
-        ta.style.position = "fixed";
-        ta.style.opacity = "0";
-        document.body.appendChild(ta);
-        ta.select();
-        document.execCommand("copy");
-        document.body.removeChild(ta);
-      }
-      setPrepLinkCopied(isoDate);
-      setTimeout(() => setPrepLinkCopied(null), 2000);
-      if (!res.ok) {
-        showToast("Copied link (without auth token)", true);
-      }
-    } catch {
-      showToast("Failed to generate link", false);
-    } finally {
-      setPrepLinkLoading(null);
-    }
   }
 
   async function fetchApps() {
@@ -310,41 +255,6 @@ export default function AdminDashboard({ onLogout }: AdminDashboardProps) {
       </header>
 
       {activeTab === "analytics" && <AnalyticsDashboard />}
-
-      {activeTab === "applicants" && upcomingEvents.length > 0 && (
-        <div className={styles.prepSection}>
-          <div className={styles.prepBox}>
-            <span className={styles.prepLabel}>Contestant Prep Links</span>
-            <div className={styles.prepList}>
-              {upcomingEvents.map((event) => {
-                const isCopied = prepLinkCopied === event.isoDate;
-                const isLoading = prepLinkLoading === event.isoDate;
-                return (
-                  <div key={event.isoDate} className={styles.prepRow}>
-                    <span className={styles.prepEventLabel}>
-                      {event.date}: {formatEventLocation(event)}
-                    </span>
-                    <button
-                      type="button"
-                      onClick={() => handleCopyPrepLink(event.isoDate!)}
-                      disabled={isLoading}
-                      className={styles.copyButton}
-                      data-copied={isCopied || undefined}
-                    >
-                      {isCopied ? <Check size={14} /> : <Copy size={14} />}
-                      {isLoading
-                        ? "Generating…"
-                        : isCopied
-                          ? "Copied!"
-                          : "Copy Link"}
-                    </button>
-                  </div>
-                );
-              })}
-            </div>
-          </div>
-        </div>
-      )}
 
       {activeTab === "applicants" && (
         <main className={styles.main}>

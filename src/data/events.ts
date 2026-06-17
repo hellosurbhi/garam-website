@@ -25,6 +25,7 @@ export interface EventEntry {
   soldOut?: boolean; // Machine-readable sold-out flag; do not use tagline for control flow
   tagline?: string; // Short status line shown on the card (e.g. "Selling fast")
   eventbriteId?: string; // Numeric Eventbrite event ID — enables modal checkout widget
+  onSaleAt?: string; // ISO 8601 UTC datetime — card shows pre-sale notify state until this moment
 }
 
 const VENUE_TOP_SECRET: EventVenue = {
@@ -284,6 +285,7 @@ export const events: EventEntry[] = [
     endTime: "21:00",
     venue: VENUE_CITY_WINERY_NYC,
     price: "15",
+    onSaleAt: "2026-06-18T19:00:00Z",
   },
   {
     date: "Aug 16",

@@ -2,7 +2,7 @@
 import type { EventEntry } from "@/data/events";
 import NotifyModal from "@/components/NotifyModal.astro";
 import { buildTicketUrl } from "@/utils/eventUrl";
-import { parseMonth, parseDay } from "@/utils/eventDate";
+import { parseMonth, parseDay, formatOnSaleDate } from "@/utils/eventDate";
 import { buildTaglineMap } from "@/utils/eventTaglines";
 import { formatEventLocation } from "@/utils/eventCity";
 
@@ -12,18 +12,6 @@ interface Props {
 
 const { events } = Astro.props;
 const taglineMap = buildTaglineMap(events);
-
-function formatOnSaleDate(iso: string): string {
-  return new Date(iso).toLocaleString("en-US", {
-    weekday: "short",
-    month: "short",
-    day: "numeric",
-    hour: "numeric",
-    minute: "2-digit",
-    timeZone: "America/New_York",
-    timeZoneName: "short",
-  });
-}
 ---
 
 <section class="shows" id="shows" aria-labelledby="shows-heading">
@@ -246,18 +234,7 @@ function formatOnSaleDate(iso: string): string {
 </section>
 
 <script>
-  // Presale reveal: if on-sale time has passed, swap notify button → live link
-  document
-    .querySelectorAll<HTMLElement>("[data-presale-notify]")
-    .forEach((btn) => {
-      const onSaleAt = btn.dataset.presaleNotify!;
-      if (Date.now() >= Date.parse(onSaleAt)) {
-        btn.hidden = true;
-        const live = btn.nextElementSibling as HTMLElement | null;
-        if (live?.hasAttribute("data-presale-live"))
-          live.removeAttribute("hidden");
-      }
-    });
+  import "@/lib/presaleReveal";
 </script>
 
 <script>

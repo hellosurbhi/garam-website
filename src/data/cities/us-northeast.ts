@@ -125,8 +125,8 @@ export const usNortheastCities: Record<string, CityData> = {
     metaDescription:
       "Garam Masala Dating is coming to Boston. Live desi dating show and mixer. MIT, Harvard, Route 128. Join the waitlist.",
     h1: "Boston Finally Gets a Live Dating Show Worth Showing Up For",
-    status: "coming-soon",
-    badgeLabel: "Coming Soon",
+    status: "active",
+    badgeLabel: "New",
     bodyParagraphs: [
       "Boston might have the highest concentration of overqualified desi singles per square mile in the country. MIT, Harvard, BU, Northeastern, Tufts. The student pipeline alone is staggering. Then half of them stay for biotech, consulting, or tech jobs in Cambridge and along the 128 corridor, and suddenly you've got a city full of brilliant South Asian twentysomethings and thirtysomethings who can't figure out where to meet each other outside of Hinge.",
       "The show that runs in New York every few weeks: real contestants volunteer for live dates on stage while a packed room watches it unfold. Before and after, the whole crowd mingles. It's not a seminar. It's not a panel. It's a night out that works because everyone showed up for the same reason.",
@@ -135,13 +135,13 @@ export const usNortheastCities: Record<string, CityData> = {
       "Cambridge, Somerville, Brookline, Back Bay. Wherever you are in the metro, this is the show Boston has been asking for.",
     ],
     ctas: [
-      { label: "Join the Boston Waitlist", href: "#waitlist" },
+      { label: "Get Boston Tickets", href: "/tickets" },
       {
         label: "Apply to Be a Contestant",
         href: "/apply?city=Boston&state=MA",
       },
     ],
-    includeEventSchema: false,
+    includeEventSchema: true,
     areaServed: "Boston, Massachusetts",
     addressLocality: "Boston",
     addressRegion: "MA",
@@ -164,11 +164,11 @@ export const usNortheastCities: Record<string, CityData> = {
     faqItems: [
       {
         q: "When is Garam Masala Dating coming to Boston?",
-        a: "No date confirmed yet. Boston is a priority for fall 2026. Join the waitlist for presale access and casting priority.",
+        a: "Sunday, August 2 at Elephant and Castle in downtown Boston. Doors at 6 PM, show runs until 8 PM. Get tickets at the link above.",
       },
       {
         q: "Will the show be in Cambridge or downtown Boston?",
-        a: "Venue TBD. We are looking at spaces in the Boston metro area accessible to the whole community. Waitlist members will be first to know.",
+        a: "Downtown Boston at Elephant and Castle, 161 Devonshire Street. Easy access from the Financial District, South Station, and all major neighborhoods.",
       },
       {
         q: "Can I apply to be on the show before a Boston date is announced?",

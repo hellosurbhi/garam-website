@@ -12,6 +12,18 @@ interface Props {
 
 const { events } = Astro.props;
 const taglineMap = buildTaglineMap(events);
+
+function formatOnSaleDate(iso: string): string {
+  return new Date(iso).toLocaleString("en-US", {
+    weekday: "short",
+    month: "short",
+    day: "numeric",
+    hour: "numeric",
+    minute: "2-digit",
+    timeZone: "America/New_York",
+    timeZoneName: "short",
+  });
+}
 ---
 
 <section class="shows" id="shows" aria-labelledby="shows-heading">
@@ -25,10 +37,15 @@ const taglineMap = buildTaglineMap(events);
   <div class="shows-list" data-reveal-stagger>
     {
       events.map((event) => {
+        const isPresale = Boolean(event.onSaleAt);
         const isLive = Boolean(event.url);
         const isSoldOut = event.soldOut ?? false;
-        const hasWidget = isLive && Boolean(event.eventbriteId) && !isSoldOut;
+        const hasWidget =
+          isLive && Boolean(event.eventbriteId) && !isSoldOut && !isPresale;
         const cityLabel = formatEventLocation(event);
+        const onSaleLabel = event.onSaleAt
+          ? formatOnSaleDate(event.onSaleAt)
+          : "";
         const cardInner = (
           <>
             <div class="show-date-block">
@@ -68,6 +85,48 @@ const taglineMap = buildTaglineMap(events);
           >
             {cardInner}
           </button>
+        ) : isPresale ? (
+          <>
+            <button
+              type="button"
+              class="show-card show-card--notify"
+              data-notify-city={cityLabel}
+              data-notify-city-slug={`presale-${event.isoDate}`}
+              data-notify-on-sale-at={event.onSaleAt}
+              data-presale-notify={event.onSaleAt}
+              data-reveal
+              data-ph-capture="cta_clicked"
+              data-ph-cta="notify_me"
+              data-ph-section="shows"
+              data-ph-city={cityLabel}
+            >
+              <div class="show-date-block">
+                <div class="month">{parseMonth(event.date)}</div>
+                <div class="day">{parseDay(event.date)}</div>
+              </div>
+              <div class="show-info">
+                <h3>{cityLabel}</h3>
+                <span>On sale {onSaleLabel}</span>
+              </div>
+              <span class="ticket-label ticket-label--notify">Notify Me</span>
+            </button>
+            <a
+              href={buildTicketUrl(event.url, "home", "shows")}
+              target="_blank"
+              rel="noopener noreferrer"
+              class="show-card show-card--live"
+              data-presale-live
+              hidden
+              data-ph-capture="cta_clicked"
+              data-ph-cta="get_tickets"
+              data-ph-section="shows"
+              data-ph-city={cityLabel}
+              data-ph-event-date={event.date}
+              data-ph-price={event.price}
+            >
+              {cardInner}
+            </a>
+          </>
         ) : isLive ? (
           <a
             href={buildTicketUrl(event.url, "home", "shows")}
@@ -185,6 +244,21 @@ const taglineMap = buildTaglineMap(events);
     </div>
   </dialog>
 </section>
+
+<script>
+  // Presale reveal: if on-sale time has passed, swap notify button → live link
+  document
+    .querySelectorAll<HTMLElement>("[data-presale-notify]")
+    .forEach((btn) => {
+      const onSaleAt = btn.dataset.presaleNotify!;
+      if (Date.now() >= Date.parse(onSaleAt)) {
+        btn.hidden = true;
+        const live = btn.nextElementSibling as HTMLElement | null;
+        if (live?.hasAttribute("data-presale-live"))
+          live.removeAttribute("hidden");
+      }
+    });
+</script>
 
 <script>
   import { identifyLead, trackLeadEvent } from "@/lib/analytics";

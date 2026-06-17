@@ -11,6 +11,18 @@ import { buildTaglineMap } from "@/utils/eventTaglines";
 import { formatEventLocation } from "@/utils/eventCity";
 import { PAGES } from "@/data/copy";
 
+function formatOnSaleDate(iso: string): string {
+  return new Date(iso).toLocaleString("en-US", {
+    weekday: "short",
+    month: "short",
+    day: "numeric",
+    hour: "numeric",
+    minute: "2-digit",
+    timeZone: "America/New_York",
+    timeZoneName: "short",
+  });
+}
+
 const TITLE = "Tickets & Upcoming Shows";
 const DESC =
   "Get tickets to Garam Masala Dating shows in New York and beyond. NYC's #1 live desi dating show and South Asian singles mixer. Now touring LA, SF, and San Diego.";
@@ -117,12 +129,19 @@ const eventSeriesJsonLd = JSON.stringify({
         upcomingEvents.length > 0 ? (
           <div class="tickets-list">
             {upcomingEvents.map((event, i) => {
+              const isPresale = Boolean(event.onSaleAt);
               const isLive = event.url && event.url !== "#";
               const isSoldOut = event.soldOut ?? false;
               const hasWidget =
-                isLive && !isSoldOut && Boolean(event.eventbriteId);
+                isLive &&
+                !isSoldOut &&
+                Boolean(event.eventbriteId) &&
+                !isPresale;
               const tagline = taglineMap.get(event.url);
               const cityLabel = formatEventLocation(event);
+              const onSaleLabel = event.onSaleAt
+                ? formatOnSaleDate(event.onSaleAt)
+                : "";
               return hasWidget ? (
                 <a
                   href={buildTicketUrl(event.url, "tickets", "listing")}
@@ -165,6 +184,86 @@ const eventSeriesJsonLd = JSON.stringify({
                     </svg>
                   </span>
                 </a>
+              ) : isPresale ? (
+                <>
+                  <button
+                    type="button"
+                    class="ticket-card ticket-card--tba"
+                    style={`--stagger-delay: ${0.1 + i * 0.06}s`}
+                    data-notify-city={cityLabel}
+                    data-notify-city-slug={`presale-${event.isoDate}`}
+                    data-notify-on-sale-at={event.onSaleAt}
+                    data-presale-notify={event.onSaleAt}
+                    data-ph-capture="cta_clicked"
+                    data-ph-cta="notify_me"
+                    data-ph-section="tickets"
+                    data-ph-city={cityLabel}
+                  >
+                    <div class="ticket-card__info">
+                      <span class="ticket-card__date">{event.date}</span>
+                      <span class="ticket-card__city">{cityLabel}</span>
+                      <span class="ticket-card__tagline">
+                        On sale {onSaleLabel}
+                      </span>
+                    </div>
+                    <span class="ticket-card__cta ticket-card__cta--notify">
+                      Notify Me
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        width="14"
+                        height="14"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-width="2"
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                      >
+                        <path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9" />
+                        <path d="M10.3 21a1.94 1.94 0 0 0 3.4 0" />
+                      </svg>
+                    </span>
+                  </button>
+                  <a
+                    href={buildTicketUrl(event.url, "tickets", "listing")}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    class="ticket-card ticket-card--live"
+                    style={`--stagger-delay: ${0.1 + i * 0.06}s`}
+                    data-presale-live
+                    hidden
+                    data-ph-capture="cta_clicked"
+                    data-ph-cta="get_tickets"
+                    data-ph-section="tickets"
+                    data-ph-city={cityLabel}
+                    data-ph-event-date={event.date}
+                    data-ph-price={event.price}
+                  >
+                    <div class="ticket-card__info">
+                      <span class="ticket-card__date">{event.date}</span>
+                      <span class="ticket-card__city">{cityLabel}</span>
+                    </div>
+                    <span class="ticket-card__cta">
+                      Grab My Spot
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        width="14"
+                        height="14"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-width="2"
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        aria-hidden="true"
+                        focusable="false"
+                      >
+                        <path d="M5 12h14" />
+                        <path d="m12 5 7 7-7 7" />
+                      </svg>
+                    </span>
+                  </a>
+                </>
               ) : isLive ? (
                 <a
                   href={buildTicketUrl(event.url, "tickets", "listing")}
@@ -536,6 +635,20 @@ const eventSeriesJsonLd = JSON.stringify({
         modalObserver.disconnect();
       });
     })();
+  </script>
+
+  <script>
+    document
+      .querySelectorAll<HTMLElement>("[data-presale-notify]")
+      .forEach((btn) => {
+        const onSaleAt = btn.dataset.presaleNotify!;
+        if (Date.now() >= Date.parse(onSaleAt)) {
+          btn.hidden = true;
+          const live = btn.nextElementSibling as HTMLElement | null;
+          if (live?.hasAttribute("data-presale-live"))
+            live.removeAttribute("hidden");
+        }
+      });
   </script>
 </BaseLayout>
 

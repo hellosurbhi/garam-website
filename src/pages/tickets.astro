@@ -3,25 +3,13 @@ import BaseLayout from "@/layouts/BaseLayout.astro";
 import NotifyModal from "@/components/NotifyModal.astro";
 import { buildBreadcrumbJsonLd } from "@/utils/breadcrumbs";
 import { events, allEvents } from "@/data/events";
-import { isEventPast } from "@/utils/eventDate";
+import { isEventPast, formatOnSaleDate } from "@/utils/eventDate";
 import { buildEventSchemas } from "@/utils/eventSchema";
 import LeadCaptureModal from "@/components/LeadCaptureModal.astro";
 import { buildTicketUrl } from "@/utils/eventUrl";
 import { buildTaglineMap } from "@/utils/eventTaglines";
 import { formatEventLocation } from "@/utils/eventCity";
 import { PAGES } from "@/data/copy";
-
-function formatOnSaleDate(iso: string): string {
-  return new Date(iso).toLocaleString("en-US", {
-    weekday: "short",
-    month: "short",
-    day: "numeric",
-    hour: "numeric",
-    minute: "2-digit",
-    timeZone: "America/New_York",
-    timeZoneName: "short",
-  });
-}
 
 const TITLE = "Tickets & Upcoming Shows";
 const DESC =
@@ -638,17 +626,7 @@ const eventSeriesJsonLd = JSON.stringify({
   </script>
 
   <script>
-    document
-      .querySelectorAll<HTMLElement>("[data-presale-notify]")
-      .forEach((btn) => {
-        const onSaleAt = btn.dataset.presaleNotify!;
-        if (Date.now() >= Date.parse(onSaleAt)) {
-          btn.hidden = true;
-          const live = btn.nextElementSibling as HTMLElement | null;
-          if (live?.hasAttribute("data-presale-live"))
-            live.removeAttribute("hidden");
-        }
-      });
+    import "@/lib/presaleReveal";
   </script>
 </BaseLayout>
 

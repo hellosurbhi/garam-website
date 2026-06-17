@@ -120,6 +120,7 @@ const { source = "notify-modal" } = Astro.props;
     updateLeadPhone,
     type LeadSubmissionPayload,
   } from "@/lib/leadSubmission";
+  import { ON_SALE_DATE_FORMAT } from "@/utils/eventDate";
 
   const dialog = document.getElementById("notify-modal") as HTMLDialogElement;
   if (dialog) {
@@ -183,15 +184,10 @@ const { source = "notify-modal" } = Astro.props;
           );
           const onSaleDateEl = document.getElementById("notify-on-sale-date");
           if (onSaleAt) {
-            const formatted = new Date(onSaleAt).toLocaleString("en-US", {
-              weekday: "short",
-              month: "short",
-              day: "numeric",
-              hour: "numeric",
-              minute: "2-digit",
-              timeZone: "America/New_York",
-              timeZoneName: "short",
-            });
+            const formatted = new Date(onSaleAt).toLocaleString(
+              "en-US",
+              ON_SALE_DATE_FORMAT,
+            );
             if (onSaleDateEl) onSaleDateEl.textContent = formatted;
             subtitleDefault?.setAttribute("hidden", "");
             subtitlePresale?.removeAttribute("hidden");

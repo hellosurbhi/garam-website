@@ -1,5 +1,39 @@
 # Changelog
 
+## feat(events): add Jun 7 NYC show at Top Secret Comedy Club (2026-06-01)
+
+### What changed
+
+- Added confirmed Manhattan show: Jun 7 "Summer of Love" at Top Secret Comedy Club, 6:00 to 8:00 PM, with Eventbrite modal checkout widget (ID: 1990821381343).
+- Inserted chronologically between the May 31 Manhattan show and the Jun 21 Manhattan Pride show.
+
+### Files affected
+
+- `src/data/events.ts`
+
+### Decisions
+
+- Used existing `VENUE_TOP_SECRET` constant. Matches pattern of all other Top Secret Comedy Club NYC events.
+
+---
+
+## feat(events): add Aug 2 NYC show at Top Secret Comedy Club (2026-05-30)
+
+### What changed
+
+- Added confirmed Manhattan show: Aug 2 "Cuffing Season Coming" at Top Secret Comedy Club, 6:30 to 8:30 PM, with Eventbrite modal checkout widget (ID: 1990583884985).
+- Inserted chronologically after the Jul 19 Los Angeles show.
+
+### Files affected
+
+- `src/data/events.ts`
+
+### Decisions
+
+- Used existing `VENUE_TOP_SECRET` constant. Matches pattern of all other Top Secret Comedy Club NYC events.
+
+---
+
 ## feat(events): add May 31 NYC show at Top Secret Comedy Club (2026-05-22)
 
 ### What changed

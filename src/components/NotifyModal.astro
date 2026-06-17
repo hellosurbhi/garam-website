@@ -33,9 +33,13 @@ const { source = "notify-modal" } = Astro.props;
     <div class="notify-steps-wrapper">
       <div id="notify-form-view">
         <h2 id="notify-modal-title" class="modal-title">Get Notified</h2>
-        <p class="modal-subtitle">
+        <p id="notify-subtitle-default" class="modal-subtitle">
           We'll email you when tickets drop for <strong id="notify-city-name"
           ></strong>.
+        </p>
+        <p id="notify-subtitle-presale" class="modal-subtitle" hidden>
+          Tickets go on sale <strong id="notify-on-sale-date"></strong>. We'll
+          email you the moment they drop.
         </p>
         <form
           id="notify-form"
@@ -169,6 +173,32 @@ const { source = "notify-modal" } = Astro.props;
           if (nameEl) nameEl.textContent = city;
           if (cityInput) cityInput.value = city;
           if (citySlugInput) citySlugInput.value = citySlug;
+          // Toggle presale vs default subtitle
+          const onSaleAt = el.dataset.notifyOnSaleAt ?? "";
+          const subtitleDefault = document.getElementById(
+            "notify-subtitle-default",
+          );
+          const subtitlePresale = document.getElementById(
+            "notify-subtitle-presale",
+          );
+          const onSaleDateEl = document.getElementById("notify-on-sale-date");
+          if (onSaleAt) {
+            const formatted = new Date(onSaleAt).toLocaleString("en-US", {
+              weekday: "short",
+              month: "short",
+              day: "numeric",
+              hour: "numeric",
+              minute: "2-digit",
+              timeZone: "America/New_York",
+              timeZoneName: "short",
+            });
+            if (onSaleDateEl) onSaleDateEl.textContent = formatted;
+            subtitleDefault?.setAttribute("hidden", "");
+            subtitlePresale?.removeAttribute("hidden");
+          } else {
+            subtitleDefault?.removeAttribute("hidden");
+            subtitlePresale?.setAttribute("hidden", "");
+          }
           // Reset to form state
           document
             .getElementById("notify-form-view")

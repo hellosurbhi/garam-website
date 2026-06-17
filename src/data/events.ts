@@ -82,6 +82,15 @@ const VENUE_CITY_WINERY_NYC: EventVenue = {
   addressCountry: "US",
 };
 
+const VENUE_ELEPHANT_CASTLE: EventVenue = {
+  name: "Elephant & Castle",
+  streetAddress: "161 Devonshire Street",
+  addressLocality: "Boston",
+  addressRegion: "MA",
+  postalCode: "02110",
+  addressCountry: "US",
+};
+
 export const events: EventEntry[] = [
   {
     date: "Feb 22",
@@ -286,6 +295,20 @@ export const events: EventEntry[] = [
     venue: VENUE_CITY_WINERY_NYC,
     price: "15",
     onSaleAt: "2026-06-18T19:00:00Z",
+  },
+  {
+    date: "Aug 2",
+    city: "Boston",
+    state: "Massachusetts",
+    stateAbbr: "MA",
+    citySlug: "boston",
+    url: "https://www.eventbrite.com/e/garam-masala-comedy-dating-show-spilling-tea-in-boston-tickets-1992075859521",
+    isoDate: "2026-08-02",
+    startTime: "18:00",
+    endTime: "20:00",
+    venue: VENUE_ELEPHANT_CASTLE,
+    price: "15",
+    eventbriteId: "1992075859521",
   },
   {
     date: "Aug 2",

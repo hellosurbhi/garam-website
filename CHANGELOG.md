@@ -1,5 +1,43 @@
 # Changelog
 
+## fix(ci): overhaul all pipelines to make failures meaningful (2026-06-17)
+
+### What changed
+
+**Phase 1: Fix broken pipelines**
+
+- **Article Refresh**: Converted `scripts/refresh-articles.js` from CommonJS `require()` to ESM `import`. The workflow was failing every month with `ReferenceError: require is not defined` because `package.json` has `"type": "module"`. Also bumped workflow Node version from 20 to 22 for consistency.
+- **Link Check**: Fixed the root cause of 6+ weeks of consecutive failures. `src/pages/cities/[slug].astro` was calling `getPostBySlug()` (which returns all posts including unpublished) and linking to articles with future `datePublished` dates. Those URLs return 404 because Astro SSG only builds pages for published posts. Added `isPublished` filter matching the pattern already used in `journal/[slug].astro`.
+- **CI Mutation Testing**: Added `timeout-minutes: 45` to the Stryker job to prevent 3+ hour hangs. Simplified the Stryker `mutate` exclusions from 6 individual entries to a single `!src/**/data/**/*.ts` wildcard, correctly excluding all static data files (journal, events, press, socials, gallery, etc.) that were being wastefully mutated.
+- **Production Health Check**: Added `test.setTimeout(180_000)` to the "Every live journal post loads correctly" Playwright test, which iterates 75+ published posts and was timing out at the 30s global limit.
+- **Local hooks**: Slimmed pre-commit to lint-staged only (~2s) and pre-push to `astro check` only (~5s). CI handles tests, builds, and full validation. These hooks now fail only if there is a real lint error or type error.
+
+**Phase 2: Add missing safety nets**
+
+- **Dependabot**: Added `.github/dependabot.yml` for weekly npm security patches (grouped, max 5 open PRs) and monthly GitHub Actions version bumps.
+- **Lighthouse CI**: Added `lighthouserc.js` and a Lighthouse CI job to `ci.yml` that runs against the local static build on 4 key pages (`/`, `/tickets`, `/apply`, `/journal`). Fails CI if performance, accessibility, or SEO scores drop below 90.
+- **Axe accessibility**: Installed `@axe-core/playwright` and added `assertAxeClean()` helper to the Playwright smoke tests. Runs WCAG 2.0 A + AA checks on all 12 static pages across all 4 viewport sizes as part of the Section A smoke loop.
+
+### Files affected
+
+- `scripts/refresh-articles.js` — ESM conversion
+- `.github/workflows/article-refresh.yml` — Node 20 to 22
+- `src/pages/cities/[slug].astro` — `isPublished` filter for relatedPosts
+- `.github/workflows/ci.yml` — Stryker timeout + Lighthouse job
+- `stryker.config.mjs` — simplified data file exclusions
+- `tests/smoke/site.spec.ts` — journal test timeout + axe-core integration
+- `.husky/pre-commit` — lint-staged only
+- `.husky/pre-push` — astro check only
+- `.github/dependabot.yml` — new file
+- `lighthouserc.js` — new file
+- `package.json` — added `@axe-core/playwright` devDependency
+
+### Decisions and trade-offs
+
+- Stryker data exclusion uses `!src/**/data/**/*.ts` (broad wildcard) rather than per-file entries. All data files are static content arrays with no branching logic worth mutation testing. This reduces mutation count by ~60-70%, bringing runtime from 3+ hours to under 45 minutes.
+- Lighthouse runs against the local static build (not the Vercel preview URL) to keep it simple with no additional secrets. The local build accurately reflects performance for an SSG site, though CDN-specific improvements (cache headers, HTTP/2) are excluded via `skipAudits`.
+- Axe runs on the static page state only. Modal/accordion accessibility in dynamic states is a future enhancement.
+
 ## feat(events): add Jun 7 NYC show at Top Secret Comedy Club (2026-06-01)
 
 ### What changed

@@ -25,6 +25,7 @@ export interface EventEntry {
   soldOut?: boolean; // Machine-readable sold-out flag; do not use tagline for control flow
   tagline?: string; // Short status line shown on the card (e.g. "Selling fast")
   eventbriteId?: string; // Numeric Eventbrite event ID — enables modal checkout widget
+  onSaleAt?: string; // ISO 8601 UTC datetime — card shows pre-sale notify state until this moment
 }
 
 const VENUE_TOP_SECRET: EventVenue = {
@@ -69,6 +70,15 @@ const VENUE_LYRIC_HYPERION: EventVenue = {
   addressLocality: "Los Angeles",
   addressRegion: "CA",
   postalCode: "90027",
+  addressCountry: "US",
+};
+
+const VENUE_CITY_WINERY_NYC: EventVenue = {
+  name: "The Loft at City Winery NYC",
+  streetAddress: "25 11th Ave",
+  addressLocality: "New York",
+  addressRegion: "NY",
+  postalCode: "10011",
   addressCountry: "US",
 };
 
@@ -262,6 +272,20 @@ export const events: EventEntry[] = [
     venue: VENUE_LYRIC_HYPERION,
     price: "15",
     eventbriteId: "1989799702474",
+  },
+  {
+    date: "Jul 26",
+    city: "Manhattan",
+    state: "New York",
+    stateAbbr: "NY",
+    citySlug: "manhattan",
+    url: "https://tickets.citywinery.com/event/garam-masala-comedy-dating-show-all-stars-editio-ownqgw",
+    isoDate: "2026-07-26",
+    startTime: "19:00",
+    endTime: "21:00",
+    venue: VENUE_CITY_WINERY_NYC,
+    price: "15",
+    onSaleAt: "2026-06-18T19:00:00Z",
   },
   {
     date: "Aug 2",

@@ -7,12 +7,7 @@ export default {
   mutate: [
     "src/**/*.ts",
     "src/**/*.tsx",
-    "!src/**/data/cities/*.ts",
-    "!src/**/data/copy.ts",
-    "!src/**/data/footer.ts",
-    "!src/**/data/icons.ts",
-    "!src/**/data/images.ts",
-    "!src/**/data/legal.ts",
+    "!src/**/data/**/*.ts",
     "!src/**/*.test.*",
     "!src/**/*.spec.*",
   ],

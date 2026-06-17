@@ -8,10 +8,16 @@
  * Updates dateModified to today's date in YYYY-MM-DD format.
  */
 
-const fs = require("fs");
-const path = require("path");
+import fs from "fs";
+import path from "path";
 
-const JOURNAL_DIR = path.join(__dirname, "..", "src", "data", "journal");
+const JOURNAL_DIR = path.join(
+  import.meta.dirname,
+  "..",
+  "src",
+  "data",
+  "journal",
+);
 const SIXTY_DAYS_MS = 60 * 24 * 60 * 60 * 1000;
 
 const today = new Date();

@@ -10,6 +10,7 @@ import { buildTicketUrl } from "@/utils/eventUrl";
 import { formatEventLocation } from "@/utils/eventCity";
 import { EVENTS } from "@/data/copy";
 import { getPostBySlug } from "@/data/journal";
+import { isPublished } from "@/utils/date";
 import { SOCIAL_URLS } from "@/data/socials";
 
 export function getStaticPaths() {
@@ -115,7 +116,7 @@ const breadcrumbJsonLd = buildBreadcrumbJsonLd([
 
 const relatedPosts = (city.relatedArticleSlugs ?? [])
   .map((slug) => getPostBySlug(slug))
-  .filter((p) => p !== undefined);
+  .filter((p) => p !== undefined && isPublished(p.datePublished));
 
 const applyHref =
   city.ctas.find((c) => c.href !== "#waitlist")?.href ?? "/apply";

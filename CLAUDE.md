@@ -52,6 +52,7 @@ Always implement the industry best-practice, sustainable fix. Never apply a shor
 - If a tool/platform doesn't support something (e.g., path aliases), restructure to use the platform correctly: don't add workaround configs.
 - All imports, patterns, and conventions must be consistent across the entire codebase. One file doing something differently is not acceptable.
 - Ask "what would a senior engineer do for a production app?" not "what's the quickest fix?"
+- Shared logic is always extracted and modularized. Duplication is never acceptable.
 
 ## Branch safety
 

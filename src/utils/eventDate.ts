@@ -62,6 +62,20 @@ export function parseDay(dateStr: string): string {
   return parts.length >= 2 && !isNaN(parseInt(parts[1], 10)) ? parts[1] : "";
 }
 
+export const ON_SALE_DATE_FORMAT: Intl.DateTimeFormatOptions = {
+  weekday: "short",
+  month: "short",
+  day: "numeric",
+  hour: "numeric",
+  minute: "2-digit",
+  timeZone: "America/New_York",
+  timeZoneName: "short",
+};
+
+export function formatOnSaleDate(iso: string): string {
+  return new Date(iso).toLocaleString("en-US", ON_SALE_DATE_FORMAT);
+}
+
 /** Milliseconds until the next midnight. */
 export function msUntilMidnight(): number {
   const now = new Date();

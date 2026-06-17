@@ -80,7 +80,7 @@ jobs:
           cache: npm
       - run: npm ci
       - name: Restore Stryker cache
-        uses: actions/cache@v4
+        uses: actions/cache@v5
         with:
           path: reports/stryker-incremental.json
           key: stryker-${{ github.sha }}

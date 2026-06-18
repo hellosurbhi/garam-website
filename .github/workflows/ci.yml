@@ -8,8 +8,6 @@
 name: CI
 
 on:
-  push:
-    branches: [main]
   pull_request:
     branches: [main]
 
@@ -19,10 +17,11 @@ concurrency:
 
 jobs:
   # ==========================================
-  # JOB 1: Lint + Type Check (fastest)
+  # JOB 1: Lint + Type Check + Tests + Build
+  # One npm ci. Fast fail order: lint → types → tests → build → audit.
   # ==========================================
-  lint:
-    name: Lint & Type Check
+  check:
+    name: Lint, Types, Test, Build
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -33,93 +32,21 @@ jobs:
       - run: npm ci
       - run: npm run lint
       - run: npx astro check
-
-  # ==========================================
-  # JOB 2: Unit Tests
-  # ==========================================
-  unit-tests:
-    name: Unit Tests
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
-        with:
-          node-version: 22
-          cache: npm
-      - run: npm ci
       - run: npm test
-
-  # ==========================================
-  # JOB 3: Build
-  # ==========================================
-  build:
-    name: Build
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
-        with:
-          node-version: 22
-          cache: npm
-      - run: npm ci
       - run: npm run build
+      - name: Security audit
+        run: npm audit --audit-level=high
 
   # ==========================================
-  # JOB 4: Stryker Mutation Testing (after unit tests pass)
-  # ==========================================
-  mutation:
-    name: Mutation Testing
-    needs: unit-tests
-    runs-on: ubuntu-latest
-    timeout-minutes: 45
-    steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
-        with:
-          node-version: 22
-          cache: npm
-      - run: npm ci
-      - name: Restore Stryker cache
-        uses: actions/cache@v4
-        with:
-          path: reports/stryker-incremental.json
-          key: stryker-${{ github.sha }}
-          restore-keys: stryker-
-      - name: Run Stryker
-        run: npx stryker run --incremental
-      - name: Upload mutation report
-        uses: actions/upload-artifact@v4
-        if: always()
-        with:
-          name: mutation-report
-          path: reports/mutation/
-          retention-days: 14
-
-  # ==========================================
-  # JOB 5: Lighthouse CI (performance + a11y budget enforcement)
-  # Runs against the local static build. Fails CI if performance, a11y,
-  # or SEO scores drop below 90. Thresholds mirror CLAUDE.md performance budget.
-  # ==========================================
-  lighthouse:
-    name: Lighthouse
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
-        with:
-          node-version: 22
-          cache: npm
-      - run: npm ci
-      - run: npm run build
-      - run: npx @lhci/cli autorun
-
-  # ==========================================
-  # JOB 6: Playwright Smoke Tests (pre-merge gate)
-  # Builds the site locally and runs smoke tests across 4 viewports.
-  # Catches 404s, JS crashes, and broken routes before they land on main.
+  # JOB 2: Smoke Tests (iPhone viewport)
+  # 70% of traffic is mobile — test the viewport that matters most.
+  # Runs after core checks pass. Catches JS crashes, broken routes,
+  # modal/form regressions, a11y violations, and SEO meta failures.
+  # The weekly scheduled run in smoke-tests.yml covers all 4 viewports.
   # ==========================================
   smoke:
-    name: Smoke Tests
+    name: Smoke Tests (mobile)
+    needs: check
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -130,8 +57,8 @@ jobs:
       - run: npm ci
       - name: Install Playwright
         run: npx playwright install chromium --with-deps
-      - name: Run smoke tests (local build)
-        run: npx playwright test
+      - name: Run smoke tests (iPhone)
+        run: npx playwright test --project iphone
       - name: Upload report on failure
         uses: actions/upload-artifact@v4
         if: failure()

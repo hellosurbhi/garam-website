@@ -65,8 +65,25 @@ export type FormErrors = Partial<
 >;
 export type SelectOption = { value: string; label: string };
 
+function getUrlCityParams() {
+  if (typeof window === "undefined") return null;
+  const params = new URLSearchParams(window.location.search);
+  const city = params.get("city");
+  const state = params.get("state");
+  return city ? { city, state: state ?? "" } : null;
+}
+
 export function useApplyForm() {
-  const [form, setForm] = useState<FormState>(INITIAL);
+  const [form, setForm] = useState<FormState>(() => {
+    const urlParams = getUrlCityParams();
+    if (!urlParams) return INITIAL;
+    return {
+      ...INITIAL,
+      city: urlParams.city,
+      state: urlParams.state,
+      country: "",
+    };
+  });
   const [photoFile, setPhotoFile] = useState<File | null>(null);
   const [photoPreview, setPhotoPreview] = useState<string | null>(null);
   const [errors, setErrors] = useState<FormErrors>({});
@@ -74,35 +91,24 @@ export function useApplyForm() {
   const [submitted, setSubmitted] = useState(false);
   const [termsAgreed, setTermsAgreed] = useState(false);
   const [showTermsModal, setShowTermsModal] = useState(false);
-  const [canGoBack, setCanGoBack] = useState(false);
+  const [canGoBack] = useState(
+    () => typeof window !== "undefined" && window.history.length > 1,
+  );
   const [toast, setToast] = useState<{ msg: string; ok: boolean } | null>(null);
-
-  useEffect(() => {
-    if (typeof window === "undefined") return;
-    if (window.history.length > 1) setCanGoBack(true);
-    const params = new URLSearchParams(window.location.search);
-    const urlCity = params.get("city");
-    const urlState = params.get("state");
-    if (urlCity) {
-      const label = urlState ? `${urlCity}, ${urlState}` : urlCity;
-      setCityInput(label);
-      setForm((prev) => ({
-        ...prev,
-        city: urlCity,
-        state: urlState ?? "",
-        country: "",
-      }));
-    }
-  }, []);
+  const [formStarted, setFormStarted] = useState(false);
+  const [cityInput, setCityInput] = useState(() => {
+    const urlParams = getUrlCityParams();
+    if (!urlParams) return "";
+    return urlParams.state
+      ? `${urlParams.city}, ${urlParams.state}`
+      : urlParams.city;
+  });
 
   useEffect(() => {
     if (!toast) return;
     const id = setTimeout(() => setToast(null), 5000);
     return () => clearTimeout(id);
   }, [toast]);
-
-  const [formStarted, setFormStarted] = useState(false);
-  const [cityInput, setCityInput] = useState("");
 
   function set(field: keyof FormState, value: string) {
     setForm((prev) => ({ ...prev, [field]: value }));

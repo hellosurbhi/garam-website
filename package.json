@@ -36,7 +36,7 @@
     "country-state-city": "^3.2.1",
     "firebase": "^12.15.0",
     "jose": "^6.2.3",
-    "lucide-react": "^0.570.0",
+    "lucide-react": "^1.21.0",
     "react": "^19.2.7",
     "react-dom": "^19.2.7",
     "react-loading-skeleton": "^3.5.0",

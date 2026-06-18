@@ -1,19 +1,25 @@
-# Production health check — runs after code lands on main and Vercel deploys.
-# Tests the actual live site, not a local build.
-# This is NOT a merge gate — it tells you if the deploy broke production.
-name: Production Health Check
+# Smoke tests — weekly against production + on-demand before releases.
+# Run manually with target=production to validate a specific deploy.
+# Run manually with target=local (default) to test against a local build.
+name: Smoke Tests
 
 on:
-  push:
-    branches: [main]
-
-concurrency:
-  group: smoke-${{ github.sha }}
-  cancel-in-progress: true
+  schedule:
+    - cron: "0 11 * * 3" # Wednesdays at 11am UTC
+  workflow_dispatch:
+    inputs:
+      target:
+        description: "Test target"
+        required: false
+        default: "local"
+        type: choice
+        options:
+          - local
+          - production
 
 jobs:
-  smoke-tests:
-    name: Production Health Check
+  smoke:
+    name: Smoke Tests
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -24,18 +30,10 @@ jobs:
       - run: npm ci
       - name: Install Playwright
         run: npx playwright install chromium --with-deps
-      - name: Wait for Vercel deployment
-        # Astro SSG builds static HTML — the commit SHA is never embedded in page
-        # content, so SHA-based polling can't confirm which deploy is live.
-        # A fixed wait is the honest approach without a Vercel API token.
-        # Upgrade path: add VERCEL_TOKEN secret + poll the Vercel Deployments API
-        # (https://vercel.com/docs/rest-api/endpoints/deployments) to detect when
-        # the deployment matching this commit reaches READY state.
-        run: sleep 90
-      - name: Run smoke tests against production
+      - name: Run smoke tests
         run: npx playwright test
         env:
-          PLAYWRIGHT_BASE_URL: https://garammasaladating.com
+          PLAYWRIGHT_BASE_URL: ${{ (github.event.inputs.target == 'production' || github.event_name == 'schedule') && 'https://garammasaladating.com' || '' }}
       - name: Upload report on failure
         uses: actions/upload-artifact@v4
         if: failure()

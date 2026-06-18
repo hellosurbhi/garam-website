@@ -1,0 +1,34 @@
+# Mutation testing — run manually to audit test quality.
+# Too expensive (15-45 min) to run on every PR; trigger from the Actions tab when needed.
+name: Mutation Testing
+
+on:
+  workflow_dispatch: {}
+
+jobs:
+  mutation:
+    name: Stryker Mutation Testing
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - name: Restore Stryker cache
+        uses: actions/cache@v4
+        with:
+          path: reports/stryker-incremental.json
+          key: stryker-${{ github.sha }}
+          restore-keys: stryker-
+      - name: Run Stryker
+        run: npx stryker run --incremental
+      - name: Upload mutation report
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: mutation-report
+          path: reports/mutation/
+          retention-days: 14

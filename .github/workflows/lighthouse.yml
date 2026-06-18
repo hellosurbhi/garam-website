@@ -1,0 +1,22 @@
+# Lighthouse CI — weekly performance and accessibility audit.
+# Run manually after major UI changes to catch regressions immediately.
+name: Lighthouse
+
+on:
+  schedule:
+    - cron: "0 10 * * 3" # Wednesdays at 10am UTC (before smoke tests at 11am)
+  workflow_dispatch: {}
+
+jobs:
+  lighthouse:
+    name: Lighthouse CI
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - run: npm run build
+      - run: npx @lhci/cli autorun

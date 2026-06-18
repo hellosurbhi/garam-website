@@ -324,6 +324,15 @@ export const events: EventEntry[] = [
     price: "15",
     eventbriteId: "1990583884985",
   },
+  {
+    date: "Aug 30",
+    city: "Washington",
+    state: "District of Columbia",
+    stateAbbr: "DC",
+    citySlug: "washington-dc",
+    url: "",
+    isoDate: "2026-08-30",
+  },
 ];
 
 // Only show TBA entries for cities with active tour planning (not all 200+ expansion pages).

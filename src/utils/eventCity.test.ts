@@ -2,40 +2,47 @@ import { describe, expect, it } from "vitest";
 import { formatEventLocation } from "./eventCity";
 
 describe("formatEventLocation", () => {
-  it("renders full city and state labels", () => {
+  it("renders city with abbreviated state", () => {
     expect(
       formatEventLocation({
         city: "Manhattan",
-        state: "New York",
+        stateAbbr: "NY",
       }),
-    ).toBe("Manhattan, New York");
+    ).toBe("Manhattan, NY");
 
     expect(
       formatEventLocation({
         city: "Jersey City",
-        state: "New Jersey",
+        stateAbbr: "NJ",
       }),
-    ).toBe("Jersey City, New Jersey");
+    ).toBe("Jersey City, NJ");
 
     expect(
       formatEventLocation({
         city: "Philadelphia",
-        state: "Pennsylvania",
+        stateAbbr: "PA",
       }),
-    ).toBe("Philadelphia, Pennsylvania");
+    ).toBe("Philadelphia, PA");
 
     expect(
       formatEventLocation({
         city: "San Francisco",
-        state: "California",
+        stateAbbr: "CA",
       }),
-    ).toBe("San Francisco, California");
+    ).toBe("San Francisco, CA");
 
     expect(
       formatEventLocation({
         city: "Los Angeles",
-        state: "California",
+        stateAbbr: "CA",
       }),
-    ).toBe("Los Angeles, California");
+    ).toBe("Los Angeles, CA");
+
+    expect(
+      formatEventLocation({
+        city: "Washington",
+        stateAbbr: "DC",
+      }),
+    ).toBe("Washington, DC");
   });
 });

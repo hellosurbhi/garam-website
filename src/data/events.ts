@@ -91,6 +91,13 @@ const VENUE_ELEPHANT_CASTLE: EventVenue = {
   addressCountry: "US",
 };
 
+const VENUE_KOMIC_KARMA: EventVenue = {
+  name: "Komic Karma Entertainment",
+  addressLocality: "North Brunswick Township",
+  addressRegion: "NJ",
+  addressCountry: "US",
+};
+
 export const events: EventEntry[] = [
   {
     date: "Feb 22",
@@ -253,6 +260,20 @@ export const events: EventEntry[] = [
     venue: VENUE_FAIGHT_COLLECTIVE,
     price: "15",
     eventbriteId: "1989633237573",
+  },
+  {
+    date: "Jul 11",
+    city: "Edison",
+    state: "New Jersey",
+    stateAbbr: "NJ",
+    citySlug: "edison",
+    url: "https://www.eventbrite.com/e/garam-masala-comedy-dating-show-laughter-is-the-best-edison-tickets-1992185715102",
+    isoDate: "2026-07-11",
+    startTime: "18:00",
+    endTime: "20:00",
+    venue: VENUE_KOMIC_KARMA,
+    price: "15",
+    eventbriteId: "1992185715102",
   },
   {
     date: "Jul 12",

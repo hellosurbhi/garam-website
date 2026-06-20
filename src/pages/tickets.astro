@@ -316,6 +316,9 @@ const eventSeriesJsonLd = JSON.stringify({
                     <span class="ticket-card__city ticket-card__city--tba">
                       {cityLabel}
                     </span>
+                    {event.tagline && (
+                      <span class="ticket-card__tagline">{event.tagline}</span>
+                    )}
                   </div>
                   <span class="ticket-card__cta ticket-card__cta--notify">
                     Notify Me

@@ -12,22 +12,23 @@ describe("event location data", () => {
     }
   });
 
-  it("renders known public event labels with full state names", () => {
+  it("renders known public event labels with abbreviated state names", () => {
     const labels = allEvents.map(formatEventLocation);
 
-    expect(labels).toContain("Manhattan, New York");
-    expect(labels).toContain("Jersey City, New Jersey");
-    expect(labels).toContain("Philadelphia, Pennsylvania");
-    expect(labels).toContain("San Francisco, California");
-    expect(labels).toContain("San Diego, California");
-    expect(labels).toContain("Los Angeles, California");
+    expect(labels).toContain("Manhattan, NY");
+    expect(labels).toContain("Jersey City, NJ");
+    expect(labels).toContain("Philadelphia, PA");
+    expect(labels).toContain("San Francisco, CA");
+    expect(labels).toContain("San Diego, CA");
+    expect(labels).toContain("Los Angeles, CA");
+    expect(labels).toContain("Washington, DC");
   });
 
-  it("does not duplicate state names in formatted labels", () => {
+  it("does not duplicate state abbreviations in formatted labels", () => {
     const labels = allEvents.map(formatEventLocation);
 
-    expect(labels).not.toContain("Manhattan, New York, New York");
-    expect(labels).not.toContain("Philadelphia, Pennsylvania, Pennsylvania");
-    expect(labels).not.toContain("San Francisco, California, California");
+    expect(labels).not.toContain("Manhattan, NY, NY");
+    expect(labels).not.toContain("Philadelphia, PA, PA");
+    expect(labels).not.toContain("San Francisco, CA, CA");
   });
 });

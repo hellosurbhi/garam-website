@@ -3,8 +3,7 @@ import { EVENT_TAGLINES } from "@/data/copy";
 
 export function getPositionalTagline(position: number): string {
   if (position === 0) return EVENT_TAGLINES.almostSoldOut;
-  if (position === 1) return EVENT_TAGLINES.justAnnounced;
-  return EVENT_TAGLINES.cycle[(position - 2) % EVENT_TAGLINES.cycle.length];
+  return EVENT_TAGLINES.cycle[(position - 1) % EVENT_TAGLINES.cycle.length];
 }
 
 /** Builds a URL-keyed map of positional taglines for live, non-sold-out events. */

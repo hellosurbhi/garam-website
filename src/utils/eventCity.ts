@@ -1,7 +1,7 @@
 import type { EventEntry } from "@/data/events";
 
 export function formatEventLocation(
-  event: Pick<EventEntry, "city" | "state">,
+  event: Pick<EventEntry, "city" | "stateAbbr">,
 ): string {
-  return `${event.city}, ${event.state}`;
+  return `${event.city}, ${event.stateAbbr}`;
 }

@@ -353,6 +353,7 @@ export const events: EventEntry[] = [
     citySlug: "washington-dc",
     url: "",
     isoDate: "2026-08-30",
+    tagline: "Tickets coming soon",
   },
 ];
 

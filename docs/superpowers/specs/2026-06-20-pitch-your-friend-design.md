@@ -4,9 +4,9 @@ Date: 2026-06-20
 
 ## Goal
 
-Add `/pitch-your-friend` — a dedicated nomination page where someone fills out a form
-about their friend to be cast on Garam Masala Dating. The form submits to the same
-Firestore collection and email API as `/apply`. The `/apply` page is not changed.
+1. Add `/pitch-your-friend` — a dedicated nomination page (friend nomination, no self-apply toggle).
+2. Add a **phone number field** to both `/apply` and `/pitch-your-friend`.
+3. Fix the **admin modal** to show all applicant fields, including email (currently missing) and the new phone field.
 
 ## URL
 
@@ -24,18 +24,20 @@ Firestore collection and email API as `/apply`. The `/apply` page is not changed
 
 ### Modified files (minimal)
 
-| File                                   | Change                                                                                                       |
-| -------------------------------------- | ------------------------------------------------------------------------------------------------------------ |
-| `src/components/ApplyPage.tsx`         | Replace inline form JSX with `<ContestantFormFields {...formProps} showTypeToggle />`. Zero behavior change. |
-| `src/components/apply/useApplyForm.ts` | Add optional `{ initialType?: "Self" \| "Nomination" }` param, default `"Self"`.                             |
-| `src/data/copy.ts`                     | Add `PITCH_FRIEND_PAGE` copy block.                                                                          |
+| File                                      | Change                                                                                                                 |
+| ----------------------------------------- | ---------------------------------------------------------------------------------------------------------------------- |
+| `src/components/ApplyPage.tsx`            | Replace inline form JSX with `<ContestantFormFields {...formProps} showTypeToggle />`. Zero behavior change.           |
+| `src/components/apply/useApplyForm.ts`    | Add optional `{ initialType?: "Self" \| "Nomination" }` param, default `"Self"`. Add `phone` to `FormState`/`INITIAL`. |
+| `src/data/copy.ts`                        | Add `PITCH_FRIEND_PAGE` copy block.                                                                                    |
+| `src/types/application.ts`                | Add `phone?: string` to `Application` interface.                                                                       |
+| `src/components/admin/ApplicantModal.tsx` | Add `email` (as mailto link) and `phone` `InfoRow` entries in the info grid.                                           |
+| `src/pages/api/notify-application.ts`     | Add `phone` to `ApplicationNotification` and email template rows.                                                      |
 
 ### Untouched
 
 - `src/pages/apply.astro` — not modified at all
-- `src/pages/api/notify-application.ts` — already handles both applicationType values
 - `src/components/ApplyPage.module.css` — reused by both components, no changes
-- Firestore schema — no change
+- Firestore schema — no migration needed, `phone` is optional and Firestore is schemaless
 
 ## ContestantFormFields component
 
@@ -126,6 +128,35 @@ Submit button label is a prop on `ContestantFormFields`: `submitLabel?: string` 
 
 Reuses `ApplySuccessPanel` unchanged. The ticket upsell ("come steal the show") is
 relevant for the nominator.
+
+## Phone number field
+
+**In the form (both `/apply` and `/pitch-your-friend`):**
+
+- Label: "Phone Number (optional)"
+- Input type: `tel`, `inputMode="tel"`, `autoComplete="tel"`
+- Placed after the Email field
+- Optional — no validation beyond being a non-empty string if provided
+- Stored as `phone` on the Firestore document
+
+**In `FormState` / `useApplyForm`:**
+
+```ts
+phone: string; // added to FormState, default ""
+```
+
+**In `ContestantFormFields`:** renders after the Email `<FieldGroup>`, using the same `styles.input` class.
+
+**In admin modal (`ApplicantModal.tsx`):**
+
+- Add `InfoRow label="Email"` rendered as a `mailto:` anchor (same pattern as the existing Instagram link)
+- Add `InfoRow label="Phone"` below email, plain text (no special formatting)
+- Both conditionally rendered: only shown when the value exists
+
+**In email notification (`notify-application.ts`):**
+
+- Add `phone?: string` to `ApplicationNotification`
+- Add a "Phone" row to the email table, rendered only when `phone` is truthy
 
 ## Analytics
 

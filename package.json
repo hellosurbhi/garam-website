@@ -65,7 +65,7 @@
     "husky": "^9.1.7",
     "jsdom": "^29.1.1",
     "linkinator": "^7.6.1",
-    "lint-staged": "^16.4.0",
+    "lint-staged": "^17.0.8",
     "prettier-plugin-astro": "^0.14.1",
     "sharp": "^0.34.5",
     "typescript": "~5.9.3",

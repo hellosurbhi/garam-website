@@ -117,7 +117,9 @@ const eventSeriesJsonLd = JSON.stringify({
         upcomingEvents.length > 0 ? (
           <div class="tickets-list">
             {upcomingEvents.map((event, i) => {
-              const isPresale = Boolean(event.onSaleAt);
+              const isPresale =
+                Boolean(event.onSaleAt) &&
+                new Date(event.onSaleAt!) > new Date();
               const isLive = event.url && event.url !== "#";
               const isSoldOut = event.soldOut ?? false;
               const hasWidget =

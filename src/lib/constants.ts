@@ -3,7 +3,7 @@ export const YOUTUBE_VIDEO_ID = "fw3keeNmJB4";
 
 /** JSON-LD ready metadata for the show highlight reel used in VideoObject structured data. */
 export const VIDEO_METADATA = {
-  title: "Garam Masala Dating: NYC's #1 Live Desi Comedy Dating Show",
+  title: "Garam Masala Dating: America's #1 Live Desi Comedy Dating Show",
   description:
     "Watch highlights from Garam Masala Dating, New York City's #1 live desi dating show. Two real South Asian singles go on a blind date in front of 250 people. Hosted by comedians Surbhi and Wyatt.",
   uploadDate: "2026-04-18",

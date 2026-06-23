@@ -19,6 +19,7 @@ interface ApplicationNotification {
   applicationType: string;
   referrerName: string;
   pitch: string;
+  phone?: string;
   photoUrl: string;
 }
 
@@ -56,6 +57,10 @@ function buildEmailHtml(data: ApplicationNotification): string {
     ["Community", escapeHtml(data.community)],
     ["Income", escapeHtml(data.income)],
   ];
+
+  if (data.phone) {
+    rows.push(["Phone", escapeHtml(data.phone)]);
+  }
 
   if (isNomination && data.referrerName) {
     rows.push(["Nominated by", escapeHtml(data.referrerName)]);

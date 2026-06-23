@@ -23,6 +23,20 @@ function InfoRow({ label, value }: { label: string; value?: string | number }) {
   );
 }
 
+function EmailRow({ email }: { email?: string }) {
+  if (!email) return null;
+  return (
+    <div>
+      <p className={styles.infoLabel}>Email</p>
+      <p className={styles.infoValue}>
+        <a href={`mailto:${email}`} className={styles.igLink}>
+          {email}
+        </a>
+      </p>
+    </div>
+  );
+}
+
 export default function ApplicantModal({
   app,
   onClose,
@@ -163,6 +177,8 @@ export default function ApplicantModal({
               @{handle}
             </a>
           </div>
+          <EmailRow email={app.email} />
+          <InfoRow label="Phone" value={app.phone} />
         </div>
 
         {app.pitch && (

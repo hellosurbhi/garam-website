@@ -11,6 +11,7 @@ export interface Application {
   country?: string;
   state?: string;
   email?: string;
+  phone?: string;
   height: string;
   instagram: string;
   community: string;

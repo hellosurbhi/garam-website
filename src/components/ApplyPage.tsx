@@ -265,7 +265,9 @@ function ApplyPageInner() {
 
                     <fieldset className={styles.seenShowSection}>
                       <legend className={styles.consentQuestion}>
-                        Have you attended a Garam Masala Dating show before?
+                        {form.applicationType === "Nomination"
+                          ? "Has your friend attended a Garam Masala Dating show before?"
+                          : "Have you attended a Garam Masala Dating show before?"}
                       </legend>
                       <div className={styles.radioGroup}>
                         <label className={styles.radioLabel}>
@@ -299,9 +301,12 @@ function ApplyPageInner() {
                       {form.seenShowBefore === "no" && (
                         <p className={styles.seenNo}>
                           Almost every contestant we cast came to a show as a
-                          Stealer first. Without that, you likely won't be
-                          selected. Use code <strong>STEALER</strong> for 20%
-                          off (only valid for Garam Masala produced events).{" "}
+                          Stealer first. Without that,{" "}
+                          {form.applicationType === "Nomination"
+                            ? "they likely won't be selected."
+                            : "you likely won't be selected."}{" "}
+                          Use code <strong>STEALER</strong> for 20% off (only
+                          valid for Garam Masala produced events).{" "}
                           <a href="/tickets" className={styles.seenNudgeLink}>
                             Come Steal &rarr;
                           </a>
@@ -351,7 +356,11 @@ function ApplyPageInner() {
                     </div>
 
                     <FieldGroup
-                      label="Instagram handle @ we wanna stalk you 👀"
+                      label={
+                        form.applicationType === "Nomination"
+                          ? "Instagram handle @ we wanna stalk them 👀"
+                          : "Instagram handle @ we wanna stalk you 👀"
+                      }
                       required
                       error={errors.instagram}
                       htmlFor="field-instagram"
@@ -416,6 +425,26 @@ function ApplyPageInner() {
                         aria-describedby={
                           errors.email ? "field-email-error" : undefined
                         }
+                      />
+                    </FieldGroup>
+
+                    <FieldGroup
+                      label="Phone Number (optional)"
+                      htmlFor="field-phone"
+                    >
+                      <input
+                        id="field-phone"
+                        type="tel"
+                        value={form.phone}
+                        onChange={(e) => set("phone", e.target.value)}
+                        placeholder={
+                          form.applicationType === "Nomination"
+                            ? "Friend's phone number"
+                            : "+1 (555) 000-0000"
+                        }
+                        className={styles.input}
+                        autoComplete="tel"
+                        inputMode="tel"
                       />
                     </FieldGroup>
 
@@ -502,7 +531,11 @@ function ApplyPageInner() {
                       Make Your Case
                     </SectionTitle>
                     <FieldGroup
-                      label="What's your type... (we will do our best to match you)"
+                      label={
+                        form.applicationType === "Nomination"
+                          ? "What's your friend's type... (we will do our best to match them)"
+                          : "What's your type... (we will do our best to match you)"
+                      }
                       htmlFor="field-type"
                     >
                       <input
@@ -646,6 +679,8 @@ function ApplyPageInner() {
                         <Spinner size="sm" label="Submitting..." />
                         Submitting…
                       </>
+                    ) : form.applicationType === "Nomination" ? (
+                      "Submit Nomination"
                     ) : (
                       "Submit Application"
                     )}

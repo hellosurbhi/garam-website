@@ -28,6 +28,7 @@ export interface FormState {
   state: string;
   city: string;
   email: string;
+  phone: string;
   height: string;
   instagram: string;
   community: string;
@@ -49,6 +50,7 @@ const INITIAL: FormState = {
   state: "",
   city: "",
   email: "",
+  phone: "",
   height: "",
   instagram: "",
   community: "",
@@ -252,6 +254,7 @@ export function useApplyForm() {
         state: form.state,
         city: form.city,
         email: form.email.trim().toLowerCase(),
+        ...(form.phone.trim() ? { phone: form.phone.trim() } : {}),
         height: form.height.trim(),
         instagram: form.instagram.trim().replace(/^@/, ""),
         community: form.community,

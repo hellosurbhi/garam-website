@@ -25,7 +25,8 @@ const taglineMap = buildTaglineMap(events);
   <div class="shows-list" data-reveal-stagger>
     {
       events.map((event) => {
-        const isPresale = Boolean(event.onSaleAt);
+        const isPresale =
+          Boolean(event.onSaleAt) && new Date(event.onSaleAt!) > new Date();
         const isLive = Boolean(event.url);
         const isSoldOut = event.soldOut ?? false;
         const hasWidget =
@@ -413,6 +414,9 @@ const taglineMap = buildTaglineMap(events);
     width: 100%;
     font: inherit;
     text-align: left;
+  }
+  .show-card[hidden] {
+    display: none;
   }
   .show-card:last-child {
     border-bottom: 1px solid rgba(255, 255, 255, 0.2);

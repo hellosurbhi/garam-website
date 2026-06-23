@@ -315,7 +315,6 @@ export const events: EventEntry[] = [
     endTime: "21:00",
     venue: VENUE_CITY_WINERY_NYC,
     price: "15",
-    onSaleAt: "2026-06-18T19:00:00Z",
   },
   {
     date: "Aug 2",

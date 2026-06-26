@@ -286,7 +286,7 @@ describe("buildEventSchemas", () => {
   it("includes correct description constant", () => {
     const schemas = buildEventSchemas([makeEvent()]);
     const parsed = JSON.parse(schemas[0]);
-    expect(parsed.description).toContain("NYC's #1 live desi dating show");
+    expect(parsed.description).toContain("America's #1 live desi dating show");
     expect(parsed.description).toContain("250 people");
   });
 

@@ -32,7 +32,7 @@
     "@astrojs/vercel": "^10.0.8",
     "@vercel/analytics": "^2.0.1",
     "@vercel/speed-insights": "^2.0.0",
-    "astro": "^6.4.8",
+    "astro": "^7.0.3",
     "country-state-city": "^3.2.1",
     "firebase": "^12.15.0",
     "jose": "^6.2.3",

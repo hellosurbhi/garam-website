@@ -110,7 +110,7 @@ export const usMidwestCities: Record<string, CityData> = {
       },
       {
         q: "Is this for students or working professionals?",
-        a: "Both. The show attracts singles in their 20s and 30s. Grad students, undergrads, and professionals in the area are all welcome.",
+        a: "Both. UIUC draws grad students, undergrads, and the professionals who stayed in Champaign after graduating. The show is built for anyone in their 20s and 30s who is single and tired of the same three bars on Green Street.",
       },
       {
         q: "Can I apply to be a contestant?",

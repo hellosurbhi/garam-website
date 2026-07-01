@@ -139,9 +139,14 @@
     }
     window.__garamErrorQueue = [];
   }
-  if ("requestIdleCallback" in window) {
-    requestIdleCallback(loadPostHog, { timeout: 3000 });
-  } else {
-    setTimeout(loadPostHog, 2000);
+  if (window.__GMD_CONSENT?.analytics) {
+    if ("requestIdleCallback" in window) {
+      requestIdleCallback(loadPostHog, { timeout: 3000 });
+    } else {
+      setTimeout(loadPostHog, 2000);
+    }
   }
+  window.addEventListener("gmd:consent-updated", function (e) {
+    if (e.detail && e.detail.analytics) loadPostHog();
+  });
 </script>

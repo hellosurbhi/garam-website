@@ -1,5 +1,13 @@
 {
   "buildCommand": "npm run build",
+  "redirects": [
+    {
+      "source": "/:path*",
+      "has": [{ "type": "host", "value": "www.garammasaladating.com" }],
+      "destination": "https://garammasaladating.com/:path*",
+      "permanent": true
+    }
+  ],
   "headers": [
     {
       "source": "/(.*)",

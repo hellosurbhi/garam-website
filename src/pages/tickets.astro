@@ -3,7 +3,7 @@ import BaseLayout from "@/layouts/BaseLayout.astro";
 import NotifyModal from "@/components/NotifyModal.astro";
 import { buildBreadcrumbJsonLd } from "@/utils/breadcrumbs";
 import { events, allEvents } from "@/data/events";
-import { isEventPast, formatOnSaleDate } from "@/utils/eventDate";
+import { isUpcomingByIso, formatOnSaleDate } from "@/utils/eventDate";
 import { buildEventSchemas } from "@/utils/eventSchema";
 import LeadCaptureModal from "@/components/LeadCaptureModal.astro";
 import { buildTicketUrl } from "@/utils/eventUrl";
@@ -15,9 +15,8 @@ const TITLE = "Tickets & Upcoming Shows";
 const DESC =
   "Get tickets to Garam Masala Dating shows in New York and beyond. America's #1 live desi dating show and South Asian singles mixer. Now touring LA, SF, and San Diego.";
 
-const upcomingEvents = allEvents.filter(
-  (e) => !isEventPast(e.date) && !e.hidden,
-);
+const today = new Date().toISOString().slice(0, 10);
+const upcomingEvents = allEvents.filter((e) => isUpcomingByIso(e, today));
 
 const taglineMap = buildTaglineMap(upcomingEvents);
 
@@ -36,12 +35,10 @@ const breadcrumbJsonLd = buildBreadcrumbJsonLd([
   { name: "Tickets" },
 ]);
 
-// Individual Event JSON-LD blocks (one per upcoming show)
-const today = new Date().toISOString().slice(0, 10);
-const upcomingForSchema = events.filter(
-  (e) => !e.hidden && e.isoDate && e.isoDate >= today,
+// Individual Event JSON-LD blocks (one per upcoming dated show)
+const eventSchemas = buildEventSchemas(
+  events.filter((e) => !e.hidden && e.isoDate && e.isoDate >= today),
 );
-const eventSchemas = buildEventSchemas(upcomingForSchema);
 
 // EventSeries JSON-LD — signals this is a recurring show, not a one-off
 const eventSeriesJsonLd = JSON.stringify({

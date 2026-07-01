@@ -98,6 +98,13 @@ const VENUE_KOMIC_KARMA: EventVenue = {
   addressCountry: "US",
 };
 
+const VENUE_DC_COMEDY_LOFT: EventVenue = {
+  name: "DC Comedy Loft",
+  addressLocality: "Washington",
+  addressRegion: "DC",
+  addressCountry: "US",
+};
+
 export const events: EventEntry[] = [
   {
     date: "Feb 22",
@@ -350,9 +357,9 @@ export const events: EventEntry[] = [
     state: "District of Columbia",
     stateAbbr: "DC",
     citySlug: "washington-dc",
-    url: "",
+    venue: VENUE_DC_COMEDY_LOFT,
+    url: "https://www.dccomedyloft.com/shows/378527",
     isoDate: "2026-08-30",
-    tagline: "Tickets coming soon",
   },
 ];
 

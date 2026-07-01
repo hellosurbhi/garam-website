@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { X, Trash2, ArchiveRestore } from "lucide-react";
+import { X, Trash2, ArchiveRestore, CheckCircle } from "lucide-react";
 import { type Application, STATUS_COLORS } from "@/types/application";
 import { formatLocation } from "@/utils/locationDisplay";
 import { Modal } from "@/components/ui/Modal";
@@ -11,6 +11,7 @@ interface ApplicantModalProps {
   onUpdate: (id: string, patch: Partial<Omit<Application, "id">>) => void;
   onDelete?: (id: string) => void;
   onRestore?: (id: string) => void;
+  onParticipated?: (id: string) => void;
 }
 
 function InfoRow({ label, value }: { label: string; value?: string | number }) {
@@ -43,6 +44,7 @@ export default function ApplicantModal({
   onUpdate,
   onDelete,
   onRestore,
+  onParticipated,
 }: ApplicantModalProps) {
   const [status, setStatus] = useState<Application["status"]>(app.status);
   const [notes, setNotes] = useState(app.notes ?? "");
@@ -221,17 +223,50 @@ export default function ApplicantModal({
         <hr className={styles.dividerSpaced} />
 
         <div className={styles.actionRow}>
-          {isDeleted
-            ? onRestore && (
-                <button
-                  onClick={() => onRestore(app.id)}
-                  className={styles.restoreButton}
-                >
-                  <ArchiveRestore size={16} />
-                  Restore
-                </button>
-              )
-            : onDelete && (
+          {isDeleted ? (
+            onRestore && (
+              <button
+                onClick={() => onRestore(app.id)}
+                className={styles.restoreButton}
+              >
+                <ArchiveRestore size={16} />
+                Restore
+              </button>
+            )
+          ) : (
+            <>
+              {!isDeleted &&
+                onParticipated &&
+                app.status !== "Participated" && (
+                  <button
+                    onClick={() => onParticipated(app.id)}
+                    className={styles.participatedButton}
+                    style={{
+                      background: "#8B5CF6",
+                      color: "#fff",
+                      border: "none",
+                      borderRadius: "4px",
+                      padding: "8px 16px",
+                      cursor: "pointer",
+                      display: "flex",
+                      alignItems: "center",
+                      gap: "8px",
+                      fontSize: "14px",
+                      fontWeight: 500,
+                      transition: "background 0.15s",
+                    }}
+                    onMouseEnter={(e) =>
+                      (e.currentTarget.style.background = "#7C3AED")
+                    }
+                    onMouseLeave={(e) =>
+                      (e.currentTarget.style.background = "#8B5CF6")
+                    }
+                  >
+                    <CheckCircle size={16} />
+                    Mark as Participated
+                  </button>
+                )}
+              {onDelete && (
                 <button
                   onClick={() => onDelete(app.id)}
                   className={styles.deleteButton}
@@ -240,6 +275,8 @@ export default function ApplicantModal({
                   Move to Deleted
                 </button>
               )}
+            </>
+          )}
         </div>
       </div>
     </Modal>

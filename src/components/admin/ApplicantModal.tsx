@@ -200,9 +200,7 @@ export default function ApplicantModal({
             onChange={handleStatusChange}
             className={styles.statusSelect}
           >
-            {(
-              ["New", "Contacted", "Cast", "Rejected", "Participated"] as const
-            ).map((s) => (
+            {(["New", "Contacted", "Cast", "Rejected"] as const).map((s) => (
               <option key={s} value={s}>
                 {s}
               </option>

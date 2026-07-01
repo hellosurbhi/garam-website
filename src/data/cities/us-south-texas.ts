@@ -165,7 +165,7 @@ export const usSouthTexasCities: Record<string, CityData> = {
       },
       {
         q: "Is this show only for South Asian people?",
-        a: "The show focuses on the South Asian singles experience but the audience is open to everyone. Our NYC crowd is desi, culturally adjacent, or genuinely curious.",
+        a: "The show centers on South Asian singles but the audience is open to everyone. Austin's tech crowd is already one of the most mixed in Texas, and the room tends to be desi, culturally adjacent, or genuinely curious about the format.",
       },
       {
         q: "Can I apply to be on the show before an Austin date is announced?",

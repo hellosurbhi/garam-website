@@ -5,6 +5,7 @@ import GTM from "../components/gtm.astro";
 import MetaPixel from "../components/meta-pixel.astro";
 import HomeFooter from "../components/home/HomeFooter.astro";
 import PageNav from "../components/layout/PageNav.astro";
+import CookieConsent from "../components/CookieConsent.astro";
 import { SITE } from "../data/copy";
 import { pageTitle, ogTitle } from "../utils/meta";
 import HomeSignup from "../components/home/HomeSignup.astro";
@@ -41,6 +42,20 @@ const {
 <!doctype html>
 <html lang="en">
   <head>
+    <script is:inline>
+      (function () {
+        try {
+          var c = JSON.parse(
+            localStorage.getItem("gmd-cookie-consent") || "null",
+          );
+          var ONE_YEAR = 365 * 24 * 60 * 60 * 1000;
+          window.__GMD_CONSENT =
+            c && c.v === 1 && Date.now() - c.ts < ONE_YEAR ? c : null;
+        } catch (e) {
+          window.__GMD_CONSENT = null;
+        }
+      })();
+    </script>
     <GTM />
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -101,6 +116,7 @@ const {
     <slot />
     {!hideSpiceList && !hideFooter && <HomeSignup />}
     {!hideFooter && <HomeFooter />}
+    <CookieConsent />
     <script>
       import { inject } from "@vercel/analytics";
       import { injectSpeedInsights } from "@vercel/speed-insights";
@@ -109,10 +125,16 @@ const {
       const isLocalPreview = ["localhost", "127.0.0.1"].includes(
         window.location.hostname,
       );
-      if (!isLocalPreview) {
+      if (!isLocalPreview && window.__GMD_CONSENT?.analytics) {
         inject();
         injectSpeedInsights();
       }
+      window.addEventListener("gmd:consent-updated", (e) => {
+        if (e.detail.analytics && !isLocalPreview) {
+          inject();
+          injectSpeedInsights();
+        }
+      });
       bootstrapLeadAttribution();
 
       // Track elements with data-ph-capture attribute

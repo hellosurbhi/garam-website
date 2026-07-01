@@ -144,6 +144,7 @@ export default defineConfig({
   site: SITE,
   output: "static",
   trailingSlash: "never",
+  compressHTML: true,
   adapter: vercel(),
   redirects: {
     "/south-asian-dating-tips": "/journal",
@@ -194,12 +195,8 @@ export default defineConfig({
     }),
   ],
   vite: {
-    optimizeDeps: {
-      esbuildOptions: {
-        define: {
-          "process.env.NODE_ENV": '"development"',
-        },
-      },
+    define: {
+      "process.env.NODE_ENV": '"development"',
     },
     plugins: [gitDatesPlugin()],
     resolve: {

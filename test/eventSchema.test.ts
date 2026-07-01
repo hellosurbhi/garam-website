@@ -1,5 +1,6 @@
 import { describe, it, expect } from "vitest";
 import { buildEventSchemas } from "../src/utils/eventSchema";
+import { events } from "../src/data/events";
 import type { EventEntry } from "../src/data/events";
 
 const BASE_VENUE = {
@@ -150,5 +151,41 @@ describe("buildEventSchemas", () => {
       { ...VALID_EVENT, url: "" },
     ];
     expect(buildEventSchemas(events)).toHaveLength(1);
+  });
+
+  it("throws at build time when a valid event is missing price", () => {
+    const noPrice: EventEntry = { ...VALID_EVENT, price: undefined };
+    expect(() => buildEventSchemas([noPrice])).toThrow(/missing price/);
+  });
+
+  it("throws at build time when a valid event is missing startTime", () => {
+    const noStart: EventEntry = { ...VALID_EVENT, startTime: undefined };
+    expect(() => buildEventSchemas([noStart])).toThrow(/missing startTime/);
+  });
+
+  it("throws at build time when a valid event is missing endTime", () => {
+    const noEnd: EventEntry = { ...VALID_EVENT, endTime: undefined };
+    expect(() => buildEventSchemas([noEnd])).toThrow(/missing endTime/);
+  });
+
+  it("emits schema for all real upcoming events without missing startDate", () => {
+    const today = new Date().toISOString().slice(0, 10);
+    const upcoming = events.filter(
+      (e) =>
+        !e.hidden &&
+        e.isoDate &&
+        e.isoDate >= today &&
+        e.venue &&
+        e.url &&
+        e.url !== "#",
+    );
+    const schemas = buildEventSchemas(upcoming);
+    for (const raw of schemas) {
+      const schema = JSON.parse(raw);
+      expect(schema.startDate).toBeTruthy();
+      expect(schema.startDate).toMatch(
+        /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}[+-]\d{2}:\d{2}$/,
+      );
+    }
   });
 });

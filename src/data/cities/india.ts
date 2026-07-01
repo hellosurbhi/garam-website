@@ -92,7 +92,7 @@ export const indiaCities: Record<string, CityData> = {
       },
       {
         q: "Will the show be in English or Hindi?",
-        a: "The show runs primarily in English with local flavor mixed in. The format adapts to each city.",
+        a: "The show runs in English but the crowd energy is pure Delhi. Hinglish is the room's mother tongue, and if you grew up on a mix of Hindi, Punjabi, and English in the same sentence, you will feel completely at home.",
       },
       {
         q: "Can I apply to be a contestant?",
@@ -141,7 +141,7 @@ export const indiaCities: Record<string, CityData> = {
       },
       {
         q: "Will the show be in English or Hindi?",
-        a: "The show runs primarily in English with local flavor mixed in. The format adapts to each city.",
+        a: "The show runs in English. Gurgaon is the most English-forward part of the NCR, and the Cyber Hub and DLF office crowd is fully English-dominant. Punjabi banter in the audience is guaranteed.",
       },
       {
         q: "Can I apply to be a contestant?",
@@ -190,7 +190,7 @@ export const indiaCities: Record<string, CityData> = {
       },
       {
         q: "Will the show be in English or Hindi?",
-        a: "The show runs primarily in English with local flavor mixed in. The format adapts to each city.",
+        a: "The show runs in English with a Hinglish crowd energy. Noida's IT sector skews English-comfortable, and the Sector 18 and Expressway crowd handles it fluently.",
       },
       {
         q: "Can I apply to be a contestant?",
@@ -239,7 +239,7 @@ export const indiaCities: Record<string, CityData> = {
       },
       {
         q: "Will the show be in English or Hindi?",
-        a: "The show runs primarily in English with local flavor mixed in. The format adapts to each city.",
+        a: "The show runs in English. Bangalore's tech crowd is the most English-comfortable in India. The Koramangala, Indiranagar, and Whitefield audience will be right at home. Expect Kannada warmth from locals and startup jargon from everyone else.",
       },
       {
         q: "Can I apply to be a contestant?",
@@ -288,7 +288,7 @@ export const indiaCities: Record<string, CityData> = {
       },
       {
         q: "Will the show be in English or Hindi?",
-        a: "The show runs primarily in English with local flavor mixed in. The format adapts to each city.",
+        a: "The show runs in English. Hyderabad is Telugu and Urdu country, and the Banjara Hills and HITEC City crowd handles English effortlessly. Expect some Telugu wit and Hyderabadi charm in the audience energy.",
       },
       {
         q: "Can I apply to be a contestant?",
@@ -343,7 +343,7 @@ export const indiaCities: Record<string, CityData> = {
       },
       {
         q: "Will the show be in English or Hindi?",
-        a: "The show runs primarily in English with local flavor mixed in. The format adapts to each city.",
+        a: "The show runs in English. Chennai is predominantly Tamil, and the Anna Nagar, Velachery, and OMR tech crowd is fully English-capable. Expect sharp Tamil humor from the audience.",
       },
       {
         q: "Can I apply to be a contestant?",
@@ -392,7 +392,7 @@ export const indiaCities: Record<string, CityData> = {
       },
       {
         q: "Will the show be in English or Hindi?",
-        a: "The show runs primarily in English with local flavor mixed in. The format adapts to each city.",
+        a: "The show runs in English. Pune is Marathi at heart but cosmopolitan in its colleges and IT parks. The FC Road, Koregaon Park, and Baner crowd switches between Marathi, Hindi, and English without breaking stride.",
       },
       {
         q: "Can I apply to be a contestant?",
@@ -441,7 +441,7 @@ export const indiaCities: Record<string, CityData> = {
       },
       {
         q: "Will the show be in English or Hindi?",
-        a: "The show runs primarily in English with local flavor mixed in. The format adapts to each city.",
+        a: "The show runs in English. Kolkata is the city of Bengali culture and intellectual wit. The South Kolkata and Salt Lake crowd brings a bookish, irony-laced energy to the room. Bengali humor runs deep.",
       },
       {
         q: "Can I apply to be a contestant?",
@@ -492,7 +492,7 @@ export const indiaCities: Record<string, CityData> = {
       },
       {
         q: "Will the show be in English or Hindi?",
-        a: "The show runs primarily in English with local flavor mixed in. The format adapts to each city.",
+        a: "The show runs in English. Ahmedabad is Gujarati at its core, but the SG Highway and Prahlad Nagar business and IT crowd handles English fluently. Expect Gujarati warmth and some sharp entrepreneurial banter.",
       },
       {
         q: "Can I apply to be a contestant?",
@@ -541,7 +541,7 @@ export const indiaCities: Record<string, CityData> = {
       },
       {
         q: "Will the show be in English or Hindi?",
-        a: "The show runs primarily in English with local flavor mixed in. The format adapts to each city.",
+        a: "The show runs in English. Chandigarh is the most planned city in India and the cultural capital of Punjab. The Sector 17 and PEC University crowd brings heavy Punjabi energy to an English-language room.",
       },
       {
         q: "Can I apply to be a contestant?",
@@ -590,7 +590,7 @@ export const indiaCities: Record<string, CityData> = {
       },
       {
         q: "Will the show be in English or Hindi?",
-        a: "The show runs primarily in English with local flavor mixed in. The format adapts to each city.",
+        a: "The show runs in English. Jaipur is Hindi-speaking Rajasthan, but the Malviya Nagar and C-Scheme crowd handles English easily. Expect the warmth and theatrical flair of a city that grew up surrounded by palaces.",
       },
       {
         q: "Can I apply to be a contestant?",
@@ -639,7 +639,7 @@ export const indiaCities: Record<string, CityData> = {
       },
       {
         q: "Will the show be in English or Hindi?",
-        a: "The show runs primarily in English with local flavor mixed in. The format adapts to each city.",
+        a: "The show runs in English. Lucknow is the city of Awadhi refinement and Urdu poetry, and even the city's English has a certain elegance to it. Gomti Nagar professionals and Hazratganj evening crowd will be right at home.",
       },
       {
         q: "Can I apply to be a contestant?",
@@ -694,7 +694,7 @@ export const indiaCities: Record<string, CityData> = {
       },
       {
         q: "Will the show be in English or Hindi?",
-        a: "The show runs primarily in English with local flavor mixed in. The format adapts to each city.",
+        a: "The show runs in English. Kochi is Malayalam-first but deeply cosmopolitan. Fort Kochi, Kakkanad, and Infopark professionals speak English daily. Expect Kerala's characteristically dry wit in the crowd reactions.",
       },
       {
         q: "Can I apply to be a contestant?",
@@ -743,7 +743,7 @@ export const indiaCities: Record<string, CityData> = {
       },
       {
         q: "Will the show be in English or Hindi?",
-        a: "The show runs primarily in English with local flavor mixed in. The format adapts to each city.",
+        a: "The show runs in English. Goa runs on Konkani, Portuguese influence, and beach English. The Panaji and Panjim crowd is already fluent in three languages before the show starts. English is the easy one.",
       },
       {
         q: "Can I apply to be a contestant?",
@@ -792,7 +792,7 @@ export const indiaCities: Record<string, CityData> = {
       },
       {
         q: "Will the show be in English or Hindi?",
-        a: "The show runs primarily in English with local flavor mixed in. The format adapts to each city.",
+        a: "The show runs in English. Indore is a Malwi-Hindi city but the IIM, IIT, and Brilliant Tutorials crowd makes the room surprisingly cosmopolitan and English-comfortable.",
       },
       {
         q: "Can I apply to be a contestant?",
@@ -844,7 +844,7 @@ export const indiaCities: Record<string, CityData> = {
       },
       {
         q: "Will the show be in English or Hindi?",
-        a: "The show runs primarily in English with local flavor mixed in. The format adapts to each city.",
+        a: "The show runs in English. Thiruvananthapuram is the capital of Kerala and speaks Malayalam. The Technopark crowd and the city's civil services community handle English with ease and precision.",
       },
       {
         q: "Can I apply to be a contestant?",
@@ -893,7 +893,7 @@ export const indiaCities: Record<string, CityData> = {
       },
       {
         q: "Will the show be in English or Hindi?",
-        a: "The show runs primarily in English with local flavor mixed in. The format adapts to each city.",
+        a: "The show runs in English. Coimbatore is Tamil through and through. The PSG and Amrita college crowd, plus the city's textile and manufacturing professionals, are fully English-comfortable.",
       },
       {
         q: "Can I apply to be a contestant?",
@@ -942,7 +942,7 @@ export const indiaCities: Record<string, CityData> = {
       },
       {
         q: "Will the show be in English or Hindi?",
-        a: "The show runs primarily in English with local flavor mixed in. The format adapts to each city.",
+        a: "The show runs in English. Nagpur sits at the center of India and speaks Marathi and Hindi. The VNIT and AIIMS crowd brings a no-nonsense, central India energy to an English-language room.",
       },
       {
         q: "Can I apply to be a contestant?",
@@ -991,7 +991,7 @@ export const indiaCities: Record<string, CityData> = {
       },
       {
         q: "Will the show be in English or Hindi?",
-        a: "The show runs primarily in English with local flavor mixed in. The format adapts to each city.",
+        a: "The show runs in English. Vadodara is Gujarati through and through, with a strong arts tradition from MS University. The Alkapuri and Fatehgunj crowd handles English fluently and brings characteristic Gujarati warmth.",
       },
       {
         q: "Can I apply to be a contestant?",
@@ -1040,7 +1040,7 @@ export const indiaCities: Record<string, CityData> = {
       },
       {
         q: "Will the show be in English or Hindi?",
-        a: "The show runs primarily in English with local flavor mixed in. The format adapts to each city.",
+        a: "The show runs in English. Surat is the diamond capital of the world and speaks Gujarati. The city's entrepreneur and textile industry crowd handles English comfortably in a room that understands hustle.",
       },
       {
         q: "Can I apply to be a contestant?",
@@ -1095,7 +1095,7 @@ export const indiaCities: Record<string, CityData> = {
       },
       {
         q: "Will the show be in English or Hindi?",
-        a: "The show runs primarily in English with local flavor mixed in. The format adapts to each city.",
+        a: "The show runs in English. Vizag is Telugu coast country with a port city's cosmopolitan edge. The NTPC, Navy, and IT corridor crowd handles English professionally.",
       },
       {
         q: "Can I apply to be a contestant?",
@@ -1144,7 +1144,7 @@ export const indiaCities: Record<string, CityData> = {
       },
       {
         q: "Will the show be in English or Hindi?",
-        a: "The show runs primarily in English with local flavor mixed in. The format adapts to each city.",
+        a: "The show runs in English. Bhopal is Hindi and Urdu country in the heart of India. The Arera Colony and New Market crowd brings central India warmth to an English-language format.",
       },
       {
         q: "Can I apply to be a contestant?",
@@ -1194,7 +1194,7 @@ export const indiaCities: Record<string, CityData> = {
       },
       {
         q: "Will the show be in English or Hindi?",
-        a: "The show runs primarily in English with local flavor mixed in. The format adapts to each city.",
+        a: "The show runs in English. Mysore is the cultural capital of Karnataka and speaks Kannada. The Mysore University and Infosys campus crowd is English-comfortable, and the city brings a royal, refined energy to the room.",
       },
       {
         q: "Can I apply to be a contestant?",
@@ -1242,7 +1242,7 @@ export const indiaCities: Record<string, CityData> = {
       },
       {
         q: "Will the show be in English or Hindi?",
-        a: "The show runs primarily in English with local flavor mixed in. The format adapts to each city.",
+        a: "The show runs in English. Dehradun is boarding school country and the gateway to Garhwal. The city's decades of English-medium education mean the crowd is at ease in the language, with Garhwali warmth underneath.",
       },
       {
         q: "Can I apply to be a contestant?",
@@ -1290,7 +1290,7 @@ export const indiaCities: Record<string, CityData> = {
       },
       {
         q: "Will the show be in English or Hindi?",
-        a: "The show runs primarily in English with local flavor mixed in. The format adapts to each city.",
+        a: "The show runs in English. Mangalore is Tulu and Kannada country with a significant Konkani Catholic community. The city's banking and export crowd speaks English fluently as a professional default.",
       },
       {
         q: "Can I apply to be a contestant?",
@@ -1338,7 +1338,7 @@ export const indiaCities: Record<string, CityData> = {
       },
       {
         q: "Will the show be in English or Hindi?",
-        a: "The show runs primarily in English with local flavor mixed in. The format adapts to each city.",
+        a: "The show runs in English because it has to. Manipal is entirely a student city pulling from every corner of India and abroad. English is the only common tongue for a campus where your roommate speaks Malayalam and your lab partner speaks Odia.",
       },
       {
         q: "Can I apply to be a contestant?",
@@ -1386,7 +1386,7 @@ export const indiaCities: Record<string, CityData> = {
       },
       {
         q: "Will the show be in English or Hindi?",
-        a: "The show runs primarily in English with local flavor mixed in. The format adapts to each city.",
+        a: "The show runs in English. Amritsar is the heart of Punjab and the Golden Temple city. The crowd speaks Punjabi at full volume and English when necessary, and the room energy is unmistakably Punjabi regardless.",
       },
       {
         q: "Can I apply to be a contestant?",
@@ -1434,7 +1434,7 @@ export const indiaCities: Record<string, CityData> = {
       },
       {
         q: "Will the show be in English or Hindi?",
-        a: "The show runs primarily in English with local flavor mixed in. The format adapts to each city.",
+        a: "The show runs in English. Ludhiana is the Manchester of India and pure Punjab. The crowd is Punjabi-loud and proud, but the language of the stage is English.",
       },
       {
         q: "Can I apply to be a contestant?",
@@ -1482,7 +1482,7 @@ export const indiaCities: Record<string, CityData> = {
       },
       {
         q: "Will the show be in English or Hindi?",
-        a: "The show runs primarily in English with local flavor mixed in. The format adapts to each city.",
+        a: "The show runs in English. Patna is Maithili and Bhojpuri country, but the IIT Patna and NIT Patna crowd handles English comfortably. The Boring Road and Dak Bungalow crowd brings a distinctive Bihari wit to the room.",
       },
       {
         q: "Can I apply to be a contestant?",
@@ -1530,7 +1530,7 @@ export const indiaCities: Record<string, CityData> = {
       },
       {
         q: "Will the show be in English or Hindi?",
-        a: "The show runs primarily in English with local flavor mixed in. The format adapts to each city.",
+        a: "The show runs in English. Ranchi is the capital of Jharkhand and sits at a crossroads of Jharkhari, Nagpuri, and Hindi. The IIT ISM and medical college crowd handles English easily in a city that punches above its cultural weight.",
       },
       {
         q: "Can I apply to be a contestant?",
@@ -1578,7 +1578,7 @@ export const indiaCities: Record<string, CityData> = {
       },
       {
         q: "Will the show be in English or Hindi?",
-        a: "The show runs primarily in English with local flavor mixed in. The format adapts to each city.",
+        a: "The show runs in English. Bhubaneswar is the temple city of Odisha and speaks Odia. The KIIT, XIMB, and IIT Bhubaneswar crowd is English-comfortable, and the city brings an understated Odia warmth to the room.",
       },
       {
         q: "Can I apply to be a contestant?",
@@ -1626,7 +1626,7 @@ export const indiaCities: Record<string, CityData> = {
       },
       {
         q: "Will the show be in English or Hindi?",
-        a: "The show runs primarily in English with local flavor mixed in. The format adapts to each city.",
+        a: "The show runs in English. Raipur is the capital of Chhattisgarh and speaks Hindi with a Chhattisgarhi accent. The NIT and medical community handles English comfortably in India's fastest growing new state capital.",
       },
       {
         q: "Can I apply to be a contestant?",
@@ -1674,7 +1674,7 @@ export const indiaCities: Record<string, CityData> = {
       },
       {
         q: "Will the show be in English or Hindi?",
-        a: "The show runs primarily in English with local flavor mixed in. The format adapts to each city.",
+        a: "The show runs in English. Guwahati is the gateway to Northeast India and speaks Assamese as the common tongue. The IIT Guwahati and Cotton University crowd handles English fluently, and the Northeast's multilingual DNA means code-switching comes naturally.",
       },
       {
         q: "Can I apply to be a contestant?",
@@ -1722,7 +1722,7 @@ export const indiaCities: Record<string, CityData> = {
       },
       {
         q: "Will the show be in English or Hindi?",
-        a: "The show runs primarily in English with local flavor mixed in. The format adapts to each city.",
+        a: "The show runs in English. Shillong is the Scotland of the East and the music capital of India. The city speaks Khasi and English with equal confidence. Of all the Indian cities on our list, Shillong is the most English-native.",
       },
       {
         q: "Can I apply to be a contestant?",
@@ -1770,7 +1770,7 @@ export const indiaCities: Record<string, CityData> = {
       },
       {
         q: "Will the show be in English or Hindi?",
-        a: "The show runs primarily in English with local flavor mixed in. The format adapts to each city.",
+        a: "The show runs in English. Pondicherry carries French colonial DNA and speaks Tamil, French, and English on the same street corner. A show in English in a city with French signage on every wall is the least unusual thing happening here.",
       },
       {
         q: "Can I apply to be a contestant?",
@@ -1818,7 +1818,7 @@ export const indiaCities: Record<string, CityData> = {
       },
       {
         q: "Will the show be in English or Hindi?",
-        a: "The show runs primarily in English with local flavor mixed in. The format adapts to each city.",
+        a: "The show runs in English. Jamshedpur is Tata's company town and a meeting point of Bengali, Hindi, and Odia. The XLRI and Tata Steel crowd handles English in a city built by a corporate with global ambitions.",
       },
       {
         q: "Can I apply to be a contestant?",
@@ -1872,7 +1872,7 @@ export const indiaCities: Record<string, CityData> = {
       },
       {
         q: "Will the show be in English or Hindi?",
-        a: "The show runs primarily in English with local flavor mixed in. The format adapts to each city.",
+        a: "The show runs in English. Trichy is classical Tamil country and one of the oldest living cities in India. The NIT Trichy and Bharat Electronics crowd speaks English professionally, with the formal precision that the city is known for.",
       },
       {
         q: "Can I apply to be a contestant?",
@@ -1926,7 +1926,7 @@ export const indiaCities: Record<string, CityData> = {
       },
       {
         q: "Will the show be in English or Hindi?",
-        a: "The show runs primarily in English with local flavor mixed in. The format adapts to each city.",
+        a: "The show runs in English. Vellore is VIT University country and speaks Tamil. The campus pulls students from every state in India, which makes English the default language of the room by necessity.",
       },
       {
         q: "Can I apply to be a contestant?",
@@ -1980,7 +1980,7 @@ export const indiaCities: Record<string, CityData> = {
       },
       {
         q: "Will the show be in English or Hindi?",
-        a: "The show runs primarily in English with local flavor mixed in. The format adapts to each city.",
+        a: "The show runs in English. Warangal is NIT and Telugu country. The engineering college crowd handles English well, and the city brings a Telangana pride to the room.",
       },
       {
         q: "Can I apply to be a contestant?",
@@ -2028,7 +2028,7 @@ export const indiaCities: Record<string, CityData> = {
       },
       {
         q: "Will the show be in English or Hindi?",
-        a: "The show runs primarily in English with local flavor mixed in. The format adapts to each city.",
+        a: "The show runs in English. Kanpur is the industrial capital of UP and the home of IIT Kanpur. The leather and textile industrialists and the IIT crowd make for a room that handles English comfortably and analytical humor even better.",
       },
       {
         q: "Can I apply to be a contestant?",
@@ -2076,7 +2076,7 @@ export const indiaCities: Record<string, CityData> = {
       },
       {
         q: "Will the show be in English or Hindi?",
-        a: "The show runs primarily in English with local flavor mixed in. The format adapts to each city.",
+        a: "The show runs in English. Allahabad (Prayagraj) is the city of law, civil services, and literature, and speaks Hindi and Urdu with intellectual seriousness. The IIT Allahabad and Allahabad University crowd handles English in a city that produced some of India's great writers.",
       },
       {
         q: "Can I apply to be a contestant?",
@@ -2124,7 +2124,7 @@ export const indiaCities: Record<string, CityData> = {
       },
       {
         q: "Will the show be in English or Hindi?",
-        a: "The show runs primarily in English with local flavor mixed in. The format adapts to each city.",
+        a: "The show runs in English. Varanasi is the oldest city in the world and speaks Bhojpuri and Sanskrit. IIT BHU and BHU's massive campus provide a young English-comfortable crowd for a city that has been philosophizing about love and life for 3,000 years.",
       },
       {
         q: "Can I apply to be a contestant?",
@@ -2172,7 +2172,7 @@ export const indiaCities: Record<string, CityData> = {
       },
       {
         q: "Will the show be in English or Hindi?",
-        a: "The show runs primarily in English with local flavor mixed in. The format adapts to each city.",
+        a: "The show runs in English. Jodhpur is Marwari and Rajasthani at heart. The IIT Jodhpur and AIIMS crowd handles English easily in a city famous for the Blue City, its food, and its summer hospitality.",
       },
       {
         q: "Can I apply to be a contestant?",
@@ -2220,7 +2220,7 @@ export const indiaCities: Record<string, CityData> = {
       },
       {
         q: "Will the show be in English or Hindi?",
-        a: "The show runs primarily in English with local flavor mixed in. The format adapts to each city.",
+        a: "The show runs in English. Udaipur is the City of Lakes and speaks Rajasthani and Hindi. The crowd handles English comfortably, and the city brings a romantic backdrop to a dating show in a place famous for being the most photogenic city in India.",
       },
       {
         q: "Can I apply to be a contestant?",
@@ -2268,7 +2268,7 @@ export const indiaCities: Record<string, CityData> = {
       },
       {
         q: "Will the show be in English or Hindi?",
-        a: "The show runs primarily in English with local flavor mixed in. The format adapts to each city.",
+        a: "The show runs in English. Kota is the coaching capital of India and speaks Hindi. The IIT-JEE and NEET aspirant community handles English while also understanding the specific pressure of a city where everyone is competing for the same 500 seats.",
       },
       {
         q: "Can I apply to be a contestant?",

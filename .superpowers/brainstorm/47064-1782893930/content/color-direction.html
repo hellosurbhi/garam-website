@@ -1,0 +1,165 @@
+<style>
+  .q-title { font-size: 1.2rem; font-weight: 700; margin-bottom: 4px; letter-spacing: -0.01em; }
+  .q-sub { color: #666; font-size: 0.9rem; margin-bottom: 32px; }
+
+  .palettes { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
+
+  .palette-card {
+    border-radius: 16px;
+    overflow: hidden;
+    cursor: pointer;
+    border: 3px solid transparent;
+    transition: border-color 0.15s, transform 0.15s;
+    background: #fff;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+  }
+  .palette-card:hover { transform: translateY(-2px); box-shadow: 0 6px 24px rgba(0,0,0,0.12); }
+  .palette-card.selected { border-color: #111; }
+
+  .swatch-row { display: flex; height: 72px; }
+  .swatch { flex: 1; }
+
+  .palette-body { padding: 16px; }
+  .palette-name { font-size: 1rem; font-weight: 700; margin: 0 0 4px; }
+  .palette-vibe { font-size: 0.8rem; color: #555; margin: 0 0 14px; line-height: 1.5; }
+
+  .mini-hero {
+    border-radius: 10px;
+    padding: 16px 14px;
+    margin-bottom: 10px;
+    min-height: 110px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+  }
+  .mini-eyebrow { font-size: 0.6rem; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; margin-bottom: 6px; opacity: 0.75; }
+  .mini-headline { font-size: 1.15rem; font-weight: 900; line-height: 1.15; margin-bottom: 12px; letter-spacing: -0.02em; }
+  .mini-cta { display: inline-block; padding: 6px 14px; border-radius: 100px; font-size: 0.7rem; font-weight: 700; letter-spacing: 0.04em; text-transform: uppercase; }
+  .mini-badge { display: inline-block; padding: 3px 8px; border-radius: 100px; font-size: 0.55rem; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; margin-bottom: 8px; }
+
+  /* Option A: Fuchsia Fire */
+  .hero-a { background: #FFF3F8; }
+  .eyebrow-a { color: #BE185D; }
+  .headline-a { color: #1A1A1A; }
+  .cta-a { background: #DB2777; color: #fff; }
+  .badge-a { background: #DB2777; color: #fff; }
+
+  /* Option B: Royal Violet */
+  .hero-b { background: #F5F0FF; }
+  .eyebrow-b { color: #7C3AED; }
+  .headline-b { color: #1A1A1A; }
+  .cta-b { background: #7C3AED; color: #fff; }
+  .badge-b { background: #DC2626; color: #fff; }
+
+  /* Option C: Cobalt Clash */
+  .hero-c { background: #F0F5FF; }
+  .eyebrow-c { color: #1D4ED8; }
+  .headline-c { color: #1A1A1A; }
+  .cta-c { background: #DC2626; color: #fff; }
+  .badge-c { background: #1D4ED8; color: #fff; }
+
+  .letter-badge {
+    display: inline-block;
+    width: 26px;
+    height: 26px;
+    border-radius: 50%;
+    background: #111;
+    color: #fff;
+    font-size: 0.75rem;
+    font-weight: 700;
+    text-align: center;
+    line-height: 26px;
+    margin-bottom: 8px;
+  }
+  .keep-note { font-size: 0.7rem; color: #888; font-style: italic; margin-top: 8px; }
+</style>
+
+<p class="q-title">What color direction for the brand?</p>
+<p class="q-sub">All three keep your off-white background and existing red. The question is: what replaces yellow/orange as your statement color? Click to select.</p>
+
+<div class="palettes">
+
+  <!-- Option A: Fuchsia Fire -->
+  <div class="palette-card" data-choice="fuchsia" onclick="toggleSelect(this)">
+    <div class="swatch-row">
+      <div class="swatch" style="background:#FFF8F0;"></div>
+      <div class="swatch" style="background:#DC2626;"></div>
+      <div class="swatch" style="background:#DB2777;"></div>
+      <div class="swatch" style="background:#1A1A1A;"></div>
+    </div>
+    <div class="palette-body">
+      <div class="letter-badge">A</div>
+      <div class="palette-name">Fuchsia Fire</div>
+      <div class="palette-vibe">Hot pink replaces yellow. Keeps your red. Feels like a South Asian wedding after-party meets Vogue editorial. The most "hot and sexy" option.</div>
+
+      <div class="mini-hero hero-a">
+        <div>
+          <div class="mini-badge badge-a">America's #1 Desi Dating Show</div>
+          <div class="mini-headline headline-a">Real Dates.<br>Real Cringe.<br>250 People.</div>
+        </div>
+        <div>
+          <span class="mini-cta cta-a">Get Tickets</span>
+        </div>
+      </div>
+
+      <div class="keep-note">Swatches: cream bg · red primary · hot pink accent · charcoal text</div>
+    </div>
+  </div>
+
+  <!-- Option B: Royal Violet -->
+  <div class="palette-card" data-choice="violet" onclick="toggleSelect(this)">
+    <div class="swatch-row">
+      <div class="swatch" style="background:#FFF8F0;"></div>
+      <div class="swatch" style="background:#DC2626;"></div>
+      <div class="swatch" style="background:#7C3AED;"></div>
+      <div class="swatch" style="background:#1A1A1A;"></div>
+    </div>
+    <div class="palette-body">
+      <div class="letter-badge">B</div>
+      <div class="palette-name">Royal Violet</div>
+      <div class="palette-vibe">Deep electric purple replaces yellow. Red stays as CTA. Feels regal, unexpected, and editorial. The most "elegant and bold" option.</div>
+
+      <div class="mini-hero hero-b">
+        <div>
+          <div class="mini-badge badge-b">America's #1 Desi Dating Show</div>
+          <div class="mini-headline headline-b">Real Dates.<br>Real Cringe.<br>250 People.</div>
+        </div>
+        <div>
+          <span class="mini-cta cta-b">Get Tickets</span>
+        </div>
+      </div>
+
+      <div class="keep-note">Swatches: cream bg · red primary · electric violet accent · charcoal text</div>
+    </div>
+  </div>
+
+  <!-- Option C: Cobalt Clash -->
+  <div class="palette-card" data-choice="cobalt" onclick="toggleSelect(this)">
+    <div class="swatch-row">
+      <div class="swatch" style="background:#FFF8F0;"></div>
+      <div class="swatch" style="background:#DC2626;"></div>
+      <div class="swatch" style="background:#1D4ED8;"></div>
+      <div class="swatch" style="background:#1A1A1A;"></div>
+    </div>
+    <div class="palette-body">
+      <div class="letter-badge">C</div>
+      <div class="palette-name">Cobalt Clash</div>
+      <div class="palette-vibe">Electric cobalt blue meets your red. Nobody in the desi entertainment space is doing red + blue. Unexpected, bold, fresh. The most "funky and disruptive" option.</div>
+
+      <div class="mini-hero hero-c">
+        <div>
+          <div class="mini-badge badge-c">America's #1 Desi Dating Show</div>
+          <div class="mini-headline headline-c">Real Dates.<br>Real Cringe.<br>250 People.</div>
+        </div>
+        <div>
+          <span class="mini-cta cta-c">Get Tickets</span>
+        </div>
+      </div>
+
+      <div class="keep-note">Swatches: cream bg · cobalt blue accent · red primary CTA · charcoal text</div>
+    </div>
+  </div>
+
+</div>
+
+<p style="margin-top:20px;font-size:0.8rem;color:#888;">Note: yellow (#FFD600) and orange (#FF6D00) are being cut from all three. These are the replacement direction options.</p>

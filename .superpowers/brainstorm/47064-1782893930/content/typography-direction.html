@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Typography Direction</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=Barlow+Condensed:wght@800;900&family=Fraunces:opsz,wght@9..144,700;9..144,900&family=Nunito:wght@400;600;700&display=swap" rel="stylesheet">
+
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Nunito', sans-serif;
+    background: #f7f7f5;
+    padding: 24px 20px 80px;
+    min-height: 100vh;
+  }
+
+  .page-title { font-size: 1.1rem; font-weight: 700; color: #111; margin-bottom: 4px; }
+  .page-sub { font-size: 0.85rem; color: #666; margin-bottom: 28px; line-height: 1.5; }
+
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px;
+    max-width: 960px;
+    margin: 0 auto;
+  }
+
+  .type-card {
+    background: #fff;
+    border-radius: 16px;
+    overflow: hidden;
+    cursor: pointer;
+    border: 3px solid transparent;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+    transition: border-color 0.15s, transform 0.15s, box-shadow 0.15s;
+  }
+  .type-card:hover { transform: translateY(-3px); box-shadow: 0 8px 24px rgba(0,0,0,0.12); }
+  .type-card.selected { border-color: #DB2777 !important; box-shadow: 0 0 0 6px rgba(219,39,119,0.12); }
+
+  .card-label {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 14px 16px 0;
+  }
+  .letter-badge {
+    width: 26px; height: 26px;
+    border-radius: 50%;
+    background: #111; color: #fff;
+    font-size: 0.75rem; font-weight: 700;
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+  }
+  .card-name { font-size: 0.9rem; font-weight: 700; color: #111; }
+
+  .phone-wrap { padding: 16px; display: flex; justify-content: center; }
+  .phone {
+    width: 175px;
+    background: #FFF8F0;
+    border-radius: 22px;
+    padding: 22px 14px 14px;
+    border: 2px solid #e5ddd5;
+    min-height: 250px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    position: relative;
+  }
+  .phone::before {
+    content: '';
+    width: 36px; height: 4px;
+    background: #ccc;
+    border-radius: 4px;
+    position: absolute;
+    top: 9px; left: 50%;
+    transform: translateX(-50%);
+  }
+
+  .phone-eyebrow {
+    font-size: 7px; font-weight: 700;
+    letter-spacing: 0.1em; text-transform: uppercase;
+    color: #DB2777; margin-bottom: 8px;
+  }
+  .phone-sub {
+    font-size: 8px; color: #666;
+    line-height: 1.5; margin-top: 7px;
+  }
+  .phone-cta {
+    display: inline-block;
+    background: #DC2626; color: #fff;
+    font-size: 8px; font-weight: 700;
+    letter-spacing: 0.05em; text-transform: uppercase;
+    padding: 6px 12px; border-radius: 100px;
+    margin-top: 12px; align-self: flex-start;
+  }
+
+  .hl-playfair {
+    font-family: 'Playfair Display', serif;
+    font-size: 27px; font-weight: 900;
+    line-height: 1.05; color: #1A1A1A;
+    letter-spacing: -0.02em;
+  }
+  .hl-barlow {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 32px; font-weight: 900;
+    line-height: 1.0; color: #1A1A1A;
+    text-transform: uppercase;
+  }
+  .hl-fraunces {
+    font-family: 'Fraunces', serif;
+    font-size: 27px; font-weight: 900;
+    line-height: 1.05; color: #1A1A1A;
+    letter-spacing: -0.02em;
+  }
+
+  .card-desc { padding: 0 16px 16px; }
+  .card-desc p { font-size: 0.78rem; color: #555; line-height: 1.55; margin-top: 10px; }
+  .tag {
+    display: inline-block;
+    background: #f0eeff; border-radius: 100px;
+    font-size: 0.65rem; font-weight: 700; color: #6d28d9;
+    padding: 2px 8px; margin-top: 8px; margin-right: 4px;
+  }
+  .tag.pink { background: #fce7f3; color: #be185d; }
+  .tag.gray { background: #f0f0f0; color: #555; }
+
+  .bottom-note {
+    text-align: center;
+    font-size: 0.75rem; color: #999;
+    margin-top: 20px;
+    line-height: 1.5;
+  }
+</style>
+</head>
+<body>
+
+<p class="page-title">Which headline font feels right?</p>
+<p class="page-sub">Cormorant Garamond is out. These are your 3 headline font options shown on a mobile screen (where 90% of your users are). Body text stays Nunito in all three.</p>
+
+<div class="grid">
+
+  <div class="type-card" data-choice="playfair" onclick="toggleSelect(this)">
+    <div class="card-label">
+      <div class="letter-badge">A</div>
+      <div class="card-name">Playfair Display</div>
+    </div>
+    <div class="phone-wrap">
+      <div class="phone">
+        <div>
+          <div class="phone-eyebrow">America's #1 Desi Dating Show</div>
+          <div class="hl-playfair">Real Dates.<br>Real Cringe.<br>250 People.</div>
+          <div class="phone-sub">Weekly in Manhattan. Now touring the USA.</div>
+        </div>
+        <div class="phone-cta">Get Tickets →</div>
+      </div>
+    </div>
+    <div class="card-desc">
+      <p>Your current headline font. Classic editorial serif. Refined, confident, elegant. Already in your codebase — no migration needed.</p>
+      <span class="tag gray">Already installed</span>
+      <span class="tag pink">Elegant</span>
+      <span class="tag pink">Editorial</span>
+    </div>
+  </div>
+
+  <div class="type-card" data-choice="barlow" onclick="toggleSelect(this)">
+    <div class="card-label">
+      <div class="letter-badge">B</div>
+      <div class="card-name">Barlow Condensed</div>
+    </div>
+    <div class="phone-wrap">
+      <div class="phone">
+        <div>
+          <div class="phone-eyebrow">America's #1 Desi Dating Show</div>
+          <div class="hl-barlow">Real Dates.<br>Real Cringe.<br>250 People.</div>
+          <div class="phone-sub">Weekly in Manhattan. Now touring the USA.</div>
+        </div>
+        <div class="phone-cta">Get Tickets →</div>
+      </div>
+    </div>
+    <div class="card-desc">
+      <p>Tall, condensed, all-caps bold. Headlines become events. Maximum visual impact in minimal space. Very fashion/entertainment brand energy.</p>
+      <span class="tag pink">High impact</span>
+      <span class="tag pink">Funky</span>
+      <span class="tag pink">Bold</span>
+    </div>
+  </div>
+
+  <div class="type-card" data-choice="fraunces" onclick="toggleSelect(this)">
+    <div class="card-label">
+      <div class="letter-badge">C</div>
+      <div class="card-name">Fraunces</div>
+    </div>
+    <div class="phone-wrap">
+      <div class="phone">
+        <div>
+          <div class="phone-eyebrow">America's #1 Desi Dating Show</div>
+          <div class="hl-fraunces">Real Dates.<br>Real Cringe.<br>250 People.</div>
+          <div class="phone-sub">Weekly in Manhattan. Now touring the USA.</div>
+        </div>
+        <div class="phone-cta">Get Tickets →</div>
+      </div>
+    </div>
+    <div class="card-desc">
+      <p>A contemporary variable display serif built to be expressive and distinctive. Similar weight to Playfair but with more personality. Nothing on the web looks like this paired with fuchsia.</p>
+      <span class="tag">Most unique</span>
+      <span class="tag pink">Expressive</span>
+      <span class="tag pink">Hot</span>
+    </div>
+  </div>
+
+</div>
+
+<p class="bottom-note">All options cut Cormorant Garamond. Italics where used will come from the chosen font's own italic — no separate decorative face.</p>
+
+</body>
+</html>

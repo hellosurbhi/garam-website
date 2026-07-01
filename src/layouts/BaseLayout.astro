@@ -42,20 +42,6 @@ const {
 <!doctype html>
 <html lang="en">
   <head>
-    <script is:inline>
-      (function () {
-        try {
-          var c = JSON.parse(
-            localStorage.getItem("gmd-cookie-consent") || "null",
-          );
-          var ONE_YEAR = 365 * 24 * 60 * 60 * 1000;
-          window.__GMD_CONSENT =
-            c && c.v === 1 && Date.now() - c.ts < ONE_YEAR ? c : null;
-        } catch (e) {
-          window.__GMD_CONSENT = null;
-        }
-      })();
-    </script>
     <GTM />
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -125,20 +111,10 @@ const {
       const isLocalPreview = ["localhost", "127.0.0.1"].includes(
         window.location.hostname,
       );
-      if (!isLocalPreview && window.__GMD_CONSENT?.analytics) {
+      if (!isLocalPreview) {
         inject();
         injectSpeedInsights();
       }
-      window.addEventListener("gmd:consent-updated", (e: Event) => {
-        const event = e as CustomEvent<{
-          analytics: boolean;
-          marketing: boolean;
-        }>;
-        if (event.detail.analytics && !isLocalPreview) {
-          inject();
-          injectSpeedInsights();
-        }
-      });
       bootstrapLeadAttribution();
 
       // Track elements with data-ph-capture attribute

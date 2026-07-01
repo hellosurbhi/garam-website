@@ -33,14 +33,18 @@
     fbq("init", "1469248418329402");
     fbq("track", "PageView");
   }
-  if (window.__GMD_CONSENT?.marketing) {
-    if ("requestIdleCallback" in window) {
-      requestIdleCallback(loadMetaPixel, { timeout: 3000 });
-    } else {
-      setTimeout(loadMetaPixel, 2000);
-    }
+  if ("requestIdleCallback" in window) {
+    requestIdleCallback(loadMetaPixel, { timeout: 3000 });
+  } else {
+    setTimeout(loadMetaPixel, 2000);
   }
-  window.addEventListener("gmd:consent-updated", function (e) {
-    if (e.detail && e.detail.marketing) loadMetaPixel();
-  });
 </script>
+<noscript
+  ><img
+    height="1"
+    width="1"
+    style="display:none"
+    alt=""
+    src="https://www.facebook.com/tr?id=1469248418329402&ev=PageView&noscript=1"
+  /></noscript
+>

@@ -96,7 +96,9 @@ export default function AdminDashboard({ onLogout }: AdminDashboardProps) {
   }
 
   useEffect(() => {
-    fetchApps();
+    (async () => {
+      await fetchApps();
+    })();
   }, []);
 
   async function handleUpdate(

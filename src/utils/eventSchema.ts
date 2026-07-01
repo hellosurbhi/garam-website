@@ -20,9 +20,14 @@ export function buildEventSchemas(eventsList: EventEntry[]): string[] {
     .map((e) => {
       const start = e.startTime ?? "20:00";
       const end = e.endTime ?? "22:00";
-      if (!e.price || !e.startTime || !e.endTime) {
-        console.warn(
-          `[eventSchema] incomplete data for ${e.isoDate} ${e.city}: missing ${[!e.price && "price", !e.startTime && "startTime", !e.endTime && "endTime"].filter(Boolean).join(", ")}`,
+      const missing = [
+        !e.price && "price",
+        !e.startTime && "startTime",
+        !e.endTime && "endTime",
+      ].filter(Boolean);
+      if (missing.length > 0) {
+        throw new Error(
+          `[eventSchema] incomplete data for ${e.isoDate} ${e.city}: missing ${missing.join(", ")}`,
         );
       }
       const venue = e.venue!;

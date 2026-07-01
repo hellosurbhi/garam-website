@@ -94,7 +94,9 @@ export default function AnalyticsDashboard() {
   }, []);
 
   useEffect(() => {
-    fetchData(period);
+    (async () => {
+      await fetchData(period);
+    })();
   }, [period, fetchData]);
 
   async function handleSync() {

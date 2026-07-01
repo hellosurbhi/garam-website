@@ -32,7 +32,7 @@ export const internationalOtherCities: Record<string, CityData> = {
       },
       {
         q: "Can I apply to be a contestant on stage?",
-        a: "Yes. Use the apply link below to submit your application. Contestants are selected based on personality, openness, and willingness to have fun on stage.",
+        a: "Yes. Use the apply link on this page to submit your application. Auckland is our primary New Zealand target so early applications from Sandringham, Papatoetoe, and the wider metro get noticed first.",
       },
     ],
     relatedArticleSlugs: [
@@ -81,7 +81,7 @@ export const internationalOtherCities: Record<string, CityData> = {
       },
       {
         q: "Can I apply to be a contestant on stage?",
-        a: "Yes. Use the apply link below to submit your application. Contestants are selected based on personality, openness, and willingness to have fun on stage.",
+        a: "Yes. Use the apply link on this page to submit your application. Wellington applicants are part of our New Zealand tour pool and stand out because the community here is tight enough that great contestants know each other.",
       },
     ],
     relatedArticleSlugs: [
@@ -130,7 +130,7 @@ export const internationalOtherCities: Record<string, CityData> = {
       },
       {
         q: "Can I apply to be a contestant on stage?",
-        a: "Yes. Use the apply link below to submit your application. Contestants are selected based on personality, openness, and willingness to have fun on stage.",
+        a: "Yes. Use the apply link on this page to submit your application. Christchurch is part of our New Zealand tour and we are actively building a cast from Canterbury's South Asian community.",
       },
     ],
     relatedArticleSlugs: [
@@ -178,7 +178,7 @@ export const internationalOtherCities: Record<string, CityData> = {
       },
       {
         q: "Can I apply to be a contestant on stage?",
-        a: "Yes. Use the apply link below to submit your application. Contestants are selected based on personality, openness, and willingness to have fun on stage.",
+        a: "Yes. Use the apply link on this page to submit your application. Indo-Fijian applicants from Suva and Nadi are both welcome, and the blend of Pacific Island warmth and Hindi culture makes for exactly the kind of contestant the show is built around.",
       },
     ],
     relatedArticleSlugs: [
@@ -227,7 +227,7 @@ export const internationalOtherCities: Record<string, CityData> = {
       },
       {
         q: "Can I apply to be a contestant on stage?",
-        a: "Yes. Use the apply link below to submit your application. Contestants are selected based on personality, openness, and willingness to have fun on stage.",
+        a: "Yes. Use the apply link on this page to submit your application. Nadi applicants carry the western Fiji Indo-Fijian identity and we are looking for people whose personalities fill a room the way the Sri Siva Subramaniya Swami temple fills the skyline.",
       },
     ],
     relatedArticleSlugs: [
@@ -275,7 +275,7 @@ export const internationalOtherCities: Record<string, CityData> = {
       },
       {
         q: "Can I apply to be a contestant on stage?",
-        a: "Yes. Use the apply link below to submit your application. Contestants are selected based on personality, openness, and willingness to have fun on stage.",
+        a: "Yes. Use the apply link on this page to submit your application. Lautoka and the western Viti Levu corridor are part of our Fiji casting pool, and contestants from Sugar City bring an energy that is distinct from anywhere else in the Pacific.",
       },
     ],
     relatedArticleSlugs: ["nri-dating-challenges", "irl-dating-revival"],
@@ -322,7 +322,7 @@ export const internationalOtherCities: Record<string, CityData> = {
       },
       {
         q: "Can I apply to be a contestant on stage?",
-        a: "Yes. Use the apply link below to submit your application. Contestants are selected based on personality, openness, and willingness to have fun on stage.",
+        a: "Yes. Use the apply link on this page to submit your application. Nairobi is our top Africa target and we are actively scouting for contestants from Parklands, Westlands, and the broader East African desi community.",
       },
     ],
     relatedArticleSlugs: [
@@ -371,7 +371,7 @@ export const internationalOtherCities: Record<string, CityData> = {
       },
       {
         q: "Can I apply to be a contestant on stage?",
-        a: "Yes. Use the apply link below to submit your application. Contestants are selected based on personality, openness, and willingness to have fun on stage.",
+        a: "Yes. Use the apply link on this page to submit your application. Mombasa applicants from the Old Town, Nyali, and Diani coastal corridor are all eligible, and the multigenerational Swahili Coast desi identity is exactly what the show celebrates.",
       },
     ],
     relatedArticleSlugs: [
@@ -420,7 +420,7 @@ export const internationalOtherCities: Record<string, CityData> = {
       },
       {
         q: "Can I apply to be a contestant on stage?",
-        a: "Yes. Use the apply link below to submit your application. Contestants are selected based on personality, openness, and willingness to have fun on stage.",
+        a: "Yes. Use the apply link on this page to submit your application. Dar es Salaam is part of our East Africa tour and we are looking for contestants from Upanga, Oyster Bay, and the wider Tanzanian Indian community who are ready to represent five generations of desi life on the Swahili Coast.",
       },
     ],
     relatedArticleSlugs: [
@@ -469,7 +469,7 @@ export const internationalOtherCities: Record<string, CityData> = {
       },
       {
         q: "Can I apply to be a contestant on stage?",
-        a: "Yes. Use the apply link below to submit your application. Contestants are selected based on personality, openness, and willingness to have fun on stage.",
+        a: "Yes. Use the apply link on this page to submit your application. Joburg is on our Africa tour and we want contestants from Lenasia, Fordsburg, Sandton, and everywhere in between who are ready to bring the resilience and humour of the South African Indian experience to the stage.",
       },
     ],
     relatedArticleSlugs: [
@@ -524,7 +524,7 @@ export const internationalOtherCities: Record<string, CityData> = {
       },
       {
         q: "Can I apply to be a contestant on stage?",
-        a: "Yes. Use the apply link below to submit your application. Contestants are selected based on personality, openness, and willingness to have fun on stage.",
+        a: "Yes. Use the apply link on this page to submit your application. Durban is a top priority on our Africa tour and we are specifically looking for contestants from Chatsworth, Phoenix, and Tongaat who can carry the full weight of what it means to be Indian South African on stage in front of their own community.",
       },
     ],
     relatedArticleSlugs: [
@@ -579,7 +579,7 @@ export const internationalOtherCities: Record<string, CityData> = {
       },
       {
         q: "Can I apply to be a contestant on stage?",
-        a: "Yes. Use the apply link below to submit your application. Contestants are selected based on personality, openness, and willingness to have fun on stage.",
+        a: "Yes. Use the apply link on this page to submit your application. Cape Town is part of our South Africa tour and we are looking for contestants from the UCT and Stellenbosch communities and professionals scattered across the Mother City who are ready to show up for a first of its kind desi night.",
       },
     ],
     relatedArticleSlugs: [
@@ -628,7 +628,7 @@ export const internationalOtherCities: Record<string, CityData> = {
       },
       {
         q: "Can I apply to be a contestant on stage?",
-        a: "Yes. Use the apply link below to submit your application. Contestants are selected based on personality, openness, and willingness to have fun on stage.",
+        a: "Yes. Use the apply link on this page to submit your application. Mauritius applications are open across Port Louis, Quatre Bornes, and Rose Hill, and when the whole island knows everyone, being the person on stage at this show is a genuinely big deal.",
       },
     ],
     relatedArticleSlugs: [
@@ -685,7 +685,7 @@ export const internationalOtherCities: Record<string, CityData> = {
       },
       {
         q: "Can I apply to be a contestant on stage?",
-        a: "Yes. Use the apply link below to submit your application. Contestants are selected based on personality, openness, and willingness to have fun on stage.",
+        a: "Yes. Use the apply link on this page to submit your application. Port of Spain applicants are part of our Caribbean tour cast and the Indo-Trinidadian contestants who bring chutney energy to a live dating format tend to become the most talked about nights of the tour.",
       },
     ],
     relatedArticleSlugs: [
@@ -740,7 +740,7 @@ export const internationalOtherCities: Record<string, CityData> = {
       },
       {
         q: "Can I apply to be a contestant on stage?",
-        a: "Yes. Use the apply link below to submit your application. Contestants are selected based on personality, openness, and willingness to have fun on stage.",
+        a: "Yes. Use the apply link on this page to submit your application. San Fernando is part of our Trinidad tour and southern Indo-Trinidadian contestants, rooted in chutney culture and Phagwa traditions, are exactly the energy this show is built to showcase.",
       },
     ],
     relatedArticleSlugs: [
@@ -795,7 +795,7 @@ export const internationalOtherCities: Record<string, CityData> = {
       },
       {
         q: "Can I apply to be a contestant on stage?",
-        a: "Yes. Use the apply link below to submit your application. Contestants are selected based on personality, openness, and willingness to have fun on stage.",
+        a: "Yes. Use the apply link on this page to submit your application. Chaguanas sits at the centre of Trinidad's Indian corridor and applicants from here and across central Trinidad bring a community confidence that is unlike anywhere else in the Caribbean.",
       },
     ],
     relatedArticleSlugs: [
@@ -850,7 +850,7 @@ export const internationalOtherCities: Record<string, CityData> = {
       },
       {
         q: "Can I apply to be a contestant on stage?",
-        a: "Yes. Use the apply link below to submit your application. Contestants are selected based on personality, openness, and willingness to have fun on stage.",
+        a: "Yes. Use the apply link on this page to submit your application. Georgetown is part of our Caribbean tour and Indo-Guyanese applicants from the city and the Essequibo coast are welcome, including those with ties to the diaspora communities in Richmond Hill and the GTA.",
       },
     ],
     relatedArticleSlugs: [
@@ -905,7 +905,7 @@ export const internationalOtherCities: Record<string, CityData> = {
       },
       {
         q: "Can I apply to be a contestant on stage?",
-        a: "Yes. Use the apply link below to submit your application. Contestants are selected based on personality, openness, and willingness to have fun on stage.",
+        a: "Yes. Use the apply link on this page to submit your application. New Amsterdam and the Berbice coast are part of our Guyana tour, and contestants from the most densely Indo-Guyanese region in the country bring a rootedness to the stage that the format is built to celebrate.",
       },
     ],
     relatedArticleSlugs: [
@@ -959,7 +959,7 @@ export const internationalOtherCities: Record<string, CityData> = {
       },
       {
         q: "Can I apply to be a contestant on stage?",
-        a: "Yes. Use the apply link below to submit your application. Contestants are selected based on personality, openness, and willingness to have fun on stage.",
+        a: "Yes. Use the apply link on this page to submit your application. Paramaribo applicants from the Hindustani Surinamese community are welcome, and with family connections stretching to The Hague and Amsterdam, contestants here are often representing two continents at once.",
       },
     ],
     relatedArticleSlugs: [
@@ -1014,7 +1014,7 @@ export const internationalOtherCities: Record<string, CityData> = {
       },
       {
         q: "Can I apply to be a contestant on stage?",
-        a: "Yes. Use the apply link below to submit your application. Contestants are selected based on personality, openness, and willingness to have fun on stage.",
+        a: "Yes. Use the apply link on this page to submit your application. Panama City is part of our Caribbean circuit and applicants from the banking and Canal Zone communities, as well as Caribbean Hindustani settlers, are all eligible to apply.",
       },
     ],
     relatedArticleSlugs: [
@@ -1069,7 +1069,7 @@ export const internationalOtherCities: Record<string, CityData> = {
       },
       {
         q: "Can I apply to be a contestant on stage?",
-        a: "Yes. Use the apply link below to submit your application. Contestants are selected based on personality, openness, and willingness to have fun on stage.",
+        a: "Yes. Use the apply link on this page to submit your application. San Juan is part of our Caribbean expansion and we are looking for contestants from the UPR medical community, Act 60 transplants, and South Asian professionals across the island who are ready to be part of the first desi dating show Puerto Rico has ever seen.",
       },
     ],
     relatedArticleSlugs: [

@@ -406,7 +406,7 @@ export const australiaCities: Record<string, CityData> = {
       },
       {
         q: "Can I apply to be a contestant?",
-        a: "Yes. Apply now. Applications stay active for 12 months. Newcastle applicants will be prioritized when we confirm a date.",
+        a: "Yes. Apply now. Applications stay active for 12 months. Newcastle AU applicants, including those from the Hunter Valley, will be prioritized when we confirm a date on our NSW expansion tour.",
       },
     ],
   },

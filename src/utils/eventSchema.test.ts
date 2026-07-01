@@ -274,6 +274,22 @@ describe("buildEventSchemas", () => {
     expect(parsed.offers.availability).toBe("https://schema.org/InStock");
   });
 
+  it("uses PreSale availability before onSaleAt", () => {
+    const onSaleAt = "2999-01-01T00:00:00.000Z";
+    const schemas = buildEventSchemas([makeEvent({ onSaleAt })]);
+    const parsed = JSON.parse(schemas[0]);
+    expect(parsed.offers.availability).toBe("https://schema.org/PreSale");
+    expect(parsed.offers.validFrom).toBe(onSaleAt);
+  });
+
+  it("uses InStock availability after onSaleAt", () => {
+    const onSaleAt = "2000-01-01T00:00:00.000Z";
+    const schemas = buildEventSchemas([makeEvent({ onSaleAt })]);
+    const parsed = JSON.parse(schemas[0]);
+    expect(parsed.offers.availability).toBe("https://schema.org/InStock");
+    expect(parsed.offers.validFrom).toBe(onSaleAt);
+  });
+
   it("includes correct image URL", () => {
     const schemas = buildEventSchemas([makeEvent()]);
     const parsed = JSON.parse(schemas[0]);

@@ -7,7 +7,7 @@ export const tipsPosts: JournalPost[] = [
     metaDescription:
       "Finding love as a South Asian in NYC means getting off the apps and tapping into high-intent, real-world networks. Here\u2019s how to actually cut through the noise.",
     datePublished: "2026-04-01",
-    dateModified: "2026-04-01",
+    dateModified: "2026-07-01",
     author: "Surbhi",
     excerpt:
       "The apps are exhausting, the aunties are hovering, and the city is massive. Here is how to actually meet people.",
@@ -68,7 +68,7 @@ export const tipsPosts: JournalPost[] = [
     metaDescription:
       "To find a partner before an arranged marriage, treat your dating life with the same urgency your parents treat your biodata. Here\u2019s how to take control of your timeline.",
     datePublished: "2026-04-02",
-    dateModified: "2026-04-02",
+    dateModified: "2026-07-01",
     author: "Surbhi",
     excerpt:
       "The clock is ticking and the biodatas are piling up. A survival guide to taking control of your own timeline.",
@@ -125,7 +125,7 @@ export const tipsPosts: JournalPost[] = [
     metaDescription:
       "\u201CGoing with the flow\u201D is a dating trap that leads directly to dead-end situationships. Replace passive dating with active vetting to find real commitment.",
     datePublished: "2026-04-03",
-    dateModified: "2026-04-03",
+    dateModified: "2026-07-01",
     author: "Surbhi",
     excerpt:
       "Stop pretending you're okay with a situationship. Here's how to date with intention and filter out time-wasters.",

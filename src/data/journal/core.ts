@@ -8,7 +8,7 @@ export const corePosts: JournalPost[] = [
     metaDescription:
       "After 4 years and 40+ live shows, Surbhi shares what Indian Matchmaking got right, what Hinge gets wrong, and what actually happens when desis date on stage in front of 250 people.",
     datePublished: "2026-04-16",
-    dateModified: "2026-04-25",
+    dateModified: "2026-07-01",
     relatedSlugs: [
       "desi-dating-show-vs-dating-apps",
       "what-actually-happens-at-a-live-comedy-dating-show",
@@ -147,7 +147,7 @@ export const corePosts: JournalPost[] = [
     metaDescription:
       "Tired of the same bar scene? Here are the best things to do in NYC if you\u2019re single, from improv shows to rooftop mixers to the #1 live comedy dating show with 250 people.",
     datePublished: "2026-04-15",
-    dateModified: "2026-04-23",
+    dateModified: "2026-07-01",
     relatedSlugs: [
       "south-asian-singles-events-nyc",
       "the-realest-way-to-meet-desi-singles-in-nyc",
@@ -285,7 +285,7 @@ export const corePosts: JournalPost[] = [
     metaDescription:
       "Want to be on the #1 live dating show? Here\u2019s exactly how casting works at Garam Masala Dating, what we look for in applications, and what to expect if you get picked.",
     datePublished: "2026-04-14",
-    dateModified: "2026-04-21",
+    dateModified: "2026-07-01",
     relatedSlugs: [
       "how-to-prepare-for-a-live-matchmaking-show",
       "what-actually-happens-at-a-live-comedy-dating-show",
@@ -426,7 +426,7 @@ export const corePosts: JournalPost[] = [
     metaDescription:
       "Tired of swiping through the same desi profiles? Here\u2019s how to actually meet South Asian singles in NYC in person, at the #1 live dating show with 250 people in the room.",
     datePublished: "2026-04-13",
-    dateModified: "2026-04-19",
+    dateModified: "2026-07-01",
     relatedSlugs: [
       "the-only-live-desi-dating-show-in-nyc",
       "south-asian-singles-events-nyc",
@@ -565,7 +565,7 @@ export const corePosts: JournalPost[] = [
     metaDescription:
       "Here\u2019s what actually happens at the #1 live comedy dating show. Blind dates on stage, audience chaos, whiteboard reveals, and a singles mixer after. From the person who runs it.",
     datePublished: "2026-04-12",
-    dateModified: "2026-04-17",
+    dateModified: "2026-07-01",
     relatedSlugs: [
       "how-to-prepare-for-a-live-matchmaking-show",
       "desi-dating-show-vs-dating-apps",
@@ -695,7 +695,7 @@ export const corePosts: JournalPost[] = [
     metaDescription:
       "Garam Masala Dating is the #1 weekly live desi dating show in NYC. Here\u2019s what actually happens at the show, who can come, and how it compares to Indian Matchmaking.",
     datePublished: "2026-04-11",
-    dateModified: "2026-04-15",
+    dateModified: "2026-07-01",
     relatedSlugs: [
       "what-actually-happens-at-a-live-comedy-dating-show",
       "south-asian-singles-events-nyc",
@@ -816,7 +816,7 @@ export const corePosts: JournalPost[] = [
     metaDescription:
       "A guide to South Asian singles events in NYC, from desi mixers to live dating shows. What\u2019s actually worth your time and what to skip.",
     datePublished: "2026-04-10",
-    dateModified: "2026-04-13",
+    dateModified: "2026-07-01",
     relatedSlugs: [
       "the-realest-way-to-meet-desi-singles-in-nyc",
       "desi-dating-show-vs-dating-apps",
@@ -937,7 +937,7 @@ export const corePosts: JournalPost[] = [
     metaDescription:
       "After four years of running Garam Masala Dating, here\u2019s what the #1 live desi dating show taught me about chemistry, connection, and why apps can\u2019t replicate what happens on stage.",
     datePublished: "2026-04-09",
-    dateModified: "2026-04-11",
+    dateModified: "2026-07-01",
     relatedSlugs: [
       "what-we-learned-from-100-desi-blind-dates",
       "how-to-prepare-for-a-live-matchmaking-show",
@@ -1065,7 +1065,7 @@ export const corePosts: JournalPost[] = [
     metaDescription:
       "After running Garam Masala Dating for over a year and watching hundreds of live blind dates unfold on stage, here's what we actually learned about South Asian dating.",
     datePublished: "2026-04-08",
-    dateModified: "2026-04-09",
+    dateModified: "2026-07-01",
     relatedSlugs: [
       "desi-dating-show-vs-dating-apps",
       "how-to-prepare-for-a-live-matchmaking-show",
@@ -1136,7 +1136,7 @@ export const corePosts: JournalPost[] = [
     metaDescription:
       "You got cast on Garam Masala Dating. Here\u2019s exactly how to prepare \u2014 what to wear, what to expect on stage, and how to not be the person who chokes in front of 250 people.",
     datePublished: "2026-04-07",
-    dateModified: "2026-04-07",
+    dateModified: "2026-07-01",
     relatedSlugs: [
       "how-to-get-cast-on-a-live-dating-show",
       "what-actually-happens-at-a-live-comedy-dating-show",

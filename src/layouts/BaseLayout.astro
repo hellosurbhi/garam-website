@@ -7,7 +7,6 @@ import HomeFooter from "../components/home/HomeFooter.astro";
 import PageNav from "../components/layout/PageNav.astro";
 import { SITE } from "../data/copy";
 import { pageTitle, ogTitle } from "../utils/meta";
-import LegalModal from "../components/LegalModal.astro";
 import HomeSignup from "../components/home/HomeSignup.astro";
 
 interface Props {
@@ -102,7 +101,6 @@ const {
     <slot />
     {!hideSpiceList && !hideFooter && <HomeSignup />}
     {!hideFooter && <HomeFooter />}
-    <LegalModal />
     <script>
       import { inject } from "@vercel/analytics";
       import { injectSpeedInsights } from "@vercel/speed-insights";

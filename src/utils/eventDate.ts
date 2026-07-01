@@ -76,6 +76,20 @@ export function formatOnSaleDate(iso: string): string {
   return new Date(iso).toLocaleString("en-US", ON_SALE_DATE_FORMAT);
 }
 
+/**
+ * Returns true if an event should be shown as upcoming.
+ * Uses isoDate for dated events (reliable ISO comparison) and passes TBA events
+ * (no isoDate) through as upcoming. Hidden events always return false.
+ */
+export function isUpcomingByIso(
+  event: { isoDate?: string; hidden?: boolean },
+  today: string = new Date().toISOString().slice(0, 10),
+): boolean {
+  if (event.hidden) return false;
+  if (!event.isoDate) return true;
+  return event.isoDate >= today;
+}
+
 /** Milliseconds until the next midnight. */
 export function msUntilMidnight(): number {
   const now = new Date();

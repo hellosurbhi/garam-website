@@ -41,6 +41,15 @@ export function buildEventSchemas(eventsList: EventEntry[]): string[] {
       if (venue.postalCode) address.postalCode = venue.postalCode;
 
       const door = subtractMinutes(start, 30);
+      const isPresale = e.onSaleAt
+        ? Date.parse(e.onSaleAt) > Date.now()
+        : false;
+      const availability = e.soldOut
+        ? "https://schema.org/SoldOut"
+        : isPresale
+          ? "https://schema.org/PreSale"
+          : "https://schema.org/InStock";
+
       return JSON.stringify({
         "@context": "https://schema.org",
         "@type": "ComedyEvent",
@@ -81,9 +90,7 @@ export function buildEventSchemas(eventsList: EventEntry[]): string[] {
           url: e.url,
           price: e.price ?? "15",
           priceCurrency: "USD",
-          availability: e.soldOut
-            ? "https://schema.org/SoldOut"
-            : "https://schema.org/InStock",
+          availability,
           ...(e.onSaleAt ? { validFrom: e.onSaleAt } : {}),
         },
         image: "https://garammasaladating.com/og-image.jpg",

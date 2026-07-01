@@ -1,5 +1,12 @@
 # Changelog
 
+## fix(schema): mark future on-sale events as pre-sale (2026-07-01)
+
+- Updated Event JSON-LD offers to emit `https://schema.org/PreSale` for non-sold-out events whose `onSaleAt` is still in the future, while preserving `validFrom`.
+- Added focused coverage for pre-sale and post-sale-start availability.
+
+---
+
 ## fix(ci): overhaul all pipelines to make failures meaningful (2026-06-17)
 
 ### What changed

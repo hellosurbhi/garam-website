@@ -37,6 +37,14 @@ const ORIENTATION_OPTIONS: FilterOption[] = [
   { value: "Other", label: "Other" },
 ];
 
+const STATUS_OPTIONS: FilterOption[] = [
+  { value: "New", label: "New" },
+  { value: "Contacted", label: "Contacted" },
+  { value: "Cast", label: "Cast" },
+  { value: "Rejected", label: "Rejected" },
+  { value: "Participated", label: "Participated" },
+];
+
 export default function AdminDashboard({ onLogout }: AdminDashboardProps) {
   const [activeTab, setActiveTab] = useState<"applicants" | "analytics">(
     "applicants",
@@ -53,6 +61,7 @@ export default function AdminDashboard({ onLogout }: AdminDashboardProps) {
     readonly FilterOption[]
   >([]);
   const [cityFilter, setCityFilter] = useState<readonly FilterOption[]>([]);
+  const [statusFilter, setStatusFilter] = useState<readonly FilterOption[]>([]);
 
   const toastTimerRef = useRef<ReturnType<typeof setTimeout> | undefined>(
     undefined,
@@ -119,6 +128,11 @@ export default function AdminDashboard({ onLogout }: AdminDashboardProps) {
     handleUpdate(id, { deletedAt: null });
   }
 
+  async function handleParticipated(id: string) {
+    await handleUpdate(id, { status: "Participated" });
+    setSelectedApp(null);
+  }
+
   const cityOptions = useMemo(() => {
     const cities = new Set(
       applications
@@ -132,6 +146,7 @@ export default function AdminDashboard({ onLogout }: AdminDashboardProps) {
     setGenderFilter([]);
     setOrientationFilter([]);
     setCityFilter([]);
+    setStatusFilter([]);
   }
 
   const { activeApps, deletedApps } = useMemo(() => {
@@ -150,6 +165,10 @@ export default function AdminDashboard({ onLogout }: AdminDashboardProps) {
     if (cityFilter.length > 0) {
       const selected = new Set(cityFilter.map((o) => o.value));
       result = result.filter((a) => selected.has(a.city?.trim()));
+    }
+    if (statusFilter.length > 0) {
+      const selected = new Set(statusFilter.map((o) => o.value));
+      result = result.filter((a) => selected.has(a.status));
     }
 
     result.sort(
@@ -170,12 +189,13 @@ export default function AdminDashboard({ onLogout }: AdminDashboardProps) {
     });
 
     return { activeApps: result, deletedApps: deleted };
-  }, [applications, genderFilter, orientationFilter, cityFilter]);
+  }, [applications, genderFilter, orientationFilter, cityFilter, statusFilter]);
 
   const hasActiveFilters =
     genderFilter.length > 0 ||
     orientationFilter.length > 0 ||
-    cityFilter.length > 0;
+    cityFilter.length > 0 ||
+    statusFilter.length > 0;
 
   return (
     <div className={styles.page}>
@@ -244,6 +264,17 @@ export default function AdminDashboard({ onLogout }: AdminDashboardProps) {
                   aria-label="Filter by city"
                 />
               </div>
+              <div className={styles.filterItemWide}>
+                <Select
+                  isMulti
+                  options={STATUS_OPTIONS}
+                  value={statusFilter}
+                  onChange={(v) => setStatusFilter(v)}
+                  placeholder="Status…"
+                  styles={adminSelectStyles<FilterOption>()}
+                  aria-label="Filter by status"
+                />
+              </div>
               {hasActiveFilters && (
                 <button onClick={clearFilters} className={styles.clearButton}>
                   Clear all
@@ -306,6 +337,7 @@ export default function AdminDashboard({ onLogout }: AdminDashboardProps) {
                       app={app}
                       onClick={() => setSelectedApp(app)}
                       onDelete={() => handleDelete(app.id)}
+                      onParticipated={() => handleParticipated(app.id)}
                       dimmed={app.status === "Rejected"}
                     />
                   ))}
@@ -355,6 +387,7 @@ export default function AdminDashboard({ onLogout }: AdminDashboardProps) {
           onUpdate={handleUpdate}
           onDelete={handleDelete}
           onRestore={handleRestore}
+          onParticipated={handleParticipated}
         />
       )}
 

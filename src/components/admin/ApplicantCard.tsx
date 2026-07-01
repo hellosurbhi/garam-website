@@ -1,4 +1,4 @@
-import { Trash2, ArchiveRestore } from "lucide-react";
+import { Trash2, ArchiveRestore, CheckCircle } from "lucide-react";
 import { type Application, STATUS_COLORS } from "@/types/application";
 import { formatLocation } from "@/utils/locationDisplay";
 
@@ -7,6 +7,7 @@ interface ApplicantCardProps {
   onClick: () => void;
   onDelete?: () => void;
   onRestore?: () => void;
+  onParticipated?: () => void;
   dimmed?: boolean;
 }
 
@@ -35,48 +36,92 @@ export default function ApplicantCard({
   onClick,
   onDelete,
   onRestore,
+  onParticipated,
   dimmed,
 }: ApplicantCardProps) {
   const handle = app.instagram.replace(/^@/, "");
 
-  const actionButton =
-    (onDelete ?? onRestore) ? (
-      <button
-        onClick={(e) => {
-          e.stopPropagation();
-          if (onDelete) onDelete();
-          else onRestore?.();
-        }}
+  const actionButtons =
+    (onDelete ?? onRestore) || onParticipated ? (
+      <div
         style={{
           position: "absolute",
           top: "8px",
           right: "8px",
-          background: "rgba(0,0,0,0.45)",
-          border: "none",
-          borderRadius: "100px",
-          minWidth: "48px",
-          minHeight: "48px",
-          padding: "10px",
-          cursor: "pointer",
           display: "flex",
-          alignItems: "center",
-          justifyContent: "center",
-          color: "#fff",
-          opacity: 0,
-          transition: "opacity 0.15s, background 0.15s",
+          gap: "8px",
           zIndex: 2,
         }}
-        onMouseEnter={(e) =>
-          (e.currentTarget.style.background = "rgba(0,0,0,0.65)")
-        }
-        onMouseLeave={(e) =>
-          (e.currentTarget.style.background = "rgba(0,0,0,0.45)")
-        }
-        aria-label={onDelete ? "Delete application" : "Restore application"}
-        className="card-action-btn"
+        className="card-action-buttons"
       >
-        {onDelete ? <Trash2 size={18} /> : <ArchiveRestore size={18} />}
-      </button>
+        {onParticipated && (
+          <button
+            onClick={(e) => {
+              e.stopPropagation();
+              onParticipated();
+            }}
+            style={{
+              background: "rgba(139, 92, 246, 0.9)",
+              border: "none",
+              borderRadius: "100px",
+              minWidth: "48px",
+              minHeight: "48px",
+              padding: "10px",
+              cursor: "pointer",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              color: "#fff",
+              opacity: 0,
+              transition: "opacity 0.15s, background 0.15s",
+            }}
+            onMouseEnter={(e) =>
+              (e.currentTarget.style.background = "rgba(139, 92, 246, 1)")
+            }
+            onMouseLeave={(e) =>
+              (e.currentTarget.style.background = "rgba(139, 92, 246, 0.9)")
+            }
+            aria-label="Mark as participated"
+            className="card-action-btn"
+          >
+            <CheckCircle size={18} />
+          </button>
+        )}
+        {(onDelete || onRestore) && (
+          <button
+            onClick={(e) => {
+              e.stopPropagation();
+              if (onDelete) onDelete();
+              else onRestore?.();
+            }}
+            style={{
+              background: "rgba(0,0,0,0.45)",
+              border: "none",
+              borderRadius: "100px",
+              minWidth: "48px",
+              minHeight: "48px",
+              padding: "10px",
+              cursor: "pointer",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              color: "#fff",
+              opacity: 0,
+              transition: "opacity 0.15s, background 0.15s",
+            }}
+            onMouseEnter={(e) =>
+              (e.currentTarget.style.background = "rgba(0,0,0,0.65)")
+            }
+            onMouseLeave={(e) =>
+              (e.currentTarget.style.background = "rgba(0,0,0,0.45)")
+            }
+            aria-label={onDelete ? "Delete application" : "Restore application"}
+            className="card-action-btn"
+          >
+            {onDelete ? <Trash2 size={18} /> : <ArchiveRestore size={18} />}
+          </button>
+        )}
+      </div>
     ) : null;
 
   return (
@@ -104,18 +149,22 @@ export default function ApplicantCard({
       onMouseEnter={(e) => {
         e.currentTarget.style.transform = "translateY(-2px)";
         e.currentTarget.style.boxShadow = "0 6px 20px rgba(0,0,0,0.12)";
-        const btn = e.currentTarget.querySelector(
+        const btns = e.currentTarget.querySelectorAll(
           ".card-action-btn",
-        ) as HTMLElement | null;
-        if (btn) btn.style.opacity = "1";
+        ) as NodeListOf<HTMLElement>;
+        btns.forEach((btn) => {
+          btn.style.opacity = "1";
+        });
       }}
       onMouseLeave={(e) => {
         e.currentTarget.style.transform = "translateY(0)";
         e.currentTarget.style.boxShadow = "0 1px 6px rgba(0,0,0,0.07)";
-        const btn = e.currentTarget.querySelector(
+        const btns = e.currentTarget.querySelectorAll(
           ".card-action-btn",
-        ) as HTMLElement | null;
-        if (btn) btn.style.opacity = "0";
+        ) as NodeListOf<HTMLElement>;
+        btns.forEach((btn) => {
+          btn.style.opacity = "0";
+        });
       }}
     >
       <div
@@ -155,7 +204,7 @@ export default function ApplicantCard({
             🌶️
           </div>
         )}
-        {actionButton}
+        {actionButtons}
       </div>
 
       <div style={{ padding: "16px" }}>

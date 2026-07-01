@@ -16,10 +16,15 @@ function subtractMinutes(time: string, mins: number): string {
  */
 export function buildEventSchemas(eventsList: EventEntry[]): string[] {
   return eventsList
-    .filter((e) => !e.hidden && e.isoDate && e.venue)
+    .filter((e) => !e.hidden && e.isoDate && e.venue && e.url && e.url !== "#")
     .map((e) => {
       const start = e.startTime ?? "20:00";
       const end = e.endTime ?? "22:00";
+      if (!e.price || !e.startTime || !e.endTime) {
+        console.warn(
+          `[eventSchema] incomplete data for ${e.isoDate} ${e.city}: missing ${[!e.price && "price", !e.startTime && "startTime", !e.endTime && "endTime"].filter(Boolean).join(", ")}`,
+        );
+      }
       const venue = e.venue!;
       const address: Record<string, string> = {
         "@type": "PostalAddress",
@@ -71,7 +76,10 @@ export function buildEventSchemas(eventsList: EventEntry[]): string[] {
           url: e.url,
           price: e.price ?? "15",
           priceCurrency: "USD",
-          availability: "https://schema.org/InStock",
+          availability: e.soldOut
+            ? "https://schema.org/SoldOut"
+            : "https://schema.org/InStock",
+          ...(e.onSaleAt ? { validFrom: e.onSaleAt } : {}),
         },
         image: "https://garammasaladating.com/og-image.jpg",
         superEvent: {

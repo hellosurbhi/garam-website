@@ -30,6 +30,13 @@ interface Window {
   }>;
   _gtmLoaded?: boolean;
   _fbLoaded?: boolean;
+  __GMD_CONSENT?: {
+    v: 1;
+    analytics: boolean;
+    marketing: boolean;
+    ts: number;
+  } | null;
+  __gmdOpenCookiePrefs?: () => void;
 }
 
 declare namespace astroHTML.JSX {

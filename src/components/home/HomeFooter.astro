@@ -93,6 +93,10 @@ const socials = [
     <div class="footer-legal">
       <a href="/privacy">Privacy</a>
       <a href="/terms">Terms</a>
+      <button
+        class="footer-cookie-btn"
+        onclick="window.__gmdOpenCookiePrefs?.()">Cookie Preferences</button
+      >
     </div>
   </div>
 </footer>
@@ -221,6 +225,20 @@ const socials = [
     transition: color 0.2s;
   }
   .footer-legal a:hover {
+    color: white;
+  }
+
+  .footer-cookie-btn {
+    background: none;
+    border: none;
+    font-size: 12px;
+    color: rgba(255, 255, 255, 0.35);
+    cursor: pointer;
+    padding: 0;
+    transition: color 0.2s;
+    font-family: inherit;
+  }
+  .footer-cookie-btn:hover {
     color: white;
   }
 

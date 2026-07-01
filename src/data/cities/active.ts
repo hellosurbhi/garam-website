@@ -174,7 +174,7 @@ export const activeCities: Record<string, CityData> = {
       },
       {
         q: "How do I get on the San Diego waitlist?",
-        a: "Click the waitlist button and enter your email. You will receive presale access and casting opportunities before tickets go public.",
+        a: "Hit the waitlist button and drop your email. San Diego waitlist members get presale ticket access and casting consideration ahead of the general public when we confirm a UTC or Mira Mesa venue.",
       },
       {
         q: "Can I apply to be on the show before a date is announced?",

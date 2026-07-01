@@ -14,75 +14,25 @@ import HomeVideo from "@/components/home/HomeVideo.astro";
 import HomeFAQ from "@/components/home/HomeFAQ.astro";
 import HomeJournal from "@/components/home/HomeJournal.astro";
 import { SOCIAL_URLS, CREATOR_URLS } from "@/data/socials";
-import { TESTIMONIALS, PAGES } from "@/data/copy";
+import { PAGES } from "@/data/copy";
+import { buildOrganizationJsonLd } from "@/utils/organizationSchema";
 import { YOUTUBE_VIDEO_ID, VIDEO_METADATA } from "@/lib/constants";
 import { events, allEvents } from "@/data/events";
-import { isEventPast } from "@/utils/eventDate";
+import { isUpcomingByIso } from "@/utils/eventDate";
 import { buildEventSchemas } from "@/utils/eventSchema";
 
 const HIDDEN_FROM_HOME = ["Salt Lake City", "Denver"];
+const today = new Date().toISOString().slice(0, 10);
 const upcomingEvents = allEvents.filter(
-  (e) =>
-    !isEventPast(e.date) && !e.hidden && !HIDDEN_FROM_HOME.includes(e.city),
+  (e) => isUpcomingByIso(e, today) && !HIDDEN_FROM_HOME.includes(e.city),
 );
 const firstTicketUrl = "/tickets";
-const today = new Date().toISOString().slice(0, 10);
 const heroEvents = events
   .filter((e) => !e.hidden && e.isoDate && e.isoDate >= today && e.url)
   .slice(0, 5);
 
 // Organization JSON-LD
-const orgJsonLd = JSON.stringify({
-  "@context": "https://schema.org",
-  "@type": "Organization",
-  name: "Garam Masala Dating",
-  alternateName: [
-    "Garam Masala Dating Show",
-    "GMS Dating",
-    "Desi Dating Show NYC",
-    "Desi Dating Show New York",
-    "NYC Desi Dating Show",
-  ],
-  url: "https://garammasaladating.com",
-  logo: "https://garammasaladating.com/images/logo.svg",
-  description:
-    "Garam Masala Dating is the #1 live desi dating show and South Asian singles mixer in New York City. Real singles go on blind dates on stage in front of a 250-person live audience. Weekly in Manhattan, monthly in Jersey City.",
-  foundingDate: "2022",
-  sameAs: [
-    SOCIAL_URLS.instagram,
-    SOCIAL_URLS.youtube,
-    SOCIAL_URLS.facebook,
-    SOCIAL_URLS.threads,
-    SOCIAL_URLS.tiktok,
-    SOCIAL_URLS.x,
-  ],
-  contactPoint: {
-    "@type": "ContactPoint",
-    email: "contact@garammasaladating.com",
-    contactType: "customer support",
-  },
-  aggregateRating: {
-    "@type": "AggregateRating",
-    ratingValue: 5,
-    bestRating: 5,
-    worstRating: 1,
-    ratingCount: 3,
-  },
-  review: TESTIMONIALS.map((t) => ({
-    "@type": "Review",
-    author: {
-      "@type": "Person",
-      name: t.author.includes(",") ? t.author.split(",")[0].trim() : t.author,
-    },
-    reviewBody: t.quote,
-    reviewRating: {
-      "@type": "Rating",
-      ratingValue: 5,
-      bestRating: 5,
-      worstRating: 1,
-    },
-  })),
-});
+const orgJsonLd = buildOrganizationJsonLd();
 
 // WebSite JSON-LD
 const websiteJsonLd = JSON.stringify({
@@ -107,11 +57,10 @@ const faqJsonLd = JSON.stringify({
   })),
 });
 
-// Individual Event JSON-LD blocks (one per upcoming show)
-const upcomingForSchema = events.filter(
-  (e) => !e.hidden && e.isoDate && e.isoDate >= today,
+// Individual Event JSON-LD blocks (one per upcoming show with a real date+url)
+const eventSchemas = buildEventSchemas(
+  events.filter((e) => !e.hidden && e.isoDate && e.isoDate >= today),
 );
-const eventSchemas = buildEventSchemas(upcomingForSchema);
 
 // VideoObject JSON-LD
 const videoJsonLd = JSON.stringify({

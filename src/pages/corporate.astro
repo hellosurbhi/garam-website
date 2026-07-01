@@ -6,7 +6,6 @@ import {
   CORPORATE_COPY,
   AUDIENCE_TIERS,
   INCLUSIONS,
-  CORPORATE_TESTIMONIALS,
   CORPORATE_FAQS,
 } from "@/data/corporate";
 
@@ -46,30 +45,6 @@ const faqJsonLd = JSON.stringify({
   })),
 });
 
-const reviewJsonLd = JSON.stringify({
-  "@context": "https://schema.org",
-  "@type": "Service",
-  name: "Private & Corporate Show | Garam Masala Dating",
-  aggregateRating: {
-    "@type": "AggregateRating",
-    ratingValue: 5,
-    bestRating: 5,
-    worstRating: 1,
-    ratingCount: CORPORATE_TESTIMONIALS.length,
-  },
-  review: CORPORATE_TESTIMONIALS.map((t) => ({
-    "@type": "Review",
-    author: { "@type": "Person", name: t.author },
-    reviewBody: t.quote,
-    reviewRating: {
-      "@type": "Rating",
-      ratingValue: 5,
-      bestRating: 5,
-      worstRating: 1,
-    },
-  })),
-});
-
 const speakableJsonLd = JSON.stringify({
   "@context": "https://schema.org",
   "@type": "WebPage",
@@ -87,7 +62,6 @@ const speakableJsonLd = JSON.stringify({
     <script type="application/ld+json" set:html={serviceJsonLd} />
     <script type="application/ld+json" set:html={faqJsonLd} />
     <script type="application/ld+json" set:html={speakableJsonLd} />
-    <script type="application/ld+json" set:html={reviewJsonLd} />
   </Fragment>
 
   <main id="main-content" class="corp">

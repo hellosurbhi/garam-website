@@ -39,8 +39,6 @@ export interface CityData {
   badgeLabel: string;
   /** For LocalBusiness schema */
   areaServed: string;
-  /** Whether to include an Event schema block */
-  includeEventSchema: boolean;
   addressLocality: string;
   addressRegion: string;
   /** Two-letter country code (US, CA, GB, AU, etc.) */

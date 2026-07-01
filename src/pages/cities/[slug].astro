@@ -5,6 +5,7 @@ import { cities } from "@/data/cities";
 import type { CityData } from "@/data/cities";
 import { getUpcomingEventsForCity } from "@/utils/cityEvents";
 import { buildBreadcrumbJsonLd } from "@/utils/breadcrumbs";
+import { buildEventSchemas } from "@/utils/eventSchema";
 import { SHOW_IMAGES, slugToImageIndex } from "@/data/images";
 import { buildTicketUrl } from "@/utils/eventUrl";
 import { formatEventLocation } from "@/utils/eventCity";
@@ -38,7 +39,9 @@ const cityEvents = getUpcomingEventsForCity(city.slug);
 
 /* ── City JSON-LD ─────────────────────────────────────────── */
 
-function buildCityJsonLd(c: CityData, hasEvents: boolean): string {
+const cityPageUrl = `https://garammasaladating.com/cities/${city.slug}`;
+
+function buildCityJsonLd(c: CityData): string {
   const graph: Record<string, unknown>[] = [
     {
       "@type": "LocalBusiness",
@@ -46,51 +49,19 @@ function buildCityJsonLd(c: CityData, hasEvents: boolean): string {
       url: "https://garammasaladating.com",
       areaServed: c.areaServed,
     },
+    {
+      "@type": "WebPage",
+      "@id": cityPageUrl,
+      url: cityPageUrl,
+      name: c.titleTag,
+      description: c.metaDescription,
+      inLanguage: "en-US",
+      isPartOf: {
+        "@type": "WebSite",
+        "@id": "https://garammasaladating.com",
+      },
+    },
   ];
-
-  if (c.includeEventSchema || hasEvents) {
-    const event: Record<string, unknown> = {
-      "@type": "Event",
-      name: `Garam Masala Dating \u2013 ${c.displayName}`,
-      eventAttendanceMode: "https://schema.org/OfflineEventAttendanceMode",
-      eventStatus: "https://schema.org/EventScheduled",
-      organizer: {
-        "@type": "Organization",
-        name: "Garam Masala Dating",
-        url: "https://garammasaladating.com",
-      },
-      performer: [
-        {
-          "@type": "Person",
-          name: "Surbhi",
-          url: "https://www.instagram.com/lordmakemetaller/",
-        },
-        {
-          "@type": "Person",
-          name: "Wyatt Feegrado",
-          url: "https://www.instagram.com/wyattfeegrado/",
-        },
-      ],
-      location: {
-        "@type": "Place",
-        name: c.venueName ?? c.displayName,
-        address: {
-          "@type": "PostalAddress",
-          addressLocality: c.addressLocality,
-          addressRegion: c.addressRegion,
-          addressCountry: "US",
-        },
-      },
-    };
-
-    if (c.eventScheduleFrequency) {
-      event.eventSchedule = {
-        "@type": "Schedule",
-        repeatFrequency: c.eventScheduleFrequency,
-      };
-    }
-    graph.push(event);
-  }
 
   if (c.faqItems && c.faqItems.length > 0) {
     graph.push({
@@ -106,7 +77,8 @@ function buildCityJsonLd(c: CityData, hasEvents: boolean): string {
   return JSON.stringify({ "@context": "https://schema.org", "@graph": graph });
 }
 
-const cityJsonLd = buildCityJsonLd(city, cityEvents.length > 0);
+const cityJsonLd = buildCityJsonLd(city);
+const cityEventSchemas = buildEventSchemas(cityEvents);
 
 const breadcrumbJsonLd = buildBreadcrumbJsonLd([
   { name: "Home", url: "https://garammasaladating.com/" },
@@ -149,6 +121,11 @@ function renderCityText(text: string, href: string): string {
   <Fragment slot="head">
     <script type="application/ld+json" set:html={cityJsonLd} />
     <script type="application/ld+json" set:html={breadcrumbJsonLd} />
+    {
+      cityEventSchemas.map((schema) => (
+        <script type="application/ld+json" set:html={schema} />
+      ))
+    }
   </Fragment>
 
   <main id="main-content" class="city-page">

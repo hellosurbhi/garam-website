@@ -7,7 +7,7 @@ export const appAlternativesPosts: JournalPost[] = [
     metaDescription:
       "Tired of dating apps and endless swiping? Here\u2019s why more desi singles are ditching Hinge and Dil Mil for IRL events \u2014 and what to do instead.",
     datePublished: "2026-04-17",
-    dateModified: "2026-04-27",
+    dateModified: "2026-07-01",
     author: "Surbhi",
     excerpt:
       "Dating app fatigue is real, and South Asian singles are feeling it harder than most. Here\u2019s why the swipe-and-hope model was never built for us \u2014 and what\u2019s actually working.",
@@ -115,7 +115,7 @@ export const appAlternativesPosts: JournalPost[] = [
     metaDescription:
       "Looking for a Dil Mil alternative? Here are the best options for South Asian singles in 2026, from Hinge to Muzz to live IRL events that actually work.",
     datePublished: "2026-04-18",
-    dateModified: "2026-04-29",
+    dateModified: "2026-07-01",
     author: "Surbhi",
     excerpt:
       "Dil Mil is the best-known South Asian dating app, but it\u2019s not the only option \u2014 and for a lot of people, it\u2019s not even the best one. Here\u2019s what else is out there.",
@@ -231,7 +231,7 @@ export const appAlternativesPosts: JournalPost[] = [
     metaDescription:
       "Is Dil Mil worth it in 2026? An honest Dil Mil review covering costs, user base, match quality, and whether it\u2019s the right app for South Asian singles.",
     datePublished: "2026-04-19",
-    dateModified: "2026-05-01",
+    dateModified: "2026-07-01",
     author: "Surbhi",
     excerpt:
       "Dil Mil is the first app most South Asian singles try. Whether it\u2019s worth your time depends on where you live, what you\u2019re looking for, and how much patience you have.",

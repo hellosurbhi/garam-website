@@ -129,8 +129,12 @@ const {
         inject();
         injectSpeedInsights();
       }
-      window.addEventListener("gmd:consent-updated", (e) => {
-        if (e.detail.analytics && !isLocalPreview) {
+      window.addEventListener("gmd:consent-updated", (e: Event) => {
+        const event = e as CustomEvent<{
+          analytics: boolean;
+          marketing: boolean;
+        }>;
+        if (event.detail.analytics && !isLocalPreview) {
           inject();
           injectSpeedInsights();
         }

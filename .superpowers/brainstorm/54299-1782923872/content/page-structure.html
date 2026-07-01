@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Homepage Structure</title>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'Nunito', sans-serif; background: #f5f4f2; padding: 24px 20px 80px; }
+
+  .page-title { font-size: 1.1rem; font-weight: 800; color: #111; margin-bottom: 4px; }
+  .page-sub { font-size: 0.82rem; color: #666; margin-bottom: 28px; line-height: 1.55; max-width: 640px; }
+
+  .grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; max-width: 980px; margin: 0 auto; align-items: start; }
+
+  .col-card {
+    background: #fff;
+    border-radius: 16px;
+    overflow: hidden;
+    cursor: pointer;
+    border: 3px solid transparent;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+    transition: border-color 0.15s, transform 0.15s, box-shadow 0.15s;
+  }
+  .col-card:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(0,0,0,0.11); }
+  .col-card.selected { border-color: #DB2777; box-shadow: 0 0 0 6px rgba(219,39,119,0.1); }
+
+  .col-header {
+    padding: 14px 16px 10px;
+    border-bottom: 1px solid #f0f0f0;
+    display: flex; align-items: center; gap: 10px;
+  }
+  .letter-badge {
+    width: 26px; height: 26px; border-radius: 50%;
+    background: #111; color: #fff;
+    font-size: 0.75rem; font-weight: 800;
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+  }
+  .col-title { font-size: 0.95rem; font-weight: 800; color: #111; }
+  .col-vibe { font-size: 0.72rem; color: #888; margin-top: 1px; }
+
+  /* Wireframe phone */
+  .phone-outer { padding: 16px; display: flex; justify-content: center; }
+  .phone {
+    width: 150px;
+    border: 2px solid #ddd;
+    border-radius: 20px;
+    overflow: hidden;
+    background: #FFF8F0;
+    position: relative;
+  }
+  .phone::before {
+    content: '';
+    display: block;
+    height: 8px;
+    background: #FFF8F0;
+    border-bottom: 1px solid #eee;
+    position: relative;
+  }
+  .phone::before { content: ''; display: block; height: 0; }
+
+  /* Wireframe section blocks */
+  .wf-block {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 7.5px;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    text-align: center;
+    line-height: 1.3;
+    padding: 0 6px;
+    border-bottom: 1px solid rgba(0,0,0,0.07);
+  }
+
+  /* Block types by role */
+  .wf-hero    { height: 80px; background: #1A1A1A; color: #fff; font-size: 8px; flex-direction: column; gap: 4px; }
+  .wf-tickets { height: 42px; background: #DC2626; color: #fff; }
+  .wf-shows   { height: 52px; background: #fce7f3; color: #be185d; border: 1px solid #f9a8d4; }
+  .wf-sticky  { height: 22px; background: #DB2777; color: #fff; font-size: 7px; position: sticky; top: 0; z-index: 10; }
+  .wf-stats   { height: 30px; background: #f8f8f8; color: #444; }
+  .wf-steps   { height: 48px; background: #fff8f0; color: #92400e; border: 1px solid #fed7aa; }
+  .wf-testimonials { height: 52px; background: #f5f3ff; color: #5b21b6; border: 1px solid #ddd6fe; }
+  .wf-press   { height: 28px; background: #f8f8f8; color: #555; }
+  .wf-video   { height: 40px; background: #e5e7eb; color: #374151; }
+  .wf-journal { height: 48px; background: #f0fdf4; color: #166534; border: 1px solid #bbf7d0; }
+  .wf-social  { height: 36px; background: #fce7f3; color: #9d174d; border: 1px dashed #f9a8d4; }
+  .wf-signup  { height: 36px; background: #1A1A1A; color: #fff; }
+  .wf-footer  { height: 30px; background: #111; color: #aaa; font-size: 7px; }
+
+  .wf-hero .hero-headline { font-size: 10px; font-weight: 900; letter-spacing: 0.02em; }
+  .wf-hero .hero-cta { background: #DB2777; color: #fff; padding: 3px 8px; border-radius: 100px; font-size: 7px; font-weight: 700; }
+
+  .fold-line {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 3px 6px;
+    background: rgba(219,39,119,0.08);
+    font-size: 6.5px;
+    font-weight: 700;
+    color: #DB2777;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+  }
+  .fold-line::before, .fold-line::after { content: ''; flex: 1; height: 1px; background: #DB2777; opacity: 0.4; }
+
+  .col-desc { padding: 10px 14px 14px; }
+  .col-desc p { font-size: 0.76rem; color: #555; line-height: 1.55; }
+  .highlight { color: #DB2777; font-weight: 700; }
+</style>
+</head>
+<body>
+
+<p class="page-title">Homepage section order on mobile — which structure?</p>
+<p class="page-sub">The pink line is the fold — what users see without scrolling. Red = ticket action. Pink = shows. Everything below the fold requires a scroll. Current homepage has 12+ sections; all three options cut ruthlessly.</p>
+
+<div class="grid">
+
+  <!-- Option A: Tickets first -->
+  <div class="col-card" data-choice="tickets-first" onclick="toggleSelect(this)">
+    <div class="col-header">
+      <div class="letter-badge">A</div>
+      <div>
+        <div class="col-title">Ticket-First</div>
+        <div class="col-vibe">Shows appear before the story</div>
+      </div>
+    </div>
+    <div class="phone-outer">
+      <div class="phone">
+        <div class="wf-block wf-hero" style="display:flex;flex-direction:column;align-items:center;justify-content:center;gap:5px;">
+          <div class="hero-headline">REAL DATES.<br>REAL CRINGE.</div>
+          <div class="hero-cta">Get Tickets</div>
+        </div>
+        <div class="fold-line">fold</div>
+        <div class="wf-block wf-shows">UPCOMING SHOWS<br>NYC · LA · SF · Boston</div>
+        <div class="wf-block wf-stats">40+ SHOWS · 10M VIEWS · 13 COUPLES</div>
+        <div class="wf-block wf-testimonials">TESTIMONIALS<br>"Best night of my life"</div>
+        <div class="wf-block wf-steps">HOW IT WORKS<br>4 Steps</div>
+        <div class="wf-block wf-journal">THE JOURNAL<br>3 articles</div>
+        <div class="wf-block wf-social">FOLLOW US<br>Instagram · YouTube</div>
+        <div class="wf-block wf-footer">Footer</div>
+      </div>
+    </div>
+    <div class="col-desc">
+      <p>Shows grid appears <span class="highlight">immediately after the hero</span>. People from Instagram already know what the show is — skip the explainer, show them dates and prices. Explainer ("how it works") moves below the fold for skeptics.</p>
+    </div>
+  </div>
+
+  <!-- Option B: Sticky bar + story -->
+  <div class="col-card" data-choice="sticky-cta" onclick="toggleSelect(this)">
+    <div class="col-header">
+      <div class="letter-badge">B</div>
+      <div>
+        <div class="col-title">Sticky Ticket Bar</div>
+        <div class="col-vibe">CTA follows you everywhere</div>
+      </div>
+    </div>
+    <div class="phone-outer">
+      <div class="phone">
+        <div class="wf-block wf-sticky">📍 Next show: Jul 26, NYC — BUY TICKETS →</div>
+        <div class="wf-block wf-hero" style="display:flex;flex-direction:column;align-items:center;justify-content:center;gap:5px;">
+          <div class="hero-headline">REAL DATES.<br>REAL CRINGE.</div>
+        </div>
+        <div class="fold-line">fold</div>
+        <div class="wf-block wf-stats">40+ SHOWS · 10M VIEWS · 13 COUPLES</div>
+        <div class="wf-block wf-steps">HOW IT WORKS<br>4 Steps</div>
+        <div class="wf-block wf-shows">ALL UPCOMING SHOWS<br>NYC · LA · SF · Boston</div>
+        <div class="wf-block wf-testimonials">TESTIMONIALS</div>
+        <div class="wf-block wf-journal">THE JOURNAL</div>
+        <div class="wf-block wf-footer">Footer</div>
+      </div>
+    </div>
+    <div class="col-desc">
+      <p>A <span class="highlight">thin sticky bar at the top</span> shows "Next show: NYC, Jul 26 → Buy Tickets" and stays visible as you scroll. Hero focuses on brand impact. The story builds before the full shows grid. CTA is always one tap away.</p>
+    </div>
+  </div>
+
+  <!-- Option C: Story then tickets -->
+  <div class="col-card" data-choice="story-first" onclick="toggleSelect(this)">
+    <div class="col-header">
+      <div class="letter-badge">C</div>
+      <div>
+        <div class="col-title">Story-First</div>
+        <div class="col-vibe">Hook then convert</div>
+      </div>
+    </div>
+    <div class="phone-outer">
+      <div class="phone">
+        <div class="wf-block wf-hero" style="display:flex;flex-direction:column;align-items:center;justify-content:center;gap:5px;">
+          <div class="hero-headline">REAL DATES.<br>REAL CRINGE.</div>
+          <div class="hero-cta">Get Tickets</div>
+        </div>
+        <div class="fold-line">fold</div>
+        <div class="wf-block wf-stats">40+ SHOWS · 10M VIEWS · 13 COUPLES</div>
+        <div class="wf-block wf-steps">HOW IT WORKS<br>4 Steps</div>
+        <div class="wf-block wf-testimonials">TESTIMONIALS<br>"Best night of my life"</div>
+        <div class="wf-block wf-shows">UPCOMING SHOWS<br>NYC · LA · SF · Boston</div>
+        <div class="wf-block wf-journal">THE JOURNAL</div>
+        <div class="wf-block wf-footer">Footer</div>
+      </div>
+    </div>
+    <div class="col-desc">
+      <p>Build the story first — stats, how it works, testimonials — then reveal shows once the user is <span class="highlight">already convinced</span>. Designed for users who don't know what the show is. Riskier for social-media referrals who just want to buy.</p>
+    </div>
+  </div>
+
+</div>
+
+</body>
+</html>

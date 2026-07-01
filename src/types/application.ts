@@ -25,7 +25,7 @@ export interface Application {
   termsAgreedAt?: Timestamp;
   photoUrl: string;
   deletedAt?: Timestamp | null;
-  status: "New" | "Contacted" | "Cast" | "Rejected";
+  status: "New" | "Contacted" | "Cast" | "Rejected" | "Participated";
   notes?: string;
   submittedAt: Timestamp;
 }
@@ -36,6 +36,7 @@ export const STATUS_COLORS: Record<Application["status"], string> = {
   Contacted: "#3B82F6",
   Cast: "#22C55E",
   Rejected: "#9CA3AF",
+  Participated: "#8B5CF6",
 };
 
 /** Ordered list of South Asian community identifiers shown in the apply form community dropdown. */

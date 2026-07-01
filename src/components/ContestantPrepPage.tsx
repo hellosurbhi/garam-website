@@ -65,7 +65,7 @@ function PrepGuide() {
           <h1 className={styles.coverTitle}>🌶️ Contestant Orientation</h1>
           <p className={styles.coverShow}>Garam Masala Dating</p>
           <p className={styles.coverIntro}>
-            You&apos;ve been selected as a contestant on NYC&apos;s #1 live
+            You&apos;ve been selected as a contestant on America&apos;s #1 live
             South Asian dating show. You&apos;ll be on stage, mic&apos;d up,
             matched with someone you&apos;ve never met, in front of a full
             audience. It&apos;s real, it&apos;s fast, and it&apos;s genuinely

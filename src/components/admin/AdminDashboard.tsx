@@ -37,6 +37,13 @@ const ORIENTATION_OPTIONS: FilterOption[] = [
   { value: "Other", label: "Other" },
 ];
 
+const STATUS_OPTIONS: FilterOption[] = [
+  { value: "New", label: "New" },
+  { value: "Contacted", label: "Contacted" },
+  { value: "Cast", label: "Cast" },
+  { value: "Rejected", label: "Rejected" },
+];
+
 export default function AdminDashboard({ onLogout }: AdminDashboardProps) {
   const [activeTab, setActiveTab] = useState<"applicants" | "analytics">(
     "applicants",
@@ -47,12 +54,14 @@ export default function AdminDashboard({ onLogout }: AdminDashboardProps) {
   const [selectedApp, setSelectedApp] = useState<Application | null>(null);
   const [toast, setToast] = useState<{ msg: string; ok: boolean } | null>(null);
   const [deletedOpen, setDeletedOpen] = useState(false);
+  const [participatedOpen, setParticipatedOpen] = useState(false);
 
   const [genderFilter, setGenderFilter] = useState<readonly FilterOption[]>([]);
   const [orientationFilter, setOrientationFilter] = useState<
     readonly FilterOption[]
   >([]);
   const [cityFilter, setCityFilter] = useState<readonly FilterOption[]>([]);
+  const [statusFilter, setStatusFilter] = useState<readonly FilterOption[]>([]);
 
   const toastTimerRef = useRef<ReturnType<typeof setTimeout> | undefined>(
     undefined,
@@ -119,6 +128,11 @@ export default function AdminDashboard({ onLogout }: AdminDashboardProps) {
     handleUpdate(id, { deletedAt: null });
   }
 
+  async function handleParticipated(id: string) {
+    await handleUpdate(id, { status: "Participated" });
+    setSelectedApp(null);
+  }
+
   const cityOptions = useMemo(() => {
     const cities = new Set(
       applications
@@ -132,10 +146,16 @@ export default function AdminDashboard({ onLogout }: AdminDashboardProps) {
     setGenderFilter([]);
     setOrientationFilter([]);
     setCityFilter([]);
+    setStatusFilter([]);
   }
 
-  const { activeApps, deletedApps } = useMemo(() => {
-    const active = applications.filter((a) => !a.deletedAt);
+  const { activeApps, deletedApps, participatedApps } = useMemo(() => {
+    const participated = applications.filter(
+      (a) => !a.deletedAt && a.status === "Participated",
+    );
+    const active = applications.filter(
+      (a) => !a.deletedAt && a.status !== "Participated",
+    );
     const deleted = applications.filter((a) => !!a.deletedAt);
 
     let result = [...active];
@@ -150,6 +170,10 @@ export default function AdminDashboard({ onLogout }: AdminDashboardProps) {
     if (cityFilter.length > 0) {
       const selected = new Set(cityFilter.map((o) => o.value));
       result = result.filter((a) => selected.has(a.city?.trim()));
+    }
+    if (statusFilter.length > 0) {
+      const selected = new Set(statusFilter.map((o) => o.value));
+      result = result.filter((a) => selected.has(a.status));
     }
 
     result.sort(
@@ -169,13 +193,18 @@ export default function AdminDashboard({ onLogout }: AdminDashboardProps) {
       return bTime - aTime;
     });
 
-    return { activeApps: result, deletedApps: deleted };
-  }, [applications, genderFilter, orientationFilter, cityFilter]);
+    return {
+      activeApps: result,
+      deletedApps: deleted,
+      participatedApps: participated,
+    };
+  }, [applications, genderFilter, orientationFilter, cityFilter, statusFilter]);
 
   const hasActiveFilters =
     genderFilter.length > 0 ||
     orientationFilter.length > 0 ||
-    cityFilter.length > 0;
+    cityFilter.length > 0 ||
+    statusFilter.length > 0;
 
   return (
     <div className={styles.page}>
@@ -244,6 +273,17 @@ export default function AdminDashboard({ onLogout }: AdminDashboardProps) {
                   aria-label="Filter by city"
                 />
               </div>
+              <div className={styles.filterItemWide}>
+                <Select
+                  isMulti
+                  options={STATUS_OPTIONS}
+                  value={statusFilter}
+                  onChange={(v) => setStatusFilter(v)}
+                  placeholder="Status…"
+                  styles={adminSelectStyles<FilterOption>()}
+                  aria-label="Filter by status"
+                />
+              </div>
               {hasActiveFilters && (
                 <button onClick={clearFilters} className={styles.clearButton}>
                   Clear all
@@ -294,8 +334,8 @@ export default function AdminDashboard({ onLogout }: AdminDashboardProps) {
           ) : (
             <>
               <p className={styles.summary}>
-                Showing {activeApps.length} active · {deletedApps.length}{" "}
-                deleted
+                Showing {activeApps.length} active · {participatedApps.length}{" "}
+                participated · {deletedApps.length} deleted
               </p>
 
               {activeApps.length > 0 && (
@@ -306,9 +346,40 @@ export default function AdminDashboard({ onLogout }: AdminDashboardProps) {
                       app={app}
                       onClick={() => setSelectedApp(app)}
                       onDelete={() => handleDelete(app.id)}
+                      onParticipated={() => handleParticipated(app.id)}
                       dimmed={app.status === "Rejected"}
                     />
                   ))}
+                </div>
+              )}
+
+              {participatedApps.length > 0 && (
+                <div className={styles.deletedSection}>
+                  <button
+                    onClick={() => setParticipatedOpen((v) => !v)}
+                    className={styles.deletedToggle}
+                    aria-expanded={participatedOpen}
+                    aria-controls="participated-apps-list"
+                  >
+                    {participatedOpen ? (
+                      <ChevronDown size={16} />
+                    ) : (
+                      <ChevronRight size={16} />
+                    )}
+                    Participated Applications ({participatedApps.length})
+                  </button>
+
+                  {participatedOpen && (
+                    <div id="participated-apps-list" className={styles.grid}>
+                      {participatedApps.map((app) => (
+                        <ApplicantCard
+                          key={app.id}
+                          app={app}
+                          onClick={() => setSelectedApp(app)}
+                        />
+                      ))}
+                    </div>
+                  )}
                 </div>
               )}
 
@@ -355,6 +426,7 @@ export default function AdminDashboard({ onLogout }: AdminDashboardProps) {
           onUpdate={handleUpdate}
           onDelete={handleDelete}
           onRestore={handleRestore}
+          onParticipated={handleParticipated}
         />
       )}
 

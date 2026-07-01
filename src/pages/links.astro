@@ -1,7 +1,7 @@
 ---
 import BaseLayout from "@/layouts/BaseLayout.astro";
 import { events } from "@/data/events";
-import { isEventPast } from "@/utils/eventDate";
+import { isDatedUpcoming } from "@/utils/eventFilters";
 import { pressItems } from "@/data/press";
 import { SOCIAL_URLS } from "@/data/socials";
 import { buildBreadcrumbJsonLd } from "@/utils/breadcrumbs";
@@ -13,7 +13,8 @@ const TITLE = "Tickets, Shows & More";
 const DESC =
   "Get tickets to upcoming Garam Masala Dating shows, follow us on Instagram and TikTok, apply as a contestant, or reach out for booking and press.";
 
-const upcomingEvents = events.filter((e) => !isEventPast(e.date) && !e.hidden);
+const today = new Date().toISOString().slice(0, 10);
+const upcomingEvents = events.filter((e) => isDatedUpcoming(e, today));
 
 const breadcrumbJsonLd = buildBreadcrumbJsonLd([
   { name: "Home", url: "https://garammasaladating.com/" },

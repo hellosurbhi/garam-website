@@ -11,9 +11,23 @@ node_modules
 dist
 dist-ssr
 .astro
-*.local
+.env
+.env.*
+!.env.example
+venv/
 .agents
 SITE-AUDIT.md
+docs/private/
+
+# Build / cache artifacts
+build/
+out/
+coverage/
+.eslintcache
+*.tsbuildinfo
+.turbo/
+.next/
+.parcel-cache/
 
 # Editor directories and files
 .vscode/*

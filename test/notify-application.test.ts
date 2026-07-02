@@ -34,7 +34,7 @@ const validBody = {
   state: "NY",
   country: "USA",
   email: "priya@example.com",
-  instagram: "priyasharma",
+  instagram: "applicant_fixture_1",
   community: "Hindu",
   income: "$50k–$100k",
   applicationType: "Self",
@@ -143,8 +143,8 @@ describe("notify-application handler", () => {
   it("email HTML includes the instagram handle", async () => {
     await POST(makeContext(makeRequest(validBody)));
     const html: string = mockSend.mock.calls[0][0].html;
-    expect(html).toContain("priyasharma");
-    expect(html).toContain("instagram.com/priyasharma");
+    expect(html).toContain("applicant_fixture_1");
+    expect(html).toContain("instagram.com/applicant_fixture_1");
   });
 
   it("email HTML escapes HTML special characters in name", async () => {

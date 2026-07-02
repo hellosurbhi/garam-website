@@ -246,7 +246,7 @@ Google does not officially support IndexNow. For Google indexing, the sitemap at
 ### What changed
 
 - Added `firebase-tools` as a dev dependency so `npx firebase ...` resolves to the deploy CLI instead of the Firebase app SDK.
-- Reauthenticated the Firebase CLI and deployed `firestore.rules` to project `garam-masala-9f15b`.
+- Reauthenticated the Firebase CLI and deployed `firestore.rules`.
 
 ### Files affected
 
@@ -1230,7 +1230,7 @@ Changed `object-fit: cover` to `object-fit: contain` in `.photoPreview` so the e
 **3. Upload timeout prevents stuck submit button**
 Wrapped `uploadBytes` in a `Promise.race` with a 30-second timeout. Firebase Storage SDK retries `ERR_FILE_NOT_FOUND` with exponential backoff, which previously kept the submit button in a loading state indefinitely. The timeout ensures the error surfaces within 30s and the button resets.
 
-**Root cause note:** The Firebase Storage `ERR_FILE_NOT_FOUND` error is a configuration issue. Firebase Storage must be enabled in the Firebase Console and `PUBLIC_FIREBASE_STORAGE_BUCKET` in `.env.local` must match the actual bucket (`garam-masala-9f15b.firebasestorage.app`). Storage rules must be deployed via `firebase deploy --only storage`.
+**Root cause note:** The Firebase Storage `ERR_FILE_NOT_FOUND` error is a configuration issue. Firebase Storage must be enabled in the Firebase Console and `PUBLIC_FIREBASE_STORAGE_BUCKET` in `.env.local` must match the actual bucket. Storage rules must be deployed via the Firebase CLI.
 
 **Files changed:**
 
@@ -1662,7 +1662,7 @@ Also deployed `firestore.rules` and `storage.rules` to Firebase production (had 
 2. Added conditional field writes for each geo field.
 3. Added the 6 geo keys to the `hasOnly()` allowlist in `validLead()` in `firestore.rules`.
 4. Added per-field optional validators for each geo field (string, non-empty, capped sizes).
-5. Deployed rules to Firebase (`garam-masala-9f15b`) via `firebase deploy --only firestore:rules,storage`.
+5. Deployed updated Firestore and Storage rules via the Firebase CLI.
 
 ### Files affected
 

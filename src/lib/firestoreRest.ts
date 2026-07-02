@@ -121,3 +121,91 @@ export async function fsAdd(
   const name = doc.name ?? "";
   return name.split("/").at(-1) ?? "";
 }
+
+/**
+ * Query a collection for documents where a field equals a value.
+ * Returns an array of { id, ...fields } objects, ordered by `orderField` descending.
+ */
+export async function fsQuery(
+  collectionId: string,
+  filterField: string,
+  filterValue: unknown,
+  orderField = "submittedAt",
+): Promise<Array<Record<string, unknown>>> {
+  const token = await getFirestoreAccessToken();
+  const projectId = import.meta.env.PUBLIC_FIREBASE_PROJECT_ID;
+  const queryUrl = `https://firestore.googleapis.com/v1/projects/${projectId}/databases/(default)/documents:runQuery`;
+
+  const body = {
+    structuredQuery: {
+      from: [{ collectionId }],
+      where: {
+        fieldFilter: {
+          field: { fieldPath: filterField },
+          op: "EQUAL",
+          value: toValue(filterValue),
+        },
+      },
+      orderBy: [
+        {
+          field: { fieldPath: orderField },
+          direction: "DESCENDING",
+        },
+      ],
+    },
+  };
+
+  const res = await fetch(queryUrl, {
+    method: "POST",
+    headers: {
+      Authorization: `Bearer ${token}`,
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(body),
+  });
+  if (!res.ok) {
+    const text = await res.text();
+    throw new Error(`fsQuery ${collectionId}: ${res.status} ${text}`);
+  }
+
+  const results = (await res.json()) as Array<{
+    document?: { name?: string; fields?: FirestoreFields };
+  }>;
+  return results
+    .filter((r) => r.document?.fields)
+    .map((r) => {
+      const docName = r.document!.name ?? "";
+      const id = docName.split("/").at(-1) ?? "";
+      return { id, ...fromFields(r.document!.fields!) };
+    });
+}
+
+/**
+ * Delete specific fields from a document using the PATCH + updateMask trick
+ * with a DELETE_FIELD sentinel in the request body.
+ * Pass `null` for each field you want to delete — this maps to
+ * Firestore's `__delete__` transform via the updateMask approach.
+ */
+export async function fsDeleteFields(
+  docPath: string,
+  fieldNames: string[],
+): Promise<void> {
+  const token = await getFirestoreAccessToken();
+  const mask = fieldNames
+    .map((f) => `updateMask.fieldPaths=${encodeURIComponent(f)}`)
+    .join("&");
+
+  // Sending an empty fields object with the updateMask removes those fields
+  const res = await fetch(`${baseUrl()}/${docPath}?${mask}`, {
+    method: "PATCH",
+    headers: {
+      Authorization: `Bearer ${token}`,
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({ fields: {} }),
+  });
+  if (!res.ok) {
+    const body = await res.text();
+    throw new Error(`fsDeleteFields ${docPath}: ${res.status} ${body}`);
+  }
+}

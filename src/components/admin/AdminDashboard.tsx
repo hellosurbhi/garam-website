@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo, useRef } from "react";
+import { useState, useEffect, useMemo } from "react";
 import {
   collection,
   getDocs,
@@ -9,7 +9,13 @@ import {
 import { ChevronRight, ChevronDown } from "lucide-react";
 import Select from "react-select";
 import { getFirebaseDb } from "@/lib/firebase";
-import { type Application } from "@/types/application";
+import {
+  type Application,
+  type ApplicantStatus,
+  STATUS_COLORS,
+  STATUS_ORDER,
+  STATUS_SECTION_DEFAULTS,
+} from "@/types/application";
 import { adminSelectStyles } from "@/utils/reactSelectStyles";
 import Skeleton from "../ui/Skeleton";
 import ApplicantCard from "./ApplicantCard";
@@ -37,12 +43,72 @@ const ORIENTATION_OPTIONS: FilterOption[] = [
   { value: "Other", label: "Other" },
 ];
 
-const STATUS_OPTIONS: FilterOption[] = [
-  { value: "New", label: "New" },
-  { value: "Contacted", label: "Contacted" },
-  { value: "Cast", label: "Cast" },
-  { value: "Rejected", label: "Rejected" },
-];
+function sectionId(status: ApplicantStatus): string {
+  return `section-${status.toLowerCase().replace(/\s+/g, "-")}`;
+}
+
+interface StatusSectionProps {
+  status: ApplicantStatus;
+  apps: Application[];
+  onCardClick: (app: Application) => void;
+  onDelete: (id: string) => void;
+  onParticipated: (id: string) => void;
+}
+
+function StatusSection({
+  status,
+  apps,
+  onCardClick,
+  onDelete,
+  onParticipated,
+}: StatusSectionProps) {
+  const [isOpen, setIsOpen] = useState(STATUS_SECTION_DEFAULTS[status]);
+  const id = sectionId(status);
+  const isDimmed =
+    status === "Rejected" ||
+    status === "Not Interested" ||
+    status === "Not Interested Anymore" ||
+    status === "Bailed";
+
+  return (
+    <div id={id} className={styles.statusSection}>
+      <button
+        onClick={() => setIsOpen((v) => !v)}
+        className={styles.sectionToggle}
+        aria-expanded={isOpen}
+        aria-controls={`${id}-list`}
+      >
+        <span
+          className={styles.sectionDot}
+          style={{ background: STATUS_COLORS[status] }}
+        />
+        {status} ({apps.length})
+        {isOpen ? <ChevronDown size={14} /> : <ChevronRight size={14} />}
+      </button>
+
+      {isOpen && (
+        <div id={`${id}-list`}>
+          {apps.length === 0 ? (
+            <p className={styles.emptySection}>No applications</p>
+          ) : (
+            <div className={styles.grid}>
+              {apps.map((app) => (
+                <ApplicantCard
+                  key={app.id}
+                  app={app}
+                  onClick={() => onCardClick(app)}
+                  onDelete={() => onDelete(app.id)}
+                  onParticipated={() => onParticipated(app.id)}
+                  dimmed={isDimmed}
+                />
+              ))}
+            </div>
+          )}
+        </div>
+      )}
+    </div>
+  );
+}
 
 export default function AdminDashboard({ onLogout }: AdminDashboardProps) {
   const [activeTab, setActiveTab] = useState<"applicants" | "analytics">(
@@ -61,22 +127,17 @@ export default function AdminDashboard({ onLogout }: AdminDashboardProps) {
     readonly FilterOption[]
   >([]);
   const [cityFilter, setCityFilter] = useState<readonly FilterOption[]>([]);
-  const [statusFilter, setStatusFilter] = useState<readonly FilterOption[]>([]);
 
-  const toastTimerRef = useRef<ReturnType<typeof setTimeout> | undefined>(
-    undefined,
-  );
-  useEffect(
-    () => () => {
-      clearTimeout(toastTimerRef.current);
-    },
-    [],
-  );
+  useEffect(() => {
+    let timer: ReturnType<typeof setTimeout> | undefined;
+    if (toast) {
+      timer = setTimeout(() => setToast(null), 2500);
+    }
+    return () => clearTimeout(timer);
+  }, [toast]);
 
   function showToast(msg: string, ok: boolean) {
-    clearTimeout(toastTimerRef.current);
     setToast({ msg, ok });
-    toastTimerRef.current = setTimeout(() => setToast(null), 2500);
   }
 
   async function fetchApps() {
@@ -148,10 +209,9 @@ export default function AdminDashboard({ onLogout }: AdminDashboardProps) {
     setGenderFilter([]);
     setOrientationFilter([]);
     setCityFilter([]);
-    setStatusFilter([]);
   }
 
-  const { activeApps, deletedApps, participatedApps } = useMemo(() => {
+  const { filteredActiveApps, deletedApps, participatedApps } = useMemo(() => {
     const participated = applications.filter(
       (a) => !a.deletedAt && a.status === "Participated",
     );
@@ -173,19 +233,10 @@ export default function AdminDashboard({ onLogout }: AdminDashboardProps) {
       const selected = new Set(cityFilter.map((o) => o.value));
       result = result.filter((a) => selected.has(a.city?.trim()));
     }
-    if (statusFilter.length > 0) {
-      const selected = new Set(statusFilter.map((o) => o.value));
-      result = result.filter((a) => selected.has(a.status));
-    }
 
     result.sort(
       (a, b) => (b.submittedAt?.seconds ?? 0) - (a.submittedAt?.seconds ?? 0),
     );
-    result.sort((a, b) => {
-      const aRej = a.status === "Rejected" ? 1 : 0;
-      const bRej = b.status === "Rejected" ? 1 : 0;
-      return aRej - bRej;
-    });
 
     deleted.sort((a, b) => {
       const aTime =
@@ -196,17 +247,32 @@ export default function AdminDashboard({ onLogout }: AdminDashboardProps) {
     });
 
     return {
-      activeApps: result,
+      filteredActiveApps: result,
       deletedApps: deleted,
       participatedApps: participated,
     };
-  }, [applications, genderFilter, orientationFilter, cityFilter, statusFilter]);
+  }, [applications, genderFilter, orientationFilter, cityFilter]);
+
+  const appsByStatus = useMemo(() => {
+    const map: Record<ApplicantStatus, Application[]> = {} as Record<
+      ApplicantStatus,
+      Application[]
+    >;
+    for (const status of STATUS_ORDER) {
+      map[status] = filteredActiveApps.filter((a) => a.status === status);
+    }
+    return map;
+  }, [filteredActiveApps]);
 
   const hasActiveFilters =
     genderFilter.length > 0 ||
     orientationFilter.length > 0 ||
-    cityFilter.length > 0 ||
-    statusFilter.length > 0;
+    cityFilter.length > 0;
+
+  const activeCount = filteredActiveApps.length;
+  const activeStatuses = STATUS_ORDER.filter(
+    (s) => appsByStatus[s]?.length > 0,
+  ).length;
 
   return (
     <div className={styles.page}>
@@ -222,7 +288,7 @@ export default function AdminDashboard({ onLogout }: AdminDashboardProps) {
               >
                 Applicants
                 {!loading && activeTab === "applicants" && (
-                  <span className={styles.tabCount}>{activeApps.length}</span>
+                  <span className={styles.tabCount}>{activeCount}</span>
                 )}
               </button>
               <button
@@ -275,17 +341,6 @@ export default function AdminDashboard({ onLogout }: AdminDashboardProps) {
                   aria-label="Filter by city"
                 />
               </div>
-              <div className={styles.filterItemWide}>
-                <Select
-                  isMulti
-                  options={STATUS_OPTIONS}
-                  value={statusFilter}
-                  onChange={(v) => setStatusFilter(v)}
-                  placeholder="Status…"
-                  styles={adminSelectStyles<FilterOption>()}
-                  aria-label="Filter by status"
-                />
-              </div>
               {hasActiveFilters && (
                 <button onClick={clearFilters} className={styles.clearButton}>
                   Clear all
@@ -321,7 +376,7 @@ export default function AdminDashboard({ onLogout }: AdminDashboardProps) {
             <div className={styles.emptyState}>
               No applications yet. Share the link! 🌶️
             </div>
-          ) : activeApps.length === 0 && deletedApps.length === 0 ? (
+          ) : activeCount === 0 && deletedApps.length === 0 ? (
             <div className={styles.emptyState}>
               <p style={{ marginBottom: "12px" }}>
                 No applications match these filters.
@@ -336,24 +391,49 @@ export default function AdminDashboard({ onLogout }: AdminDashboardProps) {
           ) : (
             <>
               <p className={styles.summary}>
-                Showing {activeApps.length} active · {participatedApps.length}{" "}
+                {activeCount} active across {activeStatuses} stage
+                {activeStatuses !== 1 ? "s" : ""} · {participatedApps.length}{" "}
                 participated · {deletedApps.length} deleted
               </p>
 
-              {activeApps.length > 0 && (
-                <div className={styles.grid}>
-                  {activeApps.map((app) => (
-                    <ApplicantCard
-                      key={app.id}
-                      app={app}
-                      onClick={() => setSelectedApp(app)}
-                      onDelete={() => handleDelete(app.id)}
-                      onParticipated={() => handleParticipated(app.id)}
-                      dimmed={app.status === "Rejected"}
+              <nav className={styles.jumpRow} aria-label="Jump to section">
+                {STATUS_ORDER.map((status) => (
+                  <button
+                    key={status}
+                    className={styles.jumpChip}
+                    onClick={() => {
+                      document
+                        .getElementById(sectionId(status))
+                        ?.scrollIntoView({
+                          behavior: "smooth",
+                          block: "start",
+                        });
+                    }}
+                  >
+                    <span
+                      className={styles.jumpChipDot}
+                      style={{ background: STATUS_COLORS[status] }}
                     />
-                  ))}
-                </div>
-              )}
+                    {status}
+                    {appsByStatus[status]?.length > 0 && (
+                      <span className={styles.jumpChipCount}>
+                        {appsByStatus[status].length}
+                      </span>
+                    )}
+                  </button>
+                ))}
+              </nav>
+
+              {STATUS_ORDER.map((status) => (
+                <StatusSection
+                  key={status}
+                  status={status}
+                  apps={appsByStatus[status] ?? []}
+                  onCardClick={setSelectedApp}
+                  onDelete={handleDelete}
+                  onParticipated={handleParticipated}
+                />
+              ))}
 
               {participatedApps.length > 0 && (
                 <div className={styles.deletedSection}>

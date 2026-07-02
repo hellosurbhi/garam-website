@@ -1,6 +1,7 @@
 import { Trash2, ArchiveRestore, CheckCircle } from "lucide-react";
 import { type Application, STATUS_COLORS } from "@/types/application";
 import { formatLocation } from "@/utils/locationDisplay";
+import { getApplicantPhotos } from "@/utils/applicantPhotos";
 
 interface ApplicantCardProps {
   app: Application;
@@ -31,6 +32,28 @@ function StatusBadge({ status }: { status: Application["status"] }) {
   );
 }
 
+function AppTypePill({ applicationType }: { applicationType: string }) {
+  const isNomination = applicationType === "Nomination";
+  return (
+    <span
+      style={{
+        display: "inline-block",
+        padding: "2px 8px",
+        borderRadius: "100px",
+        fontSize: "11px",
+        fontWeight: 600,
+        background: isNomination
+          ? "rgba(255, 109, 0, 0.12)"
+          : "rgba(220, 38, 38, 0.1)",
+        color: isNomination ? "var(--spice-orange)" : "var(--brand-red)",
+        letterSpacing: "0.02em",
+      }}
+    >
+      {isNomination ? "Nomination" : "Self"}
+    </span>
+  );
+}
+
 export default function ApplicantCard({
   app,
   onClick,
@@ -40,6 +63,10 @@ export default function ApplicantCard({
   dimmed,
 }: ApplicantCardProps) {
   const handle = app.instagram.replace(/^@/, "");
+  const photos = getApplicantPhotos(app);
+  const firstPhoto = photos[0];
+  const photoCount = photos.length;
+  const isNomination = app.applicationType === "Nomination";
 
   const actionButtons =
     (onDelete ?? onRestore) || onParticipated ? (
@@ -145,6 +172,9 @@ export default function ApplicantCard({
         transition: "transform 0.2s, box-shadow 0.2s, opacity 0.2s",
         opacity: dimmed ? 0.5 : 1,
         filter: dimmed ? "saturate(0.4)" : "none",
+        borderLeft: isNomination
+          ? "3px solid var(--spice-orange)"
+          : "3px solid var(--brand-red)",
       }}
       onMouseEnter={(e) => {
         e.currentTarget.style.transform = "translateY(-2px)";
@@ -177,9 +207,9 @@ export default function ApplicantCard({
           background: "var(--border)",
         }}
       >
-        {app.photoUrl ? (
+        {firstPhoto ? (
           <img
-            src={app.photoUrl}
+            src={firstPhoto}
             alt={app.name}
             loading="lazy"
             style={{
@@ -204,37 +234,64 @@ export default function ApplicantCard({
             🌶️
           </div>
         )}
+        {photoCount > 1 && (
+          <span
+            style={{
+              position: "absolute",
+              bottom: "8px",
+              left: "8px",
+              background: "rgba(0,0,0,0.55)",
+              color: "#fff",
+              fontSize: "11px",
+              fontWeight: 600,
+              padding: "2px 8px",
+              borderRadius: "100px",
+            }}
+          >
+            {photoCount} photos
+          </span>
+        )}
         {actionButtons}
       </div>
 
-      <div style={{ padding: "16px" }}>
+      <div style={{ padding: "14px 16px" }}>
         <div
           style={{
             display: "flex",
             justifyContent: "space-between",
             alignItems: "baseline",
-            marginBottom: "2px",
+            marginBottom: "4px",
           }}
         >
           <span
-            style={{ fontWeight: 600, fontSize: "16px", color: "var(--text)" }}
+            style={{ fontWeight: 700, fontSize: "16px", color: "var(--text)" }}
           >
             {app.name}
           </span>
-          <span style={{ fontSize: "14px", color: "var(--text-light)" }}>
-            {app.age}
-          </span>
+          <StatusBadge status={app.status} />
         </div>
 
         <p
           style={{
-            fontSize: "13px",
-            color: "var(--text-light)",
+            fontSize: "14px",
+            fontWeight: 600,
+            color: "var(--text)",
+            marginBottom: "6px",
+          }}
+        >
+          {app.age} · {app.gender} · {formatLocation(app)}
+        </p>
+
+        <div
+          style={{
+            display: "flex",
+            alignItems: "center",
+            gap: "6px",
             marginBottom: "8px",
           }}
         >
-          {formatLocation(app)}
-        </p>
+          <AppTypePill applicationType={app.applicationType} />
+        </div>
 
         <a
           href={`https://instagram.com/${handle}`}
@@ -246,13 +303,10 @@ export default function ApplicantCard({
             color: "var(--brand-red)",
             textDecoration: "none",
             display: "block",
-            marginBottom: "10px",
           }}
         >
           @{handle}
         </a>
-
-        <StatusBadge status={app.status} />
       </div>
     </article>
   );

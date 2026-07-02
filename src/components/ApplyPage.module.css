@@ -209,7 +209,88 @@
   margin-top: 12px;
 }
 
+/* ─── Sections ───────────────────────────────────────────────── */
+
+.section {
+  margin-bottom: 32px;
+}
+
+.sectionLarge {
+  margin-bottom: 40px;
+}
+
+/* Left-border distinction between Self and Nomination modes */
+.formFieldset[data-application-type="Nomination"] .section,
+.formFieldset[data-application-type="Nomination"] .sectionLarge {
+  border-left: 4px solid var(--spice-orange);
+  padding-left: 16px;
+}
+
+.formFieldset[data-application-type="Self"] .section,
+.formFieldset[data-application-type="Self"] .sectionLarge {
+  border-left: 4px solid var(--brand-red);
+  padding-left: 16px;
+}
+
+/* ─── Selectivity / accuracy callouts ───────────────────────── */
+
+.selectivityNote {
+  margin-bottom: 28px;
+  padding: 14px 18px;
+  border-radius: 12px;
+  background: rgba(var(--brand-red-rgb), 0.04);
+  border: 1px solid rgba(var(--brand-red-rgb), 0.15);
+}
+
+.selectivityNote p {
+  font-family: var(--font-body);
+  font-size: 14px;
+  color: var(--apply-brown);
+  line-height: 1.55;
+  margin: 0;
+}
+
+.contactAccuracyNote {
+  margin-bottom: 18px;
+  padding: 10px 14px;
+  border-radius: 10px;
+  background: rgba(var(--brand-red-rgb), 0.04);
+  border-left: 3px solid var(--brand-red);
+}
+
+.contactAccuracyNote p {
+  font-family: var(--font-body);
+  font-size: 13px;
+  color: var(--apply-brown);
+  line-height: 1.5;
+  margin: 0;
+}
+
+.nominationNotice {
+  margin-bottom: 20px;
+  padding: 12px 16px;
+  border-radius: 10px;
+  background: rgba(255, 109, 0, 0.06);
+  border: 1px solid rgba(255, 109, 0, 0.2);
+}
+
+.nominationNotice p {
+  font-family: var(--font-body);
+  font-size: 14px;
+  color: var(--apply-brown);
+  line-height: 1.55;
+  margin: 0;
+}
+
 /* ─── Type toggle ────────────────────────────────────────────── */
+
+.applicationModeHeading {
+  font-family: var(--font-playfair);
+  font-size: 20px;
+  font-weight: 700;
+  color: var(--charcoal);
+  margin-bottom: 8px;
+}
 
 .typeSection {
   margin-bottom: 36px;
@@ -249,6 +330,12 @@
   border: none;
   background: var(--brand-red);
   color: white;
+}
+
+/* Nomination pill uses spice-orange accent */
+.formFieldset[data-application-type="Nomination"]
+  .typeButton[data-active][data-for="Nomination"] {
+  background: var(--spice-orange);
 }
 
 /* ─── Grid layouts ───────────────────────────────────────────── */
@@ -322,6 +409,143 @@
   display: none;
 }
 
+/* ── Multi-photo guidance ── */
+
+.photoGuidance {
+  margin-bottom: 16px;
+  padding: 12px 16px;
+  border-radius: 10px;
+  background: rgba(var(--brand-red-rgb), 0.03);
+  border: 1px solid rgba(var(--brand-red-rgb), 0.1);
+}
+
+.photoGuidanceHeading {
+  font-family: var(--font-body);
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--charcoal);
+  margin: 0 0 4px;
+}
+
+.photoGuidanceIntro {
+  font-family: var(--font-body);
+  font-size: 13px;
+  color: var(--apply-brown);
+  margin: 0 0 6px;
+}
+
+.photoGuidanceList {
+  font-family: var(--font-body);
+  font-size: 13px;
+  color: var(--apply-brown);
+  margin: 0 0 6px;
+  padding-left: 18px;
+  line-height: 1.7;
+}
+
+.photoGuidanceFooter {
+  font-family: var(--font-body);
+  font-size: 12px;
+  color: var(--muted);
+  margin: 0;
+  font-style: italic;
+}
+
+/* ── Photo grid ── */
+
+.photoGrid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+  margin-bottom: 10px;
+}
+
+@media (min-width: 480px) {
+  .photoGrid {
+    grid-template-columns: repeat(4, 1fr);
+  }
+}
+
+.photoThumbWrapper {
+  position: relative;
+  border-radius: 10px;
+  overflow: hidden;
+  aspect-ratio: 3/4;
+  background: var(--border);
+}
+
+.photoThumbImg {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.photoRemoveBtn {
+  position: absolute;
+  top: 4px;
+  right: 4px;
+  width: 24px;
+  height: 24px;
+  border-radius: 100px;
+  border: none;
+  background: rgba(0, 0, 0, 0.55);
+  color: #fff;
+  font-size: 11px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  transition: background 0.15s;
+}
+
+.photoRemoveBtn:hover {
+  background: rgba(220, 38, 38, 0.85);
+}
+
+.photoRemoveBtn:focus-visible {
+  outline: 2px solid #fff;
+  outline-offset: 1px;
+}
+
+.photoAddTile,
+.photoAddTileError {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  aspect-ratio: 3/4;
+  border: 2px dashed rgba(var(--brand-red-rgb), 0.3);
+  border-radius: 10px;
+  cursor: pointer;
+  background: rgba(var(--brand-red-rgb), 0.03);
+  transition: border-color 0.2s;
+  text-align: center;
+  padding: 8px;
+}
+
+.photoAddTile:hover {
+  border-color: var(--brand-red);
+}
+
+.photoAddTileError {
+  border-color: var(--brand-red);
+}
+
+.photoAddIcon {
+  font-size: 1.5rem;
+  margin-bottom: 4px;
+}
+
+.photoAddLabel {
+  font-family: var(--font-body);
+  font-size: 12px;
+  color: var(--brand-red);
+  font-weight: 500;
+}
+
+/* Legacy single-photo classes kept to avoid stale-import errors */
 .photoDropzone {
   display: block;
   border: 2px dashed rgba(var(--brand-red-rgb), 0.3);
@@ -426,12 +650,26 @@
   box-shadow: 0 4px 20px rgba(var(--brand-red-rgb), 0.3);
 }
 
-.submitButton:disabled {
-  background: rgba(var(--brand-red-rgb), 0.5);
+/* Form incomplete: clearly disabled, not-allowed cursor */
+.submitButton:disabled:not([data-submitting]) {
+  background: rgba(var(--brand-red-rgb), 0.35);
+  cursor: not-allowed;
 }
 
-.submitButton:disabled:hover {
-  background: rgba(var(--brand-red-rgb), 0.5);
+.submitButton:disabled:not([data-submitting]):hover {
+  background: rgba(var(--brand-red-rgb), 0.35);
+  box-shadow: none;
+}
+
+/* Actively submitting: keep brand color, slight opacity */
+.submitButton[data-submitting] {
+  background: var(--brand-red);
+  opacity: 0.8;
+  cursor: wait;
+}
+
+.submitButton[data-submitting]:hover {
+  background: var(--brand-red);
   box-shadow: none;
 }
 

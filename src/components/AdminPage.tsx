@@ -8,15 +8,22 @@ export default function AdminPage() {
   const [checking, setChecking] = useState(true);
 
   useEffect(() => {
-    const unsub = onAuthStateChanged(getFirebaseAuth(), (user) => {
-      setAuthed(!!user);
-      setChecking(false);
-    });
-    return unsub;
+    let unsub: ReturnType<typeof onAuthStateChanged> | undefined;
+    getFirebaseAuth()
+      .then((auth) => {
+        unsub = onAuthStateChanged(auth, (user) => {
+          setAuthed(!!user);
+          setChecking(false);
+        });
+      })
+      .catch(() => setChecking(false));
+    return () => {
+      unsub?.();
+    };
   }, []);
 
   function handleLogout() {
-    signOut(getFirebaseAuth());
+    getFirebaseAuth().then((auth) => signOut(auth));
   }
 
   if (checking) return null;

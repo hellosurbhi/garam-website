@@ -13,7 +13,7 @@ import HomeCreators from "@/components/home/HomeCreators.astro";
 import HomeVideo from "@/components/home/HomeVideo.astro";
 import HomeFAQ from "@/components/home/HomeFAQ.astro";
 import HomeJournal from "@/components/home/HomeJournal.astro";
-import { SOCIAL_URLS, CREATOR_URLS } from "@/data/socials";
+import { CREATOR_URLS } from "@/data/socials";
 import { PAGES } from "@/data/copy";
 import { buildOrganizationJsonLd } from "@/utils/organizationSchema";
 import { YOUTUBE_VIDEO_ID, VIDEO_METADATA } from "@/lib/constants";
@@ -384,6 +384,7 @@ const speakableJsonLd = JSON.stringify({
           localStorage.setItem(POPUP_KEY, "true");
           identifyLead(savedEmail, attribution);
           trackLeadEvent("lead_email_submitted", attribution);
+          trackLeadEvent("email_signup", attribution);
           if (errorEl) {
             errorEl.textContent = "";
             errorEl.setAttribute("hidden", "");

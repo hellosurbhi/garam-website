@@ -237,6 +237,8 @@ const {
 
     const source = root.dataset.lcSource ?? "lead-capture";
     const isCityMode = root.dataset.lcCityMode === "true";
+    const isWaitlistSource =
+      /waitlist|notify|city-request|links-page|ticket/i.test(source);
     let leadDocId = "";
     let capturedEmail = "";
 
@@ -324,6 +326,16 @@ const {
             ...attribution,
             ...(city ? { city } : {}),
           });
+          trackLeadEvent("email_signup", {
+            ...attribution,
+            ...(city ? { city } : {}),
+          });
+          if (isWaitlistSource) {
+            trackLeadEvent("waitlist_submit", {
+              ...attribution,
+              ...(city ? { city } : {}),
+            });
+          }
           if (errorEl) {
             errorEl.textContent = "";
             errorEl.setAttribute("hidden", "");
@@ -456,6 +468,13 @@ const {
         sourcePage: window.location.pathname,
         ...(modalCity ? { city: modalCity } : {}),
       });
+      if (/waitlist|notify|city-request|links-page|ticket/i.test(modalSource)) {
+        trackLeadEvent("waitlist_modal_opened", {
+          source: modalSource,
+          sourcePage: window.location.pathname,
+          ...(modalCity ? { city: modalCity } : {}),
+        });
+      }
       dialog.showModal();
       (
         dialog.querySelector<HTMLInputElement>("[data-lc-email]") ?? dialog

@@ -3,6 +3,7 @@ import type { EventEntry } from "@/data/events";
 import { buildTicketUrl } from "@/utils/eventUrl";
 import { formatEventLocation } from "@/utils/eventCity";
 import { formatOnSaleDate } from "@/utils/eventDate";
+import { domainFromUrl, vendorFromUrl } from "@/lib/analyticsCapture";
 
 interface Props {
   event: EventEntry;
@@ -25,6 +26,25 @@ const onSaleLabel = event.onSaleAt ? formatOnSaleDate(event.onSaleAt) : "";
 const ticketUrl = isLive
   ? buildTicketUrl(event.url!, "tickets", "listing")
   : "#";
+const eventTitle = `Garam Masala Dating - ${cityLabel} - ${event.date}`;
+const trackingAttrs = {
+  "data-cta-position": `tickets_event_${index + 1}`,
+  "data-cta-text": isSoldOut ? "Sold Out" : "Grab My Spot",
+  "data-destination-url": ticketUrl,
+  "data-link-url": ticketUrl,
+  "data-link-domain": isLive ? domainFromUrl(ticketUrl) : "",
+  "data-event-city": cityLabel,
+  "data-event-date": event.isoDate ?? event.date,
+  "data-event-title": eventTitle,
+  "data-event-vendor": isLive ? vendorFromUrl(ticketUrl) : "",
+};
+const notifyTrackingAttrs = {
+  "data-cta-position": `tickets_event_${index + 1}`,
+  "data-cta-text": "Notify Me",
+  "data-event-city": cityLabel,
+  "data-event-date": event.isoDate ?? event.date,
+  "data-event-title": eventTitle,
+};
 ---
 
 {
@@ -40,8 +60,10 @@ const ticketUrl = isLive
       data-ph-cta="get_tickets"
       data-ph-section={sourcePage}
       data-ph-city={cityLabel}
-      data-ph-event-date={event.date}
+      data-ph-event-date={event.isoDate ?? event.date}
+      data-ph-event-title={eventTitle}
       data-ph-price={event.price}
+      {...trackingAttrs}
     >
       <div class="ticket-card__info">
         <span class="ticket-card__date">{event.date}</span>
@@ -86,6 +108,9 @@ const ticketUrl = isLive
         data-ph-cta="notify_me"
         data-ph-section={sourcePage}
         data-ph-city={cityLabel}
+        data-ph-event-date={event.isoDate ?? event.date}
+        data-ph-event-title={eventTitle}
+        {...notifyTrackingAttrs}
       >
         <div class="ticket-card__info">
           <span class="ticket-card__date">{event.date}</span>
@@ -122,8 +147,10 @@ const ticketUrl = isLive
         data-ph-cta="get_tickets"
         data-ph-section={sourcePage}
         data-ph-city={cityLabel}
-        data-ph-event-date={event.date}
+        data-ph-event-date={event.isoDate ?? event.date}
+        data-ph-event-title={eventTitle}
         data-ph-price={event.price}
+        {...trackingAttrs}
       >
         <div class="ticket-card__info">
           <span class="ticket-card__date">{event.date}</span>
@@ -165,8 +192,10 @@ const ticketUrl = isLive
       data-ph-cta="get_tickets"
       data-ph-section={sourcePage}
       data-ph-city={cityLabel}
-      data-ph-event-date={event.date}
+      data-ph-event-date={event.isoDate ?? event.date}
+      data-ph-event-title={eventTitle}
       data-ph-price={event.price}
+      {...trackingAttrs}
     >
       <div class="ticket-card__info">
         <span class="ticket-card__date">{event.date}</span>
@@ -212,6 +241,9 @@ const ticketUrl = isLive
       data-ph-cta="notify_me"
       data-ph-section={sourcePage}
       data-ph-city={cityLabel}
+      data-ph-event-date={event.isoDate ?? event.date}
+      data-ph-event-title={eventTitle}
+      {...notifyTrackingAttrs}
     >
       <div class="ticket-card__info">
         <span class="ticket-card__date ticket-card__date--tba">

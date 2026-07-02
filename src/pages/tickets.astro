@@ -1,9 +1,7 @@
 ---
-import { Picture } from "astro:assets";
 import BaseLayout from "@/layouts/BaseLayout.astro";
 import NotifyModal from "@/components/NotifyModal.astro";
 import { buildBreadcrumbJsonLd } from "@/utils/breadcrumbs";
-import { hf27Img } from "@/assets/backgrounds";
 import { events, allEvents } from "@/data/events";
 import { buildEventSchemas } from "@/utils/eventSchema";
 import LeadCaptureModal from "@/components/LeadCaptureModal.astro";
@@ -80,18 +78,6 @@ const eventSeriesJsonLd = JSON.stringify({
   </Fragment>
 
   <main id="main-content" class="tickets-page">
-    <Picture
-      class="tickets-bg"
-      src={hf27Img}
-      formats={["avif", "webp"]}
-      widths={[640, 1024, 1600]}
-      sizes="100vw"
-      alt=""
-      aria-hidden="true"
-      loading="eager"
-      decoding="async"
-      fetchpriority="high"
-    />
     <div class="tickets-container">
       {/* Header */}
       <div class="tickets-header">
@@ -153,6 +139,11 @@ const eventSeriesJsonLd = JSON.stringify({
           type="button"
           class="tickets-city-request__btn"
           data-open-modal="tickets-city-modal"
+          data-ph-capture="waitlist_click"
+          data-ph-cta="tickets_city_request"
+          data-ph-section="tickets_city_request"
+          data-cta-position="tickets_city_request"
+          data-cta-text="Tell Us Where You Are"
           aria-haspopup="dialog"
         >
           Tell Us Where You Are
@@ -212,19 +203,14 @@ const eventSeriesJsonLd = JSON.stringify({
     min-height: 100vh;
     position: relative;
     z-index: 1;
-    animation: ticketsFadeIn 0.5s ease-out both;
     overflow: hidden;
-  }
-  .tickets-bg {
-    position: absolute;
-    inset: 0;
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    object-position: center center;
-    display: block;
-    z-index: 0;
-    opacity: 0.06;
+    background:
+      radial-gradient(
+        circle at top right,
+        rgba(var(--brand-red-rgb), 0.08),
+        transparent 34rem
+      ),
+      linear-gradient(180deg, var(--off-white) 0%, var(--cream-warm) 100%);
   }
 
   .tickets-container {
@@ -239,6 +225,7 @@ const eventSeriesJsonLd = JSON.stringify({
 
   .tickets-header {
     margin-bottom: 24px;
+    animation: ticketsFadeIn 0.35s ease-out both;
   }
 
   .tickets-eyebrow {

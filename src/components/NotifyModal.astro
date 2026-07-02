@@ -216,6 +216,12 @@ const { source = "notify-modal" } = Astro.props;
             sourcePage: window.location.pathname,
             city,
           });
+          trackLeadEvent("waitlist_modal_opened", {
+            source: composeSource(citySlug),
+            sourceCitySlug: citySlug || undefined,
+            sourcePage: window.location.pathname,
+            city,
+          });
           dialog.showModal();
           dialog.focus();
         };
@@ -273,6 +279,8 @@ const { source = "notify-modal" } = Astro.props;
           notifyDocId = await captureLead(data);
           identifyLead(notifyEmail, { ...attribution, city });
           trackLeadEvent("lead_email_submitted", { ...attribution, city });
+          trackLeadEvent("email_signup", { ...attribution, city });
+          trackLeadEvent("waitlist_submit", { ...attribution, city });
           if (errorEl) {
             errorEl.textContent = "";
             errorEl.setAttribute("hidden", "");

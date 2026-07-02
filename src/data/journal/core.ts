@@ -1231,6 +1231,7 @@ export const corePosts: JournalPost[] = [
         ctaId: "tickets",
         variant: "primary",
       },
+      cityLinks: ["manhattan", "jersey-city", "los-angeles", "san-francisco"],
     },
   },
 ];

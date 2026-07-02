@@ -128,6 +128,26 @@ export const APPLY_PAGE = {
   ] as readonly string[],
   noConsentWarning:
     "Selecting No means you will not be considered. You must be okay going viral to apply.",
+  selectivityNote:
+    "We receive 2,000+ applications and cast a handful per show. If you were not selected, please do not take it personally. The best way to get on stage is to come to a show as a Stealer. That is how most of our main contestants are found. It is your real audition. Use code STEALER for 20% off any Garam Masala event.",
+  contactAccuracyNote:
+    "Real email, real phone, real Instagram. No burner accounts, no fake info. If we cannot reach you, you will not hear from us for next steps.",
+  nominationConsentLabel:
+    "I am submitting this on behalf of someone I know, with their permission. They will not be shocked to hear from us.",
+  nominationContactNote:
+    "All contact info above is your friend's, not yours. Double-check every detail. If we cannot reach them, they will never hear from us.",
+  headingSelf: "Applying for yourself",
+  headingNomination: "Nominating a friend",
+  photoGuidanceHeading: "Photos: up to 10",
+  photoGuidanceIntro: "We need to be able to tell what you look like. Include:",
+  photoGuidanceItems: [
+    "A close-up of your face (no sunglasses, no heavy filters)",
+    "A full-body shot",
+    "A recent single shot (no group photos, we cannot tell who you are)",
+    "A few candid singles that show your vibe",
+  ] as readonly string[],
+  photoGuidanceFooter:
+    "Group shots, blurry pictures, and heavy filters get skipped.",
 } as const;
 
 export const submissionDisclaimer =

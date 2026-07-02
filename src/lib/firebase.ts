@@ -1,7 +1,7 @@
 import { initializeApp, getApps, type FirebaseOptions } from "firebase/app";
 import { getFirestore, type Firestore } from "firebase/firestore";
-import { getStorage, type FirebaseStorage } from "firebase/storage";
-import { getAuth, type Auth } from "firebase/auth";
+import type { FirebaseStorage } from "firebase/storage";
+import type { Auth } from "firebase/auth";
 
 const firebaseConfig = {
   apiKey: import.meta.env.PUBLIC_FIREBASE_API_KEY?.trim(),
@@ -49,14 +49,20 @@ export function getFirebaseDb(): Firestore {
   return _db;
 }
 
-/** Return the singleton Firebase Storage instance, initialising the Firebase app on first call. */
-export function getFirebaseStorage(): FirebaseStorage {
-  if (!_storage) _storage = getStorage(getApp());
-  return _storage;
+/** Return the singleton Firebase Storage instance, lazily loading the SDK on first call. */
+export async function getFirebaseStorage(): Promise<FirebaseStorage> {
+  if (!_storage) {
+    const { getStorage } = await import("firebase/storage");
+    if (!_storage) _storage = getStorage(getApp());
+  }
+  return _storage as FirebaseStorage;
 }
 
-/** Return the singleton Firebase Auth instance, initialising the Firebase app on first call. */
-export function getFirebaseAuth(): Auth {
-  if (!_auth) _auth = getAuth(getApp());
-  return _auth;
+/** Return the singleton Firebase Auth instance, lazily loading the SDK on first call. */
+export async function getFirebaseAuth(): Promise<Auth> {
+  if (!_auth) {
+    const { getAuth } = await import("firebase/auth");
+    if (!_auth) _auth = getAuth(getApp());
+  }
+  return _auth as Auth;
 }

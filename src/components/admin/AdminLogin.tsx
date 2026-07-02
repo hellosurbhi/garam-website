@@ -21,7 +21,11 @@ export default function AdminLogin({ onSuccess }: AdminLoginProps) {
     setLoading(true);
     setError("");
     try {
-      await signInWithEmailAndPassword(getFirebaseAuth(), email, password);
+      await signInWithEmailAndPassword(
+        await getFirebaseAuth(),
+        email,
+        password,
+      );
       onSuccess();
     } catch {
       setError("Invalid email or password.");

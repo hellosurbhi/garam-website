@@ -82,7 +82,7 @@ function makeSubmitEvent() {
 function fillRequired(
   set: (field: keyof FormState, value: string) => void,
   handleTermsCheckbox: (v: boolean) => void,
-  handlePhotoChange: (e: React.ChangeEvent<HTMLInputElement>) => void,
+  handleAddPhotos: (e: React.ChangeEvent<HTMLInputElement>) => void,
 ) {
   set("name", "Jane Doe");
   set("age", "25");
@@ -93,7 +93,7 @@ function fillRequired(
   set("instagram", "janedoe");
   set("marketingConsent", "yes");
   handleTermsCheckbox(true);
-  handlePhotoChange(makeChangeEvent(makeFile()));
+  handleAddPhotos(makeChangeEvent(makeFile()));
 }
 
 /* ─── Tests ──────────────────────────────────────────────────────── */
@@ -201,32 +201,30 @@ describe("useApplyForm", () => {
     expect(result.current.errors.name).toBe("Required");
   });
 
-  /* ── handlePhotoChange ────────────────────────────────── */
+  /* ── handleAddPhotos ────────────────────────────────── */
 
-  it("handlePhotoChange accepts file under 5MB", () => {
+  it("handleAddPhotos accepts file under 5MB", () => {
     const { result } = renderHook(() => useApplyForm());
     act(() =>
-      result.current.handlePhotoChange(
-        makeChangeEvent(makeFile("p.jpg", 1024)),
-      ),
+      result.current.handleAddPhotos(makeChangeEvent(makeFile("p.jpg", 1024))),
     );
     expect(result.current.errors.photo).toBeUndefined();
   });
 
-  it("handlePhotoChange rejects file over 5MB", () => {
+  it("handleAddPhotos rejects file over 5MB", () => {
     const { result } = renderHook(() => useApplyForm());
     act(() =>
-      result.current.handlePhotoChange(
+      result.current.handleAddPhotos(
         makeChangeEvent(makeFile("huge.jpg", 6 * 1024 * 1024)),
       ),
     );
     expect(result.current.errors.photo).toBe("Photo must be under 5 MB");
   });
 
-  it("handlePhotoChange clears photo on no file selected", () => {
+  it("handleAddPhotos with no file selected does not change photo state", () => {
     const { result } = renderHook(() => useApplyForm());
-    act(() => result.current.handlePhotoChange(makeChangeEvent()));
-    expect(result.current.photoPreview).toBeNull();
+    act(() => result.current.handleAddPhotos(makeChangeEvent()));
+    expect(result.current.photoPreviews).toEqual([]);
   });
 
   /* ── handleTermsCheckbox / agreeToTerms ───────────────── */
@@ -391,7 +389,7 @@ describe("useApplyForm", () => {
       fillRequired(
         result.current.set,
         result.current.handleTermsCheckbox,
-        result.current.handlePhotoChange,
+        result.current.handleAddPhotos,
       ),
     );
 
@@ -421,7 +419,7 @@ describe("useApplyForm", () => {
       fillRequired(
         result.current.set,
         result.current.handleTermsCheckbox,
-        result.current.handlePhotoChange,
+        result.current.handleAddPhotos,
       ),
     );
 
@@ -432,7 +430,7 @@ describe("useApplyForm", () => {
     expect(result.current.submitted).toBe(true);
     expect(result.current.form.name).toBe("");
     expect(result.current.termsAgreed).toBe(false);
-    expect(result.current.photoPreview).toBeNull();
+    expect(result.current.photoPreviews).toEqual([]);
     expect(result.current.errors).toEqual({});
   });
 
@@ -443,7 +441,7 @@ describe("useApplyForm", () => {
       fillRequired(
         result.current.set,
         result.current.handleTermsCheckbox,
-        result.current.handlePhotoChange,
+        result.current.handleAddPhotos,
       );
       result.current.set("instagram", "@janedoe");
     });
@@ -464,7 +462,7 @@ describe("useApplyForm", () => {
       fillRequired(
         result.current.set,
         result.current.handleTermsCheckbox,
-        result.current.handlePhotoChange,
+        result.current.handleAddPhotos,
       );
       result.current.set("applicationType", "Nomination");
       result.current.set("referrerName", "Nominator");
@@ -486,7 +484,7 @@ describe("useApplyForm", () => {
       fillRequired(
         result.current.set,
         result.current.handleTermsCheckbox,
-        result.current.handlePhotoChange,
+        result.current.handleAddPhotos,
       ),
     );
 
@@ -506,7 +504,7 @@ describe("useApplyForm", () => {
       fillRequired(
         result.current.set,
         result.current.handleTermsCheckbox,
-        result.current.handlePhotoChange,
+        result.current.handleAddPhotos,
       ),
     );
 
@@ -527,7 +525,7 @@ describe("useApplyForm", () => {
       fillRequired(
         result.current.set,
         result.current.handleTermsCheckbox,
-        result.current.handlePhotoChange,
+        result.current.handleAddPhotos,
       ),
     );
 
@@ -541,7 +539,7 @@ describe("useApplyForm", () => {
     expect(docData.marketingConsent).toBe("yes");
     expect(docData.termsAgreedAt).toBe("mock-timestamp");
     expect(docData.submittedAt).toBe("mock-timestamp");
-    expect(docData.photoUrl).toBe("https://example.com/photo.jpg");
+    expect(docData.photoUrls).toEqual(["https://example.com/photo.jpg"]);
   });
 
   /* ── handleSubmit error flow ──────────────────────────── */
@@ -554,7 +552,7 @@ describe("useApplyForm", () => {
       fillRequired(
         result.current.set,
         result.current.handleTermsCheckbox,
-        result.current.handlePhotoChange,
+        result.current.handleAddPhotos,
       ),
     );
 
@@ -577,7 +575,7 @@ describe("useApplyForm", () => {
       fillRequired(
         result.current.set,
         result.current.handleTermsCheckbox,
-        result.current.handlePhotoChange,
+        result.current.handleAddPhotos,
       ),
     );
 
@@ -620,9 +618,9 @@ describe("useApplyForm", () => {
     expect(result.current.toast).toBeNull();
   });
 
-  it("starts with photoPreview null", () => {
+  it("starts with photoPreviews empty", () => {
     const { result } = renderHook(() => useApplyForm());
-    expect(result.current.photoPreview).toBeNull();
+    expect(result.current.photoPreviews).toEqual([]);
   });
 
   it("starts with cityInput empty", () => {
@@ -787,52 +785,52 @@ describe("useApplyForm", () => {
 
   /* ── Group 8: File size boundary ─────────────────────── */
 
-  it("handlePhotoChange accepts file exactly 5MB", () => {
+  it("handleAddPhotos accepts file exactly 5MB", () => {
     const { result } = renderHook(() => useApplyForm());
     act(() =>
-      result.current.handlePhotoChange(
+      result.current.handleAddPhotos(
         makeChangeEvent(makeFile("exact.jpg", 5 * 1024 * 1024)),
       ),
     );
     expect(result.current.errors.photo).toBeUndefined();
   });
 
-  it("handlePhotoChange rejects file at 5MB + 1 byte", () => {
+  it("handleAddPhotos rejects file at 5MB + 1 byte", () => {
     const { result } = renderHook(() => useApplyForm());
     act(() =>
-      result.current.handlePhotoChange(
+      result.current.handleAddPhotos(
         makeChangeEvent(makeFile("big.jpg", 5 * 1024 * 1024 + 1)),
       ),
     );
     expect(result.current.errors.photo).toBe("Photo must be under 5 MB");
   });
 
-  it("handlePhotoChange resets input value on rejection", () => {
+  it("handleAddPhotos resets input value on rejection", () => {
     const { result } = renderHook(() => useApplyForm());
     const event = makeChangeEvent(makeFile("huge.jpg", 6 * 1024 * 1024));
-    act(() => result.current.handlePhotoChange(event));
+    act(() => result.current.handleAddPhotos(event));
     expect(event.target.value).toBe("");
   });
 
-  it("handlePhotoChange clears previous photo error on valid file", () => {
+  it("handleAddPhotos clears previous photo error on valid file", () => {
     const { result } = renderHook(() => useApplyForm());
     act(() =>
-      result.current.handlePhotoChange(
+      result.current.handleAddPhotos(
         makeChangeEvent(makeFile("big.jpg", 6 * 1024 * 1024)),
       ),
     );
-    expect(result.current.errors.photo).toBe("Photo must be under 5 MB");
+    expect(result.current.errors.photo).toBe(
+      "Each photo must be under 5 MB. big.jpg is too large.",
+    );
     act(() =>
-      result.current.handlePhotoChange(
-        makeChangeEvent(makeFile("ok.jpg", 1024)),
-      ),
+      result.current.handleAddPhotos(makeChangeEvent(makeFile("ok.jpg", 1024))),
     );
     expect(result.current.errors.photo).toBeUndefined();
   });
 
   /* ── Group 9: FileReader error path ──────────────────── */
 
-  it("handlePhotoChange sets error on FileReader failure", () => {
+  it("handleAddPhotos sets error on FileReader failure", () => {
     const OriginalFileReader = globalThis.FileReader;
     const capturedReader: Record<string, unknown> = { readAsDataURL: vi.fn() };
 
@@ -843,7 +841,7 @@ describe("useApplyForm", () => {
     try {
       const { result } = renderHook(() => useApplyForm());
       act(() =>
-        result.current.handlePhotoChange(
+        result.current.handleAddPhotos(
           makeChangeEvent(makeFile("photo.jpg", 1024)),
         ),
       );
@@ -851,9 +849,9 @@ describe("useApplyForm", () => {
         (capturedReader.onerror as () => void)?.();
       });
       expect(result.current.errors.photo).toBe(
-        "Failed to read file. Please try again.",
+        "Failed to read a file. Please try again.",
       );
-      expect(result.current.photoPreview).toBeNull();
+      expect(result.current.photoPreviews).toEqual([]);
     } finally {
       globalThis.FileReader = OriginalFileReader;
     }
@@ -867,7 +865,7 @@ describe("useApplyForm", () => {
       fillRequired(
         result.current.set,
         result.current.handleTermsCheckbox,
-        result.current.handlePhotoChange,
+        result.current.handleAddPhotos,
       );
       result.current.set("name", "  Jane Doe  ");
       result.current.set("height", "  5'8  ");
@@ -888,7 +886,7 @@ describe("useApplyForm", () => {
       fillRequired(
         result.current.set,
         result.current.handleTermsCheckbox,
-        result.current.handlePhotoChange,
+        result.current.handleAddPhotos,
       ),
     );
     await act(async () => {
@@ -905,7 +903,7 @@ describe("useApplyForm", () => {
       fillRequired(
         result.current.set,
         result.current.handleTermsCheckbox,
-        result.current.handlePhotoChange,
+        result.current.handleAddPhotos,
       );
       result.current.set("orientation", "Bisexual");
       result.current.set("community", "South Asian");
@@ -937,10 +935,10 @@ describe("useApplyForm", () => {
       fillRequired(
         result.current.set,
         result.current.handleTermsCheckbox,
-        result.current.handlePhotoChange,
+        result.current.handleAddPhotos,
       );
       // Override photo with .png file
-      result.current.handlePhotoChange(
+      result.current.handleAddPhotos(
         makeChangeEvent(
           new File([new ArrayBuffer(1024)], "photo.png", {
             type: "image/png",
@@ -964,9 +962,9 @@ describe("useApplyForm", () => {
       fillRequired(
         result.current.set,
         result.current.handleTermsCheckbox,
-        result.current.handlePhotoChange,
+        result.current.handleAddPhotos,
       );
-      result.current.handlePhotoChange(
+      result.current.handleAddPhotos(
         makeChangeEvent(
           new File([new ArrayBuffer(1024)], "noext", { type: "image/jpeg" }),
         ),
@@ -992,7 +990,7 @@ describe("useApplyForm", () => {
       fillRequired(
         result.current.set,
         result.current.handleTermsCheckbox,
-        result.current.handlePhotoChange,
+        result.current.handleAddPhotos,
       ),
     );
     await act(async () => {
@@ -1051,7 +1049,7 @@ describe("useApplyForm", () => {
 
   /* ── Additional mutation killers ─────────────────────── */
 
-  it("handlePhotoChange generates preview via FileReader onloadend", () => {
+  it("handleAddPhotos generates preview via FileReader onloadend", () => {
     const OriginalFileReader = globalThis.FileReader;
     const capturedReader: Record<string, unknown> = {
       readAsDataURL: vi.fn(),
@@ -1065,14 +1063,16 @@ describe("useApplyForm", () => {
     try {
       const { result } = renderHook(() => useApplyForm());
       act(() =>
-        result.current.handlePhotoChange(
+        result.current.handleAddPhotos(
           makeChangeEvent(makeFile("pic.jpg", 1024)),
         ),
       );
       act(() => {
         (capturedReader.onloadend as () => void)?.();
       });
-      expect(result.current.photoPreview).toBe("data:image/jpeg;base64,abc123");
+      expect(result.current.photoPreviews[0]).toBe(
+        "data:image/jpeg;base64,abc123",
+      );
     } finally {
       globalThis.FileReader = OriginalFileReader;
     }
@@ -1084,7 +1084,7 @@ describe("useApplyForm", () => {
       fillRequired(
         result.current.set,
         result.current.handleTermsCheckbox,
-        result.current.handlePhotoChange,
+        result.current.handleAddPhotos,
       ),
     );
     await act(async () => {
@@ -1099,7 +1099,7 @@ describe("useApplyForm", () => {
       fillRequired(
         result.current.set,
         result.current.handleTermsCheckbox,
-        result.current.handlePhotoChange,
+        result.current.handleAddPhotos,
       ),
     );
     await act(async () => {
@@ -1111,7 +1111,7 @@ describe("useApplyForm", () => {
     const body = JSON.parse(fetchCall[1].body);
     expect(body.name).toBe("Jane Doe");
     expect(body.age).toBe(25);
-    expect(body.photoUrl).toBe("https://example.com/photo.jpg");
+    expect(body.photoUrls).toEqual(["https://example.com/photo.jpg"]);
   });
 
   it("set() clears specific field error without affecting others", async () => {
@@ -1138,7 +1138,7 @@ describe("useApplyForm", () => {
       fillRequired(
         result.current.set,
         result.current.handleTermsCheckbox,
-        result.current.handlePhotoChange,
+        result.current.handleAddPhotos,
       ),
     );
     await act(async () => {
@@ -1154,7 +1154,7 @@ describe("useApplyForm", () => {
       fillRequired(
         result.current.set,
         result.current.handleTermsCheckbox,
-        result.current.handlePhotoChange,
+        result.current.handleAddPhotos,
       ),
     );
     await act(async () => {
@@ -1175,7 +1175,7 @@ describe("useApplyForm", () => {
       result.current.set("email", "valid@example.com");
       result.current.set("instagram", "jane");
       result.current.set("marketingConsent", "yes");
-      result.current.handlePhotoChange(makeChangeEvent(makeFile()));
+      result.current.handleAddPhotos(makeChangeEvent(makeFile()));
       // Do NOT check terms
     });
     await act(async () => {

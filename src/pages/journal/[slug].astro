@@ -9,7 +9,9 @@ import {
 } from "@/data/journal";
 import { buildBreadcrumbJsonLd } from "@/utils/breadcrumbs";
 import { deriveSeoTitle } from "@/utils/meta";
-import { HF_IMAGES, slugToImageIndex } from "@/data/images";
+import { Picture } from "astro:assets";
+import { HF_IMAGES_ASSETS } from "@/assets/backgrounds";
+import { slugToImageIndex } from "@/data/images";
 import { gitDates } from "virtual:git-dates";
 
 export function getStaticPaths() {
@@ -40,7 +42,8 @@ const related = post.relatedSlugs
     (p): p is JournalPost => p !== undefined && publishedSlugs.has(p.slug),
   );
 
-const heroImage = HF_IMAGES[slugToImageIndex(post.slug, HF_IMAGES.length)];
+const heroImage =
+  HF_IMAGES_ASSETS[slugToImageIndex(post.slug, HF_IMAGES_ASSETS.length)];
 
 function formatDate(iso: string): string {
   return new Date(iso).toLocaleDateString("en-US", {
@@ -122,12 +125,13 @@ const seoTitle = post.seoTitle ?? deriveSeoTitle(post.title);
   </Fragment>
 
   <main id="main-content" class="post-page">
-    <img
+    <Picture
       class="post-bg"
       src={heroImage}
+      formats={["avif", "webp"]}
+      widths={[640, 1024, 1600]}
+      sizes="100vw"
       alt=""
-      width="1200"
-      height="800"
       aria-hidden="true"
       loading="lazy"
       decoding="async"

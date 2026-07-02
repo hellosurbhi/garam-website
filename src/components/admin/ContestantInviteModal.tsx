@@ -53,7 +53,8 @@ export default function ContestantInviteModal({
     setError("");
 
     try {
-      const idToken = await getFirebaseAuth().currentUser?.getIdToken();
+      const auth = await getFirebaseAuth();
+      const idToken = await auth.currentUser?.getIdToken();
       if (!idToken) {
         setError("Session expired. Please log in again.");
         setSubmitting(false);

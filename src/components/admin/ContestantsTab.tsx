@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo } from "react";
+import { useState, useEffect, useMemo, useCallback } from "react";
 import { getFirebaseAuth } from "@/lib/firebase";
 import { events } from "@/data/events";
 import Skeleton from "../ui/Skeleton";
@@ -46,11 +46,12 @@ export default function ContestantsTab() {
     (e) => e.isoDate && e.isoDate > today && !e.hidden,
   );
 
-  async function fetchInvites() {
+  const fetchInvites = useCallback(async () => {
     setLoading(true);
     setFetchError(null);
     try {
-      const user = getFirebaseAuth().currentUser;
+      const auth = await getFirebaseAuth();
+      const user = auth.currentUser;
       if (!user || user.isAnonymous) {
         setFetchError("Please log in with the admin account.");
         return;
@@ -72,11 +73,13 @@ export default function ContestantsTab() {
     } finally {
       setLoading(false);
     }
-  }
+  }, []);
 
   useEffect(() => {
-    fetchInvites();
-  }, []);
+    (async () => {
+      await fetchInvites();
+    })();
+  }, [fetchInvites]);
 
   const filteredInvites = useMemo(() => {
     if (showFilter === "all") return invites;

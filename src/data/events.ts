@@ -389,6 +389,8 @@ const TBA_CITIES = [
   },
 ];
 
+export const TBA_CITY_SLUGS: string[] = TBA_CITIES.map((c) => c.citySlug);
+
 export const comingSoonEvents: EventEntry[] = TBA_CITIES.map((city) => ({
   date: "TBA",
   city: city.city,

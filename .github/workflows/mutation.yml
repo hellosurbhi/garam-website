@@ -1,0 +1,40 @@
+# Stryker Mutation Testing — monthly
+#
+# Mutation testing is valuable for risky refactors, but it is too expensive for
+# every PR update on a personal-account budget.
+name: Mutation Testing
+
+on:
+  schedule:
+    - cron: "0 14 1 * *" # 1st of each month, 14:00 UTC
+
+concurrency:
+  group: mutation-${{ github.sha }}
+  cancel-in-progress: true
+
+jobs:
+  mutation:
+    name: Stryker Mutation Testing
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-node@v5
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - name: Restore Stryker cache
+        uses: actions/cache@v4
+        with:
+          path: reports/stryker-incremental.json
+          key: stryker-${{ github.sha }}
+          restore-keys: stryker-
+      - name: Run Stryker
+        run: npx stryker run --incremental
+      - name: Upload mutation report
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: mutation-report
+          path: reports/mutation/
+          retention-days: 14

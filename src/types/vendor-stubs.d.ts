@@ -6,5 +6,25 @@
  */
 
 declare module "@react-email/components";
-declare module "@upstash/redis";
-declare module "@upstash/ratelimit";
+
+declare module "@upstash/redis" {
+  export class Redis {
+    constructor(config: { url: string; token: string });
+  }
+}
+
+declare module "@upstash/ratelimit" {
+  export class Ratelimit {
+    constructor(config: { redis: unknown; limiter: unknown; prefix?: string });
+    static slidingWindow(
+      requests: number,
+      window: string,
+    ): { kind: "sliding_window" };
+    limit(identifier: string): Promise<{
+      success: boolean;
+      limit: number;
+      remaining: number;
+      reset: number;
+    }>;
+  }
+}

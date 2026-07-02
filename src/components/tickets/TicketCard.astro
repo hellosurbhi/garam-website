@@ -1,0 +1,393 @@
+---
+import type { EventEntry } from "@/data/events";
+import { buildTicketUrl } from "@/utils/eventUrl";
+import { formatEventLocation } from "@/utils/eventCity";
+import { formatOnSaleDate } from "@/utils/eventDate";
+
+interface Props {
+  event: EventEntry;
+  index: number;
+  sourcePage: string;
+  tagline?: string;
+}
+
+const { event, index, sourcePage, tagline } = Astro.props;
+
+const staggerDelay = `${0.1 + index * 0.06}s`;
+const isPresale =
+  Boolean(event.onSaleAt) && new Date(event.onSaleAt!) > new Date();
+const isLive = !!event.url && event.url !== "#";
+const isSoldOut = event.soldOut ?? false;
+const hasWidget =
+  isLive && !isSoldOut && Boolean(event.eventbriteId) && !isPresale;
+const cityLabel = formatEventLocation(event);
+const onSaleLabel = event.onSaleAt ? formatOnSaleDate(event.onSaleAt) : "";
+const ticketUrl = isLive
+  ? buildTicketUrl(event.url!, "tickets", "listing")
+  : "#";
+---
+
+{
+  hasWidget && (
+    <a
+      href={ticketUrl}
+      target="_blank"
+      rel="noopener noreferrer"
+      id={`eventbrite-widget-modal-trigger-${event.eventbriteId}`}
+      class="ticket-card ticket-card--live ticket-card--widget"
+      style={`--stagger-delay: ${staggerDelay}`}
+      data-ph-capture="cta_clicked"
+      data-ph-cta="get_tickets"
+      data-ph-section={sourcePage}
+      data-ph-city={cityLabel}
+      data-ph-event-date={event.date}
+      data-ph-price={event.price}
+    >
+      <div class="ticket-card__info">
+        <span class="ticket-card__date">{event.date}</span>
+        <span class="ticket-card__city">{cityLabel}</span>
+        {tagline && <span class="ticket-card__tagline">{tagline}</span>}
+      </div>
+      <span class="ticket-card__cta">
+        Grab My Spot
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          width="14"
+          height="14"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          aria-hidden="true"
+          focusable="false"
+        >
+          <path d="M5 12h14" />
+          <path d="m12 5 7 7-7 7" />
+        </svg>
+      </span>
+    </a>
+  )
+}
+
+{
+  !hasWidget && isPresale && (
+    <>
+      <button
+        type="button"
+        class="ticket-card ticket-card--tba"
+        style={`--stagger-delay: ${staggerDelay}`}
+        data-notify-city={cityLabel}
+        data-notify-city-slug={`presale-${event.isoDate}`}
+        data-notify-on-sale-at={event.onSaleAt}
+        data-presale-notify={event.onSaleAt}
+        data-ph-capture="cta_clicked"
+        data-ph-cta="notify_me"
+        data-ph-section={sourcePage}
+        data-ph-city={cityLabel}
+      >
+        <div class="ticket-card__info">
+          <span class="ticket-card__date">{event.date}</span>
+          <span class="ticket-card__city">{cityLabel}</span>
+          <span class="ticket-card__tagline">On sale {onSaleLabel}</span>
+        </div>
+        <span class="ticket-card__cta ticket-card__cta--notify">
+          Notify Me
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="14"
+            height="14"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          >
+            <path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9" />
+            <path d="M10.3 21a1.94 1.94 0 0 0 3.4 0" />
+          </svg>
+        </span>
+      </button>
+      <a
+        href={ticketUrl}
+        target="_blank"
+        rel="noopener noreferrer"
+        class="ticket-card ticket-card--live"
+        style={`--stagger-delay: ${staggerDelay}`}
+        data-presale-live
+        hidden
+        data-ph-capture="cta_clicked"
+        data-ph-cta="get_tickets"
+        data-ph-section={sourcePage}
+        data-ph-city={cityLabel}
+        data-ph-event-date={event.date}
+        data-ph-price={event.price}
+      >
+        <div class="ticket-card__info">
+          <span class="ticket-card__date">{event.date}</span>
+          <span class="ticket-card__city">{cityLabel}</span>
+        </div>
+        <span class="ticket-card__cta">
+          Grab My Spot
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="14"
+            height="14"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            aria-hidden="true"
+            focusable="false"
+          >
+            <path d="M5 12h14" />
+            <path d="m12 5 7 7-7 7" />
+          </svg>
+        </span>
+      </a>
+    </>
+  )
+}
+
+{
+  !hasWidget && !isPresale && isLive && (
+    <a
+      href={ticketUrl}
+      target="_blank"
+      rel="noopener noreferrer"
+      class={`ticket-card ticket-card--live${isSoldOut ? " ticket-card--soldout" : ""}`}
+      style={`--stagger-delay: ${staggerDelay}`}
+      data-ph-capture="cta_clicked"
+      data-ph-cta="get_tickets"
+      data-ph-section={sourcePage}
+      data-ph-city={cityLabel}
+      data-ph-event-date={event.date}
+      data-ph-price={event.price}
+    >
+      <div class="ticket-card__info">
+        <span class="ticket-card__date">{event.date}</span>
+        <span class="ticket-card__city">{cityLabel}</span>
+        {tagline && <span class="ticket-card__tagline">{tagline}</span>}
+      </div>
+      <span
+        class={`ticket-card__cta${isSoldOut ? " ticket-card__cta--soldout" : ""}`}
+      >
+        {isSoldOut ? "Sold Out" : "Grab My Spot"}
+        {!isSoldOut && (
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="14"
+            height="14"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            aria-hidden="true"
+            focusable="false"
+          >
+            <path d="M5 12h14" />
+            <path d="m12 5 7 7-7 7" />
+          </svg>
+        )}
+      </span>
+    </a>
+  )
+}
+
+{
+  !hasWidget && !isPresale && !isLive && (
+    <button
+      type="button"
+      class="ticket-card ticket-card--tba"
+      style={`--stagger-delay: ${staggerDelay}`}
+      data-notify-city={cityLabel}
+      data-notify-city-slug={event.citySlug}
+      data-ph-capture="cta_clicked"
+      data-ph-cta="notify_me"
+      data-ph-section={sourcePage}
+      data-ph-city={cityLabel}
+    >
+      <div class="ticket-card__info">
+        <span class="ticket-card__date ticket-card__date--tba">
+          {event.date}
+        </span>
+        <span class="ticket-card__city ticket-card__city--tba">
+          {cityLabel}
+        </span>
+        {tagline && <span class="ticket-card__tagline">{tagline}</span>}
+      </div>
+      <span class="ticket-card__cta ticket-card__cta--notify">
+        Notify Me
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          width="14"
+          height="14"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+        >
+          <path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9" />
+          <path d="M10.3 21a1.94 1.94 0 0 0 3.4 0" />
+        </svg>
+      </span>
+    </button>
+  )
+}
+
+<style>
+  @keyframes ticketsFadeIn {
+    from {
+      opacity: 0;
+      transform: translateY(16px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  .ticket-card {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    padding: 22px;
+    border-radius: 12px;
+    border: 1px solid;
+    text-decoration: none;
+    animation: ticketsFadeIn 0.5s ease-out both;
+    animation-delay: var(--stagger-delay, 0.1s);
+    transition:
+      border-color 0.15s,
+      background 0.15s;
+  }
+
+  .ticket-card[hidden] {
+    display: none;
+  }
+
+  .ticket-card--live {
+    border-color: rgba(var(--brand-red-rgb), 0.35);
+    background: white;
+  }
+
+  .ticket-card--live:hover {
+    border-color: rgba(var(--brand-red-rgb), 0.55);
+    background: rgba(var(--brand-red-rgb), 0.04);
+  }
+
+  .ticket-card--tba {
+    border-color: rgba(0, 0, 0, 0.08);
+    background: white;
+    cursor: pointer;
+    text-align: left;
+    font: inherit;
+  }
+
+  .ticket-card--widget {
+    cursor: pointer;
+    text-align: left;
+    font: inherit;
+    width: 100%;
+  }
+
+  .ticket-card--tba:hover {
+    border-color: rgba(var(--brand-red-rgb), 0.3);
+    background: rgba(var(--brand-red-rgb), 0.02);
+  }
+
+  .ticket-card__info {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+
+  .ticket-card__date {
+    font-family: var(--font-body);
+    font-size: 11px;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    color: var(--brand-red);
+  }
+
+  .ticket-card__date--tba {
+    color: var(--muted);
+  }
+
+  .ticket-card__city {
+    font-family: var(--font-playfair);
+    font-size: 20px;
+    font-weight: 600;
+    color: var(--charcoal);
+    line-height: 1.25;
+  }
+
+  .ticket-card__city--tba {
+    color: var(--text-light);
+  }
+
+  .ticket-card__tagline {
+    font-family: var(--font-body);
+    font-size: 11px;
+    font-weight: 500;
+    color: var(--muted);
+    letter-spacing: 0.04em;
+  }
+
+  .ticket-card__cta {
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-family: var(--font-body);
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--brand-red);
+    padding: 8px 14px;
+    border: 1px solid rgba(var(--brand-red-rgb), 0.35);
+    border-radius: 8px;
+    background: rgba(var(--brand-red-rgb), 0.08);
+    white-space: nowrap;
+    transition:
+      background 0.15s,
+      border-color 0.15s;
+  }
+
+  .ticket-card--live:hover .ticket-card__cta {
+    background: rgba(var(--brand-red-rgb), 0.15);
+    border-color: rgba(var(--brand-red-rgb), 0.5);
+  }
+
+  .ticket-card__cta--soldout {
+    background: rgba(0, 0, 0, 0.04);
+    color: var(--muted);
+    border-color: rgba(0, 0, 0, 0.08);
+  }
+
+  .ticket-card--live:hover .ticket-card__cta--soldout {
+    background: rgba(0, 0, 0, 0.04);
+    border-color: rgba(0, 0, 0, 0.08);
+  }
+
+  .ticket-card__cta--notify {
+    border-color: rgba(0, 0, 0, 0.1);
+    background: rgba(0, 0, 0, 0.03);
+    color: var(--text-light);
+  }
+
+  .ticket-card--tba:hover .ticket-card__cta--notify {
+    background: rgba(var(--brand-red-rgb), 0.08);
+    border-color: rgba(var(--brand-red-rgb), 0.35);
+    color: var(--brand-red);
+  }
+</style>

@@ -1,6 +1,10 @@
 import { describe, it, expect, beforeEach } from "vitest";
 import { getStoredUtms } from "@/lib/leadAttribution";
-import { applyUtmsToUrl } from "@/utils/utmForwarding";
+import {
+  applyStoredUtmsToUrl,
+  applyUtmsToUrl,
+  forceStoredUtmsToUrl,
+} from "@/utils/utmForwarding";
 
 describe("UTM forwarding", () => {
   beforeEach(() => {
@@ -92,5 +96,39 @@ describe("UTM forwarding", () => {
     });
     const url = new URL(result);
     expect(url.searchParams.get("utm_term")).toBe("desi");
+  });
+
+  it("applyStoredUtmsToUrl preserves existing URL UTMs while filling gaps", () => {
+    const result = applyStoredUtmsToUrl(
+      "https://garammasaladating.com/tickets?utm_source=manual",
+      {
+        utmSource: "ig",
+        utmMedium: "social",
+        utmCampaign: "ticket_sales",
+        utmContent: "bio",
+      },
+    );
+    const url = new URL(result);
+    expect(url.searchParams.get("utm_source")).toBe("manual");
+    expect(url.searchParams.get("utm_medium")).toBe("social");
+    expect(url.searchParams.get("utm_campaign")).toBe("ticket_sales");
+    expect(url.searchParams.get("utm_content")).toBe("bio");
+  });
+
+  it("forceStoredUtmsToUrl overwrites site-default vendor UTMs with first-touch attribution", () => {
+    const result = forceStoredUtmsToUrl(
+      "https://eventbrite.com/e/1?utm_source=garamsite&utm_medium=web&utm_campaign=tickets&utm_content=listing",
+      {
+        utmSource: "ig",
+        utmMedium: "social",
+        utmCampaign: "ticket_sales",
+        utmContent: "story",
+      },
+    );
+    const url = new URL(result);
+    expect(url.searchParams.get("utm_source")).toBe("ig");
+    expect(url.searchParams.get("utm_medium")).toBe("social");
+    expect(url.searchParams.get("utm_campaign")).toBe("ticket_sales");
+    expect(url.searchParams.get("utm_content")).toBe("story");
   });
 });

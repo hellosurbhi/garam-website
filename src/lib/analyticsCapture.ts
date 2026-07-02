@@ -11,6 +11,23 @@
 
 export type CaptureProps = Record<string, unknown>;
 
+export const TICKET_VENDOR_DOMAINS = [
+  "eventbrite.com",
+  "citywinery.com",
+  "dccomedyloft.com",
+] as const;
+
+export const SOCIAL_DOMAINS = [
+  "instagram.com",
+  "tiktok.com",
+  "youtube.com",
+  "youtu.be",
+  "threads.net",
+  "x.com",
+  "twitter.com",
+  "facebook.com",
+] as const;
+
 const META_EVENT_MAP: Record<string, string> = {
   lead_email_submitted: "Lead",
   email_signup: "Lead",
@@ -29,15 +46,60 @@ function safeReferrer(): string {
   }
 }
 
-function safePageType(pathname: string): string {
-  if (pathname === "/") return "home";
-  if (pathname.startsWith("/tickets")) return "tickets";
-  if (pathname.startsWith("/links")) return "links";
-  if (pathname.startsWith("/apply")) return "apply";
-  if (pathname.startsWith("/cities/")) return "city";
-  if (pathname.startsWith("/journal/")) return "journal";
-  if (pathname.startsWith("/corporate")) return "corporate";
-  if (pathname.startsWith("/sponsorship")) return "sponsorship";
+export function normalizeDomain(hostname: string): string {
+  return hostname.toLowerCase().replace(/^www\./, "");
+}
+
+export function domainFromUrl(url: string): string {
+  try {
+    return normalizeDomain(new URL(url).hostname);
+  } catch {
+    return "";
+  }
+}
+
+function matchesDomain(hostname: string, domains: readonly string[]): boolean {
+  const normalized = normalizeDomain(hostname);
+  return domains.some(
+    (domain) => normalized === domain || normalized.endsWith(`.${domain}`),
+  );
+}
+
+export function isTicketVendorUrl(url: string): boolean {
+  try {
+    return matchesDomain(new URL(url).hostname, TICKET_VENDOR_DOMAINS);
+  } catch {
+    return false;
+  }
+}
+
+export function isSocialUrl(url: string): boolean {
+  try {
+    return matchesDomain(new URL(url).hostname, SOCIAL_DOMAINS);
+  } catch {
+    return false;
+  }
+}
+
+export function vendorFromUrl(url: string): string {
+  const domain = domainFromUrl(url);
+  if (!domain) return "";
+  const vendor = TICKET_VENDOR_DOMAINS.find(
+    (candidate) => domain === candidate || domain.endsWith(`.${candidate}`),
+  );
+  return vendor ? vendor.split(".")[0]! : domain.split(".")[0]!;
+}
+
+function safePageType(pathname: string | undefined | null): string {
+  const path = pathname || "/";
+  if (path === "/") return "home";
+  if (path.startsWith("/tickets")) return "tickets";
+  if (path.startsWith("/links")) return "links";
+  if (path.startsWith("/apply")) return "apply";
+  if (path.startsWith("/cities/")) return "city";
+  if (path.startsWith("/journal/")) return "journal";
+  if (path.startsWith("/corporate")) return "corporate";
+  if (path.startsWith("/sponsorship")) return "sponsorship";
   return "other";
 }
 
@@ -45,8 +107,8 @@ function safePageType(pathname: string): string {
 export function enrichEvent(properties: CaptureProps = {}): CaptureProps {
   if (typeof window === "undefined") return { ...properties };
 
-  const url = window.location.href;
-  const pathname = window.location.pathname;
+  const url = window.location.href || "";
+  const pathname = window.location.pathname || "/";
 
   // Read UTMs from the current URL first; fall back to sessionStorage first-touch.
   const params = new URLSearchParams(window.location.search);
@@ -127,18 +189,29 @@ export function trackOutbound(
   eventName = "outbound_link_clicked",
 ): void {
   const href = anchor.href;
-  let domain = "";
-  try {
-    domain = new URL(href).hostname;
-  } catch {
-    /* invalid URL */
-  }
+  const domain = domainFromUrl(href);
+  const ctaText = (
+    anchor.dataset.ctaText ||
+    anchor.dataset.phCtaText ||
+    anchor.textContent ||
+    ""
+  )
+    .trim()
+    .slice(0, 120);
 
   capture(eventName, {
     destination_url: href,
     link_url: href,
     link_domain: domain,
-    link_text: (anchor.textContent || "").trim().slice(0, 120),
+    link_text: ctaText,
+    cta_text: ctaText,
+    cta_position:
+      anchor.dataset.ctaPosition || anchor.dataset.phSection || null,
+    event_city: anchor.dataset.eventCity || anchor.dataset.phCity || null,
+    event_date: anchor.dataset.eventDate || anchor.dataset.phEventDate || null,
+    event_title:
+      anchor.dataset.eventTitle || anchor.dataset.phEventTitle || null,
+    event_vendor: anchor.dataset.eventVendor || null,
     ...extra,
   });
 }

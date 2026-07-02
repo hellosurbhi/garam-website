@@ -1,5 +1,15 @@
-import { capture, enrichEvent, trackOutbound } from "./analyticsCapture";
-export { capture, enrichEvent, trackOutbound };
+import { capture } from "./analyticsCapture";
+export {
+  capture,
+  domainFromUrl,
+  enrichEvent,
+  isSocialUrl,
+  isTicketVendorUrl,
+  normalizeDomain,
+  TICKET_VENDOR_DOMAINS,
+  trackOutbound,
+  vendorFromUrl,
+} from "./analyticsCapture";
 
 type AnalyticsValue = string | number | boolean | null | undefined;
 type AnalyticsProps = object;

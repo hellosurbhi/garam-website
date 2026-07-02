@@ -8,6 +8,23 @@ export interface JournalFaq {
   a: string;
 }
 
+export type JournalCtaVariant = "primary" | "secondary";
+
+export interface JournalCtaSpec {
+  text: string;
+  href?: string;
+  modal?: string;
+  variant?: JournalCtaVariant;
+  ctaId: string;
+}
+
+export interface JournalCtaConfig {
+  intent: "show" | "advice";
+  topCta?: JournalCtaSpec;
+  midCta?: JournalCtaSpec;
+  bottomCta?: JournalCtaSpec;
+}
+
 export interface JournalPost {
   slug: string;
   title: string;
@@ -23,4 +40,5 @@ export interface JournalPost {
   faqs?: JournalFaq[];
   /** 2-3 slugs of related articles for cross-linking */
   relatedSlugs: string[];
+  ctaConfig?: JournalCtaConfig;
 }

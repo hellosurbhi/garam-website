@@ -1,6 +1,6 @@
 ---
-// Zero-visual component: loads the Eventbrite checkout widget script and
-// initializes modal checkout for every EB trigger button on the page.
+// Zero-visual component: loads the Eventbrite checkout widget script on user intent
+// and initializes modal checkout for every EB trigger button on the page.
 // Drop <EventbriteWidgetInit /> once per page that contains EB modal buttons.
 ---
 
@@ -141,11 +141,37 @@
       });
     }
 
-    const script = document.createElement("script");
-    script.src = "https://www.eventbrite.com/static/widgets/eb_widgets.js";
-    script.async = true;
-    script.onload = initWidgets;
-    document.head.appendChild(script);
+    // Intent-based loading: inject eb_widgets.js only on first user signal.
+    // Guards against concurrent signals triggering a double-injection.
+    let scriptInjected = false;
+
+    function loadEBScript(): void {
+      if (scriptInjected) return;
+      scriptInjected = true;
+      io.disconnect();
+      const script = document.createElement("script");
+      script.src = "https://www.eventbrite.com/static/widgets/eb_widgets.js";
+      script.async = true;
+      script.onload = initWidgets;
+      document.head.appendChild(script);
+    }
+
+    // Signal 1: hover, touch, or keyboard focus on any trigger button
+    buttons.forEach((btn) => {
+      btn.addEventListener("pointerenter", loadEBScript, { passive: true });
+      btn.addEventListener("touchstart", loadEBScript, { passive: true });
+      btn.addEventListener("focusin", loadEBScript);
+    });
+
+    // Signal 2: IntersectionObserver fallback — half the button visible covers
+    // fast touch-scroll on iOS where pointerenter/touchstart may not fire first
+    const io = new IntersectionObserver(
+      (entries) => {
+        if (entries.some((e) => e.isIntersecting)) loadEBScript();
+      },
+      { threshold: 0.5 },
+    );
+    buttons.forEach((btn) => io.observe(btn));
 
     // Save scroll position before any EB trigger click so we can restore it
     // after the widget injects its full-screen backdrop (which calls scrollTo(0,0)).

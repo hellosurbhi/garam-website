@@ -6,7 +6,9 @@ import type { CityData } from "@/data/cities";
 import { getUpcomingEventsForCity } from "@/utils/cityEvents";
 import { buildBreadcrumbJsonLd } from "@/utils/breadcrumbs";
 import { buildEventSchemas } from "@/utils/eventSchema";
-import { SHOW_IMAGES, slugToImageIndex } from "@/data/images";
+import { Picture } from "astro:assets";
+import { SHOW_IMAGES_ASSETS } from "@/assets/backgrounds";
+import { slugToImageIndex } from "@/data/images";
 import { buildTicketUrl } from "@/utils/eventUrl";
 import { formatEventLocation } from "@/utils/eventCity";
 import { EVENTS } from "@/data/copy";
@@ -23,7 +25,8 @@ export function getStaticPaths() {
 
 const { city } = Astro.props;
 
-const heroImage = SHOW_IMAGES[slugToImageIndex(city.slug, SHOW_IMAGES.length)];
+const heroImage =
+  SHOW_IMAGES_ASSETS[slugToImageIndex(city.slug, SHOW_IMAGES_ASSETS.length)];
 
 // Nearby cities for cross-linking
 const nearbyCities = (city.nearbyCities ?? [])
@@ -129,16 +132,17 @@ function renderCityText(text: string, href: string): string {
   </Fragment>
 
   <main id="main-content" class="city-page">
-    <img
+    <Picture
       class="city-bg"
       src={heroImage}
+      formats={["avif", "webp"]}
+      widths={[640, 1024, 1600]}
+      sizes="100vw"
       alt=""
-      width="1200"
-      height="675"
+      aria-hidden="true"
       loading="lazy"
       decoding="async"
       fetchpriority="low"
-      aria-hidden="true"
     />
     <div class="city-container">
       {/* Eyebrow label */}

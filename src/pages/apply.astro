@@ -1,7 +1,9 @@
 ---
+import { Picture } from "astro:assets";
 import BaseLayout from "@/layouts/BaseLayout.astro";
 import { buildBreadcrumbJsonLd } from "@/utils/breadcrumbs";
 import ApplyPage from "@/components/ApplyPage";
+import { heroImg } from "@/assets/backgrounds";
 import { APPLY_PAGE } from "@/data/copy";
 
 const breadcrumbJsonLd = buildBreadcrumbJsonLd([
@@ -19,12 +21,13 @@ const breadcrumbJsonLd = buildBreadcrumbJsonLd([
   </Fragment>
 
   <main id="main-content" class="apply-main">
-    <img
+    <Picture
       class="apply-bg"
-      src="/images/hero/hero.webp"
+      src={heroImg}
+      formats={["avif", "webp"]}
+      widths={[640, 1024, 1600]}
+      sizes="100vw"
       alt=""
-      width="1200"
-      height="800"
       aria-hidden="true"
       loading="lazy"
       decoding="async"

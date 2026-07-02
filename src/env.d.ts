@@ -42,7 +42,6 @@ interface Window {
     event: string;
     properties: Record<string, unknown>;
   }>;
-  __gmdCapture?: (event: string, properties?: Record<string, unknown>) => void;
   _gtmLoaded?: boolean;
   _fbLoaded?: boolean;
   __GMD_CONSENT?: {

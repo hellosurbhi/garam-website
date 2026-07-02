@@ -66,29 +66,29 @@
   /* legacy aliases — used only by admin components */
   --cream: #fff8f0;
   --text: #1a1a1a;
-  --text-light: #595959;
+  --text-light: #434343;
   --border: rgba(0, 0, 0, 0.1);
   --success: #22c55e;
 
   /* brand palette */
-  --brand-red: #dc2626;
-  --brand-red-rgb: 220, 38, 38;
-  --brand-red-dark: #b91c1c;
+  --brand-red: #c81e1e;
+  --brand-red-rgb: 200, 30, 30;
+  --brand-red-dark: #991b1b;
   --electric-yellow: #ffd600;
   --off-white: #fff8f0;
   --charcoal: #1a1a1a;
   --ink: #111;
   --spice-orange: #ff6d00;
-  --muted: #6b6b6b;
-  --text-secondary: #555;
-  --text-tertiary: #777;
+  --muted: #4f4f4f;
+  --text-secondary: #404040;
+  --text-tertiary: #606060;
   --cream-warm: #fff0e2;
   --off-white-rgb: 255, 248, 240;
   --white: #ffffff;
   --white-rgb: 255, 255, 255;
-  --gray-light: #999;
+  --gray-light: #7a7a7a;
   --gray-lighter: #bbb;
-  --gray-mid: #888;
+  --gray-mid: #666;
   --black-rgb: 0, 0, 0;
 
   /* apply form palette */

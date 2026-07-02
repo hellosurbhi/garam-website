@@ -70,7 +70,7 @@ This site was designed by a professional front-end designer. Every aesthetic dec
 - **Color hex values**: do not change color implementations. You may suggest using a CSS variable instead of a hardcoded hex, but do not change the actual color.
 - **Section backgrounds**: section background color alternation is intentional contrast design and MANDATORY when you createe any new sections/move anything around. No section color should match the color of the section above or below. NEVER BLACK OR DARK BACKGROUND.
 - **Font sizes, letter-spacing, line-height**: typographic choices are intentional.
-- **WebGL shader / hero gradient** (`public/js/shader-app.js`): $2,000 designer asset. This is the ONLY thing in the hero section that cannot be touched. All other hero content (text, eyebrow, subheading, CTAs) is fair game to edit. If there is a bug in the shader, report it; do not "fix" it aesthetically.
+- **WebGL shader / hero gradient** (`public/js/shader-app.js`): commissioned designer asset. This is the ONLY thing in the hero section that cannot be touched. All other hero content (text, eyebrow, subheading, CTAs) is fair game to edit. If there is a bug in the shader, report it; do not "fix" it aesthetically.
 
 **CodeRabbit rule:** Any review comment that suggests removing, changing, or "improving" the above should be discussed explicitly before ever implementing. You may offer alternative _implementations_ (e.g., CSS var vs hex) but never alter the _result_.
 

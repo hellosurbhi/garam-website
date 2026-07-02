@@ -1,5 +1,14 @@
 # Changelog
 
+## fix(review): restore `/links`, tighten photo storage, and clear shared contrast failures (2026-07-02)
+
+- Restored the `/links` smoke-test structure without undoing the new conversion order: ticket modal trigger, apply link, press modal, social row, and native dialogs all work again.
+- Bound uploaded applicant photos to the authenticated uploader in Storage metadata and tightened `storage.rules` so one applicant cannot read another applicant's photo by auth alone.
+- Darkened shared color tokens used across homepage, apply, tickets, terms, and modal text to resolve the broad mobile axe color-contrast failures.
+- Added the missing `build:prerender` script alias and corrected the README build docs to match the actual Astro production build.
+
+---
+
 ## fix(ci): overhaul all pipelines to make failures meaningful (2026-06-17)
 
 ### What changed

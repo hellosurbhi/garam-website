@@ -14,8 +14,8 @@ describe("STATUS_COLORS", () => {
     expect(STATUS_COLORS).toHaveProperty("Rejected");
   });
 
-  it("has exactly four entries", () => {
-    expect(Object.keys(STATUS_COLORS)).toHaveLength(4);
+  it("has exactly five entries", () => {
+    expect(Object.keys(STATUS_COLORS)).toHaveLength(5);
   });
 
   it("maps New to the gold color", () => {
@@ -120,6 +120,7 @@ describe("Application status type", () => {
       "Contacted",
       "Cast",
       "Rejected",
+      "Participated",
     ];
     // All STATUS_COLORS keys should match valid statuses
     for (const s of validStatuses) {

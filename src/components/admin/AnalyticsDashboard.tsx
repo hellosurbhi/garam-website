@@ -94,7 +94,10 @@ export default function AnalyticsDashboard() {
   }, []);
 
   useEffect(() => {
-    fetchData(period);
+    const timer = window.setTimeout(() => {
+      void fetchData(period);
+    }, 0);
+    return () => window.clearTimeout(timer);
   }, [period, fetchData]);
 
   async function handleSync() {

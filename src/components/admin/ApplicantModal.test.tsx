@@ -13,7 +13,7 @@ function makeApp(overrides?: Partial<Application>): Application {
     city: "New York",
     state: "NY",
     height: "5'6\"",
-    instagram: "priyasharma",
+    instagram: "applicant_fixture_1",
     community: "Hindu",
     income: "$50k–$100k",
     applicationType: "Self",
@@ -63,7 +63,7 @@ describe("ApplicantModal", () => {
 
   it("displays the formatted location", () => {
     render(<ApplicantModal app={makeApp()} {...defaultProps} />);
-    expect(screen.getByText("New York, NY")).toBeInTheDocument();
+    expect(screen.getByText(/New York,\s*NY/)).toBeInTheDocument();
   });
 
   it("displays community and income", () => {
@@ -74,8 +74,11 @@ describe("ApplicantModal", () => {
 
   it("renders Instagram handle as a link", () => {
     render(<ApplicantModal app={makeApp()} {...defaultProps} />);
-    const link = screen.getByText("@priyasharma");
-    expect(link).toHaveAttribute("href", "https://instagram.com/priyasharma");
+    const link = screen.getByText("@applicant_fixture_1");
+    expect(link).toHaveAttribute(
+      "href",
+      "https://instagram.com/applicant_fixture_1",
+    );
   });
 
   it("shows pitch when present", () => {

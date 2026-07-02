@@ -220,13 +220,20 @@ export function useApplyForm() {
     setSubmitting(true);
     let storageRef: StorageReference | null = null;
     try {
-      await signInAnonymously(getFirebaseAuth());
+      const auth = getFirebaseAuth();
+      const { user } = await signInAnonymously(auth);
+      const ownerUid = user.uid ?? auth.currentUser?.uid ?? "";
       const ext = photoFile!.name.split(".").pop() ?? "jpg";
       storageRef = ref(
         getFirebaseStorage(),
         `photos/${crypto.randomUUID()}.${ext}`,
       );
-      const task = uploadBytesResumable(storageRef, photoFile!);
+      const task = uploadBytesResumable(storageRef, photoFile!, {
+        contentType: photoFile!.type || "application/octet-stream",
+        customMetadata: {
+          ownerUid,
+        },
+      });
       await new Promise<void>((resolve, reject) => {
         const timer = setTimeout(() => {
           task.cancel();

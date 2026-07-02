@@ -96,7 +96,10 @@ export default function AdminDashboard({ onLogout }: AdminDashboardProps) {
   }
 
   useEffect(() => {
-    fetchApps();
+    const timer = window.setTimeout(() => {
+      void fetchApps();
+    }, 0);
+    return () => window.clearTimeout(timer);
   }, []);
 
   async function handleUpdate(

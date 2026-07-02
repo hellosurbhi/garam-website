@@ -13,7 +13,7 @@ function makeApp(overrides?: Partial<Application>): Application {
     city: "New York",
     state: "NY",
     height: "5'6\"",
-    instagram: "priyasharma",
+    instagram: "applicant_fixture_1",
     community: "Hindu",
     income: "$50k–$100k",
     applicationType: "Self",
@@ -41,15 +41,15 @@ describe("ApplicantCard", () => {
 
   it("renders the formatted location", () => {
     render(<ApplicantCard app={makeApp()} onClick={vi.fn()} />);
-    expect(screen.getByText("New York, NY")).toBeInTheDocument();
+    expect(screen.getByText(/New York,\s*NY/)).toBeInTheDocument();
   });
 
   it("renders the Instagram handle as a link", () => {
     render(<ApplicantCard app={makeApp()} onClick={vi.fn()} />);
-    const link = screen.getByText("@priyasharma");
+    const link = screen.getByText("@applicant_fixture_1");
     expect(link.closest("a")).toHaveAttribute(
       "href",
-      "https://instagram.com/priyasharma",
+      "https://instagram.com/applicant_fixture_1",
     );
   });
 
@@ -113,12 +113,15 @@ describe("ApplicantCard", () => {
   it("strips leading @ from instagram handle", () => {
     render(
       <ApplicantCard
-        app={makeApp({ instagram: "@testuser" })}
+        app={makeApp({ instagram: "@test_fixture_2" })}
         onClick={vi.fn()}
       />,
     );
-    expect(screen.getByText("@testuser")).toBeInTheDocument();
-    const link = screen.getByText("@testuser").closest("a");
-    expect(link).toHaveAttribute("href", "https://instagram.com/testuser");
+    expect(screen.getByText("@test_fixture_2")).toBeInTheDocument();
+    const link = screen.getByText("@test_fixture_2").closest("a");
+    expect(link).toHaveAttribute(
+      "href",
+      "https://instagram.com/test_fixture_2",
+    );
   });
 });

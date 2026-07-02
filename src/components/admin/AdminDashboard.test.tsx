@@ -25,7 +25,7 @@ function makeApp(overrides?: Partial<Application>): Application {
     city: "New York",
     state: "NY",
     height: "5'6\"",
-    instagram: "priyasharma",
+    instagram: "applicant_fixture_1",
     community: "Hindu",
     income: "$50k–$100k",
     applicationType: "Self",
@@ -181,7 +181,7 @@ describe("AdminDashboard", () => {
     render(<AdminDashboard onLogout={onLogout} />);
     await waitFor(() => {
       expect(
-        screen.getByText(/Showing 1 active · 1 deleted/),
+        screen.getByText(/Showing 1 active · 0 participated · 1 deleted/),
       ).toBeInTheDocument();
     });
   });

@@ -117,25 +117,77 @@ const {
       }
       bootstrapLeadAttribution();
 
+      function pageType(pathname: string): string {
+        if (pathname === "/") return "home";
+        if (pathname.startsWith("/tickets")) return "tickets";
+        if (pathname.startsWith("/links")) return "links";
+        if (pathname.startsWith("/apply")) return "apply";
+        if (pathname.startsWith("/cities/")) return "city";
+        if (pathname.startsWith("/journal/")) return "journal";
+        if (pathname.startsWith("/corporate")) return "corporate";
+        if (pathname.startsWith("/sponsorship")) return "sponsorship";
+        return "other";
+      }
+
+      function getUtm(key: string): string {
+        const fromUrl = new URLSearchParams(window.location.search).get(key);
+        if (fromUrl) return fromUrl;
+        try {
+          return sessionStorage.getItem(`gmd-${key.replace("_", "-")}`) || "";
+        } catch {
+          return "";
+        }
+      }
+
+      function buildClickProps(el: HTMLElement): Record<string, string> {
+        const props: Record<string, string> = {
+          source_page: window.location.pathname,
+          current_url: window.location.href,
+          pathname: window.location.pathname,
+          referrer: document.referrer || "",
+          utm_source: getUtm("utm_source"),
+          utm_medium: getUtm("utm_medium"),
+          utm_campaign: getUtm("utm_campaign"),
+          utm_content: getUtm("utm_content"),
+          utm_term: getUtm("utm_term"),
+          page_type: pageType(window.location.pathname),
+        };
+
+        const dataset = el.dataset;
+        if (dataset.ctaText) props.cta_text = dataset.ctaText;
+        if (dataset.ctaPosition) props.cta_position = dataset.ctaPosition;
+        if (dataset.destinationUrl)
+          props.destination_url = dataset.destinationUrl;
+        if (dataset.linkUrl) props.link_url = dataset.linkUrl;
+        if (dataset.linkDomain) props.link_domain = dataset.linkDomain;
+        if (dataset.eventCity) props.event_city = dataset.eventCity;
+        if (dataset.eventDate) props.event_date = dataset.eventDate;
+        if (dataset.eventTitle) props.event_title = dataset.eventTitle;
+        if (dataset.phSection) props.section = dataset.phSection;
+        if (dataset.phCta) props.cta_id = dataset.phCta;
+
+        return props;
+      }
+
       // Track elements with data-ph-capture attribute
       document.addEventListener("click", (e) => {
         const el = (e.target as HTMLElement).closest<HTMLElement>(
           "[data-ph-capture]",
         );
         if (!el) return;
-        const eventName = el.dataset.phCapture!;
-        const props: Record<string, string> = {
-          page: window.location.pathname,
-        };
-        for (const [key, value] of Object.entries(el.dataset)) {
-          if (key.startsWith("ph") && key !== "phCapture" && value) {
-            const prop =
-              key.charAt(2).toLowerCase() +
-              key.slice(3).replace(/[A-Z]/g, (m) => "_" + m.toLowerCase());
-            props[prop] = value;
+
+        const link = el.closest<HTMLAnchorElement>("a[href]");
+        if (link) {
+          try {
+            const url = new URL(link.href);
+            if (url.hostname !== window.location.hostname) return;
+          } catch {
+            return;
           }
         }
-        trackLeadEvent(eventName, props);
+
+        const eventName = el.dataset.phCapture!;
+        trackLeadEvent(eventName, buildClickProps(el));
       });
 
       // Track outbound link clicks (Eventbrite, socials, press)
@@ -144,30 +196,21 @@ const {
           "a[href]",
         );
         if (!link?.href) return;
+        if (
+          e instanceof MouseEvent &&
+          (e.metaKey || e.ctrlKey || e.shiftKey || e.altKey || e.button !== 0)
+        ) {
+          return;
+        }
         try {
           const url = new URL(link.href);
           if (url.hostname === window.location.hostname) return;
-          const domain = url.hostname.replace("www.", "");
-          let linkType = "outbound";
-          if (domain.includes("eventbrite")) linkType = "eventbrite";
-          else if (
-            [
-              "instagram.com",
-              "tiktok.com",
-              "youtube.com",
-              "threads.net",
-              "x.com",
-              "facebook.com",
-            ].some((s) => domain.includes(s))
-          )
-            linkType = "social";
-          trackLeadEvent("outbound_link_clicked", {
-            url: link.href,
-            domain,
-            link_type: linkType,
-            link_text: (link.textContent ?? "").trim().slice(0, 80),
-            page: window.location.pathname,
-          });
+          e.preventDefault();
+          const eventName = link.dataset.phCapture || "outbound_link_clicked";
+          trackLeadEvent(eventName, buildClickProps(link));
+          window.setTimeout(() => {
+            window.location.href = link.href;
+          }, 120);
         } catch {
           /* invalid URL */
         }

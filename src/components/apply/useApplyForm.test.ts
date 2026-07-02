@@ -955,6 +955,16 @@ describe("useApplyForm", () => {
       "mock-storage",
       "photos/test-uuid.png",
     );
+    expect(mockUploadBytesResumable).toHaveBeenCalledWith(
+      "mock-ref",
+      expect.any(File),
+      expect.objectContaining({
+        contentType: "image/png",
+        customMetadata: expect.objectContaining({
+          ownerUid: "",
+        }),
+      }),
+    );
   });
 
   it("submit defaults to jpg extension when filename has no extension", async () => {

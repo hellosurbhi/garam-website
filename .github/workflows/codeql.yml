@@ -12,6 +12,9 @@ jobs:
   analyze:
     name: Analyze (javascript-typescript)
     runs-on: ubuntu-latest
+    # Code scanning requires the repo to be public or GitHub Advanced Security to be enabled.
+    # continue-on-error keeps PRs green while the repo is still private.
+    continue-on-error: true
     permissions:
       security-events: write
       packages: read

@@ -819,9 +819,7 @@ describe("useApplyForm", () => {
         makeChangeEvent(makeFile("big.jpg", 6 * 1024 * 1024)),
       ),
     );
-    expect(result.current.errors.photo).toBe(
-      "Each photo must be under 5 MB. big.jpg is too large.",
-    );
+    expect(result.current.errors.photo).toBe("Photo must be under 5 MB");
     act(() =>
       result.current.handleAddPhotos(makeChangeEvent(makeFile("ok.jpg", 1024))),
     );
@@ -849,7 +847,7 @@ describe("useApplyForm", () => {
         (capturedReader.onerror as () => void)?.();
       });
       expect(result.current.errors.photo).toBe(
-        "Failed to read a file. Please try again.",
+        "Failed to read file. Please try again.",
       );
       expect(result.current.photoPreviews).toEqual([]);
     } finally {

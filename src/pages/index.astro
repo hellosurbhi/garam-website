@@ -42,8 +42,6 @@ const websiteJsonLd = JSON.stringify({
   url: "https://garammasaladating.com",
 });
 
-import { HOME_FAQS } from "@/data/copy";
-
 // Individual Event JSON-LD blocks (one per upcoming show with a real date+url)
 const eventSchemas = buildEventSchemas(
   events.filter((e) => !e.hidden && e.isoDate && e.isoDate >= today),

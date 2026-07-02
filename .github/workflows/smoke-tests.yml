@@ -36,7 +36,7 @@ jobs:
         env:
           PLAYWRIGHT_BASE_URL: ${{ (github.event.inputs.target == 'production' || github.event_name == 'schedule') && 'https://garammasaladating.com' || '' }}
       - name: Upload report on failure
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         if: failure()
         with:
           name: playwright-report

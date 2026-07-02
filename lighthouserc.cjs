@@ -1,6 +1,7 @@
-export default {
+module.exports = {
   ci: {
     collect: {
+      staticDistDir: "./dist/client",
       startServerCommand:
         "node tests/smoke/static-preview.mjs 4321 dist/client",
       startServerReadyPattern: "Static preview serving",
@@ -13,8 +14,6 @@ export default {
       numberOfRuns: 1,
       settings: {
         preset: "desktop",
-        // Skip third-party resource audits — PostHog, GA, Eventbrite, etc.
-        // are not loaded in the local static build
         skipAudits: ["uses-http2", "uses-long-cache-ttl"],
       },
     },

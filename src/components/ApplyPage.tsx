@@ -105,7 +105,6 @@ function ApplyPageInner() {
     errors,
     submitting,
     submitted,
-    isValid,
     termsAgreed,
     nominationConsent,
     handleNominationConsentChange,
@@ -741,7 +740,7 @@ function ApplyPageInner() {
 
                   <button
                     type="submit"
-                    disabled={submitting || !isValid}
+                    disabled={submitting}
                     data-submitting={submitting || undefined}
                     className={styles.submitButton}
                   >

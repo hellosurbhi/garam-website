@@ -7,15 +7,22 @@ import {
 import type { Application } from "../src/types/application";
 
 describe("STATUS_COLORS", () => {
-  it("has entries for all four statuses", () => {
+  it("has entries for the core casting statuses", () => {
     expect(STATUS_COLORS).toHaveProperty("New");
     expect(STATUS_COLORS).toHaveProperty("Contacted");
     expect(STATUS_COLORS).toHaveProperty("Cast");
     expect(STATUS_COLORS).toHaveProperty("Rejected");
   });
 
-  it("has exactly four entries", () => {
-    expect(Object.keys(STATUS_COLORS)).toHaveLength(4);
+  it("has entries for every current pipeline status", () => {
+    expect(Object.keys(STATUS_COLORS)).toHaveLength(11);
+    expect(STATUS_COLORS).toHaveProperty("Responded");
+    expect(STATUS_COLORS).toHaveProperty("Said Not Now");
+    expect(STATUS_COLORS).toHaveProperty("No Response");
+    expect(STATUS_COLORS).toHaveProperty("Not Interested Anymore");
+    expect(STATUS_COLORS).toHaveProperty("Not Interested");
+    expect(STATUS_COLORS).toHaveProperty("Bailed");
+    expect(STATUS_COLORS).toHaveProperty("Participated");
   });
 
   it("maps New to the gold color", () => {
@@ -114,12 +121,19 @@ describe("INCOME_OPTIONS", () => {
 });
 
 describe("Application status type", () => {
-  it("accepts all four valid status values", () => {
+  it("accepts all current valid status values", () => {
     const validStatuses: Application["status"][] = [
       "New",
       "Contacted",
+      "Responded",
+      "Said Not Now",
       "Cast",
+      "No Response",
+      "Not Interested Anymore",
+      "Not Interested",
       "Rejected",
+      "Bailed",
+      "Participated",
     ];
     // All STATUS_COLORS keys should match valid statuses
     for (const s of validStatuses) {

@@ -55,6 +55,7 @@ jobs:
         with:
           node-version: 22
           cache: npm
+      - run: npm install -g npm@11
       - run: npm ci
       - name: Install Playwright
         run: npx playwright install chromium --with-deps

@@ -186,7 +186,7 @@ describe("ApplicantModal", () => {
 
   it("displays the photo when photoUrl is provided", () => {
     render(<ApplicantModal app={makeApp()} {...defaultProps} />);
-    expect(screen.getByAltText("Priya Sharma")).toHaveAttribute(
+    expect(screen.getByAltText("Priya Sharma photo 1")).toHaveAttribute(
       "src",
       "https://example.com/photo.jpg",
     );

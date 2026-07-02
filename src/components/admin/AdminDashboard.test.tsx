@@ -181,7 +181,9 @@ describe("AdminDashboard", () => {
     render(<AdminDashboard onLogout={onLogout} />);
     await waitFor(() => {
       expect(
-        screen.getByText(/Showing 1 active · 1 deleted/),
+        screen.getByText(
+          /1 active across 1 stage · 0 participated · 1 deleted/,
+        ),
       ).toBeInTheDocument();
     });
   });

@@ -44,7 +44,10 @@ jobs:
       - run: npm test
       - run: npm run build
       - name: Security audit
-        run: npm audit --audit-level=high --omit=dev
+        # --omit=dev: skip dev-only tooling (@lhci/cli, firebase-tools, node-gyp)
+        # --ignore-advisories GHSA-9wv6-86v2-598j: path-to-regexp in @astrojs/vercel
+        #   is build-time only (route pattern matching), not user-input processing
+        run: npm audit --audit-level=high --omit=dev --ignore-advisories GHSA-9wv6-86v2-598j
 
   # Playwright smoke tests moved to local pre-push hook (~/.git-hooks/pre-push).
   # This eliminates the primary GitHub Actions minute consumer.

@@ -1,110 +1,103 @@
 ---
-import { Picture } from "astro:assets";
 import BaseLayout from "@/layouts/BaseLayout.astro";
+import LeadCaptureModal from "@/components/LeadCaptureModal.astro";
 import { events } from "@/data/events";
-import { heroImg } from "@/assets/backgrounds";
-import { isDatedUpcoming } from "@/utils/eventFilters";
+import { ICON_SVGS, SOCIAL_ICON_SVGS, type IconName } from "@/data/icons";
 import { pressItems } from "@/data/press";
 import { SOCIAL_URLS } from "@/data/socials";
 import { buildBreadcrumbJsonLd } from "@/utils/breadcrumbs";
-import { buildTicketUrl } from "@/utils/eventUrl";
 import { formatEventLocation } from "@/utils/eventCity";
-import { PAGES } from "@/data/copy";
+import { isDatedUpcoming } from "@/utils/eventFilters";
+import { buildTicketUrl } from "@/utils/eventUrl";
+import { domainFromUrl, vendorFromUrl } from "@/lib/analyticsCapture";
 
 const TITLE = "Tickets, Shows & More";
 const DESC =
-  "Get tickets to upcoming Garam Masala Dating shows, follow us on Instagram and TikTok, apply as a contestant, or reach out for booking and press.";
+  "Get tickets to upcoming Garam Masala Dating shows, apply as a contestant, join a city waitlist, or watch full episodes.";
 
 const today = new Date().toISOString().slice(0, 10);
-const upcomingEvents = events.filter((e) => isDatedUpcoming(e, today));
+const upcomingEvents = events
+  .filter((event) => isDatedUpcoming(event, today))
+  .sort((a, b) => a.isoDate!.localeCompare(b.isoDate!));
+
+const liveTicketEvents = upcomingEvents.filter(
+  (event) => event.url && event.url !== "#" && !event.soldOut,
+);
+const featuredEvents = liveTicketEvents.slice(0, 4);
 
 const breadcrumbJsonLd = buildBreadcrumbJsonLd([
   { name: "Home", url: "https://garammasaladating.com/" },
   { name: "Links" },
 ]);
 
-/* ── SVG icon markup ──────────────────────────────────────── */
-
-import { ICON_SVGS, SOCIAL_ICON_SVGS, type IconName } from "@/data/icons";
-import LeadCaptureModal from "@/components/LeadCaptureModal.astro";
-import EventbriteWidgetInit from "@/components/EventbriteWidgetInit.astro";
-
-function iconSvg(name: IconName, isPrimary?: boolean): string {
-  const cls = isPrimary ? "icon-primary" : "icon-glass";
-  return `<span class="${cls}">${ICON_SVGS[name]}</span>`;
+function iconSvg(name: IconName): string {
+  return `<span class="link-icon" aria-hidden="true">${ICON_SVGS[name]}</span>`;
 }
 
-/* ── Link definitions ─────────────────────────────────────── */
-
-interface LinkDef {
-  label: string;
-  href?: string;
-  isPrimary?: boolean;
-  external?: boolean;
-  dialogTrigger?: string;
-  icon: IconName;
-  ctaId: string;
-  eventName: string;
-}
-
-const links: LinkDef[] = [
+const primaryActions = [
   {
-    label: "Upcoming Shows & Tickets",
-    dialogTrigger: "events-trigger",
-    isPrimary: true,
+    label: "Buy Tickets",
+    href: "/tickets",
     icon: "ticket",
-    ctaId: "tickets",
     eventName: "cta_clicked",
+    ctaId: "buy_tickets",
+    description:
+      liveTicketEvents.length > 0
+        ? `${liveTicketEvents.length} upcoming shows`
+        : "See the next drop",
   },
   {
-    label: "Get on the List",
-    dialogTrigger: "links-spice-trigger",
-    icon: "mail",
-    ctaId: "waitlist",
-    eventName: "cta_clicked",
-  },
-  {
-    label: "Apply to Be on the Show",
+    label: "Apply",
     href: "/apply",
     icon: "heart",
-    ctaId: "apply",
     eventName: "apply_click",
+    ctaId: "apply",
+    description: "Get cast on stage",
   },
   {
-    label: "Full episodes @ YouTube",
-    href: SOCIAL_URLS.youtube,
-    external: true,
-    icon: "youtube",
-    ctaId: "youtube",
-    eventName: "outbound_link_clicked",
-  },
-  {
-    label: "As Seen In",
-    dialogTrigger: "press-trigger",
-    icon: "mic",
-    ctaId: "press",
-    eventName: "cta_clicked",
-  },
-  {
-    label: "Booking & Press Inquiries",
-    href: "mailto:press@garammasaladating.com",
+    label: "Join City Waitlist",
+    dialog: "links-spice-modal",
     icon: "mail",
-    ctaId: "booking_inquiry",
-    eventName: "cta_clicked",
+    eventName: "waitlist_click",
+    ctaId: "city_waitlist",
+    description: "Presales and city drops",
   },
-];
+] satisfies Array<{
+  label: string;
+  href?: string;
+  dialog?: string;
+  icon: IconName;
+  eventName: string;
+  ctaId: string;
+  description: string;
+}>;
 
-const socials = [
-  { href: SOCIAL_URLS.instagram, label: "Instagram", icon: "instagram" },
-  { href: SOCIAL_URLS.youtube, label: "YouTube", icon: "youtube" },
-  { href: SOCIAL_URLS.facebook, label: "Facebook", icon: "facebook" },
-  { href: SOCIAL_URLS.threads, label: "Threads", icon: "threads" },
-  { href: SOCIAL_URLS.tiktok, label: "TikTok", icon: "tiktok" },
-  { href: SOCIAL_URLS.x, label: "X", icon: "x" },
-  { href: "mailto:hello@garammasaladating.com", label: "Email", icon: "mail" },
-];
+const episodeLinks = [
+  {
+    label: "Full Episodes",
+    href: SOCIAL_URLS.youtube,
+    icon: "youtube",
+    ctaId: "youtube_full_episodes",
+  },
+  {
+    label: "Instagram",
+    href: SOCIAL_URLS.instagram,
+    icon: "instagram",
+    ctaId: "instagram",
+  },
+  {
+    label: "TikTok",
+    href: SOCIAL_URLS.tiktok,
+    icon: "tiktok",
+    ctaId: "tiktok",
+  },
+] as const;
 
-const reversedPress = [...pressItems].reverse();
+type PressLink = (typeof pressItems)[number] & { url: string };
+const pressLinks = pressItems
+  .filter((item): item is PressLink => Boolean(item.url))
+  .slice(-4)
+  .reverse();
 ---
 
 <BaseLayout title={TITLE} description={DESC}>
@@ -112,904 +105,411 @@ const reversedPress = [...pressItems].reverse();
     <script type="application/ld+json" set:html={breadcrumbJsonLd} />
   </Fragment>
 
-  <main id="main-content" class="page">
-    <Picture
-      class="page-bg"
-      src={heroImg}
-      formats={["avif", "webp"]}
-      widths={[640, 1024, 1600]}
-      sizes="100vw"
-      alt=""
-      aria-hidden="true"
-      loading="lazy"
-      decoding="async"
-      fetchpriority="low"
-    />
-    <div class="container">
-      {/* Header */}
-      <div class="header-wrap">
-        <h1 class="subtitle">{PAGES.links.subtitle}</h1>
-        <div class="divider"></div>
-      </div>
+  <main id="main-content" class="links-page">
+    <div class="links-shell">
+      <header class="links-header">
+        <p class="links-kicker">Garam Masala Dating</p>
+        <h1>Shows, casting, episodes.</h1>
+      </header>
 
-      {/* Link list */}
-      <div class="link-list">
+      <section class="primary-actions" aria-label="Primary actions">
         {
-          links.map((link, i) => {
-            const delay = 0.1 + i * 0.1;
-            const trackingAttrs = {
-              "data-ph-capture": link.eventName,
-              "data-ph-cta": link.ctaId,
-              "data-ph-section": "links",
-              "data-cta-position": String(i + 1),
-              "data-cta-text": link.label,
-            };
-
-            if (link.dialogTrigger) {
-              return (
-                <button
-                  type="button"
-                  id={link.dialogTrigger}
-                  class:list={[link.isPrimary ? "primary-link" : "glass-link"]}
-                  style={
-                    link.isPrimary
-                      ? `animation: fadeUp 0.5s ease-out ${delay}s both, pulseGlow 2.5s ease-in-out 1s infinite`
-                      : `animation: fadeUp 0.5s ease-out ${delay}s both`
-                  }
-                  {...trackingAttrs}
-                >
-                  <Fragment set:html={iconSvg(link.icon, link.isPrimary)} />
-                  <span class="link-label">{link.label}</span>
-                </button>
-              );
-            }
-
-            return (
+          primaryActions.map((action, index) =>
+            action.href ? (
               <a
-                href={link.href}
-                class:list={[link.isPrimary ? "primary-link" : "glass-link"]}
-                style={
-                  link.isPrimary
-                    ? `animation: fadeUp 0.5s ease-out ${delay}s both, pulseGlow 2.5s ease-in-out 1s infinite`
-                    : `animation: fadeUp 0.5s ease-out ${delay}s both`
-                }
-                target={link.external ? "_blank" : undefined}
-                rel={link.external ? "noopener noreferrer" : undefined}
-                data-destination-url={link.href}
-                {...trackingAttrs}
+                href={action.href}
+                class:list={[
+                  "action-link",
+                  index === 0 ? "action-link--primary" : "",
+                ]}
+                data-ph-capture={action.eventName}
+                data-ph-cta={action.ctaId}
+                data-ph-section="links_primary"
+                data-cta-position={`links_primary_${index + 1}`}
+                data-cta-text={action.label}
+                data-destination-url={action.href}
               >
-                <Fragment set:html={iconSvg(link.icon, link.isPrimary)} />
-                <span class="link-label">{link.label}</span>
-              </a>
-            );
-          })
-        }
-      </div>
-
-      {/* Social icons */}
-      <div class="social-row">
-        {
-          socials.map((s) => (
-            <a
-              href={s.href}
-              aria-label={s.label}
-              target="_blank"
-              rel="noopener noreferrer"
-              class="social-icon"
-              data-ph-capture="outbound_link_clicked"
-              data-ph-cta={s.label.toLowerCase()}
-              data-ph-section="links_social"
-              data-cta-text={s.label}
-              data-destination-url={s.href}
-            >
-              <Fragment set:html={SOCIAL_ICON_SVGS[s.icon]} />
-            </a>
-          ))
-        }
-      </div>
-
-      <p class="footer-text">Made with love and a lot of spice</p>
-    </div>
-  </main>
-
-  {/* ── Events modal ─────────────────────────────────────── */}
-  <dialog id="events-modal" class="modal-dialog" tabindex="-1">
-    <div class="modal-inner">
-      <button type="button" class="modal-close" aria-label="Close">
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          width="20"
-          height="20"
-          viewBox="0 0 24 24"
-          fill="none"
-          stroke="currentColor"
-          stroke-width="2"
-          stroke-linecap="round"
-          stroke-linejoin="round"
-          ><path d="M18 6 6 18"></path><path d="m6 6 12 12"></path></svg
-        >
-      </button>
-
-      <h2 class="modal-title">Upcoming Shows</h2>
-      <div class="modal-divider"></div>
-
-      {
-        upcomingEvents.length === 0 ? (
-          <p class="no-events">No upcoming shows. Stay tuned!</p>
-        ) : (
-          <div class="event-list">
-            {upcomingEvents.map((event) => {
-              const hasLink = event.url && event.url !== "#";
-              const isSoldOut = event.soldOut ?? false;
-              const cityLabel = formatEventLocation(event);
-              const ticketIcon = (
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  width="14"
-                  height="14"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  stroke-width="2"
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  class="ticket-icon"
-                  aria-hidden="true"
-                >
-                  <path d="M2 9a3 3 0 0 1 0 6v2a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-2a3 3 0 0 1 0-6V7a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2Z" />
-                  <path d="M13 5v2" />
-                  <path d="M13 17v2" />
-                  <path d="M13 11v2" />
-                </svg>
-              );
-              if (event.eventbriteId && hasLink && !isSoldOut) {
-                return (
-                  <button
-                    type="button"
-                    id={`eventbrite-widget-modal-trigger-${event.eventbriteId}`}
-                    class="event-link"
-                    data-eb-url={buildTicketUrl(event.url, "links", "modal")}
-                    data-city={cityLabel}
-                    data-ph-capture="ticket_click"
-                    data-ph-cta="tickets"
-                    data-ph-section="links_events_modal"
-                    data-ph-city={cityLabel}
-                    data-ph-event-date={event.date}
-                    data-ph-price={event.price ?? ""}
-                  >
-                    <span class="event-city">{cityLabel}</span>
-                    <div class="event-date-group">
-                      <span class="event-date">{event.date}</span>
-                      {ticketIcon}
-                    </div>
-                  </button>
-                );
-              }
-              return hasLink ? (
-                <a
-                  href={buildTicketUrl(event.url, "links", "modal")}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  class="event-link"
-                  data-ph-capture="ticket_click"
-                  data-ph-cta="tickets"
-                  data-ph-section="links_events_modal"
-                  data-ph-city={cityLabel}
-                  data-ph-event-date={event.date}
-                  data-ph-price={event.price ?? ""}
-                >
-                  <span class="event-city">{cityLabel}</span>
-                  <div class="event-date-group">
-                    <span class="event-date">{event.date}</span>
-                    {ticketIcon}
-                  </div>
-                </a>
-              ) : (
-                <div class="event-tba">
-                  <span class="event-city">{cityLabel}</span>
-                  <span class="event-date-muted">{event.date}</span>
-                </div>
-              );
-            })}
-          </div>
-        )
-      }
-    </div>
-  </dialog>
-
-  <EventbriteWidgetInit />
-
-  {/* ── Press modal ──────────────────────────────────────── */}
-  <dialog
-    id="press-modal"
-    class="modal-dialog modal-dialog--scrollable"
-    tabindex="-1"
-  >
-    <div class="modal-inner">
-      <button type="button" class="modal-close" aria-label="Close">
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          width="20"
-          height="20"
-          viewBox="0 0 24 24"
-          fill="none"
-          stroke="currentColor"
-          stroke-width="2"
-          stroke-linecap="round"
-          stroke-linejoin="round"
-          ><path d="M18 6 6 18"></path><path d="m6 6 12 12"></path></svg
-        >
-      </button>
-
-      <h2 class="modal-title">As Seen In</h2>
-      <div class="modal-divider"></div>
-
-      <div class="event-list">
-        {
-          reversedPress.map((item) => {
-            const inner = (
-              <>
-                <div class="press-content">
-                  <div class="press-badge-row">
-                    <span class="press-badge">
-                      {item.type === "podcast" ? (
-                        <svg
-                          xmlns="http://www.w3.org/2000/svg"
-                          width="10"
-                          height="10"
-                          viewBox="0 0 24 24"
-                          fill="none"
-                          stroke="currentColor"
-                          stroke-width="2"
-                          stroke-linecap="round"
-                          stroke-linejoin="round"
-                          aria-hidden="true"
-                        >
-                          <path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z" />
-                          <path d="M19 10v2a7 7 0 0 1-14 0v-2" />
-                          <line x1="12" x2="12" y1="19" y2="22" />
-                        </svg>
-                      ) : (
-                        <svg
-                          xmlns="http://www.w3.org/2000/svg"
-                          width="10"
-                          height="10"
-                          viewBox="0 0 24 24"
-                          fill="none"
-                          stroke="currentColor"
-                          stroke-width="2"
-                          stroke-linecap="round"
-                          stroke-linejoin="round"
-                          aria-hidden="true"
-                        >
-                          <path d="M4 22h16a2 2 0 0 0 2-2V4a2 2 0 0 0-2-2H8a2 2 0 0 0-2 2v16a2 2 0 0 1-2 2Zm0 0a2 2 0 0 1-2-2v-9c0-1.1.9-2 2-2h2" />
-                          <path d="M18 14h-8" />
-                          <path d="M15 18h-5" />
-                          <path d="M10 6h8v4h-8V6Z" />
-                        </svg>
-                      )}
-                      {item.type}
-                    </span>
-                    {!item.url && (
-                      <span class="press-badge press-badge--soon">
-                        Coming Soon
-                      </span>
-                    )}
-                  </div>
-                  <p class="press-source">{item.source}</p>
-                </div>
-                {item.url && (
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    width="14"
-                    height="14"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    stroke-width="2"
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    class="press-external-icon"
-                    aria-hidden="true"
-                  >
-                    <path d="M15 3h6v6" />
-                    <path d="M10 14 21 3" />
-                    <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6" />
-                  </svg>
-                )}
-              </>
-            );
-            return item.url ? (
-              <a
-                href={item.url}
-                target="_blank"
-                rel="noopener noreferrer"
-                class="press-item"
-              >
-                {inner}
+                <Fragment set:html={iconSvg(action.icon)} />
+                <span class="action-copy">
+                  <strong>{action.label}</strong>
+                  <span>{action.description}</span>
+                </span>
               </a>
             ) : (
-              <div class="press-item press-item--disabled">{inner}</div>
-            );
-          })
+              <button
+                type="button"
+                class:list={[
+                  "action-link",
+                  index === 0 ? "action-link--primary" : "",
+                ]}
+                data-open-modal={action.dialog}
+                data-ph-capture={action.eventName}
+                data-ph-cta={action.ctaId}
+                data-ph-section="links_primary"
+                data-cta-position={`links_primary_${index + 1}`}
+                data-cta-text={action.label}
+              >
+                <Fragment set:html={iconSvg(action.icon)} />
+                <span class="action-copy">
+                  <strong>{action.label}</strong>
+                  <span>{action.description}</span>
+                </span>
+              </button>
+            ),
+          )
         }
-      </div>
+      </section>
+
+      {
+        featuredEvents.length > 0 && (
+          <section class="event-strip" aria-labelledby="event-strip-heading">
+            <div class="section-heading">
+              <h2 id="event-strip-heading">Next tickets</h2>
+              <a
+                href="/tickets"
+                data-ph-capture="cta_clicked"
+                data-ph-cta="all_tickets"
+                data-ph-section="links_events"
+                data-cta-position="links_events_header"
+                data-cta-text="All shows"
+                data-destination-url="/tickets"
+              >
+                All shows
+              </a>
+            </div>
+            <div class="event-list">
+              {featuredEvents.map((event, index) => {
+                const city = formatEventLocation(event);
+                const ticketUrl = buildTicketUrl(
+                  event.url,
+                  "links",
+                  `event_${index + 1}`,
+                );
+                const title = `Garam Masala Dating - ${city} - ${event.date}`;
+                return (
+                  <a
+                    href={ticketUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    class="event-link"
+                    data-ph-capture="ticket_click"
+                    data-ph-cta="ticket_vendor"
+                    data-ph-section="links_events"
+                    data-cta-position={`links_event_${index + 1}`}
+                    data-cta-text={`Tickets: ${city}`}
+                    data-destination-url={ticketUrl}
+                    data-link-url={ticketUrl}
+                    data-link-domain={domainFromUrl(ticketUrl)}
+                    data-event-city={city}
+                    data-event-date={event.isoDate ?? event.date}
+                    data-event-title={title}
+                    data-event-vendor={vendorFromUrl(ticketUrl)}
+                  >
+                    <span>
+                      <strong>{city}</strong>
+                      <small>{event.date}</small>
+                    </span>
+                    <span class="event-link__cta">Tickets</span>
+                  </a>
+                );
+              })}
+            </div>
+          </section>
+        )
+      }
+
+      <section class="watch-section" aria-labelledby="watch-heading">
+        <div class="section-heading">
+          <h2 id="watch-heading">Watch episodes</h2>
+        </div>
+        <div class="watch-links">
+          {
+            episodeLinks.map((link, index) => (
+              <a
+                href={link.href}
+                target="_blank"
+                rel="noopener noreferrer"
+                class="watch-link"
+                data-ph-capture="outbound_link_clicked"
+                data-ph-cta={link.ctaId}
+                data-ph-section="links_watch"
+                data-cta-position={`links_watch_${index + 1}`}
+                data-cta-text={link.label}
+                data-destination-url={link.href}
+                data-link-url={link.href}
+                data-link-domain={domainFromUrl(link.href)}
+              >
+                <span
+                  class="watch-icon"
+                  set:html={SOCIAL_ICON_SVGS[link.icon]}
+                />
+                <span>{link.label}</span>
+              </a>
+            ))
+          }
+        </div>
+      </section>
+
+      <section class="secondary-section" aria-labelledby="secondary-heading">
+        <h2 id="secondary-heading">Press and booking</h2>
+        <a
+          href="mailto:press@garammasaladating.com"
+          class="secondary-link"
+          data-ph-capture="cta_clicked"
+          data-ph-cta="booking_inquiry"
+          data-ph-section="links_secondary"
+          data-cta-position="links_secondary_booking"
+          data-cta-text="Booking and press inquiries"
+          data-destination-url="mailto:press@garammasaladating.com"
+        >
+          Booking and press inquiries
+        </a>
+        {
+          pressLinks.length > 0 && (
+            <div class="press-list">
+              {pressLinks.map((item, index) => (
+                <a
+                  href={item.url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  data-ph-capture="outbound_link_clicked"
+                  data-ph-cta="press_link"
+                  data-ph-section="links_press"
+                  data-cta-position={`links_press_${index + 1}`}
+                  data-cta-text={item.source}
+                  data-destination-url={item.url}
+                  data-link-url={item.url}
+                  data-link-domain={domainFromUrl(item.url)}
+                >
+                  {item.source}
+                </a>
+              ))}
+            </div>
+          )
+        }
+      </section>
     </div>
-  </dialog>
+  </main>
 
   <LeadCaptureModal
     id="links-spice-modal"
     source="links-page"
     heading="Get on the List"
-    subheading="Cheap and free tickets, exclusive discount codes, show announcements. No spam."
+    subheading="Cheap and free tickets, exclusive discount codes, city drops."
     submitLabel="Count Me In"
-    successMessage="You're on the list! Deals incoming."
+    successMessage="You're on the list. Deals incoming."
   />
 </BaseLayout>
 
-<script>
-  function setupDialog(triggerId: string, dialogId: string) {
-    const trigger = document.getElementById(triggerId);
-    const dialog = document.getElementById(dialogId) as HTMLDialogElement;
-    if (!trigger || !dialog) return;
-
-    trigger.addEventListener("click", () => {
-      dialog.showModal();
-      dialog.focus();
-    });
-    dialog
-      .querySelector(".modal-close")
-      ?.addEventListener("click", () => dialog.close());
-    dialog.addEventListener("click", (e) => {
-      if (e.target === dialog) dialog.close();
-    });
-  }
-  setupDialog("events-trigger", "events-modal");
-  setupDialog("press-trigger", "press-modal");
-  setupDialog("links-spice-trigger", "links-spice-modal");
-
-  // Close the events dialog before the EB checkout modal opens.
-  // Native <dialog> opened via showModal() sits in the browser top layer — if it
-  // stays open while the EB widget injects its own modal into <body>, the dialog
-  // backdrop blocks EB and outside-click handlers collide. Closing synchronously
-  // in the capture phase (before the EB widget's bubble-phase listener fires)
-  // ensures only one modal is ever in the top layer at a time.
-  const eventsModal = document.getElementById(
-    "events-modal",
-  ) as HTMLDialogElement | null;
-  if (eventsModal) {
-    eventsModal.addEventListener(
-      "click",
-      (e) => {
-        const target = e.target as HTMLElement;
-        if (target.closest('[id^="eventbrite-widget-modal-trigger-"]')) {
-          eventsModal.close();
-        }
-      },
-      { capture: true },
-    );
-  }
-</script>
-
 <style>
-  /* ─── Animations ──────────────────────────────────────────── */
-
-  @keyframes pageIn {
-    from {
-      opacity: 0;
-      transform: translateY(8px);
-    }
-    to {
-      opacity: 1;
-      transform: translateY(0);
-    }
+  .links-page {
+    min-height: 100svh;
+    background:
+      radial-gradient(
+        circle at top right,
+        rgba(var(--brand-red-rgb), 0.12),
+        transparent 22rem
+      ),
+      linear-gradient(180deg, var(--off-white) 0%, var(--cream-warm) 100%);
   }
 
-  @keyframes fadeUp {
-    from {
-      opacity: 0;
-      transform: translateY(16px);
-    }
-    to {
-      opacity: 1;
-      transform: translateY(0);
-    }
-  }
-
-  @keyframes headerFadeUp {
-    from {
-      opacity: 0;
-      transform: translateY(12px);
-    }
-    to {
-      opacity: 1;
-      transform: translateY(0);
-    }
-  }
-
-  @keyframes pulseGlow {
-    0%,
-    100% {
-      box-shadow:
-        0 2px 12px rgba(var(--brand-red-rgb), 0.25),
-        0 0 0 0 rgba(var(--brand-red-rgb), 0);
-    }
-    50% {
-      box-shadow:
-        0 2px 12px rgba(var(--brand-red-rgb), 0.25),
-        0 0 0 8px rgba(var(--brand-red-rgb), 0.12);
-    }
-  }
-
-  @keyframes modalIn {
-    from {
-      opacity: 0;
-      transform: scale(0.95) translateY(8px);
-    }
-    to {
-      opacity: 1;
-      transform: scale(1) translateY(0);
-    }
-  }
-
-  /* ─── Page layout ─────────────────────────────────────────── */
-
-  .page {
-    min-height: 100vh;
-    background: transparent;
-    position: relative;
-    animation: pageIn 0.3s ease-out both;
-    overflow: hidden;
-  }
-  .page-bg {
-    position: absolute;
-    inset: 0;
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    object-position: center 40%;
-    display: block;
-    z-index: 0;
-    opacity: 0.08;
-  }
-
-  .container {
-    position: relative;
-    z-index: 1;
-    max-width: 420px;
+  .links-shell {
+    width: min(100%, 540px);
     margin: 0 auto;
-    padding: 24px;
+    padding: 24px 18px 56px;
     display: flex;
     flex-direction: column;
-    align-items: center;
+    gap: 28px;
   }
 
-  /* ─── Header ──────────────────────────────────────────────── */
-
-  .header-wrap {
-    text-align: center;
-    animation: headerFadeUp 0.6s ease-out 0s both;
-    margin-bottom: 32px;
+  .links-header {
+    padding-top: 8px;
   }
 
-  .home-link {
-    text-decoration: none;
-    cursor: pointer;
-  }
-
-  .links-logo {
-    height: 64px;
-    width: auto;
+  .links-kicker {
+    font-family: var(--font-body), sans-serif;
+    font-size: 11px;
+    font-weight: 800;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--brand-red);
     margin-bottom: 10px;
   }
 
-  .subtitle {
-    font-family: var(--font-playfair);
-    font-size: 24px;
-    font-weight: 700;
+  .links-header h1 {
+    font-family: var(--font-playfair), serif;
+    font-size: clamp(2.4rem, 12vw, 4.75rem);
+    line-height: 0.95;
     color: var(--charcoal);
-    line-height: 1.3;
-    margin: 0;
+    max-width: 8ch;
   }
 
-  .divider {
-    width: 48px;
-    height: 1px;
-    background: rgba(var(--brand-red-rgb), 0.3);
-    margin: 18px auto 0;
-  }
-
-  /* ─── Link list ───────────────────────────────────────────── */
-
-  .link-list {
-    width: 100%;
+  .primary-actions,
+  .event-list,
+  .watch-links,
+  .secondary-section,
+  .press-list {
     display: flex;
     flex-direction: column;
-    gap: 12px;
-  }
-
-  /* ─── LinkButton — primary ────────────────────────────────── */
-
-  .primary-link {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    width: 100%;
-    padding: 20px 24px;
-    border-radius: 14px;
-    border: none;
-    background: var(--brand-red);
-    color: white;
-    font-family: var(--font-body);
-    font-size: 17px;
-    font-weight: 600;
-    letter-spacing: 0.04em;
-    text-decoration: none;
-    cursor: pointer;
-    transition:
-      transform 0.25s ease,
-      box-shadow 0.25s ease;
-    transform: scale(1);
-    box-shadow: 0 2px 12px rgba(var(--brand-red-rgb), 0.25);
-    white-space: normal;
-    overflow-wrap: anywhere;
-  }
-
-  .primary-link:hover {
-    transform: scale(1.02);
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
-  }
-
-  /* ─── LinkButton — glass ──────────────────────────────────── */
-
-  .glass-link {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    width: 100%;
-    padding: 17px 22px;
-    border-radius: 12px;
-    border: 1px solid rgba(0, 0, 0, 0.06);
-    background: white;
-    color: var(--charcoal);
-    font-family: var(--font-body);
-    font-size: 16px;
-    font-weight: 500;
-    text-decoration: none;
-    cursor: pointer;
-    transition: all 0.25s ease;
-    transform: scale(1);
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
-    text-align: left;
-    white-space: nowrap;
-  }
-
-  .glass-link:hover {
-    border-color: rgba(var(--brand-red-rgb), 0.35);
-    background: white;
-    transform: scale(1.015);
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
-  }
-
-  /* icon-primary / icon-glass are injected via set:html, so need :global */
-  :global(.icon-primary) {
-    flex-shrink: 0;
-    color: white;
-    display: inline-flex;
-  }
-
-  :global(.icon-glass) {
-    flex-shrink: 0;
-    color: #888;
-    display: inline-flex;
-  }
-
-  .link-label {
-    flex: 1;
-    text-align: center;
-    text-transform: uppercase;
-  }
-
-  /* ─── Social icons ────────────────────────────────────────── */
-
-  .social-row {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: center;
-    gap: 12px;
-    margin-top: 36px;
-    animation: headerFadeUp 0.5s ease-out 0.9s both;
-  }
-
-  .social-icon {
-    width: var(--touch-target);
-    height: var(--touch-target);
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    background: rgba(0, 0, 0, 0.06);
-    color: #888;
-    transition:
-      background 0.2s,
-      color 0.2s;
-    text-decoration: none;
-  }
-
-  .social-icon:hover {
-    background: rgba(var(--brand-red-rgb), 0.15);
-    color: var(--brand-red);
-  }
-
-  /* ─── Footer ──────────────────────────────────────────────── */
-
-  .footer-text {
-    margin-top: 32px;
-    font-size: 14px;
-    font-family: var(--font-body);
-    font-style: italic;
-    color: var(--muted);
-    text-align: center;
-    animation: headerFadeUp 0.5s ease-out 1s both;
-  }
-
-  /* ─── Dialog / Modal ──────────────────────────────────────── */
-
-  .modal-dialog {
-    border: none;
-    background: transparent;
-    padding: 24px;
-    max-width: 100%;
-    max-height: 100vh;
-    width: 100%;
-    height: 100%;
-    overflow: visible;
-    outline: none;
-  }
-
-  .modal-dialog:focus-visible {
-    outline: 2px solid var(--brand-red);
-    outline-offset: 2px;
-  }
-
-  .modal-dialog::backdrop {
-    background: rgba(0, 0, 0, 0.5);
-  }
-
-  .modal-dialog[open] {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-  }
-
-  .modal-inner {
-    width: 100%;
-    max-width: 400px;
-    max-height: 80vh;
-    overflow-y: auto;
-    background: white;
-    border: 1px solid rgba(0, 0, 0, 0.1);
-    border-radius: 20px;
-    padding: 32px 24px;
-    animation: modalIn 0.25s ease-out both;
-    position: relative;
-    text-align: center;
-  }
-
-  .modal-close {
-    position: absolute;
-    top: 16px;
-    right: 16px;
-    background: none;
-    border: none;
-    color: #888;
-    cursor: pointer;
-    min-width: var(--touch-target);
-    min-height: var(--touch-target);
-    padding: 12px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    transition: color 0.2s;
-  }
-
-  .modal-close:hover {
-    color: var(--charcoal);
-  }
-
-  .modal-title {
-    font-family: var(--font-playfair);
-    font-size: 22px;
-    font-weight: 600;
-    color: var(--charcoal);
-    margin-bottom: 8px;
-  }
-
-  .modal-divider {
-    width: 32px;
-    height: 1px;
-    background: rgba(var(--brand-red-rgb), 0.3);
-    margin-bottom: 24px;
-  }
-
-  /* ─── Events list ─────────────────────────────────────────── */
-
-  .event-list {
-    display: flex;
-    flex-direction: column;
-    gap: 12px;
-  }
-
-  .event-link {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 14px 16px;
-    border-radius: 12px;
-    border: 1px solid rgba(0, 0, 0, 0.06);
-    background: white;
-    text-decoration: none;
-    transition: all 0.2s ease;
-    cursor: pointer;
-  }
-
-  .event-link:hover {
-    background: rgba(var(--brand-red-rgb), 0.06);
-    border-color: rgba(var(--brand-red-rgb), 0.35);
-  }
-
-  .event-link:active {
-    transform: scale(0.97);
-  }
-
-  button.event-link {
-    background: white;
-    border: 1px solid rgba(0, 0, 0, 0.06);
-    font-family: inherit;
-    font-size: inherit;
-    font-weight: inherit;
-    color: inherit;
-    width: 100%;
-    text-align: left;
-  }
-
-  .event-tba {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 14px 16px;
-    border-radius: 12px;
-    border: 1px solid rgba(0, 0, 0, 0.06);
-    background: white;
-    opacity: 0.5;
-  }
-
-  .event-city {
-    font-family: var(--font-body);
-    font-size: 16px;
-    font-weight: 500;
-    color: var(--charcoal);
-  }
-
-  .event-date {
-    font-family: var(--font-body);
-    font-size: 13px;
-    font-weight: 600;
-    color: #666;
-  }
-
-  .event-date-muted {
-    font-family: var(--font-body);
-    font-size: 13px;
-    font-weight: 600;
-    color: #888;
-  }
-
-  .event-date-group {
-    display: flex;
-    align-items: center;
     gap: 10px;
   }
 
-  .ticket-icon {
-    color: var(--brand-red);
-  }
-
-  .no-events {
-    font-family: var(--font-body);
-    font-size: 16px;
-    color: #666;
-    text-align: center;
-    padding: 16px 0;
-  }
-
-  /* ─── Press items ─────────────────────────────────────────── */
-
-  .press-item {
+  .action-link,
+  .event-link,
+  .watch-link,
+  .secondary-link {
+    min-height: 56px;
+    border: 1px solid rgba(26, 26, 26, 0.12);
+    border-radius: 8px;
+    background: rgba(var(--white-rgb), 0.74);
+    color: var(--charcoal);
+    text-decoration: none;
+    font-family: var(--font-body), sans-serif;
     display: flex;
     align-items: center;
     justify-content: space-between;
+    gap: 14px;
     padding: 14px 16px;
-    border-radius: 12px;
-    border: 1px solid rgba(0, 0, 0, 0.06);
-    background: white;
-    text-decoration: none;
-    transition: all 0.2s ease;
+    width: 100%;
+  }
+
+  button.action-link {
+    appearance: none;
     cursor: pointer;
-    gap: 12px;
+    text-align: left;
   }
 
-  .press-item:hover {
-    background: rgba(var(--brand-red-rgb), 0.06);
-    border-color: rgba(var(--brand-red-rgb), 0.35);
+  .action-link--primary {
+    min-height: 68px;
+    background: var(--brand-red);
+    border-color: var(--brand-red);
+    color: var(--white);
   }
 
-  .press-content {
-    flex: 1;
-    min-width: 0;
-  }
-
-  .press-badge-row {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    margin-bottom: 4px;
-  }
-
-  .press-badge {
+  .link-icon,
+  .watch-icon {
+    flex: 0 0 auto;
     display: inline-flex;
     align-items: center;
-    gap: 4px;
-    padding: 2px 8px;
-    border-radius: 6px;
-    background: rgba(var(--brand-red-rgb), 0.12);
-    font-family: var(--font-body);
-    font-size: 11px;
-    font-weight: 600;
-    color: var(--brand-red);
-    text-transform: uppercase;
-    letter-spacing: 0.04em;
+    justify-content: center;
+    width: 24px;
+    height: 24px;
   }
 
-  .press-source {
-    font-family: var(--font-body);
+  .action-copy {
+    flex: 1;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+  }
+
+  .action-copy strong,
+  .event-link strong {
     font-size: 16px;
-    font-weight: 500;
-    color: var(--charcoal);
-    margin: 0;
-    line-height: 1.3;
+    line-height: 1.1;
   }
 
-  .press-external-icon {
-    flex-shrink: 0;
+  .action-copy span,
+  .event-link small {
+    color: currentColor;
+    opacity: 0.72;
+    font-size: 13px;
+    line-height: 1.2;
+  }
+
+  .section-heading {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 16px;
+    margin-bottom: 10px;
+  }
+
+  .section-heading h2,
+  .secondary-section h2 {
+    font-family: var(--font-body), sans-serif;
+    font-size: 12px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--muted);
+  }
+
+  .section-heading a {
+    color: var(--brand-red);
+    font-family: var(--font-body), sans-serif;
+    font-size: 13px;
+    font-weight: 800;
+    text-decoration: none;
+  }
+
+  .event-link > span:first-child {
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+  }
+
+  .event-link__cta {
+    flex: 0 0 auto;
+    color: var(--brand-red);
+    font-size: 13px;
+    font-weight: 800;
+  }
+
+  .watch-links {
+    display: grid;
+    grid-template-columns: 1fr;
+  }
+
+  .watch-link {
+    justify-content: flex-start;
+    font-weight: 800;
+  }
+
+  .secondary-section {
+    padding-bottom: 8px;
+  }
+
+  .secondary-link {
+    justify-content: flex-start;
+    font-weight: 800;
+  }
+
+  .press-list a {
+    color: var(--text-secondary);
+    font-family: var(--font-body), sans-serif;
+    font-size: 14px;
+    line-height: 1.4;
+    text-decoration: none;
+    padding: 8px 0;
+  }
+
+  .action-link:hover,
+  .event-link:hover,
+  .watch-link:hover,
+  .secondary-link:hover,
+  .press-list a:hover,
+  .section-heading a:hover {
     color: var(--brand-red);
   }
 
-  .press-item--disabled {
-    opacity: 0.5;
-    cursor: default;
+  .action-link--primary:hover {
+    color: var(--white);
+    background: var(--brand-red-dark);
   }
 
-  .press-item--disabled:hover {
-    background: white;
-    border-color: rgba(0, 0, 0, 0.06);
-  }
-
-  .press-badge--soon {
-    background: rgba(0, 0, 0, 0.06);
-    color: #888;
-  }
-
-  @media (max-width: 767px) {
-    .primary-link,
-    .glass-link {
-      white-space: normal;
+  @media (min-width: 520px) {
+    .links-shell {
+      padding-top: 40px;
     }
-    .link-label {
-      text-align: center;
+
+    .watch-links {
+      grid-template-columns: repeat(3, 1fr);
     }
-    .social-row {
-      flex-wrap: wrap;
+
+    .watch-link {
+      justify-content: center;
     }
   }
 </style>

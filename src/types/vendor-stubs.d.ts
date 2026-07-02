@@ -6,6 +6,7 @@
  */
 
 declare module "@react-email/components";
+declare module "@react-email/render";
 
 declare module "@upstash/redis" {
   export class Redis {

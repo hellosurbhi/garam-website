@@ -1265,3 +1265,44 @@ When we start actually texting international numbers (via Twilio/MessageBird/etc
 - **Source:** CodeRabbit batch 2
 - **Comment:** `animateOpen`/`animateClose` have no setTimeout safety net. Add a short timeout (e.g., 400ms) that runs cleanup if `transitionend` never fires, cleared if the event fires first.
 - **Link:** n/a
+
+---
+
+## Auto-open PR on push (2026-07-02)
+
+Every push to a feature branch should immediately open a PR on GitHub (draft is fine). The current rule in `~/.claude/CLAUDE.md` says "when the task is complete" which is soft and easy to skip. This is how `fix/csp-twitter-connect-src` sat local for six weeks with no PR.
+
+Options to evaluate:
+
+1. Strengthen CLAUDE.md wording: move the rule into Non-Negotiable Safety Rules with explicit `gh pr create --fill --draft` command.
+2. Local git `post-push` hook: runs `gh pr create --fill --draft` automatically when no PR exists on the current branch.
+3. Claude Code `Stop` hook in `~/.claude/settings.json`: checks for pushed-but-unopened branches at end of every turn.
+
+---
+
+## Triage stale PR #16 `bugs` (2026-07-02)
+
+PR #16 (`bugs` branch) has been open since May 2026 with 66 commits covering contestant-portal work, security hardening, CSP migration, and various bug fixes. Currently in CONFLICTING state against main. Contestant-prep still exists in the codebase, so this branch has real work worth reviewing.
+
+Suggested approach: rebase the branch, then split into smaller PRs by topic (portal, security hardening, CSP migration, individual bug fixes) rather than trying to land 66 commits as one PR.
+
+---
+
+## Clean up already-merged local and remote branches (2026-07-02)
+
+Twelve local branches whose PRs are already merged still exist and clutter `git branch -a`:
+
+- `chore/americas-number-one-copy` (PRs #53, #60)
+- `chore/fix-types-node-pin` (PR #54)
+- `fix/presale-duplicate-show` (PR #52)
+- `fix/nomination-wording-phone` (PR #51)
+- `chore/deps-bump-june-2026` (PRs #42-#45)
+- `feat/dc-aug30-show` (PR #41)
+- `feat/may31-nyc-show` (PR #28)
+- `feat/nyc-show-jun7` (PR #30)
+- `feat/nyc-show-aug2` (PR #29)
+- `feat/remove-contestant-prep` (PR #31)
+- `feat/city-winery-jul26` (PR #32)
+- `fix/pipeline-audit` (PR #33)
+
+Delete via `git branch -D <name>` (use `-D` because squash-merges leave the branch unreachable) and `git push origin --delete <name>` for remote counterparts. Verify each against `gh pr list --state merged` before deleting.

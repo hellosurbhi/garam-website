@@ -5,9 +5,9 @@ import GTM from "../components/gtm.astro";
 import MetaPixel from "../components/meta-pixel.astro";
 import HomeFooter from "../components/home/HomeFooter.astro";
 import PageNav from "../components/layout/PageNav.astro";
+import CookieConsent from "../components/CookieConsent.astro";
 import { SITE } from "../data/copy";
 import { pageTitle, ogTitle } from "../utils/meta";
-import LegalModal from "../components/LegalModal.astro";
 import HomeSignup from "../components/home/HomeSignup.astro";
 
 interface Props {
@@ -64,6 +64,18 @@ const {
       href="/fonts/nunito-latin-var.woff2"
       crossorigin
     />
+    <link
+      rel="preload"
+      as="font"
+      type="font/woff2"
+      href="/fonts/cormorant-garamond-latin-400i.woff2"
+      crossorigin
+    />
+    <link rel="preconnect" href="https://www.eventbrite.com" />
+    <link rel="preconnect" href="https://us-assets.i.posthog.com" crossorigin />
+    <link rel="preconnect" href="https://us.posthog.com" crossorigin />
+    <link rel="preconnect" href="https://connect.facebook.net" crossorigin />
+    <link rel="preconnect" href="https://www.googletagmanager.com" />
     <link rel="canonical" href={canonicalUrl} />
     <link rel="alternate" type="text/markdown" href="/llms.txt" />
     <meta property="og:type" content={ogType} />
@@ -102,29 +114,57 @@ const {
     <slot />
     {!hideSpiceList && !hideFooter && <HomeSignup />}
     {!hideFooter && <HomeFooter />}
-    <LegalModal />
+    <CookieConsent />
     <script>
-      import { inject } from "@vercel/analytics";
-      import { injectSpeedInsights } from "@vercel/speed-insights";
-      import { bootstrapLeadAttribution } from "@/lib/leadAttribution";
-      import { trackLeadEvent } from "@/lib/analytics";
+      import {
+        bootstrapLeadAttribution,
+        getStoredUtms,
+      } from "@/lib/leadAttribution";
+      import {
+        capture,
+        domainFromUrl,
+        isSocialUrl,
+        isTicketVendorUrl,
+        trackOutbound,
+        vendorFromUrl,
+      } from "@/lib/analytics";
+      import {
+        forceStoredUtmsToUrl,
+        preserveUtmsOnInternalLinks,
+      } from "@/utils/utmForwarding";
       const isLocalPreview = ["localhost", "127.0.0.1"].includes(
         window.location.hostname,
       );
       if (!isLocalPreview) {
-        inject();
-        injectSpeedInsights();
+        Promise.all([
+          import("@vercel/analytics"),
+          import("@vercel/speed-insights"),
+        ]).then(([{ inject }, { injectSpeedInsights }]) => {
+          inject();
+          injectSpeedInsights();
+        });
       }
       bootstrapLeadAttribution();
+      preserveUtmsOnInternalLinks();
+      function preserveTicketVendorUtms(anchor: HTMLAnchorElement): void {
+        if (isTicketVendorUrl(anchor.href)) {
+          anchor.href = forceStoredUtmsToUrl(anchor.href, getStoredUtms());
+        }
+      }
+      document.querySelectorAll<HTMLAnchorElement>("a[href]").forEach((a) => {
+        preserveTicketVendorUtms(a);
+      });
 
-      // Track elements with data-ph-capture attribute
+      // Track elements with data-ph-capture attribute.
+      // The event name is taken from data-ph-capture so callers can emit
+      // named events (apply_click, ticket_click, cta_clicked, etc.) directly.
       document.addEventListener("click", (e) => {
         const el = (e.target as HTMLElement).closest<HTMLElement>(
           "[data-ph-capture]",
         );
         if (!el) return;
         const eventName = el.dataset.phCapture!;
-        const props: Record<string, string> = {
+        const props: Record<string, string | null | boolean> = {
           page: window.location.pathname,
         };
         for (const [key, value] of Object.entries(el.dataset)) {
@@ -135,41 +175,168 @@ const {
             props[prop] = value;
           }
         }
-        trackLeadEvent(eventName, props);
+        if (el.dataset.phCta) {
+          props.cta_id = el.dataset.phCta;
+        }
+        // Augment with non-ph data-* tracking attributes
+        const extraKeys = [
+          "ctaPosition",
+          "ctaText",
+          "destinationUrl",
+          "linkUrl",
+          "linkDomain",
+          "eventCity",
+          "eventDate",
+          "eventIsoDate",
+          "eventTitle",
+          "eventVendor",
+          "articleSlug",
+          "citySlug",
+        ] as const;
+        for (const camel of extraKeys) {
+          const val = el.dataset[camel];
+          if (val) {
+            const snake = camel.replace(/[A-Z]/g, (m) => "_" + m.toLowerCase());
+            props[snake] = val;
+          }
+        }
+        const linked = el.closest<HTMLAnchorElement>("a[href]");
+        if (linked?.href) {
+          preserveTicketVendorUtms(linked);
+          props.destination_url ??= linked.href;
+          props.link_url ??= linked.href;
+          props.link_domain ??= domainFromUrl(linked.href);
+          props.event_vendor ??= isTicketVendorUrl(linked.href)
+            ? vendorFromUrl(linked.href)
+            : null;
+          try {
+            const linkedUrl = new URL(linked.href);
+            if (linkedUrl.origin !== window.location.origin) {
+              props.link_type = isTicketVendorUrl(linked.href)
+                ? "ticket_vendor"
+                : isSocialUrl(linked.href)
+                  ? "social"
+                  : "outbound";
+            }
+          } catch {
+            /* invalid URL — keep declared tracking props only */
+          }
+        }
+        props.cta_text ??=
+          el.dataset.ctaText ||
+          (el.textContent ?? "").trim().replace(/\s+/g, " ").slice(0, 120);
+        capture(eventName, props);
+
+        if (linked?.href) {
+          let linkUrl: URL | null = null;
+          try {
+            linkUrl = new URL(linked.href);
+          } catch {
+            linkUrl = null;
+          }
+          if (
+            linkUrl?.origin === window.location.origin &&
+            linkUrl.pathname.startsWith("/apply") &&
+            eventName !== "apply_click"
+          ) {
+            capture("apply_click", {
+              ...props,
+              inferred_event: true,
+              destination_url: linked.href,
+              link_url: linked.href,
+            });
+          }
+          if (
+            linkUrl?.origin === window.location.origin &&
+            linkUrl.pathname.startsWith("/tickets") &&
+            eventName !== "ticket_click"
+          ) {
+            capture("ticket_click", {
+              ...props,
+              inferred_event: true,
+              destination_url: linked.href,
+              link_url: linked.href,
+            });
+          }
+        }
       });
 
-      // Track outbound link clicks (Eventbrite, socials, press)
+      // Track outbound link clicks with safe-navigation guard.
+      // For same-tab clicks, prevent default and delay navigation ~100ms so the
+      // PostHog XHR has time to flush before the browser navigates away.
       document.addEventListener("click", (e) => {
         const link = (e.target as HTMLElement).closest<HTMLAnchorElement>(
           "a[href]",
         );
         if (!link?.href) return;
+        if (link.href.startsWith("mailto:") || link.href.startsWith("tel:"))
+          return;
+        let url: URL;
         try {
-          const url = new URL(link.href);
-          if (url.hostname === window.location.hostname) return;
-          const domain = url.hostname.replace("www.", "");
-          let linkType = "outbound";
-          if (domain.includes("eventbrite")) linkType = "eventbrite";
-          else if (
-            [
-              "instagram.com",
-              "tiktok.com",
-              "youtube.com",
-              "threads.net",
-              "x.com",
-              "facebook.com",
-            ].some((s) => domain.includes(s))
-          )
-            linkType = "social";
-          trackLeadEvent("outbound_link_clicked", {
-            url: link.href,
-            domain,
-            link_type: linkType,
-            link_text: (link.textContent ?? "").trim().slice(0, 80),
-            page: window.location.pathname,
-          });
+          url = new URL(link.href);
         } catch {
-          /* invalid URL */
+          return;
+        }
+        if (url.origin === window.location.origin) return;
+
+        const me = e as MouseEvent;
+        const isModified =
+          me.metaKey ||
+          me.ctrlKey ||
+          me.shiftKey ||
+          me.altKey ||
+          me.button !== 0;
+        const targetSelf = !link.target || link.target === "_self";
+
+        let linkType = "outbound";
+        if (isTicketVendorUrl(link.href)) {
+          preserveTicketVendorUtms(link);
+          linkType = "ticket_vendor";
+        } else if (isSocialUrl(link.href)) linkType = "social";
+
+        const dataCapture = link.closest<HTMLElement>("[data-ph-capture]");
+
+        // Always fire outbound_link_clicked with full destination URL unless a
+        // declarative handler on the same click already emitted that raw event.
+        if (dataCapture?.dataset.phCapture !== "outbound_link_clicked") {
+          trackOutbound(link, {
+            link_type: linkType,
+            link_domain: domainFromUrl(link.href),
+          });
+        }
+
+        // Fire a named ticket_click for all ticket vendor domains
+        if (linkType === "ticket_vendor") {
+          if (dataCapture?.dataset.phCapture !== "ticket_click") {
+            capture("ticket_click", {
+              destination_url: link.href,
+              link_url: link.href,
+              link_domain: domainFromUrl(link.href),
+              vendor: vendorFromUrl(link.href),
+              event_vendor: vendorFromUrl(link.href),
+              cta_text:
+                link.dataset.ctaText ||
+                (link.textContent ?? "")
+                  .trim()
+                  .replace(/\s+/g, " ")
+                  .slice(0, 120),
+              cta_position: link.dataset.ctaPosition ?? null,
+              event_city: link.dataset.eventCity ?? link.dataset.phCity ?? null,
+              event_date:
+                link.dataset.eventDate ?? link.dataset.phEventDate ?? null,
+              event_title:
+                link.dataset.eventTitle ?? link.dataset.phEventTitle ?? null,
+            });
+          }
+        }
+
+        // Safe-navigation: delay same-tab unmodified clicks so beacon can flush
+        if (targetSelf && !isModified) {
+          e.preventDefault();
+          const dest = link.href;
+          window.setTimeout(() => {
+            window.location.assign(dest);
+          }, 100);
         }
       });
 
@@ -246,21 +413,6 @@ const {
             { once: true },
           );
         }
-      }
-
-      // Upgrade utm_medium from "web" to "mobile" on all Eventbrite links for mobile visitors
-      if (window.innerWidth < 768) {
-        document
-          .querySelectorAll<HTMLAnchorElement>("a[href*='eventbrite.com']")
-          .forEach((a) => {
-            try {
-              const u = new URL(a.href);
-              u.searchParams.set("utm_medium", "mobile");
-              a.href = u.toString();
-            } catch {
-              /* invalid URL — skip */
-            }
-          });
       }
     </script>
   </body>

@@ -32,6 +32,9 @@ function makeEvent(overrides: Partial<EventEntry> = {}): EventEntry {
     url: "https://eventbrite.com/e/123",
     isoDate: "2026-05-10",
     venue: TEST_VENUE,
+    startTime: "20:00",
+    endTime: "22:00",
+    price: "15",
     ...overrides,
   };
 }
@@ -63,14 +66,14 @@ describe("buildEventSchemas", () => {
     expect(buildEventSchemas(events)).toEqual([]);
   });
 
-  it("uses default startTime 20:00 when not specified", () => {
-    const schemas = buildEventSchemas([makeEvent()]);
+  it("uses startTime from the event", () => {
+    const schemas = buildEventSchemas([makeEvent({ startTime: "20:00" })]);
     const parsed = JSON.parse(schemas[0]);
     expect(parsed.startDate).toContain("T20:00:00");
   });
 
-  it("uses default endTime 22:00 when not specified", () => {
-    const schemas = buildEventSchemas([makeEvent()]);
+  it("uses endTime from the event", () => {
+    const schemas = buildEventSchemas([makeEvent({ endTime: "22:00" })]);
     const parsed = JSON.parse(schemas[0]);
     expect(parsed.endDate).toContain("T22:00:00");
   });
@@ -115,8 +118,8 @@ describe("buildEventSchemas", () => {
     expect(parsed.location.address).not.toHaveProperty("postalCode");
   });
 
-  it("uses default price '15' when not specified", () => {
-    const schemas = buildEventSchemas([makeEvent()]);
+  it("uses price from the event", () => {
+    const schemas = buildEventSchemas([makeEvent({ price: "15" })]);
     const parsed = JSON.parse(schemas[0]);
     expect(parsed.offers.price).toBe("15");
   });
@@ -195,28 +198,22 @@ describe("buildEventSchemas", () => {
     expect(buildEventSchemas(events)).toHaveLength(1);
   });
 
-  it("uses default startTime '20:00' when startTime is null", () => {
-    const schemas = buildEventSchemas([
-      makeEvent({ startTime: null as unknown as string }),
-    ]);
-    const parsed = JSON.parse(schemas[0]);
-    expect(parsed.startDate).toContain("T20:00:00");
+  it("throws when startTime is null (build-time guardrail)", () => {
+    expect(() =>
+      buildEventSchemas([makeEvent({ startTime: null as unknown as string })]),
+    ).toThrow(/missing startTime/);
   });
 
-  it("uses default endTime '22:00' when endTime is null", () => {
-    const schemas = buildEventSchemas([
-      makeEvent({ endTime: null as unknown as string }),
-    ]);
-    const parsed = JSON.parse(schemas[0]);
-    expect(parsed.endDate).toContain("T22:00:00");
+  it("throws when endTime is null (build-time guardrail)", () => {
+    expect(() =>
+      buildEventSchemas([makeEvent({ endTime: null as unknown as string })]),
+    ).toThrow(/missing endTime/);
   });
 
-  it("uses default price '15' when price is null", () => {
-    const schemas = buildEventSchemas([
-      makeEvent({ price: null as unknown as string }),
-    ]);
-    const parsed = JSON.parse(schemas[0]);
-    expect(parsed.offers.price).toBe("15");
+  it("throws when price is null (build-time guardrail)", () => {
+    expect(() =>
+      buildEventSchemas([makeEvent({ price: null as unknown as string })]),
+    ).toThrow(/missing price/);
   });
 
   it("uses price '0' when explicitly set", () => {
@@ -275,6 +272,22 @@ describe("buildEventSchemas", () => {
     const schemas = buildEventSchemas([makeEvent()]);
     const parsed = JSON.parse(schemas[0]);
     expect(parsed.offers.availability).toBe("https://schema.org/InStock");
+  });
+
+  it("uses PreSale availability before onSaleAt", () => {
+    const onSaleAt = "2999-01-01T00:00:00.000Z";
+    const schemas = buildEventSchemas([makeEvent({ onSaleAt })]);
+    const parsed = JSON.parse(schemas[0]);
+    expect(parsed.offers.availability).toBe("https://schema.org/PreSale");
+    expect(parsed.offers.validFrom).toBe(onSaleAt);
+  });
+
+  it("uses InStock availability after onSaleAt", () => {
+    const onSaleAt = "2000-01-01T00:00:00.000Z";
+    const schemas = buildEventSchemas([makeEvent({ onSaleAt })]);
+    const parsed = JSON.parse(schemas[0]);
+    expect(parsed.offers.availability).toBe("https://schema.org/InStock");
+    expect(parsed.offers.validFrom).toBe(onSaleAt);
   });
 
   it("includes correct image URL", () => {

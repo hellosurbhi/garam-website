@@ -21,7 +21,6 @@ export const ukCities: Record<string, CityData> = {
       { label: "Join the London Waitlist", href: "#waitlist" },
       { label: "Apply to Be a Contestant", href: "/apply?city=London" },
     ],
-    includeEventSchema: false,
     areaServed: "London, United Kingdom",
     addressLocality: "London",
     addressRegion: "Greater London",
@@ -71,7 +70,6 @@ export const ukCities: Record<string, CityData> = {
       { label: "Join the Birmingham Waitlist", href: "#waitlist" },
       { label: "Apply to Be a Contestant", href: "/apply?city=Birmingham" },
     ],
-    includeEventSchema: false,
     areaServed: "Birmingham, United Kingdom",
     addressLocality: "Birmingham",
     addressRegion: "West Midlands",
@@ -98,7 +96,7 @@ export const ukCities: Record<string, CityData> = {
       },
       {
         q: "Will the show be in English?",
-        a: "Yes. The show runs in English. The format is the same as our New York shows adapted for the local community.",
+        a: "Yes. The show runs in English. Birmingham is home to one of the UK's largest Punjabi and Gujarati communities, and the Handsworth and Sparkhill crowd is fully comfortable with an English-language format. Expect real Brummie energy in the room.",
       },
       {
         q: "Can I apply to be a contestant?",
@@ -127,7 +125,6 @@ export const ukCities: Record<string, CityData> = {
       { label: "Join the Leicester Waitlist", href: "#waitlist" },
       { label: "Apply to Be a Contestant", href: "/apply?city=Leicester" },
     ],
-    includeEventSchema: false,
     areaServed: "Leicester, United Kingdom",
     addressLocality: "Leicester",
     addressRegion: "Leicestershire",
@@ -154,7 +151,7 @@ export const ukCities: Record<string, CityData> = {
       },
       {
         q: "Will the show be in English?",
-        a: "Yes. The show runs in English. The format is the same as our New York shows adapted for the local community.",
+        a: "Yes. The show runs in English. Leicester's Gujarati community on Belgrave Road is one of the most established in Europe. English is the daily professional language for the city's second and third generation British Asians, and the room brings Gujarati warmth with it.",
       },
       {
         q: "Can I apply to be a contestant?",
@@ -183,7 +180,6 @@ export const ukCities: Record<string, CityData> = {
       { label: "Join the Manchester Waitlist", href: "#waitlist" },
       { label: "Apply to Be a Contestant", href: "/apply?city=Manchester" },
     ],
-    includeEventSchema: false,
     areaServed: "Manchester, United Kingdom",
     addressLocality: "Manchester",
     addressRegion: "Greater Manchester",
@@ -204,7 +200,7 @@ export const ukCities: Record<string, CityData> = {
       },
       {
         q: "Will the show be in English?",
-        a: "Yes. The show runs in English. The format is the same as our New York shows adapted for the local community.",
+        a: "Yes. The show runs in English. Manchester's Pakistani and Indian communities are multigenerational and spread across Rusholme, Longsight, and beyond. The Curry Mile crowd speaks English fluently and brings unmistakable northern warmth to a live room.",
       },
       {
         q: "Can I apply to be a contestant?",
@@ -233,7 +229,6 @@ export const ukCities: Record<string, CityData> = {
       { label: "Join the Leeds Waitlist", href: "#waitlist" },
       { label: "Apply to Be a Contestant", href: "/apply?city=Leeds" },
     ],
-    includeEventSchema: false,
     areaServed: "Leeds, United Kingdom",
     addressLocality: "Leeds",
     addressRegion: "West Yorkshire",
@@ -260,7 +255,7 @@ export const ukCities: Record<string, CityData> = {
       },
       {
         q: "Will the show be in English?",
-        a: "Yes. The show runs in English. The format is the same as our New York shows adapted for the local community.",
+        a: "Yes. The show runs in English. Leeds has a large Pakistani community in Harehills and Chapeltown with deep Yorkshire roots. English is the default for the young professional crowd, and that distinctive Leeds directness makes for a brilliant audience.",
       },
       {
         q: "Can I apply to be a contestant?",
@@ -289,7 +284,6 @@ export const ukCities: Record<string, CityData> = {
       { label: "Join the Bradford Waitlist", href: "#waitlist" },
       { label: "Apply to Be a Contestant", href: "/apply?city=Bradford" },
     ],
-    includeEventSchema: false,
     areaServed: "Bradford, United Kingdom",
     addressLocality: "Bradford",
     addressRegion: "West Yorkshire",
@@ -316,7 +310,7 @@ export const ukCities: Record<string, CityData> = {
       },
       {
         q: "Will the show be in English?",
-        a: "Yes. The show runs in English. The format is the same as our New York shows adapted for the local community.",
+        a: "Yes. The show runs in English. Bradford has one of the highest proportions of British Pakistanis in the UK, particularly from Mirpuri backgrounds. The community is deeply settled and English-fluent, and the room brings Bradford's no-nonsense honesty to every moment on stage.",
       },
       {
         q: "Can I apply to be a contestant?",
@@ -345,7 +339,6 @@ export const ukCities: Record<string, CityData> = {
       { label: "Join the Coventry Waitlist", href: "#waitlist" },
       { label: "Apply to Be a Contestant", href: "/apply?city=Coventry" },
     ],
-    includeEventSchema: false,
     areaServed: "Coventry, United Kingdom",
     addressLocality: "Coventry",
     addressRegion: "West Midlands",
@@ -372,7 +365,7 @@ export const ukCities: Record<string, CityData> = {
       },
       {
         q: "Will the show be in English?",
-        a: "Yes. The show runs in English. The format is the same as our New York shows adapted for the local community.",
+        a: "Yes. The show runs in English. Coventry's South Asian community spans Foleshill Road's established Punjabi and Gujarati families and Warwick University's international Indian students. English is the shared language across all of them.",
       },
       {
         q: "Can I apply to be a contestant?",
@@ -401,7 +394,6 @@ export const ukCities: Record<string, CityData> = {
       { label: "Join the Glasgow Waitlist", href: "#waitlist" },
       { label: "Apply to Be a Contestant", href: "/apply?city=Glasgow" },
     ],
-    includeEventSchema: false,
     areaServed: "Glasgow, United Kingdom",
     addressLocality: "Glasgow",
     addressRegion: "Scotland",
@@ -422,7 +414,7 @@ export const ukCities: Record<string, CityData> = {
       },
       {
         q: "Will the show be in English?",
-        a: "Yes. The show runs in English. The format is the same as our New York shows adapted for the local community.",
+        a: "Yes. The show runs in English, which is Glasgow's everyday language. The Southside's British Asian community, Pakistani and Indian, is second and third generation and fully at home in English with a Glaswegian accent that absolutely no one complains about.",
       },
       {
         q: "Can I apply to be a contestant?",
@@ -451,7 +443,6 @@ export const ukCities: Record<string, CityData> = {
       { label: "Join the Edinburgh Waitlist", href: "#waitlist" },
       { label: "Apply to Be a Contestant", href: "/apply?city=Edinburgh" },
     ],
-    includeEventSchema: false,
     areaServed: "Edinburgh, United Kingdom",
     addressLocality: "Edinburgh",
     addressRegion: "Scotland",
@@ -472,7 +463,7 @@ export const ukCities: Record<string, CityData> = {
       },
       {
         q: "Will the show be in English?",
-        a: "Yes. The show runs in English. The format is the same as our New York shows adapted for the local community.",
+        a: "Yes. The show runs in English. Edinburgh is an English-speaking Scottish city with a strong South Asian student and professional community at the university and in the tech and finance sectors. The Fringe city understands live English-language performance better than almost anywhere.",
       },
       {
         q: "Can I apply to be a contestant?",
@@ -501,7 +492,6 @@ export const ukCities: Record<string, CityData> = {
       { label: "Join the Nottingham Waitlist", href: "#waitlist" },
       { label: "Apply to Be a Contestant", href: "/apply?city=Nottingham" },
     ],
-    includeEventSchema: false,
     areaServed: "Nottingham, United Kingdom",
     addressLocality: "Nottingham",
     addressRegion: "Nottinghamshire",
@@ -522,7 +512,7 @@ export const ukCities: Record<string, CityData> = {
       },
       {
         q: "Will the show be in English?",
-        a: "Yes. The show runs in English. The format is the same as our New York shows adapted for the local community.",
+        a: "Yes. The show runs in English. Nottingham's South Asian community in Hyson Green and the University of Nottingham's large Indian student cohort are all English-comfortable. The city's comedy culture means the audience already knows how to engage with live performance.",
       },
       {
         q: "Can I apply to be a contestant?",
@@ -551,7 +541,6 @@ export const ukCities: Record<string, CityData> = {
       { label: "Join the Liverpool Waitlist", href: "#waitlist" },
       { label: "Apply to Be a Contestant", href: "/apply?city=Liverpool" },
     ],
-    includeEventSchema: false,
     areaServed: "Liverpool, United Kingdom",
     addressLocality: "Liverpool",
     addressRegion: "Merseyside",
@@ -578,7 +567,7 @@ export const ukCities: Record<string, CityData> = {
       },
       {
         q: "Will the show be in English?",
-        a: "Yes. The show runs in English. The format is the same as our New York shows adapted for the local community.",
+        a: "Yes. The show runs in English. Liverpool is an English-speaking city and the South Asian community here, growing through the university pipeline, is entirely at home in the language. Scousers are also famously expressive, which makes for an energetic room.",
       },
       {
         q: "Can I apply to be a contestant?",
@@ -607,7 +596,6 @@ export const ukCities: Record<string, CityData> = {
       { label: "Join the Sheffield Waitlist", href: "#waitlist" },
       { label: "Apply to Be a Contestant", href: "/apply?city=Sheffield" },
     ],
-    includeEventSchema: false,
     areaServed: "Sheffield, United Kingdom",
     addressLocality: "Sheffield",
     addressRegion: "South Yorkshire",
@@ -634,7 +622,7 @@ export const ukCities: Record<string, CityData> = {
       },
       {
         q: "Will the show be in English?",
-        a: "Yes. The show runs in English. The format is the same as our New York shows adapted for the local community.",
+        a: "Yes. The show runs in English. Sheffield's South Asian community in Page Hall and Darnall is established and English-fluent, and the engineering and medical students from South Asia at both universities add to the mix. The city's warmth comes through in how the audience participates.",
       },
       {
         q: "Can I apply to be a contestant?",
@@ -663,7 +651,6 @@ export const ukCities: Record<string, CityData> = {
       { label: "Join the Cambridge Waitlist", href: "#waitlist" },
       { label: "Apply to Be a Contestant", href: "/apply?city=Cambridge" },
     ],
-    includeEventSchema: false,
     areaServed: "Cambridge, United Kingdom",
     addressLocality: "Cambridge",
     addressRegion: "Cambridgeshire",
@@ -684,7 +671,7 @@ export const ukCities: Record<string, CityData> = {
       },
       {
         q: "Will the show be in English?",
-        a: "Yes. The show runs in English. The format is the same as our New York shows adapted for the local community.",
+        a: "Yes. The show runs in English. Cambridge's South Asian community is predominantly academics, researchers, and tech professionals who work in English daily. The Indian PhD and postdoc community at the university speaks English as their research language. They will also probably overthink the format. We love it.",
       },
       {
         q: "Can I apply to be a contestant?",
@@ -713,7 +700,6 @@ export const ukCities: Record<string, CityData> = {
       { label: "Join the Oxford Waitlist", href: "#waitlist" },
       { label: "Apply to Be a Contestant", href: "/apply?city=Oxford" },
     ],
-    includeEventSchema: false,
     areaServed: "Oxford, United Kingdom",
     addressLocality: "Oxford",
     addressRegion: "Oxfordshire",
@@ -734,7 +720,7 @@ export const ukCities: Record<string, CityData> = {
       },
       {
         q: "Will the show be in English?",
-        a: "Yes. The show runs in English. The format is the same as our New York shows adapted for the local community.",
+        a: "Yes. The show runs in English. Oxford's South Asian students and professionals speak English at the highest academic level. The Cowley Road community adds a more grounded multicultural energy. Together they make a room that is sharp, engaged, and very opinionated.",
       },
       {
         q: "Can I apply to be a contestant?",
@@ -763,7 +749,6 @@ export const ukCities: Record<string, CityData> = {
       { label: "Join the Southampton Waitlist", href: "#waitlist" },
       { label: "Apply to Be a Contestant", href: "/apply?city=Southampton" },
     ],
-    includeEventSchema: false,
     areaServed: "Southampton, United Kingdom",
     addressLocality: "Southampton",
     addressRegion: "Hampshire",
@@ -784,7 +769,7 @@ export const ukCities: Record<string, CityData> = {
       },
       {
         q: "Will the show be in English?",
-        a: "Yes. The show runs in English. The format is the same as our New York shows adapted for the local community.",
+        a: "Yes. The show runs in English. Southampton's growing Indian student population from the university is English-comfortable, as are the South Asian professionals in the city's healthcare and tech sectors. The south coast community is smaller but highly engaged.",
       },
       {
         q: "Can I apply to be a contestant?",
@@ -813,7 +798,6 @@ export const ukCities: Record<string, CityData> = {
       { label: "Join the Bristol Waitlist", href: "#waitlist" },
       { label: "Apply to Be a Contestant", href: "/apply?city=Bristol" },
     ],
-    includeEventSchema: false,
     areaServed: "Bristol, United Kingdom",
     addressLocality: "Bristol",
     addressRegion: "Bristol",
@@ -834,7 +818,7 @@ export const ukCities: Record<string, CityData> = {
       },
       {
         q: "Will the show be in English?",
-        a: "Yes. The show runs in English. The format is the same as our New York shows adapted for the local community.",
+        a: "Yes. The show runs in English. Bristol's South Asian community in Easton speaks English as their everyday language, and the university's Indian student intake adds to the mix. The city's progressive, creative culture means the audience comes ready to engage with something new.",
       },
       {
         q: "Can I apply to be a contestant?",
@@ -863,7 +847,6 @@ export const ukCities: Record<string, CityData> = {
       { label: "Join the Wolverhampton Waitlist", href: "#waitlist" },
       { label: "Apply to Be a Contestant", href: "/apply?city=Wolverhampton" },
     ],
-    includeEventSchema: false,
     areaServed: "Wolverhampton, United Kingdom",
     addressLocality: "Wolverhampton",
     addressRegion: "West Midlands",
@@ -890,7 +873,7 @@ export const ukCities: Record<string, CityData> = {
       },
       {
         q: "Will the show be in English?",
-        a: "Yes. The show runs in English. The format is the same as our New York shows adapted for the local community.",
+        a: "Yes. The show runs in English. Wolverhampton's Sikh and South Asian community is one of the most established in the West Midlands, with deep roots in Whitmore Reans and Penn Fields. English is the default for the community's second and third generation.",
       },
       {
         q: "Can I apply to be a contestant?",
@@ -919,7 +902,6 @@ export const ukCities: Record<string, CityData> = {
       { label: "Join the Luton Waitlist", href: "#waitlist" },
       { label: "Apply to Be a Contestant", href: "/apply?city=Luton" },
     ],
-    includeEventSchema: false,
     areaServed: "Luton, United Kingdom",
     addressLocality: "Luton",
     addressRegion: "Bedfordshire",
@@ -940,7 +922,7 @@ export const ukCities: Record<string, CityData> = {
       },
       {
         q: "Will the show be in English?",
-        a: "Yes. The show runs in English. The format is the same as our New York shows adapted for the local community.",
+        a: "Yes. The show runs in English. Luton's large Pakistani and Bangladeshi community in Bury Park is English-fluent across generations, and the growing Indian population adds to the mix. The community is fully comfortable with an English-language live format.",
       },
       {
         q: "Can I apply to be a contestant?",
@@ -969,7 +951,6 @@ export const ukCities: Record<string, CityData> = {
       { label: "Join the Slough Waitlist", href: "#waitlist" },
       { label: "Apply to Be a Contestant", href: "/apply?city=Slough" },
     ],
-    includeEventSchema: false,
     areaServed: "Slough, United Kingdom",
     addressLocality: "Slough",
     addressRegion: "Berkshire",
@@ -990,7 +971,7 @@ export const ukCities: Record<string, CityData> = {
       },
       {
         q: "Will the show be in English?",
-        a: "Yes. The show runs in English. The format is the same as our New York shows adapted for the local community.",
+        a: "Yes. The show runs in English. Slough's enormous Punjabi and South Asian community, one of the highest proportions in England, speaks English daily alongside Punjabi, Hindi, and Urdu. An English-language show here is the easiest possible bridge between the stage and the audience.",
       },
       {
         q: "Can I apply to be a contestant?",
@@ -1019,7 +1000,6 @@ export const ukCities: Record<string, CityData> = {
       { label: "Join the Reading Waitlist", href: "#waitlist" },
       { label: "Apply to Be a Contestant", href: "/apply?city=Reading" },
     ],
-    includeEventSchema: false,
     areaServed: "Reading, United Kingdom",
     addressLocality: "Reading",
     addressRegion: "Berkshire",
@@ -1040,7 +1020,7 @@ export const ukCities: Record<string, CityData> = {
       },
       {
         q: "Will the show be in English?",
-        a: "Yes. The show runs in English. The format is the same as our New York shows adapted for the local community.",
+        a: "Yes. The show runs in English. Reading's Indian tech professionals at Microsoft, Oracle, and Cisco work in English daily. The Thames Valley corridor's South Asian population is predominantly professional and highly English-comfortable. They also probably have strong opinions about the format.",
       },
       {
         q: "Can I apply to be a contestant?",
@@ -1069,7 +1049,6 @@ export const ukCities: Record<string, CityData> = {
       { label: "Join the Newcastle Waitlist", href: "#waitlist" },
       { label: "Apply to Be a Contestant", href: "/apply?city=Newcastle" },
     ],
-    includeEventSchema: false,
     areaServed: "Newcastle upon Tyne, United Kingdom",
     addressLocality: "Newcastle upon Tyne",
     addressRegion: "England",
@@ -1096,7 +1075,7 @@ export const ukCities: Record<string, CityData> = {
       },
       {
         q: "Will the show be in English?",
-        a: "Yes. The show runs in English. The format is the same as our New York shows adapted for the local community.",
+        a: "Yes. The show runs in English. Newcastle is an English-speaking city and the South Asian community here, concentrated among university students from India and the established Pakistani community, is fully at home in the language. With Geordie warmth added, the audience energy is something else.",
       },
       {
         q: "Can I apply to be a contestant?",
@@ -1125,7 +1104,6 @@ export const ukCities: Record<string, CityData> = {
       { label: "Join the Derby Waitlist", href: "#waitlist" },
       { label: "Apply to Be a Contestant", href: "/apply?city=Derby" },
     ],
-    includeEventSchema: false,
     areaServed: "Derby, United Kingdom",
     addressLocality: "Derby",
     addressRegion: "England",
@@ -1152,7 +1130,7 @@ export const ukCities: Record<string, CityData> = {
       },
       {
         q: "Will the show be in English?",
-        a: "Yes. The show runs in English. The format is the same as our New York shows adapted for the local community.",
+        a: "Yes. The show runs in English. Derby's South Asian community, particularly the Sikh and Indian families in the Normanton Road area, is multigenerational and English-fluent. The Rolls-Royce professional crowd adds another layer of English-comfortable audience.",
       },
       {
         q: "Can I apply to be a contestant?",
@@ -1181,7 +1159,6 @@ export const ukCities: Record<string, CityData> = {
       { label: "Join the Middlesbrough Waitlist", href: "#waitlist" },
       { label: "Apply to Be a Contestant", href: "/apply?city=Middlesbrough" },
     ],
-    includeEventSchema: false,
     areaServed: "Middlesbrough, United Kingdom",
     addressLocality: "Middlesbrough",
     addressRegion: "England",
@@ -1202,7 +1179,7 @@ export const ukCities: Record<string, CityData> = {
       },
       {
         q: "Will the show be in English?",
-        a: "Yes. The show runs in English. The format is the same as our New York shows adapted for the local community.",
+        a: "Yes. The show runs in English. Middlesbrough's South Asian community, including both the long-established Pakistani families in Gresham and the newer Indian students at Teesside University, is comfortable in English. The North East accent in the audience adds extra charm.",
       },
       {
         q: "Can I apply to be a contestant?",
@@ -1231,7 +1208,6 @@ export const ukCities: Record<string, CityData> = {
       { label: "Join the Sunderland Waitlist", href: "#waitlist" },
       { label: "Apply to Be a Contestant", href: "/apply?city=Sunderland" },
     ],
-    includeEventSchema: false,
     areaServed: "Sunderland, United Kingdom",
     addressLocality: "Sunderland",
     addressRegion: "England",
@@ -1252,7 +1228,7 @@ export const ukCities: Record<string, CityData> = {
       },
       {
         q: "Will the show be in English?",
-        a: "Yes. The show runs in English. The format is the same as our New York shows adapted for the local community.",
+        a: "Yes. The show runs in English. Sunderland's growing Indian student community at the university is English-comfortable by default, having studied in English before arriving. The newer arrivals join an English-speaking city with no language barrier.",
       },
       {
         q: "Can I apply to be a contestant?",
@@ -1281,7 +1257,6 @@ export const ukCities: Record<string, CityData> = {
       { label: "Join the Swansea Waitlist", href: "#waitlist" },
       { label: "Apply to Be a Contestant", href: "/apply?city=Swansea" },
     ],
-    includeEventSchema: false,
     areaServed: "Swansea, United Kingdom",
     addressLocality: "Swansea",
     addressRegion: "Wales",
@@ -1302,7 +1277,7 @@ export const ukCities: Record<string, CityData> = {
       },
       {
         q: "Will the show be in English?",
-        a: "Yes. The show runs in English. The format is the same as our New York shows adapted for the local community.",
+        a: "Yes. The show runs in English. Swansea University's South Asian students are English-comfortable and studying in the language already. Wales operates bilingually in Welsh and English, and the show runs in the latter. The Bay Campus crowd will engage with it fully.",
       },
       {
         q: "Can I apply to be a contestant?",
@@ -1331,7 +1306,6 @@ export const ukCities: Record<string, CityData> = {
       { label: "Join the Bath Waitlist", href: "#waitlist" },
       { label: "Apply to Be a Contestant", href: "/apply?city=Bath" },
     ],
-    includeEventSchema: false,
     areaServed: "Bath, United Kingdom",
     addressLocality: "Bath",
     addressRegion: "England",
@@ -1352,7 +1326,7 @@ export const ukCities: Record<string, CityData> = {
       },
       {
         q: "Will the show be in English?",
-        a: "Yes. The show runs in English. The format is the same as our New York shows adapted for the local community.",
+        a: "Yes. The show runs in English. Bath's South Asian community is predominantly University of Bath students and professional graduates, all highly English-comfortable. The city's Georgian refinement sets a high bar for any event, and the format meets it.",
       },
       {
         q: "Can I apply to be a contestant?",
@@ -1381,7 +1355,6 @@ export const ukCities: Record<string, CityData> = {
       { label: "Join the Exeter Waitlist", href: "#waitlist" },
       { label: "Apply to Be a Contestant", href: "/apply?city=Exeter" },
     ],
-    includeEventSchema: false,
     areaServed: "Exeter, United Kingdom",
     addressLocality: "Exeter",
     addressRegion: "England",
@@ -1402,7 +1375,7 @@ export const ukCities: Record<string, CityData> = {
       },
       {
         q: "Will the show be in English?",
-        a: "Yes. The show runs in English. The format is the same as our New York shows adapted for the local community.",
+        a: "Yes. The show runs in English. Exeter University's South Asian students are studying in English and living in an English-speaking city. The Devon setting is quiet but the community, while small, is fully engaged with English-language entertainment.",
       },
       {
         q: "Can I apply to be a contestant?",
@@ -1431,7 +1404,6 @@ export const ukCities: Record<string, CityData> = {
       { label: "Join the York Waitlist", href: "#waitlist" },
       { label: "Apply to Be a Contestant", href: "/apply?city=York" },
     ],
-    includeEventSchema: false,
     areaServed: "York, United Kingdom",
     addressLocality: "York",
     addressRegion: "England",
@@ -1458,7 +1430,7 @@ export const ukCities: Record<string, CityData> = {
       },
       {
         q: "Will the show be in English?",
-        a: "Yes. The show runs in English. The format is the same as our New York shows adapted for the local community.",
+        a: "Yes. The show runs in English. York University's South Asian students and the city's South Asian healthcare professionals all work and study in English daily. The historic city setting adds atmosphere to an English-language live show.",
       },
       {
         q: "Can I apply to be a contestant?",
@@ -1487,7 +1459,6 @@ export const ukCities: Record<string, CityData> = {
       { label: "Join the Durham Waitlist", href: "#waitlist" },
       { label: "Apply to Be a Contestant", href: "/apply?city=Durham" },
     ],
-    includeEventSchema: false,
     areaServed: "Durham, United Kingdom",
     addressLocality: "Durham",
     addressRegion: "England",
@@ -1508,7 +1479,7 @@ export const ukCities: Record<string, CityData> = {
       },
       {
         q: "Will the show be in English?",
-        a: "Yes. The show runs in English. The format is the same as our New York shows adapted for the local community.",
+        a: "Yes. The show runs in English. Durham University's South Asian students are studying at one of the UK's most academically demanding institutions, all in English. The collegiate system's diverse intake includes many British Asian and international Indian students who are fully at home in the language.",
       },
       {
         q: "Can I apply to be a contestant?",
@@ -1537,7 +1508,6 @@ export const ukCities: Record<string, CityData> = {
       { label: "Join the Norwich Waitlist", href: "#waitlist" },
       { label: "Apply to Be a Contestant", href: "/apply?city=Norwich" },
     ],
-    includeEventSchema: false,
     areaServed: "Norwich, United Kingdom",
     addressLocality: "Norwich",
     addressRegion: "England",
@@ -1564,7 +1534,7 @@ export const ukCities: Record<string, CityData> = {
       },
       {
         q: "Will the show be in English?",
-        a: "Yes. The show runs in English. The format is the same as our New York shows adapted for the local community.",
+        a: "Yes. The show runs in English. Norwich is an English-speaking city and UEA's South Asian students are studying in the language. The community here is small but close-knit, and an English-language live event is both accessible and genuinely novel for this audience.",
       },
       {
         q: "Can I apply to be a contestant?",
@@ -1593,7 +1563,6 @@ export const ukCities: Record<string, CityData> = {
       { label: "Join the Lancaster Waitlist", href: "#waitlist" },
       { label: "Apply to Be a Contestant", href: "/apply?city=Lancaster" },
     ],
-    includeEventSchema: false,
     areaServed: "Lancaster, United Kingdom",
     addressLocality: "Lancaster",
     addressRegion: "England",
@@ -1614,7 +1583,7 @@ export const ukCities: Record<string, CityData> = {
       },
       {
         q: "Will the show be in English?",
-        a: "Yes. The show runs in English. The format is the same as our New York shows adapted for the local community.",
+        a: "Yes. The show runs in English. Lancaster University's South Asian students, particularly from the management school, are English-comfortable and used to participating in English-language academic and social environments. The isolation of the campus makes any English-language social event feel significant.",
       },
       {
         q: "Can I apply to be a contestant?",
@@ -1643,7 +1612,6 @@ export const ukCities: Record<string, CityData> = {
       { label: "Join the Warwick Waitlist", href: "#waitlist" },
       { label: "Apply to Be a Contestant", href: "/apply?city=Warwick" },
     ],
-    includeEventSchema: false,
     areaServed: "Warwick and Leamington Spa, United Kingdom",
     addressLocality: "Leamington Spa",
     addressRegion: "England",
@@ -1670,7 +1638,7 @@ export const ukCities: Record<string, CityData> = {
       },
       {
         q: "Will the show be in English?",
-        a: "Yes. The show runs in English. The format is the same as our New York shows adapted for the local community.",
+        a: "Yes. The show runs in English. Warwick University has one of the highest South Asian student populations in the UK, and the WBS and engineering cohorts work in English daily. The Leamington Spa social scene off campus is fully English-speaking.",
       },
       {
         q: "Can I apply to be a contestant?",
@@ -1699,7 +1667,6 @@ export const ukCities: Record<string, CityData> = {
       { label: "Join the Loughborough Waitlist", href: "#waitlist" },
       { label: "Apply to Be a Contestant", href: "/apply?city=Loughborough" },
     ],
-    includeEventSchema: false,
     areaServed: "Loughborough, United Kingdom",
     addressLocality: "Loughborough",
     addressRegion: "England",
@@ -1726,7 +1693,7 @@ export const ukCities: Record<string, CityData> = {
       },
       {
         q: "Will the show be in English?",
-        a: "Yes. The show runs in English. The format is the same as our New York shows adapted for the local community.",
+        a: "Yes. The show runs in English. Loughborough University's South Asian engineering and business students are English-comfortable and academically high achieving. The sports culture campus means the audience is competitive and expressive, which translates brilliantly to a live show format.",
       },
       {
         q: "Can I apply to be a contestant?",
@@ -1755,7 +1722,6 @@ export const ukCities: Record<string, CityData> = {
       { label: "Join the Stoke Waitlist", href: "#waitlist" },
       { label: "Apply to Be a Contestant", href: "/apply?city=Stoke-on-Trent" },
     ],
-    includeEventSchema: false,
     areaServed: "Stoke-on-Trent, United Kingdom",
     addressLocality: "Stoke-on-Trent",
     addressRegion: "England",
@@ -1782,7 +1748,7 @@ export const ukCities: Record<string, CityData> = {
       },
       {
         q: "Will the show be in English?",
-        a: "Yes. The show runs in English. The format is the same as our New York shows adapted for the local community.",
+        a: "Yes. The show runs in English. Stoke's South Asian community, particularly the British Pakistani families in Shelton and Cobridge, is English-fluent and settled across generations. Keele and Staffordshire University students add to the mix.",
       },
       {
         q: "Can I apply to be a contestant?",
@@ -1811,7 +1777,6 @@ export const ukCities: Record<string, CityData> = {
       { label: "Join the Peterborough Waitlist", href: "#waitlist" },
       { label: "Apply to Be a Contestant", href: "/apply?city=Peterborough" },
     ],
-    includeEventSchema: false,
     areaServed: "Peterborough, United Kingdom",
     addressLocality: "Peterborough",
     addressRegion: "England",
@@ -1832,7 +1797,7 @@ export const ukCities: Record<string, CityData> = {
       },
       {
         q: "Will the show be in English?",
-        a: "Yes. The show runs in English. The format is the same as our New York shows adapted for the local community.",
+        a: "Yes. The show runs in English. Peterborough's South Asian community, including large Punjabi, Gujarati, and Pakistani populations, is English-fluent across generations. The city's multicultural character means a live English-language event draws from across the community comfortably.",
       },
       {
         q: "Can I apply to be a contestant?",
@@ -1861,7 +1826,6 @@ export const ukCities: Record<string, CityData> = {
       { label: "Join the Walsall Waitlist", href: "#waitlist" },
       { label: "Apply to Be a Contestant", href: "/apply?city=Walsall" },
     ],
-    includeEventSchema: false,
     areaServed: "Walsall, United Kingdom",
     addressLocality: "Walsall",
     addressRegion: "England",
@@ -1888,7 +1852,7 @@ export const ukCities: Record<string, CityData> = {
       },
       {
         q: "Will the show be in English?",
-        a: "Yes. The show runs in English. The format is the same as our New York shows adapted for the local community.",
+        a: "Yes. The show runs in English. Walsall's South Asian community, part of the broader West Midlands Punjabi and Sikh belt, is English-fluent and multigenerational. The community sits between Birmingham and Wolverhampton, and a show in Walsall draws from that entire corridor.",
       },
       {
         q: "Can I apply to be a contestant?",
@@ -1917,7 +1881,6 @@ export const ukCities: Record<string, CityData> = {
       { label: "Join the Oldham Waitlist", href: "#waitlist" },
       { label: "Apply to Be a Contestant", href: "/apply?city=Oldham" },
     ],
-    includeEventSchema: false,
     areaServed: "Oldham, United Kingdom",
     addressLocality: "Oldham",
     addressRegion: "England",
@@ -1944,7 +1907,7 @@ export const ukCities: Record<string, CityData> = {
       },
       {
         q: "Will the show be in English?",
-        a: "Yes. The show runs in English. The format is the same as our New York shows adapted for the local community.",
+        a: "Yes. The show runs in English. Oldham has one of the largest British Pakistani populations in Greater Manchester, long established in Glodwick and the surrounding areas. The community is English-fluent, and the energy Oldham brings to a room is distinctly northern and loud.",
       },
       {
         q: "Can I apply to be a contestant?",
@@ -1973,7 +1936,6 @@ export const ukCities: Record<string, CityData> = {
       { label: "Join the Blackburn Waitlist", href: "#waitlist" },
       { label: "Apply to Be a Contestant", href: "/apply?city=Blackburn" },
     ],
-    includeEventSchema: false,
     areaServed: "Blackburn, United Kingdom",
     addressLocality: "Blackburn",
     addressRegion: "England",
@@ -1994,7 +1956,7 @@ export const ukCities: Record<string, CityData> = {
       },
       {
         q: "Will the show be in English?",
-        a: "Yes. The show runs in English. The format is the same as our New York shows adapted for the local community.",
+        a: "Yes. The show runs in English. Blackburn has one of the highest proportions of British Asians in the north of England, with a large British Pakistani community in the Bastwell and Whalley Range areas. English is the everyday language, and the Lancashire directness makes for a sharp audience.",
       },
       {
         q: "Can I apply to be a contestant?",
@@ -2023,7 +1985,6 @@ export const ukCities: Record<string, CityData> = {
       { label: "Join the Bolton Waitlist", href: "#waitlist" },
       { label: "Apply to Be a Contestant", href: "/apply?city=Bolton" },
     ],
-    includeEventSchema: false,
     areaServed: "Bolton, United Kingdom",
     addressLocality: "Bolton",
     addressRegion: "England",
@@ -2050,7 +2011,7 @@ export const ukCities: Record<string, CityData> = {
       },
       {
         q: "Will the show be in English?",
-        a: "Yes. The show runs in English. The format is the same as our New York shows adapted for the local community.",
+        a: "Yes. The show runs in English. Bolton's South Asian community, a mix of British Pakistani and Indian families particularly in Great Lever and Halliwell, is English-fluent and well established. The Greater Manchester proximity means the audience has comedy event experience.",
       },
       {
         q: "Can I apply to be a contestant?",
@@ -2079,7 +2040,6 @@ export const ukCities: Record<string, CityData> = {
       { label: "Join the Huddersfield Waitlist", href: "#waitlist" },
       { label: "Apply to Be a Contestant", href: "/apply?city=Huddersfield" },
     ],
-    includeEventSchema: false,
     areaServed: "Huddersfield, United Kingdom",
     addressLocality: "Huddersfield",
     addressRegion: "England",
@@ -2100,7 +2060,7 @@ export const ukCities: Record<string, CityData> = {
       },
       {
         q: "Will the show be in English?",
-        a: "Yes. The show runs in English. The format is the same as our New York shows adapted for the local community.",
+        a: "Yes. The show runs in English. Huddersfield has a significant British Asian community with roots in the Pakistani and Bangladeshi communities in Deighton and Savile Town. English is the everyday language, and the West Yorkshire crowd brings the same no-nonsense energy as Bradford and Leeds.",
       },
       {
         q: "Can I apply to be a contestant?",
@@ -2129,7 +2089,6 @@ export const ukCities: Record<string, CityData> = {
       { label: "Join the Cardiff Waitlist", href: "#waitlist" },
       { label: "Apply to Be a Contestant", href: "/apply?city=Cardiff" },
     ],
-    includeEventSchema: false,
     areaServed: "Cardiff, United Kingdom",
     addressLocality: "Cardiff",
     addressRegion: "Wales",
@@ -2150,7 +2109,7 @@ export const ukCities: Record<string, CityData> = {
       },
       {
         q: "Will the show be in English?",
-        a: "Yes. The show runs in English. The format is the same as our New York shows adapted for the local community.",
+        a: "Yes. The show runs in English. Cardiff is the capital of Wales and operates in English as its primary language. The South Asian community here, growing through Cardiff University and the NHS, is English-fluent. The Welsh warmth in the audience is a genuine bonus.",
       },
       {
         q: "Can I apply to be a contestant?",
@@ -2179,7 +2138,6 @@ export const ukCities: Record<string, CityData> = {
       { label: "Join the Belfast Waitlist", href: "#waitlist" },
       { label: "Apply to Be a Contestant", href: "/apply?city=Belfast" },
     ],
-    includeEventSchema: false,
     areaServed: "Belfast, United Kingdom",
     addressLocality: "Belfast",
     addressRegion: "Northern Ireland",
@@ -2206,7 +2164,7 @@ export const ukCities: Record<string, CityData> = {
       },
       {
         q: "Will the show be in English?",
-        a: "Yes. The show runs in English. The format is the same as our New York shows adapted for the local community.",
+        a: "Yes. The show runs in English. Belfast is an English-speaking city and the South Asian community here, growing through Queen's University and the tech and healthcare sectors, is fully English-comfortable. Northern Irish dry humour and South Asian cultural comedy is a combination nobody expected but everyone will enjoy.",
       },
       {
         q: "Can I apply to be a contestant?",
@@ -2235,7 +2193,6 @@ export const ukCities: Record<string, CityData> = {
       { label: "Join the Aberdeen Waitlist", href: "#waitlist" },
       { label: "Apply to Be a Contestant", href: "/apply?city=Aberdeen" },
     ],
-    includeEventSchema: false,
     areaServed: "Aberdeen, United Kingdom",
     addressLocality: "Aberdeen",
     addressRegion: "Scotland",
@@ -2256,7 +2213,7 @@ export const ukCities: Record<string, CityData> = {
       },
       {
         q: "Will the show be in English?",
-        a: "Yes. The show runs in English. The format is the same as our New York shows adapted for the local community.",
+        a: "Yes. The show runs in English. Aberdeen's South Asian community is predominantly oil industry professionals and university students, all English-comfortable and working in the language daily. The show fits naturally into an English-speaking Scottish city with a strong professional Indian community.",
       },
       {
         q: "Can I apply to be a contestant?",

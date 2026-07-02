@@ -48,12 +48,12 @@ describe("ApplicantModal", () => {
 
   it("displays the applicant age", () => {
     render(<ApplicantModal app={makeApp()} {...defaultProps} />);
-    expect(screen.getByText("27")).toBeInTheDocument();
+    expect(screen.getByText(/27\s*·\s*Woman\s*·/)).toBeInTheDocument();
   });
 
   it("displays the applicant gender", () => {
     render(<ApplicantModal app={makeApp()} {...defaultProps} />);
-    expect(screen.getByText("Woman")).toBeInTheDocument();
+    expect(screen.getByText(/27\s*·\s*Woman\s*·/)).toBeInTheDocument();
   });
 
   it("displays the applicant orientation", () => {
@@ -63,7 +63,7 @@ describe("ApplicantModal", () => {
 
   it("displays the formatted location", () => {
     render(<ApplicantModal app={makeApp()} {...defaultProps} />);
-    expect(screen.getByText("New York, NY")).toBeInTheDocument();
+    expect(screen.getByText(/New York,\s*NY/)).toBeInTheDocument();
   });
 
   it("displays community and income", () => {
@@ -186,7 +186,7 @@ describe("ApplicantModal", () => {
 
   it("displays the photo when photoUrl is provided", () => {
     render(<ApplicantModal app={makeApp()} {...defaultProps} />);
-    expect(screen.getByAltText("Priya Sharma")).toHaveAttribute(
+    expect(screen.getByAltText("Priya Sharma photo 1")).toHaveAttribute(
       "src",
       "https://example.com/photo.jpg",
     );

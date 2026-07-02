@@ -33,6 +33,63 @@ service cloud.firestore {
         && (!('geoTimezone' in d.keys()) || (d.geoTimezone is string && d.geoTimezone.size() > 0 && d.geoTimezone.size() <= 100));
     }
 
+    function validApplication() {
+      let d = request.resource.data;
+      return d.keys().hasOnly([
+          'name', 'age', 'gender', 'orientation', 'city', 'state', 'country',
+          'email', 'phone', 'height', 'instagram', 'community', 'income',
+          'applicationType', 'referrerName', 'nominationConsent',
+          'pitch', 'type', 'notes', 'seenShowBefore', 'marketingConsent',
+          'termsAgreedAt', 'photoUrl', 'photoUrls', 'castEventId', 'deletedAt',
+          'status', 'submittedAt',
+          'source', 'sourcePage', 'landingPage', 'referrerHost',
+          'utmSource', 'utmMedium', 'utmCampaign', 'utmContent', 'utmTerm',
+          'fbclid', 'gclid', 'posthogDistinctId', 'sourceCitySlug'
+        ])
+        && d.keys().hasAll(['name', 'age', 'gender', 'orientation', 'city', 'height', 'instagram', 'community', 'income', 'applicationType', 'status', 'submittedAt'])
+        && d.name is string && d.name.size() > 0 && d.name.size() <= 200
+        && d.age is number && d.age >= 18 && d.age <= 120
+        && d.gender is string && d.gender.size() > 0 && d.gender.size() <= 100
+        && d.orientation is string && d.orientation.size() > 0 && d.orientation.size() <= 100
+        && d.city is string && d.city.size() > 0 && d.city.size() <= 100
+        && d.height is string && d.height.size() > 0 && d.height.size() <= 20
+        && d.instagram is string && d.instagram.size() > 0 && d.instagram.size() <= 100
+        && d.community is string && d.community.size() > 0 && d.community.size() <= 100
+        && d.income is string && d.income.size() > 0 && d.income.size() <= 100
+        && d.applicationType is string && d.applicationType.size() > 0 && d.applicationType.size() <= 50
+        && d.status is string && d.status.size() > 0 && d.status.size() <= 50
+        && d.submittedAt is timestamp
+        && (!('state' in d.keys()) || (d.state is string && d.state.size() > 0 && d.state.size() <= 100))
+        && (!('country' in d.keys()) || (d.country is string && d.country.size() > 0 && d.country.size() <= 100))
+        && (!('email' in d.keys()) || (d.email is string && d.email.size() > 0 && d.email.size() <= 320))
+        && (!('phone' in d.keys()) || (d.phone is string && d.phone.size() > 0 && d.phone.size() <= 20))
+        && (!('referrerName' in d.keys()) || (d.referrerName is string && d.referrerName.size() > 0 && d.referrerName.size() <= 200))
+        && (!('nominationConsent' in d.keys()) || d.nominationConsent is bool)
+        && (!('pitch' in d.keys()) || (d.pitch is string && d.pitch.size() <= 2000))
+        && (!('type' in d.keys()) || (d.type is string && d.type.size() > 0 && d.type.size() <= 50))
+        && (!('notes' in d.keys()) || (d.notes is string && d.notes.size() <= 2000))
+        && (!('seenShowBefore' in d.keys()) || d.seenShowBefore is bool)
+        && (!('marketingConsent' in d.keys()) || (d.marketingConsent is string && d.marketingConsent.size() > 0 && d.marketingConsent.size() <= 10))
+        && (!('termsAgreedAt' in d.keys()) || d.termsAgreedAt is timestamp)
+        && (!('photoUrl' in d.keys()) || (d.photoUrl is string && d.photoUrl.size() > 0 && d.photoUrl.size() <= 500))
+        && (!('photoUrls' in d.keys()) || (d.photoUrls is list && d.photoUrls.size() <= 10))
+        && (!('castEventId' in d.keys()) || (d.castEventId is string && d.castEventId.size() > 0 && d.castEventId.size() <= 100))
+        && (!('deletedAt' in d.keys()) || d.deletedAt == null || d.deletedAt is timestamp)
+        && (!('source' in d.keys()) || (d.source is string && d.source.size() > 0 && d.source.size() <= 50))
+        && (!('sourcePage' in d.keys()) || (d.sourcePage is string && d.sourcePage.size() > 0 && d.sourcePage.size() <= 200))
+        && (!('landingPage' in d.keys()) || (d.landingPage is string && d.landingPage.size() > 0 && d.landingPage.size() <= 200))
+        && (!('referrerHost' in d.keys()) || (d.referrerHost is string && d.referrerHost.size() > 0 && d.referrerHost.size() <= 255))
+        && (!('utmSource' in d.keys()) || (d.utmSource is string && d.utmSource.size() > 0 && d.utmSource.size() <= 100))
+        && (!('utmMedium' in d.keys()) || (d.utmMedium is string && d.utmMedium.size() > 0 && d.utmMedium.size() <= 100))
+        && (!('utmCampaign' in d.keys()) || (d.utmCampaign is string && d.utmCampaign.size() > 0 && d.utmCampaign.size() <= 150))
+        && (!('utmContent' in d.keys()) || (d.utmContent is string && d.utmContent.size() > 0 && d.utmContent.size() <= 150))
+        && (!('utmTerm' in d.keys()) || (d.utmTerm is string && d.utmTerm.size() > 0 && d.utmTerm.size() <= 150))
+        && (!('fbclid' in d.keys()) || (d.fbclid is string && d.fbclid.size() > 0 && d.fbclid.size() <= 500))
+        && (!('gclid' in d.keys()) || (d.gclid is string && d.gclid.size() > 0 && d.gclid.size() <= 500))
+        && (!('posthogDistinctId' in d.keys()) || (d.posthogDistinctId is string && d.posthogDistinctId.size() > 0 && d.posthogDistinctId.size() <= 200))
+        && (!('sourceCitySlug' in d.keys()) || (d.sourceCitySlug is string && d.sourceCitySlug.size() > 0 && d.sourceCitySlug.size() <= 100));
+    }
+
     function validPhoneUpdate() {
       let d = request.resource.data;
       let prev = resource.data;
@@ -41,11 +98,11 @@ service cloud.firestore {
     }
 
     match /applications/{doc} {
-      allow create: if true;
+      allow create: if validApplication();
       allow read, update, delete: if request.auth != null;
     }
     match /applications/{doc}/{subcollection=**} {
-      allow create: if true;
+      allow create: if request.auth != null;
       allow read, update, delete: if request.auth != null;
     }
     match /leads/{doc} {

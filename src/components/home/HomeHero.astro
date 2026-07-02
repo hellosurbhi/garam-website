@@ -47,62 +47,66 @@ function getHeroCity(city: string): string {
     </p>
 
     {
-      heroEvents.map((event) => {
-        const isSoldOut = event.soldOut ?? false;
-        const cityLabel = formatEventLocation(event);
-        const pillInner = (
-          <>
-            <span class="next-show-pill-date">
-              {event.date.split(" ")[0]} {event.date.split(" ")[1]}
-            </span>
-            <span class="next-show-pill-sep" aria-hidden="true">
-              ·
-            </span>
-            <span>{getHeroCity(cityLabel)}</span>
-            <span class="next-show-pill-sep" aria-hidden="true">
-              ·
-            </span>
-            <span>{formatTime(event.startTime ?? "20:00")}</span>
-            <span class="next-show-pill-cta" aria-hidden="true">
-              →
-            </span>
-          </>
-        );
-        return event.eventbriteId && !isSoldOut ? (
-          <a
-            href={buildTicketUrl(event.url, "home", "hero")}
-            target="_blank"
-            rel="noopener noreferrer"
-            id={`eventbrite-widget-modal-trigger-${event.eventbriteId}`}
-            data-eb-event-id={event.eventbriteId}
-            class="next-show-pill"
-            hidden
-            data-iso-date={event.isoDate}
-            data-start-time={event.startTime ?? "20:00"}
-            data-end-time={event.endTime ?? "22:00"}
-            data-city={cityLabel}
-            data-ph-section="hero"
-            data-ph-price={event.price}
-            data-ph-event-date={event.date}
-          >
-            {pillInner}
-          </a>
-        ) : (
-          <a
-            href={buildTicketUrl(event.url, "home", "hero")}
-            target="_blank"
-            rel="noopener noreferrer"
-            class="next-show-pill"
-            hidden
-            data-iso-date={event.isoDate}
-            data-start-time={event.startTime ?? "20:00"}
-            data-end-time={event.endTime ?? "22:00"}
-            data-city={cityLabel}
-          >
-            {pillInner}
-          </a>
-        );
-      })
+      heroEvents.length > 0 && (
+        <div class="pill-slot">
+          {heroEvents.map((event) => {
+            const isSoldOut = event.soldOut ?? false;
+            const cityLabel = formatEventLocation(event);
+            const pillInner = (
+              <>
+                <span class="next-show-pill-date">
+                  {event.date.split(" ")[0]} {event.date.split(" ")[1]}
+                </span>
+                <span class="next-show-pill-sep" aria-hidden="true">
+                  ·
+                </span>
+                <span>{getHeroCity(cityLabel)}</span>
+                <span class="next-show-pill-sep" aria-hidden="true">
+                  ·
+                </span>
+                <span>{formatTime(event.startTime ?? "20:00")}</span>
+                <span class="next-show-pill-cta" aria-hidden="true">
+                  →
+                </span>
+              </>
+            );
+            return event.eventbriteId && !isSoldOut ? (
+              <a
+                href={buildTicketUrl(event.url, "home", "hero")}
+                target="_blank"
+                rel="noopener noreferrer"
+                id={`eventbrite-widget-modal-trigger-${event.eventbriteId}`}
+                data-eb-event-id={event.eventbriteId}
+                class="next-show-pill"
+                hidden
+                data-iso-date={event.isoDate}
+                data-start-time={event.startTime ?? "20:00"}
+                data-end-time={event.endTime ?? "22:00"}
+                data-city={cityLabel}
+                data-ph-section="hero"
+                data-ph-price={event.price}
+                data-ph-event-date={event.date}
+              >
+                {pillInner}
+              </a>
+            ) : (
+              <a
+                href={buildTicketUrl(event.url, "home", "hero")}
+                target="_blank"
+                rel="noopener noreferrer"
+                class="next-show-pill"
+                hidden
+                data-iso-date={event.isoDate}
+                data-start-time={event.startTime ?? "20:00"}
+                data-end-time={event.endTime ?? "22:00"}
+                data-city={cityLabel}
+              >
+                {pillInner}
+              </a>
+            );
+          })}
+        </div>
+      )
     }
 
     <div class="hero-ctas">
@@ -138,7 +142,48 @@ function getHeroCity(city: string): string {
   </div>
 </section>
 
-<script src="/js/shader-app.js" defer></script>
+<script>
+  {
+    type Nav = Navigator & {
+      connection?: { saveData?: boolean; effectiveType?: string };
+    };
+    const idle =
+      (
+        window as unknown as {
+          requestIdleCallback?: (
+            cb: () => void,
+            opts?: { timeout: number },
+          ) => void;
+        }
+      ).requestIdleCallback ?? ((cb: () => void) => setTimeout(cb, 2500));
+
+    function shouldLoadShader(): boolean {
+      if (typeof window === "undefined") return false;
+      if (window.matchMedia("(prefers-reduced-motion: reduce)").matches)
+        return false;
+      const nav = navigator as Nav;
+      if (nav.connection?.saveData) return false;
+      if (
+        nav.connection?.effectiveType &&
+        ["slow-2g", "2g"].includes(nav.connection.effectiveType)
+      )
+        return false;
+      return true;
+    }
+
+    if (shouldLoadShader()) {
+      idle(
+        () => {
+          const s = document.createElement("script");
+          s.src = "/js/shader-app.js";
+          s.defer = true;
+          document.head.appendChild(s);
+        },
+        { timeout: 4000 },
+      );
+    }
+  }
+</script>
 
 <script>
   // Pick the first upcoming event that hasn't ended yet; switch to next when it does
@@ -308,6 +353,14 @@ function getHeroCity(city: string): string {
   }
 
   /* Next show pill */
+  /* Wrapper reserves vertical space before JS reveals the pill, preventing CLS */
+  .pill-slot {
+    min-height: 36px;
+    margin-bottom: 20px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
   .next-show-pill[hidden] {
     display: none !important;
   }
@@ -327,7 +380,6 @@ function getHeroCity(city: string): string {
     padding: 10px 20px;
     border-radius: 50px;
     text-decoration: none;
-    margin-bottom: 20px;
     cursor: pointer;
     transition:
       background 0.2s,
@@ -539,6 +591,7 @@ function getHeroCity(city: string): string {
     .hero h1,
     .hero-sub,
     .next-show-pill,
+    .pill-slot,
     .hero-ctas {
       animation: none;
       opacity: 1;

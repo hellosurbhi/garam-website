@@ -1,0 +1,101 @@
+---
+import type { JournalCtaSpec } from "@/data/journal/types";
+
+interface Props {
+  cta: JournalCtaSpec;
+  placement: "top" | "mid" | "bottom";
+  articleSlug: string;
+}
+
+const { cta, placement, articleSlug } = Astro.props;
+const variant = cta.variant ?? "primary";
+const eventName =
+  cta.ctaId === "tickets"
+    ? "ticket_click"
+    : cta.ctaId === "apply"
+      ? "apply_click"
+      : cta.ctaId === "waitlist"
+        ? "waitlist_click"
+        : "cta_clicked";
+---
+
+{
+  cta.href && (
+    <aside
+      class={`article-cta article-cta--${variant}`}
+      aria-label="Show promotion"
+    >
+      <a
+        href={cta.href}
+        class="article-cta__link"
+        data-ph-capture={eventName}
+        data-ph-cta={cta.ctaId}
+        data-ph-section="journal"
+        data-cta-position={`journal_${placement}`}
+        data-cta-text={cta.text}
+        data-article-slug={articleSlug}
+        data-destination-url={cta.href}
+      >
+        {cta.text}
+      </a>
+    </aside>
+  )
+}
+
+{
+  cta.modal && !cta.href && (
+    <aside
+      class={`article-cta article-cta--${variant}`}
+      aria-label="Show promotion"
+    >
+      <button
+        type="button"
+        class="article-cta__link"
+        data-open-modal={cta.modal}
+        data-ph-capture={eventName}
+        data-ph-cta={cta.ctaId}
+        data-ph-section="journal"
+        data-cta-position={`journal_${placement}`}
+        data-cta-text={cta.text}
+        data-article-slug={articleSlug}
+      >
+        {cta.text}
+      </button>
+    </aside>
+  )
+}
+
+<style>
+  .article-cta {
+    background: rgba(var(--brand-red-rgb), 0.055);
+    border: 1px solid rgba(var(--brand-red-rgb), 0.18);
+    border-radius: 8px;
+    padding: 16px 20px;
+    margin: 24px 0;
+  }
+
+  .article-cta__link {
+    font-family: var(--font-body), sans-serif;
+    font-size: 15px;
+    line-height: 1.6;
+    color: var(--brand-red);
+    font-weight: 600;
+    text-decoration: none;
+    display: block;
+    width: 100%;
+    background: none;
+    border: none;
+    padding: 0;
+    cursor: pointer;
+    text-align: left;
+  }
+
+  .article-cta__link:hover {
+    text-decoration: underline;
+  }
+
+  .article-cta--secondary .article-cta__link {
+    color: var(--charcoal);
+    font-weight: 500;
+  }
+</style>

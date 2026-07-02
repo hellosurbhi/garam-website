@@ -16,10 +16,20 @@ function subtractMinutes(time: string, mins: number): string {
  */
 export function buildEventSchemas(eventsList: EventEntry[]): string[] {
   return eventsList
-    .filter((e) => !e.hidden && e.isoDate && e.venue)
+    .filter((e) => !e.hidden && e.isoDate && e.venue && e.url && e.url !== "#")
     .map((e) => {
       const start = e.startTime ?? "20:00";
       const end = e.endTime ?? "22:00";
+      const missing = [
+        !e.price && "price",
+        !e.startTime && "startTime",
+        !e.endTime && "endTime",
+      ].filter(Boolean);
+      if (missing.length > 0) {
+        throw new Error(
+          `[eventSchema] incomplete data for ${e.isoDate} ${e.city}: missing ${missing.join(", ")}`,
+        );
+      }
       const venue = e.venue!;
       const address: Record<string, string> = {
         "@type": "PostalAddress",
@@ -31,6 +41,15 @@ export function buildEventSchemas(eventsList: EventEntry[]): string[] {
       if (venue.postalCode) address.postalCode = venue.postalCode;
 
       const door = subtractMinutes(start, 30);
+      const isPresale = e.onSaleAt
+        ? Date.parse(e.onSaleAt) > Date.now()
+        : false;
+      const availability = e.soldOut
+        ? "https://schema.org/SoldOut"
+        : isPresale
+          ? "https://schema.org/PreSale"
+          : "https://schema.org/InStock";
+
       return JSON.stringify({
         "@context": "https://schema.org",
         "@type": "ComedyEvent",
@@ -71,7 +90,8 @@ export function buildEventSchemas(eventsList: EventEntry[]): string[] {
           url: e.url,
           price: e.price ?? "15",
           priceCurrency: "USD",
-          availability: "https://schema.org/InStock",
+          availability,
+          ...(e.onSaleAt ? { validFrom: e.onSaleAt } : {}),
         },
         image: "https://garammasaladating.com/og-image.jpg",
         superEvent: {

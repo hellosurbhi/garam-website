@@ -138,6 +138,13 @@
       posthog.capture(queue[i].event, queue[i].properties);
     }
     window.__garamErrorQueue = [];
+
+    // Flush queued lead events (outbound clicks etc.) captured before PostHog loaded
+    var eventQueue = window.__garamEventQueue || [];
+    for (var j = 0; j < eventQueue.length; j++) {
+      posthog.capture(eventQueue[j].event, eventQueue[j].properties);
+    }
+    window.__garamEventQueue = [];
   }
   if ("requestIdleCallback" in window) {
     requestIdleCallback(loadPostHog, { timeout: 3000 });

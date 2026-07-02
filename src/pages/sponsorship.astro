@@ -92,9 +92,12 @@ const speakableJsonLd = JSON.stringify({
           <a
             href={`mailto:${SPONSORSHIP_COPY.contactEmail}?subject=Sponsorship%20Inquiry`}
             class="sp-email-link"
-            data-ph-capture="cta_clicked"
+            data-ph-capture="corporate_inquiry_click"
             data-ph-cta="email_hero"
             data-ph-section="sponsorship_hero"
+            data-cta-position="sponsorship_hero"
+            data-cta-text={SPONSORSHIP_COPY.contactEmail}
+            data-destination-url={`mailto:${SPONSORSHIP_COPY.contactEmail}?subject=Sponsorship%20Inquiry`}
             toolname="email-sponsorship-inquiry"
             tooldescription="Email Caleb, the manager at Garam Masala Dating, to inquire about sponsoring the #1 live desi dating show in NYC."
             >{SPONSORSHIP_COPY.contactEmail}</a
@@ -239,9 +242,12 @@ const speakableJsonLd = JSON.stringify({
         <a
           href={`mailto:${SPONSORSHIP_COPY.contactEmail}?subject=Sponsorship%20Inquiry`}
           class="sp-email-link sp-email-link--white"
-          data-ph-capture="cta_clicked"
+          data-ph-capture="corporate_inquiry_click"
           data-ph-cta="email_footer"
           data-ph-section="sponsorship_cta"
+          data-cta-position="sponsorship_cta"
+          data-cta-text={SPONSORSHIP_COPY.contactEmail}
+          data-destination-url={`mailto:${SPONSORSHIP_COPY.contactEmail}?subject=Sponsorship%20Inquiry`}
           toolname="email-sponsorship-inquiry"
           tooldescription="Email Caleb, the manager at Garam Masala Dating, to inquire about sponsoring the #1 live desi dating show in NYC."
           >{SPONSORSHIP_COPY.contactEmail}</a

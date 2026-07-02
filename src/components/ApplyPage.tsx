@@ -101,11 +101,14 @@ function ApplyPageInner() {
 
   const {
     form,
-    photoPreview,
+    photoPreviews,
     errors,
     submitting,
     submitted,
+    isValid,
     termsAgreed,
+    nominationConsent,
+    handleNominationConsentChange,
     showTermsModal,
     setShowTermsModal,
     toast,
@@ -113,11 +116,14 @@ function ApplyPageInner() {
     cityInput,
     handleCityInputChange,
     set,
-    handlePhotoChange,
+    handleAddPhotos,
+    handleRemovePhoto,
     handleTermsCheckbox,
     agreeToTerms,
     handleSubmit,
   } = useApplyForm();
+
+  const isNomination = form.applicationType === "Nomination";
 
   return (
     <>
@@ -131,9 +137,24 @@ function ApplyPageInner() {
             <ApplySuccessPanel />
           ) : (
             <div className={styles.panel}>
+              {/* ── Selectivity banner ─────────────────────── */}
+              <div className={styles.selectivityNote}>
+                <p>{APPLY_PAGE.selectivityNote}</p>
+              </div>
+
               <form onSubmit={handleSubmit} noValidate>
-                <fieldset disabled={submitting} className={styles.formFieldset}>
+                <fieldset
+                  disabled={submitting}
+                  className={styles.formFieldset}
+                  data-application-type={form.applicationType}
+                >
+                  {/* ── Mode heading + toggle ──────────────── */}
                   <div className={styles.typeSection}>
+                    <p className={styles.applicationModeHeading}>
+                      {isNomination
+                        ? APPLY_PAGE.headingNomination
+                        : APPLY_PAGE.headingSelf}
+                    </p>
                     <p className={styles.typeLabel}>I am applying…</p>
                     <div className={styles.typeButtonGroup}>
                       {(["Self", "Nomination"] as const).map((type) => (
@@ -145,6 +166,7 @@ function ApplyPageInner() {
                           data-active={
                             form.applicationType === type || undefined
                           }
+                          data-for={type}
                           aria-pressed={form.applicationType === type}
                         >
                           {type === "Self" ? "For myself" : "For a friend"}
@@ -153,11 +175,20 @@ function ApplyPageInner() {
                     </div>
                   </div>
 
+                  {/* ── Nomination intro message ───────────── */}
+                  {isNomination && (
+                    <div className={styles.nominationNotice}>
+                      <p>
+                        All contact info you fill in below is your{" "}
+                        <strong>friend's</strong>, not yours.{" "}
+                        {APPLY_PAGE.nominationContactNote}
+                      </p>
+                    </div>
+                  )}
+
                   <div className={styles.section}>
                     <SectionTitle>
-                      {form.applicationType === "Self"
-                        ? "About You"
-                        : "About Your Friend"}
+                      {isNomination ? "About Your Friend" : "About You"}
                     </SectionTitle>
 
                     <div className={styles.gridTwo}>
@@ -265,7 +296,7 @@ function ApplyPageInner() {
 
                     <fieldset className={styles.seenShowSection}>
                       <legend className={styles.consentQuestion}>
-                        {form.applicationType === "Nomination"
+                        {isNomination
                           ? "Has your friend attended a Garam Masala Dating show before?"
                           : "Have you attended a Garam Masala Dating show before?"}
                       </legend>
@@ -302,7 +333,7 @@ function ApplyPageInner() {
                         <p className={styles.seenNo}>
                           Almost every contestant we cast came to a show as a
                           Stealer first. Without that,{" "}
-                          {form.applicationType === "Nomination"
+                          {isNomination
                             ? "they likely won't be selected."
                             : "you likely won't be selected."}{" "}
                           Use code <strong>STEALER</strong> for 20% off (only
@@ -357,7 +388,7 @@ function ApplyPageInner() {
 
                     <FieldGroup
                       label={
-                        form.applicationType === "Nomination"
+                        isNomination
                           ? "Instagram handle @ we wanna stalk them 👀"
                           : "Instagram handle @ we wanna stalk you 👀"
                       }
@@ -377,9 +408,7 @@ function ApplyPageInner() {
                             set("instagram", e.target.value.replace(/^@/, ""))
                           }
                           placeholder={
-                            form.applicationType === "Nomination"
-                              ? "yourfriendshandle"
-                              : "yourhandle"
+                            isNomination ? "yourfriendshandle" : "yourhandle"
                           }
                           className={styles.igInput}
                           required
@@ -404,6 +433,11 @@ function ApplyPageInner() {
                         and DM us for a faster response.
                       </p>
                     </FieldGroup>
+
+                    {/* ── Contact accuracy note ────────────── */}
+                    <div className={styles.contactAccuracyNote}>
+                      <p>{APPLY_PAGE.contactAccuracyNote}</p>
+                    </div>
 
                     <FieldGroup
                       label="Email"
@@ -438,7 +472,7 @@ function ApplyPageInner() {
                         value={form.phone}
                         onChange={(e) => set("phone", e.target.value)}
                         placeholder={
-                          form.applicationType === "Nomination"
+                          isNomination
                             ? "Friend's phone number"
                             : "+1 (555) 000-0000"
                         }
@@ -491,7 +525,8 @@ function ApplyPageInner() {
                     </div>
                   </div>
 
-                  {form.applicationType === "Nomination" && (
+                  {/* ── Nominator info section ─────────────── */}
+                  {isNomination && (
                     <div className={styles.section}>
                       <SectionTitle>Your Info</SectionTitle>
                       <FieldGroup
@@ -517,13 +552,52 @@ function ApplyPageInner() {
                           }
                         />
                       </FieldGroup>
+
+                      {/* ── Nomination consent checkbox ──────── */}
+                      <div
+                        className={styles.consentSection}
+                        {...(errors.nominationConsent
+                          ? { "data-error": "true" }
+                          : {})}
+                      >
+                        <label className={styles.checkRow}>
+                          <input
+                            type="checkbox"
+                            checked={nominationConsent}
+                            onChange={(e) =>
+                              handleNominationConsentChange(e.target.checked)
+                            }
+                            className={styles.checkInput}
+                            required
+                            aria-describedby={
+                              errors.nominationConsent
+                                ? "nomination-consent-error"
+                                : undefined
+                            }
+                          />
+                          <span>
+                            {APPLY_PAGE.nominationConsentLabel}
+                            <span className={styles.requiredMark}>*</span>
+                          </span>
+                        </label>
+                        {errors.nominationConsent && (
+                          <p
+                            id="nomination-consent-error"
+                            className={styles.errorText}
+                            role="alert"
+                          >
+                            {errors.nominationConsent}
+                          </p>
+                        )}
+                      </div>
                     </div>
                   )}
 
                   <PhotoUploadField
-                    photoPreview={photoPreview}
+                    photoPreviews={photoPreviews}
                     error={errors.photo}
-                    onChange={handlePhotoChange}
+                    onAddPhotos={handleAddPhotos}
+                    onRemovePhoto={handleRemovePhoto}
                   />
 
                   <div className={styles.sectionLarge}>
@@ -532,7 +606,7 @@ function ApplyPageInner() {
                     </SectionTitle>
                     <FieldGroup
                       label={
-                        form.applicationType === "Nomination"
+                        isNomination
                           ? "What's your friend's type... (we will do our best to match them)"
                           : "What's your type... (we will do our best to match you)"
                       }
@@ -550,9 +624,9 @@ function ApplyPageInner() {
                     </FieldGroup>
                     <FieldGroup
                       label={
-                        form.applicationType === "Self"
-                          ? "Why would you be a great fit?"
-                          : "Why would your friend be a great fit? (optional)"
+                        isNomination
+                          ? "Why would your friend be a great fit? (optional)"
+                          : "Why would you be a great fit?"
                       }
                     >
                       <textarea
@@ -565,7 +639,7 @@ function ApplyPageInner() {
                     </FieldGroup>
                   </div>
 
-                  {/* ─── Marketing consent ──────────────────────── */}
+                  {/* ── Marketing consent ──────────────────── */}
                   <fieldset
                     className={styles.consentSection}
                     {...(errors.marketingConsent
@@ -624,7 +698,7 @@ function ApplyPageInner() {
                     )}
                   </fieldset>
 
-                  {/* ─── Terms & Conditions ─────────────────────── */}
+                  {/* ── Terms & Conditions ─────────────────── */}
                   <div
                     className={styles.consentSection}
                     {...(errors.termsAgreed ? { "data-error": "true" } : {})}
@@ -667,11 +741,8 @@ function ApplyPageInner() {
 
                   <button
                     type="submit"
-                    disabled={
-                      submitting ||
-                      form.marketingConsent !== "yes" ||
-                      !termsAgreed
-                    }
+                    disabled={submitting || !isValid}
+                    data-submitting={submitting || undefined}
                     className={styles.submitButton}
                   >
                     {submitting ? (
@@ -679,7 +750,7 @@ function ApplyPageInner() {
                         <Spinner size="sm" label="Submitting..." />
                         Submitting…
                       </>
-                    ) : form.applicationType === "Nomination" ? (
+                    ) : isNomination ? (
                       "Submit Nomination"
                     ) : (
                       "Submit Application"

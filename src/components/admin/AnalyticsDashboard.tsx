@@ -71,7 +71,7 @@ export default function AnalyticsDashboard() {
     setLoading(true);
     setError(null);
     try {
-      const idToken = await getFirebaseAuth().currentUser?.getIdToken();
+      const idToken = await (await getFirebaseAuth()).currentUser?.getIdToken();
       if (!idToken) {
         setError("Session expired. Please log in again.");
         return;
@@ -103,7 +103,7 @@ export default function AnalyticsDashboard() {
     setSyncing(true);
     setSyncMsg(null);
     try {
-      const idToken = await getFirebaseAuth().currentUser?.getIdToken();
+      const idToken = await (await getFirebaseAuth()).currentUser?.getIdToken();
       if (!idToken) {
         setSyncMsg("Session expired.");
         return;

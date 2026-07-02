@@ -1,6 +1,8 @@
 ---
+import { Picture } from "astro:assets";
 import BaseLayout from "@/layouts/BaseLayout.astro";
 import { events } from "@/data/events";
+import { heroImg } from "@/assets/backgrounds";
 import { isDatedUpcoming } from "@/utils/eventFilters";
 import { pressItems } from "@/data/press";
 import { SOCIAL_URLS } from "@/data/socials";
@@ -89,12 +91,13 @@ const reversedPress = [...pressItems].reverse();
   </Fragment>
 
   <main id="main-content" class="page">
-    <img
+    <Picture
       class="page-bg"
-      src="/images/hero/hero.webp"
+      src={heroImg}
+      formats={["avif", "webp"]}
+      widths={[640, 1024, 1600]}
+      sizes="100vw"
       alt=""
-      width="1200"
-      height="800"
       aria-hidden="true"
       loading="lazy"
       decoding="async"

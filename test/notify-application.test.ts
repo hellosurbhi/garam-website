@@ -40,7 +40,7 @@ const validBody = {
   applicationType: "Self",
   referrerName: "",
   pitch: "I love masala chai and long walks.",
-  photoUrl: "https://example.com/photo.jpg",
+  photoUrls: ["https://example.com/photo.jpg"],
 };
 
 describe("notify-application handler", () => {
@@ -223,7 +223,7 @@ describe("notify-application handler", () => {
     expect(html).not.toContain("Nominated by");
   });
 
-  it("email HTML includes photo link when photoUrl is provided", async () => {
+  it("email HTML includes photo link when photoUrls are provided", async () => {
     await POST(makeContext(makeRequest(validBody)));
     const html: string = mockSend.mock.calls[0][0].html;
     expect(html).toContain("View Photo");
@@ -241,7 +241,10 @@ describe("notify-application handler", () => {
   it("email HTML omits photo link for non-https URL", async () => {
     await POST(
       makeContext(
-        makeRequest({ ...validBody, photoUrl: "http://example.com/photo.jpg" }),
+        makeRequest({
+          ...validBody,
+          photoUrls: ["http://example.com/photo.jpg"],
+        }),
       ),
     );
     const html: string = mockSend.mock.calls[0][0].html;
@@ -250,7 +253,7 @@ describe("notify-application handler", () => {
 
   it("email HTML omits photo link for invalid URL", async () => {
     await POST(
-      makeContext(makeRequest({ ...validBody, photoUrl: "not a url" })),
+      makeContext(makeRequest({ ...validBody, photoUrls: ["not a url"] })),
     );
     const html: string = mockSend.mock.calls[0][0].html;
     expect(html).not.toContain("View Photo");

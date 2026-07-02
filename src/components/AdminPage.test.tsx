@@ -1,8 +1,8 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
-import { render, screen, waitFor } from "@testing-library/react";
+import { act, render, screen, waitFor } from "@testing-library/react";
 import AdminPage from "./AdminPage";
 
-let authCallback: (user: { uid: string } | null) => void;
+let authCallback: ((user: { uid: string } | null) => void) | undefined;
 
 vi.mock("firebase/auth", () => ({
   onAuthStateChanged: (
@@ -16,7 +16,7 @@ vi.mock("firebase/auth", () => ({
 }));
 
 vi.mock("@/lib/firebase", () => ({
-  getFirebaseAuth: vi.fn(() => "mock-auth"),
+  getFirebaseAuth: vi.fn(() => Promise.resolve("mock-auth")),
 }));
 
 vi.mock("@/components/admin/AdminLogin", () => ({
@@ -38,6 +38,7 @@ vi.mock("@/components/admin/AdminDashboard", () => ({
 describe("AdminPage", () => {
   beforeEach(() => {
     vi.clearAllMocks();
+    authCallback = undefined;
   });
 
   it("renders nothing while checking auth state", () => {
@@ -48,7 +49,8 @@ describe("AdminPage", () => {
 
   it("renders AdminLogin when user is not authenticated", async () => {
     render(<AdminPage />);
-    authCallback(null);
+    await waitFor(() => expect(authCallback).toBeTypeOf("function"));
+    act(() => authCallback?.(null));
     await waitFor(() => {
       expect(screen.getByTestId("admin-login")).toBeInTheDocument();
     });
@@ -56,7 +58,8 @@ describe("AdminPage", () => {
 
   it("renders AdminDashboard when user is authenticated", async () => {
     render(<AdminPage />);
-    authCallback({ uid: "admin-1" });
+    await waitFor(() => expect(authCallback).toBeTypeOf("function"));
+    act(() => authCallback?.({ uid: "admin-1" }));
     await waitFor(() => {
       expect(screen.getByTestId("admin-dashboard")).toBeInTheDocument();
     });

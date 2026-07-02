@@ -466,6 +466,7 @@ describe("useApplyForm", () => {
       );
       result.current.set("applicationType", "Nomination");
       result.current.set("referrerName", "Nominator");
+      result.current.handleNominationConsentChange(true);
     });
 
     await act(async () => {

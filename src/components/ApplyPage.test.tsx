@@ -3,8 +3,13 @@ import { render, screen, fireEvent, waitFor } from "@testing-library/react";
 import ApplyPage from "./ApplyPage";
 
 const mockAddDoc = vi.fn();
-const mockUploadBytes = vi.fn();
+const mockUploadBytesResumable = vi
+  .fn()
+  .mockImplementation(() =>
+    Object.assign(Promise.resolve({}), { cancel: vi.fn() }),
+  );
 const mockGetDownloadURL = vi.fn();
+const mockSignInAnonymously = vi.fn().mockResolvedValue({ user: {} });
 
 vi.mock("firebase/firestore", () => ({
   collection: vi.fn(),
@@ -14,13 +19,19 @@ vi.mock("firebase/firestore", () => ({
 
 vi.mock("firebase/storage", () => ({
   ref: vi.fn(),
-  uploadBytes: (...args: unknown[]) => mockUploadBytes(...args),
+  uploadBytesResumable: (...args: unknown[]) =>
+    mockUploadBytesResumable(...args),
   getDownloadURL: (...args: unknown[]) => mockGetDownloadURL(...args),
+}));
+
+vi.mock("firebase/auth", () => ({
+  signInAnonymously: (...args: unknown[]) => mockSignInAnonymously(...args),
 }));
 
 vi.mock("@/lib/firebase", () => ({
   getFirebaseDb: vi.fn(() => "mock-db"),
   getFirebaseStorage: vi.fn(() => "mock-storage"),
+  getFirebaseAuth: vi.fn(() => Promise.resolve("mock-auth")),
 }));
 
 vi.mock("@/data/events", () => ({
@@ -42,7 +53,9 @@ describe("ApplyPage", () => {
   beforeEach(() => {
     vi.clearAllMocks();
     mockAddDoc.mockResolvedValue({ id: "doc-1" });
-    mockUploadBytes.mockResolvedValue({});
+    mockUploadBytesResumable.mockImplementation(() =>
+      Object.assign(Promise.resolve({}), { cancel: vi.fn() }),
+    );
     mockGetDownloadURL.mockResolvedValue("https://example.com/photo.jpg");
     // Mock fetch for notify-application
     vi.spyOn(globalThis, "fetch").mockResolvedValue(new Response("{}"));
@@ -308,27 +321,23 @@ describe("ApplyPage", () => {
     expect(warning).toBeInTheDocument();
   });
 
-  it("submit button is disabled when terms not agreed", () => {
+  it("submit button remains enabled so validation can explain missing terms", () => {
     render(<ApplyPage />);
-    // Consent Yes, but no terms → button stays disabled
     fireEvent.click(getConsentRadio("yes"));
-    expect(screen.getByText("Submit Application")).toBeDisabled();
+    expect(screen.getByText("Submit Application")).not.toBeDisabled();
   });
 
-  it("submit button enables when Yes consent and terms both satisfied", () => {
+  it("submit button is enabled before submit so incomplete fields can be validated", () => {
     render(<ApplyPage />);
-    fireEvent.click(getConsentRadio("yes"));
-    fireEvent.click(screen.getByRole("checkbox"));
     expect(screen.getByText("Submit Application")).not.toBeDisabled();
   });
 
   /* ── data-error attribute (ObjectLiteral mutations) ──────── */
 
-  it("submit button is disabled when marketing consent not selected", () => {
+  it("submit button remains enabled so validation can explain missing marketing consent", () => {
     render(<ApplyPage />);
-    // Terms checked but no consent → button stays disabled
     fireEvent.click(screen.getByRole("checkbox"));
-    expect(screen.getByText("Submit Application")).toBeDisabled();
+    expect(screen.getByText("Submit Application")).not.toBeDisabled();
   });
 
   /* ── Gender/orientation options (ArrayDeclaration mutations) ── */

@@ -23,3 +23,11 @@
 **Why:** `element.focus()` in JS is treated as a potential keyboard-initiated focus by browsers (they can't always distinguish), so `:focus-visible` fires. `showModal()`'s own auto-focus has slightly different (browser-specific) heuristics.
 
 **Rule:** When opening any modal, call `dialog.focus()` (where the dialog has `tabindex="-1"`) — never `.modal-close.focus()`. Focusing a `tabindex="-1"` element is always treated as non-keyboard, so `:focus-visible` never triggers. Keyboard users who Tab into the modal still get the correct ring. Add `outline: none` to the dialog element as a guard.
+
+## Review the active PR stack before broad production rewrites
+
+**What went wrong:** I initially framed the analytics/performance cleanup too narrowly, even though several open PRs were already part of a broad rewrite stack.
+
+**Why:** On a stacked rewrite, narrow local patches can duplicate prior work or miss the durable shared layer the user actually needs.
+
+**Rule:** For broad analytics, conversion, SEO, or performance work, inspect the active/open PR stack first, then make sustainable shared-system improvements that build on it. Do not default to the smallest patch when the user explicitly asks for the durable rewrite path.

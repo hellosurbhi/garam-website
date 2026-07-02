@@ -21,15 +21,21 @@ describe("trackLeadEvent", () => {
 
   it("calls posthog.capture with event name and clean props", () => {
     trackLeadEvent("test_event", { source: "web" });
-    expect(captureMock).toHaveBeenCalledWith("test_event", { source: "web" });
+    expect(captureMock).toHaveBeenCalledWith(
+      "test_event",
+      expect.objectContaining({ source: "web", pathname: "/" }),
+    );
   });
 
   it("calls dataLayer.push with event name and props", () => {
     trackLeadEvent("test_event", { source: "web" });
-    expect(dataLayerPush).toHaveBeenCalledWith({
-      event: "test_event",
-      source: "web",
-    });
+    expect(dataLayerPush).toHaveBeenCalledWith(
+      expect.objectContaining({
+        event: "test_event",
+        source: "web",
+        pathname: "/",
+      }),
+    );
   });
 
   it("filters out undefined properties", () => {
@@ -37,11 +43,17 @@ describe("trackLeadEvent", () => {
       source: "web",
       campaign: undefined,
     });
-    expect(captureMock).toHaveBeenCalledWith("test_event", { source: "web" });
-    expect(dataLayerPush).toHaveBeenCalledWith({
-      event: "test_event",
-      source: "web",
-    });
+    expect(captureMock).toHaveBeenCalledWith(
+      "test_event",
+      expect.objectContaining({ source: "web" }),
+    );
+    expect(dataLayerPush).toHaveBeenCalledWith(
+      expect.objectContaining({
+        event: "test_event",
+        source: "web",
+      }),
+    );
+    expect(captureMock.mock.calls[0][1]).not.toHaveProperty("campaign");
   });
 
   it("does not throw when posthog is undefined", () => {
@@ -61,8 +73,13 @@ describe("trackLeadEvent", () => {
 
   it("works with default empty properties", () => {
     trackLeadEvent("test_event");
-    expect(captureMock).toHaveBeenCalledWith("test_event", {});
-    expect(dataLayerPush).toHaveBeenCalledWith({ event: "test_event" });
+    expect(captureMock).toHaveBeenCalledWith(
+      "test_event",
+      expect.objectContaining({ pathname: "/" }),
+    );
+    expect(dataLayerPush).toHaveBeenCalledWith(
+      expect.objectContaining({ event: "test_event", pathname: "/" }),
+    );
   });
 
   it("calls posthog.capture exactly once per call", () => {
@@ -77,8 +94,15 @@ describe("trackLeadEvent", () => {
 
   it("passes all-undefined props as empty object to both", () => {
     trackLeadEvent("evt", { a: undefined, b: undefined });
-    expect(captureMock).toHaveBeenCalledWith("evt", {});
-    expect(dataLayerPush).toHaveBeenCalledWith({ event: "evt" });
+    expect(captureMock).toHaveBeenCalledWith(
+      "evt",
+      expect.objectContaining({ pathname: "/" }),
+    );
+    expect(dataLayerPush).toHaveBeenCalledWith(
+      expect.objectContaining({ event: "evt", pathname: "/" }),
+    );
+    expect(captureMock.mock.calls[0][1]).not.toHaveProperty("a");
+    expect(captureMock.mock.calls[0][1]).not.toHaveProperty("b");
   });
 
   it("event name is passed as first argument to capture", () => {
@@ -296,16 +320,25 @@ describe("trackLeadEvent — filter precision", () => {
 
   it("keeps null values in properties (only filters undefined)", () => {
     trackLeadEvent("e", { a: null as unknown as string });
-    expect(captureMock).toHaveBeenCalledWith("e", { a: null });
+    expect(captureMock).toHaveBeenCalledWith(
+      "e",
+      expect.objectContaining({ a: null }),
+    );
   });
 
   it("keeps false values in properties", () => {
     trackLeadEvent("e", { a: false });
-    expect(captureMock).toHaveBeenCalledWith("e", { a: false });
+    expect(captureMock).toHaveBeenCalledWith(
+      "e",
+      expect.objectContaining({ a: false }),
+    );
   });
 
   it("keeps 0 values in properties", () => {
     trackLeadEvent("e", { a: 0 });
-    expect(captureMock).toHaveBeenCalledWith("e", { a: 0 });
+    expect(captureMock).toHaveBeenCalledWith(
+      "e",
+      expect.objectContaining({ a: 0 }),
+    );
   });
 });

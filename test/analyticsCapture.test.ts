@@ -1,5 +1,12 @@
 import { describe, it, expect, beforeEach, vi } from "vitest";
-import { capture, enrichEvent } from "@/lib/analyticsCapture";
+import {
+  capture,
+  domainFromUrl,
+  enrichEvent,
+  isSocialUrl,
+  isTicketVendorUrl,
+  vendorFromUrl,
+} from "@/lib/analyticsCapture";
 
 describe("analyticsCapture", () => {
   beforeEach(() => {
@@ -77,6 +84,30 @@ describe("analyticsCapture", () => {
       "Lead",
       expect.any(Object),
     );
+  });
+
+  it("normalizes outbound domains and recognizes ticket vendor subdomains", () => {
+    expect(domainFromUrl("https://www.eventbrite.com/e/test")).toBe(
+      "eventbrite.com",
+    );
+    expect(isTicketVendorUrl("https://tickets.citywinery.com/new-york")).toBe(
+      true,
+    );
+    expect(isTicketVendorUrl("https://dccomedyloft.com/events/1")).toBe(true);
+    expect(vendorFromUrl("https://www.eventbrite.com/e/test")).toBe(
+      "eventbrite",
+    );
+    expect(vendorFromUrl("https://tickets.citywinery.com/new-york")).toBe(
+      "citywinery",
+    );
+  });
+
+  it("recognizes social subdomains without matching unrelated domains", () => {
+    expect(isSocialUrl("https://www.youtube.com/@garammasaladating")).toBe(
+      true,
+    );
+    expect(isSocialUrl("https://notyoutube.com/watch")).toBe(false);
+    expect(isTicketVendorUrl("https://fakeeventbrite.com/e/test")).toBe(false);
   });
 
   it("capture is a no-op on posthog when posthog is undefined (before load)", () => {

@@ -13,10 +13,16 @@ vi.mock("resend", () => ({
 // Import handler after mocking
 const { POST } = await import("@/pages/api/notify-application");
 
-function makeRequest(body: unknown): Request {
+function makeRequest(
+  body: unknown,
+  origin = "https://garammasaladating.com",
+): Request {
   return new Request("https://garammasaladating.com/api/notify-application", {
     method: "POST",
-    headers: { "Content-Type": "application/json" },
+    headers: {
+      "Content-Type": "application/json",
+      ...(origin ? { origin } : {}),
+    },
     body: JSON.stringify(body),
   });
 }
@@ -49,6 +55,22 @@ describe("notify-application handler", () => {
     import.meta.env.RESEND_API_KEY = "re_test_key";
     import.meta.env.NOTIFICATION_EMAIL = "admin@example.com";
     mockSend.mockResolvedValue({ id: "email-id" });
+  });
+
+  it("returns 403 when Origin header is absent", async () => {
+    const res = await POST(makeContext(makeRequest(validBody, "")));
+    expect(res.status).toBe(403);
+    const body = await res.json();
+    expect(body.error).toBe("Forbidden");
+  });
+
+  it("returns 403 when Origin header is not in the allowlist", async () => {
+    const res = await POST(
+      makeContext(makeRequest(validBody, "https://evil.com")),
+    );
+    expect(res.status).toBe(403);
+    const body = await res.json();
+    expect(body.error).toBe("Forbidden");
   });
 
   it("returns 500 when RESEND_API_KEY is missing", async () => {

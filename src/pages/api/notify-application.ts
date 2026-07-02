@@ -4,6 +4,14 @@ import { validateEmail } from "@/utils/validateEmail";
 
 export const prerender = false;
 
+function isAllowedOrigin(origin: string | null): boolean {
+  if (!origin) return false;
+  if (origin === "https://garammasaladating.com") return true;
+  if (/^https:\/\/[\w-]+-hellosurbhi\.vercel\.app$/.test(origin)) return true;
+  if (/^http:\/\/localhost(:\d+)?$/.test(origin)) return true;
+  return false;
+}
+
 interface ApplicationNotification {
   name: string;
   age: number;
@@ -124,6 +132,14 @@ function buildEmailHtml(data: ApplicationNotification): string {
 }
 
 export const POST: APIRoute = async ({ request }) => {
+  const origin = request.headers.get("origin");
+  if (!isAllowedOrigin(origin)) {
+    return new Response(JSON.stringify({ error: "Forbidden" }), {
+      status: 403,
+      headers: { "Content-Type": "application/json" },
+    });
+  }
+
   const apiKey = import.meta.env.RESEND_API_KEY;
   const notificationEmail = import.meta.env.NOTIFICATION_EMAIL;
   if (!apiKey || !notificationEmail) {

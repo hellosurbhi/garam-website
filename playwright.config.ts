@@ -11,11 +11,10 @@ export default defineConfig({
     ? {}
     : {
         webServer: {
-          command:
-            "npm run build && node tests/smoke/static-preview.mjs 4321 dist/client",
+          command: "node tests/smoke/static-preview.mjs 4321 dist/client",
           port: 4321,
           reuseExistingServer: true,
-          timeout: 180000, // 3 min — Astro build in CI can take 60-90s
+          timeout: 30000,
         },
       }),
   use: {

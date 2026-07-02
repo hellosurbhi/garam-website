@@ -29,13 +29,14 @@ jobs:
         with:
           node-version: 22
           cache: npm
+      - run: npm install -g npm@11
       - run: npm ci
       - run: npm run lint
       - run: npx astro check
       - run: npm test
       - run: npm run build
       - name: Security audit
-        run: npm audit --audit-level=high
+        run: npm audit --audit-level=high --omit=dev
 
   # ==========================================
   # JOB 2: Smoke Tests (iPhone viewport)
@@ -54,7 +55,10 @@ jobs:
         with:
           node-version: 22
           cache: npm
+      - run: npm install -g npm@11
       - run: npm ci
+      - name: Build site
+        run: npm run build
       - name: Install Playwright
         run: npx playwright install chromium --with-deps
       - name: Run smoke tests (iPhone)

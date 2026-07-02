@@ -1,10 +1,10 @@
 # Garam Masala Dating
 
-Website, contestant application system, and admin dashboard for [Garam Masala Dating](https://garammasaladating.com) — a weekly live comedy dating show in NYC.
+Website, contestant application system, and admin dashboard for [Garam Masala Dating](https://garammasaladating.com) — the #1 live comedy dating show in NYC.
 
 ## Tech Stack
 
-- **Frontend:** React 19, TypeScript, Vite
+- **Frontend:** Astro SSG + React islands, TypeScript
 - **Data:** Firebase Firestore (applications), Firebase Auth (admin)
 - **Hosting:** Vercel with static prerendering
 - **Styling:** CSS custom properties, component-level CSS modules
@@ -12,10 +12,10 @@ Website, contestant application system, and admin dashboard for [Garam Masala Da
 ## Quick Start
 
 ```bash
-git clone https://github.com/your-org/garam-masala-dating.git
+git clone https://github.com/hellosurbhi/garam-masala-dating.git
 cd garam-masala-dating
 npm install
-cp .env.example .env.local  # then fill in your values
+cp .env.example .env.local  # fill in your own Firebase project values
 npm run dev
 ```
 
@@ -87,54 +87,12 @@ The site deploys to **Vercel**. The production build uses `build:prerender` to g
 
 ## Contributing
 
-1. Create a branch off `main`
-2. Run `npm run lint` before committing
-3. Open a PR — CI runs lint, type-check, and build
-4. All PRs require passing CI before merge
+See [CONTRIBUTING.md](CONTRIBUTING.md). This is a solo-operated project — open an issue before sending a PR.
 
-Code conventions and project rules live in `CLAUDE.md`.
+Code conventions and AI-assistant rules live in `CLAUDE.md`.
 
-.env.example
+## Licensing
 
-# Firebase (client-safe — these are public config, not secrets)
+Source code is licensed under the [MIT License](LICENSE).
 
-PUBLIC_FIREBASE_API_KEY=
-PUBLIC_FIREBASE_AUTH_DOMAIN=
-PUBLIC_FIREBASE_PROJECT_ID=
-PUBLIC_FIREBASE_STORAGE_BUCKET=
-PUBLIC_FIREBASE_MESSAGING_SENDER_ID=
-PUBLIC_FIREBASE_APP_ID=
-
-# Firebase Admin (server-side only — used by API routes)
-
-FIREBASE_ADMIN_CLIENT_EMAIL=
-FIREBASE_ADMIN_PRIVATE_KEY=
-
-# Contestant prep page password rotation
-
-CONTESTANT_PREP_SALT=
-
-# Resend (email notifications for new applications)
-
-RESEND_API_KEY=
-NOTIFICATION_EMAIL=
-
-## Firestore Backups
-
-Automatic daily backups run at 2am via Cloud Scheduler + Cloud Function.
-
-- **Bucket:** gs://garam-masala-9f15b-firestore-backups/
-- **Schedule:** Daily at 2am UTC
-- **Function:** firestoreBackup (us-central1)
-
-### Manual backup
-
-gcloud firestore export gs://garam-masala-9f15b-firestore-backups/$(date +%F) --project=garam-masala-9f15b
-
-### Check recent backups
-
-gcloud storage ls gs://garam-masala-9f15b-firestore-backups/
-
-### Check function logs
-
-gcloud functions logs read firestoreBackup --project=garam-masala-9f15b --region=us-central1 --limit=10
+Brand assets, host photography, the WebGL hero shader, and all editorial content (journal articles, city pages, tips) are proprietary and are NOT covered by the MIT License. See [NOTICE](NOTICE) for details.

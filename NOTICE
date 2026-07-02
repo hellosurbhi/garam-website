@@ -1,0 +1,26 @@
+NOTICE — Proprietary Assets
+
+The MIT License in this repository covers source code only. The following
+assets and content are the exclusive property of Garam Masala Dating and are
+NOT licensed under the MIT License. All rights reserved.
+
+BRAND
+  - The name "Garam Masala Dating" and any confusable variant
+  - All logos, wordmarks, and brand marks (public/images/logo.svg and variants)
+
+VISUAL ASSETS
+  - Host photography and personal images (public/images/**, src/assets/**)
+  - The WebGL hero shader (public/js/shader-app.js) — commissioned designer asset
+  - Show photography and promotional imagery
+
+EDITORIAL CONTENT
+  - Journal articles (src/data/journal/**)
+  - City landing page content (src/data/cities/**)
+  - Dating tips content (src/data/tips**)
+  - All other user-facing copy in src/data/
+
+Using the source code to build a different product is permitted under the MIT
+License. Reproducing or distributing the brand, visual assets, or editorial
+content is not.
+
+Contact: hello@garammasaladating.com

@@ -1,7 +1,14 @@
 {
   "name": "garam-masala-dating",
+  "description": "Website, contestant application system, and admin dashboard for Garam Masala Dating — a live comedy dating show.",
   "private": true,
   "version": "1.0.0",
+  "license": "SEE LICENSE",
+  "author": "Garam Masala Dating",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/hellosurbhi/garam-masala-dating.git"
+  },
   "type": "module",
   "engines": {
     "node": ">=22.0.0"
@@ -75,6 +82,9 @@
     "typescript-eslint": "^8.62.0",
     "vite": "^8.1.0",
     "vitest": "^4.1.9"
+  },
+  "overrides": {
+    "path-to-regexp": "^6.3.0"
   },
   "lint-staged": {
     "*.{ts,tsx,js,jsx}": [

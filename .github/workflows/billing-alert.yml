@@ -1,0 +1,31 @@
+name: Monthly Billing Alert
+
+on:
+  schedule:
+    - cron: "0 9 25 * *" # 25th of every month at 9am UTC
+  workflow_dispatch: {}
+
+concurrency:
+  group: billing-alert
+  cancel-in-progress: true
+
+jobs:
+  check-billing:
+    name: Check Actions minute usage
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check minutes used
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          RESPONSE=$(gh api /repos/${{ github.repository }}/actions/cache/usage 2>/dev/null || echo "{}")
+          CACHE_GB=$(echo "$RESPONSE" | jq -r '(.active_caches_size_in_bytes // 0) / 1073741824 | floor')
+          echo "Cache in use: ${CACHE_GB}GB"
+          echo ""
+          echo "NOTE: GitHub does not expose per-user minute counts via unauthenticated API."
+          echo "To check manually: Settings > Billing > Actions."
+          echo "If Playwright moved to pre-push and CI is passing, minute usage should be well under 500/month."
+          echo ""
+          echo "Workflows in this repo:"
+          gh api /repos/${{ github.repository }}/actions/workflows \
+            --jq '.workflows[] | "\(.name): \(.state)"'

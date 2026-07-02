@@ -159,6 +159,9 @@ export default defineConfig({
   output: "static",
   trailingSlash: "never",
   compressHTML: true,
+  build: {
+    inlineStylesheets: "auto",
+  },
   adapter: vercel(),
   redirects: {
     "/south-asian-dating-tips": "/journal",

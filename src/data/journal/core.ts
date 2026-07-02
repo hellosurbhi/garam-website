@@ -1211,5 +1211,26 @@ export const corePosts: JournalPost[] = [
         text: "The rest is just showing up. You\u2019ll be fine. The show is at Top Secret Comedy Club in the East Village. Full show details and upcoming dates are on the <a href='/cities/manhattan'>Manhattan show page</a>. Not cast yet? <a href='/apply'>Apply here</a>.",
       },
     ],
+    ctaConfig: {
+      intent: "show",
+      topCta: {
+        text: "Grab a seat at the next show",
+        href: "/tickets",
+        ctaId: "tickets",
+        variant: "primary",
+      },
+      midCta: {
+        text: "Apply to be a contestant",
+        href: "/apply",
+        ctaId: "apply",
+        variant: "secondary",
+      },
+      bottomCta: {
+        text: "See upcoming dates",
+        href: "/tickets",
+        ctaId: "tickets",
+        variant: "primary",
+      },
+    },
   },
 ];

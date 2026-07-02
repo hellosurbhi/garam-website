@@ -4,23 +4,8 @@ import { SOCIAL_URLS } from "@/data/socials";
 import { buildTicketUrl } from "@/utils/eventUrl";
 import { formatEventLocation } from "@/utils/eventCity";
 import { buildLeadAttribution } from "@/lib/leadAttribution";
+import { capture } from "@/lib/analyticsCapture";
 import styles from "@/components/ApplyPage.module.css";
-
-interface EBWidgetConfig {
-  widgetType: string;
-  eventId: string;
-  modal: boolean;
-  modalTriggerElementId: string;
-  themeSettings?: Record<string, string>;
-  onOrderComplete?: () => void;
-}
-
-declare global {
-  interface Window {
-    EBWidgets?: { createWidget: (config: EBWidgetConfig) => void };
-    dataLayer?: Record<string, unknown>[];
-  }
-}
 
 export function ApplySuccessPanel() {
   const upcomingShows = useMemo(() => {
@@ -90,7 +75,7 @@ export function ApplySuccessPanel() {
                 : null;
               sessionStorage.removeItem("eb_cta_source");
               const attr = buildLeadAttribution({ source: "ticket_purchase" });
-              window.posthog?.capture?.("order_complete", {
+              capture("order_complete", {
                 event_id: show.eventbriteId,
                 city: cityLabel,
                 source_section: src?.section ?? "apply_success",
@@ -140,7 +125,7 @@ export function ApplySuccessPanel() {
           btn?.addEventListener("click", (e) => e.preventDefault());
         } catch {
           // Widget init failed; button stays inert (no navigation needed)
-          window.posthog?.capture?.("widget_load_failed", {
+          capture("widget_load_failed", {
             event_id: show.eventbriteId ?? "",
             city: cityLabel,
             page: window.location.pathname,
@@ -182,20 +167,12 @@ export function ApplySuccessPanel() {
       const openData = openRaw
         ? (JSON.parse(openRaw) as Record<string, string>)
         : null;
-      window.posthog?.capture?.("checkout_opened", {
+      capture("checkout_opened", {
         event_id: openData?.event_id ?? "",
         city: openData?.city ?? "",
         source_section: openData?.section ?? "",
         source_page: openData?.page ?? window.location.pathname,
         price: openData?.price ?? "",
-      });
-      window.fbq?.("track", "InitiateCheckout", {
-        content_ids: [openData?.event_id ?? ""],
-        city: openData?.city ?? "",
-        value: parseFloat(
-          (openData?.price ?? "").replace(/[^0-9.]/g, "") || "0",
-        ),
-        currency: "USD",
       });
 
       const closeObserver = new MutationObserver(() => {
@@ -207,7 +184,7 @@ export function ApplySuccessPanel() {
             const closeData = closeRaw
               ? (JSON.parse(closeRaw) as Record<string, string>)
               : null;
-            window.posthog?.capture?.("checkout_abandoned", {
+            capture("checkout_abandoned", {
               event_id: closeData?.event_id ?? "",
               city: closeData?.city ?? "",
               source_section: closeData?.section ?? "",

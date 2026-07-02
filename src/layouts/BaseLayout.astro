@@ -116,20 +116,25 @@ const {
     {!hideFooter && <HomeFooter />}
     <CookieConsent />
     <script>
-      import { inject } from "@vercel/analytics";
-      import { injectSpeedInsights } from "@vercel/speed-insights";
       import { bootstrapLeadAttribution } from "@/lib/leadAttribution";
-      import { trackLeadEvent } from "@/lib/analytics";
+      import { capture, trackOutbound } from "@/lib/analytics";
       const isLocalPreview = ["localhost", "127.0.0.1"].includes(
         window.location.hostname,
       );
       if (!isLocalPreview) {
-        inject();
-        injectSpeedInsights();
+        Promise.all([
+          import("@vercel/analytics"),
+          import("@vercel/speed-insights"),
+        ]).then(([{ inject }, { injectSpeedInsights }]) => {
+          inject();
+          injectSpeedInsights();
+        });
       }
       bootstrapLeadAttribution();
 
-      // Track elements with data-ph-capture attribute
+      // Track elements with data-ph-capture attribute.
+      // The event name is taken from data-ph-capture so callers can emit
+      // named events (apply_click, ticket_click, cta_clicked, etc.) directly.
       document.addEventListener("click", (e) => {
         const el = (e.target as HTMLElement).closest<HTMLElement>(
           "[data-ph-capture]",
@@ -147,41 +152,111 @@ const {
             props[prop] = value;
           }
         }
-        trackLeadEvent(eventName, props);
+        // Augment with non-ph data-* tracking attributes
+        const extraKeys = [
+          "ctaPosition",
+          "ctaText",
+          "destinationUrl",
+          "linkDomain",
+          "eventCity",
+          "eventDate",
+          "eventTitle",
+          "articleSlug",
+          "citySlug",
+        ] as const;
+        for (const camel of extraKeys) {
+          const val = el.dataset[camel];
+          if (val) {
+            const snake = camel.replace(/[A-Z]/g, (m) => "_" + m.toLowerCase());
+            props[snake] = val;
+          }
+        }
+        capture(eventName, props);
       });
 
-      // Track outbound link clicks (Eventbrite, socials, press)
+      // Track outbound link clicks with safe-navigation guard.
+      // For same-tab clicks, prevent default and delay navigation ~100ms so the
+      // PostHog XHR has time to flush before the browser navigates away.
+      const TICKET_DOMAINS = new Set([
+        "eventbrite.com",
+        "www.eventbrite.com",
+        "citywinery.com",
+        "www.citywinery.com",
+        "dccomedyloft.com",
+        "www.dccomedyloft.com",
+      ]);
+      const SOCIAL_DOMAINS = new Set([
+        "instagram.com",
+        "www.instagram.com",
+        "tiktok.com",
+        "www.tiktok.com",
+        "youtube.com",
+        "www.youtube.com",
+        "youtu.be",
+        "threads.net",
+        "www.threads.net",
+        "x.com",
+        "twitter.com",
+        "facebook.com",
+        "www.facebook.com",
+      ]);
+
       document.addEventListener("click", (e) => {
         const link = (e.target as HTMLElement).closest<HTMLAnchorElement>(
           "a[href]",
         );
         if (!link?.href) return;
+        let hostname = "";
         try {
-          const url = new URL(link.href);
-          if (url.hostname === window.location.hostname) return;
-          const domain = url.hostname.replace("www.", "");
-          let linkType = "outbound";
-          if (domain.includes("eventbrite")) linkType = "eventbrite";
-          else if (
-            [
-              "instagram.com",
-              "tiktok.com",
-              "youtube.com",
-              "threads.net",
-              "x.com",
-              "facebook.com",
-            ].some((s) => domain.includes(s))
-          )
-            linkType = "social";
-          trackLeadEvent("outbound_link_clicked", {
-            url: link.href,
-            domain,
-            link_type: linkType,
-            link_text: (link.textContent ?? "").trim().slice(0, 80),
-            page: window.location.pathname,
-          });
+          hostname = new URL(link.href).hostname;
         } catch {
-          /* invalid URL */
+          return;
+        }
+        if (hostname === window.location.hostname) return;
+        if (link.href.startsWith("mailto:") || link.href.startsWith("tel:"))
+          return;
+
+        const me = e as MouseEvent;
+        const isModified =
+          me.metaKey ||
+          me.ctrlKey ||
+          me.shiftKey ||
+          me.altKey ||
+          me.button !== 0;
+        const targetSelf = !link.target || link.target === "_self";
+
+        let linkType = "outbound";
+        if (TICKET_DOMAINS.has(hostname)) linkType = "ticket_vendor";
+        else if (SOCIAL_DOMAINS.has(hostname)) linkType = "social";
+
+        // Always fire outbound_link_clicked with full destination URL
+        trackOutbound(link, {
+          link_type: linkType,
+          link_domain: hostname.replace(/^www\./, ""),
+        });
+
+        // Fire a named ticket_click for all ticket vendor domains
+        if (linkType === "ticket_vendor") {
+          capture("ticket_click", {
+            destination_url: link.href,
+            link_url: link.href,
+            link_domain: hostname,
+            vendor: hostname.replace(/^www\./, "").split(".")[0],
+            cta_text: (link.textContent ?? "").trim().slice(0, 120),
+            cta_position: link.dataset.ctaPosition ?? null,
+            event_city: link.dataset.eventCity ?? null,
+            event_date: link.dataset.eventDate ?? null,
+            event_title: link.dataset.eventTitle ?? null,
+          });
+        }
+
+        // Safe-navigation: delay same-tab unmodified clicks so beacon can flush
+        if (targetSelf && !isModified) {
+          e.preventDefault();
+          const dest = link.href;
+          window.setTimeout(() => {
+            window.location.assign(dest);
+          }, 100);
         }
       });
 

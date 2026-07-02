@@ -1,12 +1,7 @@
+export { capture, enrichEvent, trackOutbound } from "./analyticsCapture";
+
 type AnalyticsValue = string | number | boolean | null | undefined;
 type AnalyticsProps = object;
-
-const META_EVENT_MAP: Record<string, string> = {
-  lead_email_submitted: "Lead",
-  apply_submitted: "CompleteRegistration",
-  checkout_opened: "InitiateCheckout",
-  order_complete: "Purchase",
-};
 
 function isAnalyticsValue(
   value: unknown,
@@ -57,19 +52,15 @@ export function trackError(properties: ErrorProperties) {
 }
 
 /**
- * Send a named lead event to PostHog and the GTM dataLayer.
- * Strips any properties with non-serialisable values before forwarding.
+ * Send a named lead event through the analytics capture spine.
+ * Thin wrapper over `capture()` that strips non-serialisable values first.
+ * Preserves backward-compatible call signature for existing callers.
  */
 export function trackLeadEvent(name: string, properties: AnalyticsProps = {}) {
   const cleanProps = Object.fromEntries(
     Object.entries(properties).filter(([, value]) => isAnalyticsValue(value)),
   );
-
-  window.posthog?.capture?.(name, cleanProps);
-  window.dataLayer?.push({ event: name, ...cleanProps });
-
-  const metaEvent = META_EVENT_MAP[name];
-  if (metaEvent) window.fbq?.("track", metaEvent, cleanProps);
+  capture(name, cleanProps);
 }
 
 /**

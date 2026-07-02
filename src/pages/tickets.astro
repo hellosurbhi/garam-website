@@ -405,6 +405,11 @@ const eventSeriesJsonLd = JSON.stringify({
     </div>
   </main>
 
+  <script>
+    import { capture as _capture } from "@/lib/analyticsCapture";
+    (window as Window & { __gmdCapture?: typeof _capture }).__gmdCapture =
+      _capture;
+  </script>
   <script is:inline define:vars={{ widgetEvents }}>
     (function () {
       if (!widgetEvents.length) return;
@@ -447,8 +452,8 @@ const eventSeriesJsonLd = JSON.stringify({
                 utm_medium: sessionStorage.getItem("gmd-utm-medium") || "",
                 utm_content: sessionStorage.getItem("gmd-utm-content") || "",
               };
-              if (window.posthog) {
-                window.posthog.capture("order_complete", {
+              if (typeof window.__gmdCapture === "function") {
+                window.__gmdCapture("order_complete", {
                   event_id: ev.eventId,
                   city: ev.city,
                   source_section: (src && src.section) || "tickets",
@@ -524,8 +529,8 @@ const eventSeriesJsonLd = JSON.stringify({
             }
           } catch (_) {
             // Widget init failed; anchor href + target="_blank" provide native fallback
-            if (window.posthog) {
-              window.posthog.capture("widget_load_failed", {
+            if (typeof window.__gmdCapture === "function") {
+              window.__gmdCapture("widget_load_failed", {
                 event_id: ev.eventId,
                 city: ev.city,
                 page: window.location.pathname,
@@ -557,25 +562,14 @@ const eventSeriesJsonLd = JSON.stringify({
           modalOpenedAt = Date.now();
           var openRaw = sessionStorage.getItem("eb_cta_source");
           var openData = openRaw ? JSON.parse(openRaw) : null;
-          if (window.posthog) {
-            window.posthog.capture("checkout_opened", {
+          if (typeof window.__gmdCapture === "function") {
+            window.__gmdCapture("checkout_opened", {
               event_id: (openData && openData.event_id) || "",
               city: (openData && openData.city) || "",
               source_section: (openData && openData.section) || "",
               source_page:
                 (openData && openData.page) || window.location.pathname,
               price: (openData && openData.price) || "",
-            });
-          }
-          if (window.fbq) {
-            window.fbq("track", "InitiateCheckout", {
-              content_ids: [(openData && openData.event_id) || ""],
-              city: (openData && openData.city) || "",
-              value: parseFloat(
-                ((openData && openData.price) || "").replace(/[^0-9.]/g, "") ||
-                  "0",
-              ),
-              currency: "USD",
             });
           }
 
@@ -596,8 +590,8 @@ const eventSeriesJsonLd = JSON.stringify({
                 var durationMs = modalOpenedAt ? Date.now() - modalOpenedAt : 0;
                 var closeRaw = sessionStorage.getItem("eb_cta_source");
                 var closeData = closeRaw ? JSON.parse(closeRaw) : null;
-                if (window.posthog) {
-                  window.posthog.capture("checkout_abandoned", {
+                if (typeof window.__gmdCapture === "function") {
+                  window.__gmdCapture("checkout_abandoned", {
                     event_id: (closeData && closeData.event_id) || "",
                     city: (closeData && closeData.city) || "",
                     source_section: (closeData && closeData.section) || "",

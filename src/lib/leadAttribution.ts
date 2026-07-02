@@ -135,6 +135,43 @@ export function bootstrapLeadAttribution() {
   bootstrapGeoData();
 }
 
+/** Stored UTMs from first-touch `bootstrapLeadAttribution()` call. */
+export interface StoredUtms {
+  utmSource?: string;
+  utmMedium?: string;
+  utmCampaign?: string;
+  utmContent?: string;
+  utmTerm?: string;
+}
+
+/**
+ * Read the first-touch UTM params written by `bootstrapLeadAttribution` from sessionStorage.
+ * Used by `buildTicketUrl` to forward visitor attribution to Eventbrite.
+ */
+export function getStoredUtms(): StoredUtms {
+  if (typeof window === "undefined") return {};
+  try {
+    const read = (key: string): string | undefined => {
+      const v = sessionStorage.getItem(key);
+      return v && v.length > 0 ? v : undefined;
+    };
+    const out: StoredUtms = {};
+    const src = read(UTM_SOURCE_KEY);
+    if (src) out.utmSource = src;
+    const med = read(UTM_MEDIUM_KEY);
+    if (med) out.utmMedium = med;
+    const camp = read(UTM_CAMPAIGN_KEY);
+    if (camp) out.utmCampaign = camp;
+    const cont = read(UTM_CONTENT_KEY);
+    if (cont) out.utmContent = cont;
+    const term = read(UTM_TERM_KEY);
+    if (term) out.utmTerm = term;
+    return out;
+  } catch {
+    return {};
+  }
+}
+
 /**
  * Assemble a full `LeadAttribution` object from sessionStorage for attachment to a Firestore submission.
  * Calls `bootstrapLeadAttribution` internally so it is safe to call without a prior bootstrap.

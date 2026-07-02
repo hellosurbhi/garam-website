@@ -13,7 +13,7 @@ function makeApp(overrides?: Partial<Application>): Application {
     city: "New York",
     state: "NY",
     height: "5'6\"",
-    instagram: "priyasharma",
+    instagram: "applicant_fixture_1",
     community: "Hindu",
     income: "$50k–$100k",
     applicationType: "Self",
@@ -46,10 +46,10 @@ describe("ApplicantCard", () => {
 
   it("renders the Instagram handle as a link", () => {
     render(<ApplicantCard app={makeApp()} onClick={vi.fn()} />);
-    const link = screen.getByText("@priyasharma");
+    const link = screen.getByText("@applicant_fixture_1");
     expect(link.closest("a")).toHaveAttribute(
       "href",
-      "https://instagram.com/priyasharma",
+      "https://instagram.com/applicant_fixture_1",
     );
   });
 

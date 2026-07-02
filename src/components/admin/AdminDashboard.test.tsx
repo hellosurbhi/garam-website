@@ -25,7 +25,7 @@ function makeApp(overrides?: Partial<Application>): Application {
     city: "New York",
     state: "NY",
     height: "5'6\"",
-    instagram: "priyasharma",
+    instagram: "applicant_fixture_1",
     community: "Hindu",
     income: "$50k–$100k",
     applicationType: "Self",

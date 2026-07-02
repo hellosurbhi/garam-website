@@ -13,10 +13,16 @@ vi.mock("resend", () => ({
 // Import handler after mocking
 const { POST } = await import("@/pages/api/notify-application");
 
-function makeRequest(body: unknown): Request {
+function makeRequest(
+  body: unknown,
+  origin = "https://garammasaladating.com",
+): Request {
   return new Request("https://garammasaladating.com/api/notify-application", {
     method: "POST",
-    headers: { "Content-Type": "application/json" },
+    headers: {
+      "Content-Type": "application/json",
+      ...(origin ? { origin } : {}),
+    },
     body: JSON.stringify(body),
   });
 }
@@ -34,7 +40,7 @@ const validBody = {
   state: "NY",
   country: "USA",
   email: "priya@example.com",
-  instagram: "priyasharma",
+  instagram: "applicant_fixture_1",
   community: "Hindu",
   income: "$50k–$100k",
   applicationType: "Self",
@@ -143,8 +149,8 @@ describe("notify-application handler", () => {
   it("email HTML includes the instagram handle", async () => {
     await POST(makeContext(makeRequest(validBody)));
     const html: string = mockSend.mock.calls[0][0].html;
-    expect(html).toContain("priyasharma");
-    expect(html).toContain("instagram.com/priyasharma");
+    expect(html).toContain("applicant_fixture_1");
+    expect(html).toContain("instagram.com/applicant_fixture_1");
   });
 
   it("email HTML escapes HTML special characters in name", async () => {
@@ -265,5 +271,21 @@ describe("notify-application handler", () => {
     expect(res.status).toBe(500);
     const body = await res.json();
     expect(body.error).toBe("Failed to send notification");
+  });
+
+  it("returns 403 when Origin header is absent", async () => {
+    const res = await POST(makeContext(makeRequest(validBody, "")));
+    expect(res.status).toBe(403);
+    const body = await res.json();
+    expect(body.error).toBe("Forbidden");
+  });
+
+  it("returns 403 when Origin is not in the allowlist", async () => {
+    const res = await POST(
+      makeContext(makeRequest(validBody, "https://evil.com")),
+    );
+    expect(res.status).toBe(403);
+    const body = await res.json();
+    expect(body.error).toBe("Forbidden");
   });
 });

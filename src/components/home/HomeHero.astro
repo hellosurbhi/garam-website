@@ -142,7 +142,48 @@ function getHeroCity(city: string): string {
   </div>
 </section>
 
-<script src="/js/shader-app.js" defer></script>
+<script>
+  {
+    type Nav = Navigator & {
+      connection?: { saveData?: boolean; effectiveType?: string };
+    };
+    const idle =
+      (
+        window as unknown as {
+          requestIdleCallback?: (
+            cb: () => void,
+            opts?: { timeout: number },
+          ) => void;
+        }
+      ).requestIdleCallback ?? ((cb: () => void) => setTimeout(cb, 2500));
+
+    function shouldLoadShader(): boolean {
+      if (typeof window === "undefined") return false;
+      if (window.matchMedia("(prefers-reduced-motion: reduce)").matches)
+        return false;
+      const nav = navigator as Nav;
+      if (nav.connection?.saveData) return false;
+      if (
+        nav.connection?.effectiveType &&
+        ["slow-2g", "2g"].includes(nav.connection.effectiveType)
+      )
+        return false;
+      return true;
+    }
+
+    if (shouldLoadShader()) {
+      idle(
+        () => {
+          const s = document.createElement("script");
+          s.src = "/js/shader-app.js";
+          s.defer = true;
+          document.head.appendChild(s);
+        },
+        { timeout: 4000 },
+      );
+    }
+  }
+</script>
 
 <script>
   // Pick the first upcoming event that hasn't ended yet; switch to next when it does

@@ -257,6 +257,7 @@ export const identityPosts: JournalPost[] = [
         ctaId: "waitlist",
         variant: "primary",
       },
+      cityLinks: ["san-francisco", "seattle", "los-angeles", "manhattan"],
     },
   },
 

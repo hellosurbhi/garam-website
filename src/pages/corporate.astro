@@ -79,9 +79,12 @@ const speakableJsonLd = JSON.stringify({
           <a
             href={`mailto:${CORPORATE_COPY.agentEmail}?subject=Private%20Show%20Inquiry`}
             class="corp-email-link"
-            data-ph-capture="cta_clicked"
+            data-ph-capture="corporate_inquiry_click"
             data-ph-cta="email_hero"
             data-ph-section="corporate_hero"
+            data-cta-position="corporate_hero"
+            data-cta-text={CORPORATE_COPY.agentEmail}
+            data-destination-url={`mailto:${CORPORATE_COPY.agentEmail}?subject=Private%20Show%20Inquiry`}
             toolname="email-corporate-booking"
             tooldescription="Email Caleb, the manager at Garam Masala Dating, to book a private or corporate show in NYC."
             >{CORPORATE_COPY.agentEmail}</a
@@ -234,9 +237,12 @@ const speakableJsonLd = JSON.stringify({
         <a
           href={`mailto:${CORPORATE_COPY.agentEmail}?subject=Private%20Show%20Inquiry`}
           class="corp-email-link corp-email-link--white"
-          data-ph-capture="cta_clicked"
+          data-ph-capture="corporate_inquiry_click"
           data-ph-cta="email_footer"
           data-ph-section="corporate_cta"
+          data-cta-position="corporate_cta"
+          data-cta-text={CORPORATE_COPY.agentEmail}
+          data-destination-url={`mailto:${CORPORATE_COPY.agentEmail}?subject=Private%20Show%20Inquiry`}
           toolname="email-corporate-booking"
           tooldescription="Email Caleb, the manager at Garam Masala Dating, to book a private or corporate show in NYC."
           >{CORPORATE_COPY.agentEmail}</a

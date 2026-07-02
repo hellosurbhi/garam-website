@@ -3,6 +3,7 @@ import BaseLayout from "@/layouts/BaseLayout.astro";
 import AuthorBio from "@/components/AuthorBio.astro";
 import ArticleCta from "@/components/journal/ArticleCta.astro";
 import LeadCaptureModal from "@/components/LeadCaptureModal.astro";
+import { getCityBySlug } from "@/data/cities";
 import {
   journalPostsPublished,
   getPostBySlug,
@@ -110,6 +111,11 @@ const seoTitle = post.seoTitle ?? deriveSeoTitle(post.title);
 const cfg = post.ctaConfig;
 const hasModalCta =
   cfg?.topCta?.modal || cfg?.midCta?.modal || cfg?.bottomCta?.modal;
+const cityLinks =
+  cfg?.cityLinks
+    ?.map((slug) => getCityBySlug(slug))
+    .filter((city): city is NonNullable<typeof city> => city !== undefined) ??
+  [];
 ---
 
 <BaseLayout
@@ -185,8 +191,32 @@ const hasModalCta =
                     <p class="article-cta__text">
                       We host the #1 live dating show for South Asian singles,
                       weekly in NYC, traveling to new cities.
-                      <a href="/tickets">Get tickets</a> or{" "}
-                      <a href="/apply">apply to be on stage</a>.
+                      <a
+                        href="/tickets"
+                        data-ph-capture="ticket_click"
+                        data-ph-cta="journal_mid_tickets"
+                        data-ph-section="journal"
+                        data-cta-position="journal_mid"
+                        data-cta-text="Get tickets"
+                        data-article-slug={post.slug}
+                        data-destination-url="/tickets"
+                      >
+                        Get tickets
+                      </a>{" "}
+                      or{" "}
+                      <a
+                        href="/apply"
+                        data-ph-capture="apply_click"
+                        data-ph-cta="journal_mid_apply"
+                        data-ph-section="journal"
+                        data-cta-position="journal_mid"
+                        data-cta-text="apply to be on stage"
+                        data-article-slug={post.slug}
+                        data-destination-url="/apply"
+                      >
+                        apply to be on stage
+                      </a>
+                      .
                     </p>
                   </aside>
                 )
@@ -237,6 +267,38 @@ const hasModalCta =
         )
       }
 
+      {
+        cityLinks.length > 0 && (
+          <section class="article-city-links" aria-label="City show pages">
+            <h2 class="article-city-links__title">Find a show near you</h2>
+            <div class="article-city-links__grid">
+              {cityLinks.map((city) => (
+                <a
+                  href={`/cities/${city.slug}`}
+                  class="article-city-links__item"
+                  data-ph-capture="cta_clicked"
+                  data-ph-cta="journal_city_link"
+                  data-ph-section="journal_city_links"
+                  data-cta-position="journal_city_links"
+                  data-cta-text={city.displayName}
+                  data-article-slug={post.slug}
+                  data-destination-url={`/cities/${city.slug}`}
+                  data-event-city={city.displayName}
+                  data-city-slug={city.slug}
+                >
+                  <span>{city.displayName}</span>
+                  <small>
+                    {city.status === "active"
+                      ? "Tickets and dates"
+                      : "Waitlist"}
+                  </small>
+                </a>
+              ))}
+            </div>
+          </section>
+        )
+      }
+
       <!-- Author bio -->
       <AuthorBio />
 
@@ -247,7 +309,17 @@ const hasModalCta =
             <h2 class="related-heading">You might also like</h2>
             <div class="related-grid">
               {related.map((r) => (
-                <a href={`/journal/${r.slug}`} class="related-card">
+                <a
+                  href={`/journal/${r.slug}`}
+                  class="related-card"
+                  data-ph-capture="cta_clicked"
+                  data-ph-cta="related_journal"
+                  data-ph-section="journal_related"
+                  data-cta-position="journal_related"
+                  data-cta-text={r.title}
+                  data-article-slug={post.slug}
+                  data-destination-url={`/journal/${r.slug}`}
+                >
                   <span class="related-card-title">{r.title}</span>
                   <span class="related-card-arrow">&rarr;</span>
                 </a>
@@ -290,8 +362,16 @@ const hasModalCta =
       <!-- Footer -->
       <div class="post-footer">
         <a href="/journal" class="post-footer-back">&larr; All posts</a>
-        <a href="/apply" class="post-footer-cta"
-          >Apply to be on the show &rarr;</a
+        <a
+          href="/apply"
+          class="post-footer-cta"
+          data-ph-capture="apply_click"
+          data-ph-cta="journal_footer_apply"
+          data-ph-section="journal_footer"
+          data-cta-position="journal_footer"
+          data-cta-text="Apply to be on the show"
+          data-article-slug={post.slug}
+          data-destination-url="/apply">Apply to be on the show &rarr;</a
         >
       </div>
     </div>
@@ -478,6 +558,61 @@ const hasModalCta =
     color: var(--brand-red);
     font-size: 16px;
     flex-shrink: 0;
+  }
+
+  .article-city-links {
+    margin: 36px 0 32px;
+    padding: 24px 0 4px;
+    border-top: 1px solid rgba(0, 0, 0, 0.08);
+  }
+
+  .article-city-links__title {
+    margin: 0 0 14px;
+    font-family: var(--font-body), sans-serif;
+    font-size: 13px;
+    font-weight: 800;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--brand-red);
+  }
+
+  .article-city-links__grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 10px;
+  }
+
+  .article-city-links__item {
+    display: flex;
+    min-height: 48px;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    padding: 12px 14px;
+    border: 1px solid rgba(var(--brand-red-rgb), 0.16);
+    border-radius: 8px;
+    color: var(--charcoal);
+    text-decoration: none;
+    background: rgba(var(--brand-red-rgb), 0.035);
+  }
+
+  .article-city-links__item span {
+    font-family: var(--font-body), sans-serif;
+    font-size: 15px;
+    font-weight: 700;
+  }
+
+  .article-city-links__item small {
+    font-family: var(--font-body), sans-serif;
+    font-size: 12px;
+    color: var(--muted);
+    white-space: nowrap;
+  }
+
+  @media (min-width: 640px) {
+    .article-city-links__grid {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
   }
 
   /* Prev / Next navigation */

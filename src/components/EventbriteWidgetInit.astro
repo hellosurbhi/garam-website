@@ -42,6 +42,16 @@
       section: btn.dataset.phSection ?? "",
       price: btn.dataset.phPrice ?? "",
       eventDate: btn.dataset.phEventDate ?? "",
+      eventTitle: btn.dataset.phEventTitle ?? btn.dataset.eventTitle ?? "",
+      destinationUrl:
+        btn.dataset.destinationUrl ??
+        btn.dataset.linkUrl ??
+        btn.getAttribute("href") ??
+        btn.dataset.ebUrl ??
+        "",
+      linkDomain: btn.dataset.linkDomain ?? "",
+      ctaText: btn.dataset.ctaText ?? btn.textContent?.trim() ?? "",
+      ctaPosition: btn.dataset.ctaPosition ?? "",
     }));
 
     const rootStyle = getComputedStyle(document.documentElement);
@@ -77,6 +87,14 @@
             capture("order_complete", {
               event_id: ev.eventId,
               city: ev.city,
+              event_city: src?.city ?? ev.city,
+              event_date: src?.event_date ?? ev.eventDate,
+              event_title: src?.event_title ?? ev.eventTitle,
+              destination_url: src?.destination_url ?? ev.destinationUrl,
+              link_url: src?.destination_url ?? ev.destinationUrl,
+              link_domain: src?.link_domain ?? ev.linkDomain,
+              cta_text: src?.cta_text ?? ev.ctaText,
+              cta_position: src?.cta_position ?? ev.ctaPosition,
               source_section: src?.section ?? ev.section,
               source_page: src?.page ?? "",
               price: src?.price ?? ev.price,
@@ -135,6 +153,10 @@
           capture("widget_load_failed", {
             event_id: ev.eventId,
             city: ev.city,
+            event_title: ev.eventTitle,
+            event_date: ev.eventDate,
+            destination_url: ev.destinationUrl,
+            link_domain: ev.linkDomain,
             page: window.location.pathname,
           });
         }
@@ -189,6 +211,11 @@
             city: cfg?.city ?? "",
             price: cfg?.price ?? "",
             event_date: cfg?.eventDate ?? "",
+            event_title: cfg?.eventTitle ?? "",
+            destination_url: cfg?.destinationUrl ?? "",
+            link_domain: cfg?.linkDomain ?? "",
+            cta_text: cfg?.ctaText ?? "",
+            cta_position: cfg?.ctaPosition ?? "",
           }),
         );
       });
@@ -236,6 +263,14 @@
         capture("checkout_opened", {
           event_id: openData?.event_id ?? "",
           city: openData?.city ?? "",
+          event_city: openData?.city ?? "",
+          event_date: openData?.event_date ?? "",
+          event_title: openData?.event_title ?? "",
+          destination_url: openData?.destination_url ?? "",
+          link_url: openData?.destination_url ?? "",
+          link_domain: openData?.link_domain ?? "",
+          cta_text: openData?.cta_text ?? "",
+          cta_position: openData?.cta_position ?? "",
           source_section: openData?.section ?? "",
           source_page: openData?.page ?? window.location.pathname,
           price: openData?.price ?? "",
@@ -278,6 +313,14 @@
               capture("checkout_abandoned", {
                 event_id: closeData?.event_id ?? "",
                 city: closeData?.city ?? "",
+                event_city: closeData?.city ?? "",
+                event_date: closeData?.event_date ?? "",
+                event_title: closeData?.event_title ?? "",
+                destination_url: closeData?.destination_url ?? "",
+                link_url: closeData?.destination_url ?? "",
+                link_domain: closeData?.link_domain ?? "",
+                cta_text: closeData?.cta_text ?? "",
+                cta_position: closeData?.cta_position ?? "",
                 source_section: closeData?.section ?? "",
                 source_page: closeData?.page ?? window.location.pathname,
                 price: closeData?.price ?? "",

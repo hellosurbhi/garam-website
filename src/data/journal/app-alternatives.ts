@@ -464,6 +464,13 @@ export const appAlternativesPosts: JournalPost[] = [
         ctaId: "email_signup",
         variant: "primary",
       },
+      cityLinks: [
+        "san-francisco",
+        "manhattan",
+        "jersey-city",
+        "seattle",
+        "los-angeles",
+      ],
     },
   },
   {
@@ -602,6 +609,13 @@ export const appAlternativesPosts: JournalPost[] = [
         ctaId: "email_signup",
         variant: "primary",
       },
+      cityLinks: [
+        "manhattan",
+        "san-francisco",
+        "jersey-city",
+        "seattle",
+        "los-angeles",
+      ],
     },
   },
   {
@@ -843,6 +857,13 @@ export const appAlternativesPosts: JournalPost[] = [
         ctaId: "email_signup",
         variant: "primary",
       },
+      cityLinks: [
+        "manhattan",
+        "jersey-city",
+        "san-francisco",
+        "seattle",
+        "los-angeles",
+      ],
     },
   },
   {

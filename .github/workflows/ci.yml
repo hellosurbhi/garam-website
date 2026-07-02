@@ -36,12 +36,7 @@ jobs:
       - run: npm test
       - run: npm run build
       - name: Security audit
-        # --audit-level=critical: unfixed HIGH vulns are build-tool internals only
-        #   (esbuild dev-server Windows-only GHSA-g7r4-m6w7-qqqr in @astrojs/react;
-        #    path-to-regexp ReDoS GHSA-9wv6-86v2-598j in @astrojs/vercel routing utils)
-        # Neither processes user input at runtime. Audit still reports them for visibility.
-        # --omit=dev: exclude CI/dev tooling (@lhci/cli, firebase-tools)
-        run: npm audit --audit-level=critical --omit=dev
+        run: npm audit --audit-level=high --omit=dev
 
   # ==========================================
   # JOB 2: Smoke Tests (iPhone viewport)

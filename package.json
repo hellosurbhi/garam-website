@@ -83,6 +83,9 @@
     "vite": "^8.1.0",
     "vitest": "^4.1.9"
   },
+  "overrides": {
+    "path-to-regexp": "^6.3.0"
+  },
   "lint-staged": {
     "*.{ts,tsx,js,jsx}": [
       "eslint --fix --no-warn-ignored"

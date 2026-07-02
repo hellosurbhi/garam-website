@@ -444,6 +444,34 @@ export const appAlternativesPosts: JournalPost[] = [
       "best-dil-mil-alternatives",
       "tired-of-dating-apps-desi-singles-irl-events",
     ],
+    ctaConfig: {
+      intent: "advice",
+      topCta: {
+        text: "Meet 250 desis IRL at our next show",
+        href: "/tickets",
+        ctaId: "tickets",
+        variant: "primary",
+      },
+      midCta: {
+        text: "Apply to be a contestant",
+        href: "/apply",
+        ctaId: "apply",
+        variant: "secondary",
+      },
+      bottomCta: {
+        text: "Get on the list for your city",
+        modal: "links-spice-modal",
+        ctaId: "email_signup",
+        variant: "primary",
+      },
+      cityLinks: [
+        "san-francisco",
+        "manhattan",
+        "jersey-city",
+        "seattle",
+        "los-angeles",
+      ],
+    },
   },
   {
     slug: "best-indian-dating-apps-ranked",
@@ -561,6 +589,34 @@ export const appAlternativesPosts: JournalPost[] = [
       "why-hinge-doesnt-work-for-indians",
       "dating-apps-for-brown-people",
     ],
+    ctaConfig: {
+      intent: "advice",
+      topCta: {
+        text: "Skip the apps: come to a live dating show",
+        href: "/tickets",
+        ctaId: "tickets",
+        variant: "primary",
+      },
+      midCta: {
+        text: "Apply to be on the show",
+        href: "/apply",
+        ctaId: "apply",
+        variant: "secondary",
+      },
+      bottomCta: {
+        text: "Get on the list for your city",
+        modal: "links-spice-modal",
+        ctaId: "email_signup",
+        variant: "primary",
+      },
+      cityLinks: [
+        "manhattan",
+        "san-francisco",
+        "jersey-city",
+        "seattle",
+        "los-angeles",
+      ],
+    },
   },
   {
     slug: "muzz-alternative-south-asian-love",
@@ -781,6 +837,34 @@ export const appAlternativesPosts: JournalPost[] = [
       "why-hinge-doesnt-work-for-indians",
       "why-dating-apps-dont-work-for-south-asians",
     ],
+    ctaConfig: {
+      intent: "advice",
+      topCta: {
+        text: "Live show for South Asian singles",
+        href: "/tickets",
+        ctaId: "tickets",
+        variant: "primary",
+      },
+      midCta: {
+        text: "Apply to be on the show",
+        href: "/apply",
+        ctaId: "apply",
+        variant: "secondary",
+      },
+      bottomCta: {
+        text: "Get on the list for your city",
+        modal: "links-spice-modal",
+        ctaId: "email_signup",
+        variant: "primary",
+      },
+      cityLinks: [
+        "manhattan",
+        "jersey-city",
+        "san-francisco",
+        "seattle",
+        "los-angeles",
+      ],
+    },
   },
   {
     slug: "why-dating-apps-dont-work-for-south-asians",

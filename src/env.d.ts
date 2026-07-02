@@ -7,6 +7,16 @@ declare module "virtual:git-dates" {
 
 interface Window {
   dataLayer?: Array<Record<string, unknown>>;
+  EBWidgets?: {
+    createWidget: (config: {
+      widgetType: string;
+      eventId: string;
+      modal: boolean;
+      modalTriggerElementId: string;
+      themeSettings?: Record<string, string>;
+      onOrderComplete?: () => void;
+    }) => void;
+  };
   posthog?: {
     capture?: (event: string, properties?: Record<string, unknown>) => void;
     identify?: (
@@ -28,8 +38,19 @@ interface Window {
     event: string;
     properties: Record<string, unknown>;
   }>;
+  __garamEventQueue?: Array<{
+    event: string;
+    properties: Record<string, unknown>;
+  }>;
   _gtmLoaded?: boolean;
   _fbLoaded?: boolean;
+  __GMD_CONSENT?: {
+    v: 1;
+    analytics: boolean;
+    marketing: boolean;
+    ts: number;
+  } | null;
+  __gmdOpenCookiePrefs?: () => void;
 }
 
 declare namespace astroHTML.JSX {

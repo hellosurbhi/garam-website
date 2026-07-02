@@ -1,5 +1,13 @@
 {
   "buildCommand": "npm run build",
+  "redirects": [
+    {
+      "source": "/:path*",
+      "has": [{ "type": "host", "value": "www.garammasaladating.com" }],
+      "destination": "https://garammasaladating.com/:path*",
+      "permanent": true
+    }
+  ],
   "headers": [
     {
       "source": "/(.*)",
@@ -59,7 +67,8 @@
         {
           "key": "Cache-Control",
           "value": "public, max-age=31536000, immutable"
-        }
+        },
+        { "key": "Vary", "value": "Accept" }
       ]
     }
   ],

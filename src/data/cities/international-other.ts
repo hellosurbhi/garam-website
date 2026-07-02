@@ -32,7 +32,7 @@ export const internationalOtherCities: Record<string, CityData> = {
       },
       {
         q: "Can I apply to be a contestant on stage?",
-        a: "Yes. Use the apply link below to submit your application. Contestants are selected based on personality, openness, and willingness to have fun on stage.",
+        a: "Yes. Use the apply link on this page to submit your application. Auckland is our primary New Zealand target so early applications from Sandringham, Papatoetoe, and the wider metro get noticed first.",
       },
     ],
     relatedArticleSlugs: [
@@ -44,7 +44,6 @@ export const internationalOtherCities: Record<string, CityData> = {
       { label: "Join the Auckland Waitlist", href: "#waitlist" },
       { label: "Apply to Be a Contestant", href: "/apply?city=Auckland" },
     ],
-    includeEventSchema: false,
     areaServed: "Auckland, New Zealand",
     addressLocality: "Auckland",
     addressRegion: "Auckland",
@@ -82,7 +81,7 @@ export const internationalOtherCities: Record<string, CityData> = {
       },
       {
         q: "Can I apply to be a contestant on stage?",
-        a: "Yes. Use the apply link below to submit your application. Contestants are selected based on personality, openness, and willingness to have fun on stage.",
+        a: "Yes. Use the apply link on this page to submit your application. Wellington applicants are part of our New Zealand tour pool and stand out because the community here is tight enough that great contestants know each other.",
       },
     ],
     relatedArticleSlugs: [
@@ -94,7 +93,6 @@ export const internationalOtherCities: Record<string, CityData> = {
       { label: "Join the Wellington Waitlist", href: "#waitlist" },
       { label: "Apply to Be a Contestant", href: "/apply?city=Wellington" },
     ],
-    includeEventSchema: false,
     areaServed: "Wellington, New Zealand",
     addressLocality: "Wellington",
     addressRegion: "Wellington",
@@ -132,7 +130,7 @@ export const internationalOtherCities: Record<string, CityData> = {
       },
       {
         q: "Can I apply to be a contestant on stage?",
-        a: "Yes. Use the apply link below to submit your application. Contestants are selected based on personality, openness, and willingness to have fun on stage.",
+        a: "Yes. Use the apply link on this page to submit your application. Christchurch is part of our New Zealand tour and we are actively building a cast from Canterbury's South Asian community.",
       },
     ],
     relatedArticleSlugs: [
@@ -143,7 +141,6 @@ export const internationalOtherCities: Record<string, CityData> = {
       { label: "Join the Christchurch Waitlist", href: "#waitlist" },
       { label: "Apply to Be a Contestant", href: "/apply?city=Christchurch" },
     ],
-    includeEventSchema: false,
     areaServed: "Christchurch, New Zealand",
     addressLocality: "Christchurch",
     addressRegion: "Canterbury",
@@ -181,7 +178,7 @@ export const internationalOtherCities: Record<string, CityData> = {
       },
       {
         q: "Can I apply to be a contestant on stage?",
-        a: "Yes. Use the apply link below to submit your application. Contestants are selected based on personality, openness, and willingness to have fun on stage.",
+        a: "Yes. Use the apply link on this page to submit your application. Indo-Fijian applicants from Suva and Nadi are both welcome, and the blend of Pacific Island warmth and Hindi culture makes for exactly the kind of contestant the show is built around.",
       },
     ],
     relatedArticleSlugs: [
@@ -193,7 +190,6 @@ export const internationalOtherCities: Record<string, CityData> = {
       { label: "Join the Fiji Waitlist", href: "#waitlist" },
       { label: "Apply to Be a Contestant", href: "/apply?city=Fiji" },
     ],
-    includeEventSchema: false,
     areaServed: "Fiji",
     addressLocality: "Suva",
     addressRegion: "",
@@ -231,7 +227,7 @@ export const internationalOtherCities: Record<string, CityData> = {
       },
       {
         q: "Can I apply to be a contestant on stage?",
-        a: "Yes. Use the apply link below to submit your application. Contestants are selected based on personality, openness, and willingness to have fun on stage.",
+        a: "Yes. Use the apply link on this page to submit your application. Nadi applicants carry the western Fiji Indo-Fijian identity and we are looking for people whose personalities fill a room the way the Sri Siva Subramaniya Swami temple fills the skyline.",
       },
     ],
     relatedArticleSlugs: [
@@ -242,7 +238,6 @@ export const internationalOtherCities: Record<string, CityData> = {
       { label: "Join the Nadi Waitlist", href: "#waitlist" },
       { label: "Apply to Be a Contestant", href: "/apply?city=Nadi" },
     ],
-    includeEventSchema: false,
     areaServed: "Nadi, Fiji",
     addressLocality: "Nadi",
     addressRegion: "Ba",
@@ -280,7 +275,7 @@ export const internationalOtherCities: Record<string, CityData> = {
       },
       {
         q: "Can I apply to be a contestant on stage?",
-        a: "Yes. Use the apply link below to submit your application. Contestants are selected based on personality, openness, and willingness to have fun on stage.",
+        a: "Yes. Use the apply link on this page to submit your application. Lautoka and the western Viti Levu corridor are part of our Fiji casting pool, and contestants from Sugar City bring an energy that is distinct from anywhere else in the Pacific.",
       },
     ],
     relatedArticleSlugs: ["nri-dating-challenges", "irl-dating-revival"],
@@ -288,7 +283,6 @@ export const internationalOtherCities: Record<string, CityData> = {
       { label: "Join the Lautoka Waitlist", href: "#waitlist" },
       { label: "Apply to Be a Contestant", href: "/apply?city=Lautoka" },
     ],
-    includeEventSchema: false,
     areaServed: "Lautoka, Fiji",
     addressLocality: "Lautoka",
     addressRegion: "Ba",
@@ -328,7 +322,7 @@ export const internationalOtherCities: Record<string, CityData> = {
       },
       {
         q: "Can I apply to be a contestant on stage?",
-        a: "Yes. Use the apply link below to submit your application. Contestants are selected based on personality, openness, and willingness to have fun on stage.",
+        a: "Yes. Use the apply link on this page to submit your application. Nairobi is our top Africa target and we are actively scouting for contestants from Parklands, Westlands, and the broader East African desi community.",
       },
     ],
     relatedArticleSlugs: [
@@ -340,7 +334,6 @@ export const internationalOtherCities: Record<string, CityData> = {
       { label: "Join the Nairobi Waitlist", href: "#waitlist" },
       { label: "Apply to Be a Contestant", href: "/apply?city=Nairobi" },
     ],
-    includeEventSchema: false,
     areaServed: "Nairobi, Kenya",
     addressLocality: "Nairobi",
     addressRegion: "Nairobi",
@@ -378,7 +371,7 @@ export const internationalOtherCities: Record<string, CityData> = {
       },
       {
         q: "Can I apply to be a contestant on stage?",
-        a: "Yes. Use the apply link below to submit your application. Contestants are selected based on personality, openness, and willingness to have fun on stage.",
+        a: "Yes. Use the apply link on this page to submit your application. Mombasa applicants from the Old Town, Nyali, and Diani coastal corridor are all eligible, and the multigenerational Swahili Coast desi identity is exactly what the show celebrates.",
       },
     ],
     relatedArticleSlugs: [
@@ -390,7 +383,6 @@ export const internationalOtherCities: Record<string, CityData> = {
       { label: "Join the Mombasa Waitlist", href: "#waitlist" },
       { label: "Apply to Be a Contestant", href: "/apply?city=Mombasa" },
     ],
-    includeEventSchema: false,
     areaServed: "Mombasa, Kenya",
     addressLocality: "Mombasa",
     addressRegion: "Mombasa",
@@ -428,7 +420,7 @@ export const internationalOtherCities: Record<string, CityData> = {
       },
       {
         q: "Can I apply to be a contestant on stage?",
-        a: "Yes. Use the apply link below to submit your application. Contestants are selected based on personality, openness, and willingness to have fun on stage.",
+        a: "Yes. Use the apply link on this page to submit your application. Dar es Salaam is part of our East Africa tour and we are looking for contestants from Upanga, Oyster Bay, and the wider Tanzanian Indian community who are ready to represent five generations of desi life on the Swahili Coast.",
       },
     ],
     relatedArticleSlugs: [
@@ -440,7 +432,6 @@ export const internationalOtherCities: Record<string, CityData> = {
       { label: "Join the Dar es Salaam Waitlist", href: "#waitlist" },
       { label: "Apply to Be a Contestant", href: "/apply?city=Dar+es+Salaam" },
     ],
-    includeEventSchema: false,
     areaServed: "Dar es Salaam, Tanzania",
     addressLocality: "Dar es Salaam",
     addressRegion: "",
@@ -478,7 +469,7 @@ export const internationalOtherCities: Record<string, CityData> = {
       },
       {
         q: "Can I apply to be a contestant on stage?",
-        a: "Yes. Use the apply link below to submit your application. Contestants are selected based on personality, openness, and willingness to have fun on stage.",
+        a: "Yes. Use the apply link on this page to submit your application. Joburg is on our Africa tour and we want contestants from Lenasia, Fordsburg, Sandton, and everywhere in between who are ready to bring the resilience and humour of the South African Indian experience to the stage.",
       },
     ],
     relatedArticleSlugs: [
@@ -490,7 +481,6 @@ export const internationalOtherCities: Record<string, CityData> = {
       { label: "Join the Johannesburg Waitlist", href: "#waitlist" },
       { label: "Apply to Be a Contestant", href: "/apply?city=Johannesburg" },
     ],
-    includeEventSchema: false,
     areaServed: "Johannesburg, South Africa",
     addressLocality: "Johannesburg",
     addressRegion: "Gauteng",
@@ -534,7 +524,7 @@ export const internationalOtherCities: Record<string, CityData> = {
       },
       {
         q: "Can I apply to be a contestant on stage?",
-        a: "Yes. Use the apply link below to submit your application. Contestants are selected based on personality, openness, and willingness to have fun on stage.",
+        a: "Yes. Use the apply link on this page to submit your application. Durban is a top priority on our Africa tour and we are specifically looking for contestants from Chatsworth, Phoenix, and Tongaat who can carry the full weight of what it means to be Indian South African on stage in front of their own community.",
       },
     ],
     relatedArticleSlugs: [
@@ -546,7 +536,6 @@ export const internationalOtherCities: Record<string, CityData> = {
       { label: "Join the Durban Waitlist", href: "#waitlist" },
       { label: "Apply to Be a Contestant", href: "/apply?city=Durban" },
     ],
-    includeEventSchema: false,
     areaServed: "Durban, South Africa",
     addressLocality: "Durban",
     addressRegion: "KwaZulu-Natal",
@@ -590,7 +579,7 @@ export const internationalOtherCities: Record<string, CityData> = {
       },
       {
         q: "Can I apply to be a contestant on stage?",
-        a: "Yes. Use the apply link below to submit your application. Contestants are selected based on personality, openness, and willingness to have fun on stage.",
+        a: "Yes. Use the apply link on this page to submit your application. Cape Town is part of our South Africa tour and we are looking for contestants from the UCT and Stellenbosch communities and professionals scattered across the Mother City who are ready to show up for a first of its kind desi night.",
       },
     ],
     relatedArticleSlugs: [
@@ -602,7 +591,6 @@ export const internationalOtherCities: Record<string, CityData> = {
       { label: "Join the Cape Town Waitlist", href: "#waitlist" },
       { label: "Apply to Be a Contestant", href: "/apply?city=Cape+Town" },
     ],
-    includeEventSchema: false,
     areaServed: "Cape Town, South Africa",
     addressLocality: "Cape Town",
     addressRegion: "Western Cape",
@@ -640,7 +628,7 @@ export const internationalOtherCities: Record<string, CityData> = {
       },
       {
         q: "Can I apply to be a contestant on stage?",
-        a: "Yes. Use the apply link below to submit your application. Contestants are selected based on personality, openness, and willingness to have fun on stage.",
+        a: "Yes. Use the apply link on this page to submit your application. Mauritius applications are open across Port Louis, Quatre Bornes, and Rose Hill, and when the whole island knows everyone, being the person on stage at this show is a genuinely big deal.",
       },
     ],
     relatedArticleSlugs: [
@@ -652,7 +640,6 @@ export const internationalOtherCities: Record<string, CityData> = {
       { label: "Join the Mauritius Waitlist", href: "#waitlist" },
       { label: "Apply to Be a Contestant", href: "/apply?city=Mauritius" },
     ],
-    includeEventSchema: false,
     areaServed: "Mauritius",
     addressLocality: "Port Louis",
     addressRegion: "",
@@ -698,7 +685,7 @@ export const internationalOtherCities: Record<string, CityData> = {
       },
       {
         q: "Can I apply to be a contestant on stage?",
-        a: "Yes. Use the apply link below to submit your application. Contestants are selected based on personality, openness, and willingness to have fun on stage.",
+        a: "Yes. Use the apply link on this page to submit your application. Port of Spain applicants are part of our Caribbean tour cast and the Indo-Trinidadian contestants who bring chutney energy to a live dating format tend to become the most talked about nights of the tour.",
       },
     ],
     relatedArticleSlugs: [
@@ -710,7 +697,6 @@ export const internationalOtherCities: Record<string, CityData> = {
       { label: "Join the Port of Spain Waitlist", href: "#waitlist" },
       { label: "Apply to Be a Contestant", href: "/apply?city=Port+of+Spain" },
     ],
-    includeEventSchema: false,
     areaServed: "Port of Spain, Trinidad and Tobago",
     addressLocality: "Port of Spain",
     addressRegion: "",
@@ -754,7 +740,7 @@ export const internationalOtherCities: Record<string, CityData> = {
       },
       {
         q: "Can I apply to be a contestant on stage?",
-        a: "Yes. Use the apply link below to submit your application. Contestants are selected based on personality, openness, and willingness to have fun on stage.",
+        a: "Yes. Use the apply link on this page to submit your application. San Fernando is part of our Trinidad tour and southern Indo-Trinidadian contestants, rooted in chutney culture and Phagwa traditions, are exactly the energy this show is built to showcase.",
       },
     ],
     relatedArticleSlugs: [
@@ -766,7 +752,6 @@ export const internationalOtherCities: Record<string, CityData> = {
       { label: "Join the San Fernando Waitlist", href: "#waitlist" },
       { label: "Apply to Be a Contestant", href: "/apply?city=San+Fernando" },
     ],
-    includeEventSchema: false,
     areaServed: "San Fernando, Trinidad and Tobago",
     addressLocality: "San Fernando",
     addressRegion: "",
@@ -810,7 +795,7 @@ export const internationalOtherCities: Record<string, CityData> = {
       },
       {
         q: "Can I apply to be a contestant on stage?",
-        a: "Yes. Use the apply link below to submit your application. Contestants are selected based on personality, openness, and willingness to have fun on stage.",
+        a: "Yes. Use the apply link on this page to submit your application. Chaguanas sits at the centre of Trinidad's Indian corridor and applicants from here and across central Trinidad bring a community confidence that is unlike anywhere else in the Caribbean.",
       },
     ],
     relatedArticleSlugs: [
@@ -822,7 +807,6 @@ export const internationalOtherCities: Record<string, CityData> = {
       { label: "Join the Chaguanas Waitlist", href: "#waitlist" },
       { label: "Apply to Be a Contestant", href: "/apply?city=Chaguanas" },
     ],
-    includeEventSchema: false,
     areaServed: "Chaguanas, Trinidad and Tobago",
     addressLocality: "Chaguanas",
     addressRegion: "",
@@ -866,7 +850,7 @@ export const internationalOtherCities: Record<string, CityData> = {
       },
       {
         q: "Can I apply to be a contestant on stage?",
-        a: "Yes. Use the apply link below to submit your application. Contestants are selected based on personality, openness, and willingness to have fun on stage.",
+        a: "Yes. Use the apply link on this page to submit your application. Georgetown is part of our Caribbean tour and Indo-Guyanese applicants from the city and the Essequibo coast are welcome, including those with ties to the diaspora communities in Richmond Hill and the GTA.",
       },
     ],
     relatedArticleSlugs: [
@@ -878,7 +862,6 @@ export const internationalOtherCities: Record<string, CityData> = {
       { label: "Join the Georgetown Waitlist", href: "#waitlist" },
       { label: "Apply to Be a Contestant", href: "/apply?city=Georgetown" },
     ],
-    includeEventSchema: false,
     areaServed: "Georgetown, Guyana",
     addressLocality: "Georgetown",
     addressRegion: "",
@@ -922,7 +905,7 @@ export const internationalOtherCities: Record<string, CityData> = {
       },
       {
         q: "Can I apply to be a contestant on stage?",
-        a: "Yes. Use the apply link below to submit your application. Contestants are selected based on personality, openness, and willingness to have fun on stage.",
+        a: "Yes. Use the apply link on this page to submit your application. New Amsterdam and the Berbice coast are part of our Guyana tour, and contestants from the most densely Indo-Guyanese region in the country bring a rootedness to the stage that the format is built to celebrate.",
       },
     ],
     relatedArticleSlugs: [
@@ -933,7 +916,6 @@ export const internationalOtherCities: Record<string, CityData> = {
       { label: "Join the New Amsterdam Waitlist", href: "#waitlist" },
       { label: "Apply to Be a Contestant", href: "/apply?city=New+Amsterdam" },
     ],
-    includeEventSchema: false,
     areaServed: "New Amsterdam, Guyana",
     addressLocality: "New Amsterdam",
     addressRegion: "East Berbice-Corentyne",
@@ -977,7 +959,7 @@ export const internationalOtherCities: Record<string, CityData> = {
       },
       {
         q: "Can I apply to be a contestant on stage?",
-        a: "Yes. Use the apply link below to submit your application. Contestants are selected based on personality, openness, and willingness to have fun on stage.",
+        a: "Yes. Use the apply link on this page to submit your application. Paramaribo applicants from the Hindustani Surinamese community are welcome, and with family connections stretching to The Hague and Amsterdam, contestants here are often representing two continents at once.",
       },
     ],
     relatedArticleSlugs: [
@@ -989,7 +971,6 @@ export const internationalOtherCities: Record<string, CityData> = {
       { label: "Join the Paramaribo Waitlist", href: "#waitlist" },
       { label: "Apply to Be a Contestant", href: "/apply?city=Paramaribo" },
     ],
-    includeEventSchema: false,
     areaServed: "Paramaribo, Suriname",
     addressLocality: "Paramaribo",
     addressRegion: "",
@@ -1033,7 +1014,7 @@ export const internationalOtherCities: Record<string, CityData> = {
       },
       {
         q: "Can I apply to be a contestant on stage?",
-        a: "Yes. Use the apply link below to submit your application. Contestants are selected based on personality, openness, and willingness to have fun on stage.",
+        a: "Yes. Use the apply link on this page to submit your application. Panama City is part of our Caribbean circuit and applicants from the banking and Canal Zone communities, as well as Caribbean Hindustani settlers, are all eligible to apply.",
       },
     ],
     relatedArticleSlugs: [
@@ -1045,7 +1026,6 @@ export const internationalOtherCities: Record<string, CityData> = {
       { label: "Join the Panama City Waitlist", href: "#waitlist" },
       { label: "Apply to Be a Contestant", href: "/apply?city=Panama+City" },
     ],
-    includeEventSchema: false,
     areaServed: "Panama City, Panama",
     addressLocality: "Panama City",
     addressRegion: "",
@@ -1089,7 +1069,7 @@ export const internationalOtherCities: Record<string, CityData> = {
       },
       {
         q: "Can I apply to be a contestant on stage?",
-        a: "Yes. Use the apply link below to submit your application. Contestants are selected based on personality, openness, and willingness to have fun on stage.",
+        a: "Yes. Use the apply link on this page to submit your application. San Juan is part of our Caribbean expansion and we are looking for contestants from the UPR medical community, Act 60 transplants, and South Asian professionals across the island who are ready to be part of the first desi dating show Puerto Rico has ever seen.",
       },
     ],
     relatedArticleSlugs: [
@@ -1101,7 +1081,6 @@ export const internationalOtherCities: Record<string, CityData> = {
       { label: "Join the San Juan Waitlist", href: "#waitlist" },
       { label: "Apply to Be a Contestant", href: "/apply?city=San+Juan" },
     ],
-    includeEventSchema: false,
     areaServed: "San Juan, Puerto Rico",
     addressLocality: "San Juan",
     addressRegion: "Puerto Rico",

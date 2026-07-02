@@ -134,6 +134,38 @@ const breadcrumbJsonLd = buildBreadcrumbJsonLd([
       </div>
     </section>
 
+    <section class="mc-bridge bg-light" aria-label="Live show bridge">
+      <div class="mc-bridge-inner">
+        <p>Come watch situationships get handled live.</p>
+        <div class="mc-bridge-actions">
+          <a
+            href="/tickets"
+            data-ph-capture="ticket_click"
+            data-ph-cta="situationship_top_tickets"
+            data-ph-section="journal"
+            data-cta-position="journal_top"
+            data-cta-text="Get tickets"
+            data-article-slug={post.slug}
+            data-destination-url="/tickets"
+          >
+            Get tickets
+          </a>
+          <a
+            href="/apply"
+            data-ph-capture="apply_click"
+            data-ph-cta="situationship_top_apply"
+            data-ph-section="journal"
+            data-cta-position="journal_top"
+            data-cta-text="Apply to be on stage"
+            data-article-slug={post.slug}
+            data-destination-url="/apply"
+          >
+            Apply
+          </a>
+        </div>
+      </div>
+    </section>
+
     <!-- DISCLAIMER -->
     <section class="mc-section mc-disclaimer bg-warm" aria-label="Disclaimer">
       <div class="mc-content">
@@ -188,8 +220,33 @@ const breadcrumbJsonLd = buildBreadcrumbJsonLd([
             {slide.stepNumber === "04" && post.promoText && (
               <aside class="mc-mid-cta" aria-label="Show promotion">
                 <p class="mc-mid-cta-text">
-                  {post.promoText} <a href="/tickets">Get tickets</a> or{" "}
-                  <a href="/apply">apply to be on stage</a>.
+                  {post.promoText}{" "}
+                  <a
+                    href="/tickets"
+                    data-ph-capture="ticket_click"
+                    data-ph-cta="situationship_mid_tickets"
+                    data-ph-section="journal"
+                    data-cta-position="journal_mid"
+                    data-cta-text="Get tickets"
+                    data-article-slug={post.slug}
+                    data-destination-url="/tickets"
+                  >
+                    Get tickets
+                  </a>{" "}
+                  or{" "}
+                  <a
+                    href="/apply"
+                    data-ph-capture="apply_click"
+                    data-ph-cta="situationship_mid_apply"
+                    data-ph-section="journal"
+                    data-cta-position="journal_mid"
+                    data-cta-text="apply to be on stage"
+                    data-article-slug={post.slug}
+                    data-destination-url="/apply"
+                  >
+                    apply to be on stage
+                  </a>
+                  .
                 </p>
               </aside>
             )}
@@ -286,6 +343,40 @@ const breadcrumbJsonLd = buildBreadcrumbJsonLd([
           }
         </dl>
         <AuthorBio />
+        <section class="mc-city-links" aria-label="City show pages">
+          <h2>Find a show near you</h2>
+          <div class="mc-city-links-grid">
+            {
+              [
+                ["Manhattan", "/cities/manhattan"],
+                ["Jersey City", "/cities/jersey-city"],
+                ["San Francisco", "/cities/san-francisco"],
+                ["Seattle", "/cities/seattle"],
+                ["Los Angeles", "/cities/los-angeles"],
+              ].map(([label, href]) => (
+                <a
+                  href={href}
+                  data-ph-capture="cta_clicked"
+                  data-ph-cta="situationship_city_link"
+                  data-ph-section="journal_city_links"
+                  data-cta-position="journal_city_links"
+                  data-cta-text={label}
+                  data-article-slug={post.slug}
+                  data-destination-url={href}
+                  data-event-city={label}
+                  data-city-slug={href.replace("/cities/", "")}
+                >
+                  <span>{label}</span>
+                  <small>
+                    {label === "Manhattan" || label === "Jersey City"
+                      ? "Tickets and dates"
+                      : "Waitlist"}
+                  </small>
+                </a>
+              ))
+            }
+          </div>
+        </section>
       </div>
     </section>
 
@@ -304,7 +395,18 @@ const breadcrumbJsonLd = buildBreadcrumbJsonLd([
           data-delay="200"
           set:html={ctaSlide.body}
         />
-        <a href="/tickets" class="mc-cta-btn reveal" data-delay="320">
+        <a
+          href="/tickets"
+          class="mc-cta-btn reveal"
+          data-delay="320"
+          data-ph-capture="ticket_click"
+          data-ph-cta="situationship_bottom_tickets"
+          data-ph-section="journal"
+          data-cta-position="journal_bottom"
+          data-cta-text="Get Tickets"
+          data-article-slug={post.slug}
+          data-destination-url="/tickets"
+        >
           Get Tickets
         </a>
         <p class="mc-cta-ig reveal" data-delay="420">@garammasaladating</p>
@@ -314,7 +416,16 @@ const breadcrumbJsonLd = buildBreadcrumbJsonLd([
     <!-- PAGE FOOTER -->
     <div class="mc-footer bg-light">
       <a href="/journal" class="mc-footer-back">&larr; All journal posts</a>
-      <a href="/apply" class="mc-footer-apply">Apply to be on the show &rarr;</a
+      <a
+        href="/apply"
+        class="mc-footer-apply"
+        data-ph-capture="apply_click"
+        data-ph-cta="situationship_footer_apply"
+        data-ph-section="journal_footer"
+        data-cta-position="journal_footer"
+        data-cta-text="Apply to be on the show"
+        data-article-slug={post.slug}
+        data-destination-url="/apply">Apply to be on the show &rarr;</a
       >
     </div>
   </main>
@@ -497,6 +608,72 @@ const breadcrumbJsonLd = buildBreadcrumbJsonLd([
   @media (prefers-reduced-motion: reduce) {
     .mc-scroll-hint {
       animation: none;
+    }
+  }
+
+  .mc-bridge {
+    padding: 18px 24px 24px;
+    border-top: 1px solid rgba(0, 0, 0, 0.06);
+    border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+  }
+
+  .mc-bridge-inner {
+    display: flex;
+    max-width: 640px;
+    margin: 0 auto;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+  }
+
+  .mc-bridge p {
+    margin: 0;
+    font-family: var(--font-body), sans-serif;
+    font-size: 15px;
+    font-weight: 700;
+    color: var(--charcoal);
+  }
+
+  .mc-bridge-actions {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    justify-content: flex-end;
+  }
+
+  .mc-bridge-actions a {
+    display: inline-flex;
+    min-height: 44px;
+    align-items: center;
+    justify-content: center;
+    border-radius: 999px;
+    padding: 0 16px;
+    border: 1px solid rgba(var(--brand-red-rgb), 0.22);
+    color: var(--brand-red);
+    font-family: var(--font-body), sans-serif;
+    font-size: 13px;
+    font-weight: 800;
+    text-decoration: none;
+  }
+
+  .mc-bridge-actions a:first-child {
+    background: var(--brand-red);
+    border-color: var(--brand-red);
+    color: var(--white);
+  }
+
+  @media (max-width: 560px) {
+    .mc-bridge-inner {
+      display: grid;
+      justify-items: stretch;
+    }
+
+    .mc-bridge-actions {
+      justify-content: stretch;
+    }
+
+    .mc-bridge-actions a {
+      flex: 1 1 120px;
     }
   }
 
@@ -767,6 +944,61 @@ const breadcrumbJsonLd = buildBreadcrumbJsonLd([
     color: var(--text-secondary);
     line-height: 1.75;
     margin: 0;
+  }
+
+  .mc-city-links {
+    margin-top: 36px;
+    padding-top: 28px;
+    border-top: 1px solid rgba(var(--black-rgb), 0.06);
+  }
+
+  .mc-city-links h2 {
+    margin: 0 0 14px;
+    font-family: var(--font-body), sans-serif;
+    font-size: 13px;
+    font-weight: 800;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--brand-red);
+  }
+
+  .mc-city-links-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 10px;
+  }
+
+  .mc-city-links a {
+    display: flex;
+    min-height: 48px;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    padding: 12px 14px;
+    border: 1px solid rgba(var(--brand-red-rgb), 0.16);
+    border-radius: 8px;
+    color: var(--charcoal);
+    text-decoration: none;
+    background: rgba(var(--brand-red-rgb), 0.035);
+  }
+
+  .mc-city-links span {
+    font-family: var(--font-body), sans-serif;
+    font-size: 15px;
+    font-weight: 700;
+  }
+
+  .mc-city-links small {
+    font-family: var(--font-body), sans-serif;
+    font-size: 12px;
+    color: var(--gray-mid);
+    white-space: nowrap;
+  }
+
+  @media (min-width: 640px) {
+    .mc-city-links-grid {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
   }
 
   /* ── Closing CTA section ─────────────────────────────────── */

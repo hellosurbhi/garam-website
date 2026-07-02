@@ -114,6 +114,7 @@ const leadSource = `spice-list-${pageName}`;
         localStorage.setItem("gmd-popup-subscribed", "true");
         identifyLead(savedEmail, attribution);
         trackLeadEvent("lead_email_submitted", attribution);
+        trackLeadEvent("email_signup", attribution);
         if (errorEl) {
           errorEl.textContent = "";
           errorEl.setAttribute("hidden", "");

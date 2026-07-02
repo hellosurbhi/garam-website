@@ -1,8 +1,15 @@
-import { useState } from "react";
-import { X, Trash2, ArchiveRestore, CheckCircle } from "lucide-react";
-import { type Application, STATUS_COLORS } from "@/types/application";
+import { useState, useMemo } from "react";
+import { X, Trash2, ArchiveRestore } from "lucide-react";
+import {
+  type Application,
+  type ApplicantStatus,
+  STATUS_COLORS,
+  STATUS_ORDER,
+} from "@/types/application";
 import { formatLocation } from "@/utils/locationDisplay";
+import { getApplicantPhotos } from "@/utils/applicantPhotos";
 import { Modal } from "@/components/ui/Modal";
+import { events } from "@/data/events";
 import styles from "./ApplicantModal.module.css";
 
 interface ApplicantModalProps {
@@ -38,19 +45,37 @@ function EmailRow({ email }: { email?: string }) {
   );
 }
 
+const TODAY_ISO = new Date().toISOString().slice(0, 10);
+
+function castEventKey(e: (typeof events)[number]): string {
+  return `${e.isoDate ?? ""}__${e.citySlug ?? e.city}`;
+}
+
 export default function ApplicantModal({
   app,
   onClose,
   onUpdate,
   onDelete,
   onRestore,
-  onParticipated,
 }: ApplicantModalProps) {
-  const [status, setStatus] = useState<Application["status"]>(app.status);
+  const [status, setStatus] = useState<ApplicantStatus>(
+    app.status as ApplicantStatus,
+  );
+  const [castEventId, setCastEventId] = useState(app.castEventId ?? "");
   const [notes, setNotes] = useState(app.notes ?? "");
+  const [selectedPhotoIndex, setSelectedPhotoIndex] = useState(0);
   const [lightbox, setLightbox] = useState(false);
   const handle = app.instagram.replace(/^@/, "");
   const isDeleted = !!app.deletedAt;
+  const isNomination = app.applicationType === "Nomination";
+
+  const photos = useMemo(() => getApplicantPhotos(app), [app]);
+  const currentPhoto = photos[selectedPhotoIndex] ?? photos[0];
+
+  const upcomingEvents = useMemo(
+    () => events.filter((e) => e.isoDate && e.isoDate >= TODAY_ISO),
+    [],
+  );
 
   function handleClose() {
     if (notes !== (app.notes ?? "")) {
@@ -60,9 +85,19 @@ export default function ApplicantModal({
   }
 
   function handleStatusChange(e: React.ChangeEvent<HTMLSelectElement>) {
-    const next = e.target.value as Application["status"];
+    const next = e.target.value as ApplicantStatus;
     setStatus(next);
     onUpdate(app.id, { status: next });
+    if (next !== "Cast") {
+      setCastEventId("");
+      onUpdate(app.id, { status: next, castEventId: "" });
+    }
+  }
+
+  function handleCastEventChange(e: React.ChangeEvent<HTMLSelectElement>) {
+    const val = e.target.value;
+    setCastEventId(val);
+    onUpdate(app.id, { castEventId: val });
   }
 
   function handleNotesBlur() {
@@ -80,6 +115,10 @@ export default function ApplicantModal({
     : "N/A";
 
   const statusColor = STATUS_COLORS[status];
+  const allStatuses: readonly ApplicantStatus[] = [
+    ...STATUS_ORDER,
+    "Participated",
+  ];
 
   return (
     <Modal
@@ -87,21 +126,26 @@ export default function ApplicantModal({
       ariaLabelledby="applicant-modal-title"
       className={styles.dialog}
     >
+      {/* ── Photo area ─────────────────────────────────── */}
       <div
         className={styles.imageWrap}
         role="button"
         tabIndex={0}
         aria-label="Open photo preview"
-        onClick={() => app.photoUrl && setLightbox(true)}
+        onClick={() => currentPhoto && setLightbox(true)}
         onKeyDown={(e) => {
-          if ((e.key === "Enter" || e.key === " ") && app.photoUrl) {
+          if ((e.key === "Enter" || e.key === " ") && currentPhoto) {
             e.preventDefault();
             setLightbox(true);
           }
         }}
       >
-        {app.photoUrl ? (
-          <img src={app.photoUrl} alt={app.name} className={styles.image} />
+        {currentPhoto ? (
+          <img
+            src={currentPhoto}
+            alt={`${app.name} photo ${selectedPhotoIndex + 1}`}
+            className={styles.image}
+          />
         ) : (
           <div className={styles.noPhoto}>🌶️</div>
         )}
@@ -120,10 +164,36 @@ export default function ApplicantModal({
         {isDeleted && <div className={styles.deletedBanner}>DELETED</div>}
       </div>
 
-      {lightbox && app.photoUrl && (
+      {/* ── Thumbnail strip (only when multiple photos) ── */}
+      {photos.length > 1 && (
+        <div className={styles.photoStrip} role="list" aria-label="All photos">
+          {photos.map((url: string, i: number) => (
+            <button
+              key={url}
+              role="listitem"
+              onClick={() => setSelectedPhotoIndex(i)}
+              className={
+                i === selectedPhotoIndex
+                  ? styles.photoThumbActive
+                  : styles.photoThumb
+              }
+              aria-label={`Photo ${i + 1}`}
+              aria-pressed={i === selectedPhotoIndex}
+            >
+              <img
+                src={url}
+                alt={`${app.name} photo ${i + 1}`}
+                loading="lazy"
+              />
+            </button>
+          ))}
+        </div>
+      )}
+
+      {lightbox && currentPhoto && (
         <div className={styles.lightbox} onClick={() => setLightbox(false)}>
           <img
-            src={app.photoUrl}
+            src={currentPhoto}
             alt={app.name}
             className={styles.lightboxImage}
           />
@@ -131,6 +201,7 @@ export default function ApplicantModal({
       )}
 
       <div className={styles.body}>
+        {/* ── Name + status ──────────────────────────────── */}
         <div className={styles.nameRow}>
           <h2 id="applicant-modal-title" className={styles.name}>
             {app.name}
@@ -143,17 +214,38 @@ export default function ApplicantModal({
           </span>
         </div>
 
+        {/* ── Identity summary ────────────────────────────── */}
+        <p className={styles.identitySummary}>
+          {app.age} · {app.gender} · {formatLocation(app)}
+        </p>
+
+        <div className={styles.appTypePill} data-nomination={isNomination}>
+          {isNomination ? "Nomination" : "Self"}
+        </div>
+
+        {/* ── Info grid ────────────────────────────────────── */}
         <div className={styles.infoGrid}>
-          <InfoRow label="Age" value={app.age} />
-          <InfoRow label="Gender" value={app.gender} />
-          <InfoRow label="Orientation" value={app.orientation} />
-          <InfoRow label="Location" value={formatLocation(app)} />
           <InfoRow label="Height" value={app.height} />
+          <InfoRow label="Orientation" value={app.orientation} />
           <InfoRow label="Community" value={app.community} />
           <InfoRow label="Income" value={app.income} />
-          <InfoRow label="Application Type" value={app.applicationType} />
-          {app.applicationType === "Nomination" && (
+          {isNomination && (
             <InfoRow label="Referred by" value={app.referrerName} />
+          )}
+          {isNomination && (
+            <div>
+              <p className={styles.infoLabel}>Nominator consent</p>
+              <p
+                className={styles.infoValue}
+                style={{
+                  color: app.nominationConsent ? "#10B981" : "#EF4444",
+                }}
+              >
+                {app.nominationConsent
+                  ? "Confirmed permission"
+                  : "Not confirmed"}
+              </p>
+            </div>
           )}
           {app.seenShowBefore !== undefined && (
             <InfoRow
@@ -162,12 +254,6 @@ export default function ApplicantModal({
             />
           )}
           {app.type && <InfoRow label="Their Type" value={app.type} />}
-          {app.marketingConsent && (
-            <InfoRow
-              label="Marketing Consent"
-              value={app.marketingConsent === "yes" ? "Yes" : "No"}
-            />
-          )}
           <div>
             <p className={styles.infoLabel}>Instagram</p>
             <a
@@ -193,14 +279,18 @@ export default function ApplicantModal({
 
         <hr className={styles.divider} />
 
+        {/* ── Status select ──────────────────────────────── */}
         <div className={styles.formGroup}>
-          <label className={styles.formLabel}>Status</label>
+          <label className={styles.formLabel} htmlFor="applicant-status">
+            Status
+          </label>
           <select
+            id="applicant-status"
             value={status}
             onChange={handleStatusChange}
             className={styles.statusSelect}
           >
-            {(["New", "Contacted", "Cast", "Rejected"] as const).map((s) => (
+            {allStatuses.map((s) => (
               <option key={s} value={s}>
                 {s}
               </option>
@@ -208,9 +298,35 @@ export default function ApplicantModal({
           </select>
         </div>
 
+        {/* ── Cast event select (only when Cast) ─────────── */}
+        {status === "Cast" && (
+          <div className={styles.formGroup}>
+            <label className={styles.formLabel} htmlFor="cast-event">
+              Cast for which event?
+            </label>
+            <select
+              id="cast-event"
+              value={castEventId}
+              onChange={handleCastEventChange}
+              className={styles.statusSelect}
+            >
+              <option value="">— pick event —</option>
+              {upcomingEvents.map((e) => (
+                <option key={castEventKey(e)} value={castEventKey(e)}>
+                  {e.city}, {e.stateAbbr} — {e.date}
+                </option>
+              ))}
+            </select>
+          </div>
+        )}
+
+        {/* ── Notes ─────────────────────────────────────── */}
         <div>
-          <label className={styles.formLabel}>Internal Notes</label>
+          <label className={styles.formLabel} htmlFor="applicant-notes">
+            Internal Notes
+          </label>
           <textarea
+            id="applicant-notes"
             value={notes}
             onChange={(e) => setNotes(e.target.value)}
             onBlur={handleNotesBlur}
@@ -222,51 +338,19 @@ export default function ApplicantModal({
 
         <hr className={styles.dividerSpaced} />
 
+        {/* ── Action buttons ────────────────────────────── */}
         <div className={styles.actionRow}>
-          {isDeleted ? (
-            onRestore && (
-              <button
-                onClick={() => onRestore(app.id)}
-                className={styles.restoreButton}
-              >
-                <ArchiveRestore size={16} />
-                Restore
-              </button>
-            )
-          ) : (
-            <>
-              {!isDeleted &&
-                onParticipated &&
-                app.status !== "Participated" && (
-                  <button
-                    onClick={() => onParticipated(app.id)}
-                    className={styles.participatedButton}
-                    style={{
-                      background: "#8B5CF6",
-                      color: "#fff",
-                      border: "none",
-                      borderRadius: "4px",
-                      padding: "8px 16px",
-                      cursor: "pointer",
-                      display: "flex",
-                      alignItems: "center",
-                      gap: "8px",
-                      fontSize: "14px",
-                      fontWeight: 500,
-                      transition: "background 0.15s",
-                    }}
-                    onMouseEnter={(e) =>
-                      (e.currentTarget.style.background = "#7C3AED")
-                    }
-                    onMouseLeave={(e) =>
-                      (e.currentTarget.style.background = "#8B5CF6")
-                    }
-                  >
-                    <CheckCircle size={16} />
-                    Mark as Participated
-                  </button>
-                )}
-              {onDelete && (
+          {isDeleted
+            ? onRestore && (
+                <button
+                  onClick={() => onRestore(app.id)}
+                  className={styles.restoreButton}
+                >
+                  <ArchiveRestore size={16} />
+                  Restore
+                </button>
+              )
+            : onDelete && (
                 <button
                   onClick={() => onDelete(app.id)}
                   className={styles.deleteButton}
@@ -275,8 +359,6 @@ export default function ApplicantModal({
                   Move to Deleted
                 </button>
               )}
-            </>
-          )}
         </div>
       </div>
     </Modal>

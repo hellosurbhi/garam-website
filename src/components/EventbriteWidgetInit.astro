@@ -1,11 +1,12 @@
 ---
-// Zero-visual component: loads the Eventbrite checkout widget script and
-// initializes modal checkout for every EB trigger button on the page.
+// Zero-visual component: loads the Eventbrite checkout widget script on user intent
+// and initializes modal checkout for every EB trigger button on the page.
 // Drop <EventbriteWidgetInit /> once per page that contains EB modal buttons.
 ---
 
 <script>
   import { buildLeadAttribution } from "@/lib/leadAttribution";
+  import { capture } from "@/lib/analyticsCapture";
 
   interface EBWidgetConfig {
     widgetType: string;
@@ -26,12 +27,8 @@
     if (["localhost", "127.0.0.1"].includes(window.location.hostname)) return;
 
     type EBWidgetsAPI = { createWidget: (config: EBWidgetConfig) => void };
-    type PostHogAPI = {
-      capture: (event: string, props: Record<string, unknown>) => void;
-    };
     const w = window as typeof window & {
       EBWidgets: EBWidgetsAPI;
-      posthog?: PostHogAPI;
       dataLayer?: Record<string, unknown>[];
     };
 
@@ -45,6 +42,16 @@
       section: btn.dataset.phSection ?? "",
       price: btn.dataset.phPrice ?? "",
       eventDate: btn.dataset.phEventDate ?? "",
+      eventTitle: btn.dataset.phEventTitle ?? btn.dataset.eventTitle ?? "",
+      destinationUrl:
+        btn.dataset.destinationUrl ??
+        btn.dataset.linkUrl ??
+        btn.getAttribute("href") ??
+        btn.dataset.ebUrl ??
+        "",
+      linkDomain: btn.dataset.linkDomain ?? "",
+      ctaText: btn.dataset.ctaText ?? btn.textContent?.trim() ?? "",
+      ctaPosition: btn.dataset.ctaPosition ?? "",
     }));
 
     const rootStyle = getComputedStyle(document.documentElement);
@@ -77,9 +84,17 @@
               : null;
             sessionStorage.removeItem("eb_cta_source");
             const attr = buildLeadAttribution({ source: "ticket_purchase" });
-            w.posthog?.capture("order_complete", {
+            capture("order_complete", {
               event_id: ev.eventId,
               city: ev.city,
+              event_city: src?.city ?? ev.city,
+              event_date: src?.event_date ?? ev.eventDate,
+              event_title: src?.event_title ?? ev.eventTitle,
+              destination_url: src?.destination_url ?? ev.destinationUrl,
+              link_url: src?.destination_url ?? ev.destinationUrl,
+              link_domain: src?.link_domain ?? ev.linkDomain,
+              cta_text: src?.cta_text ?? ev.ctaText,
+              cta_position: src?.cta_position ?? ev.ctaPosition,
               source_section: src?.section ?? ev.section,
               source_page: src?.page ?? "",
               price: src?.price ?? ev.price,
@@ -135,20 +150,50 @@
             });
         } catch (_) {
           // Widget init failed; anchor href + target="_blank" provide native fallback
-          w.posthog?.capture("widget_load_failed", {
+          capture("widget_load_failed", {
             event_id: ev.eventId,
             city: ev.city,
+            event_title: ev.eventTitle,
+            event_date: ev.eventDate,
+            destination_url: ev.destinationUrl,
+            link_domain: ev.linkDomain,
             page: window.location.pathname,
           });
         }
       });
     }
 
-    const script = document.createElement("script");
-    script.src = "https://www.eventbrite.com/static/widgets/eb_widgets.js";
-    script.async = true;
-    script.onload = initWidgets;
-    document.head.appendChild(script);
+    // Intent-based loading: inject eb_widgets.js only on first user signal.
+    // Guards against concurrent signals triggering a double-injection.
+    let scriptInjected = false;
+
+    function loadEBScript(): void {
+      if (scriptInjected) return;
+      scriptInjected = true;
+      io.disconnect();
+      const script = document.createElement("script");
+      script.src = "https://www.eventbrite.com/static/widgets/eb_widgets.js";
+      script.async = true;
+      script.onload = initWidgets;
+      document.head.appendChild(script);
+    }
+
+    // Signal 1: hover, touch, or keyboard focus on any trigger button
+    buttons.forEach((btn) => {
+      btn.addEventListener("pointerenter", loadEBScript, { passive: true });
+      btn.addEventListener("touchstart", loadEBScript, { passive: true });
+      btn.addEventListener("focusin", loadEBScript);
+    });
+
+    // Signal 2: IntersectionObserver fallback — half the button visible covers
+    // fast touch-scroll on iOS where pointerenter/touchstart may not fire first
+    const io = new IntersectionObserver(
+      (entries) => {
+        if (entries.some((e) => e.isIntersecting)) loadEBScript();
+      },
+      { threshold: 0.5 },
+    );
+    buttons.forEach((btn) => io.observe(btn));
 
     // Save scroll position before any EB trigger click so we can restore it
     // after the widget injects its full-screen backdrop (which calls scrollTo(0,0)).
@@ -166,6 +211,11 @@
             city: cfg?.city ?? "",
             price: cfg?.price ?? "",
             event_date: cfg?.eventDate ?? "",
+            event_title: cfg?.eventTitle ?? "",
+            destination_url: cfg?.destinationUrl ?? "",
+            link_domain: cfg?.linkDomain ?? "",
+            cta_text: cfg?.ctaText ?? "",
+            cta_position: cfg?.ctaPosition ?? "",
           }),
         );
       });
@@ -210,20 +260,20 @@
         const openData = openSrc
           ? (JSON.parse(openSrc) as Record<string, string>)
           : null;
-        w.posthog?.capture("checkout_opened", {
+        capture("checkout_opened", {
           event_id: openData?.event_id ?? "",
           city: openData?.city ?? "",
+          event_city: openData?.city ?? "",
+          event_date: openData?.event_date ?? "",
+          event_title: openData?.event_title ?? "",
+          destination_url: openData?.destination_url ?? "",
+          link_url: openData?.destination_url ?? "",
+          link_domain: openData?.link_domain ?? "",
+          cta_text: openData?.cta_text ?? "",
+          cta_position: openData?.cta_position ?? "",
           source_section: openData?.section ?? "",
           source_page: openData?.page ?? window.location.pathname,
           price: openData?.price ?? "",
-        });
-        window.fbq?.("track", "InitiateCheckout", {
-          content_ids: [openData?.event_id ?? ""],
-          city: openData?.city ?? "",
-          value: parseFloat(
-            (openData?.price ?? "").replace(/[^0-9.]/g, "") || "0",
-          ),
-          currency: "USD",
         });
 
         // Restore scroll position after EB's internal scrollTo(0,0) fires.
@@ -260,9 +310,17 @@
               const closeData = closeSrc
                 ? (JSON.parse(closeSrc) as Record<string, string>)
                 : null;
-              w.posthog?.capture("checkout_abandoned", {
+              capture("checkout_abandoned", {
                 event_id: closeData?.event_id ?? "",
                 city: closeData?.city ?? "",
+                event_city: closeData?.city ?? "",
+                event_date: closeData?.event_date ?? "",
+                event_title: closeData?.event_title ?? "",
+                destination_url: closeData?.destination_url ?? "",
+                link_url: closeData?.destination_url ?? "",
+                link_domain: closeData?.link_domain ?? "",
+                cta_text: closeData?.cta_text ?? "",
+                cta_position: closeData?.cta_position ?? "",
                 source_section: closeData?.section ?? "",
                 source_page: closeData?.page ?? window.location.pathname,
                 price: closeData?.price ?? "",
@@ -291,7 +349,8 @@
     modalObserverTimeout = setTimeout(() => {
       modalObserver.disconnect();
     }, 30_000);
-    window.addEventListener("beforeunload", () => {
+    // pagehide (not beforeunload) keeps the page bfcache-eligible
+    window.addEventListener("pagehide", () => {
       clearTimeout(modalObserverTimeout);
       modalObserver.disconnect();
     });

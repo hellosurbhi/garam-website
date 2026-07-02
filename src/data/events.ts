@@ -1,4 +1,4 @@
-import { isEventPast } from "../utils/eventDate";
+const TODAY_ISO = new Date().toISOString().slice(0, 10);
 
 export interface EventVenue {
   name: string;
@@ -360,6 +360,9 @@ export const events: EventEntry[] = [
     venue: VENUE_DC_COMEDY_LOFT,
     url: "https://www.dccomedyloft.com/shows/378527",
     isoDate: "2026-08-30",
+    startTime: "20:00",
+    endTime: "22:00",
+    price: "15",
   },
 ];
 
@@ -386,7 +389,7 @@ const TBA_CITIES = [
   },
 ];
 
-const comingSoonEvents: EventEntry[] = TBA_CITIES.map((city) => ({
+export const comingSoonEvents: EventEntry[] = TBA_CITIES.map((city) => ({
   date: "TBA",
   city: city.city,
   state: city.state,
@@ -401,7 +404,10 @@ export const allEvents: EventEntry[] = [
   ...events,
   ...comingSoonEvents.filter(
     (tba) =>
-      !events.some((e) => e.citySlug === tba.citySlug && !isEventPast(e.date)),
+      !events.some(
+        (e) =>
+          e.citySlug === tba.citySlug && e.isoDate && e.isoDate >= TODAY_ISO,
+      ),
   ),
 ];
 

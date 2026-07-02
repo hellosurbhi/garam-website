@@ -3,45 +3,34 @@ import BaseLayout from "@/layouts/BaseLayout.astro";
 import NotifyModal from "@/components/NotifyModal.astro";
 import { buildBreadcrumbJsonLd } from "@/utils/breadcrumbs";
 import { events, allEvents } from "@/data/events";
-import { isEventPast, formatOnSaleDate } from "@/utils/eventDate";
 import { buildEventSchemas } from "@/utils/eventSchema";
 import LeadCaptureModal from "@/components/LeadCaptureModal.astro";
-import { buildTicketUrl } from "@/utils/eventUrl";
 import { buildTaglineMap } from "@/utils/eventTaglines";
-import { formatEventLocation } from "@/utils/eventCity";
+import { getUpcomingDated } from "@/utils/eventFilters";
 import { PAGES } from "@/data/copy";
+import TicketCard from "@/components/tickets/TicketCard.astro";
+import EventbriteWidgetInit from "@/components/EventbriteWidgetInit.astro";
 
 const TITLE = "Tickets & Upcoming Shows";
 const DESC =
   "Get tickets to Garam Masala Dating shows in New York and beyond. America's #1 live desi dating show and South Asian singles mixer. Now touring LA, SF, and San Diego.";
 
-const upcomingEvents = allEvents.filter(
-  (e) => !isEventPast(e.date) && !e.hidden,
-);
+const today = new Date().toISOString().slice(0, 10);
+const datedUpcoming = getUpcomingDated(allEvents, today);
+const tbaEvents = allEvents.filter((e) => !e.hidden && !e.isoDate);
+const upcomingEvents = [...datedUpcoming, ...tbaEvents];
 
 const taglineMap = buildTaglineMap(upcomingEvents);
-
-const widgetEvents = upcomingEvents
-  .filter((e) => e.eventbriteId && !e.soldOut)
-  .map((e) => ({
-    eventId: e.eventbriteId!,
-    triggerId: `eventbrite-widget-modal-trigger-${e.eventbriteId}`,
-    fallbackUrl: buildTicketUrl(e.url, "tickets", "listing"),
-    city: formatEventLocation(e),
-    price: e.price ?? "",
-  }));
 
 const breadcrumbJsonLd = buildBreadcrumbJsonLd([
   { name: "Home", url: "https://garammasaladating.com/" },
   { name: "Tickets" },
 ]);
 
-// Individual Event JSON-LD blocks (one per upcoming show)
-const today = new Date().toISOString().slice(0, 10);
-const upcomingForSchema = events.filter(
-  (e) => !e.hidden && e.isoDate && e.isoDate >= today,
+// Individual Event JSON-LD blocks (one per upcoming dated show)
+const eventSchemas = buildEventSchemas(
+  events.filter((e) => !e.hidden && e.isoDate && e.isoDate >= today),
 );
-const eventSchemas = buildEventSchemas(upcomingForSchema);
 
 // EventSeries JSON-LD — signals this is a recurring show, not a one-off
 const eventSeriesJsonLd = JSON.stringify({
@@ -89,15 +78,6 @@ const eventSeriesJsonLd = JSON.stringify({
   </Fragment>
 
   <main id="main-content" class="tickets-page">
-    <img
-      class="tickets-bg"
-      src="/images/ai-art/hf-27.webp"
-      alt=""
-      width="1200"
-      height="800"
-      aria-hidden="true"
-      loading="lazy"
-    />
     <div class="tickets-container">
       {/* Header */}
       <div class="tickets-header">
@@ -117,229 +97,18 @@ const eventSeriesJsonLd = JSON.stringify({
         upcomingEvents.length > 0 ? (
           <div class="tickets-list">
             {upcomingEvents.map((event, i) => {
-              const isPresale =
-                Boolean(event.onSaleAt) &&
-                new Date(event.onSaleAt!) > new Date();
-              const isLive = event.url && event.url !== "#";
-              const isSoldOut = event.soldOut ?? false;
-              const hasWidget =
-                isLive &&
-                !isSoldOut &&
-                Boolean(event.eventbriteId) &&
-                !isPresale;
-              const tagline = taglineMap.get(event.url);
-              const cityLabel = formatEventLocation(event);
-              const onSaleLabel = event.onSaleAt
-                ? formatOnSaleDate(event.onSaleAt)
-                : "";
-              return hasWidget ? (
-                <a
-                  href={buildTicketUrl(event.url, "tickets", "listing")}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  id={`eventbrite-widget-modal-trigger-${event.eventbriteId}`}
-                  class="ticket-card ticket-card--live ticket-card--widget"
-                  style={`--stagger-delay: ${0.1 + i * 0.06}s`}
-                  data-ph-capture="cta_clicked"
-                  data-ph-cta="get_tickets"
-                  data-ph-section="tickets"
-                  data-ph-city={cityLabel}
-                  data-ph-event-date={event.date}
-                  data-ph-price={event.price}
-                >
-                  <div class="ticket-card__info">
-                    <span class="ticket-card__date">{event.date}</span>
-                    <span class="ticket-card__city">{cityLabel}</span>
-                    {tagline && (
-                      <span class="ticket-card__tagline">{tagline}</span>
-                    )}
-                  </div>
-                  <span class="ticket-card__cta">
-                    Grab My Spot
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      width="14"
-                      height="14"
-                      viewBox="0 0 24 24"
-                      fill="none"
-                      stroke="currentColor"
-                      stroke-width="2"
-                      stroke-linecap="round"
-                      stroke-linejoin="round"
-                      aria-hidden="true"
-                      focusable="false"
-                    >
-                      <path d="M5 12h14" />
-                      <path d="m12 5 7 7-7 7" />
-                    </svg>
-                  </span>
-                </a>
-              ) : isPresale ? (
-                <>
-                  <button
-                    type="button"
-                    class="ticket-card ticket-card--tba"
-                    style={`--stagger-delay: ${0.1 + i * 0.06}s`}
-                    data-notify-city={cityLabel}
-                    data-notify-city-slug={`presale-${event.isoDate}`}
-                    data-notify-on-sale-at={event.onSaleAt}
-                    data-presale-notify={event.onSaleAt}
-                    data-ph-capture="cta_clicked"
-                    data-ph-cta="notify_me"
-                    data-ph-section="tickets"
-                    data-ph-city={cityLabel}
-                  >
-                    <div class="ticket-card__info">
-                      <span class="ticket-card__date">{event.date}</span>
-                      <span class="ticket-card__city">{cityLabel}</span>
-                      <span class="ticket-card__tagline">
-                        On sale {onSaleLabel}
-                      </span>
-                    </div>
-                    <span class="ticket-card__cta ticket-card__cta--notify">
-                      Notify Me
-                      <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        width="14"
-                        height="14"
-                        viewBox="0 0 24 24"
-                        fill="none"
-                        stroke="currentColor"
-                        stroke-width="2"
-                        stroke-linecap="round"
-                        stroke-linejoin="round"
-                      >
-                        <path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9" />
-                        <path d="M10.3 21a1.94 1.94 0 0 0 3.4 0" />
-                      </svg>
-                    </span>
-                  </button>
-                  <a
-                    href={buildTicketUrl(event.url, "tickets", "listing")}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    class="ticket-card ticket-card--live"
-                    style={`--stagger-delay: ${0.1 + i * 0.06}s`}
-                    data-presale-live
-                    hidden
-                    data-ph-capture="cta_clicked"
-                    data-ph-cta="get_tickets"
-                    data-ph-section="tickets"
-                    data-ph-city={cityLabel}
-                    data-ph-event-date={event.date}
-                    data-ph-price={event.price}
-                  >
-                    <div class="ticket-card__info">
-                      <span class="ticket-card__date">{event.date}</span>
-                      <span class="ticket-card__city">{cityLabel}</span>
-                    </div>
-                    <span class="ticket-card__cta">
-                      Grab My Spot
-                      <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        width="14"
-                        height="14"
-                        viewBox="0 0 24 24"
-                        fill="none"
-                        stroke="currentColor"
-                        stroke-width="2"
-                        stroke-linecap="round"
-                        stroke-linejoin="round"
-                        aria-hidden="true"
-                        focusable="false"
-                      >
-                        <path d="M5 12h14" />
-                        <path d="m12 5 7 7-7 7" />
-                      </svg>
-                    </span>
-                  </a>
-                </>
-              ) : isLive ? (
-                <a
-                  href={buildTicketUrl(event.url, "tickets", "listing")}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  class={`ticket-card ticket-card--live${isSoldOut ? " ticket-card--soldout" : ""}`}
-                  style={`--stagger-delay: ${0.1 + i * 0.06}s`}
-                  data-ph-capture="cta_clicked"
-                  data-ph-cta="get_tickets"
-                  data-ph-section="tickets"
-                  data-ph-city={cityLabel}
-                  data-ph-event-date={event.date}
-                  data-ph-price={event.price}
-                >
-                  <div class="ticket-card__info">
-                    <span class="ticket-card__date">{event.date}</span>
-                    <span class="ticket-card__city">{cityLabel}</span>
-                    {tagline && (
-                      <span class="ticket-card__tagline">{tagline}</span>
-                    )}
-                  </div>
-                  <span
-                    class={`ticket-card__cta${isSoldOut ? " ticket-card__cta--soldout" : ""}`}
-                  >
-                    {isSoldOut ? "Sold Out" : "Grab My Spot"}
-                    {!isSoldOut && (
-                      <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        width="14"
-                        height="14"
-                        viewBox="0 0 24 24"
-                        fill="none"
-                        stroke="currentColor"
-                        stroke-width="2"
-                        stroke-linecap="round"
-                        stroke-linejoin="round"
-                        aria-hidden="true"
-                        focusable="false"
-                      >
-                        <path d="M5 12h14" />
-                        <path d="m12 5 7 7-7 7" />
-                      </svg>
-                    )}
-                  </span>
-                </a>
-              ) : (
-                <button
-                  type="button"
-                  class="ticket-card ticket-card--tba"
-                  style={`--stagger-delay: ${0.1 + i * 0.06}s`}
-                  data-notify-city={cityLabel}
-                  data-notify-city-slug={event.citySlug}
-                  data-ph-capture="cta_clicked"
-                  data-ph-cta="notify_me"
-                  data-ph-section="tickets"
-                  data-ph-city={cityLabel}
-                >
-                  <div class="ticket-card__info">
-                    <span class="ticket-card__date ticket-card__date--tba">
-                      {event.date}
-                    </span>
-                    <span class="ticket-card__city ticket-card__city--tba">
-                      {cityLabel}
-                    </span>
-                    {event.tagline && (
-                      <span class="ticket-card__tagline">{event.tagline}</span>
-                    )}
-                  </div>
-                  <span class="ticket-card__cta ticket-card__cta--notify">
-                    Notify Me
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      width="14"
-                      height="14"
-                      viewBox="0 0 24 24"
-                      fill="none"
-                      stroke="currentColor"
-                      stroke-width="2"
-                      stroke-linecap="round"
-                      stroke-linejoin="round"
-                    >
-                      <path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9" />
-                      <path d="M10.3 21a1.94 1.94 0 0 0 3.4 0" />
-                    </svg>
-                  </span>
-                </button>
+              const isLive = !!event.url && event.url !== "#";
+              const tagline =
+                (isLive ? taglineMap.get(event.url!) : undefined) ??
+                event.tagline ??
+                undefined;
+              return (
+                <TicketCard
+                  event={event}
+                  index={i}
+                  sourcePage="tickets"
+                  tagline={tagline}
+                />
               );
             })}
           </div>
@@ -370,6 +139,11 @@ const eventSeriesJsonLd = JSON.stringify({
           type="button"
           class="tickets-city-request__btn"
           data-open-modal="tickets-city-modal"
+          data-ph-capture="waitlist_click"
+          data-ph-cta="tickets_city_request"
+          data-ph-section="tickets_city_request"
+          data-cta-position="tickets_city_request"
+          data-cta-text="Tell Us Where You Are"
           aria-haspopup="dialog"
         >
           Tell Us Where You Are
@@ -406,229 +180,7 @@ const eventSeriesJsonLd = JSON.stringify({
     </div>
   </main>
 
-  <script is:inline define:vars={{ widgetEvents }}>
-    (function () {
-      if (!widgetEvents.length) return;
-      if (["localhost", "127.0.0.1"].indexOf(window.location.hostname) !== -1)
-        return;
-
-      var rootStyle = getComputedStyle(document.documentElement);
-      var brandColor =
-        rootStyle.getPropertyValue("--brand-red").trim() || "#DC2626";
-      var fontColor =
-        rootStyle.getPropertyValue("--charcoal").trim() || "#1A1A1A";
-      var bgColor = rootStyle.getPropertyValue("--white").trim() || "#FFFFFF";
-
-      var orderCompleted = false;
-      var modalOpenedAt = 0;
-
-      function initWidgets() {
-        widgetEvents.forEach(function (ev) {
-          var config = {
-            widgetType: "checkout",
-            eventId: ev.eventId,
-            modal: true,
-            modalTriggerElementId: ev.triggerId,
-            themeSettings: {
-              brandColor: brandColor,
-              fontColor: fontColor,
-              background: bgColor,
-            },
-            onOrderComplete: function () {
-              orderCompleted = true;
-              var raw = sessionStorage.getItem("eb_cta_source");
-              var src = raw ? JSON.parse(raw) : null;
-              sessionStorage.removeItem("eb_cta_source");
-              var entry = {
-                landing_page: sessionStorage.getItem("gmd-landing-page") || "",
-                referrer_host:
-                  sessionStorage.getItem("gmd-referrer-host") || "",
-                utm_source: sessionStorage.getItem("gmd-utm-source") || "",
-                utm_campaign: sessionStorage.getItem("gmd-utm-campaign") || "",
-                utm_medium: sessionStorage.getItem("gmd-utm-medium") || "",
-                utm_content: sessionStorage.getItem("gmd-utm-content") || "",
-              };
-              if (window.posthog) {
-                window.posthog.capture("order_complete", {
-                  event_id: ev.eventId,
-                  city: ev.city,
-                  source_section: (src && src.section) || "tickets",
-                  source_page: (src && src.page) || "/tickets",
-                  price: (src && src.price) || ev.price || "",
-                  landing_page: entry.landing_page,
-                  referrer_host: entry.referrer_host,
-                  utm_source: entry.utm_source,
-                  utm_campaign: entry.utm_campaign,
-                  utm_medium: entry.utm_medium,
-                  utm_content: entry.utm_content,
-                });
-              }
-              var price = parseFloat(
-                ((src && src.price) || ev.price || "").replace(
-                  /[^0-9.]/g,
-                  "",
-                ) || "0",
-              );
-              window.dataLayer = window.dataLayer || [];
-              window.dataLayer.push({ ecommerce: null });
-              window.dataLayer.push({
-                event: "purchase",
-                ecommerce: {
-                  currency: "USD",
-                  value: price,
-                  items: [
-                    {
-                      item_name: "Garam Masala Dating - " + ev.city,
-                      item_id: String(ev.eventId),
-                      price: price,
-                      quantity: 1,
-                    },
-                  ],
-                },
-                source_section: (src && src.section) || "tickets",
-                source_page: (src && src.page) || "/tickets",
-                landing_page: entry.landing_page,
-                referrer_host: entry.referrer_host,
-                utm_source: entry.utm_source,
-                utm_campaign: entry.utm_campaign,
-              });
-              if (window.fbq) {
-                window.fbq("track", "Purchase", {
-                  value: price,
-                  currency: "USD",
-                  content_ids: [String(ev.eventId)],
-                });
-              }
-            },
-          };
-          try {
-            window.EBWidgets.createWidget(config);
-            // Widget bound successfully. Prevent the anchor's native navigation so
-            // only the modal fires. If createWidget threw, the anchor href + target="_blank"
-            // provide the native fallback without any preventDefault.
-            var trigger = document.getElementById(ev.triggerId);
-            if (trigger) {
-              trigger.addEventListener("click", function (e) {
-                e.preventDefault();
-                sessionStorage.setItem(
-                  "eb_cta_source",
-                  JSON.stringify({
-                    event_id: ev.eventId,
-                    section: trigger.dataset.phSection || "tickets",
-                    page: window.location.pathname,
-                    city: ev.city,
-                    price: trigger.dataset.phPrice || ev.price || "",
-                    event_date: trigger.dataset.phEventDate || "",
-                  }),
-                );
-              });
-            }
-          } catch (_) {
-            // Widget init failed; anchor href + target="_blank" provide native fallback
-            if (window.posthog) {
-              window.posthog.capture("widget_load_failed", {
-                event_id: ev.eventId,
-                city: ev.city,
-                page: window.location.pathname,
-              });
-            }
-          }
-        });
-      }
-
-      var script = document.createElement("script");
-      script.src = "https://www.eventbrite.com/static/widgets/eb_widgets.js";
-      script.async = true;
-      script.onload = initWidgets;
-      document.head.appendChild(script);
-
-      // Close the Eventbrite modal when clicking outside it.
-      // tickets.astro uses is:inline define:vars and cannot import EventbriteWidgetInit.astro,
-      // so the MutationObserver is duplicated here. dataset.listenerAttached guards against
-      // double-registration if the observer fires more than once before disconnecting.
-      var modalObserverTimeout;
-      var modalObserver = new MutationObserver(function () {
-        var ebStructure = document.querySelector("div.eds-structure_main");
-        if (!ebStructure) return;
-        if (!ebStructure.dataset.listenerAttached) {
-          ebStructure.dataset.listenerAttached = "1";
-
-          // Track modal open and reset purchase flag for this session.
-          orderCompleted = false;
-          modalOpenedAt = Date.now();
-          var openRaw = sessionStorage.getItem("eb_cta_source");
-          var openData = openRaw ? JSON.parse(openRaw) : null;
-          if (window.posthog) {
-            window.posthog.capture("checkout_opened", {
-              event_id: (openData && openData.event_id) || "",
-              city: (openData && openData.city) || "",
-              source_section: (openData && openData.section) || "",
-              source_page:
-                (openData && openData.page) || window.location.pathname,
-              price: (openData && openData.price) || "",
-            });
-          }
-          if (window.fbq) {
-            window.fbq("track", "InitiateCheckout", {
-              content_ids: [(openData && openData.event_id) || ""],
-              city: (openData && openData.city) || "",
-              value: parseFloat(
-                ((openData && openData.price) || "").replace(/[^0-9.]/g, "") ||
-                  "0",
-              ),
-              currency: "USD",
-            });
-          }
-
-          ebStructure.addEventListener("click", function (e) {
-            if (!e.target.closest(".eds-modal")) {
-              var closeBtn = document.querySelector(
-                ".eds-modal__close-button button",
-              );
-              if (closeBtn) closeBtn.click();
-            }
-          });
-
-          // Watch for the modal being removed from the DOM (user closed it).
-          var closeObserver = new MutationObserver(function () {
-            if (!document.querySelector("div.eds-structure_main")) {
-              closeObserver.disconnect();
-              if (!orderCompleted) {
-                var durationMs = modalOpenedAt ? Date.now() - modalOpenedAt : 0;
-                var closeRaw = sessionStorage.getItem("eb_cta_source");
-                var closeData = closeRaw ? JSON.parse(closeRaw) : null;
-                if (window.posthog) {
-                  window.posthog.capture("checkout_abandoned", {
-                    event_id: (closeData && closeData.event_id) || "",
-                    city: (closeData && closeData.city) || "",
-                    source_section: (closeData && closeData.section) || "",
-                    source_page:
-                      (closeData && closeData.page) || window.location.pathname,
-                    price: (closeData && closeData.price) || "",
-                    duration_seconds: Math.round(durationMs / 1000),
-                  });
-                }
-              }
-            }
-          });
-          closeObserver.observe(document.body, {
-            childList: true,
-            subtree: false,
-          });
-        }
-        clearTimeout(modalObserverTimeout);
-        modalObserver.disconnect();
-      });
-      modalObserver.observe(document.body, { childList: true, subtree: true });
-      modalObserverTimeout = setTimeout(function () {
-        modalObserver.disconnect();
-      }, 30000);
-      window.addEventListener("beforeunload", function () {
-        clearTimeout(modalObserverTimeout);
-        modalObserver.disconnect();
-      });
-    })();
-  </script>
+  <EventbriteWidgetInit />
 
   <script>
     import "@/lib/presaleReveal";
@@ -651,19 +203,14 @@ const eventSeriesJsonLd = JSON.stringify({
     min-height: 100vh;
     position: relative;
     z-index: 1;
-    animation: ticketsFadeIn 0.5s ease-out both;
     overflow: hidden;
-  }
-  .tickets-bg {
-    position: absolute;
-    inset: 0;
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    object-position: center center;
-    display: block;
-    z-index: 0;
-    opacity: 0.06;
+    background:
+      radial-gradient(
+        circle at top right,
+        rgba(var(--brand-red-rgb), 0.08),
+        transparent 34rem
+      ),
+      linear-gradient(180deg, var(--off-white) 0%, var(--cream-warm) 100%);
   }
 
   .tickets-container {
@@ -678,6 +225,7 @@ const eventSeriesJsonLd = JSON.stringify({
 
   .tickets-header {
     margin-bottom: 24px;
+    animation: ticketsFadeIn 0.35s ease-out both;
   }
 
   .tickets-eyebrow {
@@ -728,142 +276,6 @@ const eventSeriesJsonLd = JSON.stringify({
     display: flex;
     flex-direction: column;
     gap: 12px;
-  }
-
-  .ticket-card {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 16px;
-    padding: 22px;
-    border-radius: 12px;
-    border: 1px solid;
-    text-decoration: none;
-    animation: ticketsFadeIn 0.5s ease-out both;
-    animation-delay: var(--stagger-delay, 0.1s);
-    transition:
-      border-color 0.15s,
-      background 0.15s;
-  }
-
-  .ticket-card[hidden] {
-    display: none;
-  }
-
-  .ticket-card--live {
-    border-color: rgba(var(--brand-red-rgb), 0.35);
-    background: white;
-  }
-
-  .ticket-card--live:hover {
-    border-color: rgba(var(--brand-red-rgb), 0.55);
-    background: rgba(var(--brand-red-rgb), 0.04);
-  }
-
-  .ticket-card--tba {
-    border-color: rgba(0, 0, 0, 0.08);
-    background: white;
-    cursor: pointer;
-    text-align: left;
-    font: inherit;
-  }
-
-  .ticket-card--widget {
-    cursor: pointer;
-    text-align: left;
-    font: inherit;
-    width: 100%;
-  }
-
-  .ticket-card--tba:hover {
-    border-color: rgba(var(--brand-red-rgb), 0.3);
-    background: rgba(var(--brand-red-rgb), 0.02);
-  }
-
-  .ticket-card__info {
-    display: flex;
-    flex-direction: column;
-    gap: 4px;
-  }
-
-  .ticket-card__date {
-    font-family: var(--font-body);
-    font-size: 11px;
-    font-weight: 500;
-    text-transform: uppercase;
-    letter-spacing: 0.12em;
-    color: var(--brand-red);
-  }
-
-  .ticket-card__date--tba {
-    color: var(--muted);
-  }
-
-  .ticket-card__city {
-    font-family: var(--font-playfair);
-    font-size: 20px;
-    font-weight: 600;
-    color: var(--charcoal);
-    line-height: 1.25;
-  }
-
-  .ticket-card__city--tba {
-    color: var(--text-light);
-  }
-
-  .ticket-card__tagline {
-    font-family: var(--font-body);
-    font-size: 11px;
-    font-weight: 500;
-    color: var(--muted);
-    letter-spacing: 0.04em;
-  }
-
-  .ticket-card__cta {
-    flex-shrink: 0;
-    display: flex;
-    align-items: center;
-    gap: 6px;
-    font-family: var(--font-body);
-    font-size: 13px;
-    font-weight: 500;
-    color: var(--brand-red);
-    padding: 8px 14px;
-    border: 1px solid rgba(var(--brand-red-rgb), 0.35);
-    border-radius: 8px;
-    background: rgba(var(--brand-red-rgb), 0.08);
-    white-space: nowrap;
-    transition:
-      background 0.15s,
-      border-color 0.15s;
-  }
-
-  .ticket-card--live:hover .ticket-card__cta {
-    background: rgba(var(--brand-red-rgb), 0.15);
-    border-color: rgba(var(--brand-red-rgb), 0.5);
-  }
-
-  .ticket-card__cta--soldout {
-    background: rgba(0, 0, 0, 0.04);
-    color: var(--muted);
-    border-color: rgba(0, 0, 0, 0.08);
-  }
-
-  .ticket-card--live:hover .ticket-card__cta--soldout {
-    background: rgba(0, 0, 0, 0.04);
-    border-color: rgba(0, 0, 0, 0.08);
-  }
-
-  .ticket-card__cta--notify {
-    border-color: rgba(0, 0, 0, 0.1);
-    background: rgba(0, 0, 0, 0.03);
-    color: var(--text-light);
-  }
-
-  .ticket-card--tba:hover .ticket-card__cta--notify {
-    background: rgba(var(--brand-red-rgb), 0.08);
-    border-color: rgba(var(--brand-red-rgb), 0.35);
-    color: var(--brand-red);
   }
 
   /* ─── Empty State ────────────────────────────────────── */

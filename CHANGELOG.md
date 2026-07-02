@@ -1,5 +1,21 @@
 # Changelog
 
+## feat(analytics): p5 conversion tracking and mobile performance cleanup (2026-07-02)
+
+- Reviewed the open analytics/SEO/performance PR stack and added p5 fixes for gaps it left: canonical UTM catalog, event-time UTM preservation, ticket-vendor subdomain detection, and richer checkout lifecycle properties.
+- Reworked `/links` into a mobile-first conversion path with Buy Tickets, Apply, and City Waitlist before watch/YouTube links, while keeping YouTube available lower on the page.
+- Strengthened `/tickets`, city pages, and journal pages with standardized CTA metadata, waitlist/email raw events, city-specific conversion bridges, and tracked related links.
+- Added Lighthouse mobile configs/scripts plus focused tests for analytics domain helpers, UTM forwarding, and canonical UTM links.
+
+---
+
+## fix(schema): mark future on-sale events as pre-sale (2026-07-01)
+
+- Updated Event JSON-LD offers to emit `https://schema.org/PreSale` for non-sold-out events whose `onSaleAt` is still in the future, while preserving `validFrom`.
+- Added focused coverage for pre-sale and post-sale-start availability.
+
+---
+
 ## fix(ci): overhaul all pipelines to make failures meaningful (2026-06-17)
 
 ### What changed

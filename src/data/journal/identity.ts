@@ -237,6 +237,28 @@ export const identityPosts: JournalPost[] = [
         text: "Garam Masala Dating is also planning its first San Francisco show. <a href='/cities/san-francisco'>Join the SF waitlist</a> for presale access and casting priority when we announce the Bay Area date.",
       },
     ],
+    ctaConfig: {
+      intent: "advice",
+      topCta: {
+        text: "Live matchmaking show in SF",
+        href: "/cities/san-francisco",
+        ctaId: "city_sf",
+        variant: "primary",
+      },
+      midCta: {
+        text: "Apply to be a contestant",
+        href: "/apply",
+        ctaId: "apply",
+        variant: "secondary",
+      },
+      bottomCta: {
+        text: "Get on the SF waitlist",
+        href: "/cities/san-francisco",
+        ctaId: "waitlist",
+        variant: "primary",
+      },
+      cityLinks: ["san-francisco", "seattle", "los-angeles", "manhattan"],
+    },
   },
 
   {

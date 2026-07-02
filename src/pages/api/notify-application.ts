@@ -18,9 +18,10 @@ interface ApplicationNotification {
   income: string;
   applicationType: string;
   referrerName: string;
+  nominationConsent?: boolean;
   pitch: string;
   phone?: string;
-  photoUrl: string;
+  photoUrls: string[];
 }
 
 function escapeHtml(str: string): string {
@@ -38,7 +39,7 @@ function buildEmailHtml(data: ApplicationNotification): string {
     .map(escapeHtml)
     .join(", ");
 
-  const rows = [
+  const rows: [string, string][] = [
     ["Name", escapeHtml(data.name)],
     ["Age", String(data.age)],
     ["Gender", escapeHtml(data.gender)],
@@ -66,6 +67,13 @@ function buildEmailHtml(data: ApplicationNotification): string {
     rows.push(["Nominated by", escapeHtml(data.referrerName)]);
   }
 
+  if (isNomination) {
+    rows.push([
+      "Nominator consent",
+      data.nominationConsent ? "Confirmed" : "Not confirmed",
+    ]);
+  }
+
   const tableRows = rows
     .map(
       ([label, value]) =>
@@ -83,17 +91,25 @@ function buildEmailHtml(data: ApplicationNotification): string {
       </div>`
     : "";
 
-  let photoSection = "";
-  if (data.photoUrl) {
+  const validPhotos = data.photoUrls.filter((url) => {
     try {
-      const parsed = new URL(data.photoUrl);
-      if (parsed.protocol === "https:") {
-        photoSection = `<p style="margin-top:12px;"><a href="${escapeHtml(data.photoUrl)}" style="color:#DC2626;">View Photo</a></p>`;
-      }
+      return new URL(url).protocol === "https:";
     } catch {
-      /* invalid URL — skip photo link */
+      return false;
     }
-  }
+  });
+
+  const photoSection =
+    validPhotos.length > 0
+      ? `<div style="margin-top:12px;">
+          ${validPhotos
+            .map(
+              (url, i) =>
+                `<a href="${escapeHtml(url)}" style="color:#DC2626;margin-right:12px;">View Photo ${i + 1}</a>`,
+            )
+            .join("")}
+        </div>`
+      : "";
 
   return `<div style="font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;max-width:600px;margin:0 auto;padding:20px;">
     <h2 style="color:#DC2626;margin:0 0 16px;">New ${isNomination ? "Nomination" : "Self-Application"}</h2>
@@ -122,7 +138,9 @@ export const POST: APIRoute = async ({ request }) => {
     !body.name ||
     !body.instagram ||
     !body.email ||
-    validateEmail(body.email)
+    validateEmail(body.email) ||
+    !Array.isArray(body.photoUrls) ||
+    body.photoUrls.length === 0
   ) {
     return new Response(JSON.stringify({ error: "Missing required fields" }), {
       status: 400,

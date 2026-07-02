@@ -5,6 +5,8 @@ import vercel from "@astrojs/vercel";
 import { execSync } from "child_process";
 import { readFileSync, readdirSync } from "fs";
 import { journalPostsPublished } from "./src/data/journal/index.ts";
+import { cities } from "./src/data/cities/index.ts";
+import { events } from "./src/data/events.ts";
 
 const SITE = "https://garammasaladating.com";
 const TODAY_STR = new Date().toISOString().slice(0, 10);
@@ -121,13 +123,25 @@ const contentLastmod = new Map(
   ])
 );
 
+/** City slugs that have at least one upcoming confirmed event. */
+const citiesWithEvents = new Set(
+  events
+    .filter((e) => !e.hidden && e.isoDate && e.isoDate >= TODAY_STR && e.url && e.citySlug)
+    .map((e) => e.citySlug),
+);
+
 /** Assign sitemap priority by page type. */
 function getPriority(url) {
   if (url === `${SITE}/`) return 1.0;
   if (/\/(tickets|apply|faq|hosts|corporate|sponsorship)$/.test(url)) return 0.8;
   if (/\/(journal|cities)$/.test(url)) return 0.7;
   if (/\/journal\//.test(url)) return 0.6;
-  if (/\/cities\//.test(url)) return 0.5;
+  if (/\/cities\//.test(url)) {
+    const slug = url.split("/cities/")[1];
+    const city = cities[slug];
+    if (city?.status === "active" || citiesWithEvents.has(slug)) return 0.6;
+    return 0.4;
+  }
   if (/\/(links|privacy|terms|waiver)$/.test(url)) return 0.3;
   return 0.5;
 }
@@ -145,6 +159,9 @@ export default defineConfig({
   output: "static",
   trailingSlash: "never",
   compressHTML: true,
+  build: {
+    inlineStylesheets: "auto",
+  },
   adapter: vercel(),
   redirects: {
     "/south-asian-dating-tips": "/journal",
@@ -159,6 +176,7 @@ export default defineConfig({
     react(),
     sitemap({
       filter: (page) => {
+        if (page.includes("?")) return false;
         if (
           page.includes("/admin") ||
           page.includes("/contestant-prep") ||

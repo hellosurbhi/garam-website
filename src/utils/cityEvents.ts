@@ -1,11 +1,13 @@
 import { events } from "@/data/events";
 import type { EventEntry } from "@/data/events";
-import { isEventPast } from "@/utils/eventDate";
+
+const today = new Date().toISOString().slice(0, 10);
 
 function isUpcomingEvent(e: EventEntry): boolean {
   return (
     !e.hidden &&
-    !isEventPast(e.date) &&
+    !!e.isoDate &&
+    e.isoDate >= today &&
     e.url !== "#" &&
     e.url !== "" &&
     !!e.citySlug

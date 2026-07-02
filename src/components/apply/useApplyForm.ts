@@ -1,14 +1,7 @@
 import type React from "react";
-import { useState, useEffect, type ChangeEvent } from "react";
+import { useState, useEffect, useMemo, type ChangeEvent } from "react";
 import { collection, addDoc, serverTimestamp } from "firebase/firestore";
-import {
-  ref,
-  uploadBytesResumable,
-  getDownloadURL,
-  deleteObject,
-  type StorageReference,
-} from "firebase/storage";
-import { signInAnonymously } from "firebase/auth";
+import type { StorageReference } from "firebase/storage";
 import {
   getFirebaseDb,
   getFirebaseStorage,
@@ -63,9 +56,15 @@ const INITIAL: FormState = {
 };
 
 export type FormErrors = Partial<
-  Record<keyof FormState | "photo" | "termsAgreed", string>
+  Record<
+    keyof FormState | "photo" | "termsAgreed" | "nominationConsent",
+    string
+  >
 >;
 export type SelectOption = { value: string; label: string };
+
+const MAX_PHOTOS = 10;
+const MAX_PHOTO_BYTES = 5 * 1024 * 1024;
 
 function getUrlCityParams() {
   if (typeof window === "undefined") return null;
@@ -73,6 +72,30 @@ function getUrlCityParams() {
   const city = params.get("city");
   const state = params.get("state");
   return city ? { city, state: state ?? "" } : null;
+}
+
+function computeIsValid(
+  form: FormState,
+  photoFiles: File[],
+  termsAgreed: boolean,
+  nominationConsent: boolean,
+): boolean {
+  if (!form.name.trim()) return false;
+  const ageNum = parseInt(form.age, 10);
+  if (!form.age || Number.isNaN(ageNum) || ageNum < 18) return false;
+  if (!form.gender) return false;
+  if (!form.orientation) return false;
+  if (!form.city.trim()) return false;
+  if (validateEmail(form.email)) return false;
+  if (!form.instagram.trim()) return false;
+  if (photoFiles.length === 0) return false;
+  if (form.applicationType === "Nomination") {
+    if (!form.referrerName.trim()) return false;
+    if (!nominationConsent) return false;
+  }
+  if (!form.marketingConsent || form.marketingConsent === "no") return false;
+  if (!termsAgreed) return false;
+  return true;
 }
 
 export function useApplyForm() {
@@ -86,12 +109,13 @@ export function useApplyForm() {
       country: "",
     };
   });
-  const [photoFile, setPhotoFile] = useState<File | null>(null);
-  const [photoPreview, setPhotoPreview] = useState<string | null>(null);
+  const [photoFiles, setPhotoFiles] = useState<File[]>([]);
+  const [photoPreviews, setPhotoPreviews] = useState<string[]>([]);
   const [errors, setErrors] = useState<FormErrors>({});
   const [submitting, setSubmitting] = useState(false);
   const [submitted, setSubmitted] = useState(false);
   const [termsAgreed, setTermsAgreed] = useState(false);
+  const [nominationConsent, setNominationConsent] = useState(false);
   const [showTermsModal, setShowTermsModal] = useState(false);
   const [canGoBack] = useState(
     () => typeof window !== "undefined" && window.history.length > 1,
@@ -111,6 +135,11 @@ export function useApplyForm() {
     const id = setTimeout(() => setToast(null), 5000);
     return () => clearTimeout(id);
   }, [toast]);
+
+  const isValid = useMemo(
+    () => computeIsValid(form, photoFiles, termsAgreed, nominationConsent),
+    [form, photoFiles, termsAgreed, nominationConsent],
+  );
 
   function set(field: keyof FormState, value: string) {
     setForm((prev) => ({ ...prev, [field]: value }));
@@ -138,38 +167,64 @@ export function useApplyForm() {
     }
   }
 
-  function handlePhotoChange(e: ChangeEvent<HTMLInputElement>) {
-    const file = e.target.files?.[0];
-    if (!file) {
-      setPhotoFile(null);
-      setPhotoPreview(null);
-      return;
+  function handleAddPhotos(e: ChangeEvent<HTMLInputElement>) {
+    const incoming = Array.from(e.target.files ?? []);
+    if (incoming.length === 0) return;
+
+    const oversized = incoming.filter((f) => f.size > MAX_PHOTO_BYTES);
+    if (oversized.length > 0) {
+      setErrors((prev) => ({
+        ...prev,
+        photo: "Photo must be under 5 MB",
+      }));
     }
-    if (file.size > 5 * 1024 * 1024) {
-      setErrors((prev) => ({ ...prev, photo: "Photo must be under 5 MB" }));
-      setPhotoFile(null);
-      setPhotoPreview(null);
+
+    const valid = incoming.filter((f) => f.size <= MAX_PHOTO_BYTES);
+    if (valid.length === 0) {
       e.target.value = "";
       return;
     }
-    setPhotoFile(file);
+
+    setPhotoFiles((prev) => {
+      const combined = [...prev, ...valid].slice(0, MAX_PHOTOS);
+      return combined;
+    });
     setErrors((prev) => ({ ...prev, photo: undefined }));
-    const reader = new FileReader();
-    reader.onloadend = () => setPhotoPreview(reader.result as string);
-    reader.onerror = () => {
-      setErrors((prev) => ({
-        ...prev,
-        photo: "Failed to read file. Please try again.",
-      }));
-      setPhotoFile(null);
-      setPhotoPreview(null);
-    };
-    reader.readAsDataURL(file);
+
+    valid.forEach((file) => {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setPhotoPreviews((prev) => {
+          const next = [...prev, reader.result as string].slice(0, MAX_PHOTOS);
+          return next;
+        });
+      };
+      reader.onerror = () => {
+        setErrors((prev) => ({
+          ...prev,
+          photo: "Failed to read file. Please try again.",
+        }));
+      };
+      reader.readAsDataURL(file);
+    });
+
+    e.target.value = "";
+  }
+
+  function handleRemovePhoto(index: number) {
+    setPhotoFiles((prev) => prev.filter((_, i) => i !== index));
+    setPhotoPreviews((prev) => prev.filter((_, i) => i !== index));
   }
 
   function handleTermsCheckbox(checked: boolean) {
     setTermsAgreed(checked);
     if (checked) setErrors((prev) => ({ ...prev, termsAgreed: undefined }));
+  }
+
+  function handleNominationConsentChange(checked: boolean) {
+    setNominationConsent(checked);
+    if (checked)
+      setErrors((prev) => ({ ...prev, nominationConsent: undefined }));
   }
 
   function agreeToTerms() {
@@ -190,9 +245,12 @@ export function useApplyForm() {
     const emailErr = validateEmail(form.email);
     if (emailErr) errs.email = emailErr;
     if (!form.instagram.trim()) errs.instagram = "Required";
-    if (!photoFile) errs.photo = "A photo is required";
-    if (form.applicationType === "Nomination" && !form.referrerName.trim()) {
-      errs.referrerName = "Required";
+    if (photoFiles.length === 0) errs.photo = "A photo is required";
+    if (form.applicationType === "Nomination") {
+      if (!form.referrerName.trim()) errs.referrerName = "Required";
+      if (!nominationConsent)
+        errs.nominationConsent =
+          "Please confirm you have permission to nominate this person";
     }
     if (!form.marketingConsent) {
       errs.marketingConsent = "Please select Yes or No.";
@@ -218,31 +276,46 @@ export function useApplyForm() {
     if (!validate()) return;
 
     setSubmitting(true);
-    let storageRef: StorageReference | null = null;
+    const uploadedRefs: (StorageReference | null)[] = [];
     try {
-      await signInAnonymously(getFirebaseAuth());
-      const ext = photoFile!.name.split(".").pop() ?? "jpg";
-      storageRef = ref(
+      const [
+        { signInAnonymously },
+        auth,
+        { ref, uploadBytesResumable, getDownloadURL },
+        storage,
+      ] = await Promise.all([
+        import("firebase/auth"),
+        getFirebaseAuth(),
+        import("firebase/storage"),
         getFirebaseStorage(),
-        `photos/${crypto.randomUUID()}.${ext}`,
-      );
-      const task = uploadBytesResumable(storageRef, photoFile!);
-      await new Promise<void>((resolve, reject) => {
-        const timer = setTimeout(() => {
-          task.cancel();
-          reject(new Error("Upload timed out after 30 seconds"));
-        }, 30_000);
-        task
-          .then(() => {
-            clearTimeout(timer);
-            resolve();
-          })
-          .catch((err: unknown) => {
-            clearTimeout(timer);
-            reject(err);
+      ]);
+
+      await signInAnonymously(auth);
+
+      const photoUrls = await Promise.all(
+        photoFiles.map(async (file, i) => {
+          const ext = file.name.split(".").pop() ?? "jpg";
+          const photoRef = ref(storage, `photos/${crypto.randomUUID()}.${ext}`);
+          uploadedRefs[i] = photoRef;
+          const task = uploadBytesResumable(photoRef, file);
+          await new Promise<void>((resolve, reject) => {
+            const timer = setTimeout(() => {
+              task.cancel();
+              reject(new Error("Upload timed out after 30 seconds"));
+            }, 30_000);
+            task
+              .then(() => {
+                clearTimeout(timer);
+                resolve();
+              })
+              .catch((err: unknown) => {
+                clearTimeout(timer);
+                reject(err);
+              });
           });
-      });
-      const photoUrl = await getDownloadURL(storageRef);
+          return getDownloadURL(photoRef);
+        }),
+      );
 
       const applicationData = {
         applicationType: form.applicationType,
@@ -261,9 +334,10 @@ export function useApplyForm() {
         income: form.income,
         referrerName:
           form.applicationType === "Nomination" ? form.referrerName.trim() : "",
+        ...(form.applicationType === "Nomination" ? { nominationConsent } : {}),
         pitch: form.pitch.trim(),
         type: form.type.trim(),
-        photoUrl,
+        photoUrls,
         ...(form.seenShowBefore !== ""
           ? { seenShowBefore: form.seenShowBefore === "yes" }
           : {}),
@@ -277,7 +351,8 @@ export function useApplyForm() {
         notes: "",
         submittedAt: serverTimestamp(),
       });
-      storageRef = null; // committed — no cleanup needed
+      // All uploaded — no cleanup needed
+      uploadedRefs.fill(null);
 
       const attribution = buildLeadAttribution({ source: "apply" });
       const igHandle = form.instagram.trim().replace(/^@/, "");
@@ -304,26 +379,35 @@ export function useApplyForm() {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(applicationData),
-      }).catch(console.error);
+      }).catch(() => {});
 
       setForm(INITIAL);
       setCityInput("");
       setTermsAgreed(false);
-      setPhotoFile(null);
-      setPhotoPreview(null);
+      setNominationConsent(false);
+      setPhotoFiles([]);
+      setPhotoPreviews([]);
       setErrors({});
       setSubmitted(true);
       window.scrollTo({ top: 0, behavior: "smooth" });
     } catch (err) {
       const error = err instanceof Error ? err : new Error(String(err));
-      // Clean up orphaned photo if upload succeeded but Firestore write failed
-      if (storageRef) deleteObject(storageRef).catch(() => {});
+      // Cleanup any photos that were successfully uploaded before the failure
+      // firebase/storage is already cached if any upload started
+      if (uploadedRefs.some(Boolean)) {
+        const { deleteObject } = await import("firebase/storage");
+        await Promise.allSettled(
+          uploadedRefs
+            .filter(Boolean)
+            .map((r) => deleteObject(r!).catch(() => {})),
+        );
+      }
       trackError({
         error_message: error.message,
         error_stack: (error.stack ?? "").slice(0, 2000),
         error_type: "form_submission",
         component: "useApplyForm",
-        form_step: storageRef ? "firestore_write" : "auth_or_upload",
+        form_step: "auth_or_upload_or_firestore",
         application_type: form.applicationType,
       });
       setToast({
@@ -337,12 +421,16 @@ export function useApplyForm() {
 
   return {
     form,
-    photoPreview,
+    photoPreviews,
+    photoFiles,
     errors,
     submitting,
     submitted,
+    isValid,
     termsAgreed,
     setTermsAgreed,
+    nominationConsent,
+    handleNominationConsentChange,
     showTermsModal,
     setShowTermsModal,
     canGoBack,
@@ -351,7 +439,8 @@ export function useApplyForm() {
     cityInput,
     handleCityInputChange,
     set,
-    handlePhotoChange,
+    handleAddPhotos,
+    handleRemovePhoto,
     handleTermsCheckbox,
     agreeToTerms,
     handleSubmit,

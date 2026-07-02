@@ -43,6 +43,8 @@ interface LinkDef {
   external?: boolean;
   dialogTrigger?: string;
   icon: IconName;
+  ctaId: string;
+  eventName: string;
 }
 
 const links: LinkDef[] = [
@@ -51,24 +53,44 @@ const links: LinkDef[] = [
     dialogTrigger: "events-trigger",
     isPrimary: true,
     icon: "ticket",
+    ctaId: "tickets",
+    eventName: "cta_clicked",
   },
   {
     label: "Get on the List",
     dialogTrigger: "links-spice-trigger",
     icon: "mail",
+    ctaId: "waitlist",
+    eventName: "cta_clicked",
   },
-  { label: "Apply to Be on the Show", href: "/apply", icon: "heart" },
+  {
+    label: "Apply to Be on the Show",
+    href: "/apply",
+    icon: "heart",
+    ctaId: "apply",
+    eventName: "apply_click",
+  },
   {
     label: "Full episodes @ YouTube",
     href: SOCIAL_URLS.youtube,
     external: true,
     icon: "youtube",
+    ctaId: "youtube",
+    eventName: "outbound_link_clicked",
   },
-  { label: "As Seen In", dialogTrigger: "press-trigger", icon: "mic" },
+  {
+    label: "As Seen In",
+    dialogTrigger: "press-trigger",
+    icon: "mic",
+    ctaId: "press",
+    eventName: "cta_clicked",
+  },
   {
     label: "Booking & Press Inquiries",
     href: "mailto:press@garammasaladating.com",
     icon: "mail",
+    ctaId: "booking_inquiry",
+    eventName: "cta_clicked",
   },
 ];
 
@@ -115,6 +137,13 @@ const reversedPress = [...pressItems].reverse();
         {
           links.map((link, i) => {
             const delay = 0.1 + i * 0.1;
+            const trackingAttrs = {
+              "data-ph-capture": link.eventName,
+              "data-ph-cta": link.ctaId,
+              "data-ph-section": "links",
+              "data-cta-position": String(i + 1),
+              "data-cta-text": link.label,
+            };
 
             if (link.dialogTrigger) {
               return (
@@ -127,9 +156,7 @@ const reversedPress = [...pressItems].reverse();
                       ? `animation: fadeUp 0.5s ease-out ${delay}s both, pulseGlow 2.5s ease-in-out 1s infinite`
                       : `animation: fadeUp 0.5s ease-out ${delay}s both`
                   }
-                  data-ph-capture={link.isPrimary ? "cta_clicked" : undefined}
-                  data-ph-cta={link.isPrimary ? "tickets" : undefined}
-                  data-ph-section={link.isPrimary ? "links" : undefined}
+                  {...trackingAttrs}
                 >
                   <Fragment set:html={iconSvg(link.icon, link.isPrimary)} />
                   <span class="link-label">{link.label}</span>
@@ -148,9 +175,8 @@ const reversedPress = [...pressItems].reverse();
                 }
                 target={link.external ? "_blank" : undefined}
                 rel={link.external ? "noopener noreferrer" : undefined}
-                data-ph-capture={link.isPrimary ? "cta_clicked" : undefined}
-                data-ph-cta={link.isPrimary ? "apply" : undefined}
-                data-ph-section={link.isPrimary ? "links" : undefined}
+                data-destination-url={link.href}
+                {...trackingAttrs}
               >
                 <Fragment set:html={iconSvg(link.icon, link.isPrimary)} />
                 <span class="link-label">{link.label}</span>
@@ -170,6 +196,11 @@ const reversedPress = [...pressItems].reverse();
               target="_blank"
               rel="noopener noreferrer"
               class="social-icon"
+              data-ph-capture="outbound_link_clicked"
+              data-ph-cta={s.label.toLowerCase()}
+              data-ph-section="links_social"
+              data-cta-text={s.label}
+              data-destination-url={s.href}
             >
               <Fragment set:html={SOCIAL_ICON_SVGS[s.icon]} />
             </a>
@@ -239,6 +270,12 @@ const reversedPress = [...pressItems].reverse();
                     class="event-link"
                     data-eb-url={buildTicketUrl(event.url, "links", "modal")}
                     data-city={cityLabel}
+                    data-ph-capture="ticket_click"
+                    data-ph-cta="tickets"
+                    data-ph-section="links_events_modal"
+                    data-ph-city={cityLabel}
+                    data-ph-event-date={event.date}
+                    data-ph-price={event.price ?? ""}
                   >
                     <span class="event-city">{cityLabel}</span>
                     <div class="event-date-group">
@@ -254,6 +291,12 @@ const reversedPress = [...pressItems].reverse();
                   target="_blank"
                   rel="noopener noreferrer"
                   class="event-link"
+                  data-ph-capture="ticket_click"
+                  data-ph-cta="tickets"
+                  data-ph-section="links_events_modal"
+                  data-ph-city={cityLabel}
+                  data-ph-event-date={event.date}
+                  data-ph-price={event.price ?? ""}
                 >
                   <span class="event-city">{cityLabel}</span>
                   <div class="event-date-group">

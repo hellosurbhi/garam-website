@@ -1,4 +1,5 @@
 import type { APIRoute } from "astro";
+import { updateLeadLimiter, checkRateLimit } from "@/lib/rateLimit";
 
 export const prerender = false;
 
@@ -8,6 +9,11 @@ interface UpdatePayload {
 }
 
 export const POST: APIRoute = async ({ request }) => {
+  const ip =
+    request.headers.get("x-forwarded-for")?.split(",")[0]?.trim() ?? "unknown";
+  const rateLimited = await checkRateLimit(updateLeadLimiter, ip);
+  if (rateLimited) return rateLimited;
+
   const contentType = request.headers.get("content-type");
   if (!contentType?.includes("application/json")) {
     return new Response(JSON.stringify({ error: "Invalid content type" }), {

@@ -1,5 +1,6 @@
 import type { APIRoute } from "astro";
 import { createHmac, timingSafeEqual } from "crypto";
+import { contestantClaimLimiter, checkRateLimit } from "@/lib/rateLimit";
 
 export const prerender = false;
 
@@ -30,6 +31,11 @@ function getShowExpiryMs(isoDate: string): number {
 }
 
 export const POST: APIRoute = async ({ request }) => {
+  const ip =
+    request.headers.get("x-forwarded-for")?.split(",")[0]?.trim() ?? "unknown";
+  const rateLimited = await checkRateLimit(contestantClaimLimiter, ip);
+  if (rateLimited) return rateLimited;
+
   const salt = import.meta.env.CONTESTANT_PREP_SALT;
   if (!salt) {
     return new Response(JSON.stringify({ error: "Server misconfigured" }), {

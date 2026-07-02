@@ -1,6 +1,7 @@
 import type { APIRoute } from "astro";
 import { validateEmail } from "@/utils/validateEmail";
 import { addKitSubscriber, type KitSubscriberFields } from "@/lib/kit";
+import { captureLeadLimiter, checkRateLimit } from "@/lib/rateLimit";
 
 export const prerender = false;
 
@@ -59,6 +60,11 @@ async function createLeadDocument(
 }
 
 export const POST: APIRoute = async ({ request }) => {
+  const ip =
+    request.headers.get("x-forwarded-for")?.split(",")[0]?.trim() ?? "unknown";
+  const rateLimited = await checkRateLimit(captureLeadLimiter, ip);
+  if (rateLimited) return rateLimited;
+
   // Validate content type
   const contentType = request.headers.get("content-type");
   if (!contentType?.includes("application/json")) {

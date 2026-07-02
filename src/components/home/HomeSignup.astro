@@ -17,6 +17,10 @@ const leadSource = `spice-list-${pageName}`;
 
   <!-- min-height prevents CLS when switching between steps -->
   <div class="nl-steps-wrapper" data-reveal>
+    <div id="nl-already-subscribed" class="nl-alt-cta" hidden>
+      <p>You're already on the list!</p>
+      <a href="/apply" class="spicelist-alt-btn">Apply to Be on Stage</a>
+    </div>
     <div id="nl-step-1">
       <p>
         Get exclusive discount codes for cheaper (and sometimes free) tickets.
@@ -79,6 +83,15 @@ const leadSource = `spice-list-${pageName}`;
   import { identifyLead, trackLeadEvent } from "@/lib/analytics";
   import { buildLeadAttribution } from "@/lib/leadAttribution";
   import { captureLead, updateLeadPhone } from "@/lib/leadSubmission";
+
+  if (localStorage.getItem("gmd-popup-subscribed")) {
+    const altCta = document.getElementById("nl-already-subscribed");
+    const step1 = document.getElementById("nl-step-1");
+    if (altCta && step1) {
+      step1.setAttribute("hidden", "");
+      altCta.removeAttribute("hidden");
+    }
+  }
 
   let savedEmail = "";
   let nlDocId = "";
@@ -223,6 +236,34 @@ const leadSource = `spice-list-${pageName}`;
 </script>
 
 <style>
+  .nl-alt-cta {
+    padding: 16px 0;
+  }
+  .nl-alt-cta p {
+    color: white;
+    font-family: var(--font-cormorant), serif;
+    font-size: 18px;
+    font-style: italic;
+    margin-bottom: 16px;
+  }
+  .spicelist-alt-btn {
+    display: inline-block;
+    background: white;
+    color: var(--brand-red);
+    font-family: var(--font-body), sans-serif;
+    font-size: 16px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    padding: 14px 32px;
+    border-radius: 50px;
+    text-decoration: none;
+    transition: transform 0.06s;
+    min-height: 48px;
+  }
+  .spicelist-alt-btn:active {
+    transform: scale(0.97);
+  }
   .spicelist {
     padding: 24px 16px 24px;
     background: var(--brand-red);

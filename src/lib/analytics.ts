@@ -1,4 +1,5 @@
-export { capture, enrichEvent, trackOutbound } from "./analyticsCapture";
+import { capture, enrichEvent, trackOutbound } from "./analyticsCapture";
+export { capture, enrichEvent, trackOutbound };
 
 type AnalyticsValue = string | number | boolean | null | undefined;
 type AnalyticsProps = object;

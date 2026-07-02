@@ -15,6 +15,7 @@ import { EVENTS } from "@/data/copy";
 import { getPostBySlug } from "@/data/journal";
 import { isPublished } from "@/utils/date";
 import { SOCIAL_URLS } from "@/data/socials";
+import { domainFromUrl, vendorFromUrl } from "@/lib/analyticsCapture";
 
 export function getStaticPaths() {
   return Object.keys(cities).map((slug) => ({
@@ -99,23 +100,46 @@ const relatedPosts = (city.relatedArticleSlugs ?? [])
 const applyHref =
   city.ctas.find((c) => c.href !== "#waitlist")?.href ?? "/apply";
 
-const staticPrimaryCta =
-  cityEvents.length === 0 ? (city.ctas[0] ?? null) : null;
-// When events exist, exclude #waitlist CTAs — the contextual prompt handles them
-const staticSecondaryCtas =
-  cityEvents.length === 0
-    ? city.ctas.slice(1)
-    : city.ctas.filter((c) => c.href !== "#waitlist");
+const waitlistCta = city.ctas.find((c) => c.href === "#waitlist") ?? {
+  label: `Join the ${city.displayName} Waitlist`,
+  href: "#waitlist",
+};
+const applyCtas = city.ctas.filter((c) => c.href !== "#waitlist");
+const staticPrimaryCta = cityEvents.length === 0 ? waitlistCta : null;
+const staticSecondaryCtas = applyCtas;
+
+const cityStatus = cityEvents.length
+  ? {
+      label: "Upcoming show",
+      text:
+        cityEvents.length === 1
+          ? `${cityEvents[0].date} tickets are live.`
+          : `${cityEvents.length} upcoming dates are live.`,
+    }
+  : city.status === "past"
+    ? {
+        label: "Past show",
+        text: "Join the waitlist for the next drop.",
+      }
+    : city.status === "coming-soon"
+      ? {
+          label: "Collecting demand",
+          text: "Waitlist signups determine where we announce next.",
+        }
+      : {
+          label: "Waitlist",
+          text: "No public ticket link is live right now.",
+        };
 
 function renderCityText(text: string, href: string): string {
   return text
     .replace(
       /get on the list|join the waitlist/gi,
-      `<button class="city-inline-cta" data-waitlist-trigger>$&</button>`,
+      `<button class="city-inline-cta" data-waitlist-trigger data-ph-capture="waitlist_click" data-ph-cta="inline_waitlist" data-ph-section="city_body" data-cta-position="city_body_inline" data-cta-text="$&" data-event-city="${city.displayName}" data-city-slug="${city.slug}">$&</button>`,
     )
     .replace(
       /apply to be a contestant|apply now/gi,
-      `<a class="city-inline-link" href="${href}">$&</a>`,
+      `<a class="city-inline-link" href="${href}" data-ph-capture="apply_click" data-ph-cta="inline_apply" data-ph-section="city_body" data-cta-position="city_body_inline" data-cta-text="$&" data-destination-url="${href}" data-event-city="${city.displayName}" data-city-slug="${city.slug}">$&</a>`,
     );
 }
 ---
@@ -150,6 +174,13 @@ function renderCityText(text: string, href: string): string {
 
       {/* H1 */}
       <h1 class="city-h1">{city.h1}</h1>
+
+      {city.communityStats && <p class="city-stat">{city.communityStats}</p>}
+
+      <div class="city-status" data-status={cityStatus.label.toLowerCase()}>
+        <span>{cityStatus.label}</span>
+        <p>{cityStatus.text}</p>
+      </div>
 
       {/* Body */}
       <div class="city-body">
@@ -196,7 +227,18 @@ function renderCityText(text: string, href: string): string {
             <h3 class="city-articles__title">From the Journal</h3>
             <div class="city-articles__list">
               {relatedPosts.map((post) => (
-                <a href={`/journal/${post.slug}`} class="city-articles__card">
+                <a
+                  href={`/journal/${post.slug}`}
+                  class="city-articles__card"
+                  data-ph-capture="cta_clicked"
+                  data-ph-cta="city_related_journal"
+                  data-ph-section="city_articles"
+                  data-cta-position="city_related_journal"
+                  data-cta-text={post.title}
+                  data-destination-url={`/journal/${post.slug}`}
+                  data-event-city={city.displayName}
+                  data-city-slug={city.slug}
+                >
                   <span class="city-articles__card-title">{post.title}</span>
                   <span class="city-articles__card-arrow">&rarr;</span>
                 </a>
@@ -213,6 +255,8 @@ function renderCityText(text: string, href: string): string {
           cityEvents.map((event) => {
             const isSoldOut = event.soldOut ?? false;
             const eventLocation = formatEventLocation(event);
+            const ticketUrl = buildTicketUrl(event.url, "cities", city.slug);
+            const eventTitle = `Garam Masala Dating - ${eventLocation} - ${event.date}`;
             const arrowSvg = (
               <svg
                 xmlns="http://www.w3.org/2000/svg"
@@ -238,11 +282,24 @@ function renderCityText(text: string, href: string): string {
                 type="button"
                 id={`eventbrite-widget-modal-trigger-${event.eventbriteId}`}
                 class="city-cta city-cta--primary"
-                data-eb-url={buildTicketUrl(event.url, "cities", city.slug)}
+                data-eb-url={ticketUrl}
                 data-city={eventLocation}
+                data-ph-capture="ticket_click"
+                data-ph-cta="city_ticket"
                 data-ph-section="cities"
                 data-ph-price={event.price}
-                data-ph-event-date={event.date}
+                data-ph-event-date={event.isoDate ?? event.date}
+                data-ph-event-title={eventTitle}
+                data-cta-position="city_event_ticket"
+                data-cta-text={`${event.date}: ${EVENTS.ticketCta}`}
+                data-destination-url={ticketUrl}
+                data-link-url={ticketUrl}
+                data-link-domain={domainFromUrl(ticketUrl)}
+                data-event-city={eventLocation}
+                data-event-date={event.isoDate ?? event.date}
+                data-event-title={eventTitle}
+                data-event-vendor={vendorFromUrl(ticketUrl)}
+                data-city-slug={city.slug}
               >
                 <span>
                   {event.date}: {EVENTS.ticketCta}
@@ -251,10 +308,26 @@ function renderCityText(text: string, href: string): string {
               </button>
             ) : (
               <a
-                href={buildTicketUrl(event.url, "cities", city.slug)}
+                href={ticketUrl}
                 target="_blank"
                 rel="noopener noreferrer"
                 class="city-cta city-cta--primary"
+                data-ph-capture="ticket_click"
+                data-ph-cta="city_ticket"
+                data-ph-section="cities"
+                data-ph-price={event.price}
+                data-ph-event-date={event.isoDate ?? event.date}
+                data-ph-event-title={eventTitle}
+                data-cta-position="city_event_ticket"
+                data-cta-text={`${event.date}: ${EVENTS.ticketCta}`}
+                data-destination-url={ticketUrl}
+                data-link-url={ticketUrl}
+                data-link-domain={domainFromUrl(ticketUrl)}
+                data-event-city={eventLocation}
+                data-event-date={event.isoDate ?? event.date}
+                data-event-title={eventTitle}
+                data-event-vendor={vendorFromUrl(ticketUrl)}
+                data-city-slug={city.slug}
               >
                 <span>
                   {event.date}: {EVENTS.ticketCta}
@@ -275,6 +348,13 @@ function renderCityText(text: string, href: string): string {
                 type="button"
                 class="city-waitlist-prompt__btn"
                 data-waitlist-trigger
+                data-ph-capture="waitlist_click"
+                data-ph-cta="future_show_waitlist"
+                data-ph-section="city_event_ctas"
+                data-cta-position="city_event_waitlist_prompt"
+                data-cta-text="Add your name to the waitlist for future shows."
+                data-event-city={city.displayName}
+                data-city-slug={city.slug}
               >
                 Add your name to the waitlist for future shows.
               </button>
@@ -289,6 +369,13 @@ function renderCityText(text: string, href: string): string {
                 type="button"
                 class="city-cta city-cta--primary"
                 data-waitlist-trigger
+                data-ph-capture="waitlist_click"
+                data-ph-cta="city_waitlist"
+                data-ph-section="city_ctas"
+                data-cta-position="city_primary"
+                data-cta-text={staticPrimaryCta.label}
+                data-event-city={city.displayName}
+                data-city-slug={city.slug}
               >
                 <span>{staticPrimaryCta.label}</span>
                 <svg
@@ -312,6 +399,14 @@ function renderCityText(text: string, href: string): string {
               <a
                 href={staticPrimaryCta.href}
                 class="city-cta city-cta--primary"
+                data-ph-capture="apply_click"
+                data-ph-cta="city_apply"
+                data-ph-section="city_ctas"
+                data-cta-position="city_primary"
+                data-cta-text={staticPrimaryCta.label}
+                data-destination-url={staticPrimaryCta.href}
+                data-event-city={city.displayName}
+                data-city-slug={city.slug}
               >
                 <span>{staticPrimaryCta.label}</span>
                 <svg
@@ -341,11 +436,29 @@ function renderCityText(text: string, href: string): string {
                 type="button"
                 class="city-cta--tertiary"
                 data-waitlist-trigger
+                data-ph-capture="waitlist_click"
+                data-ph-cta="city_waitlist"
+                data-ph-section="city_ctas"
+                data-cta-position="city_secondary"
+                data-cta-text={cta.label}
+                data-event-city={city.displayName}
+                data-city-slug={city.slug}
               >
                 {cta.label} &rarr;
               </button>
             ) : (
-              <a href={cta.href} class="city-cta--tertiary">
+              <a
+                href={cta.href}
+                class="city-cta--tertiary"
+                data-ph-capture="apply_click"
+                data-ph-cta="city_apply"
+                data-ph-section="city_ctas"
+                data-cta-position="city_secondary"
+                data-cta-text={cta.label}
+                data-destination-url={cta.href}
+                data-event-city={city.displayName}
+                data-city-slug={city.slug}
+              >
                 {cta.label} &rarr;
               </a>
             ),
@@ -513,7 +626,18 @@ function renderCityText(text: string, href: string): string {
             <span class="city-nearby__label">Also coming to: </span>
             {nearbyCities.map((nc, i) => (
               <>
-                <a href={`/cities/${nc.slug}`} class="city-nearby__link">
+                <a
+                  href={`/cities/${nc.slug}`}
+                  class="city-nearby__link"
+                  data-ph-capture="cta_clicked"
+                  data-ph-cta="nearby_city"
+                  data-ph-section="city_nearby"
+                  data-cta-position="city_nearby"
+                  data-cta-text={nc.displayName}
+                  data-destination-url={`/cities/${nc.slug}`}
+                  data-event-city={city.displayName}
+                  data-city-slug={city.slug}
+                >
                   {nc.displayName}
                 </a>
                 {i < nearbyCities.length - 1 && (
@@ -550,6 +674,12 @@ function renderCityText(text: string, href: string): string {
           source: "city-waitlist",
           sourcePage: window.location.pathname,
           sourceCitySlug: citySlug,
+          city:
+            document.querySelector(".city-eyebrow")?.textContent?.trim() ??
+            undefined,
+          event_city:
+            document.querySelector(".city-eyebrow")?.textContent?.trim() ??
+            undefined,
         });
         dialog.showModal();
       });
@@ -586,6 +716,8 @@ function renderCityText(text: string, href: string): string {
           });
           identifyLead(email, { ...attribution, city });
           trackLeadEvent("lead_email_submitted", { ...attribution, city });
+          trackLeadEvent("email_signup", { ...attribution, city });
+          trackLeadEvent("waitlist_submit", { ...attribution, city });
           document
             .getElementById("waitlist-form-view")
             ?.setAttribute("hidden", "");
@@ -632,6 +764,10 @@ function renderCityText(text: string, href: string): string {
         });
         identifyLead(cityNotifyEmail, { ...attribution, city: cityName });
         trackLeadEvent("lead_email_submitted", {
+          ...attribution,
+          city: cityName,
+        });
+        trackLeadEvent("email_signup", {
           ...attribution,
           city: cityName,
         });
@@ -783,6 +919,33 @@ function renderCityText(text: string, href: string): string {
     color: var(--muted);
     line-height: 1.6;
     margin-bottom: 20px;
+  }
+
+  .city-status {
+    display: grid;
+    gap: 4px;
+    margin: 0 0 28px;
+    padding: 12px 14px;
+    border: 1px solid rgba(var(--brand-red-rgb), 0.16);
+    border-radius: 8px;
+    background: rgba(var(--brand-red-rgb), 0.04);
+  }
+
+  .city-status span {
+    font-family: var(--font-body), sans-serif;
+    font-size: 12px;
+    font-weight: 800;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--brand-red);
+  }
+
+  .city-status p {
+    margin: 0;
+    font-family: var(--font-body), sans-serif;
+    font-size: 14px;
+    line-height: 1.45;
+    color: var(--charcoal);
   }
 
   .city-h1 {

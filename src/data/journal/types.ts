@@ -23,6 +23,7 @@ export interface JournalCtaConfig {
   topCta?: JournalCtaSpec;
   midCta?: JournalCtaSpec;
   bottomCta?: JournalCtaSpec;
+  cityLinks?: string[];
 }
 
 export interface JournalPost {

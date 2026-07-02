@@ -36,12 +36,12 @@ describe("ApplicantCard", () => {
 
   it("renders the applicant age", () => {
     render(<ApplicantCard app={makeApp()} onClick={vi.fn()} />);
-    expect(screen.getByText("27")).toBeInTheDocument();
+    expect(screen.getByText(/27\s*·\s*Woman\s*·/)).toBeInTheDocument();
   });
 
   it("renders the formatted location", () => {
     render(<ApplicantCard app={makeApp()} onClick={vi.fn()} />);
-    expect(screen.getByText("New York, NY")).toBeInTheDocument();
+    expect(screen.getByText(/New York,\s*NY/)).toBeInTheDocument();
   });
 
   it("renders the Instagram handle as a link", () => {

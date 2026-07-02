@@ -400,7 +400,10 @@ export default function AdminDashboard({ onLogout }: AdminDashboardProps) {
               <p style={{ marginBottom: "12px" }}>
                 Failed to load applications.
               </p>
-              <button onClick={fetchApps} className={styles.retryButton}>
+              <button
+                onClick={() => void fetchApps()}
+                className={styles.retryButton}
+              >
                 Try again
               </button>
             </div>

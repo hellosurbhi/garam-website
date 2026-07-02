@@ -1,6 +1,11 @@
 ---
 import BaseLayout from "@/layouts/BaseLayout.astro";
-import { tipPostsSorted } from "@/data/tips";
+import { tipsPosts } from "@/data/journal/tips";
+import type { JournalPost } from "@/data/journal/types";
+const tipPostsSorted: JournalPost[] = [...tipsPosts].sort(
+  (a, b) =>
+    new Date(b.datePublished).getTime() - new Date(a.datePublished).getTime(),
+);
 import { buildBreadcrumbJsonLd } from "@/utils/breadcrumbs";
 
 const TITLE = "South Asian Dating Tips | Garam Masala Dating";

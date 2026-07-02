@@ -42,20 +42,7 @@ const websiteJsonLd = JSON.stringify({
   url: "https://garammasaladating.com",
 });
 
-// FAQPage JSON-LD (homepage FAQs — 2.7x higher AI citation rate)
 import { HOME_FAQS } from "@/data/copy";
-const faqJsonLd = JSON.stringify({
-  "@context": "https://schema.org",
-  "@type": "FAQPage",
-  mainEntity: HOME_FAQS.map((faq) => ({
-    "@type": "Question",
-    name: faq.q,
-    acceptedAnswer: {
-      "@type": "Answer",
-      text: faq.short.replace(/<[^>]+>/g, ""),
-    },
-  })),
-});
 
 // Individual Event JSON-LD blocks (one per upcoming show with a real date+url)
 const eventSchemas = buildEventSchemas(
@@ -141,7 +128,6 @@ const speakableJsonLd = JSON.stringify({
   <Fragment slot="head">
     <script type="application/ld+json" set:html={orgJsonLd} />
     <script type="application/ld+json" set:html={websiteJsonLd} />
-    <script type="application/ld+json" set:html={faqJsonLd} />
     <script type="application/ld+json" set:html={speakableJsonLd} />
     <script type="application/ld+json" set:html={videoJsonLd} />
     <script type="application/ld+json" set:html={eventSeriesJsonLd} />

@@ -18,6 +18,10 @@ on:
           - local
           - production
 
+concurrency:
+  group: smoke-tests-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
   smoke:
     name: Smoke Tests (all viewports)

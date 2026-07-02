@@ -1,6 +1,7 @@
 import type { APIRoute } from "astro";
 import { Resend } from "resend";
 import { validateEmail } from "@/utils/validateEmail";
+import { notifyApplicationLimiter, checkRateLimit } from "@/lib/rateLimit";
 
 export const prerender = false;
 
@@ -124,6 +125,11 @@ function buildEmailHtml(data: ApplicationNotification): string {
 }
 
 export const POST: APIRoute = async ({ request }) => {
+  const ip =
+    request.headers.get("x-forwarded-for")?.split(",")[0]?.trim() ?? "unknown";
+  const rateLimited = await checkRateLimit(notifyApplicationLimiter, ip);
+  if (rateLimited) return rateLimited;
+
   const apiKey = import.meta.env.RESEND_API_KEY;
   const notificationEmail = import.meta.env.NOTIFICATION_EMAIL;
   if (!apiKey || !notificationEmail) {

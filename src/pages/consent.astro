@@ -1,0 +1,115 @@
+---
+import BaseLayout from "@/layouts/BaseLayout.astro";
+import { buildBreadcrumbJsonLd } from "@/utils/breadcrumbs";
+import { LEGAL_DOCS } from "@/data/legal";
+
+const doc = LEGAL_DOCS.consent;
+
+const breadcrumbJsonLd = buildBreadcrumbJsonLd([
+  { name: "Home", url: "https://garammasaladating.com/" },
+  { name: doc.title },
+]);
+---
+
+<BaseLayout
+  title={doc.metaTitle}
+  description={doc.metaDescription}
+  noindex={true}
+>
+  <Fragment slot="head">
+    <script type="application/ld+json" set:html={breadcrumbJsonLd} />
+  </Fragment>
+
+  <main id="main-content" class="legal-page">
+    <div class="legal-container">
+      <h1>{doc.title}</h1>
+      <p class="legal-updated">Last updated: {doc.lastUpdated}</p>
+      {
+        doc.intro?.map((block) =>
+          block.type === "p" ? (
+            <p class="legal-intro" set:html={block.text} />
+          ) : (
+            <ul>
+              {block.items.map((item) => (
+                <li set:html={item} />
+              ))}
+            </ul>
+          ),
+        )
+      }
+      {
+        doc.sections.map((section) => (
+          <Fragment>
+            <h2>{section.heading}</h2>
+            {section.blocks.map((block) =>
+              block.type === "p" ? (
+                <p set:html={block.text} />
+              ) : (
+                <ul>
+                  {block.items.map((item) => (
+                    <li set:html={item} />
+                  ))}
+                </ul>
+              ),
+            )}
+          </Fragment>
+        ))
+      }
+    </div>
+  </main>
+</BaseLayout>
+
+<style>
+  .legal-page {
+    min-height: 100vh;
+    padding: 24px;
+  }
+  .legal-container {
+    max-width: 640px;
+    margin: 0 auto;
+  }
+  .legal-container h1 {
+    font-family: var(--font-playfair), serif;
+    font-size: 32px;
+    font-weight: 700;
+    color: var(--charcoal);
+    margin-bottom: 8px;
+  }
+  .legal-updated {
+    font-size: 13px;
+    color: var(--muted);
+    margin-bottom: 24px;
+  }
+  .legal-intro {
+    margin-bottom: 32px;
+  }
+  .legal-container h2 {
+    font-family: var(--font-playfair), serif;
+    font-size: 20px;
+    font-weight: 700;
+    color: var(--charcoal);
+    margin-top: 32px;
+    margin-bottom: 12px;
+  }
+  .legal-container p {
+    font-size: 15px;
+    color: var(--text-secondary);
+    line-height: 1.75;
+    margin-bottom: 16px;
+  }
+  .legal-container ul {
+    padding-left: 20px;
+    margin-bottom: 16px;
+  }
+  .legal-container li {
+    font-size: 15px;
+    color: var(--text-secondary);
+    line-height: 1.75;
+    margin-bottom: 6px;
+  }
+  .legal-container a {
+    color: var(--brand-red);
+    text-decoration: underline;
+    text-underline-offset: 3px;
+  }
+</style>

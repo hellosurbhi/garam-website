@@ -306,7 +306,8 @@
     modalObserverTimeout = setTimeout(() => {
       modalObserver.disconnect();
     }, 30_000);
-    window.addEventListener("beforeunload", () => {
+    // pagehide (not beforeunload) keeps the page bfcache-eligible
+    window.addEventListener("pagehide", () => {
       clearTimeout(modalObserverTimeout);
       modalObserver.disconnect();
     });

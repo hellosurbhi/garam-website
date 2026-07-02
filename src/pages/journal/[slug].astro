@@ -1,6 +1,8 @@
 ---
 import BaseLayout from "@/layouts/BaseLayout.astro";
 import AuthorBio from "@/components/AuthorBio.astro";
+import ArticleCta from "@/components/journal/ArticleCta.astro";
+import LeadCaptureModal from "@/components/LeadCaptureModal.astro";
 import {
   journalPostsPublished,
   getPostBySlug,
@@ -104,6 +106,10 @@ const breadcrumbJsonLd = buildBreadcrumbJsonLd([
 ]);
 
 const seoTitle = post.seoTitle ?? deriveSeoTitle(post.title);
+
+const cfg = post.ctaConfig;
+const hasModalCta =
+  cfg?.topCta?.modal || cfg?.midCta?.modal || cfg?.bottomCta?.modal;
 ---
 
 <BaseLayout
@@ -153,19 +159,37 @@ const seoTitle = post.seoTitle ?? deriveSeoTitle(post.title);
       <div class="post-divider"></div>
 
       <!-- Article body -->
+      {
+        post.ctaConfig?.topCta && (
+          <ArticleCta
+            cta={post.ctaConfig.topCta}
+            placement="top"
+            articleSlug={post.slug}
+          />
+        )
+      }
       <article class="post-body">
         {
           post.body.map((block, i) => {
+            const cfg = post.ctaConfig;
             const midCta =
               i === 3 ? (
-                <aside class="article-cta" aria-label="Show promotion">
-                  <p class="article-cta__text">
-                    We host the #1 live dating show for South Asian singles,
-                    weekly in NYC, traveling to new cities.
-                    <a href="/tickets">Get tickets</a> or{" "}
-                    <a href="/apply">apply to be on stage</a>.
-                  </p>
-                </aside>
+                cfg?.midCta ? (
+                  <ArticleCta
+                    cta={cfg.midCta}
+                    placement="mid"
+                    articleSlug={post.slug}
+                  />
+                ) : (
+                  <aside class="article-cta" aria-label="Show promotion">
+                    <p class="article-cta__text">
+                      We host the #1 live dating show for South Asian singles,
+                      weekly in NYC, traveling to new cities.
+                      <a href="/tickets">Get tickets</a> or{" "}
+                      <a href="/apply">apply to be on stage</a>.
+                    </p>
+                  </aside>
+                )
               ) : null;
 
             if (block.type === "h2") {
@@ -203,6 +227,15 @@ const seoTitle = post.seoTitle ?? deriveSeoTitle(post.title);
           })
         }
       </article>
+      {
+        post.ctaConfig?.bottomCta && (
+          <ArticleCta
+            cta={post.ctaConfig.bottomCta}
+            placement="bottom"
+            articleSlug={post.slug}
+          />
+        )
+      }
 
       <!-- Author bio -->
       <AuthorBio />
@@ -263,6 +296,17 @@ const seoTitle = post.seoTitle ?? deriveSeoTitle(post.title);
       </div>
     </div>
   </main>
+
+  {
+    hasModalCta && (
+      <LeadCaptureModal
+        id="links-spice-modal"
+        source="journal-article"
+        heading="Get on the List"
+        subheading="Cheap and free tickets, exclusive drops."
+      />
+    )
+  }
 </BaseLayout>
 
 <style>

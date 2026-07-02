@@ -91,3 +91,57 @@ export async function verifyAdminToken(
   if (allowedUids.length === 0) return null;
   return allowedUids.includes(uid) ? uid : null;
 }
+
+export interface AdminIdentity {
+  uid: string;
+  email: string;
+}
+
+/**
+ * Verify a Firebase ID token AND return the admin's email.
+ * Email is extracted from the verified JWT payload (the `email` claim).
+ * Returns null if the token is invalid or the uid is not in ADMIN_UIDS.
+ */
+export async function verifyAdminIdentity(
+  authHeader: string | undefined,
+): Promise<AdminIdentity | null> {
+  if (!authHeader || !authHeader.startsWith("Bearer ")) return null;
+
+  const token = authHeader.slice(7);
+  const projectId = import.meta.env.PUBLIC_FIREBASE_PROJECT_ID;
+  if (!projectId) return null;
+
+  try {
+    const headerB64 = token.split(".")[0];
+    const header = JSON.parse(
+      Buffer.from(headerB64, "base64url").toString(),
+    ) as { kid?: string };
+    if (!header.kid) return null;
+
+    const keys = await getPublicKeys();
+    const key = keys[header.kid];
+    if (!key) return null;
+
+    const { payload } = await jwtVerify(token, key, {
+      issuer: `https://securetoken.google.com/${projectId}`,
+      audience: projectId,
+    });
+
+    const uid = payload.sub;
+    const email =
+      typeof payload["email"] === "string" ? payload["email"] : null;
+
+    if (typeof uid !== "string" || uid.length === 0 || !email) return null;
+
+    const allowedUids = String(import.meta.env.ADMIN_UIDS ?? "")
+      .split(",")
+      .map((v) => v.trim())
+      .filter(Boolean);
+
+    if (allowedUids.length === 0 || !allowedUids.includes(uid)) return null;
+
+    return { uid, email };
+  } catch {
+    return null;
+  }
+}

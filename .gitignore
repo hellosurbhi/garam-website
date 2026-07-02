@@ -41,6 +41,7 @@ coverage/
 *.sw?
 .vercel
 .claude
+.firebaserc
 .beads
 .ralph-tui
 

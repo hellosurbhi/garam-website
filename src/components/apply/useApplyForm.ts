@@ -189,7 +189,7 @@ export function useApplyForm() {
       return;
     }
 
-    const oversized = incoming.filter((f) => f.size > MAX_PHOTO_BYTES);
+    const oversized = incoming.filter((f) => f.size >= MAX_PHOTO_BYTES);
     if (oversized.length > 0) {
       setErrors((prev) => ({
         ...prev,
@@ -198,7 +198,7 @@ export function useApplyForm() {
     }
 
     const valid = incoming.filter(
-      (f) => f.size <= MAX_PHOTO_BYTES && ALLOWED_TYPES.has(f.type),
+      (f) => f.size < MAX_PHOTO_BYTES && ALLOWED_TYPES.has(f.type),
     );
     if (valid.length === 0) {
       e.target.value = "";

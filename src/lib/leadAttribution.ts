@@ -88,6 +88,8 @@ async function readGeoResponse(res: Response): Promise<GeoResponse | null> {
 
 function bootstrapGeoData() {
   if (sessionStorage.getItem(GEO_FETCHED_KEY)) return;
+  // Set the lock immediately so concurrent calls on the same page don't double-fetch
+  sessionStorage.setItem(GEO_FETCHED_KEY, "1");
 
   fetch("/api/geo")
     .then(readGeoResponse)
@@ -100,9 +102,6 @@ function bootstrapGeoData() {
     })
     .catch(() => {
       // Geo attribution is best-effort; lead capture should never surface it.
-    })
-    .finally(() => {
-      sessionStorage.setItem(GEO_FETCHED_KEY, "1");
     });
 }
 

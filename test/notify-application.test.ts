@@ -52,17 +52,8 @@ const validBody = {
 describe("notify-application handler", () => {
   beforeEach(() => {
     vi.clearAllMocks();
-    import.meta.env.RESEND_API_KEY = "re_test_key";
     import.meta.env.NOTIFICATION_EMAIL = "admin@example.com";
     mockSend.mockResolvedValue({ id: "email-id" });
-  });
-
-  it("returns 500 when RESEND_API_KEY is missing", async () => {
-    delete import.meta.env.RESEND_API_KEY;
-    const res = await POST(makeContext(makeRequest(validBody)));
-    expect(res.status).toBe(500);
-    const body = await res.json();
-    expect(body.error).toBe("Server misconfigured");
   });
 
   it("returns 500 when NOTIFICATION_EMAIL is missing", async () => {

@@ -1,2 +1,7 @@
 set -e
 npx lint-staged
+# Run global multi-reviewer chain (DeepSeek + CodeRabbit + Gemini via ~/.git-hooks/pre-commit).
+# This is intentionally after lint-staged so formatting runs first.
+if [ -x "$HOME/.git-hooks/pre-commit" ]; then
+  bash "$HOME/.git-hooks/pre-commit"
+fi

@@ -67,3 +67,9 @@ test-results/
 reports/
 link-results.json
 .lighthouseci/
+
+# Internal working notes (not for public repo)
+BUGS.md
+ENHANCEMENTS.md
+LESSONS.md
+.impeccable.md

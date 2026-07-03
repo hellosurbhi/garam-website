@@ -30,6 +30,7 @@ import Skeleton from "../ui/Skeleton";
 import ApplicantCard from "./ApplicantCard";
 import ApplicantModal from "./ApplicantModal";
 import AnalyticsDashboard from "./AnalyticsDashboard";
+import ContestantFunnel from "./ContestantFunnel";
 import TaskInbox from "./TaskInbox";
 import styles from "./AdminDashboard.module.css";
 
@@ -498,7 +499,12 @@ export default function AdminDashboard({ onLogout }: AdminDashboardProps) {
         )
       )}
 
-      {activeTab === "analytics" && <AnalyticsDashboard />}
+      {activeTab === "analytics" && (
+        <>
+          <ContestantFunnel applications={applications} />
+          <AnalyticsDashboard />
+        </>
+      )}
 
       {activeTab === "applicants" && (
         <main className={styles.main}>

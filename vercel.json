@@ -1,5 +1,8 @@
 {
   "buildCommand": "npm run build",
+  "github": {
+    "silent": true
+  },
   "redirects": [
     {
       "source": "/:path*",

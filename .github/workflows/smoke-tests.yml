@@ -18,6 +18,9 @@ on:
           - local
           - production
 
+permissions:
+  contents: read
+
 concurrency:
   group: smoke-tests-${{ github.ref }}
   cancel-in-progress: true

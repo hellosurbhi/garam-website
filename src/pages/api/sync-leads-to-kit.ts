@@ -69,10 +69,11 @@ export const POST: APIRoute = async ({ request }) => {
     accessToken = await getFirestoreAccessToken();
   } catch (err) {
     const detail = err instanceof Error ? err.message : String(err);
-    return new Response(
-      JSON.stringify({ error: "Firestore auth failed", detail }),
-      { status: 500, headers: { "Content-Type": "application/json" } },
-    );
+    console.error("[sync-leads-to-kit] Firestore auth failed:", detail);
+    return new Response(JSON.stringify({ error: "Firestore auth failed" }), {
+      status: 500,
+      headers: { "Content-Type": "application/json" },
+    });
   }
 
   do {
@@ -87,10 +88,11 @@ export const POST: APIRoute = async ({ request }) => {
     });
     if (!res.ok) {
       const body = await res.text();
-      return new Response(
-        JSON.stringify({ error: "Failed to list leads", detail: body }),
-        { status: 500, headers: { "Content-Type": "application/json" } },
-      );
+      console.error("[sync-leads-to-kit] Failed to list leads:", body);
+      return new Response(JSON.stringify({ error: "Failed to list leads" }), {
+        status: 500,
+        headers: { "Content-Type": "application/json" },
+      });
     }
 
     const data = (await res.json()) as FirestoreListResponse;

@@ -404,7 +404,7 @@ export const POST: APIRoute = async ({ request }) => {
   } catch (err) {
     const msg = err instanceof Error ? err.message : String(err);
     console.error(`[sync-orders] Fatal error: ${msg}`);
-    return new Response(JSON.stringify({ error: "Sync failed", detail: msg }), {
+    return new Response(JSON.stringify({ error: "Sync failed" }), {
       status: 500,
       headers: { "Content-Type": "application/json" },
     });

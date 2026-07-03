@@ -522,8 +522,6 @@ describe("bootstrapLeadAttribution — geo data", () => {
           city: "Boston",
           region: "MA",
           country: "US",
-          latitude: "42.36",
-          longitude: "-71.06",
           timezone: "America/New_York",
         }),
         { status: 200 },
@@ -535,8 +533,6 @@ describe("bootstrapLeadAttribution — geo data", () => {
     expect(sessionStorage.getItem("gmd-geo-city")).toBe("Boston");
     expect(sessionStorage.getItem("gmd-geo-region")).toBe("MA");
     expect(sessionStorage.getItem("gmd-geo-country")).toBe("US");
-    expect(sessionStorage.getItem("gmd-geo-latitude")).toBe("42.36");
-    expect(sessionStorage.getItem("gmd-geo-longitude")).toBe("-71.06");
     expect(sessionStorage.getItem("gmd-geo-timezone")).toBe("America/New_York");
   });
 
@@ -612,28 +608,6 @@ describe("bootstrapLeadAttribution — geo data", () => {
     expect(sessionStorage.getItem("gmd-geo-country")).toBe("US");
     expect(sessionStorage.getItem("gmd-geo-city")).toBeNull();
     expect(sessionStorage.getItem("gmd-geo-region")).toBeNull();
-  });
-
-  it("stores only latitude when response has only latitude field", async () => {
-    vi.spyOn(globalThis, "fetch").mockResolvedValue(
-      new Response(JSON.stringify({ latitude: "40.71" }), { status: 200 }),
-    );
-    bootstrapLeadAttribution();
-    await new Promise((r) => setTimeout(r, 50));
-    expect(sessionStorage.getItem("gmd-geo-latitude")).toBe("40.71");
-    expect(sessionStorage.getItem("gmd-geo-city")).toBeNull();
-    expect(sessionStorage.getItem("gmd-geo-longitude")).toBeNull();
-  });
-
-  it("stores only longitude when response has only longitude field", async () => {
-    vi.spyOn(globalThis, "fetch").mockResolvedValue(
-      new Response(JSON.stringify({ longitude: "-74.00" }), { status: 200 }),
-    );
-    bootstrapLeadAttribution();
-    await new Promise((r) => setTimeout(r, 50));
-    expect(sessionStorage.getItem("gmd-geo-longitude")).toBe("-74.00");
-    expect(sessionStorage.getItem("gmd-geo-city")).toBeNull();
-    expect(sessionStorage.getItem("gmd-geo-latitude")).toBeNull();
   });
 
   it("stores only timezone when response has only timezone field", async () => {

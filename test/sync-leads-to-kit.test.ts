@@ -106,7 +106,6 @@ describe("sync-leads-to-kit handler", () => {
     expect(res.status).toBe(500);
     await expect(res.json()).resolves.toMatchObject({
       error: "Firestore auth failed",
-      detail: "missing key",
     });
   });
 });

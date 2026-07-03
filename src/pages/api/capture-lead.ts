@@ -24,8 +24,6 @@ interface LeadPayload {
   geoCity?: string;
   geoRegion?: string;
   geoCountry?: string;
-  geoLatitude?: number | string;
-  geoLongitude?: number | string;
   geoTimezone?: string;
 }
 
@@ -125,19 +123,19 @@ export const POST: APIRoute = async ({ request }) => {
   addStringField(fields, "geoRegion", body.geoRegion, 100);
   addStringField(fields, "geoCountry", body.geoCountry, 100);
   addStringField(fields, "geoTimezone", body.geoTimezone, 100);
-  const lat =
-    typeof body.geoLatitude === "number"
-      ? body.geoLatitude
-      : Number(String(body.geoLatitude ?? "").trim());
-  if (Number.isFinite(lat) && lat >= -90 && lat <= 90) {
-    fields.geoLatitude = { doubleValue: lat };
+  const latHeader = request.headers.get("x-vercel-ip-latitude");
+  if (latHeader) {
+    const lat = Number(latHeader);
+    if (Number.isFinite(lat) && lat >= -90 && lat <= 90) {
+      fields.geoLatitude = { doubleValue: lat };
+    }
   }
-  const lng =
-    typeof body.geoLongitude === "number"
-      ? body.geoLongitude
-      : Number(String(body.geoLongitude ?? "").trim());
-  if (Number.isFinite(lng) && lng >= -180 && lng <= 180) {
-    fields.geoLongitude = { doubleValue: lng };
+  const lngHeader = request.headers.get("x-vercel-ip-longitude");
+  if (lngHeader) {
+    const lng = Number(lngHeader);
+    if (Number.isFinite(lng) && lng >= -180 && lng <= 180) {
+      fields.geoLongitude = { doubleValue: lng };
+    }
   }
 
   try {
@@ -152,10 +150,11 @@ export const POST: APIRoute = async ({ request }) => {
 
     if (!res.ok) {
       const errText = await res.text();
-      return new Response(
-        JSON.stringify({ error: "Failed to save lead", detail: errText }),
-        { status: 500, headers: { "Content-Type": "application/json" } },
-      );
+      console.error("[capture-lead] Failed to save lead:", errText);
+      return new Response(JSON.stringify({ error: "Failed to save lead" }), {
+        status: 500,
+        headers: { "Content-Type": "application/json" },
+      });
     }
 
     const doc = await res.json();

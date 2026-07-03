@@ -324,42 +324,6 @@ describe("buildLeadAttribution", () => {
     expect(result.geoCountry).toBe("US");
   });
 
-  it("includes geoLatitude as a number when present in sessionStorage", () => {
-    sessionStorage.setItem("gmd-geo-latitude", "40.7128");
-    const result = buildLeadAttribution({ source: "apply" });
-    expect(result.geoLatitude).toBe(40.7128);
-  });
-
-  it("includes geoLongitude as a number when present in sessionStorage", () => {
-    sessionStorage.setItem("gmd-geo-longitude", "-74.0060");
-    const result = buildLeadAttribution({ source: "apply" });
-    expect(result.geoLongitude).toBe(-74.006);
-  });
-
-  it("omits geoLatitude when value is not a valid number", () => {
-    sessionStorage.setItem("gmd-geo-latitude", "not-a-number");
-    const result = buildLeadAttribution({ source: "apply" });
-    expect(result).not.toHaveProperty("geoLatitude");
-  });
-
-  it("omits geoLongitude when value is not a valid number", () => {
-    sessionStorage.setItem("gmd-geo-longitude", "bad");
-    const result = buildLeadAttribution({ source: "apply" });
-    expect(result).not.toHaveProperty("geoLongitude");
-  });
-
-  it("omits geoLatitude when out of range", () => {
-    sessionStorage.setItem("gmd-geo-latitude", "91");
-    const result = buildLeadAttribution({ source: "apply" });
-    expect(result).not.toHaveProperty("geoLatitude");
-  });
-
-  it("omits geoLongitude when out of range", () => {
-    sessionStorage.setItem("gmd-geo-longitude", "-181");
-    const result = buildLeadAttribution({ source: "apply" });
-    expect(result).not.toHaveProperty("geoLongitude");
-  });
-
   it("includes geoTimezone when present in sessionStorage", () => {
     sessionStorage.setItem("gmd-geo-timezone", "America/New_York");
     const result = buildLeadAttribution({ source: "apply" });
@@ -371,8 +335,6 @@ describe("buildLeadAttribution", () => {
     expect(result).not.toHaveProperty("geoCity");
     expect(result).not.toHaveProperty("geoRegion");
     expect(result).not.toHaveProperty("geoCountry");
-    expect(result).not.toHaveProperty("geoLatitude");
-    expect(result).not.toHaveProperty("geoLongitude");
     expect(result).not.toHaveProperty("geoTimezone");
   });
 
@@ -380,30 +342,12 @@ describe("buildLeadAttribution", () => {
     sessionStorage.setItem("gmd-geo-city", "Boston");
     sessionStorage.setItem("gmd-geo-region", "MA");
     sessionStorage.setItem("gmd-geo-country", "US");
-    sessionStorage.setItem("gmd-geo-latitude", "42.36");
-    sessionStorage.setItem("gmd-geo-longitude", "-71.06");
     sessionStorage.setItem("gmd-geo-timezone", "America/New_York");
     const result = buildLeadAttribution({ source: "apply" });
     expect(result.geoCity).toBe("Boston");
     expect(result.geoRegion).toBe("MA");
     expect(result.geoCountry).toBe("US");
-    expect(result.geoLatitude).toBe(42.36);
-    expect(result.geoLongitude).toBe(-71.06);
     expect(result.geoTimezone).toBe("America/New_York");
-  });
-
-  it("accepts boundary values for latitude and longitude", () => {
-    sessionStorage.setItem("gmd-geo-latitude", "-90");
-    sessionStorage.setItem("gmd-geo-longitude", "-180");
-    let result = buildLeadAttribution({ source: "apply" });
-    expect(result.geoLatitude).toBe(-90);
-    expect(result.geoLongitude).toBe(-180);
-
-    sessionStorage.setItem("gmd-geo-latitude", "90");
-    sessionStorage.setItem("gmd-geo-longitude", "180");
-    result = buildLeadAttribution({ source: "apply" });
-    expect(result.geoLatitude).toBe(90);
-    expect(result.geoLongitude).toBe(180);
   });
 
   /* ── posthog edge cases ─────────────────────────────── */

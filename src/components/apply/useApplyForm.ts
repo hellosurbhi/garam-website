@@ -345,6 +345,7 @@ export function useApplyForm() {
 
       await addDoc(collection(getFirebaseDb(), "applications"), {
         ...applicationData,
+        emailNormalized: form.email.trim().toLowerCase(),
         marketingConsent: form.marketingConsent,
         termsAgreedAt: serverTimestamp(),
         status: "New",

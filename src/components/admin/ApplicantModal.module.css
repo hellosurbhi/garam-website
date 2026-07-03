@@ -348,3 +348,44 @@
 .restoreButton:hover {
   background: rgba(34, 197, 94, 0.04);
 }
+
+.sendEmailButton {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  width: 100%;
+  padding: 12px 18px;
+  border-radius: 100px;
+  border: 1.5px solid var(--brand-red);
+  background: var(--brand-red);
+  font-family: var(--font-body);
+  font-size: 15px;
+  font-weight: 600;
+  color: #fff;
+  cursor: pointer;
+  transition:
+    background 0.15s,
+    opacity 0.15s;
+}
+
+.sendEmailButton:hover:not(:disabled) {
+  background: var(--brand-red-dark);
+  border-color: var(--brand-red-dark);
+}
+
+.sendEmailButton:active:not(:disabled) {
+  transform: scale(0.97);
+}
+
+.sendEmailButton:disabled {
+  opacity: 0.55;
+  cursor: default;
+}
+
+.sendEmailError {
+  font-size: 13px;
+  color: var(--brand-red);
+  margin-top: 8px;
+  text-align: center;
+}

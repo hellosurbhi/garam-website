@@ -1,5 +1,13 @@
 import { useState, useMemo } from "react";
-import { X, Trash2, ArchiveRestore } from "lucide-react";
+import { X, Trash2, ArchiveRestore, Send } from "lucide-react";
+import {
+  collection,
+  addDoc,
+  updateDoc,
+  doc,
+  serverTimestamp,
+} from "firebase/firestore";
+import { getFirebaseAuth, getFirebaseDb } from "@/lib/firebase";
 import {
   type Application,
   type ApplicantStatus,
@@ -65,6 +73,9 @@ export default function ApplicantModal({
   const [notes, setNotes] = useState(app.notes ?? "");
   const [selectedPhotoIndex, setSelectedPhotoIndex] = useState(0);
   const [lightbox, setLightbox] = useState(false);
+  const [schedulingEmailState, setSchedulingEmailState] = useState<
+    "idle" | "sending" | "sent" | "error"
+  >("idle");
   const handle = app.instagram.replace(/^@/, "");
   const isDeleted = !!app.deletedAt;
   const isNomination = app.applicationType === "Nomination";
@@ -102,6 +113,47 @@ export default function ApplicantModal({
 
   function handleNotesBlur() {
     onUpdate(app.id, { notes });
+  }
+
+  async function handleSendSchedulingEmail() {
+    if (!app.email) return;
+    setSchedulingEmailState("sending");
+    try {
+      const auth = await getFirebaseAuth();
+      const token = await auth.currentUser?.getIdToken();
+      if (!token) throw new Error("Not authenticated");
+
+      const res = await fetch("/api/actions/send-scheduling-email", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({ applicationId: app.id }),
+      });
+      if (!res.ok) throw new Error(`HTTP ${res.status}`);
+
+      const db = getFirebaseDb();
+      const appRef = doc(db, "applications", app.id);
+      await updateDoc(appRef, {
+        contactedAt: serverTimestamp(),
+        ...(status === "New" ? { status: "Contacted" } : {}),
+      });
+      await addDoc(collection(db, "applications", app.id, "events"), {
+        type: "outreach_sent",
+        timestamp: serverTimestamp(),
+        actor: auth.currentUser?.email ?? "admin",
+        payload: {},
+      });
+
+      if (status === "New") {
+        setStatus("Contacted");
+        onUpdate(app.id, { status: "Contacted" });
+      }
+      setSchedulingEmailState("sent");
+    } catch {
+      setSchedulingEmailState("error");
+    }
   }
 
   const formattedDate = app.submittedAt
@@ -337,6 +389,32 @@ export default function ApplicantModal({
         </div>
 
         <hr className={styles.dividerSpaced} />
+
+        {/* ── Send scheduling email ─────────────────────── */}
+        {app.email && (
+          <div className={styles.formGroup}>
+            <button
+              onClick={() => void handleSendSchedulingEmail()}
+              disabled={
+                schedulingEmailState === "sending" ||
+                schedulingEmailState === "sent"
+              }
+              className={styles.sendEmailButton}
+              aria-label="Send scheduling email to applicant"
+            >
+              <Send size={15} />
+              {schedulingEmailState === "idle" && "Send scheduling email"}
+              {schedulingEmailState === "sending" && "Sending..."}
+              {schedulingEmailState === "sent" && "Email sent"}
+              {schedulingEmailState === "error" && "Failed — try again"}
+            </button>
+            {schedulingEmailState === "error" && (
+              <p className={styles.sendEmailError} role="alert">
+                Could not send email. Check your Zoho SMTP config or try again.
+              </p>
+            )}
+          </div>
+        )}
 
         {/* ── Action buttons ────────────────────────────── */}
         <div className={styles.actionRow}>

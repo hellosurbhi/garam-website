@@ -8,8 +8,6 @@ export const GET: APIRoute = ({ request }) => {
     city: headers.get("x-vercel-ip-city") ?? undefined,
     region: headers.get("x-vercel-ip-country-region") ?? undefined,
     country: headers.get("x-vercel-ip-country") ?? undefined,
-    latitude: headers.get("x-vercel-ip-latitude") ?? undefined,
-    longitude: headers.get("x-vercel-ip-longitude") ?? undefined,
     timezone: headers.get("x-vercel-ip-timezone") ?? undefined,
   };
 

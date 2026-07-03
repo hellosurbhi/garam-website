@@ -629,12 +629,10 @@ export const GET: APIRoute = async ({ request, url }) => {
     });
   } catch (err) {
     const msg = err instanceof Error ? err.message : String(err);
-    return new Response(
-      JSON.stringify({ error: "Analytics fetch failed", detail: msg }),
-      {
-        status: 500,
-        headers: { "Content-Type": "application/json" },
-      },
-    );
+    console.error("[analytics] Fetch failed:", msg);
+    return new Response(JSON.stringify({ error: "Analytics fetch failed" }), {
+      status: 500,
+      headers: { "Content-Type": "application/json" },
+    });
   }
 };

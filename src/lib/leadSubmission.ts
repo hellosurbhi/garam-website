@@ -19,8 +19,6 @@ export interface LeadSubmissionPayload {
   geoCity?: string;
   geoRegion?: string;
   geoCountry?: string;
-  geoLatitude?: number;
-  geoLongitude?: number;
   geoTimezone?: string;
 }
 

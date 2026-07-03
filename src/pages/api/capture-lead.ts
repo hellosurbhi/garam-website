@@ -24,8 +24,6 @@ interface LeadPayload {
   geoCity?: string;
   geoRegion?: string;
   geoCountry?: string;
-  geoLatitude?: number | string;
-  geoLongitude?: number | string;
   geoTimezone?: string;
 }
 
@@ -44,6 +42,20 @@ function addStringField(
 ) {
   const normalized = normalizedString(value, maxLength);
   if (normalized) fields[key] = { stringValue: normalized };
+}
+
+function addNumericHeaderField(
+  fields: FirestoreFields,
+  key: string,
+  headerValue: string | null,
+  min: number,
+  max: number,
+) {
+  if (!headerValue) return;
+  const value = Number(headerValue);
+  if (Number.isFinite(value) && value >= min && value <= max) {
+    fields[key] = { doubleValue: value };
+  }
 }
 
 async function createLeadDocument(
@@ -125,20 +137,20 @@ export const POST: APIRoute = async ({ request }) => {
   addStringField(fields, "geoRegion", body.geoRegion, 100);
   addStringField(fields, "geoCountry", body.geoCountry, 100);
   addStringField(fields, "geoTimezone", body.geoTimezone, 100);
-  const lat =
-    typeof body.geoLatitude === "number"
-      ? body.geoLatitude
-      : Number(String(body.geoLatitude ?? "").trim());
-  if (Number.isFinite(lat) && lat >= -90 && lat <= 90) {
-    fields.geoLatitude = { doubleValue: lat };
-  }
-  const lng =
-    typeof body.geoLongitude === "number"
-      ? body.geoLongitude
-      : Number(String(body.geoLongitude ?? "").trim());
-  if (Number.isFinite(lng) && lng >= -180 && lng <= 180) {
-    fields.geoLongitude = { doubleValue: lng };
-  }
+  addNumericHeaderField(
+    fields,
+    "geoLatitude",
+    request.headers.get("x-vercel-ip-latitude"),
+    -90,
+    90,
+  );
+  addNumericHeaderField(
+    fields,
+    "geoLongitude",
+    request.headers.get("x-vercel-ip-longitude"),
+    -180,
+    180,
+  );
 
   try {
     let res = await createLeadDocument(projectId, fields);
@@ -152,10 +164,11 @@ export const POST: APIRoute = async ({ request }) => {
 
     if (!res.ok) {
       const errText = await res.text();
-      return new Response(
-        JSON.stringify({ error: "Failed to save lead", detail: errText }),
-        { status: 500, headers: { "Content-Type": "application/json" } },
-      );
+      console.error("[capture-lead] Failed to save lead:", errText);
+      return new Response(JSON.stringify({ error: "Failed to save lead" }), {
+        status: 500,
+        headers: { "Content-Type": "application/json" },
+      });
     }
 
     const doc = await res.json();

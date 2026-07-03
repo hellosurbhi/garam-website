@@ -17,6 +17,8 @@ on:
     - cron: "0 6 * * *" # 6:00 AM UTC daily (2:00 AM ET)
   workflow_dispatch: {} # Allow manual trigger
 
+permissions: {}
+
 jobs:
   trigger-deploy:
     runs-on: ubuntu-latest

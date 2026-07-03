@@ -17,8 +17,6 @@ export interface LeadAttribution {
   geoCity?: string;
   geoRegion?: string;
   geoCountry?: string;
-  geoLatitude?: number;
-  geoLongitude?: number;
   geoTimezone?: string;
 }
 
@@ -32,8 +30,6 @@ const UTM_TERM_KEY = "gmd-utm-term";
 const GEO_CITY_KEY = "gmd-geo-city";
 const GEO_REGION_KEY = "gmd-geo-region";
 const GEO_COUNTRY_KEY = "gmd-geo-country";
-const GEO_LATITUDE_KEY = "gmd-geo-latitude";
-const GEO_LONGITUDE_KEY = "gmd-geo-longitude";
 const GEO_TIMEZONE_KEY = "gmd-geo-timezone";
 const GEO_FETCHED_KEY = "gmd-geo-fetched";
 const FBCLID_KEY = "gmd-fbclid";
@@ -74,8 +70,6 @@ interface GeoResponse {
   city?: string;
   region?: string;
   country?: string;
-  latitude?: string;
-  longitude?: string;
   timezone?: string;
 }
 
@@ -102,9 +96,6 @@ function bootstrapGeoData() {
       if (geo.city) sessionStorage.setItem(GEO_CITY_KEY, geo.city);
       if (geo.region) sessionStorage.setItem(GEO_REGION_KEY, geo.region);
       if (geo.country) sessionStorage.setItem(GEO_COUNTRY_KEY, geo.country);
-      if (geo.latitude) sessionStorage.setItem(GEO_LATITUDE_KEY, geo.latitude);
-      if (geo.longitude)
-        sessionStorage.setItem(GEO_LONGITUDE_KEY, geo.longitude);
       if (geo.timezone) sessionStorage.setItem(GEO_TIMEZONE_KEY, geo.timezone);
     })
     .catch(() => {
@@ -233,19 +224,6 @@ export function buildLeadAttribution(params: {
 
   const geoCountry = sessionStorage.getItem(GEO_COUNTRY_KEY) ?? undefined;
   if (geoCountry) attribution.geoCountry = geoCountry;
-
-  const latStr = sessionStorage.getItem(GEO_LATITUDE_KEY);
-  if (latStr) {
-    const lat = parseFloat(latStr);
-    if (isFinite(lat) && lat >= -90 && lat <= 90) attribution.geoLatitude = lat;
-  }
-
-  const lngStr = sessionStorage.getItem(GEO_LONGITUDE_KEY);
-  if (lngStr) {
-    const lng = parseFloat(lngStr);
-    if (isFinite(lng) && lng >= -180 && lng <= 180)
-      attribution.geoLongitude = lng;
-  }
 
   const geoTimezone = sessionStorage.getItem(GEO_TIMEZONE_KEY) ?? undefined;
   if (geoTimezone) attribution.geoTimezone = geoTimezone;

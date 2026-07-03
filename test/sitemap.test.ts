@@ -64,7 +64,9 @@ describe("city pages in sitemap", () => {
   it("all city URLs start with the canonical HTTPS origin", () => {
     for (const slug of citySlugs) {
       const url = `${SITE}/cities/${slug}`;
-      expect(url.startsWith("https://garammasaladating.com")).toBe(true);
+      const parsed = new URL(url);
+      expect(parsed.protocol).toBe("https:");
+      expect(parsed.hostname).toBe("garammasaladating.com");
     }
   });
 });

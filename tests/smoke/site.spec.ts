@@ -170,15 +170,19 @@ async function assertFooter(page: Page) {
 }
 
 async function assertAllLinksValid(page: Page) {
-  const badLinks = await page
-    .locator("a[href]")
-    .evaluateAll((anchors) =>
-      anchors
-        .map((a) => (a as HTMLAnchorElement).getAttribute("href") ?? "")
-        .filter(
-          (href) => !href || href === "#" || href.startsWith("javascript:"),
-        ),
-    );
+  const badLinks = await page.locator("a[href]").evaluateAll((anchors) =>
+    anchors
+      .map((a) => (a as HTMLAnchorElement).getAttribute("href") ?? "")
+      .filter((href) => {
+        if (!href || href === "#") return true;
+        const scheme = href
+          .toLowerCase()
+          .replace(/[\t\n\r]/g, "")
+          .trim()
+          .split(":")[0];
+        return ["javascript", "data", "vbscript"].includes(scheme);
+      }),
+  );
   expect(badLinks, `Found invalid link hrefs: ${badLinks.join(", ")}`).toEqual(
     [],
   );

@@ -16,6 +16,9 @@ on:
       - "docs/**"
       - ".github/ISSUE_TEMPLATE/**"
 
+permissions:
+  contents: read
+
 concurrency:
   group: ci-${{ github.ref }}
   cancel-in-progress: true

@@ -186,6 +186,48 @@ export async function fsQuery(
  * Pass `null` for each field you want to delete — this maps to
  * Firestore's `__delete__` transform via the updateMask approach.
  */
+/**
+ * List all documents in a collection, handling Firestore pagination automatically.
+ * Returns up to ~10,000 documents in practice (300 per page).
+ */
+export async function fsListAll(
+  collectionId: string,
+): Promise<Array<Record<string, unknown>>> {
+  const token = await getFirestoreAccessToken();
+  const results: Array<Record<string, unknown>> = [];
+  let pageToken: string | undefined;
+
+  do {
+    const url = new URL(`${baseUrl()}/${collectionId}`);
+    url.searchParams.set("pageSize", "300");
+    if (pageToken) url.searchParams.set("pageToken", pageToken);
+
+    const res = await fetch(url.toString(), {
+      headers: { Authorization: `Bearer ${token}` },
+    });
+    if (!res.ok) {
+      const text = await res.text();
+      throw new Error(`fsListAll ${collectionId}: ${res.status} ${text}`);
+    }
+
+    const data = (await res.json()) as {
+      documents?: Array<{ name?: string; fields?: FirestoreFields }>;
+      nextPageToken?: string;
+    };
+
+    for (const doc of data.documents ?? []) {
+      if (!doc.fields) continue;
+      const docName = doc.name ?? "";
+      const id = docName.split("/").at(-1) ?? "";
+      results.push({ id, ...fromFields(doc.fields) });
+    }
+
+    pageToken = data.nextPageToken;
+  } while (pageToken);
+
+  return results;
+}
+
 export async function fsDeleteFields(
   docPath: string,
   fieldNames: string[],

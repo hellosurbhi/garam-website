@@ -6,31 +6,25 @@
 
 - **Date:** 2026-04-13
 - **File:** `src/pages/apply.astro:23`
-- **Status:** Open
+- **Status:** Fixed (2026-07-03)
 - **Severity:** Low
-- **What's happening:** `apply.astro` references `/images/promo/cupid-garden.webp` as a decorative background image (aria-hidden). The file does not exist in `public/images/promo/`. Every apply page load emits a 404 in the browser console.
-- **What should happen:** The file should either be added to `public/images/promo/` or the reference should be removed/replaced with an existing image.
-- **Fix:** Add the correct `cupid-garden.webp` image to `public/images/promo/`, or swap the `src` to an existing promo image (e.g., `pure-chaos.webp`).
+- **What happened:** Reference to the missing image was removed from `apply.astro`.
 
 ### [HIGH] Firestore applications collection has no field validation on create
 
 - **Date:** 2026-04-09
 - **File:** `firestore.rules:36, 40`
-- **Status:** Open
+- **Status:** Fixed (prior session)
 - **Severity:** High
-- **What's happening:** `allow create: if true;` on the `applications` collection and its subcollections. Unlike the `leads` collection (which has thorough `validLead()` validation with `hasOnly`, `hasAll`, type checks, and length limits), applications accept any document shape from any unauthenticated user. This enables spam flooding, data poisoning, or arbitrary field injection.
-- **What should happen:** Applications should have a `validApplication()` function mirroring the `validLead()` pattern — restricting allowed fields, requiring key fields, and enforcing type/length constraints.
-- **Fix:** Add a `validApplication()` function to `firestore.rules` with field validation. Consider also requiring `request.auth != null` or adding Firebase App Check.
+- **What happened:** `validApplication()` function was added to `firestore.rules` with `hasOnly`, `hasAll`, type checks, length limits, and enum validation — matching the `validLead()` pattern. Cloudflare Turnstile CAPTCHA also added to the apply form (wave-2 work).
 
 ### [MEDIUM] No runtime input validation on POST API routes
 
 - **Date:** 2026-04-09
 - **File:** `src/pages/api/notify-application.ts:105`
-- **Status:** Open
+- **Status:** Fixed (2026-07-03)
 - **Severity:** Medium
-- **What's happening:** `notify-application.ts` uses an unsafe `as ApplicationNotification` cast with no runtime validation. Only checks that `name` and `instagram` exist — doesn't validate types, lengths, or format of the other 12 fields. Similar pattern in other POST endpoints.
-- **What should happen:** All POST endpoints should validate request bodies at runtime using schema validation (e.g., Zod).
-- **Fix:** Add Zod schemas for `ApplicationNotification` and other request types. Validate before processing.
+- **What happened:** Replaced unsafe `as ApplicationNotification` cast with a full Zod schema (`ApplicationSchema`) validating all 15+ fields including types, lengths, email format, URL format, and enum values. Returns 400 on schema failure.
 
 ### [LOW] Leads collection allows unauthenticated phone updates
 
@@ -46,11 +40,9 @@
 
 - **Date:** 2026-04-08
 - **File:** `src/pages/index.astro`, `src/pages/faq.astro`
-- **Status:** Open
+- **Status:** Fixed (prior session)
 - **Severity:** High
-- **What's happening:** The homepage still imports `HOME_FAQS`, builds `faqJsonLd`, and emits a `FAQPage` JSON-LD block. The dedicated FAQ page also emits its own `FAQPage` schema with overlapping questions and different answer wording.
-- **What should happen:** Only `/faq` should own the `FAQPage` schema. The homepage can keep the visible accordion, but should not emit competing FAQ structured data.
-- **Fix:** Remove the homepage FAQ JSON-LD block from `src/pages/index.astro`.
+- **What happened:** The `faqJsonLd` block was removed from `src/pages/index.astro`. Only `/faq` emits `FAQPage` structured data.
 
 ### [MEDIUM] Home hero photo background from audit not implemented
 
@@ -116,11 +108,9 @@
 
 - **Date:** 2026-04-08
 - **File:** `src/components/home/HomeSignup.astro`
-- **Status:** Open
+- **Status:** Fixed (2026-07-03)
 - **Severity:** Medium
-- **What's happening:** The section always renders the email signup prompt, even when `localStorage` already contains `gmd-popup-subscribed`. Users who subscribed through the popup still see another email ask at the bottom of the home page.
-- **What should happen:** Previously subscribed users should see an alternate CTA, not another email form.
-- **Fix:** Detect the subscription flag on load and swap the section content to a follow/apply state.
+- **What happened:** `captureLead()` in `src/lib/leadSubmission.ts` now sets `gmd-popup-subscribed` on every successful email capture. HomeSignup already read this key — the gap was that LeadCaptureModal, NotifyModal, HomeShows and city pages called `captureLead` without setting the key. Fixing it in one place (the shared function) covers all call sites.
 
 ### [LOW] Popup CTA copy still uses weaker pre-audit wording
 
@@ -176,11 +166,9 @@
 
 - **Date:** 2026-04-08
 - **File:** `src/pages/contestant-prep.astro`
-- **Status:** Open
+- **Status:** Fixed (prior session)
 - **Severity:** Low
-- **What's happening:** `description=""` is passed to BaseLayout, resulting in an empty meta description tag. While the page has `noindex={true}`, an empty description is still sloppy.
-- **What should happen:** Even noindex pages should have a meaningful description for anyone who lands on them.
-- **Fix:** Add a description like "Preparation guide for confirmed Garam Masala Dating contestants."
+- **What happened:** Description set to "Preparation guide for confirmed Garam Masala Dating contestants." in `contestant-prep.astro`.
 
 ### [HIGH] Firebase Auth blocked by CSP in production — apply form silently fails
 
@@ -234,11 +222,9 @@
 
 - **Date:** 2026-04-04
 - **File:** `src/components/ApplyPage.tsx`
-- **Status:** Open
+- **Status:** Fixed (2026-07-03)
 - **Severity:** Medium
-- **What's happening:** The form submits directly to Firestore from the browser with no bot protection. A script could submit thousands of fake applications.
-- **What should happen:** Bot submissions should be blocked or rate-limited.
-- **Fix:** Add Firebase App Check with reCAPTCHA v3 and enforce in Firestore security rules.
+- **What happened:** Cloudflare Turnstile invisible CAPTCHA added to the apply form. Server-side verification at `/api/verify-turnstile` blocks submission if token is missing or invalid. Opt-in via `PUBLIC_TURNSTILE_SITE_KEY` env var so localhost still works without keys.
 
 ### [LOW] No pagination in AdminDashboard
 
@@ -338,11 +324,9 @@
 - **Date:** 2026-04-08
 - **File:** `src/components/apply/useApplyForm.ts:153`
 - **Source:** CodeRabbit PR #11
-- **Status:** Open
+- **Status:** Fixed (2026-07-03)
 - **Severity:** Low
-- **What's happening:** Client-side check uses `> 5 * 1024 * 1024` (allows exactly 5MB), but Firebase storage.rules uses `< 5 * 1024 * 1024` (rejects exactly 5MB). A file that is exactly 5,242,880 bytes passes client validation but fails on `uploadBytes()` with a generic error toast.
-- **What should happen:** Client check should use `>=` to match server rule.
-- **Fix:** Change `>` to `>=` in the size check on line 132.
+- **What happened:** Changed `f.size > MAX_PHOTO_BYTES` to `>=` in the oversized filter and `<= MAX_PHOTO_BYTES` to `<` in the valid filter — now matches storage.rules strict less-than.
 - **Link:** https://github.com/hellosurbhi/garam-website/pull/11#discussion_r3046995946
 
 ### [MEDIUM] Instagram "@" alone passes validation, creates invalid Firestore doc
@@ -350,11 +334,9 @@
 - **Date:** 2026-04-08
 - **File:** `src/components/apply/useApplyForm.ts:190`
 - **Source:** CodeRabbit PR #11
-- **Status:** Open
+- **Status:** Fixed (2026-07-03)
 - **Severity:** Medium
-- **What's happening:** Instagram validation only checks the raw field is non-empty. Line 222 strips a leading `@` before persisting. So `"@"` passes validation, normalizes to `""`, creates a Firestore document without a handle, and `/api/notify-application` returns 400 because `instagram` is required.
-- **What should happen:** Validate Instagram after normalizing (stripping `@`), not before.
-- **Fix:** Normalize first, then validate that the result is non-empty.
+- **What happened:** Both the `isFormValid()` guard and the submit-time validation now strip the leading `@` before checking emptiness: `!form.instagram.trim().replace(/^@/, "")`.
 - **Link:** https://github.com/hellosurbhi/garam-website/pull/11#discussion_r3046995985
 
 ## Fixed
@@ -481,16 +463,16 @@
 
 - **File:** `src/components/apply/useApplyForm.ts:320`
 - **Source:** CodeRabbit PR #12
-- **Status:** Open
-- **Comment:** `identifyLead(igHandle, {...})` passes the Instagram handle as the distinct ID in PostHog, which also sets it as the `email` field internally. This corrupts downstream identity data in PostHog. Either remove the `identifyLead` call from the apply flow or create a separate helper that sets `distinct_id` without populating `email`.
+- **Status:** Fixed (2026-07-03)
+- **Comment:** Changed `identifier = form.email.trim() || igHandle` to `identifier = form.email.trim()`. If email is absent, the identifyLead call is skipped. Instagram handle is still passed as a property but never as the distinct_id or email field.
 - **Link:** https://github.com/hellosurbhi/garam-website/pull/12#discussion_r3054383967
 
 ## Phone update API: non-2xx responses show false success
 
 - **File:** `src/components/LeadCaptureModal.astro:344`
 - **Source:** CodeRabbit PR #12
-- **Status:** Open
-- **Comment:** The phone submit handler calls `fetch("/api/update-lead")` but never checks `res.ok`. A 400 or 500 response falls through to `trackLeadEvent` and `showStep("success")`, so the modal confirms a phone save that never happened.
+- **Status:** Fixed (prior session)
+- **Comment:** LeadCaptureModal was refactored to call `updateLeadPhone()` from `leadSubmission.ts` instead of raw `fetch`. `updateLeadPhone` already checks `res.ok` and throws on failure, which the surrounding try/catch surfaces as an error message.
 - **Link:** https://github.com/hellosurbhi/garam-website/pull/12#discussion_r3054383980
 
 ## Unauthenticated Firestore writes on capture-lead
@@ -505,16 +487,16 @@
 
 - **File:** `src/pages/api/capture-lead.ts:85`
 - **Source:** CodeRabbit PR #12
-- **Status:** Open
-- **Comment:** The outbound POST to Firestore REST API has no timeout, which can stall request handling during upstream latency incidents. A bounded timeout with controlled 5xx response is needed.
+- **Status:** Fixed (2026-07-03)
+- **Comment:** Added `signal: AbortSignal.timeout(8000)` to `createLeadDocument()` fetch call. Requests stalled beyond 8 seconds now abort and surface a 500 to the client.
 - **Link:** https://github.com/hellosurbhi/garam-website/pull/12#discussion_r3054384003
 
 ## Raw Firestore error text returned to clients
 
 - **File:** `src/pages/api/capture-lead.ts:92`
 - **Source:** CodeRabbit PR #12
-- **Status:** Open
-- **Comment:** `detail: errText` in error responses can leak internal Firestore/rules context. Should return a generic client error and log detailed text server-side only.
+- **Status:** Fixed (2026-07-03)
+- **Comment:** Removed `detail: errText` from error response. Firestore error text is now logged server-side via `console.error`. Client receives only the generic "Failed to save lead" message.
 - **Link:** https://github.com/hellosurbhi/garam-website/pull/12#discussion_r3054384008
 
 ## update-lead allows phone overwrite without ownership proof
@@ -553,16 +535,16 @@
 
 - **File:** `src/components/NotifyModal.astro:137`
 - **Source:** CodeRabbit PR #12
-- **Status:** Open
-- **Comment:** `dataset.source ?? "notify-modal"` keeps empty strings, so `<NotifyModal source="" />` emits sources like `-manhattan` (leading hyphen). Source should be trimmed/fallback-guarded before composing attribution strings.
+- **Status:** Fixed (2026-07-03)
+- **Comment:** Changed `dataset.source ?? "notify-modal"` to `dataset.source?.trim() || "notify-modal"` so empty-string props fall through to the default just like undefined.
 - **Link:** https://github.com/hellosurbhi/garam-website/pull/12#discussion_r3063506928
 
 ## Explicit city slugs in NotifyModal not sanitized
 
 - **File:** `src/components/NotifyModal.astro:170`
 - **Source:** CodeRabbit PR #12
-- **Status:** Open
-- **Comment:** Only the fallback path runs through `toCitySlug()`. If a trigger carries `data-notify-city-slug="New York "` (trailing space or non-canonical value), the unsanitized value is stored and tracked.
+- **Status:** Fixed (2026-07-03)
+- **Comment:** Both paths now run through `toCitySlug()`: `const rawSlug = el.dataset.notifyCitySlug?.trim(); const citySlug = rawSlug ? toCitySlug(rawSlug) : toCitySlug(city)`.
 - **Link:** https://github.com/hellosurbhi/garam-website/pull/12#discussion_r3063506949
 
 ---
@@ -573,24 +555,24 @@
 
 - **File:** `src/index.css:222-241`
 - **Source:** CodeRabbit batch 2
-- **Status:** Open
-- **Comment:** `@keyframes popupOut` and `@keyframes modalOut` are identical. `index.astro` uses `popupOut`, unclear where `modalOut` is consumed. Should be consolidated into a single `@keyframes dialog-out` and all references updated.
+- **Status:** Fixed (2026-07-03)
+- **Comment:** Consolidated both identical keyframes into a single `@keyframes dialog-out`. Updated references in `index.astro` (popup close) and `HomeShows.astro` (city modal close).
 - **Link:** n/a
 
 ## HomeFAQ.astro no transitionend timeout fallback
 
 - **File:** `src/components/home/HomeFAQ.astro:55-88`
 - **Source:** CodeRabbit batch 2
-- **Status:** Open
-- **Comment:** `animateOpen` and `animateClose` attach `{ once: true }` transitionend listeners but have no setTimeout fallback. If the transition never fires (e.g., reduced-motion OS override, display:none ancestor), the cleanup that resets `answer.style.height` never runs and the element is stuck with an inline height.
+- **Status:** Fixed (2026-07-03)
+- **Comment:** `closeAnimated` now uses a `done` flag + `setTimeout(cleanup, 400)` fallback alongside the `transitionend` listener. If the transition never fires (hidden ancestor, display:none, etc.), the `is-closing` class and `item.open` are cleaned up after 400ms regardless.
 - **Link:** n/a
 
 ## HomeShows.astro empty city string passed to analytics
 
 - **File:** `src/components/home/HomeShows.astro:111-124`
 - **Source:** CodeRabbit batch 2
-- **Status:** Open
-- **Comment:** `identifyLead` and `trackLeadEvent` receive `city` which can be an empty string (`resolvedCity?.city ?? cityInput?.value.trim()`). Analytics calls should exclude the `city` property when it is falsy to avoid corrupting PostHog identity data.
+- **Status:** Fixed (2026-07-03)
+- **Comment:** `identifyLead` and `trackLeadEvent` calls now use `const cityProp = city ? { city } : {}` and spread it conditionally, so `city` is never included when empty.
 - **Link:** n/a
 
 ---
@@ -605,11 +587,9 @@
   - `public/images/journal/journal-featured.webp`
   - `public/images/promo/links-hero.webp`
   - `public/images/promo/tickets-hero.webp`
-- **Status:** Open
+- **Status:** Fixed (prior session)
 - **Severity:** Low
-- **What's happening:** No references to these files exist anywhere in the codebase. They are dead assets bloating the public directory and the deployed bundle.
-- **What should happen:** Files should be deleted to keep the public directory clean.
-- **Fix:** Delete all four files.
+- **What happened:** All four files were deleted from the public directory.
 
 ### [LOW] Hero variant files may be orphaned
 
@@ -618,8 +598,6 @@
   - `public/images/hero/hero.avif`
   - `public/images/hero/hero-mobile.webp`
   - `public/images/hero/hero-mobile.avif`
-- **Status:** Open
+- **Status:** Fixed (2026-07-03)
 - **Severity:** Low
-- **What's happening:** CLAUDE.md states "Hero images preloaded (AVIF, conditional on viewport size)" but no `<picture>` sources or `<link rel="preload">` tags reference these files anywhere in the codebase. Only `hero.webp` is used (in `links.astro`). These were likely dropped during a past refactor without cleaning up the assets.
-- **What should happen:** Either restore the AVIF/mobile preload tags in `BaseLayout.astro` and `HomeHero.astro`, or delete the orphaned files and update the CLAUDE.md architecture note.
-- **Fix:** Check `BaseLayout.astro` and `HomeHero.astro` for any preload or `<picture>` usage. If none found, delete the three files and remove the stale CLAUDE.md note about AVIF preloading.
+- **What happened:** `hero-mobile.*` were already gone. Confirmed `hero.avif` had no references anywhere in the codebase and deleted it. Updated CLAUDE.md to remove stale AVIF preload note.

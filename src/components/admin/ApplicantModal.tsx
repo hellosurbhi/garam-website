@@ -133,7 +133,7 @@ export default function ApplicantModal({
       });
       if (!res.ok) throw new Error(`HTTP ${res.status}`);
 
-      const db = getFirebaseDb();
+      const db = await getFirebaseDb();
       const appRef = doc(db, "applications", app.id);
       await updateDoc(appRef, {
         contactedAt: serverTimestamp(),

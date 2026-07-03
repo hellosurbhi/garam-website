@@ -1,6 +1,5 @@
 import type React from "react";
 import { useState, useEffect, useMemo, type ChangeEvent } from "react";
-import { collection, addDoc, serverTimestamp } from "firebase/firestore";
 import type { StorageReference } from "firebase/storage";
 import {
   getFirebaseDb,
@@ -343,7 +342,11 @@ export function useApplyForm() {
           : {}),
       };
 
-      await addDoc(collection(getFirebaseDb(), "applications"), {
+      const [{ collection, addDoc, serverTimestamp }, db] = await Promise.all([
+        import("firebase/firestore"),
+        getFirebaseDb(),
+      ]);
+      await addDoc(collection(db, "applications"), {
         ...applicationData,
         emailNormalized: form.email.trim().toLowerCase(),
         marketingConsent: form.marketingConsent,

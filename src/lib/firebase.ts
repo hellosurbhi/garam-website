@@ -1,5 +1,5 @@
 import { initializeApp, getApps, type FirebaseOptions } from "firebase/app";
-import { getFirestore, type Firestore } from "firebase/firestore";
+import type { Firestore } from "firebase/firestore";
 import type { FirebaseStorage } from "firebase/storage";
 import type { Auth } from "firebase/auth";
 
@@ -43,10 +43,13 @@ function getApp() {
   return getApps().length ? getApps()[0] : initializeApp(getValidatedConfig());
 }
 
-/** Return the singleton Firestore instance, initialising the Firebase app on first call. */
-export function getFirebaseDb(): Firestore {
-  if (!_db) _db = getFirestore(getApp());
-  return _db;
+/** Return the singleton Firestore instance, lazily loading the SDK on first call. */
+export async function getFirebaseDb(): Promise<Firestore> {
+  if (!_db) {
+    const { getFirestore } = await import("firebase/firestore");
+    if (!_db) _db = getFirestore(getApp());
+  }
+  return _db as Firestore;
 }
 
 /** Return the singleton Firebase Storage instance, lazily loading the SDK on first call. */

@@ -5,6 +5,12 @@ import {
   doc,
   updateDoc,
   Timestamp,
+  query,
+  orderBy,
+  limit,
+  startAfter,
+  type QueryDocumentSnapshot,
+  type DocumentData,
 } from "firebase/firestore";
 import { ChevronRight, ChevronDown } from "lucide-react";
 import Select from "react-select";
@@ -122,6 +128,12 @@ export default function AdminDashboard({ onLogout }: AdminDashboardProps) {
   const [deletedOpen, setDeletedOpen] = useState(false);
   const [participatedOpen, setParticipatedOpen] = useState(false);
 
+  const PAGE_SIZE = 50;
+  const [lastDoc, setLastDoc] =
+    useState<QueryDocumentSnapshot<DocumentData> | null>(null);
+  const [hasMore, setHasMore] = useState(true);
+  const [loadingMore, setLoadingMore] = useState(false);
+
   const [genderFilter, setGenderFilter] = useState<readonly FilterOption[]>([]);
   const [orientationFilter, setOrientationFilter] = useState<
     readonly FilterOption[]
@@ -140,19 +152,44 @@ export default function AdminDashboard({ onLogout }: AdminDashboardProps) {
     setToast({ msg, ok });
   }
 
-  async function fetchApps() {
-    setLoading(true);
+  async function fetchApps(after?: QueryDocumentSnapshot<DocumentData> | null) {
+    if (after) {
+      setLoadingMore(true);
+    } else {
+      setLoading(true);
+    }
     setFetchError(false);
     try {
-      const snap = await getDocs(collection(getFirebaseDb(), "applications"));
+      const colRef = collection(getFirebaseDb(), "applications");
+      const q = after
+        ? query(
+            colRef,
+            orderBy("submittedAt", "desc"),
+            startAfter(after),
+            limit(PAGE_SIZE),
+          )
+        : query(colRef, orderBy("submittedAt", "desc"), limit(PAGE_SIZE));
+      const snap = await getDocs(q);
       const docs = snap.docs.map(
         (d) => ({ id: d.id, ...d.data() }) as Application,
       );
-      setApplications(docs);
+      setHasMore(snap.docs.length === PAGE_SIZE);
+      setLastDoc(snap.docs[snap.docs.length - 1] ?? null);
+      if (after) {
+        setApplications((prev) => [...prev, ...docs]);
+      } else {
+        setApplications(docs);
+      }
     } catch {
-      setFetchError(true);
+      if (after) {
+        setHasMore(false);
+        showToast("Failed to load more applications", false);
+      } else {
+        setFetchError(true);
+      }
     } finally {
       setLoading(false);
+      setLoadingMore(false);
     }
   }
 
@@ -368,7 +405,10 @@ export default function AdminDashboard({ onLogout }: AdminDashboardProps) {
               <p style={{ marginBottom: "12px" }}>
                 Failed to load applications.
               </p>
-              <button onClick={fetchApps} className={styles.retryButton}>
+              <button
+                onClick={() => void fetchApps()}
+                className={styles.retryButton}
+              >
                 Try again
               </button>
             </div>
@@ -510,6 +550,18 @@ export default function AdminDashboard({ onLogout }: AdminDashboardProps) {
           onRestore={handleRestore}
           onParticipated={handleParticipated}
         />
+      )}
+
+      {activeTab === "applicants" && hasMore && !loading && !fetchError && (
+        <div className={styles.loadMoreRow}>
+          <button
+            className={styles.loadMoreBtn}
+            onClick={() => void fetchApps(lastDoc)}
+            disabled={loadingMore}
+          >
+            {loadingMore ? "Loading..." : "Load more"}
+          </button>
+        </div>
       )}
 
       {toast && (

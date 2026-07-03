@@ -26,6 +26,7 @@ export interface EventEntry {
   tagline?: string; // Short status line shown on the card (e.g. "Selling fast")
   eventbriteId?: string; // Numeric Eventbrite event ID — enables modal checkout widget
   onSaleAt?: string; // ISO 8601 UTC datetime — card shows pre-sale notify state until this moment
+  timezone?: string; // IANA timezone identifier, e.g. "America/New_York" (default: "America/New_York")
 }
 
 const VENUE_TOP_SECRET: EventVenue = {
@@ -388,6 +389,8 @@ const TBA_CITIES = [
     citySlug: "houston",
   },
 ];
+
+export const TBA_CITY_SLUGS: string[] = TBA_CITIES.map((c) => c.citySlug);
 
 export const comingSoonEvents: EventEntry[] = TBA_CITIES.map((city) => ({
   date: "TBA",

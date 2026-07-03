@@ -8,15 +8,19 @@ export interface LegalSection {
 }
 
 export interface LegalDocument {
-  id: "privacy" | "terms";
+  id: "privacy" | "terms" | "consent";
   title: string;
   lastUpdated: string;
   metaTitle: string;
   metaDescription: string;
+  intro?: LegalBlock[];
   sections: LegalSection[];
 }
 
-export const LEGAL_DOCS: Record<"privacy" | "terms", LegalDocument> = {
+export const LEGAL_DOCS: Record<
+  "privacy" | "terms" | "consent",
+  LegalDocument
+> = {
   privacy: {
     id: "privacy",
     title: "Privacy Policy",
@@ -112,7 +116,7 @@ export const LEGAL_DOCS: Record<"privacy" | "terms", LegalDocument> = {
   terms: {
     id: "terms",
     title: "Terms of Service",
-    lastUpdated: "April 14, 2026",
+    lastUpdated: "May 16, 2026",
     metaTitle: "Terms of Service",
     metaDescription:
       "Terms of service for Garam Masala Dating. Rules and guidelines for using our website and attending our shows.",
@@ -189,7 +193,7 @@ export const LEGAL_DOCS: Record<"privacy" | "terms", LegalDocument> = {
         blocks: [
           {
             type: "p",
-            text: "By attending a Garam Masala Dating show, you acknowledge that the event may be photographed or recorded. These photos and videos may be used on our website, social media, and marketing materials. If you'd prefer not to be featured as an audience member, let us know at the event or email us afterward.",
+            text: 'Audience members may appear in event photos, videos, livestreams, or other recordings. The filming and recording consent for all attendees is available at <a href="/consent">garammasaladating.com/consent</a>.',
           },
           {
             type: "p",
@@ -277,6 +281,71 @@ export const LEGAL_DOCS: Record<"privacy" | "terms", LegalDocument> = {
           {
             type: "p",
             text: 'Questions? Email <a href="mailto:contact@garammasaladating.com">contact@garammasaladating.com</a>.',
+          },
+        ],
+      },
+    ],
+  },
+  consent: {
+    id: "consent",
+    title: "Filming and Recording Consent",
+    lastUpdated: "May 2026",
+    metaTitle: "Filming and Recording Consent",
+    metaDescription:
+      "Filming and recording consent terms for attending Garam Masala Dating live events.",
+    intro: [
+      {
+        type: "p",
+        text: "All Garam Masala Dating events are filmed and recorded. By purchasing a ticket and entering the venue, you agree to the following terms regarding filming, recording, and the use of your likeness.",
+      },
+    ],
+    sections: [
+      {
+        heading: "Audience members",
+        blocks: [
+          {
+            type: "p",
+            text: "By entering a Garam Masala Dating event, you are entering an area where photography, audio recording, and video recording will occur throughout the show. Your entry and presence at the event constitute your consent to be photographed, filmed, and otherwise recorded, and to the use, publication, distribution, and reproduction of any recorded media of your appearance, voice, and name by Garam Masala Dating and its production team, in perpetuity, across all media and platforms now known or later developed, for any purpose, including but not limited to social media, advertising, promotion, news coverage, and derivative content, without compensation, approval, or further notice.",
+          },
+        ],
+      },
+      {
+        heading: "Audience members who participate on stage",
+        blocks: [
+          {
+            type: "p",
+            text: "Garam Masala Dating is a live, interactive show. Audience members may be invited to participate on stage during the program. If you voluntarily participate on stage or in any interactive segment, your participation constitutes your consent to be individually identified, highlighted, or featured in edited clips, reels, promotional materials, and any other content created by Garam Masala Dating. You understand that on-stage participation may result in content that receives significant public distribution and that you will have no right to review, approve, or request removal of any such content.",
+          },
+        ],
+      },
+      {
+        heading: "Contestants",
+        blocks: [
+          {
+            type: "p",
+            text: "If you are selected to participate as a contestant on Garam Masala Dating, your participation is governed by a separate Contestant Waiver and Participation Agreement, which you will sign before appearing on the show. The contestant agreement includes a broader grant of rights covering your name, likeness, voice, biographical information, and performance, as well as confidentiality, non-disparagement, and indemnification terms. The terms on this page apply in addition to the contestant agreement, not in place of it.",
+          },
+        ],
+      },
+      {
+        heading: "Release of claims",
+        blocks: [
+          {
+            type: "p",
+            text: "By attending or participating in a Garam Masala Dating event, you waive and release any claims related to the use of recorded media of you at the event, including any right to inspect or approve any photo, video, or audio recording, and any claims for invasion of privacy, violation of the right of publicity, defamation, emotional distress, or copyright infringement, or for any fees for the use of such recorded media.",
+          },
+        ],
+      },
+      {
+        heading: "General",
+        blocks: [
+          {
+            type: "p",
+            text: 'All photography, filming, and recording at Garam Masala Dating events are conducted in reliance on this consent. If you do not agree to these terms, do not enter the event. This policy is subject to the Terms of Service at <a href="/terms">garammasaladating.com/terms</a>. These terms are governed by the laws of the State of New York.',
+          },
+          {
+            type: "p",
+            text: 'Questions? Contact <a href="mailto:contact@garammasaladating.com">contact@garammasaladating.com</a>.',
           },
         ],
       },

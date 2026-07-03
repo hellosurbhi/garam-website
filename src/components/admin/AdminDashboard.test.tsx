@@ -48,6 +48,11 @@ vi.mock("firebase/firestore", () => ({
   getDocs: (...args: unknown[]) => mockGetDocs(...args),
   doc: vi.fn(),
   updateDoc: (...args: unknown[]) => mockUpdateDoc(...args),
+  // pagination helpers used by AdminDashboard — must be present so query() doesn't throw
+  query: vi.fn((...args: unknown[]) => ({ _args: args })),
+  orderBy: vi.fn(),
+  limit: vi.fn(),
+  startAfter: vi.fn(),
   Timestamp: {
     now: vi.fn(() => ({ seconds: 1742054400, toDate: () => new Date() })),
   },

@@ -1,43 +1,51 @@
 import { SOCIAL_URLS } from "@/data/socials";
-import { activeCities } from "@/data/cities/active";
 import { cities } from "@/data/cities";
 import type { CityData } from "@/data/cities";
-import { citySlugsWithUpcomingEvents } from "@/utils/cityEvents";
+import { allEvents, TBA_CITY_SLUGS } from "@/data/events";
+import { isEventPast } from "@/utils/eventDate";
 
 export interface FooterLink {
   label: string;
   href: string;
 }
 
-const FEATURED_FOOTER_CITY_SLUGS = [
-  "manhattan",
-  "jersey-city",
-  "los-angeles",
-  "san-francisco",
-  "san-diego",
-];
+const MAX_FOOTER_CITY_LINKS = 6;
 
 function cityLabel(c: CityData): string {
   return c.slug === "manhattan" ? "New York City" : c.displayName;
 }
 
 function buildFooterShowLinks(): FooterLink[] {
-  const announcedSlugs = citySlugsWithUpcomingEvents();
-  const announcedSet = new Set(announcedSlugs);
+  // Mirror the tickets page: confirmed upcoming cities first, then TBA cities.
+  // allEvents already dedups TBA entries when a confirmed show exists for that city.
+  const seen = new Set<string>();
+  const slugs: string[] = [];
 
-  const announcedLinks: FooterLink[] = announcedSlugs
+  for (const e of allEvents) {
+    if (!e.citySlug || seen.has(e.citySlug)) continue;
+    const isConfirmedUpcoming =
+      !e.hidden && e.date !== "TBA" && !isEventPast(e.date) && !!e.url;
+    const isTba = !e.hidden && e.date === "TBA";
+    if (isConfirmedUpcoming || isTba) {
+      seen.add(e.citySlug);
+      slugs.push(e.citySlug);
+    }
+  }
+
+  const links: FooterLink[] = slugs
+    .slice(0, MAX_FOOTER_CITY_LINKS)
     .map((slug) => cities[slug])
     .filter((c): c is CityData => c !== undefined)
     .map((c) => ({ label: cityLabel(c), href: `/cities/${c.slug}` }));
 
-  const links: FooterLink[] = [...announcedLinks];
-
-  // Keep the core market links visible even as announced show inventory changes.
-  for (const slug of FEATURED_FOOTER_CITY_SLUGS) {
-    if (announcedSet.has(slug)) continue;
-    const c = activeCities[slug];
+  // Fill remaining slots from the same TBA city list used on the tickets page.
+  for (const slug of TBA_CITY_SLUGS) {
+    if (links.length >= MAX_FOOTER_CITY_LINKS) break;
+    if (seen.has(slug)) continue;
+    const c = cities[slug];
     if (!c) continue;
     links.push({ label: cityLabel(c), href: `/cities/${c.slug}` });
+    seen.add(slug);
   }
 
   links.push({ label: "All Cities", href: "/cities" });

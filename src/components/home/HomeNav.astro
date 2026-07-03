@@ -142,6 +142,17 @@ const pathname = Astro.url.pathname;
   }
   .home-nav.scrolled .nav-pill.primary {
     color: white;
+    box-shadow: 0 2px 8px rgba(220, 38, 38, 0.3);
+    transform: scale(1.03);
+    transition:
+      box-shadow 200ms ease-out,
+      transform 200ms ease-out;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .home-nav.scrolled .nav-pill.primary {
+      box-shadow: none;
+      transform: none;
+    }
   }
   .nav-pill.primary:hover {
     background: var(--brand-red-dark);

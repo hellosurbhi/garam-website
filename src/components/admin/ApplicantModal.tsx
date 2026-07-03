@@ -197,6 +197,7 @@ export default function ApplicantModal({
             src={currentPhoto}
             alt={`${app.name} photo ${selectedPhotoIndex + 1}`}
             className={styles.image}
+            loading="lazy"
           />
         ) : (
           <div className={styles.noPhoto}>🌶️</div>

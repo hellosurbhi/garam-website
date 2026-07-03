@@ -503,8 +503,8 @@
 
 - **File:** `src/utils/eventSchema.ts`
 - **Source:** CodeRabbit PR #12
-- **Status:** Open
-- **Comment:** Minute clamping logic can generate a door time later than the show start (e.g., `20:00` becomes `20:30`), resulting in an incorrect `doorTime` in JSON-LD event schema which breaks event-time correctness.
+- **Status:** Resolved (no bug present)
+- **Comment:** `subtractMinutes(start, 30)` computes `h * 60 + m - 30` with `Math.floor` — always produces a time 30 minutes before start. No clamping logic exists that could produce a later time. The referenced behavior does not reproduce in the current implementation.
 - **Link:** https://github.com/hellosurbhi/garam-website/pull/12#discussion_r3054384028
 
 ## Duplicate brand name in sponsorship page title

@@ -286,7 +286,7 @@ Surfaced while fixing the `tickets-notify` source-per-city attribution. Both ite
 ### Dev-mode fallback for `/api/geo`
 
 **Priority:** Low
-**Status:** Needs implementation
+**Status:** Fixed (already present in src/pages/api/geo.ts)
 
 `src/pages/api/geo.ts` reads Vercel's `x-vercel-ip-*` headers, which do not exist on the local Astro dev server. As a result every localhost test of any lead form writes a Firestore doc with zero `geo*` fields, which makes it impossible to verify the geo plumbing end-to-end in dev and causes repeated confusion ("why is my lead doc missing metadata?"). This was the exact cause of the 2026-04-10 tickets-notify question.
 

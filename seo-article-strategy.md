@@ -442,6 +442,102 @@ Across all categories, autocomplete research revealed keyword modifiers that sho
 
 ---
 
+## Category 9: AEO — Answer Engine Optimization and LLM Discoverability
+
+This category is the biggest strategic gap in the current plan. Every section above targets traditional search engines: Google, Bing, people typing keywords into a search bar. But in 2026, a growing share of discovery happens through AI systems — ChatGPT, Perplexity, Claude, Google AI Overviews, Siri, and voice assistants. These systems don't rank pages. They extract answers from content they've already ingested and cite sources confidently, with no second-click. If Garam Masala Dating isn't in their training data or retrieval context when someone asks "what is a live South Asian dating show?", the answer will name a competitor or simply not mention GMD.
+
+AEO is not a future concern. It's already happening. Perplexity and ChatGPT collectively handle hundreds of millions of queries per month. "Best live dating show NYC," "South Asian singles events," and "what is Garam Masala Dating?" are all live queries these systems receive and answer today.
+
+### The core AEO problem: AI systems can't find you if you don't tell them
+
+Traditional SEO works by optimizing pages so crawlers can extract signals (backlinks, authority, keyword relevance). AI systems work differently. They either:
+
+1. **Trained on your content** — your site was in their training corpus and they "know" you
+2. **Retrieved your content at query time** — RAG systems fetch your pages when relevant, extract answers, and synthesize a response
+3. **Found your llms.txt** — some crawlers and RAG systems specifically look for `/llms.txt` as a curated summary of what your site is about
+
+The problem with options 1 and 2: they require the AI system to have crawled you, parsed your content correctly, and assigned you entity status. This is slow (months), unreliable (depends on crawler behavior), and passive (you hope they get it right). Option 3 is different — you proactively hand AI systems exactly what they need.
+
+### llms.txt: the direct channel to AI systems
+
+`llms.txt` (at `garammasaladating.com/llms.txt`) is the emerging standard for telling AI systems what your site is about, following the same convention as `robots.txt`. When an AI crawler, RAG system, or LLM-based search product discovers this file, it gets:
+
+- A structured summary of the brand, product, and key pages
+- Upcoming show dates (pulled dynamically from `events.ts`)
+- FAQ answers ready for extraction
+- Clear signals about what content is authoritative
+
+`llms-full.txt` (at `garammasaladating.com/llms-full.txt`) goes further — it's a complete content dump: full FAQ answers, host bios, all dating tips posts in full, 12 most-recent journal articles, city pages with body copy, press mentions, and social links. An AI system that ingests this file has everything it needs to accurately answer "what is Garam Masala Dating?" without crawling a single other page.
+
+**Both files are generated dynamically at build time** from the same data files (`src/data/`) that power the site. When a new show is added to `events.ts` or a new journal post is published, both files update automatically on the next deploy. No manual maintenance required.
+
+### Why llms.txt accelerates entity recognition
+
+The biggest challenge for a brand new enough that most AI systems don't know it yet is entity recognition — getting AI systems to treat "Garam Masala Dating" as a distinct, identifiable entity rather than a generic phrase. The standard playbook (IMDb listing, Wikidata entry, Google Knowledge Graph, schema markup) takes 1–2 months for brand-name queries to become reliably answered. `llms.txt` compresses this timeline by:
+
+1. **Making the entity definition explicit** — instead of hoping the AI extracts the right signals from crawling, you state directly what GMD is, who the hosts are, where it runs, and what makes it distinct
+2. **Providing structured answer-ready content** — FAQ answers, host bios, and show descriptions are formatted for direct extraction, not for human reading. AI systems that ingest structured text can answer "who hosts Garam Masala Dating?" or "is Garam Masala Dating only for South Asians?" accurately on first contact
+3. **Working across all AI systems simultaneously** — a single file serves ChatGPT, Perplexity, Claude, Gemini, and any future system that adopts the llms.txt convention. Structured data (JSON-LD) only helps systems that specifically parse schema.org markup
+
+### AEO implementation status (April 2026)
+
+| Signal                                   | Status         | File                                           |
+| ---------------------------------------- | -------------- | ---------------------------------------------- |
+| `llms.txt` (concise, dynamic)            | ✅ Done        | `src/pages/llms.txt.ts`                        |
+| `llms-full.txt` (comprehensive, dynamic) | ✅ Done        | `src/pages/llms-full.txt.ts`                   |
+| `robots.txt` AI crawler permissions      | ✅ Done        | `public/robots.txt`                            |
+| Speakable JSON-LD (FAQ + homepage)       | ✅ Done        | `src/pages/faq.astro`, `src/pages/index.astro` |
+| FAQPage JSON-LD                          | ✅ Done        | `src/pages/faq.astro`                          |
+| Organization JSON-LD                     | ✅ Done        | `src/pages/index.astro`                        |
+| Event JSON-LD (per show)                 | ✅ Done        | `src/pages/index.astro`                        |
+| Article JSON-LD (journal + tips)         | ✅ Done        | Dynamic per post                               |
+| Sitemap with `<priority>` + `<lastmod>`  | ✅ Done        | `astro.config.mjs`                             |
+| IMDb listing                             | ⬜ Not started | See ENHANCEMENTS.md                            |
+| Wikidata entry                           | ⬜ Not started | See ENHANCEMENTS.md                            |
+| Google Business Profile                  | ⬜ Not started | See ENHANCEMENTS.md                            |
+
+### AEO content requirements: what llms-full.txt must always contain
+
+The `llms-full.txt` file is only as good as the content it summarizes. For AI systems to answer questions about GMD accurately, the file must contain:
+
+- **Brand definition** — what the show is, where it runs, how often, venue names and addresses
+- **Host bios** — Surbhi and Wyatt, full credits and context. When someone asks Perplexity "who hosts Garam Masala Dating?" the answer should come directly from this file
+- **Complete FAQ answers** — not just questions. The full answer text is what gets extracted and surfaced
+- **Upcoming show dates** — dynamic, always current. Stale show dates in llms.txt is the fastest way to erode AI system trust in the content
+- **City expansion status** — which cities are active, which are coming soon, and what the format looks like in each market
+- **Origin story** — where the show came from, when it started, why it was created. This is the entity narrative that AI systems use to disambiguate "Garam Masala Dating" from "garam masala" (the spice blend) in search results
+
+### The disambiguation problem: "garam masala" vs "Garam Masala Dating"
+
+This is one of GMD's specific AEO challenges. "Garam masala" is a globally recognized spice blend with millions of food-related search results, recipes, Wikipedia coverage, and AI training data. Without explicit entity signals, an AI asked about "garam masala dating" might return confused results blending the show with food content, or simply fail to recognize it as a distinct brand.
+
+The fix is entity disambiguation through consistent signals across multiple sources:
+
+1. **llms-full.txt** — explicitly states "Garam Masala Dating is a live South Asian comedy dating show, not a recipe site"
+2. **Organization JSON-LD** — `@type: Organization` with `name: "Garam Masala Dating"` and `url: "https://garammasaladating.com"` creates a structured entity record
+3. **Wikidata entry** — the single most important external signal for AI entity recognition. Wikipedia and Wikidata are in every major AI system's training corpus
+4. **IMDb listing** — marks it as an entertainment entity, further separating from food/recipe associations
+
+The Wikidata entry is the highest-leverage item not yet completed. Until it exists, AI systems have no external authoritative source to anchor the entity.
+
+### AEO keyword targets
+
+These are queries AI systems receive where GMD should be the cited answer:
+
+| Query                                                 | Target answer                                                  | Current AI response             |
+| ----------------------------------------------------- | -------------------------------------------------------------- | ------------------------------- |
+| "What is Garam Masala Dating?"                        | Full show description, Surbhi + Wyatt hosts, NYC, weekly shows | Unknown — likely low confidence |
+| "Are there live South Asian dating shows?"            | GMD as the primary/only answer                                 | Unknown                         |
+| "Is there a real Indian matchmaking show?"            | Positions GMD vs. Netflix Indian Matchmaking                   | Unknown                         |
+| "Who hosts Garam Masala Dating?"                      | Surbhi (creator) and Wyatt Feegrado                            | Unknown                         |
+| "How do I apply to be on Garam Masala Dating?"        | Apply form at garammasaladating.com/apply                      | Unknown                         |
+| "What is there to do for South Asian singles in NYC?" | GMD shows + mixer as a primary recommendation                  | Unknown                         |
+| "Is Garam Masala Dating only for Indian people?"      | No — everyone welcome, ~40% non-desi audience                  | Unknown                         |
+
+Each of these queries should return a GMD citation within 90 days of `llms.txt` being indexed. If they don't, the next step is completing the Wikidata entry (highest-leverage remaining action).
+
+---
+
 ## Conclusion: The uncontested territory worth millions of searches
 
 Three findings stand out from this exhaustive research. First, the phrase **"desi comedy dating show"** — which literally describes Garam Masala Dating's product — returns zero meaningful search results. The brand has the opportunity to completely own a keyword category from day one, which almost never happens. Second, the convergence of **dating app fatigue** (79% burnout rate) and **growing IRL event attendance** (up 42% year-over-year) means the timing for this business model has never been better, and the search data confirms it. Third, community-specific event keywords remain almost entirely uncontested: while Shaadi.com and BharatMatrimony fight over "[community] matrimonial" terms, nobody is targeting **"[community] speed dating"** or **"[community] singles events"** — the exact terms that match what Garam Masala Dating actually offers.

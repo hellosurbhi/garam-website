@@ -25,7 +25,7 @@ function buildFooterShowLinks(): FooterLink[] {
     if (!e.citySlug || seen.has(e.citySlug)) continue;
     const isConfirmedUpcoming =
       !e.hidden && e.date !== "TBA" && !isEventPast(e.date) && !!e.url;
-    const isTba = e.date === "TBA";
+    const isTba = !e.hidden && e.date === "TBA";
     if (isConfirmedUpcoming || isTba) {
       seen.add(e.citySlug);
       slugs.push(e.citySlug);

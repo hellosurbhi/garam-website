@@ -30,7 +30,10 @@ function normalizeOptionalNumber(min: number, max: number) {
 }
 
 const emailSchema = z.preprocess(trimString, z.email().max(320));
-const httpsUrlSchema = z.preprocess(trimString, z.url().max(2048));
+const httpsUrlSchema = z.preprocess(
+  trimString,
+  z.url({ protocol: /^https$/ }).max(2048),
+);
 
 export const ApplicationNotificationSchema = z.object({
   name: normalizeRequiredString(1, 100),

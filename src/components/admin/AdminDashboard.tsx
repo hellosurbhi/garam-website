@@ -181,7 +181,12 @@ export default function AdminDashboard({ onLogout }: AdminDashboardProps) {
         setApplications(docs);
       }
     } catch {
-      setFetchError(true);
+      if (after) {
+        setHasMore(false);
+        showToast("Failed to load more applications", false);
+      } else {
+        setFetchError(true);
+      }
     } finally {
       setLoading(false);
       setLoadingMore(false);
@@ -547,7 +552,7 @@ export default function AdminDashboard({ onLogout }: AdminDashboardProps) {
         />
       )}
 
-      {hasMore && !loading && (
+      {activeTab === "applicants" && hasMore && !loading && !fetchError && (
         <div className={styles.loadMoreRow}>
           <button
             className={styles.loadMoreBtn}

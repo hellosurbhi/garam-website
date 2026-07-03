@@ -2,10 +2,14 @@ import { describe, it, expect, beforeEach, afterEach, vi } from "vitest";
 
 const { POST } = await import("@/pages/api/capture-lead");
 
-function makeRequest(body: unknown, contentType = "application/json"): Request {
+function makeRequest(
+  body: unknown,
+  contentType = "application/json",
+  extraHeaders: Record<string, string> = {},
+): Request {
   return new Request("https://garammasaladating.com/api/capture-lead", {
     method: "POST",
-    headers: { "Content-Type": contentType },
+    headers: { "Content-Type": contentType, ...extraHeaders },
     body: JSON.stringify(body),
   });
 }
@@ -44,18 +48,23 @@ describe("capture-lead handler", () => {
 
     const res = await POST(
       makeContext(
-        makeRequest({
-          email: " Person@Example.com ",
-          city: " Manhattan ",
-          source: "x".repeat(60),
-          sourcePage: "/cities/manhattan",
-          landingPage: "/",
-          fbclid: "fb-click-id",
-          gclid: "g-click-id",
-          sourceCitySlug: "manhattan",
-          geoLatitude: "40.7128",
-          geoLongitude: "-74.0060",
-        }),
+        makeRequest(
+          {
+            email: " Person@Example.com ",
+            city: " Manhattan ",
+            source: "x".repeat(60),
+            sourcePage: "/cities/manhattan",
+            landingPage: "/",
+            fbclid: "fb-click-id",
+            gclid: "g-click-id",
+            sourceCitySlug: "manhattan",
+          },
+          "application/json",
+          {
+            "x-vercel-ip-latitude": "40.7128",
+            "x-vercel-ip-longitude": "-74.0060",
+          },
+        ),
       ),
     );
 

@@ -44,6 +44,20 @@ function addStringField(
   if (normalized) fields[key] = { stringValue: normalized };
 }
 
+function addNumericHeaderField(
+  fields: FirestoreFields,
+  key: string,
+  headerValue: string | null,
+  min: number,
+  max: number,
+) {
+  if (!headerValue) return;
+  const value = Number(headerValue);
+  if (Number.isFinite(value) && value >= min && value <= max) {
+    fields[key] = { doubleValue: value };
+  }
+}
+
 async function createLeadDocument(
   projectId: string,
   fields: FirestoreFields,
@@ -123,20 +137,20 @@ export const POST: APIRoute = async ({ request }) => {
   addStringField(fields, "geoRegion", body.geoRegion, 100);
   addStringField(fields, "geoCountry", body.geoCountry, 100);
   addStringField(fields, "geoTimezone", body.geoTimezone, 100);
-  const latHeader = request.headers.get("x-vercel-ip-latitude");
-  if (latHeader) {
-    const lat = Number(latHeader);
-    if (Number.isFinite(lat) && lat >= -90 && lat <= 90) {
-      fields.geoLatitude = { doubleValue: lat };
-    }
-  }
-  const lngHeader = request.headers.get("x-vercel-ip-longitude");
-  if (lngHeader) {
-    const lng = Number(lngHeader);
-    if (Number.isFinite(lng) && lng >= -180 && lng <= 180) {
-      fields.geoLongitude = { doubleValue: lng };
-    }
-  }
+  addNumericHeaderField(
+    fields,
+    "geoLatitude",
+    request.headers.get("x-vercel-ip-latitude"),
+    -90,
+    90,
+  );
+  addNumericHeaderField(
+    fields,
+    "geoLongitude",
+    request.headers.get("x-vercel-ip-longitude"),
+    -180,
+    180,
+  );
 
   try {
     let res = await createLeadDocument(projectId, fields);

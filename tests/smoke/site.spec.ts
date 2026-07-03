@@ -175,7 +175,11 @@ async function assertAllLinksValid(page: Page) {
       .map((a) => (a as HTMLAnchorElement).getAttribute("href") ?? "")
       .filter((href) => {
         if (!href || href === "#") return true;
-        const scheme = href.toLowerCase().trim().split(":")[0];
+        const scheme = href
+          .toLowerCase()
+          .replace(/[\t\n\r]/g, "")
+          .trim()
+          .split(":")[0];
         return ["javascript", "data", "vbscript"].includes(scheme);
       }),
   );

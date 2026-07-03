@@ -6,6 +6,7 @@ import {
   TESTIMONIALS,
   EXPERIENCE_STEPS,
 } from "@/data/copy";
+import { stripHtml } from "@/utils/stripHtml";
 import { events, getEventDisplayStatus } from "@/data/events";
 import { pressItems } from "@/data/press";
 import { SOCIAL_URLS, CREATOR_URLS } from "@/data/socials";
@@ -70,7 +71,7 @@ export const GET: APIRoute = () => {
   ).join("\n\n");
 
   const faqSection = HOME_FAQS.map(
-    (f) => `### ${f.q}\n\n${f.short.replace(/<[^>]+>/g, "")}\n\n${f.long}`,
+    (f) => `### ${f.q}\n\n${stripHtml(f.short)}\n\n${stripHtml(f.long)}`,
   ).join("\n\n---\n\n");
 
   const upcomingSection =

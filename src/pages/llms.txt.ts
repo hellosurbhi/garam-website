@@ -1,5 +1,6 @@
 import type { APIRoute } from "astro";
 import { SITE, HOME_FAQS, STATS } from "@/data/copy";
+import { stripHtml } from "@/utils/stripHtml";
 import { events, getEventDisplayStatus } from "@/data/events";
 import { SOCIAL_URLS } from "@/data/socials";
 import { journalPostsPublished } from "@/data/journal";
@@ -41,7 +42,7 @@ export const GET: APIRoute = () => {
   const stats = STATS.map((s) => `${s.num} ${s.label}`).join(" · ");
 
   const faqLines = HOME_FAQS.map(
-    (f) => `Q: ${f.q}\nA: ${f.short.replace(/<[^>]+>/g, "")}`,
+    (f) => `Q: ${f.q}\nA: ${stripHtml(f.short)}`,
   ).join("\n\n");
 
   const content = `# ${SITE.name}

@@ -31,9 +31,9 @@ describe("canonical URL generation", () => {
     const testPaths = ["/", "/tickets", "/cities/london", "/faq"];
     for (const path of testPaths) {
       const url = buildCanonical(path);
-      expect(url.startsWith("https://garammasaladating.com")).toBe(true);
-      expect(url).not.toContain("www.");
-      expect(url).not.toContain("http://");
+      const parsed = new URL(url);
+      expect(parsed.protocol).toBe("https:");
+      expect(parsed.hostname).toBe("garammasaladating.com");
     }
   });
 });

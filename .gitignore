@@ -16,7 +16,6 @@ dist-ssr
 !.env.example
 venv/
 .agents
-SITE-AUDIT.md
 docs/private/
 
 # Build / cache artifacts

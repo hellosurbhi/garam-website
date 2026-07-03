@@ -1359,3 +1359,51 @@ When we start actually texting international numbers (via Twilio/MessageBird/etc
 **Why deferred:** Ads hurt conversion on the high-value pages and require sufficient organic traffic to generate meaningful revenue.
 
 **Trigger:** Journal/tips pages reaching 10K+ monthly organic sessions.
+
+---
+
+## Recovered from bugs worktree (2026-07-03)
+
+Content from `bugs` branch (tip `c33936a`) not present in the main line. Preserved for provenance; the P1-P5 contestant workflow control tower (already in this file above) supersedes the rollout plan here, but the acceptance criteria and file list remain useful reference.
+
+## Contestant Casting Automation (2026-05-16)
+
+### Admin-selected contestants should get automated packet and confirmation emails
+
+**Priority:** High
+**Status:** Superseded by P1-P5 contestant workflow control tower (implemented July 2026)
+
+The intended workflow is: everyone applies through the public form, the operator chooses an applicant internally for a specific show, and the applicant receives a polished "you've been selected" email with their contestant packet link. After they sign the waiver, the portal unlocks the prep guide and shows their call time as 45 minutes before the listed show time.
+
+The system should also send a day-before confirmation email automatically so the team does not need to manually chase contestants. That email should include the venue, exact arrival point, call time, a clear "do not be on Indian time" arrival warning, and a team contact name/phone number for questions.
+
+**Rollout plan:**
+
+1. Extend the admin "Cast Contestant" action so the operator selects the applicant, show, role, and production contact phone number in one place.
+2. Store show metadata on the invite at creation time: show display date, start time, venue name/address, timezone, role, applicant email, and production contact.
+3. Send the selected-contestant email automatically with the private `/contestant-portal?invite=...` link.
+4. After waiver signing, show the prep portal with call time calculated as `showStartTime - 45 minutes`.
+5. Add a scheduled job that finds contestants for shows happening tomorrow and sends the confirmation email once.
+6. Track delivery state on each contestant record: `inviteSentAt`, `waiverSignedAt`, `confirmationEmailSentAt`, and last email error if delivery fails.
+7. Add admin visibility for each contestant's status so the team can see invited, waiver signed, and confirmation sent without asking the operator.
+
+**Acceptance criteria:**
+
+1. A logged-in admin can choose an applicant for a specific show and send the contestant packet without copying links manually.
+2. The contestant packet email feels like a casting selection, not a generic waiver reminder.
+3. The portal displays role-specific prep and call time equal to 45 minutes before show start when a show is attached.
+4. The day-before confirmation email sends automatically with venue, call time, arrival instructions, and the team contact phone number.
+5. The confirmation job is idempotent and cannot send duplicate reminders for the same contestant/show.
+6. Admin can see invite, waiver, and confirmation status for each contestant.
+
+**Files likely to touch:**
+
+- `src/components/admin/ContestantInviteModal.tsx`
+- `src/components/admin/ContestantsTab.tsx`
+- `src/pages/api/create-invite.ts`
+- `src/pages/api/contestant-claim.ts`
+- `src/pages/api/portal-state.ts`
+- `src/components/ContestantPortal.tsx`
+- `src/emails/InviteEmail.tsx`
+- `src/emails/ContestantConfirmationEmail.tsx` (new)
+- Scheduled email endpoint/job configuration

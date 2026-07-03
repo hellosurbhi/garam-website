@@ -24,6 +24,7 @@ export interface Application {
   country?: string;
   state?: string;
   email?: string;
+  emailNormalized?: string; // email.toLowerCase(), set on create; used for webhook correlation
   phone?: string;
   height: string;
   instagram: string;
@@ -44,6 +45,22 @@ export interface Application {
   status: ApplicantStatus;
   notes?: string;
   submittedAt: Timestamp;
+
+  // Contestant workflow fields (P2+) — all optional, not present on older docs
+  contactedAt?: Timestamp;
+  scheduledAt?: Timestamp;
+  calBookingUrl?: string;
+  calBookingId?: number;
+  interviewedAt?: Timestamp;
+  decision?: "approve" | "reject" | "unsure" | null;
+  decidedAt?: Timestamp;
+  invitedAt?: Timestamp;
+  waiverSignedAt?: Timestamp;
+  participatedAt?: Timestamp;
+  followupSentAt?: Timestamp;
+  waiverNudgeSentAt?: Timestamp;
+  rejectionSentAt?: Timestamp;
+  postShowSentAt?: Timestamp;
 }
 
 /** Hex colour for each application status, used in admin UI status badges. */

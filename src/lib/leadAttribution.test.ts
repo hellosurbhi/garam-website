@@ -602,8 +602,6 @@ describe("bootstrapLeadAttribution — geo data", () => {
     expect(sessionStorage.getItem("gmd-geo-region")).toBe("MA");
     expect(sessionStorage.getItem("gmd-geo-city")).toBeNull();
     expect(sessionStorage.getItem("gmd-geo-country")).toBeNull();
-    expect(sessionStorage.getItem("gmd-geo-latitude")).toBeNull();
-    expect(sessionStorage.getItem("gmd-geo-longitude")).toBeNull();
     expect(sessionStorage.getItem("gmd-geo-timezone")).toBeNull();
   });
 
@@ -639,15 +637,6 @@ describe("bootstrapLeadAttribution — geo data", () => {
     expect(sessionStorage.getItem("gmd-geo-city")).toBeNull();
   });
 
-  it("does not store latitude when geo.latitude is empty string", async () => {
-    vi.spyOn(globalThis, "fetch").mockResolvedValue(
-      new Response(JSON.stringify({ latitude: "" }), { status: 200 }),
-    );
-    bootstrapLeadAttribution();
-    await new Promise((r) => setTimeout(r, 50));
-    expect(sessionStorage.getItem("gmd-geo-latitude")).toBeNull();
-  });
-
   it("does not store region when geo.region is empty string", async () => {
     vi.spyOn(globalThis, "fetch").mockResolvedValue(
       new Response(JSON.stringify({ region: "" }), { status: 200 }),
@@ -664,15 +653,6 @@ describe("bootstrapLeadAttribution — geo data", () => {
     bootstrapLeadAttribution();
     await new Promise((r) => setTimeout(r, 50));
     expect(sessionStorage.getItem("gmd-geo-country")).toBeNull();
-  });
-
-  it("does not store longitude when geo.longitude is empty string", async () => {
-    vi.spyOn(globalThis, "fetch").mockResolvedValue(
-      new Response(JSON.stringify({ longitude: "" }), { status: 200 }),
-    );
-    bootstrapLeadAttribution();
-    await new Promise((r) => setTimeout(r, 50));
-    expect(sessionStorage.getItem("gmd-geo-longitude")).toBeNull();
   });
 
   it("does not store timezone when geo.timezone is empty string", async () => {

@@ -208,11 +208,10 @@ export const POST: APIRoute = async ({ request }) => {
       html: buildAdminEmailHtml(body),
     });
 
-    // Welcome email to applicant (fire-and-forget — don't block on failure)
+    // Welcome email to applicant — non-fatal if it fails, but awaited so the
+    // serverless function doesn't exit before the send attempt completes.
     const welcome = applicationReceived(body.name, body.city);
-    sendMail({ to: body.email, ...welcome }).catch(() => {
-      // non-fatal: applicant welcome email failure doesn't affect submission
-    });
+    await Promise.allSettled([sendMail({ to: body.email, ...welcome })]);
 
     return new Response(JSON.stringify({ sent: true }), {
       status: 200,

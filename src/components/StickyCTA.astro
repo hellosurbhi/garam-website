@@ -108,8 +108,9 @@ const {
 </style>
 
 <script>
-  const bar = document.getElementById("sticky-cta");
-  if (bar) {
+  const barEl = document.getElementById("sticky-cta");
+  if (barEl) {
+    const bar = barEl;
     const link = bar.querySelector<HTMLAnchorElement>("a");
     const selector = bar.dataset.trigger ?? "main > :first-child";
     const trigger = document.querySelector(selector);

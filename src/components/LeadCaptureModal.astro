@@ -309,7 +309,7 @@ const {
         }
 
         try {
-          const attribution = buildLeadAttribution({ source });
+          const attribution = await buildLeadAttribution({ source });
           const payload: LeadSubmissionPayload = {
             email: capturedEmail,
             ...attribution,
@@ -394,7 +394,7 @@ const {
           if (leadDocId) {
             await updateLeadPhone(leadDocId, cleaned);
           } else {
-            const attribution = buildLeadAttribution({ source });
+            const attribution = await buildLeadAttribution({ source });
             await captureLead({
               email: capturedEmail,
               phone: cleaned,

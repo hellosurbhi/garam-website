@@ -207,7 +207,7 @@ Surfaced while fixing the `tickets-notify` source-per-city attribution. Both ite
 ### Geo fetch race condition in `bootstrapGeoData()`
 
 **Priority:** Medium
-**Status:** Needs implementation
+**Status:** Fixed in feat/wave2-conversion
 
 `src/lib/leadAttribution.ts` (around lines 75 to 92) fires `fetch("/api/geo")` as a fire-and-forget call from `bootstrapGeoData()`, which is invoked by `bootstrapLeadAttribution()` on page load via `BaseLayout.astro` (around line 116 in the body-tail script). The response populates `sessionStorage` keys `gmd-geo-city`, `gmd-geo-region`, `gmd-geo-country`, `gmd-geo-latitude`, `gmd-geo-longitude`, `gmd-geo-timezone`, gated by `gmd-geo-fetched`. `buildLeadAttribution()` reads those keys synchronously (around lines 147 to 164) and silently omits any that are missing.
 

@@ -119,7 +119,7 @@ const leadSource = `spice-list-${pageName}`;
         submitBtn.textContent = "Sending...";
       }
       try {
-        const attribution = buildLeadAttribution({ source: leadSource });
+        const attribution = await buildLeadAttribution({ source: leadSource });
         nlDocId = await captureLead({
           email: savedEmail,
           ...attribution,
@@ -188,7 +188,9 @@ const leadSource = `spice-list-${pageName}`;
         if (nlDocId) {
           await updateLeadPhone(nlDocId, cleaned);
         } else {
-          const attribution = buildLeadAttribution({ source: leadSource });
+          const attribution = await buildLeadAttribution({
+            source: leadSource,
+          });
           await captureLead({
             email: savedEmail,
             phone: cleaned,

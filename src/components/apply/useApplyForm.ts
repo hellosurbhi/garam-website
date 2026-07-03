@@ -411,7 +411,7 @@ export function useApplyForm() {
       // All uploaded — no cleanup needed
       uploadedRefs.fill(null);
 
-      const attribution = buildLeadAttribution({ source: "apply" });
+      const attribution = await buildLeadAttribution({ source: "apply" });
       const igHandle = form.instagram.trim().replace(/^@/, "");
       const identifier = form.email.trim();
       if (identifier) {

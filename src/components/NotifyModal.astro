@@ -268,7 +268,7 @@ const { source = "notify-modal" } = Astro.props;
             document.getElementById("notify-city-slug") as HTMLInputElement
           ).value;
           const finalSource = composeSource(citySlug);
-          const attribution = buildLeadAttribution({
+          const attribution = await buildLeadAttribution({
             source: finalSource,
             sourceCitySlug: citySlug || undefined,
           });
@@ -360,7 +360,7 @@ const { source = "notify-modal" } = Astro.props;
           if (notifyDocId) {
             await updateLeadPhone(notifyDocId, cleaned);
           } else {
-            const attribution = buildLeadAttribution({
+            const attribution = await buildLeadAttribution({
               source: finalSource,
               sourceCitySlug: citySlug || undefined,
             });

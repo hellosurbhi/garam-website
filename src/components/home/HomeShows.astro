@@ -332,7 +332,9 @@ const taglineMap = buildTaglineMap(events);
           const email = (
             document.getElementById("city-email") as HTMLInputElement
           ).value;
-          const attribution = buildLeadAttribution({ source: "request-city" });
+          const attribution = await buildLeadAttribution({
+            source: "request-city",
+          });
           const payload: LeadSubmissionPayload = {
             email,
             ...attribution,

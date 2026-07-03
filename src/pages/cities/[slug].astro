@@ -716,7 +716,7 @@ function renderCityText(text: string, href: string): string {
         const errorEl = document.getElementById("waitlist-error");
         if (submitBtn) submitBtn.disabled = true;
         try {
-          const attribution = buildLeadAttribution({
+          const attribution = await buildLeadAttribution({
             source: "city-waitlist",
             sourceCitySlug: citySlug,
           });
@@ -764,7 +764,7 @@ function renderCityText(text: string, href: string): string {
       ).querySelector<HTMLButtonElement>('[type="submit"]');
       if (submitBtn) submitBtn.disabled = true;
       try {
-        const attribution = buildLeadAttribution({
+        const attribution = await buildLeadAttribution({
           source: "city-page",
           sourceCitySlug: citySlug,
         });
@@ -836,7 +836,7 @@ function renderCityText(text: string, href: string): string {
         if (cityNotifyDocId) {
           await updateLeadPhone(cityNotifyDocId, cleaned);
         } else {
-          const attribution = buildLeadAttribution({
+          const attribution = await buildLeadAttribution({
             source: "city-page",
             sourceCitySlug: citySlug,
           });

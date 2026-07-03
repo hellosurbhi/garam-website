@@ -362,7 +362,7 @@ const speakableJsonLd = JSON.stringify({
           submitBtn.textContent = "Sending...";
         }
         try {
-          const attribution = buildLeadAttribution({ source: "popup" });
+          const attribution = await buildLeadAttribution({ source: "popup" });
           popupDocId = await captureLead({
             email: savedEmail,
             ...attribution,
@@ -424,7 +424,9 @@ const speakableJsonLd = JSON.stringify({
           if (popupDocId) {
             await updateLeadPhone(popupDocId, cleaned);
           } else {
-            const attribution = buildLeadAttribution({ source: "popup" });
+            const attribution = await buildLeadAttribution({
+              source: "popup",
+            });
             await captureLead({
               email: savedEmail,
               phone: cleaned,

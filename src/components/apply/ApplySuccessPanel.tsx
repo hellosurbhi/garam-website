@@ -67,14 +67,16 @@ export function ApplySuccessPanel() {
             modal: true,
             modalTriggerElementId: tid,
             themeSettings: { brandColor, fontColor, background: bgColor },
-            onOrderComplete() {
+            async onOrderComplete() {
               orderCompleted = true;
               const raw = sessionStorage.getItem("eb_cta_source");
               const src: Record<string, string> | null = raw
                 ? JSON.parse(raw)
                 : null;
               sessionStorage.removeItem("eb_cta_source");
-              const attr = buildLeadAttribution({ source: "ticket_purchase" });
+              const attr = await buildLeadAttribution({
+                source: "ticket_purchase",
+              });
               capture("order_complete", {
                 event_id: show.eventbriteId,
                 city: cityLabel,

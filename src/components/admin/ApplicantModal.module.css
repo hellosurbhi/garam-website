@@ -389,3 +389,78 @@
   margin-top: 8px;
   text-align: center;
 }
+
+/* ── Timeline ─────────────────────────────────────── */
+
+.timelineEmpty {
+  font-size: 13px;
+  color: var(--muted);
+  margin: 4px 0 12px;
+}
+
+.timeline {
+  list-style: none;
+  margin: 0 0 12px;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.timelineEvent {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: 8px 10px;
+  background: #f9f6f2;
+  border-radius: 6px;
+}
+
+.timelineLabel {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--charcoal);
+}
+
+.timelineNote {
+  font-size: 13px;
+  color: var(--charcoal);
+  font-style: italic;
+}
+
+.timelineMeta {
+  font-size: 11px;
+  color: var(--muted);
+}
+
+.addNoteRow {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.addNoteButton {
+  align-self: flex-end;
+  padding: 7px 16px;
+  background: var(--charcoal);
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: opacity 0.15s;
+}
+
+.addNoteButton:hover:not(:disabled) {
+  opacity: 0.8;
+}
+
+.addNoteButton:active:not(:disabled) {
+  transform: scale(0.97);
+}
+
+.addNoteButton:disabled {
+  opacity: 0.45;
+  cursor: default;
+}

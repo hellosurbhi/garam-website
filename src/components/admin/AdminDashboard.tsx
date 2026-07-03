@@ -1,10 +1,12 @@
 import { useState, useEffect, useMemo } from "react";
 import {
   collection,
+  addDoc,
   getDocs,
   doc,
   updateDoc,
   Timestamp,
+  serverTimestamp,
   query,
   orderBy,
   limit,
@@ -14,7 +16,7 @@ import {
 } from "firebase/firestore";
 import { ChevronRight, ChevronDown } from "lucide-react";
 import Select from "react-select";
-import { getFirebaseDb } from "@/lib/firebase";
+import { getFirebaseDb, getFirebaseAuth } from "@/lib/firebase";
 import {
   type Application,
   type ApplicantStatus,
@@ -27,6 +29,7 @@ import Skeleton from "../ui/Skeleton";
 import ApplicantCard from "./ApplicantCard";
 import ApplicantModal from "./ApplicantModal";
 import AnalyticsDashboard from "./AnalyticsDashboard";
+import TaskInbox from "./TaskInbox";
 import styles from "./AdminDashboard.module.css";
 
 interface AdminDashboardProps {
@@ -117,9 +120,9 @@ function StatusSection({
 }
 
 export default function AdminDashboard({ onLogout }: AdminDashboardProps) {
-  const [activeTab, setActiveTab] = useState<"applicants" | "analytics">(
-    "applicants",
-  );
+  const [activeTab, setActiveTab] = useState<
+    "today" | "applicants" | "analytics"
+  >("today");
   const [applications, setApplications] = useState<Application[]>([]);
   const [loading, setLoading] = useState(true);
   const [fetchError, setFetchError] = useState(false);
@@ -194,6 +197,7 @@ export default function AdminDashboard({ onLogout }: AdminDashboardProps) {
   }
 
   useEffect(() => {
+     
     (async () => {
       await fetchApps();
     })();
@@ -229,7 +233,22 @@ export default function AdminDashboard({ onLogout }: AdminDashboardProps) {
   }
 
   async function handleParticipated(id: string) {
-    await handleUpdate(id, { status: "Participated" });
+    await handleUpdate(id, {
+      status: "Participated",
+      participatedAt: serverTimestamp(),
+    } as Partial<Omit<Application, "id">>);
+    try {
+      const auth = await getFirebaseAuth();
+      const db = getFirebaseDb();
+      await addDoc(collection(db, "applications", id, "events"), {
+        type: "participated",
+        timestamp: serverTimestamp(),
+        actor: auth.currentUser?.email ?? "admin",
+        payload: {},
+      });
+    } catch {
+      // non-fatal event log failure
+    }
     setSelectedApp(null);
   }
 
@@ -320,6 +339,13 @@ export default function AdminDashboard({ onLogout }: AdminDashboardProps) {
             <div className={styles.tabs}>
               <button
                 className={styles.tab}
+                data-active={activeTab === "today" || undefined}
+                onClick={() => setActiveTab("today")}
+              >
+                Today
+              </button>
+              <button
+                className={styles.tab}
                 data-active={activeTab === "applicants" || undefined}
                 onClick={() => setActiveTab("applicants")}
               >
@@ -387,6 +413,21 @@ export default function AdminDashboard({ onLogout }: AdminDashboardProps) {
           </div>
         )}
       </header>
+
+      {activeTab === "today" && (
+        <TaskInbox
+          applications={applications}
+          onOpenApp={(app) => {
+            setSelectedApp(app);
+            setActiveTab("applicants");
+          }}
+          onRefresh={(id, patch) => {
+            setApplications((prev) =>
+              prev.map((a) => (a.id === id ? { ...a, ...patch } : a)),
+            );
+          }}
+        />
+      )}
 
       {activeTab === "analytics" && <AnalyticsDashboard />}
 
@@ -541,7 +582,7 @@ export default function AdminDashboard({ onLogout }: AdminDashboardProps) {
         </main>
       )}
 
-      {activeTab === "applicants" && selectedApp && (
+      {selectedApp && (
         <ApplicantModal
           app={selectedApp}
           onClose={() => setSelectedApp(null)}

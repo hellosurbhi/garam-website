@@ -121,6 +121,7 @@ export function useApplyForm() {
   );
   const [toast, setToast] = useState<{ msg: string; ok: boolean } | null>(null);
   const [formStarted, setFormStarted] = useState(false);
+  const [turnstileToken, setTurnstileToken] = useState("");
   const [cityInput, setCityInput] = useState(() => {
     const urlParams = getUrlCityParams();
     if (!urlParams) return "";
@@ -275,6 +276,37 @@ export function useApplyForm() {
     if (!validate()) return;
 
     setSubmitting(true);
+
+    // Verify Turnstile token when the feature is configured
+    const turnstileSiteKey = import.meta.env.PUBLIC_TURNSTILE_SITE_KEY;
+    if (turnstileSiteKey) {
+      if (!turnstileToken) {
+        setToast({
+          msg: "Please wait a moment while we verify your submission, then try again.",
+          ok: false,
+        });
+        setSubmitting(false);
+        return;
+      }
+      try {
+        const verifyRes = await fetch("/api/verify-turnstile", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ token: turnstileToken }),
+        });
+        if (!verifyRes.ok) {
+          setToast({
+            msg: "Verification failed. Please refresh the page and try again.",
+            ok: false,
+          });
+          setSubmitting(false);
+          return;
+        }
+      } catch {
+        // Network error — allow submission through rather than hard-blocking
+      }
+    }
+
     const uploadedRefs: (StorageReference | null)[] = [];
     try {
       const [
@@ -448,5 +480,6 @@ export function useApplyForm() {
     handleTermsCheckbox,
     agreeToTerms,
     handleSubmit,
+    setTurnstileToken,
   };
 }

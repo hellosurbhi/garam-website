@@ -84,6 +84,16 @@ function buildCityJsonLd(c: CityData): string {
 const cityJsonLd = buildCityJsonLd(city);
 const cityEventSchemas = buildEventSchemas(cityEvents);
 
+const speakableJsonLd = JSON.stringify({
+  "@context": "https://schema.org",
+  "@type": "WebPage",
+  speakable: {
+    "@type": "SpeakableSpecification",
+    cssSelector: [".city-h1", ".city-paragraph"],
+  },
+  url: cityPageUrl,
+});
+
 const breadcrumbJsonLd = buildBreadcrumbJsonLd([
   { name: "Home", url: "https://garammasaladating.com/" },
   { name: "Cities", url: "https://garammasaladating.com/cities" },
@@ -148,6 +158,7 @@ function renderCityText(text: string, href: string): string {
   <Fragment slot="head">
     <script type="application/ld+json" set:html={cityJsonLd} />
     <script type="application/ld+json" set:html={breadcrumbJsonLd} />
+    <script type="application/ld+json" set:html={speakableJsonLd} />
     {
       cityEventSchemas.map((schema) => (
         <script type="application/ld+json" set:html={schema} />

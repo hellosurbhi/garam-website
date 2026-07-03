@@ -68,7 +68,7 @@ describe("notify-application handler", () => {
     );
     expect(res.status).toBe(400);
     const body = await res.json();
-    expect(body.error).toBe("Missing required fields");
+    expect(body.error).toBe("Invalid request body");
   });
 
   it("returns 400 when instagram is missing", async () => {
@@ -84,7 +84,7 @@ describe("notify-application handler", () => {
     );
     expect(res.status).toBe(400);
     const body = await res.json();
-    expect(body.error).toBe("Missing required fields");
+    expect(body.error).toBe("Invalid request body");
   });
 
   it("returns 400 when email is malformed", async () => {
@@ -93,7 +93,7 @@ describe("notify-application handler", () => {
     );
     expect(res.status).toBe(400);
     const body = await res.json();
-    expect(body.error).toBe("Missing required fields");
+    expect(body.error).toBe("Invalid request body");
   });
 
   it("returns 200 and sends email for valid self-application", async () => {

@@ -571,15 +571,32 @@ const notifyTrackingAttrs = {
     const url = btn.dataset.shareUrl ?? window.location.href;
     const title = btn.dataset.shareTitle ?? "Garam Masala Dating";
 
-    if (navigator.share) {
+    const canNativeShare =
+      typeof navigator.share === "function" &&
+      typeof navigator.canShare === "function" &&
+      navigator.canShare({ title, url });
+    const method = canNativeShare ? "native" : "clipboard";
+
+    function trackShare() {
+      if (window.posthog && window.posthog.capture) {
+        window.posthog.capture("event_shared", {
+          share_method: method,
+          share_url: url,
+        });
+      }
+    }
+
+    if (canNativeShare) {
       try {
         await navigator.share({ title, url });
+        trackShare();
       } catch {
         // user cancelled — no action needed
       }
     } else {
       try {
         await navigator.clipboard.writeText(url);
+        trackShare();
         const orig = btn.innerHTML;
         btn.textContent = "Copied!";
         setTimeout(() => {

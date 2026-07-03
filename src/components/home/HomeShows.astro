@@ -339,10 +339,14 @@ const taglineMap = buildTaglineMap(events);
           };
           if (city) payload.city = city;
           await captureLead(payload);
-          identifyLead(email, { ...attribution, city });
-          trackLeadEvent("lead_email_submitted", { ...attribution, city });
-          trackLeadEvent("email_signup", { ...attribution, city });
-          trackLeadEvent("waitlist_submit", { ...attribution, city });
+          const cityProp = city ? { city } : {};
+          identifyLead(email, { ...attribution, ...cityProp });
+          trackLeadEvent("lead_email_submitted", {
+            ...attribution,
+            ...cityProp,
+          });
+          trackLeadEvent("email_signup", { ...attribution, ...cityProp });
+          trackLeadEvent("waitlist_submit", { ...attribution, ...cityProp });
           document.getElementById("city-form-view")?.setAttribute("hidden", "");
           document.getElementById("city-success")?.removeAttribute("hidden");
         } catch {
@@ -589,7 +593,7 @@ const taglineMap = buildTaglineMap(events);
     }
   }
   .modal-dialog.closing .modal-inner {
-    animation: modalOut 0.2s ease-in forwards;
+    animation: dialog-out 0.2s ease-in forwards;
   }
   .modal-close {
     position: absolute;

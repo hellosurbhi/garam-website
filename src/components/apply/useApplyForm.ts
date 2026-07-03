@@ -86,7 +86,7 @@ function computeIsValid(
   if (!form.orientation) return false;
   if (!form.city.trim()) return false;
   if (validateEmail(form.email)) return false;
-  if (!form.instagram.trim()) return false;
+  if (!form.instagram.trim().replace(/^@/, "")) return false;
   if (photoFiles.length === 0) return false;
   if (form.applicationType === "Nomination") {
     if (!form.referrerName.trim()) return false;
@@ -190,7 +190,7 @@ export function useApplyForm() {
       return;
     }
 
-    const oversized = incoming.filter((f) => f.size > MAX_PHOTO_BYTES);
+    const oversized = incoming.filter((f) => f.size >= MAX_PHOTO_BYTES);
     if (oversized.length > 0) {
       setErrors((prev) => ({
         ...prev,
@@ -199,7 +199,7 @@ export function useApplyForm() {
     }
 
     const valid = incoming.filter(
-      (f) => f.size <= MAX_PHOTO_BYTES && ALLOWED_TYPES.has(f.type),
+      (f) => f.size < MAX_PHOTO_BYTES && ALLOWED_TYPES.has(f.type),
     );
     if (valid.length === 0) {
       e.target.value = "";
@@ -265,7 +265,7 @@ export function useApplyForm() {
     if (!form.city.trim()) errs.city = "Required";
     const emailErr = validateEmail(form.email);
     if (emailErr) errs.email = emailErr;
-    if (!form.instagram.trim()) errs.instagram = "Required";
+    if (!form.instagram.trim().replace(/^@/, "")) errs.instagram = "Required";
     if (photoFiles.length === 0) errs.photo = "A photo is required";
     if (form.applicationType === "Nomination") {
       if (!form.referrerName.trim()) errs.referrerName = "Required";
@@ -413,7 +413,7 @@ export function useApplyForm() {
 
       const attribution = buildLeadAttribution({ source: "apply" });
       const igHandle = form.instagram.trim().replace(/^@/, "");
-      const identifier = form.email.trim() || igHandle;
+      const identifier = form.email.trim();
       if (identifier) {
         identifyLead(identifier, {
           name: form.name,

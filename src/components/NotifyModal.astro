@@ -128,7 +128,8 @@ const { source = "notify-modal" } = Astro.props;
     // and becomes a prefix. The submit handlers compose the final per-city
     // source (e.g. "tickets-notify-manhattan") from the slug captured when the
     // modal was opened.
-    const baseSource = (dialog as HTMLElement).dataset.source ?? "notify-modal";
+    const baseSource =
+      (dialog as HTMLElement).dataset.source?.trim() || "notify-modal";
 
     function toCitySlug(value: string): string {
       return value
@@ -162,8 +163,8 @@ const { source = "notify-modal" } = Astro.props;
           // Prefer the slug the trigger button carries (from EventEntry.citySlug
           // in src/data/events.ts); fall back to slugifying the display name
           // so the source is never flat even if a future event forgets citySlug.
-          const citySlug =
-            el.dataset.notifyCitySlug?.trim() || toCitySlug(city);
+          const rawSlug = el.dataset.notifyCitySlug?.trim();
+          const citySlug = rawSlug ? toCitySlug(rawSlug) : toCitySlug(city);
           const nameEl = document.getElementById("notify-city-name");
           const cityInput = document.getElementById(
             "notify-city",

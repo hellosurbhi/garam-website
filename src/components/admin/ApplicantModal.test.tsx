@@ -3,6 +3,31 @@ import { render, screen, fireEvent } from "@testing-library/react";
 import type { Application } from "@/types/application";
 import ApplicantModal from "./ApplicantModal";
 
+// P3 added onSnapshot subscription in useEffect — mock Firestore and firebase lib
+// so tests don't try to connect to a real Firebase instance.
+vi.mock("@/lib/firebase", () => ({
+  getFirebaseDb: vi.fn(() => "mock-db"),
+  getFirebaseAuth: vi.fn(() => Promise.resolve("mock-auth")),
+}));
+
+vi.mock("firebase/firestore", () => ({
+  collection: vi.fn(() => "mock-collection-ref"),
+  query: vi.fn((...args: unknown[]) => args[0]),
+  orderBy: vi.fn(() => "mock-order"),
+  onSnapshot: vi.fn((_ref: unknown, cb: (snap: { docs: unknown[] }) => void) => {
+    cb({ docs: [] }); // empty events list on mount
+    return vi.fn(); // unsubscribe no-op
+  }),
+  updateDoc: vi.fn(() => Promise.resolve()),
+  doc: vi.fn(() => "mock-doc-ref"),
+  serverTimestamp: vi.fn(() => "mock-ts"),
+  addDoc: vi.fn(() => Promise.resolve({ id: "mock-event-id" })),
+}));
+
+vi.mock("firebase/auth", () => ({
+  signInAnonymously: vi.fn(() => Promise.resolve()),
+}));
+
 function makeApp(overrides?: Partial<Application>): Application {
   return {
     id: "test-1",

@@ -171,6 +171,25 @@ export function useApplyForm() {
     const incoming = Array.from(e.target.files ?? []);
     if (incoming.length === 0) return;
 
+    const ALLOWED_TYPES = new Set([
+      "image/jpeg",
+      "image/png",
+      "image/webp",
+      "image/heic",
+      "image/heif",
+      "image/gif",
+    ]);
+
+    const invalidType = incoming.filter((f) => !ALLOWED_TYPES.has(f.type));
+    if (invalidType.length > 0) {
+      setErrors((prev) => ({
+        ...prev,
+        photo: "Only JPEG, PNG, WEBP, HEIC and GIF files are allowed",
+      }));
+      e.target.value = "";
+      return;
+    }
+
     const oversized = incoming.filter((f) => f.size > MAX_PHOTO_BYTES);
     if (oversized.length > 0) {
       setErrors((prev) => ({
@@ -179,7 +198,9 @@ export function useApplyForm() {
       }));
     }
 
-    const valid = incoming.filter((f) => f.size <= MAX_PHOTO_BYTES);
+    const valid = incoming.filter(
+      (f) => f.size <= MAX_PHOTO_BYTES && ALLOWED_TYPES.has(f.type),
+    );
     if (valid.length === 0) {
       e.target.value = "";
       return;

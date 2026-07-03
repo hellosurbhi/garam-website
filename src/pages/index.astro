@@ -13,6 +13,7 @@ import HomeCreators from "@/components/home/HomeCreators.astro";
 import HomeVideo from "@/components/home/HomeVideo.astro";
 import HomeFAQ from "@/components/home/HomeFAQ.astro";
 import HomeJournal from "@/components/home/HomeJournal.astro";
+import StickyCTA from "@/components/StickyCTA.astro";
 import { CREATOR_URLS } from "@/data/socials";
 import { PAGES } from "@/data/copy";
 import { buildOrganizationJsonLd } from "@/utils/organizationSchema";
@@ -230,6 +231,7 @@ const speakableJsonLd = JSON.stringify({
       </div>
     </div>
   </dialog>
+  <StickyCTA triggerSelector=".hero" />
 </BaseLayout>
 
 <script>

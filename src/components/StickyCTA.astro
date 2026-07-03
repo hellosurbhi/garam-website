@@ -1,0 +1,144 @@
+---
+interface Props {
+  href?: string;
+  label?: string;
+  /** CSS selector for the element whose exit triggers the bar to appear */
+  triggerSelector?: string;
+}
+
+const {
+  href = "/tickets",
+  label = "Get Tickets",
+  triggerSelector = "#hero, .hero, [data-hero], main > :first-child",
+} = Astro.props;
+---
+
+<div
+  class="sticky-cta"
+  id="sticky-cta"
+  aria-hidden="true"
+  data-trigger={triggerSelector}
+>
+  <a
+    href={href}
+    class="sticky-cta__link"
+    data-ph-capture="cta_clicked"
+    data-ph-cta="sticky_get_tickets"
+    data-ph-section="sticky_cta"
+  >
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      width="16"
+      height="16"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      stroke-width="2"
+      stroke-linecap="round"
+      stroke-linejoin="round"
+      aria-hidden="true"
+      focusable="false"
+    >
+      <path
+        d="M2 9a3 3 0 0 1 0 6v2a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-2a3 3 0 0 1 0-6V7a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2Z"
+      ></path>
+      <path d="M13 5v2"></path>
+      <path d="M13 17v2"></path>
+      <path d="M13 11v2"></path>
+    </svg>
+    {label}
+  </a>
+</div>
+
+<style>
+  .sticky-cta {
+    display: none;
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    z-index: 200;
+    padding: 12px 16px;
+    padding-bottom: max(12px, env(safe-area-inset-bottom));
+    background: white;
+    border-top: 1px solid rgba(0, 0, 0, 0.08);
+    box-shadow: 0 -4px 24px rgba(0, 0, 0, 0.08);
+    transform: translateY(100%);
+    transition: transform 0.3s ease;
+  }
+
+  .sticky-cta.is-visible {
+    transform: translateY(0);
+  }
+
+  .sticky-cta__link {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    width: 100%;
+    padding: 14px 24px;
+    background: var(--brand-red);
+    color: white;
+    font-family: var(--font-body);
+    font-size: 15px;
+    font-weight: 700;
+    letter-spacing: 0.02em;
+    border-radius: 10px;
+    text-decoration: none;
+    transition: background 0.15s;
+  }
+
+  .sticky-cta__link:hover {
+    background: var(--brand-red-dark);
+  }
+
+  .sticky-cta__link:active {
+    transform: scale(0.97);
+  }
+
+  @media (max-width: 768px) {
+    .sticky-cta {
+      display: block;
+    }
+  }
+</style>
+
+<script>
+  const bar = document.getElementById("sticky-cta");
+  if (bar) {
+    const selector = bar.dataset.trigger ?? "main > :first-child";
+    const trigger = document.querySelector(selector);
+
+    if (trigger) {
+      const observer = new IntersectionObserver(
+        ([entry]) => {
+          if (!entry.isIntersecting) {
+            bar.classList.add("is-visible");
+            bar.removeAttribute("aria-hidden");
+          } else {
+            bar.classList.remove("is-visible");
+            bar.setAttribute("aria-hidden", "true");
+          }
+        },
+        { threshold: 0.1 },
+      );
+      observer.observe(trigger);
+    } else {
+      // Fallback: show after scrolling 300px
+      window.addEventListener(
+        "scroll",
+        () => {
+          if (window.scrollY > 300) {
+            bar.classList.add("is-visible");
+            bar.removeAttribute("aria-hidden");
+          } else {
+            bar.classList.remove("is-visible");
+            bar.setAttribute("aria-hidden", "true");
+          }
+        },
+        { passive: true },
+      );
+    }
+  }
+</script>

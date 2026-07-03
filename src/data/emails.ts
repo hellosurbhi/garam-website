@@ -303,3 +303,64 @@ export function postShow(name: string): EmailTemplate {
 
   return { subject, text, html };
 }
+
+export function applicationReceived(name: string, city: string): EmailTemplate {
+  const firstName = name.split(" ")[0];
+  const subject = `We got your application, ${firstName}!`;
+  const text = [
+    `Hi ${firstName},`,
+    "",
+    `Thank you so much for applying to Garam Masala Dating${city ? ` (${city})` : ""}! We're so excited you want to be on the show.`,
+    "",
+    "We go through applications personally and will be in touch soon. In the meantime, follow us on Instagram for show updates and behind-the-scenes content.",
+    "",
+    "Talk soon!",
+    "",
+    "Surbhi",
+    "Garam Masala Dating",
+  ].join("\n");
+
+  const html = wrap(
+    p(`Hi ${firstName},`) +
+      p(
+        `Thank you so much for applying to Garam Masala Dating${city ? ` (${city})` : ""}! We're so excited you want to be on the show.`,
+      ) +
+      p(
+        `We go through applications personally and will be in touch soon. In the meantime, follow us on ${link("https://www.instagram.com/garammasaladating/", "@garammasaladating")} for show updates and behind-the-scenes content.`,
+      ) +
+      p("Talk soon!") +
+      p("Surbhi<br>Garam Masala Dating"),
+  );
+
+  return { subject, text, html };
+}
+
+export function newShowAnnouncement(opts: {
+  subject: string;
+  city: string;
+  date: string;
+  venue: string;
+  ticketUrl: string;
+  customMessage?: string;
+}): EmailTemplate {
+  const { subject, city, date, venue, ticketUrl, customMessage } = opts;
+  const text = [
+    customMessage ?? `New show in ${city} on ${date} at ${venue}!`,
+    "",
+    `Grab your tickets: ${ticketUrl}`,
+    "",
+    "See you there!",
+    "",
+    "Surbhi",
+    "Garam Masala Dating",
+  ].join("\n");
+
+  const html = wrap(
+    p(customMessage ?? `New show in ${city} on ${date} at ${venue}!`) +
+      p(`${link(ticketUrl, "Grab your tickets")} before they sell out.`) +
+      p("See you there!") +
+      p("Surbhi<br>Garam Masala Dating"),
+  );
+
+  return { subject, text, html };
+}

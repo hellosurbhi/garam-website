@@ -10,6 +10,7 @@ import { getUpcomingDated } from "@/utils/eventFilters";
 import { PAGES } from "@/data/copy";
 import TicketCard from "@/components/tickets/TicketCard.astro";
 import EventbriteWidgetInit from "@/components/EventbriteWidgetInit.astro";
+import StickyCTA from "@/components/StickyCTA.astro";
 
 const TITLE = "Tickets & Upcoming Shows";
 const DESC =
@@ -185,6 +186,7 @@ const eventSeriesJsonLd = JSON.stringify({
   <script>
     import "@/lib/presaleReveal";
   </script>
+  <StickyCTA triggerSelector=".tickets-header" label="Grab My Spot" />
 </BaseLayout>
 
 <style>

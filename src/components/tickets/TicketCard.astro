@@ -21,6 +21,23 @@ const isLive = !!event.url && event.url !== "#";
 const isSoldOut = event.soldOut ?? false;
 const hasWidget =
   isLive && !isSoldOut && Boolean(event.eventbriteId) && !isPresale;
+
+// Countdown badge: only for dated upcoming shows within 21 days
+const daysUntil = event.isoDate
+  ? Math.ceil(
+      (new Date(event.isoDate).getTime() - Date.now()) / (1000 * 60 * 60 * 24),
+    )
+  : null;
+const showCountdown =
+  daysUntil !== null && daysUntil > 0 && daysUntil <= 21 && !isSoldOut;
+const countdownLabel =
+  daysUntil === 1
+    ? "Tomorrow"
+    : daysUntil !== null && daysUntil <= 7
+      ? `${daysUntil} days away`
+      : daysUntil !== null
+        ? `${daysUntil} days away`
+        : "";
 const cityLabel = formatEventLocation(event);
 const onSaleLabel = event.onSaleAt ? formatOnSaleDate(event.onSaleAt) : "";
 const ticketUrl = isLive
@@ -68,27 +85,61 @@ const notifyTrackingAttrs = {
       <div class="ticket-card__info">
         <span class="ticket-card__date">{event.date}</span>
         <span class="ticket-card__city">{cityLabel}</span>
-        {tagline && <span class="ticket-card__tagline">{tagline}</span>}
+        {showCountdown && (
+          <span class="ticket-card__countdown">{countdownLabel}</span>
+        )}
+        {!showCountdown && tagline && (
+          <span class="ticket-card__tagline">{tagline}</span>
+        )}
       </div>
-      <span class="ticket-card__cta">
-        Grab My Spot
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          width="14"
-          height="14"
-          viewBox="0 0 24 24"
-          fill="none"
-          stroke="currentColor"
-          stroke-width="2"
-          stroke-linecap="round"
-          stroke-linejoin="round"
-          aria-hidden="true"
-          focusable="false"
+      <div class="ticket-card__actions">
+        <button
+          type="button"
+          class="ticket-card__share"
+          aria-label={`Share ${cityLabel} show`}
+          data-share-url={ticketUrl}
+          data-share-title={`Garam Masala Dating - ${cityLabel} - ${event.date}`}
         >
-          <path d="M5 12h14" />
-          <path d="m12 5 7 7-7 7" />
-        </svg>
-      </span>
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="14"
+            height="14"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            aria-hidden="true"
+            focusable="false"
+          >
+            <circle cx="18" cy="5" r="3" />
+            <circle cx="6" cy="12" r="3" />
+            <circle cx="18" cy="19" r="3" />
+            <line x1="8.59" y1="13.51" x2="15.42" y2="17.49" />
+            <line x1="15.41" y1="6.51" x2="8.59" y2="10.49" />
+          </svg>
+        </button>
+        <span class="ticket-card__cta">
+          Grab My Spot
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="14"
+            height="14"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            aria-hidden="true"
+            focusable="false"
+          >
+            <path d="M5 12h14" />
+            <path d="m12 5 7 7-7 7" />
+          </svg>
+        </span>
+      </div>
     </a>
   )
 }
@@ -200,31 +251,67 @@ const notifyTrackingAttrs = {
       <div class="ticket-card__info">
         <span class="ticket-card__date">{event.date}</span>
         <span class="ticket-card__city">{cityLabel}</span>
-        {tagline && <span class="ticket-card__tagline">{tagline}</span>}
-      </div>
-      <span
-        class={`ticket-card__cta${isSoldOut ? " ticket-card__cta--soldout" : ""}`}
-      >
-        {isSoldOut ? "Sold Out" : "Grab My Spot"}
-        {!isSoldOut && (
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            width="14"
-            height="14"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            stroke-width="2"
-            stroke-linecap="round"
-            stroke-linejoin="round"
-            aria-hidden="true"
-            focusable="false"
-          >
-            <path d="M5 12h14" />
-            <path d="m12 5 7 7-7 7" />
-          </svg>
+        {showCountdown && !isSoldOut && (
+          <span class="ticket-card__countdown">{countdownLabel}</span>
         )}
-      </span>
+        {(!showCountdown || isSoldOut) && tagline && (
+          <span class="ticket-card__tagline">{tagline}</span>
+        )}
+      </div>
+      <div class="ticket-card__actions">
+        {!isSoldOut && (
+          <button
+            type="button"
+            class="ticket-card__share"
+            aria-label={`Share ${cityLabel} show`}
+            data-share-url={ticketUrl}
+            data-share-title={`Garam Masala Dating - ${cityLabel} - ${event.date}`}
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="14"
+              height="14"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              aria-hidden="true"
+              focusable="false"
+            >
+              <circle cx="18" cy="5" r="3" />
+              <circle cx="6" cy="12" r="3" />
+              <circle cx="18" cy="19" r="3" />
+              <line x1="8.59" y1="13.51" x2="15.42" y2="17.49" />
+              <line x1="15.41" y1="6.51" x2="8.59" y2="10.49" />
+            </svg>
+          </button>
+        )}
+        <span
+          class={`ticket-card__cta${isSoldOut ? " ticket-card__cta--soldout" : ""}`}
+        >
+          {isSoldOut ? "Sold Out" : "Grab My Spot"}
+          {!isSoldOut && (
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="14"
+              height="14"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              aria-hidden="true"
+              focusable="false"
+            >
+              <path d="M5 12h14" />
+              <path d="m12 5 7 7-7 7" />
+            </svg>
+          )}
+        </span>
+      </div>
     </a>
   )
 }
@@ -422,4 +509,85 @@ const notifyTrackingAttrs = {
     border-color: rgba(var(--brand-red-rgb), 0.35);
     color: var(--brand-red);
   }
+
+  .ticket-card__actions {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-shrink: 0;
+  }
+
+  .ticket-card__share {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    border-radius: 8px;
+    border: 1px solid rgba(0, 0, 0, 0.1);
+    background: transparent;
+    color: var(--muted);
+    cursor: pointer;
+    transition:
+      background 0.15s,
+      border-color 0.15s,
+      color 0.15s;
+    flex-shrink: 0;
+  }
+
+  .ticket-card__share:hover {
+    background: rgba(var(--brand-red-rgb), 0.06);
+    border-color: rgba(var(--brand-red-rgb), 0.3);
+    color: var(--brand-red);
+  }
+
+  .ticket-card__share:active {
+    transform: scale(0.97);
+  }
+
+  .ticket-card__countdown {
+    font-family: var(--font-body);
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--brand-red);
+    letter-spacing: 0.04em;
+    background: rgba(var(--brand-red-rgb), 0.08);
+    padding: 2px 6px;
+    border-radius: 4px;
+    align-self: flex-start;
+  }
 </style>
+
+<script>
+  document.addEventListener("click", async (e) => {
+    const btn = (e.target as Element).closest<HTMLButtonElement>(
+      ".ticket-card__share",
+    );
+    if (!btn) return;
+    // Stop propagation so the parent card link doesn't fire
+    e.preventDefault();
+    e.stopPropagation();
+
+    const url = btn.dataset.shareUrl ?? window.location.href;
+    const title = btn.dataset.shareTitle ?? "Garam Masala Dating";
+
+    if (navigator.share) {
+      try {
+        await navigator.share({ title, url });
+      } catch {
+        // user cancelled — no action needed
+      }
+    } else {
+      try {
+        await navigator.clipboard.writeText(url);
+        const orig = btn.innerHTML;
+        btn.textContent = "Copied!";
+        setTimeout(() => {
+          btn.innerHTML = orig;
+        }, 1500);
+      } catch {
+        // clipboard unavailable — silent fail
+      }
+    }
+  });
+</script>

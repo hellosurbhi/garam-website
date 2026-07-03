@@ -1,5 +1,6 @@
 import type { APIRoute } from "astro";
-import { Resend } from "resend";
+import { sendMail } from "@/lib/zohoMailer";
+import { applicationReceived } from "@/data/emails";
 import { validateEmail } from "@/utils/validateEmail";
 
 export const prerender = false;
@@ -40,7 +41,7 @@ function escapeHtml(str: string): string {
     .replace(/"/g, "&quot;");
 }
 
-function buildEmailHtml(data: ApplicationNotification): string {
+function buildAdminEmailHtml(data: ApplicationNotification): string {
   const isNomination = data.applicationType === "Nomination";
   const location = [data.city, data.state, data.country]
     .filter(Boolean)
@@ -131,6 +132,31 @@ function buildEmailHtml(data: ApplicationNotification): string {
   </div>`;
 }
 
+function buildAdminEmailText(data: ApplicationNotification): string {
+  const isNomination = data.applicationType === "Nomination";
+  const location = [data.city, data.state, data.country]
+    .filter(Boolean)
+    .join(", ");
+  const lines = [
+    `New ${isNomination ? "Nomination" : "Self-Application"}: ${data.name}`,
+    "",
+    `Age: ${data.age}`,
+    `Gender: ${data.gender}`,
+    `Orientation: ${data.orientation}`,
+    `Location: ${location}`,
+    `Email: ${data.email}`,
+    `Instagram: @${data.instagram}`,
+    `Community: ${data.community}`,
+    `Income: ${data.income}`,
+  ];
+  if (data.phone) lines.push(`Phone: ${data.phone}`);
+  if (isNomination && data.referrerName)
+    lines.push(`Nominated by: ${data.referrerName}`);
+  if (data.pitch) lines.push("", `Pitch: ${data.pitch}`);
+  lines.push("", "https://garammasaladating.com/admin");
+  return lines.join("\n");
+}
+
 export const POST: APIRoute = async ({ request }) => {
   const origin = request.headers.get("origin");
   if (!isAllowedOrigin(origin)) {
@@ -140,9 +166,8 @@ export const POST: APIRoute = async ({ request }) => {
     });
   }
 
-  const apiKey = import.meta.env.RESEND_API_KEY;
   const notificationEmail = import.meta.env.NOTIFICATION_EMAIL;
-  if (!apiKey || !notificationEmail) {
+  if (!notificationEmail) {
     return new Response(JSON.stringify({ error: "Server misconfigured" }), {
       status: 500,
       headers: { "Content-Type": "application/json" },
@@ -164,14 +189,23 @@ export const POST: APIRoute = async ({ request }) => {
     });
   }
 
-  const resend = new Resend(apiKey);
+  const isNomination = body.applicationType === "Nomination";
+
   try {
-    await resend.emails.send({
-      from: "Garam Masala Dating <casting@garammasaladating.com>",
+    // Notify Surbhi
+    await sendMail({
       to: notificationEmail,
-      subject: `New Application: ${body.name} (${body.applicationType === "Nomination" ? "Nomination" : "Self"})`,
-      html: buildEmailHtml(body),
+      subject: `New Application: ${body.name} (${isNomination ? "Nomination" : "Self"})`,
+      text: buildAdminEmailText(body),
+      html: buildAdminEmailHtml(body),
     });
+
+    // Welcome email to applicant (fire-and-forget — don't block on failure)
+    const welcome = applicationReceived(body.name, body.city);
+    sendMail({ to: body.email, ...welcome }).catch(() => {
+      // non-fatal: applicant welcome email failure doesn't affect submission
+    });
+
     return new Response(JSON.stringify({ sent: true }), {
       status: 200,
       headers: { "Content-Type": "application/json" },

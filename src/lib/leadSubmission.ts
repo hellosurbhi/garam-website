@@ -50,6 +50,12 @@ export async function captureLead(
     throw new Error(result?.error ?? "Failed to save lead");
   }
 
+  try {
+    localStorage.setItem("gmd-popup-subscribed", "true");
+  } catch {
+    // Private browsing or storage quota — non-fatal
+  }
+
   return result?.id ?? "";
 }
 

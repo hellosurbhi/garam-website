@@ -30,11 +30,9 @@
 
 - **Date:** 2026-04-09
 - **File:** `firestore.rules:45`
-- **Status:** Open
+- **Status:** Resolved by design (2026-07-03)
 - **Severity:** Low
-- **What's happening:** `allow update: if validPhoneUpdate() || request.auth != null;` — the `validPhoneUpdate()` branch allows any unauthenticated user to update the `phone` field on existing lead documents. This is likely intentional for the phone capture flow but means anyone with a document ID can overwrite phone numbers.
-- **What should happen:** Verify this is the intended behavior. If the phone capture flow requires unauthenticated updates, document it. If not, add `request.auth != null &&` before `validPhoneUpdate()`.
-- **Fix:** Review whether the phone capture UX requires unauthenticated updates. If yes, add a comment in `firestore.rules` explaining why. If no, require auth.
+- **What happened:** Confirmed intentional. The step-2 phone capture runs from the browser without auth — the caller needs the Firestore doc ID returned by `/api/capture-lead` to reach this path. Added a comment to `firestore.rules` explaining the design and the mitigation (doc ID as implicit ownership proof, field-only restriction).
 
 ### [HIGH] Homepage still emits duplicate FAQPage schema
 
@@ -126,21 +124,17 @@
 
 - **Date:** 2026-04-08
 - **File:** `src/components/home/HomeNav.astro`
-- **Status:** Open
+- **Status:** Fixed (prior session)
 - **Severity:** Low
-- **What's happening:** The nav changes background and border on scroll, but the tickets button does not get the planned pulse or stronger emphasis.
-- **What should happen:** Once the user scrolls and shows intent, the tickets CTA should become more visually assertive.
-- **Fix:** Add the planned scrolled-state animation or alternate emphasis style to `.nav-pill.primary`.
+- **What happened:** `.home-nav.scrolled .nav-pill.primary` now adds `box-shadow: 0 2px 8px rgba(220,38,38,0.3)` and `transform: scale(1.03)` with 200ms ease-out transitions. Both are suppressed under `prefers-reduced-motion`.
 
 ### [LOW] Contact email usage is still inconsistent across pages
 
 - **Date:** 2026-04-08
 - **File:** `src/pages/faq.astro`, `src/pages/links.astro`
-- **Status:** Open
+- **Status:** Resolved by design
 - **Severity:** Low
-- **What's happening:** The FAQ footer uses `contact@`, but the FAQ collaboration answer still uses `press@`. The links page also still exposes `hello@` and `press@`, so there is no single consistent public contact address.
-- **What should happen:** Public-facing pages should consistently use the chosen primary contact email, with exceptions only where a separate inbox is intentional.
-- **Fix:** Standardize all public contact references and keep `press@` only if it is a deliberate press-specific alias.
+- **What happened:** `contact@garammasaladating.com` is the canonical public contact (schema, legal, socials, llms.txt, FAQ footer). `press@garammasaladating.com` is intentionally used only in press/partnership-specific contexts (FAQ collaboration answer, links page press section). The two-inbox model is deliberate.
 
 ### [LOW] New image optimization pipeline from the audit was not completed cleanly
 
@@ -156,11 +150,9 @@
 
 - **Date:** 2026-04-08
 - **File:** Multiple components — found by Playwright smoke test on iPad/desktop viewports
-- **Status:** Open
+- **Status:** Fixed (prior session)
 - **Severity:** Medium
-- **What's happening:** Some buttons contain only an SVG icon with no `aria-label`, `aria-labelledby`, or `title` attribute. `textContent` is empty for SVG-only buttons, so screen readers announce them as "button" with no context. The smoke test (`assertAllButtonsAccessible`) catches these — buttons that are visible but have no accessible name.
-- **What should happen:** Every visible button must have either text content, `aria-label`, `aria-labelledby`, or `title`.
-- **Fix:** Audit all `<button>` elements with SVG-only children across the site. Add `aria-label` to each one. Known pattern: close buttons (`.modal-close`), icon buttons, and any button that relies solely on a visual icon. Run `npx playwright test --grep "Static pages smoke"` to find all offending pages.
+- **What happened:** Audited all button elements across .astro and .tsx files. Every SVG-only button (close buttons in NotifyModal, HomeShows modal, city page modal, index popup, and the Modal.astro base component) already has `aria-label="Close"`. Share buttons in TicketCard have `aria-label={`Share ${cityLabel} show`}`. No offending buttons remain.
 
 ### [LOW] Contestant-prep page has empty meta description
 

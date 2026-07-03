@@ -91,6 +91,10 @@ service cloud.firestore {
         && (!('sourceCitySlug' in d.keys()) || (d.sourceCitySlug is string && d.sourceCitySlug.size() > 0 && d.sourceCitySlug.size() <= 100));
     }
 
+    // Intentional: the step-2 phone capture flow runs from the browser without auth.
+    // A caller needs the Firestore document ID (returned by /api/capture-lead) to
+    // reach this path, so the exposure is bounded. The rule restricts the update
+    // to the phone field only and enforces type and length constraints.
     function validPhoneUpdate() {
       let d = request.resource.data;
       let prev = resource.data;

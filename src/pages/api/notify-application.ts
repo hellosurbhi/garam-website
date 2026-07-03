@@ -1,7 +1,7 @@
 import type { APIRoute } from "astro";
+import { z } from "zod";
 import { sendMail } from "@/lib/zohoMailer";
 import { applicationReceived } from "@/data/emails";
-import { validateEmail } from "@/utils/validateEmail";
 
 export const prerender = false;
 
@@ -13,25 +13,30 @@ function isAllowedOrigin(origin: string | null): boolean {
   return false;
 }
 
-interface ApplicationNotification {
-  name: string;
-  age: number;
-  gender: string;
-  orientation: string;
-  city: string;
-  state: string;
-  country: string;
-  email: string;
-  instagram: string;
-  community: string;
-  income: string;
-  applicationType: string;
-  referrerName: string;
-  nominationConsent?: boolean;
-  pitch: string;
-  phone?: string;
-  photoUrls: string[];
-}
+const ApplicationSchema = z.object({
+  name: z.string().min(1).max(200),
+  age: z.number().int().min(18).max(120),
+  gender: z.string().min(1).max(100),
+  orientation: z.string().min(1).max(100),
+  city: z.string().min(1).max(200),
+  state: z.string().max(100).default(""),
+  country: z.string().max(100).default(""),
+  email: z.string().email().max(320),
+  instagram: z.string().min(1).max(100),
+  community: z.string().max(100).default(""),
+  income: z.string().max(100).default(""),
+  applicationType: z.enum(["Self", "Nomination"]),
+  referrerName: z.string().max(200).default(""),
+  nominationConsent: z.boolean().optional(),
+  pitch: z.string().max(5000).default(""),
+  phone: z.string().max(30).optional(),
+  height: z.string().max(50).optional(),
+  type: z.string().max(200).optional(),
+  seenShowBefore: z.boolean().optional(),
+  photoUrls: z.array(z.string().url().startsWith("https://")).min(1).max(10),
+});
+
+type ApplicationNotification = z.infer<typeof ApplicationSchema>;
 
 function escapeHtml(str: string): string {
   return str
@@ -174,16 +179,19 @@ export const POST: APIRoute = async ({ request }) => {
     });
   }
 
-  const body = (await request.json()) as ApplicationNotification;
-  if (
-    !body.name ||
-    !body.instagram ||
-    !body.email ||
-    validateEmail(body.email) ||
-    !Array.isArray(body.photoUrls) ||
-    body.photoUrls.length === 0
-  ) {
-    return new Response(JSON.stringify({ error: "Missing required fields" }), {
+  let body: ApplicationNotification;
+  try {
+    const raw: unknown = await request.json();
+    const result = ApplicationSchema.safeParse(raw);
+    if (!result.success) {
+      return new Response(JSON.stringify({ error: "Invalid request body" }), {
+        status: 400,
+        headers: { "Content-Type": "application/json" },
+      });
+    }
+    body = result.data;
+  } catch {
+    return new Response(JSON.stringify({ error: "Bad request" }), {
       status: 400,
       headers: { "Content-Type": "application/json" },
     });

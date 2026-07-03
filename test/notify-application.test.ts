@@ -3,11 +3,9 @@ import { describe, it, expect, vi, beforeEach } from "vitest";
 // vi.hoisted ensures mockSend is evaluated before vi.mock hoisting
 const mockSend = vi.hoisted(() => vi.fn());
 
-// Mock the resend module - Resend is used as a class (new Resend()), so must use function
-vi.mock("resend", () => ({
-  Resend: vi.fn().mockImplementation(function () {
-    return { emails: { send: mockSend } };
-  }),
+// Mock zohoMailer — notify-application switched from Resend to Zoho SMTP (R12)
+vi.mock("@/lib/zohoMailer", () => ({
+  sendMail: mockSend,
 }));
 
 // Import handler after mocking
@@ -101,7 +99,8 @@ describe("notify-application handler", () => {
     expect(res.status).toBe(200);
     const body = await res.json();
     expect(body.sent).toBe(true);
-    expect(mockSend).toHaveBeenCalledOnce();
+    // sendMail is called twice: admin notification + applicant welcome email
+    expect(mockSend).toHaveBeenCalledTimes(2);
   });
 
   it("sends email with correct subject for self-application", async () => {
@@ -256,7 +255,7 @@ describe("notify-application handler", () => {
     expect(html).not.toContain("View Photo");
   });
 
-  it("returns 500 when Resend throws an error", async () => {
+  it("returns 500 when sendMail throws an error", async () => {
     mockSend.mockRejectedValue(new Error("Network failure"));
     const res = await POST(makeContext(makeRequest(validBody)));
     expect(res.status).toBe(500);

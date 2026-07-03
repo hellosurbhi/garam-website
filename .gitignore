@@ -16,7 +16,6 @@ dist-ssr
 !.env.example
 venv/
 .agents
-SITE-AUDIT.md
 docs/private/
 
 # Build / cache artifacts
@@ -58,7 +57,6 @@ coverage/
 # stryker temp files
 .stryker-tmp
 .gstack/
-seo-article-strategy.md
 surbhi-shader-export*/
 
 # Test reports
@@ -68,9 +66,3 @@ reports/
 link-results.json
 .lighthouseci/
 
-# Internal working notes (not for public repo)
-BUGS.md
-ENHANCEMENTS.md
-LESSONS.md
-.impeccable.md
-design-improvements.MD

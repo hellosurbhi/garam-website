@@ -4,6 +4,10 @@ on:
   schedule:
     - cron: "0 9 * * 1" # Every Monday at 9am UTC — catches external links that died
 
+concurrency:
+  group: link-check-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
   link-check:
     name: link-check

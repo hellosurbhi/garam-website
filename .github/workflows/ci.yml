@@ -10,6 +10,11 @@ name: CI
 on:
   pull_request:
     branches: [main]
+    paths-ignore:
+      - "**.md"
+      - "CHANGELOG.md"
+      - "docs/**"
+      - ".github/ISSUE_TEMPLATE/**"
 
 concurrency:
   group: ci-${{ github.ref }}
@@ -38,35 +43,6 @@ jobs:
       - name: Security audit
         run: npm audit --audit-level=high --omit=dev
 
-  # ==========================================
-  # JOB 2: Smoke Tests (iPhone viewport)
-  # 70% of traffic is mobile — test the viewport that matters most.
-  # Runs after core checks pass. Catches JS crashes, broken routes,
-  # modal/form regressions, a11y violations, and SEO meta failures.
-  # The weekly scheduled run in smoke-tests.yml covers all 4 viewports.
-  # ==========================================
-  smoke:
-    name: Smoke Tests (mobile)
-    needs: check
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v6
-        with:
-          node-version: 22
-          cache: npm
-      - run: npm install -g npm@11
-      - run: npm ci
-      - name: Build site
-        run: npm run build
-      - name: Install Playwright
-        run: npx playwright install chromium --with-deps
-      - name: Run smoke tests (iPhone)
-        run: npx playwright test --project iphone
-      - name: Upload report on failure
-        uses: actions/upload-artifact@v4
-        if: failure()
-        with:
-          name: playwright-report
-          path: playwright-report/
-          retention-days: 7
+  # Playwright smoke tests moved to local pre-push hook (~/.git-hooks/pre-push).
+  # This eliminates the primary GitHub Actions minute consumer.
+  # Production coverage: smoke-tests.yml runs weekly against all 4 viewports on schedule.

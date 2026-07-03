@@ -114,6 +114,25 @@ export const PAGES = {
   links: {
     subtitle: "NYC's hottest live desi dating show 🌶️",
   },
+  thankYou: {
+    eyebrow: "You're in",
+    heading: "See you at the show!",
+    subheading:
+      "Your ticket is confirmed. Check your email for the details and we'll see you there.",
+    contestantHeading: "Want to be on stage?",
+    contestantBody:
+      "We cast contestants from the audience all the time. Apply now and we might just put you on a blind date in front of 250 people.",
+    contestantCta: "Apply to Be a Contestant",
+    shareHeading: "Tell a friend",
+    shareBody:
+      "The more the merrier. Share the show and bring someone who needs a night out.",
+    shareCta: "Share the Show",
+    emailHeading: "Stay in the loop",
+    emailBody:
+      "New shows drop fast and sell out faster. Get on the list and you'll hear first.",
+    emailCta: "Join the List",
+    backCta: "See All Shows",
+  },
 } as const;
 
 export const APPLY_PAGE = {

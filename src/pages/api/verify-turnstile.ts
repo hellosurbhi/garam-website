@@ -57,7 +57,7 @@ export const POST: APIRoute = async ({ request }) => {
   try {
     const resp = await fetch(
       "https://challenges.cloudflare.com/turnstile/v0/siteverify",
-      { method: "POST", body: form },
+      { method: "POST", body: form, signal: AbortSignal.timeout(5000) },
     );
     const data = (await resp.json()) as { success: boolean };
     if (!data.success) {

@@ -234,8 +234,8 @@ describe("notify-application handler", () => {
     expect(html).toContain("USA");
   });
 
-  it("email HTML omits photo link for non-https URL", async () => {
-    await POST(
+  it("returns 400 for non-https photo URL", async () => {
+    const res = await POST(
       makeContext(
         makeRequest({
           ...validBody,
@@ -243,16 +243,14 @@ describe("notify-application handler", () => {
         }),
       ),
     );
-    const html: string = mockSend.mock.calls[0][0].html;
-    expect(html).not.toContain("View Photo");
+    expect(res.status).toBe(400);
   });
 
-  it("email HTML omits photo link for invalid URL", async () => {
-    await POST(
+  it("returns 400 for invalid photo URL", async () => {
+    const res = await POST(
       makeContext(makeRequest({ ...validBody, photoUrls: ["not a url"] })),
     );
-    const html: string = mockSend.mock.calls[0][0].html;
-    expect(html).not.toContain("View Photo");
+    expect(res.status).toBe(400);
   });
 
   it("returns 500 when sendMail throws an error", async () => {

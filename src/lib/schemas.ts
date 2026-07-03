@@ -16,19 +16,6 @@ function normalizeOptionalString(max: number) {
   }, z.string().max(max).optional());
 }
 
-function normalizeOptionalNumber(min: number, max: number) {
-  return z.preprocess((value) => {
-    if (value === undefined || value === null || value === "") return undefined;
-    if (typeof value === "number") return value;
-    if (typeof value === "string") {
-      const trimmed = value.trim();
-      if (!trimmed) return undefined;
-      return Number(trimmed);
-    }
-    return value;
-  }, z.number().min(min).max(max).optional());
-}
-
 const emailSchema = z.preprocess(trimString, z.email().max(320));
 const httpsUrlSchema = z.preprocess(
   trimString,
@@ -72,8 +59,6 @@ export const LeadPayloadSchema = z.object({
   geoCity: normalizeOptionalString(100),
   geoRegion: normalizeOptionalString(100),
   geoCountry: normalizeOptionalString(100),
-  geoLatitude: normalizeOptionalNumber(-90, 90),
-  geoLongitude: normalizeOptionalNumber(-180, 180),
   geoTimezone: normalizeOptionalString(100),
   company: normalizeOptionalString(200),
 });

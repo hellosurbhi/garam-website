@@ -174,6 +174,7 @@ export const submissionDisclaimer =
 
 export const EVENTS = {
   ticketCta: "Grab My Spot",
+  stickyCta: "Get Tickets",
 } as const;
 
 export const EVENT_TAGLINES = {

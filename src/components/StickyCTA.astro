@@ -1,4 +1,6 @@
 ---
+import { EVENTS } from "@/data/copy";
+
 interface Props {
   href?: string;
   label?: string;
@@ -8,7 +10,7 @@ interface Props {
 
 const {
   href = "/tickets",
-  label = "Get Tickets",
+  label = EVENTS.stickyCta,
   triggerSelector = "#hero, .hero, [data-hero], main > :first-child",
 } = Astro.props;
 ---
@@ -22,6 +24,7 @@ const {
   <a
     href={href}
     class="sticky-cta__link"
+    tabindex="-1"
     data-ph-capture="cta_clicked"
     data-ph-cta="sticky_get_tickets"
     data-ph-section="sticky_cta"
@@ -81,7 +84,7 @@ const {
     background: var(--brand-red);
     color: white;
     font-family: var(--font-body);
-    font-size: 15px;
+    font-size: 16px;
     font-weight: 700;
     letter-spacing: 0.02em;
     border-radius: 10px;
@@ -107,19 +110,27 @@ const {
 <script>
   const bar = document.getElementById("sticky-cta");
   if (bar) {
+    const link = bar.querySelector<HTMLAnchorElement>("a");
     const selector = bar.dataset.trigger ?? "main > :first-child";
     const trigger = document.querySelector(selector);
+
+    function show() {
+      bar.classList.add("is-visible");
+      bar.removeAttribute("aria-hidden");
+      if (link) link.removeAttribute("tabindex");
+    }
+
+    function hide() {
+      bar.classList.remove("is-visible");
+      bar.setAttribute("aria-hidden", "true");
+      if (link) link.setAttribute("tabindex", "-1");
+    }
 
     if (trigger) {
       const observer = new IntersectionObserver(
         ([entry]) => {
-          if (!entry.isIntersecting) {
-            bar.classList.add("is-visible");
-            bar.removeAttribute("aria-hidden");
-          } else {
-            bar.classList.remove("is-visible");
-            bar.setAttribute("aria-hidden", "true");
-          }
+          if (!entry.isIntersecting) show();
+          else hide();
         },
         { threshold: 0.1 },
       );
@@ -129,13 +140,8 @@ const {
       window.addEventListener(
         "scroll",
         () => {
-          if (window.scrollY > 300) {
-            bar.classList.add("is-visible");
-            bar.removeAttribute("aria-hidden");
-          } else {
-            bar.classList.remove("is-visible");
-            bar.setAttribute("aria-hidden", "true");
-          }
+          if (window.scrollY > 300) show();
+          else hide();
         },
         { passive: true },
       );

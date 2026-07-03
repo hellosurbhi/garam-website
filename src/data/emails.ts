@@ -24,6 +24,15 @@ function link(url: string, label: string): string {
   return `<a href="${url}" style="color:#DC2626;">${label}</a>`;
 }
 
+function escapeHtml(str: string): string {
+  return str
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#39;");
+}
+
 export function schedulingInvite(name: string, calUrl: string): EmailTemplate {
   const subject = `Let's chat, ${name.split(" ")[0]}`;
   const text = [
@@ -307,6 +316,8 @@ export function postShow(name: string): EmailTemplate {
 export function applicationReceived(name: string, city: string): EmailTemplate {
   const firstName = name.split(" ")[0];
   const subject = `We got your application, ${firstName}!`;
+  const safeFirstName = escapeHtml(firstName);
+  const safeCity = escapeHtml(city);
   const text = [
     `Hi ${firstName},`,
     "",
@@ -321,9 +332,9 @@ export function applicationReceived(name: string, city: string): EmailTemplate {
   ].join("\n");
 
   const html = wrap(
-    p(`Hi ${firstName},`) +
+    p(`Hi ${safeFirstName},`) +
       p(
-        `Thank you so much for applying to Garam Masala Dating${city ? ` (${city})` : ""}! We're so excited you want to be on the show.`,
+        `Thank you so much for applying to Garam Masala Dating${safeCity ? ` (${safeCity})` : ""}! We're so excited you want to be on the show.`,
       ) +
       p(
         `We go through applications personally and will be in touch soon. In the meantime, follow us on ${link("https://www.instagram.com/garammasaladating/", "@garammasaladating")} for show updates and behind-the-scenes content.`,
@@ -344,6 +355,12 @@ export function newShowAnnouncement(opts: {
   customMessage?: string;
 }): EmailTemplate {
   const { subject, city, date, venue, ticketUrl, customMessage } = opts;
+  const safeCity = escapeHtml(city);
+  const safeDate = escapeHtml(date);
+  const safeVenue = escapeHtml(venue);
+  const safeCustomMessage = customMessage
+    ? escapeHtml(customMessage)
+    : undefined;
   const text = [
     customMessage ?? `New show in ${city} on ${date} at ${venue}!`,
     "",
@@ -356,7 +373,10 @@ export function newShowAnnouncement(opts: {
   ].join("\n");
 
   const html = wrap(
-    p(customMessage ?? `New show in ${city} on ${date} at ${venue}!`) +
+    p(
+      safeCustomMessage ??
+        `New show in ${safeCity} on ${safeDate} at ${safeVenue}!`,
+    ) +
       p(`${link(ticketUrl, "Grab your tickets")} before they sell out.`) +
       p("See you there!") +
       p("Surbhi<br>Garam Masala Dating"),

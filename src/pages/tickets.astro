@@ -96,7 +96,7 @@ const eventSeriesJsonLd = JSON.stringify({
       {/* Event cards */}
       {
         upcomingEvents.length > 0 ? (
-          <div class="tickets-list">
+          <div class="tickets-list" id="shows">
             {upcomingEvents.map((event, i) => {
               const isLive = !!event.url && event.url !== "#";
               const tagline =
@@ -186,7 +186,11 @@ const eventSeriesJsonLd = JSON.stringify({
   <script>
     import "@/lib/presaleReveal";
   </script>
-  <StickyCTA triggerSelector=".tickets-header" label="Grab My Spot" />
+  <StickyCTA
+    triggerSelector=".tickets-header"
+    label="Grab My Spot"
+    href="#shows"
+  />
 </BaseLayout>
 
 <style>

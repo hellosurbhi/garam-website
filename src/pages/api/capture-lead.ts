@@ -138,6 +138,7 @@ export const POST: APIRoute = async ({ request }) => {
   addStringField(fields, "geoRegion", body.geoRegion, 100);
   addStringField(fields, "geoCountry", body.geoCountry, 100);
   addStringField(fields, "geoTimezone", body.geoTimezone, 100);
+  // Read server-side Vercel geo headers (not sessionStorage — no CodeQL issue)
   addNumericHeaderField(
     fields,
     "geoLatitude",

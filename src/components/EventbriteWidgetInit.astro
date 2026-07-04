@@ -298,7 +298,7 @@
       },
       { threshold: 0 },
     );
-    modalButtons.forEach((el) => io.observe(el));
+    modalButtons.forEach((el) => io?.observe(el));
 
     // Inline embeds are the primary page content — load the EB script immediately
     // rather than deferring via IO (the hidden container has no layout size).
@@ -309,7 +309,7 @@
 
     if (!modalButtons.length) {
       window.addEventListener("pagehide", () => {
-        io.disconnect();
+        io?.disconnect();
       });
       return;
     }

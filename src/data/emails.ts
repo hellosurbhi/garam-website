@@ -21,7 +21,10 @@ function p(text: string): string {
 }
 
 function link(url: string, label: string): string {
-  return `<a href="${url}" style="color:#DC2626;">${label}</a>`;
+  // Escape the URL in the href attribute to prevent HTML injection if a URL contains quotes.
+  // label is caller-controlled — callers must pass already-escaped text or static strings.
+  const safeUrl = url.replace(/"/g, "&quot;").replace(/'/g, "&#39;");
+  return `<a href="${safeUrl}" style="color:#DC2626;">${label}</a>`;
 }
 
 function escapeHtml(str: string): string {
@@ -34,7 +37,8 @@ function escapeHtml(str: string): string {
 }
 
 export function schedulingInvite(name: string, calUrl: string): EmailTemplate {
-  const subject = `Let's chat, ${name.split(" ")[0]}`;
+  const firstName = name.split(" ")[0];
+  const subject = `Let's chat, ${firstName}`;
   const text = [
     `Hi ${name},`,
     "",
@@ -49,13 +53,14 @@ export function schedulingInvite(name: string, calUrl: string): EmailTemplate {
     "Garam Masala Dating",
   ].join("\n");
 
+  const safeName = escapeHtml(name);
   const html = wrap(
-    p(`Hi ${name},`) +
+    p(`Hi ${safeName},`) +
       p(
         "I came across your application for Garam Masala Dating and loved your pitch. I'd love to jump on a quick call to learn more about you and answer any questions you might have about the show.",
       ) +
       p(
-        `You can grab a time that works for you here: ${link(calUrl, calUrl)}`,
+        `You can grab a time that works for you here: ${link(calUrl, escapeHtml(calUrl))}`,
       ) +
       p("Looking forward to connecting!") +
       p("Surbhi<br>Garam Masala Dating"),
@@ -83,13 +88,14 @@ export function schedulingFollowup(
     "Garam Masala Dating",
   ].join("\n");
 
+  const safeName = escapeHtml(name);
   const html = wrap(
-    p(`Hi ${name},`) +
+    p(`Hi ${safeName},`) +
       p(
         "Just wanted to follow up on my earlier message. We're still looking for contestants for an upcoming Garam Masala Dating show and I think you'd be a great fit.",
       ) +
       p(
-        `If you're still interested, feel free to grab a time here: ${link(calUrl, calUrl)}`,
+        `If you're still interested, feel free to grab a time here: ${link(calUrl, escapeHtml(calUrl))}`,
       ) +
       p("No worries if the timing isn't right. Just let me know!") +
       p("Surbhi<br>Garam Masala Dating"),
@@ -125,15 +131,20 @@ export function inviteApproval(
     "Garam Masala Dating",
   ].join("\n");
 
+  const safeName = escapeHtml(name);
+  const safeShowLine =
+    opts.showDate && opts.showCity
+      ? `The show is on ${escapeHtml(opts.showDate)} in ${escapeHtml(opts.showCity)}.`
+      : "We'll send you the show details shortly.";
   const html = wrap(
-    p(`Hi ${name},`) +
+    p(`Hi ${safeName},`) +
       p(
         "Great news! We'd love to have you as a contestant on Garam Masala Dating. You had a wonderful energy on our call and we think the audience is going to love you.",
       ) +
-      p(showLine) +
+      p(safeShowLine) +
       (opts.portalUrl
         ? p(
-            `Next step: please sign your contestant waiver here: ${link(opts.portalUrl, opts.portalUrl)}`,
+            `Next step: please sign your contestant waiver here: ${link(opts.portalUrl, "Sign waiver")}`,
           )
         : p("We'll send you the waiver link shortly.")) +
       p("Reach out if you have any questions. So excited to have you!") +
@@ -158,12 +169,13 @@ export function waiverNudge(name: string, portalUrl: string): EmailTemplate {
     "Garam Masala Dating",
   ].join("\n");
 
+  const safeName = escapeHtml(name);
   const html = wrap(
-    p(`Hi ${name},`) +
+    p(`Hi ${safeName},`) +
       p(
         "Just a quick reminder to sign your contestant waiver so we can confirm your spot in the show.",
       ) +
-      p(`You can sign here: ${link(portalUrl, portalUrl)}`) +
+      p(`You can sign here: ${link(portalUrl, "Sign waiver")}`) +
       p(
         "The link is valid for a limited time. Let me know if you run into any issues!",
       ) +
@@ -188,8 +200,9 @@ export function waiverReceipt(name: string): EmailTemplate {
     "Garam Masala Dating",
   ].join("\n");
 
+  const safeName = escapeHtml(name);
   const html = wrap(
-    p(`Hi ${name},`) +
+    p(`Hi ${safeName},`) +
       p(
         "Thanks for signing your contestant waiver for Garam Masala Dating. You're all set!",
       ) +
@@ -218,8 +231,9 @@ export function rejection(name: string): EmailTemplate {
     "Garam Masala Dating",
   ].join("\n");
 
+  const safeName = escapeHtml(name);
   const html = wrap(
-    p(`Hi ${name},`) +
+    p(`Hi ${safeName},`) +
       p(
         "Thank you so much for applying to Garam Masala Dating and for taking the time to chat with us. We loved learning more about you.",
       ) +
@@ -256,13 +270,13 @@ export function hostBriefing(interviews: InterviewSummary[]): EmailTemplate {
     .map(
       (i) => `
     <tr>
-      <td style="padding:8px 12px;border-bottom:1px solid #eee;font-weight:600;">${i.name}</td>
-      <td style="padding:8px 12px;border-bottom:1px solid #eee;">${i.city}</td>
-      <td style="padding:8px 12px;border-bottom:1px solid #eee;">${i.interviewTime}</td>
+      <td style="padding:8px 12px;border-bottom:1px solid #eee;font-weight:600;">${escapeHtml(i.name)}</td>
+      <td style="padding:8px 12px;border-bottom:1px solid #eee;">${escapeHtml(i.city)}</td>
+      <td style="padding:8px 12px;border-bottom:1px solid #eee;">${escapeHtml(i.interviewTime)}</td>
       <td style="padding:8px 12px;border-bottom:1px solid #eee;">${link(i.calUrl, "View booking")}</td>
     </tr>
     <tr>
-      <td colspan="4" style="padding:4px 12px 12px;border-bottom:2px solid #f0f0f0;color:#555;font-size:14px;">"${i.pitchSnippet}"</td>
+      <td colspan="4" style="padding:4px 12px 12px;border-bottom:2px solid #f0f0f0;color:#555;font-size:14px;">"${escapeHtml(i.pitchSnippet)}"</td>
     </tr>`,
     )
     .join("");
@@ -295,8 +309,9 @@ export function postShow(name: string): EmailTemplate {
     "Garam Masala Dating",
   ].join("\n");
 
+  const safeName = escapeHtml(name);
   const html = wrap(
-    p(`Hi ${name},`) +
+    p(`Hi ${safeName},`) +
       p(
         "Thank you so much for being a contestant on Garam Masala Dating! We hope you had as much fun as we did.",
       ) +

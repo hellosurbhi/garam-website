@@ -16,6 +16,8 @@ import { getPostBySlug } from "@/data/journal";
 import { isPublished } from "@/utils/date";
 import { SOCIAL_URLS } from "@/data/socials";
 import { domainFromUrl, vendorFromUrl } from "@/lib/analyticsCapture";
+import CityEventTicketButton from "@/components/cities/CityEventTicketButton.astro";
+import { formatDisplayTime } from "@/utils/eventDate";
 
 export function getStaticPaths() {
   return Object.keys(cities).map((slug) => ({
@@ -186,6 +188,48 @@ function renderCityText(text: string, href: string): string {
       {/* H1 */}
       <h1 class="city-h1">{city.h1}</h1>
 
+      {/* Ticket hero — shown above the fold when tickets are live */}
+      {
+        cityEvents.length > 0 && (
+          <section class="city-ticket-hero" aria-label="Buy tickets">
+            <p class="city-ticket-hero__eyebrow">On sale now</p>
+            <h2 class="city-ticket-hero__title">Buy Tickets Here</h2>
+            <div class="city-ticket-hero__buttons">
+              {cityEvents.map((event) => (
+                <CityEventTicketButton
+                  event={event}
+                  citySlug={city.slug}
+                  instance="hero"
+                />
+              ))}
+            </div>
+            <ul class="city-ticket-hero__meta" aria-label="Event details">
+              {cityEvents.map((event) => {
+                const venueName = event.venue?.name;
+                const venueCity = event.venue?.addressLocality;
+                const venueRegion = event.venue?.addressRegion;
+                const locationStr = venueName
+                  ? venueCity
+                    ? `${venueName} · ${venueCity}, ${venueRegion}`
+                    : venueName
+                  : formatEventLocation(event);
+                const timeStr = event.startTime
+                  ? formatDisplayTime(event.startTime)
+                  : null;
+                const priceStr = event.price ? `$${event.price}` : null;
+                return (
+                  <li>
+                    {locationStr}
+                    {timeStr && <> · {timeStr}</>}
+                    {priceStr && <> · {priceStr}</>}
+                  </li>
+                );
+              })}
+            </ul>
+          </section>
+        )
+      }
+
       {city.communityStats && <p class="city-stat">{city.communityStats}</p>}
 
       <div class="city-status" data-status={cityStatus.label.toLowerCase()}>
@@ -263,90 +307,13 @@ function renderCityText(text: string, href: string): string {
       <div class="city-ctas">
         {/* Per-event ticket buttons for active cities */}
         {
-          cityEvents.map((event) => {
-            const isSoldOut = event.soldOut ?? false;
-            const eventLocation = formatEventLocation(event);
-            const ticketUrl = buildTicketUrl(event.url, "cities", city.slug);
-            const eventTitle = `Garam Masala Dating - ${eventLocation} - ${event.date}`;
-            const arrowSvg = (
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                width="16"
-                height="16"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                stroke-width="2"
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                class="city-cta__arrow"
-                aria-hidden="true"
-              >
-                <>
-                  <path d="M5 12h14" />
-                  <path d="m12 5 7 7-7 7" />
-                </>
-              </svg>
-            );
-            return event.eventbriteId && !isSoldOut ? (
-              <button
-                type="button"
-                id={`eventbrite-widget-modal-trigger-${event.eventbriteId}`}
-                class="city-cta city-cta--primary"
-                data-eb-url={ticketUrl}
-                data-city={eventLocation}
-                data-ph-capture="ticket_click"
-                data-ph-cta="city_ticket"
-                data-ph-section="cities"
-                data-ph-price={event.price}
-                data-ph-event-date={event.isoDate ?? event.date}
-                data-ph-event-title={eventTitle}
-                data-cta-position="city_event_ticket"
-                data-cta-text={`${event.date}: ${EVENTS.ticketCta}`}
-                data-destination-url={ticketUrl}
-                data-link-url={ticketUrl}
-                data-link-domain={domainFromUrl(ticketUrl)}
-                data-event-city={eventLocation}
-                data-event-date={event.isoDate ?? event.date}
-                data-event-title={eventTitle}
-                data-event-vendor={vendorFromUrl(ticketUrl)}
-                data-city-slug={city.slug}
-              >
-                <span>
-                  {event.date}: {EVENTS.ticketCta}
-                </span>
-                {arrowSvg}
-              </button>
-            ) : (
-              <a
-                href={ticketUrl}
-                target="_blank"
-                rel="noopener noreferrer"
-                class="city-cta city-cta--primary"
-                data-ph-capture="ticket_click"
-                data-ph-cta="city_ticket"
-                data-ph-section="cities"
-                data-ph-price={event.price}
-                data-ph-event-date={event.isoDate ?? event.date}
-                data-ph-event-title={eventTitle}
-                data-cta-position="city_event_ticket"
-                data-cta-text={`${event.date}: ${EVENTS.ticketCta}`}
-                data-destination-url={ticketUrl}
-                data-link-url={ticketUrl}
-                data-link-domain={domainFromUrl(ticketUrl)}
-                data-event-city={eventLocation}
-                data-event-date={event.isoDate ?? event.date}
-                data-event-title={eventTitle}
-                data-event-vendor={vendorFromUrl(ticketUrl)}
-                data-city-slug={city.slug}
-              >
-                <span>
-                  {event.date}: {EVENTS.ticketCta}
-                </span>
-                {arrowSvg}
-              </a>
-            );
-          })
+          cityEvents.map((event) => (
+            <CityEventTicketButton
+              event={event}
+              citySlug={city.slug}
+              instance="list"
+            />
+          ))
         }
         {/* Contextual waitlist prompt for cities with events */}
         {
@@ -966,6 +933,57 @@ function renderCityText(text: string, href: string): string {
     color: var(--charcoal);
     line-height: 1.12;
     margin-bottom: 32px;
+  }
+
+  /* ─── Ticket Hero (above-the-fold CTA for active shows) ─────── */
+
+  .city-ticket-hero {
+    margin-bottom: 32px;
+    padding: 22px 20px;
+    border: 1.5px solid rgba(var(--brand-red-rgb), 0.22);
+    border-radius: 16px;
+    background: rgba(var(--brand-red-rgb), 0.05);
+  }
+
+  .city-ticket-hero__eyebrow {
+    font-family: var(--font-body);
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.15em;
+    color: var(--brand-red);
+    margin-bottom: 6px;
+  }
+
+  .city-ticket-hero__title {
+    font-family: var(--font-playfair);
+    font-size: 24px;
+    font-weight: 700;
+    color: var(--charcoal);
+    margin-bottom: 16px;
+    line-height: 1.15;
+  }
+
+  .city-ticket-hero__buttons {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .city-ticket-hero__meta {
+    list-style: none;
+    padding: 0;
+    margin: 12px 0 0;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+
+  .city-ticket-hero__meta li {
+    font-family: var(--font-body);
+    font-size: 13px;
+    color: var(--text-light);
+    line-height: 1.45;
   }
 
   .city-body {

@@ -905,7 +905,7 @@ function renderCityText(text: string, href: string): string {
   }
 
   @media (prefers-reduced-motion: no-preference) {
-    .city-page {
+    :global(html) {
       scroll-behavior: smooth;
     }
   }

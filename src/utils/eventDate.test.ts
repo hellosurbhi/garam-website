@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
-import { isEventPast, msUntilMidnight } from "./eventDate";
+import { isEventPast, msUntilMidnight, formatDisplayTime } from "./eventDate";
 
 describe("isEventPast", () => {
   beforeEach(() => {
@@ -122,5 +122,35 @@ describe("msUntilMidnight", () => {
     const ms = msUntilMidnight();
     expect(ms).toBeGreaterThan(0);
     expect(ms).toBeLessThan(86400000);
+  });
+});
+
+describe("formatDisplayTime", () => {
+  it("formats whole-hour PM time", () => {
+    expect(formatDisplayTime("18:00")).toBe("6 PM");
+  });
+
+  it("formats half-hour PM time", () => {
+    expect(formatDisplayTime("19:30")).toBe("7:30 PM");
+  });
+
+  it("formats noon", () => {
+    expect(formatDisplayTime("12:00")).toBe("12 PM");
+  });
+
+  it("formats midnight as 12 AM", () => {
+    expect(formatDisplayTime("00:00")).toBe("12 AM");
+  });
+
+  it("formats whole-hour AM time", () => {
+    expect(formatDisplayTime("09:00")).toBe("9 AM");
+  });
+
+  it("formats minute-padded AM time", () => {
+    expect(formatDisplayTime("10:05")).toBe("10:05 AM");
+  });
+
+  it("returns original string for invalid input", () => {
+    expect(formatDisplayTime("not-a-time")).toBe("not-a-time");
   });
 });

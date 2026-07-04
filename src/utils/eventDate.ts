@@ -90,6 +90,22 @@ export function isUpcomingByIso(
   return event.isoDate >= today;
 }
 
+/**
+ * Formats a 24-hour "HH:MM" string for display.
+ * "18:00" → "6 PM", "19:30" → "7:30 PM", "00:00" → "12 AM".
+ */
+export function formatDisplayTime(hhmm: string): string {
+  const parts = hhmm.split(":");
+  const h = parseInt(parts[0] ?? "", 10);
+  const m = parseInt(parts[1] ?? "0", 10);
+  if (isNaN(h)) return hhmm;
+  const period = h >= 12 ? "PM" : "AM";
+  const hour = h > 12 ? h - 12 : h === 0 ? 12 : h;
+  return m === 0
+    ? `${hour} ${period}`
+    : `${hour}:${String(m).padStart(2, "0")} ${period}`;
+}
+
 /** Milliseconds until the next midnight. */
 export function msUntilMidnight(): number {
   const now = new Date();

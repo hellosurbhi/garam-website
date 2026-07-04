@@ -1,0 +1,178 @@
+---
+/**
+ * CityEventTicketButton — renders a single per-event ticket CTA.
+ *
+ * Used in two contexts on the city page:
+ *   instance="hero"  — the "Buy Tickets Here" block injected above the fold
+ *   instance="list"  — the original lower .city-ctas section
+ *
+ * The Eventbrite widget requires a unique DOM id per trigger element. When both
+ * instances share the same eventbriteId, appending "-hero" / "-list" keeps ids
+ * unique. The explicit `data-eb-event-id` attribute tells the widget initializer
+ * the real numeric event id regardless of the id suffix.
+ */
+import type { EventEntry } from "@/data/events";
+import { buildTicketUrl } from "@/utils/eventUrl";
+import { formatEventLocation } from "@/utils/eventCity";
+import { domainFromUrl, vendorFromUrl } from "@/lib/analyticsCapture";
+import { EVENTS } from "@/data/copy";
+
+interface Props {
+  event: EventEntry;
+  citySlug: string;
+  instance: "hero" | "list";
+}
+
+const { event, citySlug, instance } = Astro.props;
+
+const isSoldOut = event.soldOut ?? false;
+const eventLocation = formatEventLocation(event);
+const ticketUrl = buildTicketUrl(event.url, "cities", citySlug);
+const eventTitle = `Garam Masala Dating - ${eventLocation} - ${event.date}`;
+
+const triggerId = event.eventbriteId
+  ? `eventbrite-widget-modal-trigger-${event.eventbriteId}-${instance}`
+  : undefined;
+
+const ctaPosition =
+  instance === "hero" ? "city_hero_ticket" : "city_event_ticket";
+const phCta = instance === "hero" ? "city_hero_ticket" : "city_ticket";
+const ctaText = isSoldOut ? "Sold Out" : `${event.date}: ${EVENTS.ticketCta}`;
+
+const sharedAttrs = {
+  "data-ph-capture": "ticket_click",
+  "data-ph-cta": phCta,
+  "data-ph-section": "cities",
+  "data-ph-price": event.price,
+  "data-ph-event-date": event.isoDate ?? event.date,
+  "data-ph-event-title": eventTitle,
+  "data-cta-position": ctaPosition,
+  "data-cta-text": ctaText,
+  "data-destination-url": ticketUrl,
+  "data-link-url": ticketUrl,
+  "data-link-domain": domainFromUrl(ticketUrl),
+  "data-event-city": eventLocation,
+  "data-event-date": event.isoDate ?? event.date,
+  "data-event-title": eventTitle,
+  "data-event-vendor": vendorFromUrl(ticketUrl),
+  "data-city-slug": citySlug,
+};
+
+const arrowPath1 = "M5 12h14";
+const arrowPath2 = "m12 5 7 7-7 7";
+---
+
+{
+  triggerId && !isSoldOut ? (
+    /* Eventbrite modal trigger — opens inline checkout widget */
+    <button
+      type="button"
+      id={triggerId}
+      class="city-cta city-cta--primary"
+      data-eb-url={ticketUrl}
+      data-eb-event-id={event.eventbriteId}
+      data-city={eventLocation}
+      {...sharedAttrs}
+    >
+      <span>{ctaText}</span>
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        width="16"
+        height="16"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="2"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+        class="city-cta__arrow"
+        aria-hidden="true"
+      >
+        <path d={arrowPath1} />
+        <path d={arrowPath2} />
+      </svg>
+    </button>
+  ) : (
+    /* Plain link fallback: no EB id, sold out, or widget unavailable */
+    <a
+      href={ticketUrl}
+      target="_blank"
+      rel="noopener noreferrer"
+      class={`city-cta city-cta--primary${isSoldOut ? " city-cta--soldout" : ""}`}
+      {...sharedAttrs}
+    >
+      <span>{ctaText}</span>
+      {!isSoldOut && (
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          width="16"
+          height="16"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          class="city-cta__arrow"
+          aria-hidden="true"
+        >
+          <path d={arrowPath1} />
+          <path d={arrowPath2} />
+        </svg>
+      )}
+    </a>
+  )
+}
+
+<style>
+  .city-cta {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 18px 22px;
+    border-radius: 14px;
+    border: 1px solid;
+    font-family: var(--font-body);
+    font-size: 16px;
+    font-weight: 500;
+    text-decoration: none;
+    appearance: none;
+    cursor: pointer;
+    transition:
+      background 0.15s,
+      border-color 0.15s,
+      transform 0.15s;
+    width: 100%;
+    text-align: left;
+    font: inherit;
+    font-family: var(--font-body);
+    font-size: 16px;
+    font-weight: 500;
+  }
+
+  .city-cta:active {
+    transform: scale(0.97);
+  }
+
+  .city-cta--primary {
+    border-color: rgba(var(--brand-red-rgb), 0.5);
+    background: rgba(var(--brand-red-rgb), 0.1);
+    color: var(--brand-red);
+  }
+
+  .city-cta--primary:hover {
+    border-color: rgba(var(--brand-red-rgb), 0.7);
+    background: rgba(var(--brand-red-rgb), 0.15);
+  }
+
+  .city-cta--soldout {
+    border-color: rgba(0, 0, 0, 0.08);
+    background: rgba(0, 0, 0, 0.04);
+    color: var(--muted);
+    cursor: default;
+  }
+
+  .city-cta__arrow {
+    flex-shrink: 0;
+  }
+</style>

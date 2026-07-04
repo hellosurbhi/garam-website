@@ -202,7 +202,6 @@ export default function AdminDashboard({ onLogout }: AdminDashboardProps) {
         }
       } catch {
         if (after) {
-          setHasMore(false);
           setToast({ msg: "Failed to load more applications", ok: false });
         } else {
           setFetchError(true);

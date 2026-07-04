@@ -34,7 +34,7 @@ function link(url: string, label: string): string {
   if (parsed.protocol !== "https:" && parsed.protocol !== "http:") {
     return escapeHtml(url);
   }
-  const safeUrl = url.replace(/"/g, "&quot;").replace(/'/g, "&#39;");
+  const safeUrl = escapeHtml(url);
   return `<a href="${safeUrl}" style="color:#DC2626;">${label}</a>`;
 }
 

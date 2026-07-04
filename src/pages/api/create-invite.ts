@@ -10,9 +10,15 @@ import { inviteApproval } from "@/data/emails";
 import { events } from "@/data/events";
 
 const InviteSchema = z.object({
-  applicantId: z.string().min(1),
+  applicantId: z
+    .string()
+    .trim()
+    .min(1)
+    .refine((value) => !value.includes("/"), {
+      message: "Invalid applicantId",
+    }),
   applicantName: z.string().optional(),
-  applicantEmail: z.string().email().optional(),
+  applicantEmail: z.email().optional(),
   showId: z.string().min(1),
   role: z.enum(["female", "male"]),
 });

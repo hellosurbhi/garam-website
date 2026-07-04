@@ -8,7 +8,14 @@ import { sendMail } from "@/lib/zohoMailer";
 import { rejection } from "@/data/emails";
 
 const Schema = z.object({
-  applicationId: z.string().min(1).max(200),
+  applicationId: z
+    .string()
+    .trim()
+    .min(1)
+    .max(200)
+    .refine((value) => !value.includes("/"), {
+      message: "Invalid applicationId",
+    }),
   decision: z.enum(["approve", "reject", "unsure"]),
   note: z.string().max(2000).optional(),
 });

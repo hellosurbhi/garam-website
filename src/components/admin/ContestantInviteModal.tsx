@@ -140,7 +140,7 @@ export default function ContestantInviteModal({
           className={styles.closeButton}
           aria-label="Close"
         >
-          <X size={18} />
+          <X size={18} aria-hidden="true" />
         </button>
       </div>
 

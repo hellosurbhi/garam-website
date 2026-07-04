@@ -485,7 +485,7 @@ function ContestantPacketGate({
               waiverAgreed: agreed,
               signature: signature.trim(),
               waiverVersion: WAIVER_VERSION,
-              mailingListOptIn: true,
+              mailingListOptIn: false,
             },
             resolvedRole,
           );
@@ -612,9 +612,18 @@ function ContestantPacketGate({
             onChange={(e) => setSignature(e.target.value)}
             className="portal-input portal-input-sig"
             aria-label="Signature"
+            aria-describedby={
+              signature.trim() && !signatureValid
+                ? "portal-signature-error"
+                : undefined
+            }
           />
           {signature.trim() && !signatureValid && (
-            <p className="portal-error-inline">
+            <p
+              id="portal-signature-error"
+              role="alert"
+              className="portal-error-inline"
+            >
               Signature must match your legal name above.
             </p>
           )}

@@ -129,7 +129,11 @@ function getBucket(app: Application): Bucket | null {
   if (DONE_STATUSES.has(app.status) && app.status !== "Cast") return null;
 
   if (app.decision === "approve" && !app.invitedAt) return "needsInvite";
-  if (app.invitedAt && !app.waiverSignedAt && hoursAgo(app.invitedAt) > 48)
+  if (
+    app.invitedAt &&
+    !app.waiverSignedAt &&
+    hoursAgo(app.waiverNudgeSentAt ?? app.invitedAt) > 48
+  )
     return "waiverPending";
   if (
     app.scheduledAt &&
@@ -138,7 +142,11 @@ function getBucket(app: Application): Bucket | null {
   )
     return "logOutcome";
   if (app.scheduledAt && isTodayNYC(app.scheduledAt)) return "todayInterviews";
-  if (app.contactedAt && !app.scheduledAt && hoursAgo(app.contactedAt) > 48)
+  if (
+    app.contactedAt &&
+    !app.scheduledAt &&
+    hoursAgo(app.followupSentAt ?? app.contactedAt) > 48
+  )
     return "scheduling";
   if (app.status === "New" && !app.contactedAt) return "outreach";
   return null;
@@ -243,12 +251,22 @@ function DecisionForm({
       </div>
       <textarea
         className={styles.decisionNote}
+        aria-label="Decision notes"
+        aria-describedby={err ? `decision-error-${app.id}` : undefined}
         placeholder="Notes (optional)"
         value={note}
         onChange={(e) => setNote(e.target.value)}
         rows={2}
       />
-      {err && <p className={styles.decisionErr}>{err}</p>}
+      {err && (
+        <p
+          id={`decision-error-${app.id}`}
+          className={styles.decisionErr}
+          role="alert"
+        >
+          {err}
+        </p>
+      )}
       <button
         className={styles.decisionSave}
         onClick={() => void handleSave()}
@@ -512,7 +530,6 @@ export default function TaskInbox({
                 new Date().toISOString() as unknown as Application["invitedAt"],
               status: "Cast",
             });
-            setInviteApp(null);
           }}
         />
       )}

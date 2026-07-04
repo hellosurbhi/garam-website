@@ -62,6 +62,9 @@ export const POST: APIRoute = async ({ request }) => {
       const invite = await fsGet(`invites/${contestantId}`);
       applicantId =
         typeof invite?.applicantId === "string" ? invite.applicantId : null;
+      if (!applicantId) {
+        return jsonResponse({ error: "Invalid or expired waiver link" }, 401);
+      }
     } catch {
       return jsonResponse({ error: "Invalid or expired waiver link" }, 401);
     }

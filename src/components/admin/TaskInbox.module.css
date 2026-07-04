@@ -97,6 +97,7 @@
   border: 1px solid var(--brand-red);
   border-radius: 6px;
   padding: 5px 12px;
+  min-height: 48px;
   cursor: pointer;
   white-space: nowrap;
   transition:
@@ -173,6 +174,7 @@
   border: none;
   border-radius: 6px;
   padding: 7px 16px;
+  min-height: 48px;
   font-size: 0.875rem;
   font-weight: 600;
   cursor: pointer;

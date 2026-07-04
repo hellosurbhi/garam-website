@@ -54,7 +54,6 @@ export const POST: APIRoute = async ({ request }) => {
 
   if (decision === "reject") {
     patch.status = "Rejected";
-    patch.rejectionSentAt = now;
   }
 
   await fsPatch(`applications/${applicationId}`, patch);
@@ -78,6 +77,7 @@ export const POST: APIRoute = async ({ request }) => {
   if (decision === "reject" && typeof app.email === "string" && app.email) {
     const name = typeof app.name === "string" ? app.name : "there";
     const template = rejection(name);
+    let rejectionEmailSentAt: string | null = null;
     try {
       await sendMail({
         to: app.email,
@@ -85,16 +85,22 @@ export const POST: APIRoute = async ({ request }) => {
         text: template.text,
         html: template.html,
       });
+      rejectionEmailSentAt = new Date().toISOString();
     } catch {
       // Rejection email failure is non-fatal; decision is already recorded
     }
 
-    await fsAdd(`applications/${applicationId}/events`, {
-      type: "rejection_sent",
-      timestamp: now,
-      actor: "system",
-      payload: {},
-    });
+    if (rejectionEmailSentAt) {
+      await fsPatch(`applications/${applicationId}`, {
+        rejectionSentAt: rejectionEmailSentAt,
+      });
+      await fsAdd(`applications/${applicationId}/events`, {
+        type: "rejection_sent",
+        timestamp: rejectionEmailSentAt,
+        actor: "system",
+        payload: {},
+      });
+    }
   }
 
   return json({ ok: true });

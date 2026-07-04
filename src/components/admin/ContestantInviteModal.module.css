@@ -3,10 +3,10 @@
   border-radius: 16px;
   max-width: 480px;
   width: calc(100% - 48px);
-  animation: modalIn 0.2s ease-out both;
+  animation: modal-in 0.2s ease-out both;
 }
 
-@keyframes modalIn {
+@keyframes modal-in {
   from {
     opacity: 0;
     transform: scale(0.96) translateY(8px);
@@ -124,8 +124,12 @@
 }
 
 .selectInput:focus {
-  outline: none;
   border-color: var(--brand-red);
+}
+
+.selectInput:focus-visible {
+  outline: 2px solid var(--brand-red);
+  outline-offset: 2px;
 }
 
 .errorMsg {
@@ -181,7 +185,7 @@
 }
 
 .copyButton {
-  min-height: 44px;
+  min-height: 48px;
   padding: 0 14px;
   border-radius: 8px;
   border: 1px solid var(--border);
@@ -202,6 +206,7 @@
 
 .cancelButton {
   padding: 10px 20px;
+  min-height: 48px;
   border-radius: 100px;
   border: 1px solid var(--border);
   background: transparent;
@@ -222,6 +227,7 @@
 
 .submitButton {
   padding: 10px 20px;
+  min-height: 48px;
   border-radius: 100px;
   border: none;
   background: var(--brand-red);

@@ -60,32 +60,33 @@ export const POST: APIRoute = async ({ request }) => {
       !e.hidden && e.isoDate && `${e.citySlug}-${e.isoDate}` === castEventId,
   );
 
-  // Build a fresh signed waiver URL — reissue the token so the link stays valid
-  // Look up the existing invite to get the invite doc ID
-  // If no invite doc is found, fall back to a URL without a token (Surbhi must send manually)
   const siteUrl = import.meta.env.SITE ?? "https://garammasaladating.com";
-  let waiverUrl = `${siteUrl}/waiver`;
 
-  if (event?.isoDate) {
-    // Find the invite doc created for this application
-    const { fsQuery } = await import("@/lib/firestoreRest");
-    const invites = await fsQuery(
-      "invites",
-      "applicantId",
-      applicationId,
-      "createdAt",
-    );
-    const latestInvite = invites[0];
-    if (latestInvite && typeof latestInvite.id === "string") {
-      const token = await signPortalToken(
-        latestInvite.id,
-        castEventId,
-        event.isoDate,
-        event.timezone ?? "America/New_York",
-      );
-      waiverUrl = `${siteUrl}/waiver?token=${encodeURIComponent(token)}`;
-    }
+  if (!event?.isoDate) {
+    return json({ error: "Cast event not found" }, 400);
   }
+
+  const { fsQuery } = await import("@/lib/firestoreRest");
+  const invites = await fsQuery(
+    "invites",
+    "applicantId",
+    applicationId,
+    "createdAt",
+  );
+  const invite = invites.find(
+    (item) => item.showId === castEventId && typeof item.id === "string",
+  );
+  if (!invite || typeof invite.id !== "string") {
+    return json({ error: "No invite found for this application" }, 409);
+  }
+
+  const token = await signPortalToken(
+    invite.id,
+    castEventId,
+    event.isoDate,
+    event.timezone ?? "America/New_York",
+  );
+  const waiverUrl = `${siteUrl}/waiver?token=${encodeURIComponent(token)}`;
 
   const name = typeof app.name === "string" ? app.name : "there";
   const now = new Date().toISOString();

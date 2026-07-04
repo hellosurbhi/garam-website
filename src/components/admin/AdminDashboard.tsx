@@ -216,8 +216,10 @@ export default function AdminDashboard({ onLogout }: AdminDashboardProps) {
         prev?.id === id ? { ...prev, ...patch } : prev,
       );
       showToast("Saved", true);
+      return true;
     } catch {
       showToast("Save failed", false);
+      return false;
     }
   }
 
@@ -233,10 +235,11 @@ export default function AdminDashboard({ onLogout }: AdminDashboardProps) {
   }
 
   async function handleParticipated(id: string) {
-    await handleUpdate(id, {
+    const saved = await handleUpdate(id, {
       status: "Participated",
       participatedAt: serverTimestamp(),
     } as Partial<Omit<Application, "id">>);
+    if (!saved) return;
     try {
       const auth = await getFirebaseAuth();
       const db = getFirebaseDb();
@@ -415,18 +418,38 @@ export default function AdminDashboard({ onLogout }: AdminDashboardProps) {
       </header>
 
       {activeTab === "today" && (
-        <TaskInbox
-          applications={applications}
-          onOpenApp={(app) => {
-            setSelectedApp(app);
-            setActiveTab("applicants");
-          }}
-          onRefresh={(id, patch) => {
-            setApplications((prev) =>
-              prev.map((a) => (a.id === id ? { ...a, ...patch } : a)),
-            );
-          }}
-        />
+        loading ? (
+          <div
+            role="status"
+            aria-live="polite"
+            aria-label="Loading applications"
+          >
+            <Skeleton count={3} />
+          </div>
+        ) : fetchError ? (
+          <div className={styles.errorState}>
+            <p style={{ marginBottom: "12px" }}>Failed to load applications.</p>
+            <button
+              onClick={() => void fetchApps()}
+              className={styles.retryButton}
+            >
+              Try again
+            </button>
+          </div>
+        ) : (
+          <TaskInbox
+            applications={applications}
+            onOpenApp={(app) => {
+              setSelectedApp(app);
+              setActiveTab("applicants");
+            }}
+            onRefresh={(id, patch) => {
+              setApplications((prev) =>
+                prev.map((a) => (a.id === id ? { ...a, ...patch } : a)),
+              );
+            }}
+          />
+        )
       )}
 
       {activeTab === "analytics" && <AnalyticsDashboard />}

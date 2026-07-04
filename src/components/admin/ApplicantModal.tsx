@@ -60,7 +60,7 @@ function EmailRow({ email }: { email?: string }) {
 interface AppEvent {
   id: string;
   type: string;
-  timestamp: Timestamp | null;
+  timestamp: Timestamp | string | null;
   actor: string;
   payload: Record<string, unknown>;
 }
@@ -129,7 +129,7 @@ export default function ApplicantModal({
         snap.docs.map((d) => ({
           id: d.id,
           type: d.data().type as string,
-          timestamp: d.data().timestamp as Timestamp | null,
+          timestamp: d.data().timestamp as Timestamp | string | null,
           actor: d.data().actor as string,
           payload: d.data().payload as Record<string, unknown>,
         })),
@@ -146,7 +146,7 @@ export default function ApplicantModal({
       const auth = await getFirebaseAuth();
       const token = await auth.currentUser?.getIdToken();
       if (!token) throw new Error("Not authenticated");
-      await fetch("/api/actions/log-note", {
+      const res = await fetch("/api/actions/log-note", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -154,6 +154,7 @@ export default function ApplicantModal({
         },
         body: JSON.stringify({ applicationId: app.id, note: trimmed }),
       });
+      if (!res.ok) throw new Error(`HTTP ${res.status}`);
       setNoteText("");
     } catch {
       // silent — the onSnapshot listener will still show any note that saved
@@ -524,7 +525,10 @@ export default function ApplicantModal({
             <ol className={styles.timeline}>
               {appEvents.map((ev) => {
                 const ts = ev.timestamp
-                  ? new Date(ev.timestamp.toDate()).toLocaleString("en-US", {
+                  ? (typeof ev.timestamp === "string"
+                      ? new Date(ev.timestamp)
+                      : ev.timestamp.toDate()
+                    ).toLocaleString("en-US", {
                       month: "short",
                       day: "numeric",
                       hour: "numeric",

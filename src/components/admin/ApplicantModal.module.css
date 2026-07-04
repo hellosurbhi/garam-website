@@ -412,7 +412,7 @@
   flex-direction: column;
   gap: 2px;
   padding: 8px 10px;
-  background: #f9f6f2;
+  background: var(--cream);
   border-radius: 6px;
 }
 
@@ -442,11 +442,12 @@
 .addNoteButton {
   align-self: flex-end;
   padding: 7px 16px;
+  min-height: 48px;
   background: var(--charcoal);
   color: #fff;
   border: none;
   border-radius: 6px;
-  font-size: 13px;
+  font-size: 1rem;
   font-weight: 600;
   cursor: pointer;
   transition: opacity 0.15s;

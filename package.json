@@ -33,7 +33,8 @@
     "perf:lighthouse": "node scripts/run-lhci.mjs lighthouserc.cjs",
     "perf:mobile": "node scripts/run-lhci.mjs lighthouserc.mobile.cjs",
     "test:mutate": "stryker run",
-    "test:mutate:incremental": "stryker run --incremental"
+    "test:mutate:incremental": "stryker run --incremental",
+    "mutation:ratchet": "bash scripts/mutation-ratchet.sh"
   },
   "dependencies": {
     "@astrojs/react": "^5.0.7",

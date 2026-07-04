@@ -25,8 +25,10 @@ export default {
   // Thresholds: reporting bands only. The absolute break gate is null on purpose:
   // the real score is ~29% and a 60% break blocked EVERY push that touched a test
   // file in the last 7 days, including the automation's own CI-fix pushes. The
-  // enforced gate lives in the pre-push hook instead: it blocks any REGRESSION of
-  // the score vs the last recorded run (ratchet). Raise tests, the ratchet rises.
+  // enforced gate lives in scripts/mutation-ratchet.sh (repo-tracked): it blocks
+  // any REGRESSION of the score vs the last recorded run. Invoked from
+  // .husky/pre-push (falls through to it when ~/.git-hooks/pre-push is absent).
+  // Run manually: npm run mutation:ratchet. Raise tests, the ratchet rises.
   thresholds: {
     high: 80,
     low: 65,

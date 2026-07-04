@@ -242,7 +242,7 @@ export default function AdminDashboard({ onLogout }: AdminDashboardProps) {
     if (!saved) return;
     try {
       const auth = await getFirebaseAuth();
-      const db = getFirebaseDb();
+      const db = await getFirebaseDb();
       await addDoc(collection(db, "applications", id, "events"), {
         type: "participated",
         timestamp: serverTimestamp(),

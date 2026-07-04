@@ -121,7 +121,7 @@ export default function ApplicantModal({
   );
 
   useEffect(() => {
-    const db = getFirebaseDb();
+    const db = await getFirebaseDb();
     const eventsRef = collection(db, "applications", app.id, "events");
     const q = query(eventsRef, orderBy("timestamp", "asc"));
     const unsub = onSnapshot(q, (snap) => {

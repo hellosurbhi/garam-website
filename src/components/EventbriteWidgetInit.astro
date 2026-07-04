@@ -270,11 +270,12 @@
     // Guards against concurrent signals triggering a double-injection.
 
     let scriptInjected = false;
+    let io: IntersectionObserver | undefined;
 
     function loadEBScript(): void {
       if (scriptInjected) return;
       scriptInjected = true;
-      io.disconnect();
+      io?.disconnect();
       const script = document.createElement("script");
       script.src = "https://www.eventbrite.com/static/widgets/eb_widgets.js";
       script.async = true;
@@ -289,16 +290,19 @@
       btn.addEventListener("focusin", loadEBScript);
     });
 
-    // IntersectionObserver covers both modal trigger visibility and embed
-    // containers entering the viewport. Threshold 0 starts loading as soon
-    // as any pixel is visible — ensures the inline iframe renders promptly.
-    const io = new IntersectionObserver(
+    // IO watches modal buttons only — embed containers start display:none so
+    // the observer would never fire for them.
+    io = new IntersectionObserver(
       (entries) => {
         if (entries.some((e) => e.isIntersecting)) loadEBScript();
       },
       { threshold: 0 },
     );
-    [...modalButtons, ...embedContainers].forEach((el) => io.observe(el));
+    modalButtons.forEach((el) => io.observe(el));
+
+    // Inline embeds are the primary page content — load the EB script immediately
+    // rather than deferring via IO (the hidden container has no layout size).
+    if (embedContainers.length) loadEBScript();
 
     // ── Modal-only infrastructure ───────────────────────────────────────────
     // Skipped entirely on pages that have only inline embeds (e.g. city pages).

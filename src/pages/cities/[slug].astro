@@ -9,13 +9,10 @@ import { buildEventSchemas } from "@/utils/eventSchema";
 import { Picture } from "astro:assets";
 import { SHOW_IMAGES_ASSETS } from "@/assets/backgrounds";
 import { slugToImageIndex } from "@/data/images";
-import { buildTicketUrl } from "@/utils/eventUrl";
 import { formatEventLocation } from "@/utils/eventCity";
-import { EVENTS } from "@/data/copy";
 import { getPostBySlug } from "@/data/journal";
 import { isPublished } from "@/utils/date";
 import { SOCIAL_URLS } from "@/data/socials";
-import { domainFromUrl, vendorFromUrl } from "@/lib/analyticsCapture";
 import CityEventTicketButton from "@/components/cities/CityEventTicketButton.astro";
 import { formatDisplayTime } from "@/utils/eventDate";
 

@@ -1,6 +1,7 @@
 import type { APIRoute } from "astro";
-import { Resend } from "resend";
-import { validateEmail } from "@/utils/validateEmail";
+import { z } from "zod";
+import { sendMail } from "@/lib/zohoMailer";
+import { applicationReceived } from "@/data/emails";
 
 export const prerender = false;
 
@@ -12,25 +13,30 @@ function isAllowedOrigin(origin: string | null): boolean {
   return false;
 }
 
-interface ApplicationNotification {
-  name: string;
-  age: number;
-  gender: string;
-  orientation: string;
-  city: string;
-  state: string;
-  country: string;
-  email: string;
-  instagram: string;
-  community: string;
-  income: string;
-  applicationType: string;
-  referrerName: string;
-  nominationConsent?: boolean;
-  pitch: string;
-  phone?: string;
-  photoUrls: string[];
-}
+const ApplicationSchema = z.object({
+  name: z.string().min(1).max(200),
+  age: z.number().int().min(18).max(120),
+  gender: z.string().min(1).max(100),
+  orientation: z.string().min(1).max(100),
+  city: z.string().min(1).max(200),
+  state: z.string().max(100).default(""),
+  country: z.string().max(100).default(""),
+  email: z.string().email().max(320),
+  instagram: z.string().min(1).max(100),
+  community: z.string().max(100).default(""),
+  income: z.string().max(100).default(""),
+  applicationType: z.enum(["Self", "Nomination"]),
+  referrerName: z.string().max(200).default(""),
+  nominationConsent: z.boolean().optional(),
+  pitch: z.string().max(5000).default(""),
+  phone: z.string().max(30).optional(),
+  height: z.string().max(50).optional(),
+  type: z.string().max(200).optional(),
+  seenShowBefore: z.boolean().optional(),
+  photoUrls: z.array(z.string().url().startsWith("https://")).min(1).max(10),
+});
+
+type ApplicationNotification = z.infer<typeof ApplicationSchema>;
 
 function escapeHtml(str: string): string {
   return str
@@ -40,7 +46,7 @@ function escapeHtml(str: string): string {
     .replace(/"/g, "&quot;");
 }
 
-function buildEmailHtml(data: ApplicationNotification): string {
+function buildAdminEmailHtml(data: ApplicationNotification): string {
   const isNomination = data.applicationType === "Nomination";
   const location = [data.city, data.state, data.country]
     .filter(Boolean)
@@ -131,6 +137,31 @@ function buildEmailHtml(data: ApplicationNotification): string {
   </div>`;
 }
 
+function buildAdminEmailText(data: ApplicationNotification): string {
+  const isNomination = data.applicationType === "Nomination";
+  const location = [data.city, data.state, data.country]
+    .filter(Boolean)
+    .join(", ");
+  const lines = [
+    `New ${isNomination ? "Nomination" : "Self-Application"}: ${data.name}`,
+    "",
+    `Age: ${data.age}`,
+    `Gender: ${data.gender}`,
+    `Orientation: ${data.orientation}`,
+    `Location: ${location}`,
+    `Email: ${data.email}`,
+    `Instagram: @${data.instagram}`,
+    `Community: ${data.community}`,
+    `Income: ${data.income}`,
+  ];
+  if (data.phone) lines.push(`Phone: ${data.phone}`);
+  if (isNomination && data.referrerName)
+    lines.push(`Nominated by: ${data.referrerName}`);
+  if (data.pitch) lines.push("", `Pitch: ${data.pitch}`);
+  lines.push("", "https://garammasaladating.com/admin");
+  return lines.join("\n");
+}
+
 export const POST: APIRoute = async ({ request }) => {
   const origin = request.headers.get("origin");
   if (!isAllowedOrigin(origin)) {
@@ -140,38 +171,48 @@ export const POST: APIRoute = async ({ request }) => {
     });
   }
 
-  const apiKey = import.meta.env.RESEND_API_KEY;
   const notificationEmail = import.meta.env.NOTIFICATION_EMAIL;
-  if (!apiKey || !notificationEmail) {
+  if (!notificationEmail) {
     return new Response(JSON.stringify({ error: "Server misconfigured" }), {
       status: 500,
       headers: { "Content-Type": "application/json" },
     });
   }
 
-  const body = (await request.json()) as ApplicationNotification;
-  if (
-    !body.name ||
-    !body.instagram ||
-    !body.email ||
-    validateEmail(body.email) ||
-    !Array.isArray(body.photoUrls) ||
-    body.photoUrls.length === 0
-  ) {
-    return new Response(JSON.stringify({ error: "Missing required fields" }), {
+  let body: ApplicationNotification;
+  try {
+    const raw: unknown = await request.json();
+    const result = ApplicationSchema.safeParse(raw);
+    if (!result.success) {
+      return new Response(JSON.stringify({ error: "Invalid request body" }), {
+        status: 400,
+        headers: { "Content-Type": "application/json" },
+      });
+    }
+    body = result.data;
+  } catch {
+    return new Response(JSON.stringify({ error: "Bad request" }), {
       status: 400,
       headers: { "Content-Type": "application/json" },
     });
   }
 
-  const resend = new Resend(apiKey);
+  const isNomination = body.applicationType === "Nomination";
+
   try {
-    await resend.emails.send({
-      from: "Garam Masala Dating <casting@garammasaladating.com>",
+    // Notify Surbhi
+    await sendMail({
       to: notificationEmail,
-      subject: `New Application: ${body.name} (${body.applicationType === "Nomination" ? "Nomination" : "Self"})`,
-      html: buildEmailHtml(body),
+      subject: `New Application: ${body.name} (${isNomination ? "Nomination" : "Self"})`,
+      text: buildAdminEmailText(body),
+      html: buildAdminEmailHtml(body),
     });
+
+    // Welcome email to applicant — non-fatal if it fails, but awaited so the
+    // serverless function doesn't exit before the send attempt completes.
+    const welcome = applicationReceived(body.name, body.city);
+    await Promise.allSettled([sendMail({ to: body.email, ...welcome })]);
+
     return new Response(JSON.stringify({ sent: true }), {
       status: 200,
       headers: { "Content-Type": "application/json" },

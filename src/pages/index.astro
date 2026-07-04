@@ -13,6 +13,7 @@ import HomeCreators from "@/components/home/HomeCreators.astro";
 import HomeVideo from "@/components/home/HomeVideo.astro";
 import HomeFAQ from "@/components/home/HomeFAQ.astro";
 import HomeJournal from "@/components/home/HomeJournal.astro";
+import StickyCTA from "@/components/StickyCTA.astro";
 import { CREATOR_URLS } from "@/data/socials";
 import { PAGES } from "@/data/copy";
 import { buildOrganizationJsonLd } from "@/utils/organizationSchema";
@@ -230,6 +231,7 @@ const speakableJsonLd = JSON.stringify({
       </div>
     </div>
   </dialog>
+  <StickyCTA triggerSelector=".hero" />
 </BaseLayout>
 
 <script>
@@ -360,7 +362,7 @@ const speakableJsonLd = JSON.stringify({
           submitBtn.textContent = "Sending...";
         }
         try {
-          const attribution = buildLeadAttribution({ source: "popup" });
+          const attribution = await buildLeadAttribution({ source: "popup" });
           popupDocId = await captureLead({
             email: savedEmail,
             ...attribution,
@@ -422,7 +424,9 @@ const speakableJsonLd = JSON.stringify({
           if (popupDocId) {
             await updateLeadPhone(popupDocId, cleaned);
           } else {
-            const attribution = buildLeadAttribution({ source: "popup" });
+            const attribution = await buildLeadAttribution({
+              source: "popup",
+            });
             await captureLead({
               email: savedEmail,
               phone: cleaned,
@@ -546,7 +550,7 @@ const speakableJsonLd = JSON.stringify({
     }
   }
   .popup-dialog.closing .popup-inner {
-    animation: popupOut 0.2s ease-in forwards;
+    animation: dialog-out 0.2s ease-in forwards;
   }
   .popup-close {
     position: absolute;

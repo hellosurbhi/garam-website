@@ -163,7 +163,7 @@ export default function AdminDashboard({ onLogout }: AdminDashboardProps) {
     }
     setFetchError(false);
     try {
-      const colRef = collection(getFirebaseDb(), "applications");
+      const colRef = collection(await getFirebaseDb(), "applications");
       const q = after
         ? query(
             colRef,
@@ -208,7 +208,7 @@ export default function AdminDashboard({ onLogout }: AdminDashboardProps) {
     patch: Partial<Omit<Application, "id">>,
   ) {
     try {
-      await updateDoc(doc(getFirebaseDb(), "applications", id), patch);
+      await updateDoc(doc(await getFirebaseDb(), "applications", id), patch);
       setApplications((prev) =>
         prev.map((a) => (a.id === id ? { ...a, ...patch } : a)),
       );

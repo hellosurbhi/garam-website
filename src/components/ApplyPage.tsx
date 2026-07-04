@@ -1,4 +1,24 @@
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
+
+declare global {
+  interface Window {
+    turnstile?: {
+      render: (
+        container: HTMLElement,
+        options: {
+          sitekey: string;
+          callback: (token: string) => void;
+          "expired-callback": () => void;
+          "error-callback": () => void;
+          size?: "normal" | "invisible" | "compact";
+        },
+      ) => string;
+      remove: (widgetId: string) => void;
+      reset: (widgetId: string) => void;
+    };
+    __gmd_turnstile_load?: () => void;
+  }
+}
 import { ErrorBoundary } from "./ErrorBoundary";
 import { COMMUNITY_OPTIONS, INCOME_OPTIONS } from "@/types/application";
 import styles from "./ApplyPage.module.css";
@@ -26,6 +46,8 @@ export default function ApplyPage() {
 }
 
 function ApplyPageInner() {
+  const turnstileContainerRef = useRef<HTMLDivElement>(null);
+
   useEffect(() => {
     if (typeof navigator === "undefined") return;
     const mc =
@@ -120,7 +142,48 @@ function ApplyPageInner() {
     handleTermsCheckbox,
     agreeToTerms,
     handleSubmit,
+    setTurnstileToken,
+    turnstileWidgetIdRef,
   } = useApplyForm();
+
+  useEffect(() => {
+    const siteKey = import.meta.env.PUBLIC_TURNSTILE_SITE_KEY as
+      string | undefined;
+    if (!siteKey) return;
+
+    function renderWidget() {
+      if (
+        !turnstileContainerRef.current ||
+        !window.turnstile ||
+        turnstileWidgetIdRef.current
+      )
+        return;
+      turnstileWidgetIdRef.current = window.turnstile.render(
+        turnstileContainerRef.current,
+        {
+          sitekey: siteKey!,
+          callback: (token: string) => setTurnstileToken(token),
+          "expired-callback": () => setTurnstileToken(""),
+          "error-callback": () => setTurnstileToken(""),
+          size: "invisible",
+        },
+      );
+    }
+
+    if (window.turnstile) {
+      renderWidget();
+    } else {
+      window.__gmd_turnstile_load = renderWidget;
+    }
+
+    return () => {
+      if (turnstileWidgetIdRef.current && window.turnstile) {
+        window.turnstile.remove(turnstileWidgetIdRef.current);
+        turnstileWidgetIdRef.current = undefined;
+      }
+      delete window.__gmd_turnstile_load;
+    };
+  }, [setTurnstileToken]);
 
   const isNomination = form.applicationType === "Nomination";
 
@@ -737,6 +800,9 @@ function ApplyPageInner() {
                       </p>
                     )}
                   </div>
+
+                  {/* Cloudflare Turnstile invisible widget — rendered via useEffect */}
+                  <div ref={turnstileContainerRef} aria-hidden="true" />
 
                   <button
                     type="submit"

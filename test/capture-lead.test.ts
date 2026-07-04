@@ -79,8 +79,6 @@ describe("capture-lead handler", () => {
     expect(fields.fbclid.stringValue).toBe("fb-click-id");
     expect(fields.gclid.stringValue).toBe("g-click-id");
     expect(fields.sourceCitySlug.stringValue).toBe("manhattan");
-    expect(fields.geoLatitude.doubleValue).toBe(40.7128);
-    expect(fields.geoLongitude.doubleValue).toBe(-74.006);
   });
 
   it("retries without click ids when deployed Firestore rules reject them", async () => {

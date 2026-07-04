@@ -18,6 +18,31 @@ const breadcrumbJsonLd = buildBreadcrumbJsonLd([
 >
   <Fragment slot="head">
     <script type="application/ld+json" set:html={breadcrumbJsonLd} />
+    <link
+      rel="preconnect"
+      href="https://firestore.googleapis.com"
+      crossorigin
+    />
+    <link
+      rel="preconnect"
+      href="https://firebasestorage.googleapis.com"
+      crossorigin
+    />
+    <link
+      rel="preconnect"
+      href="https://identitytoolkit.googleapis.com"
+      crossorigin
+    />
+    {
+      import.meta.env.PUBLIC_TURNSTILE_SITE_KEY && (
+        <script
+          is:inline
+          src="https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit&onload=__gmd_turnstile_load"
+          async
+          defer
+        />
+      )
+    }
   </Fragment>
 
   <main id="main-content" class="apply-main">

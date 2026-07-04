@@ -1,6 +1,5 @@
 import type React from "react";
-import { useState, useEffect, useMemo, type ChangeEvent } from "react";
-import { collection, addDoc, serverTimestamp } from "firebase/firestore";
+import { useState, useEffect, useMemo, useRef, type ChangeEvent } from "react";
 import type { StorageReference } from "firebase/storage";
 import {
   getFirebaseDb,
@@ -87,7 +86,7 @@ function computeIsValid(
   if (!form.orientation) return false;
   if (!form.city.trim()) return false;
   if (validateEmail(form.email)) return false;
-  if (!form.instagram.trim()) return false;
+  if (!form.instagram.trim().replace(/^@/, "")) return false;
   if (photoFiles.length === 0) return false;
   if (form.applicationType === "Nomination") {
     if (!form.referrerName.trim()) return false;
@@ -122,6 +121,8 @@ export function useApplyForm() {
   );
   const [toast, setToast] = useState<{ msg: string; ok: boolean } | null>(null);
   const [formStarted, setFormStarted] = useState(false);
+  const [turnstileToken, setTurnstileToken] = useState("");
+  const turnstileWidgetIdRef = useRef<string | undefined>(undefined);
   const [cityInput, setCityInput] = useState(() => {
     const urlParams = getUrlCityParams();
     if (!urlParams) return "";
@@ -171,6 +172,23 @@ export function useApplyForm() {
     const incoming = Array.from(e.target.files ?? []);
     if (incoming.length === 0) return;
 
+    const ALLOWED_TYPES = new Set([
+      "image/jpeg",
+      "image/png",
+      "image/webp",
+      "image/heic",
+    ]);
+
+    const invalidType = incoming.filter((f) => !ALLOWED_TYPES.has(f.type));
+    if (invalidType.length > 0) {
+      setErrors((prev) => ({
+        ...prev,
+        photo: "Only JPEG, PNG and WEBP files are allowed",
+      }));
+      e.target.value = "";
+      return;
+    }
+
     const oversized = incoming.filter((f) => f.size > MAX_PHOTO_BYTES);
     if (oversized.length > 0) {
       setErrors((prev) => ({
@@ -179,7 +197,9 @@ export function useApplyForm() {
       }));
     }
 
-    const valid = incoming.filter((f) => f.size <= MAX_PHOTO_BYTES);
+    const valid = incoming.filter(
+      (f) => f.size <= MAX_PHOTO_BYTES && ALLOWED_TYPES.has(f.type),
+    );
     if (valid.length === 0) {
       e.target.value = "";
       return;
@@ -244,7 +264,7 @@ export function useApplyForm() {
     if (!form.city.trim()) errs.city = "Required";
     const emailErr = validateEmail(form.email);
     if (emailErr) errs.email = emailErr;
-    if (!form.instagram.trim()) errs.instagram = "Required";
+    if (!form.instagram.trim().replace(/^@/, "")) errs.instagram = "Required";
     if (photoFiles.length === 0) errs.photo = "A photo is required";
     if (form.applicationType === "Nomination") {
       if (!form.referrerName.trim()) errs.referrerName = "Required";
@@ -276,6 +296,46 @@ export function useApplyForm() {
     if (!validate()) return;
 
     setSubmitting(true);
+
+    // Verify Turnstile token when the feature is configured
+    const turnstileSiteKey = import.meta.env.PUBLIC_TURNSTILE_SITE_KEY;
+    if (turnstileSiteKey) {
+      if (!turnstileToken) {
+        setToast({
+          msg: "Please wait a moment while we verify your submission, then try again.",
+          ok: false,
+        });
+        setSubmitting(false);
+        return;
+      }
+      try {
+        const verifyRes = await fetch("/api/verify-turnstile", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ token: turnstileToken }),
+        });
+        // Token is one-time-use — clear it and request a new challenge regardless
+        setTurnstileToken("");
+        if (window.turnstile && turnstileWidgetIdRef.current) {
+          window.turnstile.reset(turnstileWidgetIdRef.current);
+        }
+        if (!verifyRes.ok) {
+          setToast({
+            msg: "Verification failed. Please refresh the page and try again.",
+            ok: false,
+          });
+          setSubmitting(false);
+          return;
+        }
+      } catch {
+        // Network error — allow submission through rather than hard-blocking
+        setTurnstileToken("");
+        if (window.turnstile && turnstileWidgetIdRef.current) {
+          window.turnstile.reset(turnstileWidgetIdRef.current);
+        }
+      }
+    }
+
     const uploadedRefs: (StorageReference | null)[] = [];
     try {
       const [
@@ -343,7 +403,11 @@ export function useApplyForm() {
           : {}),
       };
 
-      await addDoc(collection(getFirebaseDb(), "applications"), {
+      const [{ collection, addDoc, serverTimestamp }, db] = await Promise.all([
+        import("firebase/firestore"),
+        getFirebaseDb(),
+      ]);
+      await addDoc(collection(db, "applications"), {
         ...applicationData,
         emailNormalized: form.email.trim().toLowerCase(),
         marketingConsent: form.marketingConsent,
@@ -355,9 +419,9 @@ export function useApplyForm() {
       // All uploaded — no cleanup needed
       uploadedRefs.fill(null);
 
-      const attribution = buildLeadAttribution({ source: "apply" });
+      const attribution = await buildLeadAttribution({ source: "apply" });
       const igHandle = form.instagram.trim().replace(/^@/, "");
-      const identifier = form.email.trim() || igHandle;
+      const identifier = form.email.trim();
       if (identifier) {
         identifyLead(identifier, {
           name: form.name,
@@ -415,6 +479,11 @@ export function useApplyForm() {
         msg: "Sorry, the form isn't working right now. DM us on @garammasaladating on Instagram and we'll sort it out!",
         ok: false,
       });
+      // Spent token — reset so the next retry gets a fresh challenge
+      setTurnstileToken("");
+      if (window.turnstile && turnstileWidgetIdRef.current) {
+        window.turnstile.reset(turnstileWidgetIdRef.current);
+      }
     } finally {
       setSubmitting(false);
     }
@@ -445,5 +514,7 @@ export function useApplyForm() {
     handleTermsCheckbox,
     agreeToTerms,
     handleSubmit,
+    setTurnstileToken,
+    turnstileWidgetIdRef,
   };
 }

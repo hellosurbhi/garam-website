@@ -587,6 +587,126 @@ describe("useApplyForm", () => {
     expect(mockDeleteObject).toHaveBeenCalledWith("mock-ref");
   });
 
+  /* ── Turnstile reset behaviour ────────────────────────── */
+
+  it("clears turnstile token after successful verification", async () => {
+    vi.stubEnv("PUBLIC_TURNSTILE_SITE_KEY", "test-site-key");
+    const mockReset = vi.fn();
+    (
+      window as Window & {
+        turnstile?: {
+          render: () => string;
+          remove: (id: string) => void;
+          reset: (id: string) => void;
+        };
+      }
+    ).turnstile = {
+      render: vi.fn(() => "widget-1"),
+      remove: vi.fn(),
+      reset: mockReset,
+    };
+
+    const { result } = renderHook(() => useApplyForm());
+    act(() => {
+      fillRequired(
+        result.current.set,
+        result.current.handleTermsCheckbox,
+        result.current.handleAddPhotos,
+      );
+      result.current.setTurnstileToken("a-valid-token");
+      result.current.turnstileWidgetIdRef.current = "widget-1";
+    });
+
+    await act(async () => {
+      await result.current.handleSubmit(makeSubmitEvent());
+    });
+
+    expect(result.current.submitted).toBe(true);
+    expect(mockReset).toHaveBeenCalledWith("widget-1");
+    delete (window as Window & { turnstile?: unknown }).turnstile;
+    vi.unstubAllEnvs();
+  });
+
+  it("clears turnstile token and resets widget on verification failure", async () => {
+    vi.stubEnv("PUBLIC_TURNSTILE_SITE_KEY", "test-site-key");
+    const mockReset = vi.fn();
+    (
+      window as Window & {
+        turnstile?: {
+          render: () => string;
+          remove: (id: string) => void;
+          reset: (id: string) => void;
+        };
+      }
+    ).turnstile = {
+      render: vi.fn(() => "widget-1"),
+      remove: vi.fn(),
+      reset: mockReset,
+    };
+    vi.spyOn(globalThis, "fetch").mockResolvedValueOnce(
+      new Response("{}", { status: 422 }),
+    );
+
+    const { result } = renderHook(() => useApplyForm());
+    act(() => {
+      fillRequired(
+        result.current.set,
+        result.current.handleTermsCheckbox,
+        result.current.handleAddPhotos,
+      );
+      result.current.setTurnstileToken("spent-token");
+      result.current.turnstileWidgetIdRef.current = "widget-1";
+    });
+
+    await act(async () => {
+      await result.current.handleSubmit(makeSubmitEvent());
+    });
+
+    expect(result.current.submitted).toBe(false);
+    expect(mockReset).toHaveBeenCalledWith("widget-1");
+    delete (window as Window & { turnstile?: unknown }).turnstile;
+    vi.unstubAllEnvs();
+  });
+
+  it("clears turnstile token on Firestore failure", async () => {
+    vi.stubEnv("PUBLIC_TURNSTILE_SITE_KEY", "test-site-key");
+    const mockReset = vi.fn();
+    (
+      window as Window & {
+        turnstile?: {
+          render: () => string;
+          remove: (id: string) => void;
+          reset: (id: string) => void;
+        };
+      }
+    ).turnstile = {
+      render: vi.fn(() => "widget-1"),
+      remove: vi.fn(),
+      reset: mockReset,
+    };
+    mockAddDoc.mockRejectedValueOnce(new Error("Firestore error"));
+
+    const { result } = renderHook(() => useApplyForm());
+    act(() => {
+      fillRequired(
+        result.current.set,
+        result.current.handleTermsCheckbox,
+        result.current.handleAddPhotos,
+      );
+      result.current.setTurnstileToken("a-valid-token");
+      result.current.turnstileWidgetIdRef.current = "widget-1";
+    });
+
+    await act(async () => {
+      await result.current.handleSubmit(makeSubmitEvent());
+    });
+
+    expect(result.current.submitted).toBe(false);
+    expect(mockReset).toHaveBeenCalledWith("widget-1");
+    delete (window as Window & { turnstile?: unknown }).turnstile;
+    vi.unstubAllEnvs();
+  });
+
   /* ── Group 1: Complete initial state ─────────────────── */
 
   it("returns all INITIAL form fields as empty strings", () => {

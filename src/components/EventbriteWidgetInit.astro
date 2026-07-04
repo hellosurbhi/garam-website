@@ -76,14 +76,16 @@
             fontColor,
             background: bgColor,
           },
-          onOrderComplete() {
+          async onOrderComplete() {
             orderCompleted = true;
             const raw = sessionStorage.getItem("eb_cta_source");
             const src = raw
               ? (JSON.parse(raw) as Record<string, string>)
               : null;
             sessionStorage.removeItem("eb_cta_source");
-            const attr = buildLeadAttribution({ source: "ticket_purchase" });
+            const attr = await buildLeadAttribution({
+              source: "ticket_purchase",
+            });
             capture("order_complete", {
               event_id: ev.eventId,
               city: ev.city,

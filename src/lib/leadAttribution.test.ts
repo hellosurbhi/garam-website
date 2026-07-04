@@ -187,49 +187,55 @@ describe("buildLeadAttribution", () => {
       configurable: true,
     });
     delete (window as unknown as Record<string, unknown>).posthog;
+    // Resolve geo fetch immediately with empty data so tests don't hang or
+    // wait for the 1500ms race timeout.
+    vi.spyOn(globalThis, "fetch").mockResolvedValue(
+      new Response("{}", { status: 200 }),
+    );
   });
 
   afterEach(() => {
     sessionStorage.clear();
     delete (window as unknown as Record<string, unknown>).posthog;
+    vi.restoreAllMocks();
   });
 
-  it("returns required fields: source, sourcePage, landingPage", () => {
-    const result = buildLeadAttribution({ source: "apply-page" });
+  it("returns required fields: source, sourcePage, landingPage", async () => {
+    const result = await buildLeadAttribution({ source: "apply-page" });
     expect(result.source).toBe("apply-page");
     expect(result.sourcePage).toBe("/apply");
     expect(result.landingPage).toBe("/apply");
   });
 
-  it("uses sessionStorage landing page when available", () => {
+  it("uses sessionStorage landing page when available", async () => {
     sessionStorage.setItem("gmd-landing-page", "/tickets");
-    const result = buildLeadAttribution({ source: "apply-page" });
+    const result = await buildLeadAttribution({ source: "apply-page" });
     expect(result.landingPage).toBe("/tickets");
   });
 
-  it("falls back to current pathname when landing page not in sessionStorage", () => {
-    const result = buildLeadAttribution({ source: "apply-page" });
+  it("falls back to current pathname when landing page not in sessionStorage", async () => {
+    const result = await buildLeadAttribution({ source: "apply-page" });
     expect(result.landingPage).toBe("/apply");
   });
 
-  it("includes referrerHost when present in sessionStorage", () => {
+  it("includes referrerHost when present in sessionStorage", async () => {
     sessionStorage.setItem("gmd-referrer-host", "www.google.com");
-    const result = buildLeadAttribution({ source: "apply-page" });
+    const result = await buildLeadAttribution({ source: "apply-page" });
     expect(result.referrerHost).toBe("www.google.com");
   });
 
-  it("omits referrerHost when not in sessionStorage", () => {
-    const result = buildLeadAttribution({ source: "apply-page" });
+  it("omits referrerHost when not in sessionStorage", async () => {
+    const result = await buildLeadAttribution({ source: "apply-page" });
     expect(result).not.toHaveProperty("referrerHost");
   });
 
-  it("includes UTM fields when present in sessionStorage", () => {
+  it("includes UTM fields when present in sessionStorage", async () => {
     sessionStorage.setItem("gmd-utm-source", "instagram");
     sessionStorage.setItem("gmd-utm-medium", "social");
     sessionStorage.setItem("gmd-utm-campaign", "spring");
     sessionStorage.setItem("gmd-utm-content", "bio");
     sessionStorage.setItem("gmd-utm-term", "dating");
-    const result = buildLeadAttribution({ source: "apply-page" });
+    const result = await buildLeadAttribution({ source: "apply-page" });
     expect(result.utmSource).toBe("instagram");
     expect(result.utmMedium).toBe("social");
     expect(result.utmCampaign).toBe("spring");
@@ -237,16 +243,16 @@ describe("buildLeadAttribution", () => {
     expect(result.utmTerm).toBe("dating");
   });
 
-  it("includes paid click ids when present in sessionStorage", () => {
+  it("includes paid click ids when present in sessionStorage", async () => {
     sessionStorage.setItem("gmd-fbclid", "fb-click-id");
     sessionStorage.setItem("gmd-gclid", "g-click-id");
-    const result = buildLeadAttribution({ source: "apply-page" });
+    const result = await buildLeadAttribution({ source: "apply-page" });
     expect(result.fbclid).toBe("fb-click-id");
     expect(result.gclid).toBe("g-click-id");
   });
 
-  it("omits UTM fields when not in sessionStorage", () => {
-    const result = buildLeadAttribution({ source: "apply-page" });
+  it("omits UTM fields when not in sessionStorage", async () => {
+    const result = await buildLeadAttribution({ source: "apply-page" });
     expect(result).not.toHaveProperty("utmSource");
     expect(result).not.toHaveProperty("utmMedium");
     expect(result).not.toHaveProperty("utmCampaign");
@@ -254,223 +260,225 @@ describe("buildLeadAttribution", () => {
     expect(result).not.toHaveProperty("utmTerm");
   });
 
-  it("includes posthogDistinctId when posthog returns non-empty string", () => {
+  it("includes posthogDistinctId when posthog returns non-empty string", async () => {
     (window as unknown as Record<string, unknown>).posthog = {
       get_distinct_id: () => "ph-user-123",
     };
-    const result = buildLeadAttribution({ source: "apply-page" });
+    const result = await buildLeadAttribution({ source: "apply-page" });
     expect(result.posthogDistinctId).toBe("ph-user-123");
   });
 
-  it("excludes posthogDistinctId when it is whitespace-only", () => {
+  it("excludes posthogDistinctId when it is whitespace-only", async () => {
     (window as unknown as Record<string, unknown>).posthog = {
       get_distinct_id: () => "   ",
     };
-    const result = buildLeadAttribution({ source: "apply-page" });
+    const result = await buildLeadAttribution({ source: "apply-page" });
     expect(result).not.toHaveProperty("posthogDistinctId");
   });
 
-  it("excludes posthogDistinctId when posthog is undefined", () => {
-    const result = buildLeadAttribution({ source: "apply-page" });
+  it("excludes posthogDistinctId when posthog is undefined", async () => {
+    const result = await buildLeadAttribution({ source: "apply-page" });
     expect(result).not.toHaveProperty("posthogDistinctId");
   });
 
-  it("includes sourceCitySlug when provided", () => {
-    const result = buildLeadAttribution({
+  it("includes sourceCitySlug when provided", async () => {
+    const result = await buildLeadAttribution({
       source: "city-page",
       sourceCitySlug: "manhattan",
     });
     expect(result.sourceCitySlug).toBe("manhattan");
   });
 
-  it("excludes sourceCitySlug when not provided", () => {
-    const result = buildLeadAttribution({ source: "apply-page" });
+  it("excludes sourceCitySlug when not provided", async () => {
+    const result = await buildLeadAttribution({ source: "apply-page" });
     expect(result).not.toHaveProperty("sourceCitySlug");
   });
 
-  it("excludes posthogDistinctId when posthog returns a number", () => {
+  it("excludes posthogDistinctId when posthog returns a number", async () => {
     (window as unknown as Record<string, unknown>).posthog = {
       get_distinct_id: () => 12345,
     };
-    const result = buildLeadAttribution({ source: "apply-page" });
+    const result = await buildLeadAttribution({ source: "apply-page" });
     expect(result).not.toHaveProperty("posthogDistinctId");
   });
 
-  it("excludes posthogDistinctId when posthog returns empty string", () => {
+  it("excludes posthogDistinctId when posthog returns empty string", async () => {
     (window as unknown as Record<string, unknown>).posthog = {
       get_distinct_id: () => "",
     };
-    const result = buildLeadAttribution({ source: "apply-page" });
+    const result = await buildLeadAttribution({ source: "apply-page" });
     expect(result).not.toHaveProperty("posthogDistinctId");
   });
 
   /* ── Geo data in build ──────────────────────────────── */
 
-  it("includes geoCity when present in sessionStorage", () => {
+  it("includes geoCity when present in sessionStorage", async () => {
     sessionStorage.setItem("gmd-geo-city", "New York");
-    const result = buildLeadAttribution({ source: "apply" });
+    const result = await buildLeadAttribution({ source: "apply" });
     expect(result.geoCity).toBe("New York");
   });
 
-  it("includes geoRegion when present in sessionStorage", () => {
+  it("includes geoRegion when present in sessionStorage", async () => {
     sessionStorage.setItem("gmd-geo-region", "NY");
-    const result = buildLeadAttribution({ source: "apply" });
+    const result = await buildLeadAttribution({ source: "apply" });
     expect(result.geoRegion).toBe("NY");
   });
 
-  it("includes geoCountry when present in sessionStorage", () => {
+  it("includes geoCountry when present in sessionStorage", async () => {
     sessionStorage.setItem("gmd-geo-country", "US");
-    const result = buildLeadAttribution({ source: "apply" });
+    const result = await buildLeadAttribution({ source: "apply" });
     expect(result.geoCountry).toBe("US");
   });
 
-  it("includes geoTimezone when present in sessionStorage", () => {
+  it("includes geoTimezone when present in sessionStorage", async () => {
     sessionStorage.setItem("gmd-geo-timezone", "America/New_York");
-    const result = buildLeadAttribution({ source: "apply" });
+    const result = await buildLeadAttribution({ source: "apply" });
     expect(result.geoTimezone).toBe("America/New_York");
   });
 
-  it("omits geo fields when not in sessionStorage", () => {
-    const result = buildLeadAttribution({ source: "apply" });
+  it("omits geo fields when not in sessionStorage", async () => {
+    const result = await buildLeadAttribution({ source: "apply" });
     expect(result).not.toHaveProperty("geoCity");
     expect(result).not.toHaveProperty("geoRegion");
     expect(result).not.toHaveProperty("geoCountry");
     expect(result).not.toHaveProperty("geoTimezone");
   });
 
-  it("includes all geo fields when all present", () => {
+  it("includes all geo fields when all present", async () => {
     sessionStorage.setItem("gmd-geo-city", "Boston");
     sessionStorage.setItem("gmd-geo-region", "MA");
     sessionStorage.setItem("gmd-geo-country", "US");
     sessionStorage.setItem("gmd-geo-timezone", "America/New_York");
-    const result = buildLeadAttribution({ source: "apply" });
+    const result = await buildLeadAttribution({ source: "apply" });
     expect(result.geoCity).toBe("Boston");
     expect(result.geoRegion).toBe("MA");
     expect(result.geoCountry).toBe("US");
     expect(result.geoTimezone).toBe("America/New_York");
   });
 
+
+
   /* ── posthog edge cases ─────────────────────────────── */
 
-  it("excludes posthogDistinctId when posthog has no get_distinct_id method", () => {
+  it("excludes posthogDistinctId when posthog has no get_distinct_id method", async () => {
     (window as unknown as Record<string, unknown>).posthog = {};
-    const result = buildLeadAttribution({ source: "apply" });
+    const result = await buildLeadAttribution({ source: "apply" });
     expect(result).not.toHaveProperty("posthogDistinctId");
   });
 
-  it("includes posthogDistinctId with non-empty trimmed string", () => {
+  it("includes posthogDistinctId with non-empty trimmed string", async () => {
     (window as unknown as Record<string, unknown>).posthog = {
       get_distinct_id: () => "  user-abc  ",
     };
-    const result = buildLeadAttribution({ source: "apply" });
+    const result = await buildLeadAttribution({ source: "apply" });
     expect(result.posthogDistinctId).toBe("  user-abc  ");
   });
 
   /* ── Individual UTM field inclusion ─────────────────── */
 
-  it("includes only utmSource when only that UTM is in storage", () => {
+  it("includes only utmSource when only that UTM is in storage", async () => {
     sessionStorage.setItem("gmd-utm-source", "ig");
-    const result = buildLeadAttribution({ source: "apply" });
+    const result = await buildLeadAttribution({ source: "apply" });
     expect(result.utmSource).toBe("ig");
     expect(result).not.toHaveProperty("utmMedium");
     expect(result).not.toHaveProperty("utmCampaign");
   });
 
-  it("includes only utmMedium when only that UTM is in storage", () => {
+  it("includes only utmMedium when only that UTM is in storage", async () => {
     sessionStorage.setItem("gmd-utm-medium", "social");
-    const result = buildLeadAttribution({ source: "apply" });
+    const result = await buildLeadAttribution({ source: "apply" });
     expect(result.utmMedium).toBe("social");
     expect(result).not.toHaveProperty("utmSource");
   });
 
-  it("includes only utmCampaign when only that UTM is in storage", () => {
+  it("includes only utmCampaign when only that UTM is in storage", async () => {
     sessionStorage.setItem("gmd-utm-campaign", "spring");
-    const result = buildLeadAttribution({ source: "apply" });
+    const result = await buildLeadAttribution({ source: "apply" });
     expect(result.utmCampaign).toBe("spring");
     expect(result).not.toHaveProperty("utmSource");
   });
 
-  it("includes only utmContent when only that UTM is in storage", () => {
+  it("includes only utmContent when only that UTM is in storage", async () => {
     sessionStorage.setItem("gmd-utm-content", "header");
-    const result = buildLeadAttribution({ source: "apply" });
+    const result = await buildLeadAttribution({ source: "apply" });
     expect(result.utmContent).toBe("header");
   });
 
-  it("includes only utmTerm when only that UTM is in storage", () => {
+  it("includes only utmTerm when only that UTM is in storage", async () => {
     sessionStorage.setItem("gmd-utm-term", "dating");
-    const result = buildLeadAttribution({ source: "apply" });
+    const result = await buildLeadAttribution({ source: "apply" });
     expect(result.utmTerm).toBe("dating");
   });
 
   /* ── source field ───────────────────────────────────── */
 
-  it("source field matches the provided source parameter", () => {
-    const result = buildLeadAttribution({ source: "tickets-page" });
+  it("source field matches the provided source parameter", async () => {
+    const result = await buildLeadAttribution({ source: "tickets-page" });
     expect(result.source).toBe("tickets-page");
   });
 
-  it("sourcePage reflects current pathname", () => {
+  it("sourcePage reflects current pathname", async () => {
     Object.defineProperty(window, "location", {
       value: { pathname: "/tickets", search: "" },
       writable: true,
       configurable: true,
     });
-    const result = buildLeadAttribution({ source: "apply" });
+    const result = await buildLeadAttribution({ source: "apply" });
     expect(result.sourcePage).toBe("/tickets");
   });
 
-  it("excludes posthogDistinctId when get_distinct_id returns null", () => {
+  it("excludes posthogDistinctId when get_distinct_id returns null", async () => {
     (window as unknown as Record<string, unknown>).posthog = {
       get_distinct_id: () => null,
     };
-    const result = buildLeadAttribution({ source: "apply" });
+    const result = await buildLeadAttribution({ source: "apply" });
     expect(result).not.toHaveProperty("posthogDistinctId");
   });
 
-  it("excludes posthogDistinctId when get_distinct_id returns undefined", () => {
+  it("excludes posthogDistinctId when get_distinct_id returns undefined", async () => {
     (window as unknown as Record<string, unknown>).posthog = {
       get_distinct_id: () => undefined,
     };
-    const result = buildLeadAttribution({ source: "apply" });
+    const result = await buildLeadAttribution({ source: "apply" });
     expect(result).not.toHaveProperty("posthogDistinctId");
   });
 
-  it("excludes posthogDistinctId when get_distinct_id returns boolean true", () => {
+  it("excludes posthogDistinctId when get_distinct_id returns boolean true", async () => {
     (window as unknown as Record<string, unknown>).posthog = {
       get_distinct_id: () => true,
     };
-    const result = buildLeadAttribution({ source: "apply" });
+    const result = await buildLeadAttribution({ source: "apply" });
     expect(result).not.toHaveProperty("posthogDistinctId");
   });
 
-  it("does not include sourceCitySlug when it is empty string", () => {
-    const result = buildLeadAttribution({
+  it("does not include sourceCitySlug when it is empty string", async () => {
+    const result = await buildLeadAttribution({
       source: "apply",
       sourceCitySlug: "",
     });
     expect(result).not.toHaveProperty("sourceCitySlug");
   });
 
-  it("landingPage falls back to getPathname when sessionStorage has no landing page", () => {
+  it("landingPage falls back to getPathname when sessionStorage has no landing page", async () => {
     // Do not pre-set gmd-landing-page; buildLeadAttribution calls bootstrap first,
     // which sets it, then reads it. Confirm it reads the stored value.
-    const result = buildLeadAttribution({ source: "apply" });
+    const result = await buildLeadAttribution({ source: "apply" });
     expect(result.landingPage).toBe("/apply");
     expect(typeof result.landingPage).toBe("string");
   });
 
-  it("referrerHost is undefined type when not in sessionStorage", () => {
-    const result = buildLeadAttribution({ source: "apply" });
+  it("referrerHost is undefined type when not in sessionStorage", async () => {
+    const result = await buildLeadAttribution({ source: "apply" });
     expect(result.referrerHost).toBeUndefined();
   });
 
-  it("utmSource is undefined type when not in sessionStorage", () => {
-    const result = buildLeadAttribution({ source: "apply" });
+  it("utmSource is undefined type when not in sessionStorage", async () => {
+    const result = await buildLeadAttribution({ source: "apply" });
     expect(result.utmSource).toBeUndefined();
   });
 
-  it("geoCity is undefined type when not in sessionStorage", () => {
-    const result = buildLeadAttribution({ source: "apply" });
+  it("geoCity is undefined type when not in sessionStorage", async () => {
+    const result = await buildLeadAttribution({ source: "apply" });
     expect(result.geoCity).toBeUndefined();
   });
 });
@@ -594,8 +602,6 @@ describe("bootstrapLeadAttribution — geo data", () => {
     expect(sessionStorage.getItem("gmd-geo-region")).toBe("MA");
     expect(sessionStorage.getItem("gmd-geo-city")).toBeNull();
     expect(sessionStorage.getItem("gmd-geo-country")).toBeNull();
-    expect(sessionStorage.getItem("gmd-geo-latitude")).toBeNull();
-    expect(sessionStorage.getItem("gmd-geo-longitude")).toBeNull();
     expect(sessionStorage.getItem("gmd-geo-timezone")).toBeNull();
   });
 
@@ -631,15 +637,6 @@ describe("bootstrapLeadAttribution — geo data", () => {
     expect(sessionStorage.getItem("gmd-geo-city")).toBeNull();
   });
 
-  it("does not store latitude when geo.latitude is empty string", async () => {
-    vi.spyOn(globalThis, "fetch").mockResolvedValue(
-      new Response(JSON.stringify({ latitude: "" }), { status: 200 }),
-    );
-    bootstrapLeadAttribution();
-    await new Promise((r) => setTimeout(r, 50));
-    expect(sessionStorage.getItem("gmd-geo-latitude")).toBeNull();
-  });
-
   it("does not store region when geo.region is empty string", async () => {
     vi.spyOn(globalThis, "fetch").mockResolvedValue(
       new Response(JSON.stringify({ region: "" }), { status: 200 }),
@@ -658,15 +655,6 @@ describe("bootstrapLeadAttribution — geo data", () => {
     expect(sessionStorage.getItem("gmd-geo-country")).toBeNull();
   });
 
-  it("does not store longitude when geo.longitude is empty string", async () => {
-    vi.spyOn(globalThis, "fetch").mockResolvedValue(
-      new Response(JSON.stringify({ longitude: "" }), { status: 200 }),
-    );
-    bootstrapLeadAttribution();
-    await new Promise((r) => setTimeout(r, 50));
-    expect(sessionStorage.getItem("gmd-geo-longitude")).toBeNull();
-  });
-
   it("does not store timezone when geo.timezone is empty string", async () => {
     vi.spyOn(globalThis, "fetch").mockResolvedValue(
       new Response(JSON.stringify({ timezone: "" }), { status: 200 }),
@@ -674,5 +662,34 @@ describe("bootstrapLeadAttribution — geo data", () => {
     bootstrapLeadAttribution();
     await new Promise((r) => setTimeout(r, 50));
     expect(sessionStorage.getItem("gmd-geo-timezone")).toBeNull();
+  });
+
+  /* ── geo race condition fix ─────────────────────────── */
+
+  it("awaits in-flight geo fetch and includes geo data when fetch resolves quickly", async () => {
+    vi.spyOn(globalThis, "fetch").mockResolvedValue(
+      new Response(JSON.stringify({ city: "Miami", country: "US" }), {
+        status: 200,
+      }),
+    );
+    // Call buildLeadAttribution immediately — no prior bootstrap, fetch is in-flight
+    const result = await buildLeadAttribution({ source: "test" });
+    expect(result.geoCity).toBe("Miami");
+    expect(result.geoCountry).toBe("US");
+  });
+
+  it("caps the geo wait at 1500ms and returns attribution without geo when fetch is slow", async () => {
+    vi.useFakeTimers();
+    // Fetch that never resolves (simulates a very slow network)
+    vi.spyOn(globalThis, "fetch").mockImplementation(
+      () => new Promise<Response>(() => {}),
+    );
+    const buildPromise = buildLeadAttribution({ source: "test" });
+    // Advance past the 1500ms race timeout
+    await vi.runAllTimersAsync();
+    const result = await buildPromise;
+    expect(result).not.toHaveProperty("geoCity");
+    expect(result.source).toBe("test");
+    vi.useRealTimers();
   });
 });

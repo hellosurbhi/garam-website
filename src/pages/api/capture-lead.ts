@@ -67,6 +67,7 @@ async function createLeadDocument(
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ fields }),
+    signal: AbortSignal.timeout(8000),
   });
 }
 
@@ -137,6 +138,7 @@ export const POST: APIRoute = async ({ request }) => {
   addStringField(fields, "geoRegion", body.geoRegion, 100);
   addStringField(fields, "geoCountry", body.geoCountry, 100);
   addStringField(fields, "geoTimezone", body.geoTimezone, 100);
+  // Read server-side Vercel geo headers (not sessionStorage — no CodeQL issue)
   addNumericHeaderField(
     fields,
     "geoLatitude",
@@ -164,7 +166,7 @@ export const POST: APIRoute = async ({ request }) => {
 
     if (!res.ok) {
       const errText = await res.text();
-      console.error("[capture-lead] Failed to save lead:", errText);
+      console.error("[capture-lead] Firestore write failed:", errText);
       return new Response(JSON.stringify({ error: "Failed to save lead" }), {
         status: 500,
         headers: { "Content-Type": "application/json" },

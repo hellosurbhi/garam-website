@@ -3,11 +3,9 @@ import { describe, it, expect, vi, beforeEach } from "vitest";
 // vi.hoisted ensures mockSend is evaluated before vi.mock hoisting
 const mockSend = vi.hoisted(() => vi.fn());
 
-// Mock the resend module - Resend is used as a class (new Resend()), so must use function
-vi.mock("resend", () => ({
-  Resend: vi.fn().mockImplementation(function () {
-    return { emails: { send: mockSend } };
-  }),
+// Mock zohoMailer — notify-application switched from Resend to Zoho SMTP (R12)
+vi.mock("@/lib/zohoMailer", () => ({
+  sendMail: mockSend,
 }));
 
 // Import handler after mocking
@@ -52,17 +50,8 @@ const validBody = {
 describe("notify-application handler", () => {
   beforeEach(() => {
     vi.clearAllMocks();
-    import.meta.env.RESEND_API_KEY = "re_test_key";
     import.meta.env.NOTIFICATION_EMAIL = "admin@example.com";
     mockSend.mockResolvedValue({ id: "email-id" });
-  });
-
-  it("returns 500 when RESEND_API_KEY is missing", async () => {
-    delete import.meta.env.RESEND_API_KEY;
-    const res = await POST(makeContext(makeRequest(validBody)));
-    expect(res.status).toBe(500);
-    const body = await res.json();
-    expect(body.error).toBe("Server misconfigured");
   });
 
   it("returns 500 when NOTIFICATION_EMAIL is missing", async () => {
@@ -77,7 +66,7 @@ describe("notify-application handler", () => {
     );
     expect(res.status).toBe(400);
     const body = await res.json();
-    expect(body.error).toBe("Missing required fields");
+    expect(body.error).toBe("Invalid request body");
   });
 
   it("returns 400 when instagram is missing", async () => {
@@ -93,7 +82,7 @@ describe("notify-application handler", () => {
     );
     expect(res.status).toBe(400);
     const body = await res.json();
-    expect(body.error).toBe("Missing required fields");
+    expect(body.error).toBe("Invalid request body");
   });
 
   it("returns 400 when email is malformed", async () => {
@@ -102,7 +91,7 @@ describe("notify-application handler", () => {
     );
     expect(res.status).toBe(400);
     const body = await res.json();
-    expect(body.error).toBe("Missing required fields");
+    expect(body.error).toBe("Invalid request body");
   });
 
   it("returns 200 and sends email for valid self-application", async () => {
@@ -110,7 +99,8 @@ describe("notify-application handler", () => {
     expect(res.status).toBe(200);
     const body = await res.json();
     expect(body.sent).toBe(true);
-    expect(mockSend).toHaveBeenCalledOnce();
+    // sendMail is called twice: admin notification + applicant welcome email
+    expect(mockSend).toHaveBeenCalledTimes(2);
   });
 
   it("sends email with correct subject for self-application", async () => {
@@ -244,8 +234,8 @@ describe("notify-application handler", () => {
     expect(html).toContain("USA");
   });
 
-  it("email HTML omits photo link for non-https URL", async () => {
-    await POST(
+  it("returns 400 for non-https photo URL", async () => {
+    const res = await POST(
       makeContext(
         makeRequest({
           ...validBody,
@@ -253,19 +243,17 @@ describe("notify-application handler", () => {
         }),
       ),
     );
-    const html: string = mockSend.mock.calls[0][0].html;
-    expect(html).not.toContain("View Photo");
+    expect(res.status).toBe(400);
   });
 
-  it("email HTML omits photo link for invalid URL", async () => {
-    await POST(
+  it("returns 400 for invalid photo URL", async () => {
+    const res = await POST(
       makeContext(makeRequest({ ...validBody, photoUrls: ["not a url"] })),
     );
-    const html: string = mockSend.mock.calls[0][0].html;
-    expect(html).not.toContain("View Photo");
+    expect(res.status).toBe(400);
   });
 
-  it("returns 500 when Resend throws an error", async () => {
+  it("returns 500 when sendMail throws an error", async () => {
     mockSend.mockRejectedValue(new Error("Network failure"));
     const res = await POST(makeContext(makeRequest(validBody)));
     expect(res.status).toBe(500);

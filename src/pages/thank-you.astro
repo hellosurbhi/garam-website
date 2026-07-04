@@ -1,0 +1,256 @@
+---
+import BaseLayout from "@/layouts/BaseLayout.astro";
+import { buildBreadcrumbJsonLd } from "@/utils/breadcrumbs";
+import LeadCaptureModal from "@/components/LeadCaptureModal.astro";
+import { PAGES, SITE } from "@/data/copy";
+import { SOCIAL_URLS } from "@/data/socials";
+
+const C = PAGES.thankYou;
+
+const breadcrumbJsonLd = buildBreadcrumbJsonLd([
+  { name: "Home", url: "https://garammasaladating.com/" },
+  { name: "Tickets", url: "https://garammasaladating.com/tickets" },
+  { name: "Thank You" },
+]);
+
+const shareText = encodeURIComponent(
+  `I just got tickets to ${SITE.name}! Live blind dates in front of 250 people. Come watch the chaos 🌶️`,
+);
+const shareUrl = encodeURIComponent("https://garammasaladating.com/tickets");
+---
+
+<BaseLayout
+  title="See You at the Show"
+  description="Your ticket is confirmed. See you at Garam Masala Dating!"
+  noindex
+>
+  <Fragment slot="head">
+    <script type="application/ld+json" set:html={breadcrumbJsonLd} />
+  </Fragment>
+
+  <main id="main-content" class="ty-main">
+    <div class="ty-container">
+      <!-- Confirmation -->
+      <div class="ty-hero">
+        <p class="ty-eyebrow">{C.eyebrow}</p>
+        <h1 class="ty-heading">{C.heading}</h1>
+        <p class="ty-subheading">{C.subheading}</p>
+      </div>
+
+      <div class="ty-grid">
+        <!-- Contestant CTA -->
+        <div class="ty-card ty-card--red">
+          <h2 class="ty-card-heading">{C.contestantHeading}</h2>
+          <p class="ty-card-body">{C.contestantBody}</p>
+          <a href="/apply" class="ty-btn ty-btn--white">{C.contestantCta}</a>
+        </div>
+
+        <!-- Share -->
+        <div class="ty-card">
+          <h2 class="ty-card-heading">{C.shareHeading}</h2>
+          <p class="ty-card-body">{C.shareBody}</p>
+          <div class="ty-share-row">
+            <a
+              href={`https://twitter.com/intent/tweet?text=${shareText}&url=${shareUrl}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              class="ty-btn"
+              aria-label="Share on X (Twitter)"
+            >
+              Share on X
+            </a>
+            <a
+              href={SOCIAL_URLS.instagram}
+              target="_blank"
+              rel="noopener noreferrer"
+              class="ty-btn"
+              aria-label="Follow us on Instagram"
+            >
+              Follow on Instagram
+            </a>
+          </div>
+        </div>
+
+        <!-- Email list -->
+        <div class="ty-card">
+          <h2 class="ty-card-heading">{C.emailHeading}</h2>
+          <p class="ty-card-body">{C.emailBody}</p>
+          <button
+            class="ty-btn"
+            data-waitlist-trigger
+            data-ph-capture="waitlist_click"
+            data-ph-cta="thank_you_email"
+            data-ph-section="thank_you"
+            data-cta-position="thank_you_email"
+            data-cta-text={C.emailCta}
+          >
+            {C.emailCta}
+          </button>
+        </div>
+      </div>
+
+      <a href="/tickets" class="ty-back">{C.backCta}</a>
+    </div>
+  </main>
+
+  <LeadCaptureModal id="ty-lead-modal" source="thank-you" />
+</BaseLayout>
+
+<style>
+  .ty-main {
+    min-height: 100vh;
+    background: var(--off-white);
+    padding: 60px 20px 80px;
+  }
+
+  .ty-container {
+    max-width: 700px;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 48px;
+  }
+
+  /* Hero */
+  .ty-hero {
+    text-align: center;
+  }
+
+  .ty-eyebrow {
+    font-family: var(--font-body);
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.2em;
+    color: var(--brand-red);
+    margin: 0 0 16px;
+  }
+
+  .ty-heading {
+    font-family: var(--font-playfair);
+    font-size: clamp(36px, 7vw, 56px);
+    font-weight: 700;
+    color: var(--charcoal);
+    line-height: 1.1;
+    margin: 0 0 16px;
+  }
+
+  .ty-subheading {
+    font-family: var(--font-body);
+    font-size: 18px;
+    color: var(--text-secondary);
+    line-height: 1.6;
+    margin: 0;
+  }
+
+  /* Card grid */
+  .ty-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    width: 100%;
+  }
+
+  .ty-card {
+    background: #fff;
+    border: 1px solid rgba(0, 0, 0, 0.07);
+    border-radius: 20px;
+    padding: 32px;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+
+  .ty-card--red {
+    background: var(--brand-red);
+    border-color: transparent;
+  }
+
+  .ty-card--red .ty-card-heading,
+  .ty-card--red .ty-card-body {
+    color: #fff;
+  }
+
+  .ty-card-heading {
+    font-family: var(--font-playfair);
+    font-size: 24px;
+    font-weight: 700;
+    color: var(--charcoal);
+    margin: 0;
+    line-height: 1.2;
+  }
+
+  .ty-card-body {
+    font-family: var(--font-body);
+    font-size: 16px;
+    color: var(--text-secondary);
+    line-height: 1.6;
+    margin: 0;
+  }
+
+  /* Buttons */
+  .ty-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 14px 24px;
+    min-height: 48px;
+    border-radius: 100px;
+    font-family: var(--font-body);
+    font-size: 15px;
+    font-weight: 700;
+    text-decoration: none;
+    cursor: pointer;
+    border: none;
+    background: var(--brand-red);
+    color: #fff;
+    align-self: flex-start;
+    transition:
+      background 0.15s ease,
+      transform 0.1s ease;
+  }
+
+  .ty-btn:hover {
+    background: var(--brand-red-dark);
+  }
+
+  .ty-btn:active {
+    transform: scale(0.97);
+  }
+
+  .ty-btn--white {
+    background: #fff;
+    color: var(--brand-red);
+  }
+
+  .ty-btn--white:hover {
+    background: rgba(255, 255, 255, 0.9);
+  }
+
+  .ty-share-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+  }
+
+  /* Back link */
+  .ty-back {
+    font-family: var(--font-body);
+    font-size: 15px;
+    color: var(--text-secondary);
+    text-decoration: underline;
+    text-underline-offset: 3px;
+  }
+
+  @media (min-width: 600px) {
+    .ty-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+    }
+
+    .ty-card:first-child {
+      grid-column: 1 / -1;
+    }
+  }
+</style>

@@ -25,7 +25,7 @@ src/
 api/              # Vercel serverless (notify-application, contestant-prep-auth)
 public/
   fonts/          # self-hosted woff2 (Playfair, Nunito, Cormorant, JetBrains)
-  images/         # all images (logo.svg, hero.avif, host photos)
+  images/         # all images (logo.svg, hero.webp, host photos)
 ```
 
 Key pages: `/` `/tickets` `/apply` `/links` `/faq` `/hosts` `/journal` `/cities/[slug]` `/admin` `/contestant-prep` `/privacy` `/terms`
@@ -121,7 +121,7 @@ Fonts: Playfair Display (headings), Nunito (body), Cormorant Garamond (decorativ
 - Sitemap: auto-generated via `@astrojs/sitemap` at build time
 - ErrorBoundary wraps ApplyPage (prevents white screen on React crash)
 - Global `prefers-reduced-motion` kills all animations site-wide
-- Hero images preloaded (AVIF, conditional on viewport size)
+- Hero image: `hero.webp` (used in links.astro hero section)
 - `country-state-city` package lazy-loaded only on apply page
 - Astro SSG: zero JS on static pages, React islands only on apply/admin/prep
 

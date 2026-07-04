@@ -61,14 +61,16 @@ import { HOME_FAQS as faqs } from "@/data/copy";
     answer: HTMLElement,
   ): void => {
     answer.classList.add("is-closing");
-    answer.addEventListener(
-      "transitionend",
-      () => {
-        answer.classList.remove("is-closing");
-        item.open = false;
-      },
-      { once: true },
-    );
+    let done = false;
+    const cleanup = () => {
+      if (done) return;
+      done = true;
+      answer.classList.remove("is-closing");
+      item.open = false;
+    };
+    answer.addEventListener("transitionend", cleanup, { once: true });
+    // Fallback: if transition never fires (hidden ancestor, display:none, etc.)
+    setTimeout(cleanup, 400);
   };
 
   document.querySelectorAll<HTMLDetailsElement>(".faq-item").forEach((item) => {

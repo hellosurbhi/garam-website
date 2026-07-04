@@ -24,6 +24,15 @@ function link(url: string, label: string): string {
   return `<a href="${url}" style="color:#DC2626;">${label}</a>`;
 }
 
+function escapeHtml(str: string): string {
+  return str
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#39;");
+}
+
 export function schedulingInvite(name: string, calUrl: string): EmailTemplate {
   const subject = `Let's chat, ${name.split(" ")[0]}`;
   const text = [
@@ -298,6 +307,78 @@ export function postShow(name: string): EmailTemplate {
         "You can reply directly to this email with a sentence or two, or just let us know what you thought!",
       ) +
       p("Thanks again for being part of the show.") +
+      p("Surbhi<br>Garam Masala Dating"),
+  );
+
+  return { subject, text, html };
+}
+
+export function applicationReceived(name: string, city: string): EmailTemplate {
+  const firstName = name.split(" ")[0];
+  const subject = `We got your application, ${firstName}!`;
+  const safeFirstName = escapeHtml(firstName);
+  const safeCity = escapeHtml(city);
+  const text = [
+    `Hi ${firstName},`,
+    "",
+    `Thank you so much for applying to Garam Masala Dating${city ? ` (${city})` : ""}! We're so excited you want to be on the show.`,
+    "",
+    "We go through applications personally and will be in touch soon. In the meantime, follow us on Instagram for show updates and behind-the-scenes content.",
+    "",
+    "Talk soon!",
+    "",
+    "Surbhi",
+    "Garam Masala Dating",
+  ].join("\n");
+
+  const html = wrap(
+    p(`Hi ${safeFirstName},`) +
+      p(
+        `Thank you so much for applying to Garam Masala Dating${safeCity ? ` (${safeCity})` : ""}! We're so excited you want to be on the show.`,
+      ) +
+      p(
+        `We go through applications personally and will be in touch soon. In the meantime, follow us on ${link("https://www.instagram.com/garammasaladating/", "@garammasaladating")} for show updates and behind-the-scenes content.`,
+      ) +
+      p("Talk soon!") +
+      p("Surbhi<br>Garam Masala Dating"),
+  );
+
+  return { subject, text, html };
+}
+
+export function newShowAnnouncement(opts: {
+  subject: string;
+  city: string;
+  date: string;
+  venue: string;
+  ticketUrl: string;
+  customMessage?: string;
+}): EmailTemplate {
+  const { subject, city, date, venue, ticketUrl, customMessage } = opts;
+  const safeCity = escapeHtml(city);
+  const safeDate = escapeHtml(date);
+  const safeVenue = escapeHtml(venue);
+  const safeCustomMessage = customMessage
+    ? escapeHtml(customMessage)
+    : undefined;
+  const text = [
+    customMessage ?? `New show in ${city} on ${date} at ${venue}!`,
+    "",
+    `Grab your tickets: ${ticketUrl}`,
+    "",
+    "See you there!",
+    "",
+    "Surbhi",
+    "Garam Masala Dating",
+  ].join("\n");
+
+  const html = wrap(
+    p(
+      safeCustomMessage ??
+        `New show in ${safeCity} on ${safeDate} at ${safeVenue}!`,
+    ) +
+      p(`${link(ticketUrl, "Grab your tickets")} before they sell out.`) +
+      p("See you there!") +
       p("Surbhi<br>Garam Masala Dating"),
   );
 

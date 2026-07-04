@@ -35,6 +35,10 @@ const GEO_FETCHED_KEY = "gmd-geo-fetched";
 const FBCLID_KEY = "gmd-fbclid";
 const GCLID_KEY = "gmd-gclid";
 
+// Tracks the in-flight /api/geo fetch so buildLeadAttribution can await it
+// instead of racing with a fire-and-forget promise. Cleared via .finally().
+let geoFetchPromise: Promise<void> | null = null;
+
 function getPathname(): string {
   return window.location.pathname || "/";
 }
@@ -86,23 +90,27 @@ async function readGeoResponse(res: Response): Promise<GeoResponse | null> {
   }
 }
 
-function bootstrapGeoData() {
+function bootstrapGeoData(): void {
   if (sessionStorage.getItem(GEO_FETCHED_KEY)) return;
+  if (geoFetchPromise) return; // already in-flight on this page
 
-  fetch("/api/geo")
+  geoFetchPromise = fetch("/api/geo")
     .then(readGeoResponse)
     .then((geo) => {
-      if (!geo) return;
-      if (geo.city) sessionStorage.setItem(GEO_CITY_KEY, geo.city);
-      if (geo.region) sessionStorage.setItem(GEO_REGION_KEY, geo.region);
-      if (geo.country) sessionStorage.setItem(GEO_COUNTRY_KEY, geo.country);
-      if (geo.timezone) sessionStorage.setItem(GEO_TIMEZONE_KEY, geo.timezone);
+      if (geo) {
+        if (geo.city) sessionStorage.setItem(GEO_CITY_KEY, geo.city);
+        if (geo.region) sessionStorage.setItem(GEO_REGION_KEY, geo.region);
+        if (geo.country) sessionStorage.setItem(GEO_COUNTRY_KEY, geo.country);
+        if (geo.timezone) sessionStorage.setItem(GEO_TIMEZONE_KEY, geo.timezone);
+        // lat/lon intentionally omitted (clear-text storage of precise location — CodeQL)
+      }
+      sessionStorage.setItem(GEO_FETCHED_KEY, "1");
     })
     .catch(() => {
-      // Geo attribution is best-effort; lead capture should never surface it.
+      sessionStorage.setItem(GEO_FETCHED_KEY, "1"); // prevent retry storm
     })
     .finally(() => {
-      sessionStorage.setItem(GEO_FETCHED_KEY, "1");
+      geoFetchPromise = null; // release so test isolation and retry work correctly
     });
 }
 
@@ -170,11 +178,20 @@ export function getStoredUtms(): StoredUtms {
  * @param params.source Identifies which form or CTA triggered the lead (e.g. "apply-page").
  * @param params.sourceCitySlug Optional city slug when the lead originated from a city landing page.
  */
-export function buildLeadAttribution(params: {
+export async function buildLeadAttribution(params: {
   source: string;
   sourceCitySlug?: string;
-}): LeadAttribution {
+}): Promise<LeadAttribution> {
   bootstrapLeadAttribution();
+
+  // Wait for the in-flight geo fetch, capped at 1500ms. Prevents submitting
+  // attribution before geo data lands when the user acts within ~100ms of page load.
+  if (geoFetchPromise) {
+    await Promise.race([
+      geoFetchPromise,
+      new Promise<void>((resolve) => setTimeout(resolve, 1500)),
+    ]);
+  }
 
   const posthogDistinctId = window.posthog?.get_distinct_id?.();
   const attribution: LeadAttribution = {

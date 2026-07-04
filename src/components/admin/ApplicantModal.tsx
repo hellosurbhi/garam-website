@@ -133,7 +133,7 @@ export default function ApplicantModal({
       });
       if (!res.ok) throw new Error(`HTTP ${res.status}`);
 
-      const db = getFirebaseDb();
+      const db = await getFirebaseDb();
       const appRef = doc(db, "applications", app.id);
       await updateDoc(appRef, {
         contactedAt: serverTimestamp(),
@@ -197,6 +197,7 @@ export default function ApplicantModal({
             src={currentPhoto}
             alt={`${app.name} photo ${selectedPhotoIndex + 1}`}
             className={styles.image}
+            loading="lazy"
           />
         ) : (
           <div className={styles.noPhoto}>🌶️</div>

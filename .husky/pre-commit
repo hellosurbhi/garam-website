@@ -1,7 +1,13 @@
 set -e
 npx lint-staged
+# Type and unit gates at commit time (user rule: pre-commit must run astro check
+# and vitest — reviews without deterministic gates let regressions through).
+# Playwright stays in pre-push; these two are fast enough for every commit.
+npm run check
+npm run test
 # Run global multi-reviewer chain (DeepSeek + CodeRabbit + Gemini via ~/.git-hooks/pre-commit).
-# This is intentionally after lint-staged so formatting runs first.
+# This is intentionally after the deterministic gates so reviewer calls are never
+# spent on a commit that fails its own tests.
 if [ -x "$HOME/.git-hooks/pre-commit" ]; then
   bash "$HOME/.git-hooks/pre-commit"
 fi

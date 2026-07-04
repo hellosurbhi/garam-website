@@ -1,29 +1,63 @@
 ---
 // Zero-visual component: loads the Eventbrite checkout widget script on user intent
-// and initializes modal checkout for every EB trigger button on the page.
-// Drop <EventbriteWidgetInit /> once per page that contains EB modal buttons.
+// and initializes both modal checkout (trigger buttons) and inline embeds (container divs).
+// Drop <EventbriteWidgetInit /> once per page that contains EB widget elements.
 ---
 
 <script>
   import { buildLeadAttribution } from "@/lib/leadAttribution";
   import { capture } from "@/lib/analyticsCapture";
 
-  interface EBWidgetConfig {
+  interface EBCfg {
+    eventId: string;
+    triggerId: string | undefined;
+    containerId: string | undefined;
+    isModal: boolean;
+    fallbackUrl: string;
+    city: string;
+    section: string;
+    price: string;
+    eventDate: string;
+    eventTitle: string;
+    destinationUrl: string;
+    linkDomain: string;
+    ctaText: string;
+    ctaPosition: string;
+  }
+
+  interface EBWidgetModalConfig {
     widgetType: string;
     eventId: string;
-    modal: boolean;
+    modal: true;
     modalTriggerElementId: string;
     themeSettings?: Record<string, string>;
     onOrderComplete?: () => void;
   }
 
+  interface EBWidgetEmbedConfig {
+    widgetType: string;
+    eventId: string;
+    iframeContainerId: string;
+    iframeContainerHeight?: number;
+    themeSettings?: Record<string, string>;
+    onOrderComplete?: () => void;
+  }
+
+  type EBWidgetConfig = EBWidgetModalConfig | EBWidgetEmbedConfig;
+
   (function initEBWidgets(): void {
-    const buttons = Array.from(
+    const modalButtons = Array.from(
       document.querySelectorAll<HTMLElement>(
         '[id^="eventbrite-widget-modal-trigger-"]',
       ),
     );
-    if (!buttons.length) return;
+    const embedContainers = Array.from(
+      document.querySelectorAll<HTMLElement>(
+        '[id^="eventbrite-widget-container-"]',
+      ),
+    );
+
+    if (!modalButtons.length && !embedContainers.length) return;
     if (["localhost", "127.0.0.1"].includes(window.location.hostname)) return;
 
     type EBWidgetsAPI = { createWidget: (config: EBWidgetConfig) => void };
@@ -32,27 +66,98 @@
       dataLayer?: Record<string, unknown>[];
     };
 
-    const configs = buttons.map((btn) => ({
-      eventId:
-        btn.dataset.ebEventId ??
-        btn.id.replace("eventbrite-widget-modal-trigger-", ""),
-      triggerId: btn.id,
-      fallbackUrl: btn.getAttribute("href") ?? btn.dataset.ebUrl ?? "",
-      city: btn.dataset.city ?? btn.dataset.phCity ?? "",
-      section: btn.dataset.phSection ?? "",
-      price: btn.dataset.phPrice ?? "",
-      eventDate: btn.dataset.phEventDate ?? "",
-      eventTitle: btn.dataset.phEventTitle ?? btn.dataset.eventTitle ?? "",
-      destinationUrl:
-        btn.dataset.destinationUrl ??
-        btn.dataset.linkUrl ??
-        btn.getAttribute("href") ??
-        btn.dataset.ebUrl ??
-        "",
-      linkDomain: btn.dataset.linkDomain ?? "",
-      ctaText: btn.dataset.ctaText ?? btn.textContent?.trim() ?? "",
-      ctaPosition: btn.dataset.ctaPosition ?? "",
-    }));
+    // ── Shared helpers ──────────────────────────────────────────────────────
+
+    function readCfg(el: HTMLElement, isModal: boolean): EBCfg {
+      const prefix = isModal
+        ? "eventbrite-widget-modal-trigger-"
+        : "eventbrite-widget-container-";
+      const eventId = el.dataset.ebEventId ?? el.id.replace(prefix, "");
+      return {
+        eventId,
+        triggerId: isModal ? el.id : undefined,
+        containerId: isModal ? undefined : el.id,
+        isModal,
+        fallbackUrl: el.getAttribute("href") ?? el.dataset.ebUrl ?? "",
+        city: el.dataset.city ?? el.dataset.phCity ?? "",
+        section: el.dataset.phSection ?? "",
+        price: el.dataset.phPrice ?? "",
+        eventDate: el.dataset.phEventDate ?? "",
+        eventTitle: el.dataset.phEventTitle ?? el.dataset.eventTitle ?? "",
+        destinationUrl:
+          el.dataset.destinationUrl ??
+          el.dataset.linkUrl ??
+          el.getAttribute("href") ??
+          el.dataset.ebUrl ??
+          "",
+        linkDomain: el.dataset.linkDomain ?? "",
+        ctaText: el.dataset.ctaText ?? el.textContent?.trim() ?? "",
+        ctaPosition: el.dataset.ctaPosition ?? "",
+      };
+    }
+
+    function makeOrderCompleteHandler(cfg: EBCfg): () => void {
+      return async function onOrderComplete(): Promise<void> {
+        const raw = sessionStorage.getItem("eb_cta_source");
+        const src = raw ? (JSON.parse(raw) as Record<string, string>) : null;
+        sessionStorage.removeItem("eb_cta_source");
+        const attr = await buildLeadAttribution({ source: "ticket_purchase" });
+        capture("order_complete", {
+          event_id: cfg.eventId,
+          city: cfg.city,
+          event_city: src?.city ?? cfg.city,
+          event_date: src?.event_date ?? cfg.eventDate,
+          event_title: src?.event_title ?? cfg.eventTitle,
+          destination_url: src?.destination_url ?? cfg.destinationUrl,
+          link_url: src?.destination_url ?? cfg.destinationUrl,
+          link_domain: src?.link_domain ?? cfg.linkDomain,
+          cta_text: src?.cta_text ?? cfg.ctaText,
+          cta_position: src?.cta_position ?? cfg.ctaPosition,
+          source_section: src?.section ?? cfg.section,
+          source_page: src?.page ?? "",
+          price: src?.price ?? cfg.price,
+          landing_page: attr.landingPage,
+          referrer_host: attr.referrerHost,
+          utm_source: attr.utmSource,
+          utm_campaign: attr.utmCampaign,
+          utm_medium: attr.utmMedium,
+          utm_content: attr.utmContent,
+        });
+        const price = parseFloat(
+          (src?.price ?? cfg.price ?? "").replace(/[^0-9.]/g, "") || "0",
+        );
+        w.dataLayer = w.dataLayer ?? [];
+        w.dataLayer.push({ ecommerce: null });
+        w.dataLayer.push({
+          event: "purchase",
+          ecommerce: {
+            currency: "USD",
+            value: price,
+            items: [
+              {
+                item_name: `Garam Masala Dating - ${cfg.city}`,
+                item_id: String(cfg.eventId),
+                price,
+                quantity: 1,
+              },
+            ],
+          },
+          source_section: src?.section ?? cfg.section,
+          source_page: src?.page ?? "",
+          landing_page: attr.landingPage,
+          referrer_host: attr.referrerHost,
+          utm_source: attr.utmSource,
+          utm_campaign: attr.utmCampaign,
+        });
+        window.fbq?.("track", "Purchase", {
+          value: price,
+          currency: "USD",
+          content_ids: [String(cfg.eventId)],
+        });
+      };
+    }
+
+    // ── Theme tokens ────────────────────────────────────────────────────────
 
     const rootStyle = getComputedStyle(document.documentElement);
     const brandColor =
@@ -61,112 +166,96 @@
       rootStyle.getPropertyValue("--charcoal").trim() || "#1A1A1A";
     const bgColor = rootStyle.getPropertyValue("--white").trim() || "#FFFFFF";
 
+    // ── Config arrays ───────────────────────────────────────────────────────
+
+    const modalCfgs = modalButtons.map((btn) => readCfg(btn, true));
+    const embedCfgs = embedContainers.map((div) => readCfg(div, false));
+
     let orderCompleted = false;
     let modalOpenedAt = 0;
 
+    // ── Widget initialisation ───────────────────────────────────────────────
+
     function initWidgets(): void {
-      configs.forEach((ev) => {
-        const config: EBWidgetConfig = {
+      // Modal triggers — unchanged behaviour
+      modalCfgs.forEach((cfg) => {
+        const config: EBWidgetModalConfig = {
           widgetType: "checkout",
-          eventId: ev.eventId,
+          eventId: cfg.eventId,
           modal: true,
-          modalTriggerElementId: ev.triggerId,
-          themeSettings: {
-            brandColor,
-            fontColor,
-            background: bgColor,
-          },
-          async onOrderComplete() {
-            orderCompleted = true;
-            const raw = sessionStorage.getItem("eb_cta_source");
-            const src = raw
-              ? (JSON.parse(raw) as Record<string, string>)
-              : null;
-            sessionStorage.removeItem("eb_cta_source");
-            const attr = await buildLeadAttribution({
-              source: "ticket_purchase",
-            });
-            capture("order_complete", {
-              event_id: ev.eventId,
-              city: ev.city,
-              event_city: src?.city ?? ev.city,
-              event_date: src?.event_date ?? ev.eventDate,
-              event_title: src?.event_title ?? ev.eventTitle,
-              destination_url: src?.destination_url ?? ev.destinationUrl,
-              link_url: src?.destination_url ?? ev.destinationUrl,
-              link_domain: src?.link_domain ?? ev.linkDomain,
-              cta_text: src?.cta_text ?? ev.ctaText,
-              cta_position: src?.cta_position ?? ev.ctaPosition,
-              source_section: src?.section ?? ev.section,
-              source_page: src?.page ?? "",
-              price: src?.price ?? ev.price,
-              landing_page: attr.landingPage,
-              referrer_host: attr.referrerHost,
-              utm_source: attr.utmSource,
-              utm_campaign: attr.utmCampaign,
-              utm_medium: attr.utmMedium,
-              utm_content: attr.utmContent,
-            });
-            const price = parseFloat(
-              (src?.price ?? ev.price ?? "").replace(/[^0-9.]/g, "") || "0",
-            );
-            w.dataLayer = w.dataLayer ?? [];
-            w.dataLayer.push({ ecommerce: null });
-            w.dataLayer.push({
-              event: "purchase",
-              ecommerce: {
-                currency: "USD",
-                value: price,
-                items: [
-                  {
-                    item_name: `Garam Masala Dating - ${ev.city}`,
-                    item_id: String(ev.eventId),
-                    price,
-                    quantity: 1,
-                  },
-                ],
-              },
-              source_section: src?.section ?? ev.section,
-              source_page: src?.page ?? "",
-              landing_page: attr.landingPage,
-              referrer_host: attr.referrerHost,
-              utm_source: attr.utmSource,
-              utm_campaign: attr.utmCampaign,
-            });
-            window.fbq?.("track", "Purchase", {
-              value: price,
-              currency: "USD",
-              content_ids: [String(ev.eventId)],
-            });
-          },
+          modalTriggerElementId: cfg.triggerId!,
+          themeSettings: { brandColor, fontColor, background: bgColor },
+          onOrderComplete: makeOrderCompleteHandler(cfg),
         };
         try {
           w.EBWidgets.createWidget(config);
-          // Widget bound successfully. Prevent the anchor's native navigation so
-          // only the modal fires. If createWidget threw, the anchor href + target="_blank"
-          // provide the native fallback without any preventDefault.
           document
-            .getElementById(ev.triggerId)
+            .getElementById(cfg.triggerId!)
             ?.addEventListener("click", (e) => {
               e.preventDefault();
             });
         } catch (_) {
-          // Widget init failed; anchor href + target="_blank" provide native fallback
           capture("widget_load_failed", {
-            event_id: ev.eventId,
-            city: ev.city,
-            event_title: ev.eventTitle,
-            event_date: ev.eventDate,
-            destination_url: ev.destinationUrl,
-            link_domain: ev.linkDomain,
+            event_id: cfg.eventId,
+            city: cfg.city,
+            event_title: cfg.eventTitle,
+            event_date: cfg.eventDate,
+            destination_url: cfg.destinationUrl,
+            link_domain: cfg.linkDomain,
             page: window.location.pathname,
           });
         }
       });
+
+      // Inline embed containers — non-modal behaviour
+      embedCfgs.forEach((cfg) => {
+        const containerEl = document.getElementById(cfg.containerId!);
+        if (!containerEl) return;
+        const config: EBWidgetEmbedConfig = {
+          widgetType: "checkout",
+          eventId: cfg.eventId,
+          iframeContainerId: cfg.containerId!,
+          themeSettings: { brandColor, fontColor, background: bgColor },
+          onOrderComplete: makeOrderCompleteHandler(cfg),
+        };
+        try {
+          w.EBWidgets.createWidget(config);
+          // Triggers CSS: show container, hide fallback link
+          containerEl.dataset.ebLoaded = "true";
+          capture("checkout_opened", {
+            event_id: cfg.eventId,
+            city: cfg.city,
+            event_city: cfg.city,
+            event_date: cfg.eventDate,
+            event_title: cfg.eventTitle,
+            destination_url: cfg.destinationUrl,
+            link_url: cfg.destinationUrl,
+            link_domain: cfg.linkDomain,
+            cta_text: cfg.ctaText,
+            cta_position: cfg.ctaPosition,
+            source_section: cfg.section,
+            source_page: window.location.pathname,
+            price: cfg.price,
+          });
+        } catch (_) {
+          capture("widget_load_failed", {
+            event_id: cfg.eventId,
+            city: cfg.city,
+            event_title: cfg.eventTitle,
+            event_date: cfg.eventDate,
+            destination_url: cfg.destinationUrl,
+            link_domain: cfg.linkDomain,
+            page: window.location.pathname,
+          });
+          // data-eb-loaded never set → fallback link stays visible
+        }
+      });
     }
 
-    // Intent-based loading: inject eb_widgets.js only on first user signal.
+    // ── Intent-based script loading ─────────────────────────────────────────
+    // Defers eb_widgets.js until first user signal or viewport entry.
     // Guards against concurrent signals triggering a double-injection.
+
     let scriptInjected = false;
 
     function loadEBScript(): void {
@@ -180,30 +269,42 @@
       document.head.appendChild(script);
     }
 
-    // Signal 1: hover, touch, or keyboard focus on any trigger button
-    buttons.forEach((btn) => {
+    // Modal triggers: hover / touch / focus load the script eagerly
+    modalButtons.forEach((btn) => {
       btn.addEventListener("pointerenter", loadEBScript, { passive: true });
       btn.addEventListener("touchstart", loadEBScript, { passive: true });
       btn.addEventListener("focusin", loadEBScript);
     });
 
-    // Signal 2: IntersectionObserver fallback — half the button visible covers
-    // fast touch-scroll on iOS where pointerenter/touchstart may not fire first
+    // IntersectionObserver covers both modal trigger visibility and embed
+    // containers entering the viewport. Threshold 0 starts loading as soon
+    // as any pixel is visible — ensures the inline iframe renders promptly.
     const io = new IntersectionObserver(
       (entries) => {
         if (entries.some((e) => e.isIntersecting)) loadEBScript();
       },
-      { threshold: 0.5 },
+      { threshold: 0 },
     );
-    buttons.forEach((btn) => io.observe(btn));
+    [...modalButtons, ...embedContainers].forEach((el) => io.observe(el));
 
-    // Save scroll position before any EB trigger click so we can restore it
+    // ── Modal-only infrastructure ───────────────────────────────────────────
+    // Skipped entirely on pages that have only inline embeds (e.g. city pages).
+
+    if (!modalButtons.length) {
+      window.addEventListener("pagehide", () => {
+        io.disconnect();
+      });
+      return;
+    }
+
+    // Save scroll position before any modal trigger click so we can restore it
     // after the widget injects its full-screen backdrop (which calls scrollTo(0,0)).
     let savedScrollY = 0;
-    buttons.forEach((btn) => {
+
+    modalButtons.forEach((btn) => {
       btn.addEventListener("click", () => {
         savedScrollY = window.scrollY;
-        const cfg = configs.find((c) => c.triggerId === btn.id);
+        const cfg = modalCfgs.find((c) => c.triggerId === btn.id);
         sessionStorage.setItem(
           "eb_cta_source",
           JSON.stringify({
@@ -255,7 +356,6 @@
       if (ebStructure && !ebStructure.dataset.listenerAttached) {
         ebStructure.dataset.listenerAttached = "1";
 
-        // Track modal open and reset purchase flag for this session.
         orderCompleted = false;
         modalOpenedAt = Date.now();
         const openSrc = sessionStorage.getItem("eb_cta_source");

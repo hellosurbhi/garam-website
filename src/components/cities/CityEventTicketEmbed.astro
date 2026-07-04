@@ -1,16 +1,4 @@
 ---
-/**
- * CityEventTicketButton — renders a single per-event ticket CTA.
- *
- * Used in two contexts on the city page:
- *   instance="hero"  — the "Buy Tickets Here" block injected above the fold
- *   instance="list"  — the original lower .city-ctas section
- *
- * The Eventbrite widget requires a unique DOM id per trigger element. When both
- * instances share the same eventbriteId, appending "-hero" / "-list" keeps ids
- * unique. The explicit `data-eb-event-id` attribute tells the widget initializer
- * the real numeric event id regardless of the id suffix.
- */
 import type { EventEntry } from "@/data/events";
 import { buildTicketUrl } from "@/utils/eventUrl";
 import { formatEventLocation } from "@/utils/eventCity";
@@ -20,33 +8,28 @@ import { EVENTS } from "@/data/copy";
 interface Props {
   event: EventEntry;
   citySlug: string;
-  instance: "hero" | "list";
 }
 
-const { event, citySlug, instance } = Astro.props;
+const { event, citySlug } = Astro.props;
 
 const isSoldOut = event.soldOut ?? false;
 const eventLocation = formatEventLocation(event);
 const ticketUrl = buildTicketUrl(event.url, "cities", citySlug);
 const eventTitle = `Garam Masala Dating - ${eventLocation} - ${event.date}`;
-
-const triggerId = event.eventbriteId
-  ? `eventbrite-widget-modal-trigger-${event.eventbriteId}-${instance}`
-  : undefined;
-
-const ctaPosition =
-  instance === "hero" ? "city_hero_ticket" : "city_event_ticket";
-const phCta = instance === "hero" ? "city_hero_ticket" : "city_ticket";
 const ctaText = isSoldOut ? "Sold Out" : `${event.date}: ${EVENTS.ticketCta}`;
+
+const containerId = event.eventbriteId
+  ? `eventbrite-widget-container-${event.eventbriteId}`
+  : undefined;
 
 const sharedAttrs = {
   "data-ph-capture": "ticket_click",
-  "data-ph-cta": phCta,
+  "data-ph-cta": "city_hero_embed",
   "data-ph-section": "cities",
   "data-ph-price": event.price,
   "data-ph-event-date": event.isoDate ?? event.date,
   "data-ph-event-title": eventTitle,
-  "data-cta-position": ctaPosition,
+  "data-cta-position": "city_hero_embed",
   "data-cta-text": ctaText,
   "data-destination-url": ticketUrl,
   "data-link-url": ticketUrl,
@@ -63,37 +46,44 @@ const arrowPath2 = "m12 5 7 7-7 7";
 ---
 
 {
-  triggerId && !isSoldOut ? (
-    /* Eventbrite modal trigger — opens inline checkout widget */
-    <button
-      type="button"
-      id={triggerId}
-      class="city-cta city-cta--primary"
-      data-eb-url={ticketUrl}
-      data-eb-event-id={event.eventbriteId}
-      data-city={eventLocation}
-      {...sharedAttrs}
-    >
-      <span>{ctaText}</span>
-      <svg
-        xmlns="http://www.w3.org/2000/svg"
-        width="16"
-        height="16"
-        viewBox="0 0 24 24"
-        fill="none"
-        stroke="currentColor"
-        stroke-width="2"
-        stroke-linecap="round"
-        stroke-linejoin="round"
-        class="city-cta__arrow"
-        aria-hidden="true"
+  containerId && !isSoldOut ? (
+    <div class="eb-embed" id={`buy-${event.eventbriteId}`}>
+      <div
+        id={containerId}
+        class="eb-embed__container"
+        data-eb-event-id={event.eventbriteId}
+        data-eb-url={ticketUrl}
+        data-city={eventLocation}
+        {...sharedAttrs}
+      />
+      {/* Visible by default; JS hides it after widget loads */}
+      <a
+        href={ticketUrl}
+        target="_blank"
+        rel="noopener noreferrer"
+        class="eb-embed__fallback city-cta city-cta--primary"
+        {...sharedAttrs}
       >
-        <path d={arrowPath1} />
-        <path d={arrowPath2} />
-      </svg>
-    </button>
+        <span>{ctaText}</span>
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          width="16"
+          height="16"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          class="city-cta__arrow"
+          aria-hidden="true"
+        >
+          <path d={arrowPath1} />
+          <path d={arrowPath2} />
+        </svg>
+      </a>
+    </div>
   ) : (
-    /* Plain link fallback: no EB id, sold out, or widget unavailable */
     <a
       href={ticketUrl}
       target="_blank"
@@ -125,6 +115,29 @@ const arrowPath2 = "m12 5 7 7-7 7";
 }
 
 <style>
+  /* Scroll-anchor wrapper: offset for sticky nav */
+  .eb-embed {
+    scroll-margin-top: 80px;
+  }
+
+  /* Container hidden until JS marks widget loaded */
+  .eb-embed__container {
+    display: none;
+    min-height: 720px;
+    width: 100%;
+    border-radius: 12px;
+    overflow: hidden;
+  }
+
+  .eb-embed__container[data-eb-loaded="true"] {
+    display: block;
+  }
+
+  /* Hide fallback once the iframe is live */
+  .eb-embed__container[data-eb-loaded="true"] ~ .eb-embed__fallback {
+    display: none;
+  }
+
   .city-cta {
     display: flex;
     align-items: center;
@@ -144,10 +157,6 @@ const arrowPath2 = "m12 5 7 7-7 7";
       transform 0.15s;
     width: 100%;
     text-align: left;
-    font: inherit;
-    font-family: var(--font-body);
-    font-size: 16px;
-    font-weight: 500;
   }
 
   .city-cta:active {

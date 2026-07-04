@@ -191,7 +191,7 @@
   border: 1px solid var(--border);
   background: var(--cream);
   font-family: var(--font-body);
-  font-size: 13px;
+  font-size: 1rem;
   font-weight: 600;
   color: var(--text);
   cursor: pointer;
@@ -211,7 +211,7 @@
   border: 1px solid var(--border);
   background: transparent;
   font-family: var(--font-body);
-  font-size: 14px;
+  font-size: 1rem;
   font-weight: 500;
   color: var(--text-light);
   cursor: pointer;
@@ -232,7 +232,7 @@
   border: none;
   background: var(--brand-red);
   font-family: var(--font-body);
-  font-size: 14px;
+  font-size: 1rem;
   font-weight: 600;
   color: #fff;
   cursor: pointer;

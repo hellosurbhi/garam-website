@@ -108,6 +108,7 @@ export default function ApplicantModal({
   const [appEvents, setAppEvents] = useState<AppEvent[]>([]);
   const [noteText, setNoteText] = useState("");
   const [noteSaving, setNoteSaving] = useState(false);
+  const [noteError, setNoteError] = useState("");
   const handle = app.instagram.replace(/^@/, "");
   const isDeleted = !!app.deletedAt;
   const isNomination = app.applicationType === "Nomination";
@@ -121,27 +122,36 @@ export default function ApplicantModal({
   );
 
   useEffect(() => {
-    const db = await getFirebaseDb();
-    const eventsRef = collection(db, "applications", app.id, "events");
-    const q = query(eventsRef, orderBy("timestamp", "asc"));
-    const unsub = onSnapshot(q, (snap) => {
-      setAppEvents(
-        snap.docs.map((d) => ({
-          id: d.id,
-          type: d.data().type as string,
-          timestamp: d.data().timestamp as Timestamp | string | null,
-          actor: d.data().actor as string,
-          payload: d.data().payload as Record<string, unknown>,
-        })),
-      );
-    });
-    return unsub;
+    let unsub: (() => void) | undefined;
+    let cancelled = false;
+    (async () => {
+      const db = await getFirebaseDb();
+      if (cancelled) return;
+      const eventsRef = collection(db, "applications", app.id, "events");
+      const q = query(eventsRef, orderBy("timestamp", "asc"));
+      unsub = onSnapshot(q, (snap) => {
+        setAppEvents(
+          snap.docs.map((d) => ({
+            id: d.id,
+            type: d.data().type as string,
+            timestamp: d.data().timestamp as Timestamp | string | null,
+            actor: d.data().actor as string,
+            payload: d.data().payload as Record<string, unknown>,
+          })),
+        );
+      });
+    })();
+    return () => {
+      cancelled = true;
+      unsub?.();
+    };
   }, [app.id]);
 
   async function handleAddNote() {
     const trimmed = noteText.trim();
     if (!trimmed) return;
     setNoteSaving(true);
+    setNoteError("");
     try {
       const auth = await getFirebaseAuth();
       const token = await auth.currentUser?.getIdToken();
@@ -157,7 +167,7 @@ export default function ApplicantModal({
       if (!res.ok) throw new Error(`HTTP ${res.status}`);
       setNoteText("");
     } catch {
-      // silent — the onSnapshot listener will still show any note that saved
+      setNoteError("Failed to save note. Please try again.");
     } finally {
       setNoteSaving(false);
     }
@@ -565,7 +575,13 @@ export default function ApplicantModal({
               rows={2}
               className={styles.notesTextarea}
               aria-label="Add timeline note"
+              aria-describedby={noteError ? "note-error" : undefined}
             />
+            {noteError && (
+              <p id="note-error" className={styles.sendEmailError} role="alert">
+                {noteError}
+              </p>
+            )}
             <button
               onClick={() => void handleAddNote()}
               disabled={noteSaving || !noteText.trim()}

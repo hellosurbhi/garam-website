@@ -4,6 +4,16 @@
   margin: 0 auto;
 }
 
+.actionError {
+  font-family: var(--font-body);
+  font-size: 0.875rem;
+  color: var(--brand-red);
+  background: rgba(220, 38, 38, 0.06);
+  border-radius: 8px;
+  padding: 10px 14px;
+  margin-bottom: 16px;
+}
+
 .empty {
   padding: 48px 24px;
   text-align: center;
@@ -90,7 +100,7 @@
 
 .rowAction {
   flex-shrink: 0;
-  font-size: 0.82rem;
+  font-size: 1rem;
   font-weight: 600;
   color: var(--brand-red);
   background: none;
@@ -175,7 +185,7 @@
   border-radius: 6px;
   padding: 7px 16px;
   min-height: 48px;
-  font-size: 0.875rem;
+  font-size: 1rem;
   font-weight: 600;
   cursor: pointer;
   transition: opacity 0.15s;

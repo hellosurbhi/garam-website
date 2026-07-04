@@ -1,6 +1,23 @@
 import { useCallback, useEffect, useState } from "react";
 import { WAIVER_VERSION, WAIVER_TEXT } from "@/data/waiver";
 import { SOCIAL_URLS } from "@/data/socials";
+import {
+  PORTAL_CONTACT_EMAIL,
+  ERROR_VIEW,
+  EXPIRED_VIEW,
+  PACKET_HERO,
+  ROLE_SELECT,
+  PORTAL_INTRO,
+  GOLDEN_RULES,
+  SAMPLE_QUESTIONS,
+  COME_PREPARED_WITH,
+  WARDROBE,
+  DAY_OF,
+  ARRIVAL_NOTES,
+  MAILING_LIST_DISCLOSURE,
+  missingRoleError,
+  claimErrorMessage,
+} from "@/data/contestantPortal";
 import { WaiverDocument } from "@/components/WaiverDocument";
 
 type ContestantRole = "female" | "male";
@@ -68,8 +85,7 @@ type PortalResponseData = {
   error?: string;
 };
 
-const CLAIM_ERROR_MESSAGE =
-  "Could not finish signup. Please try again or email contact@garammasaladating.com.";
+const CLAIM_ERROR_MESSAGE = claimErrorMessage(PORTAL_CONTACT_EMAIL);
 
 function normalizeRole(role?: string | null): ContestantRole | null {
   if (role === "female" || role === "male") {
@@ -161,8 +177,7 @@ export default function ContestantPortal() {
           if (!role) {
             setState({
               type: "error",
-              message:
-                "This contestant packet link is missing its casting role. Email contact@garammasaladating.com and we'll resend it.",
+              message: missingRoleError(PORTAL_CONTACT_EMAIL),
             });
             return;
           }
@@ -370,12 +385,12 @@ export default function ContestantPortal() {
 function ErrorView({ message }: { message: string }) {
   return (
     <div className="portal-center">
-      <h1 className="portal-heading">Something went wrong</h1>
+      <h1 className="portal-heading">{ERROR_VIEW.heading}</h1>
       <p className="portal-body">{message}</p>
       <p className="portal-muted">
-        Questions? Email{" "}
-        <a href="mailto:contact@garammasaladating.com" className="portal-link">
-          contact@garammasaladating.com
+        {ERROR_VIEW.supportLabel}{" "}
+        <a href={SOCIAL_URLS.email} className="portal-link">
+          {PORTAL_CONTACT_EMAIL}
         </a>
       </p>
     </div>
@@ -386,13 +401,13 @@ function ExpiredView() {
   return (
     <div className="portal-center">
       <p className="portal-emoji">🌶️</p>
-      <h1 className="portal-heading">Thank you for being part of the show!</h1>
+      <h1 className="portal-heading">{EXPIRED_VIEW.heading}</h1>
       <p className="portal-body">
-        You&apos;re welcome to attend anytime for free. Please email{" "}
-        <a href="mailto:contact@garammasaladating.com" className="portal-link">
-          contact@garammasaladating.com
+        {EXPIRED_VIEW.body}{" "}
+        <a href={SOCIAL_URLS.email} className="portal-link">
+          {PORTAL_CONTACT_EMAIL}
         </a>{" "}
-        to let us know what event you&apos;d like to be added to.
+        {EXPIRED_VIEW.bodyTail}
       </p>
       <div className="portal-btn-row">
         <a href="/" className="portal-btn-outline">
@@ -485,7 +500,7 @@ function ContestantPacketGate({
               waiverAgreed: agreed,
               signature: signature.trim(),
               waiverVersion: WAIVER_VERSION,
-              mailingListOptIn: false,
+              mailingListOptIn: true,
             },
             resolvedRole,
           );
@@ -494,13 +509,9 @@ function ContestantPacketGate({
       >
         <div className="portal-packet-hero">
           <p className="portal-emoji">🌶️</p>
-          <p className="portal-kicker">You&apos;ve been selected</p>
-          <h1 className="portal-heading-lg">Your Contestant Packet</h1>
-          <p className="portal-body">
-            Congratulations. You&apos;ve been selected for Garam Masala Dating.
-            Complete this production packet to lock your spot and open your prep
-            guide.
-          </p>
+          <p className="portal-kicker">{PACKET_HERO.kicker}</p>
+          <h1 className="portal-heading-lg">{PACKET_HERO.heading}</h1>
+          <p className="portal-body">{PACKET_HERO.body}</p>
           <p className="portal-muted">
             {showCity && showDate
               ? `${showCity} · ${showDisplayDate || showDate}`
@@ -522,10 +533,8 @@ function ContestantPacketGate({
           </div>
         ) : (
           <fieldset className="portal-role-select">
-            <legend>Confirm your casting track</legend>
-            <p>
-              This unlocks the correct call time and prep notes after you sign.
-            </p>
+            <legend>{ROLE_SELECT.legend}</legend>
+            <p>{ROLE_SELECT.description}</p>
             <div className="portal-role-options">
               <label className="portal-role-option">
                 <input
@@ -645,6 +654,7 @@ function ContestantPacketGate({
             Scroll through the full waiver to enable agreement.
           </p>
         )}
+        <p className="portal-muted">{MAILING_LIST_DISCLOSURE}</p>
         {formError && (
           <p role="alert" className="portal-error">
             {formError}
@@ -699,16 +709,8 @@ function ActivePortal({
       </header>
 
       <section className="portal-section portal-section-intro">
-        <p className="portal-body-text">
-          You&apos;ve been selected as a contestant on NYC&apos;s #1 live South
-          Asian dating show. You&apos;ll be on stage, mic&apos;d up, matched
-          with someone you&apos;ve never met, in front of a full audience.
-          It&apos;s real, it&apos;s fast, and it&apos;s genuinely one of the
-          most fun things you&apos;ll do. Read this packet before you arrive.
-        </p>
-        <p className="portal-core-line">
-          We don&apos;t need you to be funny. We need you to be real.
-        </p>
+        <p className="portal-body-text">{PORTAL_INTRO.body}</p>
+        <p className="portal-core-line">{PORTAL_INTRO.coreLine}</p>
       </section>
 
       <section className="portal-section">
@@ -717,31 +719,11 @@ function ActivePortal({
           These apply to every contestant, every show. No exceptions.
         </p>
         <ol className="portal-list">
-          <li>
-            <strong>Keep answers to 20 to 30 seconds.</strong> The sweet spot is
-            conversational. Not one word, not a five-minute story.
-          </li>
-          <li>
-            <strong>Vulnerable beats funny every time.</strong> A genuine moment
-            lands harder than a polished joke. You don&apos;t need to entertain
-            everyone; you need to be honest.
-          </li>
-          <li>
-            <strong>The audience is on your side.</strong> They showed up
-            wanting to see a real connection.
-          </li>
-          <li>
-            <strong>Focus on your date, not the crowd.</strong> Your date is the
-            only person that matters.
-          </li>
-          <li>
-            <strong>It&apos;s okay to not feel it.</strong> &ldquo;I&apos;m not
-            feeling the chemistry&rdquo; is honest. Faking attraction is not.
-          </li>
-          <li>
-            <strong>Two to three drinks maximum before you go on.</strong>{" "}
-            Relaxed, not impaired.
-          </li>
+          {GOLDEN_RULES.map(({ rule, detail }) => (
+            <li key={rule}>
+              <strong>{rule}</strong> {detail}
+            </li>
+          ))}
         </ol>
       </section>
 
@@ -751,19 +733,9 @@ function ActivePortal({
           Prepare a 30 to 60 second answer for each. The host may go off-script.
         </p>
         <ol className="portal-list">
-          <li>What&apos;s your name, and what do you do?</li>
-          <li>What are you actually looking for in a partner?</li>
-          <li>What are your dealbreakers?</li>
-          <li>What are your green flags?</li>
-          <li>What&apos;s your biggest ick?</li>
-          <li>Why did your last relationship end?</li>
-          <li>Are you over your ex?</li>
-          <li>What&apos;s your best quality? Your worst?</li>
-          <li>Where would you take someone on a first date?</li>
-          <li>How close are you to your family?</li>
-          <li>What do you do for fun outside of work?</li>
-          <li>How many serious relationships have you been in?</li>
-          <li>How much do you make? (Yes, this comes up.)</li>
+          {SAMPLE_QUESTIONS.map((q) => (
+            <li key={q}>{q}</li>
+          ))}
         </ol>
       </section>
 
@@ -773,47 +745,26 @@ function ActivePortal({
           Not suggestions. Have all four ready before you arrive.
         </p>
         <ul className="portal-list">
-          <li>
-            <strong>One thoughtful question to ask your date.</strong>{" "}
-            Conversational, not interview-style. Good: &ldquo;What makes you
-            hard to date?&rdquo; Bad: &ldquo;What do you do?&rdquo;
-          </li>
-          <li>
-            <strong>A talent or party trick (30 seconds).</strong> The weirder
-            and more specific to you, the better.
-          </li>
-          <li>
-            <strong>A pickup line.</strong> Cheesy is the point.
-          </li>
-          <li>
-            <strong>Your 30-second elevator pitch.</strong> Who are you, and why
-            should someone want to date you? Practice it out loud once.
-          </li>
+          {COME_PREPARED_WITH.map(({ prompt, detail }) => (
+            <li key={prompt}>
+              <strong>{prompt}</strong> {detail}
+            </li>
+          ))}
         </ul>
       </section>
 
       <section className="portal-section">
-        <h2 className="portal-section-title">What to Wear</h2>
-        <p className="portal-body-text">
-          Dress like you&apos;re going on a real first date. Bold colors,
-          statement fits, sequins welcome. Whatever reads as confident on a lit
-          stage in front of a full audience. Avoid office clothes, gym clothes,
-          or anything that disappears under stage lighting.
-        </p>
+        <h2 className="portal-section-title">{WARDROBE.heading}</h2>
+        <p className="portal-body-text">{WARDROBE.body}</p>
       </section>
 
       <section className="portal-section">
-        <h2 className="portal-section-title">Day Of</h2>
-        <p className="portal-body-text">
-          Bring your friends. Having friendly faces in the crowd makes a real
-          difference up there. They cheer louder, the room warms up faster, and
-          you will feel less alone on stage. Your phone will be with you
-          backstage, so you can look at notes if you need them.
-        </p>
+        <h2 className="portal-section-title">{DAY_OF.heading}</h2>
+        <p className="portal-body-text">{DAY_OF.body}</p>
       </section>
 
       <section className="portal-section">
-        <h2 className="portal-section-title">Arrival &amp; Notes</h2>
+        <h2 className="portal-section-title">{ARRIVAL_NOTES.heading}</h2>
         <p className="portal-arrival-time">
           {callTime
             ? `Call time: ${callTime} sharp.`
@@ -822,47 +773,19 @@ function ActivePortal({
         {venueName && (
           <p className="portal-body-text">Arrive at {venueName}.</p>
         )}
-        {role === "female" ? (
-          <>
-            <p className="portal-body-text">
-              We keep you separate from the men before the show so your first
-              impression of each other happens on stage.
-            </p>
-            <p className="portal-body-text">
-              You have full permission to not like someone. You don&apos;t owe
-              anyone chemistry, and you don&apos;t need to perform it.
-              &ldquo;I&apos;m not really feeling the connection&rdquo; is great
-              content. The girls who are remembered are the ones who said
-              exactly what they thought. Don&apos;t fake it. The audience always
-              knows.
-            </p>
-          </>
-        ) : (
-          <>
-            <p className="portal-body-text">
-              We keep you separate from the women before the show so your first
-              impression of each other happens on stage.
-            </p>
-            <p className="portal-body-text">
-              Audiences on this show tend to root for the women. Don&apos;t
-              compensate by playing up charm or confidence. It reads as cocky
-              and always backfires. What actually works: being genuinely curious
-              about your date, not taking yourself too seriously, and being a
-              little self-deprecating. Confident but humble.
-            </p>
-          </>
-        )}
+        {ARRIVAL_NOTES[role].map((line) => (
+          <p key={line} className="portal-body-text">
+            {line}
+          </p>
+        ))}
       </section>
 
       <footer className="portal-footer">
         <p>See you on stage. 🌶️</p>
         <p>
           Questions? Email{" "}
-          <a
-            href="mailto:contact@garammasaladating.com"
-            className="portal-link"
-          >
-            contact@garammasaladating.com
+          <a href={SOCIAL_URLS.email} className="portal-link">
+            {PORTAL_CONTACT_EMAIL}
           </a>{" "}
           or DM{" "}
           <a

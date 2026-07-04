@@ -311,6 +311,7 @@ export default function TaskInbox({
   const [loadingId, setLoadingId] = useState<string | null>(null);
   const [expandedId, setExpandedId] = useState<string | null>(null);
   const [inviteApp, setInviteApp] = useState<Application | null>(null);
+  const [actionError, setActionError] = useState<string | null>(null);
 
   async function runAction(
     appId: string,
@@ -318,11 +319,14 @@ export default function TaskInbox({
     patch: Partial<Application>,
   ) {
     setLoadingId(appId);
+    setActionError(null);
     try {
       await fn();
       onRefresh(appId, patch);
     } catch (e) {
-      console.error(e);
+      setActionError(
+        e instanceof Error ? e.message : "Action failed. Please try again.",
+      );
     } finally {
       setLoadingId(null);
     }
@@ -376,6 +380,11 @@ export default function TaskInbox({
 
   return (
     <div className={styles.inbox}>
+      {actionError && (
+        <p className={styles.actionError} role="alert">
+          {actionError}
+        </p>
+      )}
       <Section
         title="Needs first outreach"
         apps={buckets.outreach}

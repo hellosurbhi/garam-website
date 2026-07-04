@@ -1,6 +1,7 @@
 export const prerender = false;
 
 import type { APIRoute } from "astro";
+import { z } from "zod";
 import { verifyAdminIdentity } from "@/lib/verifyToken";
 import { fsAdd, fsPatch } from "@/lib/firestoreRest";
 import { signPortalToken } from "@/lib/portalToken";
@@ -8,15 +9,13 @@ import { sendMail } from "@/lib/zohoMailer";
 import { inviteApproval } from "@/data/emails";
 import { events } from "@/data/events";
 
-const VALID_ROLES = ["female", "male"];
-
-interface InviteBody {
-  applicantId?: string;
-  applicantName?: string;
-  applicantEmail?: string;
-  showId: string;
-  role: string;
-}
+const InviteSchema = z.object({
+  applicantId: z.string().min(1),
+  applicantName: z.string().optional(),
+  applicantEmail: z.string().email().optional(),
+  showId: z.string().min(1),
+  role: z.enum(["female", "male"]),
+});
 
 function json(data: Record<string, unknown>, status = 200) {
   return new Response(JSON.stringify(data), {
@@ -35,30 +34,21 @@ export const POST: APIRoute = async ({ request }) => {
   if (!contentType?.includes("application/json"))
     return json({ error: "Invalid content type" }, 400);
 
-  let body: Partial<Record<keyof InviteBody, unknown>>;
+  let rawBody: unknown;
   try {
-    body = await request.json();
+    rawBody = await request.json();
   } catch {
     return json({ error: "Invalid JSON" }, 400);
   }
 
-  const applicantId =
-    typeof body.applicantId === "string" ? body.applicantId.trim() : "";
-  const applicantName =
-    typeof body.applicantName === "string" ? body.applicantName.trim() : "";
-  const applicantEmail =
-    typeof body.applicantEmail === "string" ? body.applicantEmail.trim() : "";
-  const showId = typeof body.showId === "string" ? body.showId.trim() : "";
-  const role = typeof body.role === "string" ? body.role.trim() : "";
-
-  if (!showId || !role)
-    return json({ error: "Missing showId or role" }, 400);
-  if (!VALID_ROLES.includes(role))
+  const parsed = InviteSchema.safeParse(rawBody);
+  if (!parsed.success)
     return json(
-      { error: `Invalid role. Must be one of: ${VALID_ROLES.join(", ")}` },
+      { error: parsed.error.issues[0]?.message ?? "Invalid input" },
       400,
     );
-  if (!applicantId) return json({ error: "Missing applicantId" }, 400);
+
+  const { applicantId, applicantName, applicantEmail, showId, role } = parsed.data;
 
   const event = events.find(
     (e) => !e.hidden && e.isoDate && `${e.citySlug}-${e.isoDate}` === showId,
@@ -75,9 +65,9 @@ export const POST: APIRoute = async ({ request }) => {
     showVenueAddress: event.venue?.streetAddress ?? "",
     showTimezone: event.timezone ?? "America/New_York",
     role,
-    applicantId,
-    applicantName,
-    applicantEmail: applicantEmail.toLowerCase(),
+    applicantId: applicantId.trim(),
+    applicantName: applicantName?.trim() ?? "",
+    applicantEmail: applicantEmail?.trim().toLowerCase() ?? "",
     claimed: false,
     createdAt: new Date().toISOString(),
   };
@@ -93,17 +83,24 @@ export const POST: APIRoute = async ({ request }) => {
   );
   const waiverUrl = `${siteUrl}/waiver?token=${encodeURIComponent(token)}`;
 
-  // Set casting metadata unconditionally; invitedAt and invite_sent only after email succeeds
-  await fsPatch(`applications/${applicantId}`, {
+  // Set invitedAt + castEventId on the application and log invite_sent event
+  await fsPatch(`applications/${applicantId.trim()}`, {
+    invitedAt: new Date().toISOString(),
     castEventId: showId,
     status: "Cast",
+  });
+  await fsAdd(`applications/${applicantId.trim()}/events`, {
+    type: "invite_sent",
+    timestamp: new Date().toISOString(),
+    actor: identity.email,
+    payload: { inviteId, showId },
   });
 
   let emailSent = false;
   let emailError: string | undefined;
 
-  if (applicantEmail) {
-    const name = applicantName || "there";
+  if (applicantEmail?.trim()) {
+    const name = applicantName?.trim() ?? "there";
     const template = inviteApproval(name, {
       portalUrl: waiverUrl,
       showDate: event.date,
@@ -111,22 +108,12 @@ export const POST: APIRoute = async ({ request }) => {
     });
     try {
       await sendMail({
-        to: applicantEmail.toLowerCase(),
+        to: applicantEmail.trim().toLowerCase(),
         subject: template.subject,
         text: template.text,
         html: template.html,
       });
       emailSent = true;
-      const sentAt = new Date().toISOString();
-      await fsPatch(`applications/${applicantId}`, {
-        invitedAt: sentAt,
-      });
-      await fsAdd(`applications/${applicantId}/events`, {
-        type: "invite_sent",
-        timestamp: sentAt,
-        actor: identity.email,
-        payload: { inviteId, showId },
-      });
     } catch (err) {
       emailError = err instanceof Error ? err.message : "Email send failed";
     }

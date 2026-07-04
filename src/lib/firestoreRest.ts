@@ -204,6 +204,7 @@ export async function fsListAll(
 
     const res = await fetch(url.toString(), {
       headers: { Authorization: `Bearer ${token}` },
+      signal: AbortSignal.timeout(15_000),
     });
     if (!res.ok) {
       const text = await res.text();

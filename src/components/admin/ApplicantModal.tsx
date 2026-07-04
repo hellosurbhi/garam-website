@@ -590,6 +590,11 @@ export default function ApplicantModal({
               {noteSaving ? "Saving..." : "Add note"}
             </button>
           </div>
+          {noteError && (
+            <p className={styles.sendEmailError} role="alert">
+              {noteError}
+            </p>
+          )}
         </div>
       </div>
     </Modal>

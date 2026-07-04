@@ -102,12 +102,13 @@
   flex-shrink: 0;
   font-size: 1rem;
   font-weight: 600;
+  min-height: 48px;
+  min-width: 48px;
   color: var(--brand-red);
   background: none;
   border: 1px solid var(--brand-red);
   border-radius: 6px;
   padding: 5px 12px;
-  min-height: 48px;
   cursor: pointer;
   white-space: nowrap;
   transition:
@@ -184,9 +185,10 @@
   border: none;
   border-radius: 6px;
   padding: 7px 16px;
-  min-height: 48px;
   font-size: 1rem;
   font-weight: 600;
+  min-height: 48px;
+  min-width: 48px;
   cursor: pointer;
   transition: opacity 0.15s;
 }

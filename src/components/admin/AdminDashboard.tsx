@@ -1,11 +1,10 @@
-import { useState, useEffect, useMemo, useCallback } from "react";
+import { useState, useEffect, useMemo } from "react";
 import {
   collection,
   addDoc,
   getDocs,
   doc,
   updateDoc,
-  where,
   Timestamp,
   serverTimestamp,
   query,
@@ -120,19 +119,6 @@ function StatusSection({
   );
 }
 
-// Statuses that are definitively closed — these apps never appear in the Today inbox.
-// "Cast" is intentionally omitted: cast members still need waiver nudging.
-const INBOX_EXCLUDED_STATUSES: ApplicantStatus[] = [
-  "Rejected",
-  "Not Interested",
-  "Not Interested Anymore",
-  "Said Not Now",
-  "Bailed",
-  "Participated",
-];
-
-const PAGE_SIZE = 50;
-
 export default function AdminDashboard({ onLogout }: AdminDashboardProps) {
   const [activeTab, setActiveTab] = useState<
     "today" | "applicants" | "analytics"
@@ -140,14 +126,12 @@ export default function AdminDashboard({ onLogout }: AdminDashboardProps) {
   const [applications, setApplications] = useState<Application[]>([]);
   const [loading, setLoading] = useState(true);
   const [fetchError, setFetchError] = useState(false);
-  const [inboxApps, setInboxApps] = useState<Application[]>([]);
-  const [inboxLoading, setInboxLoading] = useState(true);
-  const [inboxError, setInboxError] = useState(false);
   const [selectedApp, setSelectedApp] = useState<Application | null>(null);
   const [toast, setToast] = useState<{ msg: string; ok: boolean } | null>(null);
   const [deletedOpen, setDeletedOpen] = useState(false);
   const [participatedOpen, setParticipatedOpen] = useState(false);
 
+  const PAGE_SIZE = 50;
   const [lastDoc, setLastDoc] =
     useState<QueryDocumentSnapshot<DocumentData> | null>(null);
   const [hasMore, setHasMore] = useState(true);
@@ -171,88 +155,58 @@ export default function AdminDashboard({ onLogout }: AdminDashboardProps) {
     setToast({ msg, ok });
   }
 
-  const fetchApps = useCallback(
-    async (after?: QueryDocumentSnapshot<DocumentData> | null) => {
-      if (after) {
-        setLoadingMore(true);
-      } else {
-        setLoading(true);
-      }
-      setFetchError(false);
-      try {
-        const colRef = collection(await getFirebaseDb(), "applications");
-        const q = after
-          ? query(
-              colRef,
-              orderBy("submittedAt", "desc"),
-              startAfter(after),
-              limit(PAGE_SIZE),
-            )
-          : query(colRef, orderBy("submittedAt", "desc"), limit(PAGE_SIZE));
-        const snap = await getDocs(q);
-        const docs = snap.docs.map(
-          (d) => ({ id: d.id, ...d.data() }) as Application,
-        );
-        setHasMore(snap.docs.length === PAGE_SIZE);
-        setLastDoc(snap.docs[snap.docs.length - 1] ?? null);
-        if (after) {
-          setApplications((prev) => [...prev, ...docs]);
-        } else {
-          setApplications(docs);
-        }
-      } catch {
-        if (after) {
-          setToast({ msg: "Failed to load more applications", ok: false });
-        } else {
-          setFetchError(true);
-        }
-      } finally {
-        setLoading(false);
-        setLoadingMore(false);
-      }
-    },
-    [],
-  );
-
-  useEffect(() => {
-
-    (async () => {
-      await fetchApps();
-    })();
-  }, [fetchApps]);
-
-  async function fetchInboxApps() {
-    setInboxLoading(true);
-    setInboxError(false);
+  async function fetchApps(after?: QueryDocumentSnapshot<DocumentData> | null) {
+    if (after) {
+      setLoadingMore(true);
+    } else {
+      setLoading(true);
+    }
+    setFetchError(false);
     try {
-      const db = await getFirebaseDb();
-      const colRef = collection(db, "applications");
-      const q = query(
-        colRef,
-        where("status", "not-in", INBOX_EXCLUDED_STATUSES),
-      );
+      const colRef = collection(await getFirebaseDb(), "applications");
+      const q = after
+        ? query(
+            colRef,
+            orderBy("submittedAt", "desc"),
+            startAfter(after),
+            limit(PAGE_SIZE),
+          )
+        : query(colRef, orderBy("submittedAt", "desc"), limit(PAGE_SIZE));
       const snap = await getDocs(q);
-      const docs = snap.docs
-        .map((d) => ({ id: d.id, ...d.data() }) as Application)
-        .filter((a) => !a.deletedAt);
-      setInboxApps(docs);
+      const docs = snap.docs.map(
+        (d) => ({ id: d.id, ...d.data() }) as Application,
+      );
+      setHasMore(snap.docs.length === PAGE_SIZE);
+      setLastDoc(snap.docs[snap.docs.length - 1] ?? null);
+      if (after) {
+        setApplications((prev) => [...prev, ...docs]);
+      } else {
+        setApplications(docs);
+      }
     } catch {
-      setInboxError(true);
+      if (after) {
+        setHasMore(false);
+        showToast("Failed to load more applications", false);
+      } else {
+        setFetchError(true);
+      }
     } finally {
-      setInboxLoading(false);
+      setLoading(false);
+      setLoadingMore(false);
     }
   }
 
   useEffect(() => {
+     
     (async () => {
-      await fetchInboxApps();
+      await fetchApps();
     })();
   }, []);
 
   async function handleUpdate(
     id: string,
     patch: Partial<Omit<Application, "id">>,
-  ) {
+  ): Promise<boolean> {
     try {
       await updateDoc(doc(await getFirebaseDb(), "applications", id), patch);
       setApplications((prev) =>
@@ -281,14 +235,17 @@ export default function AdminDashboard({ onLogout }: AdminDashboardProps) {
   }
 
   async function handleParticipated(id: string) {
-    const saved = await handleUpdate(id, {
+    const ok = await handleUpdate(id, {
       status: "Participated",
       participatedAt: serverTimestamp(),
     } as Partial<Omit<Application, "id">>);
-    if (!saved) return;
+    if (!ok) {
+      setSelectedApp(null);
+      return;
+    }
     try {
       const auth = await getFirebaseAuth();
-      const db = await getFirebaseDb();
+      const db = getFirebaseDb();
       await addDoc(collection(db, "applications", id, "events"), {
         type: "participated",
         timestamp: serverTimestamp(),
@@ -464,38 +421,18 @@ export default function AdminDashboard({ onLogout }: AdminDashboardProps) {
       </header>
 
       {activeTab === "today" && (
-        inboxLoading ? (
-          <div
-            role="status"
-            aria-live="polite"
-            aria-label="Loading today's tasks"
-          >
-            <Skeleton count={3} />
-          </div>
-        ) : inboxError ? (
-          <div className={styles.errorState}>
-            <p style={{ marginBottom: "12px" }}>Failed to load applications.</p>
-            <button
-              onClick={() => void fetchInboxApps()}
-              className={styles.retryButton}
-            >
-              Try again
-            </button>
-          </div>
-        ) : (
-          <TaskInbox
-            applications={inboxApps}
-            onOpenApp={(app) => {
-              setSelectedApp(app);
-              setActiveTab("applicants");
-            }}
-            onRefresh={(id, patch) => {
-              setInboxApps((prev) =>
-                prev.map((a) => (a.id === id ? { ...a, ...patch } : a)),
-              );
-            }}
-          />
-        )
+        <TaskInbox
+          applications={applications}
+          onOpenApp={(app) => {
+            setSelectedApp(app);
+            setActiveTab("applicants");
+          }}
+          onRefresh={(id, patch) => {
+            setApplications((prev) =>
+              prev.map((a) => (a.id === id ? { ...a, ...patch } : a)),
+            );
+          }}
+        />
       )}
 
       {activeTab === "analytics" && <AnalyticsDashboard />}

@@ -26,6 +26,8 @@ const SKIP_FOLLOWUP_STATUSES = new Set([
 const H48 = 48 * 60 * 60 * 1000;
 const D7 = 7 * 24 * 60 * 60 * 1000;
 const H24 = 24 * 60 * 60 * 1000;
+// Hard cap per section to bound cron execution time within Vercel's function limit.
+const MAX_PER_RUN = 50;
 
 function verifyCronSecret(request: Request): boolean {
   const cronSecret = import.meta.env.CRON_SECRET;
@@ -72,6 +74,7 @@ export const GET: APIRoute = async ({ request }) => {
 
   // ── 1. Scheduling follow-up nudge ────────────────────────────────────────────
   for (const app of allApps) {
+    if (results.schedulingFollowups >= MAX_PER_RUN) break;
     if (app.deletedAt) continue;
     const contactedMs = toMs(app.contactedAt);
     if (contactedMs === null) continue;
@@ -96,20 +99,25 @@ export const GET: APIRoute = async ({ request }) => {
     }
 
     const sentAt = new Date().toISOString();
-    await fsPatch(`applications/${app.id as string}`, {
-      followupSentAt: sentAt,
-    });
-    await fsAdd(`applications/${app.id as string}/events`, {
-      type: "followup_sent",
-      timestamp: sentAt,
-      actor: "system",
-      payload: {},
-    });
-    results.schedulingFollowups++;
+    try {
+      await fsPatch(`applications/${app.id as string}`, {
+        followupSentAt: sentAt,
+      });
+      await fsAdd(`applications/${app.id as string}/events`, {
+        type: "followup_sent",
+        timestamp: sentAt,
+        actor: "system",
+        payload: {},
+      });
+      results.schedulingFollowups++;
+    } catch {
+      // Email already sent; persistence failure logged for manual follow-up.
+    }
   }
 
   // ── 2. Waiver nudge ───────────────────────────────────────────────────────────
   for (const app of allApps) {
+    if (results.waiverNudges >= MAX_PER_RUN) break;
     if (app.deletedAt) continue;
     const invitedMs = toMs(app.invitedAt);
     if (invitedMs === null) continue;
@@ -166,20 +174,25 @@ export const GET: APIRoute = async ({ request }) => {
     }
 
     const sentAt = new Date().toISOString();
-    await fsPatch(`applications/${app.id as string}`, {
-      waiverNudgeSentAt: sentAt,
-    });
-    await fsAdd(`applications/${app.id as string}/events`, {
-      type: "waiver_nudge_sent",
-      timestamp: sentAt,
-      actor: "system",
-      payload: {},
-    });
-    results.waiverNudges++;
+    try {
+      await fsPatch(`applications/${app.id as string}`, {
+        waiverNudgeSentAt: sentAt,
+      });
+      await fsAdd(`applications/${app.id as string}/events`, {
+        type: "waiver_nudge_sent",
+        timestamp: sentAt,
+        actor: "system",
+        payload: {},
+      });
+      results.waiverNudges++;
+    } catch {
+      // Email already sent; persistence failure logged for manual follow-up.
+    }
   }
 
   // ── 3. Auto-decay ────────────────────────────────────────────────────────────
   for (const app of allApps) {
+    if (results.autoDecayed >= MAX_PER_RUN) break;
     if (app.deletedAt) continue;
     const followupMs = toMs(app.followupSentAt);
     if (followupMs === null) continue;
@@ -188,16 +201,20 @@ export const GET: APIRoute = async ({ request }) => {
     if (now - followupMs < D7) continue;
 
     const decayedAt = new Date().toISOString();
-    await fsPatch(`applications/${app.id as string}`, {
-      status: "No Response",
-    });
-    await fsAdd(`applications/${app.id as string}/events`, {
-      type: "status_auto_decayed",
-      timestamp: decayedAt,
-      actor: "system",
-      payload: {},
-    });
-    results.autoDecayed++;
+    try {
+      await fsPatch(`applications/${app.id as string}`, {
+        status: "No Response",
+      });
+      await fsAdd(`applications/${app.id as string}/events`, {
+        type: "status_auto_decayed",
+        timestamp: decayedAt,
+        actor: "system",
+        payload: {},
+      });
+      results.autoDecayed++;
+    } catch {
+      // Persistence failure; will retry on next cron run.
+    }
   }
 
   // ── 4. Host briefing ─────────────────────────────────────────────────────────

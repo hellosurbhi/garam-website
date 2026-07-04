@@ -103,7 +103,7 @@ service cloud.firestore {
     }
 
     match /applications/{doc} {
-      allow create: if validApplication();
+      allow create: if request.auth != null && validApplication();
       allow read, update, delete: if request.auth != null;
     }
     match /applications/{doc}/{subcollection=**} {

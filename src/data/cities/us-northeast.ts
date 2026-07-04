@@ -3,19 +3,18 @@ import type { CityData } from "./types";
 export const usNortheastCities: Record<string, CityData> = {
   edison: {
     slug: "edison",
-    displayName: "Edison/Iselin",
-    titleTag: "Edison NJ Indian Singles Event",
+    displayName: "Edison/New Brunswick",
+    titleTag: "Live Desi Dating Show in Edison NJ",
     metaDescription:
-      "Garam Masala Dating is coming to Edison, NJ. Live desi dating show and mixer from the creators of NYC's top South Asian singles night. Join the waitlist.",
-    h1: "Oak Tree Road Deserves a Dating Show",
-    status: "coming-soon",
-    badgeLabel: "Coming Soon",
+      "Garam Masala Dating comes to Edison NJ on July 11. Real South Asian singles on live dates on stage. Tickets are $15. The show that sold out NYC is now in Jersey.",
+    h1: "Single and Desi in Jersey? This Is Your Night.",
+    status: "active",
+    badgeLabel: "Tickets Live",
     bodyParagraphs: [
-      "If you grew up driving down Oak Tree Road for chaat after Saturday tuition, you already know Edison doesn't need an introduction. This is the desi capital of the East Coast. The restaurants, the grocery stores, the aunties who know everyone. What's missing is a way for single people to actually meet each other that isn't a family friend's shaadi.com profile or an awkward rishta dinner.",
-      "The format that took over New York: real contestants go on live dates on stage while a packed room watches it unfold. Before and after, the whole crowd mingles. It's a night out with purpose, and Edison is long overdue for one.",
-      "Edison and Iselin sit right in the middle of the densest South Asian corridor on the East Coast. Woodbridge, Piscataway, the whole Middlesex County stretch. Rutgers alone sends thousands of desi students into this area every year. The community is massive, the singles scene is nonexistent, and the demand is obvious.",
-      "We're building a waitlist for Edison and the surrounding area. When we announce a date, the waitlist gets first access to tickets. If you want to be one of the contestants on stage when we come to your city, apply now so you're already in the system.",
-      "You don't have to take the train into Manhattan anymore. We're bringing the show to you.",
+      "Your aunties have been asking. Your cousins keep sending biodata over WhatsApp. You have been on Dil Mil long enough to recognize faces from the last shaadi you attended. You are not alone. You are just in the wrong room.",
+      "Garam Masala Dating is a live comedy dating show. Real South Asian singles go on actual dates in front of a full room. It is funny, warm and chaotic in the best way and nothing like the apps. The NYC show has been selling out for months.",
+      "On July 11 we are bringing the show to Komic Karma Entertainment in North Brunswick. This is a room built for Jersey desi singles. You can come to watch, to meet people in the crowd or to apply to be a contestant and get on stage.",
+      "Tickets are $15. The NYC show sells out weeks in advance. Grab yours from the box above so you are not scrambling the day before, and if you want to be on stage, apply to be a contestant before the spots fill up.",
     ],
     ctas: [
       { label: "Join the Edison Waitlist", href: "#waitlist" },
@@ -37,7 +36,7 @@ export const usNortheastCities: Record<string, CityData> = {
       "philadelphia",
     ],
     communityStats:
-      "Edison and Iselin form the heart of the densest South Asian corridor on the East Coast, anchored by Middlesex County and Rutgers University",
+      "Edison has the highest concentration of South Asians of any city in the United States and the singles here have been waiting for a night built for them",
     relatedArticleSlugs: [
       "guide-to-indian-dating-culture-america",
       "desi-red-flags-green-flags",
@@ -45,16 +44,16 @@ export const usNortheastCities: Record<string, CityData> = {
     ],
     faqItems: [
       {
-        q: "When is Garam Masala Dating coming to Edison?",
-        a: "No date confirmed yet. We are building the waitlist to determine timing. Edison is a priority given the size of the local South Asian community.",
+        q: "When and where is the Edison show?",
+        a: "Saturday July 11 2026 at Komic Karma Entertainment in North Brunswick NJ. Doors open at 6 PM.",
       },
       {
-        q: "Will the show be on Oak Tree Road?",
-        a: "Venue TBD. We are looking at spaces in Edison, Iselin, and the surrounding Middlesex County area. Waitlist members will be first to know.",
+        q: "Can I come just to watch?",
+        a: "Yes. Most people come as audience members. The whole crowd mingles before and after the show. You do not need to be a contestant to have a great night.",
       },
       {
-        q: "Can I apply to be a contestant before a date is announced?",
-        a: "Yes. Apply now. Applications stay active for 12 months and Edison area applicants will be prioritized when we confirm a date.",
+        q: "What is the format and how much does it cost?",
+        a: "Tickets are $15. Real South Asian singles go on live dates on stage while the audience watches. There are laughs, moments and a mixer afterward. Think of it as a comedy show where the dates are real.",
       },
     ],
   },

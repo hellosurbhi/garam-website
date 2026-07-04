@@ -14,6 +14,7 @@ declare global {
         },
       ) => string;
       remove: (widgetId: string) => void;
+      reset: (widgetId: string) => void;
     };
     __gmd_turnstile_load?: () => void;
   }
@@ -46,7 +47,6 @@ export default function ApplyPage() {
 
 function ApplyPageInner() {
   const turnstileContainerRef = useRef<HTMLDivElement>(null);
-  const turnstileWidgetIdRef = useRef<string | undefined>(undefined);
 
   useEffect(() => {
     if (typeof navigator === "undefined") return;
@@ -143,6 +143,7 @@ function ApplyPageInner() {
     agreeToTerms,
     handleSubmit,
     setTurnstileToken,
+    turnstileWidgetIdRef,
   } = useApplyForm();
 
   useEffect(() => {

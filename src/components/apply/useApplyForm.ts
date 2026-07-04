@@ -1,5 +1,5 @@
 import type React from "react";
-import { useState, useEffect, useMemo, type ChangeEvent } from "react";
+import { useState, useEffect, useMemo, useRef, type ChangeEvent } from "react";
 import type { StorageReference } from "firebase/storage";
 import {
   getFirebaseDb,
@@ -122,6 +122,7 @@ export function useApplyForm() {
   const [toast, setToast] = useState<{ msg: string; ok: boolean } | null>(null);
   const [formStarted, setFormStarted] = useState(false);
   const [turnstileToken, setTurnstileToken] = useState("");
+  const turnstileWidgetIdRef = useRef<string | undefined>(undefined);
   const [cityInput, setCityInput] = useState(() => {
     const urlParams = getUrlCityParams();
     if (!urlParams) return "";
@@ -313,6 +314,11 @@ export function useApplyForm() {
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ token: turnstileToken }),
         });
+        // Token is one-time-use — clear it and request a new challenge regardless
+        setTurnstileToken("");
+        if (window.turnstile && turnstileWidgetIdRef.current) {
+          window.turnstile.reset(turnstileWidgetIdRef.current);
+        }
         if (!verifyRes.ok) {
           setToast({
             msg: "Verification failed. Please refresh the page and try again.",
@@ -323,6 +329,10 @@ export function useApplyForm() {
         }
       } catch {
         // Network error — allow submission through rather than hard-blocking
+        setTurnstileToken("");
+        if (window.turnstile && turnstileWidgetIdRef.current) {
+          window.turnstile.reset(turnstileWidgetIdRef.current);
+        }
       }
     }
 
@@ -469,6 +479,11 @@ export function useApplyForm() {
         msg: "Sorry, the form isn't working right now. DM us on @garammasaladating on Instagram and we'll sort it out!",
         ok: false,
       });
+      // Spent token — reset so the next retry gets a fresh challenge
+      setTurnstileToken("");
+      if (window.turnstile && turnstileWidgetIdRef.current) {
+        window.turnstile.reset(turnstileWidgetIdRef.current);
+      }
     } finally {
       setSubmitting(false);
     }
@@ -500,5 +515,6 @@ export function useApplyForm() {
     agreeToTerms,
     handleSubmit,
     setTurnstileToken,
+    turnstileWidgetIdRef,
   };
 }

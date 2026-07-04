@@ -56,6 +56,8 @@ export const LeadPayloadSchema = z.object({
   utmTerm: normalizeOptionalString(150),
   posthogDistinctId: normalizeOptionalString(200),
   sourceCitySlug: normalizeOptionalString(100),
+  fbclid: normalizeOptionalString(500),
+  gclid: normalizeOptionalString(500),
   geoCity: normalizeOptionalString(100),
   geoRegion: normalizeOptionalString(100),
   geoCountry: normalizeOptionalString(100),

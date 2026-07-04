@@ -6,7 +6,7 @@ import {
   getFirebaseStorage,
   getFirebaseAuth,
 } from "@/lib/firebase";
-import { trackError, trackLeadEvent } from "@/lib/analytics";
+import { trackError, trackLeadEvent, identifyLead } from "@/lib/analytics";
 import { buildLeadAttribution } from "@/lib/leadAttribution";
 import { validateEmail } from "@/utils/validateEmail";
 import { normalizeInstagramHandle } from "@/utils/instagram";

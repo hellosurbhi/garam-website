@@ -289,6 +289,12 @@ export default function AdminDashboard({ onLogout }: AdminDashboardProps) {
   >([]);
   const [cityFilter, setCityFilter] = useState<readonly FilterOption[]>([]);
   const [nameSearch, setNameSearch] = useState("");
+  const [prepLinkCopied, setPrepLinkCopied] = useState<string | null>(null);
+
+  const today = new Date().toLocaleDateString("en-CA");
+  const upcomingEvents = events.filter(
+    (e) => e.isoDate && e.isoDate > today && !e.hidden,
+  );
 
   useEffect(() => {
     let timer: ReturnType<typeof setTimeout> | undefined;
@@ -847,7 +853,6 @@ export default function AdminDashboard({ onLogout }: AdminDashboardProps) {
               </div>
             </div>
           )}
-
 
           <main className={styles.main}>
             {loading ? (

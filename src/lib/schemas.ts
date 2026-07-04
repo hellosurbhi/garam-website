@@ -115,6 +115,7 @@ export const StageWaiverSchema = z.object({
   waiverVersion: normalizeRequiredString(1, 30),
   mailingListOptIn: z.boolean(),
   showId: normalizeOptionalString(100),
+  portalToken: normalizeOptionalString(2048),
 });
 
 export const AdminApplicationPatchSchema = z

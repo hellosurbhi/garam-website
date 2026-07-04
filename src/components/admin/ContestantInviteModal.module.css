@@ -1,0 +1,255 @@
+.dialog {
+  background: #fff;
+  border-radius: 16px;
+  max-width: 480px;
+  width: calc(100% - 48px);
+  animation: modal-in 0.2s ease-out both;
+}
+
+@keyframes modal-in {
+  from {
+    opacity: 0;
+    transform: scale(0.96) translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 20px 24px 0;
+}
+
+.title {
+  font-family: var(--font-playfair);
+  font-size: 20px;
+  font-weight: 700;
+  color: var(--text);
+}
+
+.closeButton {
+  background: none;
+  border: none;
+  border-radius: 100px;
+  min-width: 48px;
+  min-height: 48px;
+  padding: 8px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--text-light);
+  transition: color 0.15s;
+}
+
+.closeButton:hover {
+  color: var(--text);
+}
+
+.closeButton:focus {
+  outline: none;
+}
+
+.closeButton:focus-visible {
+  outline: 2px solid var(--brand-red);
+  outline-offset: 2px;
+}
+
+.body {
+  padding: 20px 24px 24px;
+}
+
+.applicantInfo {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: 12px 16px;
+  border-radius: 10px;
+  background: var(--cream);
+  margin-bottom: 20px;
+}
+
+.applicantName {
+  font-family: var(--font-body);
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--text);
+}
+
+.applicantEmail {
+  font-family: var(--font-body);
+  font-size: 13px;
+  color: var(--text-light);
+}
+
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.formGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.formLabel {
+  font-family: var(--font-body);
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--text-light);
+}
+
+.selectInput {
+  padding: 10px 14px;
+  border-radius: 100px;
+  border: 1px solid var(--border);
+  font-family: var(--font-body);
+  font-size: 16px;
+  color: var(--text);
+  background: #fff;
+  cursor: pointer;
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%23888' stroke-width='2'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 14px center;
+  padding-right: 36px;
+}
+
+.selectInput:focus {
+  border-color: var(--brand-red);
+}
+
+.selectInput:focus-visible {
+  outline: 2px solid var(--brand-red);
+  outline-offset: 2px;
+}
+
+.errorMsg {
+  font-family: var(--font-body);
+  font-size: 13px;
+  color: var(--brand-red);
+  padding: 8px 12px;
+  border-radius: 8px;
+  background: rgba(220, 38, 38, 0.06);
+}
+
+.resultPanel {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.successMsg,
+.warningMsg {
+  font-family: var(--font-body);
+  font-size: 14px;
+  line-height: 1.45;
+  margin: 0;
+}
+
+.successMsg {
+  color: var(--text);
+  font-weight: 600;
+}
+
+.warningMsg {
+  color: #8a4b00;
+  padding: 10px 12px;
+  border-radius: 8px;
+  background: rgba(245, 158, 11, 0.12);
+}
+
+.linkRow {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 8px;
+}
+
+.linkInput {
+  min-width: 0;
+  padding: 10px 12px;
+  border-radius: 8px;
+  border: 1px solid var(--border);
+  font-family: var(--font-body);
+  font-size: 13px;
+  color: var(--text);
+  background: #fff;
+}
+
+.copyButton {
+  min-height: 48px;
+  padding: 0 14px;
+  border-radius: 8px;
+  border: 1px solid var(--border);
+  background: var(--cream);
+  font-family: var(--font-body);
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--text);
+  cursor: pointer;
+}
+
+.actionRow {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  padding-top: 8px;
+}
+
+.cancelButton {
+  padding: 10px 20px;
+  min-height: 48px;
+  border-radius: 100px;
+  border: 1px solid var(--border);
+  background: transparent;
+  font-family: var(--font-body);
+  font-size: 1rem;
+  font-weight: 500;
+  color: var(--text-light);
+  cursor: pointer;
+  transition:
+    border-color 0.15s,
+    color 0.15s;
+}
+
+.cancelButton:hover {
+  border-color: var(--text-light);
+  color: var(--text);
+}
+
+.submitButton {
+  padding: 10px 20px;
+  min-height: 48px;
+  border-radius: 100px;
+  border: none;
+  background: var(--brand-red);
+  font-family: var(--font-body);
+  font-size: 1rem;
+  font-weight: 600;
+  color: #fff;
+  cursor: pointer;
+  transition:
+    background 0.15s,
+    transform 0.1s;
+}
+
+.submitButton:hover:not(:disabled) {
+  background: var(--brand-red-dark);
+}
+
+.submitButton:active:not(:disabled) {
+  transform: scale(0.97);
+}
+
+.submitButton:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}

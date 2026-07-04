@@ -1,10 +1,13 @@
 import { useState, useEffect, useMemo } from "react";
 import {
   collection,
+  addDoc,
   getDocs,
   doc,
   updateDoc,
+  where,
   Timestamp,
+  serverTimestamp,
   query,
   orderBy,
   limit,
@@ -14,7 +17,7 @@ import {
 } from "firebase/firestore";
 import { ChevronRight, ChevronDown } from "lucide-react";
 import Select from "react-select";
-import { getFirebaseDb } from "@/lib/firebase";
+import { getFirebaseDb, getFirebaseAuth } from "@/lib/firebase";
 import {
   type Application,
   type ApplicantStatus,
@@ -27,6 +30,7 @@ import Skeleton from "../ui/Skeleton";
 import ApplicantCard from "./ApplicantCard";
 import ApplicantModal from "./ApplicantModal";
 import AnalyticsDashboard from "./AnalyticsDashboard";
+import TaskInbox from "./TaskInbox";
 import styles from "./AdminDashboard.module.css";
 
 interface AdminDashboardProps {
@@ -116,13 +120,27 @@ function StatusSection({
   );
 }
 
+// Statuses that are definitively closed — these apps never appear in the Today inbox.
+// "Cast" is intentionally omitted: cast members still need waiver nudging.
+const INBOX_EXCLUDED_STATUSES: ApplicantStatus[] = [
+  "Rejected",
+  "Not Interested",
+  "Not Interested Anymore",
+  "Said Not Now",
+  "Bailed",
+  "Participated",
+];
+
 export default function AdminDashboard({ onLogout }: AdminDashboardProps) {
-  const [activeTab, setActiveTab] = useState<"applicants" | "analytics">(
-    "applicants",
-  );
+  const [activeTab, setActiveTab] = useState<
+    "today" | "applicants" | "analytics"
+  >("today");
   const [applications, setApplications] = useState<Application[]>([]);
   const [loading, setLoading] = useState(true);
   const [fetchError, setFetchError] = useState(false);
+  const [inboxApps, setInboxApps] = useState<Application[]>([]);
+  const [inboxLoading, setInboxLoading] = useState(true);
+  const [inboxError, setInboxError] = useState(false);
   const [selectedApp, setSelectedApp] = useState<Application | null>(null);
   const [toast, setToast] = useState<{ msg: string; ok: boolean } | null>(null);
   const [deletedOpen, setDeletedOpen] = useState(false);
@@ -194,8 +212,37 @@ export default function AdminDashboard({ onLogout }: AdminDashboardProps) {
   }
 
   useEffect(() => {
+
     (async () => {
       await fetchApps();
+    })();
+  }, []);
+
+  async function fetchInboxApps() {
+    setInboxLoading(true);
+    setInboxError(false);
+    try {
+      const db = await getFirebaseDb();
+      const colRef = collection(db, "applications");
+      const q = query(
+        colRef,
+        where("status", "not-in", INBOX_EXCLUDED_STATUSES),
+      );
+      const snap = await getDocs(q);
+      const docs = snap.docs
+        .map((d) => ({ id: d.id, ...d.data() }) as Application)
+        .filter((a) => !a.deletedAt);
+      setInboxApps(docs);
+    } catch {
+      setInboxError(true);
+    } finally {
+      setInboxLoading(false);
+    }
+  }
+
+  useEffect(() => {
+    (async () => {
+      await fetchInboxApps();
     })();
   }, []);
 
@@ -212,8 +259,10 @@ export default function AdminDashboard({ onLogout }: AdminDashboardProps) {
         prev?.id === id ? { ...prev, ...patch } : prev,
       );
       showToast("Saved", true);
+      return true;
     } catch {
       showToast("Save failed", false);
+      return false;
     }
   }
 
@@ -229,7 +278,23 @@ export default function AdminDashboard({ onLogout }: AdminDashboardProps) {
   }
 
   async function handleParticipated(id: string) {
-    await handleUpdate(id, { status: "Participated" });
+    const saved = await handleUpdate(id, {
+      status: "Participated",
+      participatedAt: serverTimestamp(),
+    } as Partial<Omit<Application, "id">>);
+    if (!saved) return;
+    try {
+      const auth = await getFirebaseAuth();
+      const db = await getFirebaseDb();
+      await addDoc(collection(db, "applications", id, "events"), {
+        type: "participated",
+        timestamp: serverTimestamp(),
+        actor: auth.currentUser?.email ?? "admin",
+        payload: {},
+      });
+    } catch {
+      // non-fatal event log failure
+    }
     setSelectedApp(null);
   }
 
@@ -320,6 +385,13 @@ export default function AdminDashboard({ onLogout }: AdminDashboardProps) {
             <div className={styles.tabs}>
               <button
                 className={styles.tab}
+                data-active={activeTab === "today" || undefined}
+                onClick={() => setActiveTab("today")}
+              >
+                Today
+              </button>
+              <button
+                className={styles.tab}
                 data-active={activeTab === "applicants" || undefined}
                 onClick={() => setActiveTab("applicants")}
               >
@@ -387,6 +459,41 @@ export default function AdminDashboard({ onLogout }: AdminDashboardProps) {
           </div>
         )}
       </header>
+
+      {activeTab === "today" && (
+        inboxLoading ? (
+          <div
+            role="status"
+            aria-live="polite"
+            aria-label="Loading today's tasks"
+          >
+            <Skeleton count={3} />
+          </div>
+        ) : inboxError ? (
+          <div className={styles.errorState}>
+            <p style={{ marginBottom: "12px" }}>Failed to load applications.</p>
+            <button
+              onClick={() => void fetchInboxApps()}
+              className={styles.retryButton}
+            >
+              Try again
+            </button>
+          </div>
+        ) : (
+          <TaskInbox
+            applications={inboxApps}
+            onOpenApp={(app) => {
+              setSelectedApp(app);
+              setActiveTab("applicants");
+            }}
+            onRefresh={(id, patch) => {
+              setInboxApps((prev) =>
+                prev.map((a) => (a.id === id ? { ...a, ...patch } : a)),
+              );
+            }}
+          />
+        )
+      )}
 
       {activeTab === "analytics" && <AnalyticsDashboard />}
 
@@ -541,7 +648,7 @@ export default function AdminDashboard({ onLogout }: AdminDashboardProps) {
         </main>
       )}
 
-      {activeTab === "applicants" && selectedApp && (
+      {selectedApp && (
         <ApplicantModal
           app={selectedApp}
           onClose={() => setSelectedApp(null)}

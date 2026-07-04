@@ -1,4 +1,4 @@
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import { X, Trash2, ArchiveRestore, Send } from "lucide-react";
 import {
   collection,
@@ -6,6 +6,10 @@ import {
   updateDoc,
   doc,
   serverTimestamp,
+  onSnapshot,
+  orderBy,
+  query,
+  type Timestamp,
 } from "firebase/firestore";
 import { getFirebaseAuth, getFirebaseDb } from "@/lib/firebase";
 import {
@@ -53,6 +57,31 @@ function EmailRow({ email }: { email?: string }) {
   );
 }
 
+interface AppEvent {
+  id: string;
+  type: string;
+  timestamp: Timestamp | string | null;
+  actor: string;
+  payload: Record<string, unknown>;
+}
+
+const EVENT_LABELS: Record<string, string> = {
+  outreach_sent: "Scheduling email sent",
+  followup_sent: "Follow-up email sent",
+  booking_created: "Interview booked",
+  booking_rescheduled: "Interview rescheduled",
+  booking_cancelled: "Interview cancelled",
+  interview_note: "Note added",
+  decision_recorded: "Decision recorded",
+  invite_sent: "Invite sent",
+  waiver_signed: "Waiver signed",
+  waiver_nudge_sent: "Waiver nudge sent",
+  rejection_sent: "Rejection sent",
+  status_auto_decayed: "Auto-marked No Response",
+  post_show_sent: "Post-show email sent",
+  participated: "Marked participated",
+};
+
 const TODAY_ISO = new Date().toISOString().slice(0, 10);
 
 function castEventKey(e: (typeof events)[number]): string {
@@ -76,6 +105,10 @@ export default function ApplicantModal({
   const [schedulingEmailState, setSchedulingEmailState] = useState<
     "idle" | "sending" | "sent" | "error"
   >("idle");
+  const [appEvents, setAppEvents] = useState<AppEvent[]>([]);
+  const [noteText, setNoteText] = useState("");
+  const [noteSaving, setNoteSaving] = useState(false);
+  const [noteError, setNoteError] = useState("");
   const handle = app.instagram.replace(/^@/, "");
   const isDeleted = !!app.deletedAt;
   const isNomination = app.applicationType === "Nomination";
@@ -87,6 +120,58 @@ export default function ApplicantModal({
     () => events.filter((e) => e.isoDate && e.isoDate >= TODAY_ISO),
     [],
   );
+
+  useEffect(() => {
+    let unsub: (() => void) | undefined;
+    let cancelled = false;
+    (async () => {
+      const db = await getFirebaseDb();
+      if (cancelled) return;
+      const eventsRef = collection(db, "applications", app.id, "events");
+      const q = query(eventsRef, orderBy("timestamp", "asc"));
+      unsub = onSnapshot(q, (snap) => {
+        setAppEvents(
+          snap.docs.map((d) => ({
+            id: d.id,
+            type: d.data().type as string,
+            timestamp: d.data().timestamp as Timestamp | string | null,
+            actor: d.data().actor as string,
+            payload: d.data().payload as Record<string, unknown>,
+          })),
+        );
+      });
+    })();
+    return () => {
+      cancelled = true;
+      unsub?.();
+    };
+  }, [app.id]);
+
+  async function handleAddNote() {
+    const trimmed = noteText.trim();
+    if (!trimmed) return;
+    setNoteSaving(true);
+    setNoteError("");
+    try {
+      const auth = await getFirebaseAuth();
+      const token = await auth.currentUser?.getIdToken();
+      if (!token) throw new Error("Not authenticated");
+      const res = await fetch("/api/actions/log-note", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({ applicationId: app.id, note: trimmed }),
+      });
+      if (!res.ok) throw new Error(`HTTP ${res.status}`);
+      setNoteText("");
+    } catch {
+      setNoteError("Failed to save note. Please try again.");
+    } finally {
+      setNoteSaving(false);
+    }
+  }
 
   function handleClose() {
     if (notes !== (app.notes ?? "")) {
@@ -438,6 +523,73 @@ export default function ApplicantModal({
                   Move to Deleted
                 </button>
               )}
+        </div>
+
+        <hr className={styles.dividerSpaced} />
+
+        {/* ── Timeline ──────────────────────────────────── */}
+        <div>
+          <p className={styles.formLabel}>Timeline</p>
+          {appEvents.length === 0 ? (
+            <p className={styles.timelineEmpty}>No events yet.</p>
+          ) : (
+            <ol className={styles.timeline}>
+              {appEvents.map((ev) => {
+                const ts = ev.timestamp
+                  ? (typeof ev.timestamp === "string"
+                      ? new Date(ev.timestamp)
+                      : ev.timestamp.toDate()
+                    ).toLocaleString("en-US", {
+                      month: "short",
+                      day: "numeric",
+                      hour: "numeric",
+                      minute: "2-digit",
+                    })
+                  : "";
+                const label = EVENT_LABELS[ev.type] ?? ev.type;
+                const note =
+                  ev.type === "interview_note"
+                    ? (ev.payload.note as string | undefined)
+                    : undefined;
+                return (
+                  <li key={ev.id} className={styles.timelineEvent}>
+                    <span className={styles.timelineLabel}>{label}</span>
+                    {note && (
+                      <span className={styles.timelineNote}>{note}</span>
+                    )}
+                    <span className={styles.timelineMeta}>
+                      {ev.actor}
+                      {ts ? ` · ${ts}` : ""}
+                    </span>
+                  </li>
+                );
+              })}
+            </ol>
+          )}
+
+          <div className={styles.addNoteRow}>
+            <textarea
+              value={noteText}
+              onChange={(e) => setNoteText(e.target.value)}
+              placeholder="Add a note..."
+              rows={2}
+              className={styles.notesTextarea}
+              aria-label="Add timeline note"
+              aria-describedby={noteError ? "note-error" : undefined}
+            />
+            {noteError && (
+              <p id="note-error" className={styles.sendEmailError} role="alert">
+                {noteError}
+              </p>
+            )}
+            <button
+              onClick={() => void handleAddNote()}
+              disabled={noteSaving || !noteText.trim()}
+              className={styles.addNoteButton}
+            >
+              {noteSaving ? "Saving..." : "Add note"}
+            </button>
+          </div>
         </div>
       </div>
     </Modal>

@@ -48,7 +48,8 @@ vi.mock("firebase/firestore", () => ({
   getDocs: (...args: unknown[]) => mockGetDocs(...args),
   doc: vi.fn(),
   updateDoc: (...args: unknown[]) => mockUpdateDoc(...args),
-  // pagination helpers used by AdminDashboard — must be present so query() doesn't throw
+  // query helpers used by AdminDashboard — must be present so queries don't throw
+  where: vi.fn(),
   query: vi.fn((...args: unknown[]) => ({ _args: args })),
   orderBy: vi.fn(),
   limit: vi.fn(),
@@ -105,8 +106,9 @@ describe("AdminDashboard", () => {
   it("shows loading state while fetching", () => {
     mockGetDocs.mockReturnValue(new Promise(() => {})); // never resolves
     render(<AdminDashboard onLogout={onLogout} />);
+    // The Today tab is shown by default; it uses inboxLoading state
     expect(
-      screen.getByRole("status", { name: "Loading applications" }),
+      screen.getByRole("status", { name: "Loading today's tasks" }),
     ).toBeInTheDocument();
   });
 
@@ -131,8 +133,9 @@ describe("AdminDashboard", () => {
   it("shows empty state when no applications exist", async () => {
     mockGetDocs.mockResolvedValue({ docs: [] });
     render(<AdminDashboard onLogout={onLogout} />);
+    // Today tab shows TaskInbox empty state when inboxApps is empty
     await waitFor(() => {
-      expect(screen.getByText(/No applications yet/)).toBeInTheDocument();
+      expect(screen.getByText(/You're all caught up/)).toBeInTheDocument();
     });
   });
 
@@ -155,6 +158,8 @@ describe("AdminDashboard", () => {
       docs: [{ id: "1", data: () => ({ ...makeApp({ id: "1" }) }) }],
     });
     render(<AdminDashboard onLogout={onLogout} />);
+    // Badge only renders when Applicants tab is active — click it first
+    fireEvent.click(screen.getByRole("button", { name: /applicants/i }));
     await waitFor(() => {
       const tab = screen.getByRole("button", { name: /applicants/i });
       expect(tab).toHaveTextContent("1");
@@ -184,6 +189,8 @@ describe("AdminDashboard", () => {
       ],
     });
     render(<AdminDashboard onLogout={onLogout} />);
+    // Summary is only rendered when the Applicants tab is active
+    fireEvent.click(screen.getByRole("button", { name: /applicants/i }));
     await waitFor(() => {
       expect(
         screen.getByText(
@@ -194,15 +201,18 @@ describe("AdminDashboard", () => {
   });
 
   it("retry button re-fetches applications", async () => {
-    mockGetDocs.mockRejectedValueOnce(new Error("fail"));
+    // Both initial queries (fetchApps + fetchInboxApps) must fail to show error in Today tab
+    mockGetDocs.mockRejectedValue(new Error("fail"));
     render(<AdminDashboard onLogout={onLogout} />);
     await waitFor(() => {
       expect(screen.getByText("Try again")).toBeInTheDocument();
     });
-    mockGetDocs.mockResolvedValueOnce({ docs: [] });
+    // Override to succeed; clicking Try again retries fetchInboxApps
+    mockGetDocs.mockResolvedValue({ docs: [] });
     fireEvent.click(screen.getByText("Try again"));
+    // Today tab empty state after successful retry with no inbox items
     await waitFor(() => {
-      expect(screen.getByText(/No applications yet/)).toBeInTheDocument();
+      expect(screen.getByText(/You're all caught up/)).toBeInTheDocument();
     });
   });
 });

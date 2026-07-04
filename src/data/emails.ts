@@ -21,13 +21,27 @@ function p(text: string): string {
 }
 
 function link(url: string, label: string): string {
-  // Escape the URL in the href attribute to prevent HTML injection if a URL contains quotes.
+  // Scheme allowlist: only http(s) URLs may become hyperlinks. Anything else
+  // (javascript:, data:, malformed) renders as escaped plain text so a poisoned
+  // URL can never become a clickable payload in an email client.
   // label is caller-controlled — callers must pass already-escaped text or static strings.
+  let parsed: URL;
+  try {
+    parsed = new URL(url);
+  } catch {
+    return escapeHtml(url);
+  }
+  if (parsed.protocol !== "https:" && parsed.protocol !== "http:") {
+    return escapeHtml(url);
+  }
   const safeUrl = url.replace(/"/g, "&quot;").replace(/'/g, "&#39;");
   return `<a href="${safeUrl}" style="color:#DC2626;">${label}</a>`;
 }
 
-function escapeHtml(str: string): string {
+// Shared escaper for every HTML email surface in the app. Import this instead of
+// writing a local copy: the duplicate that lived in notify-application.ts had
+// drifted (it did not escape single quotes).
+export function escapeHtml(str: string): string {
   return str
     .replace(/&/g, "&amp;")
     .replace(/</g, "&lt;")
@@ -36,9 +50,16 @@ function escapeHtml(str: string): string {
     .replace(/'/g, "&#39;");
 }
 
+// Email subjects are headers: CR/LF in an interpolated value is a header-injection
+// vector if the mailer does not reject it. Strip control characters defensively.
+export function subjectSafe(str: string): string {
+  // eslint-disable-next-line no-control-regex
+  return str.replace(/[\x00-\x1f\x7f]+/g, " ").trim();
+}
+
 export function schedulingInvite(name: string, calUrl: string): EmailTemplate {
   const firstName = name.split(" ")[0];
-  const subject = `Let's chat, ${firstName}`;
+  const subject = `Let's chat, ${subjectSafe(firstName)}`;
   const text = [
     `Hi ${name},`,
     "",
@@ -73,7 +94,7 @@ export function schedulingFollowup(
   name: string,
   calUrl: string,
 ): EmailTemplate {
-  const subject = `Following up, ${name.split(" ")[0]}`;
+  const subject = `Following up, ${subjectSafe(name.split(" ")[0])}`;
   const text = [
     `Hi ${name},`,
     "",
@@ -155,7 +176,7 @@ export function inviteApproval(
 }
 
 export function waiverNudge(name: string, portalUrl: string): EmailTemplate {
-  const subject = `Quick reminder, ${name.split(" ")[0]}: waiver needed`;
+  const subject = `Quick reminder, ${subjectSafe(name.split(" ")[0])}: waiver needed`;
   const text = [
     `Hi ${name},`,
     "",
@@ -330,7 +351,7 @@ export function postShow(name: string): EmailTemplate {
 
 export function applicationReceived(name: string, city: string): EmailTemplate {
   const firstName = name.split(" ")[0];
-  const subject = `We got your application, ${firstName}!`;
+  const subject = `We got your application, ${subjectSafe(firstName)}!`;
   const safeFirstName = escapeHtml(firstName);
   const safeCity = escapeHtml(city);
   const text = [
@@ -369,7 +390,8 @@ export function newShowAnnouncement(opts: {
   ticketUrl: string;
   customMessage?: string;
 }): EmailTemplate {
-  const { subject, city, date, venue, ticketUrl, customMessage } = opts;
+  const { city, date, venue, ticketUrl, customMessage } = opts;
+  const subject = subjectSafe(opts.subject);
   const safeCity = escapeHtml(city);
   const safeDate = escapeHtml(date);
   const safeVenue = escapeHtml(venue);

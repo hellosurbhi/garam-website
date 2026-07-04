@@ -183,7 +183,7 @@ function ApplyPageInner() {
       }
       delete window.__gmd_turnstile_load;
     };
-  }, [setTurnstileToken]);
+  }, [setTurnstileToken, turnstileWidgetIdRef]);
 
   const isNomination = form.applicationType === "Nomination";
 

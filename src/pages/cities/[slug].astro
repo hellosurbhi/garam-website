@@ -228,10 +228,14 @@ function renderCityText(text: string, href: string): string {
 
       {city.communityStats && <p class="city-stat">{city.communityStats}</p>}
 
-      <div class="city-status" data-status={cityStatus.label.toLowerCase()}>
-        <span>{cityStatus.label}</span>
-        <p>{cityStatus.text}</p>
-      </div>
+      {
+        cityEvents.length === 0 && (
+          <div class="city-status" data-status={cityStatus.label.toLowerCase()}>
+            <span>{cityStatus.label}</span>
+            <p>{cityStatus.text}</p>
+          </div>
+        )
+      }
 
       {/* Body */}
       <div class="city-body">

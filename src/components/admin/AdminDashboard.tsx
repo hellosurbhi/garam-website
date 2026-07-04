@@ -5,6 +5,7 @@ import {
   getDocs,
   doc,
   updateDoc,
+  where,
   Timestamp,
   serverTimestamp,
   query,
@@ -119,6 +120,17 @@ function StatusSection({
   );
 }
 
+// Statuses that are definitively closed — these apps never appear in the Today inbox.
+// "Cast" is intentionally omitted: cast members still need waiver nudging.
+const INBOX_EXCLUDED_STATUSES: ApplicantStatus[] = [
+  "Rejected",
+  "Not Interested",
+  "Not Interested Anymore",
+  "Said Not Now",
+  "Bailed",
+  "Participated",
+];
+
 export default function AdminDashboard({ onLogout }: AdminDashboardProps) {
   const [activeTab, setActiveTab] = useState<
     "today" | "applicants" | "analytics"
@@ -126,6 +138,9 @@ export default function AdminDashboard({ onLogout }: AdminDashboardProps) {
   const [applications, setApplications] = useState<Application[]>([]);
   const [loading, setLoading] = useState(true);
   const [fetchError, setFetchError] = useState(false);
+  const [inboxApps, setInboxApps] = useState<Application[]>([]);
+  const [inboxLoading, setInboxLoading] = useState(true);
+  const [inboxError, setInboxError] = useState(false);
   const [selectedApp, setSelectedApp] = useState<Application | null>(null);
   const [toast, setToast] = useState<{ msg: string; ok: boolean } | null>(null);
   const [deletedOpen, setDeletedOpen] = useState(false);
@@ -197,9 +212,37 @@ export default function AdminDashboard({ onLogout }: AdminDashboardProps) {
   }
 
   useEffect(() => {
-     
+
     (async () => {
       await fetchApps();
+    })();
+  }, []);
+
+  async function fetchInboxApps() {
+    setInboxLoading(true);
+    setInboxError(false);
+    try {
+      const db = await getFirebaseDb();
+      const colRef = collection(db, "applications");
+      const q = query(
+        colRef,
+        where("status", "not-in", INBOX_EXCLUDED_STATUSES),
+      );
+      const snap = await getDocs(q);
+      const docs = snap.docs
+        .map((d) => ({ id: d.id, ...d.data() }) as Application)
+        .filter((a) => !a.deletedAt);
+      setInboxApps(docs);
+    } catch {
+      setInboxError(true);
+    } finally {
+      setInboxLoading(false);
+    }
+  }
+
+  useEffect(() => {
+    (async () => {
+      await fetchInboxApps();
     })();
   }, []);
 
@@ -421,18 +464,38 @@ export default function AdminDashboard({ onLogout }: AdminDashboardProps) {
       </header>
 
       {activeTab === "today" && (
-        <TaskInbox
-          applications={applications}
-          onOpenApp={(app) => {
-            setSelectedApp(app);
-            setActiveTab("applicants");
-          }}
-          onRefresh={(id, patch) => {
-            setApplications((prev) =>
-              prev.map((a) => (a.id === id ? { ...a, ...patch } : a)),
-            );
-          }}
-        />
+        inboxLoading ? (
+          <div
+            role="status"
+            aria-live="polite"
+            aria-label="Loading today's tasks"
+          >
+            <Skeleton count={3} />
+          </div>
+        ) : inboxError ? (
+          <div className={styles.errorState}>
+            <p style={{ marginBottom: "12px" }}>Failed to load applications.</p>
+            <button
+              onClick={() => void fetchInboxApps()}
+              className={styles.retryButton}
+            >
+              Try again
+            </button>
+          </div>
+        ) : (
+          <TaskInbox
+            applications={inboxApps}
+            onOpenApp={(app) => {
+              setSelectedApp(app);
+              setActiveTab("applicants");
+            }}
+            onRefresh={(id, patch) => {
+              setInboxApps((prev) =>
+                prev.map((a) => (a.id === id ? { ...a, ...patch } : a)),
+              );
+            }}
+          />
+        )
       )}
 
       {activeTab === "analytics" && <AnalyticsDashboard />}

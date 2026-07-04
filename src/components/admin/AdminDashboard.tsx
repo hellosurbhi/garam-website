@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo } from "react";
+import { useState, useEffect, useMemo, useCallback } from "react";
 import {
   collection,
   addDoc,
@@ -131,6 +131,8 @@ const INBOX_EXCLUDED_STATUSES: ApplicantStatus[] = [
   "Participated",
 ];
 
+const PAGE_SIZE = 50;
+
 export default function AdminDashboard({ onLogout }: AdminDashboardProps) {
   const [activeTab, setActiveTab] = useState<
     "today" | "applicants" | "analytics"
@@ -146,7 +148,6 @@ export default function AdminDashboard({ onLogout }: AdminDashboardProps) {
   const [deletedOpen, setDeletedOpen] = useState(false);
   const [participatedOpen, setParticipatedOpen] = useState(false);
 
-  const PAGE_SIZE = 50;
   const [lastDoc, setLastDoc] =
     useState<QueryDocumentSnapshot<DocumentData> | null>(null);
   const [hasMore, setHasMore] = useState(true);
@@ -170,53 +171,55 @@ export default function AdminDashboard({ onLogout }: AdminDashboardProps) {
     setToast({ msg, ok });
   }
 
-  async function fetchApps(after?: QueryDocumentSnapshot<DocumentData> | null) {
-    if (after) {
-      setLoadingMore(true);
-    } else {
-      setLoading(true);
-    }
-    setFetchError(false);
-    try {
-      const colRef = collection(await getFirebaseDb(), "applications");
-      const q = after
-        ? query(
-            colRef,
-            orderBy("submittedAt", "desc"),
-            startAfter(after),
-            limit(PAGE_SIZE),
-          )
-        : query(colRef, orderBy("submittedAt", "desc"), limit(PAGE_SIZE));
-      const snap = await getDocs(q);
-      const docs = snap.docs.map(
-        (d) => ({ id: d.id, ...d.data() }) as Application,
-      );
-      setHasMore(snap.docs.length === PAGE_SIZE);
-      setLastDoc(snap.docs[snap.docs.length - 1] ?? null);
+  const fetchApps = useCallback(
+    async (after?: QueryDocumentSnapshot<DocumentData> | null) => {
       if (after) {
-        setApplications((prev) => [...prev, ...docs]);
+        setLoadingMore(true);
       } else {
-        setApplications(docs);
+        setLoading(true);
       }
-    } catch {
-      if (after) {
-        setHasMore(false);
-        showToast("Failed to load more applications", false);
-      } else {
-        setFetchError(true);
+      setFetchError(false);
+      try {
+        const colRef = collection(await getFirebaseDb(), "applications");
+        const q = after
+          ? query(
+              colRef,
+              orderBy("submittedAt", "desc"),
+              startAfter(after),
+              limit(PAGE_SIZE),
+            )
+          : query(colRef, orderBy("submittedAt", "desc"), limit(PAGE_SIZE));
+        const snap = await getDocs(q);
+        const docs = snap.docs.map(
+          (d) => ({ id: d.id, ...d.data() }) as Application,
+        );
+        setHasMore(snap.docs.length === PAGE_SIZE);
+        setLastDoc(snap.docs[snap.docs.length - 1] ?? null);
+        if (after) {
+          setApplications((prev) => [...prev, ...docs]);
+        } else {
+          setApplications(docs);
+        }
+      } catch {
+        if (after) {
+          setToast({ msg: "Failed to load more applications", ok: false });
+        } else {
+          setFetchError(true);
+        }
+      } finally {
+        setLoading(false);
+        setLoadingMore(false);
       }
-    } finally {
-      setLoading(false);
-      setLoadingMore(false);
-    }
-  }
+    },
+    [],
+  );
 
   useEffect(() => {
 
     (async () => {
       await fetchApps();
     })();
-  }, []);
+  }, [fetchApps]);
 
   async function fetchInboxApps() {
     setInboxLoading(true);

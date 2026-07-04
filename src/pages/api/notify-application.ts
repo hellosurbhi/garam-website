@@ -1,7 +1,7 @@
 import type { APIRoute } from "astro";
 import { z } from "zod";
 import { sendMail } from "@/lib/zohoMailer";
-import { applicationReceived } from "@/data/emails";
+import { applicationReceived, escapeHtml, subjectSafe } from "@/data/emails";
 
 export const prerender = false;
 
@@ -38,13 +38,8 @@ const ApplicationSchema = z.object({
 
 type ApplicationNotification = z.infer<typeof ApplicationSchema>;
 
-function escapeHtml(str: string): string {
-  return str
-    .replace(/&/g, "&amp;")
-    .replace(/</g, "&lt;")
-    .replace(/>/g, "&gt;")
-    .replace(/"/g, "&quot;");
-}
+// escapeHtml is imported from @/data/emails: one escaper for every email surface.
+// The local copy that used to live here had drifted (no single-quote escaping).
 
 function buildAdminEmailHtml(data: ApplicationNotification): string {
   const isNomination = data.applicationType === "Nomination";
@@ -203,7 +198,7 @@ export const POST: APIRoute = async ({ request }) => {
     // Notify Surbhi
     await sendMail({
       to: notificationEmail,
-      subject: `New Application: ${body.name} (${isNomination ? "Nomination" : "Self"})`,
+      subject: `New Application: ${subjectSafe(body.name)} (${isNomination ? "Nomination" : "Self"})`,
       text: buildAdminEmailText(body),
       html: buildAdminEmailHtml(body),
     });

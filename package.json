@@ -26,6 +26,8 @@
     "prepare": "husky",
     "images:organize": "node scripts/organize-images.js",
     "images:organize:v": "VERBOSE=1 node scripts/organize-images.js",
+    "images:optimize": "node scripts/optimize-images.js",
+    "images:optimize:v": "VERBOSE=1 node scripts/optimize-images.js",
     "test:links": "linkinator https://garammasaladating.com --recurse --timeout 30000 --retry --skip 'eventbrite.com|instagram.com|tiktok.com|facebook.com|twitter.com|x.com|youtube.com|linkedin.com'",
     "test:smoke": "playwright test",
     "test:smoke:headed": "playwright test --headed",

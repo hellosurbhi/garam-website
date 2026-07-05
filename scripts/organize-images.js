@@ -19,9 +19,9 @@
  *   npm run images:organize:v        # verbose (VERBOSE=1)
  */
 
-import sharp from "sharp";
-import { readdirSync, existsSync, mkdirSync } from "fs";
+import { readdirSync, existsSync } from "fs";
 import { resolve, join, extname } from "path";
+import { convertImage, ensureDir, makeLogger } from "./lib/image-utils.js";
 
 const ROOT = resolve(import.meta.dirname, "..");
 const PUBLIC = join(ROOT, "public");
@@ -30,37 +30,18 @@ const SHOW_SRC = join(ROOT, "src", "assets", "show-raw");
 const HF_OUT = join(PUBLIC, "images", "hf");
 const SHOW_OUT = join(PUBLIC, "images", "show");
 
-const VERBOSE = !!process.env.VERBOSE;
-const log = (...args) => {
-  if (VERBOSE) console.debug(...args);
-};
+const log = makeLogger();
 
 const IMAGE_EXTS = new Set([".jpg", ".jpeg", ".png", ".webp", ".avif"]);
 
 // Ensure output dirs exist
 for (const d of [HF_OUT, SHOW_OUT]) {
-  if (!existsSync(d)) mkdirSync(d, { recursive: true });
+  ensureDir(d);
 }
 
 /** Convert and output a single image as WebP, skipping if output exists. */
-async function toWebP(
-  srcPath,
-  destPath,
-  { width = 1200, height = 900, quality = 75 } = {},
-) {
-  if (existsSync(destPath)) {
-    log(`  skip (exists): ${destPath.replace(ROOT, "")}`);
-    return;
-  }
-  await sharp(srcPath)
-    .resize({ width, height, fit: "inside", withoutEnlargement: true })
-    .webp({ quality })
-    .toFile(destPath);
-  const meta = await sharp(destPath).metadata();
-  const kb = Math.round((meta.size ?? 0) / 1024);
-  log(
-    `  → ${destPath.replace(ROOT, "")} (${meta.width}×${meta.height}, ${kb}KB)`,
-  );
+async function toWebP(srcPath, destPath) {
+  await convertImage(srcPath, destPath, { log });
 }
 
 /** Read and sort source files from a directory. */

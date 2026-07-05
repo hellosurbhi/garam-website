@@ -141,8 +141,8 @@ const arrowPath2 = "m12 5 7 7-7 7";
    * Fixed height (not min) = zero CLS: the slot is reserved at its final size
    * before the Eventbrite script even loads.
    *
-   * Loading skeleton: soft red-tint gradient that is naturally hidden once the
-   * opaque Eventbrite iframe fills the container. No explicit JS toggle needed.
+   * Loading skeleton: neutral grey sweep (not red-tint) so it reads as a clean
+   * placeholder on a white page. Covered by the opaque EB iframe once mounted.
    */
   .eb-embed__container {
     display: block;
@@ -152,9 +152,9 @@ const arrowPath2 = "m12 5 7 7-7 7";
     overflow: hidden;
     background: linear-gradient(
       90deg,
-      rgba(var(--brand-red-rgb), 0.05) 25%,
-      rgba(var(--brand-red-rgb), 0.1) 50%,
-      rgba(var(--brand-red-rgb), 0.05) 75%
+      rgba(0, 0, 0, 0.04) 25%,
+      rgba(0, 0, 0, 0.07) 50%,
+      rgba(0, 0, 0, 0.04) 75%
     );
     background-size: 200% 100%;
   }
@@ -189,11 +189,15 @@ const arrowPath2 = "m12 5 7 7-7 7";
    */
   .eb-embed--failed .eb-embed__container {
     animation: none;
-    background: rgba(var(--brand-red-rgb), 0.05);
+    background: rgba(0, 0, 0, 0.04);
   }
 
-  /* Hidden by default — never stacks below the embed */
-  .eb-embed__fallback {
+  /*
+   * Specificity is (0,2,0) — beats .city-cta { display: flex } which is (0,1,0).
+   * Without the .eb-embed scope, .city-cta's later source-order would win and the
+   * button would show permanently, even when the embed loads successfully.
+   */
+  .eb-embed .eb-embed__fallback {
     display: none;
   }
 

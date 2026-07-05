@@ -23,8 +23,14 @@ export function ensureDir(dir) {
 /**
  * Convert one image. Output format follows the destination extension
  * (.webp, .jpg, .avif). Existing outputs are skipped so re-runs are
- * idempotent; set FORCE=1 to re-process. Returns true when a file was
- * written.
+ * idempotent; set FORCE=1 to re-process.
+ *
+ * Returns:
+ *   true  — file written successfully
+ *   false — skipped (output already exists)
+ *   null  — conversion failed (error printed to stderr; batch should continue)
+ *
+ * Throws only for programmer errors (unsupported output format).
  */
 export async function convertImage(
   srcPath,
@@ -37,24 +43,32 @@ export async function convertImage(
     return false;
   }
 
-  const pipeline = sharp(srcPath).resize({
-    width,
-    height,
-    fit,
-    withoutEnlargement: fit === "inside",
-  });
-
   const ext = extname(destPath).toLowerCase();
-  if (ext === ".webp") pipeline.webp({ quality });
-  else if (ext === ".jpg" || ext === ".jpeg")
-    pipeline.jpeg({ quality, mozjpeg: true });
-  else if (ext === ".avif") pipeline.avif({ quality });
-  else throw new Error(`Unsupported output format: ${destPath}`);
+  if (ext !== ".webp" && ext !== ".jpg" && ext !== ".jpeg" && ext !== ".avif") {
+    throw new Error(`Unsupported output format: ${destPath}`);
+  }
 
-  await pipeline.toFile(destPath);
+  try {
+    const pipeline = sharp(srcPath).resize({
+      width,
+      height,
+      fit,
+      withoutEnlargement: fit === "inside",
+    });
 
-  const meta = await sharp(destPath).metadata();
-  const kb = Math.round((meta.size ?? 0) / 1024);
-  say(`  → ${destPath} (${meta.width}×${meta.height}, ${kb}KB)`);
-  return true;
+    if (ext === ".webp") pipeline.webp({ quality });
+    else if (ext === ".jpg" || ext === ".jpeg")
+      pipeline.jpeg({ quality, mozjpeg: true });
+    else pipeline.avif({ quality });
+
+    await pipeline.toFile(destPath);
+
+    const meta = await sharp(destPath).metadata();
+    const kb = Math.round((meta.size ?? 0) / 1024);
+    say(`  → ${destPath} (${meta.width}×${meta.height}, ${kb}KB)`);
+    return true;
+  } catch (err) {
+    console.error(`  ERROR converting ${srcPath} → ${destPath}: ${err.message}`);
+    return null;
+  }
 }

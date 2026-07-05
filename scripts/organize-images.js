@@ -39,9 +39,9 @@ for (const d of [HF_OUT, SHOW_OUT]) {
   ensureDir(d);
 }
 
-/** Convert and output a single image as WebP, skipping if output exists. */
+/** Convert and output a single image as WebP, skipping if output exists. Returns null on failure. */
 async function toWebP(srcPath, destPath) {
-  await convertImage(srcPath, destPath, { log });
+  return convertImage(srcPath, destPath, { log });
 }
 
 /** Read and sort source files from a directory. */
@@ -69,6 +69,8 @@ function listSources(dir, numericSort = false) {
 }
 
 async function main() {
+  const failedFiles = [];
+
   // ── HF pool ────────────────────────────────────────────────────────────────
   const hfSources = listSources(HF_SRC, false);
   log(
@@ -76,7 +78,8 @@ async function main() {
   );
   for (let i = 0; i < hfSources.length; i++) {
     const name = `hf-${String(i + 1).padStart(2, "0")}.webp`;
-    await toWebP(hfSources[i], join(HF_OUT, name));
+    const result = await toWebP(hfSources[i], join(HF_OUT, name));
+    if (result === null) failedFiles.push(hfSources[i]);
   }
 
   // ── Show pool ──────────────────────────────────────────────────────────────
@@ -86,7 +89,8 @@ async function main() {
   );
   for (let i = 0; i < showSources.length; i++) {
     const name = `show-${String(i + 1).padStart(2, "0")}.webp`;
-    await toWebP(showSources[i], join(SHOW_OUT, name));
+    const result = await toWebP(showSources[i], join(SHOW_OUT, name));
+    if (result === null) failedFiles.push(showSources[i]);
   }
 
   // Summary
@@ -97,6 +101,11 @@ async function main() {
     ? readdirSync(SHOW_OUT).filter((f) => f.endsWith(".webp")).length
     : 0;
   log(`\nDone. HF: ${hfOut} files, Show: ${showOut} files.`);
+
+  if (failedFiles.length > 0) {
+    console.error(`\nFailed: ${failedFiles.length} image(s) could not be converted`);
+    process.exit(1);
+  }
 }
 
 main().catch((err) => {

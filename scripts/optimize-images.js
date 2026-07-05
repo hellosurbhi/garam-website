@@ -48,12 +48,13 @@ async function processNamedImage({ src, name }) {
     console.error(`  MISSING: src/assets/show-raw/${src}`);
     return;
   }
-  await convertImage(input, join(PROMO_DIR, `${name}.webp`), {
+  const result = await convertImage(input, join(PROMO_DIR, `${name}.webp`), {
     width: 1200,
     height: 1200,
     quality: 75,
     log,
   });
+  if (result === null) missingFiles.push(src);
 }
 
 async function processOgImage() {
@@ -63,13 +64,14 @@ async function processOgImage() {
     return;
   }
   log("OG image (1200x630 crop):");
-  await convertImage(OG_SOURCE, OG_OUTPUT, {
+  const result = await convertImage(OG_SOURCE, OG_OUTPUT, {
     width: 1200,
     height: 630,
     fit: "cover",
     quality: 85,
     log,
   });
+  if (result === null) missingFiles.push("Garammasaladating-7.jpg");
 }
 
 async function main() {

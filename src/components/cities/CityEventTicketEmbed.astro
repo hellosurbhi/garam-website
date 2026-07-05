@@ -2,6 +2,7 @@
 import type { EventEntry } from "@/data/events";
 import { buildTicketUrl } from "@/utils/eventUrl";
 import { formatEventLocation } from "@/utils/eventCity";
+import { formatDisplayTime } from "@/utils/eventDate";
 import { domainFromUrl, vendorFromUrl } from "@/lib/analyticsCapture";
 import { EVENTS } from "@/data/copy";
 
@@ -21,6 +22,22 @@ const ctaText = isSoldOut ? "Sold Out" : `${event.date}: ${EVENTS.ticketCta}`;
 const containerId = event.eventbriteId
   ? `eventbrite-widget-container-${event.eventbriteId}`
   : undefined;
+
+/*
+ * Card display data for the fallback layer.
+ * Strip bureaucratic "Township" suffix so "North Brunswick Township" reads
+ * as "North Brunswick" to the user.
+ */
+const venueTown = (event.venue?.addressLocality ?? "").replace(
+  /\s+Township$/,
+  "",
+);
+const venueDisplay = event.venue?.name
+  ? venueTown
+    ? `${event.venue.name}, ${venueTown}`
+    : event.venue.name
+  : eventLocation;
+const timeDisplay = event.startTime ? formatDisplayTime(event.startTime) : null;
 
 const sharedAttrs = {
   "data-ph-capture": "ticket_click",
@@ -47,7 +64,52 @@ const arrowPath2 = "m12 5 7 7-7 7";
 
 {
   containerId && !isSoldOut ? (
+    /*
+     * Progressive enhancement: the card layer is always rendered as baseline HTML.
+     * Eventbrite injects an opaque iframe into the container layer on top of it.
+     * The card shows as loading skeleton, failure fallback and no-JS fallback all
+     * in one element; no JS class toggling needed.
+     *
+     * .eb-embed height is fixed at 425px to prevent CLS. Both layers are
+     * position:absolute and fill that reserved space.
+     */
     <div class="eb-embed" id={`buy-${event.eventbriteId}`}>
+      {/* Baseline info card: visible until the iframe covers it */}
+      <div class="eb-embed__card">
+        <p class="eb-embed__card-name">{EVENTS.showName}</p>
+        <p class="eb-embed__card-details">
+          {event.date}
+          {timeDisplay && <> · Doors {timeDisplay}</>}
+        </p>
+        <p class="eb-embed__card-venue">{venueDisplay}</p>
+        <p class="eb-embed__card-price">Tickets from ${event.price}</p>
+        <a
+          href={ticketUrl}
+          target="_blank"
+          rel="noopener noreferrer"
+          class="city-cta city-cta--primary eb-embed__card-cta"
+          {...sharedAttrs}
+        >
+          <span>Get tickets</span>
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="16"
+            height="16"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            class="city-cta__arrow"
+            aria-hidden="true"
+          >
+            <path d={arrowPath1} />
+            <path d={arrowPath2} />
+          </svg>
+        </a>
+      </div>
+      {/* Container layer: Eventbrite injects an opaque iframe here, covering the card */}
       <div
         id={containerId}
         class="eb-embed__container"
@@ -56,43 +118,6 @@ const arrowPath2 = "m12 5 7 7-7 7";
         data-city={eventLocation}
         {...sharedAttrs}
       />
-      {/* Hidden; shown centered within the 425px box only if widget fails to load */}
-      <a
-        href={ticketUrl}
-        target="_blank"
-        rel="noopener noreferrer"
-        class="eb-embed__fallback city-cta city-cta--primary"
-        {...sharedAttrs}
-      >
-        <span>{ctaText}</span>
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          width="16"
-          height="16"
-          viewBox="0 0 24 24"
-          fill="none"
-          stroke="currentColor"
-          stroke-width="2"
-          stroke-linecap="round"
-          stroke-linejoin="round"
-          class="city-cta__arrow"
-          aria-hidden="true"
-        >
-          <path d={arrowPath1} />
-          <path d={arrowPath2} />
-        </svg>
-      </a>
-      {/* No-JS: neither the container nor the JS-hidden fallback renders, so give a plain link */}
-      <noscript>
-        <a
-          href={ticketUrl}
-          target="_blank"
-          rel="noopener noreferrer"
-          class="city-cta city-cta--primary eb-embed__noscript"
-        >
-          <span>{ctaText}</span>
-        </a>
-      </noscript>
     </div>
   ) : (
     <a
@@ -127,94 +152,89 @@ const arrowPath2 = "m12 5 7 7-7 7";
 
 <style>
   /*
-   * Scroll-anchor wrapper. position:relative lets the failure-state overlay
-   * center itself within the reserved box without shifting layout.
+   * Wrapper: fixed height prevents CLS. Both child layers are position:absolute
+   * and fill this reserved space. Height must match iframeContainerHeight in
+   * EventbriteWidgetInit.astro (425). Scroll anchor clears the sticky nav.
    */
   .eb-embed {
     position: relative;
+    height: var(--eb-embed-height);
     scroll-margin-top: 80px;
   }
 
   /*
-   * Height driven by --eb-embed-height (src/index.css :root). The JS widget
-   * init reads the same variable at runtime, so there is one source of truth.
-   * Fixed height (not min) = zero CLS: the slot is reserved at its final size
-   * before the Eventbrite script even loads.
-   *
-   * Loading skeleton: neutral grey sweep (not red-tint) so it reads as a clean
-   * placeholder on a white page. Covered by the opaque EB iframe once mounted.
+   * Baseline info card. Sits at z-index 0, always visible as static HTML.
+   * Shows show name, date, venue and price so the user has all the info
+   * even before the Eventbrite script loads or if it never loads.
    */
-  .eb-embed__container {
-    display: block;
-    height: var(--eb-embed-height);
-    width: 100%;
-    border-radius: 12px;
-    overflow: hidden;
-    background: linear-gradient(
-      90deg,
-      rgba(0, 0, 0, 0.04) 25%,
-      rgba(0, 0, 0, 0.07) 50%,
-      rgba(0, 0, 0, 0.04) 75%
-    );
-    background-size: 200% 100%;
-  }
-
-  /* Shimmer sweep. :has() is in all 2026 browsers — stops animation once the
-     injected iframe is in the DOM. Skipped entirely for prefers-reduced-motion. */
-  @media (prefers-reduced-motion: no-preference) {
-    .eb-embed__container:not(:has(> iframe)) {
-      animation: eb-shimmer 1.8s ease-in-out infinite;
-    }
-  }
-
-  @keyframes eb-shimmer {
-    0% {
-      background-position: 200% 0;
-    }
-    100% {
-      background-position: -200% 0;
-    }
-  }
-
-  /* JS adds .eb-embed--loaded when iframe is confirmed mounted: cleans up animation */
-  .eb-embed--loaded .eb-embed__container {
-    animation: none;
-    background: transparent;
-  }
-
-  /*
-   * Failure state: stop animation, keep static tint so the box reads as
-   * "something's here" not a blank hole, and surface the fallback link
-   * centered within the same 425px space. Nothing shifts layout.
-   */
-  .eb-embed--failed .eb-embed__container {
-    animation: none;
-    background: rgba(0, 0, 0, 0.04);
-  }
-
-  /*
-   * Specificity is (0,2,0) — beats .city-cta { display: flex } which is (0,1,0).
-   * Without the .eb-embed scope, .city-cta's later source-order would win and the
-   * button would show permanently, even when the embed loads successfully.
-   */
-  .eb-embed .eb-embed__fallback {
-    display: none;
-  }
-
-  /* On failure: overlay the box, centered, compact width */
-  .eb-embed--failed .eb-embed__fallback {
-    display: inline-flex;
+  .eb-embed__card {
     position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
+    inset: 0;
+    z-index: 0;
+    background: #fff;
+    border: 1px solid rgba(0, 0, 0, 0.08);
+    border-radius: 12px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    padding: 24px;
+    text-align: center;
+  }
+
+  .eb-embed__card-name {
+    font-family: var(--font-body);
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    color: var(--brand-red);
+    margin: 0;
+  }
+
+  .eb-embed__card-details {
+    font-family: var(--font-body);
+    font-size: 17px;
+    font-weight: 600;
+    color: var(--charcoal);
+    margin: 0;
+  }
+
+  .eb-embed__card-venue {
+    font-family: var(--font-body);
+    font-size: 14px;
+    font-weight: 400;
+    color: var(--muted);
+    margin: 0;
+  }
+
+  .eb-embed__card-price {
+    font-family: var(--font-body);
+    font-size: 15px;
+    font-weight: 500;
+    color: var(--charcoal);
+    margin: 0 0 10px;
+  }
+
+  /* Card CTA: auto-width so it does not stretch full card width */
+  .eb-embed__card-cta {
     width: auto;
     white-space: nowrap;
   }
 
-  /* Keep centering transform under press feedback */
-  .eb-embed--failed .eb-embed__fallback:active {
-    transform: translate(-50%, -50%) scale(0.97);
+  /*
+   * Container layer: Eventbrite injects an opaque iframe here at z-index 1.
+   * The iframe covers the card once EB loads; the card stays below as the
+   * permanent fallback if EB never loads. overflow:hidden clips iframe corners
+   * to match the border-radius.
+   */
+  .eb-embed__container {
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+    border-radius: 12px;
+    overflow: hidden;
   }
 
   .city-cta {

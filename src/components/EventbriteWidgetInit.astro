@@ -212,11 +212,12 @@
       embedCfgs.forEach((cfg) => {
         const containerEl = document.getElementById(cfg.containerId!);
         if (!containerEl) return;
-        const wrapperEl = containerEl.closest<HTMLElement>(".eb-embed");
         const config: EBWidgetEmbedConfig = {
           widgetType: "checkout",
           eventId: cfg.eventId,
           iframeContainerId: cfg.containerId!,
+          // Reads --eb-embed-height from :root (src/index.css) so the height
+          // has one source of truth shared by CSS and the EB widget runtime.
           iframeContainerHeight:
             parseInt(
               getComputedStyle(document.documentElement).getPropertyValue(
@@ -228,13 +229,10 @@
         };
         try {
           w.EBWidgets.createWidget(config);
-          // Watch for the iframe EB injects so we know it loaded successfully.
+          // Watch for the iframe EB injects so we can fire the checkout_opened event.
           const iframeObserver = new MutationObserver(() => {
             if (containerEl.querySelector("iframe")) {
               iframeObserver.disconnect();
-              clearTimeout(iframeTimeout);
-              // Mark loaded: stops shimmer animation and clears skeleton background
-              wrapperEl?.classList.add("eb-embed--loaded");
               capture("checkout_opened", {
                 event_id: cfg.eventId,
                 city: cfg.city,
@@ -256,15 +254,7 @@
             childList: true,
             subtree: true,
           });
-          // 8 s hard-stop: if EB never injects the iframe, show fallback.
-          const iframeTimeout = setTimeout(() => {
-            iframeObserver.disconnect();
-            if (!containerEl.querySelector("iframe")) {
-              wrapperEl?.classList.add("eb-embed--failed");
-            }
-          }, 8_000);
         } catch (_) {
-          wrapperEl?.classList.add("eb-embed--failed");
           capture("widget_load_failed", {
             event_id: cfg.eventId,
             city: cfg.city,
@@ -303,8 +293,8 @@
       btn.addEventListener("focusin", loadEBScript);
     });
 
-    // IO watches modal buttons only — embed containers start display:none so
-    // the observer would never fire for them.
+    // IO watches modal buttons only; inline embed containers load the script
+    // immediately via the embedContainers check below.
     io = new IntersectionObserver(
       (entries) => {
         if (entries.some((e) => e.isIntersecting)) loadEBScript();

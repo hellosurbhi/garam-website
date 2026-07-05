@@ -173,6 +173,7 @@ export const submissionDisclaimer =
   "By submitting, you agree to be contacted by the Garam Masala Dating team.";
 
 export const EVENTS = {
+  showName: "Garam Masala Comedy Dating Show",
   ticketCta: "Grab My Spot",
   stickyCta: "Get Tickets",
 } as const;
@@ -217,9 +218,4 @@ export const EXPERIENCE_STEPS = [
 export const AUTHOR_BIO = {
   surbhi:
     "Co-creator and host of Garam Masala Dating, America's #1 live desi dating show. Stand-up comedian. Accidentally matched three couples and counting.",
-} as const;
-
-export const CITY_TICKET_HERO = {
-  eyebrow: "NYC sells out every week",
-  title: "Save your seat before it's gone",
 } as const;

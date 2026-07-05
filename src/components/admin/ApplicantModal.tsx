@@ -60,7 +60,7 @@ function EmailRow({ email }: { email?: string }) {
 interface AppEvent {
   id: string;
   type: string;
-  timestamp: Timestamp | string | null;
+  timestamp: Timestamp | null;
   actor: string;
   payload: Record<string, unknown>;
 }
@@ -134,7 +134,7 @@ export default function ApplicantModal({
           snap.docs.map((d) => ({
             id: d.id,
             type: d.data().type as string,
-            timestamp: d.data().timestamp as Timestamp | string | null,
+            timestamp: d.data().timestamp as Timestamp | null,
             actor: d.data().actor as string,
             payload: d.data().payload as Record<string, unknown>,
           })),
@@ -536,10 +536,7 @@ export default function ApplicantModal({
             <ol className={styles.timeline}>
               {appEvents.map((ev) => {
                 const ts = ev.timestamp
-                  ? (typeof ev.timestamp === "string"
-                      ? new Date(ev.timestamp)
-                      : ev.timestamp.toDate()
-                    ).toLocaleString("en-US", {
+                  ? new Date(ev.timestamp.toDate()).toLocaleString("en-US", {
                       month: "short",
                       day: "numeric",
                       hour: "numeric",

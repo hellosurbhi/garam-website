@@ -1,5 +1,9 @@
 {
   "buildCommand": "npm run build",
+  "crons": [
+    { "path": "/api/cron/followups", "schedule": "0 14 * * *" },
+    { "path": "/api/cron/post-show", "schedule": "0 15 * * 1" }
+  ],
   "github": {
     "silent": true
   },

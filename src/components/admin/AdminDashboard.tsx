@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo, useCallback } from "react";
+import { useState, useEffect, useMemo } from "react";
 import {
   collection,
   addDoc,
@@ -131,8 +131,6 @@ const INBOX_EXCLUDED_STATUSES: ApplicantStatus[] = [
   "Participated",
 ];
 
-const PAGE_SIZE = 50;
-
 export default function AdminDashboard({ onLogout }: AdminDashboardProps) {
   const [activeTab, setActiveTab] = useState<
     "today" | "applicants" | "analytics"
@@ -148,6 +146,7 @@ export default function AdminDashboard({ onLogout }: AdminDashboardProps) {
   const [deletedOpen, setDeletedOpen] = useState(false);
   const [participatedOpen, setParticipatedOpen] = useState(false);
 
+  const PAGE_SIZE = 50;
   const [lastDoc, setLastDoc] =
     useState<QueryDocumentSnapshot<DocumentData> | null>(null);
   const [hasMore, setHasMore] = useState(true);
@@ -171,55 +170,53 @@ export default function AdminDashboard({ onLogout }: AdminDashboardProps) {
     setToast({ msg, ok });
   }
 
-  const fetchApps = useCallback(
-    async (after?: QueryDocumentSnapshot<DocumentData> | null) => {
+  async function fetchApps(after?: QueryDocumentSnapshot<DocumentData> | null) {
+    if (after) {
+      setLoadingMore(true);
+    } else {
+      setLoading(true);
+    }
+    setFetchError(false);
+    try {
+      const colRef = collection(await getFirebaseDb(), "applications");
+      const q = after
+        ? query(
+            colRef,
+            orderBy("submittedAt", "desc"),
+            startAfter(after),
+            limit(PAGE_SIZE),
+          )
+        : query(colRef, orderBy("submittedAt", "desc"), limit(PAGE_SIZE));
+      const snap = await getDocs(q);
+      const docs = snap.docs.map(
+        (d) => ({ id: d.id, ...d.data() }) as Application,
+      );
+      setHasMore(snap.docs.length === PAGE_SIZE);
+      setLastDoc(snap.docs[snap.docs.length - 1] ?? null);
       if (after) {
-        setLoadingMore(true);
+        setApplications((prev) => [...prev, ...docs]);
       } else {
-        setLoading(true);
+        setApplications(docs);
       }
-      setFetchError(false);
-      try {
-        const colRef = collection(await getFirebaseDb(), "applications");
-        const q = after
-          ? query(
-              colRef,
-              orderBy("submittedAt", "desc"),
-              startAfter(after),
-              limit(PAGE_SIZE),
-            )
-          : query(colRef, orderBy("submittedAt", "desc"), limit(PAGE_SIZE));
-        const snap = await getDocs(q);
-        const docs = snap.docs.map(
-          (d) => ({ id: d.id, ...d.data() }) as Application,
-        );
-        setHasMore(snap.docs.length === PAGE_SIZE);
-        setLastDoc(snap.docs[snap.docs.length - 1] ?? null);
-        if (after) {
-          setApplications((prev) => [...prev, ...docs]);
-        } else {
-          setApplications(docs);
-        }
-      } catch {
-        if (after) {
-          setToast({ msg: "Failed to load more applications", ok: false });
-        } else {
-          setFetchError(true);
-        }
-      } finally {
-        setLoading(false);
-        setLoadingMore(false);
+    } catch {
+      if (after) {
+        setHasMore(false);
+        showToast("Failed to load more applications", false);
+      } else {
+        setFetchError(true);
       }
-    },
-    [],
-  );
+    } finally {
+      setLoading(false);
+      setLoadingMore(false);
+    }
+  }
 
   useEffect(() => {
 
     (async () => {
       await fetchApps();
     })();
-  }, [fetchApps]);
+  }, []);
 
   async function fetchInboxApps() {
     setInboxLoading(true);
@@ -252,7 +249,7 @@ export default function AdminDashboard({ onLogout }: AdminDashboardProps) {
   async function handleUpdate(
     id: string,
     patch: Partial<Omit<Application, "id">>,
-  ) {
+  ): Promise<boolean> {
     try {
       await updateDoc(doc(await getFirebaseDb(), "applications", id), patch);
       setApplications((prev) =>
@@ -281,11 +278,14 @@ export default function AdminDashboard({ onLogout }: AdminDashboardProps) {
   }
 
   async function handleParticipated(id: string) {
-    const saved = await handleUpdate(id, {
+    const ok = await handleUpdate(id, {
       status: "Participated",
       participatedAt: serverTimestamp(),
     } as Partial<Omit<Application, "id">>);
-    if (!saved) return;
+    if (!ok) {
+      setSelectedApp(null);
+      return;
+    }
     try {
       const auth = await getFirebaseAuth();
       const db = await getFirebaseDb();

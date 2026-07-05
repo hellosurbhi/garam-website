@@ -251,19 +251,15 @@ function DecisionForm({
       </div>
       <textarea
         className={styles.decisionNote}
-        aria-label="Decision notes"
-        aria-describedby={err ? `decision-error-${app.id}` : undefined}
         placeholder="Notes (optional)"
         value={note}
         onChange={(e) => setNote(e.target.value)}
         rows={2}
+        aria-label="Decision notes"
+        aria-describedby={err ? "decision-err" : undefined}
       />
       {err && (
-        <p
-          id={`decision-error-${app.id}`}
-          className={styles.decisionErr}
-          role="alert"
-        >
+        <p id="decision-err" className={styles.decisionErr} role="alert">
           {err}
         </p>
       )}
@@ -324,9 +320,8 @@ export default function TaskInbox({
       await fn();
       onRefresh(appId, patch);
     } catch (e) {
-      setActionError(
-        e instanceof Error ? e.message : "Action failed. Please try again.",
-      );
+      console.error(e);
+      setActionError(e instanceof Error ? e.message : "Action failed. Please try again.");
     } finally {
       setLoadingId(null);
     }

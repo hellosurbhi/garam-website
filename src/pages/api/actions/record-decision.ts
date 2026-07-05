@@ -8,7 +8,14 @@ import { sendMail } from "@/lib/zohoMailer";
 import { rejection } from "@/data/emails";
 
 const Schema = z.object({
-  applicationId: z.string().min(1).max(200),
+  applicationId: z
+    .string()
+    .trim()
+    .min(1)
+    .max(200)
+    .refine((value) => !value.includes("/"), {
+      message: "Invalid applicationId",
+    }),
   decision: z.enum(["approve", "reject", "unsure"]),
   note: z.string().max(2000).optional(),
 });
@@ -77,7 +84,7 @@ export const POST: APIRoute = async ({ request }) => {
   if (decision === "reject" && typeof app.email === "string" && app.email) {
     const name = typeof app.name === "string" ? app.name : "there";
     const template = rejection(name);
-    let rejectionEmailSentAt: string | null = null;
+    let emailSent = false;
     try {
       await sendMail({
         to: app.email,
@@ -85,18 +92,16 @@ export const POST: APIRoute = async ({ request }) => {
         text: template.text,
         html: template.html,
       });
-      rejectionEmailSentAt = new Date().toISOString();
-    } catch {
-      // Rejection email failure is non-fatal; decision is already recorded
+      emailSent = true;
+    } catch (e) {
+      console.error(`Rejection email failed for application ${applicationId}`, e);
     }
 
-    if (rejectionEmailSentAt) {
-      await fsPatch(`applications/${applicationId}`, {
-        rejectionSentAt: rejectionEmailSentAt,
-      });
+    if (emailSent) {
+      await fsPatch(`applications/${applicationId}`, { rejectionSentAt: now });
       await fsAdd(`applications/${applicationId}/events`, {
         type: "rejection_sent",
-        timestamp: rejectionEmailSentAt,
+        timestamp: now,
         actor: "system",
         payload: {},
       });

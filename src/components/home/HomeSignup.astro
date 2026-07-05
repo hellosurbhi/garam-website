@@ -82,7 +82,11 @@ const leadSource = `spice-list-${pageName}`;
   import { cleanPhone } from "@/lib/phone";
   import { identifyLead, trackLeadEvent } from "@/lib/analytics";
   import { buildLeadAttribution } from "@/lib/leadAttribution";
-  import { captureLead, updateLeadPhone } from "@/lib/leadSubmission";
+  import {
+    captureLead,
+    updateLeadPhone,
+    type LeadCaptureResult,
+  } from "@/lib/leadSubmission";
 
   if (localStorage.getItem("gmd-popup-subscribed")) {
     const altCta = document.getElementById("nl-already-subscribed");
@@ -94,7 +98,7 @@ const leadSource = `spice-list-${pageName}`;
   }
 
   let savedEmail = "";
-  let nlDocId = "";
+  let nlDocId: LeadCaptureResult | null = null;
 
   // Per-page source set by the Astro frontmatter (e.g. "spice-list-home",
   // "spice-list-apply"). Falls back to the bare component name only if the
@@ -120,10 +124,11 @@ const leadSource = `spice-list-${pageName}`;
       }
       try {
         const attribution = await buildLeadAttribution({ source: leadSource });
-        nlDocId = await captureLead({
+        const captured = await captureLead({
           email: savedEmail,
           ...attribution,
         });
+        nlDocId = captured.id ? captured : null;
         localStorage.setItem("gmd-popup-subscribed", "true");
         identifyLead(savedEmail, attribution);
         trackLeadEvent("lead_email_submitted", attribution);

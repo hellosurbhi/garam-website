@@ -2,6 +2,7 @@ import type { APIRoute } from "astro";
 import { validateEmail } from "@/utils/validateEmail";
 import { addKitSubscriber, type KitSubscriberFields } from "@/lib/kit";
 import { enforceRateLimit, RATE_LIMITS } from "@/lib/rateLimit";
+import { issueLeadToken } from "@/lib/leadToken";
 
 export const prerender = false;
 
@@ -196,10 +197,22 @@ export const POST: APIRoute = async ({ request }) => {
       // Kit errors are already logged inside addKitSubscriber
     });
 
-    return new Response(JSON.stringify({ ok: true, id: docId }), {
-      status: 200,
-      headers: { "Content-Type": "application/json" },
-    });
+    // Ownership proof for the step-2 phone update. Null while
+    // LEAD_UPDATE_SECRET is unset (feature off), in which case the key is
+    // omitted and clients keep using the bare doc id.
+    const updateToken = docId ? issueLeadToken(docId) : null;
+
+    return new Response(
+      JSON.stringify({
+        ok: true,
+        id: docId,
+        ...(updateToken ? { updateToken } : {}),
+      }),
+      {
+        status: 200,
+        headers: { "Content-Type": "application/json" },
+      },
+    );
   } catch {
     return new Response(JSON.stringify({ error: "Server error" }), {
       status: 500,

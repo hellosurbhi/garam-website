@@ -198,6 +198,35 @@ describe("capture-lead handler", () => {
     expect(fetchSpy).not.toHaveBeenCalled();
   });
 
+  it("includes an updateToken when LEAD_UPDATE_SECRET is set", async () => {
+    import.meta.env.LEAD_UPDATE_SECRET = "test-secret";
+    try {
+      vi.spyOn(globalThis, "fetch").mockResolvedValue(
+        new Response(
+          JSON.stringify({
+            name: "projects/p/databases/d/documents/leads/lead123",
+          }),
+          { status: 200 },
+        ),
+      );
+
+      const res = await POST(
+        makeContext(
+          makeRequest({ email: "lead@example.com", source: "popup" }),
+        ),
+      );
+
+      expect(res.status).toBe(200);
+      const body = (await res.json()) as { id: string; updateToken?: string };
+      expect(body.id).toBe("lead123");
+      expect(body.updateToken).toBeDefined();
+      const { verifyLeadToken } = await import("@/lib/leadToken");
+      expect(verifyLeadToken(body.updateToken!)).toBe("lead123");
+    } finally {
+      delete import.meta.env.LEAD_UPDATE_SECRET;
+    }
+  });
+
   it("short-circuits with 429 before any Firestore write when rate limited", async () => {
     const fetchSpy = vi.spyOn(globalThis, "fetch");
     vi.mocked(enforceRateLimit).mockResolvedValueOnce(

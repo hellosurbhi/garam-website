@@ -238,7 +238,11 @@ const speakableJsonLd = JSON.stringify({
   import { cleanPhone } from "@/lib/phone";
   import { identifyLead, trackLeadEvent } from "@/lib/analytics";
   import { buildLeadAttribution } from "@/lib/leadAttribution";
-  import { captureLead, updateLeadPhone } from "@/lib/leadSubmission";
+  import {
+    captureLead,
+    updateLeadPhone,
+    type LeadCaptureResult,
+  } from "@/lib/leadSubmission";
 
   // Email popup logic — only suppressed permanently after email submit
   const POPUP_KEY = "gmd-popup-subscribed";
@@ -343,7 +347,7 @@ const speakableJsonLd = JSON.stringify({
     });
 
     let savedEmail = "";
-    let popupDocId = "";
+    let popupDocId: LeadCaptureResult | null = null;
 
     document
       .getElementById("popup-email-form")
@@ -363,10 +367,11 @@ const speakableJsonLd = JSON.stringify({
         }
         try {
           const attribution = await buildLeadAttribution({ source: "popup" });
-          popupDocId = await captureLead({
+          const captured = await captureLead({
             email: savedEmail,
             ...attribution,
           });
+          popupDocId = captured.id ? captured : null;
           localStorage.setItem(POPUP_KEY, "true");
           identifyLead(savedEmail, attribution);
           trackLeadEvent("lead_email_submitted", attribution);

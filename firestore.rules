@@ -95,6 +95,11 @@ service cloud.firestore {
     // A caller needs the Firestore document ID (returned by /api/capture-lead) to
     // reach this path, so the exposure is bounded. The rule restricts the update
     // to the phone field only and enforces type and length constraints.
+    // Additionally, once LEAD_UPDATE_SECRET is configured, /api/update-lead
+    // requires an HMAC-signed 10 minute token issued by /api/capture-lead
+    // (src/lib/leadToken.ts) and derives the doc id from that token. This rule
+    // stays as the defense for writes that bypass the API and hit Firestore
+    // REST directly; rules cannot verify HMACs.
     function validPhoneUpdate() {
       let d = request.resource.data;
       let prev = resource.data;

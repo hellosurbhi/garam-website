@@ -118,6 +118,7 @@ const { source = "notify-modal" } = Astro.props;
   import {
     captureLead,
     updateLeadPhone,
+    type LeadCaptureResult,
     type LeadSubmissionPayload,
   } from "@/lib/leadSubmission";
   import { ON_SALE_DATE_FORMAT } from "@/utils/eventDate";
@@ -145,7 +146,7 @@ const { source = "notify-modal" } = Astro.props;
     }
 
     let openerEl: HTMLElement | null = null;
-    let notifyDocId = "";
+    let notifyDocId: LeadCaptureResult | null = null;
     let notifyEmail = "";
 
     // Restore focus to the element that opened the modal
@@ -209,7 +210,7 @@ const { source = "notify-modal" } = Astro.props;
             errorEl.textContent = "";
             errorEl.setAttribute("hidden", "");
           }
-          notifyDocId = "";
+          notifyDocId = null;
           openerEl = document.activeElement as HTMLElement;
           trackLeadEvent("notify_modal_opened", {
             source: composeSource(citySlug),
@@ -277,7 +278,8 @@ const { source = "notify-modal" } = Astro.props;
             city,
             ...attribution,
           };
-          notifyDocId = await captureLead(data);
+          const captured = await captureLead(data);
+          notifyDocId = captured.id ? captured : null;
           identifyLead(notifyEmail, { ...attribution, city });
           trackLeadEvent("lead_email_submitted", { ...attribution, city });
           trackLeadEvent("email_signup", { ...attribution, city });

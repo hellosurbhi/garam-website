@@ -56,7 +56,7 @@ const arrowPath2 = "m12 5 7 7-7 7";
         data-city={eventLocation}
         {...sharedAttrs}
       />
-      {/* Visible by default; JS hides it after widget loads */}
+      {/* Hidden; shown centered within the 425px box only if widget fails to load */}
       <a
         href={ticketUrl}
         target="_blank"
@@ -82,6 +82,17 @@ const arrowPath2 = "m12 5 7 7-7 7";
           <path d={arrowPath2} />
         </svg>
       </a>
+      {/* No-JS: neither the container nor the JS-hidden fallback renders, so give a plain link */}
+      <noscript>
+        <a
+          href={ticketUrl}
+          target="_blank"
+          rel="noopener noreferrer"
+          class="city-cta city-cta--primary eb-embed__noscript"
+        >
+          <span>{ctaText}</span>
+        </a>
+      </noscript>
     </div>
   ) : (
     <a
@@ -115,31 +126,91 @@ const arrowPath2 = "m12 5 7 7-7 7";
 }
 
 <style>
-  /* Scroll-anchor wrapper: offset for sticky nav */
+  /*
+   * Scroll-anchor wrapper. position:relative lets the failure-state overlay
+   * center itself within the reserved box without shifting layout.
+   */
   .eb-embed {
+    position: relative;
     scroll-margin-top: 80px;
   }
 
-  /* Container always visible so EB can measure it and inject the iframe */
+  /*
+   * Height is fixed at 425px — must match iframeContainerHeight in
+   * EventbriteWidgetInit.astro. Changing one requires changing the other.
+   * Fixed height (not min) = zero CLS: the slot is reserved at its final size
+   * before the Eventbrite script even loads.
+   *
+   * Loading skeleton: soft red-tint gradient that is naturally hidden once the
+   * opaque Eventbrite iframe fills the container. No explicit JS toggle needed.
+   */
   .eb-embed__container {
     display: block;
-    min-height: 425px;
+    height: 425px;
     width: 100%;
     border-radius: 12px;
     overflow: hidden;
+    background: linear-gradient(
+      90deg,
+      rgba(var(--brand-red-rgb), 0.05) 25%,
+      rgba(var(--brand-red-rgb), 0.1) 50%,
+      rgba(var(--brand-red-rgb), 0.05) 75%
+    );
+    background-size: 200% 100%;
   }
 
-  /* Fallback hidden by default; .eb-embed--failed reveals it on widget error */
+  /* Shimmer sweep. :has() is in all 2026 browsers — stops animation once the
+     injected iframe is in the DOM. Skipped entirely for prefers-reduced-motion. */
+  @media (prefers-reduced-motion: no-preference) {
+    .eb-embed__container:not(:has(> iframe)) {
+      animation: eb-shimmer 1.8s ease-in-out infinite;
+    }
+  }
+
+  @keyframes eb-shimmer {
+    0% {
+      background-position: 200% 0;
+    }
+    100% {
+      background-position: -200% 0;
+    }
+  }
+
+  /* JS adds .eb-embed--loaded when iframe is confirmed mounted: cleans up animation */
+  .eb-embed--loaded .eb-embed__container {
+    animation: none;
+    background: transparent;
+  }
+
+  /*
+   * Failure state: stop animation, keep static tint so the box reads as
+   * "something's here" not a blank hole, and surface the fallback link
+   * centered within the same 425px space. Nothing shifts layout.
+   */
+  .eb-embed--failed .eb-embed__container {
+    animation: none;
+    background: rgba(var(--brand-red-rgb), 0.05);
+  }
+
+  /* Hidden by default — never stacks below the embed */
   .eb-embed__fallback {
     display: none;
   }
 
-  .eb-embed--failed .eb-embed__container {
-    display: none;
+  /* On failure: overlay the box, centered, compact width */
+  .eb-embed--failed .eb-embed__fallback {
+    display: inline-flex;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: auto;
+    white-space: nowrap;
   }
 
-  .eb-embed--failed .eb-embed__fallback {
-    display: flex;
+  /* Keep centering transform under press feedback */
+  .eb-embed--failed .eb-embed__fallback:active {
+    transform: translate(-50%, -50%) scale(0.97);
   }
 
   .city-cta {

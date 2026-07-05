@@ -217,6 +217,7 @@
           widgetType: "checkout",
           eventId: cfg.eventId,
           iframeContainerId: cfg.containerId!,
+          // Must match .eb-embed__container height in CityEventTicketEmbed.astro (425px).
           iframeContainerHeight: 425,
           onOrderComplete: makeOrderCompleteHandler(cfg),
         };
@@ -227,6 +228,8 @@
             if (containerEl.querySelector("iframe")) {
               iframeObserver.disconnect();
               clearTimeout(iframeTimeout);
+              // Mark loaded: stops shimmer animation and clears skeleton background
+              wrapperEl?.classList.add("eb-embed--loaded");
               capture("checkout_opened", {
                 event_id: cfg.eventId,
                 city: cfg.city,

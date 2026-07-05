@@ -638,16 +638,21 @@
   cursor: pointer;
   transition:
     background 0.2s,
-    box-shadow 0.2s;
+    box-shadow 0.2s,
+    transform 160ms ease-out;
   display: flex;
   align-items: center;
   justify-content: center;
   gap: 10px;
 }
 
-.submitButton:hover {
+.submitButton:not(:disabled):hover {
   background: var(--brand-red-dark);
   box-shadow: 0 4px 20px rgba(var(--brand-red-rgb), 0.3);
+}
+
+.submitButton:not(:disabled):active {
+  transform: scale(0.97);
 }
 
 /* Form incomplete: clearly disabled, not-allowed cursor */
@@ -831,6 +836,13 @@
 .successPanel {
   text-align: center;
   padding: 32px 20px 32px;
+  min-height: 100svh;
+}
+
+@media (min-width: 768px) {
+  .successPanel {
+    min-height: auto;
+  }
 }
 
 .successEmoji {
@@ -844,6 +856,16 @@
   font-weight: 700;
   color: var(--charcoal);
   margin: 0 0 8px;
+}
+
+.successTitle:focus-visible {
+  outline: 2px solid var(--brand-red);
+  outline-offset: 4px;
+  border-radius: 4px;
+}
+
+.successTitle:focus:not(:focus-visible) {
+  outline: none;
 }
 
 .successText {

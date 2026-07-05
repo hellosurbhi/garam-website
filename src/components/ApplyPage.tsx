@@ -127,6 +127,7 @@ function ApplyPageInner() {
     errors,
     submitting,
     submitted,
+    isValid,
     termsAgreed,
     nominationConsent,
     handleNominationConsentChange,
@@ -142,6 +143,7 @@ function ApplyPageInner() {
     handleTermsCheckbox,
     agreeToTerms,
     handleSubmit,
+    handleBlur,
     setTurnstileToken,
     turnstileWidgetIdRef,
   } = useApplyForm();
@@ -265,6 +267,7 @@ function ApplyPageInner() {
                           type="text"
                           value={form.name}
                           onChange={(e) => set("name", e.target.value)}
+                          onBlur={() => handleBlur("name")}
                           placeholder="Name"
                           className={styles.input}
                           required
@@ -287,6 +290,7 @@ function ApplyPageInner() {
                           type="number"
                           value={form.age}
                           onChange={(e) => set("age", e.target.value)}
+                          onBlur={() => handleBlur("age")}
                           placeholder="Age"
                           min={18}
                           max={99}
@@ -469,6 +473,7 @@ function ApplyPageInner() {
                           onChange={(e) =>
                             set("instagram", e.target.value.replace(/^@/, ""))
                           }
+                          onBlur={() => handleBlur("instagram")}
                           placeholder={
                             isNomination ? "yourfriendshandle" : "yourhandle"
                           }
@@ -512,6 +517,7 @@ function ApplyPageInner() {
                         type="email"
                         value={form.email}
                         onChange={(e) => set("email", e.target.value)}
+                        onBlur={() => handleBlur("email")}
                         placeholder="you@example.com"
                         className={styles.input}
                         required
@@ -602,6 +608,7 @@ function ApplyPageInner() {
                           type="text"
                           value={form.referrerName}
                           onChange={(e) => set("referrerName", e.target.value)}
+                          onBlur={() => handleBlur("referrerName")}
                           placeholder="So we know who nominated them"
                           className={styles.input}
                           required
@@ -806,7 +813,7 @@ function ApplyPageInner() {
 
                   <button
                     type="submit"
-                    disabled={submitting}
+                    disabled={submitting || !isValid}
                     data-submitting={submitting || undefined}
                     className={styles.submitButton}
                   >

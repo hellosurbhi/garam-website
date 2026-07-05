@@ -217,8 +217,13 @@
           widgetType: "checkout",
           eventId: cfg.eventId,
           iframeContainerId: cfg.containerId!,
-          // Must match .eb-embed__container height in CityEventTicketEmbed.astro (425px).
-          iframeContainerHeight: 425,
+          iframeContainerHeight:
+            parseInt(
+              getComputedStyle(document.documentElement).getPropertyValue(
+                "--eb-embed-height",
+              ),
+              10,
+            ) || 425,
           onOrderComplete: makeOrderCompleteHandler(cfg),
         };
         try {

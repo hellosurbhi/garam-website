@@ -101,6 +101,9 @@
 
   /* accessibility */
   --touch-target: 48px;
+
+  /* Eventbrite inline embed */
+  --eb-embed-height: 425px;
 }
 
 *,

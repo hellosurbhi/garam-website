@@ -136,8 +136,8 @@ const arrowPath2 = "m12 5 7 7-7 7";
   }
 
   /*
-   * Height is fixed at 425px — must match iframeContainerHeight in
-   * EventbriteWidgetInit.astro. Changing one requires changing the other.
+   * Height driven by --eb-embed-height (src/index.css :root). The JS widget
+   * init reads the same variable at runtime, so there is one source of truth.
    * Fixed height (not min) = zero CLS: the slot is reserved at its final size
    * before the Eventbrite script even loads.
    *
@@ -146,7 +146,7 @@ const arrowPath2 = "m12 5 7 7-7 7";
    */
   .eb-embed__container {
     display: block;
-    height: 425px;
+    height: var(--eb-embed-height);
     width: 100%;
     border-radius: 12px;
     overflow: hidden;

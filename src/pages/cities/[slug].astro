@@ -1002,6 +1002,13 @@ function renderCityText(text: string, href: string): string {
     gap: 24px;
   }
 
+  @media (max-width: 1024px) {
+    .city-h1,
+    .city-ticket-hero__title {
+      display: none;
+    }
+  }
+
   .city-body {
     display: flex;
     flex-direction: column;

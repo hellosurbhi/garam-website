@@ -65,16 +65,13 @@ const arrowPath2 = "m12 5 7 7-7 7";
 {
   containerId && !isSoldOut ? (
     /*
-     * Progressive enhancement: the card layer is always rendered as baseline HTML.
-     * Eventbrite injects an opaque iframe into the container layer on top of it.
-     * The card shows as loading skeleton, failure fallback and no-JS fallback all
-     * in one element; no JS class toggling needed.
-     *
-     * .eb-embed height is fixed at 425px to prevent CLS. Both layers are
-     * position:absolute and fill that reserved space.
+     * The container reserves 425px and shows a neutral skeleton while Eventbrite
+     * loads. The info card is hidden by default and only revealed when JS adds
+     * "eb-embed--failed" after an 8s timeout or a createWidget catch.
+     * No-JS users get the noscript link below.
      */
     <div class="eb-embed" id={`buy-${event.eventbriteId}`}>
-      {/* Baseline info card: visible until the iframe covers it */}
+      {/* Info card: hidden by default, shown only on widget failure */}
       <div class="eb-embed__card">
         <p class="eb-embed__card-name">{EVENTS.showName}</p>
         <p class="eb-embed__card-details">
@@ -109,7 +106,7 @@ const arrowPath2 = "m12 5 7 7-7 7";
           </svg>
         </a>
       </div>
-      {/* Container layer: Eventbrite injects an opaque iframe here, covering the card */}
+      {/* Skeleton container: reserves 425px and shows loading state until EB injects the iframe */}
       <div
         id={containerId}
         class="eb-embed__container"
@@ -118,6 +115,18 @@ const arrowPath2 = "m12 5 7 7-7 7";
         data-city={eventLocation}
         {...sharedAttrs}
       />
+      <noscript>
+        <a
+          href={ticketUrl}
+          target="_blank"
+          rel="noopener noreferrer"
+          class="city-cta city-cta--primary"
+        >
+          <span>
+            {event.date} · Get tickets from ${event.price}
+          </span>
+        </a>
+      </noscript>
     </div>
   ) : (
     <a
@@ -152,35 +161,32 @@ const arrowPath2 = "m12 5 7 7-7 7";
 
 <style>
   /*
-   * Wrapper: fixed height prevents CLS. Both child layers are position:absolute
-   * and fill this reserved space. Height must match iframeContainerHeight in
-   * EventbriteWidgetInit.astro (425). Scroll anchor clears the sticky nav.
+   * Wrapper: collapses to card height on failure. The container child holds
+   * the 425px CLS reservation. Scroll anchor clears the sticky nav.
    */
   .eb-embed {
     position: relative;
-    height: var(--eb-embed-height);
     scroll-margin-top: 80px;
   }
 
   /*
-   * Baseline info card. Sits at z-index 0, always visible as static HTML.
-   * Shows show name, date, venue and price so the user has all the info
-   * even before the Eventbrite script loads or if it never loads.
+   * Info card: hidden during load, only revealed when JS marks the embed failed.
+   * Sized to its own content so there is no dead whitespace.
    */
   .eb-embed__card {
-    position: absolute;
-    inset: 0;
-    z-index: 0;
+    display: none;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    padding: 28px 24px;
     background: #fff;
     border: 1px solid rgba(0, 0, 0, 0.08);
     border-radius: 12px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    gap: 6px;
-    padding: 24px;
     text-align: center;
+  }
+
+  .eb-embed--failed .eb-embed__card {
+    display: flex;
   }
 
   .eb-embed__card-name {
@@ -224,17 +230,40 @@ const arrowPath2 = "m12 5 7 7-7 7";
   }
 
   /*
-   * Container layer: Eventbrite injects an opaque iframe here at z-index 1.
-   * The iframe covers the card once EB loads; the card stays below as the
-   * permanent fallback if EB never loads. overflow:hidden clips iframe corners
-   * to match the border-radius.
+   * Container: holds the 425px CLS reservation and shows a neutral skeleton
+   * while the Eventbrite script loads. The :has selector clears the skeleton
+   * once the iframe is injected. overflow:hidden clips iframe corners.
    */
   .eb-embed__container {
-    position: absolute;
-    inset: 0;
-    z-index: 1;
+    height: var(--eb-embed-height);
     border-radius: 12px;
     overflow: hidden;
+    background: rgba(0, 0, 0, 0.04);
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    .eb-embed__container {
+      animation: eb-shimmer 1.6s ease-in-out infinite;
+    }
+  }
+
+  @keyframes eb-shimmer {
+    0%,
+    100% {
+      background: rgba(0, 0, 0, 0.04);
+    }
+    50% {
+      background: rgba(0, 0, 0, 0.07);
+    }
+  }
+
+  .eb-embed__container:has(> iframe) {
+    animation: none;
+    background: transparent;
+  }
+
+  .eb-embed--failed .eb-embed__container {
+    display: none;
   }
 
   .city-cta {

@@ -212,6 +212,7 @@
       embedCfgs.forEach((cfg) => {
         const containerEl = document.getElementById(cfg.containerId!);
         if (!containerEl) return;
+        const wrapperEl = containerEl.closest<HTMLElement>(".eb-embed");
         const config: EBWidgetEmbedConfig = {
           widgetType: "checkout",
           eventId: cfg.eventId,
@@ -229,9 +230,25 @@
         };
         try {
           w.EBWidgets.createWidget(config);
-          // Watch for the iframe EB injects so we can fire the checkout_opened event.
+          // If no iframe appears within 8s, reveal the fallback info card.
+          const failureTimer = setTimeout(() => {
+            if (!containerEl.querySelector("iframe")) {
+              wrapperEl?.classList.add("eb-embed--failed");
+              capture("widget_load_failed", {
+                event_id: cfg.eventId,
+                city: cfg.city,
+                event_title: cfg.eventTitle,
+                event_date: cfg.eventDate,
+                destination_url: cfg.destinationUrl,
+                link_domain: cfg.linkDomain,
+                page: window.location.pathname,
+              });
+            }
+          }, 8000);
+          // Watch for the iframe EB injects: clear the failure timer and fire checkout_opened.
           const iframeObserver = new MutationObserver(() => {
             if (containerEl.querySelector("iframe")) {
+              clearTimeout(failureTimer);
               iframeObserver.disconnect();
               capture("checkout_opened", {
                 event_id: cfg.eventId,
@@ -255,6 +272,7 @@
             subtree: true,
           });
         } catch (_) {
+          wrapperEl?.classList.add("eb-embed--failed");
           capture("widget_load_failed", {
             event_id: cfg.eventId,
             city: cfg.city,

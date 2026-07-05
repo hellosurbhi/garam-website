@@ -357,8 +357,13 @@ Surfaced while fixing the `tickets-notify` source-per-city attribution. Both ite
 
 ### Finish full audit photo rollout
 
-- **Why:** The initial rewrite landed only part of the visual refresh. Key placements are still missing: hero background photo, Experience section proof image, testimonial accent image, upgraded creator portraits, and journal cupid art.
-- **How:** Use the optimized photo set from the audit and finish the remaining placements section by section, verifying desktop/mobile composition after each pass.
+- **Why:** The initial rewrite landed only part of the visual refresh. Key placements are still missing: Experience section proof image, testimonial accent image, upgraded creator portraits, and journal cupid art. (Hero background photo dropped: owner directive, the hero stays as designed.)
+- **How:** Superseded by the homepage visual redesign (owner decision 2026-07-05). Decide placements fresh inside the redesign; do not port these April specs blindly. Sizing note if portraits come back: `hosts/wyatt.avif` source is 269x290, which caps avatars at about 160px before visible upscaling.
+
+### Magic-byte validation for photo uploads
+
+- **Why:** `storage.rules` validates contentType and size and the client checks MIME type, but contentType is client-declared. A hostile client can label any payload as image/jpeg. True content inspection needs to read the file bytes server-side.
+- **How:** Cloud Function on `storage.object.finalize` that sniffs magic bytes and deletes non-image objects. Needs the firebase-functions toolchain, which the repo does not have yet; bundle this with the first real Cloud Functions work rather than standing up the toolchain for one check. Residual from the 2026-04-04 file-type bug in BUGS.md.
 
 ### Add a tickets-page hero image strip or banner
 
@@ -821,8 +826,14 @@ Items flagged during the 2026-04-08 cleanup audit. Not confirmed dead — may ha
 ## Review: scripts/optimize-images.js
 
 - **What:** Image optimization script using sharp (resize, compress, convert to WebP)
-- **Current state:** Not referenced in any npm script or GitHub workflow. `scripts/organize-images.js` IS used via `npm run images:organize`.
-- **Action:** Check if this is run manually. If not, delete it.
+- **Current state:** Repaired 2026-07-05: real source paths, idempotent, registered as `npm run images:optimize`, shares sharp helpers with organize-images via `scripts/lib/image-utils.js`.
+- **Action:** Done. Kept as the named-image and OG-crop pipeline.
+
+## Review: organize-images HF output directory drift
+
+- **What:** `scripts/organize-images.js` writes the HF pool to `public/images/hf/`, but the committed hf files the site serves live under `public/images/ai-art/` (hf-01.webp and up).
+- **Current state:** Running `npm run images:organize` regenerates 26 duplicate webp files into the untracked `public/images/hf/` directory. Found 2026-07-05 while verifying the script repair; the stray output was removed.
+- **Action:** Point `HF_OUT` at the directory the site actually serves, or move the committed hf assets. Decide which location is canonical first.
 
 ## Review: scripts/migrate-locations.ts
 

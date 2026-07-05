@@ -140,8 +140,8 @@ const {
           import("@vercel/analytics"),
           import("@vercel/speed-insights"),
         ]).then(([{ inject }, { injectSpeedInsights }]) => {
-          inject();
-          injectSpeedInsights();
+          inject({ mode: "production" });
+          injectSpeedInsights({ mode: "production" });
         });
       }
       bootstrapLeadAttribution();

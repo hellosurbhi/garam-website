@@ -1407,3 +1407,5 @@ The system should also send a day-before confirmation email automatically so the
 - `src/emails/InviteEmail.tsx`
 - `src/emails/ContestantConfirmationEmail.tsx` (new)
 - Scheduled email endpoint/job configuration
+
+## Skipped reviews (pending retry)

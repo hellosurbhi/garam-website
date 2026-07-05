@@ -296,6 +296,26 @@ describe("ApplyPage", () => {
     });
   });
 
+  it("instagram input has aria-invalid true after blur with empty value", async () => {
+    render(<ApplyPage />);
+    const igInput = screen.getByPlaceholderText("yourhandle");
+    fireEvent.focus(igInput);
+    fireEvent.blur(igInput);
+    await waitFor(() => {
+      expect(igInput).toHaveAttribute("aria-invalid", "true");
+    });
+  });
+
+  it("email input has aria-invalid true after blur with invalid email", async () => {
+    render(<ApplyPage />);
+    const emailInput = screen.getByPlaceholderText("you@example.com");
+    fireEvent.change(emailInput, { target: { value: "notanemail" } });
+    fireEvent.blur(emailInput);
+    await waitFor(() => {
+      expect(emailInput).toHaveAttribute("aria-invalid", "true");
+    });
+  });
+
   /* ── Error display (ConditionalExpression mutations) ──────── */
 
   it("marketing consent no selection shows inline warning with role=alert", () => {

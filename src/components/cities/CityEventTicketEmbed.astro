@@ -120,22 +120,26 @@ const arrowPath2 = "m12 5 7 7-7 7";
     scroll-margin-top: 80px;
   }
 
-  /* Container hidden until JS marks widget loaded */
+  /* Container always visible so EB can measure it and inject the iframe */
   .eb-embed__container {
-    display: none;
-    min-height: 720px;
+    display: block;
+    min-height: 425px;
     width: 100%;
     border-radius: 12px;
     overflow: hidden;
   }
 
-  .eb-embed__container[data-eb-loaded="true"] {
-    display: block;
+  /* Fallback hidden by default; .eb-embed--failed reveals it on widget error */
+  .eb-embed__fallback {
+    display: none;
   }
 
-  /* Hide fallback once the iframe is live */
-  .eb-embed__container[data-eb-loaded="true"] ~ .eb-embed__fallback {
+  .eb-embed--failed .eb-embed__container {
     display: none;
+  }
+
+  .eb-embed--failed .eb-embed__fallback {
+    display: flex;
   }
 
   .city-cta {

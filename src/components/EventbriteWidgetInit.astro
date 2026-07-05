@@ -212,22 +212,21 @@
       embedCfgs.forEach((cfg) => {
         const containerEl = document.getElementById(cfg.containerId!);
         if (!containerEl) return;
+        const wrapperEl = containerEl.closest<HTMLElement>(".eb-embed");
         const config: EBWidgetEmbedConfig = {
           widgetType: "checkout",
           eventId: cfg.eventId,
           iframeContainerId: cfg.containerId!,
-          themeSettings: { brandColor, fontColor, background: bgColor },
+          iframeContainerHeight: 425,
           onOrderComplete: makeOrderCompleteHandler(cfg),
         };
         try {
           w.EBWidgets.createWidget(config);
-          // Wait for the iframe to mount before hiding the fallback link.
-          // createWidget returns immediately; the iframe is injected asynchronously.
+          // Watch for the iframe EB injects so we know it loaded successfully.
           const iframeObserver = new MutationObserver(() => {
             if (containerEl.querySelector("iframe")) {
               iframeObserver.disconnect();
               clearTimeout(iframeTimeout);
-              containerEl.dataset.ebLoaded = "true";
               capture("checkout_opened", {
                 event_id: cfg.eventId,
                 city: cfg.city,
@@ -245,12 +244,19 @@
               });
             }
           });
-          iframeObserver.observe(containerEl, { childList: true, subtree: true });
-          // 5 s hard-stop: if the iframe never appears, leave the fallback visible.
+          iframeObserver.observe(containerEl, {
+            childList: true,
+            subtree: true,
+          });
+          // 8 s hard-stop: if EB never injects the iframe, show fallback.
           const iframeTimeout = setTimeout(() => {
             iframeObserver.disconnect();
-          }, 5_000);
+            if (!containerEl.querySelector("iframe")) {
+              wrapperEl?.classList.add("eb-embed--failed");
+            }
+          }, 8_000);
         } catch (_) {
+          wrapperEl?.classList.add("eb-embed--failed");
           capture("widget_load_failed", {
             event_id: cfg.eventId,
             city: cfg.city,
@@ -260,7 +266,6 @@
             link_domain: cfg.linkDomain,
             page: window.location.pathname,
           });
-          // data-eb-loaded never set → fallback link stays visible
         }
       });
     }

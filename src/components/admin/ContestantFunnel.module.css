@@ -1,0 +1,169 @@
+.panel {
+  background: #fff;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 24px;
+  margin-bottom: 20px;
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 24px;
+  flex-wrap: wrap;
+}
+
+.title {
+  font-family: var(--font-playfair);
+  font-size: 17px;
+  font-weight: 700;
+  color: var(--text);
+  margin: 0;
+}
+
+.windowGroup {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  background: var(--off-white);
+  border: 1px solid var(--border);
+  border-radius: 100px;
+  padding: 4px;
+}
+
+.windowBtn {
+  padding: 5px 14px;
+  border-radius: 100px;
+  border: none;
+  background: transparent;
+  font-family: var(--font-body);
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--text-light);
+  cursor: pointer;
+  transition: all 0.15s;
+}
+
+.windowBtn[data-active] {
+  background: var(--charcoal);
+  color: #fff;
+}
+
+.empty {
+  font-size: 14px;
+  color: var(--text-light);
+  text-align: center;
+  padding: 24px 0;
+  margin: 0;
+}
+
+.funnel {
+  margin-bottom: 12px;
+}
+
+.stageRow {
+  display: grid;
+  grid-template-columns: 110px 1fr 40px 44px 52px;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 10px;
+}
+
+.stageLabel {
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--text);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.barTrack {
+  height: 8px;
+  background: var(--border);
+  border-radius: 100px;
+  overflow: hidden;
+}
+
+.barFill {
+  height: 100%;
+  border-radius: 100px;
+  transition: width 0.4s ease;
+}
+
+.stageCount {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text);
+  text-align: right;
+}
+
+.stagePct {
+  font-size: 12px;
+  color: var(--text-light);
+  text-align: right;
+}
+
+.stageMedian {
+  font-size: 12px;
+  color: var(--text-light);
+  text-align: right;
+}
+
+.slowestNote {
+  font-size: 12px;
+  color: var(--text-light);
+  margin: 0 0 20px;
+}
+
+.citySection {
+  border-top: 1px solid var(--border);
+  padding-top: 20px;
+  margin-top: 8px;
+}
+
+.cityTitle {
+  font-family: var(--font-playfair);
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--text);
+  margin: 0 0 14px;
+}
+
+.cityTable {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.cityTable th {
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.07em;
+  color: var(--text-light);
+  text-align: left;
+  padding: 0 12px 10px 0;
+  border-bottom: 1px solid var(--border);
+}
+
+.cityTable th:not(:first-child) {
+  text-align: right;
+}
+
+.cityTable td {
+  font-size: 13px;
+  color: var(--text);
+  padding: 10px 12px 10px 0;
+  border-bottom: 1px solid var(--border);
+  vertical-align: middle;
+}
+
+.cityTable td:not(:first-child) {
+  text-align: right;
+}
+
+.cityTable tr:last-child td {
+  border-bottom: none;
+}

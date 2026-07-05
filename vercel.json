@@ -7,6 +7,10 @@
   "github": {
     "silent": true
   },
+  "crons": [
+    { "path": "/api/cron/followups", "schedule": "0 14 * * *" },
+    { "path": "/api/cron/post-show", "schedule": "0 15 * * 1" }
+  ],
   "redirects": [
     {
       "source": "/:path*",

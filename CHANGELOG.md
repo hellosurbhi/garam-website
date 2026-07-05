@@ -1,5 +1,49 @@
 # Changelog
 
+## feat(contestant-workflow): Contestant Workflow Control Tower -- P1 through P5 (2026-07-03)
+
+End-to-end contestant pipeline management built into the admin dashboard. Replaces manual juggling of Zoho mail, cal.com, Tally, and a paper notebook with one consolidated tool.
+
+**P1 (Zoho SMTP foundation):**
+
+- `src/lib/zohoMailer.ts` -- Nodemailer transport to smtp.zoho.com:465 with SSL. All contestant-facing emails sent through Zoho to hit Primary inbox.
+- `src/data/emails.ts` -- 8 email templates: scheduling invite, scheduling followup, invite approval, waiver nudge, waiver receipt, rejection, host briefing, post-show thank-you.
+- One-click "Send scheduling email" button in `ApplicantModal` calls `POST /api/actions/send-scheduling-email`.
+- `emailNormalized` field (lowercased email) added to `useApplyForm.ts` Firestore write for webhook correlation.
+
+**P2 (cal.com webhook):**
+
+- `src/pages/api/webhooks/cal.ts` -- HMAC-SHA256 verified (X-Cal-Signature-256, timing-safe compare). Handles BOOKING_CREATED / BOOKING_RESCHEDULED / BOOKING_CANCELLED.
+- Sets `scheduledAt`, `calBookingUrl`, `calBookingId` on applications via `emailNormalized` Firestore index query.
+- Logs `booking_created/rescheduled/cancelled` events to `applications/{id}/events` subcollection.
+- Firestore index on `emailNormalized` added to `firestore.indexes.json`. Firestore rules enforce `emailNormalized == email.lower()` on create.
+
+**P3 (Task Inbox and decision recording):**
+
+- `src/components/admin/TaskInbox.tsx` -- "Today" tab (default landing) with 6 priority buckets: needs outreach, waiting on scheduling, today's interviews, log outcome, needs invite, waiver pending.
+- Interview outcome inline form (approve/reject/unsure + notes) calls `POST /api/actions/record-decision`.
+- Rejection email sent automatically on reject decision.
+- Per-applicant timeline in `ApplicantModal` (real-time `onSnapshot` listener on events subcollection) plus "Add note" field.
+- `create-invite.ts` modified: sends invite via Zoho, sets `invitedAt`, logs `invite_sent`.
+- `stage-waiver.ts` modified: verifies portal token, sets `waiverSignedAt`, sends `waiverReceipt` via Zoho, logs `waiver_signed`.
+- New action routes: `send-scheduling-email`, `send-scheduling-followup`, `record-decision`, `log-note`, `send-waiver-nudge`.
+
+**P4 (Vercel Cron):**
+
+- `src/pages/api/cron/followups.ts` (daily 14:00 UTC) -- 4 automated scans: scheduling followup (48h nudge), waiver nudge (48h nudge with signed portal token), auto-decay to "No Response" (7d no reply), host briefing email (idempotent, one bundled email per day listing next 24h interviews).
+- `src/pages/api/cron/post-show.ts` (weekly Monday 15:00 UTC) -- sends post-show thank-you to recent Participated applicants.
+- `vercel.json` updated with two cron entries.
+- `handleParticipated` in `AdminDashboard` now sets `participatedAt` and logs `participated` event.
+
+**P5 (Funnel analytics):**
+
+- `src/components/admin/ContestantFunnel.tsx` -- 8-stage contestant funnel (Applied through Participated) rendered at the top of the Analytics tab.
+- 7 / 30 / 90 day window selector. Each stage shows count, conversion rate vs previous stage, and median transition time. Slowest stage highlighted in brand-red.
+- Per-city breakdown table (top 10 cities by applied count).
+- Zero extra Firestore queries -- computed purely from the already-loaded applications list.
+
+---
+
 ## feat(analytics): p5 conversion tracking and mobile performance cleanup (2026-07-02)
 
 - Reviewed the open analytics/SEO/performance PR stack and added p5 fixes for gaps it left: canonical UTM catalog, event-time UTM preservation, ticket-vendor subdomain detection, and richer checkout lifecycle properties.

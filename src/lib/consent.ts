@@ -7,8 +7,10 @@ export type ConsentRecord = {
 
 const CONSENT_KEY = "gmd-cookie-consent";
 const CONSENT_VERSION = 1 as const;
-const CONSENT_TTL_MS = 365 * 24 * 60 * 60 * 1000;
 
+// Consent persists indefinitely. The version field (`v`) is the re-consent
+// mechanism: bump CONSENT_VERSION when cookie categories change and every
+// stored record with the old version will be treated as missing.
 export function readConsent(): ConsentRecord | null {
   try {
     const raw = localStorage.getItem(CONSENT_KEY);
@@ -16,9 +18,6 @@ export function readConsent(): ConsentRecord | null {
 
     const parsed = JSON.parse(raw) as ConsentRecord;
     if (parsed.v !== CONSENT_VERSION) return null;
-
-    const age = Date.now() - parsed.ts;
-    if (age > CONSENT_TTL_MS) return null;
 
     return parsed;
   } catch {

@@ -40,22 +40,17 @@ describe("consent", () => {
     expect(readConsent()).toBeNull();
   });
 
-  it("readConsent returns null once the record is older than one year", () => {
+  it("readConsent returns a record permanently — no expiry regardless of age", () => {
     vi.useFakeTimers();
-    vi.setSystemTime(new Date("2026-07-05T00:00:00Z"));
+    vi.setSystemTime(new Date("2020-01-01T00:00:00Z"));
     writeConsent({ analytics: true, marketing: true });
 
-    vi.setSystemTime(new Date("2027-07-06T00:00:01Z"));
-    expect(readConsent()).toBeNull();
-  });
-
-  it("readConsent returns a record still within its one year TTL", () => {
-    vi.useFakeTimers();
-    vi.setSystemTime(new Date("2026-07-05T00:00:00Z"));
-    writeConsent({ analytics: false, marketing: true });
-
-    vi.setSystemTime(new Date("2027-07-04T00:00:00Z"));
-    expect(readConsent()?.marketing).toBe(true);
+    // Jump forward 10 years — consent must still be valid
+    vi.setSystemTime(new Date("2030-01-01T00:00:00Z"));
+    const record = readConsent();
+    expect(record).not.toBeNull();
+    expect(record?.analytics).toBe(true);
+    expect(hasConsented()).toBe(true);
   });
 
   it("readConsent returns null for corrupt JSON", () => {

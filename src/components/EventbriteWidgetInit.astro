@@ -212,22 +212,44 @@
       embedCfgs.forEach((cfg) => {
         const containerEl = document.getElementById(cfg.containerId!);
         if (!containerEl) return;
+        const wrapperEl = containerEl.closest<HTMLElement>(".eb-embed");
         const config: EBWidgetEmbedConfig = {
           widgetType: "checkout",
           eventId: cfg.eventId,
           iframeContainerId: cfg.containerId!,
-          themeSettings: { brandColor, fontColor, background: bgColor },
+          // Reads --eb-embed-height from :root (src/index.css) so the height
+          // has one source of truth shared by CSS and the EB widget runtime.
+          iframeContainerHeight:
+            parseInt(
+              getComputedStyle(document.documentElement).getPropertyValue(
+                "--eb-embed-height",
+              ),
+              10,
+            ) || 425,
           onOrderComplete: makeOrderCompleteHandler(cfg),
         };
         try {
           w.EBWidgets.createWidget(config);
-          // Wait for the iframe to mount before hiding the fallback link.
-          // createWidget returns immediately; the iframe is injected asynchronously.
+          // If no iframe appears within 8s, reveal the fallback info card.
+          const failureTimer = setTimeout(() => {
+            if (!containerEl.querySelector("iframe")) {
+              wrapperEl?.classList.add("eb-embed--failed");
+              capture("widget_load_failed", {
+                event_id: cfg.eventId,
+                city: cfg.city,
+                event_title: cfg.eventTitle,
+                event_date: cfg.eventDate,
+                destination_url: cfg.destinationUrl,
+                link_domain: cfg.linkDomain,
+                page: window.location.pathname,
+              });
+            }
+          }, 8000);
+          // Watch for the iframe EB injects: clear the failure timer and fire checkout_opened.
           const iframeObserver = new MutationObserver(() => {
             if (containerEl.querySelector("iframe")) {
+              clearTimeout(failureTimer);
               iframeObserver.disconnect();
-              clearTimeout(iframeTimeout);
-              containerEl.dataset.ebLoaded = "true";
               capture("checkout_opened", {
                 event_id: cfg.eventId,
                 city: cfg.city,
@@ -245,12 +267,12 @@
               });
             }
           });
-          iframeObserver.observe(containerEl, { childList: true, subtree: true });
-          // 5 s hard-stop: if the iframe never appears, leave the fallback visible.
-          const iframeTimeout = setTimeout(() => {
-            iframeObserver.disconnect();
-          }, 5_000);
+          iframeObserver.observe(containerEl, {
+            childList: true,
+            subtree: true,
+          });
         } catch (_) {
+          wrapperEl?.classList.add("eb-embed--failed");
           capture("widget_load_failed", {
             event_id: cfg.eventId,
             city: cfg.city,
@@ -260,7 +282,6 @@
             link_domain: cfg.linkDomain,
             page: window.location.pathname,
           });
-          // data-eb-loaded never set → fallback link stays visible
         }
       });
     }
@@ -290,8 +311,8 @@
       btn.addEventListener("focusin", loadEBScript);
     });
 
-    // IO watches modal buttons only — embed containers start display:none so
-    // the observer would never fire for them.
+    // IO watches modal buttons only; inline embed containers load the script
+    // immediately via the embedContainers check below.
     io = new IntersectionObserver(
       (entries) => {
         if (entries.some((e) => e.isIntersecting)) loadEBScript();

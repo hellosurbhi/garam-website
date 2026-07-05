@@ -2,6 +2,7 @@
 import type { EventEntry } from "@/data/events";
 import { buildTicketUrl } from "@/utils/eventUrl";
 import { formatEventLocation } from "@/utils/eventCity";
+import { formatDisplayTime } from "@/utils/eventDate";
 import { domainFromUrl, vendorFromUrl } from "@/lib/analyticsCapture";
 import { EVENTS } from "@/data/copy";
 
@@ -21,6 +22,22 @@ const ctaText = isSoldOut ? "Sold Out" : `${event.date}: ${EVENTS.ticketCta}`;
 const containerId = event.eventbriteId
   ? `eventbrite-widget-container-${event.eventbriteId}`
   : undefined;
+
+/*
+ * Card display data for the fallback layer.
+ * Strip bureaucratic "Township" suffix so "North Brunswick Township" reads
+ * as "North Brunswick" to the user.
+ */
+const venueTown = (event.venue?.addressLocality ?? "").replace(
+  /\s+Township$/,
+  "",
+);
+const venueDisplay = event.venue?.name
+  ? venueTown
+    ? `${event.venue.name}, ${venueTown}`
+    : event.venue.name
+  : eventLocation;
+const timeDisplay = event.startTime ? formatDisplayTime(event.startTime) : null;
 
 const sharedAttrs = {
   "data-ph-capture": "ticket_click",
@@ -47,7 +64,58 @@ const arrowPath2 = "m12 5 7 7-7 7";
 
 {
   containerId && !isSoldOut ? (
+    /*
+     * The container reserves 425px and shows a neutral skeleton while Eventbrite
+     * loads. The info card is hidden by default and only revealed when JS adds
+     * "eb-embed--failed" after an 8s timeout or a createWidget catch.
+     * No-JS users get the noscript link below.
+     */
     <div class="eb-embed" id={`buy-${event.eventbriteId}`}>
+      {/* Skeleton: dedicated element so EB cannot interfere with its styles */}
+      <div class="eb-embed__skeleton" aria-hidden="true" />
+      {/* Info card: hidden by default, shown only on widget failure */}
+      <div class="eb-embed__card">
+        <p class="eb-embed__card-name">{EVENTS.showName}</p>
+        <p class="eb-embed__card-details">
+          {event.date}
+          {timeDisplay && (
+            <>
+              {" "}
+              · {EVENTS.doorsLabel} {timeDisplay}
+            </>
+          )}
+        </p>
+        <p class="eb-embed__card-venue">{venueDisplay}</p>
+        <p class="eb-embed__card-price">
+          {EVENTS.priceFromLabel} ${event.price}
+        </p>
+        <a
+          href={ticketUrl}
+          target="_blank"
+          rel="noopener noreferrer"
+          class="city-cta city-cta--primary eb-embed__card-cta"
+          {...sharedAttrs}
+        >
+          <span>{EVENTS.getTicketsCta}</span>
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="16"
+            height="16"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            class="city-cta__arrow"
+            aria-hidden="true"
+          >
+            <path d={arrowPath1} />
+            <path d={arrowPath2} />
+          </svg>
+        </a>
+      </div>
+      {/* EB target: transparent overlay; opaque iframe from EB covers the skeleton on mount */}
       <div
         id={containerId}
         class="eb-embed__container"
@@ -56,32 +124,18 @@ const arrowPath2 = "m12 5 7 7-7 7";
         data-city={eventLocation}
         {...sharedAttrs}
       />
-      {/* Visible by default; JS hides it after widget loads */}
-      <a
-        href={ticketUrl}
-        target="_blank"
-        rel="noopener noreferrer"
-        class="eb-embed__fallback city-cta city-cta--primary"
-        {...sharedAttrs}
-      >
-        <span>{ctaText}</span>
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          width="16"
-          height="16"
-          viewBox="0 0 24 24"
-          fill="none"
-          stroke="currentColor"
-          stroke-width="2"
-          stroke-linecap="round"
-          stroke-linejoin="round"
-          class="city-cta__arrow"
-          aria-hidden="true"
+      <noscript>
+        <a
+          href={ticketUrl}
+          target="_blank"
+          rel="noopener noreferrer"
+          class="city-cta city-cta--primary"
         >
-          <path d={arrowPath1} />
-          <path d={arrowPath2} />
-        </svg>
-      </a>
+          <span>
+            {event.date} · Get tickets from ${event.price}
+          </span>
+        </a>
+      </noscript>
     </div>
   ) : (
     <a
@@ -115,27 +169,133 @@ const arrowPath2 = "m12 5 7 7-7 7";
 }
 
 <style>
-  /* Scroll-anchor wrapper: offset for sticky nav */
+  /*
+   * Wrapper: fixed height is the CLS reservation. Collapses to card height on
+   * failure via height:auto override. Scroll anchor clears the sticky nav.
+   */
   .eb-embed {
+    position: relative;
+    height: var(--eb-embed-height);
     scroll-margin-top: 80px;
   }
 
-  /* Container hidden until JS marks widget loaded */
+  /*
+   * Skeleton: dedicated absolutely-positioned element so the Eventbrite widget
+   * JS cannot interfere with its styles. Sits at z-index 0; the opaque iframe
+   * (injected into .eb-embed__container above it) covers it on success.
+   */
+  .eb-embed__skeleton {
+    position: absolute;
+    inset: 0;
+    border-radius: 12px;
+    background: #ebebeb;
+    overflow: hidden;
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    .eb-embed__skeleton::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(
+        90deg,
+        transparent 0%,
+        rgba(255, 255, 255, 0.55) 50%,
+        transparent 100%
+      );
+      transform: translateX(-100%);
+      animation: eb-shimmer 1.5s ease-in-out infinite;
+    }
+  }
+
+  @keyframes eb-shimmer {
+    100% {
+      transform: translateX(200%);
+    }
+  }
+
+  /*
+   * EB target: transparent overlay above the skeleton at z-index 1.
+   * EB injects an opaque iframe here which covers the skeleton on mount.
+   * overflow:hidden clips iframe corners to the border-radius.
+   */
   .eb-embed__container {
-    display: none;
-    min-height: 720px;
-    width: 100%;
+    position: absolute;
+    inset: 0;
+    z-index: 1;
     border-radius: 12px;
     overflow: hidden;
   }
 
-  .eb-embed__container[data-eb-loaded="true"] {
-    display: block;
+  /*
+   * Info card: hidden during load, shown only when JS adds eb-embed--failed.
+   * Sits above skeleton and container at z-index 2 on failure.
+   * Sized to its own content so there is no dead whitespace.
+   */
+  .eb-embed__card {
+    display: none;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    padding: 28px 24px;
+    background: var(--white);
+    border: 1px solid rgba(var(--black-rgb), 0.08);
+    border-radius: 12px;
+    text-align: center;
   }
 
-  /* Hide fallback once the iframe is live */
-  .eb-embed__container[data-eb-loaded="true"] ~ .eb-embed__fallback {
+  .eb-embed--failed {
+    height: auto;
+  }
+
+  .eb-embed--failed .eb-embed__skeleton,
+  .eb-embed--failed .eb-embed__container {
     display: none;
+  }
+
+  .eb-embed--failed .eb-embed__card {
+    position: relative;
+    z-index: 2;
+    display: flex;
+  }
+
+  .eb-embed__card-name {
+    font-family: var(--font-body);
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    color: var(--brand-red);
+    margin: 0;
+  }
+
+  .eb-embed__card-details {
+    font-family: var(--font-body);
+    font-size: 17px;
+    font-weight: 600;
+    color: var(--charcoal);
+    margin: 0;
+  }
+
+  .eb-embed__card-venue {
+    font-family: var(--font-body);
+    font-size: 14px;
+    font-weight: 400;
+    color: var(--muted);
+    margin: 0;
+  }
+
+  .eb-embed__card-price {
+    font-family: var(--font-body);
+    font-size: 15px;
+    font-weight: 500;
+    color: var(--charcoal);
+    margin: 0 0 10px;
+  }
+
+  .eb-embed__card-cta {
+    width: 100%;
+    white-space: nowrap;
   }
 
   .city-cta {

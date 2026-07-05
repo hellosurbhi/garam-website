@@ -173,8 +173,12 @@ export const submissionDisclaimer =
   "By submitting, you agree to be contacted by the Garam Masala Dating team.";
 
 export const EVENTS = {
+  showName: "Garam Masala Comedy Dating Show",
   ticketCta: "Grab My Spot",
   stickyCta: "Get Tickets",
+  doorsLabel: "Doors",
+  priceFromLabel: "Tickets from",
+  getTicketsCta: "Get tickets",
 } as const;
 
 export const EVENT_TAGLINES = {

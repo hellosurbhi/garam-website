@@ -14,7 +14,6 @@ import { getPostBySlug } from "@/data/journal";
 import { isPublished } from "@/utils/date";
 import { SOCIAL_URLS } from "@/data/socials";
 import CityEventTicketEmbed from "@/components/cities/CityEventTicketEmbed.astro";
-import { formatDisplayTime } from "@/utils/eventDate";
 import { buildTicketUrl } from "@/utils/eventUrl";
 import { domainFromUrl, vendorFromUrl } from "@/lib/analyticsCapture";
 import { EVENTS } from "@/data/copy";
@@ -192,36 +191,14 @@ function renderCityText(text: string, href: string): string {
       {
         cityEvents.length > 0 && (
           <section class="city-ticket-hero" aria-label="Buy tickets">
-            <p class="city-ticket-hero__eyebrow">On sale now</p>
-            <h2 class="city-ticket-hero__title">Buy Tickets Here</h2>
+            <h2 class="city-ticket-hero__title">
+              Grab a seat, {cityEvents[0]?.city ?? ""} shows fill fast
+            </h2>
             <div class="city-ticket-hero__embeds">
               {cityEvents.map((event) => (
                 <CityEventTicketEmbed event={event} citySlug={city.slug} />
               ))}
             </div>
-            <ul class="city-ticket-hero__meta" aria-label="Event details">
-              {cityEvents.map((event) => {
-                const venueName = event.venue?.name;
-                const venueCity = event.venue?.addressLocality;
-                const venueRegion = event.venue?.addressRegion;
-                const locationStr = venueName
-                  ? venueCity
-                    ? `${venueName} · ${venueCity}, ${venueRegion}`
-                    : venueName
-                  : formatEventLocation(event);
-                const timeStr = event.startTime
-                  ? formatDisplayTime(event.startTime)
-                  : null;
-                const priceStr = event.price ? `$${event.price}` : null;
-                return (
-                  <li>
-                    {locationStr}
-                    {timeStr && <> · {timeStr}</>}
-                    {priceStr && <> · {priceStr}</>}
-                  </li>
-                );
-              })}
-            </ul>
           </section>
         )
       }
@@ -920,6 +897,8 @@ function renderCityText(text: string, href: string): string {
     position: relative;
     z-index: 1;
     animation: cityFadeIn 0.5s ease-out both;
+    /* White so the Eventbrite checkout iframe reads as one clean focal surface */
+    background: #fff;
   }
   .city-bg {
     position: absolute;
@@ -997,31 +976,24 @@ function renderCityText(text: string, href: string): string {
 
   /* ─── Ticket Hero (above-the-fold CTA for active shows) ─────── */
 
+  /* ─── Ticket Hero: transparent card, white page, single focal surface ─── */
+
   .city-ticket-hero {
     margin-bottom: 32px;
-    padding: 22px 20px;
-    border: 1.5px solid rgba(var(--brand-red-rgb), 0.22);
-    border-radius: 16px;
-    background: rgba(var(--brand-red-rgb), 0.05);
+    /* No border or tinted background; the Eventbrite iframe IS the hero */
+    padding: 0;
+    border: none;
+    background: transparent;
   }
 
-  .city-ticket-hero__eyebrow {
-    font-family: var(--font-body);
-    font-size: 11px;
-    font-weight: 700;
-    text-transform: uppercase;
-    letter-spacing: 0.15em;
-    color: var(--brand-red);
-    margin-bottom: 6px;
-  }
-
+  /* Soft scarcity line above the embed; body font gives clear hierarchy vs the Playfair H1 */
   .city-ticket-hero__title {
-    font-family: var(--font-playfair);
-    font-size: 24px;
-    font-weight: 700;
+    font-family: var(--font-body);
+    font-size: 18px;
+    font-weight: 600;
     color: var(--charcoal);
-    margin-bottom: 16px;
-    line-height: 1.15;
+    margin-bottom: 14px;
+    line-height: 1.3;
   }
 
   .city-ticket-hero__embeds {
@@ -1030,20 +1002,11 @@ function renderCityText(text: string, href: string): string {
     gap: 24px;
   }
 
-  .city-ticket-hero__meta {
-    list-style: none;
-    padding: 0;
-    margin: 12px 0 0;
-    display: flex;
-    flex-direction: column;
-    gap: 4px;
-  }
-
-  .city-ticket-hero__meta li {
-    font-family: var(--font-body);
-    font-size: 13px;
-    color: var(--text-light);
-    line-height: 1.45;
+  @media (max-width: 1024px) {
+    .city-h1,
+    .city-ticket-hero__title {
+      display: none;
+    }
   }
 
   .city-body {

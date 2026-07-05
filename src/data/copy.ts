@@ -218,3 +218,8 @@ export const AUTHOR_BIO = {
   surbhi:
     "Co-creator and host of Garam Masala Dating, America's #1 live desi dating show. Stand-up comedian. Accidentally matched three couples and counting.",
 } as const;
+
+export const CITY_TICKET_HERO = {
+  eyebrow: "NYC sells out every week",
+  title: "Save your seat before it's gone",
+} as const;

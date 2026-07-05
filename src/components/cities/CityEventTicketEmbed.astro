@@ -76,10 +76,10 @@ const arrowPath2 = "m12 5 7 7-7 7";
         <p class="eb-embed__card-name">{EVENTS.showName}</p>
         <p class="eb-embed__card-details">
           {event.date}
-          {timeDisplay && <> · Doors {timeDisplay}</>}
+          {timeDisplay && <> · {EVENTS.doorsLabel} {timeDisplay}</>}
         </p>
         <p class="eb-embed__card-venue">{venueDisplay}</p>
-        <p class="eb-embed__card-price">Tickets from ${event.price}</p>
+        <p class="eb-embed__card-price">{EVENTS.priceFromLabel} ${event.price}</p>
         <a
           href={ticketUrl}
           target="_blank"
@@ -87,7 +87,7 @@ const arrowPath2 = "m12 5 7 7-7 7";
           class="city-cta city-cta--primary eb-embed__card-cta"
           {...sharedAttrs}
         >
-          <span>Get tickets</span>
+          <span>{EVENTS.getTicketsCta}</span>
           <svg
             xmlns="http://www.w3.org/2000/svg"
             width="16"
@@ -179,8 +179,8 @@ const arrowPath2 = "m12 5 7 7-7 7";
     align-items: center;
     gap: 8px;
     padding: 28px 24px;
-    background: #fff;
-    border: 1px solid rgba(0, 0, 0, 0.08);
+    background: var(--white);
+    border: 1px solid rgba(var(--black-rgb), 0.08);
     border-radius: 12px;
     text-align: center;
   }
@@ -223,9 +223,8 @@ const arrowPath2 = "m12 5 7 7-7 7";
     margin: 0 0 10px;
   }
 
-  /* Card CTA: auto-width so it does not stretch full card width */
   .eb-embed__card-cta {
-    width: auto;
+    width: 100%;
     white-space: nowrap;
   }
 

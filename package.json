@@ -55,7 +55,8 @@
     "react-loading-skeleton": "^3.5.0",
     "react-select": "^5.10.2",
     "recharts": "^3.9.0",
-    "resend": "^6.16.0"
+    "resend": "^6.16.0",
+    "zod": "^4.4.3"
   },
   "devDependencies": {
     "@astrojs/check": "^0.9.9",

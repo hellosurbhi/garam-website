@@ -1,5 +1,6 @@
 import type { APIRoute } from "astro";
 import { createHmac, timingSafeEqual } from "crypto";
+import { enforceRateLimit, RATE_LIMITS } from "@/lib/rateLimit";
 
 export const prerender = false;
 
@@ -30,6 +31,12 @@ function getShowExpiryMs(isoDate: string): number {
 }
 
 export const POST: APIRoute = async ({ request }) => {
+  const limited = await enforceRateLimit(
+    request,
+    RATE_LIMITS.contestantPrepAuth,
+  );
+  if (limited) return limited;
+
   const salt = import.meta.env.CONTESTANT_PREP_SALT;
   if (!salt) {
     return new Response(JSON.stringify({ error: "Server misconfigured" }), {

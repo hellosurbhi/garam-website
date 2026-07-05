@@ -6,22 +6,15 @@ import { WAIVER_VERSION, WAIVER_TEXT } from "@/data/waiver";
 import { sendMail } from "@/lib/zohoMailer";
 import { waiverReceipt } from "@/data/emails";
 import { createHash } from "node:crypto";
-import {
-  checkRateLimit,
-  getClientIp,
-  stageWaiverLimiter,
-} from "@/lib/rateLimit";
+import { enforceRateLimit, getClientIp, RATE_LIMITS } from "@/lib/rateLimit";
 import { jsonResponse, parseJsonRequest } from "@/lib/http";
 import { StageWaiverSchema } from "@/lib/schemas";
 import { verifyPortalToken } from "@/lib/portalToken";
 import { fsGet, fsAdd, fsPatch } from "@/lib/firestoreRest";
 
 export const POST: APIRoute = async ({ request }) => {
-  const rateLimitResponse = await checkRateLimit(
-    stageWaiverLimiter,
-    getClientIp(request),
-  );
-  if (rateLimitResponse) return rateLimitResponse;
+  const limited = await enforceRateLimit(request, RATE_LIMITS.stageWaiver);
+  if (limited) return limited;
 
   const parsed = await parseJsonRequest(request, StageWaiverSchema);
   if (!parsed.success) return parsed.response;

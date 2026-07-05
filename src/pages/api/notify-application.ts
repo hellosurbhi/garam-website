@@ -2,6 +2,7 @@ import type { APIRoute } from "astro";
 import { z } from "zod";
 import { sendMail } from "@/lib/zohoMailer";
 import { applicationReceived, escapeHtml, subjectSafe } from "@/data/emails";
+import { enforceRateLimit, RATE_LIMITS } from "@/lib/rateLimit";
 
 export const prerender = false;
 
@@ -158,6 +159,12 @@ function buildAdminEmailText(data: ApplicationNotification): string {
 }
 
 export const POST: APIRoute = async ({ request }) => {
+  const limited = await enforceRateLimit(
+    request,
+    RATE_LIMITS.notifyApplication,
+  );
+  if (limited) return limited;
+
   const origin = request.headers.get("origin");
   if (!isAllowedOrigin(origin)) {
     return new Response(JSON.stringify({ error: "Forbidden" }), {

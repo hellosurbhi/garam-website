@@ -3,6 +3,7 @@ export const prerender = false;
 import type { APIRoute } from "astro";
 import { getFirestoreAccessToken } from "@/lib/firestoreAdmin";
 import { addKitSubscriber, type KitSubscriberFields } from "@/lib/kit";
+import { enforceRateLimit, RATE_LIMITS } from "@/lib/rateLimit";
 
 interface FirestoreStringValue {
   stringValue: string;
@@ -30,6 +31,11 @@ function str(
 }
 
 export const POST: APIRoute = async ({ request }) => {
+  // Rate limit before secret comparison so the guard also throttles
+  // brute-force attempts against the bearer secret.
+  const limited = await enforceRateLimit(request, RATE_LIMITS.syncLeadsToKit);
+  if (limited) return limited;
+
   const cronSecret = import.meta.env.CRON_SECRET;
   if (!cronSecret) {
     return new Response(

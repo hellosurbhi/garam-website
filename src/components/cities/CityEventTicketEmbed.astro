@@ -71,15 +71,24 @@ const arrowPath2 = "m12 5 7 7-7 7";
      * No-JS users get the noscript link below.
      */
     <div class="eb-embed" id={`buy-${event.eventbriteId}`}>
+      {/* Skeleton: dedicated element so EB cannot interfere with its styles */}
+      <div class="eb-embed__skeleton" aria-hidden="true" />
       {/* Info card: hidden by default, shown only on widget failure */}
       <div class="eb-embed__card">
         <p class="eb-embed__card-name">{EVENTS.showName}</p>
         <p class="eb-embed__card-details">
           {event.date}
-          {timeDisplay && <> · {EVENTS.doorsLabel} {timeDisplay}</>}
+          {timeDisplay && (
+            <>
+              {" "}
+              · {EVENTS.doorsLabel} {timeDisplay}
+            </>
+          )}
         </p>
         <p class="eb-embed__card-venue">{venueDisplay}</p>
-        <p class="eb-embed__card-price">{EVENTS.priceFromLabel} ${event.price}</p>
+        <p class="eb-embed__card-price">
+          {EVENTS.priceFromLabel} ${event.price}
+        </p>
         <a
           href={ticketUrl}
           target="_blank"
@@ -106,7 +115,7 @@ const arrowPath2 = "m12 5 7 7-7 7";
           </svg>
         </a>
       </div>
-      {/* Skeleton container: reserves 425px and shows loading state until EB injects the iframe */}
+      {/* EB target: transparent overlay; opaque iframe from EB covers the skeleton on mount */}
       <div
         id={containerId}
         class="eb-embed__container"
@@ -161,16 +170,66 @@ const arrowPath2 = "m12 5 7 7-7 7";
 
 <style>
   /*
-   * Wrapper: collapses to card height on failure. The container child holds
-   * the 425px CLS reservation. Scroll anchor clears the sticky nav.
+   * Wrapper: fixed height is the CLS reservation. Collapses to card height on
+   * failure via height:auto override. Scroll anchor clears the sticky nav.
    */
   .eb-embed {
     position: relative;
+    height: var(--eb-embed-height);
     scroll-margin-top: 80px;
   }
 
   /*
-   * Info card: hidden during load, only revealed when JS marks the embed failed.
+   * Skeleton: dedicated absolutely-positioned element so the Eventbrite widget
+   * JS cannot interfere with its styles. Sits at z-index 0; the opaque iframe
+   * (injected into .eb-embed__container above it) covers it on success.
+   */
+  .eb-embed__skeleton {
+    position: absolute;
+    inset: 0;
+    border-radius: 12px;
+    background: #ebebeb;
+    overflow: hidden;
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    .eb-embed__skeleton::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(
+        90deg,
+        transparent 0%,
+        rgba(255, 255, 255, 0.55) 50%,
+        transparent 100%
+      );
+      transform: translateX(-100%);
+      animation: eb-shimmer 1.5s ease-in-out infinite;
+    }
+  }
+
+  @keyframes eb-shimmer {
+    100% {
+      transform: translateX(200%);
+    }
+  }
+
+  /*
+   * EB target: transparent overlay above the skeleton at z-index 1.
+   * EB injects an opaque iframe here which covers the skeleton on mount.
+   * overflow:hidden clips iframe corners to the border-radius.
+   */
+  .eb-embed__container {
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+    border-radius: 12px;
+    overflow: hidden;
+  }
+
+  /*
+   * Info card: hidden during load, shown only when JS adds eb-embed--failed.
+   * Sits above skeleton and container at z-index 2 on failure.
    * Sized to its own content so there is no dead whitespace.
    */
   .eb-embed__card {
@@ -185,7 +244,18 @@ const arrowPath2 = "m12 5 7 7-7 7";
     text-align: center;
   }
 
+  .eb-embed--failed {
+    height: auto;
+  }
+
+  .eb-embed--failed .eb-embed__skeleton,
+  .eb-embed--failed .eb-embed__container {
+    display: none;
+  }
+
   .eb-embed--failed .eb-embed__card {
+    position: relative;
+    z-index: 2;
     display: flex;
   }
 
@@ -226,53 +296,6 @@ const arrowPath2 = "m12 5 7 7-7 7";
   .eb-embed__card-cta {
     width: 100%;
     white-space: nowrap;
-  }
-
-  /*
-   * Container: holds the 425px CLS reservation and shows a neutral skeleton
-   * while the Eventbrite script loads. The :has selector clears the skeleton
-   * once the iframe is injected. overflow:hidden clips iframe corners.
-   */
-  .eb-embed__container {
-    position: relative;
-    height: var(--eb-embed-height);
-    border-radius: 12px;
-    overflow: hidden;
-    background: #ebebeb;
-  }
-
-  @media (prefers-reduced-motion: no-preference) {
-    .eb-embed__container::after {
-      content: "";
-      position: absolute;
-      inset: 0;
-      background: linear-gradient(
-        90deg,
-        transparent 0%,
-        rgba(255, 255, 255, 0.55) 50%,
-        transparent 100%
-      );
-      transform: translateX(-100%);
-      animation: eb-shimmer 1.5s ease-in-out infinite;
-    }
-  }
-
-  @keyframes eb-shimmer {
-    100% {
-      transform: translateX(200%);
-    }
-  }
-
-  .eb-embed__container:has(> iframe) {
-    background: transparent;
-  }
-
-  .eb-embed__container:has(> iframe)::after {
-    display: none;
-  }
-
-  .eb-embed--failed .eb-embed__container {
-    display: none;
   }
 
   .city-cta {

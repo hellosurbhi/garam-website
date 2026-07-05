@@ -1,4 +1,5 @@
 import type { APIRoute } from "astro";
+import { enforceRateLimit, RATE_LIMITS } from "@/lib/rateLimit";
 
 function isAllowedOrigin(origin: string | null): boolean {
   if (!origin) return false;
@@ -11,6 +12,9 @@ function isAllowedOrigin(origin: string | null): boolean {
 export const prerender = false;
 
 export const POST: APIRoute = async ({ request }) => {
+  const limited = await enforceRateLimit(request, RATE_LIMITS.verifyTurnstile);
+  if (limited) return limited;
+
   const origin = request.headers.get("origin");
   if (!isAllowedOrigin(origin)) {
     return new Response(JSON.stringify({ ok: false }), {

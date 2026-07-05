@@ -63,7 +63,9 @@ export type FormErrors = Partial<
 export type SelectOption = { value: string; label: string };
 
 const MAX_PHOTOS = 10;
-const MAX_PHOTO_BYTES = 5 * 1024 * 1024;
+// 15 MB: recent iPhone photos (HEIC, 48 MP) run up to ~10 MB; the old 5 MB
+// cap rejected them. Must stay aligned with storage.rules (strict less-than).
+const MAX_PHOTO_BYTES = 15 * 1024 * 1024;
 
 function getUrlCityParams() {
   if (typeof window === "undefined") return null;
@@ -189,16 +191,16 @@ export function useApplyForm() {
       return;
     }
 
-    const oversized = incoming.filter((f) => f.size > MAX_PHOTO_BYTES);
+    const oversized = incoming.filter((f) => f.size >= MAX_PHOTO_BYTES);
     if (oversized.length > 0) {
       setErrors((prev) => ({
         ...prev,
-        photo: "Photo must be under 5 MB",
+        photo: "Photo must be under 15 MB",
       }));
     }
 
     const valid = incoming.filter(
-      (f) => f.size <= MAX_PHOTO_BYTES && ALLOWED_TYPES.has(f.type),
+      (f) => f.size < MAX_PHOTO_BYTES && ALLOWED_TYPES.has(f.type),
     );
     if (valid.length === 0) {
       e.target.value = "";

@@ -227,6 +227,7 @@ const {
   import {
     captureLead,
     updateLeadPhone,
+    type LeadCaptureResult,
     type LeadSubmissionPayload,
   } from "@/lib/leadSubmission";
 
@@ -239,7 +240,7 @@ const {
     const isCityMode = root.dataset.lcCityMode === "true";
     const isWaitlistSource =
       /waitlist|notify|city-request|links-page|ticket/i.test(source);
-    let leadDocId = "";
+    let leadDocId: LeadCaptureResult | null = null;
     let capturedEmail = "";
 
     function showStep(step: "email" | "phone" | "success") {
@@ -277,7 +278,7 @@ const {
       );
       if (successMsg)
         successMsg.textContent = successMsg.dataset.lcDefaultMsg ?? "";
-      leadDocId = "";
+      leadDocId = null;
       capturedEmail = "";
     }
 
@@ -316,7 +317,8 @@ const {
           };
           if (city) payload.city = city;
 
-          leadDocId = await captureLead(payload);
+          const captured = await captureLead(payload);
+          leadDocId = captured.id ? captured : null;
 
           identifyLead(capturedEmail, {
             ...attribution,

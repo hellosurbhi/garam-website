@@ -19,9 +19,9 @@
  *   npm run images:organize:v        # verbose (VERBOSE=1)
  */
 
-import sharp from "sharp";
-import { readdirSync, existsSync, mkdirSync } from "fs";
+import { readdirSync, existsSync } from "fs";
 import { resolve, join, extname } from "path";
+import { convertImage, ensureDir, makeLogger } from "./lib/image-utils.js";
 
 const ROOT = resolve(import.meta.dirname, "..");
 const PUBLIC = join(ROOT, "public");
@@ -30,37 +30,18 @@ const SHOW_SRC = join(ROOT, "src", "assets", "show-raw");
 const HF_OUT = join(PUBLIC, "images", "hf");
 const SHOW_OUT = join(PUBLIC, "images", "show");
 
-const VERBOSE = !!process.env.VERBOSE;
-const log = (...args) => {
-  if (VERBOSE) console.debug(...args);
-};
+const log = makeLogger();
 
 const IMAGE_EXTS = new Set([".jpg", ".jpeg", ".png", ".webp", ".avif"]);
 
 // Ensure output dirs exist
 for (const d of [HF_OUT, SHOW_OUT]) {
-  if (!existsSync(d)) mkdirSync(d, { recursive: true });
+  ensureDir(d);
 }
 
-/** Convert and output a single image as WebP, skipping if output exists. */
-async function toWebP(
-  srcPath,
-  destPath,
-  { width = 1200, height = 900, quality = 75 } = {},
-) {
-  if (existsSync(destPath)) {
-    log(`  skip (exists): ${destPath.replace(ROOT, "")}`);
-    return;
-  }
-  await sharp(srcPath)
-    .resize({ width, height, fit: "inside", withoutEnlargement: true })
-    .webp({ quality })
-    .toFile(destPath);
-  const meta = await sharp(destPath).metadata();
-  const kb = Math.round((meta.size ?? 0) / 1024);
-  log(
-    `  → ${destPath.replace(ROOT, "")} (${meta.width}×${meta.height}, ${kb}KB)`,
-  );
+/** Convert and output a single image as WebP, skipping if output exists. Returns null on failure. */
+async function toWebP(srcPath, destPath) {
+  return convertImage(srcPath, destPath, { log });
 }
 
 /** Read and sort source files from a directory. */
@@ -88,6 +69,8 @@ function listSources(dir, numericSort = false) {
 }
 
 async function main() {
+  const failedFiles = [];
+
   // ── HF pool ────────────────────────────────────────────────────────────────
   const hfSources = listSources(HF_SRC, false);
   log(
@@ -95,7 +78,8 @@ async function main() {
   );
   for (let i = 0; i < hfSources.length; i++) {
     const name = `hf-${String(i + 1).padStart(2, "0")}.webp`;
-    await toWebP(hfSources[i], join(HF_OUT, name));
+    const result = await toWebP(hfSources[i], join(HF_OUT, name));
+    if (result === null) failedFiles.push(hfSources[i]);
   }
 
   // ── Show pool ──────────────────────────────────────────────────────────────
@@ -105,7 +89,8 @@ async function main() {
   );
   for (let i = 0; i < showSources.length; i++) {
     const name = `show-${String(i + 1).padStart(2, "0")}.webp`;
-    await toWebP(showSources[i], join(SHOW_OUT, name));
+    const result = await toWebP(showSources[i], join(SHOW_OUT, name));
+    if (result === null) failedFiles.push(showSources[i]);
   }
 
   // Summary
@@ -116,6 +101,11 @@ async function main() {
     ? readdirSync(SHOW_OUT).filter((f) => f.endsWith(".webp")).length
     : 0;
   log(`\nDone. HF: ${hfOut} files, Show: ${showOut} files.`);
+
+  if (failedFiles.length > 0) {
+    console.error(`\nFailed: ${failedFiles.length} image(s) could not be converted`);
+    process.exit(1);
+  }
 }
 
 main().catch((err) => {

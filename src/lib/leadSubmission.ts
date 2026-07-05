@@ -25,7 +25,18 @@ export interface LeadSubmissionPayload {
 interface CaptureLeadResponse {
   ok?: boolean;
   id?: string;
+  updateToken?: string;
   error?: string;
+}
+
+/**
+ * Handle returned by captureLead and consumed by updateLeadPhone.
+ * updateToken is the signed ownership proof for the step-2 phone update;
+ * it is absent while the server has no LEAD_UPDATE_SECRET configured.
+ */
+export interface LeadCaptureResult {
+  id: string;
+  updateToken?: string;
 }
 
 async function readJson<T>(response: Response): Promise<T | null> {
@@ -38,7 +49,7 @@ async function readJson<T>(response: Response): Promise<T | null> {
 
 export async function captureLead(
   payload: LeadSubmissionPayload,
-): Promise<string> {
+): Promise<LeadCaptureResult> {
   const res = await fetch("/api/capture-lead", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
@@ -56,19 +67,26 @@ export async function captureLead(
     // Private browsing or storage quota — non-fatal
   }
 
-  return result?.id ?? "";
+  return {
+    id: result?.id ?? "",
+    ...(result?.updateToken ? { updateToken: result.updateToken } : {}),
+  };
 }
 
 export async function updateLeadPhone(
-  id: string,
+  lead: LeadCaptureResult,
   phone: string,
 ): Promise<void> {
-  if (!id) throw new Error("Lead id required");
+  if (!lead.id) throw new Error("Lead id required");
 
   const res = await fetch("/api/update-lead", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ id, phone }),
+    body: JSON.stringify({
+      id: lead.id,
+      ...(lead.updateToken ? { token: lead.updateToken } : {}),
+      phone,
+    }),
   });
   const result = await readJson<CaptureLeadResponse>(res);
 

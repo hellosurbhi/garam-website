@@ -671,7 +671,11 @@ function renderCityText(text: string, href: string): string {
   import { cleanPhone } from "@/lib/phone";
   import { identifyLead, trackLeadEvent } from "@/lib/analytics";
   import { buildLeadAttribution } from "@/lib/leadAttribution";
-  import { captureLead, updateLeadPhone } from "@/lib/leadSubmission";
+  import {
+    captureLead,
+    updateLeadPhone,
+    type LeadCaptureResult,
+  } from "@/lib/leadSubmission";
 
   const dialog = document.getElementById("waitlist-modal") as HTMLDialogElement;
   const citySlug =
@@ -746,7 +750,7 @@ function renderCityText(text: string, href: string): string {
 
   // City page email + phone signup
   let cityNotifyEmail = "";
-  let cityNotifyDocId = "";
+  let cityNotifyDocId: LeadCaptureResult | null = null;
   const cityName = document.querySelector(".city-eyebrow")?.textContent ?? "";
 
   document
@@ -766,11 +770,12 @@ function renderCityText(text: string, href: string): string {
           source: "city-page",
           sourceCitySlug: citySlug,
         });
-        cityNotifyDocId = await captureLead({
+        const captured = await captureLead({
           email: cityNotifyEmail,
           city: cityName,
           ...attribution,
         });
+        cityNotifyDocId = captured.id ? captured : null;
         identifyLead(cityNotifyEmail, { ...attribution, city: cityName });
         trackLeadEvent("lead_email_submitted", {
           ...attribution,

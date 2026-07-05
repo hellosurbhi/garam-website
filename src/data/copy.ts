@@ -172,6 +172,15 @@ export const APPLY_PAGE = {
 export const submissionDisclaimer =
   "By submitting, you agree to be contacted by the Garam Masala Dating team.";
 
+export const COOKIE_CONSENT = {
+  message: "We use cookies for analytics and marketing.",
+  privacyLabel: "Privacy Policy",
+  reject: "Reject All",
+  manage: "Manage",
+  manageAriaLabel: "Manage cookie preferences",
+  accept: "Accept All",
+} as const;
+
 export const EVENTS = {
   showName: "Garam Masala Comedy Dating Show",
   ticketCta: "Grab My Spot",

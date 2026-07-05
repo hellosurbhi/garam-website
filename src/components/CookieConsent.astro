@@ -1,32 +1,25 @@
 ---
-import { readConsent } from "@/lib/consent";
-
-const hasConsent = readConsent();
+import { COOKIE_CONSENT } from "@/data/copy";
 ---
 
-<div
-  id="cookie-banner"
-  role="region"
-  aria-label="Cookie consent"
-  style={{ display: hasConsent ? "none" : "block" }}
->
+<div id="cookie-banner" role="region" aria-label="Cookie consent" hidden>
   <div class="cookie-banner-inner">
-    <div class="cookie-banner-content">
-      <p>
-        We use cookies for analytics and marketing. See our <a href="/privacy"
-          >Privacy Policy</a
-        > for details.
-      </p>
-    </div>
+    <p class="cookie-banner-content">
+      {COOKIE_CONSENT.message}
+      <a href="/privacy">{COOKIE_CONSENT.privacyLabel}</a>
+    </p>
     <div class="cookie-banner-buttons">
       <button id="cookie-reject" class="cookie-btn cookie-btn-outline"
-        >Reject All</button
+        >{COOKIE_CONSENT.reject}</button
       >
-      <button id="cookie-manage" class="cookie-btn cookie-btn-outline"
-        >Manage Preferences</button
+      <button
+        id="cookie-manage"
+        class="cookie-btn cookie-btn-outline"
+        aria-label={COOKIE_CONSENT.manageAriaLabel}
+        >{COOKIE_CONSENT.manage}</button
       >
       <button id="cookie-accept" class="cookie-btn cookie-btn-hot"
-        >Accept All</button
+        >{COOKIE_CONSENT.accept}</button
       >
     </div>
   </div>
@@ -120,81 +113,8 @@ const hasConsent = readConsent();
 </dialog>
 
 <script>
-  import { readConsent, writeConsent, type ConsentRecord } from "@/lib/consent";
-
-  const banner = document.getElementById("cookie-banner")!;
-  const dialog = document.getElementById(
-    "cookie-prefs-dialog",
-  )! as HTMLDialogElement;
-  const analyticsCheck = document.getElementById(
-    "cookie-analytics",
-  )! as HTMLInputElement;
-  const marketingCheck = document.getElementById(
-    "cookie-marketing",
-  )! as HTMLInputElement;
-
-  const acceptBtn = document.getElementById("cookie-accept")!;
-  const rejectBtn = document.getElementById("cookie-reject")!;
-  const manageBtn = document.getElementById("cookie-manage")!;
-  const saveBtn = document.getElementById("cookie-save")!;
-  const modalAcceptBtn = document.getElementById("cookie-modal-accept")!;
-  const modalCloseBtn = document.getElementById("cookie-modal-close")!;
-
-  function loadPrefs() {
-    const consent = readConsent();
-    analyticsCheck.checked = consent?.analytics ?? false;
-    marketingCheck.checked = consent?.marketing ?? false;
-  }
-
-  function dispatchConsentEvent(record: ConsentRecord) {
-    window.dispatchEvent(
-      new CustomEvent("gmd:consent-updated", { detail: record }),
-    );
-  }
-
-  function handleAcceptAll() {
-    const record = writeConsent({ analytics: true, marketing: true });
-    dispatchConsentEvent(record);
-    banner.style.display = "none";
-    dialog.close();
-  }
-
-  function handleRejectAll() {
-    const record = writeConsent({ analytics: false, marketing: false });
-    dispatchConsentEvent(record);
-    banner.style.display = "none";
-  }
-
-  function handleSave() {
-    const record = writeConsent({
-      analytics: analyticsCheck.checked,
-      marketing: marketingCheck.checked,
-    });
-    dispatchConsentEvent(record);
-    banner.style.display = "none";
-    dialog.close();
-  }
-
-  acceptBtn.addEventListener("click", handleAcceptAll);
-  rejectBtn.addEventListener("click", handleRejectAll);
-  manageBtn.addEventListener("click", () => dialog.showModal());
-  saveBtn.addEventListener("click", handleSave);
-  modalAcceptBtn.addEventListener("click", handleAcceptAll);
-  modalCloseBtn.addEventListener("click", () => dialog.close());
-
-  // Close dialog on Escape key (dialog default behavior)
-  dialog.addEventListener("cancel", (e) => {
-    e.preventDefault();
-  });
-
-  // Expose API for footer link
-  window.__gmdOpenCookiePrefs = () => {
-    loadPrefs();
-    dialog.showModal();
-  };
-
-  // Initialize preferences when modal opens
-  dialog.addEventListener("show", loadPrefs);
+  import { initCookieConsent } from "@/lib/cookieConsentInit";
+  initCookieConsent();
 </script>
 
 <style>
@@ -205,9 +125,13 @@ const hasConsent = readConsent();
     right: 0;
     background: var(--charcoal);
     color: white;
-    padding: 16px 20px;
+    padding: 12px 16px;
     z-index: 9000;
     box-shadow: 0 -2px 8px rgba(0, 0, 0, 0.1);
+  }
+
+  #cookie-banner[hidden] {
+    display: none;
   }
 
   .cookie-banner-inner {
@@ -215,18 +139,14 @@ const hasConsent = readConsent();
     margin: 0 auto;
     display: flex;
     flex-direction: column;
-    gap: 16px;
-    align-items: flex-start;
+    gap: 10px;
   }
 
   .cookie-banner-content {
-    font-size: 14px;
-    line-height: 1.5;
-    flex: 1;
-  }
-
-  .cookie-banner-content p {
     margin: 0;
+    font-size: 14px;
+    line-height: 1.4;
+    flex: 1;
   }
 
   .cookie-banner-content a {
@@ -237,8 +157,12 @@ const hasConsent = readConsent();
   .cookie-banner-buttons {
     display: flex;
     gap: 8px;
-    flex-wrap: wrap;
     align-items: center;
+  }
+
+  .cookie-banner-buttons .cookie-btn {
+    flex: 1;
+    min-height: 48px;
   }
 
   #cookie-prefs-dialog {
@@ -390,7 +314,10 @@ const hasConsent = readConsent();
     border: none;
     border-radius: 6px;
     cursor: pointer;
-    transition: all 0.25s cubic-bezier(0.34, 1.3, 0.64, 1);
+    transition:
+      transform 160ms ease-out,
+      background 200ms ease,
+      border-color 200ms ease;
     font-family: var(--font-body);
   }
 
@@ -428,14 +355,19 @@ const hasConsent = readConsent();
   }
 
   @media (min-width: 640px) {
+    #cookie-banner {
+      padding: 16px 20px;
+    }
+
     .cookie-banner-inner {
       flex-direction: row;
       align-items: center;
       justify-content: space-between;
+      gap: 16px;
     }
 
-    .cookie-banner-buttons {
-      flex-wrap: nowrap;
+    .cookie-banner-buttons .cookie-btn {
+      flex: none;
     }
   }
 </style>

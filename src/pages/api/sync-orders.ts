@@ -1,6 +1,7 @@
 export const prerender = false;
 
 import type { APIRoute } from "astro";
+import { enforceRateLimit, RATE_LIMITS } from "@/lib/rateLimit";
 import { verifyAdminToken } from "@/lib/verifyToken";
 import { getFirestoreAccessToken } from "@/lib/firestoreAdmin";
 import { fetchEventOrders } from "@/lib/eventbrite";
@@ -255,6 +256,11 @@ async function writeSyncMeta(
 // ─── Route handler ────────────────────────────────────────────────────────────
 
 export const POST: APIRoute = async ({ request }) => {
+  // Rate limit before secret comparison so the guard also throttles
+  // brute-force attempts against the bearer secret.
+  const limited = await enforceRateLimit(request, RATE_LIMITS.syncOrders);
+  if (limited) return limited;
+
   const authHeader = request.headers.get("authorization") ?? "";
 
   // Auth: check cron secret first, then Firebase ID token

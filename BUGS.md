@@ -2,6 +2,40 @@
 
 ## Open
 
+### [HIGH] Dev server cannot transform TypeScript in astro component scripts
+
+- **Date:** 2026-07-05
+- **File:** any `.astro` file with TypeScript inside a `<script>` tag (CookieConsent, HomeSignup, NotifyModal, index and more)
+- **Status:** Fixed (2026-07-05) for CookieConsent; upstream Astro/Vite Rolldown issue remains open for other files
+- **Severity:** High (dev only; production builds are unaffected)
+- **What happened:** In `npm run dev`, the `vite:oxc` transform parses extracted astro scripts as plain JavaScript, so any TypeScript syntax (a `type` import specifier, `as` casts, non-null `!`) throws `[PARSE_ERROR]` and the script module 500s. Pages render but their client scripts never execute, which makes features like the cookie banner look broken in dev while working fine in the built site.
+- **Fix applied to CookieConsent:** Moved all banner logic into `src/lib/cookieConsentInit.ts`, a plain TypeScript module imported via Vite's normal TS pipeline. The `<script>` in `CookieConsent.astro` is now a bare `import { initCookieConsent } from "@/lib/cookieConsentInit"; initCookieConsent();` with zero TS syntax — so the oxc extractor never chokes on it. Full typing is preserved in the module.
+- **Remaining:** Other `.astro` files with TS-syntax inline scripts are still affected. Same pattern applies: extract logic to a `.ts` module, keep the inline `<script>` as a bare import. Track for a follow-up sweep if the upstream Astro/Vite Rolldown fix does not land.
+
+### [HIGH] Cookie consent banner reappears on every page and covers the submit button
+
+- **Date:** 2026-07-05
+- **File:** `src/components/CookieConsent.astro`
+- **Status:** Fixed (2026-07-05)
+- **Severity:** High
+- **What happened:** The banner decided visibility at build time via `readConsent()` in Astro frontmatter, where localStorage does not exist, so every static page shipped with the banner visible and the client script never re-checked on load. Clicking a button hid it for that page only. On mobile the stacked layout covered the apply submit button and sticky CTAs. Fix: banner ships hidden, the client script reveals it only when no valid consent record exists, Manage loads saved preferences before opening the dialog, Escape closes the dialog again, and the mobile layout is compact (single message line, three equal-width buttons on one row, 48px touch targets). Banner copy moved to `data/copy.ts`.
+
+### [MEDIUM] Photo upload limit rejected large iPhone photos
+
+- **Date:** 2026-07-05
+- **File:** `src/components/apply/useApplyForm.ts`, `storage.rules`
+- **Status:** Fixed (2026-07-05)
+- **Severity:** Medium
+- **What happened:** The 5 MB cap rejected recent iPhone photos (48 MP HEIC runs up to about 10 MB). Raised to 15 MB in both the client check and storage.rules, aligned on strict less-than (the client previously accepted a file exactly at the limit that storage then rejected). storage.rules needs a Firebase deploy to take effect.
+
+### [MEDIUM] Homepage Instagram reels showed facade covers instead of real embeds
+
+- **Date:** 2026-07-05
+- **File:** `src/components/home/HomeVideo.astro`
+- **Status:** Fixed (2026-07-05)
+- **Severity:** Medium
+- **What happened:** The Wave 6 perf pass (PR #70) replaced the reel embeds with gradient covers showing only the Instagram logo; the real reel appeared only after a click. Restored the real `instagram-media` blockquotes with embed.js loading in idle time after window load, plus a 480px min-height per slot to hold layout while embeds hydrate. Accepted trade-off: embed.js (~50KB) is back on every homepage load.
+
 ### [LOW] Missing image: cupid-garden.webp causes 404 on every apply page load
 
 - **Date:** 2026-04-13
@@ -46,61 +80,49 @@
 
 - **Date:** 2026-04-08
 - **File:** `src/components/home/HomeHero.astro`
-- **Status:** Open
+- **Status:** Won't fix (2026-07-05)
 - **Severity:** Medium
-- **What's happening:** The hero still renders only the shader canvas and gradient background. The planned stage photo layer was never added.
-- **What should happen:** The hero should include the optimized show photo behind the shader for depth and stronger visual proof.
-- **Fix:** Add a `<picture>` background layer using the new hero asset, placed behind the canvas with reduced opacity.
+- **What happened:** Owner directive: the hero is intentional and stays as designed (shader plus gradient). No photo layer will be added.
 
 ### [MEDIUM] Home creators avatars were not upgraded to larger host photos
 
 - **Date:** 2026-04-08
 - **File:** `src/components/home/HomeCreators.astro`
-- **Status:** Open
+- **Status:** Deferred (2026-07-05)
 - **Severity:** Medium
-- **What's happening:** Creator avatars are still rendered at 96x96 on mobile and desktop. The audit called for larger host photos and updated crops.
-- **What should happen:** Home creator cards should use larger images with stronger visual emphasis and updated source assets.
-- **Fix:** Increase avatar sizing to the planned 160-200px range and switch to the newer processed host images.
+- **What happened:** Superseded by the homepage visual redesign (owner decision 2026-07-05). Tracked in ENHANCEMENTS.md under "Finish full audit photo rollout"; decide sizing fresh in the redesign. Note if revisited: `hosts/wyatt.avif` source is 269x290, which caps avatars at about 160px before visible upscaling.
 
 ### [MEDIUM] Hosts page still uses small individual avatar images
 
 - **Date:** 2026-04-08
 - **File:** `src/pages/hosts.astro`
-- **Status:** Open
+- **Status:** Deferred (2026-07-05)
 - **Severity:** Medium
-- **What's happening:** The hosts page uses a strong action shot banner, but the individual host avatars are still 96x96 and were not upgraded as planned.
-- **What should happen:** The hosts page should use larger individual photos to match the rest of the redesign.
-- **Fix:** Replace the small avatars with larger cropped host images and adjust layout spacing accordingly.
+- **What happened:** Superseded by the homepage visual redesign (owner decision 2026-07-05). Tracked in ENHANCEMENTS.md under "Finish full audit photo rollout".
 
 ### [MEDIUM] Experience section photo placement was missed
 
 - **Date:** 2026-04-08
 - **File:** `src/components/home/HomeExperience.astro`
-- **Status:** Open
+- **Status:** Deferred (2026-07-05)
 - **Severity:** Medium
-- **What's happening:** The Experience section still has only text plus ambient background images. The planned audience reaction photo in the left column was never added.
-- **What should happen:** The section should include the audience photo below the copy to add proof and break up the text block.
-- **Fix:** Add the planned `<picture>` element below the body copy and style it per the audit.
+- **What happened:** Superseded by the homepage visual redesign (owner decision 2026-07-05). Tracked in ENHANCEMENTS.md under "Finish full audit photo rollout".
 
 ### [MEDIUM] Testimonials accent photo was not added
 
 - **Date:** 2026-04-08
 - **File:** `src/components/home/HomeTestimonials.astro`
-- **Status:** Open
+- **Status:** Deferred (2026-07-05)
 - **Severity:** Medium
-- **What's happening:** The testimonial section still renders only the three quote cards over a background image. The planned desktop-only image card or accent treatment was not implemented.
-- **What should happen:** Testimonials should include the audience reaction photo as added visual proof on desktop.
-- **Fix:** Add the fourth desktop grid item or equivalent accent treatment using the processed image.
+- **What happened:** Superseded by the homepage visual redesign (owner decision 2026-07-05). Tracked in ENHANCEMENTS.md under "Finish full audit photo rollout".
 
 ### [MEDIUM] Journal decorative cupid artwork not implemented
 
 - **Date:** 2026-04-08
 - **File:** `src/pages/journal/index.astro`, `src/pages/journal/[slug].astro`
-- **Status:** Open
+- **Status:** Deferred (2026-07-05)
 - **Severity:** Medium
-- **What's happening:** The journal pages still use the generic background image only. The decorative cupid artwork from the audit was not added to the index header or article layout.
-- **What should happen:** Journal pages should include the subtle cupid art accents that were part of the visual refresh plan.
-- **Fix:** Add absolutely positioned decorative image elements with the planned opacity and positioning.
+- **What happened:** Superseded by the homepage visual redesign (owner decision 2026-07-05). Tracked in ENHANCEMENTS.md under "Finish full audit photo rollout". The `ai-art/cupid-garden.webp` asset exists and remains unused.
 
 ### [MEDIUM] Spice List section still double-asks subscribed users for email
 
@@ -114,7 +136,7 @@
 
 - **Date:** 2026-04-08
 - **File:** `src/pages/index.astro`
-- **Status:** Open
+- **Status:** Blocked on business decision (2026-07-05): no final offer exists yet. Tracked in ENHANCEMENTS.md under "Strengthen popup offer copy once the actual incentive is finalized".
 - **Severity:** Low
 - **What's happening:** The popup still says "Want Cheaper Tickets?" and "Get My Discount Code" rather than the stronger offer-based copy proposed in the audit.
 - **What should happen:** Popup copy should use the updated conversion-focused wording once the actual offer is confirmed.
@@ -140,11 +162,9 @@
 
 - **Date:** 2026-04-08
 - **File:** `scripts/optimize-images.js`
-- **Status:** Open
+- **Status:** Fixed (2026-07-05)
 - **Severity:** Low
-- **What's happening:** The repo has a JS image script instead of the planned shell script, and several source paths in the script point to files that do not exist. This makes the pipeline unreliable if rerun.
-- **What should happen:** The repo should contain a working, repeatable asset pipeline for the new show photos.
-- **Fix:** Correct the source paths or replace the script with the intended `optimize-new-photos` workflow, then verify it end-to-end.
+- **What happened:** The script referenced source files that no longer exist and wrote to a phantom `public/images/gallery/` directory. Now reads raws from `src/assets/show-raw/`, writes named webp files to `public/images/promo/`, produces the OG crop from the real raw, and is idempotent (skip-if-exists, `FORCE=1` to regenerate). Shared sharp helpers extracted to `scripts/lib/image-utils.js`, also used by `organize-images.js`. Registered as `npm run images:optimize`. Verified with two consecutive runs (second run all skips, zero diff on committed images).
 
 ### [MEDIUM] SVG-only buttons missing aria-label (accessibility)
 
@@ -175,11 +195,9 @@
 
 - **Date:** 2026-04-04
 - **File:** `api/notify-application.ts`, `api/contestant-prep-auth.ts`
-- **Status:** Open
+- **Status:** Fixed (2026-07-05)
 - **Severity:** Medium
-- **What's happening:** No rate limiting on any API endpoint. A bot can trigger unlimited Resend emails (incurring cost) or brute-force the contestant prep auth endpoint.
-- **What should happen:** Endpoints should be rate-limited.
-- **Fix:** Use Vercel Edge Rate Limiting or Upstash Redis for per-IP rate limits.
+- **What happened:** Per-IP Upstash sliding-window limits on eight POST routes: capture-lead, update-lead, notify-application, contestant-prep-auth, verify-turnstile, sync-orders, sync-leads-to-kit and stage-waiver. `src/lib/rateLimit.ts` was rewritten to lazy init and fail open when `UPSTASH_REDIS_REST_URL`/`UPSTASH_REDIS_REST_TOKEN` are unset or Redis errors (the earlier module-scope version failed closed in prod with unset env). Admin ID-token routes and the HMAC-verified cal webhook are excluded as already authenticated. Inert until the Upstash env vars are set in Vercel.
 
 ### [MEDIUM] CORS config allows all origins with DELETE method
 
@@ -197,18 +215,16 @@
 - **Status:** Open
 - **Severity:** Low
 - **What's happening:** Both script-src and style-src include 'unsafe-inline', weakening CSP XSS protection.
-- **What should happen:** Use CSP nonces to eliminate unsafe-inline from script-src.
-- **Fix:** Migrate to Astro CSP nonce middleware. Lower priority since the site has minimal user-generated content.
+- **What should happen:** Since the site is SSG, nonces do not apply; hashes do. Migrate to Astro's `experimental.csp` support, which computes hashes for inline scripts and styles at build time, then move the Content-Security-Policy header out of `vercel.json` so there is one source of truth.
+- **Fix:** Dedicated PR (2026-07-05 triage decision): the migration touches every page's inline scripts and needs its own smoke-test pass, so it stays out of batch fixes.
 
 ### [MEDIUM] No server-side file-type validation on photo uploads
 
 - **Date:** 2026-04-04
 - **File:** `src/components/ApplyPage.tsx`
-- **Status:** Open
+- **Status:** Fixed (PR #87 + PR #100)
 - **Severity:** Medium
-- **What's happening:** Photos are uploaded directly to Firebase Storage from the client. The `accept="image/*"` HTML attribute is trivially bypassed. An attacker could upload SVGs with embedded scripts or other malicious file types.
-- **What should happen:** File type should be validated server-side via MIME type / magic bytes.
-- **Fix:** Create a Firebase Cloud Function trigger on `storage.object.finalize` that checks `contentType` and deletes non-image files. Or use a server API endpoint as an upload proxy.
+- **What happened:** `storage.rules` enforces auth, a contentType allowlist (jpeg, png, webp, heic) and the size cap server-side (PR #87). The client validates MIME type against the same allowlist before upload (PR #100). SVG is not on the allowlist. Residual gap: contentType is client-declared, so true magic-byte inspection would need a Cloud Function on `storage.object.finalize`; tracked in ENHANCEMENTS.md.
 
 ### [MEDIUM] No CAPTCHA or rate limiting on application form
 
@@ -222,11 +238,9 @@
 
 - **Date:** 2026-04-04
 - **File:** `src/components/admin/AdminDashboard.tsx`
-- **Status:** Open
+- **Status:** Fixed (PR #88)
 - **Severity:** Low
-- **What's happening:** All applications are fetched in a single `getDocs` call. With 500+ records this will be slow and expensive.
-- **What should happen:** Applications should be paginated with Firestore cursor-based pagination.
-- **Fix:** Use `query()` with `limit()`, `orderBy()`, and `startAfter()` for pagination when app count grows.
+- **What happened:** Cursor-based pagination landed in PR #88: `limit(50)` with `orderBy("submittedAt", "desc")`, `startAfter` cursor and a "Load more" button.
 
 ### [HIGH] Color contrast: #888 (--muted) fails WCAG AA on #FFF8F0
 
@@ -471,8 +485,8 @@
 
 - **File:** `src/pages/api/capture-lead.ts:85`
 - **Source:** CodeRabbit PR #12
-- **Status:** Open
-- **Comment:** The route accepts unauthenticated public input with no rate limiting or CAPTCHA, forwarding directly to a writable `leads` collection. Vulnerable to scripted spam and cost amplification.
+- **Status:** Fixed (2026-07-05)
+- **Comment:** Per-IP rate limiting (10/min, Upstash sliding window) now guards the route, bounding scripted spam and cost amplification. Firestore rules `validLead()` continues to constrain document shape. The route stays intentionally unauthenticated: it is the public email capture path.
 - **Link:** https://github.com/hellosurbhi/garam-website/pull/12#discussion_r3054383999
 
 ## No timeout on Firestore API request in capture-lead
@@ -495,8 +509,8 @@
 
 - **File:** `src/pages/api/update-lead.ts:50`
 - **Source:** CodeRabbit PR #12
-- **Status:** Open
-- **Comment:** The route trusts a caller-supplied `id` with no ownership verification. Anyone who obtains a lead document ID can overwrite its phone number. Should require a signed update token tied to the original email capture session.
+- **Status:** Fixed (2026-07-05)
+- **Comment:** capture-lead now issues an HMAC-signed 10 minute token (`src/lib/leadToken.ts`) and update-lead derives the doc id from that token, ignoring any client-supplied id. Opt-in via `LEAD_UPDATE_SECRET`; the legacy doc-id path stays active until the env var is set so deploys are safe. Also fixed while in the route: raw Firestore error text was leaking to clients and the fetch had no timeout.
 - **Link:** https://github.com/hellosurbhi/garam-website/pull/12#discussion_r3054384013
 
 ## Door time calculation can produce timestamp after show start time

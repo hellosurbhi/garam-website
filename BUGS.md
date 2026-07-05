@@ -2,6 +2,16 @@
 
 ## Open
 
+### [HIGH] Dev server cannot transform TypeScript in astro component scripts
+
+- **Date:** 2026-07-05
+- **File:** any `.astro` file with TypeScript inside a `<script>` tag (CookieConsent, HomeSignup, NotifyModal, index and more)
+- **Status:** Open
+- **Severity:** High (dev only; production builds are unaffected)
+- **What's happening:** In `npm run dev`, the `vite:oxc` transform parses extracted astro scripts as plain JavaScript, so any TypeScript syntax (a `type` import specifier, `as` casts, non-null `!`) throws `[PARSE_ERROR]` and the script module 500s. Pages render but their client scripts never execute, which makes features like the cookie banner and lead forms look broken in dev while working fine in the built site. Verified 2026-07-05 with a clean `.vite` cache on the current Astro 7 / Vite 8 (Rolldown) versions; scripts without TypeScript (for example HomeShows' bare import) transform fine, so this is a TS detection failure in the dev transform pipeline.
+- **What should happen:** Dev transforms should honor the `lang.ts` flag Astro puts on extracted scripts, same as the build pipeline does.
+- **Fix:** Likely an upstream Astro/Vite Rolldown issue introduced with the major upgrade (PR #61). Check for newer Astro and Vite patch releases; if none fix it, minimize a repro and file upstream. Do not strip TypeScript from component scripts to work around it.
+
 ### [HIGH] Cookie consent banner reappears on every page and covers the submit button
 
 - **Date:** 2026-07-05

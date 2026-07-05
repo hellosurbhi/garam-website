@@ -627,7 +627,7 @@ describe("useApplyForm", () => {
     vi.unstubAllEnvs();
   });
 
-  it("clears turnstile token and resets widget on verification failure", async () => {
+  it("resets widget on verification failure and continues submission (fail-open)", async () => {
     vi.stubEnv("PUBLIC_TURNSTILE_SITE_KEY", "test-site-key");
     const mockReset = vi.fn();
     (
@@ -662,8 +662,10 @@ describe("useApplyForm", () => {
       await result.current.handleSubmit(makeSubmitEvent());
     });
 
-    expect(result.current.submitted).toBe(false);
+    // Fail-open: 422 from Turnstile no longer blocks submission.
+    // Widget is reset so the next attempt gets a fresh challenge.
     expect(mockReset).toHaveBeenCalledWith("widget-1");
+    expect(result.current.submitted).toBe(true);
     delete (window as Window & { turnstile?: unknown }).turnstile;
     vi.unstubAllEnvs();
   });
@@ -1135,35 +1137,23 @@ describe("useApplyForm", () => {
     expect(result.current.errors.referrerName).toBe("Required");
   });
 
-  /* ── Group 16: Validation scroll behavior ────────────── */
+  /* ── Group 16: Validation feedback (no scroll — button gate prevents invalid submit) */
 
-  it("validation scrolls to first error element", async () => {
-    const mockScrollIntoView = vi.fn();
-    const mockElement = { scrollIntoView: mockScrollIntoView };
-    const mockRAF = vi
-      .spyOn(globalThis, "requestAnimationFrame")
-      .mockImplementation((cb) => {
-        cb(0);
-        return 0;
-      });
-    const mockQS = vi
-      .spyOn(document, "querySelector")
-      .mockReturnValue(mockElement as unknown as Element);
-
+  it("validation sets error toast when handleSubmit called with empty form", async () => {
+    // With the gated submit button, users cannot reach handleSubmit via UI unless
+    // the form is valid. This test calls handleSubmit directly (as a safety net check)
+    // and verifies the toast is still set and errors are populated.
     const { result } = renderHook(() => useApplyForm());
     await act(async () => {
       await result.current.handleSubmit(makeSubmitEvent());
     });
 
-    expect(mockRAF).toHaveBeenCalled();
-    expect(mockQS).toHaveBeenCalledWith("[data-error]");
-    expect(mockScrollIntoView).toHaveBeenCalledWith({
-      behavior: "smooth",
-      block: "center",
+    expect(result.current.toast).toEqual({
+      msg: "Please fill in all required fields",
+      ok: false,
     });
-
-    mockRAF.mockRestore();
-    mockQS.mockRestore();
+    // errors object should have at least one field flagged
+    expect(Object.keys(result.current.errors).length).toBeGreaterThan(0);
   });
 
   /* ── Additional mutation killers ─────────────────────── */

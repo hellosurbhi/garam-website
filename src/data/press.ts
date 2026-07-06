@@ -3,6 +3,8 @@ export interface PressItem {
   source: string;
   url?: string;
   type: "podcast" | "article" | "press";
+  /** Optional pull quote from the outlet. Only add for real, verifiable coverage. */
+  quote?: string;
 }
 
 export const pressItems: PressItem[] = [

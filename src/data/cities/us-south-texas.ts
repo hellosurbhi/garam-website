@@ -313,6 +313,34 @@ export const usSouthTexasCities: Record<string, CityData> = {
         q: "Can I apply to be a contestant?",
         a: "Yes. Apply now. Applications stay active for 12 months. San Antonio applicants will be prioritized when we confirm a date.",
       },
+      {
+        q: "Is there Indian speed dating in San Antonio?",
+        a: "San Antonio's desi singles get community gatherings and a drive up I-35 for anything else. A local show ends the Austin dependency and gives the Medical Center crowd a night that fits between shifts.",
+      },
+      {
+        q: "Where do South Asian singles in San Antonio actually meet?",
+        a: "The South Texas Medical Center, UTSA and UT Health circles, the military medicine community and Stone Oak family events. Everyone is busy saving lives or serving, and nobody built them a social scene. We travel.",
+      },
+      {
+        q: "Will the military desi community fit in here?",
+        a: "Completely. San Antonio's military medicine ecosystem includes a real South Asian contingent, and a live show is the rare event that works whether you have been in town three weeks or thirty years.",
+      },
+    ],
+    sections: [
+      {
+        heading: "Military City's desi scene is hiding in the Medical Center",
+        paragraphs: [
+          "San Antonio's South Asian community concentrates around two institutions: the South Texas Medical Center, one of the biggest medical employment hubs in the country, and the military medicine ecosystem across the city's bases. Add UTSA and UT Health students and Stone Oak's settled families and you get a scene that is bigger than its reputation and almost entirely without occasions. The default fix, driving to Austin or Houston events, costs three hours round trip and every ounce of post-shift energy.",
+          "A local room changes the equation for the one Texas metro that never gets its own desi night. The 210 has been patient. We noticed.",
+        ],
+      },
+      {
+        heading: "What a Garam Masala night in San Antonio looks like",
+        paragraphs: [
+          "A Medical Center resident and a USAA analyst who have never met, on stage, going on a first date while the whole 210 desi scene reacts over drinks. Comedian hosts, live votes and a mixer where the River Walk handles the second location without a planning committee.",
+          "Join the waitlist to keep San Antonio off the I-35 commute, or apply to be a contestant and give Military City a story worth reporting for duty.",
+        ],
+      },
     ],
   },
 
@@ -364,6 +392,35 @@ export const usSouthTexasCities: Record<string, CityData> = {
         q: "Can I apply to be a contestant?",
         a: "Yes. Apply now. Applications stay active for 12 months. College Station applicants will be prioritized when we confirm a date.",
       },
+      {
+        q: "Is there Indian speed dating in College Station?",
+        a: "Aggieland has grad mixers and ISA events, which produce study partners at a 100% rate and dates at approximately zero. A live show with real blind dates is the missing format, and isolated campuses are where it hits hardest.",
+      },
+      {
+        q: "Where do Texas A&M desi students actually meet?",
+        a: "Zachry's engineering floors, the MSC, Northgate on weekends and apartment complexes that are unofficially Indian graduate housing. Massive pool, zero visibility, one hour and a half from any alternative. Prime conditions for us.",
+      },
+      {
+        q: "Would Aggies actually volunteer to date on stage?",
+        a: "Aggies invented half the audience participation traditions in Texas. Yes. The volunteer problem in College Station will be too many hands, and we are prepared for that.",
+      },
+    ],
+    sections: [
+      {
+        heading:
+          "A&M's Indian grad community is enormous and completely siloed",
+        paragraphs: [
+          "Texas A&M runs one of the largest Indian graduate populations in the country, spread across engineering, ag sciences and the business school, dense enough that Hindi and Telugu carry across the Zachry lobby. But the silos are ironclad: departments, batches and apartment complexes each run their own social loop, and the isolation, ninety minutes to Houston or Austin, removes every external option. The result is thousands of single desis in three square miles who have functionally never been introduced.",
+          "College Station is the purest version of the problem this show solves, which is why the waitlist here grew before we ever mentioned Texas.",
+        ],
+      },
+      {
+        heading: "What a Garam Masala night in Aggieland looks like",
+        paragraphs: [
+          "Two Aggies who have never met, a petroleum engineering PhD and a Mays MBA maybe, on stage, going on a first date while a room that treats traditions as a load-bearing structure invents a new one on the spot. Comedian hosts, thunderous votes and a mixer on Northgate that the whole desi campus attends because there is nowhere else to be.",
+          "Join the waitlist to bring the show to the Brazos Valley, or apply to be a contestant. Gig 'em, obviously.",
+        ],
+      },
     ],
   },
 
@@ -414,6 +471,34 @@ export const usSouthTexasCities: Record<string, CityData> = {
       {
         q: "Can I apply to be a contestant?",
         a: "Yes. Apply now. Applications stay active for 12 months. Oklahoma applicants will be prioritized when we confirm a date.",
+      },
+      {
+        q: "Is there Indian speed dating in Oklahoma City?",
+        a: "Oklahoma has never had a desi singles event. Between OU, OSU and the OKC professional scene, the audience exists. The first show becomes the community's calendar anchor by default.",
+      },
+      {
+        q: "Where do South Asian singles in OKC actually meet?",
+        a: "OU Health circles, Norman's campus orbit, Edmond community events and Paseo district weekends. The scene is scattered across a metro and two college towns, all within an hour of one central room.",
+      },
+      {
+        q: "Would Norman and Stillwater both show up?",
+        a: "A bedlam-neutral OKC venue is the diplomatic answer, and yes. The rivalry pauses for exactly one night, or becomes the best audience vote dynamic on the entire tour.",
+      },
+    ],
+    sections: [
+      {
+        heading: "Oklahoma's desi scene is three towns and one missing room",
+        paragraphs: [
+          "OKC's South Asian community triangulates between OU in Norman, OSU in Stillwater and the capital's own professional base in healthcare, energy and the growing tech scene around Midtown. Each corner has its own desi circle, each circle is small enough to exhaust and the highway math keeps them from ever merging. Singles here run app radii that hit three states and still see the same twenty profiles.",
+          "One OKC room merges the triangle. In markets like this the first show is not an event, it is infrastructure.",
+        ],
+      },
+      {
+        heading: "What a Garam Masala night in OKC looks like",
+        paragraphs: [
+          "An OU Health resident and an Edmond energy analyst who have never met, on stage, going on a first date while OU and OSU fans vote on something they finally agree about. Comedian hosts, live chaos and a mixer in the Paseo where the whole state's desi scene meets itself for the first time.",
+          "Join the waitlist to put Oklahoma on the tour, or apply to be a contestant and make Bedlam history of a better kind.",
+        ],
       },
     ],
   },
@@ -472,6 +557,34 @@ export const usSouthTexasCities: Record<string, CityData> = {
       {
         q: "Can I apply to be a contestant?",
         a: "Yes. Apply now. Applications stay active for 12 months. New Orleans applicants will be prioritized when we confirm a date.",
+      },
+      {
+        q: "Is there Indian speed dating in New Orleans?",
+        a: "NOLA has an event for everything except this. The desi community is small, the city's appetite for live formats is infinite and the first desi dating show here will be a cultural event more than a singles event. Both is the goal.",
+      },
+      {
+        q: "Where do South Asian singles in New Orleans actually meet?",
+        a: "Tulane and LSU Health circles, Ochsner's medical machine, Metairie community events and festival season, where everyone meets everyone and remembers nothing. A show gives the scene one intentional night with name recall.",
+      },
+      {
+        q: "Will the show have NOLA flavor?",
+        a: "The format stays, the city seasons it. Expect a second line energy in the audience votes and a mixer that does not acknowledge closing time, because this is New Orleans and neither will we.",
+      },
+    ],
+    sections: [
+      {
+        heading: "NOLA's tiny desi scene lives in the best party city on earth",
+        paragraphs: [
+          "New Orleans holds a small South Asian community anchored by Tulane, LSU Health and Ochsner's hospital system, plus the Metairie families who have run the community institutions for decades. Small scenes in big-energy cities have a specific dating problem: the community events are intimate enough that bringing romantic intent feels like a violation, so everyone performs platonic warmth forever while quietly swiping on a pool the size of a krewe.",
+          "A show gives the scene plausible deniability and a stage. It is a comedy night, officially. What the mixer does after is between you and the city.",
+        ],
+      },
+      {
+        heading: "What a Garam Masala night in New Orleans looks like",
+        paragraphs: [
+          "A Tulane public health researcher and an Ochsner resident who have never met, on stage, going on a first date in a city that considers watching strangers fall in love a spectator sport with refreshments. Live votes, comedian hosts and a mixer that migrates toward Frenchmen Street the way all good NOLA nights do.",
+          "Join the waitlist to bring the show down south, or apply to be a contestant and let the city that invented excess watch you flirt.",
+        ],
       },
     ],
   },

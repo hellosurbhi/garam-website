@@ -71,7 +71,8 @@ export const usWestCities: Record<string, CityData> = {
     ],
     sections: [
       {
-        heading: "The densest desi metro in America still cannot get a second date",
+        heading:
+          "The densest desi metro in America still cannot get a second date",
         paragraphs: [
           "Santa Clara County has more Indian Americans than any metro in the country, which should make it the easiest place in the western hemisphere to find a desi partner. Instead the density works against itself. Everyone works at the same handful of companies, lives in the same Sunnyvale and Milpitas complexes and has already seen everyone else on Dil Mil twice. The pool is enormous and completely stale, because the only sorting mechanisms are apps and mutual friends, and both exhausted themselves years ago.",
           "What refreshes a stale pool is context nobody has seen each other in. A live show reshuffles the entire deck in one night: new faces, real reactions and a reason to talk that is not someone's referral bonus.",
@@ -142,6 +143,35 @@ export const usWestCities: Record<string, CityData> = {
         q: "Can I apply to be a contestant?",
         a: "Yes. Apply now. Applications stay active for 12 months. Sacramento applicants will be prioritized when we confirm a date.",
       },
+      {
+        q: "Is there Indian speed dating in Sacramento?",
+        a: "Sacramento's desi singles inherit Bay Area expectations and a fraction of the Bay Area calendar. Speed dating barely exists here. A live show with a mixer gives the capital its own night instead of another 80 West errand.",
+      },
+      {
+        q: "Where do South Asian singles in Sacramento actually meet?",
+        a: "Folsom and Elk Grove community circuits, state worker networks, Sac State and UC Davis Health circles and Bay Area events two hours away. The population keeps growing. The calendar has not caught up. That is our cue.",
+      },
+      {
+        q: "Would Davis students come to a Sacramento show?",
+        a: "Twenty minutes on the causeway, so yes. A Sacramento room always ends up part capital, part campus, which makes the mixer better for everyone.",
+      },
+    ],
+    sections: [
+      {
+        heading:
+          "Sacramento inherited the Bay's desi singles without the Bay's scene",
+        paragraphs: [
+          "The Bay Area exodus filled Folsom, Elk Grove and Roseville with South Asian tech workers who kept their jobs, shed their rents and quietly gave the capital region one of the fastest growing desi populations in California. They arrived expecting some version of the Bay's social density and found a scene built around state work schedules and family community events. The singles among them describe the same limbo: too settled to drive to San Francisco every weekend, too new for the local network to work on their behalf.",
+          "A capital show ends the limbo. Local room, local crowd and a mixer where 'I also fled the Bay' is the region's universal icebreaker.",
+        ],
+      },
+      {
+        heading: "What a Garam Masala night in Sacramento looks like",
+        paragraphs: [
+          "A Folsom software engineer and a UC Davis Health resident who have never met, on stage, going on a first date while midtown fills with the capital's entire desi scene at once. Comedian hosts, live votes and a mixer where the farm-to-fork small talk converts into actual plans.",
+          "Join the waitlist for first access when we announce, or apply to be a contestant and give the 916 its own highlight reel.",
+        ],
+      },
     ],
   },
 
@@ -195,6 +225,34 @@ export const usWestCities: Record<string, CityData> = {
       {
         q: "Can I apply to be a contestant?",
         a: "Yes. Apply now. Applications stay active for 12 months. Davis applicants will be prioritized when we confirm a date.",
+      },
+      {
+        q: "Is there Indian speed dating in Davis?",
+        a: "Davis has bike lanes, farmers markets and no desi singles events whatsoever. The campus orgs cover culture, not dating. One show covers the rest.",
+      },
+      {
+        q: "Where do UC Davis desi students actually meet?",
+        a: "Lab groups, the ARC, the MU patio and the same downtown blocks everyone cycles through daily. Three square miles of proximity with zero romantic infrastructure.",
+      },
+      {
+        q: "Davis show or Sacramento show?",
+        a: "They feed each other: the causeway is twenty minutes and both waitlists count toward one regional room. Sign up wherever you are and we will put the venue where the numbers point.",
+      },
+    ],
+    sections: [
+      {
+        heading: "Davis is a small town with a big university's dating problem",
+        paragraphs: [
+          "UC Davis brings a large Indian and South Asian enrollment into a town that is functionally a campus with zoning. The social geography is famously tiny: everyone bikes the same streets, studies in the same buildings and swipes through the same dozen profiles until the app becomes a yearbook. The escape options are Sacramento, mild, or the Bay, far, and neither happens on a grad student schedule.",
+          "The show works in Davis because the town's whole scene fits in one room and finally gets to act like the community it technically already is.",
+        ],
+      },
+      {
+        heading: "What a Garam Masala night in Davis looks like",
+        paragraphs: [
+          "Two Aggies, the UC kind, who have never met, a viticulture PhD and a biomedical engineering masters maybe, on stage, going on a first date while the whole town reacts. Comedian hosts, live votes and a mixer downtown where everyone's bike is parked within a hundred feet of the second date options.",
+          "Join the waitlist to bring the show across the causeway, or apply to be a contestant and give Davis a story bigger than the farmers market.",
+        ],
       },
     ],
   },
@@ -253,6 +311,34 @@ export const usWestCities: Record<string, CityData> = {
       {
         q: "Can I apply to be a contestant?",
         a: "Yes. Apply now. Applications stay active for 12 months. Irvine applicants will be prioritized when we confirm a date.",
+      },
+      {
+        q: "Is there Indian speed dating in Irvine or Orange County?",
+        a: "OC gets the occasional desi mixer up toward Anaheim's Little India district, but Irvine itself, one of the most South Asian cities in Southern California, has nothing built for singles. We find that backwards and intend to fix it.",
+      },
+      {
+        q: "Where do South Asian singles in Irvine actually meet?",
+        a: "UCI circles, the tech and biotech campuses around the Spectrum, Diamond Jamboree adjacent food runs and community events designed for families. The city was master planned for everything except this.",
+      },
+      {
+        q: "Will LA people drive down?",
+        a: "Some will, the 405 permitting. But the point of an Irvine show is that OC's desi singles stop being a suburb of LA's scene and get their own room, their own cast and their own mixer.",
+      },
+    ],
+    sections: [
+      {
+        heading: "Irvine was master planned without a singles scene",
+        paragraphs: [
+          "Irvine's South Asian population boomed alongside UCI and the tech, biotech and finance campuses around the Spectrum, making it one of the most desi cities in Southern California. It is also a city engineered for order: great schools, safe streets, everything closes early and spontaneity was not in the plan. Single desis here live minutes from thousands of other single desis and meet none of them, because the city's social surfaces are all family parks and office campuses.",
+          "A live show is the unplanned thing Irvine needs, scheduled responsibly, with parking, because we know our audience.",
+        ],
+      },
+      {
+        heading: "What a Garam Masala night in Irvine looks like",
+        paragraphs: [
+          "A UCI grad student and a Spectrum product manager who have never met, on stage, going on a first date while Orange County's politest crowd discovers it has opinions and volume. Comedian hosts, live votes and a mixer where the boba run afterward is a structural part of the evening.",
+          "Join the waitlist to give OC its own night, or apply to be a contestant and bring some chaos to the master plan.",
+        ],
       },
     ],
   },
@@ -398,6 +484,34 @@ export const usWestCities: Record<string, CityData> = {
         q: "Can I apply to be a contestant?",
         a: "Yes. Apply now. Applications stay active for 12 months. Portland applicants will be prioritized when we confirm a date.",
       },
+      {
+        q: "Is there Indian speed dating in Portland?",
+        a: "Portland has speed dating for climbers, for book lovers and for people who ferment things, but not for desi singles. The west side's Intel corridor alone could fill a room. We plan to prove it.",
+      },
+      {
+        q: "Where do South Asian singles in Portland actually meet?",
+        a: "Intel's Hillsboro campuses, Nike and the west side tech belt, PSU and OHSU circles and community events in Beaverton. The scene is west of the river and the nightlife is east, which is half the problem right there.",
+      },
+      {
+        q: "East side or west side venue?",
+        a: "Central, most likely, so the Hillsboro crowd and the inner east side both make it without a bridge crisis. The waitlist zip codes referee, as always.",
+      },
+    ],
+    sections: [
+      {
+        heading: "Portland's desi scene is split by the river and the commute",
+        paragraphs: [
+          "Portland's South Asian community lives a bridge apart from its own social life. Intel's Hillsboro campuses and the west side tech belt hold the professional mass, Beaverton holds the community infrastructure, and the city's famous nightlife and weirdness live across the river where almost none of them do. The result is a desi scene that is bigger than Portland realizes and lonelier than it should be, swiping through a pool the apps insist is small because everyone's radius stops at the west hills.",
+          "One central show pulls both sides across their bridges on the same night, which in Portland terms is a diplomatic achievement.",
+        ],
+      },
+      {
+        heading: "What a Garam Masala night in Portland looks like",
+        paragraphs: [
+          "An Intel engineer and an OHSU resident who have never met, on stage, going on a first date while a city that ironically detests earnestness discovers it loves watching it. Comedian hosts, live votes and a mixer where the food cart consensus is the compatibility test.",
+          "Join the waitlist to bring the show to the Rose City, or apply to be a contestant and keep Portland weird in the one way it has not tried yet.",
+        ],
+      },
     ],
   },
 
@@ -456,6 +570,35 @@ export const usWestCities: Record<string, CityData> = {
         q: "Can I apply to be a contestant?",
         a: "Yes. Apply now. Applications stay active for 12 months. Phoenix applicants will be prioritized when we confirm a date.",
       },
+      {
+        q: "Is there Indian speed dating in Phoenix?",
+        a: "The East Valley's desi social calendar is temples, cricket and community festivals, with singles events near zero. For one of the fastest growing desi corridors in the Southwest, that gap is the whole opportunity.",
+      },
+      {
+        q: "Where do South Asian singles in Phoenix actually meet?",
+        a: "Intel and the Chandler tech corridor, ASU's massive campus orbit, Gilbert community events and air conditioned proximity everywhere else. It is a car city: organic run-ins do not happen. Engineered run-ins are literally our product.",
+      },
+      {
+        q: "Chandler, Tempe or Scottsdale for the venue?",
+        a: "Tempe splits the difference between ASU and the East Valley corridor and keeps Scottsdale in range. Waitlist zip codes make the final call, climate control guaranteed either way.",
+      },
+    ],
+    sections: [
+      {
+        heading:
+          "The East Valley became a desi corridor while nobody was looking",
+        paragraphs: [
+          "Chandler, Gilbert and Tempe quietly assembled one of the Southwest's largest South Asian populations: Intel's fabs and the semiconductor supply chain anchor the professional base, ASU feeds a huge student and alumni layer and the new chip investments keep accelerating all of it. The community built temples, groceries and cricket leagues at remarkable speed. The singles got nothing, because a car city with family-first institutions produces exactly zero serendipity.",
+          "A show manufactures the serendipity. One room, one night, the whole corridor off the 101 and 202 in the same place with intent.",
+        ],
+      },
+      {
+        heading: "What a Garam Masala night in Phoenix looks like",
+        paragraphs: [
+          "An Intel process engineer and an ASU PhD who have never met, on stage, going on a first date while the East Valley votes with playoff energy. Comedian hosts, live chaos and a mixer where discovering someone lives on your side of the 101 feels like fate.",
+          "Join the waitlist for first access, or apply to be a contestant. Evening show, brutal AC, zero degrees of swelter. We plan around the desert.",
+        ],
+      },
     ],
   },
 
@@ -512,6 +655,34 @@ export const usWestCities: Record<string, CityData> = {
       {
         q: "Can I apply to be a contestant?",
         a: "Yes. Apply now. Applications stay active for 12 months. Tucson applicants will be prioritized when we confirm a date.",
+      },
+      {
+        q: "Is there Indian speed dating in Tucson?",
+        a: "Tucson's desi community is university-tight and event-poor. Nothing singles-first exists here, and Phoenix is a two hour round trip. One local show changes the entire calculus.",
+      },
+      {
+        q: "Where do South Asian singles in Tucson actually meet?",
+        a: "U of A grad circles, Banner health system cohorts and the fourth avenue and university district loop. Small pool, total context, no occasions. Our favorite kind of fix.",
+      },
+      {
+        q: "Would Phoenix desis drive down?",
+        a: "Some always do, especially when the East Valley wants a night that is not its own backyard. But a Tucson show is built for Tucson: the desert pace, the tight community and the university heartbeat.",
+      },
+    ],
+    sections: [
+      {
+        heading: "Tucson's desi scene is one campus and total familiarity",
+        paragraphs: [
+          "The University of Arizona anchors nearly all of desi Tucson: graduate students across the sciences, med students and residents through Banner, and a modest professional layer that stayed for the mountains and the calm. The community's size means everyone has complete social context on everyone within a semester, and the dating scene quietly relocates to Phoenix trips and app radii that hit the border.",
+          "Small, tight scenes produce the most electric shows because the stakes are visible to the whole room. Tucson will know both daters. That is the point.",
+        ],
+      },
+      {
+        heading: "What a Garam Masala night in Tucson looks like",
+        paragraphs: [
+          "A U of A optics PhD and a Banner resident who have never met, on stage, going on a first date while the desert's entire desi scene reacts under one roof. Comedian hosts, live votes and a mixer that drifts to fourth avenue while the sunset does the ambiance for free.",
+          "Join the waitlist to bring the show down the 10, or apply to be a contestant and give the Old Pueblo a new story.",
+        ],
       },
     ],
   },
@@ -571,6 +742,34 @@ export const usWestCities: Record<string, CityData> = {
         q: "Can I apply to be a contestant?",
         a: "Yes. Apply now. Applications stay active for 12 months. Las Vegas applicants will be prioritized when we confirm a date.",
       },
+      {
+        q: "Is there Indian speed dating in Las Vegas?",
+        a: "For tourists, everything exists. For local desi singles, nothing does. Vegas locals famously avoid the Strip, which means the community's singles have a world of nightlife they never use and no night of their own. We fix exactly that.",
+      },
+      {
+        q: "Where do South Asian singles in Las Vegas actually meet?",
+        a: "Henderson and Summerlin community events, UNLV circles, the hospital systems and hospitality management floors. The local desi scene is real, growing and completely overshadowed by the tourist economy around it.",
+      },
+      {
+        q: "Will the show be on the Strip?",
+        a: "Off Strip, for locals, on purpose. Think Henderson or a downtown venue where parking is real and nobody is charging resort fees for a comedy show.",
+      },
+    ],
+    sections: [
+      {
+        heading: "Vegas locals built a desi community the Strip never sees",
+        paragraphs: [
+          "Las Vegas has a fast growing South Asian community that lives entirely in the parallel city tourists never visit: Henderson and Summerlin subdivisions, UNLV's campus, the hospital systems and the corporate side of the casino industry, where desi engineers and analysts run the machines behind the lights. Local social life happens in community halls and home gatherings, and the singles inherit the strangest dating market in America: infinite nightlife designed for visitors, zero nights designed for them.",
+          "An off Strip show gives local desi Vegas what it has never had: an event in its own city, for its own people, with a mixer that does not involve a casino floor.",
+        ],
+      },
+      {
+        heading: "What a Garam Masala night in Las Vegas looks like",
+        paragraphs: [
+          "A UNLV hospitality grad and a Henderson data analyst who have never met, on stage, going on a first date while a room of locals brings service industry timing to the audience votes. Comedian hosts, live chaos and a mixer where 'I never go to the Strip either' is the strongest bond two people can form in Clark County.",
+          "Join the waitlist to bring the show to the locals' Vegas, or apply to be a contestant. What happens on stage very much does not stay there, that is the point.",
+        ],
+      },
     ],
   },
 
@@ -621,6 +820,34 @@ export const usWestCities: Record<string, CityData> = {
       {
         q: "Can I apply to be a contestant?",
         a: "Yes. Apply now. Applications stay active for 12 months. Albuquerque applicants will be prioritized when we confirm a date.",
+      },
+      {
+        q: "Is there Indian speed dating in Albuquerque?",
+        a: "New Mexico has never had a desi singles event. Between Sandia, UNM and the tech transplants, the audience is here, quietly, waiting for someone to build the night. Consider it built.",
+      },
+      {
+        q: "Where do South Asian singles in Albuquerque actually meet?",
+        a: "Sandia Labs badge lines, UNM grad circles, the hospital systems and community potlucks where the median age is either 24 or 60 with nothing between. A show serves exactly the missing middle.",
+      },
+      {
+        q: "Would Santa Fe folks come down?",
+        a: "An hour on I-25 for the only desi singles event in state history? Santa Fe, Los Alamos and Rio Rancho will all be in the room, and the Los Alamos crowd will overthink the audience vote beautifully.",
+      },
+    ],
+    sections: [
+      {
+        heading: "New Mexico's desi scene is scientists all the way down",
+        paragraphs: [
+          "Albuquerque's South Asian community is anchored by institutions that select for brains: Sandia National Laboratories, UNM and its hospital system and the Los Alamos orbit up the highway. The result is a small, deeply educated desi population whose social life runs through lab groups and department events, with a dating pool that everyone assumes is empty because it has never once been gathered in one place.",
+          "Gathering it is the entire job. One room in Nob Hill or downtown, one night and the state's desi singles finally get a headcount.",
+        ],
+      },
+      {
+        heading: "What a Garam Masala night in Albuquerque looks like",
+        paragraphs: [
+          "A Sandia engineer and a UNM resident who have never met, on stage, going on a first date while New Mexico's entire desi scene fits in one room and reacts accordingly. Comedian hosts, live votes and a mixer where green versus red chile is the compatibility question that actually matters.",
+          "Join the waitlist to put the 505 on the tour, or apply to be a contestant and make state history with your flirting.",
+        ],
       },
     ],
   },
@@ -675,6 +902,34 @@ export const usWestCities: Record<string, CityData> = {
       {
         q: "Can I apply to be a contestant?",
         a: "Yes. Apply now. Applications stay active for 12 months. Boise applicants will be prioritized when we confirm a date.",
+      },
+      {
+        q: "Is there Indian speed dating in Boise?",
+        a: "Idaho has never seen a desi singles event. Micron's expansion is changing the math fast, and the first show in the Treasure Valley will draw from a community that is finally big enough to fill a room.",
+      },
+      {
+        q: "Where do South Asian singles in Boise actually meet?",
+        a: "Micron's campuses, HP and the growing tech scene, Boise State circles and a community small enough that the group chat is the institution. Proximity is total, occasions are zero. Familiar equation, known solution.",
+      },
+      {
+        q: "Is Boise really on the tour map?",
+        a: "Growth markets earn their way on. Micron's expansion is importing desi engineers by the hundreds, and waitlist velocity is how a frontier market jumps the queue. Boise controls its own destiny here.",
+      },
+    ],
+    sections: [
+      {
+        heading: "Micron is building Boise's desi community in real time",
+        paragraphs: [
+          "Boise's South Asian story is being written right now: Micron's headquarters and its expanding fab investment keep importing engineers, HP and the local tech scene add their own layer and Boise State contributes the student base. The community is young, technical and growing faster than its institutions, which currently consist of a couple of restaurants, a grocery run and a very active group chat. Singles here experience frontier loneliness: surrounded by mountains, foothill trails and almost nobody who shares the cultural shorthand.",
+          "First shows in frontier markets become founding events. The couples who meet at Boise's first desi night will tell that story forever, and we want the credit.",
+        ],
+      },
+      {
+        heading: "What a Garam Masala night in Boise looks like",
+        paragraphs: [
+          "A Micron process engineer and a St. Luke's resident who have never met, on stage, going on a first date while the Treasure Valley's whole desi scene shares a room for the first time ever. Comedian hosts, live votes and a mixer downtown where the foothills sunset handles the atmosphere.",
+          "Join the waitlist to write Idaho's first chapter, or apply to be a contestant and be the reason the group chat finally has news.",
+        ],
       },
     ],
   },
@@ -733,6 +988,34 @@ export const usWestCities: Record<string, CityData> = {
       {
         q: "Can I apply to be a contestant?",
         a: "Yes. Apply now. Applications stay active for 12 months. Hawaii applicants will be prioritized when we confirm a date.",
+      },
+      {
+        q: "Is there Indian speed dating in Honolulu?",
+        a: "Hawaii's desi community is too small for a speed dating circuit and exactly the right size for one great night. On an island, the first desi singles event is automatically the biggest in history. We accept the title in advance.",
+      },
+      {
+        q: "Where do South Asian singles in Honolulu actually meet?",
+        a: "UH Manoa circles, the medical systems, the military bases and a community where everyone already knows everyone's auntie. The island radius problem is real: you cannot swipe your way to the next city over.",
+      },
+      {
+        q: "Is this just an excuse to do a show in Hawaii?",
+        a: "It is a real market with a real gap AND an excellent excuse. Both things are true and we are at peace with that.",
+      },
+    ],
+    sections: [
+      {
+        heading: "Island dating math is brutal and nobody talks about it",
+        paragraphs: [
+          "Honolulu's South Asian community is small: UH Manoa students and faculty, physicians in the hospital systems, military families rotating through and a professional handful who chose paradise over proximity to the diaspora. The dating math is what makes it unique. On the mainland a thin local pool means widening the radius. On Oahu the radius ends at the reef. Every single desi on the island knows the entire rest of the list, or thinks they do.",
+          "A show gives the island's scene one intentional gathering, plus the mainland transplants and military rotations the community never quite absorbs. The room will be small and it will be legendary.",
+        ],
+      },
+      {
+        heading: "What a Garam Masala night in Honolulu looks like",
+        paragraphs: [
+          "A UH researcher and a Tripler physician who have never met, on stage, going on a first date while the entire desi population of an island watches, because it literally can. Comedian hosts, live votes and a mixer that walks out to the beach after, because some venues cannot be beaten.",
+          "Join the waitlist to make the islands real, or apply to be a contestant and give your mainland cousins genuine envy.",
+        ],
       },
     ],
   },

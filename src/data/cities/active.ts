@@ -240,6 +240,34 @@ export const activeCities: Record<string, CityData> = {
         q: "How many people attend a Garam Masala Dating show?",
         a: "Our NYC shows sell out at 250 people. Touring shows run 100 to 200 depending on venue.",
       },
+      {
+        q: "Is there Indian speed dating in San Diego?",
+        a: "San Diego's desi singles get community events and the occasional LA trek up the 5. No recurring singles night exists here, which for a metro with this much biotech and defense tech talent is a genuine oversight. We correct oversights.",
+      },
+      {
+        q: "Where do South Asian singles in San Diego actually meet?",
+        a: "The UTC and Sorrento Valley biotech corridor, UCSD's campus orbit, Mira Mesa's desi commercial strip and community events built for families. Proximity everywhere, occasions nowhere.",
+      },
+      {
+        q: "Is the LA show close enough for San Diego?",
+        a: "Two hours each way on a Friday is a commitment, and plenty of San Diegans have made it. The waitlist is how you tell us to stop making you. Local numbers bring the local show.",
+      },
+    ],
+    sections: [
+      {
+        heading: "San Diego's desi scene runs on biotech and stays home",
+        paragraphs: [
+          "San Diego's South Asian community grew up around UCSD, the Sorrento Valley biotech cluster and the defense and telecom engineering base, with Mira Mesa as its commercial heart. It is a comfortable, sunny, family-shaped scene, and its singles quietly suffer for it: the community calendar assumes households, the apps churn the same few thousand faces and Los Angeles hovers two hours north absorbing all the event energy.",
+          "A San Diego show keeps the best crowd in Southern California in its own city for one night, and the mixer runs on beach town friendliness that the LA scene honestly cannot match.",
+        ],
+      },
+      {
+        heading: "What a Garam Masala night in San Diego looks like",
+        paragraphs: [
+          "A Sorrento Valley scientist and a UCSD postdoc who have never met, on stage, going on a first date while North Park and Mira Mesa react in the same room for the first time. Comedian hosts, live votes and a mixer where the taco consensus afterward is a binding social contract.",
+          "Join the waitlist to bring the show down the 5, or apply to be a contestant and give America's finest city its finest first date.",
+        ],
+      },
     ],
   },
 
@@ -465,6 +493,34 @@ export const activeCities: Record<string, CityData> = {
         q: "Can I apply to be a contestant before a date is announced?",
         a: "Yes. Apply now. Applications stay active for 12 months and SLC applicants will be prioritized when we confirm a date.",
       },
+      {
+        q: "Is there Indian speed dating in Salt Lake City?",
+        a: "Utah has never had a desi singles event. The Silicon Slopes tech boom brought the community, the University of Utah keeps feeding it and the first show here becomes the scene's founding story by default.",
+      },
+      {
+        q: "Where do South Asian singles in SLC actually meet?",
+        a: "Silicon Slopes campuses from Lehi to Draper, University of Utah circles and a community small enough that everyone has met at exactly one Diwali event. Structured occasions are the missing piece.",
+      },
+      {
+        q: "Does the show work in a smaller desi market like Utah?",
+        a: "Small markets are our loudest rooms because the night actually matters. When the whole scene shares one room for the first time, the mixer does a year of introductions in an hour.",
+      },
+    ],
+    sections: [
+      {
+        heading: "Silicon Slopes imported a desi community without a scene",
+        paragraphs: [
+          "Utah's tech boom pulled South Asian engineers into Lehi, Draper and Sandy faster than any community infrastructure could follow, and the University of Utah adds a steady graduate layer. The result is a young, technical desi population scattered along the I-15 corridor whose entire social surface is work, the gym and a group chat. The mountains are spectacular and the dating scene is a rumor.",
+          "One SLC show gives the corridor its first real gathering. Frontier markets remember their first, and we like being memorable.",
+        ],
+      },
+      {
+        heading: "What a Garam Masala night in Salt Lake looks like",
+        paragraphs: [
+          "A Lehi product manager and a University of Utah researcher who have never met, on stage, going on a first date while the Wasatch Front's entire desi scene shares one room and discovers its own headcount. Comedian hosts, live votes and a mixer where the ski small talk finally leads somewhere.",
+          "Join the waitlist to bring the show to the Slopes, or apply to be a contestant and become Utah desi folklore.",
+        ],
+      },
     ],
   },
 
@@ -607,6 +663,34 @@ export const activeCities: Record<string, CityData> = {
       {
         q: "Can I apply to be a contestant before a Denver date is announced?",
         a: "Yes. Apply now. Applications stay active for 12 months and Denver applicants will be prioritized when we confirm a date.",
+      },
+      {
+        q: "Is there Indian speed dating in Denver?",
+        a: "Denver's desi singles have community events, hiking groups where everyone is already coupled and no singles night of their own. For a metro pulling this much young tech and aerospace talent, that gap is overdue for closing.",
+      },
+      {
+        q: "Where do South Asian singles in Denver actually meet?",
+        a: "The DTC and Boulder tech corridors, Anschutz medical campus, aerospace floors around the metro and trailheads at 6am, which is a friendship venue, not a dating one. The scene needs a room with drinks and intent.",
+      },
+      {
+        q: "Would Boulder come down for a Denver show?",
+        a: "Boulder's desi grad students and tech workers are 35 minutes away with nothing comparable up the hill. A RiNo or LoDo venue pulls the whole Front Range, and the waitlist numbers say Boulder knows it.",
+      },
+    ],
+    sections: [
+      {
+        heading: "Denver's desi transplants are fit, employed and unintroduced",
+        paragraphs: [
+          "Denver's South Asian community is a transplant story: tech and aerospace recruiting, the Anschutz medical campus and Boulder's university and startup scene pulled a generation of young desi professionals to the Front Range for the mountains and the pay. Nobody's parents live here, nobody's aunty network operates here and the community events that exist skew family. The singles hike, ski, work and swipe through a pool that feels weirdly thin for a metro this size because it has never been gathered.",
+          "A Denver show is the gathering. One room at altitude, every scattered circle of Front Range desi life finally in the same place on purpose.",
+        ],
+      },
+      {
+        heading: "What a Garam Masala night in Denver looks like",
+        paragraphs: [
+          "An Anschutz resident and a Boulder startup engineer who have never met, on stage, going on a first date while the Front Range votes with thin-air enthusiasm. Comedian hosts, live chaos and a mixer in RiNo where the fourteener talk finally converts into an actual date plan.",
+          "Join the waitlist to lock in the Mile High show, or apply to be a contestant and flirt at elevation.",
+        ],
       },
     ],
   },

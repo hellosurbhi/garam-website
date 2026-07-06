@@ -72,7 +72,7 @@ async function getAccessToken() {
   return access_token;
 }
 
-async function grant(uid, accessToken) {
+async function grant(uid, accessToken, entryNum) {
   const url = `https://identitytoolkit.googleapis.com/v1/projects/${projectId}/accounts:update`;
   const res = await fetch(url, {
     method: "POST",
@@ -86,10 +86,10 @@ async function grant(uid, accessToken) {
     }),
   });
   if (!res.ok) {
-    console.error(`  ✗ ${uid}: ${res.status} ${await res.text()}`);
+    console.error(`  ✗ entry ${entryNum}: ${res.status} ${await res.text()}`);
     return false;
   }
-  console.log(`  ✓ ${uid}`);
+  console.log(`  ✓ entry ${entryNum}`);
   return true;
 }
 
@@ -98,8 +98,10 @@ console.log(
   `[grant-admin-claims] granting admin claim to ${adminUids.length} uid(s):`,
 );
 let ok = 0;
+let entryNum = 0;
 for (const uid of adminUids) {
-  if (await grant(uid, token)) ok += 1;
+  entryNum++;
+  if (await grant(uid, token, entryNum)) ok += 1;
 }
 console.log(`[grant-admin-claims] done: ${ok}/${adminUids.length} succeeded.`);
 console.log("Admins must re-authenticate for the claim to take effect.");

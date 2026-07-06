@@ -81,6 +81,9 @@ export const GET: APIRoute = async ({ request }) => {
   }
 
   if (inviteId) {
+    if (inviteId.includes("/")) {
+      return json({ state: "error", message: "Invalid invite link." }, 400);
+    }
     const invite = await fsGet(`invites/${inviteId}`);
     if (!invite) {
       return json({ state: "error", message: "Invalid invite link." }, 404);

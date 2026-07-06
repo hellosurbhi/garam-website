@@ -1,5 +1,6 @@
 export const prerender = false;
 
+import { timingSafeEqual } from "node:crypto";
 import type { APIRoute } from "astro";
 import { fsGet, fsPatch, fsAdd, fsListAll, fsQuery } from "@/lib/firestoreRest";
 import { sendMail } from "@/lib/zohoMailer";
@@ -30,7 +31,10 @@ const MAX_PER_RUN = 50;
 function verifyCronSecret(request: Request): boolean {
   const cronSecret = import.meta.env.CRON_SECRET;
   if (!cronSecret) return false;
-  return request.headers.get("authorization") === `Bearer ${cronSecret}`;
+  const provided = request.headers.get("authorization") ?? "";
+  const expected = `Bearer ${cronSecret}`;
+  if (provided.length !== expected.length) return false;
+  return timingSafeEqual(Buffer.from(provided), Buffer.from(expected));
 }
 
 function toMs(val: unknown): number | null {

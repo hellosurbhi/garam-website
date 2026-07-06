@@ -9,7 +9,11 @@ import { waiverNudge } from "@/data/emails";
 import { events } from "@/data/events";
 
 const Schema = z.object({
-  applicationId: z.string().min(1).max(200),
+  applicationId: z
+    .string()
+    .min(1)
+    .max(200)
+    .refine((v) => !v.includes("/"), { message: "Invalid applicationId" }),
 });
 
 function json(data: Record<string, unknown>, status = 200) {

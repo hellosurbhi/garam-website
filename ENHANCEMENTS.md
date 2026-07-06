@@ -1419,4 +1419,12 @@ The system should also send a day-before confirmation email automatically so the
 - `src/emails/ContestantConfirmationEmail.tsx` (new)
 - Scheduled email endpoint/job configuration
 
+### Admin applications PATCH API
+
+PR #16 included `src/pages/api/applications.ts`: an admin-authenticated endpoint for patching applicant status, notes, and soft-delete. It used firebase-admin SDK (not on main). Needs rewrite to firestoreRest + `verifyAdminToken` pattern before adding. The `AdminApplicationPatchSchema` validation is already in `src/lib/schemas.ts`.
+
+### Stale generate-contestant-link API
+
+`src/pages/api/generate-contestant-link.ts` (and its test) was deleted in PR #16 but is still present on main. It should be removed: the invite flow now goes through `create-invite.ts` and the contestant portal token pattern.
+
 ## Skipped reviews (pending retry)

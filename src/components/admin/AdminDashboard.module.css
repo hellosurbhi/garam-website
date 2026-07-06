@@ -128,6 +128,66 @@
   min-width: 220px;
 }
 
+.searchWrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+  min-width: 200px;
+}
+
+.searchIcon {
+  position: absolute;
+  left: 10px;
+  pointer-events: none;
+  color: var(--text-light);
+  transition: color 0.15s;
+}
+
+.searchWrapper:focus-within .searchIcon {
+  color: var(--charcoal);
+}
+
+.searchInput {
+  width: 100%;
+  padding: 8px 30px 8px 30px;
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  background: #fff;
+  font-family: var(--font-body);
+  font-size: 14px;
+  color: var(--text);
+  outline: none;
+  transition:
+    border-color 0.15s,
+    box-shadow 0.15s;
+}
+
+.searchInput::placeholder {
+  color: var(--text-light);
+}
+
+.searchInput:focus {
+  border-color: var(--charcoal);
+  box-shadow: 0 0 0 2px rgba(26, 26, 26, 0.08);
+}
+
+.searchClear {
+  position: absolute;
+  right: 8px;
+  display: flex;
+  align-items: center;
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: var(--text-light);
+  padding: 2px;
+  transition: color 0.15s;
+}
+
+.searchClear:hover {
+  color: var(--text);
+}
+
 .clearButton {
   background: none;
   border: none;
@@ -306,6 +366,9 @@
   }
   .main {
     padding: 16px;
+  }
+  .searchWrapper {
+    min-width: 100%;
   }
   .filterItem {
     min-width: 100%;

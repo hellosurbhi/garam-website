@@ -2,6 +2,16 @@ rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
 
+    // A request is an admin only when the verified ID token carries the
+    // custom claim { admin: true }. Anonymous sessions (used by the public
+    // apply form via signInAnonymously) never carry this claim, so they can
+    // create an application but can never read the applications or leads
+    // collections. Grant the claim with scripts/grant-admin-claims.mjs BEFORE
+    // deploying these rules, or the admin dashboard loses read access.
+    function isAdmin() {
+      return request.auth != null && request.auth.token.admin == true;
+    }
+
     function validLead() {
       let d = request.resource.data;
       return d.keys().hasOnly(['email', 'city', 'state', 'country', 'phone', 'source', 'sourcePage', 'landingPage', 'referrerHost', 'utmSource', 'utmMedium', 'utmCampaign', 'utmContent', 'utmTerm', 'fbclid', 'gclid', 'posthogDistinctId', 'sourceCitySlug', 'createdAt', 'geoCity', 'geoRegion', 'geoCountry', 'geoLatitude', 'geoLongitude', 'geoTimezone'])
@@ -108,28 +118,32 @@ service cloud.firestore {
     }
 
     match /applications/{doc} {
+      // Anonymous apply-form sessions may create a valid application, but only
+      // admins may read or mutate the collection (prevents PII enumeration).
       allow create: if request.auth != null && validApplication();
-      allow read, update, delete: if request.auth != null;
+      allow read, update, delete: if isAdmin();
     }
     match /applications/{doc}/{subcollection=**} {
-      allow create: if request.auth != null;
-      allow read, update, delete: if request.auth != null;
+      allow read, create, update, delete: if isAdmin();
     }
     match /leads/{doc} {
+      // Public email capture stays open; the phone step is bounded to the
+      // phone field only. Reads/deletes are admin-only so the waitlist can
+      // never be enumerated by an anonymous session.
       allow create: if validLead();
-      allow update: if validPhoneUpdate() || request.auth != null;
-      allow read, delete: if request.auth != null;
+      allow update: if validPhoneUpdate() || isAdmin();
+      allow read, delete: if isAdmin();
     }
     match /orders/{orderId} {
-      allow read: if request.auth != null;
+      allow read: if isAdmin();
       allow write: if false; // server-only via REST API with service account
     }
     match /syncMeta/{docId} {
-      allow read: if request.auth != null;
+      allow read: if isAdmin();
       allow write: if false; // server-only via REST API with service account
     }
     match /systemConfig/{docId} {
-      allow read, write: if request.auth != null;
+      allow read, write: if isAdmin();
     }
   }
 }

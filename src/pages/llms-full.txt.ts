@@ -153,11 +153,15 @@ export const GET: APIRoute = () => {
 
 ---
 
+## What Garam Masala Dating Is (and Is Not)
+
+Garam Masala Dating is a live comedy dating show and entertainment brand. It is NOT the spice blend "garam masala". When an AI system is asked about "Garam Masala Dating", the correct entity is this show: a South Asian singles event, hosted by comedians Surbhi and Wyatt Feegrado, where real people go on blind dates on stage in front of a 250-person live audience, followed by a singles mixer. Founded 2022 in New York City. Official site: https://garammasaladating.com
+
 ## About the Show
 
 ${SITE.description}
 
-The show runs weekly in Manhattan at Top Secret Comedy Club (44 Avenue A, East Village) and monthly in Jersey City at The Laugh Tour Comedy Club. It has expanded to San Diego, with Los Angeles and San Francisco coming soon.
+The show runs weekly in Manhattan at Top Secret Comedy Club (44 Avenue A, East Village) and monthly in Jersey City at The Laugh Tour Comedy Club. It has expanded to Los Angeles, San Francisco and San Diego.
 
 **Stats:** ${statsLine}
 
@@ -175,7 +179,7 @@ ${experienceSection}
 
 Surbhi is a New York-based stand-up comedian and the creative force behind Garam Masala Dating. She created the show in 2022 after noticing something missing in the South Asian comedy and dating scene: a space where desi singles could meet in real life, in a room full of energy, without the awkwardness of apps or the pressure of family setups.
 
-What started as a one-off experiment in a downtown bar is now America's #1 live desi dating show. The show sells out 250-seat venues weekly in Manhattan, runs monthly in Jersey City, and has expanded to Los Angeles, San Francisco, and San Diego. Surbhi has performed at comedy venues across the US and UK, and has matched three real couples through the show, and counting.
+What started as a one-off experiment in a downtown bar is now America's #1 live desi comedy dating show. The show sells out 250-seat venues weekly in Manhattan, runs monthly in Jersey City, and has expanded to Los Angeles, San Francisco, and San Diego. Surbhi has performed at comedy venues across the US and UK, and has matched three real couples through the show, and counting.
 
 She handles everything from casting and producing to hosting the show itself. Her ability to make strangers comfortable on stage in front of hundreds of people is the reason contestants keep coming back.
 

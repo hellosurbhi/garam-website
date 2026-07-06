@@ -36,6 +36,7 @@ export interface Application {
   pitch?: string;
   type?: string;
   seenShowBefore?: boolean;
+  howHeard?: string;
   marketingConsent?: "yes" | "no";
   termsAgreedAt?: Timestamp;
   photoUrl?: string; // legacy single-photo field — use getApplicantPhotos() to read
@@ -129,4 +130,20 @@ export const INCOME_OPTIONS = [
   "$150k to $200k",
   "Over $200k",
   "Prefer not to say",
+];
+
+/**
+ * Attribution choices for the apply form "How did you find us?" dropdown.
+ * This is channel-optimization data: it tells us which acquisition channels
+ * produce contestants, which the UTM capture cannot (people apply days after
+ * first hearing about the show, losing the original referrer).
+ */
+export const HOW_HEARD_OPTIONS = [
+  "Instagram",
+  "TikTok",
+  "YouTube",
+  "At a show",
+  "Friend or word of mouth",
+  "Google search",
+  "Other",
 ];

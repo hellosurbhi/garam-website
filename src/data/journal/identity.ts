@@ -874,7 +874,7 @@ export const identityPosts: JournalPost[] = [
       },
       {
         type: "p",
-        text: "I run the #1 live comedy dating show for South Asians, which means I spend a lot of time in rooms where the brown tax doesn't apply, where being desi is the ambient default rather than the thing you have to explain. Every time I talk to contestants who've been grinding on mainstream apps, I hear the same fatigue. Not just about dating being hard. About dating being hard in a specific, racialized way that compounds all the other ways it's hard.",
+        text: "I run the #1 desi comedy dating show, which means I spend a lot of time in rooms where the brown tax doesn't apply, where being desi is the ambient default rather than the thing you have to explain. Every time I talk to contestants who've been grinding on mainstream apps, I hear the same fatigue. Not just about dating being hard. About dating being hard in a specific, racialized way that compounds all the other ways it's hard.",
       },
       {
         type: "h2",

@@ -97,7 +97,7 @@ export const seasonalPosts: JournalPost[] = [
       },
       {
         q: "Where can South Asian singles meet people outside of weddings?",
-        a: "Garam Masala Dating is the #1 live comedy dating show in NYC where South Asian singles go on blind dates on stage in front of 250 people. No aunties. No questions. Just a show, a mixer, and a room full of people who are actually trying to meet someone.",
+        a: "Garam Masala Dating is the #1 desi comedy dating show in NYC where South Asian singles go on blind dates on stage in front of 250 people. No aunties. No questions. Just a show, a mixer, and a room full of people who are actually trying to meet someone.",
       },
       {
         q: "Are there South Asian singles events in NYC?",
@@ -209,7 +209,7 @@ export const seasonalPosts: JournalPost[] = [
       },
       {
         q: "What are the best ways to meet South Asian singles in person?",
-        a: "Live events, community gatherings, and shows where the shared activity is the draw and any connection is a bonus. Garam Masala Dating runs weekly in NYC \u2014 the #1 live comedy dating show followed by a singles mixer. It\u2019s low-stakes, high-energy, and full of people who are there to have fun, not to be desperate.",
+        a: "Live events, community gatherings, and shows where the shared activity is the draw and any connection is a bonus. Garam Masala Dating runs weekly in NYC \u2014 the #1 desi comedy dating show followed by a singles mixer. It\u2019s low-stakes, high-energy, and full of people who are there to have fun, not to be desperate.",
       },
       {
         q: "Is Garam Masala Dating open year-round?",
@@ -330,7 +330,7 @@ export const seasonalPosts: JournalPost[] = [
       },
       {
         q: "What is the best South Asian singles event in NYC during Diwali?",
-        a: "Garam Masala Dating runs weekly at Top Secret Comedy Club in Manhattan through October and November. It\u2019s the #1 live comedy dating show followed by a singles mixer. Over 40 shows in, 3 real couples out. Tickets and applications at garammasaladating.com.",
+        a: "Garam Masala Dating runs weekly at Top Secret Comedy Club in Manhattan through October and November. It\u2019s the #1 desi comedy dating show followed by a singles mixer. Over 40 shows in, 3 real couples out. Tickets and applications at garammasaladating.com.",
       },
       {
         q: "How do I meet South Asian singles at a Diwali party?",
@@ -446,7 +446,7 @@ export const seasonalPosts: JournalPost[] = [
       },
       {
         q: "What is Garam Masala Dating?",
-        a: "Garam Masala Dating is the #1 weekly live comedy dating show in NYC where South Asian singles go on blind dates on stage in front of 250 people. After the show there\u2019s a singles mixer. It runs at Top Secret Comedy Club in Manhattan. Three real couples have come out of it. Tickets and applications at garammasaladating.com.",
+        a: "Garam Masala Dating is the #1 weekly desi comedy dating show in NYC where South Asian singles go on blind dates on stage in front of 250 people. After the show there\u2019s a singles mixer. It runs at Top Secret Comedy Club in Manhattan. Three real couples have come out of it. Tickets and applications at garammasaladating.com.",
       },
     ],
     relatedSlugs: [

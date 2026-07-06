@@ -14,7 +14,7 @@ import StickyCTA from "@/components/StickyCTA.astro";
 
 const TITLE = "Tickets & Upcoming Shows";
 const DESC =
-  "Get tickets to Garam Masala Dating shows in New York and beyond. America's #1 live desi dating show and South Asian singles mixer. Now touring LA, SF, and San Diego.";
+  "Get tickets to Garam Masala Dating shows in New York and beyond. America's #1 live desi comedy dating show and South Asian singles mixer. Now touring LA, SF, and San Diego.";
 
 const today = new Date().toISOString().slice(0, 10);
 const datedUpcoming = getUpcomingDated(allEvents, today);
@@ -158,6 +158,7 @@ const eventSeriesJsonLd = JSON.stringify({
         subheading="Tell us where you are and we'll let you know when we're coming."
         submitLabel="Notify Me"
         successMessage="Got it! We'll reach out when we're headed your way."
+        collectCity={true}
       />
 
       {/* Footer */}

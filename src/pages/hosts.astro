@@ -12,6 +12,12 @@ const breadcrumbJsonLd = buildBreadcrumbJsonLd([
   { name: "Hosts" },
 ]);
 
+const orgRef = {
+  "@type": "Organization",
+  "@id": "https://garammasaladating.com/#organization",
+  name: "Garam Masala Dating",
+};
+
 const personJsonLd = JSON.stringify([
   {
     "@context": "https://schema.org",
@@ -19,7 +25,15 @@ const personJsonLd = JSON.stringify([
     name: "Surbhi",
     jobTitle: "Stand-Up Comedian & Co-Creator",
     url: CREATOR_URLS.surbhi,
-    worksFor: { "@type": "Organization", name: "Garam Masala Dating" },
+    sameAs: [CREATOR_URLS.surbhi],
+    knowsAbout: [
+      "stand-up comedy",
+      "South Asian dating",
+      "live dating shows",
+      "matchmaking",
+    ],
+    worksFor: orgRef,
+    founderOf: orgRef,
   },
   {
     "@context": "https://schema.org",
@@ -27,7 +41,9 @@ const personJsonLd = JSON.stringify([
     name: "Wyatt Feegrado",
     jobTitle: "Stand-Up Comedian & Co-Host",
     url: CREATOR_URLS.wyatt,
-    worksFor: { "@type": "Organization", name: "Garam Masala Dating" },
+    sameAs: [CREATOR_URLS.wyatt],
+    knowsAbout: ["stand-up comedy", "live dating shows", "crowd work"],
+    worksFor: orgRef,
   },
 ]);
 ---
@@ -91,12 +107,13 @@ const personJsonLd = JSON.stringify([
             family setups.
           </p>
           <p>
-            What started as a one-off experiment in a downtown bar is now NYC's
-            #1 live desi dating show. The show sells out 250-seat venues weekly
-            in Manhattan, runs monthly in Jersey City, and has expanded to Los
-            Angeles, San Francisco, and San Diego. Surbhi has performed at
-            comedy venues across the US and UK, and has accidentally matched
-            three real couples through the show, and counting.
+            What started as a one-off experiment in a downtown bar is now
+            America's #1 live desi comedy dating show. The show sells out
+            250-seat venues weekly in Manhattan, runs monthly in Jersey City,
+            and has expanded to Los Angeles, San Francisco, and San Diego.
+            Surbhi has performed at comedy venues across the US and UK, and has
+            accidentally matched three real couples through the show, and
+            counting.
           </p>
           <p>
             She handles everything from casting and producing to hosting the

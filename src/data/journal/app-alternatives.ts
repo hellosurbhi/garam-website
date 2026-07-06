@@ -93,7 +93,7 @@ export const appAlternativesPosts: JournalPost[] = [
       },
       {
         q: "What should I do instead of dating apps?",
-        a: "IRL events \u2014 mixers, cultural nights, comedy shows, live dating events \u2014 give you more information in five minutes than a week of app conversations. If you\u2019re in NYC, Garam Masala Dating is the #1 live comedy dating show where South Asian singles meet on stage and at post-show mixers.",
+        a: "IRL events \u2014 mixers, cultural nights, comedy shows, live dating events \u2014 give you more information in five minutes than a week of app conversations. If you\u2019re in NYC, Garam Masala Dating is the #1 desi comedy dating show where South Asian singles meet on stage and at post-show mixers.",
       },
       {
         q: "Are there good events for desi singles?",
@@ -115,12 +115,14 @@ export const appAlternativesPosts: JournalPost[] = [
     title: "Best Dil Mil Alternatives for South Asian Singles in 2026",
     seoTitle: "Best Dil Mil Alternatives for Desis 2026",
     metaDescription:
-      "Looking for a Dil Mil alternative? Here are the best options for South Asian singles in 2026, from Hinge to Muzz to live IRL events that actually work.",
+      "Dil Mil not delivering? The best Dil Mil alternatives for South Asian singles in 2026, ranked by real results, plus the IRL option no app can touch.",
     datePublished: "2026-04-18",
-    dateModified: "2026-07-01",
+    dateModified: "2026-07-06",
     author: "Surbhi",
     excerpt:
-      "Dil Mil is the best-known South Asian dating app, but it\u2019s not the only option \u2014 and for a lot of people, it\u2019s not even the best one. Here\u2019s what else is out there.",
+      "Dil Mil is the best-known South Asian dating app, but it\u2019s not the only option, and for a lot of people it\u2019s not even the best one. Here\u2019s what else is out there.",
+    keyTakeaway:
+      "The best Dil Mil alternatives for South Asian singles in 2026 are Hinge (bigger pool), Aisle (higher intent), Muzz (for Muslim South Asians) and Aisle-style paid apps, plus live IRL events. Which is best depends on your city and what you want, and most people who succeed combine an app with in-person events.",
     body: [
       {
         type: "p",
@@ -233,14 +235,32 @@ export const appAlternativesPosts: JournalPost[] = [
     metaDescription:
       "Is Dil Mil worth it in 2026? An honest Dil Mil review covering costs, user base, match quality, and whether it\u2019s the right app for South Asian singles.",
     datePublished: "2026-04-19",
-    dateModified: "2026-07-01",
+    dateModified: "2026-07-06",
+    appReview: {
+      appName: "Dil Mil",
+      operatingSystem: "iOS, Android",
+      applicationCategory: "LifestyleApplication",
+      ratingValue: 3.5,
+      pros: [
+        "South Asian cultural context is built in, no explaining yourself",
+        "Around a million diaspora users across the US, UK and Canada",
+        "Strong pools in major metros like NYC, Chicago, Houston and the Bay Area",
+      ],
+      cons: [
+        "Match volume drops off sharply outside big South Asian metros",
+        "Premium runs $30 to $40 per month",
+        "Same swipe fatigue as every other app once the novelty wears off",
+      ],
+    },
     author: "Surbhi",
     excerpt:
       "Dil Mil is the first app most South Asian singles try. Whether it\u2019s worth your time depends on where you live, what you\u2019re looking for, and how much patience you have.",
+    keyTakeaway:
+      "Dil Mil is worth it if you live in a major metro with a dense South Asian community (NYC, the Bay Area, Toronto, London) and want cultural context built in. Outside those metros the pool thins out fast. Premium runs about $30 to $40 a month. It is a good sorting tool, not a silver bullet.",
     body: [
       {
         type: "p",
-        text: "Dil Mil is practically a rite of passage for desi singles in the US. Most people I know have had it on their phone at some point. Whether they actually met someone on it is a different story. I\u2019ve been running the #1 live dating show for four years, which means I\u2019ve heard the Dil Mil post-mortem from hundreds of people. Here\u2019s what I\u2019ve learned.",
+        text: "Dil Mil is practically a rite of passage for desi singles in the US. Most people I know have had it on their phone at some point. Whether they actually met someone on it is a different story. I\u2019ve been running the #1 live desi dating show for four years, which means I\u2019ve heard the Dil Mil post-mortem from hundreds of people. Here\u2019s what I\u2019ve learned.",
       },
       {
         type: "h2",
@@ -343,12 +363,14 @@ export const appAlternativesPosts: JournalPost[] = [
     slug: "why-hinge-doesnt-work-for-indians",
     title: "Why Hinge Doesn\u2019t Work for Most Indians (And What Does)",
     metaDescription:
-      "Hinge for Indians sounds good in theory but often falls short. Here\u2019s why the app struggles for South Asian users and what actually works better.",
+      "Hinge gets Indian singles matches but rarely second dates. The 3 reasons the app fails South Asian users and what actually produces real dates in 2026.",
     datePublished: "2026-04-20",
-    dateModified: "2026-05-03",
+    dateModified: "2026-07-06",
     author: "Surbhi",
     excerpt:
-      "Hinge is the biggest dating app in America and Indians use it \u2014 but the success rate for South Asian users is worse than the platform average. Here\u2019s why.",
+      "Hinge is the biggest dating app in America and Indians use it, but the success rate for South Asian users is worse than the platform average. Here\u2019s why.",
+    keyTakeaway:
+      "Hinge gets Indian users matches but rarely second dates, because the pool is culturally thin, family and background expectations do not surface in prompts, and desi representation is low outside big metros. It works best paired with a South Asian app like Dil Mil, or with in-person events where chemistry is visible immediately.",
     body: [
       {
         type: "p",
@@ -479,13 +501,16 @@ export const appAlternativesPosts: JournalPost[] = [
     slug: "best-indian-dating-apps-ranked",
     title:
       "The Best Indian Dating Apps Ranked by Someone Who\u2019s Tried Them All",
+    seoTitle: "7 Best Indian Dating Apps in 2026, Ranked",
     metaDescription:
-      "The best Indian dating apps ranked honestly for 2026 \u2014 Dil Mil, Hinge, Aisle, Muzz, Ishq, Salams, and more. Which one is actually worth your time?",
+      "I ranked all 7 Indian dating apps by what actually gets desis real dates in 2026: Dil Mil, Hinge, Aisle, Muzz, Salams, Ishq and Yuzu. One clear winner.",
     datePublished: "2026-04-21",
-    dateModified: "2026-05-05",
+    dateModified: "2026-07-06",
     author: "Surbhi",
     excerpt:
       "I\u2019ve run the #1 live South Asian dating show for four years and talked to hundreds of contestants about what\u2019s working. Here\u2019s the honest ranking of Indian dating apps in 2026.",
+    keyTakeaway:
+      "The best Indian dating apps in 2026, ranked by real results: Dil Mil (best cultural fit in major metros), Hinge (best reach), Aisle (highest intent), Muzz (best for Muslim South Asians), then Salams, Ishq and Yuzu. No app solves the core problem that chemistry does not transmit over text, which is why in-person events increasingly win.",
     body: [
       {
         type: "p",
@@ -501,7 +526,7 @@ export const appAlternativesPosts: JournalPost[] = [
       },
       {
         type: "h2",
-        text: "1. Dil Mil \u2014 best for South Asian cultural context in major metros",
+        text: "1. Dil Mil: best for South Asian cultural context in major metros",
       },
       {
         type: "p",
@@ -509,15 +534,15 @@ export const appAlternativesPosts: JournalPost[] = [
       },
       {
         type: "h2",
-        text: "2. Hinge \u2014 best for volume and major metro reach",
+        text: "2. Hinge: best for volume and major metro reach",
       },
       {
         type: "p",
-        text: "Hinge is the second-largest dating app in the US and has a substantial Indian user base. The prompts format creates better conversation starters than Dil Mil, and the pool is much larger. The cost is cultural dilution \u2014 you\u2019ll spend more time filtering for cultural fit. Best used alongside Dil Mil, not instead of it. I\u2019ve written more about <a href='/journal/why-hinge-doesnt-work-for-indians'>why Hinge specifically struggles for Indian users</a> and what you can do about it.",
+        text: "Hinge is the second-largest dating app in the US and has a substantial Indian user base. The prompts format creates better conversation starters than Dil Mil, and the pool is much larger. The cost is cultural dilution: you\u2019ll spend more time filtering for cultural fit. Best used alongside Dil Mil, not instead of it. I\u2019ve written more about <a href='/journal/why-hinge-doesnt-work-for-indians'>why Hinge specifically struggles for Indian users</a> and what you can do about it.",
       },
       {
         type: "h2",
-        text: "3. Aisle \u2014 best for high intent",
+        text: "3. Aisle: best for high intent",
       },
       {
         type: "p",
@@ -525,7 +550,7 @@ export const appAlternativesPosts: JournalPost[] = [
       },
       {
         type: "h2",
-        text: "4. Muzz \u2014 best for Muslim South Asians",
+        text: "4. Muzz: best for Muslim South Asians",
       },
       {
         type: "p",
@@ -533,7 +558,7 @@ export const appAlternativesPosts: JournalPost[] = [
       },
       {
         type: "h3",
-        text: "5. Salams \u2014 high volume for Muslim singles with caveats",
+        text: "5. Salams: high volume for Muslim singles with caveats",
       },
       {
         type: "p",
@@ -541,7 +566,7 @@ export const appAlternativesPosts: JournalPost[] = [
       },
       {
         type: "h3",
-        text: "6. Ishq \u2014 best signal-to-noise ratio (if you can get in)",
+        text: "6. Ishq: best signal-to-noise ratio (if you can get in)",
       },
       {
         type: "p",
@@ -549,7 +574,7 @@ export const appAlternativesPosts: JournalPost[] = [
       },
       {
         type: "h3",
-        text: "7. Yuzu \u2014 new entry from Match Group",
+        text: "7. Yuzu: new entry from Match Group",
       },
       {
         type: "p",
@@ -575,7 +600,7 @@ export const appAlternativesPosts: JournalPost[] = [
       },
       {
         q: "Is there a dating app specifically for Indians?",
-        a: "Yes. Dil Mil, Aisle, Ishq, and Mirchi are all built specifically for South Asian singles. Muzz and Salams serve Muslim South Asians. Each has different strengths \u2014 Dil Mil for diaspora matching, Aisle for intent, Ishq for curated exclusivity.",
+        a: "Yes. Dil Mil, Aisle, Ishq and Mirchi are all built specifically for South Asian singles. Muzz and Salams serve Muslim South Asians. Each has different strengths: Dil Mil for diaspora matching, Aisle for intent, Ishq for curated exclusivity.",
       },
       {
         q: "Which Indian dating app has the most users?",
@@ -590,6 +615,15 @@ export const appAlternativesPosts: JournalPost[] = [
       "is-dil-mil-worth-it",
       "why-hinge-doesnt-work-for-indians",
       "dating-apps-for-brown-people",
+    ],
+    rankedItems: [
+      { position: 1, name: "Dil Mil" },
+      { position: 2, name: "Hinge" },
+      { position: 3, name: "Aisle" },
+      { position: 4, name: "Muzz" },
+      { position: 5, name: "Salams" },
+      { position: 6, name: "Ishq" },
+      { position: 7, name: "Yuzu" },
     ],
     ctaConfig: {
       intent: "advice",
@@ -814,7 +848,7 @@ export const appAlternativesPosts: JournalPost[] = [
       },
       {
         type: "p",
-        text: "Garam Masala Dating is the most specific version of this. It\u2019s the #1 live comedy dating show built for South Asian singles, running monthly in NYC. Three blind dates on stage in front of 250 people. A mixer after where the whole room is already warm from what just happened. It\u2019s not an app. It\u2019s not a spreadsheet. It\u2019s 250 brown people in a room having a genuinely good time, and some of them are going home with each other\u2019s numbers. <a href='/apply'>Apply to be a contestant</a> or buy tickets and come watch. Either works.",
+        text: "Garam Masala Dating is the most specific version of this. It\u2019s the #1 desi comedy dating show built for South Asian singles, running monthly in NYC. Three blind dates on stage in front of 250 people. A mixer after where the whole room is already warm from what just happened. It\u2019s not an app. It\u2019s not a spreadsheet. It\u2019s 250 brown people in a room having a genuinely good time, and some of them are going home with each other\u2019s numbers. <a href='/apply'>Apply to be a contestant</a> or buy tickets and come watch. Either works.",
       },
     ],
     faqs: [
@@ -959,7 +993,7 @@ export const appAlternativesPosts: JournalPost[] = [
       },
       {
         type: "p",
-        text: "Garam Masala Dating is the #1 live comedy dating show in NYC built for South Asian singles. Three blind dates on stage every month in front of 250 people. The chemistry is real and unscripted. The mixer after is warm and loud and full of people who are actually trying to connect rather than curate. You can come as an audience member or <a href='/apply'>apply to be a contestant</a>. Three couples have met here. More are in the pipeline. The algorithm didn\u2019t make that happen. The room did.",
+        text: "Garam Masala Dating is the #1 desi comedy dating show in NYC built for South Asian singles. Three blind dates on stage every month in front of 250 people. The chemistry is real and unscripted. The mixer after is warm and loud and full of people who are actually trying to connect rather than curate. You can come as an audience member or <a href='/apply'>apply to be a contestant</a>. Three couples have met here. More are in the pipeline. The algorithm didn\u2019t make that happen. The room did.",
       },
     ],
     faqs: [
@@ -981,7 +1015,7 @@ export const appAlternativesPosts: JournalPost[] = [
       },
       {
         q: "Is there a live South Asian dating show in NYC?",
-        a: "Yes. Garam Masala Dating is the #1 live comedy dating show at Top Secret Comedy Club in Manhattan featuring South Asian singles on blind dates on stage in front of 250 people. Monthly shows with a mixer after. Tickets and contestant applications at garammasaladating.com.",
+        a: "Yes. Garam Masala Dating is the #1 desi comedy dating show at Top Secret Comedy Club in Manhattan featuring South Asian singles on blind dates on stage in front of 250 people. Monthly shows with a mixer after. Tickets and contestant applications at garammasaladating.com.",
       },
     ],
     relatedSlugs: [
@@ -989,5 +1023,223 @@ export const appAlternativesPosts: JournalPost[] = [
       "best-indian-dating-apps-ranked",
       "desi-dating-show-vs-dating-apps",
     ],
+  },
+  {
+    slug: "best-indian-dating-apps-canada",
+    title: "The Best Indian Dating Apps in Canada, Ranked for 2026",
+    seoTitle: "Best Indian Dating Apps in Canada (2026)",
+    metaDescription:
+      "The best South Asian dating apps for Canada in 2026: Dil Mil, Hinge, Muzz, Shaadi and the IRL scene in the GTA and Vancouver. Which actually works here.",
+    datePublished: "2026-07-06",
+    dateModified: "2026-07-06",
+    author: "Surbhi",
+    excerpt:
+      "Canada has one of the densest South Asian populations outside South Asia, so you'd expect the apps to work here. Density is not the same as a dating scene, and Canadian desis know the difference.",
+    keyTakeaway:
+      "In Canada, Dil Mil has the deepest South Asian pools in the GTA and Metro Vancouver, Hinge has the widest reach in major cities, and Muzz leads for Muslim South Asians. Outside Toronto and Vancouver the pools thin fast, so Canadian desis increasingly pair apps with community events.",
+    faqs: [
+      {
+        q: "What is the best Indian dating app in Canada?",
+        a: "Dil Mil has the deepest South Asian pools in the GTA and Metro Vancouver, the two densest desi metros in Canada. Hinge has the largest overall reach for major cities. Muzz leads for Muslim South Asians. Most people who succeed run two apps rather than one, and increasingly pair them with in-person events.",
+      },
+      {
+        q: "Does Dil Mil work in Canada?",
+        a: "In Toronto, Brampton, Mississauga and Metro Vancouver, yes, the pools are genuinely deep. Outside those metros it thins out fast. If you are in Calgary, Ottawa, Winnipeg or the Maritimes, expect a smaller pool and more app-hopping.",
+      },
+      {
+        q: "Where do South Asian singles in Canada meet in person?",
+        a: "The GTA and Vancouver have the biggest community scenes: Bollywood nights, Diwali and Vaisakhi events, university associations and family networks. What Canada has lacked is a singles-first live event, which is exactly why Garam Masala Dating's Canadian waitlists lead the country.",
+      },
+      {
+        q: "Is Shaadi.com worth it in Canada?",
+        a: "For marriage-minded users with a large NRI presence in Toronto, Vancouver and Calgary, Shaadi.com is usable, but it functions like a matrimonial database, not a dating app. Read our full Shaadi.com review before paying for a plan.",
+      },
+    ],
+    relatedSlugs: [
+      "best-indian-dating-apps-ranked",
+      "best-indian-dating-apps-australia",
+      "why-dating-apps-dont-work-for-south-asians",
+    ],
+    body: [
+      {
+        type: "p",
+        text: "Canada has one of the densest South Asian populations outside South Asia, so you'd expect the apps to work here. Density is not the same as a dating scene, and Canadian desis know the difference. I run the #1 live desi comedy dating show in NYC, our Canadian waitlists are the loudest outside the US, and I talk to Canadian desi singles constantly about what is and is not working. Here is the honest ranking for 2026.",
+      },
+      {
+        type: "h2",
+        text: "The Canadian desi dating problem is geography, not numbers",
+      },
+      {
+        type: "p",
+        text: "The GTA alone has over a million South Asians and Metro Vancouver has hundreds of thousands, with Surrey holding one of the largest Punjabi communities on earth. The pool is enormous. The problem is that it is spread across sprawling metros where a promising match lives 45 minutes away without traffic, and Canadian winters delete five months of spontaneous meeting every year. The apps do not account for the Gardiner Expressway or the Fraser River.",
+      },
+      {
+        type: "h2",
+        text: "1. Dil Mil, best for the GTA and Vancouver",
+      },
+      {
+        type: "p",
+        text: "Dil Mil's Canadian pools in Toronto, Brampton, Mississauga and Metro Vancouver are genuinely deep, deeper relative to the general population than in most US cities. The cultural filtering is built in, which the Canadian desi community, with its strong family expectations, tends to want. The weakness is the same everywhere: thin pools the moment you leave the big two metros. For a full breakdown of Dil Mil's strengths and costs, see our <a href='/journal/is-dil-mil-worth-it'>honest Dil Mil review</a>.",
+      },
+      {
+        type: "h2",
+        text: "2. Hinge, best for overall reach in major cities",
+      },
+      {
+        type: "p",
+        text: "Hinge is the mainstream default in Toronto, Vancouver, Montreal and Calgary, and it has a substantial South Asian user base in all four. The prompts format produces better conversation starters than Dil Mil, but you spend more time filtering for cultural fit. Best used alongside Dil Mil, not instead of it. Our piece on <a href='/journal/why-hinge-doesnt-work-for-indians'>why Hinge struggles for Indian users</a> applies just as much north of the border.",
+      },
+      {
+        type: "h2",
+        text: "3. Muzz, best for Muslim South Asians",
+      },
+      {
+        type: "p",
+        text: "For Muslim South Asians in Canada, Muzz is the primary app before anything else. Fifteen million users globally, real halal dating features and a community that understands the specific expectations. The Canadian pools in the GTA and Vancouver are strong.",
+      },
+      {
+        type: "h2",
+        text: "4. Shaadi.com and matrimony sites, for the marriage-ready",
+      },
+      {
+        type: "p",
+        text: "Canada's large NRI population means Shaadi.com and BharatMatrimony both have real usage here, especially in Toronto, Vancouver and Calgary. They function as matrimonial databases rather than dating apps, so treat them accordingly. If you want the honest verdict, read our <a href='/journal/shaadi-com-review-2026'>Shaadi.com review</a>.",
+      },
+      {
+        type: "h2",
+        text: "The thing the apps cannot fix in Canada",
+      },
+      {
+        type: "p",
+        text: "Every Canadian desi single I talk to describes the same wall: the community is huge, the family network is efficient, and yet meeting someone you actually chose, outside a wedding or an app, is nearly impossible. The scene is all festivals and family functions, none of it singles-first. That is the exact gap a live show fills, which is why Toronto, Vancouver, Brampton, Surrey and Mississauga sit at the top of our waitlist. Get on your city's list at garammasaladating.com and the community decides where we bring the show first.",
+      },
+    ],
+    ctaConfig: {
+      intent: "advice",
+      topCta: {
+        text: "Get on your Canadian city's waitlist",
+        href: "/cities/toronto",
+        ctaId: "cta_clicked",
+        variant: "primary",
+      },
+      midCta: {
+        text: "Apply to be a contestant",
+        href: "/apply",
+        ctaId: "apply",
+        variant: "secondary",
+      },
+      bottomCta: {
+        text: "See where the show is headed",
+        href: "/cities",
+        ctaId: "cta_clicked",
+        variant: "primary",
+      },
+      cityLinks: ["toronto", "vancouver", "brampton", "mississauga"],
+    },
+  },
+  {
+    slug: "best-indian-dating-apps-australia",
+    title: "The Best Indian Dating Apps in Australia, Ranked for 2026",
+    seoTitle: "Best Indian Dating Apps in Australia (2026)",
+    metaDescription:
+      "The best South Asian dating apps for Australia in 2026: Dil Mil, Hinge, Muzz and the IRL scene in Sydney and Melbourne. What actually works down under.",
+    datePublished: "2026-07-06",
+    dateModified: "2026-07-06",
+    author: "Surbhi",
+    excerpt:
+      "India is one of the fastest growing sources of migration to Australia, but the dating apps have not caught up. Australian desi singles work with thinner pools than their London or Toronto cousins, and it shows.",
+    keyTakeaway:
+      "In Australia, Hinge has the broadest reach in Sydney and Melbourne, Dil Mil works there with a thinner pool, and Muzz leads for Muslim South Asians. Because Australia's desi community is newer, app density lags the population, which makes in-person events disproportionately valuable for meeting South Asian singles.",
+    faqs: [
+      {
+        q: "What is the best Indian dating app in Australia?",
+        a: "Hinge has the broadest reach in Sydney and Melbourne, where most of Australia's South Asian population lives. Dil Mil works in those two cities but the pools are thinner than in North America or the UK. Muzz leads for Muslim South Asians. Given the smaller pools, most Australian desis pair apps with community events rather than relying on apps alone.",
+      },
+      {
+        q: "Does Dil Mil work in Australia?",
+        a: "In Sydney and Melbourne, moderately. Australia's South Asian population is large and growing fast, but it is newer than the UK or Canadian diasporas, so the desi-specific apps have shallower pools. Expect to run Dil Mil alongside Hinge rather than as your only app.",
+      },
+      {
+        q: "Where do South Asian singles in Australia meet in person?",
+        a: "Sydney's Harris Park and Parramatta and Melbourne's Dandenong and western suburbs anchor real community scenes, plus university associations and festival events. What Australia lacks is a singles-first live event, which is why Sydney and Melbourne are our top Australian waitlist cities.",
+      },
+      {
+        q: "Is the app pool really smaller in Australia?",
+        a: "Yes, relative to the US, UK and Canada. Australia's Indian community is one of the country's fastest growing, but it is a more recent wave, so app density lags the population. This makes in-person events disproportionately valuable here.",
+      },
+    ],
+    relatedSlugs: [
+      "best-indian-dating-apps-ranked",
+      "best-indian-dating-apps-canada",
+      "dating-apps-for-brown-people",
+    ],
+    body: [
+      {
+        type: "p",
+        text: "India is one of the fastest growing sources of migration to Australia, but the dating apps have not caught up. Australian desi singles work with thinner pools than their London or Toronto cousins, and it shows. I run the #1 live desi comedy dating show in NYC and Sydney and Melbourne are near the top of our international waitlist, so here is the honest ranking for meeting South Asian singles in Australia in 2026.",
+      },
+      {
+        type: "h2",
+        text: "Australia's desi dating scene is big, new and thin on formats",
+      },
+      {
+        type: "p",
+        text: "Sydney and Melbourne hold most of Australia's South Asian population, concentrated in Harris Park and Parramatta in Sydney and Dandenong, Tarneit and the western suburbs in Melbourne. The community is one of the country's fastest growing, but it is a recent wave, which means the desi-specific apps have shallower pools than the decades-old diasporas of the UK and Canada. The general apps work, the niche apps are catching up, and the in-person scene is almost entirely festivals and family.",
+      },
+      {
+        type: "h2",
+        text: "1. Hinge, best for overall reach",
+      },
+      {
+        type: "p",
+        text: "Hinge has the largest usable pool for South Asian singles in Sydney and Melbourne simply because it is where everyone is. You will filter more for cultural fit, but the volume is there in a way the niche apps cannot match yet in Australia. Our piece on <a href='/journal/why-hinge-doesnt-work-for-indians'>why Hinge struggles for Indian users</a> still applies, so treat it as one tool, not the whole toolbox.",
+      },
+      {
+        type: "h2",
+        text: "2. Dil Mil, best cultural fit in the two big cities",
+      },
+      {
+        type: "p",
+        text: "Dil Mil works in Sydney and Melbourne, with the cultural filtering the community wants, but the pools are noticeably thinner than in North America. Outside the two big cities, Brisbane, Perth, Adelaide, it gets sparse fast. Run it alongside Hinge. Our <a href='/journal/is-dil-mil-worth-it'>Dil Mil review</a> covers what to expect.",
+      },
+      {
+        type: "h2",
+        text: "3. Muzz, best for Muslim South Asians",
+      },
+      {
+        type: "p",
+        text: "For Muslim South Asians across Australia, Muzz is the primary app, with the strongest pools in Sydney and Melbourne. The halal dating features and community norms are the reason to start here before anything else.",
+      },
+      {
+        type: "h2",
+        text: "Why in-person matters more in Australia than anywhere",
+      },
+      {
+        type: "p",
+        text: "When the app pools are thinner, the value of getting everyone in one room goes up, not down. Australia's desi singles are interesting, employed and scattered across enormous cities with no singles-first event to gather them. That is the exact gap a live show fills, and it is why Sydney and Melbourne lead our Australian waitlist. Get on your city's list at garammasaladating.com and help decide where we bring the show first.",
+      },
+    ],
+    ctaConfig: {
+      intent: "advice",
+      topCta: {
+        text: "Get on your Australian city's waitlist",
+        href: "/cities/sydney",
+        ctaId: "cta_clicked",
+        variant: "primary",
+      },
+      midCta: {
+        text: "Apply to be a contestant",
+        href: "/apply",
+        ctaId: "apply",
+        variant: "secondary",
+      },
+      bottomCta: {
+        text: "See where the show is headed",
+        href: "/cities",
+        ctaId: "cta_clicked",
+        variant: "primary",
+      },
+      cityLinks: ["sydney", "melbourne", "brisbane", "perth"],
+    },
   },
 ];

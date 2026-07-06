@@ -7,9 +7,9 @@ export const datingCulturePosts: JournalPost[] = [
       "How to Tell Your Indian Parents About Your Partner: A Step-by-Step Guide",
     seoTitle: "Tell Indian Parents About Your Partner",
     metaDescription:
-      "Dreading the \"how to tell Indian parents about boyfriend/girlfriend\" conversation? Here's a practical, honest guide from someone who's seen it all.",
+      "The step-by-step playbook for telling Indian parents about your partner: who to tell first, exact scripts that work and the mistakes that start family wars.",
     datePublished: "2026-04-25",
-    dateModified: "2026-05-13",
+    dateModified: "2026-07-06",
     author: "Surbhi",
     excerpt:
       "There is no perfect script for telling your Indian parents about a partner, but there is a strategy, and most people skip all of it. Let's fix that.",

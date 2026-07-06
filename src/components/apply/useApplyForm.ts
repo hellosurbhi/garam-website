@@ -30,6 +30,7 @@ export interface FormState {
   type: string;
   marketingConsent: "yes" | "no" | "";
   seenShowBefore: "" | "yes" | "no";
+  howHeard: string;
 }
 
 const INITIAL: FormState = {
@@ -52,6 +53,7 @@ const INITIAL: FormState = {
   type: "",
   marketingConsent: "",
   seenShowBefore: "",
+  howHeard: "",
 };
 
 export type FormErrors = Partial<
@@ -443,6 +445,7 @@ export function useApplyForm() {
         ...(form.seenShowBefore !== ""
           ? { seenShowBefore: form.seenShowBefore === "yes" }
           : {}),
+        ...(form.howHeard ? { howHeard: form.howHeard } : {}),
       };
 
       const [{ collection, addDoc, serverTimestamp }, db] = await Promise.all([

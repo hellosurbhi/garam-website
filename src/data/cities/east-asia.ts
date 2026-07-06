@@ -47,6 +47,34 @@ export const eastAsiaCities: Record<string, CityData> = {
         q: "Can I apply to be a contestant?",
         a: "Yes. Apply now. Applications stay active for 12 months. Tokyo applicants will be prioritized when we confirm a date.",
       },
+      {
+        q: "Is there Indian speed dating in Tokyo?",
+        a: "Tokyo has konkatsu culture for the Japanese market and nothing equivalent for its 40,000-plus Indian residents. Nishi-Kasai's community and the Roppongi expat crowd both date in a vacuum. We fill vacuums.",
+      },
+      {
+        q: "Where do desi singles in Tokyo actually meet?",
+        a: "Nishi-Kasai's community events, the IT employers' floors, international meetups in Roppongi and Shibuya and each other's workplace lunch groups. The scene is bigger than anyone realises and completely unassembled.",
+      },
+      {
+        q: "Will the show run in English?",
+        a: "Yes, with whatever Hindi, Tamil and Japanese the daters bring. Tokyo's desi crowd code-switches for a living. The show will keep up.",
+      },
+    ],
+    sections: [
+      {
+        heading: "Tokyo's Little India dates in a vacuum",
+        paragraphs: [
+          "Nishi-Kasai became Tokyo's Indian hub through the IT visa wave, complete with grocery stores, schools and a community that solved every logistics problem except romance. Dating options for desi Tokyoites are structurally poor: the Japanese matchmaking industry is not built for them, the expat dating scene is a churn of short-timers and the community itself is small enough that word travels on the Tozai line faster than the train.",
+          "A live show gives desi Tokyo its first assembly. Engineers from Edogawa, finance expats from Minato and students from Todai in one room, discovering the scene they already were.",
+        ],
+      },
+      {
+        heading: "What a Garam Masala night in Tokyo looks like",
+        paragraphs: [
+          "A Nishi-Kasai backend engineer and a Roppongi consultant who have never met, on stage, going on a first date while Tokyo's famously reserved audiences discover the joy of voting loudly. Comedian hosts, live chaos and an izakaya mixer where the last train decision becomes the night's real cliffhanger.",
+          "Join the waitlist for first access to Tokyo dates, or apply to be a contestant and give Japan's desi community its founding romance.",
+        ],
+      },
     ],
   },
 
@@ -95,6 +123,34 @@ export const eastAsiaCities: Record<string, CityData> = {
       {
         q: "Can I apply to be a contestant?",
         a: "Yes. Apply now. Applications stay active for 12 months. Osaka applicants will be prioritized when we confirm a date.",
+      },
+      {
+        q: "Is there Indian speed dating in Osaka?",
+        a: "Kansai's desi community has no events between Diwali gatherings, and Tokyo's scene is a Shinkansen ticket away. An Osaka show would be Kansai's first ever desi singles night, in the Japanese city most likely to enjoy it loudly.",
+      },
+      {
+        q: "Where do desi singles in Osaka actually meet?",
+        a: "The IT and manufacturing employers, Osaka University circles and the international meetup circuit around Umeda and Namba. Small scene, warm city, zero occasions.",
+      },
+      {
+        q: "Why does the show fit Osaka specifically?",
+        a: "Osaka is Japan's comedy capital: the city invented manzai and treats laughing in public as a civic duty. A comedy dating show lands here the way it lands nowhere else in Japan.",
+      },
+    ],
+    sections: [
+      {
+        heading: "Japan's comedy capital meets the format built for it",
+        paragraphs: [
+          "Osaka's South Asian community is small, IT engineers, manufacturing specialists and university researchers scattered across Kansai, but the city around them is Japan's comedy heartland, where audiences heckle affectionately and manzai timing is a birthright. The desi singles here have Tokyo's isolation problems without Tokyo's numbers, and a local scene of approximately zero events.",
+          "A comedy dating show in the city that invented Japanese double-act comedy is a format homecoming. Kansai's desi crowd gets its first event inside a live culture that already speaks the language.",
+        ],
+      },
+      {
+        heading: "What a Garam Masala night in Osaka looks like",
+        paragraphs: [
+          "An Umeda systems engineer and an Osaka University postdoc who have never met, on stage, going on a first date while Kansai's small desi scene and its curious Japanese friends react with manzai-trained timing. Comedian hosts, live votes and a Dotonbori mixer under the neon.",
+          "Join the waitlist for first access to Osaka dates, or apply to be a contestant and debut in comedy's home city.",
+        ],
       },
     ],
   },
@@ -145,6 +201,35 @@ export const eastAsiaCities: Record<string, CityData> = {
         q: "Can I apply to be a contestant?",
         a: "Yes. Apply now. Applications stay active for 12 months. Nagoya applicants will be prioritized when we confirm a date.",
       },
+      {
+        q: "Is there Indian speed dating in Nagoya?",
+        a: "Nagoya's desi engineers have company dorms, long shifts and no community events at all. The automotive corridor imported the workforce and skipped the social layer entirely. That is our exact specialty.",
+      },
+      {
+        q: "Where do desi singles in Nagoya actually meet?",
+        a: "The automotive and supplier campuses, Nagoya University circles and the small international meetup scene around Sakae. The honest answer is mostly nowhere, which is why Nagoya is on this list.",
+      },
+      {
+        q: "Would Toyota City engineers make it in?",
+        a: "The Meitetsu line runs straight in and the alternative is another night in the dormitory. Toyota City, Kariya and the whole supplier belt will be in the room.",
+      },
+    ],
+    sections: [
+      {
+        heading:
+          "The automotive corridor imported engineers and forgot the rest",
+        paragraphs: [
+          "Nagoya's industrial machine, Toyota and its constellation of suppliers, has quietly recruited South Asian engineers for years, placing them in company housing across Aichi with work schedules that consume everything. The result is the loneliest desi demographic in Japan: well paid, far from home and socially provisioned with exactly one company cafeteria.",
+          "A Nagoya show is social infrastructure delivered as entertainment. One night that gives the corridor's scattered desi engineers a scene, however small, that belongs to them and not the company.",
+        ],
+      },
+      {
+        heading: "What a Garam Masala night in Nagoya looks like",
+        paragraphs: [
+          "A powertrain engineer and a Nagoya University researcher who have never met, on stage, going on a first date while Aichi's entire desi population fits in one Sakae room and intends to remember the night. Comedian hosts, live votes and a mixer where the shift schedules finally align.",
+          "Join the waitlist to bring the show to the corridor, or apply to be a contestant and give Toyota City a story that is not about torque.",
+        ],
+      },
     ],
   },
 
@@ -193,6 +278,34 @@ export const eastAsiaCities: Record<string, CityData> = {
       {
         q: "Can I apply to be a contestant?",
         a: "Yes. Apply now. Applications stay active for 12 months. Seoul applicants will be prioritized when we confirm a date.",
+      },
+      {
+        q: "Is there Indian speed dating in Seoul?",
+        a: "Korea's sogaeting culture runs on introductions desi residents never receive. Seoul's Indian engineers, researchers and students have no scene of their own, and the first show becomes it overnight.",
+      },
+      {
+        q: "Where do desi singles in Seoul actually meet?",
+        a: "Samsung and LG campuses, SNU and KAIST-adjacent circles, Itaewon's international strip and the Indian restaurant cluster everyone rotates through. Small scene, high isolation, ready audience.",
+      },
+      {
+        q: "Will the show work with Seoul's intense work culture?",
+        a: "One Saturday night against a culture of overtime is exactly the trade this crowd wants. Booked far enough ahead, the calendar defense holds, and the mixer rewards everyone who defended it.",
+      },
+    ],
+    sections: [
+      {
+        heading: "Seoul's desi crowd lives outside every introduction network",
+        paragraphs: [
+          "Korean dating runs on introductions, sogaeting through friends, colleagues and apps built for locals, and Seoul's growing Indian community of chip engineers, researchers and graduate students sits entirely outside those networks. The expat dating scene is transient, the community is small and scattered across tech campuses and university labs and the isolation compounds with every year of a Korea posting.",
+          "A live show is the introduction network arriving all at once: one room, every scattered desi circle in the capital region and a format that requires no local social capital to enter.",
+        ],
+      },
+      {
+        heading: "What a Garam Masala night in Seoul looks like",
+        paragraphs: [
+          "A Suwon semiconductor engineer and an SNU postdoc who have never met, on stage, going on a first date while Seoul's compact desi scene reacts with the pent-up energy of a community that has waited years for any event at all. Comedian hosts, live votes and an Itaewon mixer that runs to first metro.",
+          "Join the waitlist for first access to Seoul dates, or apply to be a contestant and become the community's founding story.",
+        ],
       },
     ],
   },
@@ -243,6 +356,34 @@ export const eastAsiaCities: Record<string, CityData> = {
         q: "Can I apply to be a contestant?",
         a: "Yes. Apply now. Applications stay active for 12 months. Taipei applicants will be prioritized when we confirm a date.",
       },
+      {
+        q: "Is there Indian speed dating in Taipei?",
+        a: "Taiwan's desi community grew with the semiconductor boom and its social calendar never started. Taipei's international meetups are generalist; nothing serves the Indian engineers and students specifically. First show, whole market.",
+      },
+      {
+        q: "Where do desi singles in Taipei actually meet?",
+        a: "The tech employers, NTU circles, the Indian restaurant cluster near Zhongshan and the same expat bars everyone cycles through. The scene is at the exact size where one event assembles all of it.",
+      },
+      {
+        q: "Would the Hsinchu crowd come up?",
+        a: "The high speed rail makes it thirty minutes, and Hsinchu's engineers have even fewer options. A Taipei show is a whole-island show, and the HSR schedule is our co-organizer.",
+      },
+    ],
+    sections: [
+      {
+        heading: "Taiwan's desi scene arrived with the chips",
+        paragraphs: [
+          "Taiwan's semiconductor supremacy pulled a generation of Indian engineers and researchers to Taipei and the Hsinchu corridor, and NTU adds a student layer. The community is new, technical and at the classic awkward scale: everyone knows the same restaurants, recognises the same faces and has never been formally introduced to any of them.",
+          "One Taipei show assembles the island's entire scene, which is a superpower small markets have over big ones: total coverage in a single night.",
+        ],
+      },
+      {
+        heading: "What a Garam Masala night in Taipei looks like",
+        paragraphs: [
+          "An NTU masters student and a fab process engineer who have never met, on stage, going on a first date while Taiwan's whole desi scene reacts in one room off a night market. Comedian hosts, live votes and a mixer where the beef noodle versus biryani debate finds its forever format.",
+          "Join the waitlist for first access to Taipei dates, or apply to be a contestant and give the island its first great desi love story.",
+        ],
+      },
     ],
   },
 
@@ -292,6 +433,34 @@ export const eastAsiaCities: Record<string, CityData> = {
         q: "Can I apply to be a contestant?",
         a: "Yes. Apply now. Applications stay active for 12 months. Hsinchu applicants will be prioritized when we confirm a date.",
       },
+      {
+        q: "Is there Indian speed dating in Hsinchu?",
+        a: "Hsinchu has the world's most advanced fabs and zero social events for the desi engineers who staff them. The imbalance is almost artistic. We correct it with a stage and a mixer.",
+      },
+      {
+        q: "Where do desi singles in Hsinchu actually meet?",
+        a: "The science park's campuses, NTHU and NCTU circles and the weekend HSR to Taipei. Shift schedules and cleanroom hours do the rest of the damage. A local night is the only real fix.",
+      },
+      {
+        q: "Hsinchu show or Taipei show?",
+        a: "Whichever waitlist wins hosts first, and the HSR carries the other city in. Hsinchu's case: the engineers outnumber Taipei's desi crowd and deserve a night that does not require a train.",
+      },
+    ],
+    sections: [
+      {
+        heading: "The science park runs on desi engineers with no third place",
+        paragraphs: [
+          "Hsinchu Science Park's fabs employ a serious contingent of Indian process engineers, device physicists and researchers, supplemented by NTHU and NCTU's graduate programs. Life here is calibrated to the nanometer and the shift calendar: company housing, cleanroom rotations and a social scene consisting of the same three restaurants and a badminton league. Taipei is thirty minutes away and might as well be further after a twelve hour shift.",
+          "A Hsinchu show is a third place delivered in one night: not work, not the dorm, a room where the corridor's desi engineers finally meet outside the fab.",
+        ],
+      },
+      {
+        heading: "What a Garam Masala night in Hsinchu looks like",
+        paragraphs: [
+          "A lithography engineer and an NTHU PhD who have never met, on stage, going on a first date while the science park's entire desi population reacts with the precision-released energy of people who schedule joy quarterly. Comedian hosts, live votes and a mixer that outruns every shift change.",
+          "Join the waitlist to bring the show to the corridor, or apply to be a contestant and yield the best result of your career.",
+        ],
+      },
     ],
   },
 
@@ -340,6 +509,34 @@ export const eastAsiaCities: Record<string, CityData> = {
       {
         q: "Can I apply to be a contestant?",
         a: "Yes. Apply now. Applications stay active for 12 months. Hong Kong applicants will be prioritized when we confirm a date.",
+      },
+      {
+        q: "Is there Indian speed dating in Hong Kong?",
+        a: "Hong Kong has speed dating for its finance crowd and nothing for a South Asian community 80,000 strong with 160 years of history. The gap between community depth and event supply here is the widest in Asia.",
+      },
+      {
+        q: "Where do desi singles in Hong Kong actually meet?",
+        a: "The banks and law firms of Central, HKU and HKUST circles, Tsim Sha Tsui's community institutions and LKF on weekends. Heritage families and expat professionals share a tiny territory and no events.",
+      },
+      {
+        q: "Island side or Kowloon side for the show?",
+        a: "The MTR makes it academic, but the symbolism matters: a venue reachable from both TST's heritage community and Central's towers, because this show is for both.",
+      },
+    ],
+    sections: [
+      {
+        heading: "160 years of desi Hong Kong and no singles night",
+        paragraphs: [
+          "Hong Kong's South Asian community predates most of its skyline: Sindhi and Parsi trading families who built businesses through the colonial era, Punjabi families with generations in the territory and a modern layer of bankers, lawyers and academics recruited into Central's towers. The community's depth is unmatched in East Asia, and its singles infrastructure is identical to everywhere else's: nothing.",
+          "Hong Kong's density is the show's best friend: everyone lives within forty minutes of everyone, the venues are world class and the after-mixer options never close.",
+        ],
+      },
+      {
+        heading: "What a Garam Masala night in Hong Kong looks like",
+        paragraphs: [
+          "A Central investment analyst and a fourth generation TST family scion who have never met, on stage, going on a first date while a room that spans 160 years of desi Hong Kong reacts at typhoon signal intensity. Comedian hosts, live votes and an LKF mixer where the escalators do the crowd flow.",
+          "Join the waitlist for first access to Hong Kong dates, or apply to be a contestant and add a chapter to Asia's oldest desi story.",
+        ],
       },
     ],
   },

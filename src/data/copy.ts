@@ -6,16 +6,16 @@
 
 export const SITE = {
   name: "Garam Masala Dating",
-  tagline: "America's #1 Live South Asian Dating Show",
-  heroEyebrow: "America's #1 Live Desi Dating Show",
+  tagline: "America's #1 Live Desi Comedy Dating Show",
+  heroEyebrow: "America's #1 Live Desi Comedy Dating Show",
   description:
-    "Garam Masala Dating is America's #1 live desi dating show where South Asian singles go on a blind date in front of a packed house. Our hosts Surbhi and Wyatt guide the chaos with stand-up, crowd work, and genuine matchmaking instincts. Every show ends with a singles mixer where the audience gets to continue the experiment.",
+    "Garam Masala Dating is America's #1 live desi comedy dating show where South Asian singles go on a blind date in front of a packed house. Our hosts Surbhi and Wyatt guide the chaos with stand-up, crowd work and genuine matchmaking instincts. Every show ends with a singles mixer where the audience gets to continue the experiment.",
   shortDescription:
     "America's #1 live desi comedy dating show. Real singles. Real dates. 250-person audience. Weekly in Manhattan.",
-  footerTagline: "America's #1 live desi dating show.",
+  footerTagline: "America's #1 live desi comedy dating show.",
   footerHosts: "Hosted by Surbhi & Wyatt.",
   hosts: "Surbhi & Wyatt",
-  ogImageAlt: "Garam Masala Dating: America's #1 live desi dating show",
+  ogImageAlt: "Garam Masala Dating: America's #1 live desi comedy dating show",
 } as const;
 
 export const STATS = [
@@ -63,7 +63,7 @@ export const HOME_FAQS: FaqItem[] = [
   {
     q: "What is Garam Masala Dating?",
     short:
-      "Garam Masala Dating is America's #1 live desi dating show. A 90-minute live event where two real singles go on a first date on stage in front of a live audience, hosted by comedians Surbhi and Wyatt.",
+      "Garam Masala Dating is America's #1 live desi comedy dating show. A 90-minute live event where two real singles go on a first date on stage in front of a live audience, hosted by comedians Surbhi and Wyatt.",
     long: "The show combines stand-up comedy, live matchmaking, and audience participation. Two strangers meet for the first time on stage. They go through a date full of questions, games, and genuine moments with a packed house watching. At the end, the audience votes on whether they should get a second date. Then we throw a singles mixer in the same venue so the audience can continue the magic themselves. It\u2019s part comedy show, part reality TV, part social experiment, and entirely unforgettable.",
   },
   {
@@ -93,7 +93,7 @@ export const HOME_FAQS: FaqItem[] = [
 ];
 
 export const MARQUEE_ITEMS = [
-  "America's #1 Live Desi Dating Show",
+  "America's #1 Live Desi Comedy Dating Show",
   "40+ Sold-Out Shows",
   "10M+ Views on Social",
   "13 Couples Matched",
@@ -105,14 +105,14 @@ export const MARQUEE_ITEMS = [
 export const PAGES = {
   home: {
     description:
-      "Garam Masala Dating is America's #1 live desi dating show. Watch real South Asian singles go on blind dates on stage in front of 250 people. Hosted by comedians Surbhi & Wyatt. Tickets available now.",
+      "Garam Masala Dating is America's #1 live desi comedy dating show. Watch real South Asian singles go on blind dates live on stage in front of 250 people in NYC. Hosted by comedians Surbhi & Wyatt. Tickets available now.",
   },
   tickets: {
     intro:
       "Two real singles. One blind date on stage. 250 people watching. Pick your show below.",
   },
   links: {
-    subtitle: "NYC's hottest live desi dating show 🌶️",
+    subtitle: "NYC's hottest desi comedy dating show 🌶️",
   },
   thankYou: {
     eyebrow: "You're in",
@@ -137,7 +137,7 @@ export const PAGES = {
 
 export const APPLY_PAGE = {
   title: "Apply to Be on Garam Masala Dating",
-  subtitle: "America's #1 live desi dating show 🌶️",
+  subtitle: "America's #1 live desi comedy dating show 🌶️",
   introText:
     "Garam Masala is a dating show where sparks fly, secrets slip, and matches are made. We're casting bold, funny, attractive personalities who are down to flirt, overshare, and maybe fall in love… or at least cause chaos. Whether you're straight, queer, unsure, or just here for the plot, we want personality!",
   requirements: [
@@ -227,7 +227,43 @@ export const EXPERIENCE_STEPS = [
   },
 ];
 
+/**
+ * Follow block shown after every journal article body. Split into
+ * segments so the component can wrap the platform names in tracked links.
+ */
+export const JOURNAL_FOLLOW = {
+  ariaLabel: "Follow the show",
+  intro:
+    "This journal comes from Garam Masala Dating, a show that sells out weekly in NYC. Watch a date before you attend one.",
+  youtubeLabel: "Watch full episodes on YouTube",
+  instagramLabel: "Follow on Instagram",
+} as const;
+
+/**
+ * Follow CTA shown as the PRIMARY action on city pages with no live event.
+ * When the event does not exist, the show only exists on YouTube and
+ * Instagram, so those become the main call to action, with the waitlist
+ * beneath as the data capture for future tickets.
+ */
+export const CITY_FOLLOW = {
+  // {city} is replaced at render time with the city display name.
+  intro:
+    "There's no {city} show on sale yet. The show sells out weekly in NYC, so watch it there until we bring it to you.",
+  youtubeLabel: "Watch full episodes on YouTube",
+  instagramLabel: "Follow on Instagram",
+  waitlistSupport:
+    "Tickets for {city} don't exist yet. Waitlist signups decide where we go next, and the list gets tickets first.",
+} as const;
+
+/** Labels for the visible review verdict box on app review journal posts. */
+export const VERDICT_BOX = {
+  eyebrow: "The Verdict",
+  outOfLabel: "out of 5",
+  prosLabel: "What works",
+  consLabel: "What holds it back",
+} as const;
+
 export const AUTHOR_BIO = {
   surbhi:
-    "Co-creator and host of Garam Masala Dating, America's #1 live desi dating show. Stand-up comedian. Accidentally matched three couples and counting.",
+    "Co-creator and host of Garam Masala Dating, America's #1 live desi comedy dating show. Stand-up comedian. Accidentally matched three couples and counting.",
 } as const;

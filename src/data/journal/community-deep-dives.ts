@@ -45,7 +45,7 @@ export const communityDeepDivesPosts: JournalPost[] = [
       },
       {
         type: "p",
-        text: "I host Garam Masala Dating, the #1 live comedy dating show in NYC, and South Indian contestants come in with a particular kind of pressure. It's not louder than what Punjabi or Gujarati contestants carry, it's more precise. There's a sense of 'we've already calculated the variables, now tell me where you land.' It's oddly efficient, and also occasionally terrifying for the person across from them.",
+        text: "I host Garam Masala Dating, the #1 desi comedy dating show in NYC, and South Indian contestants come in with a particular kind of pressure. It's not louder than what Punjabi or Gujarati contestants carry, it's more precise. There's a sense of 'we've already calculated the variables, now tell me where you land.' It's oddly efficient, and also occasionally terrifying for the person across from them.",
       },
       {
         type: "h2",

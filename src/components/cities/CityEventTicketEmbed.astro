@@ -137,16 +137,46 @@ const arrowPath2 = "m12 5 7 7-7 7";
         </a>
       </noscript>
     </div>
-  ) : (
+  ) : isSoldOut ? (
     <a
       href={ticketUrl}
       target="_blank"
       rel="noopener noreferrer"
-      class={`city-cta city-cta--primary${isSoldOut ? " city-cta--soldout" : ""}`}
+      class="city-cta city-cta--primary city-cta--soldout"
       {...sharedAttrs}
     >
       <span>{ctaText}</span>
-      {!isSoldOut && (
+    </a>
+  ) : (
+    /*
+     * State B: a live event sold on a non-Eventbrite vendor (e.g. DC Comedy
+     * Loft). No embeddable widget, so render a full-strength always-visible
+     * ticket card with venue, date, doors and price, and a full-width Buy
+     * Tickets button that names the vendor for trust.
+     */
+    <div class="vendor-card">
+      <p class="vendor-card__eyebrow">{EVENTS.showName}</p>
+      <p class="vendor-card__date">
+        {event.date}
+        {timeDisplay && (
+          <>
+            {" "}
+            · {EVENTS.doorsLabel} {timeDisplay}
+          </>
+        )}
+      </p>
+      <p class="vendor-card__venue">{venueDisplay}</p>
+      <p class="vendor-card__price">
+        {EVENTS.priceFromLabel} ${event.price}
+      </p>
+      <a
+        href={ticketUrl}
+        target="_blank"
+        rel="noopener noreferrer"
+        class="city-cta city-cta--primary vendor-card__cta"
+        {...sharedAttrs}
+      >
+        <span>{EVENTS.getTicketsCta}</span>
         <svg
           xmlns="http://www.w3.org/2000/svg"
           width="16"
@@ -163,8 +193,8 @@ const arrowPath2 = "m12 5 7 7-7 7";
           <path d={arrowPath1} />
           <path d={arrowPath2} />
         </svg>
-      )}
-    </a>
+      </a>
+    </div>
   )
 }
 
@@ -294,6 +324,62 @@ const arrowPath2 = "m12 5 7 7-7 7";
   }
 
   .eb-embed__card-cta {
+    width: 100%;
+    white-space: nowrap;
+  }
+
+  /*
+   * State B vendor card: always visible (not gated behind widget failure).
+   * Reuses the fallback card's visual language but stands on its own.
+   */
+  .vendor-card {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    padding: 28px 24px;
+    background: var(--white);
+    border: 1px solid rgba(var(--brand-red-rgb), 0.18);
+    border-radius: 12px;
+    text-align: center;
+    scroll-margin-top: 80px;
+  }
+
+  .vendor-card__eyebrow {
+    font-family: var(--font-body);
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    color: var(--brand-red);
+    margin: 0;
+  }
+
+  .vendor-card__date {
+    font-family: var(--font-body);
+    font-size: 18px;
+    font-weight: 600;
+    color: var(--charcoal);
+    margin: 0;
+  }
+
+  .vendor-card__venue {
+    font-family: var(--font-body);
+    font-size: 14px;
+    font-weight: 400;
+    color: var(--muted);
+    margin: 0;
+  }
+
+  .vendor-card__price {
+    font-family: var(--font-body);
+    font-size: 15px;
+    font-weight: 500;
+    color: var(--charcoal);
+    margin: 0 0 10px;
+  }
+
+  .vendor-card__cta {
     width: 100%;
     white-space: nowrap;
   }

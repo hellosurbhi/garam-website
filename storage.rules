@@ -1,9 +1,22 @@
 rules_version = "2";
 service firebase.storage {
   match /b/{bucket}/o {
+    // Same admin gate as firestore.rules: the apply flow signs visitors in
+    // anonymously to upload photos, so plain `request.auth != null` is not
+    // an admin check. Reads (applicant photos are PII) require a
+    // non-anonymous allowlisted account or an admin custom claim. The
+    // admin dashboard displays photos via tokened download URLs, which are
+    // unaffected by this rule.
+    function isAdmin() {
+      return request.auth != null
+        && request.auth.token.firebase.sign_in_provider != 'anonymous'
+        && (request.auth.token.email in ['messagesurbhi@gmail.com', 'contact@garammasaladating.com']
+            || ('admin' in request.auth.token && request.auth.token.admin == true));
+    }
+
     match /photos/{photoId} {
-      // Photos are only displayed in the admin dashboard — require auth to read
-      allow read: if request.auth != null;
+      allow read: if isAdmin();
+      // Applicants upload from an anonymous session; size and type stay enforced.
       allow write: if request.auth != null
         && request.resource.size < 15 * 1024 * 1024
         && (request.resource.contentType == "image/jpeg"

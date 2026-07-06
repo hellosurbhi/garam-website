@@ -16,7 +16,7 @@ import { SOCIAL_URLS } from "@/data/socials";
 import CityEventTicketEmbed from "@/components/cities/CityEventTicketEmbed.astro";
 import { buildTicketUrl } from "@/utils/eventUrl";
 import { domainFromUrl, vendorFromUrl } from "@/lib/analyticsCapture";
-import { EVENTS } from "@/data/copy";
+import { EVENTS, CITY_FOLLOW } from "@/data/copy";
 
 export function getStaticPaths() {
   return Object.keys(cities).map((slug) => ({
@@ -101,7 +101,23 @@ const breadcrumbJsonLd = buildBreadcrumbJsonLd([
   { name: city.displayName },
 ]);
 
-const relatedPosts = (city.relatedArticleSlugs ?? [])
+// Featured internal links appended to every city's journal section:
+// - best-indian-dating-apps-ranked is the site's biggest-impression page
+//   (GSC: 1,493 impressions, position 25.68); 300+ city pages linking to it
+//   is the single largest internal-link boost available.
+// - Active cities (real NYC-scene relevance) also feature the flagship
+//   category guide.
+const featuredArticleSlugs = [
+  "best-indian-dating-apps-ranked",
+  ...(city.status === "active" ? ["live-dating-shows-nyc-2026"] : []),
+];
+const relatedSlugs = [
+  ...(city.relatedArticleSlugs ?? []),
+  ...featuredArticleSlugs.filter(
+    (s) => !(city.relatedArticleSlugs ?? []).includes(s),
+  ),
+];
+const relatedPosts = relatedSlugs
   .map((slug) => getPostBySlug(slug))
   .filter(
     (p): p is NonNullable<typeof p> =>
@@ -118,6 +134,14 @@ const waitlistCta = city.ctas.find((c) => c.href === "#waitlist") ?? {
 const applyCtas = city.ctas.filter((c) => c.href !== "#waitlist");
 const staticPrimaryCta = cityEvents.length === 0 ? waitlistCta : null;
 const staticSecondaryCtas = applyCtas;
+
+// State C copy: no live event, so follow CTAs are primary and the waitlist
+// is the data capture beneath. {city} placeholders resolved here.
+const followIntro = CITY_FOLLOW.intro.replace("{city}", city.displayName);
+const followWaitlistSupport = CITY_FOLLOW.waitlistSupport.replace(
+  "{city}",
+  city.displayName,
+);
 
 const cityStatus = cityEvents.length
   ? {
@@ -217,40 +241,29 @@ function renderCityText(text: string, href: string): string {
       {/* Body */}
       <div class="city-body">
         {
-          city.bodyParagraphs.map((para, i) => (
-            <>
+          city.bodyParagraphs.map((para) => (
+            <p
+              class="city-paragraph"
+              set:html={renderCityText(para, applyHref)}
+            />
+          ))
+        }
+      </div>
+
+      {/* Deep-dive sections (h2 + paragraphs) for enriched city pages */}
+      {
+        (city.sections ?? []).map((section) => (
+          <section class="city-section">
+            <h2 class="city-section__heading">{section.heading}</h2>
+            {section.paragraphs.map((para) => (
               <p
                 class="city-paragraph"
                 set:html={renderCityText(para, applyHref)}
               />
-              {i === 0 && cityEvents.length === 0 && (
-                <aside class="city-social-cta" aria-label="Follow us">
-                  <p class="city-social-cta__text">
-                    We sell out every week in NYC.{" "}
-                    <a
-                      href={SOCIAL_URLS.instagram}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                    >
-                      Instagram
-                    </a>{" "}
-                    has the best moments, and{" "}
-                    <a
-                      href={SOCIAL_URLS.youtube}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                    >
-                      YouTube
-                    </a>{" "}
-                    has full episodes. Watch while we make our way to{" "}
-                    {city.displayName}.
-                  </p>
-                </aside>
-              )}
-            </>
-          ))
-        }
-      </div>
+            ))}
+          </section>
+        ))
+      }
 
       {/* Related journal articles */}
       {
@@ -368,6 +381,78 @@ function renderCityText(text: string, href: string): string {
                 Add your name to the waitlist for future shows.
               </button>
             </p>
+          )
+        }
+        {
+          /* State C: no live event. Follow buttons are the primary CTA (the
+            show only exists on YouTube/Instagram), waitlist is the capture. */
+        }
+        {
+          cityEvents.length === 0 && (
+            <div class="city-follow">
+              <p class="city-follow__intro">{followIntro}</p>
+              <a
+                href={SOCIAL_URLS.youtube}
+                target="_blank"
+                rel="noopener noreferrer"
+                class="city-cta city-follow__btn city-follow__btn--youtube"
+                data-ph-capture="cta_clicked"
+                data-ph-cta="city_follow_youtube"
+                data-ph-section="city_follow"
+                data-cta-position="city_follow_primary"
+                data-cta-text={CITY_FOLLOW.youtubeLabel}
+                data-destination-url={SOCIAL_URLS.youtube}
+                data-event-city={city.displayName}
+                data-city-slug={city.slug}
+              >
+                <span>{CITY_FOLLOW.youtubeLabel}</span>
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="18"
+                  height="18"
+                  viewBox="0 0 24 24"
+                  fill="currentColor"
+                  class="city-follow__icon"
+                  aria-hidden="true"
+                >
+                  <path d="M23 12s0-3.5-.44-5.17a2.78 2.78 0 0 0-1.96-1.96C18.93 4.43 12 4.43 12 4.43s-6.93 0-8.6.44a2.78 2.78 0 0 0-1.96 1.96C1 8.5 1 12 1 12s0 3.5.44 5.17a2.78 2.78 0 0 0 1.96 1.96c1.67.44 8.6.44 8.6.44s6.93 0 8.6-.44a2.78 2.78 0 0 0 1.96-1.96C23 15.5 23 12 23 12ZM9.75 15.02V8.98L15.5 12l-5.75 3.02Z" />
+                </svg>
+              </a>
+              <a
+                href={SOCIAL_URLS.instagram}
+                target="_blank"
+                rel="noopener noreferrer"
+                class="city-cta city-follow__btn city-follow__btn--instagram"
+                data-ph-capture="cta_clicked"
+                data-ph-cta="city_follow_instagram"
+                data-ph-section="city_follow"
+                data-cta-position="city_follow_primary"
+                data-cta-text={CITY_FOLLOW.instagramLabel}
+                data-destination-url={SOCIAL_URLS.instagram}
+                data-event-city={city.displayName}
+                data-city-slug={city.slug}
+              >
+                <span>{CITY_FOLLOW.instagramLabel}</span>
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="18"
+                  height="18"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  class="city-follow__icon"
+                  aria-hidden="true"
+                >
+                  <rect x="2" y="2" width="20" height="20" rx="5" ry="5" />
+                  <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37Z" />
+                  <line x1="17.5" y1="6.5" x2="17.51" y2="6.5" />
+                </svg>
+              </a>
+              <p class="city-follow__support">{followWaitlistSupport}</p>
+            </div>
           )
         }
         {/* Primary static CTA */}
@@ -538,9 +623,13 @@ function renderCityText(text: string, href: string): string {
         </div>
       </dialog>
 
-      {/* Email + phone signup for cities with events */}
       {
-        cityEvents.length > 0 && (
+        /* Email + phone signup. Renders in every state: for event cities it
+          captures repeat interest, for no-event cities it is the data
+          capture for future tickets that pairs with the follow buttons. */
+      }
+      {
+        (
           <div class="city-notify">
             <div class="city-notify__steps">
               <div id="city-notify-step1">
@@ -1052,6 +1141,22 @@ function renderCityText(text: string, href: string): string {
     margin: 0;
   }
 
+  .city-section {
+    display: flex;
+    flex-direction: column;
+    gap: 22px;
+    margin-top: 34px;
+  }
+
+  .city-section__heading {
+    font-family: var(--font-playfair);
+    font-size: 22px;
+    font-weight: 600;
+    color: var(--charcoal);
+    line-height: 1.3;
+    margin: 0;
+  }
+
   /* set:html content bypasses Astro scoping — must use :global() */
   :global(.city-inline-cta) {
     background: none;
@@ -1072,29 +1177,64 @@ function renderCityText(text: string, href: string): string {
     font-style: italic;
   }
 
-  .city-social-cta {
-    background: rgba(var(--brand-red-rgb), 0.05);
-    border-left: 3px solid var(--brand-red);
-    border-radius: 0 8px 8px 0;
-    padding: 14px 18px;
+  /* State C follow block: primary CTA when no live event exists. */
+  .city-follow {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
   }
 
-  .city-social-cta__text {
-    font-family: var(--font-body), sans-serif;
+  .city-follow__intro {
+    font-family: var(--font-body);
     font-size: 15px;
     line-height: 1.6;
     color: var(--charcoal);
-    margin: 0;
+    margin: 0 0 2px;
   }
 
-  .city-social-cta__text a {
-    color: var(--brand-red);
+  .city-follow__btn {
+    justify-content: center;
+    gap: 10px;
     font-weight: 600;
-    text-decoration: none;
+    text-align: center;
   }
 
-  .city-social-cta__text a:hover {
-    text-decoration: underline;
+  .city-follow__btn--youtube {
+    border-color: var(--brand-red);
+    background: var(--brand-red);
+    color: var(--white);
+  }
+
+  @media (hover: hover) and (pointer: fine) {
+    .city-follow__btn--youtube:hover {
+      background: var(--brand-red-dark, #b91c1c);
+      border-color: var(--brand-red-dark, #b91c1c);
+    }
+  }
+
+  .city-follow__btn--instagram {
+    border-color: rgba(var(--brand-red-rgb), 0.5);
+    background: transparent;
+    color: var(--brand-red);
+  }
+
+  @media (hover: hover) and (pointer: fine) {
+    .city-follow__btn--instagram:hover {
+      border-color: rgba(var(--brand-red-rgb), 0.7);
+      background: rgba(var(--brand-red-rgb), 0.08);
+    }
+  }
+
+  .city-follow__icon {
+    flex-shrink: 0;
+  }
+
+  .city-follow__support {
+    font-family: var(--font-body);
+    font-size: 14px;
+    line-height: 1.55;
+    color: var(--muted);
+    margin: 6px 0 2px;
   }
 
   .city-ctas {

@@ -55,6 +55,34 @@ export const usNortheastCities: Record<string, CityData> = {
         q: "What is the format and how much does it cost?",
         a: "Tickets are $15. Real South Asian singles go on live dates on stage while the audience watches. There are laughs, moments and a mixer afterward. Think of it as a comedy show where the dates are real.",
       },
+      {
+        q: "Is there Indian speed dating in Edison or Central Jersey?",
+        a: "Central Jersey gets matrimonial meetups and community mixers, which is not the same thing. This is a comedy show where the dates are real, the crowd votes and the mixer starts with the whole room already laughing. Different energy entirely.",
+      },
+      {
+        q: "Where do desi singles in Edison actually meet?",
+        a: "Oak Tree Road for everything except dating. Weddings, garba season and whoever your mother has shortlisted. The densest South Asian city in America somehow has no singles night, which is precisely why we brought the show here.",
+      },
+      {
+        q: "Can I come with my cousins or a group?",
+        a: "Group tickets are the Edison default, honestly. Come six deep, watch the dates, argue about the vote and let the mixer sort out which of you actually talks to someone new.",
+      },
+    ],
+    sections: [
+      {
+        heading: "Oak Tree Road has everything except a singles night",
+        paragraphs: [
+          "Edison and Iselin hold the most concentrated South Asian population in the United States, and Oak Tree Road is its main street: two miles of chaat, jewelers, sari shops and banquet halls that host a wedding every weekend. The infrastructure for married desi life is world class here. The infrastructure for getting there is nonexistent. Between the family network, the community's very efficient gossip protocols and a social calendar built entirely around households, single people in the Middlesex desi heartland mostly date in Manhattan or not at all.",
+          "Bringing the show here was the most obvious decision we have made. The audience does not need the culture explained. The audience is the culture.",
+        ],
+      },
+      {
+        heading: "What the Central Jersey show night looks like",
+        paragraphs: [
+          "The room at Komic Karma in North Brunswick fills with exactly who you would expect: Rutgers grads, pharma and finance commuters, first gen kids whose parents live ten minutes away and do not know they are here. Two local singles go on a real blind date on stage, the crowd reacts in three languages and the mixer after is the rare Central Jersey space where being single is the whole point instead of the problem.",
+          "Tickets are $15 and the NYC shows sell out weeks ahead, so do not gamble on the door. Grab a seat, or apply to be a contestant and give Oak Tree Road something new to discuss over chaat.",
+        ],
+      },
     ],
   },
 
@@ -111,6 +139,34 @@ export const usNortheastCities: Record<string, CityData> = {
       {
         q: "Is this for young professionals or families?",
         a: "The show draws single South Asians in their mid 20s to mid 30s. It is a singles event, not a family event. Everyone in the room is there to meet someone.",
+      },
+      {
+        q: "Is there Indian speed dating in Morris County?",
+        a: "Not really. Morris County desi social life runs through temples, community halls and family networks, none of which are built for singles. This show is, and it comes without the biodata paperwork.",
+      },
+      {
+        q: "Where do desi singles in Parsippany actually meet?",
+        a: "Mostly in Manhattan, after an hour on Route 280 or NJ Transit. The whole point of a Morris County show is deleting that commute from your dating life.",
+      },
+      {
+        q: "Will people I know from the community be there?",
+        a: "Statistically, someone will know your cousin. Practically, everyone in the room is there for the same reason you are, which makes it the one desi event where being seen is a feature.",
+      },
+    ],
+    sections: [
+      {
+        heading: "Morris County's quiet desi capital",
+        paragraphs: [
+          "Parsippany's Indian community is one of New Jersey's largest and least loud about it. Pharma and tech campuses along the 287 corridor filled the townhouses, the schools filled with second gen kids and the social scene organized itself entirely around families: temple events, weekend cultural programs, festival calendars planned months out. Singles get the leftovers. If you are 28 and unmarried here, your options are the family network working on your behalf or a train to the city.",
+          "A local show flips the default. Same community, same faces you half recognize from Navratri, except this room is explicitly for the single ones.",
+        ],
+      },
+      {
+        heading: "What a Garam Masala night in Morris County looks like",
+        paragraphs: [
+          "Two local singles who have never met, on stage, going on a real first date while a room of Parsippany, Morristown and Denville desis reacts like it has a stake in the outcome. Comedian hosts, live votes and a mixer where the drive home is fifteen minutes instead of a Penn Station sprint.",
+          "Waitlist signups decide when Morris County gets its date. Get on the list, or apply to be a contestant and give the community WhatsApp groups something better to forward.",
+        ],
       },
     ],
   },
@@ -170,6 +226,34 @@ export const usNortheastCities: Record<string, CityData> = {
         q: "Can I apply to be on the show before a Boston date is announced?",
         a: "Yes. Apply now. Applications stay active for 12 months. Boston applicants will be prioritized when we confirm a date.",
       },
+      {
+        q: "Is there Indian speed dating in Boston?",
+        a: "Boston's desi speed dating happens in waves around the universities and dies every summer. A live comedy dating show is a sturdier format: the show does the icebreaking for the whole room and the mixer works whether you came from Cambridge or Burlington.",
+      },
+      {
+        q: "Where do South Asian singles in Boston actually meet?",
+        a: "Grad school orbits at MIT and Harvard, hospital cohorts, Route 128 tech campuses and community events out in Lexington and Waltham. Every circle is smart, busy and closed. One show puts all of them in the same room with a reason to talk.",
+      },
+      {
+        q: "Is the show fun if I am a grad student on a budget?",
+        a: "Tickets run around the price of two Cambridge beers and include the mixer. Per unit of actual human connection, it is the best deal in the metro and we will die on that hill.",
+      },
+    ],
+    sections: [
+      {
+        heading: "Boston's desi singles are overqualified and under-introduced",
+        paragraphs: [
+          "Greater Boston might have the most degrees per single desi of any metro on earth. MIT, Harvard, BU, Northeastern and Tufts import brilliant South Asians every September, the hospitals and biotech corridor keep them here, and the social result is a scene made of brilliant, exhausted people who only ever meet their own labs. The apps do badly here for a specific reason: half the pool churns out every graduation, so the matches reset just as they were getting somewhere.",
+          "What survives churn is an institution. A recurring live show gives Boston's desi singles a fixed point: same format, new faces, no lab affiliation required.",
+        ],
+      },
+      {
+        heading: "What a Garam Masala night in Boston looks like",
+        paragraphs: [
+          "An MGH resident and an MIT postdoc who have never met, on stage, going on a first date while a room from Somerville to the South End votes on their chemistry. The hosts keep it moving, the crowd keeps it honest and the mixer after finally introduces Cambridge to Brookline without a conference lanyard in sight.",
+          "Boston seats fill with waitlist members first, so get on the list, and if you think you can flirt under peer review, apply to be a contestant.",
+        ],
+      },
     ],
   },
 
@@ -227,6 +311,35 @@ export const usNortheastCities: Record<string, CityData> = {
         q: "Can I apply to be a contestant before a CT date is announced?",
         a: "Yes. Apply now. Applications stay active for 12 months. Connecticut applicants will be prioritized when we confirm a date.",
       },
+      {
+        q: "Is there Indian speed dating in Connecticut?",
+        a: "Connecticut's desi singles events are nearly nonexistent, which is why everyone defaults to Manhattan. A Stamford show means the format comes to the Metro North side of the equation for once.",
+      },
+      {
+        q: "Where do South Asian singles in Connecticut actually meet?",
+        a: "The honest answer is the 6:52 express to Grand Central. Between Stamford's finance towers, the Hartford insurance corridor and UConn's pipeline, the singles exist. The room for them does not. Yet.",
+      },
+      {
+        q: "Would the show be Stamford only or serve Hartford too?",
+        a: "Stamford is the likely anchor because of Metro North and the density, but the waitlist zip codes genuinely steer this. Hartford and New Haven signups push the venue north.",
+      },
+    ],
+    sections: [
+      {
+        heading:
+          "Connecticut's desi singles are commuters in their own dating lives",
+        paragraphs: [
+          "Stamford has become a real finance and tech hub with a young South Asian professional class that mostly still dates like it lives in Manhattan: events in the city, matches in the city, last trains home from the city. Meanwhile the settled desi communities around Hartford, Danbury and the Farmington Valley have deep roots and zero singles infrastructure. Two Connecticuts, one shared problem: every meaningful romantic option seems to require a train ticket.",
+          "A Connecticut show collapses that. Local room, local daters and a mixer where 'I also hate the 10:07 back' is a legitimate spark.",
+        ],
+      },
+      {
+        heading: "What a Garam Masala night in Stamford looks like",
+        paragraphs: [
+          "A Stamford analyst and a UConn health researcher who have never met, on a first date on stage, while Fairfield County votes on their chemistry. The hosts run the chaos, the crowd runs the verdict and the mixer after gives Connecticut's scattered desi singles their first real room of their own.",
+          "Waitlist volume is how Connecticut jumps the tour queue. Join the waitlist, or apply to be a contestant and make Metro North proud.",
+        ],
+      },
     ],
   },
 
@@ -278,6 +391,34 @@ export const usNortheastCities: Record<string, CityData> = {
         q: "Can I apply to be a contestant?",
         a: "Yes. Apply now. Applications stay active for 12 months. New Haven area applicants will be prioritized when we confirm a date.",
       },
+      {
+        q: "Is there Indian speed dating in New Haven?",
+        a: "No recurring one. The Yale South Asian orbit socializes through department events and cultural shows, which are lovely and not dating events. This format fills exactly that gap.",
+      },
+      {
+        q: "Where do South Asian singles in New Haven actually meet?",
+        a: "Grad school mixers, lab adjacency and the occasional trek to New York. In a city this size the pool feels smaller than it is because the circles never cross. One show crosses them on purpose.",
+      },
+      {
+        q: "Is this a students-only event?",
+        a: "No. The Yale crowd will be there, but so will the medical community and the settled desi families' single adult kids from Hamden and Woodbridge. Small city, full spectrum.",
+      },
+    ],
+    sections: [
+      {
+        heading: "New Haven's small pool problem is a mixing problem",
+        paragraphs: [
+          "New Haven's desi singles all report the same thing: everyone knows everyone, and yet nobody has met anyone new since orientation. That is not a small pool. That is a stratified one. Yale's grad programs, the med school, the hospital and the townie desi community each run their own social loop, and the loops only intersect at Diwali. The dating pool is bigger than it feels. It has just never been in one room.",
+          "A live show is the room. Ninety minutes of shared laughter does more cross-circle introduction than a year of department happy hours.",
+        ],
+      },
+      {
+        heading: "What a Garam Masala night in New Haven looks like",
+        paragraphs: [
+          "A Yale postdoc and a hospital resident who have never met, on stage, going on a first date while the whole desi ecosystem of a very compact city reacts in real time. Then a mixer where the pizza debate is the icebreaker nobody needs but everyone uses.",
+          "New Haven punches above its weight on our waitlist per capita. Keep that up: join the waitlist or apply to be a contestant.",
+        ],
+      },
     ],
   },
 
@@ -328,6 +469,34 @@ export const usNortheastCities: Record<string, CityData> = {
       {
         q: "Can I apply to be a contestant?",
         a: "Yes. Apply now. Applications stay active for 12 months. Rhode Island applicants will be prioritized when we confirm a date.",
+      },
+      {
+        q: "Is there Indian speed dating in Providence?",
+        a: "Rhode Island has essentially no desi singles events, which makes the math simple: one live show instantly becomes the biggest South Asian singles night in state history. Low bar, happy to clear it spectacularly.",
+      },
+      {
+        q: "Where do South Asian singles in Providence actually meet?",
+        a: "Brown and RISD circles, URI pockets, the hospital systems and the occasional Boston trip. The community is small enough that everyone knows everyone, which is exactly why a show full of new context works so well here.",
+      },
+      {
+        q: "Is it worth coming from elsewhere in Rhode Island?",
+        a: "The whole state is 45 minutes end to end. Yes. Cranston, Warwick and even the Massachusetts border towns are all closer to a Providence show than to anything comparable in Boston.",
+      },
+    ],
+    sections: [
+      {
+        heading: "The smallest state has the tightest desi grapevine",
+        paragraphs: [
+          "Providence's South Asian community operates at village scale inside a real city. Brown and URI bring the students, the hospitals bring the residents, Cranston and Warwick hold the settled families and the grapevine connects all of it at fiber speed. Dating here means every option arrives pre-annotated with community context, which is efficient and also suffocating. Half the singles opt out and swipe on Boston instead, an hour away on a good day.",
+          "The fix is fresh context. A live show fills a room with people you somehow have not met, in a format where the whole crowd warms up together before anyone has to be brave.",
+        ],
+      },
+      {
+        heading: "What a Garam Masala night in Providence looks like",
+        paragraphs: [
+          "A Brown grad student and a Lifespan resident who have never met, on stage, on a first date, while a room that includes at least one person who knows both their families reacts live. Then the mixer, where the walkable city does the follow-up date logistics for you.",
+          "Providence happens when the waitlist says so. Join the waitlist, or apply to be a contestant and give the grapevine its best material in years.",
+        ],
       },
     ],
   },
@@ -387,6 +556,35 @@ export const usNortheastCities: Record<string, CityData> = {
         q: "Is this only for grad students?",
         a: "No. The show draws working professionals and students alike. The crowd in New York skews mid 20s to mid 30s. Anyone who is single and interested is welcome.",
       },
+      {
+        q: "Is there Indian speed dating in Pittsburgh?",
+        a: "Occasionally through student orgs, rarely for the professionals who stayed after graduation. A live comedy dating show serves both at once and gives the room a shared experience before anyone has to introduce themselves.",
+      },
+      {
+        q: "Where do South Asian singles in Pittsburgh actually meet?",
+        a: "CMU and Pitt department circles, the robotics and autonomy companies in the Strip, Squirrel Hill and Shadyside coffee shops and a very stretched Hinge radius. The scene is dense with engineers and thin on occasions. We supply the occasion.",
+      },
+      {
+        q: "Will the crowd be all grad students?",
+        a: "No. Pittsburgh's trick is that people stay: the tech companies, hospitals and universities hold graduates for years. Expect a room that runs from first year PhDs to staff engineers with mortgages in Lawrenceville.",
+      },
+    ],
+    sections: [
+      {
+        heading:
+          "Pittsburgh built a desi tech town and forgot the social layer",
+        paragraphs: [
+          "CMU and Pitt turned Pittsburgh into a legitimate robotics and AI hub, and the South Asian share of that talent is enormous. The city kept them: cheap rent, real neighborhoods, jobs that used to require the Bay. What it never built was a social scene to match. Desi Pittsburgh socializes in department clusters and company Slack channels, and the dating pool, while genuinely large, has no venue where it all shows up at once.",
+          "One show fixes the venue problem. The format does the rest, because a room full of engineers watching a live blind date produces the most invested audience in comedy.",
+        ],
+      },
+      {
+        heading: "What a Garam Masala night in Pittsburgh looks like",
+        paragraphs: [
+          "A CMU roboticist and a UPMC resident who have never met, on stage, going on a first date while Squirrel Hill, Shadyside and the Strip District vote on the outcome. Comedian hosts steer, the crowd reacts like a design review gone feral and the mixer after finally merges the campus and professional scenes.",
+          "Pittsburgh's waitlist has been persistent, which we respect. Push it over the line: join the waitlist or apply to be a contestant.",
+        ],
+      },
     ],
   },
 
@@ -443,6 +641,34 @@ export const usNortheastCities: Record<string, CityData> = {
       {
         q: "Can I apply to be a contestant?",
         a: "Yes. Apply now. Applications stay active for 12 months. State College applicants will be prioritized when we confirm a date.",
+      },
+      {
+        q: "Is there Indian speed dating at Penn State?",
+        a: "Student orgs run occasional mixers, but nothing with a stage, a crowd and a format. In a town where everything happens on campus, a real live dating show is genuinely new territory.",
+      },
+      {
+        q: "Where do Indian students at Penn State actually meet?",
+        a: "ISA events, department clusters, apartment parties in the same three complexes and a dating app radius that hits farmland in every direction. Happy Valley density is real. The occasions are not. That is fixable.",
+      },
+      {
+        q: "Will townies and staff come or just students?",
+        a: "College towns always surprise us: faculty, hospital staff and young professionals show up alongside the student crowd. Single is single, and the mixer does not check enrollment status.",
+      },
+    ],
+    sections: [
+      {
+        heading: "Happy Valley's captive audience is the whole point",
+        paragraphs: [
+          "State College is three hours from everything, which usually reads as a bug and is, for this show, the feature. Penn State holds one of the biggest Indian student populations in America inside a town with one social calendar. Nobody is choosing between our show and a hundred other desi events, because there are no other desi events. When something real comes to Happy Valley, the entire community shows up to the same room on the same night.",
+          "That concentration is exactly what a live dating format wants: everyone in one place, everyone sharing the same 90 minutes, everyone still there for the mixer because there is nowhere else to be.",
+        ],
+      },
+      {
+        heading: "What a Garam Masala night in State College looks like",
+        paragraphs: [
+          "Two Penn State singles who have never met, a mechanical engineering PhD and a Smeal MBA maybe, on stage in front of a crowd that will absolutely see each other at the HUB on Monday. Live votes, comedian hosts and a mixer where the whole desi campus finally meets outside a GBM.",
+          "The waitlist tells us when the valley is ready. Join the waitlist, or apply to be a contestant and become campus legend by Tuesday.",
+        ],
       },
     ],
   },
@@ -501,6 +727,34 @@ export const usNortheastCities: Record<string, CityData> = {
         q: "Can I apply to be a contestant?",
         a: "Yes. Apply now. Applications stay active for 12 months. Buffalo applicants will be prioritized when we confirm a date.",
       },
+      {
+        q: "Is there Indian speed dating in Buffalo?",
+        a: "Effectively no. Western New York's desi singles rely on UB circles and apps with a lake in the match radius. One live show becomes the region's singles event by default, and we intend to earn the title anyway.",
+      },
+      {
+        q: "Where do South Asian singles in Buffalo actually meet?",
+        a: "UB's north campus orbit, Amherst and Williamsville community events and the med campus downtown. Tight circles, long winters, no dedicated singles night. The format was built for exactly this.",
+      },
+      {
+        q: "Would a Buffalo show run in winter?",
+        a: "We route around lake effect season where we can, but honestly a packed warm room in January is peak Buffalo romance. Bring layers, leave with a number.",
+      },
+    ],
+    sections: [
+      {
+        heading: "Buffalo's desi scene is bigger than Buffalo thinks",
+        paragraphs: [
+          "UB quietly built one of the largest Indian student communities in the Northeast, and the graduates seeded Amherst, Williamsville and the medical corridor with young professionals who stayed for the cost of living and the actual civic pride. What Western New York never developed is anywhere for its desi singles to meet on purpose. The community potlucks are family events. The apps are thin. Toronto glitters across the border with its own scene and a customs line in between.",
+          "A Buffalo show gives the 716 its own night: local daters, local jokes and a mixer where nobody needs a passport.",
+        ],
+      },
+      {
+        heading: "What a Garam Masala night in Buffalo looks like",
+        paragraphs: [
+          "A UB engineering grad and a Roswell Park researcher who have never met, on a first date on stage, while a room that has survived four blizzards together this year reacts with championship energy. Comedian hosts, live votes and a mixer with wings after. Obviously wings after.",
+          "The waitlist decides when the 716 gets its date. Join the waitlist, or apply to be a contestant and warm up the winter properly.",
+        ],
+      },
     ],
   },
 
@@ -551,6 +805,34 @@ export const usNortheastCities: Record<string, CityData> = {
       {
         q: "Can I apply to be a contestant?",
         a: "Yes. Apply now. Applications stay active for 12 months. Syracuse area applicants will be prioritized when we confirm a date.",
+      },
+      {
+        q: "Is there Indian speed dating in Syracuse?",
+        a: "No. Central New York's desi singles have student org mixers and nothing else. A live comedy dating show would be the first real singles event the 315 has ever had, which is exactly the kind of first we like being.",
+      },
+      {
+        q: "Where do South Asian singles in Syracuse actually meet?",
+        a: "SU and ESF circles, the hospital systems and whatever Rochester or Albany event is worth the drive that month. The region's desi singles are spread across three cities an hour apart, all waiting for someone to pick a room.",
+      },
+      {
+        q: "Could one show serve Syracuse, Rochester and Albany together?",
+        a: "That is genuinely on the table. Syracuse sits in the middle, so a central New York date could pull all three waitlists into one very good night. Sign up from whichever city you are in, the numbers decide.",
+      },
+    ],
+    sections: [
+      {
+        heading: "The 315 is a desi dating desert with real demand",
+        paragraphs: [
+          "Syracuse University's Indian student community is substantial and the local South Asian professional base around the hospitals and tech employers is bigger than outsiders assume. What central New York lacks is any social infrastructure connecting them: no desi nights, no singles events, a cultural calendar that ends at the campus gates. Every single South Asian in the region is dating through two apps and the occasional wedding introduction.",
+          "That scarcity is an opportunity. In markets like this, one good live show becomes the event of the season, because it is the only event of the season.",
+        ],
+      },
+      {
+        heading: "What a Garam Masala night in Syracuse looks like",
+        paragraphs: [
+          "An SU grad student and a hospital resident who have never met, on stage in front of a crowd drawn from three cities' worth of pent-up demand, going on a first date with live votes and comedian hosts. The mixer after doubles as central New York's first proper desi singles mingle.",
+          "Join the waitlist to prove the 315 out, or apply to be a contestant and make regional history with your flirting.",
+        ],
       },
     ],
   },
@@ -609,6 +891,35 @@ export const usNortheastCities: Record<string, CityData> = {
         q: "Can I apply to be a contestant?",
         a: "Yes. Apply now. Applications stay active for 12 months. Ithaca applicants will be prioritized when we confirm a date.",
       },
+      {
+        q: "Is there Indian speed dating in Ithaca?",
+        a: "Ithaca has SASA formals and grad mixers, which are community events wearing dating event costumes. A live show with real blind dates on stage is a different species, and in a town this size it becomes the semester's event instantly.",
+      },
+      {
+        q: "Where do South Asian singles at Cornell actually meet?",
+        a: "Collegetown parties, department clusters and a dating app radius that includes more waterfalls than people. Cornell's desi community is huge and the town is tiny. The mismatch is the whole problem and the whole opportunity.",
+      },
+      {
+        q: "Is it worth it if I am a PhD student who never leaves the lab?",
+        a: "Especially then. The show hands you 90 minutes of shared social material and a mixer where the openers write themselves. It is the most efficient social event per hour you will attend this year, and we know how much that framing appeals to you.",
+      },
+    ],
+    sections: [
+      {
+        heading:
+          "Cornell's desi community dates inside a very small snow globe",
+        paragraphs: [
+          "Cornell brings thousands of South Asian students to a town of thirty thousand people on a hill above a lake. The community is vibrant on paper: SASA is one of the strongest South Asian student associations in the Ivy League and Naacho sells out its shows. But the dating reality is a snow globe. Everyone has context on everyone, the app pool exhausts itself by October and the nearest fresh scene is a four hour bus.",
+          "A live dating show works with the snow globe instead of against it: yes everyone will know, and that is what makes the room electric.",
+        ],
+      },
+      {
+        heading: "What a Garam Masala night in Ithaca looks like",
+        paragraphs: [
+          "Two Cornellians who have somehow never crossed paths, an AEM senior and an engineering PhD maybe, on a first date on stage while a room full of mutuals loses its collective mind. Live votes, comedian hosts and a mixer that carries into Collegetown afterward because the town is one hill and everyone is walking the same direction.",
+          "Ithaca is on the map when the waitlist says so. Join the waitlist, or apply to be a contestant and give the gorge jokes a rest for one night.",
+        ],
+      },
     ],
   },
 
@@ -660,6 +971,34 @@ export const usNortheastCities: Record<string, CityData> = {
         q: "Can I apply to be a contestant?",
         a: "Yes. Apply now. Applications stay active for 12 months. Rochester applicants will be prioritized when we confirm a date.",
       },
+      {
+        q: "Is there Indian speed dating in Rochester?",
+        a: "Nothing recurring. Rochester's desi singles scene is two universities, a few community organizations and a lot of quiet swiping. One live show would instantly be the biggest desi singles event the Flour City has hosted.",
+      },
+      {
+        q: "Where do South Asian singles in Rochester actually meet?",
+        a: "RIT and U of R circles, Henrietta and Pittsford community events and the occasional Buffalo or Syracuse trip. The pieces exist. The room does not. That is a solvable problem and we solve exactly it.",
+      },
+      {
+        q: "Would Rochester get its own show or share one with Buffalo?",
+        a: "Depends on the waitlists. The cities are an hour apart, so either one strong room in the middle or two smaller nights. Rochester signups arguing for their own show is the most Rochester thing possible and we encourage it.",
+      },
+    ],
+    sections: [
+      {
+        heading: "Rochester's desi pipeline never got a social layer",
+        paragraphs: [
+          "RIT and the University of Rochester import South Asian talent every fall: engineers, imaging scientists, med students at URMC. The settled community in Henrietta, Pittsford and Brighton is established enough to fill temple events and Diwali programs. Between the two sits a missing layer: the mid 20s to mid 30s singles who aged out of student orgs and have not aged into the family circuit. They are dating on apps calibrated for bigger cities and losing patience with all of it.",
+          "The show exists for exactly that missing layer, and mid-size markets like Rochester consistently produce the loudest rooms because the night actually matters.",
+        ],
+      },
+      {
+        heading: "What a Garam Masala night in Rochester looks like",
+        paragraphs: [
+          "An RIT alum and a URMC resident who have never met, on stage, going on a first date with live audience votes and comedian hosts. Then a mixer where the garbage plate debate does the icebreaking that Western New York smalltalk was built for.",
+          "Get on the waitlist to move Rochester up the calendar, or apply to be a contestant and represent the 585 properly.",
+        ],
+      },
     ],
   },
 
@@ -710,6 +1049,35 @@ export const usNortheastCities: Record<string, CityData> = {
       {
         q: "Can I apply to be a contestant?",
         a: "Yes. Apply now. Applications stay active for 12 months. Capital Region applicants will be prioritized when we confirm a date.",
+      },
+      {
+        q: "Is there Indian speed dating in Albany?",
+        a: "The Capital Region has community organizations and festival events, but no singles-first anything. A live comedy dating show would be the region's first, which is exactly the kind of gap we route the tour around.",
+      },
+      {
+        q: "Where do South Asian singles in the Capital Region actually meet?",
+        a: "RPI and UAlbany circles, the state workforce, the nanotech corridor and community events where everyone's parents are also present. The region's desi singles are dispersed across Albany, Troy and Schenectady, waiting for a reason to converge.",
+      },
+      {
+        q: "Would the show pull from Troy and Schenectady too?",
+        a: "Yes. The three cities are twenty minutes apart, and a Capital Region show is planned as one room for all of it. RPI alone guarantees Troy shows up loud.",
+      },
+    ],
+    sections: [
+      {
+        heading:
+          "The Capital Region's desi scene is three cities pretending to be none",
+        paragraphs: [
+          "Albany, Troy and Schenectady each hold a piece of the Capital Region's South Asian community: RPI's engineering pipeline in Troy, state government and UAlbany in Albany, GE legacy families and the growing tech corridor around Malta's chip fabs. Every piece is real and none of them talk to each other socially. The result is a region with thousands of desi singles and a collective belief that there is nobody here to date.",
+          "One room, one night, three cities' worth of singles discovering each other exists. The format has done this before. Mid-size regions are where it shines hardest.",
+        ],
+      },
+      {
+        heading: "What a Garam Masala night in Albany looks like",
+        paragraphs: [
+          "An RPI grad and a state agency analyst who have never met, on a first date on stage, while the whole 518 votes on the second date. Comedian hosts, live chaos and a mixer where Troy and Albany finally cross the Hudson for something other than a hockey game.",
+          "The Capital Region gets its date when the waitlist earns it. Join the waitlist, or apply to be a contestant and give the 518 its first great dating story.",
+        ],
       },
     ],
   },
@@ -767,6 +1135,34 @@ export const usNortheastCities: Record<string, CityData> = {
       {
         q: "Can I apply to be a contestant?",
         a: "Yes. Apply now. Applications stay active for 12 months. Long Island applicants will be prioritized when we confirm a date.",
+      },
+      {
+        q: "Is there Indian speed dating on Long Island?",
+        a: "Nassau gets the occasional community mixer, Suffolk gets nothing. For a region with Stony Brook's desi density plus Hicksville's, that is a remarkable gap, and it is the reason Long Island is on this map.",
+      },
+      {
+        q: "Where do South Asian singles on Long Island actually meet?",
+        a: "Stony Brook campus circles, Hicksville's desi commercial strip for errands and the LIRR into Penn for actual social life. The island has the population of a major metro and the singles infrastructure of a small town.",
+      },
+      {
+        q: "Would the show be near campus or closer to Nassau?",
+        a: "Waitlist zip codes decide. A campus-adjacent room guarantees the student crowd, a mid-island venue pulls Hicksville and the LIRR towns. Either way it beats the 10:47 back from Penn Station.",
+      },
+    ],
+    sections: [
+      {
+        heading: "Long Island's desi singles commute past each other daily",
+        paragraphs: [
+          "Long Island holds two very different desi worlds. Stony Brook University runs one of the highest South Asian student percentages of any public university in the Northeast, a campus community with its own gravity out in Suffolk. Forty minutes west, Hicksville has become downstate's suburban Little India, with the families, groceries and banquet halls to prove it. The singles from both worlds share train cars into Manhattan every weekend to attend events that could have happened here.",
+          "An island show deletes the commute and merges the two worlds. That combination has been requested in our DMs more than almost any non-metro market.",
+        ],
+      },
+      {
+        heading: "What a Garam Masala night on Long Island looks like",
+        paragraphs: [
+          "A Stony Brook PhD and a Nassau physical therapist who have never met, on stage, going on a first date while a room full of people who all have LIRR horror stories reacts in real time. Then the mixer, where 'which branch do you live on' is finally a flirtation instead of a logistics question.",
+          "Join the waitlist to bring the show over the city line, or apply to be a contestant and make the island proud.",
+        ],
       },
     ],
   },

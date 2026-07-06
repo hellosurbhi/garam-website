@@ -1,8 +1,11 @@
-# Daily Rebuild — publishes scheduled journal articles
+# Daily Rebuild — publishes scheduled journal articles and flips
+# date-driven page states.
 #
-# The journal system hides articles with future datePublished values.
-# This workflow triggers a Vercel redeploy daily so articles appear
-# on their scheduled date.
+# The journal system hides articles with future datePublished values, and
+# city pages derive their entire CTA state from event dates at build time
+# (event ended -> page reverts to waitlist + follow CTAs; onSaleAt reached
+# -> presale flips). This workflow triggers a Vercel redeploy daily so all
+# date boundaries take effect within 24h with zero manual work.
 #
 # SETUP:
 # 1. Go to Vercel Dashboard > Project > Settings > Git > Deploy Hooks
@@ -24,4 +27,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Trigger Vercel Deploy Hook
-        run: curl -sS -X POST "${{ secrets.VERCEL_DEPLOY_HOOK }}"
+        run: |
+          curl --fail --silent --show-error --max-time 30 \
+            --retry 3 --retry-delay 10 --retry-all-errors \
+            -X POST "${{ secrets.VERCEL_DEPLOY_HOOK }}"

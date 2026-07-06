@@ -34,6 +34,35 @@ export const internationalOtherCities: Record<string, CityData> = {
         q: "Can I apply to be a contestant on stage?",
         a: "Yes. Use the apply link on this page to submit your application. Auckland is our primary New Zealand target so early applications from Sandringham, Papatoetoe, and the wider metro get noticed first.",
       },
+      {
+        q: "Is there Indian speed dating in Auckland?",
+        a: "Aotearoa's largest desi community has community events, temple calendars and nothing singles-first. New Zealand's first desi dating show starts in Auckland because everything in New Zealand desi life starts in Auckland.",
+      },
+      {
+        q: "Where do South Asian singles in Auckland actually meet?",
+        a: "Sandringham and Papatoetoe community life, the university and med school circles, tech offices around the CBD and each other's flat viewings, given the housing market. One intentional room beats all of it.",
+      },
+      {
+        q: "Would the show pull from Hamilton and beyond?",
+        a: "For the country's first desi singles night, yes. Hamilton is 90 minutes away and the rest of the North Island's desi crowd already treats Auckland as its capital of everything.",
+      },
+    ],
+    sections: [
+      {
+        heading:
+          "Auckland is desi New Zealand and desi New Zealand has no scene",
+        paragraphs: [
+          "Auckland holds the overwhelming majority of New Zealand's Indian and South Asian population, layered between Sandringham's established community strip, Papatoetoe and Manukau's family suburbs and a young professional crowd in the CBD's towers. The community's institutions are strong, the singles offering is nil and the alternative scene is a four hour flight to Sydney.",
+          "The first show here is a national event by definition. When the whole country's desi scene has one room for one night, the room writes itself into community history.",
+        ],
+      },
+      {
+        heading: "What a Garam Masala night in Auckland looks like",
+        paragraphs: [
+          "A med school registrar and a Sandringham-raised engineer who have never met, on stage, going on a first date while Aotearoa's whole desi scene reacts in one room. Comedian hosts, live votes and a K Road mixer with harbour air and no last-train anxiety.",
+          "Join the waitlist to bring the show across the Tasman, or apply to be a contestant and become New Zealand desi history.",
+        ],
+      },
     ],
     relatedArticleSlugs: [
       "nri-dating-challenges",
@@ -82,6 +111,34 @@ export const internationalOtherCities: Record<string, CityData> = {
       {
         q: "Can I apply to be a contestant on stage?",
         a: "Yes. Use the apply link on this page to submit your application. Wellington applicants are part of our New Zealand tour pool and stand out because the community here is tight enough that great contestants know each other.",
+      },
+      {
+        q: "Is there Indian speed dating in Wellington?",
+        a: "Wellington has policy consultations on everything except its desi singles scene, which is nonexistent. Victoria University's cohort and the public service's South Asian professionals deserve one night that is not a select committee.",
+      },
+      {
+        q: "Where do South Asian singles in Wellington actually meet?",
+        a: "Victoria and Massey circles, ministry floors, the tech scene around Cuba Street and Newtown's community pockets. Compact city, tight scene, no occasions. The formula we know best.",
+      },
+      {
+        q: "Auckland or Wellington first for New Zealand?",
+        a: "Auckland has the numbers, Wellington has the compactness and the crowd culture. Waitlist volume decides, and the loser gets the second date of the NZ leg regardless.",
+      },
+    ],
+    sections: [
+      {
+        heading: "Wellington's desi wonks date at consultation pace",
+        paragraphs: [
+          "Wellington's South Asian community concentrates in the public service, the universities and a growing tech scene, which produces the capital's specific dating profile: thoughtful, credentialed and moving at the speed of a discussion document. The city's compactness should help, everyone is within fifteen windy minutes of everyone, and instead it just guarantees you re-encounter your unresolved almost-somethings weekly on Lambton Quay.",
+          "A live show forces a decision point, which is precisely what consultation culture avoids. The audience vote is binding in spirit.",
+        ],
+      },
+      {
+        heading: "What a Garam Masala night in Wellington looks like",
+        paragraphs: [
+          "A ministry policy analyst and a Victoria PhD who have never met, on stage, going on a first date while the capital's compact desi scene fills one Cuba Street room. Comedian hosts, live votes and a mixer where the southerly keeps everyone inside and talking.",
+          "Join the waitlist for the New Zealand leg, or apply to be a contestant and give Wellington a submission worth reading.",
+        ],
       },
     ],
     relatedArticleSlugs: [
@@ -132,6 +189,35 @@ export const internationalOtherCities: Record<string, CityData> = {
         q: "Can I apply to be a contestant on stage?",
         a: "Yes. Use the apply link on this page to submit your application. Christchurch is part of our New Zealand tour and we are actively building a cast from Canterbury's South Asian community.",
       },
+      {
+        q: "Is there Indian speed dating in Christchurch?",
+        a: "Canterbury's desi community grew through the rebuild and the universities, and its social calendar never grew with it. The South Island has never had a desi singles event. Firsts are our specialty.",
+      },
+      {
+        q: "Where do South Asian singles in Christchurch actually meet?",
+        a: "University of Canterbury circles, the hospital, the rebuild-era construction and engineering employers and Riccarton's community pockets. Small scene, big island, no events.",
+      },
+      {
+        q: "Would Dunedin and the South Island come up?",
+        a: "For the island's first desi night, the drive from Dunedin is five hours and people will make it. Otago's students have even fewer options and remarkable commitment.",
+      },
+    ],
+    sections: [
+      {
+        heading:
+          "The rebuild brought Canterbury's desi community and no social layer",
+        paragraphs: [
+          "Christchurch's Indian community expanded through the post-earthquake rebuild, engineers, construction professionals and health workers, layered onto University of Canterbury's student base. The city rebuilt everything except a social scene for them: community events are family occasions, the nightlife is generalist and the nearest desi event of any kind is a flight to Auckland.",
+          "The South Island's first desi singles night is a genuine landmark, and landmark nights in isolated markets produce the most loyal scenes we have.",
+        ],
+      },
+      {
+        heading: "What a Garam Masala night in Christchurch looks like",
+        paragraphs: [
+          "A UC engineering postgrad and a Christchurch Hospital doctor who have never met, on stage, going on a first date while the South Island's entire desi scene shares one room with alpine air outside. Comedian hosts, live votes and a mixer in the rebuilt centre that the city can be proud of twice over.",
+          "Join the waitlist to bring the show south, or apply to be a contestant and make South Island history.",
+        ],
+      },
     ],
     relatedArticleSlugs: [
       "how-to-meet-indian-singles-without-apps",
@@ -179,6 +265,35 @@ export const internationalOtherCities: Record<string, CityData> = {
       {
         q: "Can I apply to be a contestant on stage?",
         a: "Yes. Use the apply link on this page to submit your application. Indo-Fijian applicants from Suva and Nadi are both welcome, and the blend of Pacific Island warmth and Hindi culture makes for exactly the kind of contestant the show is built around.",
+      },
+      {
+        q: "Is there Indian speed dating in Fiji?",
+        a: "Indo-Fijian social life runs through family, temple, mosque and community networks nearly 150 years deep. Formal singles events have never existed here. A live show fits the culture's love of a big occasion far better anyway.",
+      },
+      {
+        q: "Where do Indo-Fijian singles actually meet?",
+        a: "Family functions, festival season, USP's campus in Suva and the diaspora pipeline to Auckland and Sydney. Many of Fiji's singles meet their partners abroad by default. A home event changes the default.",
+      },
+      {
+        q: "Suva or Nadi for the show?",
+        a: "Suva has USP and the government crowd, Nadi has the west and the airport. The dream is both ends of Viti Levu in one tour week, and the waitlists decide the order.",
+      },
+    ],
+    sections: [
+      {
+        heading:
+          "Indo-Fijian culture is a 150 year love story with no dating scene",
+        paragraphs: [
+          "Indo-Fijians built one of the most distinct desi cultures on earth: Fiji Hindi, girmit history, chutney music and a community that is over a third of the country. The social structures remain deeply communal, and the singles path runs through family introductions or emigration, with Auckland and Sydney absorbing a generation of Fiji's young desi talent partly because the social opportunities left first.",
+          "A Fiji show honours the culture where it lives. The diaspora flies home for weddings; a night this good is a lighter excuse.",
+        ],
+      },
+      {
+        heading: "What a Garam Masala night in Fiji looks like",
+        paragraphs: [
+          "A USP graduate and a Nadi hotelier who have never met, on stage, going on a first date while an Indo-Fijian crowd brings kava-session warmth and wedding-tent volume to the votes. Comedian hosts, live chaos and a mixer where the islands' hospitality does the rest.",
+          "Join the waitlist to bring the show to the Pacific, or apply to be a contestant and give girmit history its most joyful new chapter.",
+        ],
       },
     ],
     relatedArticleSlugs: [
@@ -229,6 +344,34 @@ export const internationalOtherCities: Record<string, CityData> = {
         q: "Can I apply to be a contestant on stage?",
         a: "Yes. Use the apply link on this page to submit your application. Nadi applicants carry the western Fiji Indo-Fijian identity and we are looking for people whose personalities fill a room the way the Sri Siva Subramaniya Swami temple fills the skyline.",
       },
+      {
+        q: "Is there speed dating in Nadi?",
+        a: "Western Viti Levu's social calendar is temple festivals, family functions and the tourism industry's staff parties. Singles events do not exist. The west deserves its own night, not a Suva hand-me-down.",
+      },
+      {
+        q: "Where do Indo-Fijian singles in Nadi actually meet?",
+        a: "The hotels and resorts where half the west works, festival season around the temple and family networks with full coverage. The tourism economy socialises everyone except its own workers.",
+      },
+      {
+        q: "Would tourists end up in the audience?",
+        a: "Probably a few curious ones, and the format survives it fine. But the night is built for the west's Indo-Fijian community: local daters, local jokes, local stakes.",
+      },
+    ],
+    sections: [
+      {
+        heading: "Nadi hosts the world's holidays and none of its own",
+        paragraphs: [
+          "Nadi runs Fiji's tourism machine: the airport, the resorts, the Denarau marina, staffed heavily by the west's Indo-Fijian community whose own social lives happen entirely off the resort clock. The Sri Siva Subramaniya temple anchors the cultural identity, the sugar towns up the coast hold the family networks and the singles get everyone else's romance as a workplace and none of their own.",
+          "A Nadi show flips the hospitality: one night where the west's desi community is the guest of honour in its own town.",
+        ],
+      },
+      {
+        heading: "What a Garam Masala night in Nadi looks like",
+        paragraphs: [
+          "A resort duty manager and a Lautoka-raised teacher who have never met, on stage, going on a first date while the west's Indo-Fijian community reacts with the energy it usually spends on other people's weddings. Comedian hosts, live votes and a mixer with the Pacific doing the backdrop.",
+          "Join the waitlist for the Fiji leg, or apply to be a contestant and give the west its own headline.",
+        ],
+      },
     ],
     relatedArticleSlugs: [
       "what-actually-happens-at-a-live-comedy-dating-show",
@@ -277,6 +420,34 @@ export const internationalOtherCities: Record<string, CityData> = {
         q: "Can I apply to be a contestant on stage?",
         a: "Yes. Use the apply link on this page to submit your application. Lautoka and the western Viti Levu corridor are part of our Fiji casting pool, and contestants from Sugar City bring an energy that is distinct from anywhere else in the Pacific.",
       },
+      {
+        q: "Is there speed dating in Lautoka?",
+        a: "Sugar City's social life is family, temple, mosque and the mill's long shadow. Singles events have never existed in western Fiji, which makes the first one a genuine community moment.",
+      },
+      {
+        q: "Where do Indo-Fijian singles in Lautoka actually meet?",
+        a: "Festival season, family functions and the Nadi corridor's tourism employers. The community's depth is generations of girmit history. Its singles calendar is empty. One night fills it.",
+      },
+      {
+        q: "Lautoka or Nadi for the western show?",
+        a: "Twenty minutes apart, one corridor, one crowd. Whichever hosts, the other fills half the room, and Sugar City's pride guarantees it argues for home turf.",
+      },
+    ],
+    sections: [
+      {
+        heading: "Sugar City's story deserves a new chapter",
+        paragraphs: [
+          "Lautoka is the heart of the girmit story: the sugar mill, the cane fields and the Indo-Fijian families whose great-grandparents crossed an ocean under indenture and built a culture that survived everything since. The community's social fabric is dense and ceremonial, weddings, pujas, Eid, and its single generation navigates it all with no space designed for them.",
+          "A Lautoka show sits that history in the front row and gives its descendants a night of pure joy on their own terms. The symbolism is not lost on us and will not be lost on the room.",
+        ],
+      },
+      {
+        heading: "What a Garam Masala night in Lautoka looks like",
+        paragraphs: [
+          "Two western Viti Levu singles who have never met, on stage, going on a first date while Sugar City reacts with festival-day energy. Comedian hosts, live votes and a mixer where four generations of community history watch the fifth one flirt.",
+          "Join the waitlist for the Fiji leg, or apply to be a contestant and write girmit history's happiest footnote.",
+        ],
+      },
     ],
     relatedArticleSlugs: ["nri-dating-challenges", "irl-dating-revival"],
     ctas: [
@@ -323,6 +494,35 @@ export const internationalOtherCities: Record<string, CityData> = {
       {
         q: "Can I apply to be a contestant on stage?",
         a: "Yes. Use the apply link on this page to submit your application. Nairobi is our top Africa target and we are actively scouting for contestants from Parklands, Westlands, and the broader East African desi community.",
+      },
+      {
+        q: "Is there Indian speed dating in Nairobi?",
+        a: "Nairobi's century-old desi community has gymkhanas, temple calendars and family networks of legendary efficiency, and zero singles events. East Africa's desi capital deserves the continent's first show.",
+      },
+      {
+        q: "Where do desi singles in Nairobi actually meet?",
+        a: "Parklands and Westlands social circuits, the family business networks, Diamond Plaza's food floors and each other's weddings. The community's closeness is its superpower and its dating obstacle simultaneously.",
+      },
+      {
+        q: "Will the show fit Nairobi's community culture?",
+        a: "The gymkhana crowd invented desi social infrastructure in East Africa. A comedy dating show is just the newest wing of a very old building, and the aunties will approve of the format once they see the mixer's results.",
+      },
+    ],
+    sections: [
+      {
+        heading:
+          "Nairobi's desi community built East Africa and kept its singles waiting",
+        paragraphs: [
+          "Nairobi's Gujarati, Punjabi and Goan communities go back over a century, from the railway era to today's family business empires, with Parklands as the heartland and social institutions, gymkhanas, temples, community halls, that most diaspora cities would envy. The singles inherit all of it plus the classic tight-community bind: every potential match arrives pre-vetted, pre-discussed and slightly pre-ruined by context.",
+          "A live show adds the one thing the gymkhana calendar never had: a night where being single is the point and the community's famous warmth points at romance.",
+        ],
+      },
+      {
+        heading: "What a Garam Masala night in Nairobi looks like",
+        paragraphs: [
+          "A Parklands-raised architect and a Westlands fintech founder who have never met, somehow, on stage, going on a first date while three generations of East African desi society react at full volume. Comedian hosts, live votes and a mixer that runs on Nairobi's unmatched hosting instincts.",
+          "Join the waitlist to bring the show to East Africa first, or apply to be a contestant and give the community WhatsApp networks their finest hour.",
+        ],
       },
     ],
     relatedArticleSlugs: [
@@ -373,6 +573,34 @@ export const internationalOtherCities: Record<string, CityData> = {
         q: "Can I apply to be a contestant on stage?",
         a: "Yes. Use the apply link on this page to submit your application. Mombasa applicants from the Old Town, Nyali, and Diani coastal corridor are all eligible, and the multigenerational Swahili Coast desi identity is exactly what the show celebrates.",
       },
+      {
+        q: "Is there Indian speed dating in Mombasa?",
+        a: "The coast's desi families have traded across the Indian Ocean for centuries and never once held a singles event. Mombasa's community is smaller than Nairobi's and older than most countries. The first show honours both facts.",
+      },
+      {
+        q: "Where do desi singles in Mombasa actually meet?",
+        a: "Old Town's family networks, Nyali's social circuit and Nairobi trips when the coast feels small. The community context is total, which is exactly what a fresh-format night cuts through.",
+      },
+      {
+        q: "Nairobi or Mombasa for the Kenya show?",
+        a: "Nairobi has the numbers, Mombasa has the setting and the centuries. A coast show after a capital show is the dream Kenya leg, and the waitlists shape the order.",
+      },
+    ],
+    sections: [
+      {
+        heading: "The Swahili Coast's desi story predates everything",
+        paragraphs: [
+          "Mombasa's Indian community arrived on monsoon trade winds centuries before colonial Kenya existed: Gujarati and Kutchi trading families whose descendants still run the coast's commerce from Old Town to Nyali. The community is proud, compact and generationally intertwined, and its singles navigate a social world where every family has known every other family since before the railway.",
+          "A live show offers the coast's singles something genuinely unprecedented: a public, joyful format for meeting that no great-aunt designed and every great-aunt will attend.",
+        ],
+      },
+      {
+        heading: "What a Garam Masala night in Mombasa looks like",
+        paragraphs: [
+          "Two coast singles whose families have traded together for a century but who have never met, on stage, going on a first date while Old Town and Nyali react with ocean-breeze warmth and wedding-season volume. Comedian hosts, live votes and a mixer where the Indian Ocean does the ambiance it has done for five hundred years.",
+          "Join the waitlist for the Kenya leg, or apply to be a contestant and add a chapter to the oldest desi story in Africa.",
+        ],
+      },
     ],
     relatedArticleSlugs: [
       "desi-night-out-beyond-bollywood",
@@ -422,6 +650,35 @@ export const internationalOtherCities: Record<string, CityData> = {
         q: "Can I apply to be a contestant on stage?",
         a: "Yes. Use the apply link on this page to submit your application. Dar es Salaam is part of our East Africa tour and we are looking for contestants from Upanga, Oyster Bay, and the wider Tanzanian Indian community who are ready to represent five generations of desi life on the Swahili Coast.",
       },
+      {
+        q: "Is there Indian speed dating in Dar es Salaam?",
+        a: "Dar's desi community has jamatkhanas, temples and community halls serving five generations, and no singles events in its history. The first one becomes a community institution the night it happens.",
+      },
+      {
+        q: "Where do desi singles in Dar actually meet?",
+        a: "Upanga's community institutions, Oyster Bay's social circuit, the family business networks and weddings, which function as the community's only sanctioned mixer. We add a second one with better jokes.",
+      },
+      {
+        q: "Will the show respect the community's diversity?",
+        a: "Dar's desi community spans Ismaili, Hindu, Sikh and Goan traditions that have shared this city for a century. The show's stage is neutral ground by design, and the mixer is where the traditions have always actually met anyway.",
+      },
+    ],
+    sections: [
+      {
+        heading:
+          "Dar's five generations built everything except a singles night",
+        paragraphs: [
+          "Dar es Salaam's Indian community is one of Africa's most rooted: Gujarati, Ismaili, Punjabi and Goan families whose institutions in Upanga have anchored the city for a century. The community's social machinery is complete, schools, sports clubs, religious calendars, except for the singles, who get family introductions or the diaspora escape route to London and Toronto.",
+          "A Dar show gives the fifth generation a reason to build its love story at home, in front of the four generations who built everything else.",
+        ],
+      },
+      {
+        heading: "What a Garam Masala night in Dar looks like",
+        paragraphs: [
+          "An Upanga-raised accountant and an Oyster Bay marketing lead who have never met, on stage, going on a first date while five generations of Tanzanian desi society react with coastal warmth. Comedian hosts, live votes and a mixer with the harbour breeze doing the atmospherics.",
+          "Join the waitlist for the East Africa leg, or apply to be a contestant and make Swahili Coast history smile.",
+        ],
+      },
     ],
     relatedArticleSlugs: [
       "nri-dating-challenges",
@@ -470,6 +727,34 @@ export const internationalOtherCities: Record<string, CityData> = {
       {
         q: "Can I apply to be a contestant on stage?",
         a: "Yes. Use the apply link on this page to submit your application. Joburg is on our Africa tour and we want contestants from Lenasia, Fordsburg, Sandton, and everywhere in between who are ready to bring the resilience and humour of the South African Indian experience to the stage.",
+      },
+      {
+        q: "Is there Indian speed dating in Johannesburg?",
+        a: "Joburg's Indian community has history, humour and heavyweight institutions, and its singles have Lenasia family networks or Sandton's generic scene with nothing in between. The in-between is our entire product.",
+      },
+      {
+        q: "Where do desi singles in Joburg actually meet?",
+        a: "Lenasia and Fordsburg community life, Sandton and Rosebank's professional circuit, Wits and UJ circles and family weddings with agendas. One neutral room, all of it, one night.",
+      },
+      {
+        q: "Lenasia or Sandton for the venue?",
+        a: "Somewhere both can claim: the show needs the community's depth and the professional crowd's reach in one room, and Joburg's geography makes Rosebank or Braamfontein the likely diplomatic answer.",
+      },
+    ],
+    sections: [
+      {
+        heading: "Joburg's Indian story is resilience with a sense of humour",
+        paragraphs: [
+          "Johannesburg's Indian community carries a history no other diaspora city matches: Fordsburg's trading roots, Lenasia's apartheid-era designation and the generations who built full lives despite everything, with comedy as a community survival skill. Today's singles span Lenasia's rooted networks and the Sandton professional class, two worlds with the same surnames and increasingly little else shared.",
+          "A live comedy dating show in the city where South African Indian humour was forged is a homecoming for the format. The crowd work writes itself and the crowd will write back.",
+        ],
+      },
+      {
+        heading: "What a Garam Masala night in Joburg looks like",
+        paragraphs: [
+          "A Lenasia-raised attorney and a Sandton consultant who have never met, on stage, going on a first date while a crowd fluent in four languages of banter reacts at highveld altitude. Comedian hosts, live votes and a mixer with bunny chow opinions flying.",
+          "Join the waitlist for the South Africa leg, or apply to be a contestant and show the continent how Joburg flirts.",
+        ],
       },
     ],
     relatedArticleSlugs: [
@@ -526,6 +811,34 @@ export const internationalOtherCities: Record<string, CityData> = {
         q: "Can I apply to be a contestant on stage?",
         a: "Yes. Use the apply link on this page to submit your application. Durban is a top priority on our Africa tour and we are specifically looking for contestants from Chatsworth, Phoenix, and Tongaat who can carry the full weight of what it means to be Indian South African on stage in front of their own community.",
       },
+      {
+        q: "Is there Indian speed dating in Durban?",
+        a: "The largest Indian city outside Asia has weddings, temple festivals and a curry culture with its own literature, and no singles events. Durban is the single most obvious untapped market on the entire world tour.",
+      },
+      {
+        q: "Where do desi singles in Durban actually meet?",
+        a: "Chatsworth and Phoenix community life, UKZN circles, Umhlanga's professional crowd and family networks that have run introductions since 1860. The community's scale means the show could run monthly here from day one.",
+      },
+      {
+        q: "Will the show get Durban's specific culture?",
+        a: "Durban Indian culture is its own civilisation: the slang, the food, the humour. The show casts local and the hosts learn fast. By interval, the room will have taught us everything we need.",
+      },
+    ],
+    sections: [
+      {
+        heading: "Durban is the biggest desi city we have never played",
+        paragraphs: [
+          "Durban's Indian community, descended from the 1860 indenture ships and the traders who followed, is the largest outside Asia: Chatsworth and Phoenix are entire Indian cities within the city, UKZN feeds the professional pipeline and the culture, bunny chow, charou slang, a comedy tradition of its own, is fully distinct and fully confident. The singles infrastructure, as everywhere, is weddings and aunties.",
+          "By raw audience potential, Durban is the strongest market on our world map outside India itself. The only question is which venue survives the crowd.",
+        ],
+      },
+      {
+        heading: "What a Garam Masala night in Durban looks like",
+        paragraphs: [
+          "A Chatsworth-raised teacher and an Umhlanga fintech analyst who have never met, on stage, going on a first date while the most Indian city outside Asia reacts with 160 years of pent-up event demand. Comedian hosts, live votes and a mixer where the bunny chow order is a personality test.",
+          "Join the waitlist to make Durban the Africa flagship, or apply to be a contestant and represent the charou nation properly.",
+        ],
+      },
     ],
     relatedArticleSlugs: [
       "punjabi-dating-culture-beyond-bollywood",
@@ -581,6 +894,34 @@ export const internationalOtherCities: Record<string, CityData> = {
         q: "Can I apply to be a contestant on stage?",
         a: "Yes. Use the apply link on this page to submit your application. Cape Town is part of our South Africa tour and we are looking for contestants from the UCT and Stellenbosch communities and professionals scattered across the Mother City who are ready to show up for a first of its kind desi night.",
       },
+      {
+        q: "Is there Indian speed dating in Cape Town?",
+        a: "The Mother City has an event for every taste except this one. Cape Town's desi professionals and students are scattered thin across a gorgeous city with no way to find each other. One night, one room, solved.",
+      },
+      {
+        q: "Where do desi singles in Cape Town actually meet?",
+        a: "UCT and Stellenbosch circles, the tech and finance offices, Rylands' community pocket and braais where everyone brings a plus-one except you. The scatter is the problem. Assembly is the product.",
+      },
+      {
+        q: "Would Durban and Joburg transplants come?",
+        a: "Half of desi Cape Town is a Durban or Joburg transplant who moved for the mountain and lost the community. This show is specifically for them, and they know who they are.",
+      },
+    ],
+    sections: [
+      {
+        heading: "Cape Town's desi crowd traded community for scenery",
+        paragraphs: [
+          "Cape Town's Indian community is the smallest of South Africa's big three and the most scattered: Rylands holds the historic pocket while the young professionals, many of them Durban and Joburg transplants chasing careers and the mountain, spread across the city bowl and southern suburbs with no community gravity at all. They gained the views and lost the network, and the braai circuit does not replace it.",
+          "One show rebuilds the network for a night. The transplants remember what a full desi room feels like, and the mixer does the rest.",
+        ],
+      },
+      {
+        heading: "What a Garam Masala night in Cape Town looks like",
+        paragraphs: [
+          "A UCT medic and a Woodstock startup designer who have never met, on stage, going on a first date with Table Mountain somewhere in the establishing shot. Comedian hosts, live votes and a mixer that migrates down Bree Street as the evening warms.",
+          "Join the waitlist for the South Africa leg, or apply to be a contestant and give the Mother City a love story with the best backdrop on tour.",
+        ],
+      },
     ],
     relatedArticleSlugs: [
       "how-to-meet-indian-singles-without-apps",
@@ -629,6 +970,35 @@ export const internationalOtherCities: Record<string, CityData> = {
       {
         q: "Can I apply to be a contestant on stage?",
         a: "Yes. Use the apply link on this page to submit your application. Mauritius applications are open across Port Louis, Quatre Bornes, and Rose Hill, and when the whole island knows everyone, being the person on stage at this show is a genuinely big deal.",
+      },
+      {
+        q: "Is there speed dating in Mauritius?",
+        a: "An island that is two-thirds South Asian by descent has never had a desi singles event, because when the community is the majority, nobody thinks to build for it. We noticed the gap from another hemisphere.",
+      },
+      {
+        q: "Where do Mauritian singles actually meet?",
+        a: "University of Mauritius circles, the Ebene cybercity offices, family networks with island-wide coverage and weddings that double as the national introduction service. One show gives the island a second service with better pacing.",
+      },
+      {
+        q: "Will the show run in English, French or Creole?",
+        a: "English format, Mauritian energy. The daters will code-switch through three languages in one date and the audience will follow every word, because this is Mauritius and everyone always does.",
+      },
+    ],
+    sections: [
+      {
+        heading:
+          "The most desi country outside Asia never built a singles night",
+        paragraphs: [
+          "Mauritius is the world's great desi majority experiment: descendants of Bhojpuri, Tamil and Gujarati arrivals make up most of the island, running its politics, its Ebene tech corridor and its cultural calendar. Precisely because desi life is the default, nobody ever built desi-specific social infrastructure, and the island's singles navigate a community where everyone is two introductions from everyone via networks that never switch off.",
+          "An island show has the best coverage math on earth: one room can genuinely hold a meaningful share of the national scene, and the coverage never expires because nobody can move away quietly.",
+        ],
+      },
+      {
+        heading: "What a Garam Masala night in Mauritius looks like",
+        paragraphs: [
+          "An Ebene fintech analyst and a Rose Hill teacher who have never met, on stage, going on a first date while an island that treats gossip as a public utility reacts in three languages. Comedian hosts, live votes and a mixer where the sega playlist request is inevitable and correct.",
+          "Join the waitlist to bring the show to the Indian Ocean, or apply to be a contestant and become island-famous by morning.",
+        ],
       },
     ],
     relatedArticleSlugs: [
@@ -687,6 +1057,34 @@ export const internationalOtherCities: Record<string, CityData> = {
         q: "Can I apply to be a contestant on stage?",
         a: "Yes. Use the apply link on this page to submit your application. Port of Spain applicants are part of our Caribbean tour cast and the Indo-Trinidadian contestants who bring chutney energy to a live dating format tend to become the most talked about nights of the tour.",
       },
+      {
+        q: "Is there Indian speed dating in Trinidad?",
+        a: "Trinidad has fetes for everything and singles events for nothing. Indo-Trinidadian social life runs on family functions, chutney shows and Carnival season, none of which are built for meeting your person on purpose.",
+      },
+      {
+        q: "Where do Indo-Trinidadian singles actually meet?",
+        a: "UWI St Augustine circles, the office towers of Port of Spain, family weddings and Carnival, where everyone meets everyone and remembers selectively. A show adds intention to a culture that already has all the energy.",
+      },
+      {
+        q: "Will the show feel like a fete?",
+        a: "The audience votes will, guaranteed. The format keeps the dates on stage structured while the room brings soca-season volume, and the mixer afterward is a fete with a purpose.",
+      },
+    ],
+    sections: [
+      {
+        heading: "Trinidad has the energy, the culture and no format",
+        paragraphs: [
+          "Indo-Trinidadians built one of the Caribbean's defining cultures: chutney soca, Divali Nagar, doubles at every corner and a social calendar that runs hot all year. What the culture never produced is a singles event, because the fete tradition assumes the meeting happens in the crowd. Sometimes it does. Mostly everyone dances, goes home and repeats.",
+          "A live dating show gives Trini energy a target. The format's audience participation was practically designed for a nation that considers commentary a birthright.",
+        ],
+      },
+      {
+        heading: "What a Garam Masala night in Port of Spain looks like",
+        paragraphs: [
+          "A UWI graduate and a Woodbrook marketing exec who have never met, on stage, going on a first date while a Trini crowd delivers the most musical heckling on the world tour. Comedian hosts, live votes and a mixer that migrates toward the Avenue with doubles as the closing course.",
+          "Join the waitlist for the Caribbean leg, or apply to be a contestant and give Trinidad a storyline better than Carnival Monday.",
+        ],
+      },
     ],
     relatedArticleSlugs: [
       "desi-night-out-beyond-bollywood",
@@ -741,6 +1139,34 @@ export const internationalOtherCities: Record<string, CityData> = {
       {
         q: "Can I apply to be a contestant on stage?",
         a: "Yes. Use the apply link on this page to submit your application. San Fernando is part of our Trinidad tour and southern Indo-Trinidadian contestants, rooted in chutney culture and Phagwa traditions, are exactly the energy this show is built to showcase.",
+      },
+      {
+        q: "Is there speed dating in San Fernando?",
+        a: "South Trinidad's social life is chutney shows, temple festivals and family networks that predate the oil refinery. Singles events have never existed south of the Caroni. The heartland deserves its own night.",
+      },
+      {
+        q: "Where do Indo-Trinidadian singles in the south actually meet?",
+        a: "Family functions, Phagwa and Divali season, the Gulf City liming circuit and Port of Spain trips up the highway. The south has the culture's deepest roots and the emptiest singles calendar.",
+      },
+      {
+        q: "Why San Fernando and not just Port of Spain?",
+        a: "Because the south is the Indo-Trinidadian heartland and heartlands host, they do not commute. A Sando show is a statement the community will hear correctly.",
+      },
+    ],
+    sections: [
+      {
+        heading: "The south is where Indo-Trinidad lives deepest",
+        paragraphs: [
+          "San Fernando anchors the sugar belt geography where Indo-Trinidadian culture runs deepest: the temples and mosques of the old estates, chutney music's home territory and family networks unbroken since indenture. The south's singles inherit the culture at full strength and its introduction machinery at full formality, with Port of Spain's scene an hour away and built for someone else.",
+          "A Sando show plants the flag where the culture actually lives. The room will know every chutney reference before the hosts finish them.",
+        ],
+      },
+      {
+        heading: "What a Garam Masala night in San Fernando looks like",
+        paragraphs: [
+          "Two south Trinidad singles who have never met, on stage, going on a first date while the heartland reacts with Skinner Park volume. Comedian hosts, live votes and a mixer where the aunties' intelligence network finally reports good news.",
+          "Join the waitlist for the Trinidad leg, or apply to be a contestant and make the south proud on its own stage.",
+        ],
       },
     ],
     relatedArticleSlugs: [
@@ -797,6 +1223,34 @@ export const internationalOtherCities: Record<string, CityData> = {
         q: "Can I apply to be a contestant on stage?",
         a: "Yes. Use the apply link on this page to submit your application. Chaguanas sits at the centre of Trinidad's Indian corridor and applicants from here and across central Trinidad bring a community confidence that is unlike anywhere else in the Caribbean.",
       },
+      {
+        q: "Is there speed dating in Chaguanas?",
+        a: "The most Indian city in the Caribbean has never had a singles event, which is the kind of statistic that gets a city bumped up our routing. Central Trinidad hosts, everyone else drives.",
+      },
+      {
+        q: "Where do Indo-Trinidadian singles in central actually meet?",
+        a: "Divali Nagar season, the Chaguanas market economy's family businesses, Price Plaza liming and everyone's weddings. The central corridor has the density of a small country and the singles calendar of a small village.",
+      },
+      {
+        q: "Would the whole island come to a Chaguanas show?",
+        a: "Central is equidistant from everything, which is why it grew in the first place. Port of Spain, Sando and the east-west corridor all reach Chaguanas in under an hour.",
+      },
+    ],
+    sections: [
+      {
+        heading: "Chaguanas is the Caribbean's desi capital and knows it",
+        paragraphs: [
+          "Chaguanas grew from market town to Trinidad's largest borough on the strength of its Indo-Trinidadian business culture, and it carries the confidence of a community that built its own prosperity: the Divali Nagar site, the market dynasties, the malls that central Trinidad treats as public squares. The singles here have the Caribbean's deepest desi context and the same empty event calendar as everywhere else on the tour.",
+          "Density plus confidence plus zero competition is the strongest formula on our map. Chaguanas hosting the Caribbean's first desi dating show is almost suspiciously obvious.",
+        ],
+      },
+      {
+        heading: "What a Garam Masala night in Chaguanas looks like",
+        paragraphs: [
+          "Two central Trinidad singles who have never met, on stage, going on a first date while the Caribbean's most desi city reacts with Divali Nagar crowd energy. Comedian hosts, live votes and a mixer where the roti shop debate carries genuine matrimonial weight.",
+          "Join the waitlist for the Caribbean leg, or apply to be a contestant and headline the borough that built itself.",
+        ],
+      },
     ],
     relatedArticleSlugs: [
       "rise-of-south-asian-comedy-america",
@@ -851,6 +1305,34 @@ export const internationalOtherCities: Record<string, CityData> = {
       {
         q: "Can I apply to be a contestant on stage?",
         a: "Yes. Use the apply link on this page to submit your application. Georgetown is part of our Caribbean tour and Indo-Guyanese applicants from the city and the Essequibo coast are welcome, including those with ties to the diaspora communities in Richmond Hill and the GTA.",
+      },
+      {
+        q: "Is there speed dating in Georgetown?",
+        a: "Guyana's social calendar is weddings, religious festivals and fundraisers, and the singles get introduced at all three whether they asked or not. A show makes the introduction voluntary, public and actually fun.",
+      },
+      {
+        q: "Where do Indo-Guyanese singles actually meet?",
+        a: "UG Turkeyen circles, the oil boom's new office economy, family networks along the coast and the diaspora pipeline to Richmond Hill and Toronto. The boom is keeping more young people home. The scene needs to catch up to them.",
+      },
+      {
+        q: "Will diaspora Guyanese fly back for this?",
+        a: "Richmond Hill flies home for weddings on weaker pretexts. The first desi dating show in Guyanese history is precisely the event the diaspora group chats were built to mobilise for.",
+      },
+    ],
+    sections: [
+      {
+        heading: "Guyana's boom is keeping its singles home for the first time",
+        paragraphs: [
+          "Indo-Guyanese culture defined the Western Hemisphere's desi story for 180 years, and for most of living memory its young people exported themselves to Richmond Hill and Scarborough as a rite of passage. The oil boom is rewriting that: Georgetown's new economy is holding graduates home, and the city suddenly has a generation of young Indo-Guyanese professionals with salaries, prospects and a social scene built for their parents.",
+          "The first show lands in that exact gap: a night for the generation that stayed, with the diaspora watching jealously on Instagram.",
+        ],
+      },
+      {
+        heading: "What a Garam Masala night in Georgetown looks like",
+        paragraphs: [
+          "A UG graduate and an oil sector analyst who have never met, on stage, going on a first date while Georgetown reacts with wedding-house volume. Comedian hosts, live votes and a seawall-adjacent mixer where the seven curry references fly.",
+          "Join the waitlist for the Caribbean leg, or apply to be a contestant and give Guyana's new era its first love story.",
+        ],
       },
     ],
     relatedArticleSlugs: [
@@ -907,6 +1389,34 @@ export const internationalOtherCities: Record<string, CityData> = {
         q: "Can I apply to be a contestant on stage?",
         a: "Yes. Use the apply link on this page to submit your application. New Amsterdam and the Berbice coast are part of our Guyana tour, and contestants from the most densely Indo-Guyanese region in the country bring a rootedness to the stage that the format is built to celebrate.",
       },
+      {
+        q: "Is there speed dating in Berbice?",
+        a: "Berbice is the cultural heartland of Indo-Guyana and its social calendar is entirely family and faith. A singles event here is unprecedented, which is exactly why it will be remembered.",
+      },
+      {
+        q: "Where do Indo-Guyanese singles in Berbice actually meet?",
+        a: "Mandirs and masjids, wedding season along the Corentyne coast and Georgetown or Toronto for anyone chasing more options. The heartland keeps the culture and exports the singles. One night reverses the flow.",
+      },
+      {
+        q: "Would Georgetown come down for a Berbice show?",
+        a: "The Berbice bridge made the heartland reachable, and heritage pulls: half of Georgetown's Indo-Guyanese families are Berbician two generations back. They will come home for this.",
+      },
+    ],
+    sections: [
+      {
+        heading: "Berbice is where Indo-Guyanese culture keeps its roots",
+        paragraphs: [
+          "The Corentyne coast is Indo-Guyana at its most concentrated: rice and sugar villages, mandirs every few miles and the families whose ancestors landed at the Berbice estates in the 1830s. The culture's depth here is unmatched in the hemisphere, and its formality too: introductions run through families, and the young Berbicians who want something different leave for Georgetown or the diaspora.",
+          "Bringing the show to New Amsterdam honours the root system. The heartland gets a first-of-its-kind night without anyone needing a bus to the capital.",
+        ],
+      },
+      {
+        heading: "What a Garam Masala night in New Amsterdam looks like",
+        paragraphs: [
+          "Two Berbice singles who have never met, on stage, going on a first date while the heartland reacts with the warmth of a region that treats every guest as family. Comedian hosts, live votes and a mixer where the Corentyne's legendary hospitality points inward for once.",
+          "Join the waitlist for the Guyana leg, or apply to be a contestant and give Berbice a story to carry up the coast.",
+        ],
+      },
     ],
     relatedArticleSlugs: [
       "desi-dating-problems-brown-people",
@@ -960,6 +1470,34 @@ export const internationalOtherCities: Record<string, CityData> = {
       {
         q: "Can I apply to be a contestant on stage?",
         a: "Yes. Use the apply link on this page to submit your application. Paramaribo applicants from the Hindustani Surinamese community are welcome, and with family connections stretching to The Hague and Amsterdam, contestants here are often representing two continents at once.",
+      },
+      {
+        q: "Is there speed dating in Paramaribo?",
+        a: "Hindustani Surinamese social life runs through family networks that span two continents, with introductions processed via Paramaribo and The Hague simultaneously. A singles event has never existed on either end. We start with the original.",
+      },
+      {
+        q: "Where do Hindustani singles in Paramaribo actually meet?",
+        a: "Family functions, the mandir and masjid calendars, Anton de Kom university circles and the Netherlands pipeline that absorbs half the generation. The community's map has two capitals and no singles night in either.",
+      },
+      {
+        q: "Will the show work in Dutch and Sarnami?",
+        a: "The format is language-flexible and Paramaribo code-switches for a living. English scaffolding, Sarnami punchlines, Dutch asides: the room will run all three and lose nothing.",
+      },
+    ],
+    sections: [
+      {
+        heading: "Suriname's desi story spans two continents and no events",
+        paragraphs: [
+          "Hindustani Surinamese culture is one of the diaspora's most remarkable: Sarnami Bhojpuri still spoken five generations after the Lalla Rookh, baithak gana music and a community that lives simultaneously in Paramaribo and the Netherlands, where half its families migrated. The singles navigate a two-continent introduction network with zero events at either node.",
+          "A Paramaribo show is the origin-point booking: the community's homeland gets the first night, and The Hague's turn follows on the Europe leg. Both group chats are already connected.",
+        ],
+      },
+      {
+        heading: "What a Garam Masala night in Paramaribo looks like",
+        paragraphs: [
+          "Two Hindustani Surinamese singles who have never met, on stage, going on a first date while a crowd fluent in Dutch, Sarnami and Sranan reacts in all three. Comedian hosts, live votes and a Waterkant mixer where the roti versus bara debate is the opening ceremony.",
+          "Join the waitlist for the Caribbean leg, or apply to be a contestant and star in a story two continents will repost.",
+        ],
       },
     ],
     relatedArticleSlugs: [
@@ -1016,6 +1554,34 @@ export const internationalOtherCities: Record<string, CityData> = {
         q: "Can I apply to be a contestant on stage?",
         a: "Yes. Use the apply link on this page to submit your application. Panama City is part of our Caribbean circuit and applicants from the banking and Canal Zone communities, as well as Caribbean Hindustani settlers, are all eligible to apply.",
       },
+      {
+        q: "Is there Indian speed dating in Panama City?",
+        a: "Panama's desi community is a trading and banking network with social life to match: business dinners and community events, nothing singles-first. A small market with a big-city skyline is exactly our kind of booking.",
+      },
+      {
+        q: "Where do desi singles in Panama City actually meet?",
+        a: "The banking district's towers, the free zone trading community's family networks and Casco Viejo's weekend circuit. Small scene, high polish, zero occasions.",
+      },
+      {
+        q: "Is Panama's desi community really big enough?",
+        a: "It is compact and completely unserved, and the regional pull matters: desi professionals from across Central America treat Panama City as their hub. The first show becomes a regional summit by default.",
+      },
+    ],
+    sections: [
+      {
+        heading: "Panama's desi hub has towers, trade and no third place",
+        paragraphs: [
+          "Panama City's Indian community grew through the canal economy: Sindhi and Gujarati trading families in the free zone, a newer banking and logistics professional class in the tower district and a social life conducted entirely through business networks and family circuits. The singles get Central America's best skyline and no room of their own beneath it.",
+          "As the region's hub city, a Panama show quietly serves desi professionals from San José to Bogotá who route through anyway. Small local market, wide regional catchment.",
+        ],
+      },
+      {
+        heading: "What a Garam Masala night in Panama City looks like",
+        paragraphs: [
+          "A banking analyst and a free zone trading family heir who have never met, on stage, going on a first date while a compact, sharply dressed desi crowd reacts with canal-side cosmopolitan energy. Comedian hosts, live votes and a Casco Viejo mixer under colonial balconies.",
+          "Join the waitlist for the Latin America circuit, or apply to be a contestant and headline the isthmus.",
+        ],
+      },
     ],
     relatedArticleSlugs: [
       "how-to-meet-indian-singles-without-apps",
@@ -1070,6 +1636,34 @@ export const internationalOtherCities: Record<string, CityData> = {
       {
         q: "Can I apply to be a contestant on stage?",
         a: "Yes. Use the apply link on this page to submit your application. San Juan is part of our Caribbean expansion and we are looking for contestants from the UPR medical community, Act 60 transplants, and South Asian professionals across the island who are ready to be part of the first desi dating show Puerto Rico has ever seen.",
+      },
+      {
+        q: "Is there Indian speed dating in San Juan?",
+        a: "Puerto Rico's small desi community has never had an event of its own, and the mainland scene is a flight away. The island's first desi dating show doubles as its first desi census.",
+      },
+      {
+        q: "Where do desi singles in San Juan actually meet?",
+        a: "The UPR medical campus, the Act 60 remote-work crowd in Condado and Dorado and the handful of Indian restaurants where everyone nods at everyone. Recognition without introduction, the classic small-scene bind.",
+      },
+      {
+        q: "Does a mainland-style show translate to the island?",
+        a: "The format travels anywhere there are singles and a stage, and San Juan adds what no mainland stop has: a mixer that walks out onto a Caribbean beach in a US jurisdiction. The logistics are absurdly in our favour.",
+      },
+    ],
+    sections: [
+      {
+        heading: "San Juan's desi scene is small, new and sun-drunk",
+        paragraphs: [
+          "Puerto Rico's South Asian community is an unlikely assembly: UPR's medical trainees, Act 60 tax-incentive transplants running mainland careers from Condado condos and a small settled merchant community. Everyone arrived for different reasons, nobody arrived with a network and the island's famous social warmth has no desi-specific channel to flow through.",
+          "One show builds the channel. In a scene this new, the first event is the founding myth, and founding myths with beach access age exceptionally well.",
+        ],
+      },
+      {
+        heading: "What a Garam Masala night in San Juan looks like",
+        paragraphs: [
+          "A UPR resident and a Condado fintech transplant who have never met, on stage, going on a first date while the island's entire desi scene fits in one room with salsa bleeding through the walls. Comedian hosts, live votes and a mixer that ends barefoot on Ocean Park sand.",
+          "Join the waitlist for the Caribbean expansion, or apply to be a contestant and star in the island's first desi love story.",
+        ],
       },
     ],
     relatedArticleSlugs: [

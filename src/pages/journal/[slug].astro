@@ -16,6 +16,8 @@ import { Picture } from "astro:assets";
 import { HF_IMAGES_ASSETS } from "@/assets/backgrounds";
 import { slugToImageIndex } from "@/data/images";
 import { gitDates } from "virtual:git-dates";
+import { VERDICT_BOX, JOURNAL_FOLLOW } from "@/data/copy";
+import { SOCIAL_URLS } from "@/data/socials";
 
 export function getStaticPaths() {
   return journalPostsPublished.map((post, idx) => {
@@ -100,11 +102,71 @@ const faqJsonLd = post.faqs?.length
     })
   : null;
 
+// Ranked list articles emit ItemList (semantic structure, no carousel expected)
+const itemListJsonLd = post.rankedItems?.length
+  ? JSON.stringify({
+      "@context": "https://schema.org",
+      "@type": "ItemList",
+      itemListElement: post.rankedItems.map((item) => ({
+        "@type": "ListItem",
+        position: item.position,
+        name: item.name,
+        ...(item.url ? { url: item.url } : {}),
+      })),
+    })
+  : null;
+
+// Third party app reviews emit Review JSON-LD; the rating is also rendered
+// visibly in the verdict box below, as Google's review snippet policy requires
+const reviewJsonLd = post.appReview
+  ? JSON.stringify({
+      "@context": "https://schema.org",
+      "@type": "Review",
+      itemReviewed: {
+        "@type": "SoftwareApplication",
+        name: post.appReview.appName,
+        operatingSystem: post.appReview.operatingSystem,
+        applicationCategory: post.appReview.applicationCategory,
+      },
+      reviewRating: {
+        "@type": "Rating",
+        ratingValue: post.appReview.ratingValue,
+        bestRating: 5,
+        worstRating: 1,
+      },
+      author: {
+        "@type": "Person",
+        name: post.author,
+        url: "https://garammasaladating.com",
+      },
+      publisher: {
+        "@type": "Organization",
+        name: "Garam Masala Dating",
+        url: "https://garammasaladating.com",
+      },
+      datePublished: post.datePublished,
+    })
+  : null;
+
 const breadcrumbJsonLd = buildBreadcrumbJsonLd([
   { name: "Home", url: "https://garammasaladating.com" },
   { name: "Journal", url: "https://garammasaladating.com/journal" },
   { name: post.title },
 ]);
+
+// Speakable (AEO): marks the title + answer-first lead as the passages AI
+// voice/answer engines should extract. Only when a keyTakeaway exists.
+const speakableJsonLd = post.keyTakeaway
+  ? JSON.stringify({
+      "@context": "https://schema.org",
+      "@type": "WebPage",
+      url: postUrl,
+      speakable: {
+        "@type": "SpeakableSpecification",
+        cssSelector: [".post-title", ".post-answer__text"],
+      },
+    })
+  : null;
 
 const seoTitle = post.seoTitle ?? deriveSeoTitle(post.title);
 
@@ -134,6 +196,21 @@ const cityLinks =
     <script type="application/ld+json" set:html={articleJsonLd} />
     <script type="application/ld+json" set:html={breadcrumbJsonLd} />
     {faqJsonLd && <script type="application/ld+json" set:html={faqJsonLd} />}
+    {
+      speakableJsonLd && (
+        <script type="application/ld+json" set:html={speakableJsonLd} />
+      )
+    }
+    {
+      itemListJsonLd && (
+        <script type="application/ld+json" set:html={itemListJsonLd} />
+      )
+    }
+    {
+      reviewJsonLd && (
+        <script type="application/ld+json" set:html={reviewJsonLd} />
+      )
+    }
   </Fragment>
 
   <main id="main-content" class="post-page">
@@ -164,6 +241,64 @@ const cityLinks =
       <!-- Divider -->
       <div class="post-divider"></div>
 
+      {/* Answer-first lead (AEO): definition-led direct answer, Speakable. */}
+      {
+        post.keyTakeaway && (
+          <aside class="post-answer" aria-label="Quick answer">
+            <p class="post-answer__label">Quick answer</p>
+            <p class="post-answer__text">{post.keyTakeaway}</p>
+          </aside>
+        )
+      }
+
+      {
+        post.appReview && (
+          <aside
+            class="verdict-box"
+            aria-label={`${VERDICT_BOX.eyebrow}: ${post.appReview.appName}`}
+          >
+            <p class="verdict-box__eyebrow">{VERDICT_BOX.eyebrow}</p>
+            <div class="verdict-box__header">
+              <span class="verdict-box__app">{post.appReview.appName}</span>
+              <span
+                class="verdict-box__rating"
+                role="img"
+                aria-label={`Rated ${post.appReview.ratingValue} ${VERDICT_BOX.outOfLabel}`}
+              >
+                <span class="verdict-box__score" aria-hidden="true">
+                  {post.appReview.ratingValue}
+                </span>
+                <span class="verdict-box__outof" aria-hidden="true">
+                  {VERDICT_BOX.outOfLabel}
+                </span>
+              </span>
+            </div>
+            <div class="verdict-box__cols">
+              <div class="verdict-box__col">
+                <p class="verdict-box__label verdict-box__label--pros">
+                  {VERDICT_BOX.prosLabel}
+                </p>
+                <ul class="verdict-box__list">
+                  {post.appReview.pros.map((item) => (
+                    <li>{item}</li>
+                  ))}
+                </ul>
+              </div>
+              <div class="verdict-box__col">
+                <p class="verdict-box__label verdict-box__label--cons">
+                  {VERDICT_BOX.consLabel}
+                </p>
+                <ul class="verdict-box__list">
+                  {post.appReview.cons.map((item) => (
+                    <li>{item}</li>
+                  ))}
+                </ul>
+              </div>
+            </div>
+          </aside>
+        )
+      }
+
       <!-- Article body -->
       {
         post.ctaConfig?.topCta && (
@@ -189,8 +324,8 @@ const cityLinks =
                 ) : (
                   <aside class="article-cta" aria-label="Show promotion">
                     <p class="article-cta__text">
-                      We host the #1 live dating show for South Asian singles,
-                      weekly in NYC, traveling to new cities.
+                      We host the #1 desi comedy dating show, weekly in NYC,
+                      traveling to new cities.
                       <a
                         href="/tickets"
                         data-ph-capture="ticket_click"
@@ -266,6 +401,70 @@ const cityLinks =
           />
         )
       }
+
+      <aside class="journal-follow" aria-label={JOURNAL_FOLLOW.ariaLabel}>
+        <p class="journal-follow__intro">{JOURNAL_FOLLOW.intro}</p>
+        <div class="journal-follow__btns">
+          <a
+            href={SOCIAL_URLS.youtube}
+            target="_blank"
+            rel="noopener noreferrer"
+            class="journal-follow__btn journal-follow__btn--youtube"
+            data-ph-capture="cta_clicked"
+            data-ph-cta="journal_follow_youtube"
+            data-ph-section="journal_follow"
+            data-cta-position="journal_follow"
+            data-cta-text={JOURNAL_FOLLOW.youtubeLabel}
+            data-article-slug={post.slug}
+            data-destination-url={SOCIAL_URLS.youtube}
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="18"
+              height="18"
+              viewBox="0 0 24 24"
+              fill="currentColor"
+              aria-hidden="true"
+            >
+              <path
+                d="M23 12s0-3.5-.44-5.17a2.78 2.78 0 0 0-1.96-1.96C18.93 4.43 12 4.43 12 4.43s-6.93 0-8.6.44a2.78 2.78 0 0 0-1.96 1.96C1 8.5 1 12 1 12s0 3.5.44 5.17a2.78 2.78 0 0 0 1.96 1.96c1.67.44 8.6.44 8.6.44s6.93 0 8.6-.44a2.78 2.78 0 0 0 1.96-1.96C23 15.5 23 12 23 12ZM9.75 15.02V8.98L15.5 12l-5.75 3.02Z"
+              ></path>
+            </svg>
+            <span>{JOURNAL_FOLLOW.youtubeLabel}</span>
+          </a>
+          <a
+            href={SOCIAL_URLS.instagram}
+            target="_blank"
+            rel="noopener noreferrer"
+            class="journal-follow__btn journal-follow__btn--instagram"
+            data-ph-capture="cta_clicked"
+            data-ph-cta="journal_follow_instagram"
+            data-ph-section="journal_follow"
+            data-cta-position="journal_follow"
+            data-cta-text={JOURNAL_FOLLOW.instagramLabel}
+            data-article-slug={post.slug}
+            data-destination-url={SOCIAL_URLS.instagram}
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="18"
+              height="18"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              aria-hidden="true"
+            >
+              <rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect>
+              <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37Z"></path>
+              <line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line>
+            </svg>
+            <span>{JOURNAL_FOLLOW.instagramLabel}</span>
+          </a>
+        </div>
+      </aside>
 
       {
         cityLinks.length > 0 && (
@@ -384,6 +583,7 @@ const cityLinks =
         source="journal-article"
         heading="Get on the List"
         subheading="Cheap and free tickets, exclusive drops."
+        collectCity={true}
       />
     )
   }
@@ -462,6 +662,31 @@ const cityLinks =
     height: 1px;
     background: rgba(var(--brand-red-rgb), 0.3);
     margin-bottom: 30px;
+  }
+
+  /* Answer-first lead (AEO): visually prominent, machine-extractable. */
+  .post-answer {
+    background: rgba(var(--brand-red-rgb), 0.05);
+    border: 1px solid rgba(var(--brand-red-rgb), 0.15);
+    border-radius: 12px;
+    padding: 18px 22px;
+    margin-bottom: 30px;
+  }
+  .post-answer__label {
+    font-family: var(--font-body);
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    color: var(--brand-red);
+    margin: 0 0 8px;
+  }
+  .post-answer__text {
+    font-family: var(--font-body);
+    font-size: 17px;
+    line-height: 1.6;
+    color: var(--charcoal);
+    margin: 0;
   }
 
   .post-body {
@@ -702,6 +927,159 @@ const cityLinks =
   }
 
   /* Mid-article CTA banner */
+  .journal-follow {
+    background: rgba(var(--brand-red-rgb), 0.05);
+    border: 1px solid rgba(var(--brand-red-rgb), 0.12);
+    border-radius: 12px;
+    padding: 20px;
+    margin: 30px 0 6px;
+  }
+  .journal-follow__intro {
+    font-family: var(--font-body);
+    font-size: 16px;
+    line-height: 1.6;
+    color: var(--charcoal);
+    margin: 0 0 14px;
+  }
+  .journal-follow__btns {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+  .journal-follow__btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    padding: 14px 20px;
+    border-radius: 12px;
+    border: 1px solid;
+    font-family: var(--font-body);
+    font-size: 16px;
+    font-weight: 600;
+    text-decoration: none;
+    transition:
+      background 0.15s,
+      border-color 0.15s,
+      transform 0.15s;
+  }
+  .journal-follow__btn:active {
+    transform: scale(0.97);
+  }
+  .journal-follow__btn svg {
+    flex-shrink: 0;
+  }
+  .journal-follow__btn--youtube {
+    border-color: var(--brand-red);
+    background: var(--brand-red);
+    color: var(--white);
+  }
+  .journal-follow__btn--instagram {
+    border-color: rgba(var(--brand-red-rgb), 0.5);
+    background: transparent;
+    color: var(--brand-red);
+  }
+  @media (hover: hover) and (pointer: fine) {
+    .journal-follow__btn--youtube:hover {
+      background: var(--brand-red-dark, #b91c1c);
+      border-color: var(--brand-red-dark, #b91c1c);
+    }
+    .journal-follow__btn--instagram:hover {
+      border-color: rgba(var(--brand-red-rgb), 0.7);
+      background: rgba(var(--brand-red-rgb), 0.08);
+    }
+  }
+  .journal-follow__btn:focus-visible {
+    outline: 2px solid var(--brand-red);
+    outline-offset: 2px;
+  }
+
+  .verdict-box {
+    background: var(--white);
+    border: 1px solid rgba(var(--brand-red-rgb), 0.15);
+    border-radius: 10px;
+    padding: 20px;
+    margin-bottom: 30px;
+  }
+  .verdict-box__eyebrow {
+    font-family: var(--font-body);
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    color: var(--brand-red);
+    margin: 0 0 10px;
+  }
+  .verdict-box__header {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 12px;
+    border-bottom: 1px solid rgba(var(--brand-red-rgb), 0.12);
+    padding-bottom: 14px;
+    margin-bottom: 14px;
+  }
+  .verdict-box__app {
+    font-family: var(--font-playfair);
+    font-size: 22px;
+    font-weight: 700;
+    color: var(--charcoal);
+  }
+  .verdict-box__rating {
+    display: flex;
+    align-items: baseline;
+    gap: 6px;
+    white-space: nowrap;
+  }
+  .verdict-box__score {
+    font-family: var(--font-playfair);
+    font-size: 30px;
+    font-weight: 700;
+    color: var(--brand-red);
+    line-height: 1;
+  }
+  .verdict-box__outof {
+    font-family: var(--font-body);
+    font-size: 13px;
+    color: #888;
+  }
+  .verdict-box__cols {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+  @media (min-width: 480px) {
+    .verdict-box__cols {
+      grid-template-columns: 1fr 1fr;
+    }
+  }
+  .verdict-box__label {
+    font-family: var(--font-body);
+    font-size: 13px;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    margin: 0 0 8px;
+  }
+  .verdict-box__label--pros {
+    color: var(--success);
+  }
+  .verdict-box__label--cons {
+    color: var(--brand-red);
+  }
+  .verdict-box__list {
+    margin: 0;
+    padding-left: 18px;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+  .verdict-box__list li {
+    font-family: var(--font-body);
+    font-size: 16px;
+    line-height: 1.55;
+    color: var(--charcoal);
+  }
+
   .article-cta {
     background: rgba(var(--brand-red-rgb), 0.05);
     border-left: 3px solid var(--brand-red);

@@ -53,6 +53,34 @@ export const canadaCities: Record<string, CityData> = {
         q: "Is the show open to non-South Asian attendees?",
         a: "Yes. The audience is open to everyone. Our NYC shows draw South Asian professionals, diaspora, and anyone who shows up curious.",
       },
+      {
+        q: "Is there Indian speed dating in Toronto?",
+        a: "Generic speed dating companies run occasional desi nights in Toronto, but they tend to be quiet rooms with name tags. A live comedy dating show warms up the entire crowd for 90 minutes before anyone has to introduce themselves, which is why our mixers work where speed dating stalls.",
+      },
+      {
+        q: "Where can I meet South Asian singles in Toronto?",
+        a: "Beyond the apps, the GTA scene runs through Bollywood club nights downtown, cultural festivals, university South Asian associations and community fundraisers. The catch is that none of them are built for singles. Garam Masala Dating is, and the waitlist is how Toronto gets its first show.",
+      },
+      {
+        q: "How much will Toronto tickets cost?",
+        a: "Our NYC tickets start around $15 US and touring shows are priced similarly for the market. Waitlist members get presale pricing before tickets go public.",
+      },
+    ],
+    sections: [
+      {
+        heading: "Where Toronto's desi singles actually meet right now",
+        paragraphs: [
+          "Be honest about the current options. There are Bollywood nights at downtown clubs where the music is right and the conversation is impossible. There are garba and Diwali events where your cousin's friend's mother is doing recon. There are university South Asian student associations that age you out the day you graduate, and professional networking events where everyone pretends they came for the networking. The GTA has more desi social infrastructure than almost any city on the planet and almost none of it is designed for two single people to actually meet.",
+          "The apps fill the gap badly. Dil Mil and Hinge both have deep Toronto pools on paper, but Brampton to downtown is a 45 minute drive without traffic and the apps do not care about the Gardiner. Half the matches die on logistics alone.",
+        ],
+      },
+      {
+        heading: "What a Garam Masala night in Toronto will look like",
+        paragraphs: [
+          "Picture the format transplanted: two GTA singles on stage who have never met, a Brampton Punjabi kid and a Scarborough Tamil software engineer maybe, going on a first date in front of a few hundred people who understand every reference. The audience votes. The mixer after is where downtown condo dwellers, Mississauga professionals and the U of T and TMU crowds finally end up in one room with a reason to talk.",
+          "Toronto is the loudest city on our waitlist outside the US, and the first Canadian show will go to the city that earns it. Get on the list and bring the GTA numbers up, or apply to be a contestant so you are in the pool the day we announce.",
+        ],
+      },
     ],
   },
 
@@ -101,6 +129,34 @@ export const canadaCities: Record<string, CityData> = {
       {
         q: "Can I apply to be a contestant?",
         a: "Yes. Applications are open now. Apply early so you are already in the system when we confirm Vancouver dates.",
+      },
+      {
+        q: "Is there Punjabi or desi speed dating in Vancouver?",
+        a: "Occasionally, and it is usually a quiet room in a Surrey banquet hall. A live comedy dating show is the opposite: 90 minutes of shared laughter first, then a mixer where the whole room already has something to talk about.",
+      },
+      {
+        q: "Where do South Asian singles meet in Vancouver?",
+        a: "Vaisakhi and Diwali events, Punjabi Market on Main Street, UBC and SFU cultural associations and the Surrey banquet circuit. All community, none of it singles-first. That gap is exactly why Vancouver is on our tour map.",
+      },
+      {
+        q: "Will the show be Punjabi-friendly?",
+        a: "The show runs in English with the desi cultural references fully intact, and Punjabi jokes tend to land hardest. If your grandparents came from Punjab, you will feel extremely seen.",
+      },
+    ],
+    sections: [
+      {
+        heading: "Vancouver's desi singles problem, stated plainly",
+        paragraphs: [
+          "Metro Vancouver has one of the deepest South Asian communities in North America and one of the thinnest singles scenes. The community events are family events. The Vaisakhi parade pulls a hundred thousand people and exactly zero of them are there to flirt. Surrey's social life runs through gurdwaras, banquet halls and family networks, which is beautiful for community and useless for meeting someone your own age without an aunty translating.",
+          "Downtown is its own island. The UBC and SFU crowd and the Yaletown professionals rarely cross the Fraser, so two halves of the same community date on separate apps in the same metro. The Vancouver freeze does the rest.",
+        ],
+      },
+      {
+        heading: "What a Garam Masala night in Vancouver will look like",
+        paragraphs: [
+          "One room, both sides of the river. Surrey Punjabi kids, downtown tech workers, Richmond and Burnaby professionals, all watching two real singles go on a blind date on stage with comedians steering. The audience votes, the mixer follows and the freeze thaws fast when everyone has just spent 90 minutes laughing at the same jokes.",
+          "Vancouver is high on the Canadian list and waitlist volume decides the order. Join the waitlist for first tickets, or apply to be a contestant if you want the blind date to be yours.",
+        ],
       },
     ],
   },
@@ -151,6 +207,34 @@ export const canadaCities: Record<string, CityData> = {
         q: "Can I apply to be a contestant?",
         a: "Yes. Applications are open now. Apply early to be in the system when Calgary dates are confirmed.",
       },
+      {
+        q: "Is there Indian speed dating in Calgary?",
+        a: "Calgary's desi calendar is gurdwara langars, community banquets and Stampede week, none of which are singles events. A live comedy dating show gives NE Calgary and the downtown crowd their first night built for meeting someone.",
+      },
+      {
+        q: "Where do South Asian singles in Calgary actually meet?",
+        a: "Oil and gas towers downtown, the growing tech scene, U of C circles and the NE community network where every introduction comes with a family reference attached. One neutral room changes everything.",
+      },
+      {
+        q: "NE Calgary or downtown for the venue?",
+        a: "Central with parking is the honest answer: the NE has the community, downtown and the Beltline have the rooms. The waitlist postal codes call it.",
+      },
+    ],
+    sections: [
+      {
+        heading: "Calgary's desi singles live between two worlds",
+        paragraphs: [
+          "NE Calgary holds one of Canada's most established Punjabi and South Asian communities, complete with its own commercial strips, banquet halls and a family network of terrifying efficiency. Downtown and the Beltline hold the other half of desi Calgary: oil and gas analysts, engineers and a growing tech crowd who moved for work and know four people. The two halves share festivals and nothing else, and the singles in both report the same empty calendar.",
+          "One show bridges the NE and the core for a night. In a city that fills rooms for everything from Stampede to comedy festivals, a desi dating night is overdue by about a decade.",
+        ],
+      },
+      {
+        heading: "What a Garam Masala night in Calgary looks like",
+        paragraphs: [
+          "A Suncor analyst and a U of C med student who have never met, on stage, going on a first date while YYC votes with chinook-level energy. Comedian hosts, live chaos and a mixer where the NE and the Beltline finally exchange numbers.",
+          "Join the waitlist for first access when Calgary dates drop, or apply to be a contestant and give the city a show worth bragging about at the next family function.",
+        ],
+      },
     ],
   },
 
@@ -199,6 +283,34 @@ export const canadaCities: Record<string, CityData> = {
       {
         q: "Can I apply to be a contestant?",
         a: "Yes. Applications are open now. Apply early so you are in the system when Edmonton dates go live.",
+      },
+      {
+        q: "Is there Indian speed dating in Edmonton?",
+        a: "Mill Woods has every desi institution except a singles night. Community events assume families, the apps assume Toronto density and Edmonton's singles get neither. The show is the missing piece.",
+      },
+      {
+        q: "Where do South Asian singles in Edmonton actually meet?",
+        a: "U of A circles, the health sciences campus, downtown offices and Mill Woods community life where everyone's parents know each other. Warm community, zero romantic infrastructure.",
+      },
+      {
+        q: "Will the show be in Mill Woods or downtown?",
+        a: "Likely central, Whyte Ave or downtown, so the U of A crowd and Mill Woods both make it. Either way it is a 20 minute drive because Edmonton is merciful that way.",
+      },
+    ],
+    sections: [
+      {
+        heading: "Mill Woods raised a generation that has nowhere to date",
+        paragraphs: [
+          "Edmonton's South Asian story runs through Mill Woods, one of Canada's great desi neighborhoods, where the gurdwaras, temples and family networks built everything a community needs except a way for its adult children to find partners without formal proceedings. U of A adds thousands of South Asian students and health sciences trainees who orbit campus and never touch the community side of the city.",
+          "The show merges the two Edmontons: Mill Woods' second gen kids and the university's imports, one room, no aunties in official capacities.",
+        ],
+      },
+      {
+        heading: "What a Garam Masala night in Edmonton looks like",
+        paragraphs: [
+          "A U of A resident and a Mill Woods-raised engineer who have never met, on stage, going on a first date while the 780 votes like it is a playoff game. Comedian hosts, live chaos and a mixer on Whyte Ave where winter has no jurisdiction.",
+          "Join the waitlist for first access, or apply to be a contestant and give Edmonton a better story than the mall.",
+        ],
       },
     ],
   },
@@ -255,6 +367,34 @@ export const canadaCities: Record<string, CityData> = {
         q: "Can I apply to be a contestant?",
         a: "Yes. Applications are open now. Apply early to get priority when Ottawa dates are confirmed.",
       },
+      {
+        q: "Is there Indian speed dating in Ottawa?",
+        a: "Ottawa has networking events for everything except romance. The desi scene splits between government and Kanata tech, both full of single professionals with security clearances and no social openings. We are the social opening.",
+      },
+      {
+        q: "Where do South Asian singles in Ottawa actually meet?",
+        a: "Public service floors, Kanata tech campuses, Carleton and uOttawa circles and community events in Barrhaven. Everyone is polite, cautious and dating nobody. The format exists to break exactly this pattern.",
+      },
+      {
+        q: "Will Gatineau folks come across the river?",
+        a: "A downtown venue keeps both sides of the Ottawa River in range, and yes, the 819 has been on the waitlist too. Bilingual chaos is welcome chaos.",
+      },
+    ],
+    sections: [
+      {
+        heading: "Ottawa dates at the speed of government",
+        paragraphs: [
+          "Ottawa's desi community is prosperous, credentialed and famously slow-moving socially: public servants downtown, tech workers in Kanata, students at Carleton and uOttawa and families in Barrhaven and Orleans. The city's culture rewards caution, which is excellent for pension planning and lethal for dating. Singles here describe app conversations that progress like access-to-information requests.",
+          "A live show is the counter-programming: one night where the entire scene is in a room with explicit permission to be forward, and 90 minutes of comedy to burn off the bureaucratic reflexes.",
+        ],
+      },
+      {
+        heading: "What a Garam Masala night in Ottawa looks like",
+        paragraphs: [
+          "A Treasury Board analyst and a Kanata firmware engineer who have never met, on stage, going on a first date while the capital votes with surprising abandon. Comedian hosts, live chaos and a ByWard Market mixer where the follow-up date is a canal walk waiting to happen.",
+          "Join the waitlist for first access, or apply to be a contestant and give the civil service something unclassified to discuss.",
+        ],
+      },
     ],
   },
 
@@ -310,6 +450,35 @@ export const canadaCities: Record<string, CityData> = {
         q: "Can I apply to be a contestant?",
         a: "Yes. Applications are open now. Apply early to be in the casting pool when we confirm Montreal dates.",
       },
+      {
+        q: "Is there Indian speed dating in Montreal?",
+        a: "Montreal has speed dating in two languages and desi singles events in zero. Parc-Ex has the community, McGill and Concordia have the students and nobody has built the night. Consider it under construction.",
+      },
+      {
+        q: "Where do South Asian singles in Montreal actually meet?",
+        a: "Parc-Extension and the Jean-Talon corridor, McGill and Concordia circles, the Plateau's shared apartments and Mile End cafes. The scene is young, international and scattered across two solitudes plus a third one nobody names.",
+      },
+      {
+        q: "Will the show be in English or French?",
+        a: "The show runs in English with whatever the daters bring: our formats have survived Hinglish, Punjabi asides and now presumably some franglais. Montreal will make it its own, that is the whole point.",
+      },
+    ],
+    sections: [
+      {
+        heading:
+          "Parc-Ex to the Plateau, Montreal's desi scene never converges",
+        paragraphs: [
+          "Montreal's South Asian community stacks three worlds that rarely meet: Parc-Extension's established Tamil, Punjabi and Bangladeshi families along Jean-Talon, the massive international student cohorts at McGill and Concordia and the young professionals scattered through the Plateau and Griffintown. Each world dates inside itself or not at all, and the language politics add a filter no other Canadian city deals with.",
+          "In the city that hosts Just for Laughs, a comedy dating show is practically municipal infrastructure waiting to be installed. Montreal understands live formats better than anywhere in Canada.",
+        ],
+      },
+      {
+        heading: "What a Garam Masala night in Montreal looks like",
+        paragraphs: [
+          "A McGill PhD and a Griffintown game developer who have never met, on stage, going on a first date while a room that heckles in two languages votes in one voice. Comedian hosts, live chaos and a mixer that migrates toward St-Laurent because all Montreal nights bend that way.",
+          "Join the waitlist for first access when Montreal dates land, or apply to be a contestant and give the 514 a premiere worth queueing for.",
+        ],
+      },
     ],
   },
 
@@ -359,6 +528,34 @@ export const canadaCities: Record<string, CityData> = {
         q: "Can I apply to be a contestant?",
         a: "Yes. Applications are open now. Apply early so you are in the system when Winnipeg dates go live.",
       },
+      {
+        q: "Is there Indian speed dating in Winnipeg?",
+        a: "Winnipeg's desi singles have community events, long winters and each other's group chats. No singles nights exist between the Diwali calendar and April. We schedule accordingly and heat the room.",
+      },
+      {
+        q: "Where do South Asian singles in Winnipeg actually meet?",
+        a: "U of M circles, the health sciences campus, downtown offices and a community tight enough that word of a good event travels the whole city in a weekend. That last part works entirely in our favor.",
+      },
+      {
+        q: "Will a Winnipeg show happen in winter?",
+        a: "We aim for the survivable months, but honestly a packed warm room in February is the strongest value proposition in Manitoba. Coat check guaranteed.",
+      },
+    ],
+    sections: [
+      {
+        heading: "Winnipeg's desi scene is tight, growing and event-starved",
+        paragraphs: [
+          "Manitoba's nominee program made Winnipeg one of Canada's fastest growing Indian and South Asian destinations, and the community layered onto an already established Filipino and Punjabi presence across the city's north and south ends. U of M and the health sciences pipeline add students and residents. What nobody added is a social calendar for singles: the community events are family occasions and the winters delete five months of spontaneity annually.",
+          "Tight communities make the best rooms. When Winnipeg's desi scene gets its first singles night, the whole scene will be in it, because word travels here like nowhere else.",
+        ],
+      },
+      {
+        heading: "What a Garam Masala night in Winnipeg looks like",
+        paragraphs: [
+          "A U of M resident and a downtown analyst who have never met, on stage, going on a first date while the 204 packs a warm room in defiance of the forecast. Comedian hosts, live votes and a mixer where 'my car is plugged in' is a legitimate exit line that nobody uses.",
+          "Join the waitlist for first access to Winnipeg dates, or apply to be a contestant and give the prairies a story that outlasts the winter.",
+        ],
+      },
     ],
   },
 
@@ -407,6 +604,34 @@ export const canadaCities: Record<string, CityData> = {
       {
         q: "Can I apply to be a contestant?",
         a: "Yes. Applications are open now. Apply early so you are in the casting pool when KW dates are confirmed.",
+      },
+      {
+        q: "Is there Indian speed dating in Waterloo or Kitchener?",
+        a: "KW has hackathons with better matchmaking than its dating scene. For a tech corridor with one of the heaviest Indian student and engineer concentrations in Canada, zero singles events is a bug we are patching.",
+      },
+      {
+        q: "Where do South Asian singles in KW actually meet?",
+        a: "UW and Laurier campuses, the tech offices around the tannery district and co-op terms that reshuffle everyone's social graph every four months. Density without occasions, the purest case in Canada.",
+      },
+      {
+        q: "Does the co-op cycle hurt a KW show?",
+        a: "It helps: every term brings a new crowd back to campus and the show becomes the thing you catch when your stream is in town. Recurring formats love a population that rotates.",
+      },
+    ],
+    sections: [
+      {
+        heading: "Waterloo optimized everything except meeting someone",
+        paragraphs: [
+          "The University of Waterloo's engineering and CS programs run one of the densest Indian student pipelines in North America, and the KW tech corridor converts graduates into local engineers at scale. This is a population that A/B tests its resumes and optimizes its co-op rankings, and its dating life runs on the same three apps as everyone else's with worse results, because half the pool relocates every co-op term and the other half never leaves the lab.",
+          "A live show is the one format built for exactly this: high density, low social infrastructure and an audience that appreciates a well-designed system. The system is a stage, a blind date and a mixer. It converges fast.",
+        ],
+      },
+      {
+        heading: "What a Garam Masala night in KW looks like",
+        paragraphs: [
+          "A UW software engineering senior and a Laurier business grad who have never met, on stage, going on a first date while a room full of people who have shipped code together but never flirted watches with unbearable investment. Comedian hosts, live votes and a mixer in uptown Waterloo where the whiteboard energy finally goes somewhere useful.",
+          "Join the waitlist for first access to KW dates, or apply to be a contestant. Think of it as a co-op posting for your love life.",
+        ],
       },
     ],
   },
@@ -462,6 +687,35 @@ export const canadaCities: Record<string, CityData> = {
       {
         q: "Can I apply to be a contestant?",
         a: "Yes. Applications are open now. Apply early to be in the casting pool when Hamilton dates are confirmed.",
+      },
+      {
+        q: "Is there Indian speed dating in Hamilton?",
+        a: "The Hammer's desi singles either drive to Toronto events or stay home. A local show ends the QEW tax and gives McMaster's massive desi cohort a night in its own city.",
+      },
+      {
+        q: "Where do South Asian singles in Hamilton actually meet?",
+        a: "McMaster's campus and med school orbit, the hospital systems, Stoney Creek and the Mountain's community events. GTA spillover keeps growing the scene faster than anyone builds for it.",
+      },
+      {
+        q: "Would Burlington and the GTA edge come?",
+        a: "A Hamilton show pulls Burlington, Grimsby and the Brantford corridor by default. West GTA desis have been asking for something closer than downtown Toronto for years.",
+      },
+    ],
+    sections: [
+      {
+        heading:
+          "Hamilton absorbed the GTA's desi spillover and kept its own pace",
+        paragraphs: [
+          "Toronto's housing math sent a generation of young South Asian families and professionals down the QEW, and Hamilton took them in alongside McMaster's engineering, health sciences and medical cohorts. The result is a desi scene bigger than the city's reputation, split between campus, the hospitals and the Mountain's growing community, with social options that end at Toronto's border and a collective fatigue about making that drive.",
+          "A Hamilton show keeps the west end of the Golden Horseshoe home for a night, and the steel town crowd brings an honesty to audience voting that we frankly cannot wait for.",
+        ],
+      },
+      {
+        heading: "What a Garam Masala night in Hamilton looks like",
+        paragraphs: [
+          "A McMaster med student and a Stoney Creek engineer who have never met, on stage, going on a first date while the Hammer reacts with zero pretension. Comedian hosts, live votes and a James Street mixer where the second date options are a short walk in any direction.",
+          "Join the waitlist for first access to Hamilton dates, or apply to be a contestant and rep the 905 properly.",
+        ],
       },
     ],
   },
@@ -521,6 +775,34 @@ export const canadaCities: Record<string, CityData> = {
         q: "Can I apply to be a contestant?",
         a: "Yes. Applications are open now. Apply early to be in the system when London ON dates go live.",
       },
+      {
+        q: "Is there Indian speed dating in London Ontario?",
+        a: "London ON has a booming Indian student population and a social calendar that never noticed. No desi singles events exist here, which makes the first one an institution by default.",
+      },
+      {
+        q: "Where do South Asian singles in London ON actually meet?",
+        a: "Western's campus, Fanshawe's programs, the hospital systems and Richmond Row on weekends. The pool is bigger every year and the occasions have not moved since 2015.",
+      },
+      {
+        q: "Is this a student event or an everyone event?",
+        a: "Everyone. Western and Fanshawe supply the volume, but London's settled desi professionals and the health sciences crowd round out exactly the mixed-age room this format loves.",
+      },
+    ],
+    sections: [
+      {
+        heading: "Western's Indian student boom outran London's social scene",
+        paragraphs: [
+          "Western University and Fanshawe College turned London into one of Ontario's fastest growing Indian student destinations, and a meaningful share stays after graduation for the hospitals, the insurance employers and the cost of living. The city's desi social infrastructure never caught up: community events skew family, Richmond Row skews undergrad and the singles in between run app radii that hit Lake Huron.",
+          "Mid-size Ontario cities are where this format compounds fastest: one great night and the entire scene reorganizes around the next date.",
+        ],
+      },
+      {
+        heading: "What a Garam Masala night in London ON looks like",
+        paragraphs: [
+          "A Western MBA and an LHSC resident who have never met, on stage, going on a first date while the Forest City packs its first ever desi singles room. Comedian hosts, live votes and a mixer that takes over half of Richmond Row after.",
+          "Join the waitlist for first access to London dates, or apply to be a contestant and give the 519 its main event.",
+        ],
+      },
     ],
   },
 
@@ -569,6 +851,34 @@ export const canadaCities: Record<string, CityData> = {
       {
         q: "Can I apply to be a contestant?",
         a: "Yes. Applications are open now. Apply early so you are in the casting pool when Halifax dates are confirmed.",
+      },
+      {
+        q: "Is there Indian speed dating in Halifax?",
+        a: "Atlantic Canada has no desi singles events at all. Halifax's Indian community tripled in a decade and the social calendar is still Diwali plus whatever Dal's student societies organize. The first show fills a genuinely empty market.",
+      },
+      {
+        q: "Where do South Asian singles in Halifax actually meet?",
+        a: "Dalhousie and SMU circles, the hospital systems, Clayton Park's growing community and the downtown bar scene where the desi crowd finds itself by accident. Intentional beats accidental. We sell intentional.",
+      },
+      {
+        q: "Would people come from elsewhere in the Maritimes?",
+        a: "Moncton is two and a half hours, Charlottetown three with a bridge. For the first desi singles night in Atlantic Canadian history, the caravans will form. Maritimers understand events.",
+      },
+    ],
+    sections: [
+      {
+        heading: "Halifax became a desi city faster than anyone noticed",
+        paragraphs: [
+          "Nova Scotia's immigration push and Dalhousie's international recruitment made Halifax one of Canada's fastest growing Indian destinations, with students, health workers and young tech professionals arriving faster than the community could build institutions. The singles among them get the newcomer's paradox: surrounded by other newcomers in exactly their situation and no structure for meeting them beyond a Diwali event and the Grafton Street bar circuit.",
+          "One show turns a scattered arrival cohort into a scene. Atlantic Canada's first desi singles night will be remembered by everyone in the room, which is the kind of pressure we enjoy.",
+        ],
+      },
+      {
+        heading: "What a Garam Masala night in Halifax looks like",
+        paragraphs: [
+          "A Dal grad student and a QEII resident who have never met, on stage, going on a first date while the entire Atlantic desi scene fits in one harbor-side room and knows it. Comedian hosts, live votes and a mixer with maritime hospitality doing the heavy lifting.",
+          "Join the waitlist to bring the show east, or apply to be a contestant and make Atlantic Canadian history with your flirting.",
+        ],
       },
     ],
   },
@@ -619,6 +929,34 @@ export const canadaCities: Record<string, CityData> = {
         q: "Can I apply to be a contestant?",
         a: "Yes. Applications are open now. Apply early to be in the casting pool when Saskatoon dates are confirmed.",
       },
+      {
+        q: "Is there Indian speed dating in Saskatoon?",
+        a: "Saskatchewan has never had a desi singles event. The nominee program built the community, U of S keeps feeding it and the first show becomes the province's desi social landmark by default.",
+      },
+      {
+        q: "Where do South Asian singles in Saskatoon actually meet?",
+        a: "U of S circles, the health region, downtown offices and community gatherings where the guest list is the same forty families. New context is the scarce resource. We import it.",
+      },
+      {
+        q: "One prairie show or separate Saskatoon and Regina nights?",
+        a: "The dream is a prairie run: Winnipeg, Regina, Saskatoon in one sweep. Waitlist volume across the three cities decides whether it is one central room or three local ones.",
+      },
+    ],
+    sections: [
+      {
+        heading: "Saskatoon's desi community is new, growing and unintroduced",
+        paragraphs: [
+          "Saskatchewan's nominee program turned Saskatoon into a genuine Indian immigration destination, layering students at U of S, health workers and young families onto a prairie city that had never had a large desi presence. The community is building its institutions in real time, and singles infrastructure is understandably last on the list, which means it is currently nothing.",
+          "Prairie scenes are small, warm and completely reachable: one good night and every desi single in the city knows about it, attends it and references it for years.",
+        ],
+      },
+      {
+        heading: "What a Garam Masala night in Saskatoon looks like",
+        paragraphs: [
+          "A U of S engineering grad and a City Hospital nurse who have never met, on stage, going on a first date while the Paris of the Prairies fills its first desi singles room. Comedian hosts, live votes and a Broadway Avenue mixer where the river walk handles the after-hours logistics.",
+          "Join the waitlist to bring the show to the prairies, or apply to be a contestant and become the community's founding legend.",
+        ],
+      },
     ],
   },
 
@@ -668,6 +1006,34 @@ export const canadaCities: Record<string, CityData> = {
         q: "Can I apply to be a contestant?",
         a: "Yes. Applications are open now. Apply early so you are in the system when Regina dates go live.",
       },
+      {
+        q: "Is there Indian speed dating in Regina?",
+        a: "Regina's desi community is small enough that speed dating would be a family reunion. A live show works differently: the entertainment carries the night and the mixer makes the introductions the community is too polite to engineer.",
+      },
+      {
+        q: "Where do South Asian singles in Regina actually meet?",
+        a: "U of R circles, government offices, the health region and community events where everyone's attendance is reported to at least two mothers. A neutral, singles-first room is the missing ingredient.",
+      },
+      {
+        q: "Would Regina and Saskatoon share a show?",
+        a: "Possibly, the drive is two and a half hours. But Regina's waitlist has been arguing for its own night, and small proud cities that argue usually win with us.",
+      },
+    ],
+    sections: [
+      {
+        heading: "Regina's grapevine is faster than its dating scene",
+        paragraphs: [
+          "Regina's South Asian community runs on total familiarity: U of R students, government workers and the families who anchor the gurdwara and temple circuits all know each other at one degree of separation. The infamous phenomenon where your mother knows about your coffee date before you have paid for the coffee is not a joke here, it is infrastructure. Singles respond by not dating locally at all.",
+          "The show gives Regina a sanctioned space for exactly what the grapevine polices: public, joyful, communal flirting. When the watching is the format, the surveillance becomes the fun.",
+        ],
+      },
+      {
+        heading: "What a Garam Masala night in Regina looks like",
+        paragraphs: [
+          "A U of R grad and a provincial analyst who have never met, on stage, going on a first date while a room that includes both their aunties' informants reacts live. Comedian hosts, audience votes and a mixer where the news cycle finally works in everyone's favor.",
+          "Join the waitlist to give the Queen City its night, or apply to be a contestant and control your own narrative for once.",
+        ],
+      },
     ],
   },
 
@@ -716,6 +1082,34 @@ export const canadaCities: Record<string, CityData> = {
       {
         q: "Can I apply to be a contestant?",
         a: "Yes. Applications are open now. Apply early to be in the casting pool when Victoria dates are confirmed.",
+      },
+      {
+        q: "Is there Indian speed dating in Victoria?",
+        a: "Victoria's desi scene is too small for a circuit and perfectly sized for one great night. Island singles exhaust the apps in a week; a live show resets the whole board at once.",
+      },
+      {
+        q: "Where do South Asian singles in Victoria actually meet?",
+        a: "UVic circles, the provincial government, the tech scene downtown and the ferry to Vancouver when all else fails. The island radius problem is real and structural. We work around structures.",
+      },
+      {
+        q: "Would a Victoria show pair with Vancouver?",
+        a: "A BC run is the natural shape: Vancouver, Surrey, then the ferry over. Island waitlist numbers decide whether Victoria gets its own night or a dedicated ferry contingent.",
+      },
+    ],
+    sections: [
+      {
+        heading: "Island dating math, Pacific edition",
+        paragraphs: [
+          "Victoria's South Asian community is modest: UVic students and faculty, provincial government workers and a growing tech crowd, all living in one of the most beautiful and romantically constrained cities in Canada. The apps exhaust in days, the community events are family teas and the mainland scene is a ferry booking away, which converts spontaneity into logistics.",
+          "One island show resets the entire pool in a night. Everyone attends because everyone knows the alternative is the same twelve profiles until spring.",
+        ],
+      },
+      {
+        heading: "What a Garam Masala night in Victoria looks like",
+        paragraphs: [
+          "A UVic researcher and a legislature analyst who have never met, on stage, going on a first date while the island's whole desi scene reacts in one downtown room. Comedian hosts, live votes and a mixer where the inner harbour handles the atmosphere free of charge.",
+          "Join the waitlist to bring the show across the strait, or apply to be a contestant and give the island its story.",
+        ],
       },
     ],
   },
@@ -772,6 +1166,34 @@ export const canadaCities: Record<string, CityData> = {
         q: "Can I apply to be a contestant?",
         a: "Yes. Applications are open now from both sides of the border. Apply early to be in the casting pool when dates are confirmed.",
       },
+      {
+        q: "Is there Indian speed dating in Windsor?",
+        a: "Windsor's desi singles have UWindsor circles and Detroit across the bridge, with nothing built locally. A border-town show doubles the pool overnight, which no app on either side manages.",
+      },
+      {
+        q: "Where do South Asian singles in Windsor actually meet?",
+        a: "UWindsor and St. Clair campuses, the auto sector engineering floors and community events where the median attendee owns a minivan. The young singles deserve their own night, ideally without a customs declaration.",
+      },
+      {
+        q: "Can Detroit metro desis actually attend?",
+        a: "The tunnel and bridge make it a 20 minute trip with a passport, and metro Detroit's desi singles have made longer drives for worse events. A Windsor show is quietly an international show, which delights us.",
+      },
+    ],
+    sections: [
+      {
+        heading: "Windsor's dating pool has a border running through it",
+        paragraphs: [
+          "Windsor lives the strangest dating geography in Canada: UWindsor and St. Clair College grow the local desi student base, the auto sector employs the professional layer and the biggest nearby pool of South Asian singles sits across an international border in metro Detroit. The apps handle this terribly, matching people across a crossing that requires documentation, and the two communities' events never coordinate.",
+          "A Windsor show makes the border a feature: one night where the 519 and the 313 share a room, and the only checkpoint is the ticket scanner.",
+        ],
+      },
+      {
+        heading: "What a Garam Masala night in Windsor looks like",
+        paragraphs: [
+          "A UWindsor engineering grad and a Troy, Michigan analyst who have never met, on stage, going on a first date while a genuinely international audience votes across the river's worth of accents. Comedian hosts, live chaos and a mixer where 'which side do you live on' has real romantic stakes.",
+          "Join the waitlist from either country, or apply to be a contestant and make the first cross-border match in show history.",
+        ],
+      },
     ],
   },
 
@@ -826,6 +1248,34 @@ export const canadaCities: Record<string, CityData> = {
       {
         q: "Can I apply to be a contestant?",
         a: "Yes. Applications are open now. Apply early so you are in the casting pool when Brampton dates are confirmed.",
+      },
+      {
+        q: "Is there Indian speed dating in Brampton?",
+        a: "Brampton has every desi institution on earth except a singles night. Speed dating here means your parents inviting a family over for chai. The show is the alternative the city has been requesting loudly.",
+      },
+      {
+        q: "Where do Brampton desi singles actually meet?",
+        a: "Sheridan and nearby campuses, Toronto commutes, banquet hall weddings and a community where anonymity was abolished decades ago. Half the city dates downtown specifically to avoid being seen. We are building the night worth being seen at.",
+      },
+      {
+        q: "Why does the most desi city in Canada need this show?",
+        a: "Because majority-desi and singles-friendly are different things. Brampton's social fabric is built entirely around families, which is beautiful and useless if you are 27 and single. One night flips the script.",
+      },
+    ],
+    sections: [
+      {
+        heading: "Brampton is the desi capital with no desi dating scene",
+        paragraphs: [
+          "Say it plainly: Brampton is the most South Asian city outside South Asia, and its singles still drive to downtown Toronto to date. The city's entire social architecture serves families: banquet halls booked for weddings a year out, temple and gurdwara calendars, plazas where three generations shop together. A single person's options are the family network operating at full efficiency or total romantic anonymity 45 minutes east.",
+          "A Brampton show is the highest-demand, most obvious stop on our Canadian map. The waitlist numbers from the 905 lead the country and it is not close.",
+        ],
+      },
+      {
+        heading: "What a Garam Masala night in Brampton looks like",
+        paragraphs: [
+          "Two Brampton singles who have never met, which itself defies the odds, on stage, going on a first date while a room that understands every single reference without translation reacts at full volume. Comedian hosts, live votes and a mixer that will produce more community news than a wedding season.",
+          "Join the waitlist to bring the show home, or apply to be a contestant and give the city that built desi Canada its main event.",
+        ],
       },
     ],
   },
@@ -882,6 +1332,34 @@ export const canadaCities: Record<string, CityData> = {
         q: "Can I apply to be a contestant?",
         a: "Yes. Applications are open now. Apply early to be in the casting pool when Mississauga dates are confirmed.",
       },
+      {
+        q: "Is there Indian speed dating in Mississauga?",
+        a: "Sauga's desi singles borrow Toronto's calendar and Brampton's family network and own neither. A Mississauga show gives the Hurontario corridor its own night instead of a commute in either direction.",
+      },
+      {
+        q: "Where do South Asian singles in Mississauga actually meet?",
+        a: "UTM and Sheridan circles, Square One's orbit, corporate campuses along the 403 and Port Credit patios in summer. The density rivals anywhere in North America. The occasions do not exist. Yet.",
+      },
+      {
+        q: "How is a Sauga show different from a Brampton or Toronto one?",
+        a: "Different crowd entirely: Sauga skews young professional, condo-dwelling and slightly more mixed than Brampton, with less downtown scene fatigue than Toronto. Each GTA show gets its own cast and its own energy.",
+      },
+    ],
+    sections: [
+      {
+        heading: "Mississauga is a destination pretending to be a hallway",
+        paragraphs: [
+          "Everyone treats Sauga as the space between Toronto and Brampton, including its own residents, and the dating scene suffers for it: the Hurontario corridor from Port Credit to the Brampton border holds one of the continent's densest South Asian populations, UTM and Sheridan feed it students and the young professionals fill the Square One condo towers. And every single one of them dates as if their city does not exist, commuting downtown for events that could happen at home.",
+          "A Mississauga show ends the hallway era. The corridor gets its own room, its own cast and a mixer where the drive home is fifteen minutes for everyone.",
+        ],
+      },
+      {
+        heading: "What a Garam Masala night in Sauga looks like",
+        paragraphs: [
+          "A UTM alum and a Square One tower consultant who have never met, on stage, going on a first date while the 905's most underestimated desi crowd proves it can out-react downtown. Comedian hosts, live votes and a mixer where Port Credit handles the summer second dates.",
+          "Join the waitlist for first access to Mississauga dates, or apply to be a contestant and put Sauga on the map it already deserves.",
+        ],
+      },
     ],
   },
 
@@ -930,6 +1408,34 @@ export const canadaCities: Record<string, CityData> = {
       {
         q: "Can I apply to be a contestant?",
         a: "Yes. Applications are open now. Apply early to be in the casting pool when Surrey dates are confirmed.",
+      },
+      {
+        q: "Is there Punjabi speed dating in Surrey?",
+        a: "Surrey's introductions run through families, gurdwara networks and wedding season reconnaissance. Formal speed dating never took root. A live comedy dating show fits the community's love of a big night out far better, and it comes with a mixer.",
+      },
+      {
+        q: "Where do Surrey's Punjabi singles actually meet?",
+        a: "Newton and Fleetwood community life, SFU Surrey's campus, banquet halls during wedding season and Vancouver's scene when they want anonymity. A Surrey-side show removes the bridge toll on your dating life.",
+      },
+      {
+        q: "How is this different from the Vancouver show?",
+        a: "Surrey gets its own night, its own cast and a venue on the right side of the Fraser. The Punjabi capital of Western Canada should not have to commute to date, and the waitlist agrees loudly.",
+      },
+    ],
+    sections: [
+      {
+        heading: "Surrey built Punjabi Canada and deserves its own stage",
+        paragraphs: [
+          "Newton, Whalley and Fleetwood hold one of the largest Punjabi communities on the planet outside Punjab, with the banquet halls, sweet shops and gurdwaras to match. The community's social machinery is legendary and entirely marriage-adjacent: weddings are the events, the network is the app and single people navigate both with a mix of gratitude and dread. What Surrey has never had is a night where its singles meet each other on their own terms.",
+          "SFU Surrey's growing campus adds a student layer, and the young professionals filling the Central City towers add another. The room is ready. It has been ready for years.",
+        ],
+      },
+      {
+        heading: "What a Garam Masala night in Surrey looks like",
+        paragraphs: [
+          "Two Surrey singles who have never met, which in this community is a statistical event, on stage, going on a first date while a room that heckles with love reacts in two languages. Comedian hosts, live votes and a mixer that runs on the community's natural event energy without a single aunty in an operational role.",
+          "Join the waitlist for first access to Surrey dates, or apply to be a contestant and give the 604's Punjabi heartland its own main event.",
+        ],
       },
     ],
   },
@@ -980,6 +1486,35 @@ export const canadaCities: Record<string, CityData> = {
         q: "Can I apply to be a contestant?",
         a: "Yes. Applications are open now. Apply early to be in the casting pool when Abbotsford dates are confirmed.",
       },
+      {
+        q: "Is there Punjabi speed dating in Abbotsford?",
+        a: "The Fraser Valley's introductions run through families that have known each other for three generations. Nothing singles-first exists between Surrey and Chilliwack, which is exactly the gap a valley show fills.",
+      },
+      {
+        q: "Where do Fraser Valley desi singles actually meet?",
+        a: "UFV circles, the farming and trucking family networks and Vancouver trips that cost an evening in traffic each way. The valley's singles are the most underserved in BC and they know it.",
+      },
+      {
+        q: "Abbotsford show or just drive to Surrey?",
+        a: "The valley deserves better than being Surrey's suburb in our routing. If Abbotsford's waitlist keeps pace, the show comes up the highway. History says the valley shows up for its own.",
+      },
+    ],
+    sections: [
+      {
+        heading:
+          "The Fraser Valley's roots run deep and its dating options run dry",
+        paragraphs: [
+          "Abbotsford's Punjabi Sikh community goes back over a century, from the farming families who built the valley's berry industry to the trucking and construction businesses that anchor it now. The community's depth is its dating paradox: three generations of shared history means every introduction arrives pre-loaded, and UFV's students plus the young professionals get a social scene where their families' reputations date alongside them.",
+          "A valley show offers what the community structure cannot: a night of fresh context, public permission and a room where being single is the event rather than the topic.",
+        ],
+      },
+      {
+        heading: "What a Garam Masala night in Abbotsford looks like",
+        paragraphs: [
+          "Two valley singles who have never met, a UFV grad and a logistics company manager maybe, on stage, going on a first date while a room full of people whose grandparents knew each other reacts at harvest festival volume. Comedian hosts, live votes and a mixer where the valley's famous hospitality points at romance for once.",
+          "Join the waitlist to bring the show up Highway 1, or apply to be a contestant and give the valley a story that beats wedding season gossip.",
+        ],
+      },
     ],
   },
 
@@ -1028,6 +1563,34 @@ export const canadaCities: Record<string, CityData> = {
       {
         q: "Can I apply to be a contestant?",
         a: "Yes. Applications are open now. Apply early to be in the casting pool when Kelowna dates are confirmed.",
+      },
+      {
+        q: "Is there Indian speed dating in Kelowna?",
+        a: "The Okanagan has wine tours, ski hills and zero desi singles events. Kelowna's growing South Asian community dates through two apps and luck. A live show resets a market this size in one night.",
+      },
+      {
+        q: "Where do South Asian singles in Kelowna actually meet?",
+        a: "UBC Okanagan circles, the hospital, the tourism and wine industries and whatever Vancouver event justifies a four hour drive. Thin pool, gorgeous setting, no occasions. Two of those three are fixable.",
+      },
+      {
+        q: "Would the valley's tourism crowd fit the show?",
+        a: "Perfectly. Kelowna's service and wine industry professionals are extroverts by trade, and a live dating show plus mixer is exactly their kind of night. Expect the loudest small room in BC.",
+      },
+    ],
+    sections: [
+      {
+        heading: "The Okanagan is a postcard with a thin dating pool",
+        paragraphs: [
+          "Kelowna's growth wave brought South Asian students to UBC Okanagan, professionals to the hospital and tech park and families to a valley that sells lifestyle better than almost anywhere in Canada. The desi singles inside that growth live the small-market squeeze: the apps exhaust in a week, the community is too new for a network and the nearest real scene is a mountain pass away.",
+          "One Okanagan show resets the entire local pool and pulls Kamloops and Vernon into the room too. Small markets, big nights: the format's favorite equation.",
+        ],
+      },
+      {
+        heading: "What a Garam Masala night in Kelowna looks like",
+        paragraphs: [
+          "A UBCO grad student and a Kelowna General nurse who have never met, on stage, going on a first date with lake views doing the set design. Comedian hosts, live votes and a mixer where the wine recommendations are locally verified.",
+          "Join the waitlist to bring the show to the Okanagan, or apply to be a contestant and give the valley a better story than another vineyard proposal.",
+        ],
       },
     ],
   },
@@ -1087,6 +1650,34 @@ export const canadaCities: Record<string, CityData> = {
         q: "Can I apply to be a contestant?",
         a: "Yes. Applications are open now. Apply early to be in the casting pool when St. John’s dates are confirmed.",
       },
+      {
+        q: "Is there Indian speed dating in St. John's?",
+        a: "Newfoundland has never had a desi singles event, and the MUN Indian community has grown large enough that the absence is now conspicuous. The first show on the Rock will be the easternmost desi dating night in North America, a title we intend to hold.",
+      },
+      {
+        q: "Where do South Asian singles in St. John's actually meet?",
+        a: "MUN's campus, the health sciences centre and George Street, where the desi crowd finds itself by accident on weekends. The island's warmth is real. The occasions are not. One of those is our job.",
+      },
+      {
+        q: "Does the isolation actually help the show?",
+        a: "Enormously. When the nearest alternative scene is a flight away, the whole community shows up to the one night that exists. Isolated markets produce the most committed rooms on the tour.",
+      },
+    ],
+    sections: [
+      {
+        heading: "The Rock's desi community grew faster than anyone noticed",
+        paragraphs: [
+          "Memorial University's affordable international tuition quietly made St. John's a real Indian student destination, and a growing share stays for the health system and the province's immigration pathways. The community is young, concentrated around campus and the hospitals and completely without social infrastructure of its own. Dating here means a small pool with total context, an app radius that hits open Atlantic and the legendary George Street strip doing all the heavy lifting.",
+          "Newfoundland hospitality plus a live dating format is an obvious chemical reaction. The screech-in jokes write themselves and we will be exercising restraint.",
+        ],
+      },
+      {
+        heading: "What a Garam Masala night in St. John's looks like",
+        paragraphs: [
+          "A MUN engineering grad and a Health Sciences resident who have never met, on stage, going on a first date while the island's entire desi scene fills one room off Water Street. Comedian hosts, live votes and a mixer that inevitably ends on George Street because all St. John's nights do.",
+          "Join the waitlist to bring the show to the edge of the continent, or apply to be a contestant and become the Rock's founding romance legend.",
+        ],
+      },
     ],
   },
 
@@ -1142,6 +1733,34 @@ export const canadaCities: Record<string, CityData> = {
         q: "Can I apply to be a contestant?",
         a: "Yes. Applications are open now. Apply early to be in the system when Moncton dates go live.",
       },
+      {
+        q: "Is there Indian speed dating in Moncton?",
+        a: "New Brunswick's desi singles have community potlucks and a two hour drive to Halifax. Nothing singles-first exists in the province, which makes Moncton's first show a provincial event by default.",
+      },
+      {
+        q: "Where do South Asian singles in Moncton actually meet?",
+        a: "The universities, the growing IT and customer operations employers and community gatherings where the guest list is every desi family in the tri-community. New context is the scarce resource here.",
+      },
+      {
+        q: "Would a Moncton show cover all of New Brunswick?",
+        a: "Realistically yes: Fredericton is under two hours, Saint John about the same. One central New Brunswick room pulls all three cities, and the waitlists get counted together.",
+      },
+    ],
+    sections: [
+      {
+        heading: "Moncton is Atlantic Canada's quiet second desi hub",
+        paragraphs: [
+          "Moncton's affordability drew Indian newcomers who priced out of Ontario dreams, and the city's bilingual service economy and growing IT sector gave them jobs to stay for. Université de Moncton and Crandall add students, and the community now spans the tri-cities with typical Atlantic warmth and typical small market gaps: the social calendar is family events and the singles pool has never once been gathered in a room.",
+          "New Brunswick's first desi singles night is a provincial occasion whether we plan it that way or not. We plan it that way.",
+        ],
+      },
+      {
+        heading: "What a Garam Masala night in Moncton looks like",
+        paragraphs: [
+          "A U de Moncton grad and an IT analyst who have never met, on stage, going on a first date while desi New Brunswick reacts in one room for the first time. Comedian hosts, live votes and a mixer where half the introductions come with 'you are from Dieppe too?'",
+          "Join the waitlist to put New Brunswick on the tour, or apply to be a contestant and make provincial history.",
+        ],
+      },
     ],
   },
 
@@ -1190,6 +1809,34 @@ export const canadaCities: Record<string, CityData> = {
       {
         q: "Can I apply to be a contestant?",
         a: "Yes. Applications are open now. Apply early to be in the casting pool when Charlottetown dates are confirmed.",
+      },
+      {
+        q: "Is there Indian speed dating in Charlottetown?",
+        a: "PEI's desi community tripled and its singles infrastructure stayed at zero. On an island this size, the first desi singles event becomes a provincial holiday informally. We accept the responsibility.",
+      },
+      {
+        q: "Where do South Asian singles in PEI actually meet?",
+        a: "UPEI circles, the hospitality industry, the provincial nominee newcomer networks and community dinners where everyone has met everyone twice. Fresh context does not exist on the island. We import it by the showload.",
+      },
+      {
+        q: "Is PEI seriously on the tour map?",
+        a: "The island's waitlist per capita beats cities twenty times its size, and small proud markets that show up get rewarded. Also we have been told about the lobster rolls. The routing math includes lobster rolls.",
+      },
+    ],
+    sections: [
+      {
+        heading: "PEI's desi boom is the most concentrated in Canada",
+        paragraphs: [
+          "Prince Edward Island's nominee program tripled its South Asian population in a handful of years, concentrated almost entirely in Charlottetown: UPEI students, hospitality and healthcare workers and young families building the island's first real desi community. The singles live the purest small-island math in the country: a pool everyone can name from memory, an app radius that is mostly the Gulf of St. Lawrence and social options that end at the community potluck.",
+          "One show resets the entire island's romantic possibilities in a night. Nowhere else on the tour does one room equal one hundred percent of the scene.",
+        ],
+      },
+      {
+        heading: "What a Garam Masala night in Charlottetown looks like",
+        paragraphs: [
+          "A UPEI student and a Queen Elizabeth Hospital tech who have never met, somehow, on stage, going on a first date while literally the entire desi population of a province reacts. Comedian hosts, live votes and a mixer on Victoria Row where island time does the rest.",
+          "Join the waitlist to make the island stop official, or apply to be a contestant and become PEI's whole origin story.",
+        ],
       },
     ],
   },
@@ -1246,6 +1893,35 @@ export const canadaCities: Record<string, CityData> = {
         q: "Can I apply to be a contestant?",
         a: "Yes. Applications are open now. Apply early to be in the casting pool when Fredericton dates are confirmed.",
       },
+      {
+        q: "Is there Indian speed dating in Fredericton?",
+        a: "Fredericton's desi scene is UNB campus life plus government-town quiet. No singles events exist here or anywhere in New Brunswick, which makes the province's first one a genuine occasion.",
+      },
+      {
+        q: "Where do South Asian singles in Fredericton actually meet?",
+        a: "UNB and STU circles, the provincial government offices and the cybersecurity cluster's growing employers. Small pool, high retention, no occasions: the exact profile the show is built for.",
+      },
+      {
+        q: "Fredericton or Moncton for the New Brunswick show?",
+        a: "The two waitlists get read together and the drive between them is under two hours. Whichever city signs up harder hosts, and the other one carpools. Provincial rivalry welcome.",
+      },
+    ],
+    sections: [
+      {
+        heading:
+          "Fredericton keeps its desi graduates and gives them nothing to attend",
+        paragraphs: [
+          "UNB's international recruitment built Fredericton's Indian community, and the city's trick is retention: government jobs, the growing cybersecurity cluster and a cost of living that makes staying rational. The result is a small desi population that skews educated and young, socializes through campus and office circles and has never had a single event where meeting someone was the point.",
+          "Government towns run on routine, and a live dating show is the scheduled disruption the routine needs. One night, the whole scene, no committee approval required.",
+        ],
+      },
+      {
+        heading: "What a Garam Masala night in Fredericton looks like",
+        paragraphs: [
+          "A UNB computer science grad and a provincial policy analyst who have never met, on stage, going on a first date while the capital's compact desi scene fills one downtown room. Comedian hosts, live votes and a mixer along the river where the small city does its best work.",
+          "Join the waitlist to make Fredericton's case, or apply to be a contestant and give the capital some non-legislative drama.",
+        ],
+      },
     ],
   },
 
@@ -1294,6 +1970,34 @@ export const canadaCities: Record<string, CityData> = {
       {
         q: "Can I apply to be a contestant?",
         a: "Yes. Applications are open now. Apply early to be in the casting pool when Thunder Bay dates are confirmed.",
+      },
+      {
+        q: "Is there Indian speed dating in Thunder Bay?",
+        a: "Northwestern Ontario has no desi singles events within six hours in any direction. That kind of isolation makes the first show less an event and more a regional summit. We are comfortable hosting summits.",
+      },
+      {
+        q: "Where do South Asian singles in Thunder Bay actually meet?",
+        a: "Lakehead University circles, the regional health sciences centre and a community whose entire social calendar fits on one fridge door. Everyone will hear about the show within a week of announcement. That is not marketing, that is Thunder Bay.",
+      },
+      {
+        q: "Will people really come from out of town?",
+        a: "When the alternative is a six hour drive to Winnipeg, yes. The Lakehead crowd plus the regional health workers plus every desi single within 200 kilometers is exactly a full room.",
+      },
+    ],
+    sections: [
+      {
+        heading: "Thunder Bay's isolation makes the math simple",
+        paragraphs: [
+          "Lakehead University quietly brings Indian students to the head of the lakes, the regional hospital adds health workers and the community that forms is small, hardy and six hours from the nearest city in every direction. Dating apps here are a formality: the radius covers boreal forest. The community's own events are warm, family-run and romantically useless, and everyone single knows everyone else single by name and backstory.",
+          "In markets this isolated, the show does not compete with anything, because there is nothing. It becomes the calendar. One night, the whole scene, memories with decade-long half-lives.",
+        ],
+      },
+      {
+        heading: "What a Garam Masala night in Thunder Bay looks like",
+        paragraphs: [
+          "A Lakehead grad student and a health sciences nurse who have never met, on stage, going on a first date while northwestern Ontario's entire desi population reacts in one warm room with the lake wind outside. Comedian hosts, live votes and a mixer where the Persian roll debate is mandatory local content.",
+          "Join the waitlist to bring the show north, or apply to be a contestant and become the community's best story for years.",
+        ],
       },
     ],
   },
@@ -1350,6 +2054,34 @@ export const canadaCities: Record<string, CityData> = {
         q: "Can I apply to be a contestant?",
         a: "Yes. Applications are open now. Apply early to be in the casting pool when Guelph dates are confirmed.",
       },
+      {
+        q: "Is there Indian speed dating in Guelph?",
+        a: "Guelph's desi students borrow Waterloo's events and Toronto's apps and own neither. A Royal City show gives the ag and vet school crowd a night that does not require the 401.",
+      },
+      {
+        q: "Where do South Asian singles in Guelph actually meet?",
+        a: "U of G's campus, the vet and ag science buildings, downtown's compact bar scene and the constant gravitational pull of Toronto weekends. The golden triangle position means options everywhere except home.",
+      },
+      {
+        q: "Would KW and Guelph share a show?",
+        a: "The cities are 30 minutes apart, so possibly, but Guelph's crowd has its own flavor: more life sciences, less software, equally single. Waitlist volume decides whether the Royal City hosts or carpools.",
+      },
+    ],
+    sections: [
+      {
+        heading: "Guelph's golden triangle problem",
+        paragraphs: [
+          "The University of Guelph anchors a desi community with a personality unlike its neighbors: veterinary medicine, agricultural science and biology programs pull a different South Asian crowd than Waterloo's code factories, and the city's size makes the scene walkable and instantly familiar. The triangle position is the curse: Toronto, Waterloo and Hamilton all within an hour means every social occasion leaks outward and nothing accumulates locally.",
+          "A Guelph show reverses the leak for a night. The vet school crowd alone guarantees the most empathetic audience votes on the entire tour.",
+        ],
+      },
+      {
+        heading: "What a Garam Masala night in Guelph looks like",
+        paragraphs: [
+          "An OVC vet student and a food science masters grad who have never met, on stage, going on a first date while the Royal City's compact desi scene fills a downtown room. Comedian hosts, live votes and a mixer within stumbling distance of everything, because Guelph's downtown is three streets and we love it for that.",
+          "Join the waitlist to keep Guelph's nights local, or apply to be a contestant and give the campus a legend.",
+        ],
+      },
     ],
   },
 
@@ -1404,6 +2136,34 @@ export const canadaCities: Record<string, CityData> = {
       {
         q: "Can I apply to be a contestant?",
         a: "Yes. Applications are open now. Apply early to be in the casting pool when Kingston dates are confirmed.",
+      },
+      {
+        q: "Is there Indian speed dating in Kingston?",
+        a: "Kingston's desi scene is Queen's circles and Princess Street repetition. No singles events exist between Toronto and Ottawa on the 401, which makes Kingston the natural midpoint stop.",
+      },
+      {
+        q: "Where do South Asian singles in Kingston actually meet?",
+        a: "Queen's campus and its professional schools, KGH's residents, CFB Kingston's rotations and the same three Princess Street bars everyone rotates through. Familiar faces, no fresh format. We are the fresh format.",
+      },
+      {
+        q: "Would Kingston pull from along the 401?",
+        a: "Belleville, Brockville and even Ottawa's impatient contingent are all within reach. The midpoint position that makes Kingston sleepy also makes it the perfect regional host.",
+      },
+    ],
+    sections: [
+      {
+        heading: "Kingston's smart set has nowhere to flirt",
+        paragraphs: [
+          "Queen's University stocks Kingston with an accomplished desi cohort: commerce students, engineers, med students at KGH and law students who will all deny attending this show while buying tickets early. The limestone city's social scene is built for undergrads in general and nobody desi in particular, and the singles describe Princess Street as a loop they have been walking for years with the same cast.",
+          "The military base and the correctional services sector add professionals nobody's social circle ever includes. One show, every silo, and suddenly the loop has new people in it.",
+        ],
+      },
+      {
+        heading: "What a Garam Masala night in Kingston looks like",
+        paragraphs: [
+          "A Queen's med student and an RMC officer who have never met, on stage, going on a first date while the limestone city's whole desi scene reacts in one room. Comedian hosts, live votes and a mixer where the waterfront handles the second act.",
+          "Join the waitlist to put Kingston on the 401 corridor tour, or apply to be a contestant and outperform every case competition you have ever entered.",
+        ],
       },
     ],
   },

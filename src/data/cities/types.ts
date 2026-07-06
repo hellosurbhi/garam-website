@@ -3,6 +3,16 @@ export interface CityCta {
   href: string;
 }
 
+/**
+ * A titled content section rendered as an h2 plus paragraphs after the
+ * body. Used to deepen priority city pages with unique local content so
+ * Google indexes them (thin templated pages get skipped).
+ */
+export interface CitySection {
+  heading: string;
+  paragraphs: string[];
+}
+
 export type CityRegion =
   | "US Northeast"
   | "US Southeast"
@@ -57,4 +67,6 @@ export interface CityData {
   relatedArticleSlugs?: string[];
   /** City-specific Q&A for the FAQ section and FAQPage JSON-LD schema */
   faqItems?: Array<{ q: string; a: string }>;
+  /** Deep-dive content sections (h2 + paragraphs) rendered after the body */
+  sections?: CitySection[];
 }

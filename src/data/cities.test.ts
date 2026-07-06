@@ -94,6 +94,66 @@ describe("cities", () => {
       expect(city.region.trim()).not.toBe("");
     }
   });
+
+  it("sections, when present, have non-empty headings and paragraphs", () => {
+    for (const city of allCities) {
+      if (!city.sections) continue;
+      expect(
+        city.sections.length,
+        `${city.slug} has an empty sections array`,
+      ).toBeGreaterThan(0);
+      for (const section of city.sections) {
+        expect(section.heading.trim(), `${city.slug} section heading`).not.toBe(
+          "",
+        );
+        expect(
+          section.paragraphs.length,
+          `${city.slug} section "${section.heading}" has no paragraphs`,
+        ).toBeGreaterThan(0);
+        for (const para of section.paragraphs) {
+          expect(para.trim(), `${city.slug} section paragraph`).not.toBe("");
+        }
+      }
+    }
+  });
+
+  it("enriched priority cities carry deep content (2+ sections, 6+ FAQs)", () => {
+    const enriched = [
+      "manhattan",
+      "jersey-city",
+      "los-angeles",
+      "san-francisco",
+      "philadelphia",
+      "edison",
+      "boston",
+      "toronto",
+      "london",
+      "austin",
+      "chicago",
+      "houston",
+      "dallas",
+      "atlanta",
+      "washington-dc",
+      "seattle",
+      "vancouver",
+      "sydney",
+      "melbourne",
+      "leicester",
+      "san-jose",
+    ];
+    for (const slug of enriched) {
+      const city = cities[slug];
+      expect(city, `${slug} missing from cities`).toBeDefined();
+      expect(
+        city.sections?.length ?? 0,
+        `${slug} should have at least 2 sections`,
+      ).toBeGreaterThanOrEqual(2);
+      expect(
+        city.faqItems?.length ?? 0,
+        `${slug} should have at least 6 FAQ items`,
+      ).toBeGreaterThanOrEqual(6);
+    }
+  });
 });
 
 describe("citiesIndex", () => {

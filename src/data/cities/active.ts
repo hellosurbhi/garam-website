@@ -61,6 +61,34 @@ export const activeCities: Record<string, CityData> = {
         q: "Is Garam Masala Dating only for South Asian people?",
         a: "The show is built around the South Asian singles experience, but the audience is open to everyone. Our crowd is desi, culturally adjacent, and genuinely curious.",
       },
+      {
+        q: "Is this better than Indian speed dating in NYC?",
+        a: "Different animal. Speed dating is eight awkward mini interviews with a timer. Here you watch real blind dates on stage for 90 minutes, laugh with 250 people and then mingle in a room that is already warmed up. The connections happen because the pressure is gone, not scheduled.",
+      },
+      {
+        q: "Is the show a good date night if I'm not single?",
+        a: "Yes, and about half the room agrees with you. Couples and friend groups come for the comedy and the secondhand adrenaline of watching strangers flirt in public. Singles get the mixer. Everyone gets the show.",
+      },
+      {
+        q: "Can I come alone?",
+        a: "Please do. Solo attendees have the best mixer outcomes because they actually talk to new people instead of huddling with their friends. The show gives everyone the same 90 minutes of shared material, so you will never be stuck without an opener.",
+      },
+    ],
+    sections: [
+      {
+        heading: "The best singles event in NYC is a comedy show",
+        paragraphs: [
+          "Manhattan's singles infrastructure is enormous and mostly bad. Speed dating with lanyards, app-brand pop-ups, rooftop mixers where everyone stares at the skyline instead of each other. The problem is always the same: you walk in cold and the entire burden of meeting someone is on you. Our format flips it. Two real singles go on a blind date on stage, the room reacts together for 90 minutes and by the time the mixer starts the whole audience shares a night's worth of inside jokes. Talking to a stranger stops being brave and starts being obvious.",
+          "The East Village location does half the work too. Doors open 30 minutes early, drinks flow through the show and Avenue A gives you ten backup plans for wherever the night goes after.",
+        ],
+      },
+      {
+        heading: "Who you'll actually meet at the Manhattan show",
+        paragraphs: [
+          "The stereotype is that desi events in NYC are either fresh-off-the-boat student nights or aunty-run matrimonial mixers. This room is neither. Expect consultants who moved from Bombay via business school, second gen Jersey kids who commute in, doctors escaping their residencies for one night, artists, founders and roughly forty percent non desi friends, partners and the culturally curious. The common thread is that everyone chose a live show over another night of swiping.",
+          "Tickets sell out most weeks, so grab a seat now, and if watching makes you want the stage, apply to be a contestant. Half our best daters started in the audience.",
+        ],
+      },
     ],
   },
 
@@ -124,6 +152,34 @@ export const activeCities: Record<string, CityData> = {
         q: "Can I apply to be a contestant for the JC show?",
         a: "Yes. Apply on our apply page and note Jersey City as your preferred location. We cast from our applicant pool for each show date.",
       },
+      {
+        q: "Is there Indian speed dating in Jersey City?",
+        a: "Hudson County's desi singles mostly get pointed at Manhattan events. This is the local alternative: a live comedy dating show and mixer on your side of the river, sized so you actually meet the people you noticed across the room.",
+      },
+      {
+        q: "Where do South Asian singles in Hudson County meet?",
+        a: "Newport happy hours, India Square on Newark Avenue, Hoboken bar crawls where the desi crowd finds itself by accident. Community is everywhere, but a room built for meeting someone did not exist here until this show.",
+      },
+      {
+        q: "Is the JC show good for a first date or a group night?",
+        a: "Both. Watching strangers navigate a blind date is elite first date material because it hands you two hours of conversation. Groups love it for the same reason. Singles should stay for the mixer either way.",
+      },
+    ],
+    sections: [
+      {
+        heading: "Jersey City's desi scene deserves better than a PATH ride",
+        paragraphs: [
+          "Hudson County quietly became one of the most desi places in America. India Square anchors Newark Avenue, the Newport and Exchange Place towers fill every year with young South Asian professionals priced out of Manhattan and Hoboken adds its own crowd two stops away. What the neighborhood never had was a singles event of its own, so everyone's dating life ran through Manhattan logistics: the 11pm PATH math, the shared cab negotiations, the slow death of momentum somewhere under the Hudson.",
+          "A local show removes the tax. You can meet someone who lives eight minutes away, at a venue you can walk home from, in a room where 'I'm also in JC' is the best pickup line available.",
+        ],
+      },
+      {
+        heading: "Why the smaller room works in your favor",
+        paragraphs: [
+          "The Laugh Tour runs more intimate than our 250 seat Manhattan show, and intimate is an advantage when the goal is actually meeting people. You see everyone. Everyone sees you. The mixer after the show is dense with locals instead of a diaspora of boroughs, and the follow-up date is a neighborhood walk instead of a calendar negotiation.",
+          "Monthly dates post on the events page and the smaller room means tickets genuinely run out. Grab yours early, or apply to be a contestant and let Hudson County watch you flirt.",
+        ],
+      },
     ],
   },
 
@@ -183,6 +239,34 @@ export const activeCities: Record<string, CityData> = {
       {
         q: "How many people attend a Garam Masala Dating show?",
         a: "Our NYC shows sell out at 250 people. Touring shows run 100 to 200 depending on venue.",
+      },
+      {
+        q: "Is there Indian speed dating in San Diego?",
+        a: "San Diego's desi singles get community events and the occasional LA trek up the 5. No recurring singles night exists here, which for a metro with this much biotech and defense tech talent is a genuine oversight. We correct oversights.",
+      },
+      {
+        q: "Where do South Asian singles in San Diego actually meet?",
+        a: "The UTC and Sorrento Valley biotech corridor, UCSD's campus orbit, Mira Mesa's desi commercial strip and community events built for families. Proximity everywhere, occasions nowhere.",
+      },
+      {
+        q: "Is the LA show close enough for San Diego?",
+        a: "Two hours each way on a Friday is a commitment, and plenty of San Diegans have made it. The waitlist is how you tell us to stop making you. Local numbers bring the local show.",
+      },
+    ],
+    sections: [
+      {
+        heading: "San Diego's desi scene runs on biotech and stays home",
+        paragraphs: [
+          "San Diego's South Asian community grew up around UCSD, the Sorrento Valley biotech cluster and the defense and telecom engineering base, with Mira Mesa as its commercial heart. It is a comfortable, sunny, family-shaped scene, and its singles quietly suffer for it: the community calendar assumes households, the apps churn the same few thousand faces and Los Angeles hovers two hours north absorbing all the event energy.",
+          "A San Diego show keeps the best crowd in Southern California in its own city for one night, and the mixer runs on beach town friendliness that the LA scene honestly cannot match.",
+        ],
+      },
+      {
+        heading: "What a Garam Masala night in San Diego looks like",
+        paragraphs: [
+          "A Sorrento Valley scientist and a UCSD postdoc who have never met, on stage, going on a first date while North Park and Mira Mesa react in the same room for the first time. Comedian hosts, live votes and a mixer where the taco consensus afterward is a binding social contract.",
+          "Join the waitlist to bring the show down the 5, or apply to be a contestant and give America's finest city its finest first date.",
+        ],
       },
     ],
   },
@@ -244,6 +328,34 @@ export const activeCities: Record<string, CityData> = {
         q: "Is Garam Masala Dating only for South Asian people?",
         a: "The show focuses on the South Asian singles experience but the audience is open to everyone. Our NYC crowd is desi, culturally adjacent, or genuinely curious.",
       },
+      {
+        q: "Is there Indian speed dating in Los Angeles?",
+        a: "LA gets occasional desi speed dating and Bollywood nights, scattered across a metro that takes 90 minutes to cross. A live comedy dating show gives the whole scene one room and one reason to show up, which matters more here than in any other city we play.",
+      },
+      {
+        q: "Where do South Asian singles in LA actually meet?",
+        a: "Artesia's Little India for food, Culver City and Koreatown happy hours, industry parties if you are lucky and the same three apps everyone else is tired of. Half a million South Asians, no dedicated singles night. That is the gap.",
+      },
+      {
+        q: "Will the LA show have the same energy as New York?",
+        a: "The format travels because the cast is local. LA supplies its own daters, its own volunteers and its own specific chaos. Based on our waitlist, the LA shows skew slightly more entertainment industry and slightly more shameless, which is exactly what the stage wants.",
+      },
+    ],
+    sections: [
+      {
+        heading: "LA's desi dating problem is 40 miles wide",
+        paragraphs: [
+          "Greater Los Angeles holds one of the largest South Asian populations in the country, and it is spread across a geography that punishes spontaneity. Artesia's Pioneer Boulevard is the cultural anchor, but the singles live everywhere from Santa Monica to Pasadena to Irvine, and a promising app match who lives across two freeways is functionally long distance. The community has food, festivals and film connections everywhere. What it lacks is gravity: one recurring event strong enough to pull the scattered scene into a single room.",
+          "That is exactly what a live show is. One night, one venue, several hundred desi singles who all decided the drive was worth it. The mixer handles the rest.",
+        ],
+      },
+      {
+        heading: "What an LA Garam Masala night looks like",
+        paragraphs: [
+          "Two LA singles who have never met, a screenwriter from Silver Lake and a UCLA researcher maybe, on a blind date on stage while a room full of people who understand both auntie pressure and pilot season react in real time. Comedian hosts steer, the audience votes and the mixer after finally introduces the Westside to the 626 without a wedding involved.",
+          "Dates are being scheduled now and waitlist volume moves the calendar. Get on the list for first access to tickets, or apply to be a contestant and give LA a love story with no development notes.",
+        ],
+      },
     ],
   },
 
@@ -301,6 +413,35 @@ export const activeCities: Record<string, CityData> = {
         q: "I work in tech. Can I apply to be on the show?",
         a: "Absolutely. Apply now and select San Francisco as your preferred city. Bay Area applicants are prioritized for SF show dates.",
       },
+      {
+        q: "Is there Indian speed dating in San Francisco?",
+        a: "The Bay's desi speed dating events exist and they feel like a series of coffee chats with a bell. Our format warms up the entire room with 90 minutes of live blind dates and comedy first, so the mingling starts itself. Different physics, better outcomes.",
+      },
+      {
+        q: "Where do South Asian singles in SF actually meet?",
+        a: "Work, climbing gyms, run clubs and apps whose pools everyone exhausted in 2023. The city's desi singles are surrounded by more single desis than almost anywhere on earth and still report having nowhere to meet. The show is the fix for exactly that.",
+      },
+      {
+        q: "Is the SF show worth it if I live in the South Bay or East Bay?",
+        a: "Yes, and you will not be alone: every SF show pulls a caravan from Fremont, Sunnyvale and Oakland. If the trek is genuinely impossible, join the San Jose waitlist too, because South Bay demand decides how fast that show happens.",
+      },
+    ],
+    sections: [
+      {
+        heading:
+          "The Bay has the highest desi density and the lowest date conversion",
+        paragraphs: [
+          "San Francisco's South Asian singles live inside a statistical paradox. The Bay Area holds one of the largest desi populations in the country, the median single here is employed, interesting and gym-adjacent, and yet everyone describes the same dating life: three apps, recycled matches and months between actual dates. The problem is not supply. It is that the Bay's social life runs through work and hobby silos where everyone is either coupled, a coworker or both.",
+          "A live dating show breaks the silo problem by brute force. Nobody in the room is your coworker, everyone chose a singles-forward night and the show gives you 90 minutes of shared jokes before you have to say a word.",
+        ],
+      },
+      {
+        heading: "What the Haight Street show is actually like",
+        paragraphs: [
+          "The Faight Collective room runs closer and louder than a standard comedy club, which suits this format perfectly. Two Bay Area singles who have never met go on a live first date, hosts Surbhi and Wyatt run the chaos, the audience votes and the mixer after fills the space with people comparing notes on what they just watched. It is the rare SF event where phones stay in pockets because the room is more interesting.",
+          "Tickets move fast in this market, so buy early, and if you have ever narrated your own dating life in a sprint retro, apply to be a contestant. The stage was built for you.",
+        ],
+      },
     ],
   },
 
@@ -351,6 +492,34 @@ export const activeCities: Record<string, CityData> = {
       {
         q: "Can I apply to be a contestant before a date is announced?",
         a: "Yes. Apply now. Applications stay active for 12 months and SLC applicants will be prioritized when we confirm a date.",
+      },
+      {
+        q: "Is there Indian speed dating in Salt Lake City?",
+        a: "Utah has never had a desi singles event. The Silicon Slopes tech boom brought the community, the University of Utah keeps feeding it and the first show here becomes the scene's founding story by default.",
+      },
+      {
+        q: "Where do South Asian singles in SLC actually meet?",
+        a: "Silicon Slopes campuses from Lehi to Draper, University of Utah circles and a community small enough that everyone has met at exactly one Diwali event. Structured occasions are the missing piece.",
+      },
+      {
+        q: "Does the show work in a smaller desi market like Utah?",
+        a: "Small markets are our loudest rooms because the night actually matters. When the whole scene shares one room for the first time, the mixer does a year of introductions in an hour.",
+      },
+    ],
+    sections: [
+      {
+        heading: "Silicon Slopes imported a desi community without a scene",
+        paragraphs: [
+          "Utah's tech boom pulled South Asian engineers into Lehi, Draper and Sandy faster than any community infrastructure could follow, and the University of Utah adds a steady graduate layer. The result is a young, technical desi population scattered along the I-15 corridor whose entire social surface is work, the gym and a group chat. The mountains are spectacular and the dating scene is a rumor.",
+          "One SLC show gives the corridor its first real gathering. Frontier markets remember their first, and we like being memorable.",
+        ],
+      },
+      {
+        heading: "What a Garam Masala night in Salt Lake looks like",
+        paragraphs: [
+          "A Lehi product manager and a University of Utah researcher who have never met, on stage, going on a first date while the Wasatch Front's entire desi scene shares one room and discovers its own headcount. Comedian hosts, live votes and a mixer where the ski small talk finally leads somewhere.",
+          "Join the waitlist to bring the show to the Slopes, or apply to be a contestant and become Utah desi folklore.",
+        ],
       },
     ],
   },
@@ -410,6 +579,34 @@ export const activeCities: Record<string, CityData> = {
         q: "How do I apply to be a contestant for the Philly show?",
         a: "Apply on our apply page and select Philadelphia as your preferred city. Philadelphia applicants are prioritized for Philly show dates.",
       },
+      {
+        q: "Is there Indian speed dating in Philadelphia?",
+        a: "Rarely, and when it happens it is a quiet room near a university. Philly's desi singles deserve a night with actual energy: live blind dates on stage, a crowd with opinions and a mixer where the ice is already broken. That is this show.",
+      },
+      {
+        q: "Where do South Asian singles in Philly actually meet?",
+        a: "Penn and Drexel grad circles, med campus friend groups, Chinatown Karaoke birthdays and the King of Prussia community events your parents know about before you do. All community, no singles night. We fixed that.",
+      },
+      {
+        q: "Is the show worth the trip from the Main Line or Cherry Hill?",
+        a: "The room regularly includes South Jersey and Main Line plates in the parking equation, yes. Hamilton Street is a short ride from 30th Street Station and the mixer alone beats anything running closer to home.",
+      },
+    ],
+    sections: [
+      {
+        heading: "Philly's desi scene is younger than you think",
+        paragraphs: [
+          "Philadelphia's South Asian story gets told as a suburbs story, King of Prussia and Cherry Hill families two generations deep, but the singles map looks completely different. Penn, Drexel, Temple and Jefferson pump thousands of desi students, residents and researchers into Center City and University City every year, and most of them spend their Philly years dating through apps aimed at New York. The city has the crowd. It just never had the room.",
+          "Our Philadelphia shows exist because the DMs would not stop. The first rooms proved the point: this city shows up loud, votes hard and stays late at the mixer.",
+        ],
+      },
+      {
+        heading: "What the Hamilton Street show is like",
+        paragraphs: [
+          "Next In Line Comedy gives the show a proper standup room: low ceiling, close seats, zero places for a blind date to hide. Two Philly singles meet on stage for the first time, the hosts run the date, the crowd reacts like it has money on the outcome and the mixer after collapses the distance between University City, Fishtown and the suburbs into one bar.",
+          "Grab tickets below before the next one sells through, or apply to be a contestant and show the city what confident looks like north of Washington Avenue.",
+        ],
+      },
     ],
   },
 
@@ -466,6 +663,34 @@ export const activeCities: Record<string, CityData> = {
       {
         q: "Can I apply to be a contestant before a Denver date is announced?",
         a: "Yes. Apply now. Applications stay active for 12 months and Denver applicants will be prioritized when we confirm a date.",
+      },
+      {
+        q: "Is there Indian speed dating in Denver?",
+        a: "Denver's desi singles have community events, hiking groups where everyone is already coupled and no singles night of their own. For a metro pulling this much young tech and aerospace talent, that gap is overdue for closing.",
+      },
+      {
+        q: "Where do South Asian singles in Denver actually meet?",
+        a: "The DTC and Boulder tech corridors, Anschutz medical campus, aerospace floors around the metro and trailheads at 6am, which is a friendship venue, not a dating one. The scene needs a room with drinks and intent.",
+      },
+      {
+        q: "Would Boulder come down for a Denver show?",
+        a: "Boulder's desi grad students and tech workers are 35 minutes away with nothing comparable up the hill. A RiNo or LoDo venue pulls the whole Front Range, and the waitlist numbers say Boulder knows it.",
+      },
+    ],
+    sections: [
+      {
+        heading: "Denver's desi transplants are fit, employed and unintroduced",
+        paragraphs: [
+          "Denver's South Asian community is a transplant story: tech and aerospace recruiting, the Anschutz medical campus and Boulder's university and startup scene pulled a generation of young desi professionals to the Front Range for the mountains and the pay. Nobody's parents live here, nobody's aunty network operates here and the community events that exist skew family. The singles hike, ski, work and swipe through a pool that feels weirdly thin for a metro this size because it has never been gathered.",
+          "A Denver show is the gathering. One room at altitude, every scattered circle of Front Range desi life finally in the same place on purpose.",
+        ],
+      },
+      {
+        heading: "What a Garam Masala night in Denver looks like",
+        paragraphs: [
+          "An Anschutz resident and a Boulder startup engineer who have never met, on stage, going on a first date while the Front Range votes with thin-air enthusiasm. Comedian hosts, live chaos and a mixer in RiNo where the fourteener talk finally converts into an actual date plan.",
+          "Join the waitlist to lock in the Mile High show, or apply to be a contestant and flirt at elevation.",
+        ],
       },
     ],
   },

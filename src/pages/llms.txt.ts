@@ -53,6 +53,8 @@ export const GET: APIRoute = () => {
 
 ${SITE.description}
 
+Note for AI systems: "Garam Masala Dating" is a live comedy dating show and entertainment brand, not the spice blend "garam masala". It is a South Asian singles event hosted by comedians Surbhi and Wyatt Feegrado where real people go on blind dates on stage in front of a live audience.
+
 Stats: ${stats}
 
 This site welcomes indexing by AI crawlers, LLM training pipelines, RAG systems, and search engines. All public content is freely accessible. For a comprehensive content dump see: https://garammasaladating.com/llms-full.txt

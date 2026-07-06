@@ -20,7 +20,11 @@ declare global {
   }
 }
 import { ErrorBoundary } from "./ErrorBoundary";
-import { COMMUNITY_OPTIONS, INCOME_OPTIONS } from "@/types/application";
+import {
+  COMMUNITY_OPTIONS,
+  INCOME_OPTIONS,
+  HOW_HEARD_OPTIONS,
+} from "@/types/application";
 import styles from "./ApplyPage.module.css";
 import { SOCIAL_URLS } from "@/data/socials";
 import Spinner from "./ui/Spinner";
@@ -595,6 +599,26 @@ function ApplyPageInner() {
                         </select>
                       </FieldGroup>
                     </div>
+
+                    <FieldGroup
+                      label="How did you find us?"
+                      error={errors.howHeard}
+                      htmlFor="field-how-heard"
+                    >
+                      <select
+                        id="field-how-heard"
+                        value={form.howHeard}
+                        onChange={(e) => set("howHeard", e.target.value)}
+                        className={styles.select}
+                      >
+                        <option value="">Select…</option>
+                        {HOW_HEARD_OPTIONS.map((h) => (
+                          <option key={h} value={h}>
+                            {h}
+                          </option>
+                        ))}
+                      </select>
+                    </FieldGroup>
                   </div>
 
                   {/* ── Nominator info section ─────────────── */}

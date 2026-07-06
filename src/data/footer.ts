@@ -66,5 +66,6 @@ export const FOOTER_EXPLORE_LINKS: FooterLink[] = [
   { label: "FAQ", href: "/faq" },
   { label: "The Journal", href: "/journal" },
   { label: "Meet the Hosts", href: "/hosts" },
+  { label: "Press", href: "/press" },
   { label: "Contact", href: SOCIAL_URLS.email },
 ];

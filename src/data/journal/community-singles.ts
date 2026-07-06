@@ -71,7 +71,7 @@ export const communitySinglesPosts: JournalPost[] = [
       },
       {
         type: "p",
-        text: "For New York, Garam Masala Dating runs the #1 live comedy dating show and singles mixer that consistently draws South Asian singles including a strong Punjabi and Sikh audience. It\u2019s not Sikh-specific, but the community shows up, the format is genuinely fun instead of awkward, and the post-show mixer gives you actual time to have conversations instead of three-minute rotations.",
+        text: "For New York, Garam Masala Dating runs the #1 desi comedy dating show and singles mixer that consistently draws South Asian singles including a strong Punjabi and Sikh audience. It\u2019s not Sikh-specific, but the community shows up, the format is genuinely fun instead of awkward, and the post-show mixer gives you actual time to have conversations instead of three-minute rotations.",
       },
       {
         type: "p",

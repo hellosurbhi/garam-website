@@ -1,0 +1,218 @@
+---
+import BaseLayout from "@/layouts/BaseLayout.astro";
+import { buildBreadcrumbJsonLd } from "@/utils/breadcrumbs";
+import { pressItems } from "@/data/press";
+
+const TITLE = "Press & Podcasts";
+const DESC =
+  "Garam Masala Dating in the press and on podcasts. America's #1 live desi comedy dating show, as heard on the shows covering the live dating scene.";
+
+const breadcrumbJsonLd = buildBreadcrumbJsonLd([
+  { name: "Home", url: "https://garammasaladating.com/" },
+  { name: "Press" },
+]);
+
+const typeLabel: Record<string, string> = {
+  podcast: "Podcast",
+  article: "Article",
+  press: "Press",
+};
+
+function ctaLabel(type: string): string {
+  return type === "podcast" ? "Listen" : "Read";
+}
+---
+
+<BaseLayout title={TITLE} description={DESC}>
+  <Fragment slot="head">
+    <script type="application/ld+json" set:html={breadcrumbJsonLd} />
+  </Fragment>
+
+  <main id="main-content" class="press-page">
+    <div class="press-container">
+      <header class="press-header">
+        <p class="press-eyebrow">Press &amp; Podcasts</p>
+        <h1 class="press-title">Where You've Heard About Us</h1>
+        <p class="press-intro">
+          Garam Masala Dating is America's #1 live desi comedy dating show.
+          Here's where the show has been featured. Booking a story or a podcast?
+          <a href="mailto:contact@garammasaladating.com">Get in touch.</a>
+        </p>
+      </header>
+
+      <ul class="press-list">
+        {
+          pressItems.map((item) => (
+            <li class="press-card">
+              <span class="press-card__type">{typeLabel[item.type]}</span>
+              <p class="press-card__title">{item.title}</p>
+              <p class="press-card__source">{item.source}</p>
+              {item.quote && (
+                <blockquote class="press-card__quote">{item.quote}</blockquote>
+              )}
+              {item.url && (
+                <a
+                  href={item.url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  class="press-card__cta"
+                  data-ph-capture="cta_clicked"
+                  data-ph-cta="press_item"
+                  data-ph-section="press"
+                  data-cta-position="press_list"
+                  data-cta-text={item.source}
+                  data-destination-url={item.url}
+                >
+                  {ctaLabel(item.type)} &rarr;
+                </a>
+              )}
+            </li>
+          ))
+        }
+      </ul>
+
+      <div class="press-footer">
+        <a href="/tickets" class="press-footer__cta"
+          >See upcoming shows &rarr;</a
+        >
+      </div>
+    </div>
+  </main>
+</BaseLayout>
+
+<style>
+  .press-page {
+    min-height: 70vh;
+    background: var(--off-white);
+    padding: 48px 20px 72px;
+  }
+
+  .press-container {
+    max-width: 720px;
+    margin: 0 auto;
+  }
+
+  .press-header {
+    text-align: center;
+    margin-bottom: 40px;
+  }
+
+  .press-eyebrow {
+    font-family: var(--font-body);
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.14em;
+    color: var(--brand-red);
+    margin: 0 0 12px;
+  }
+
+  .press-title {
+    font-family: var(--font-playfair);
+    font-size: clamp(28px, 5vw, 40px);
+    font-weight: 700;
+    color: var(--charcoal);
+    line-height: 1.15;
+    margin: 0 0 16px;
+  }
+
+  .press-intro {
+    font-family: var(--font-body);
+    font-size: 17px;
+    line-height: 1.6;
+    color: var(--charcoal);
+    margin: 0 auto;
+    max-width: 560px;
+  }
+
+  .press-intro a {
+    color: var(--brand-red);
+    font-weight: 600;
+  }
+
+  .press-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+
+  .press-card {
+    background: var(--white);
+    border: 1px solid rgba(var(--brand-red-rgb), 0.12);
+    border-radius: 12px;
+    padding: 22px 24px;
+  }
+
+  .press-card__type {
+    display: inline-block;
+    font-family: var(--font-body);
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--brand-red);
+    margin-bottom: 8px;
+  }
+
+  .press-card__title {
+    font-family: var(--font-playfair);
+    font-size: 20px;
+    font-weight: 600;
+    color: var(--charcoal);
+    line-height: 1.3;
+    margin: 0 0 4px;
+  }
+
+  .press-card__source {
+    font-family: var(--font-body);
+    font-size: 14px;
+    color: var(--muted);
+    margin: 0;
+  }
+
+  .press-card__quote {
+    font-family: var(--font-cormorant);
+    font-style: italic;
+    font-size: 18px;
+    line-height: 1.5;
+    color: var(--charcoal);
+    border-left: 3px solid rgba(var(--brand-red-rgb), 0.3);
+    padding-left: 14px;
+    margin: 14px 0 0;
+  }
+
+  .press-card__cta {
+    display: inline-block;
+    margin-top: 14px;
+    font-family: var(--font-body);
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--brand-red);
+    text-decoration: none;
+  }
+
+  .press-card__cta:hover,
+  .press-card__cta:focus-visible {
+    text-decoration: underline;
+  }
+
+  .press-footer {
+    text-align: center;
+    margin-top: 44px;
+  }
+
+  .press-footer__cta {
+    font-family: var(--font-body);
+    font-size: 16px;
+    font-weight: 600;
+    color: var(--brand-red);
+    text-decoration: none;
+  }
+
+  .press-footer__cta:hover,
+  .press-footer__cta:focus-visible {
+    text-decoration: underline;
+  }
+</style>

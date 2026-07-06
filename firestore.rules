@@ -2,16 +2,6 @@ rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
 
-    // A request is an admin only when the verified ID token carries the
-    // custom claim { admin: true }. Anonymous sessions (used by the public
-    // apply form via signInAnonymously) never carry this claim, so they can
-    // create an application but can never read the applications or leads
-    // collections. Grant the claim with scripts/grant-admin-claims.mjs BEFORE
-    // deploying these rules, or the admin dashboard loses read access.
-    function isAdmin() {
-      return request.auth != null && request.auth.token.admin == true;
-    }
-
     function validLead() {
       let d = request.resource.data;
       return d.keys().hasOnly(['email', 'city', 'state', 'country', 'phone', 'source', 'sourcePage', 'landingPage', 'referrerHost', 'utmSource', 'utmMedium', 'utmCampaign', 'utmContent', 'utmTerm', 'fbclid', 'gclid', 'posthogDistinctId', 'sourceCitySlug', 'createdAt', 'geoCity', 'geoRegion', 'geoCountry', 'geoLatitude', 'geoLongitude', 'geoTimezone'])
@@ -49,7 +39,7 @@ service cloud.firestore {
           'name', 'age', 'gender', 'orientation', 'city', 'state', 'country',
           'email', 'emailNormalized', 'phone', 'height', 'instagram', 'community', 'income',
           'applicationType', 'referrerName', 'nominationConsent',
-          'pitch', 'type', 'notes', 'seenShowBefore', 'marketingConsent',
+          'pitch', 'type', 'notes', 'seenShowBefore', 'howHeard', 'marketingConsent',
           'termsAgreedAt', 'photoUrl', 'photoUrls', 'castEventId', 'deletedAt',
           'status', 'submittedAt',
           'source', 'sourcePage', 'landingPage', 'referrerHost',
@@ -80,6 +70,7 @@ service cloud.firestore {
         && (!('type' in d.keys()) || (d.type is string && d.type.size() > 0 && d.type.size() <= 50))
         && (!('notes' in d.keys()) || (d.notes is string && d.notes.size() <= 2000))
         && (!('seenShowBefore' in d.keys()) || d.seenShowBefore is bool)
+        && (!('howHeard' in d.keys()) || (d.howHeard is string && d.howHeard.size() > 0 && d.howHeard.size() <= 50))
         && (!('marketingConsent' in d.keys()) || (d.marketingConsent is string && d.marketingConsent.size() > 0 && d.marketingConsent.size() <= 10))
         && (!('termsAgreedAt' in d.keys()) || d.termsAgreedAt is timestamp)
         && (!('photoUrl' in d.keys()) || (d.photoUrl is string && d.photoUrl.size() > 0 && d.photoUrl.size() <= 500))
@@ -117,6 +108,20 @@ service cloud.firestore {
         && d.phone is string && d.phone.size() > 0 && d.phone.size() <= 20;
     }
 
+    // Admin gate for all PII reads and management. The public apply flow
+    // signs visitors in ANONYMOUSLY for photo uploads, so `request.auth !=
+    // null` is NOT an admin check: any visitor can obtain an anonymous
+    // session with the public Firebase config. Admin operations therefore
+    // require a non-anonymous account that is on the email allowlist or
+    // carries an `admin` custom claim. If the admin login email ever
+    // changes, update the allowlist below.
+    function isAdmin() {
+      return request.auth != null
+        && request.auth.token.firebase.sign_in_provider != 'anonymous'
+        && (request.auth.token.email in ['messagesurbhi@gmail.com', 'contact@garammasaladating.com']
+            || ('admin' in request.auth.token && request.auth.token.admin == true));
+    }
+
     match /applications/{doc} {
       // Anonymous apply-form sessions may create a valid application, but only
       // admins may read or mutate the collection (prevents PII enumeration).
@@ -124,6 +129,7 @@ service cloud.firestore {
       allow read, update, delete: if isAdmin();
     }
     match /applications/{doc}/{subcollection=**} {
+      // Subcollections (status events) are written only by the admin dashboard.
       allow read, create, update, delete: if isAdmin();
     }
     match /leads/{doc} {

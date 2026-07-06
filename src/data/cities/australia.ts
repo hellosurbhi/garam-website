@@ -145,7 +145,8 @@ export const australiaCities: Record<string, CityData> = {
     ],
     sections: [
       {
-        heading: "Melbourne is a live entertainment city with no live dating night",
+        heading:
+          "Melbourne is a live entertainment city with no live dating night",
         paragraphs: [
           "Melbourne prides itself on being Australia's culture capital: the comedy festival, the theatres, the laneway gigs, the general belief that a good night out should involve a stage. Meanwhile its South Asian community, one of the country's largest and youngest, has student cohorts at four major universities and booming suburbs in the west and southeast, and its singles meet each other almost exclusively through apps with shallow Australian pools and group house parties where everyone already knows everyone.",
           "A city this committed to live formats not having a live dating show is a gap begging to be filled, and the audience that fills comedy festival rooms every April is exactly the audience this show was built for.",
@@ -207,6 +208,34 @@ export const australiaCities: Record<string, CityData> = {
         q: "Can I apply to be a contestant?",
         a: "Yes. Apply now. Applications stay active for 12 months. Brisbane applicants will be prioritized when we confirm a date.",
       },
+      {
+        q: "Is there Indian speed dating in Brisbane?",
+        a: "Queensland's desi singles events are basically nonexistent, and Sydney is a nine hour drive. Brisbane's three universities plus the fastest growing Indian community in the state make it the obvious third Australian stop.",
+      },
+      {
+        q: "Where do South Asian singles in Brisbane actually meet?",
+        a: "UQ, QUT and Griffith circles, the hospital systems, Sunnybank's food scene and Fortitude Valley on weekends. Growing scene, warm climate, no anchor event. We anchor.",
+      },
+      {
+        q: "Would the show run in the Valley or the CBD?",
+        a: "Fortitude Valley has the venues and the transit. Wherever it lands, Brisbane's version of the mixer runs outdoors half the year, which no northern hemisphere stop can offer.",
+      },
+    ],
+    sections: [
+      {
+        heading: "Brisbane's desi boom is Queensland's best kept secret",
+        paragraphs: [
+          "Brisbane's Indian community has grown faster than either southern capital's in relative terms, driven by UQ, QUT and Griffith's international programs and a migration wave chasing Queensland's cost of living. Sunnybank and the south side built the food and community layer, and the singles inherited the standard new-market deal: plenty of each other, nothing to attend.",
+          "Queensland has watched Sydney and Melbourne get every South Asian cultural event for a generation. Being third on the Australian tour map still means first in the state's history, and Brisbane crowds show up for firsts.",
+        ],
+      },
+      {
+        heading: "What a Garam Masala night in Brisbane looks like",
+        paragraphs: [
+          "A UQ postgrad and a Mater Hospital doctor who have never met, on stage, going on a first date while a Queensland crowd brings state-of-origin energy to the audience votes. Comedian hosts, live chaos and a Valley mixer that runs warm past midnight because the weather permits everything.",
+          "Join the waitlist to put Brisbane on the first Australian leg, or apply to be a contestant and give the Sunshine State its story.",
+        ],
+      },
     ],
   },
 
@@ -256,6 +285,34 @@ export const australiaCities: Record<string, CityData> = {
         q: "Can I apply to be a contestant?",
         a: "Yes. Apply now. Applications stay active for 12 months. Perth applicants will be prioritized when we confirm a date.",
       },
+      {
+        q: "Is there Indian speed dating in Perth?",
+        a: "The most isolated major city on earth has no desi singles events and no neighboring city to borrow them from. That makes a Perth show less a tour stop and more a public service, and we are happy to serve.",
+      },
+      {
+        q: "Where do South Asian singles in Perth actually meet?",
+        a: "UWA and Curtin circles, the mining and energy employers, Canning Vale and the southeastern suburbs' community life and Northbridge on weekends. Big community, hard isolation, zero occasions.",
+      },
+      {
+        q: "Does Perth's isolation change the show?",
+        a: "It supercharges it. When there is no next city to try, the whole scene commits to the one night that exists. Isolated markets have produced our most legendary mixers and Perth will extend the record.",
+      },
+    ],
+    sections: [
+      {
+        heading: "Perth's desi singles cannot drive to a better option",
+        paragraphs: [
+          "Perth's South Asian community, built by the mining boom's engineers, the universities and a fast-growing migration intake, lives with dating math no other Australian city faces: the nearest alternative scene is a four hour flight. Canning Vale and the southeastern corridor hold the community depth, the CBD and Northbridge hold the nightlife and the desi singles between them cycle through apps whose pools end at the Indian Ocean.",
+          "One Perth show resets the most isolated desi dating pool on the planet. The stakes do our marketing for us.",
+        ],
+      },
+      {
+        heading: "What a Garam Masala night in Perth looks like",
+        paragraphs: [
+          "A Curtin engineering grad and a mining company analyst who have never met, on stage, going on a first date while a city that knows everyone flew or drove serious distances to be here reacts accordingly. Comedian hosts, live votes and a Northbridge mixer under a sky the east coast cannot match.",
+          "Join the waitlist to bring the show west, or apply to be a contestant and become the most isolated love story in show history.",
+        ],
+      },
     ],
   },
 
@@ -304,6 +361,35 @@ export const australiaCities: Record<string, CityData> = {
       {
         q: "Can I apply to be a contestant?",
         a: "Yes. Apply now. Applications stay active for 12 months. Adelaide applicants will be prioritized when we confirm a date.",
+      },
+      {
+        q: "Is there Indian speed dating in Adelaide?",
+        a: "Adelaide's Indian population boomed and its events calendar never noticed. Student org nights and community festivals exist; singles events do not. The Festival State should recognise the format instantly.",
+      },
+      {
+        q: "Where do South Asian singles in Adelaide actually meet?",
+        a: "Adelaide Uni, UniSA and Flinders circles, the hospital precinct and Rundle Street weekends. The pool skews young and student-heavy, refreshing yearly and never once gathered.",
+      },
+      {
+        q: "Does the young crowd change the show?",
+        a: "It raises the volume. Student-heavy rooms vote louder, volunteer faster and treat the mixer like a festival closing night. Adelaide's version will run on Fringe-trained audience instincts.",
+      },
+    ],
+    sections: [
+      {
+        heading:
+          "Adelaide's Indian boom outpaced every institution except the universities",
+        paragraphs: [
+          "Adelaide posted one of Australia's steepest Indian population curves, driven by state migration incentives and three universities' international intake. The community is new, young and concentrated around campus and the northeastern suburbs, with a social life of society events and festival-season improvisation. The Fringe makes Adelaide audiences some of the most format-literate in the southern hemisphere for one month a year; the other eleven, the desi singles have nothing.",
+          "A live dating show in the Festival State is a native genre. The city already knows how to be this audience.",
+        ],
+      },
+      {
+        heading: "What a Garam Masala night in Adelaide looks like",
+        paragraphs: [
+          "A Flinders med student and a UniSA engineering grad who have never met, on stage, going on a first date while an audience trained by Fringe seasons reacts on cue and off script. Comedian hosts, live votes and an East End mixer that treats closing time as a rumour.",
+          "Join the waitlist for first access to Adelaide dates, or apply to be a contestant and give the Festival State a new format to claim.",
+        ],
       },
     ],
   },
@@ -360,6 +446,34 @@ export const australiaCities: Record<string, CityData> = {
         q: "Can I apply to be a contestant?",
         a: "Yes. Apply now. Applications stay active for 12 months. Canberra applicants will be prioritized when we confirm a date.",
       },
+      {
+        q: "Is there Indian speed dating in Canberra?",
+        a: "The capital has policy roundtables on every topic except this one. ANU's desi cohort and the public service's South Asian professionals have no singles events between them, an oversight we are formally tabling.",
+      },
+      {
+        q: "Where do South Asian singles in Canberra actually meet?",
+        a: "ANU and UC circles, departmental offices, Braddon's bar strip and Sydney trips when the capital's pace gets unbearable. Two worlds, diplomats and doctorates, no bridge event.",
+      },
+      {
+        q: "Is Canberra actually fun enough for this show?",
+        a: "Canberra's boring reputation is maintained by people who have never seen its crowds off duty. A room full of policy brains with one sanctioned night of chaos is a format goldmine.",
+      },
+    ],
+    sections: [
+      {
+        heading: "Canberra's desi scene is credentialed and becalmed",
+        paragraphs: [
+          "The capital's South Asian population splits between ANU and UC's academic pipeline and the public service and diplomatic corps' professional one: security-cleared, well-read and dating at the pace of cabinet process. Canberra's social geography compounds it, a city of townhouse suburbs and one bar strip, where the desi singles from the two worlds share a lake and no occasions.",
+          "A live show is the intervention the capital's singles would commission for themselves if there were a grants process for it. There is not. There is a waitlist.",
+        ],
+      },
+      {
+        heading: "What a Garam Masala night in Canberra looks like",
+        paragraphs: [
+          "An ANU postdoc and a departmental policy officer who have never met, on stage, going on a first date while the capital's most discreet crowd discovers public opinion as a participation sport. Comedian hosts, live votes and a Braddon mixer that stays off the record.",
+          "Join the waitlist for first access to Canberra dates, or apply to be a contestant and give the capital a leak worth printing.",
+        ],
+      },
     ],
   },
 
@@ -415,6 +529,34 @@ export const australiaCities: Record<string, CityData> = {
         q: "Can I apply to be a contestant?",
         a: "Yes. Apply now. Applications stay active for 12 months. Gold Coast applicants will be prioritized when we confirm a date.",
       },
+      {
+        q: "Is there Indian speed dating on the Gold Coast?",
+        a: "The Coast has singles events for backpackers and nothing for its actual desi residents. Griffith and Bond's students plus the hospitality and health workforces make a real local market hiding behind the tourist one.",
+      },
+      {
+        q: "Where do South Asian singles on the Gold Coast actually meet?",
+        a: "Griffith and Bond campuses, the hospital and hospitality employers, Southport's growing community and Brisbane trips up the M1. Living in a resort town is oddly lonely, which is the entire brief.",
+      },
+      {
+        q: "Would this pull from Brisbane too?",
+        a: "The M1 flows both ways and the southeast Queensland scene functions as one corridor. Whichever city hosts first, the other sends carloads.",
+      },
+    ],
+    sections: [
+      {
+        heading: "The Gold Coast's desi locals live behind the postcard",
+        paragraphs: [
+          "Behind Surfers Paradise's tourist economy is an actual city where Griffith and Bond's international students, the hospital's medics and a growing Indian community around Southport live regular lives with irregular loneliness: the Coast's entire social infrastructure points at visitors, and its desi residents get beach bars calibrated for people leaving in four days.",
+          "A local show flips the calibration: a night designed for people who stay, in a city that desperately needs more of those.",
+        ],
+      },
+      {
+        heading: "What a Garam Masala night on the Gold Coast looks like",
+        paragraphs: [
+          "A Griffith med student and a Broadbeach hotel manager who have never met, on stage, going on a first date while the Coast's actual locals outnumber tourists in a room for once. Comedian hosts, live votes and a mixer where the beach walk after is a structural feature, not a line.",
+          "Join the waitlist for first access to Gold Coast dates, or apply to be a contestant and get a love story with better lighting than anywhere on tour.",
+        ],
+      },
     ],
   },
 
@@ -464,6 +606,34 @@ export const australiaCities: Record<string, CityData> = {
         q: "Can I apply to be a contestant?",
         a: "Yes. Apply now. Applications stay active for 12 months. Newcastle AU applicants, including those from the Hunter Valley, will be prioritized when we confirm a date on our NSW expansion tour.",
       },
+      {
+        q: "Is there Indian speed dating in Newcastle NSW?",
+        a: "The Hunter has pub trivia, live music and no desi singles events whatsoever. The University of Newcastle's Indian cohort built the audience; Sydney's two hour distance protects the market. We claim it.",
+      },
+      {
+        q: "Where do South Asian singles in Newcastle NSW actually meet?",
+        a: "The university's Callaghan campus, John Hunter Hospital's cohorts and the honeysuckle strip on weekends. Compact scene, no occasions, classic first-mover conditions.",
+      },
+      {
+        q: "Would the Central Coast come up?",
+        a: "Gosford and the Central Coast's scattered desi professionals sit an hour south with even fewer options. A Newcastle show is a Hunter-plus show by default.",
+      },
+    ],
+    sections: [
+      {
+        heading: "The Hunter's desi students are two hours from everything",
+        paragraphs: [
+          "The University of Newcastle quietly assembled one of regional Australia's larger Indian student populations, with John Hunter Hospital adding medics and the energy transition bringing engineers to the Hunter. Sydney's scene is two hours south, close enough to know about and far enough to skip, and the local desi singles calendar is a page of zeros.",
+          "Regional firsts run on commitment: everyone in a Newcastle room chose the night deliberately, and deliberate rooms make the best shows.",
+        ],
+      },
+      {
+        heading: "What a Garam Masala night in Newcastle NSW looks like",
+        paragraphs: [
+          "A Callaghan engineering postgrad and a John Hunter registrar who have never met, on stage, going on a first date while the Hunter's whole desi scene reacts in one harbourside room. Comedian hosts, live votes and a mixer where the beach and the bar strip compete for the after-hours crowd.",
+          "Join the waitlist for the NSW expansion leg, or apply to be a contestant and put the Hunter on the map first.",
+        ],
+      },
     ],
   },
 
@@ -512,6 +682,34 @@ export const australiaCities: Record<string, CityData> = {
       {
         q: "Can I apply to be a contestant?",
         a: "Yes. Apply now. Applications stay active for 12 months. Hobart applicants will be prioritized when we confirm a date.",
+      },
+      {
+        q: "Is there Indian speed dating in Hobart?",
+        a: "Tasmania has never hosted a desi singles event. The island's Indian community is its fastest growing demographic and its dating options are two apps and the Spirit of Tasmania. One show changes the whole island's math.",
+      },
+      {
+        q: "Where do South Asian singles in Hobart actually meet?",
+        a: "UTAS circles, the Royal Hobart's cohorts, the hospitality industry and Salamanca on weekends. Island-tight community, total context, zero occasions. The purest case on the map.",
+      },
+      {
+        q: "Is Hobart really worth a tour stop?",
+        a: "The fastest growing desi community proportionally in Australia, on an island with no competing events ever, in a city with MONA-grade appetite for unusual formats. Hobart is not a risk. It is a guaranteed story.",
+      },
+    ],
+    sections: [
+      {
+        heading: "Tasmania's desi boom happened on an island with no scene",
+        paragraphs: [
+          "Hobart's Indian community grew faster proportionally than any Australian capital's, driven by UTAS recruitment and state migration streams, and it landed on an island whose isolation is the selling point. The singles get the strictest radius problem in the country: the app pool ends at the Bass Strait and the community is small enough that everyone's context is complete by the second Diwali.",
+          "One Hobart show resets an entire island's dating pool simultaneously, which no mainland stop can claim. The whole scene, one room, one night.",
+        ],
+      },
+      {
+        heading: "What a Garam Masala night in Hobart looks like",
+        paragraphs: [
+          "A UTAS PhD and a Royal Hobart nurse who have never met, on stage, going on a first date while the entire desi population of an island state reacts, because it can all literally fit. Comedian hosts, live votes and a Salamanca mixer with mountain views and no last ferry to catch.",
+          "Join the waitlist to bring the show across the strait, or apply to be a contestant and become Tasmanian desi history in one evening.",
+        ],
       },
     ],
   },

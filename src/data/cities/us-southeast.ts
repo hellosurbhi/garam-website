@@ -226,6 +226,34 @@ export const usSoutheastCities: Record<string, CityData> = {
         q: "Can I apply to be a contestant before a Charlotte date is announced?",
         a: "Yes. Apply now. Applications stay active for 12 months. Charlotte applicants will be prioritized when we confirm a date.",
       },
+      {
+        q: "Is there Indian speed dating in Charlotte?",
+        a: "Charlotte's desi singles get bank happy hours and community festivals, not dating events. A live comedy dating show with a mixer would be the city's first real desi singles night, which tracks for a city that builds everything else fast.",
+      },
+      {
+        q: "Where do South Asian singles in Charlotte actually meet?",
+        a: "Uptown banking floors, Ballantyne and University City community events and apps that keep serving the same two hundred profiles. The population doubled, the social infrastructure did not. That is the gap we fill.",
+      },
+      {
+        q: "Would the show pull from the whole metro?",
+        a: "Yes. Ballantyne, Matthews, Huntersville and the University area are all within a reasonable drive of an Uptown or South End venue, and waitlist zip codes shape the final pick.",
+      },
+    ],
+    sections: [
+      {
+        heading: "Charlotte grew a desi professional class overnight",
+        paragraphs: [
+          "The banks did what banks do: they recruited, and a lot of who they recruited was South Asian. Charlotte's desi community swelled through finance and then tech, filling Ballantyne, University City and the new apartment towers of South End with analysts, engineers and product managers in their prime dating years. The city's famous friendliness only goes so far here, because Southern small talk does not convert into desi introductions, and the community's own events skew family and festival.",
+          "The result is a very specific loneliness: thousands of single South Asians in the same square miles with no occasion designed for them to meet. Occasions are our entire business.",
+        ],
+      },
+      {
+        heading: "What a Garam Masala night in Charlotte looks like",
+        paragraphs: [
+          "A South End fintech engineer and a Ballantyne consultant who have never met, on stage, going on a first date while the Queen City votes on their chemistry. Comedian hosts run the chaos and the mixer after finally gives Charlotte's desi singles a room where the opener is not 'which bank'.",
+          "The Southeast leg gets routed by waitlist volume. Join the waitlist, or apply to be a contestant and show the 704 what shooting your shot looks like.",
+        ],
+      },
     ],
   },
 
@@ -283,6 +311,34 @@ export const usSoutheastCities: Record<string, CityData> = {
         q: "Can I apply to be a contestant?",
         a: "Yes. Apply now. Applications stay active for 12 months. Triangle area applicants will be prioritized when we confirm a date.",
       },
+      {
+        q: "Is there Indian speed dating in Raleigh or the Triangle?",
+        a: "The Triangle gets occasional community mixers in Cary and Morrisville, mostly family-adjacent. A live comedy dating show is singles-first by design: real blind dates on stage, audience voting and a mixer that starts warm.",
+      },
+      {
+        q: "Where do South Asian singles in the Triangle actually meet?",
+        a: "RTP campuses, Duke, UNC and NC State circles and the Cary grocery run where everyone sees everyone and nobody says hello. The density is among the best in the South. The occasions are not. Yet.",
+      },
+      {
+        q: "Would the show be in Raleigh, Durham or Cary?",
+        a: "The eternal Triangle question. Cary and Morrisville have the desi density, Durham and Raleigh have the venues. Waitlist zip codes are real input, so sign up from wherever you are and vote with your email address.",
+      },
+    ],
+    sections: [
+      {
+        heading: "The Triangle is the most underrated desi metro in America",
+        paragraphs: [
+          "Cary and Morrisville quietly became majority-minority suburbs with some of the densest Indian populations in the country, fed by Research Triangle Park's tech and pharma campuses and three top-tier universities. The community built everything: temples, cricket leagues, three competing grocery ecosystems and a Diwali celebration that closes streets. Everything except a way for its enormous single population to meet outside of family introductions and the same exhausted apps.",
+          "The Triangle's singles have been exporting themselves to Charlotte and DC events for years. The demand is not hypothetical. It is on our waitlist with an area code attached.",
+        ],
+      },
+      {
+        heading: "What a Garam Masala night in the Triangle looks like",
+        paragraphs: [
+          "An RTP biotech scientist and a Duke MBA who have never met, on stage, going on a first date while Cary aunties, NC State grads and Durham creatives vote on the outcome. The mixer after finally puts all three corners of the Triangle in one room without a cricket match involved.",
+          "This market is high on our Southeast list because the waitlist keeps saying so. Join the waitlist, or apply to be a contestant and represent the 919.",
+        ],
+      },
     ],
   },
 
@@ -330,6 +386,34 @@ export const usSoutheastCities: Record<string, CityData> = {
       {
         q: "Can I apply to be a contestant?",
         a: "Yes. Apply now. Applications stay active for 12 months. Tampa area applicants will be prioritized when we confirm a date.",
+      },
+      {
+        q: "Is there Indian speed dating in Tampa?",
+        a: "Tampa Bay's desi singles events are rare and quiet. This is the opposite: a live comedy dating show where the whole room reacts to real blind dates, then a mixer that starts loose because everyone has been laughing for 90 minutes.",
+      },
+      {
+        q: "Where do South Asian singles in Tampa actually meet?",
+        a: "USF circles, the hospital systems, Westchase and New Tampa community events and whatever Orlando is doing that weekend. The bay area's desi crowd is bigger than its calendar. We fix calendars.",
+      },
+      {
+        q: "Would the show serve St Pete and Clearwater too?",
+        a: "Yes. A central Tampa venue keeps the whole bay in range, and honestly the St Pete crowd has been disproportionately loud on the waitlist. We notice these things.",
+      },
+    ],
+    sections: [
+      {
+        heading: "Tampa's desi scene is doctors all the way down",
+        paragraphs: [
+          "Tampa Bay's South Asian community was built by medicine: physicians who set up practices decades ago, the USF and Moffitt pipelines that keep importing residents and researchers, and a second generation now old enough to be very single and very tired of explaining that to their parents. The community is prosperous and organized, with temples and cultural associations across Westchase, New Tampa and Brandon. What it has never had is a night where the single ones find each other without a family introduction doing the routing.",
+          "Florida's spread-out geography makes the apps worse than usual here, which makes a single concentrated room worth more than usual. That is the show.",
+        ],
+      },
+      {
+        heading: "What a Garam Masala night in Tampa looks like",
+        paragraphs: [
+          "A USF med resident and a Westshore financial analyst who have never met, on stage, on a first date, while the bay's desi community votes with hurricane-season energy. Comedian hosts, live chaos and a mixer where 'which bridge do you take home' is a genuinely useful compatibility question.",
+          "Join the waitlist to pull the tour south, or apply to be a contestant and give Tampa a love story with no theme park involved.",
+        ],
       },
     ],
   },
@@ -382,6 +466,34 @@ export const usSoutheastCities: Record<string, CityData> = {
         q: "Can I apply to be a contestant?",
         a: "Yes. Apply now. Applications stay active for 12 months. Orlando applicants will be prioritized when we confirm a date.",
       },
+      {
+        q: "Is there Indian speed dating in Orlando?",
+        a: "Not meaningfully. Central Florida's desi singles get student org events at UCF and family functions everywhere else. A live dating show with a mixer would be the region's first singles-first night, and Orlando knows how to show up for a show.",
+      },
+      {
+        q: "Where do South Asian singles in Orlando actually meet?",
+        a: "UCF's massive desi student orbit, the hospitality and healthcare workforces and the Hunters Creek and Lake Nona community circuits. Everyone is adjacent to everyone and nobody has a room. Classic case, known cure.",
+      },
+      {
+        q: "Is this a tourist thing or a local thing?",
+        a: "Local, completely. The show casts Orlando daters, draws an Orlando crowd and runs nowhere near a theme park unless the venue math gets very funny.",
+      },
+    ],
+    sections: [
+      {
+        heading: "Orlando's desi community outgrew its calendar",
+        paragraphs: [
+          "UCF is one of the largest universities in the country and its South Asian population matches the scale, while Lake Nona's medical city and the broader healthcare boom keep converting students into residents who stay. Add the established communities around Hunters Creek and Dr. Phillips and central Florida holds a desi population that would surprise anyone who only knows Orlando from the airport. The singles among them are dating through apps built for denser cities and community events built for families.",
+          "A city whose entire economy is live experiences somehow has zero live experiences for desi singles. We take that personally.",
+        ],
+      },
+      {
+        heading: "What a Garam Masala night in Orlando looks like",
+        paragraphs: [
+          "A UCF grad and a Lake Nona nurse who have never met, on stage, going on a first date while central Florida reacts louder than a coaster drop. Comedian hosts, audience votes and a mixer where the whole scattered scene finally shares one zip code for a night.",
+          "Waitlist volume moves Orlando up the Florida leg. Join the waitlist, or apply to be a contestant and give the City Beautiful a better main attraction.",
+        ],
+      },
     ],
   },
 
@@ -429,6 +541,34 @@ export const usSoutheastCities: Record<string, CityData> = {
       {
         q: "Can I apply to be a contestant?",
         a: "Yes. Apply now. Applications stay active for 12 months. Miami applicants will be prioritized when we confirm a date.",
+      },
+      {
+        q: "Is there Indian speed dating in Miami?",
+        a: "Miami has speed dating for every demographic except this one. The desi scene here is small, social and scattered across a very long county, which is exactly the profile where one live show becomes the event.",
+      },
+      {
+        q: "Where do South Asian singles in Miami actually meet?",
+        a: "Brickell happy hours, UM circles, Broward community events and each other's Instagram stories. Miami desis are the most likely in the country to date outside the community, not from preference but from lack of a room. Here is the room.",
+      },
+      {
+        q: "Will the show have Miami energy or NYC energy?",
+        a: "The format is ours, the energy is always local. Expect the loudest audience votes on the tour, a mixer that ignores its scheduled end time and at least one date conducted partially in Spanish.",
+      },
+    ],
+    sections: [
+      {
+        heading: "Miami's desi singles are hiding in plain sight",
+        paragraphs: [
+          "Miami's South Asian community is smaller than Atlanta's or Tampa's and dramatically more dispersed: Brickell finance transplants, UM students and med residents, established families up in Broward and a steady drip of New York desis who moved for the weather and kept their old group chats. There is no Devon Avenue here, no single anchor neighborhood, which means desi singles mostly assume there are no desi singles. They are wrong by thousands.",
+          "In a city built entirely on nightlife, the absence of one desi singles night is almost impressive. It is also temporary.",
+        ],
+      },
+      {
+        heading: "What a Garam Masala night in Miami looks like",
+        paragraphs: [
+          "A Brickell fintech analyst and a UM resident who have never met, on a first date on stage, while a crowd that treats audience voting as a contact sport decides their fate. Then a mixer that runs on Miami time, which is to say indefinitely.",
+          "The 305 gets its show when the waitlist earns it. Join the waitlist, or apply to be a contestant and bring the drama Miami deserves.",
+        ],
       },
     ],
   },
@@ -480,6 +620,35 @@ export const usSoutheastCities: Record<string, CityData> = {
       {
         q: "Can I apply to be a contestant?",
         a: "Yes. Apply now. Applications stay active for 12 months. Jacksonville applicants will be prioritized when we confirm a date.",
+      },
+      {
+        q: "Is there Indian speed dating in Jacksonville?",
+        a: "No, and the nearest alternatives are hours away in Orlando or Atlanta. For a metro this size that is a real gap, and gaps are how cities get on our tour map.",
+      },
+      {
+        q: "Where do South Asian singles in Jacksonville actually meet?",
+        a: "The Mayo Clinic and Baptist Health systems, UNF circles, the Southside community events and long drives to other cities' scenes. Jax desis are used to distance. One local room changes the math completely.",
+      },
+      {
+        q: "Is Jacksonville really big enough for this show?",
+        a: "The metro holds more desi professionals than its reputation suggests, especially in medicine and logistics. Mid-size rooms are also our favorite rooms: everyone actually meets everyone at the mixer.",
+      },
+    ],
+    sections: [
+      {
+        heading:
+          "Jacksonville's desi community is real and completely unserved",
+        paragraphs: [
+          "Jacksonville sprawls across more land than any city in the lower 48, and its South Asian community sprawls with it: physicians around the Mayo Clinic campus, IT and logistics professionals on the Southside, families out toward St. Johns County chasing the schools. Every desi single here tells the same story: the community exists, you see it at the temple and the grocery store, and there has never once been an event where being single was the point.",
+          "That is a solvable problem with a stage, two microphones and a format that has filled rooms in eight cities.",
+        ],
+      },
+      {
+        heading: "What a Garam Masala night in Jax looks like",
+        paragraphs: [
+          "A Mayo resident and a Southside analyst who have never met, on stage, going on a first date while the whole 904 reacts. Comedian hosts, live votes and a mixer where discovering someone lives only twenty minutes away counts as a genuine Jacksonville miracle.",
+          "Waitlist numbers put Jax on the Florida leg. Join the waitlist, or apply to be a contestant and give the biggest small town in America its first dating show.",
+        ],
       },
     ],
   },
@@ -538,6 +707,35 @@ export const usSoutheastCities: Record<string, CityData> = {
         q: "Can I apply to be a contestant?",
         a: "Yes. Apply now. Applications stay active for 12 months. Nashville applicants will be prioritized when we confirm a date.",
       },
+      {
+        q: "Is there Indian speed dating in Nashville?",
+        a: "Music City runs singles events for every scene except this one. The desi crowd here is healthcare-heavy, transplant-heavy and event-starved, which is the exact profile where a live comedy dating show lands hardest.",
+      },
+      {
+        q: "Where do South Asian singles in Nashville actually meet?",
+        a: "Vanderbilt and the hospital systems, the healthcare company campuses out in Franklin and Brentwood and group outings to Broadway that never quite convert. Everyone moved here from somewhere else, nobody brought their aunty network. That is an opening.",
+      },
+      {
+        q: "Will the show feel like a honky tonk night?",
+        a: "No line dancing, we promise. Expect the standard format with Nashville's live-show literacy: this city knows how to be an audience better than almost anywhere, which makes the votes and the mixer absolutely sing.",
+      },
+    ],
+    sections: [
+      {
+        heading:
+          "Nashville's desi transplants have no aunty network and no room",
+        paragraphs: [
+          "Nashville's South Asian community is young in a very specific way: it arrived recently, mostly through healthcare. Vanderbilt, HCA and the hospital ecosystem recruited a generation of desi doctors, nurses, analysts and administrators who moved without family networks and discovered a city with world-class live entertainment and zero desi social infrastructure. The traditional matchmaking machinery does not run here. Neither do the big-city apps, whose Nashville pools are shallow.",
+          "That leaves a community of well-paid, extroverted transplants with nothing to attend. In a city that treats live shows as a public utility, the fix is obvious.",
+        ],
+      },
+      {
+        heading: "What a Garam Masala night in Nashville looks like",
+        paragraphs: [
+          "A Vandy resident and a Franklin healthcare analyst who have never met, on stage, going on a first date in front of a crowd that applauds on beat. Comedian hosts, live votes and a mixer where 'I also know nobody here' is the most honest and effective opener in Tennessee.",
+          "Nashville is on the shortlist because the waitlist keeps growing without us touching it. Join the waitlist, or apply to be a contestant and give Music City a duet.",
+        ],
+      },
     ],
   },
 
@@ -594,6 +792,34 @@ export const usSoutheastCities: Record<string, CityData> = {
       {
         q: "Can I apply to be a contestant?",
         a: "Yes. Apply now. Applications stay active for 12 months. Baltimore applicants will be prioritized when we confirm a date.",
+      },
+      {
+        q: "Is there Indian speed dating in Baltimore?",
+        a: "Baltimore's desi singles usually get told to go to DC events, which is its own kind of insult. A Charm City show means the Hopkins and UMB crowds finally get a night that does not involve the BW Parkway.",
+      },
+      {
+        q: "Where do South Asian singles in Baltimore actually meet?",
+        a: "Hopkins labs and hospitals, UMB's professional schools, Columbia and Ellicott City community events and DC events an hour away. The scene is credentialed, busy and starved for local occasions.",
+      },
+      {
+        q: "Is this separate from a DC show?",
+        a: "Yes, deliberately. Baltimore has its own gravity: Hopkins alone sustains a desi community that deserves better than being a DC suburb in our routing. Waitlist numbers keep the case strong.",
+      },
+    ],
+    sections: [
+      {
+        heading: "Baltimore's desi scene lives in the shadow of two giants",
+        paragraphs: [
+          "Between Johns Hopkins and the University of Maryland's Baltimore campuses, this city imports South Asian researchers, residents and grad students at elite volume, and Howard County's Ellicott City and Columbia hold one of the most established desi suburban communities on the East Coast. But Baltimore's singles scene gets squeezed from both sides: DC's events pull the ambitious hour south, and the hospital grind swallows everyone else. The community is here. The nights are not.",
+          "A local show changes the default. No parkway, no Metro math, just a room in your own city where the desi singles of Charm City discover each other exists.",
+        ],
+      },
+      {
+        heading: "What a Garam Masala night in Baltimore looks like",
+        paragraphs: [
+          "A Hopkins postdoc and an Ellicott City engineer who have never met, on stage, going on a first date while Fed Hill, Canton and Columbia react in real time. Comedian hosts, live votes and a mixer where the crab cake take is the compatibility test.",
+          "Join the waitlist to give Baltimore its own night, or apply to be a contestant and show DC what it drives past.",
+        ],
       },
     ],
   },
@@ -652,6 +878,34 @@ export const usSoutheastCities: Record<string, CityData> = {
         q: "Can I apply to be a contestant?",
         a: "Yes. Apply now. Applications stay active for 12 months. Richmond applicants will be prioritized when we confirm a date.",
       },
+      {
+        q: "Is there Indian speed dating in Richmond?",
+        a: "No. RVA's desi singles have community festivals, VCU circles and a drive to DC when they are feeling ambitious. One live show would be the city's first desi singles event, full stop.",
+      },
+      {
+        q: "Where do South Asian singles in Richmond actually meet?",
+        a: "VCU and the medical campus, the West End and Short Pump community orbit and each other's weddings, which is a fine system until it is your turn to be the wedding. We offer an alternative pipeline.",
+      },
+      {
+        q: "Is Richmond big enough for a show?",
+        a: "It is early, honestly, which is why the waitlist matters more here than anywhere. Strong signups pull mid-size markets onto the tour years before the spreadsheet says so.",
+      },
+    ],
+    sections: [
+      {
+        heading: "RVA's desi scene is small, young and about to compound",
+        paragraphs: [
+          "Richmond's South Asian community follows the classic mid-size trajectory: VCU and the medical campus bring students and residents, the West End and Short Pump suburbs hold the settled families, and the singles in between run on a scene too small for the apps to work and too new for the community to have built its own institutions. Everyone is two introductions away from everyone, and both introductions are usually someone's mother.",
+          "Cities at this stage flip fast. One recurring night becomes the institution, and whoever builds it first defines the scene for a decade. We like being first.",
+        ],
+      },
+      {
+        heading: "What a Garam Masala night in Richmond looks like",
+        paragraphs: [
+          "A VCU med student and a Short Pump consultant who have never met, on stage, on a first date, while a room that includes both their future gossip networks votes live. Then a mixer in a city walkable enough that the second location is never a negotiation.",
+          "Get on the waitlist to make Richmond's case, or apply to be a contestant and become the founding legend of RVA's desi dating scene.",
+        ],
+      },
     ],
   },
 
@@ -708,6 +962,34 @@ export const usSoutheastCities: Record<string, CityData> = {
       {
         q: "Can I apply to be a contestant?",
         a: "Yes. Apply now. Applications stay active for 12 months. Charlottesville applicants will be prioritized when we confirm a date.",
+      },
+      {
+        q: "Is there Indian speed dating in Charlottesville?",
+        a: "UVA's desi orgs run cultural events, not dating events. In a town this compact, a live comedy dating show becomes the social event of the semester by the second week of ticket sales.",
+      },
+      {
+        q: "Where do South Asian singles in Charlottesville actually meet?",
+        a: "Grounds, the Corner, department circles and the health system. It is a small pond with surprisingly good fish, and everyone is waiting for an excuse to actually talk to each other. We are the excuse.",
+      },
+      {
+        q: "Will the show pull from beyond UVA?",
+        a: "Yes. The health system staff, the town's professional class and desi families from as far as Harrisonburg and Waynesboro make the drive when something real happens here. Small market, wide radius.",
+      },
+    ],
+    sections: [
+      {
+        heading: "Charlottesville's smallness is the feature",
+        paragraphs: [
+          "UVA anchors a South Asian community that is bigger than the town around it: undergrads and grad students across every school, residents and researchers at the health system and a professional layer that stayed for the mountains and the pace. Dating here suffers from the small town paradox, everyone knows of everyone and nobody has met, and the escape valve has always been Richmond or DC at highway prices.",
+          "The same smallness that makes dating awkward makes a live show electric. When the whole scene fits in one room, the room is the scene.",
+        ],
+      },
+      {
+        heading: "What a Garam Masala night in Charlottesville looks like",
+        paragraphs: [
+          "Two Wahoos who have never met, a Darden MBA and a health system resident maybe, on a first date on stage while the entire desi ecosystem of a very small town watches with zero chill. Live votes, comedian hosts and a mixer on or near the Corner where the follow-up date plans itself.",
+          "Join the waitlist to put C'ville on the tour, or apply to be a contestant and give Grounds a story that outlives your degree.",
+        ],
       },
     ],
   },
@@ -766,6 +1048,34 @@ export const usSoutheastCities: Record<string, CityData> = {
         q: "Can I apply to be a contestant?",
         a: "Yes. Apply now. Applications stay active for 12 months. Blacksburg applicants will be prioritized when we confirm a date.",
       },
+      {
+        q: "Is there Indian speed dating in Blacksburg?",
+        a: "The New River Valley has graduate mixers and ISA events, which everyone attends and nobody meets anyone at. A live show with real blind dates is a different gravity entirely, especially in a town with one social calendar.",
+      },
+      {
+        q: "Where do Indian students at Virginia Tech actually meet?",
+        a: "Department clusters, apartment complexes off Prices Fork and the same three spots downtown. Tech's Indian grad population is one of the largest in the country and the town gives it exactly nowhere designed for dating.",
+      },
+      {
+        q: "Would people really drive in from Roanoke?",
+        a: "For the New River Valley's first live dating show? Roanoke, Christiansburg and Radford will all be represented, and the 81 corridor carpools will be their own matchmaking layer.",
+      },
+    ],
+    sections: [
+      {
+        heading: "Virginia Tech built a desi enclave in the mountains",
+        paragraphs: [
+          "Tech's engineering and computer science programs import Indian graduate students at a scale that reshaped Blacksburg: entire apartment complexes run desi, the cricket fields are booked solid and the grocery run to the international store is a social event. The isolation that makes the New River Valley beautiful also makes it romantically brutal. The app radius hits mountains in every direction and the community is tight enough that a bad first date follows you to your defense.",
+          "College towns this concentrated are our best rooms. Everyone comes, everyone knows the stakes and the mixer runs on the shared relief of finally having an occasion.",
+        ],
+      },
+      {
+        heading: "What a Garam Masala night in Blacksburg looks like",
+        paragraphs: [
+          "Two Hokies who have never met, a CS PhD and an ISE masters student maybe, on a first date on stage while a room that shares four group chats reacts live. Comedian hosts, audience votes and a mixer where the whole valley's desi scene fits in one bar and finally acts like it.",
+          "Join the waitlist to bring the show up the mountain, or apply to be a contestant and enter Hokie folklore.",
+        ],
+      },
     ],
   },
 
@@ -822,6 +1132,34 @@ export const usSoutheastCities: Record<string, CityData> = {
       {
         q: "Can I apply to be a contestant?",
         a: "Yes. Apply now. Applications stay active for 12 months. Knoxville applicants will be prioritized when we confirm a date.",
+      },
+      {
+        q: "Is there Indian speed dating in Knoxville?",
+        a: "East Tennessee has never had a desi singles event of any kind, which makes the first one automatically historic. We are comfortable with that responsibility.",
+      },
+      {
+        q: "Where do South Asian singles in Knoxville actually meet?",
+        a: "UT engineering circles, Oak Ridge lab carpools, Farragut community events and trips to Atlanta when the isolation peaks. The scene is smart, kind and completely without occasions. We bring the occasion.",
+      },
+      {
+        q: "Would Oak Ridge folks come?",
+        a: "The lab crowd is half the reason Knoxville is on this list. National lab scientists are exactly the demographic that overthinks apps and thrives at a live show with structured chaos.",
+      },
+    ],
+    sections: [
+      {
+        heading: "Knoxville plus Oak Ridge is a stealth desi tech corridor",
+        paragraphs: [
+          "UT Knoxville brings Indian grad students to East Tennessee and Oak Ridge National Laboratory quietly employs a serious contingent of South Asian scientists and engineers twenty five minutes west. Between campus, the lab and the healthcare systems, the region's desi professional class is real and completely socially unserved: no desi nights, no singles events, a community calendar that is all families and festivals.",
+          "The Smokies are a great date spot with nobody to take to them. That is the specific problem this show solves.",
+        ],
+      },
+      {
+        heading: "What a Garam Masala night in Knoxville looks like",
+        paragraphs: [
+          "A UT researcher and an ORNL computational scientist who have never met, on stage, going on a first date while East Tennessee's entire desi scene reacts in one room for the first time ever. Live votes, comedian hosts and a mixer where the drive home conversation is finally about someone you met rather than the event that did not happen.",
+          "Join the waitlist to prove out the 865, or apply to be a contestant and make history in the foothills.",
+        ],
       },
     ],
   },
@@ -880,6 +1218,35 @@ export const usSoutheastCities: Record<string, CityData> = {
         q: "Can I apply to be a contestant?",
         a: "Yes. Apply now. Applications stay active for 12 months. Greenville area applicants will be prioritized when we confirm a date.",
       },
+      {
+        q: "Is there Indian speed dating in Greenville?",
+        a: "The Upstate has no desi singles events at all. Between the engineering employers and Clemson up the road, the single South Asians exist in real numbers. The occasion does not. We specialize in occasions.",
+      },
+      {
+        q: "Where do South Asian singles in the Upstate actually meet?",
+        a: "The manufacturing and engineering campuses along 85, Clemson circles and community gatherings that skew family. Most Upstate desi singles date through Charlotte or Atlanta events, both a real drive away.",
+      },
+      {
+        q: "Would a Greenville show pull from Clemson and Spartanburg?",
+        a: "Yes. The Upstate functions as one corridor and downtown Greenville is its agreed-upon center. One room serves the whole 85 stretch.",
+      },
+    ],
+    sections: [
+      {
+        heading:
+          "The Upstate's engineering boom brought desi singles nobody planned for",
+        paragraphs: [
+          "Greenville's manufacturing renaissance, the automotive and engineering employers along the I-85 corridor plus Michelin's North American headquarters, recruited a generation of South Asian engineers into a region whose desi infrastructure is one temple and a handful of restaurants. Add Clemson's Indian grad students forty minutes away and the Upstate holds a scattered, young, technical desi population with a famously charming downtown and nothing to attend in it.",
+          "Small corridor markets like this are where a single show reshapes the whole scene. Everyone attends, everyone meets and the group chats never recover.",
+        ],
+      },
+      {
+        heading: "What a Garam Masala night in Greenville looks like",
+        paragraphs: [
+          "A BMW plant engineer and a Clemson PhD who have never met, on stage, on a first date, while the Upstate's entire desi scene fills a downtown room for the first time. Live votes, comedian hosts and a mixer that spills onto Main Street afterward because Greenville was built for exactly that.",
+          "Join the waitlist to put the Upstate on the tour, or apply to be a contestant and give the 864 its origin story.",
+        ],
+      },
     ],
   },
 
@@ -936,6 +1303,34 @@ export const usSoutheastCities: Record<string, CityData> = {
       {
         q: "Can I apply to be a contestant?",
         a: "Yes. Apply now. Applications stay active for 12 months. Savannah area applicants will be prioritized when we confirm a date.",
+      },
+      {
+        q: "Is there Indian speed dating in Savannah?",
+        a: "Savannah has ghost tours, art crawls and zero desi singles events. We find that combination artistically unacceptable and intend to fix it.",
+      },
+      {
+        q: "Where do South Asian singles in Savannah actually meet?",
+        a: "SCAD studios, the hospital systems, the hospitality industry and Gulfstream's engineering floors. The crowd is creative and small, which makes one good room worth a season of scattered efforts.",
+      },
+      {
+        q: "Why would the tour stop in a market this size?",
+        a: "Because culture plays beat density plays sometimes. A live dating show in a city built on storytelling and historic squares is a night people will drive from Charleston and Jacksonville for. The waitlist gets to prove us right.",
+      },
+    ],
+    sections: [
+      {
+        heading: "Savannah is the tour's wildcard on purpose",
+        paragraphs: [
+          "Savannah's desi community is the smallest on our Southeast map and the most interesting. SCAD imports globally minded creative students, Gulfstream and the port bring engineers and the hospital systems add the medical layer every Southern city has. Nobody here expects a desi dating show, which is precisely the appeal: in a city that runs on atmosphere, the format lands as an event rather than an errand.",
+          "Charleston is under two hours away and Jacksonville is closer than that. A Savannah date is really a Lowcountry date, and the Lowcountry has been quietly filling out our waitlist.",
+        ],
+      },
+      {
+        heading: "What a Garam Masala night in Savannah looks like",
+        paragraphs: [
+          "A SCAD illustrator and a Gulfstream engineer who have never met, on a first date on stage in a room that appreciates drama as a craft. Live votes, comedian hosts and a mixer that walks out into the squares afterward, because no city on the tour does the after-show wander better.",
+          "Join the waitlist to make the wildcard real, or apply to be a contestant and give Savannah a story the ghost tours cannot compete with.",
+        ],
       },
     ],
   },

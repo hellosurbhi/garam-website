@@ -39,7 +39,7 @@ service cloud.firestore {
           'name', 'age', 'gender', 'orientation', 'city', 'state', 'country',
           'email', 'emailNormalized', 'phone', 'height', 'instagram', 'community', 'income',
           'applicationType', 'referrerName', 'nominationConsent',
-          'pitch', 'type', 'notes', 'seenShowBefore', 'marketingConsent',
+          'pitch', 'type', 'notes', 'seenShowBefore', 'howHeard', 'marketingConsent',
           'termsAgreedAt', 'photoUrl', 'photoUrls', 'castEventId', 'deletedAt',
           'status', 'submittedAt',
           'source', 'sourcePage', 'landingPage', 'referrerHost',
@@ -70,6 +70,7 @@ service cloud.firestore {
         && (!('type' in d.keys()) || (d.type is string && d.type.size() > 0 && d.type.size() <= 50))
         && (!('notes' in d.keys()) || (d.notes is string && d.notes.size() <= 2000))
         && (!('seenShowBefore' in d.keys()) || d.seenShowBefore is bool)
+        && (!('howHeard' in d.keys()) || (d.howHeard is string && d.howHeard.size() > 0 && d.howHeard.size() <= 50))
         && (!('marketingConsent' in d.keys()) || (d.marketingConsent is string && d.marketingConsent.size() > 0 && d.marketingConsent.size() <= 10))
         && (!('termsAgreedAt' in d.keys()) || d.termsAgreedAt is timestamp)
         && (!('photoUrl' in d.keys()) || (d.photoUrl is string && d.photoUrl.size() > 0 && d.photoUrl.size() <= 500))

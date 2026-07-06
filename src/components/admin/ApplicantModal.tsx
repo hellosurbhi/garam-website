@@ -391,6 +391,9 @@ export default function ApplicantModal({
               value={app.seenShowBefore ? "Yes" : "No"}
             />
           )}
+          {app.howHeard && (
+            <InfoRow label="How They Found Us" value={app.howHeard} />
+          )}
           {app.type && <InfoRow label="Their Type" value={app.type} />}
           <div>
             <p className={styles.infoLabel}>Instagram</p>

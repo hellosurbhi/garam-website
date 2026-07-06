@@ -487,4 +487,190 @@ export const liveShowsPosts: JournalPost[] = [
       cityLinks: ["manhattan", "jersey-city", "boston", "los-angeles"],
     },
   },
+  {
+    slug: "live-dating-show-vs-dating-apps",
+    title: "Live Dating Show vs Dating Apps: Which Actually Works?",
+    seoTitle: "Live Dating Show vs Dating Apps: Which Wins?",
+    metaDescription:
+      "Live dating show vs dating apps, compared by someone who runs one. Why a room full of real singles beats a week of swiping, and where apps still win.",
+    datePublished: "2026-07-06",
+    dateModified: "2026-07-06",
+    author: "Surbhi",
+    excerpt:
+      "I've spent four years watching people meet at a live dating show and four years hearing them complain about the apps. The comparison is not close, but it is not one-sided either.",
+    faqs: [
+      {
+        q: "Are live dating shows better than dating apps?",
+        a: "For actually meeting someone in person, yes. A live dating show plus a mixer gives you a room of real singles who chose to be there, with 90 minutes of shared experience doing the icebreaking. Apps win on pure volume and convenience, but they filter people before chemistry can happen. Most people who succeed use both: apps for reach, live events for real connection.",
+      },
+      {
+        q: "What is the difference between a live dating show and speed dating?",
+        a: "Speed dating makes everyone participate in timed rounds with no audience. A live dating show is entertainment first: two real singles date on stage, comedians host, the crowd reacts and votes, and a mixer follows. The show warms up the whole room so the mingling afterward is easy, which speed dating's cold start never achieves.",
+      },
+      {
+        q: "Can you actually meet someone at a live dating show?",
+        a: "Yes, and not only the people on stage. At Garam Masala Dating the post-show mixer is where most audience connections happen, because a room of 250 people who just laughed together for 90 minutes has no ice left to break. Buy a ticket at garammasaladating.com to see for yourself.",
+      },
+    ],
+    relatedSlugs: [
+      "what-is-a-comedy-dating-show",
+      "desi-dating-show-vs-dating-apps",
+      "live-dating-shows-nyc-2026",
+    ],
+    body: [
+      {
+        type: "p",
+        text: "I've spent four years watching people meet at a live dating show and four years hearing them complain about the apps. The comparison is not close, but it is not one-sided either. Apps are a sorting mechanism. A live show is a connection mechanism. Here is exactly how they stack up, from someone who runs one and is therefore biased and extremely well informed.",
+      },
+      {
+        type: "h2",
+        text: "What apps are good at",
+      },
+      {
+        type: "p",
+        text: "Volume and convenience. No app on earth is easier than lying on your couch swiping. The reach is real: in a big city you can see hundreds of profiles a night. Apps are also good at filtering, which is precisely their problem, because they let you eliminate people on criteria that have nothing to do with whether you would actually like each other in a room. Chemistry does not transmit over text. You can optimize a profile forever and still show up to a date where nothing clicks.",
+      },
+      {
+        type: "h2",
+        text: "What a live dating show is good at",
+      },
+      {
+        type: "p",
+        text: "Everything the apps are bad at. In five minutes of watching someone react to a live blind date, you learn more than a week of texting tells you. You hear their laugh, you see their timing, you watch how they treat a stranger. None of that is in a bio. And the format solves the hardest problem in real-life dating, which is the cold approach: at a <a href='/journal/what-actually-happens-at-a-live-comedy-dating-show'>live comedy dating show</a>, 90 minutes of shared laughter breaks the ice for the entire room before anyone has to say hello.",
+      },
+      {
+        type: "h2",
+        text: "The head-to-head",
+      },
+      {
+        type: "p",
+        text: "Reach: apps win, easily. Convenience: apps win. Information per minute: the show wins by a mile. Cold-start problem: the show solves it, apps make it worse. Odds of an actual conversation: the show, because everyone in the room is single and present. Odds of a second date: whichever one produced a real spark, and sparks happen in rooms, not chat windows. The honest answer is that they are not really competitors. Apps are the top of the funnel. A live show is where the funnel actually converts.",
+      },
+      {
+        type: "h2",
+        text: "Use both, but stop pretending the apps are enough",
+      },
+      {
+        type: "p",
+        text: "Keep the apps for reach if you want. But if you have been swiping for years and going on dates that feel dead on arrival, the problem is not your profile. It is the medium. Come to a room full of real singles instead. <a href='/tickets'>Grab a ticket</a> to the next show, or <a href='/apply'>apply to be a contestant</a> and skip straight to the stage.",
+      },
+    ],
+    ctaConfig: {
+      intent: "show",
+      topCta: {
+        text: "See the next live show",
+        href: "/tickets",
+        ctaId: "tickets",
+        variant: "primary",
+      },
+      midCta: {
+        text: "Apply to be a contestant",
+        href: "/apply",
+        ctaId: "apply",
+        variant: "secondary",
+      },
+      bottomCta: {
+        text: "Get your tickets",
+        href: "/tickets",
+        ctaId: "tickets",
+        variant: "primary",
+      },
+      cityLinks: ["manhattan", "jersey-city", "los-angeles", "san-francisco"],
+    },
+  },
+  {
+    slug: "blind-date-show-what-to-expect",
+    title: "Going to a Blind Date Show? Here's Exactly What to Expect",
+    seoTitle: "Blind Date Show: What to Expect (2026)",
+    metaDescription:
+      "Buying tickets to a blind date show? Here's exactly what happens, what the audience does, whether you'll get pulled on stage and how to have the best night.",
+    datePublished: "2026-07-06",
+    dateModified: "2026-07-06",
+    author: "Surbhi",
+    excerpt:
+      "You bought a ticket to a blind date show, or you're about to, and you want to know what you're walking into. Good instinct. Here is the honest, full rundown from the person running one.",
+    faqs: [
+      {
+        q: "What happens at a blind date show?",
+        a: "Two real singles who have never met go on a first date on stage while comedian hosts guide it with questions and games. The audience watches, reacts and usually votes on whether the pair should see each other again. At Garam Masala Dating the show runs about 90 minutes and is followed by a singles mixer where the audience meets each other.",
+      },
+      {
+        q: "Will I get pulled on stage at a blind date show?",
+        a: "Only if you volunteer. At Garam Masala Dating nobody goes on stage without raising their hand, and about 95% of the audience just watches and votes. If you do want stage time, volunteering is genuinely the fastest way to end up on a blind date in front of 250 people.",
+      },
+      {
+        q: "Is a blind date show a good idea for a first date or a group?",
+        a: "Both. It is a great date because it hands you two hours of built-in conversation, and a great group night because watching strangers navigate a live blind date is pure entertainment. Singles should stay for the mixer either way.",
+      },
+      {
+        q: "How much are blind date show tickets?",
+        a: "Most live dating shows run $15 to $40. Garam Masala Dating tickets start around $15 and include the post-show singles mixer. Buy early because popular shows sell out.",
+      },
+    ],
+    relatedSlugs: [
+      "what-actually-happens-at-a-live-comedy-dating-show",
+      "what-is-a-comedy-dating-show",
+      "dating-shows-you-can-attend-2026",
+    ],
+    body: [
+      {
+        type: "p",
+        text: "You bought a ticket to a blind date show, or you're about to, and you want to know what you're walking into. Good instinct. Here is the honest, full rundown from the person running one, so you show up knowing exactly how the night works and how to get the most out of it.",
+      },
+      {
+        type: "h2",
+        text: "The format, start to finish",
+      },
+      {
+        type: "p",
+        text: "Doors open about 30 minutes before showtime. Grab a drink, grab a seat, the good sightlines go early. The hosts warm up the crowd with stand-up, then two real singles who have never met come on stage and go on a first date: rapid-fire questions, games designed to surface red flags and green flags fast, and a lot of crowd reaction. Near the end, the audience votes on whether they should get a second date, and the daters reveal what they actually want. Then, at our show, the venue turns into a singles mixer and the whole room keeps going.",
+      },
+      {
+        type: "h2",
+        text: "What the audience actually does",
+      },
+      {
+        type: "p",
+        text: "More than you think and less than you fear. You react, you laugh, you vote, and that is it unless you choose otherwise. The vote is just raising your hand. Nobody is putting you on the spot. About 95% of any crowd watches the entire night from their seat and has a great time doing it.",
+      },
+      {
+        type: "h2",
+        text: "Will you get pulled on stage",
+      },
+      {
+        type: "p",
+        text: "Not unless you want to. At <a href='/journal/how-to-get-cast-on-a-live-dating-show'>Garam Masala Dating</a> we only bring up volunteers, people who raised their hand because they wanted the stage. If that is you, brilliant, it is the fastest way onto a blind date in front of 250 people. If it is not you, relax completely and enjoy the show.",
+      },
+      {
+        type: "h2",
+        text: "How to have the best possible night",
+      },
+      {
+        type: "p",
+        text: "Come a little early for a good seat. Come with friends or come solo, both work, and solo attendees actually do best at the mixer because they talk to new people instead of huddling. Stay for the mixer even if you came just to watch, because that is where the audience meets each other and the ice is already gone. And if watching the daters makes you think you could do that, you probably could. <a href='/tickets'>Get a ticket to the next show</a>, or <a href='/apply'>apply to be a contestant</a> and be the blind date everyone is watching.",
+      },
+    ],
+    ctaConfig: {
+      intent: "show",
+      topCta: {
+        text: "Get tickets to the next show",
+        href: "/tickets",
+        ctaId: "tickets",
+        variant: "primary",
+      },
+      midCta: {
+        text: "Apply to be a contestant",
+        href: "/apply",
+        ctaId: "apply",
+        variant: "secondary",
+      },
+      bottomCta: {
+        text: "See upcoming dates",
+        href: "/tickets",
+        ctaId: "tickets",
+        variant: "primary",
+      },
+      cityLinks: ["manhattan", "boston", "philadelphia", "edison"],
+    },
+  },
 ];

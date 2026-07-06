@@ -75,6 +75,15 @@ describe("portal-state GET /api/portal-state", () => {
   });
 
   describe("invite param", () => {
+    it("rejects inviteId containing a slash with 400", async () => {
+      const req = makeRequest("/api/portal-state?invite=foo/bar");
+      const res = await GET({ request: req } as Parameters<typeof GET>[0]);
+      expect(res.status).toBe(400);
+      const body = await res.json();
+      expect(body.state).toBe("error");
+      expect(mocks.fsGet).not.toHaveBeenCalled();
+    });
+
     it("returns invite state for a valid unclaimed invite", async () => {
       mocks.fsGet.mockResolvedValue({
         claimed: false,

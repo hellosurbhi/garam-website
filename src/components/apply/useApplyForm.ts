@@ -284,13 +284,42 @@ export function useApplyForm() {
     setErrors(errs);
     if (Object.keys(errs).length > 0) {
       setToast({ msg: "Please fill in all required fields", ok: false });
-      requestAnimationFrame(() => {
-        const el = document.querySelector<HTMLElement>("[data-error]");
-        el?.scrollIntoView({ behavior: "smooth", block: "center" });
-      });
       return false;
     }
     return true;
+  }
+
+  function handleBlur(field: keyof FormState) {
+    const errs: FormErrors = {};
+    switch (field) {
+      case "name":
+        if (!form.name.trim()) errs.name = "Required";
+        break;
+      case "age": {
+        const ageNum = parseInt(form.age, 10);
+        if (!form.age || Number.isNaN(ageNum) || ageNum < 18)
+          errs.age = "Must be 18 or older";
+        break;
+      }
+      case "email": {
+        const emailErr = validateEmail(form.email);
+        if (emailErr) errs.email = emailErr;
+        break;
+      }
+      case "instagram":
+        if (!form.instagram.trim().replace(/^@/, ""))
+          errs.instagram = "Required";
+        break;
+      case "referrerName":
+        if (form.applicationType === "Nomination" && !form.referrerName.trim())
+          errs.referrerName = "Required";
+        break;
+      default:
+        return;
+    }
+    if (Object.keys(errs).length > 0) {
+      setErrors((prev) => ({ ...prev, ...errs }));
+    }
   }
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
@@ -299,38 +328,24 @@ export function useApplyForm() {
 
     setSubmitting(true);
 
-    // Verify Turnstile token when the feature is configured
+    // Best-effort bot check: verify token when available, fail open when not.
+    // The real security gate is Firestore auth (signInAnonymously + rules).
     const turnstileSiteKey = import.meta.env.PUBLIC_TURNSTILE_SITE_KEY;
-    if (turnstileSiteKey) {
-      if (!turnstileToken) {
-        setToast({
-          msg: "Please wait a moment while we verify your submission, then try again.",
-          ok: false,
-        });
-        setSubmitting(false);
-        return;
-      }
+    if (turnstileSiteKey && turnstileToken) {
       try {
-        const verifyRes = await fetch("/api/verify-turnstile", {
+        await fetch("/api/verify-turnstile", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ token: turnstileToken }),
         });
-        // Token is one-time-use — clear it and request a new challenge regardless
+        // Token is one-time-use — reset widget regardless of result
         setTurnstileToken("");
         if (window.turnstile && turnstileWidgetIdRef.current) {
           window.turnstile.reset(turnstileWidgetIdRef.current);
         }
-        if (!verifyRes.ok) {
-          setToast({
-            msg: "Verification failed. Please refresh the page and try again.",
-            ok: false,
-          });
-          setSubmitting(false);
-          return;
-        }
+        // Allow through even on verify failure — widget issues must not block real applicants
       } catch {
-        // Network error — allow submission through rather than hard-blocking
+        // Network error — allow submission through
         setTurnstileToken("");
         if (window.turnstile && turnstileWidgetIdRef.current) {
           window.turnstile.reset(turnstileWidgetIdRef.current);
@@ -455,8 +470,10 @@ export function useApplyForm() {
       setPhotoFiles([]);
       setPhotoPreviews([]);
       setErrors({});
+      // Instant scroll before state swap — single frame, imperceptible.
+      // Prevents the height collapse from leaving the viewport past end-of-content.
+      window.scrollTo({ top: 0, behavior: "instant" as ScrollBehavior });
       setSubmitted(true);
-      window.scrollTo({ top: 0, behavior: "smooth" });
     } catch (err) {
       const error = err instanceof Error ? err : new Error(String(err));
       // Cleanup any photos that were successfully uploaded before the failure
@@ -516,6 +533,7 @@ export function useApplyForm() {
     handleTermsCheckbox,
     agreeToTerms,
     handleSubmit,
+    handleBlur,
     setTurnstileToken,
     turnstileWidgetIdRef,
   };

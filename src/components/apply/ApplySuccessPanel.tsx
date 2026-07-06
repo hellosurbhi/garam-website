@@ -1,4 +1,4 @@
-import { useMemo, useEffect } from "react";
+import { useMemo, useEffect, useRef } from "react";
 import { events } from "@/data/events";
 import { SOCIAL_URLS } from "@/data/socials";
 import { buildTicketUrl } from "@/utils/eventUrl";
@@ -8,6 +8,12 @@ import { capture } from "@/lib/analyticsCapture";
 import styles from "@/components/ApplyPage.module.css";
 
 export function ApplySuccessPanel() {
+  const headingRef = useRef<HTMLHeadingElement>(null);
+
+  useEffect(() => {
+    headingRef.current?.focus();
+  }, []);
+
   const upcomingShows = useMemo(() => {
     const today = new Date().toLocaleDateString("en-CA");
     return events.filter(
@@ -217,7 +223,9 @@ export function ApplySuccessPanel() {
   return (
     <div className={styles.successPanel} role="status" aria-live="polite">
       <div className={styles.successEmoji}>🌶️</div>
-      <h1 className={styles.successTitle}>Thanks for applying!</h1>
+      <h1 ref={headingRef} tabIndex={-1} className={styles.successTitle}>
+        Thanks for applying!
+      </h1>
       <p className={styles.successText}>
         We review every application and will reach out if you&apos;re selected.
       </p>

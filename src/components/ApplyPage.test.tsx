@@ -104,28 +104,19 @@ describe("ApplyPage", () => {
     ).toBeInTheDocument();
   });
 
-  it("shows error text when submitting with empty required fields", async () => {
+  it("submit button is disabled when required fields are empty", () => {
     render(<ApplyPage />);
-    // Unlock submit gate: Yes consent + Terms checked
-    fireEvent.click(getConsentRadio("yes"));
-    fireEvent.click(screen.getByRole("checkbox"));
-    fireEvent.click(screen.getByText("Submit Application"));
-    await waitFor(() => {
-      expect(
-        screen.getByText("Please fill in all required fields"),
-      ).toBeInTheDocument();
-    });
+    const btn = screen.getByText("Submit Application").closest("button")!;
+    expect(btn).toBeDisabled();
   });
 
-  it("shows 'Required' error for empty name after submit", async () => {
+  it("shows 'Required' error for empty name on blur", async () => {
     render(<ApplyPage />);
-    // Unlock submit gate: Yes consent + Terms checked
-    fireEvent.click(getConsentRadio("yes"));
-    fireEvent.click(screen.getByRole("checkbox"));
-    fireEvent.click(screen.getByText("Submit Application"));
+    const nameInput = screen.getByPlaceholderText("Name");
+    fireEvent.focus(nameInput);
+    fireEvent.blur(nameInput);
     await waitFor(() => {
-      const errors = screen.getAllByText("Required");
-      expect(errors.length).toBeGreaterThan(0);
+      expect(screen.getByText("Required")).toBeInTheDocument();
     });
   });
 
@@ -285,27 +276,43 @@ describe("ApplyPage", () => {
     expect(nameInput).toHaveAttribute("aria-invalid", "false");
   });
 
-  it("inputs have aria-invalid true after validation failure", async () => {
+  it("name input has aria-invalid true after blur with empty value", async () => {
     render(<ApplyPage />);
-    // Unlock submit gate: Yes consent + Terms checked
-    fireEvent.click(getConsentRadio("yes"));
-    fireEvent.click(screen.getByRole("checkbox"));
-    fireEvent.click(screen.getByText("Submit Application"));
+    const nameInput = screen.getByPlaceholderText("Name");
+    fireEvent.focus(nameInput);
+    fireEvent.blur(nameInput);
     await waitFor(() => {
-      const nameInput = screen.getByPlaceholderText("Name");
       expect(nameInput).toHaveAttribute("aria-invalid", "true");
     });
   });
 
-  it("age input has aria-invalid true after validation failure", async () => {
+  it("age input has aria-invalid true after blur with invalid value", async () => {
     render(<ApplyPage />);
-    // Unlock submit gate: Yes consent + Terms checked
-    fireEvent.click(getConsentRadio("yes"));
-    fireEvent.click(screen.getByRole("checkbox"));
-    fireEvent.click(screen.getByText("Submit Application"));
+    const ageInput = screen.getByPlaceholderText("Age");
+    fireEvent.focus(ageInput);
+    fireEvent.blur(ageInput);
     await waitFor(() => {
-      const ageInput = screen.getByPlaceholderText("Age");
       expect(ageInput).toHaveAttribute("aria-invalid", "true");
+    });
+  });
+
+  it("instagram input has aria-invalid true after blur with empty value", async () => {
+    render(<ApplyPage />);
+    const igInput = screen.getByPlaceholderText("yourhandle");
+    fireEvent.focus(igInput);
+    fireEvent.blur(igInput);
+    await waitFor(() => {
+      expect(igInput).toHaveAttribute("aria-invalid", "true");
+    });
+  });
+
+  it("email input has aria-invalid true after blur with invalid email", async () => {
+    render(<ApplyPage />);
+    const emailInput = screen.getByPlaceholderText("you@example.com");
+    fireEvent.change(emailInput, { target: { value: "notanemail" } });
+    fireEvent.blur(emailInput);
+    await waitFor(() => {
+      expect(emailInput).toHaveAttribute("aria-invalid", "true");
     });
   });
 
@@ -321,23 +328,29 @@ describe("ApplyPage", () => {
     expect(warning).toBeInTheDocument();
   });
 
-  it("submit button remains enabled so validation can explain missing terms", () => {
+  it("submit button is disabled when form is empty", () => {
+    render(<ApplyPage />);
+    expect(
+      screen.getByText("Submit Application").closest("button"),
+    ).toBeDisabled();
+  });
+
+  it("submit button is disabled when only consent is set but other fields are empty", () => {
     render(<ApplyPage />);
     fireEvent.click(getConsentRadio("yes"));
-    expect(screen.getByText("Submit Application")).not.toBeDisabled();
+    expect(
+      screen.getByText("Submit Application").closest("button"),
+    ).toBeDisabled();
   });
 
-  it("submit button is enabled before submit so incomplete fields can be validated", () => {
-    render(<ApplyPage />);
-    expect(screen.getByText("Submit Application")).not.toBeDisabled();
-  });
+  /* ── Button gate: required fields ────────────────────────── */
 
-  /* ── data-error attribute (ObjectLiteral mutations) ──────── */
-
-  it("submit button remains enabled so validation can explain missing marketing consent", () => {
+  it("submit button is disabled when only terms are checked but other fields are empty", () => {
     render(<ApplyPage />);
     fireEvent.click(screen.getByRole("checkbox"));
-    expect(screen.getByText("Submit Application")).not.toBeDisabled();
+    expect(
+      screen.getByText("Submit Application").closest("button"),
+    ).toBeDisabled();
   });
 
   /* ── Gender/orientation options (ArrayDeclaration mutations) ── */
@@ -372,12 +385,11 @@ describe("ApplyPage", () => {
     expect(input.value).toBe("Mumbai");
   });
 
-  it("city input has aria-invalid true after validation failure", async () => {
+  it("city input has aria-invalid true after form submit with empty city", async () => {
     render(<ApplyPage />);
-    // Unlock submit gate: Yes consent + Terms checked
-    fireEvent.click(getConsentRadio("yes"));
-    fireEvent.click(screen.getByRole("checkbox"));
-    fireEvent.click(screen.getByText("Submit Application"));
+    // Submit the form directly — bypasses the button disabled state,
+    // triggering validate() which sets errors.city on empty city.
+    fireEvent.submit(document.querySelector("form")!);
     await waitFor(() => {
       const cityInput = screen.getByPlaceholderText("(Ex. Chicago)");
       expect(cityInput).toHaveAttribute("aria-invalid", "true");
@@ -433,24 +445,21 @@ describe("ApplyPage", () => {
 
   /* ── Toast rendering ─────────────────────────────────────── */
 
-  it("toast shows error message after failed validation", async () => {
+  it("toast shows error message when form is submitted with missing fields", async () => {
     render(<ApplyPage />);
-    // Unlock submit gate: Yes consent + Terms checked
-    fireEvent.click(getConsentRadio("yes"));
-    fireEvent.click(screen.getByRole("checkbox"));
-    fireEvent.click(screen.getByText("Submit Application"));
+    // fireEvent.submit bypasses the button disabled state and calls
+    // handleSubmit directly, which runs validate() and sets the toast.
+    fireEvent.submit(document.querySelector("form")!);
     await waitFor(() => {
-      const toast = screen.getByText("Please fill in all required fields");
-      expect(toast).toBeInTheDocument();
+      expect(
+        screen.getByText("Please fill in all required fields"),
+      ).toBeInTheDocument();
     });
   });
 
   it("toast has dismiss button", async () => {
     render(<ApplyPage />);
-    // Unlock submit gate: Yes consent + Terms checked
-    fireEvent.click(getConsentRadio("yes"));
-    fireEvent.click(screen.getByRole("checkbox"));
-    fireEvent.click(screen.getByText("Submit Application"));
+    fireEvent.submit(document.querySelector("form")!);
     await waitFor(() => {
       expect(screen.getByLabelText("Dismiss")).toBeInTheDocument();
     });
@@ -458,10 +467,7 @@ describe("ApplyPage", () => {
 
   it("toast dismiss button removes toast", async () => {
     render(<ApplyPage />);
-    // Unlock submit gate: Yes consent + Terms checked
-    fireEvent.click(getConsentRadio("yes"));
-    fireEvent.click(screen.getByRole("checkbox"));
-    fireEvent.click(screen.getByText("Submit Application"));
+    fireEvent.submit(document.querySelector("form")!);
     await waitFor(() => {
       expect(
         screen.getByText("Please fill in all required fields"),
@@ -477,14 +483,12 @@ describe("ApplyPage", () => {
 
   /* ── aria-describedby attributes ─────────────────────────── */
 
-  it("name input gets aria-describedby pointing to error when error exists", async () => {
+  it("name input gets aria-describedby pointing to error when name is blurred empty", async () => {
     render(<ApplyPage />);
-    // Unlock submit gate: Yes consent + Terms checked
-    fireEvent.click(getConsentRadio("yes"));
-    fireEvent.click(screen.getByRole("checkbox"));
-    fireEvent.click(screen.getByText("Submit Application"));
+    const nameInput = screen.getByPlaceholderText("Name");
+    fireEvent.focus(nameInput);
+    fireEvent.blur(nameInput);
     await waitFor(() => {
-      const nameInput = screen.getByPlaceholderText("Name");
       expect(nameInput).toHaveAttribute("aria-describedby", "field-name-error");
     });
   });

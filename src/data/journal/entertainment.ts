@@ -110,7 +110,7 @@ export const entertainmentPosts: JournalPost[] = [
     relatedSlugs: [
       "what-actually-happens-at-a-live-comedy-dating-show",
       "south-asian-singles-events-nyc",
-      "the-only-live-desi-dating-show-in-nyc",
+      "live-dating-shows-nyc-2026",
     ],
   },
 
@@ -219,7 +219,7 @@ export const entertainmentPosts: JournalPost[] = [
       },
     ],
     relatedSlugs: [
-      "indian-matchmaking-hinge-and-a-live-comedy-show",
+      "shows-like-love-island-you-can-attend",
       "what-we-learned-from-100-desi-blind-dates",
       "how-to-get-cast-on-a-live-dating-show",
     ],

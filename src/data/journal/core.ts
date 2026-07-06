@@ -572,7 +572,7 @@ export const corePosts: JournalPost[] = [
     relatedSlugs: [
       "how-to-prepare-for-a-live-matchmaking-show",
       "desi-dating-show-vs-dating-apps",
-      "the-only-live-desi-dating-show-in-nyc",
+      "what-is-a-comedy-dating-show",
     ],
     author: "Surbhi",
     excerpt:

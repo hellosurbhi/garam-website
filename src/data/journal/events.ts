@@ -481,7 +481,7 @@ export const eventsPosts: JournalPost[] = [
     ],
     relatedSlugs: [
       "what-actually-happens-at-a-live-comedy-dating-show",
-      "best-things-to-do-in-nyc-if-youre-single",
+      "what-is-a-comedy-dating-show",
       "how-to-get-cast-on-a-live-dating-show",
     ],
     body: [

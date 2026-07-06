@@ -55,6 +55,34 @@ export const usNortheastCities: Record<string, CityData> = {
         q: "What is the format and how much does it cost?",
         a: "Tickets are $15. Real South Asian singles go on live dates on stage while the audience watches. There are laughs, moments and a mixer afterward. Think of it as a comedy show where the dates are real.",
       },
+      {
+        q: "Is there Indian speed dating in Edison or Central Jersey?",
+        a: "Central Jersey gets matrimonial meetups and community mixers, which is not the same thing. This is a comedy show where the dates are real, the crowd votes and the mixer starts with the whole room already laughing. Different energy entirely.",
+      },
+      {
+        q: "Where do desi singles in Edison actually meet?",
+        a: "Oak Tree Road for everything except dating. Weddings, garba season and whoever your mother has shortlisted. The densest South Asian city in America somehow has no singles night, which is precisely why we brought the show here.",
+      },
+      {
+        q: "Can I come with my cousins or a group?",
+        a: "Group tickets are the Edison default, honestly. Come six deep, watch the dates, argue about the vote and let the mixer sort out which of you actually talks to someone new.",
+      },
+    ],
+    sections: [
+      {
+        heading: "Oak Tree Road has everything except a singles night",
+        paragraphs: [
+          "Edison and Iselin hold the most concentrated South Asian population in the United States, and Oak Tree Road is its main street: two miles of chaat, jewelers, sari shops and banquet halls that host a wedding every weekend. The infrastructure for married desi life is world class here. The infrastructure for getting there is nonexistent. Between the family network, the community's very efficient gossip protocols and a social calendar built entirely around households, single people in the Middlesex desi heartland mostly date in Manhattan or not at all.",
+          "Bringing the show here was the most obvious decision we have made. The audience does not need the culture explained. The audience is the culture.",
+        ],
+      },
+      {
+        heading: "What the Central Jersey show night looks like",
+        paragraphs: [
+          "The room at Komic Karma in North Brunswick fills with exactly who you would expect: Rutgers grads, pharma and finance commuters, first gen kids whose parents live ten minutes away and do not know they are here. Two local singles go on a real blind date on stage, the crowd reacts in three languages and the mixer after is the rare Central Jersey space where being single is the whole point instead of the problem.",
+          "Tickets are $15 and the NYC shows sell out weeks ahead, so do not gamble on the door. Grab a seat, or apply to be a contestant and give Oak Tree Road something new to discuss over chaat.",
+        ],
+      },
     ],
   },
 
@@ -169,6 +197,34 @@ export const usNortheastCities: Record<string, CityData> = {
       {
         q: "Can I apply to be on the show before a Boston date is announced?",
         a: "Yes. Apply now. Applications stay active for 12 months. Boston applicants will be prioritized when we confirm a date.",
+      },
+      {
+        q: "Is there Indian speed dating in Boston?",
+        a: "Boston's desi speed dating happens in waves around the universities and dies every summer. A live comedy dating show is a sturdier format: the show does the icebreaking for the whole room and the mixer works whether you came from Cambridge or Burlington.",
+      },
+      {
+        q: "Where do South Asian singles in Boston actually meet?",
+        a: "Grad school orbits at MIT and Harvard, hospital cohorts, Route 128 tech campuses and community events out in Lexington and Waltham. Every circle is smart, busy and closed. One show puts all of them in the same room with a reason to talk.",
+      },
+      {
+        q: "Is the show fun if I am a grad student on a budget?",
+        a: "Tickets run around the price of two Cambridge beers and include the mixer. Per unit of actual human connection, it is the best deal in the metro and we will die on that hill.",
+      },
+    ],
+    sections: [
+      {
+        heading: "Boston's desi singles are overqualified and under-introduced",
+        paragraphs: [
+          "Greater Boston might have the most degrees per single desi of any metro on earth. MIT, Harvard, BU, Northeastern and Tufts import brilliant South Asians every September, the hospitals and biotech corridor keep them here, and the social result is a scene made of brilliant, exhausted people who only ever meet their own labs. The apps do badly here for a specific reason: half the pool churns out every graduation, so the matches reset just as they were getting somewhere.",
+          "What survives churn is an institution. A recurring live show gives Boston's desi singles a fixed point: same format, new faces, no lab affiliation required.",
+        ],
+      },
+      {
+        heading: "What a Garam Masala night in Boston looks like",
+        paragraphs: [
+          "An MGH resident and an MIT postdoc who have never met, on stage, going on a first date while a room from Somerville to the South End votes on their chemistry. The hosts keep it moving, the crowd keeps it honest and the mixer after finally introduces Cambridge to Brookline without a conference lanyard in sight.",
+          "Boston seats fill with waitlist members first, so get on the list, and if you think you can flirt under peer review, apply to be a contestant.",
+        ],
       },
     ],
   },

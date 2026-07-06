@@ -119,6 +119,13 @@ describe("cities", () => {
 
   it("enriched priority cities carry deep content (2+ sections, 6+ FAQs)", () => {
     const enriched = [
+      "manhattan",
+      "jersey-city",
+      "los-angeles",
+      "san-francisco",
+      "philadelphia",
+      "edison",
+      "boston",
       "toronto",
       "london",
       "austin",

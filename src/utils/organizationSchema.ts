@@ -15,7 +15,7 @@ export function buildOrganizationJsonLd(): string {
     url: "https://garammasaladating.com",
     logo: "https://garammasaladating.com/images/logo.svg",
     description:
-      "Garam Masala Dating is the #1 live desi dating show and South Asian singles mixer in New York City. Real singles go on blind dates on stage in front of a 250-person live audience. Weekly in Manhattan, monthly in Jersey City.",
+      "Garam Masala Dating is America's #1 live desi comedy dating show and South Asian singles mixer, based in New York City. Real singles go on blind dates on stage in front of a 250-person live audience. Weekly in Manhattan, monthly in Jersey City.",
     foundingDate: "2022",
     sameAs: [
       SOCIAL_URLS.instagram,

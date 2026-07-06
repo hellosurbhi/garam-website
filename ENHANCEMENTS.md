@@ -9,7 +9,7 @@ Items from the GMD website audit checklists (site audit, codebase cleanup, conve
 ### Extend the deep-content pattern to the remaining ~290 city pages
 
 **Priority:** High
-**Status:** Batch 1 shipped (feat/seo-powerhouse-wave1), batches 2+ pending
+**Status:** COMPLETE 2026-07-06. All 307 city pages enriched on feat/seo-powerhouse-wave1 (all batches shipped in one wave at the operator's request: US, Canada, UK, Australia, Europe, India, Southeast Asia, East Asia, Pacific, Africa, Caribbean). Median indexable body text went from 239 to 417 words plus 6 city-specific FAQs per page. The batch recipe below remains the reference for any future city additions.
 
 GSC (Apr to Jun 2026) shows 66 pages crawled or discovered but not indexed, driven by thin city pages (median 239 body words, one templated paragraph shared across all 307). Batch 1 enriched the 14 priority diaspora metros (Toronto, London, Austin, Chicago, Houston, Dallas, Atlanta, Washington DC, Seattle, Vancouver, Sydney, Melbourne, Leicester, San Jose) using the `sections` field on `CityData`: each got 2 unique h2 sections (~150 to 200 words each) plus 3 extra city-specific FAQ items, roughly doubling indexable text.
 

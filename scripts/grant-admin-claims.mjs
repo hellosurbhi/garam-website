@@ -75,8 +75,29 @@ async function getAccessToken() {
 // Logs an entry number rather than the UID: ADMIN_UIDS comes from the
 // environment, so echoing its values to stdout trips clear-text-logging.
 async function grant(uid, accessToken, entryNum) {
-  const url = `https://identitytoolkit.googleapis.com/v1/projects/${projectId}/accounts:update`;
-  const res = await fetch(url, {
+  const base = `https://identitytoolkit.googleapis.com/v1/projects/${projectId}/accounts`;
+
+  // Read current claims first so unrelated claims are preserved on update.
+  const lookupRes = await fetch(`${base}:lookup`, {
+    method: "POST",
+    headers: {
+      Authorization: `Bearer ${accessToken}`,
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({ localId: [uid] }),
+  });
+  if (!lookupRes.ok) {
+    console.error(
+      `  ✗ entry ${entryNum} (lookup): ${lookupRes.status} ${await lookupRes.text()}`,
+    );
+    return false;
+  }
+  const lookupData = await lookupRes.json();
+  const existingAttrs = lookupData.users?.[0]?.customAttributes;
+  const existingClaims = existingAttrs ? JSON.parse(existingAttrs) : {};
+  const mergedClaims = { ...existingClaims, admin: true };
+
+  const updateRes = await fetch(`${base}:update`, {
     method: "POST",
     headers: {
       Authorization: `Bearer ${accessToken}`,
@@ -84,11 +105,13 @@ async function grant(uid, accessToken, entryNum) {
     },
     body: JSON.stringify({
       localId: uid,
-      customAttributes: JSON.stringify({ admin: true }),
+      customAttributes: JSON.stringify(mergedClaims),
     }),
   });
-  if (!res.ok) {
-    console.error(`  ✗ entry ${entryNum}: ${res.status} ${await res.text()}`);
+  if (!updateRes.ok) {
+    console.error(
+      `  ✗ entry ${entryNum}: ${updateRes.status} ${await updateRes.text()}`,
+    );
     return false;
   }
   console.log(`  ✓ entry ${entryNum}`);

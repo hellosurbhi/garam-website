@@ -1,7 +1,26 @@
 ---
-const target = new URL("/waiver", Astro.url);
-const showId = Astro.url.searchParams.get("show")?.trim();
-if (showId) target.searchParams.set("show", showId);
-
-return Astro.redirect(`${target.pathname}${target.search}`, 301);
+// Static output: Astro.url.searchParams is empty at build time, so a
+// server-side redirect cannot preserve the ?show= query parameter. The
+// redirect is performed client-side so the runtime URL is available.
 ---
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Redirecting…</title>
+    <noscript>
+      <meta http-equiv="refresh" content="0; url=/waiver" />
+    </noscript>
+    <script>
+      const showId = new URLSearchParams(window.location.search)
+        .get("show")
+        ?.trim();
+      const dest = showId
+        ? `/waiver?show=${encodeURIComponent(showId)}`
+        : "/waiver";
+      window.location.replace(dest);
+    </script>
+  </head>
+  <body></body>
+</html>

@@ -146,9 +146,11 @@ export const GET: APIRoute = async ({ request }) => {
         app.id as string,
         "createdAt",
       );
-      const latestInvite = invites[0];
-      if (latestInvite && typeof latestInvite.id === "string") {
-        waiverUrl = `${siteUrl}/contestant-portal?invite=${encodeURIComponent(latestInvite.id)}`;
+      const matchingInvite = invites.find(
+        (item) => item.showId === castEventId && typeof item.id === "string",
+      );
+      if (matchingInvite && typeof matchingInvite.id === "string") {
+        waiverUrl = `${siteUrl}/contestant-portal?invite=${encodeURIComponent(matchingInvite.id)}`;
       }
     }
 

@@ -1,5 +1,10 @@
 import type { APIRoute } from "astro";
-import { fsGet, fsAdd, fsPatch } from "@/lib/firestoreRest";
+import {
+  fsAdd,
+  fsBeginTransaction,
+  fsGetInTransaction,
+  fsCommitTransaction,
+} from "@/lib/firestoreRest";
 import { cleanPhone } from "@/lib/phone";
 import { signPortalToken, _midnightLocalUnix } from "@/lib/portalToken";
 import { WAIVER_VERSION, WAIVER_TEXT } from "@/data/waiver";
@@ -46,7 +51,11 @@ export const POST: APIRoute = async ({ request }) => {
   const phone = cleanPhone(rawPhone);
   if (!phone) return jsonResponse({ error: "Invalid phone number" }, 400);
 
-  const invite = await fsGet(`invites/${inviteId}`);
+  // Begin a read-write transaction so the claimed=false check and the claim
+  // write are atomic, preventing two concurrent requests from both passing the
+  // check and creating separate contestant records for the same invite.
+  const txId = await fsBeginTransaction();
+  const invite = await fsGetInTransaction(`invites/${inviteId}`, txId);
   if (!invite) return jsonResponse({ error: "Invalid invite" }, 404);
   if (invite.claimed) {
     return jsonResponse({ error: "This invite has already been used" }, 409);
@@ -104,11 +113,17 @@ export const POST: APIRoute = async ({ request }) => {
     showTimezone,
   );
 
-  await fsPatch(`invites/${inviteId}`, {
-    claimed: true,
-    claimedAt: signedAtIso,
-    contestantId,
-  });
+  // Commit the transaction: atomically marks the invite claimed and links it
+  // to the contestant. Returns false if a concurrent request won the race.
+  const committed = await fsCommitTransaction(txId, [
+    {
+      docPath: `invites/${inviteId}`,
+      fields: { claimed: true, claimedAt: signedAtIso, contestantId },
+      fieldPaths: ["claimed", "claimedAt", "contestantId"],
+    },
+  ]);
+  if (!committed)
+    return jsonResponse({ error: "This invite has already been used" }, 409);
 
   try {
     const template = waiverReceiptWithText({

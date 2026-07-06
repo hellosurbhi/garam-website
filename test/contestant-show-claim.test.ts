@@ -42,6 +42,16 @@ vi.mock("@/data/events", () => ({
       timezone: "America/New_York",
       venue: { name: "Test Venue", streetAddress: "123 Main St" },
     },
+    {
+      hidden: false,
+      citySlug: "nyc",
+      isoDate: "2000-01-01",
+      city: "New York",
+      date: "January 1, 2000",
+      startTime: "20:00",
+      timezone: "America/New_York",
+      venue: { name: "Past Venue", streetAddress: "123 Main St" },
+    },
   ],
 }));
 
@@ -153,8 +163,7 @@ describe("contestant-show-claim POST", () => {
     const res = await POST({
       request: makeRequest({ ...VALID_BODY, showId: "nyc-2000-01-01" }),
     } as Parameters<typeof POST>[0]);
-    // showId not found in events list (isoDate 2000-01-01), returns 404 or 410
-    expect([404, 410]).toContain(res.status);
+    expect(res.status).toBe(410);
   });
 
   it("creates contestant doc and sets portal_session cookie on success", async () => {

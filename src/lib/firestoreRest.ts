@@ -229,6 +229,80 @@ export async function fsListAll(
   return results;
 }
 
+/** Begin a Firestore read-write transaction. Returns the opaque transaction ID. */
+export async function fsBeginTransaction(): Promise<string> {
+  const token = await getFirestoreAccessToken();
+  const res = await fetch(`${baseUrl()}:beginTransaction`, {
+    method: "POST",
+    headers: {
+      Authorization: `Bearer ${token}`,
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({ options: { readWrite: {} } }),
+  });
+  if (!res.ok) throw new Error(`fsBeginTransaction: ${res.status}`);
+  const { transaction } = (await res.json()) as { transaction: string };
+  return transaction;
+}
+
+/** Read a document within an open transaction. */
+export async function fsGetInTransaction(
+  docPath: string,
+  txId: string,
+): Promise<Record<string, unknown> | null> {
+  const token = await getFirestoreAccessToken();
+  const url = new URL(`${baseUrl()}/${docPath}`);
+  url.searchParams.set("transaction", txId);
+  const res = await fetch(url.toString(), {
+    headers: { Authorization: `Bearer ${token}` },
+  });
+  if (res.status === 404) return null;
+  if (!res.ok)
+    throw new Error(`fsGetInTransaction ${docPath}: ${res.status}`);
+  const doc = (await res.json()) as { fields?: FirestoreFields };
+  return doc.fields ? fromFields(doc.fields) : {};
+}
+
+/**
+ * Commit a transaction with one or more PATCH writes.
+ * Returns true on success, false if the transaction was aborted (concurrent write).
+ */
+export async function fsCommitTransaction(
+  txId: string,
+  writes: Array<{
+    docPath: string;
+    fields: Record<string, unknown>;
+    fieldPaths: string[];
+  }>,
+): Promise<boolean> {
+  const token = await getFirestoreAccessToken();
+  const projectId = import.meta.env.PUBLIC_FIREBASE_PROJECT_ID;
+  const docBase = `projects/${projectId}/databases/(default)/documents`;
+  const res = await fetch(`${baseUrl()}:commit`, {
+    method: "POST",
+    headers: {
+      Authorization: `Bearer ${token}`,
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      transaction: txId,
+      writes: writes.map(({ docPath, fields, fieldPaths }) => ({
+        update: {
+          name: `${docBase}/${docPath}`,
+          fields: toFields(fields),
+        },
+        updateMask: { fieldPaths },
+      })),
+    }),
+  });
+  if (res.status === 409) return false;
+  if (!res.ok) {
+    const body = await res.text();
+    throw new Error(`fsCommitTransaction: ${res.status} ${body}`);
+  }
+  return true;
+}
+
 export async function fsDeleteFields(
   docPath: string,
   fieldNames: string[],

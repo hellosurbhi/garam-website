@@ -4,6 +4,12 @@ import { Resend } from "resend";
 
 export const prerender = false;
 
+const htmlHeaders: HeadersInit = {
+  "Content-Type": "text/html; charset=utf-8",
+  "Cache-Control": "no-store",
+  "Referrer-Policy": "no-referrer",
+};
+
 export const GET: APIRoute = async ({ request }) => {
   const url = new URL(request.url);
   const email = url.searchParams.get("email");
@@ -17,7 +23,7 @@ export const GET: APIRoute = async ({ request }) => {
       ),
       {
         status: 400,
-        headers: { "Content-Type": "text/html" },
+        headers: htmlHeaders,
       },
     );
   }
@@ -26,7 +32,7 @@ export const GET: APIRoute = async ({ request }) => {
   if (!secret) {
     return new Response(page("Error", "Server configuration error."), {
       status: 500,
-      headers: { "Content-Type": "text/html" },
+      headers: htmlHeaders,
     });
   }
 
@@ -36,7 +42,7 @@ export const GET: APIRoute = async ({ request }) => {
       page("Invalid link", "This unsubscribe link has expired or is invalid."),
       {
         status: 403,
-        headers: { "Content-Type": "text/html" },
+        headers: htmlHeaders,
       },
     );
   }
@@ -53,24 +59,41 @@ export const GET: APIRoute = async ({ request }) => {
       page("Invalid link", "This unsubscribe link has expired or is invalid."),
       {
         status: 403,
-        headers: { "Content-Type": "text/html" },
+        headers: htmlHeaders,
       },
     );
   }
 
   const apiKey = import.meta.env.RESEND_API_KEY;
   const audienceId = import.meta.env.RESEND_CONTESTANT_AUDIENCE_ID;
-  if (apiKey && audienceId) {
-    try {
-      const resend = new Resend(apiKey);
-      await resend.contacts.update({
-        audienceId,
-        id: email,
-        unsubscribed: true,
-      });
-    } catch {
-      // Contact may not exist in audience; that's fine
+  if (!apiKey || !audienceId) {
+    return new Response(page("Error", "Server configuration error."), {
+      status: 500,
+      headers: htmlHeaders,
+    });
+  }
+
+  const resend = new Resend(apiKey);
+  let updateFailed = false;
+  try {
+    const { error } = await resend.contacts.update({
+      audienceId,
+      id: email,
+      unsubscribed: true,
+    });
+    // 404 means the contact isn't in this audience — treat as already unsubscribed.
+    if (error && (error as { statusCode?: number }).statusCode !== 404) {
+      updateFailed = true;
     }
+  } catch {
+    updateFailed = true;
+  }
+
+  if (updateFailed) {
+    return new Response(
+      page("Error", "Could not process your request. Please try again."),
+      { status: 500, headers: htmlHeaders },
+    );
   }
 
   return new Response(
@@ -78,7 +101,7 @@ export const GET: APIRoute = async ({ request }) => {
       "Unsubscribed",
       "You've been removed from our mailing list. You won't receive any more emails from us.",
     ),
-    { status: 200, headers: { "Content-Type": "text/html" } },
+    { status: 200, headers: htmlHeaders },
   );
 };
 

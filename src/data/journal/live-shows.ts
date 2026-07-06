@@ -879,4 +879,105 @@ export const liveShowsPosts: JournalPost[] = [
       cityLinks: ["manhattan", "jersey-city", "boston", "los-angeles"],
     },
   },
+  {
+    slug: "what-is-a-desi-dating-show",
+    title: "What Is a Desi Dating Show? The Genre, Explained (2026)",
+    seoTitle: "What Is a Desi Dating Show? (2026 Guide)",
+    metaDescription:
+      "A desi dating show is a dating show made for South Asian singles. Here's the genre explained: filmed shows like Indian Matchmaking, live desi dating shows you can attend, and where to see one near you.",
+    datePublished: "2026-07-06",
+    dateModified: "2026-07-06",
+    author: "Surbhi",
+    excerpt:
+      "Desi dating shows went from nonexistent to a whole genre in a few years. Some you stream, one you can actually walk into. Here's the full map of what a desi dating show is in 2026.",
+    keyTakeaway:
+      "A desi dating show is a dating show built for South Asian singles. There are two kinds: filmed shows you stream, like Netflix's Indian Matchmaking, and live desi dating shows you attend in person. Garam Masala Dating is America's #1 live desi comedy dating show, where real South Asian singles date on stage in NYC with a singles mixer after.",
+    faqs: [
+      {
+        q: "What is a desi dating show?",
+        a: "A desi dating show is a dating show made for and about South Asian singles. It comes in two forms: filmed shows you stream, such as Netflix's Indian Matchmaking, and live desi dating shows you attend in person, such as Garam Masala Dating in NYC, where real singles go on blind dates on stage in front of an audience.",
+      },
+      {
+        q: "Is there a live desi dating show I can attend?",
+        a: "Yes. Garam Masala Dating is America's #1 live desi comedy dating show. Real South Asian singles go on blind dates on stage in front of a 250-person audience, weekly in Manhattan and touring other cities, with a singles mixer after every show. Filmed desi dating shows, by contrast, cannot be attended.",
+      },
+      {
+        q: "Where can I see a desi dating show in NYC?",
+        a: "Garam Masala Dating runs a live desi dating show weekly in Manhattan at Top Secret Comedy Club, with a singles mixer after. Tickets start around $15 at garammasaladating.com/tickets. It is the only live, ticketed desi dating show running weekly in New York City.",
+      },
+      {
+        q: "Is a desi dating show only for South Asian people?",
+        a: "No. Desi dating shows have a South Asian cultural flavor but are open to everyone. At Garam Masala Dating roughly 40% of the audience is non-desi. Love and comedy are universal, and the show welcomes anyone who wants a great night out.",
+      },
+      {
+        q: "How is a desi dating show different from Indian Matchmaking?",
+        a: "Indian Matchmaking is a filmed Netflix series about arranged-marriage matchmaking, edited and consumed on a screen. A live desi dating show like Garam Masala Dating is unscripted and unedited: real singles date on stage in real time, the audience reacts and votes, and everyone mingles at a mixer after. One is TV, the other is a night out.",
+      },
+    ],
+    relatedSlugs: [
+      "what-is-a-comedy-dating-show",
+      "the-only-live-desi-dating-show-in-nyc",
+      "stop-waiting-for-indian-love-is-blind",
+    ],
+    body: [
+      {
+        type: "p",
+        text: "Desi dating shows went from nonexistent to a whole genre in a few years. Some you stream, one you can actually walk into. Here's the full map of what a desi dating show is in 2026, from someone who runs the live one.",
+      },
+      {
+        type: "h2",
+        text: "The definition",
+      },
+      {
+        type: "p",
+        text: "A desi dating show is a dating show built for and about South Asian singles: people of Indian, Pakistani, Bangladeshi, Sri Lankan and broader South Asian heritage. What makes it desi is the cultural context, the family expectations, the arranged-versus-love tension, the aunty of it all, treated with humor and honesty rather than explained from the outside. The genre exists because mainstream dating content never spoke to that specific experience.",
+      },
+      {
+        type: "h2",
+        text: "The two kinds of desi dating show",
+      },
+      {
+        type: "p",
+        text: "There are filmed desi dating shows and live desi dating shows, and the difference is everything. Filmed shows, the most famous being Netflix's Indian Matchmaking, are pre-produced, edited into a season and watched on a screen. They are entertainment you consume. Live desi dating shows are events you attend: real singles date on stage in front of a real audience, unscripted and unedited, and you are in the room. One is television. The other is a night out that you can buy a ticket to.",
+      },
+      {
+        type: "h2",
+        text: "Why the live version is a different thing entirely",
+      },
+      {
+        type: "p",
+        text: "You cannot attend a filmed show, it wrapped months ago on a closed set. You can attend a live one this week. At <a href='/journal/what-actually-happens-at-a-live-comedy-dating-show'>Garam Masala Dating</a>, two real South Asian singles go on a blind date on stage, comedians host, 250 people react and vote, and then the venue turns into a singles mixer where the audience gets to meet each other too. There is no edit, no villain manufactured in post, and a nonzero chance you leave with a number. A screen cannot do that.",
+      },
+      {
+        type: "h2",
+        text: "Where to see a desi dating show near you",
+      },
+      {
+        type: "p",
+        text: "If you want to watch, filmed shows stream anytime. If you want to be in the room, Garam Masala Dating runs weekly in <a href='/cities/manhattan'>Manhattan</a> with shows in <a href='/cities/jersey-city'>Jersey City</a>, <a href='/cities/boston'>Boston</a>, <a href='/cities/philadelphia'>Philadelphia</a>, <a href='/cities/los-angeles'>Los Angeles</a> and <a href='/cities/san-francisco'>San Francisco</a>, and it is expanding by demand across <a href='/cities'>300+ cities</a>. It is the only live, ticketed desi dating show running weekly in America. <a href='/tickets'>Grab a ticket</a>, or <a href='/apply'>apply to be on stage</a>.",
+      },
+    ],
+    ctaConfig: {
+      intent: "show",
+      topCta: {
+        text: "See the live desi dating show",
+        href: "/tickets",
+        ctaId: "tickets",
+        variant: "primary",
+      },
+      midCta: {
+        text: "Apply to be a contestant",
+        href: "/apply",
+        ctaId: "apply",
+        variant: "secondary",
+      },
+      bottomCta: {
+        text: "Find a show near you",
+        href: "/cities",
+        ctaId: "cta_clicked",
+        variant: "primary",
+      },
+      cityLinks: ["manhattan", "jersey-city", "los-angeles", "san-francisco"],
+    },
+  },
 ];

@@ -130,6 +130,35 @@ export const ukCities: Record<string, CityData> = {
         q: "Can I apply to be a contestant?",
         a: "Yes. Apply now. Applications stay active for 12 months. Birmingham applicants will be prioritized when we confirm a date.",
       },
+      {
+        q: "Is there Asian speed dating in Birmingham?",
+        a: "Brum has a long history of Asian marriage events and professional networking mixers, most of them formal to the point of paperwork. A live comedy dating show is the opposite register: entertainment first, mingling after, no biodata exchanged at the door.",
+      },
+      {
+        q: "Where do British Asian singles in Birmingham actually meet?",
+        a: "Broad Street and Digbeth nights where the desi crowd self-assembles, uni circles at Aston and UoB, community events in Handsworth and Sparkhill and weddings, endlessly weddings. The second city has the scene. It lacks the singles night.",
+      },
+      {
+        q: "Which part of Brum would host the show?",
+        a: "Digbeth or the city centre for neutrality and transit. The community spans Handsworth to Small Heath to Solihull, so central wins, and the waitlist postcodes confirm it.",
+      },
+    ],
+    sections: [
+      {
+        heading:
+          "The second city has the UK's second biggest desi scene and no first move",
+        paragraphs: [
+          "Birmingham's South Asian communities built whole districts: Sparkhill, Small Heath, Handsworth and the Balti Triangle's food legacy, layered across Pakistani, Indian, Kashmiri and Bangladeshi lines. The social calendar is enormous and entirely communal: melas, Eid events, weddings that occupy entire postcodes. For singles the machinery offers two speeds, formal marriage events or nothing, and an entire generation of second and third gen Brummies opts for nothing.",
+          "A live show slots exactly between those speeds: public enough to be respectable, fun enough to be worth a Saturday and a mixer where nobody's chacha is taking notes.",
+        ],
+      },
+      {
+        heading: "What a Garam Masala night in Birmingham looks like",
+        paragraphs: [
+          "A Aston grad and a Queen Elizabeth Hospital doctor who have never met, on stage, going on a first date while a room that spans every Brum postcode reacts at full West Midlands volume. Comedian hosts, live votes and a mixer where the balti debate is a load-bearing conversation.",
+          "Join the waitlist for first access when Birmingham dates land, or apply to be a contestant and give the second city a first.",
+        ],
+      },
     ],
   },
 
@@ -207,7 +236,8 @@ export const ukCities: Record<string, CityData> = {
         ],
       },
       {
-        heading: "What a Garam Masala night on the Golden Mile side of town looks like",
+        heading:
+          "What a Garam Masala night on the Golden Mile side of town looks like",
         paragraphs: [
           "Diwali on Belgrave Road draws one of the biggest celebrations outside India, so nobody needs to explain to Leicester how to show up for a desi night out. Picture that energy pointed at two local singles on stage going on a real first date, with comedian hosts, live audience votes and a Gujarati aunty in row two who has opinions she intends to share.",
           "The waitlist decides the UK tour order after London. Get on the list for first access, or apply to be a contestant and give the Golden Mile something new to talk about.",
@@ -261,6 +291,34 @@ export const ukCities: Record<string, CityData> = {
       {
         q: "Can I apply to be a contestant?",
         a: "Yes. Apply now. Applications stay active for 12 months. Manchester applicants will be prioritized when we confirm a date.",
+      },
+      {
+        q: "Is there Asian speed dating in Manchester?",
+        a: "Manchester's Asian singles events appear and vanish with the seasons. A recurring live comedy dating show gives the scene a fixture: same format, new faces, Northern Quarter energy and a mixer that outlasts the format that spawned it.",
+      },
+      {
+        q: "Where do British Asian singles in Manchester actually meet?",
+        a: "UoM and MMU circles, Spinningfields and MediaCity offices, Rusholme for food runs and the Northern Quarter where the desi crowd finds itself on weekends. Big scene, no anchor event. We anchor.",
+      },
+      {
+        q: "Will the show pull from Greater Manchester's Asian towns?",
+        a: "Oldham, Bolton, Rochdale and Stockport are all a tram or short drive away, and their young British Asians already do their nights out in town. A central Manchester room is effectively a Greater Manchester room.",
+      },
+    ],
+    sections: [
+      {
+        heading: "Manchester's desi scene is big enough to be three scenes",
+        paragraphs: [
+          "Manchester holds the North's largest South Asian population and it runs in layers that rarely touch: the university cohorts cycling through Fallowfield and Oxford Road, the young professionals in Ancoats and Salford Quays and the deep-rooted communities of Rusholme, Longsight and the satellite towns. Each layer dates inside itself on the same exhausted apps, and the city's legendary night economy offers everything except a desi singles night.",
+          "One show stacks the layers in a single room. Manchester's live audience culture, trained by decades of music and comedy, does the rest.",
+        ],
+      },
+      {
+        heading: "What a Garam Masala night in Manchester looks like",
+        paragraphs: [
+          "A UoM postgrad and a MediaCity producer who have never met, on stage, going on a first date while a room that treats heckling as a love language reacts in real time. Comedian hosts, live votes and a Northern Quarter mixer that Manchester will simply refuse to end on time.",
+          "Join the waitlist for first access to Manchester dates, or apply to be a contestant and give the North its main event.",
+        ],
       },
     ],
   },
@@ -317,6 +375,35 @@ export const ukCities: Record<string, CityData> = {
         q: "Can I apply to be a contestant?",
         a: "Yes. Apply now. Applications stay active for 12 months. Leeds applicants will be prioritized when we confirm a date.",
       },
+      {
+        q: "Is there Asian speed dating in Leeds?",
+        a: "West Yorkshire's Asian singles events cluster in Bradford and skew matrimonial. Leeds itself, with two big universities and a young professional desi crowd, has nothing singles-first. That gap is the booking.",
+      },
+      {
+        q: "Where do British Asian singles in Leeds actually meet?",
+        a: "Leeds and Leeds Beckett campuses, the financial and legal district, Harehills and Beeston community life and Call Lane on weekends. The city centre crowd and the community crowd rarely mix. One room fixes that.",
+      },
+      {
+        q: "Would Bradford come over for a Leeds show?",
+        a: "Twenty minutes on the train, so yes, and the reverse holds when Bradford hosts. West Yorkshire works best as a corridor and our routing treats it that way.",
+      },
+    ],
+    sections: [
+      {
+        heading:
+          "Leeds has Yorkshire's young desi professionals and no plan for them",
+        paragraphs: [
+          "Leeds pulls West Yorkshire's ambitious young British Asians out of the mill towns and into its universities, law firms, banks and NHS trusts, then offers them a social scene with no desi layer at all. The community heartlands in Harehills and Beeston run traditional calendars, the city centre runs student nights and the singles in between describe dating as a choice between Bradford's aunty network and Hinge's Yorkshire-wide sprawl.",
+          "A Leeds show gives the corridor's professionals their own fixture, with the city's live venue culture doing half the atmosphere work for free.",
+        ],
+      },
+      {
+        heading: "What a Garam Masala night in Leeds looks like",
+        paragraphs: [
+          "A Leeds law trainee and an LGI doctor who have never met, on stage, going on a first date while Yorkshire's most direct audience says exactly what it thinks in real time. Comedian hosts, live votes and a Call Lane mixer with the best post-show curry options on the entire tour, which Leeds will remind everyone of, repeatedly.",
+          "Join the waitlist for first access to Leeds dates, or apply to be a contestant and let Yorkshire judge your flirting honestly.",
+        ],
+      },
     ],
   },
 
@@ -371,6 +458,34 @@ export const ukCities: Record<string, CityData> = {
       {
         q: "Can I apply to be a contestant?",
         a: "Yes. Apply now. Applications stay active for 12 months. Bradford applicants will be prioritized when we confirm a date.",
+      },
+      {
+        q: "Is there Asian speed dating in Bradford?",
+        a: "Bradford's introduction machinery is families, mosques, mandirs and events with matrimonial intent printed on the flyer. A comedy dating show is the release valve: a public, joyful format where attending does not commit you to anything except a good night.",
+      },
+      {
+        q: "Where do British Asian singles in Bradford actually meet?",
+        a: "University of Bradford circles, the tight community networks of Manningham and Great Horton and Leeds nights out when anonymity is required. The desi density is among Britain's highest. The singles infrastructure is zero.",
+      },
+      {
+        q: "Will people worry about being seen at the show?",
+        a: "The opposite happens: because the show is entertainment first, attending carries no declaration. Half the room is couples and friend groups, which gives the single half perfect cover and a working mixer.",
+      },
+    ],
+    sections: [
+      {
+        heading: "Bradford's community closeness is the blessing and the block",
+        paragraphs: [
+          "Bradford runs one of the deepest South Asian communities in Britain: generations rooted in Manningham, Great Horton and Girlington, with an infrastructure of mosques, mandirs, sweet centres and family networks that function better than most local councils. For singles the closeness cuts both ways. Introductions are abundant and always official; casual, low-stakes meeting is structurally impossible when every conversation is reported upstream within the hour.",
+          "The show provides sanctioned informality: a night the community can see and approve of, inside which the singles finally get room to move.",
+        ],
+      },
+      {
+        heading: "What a Garam Masala night in Bradford looks like",
+        paragraphs: [
+          "Two Bradfordians who have never met, statistically remarkable in this city, on stage, going on a first date while a room that knows both their families' reputations reacts with joyful abandon. Comedian hosts, live votes and a mixer where the grapevine finally carries good news.",
+          "Join the waitlist for first access to Bradford dates, or apply to be a contestant and give the city something better than rishta rumours.",
+        ],
       },
     ],
   },
@@ -427,6 +542,34 @@ export const ukCities: Record<string, CityData> = {
         q: "Can I apply to be a contestant?",
         a: "Yes. Apply now. Applications stay active for 12 months. Coventry applicants will be prioritized when we confirm a date.",
       },
+      {
+        q: "Is there Indian speed dating in Coventry?",
+        a: "Coventry has one of the UK's largest Indian student intakes and zero dating events for it. Warwick and Coventry Uni societies run cultural nights, not singles nights. The distinction is our entire business model.",
+      },
+      {
+        q: "Where do Indian students in Coventry actually meet?",
+        a: "Warwick's campus bubble, Coventry Uni's city centre buildings, Foleshill Road food runs and Birmingham weekends. Two huge student populations a mile apart who basically never mix. One room, both unis, done.",
+      },
+      {
+        q: "Warwick students or Coventry locals, who is this for?",
+        a: "Both, plus the settled Foleshill and Longford communities' second gen singles. The show works precisely because it mixes crowds that share a city and nothing else.",
+      },
+    ],
+    sections: [
+      {
+        heading: "Coventry hosts two desi student cities that never meet",
+        paragraphs: [
+          "Warwick's enormous Indian intake lives in a campus bubble on the city's edge; Coventry University's equally large cohort lives downtown; and the settled Punjabi and Gujarati communities of Foleshill have run the city's desi institutions for fifty years. Three populations, one postcode area, no shared events. The students cycle through two year masters degrees without ever meeting the city, and the city's own singles date in Birmingham.",
+          "A central Coventry show is the first event with all three crowds on the guest list, and the UK City of Culture has the venues to hold it.",
+        ],
+      },
+      {
+        heading: "What a Garam Masala night in Coventry looks like",
+        paragraphs: [
+          "A Warwick data science masters student and a Foleshill-raised NHS pharmacist who have never met, on stage, going on a first date while both universities and the Golden Mile of Foleshill Road react together for the first time. Comedian hosts, live votes and a mixer that finally introduces the bubble to the city.",
+          "Join the waitlist for first access to Coventry dates, or apply to be a contestant and unite the postcodes.",
+        ],
+      },
     ],
   },
 
@@ -475,6 +618,35 @@ export const ukCities: Record<string, CityData> = {
       {
         q: "Can I apply to be a contestant?",
         a: "Yes. Apply now. Applications stay active for 12 months. Glasgow applicants will be prioritized when we confirm a date.",
+      },
+      {
+        q: "Is there Asian speed dating in Glasgow?",
+        a: "Scotland's Asian singles events are rare and Edinburgh-shy. Glasgow's Southside community plus two universities is the country's densest desi pool, and it has never had a singles night with actual entertainment attached. First mover, us.",
+      },
+      {
+        q: "Where do British Asian singles in Glasgow actually meet?",
+        a: "Pollokshields and Southside community life, Glasgow Uni and Strathclyde circles and West End nights where the desi crowd finds itself. Three generations deep and still no dedicated event. That ends with one booking.",
+      },
+      {
+        q: "Will Edinburgh people make the trip?",
+        a: "Fifty minutes on the train and Glasgow's crowds are better craic anyway, which we are legally allowed to say because Glasgow told us. A Scottish show serves the whole central belt.",
+      },
+    ],
+    sections: [
+      {
+        heading:
+          "Pollokshields built Scottish Asian life and kept it family-shaped",
+        paragraphs: [
+          "Glasgow's Southside has anchored Scotland's South Asian community for three generations: Pollokshields' Punjabi and Pakistani families, the mosques and gurdwaras, the wedding halls and a food scene that quietly outperforms cities twice the size. The community's social life is rich and entirely family-structured, while the young singles split their time between university circles and a Glasgow nightlife with no desi lane at all.",
+          "Glaswegians are constitutionally incapable of being a quiet audience, which makes this the single best crowd-format fit on the UK map. The room will run itself.",
+        ],
+      },
+      {
+        heading: "What a Garam Masala night in Glasgow looks like",
+        paragraphs: [
+          "A Strathclyde engineering grad and a Southside-raised teacher who have never met, on stage, going on a first date while a Glasgow crowd provides colour commentary that borders on co-hosting. Comedian hosts, live votes and a mixer where the patter does the matchmaking.",
+          "Join the waitlist for first access to Glasgow dates, or apply to be a contestant and let the best hecklers in Britain fall in love with you.",
+        ],
       },
     ],
   },
@@ -525,6 +697,34 @@ export const ukCities: Record<string, CityData> = {
         q: "Can I apply to be a contestant?",
         a: "Yes. Apply now. Applications stay active for 12 months. Edinburgh applicants will be prioritized when we confirm a date.",
       },
+      {
+        q: "Is there Indian speed dating in Edinburgh?",
+        a: "Edinburgh has a festival for everything except desi singles. The university and tech scene supply the crowd; the city's live format literacy supplies the audience; we supply the missing show.",
+      },
+      {
+        q: "Where do South Asian singles in Edinburgh actually meet?",
+        a: "University of Edinburgh circles, the fintech and consultancy offices, Leith's social scene and August, when the whole city becomes one venue. The other eleven months are our opening.",
+      },
+      {
+        q: "Would the show ever run during the Fringe?",
+        a: "The thought has occurred to us more than once. A dating show in the world's biggest live festival city is either a Fringe run waiting to happen or the best off-season booking in Britain. Possibly both.",
+      },
+    ],
+    sections: [
+      {
+        heading: "The world's live capital has no live desi dating",
+        paragraphs: [
+          "Edinburgh audiences are the most format-literate on earth: a city that hosts the Fringe every August knows exactly how to sit in a room and let a show happen to them. Its South Asian community, university researchers, fintech professionals, medics and a settled community from Leith to Newington, has never been offered a live format of its own, and the singles default to apps whose Edinburgh pools recycle by February.",
+          "This is the easiest audience pitch on the UK tour: a city that will try any show once and a community with nothing else on the calendar.",
+        ],
+      },
+      {
+        heading: "What a Garam Masala night in Edinburgh looks like",
+        paragraphs: [
+          "An informatics PhD and a fintech analyst who have never met, on stage, going on a first date while an audience trained by a thousand Fringe shows delivers perfectly timed reactions. Comedian hosts, live votes and a mixer in the Old Town where the closes and wynds handle the romance logistics.",
+          "Join the waitlist for first access to Edinburgh dates, or apply to be a contestant and headline your own festival slot.",
+        ],
+      },
     ],
   },
 
@@ -573,6 +773,34 @@ export const ukCities: Record<string, CityData> = {
       {
         q: "Can I apply to be a contestant?",
         a: "Yes. Apply now. Applications stay active for 12 months. Nottingham applicants will be prioritized when we confirm a date.",
+      },
+      {
+        q: "Is there Asian speed dating in Nottingham?",
+        a: "Nottingham's desi singles get student club nights or Leicester's events up the road. Nothing recurring exists in the city itself, which for two big universities' worth of desi students is a genuine miss.",
+      },
+      {
+        q: "Where do British Asian singles in Nottingham actually meet?",
+        a: "UoN and Trent circles, Hyson Green community life and the Lace Market on weekends. The city's desi crowd is younger than most and completely unanchored. An anchor is exactly what a recurring show is.",
+      },
+      {
+        q: "Nottingham or Leicester first for the East Midlands?",
+        a: "Leicester's community depth versus Nottingham's student energy is a genuine coin flip, so the waitlists decide. The loser hosts second and everyone attends both, because it is a 40 minute drive.",
+      },
+    ],
+    sections: [
+      {
+        heading: "Nottingham's desi scene is young and unclaimed",
+        paragraphs: [
+          "Two large universities give Nottingham a South Asian population that skews younger than any comparable UK city, layered over the established communities of Hyson Green and Radford. The city's nightlife is famous and generic: nothing in it speaks desi, so the students run society events, the second gen professionals drive to Leicester or Birmingham and the scene never accumulates an identity of its own.",
+          "Unclaimed scenes are the best ones to claim. A recurring Nottingham show becomes the East Midlands student crowd's institution by its second run.",
+        ],
+      },
+      {
+        heading: "What a Garam Masala night in Nottingham looks like",
+        paragraphs: [
+          "A UoN medic and a Trent design grad who have never met, on stage, going on a first date while a young, loud East Midlands crowd votes like it is a cup final. Comedian hosts, live chaos and a Lace Market mixer that runs on student stamina.",
+          "Join the waitlist for first access to Nottingham dates, or apply to be a contestant and claim the city.",
+        ],
       },
     ],
   },
@@ -629,6 +857,34 @@ export const ukCities: Record<string, CityData> = {
         q: "Can I apply to be a contestant?",
         a: "Yes. Apply now. Applications stay active for 12 months. Liverpool applicants will be prioritized when we confirm a date.",
       },
+      {
+        q: "Is there Asian speed dating in Liverpool?",
+        a: "Merseyside's desi singles have never had a dedicated event, and the nearest scene is Manchester's, forty minutes east. Liverpool crowds participate harder than anywhere in Britain, which makes this the show's most natural missing market.",
+      },
+      {
+        q: "Where do South Asian singles in Liverpool actually meet?",
+        a: "The universities, the Royal and Alder Hey hospital cohorts and city centre nights where the desi crowd is scattered thin. Growing community, zero occasions, famous audience culture. The math writes itself.",
+      },
+      {
+        q: "Is the Liverpool desi community big enough?",
+        a: "Growing fast via the universities and the NHS, and the show sizes to its market. A tight Liverpool room with Scouse audience energy will outperform bigger, politer cities. We would bet the door on it.",
+      },
+    ],
+    sections: [
+      {
+        heading: "Liverpool participates. That is the whole thesis.",
+        paragraphs: [
+          "Liverpool's South Asian community is newer and smaller than Manchester's, built through the universities, the hospitals and a young professional layer that chose the city for its housing math and its humour. What Liverpool has that no bigger city can import is audience culture: Scousers treat every show as a conversation they were personally invited into, and a live dating format is functionally a conversation with staging.",
+          "Small community, elite crowd participation, no competing desi events within forty minutes. On paper this is a risk market. In a room, it will be a highlight reel.",
+        ],
+      },
+      {
+        heading: "What a Garam Masala night in Liverpool looks like",
+        paragraphs: [
+          "A UoL dentistry student and a Royal Liverpool doctor who have never met, on stage, going on a first date while a crowd that considers commentary a birthright co-produces the entire evening. Comedian hosts, live votes and a Ropewalks mixer where nobody has ever needed an icebreaker in their life.",
+          "Join the waitlist for first access to Liverpool dates, or apply to be a contestant and let the friendliest hecklers in England adopt you.",
+        ],
+      },
     ],
   },
 
@@ -684,6 +940,34 @@ export const ukCities: Record<string, CityData> = {
         q: "Can I apply to be a contestant?",
         a: "Yes. Apply now. Applications stay active for 12 months. Sheffield applicants will be prioritized when we confirm a date.",
       },
+      {
+        q: "Is there Asian speed dating in Sheffield?",
+        a: "Sheffield's desi singles have community events in Darnall and Page Hall and student nights at two universities, with nothing connecting them. The friendliest city in Britain deserves a night where the friendliness has direction.",
+      },
+      {
+        q: "Where do British Asian singles in Sheffield actually meet?",
+        a: "Sheffield and Hallam campuses, the hospitals, Abbeydale Road's food scene and London Road on weekends. The scene exists in pieces. A show assembles the pieces monthly.",
+      },
+      {
+        q: "Would the show pull from Rotherham and Doncaster?",
+        a: "South Yorkshire moves as one for good events, and the tram-train makes it easy. A Sheffield room is a county room.",
+      },
+    ],
+    sections: [
+      {
+        heading: "Sheffield's friendliness needs a format",
+        paragraphs: [
+          "Sheffield's South Asian communities around Page Hall, Darnall and the Abbeydale corridor share the city with two large universities' worth of desi students and a hospital system that keeps graduates local. Everyone confirms the same two facts: this is the friendliest big city in Britain, and its desi singles have absolutely nowhere to point that friendliness romantically. Community events are family events, student nights are generic and the professionals fall through the gap.",
+          "The show gives Sheffield's warmth a structure: ninety minutes of shared laughter, then a mixer where being nice to strangers is finally the whole point.",
+        ],
+      },
+      {
+        heading: "What a Garam Masala night in Sheffield looks like",
+        paragraphs: [
+          "A Hallam engineering grad and a Northern General doctor who have never met, on stage, going on a first date while South Yorkshire's kindest crowd wills them to succeed audibly. Comedian hosts, live votes and a mixer where the Peak District date ideas write themselves.",
+          "Join the waitlist for first access to Sheffield dates, or apply to be a contestant and flirt in front of the nicest audience on the tour.",
+        ],
+      },
     ],
   },
 
@@ -732,6 +1016,34 @@ export const ukCities: Record<string, CityData> = {
       {
         q: "Can I apply to be a contestant?",
         a: "Yes. Apply now. Applications stay active for 12 months. Cambridge applicants will be prioritized when we confirm a date.",
+      },
+      {
+        q: "Is there Indian speed dating in Cambridge?",
+        a: "Cambridge has formal halls, college bops and a tech park's worth of desi engineers, and no dating events for any of them. The smartest square mile in Britain has outsourced its love life to three apps. We are the in-person alternative.",
+      },
+      {
+        q: "Where do South Asian singles in Cambridge actually meet?",
+        a: "College and department circles, the Science Park and biotech campuses, Addenbrooke's cohorts and Mill Road's food corridor. The silos here are architectural: literal walls with porters. One neutral room breaks them all.",
+      },
+      {
+        q: "Students, academics or tech workers, who comes?",
+        a: "All three, which is the point. The postdoc who never leaves the lab, the Arm engineer who never meets academics and the masters student on a one year clock finally share a guest list.",
+      },
+    ],
+    sections: [
+      {
+        heading: "Cambridge optimises everything except this",
+        paragraphs: [
+          "Cambridge's South Asian population is elite and atomised: university researchers walled into colleges, biotech and chip engineers walled into science parks, Addenbrooke's medics walled into rotas. The city's social structures were designed in the fifteenth century for celibate scholars and have been iterated on approximately once. Its desi singles are world class at everything except meeting each other.",
+          "A live show is the one event format that requires no network to attend and produces one by ending. The mixer alone will generate more cross-silo introductions than a year of formal halls.",
+        ],
+      },
+      {
+        heading: "What a Garam Masala night in Cambridge looks like",
+        paragraphs: [
+          "A genomics postdoc and an Arm silicon engineer who have never met, on stage, going on a first date while a room of overthinkers experiences the joy of watching someone else be perceived for once. Comedian hosts, live votes and a mixer where the punting invitation is deployed within the hour.",
+          "Join the waitlist for first access to Cambridge dates, or apply to be a contestant and submit your love life for peer review.",
+        ],
       },
     ],
   },
@@ -782,6 +1094,34 @@ export const ukCities: Record<string, CityData> = {
         q: "Can I apply to be a contestant?",
         a: "Yes. Apply now. Applications stay active for 12 months. Oxford applicants will be prioritized when we confirm a date.",
       },
+      {
+        q: "Is there Indian speed dating in Oxford?",
+        a: "Oxford's desi social life is society events and college bars, both of which reset every October. Nothing singles-first exists, and Cowley Road's culture deserves a show that matches its energy.",
+      },
+      {
+        q: "Where do South Asian singles in Oxford actually meet?",
+        a: "College and department loops, the hospitals, the business park employers and Cowley Road, which is the one place Oxford's town and gown desi crowds genuinely overlap. That overlap is our venue brief.",
+      },
+      {
+        q: "Town or gown, who is the show for?",
+        a: "Both, and the NHS crowd makes three. Oxford's desi scene splits into worlds that share three streets and no events. One night with all of them in a room is the whole concept.",
+      },
+    ],
+    sections: [
+      {
+        heading: "Oxford's clique problem has a desi edition",
+        paragraphs: [
+          "Oxford's South Asian scene splits along the city's oldest fault line: the university's students and researchers live in college loops that regenerate annually, while the town's communities along Cowley Road and in East Oxford run deeper and older, and the two acknowledge each other mostly through takeaway transactions. Add the hospital trusts and the science parks and you get four desi populations sharing one small city and zero occasions.",
+          "The show is deliberately unclubbable: no college affiliation, no society membership, one ticket and a mixer where the cliques dissolve on contact with actual fun.",
+        ],
+      },
+      {
+        heading: "What a Garam Masala night in Oxford looks like",
+        paragraphs: [
+          "A DPhil candidate and a John Radcliffe registrar who have never met, on stage, going on a first date while town and gown react as one crowd for possibly the first time in municipal history. Comedian hosts, live votes and a Cowley Road mixer where the second date options run the length of the street.",
+          "Join the waitlist for first access to Oxford dates, or apply to be a contestant and give the city a viva worth attending.",
+        ],
+      },
     ],
   },
 
@@ -831,6 +1171,34 @@ export const ukCities: Record<string, CityData> = {
         q: "Can I apply to be a contestant?",
         a: "Yes. Apply now. Applications stay active for 12 months. Southampton applicants will be prioritized when we confirm a date.",
       },
+      {
+        q: "Is there Indian speed dating in Southampton?",
+        a: "The south coast has no desi singles events between Brighton and Bristol. Southampton's growing Indian student and professional base makes it the natural host, and the train-to-London era needs to end.",
+      },
+      {
+        q: "Where do South Asian singles in Southampton actually meet?",
+        a: "Southampton and Solent campuses, the hospital trusts, the maritime and tech employers and Portswood's student corridor. The pool refreshes yearly and never gets gathered. Gathering is the product.",
+      },
+      {
+        q: "Would Portsmouth come along the M27?",
+        a: "Twenty five minutes and their own desi student boom says yes. A Southampton show is a Solent show, rivalry suspended for one evening only.",
+      },
+    ],
+    sections: [
+      {
+        heading: "The south coast's desi boom has no social layer",
+        paragraphs: [
+          "Southampton's Indian student enrollment surged with the university's global recruitment, and the hospital trusts and maritime employers convert a share into residents every year. The south coast never built desi social infrastructure to receive them: community events are small and family-run, the nightlife is generically British and the singles standardise on a London train for anything culturally specific, two hours round trip plus the last-train sprint.",
+          "A local show repatriates those evenings. The Solent's desi singles spend their night out at home for once, and the mixer introduces Southampton to Portsmouth without a ferry metaphor.",
+        ],
+      },
+      {
+        heading: "What a Garam Masala night in Southampton looks like",
+        paragraphs: [
+          "A Southampton engineering masters student and a General Hospital doctor who have never met, on stage, going on a first date while the south coast's first ever desi singles room reacts at full volume. Comedian hosts, live votes and an Oxford Street mixer, the Southampton one, where the night stays local.",
+          "Join the waitlist for first access to Southampton dates, or apply to be a contestant and retire your Waterloo ticket habit.",
+        ],
+      },
     ],
   },
 
@@ -879,6 +1247,34 @@ export const ukCities: Record<string, CityData> = {
       {
         q: "Can I apply to be a contestant?",
         a: "Yes. Apply now. Applications stay active for 12 months. Bristol applicants will be prioritized when we confirm a date.",
+      },
+      {
+        q: "Is there Asian speed dating in Bristol?",
+        a: "Bristol has speed dating for vegans, climbers and vinyl collectors, and nothing for desi singles. In the West Country's most event-literate city, that is an oversight we are professionally obligated to correct.",
+      },
+      {
+        q: "Where do British Asian singles in Bristol actually meet?",
+        a: "Easton and Stapleton Road community life, UoB and UWE circles, the tech and aerospace employers and Stokes Croft nights. The scene is creative, scattered and anchor-less. Recurring shows are anchors.",
+      },
+      {
+        q: "Will the show fit Bristol's vibe?",
+        a: "A live format with audience participation and zero corporate gloss? This city was the easiest venue conversation on the UK map. Bristol invented this vibe.",
+      },
+    ],
+    sections: [
+      {
+        heading: "Bristol's creative scene never built a desi wing",
+        paragraphs: [
+          "Easton has anchored Bristol's South Asian community for generations while the city around it became Britain's independent culture capital: street art, sound systems, a live scene that supports everything niche. Somehow none of that programming energy ever pointed at the desi singles: UoB and UWE's students, the aerospace and tech professionals and Easton's own second gen, all dating through apps in a city that hosts a night for literally everything else.",
+          "The show plugs straight into Bristol's existing habits: it is independent, live, participatory and slightly chaotic. The city will treat it as a native species.",
+        ],
+      },
+      {
+        heading: "What a Garam Masala night in Bristol looks like",
+        paragraphs: [
+          "A UWE design grad and an Airbus engineer who have never met, on stage, going on a first date while a Stokes Croft crowd brings festival energy to a Tuesday. Comedian hosts, live votes and a mixer that migrates down Gloucester Road on principle.",
+          "Join the waitlist for first access to Bristol dates, or apply to be a contestant and give the west its main event.",
+        ],
       },
     ],
   },
@@ -935,6 +1331,34 @@ export const ukCities: Record<string, CityData> = {
         q: "Can I apply to be a contestant?",
         a: "Yes. Apply now. Applications stay active for 12 months. Wolverhampton applicants will be prioritized when we confirm a date.",
       },
+      {
+        q: "Is there Asian speed dating in Wolverhampton?",
+        a: "The Black Country's Asian singles get marriage events and Birmingham's calendar. Wolves itself, one of Britain's most Punjabi cities, has no night of its own. That is precisely the kind of wrong we exist to right.",
+      },
+      {
+        q: "Where do British Asian singles in Wolves actually meet?",
+        a: "Heath Town and Whitmore Reans community life, the university, Dudley Road's food corridor and Birmingham when anonymity is required. Deep roots, zero singles occasions.",
+      },
+      {
+        q: "Wolves show or just attend Birmingham's?",
+        a: "The Black Country deserves better than being Birmingham's plus-one. If the WV postcodes keep signing up, Wolves hosts its own night and Brum can do the commuting for once.",
+      },
+    ],
+    sections: [
+      {
+        heading: "Wolverhampton's Punjabi roots deserve their own night",
+        paragraphs: [
+          "Wolverhampton holds one of Britain's most established Punjabi communities, generations deep in Heath Town, Whitmore Reans and Blakenhall, with gurdwaras that anchor the whole Black Country. The community's social machinery is strong and, as everywhere, family-shaped: weddings, langar, festival days. The singles get Birmingham's events twenty minutes away and the distinct feeling of being a footnote to the second city's scene.",
+          "A Wolves show flips the geography. The Black Country hosts, Birmingham travels and the room runs on a community pride that bigger cities cannot fake.",
+        ],
+      },
+      {
+        heading: "What a Garam Masala night in Wolves looks like",
+        paragraphs: [
+          "Two Black Country singles who have never met, on stage, going on a first date while a room that has known each other's families since the foundries reacts with full-throated honesty. Comedian hosts, live votes and a mixer where the bhangra playlist request line opens early.",
+          "Join the waitlist for first access to Wolverhampton dates, or apply to be a contestant and rep the WV like it deserves.",
+        ],
+      },
     ],
   },
 
@@ -983,6 +1407,34 @@ export const ukCities: Record<string, CityData> = {
       {
         q: "Can I apply to be a contestant?",
         a: "Yes. Apply now. Applications stay active for 12 months. Luton applicants will be prioritized when we confirm a date.",
+      },
+      {
+        q: "Is there Asian speed dating in Luton?",
+        a: "Bury Park's social calendar is community and mosque events, with London's scene thirty minutes south absorbing everything else. Luton's own singles night does not exist. One booking changes that.",
+      },
+      {
+        q: "Where do British Asian singles in Luton actually meet?",
+        a: "Bury Park's institutions, the university, the airport's employment orbit and Thameslink platforms heading to someone else's event. The community density rivals East London. The calendar does not.",
+      },
+      {
+        q: "Why not just go to a London show?",
+        a: "Because the last Thameslink home is a relationship-ending experience, and because Luton's scene deserves its own room. Local shows produce local couples, which is rather the point.",
+      },
+    ],
+    sections: [
+      {
+        heading: "Bury Park built the density, London stole the nights",
+        paragraphs: [
+          "Luton's Pakistani and Bangladeshi communities give Bury Park a cultural density that rivals anywhere in Britain, and the town's position handcuffs its social life: thirty minutes from St Pancras means every ambitious night out defaults to London, and nothing accumulates locally. The singles live the commuter paradox, surrounded by community at home and anonymous in the city where they actually socialize.",
+          "A Luton show keeps one night local and tests a thesis we believe strongly: dense, tight communities throw better rooms than big anonymous ones, every single time.",
+        ],
+      },
+      {
+        heading: "What a Garam Masala night in Luton looks like",
+        paragraphs: [
+          "Two Luton singles who have never met, on stage, going on a first date while a Bury Park crowd reacts with the energy of a cup upset. Comedian hosts, live votes and a mixer where the walk home is measured in minutes, not rail zones.",
+          "Join the waitlist for first access to Luton dates, or apply to be a contestant and give the town a better airport story.",
+        ],
       },
     ],
   },
@@ -1033,6 +1485,35 @@ export const ukCities: Record<string, CityData> = {
         q: "Can I apply to be a contestant?",
         a: "Yes. Apply now. Applications stay active for 12 months. Slough applicants will be prioritized when we confirm a date.",
       },
+      {
+        q: "Is there Indian speed dating in Slough?",
+        a: "Slough has one of England's highest desi concentrations and zero singles events, because London is twenty minutes away and eats every night out. A local show is the correction.",
+      },
+      {
+        q: "Where do British Asian singles in Slough actually meet?",
+        a: "The trading estate's employers, the high street's community life, Windsor's bars for a change of scene and the Elizabeth line into London for everything else. Density without occasions, the Home Counties edition.",
+      },
+      {
+        q: "Would Reading and the Thames Valley crowd come?",
+        a: "The Elizabeth line and the M4 make a Slough show a Thames Valley show by default. Reading's tech desis and Southall's West London crowd are both one easy hop away.",
+      },
+    ],
+    sections: [
+      {
+        heading:
+          "Slough is the most desi town in England's most eventless corridor",
+        paragraphs: [
+          "Slough's South Asian majority-adjacent demographics are a national statistic, built by the trading estate's decades of employment and Heathrow's gravity. The town's singles inherit a strange deal: total community density at home, one of Europe's biggest social scenes twenty minutes east and nothing in between. Every desi night out is an away game, and the Elizabeth line only made the leak faster.",
+          "A Slough show is the home fixture: the corridor from Southall to Reading gets a desi night that does not end with a westbound sprint from Paddington.",
+        ],
+      },
+      {
+        heading: "What a Garam Masala night in Slough looks like",
+        paragraphs: [
+          "Two Thames Valley singles who have never met, on stage, going on a first date while a room that spans Southall to Maidenhead reacts in three languages. Comedian hosts, live votes and a mixer where 'which junction' is a genuinely romantic question.",
+          "Join the waitlist for first access to Slough dates, or apply to be a contestant and give the M4 corridor its main event.",
+        ],
+      },
     ],
   },
 
@@ -1081,6 +1562,35 @@ export const ukCities: Record<string, CityData> = {
       {
         q: "Can I apply to be a contestant?",
         a: "Yes. Apply now. Applications stay active for 12 months. Reading applicants will be prioritized when we confirm a date.",
+      },
+      {
+        q: "Is there Indian speed dating in Reading?",
+        a: "The Thames Valley's Indian engineers have team lunches, sprint reviews and no dating events. Reading is the corridor's social centre by default, which makes it the natural host for the first one.",
+      },
+      {
+        q: "Where do Indian singles in Reading actually meet?",
+        a: "The tech campuses along the A33 and Thames Valley Park, the university, the Oracle's bars and London trains. Everyone works within two miles of each other and meets nobody. Classic corridor problem.",
+      },
+      {
+        q: "Would the show draw from Bracknell and Basingstoke?",
+        a: "The whole M4 and M3 tech belt treats Reading as its night out already. A Reading show formalizes the arrangement with better entertainment.",
+      },
+    ],
+    sections: [
+      {
+        heading:
+          "The Thames Valley hired thousands of Indian engineers and planned nothing else",
+        paragraphs: [
+          "Reading anchors Britain's densest tech corridor, and the corridor's recruitment pipelines run deep into India: Microsoft, Oracle and the consultancies filled the business parks with engineers who arrived knowing nobody outside their teams. The town's social offering is mainstream British nightlife, the community infrastructure is thin because the population is new, and the result is a professional desi crowd with disposable income, shared context and zero occasions.",
+          "One show converts the corridor's proximity into an actual scene. The engineers are pre-sorted for compatibility; someone just has to put them in a room that is not a stand-up meeting.",
+        ],
+      },
+      {
+        heading: "What a Garam Masala night in Reading looks like",
+        paragraphs: [
+          "A Thames Valley Park engineer and a Royal Berkshire doctor who have never met, on stage, going on a first date while a room full of people who deploy on Fridays votes with reckless courage. Comedian hosts, live chaos and an Oracle-side mixer that outlasts every retro anyone has scheduled.",
+          "Join the waitlist for first access to Reading dates, or apply to be a contestant and take one genuine risk this quarter.",
+        ],
       },
     ],
   },
@@ -1137,6 +1647,35 @@ export const ukCities: Record<string, CityData> = {
         q: "Can I apply to be a contestant?",
         a: "Yes. Apply now. Applications stay active for 12 months. Newcastle applicants will be prioritized when we confirm a date.",
       },
+      {
+        q: "Is there Asian speed dating in Newcastle?",
+        a: "The Toon has stag legends and student nights, and nothing for its growing desi crowd. Two universities' worth of South Asian students plus the NHS trusts is a real market that nobody has served. First movers again.",
+      },
+      {
+        q: "Where do South Asian singles in Newcastle actually meet?",
+        a: "Newcastle and Northumbria campuses, the RVI's medical cohorts and the Diamond Strip on weekends. The desi scene dissolves into the city's general nightlife and never finds itself. One show, one room, found.",
+      },
+      {
+        q: "Will Geordie crowd energy suit the show?",
+        a: "A city that treats every night out as an event and every stranger as a future friend? The mixer will run itself and the audience votes will be audible from Gateshead.",
+      },
+    ],
+    sections: [
+      {
+        heading:
+          "The Toon's desi scene is dissolved in the world's friendliest nightlife",
+        paragraphs: [
+          "Newcastle and Northumbria pull thousands of South Asian students to the North East, and the NHS trusts keep a professional layer growing. The catch is that Newcastle's nightlife is so strong and so generalist that no desi lane ever formed: everyone just joins the Toon's default night out, has a great time and meets no one culturally compatible. Geordie warmth plus desi invisibility is the specific local equation.",
+          "A show creates the lane. The city's audience culture, arguably Britain's warmest, turns the format up to eleven without being asked.",
+        ],
+      },
+      {
+        heading: "What a Garam Masala night in Newcastle looks like",
+        paragraphs: [
+          "A Newcastle medic and a Northumbria design grad who have never met, on stage, going on a first date while a Geordie-desi crowd adopts them both within minutes. Comedian hosts, live votes and a Quayside mixer where nobody has ever once been left standing alone.",
+          "Join the waitlist for first access to Newcastle dates, or apply to be a contestant and let the Toon claim your love story as its own.",
+        ],
+      },
     ],
   },
 
@@ -1192,6 +1731,35 @@ export const ukCities: Record<string, CityData> = {
         q: "Can I apply to be a contestant?",
         a: "Yes. Apply now. Applications stay active for 12 months. Derby applicants will be prioritized when we confirm a date.",
       },
+      {
+        q: "Is there Asian speed dating in Derby?",
+        a: "Normanton's community events and Nottingham's calendar are the local options, neither singles-first. Derby's own desi night has never existed, and the East Midlands corridor makes it viable overnight.",
+      },
+      {
+        q: "Where do British Asian singles in Derby actually meet?",
+        a: "Normanton Road community life, Rolls-Royce and the engineering employers, the university and Nottingham weekends. The city's desi roots run deep and its singles calendar runs empty.",
+      },
+      {
+        q: "Derby or Nottingham for the East Midlands show?",
+        a: "Twenty minutes apart, so realistically the corridor shares whichever room books first. Derby's waitlist making noise is the fastest way to host rather than travel.",
+      },
+    ],
+    sections: [
+      {
+        heading:
+          "Derby's desi community built engineering careers and no dating scene",
+        paragraphs: [
+          "Normanton Road has been Derby's South Asian heart for decades, and Rolls-Royce plus the rail and aerospace employers gave the community's generations an engineering backbone. It is a stable, rooted, prosperous scene whose singles have precisely two options: the family network operating at Normanton speed, or Nottingham's generic nightlife up the A52. Nothing in the city treats its own desi singles as an audience.",
+          "The show does. Mid-size engineering towns produce our most loyal rooms, because when the one event happens, everyone protects it.",
+        ],
+      },
+      {
+        heading: "What a Garam Masala night in Derby looks like",
+        paragraphs: [
+          "A Rolls-Royce graduate engineer and a Royal Derby doctor who have never met, on stage, going on a first date while a room that spans Normanton to Allestree reacts with East Midlands honesty. Comedian hosts, live votes and a Cathedral Quarter mixer within walking distance of everything.",
+          "Join the waitlist for first access to Derby dates, or apply to be a contestant and give the city a story beyond the trains.",
+        ],
+      },
     ],
   },
 
@@ -1240,6 +1808,34 @@ export const ukCities: Record<string, CityData> = {
       {
         q: "Can I apply to be a contestant?",
         a: "Yes. Apply now. Applications stay active for 12 months. Middlesbrough applicants will be prioritized when we confirm a date.",
+      },
+      {
+        q: "Is there Asian speed dating in Middlesbrough?",
+        a: "Teesside has never had a desi singles event of any description. Teesside University's Indian intake built the audience; the North East's event deficit left the field empty. Empty fields are our favourite venues.",
+      },
+      {
+        q: "Where do South Asian singles in Middlesbrough actually meet?",
+        a: "Teesside University circles, James Cook hospital cohorts and Linthorpe Road's food spots. The pool is compact, the alternatives are an hour away in Newcastle and the demand shows up in our DMs regardless.",
+      },
+      {
+        q: "Would a Boro show pull from Durham and Darlington?",
+        a: "The whole Tees Valley plus Durham's students sits within forty minutes. One Boro room serves a region that has never once been served.",
+      },
+    ],
+    sections: [
+      {
+        heading: "Teesside got the students and none of the scene",
+        paragraphs: [
+          "Teesside University's affordable international offer made Middlesbrough a genuine Indian student destination, and James Cook University Hospital adds medics to the mix. The North East's cultural programming never followed the students down the A19: Newcastle keeps the events, the Boro keeps the quiet and a community of thousands cycles through degrees with a social life measured in society meetings.",
+          "The overlooked-town chip on the shoulder is real fuel here. When the show that plays Manhattan books Middlesbrough, the room takes it personally in the best way.",
+        ],
+      },
+      {
+        heading: "What a Garam Masala night in the Boro looks like",
+        paragraphs: [
+          "A Teesside computing masters student and a James Cook doctor who have never met, on stage, going on a first date while the Tees Valley's entire desi scene reacts in one room with a parmo waiting after. Comedian hosts, live votes and a Linthorpe Road mixer that makes the case Newcastle never let Boro make.",
+          "Join the waitlist to put Teesside on the tour, or apply to be a contestant and give the town a first it will keep.",
+        ],
       },
     ],
   },
@@ -1290,6 +1886,34 @@ export const ukCities: Record<string, CityData> = {
         q: "Can I apply to be a contestant?",
         a: "Yes. Apply now. Applications stay active for 12 months. Sunderland applicants will be prioritized when we confirm a date.",
       },
+      {
+        q: "Is there Asian speed dating in Sunderland?",
+        a: "Wearside's desi singles have university circles and a Metro ride to Newcastle. Nothing local, nothing singles-first, which in our routing translates to: available market, motivated crowd.",
+      },
+      {
+        q: "Where do South Asian singles in Sunderland actually meet?",
+        a: "University of Sunderland's growing Indian cohort, the hospital trust and the city centre's compact social strip. The pool is small and completely unintroduced, which one night fixes.",
+      },
+      {
+        q: "Sunderland or Newcastle for the North East show?",
+        a: "Newcastle has the mass, Sunderland has the underdog turnout. If the Wearside waitlist keeps its pace, the Mackems host and the Toon takes the Metro for once.",
+      },
+    ],
+    sections: [
+      {
+        heading: "Wearside's desi crowd is small, new and completely unclaimed",
+        paragraphs: [
+          "The University of Sunderland's international recruitment built a young Indian community on Wearside from nearly nothing in a decade, supplemented by NHS staffing at the Royal. There is no legacy community structure, no event calendar and no expectation, which paradoxically makes it one of the most interesting stops on the map: everything the scene becomes starts from the first room someone bothers to book.",
+          "Working class crowd energy without pretence is this show's natural habitat. The format needs honest reactions and Wearside has never once withheld an opinion.",
+        ],
+      },
+      {
+        heading: "What a Garam Masala night in Sunderland looks like",
+        paragraphs: [
+          "Two Wearside singles who have never met, on stage, going on a first date while a crowd that saves its politeness for no one reacts in real time. Comedian hosts, live votes and a mixer where the night's honesty carries straight through to the numbers exchanged.",
+          "Join the waitlist to give Sunderland its first, or apply to be a contestant and let the Mackems claim you.",
+        ],
+      },
     ],
   },
 
@@ -1338,6 +1962,34 @@ export const ukCities: Record<string, CityData> = {
       {
         q: "Can I apply to be a contestant?",
         a: "Yes. Apply now. Applications stay active for 12 months. Swansea applicants will be prioritized when we confirm a date.",
+      },
+      {
+        q: "Is there Indian speed dating in Swansea?",
+        a: "West Wales has no desi singles events at all, and Cardiff's occasional ones are an hour east. Swansea's university-driven desi community deserves a night that does not require the M4.",
+      },
+      {
+        q: "Where do South Asian singles in Swansea actually meet?",
+        a: "Swansea University's Bay and Singleton campuses, Morriston Hospital's cohorts and Wind Street on weekends. Compact scene, gorgeous coastline, zero occasions. Two of three sorted, we bring the third.",
+      },
+      {
+        q: "Would a Swansea show pull from Cardiff?",
+        a: "If Cardiff can host, Swansea can host. West Wales showing up on the waitlist is how the show goes west of the capital, and the Mumbles mixer potential alone argues for it.",
+      },
+    ],
+    sections: [
+      {
+        heading: "Swansea's desi students live in Cardiff's shadow by accident",
+        paragraphs: [
+          "Swansea University's competitive international offer built a real South Asian student community on the bay, with Morriston Hospital adding medics and a small settled community anchoring it. Everything cultural in Wales defaults to Cardiff, so Swansea's desi singles inherit an hour's drive for any event and a local scene of society meetings and Wind Street's generalist chaos.",
+          "A Swansea show makes the west host for once. Small coastal city, tight desi scene, sea air at the mixer: some tour stops sell themselves internally and this is one.",
+        ],
+      },
+      {
+        heading: "What a Garam Masala night in Swansea looks like",
+        paragraphs: [
+          "A Swansea engineering masters student and a Morriston doctor who have never met, on stage, going on a first date while west Wales's whole desi scene fills a room by the bay. Comedian hosts, live votes and a mixer that ends at the Mumbles if the weather cooperates.",
+          "Join the waitlist to bring the show west, or apply to be a contestant and give Swansea its own headline.",
+        ],
       },
     ],
   },
@@ -1388,6 +2040,34 @@ export const ukCities: Record<string, CityData> = {
         q: "Can I apply to be a contestant?",
         a: "Yes. Apply now. Applications stay active for 12 months. Bath applicants will be prioritized when we confirm a date.",
       },
+      {
+        q: "Is there Indian speed dating in Bath?",
+        a: "Bath's social calendar is heritage-grade and dating-poor: nothing desi, nothing singles-first, everything gorgeous. We add the missing category and borrow the architecture as set dressing.",
+      },
+      {
+        q: "Where do South Asian singles in Bath actually meet?",
+        a: "University of Bath's engineering and management cohorts, the RUH and Bristol's scene twenty minutes away, which absorbs most of the effort. A Bath room keeps one night in the postcode.",
+      },
+      {
+        q: "Bath show or just attend Bristol's?",
+        a: "The cities share a scene and twenty minutes of track, so the first booking serves both. Bath's case is atmosphere: no tour stop will look better in the photos.",
+      },
+    ],
+    sections: [
+      {
+        heading: "Bath is beautiful, small and romantically inert",
+        paragraphs: [
+          "The University of Bath pulls a strong South Asian cohort into a city built for admiring rather than mingling: high social polish, small circles and a night economy aimed at visitors. Desi students and the RUH's medics cycle through years here with a dating life outsourced entirely to Bristol and the apps, in a city that objectively looks like the set of a romance nobody is filming.",
+          "One show films it, metaphorically. A live dating format against Georgian stone is the easiest atmosphere win on the UK map.",
+        ],
+      },
+      {
+        heading: "What a Garam Masala night in Bath looks like",
+        paragraphs: [
+          "A Bath management masters student and an RUH doctor who have never met, on stage, going on a first date in the most architecturally overqualified venue on tour. Comedian hosts, live votes and a mixer where the walk through the crescents does half the romancing.",
+          "Join the waitlist to bring the show to the spa city, or apply to be a contestant and get a love story with listed-building backdrops.",
+        ],
+      },
     ],
   },
 
@@ -1436,6 +2116,34 @@ export const ukCities: Record<string, CityData> = {
       {
         q: "Can I apply to be a contestant?",
         a: "Yes. Apply now. Applications stay active for 12 months. Exeter applicants will be prioritized when we confirm a date.",
+      },
+      {
+        q: "Is there Indian speed dating in Exeter?",
+        a: "The South West peninsula has nothing between Bristol and the sea. Exeter's Russell Group desi cohort dates through apps that suggest people in other counties. A local show resets a pool this size in one evening.",
+      },
+      {
+        q: "Where do South Asian singles in Exeter actually meet?",
+        a: "The university's campuses, the RD&E hospital and the quay on sunny weekends. Small scene, complete context, no occasions. The template case for a live format.",
+      },
+      {
+        q: "Would Plymouth and the peninsula come up?",
+        a: "For the only desi singles night in Devon's history? Plymouth, Torbay and even Cornwall's scattered desis are all within striking distance and demonstrably starved for exactly this.",
+      },
+    ],
+    sections: [
+      {
+        heading: "Exeter is where the desi app radius gives up",
+        paragraphs: [
+          "The University of Exeter brings a genuine South Asian cohort to a city where the dating apps visibly run out of people: the radius expands to Bristol, then Cardiff, then surrender. The RD&E adds medics and the peninsula's scattered desi professionals look to Exeter as their hub by default, because there is nothing else between here and Land's End.",
+          "Peninsula markets reward whoever shows up first with total loyalty. Devon's first desi singles night will be Devon's desi singles institution, immediately and by acclamation.",
+        ],
+      },
+      {
+        heading: "What a Garam Masala night in Exeter looks like",
+        paragraphs: [
+          "An Exeter economics finalist and an RD&E doctor who have never met, on stage, going on a first date while the entire peninsula's desi scene fits in one room and intends to remember it. Comedian hosts, live votes and a quayside mixer with Devon doing the scenery.",
+          "Join the waitlist to bring the show west of Bristol, or apply to be a contestant and make peninsula history.",
+        ],
       },
     ],
   },
@@ -1492,6 +2200,34 @@ export const ukCities: Record<string, CityData> = {
         q: "Can I apply to be a contestant?",
         a: "Yes. Apply now. Applications stay active for 12 months. York applicants will be prioritized when we confirm a date.",
       },
+      {
+        q: "Is there Indian speed dating in York?",
+        a: "York's event economy serves tourists and ghosts, not desi singles. The university's South Asian cohort and the city's young professionals have Leeds twenty five minutes away and nothing at home. One booking changes the home fixture list.",
+      },
+      {
+        q: "Where do South Asian singles in York actually meet?",
+        a: "The university's Heslington campuses, the hospital and the Micklegate run on weekends. Small pool, high turnover, zero desi occasions between graduation ceremonies.",
+      },
+      {
+        q: "York show or Leeds show for this corner of Yorkshire?",
+        a: "Leeds has the mass, York has the setting. Realistically Leeds hosts first and York's waitlist decides whether the medieval walls get their own night after.",
+      },
+    ],
+    sections: [
+      {
+        heading: "York's desi students pass through a postcard without meeting",
+        paragraphs: [
+          "The University of York's computer science, management and health cohorts bring a steady South Asian population to a city preserved for visitors: the Shambles sells fudge, the walls sell history and nothing anywhere sells the possibility of meeting someone who shares your culture. The students cycle through three year degrees dating via Leeds' apps, and the city's own young desi professionals barely register each other's existence.",
+          "One show inside the walls converts a postcard into a scene, however briefly, and briefly is all a good mixer needs.",
+        ],
+      },
+      {
+        heading: "What a Garam Masala night in York looks like",
+        paragraphs: [
+          "A York data science masters student and a hospital physio who have never met, on stage, going on a first date in a city that has hosted everything for two thousand years except this. Comedian hosts, live votes and a mixer in the Shambles' shadow where the gothic atmosphere does overtime.",
+          "Join the waitlist to give York its first, or apply to be a contestant and add your chapter to a very old city's very new scene.",
+        ],
+      },
     ],
   },
 
@@ -1540,6 +2276,35 @@ export const ukCities: Record<string, CityData> = {
       {
         q: "Can I apply to be a contestant?",
         a: "Yes. Apply now. Applications stay active for 12 months. Durham applicants will be prioritized when we confirm a date.",
+      },
+      {
+        q: "Is there Indian speed dating in Durham?",
+        a: "Durham's colleges run formals, not dating events, and the desi cohort cycles through them meeting the same circles annually. The North East's show routing treats Durham as a prestige stop with a guaranteed sell-out crowd.",
+      },
+      {
+        q: "Where do South Asian singles in Durham actually meet?",
+        a: "College bars, department clusters and the two streets that constitute the city's nightlife. The collegiate system builds bonds and buries romance. A neutral room does what the colleges structurally cannot.",
+      },
+      {
+        q: "Would Newcastle students come down?",
+        a: "Fifteen minutes on the train each way, and the rivalry makes the audience votes spicier. A Durham show is a Durham-Newcastle show with better architecture.",
+      },
+    ],
+    sections: [
+      {
+        heading:
+          "Durham's collegiate system is a friendship machine and a dating wall",
+        paragraphs: [
+          "Durham's colleges are brilliant at making friends and terrible at making couples: the same faces at every formal, social circles assigned at enrollment and a town small enough that the walk between all possible venues takes eleven minutes. The South Asian cohort, strong in the sciences and the business school, exhausts its social graph by Christmas of first year and spends the rest of the degree on apps pointed at Newcastle.",
+          "One neutral show cuts across every college at once, which the entire collegiate calendar never manages. The format is the exeat the system needs.",
+        ],
+      },
+      {
+        heading: "What a Garam Masala night in Durham looks like",
+        paragraphs: [
+          "Two Durham postgrads from colleges that never mix, on stage, going on a first date while the cathedral looms and the whole cohort reacts. Comedian hosts, live votes and a riverside mixer where the college scarves finally come off, metaphorically.",
+          "Join the waitlist for first access to Durham dates, or apply to be a contestant and give the colleges something to gossip across walls about.",
+        ],
       },
     ],
   },
@@ -1596,6 +2361,35 @@ export const ukCities: Record<string, CityData> = {
         q: "Can I apply to be a contestant?",
         a: "Yes. Apply now. Applications stay active for 12 months. Norwich applicants will be prioritized when we confirm a date.",
       },
+      {
+        q: "Is there Indian speed dating in Norwich?",
+        a: "East Anglia's desi singles have UEA circles and a two hour train to London. Norwich's isolation means the first desi singles night here instantly owns the entire region's calendar.",
+      },
+      {
+        q: "Where do South Asian singles in Norwich actually meet?",
+        a: "UEA's campus, the Norfolk and Norwich hospital and the lanes on weekends. Compact scene, committed residents and zero desi occasions in living memory.",
+      },
+      {
+        q: "Does Norwich's isolation help or hurt?",
+        a: "Helps enormously. Nobody passes through Norwich, so everyone in the room chose to be there, and rooms full of people who committed always outperform rooms full of people who wandered in.",
+      },
+    ],
+    sections: [
+      {
+        heading:
+          "Norwich's desi scene is small, settled and completely unserved",
+        paragraphs: [
+          "UEA built Norwich's South Asian community through its science and health programs, and the Norfolk and Norwich hospital keeps a share local after graduation. East Anglia's geography does the rest: not on the way to anywhere, two hours from London and a local desi social calendar consisting of one Diwali event and personal initiative. The singles who stay genuinely love the city and date as if it has no other desis in it, which is false and fixable.",
+          "A fine city, as the sign says, deserves a fine night. The first one becomes the fixture by default.",
+        ],
+      },
+      {
+        heading: "What a Garam Masala night in Norwich looks like",
+        paragraphs: [
+          "A UEA researcher and an NNUH doctor who have never met, on stage, going on a first date while East Anglia's entire desi scene reacts in one room off the lanes. Comedian hosts, live votes and a mixer where the medieval streets handle the after-hours wandering.",
+          "Join the waitlist to bring the show east, or apply to be a contestant and give Norwich a story the fine city keeps.",
+        ],
+      },
     ],
   },
 
@@ -1644,6 +2438,34 @@ export const ukCities: Record<string, CityData> = {
       {
         q: "Can I apply to be a contestant?",
         a: "Yes. Apply now. Applications stay active for 12 months. Lancaster applicants will be prioritized when we confirm a date.",
+      },
+      {
+        q: "Is there Indian speed dating in Lancaster?",
+        a: "Lancaster's colleges run socials and the city runs quiet. Nothing desi, nothing singles-first, and Manchester is an hour away. The first local show owns the market on arrival.",
+      },
+      {
+        q: "Where do South Asian singles in Lancaster actually meet?",
+        a: "The campus colleges, the management school's cohorts and the two-street city centre. Everyone knows everyone by week five. New context has to be imported, which is precisely our cargo.",
+      },
+      {
+        q: "Would Preston and the coast come?",
+        a: "Preston's own desi community is twenty minutes south with nothing comparable, so yes. A Lancaster show quietly serves most of north Lancashire.",
+      },
+    ],
+    sections: [
+      {
+        heading: "Lancaster's campus bubble has a desi wing and no exit",
+        paragraphs: [
+          "Lancaster University's ranking pulls South Asian students to a campus three miles from a small city, and the collegiate system keeps social life on the hill: college bars, society events and a bus into town that most people skip. The desi cohort's dating options are the same faces at escalating proximity, apps that suggest Preston and patience.",
+          "A show in town gives the bubble a reason to burst for one night, and pulls in the north Lancashire professionals the campus never sees.",
+        ],
+      },
+      {
+        heading: "What a Garam Masala night in Lancaster looks like",
+        paragraphs: [
+          "A management school masters student and a Royal Lancaster doctor who have never met, on stage, going on a first date while the hill and the city share a room for once. Comedian hosts, live votes and a mixer under the castle where the bus timetable stops mattering.",
+          "Join the waitlist for first access to Lancaster dates, or apply to be a contestant and give the colleges a legend.",
+        ],
       },
     ],
   },
@@ -1700,6 +2522,35 @@ export const ukCities: Record<string, CityData> = {
         q: "Can I apply to be a contestant?",
         a: "Yes. Apply now. Applications stay active for 12 months. Warwick/Leamington Spa applicants will be prioritized when we confirm a date.",
       },
+      {
+        q: "Is there Indian speed dating in Leamington Spa?",
+        a: "Warwick's enormous desi cohort has society galas and Diwali on the Piazza, and no dating events whatsoever. Leamington's Parade has the venues. The equation solves itself.",
+      },
+      {
+        q: "Where do Warwick desi students actually meet?",
+        a: "The Piazza, the library's endless floors, society circles and Leamington house parties. One of Britain's biggest desi student populations dates through Instagram mutuals and luck.",
+      },
+      {
+        q: "Campus or Leamington for the venue?",
+        a: "Leamington, where the social life already lives. The Parade's venues plus the student housing density means half the audience walks home, which is mixer math we love.",
+      },
+    ],
+    sections: [
+      {
+        heading:
+          "Warwick has Britain's densest desi campus and no dating layer",
+        paragraphs: [
+          "Warwick's South Asian population is among the largest of any UK university, dense enough that its Diwali celebration fills the Piazza and its societies run like mid-size companies. The social structure is entirely group-based: society committees, course clusters and Leamington houses of eight. Pairing off inside machinery this communal is genuinely awkward, and the apps just reshuffle the same campus deck.",
+          "A live show gives the campus its missing format: public, funny, opt-in and finally about two individuals instead of a committee.",
+        ],
+      },
+      {
+        heading: "What a Garam Masala night in Leamington looks like",
+        paragraphs: [
+          "A WBS finalist and an engineering PhD who have never met, despite four mutual societies, on stage, going on a first date while half the Piazza's Diwali crowd reacts. Comedian hosts, live votes and a Parade mixer that the group chats will annotate for weeks.",
+          "Join the waitlist for first access to Warwick dates, or apply to be a contestant and outrank every society exec position on your CV.",
+        ],
+      },
     ],
   },
 
@@ -1754,6 +2605,34 @@ export const ukCities: Record<string, CityData> = {
       {
         q: "Can I apply to be a contestant?",
         a: "Yes. Apply now. Applications stay active for 12 months. Loughborough applicants will be prioritized when we confirm a date.",
+      },
+      {
+        q: "Is there Indian speed dating in Loughborough?",
+        a: "Loughborough's calendar is sport, sport and society events. Its desi engineering and business cohorts have Leicester's scene twenty minutes away and nothing on campus. We fix the home schedule.",
+      },
+      {
+        q: "Where do Loughborough desi students actually meet?",
+        a: "The engineering buildings, the gym at competitive hours and the three venues everyone rotates through weekly. High fitness, low serendipity.",
+      },
+      {
+        q: "Would Leicester's crowd come up?",
+        a: "The corridor works both ways: Loughborough students already train down for Leicester's Golden Mile. A campus-town show pulls the reverse crowd plus Nottingham's overflow.",
+      },
+    ],
+    sections: [
+      {
+        heading: "Loughborough trains everything except this",
+        paragraphs: [
+          "Loughborough's sporting machine gives the campus a specific personality: disciplined, energetic and scheduled to the half hour. Its South Asian cohort in engineering, business and sport science inherits the culture, and the dating life shows it: everyone is in peak condition and nobody has an unstructured hour to meet someone. The apps get treated like a training block and abandoned like one too.",
+          "A live show is a scheduled block for exactly the thing the schedule crowds out. The audience fitness levels will be the highest on tour and the mixer stamina limitless.",
+        ],
+      },
+      {
+        heading: "What a Garam Masala night in Loughborough looks like",
+        paragraphs: [
+          "A sports engineering finalist and a business school postgrad who have never met, on stage, going on a first date while a campus that cheers professionally reacts at full volume. Comedian hosts, live votes and a mixer that half the room logs as cardio.",
+          "Join the waitlist for first access to Loughborough dates, or apply to be a contestant and compete in the one event this campus has never medalled in.",
+        ],
       },
     ],
   },
@@ -1810,6 +2689,34 @@ export const ukCities: Record<string, CityData> = {
         q: "Can I apply to be a contestant?",
         a: "Yes. Apply now. Applications stay active for 12 months. Stoke-on-Trent applicants will be prioritized when we confirm a date.",
       },
+      {
+        q: "Is there Asian speed dating in Stoke?",
+        a: "The Potteries' desi singles have community events in Shelton and Cobridge and a drive to Manchester or Birmingham for everything else. Nothing local, nothing singles-first. That gap is the invitation.",
+      },
+      {
+        q: "Where do British Asian singles in Stoke actually meet?",
+        a: "Staffordshire and Keele university circles, the Royal Stoke's cohorts and community life in the six towns. The scene is older and deeper than outsiders assume and completely without occasions.",
+      },
+      {
+        q: "Would a Stoke show pull from the whole corridor?",
+        a: "Stoke sits between Manchester and Birmingham with cheap venues and a motorway junction. The M6 corridor's overlooked desi towns, Crewe to Stafford, all fall within its pull.",
+      },
+    ],
+    sections: [
+      {
+        heading: "The Potteries have desi roots and zero programming",
+        paragraphs: [
+          "Stoke's South Asian community dates to the pottery industry's labour recruitment, with established Pakistani and Indian neighbourhoods in Shelton, Cobridge and Normacot, plus Keele and Staffordshire universities adding students and the Royal Stoke adding medics. The cultural investment all, famously, went elsewhere: Manchester and Birmingham absorb the region's desi social life, and the six towns keep the quiet.",
+          "Overlooked markets take nothing for granted. A Stoke show gets a room that treats the night as an event because it is one, singular, the first of its kind.",
+        ],
+      },
+      {
+        heading: "What a Garam Masala night in Stoke looks like",
+        paragraphs: [
+          "A Keele medic and a Staffs computing grad who have never met, on stage, going on a first date while the six towns react as one for once. Comedian hosts, live votes and a mixer where the oatcake debate is the compatibility screening.",
+          "Join the waitlist to put the Potteries on the tour, or apply to be a contestant and give Stoke a first worth firing in a kiln.",
+        ],
+      },
     ],
   },
 
@@ -1858,6 +2765,35 @@ export const ukCities: Record<string, CityData> = {
       {
         q: "Can I apply to be a contestant?",
         a: "Yes. Apply now. Applications stay active for 12 months. Peterborough applicants will be prioritized when we confirm a date.",
+      },
+      {
+        q: "Is there Asian speed dating in Peterborough?",
+        a: "Lincoln Road's community life covers everything except singles. Peterborough's desi crowd either takes the fast train to London events or stays home, and the fast train ruins the maths. Local is the answer.",
+      },
+      {
+        q: "Where do British Asian singles in Peterborough actually meet?",
+        a: "Lincoln Road's institutions, the hospital, the logistics and back-office employers and King's Cross-bound trains. Thirty years of community depth, zero singles nights.",
+      },
+      {
+        q: "Would Cambridge come up for a Peterborough show?",
+        a: "Fifty minutes by train, and Cambridge's desi tech crowd has nothing of its own yet either. Whichever city hosts first, the other supplies a carriage of attendees.",
+      },
+    ],
+    sections: [
+      {
+        heading:
+          "Lincoln Road built the community, London borrowed the singles",
+        paragraphs: [
+          "Peterborough's South Asian community has three decades of roots along Lincoln Road: Pakistani and Indian families, the mosques, the food and a settled confidence about its own identity. The city's rail position, 50 minutes to King's Cross, gives its young singles the classic commuter deal: community at home, social life in London and a growing exhaustion with the return ticket cost of every attempt at romance.",
+          "A local show ends the away-game era. Fenland's desi singles get one night where the last train is irrelevant.",
+        ],
+      },
+      {
+        heading: "What a Garam Masala night in Peterborough looks like",
+        paragraphs: [
+          "Two Peterborough singles who have never met, on stage, going on a first date while a Lincoln Road crowd reacts at full family-wedding volume without a single family member officiating. Comedian hosts, live votes and a mixer where the walk home replaces the rail replacement bus.",
+          "Join the waitlist for first access to Peterborough dates, or apply to be a contestant and headline your own city.",
+        ],
       },
     ],
   },
@@ -1914,6 +2850,34 @@ export const ukCities: Record<string, CityData> = {
         q: "Can I apply to be a contestant?",
         a: "Yes. Apply now. Applications stay active for 12 months. Walsall applicants will be prioritized when we confirm a date.",
       },
+      {
+        q: "Is there Asian speed dating in Walsall?",
+        a: "Caldmore's social machinery is thorough and entirely matrimonial. A comedy dating show gives Walsall's singles the plausible deniability of a night out with the functionality of an introduction service, minus the paperwork.",
+      },
+      {
+        q: "Where do British Asian singles in Walsall actually meet?",
+        a: "Caldmore and Palfrey community life, Birmingham's scene twenty minutes down the M6 and family recommendations with terms and conditions. A local singles night has never existed. First mover advantage is real.",
+      },
+      {
+        q: "Why not just go to a Birmingham show?",
+        a: "Many will do both, but a Walsall night means the auntie network's home turf hosts the one event it cannot fully surveil. That alone sells tickets.",
+      },
+    ],
+    sections: [
+      {
+        heading: "Caldmore's information network needs counterprogramming",
+        paragraphs: [
+          "Walsall's South Asian community, concentrated in Caldmore, Palfrey and Pleck, operates one of the West Midlands' most efficient social information networks: who is single, who is seeing someone and who was seen at Nando's with whom, all processed in near real time. The singles' rational response has been to conduct their entire romantic lives in Birmingham, anonymously.",
+          "The show offers a better deal: a hometown event where being seen is the format, the comedy provides the cover and the mixer provides the outcome. The network can report whatever it likes; you were at a show.",
+        ],
+      },
+      {
+        heading: "What a Garam Masala night in Walsall looks like",
+        paragraphs: [
+          "Two Walsall singles who have never met, improbable but verifiable, on stage, going on a first date while a Caldmore-raised crowd reacts with the honesty the Black Country is contractually obligated to provide. Comedian hosts, live votes and a mixer that generates a week of grapevine content with everyone's blessing.",
+          "Join the waitlist for first access to Walsall dates, or apply to be a contestant and give the network something accurate to report for once.",
+        ],
+      },
     ],
   },
 
@@ -1969,6 +2933,34 @@ export const ukCities: Record<string, CityData> = {
         q: "Can I apply to be a contestant?",
         a: "Yes. Apply now. Applications stay active for 12 months. Oldham applicants will be prioritized when we confirm a date.",
       },
+      {
+        q: "Is there Asian speed dating in Oldham?",
+        a: "Oldham's introductions run through families and mosques, with Manchester's nightlife absorbing whoever opts out. Nothing local serves the second gen singles caught between those systems. That is exactly our lane.",
+      },
+      {
+        q: "Where do British Asian singles in Oldham actually meet?",
+        a: "Glodwick and Werneth community life, Manchester tram rides and workplaces across Greater Manchester. The community is one of Britain's most concentrated and its singles calendar is empty.",
+      },
+      {
+        q: "Oldham show or Manchester show?",
+        a: "Manchester will host the region's big room, but Oldham's density argues for its own night. Waitlist numbers from OL postcodes are the tiebreaker.",
+      },
+    ],
+    sections: [
+      {
+        heading: "Oldham's second gen carries two rulebooks and no venue",
+        paragraphs: [
+          "Oldham's Pakistani and Bangladeshi communities are among Britain's most concentrated, and its young British Asians live the classic mill town double life: community expectations at home in Glodwick and Werneth, mainstream social life a tram ride away in Manchester and no space that honours both at once. The result is a generation dating in secret, at distance or not at all.",
+          "A local show is the both-worlds venue: desi enough that the community recognises itself, modern enough that the singles actually want to be there.",
+        ],
+      },
+      {
+        heading: "What a Garam Masala night in Oldham looks like",
+        paragraphs: [
+          "Two Oldhamers who have never met, on stage, going on a first date while a crowd that shares every reference point reacts without translation. Comedian hosts, live votes and a mixer where the tram home is optional because home is ten minutes away.",
+          "Join the waitlist for first access to Oldham dates, or apply to be a contestant and give the town's grapevine a headline act.",
+        ],
+      },
     ],
   },
 
@@ -2017,6 +3009,34 @@ export const ukCities: Record<string, CityData> = {
       {
         q: "Can I apply to be a contestant?",
         a: "Yes. Apply now. Applications stay active for 12 months. Blackburn applicants will be prioritized when we confirm a date.",
+      },
+      {
+        q: "Is there Asian speed dating in Blackburn?",
+        a: "Blackburn with Darwen's proportionally huge desi community runs on family and mosque networks with no singles events at all. Manchester is forty minutes away and might as well be another country on a weeknight. Local is the unlock.",
+      },
+      {
+        q: "Where do British Asian singles in Blackburn actually meet?",
+        a: "Whalley Range and Audley community life, the college and workplace circles across East Lancashire. Deep roots, tight networks, zero neutral ground. We supply the neutral ground.",
+      },
+      {
+        q: "Would Burnley and East Lancashire come?",
+        a: "Burnley, Accrington and Preston's desi communities all sit within half an hour and share the same event drought. A Blackburn show is an East Lancashire show by geography.",
+      },
+    ],
+    sections: [
+      {
+        heading: "East Lancashire's mill towns share one dating problem",
+        paragraphs: [
+          "Blackburn anchors a string of Lancashire mill towns, Burnley, Accrington, Darwen, whose South Asian communities go back to the textile recruitment era and remain among Britain's most proportionally concentrated. The social structures are strong and traditional, the singles inherit an introduction system with exactly one setting, formal, and the regional alternative is a Manchester night that requires planning permission from three group chats.",
+          "One East Lancashire show serves the whole corridor: local enough to attend spontaneously, big enough to gather towns that never socialise together.",
+        ],
+      },
+      {
+        heading: "What a Garam Masala night in Blackburn looks like",
+        paragraphs: [
+          "Two East Lancashire singles who have never met, on stage, going on a first date while a crowd from four mill towns reacts as one. Comedian hosts, live votes and a mixer that finally introduces Blackburn to Burnley for reasons unrelated to football hostility.",
+          "Join the waitlist for first access to Blackburn dates, or apply to be a contestant and give East Lancs its first great dating story.",
+        ],
       },
     ],
   },
@@ -2073,6 +3093,34 @@ export const ukCities: Record<string, CityData> = {
         q: "Can I apply to be a contestant?",
         a: "Yes. Apply now. Applications stay active for 12 months. Bolton applicants will be prioritized when we confirm a date.",
       },
+      {
+        q: "Is there Asian speed dating in Bolton?",
+        a: "Bolton's desi social calendar runs through Deane and Daubhill's community institutions, all family formats. The singles get Manchester's orbit or nothing. A hometown show is the third option that never existed.",
+      },
+      {
+        q: "Where do British Asian singles in Bolton actually meet?",
+        a: "Deane Road's community life, the university, Manchester commutes and weddings where everyone takes notes. The Albert Halls host everything else; it is time they hosted this.",
+      },
+      {
+        q: "Bolton show or just tram into Manchester?",
+        a: "Manchester's room will exist, but Bolton's community density plus the Octagon's live culture makes a genuine local case. BL postcode waitlist numbers decide.",
+      },
+    ],
+    sections: [
+      {
+        heading: "Bolton has the venues and the community, just never together",
+        paragraphs: [
+          "Bolton's South Asian community around Deane, Daubhill and Great Lever is one of Greater Manchester's largest, and the town separately maintains a real live culture through the Octagon and the Albert Halls. The two facts have never once intersected: the venues host touring drama and tribute acts while the community's events stay in community halls, and the desi singles drain toward Manchester nightly.",
+          "One booking intersects them. A live desi dating show in a proper Bolton venue is the town's two strengths finally shaking hands.",
+        ],
+      },
+      {
+        heading: "What a Garam Masala night in Bolton looks like",
+        paragraphs: [
+          "Two Boltonians who have never met, on stage, going on a first date while a crowd that knows both their postcodes reacts with northern candour. Comedian hosts, live votes and a mixer where the chippy recommendation is the trust exercise.",
+          "Join the waitlist for first access to Bolton dates, or apply to be a contestant and give the town a show worth staying home for.",
+        ],
+      },
     ],
   },
 
@@ -2122,6 +3170,35 @@ export const ukCities: Record<string, CityData> = {
         q: "Can I apply to be a contestant?",
         a: "Yes. Apply now. Applications stay active for 12 months. Huddersfield applicants will be prioritized when we confirm a date.",
       },
+      {
+        q: "Is there Asian speed dating in Huddersfield?",
+        a: "Huddersfield sits between three cities' scenes and hosts none of its own. The desi singles commute to Leeds, Bradford or Manchester for events that could fit in a room off the ring road. We book the room.",
+      },
+      {
+        q: "Where do British Asian singles in Huddersfield actually meet?",
+        a: "The university, Birkby and Thornton Lodge community life and other towns' nights out. Corridor towns always underestimate their own pull until the first local event sells through.",
+      },
+      {
+        q: "Why Huddersfield and not just Leeds or Bradford?",
+        a: "Because pass-through towns deserve destination nights, and because a Huddersfield room splits the difference for the whole Kirklees desi crowd. The M62 works in every direction.",
+      },
+    ],
+    sections: [
+      {
+        heading:
+          "Huddersfield is nobody's destination and everybody's midpoint",
+        paragraphs: [
+          "Huddersfield's Pakistani community in Birkby, Thornton Lodge and Crosland Moor has generations of West Yorkshire roots, and the university adds a steady international layer. The town's curse is corridor geography: Leeds, Bradford and Manchester all within forty minutes means every event, every night out and every date happens somewhere else, and the local scene never accumulates.",
+          "Destination programming reverses the flow. One night where Leeds and Bradford drive to Huddersfield rewrites the town's social self-image, and the format is strong enough to do it.",
+        ],
+      },
+      {
+        heading: "What a Garam Masala night in Huddersfield looks like",
+        paragraphs: [
+          "Two Kirklees singles who have never met, on stage, going on a first date while a crowd drawn from three cities' worth of corridors reacts in the town they usually drive through. Comedian hosts, live votes and a mixer that makes the case for staying local.",
+          "Join the waitlist for first access to Huddersfield dates, or apply to be a contestant and put HD postcodes on the map.",
+        ],
+      },
     ],
   },
 
@@ -2170,6 +3247,34 @@ export const ukCities: Record<string, CityData> = {
       {
         q: "Can I apply to be a contestant?",
         a: "Yes. Apply now. Applications stay active for 12 months. Cardiff applicants will be prioritized when we confirm a date.",
+      },
+      {
+        q: "Is there Asian speed dating in Cardiff?",
+        a: "Wales's Asian singles events are occasional and quiet, which for a capital city with Riverside's community depth and three universities is undersupply on a national scale. The Welsh show starts here.",
+      },
+      {
+        q: "Where do South Asian singles in Cardiff actually meet?",
+        a: "Cardiff Uni and Met circles, the Heath hospital campus, Riverside and City Road's food corridor and Womanby Street on weekends. All the pieces of a scene, no assembling event.",
+      },
+      {
+        q: "Would the valleys and Newport come in?",
+        a: "All of South Wales already treats Cardiff as its night out. A capital show serves Newport, the valleys and Swansea's impatient contingent in one room.",
+      },
+    ],
+    sections: [
+      {
+        heading: "Cardiff is Wales's entire desi scene by default",
+        paragraphs: [
+          "Riverside has anchored Welsh South Asian life for generations, City Road runs the food corridor and three universities plus the Heath's hospital campus keep the population young and refreshing. Because nowhere else in Wales has critical mass, Cardiff carries the whole nation's desi social expectations and currently delivers a calendar of community events and nothing singles-first.",
+          "A capital booking is therefore a national booking: the first desi dating show in Wales, with a catchment that runs from Newport to Carmarthen.",
+        ],
+      },
+      {
+        heading: "What a Garam Masala night in Cardiff looks like",
+        paragraphs: [
+          "A Cardiff medic and a Bay tech worker who have never met, on stage, going on a first date while a room drawn from the whole of South Wales reacts with match-day lungs. Comedian hosts, live votes and a Womanby Street mixer that sings before the night ends, statistically guaranteed.",
+          "Join the waitlist for first access to Cardiff dates, or apply to be a contestant and headline for a nation.",
+        ],
       },
     ],
   },
@@ -2226,6 +3331,34 @@ export const ukCities: Record<string, CityData> = {
         q: "Can I apply to be a contestant?",
         a: "Yes. Apply now. Applications stay active for 12 months. Belfast applicants will be prioritized when we confirm a date.",
       },
+      {
+        q: "Is there Indian speed dating in Belfast?",
+        a: "Northern Ireland has never had a desi singles event. The community is new, growing through Queen's, Ulster University and the health service, and completely without its own nights. First in the province is a title we collect.",
+      },
+      {
+        q: "Where do South Asian singles in Belfast actually meet?",
+        a: "Queen's and Ulster campuses, the Royal Victoria's cohorts, the growing tech sector and the Cathedral Quarter on weekends. A young community in a city that loves a night out, minus the one night built for them.",
+      },
+      {
+        q: "Is the Belfast desi community big enough?",
+        a: "Growing faster than any UK region's from a standing start, and tight in the way new communities are. A compact Belfast room with the city's storytelling culture will punch far above its census weight.",
+      },
+    ],
+    sections: [
+      {
+        heading: "Belfast's desi story is the newest in the UK",
+        paragraphs: [
+          "Northern Ireland's South Asian community is being built right now: Queen's and Ulster University recruitment, health service staffing and a tech sector drawing engineers to a city with famously affordable living. There are no generations of community structure, no aunty networks, no legacy institutions, just arrivals finding each other through work and student societies in a city that does craic professionally.",
+          "New communities bond over firsts, and the first desi dating show in Northern Ireland is a bonding event by construction. The mixer doubles as a community founding meeting with drinks.",
+        ],
+      },
+      {
+        heading: "What a Garam Masala night in Belfast looks like",
+        paragraphs: [
+          "A Queen's PhD and a Royal Victoria doctor who have never met, on stage, going on a first date while a city that narrates everything provides live commentary of broadcast quality. Comedian hosts, live votes and a Cathedral Quarter mixer where the craic does the matchmaking.",
+          "Join the waitlist to bring the show across the water, or apply to be a contestant and become the province's founding romance.",
+        ],
+      },
     ],
   },
 
@@ -2274,6 +3407,34 @@ export const ukCities: Record<string, CityData> = {
       {
         q: "Can I apply to be a contestant?",
         a: "Yes. Apply now. Applications stay active for 12 months. Aberdeen applicants will be prioritized when we confirm a date.",
+      },
+      {
+        q: "Is there Indian speed dating in Aberdeen?",
+        a: "The Granite City's desi singles have university circles, energy sector colleagues and a three hour drive to anything resembling a scene. Nothing local exists, which is exactly the kind of nothing we replace.",
+      },
+      {
+        q: "Where do South Asian singles in Aberdeen actually meet?",
+        a: "Aberdeen and RGU campuses, the energy companies' offices and ARI's medical cohorts. Two distinct desi crowds, students and oil professionals, who share a city and no events.",
+      },
+      {
+        q: "Is Aberdeen too remote for the tour?",
+        a: "Remote markets are loyalty markets. When the only desi singles night north of the central belt happens, the whole northeast of Scotland attends and remembers. That kind of room is worth the drive.",
+      },
+    ],
+    sections: [
+      {
+        heading: "Aberdeen's two desi worlds share granite and nothing else",
+        paragraphs: [
+          "Aberdeen's South Asian community splits cleanly in two: the university crowd at Aberdeen and RGU cycling through degrees, and the energy sector professionals whose employers have recruited internationally for decades. The oil crowd earns well, socialises within companies and stays years; the students orbit campus and leave. Three hours from Glasgow or Edinburgh, both halves date locally or not at all, and locally offers nothing.",
+          "One show, both worlds, first time. Isolated markets convert singular events into permanent institutions, and Aberdeen has the disposable income to keep one running.",
+        ],
+      },
+      {
+        heading: "What a Garam Masala night in Aberdeen looks like",
+        paragraphs: [
+          "An RGU masters student and a subsea engineer who have never met, on stage, going on a first date while the granite reserve cracks in real time, because it always does once the first laugh lands. Comedian hosts, live votes and a mixer where the northeast finally introduces itself to itself.",
+          "Join the waitlist to bring the show north, or apply to be a contestant and warm up the Granite City properly.",
+        ],
       },
     ],
   },

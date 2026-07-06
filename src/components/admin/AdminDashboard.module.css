@@ -154,9 +154,8 @@
   border-radius: 4px;
   background: #fff;
   font-family: var(--font-body);
-  font-size: 14px;
+  font-size: 16px;
   color: var(--text);
-  outline: none;
   transition:
     border-color 0.15s,
     box-shadow 0.15s;
@@ -166,21 +165,25 @@
   color: var(--text-light);
 }
 
-.searchInput:focus {
+.searchInput:focus-visible {
   border-color: var(--charcoal);
   box-shadow: 0 0 0 2px rgba(26, 26, 26, 0.08);
 }
 
 .searchClear {
   position: absolute;
-  right: 8px;
+  right: 0;
+  top: 50%;
+  transform: translateY(-50%);
   display: flex;
   align-items: center;
+  justify-content: center;
+  min-width: 48px;
+  min-height: 48px;
   background: none;
   border: none;
   cursor: pointer;
   color: var(--text-light);
-  padding: 2px;
   transition: color 0.15s;
 }
 

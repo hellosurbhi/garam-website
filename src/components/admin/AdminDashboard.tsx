@@ -462,7 +462,7 @@ export default function AdminDashboard({ onLogout }: AdminDashboardProps) {
                     onClick={() => setNameSearch("")}
                     aria-label="Clear search"
                   >
-                    <X size={12} />
+                    <X size={12} aria-hidden="true" />
                   </button>
                 )}
               </div>

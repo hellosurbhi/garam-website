@@ -3,6 +3,7 @@ import { fsGet } from "@/lib/firestoreRest";
 import { verifyPortalToken } from "@/lib/portalToken";
 import { events } from "@/data/events";
 import { isEventPast } from "@/utils/eventDate";
+import { enforceRateLimit, RATE_LIMITS } from "@/lib/rateLimit";
 
 export const prerender = false;
 
@@ -48,6 +49,9 @@ function normalizeRole(
 }
 
 export const GET: APIRoute = async ({ request }) => {
+  const limited = await enforceRateLimit(request, RATE_LIMITS.contestantClaim);
+  if (limited) return limited;
+
   const url = new URL(request.url);
   const inviteId = url.searchParams.get("invite");
   const showId = url.searchParams.get("show");

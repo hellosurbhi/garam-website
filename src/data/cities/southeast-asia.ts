@@ -47,6 +47,34 @@ export const southeastAsiaCities: Record<string, CityData> = {
         q: "Can I apply to be a contestant?",
         a: "Yes. Apply now. Applications stay active for 12 months. Bangkok applicants will be prioritized when we confirm a date.",
       },
+      {
+        q: "Is there Indian speed dating in Bangkok?",
+        a: "Bangkok has expat mixers for every industry and nothing for its century-old desi community plus the new expat wave. A live comedy dating show bridges Phahurat's heritage crowd and the Sukhumvit professionals in one night.",
+      },
+      {
+        q: "Where do desi singles in Bangkok actually meet?",
+        a: "Sukhumvit's expat circuit, Phahurat's community institutions, the international firms' offices and each other's Instagram stories. Two desi Bangkoks, zero shared occasions.",
+      },
+      {
+        q: "Will the show suit the expat crowd or the settled community?",
+        a: "Both by design. The format needs no local context beyond being single, and the mixer thrives on exactly the mix Bangkok's desi scene never engineers on its own.",
+      },
+    ],
+    sections: [
+      {
+        heading: "Bangkok has two desi communities that never meet",
+        paragraphs: [
+          "Phahurat's Sikh and Punjabi trading families go back over a century, with the gurdwara anchoring one of Southeast Asia's oldest desi communities. The new wave, IT professionals, finance expats and entrepreneurs along Sukhumvit, lives a parallel life of rooftop bars and serviced apartments. The two Bangkoks share festivals occasionally and social lives never, and the singles in both report the same thing: a city of endless nightlife with no night for them.",
+          "One show, both Bangkoks, one room. The mixer will be the first structured meeting these communities have had in a generation.",
+        ],
+      },
+      {
+        heading: "What a Garam Masala night in Bangkok looks like",
+        paragraphs: [
+          "A Sukhumvit fintech expat and a Phahurat family business heir who have never met, on stage, going on a first date while a genuinely multigenerational desi crowd reacts over drinks. Comedian hosts, live votes and a mixer that runs on Bangkok time, which is to say gloriously late.",
+          "Join the waitlist for first access to Bangkok dates, or apply to be a contestant and make two communities' worth of history.",
+        ],
+      },
     ],
   },
 
@@ -95,6 +123,35 @@ export const southeastAsiaCities: Record<string, CityData> = {
       {
         q: "Can I apply to be a contestant?",
         a: "Yes. Apply now. Applications stay active for 12 months. Chiang Mai applicants will be prioritized when we confirm a date.",
+      },
+      {
+        q: "Is there Indian speed dating in Chiang Mai?",
+        a: "Chiang Mai has coworking mixers, crypto meetups and retreats for every ailment, and nothing for the desi nomads and expats who quietly fill them all. A dating show is the event this city's event culture forgot.",
+      },
+      {
+        q: "Where do desi singles in Chiang Mai actually meet?",
+        a: "Nimman's cafes, coworking spaces and the digital nomad event circuit, where everyone is networking and nobody is flirting on the record. We change the record.",
+      },
+      {
+        q: "Is a nomad crowd too transient for a dating show?",
+        a: "Transience is the point: everyone here is between chapters and open to plot developments. The mixer works better when nobody is guarding a five year plan.",
+      },
+    ],
+    sections: [
+      {
+        heading:
+          "The nomad capital's desi crowd networks everything except romance",
+        paragraphs: [
+          "Chiang Mai's digital nomad machine attracts a steady stream of Indian and diaspora founders, freelancers and remote engineers, and its event culture serves them relentlessly: masterminds, coworking socials, visa run logistics groups. Romance is the one vertical nobody built, so the desi nomads network by day and swipe through a pool of tourists by night.",
+          "A live dating show is precisely calibrated for this crowd: structured enough to justify attending, playful enough to disarm the personal-brand reflex.",
+        ],
+      },
+      {
+        heading: "What a Garam Masala night in Chiang Mai looks like",
+        paragraphs: [
+          "A Bangalore-born indie founder and a diaspora UX designer who have never met, on stage, going on a first date while Nimman's entire desi nomad scene reacts between sips. Comedian hosts, live votes and a mixer that outlasts every mastermind session in the city.",
+          "Join the waitlist for first access to Chiang Mai dates, or apply to be a contestant and diversify your portfolio properly.",
+        ],
       },
     ],
   },
@@ -148,6 +205,35 @@ export const southeastAsiaCities: Record<string, CityData> = {
         q: "Can I apply to be a contestant?",
         a: "Yes. Apply now. Applications stay active for 12 months. HCMC applicants will be prioritized when we confirm a date.",
       },
+      {
+        q: "Is there Indian speed dating in Ho Chi Minh City?",
+        a: "Saigon's desi expats have industry happy hours and a community small enough to fit in two group chats. No dating events exist, which makes the first one a community festival with a format.",
+      },
+      {
+        q: "Where do desi singles in Saigon actually meet?",
+        a: "District 1 and Thao Dien's expat circuits, the IT and manufacturing employers and the same handful of Indian restaurants where everyone waves at everyone. Small pool, full context, no occasions.",
+      },
+      {
+        q: "Is the HCMC desi community big enough for a show?",
+        a: "Growing fast on the back of IT and manufacturing investment, and small communities produce the most committed rooms. Everyone attends the only event, and everyone remembers it.",
+      },
+    ],
+    sections: [
+      {
+        heading:
+          "Saigon's desi expats all know of each other and none have met",
+        paragraphs: [
+          "Ho Chi Minh City's Indian community rides Vietnam's boom: IT services, manufacturing, textiles and a growing founder crowd spread between District 1's towers and Thao Dien's expat villas. The community is precisely the awkward size, small enough that everyone recognises everyone from the same three restaurants, big enough that nobody has actually been introduced.",
+          "One night converts recognition into acquaintance at scale. The mixer is the introduction round the whole scene has been waiting for someone else to organise.",
+        ],
+      },
+      {
+        heading: "What a Garam Masala night in Saigon looks like",
+        paragraphs: [
+          "An IT delivery manager and a Thao Dien startup founder who have never met, despite four mutual friends and a shared biryani vendor, on stage, going on a first date while the whole desi expat scene reacts. Comedian hosts, live votes and a rooftop mixer because this is Saigon and rooftops are the law.",
+          "Join the waitlist for first access to HCMC dates, or apply to be a contestant and give the group chats their biggest story.",
+        ],
+      },
     ],
   },
 
@@ -196,6 +282,34 @@ export const southeastAsiaCities: Record<string, CityData> = {
       {
         q: "Can I apply to be a contestant?",
         a: "Yes. Apply now. Applications stay active for 12 months. Manila applicants will be prioritized when we confirm a date.",
+      },
+      {
+        q: "Is there Indian speed dating in Manila?",
+        a: "Manila's desi community spans generations of Sindhi trading families and a new professional wave, with community events for the former and nothing for the latter. A live show serves both and dresses up well, which Manila appreciates.",
+      },
+      {
+        q: "Where do desi singles in Manila actually meet?",
+        a: "Makati and BGC's professional circuits, the international schools' alumni networks, the settled community's institutions and Poblacion on weekends. The scene has layers that never mix. Mixing is the product.",
+      },
+      {
+        q: "Will the show fit Manila's going-out culture?",
+        a: "A city that treats every night out as an occasion and every videoke session as a performance? The audience votes will be operatic and the mixer will have a dress code by popular demand.",
+      },
+    ],
+    sections: [
+      {
+        heading: "Manila's desi generations run parallel lives",
+        paragraphs: [
+          "Manila's Indian community has real depth: Sindhi and Punjabi families generations into the textile and trading economies, plus a newer wave of BPO managers, pharma professionals and founders in Makati and BGC. The generations share temples and family friendships and no social scene, and the singles in both worlds date inside very small, very known circles.",
+          "The show gives Manila's desi singles what the city gives everyone else nightly: an occasion with production values and permission to be seen enjoying it.",
+        ],
+      },
+      {
+        heading: "What a Garam Masala night in Manila looks like",
+        paragraphs: [
+          "A BGC consultant and a third generation trading family daughter who have never met, on stage, going on a first date while a crowd that dressed for the occasion reacts with full Manila theatricality. Comedian hosts, live votes and a Poblacion mixer that treats closing time as a suggestion.",
+          "Join the waitlist for first access to Manila dates, or apply to be a contestant and give the city a love story with proper staging.",
+        ],
       },
     ],
   },
@@ -246,6 +360,35 @@ export const southeastAsiaCities: Record<string, CityData> = {
         q: "Can I apply to be a contestant?",
         a: "Yes. Apply now. Applications stay active for 12 months. Colombo applicants will be prioritized when we confirm a date.",
       },
+      {
+        q: "Is there speed dating in Colombo?",
+        a: "Colombo's singles events are rare, quiet and instantly reported to three aunties. A live comedy dating show gives the city what it actually wants: a packed event worth dressing for, with the meeting-someone part built in.",
+      },
+      {
+        q: "Where do singles in Colombo actually meet?",
+        a: "University circles, the corporate towers of Colombo 2 and 3, Wellawatte and Dehiwala community life and whatever event everyone decides matters that month. The city packs out anything good. We intend to be the thing that is good.",
+      },
+      {
+        q: "Will the show respect Colombo's social sensitivities?",
+        a: "The format is voluntary at every step and the audience just watches and votes. Colombo crowds are famously warm once the lights go down, and the mixer gives cover to everyone who officially came for the comedy.",
+      },
+    ],
+    sections: [
+      {
+        heading:
+          "Colombo complains about nothing to do and sells out everything",
+        paragraphs: [
+          "Colombo's social paradox is well documented by its own residents: everyone insists the city has no scene, and every decent event sells out in days. The dating layer suffers the same contradiction, tight social circles where everyone knows everyone's history, family expectations idling in the background and no format that lets singles meet outside the circle without it becoming an announcement.",
+          "A live show is deniable, delightful and public in the right way: you attended an event, the event happened to be full of singles and the aunties can be told it was a comedy night, because it was.",
+        ],
+      },
+      {
+        heading: "What a Garam Masala night in Colombo looks like",
+        paragraphs: [
+          "A Colombo 7 lawyer and a Wellawatte startup analyst who have never met, on stage, going on a first date while a city that lives for occasions treats the audience vote like a general election. Comedian hosts, live chaos and a mixer that migrates toward Marine Drive as the night cools.",
+          "Join the waitlist for first access to Colombo dates, or apply to be a contestant and give the island its favourite new story.",
+        ],
+      },
     ],
   },
 
@@ -294,6 +437,34 @@ export const southeastAsiaCities: Record<string, CityData> = {
       {
         q: "Can I apply to be a contestant?",
         a: "Yes. Apply now. Applications stay active for 12 months. Kandy applicants will be prioritized when we confirm a date.",
+      },
+      {
+        q: "Is there speed dating in Kandy?",
+        a: "Kandy has never had a singles event of any kind. Peradeniya's campus community and the hill capital's established families both run on introductions with official channels. We are the unofficial channel with a stage.",
+      },
+      {
+        q: "Where do singles in Kandy actually meet?",
+        a: "Peradeniya's faculties, the hospital, the tuition economy and family networks that predate the republic. A neutral, playful room is genuinely novel here, which is exactly its power.",
+      },
+      {
+        q: "Would Colombo people come up for a Kandy show?",
+        a: "The train ride is famously beautiful and Colombo treats Kandy weekends as a genre. A hill capital show with a mixer is the best excuse the intercity express has ever had.",
+      },
+    ],
+    sections: [
+      {
+        heading: "Kandy's social life is official channels only",
+        paragraphs: [
+          "The hill capital runs on institutions: Peradeniya's historic campus, the temple's calendar, schools whose alumni networks function as social operating systems and families who have known each other for generations. Singles here meet through channels, proposals, introductions, carefully chaperoned coincidences, and the university crowd cycles through degrees inside faculty bubbles.",
+          "A live dating show is the first unofficial channel with official respectability: public, funny and structured enough that attending it breaks no rules while quietly rewriting several.",
+        ],
+      },
+      {
+        heading: "What a Garam Masala night in Kandy looks like",
+        paragraphs: [
+          "A Peradeniya engineering senior and a Kandy General doctor who have never met, on stage, going on a first date while the hill capital's compact scene reacts with lakeside decorum for ten minutes and abandons it permanently thereafter. Comedian hosts, live votes and a mixer with mountain air doing the atmospherics.",
+          "Join the waitlist to bring the show up the mountain, or apply to be a contestant and give Kandy a story the alumni networks will archive.",
+        ],
       },
     ],
   },

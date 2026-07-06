@@ -241,6 +241,22 @@ export const JOURNAL_FOLLOW = {
     " has the moments people will not stop tagging their friends in. Watch a date before you attend one.",
 } as const;
 
+/**
+ * Follow CTA shown as the PRIMARY action on city pages with no live event.
+ * When the event does not exist, the show only exists on YouTube and
+ * Instagram, so those become the main call to action, with the waitlist
+ * beneath as the data capture for future tickets.
+ */
+export const CITY_FOLLOW = {
+  // {city} is replaced at render time with the city display name.
+  intro:
+    "There's no {city} show on sale yet. The show sells out weekly in NYC, so watch it there until we bring it to you.",
+  youtubeLabel: "Watch full episodes on YouTube",
+  instagramLabel: "Follow on Instagram",
+  waitlistSupport:
+    "Tickets for {city} don't exist yet. Waitlist signups decide where we go next, and the list gets tickets first.",
+} as const;
+
 /** Labels for the visible review verdict box on app review journal posts. */
 export const VERDICT_BOX = {
   eyebrow: "The Verdict",

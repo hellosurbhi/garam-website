@@ -56,6 +56,34 @@ export const usSouthTexasCities: Record<string, CityData> = {
         q: "Can people in Plano, Irving, and Richardson attend?",
         a: "Yes. The Dallas show is built for the entire metro South Asian community, including the suburbs.",
       },
+      {
+        q: "Is there Indian speed dating in Dallas?",
+        a: "DFW gets the occasional desi speed dating night and matrimonial meetup, usually heavy on biodata energy. A live comedy dating show is a different animal: entertainment first, then a mixer where the whole room is already laughing and talking before anyone has to be brave.",
+      },
+      {
+        q: "Where do South Asian singles in DFW actually meet?",
+        a: "Garba season, Diwali melas, cricket leagues, temple youth groups that everyone aged out of a decade ago and the same three apps. The community infrastructure is elite. The singles infrastructure is missing. That is the gap the show fills.",
+      },
+      {
+        q: "What will Dallas tickets cost?",
+        a: "NYC tickets start around $15 and touring stops are priced for the market. Waitlist members get presale pricing and first pick of seats before tickets go public.",
+      },
+    ],
+    sections: [
+      {
+        heading: "DFW has the desi density, just not the room",
+        paragraphs: [
+          "The north Dallas suburbs are one of the great South Asian success stories in America. Plano, Frisco, Irving and Richardson have the grocery stores, the chaat spots, the temples, the mosques, the garba nights and the cricket leagues of a community that built everything it needed. Except one thing: a place where single people can meet each other on purpose. The social calendar is family-first by design, which is lovely until you are 28 and every event you attend comes with a built-in interrogation.",
+          "So DFW singles live on Dil Mil and Hinge, matching with people who live 40 minutes up the tollway and never converting. The metro has 130,000 South Asians and the median first date still happens over an app-arranged coffee. That is a solvable problem.",
+        ],
+      },
+      {
+        heading: "What a Garam Masala night in Dallas will look like",
+        paragraphs: [
+          "Two DFW singles on stage who have never met, a UT Dallas grad and a Las Colinas consultant maybe, going on a live first date while a few hundred people from every corner of the metroplex react in real time. Then the mixer, where Plano finally meets Uptown without anyone's mom coordinating it.",
+          "Dallas is one of the loudest cities on the waitlist and we route the tour by exactly that signal. Get on the list for presale access, or apply to be a contestant and let the metroplex watch you flirt.",
+        ],
+      },
     ],
   },
 
@@ -112,6 +140,34 @@ export const usSouthTexasCities: Record<string, CityData> = {
       {
         q: "How do I get on the Houston waitlist?",
         a: "Click the waitlist button and enter your email. You will receive presale access and casting opportunities before tickets go public.",
+      },
+      {
+        q: "Is there Indian speed dating in Houston?",
+        a: "Houston sees occasional desi speed dating and matrimonial events, and they trend formal. This is the opposite: a comedy show where two real singles date on stage, the crowd votes and the mixer afterward does what speed dating promises without the timer stress.",
+      },
+      {
+        q: "Where do desi singles in Houston actually meet?",
+        a: "The Hillcroft corridor for food, Sugar Land and Katy for community events, the med center for 80 hour weeks that kill your social life. Houston has the largest South Asian scene in Texas and no recurring singles night to show for it. Yet.",
+      },
+      {
+        q: "Is the show only for Indian singles?",
+        a: "No. Houston's South Asian community spans Indian, Pakistani, Bangladeshi and Sri Lankan roots and our stage and audience reflect all of it, plus the non desi friends who come for the comedy and stay for the chaos.",
+      },
+    ],
+    sections: [
+      {
+        heading: "Houston's desi scene is huge, diverse and completely siloed",
+        paragraphs: [
+          "Houston does South Asian scale like nowhere else in the South. The Mahatma Gandhi District on Hillcroft is one of the densest desi commercial strips in America, Sugar Land and Katy are anchored by community institutions and the Texas Medical Center imports a fresh class of South Asian residents and fellows every single July. The problem is these worlds never touch. The med center crowd does not drive to Sugar Land. The energy corridor engineers do not know the Rice grad students exist. Everyone dates inside their own silo or not at all.",
+          "A show is a forcing function. One night, one room, every silo buying tickets to the same thing. The mixer does the rest.",
+        ],
+      },
+      {
+        heading: "What a Garam Masala night in Houston will look like",
+        paragraphs: [
+          "A med center resident and an energy analyst on stage, zero prior contact, going on a first date in front of a crowd that spans Hillcroft aunties to UH undergrads. Audience votes, hosts stir the pot, and afterward the whole room mingles with the kind of energy only Houston's desi scene can supply.",
+          "H-Town is near the top of the US waitlist. Join the waitlist for presale access, or apply to be a contestant if you think you can flirt in front of the most opinionated desi crowd in Texas.",
+        ],
       },
     ],
   },
@@ -170,6 +226,34 @@ export const usSouthTexasCities: Record<string, CityData> = {
       {
         q: "Can I apply to be on the show before an Austin date is announced?",
         a: "Yes. Apply now. Applications stay active for 12 months. Austin applicants will be prioritized when we confirm a date.",
+      },
+      {
+        q: "Is there Indian speed dating in Austin?",
+        a: "Barely. Austin's desi singles scene runs on tech happy hours and the occasional Bollywood night, with speed dating almost nonexistent. A live comedy dating show lands here exactly because the city loves live formats and has nowhere for its South Asian singles to actually meet.",
+      },
+      {
+        q: "Where do South Asian singles in Austin hang out?",
+        a: "The Domain bars, Rainey Street, cricket leagues, UT South Asian orgs and tech campus affinity groups. Plenty of proximity, no intentional singles space. That is the gap.",
+      },
+      {
+        q: "Will the show feel like Austin or like an import?",
+        a: "Every stop is cast locally, so the daters, the volunteers and the roast material are Austin's own. New York built the format. Austin supplies the weird.",
+      },
+    ],
+    sections: [
+      {
+        heading: "Austin's desi singles problem is brand new",
+        paragraphs: [
+          "Most cities on this tour have had South Asian communities for two generations. Austin built one in ten years. The tech migration filled Round Rock, Cedar Park and the Domain with twenty and thirty something engineers who moved for the job, know four people in town and work on teams that are half desi anyway. Dating a coworker is a bad idea. Dating outside your entire social graph requires infrastructure Austin has not built yet.",
+          "The result is a city full of interesting, employed, single South Asians whose entire romantic pipeline is two apps and a company Slack. For a city with this much live music, comedy and general willingness to leave the house, that is a bizarre gap.",
+        ],
+      },
+      {
+        heading: "What a Garam Masala night in Austin will look like",
+        paragraphs: [
+          "Two Austin singles who have never met, on stage at a comedy venue, going on a real first date while a few hundred people who all moved here since 2019 finally meet each other in the audience. The mixer after is the point: same room, same energy and every silo of Austin desi life colliding on purpose.",
+          "Austin's waitlist grows every week and the tour follows the signal. Get on the list for first access to tickets, or apply to be a contestant and christen the Texas leg properly.",
+        ],
       },
     ],
   },

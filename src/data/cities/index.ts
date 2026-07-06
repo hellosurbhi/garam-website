@@ -2,7 +2,7 @@
  * City data aggregator.
  * Imports all regional city files and exports a unified record.
  */
-export type { CityData, CityCta, CityRegion } from "./types";
+export type { CityData, CityCta, CityRegion, CitySection } from "./types";
 import type { CityData, CityRegion } from "./types";
 import { activeCities } from "./active";
 import { usNortheastCities } from "./us-northeast";

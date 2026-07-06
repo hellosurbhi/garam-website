@@ -53,6 +53,34 @@ export const canadaCities: Record<string, CityData> = {
         q: "Is the show open to non-South Asian attendees?",
         a: "Yes. The audience is open to everyone. Our NYC shows draw South Asian professionals, diaspora, and anyone who shows up curious.",
       },
+      {
+        q: "Is there Indian speed dating in Toronto?",
+        a: "Generic speed dating companies run occasional desi nights in Toronto, but they tend to be quiet rooms with name tags. A live comedy dating show warms up the entire crowd for 90 minutes before anyone has to introduce themselves, which is why our mixers work where speed dating stalls.",
+      },
+      {
+        q: "Where can I meet South Asian singles in Toronto?",
+        a: "Beyond the apps, the GTA scene runs through Bollywood club nights downtown, cultural festivals, university South Asian associations and community fundraisers. The catch is that none of them are built for singles. Garam Masala Dating is, and the waitlist is how Toronto gets its first show.",
+      },
+      {
+        q: "How much will Toronto tickets cost?",
+        a: "Our NYC tickets start around $15 US and touring shows are priced similarly for the market. Waitlist members get presale pricing before tickets go public.",
+      },
+    ],
+    sections: [
+      {
+        heading: "Where Toronto's desi singles actually meet right now",
+        paragraphs: [
+          "Be honest about the current options. There are Bollywood nights at downtown clubs where the music is right and the conversation is impossible. There are garba and Diwali events where your cousin's friend's mother is doing recon. There are university South Asian student associations that age you out the day you graduate, and professional networking events where everyone pretends they came for the networking. The GTA has more desi social infrastructure than almost any city on the planet and almost none of it is designed for two single people to actually meet.",
+          "The apps fill the gap badly. Dil Mil and Hinge both have deep Toronto pools on paper, but Brampton to downtown is a 45 minute drive without traffic and the apps do not care about the Gardiner. Half the matches die on logistics alone.",
+        ],
+      },
+      {
+        heading: "What a Garam Masala night in Toronto will look like",
+        paragraphs: [
+          "Picture the format transplanted: two GTA singles on stage who have never met, a Brampton Punjabi kid and a Scarborough Tamil software engineer maybe, going on a first date in front of a few hundred people who understand every reference. The audience votes. The mixer after is where downtown condo dwellers, Mississauga professionals and the U of T and TMU crowds finally end up in one room with a reason to talk.",
+          "Toronto is the loudest city on our waitlist outside the US, and the first Canadian show will go to the city that earns it. Get on the list and bring the GTA numbers up, or apply to be a contestant so you are in the pool the day we announce.",
+        ],
+      },
     ],
   },
 
@@ -101,6 +129,34 @@ export const canadaCities: Record<string, CityData> = {
       {
         q: "Can I apply to be a contestant?",
         a: "Yes. Applications are open now. Apply early so you are already in the system when we confirm Vancouver dates.",
+      },
+      {
+        q: "Is there Punjabi or desi speed dating in Vancouver?",
+        a: "Occasionally, and it is usually a quiet room in a Surrey banquet hall. A live comedy dating show is the opposite: 90 minutes of shared laughter first, then a mixer where the whole room already has something to talk about.",
+      },
+      {
+        q: "Where do South Asian singles meet in Vancouver?",
+        a: "Vaisakhi and Diwali events, Punjabi Market on Main Street, UBC and SFU cultural associations and the Surrey banquet circuit. All community, none of it singles-first. That gap is exactly why Vancouver is on our tour map.",
+      },
+      {
+        q: "Will the show be Punjabi-friendly?",
+        a: "The show runs in English with the desi cultural references fully intact, and Punjabi jokes tend to land hardest. If your grandparents came from Punjab, you will feel extremely seen.",
+      },
+    ],
+    sections: [
+      {
+        heading: "Vancouver's desi singles problem, stated plainly",
+        paragraphs: [
+          "Metro Vancouver has one of the deepest South Asian communities in North America and one of the thinnest singles scenes. The community events are family events. The Vaisakhi parade pulls a hundred thousand people and exactly zero of them are there to flirt. Surrey's social life runs through gurdwaras, banquet halls and family networks, which is beautiful for community and useless for meeting someone your own age without an aunty translating.",
+          "Downtown is its own island. The UBC and SFU crowd and the Yaletown professionals rarely cross the Fraser, so two halves of the same community date on separate apps in the same metro. The Vancouver freeze does the rest.",
+        ],
+      },
+      {
+        heading: "What a Garam Masala night in Vancouver will look like",
+        paragraphs: [
+          "One room, both sides of the river. Surrey Punjabi kids, downtown tech workers, Richmond and Burnaby professionals, all watching two real singles go on a blind date on stage with comedians steering. The audience votes, the mixer follows and the freeze thaws fast when everyone has just spent 90 minutes laughing at the same jokes.",
+          "Vancouver is high on the Canadian list and waitlist volume decides the order. Join the waitlist for first tickets, or apply to be a contestant if you want the blind date to be yours.",
+        ],
       },
     ],
   },

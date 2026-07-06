@@ -56,6 +56,34 @@ export const usWestCities: Record<string, CityData> = {
         q: "Can I apply to be a contestant?",
         a: "Yes. Apply now. Applications stay active for 12 months. South Bay applicants will be prioritized when we confirm a date.",
       },
+      {
+        q: "Is there Indian speed dating in San Jose or the South Bay?",
+        a: "It exists, and by every account it feels like a sprint of coffee chats. The South Bay does not lack South Asian singles, it lacks an event with actual energy. A comedy show with a live blind date and a mixer is a different category of night.",
+      },
+      {
+        q: "Where do South Asian singles in the South Bay actually meet?",
+        a: "Company events, cultural organizations, cricket leagues and badminton clubs, all of which are 60% coupled at any given time. With the largest Indian American population of any US metro, the South Bay's missing piece has never been people. It is the room.",
+      },
+      {
+        q: "How is this different from the SF show?",
+        a: "San Francisco already hosts Garam Masala Dating. The South Bay show would be its own stop with its own cast, because asking Sunnyvale to drive to the Mission on a weeknight is how you lose half the Valley. Waitlist numbers decide how fast that happens.",
+      },
+    ],
+    sections: [
+      {
+        heading: "The densest desi metro in America still cannot get a second date",
+        paragraphs: [
+          "Santa Clara County has more Indian Americans than any metro in the country, which should make it the easiest place in the western hemisphere to find a desi partner. Instead the density works against itself. Everyone works at the same handful of companies, lives in the same Sunnyvale and Milpitas complexes and has already seen everyone else on Dil Mil twice. The pool is enormous and completely stale, because the only sorting mechanisms are apps and mutual friends, and both exhausted themselves years ago.",
+          "What refreshes a stale pool is context nobody has seen each other in. A live show reshuffles the entire deck in one night: new faces, real reactions and a reason to talk that is not someone's referral bonus.",
+        ],
+      },
+      {
+        heading: "What a Garam Masala night in the South Bay will look like",
+        paragraphs: [
+          "Two South Bay singles who have never met, on stage in front of a few hundred engineers, PMs, med students and startup founders who all swear the Bay has no dating scene, watching chemistry happen live and voting on it. The mixer after is the biggest concentration of single desis the Valley has seen outside a wedding.",
+          "The SF show sells out and the South Bay waitlist keeps asking for its own night. Get on the list to make the case louder, or apply to be a contestant and let 200,000 of your neighbors watch you shoot your shot.",
+        ],
+      },
     ],
   },
 
@@ -283,6 +311,34 @@ export const usWestCities: Record<string, CityData> = {
       {
         q: "Can I apply to be a contestant?",
         a: "Yes. Apply now. Applications stay active for 12 months. Seattle applicants will be prioritized when we confirm a date.",
+      },
+      {
+        q: "Is there Indian speed dating in Seattle?",
+        a: "Sporadically, and it fights the Seattle Freeze the whole way. The live show format beats the freeze structurally: nobody has to break the ice because the show does it for the entire room, and the mixer starts with 200 people already laughing.",
+      },
+      {
+        q: "Where do South Asian singles in Seattle actually meet?",
+        a: "Work, mostly, which is the problem. Beyond the tech campuses there are UW desi orgs, cultural events on the Eastside and hiking groups where everyone is somehow already married. A dedicated desi singles night is the missing piece.",
+      },
+      {
+        q: "Seattle or Bellevue, which side wins the venue?",
+        a: "Whichever side the waitlist tips. The honest answer is the Eastside has the density and Capitol Hill has the venues, so we are watching signups by zip code before we commit.",
+      },
+    ],
+    sections: [
+      {
+        heading: "The Seattle Freeze meets the arranged marriage timeline",
+        paragraphs: [
+          "Seattle's South Asian singles face a uniquely bad combination: a local culture where strangers do not talk to each other and a family culture where your mother wants a wedding date by Diwali. Tens of thousands of Indian engineers moved here for Amazon and Microsoft in their twenties, and the city's social physics quietly guaranteed most of them would only ever meet coworkers. Dating within your org chart is a minefield, so everyone defaults to apps, and the apps here have the same twelve thousand people on repeat.",
+          "This is the exact environment where a live format overperforms. The freeze cannot survive 90 minutes of a packed room reacting to a first date together.",
+        ],
+      },
+      {
+        heading: "What a Garam Masala night in Seattle will look like",
+        paragraphs: [
+          "A UW grad student and a Redmond engineer who have never met, on stage, going on a first date while Bellevue, Kirkland and Capitol Hill vote on the chemistry. Comedian hosts run the night, the crowd runs the verdict and the mixer after is the rare Seattle room where talking to a stranger is the whole point.",
+          "The Eastside waitlist is one of our fastest growing anywhere. Get on the list for first access to tickets, or apply to be a contestant and prove the freeze is a choice.",
+        ],
       },
     ],
   },

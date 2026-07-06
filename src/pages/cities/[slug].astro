@@ -252,6 +252,21 @@ function renderCityText(text: string, href: string): string {
         }
       </div>
 
+      {/* Deep-dive sections (h2 + paragraphs) for enriched city pages */}
+      {
+        (city.sections ?? []).map((section) => (
+          <section class="city-section">
+            <h2 class="city-section__heading">{section.heading}</h2>
+            {section.paragraphs.map((para) => (
+              <p
+                class="city-paragraph"
+                set:html={renderCityText(para, applyHref)}
+              />
+            ))}
+          </section>
+        ))
+      }
+
       {/* Related journal articles */}
       {
         relatedPosts.length > 0 && (
@@ -1026,6 +1041,22 @@ function renderCityText(text: string, href: string): string {
     font-size: 17px;
     color: var(--text-secondary);
     line-height: 1.7;
+    margin: 0;
+  }
+
+  .city-section {
+    display: flex;
+    flex-direction: column;
+    gap: 22px;
+    margin-top: 34px;
+  }
+
+  .city-section__heading {
+    font-family: var(--font-playfair);
+    font-size: 22px;
+    font-weight: 600;
+    color: var(--charcoal);
+    line-height: 1.3;
     margin: 0;
   }
 

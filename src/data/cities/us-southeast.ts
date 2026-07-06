@@ -56,6 +56,34 @@ export const usSoutheastCities: Record<string, CityData> = {
         q: "Can I apply to be a contestant before a DC date is announced?",
         a: "Yes. Apply now. Applications stay active for 12 months. DC area applicants will be prioritized when we confirm a date.",
       },
+      {
+        q: "Is there Indian speed dating in DC?",
+        a: "The DMV gets desi speed dating and professional mixers now and then, usually with a networking-event soul. This is the opposite energy: a comedy show first, a live blind date on stage, audience voting and then a mixer that starts loose because the room spent 90 minutes laughing together.",
+      },
+      {
+        q: "Where do South Asian singles in the DMV actually meet?",
+        a: "South Asian professional associations, embassy row cultural events, Diwali galas and the happy hour circuit from Clarendon to Dupont. The DMV has the most credentialed desi singles in America and the most transactional ways of meeting them. We are bringing the fun version.",
+      },
+      {
+        q: "Which side of the river will the show be on?",
+        a: "Wherever the metro serves best. NoVA has the density, the District has the venues and Maryland has been asking too. Waitlist geography genuinely influences the pick, so sign up from wherever you are.",
+      },
+    ],
+    sections: [
+      {
+        heading: "The DMV dates like it networks, and that is the problem",
+        paragraphs: [
+          "The DC metro's South Asian community is the most professionally stacked in the country: Hill staffers, consultants, doctors across three states, engineers up the Silver Line in Tysons and Reston, policy people who can explain sanctions over drinks. The dating scene reflects the culture, which means it runs on credentials and calendars. First dates feel like informational interviews. Everyone is impressive and nobody is having fun.",
+          "That is precisely the audience a comedy dating show was built for. You cannot LinkedIn your way through watching two strangers fall for each other on stage, and the mixer afterward gives the most scheduled city in America an unscheduled hour.",
+        ],
+      },
+      {
+        heading: "What a Garam Masala night in the DMV will look like",
+        paragraphs: [
+          "A Georgetown grad student and an Ashburn cloud engineer who have never met, on stage, going on a first date while Fairfax aunties, GW undergrads and Rockville professionals vote in real time. Then the mixer, where NoVA finally meets the District without anyone checking a work phone.",
+          "DC has been requesting this show since our first month. Join the waitlist for first access when we announce, or apply to be a contestant and show the Hill what confident actually looks like.",
+        ],
+      },
     ],
   },
 
@@ -112,6 +140,34 @@ export const usSoutheastCities: Record<string, CityData> = {
       {
         q: "Can I apply to be a contestant before an Atlanta date is announced?",
         a: "Yes. Apply now. Applications stay active for 12 months. Atlanta applicants will be prioritized when we confirm a date.",
+      },
+      {
+        q: "Is there Indian speed dating in Atlanta?",
+        a: "Occasionally, usually tied to a festival weekend, and it disappears as fast as it appears. Atlanta's desi singles deserve something recurring. A live comedy dating show plus mixer is that, and the waitlist is how the city gets it.",
+      },
+      {
+        q: "Where do South Asian singles in Atlanta actually meet?",
+        a: "Garba nights in the northern suburbs, Diwali events, Georgia Tech and Emory desi orgs and the occasional Bollywood night in Midtown. The scene is young and growing fast, but nothing on that list is built for singles. That is the opening.",
+      },
+      {
+        q: "Will the show be inside the perimeter or OTP?",
+        a: "The eternal Atlanta question. Venue selection will balance the Alpharetta and Johns Creek density with Midtown accessibility, and waitlist zip codes are real input into that call.",
+      },
+    ],
+    sections: [
+      {
+        heading: "Atlanta's desi boom outran its social scene",
+        paragraphs: [
+          "Atlanta added South Asians faster than almost any metro in the country, and the community's infrastructure is still catching up. Alpharetta, Johns Creek, Duluth and Suwanee filled with young families and young professionals in the same decade, Georgia Tech and Emory keep the pipeline flowing and the singles among all of them inherited a social calendar designed for households: temple events, festival melas, weekend cricket. Great for community. Useless for finding your person.",
+          "Meanwhile the perimeter divide does its quiet damage. OTP desis and ITP desis live parallel lives, and the apps do not fix a city where a match can live 90 traffic minutes away.",
+        ],
+      },
+      {
+        heading: "What a Garam Masala night in Atlanta will look like",
+        paragraphs: [
+          "An Emory resident and an Alpharetta product manager who have never met, on stage in front of a crowd that drove in from both sides of the perimeter, going on a first date with comedian hosts and live audience votes. The mixer after finally gives the fastest growing desi metro in the South one room where single actually means available.",
+          "Atlanta's waitlist numbers keep climbing and the Southeast leg gets planned off exactly that. Get on the list for presale access, or apply to be a contestant and represent the A properly.",
+        ],
       },
     ],
   },

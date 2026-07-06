@@ -4,6 +4,31 @@ Items from the GMD website audit checklists (site audit, codebase cleanup, conve
 
 ---
 
+## City Page Enrichment: Remaining Batches (2026-07-06)
+
+### Extend the deep-content pattern to the remaining ~290 city pages
+
+**Priority:** High
+**Status:** Batch 1 shipped (feat/seo-powerhouse-wave1), batches 2+ pending
+
+GSC (Apr to Jun 2026) shows 66 pages crawled or discovered but not indexed, driven by thin city pages (median 239 body words, one templated paragraph shared across all 307). Batch 1 enriched the 14 priority diaspora metros (Toronto, London, Austin, Chicago, Houston, Dallas, Atlanta, Washington DC, Seattle, Vancouver, Sydney, Melbourne, Leicester, San Jose) using the `sections` field on `CityData`: each got 2 unique h2 sections (~150 to 200 words each) plus 3 extra city-specific FAQ items, roughly doubling indexable text.
+
+**Batch recipe (repeat per city):**
+
+1. Two `sections` entries: one on where that city's desi singles actually meet today (grounded in real, widely documented neighborhoods, universities and festivals; no invented venues or unsourced statistics) and one "what a Garam Masala night here will look like" tied to the tour narrative.
+2. Three extra `faqItems` targeting long-tail queries: "indian speed dating {city}", "where do south asian singles meet in {city}" and one city-specific question (venue geography, pricing, community mix).
+3. Keep the copy voice: no separator dashes, no Oxford commas, lowercase "join the waitlist" and "apply to be a contestant" phrases intact so `renderCityText` converts them into inline CTAs.
+4. Tests: add the new slugs to the enriched list in `src/data/cities.test.ts` so the 2-section 6-FAQ floor is enforced.
+
+**Suggested batch order (by GSC country impressions + diaspora size):**
+
+- Batch 2 (US): san-diego area pages not yet active, phoenix, denver metro pages, tampa, orlando, raleigh, charlotte, nashville, detroit, minneapolis, columbus-oh, pittsburgh, st-louis
+- Batch 3 (Canada + UK, GSC shows 361 + 306 impressions): calgary, ottawa, montreal, edmonton, winnipeg, birmingham, manchester, bradford, wolverhampton, glasgow
+- Batch 4 (Australia + NZ + rest of world): brisbane, perth, adelaide, canberra, auckland, singapore, dubai, hong-kong
+- Batch 5+: India metros and remaining international pages
+
+---
+
 ## Admin Event Management (2026-05-15)
 
 ### Admin Event Management: CRUD events from the dashboard

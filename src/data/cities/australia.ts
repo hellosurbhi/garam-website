@@ -53,6 +53,34 @@ export const australiaCities: Record<string, CityData> = {
         q: "Can I apply to be a contestant before a date is announced?",
         a: "Yes. Apply now. Applications stay active for 12 months and Sydney applicants will be prioritized when we confirm a date.",
       },
+      {
+        q: "Is there Indian speed dating in Sydney?",
+        a: "Sydney gets occasional desi speed dating and matrimonial events, mostly around Parramatta, mostly formal. A live comedy dating show runs on the opposite energy: the room laughs together for 90 minutes before anyone has to introduce themselves, so the mixer actually works.",
+      },
+      {
+        q: "Where do South Asian singles in Sydney actually meet?",
+        a: "Harris Park dinners, Diwali at Parramatta, uni society events at UNSW, USyd and UTS and the CBD after-work circuit. The community shows up everywhere except a dedicated singles night, because Australia has never had one like this.",
+      },
+      {
+        q: "Will the show be in the CBD or Western Sydney?",
+        a: "The venue call balances Parramatta's density against CBD transit, and waitlist postcodes are genuine input. Wherever it lands, it will be reachable from both Harris Park and the harbour side of town.",
+      },
+    ],
+    sections: [
+      {
+        heading: "Sydney's desi scene is split down Parramatta Road",
+        paragraphs: [
+          "Sydney has one of the fastest growing Indian communities in the western world and a geography problem to match. Western Sydney around Harris Park and Parramatta holds the cultural heart: the restaurants, the festivals, the extended families. The CBD and the east hold the graduate jobs, the sharehouses and the after-work bars. Young South Asians commute between the two lives daily and date in neither, because the community events come with relatives attached and the city venues come with nobody desi in them.",
+          "The apps limp along with thin Australian pools, and the arranged pipeline hums in the background asking if you have met anyone yet. Australia's desi singles are overdue exactly this format.",
+        ],
+      },
+      {
+        heading: "What a Garam Masala night in Sydney will look like",
+        paragraphs: [
+          "A Parramatta physio and a Surry Hills software engineer who have never met, on stage, going on a first date while a few hundred Sydney desis vote on whether there should be a second one. Comedian hosts, live chaos and a mixer where Western Sydney and the CBD finally share a postcode for one night.",
+          "Sydney is our top priority in Australia and the first international leg gets routed by waitlist volume. Get on the list for first access, or apply to be a contestant and make Harris Park proud.",
+        ],
+      },
     ],
   },
 
@@ -101,6 +129,34 @@ export const australiaCities: Record<string, CityData> = {
       {
         q: "Can I apply to be a contestant?",
         a: "Yes. Apply now. Applications stay active for 12 months. Melbourne applicants will be prioritized when we confirm a date.",
+      },
+      {
+        q: "Is there Indian speed dating in Melbourne?",
+        a: "Rarely, and never with a crowd. Melbourne's strength is live entertainment culture: this is the city of the International Comedy Festival. A dating show built on stand-up and audience voting fits Melbourne better than any city outside New York.",
+      },
+      {
+        q: "Where do South Asian singles in Melbourne actually meet?",
+        a: "Uni societies at Monash, UniMelb, RMIT and Deakin, community events out in Dandenong and Tarneit and the CBD laneway bar circuit. Students meet students and suburbs meet suburbs. Nothing currently mixes the whole scene, which is the point of the show.",
+      },
+      {
+        q: "Will the show be in the CBD or the suburbs?",
+        a: "Likely central for transit, with timing that works for the west and southeast. Melbourne's desi population is spread from Tarneit to Cranbourne, so the venue call is about making one room reachable for all of it.",
+      },
+    ],
+    sections: [
+      {
+        heading: "Melbourne is a live entertainment city with no live dating night",
+        paragraphs: [
+          "Melbourne prides itself on being Australia's culture capital: the comedy festival, the theatres, the laneway gigs, the general belief that a good night out should involve a stage. Meanwhile its South Asian community, one of the country's largest and youngest, has student cohorts at four major universities and booming suburbs in the west and southeast, and its singles meet each other almost exclusively through apps with shallow Australian pools and group house parties where everyone already knows everyone.",
+          "A city this committed to live formats not having a live dating show is a gap begging to be filled, and the audience that fills comedy festival rooms every April is exactly the audience this show was built for.",
+        ],
+      },
+      {
+        heading: "What a Garam Masala night in Melbourne will look like",
+        paragraphs: [
+          "A Monash postgrad and a Docklands consultant who have never met, on stage, going on a first date while a room full of Melbourne desis heckle with love and vote on the outcome. Then the mixer, where Tarneit, Dandenong, Clayton and the CBD collide for the first time outside a cricket final.",
+          "Melbourne and Sydney are genuinely neck and neck for the first Australian date and the waitlist is the tiebreaker. Get on the list, or apply to be a contestant and give the comedy capital its newest format.",
+        ],
       },
     ],
   },

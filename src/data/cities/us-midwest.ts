@@ -59,6 +59,34 @@ export const usMidwestCities: Record<string, CityData> = {
         q: "How many people attend a Garam Masala Dating show?",
         a: "Our NYC shows sell out at 250 people. Touring shows typically run 100 to 200 depending on the venue.",
       },
+      {
+        q: "Is there Indian speed dating in Chicago?",
+        a: "Chicago gets desi speed dating nights a few times a year, mostly downtown, mostly quiet. The live show format works differently: 90 minutes of comedy and a real blind date on stage first, so by the time the mixer starts the room already feels like a party, not a waiting room.",
+      },
+      {
+        q: "Where do South Asian singles in Chicago actually meet?",
+        a: "Devon Avenue for food and family errands, garba and Diwali events on the calendar, downtown desi club nights a few times a year and the campus orgs at Northwestern, UChicago and UIC. Community everywhere, singles events almost nowhere. That is the gap we fill.",
+      },
+      {
+        q: "Will the show draw from the suburbs too?",
+        a: "Yes. Naperville, Schaumburg and the northwest suburban desi corridor are half the reason Chicago is on the shortlist. The venue will be transit and parking friendly so the suburbs show up.",
+      },
+    ],
+    sections: [
+      {
+        heading: "Chicago's desi scene has everything except a singles night",
+        paragraphs: [
+          "Devon Avenue is the most famous South Asian street in America. The suburbs from Naperville to Schaumburg hold six figure desi populations with their own temples, mosques, gurdwaras and banquet hall circuits. Northwestern, UChicago, UIC and IIT keep the student pipeline full. And the actual singles in all of this are dating through the same two apps as everyone in Ohio, because Chicago's desi social calendar is built around families, festivals and alumni networks rather than around two single people meeting.",
+          "The second largest South Asian metro in the country runs on imported dating infrastructure. Chicago deserves its own room.",
+        ],
+      },
+      {
+        heading: "What a Garam Masala night in Chicago will look like",
+        paragraphs: [
+          "A West Loop consultant and a UIC med student who have never met, on stage, going on a first date while a few hundred Chicagoland desis vote on their chemistry. Comedian hosts keep it moving, the crowd keeps it honest and the mixer after finally puts the city and the suburbs in one room without a wedding invitation.",
+          "Chicago has been on our shortlist since the first waitlist numbers came in. Get on the list for presale access, or apply to be a contestant and give Devon Avenue something new to gossip about.",
+        ],
+      },
     ],
   },
 

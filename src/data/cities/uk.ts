@@ -47,6 +47,34 @@ export const ukCities: Record<string, CityData> = {
         q: "Is the show open to attendees from outside Zone 1?",
         a: "Yes. We are specifically looking at venues accessible to the full London South Asian community, not just the city centre crowd.",
       },
+      {
+        q: "Is there Asian speed dating in London?",
+        a: "London has a long running circuit of Hindu, Sikh and Muslim speed dating events, and they work for some people. The difference with a live comedy dating show is the room: 90 minutes of stand-up and a live blind date warm everyone up before the mingling starts, so the mixer never has that first-five-minutes silence.",
+      },
+      {
+        q: "Where do British Asian singles meet in London?",
+        a: "Bollywood brunches, uni society balls long after graduation, Diwali in Trafalgar Square and a packed calendar of desi club nights. Community is everywhere, singles events that feel fun are rare. That gap is exactly what the show fills.",
+      },
+      {
+        q: "Will the London show use UK daters or the NYC cast?",
+        a: "London daters. The contestants and the volunteers from the audience are always local, that is what makes each city's show its own. Apply to be a contestant now and you are in the pool when London dates land.",
+      },
+    ],
+    sections: [
+      {
+        heading: "London already has every desi scene except this one",
+        paragraphs: [
+          "London's British Asian social calendar is the busiest in the western world. There are Bollywood and bhangra nights every weekend, comedy lineups full of British Asian acts, shaadi season running eight months of the year and aunties running informal matchmaking operations with better data than any app. What London does not have is a live show where two real singles go on a first date on stage while the city watches and votes. New York proved the format sells out weekly. London's community is three times the size.",
+          "The apps do not carry the load here either. Dil Mil is thinner in the UK than the US, Hinge is saturated, and Muzz works only for the Muslim side of a very plural community. Everyone is on them and nobody is happy, which is London's most transferable dating fact.",
+        ],
+      },
+      {
+        heading: "What a Garam Masala night in London will look like",
+        paragraphs: [
+          "A Southall Punjabi trainee solicitor and a Tooting Tamil doctor who have never met, on a stage in a room that laughs at the same aunty jokes in two languages. Comedian hosts running the date, the audience voting on a second date, and a mixer after where Wembley, East Ham, Harrow and Zone 1 finally cross-pollinate.",
+          "London decides when this happens. The waitlist is the loudest signal we track, so get on the list, and if you want to be one of the two people on that stage, apply to be a contestant.",
+        ],
+      },
     ],
   },
 
@@ -156,6 +184,34 @@ export const ukCities: Record<string, CityData> = {
       {
         q: "Can I apply to be a contestant?",
         a: "Yes. Apply now. Applications stay active for 12 months. Leicester applicants will be prioritized when we confirm a date.",
+      },
+      {
+        q: "Are there singles events for British Asians in Leicester?",
+        a: "Leicester has garba nights, temple socials and community dinners in every direction, but almost nothing built for singles who want to meet outside the family network. A live comedy dating show gives the city a way to date in public without the whole community filing a report.",
+      },
+      {
+        q: "Why Leicester instead of just doing London?",
+        a: "Because Leicester's South Asian community is proportionally the biggest in Britain and the most tightly knit. A room this connected reacts louder, votes harder and mingles faster. We think it will be one of the best crowds on the UK tour, full stop.",
+      },
+      {
+        q: "What ages come to the show?",
+        a: "Mostly 21 to 40, with the mixer skewing to mid 20s and 30s. Couples and married friends come to watch too. Nobody checks your intentions at the door.",
+      },
+    ],
+    sections: [
+      {
+        heading: "Dating in Leicester when everyone knows your family",
+        paragraphs: [
+          "Leicester's blessing and curse is the same fact: the community is so established that anonymity does not exist. Your parents' friends run the shops on Belgrave Road, your masi knows the temple committee and any date you go on within a two mile radius will be witnessed and discussed. That drives half the city's singles onto apps where the nearest matches are in Birmingham, and keeps the other half from dating at all until a rishta arrives.",
+          "A live dating show flips that dynamic on purpose. The watching is the point, the room is on your side and the mixer afterward gives everyone a socially airtight reason to be there: it is a comedy night. What happens after the comedy is your business.",
+        ],
+      },
+      {
+        heading: "What a Garam Masala night on the Golden Mile side of town looks like",
+        paragraphs: [
+          "Diwali on Belgrave Road draws one of the biggest celebrations outside India, so nobody needs to explain to Leicester how to show up for a desi night out. Picture that energy pointed at two local singles on stage going on a real first date, with comedian hosts, live audience votes and a Gujarati aunty in row two who has opinions she intends to share.",
+          "The waitlist decides the UK tour order after London. Get on the list for first access, or apply to be a contestant and give the Golden Mile something new to talk about.",
+        ],
       },
     ],
   },

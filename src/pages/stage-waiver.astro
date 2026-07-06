@@ -1,0 +1,7 @@
+---
+const target = new URL("/waiver", Astro.url);
+const showId = Astro.url.searchParams.get("show")?.trim();
+if (showId) target.searchParams.set("show", showId);
+
+return Astro.redirect(`${target.pathname}${target.search}`, 301);
+---

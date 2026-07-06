@@ -1,0 +1,152 @@
+.dashboard {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 32px;
+}
+
+.toolbar {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 28px;
+  flex-wrap: wrap;
+}
+
+.filterInput {
+  padding: 8px 14px;
+  border-radius: 100px;
+  border: 1px solid var(--border);
+  background: #fff;
+  font-family: var(--font-body);
+  font-size: 14px;
+  color: var(--text);
+  min-width: 220px;
+  min-height: var(--touch-target);
+}
+
+.filterInput:focus-visible {
+  border-color: var(--brand-red);
+  outline: 2px solid var(--brand-red);
+  outline-offset: 2px;
+}
+
+.count {
+  font-size: 13px;
+  color: var(--text-light);
+}
+
+.exportButton {
+  margin-left: auto;
+  padding: 8px 18px;
+  border-radius: 100px;
+  border: 1px solid var(--border);
+  background: #fff;
+  font-family: var(--font-body);
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-light);
+  cursor: pointer;
+  transition: all 0.2s;
+  min-height: var(--touch-target);
+}
+
+.exportButton:hover:not(:disabled) {
+  border-color: var(--brand-red);
+  color: var(--brand-red);
+}
+
+.exportButton:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.section {
+  background: #fff;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 24px;
+  margin-bottom: 20px;
+}
+
+.tableWrap {
+  overflow-x: auto;
+}
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.table th {
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.07em;
+  color: var(--text-light);
+  text-align: left;
+  padding: 0 12px 10px 0;
+  border-bottom: 1px solid var(--border);
+  white-space: nowrap;
+}
+
+.table td {
+  font-size: 14px;
+  color: var(--text);
+  padding: 11px 12px 11px 0;
+  border-bottom: 1px solid var(--border);
+  vertical-align: middle;
+  white-space: nowrap;
+}
+
+.table tr:last-child td {
+  border-bottom: none;
+}
+
+.pill {
+  display: inline-block;
+  padding: 2px 10px;
+  border-radius: 100px;
+  font-size: 12px;
+  font-weight: 600;
+  background: rgba(var(--brand-red-rgb), 0.08);
+  color: var(--brand-red);
+}
+
+.emptyHint {
+  font-size: 14px;
+  color: var(--text-light);
+  text-align: center;
+  padding: 24px 0;
+}
+
+.loadingState {
+  text-align: center;
+  padding: 48px 0;
+  font-size: 15px;
+  color: var(--text-light);
+}
+
+.errorState {
+  text-align: center;
+  padding: 48px 0;
+}
+
+.retryButton {
+  margin-top: 12px;
+  padding: 8px 20px;
+  border-radius: 100px;
+  border: 1px solid var(--brand-red);
+  background: #fff;
+  font-family: var(--font-body);
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--brand-red);
+  cursor: pointer;
+  min-height: var(--touch-target);
+}
+
+@media (max-width: 700px) {
+  .dashboard {
+    padding: 16px;
+  }
+}

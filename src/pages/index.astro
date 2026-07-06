@@ -194,6 +194,15 @@ const speakableJsonLd = JSON.stringify({
               aria-label="Email address"
               toolparamdescription="Email address to receive discount codes and show announcements"
             />
+            <input
+              type="text"
+              id="popup-city"
+              class="ph-mask"
+              placeholder="Your city (optional)"
+              aria-label="City (optional)"
+              autocomplete="address-level2"
+              toolparamdescription="City the subscriber lives in, used to alert them when a show comes near them (optional)"
+            />
             <p id="popup-email-error" class="popup-error" hidden role="alert">
             </p>
             <button type="submit" class="popup-submit"
@@ -273,6 +282,13 @@ const speakableJsonLd = JSON.stringify({
       if (Date.now() - sessionStart < MIN_SESSION_MS) return false;
       if (document.querySelector("dialog[open]")) return false;
       popupShown = true;
+      // Prefill the optional city from IP geo (resolved by now: popup only
+      // fires after MIN_SESSION_MS). Leaves it blank if geo is unavailable.
+      const cityInput = document.getElementById(
+        "popup-city",
+      ) as HTMLInputElement | null;
+      const geoCity = sessionStorage.getItem("gmd-geo-city");
+      if (cityInput && geoCity && !cityInput.value) cityInput.value = geoCity;
       trackLeadEvent("popup_opened", {
         source: "popup",
         sourcePage: window.location.pathname,
@@ -356,6 +372,9 @@ const speakableJsonLd = JSON.stringify({
         savedEmail = (
           document.getElementById("popup-email") as HTMLInputElement
         ).value;
+        const popupCity = (
+          document.getElementById("popup-city") as HTMLInputElement | null
+        )?.value.trim();
         const errorEl = document.getElementById("popup-email-error");
         const submitBtn = (
           e.target as HTMLFormElement
@@ -369,6 +388,7 @@ const speakableJsonLd = JSON.stringify({
           const attribution = await buildLeadAttribution({ source: "popup" });
           const captured = await captureLead({
             email: savedEmail,
+            ...(popupCity ? { city: popupCity } : {}),
             ...attribution,
           });
           popupDocId = captured.id ? captured : null;

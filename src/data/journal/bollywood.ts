@@ -730,11 +730,11 @@ export const bollywoodPosts: JournalPost[] = [
     dateModified: "2026-09-04",
     author: "Surbhi",
     excerpt:
-      "Running the #1 live dating show means I've seen a lot of men who learned what romance looks like from Bollywood. Some of those lessons were fine. Some of them were Kabir Singh. Here's the list.",
+      "Running the #1 live desi dating show means I've seen a lot of men who learned what romance looks like from Bollywood. Some of those lessons were fine. Some of them were Kabir Singh. Here's the list.",
     body: [
       {
         type: "p",
-        text: "Running the #1 live dating show means I\u2019ve seen a lot of men walk on stage with a clear idea of what romance looks like. Some of those ideas are great. Some of them are, unmistakably, Kabir Singh. Bollywood has been teaching a very specific curriculum about masculine romantic behavior for 30 years, and some of those lessons are worth examining under better lighting.",
+        text: "Running the #1 live desi dating show means I\u2019ve seen a lot of men walk on stage with a clear idea of what romance looks like. Some of those ideas are great. Some of them are, unmistakably, Kabir Singh. Bollywood has been teaching a very specific curriculum about masculine romantic behavior for 30 years, and some of those lessons are worth examining under better lighting.",
       },
       {
         type: "h2",

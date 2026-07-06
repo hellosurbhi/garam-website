@@ -26,7 +26,7 @@ export const entertainmentPosts: JournalPost[] = [
       },
       {
         type: "p",
-        text: "The other thing worth knowing is that Indian comedy in NYC is not monolithic. You have traditional stand-up nights that happen to skew South Asian, roast formats, storytelling shows, and then, in a category entirely its own, Garam Masala Dating, which is the #1 live comedy dating show where real South Asian singles go on blind dates on stage in front of 250 people. Different nights serve different moods. Figure out what you are actually looking for before you commit.",
+        text: "The other thing worth knowing is that Indian comedy in NYC is not monolithic. You have traditional stand-up nights that happen to skew South Asian, roast formats, storytelling shows, and then, in a category entirely its own, Garam Masala Dating, which is the #1 desi comedy dating show where real South Asian singles go on blind dates on stage in front of 250 people. Different nights serve different moods. Figure out what you are actually looking for before you commit.",
       },
       {
         type: "h2",
@@ -42,7 +42,7 @@ export const entertainmentPosts: JournalPost[] = [
       },
       {
         type: "p",
-        text: "For something completely different, there is Garam Masala Dating at Top Secret Comedy Club in Manhattan. It is the #1 live comedy dating show, not a stand-up night. Two South Asian singles meet for the first time on stage. Hosts Surbhi and Wyatt run it live, unscripted, in front of a real audience. There is a whiteboard rating reveal. Sometimes there is a connection. Sometimes there is chaos. Either way, 250 people watch it happen. <a href='/journal/what-actually-happens-at-a-live-comedy-dating-show'>Here is a full breakdown of what actually happens at the show.</a>",
+        text: "For something completely different, there is Garam Masala Dating at Top Secret Comedy Club in Manhattan. It is the #1 desi comedy dating show, not a stand-up night. Two South Asian singles meet for the first time on stage. Hosts Surbhi and Wyatt run it live, unscripted, in front of a real audience. There is a whiteboard rating reveal. Sometimes there is a connection. Sometimes there is chaos. Either way, 250 people watch it happen. <a href='/journal/what-actually-happens-at-a-live-comedy-dating-show'>Here is a full breakdown of what actually happens at the show.</a>",
       },
       {
         type: "h2",
@@ -88,11 +88,11 @@ export const entertainmentPosts: JournalPost[] = [
     faqs: [
       {
         q: "What are the best Indian comedy shows in NYC in 2026?",
-        a: "The main options are Laughing Lassi (an irregular stand-up showcase with coverage in TimeOut and The New Yorker) and Garam Masala Dating (the #1 monthly live comedy dating show at Top Secret Comedy Club in Manhattan). Mainstream clubs like Comedy Cellar and Stand Up NY also feature South Asian comics on regular lineups.",
+        a: "The main options are Laughing Lassi (an irregular stand-up showcase with coverage in TimeOut and The New Yorker) and Garam Masala Dating (the #1 monthly desi comedy dating show at Top Secret Comedy Club in Manhattan). Mainstream clubs like Comedy Cellar and Stand Up NY also feature South Asian comics on regular lineups.",
       },
       {
         q: "Is Garam Masala Dating a comedy show or a dating show?",
-        a: "Both. It is the #1 live comedy dating show where real South Asian singles go on blind dates on stage in front of 250 people. The comedy comes from the unscripted, live format, not from stand-up sets. Hosted by Surbhi and Wyatt at Top Secret Comedy Club in Manhattan.",
+        a: "Both. It is the #1 desi comedy dating show where real South Asian singles go on blind dates on stage in front of 250 people. The comedy comes from the unscripted, live format, not from stand-up sets. Hosted by Surbhi and Wyatt at Top Secret Comedy Club in Manhattan.",
       },
       {
         q: "How do I find out about South Asian comedy events in NYC?",
@@ -308,7 +308,7 @@ export const entertainmentPosts: JournalPost[] = [
     faqs: [
       {
         q: "Who are the biggest South Asian comedians in America?",
-        a: "The most prominent names include Hasan Minhaj, Kal Penn, Aparna Nancherla, Nimesh Patel, and Punchline Parveen. The Bay Area has a particularly active scene with Masala Comedy Club and HellaDesi. NYC has Laughing Lassi. Garam Masala Dating is the only South Asian comedy show that also functions as the #1 live dating show.",
+        a: "The most prominent names include Hasan Minhaj, Kal Penn, Aparna Nancherla, Nimesh Patel, and Punchline Parveen. The Bay Area has a particularly active scene with Masala Comedy Club and HellaDesi. NYC has Laughing Lassi. Garam Masala Dating is the only South Asian comedy show that also functions as the #1 live desi dating show.",
       },
       {
         q: "What South Asian comedy shows exist in America?",
@@ -502,7 +502,7 @@ export const entertainmentPosts: JournalPost[] = [
       },
       {
         type: "p",
-        text: "Garam Masala Dating is not a Bollywood night. It is not a singles mixer. It is not a stand-up show. It is the #1 live comedy dating show where two South Asian singles go on blind dates on stage in front of 250 people. The show runs for about an hour. After the show, there is a mixer where the entire audience, most of whom have been energized by watching other people take social risks, ends up in real conversations.",
+        text: "Garam Masala Dating is not a Bollywood night. It is not a singles mixer. It is not a stand-up show. It is the #1 desi comedy dating show where two South Asian singles go on blind dates on stage in front of 250 people. The show runs for about an hour. After the show, there is a mixer where the entire audience, most of whom have been energized by watching other people take social risks, ends up in real conversations.",
       },
       {
         type: "p",

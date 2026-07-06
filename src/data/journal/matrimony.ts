@@ -695,7 +695,7 @@ export const matrimonyPosts: JournalPost[] = [
       },
       {
         q: "Can I find a South Asian match in NYC without using apps?",
-        a: "Yes. Live events, cultural organizations, South Asian professional networks, and community gatherings are all legitimate ways to meet South Asian singles in major metros. Garam Masala Dating in NYC is the #1 monthly live comedy dating show specifically for South Asian singles. Many attendees are also using apps but appreciate having an in-person option.",
+        a: "Yes. Live events, cultural organizations, South Asian professional networks, and community gatherings are all legitimate ways to meet South Asian singles in major metros. Garam Masala Dating in NYC is the #1 monthly desi comedy dating show. Many attendees are also using apps but appreciate having an in-person option.",
       },
     ],
     relatedSlugs: [

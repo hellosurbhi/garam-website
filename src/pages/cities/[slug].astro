@@ -514,6 +514,16 @@ function renderCityText(text: string, href: string): string {
                 aria-describedby="waitlist-error"
                 toolparamdescription="Email address to be notified when show tickets go on sale in this city"
               />
+              <input
+                type="tel"
+                id="waitlist-phone"
+                class="ph-mask"
+                placeholder="Phone for text drops (optional)"
+                aria-label="Phone number (optional)"
+                autocomplete="tel"
+                inputmode="tel"
+                toolparamdescription="Mobile phone number for SMS ticket drops in this city (optional)"
+              />
               <p id="waitlist-error" class="modal-error" hidden role="alert">
               </p>
               <button type="submit" class="modal-submit"
@@ -711,6 +721,10 @@ function renderCityText(text: string, href: string): string {
         const email = (
           document.getElementById("waitlist-email") as HTMLInputElement
         ).value;
+        const phoneRaw = (
+          document.getElementById("waitlist-phone") as HTMLInputElement | null
+        )?.value;
+        const phone = phoneRaw ? cleanPhone(phoneRaw) : "";
         const city = document.querySelector(".city-eyebrow")?.textContent ?? "";
         const submitBtn = (
           e.target as HTMLFormElement
@@ -725,6 +739,7 @@ function renderCityText(text: string, href: string): string {
           await captureLead({
             email,
             city,
+            ...(phone ? { phone } : {}),
             ...attribution,
           });
           identifyLead(email, { ...attribution, city });

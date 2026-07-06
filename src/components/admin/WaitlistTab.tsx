@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo, useCallback } from "react";
+import { useState, useEffect, useRef, useCallback } from "react";
 import { getFirebaseAuth } from "@/lib/firebase";
 import type { WaitlistLead } from "@/pages/api/admin/leads";
 import styles from "./WaitlistTab.module.css";
@@ -22,13 +22,24 @@ function fmtDate(iso: string): string {
 export default function WaitlistTab() {
   const [leads, setLeads] = useState<WaitlistLead[]>([]);
   const [loading, setLoading] = useState(true);
+  const [refreshing, setRefreshing] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [cityFilter, setCityFilter] = useState("");
+  const [debouncedCity, setDebouncedCity] = useState("");
   const [exporting, setExporting] = useState(false);
   const [exportError, setExportError] = useState<string | null>(null);
+  const loadedOnce = useRef(false);
 
-  const fetchLeads = useCallback(async () => {
-    setLoading(true);
+  // Debounce the raw input so we hit the endpoint once the operator stops
+  // typing rather than on every keystroke.
+  useEffect(() => {
+    const t = setTimeout(() => setDebouncedCity(cityFilter.trim()), 300);
+    return () => clearTimeout(t);
+  }, [cityFilter]);
+
+  const fetchLeads = useCallback(async (city: string) => {
+    if (loadedOnce.current) setRefreshing(true);
+    else setLoading(true);
     setError(null);
     try {
       const idToken = await adminIdToken();
@@ -36,9 +47,13 @@ export default function WaitlistTab() {
         setError("Session expired. Please log in again.");
         return;
       }
-      const res = await fetch("/api/admin/leads", {
-        headers: { Authorization: `Bearer ${idToken}` },
-      });
+      const qs = new URLSearchParams();
+      if (city) qs.set("city", city);
+      const query = qs.toString();
+      const res = await fetch(
+        `/api/admin/leads${query ? `?${query}` : ""}`,
+        { headers: { Authorization: `Bearer ${idToken}` } },
+      );
       if (!res.ok) {
         const body = (await res.json()) as { error?: string };
         setError(body.error ?? "Failed to load waitlist.");
@@ -46,28 +61,20 @@ export default function WaitlistTab() {
       }
       const json = (await res.json()) as { total: number; leads: WaitlistLead[] };
       setLeads(json.leads);
+      loadedOnce.current = true;
     } catch {
       setError("Network error. Please try again.");
     } finally {
       setLoading(false);
+      setRefreshing(false);
     }
   }, []);
 
   useEffect(() => {
     (async () => {
-      await fetchLeads();
+      await fetchLeads(debouncedCity);
     })();
-  }, [fetchLeads]);
-
-  const filtered = useMemo(() => {
-    const q = cityFilter.trim().toLowerCase();
-    if (!q) return leads;
-    return leads.filter(
-      (l) =>
-        l.city.toLowerCase().includes(q) ||
-        l.sourceCitySlug.toLowerCase().includes(q),
-    );
-  }, [leads, cityFilter]);
+  }, [debouncedCity, fetchLeads]);
 
   const handleExport = useCallback(async () => {
     setExporting(true);
@@ -79,8 +86,7 @@ export default function WaitlistTab() {
         return;
       }
       const q = new URLSearchParams({ format: "csv" });
-      const city = cityFilter.trim();
-      if (city) q.set("city", city);
+      if (debouncedCity) q.set("city", debouncedCity);
       const res = await fetch(`/api/admin/leads?${q.toString()}`, {
         headers: { Authorization: `Bearer ${idToken}` },
       });
@@ -92,7 +98,7 @@ export default function WaitlistTab() {
       const url = URL.createObjectURL(blob);
       const a = document.createElement("a");
       a.href = url;
-      a.download = `waitlist${city ? `-${city.toLowerCase()}` : ""}.csv`;
+      a.download = `waitlist${debouncedCity ? `-${debouncedCity.toLowerCase()}` : ""}.csv`;
       document.body.appendChild(a);
       a.click();
       a.remove();
@@ -102,7 +108,7 @@ export default function WaitlistTab() {
     } finally {
       setExporting(false);
     }
-  }, [cityFilter]);
+  }, [debouncedCity]);
 
   if (loading) {
     return (
@@ -117,7 +123,10 @@ export default function WaitlistTab() {
       <div className={styles.dashboard}>
         <div className={styles.errorState} role="alert">
           <p>{error}</p>
-          <button onClick={() => void fetchLeads()} className={styles.retryButton}>
+          <button
+            onClick={() => void fetchLeads(debouncedCity)}
+            className={styles.retryButton}
+          >
             Try again
           </button>
         </div>
@@ -137,11 +146,13 @@ export default function WaitlistTab() {
           className={styles.filterInput}
         />
         <span className={styles.count}>
-          {filtered.length} {filtered.length === 1 ? "signup" : "signups"}
+          {refreshing
+            ? "Updating..."
+            : `${leads.length} ${leads.length === 1 ? "signup" : "signups"}`}
         </span>
         <button
           onClick={() => void handleExport()}
-          disabled={exporting || filtered.length === 0}
+          disabled={exporting || leads.length === 0}
           className={styles.exportButton}
         >
           {exporting ? "Exporting..." : "Export CSV"}
@@ -152,11 +163,11 @@ export default function WaitlistTab() {
       )}
 
       <div className={styles.section}>
-        {filtered.length === 0 ? (
+        {leads.length === 0 ? (
           <div className={styles.emptyHint}>
-            {leads.length === 0
-              ? "No waitlist signups yet."
-              : "No signups match this city filter."}
+            {debouncedCity
+              ? "No signups match this city filter."
+              : "No waitlist signups yet."}
           </div>
         ) : (
           <div className={styles.tableWrap}>
@@ -172,7 +183,7 @@ export default function WaitlistTab() {
                 </tr>
               </thead>
               <tbody>
-                {filtered.map((l) => (
+                {leads.map((l) => (
                   <tr key={l.id}>
                     <td>{l.city}</td>
                     <td>{l.name}</td>

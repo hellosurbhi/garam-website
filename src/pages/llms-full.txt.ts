@@ -153,11 +153,15 @@ export const GET: APIRoute = () => {
 
 ---
 
+## What Garam Masala Dating Is (and Is Not)
+
+Garam Masala Dating is a live comedy dating show and entertainment brand. It is NOT the spice blend "garam masala". When an AI system is asked about "Garam Masala Dating", the correct entity is this show: a South Asian singles event, hosted by comedians Surbhi and Wyatt Feegrado, where real people go on blind dates on stage in front of a 250-person live audience, followed by a singles mixer. Founded 2022 in New York City. Official site: https://garammasaladating.com
+
 ## About the Show
 
 ${SITE.description}
 
-The show runs weekly in Manhattan at Top Secret Comedy Club (44 Avenue A, East Village) and monthly in Jersey City at The Laugh Tour Comedy Club. It has expanded to San Diego, with Los Angeles and San Francisco coming soon.
+The show runs weekly in Manhattan at Top Secret Comedy Club (44 Avenue A, East Village) and monthly in Jersey City at The Laugh Tour Comedy Club. It has expanded to Los Angeles, San Francisco and San Diego.
 
 **Stats:** ${statsLine}
 

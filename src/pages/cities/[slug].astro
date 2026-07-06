@@ -101,7 +101,23 @@ const breadcrumbJsonLd = buildBreadcrumbJsonLd([
   { name: city.displayName },
 ]);
 
-const relatedPosts = (city.relatedArticleSlugs ?? [])
+// Featured internal links appended to every city's journal section:
+// - best-indian-dating-apps-ranked is the site's biggest-impression page
+//   (GSC: 1,493 impressions, position 25.68); 300+ city pages linking to it
+//   is the single largest internal-link boost available.
+// - Active cities (real NYC-scene relevance) also feature the flagship
+//   category guide.
+const featuredArticleSlugs = [
+  "best-indian-dating-apps-ranked",
+  ...(city.status === "active" ? ["live-dating-shows-nyc-2026"] : []),
+];
+const relatedSlugs = [
+  ...(city.relatedArticleSlugs ?? []),
+  ...featuredArticleSlugs.filter(
+    (s) => !(city.relatedArticleSlugs ?? []).includes(s),
+  ),
+];
+const relatedPosts = relatedSlugs
   .map((slug) => getPostBySlug(slug))
   .filter(
     (p): p is NonNullable<typeof p> =>

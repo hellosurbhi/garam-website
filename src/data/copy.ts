@@ -233,12 +233,10 @@ export const EXPERIENCE_STEPS = [
  */
 export const JOURNAL_FOLLOW = {
   ariaLabel: "Follow the show",
-  before: "This journal comes from a show that sells out weekly in NYC. ",
-  youtubeText: "YouTube",
-  middle: " has full episodes, ",
-  instagramText: "Instagram",
-  after:
-    " has the moments people will not stop tagging their friends in. Watch a date before you attend one.",
+  intro:
+    "This journal comes from Garam Masala Dating, a show that sells out weekly in NYC. Watch a date before you attend one.",
+  youtubeLabel: "Watch full episodes on YouTube",
+  instagramLabel: "Follow on Instagram",
 } as const;
 
 /**

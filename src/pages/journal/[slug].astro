@@ -374,33 +374,67 @@ const cityLinks =
       }
 
       <aside class="journal-follow" aria-label={JOURNAL_FOLLOW.ariaLabel}>
-        <p class="journal-follow__text">
-          {JOURNAL_FOLLOW.before}<a
+        <p class="journal-follow__intro">{JOURNAL_FOLLOW.intro}</p>
+        <div class="journal-follow__btns">
+          <a
             href={SOCIAL_URLS.youtube}
             target="_blank"
             rel="noopener noreferrer"
+            class="journal-follow__btn journal-follow__btn--youtube"
             data-ph-capture="cta_clicked"
             data-ph-cta="journal_follow_youtube"
             data-ph-section="journal_follow"
             data-cta-position="journal_follow"
-            data-cta-text={JOURNAL_FOLLOW.youtubeText}
+            data-cta-text={JOURNAL_FOLLOW.youtubeLabel}
             data-article-slug={post.slug}
             data-destination-url={SOCIAL_URLS.youtube}
-            >{JOURNAL_FOLLOW.youtubeText}</a
-          >{JOURNAL_FOLLOW.middle}<a
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="18"
+              height="18"
+              viewBox="0 0 24 24"
+              fill="currentColor"
+              aria-hidden="true"
+            >
+              <path
+                d="M23 12s0-3.5-.44-5.17a2.78 2.78 0 0 0-1.96-1.96C18.93 4.43 12 4.43 12 4.43s-6.93 0-8.6.44a2.78 2.78 0 0 0-1.96 1.96C1 8.5 1 12 1 12s0 3.5.44 5.17a2.78 2.78 0 0 0 1.96 1.96c1.67.44 8.6.44 8.6.44s6.93 0 8.6-.44a2.78 2.78 0 0 0 1.96-1.96C23 15.5 23 12 23 12ZM9.75 15.02V8.98L15.5 12l-5.75 3.02Z"
+              ></path>
+            </svg>
+            <span>{JOURNAL_FOLLOW.youtubeLabel}</span>
+          </a>
+          <a
             href={SOCIAL_URLS.instagram}
             target="_blank"
             rel="noopener noreferrer"
+            class="journal-follow__btn journal-follow__btn--instagram"
             data-ph-capture="cta_clicked"
             data-ph-cta="journal_follow_instagram"
             data-ph-section="journal_follow"
             data-cta-position="journal_follow"
-            data-cta-text={JOURNAL_FOLLOW.instagramText}
+            data-cta-text={JOURNAL_FOLLOW.instagramLabel}
             data-article-slug={post.slug}
             data-destination-url={SOCIAL_URLS.instagram}
-            >{JOURNAL_FOLLOW.instagramText}</a
-          >{JOURNAL_FOLLOW.after}
-        </p>
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="18"
+              height="18"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              aria-hidden="true"
+            >
+              <rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect>
+              <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37Z"></path>
+              <line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line>
+            </svg>
+            <span>{JOURNAL_FOLLOW.instagramLabel}</span>
+          </a>
+        </div>
       </aside>
 
       {
@@ -840,25 +874,67 @@ const cityLinks =
   /* Mid-article CTA banner */
   .journal-follow {
     background: rgba(var(--brand-red-rgb), 0.05);
-    border-left: 3px solid var(--brand-red);
-    border-radius: 0 8px 8px 0;
-    padding: 16px 20px;
+    border: 1px solid rgba(var(--brand-red-rgb), 0.12);
+    border-radius: 12px;
+    padding: 20px;
     margin: 30px 0 6px;
   }
-  .journal-follow__text {
+  .journal-follow__intro {
     font-family: var(--font-body);
     font-size: 16px;
     line-height: 1.6;
     color: var(--charcoal);
-    margin: 0;
+    margin: 0 0 14px;
   }
-  .journal-follow__text a {
+  .journal-follow__btns {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+  .journal-follow__btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    padding: 14px 20px;
+    border-radius: 12px;
+    border: 1px solid;
+    font-family: var(--font-body);
+    font-size: 16px;
+    font-weight: 600;
+    text-decoration: none;
+    transition:
+      background 0.15s,
+      border-color 0.15s,
+      transform 0.15s;
+  }
+  .journal-follow__btn:active {
+    transform: scale(0.97);
+  }
+  .journal-follow__btn svg {
+    flex-shrink: 0;
+  }
+  .journal-follow__btn--youtube {
+    border-color: var(--brand-red);
+    background: var(--brand-red);
+    color: var(--white);
+  }
+  .journal-follow__btn--instagram {
+    border-color: rgba(var(--brand-red-rgb), 0.5);
+    background: transparent;
     color: var(--brand-red);
-    font-weight: 700;
-    text-decoration: underline;
-    text-underline-offset: 2px;
   }
-  .journal-follow__text a:focus-visible {
+  @media (hover: hover) and (pointer: fine) {
+    .journal-follow__btn--youtube:hover {
+      background: var(--brand-red-dark, #b91c1c);
+      border-color: var(--brand-red-dark, #b91c1c);
+    }
+    .journal-follow__btn--instagram:hover {
+      border-color: rgba(var(--brand-red-rgb), 0.7);
+      background: rgba(var(--brand-red-rgb), 0.08);
+    }
+  }
+  .journal-follow__btn:focus-visible {
     outline: 2px solid var(--brand-red);
     outline-offset: 2px;
   }

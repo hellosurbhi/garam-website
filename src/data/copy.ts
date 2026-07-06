@@ -227,6 +227,14 @@ export const EXPERIENCE_STEPS = [
   },
 ];
 
+/** Labels for the visible review verdict box on app review journal posts. */
+export const VERDICT_BOX = {
+  eyebrow: "The Verdict",
+  outOfLabel: "out of 5",
+  prosLabel: "What works",
+  consLabel: "What holds it back",
+} as const;
+
 export const AUTHOR_BIO = {
   surbhi:
     "Co-creator and host of Garam Masala Dating, America's #1 live desi dating show. Stand-up comedian. Accidentally matched three couples and counting.",

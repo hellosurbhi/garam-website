@@ -8,8 +8,24 @@ export const matrimonyPosts: JournalPost[] = [
     metaDescription:
       "Honest Shaadi.com review for 2026. Is Shaadi.com legit? We break down what works, what doesn\u2019t, and who actually gets results on the platform.",
     datePublished: "2026-06-02",
-    dateModified: "2026-07-28",
+    dateModified: "2026-07-06",
     author: "Surbhi",
+    appReview: {
+      appName: "Shaadi.com",
+      operatingSystem: "iOS, Android, Web",
+      applicationCategory: "LifestyleApplication",
+      ratingValue: 3,
+      pros: [
+        "35 million registered profiles, the largest pool in matrimony",
+        "Operating since 1997 with a long record of real marriages",
+        "Strong NRI presence in metros like New York, London, Toronto and Houston",
+      ],
+      cons: [
+        "High volume of inactive profiles drags down response rates",
+        "Messaging requires a paid plan, roughly $30 to over $100 per month",
+        "Built for marriage-ready users, frustrating if you want to date first",
+      ],
+    },
     excerpt:
       "Shaadi.com has 35 million registered profiles and 15,000 new ones every single day. That sounds great until you\u2019re the one wading through them at midnight wondering if anyone on here is actually serious.",
     body: [
@@ -460,8 +476,24 @@ export const matrimonyPosts: JournalPost[] = [
     metaDescription:
       "Honest Betterhalf dating app review for 2026. How does this AI matchmaking app compare to Shaadi.com for marriage-minded South Asian professionals?",
     datePublished: "2026-06-06",
-    dateModified: "2026-08-05",
+    dateModified: "2026-07-06",
     author: "Surbhi",
+    appReview: {
+      appName: "Betterhalf",
+      operatingSystem: "iOS, Android",
+      applicationCategory: "LifestyleApplication",
+      ratingValue: 3.5,
+      pros: [
+        "Curated daily matches instead of an endless database to scroll",
+        "Designed for professionals running their own search, no parent-managed profiles",
+        "Cleaner, more modern interface than legacy matrimony platforms",
+      ],
+      cons: [
+        "Diaspora match pool is still small compared to Shaadi.com",
+        "Works best paired with a higher volume platform, not solo",
+        "AI matching quality depends heavily on how honestly you answer onboarding",
+      ],
+    },
     excerpt:
       "Betterhalf promises curated matches for South Asian professionals instead of an overwhelming database to scroll through. Here\u2019s what that actually looks like in practice.",
     body: [

@@ -16,6 +16,7 @@ import { Picture } from "astro:assets";
 import { HF_IMAGES_ASSETS } from "@/assets/backgrounds";
 import { slugToImageIndex } from "@/data/images";
 import { gitDates } from "virtual:git-dates";
+import { VERDICT_BOX } from "@/data/copy";
 
 export function getStaticPaths() {
   return journalPostsPublished.map((post, idx) => {
@@ -100,6 +101,52 @@ const faqJsonLd = post.faqs?.length
     })
   : null;
 
+// Ranked list articles emit ItemList (semantic structure, no carousel expected)
+const itemListJsonLd = post.rankedItems?.length
+  ? JSON.stringify({
+      "@context": "https://schema.org",
+      "@type": "ItemList",
+      itemListElement: post.rankedItems.map((item) => ({
+        "@type": "ListItem",
+        position: item.position,
+        name: item.name,
+        ...(item.url ? { url: item.url } : {}),
+      })),
+    })
+  : null;
+
+// Third party app reviews emit Review JSON-LD; the rating is also rendered
+// visibly in the verdict box below, as Google's review snippet policy requires
+const reviewJsonLd = post.appReview
+  ? JSON.stringify({
+      "@context": "https://schema.org",
+      "@type": "Review",
+      itemReviewed: {
+        "@type": "SoftwareApplication",
+        name: post.appReview.appName,
+        operatingSystem: post.appReview.operatingSystem,
+        applicationCategory: post.appReview.applicationCategory,
+      },
+      reviewRating: {
+        "@type": "Rating",
+        ratingValue: post.appReview.ratingValue,
+        bestRating: 5,
+        worstRating: 1,
+      },
+      author: {
+        "@type": "Person",
+        name: post.author,
+        url: "https://garammasaladating.com",
+      },
+      publisher: {
+        "@type": "Organization",
+        name: "Garam Masala Dating",
+        url: "https://garammasaladating.com",
+      },
+      datePublished: post.datePublished,
+    })
+  : null;
+
 const breadcrumbJsonLd = buildBreadcrumbJsonLd([
   { name: "Home", url: "https://garammasaladating.com" },
   { name: "Journal", url: "https://garammasaladating.com/journal" },
@@ -134,6 +181,16 @@ const cityLinks =
     <script type="application/ld+json" set:html={articleJsonLd} />
     <script type="application/ld+json" set:html={breadcrumbJsonLd} />
     {faqJsonLd && <script type="application/ld+json" set:html={faqJsonLd} />}
+    {
+      itemListJsonLd && (
+        <script type="application/ld+json" set:html={itemListJsonLd} />
+      )
+    }
+    {
+      reviewJsonLd && (
+        <script type="application/ld+json" set:html={reviewJsonLd} />
+      )
+    }
   </Fragment>
 
   <main id="main-content" class="post-page">
@@ -163,6 +220,54 @@ const cityLinks =
 
       <!-- Divider -->
       <div class="post-divider"></div>
+
+      {
+        post.appReview && (
+          <aside
+            class="verdict-box"
+            aria-label={`${VERDICT_BOX.eyebrow}: ${post.appReview.appName}`}
+          >
+            <p class="verdict-box__eyebrow">{VERDICT_BOX.eyebrow}</p>
+            <div class="verdict-box__header">
+              <span class="verdict-box__app">{post.appReview.appName}</span>
+              <span
+                class="verdict-box__rating"
+                role="img"
+                aria-label={`Rated ${post.appReview.ratingValue} ${VERDICT_BOX.outOfLabel}`}
+              >
+                <span class="verdict-box__score" aria-hidden="true">
+                  {post.appReview.ratingValue}
+                </span>
+                <span class="verdict-box__outof" aria-hidden="true">
+                  {VERDICT_BOX.outOfLabel}
+                </span>
+              </span>
+            </div>
+            <div class="verdict-box__cols">
+              <div class="verdict-box__col">
+                <p class="verdict-box__label verdict-box__label--pros">
+                  {VERDICT_BOX.prosLabel}
+                </p>
+                <ul class="verdict-box__list">
+                  {post.appReview.pros.map((item) => (
+                    <li>{item}</li>
+                  ))}
+                </ul>
+              </div>
+              <div class="verdict-box__col">
+                <p class="verdict-box__label verdict-box__label--cons">
+                  {VERDICT_BOX.consLabel}
+                </p>
+                <ul class="verdict-box__list">
+                  {post.appReview.cons.map((item) => (
+                    <li>{item}</li>
+                  ))}
+                </ul>
+              </div>
+            </div>
+          </aside>
+        )
+      }
 
       <!-- Article body -->
       {
@@ -702,6 +807,92 @@ const cityLinks =
   }
 
   /* Mid-article CTA banner */
+  .verdict-box {
+    background: var(--white);
+    border: 1px solid rgba(var(--brand-red-rgb), 0.15);
+    border-radius: 10px;
+    padding: 20px;
+    margin-bottom: 30px;
+  }
+  .verdict-box__eyebrow {
+    font-family: var(--font-body);
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    color: var(--brand-red);
+    margin: 0 0 10px;
+  }
+  .verdict-box__header {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 12px;
+    border-bottom: 1px solid rgba(var(--brand-red-rgb), 0.12);
+    padding-bottom: 14px;
+    margin-bottom: 14px;
+  }
+  .verdict-box__app {
+    font-family: var(--font-playfair);
+    font-size: 22px;
+    font-weight: 700;
+    color: var(--charcoal);
+  }
+  .verdict-box__rating {
+    display: flex;
+    align-items: baseline;
+    gap: 6px;
+    white-space: nowrap;
+  }
+  .verdict-box__score {
+    font-family: var(--font-playfair);
+    font-size: 30px;
+    font-weight: 700;
+    color: var(--brand-red);
+    line-height: 1;
+  }
+  .verdict-box__outof {
+    font-family: var(--font-body);
+    font-size: 13px;
+    color: #888;
+  }
+  .verdict-box__cols {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+  @media (min-width: 480px) {
+    .verdict-box__cols {
+      grid-template-columns: 1fr 1fr;
+    }
+  }
+  .verdict-box__label {
+    font-family: var(--font-body);
+    font-size: 13px;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    margin: 0 0 8px;
+  }
+  .verdict-box__label--pros {
+    color: var(--success);
+  }
+  .verdict-box__label--cons {
+    color: var(--brand-red);
+  }
+  .verdict-box__list {
+    margin: 0;
+    padding-left: 18px;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+  .verdict-box__list li {
+    font-family: var(--font-body);
+    font-size: 16px;
+    line-height: 1.55;
+    color: var(--charcoal);
+  }
+
   .article-cta {
     background: rgba(var(--brand-red-rgb), 0.05);
     border-left: 3px solid var(--brand-red);

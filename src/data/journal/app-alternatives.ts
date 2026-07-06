@@ -115,12 +115,12 @@ export const appAlternativesPosts: JournalPost[] = [
     title: "Best Dil Mil Alternatives for South Asian Singles in 2026",
     seoTitle: "Best Dil Mil Alternatives for Desis 2026",
     metaDescription:
-      "Looking for a Dil Mil alternative? Here are the best options for South Asian singles in 2026, from Hinge to Muzz to live IRL events that actually work.",
+      "Dil Mil not delivering? The best Dil Mil alternatives for South Asian singles in 2026, ranked by real results, plus the IRL option no app can touch.",
     datePublished: "2026-04-18",
-    dateModified: "2026-07-01",
+    dateModified: "2026-07-06",
     author: "Surbhi",
     excerpt:
-      "Dil Mil is the best-known South Asian dating app, but it\u2019s not the only option \u2014 and for a lot of people, it\u2019s not even the best one. Here\u2019s what else is out there.",
+      "Dil Mil is the best-known South Asian dating app, but it\u2019s not the only option, and for a lot of people it\u2019s not even the best one. Here\u2019s what else is out there.",
     body: [
       {
         type: "p",
@@ -233,7 +233,23 @@ export const appAlternativesPosts: JournalPost[] = [
     metaDescription:
       "Is Dil Mil worth it in 2026? An honest Dil Mil review covering costs, user base, match quality, and whether it\u2019s the right app for South Asian singles.",
     datePublished: "2026-04-19",
-    dateModified: "2026-07-01",
+    dateModified: "2026-07-06",
+    appReview: {
+      appName: "Dil Mil",
+      operatingSystem: "iOS, Android",
+      applicationCategory: "LifestyleApplication",
+      ratingValue: 3.5,
+      pros: [
+        "South Asian cultural context is built in, no explaining yourself",
+        "Around a million diaspora users across the US, UK and Canada",
+        "Strong pools in major metros like NYC, Chicago, Houston and the Bay Area",
+      ],
+      cons: [
+        "Match volume drops off sharply outside big South Asian metros",
+        "Premium runs $30 to $40 per month",
+        "Same swipe fatigue as every other app once the novelty wears off",
+      ],
+    },
     author: "Surbhi",
     excerpt:
       "Dil Mil is the first app most South Asian singles try. Whether it\u2019s worth your time depends on where you live, what you\u2019re looking for, and how much patience you have.",
@@ -343,12 +359,12 @@ export const appAlternativesPosts: JournalPost[] = [
     slug: "why-hinge-doesnt-work-for-indians",
     title: "Why Hinge Doesn\u2019t Work for Most Indians (And What Does)",
     metaDescription:
-      "Hinge for Indians sounds good in theory but often falls short. Here\u2019s why the app struggles for South Asian users and what actually works better.",
+      "Hinge gets Indian singles matches but rarely second dates. The 3 reasons the app fails South Asian users and what actually produces real dates in 2026.",
     datePublished: "2026-04-20",
-    dateModified: "2026-05-03",
+    dateModified: "2026-07-06",
     author: "Surbhi",
     excerpt:
-      "Hinge is the biggest dating app in America and Indians use it \u2014 but the success rate for South Asian users is worse than the platform average. Here\u2019s why.",
+      "Hinge is the biggest dating app in America and Indians use it, but the success rate for South Asian users is worse than the platform average. Here\u2019s why.",
     body: [
       {
         type: "p",
@@ -479,10 +495,11 @@ export const appAlternativesPosts: JournalPost[] = [
     slug: "best-indian-dating-apps-ranked",
     title:
       "The Best Indian Dating Apps Ranked by Someone Who\u2019s Tried Them All",
+    seoTitle: "7 Best Indian Dating Apps in 2026, Ranked",
     metaDescription:
-      "The best Indian dating apps ranked honestly for 2026 \u2014 Dil Mil, Hinge, Aisle, Muzz, Ishq, Salams, and more. Which one is actually worth your time?",
+      "I ranked all 7 Indian dating apps by what actually gets desis real dates in 2026: Dil Mil, Hinge, Aisle, Muzz, Salams, Ishq and Yuzu. One clear winner.",
     datePublished: "2026-04-21",
-    dateModified: "2026-05-05",
+    dateModified: "2026-07-06",
     author: "Surbhi",
     excerpt:
       "I\u2019ve run the #1 live South Asian dating show for four years and talked to hundreds of contestants about what\u2019s working. Here\u2019s the honest ranking of Indian dating apps in 2026.",
@@ -501,7 +518,7 @@ export const appAlternativesPosts: JournalPost[] = [
       },
       {
         type: "h2",
-        text: "1. Dil Mil \u2014 best for South Asian cultural context in major metros",
+        text: "1. Dil Mil: best for South Asian cultural context in major metros",
       },
       {
         type: "p",
@@ -509,15 +526,15 @@ export const appAlternativesPosts: JournalPost[] = [
       },
       {
         type: "h2",
-        text: "2. Hinge \u2014 best for volume and major metro reach",
+        text: "2. Hinge: best for volume and major metro reach",
       },
       {
         type: "p",
-        text: "Hinge is the second-largest dating app in the US and has a substantial Indian user base. The prompts format creates better conversation starters than Dil Mil, and the pool is much larger. The cost is cultural dilution \u2014 you\u2019ll spend more time filtering for cultural fit. Best used alongside Dil Mil, not instead of it. I\u2019ve written more about <a href='/journal/why-hinge-doesnt-work-for-indians'>why Hinge specifically struggles for Indian users</a> and what you can do about it.",
+        text: "Hinge is the second-largest dating app in the US and has a substantial Indian user base. The prompts format creates better conversation starters than Dil Mil, and the pool is much larger. The cost is cultural dilution: you\u2019ll spend more time filtering for cultural fit. Best used alongside Dil Mil, not instead of it. I\u2019ve written more about <a href='/journal/why-hinge-doesnt-work-for-indians'>why Hinge specifically struggles for Indian users</a> and what you can do about it.",
       },
       {
         type: "h2",
-        text: "3. Aisle \u2014 best for high intent",
+        text: "3. Aisle: best for high intent",
       },
       {
         type: "p",
@@ -525,7 +542,7 @@ export const appAlternativesPosts: JournalPost[] = [
       },
       {
         type: "h2",
-        text: "4. Muzz \u2014 best for Muslim South Asians",
+        text: "4. Muzz: best for Muslim South Asians",
       },
       {
         type: "p",
@@ -533,7 +550,7 @@ export const appAlternativesPosts: JournalPost[] = [
       },
       {
         type: "h3",
-        text: "5. Salams \u2014 high volume for Muslim singles with caveats",
+        text: "5. Salams: high volume for Muslim singles with caveats",
       },
       {
         type: "p",
@@ -541,7 +558,7 @@ export const appAlternativesPosts: JournalPost[] = [
       },
       {
         type: "h3",
-        text: "6. Ishq \u2014 best signal-to-noise ratio (if you can get in)",
+        text: "6. Ishq: best signal-to-noise ratio (if you can get in)",
       },
       {
         type: "p",
@@ -549,7 +566,7 @@ export const appAlternativesPosts: JournalPost[] = [
       },
       {
         type: "h3",
-        text: "7. Yuzu \u2014 new entry from Match Group",
+        text: "7. Yuzu: new entry from Match Group",
       },
       {
         type: "p",
@@ -575,7 +592,7 @@ export const appAlternativesPosts: JournalPost[] = [
       },
       {
         q: "Is there a dating app specifically for Indians?",
-        a: "Yes. Dil Mil, Aisle, Ishq, and Mirchi are all built specifically for South Asian singles. Muzz and Salams serve Muslim South Asians. Each has different strengths \u2014 Dil Mil for diaspora matching, Aisle for intent, Ishq for curated exclusivity.",
+        a: "Yes. Dil Mil, Aisle, Ishq and Mirchi are all built specifically for South Asian singles. Muzz and Salams serve Muslim South Asians. Each has different strengths: Dil Mil for diaspora matching, Aisle for intent, Ishq for curated exclusivity.",
       },
       {
         q: "Which Indian dating app has the most users?",
@@ -590,6 +607,15 @@ export const appAlternativesPosts: JournalPost[] = [
       "is-dil-mil-worth-it",
       "why-hinge-doesnt-work-for-indians",
       "dating-apps-for-brown-people",
+    ],
+    rankedItems: [
+      { position: 1, name: "Dil Mil" },
+      { position: 2, name: "Hinge" },
+      { position: 3, name: "Aisle" },
+      { position: 4, name: "Muzz" },
+      { position: 5, name: "Salams" },
+      { position: 6, name: "Ishq" },
+      { position: 7, name: "Yuzu" },
     ],
     ctaConfig: {
       intent: "advice",

@@ -2,7 +2,13 @@
  * Journal data aggregator.
  * Imports all category files and exports a unified array.
  */
-export type { PostBlock, JournalFaq, JournalPost } from "./types";
+export type {
+  PostBlock,
+  JournalFaq,
+  JournalPost,
+  RankedItem,
+  AppReview,
+} from "./types";
 import type { JournalPost } from "./types";
 import { isPublished } from "../../utils/date";
 import { corePosts } from "./core";

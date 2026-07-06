@@ -1,9 +1,21 @@
 import { events } from "@/data/events";
 import type { EventEntry } from "@/data/events";
 
-const today = new Date().toISOString().slice(0, 10);
+function currentDay(): string {
+  return new Date().toISOString().slice(0, 10);
+}
 
-function isUpcomingEvent(e: EventEntry): boolean {
+/**
+ * An event is "upcoming" for a city when it is not hidden, has an ISO date on
+ * or after `today`, a real ticket URL and a city slug. This is the single
+ * gate behind the city page CTA state machine: once an event's isoDate falls
+ * before today, it drops out here and the page reverts to the no-event state
+ * automatically on the next build. `today` is injectable for tests.
+ */
+export function isUpcomingEvent(
+  e: EventEntry,
+  today: string = currentDay(),
+): boolean {
   return (
     !e.hidden &&
     !!e.isoDate &&
@@ -15,13 +27,17 @@ function isUpcomingEvent(e: EventEntry): boolean {
 }
 
 export function getUpcomingEventsForCity(citySlug: string): EventEntry[] {
-  return events.filter((e) => isUpcomingEvent(e) && e.citySlug === citySlug);
+  const today = currentDay();
+  return events.filter(
+    (e) => isUpcomingEvent(e, today) && e.citySlug === citySlug,
+  );
 }
 
 export function citySlugsWithUpcomingEvents(): string[] {
+  const today = currentDay();
   const slugs = new Set<string>();
   for (const e of events) {
-    if (isUpcomingEvent(e) && e.citySlug) {
+    if (isUpcomingEvent(e, today) && e.citySlug) {
       slugs.add(e.citySlug);
     }
   }

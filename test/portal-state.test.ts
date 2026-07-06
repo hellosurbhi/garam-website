@@ -84,6 +84,7 @@ describe("portal-state GET /api/portal-state", () => {
       expect(mocks.fsGet).not.toHaveBeenCalled();
     });
 
+
     it("returns invite state for a valid unclaimed invite", async () => {
       mocks.fsGet.mockResolvedValue({
         claimed: false,

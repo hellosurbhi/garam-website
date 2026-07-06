@@ -131,6 +131,7 @@ function ApplyPageInner() {
     termsAgreed,
     nominationConsent,
     handleNominationConsentChange,
+    handleMarketingConsentChange,
     showTermsModal,
     setShowTermsModal,
     toast,
@@ -141,9 +142,9 @@ function ApplyPageInner() {
     handleAddPhotos,
     handleRemovePhoto,
     handleTermsCheckbox,
+    handleBlur,
     agreeToTerms,
     handleSubmit,
-    handleBlur,
     setTurnstileToken,
     turnstileWidgetIdRef,
   } = useApplyForm();
@@ -315,6 +316,7 @@ function ApplyPageInner() {
                           id="field-gender"
                           value={form.gender}
                           onChange={(e) => set("gender", e.target.value)}
+                          onBlur={() => handleBlur("gender")}
                           className={styles.select}
                           required
                           aria-invalid={!!errors.gender}
@@ -341,6 +343,7 @@ function ApplyPageInner() {
                           id="field-orientation"
                           value={form.orientation}
                           onChange={(e) => set("orientation", e.target.value)}
+                          onBlur={() => handleBlur("orientation")}
                           className={styles.select}
                           required
                           aria-invalid={!!errors.orientation}
@@ -423,6 +426,7 @@ function ApplyPageInner() {
                           type="text"
                           value={cityInput}
                           onChange={handleCityInputChange}
+                          onBlur={() => handleBlur("city")}
                           placeholder="(Ex. Chicago)"
                           className={styles.input}
                           required
@@ -732,7 +736,7 @@ function ApplyPageInner() {
                           name="marketingConsent"
                           value="yes"
                           checked={form.marketingConsent === "yes"}
-                          onChange={() => set("marketingConsent", "yes")}
+                          onChange={() => handleMarketingConsentChange("yes")}
                           className={styles.radioInput}
                           aria-invalid={!!errors.marketingConsent}
                         />
@@ -744,7 +748,7 @@ function ApplyPageInner() {
                           name="marketingConsent"
                           value="no"
                           checked={form.marketingConsent === "no"}
-                          onChange={() => set("marketingConsent", "no")}
+                          onChange={() => handleMarketingConsentChange("no")}
                           className={styles.radioInput}
                           aria-invalid={!!errors.marketingConsent}
                         />

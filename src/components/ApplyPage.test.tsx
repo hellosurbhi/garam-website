@@ -76,6 +76,48 @@ describe("ApplyPage", () => {
     )!;
   }
 
+  // Fill all required fields so the form becomes valid and the submit button
+  // is enabled. Used by tests that need to reach the Firestore submit path.
+  function fillAllRequiredFields() {
+    fireEvent.change(screen.getByPlaceholderText("Name"), {
+      target: { value: "Jane Doe" },
+    });
+    fireEvent.change(screen.getByPlaceholderText("Age"), {
+      target: { value: "25" },
+    });
+    fireEvent.change(screen.getByRole("combobox", { name: /gender/i }), {
+      target: { value: "Woman" },
+    });
+    fireEvent.change(screen.getByRole("combobox", { name: /orientation/i }), {
+      target: { value: "Straight" },
+    });
+    fireEvent.change(screen.getByPlaceholderText("(Ex. Chicago)"), {
+      target: { value: "New York" },
+    });
+    fireEvent.change(screen.getByPlaceholderText("you@example.com"), {
+      target: { value: "jane@example.com" },
+    });
+    fireEvent.change(screen.getByRole("textbox", { name: /instagram/i }), {
+      target: { value: "janedoe" },
+    });
+    // Photo: setPhotoFiles is called synchronously inside handleAddPhotos,
+    // so isValid updates before FileReader completes.
+    const photoInput = document.getElementById(
+      "photo-input",
+    ) as HTMLInputElement;
+    fireEvent.change(photoInput, {
+      target: {
+        files: [
+          new File([new ArrayBuffer(1024)], "photo.jpg", {
+            type: "image/jpeg",
+          }),
+        ],
+      },
+    });
+    fireEvent.click(getConsentRadio("yes"));
+    fireEvent.click(screen.getByRole("checkbox"));
+  }
+
   it("shows 'For myself' and 'For a friend' toggle buttons", () => {
     render(<ApplyPage />);
     expect(screen.getByText("For myself")).toBeInTheDocument();
@@ -445,39 +487,49 @@ describe("ApplyPage", () => {
 
   /* ── Toast rendering ─────────────────────────────────────── */
 
-  it("toast shows error message when form is submitted with missing fields", async () => {
+  it("no required-fields toast fires when empty form is submitted directly", async () => {
     render(<ApplyPage />);
-    // fireEvent.submit bypasses the button disabled state and calls
-    // handleSubmit directly, which runs validate() and sets the toast.
+    // fireEvent.submit bypasses the disabled button; validate() still runs
+    // (setting field errors), but the required-fields toast is intentionally
+    // removed — the disabled button is the user-facing signal for missing fields.
     fireEvent.submit(document.querySelector("form")!);
-    await waitFor(() => {
-      expect(
-        screen.getByText("Please fill in all required fields"),
-      ).toBeInTheDocument();
-    });
+    await new Promise<void>((r) => setTimeout(r, 0));
+    expect(
+      screen.queryByText("Please fill in all required fields"),
+    ).not.toBeInTheDocument();
   });
 
-  it("toast has dismiss button", async () => {
+  it("toast has dismiss button on submission failure", async () => {
+    mockAddDoc.mockRejectedValueOnce(new Error("Firestore error"));
     render(<ApplyPage />);
-    fireEvent.submit(document.querySelector("form")!);
+    fillAllRequiredFields();
+    await waitFor(() =>
+      expect(
+        screen.getByText("Submit Application").closest("button"),
+      ).not.toBeDisabled(),
+    );
+    fireEvent.click(screen.getByText("Submit Application").closest("button")!);
     await waitFor(() => {
       expect(screen.getByLabelText("Dismiss")).toBeInTheDocument();
     });
   });
 
   it("toast dismiss button removes toast", async () => {
+    mockAddDoc.mockRejectedValueOnce(new Error("Firestore error"));
     render(<ApplyPage />);
-    fireEvent.submit(document.querySelector("form")!);
-    await waitFor(() => {
+    fillAllRequiredFields();
+    await waitFor(() =>
       expect(
-        screen.getByText("Please fill in all required fields"),
-      ).toBeInTheDocument();
+        screen.getByText("Submit Application").closest("button"),
+      ).not.toBeDisabled(),
+    );
+    fireEvent.click(screen.getByText("Submit Application").closest("button")!);
+    await waitFor(() => {
+      expect(screen.getByLabelText("Dismiss")).toBeInTheDocument();
     });
     fireEvent.click(screen.getByLabelText("Dismiss"));
     await waitFor(() => {
-      expect(
-        screen.queryByText("Please fill in all required fields"),
-      ).not.toBeInTheDocument();
+      expect(screen.queryByLabelText("Dismiss")).not.toBeInTheDocument();
     });
   });
 

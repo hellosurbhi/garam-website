@@ -18,6 +18,8 @@ export const liveShowsPosts: JournalPost[] = [
     author: "Surbhi",
     excerpt:
       "New York is the live dating show capital of the world. Nowhere else can you watch strangers fall for each other on stage on any given week, and I say that as someone who runs one of these shows and goes to all the others.",
+    keyTakeaway:
+      "NYC's main live dating shows are Garam Masala Dating (a desi comedy dating show and singles mixer, open to everyone), UpDating (blindfolded blind dates) and Tinder Live (a comedy show about dating apps). Garam Masala Dating runs weekly and is the only one built so the audience gets to date too.",
     faqs: [
       {
         q: "What live dating shows are running in NYC right now?",
@@ -161,6 +163,8 @@ export const liveShowsPosts: JournalPost[] = [
     author: "Surbhi",
     excerpt:
       "Every summer the same thing happens. Love Island takes over the group chat, everyone picks a couple to defend like a legal client, and then the season ends and leaves a hole in your week where the drama used to live.",
+    keyTakeaway:
+      "You cannot attend Love Island, which films on a closed set, but you can attend a live dating show, which is the in-person version of reality dating TV. Real singles date on stage while you watch, react and vote. In NYC, Garam Masala Dating and UpDating both run this format with tickets from around $15.",
     faqs: [
       {
         q: "Can you attend Love Island in person?",
@@ -276,6 +280,8 @@ export const liveShowsPosts: JournalPost[] = [
     author: "Surbhi",
     excerpt:
       "A comedy dating show is a live event where real singles go on an actual first date on stage while comedians host and a full audience watches, reacts and votes. No scripts, no edit, no second takes.",
+    keyTakeaway:
+      "A comedy dating show is a live stage show where real singles go on a first date in front of an audience while comedian hosts guide it with stand-up, games and crowd work, and the crowd votes on a second date. Garam Masala Dating in NYC is a leading example, and most shows end with a singles mixer.",
     faqs: [
       {
         q: "What is a comedy dating show?",
@@ -387,6 +393,8 @@ export const liveShowsPosts: JournalPost[] = [
     author: "Surbhi",
     excerpt:
       "Somewhere between season four of your favorite dating show and your hundredth app download, a thought arrives: I want to see this happen in real life. You can.",
+    keyTakeaway:
+      "Reality dating shows film on closed sets you cannot attend, but live dating shows are built for audiences. In 2026 the deepest scene is NYC, where Garam Masala Dating runs weekly with shows also in Jersey City, Boston, Philadelphia, LA and San Francisco. Tickets run about $15 to $40, and you can apply to be a dater.",
     faqs: [
       {
         q: "Can you attend a dating show taping?",
@@ -498,6 +506,8 @@ export const liveShowsPosts: JournalPost[] = [
     author: "Surbhi",
     excerpt:
       "I've spent four years watching people meet at a live dating show and four years hearing them complain about the apps. The comparison is not close, but it is not one-sided either.",
+    keyTakeaway:
+      "For actually meeting someone in person, a live dating show beats dating apps: a room of real singles plus 90 minutes of shared laughter does the icebreaking that apps never can. Apps still win on reach and convenience. Most people who succeed use both, apps for volume and live events like Garam Masala Dating for real connection.",
     faqs: [
       {
         q: "Are live dating shows better than dating apps?",
@@ -589,6 +599,8 @@ export const liveShowsPosts: JournalPost[] = [
     author: "Surbhi",
     excerpt:
       "You bought a ticket to a blind date show, or you're about to, and you want to know what you're walking into. Good instinct. Here is the honest, full rundown from the person running one.",
+    keyTakeaway:
+      "At a blind date show, two real singles who have never met go on a first date on stage while comedian hosts guide it and the audience reacts and votes. You only go on stage if you volunteer; about 95% of the crowd just watches. Garam Masala Dating shows run about 90 minutes and end with a singles mixer.",
     faqs: [
       {
         q: "What happens at a blind date show?",

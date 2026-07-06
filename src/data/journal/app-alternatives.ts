@@ -121,6 +121,8 @@ export const appAlternativesPosts: JournalPost[] = [
     author: "Surbhi",
     excerpt:
       "Dil Mil is the best-known South Asian dating app, but it\u2019s not the only option, and for a lot of people it\u2019s not even the best one. Here\u2019s what else is out there.",
+    keyTakeaway:
+      "The best Dil Mil alternatives for South Asian singles in 2026 are Hinge (bigger pool), Aisle (higher intent), Muzz (for Muslim South Asians) and Aisle-style paid apps, plus live IRL events. Which is best depends on your city and what you want, and most people who succeed combine an app with in-person events.",
     body: [
       {
         type: "p",
@@ -253,6 +255,8 @@ export const appAlternativesPosts: JournalPost[] = [
     author: "Surbhi",
     excerpt:
       "Dil Mil is the first app most South Asian singles try. Whether it\u2019s worth your time depends on where you live, what you\u2019re looking for, and how much patience you have.",
+    keyTakeaway:
+      "Dil Mil is worth it if you live in a major metro with a dense South Asian community (NYC, the Bay Area, Toronto, London) and want cultural context built in. Outside those metros the pool thins out fast. Premium runs about $30 to $40 a month. It is a good sorting tool, not a silver bullet.",
     body: [
       {
         type: "p",
@@ -365,6 +369,8 @@ export const appAlternativesPosts: JournalPost[] = [
     author: "Surbhi",
     excerpt:
       "Hinge is the biggest dating app in America and Indians use it, but the success rate for South Asian users is worse than the platform average. Here\u2019s why.",
+    keyTakeaway:
+      "Hinge gets Indian users matches but rarely second dates, because the pool is culturally thin, family and background expectations do not surface in prompts, and desi representation is low outside big metros. It works best paired with a South Asian app like Dil Mil, or with in-person events where chemistry is visible immediately.",
     body: [
       {
         type: "p",
@@ -503,6 +509,8 @@ export const appAlternativesPosts: JournalPost[] = [
     author: "Surbhi",
     excerpt:
       "I\u2019ve run the #1 live South Asian dating show for four years and talked to hundreds of contestants about what\u2019s working. Here\u2019s the honest ranking of Indian dating apps in 2026.",
+    keyTakeaway:
+      "The best Indian dating apps in 2026, ranked by real results: Dil Mil (best cultural fit in major metros), Hinge (best reach), Aisle (highest intent), Muzz (best for Muslim South Asians), then Salams, Ishq and Yuzu. No app solves the core problem that chemistry does not transmit over text, which is why in-person events increasingly win.",
     body: [
       {
         type: "p",
@@ -1027,6 +1035,8 @@ export const appAlternativesPosts: JournalPost[] = [
     author: "Surbhi",
     excerpt:
       "Canada has one of the densest South Asian populations outside South Asia, so you'd expect the apps to work here. Density is not the same as a dating scene, and Canadian desis know the difference.",
+    keyTakeaway:
+      "In Canada, Dil Mil has the deepest South Asian pools in the GTA and Metro Vancouver, Hinge has the widest reach in major cities, and Muzz leads for Muslim South Asians. Outside Toronto and Vancouver the pools thin fast, so Canadian desis increasingly pair apps with community events.",
     faqs: [
       {
         q: "What is the best Indian dating app in Canada?",
@@ -1138,6 +1148,8 @@ export const appAlternativesPosts: JournalPost[] = [
     author: "Surbhi",
     excerpt:
       "India is one of the fastest growing sources of migration to Australia, but the dating apps have not caught up. Australian desi singles work with thinner pools than their London or Toronto cousins, and it shows.",
+    keyTakeaway:
+      "In Australia, Hinge has the broadest reach in Sydney and Melbourne, Dil Mil works there with a thinner pool, and Muzz leads for Muslim South Asians. Because Australia's desi community is newer, app density lags the population, which makes in-person events disproportionately valuable for meeting South Asian singles.",
     faqs: [
       {
         q: "What is the best Indian dating app in Australia?",

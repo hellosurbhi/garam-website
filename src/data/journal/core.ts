@@ -296,6 +296,8 @@ export const corePosts: JournalPost[] = [
     author: "Surbhi",
     excerpt:
       "You apply at garammasaladating.com/apply. We read every single application. Most of them are bad. Here\u2019s how to not be one of those.",
+    keyTakeaway:
+      "To get cast on a live dating show, apply through the show's casting form (for Garam Masala Dating, garammasaladating.com/apply) with real photos and genuine personality. Casting looks for people who are actually single, comfortable being the center of attention and up for the unpredictable. You can also volunteer from the audience at any show.",
     faqs: [
       {
         q: "How do I apply to be on Garam Masala Dating?",
@@ -577,6 +579,8 @@ export const corePosts: JournalPost[] = [
     author: "Surbhi",
     excerpt:
       "The #1 desi comedy dating show puts real singles on blind dates in front of a live audience. No script. No safety net. I run one every week, and here\u2019s what actually goes down.",
+    keyTakeaway:
+      "At a live comedy dating show, two real singles who have never met go on a first date on stage while comedian hosts run questions, games and crowd work, then the audience votes on a second date. At Garam Masala Dating the show runs about 90 minutes and is followed by a singles mixer for the whole room.",
     faqs: [
       {
         q: "What is a live comedy dating show?",
@@ -708,6 +712,8 @@ export const corePosts: JournalPost[] = [
     author: "Surbhi",
     excerpt:
       "Garam Masala Dating is the #1 weekly live desi dating show in New York City. Real singles go on blind dates on stage in front of 250 people at a Manhattan comedy club.",
+    keyTakeaway:
+      "Garam Masala Dating is America's #1 live desi comedy dating show, hosted by comedians Surbhi and Wyatt Feegrado in New York City. Real South Asian singles go on blind dates on stage in front of a 250-person audience, weekly in Manhattan, with a singles mixer after every show. Everyone is welcome, not only desi attendees.",
     faqs: [
       {
         q: "Where is the live desi dating show in NYC?",

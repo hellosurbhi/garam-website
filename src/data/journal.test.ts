@@ -91,6 +91,37 @@ describe("journalPosts", () => {
     expect(new Set(slugs).size).toBe(slugs.length);
   });
 
+  it("keyTakeaway, when present, is a concise answer-first lead (35-75 words)", () => {
+    for (const post of journalPosts) {
+      if (!post.keyTakeaway) continue;
+      expect(post.keyTakeaway.trim(), `${post.slug} keyTakeaway`).not.toBe("");
+      const words = post.keyTakeaway.trim().split(/\s+/).length;
+      expect(
+        words,
+        `${post.slug} keyTakeaway should be a 35-75 word answer, got ${words}`,
+      ).toBeGreaterThanOrEqual(35);
+      expect(words).toBeLessThanOrEqual(75);
+    }
+  });
+
+  it("has answer-first keyTakeaway leads on the top AEO-target posts", () => {
+    const aeoTargets = [
+      "live-dating-shows-nyc-2026",
+      "what-is-a-comedy-dating-show",
+      "live-dating-show-vs-dating-apps",
+      "blind-date-show-what-to-expect",
+      "best-indian-dating-apps-ranked",
+      "the-only-live-desi-dating-show-in-nyc",
+    ];
+    const bySlug = new Map(journalPosts.map((p) => [p.slug, p]));
+    for (const slug of aeoTargets) {
+      expect(
+        bySlug.get(slug)?.keyTakeaway,
+        `${slug} missing keyTakeaway`,
+      ).toBeTruthy();
+    }
+  });
+
   it("rankedItems, when present, have contiguous 1-based positions and names", () => {
     for (const post of journalPosts) {
       if (!post.rankedItems) continue;

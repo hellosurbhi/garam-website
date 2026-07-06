@@ -28,6 +28,8 @@ export const matrimonyPosts: JournalPost[] = [
     },
     excerpt:
       "Shaadi.com has 35 million registered profiles and 15,000 new ones every single day. That sounds great until you\u2019re the one wading through them at midnight wondering if anyone on here is actually serious.",
+    keyTakeaway:
+      "Shaadi.com is legit and still worth it in 2026 if you are genuinely marriage-ready, treat it like a job search and use a paid plan to message. It functions more like a matrimonial database than a dating app, and its high volume of inactive profiles means patience is required. If you want to date first, it will frustrate you.",
     body: [
       {
         type: "p",
@@ -496,6 +498,8 @@ export const matrimonyPosts: JournalPost[] = [
     },
     excerpt:
       "Betterhalf promises curated matches for South Asian professionals instead of an overwhelming database to scroll through. Here\u2019s what that actually looks like in practice.",
+    keyTakeaway:
+      "Betterhalf is worth trying for urban, marriage-minded South Asian professionals who are tired of legacy matrimony sites: the AI-curated daily matches and cleaner interface are genuine upgrades. The catch is a smaller diaspora pool, so treat it as one part of a multi-platform strategy rather than your only app.",
     body: [
       {
         type: "p",

@@ -63,6 +63,13 @@ export interface JournalPost {
   author: string;
   /** First two sentences of the body — used on the index page. */
   excerpt: string;
+  /**
+   * Answer-first lead (AEO): a 40-60 word, definition-led direct answer to the
+   * post's title question, rendered as a highlighted callout at the very top of
+   * the article and marked Speakable so AI answer engines can lift it verbatim.
+   * Present only on the posts that map to real LLM/voice queries.
+   */
+  keyTakeaway?: string;
   body: PostBlock[];
   faqs?: JournalFaq[];
   /** 2-3 slugs of related articles for cross-linking */

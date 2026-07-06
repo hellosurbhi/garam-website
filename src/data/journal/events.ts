@@ -12,6 +12,8 @@ export const eventsPosts: JournalPost[] = [
     author: "Surbhi",
     excerpt:
       "Most desi singles I know are on three apps and actively miserable on all of them. There is a better way, and it involves leaving your apartment.",
+    keyTakeaway:
+      "The most effective ways to meet Indian singles without dating apps are cultural events, desi social mixers, South Asian professional networks and live shows built for desi singles. In NYC, Garam Masala Dating runs a live comedy dating show and singles mixer where South Asian singles meet in person. In-person skips the pre-screening that apps make frictionless.",
     faqs: [
       {
         q: "How do I meet Indian singles without dating apps?",

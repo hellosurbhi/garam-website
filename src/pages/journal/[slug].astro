@@ -154,6 +154,20 @@ const breadcrumbJsonLd = buildBreadcrumbJsonLd([
   { name: post.title },
 ]);
 
+// Speakable (AEO): marks the title + answer-first lead as the passages AI
+// voice/answer engines should extract. Only when a keyTakeaway exists.
+const speakableJsonLd = post.keyTakeaway
+  ? JSON.stringify({
+      "@context": "https://schema.org",
+      "@type": "WebPage",
+      url: postUrl,
+      speakable: {
+        "@type": "SpeakableSpecification",
+        cssSelector: [".post-title", ".post-answer__text"],
+      },
+    })
+  : null;
+
 const seoTitle = post.seoTitle ?? deriveSeoTitle(post.title);
 
 const cfg = post.ctaConfig;
@@ -182,6 +196,11 @@ const cityLinks =
     <script type="application/ld+json" set:html={articleJsonLd} />
     <script type="application/ld+json" set:html={breadcrumbJsonLd} />
     {faqJsonLd && <script type="application/ld+json" set:html={faqJsonLd} />}
+    {
+      speakableJsonLd && (
+        <script type="application/ld+json" set:html={speakableJsonLd} />
+      )
+    }
     {
       itemListJsonLd && (
         <script type="application/ld+json" set:html={itemListJsonLd} />
@@ -221,6 +240,16 @@ const cityLinks =
 
       <!-- Divider -->
       <div class="post-divider"></div>
+
+      {/* Answer-first lead (AEO): definition-led direct answer, Speakable. */}
+      {
+        post.keyTakeaway && (
+          <aside class="post-answer" aria-label="Quick answer">
+            <p class="post-answer__label">Quick answer</p>
+            <p class="post-answer__text">{post.keyTakeaway}</p>
+          </aside>
+        )
+      }
 
       {
         post.appReview && (
@@ -633,6 +662,31 @@ const cityLinks =
     height: 1px;
     background: rgba(var(--brand-red-rgb), 0.3);
     margin-bottom: 30px;
+  }
+
+  /* Answer-first lead (AEO): visually prominent, machine-extractable. */
+  .post-answer {
+    background: rgba(var(--brand-red-rgb), 0.05);
+    border: 1px solid rgba(var(--brand-red-rgb), 0.15);
+    border-radius: 12px;
+    padding: 18px 22px;
+    margin-bottom: 30px;
+  }
+  .post-answer__label {
+    font-family: var(--font-body);
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    color: var(--brand-red);
+    margin: 0 0 8px;
+  }
+  .post-answer__text {
+    font-family: var(--font-body);
+    font-size: 17px;
+    line-height: 1.6;
+    color: var(--charcoal);
+    margin: 0;
   }
 
   .post-body {

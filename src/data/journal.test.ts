@@ -90,6 +90,60 @@ describe("journalPosts", () => {
     const slugs = journalPosts.map((p) => p.slug);
     expect(new Set(slugs).size).toBe(slugs.length);
   });
+
+  it("rankedItems, when present, have contiguous 1-based positions and names", () => {
+    for (const post of journalPosts) {
+      if (!post.rankedItems) continue;
+      expect(
+        post.rankedItems.length,
+        `${post.slug} has empty rankedItems`,
+      ).toBeGreaterThan(0);
+      const positions = post.rankedItems
+        .map((item) => item.position)
+        .sort((a, b) => a - b);
+      positions.forEach((pos, idx) => {
+        expect(
+          pos,
+          `${post.slug} rankedItems positions must be contiguous 1..n`,
+        ).toBe(idx + 1);
+      });
+      for (const item of post.rankedItems) {
+        expect(item.name.trim(), `${post.slug} rankedItem name`).not.toBe("");
+      }
+    }
+  });
+
+  it("appReview, when present, has a 1-5 rating and non-empty verdict content", () => {
+    for (const post of journalPosts) {
+      if (!post.appReview) continue;
+      const review = post.appReview;
+      expect(review.appName.trim()).not.toBe("");
+      expect(review.operatingSystem.trim()).not.toBe("");
+      expect(review.applicationCategory.trim()).not.toBe("");
+      expect(review.ratingValue).toBeGreaterThanOrEqual(1);
+      expect(review.ratingValue).toBeLessThanOrEqual(5);
+      expect(
+        review.pros.length,
+        `${post.slug} appReview needs pros for the visible verdict box`,
+      ).toBeGreaterThan(0);
+      expect(
+        review.cons.length,
+        `${post.slug} appReview needs cons for the visible verdict box`,
+      ).toBeGreaterThan(0);
+      for (const line of [...review.pros, ...review.cons]) {
+        expect(line.trim()).not.toBe("");
+      }
+    }
+  });
+
+  it("app reviews never review Garam Masala itself (Google self serving review policy)", () => {
+    for (const post of journalPosts) {
+      if (!post.appReview) continue;
+      expect(post.appReview.appName.toLowerCase()).not.toContain(
+        "garam masala",
+      );
+    }
+  });
 });
 
 describe("journalPostsSorted", () => {

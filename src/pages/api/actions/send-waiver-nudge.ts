@@ -6,7 +6,6 @@ import { verifyAdminIdentity } from "@/lib/verifyToken";
 import { fsGet, fsPatch, fsAdd } from "@/lib/firestoreRest";
 import { sendMail } from "@/lib/zohoMailer";
 import { waiverNudge } from "@/data/emails";
-import { signPortalToken } from "@/lib/portalToken";
 import { events } from "@/data/events";
 
 const Schema = z.object({
@@ -80,13 +79,9 @@ export const POST: APIRoute = async ({ request }) => {
     return json({ error: "No invite found for this application" }, 409);
   }
 
-  const token = await signPortalToken(
-    invite.id,
-    castEventId,
-    event.isoDate,
-    event.timezone ?? "America/New_York",
-  );
-  const waiverUrl = `${siteUrl}/waiver?token=${encodeURIComponent(token)}`;
+  // Link to the native Cast Portal (Green Room), matching create-invite. The
+  // portal resolves the invite by id; no separate JWT is needed for the link.
+  const waiverUrl = `${siteUrl}/contestant-portal?invite=${encodeURIComponent(invite.id)}`;
 
   const name = typeof app.name === "string" ? app.name : "there";
   const now = new Date().toISOString();

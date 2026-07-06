@@ -286,17 +286,6 @@ describe("useApplyForm", () => {
     );
   });
 
-  it("validation shows toast on failure", async () => {
-    const { result } = renderHook(() => useApplyForm());
-    await act(async () => {
-      await result.current.handleSubmit(makeSubmitEvent());
-    });
-    expect(result.current.toast).toEqual({
-      msg: "Please fill in all required fields",
-      ok: false,
-    });
-  });
-
   it("validation rejects age under 18", async () => {
     const { result } = renderHook(() => useApplyForm());
     act(() => result.current.set("age", "17"));
@@ -1147,21 +1136,19 @@ describe("useApplyForm", () => {
     expect(result.current.errors.referrerName).toBe("Required");
   });
 
-  /* ── Group 16: Validation feedback (no scroll — button gate prevents invalid submit) */
+  /* ── Group 16: Validation feedback (button gate prevents invalid submit via UI) */
 
-  it("validation sets error toast when handleSubmit called with empty form", async () => {
-    // With the gated submit button, users cannot reach handleSubmit via UI unless
-    // the form is valid. This test calls handleSubmit directly (as a safety net check)
-    // and verifies the toast is still set and errors are populated.
+  it("direct handleSubmit call with empty form populates errors but does not set toast", async () => {
+    // The disabled button prevents reaching handleSubmit via UI when invalid.
+    // Calling handleSubmit directly (e.g. programmatic or test) still validates
+    // and populates errors, but no required-fields toast fires — users already
+    // know the form is incomplete because the button is grey.
     const { result } = renderHook(() => useApplyForm());
     await act(async () => {
       await result.current.handleSubmit(makeSubmitEvent());
     });
 
-    expect(result.current.toast).toEqual({
-      msg: "Please fill in all required fields",
-      ok: false,
-    });
+    expect(result.current.toast).toBeNull();
     // errors object should have at least one field flagged
     expect(Object.keys(result.current.errors).length).toBeGreaterThan(0);
   });

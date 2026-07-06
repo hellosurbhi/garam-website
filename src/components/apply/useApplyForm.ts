@@ -75,28 +75,39 @@ function getUrlCityParams() {
   return city ? { city, state: state ?? "" } : null;
 }
 
-function computeIsValid(
+/** Single source of truth for all required-field validation rules. */
+function getFieldErrors(
   form: FormState,
   photoFiles: File[],
   termsAgreed: boolean,
   nominationConsent: boolean,
-): boolean {
-  if (!form.name.trim()) return false;
+): FormErrors {
+  const errs: FormErrors = {};
+  if (!form.name.trim()) errs.name = "Required";
   const ageNum = parseInt(form.age, 10);
-  if (!form.age || Number.isNaN(ageNum) || ageNum < 18) return false;
-  if (!form.gender) return false;
-  if (!form.orientation) return false;
-  if (!form.city.trim()) return false;
-  if (validateEmail(form.email)) return false;
-  if (!form.instagram.trim().replace(/^@/, "")) return false;
-  if (photoFiles.length === 0) return false;
+  if (!form.age || Number.isNaN(ageNum) || ageNum < 18)
+    errs.age = "Must be 18 or older";
+  if (!form.gender) errs.gender = "Required";
+  if (!form.orientation) errs.orientation = "Required";
+  if (!form.city.trim()) errs.city = "Required";
+  const emailErr = validateEmail(form.email);
+  if (emailErr) errs.email = emailErr;
+  if (!form.instagram.trim().replace(/^@/, "")) errs.instagram = "Required";
+  if (photoFiles.length === 0) errs.photo = "A photo is required";
   if (form.applicationType === "Nomination") {
-    if (!form.referrerName.trim()) return false;
-    if (!nominationConsent) return false;
+    if (!form.referrerName.trim()) errs.referrerName = "Required";
+    if (!nominationConsent)
+      errs.nominationConsent =
+        "Please confirm you have permission to nominate this person";
   }
-  if (!form.marketingConsent || form.marketingConsent === "no") return false;
-  if (!termsAgreed) return false;
-  return true;
+  if (!form.marketingConsent) {
+    errs.marketingConsent = "Please select Yes or No.";
+  } else if (form.marketingConsent === "no") {
+    errs.marketingConsent = "You must select Yes to apply.";
+  }
+  if (!termsAgreed)
+    errs.termsAgreed = "You must agree to the Terms & Conditions";
+  return errs;
 }
 
 export function useApplyForm() {
@@ -140,13 +151,34 @@ export function useApplyForm() {
   }, [toast]);
 
   const isValid = useMemo(
-    () => computeIsValid(form, photoFiles, termsAgreed, nominationConsent),
+    () =>
+      Object.keys(
+        getFieldErrors(form, photoFiles, termsAgreed, nominationConsent),
+      ).length === 0,
     [form, photoFiles, termsAgreed, nominationConsent],
   );
+  const [touched, setTouched] = useState<
+    Partial<Record<keyof FormErrors, true>>
+  >({});
 
   function set(field: keyof FormState, value: string) {
+    // Functional updater so batched set() calls chain correctly.
     setForm((prev) => ({ ...prev, [field]: value }));
-    setErrors((prev) => ({ ...prev, [field]: undefined }));
+    const fieldKey = field as keyof FormErrors;
+    if (touched[fieldKey]) {
+      // Evaluate this field's error against the new value; other fields use
+      // current form (safe because error eval is per-field, not cross-field).
+      const approxForm = { ...form, [field]: value };
+      const errs = getFieldErrors(
+        approxForm,
+        photoFiles,
+        termsAgreed,
+        nominationConsent,
+      );
+      setErrors((prev) => ({ ...prev, [field]: errs[fieldKey] }));
+    } else {
+      setErrors((prev) => ({ ...prev, [field]: undefined }));
+    }
     if (!formStarted) {
       setFormStarted(true);
       trackLeadEvent("apply_form_started", {
@@ -160,7 +192,18 @@ export function useApplyForm() {
     const value = e.target.value;
     setCityInput(value);
     setForm((prev) => ({ ...prev, city: value, state: "", country: "" }));
-    setErrors((prev) => ({ ...prev, city: undefined, country: undefined }));
+    if (touched.city) {
+      const approxForm = { ...form, city: value, state: "", country: "" };
+      const errs = getFieldErrors(
+        approxForm,
+        photoFiles,
+        termsAgreed,
+        nominationConsent,
+      );
+      setErrors((prev) => ({ ...prev, city: errs.city, country: undefined }));
+    } else {
+      setErrors((prev) => ({ ...prev, city: undefined, country: undefined }));
+    }
     if (!formStarted) {
       setFormStarted(true);
       trackLeadEvent("apply_form_started", {
@@ -240,86 +283,68 @@ export function useApplyForm() {
 
   function handleTermsCheckbox(checked: boolean) {
     setTermsAgreed(checked);
-    if (checked) setErrors((prev) => ({ ...prev, termsAgreed: undefined }));
+    setTouched((prev) => ({ ...prev, termsAgreed: true }));
+    const errs = getFieldErrors(form, photoFiles, checked, nominationConsent);
+    setErrors((prev) => ({ ...prev, termsAgreed: errs.termsAgreed }));
   }
 
   function handleNominationConsentChange(checked: boolean) {
     setNominationConsent(checked);
-    if (checked)
-      setErrors((prev) => ({ ...prev, nominationConsent: undefined }));
+    setTouched((prev) => ({ ...prev, nominationConsent: true }));
+    const errs = getFieldErrors(form, photoFiles, termsAgreed, checked);
+    setErrors((prev) => ({
+      ...prev,
+      nominationConsent: errs.nominationConsent,
+    }));
+  }
+
+  function handleMarketingConsentChange(value: "yes" | "no") {
+    setForm((prev) => ({ ...prev, marketingConsent: value }));
+    setTouched((prev) => ({ ...prev, marketingConsent: true }));
+    const newForm = { ...form, marketingConsent: value };
+    const errs = getFieldErrors(
+      newForm,
+      photoFiles,
+      termsAgreed,
+      nominationConsent,
+    );
+    setErrors((prev) => ({ ...prev, marketingConsent: errs.marketingConsent }));
+    if (!formStarted) {
+      setFormStarted(true);
+      trackLeadEvent("apply_form_started", {
+        application_type: form.applicationType,
+        page: typeof window !== "undefined" ? window.location.pathname : "/",
+      });
+    }
   }
 
   function agreeToTerms() {
     setTermsAgreed(true);
+    setTouched((prev) => ({ ...prev, termsAgreed: true }));
     setErrors((prev) => ({ ...prev, termsAgreed: undefined }));
     setShowTermsModal(false);
   }
 
   function validate(): boolean {
-    const errs: FormErrors = {};
-    if (!form.name.trim()) errs.name = "Required";
-    const ageNum = parseInt(form.age, 10);
-    if (!form.age || Number.isNaN(ageNum) || ageNum < 18)
-      errs.age = "Must be 18 or older";
-    if (!form.gender) errs.gender = "Required";
-    if (!form.orientation) errs.orientation = "Required";
-    if (!form.city.trim()) errs.city = "Required";
-    const emailErr = validateEmail(form.email);
-    if (emailErr) errs.email = emailErr;
-    if (!form.instagram.trim().replace(/^@/, "")) errs.instagram = "Required";
-    if (photoFiles.length === 0) errs.photo = "A photo is required";
-    if (form.applicationType === "Nomination") {
-      if (!form.referrerName.trim()) errs.referrerName = "Required";
-      if (!nominationConsent)
-        errs.nominationConsent =
-          "Please confirm you have permission to nominate this person";
-    }
-    if (!form.marketingConsent) {
-      errs.marketingConsent = "Please select Yes or No.";
-    } else if (form.marketingConsent === "no") {
-      errs.marketingConsent = "You must select Yes to apply.";
-    }
-    if (!termsAgreed)
-      errs.termsAgreed = "You must agree to the Terms & Conditions";
+    const errs = getFieldErrors(
+      form,
+      photoFiles,
+      termsAgreed,
+      nominationConsent,
+    );
     setErrors(errs);
-    if (Object.keys(errs).length > 0) {
-      setToast({ msg: "Please fill in all required fields", ok: false });
-      return false;
-    }
-    return true;
+    return Object.keys(errs).length === 0;
   }
 
-  function handleBlur(field: keyof FormState) {
-    const errs: FormErrors = {};
-    switch (field) {
-      case "name":
-        if (!form.name.trim()) errs.name = "Required";
-        break;
-      case "age": {
-        const ageNum = parseInt(form.age, 10);
-        if (!form.age || Number.isNaN(ageNum) || ageNum < 18)
-          errs.age = "Must be 18 or older";
-        break;
-      }
-      case "email": {
-        const emailErr = validateEmail(form.email);
-        if (emailErr) errs.email = emailErr;
-        break;
-      }
-      case "instagram":
-        if (!form.instagram.trim().replace(/^@/, ""))
-          errs.instagram = "Required";
-        break;
-      case "referrerName":
-        if (form.applicationType === "Nomination" && !form.referrerName.trim())
-          errs.referrerName = "Required";
-        break;
-      default:
-        return;
-    }
-    if (Object.keys(errs).length > 0) {
-      setErrors((prev) => ({ ...prev, ...errs }));
-    }
+  function handleBlur(field: keyof FormErrors) {
+    setTouched((prev) => ({ ...prev, [field]: true }));
+    const errs = getFieldErrors(
+      form,
+      photoFiles,
+      termsAgreed,
+      nominationConsent,
+    );
+    setErrors((prev) => ({ ...prev, [field]: errs[field] }));
   }
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
@@ -520,6 +545,7 @@ export function useApplyForm() {
     setTermsAgreed,
     nominationConsent,
     handleNominationConsentChange,
+    handleMarketingConsentChange,
     showTermsModal,
     setShowTermsModal,
     canGoBack,
@@ -531,9 +557,9 @@ export function useApplyForm() {
     handleAddPhotos,
     handleRemovePhoto,
     handleTermsCheckbox,
+    handleBlur,
     agreeToTerms,
     handleSubmit,
-    handleBlur,
     setTurnstileToken,
     turnstileWidgetIdRef,
   };

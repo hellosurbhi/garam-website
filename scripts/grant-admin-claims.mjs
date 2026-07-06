@@ -72,6 +72,8 @@ async function getAccessToken() {
   return access_token;
 }
 
+// Logs an entry number rather than the UID: ADMIN_UIDS comes from the
+// environment, so echoing its values to stdout trips clear-text-logging.
 async function grant(uid, accessToken, entryNum) {
   const url = `https://identitytoolkit.googleapis.com/v1/projects/${projectId}/accounts:update`;
   const res = await fetch(url, {
@@ -100,7 +102,7 @@ console.log(
 let ok = 0;
 let entryNum = 0;
 for (const uid of adminUids) {
-  entryNum++;
+  entryNum += 1;
   if (await grant(uid, token, entryNum)) ok += 1;
 }
 console.log(`[grant-admin-claims] done: ${ok}/${adminUids.length} succeeded.`);

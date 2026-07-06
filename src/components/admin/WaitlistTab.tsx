@@ -25,6 +25,7 @@ export default function WaitlistTab() {
   const [error, setError] = useState<string | null>(null);
   const [cityFilter, setCityFilter] = useState("");
   const [exporting, setExporting] = useState(false);
+  const [exportError, setExportError] = useState<string | null>(null);
 
   const fetchLeads = useCallback(async () => {
     setLoading(true);
@@ -70,10 +71,11 @@ export default function WaitlistTab() {
 
   const handleExport = useCallback(async () => {
     setExporting(true);
+    setExportError(null);
     try {
       const idToken = await adminIdToken();
       if (!idToken) {
-        setError("Session expired. Please log in again.");
+        setExportError("Session expired. Please log in again.");
         return;
       }
       const q = new URLSearchParams({ format: "csv" });
@@ -83,7 +85,7 @@ export default function WaitlistTab() {
         headers: { Authorization: `Bearer ${idToken}` },
       });
       if (!res.ok) {
-        setError("Export failed. Please try again.");
+        setExportError("Export failed. Please try again.");
         return;
       }
       const blob = await res.blob();
@@ -96,7 +98,7 @@ export default function WaitlistTab() {
       a.remove();
       URL.revokeObjectURL(url);
     } catch {
-      setError("Export failed. Please try again.");
+      setExportError("Export failed. Please try again.");
     } finally {
       setExporting(false);
     }
@@ -113,7 +115,7 @@ export default function WaitlistTab() {
   if (error) {
     return (
       <div className={styles.dashboard}>
-        <div className={styles.errorState}>
+        <div className={styles.errorState} role="alert">
           <p>{error}</p>
           <button onClick={() => void fetchLeads()} className={styles.retryButton}>
             Try again
@@ -145,6 +147,9 @@ export default function WaitlistTab() {
           {exporting ? "Exporting..." : "Export CSV"}
         </button>
       </div>
+      {exportError && (
+        <p className={styles.exportError} role="alert">{exportError}</p>
+      )}
 
       <div className={styles.section}>
         {filtered.length === 0 ? (

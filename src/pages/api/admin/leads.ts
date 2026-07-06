@@ -40,9 +40,12 @@ async function listLeads(
     const qs = new URLSearchParams({ pageSize: "300" });
     if (pageToken) qs.set("pageToken", pageToken);
     const url = `https://firestore.googleapis.com/v1/projects/${projectId}/databases/(default)/documents/leads?${qs.toString()}`;
+    const controller = new AbortController();
+    const timer = setTimeout(() => controller.abort(), 10_000);
     const res = await fetch(url, {
       headers: { Authorization: `Bearer ${accessToken}` },
-    });
+      signal: controller.signal,
+    }).finally(() => clearTimeout(timer));
     if (!res.ok) {
       throw new Error(`Failed to list leads: ${res.status}`);
     }
@@ -152,7 +155,7 @@ export const GET: APIRoute = async ({ request, url }) => {
         status: 200,
         headers: {
           "Content-Type": "text/csv; charset=utf-8",
-          "Content-Disposition": `attachment; filename="waitlist${cityFilter ? `-${cityFilter}` : ""}.csv"`,
+          "Content-Disposition": `attachment; filename="waitlist${cityFilter ? `-${cityFilter.replace(/[^a-z0-9]/gi, "")}` : ""}.csv"`,
         },
       });
     }

@@ -1,7 +1,13 @@
 .dashboard {
   max-width: 1200px;
   margin: 0 auto;
-  padding: 32px;
+  padding: 16px;
+}
+
+@media (min-width: 701px) {
+  .dashboard {
+    padding: 32px;
+  }
 }
 
 .toolbar {
@@ -18,7 +24,7 @@
   border: 1px solid var(--border);
   background: #fff;
   font-family: var(--font-body);
-  font-size: 14px;
+  font-size: 16px;
   color: var(--text);
   min-width: 220px;
   min-height: var(--touch-target);
@@ -42,7 +48,7 @@
   border: 1px solid var(--border);
   background: #fff;
   font-family: var(--font-body);
-  font-size: 13px;
+  font-size: 16px;
   font-weight: 600;
   color: var(--text-light);
   cursor: pointer;
@@ -119,6 +125,12 @@
   padding: 24px 0;
 }
 
+.exportError {
+  color: var(--brand-red);
+  font-size: 14px;
+  margin-bottom: 12px;
+}
+
 .loadingState {
   text-align: center;
   padding: 48px 0;
@@ -138,15 +150,10 @@
   border: 1px solid var(--brand-red);
   background: #fff;
   font-family: var(--font-body);
-  font-size: 14px;
+  font-size: 16px;
   font-weight: 600;
   color: var(--brand-red);
   cursor: pointer;
   min-height: var(--touch-target);
 }
 
-@media (max-width: 700px) {
-  .dashboard {
-    padding: 16px;
-  }
-}

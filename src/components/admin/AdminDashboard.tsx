@@ -32,6 +32,7 @@ import ApplicantModal from "./ApplicantModal";
 import AnalyticsDashboard from "./AnalyticsDashboard";
 import ContestantFunnel from "./ContestantFunnel";
 import TaskInbox from "./TaskInbox";
+import WaitlistTab from "./WaitlistTab";
 import styles from "./AdminDashboard.module.css";
 
 interface AdminDashboardProps {
@@ -136,7 +137,7 @@ const PAGE_SIZE = 50;
 
 export default function AdminDashboard({ onLogout }: AdminDashboardProps) {
   const [activeTab, setActiveTab] = useState<
-    "today" | "applicants" | "analytics"
+    "today" | "applicants" | "analytics" | "waitlist"
   >("today");
   const [applications, setApplications] = useState<Application[]>([]);
   const [loading, setLoading] = useState(true);
@@ -432,6 +433,13 @@ export default function AdminDashboard({ onLogout }: AdminDashboardProps) {
               >
                 Analytics
               </button>
+              <button
+                className={styles.tab}
+                data-active={activeTab === "waitlist" || undefined}
+                onClick={() => setActiveTab("waitlist")}
+              >
+                Waitlist
+              </button>
             </div>
           </div>
           <button onClick={onLogout} className={styles.logoutButton}>
@@ -549,6 +557,8 @@ export default function AdminDashboard({ onLogout }: AdminDashboardProps) {
           <AnalyticsDashboard />
         </>
       )}
+
+      {activeTab === "waitlist" && <WaitlistTab />}
 
       {activeTab === "applicants" && (
         <main className={styles.main}>

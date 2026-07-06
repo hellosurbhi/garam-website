@@ -40,6 +40,15 @@ const leadSource = `spice-list-${pageName}`;
           aria-label="Email address"
           toolparamdescription="Email address to receive discount codes and show announcements"
         />
+        <input
+          type="text"
+          id="nl-city"
+          class="ph-mask"
+          placeholder="Your city (optional)"
+          aria-label="City (optional)"
+          autocomplete="address-level2"
+          toolparamdescription="City the subscriber lives in, used to alert them when a show comes near them (optional)"
+        />
         <p id="nl-email-error" class="spicelist-error" hidden role="alert"></p>
         <button type="submit">Get My Discount Code</button>
       </form>
@@ -107,12 +116,35 @@ const leadSource = `spice-list-${pageName}`;
     document.querySelector<HTMLElement>(".spicelist[data-lead-source]")?.dataset
       .leadSource ?? "spice-list";
 
+  // Prefill the optional city from IP geo once it resolves. The geo fetch is
+  // fired on page load; poll briefly so the value appears without the user
+  // typing. Never overwrites a value the user has entered.
+  const nlCityInput = document.getElementById(
+    "nl-city",
+  ) as HTMLInputElement | null;
+  if (nlCityInput) {
+    const prefillCity = () => {
+      const geoCity = sessionStorage.getItem("gmd-geo-city");
+      if (geoCity && !nlCityInput.value) nlCityInput.value = geoCity;
+      return Boolean(geoCity);
+    };
+    if (!prefillCity()) {
+      let tries = 0;
+      const timer = setInterval(() => {
+        if (prefillCity() || ++tries >= 5) clearInterval(timer);
+      }, 1000);
+    }
+  }
+
   document
     .getElementById("nl-email-form")
     ?.addEventListener("submit", async (e) => {
       e.preventDefault();
       savedEmail = (document.getElementById("nl-email") as HTMLInputElement)
         .value;
+      const nlCity = (
+        document.getElementById("nl-city") as HTMLInputElement | null
+      )?.value.trim();
       const errorEl = document.getElementById("nl-email-error");
       const submitBtn = (
         e.target as HTMLFormElement
@@ -126,6 +158,7 @@ const leadSource = `spice-list-${pageName}`;
         const attribution = await buildLeadAttribution({ source: leadSource });
         const captured = await captureLead({
           email: savedEmail,
+          ...(nlCity ? { city: nlCity } : {}),
           ...attribution,
         });
         nlDocId = captured.id ? captured : null;

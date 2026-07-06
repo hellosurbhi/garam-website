@@ -1,13 +1,15 @@
 import type { APIRoute } from "astro";
 import { createHmac } from "crypto";
-import { verifyIdToken } from "@/lib/verifyToken";
+import { verifyAdminToken } from "@/lib/verifyToken";
 
 export const prerender = false;
 
 const ISO_DATE_RE = /^\d{4}-\d{2}-\d{2}$/;
 
 export const POST: APIRoute = async ({ request }) => {
-  const uid = await verifyIdToken(
+  // Admin-only: matches the other privileged routes. Any authenticated Firebase
+  // session (including anonymous apply-form sessions) must not mint prep links.
+  const uid = await verifyAdminToken(
     request.headers.get("authorization") ?? undefined,
   );
   if (!uid) {

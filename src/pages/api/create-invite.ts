@@ -4,7 +4,6 @@ import type { APIRoute } from "astro";
 import { z } from "zod";
 import { verifyAdminIdentity } from "@/lib/verifyToken";
 import { fsAdd, fsPatch } from "@/lib/firestoreRest";
-import { signPortalToken } from "@/lib/portalToken";
 import { sendMail } from "@/lib/zohoMailer";
 import { inviteApproval } from "@/data/emails";
 import { events } from "@/data/events";
@@ -54,7 +53,8 @@ export const POST: APIRoute = async ({ request }) => {
       400,
     );
 
-  const { applicantId, applicantName, applicantEmail, showId, role } = parsed.data;
+  const { applicantId, applicantName, applicantEmail, showId, role } =
+    parsed.data;
 
   const event = events.find(
     (e) => !e.hidden && e.isoDate && `${e.citySlug}-${e.isoDate}` === showId,
@@ -81,13 +81,11 @@ export const POST: APIRoute = async ({ request }) => {
   const inviteId = await fsAdd("invites", inviteData);
   const siteUrl = import.meta.env.SITE ?? "https://garammasaladating.com";
 
-  const token = await signPortalToken(
-    inviteId,
-    showId,
-    event.isoDate!,
-    event.timezone ?? "America/New_York",
-  );
-  const waiverUrl = `${siteUrl}/waiver?token=${encodeURIComponent(token)}`;
+  // Link to the native Cast Portal (the Green Room). portal-state resolves the
+  // invite by its Firestore id, so the unguessable inviteId is the token; no
+  // separate JWT is needed for the invite link (the portal issues the session
+  // cookie only after the contestant accepts and signs).
+  const portalUrl = `${siteUrl}/contestant-portal?invite=${encodeURIComponent(inviteId)}`;
 
   // Set invitedAt + castEventId on the application and log invite_sent event
   await fsPatch(`applications/${applicantId.trim()}`, {
@@ -108,7 +106,7 @@ export const POST: APIRoute = async ({ request }) => {
   if (applicantEmail?.trim()) {
     const name = applicantName?.trim() ?? "there";
     const template = inviteApproval(name, {
-      portalUrl: waiverUrl,
+      portalUrl,
       showDate: event.date,
       showCity: event.city,
     });
@@ -130,7 +128,7 @@ export const POST: APIRoute = async ({ request }) => {
   return json({
     ok: true,
     inviteId,
-    inviteUrl: waiverUrl,
+    inviteUrl: portalUrl,
     emailSent,
     ...(emailError ? { emailError } : {}),
   });

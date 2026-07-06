@@ -1,9 +1,9 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
 
-const mockVerifyIdToken = vi.fn();
+const mockVerifyAdminToken = vi.fn();
 
 vi.mock("@/lib/verifyToken", () => ({
-  verifyIdToken: (...args: unknown[]) => mockVerifyIdToken(...args),
+  verifyAdminToken: (...args: unknown[]) => mockVerifyAdminToken(...args),
 }));
 
 const { POST } = await import("@/pages/api/generate-contestant-link");
@@ -33,7 +33,7 @@ describe("generate-contestant-link handler", () => {
   beforeEach(() => {
     vi.clearAllMocks();
     import.meta.env.CONTESTANT_PREP_SALT = TEST_SALT;
-    mockVerifyIdToken.mockResolvedValue("admin-uid");
+    mockVerifyAdminToken.mockResolvedValue("admin-uid");
   });
 
   afterEach(() => {
@@ -42,7 +42,7 @@ describe("generate-contestant-link handler", () => {
   });
 
   it("returns 401 when not authenticated", async () => {
-    mockVerifyIdToken.mockResolvedValue(null);
+    mockVerifyAdminToken.mockResolvedValue(null);
     const req = makeRequest("POST", { showDate: "2026-06-15" });
     const res = await POST(makeContext(req));
     expect(res.status).toBe(401);

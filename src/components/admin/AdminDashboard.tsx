@@ -15,7 +15,7 @@ import {
   type QueryDocumentSnapshot,
   type DocumentData,
 } from "firebase/firestore";
-import { ChevronRight, ChevronDown } from "lucide-react";
+import { ChevronRight, ChevronDown, Search, X } from "lucide-react";
 import Select from "react-select";
 import { getFirebaseDb, getFirebaseAuth } from "@/lib/firebase";
 import {
@@ -159,6 +159,7 @@ export default function AdminDashboard({ onLogout }: AdminDashboardProps) {
     readonly FilterOption[]
   >([]);
   const [cityFilter, setCityFilter] = useState<readonly FilterOption[]>([]);
+  const [nameSearch, setNameSearch] = useState("");
 
   useEffect(() => {
     let timer: ReturnType<typeof setTimeout> | undefined;
@@ -216,7 +217,6 @@ export default function AdminDashboard({ onLogout }: AdminDashboardProps) {
   );
 
   useEffect(() => {
-
     (async () => {
       await fetchApps();
     })();
@@ -318,6 +318,7 @@ export default function AdminDashboard({ onLogout }: AdminDashboardProps) {
     setGenderFilter([]);
     setOrientationFilter([]);
     setCityFilter([]);
+    setNameSearch("");
   }
 
   const { filteredActiveApps, deletedApps, participatedApps } = useMemo(() => {
@@ -343,11 +344,27 @@ export default function AdminDashboard({ onLogout }: AdminDashboardProps) {
       result = result.filter((a) => selected.has(a.city?.trim()));
     }
 
+    const nameQuery = nameSearch.trim().toLowerCase();
+    if (nameQuery) {
+      result = result.filter((a) => a.name.toLowerCase().includes(nameQuery));
+    }
+
     result.sort(
       (a, b) => (b.submittedAt?.seconds ?? 0) - (a.submittedAt?.seconds ?? 0),
     );
 
-    deleted.sort((a, b) => {
+    let filteredDeleted = [...deleted];
+    let filteredParticipated = [...participated];
+    if (nameQuery) {
+      filteredDeleted = filteredDeleted.filter((a) =>
+        a.name.toLowerCase().includes(nameQuery),
+      );
+      filteredParticipated = filteredParticipated.filter((a) =>
+        a.name.toLowerCase().includes(nameQuery),
+      );
+    }
+
+    filteredDeleted.sort((a, b) => {
       const aTime =
         a.deletedAt && "seconds" in a.deletedAt ? a.deletedAt.seconds : 0;
       const bTime =
@@ -357,10 +374,10 @@ export default function AdminDashboard({ onLogout }: AdminDashboardProps) {
 
     return {
       filteredActiveApps: result,
-      deletedApps: deleted,
-      participatedApps: participated,
+      deletedApps: filteredDeleted,
+      participatedApps: filteredParticipated,
     };
-  }, [applications, genderFilter, orientationFilter, cityFilter]);
+  }, [applications, genderFilter, orientationFilter, cityFilter, nameSearch]);
 
   const appsByStatus = useMemo(() => {
     const map: Record<ApplicantStatus, Application[]> = {} as Record<
@@ -376,7 +393,8 @@ export default function AdminDashboard({ onLogout }: AdminDashboardProps) {
   const hasActiveFilters =
     genderFilter.length > 0 ||
     orientationFilter.length > 0 ||
-    cityFilter.length > 0;
+    cityFilter.length > 0 ||
+    nameSearch.trim().length > 0;
 
   const activeCount = filteredActiveApps.length;
   const activeStatuses = STATUS_ORDER.filter(
@@ -424,6 +442,30 @@ export default function AdminDashboard({ onLogout }: AdminDashboardProps) {
         {activeTab === "applicants" && (
           <div className={styles.filterBar}>
             <div className={styles.filterRow}>
+              <div className={styles.searchWrapper}>
+                <Search
+                  size={14}
+                  className={styles.searchIcon}
+                  aria-hidden="true"
+                />
+                <input
+                  type="search"
+                  className={styles.searchInput}
+                  placeholder="Search by name…"
+                  value={nameSearch}
+                  onChange={(e) => setNameSearch(e.target.value)}
+                  aria-label="Search contestants by name"
+                />
+                {nameSearch && (
+                  <button
+                    className={styles.searchClear}
+                    onClick={() => setNameSearch("")}
+                    aria-label="Clear search"
+                  >
+                    <X size={12} aria-hidden="true" />
+                  </button>
+                )}
+              </div>
               <div className={styles.filterItem}>
                 <Select
                   isMulti
@@ -467,8 +509,8 @@ export default function AdminDashboard({ onLogout }: AdminDashboardProps) {
         )}
       </header>
 
-      {activeTab === "today" && (
-        inboxLoading ? (
+      {activeTab === "today" &&
+        (inboxLoading ? (
           <div
             role="status"
             aria-live="polite"
@@ -499,8 +541,7 @@ export default function AdminDashboard({ onLogout }: AdminDashboardProps) {
               );
             }}
           />
-        )
-      )}
+        ))}
 
       {activeTab === "analytics" && (
         <>

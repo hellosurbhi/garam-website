@@ -51,6 +51,11 @@ export const RATE_LIMITS = {
     limit: 5,
     windowSeconds: 60,
   },
+  contestantClaim: {
+    prefix: "ratelimit:contestant-claim",
+    limit: 5,
+    windowSeconds: 60,
+  },
 } as const satisfies Record<string, RateLimitPolicy>;
 
 export function getClientIp(request: Request): string {

@@ -1,5 +1,6 @@
 export const prerender = false;
 
+import { timingSafeEqual } from "node:crypto";
 import type { APIRoute } from "astro";
 import { fsGet, fsPatch, fsAdd, fsListAll, fsQuery } from "@/lib/firestoreRest";
 import { sendMail } from "@/lib/zohoMailer";
@@ -9,8 +10,6 @@ import {
   hostBriefing,
   type InterviewSummary,
 } from "@/data/emails";
-import { signPortalToken } from "@/lib/portalToken";
-import { events } from "@/data/events";
 
 const SKIP_FOLLOWUP_STATUSES = new Set([
   "Rejected",
@@ -32,7 +31,10 @@ const MAX_PER_RUN = 50;
 function verifyCronSecret(request: Request): boolean {
   const cronSecret = import.meta.env.CRON_SECRET;
   if (!cronSecret) return false;
-  return request.headers.get("authorization") === `Bearer ${cronSecret}`;
+  const provided = request.headers.get("authorization") ?? "";
+  const expected = `Bearer ${cronSecret}`;
+  if (provided.length !== expected.length) return false;
+  return timingSafeEqual(Buffer.from(provided), Buffer.from(expected));
 }
 
 function toMs(val: unknown): number | null {
@@ -131,33 +133,22 @@ export const GET: APIRoute = async ({ request }) => {
     const castEventId =
       typeof app.castEventId === "string" ? app.castEventId : null;
 
-    let waiverUrl = `${siteUrl}/waiver`;
+    // Nudge points at the native Cast Portal (Green Room). We resolve the
+    // applicant's latest invite and link to /contestant-portal?invite=<id>,
+    // matching the link create-invite emails. Fall back to the portal root if
+    // no invite is found so the contestant still lands in the right place.
+    let waiverUrl = `${siteUrl}/contestant-portal`;
 
     if (castEventId) {
-      // castEventId format: citySlug-YYYY-MM-DD; extract date from last 10 chars
-      const isoDate = castEventId.slice(-10);
-      const event = events.find((e) => e.isoDate === isoDate && !e.hidden);
-      if (event?.isoDate) {
-        const invites = await fsQuery(
-          "invites",
-          "applicantId",
-          app.id as string,
-          "createdAt",
-        );
-        const latestInvite = invites[0];
-        if (latestInvite && typeof latestInvite.id === "string") {
-          try {
-            const token = await signPortalToken(
-              latestInvite.id,
-              castEventId,
-              event.isoDate,
-              event.timezone ?? "America/New_York",
-            );
-            waiverUrl = `${siteUrl}/waiver?token=${encodeURIComponent(token)}`;
-          } catch {
-            // fall back to plain waiver URL
-          }
-        }
+      const invites = await fsQuery(
+        "invites",
+        "applicantId",
+        app.id as string,
+        "createdAt",
+      );
+      const latestInvite = invites[0];
+      if (latestInvite && typeof latestInvite.id === "string") {
+        waiverUrl = `${siteUrl}/contestant-portal?invite=${encodeURIComponent(latestInvite.id)}`;
       }
     }
 

@@ -24,7 +24,7 @@ function link(url: string, label: string): string {
   // Scheme allowlist: only http(s) URLs may become hyperlinks. Anything else
   // (javascript:, data:, malformed) renders as escaped plain text so a poisoned
   // URL can never become a clickable payload in an email client.
-  // label is caller-controlled — callers must pass already-escaped text or static strings.
+  // label is caller-controlled: callers must pass already-escaped text or static strings.
   let parsed: URL;
   try {
     parsed = new URL(url);
@@ -129,22 +129,22 @@ export function inviteApproval(
   name: string,
   opts: { portalUrl?: string; showDate?: string; showCity?: string } = {},
 ): EmailTemplate {
-  const subject = `You're in! Garam Masala Dating`;
+  const subject = `You're cast! Accept your spot on Garam Masala Dating`;
   const showLine =
     opts.showDate && opts.showCity
-      ? `The show is on ${opts.showDate} in ${opts.showCity}.`
+      ? `Your show is on ${opts.showDate} in ${opts.showCity}.`
       : "We'll send you the show details shortly.";
 
   const text = [
     `Hi ${name},`,
     "",
-    "Great news! We'd love to have you as a contestant on Garam Masala Dating. You had a wonderful energy on our call and we think the audience is going to love you.",
+    "Great news! We'd love to cast you on Garam Masala Dating. You had a wonderful energy on our call and we think the audience is going to love you.",
     "",
     showLine,
     "",
     opts.portalUrl
-      ? `Next step: please sign your contestant waiver here: ${opts.portalUrl}`
-      : "We'll send you the waiver link shortly.",
+      ? `Next step: head to your private Green Room to accept your casting and review the Cast Member Terms: ${opts.portalUrl}`
+      : "We'll send you your Green Room link shortly.",
     "",
     "Reach out if you have any questions. So excited to have you!",
     "",
@@ -155,19 +155,19 @@ export function inviteApproval(
   const safeName = escapeHtml(name);
   const safeShowLine =
     opts.showDate && opts.showCity
-      ? `The show is on ${escapeHtml(opts.showDate)} in ${escapeHtml(opts.showCity)}.`
+      ? `Your show is on ${escapeHtml(opts.showDate)} in ${escapeHtml(opts.showCity)}.`
       : "We'll send you the show details shortly.";
   const html = wrap(
     p(`Hi ${safeName},`) +
       p(
-        "Great news! We'd love to have you as a contestant on Garam Masala Dating. You had a wonderful energy on our call and we think the audience is going to love you.",
+        "Great news! We'd love to cast you on Garam Masala Dating. You had a wonderful energy on our call and we think the audience is going to love you.",
       ) +
       p(safeShowLine) +
       (opts.portalUrl
         ? p(
-            `Next step: please sign your contestant waiver here: ${link(opts.portalUrl, "Sign waiver")}`,
+            `Next step: head to your private Green Room to accept your casting and review the Cast Member Terms: ${link(opts.portalUrl, "Accept your casting")}`,
           )
-        : p("We'll send you the waiver link shortly.")) +
+        : p("We'll send you your Green Room link shortly.")) +
       p("Reach out if you have any questions. So excited to have you!") +
       p("Surbhi<br>Garam Masala Dating"),
   );
@@ -203,6 +203,45 @@ export function waiverNudge(name: string, portalUrl: string): EmailTemplate {
       p("Surbhi<br>Garam Masala Dating"),
   );
 
+  return { subject, text, html };
+}
+
+export function waiverReceiptWithText(opts: {
+  firstName: string;
+  signature: string;
+  signedAtIso: string;
+  waiverText: string;
+}): EmailTemplate {
+  const subject = "Your Garam Masala Dating waiver (signed copy)";
+  const text = [
+    `Hi ${opts.firstName}, here's a copy of the waiver you signed. Keep this for your records.`,
+    "",
+    opts.waiverText,
+    "",
+    `Electronically signed by: ${opts.signature}`,
+    `Signed at: ${opts.signedAtIso}`,
+    "",
+    "Garam Masala Dating · contact@garammasaladating.com",
+  ].join("\n");
+  const safe = {
+    firstName: escapeHtml(opts.firstName),
+    signature: escapeHtml(opts.signature),
+    signedAtIso: escapeHtml(opts.signedAtIso),
+    waiverText: escapeHtml(opts.waiverText),
+  };
+  const html = wrap(
+    p(
+      `Hi ${safe.firstName}, here&apos;s a copy of the waiver you signed. Keep this for your records.`,
+    ) +
+      `<div style="background:#fff;border:1px solid rgba(0,0,0,0.1);border-radius:12px;padding:24px 20px;margin-bottom:24px;"><p style="font-size:13px;color:#666;line-height:1.7;white-space:pre-wrap;margin:0;">${safe.waiverText}</p></div>` +
+      `<hr style="border-color:rgba(0,0,0,0.1);margin:0 0 16px;border-style:solid;"/>` +
+      p(`<strong>Electronically signed by:</strong> ${safe.signature}`) +
+      p(
+        `<span style="font-size:13px;color:#666;">Signed at: ${safe.signedAtIso}</span>`,
+      ) +
+      `<hr style="border-color:rgba(0,0,0,0.1);margin:0 0 16px;border-style:solid;"/>` +
+      `<p style="font-size:12px;color:#999;text-align:center;margin:0;">Garam Masala Dating &middot; contact@garammasaladating.com</p>`,
+  );
   return { subject, text, html };
 }
 

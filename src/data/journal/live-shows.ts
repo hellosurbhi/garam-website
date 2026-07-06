@@ -685,4 +685,198 @@ export const liveShowsPosts: JournalPost[] = [
       cityLinks: ["manhattan", "boston", "philadelphia", "edison"],
     },
   },
+  {
+    slug: "dating-show-tickets",
+    title: "Dating Show Tickets: How to Buy Them and What They Cost in 2026",
+    seoTitle: "Dating Show Tickets: Prices & How to Buy (2026)",
+    metaDescription:
+      "Dating show tickets, explained: which live and touring dating shows sell tickets, what they cost, and how to buy them. Your guide to seeing a real dating show live.",
+    datePublished: "2026-07-06",
+    dateModified: "2026-07-06",
+    author: "Surbhi",
+    excerpt:
+      "You cannot buy a ticket to Love Island, but you can absolutely buy a ticket to a real dating show happening on a stage near you. Here's who sells them, what they cost and how it works.",
+    keyTakeaway:
+      "Dating show tickets are sold by live dating shows, which unlike TV dating shows are built for audiences. Most run $15 to $40 through Eventbrite, Ticketmaster or the show's own site. In NYC, Garam Masala Dating sells tickets weekly from around $15, mixer included, and touring shows post new city dates regularly.",
+    faqs: [
+      {
+        q: "How much are dating show tickets?",
+        a: "Live dating show tickets typically run $15 to $40 depending on the show and how early you buy. Garam Masala Dating tickets start around $15 and include the post-show singles mixer. TV dating shows like Love Island do not sell tickets because they film on closed sets.",
+      },
+      {
+        q: "Where do you buy dating show tickets?",
+        a: "Through the show's ticketing platform, usually Eventbrite, Ticketmaster or the show's own website. Garam Masala Dating tickets are at garammasaladating.com/tickets. Popular shows sell out in advance, so buy early.",
+      },
+      {
+        q: "Are there touring dating shows I can get tickets to?",
+        a: "Yes. Several live dating shows tour multiple cities. Garam Masala Dating runs weekly in NYC and tours Jersey City, Boston, Philadelphia, Edison, Los Angeles and San Francisco, adding cities based on demand. UpDating tours nationally with blindfolded blind dates. Check each show's site for city dates.",
+      },
+      {
+        q: "Can you get a refund on dating show tickets?",
+        a: "Refund policies depend on the ticketing platform and the show. Most live dating shows follow the standard Eventbrite or Ticketmaster policy for the event. Check the specific event listing before you buy.",
+      },
+    ],
+    relatedSlugs: [
+      "dating-shows-you-can-attend-2026",
+      "live-dating-shows-nyc-2026",
+      "blind-date-show-what-to-expect",
+    ],
+    body: [
+      {
+        type: "p",
+        text: "You cannot buy a ticket to Love Island, but you can absolutely buy a ticket to a real dating show happening on a stage near you. Here's who sells them, what they cost and how it works, from someone who sells them every week.",
+      },
+      {
+        type: "h2",
+        text: "Which dating shows actually sell tickets",
+      },
+      {
+        type: "p",
+        text: "TV dating shows do not sell tickets, they film on closed sets. The dating shows you can buy tickets to are live shows built for audiences: Garam Masala Dating in NYC, UpDating touring nationally, Tinder Live and a rotating set of comedy-club formats. If a show puts real singles on a real stage in front of a real crowd, it sells tickets. If it airs on Netflix, it does not.",
+      },
+      {
+        type: "h2",
+        text: "What dating show tickets cost",
+      },
+      {
+        type: "p",
+        text: "Expect $15 to $40 for most live dating shows, with price driven by the venue, the city and how early you buy. Garam Masala Dating tickets start around $15 and include the singles mixer after the show, which is where a lot of the audience actually meets people. Front-section and couples' seats go first, so early buyers get the better experience for the same money.",
+      },
+      {
+        type: "h2",
+        text: "How to buy them, and why early matters",
+      },
+      {
+        type: "p",
+        text: "Tickets sell through Eventbrite, Ticketmaster or the show's own site. For <a href='/tickets'>Garam Masala Dating the link is always at garammasaladating.com/tickets</a>. The one rule that matters: buy early. Live dating shows are small rooms, usually 100 to 250 seats, and the good ones sell out days ahead. Waiting for the door is how you miss the show.",
+      },
+      {
+        type: "h2",
+        text: "Touring shows: getting tickets in your city",
+      },
+      {
+        type: "p",
+        text: "If a show is not in your city yet, the touring ones let you register interest so you hear when tickets drop. Garam Masala Dating routes its tour by waitlist demand across <a href='/cities'>300+ cities</a>, so joining your city's list is literally how you get early ticket access and help decide where the show goes next. That is the closest thing to skipping the line that exists.",
+      },
+    ],
+    ctaConfig: {
+      intent: "show",
+      topCta: {
+        text: "Get dating show tickets",
+        href: "/tickets",
+        ctaId: "tickets",
+        variant: "primary",
+      },
+      midCta: {
+        text: "Find your city",
+        href: "/cities",
+        ctaId: "cta_clicked",
+        variant: "secondary",
+      },
+      bottomCta: {
+        text: "See upcoming dates",
+        href: "/tickets",
+        ctaId: "tickets",
+        variant: "primary",
+      },
+      cityLinks: ["manhattan", "jersey-city", "los-angeles", "san-francisco"],
+    },
+  },
+  {
+    slug: "interactive-dating-show",
+    title: "Interactive Dating Shows: The Live Format Where the Audience Plays",
+    seoTitle: "Interactive Dating Shows Explained (2026)",
+    metaDescription:
+      "An interactive dating show puts real singles on stage and lets the audience react, vote and shape the date live. Here's how the unfiltered, unscripted format works and where to see one.",
+    datePublished: "2026-07-06",
+    dateModified: "2026-07-06",
+    author: "Surbhi",
+    excerpt:
+      "Reality dating TV makes you a spectator. An interactive dating show makes you part of the date. That difference is the whole appeal, and it is why the format is spreading.",
+    keyTakeaway:
+      "An interactive dating show is a live, unscripted show where real singles date on stage and the audience reacts, votes and shapes the outcome in real time, then mingles at a singles mixer. It is unfiltered because there is no edit and no second take. Garam Masala Dating in NYC is a leading interactive dating show.",
+    faqs: [
+      {
+        q: "What is an interactive dating show?",
+        a: "An interactive dating show is a live event where real singles go on a date on stage and the audience participates: reacting, voting on whether the pair should get a second date, and sometimes volunteering to join in. Unlike TV dating shows, nothing is edited and the crowd directly shapes the night. Garam Masala Dating is one example.",
+      },
+      {
+        q: "How is an interactive dating show different from a TV dating show?",
+        a: "A TV dating show is filmed months ahead, edited into an arc and consumed on a screen. An interactive dating show is live and unfiltered: the date happens in front of you, the audience votes in real time, and there is no edit to hide the awkward moments. You are in the room, not on the couch.",
+      },
+      {
+        q: "Do you have to participate at an interactive dating show?",
+        a: "No. Audience participation means reacting and voting, which everyone does, but going on stage is strictly voluntary. At Garam Masala Dating about 95% of the crowd just watches, laughs and votes. Only volunteers go up.",
+      },
+      {
+        q: "Where can I see an interactive dating show?",
+        a: "In NYC, Garam Masala Dating runs a live interactive comedy dating show weekly, with a singles mixer after. It also tours other cities. UpDating runs an interactive blindfolded version nationally. Tickets for most interactive dating shows run $15 to $40.",
+      },
+    ],
+    relatedSlugs: [
+      "what-is-a-comedy-dating-show",
+      "what-actually-happens-at-a-live-comedy-dating-show",
+      "dating-show-tickets",
+    ],
+    body: [
+      {
+        type: "p",
+        text: "Reality dating TV makes you a spectator. An interactive dating show makes you part of the date. That difference is the whole appeal, and it is why the format is spreading faster than any dating show on a screen.",
+      },
+      {
+        type: "h2",
+        text: "What makes a dating show interactive",
+      },
+      {
+        type: "p",
+        text: "Interactive means the audience is not just watching, it is shaping the night. At an interactive dating show the crowd reacts out loud, votes on whether the daters should get a second date, and at some shows can volunteer to go on a blind date themselves. The energy in the room feeds back into the date on stage. That loop between the daters and the crowd is what a screen can never reproduce.",
+      },
+      {
+        type: "h2",
+        text: "Unfiltered is the point",
+      },
+      {
+        type: "p",
+        text: "The reason interactive dating shows feel so different from TV is that there is no edit. No producer cutting to a confessional, no villain manufactured in post, no second take. When two strangers hit an awkward silence on stage, the silence stays. When the chemistry lands, the whole room feels it at once. Unfiltered and unscripted is not a marketing line here, it is the actual format.",
+      },
+      {
+        type: "h2",
+        text: "You are as involved as you want to be",
+      },
+      {
+        type: "p",
+        text: "Interactive does not mean you get put on the spot. At <a href='/journal/what-actually-happens-at-a-live-comedy-dating-show'>Garam Masala Dating</a> the vast majority of the audience simply watches, laughs and votes, and only volunteers ever go on stage. The interactivity is opt-in, which is exactly why the room stays loose and the mixer afterward works.",
+      },
+      {
+        type: "h2",
+        text: "Where to experience one",
+      },
+      {
+        type: "p",
+        text: "NYC has the deepest interactive dating show scene. Garam Masala Dating runs weekly with a singles mixer after every show and tours other cities, and UpDating runs an interactive blindfolded format nationally. If you have only ever watched dating shows on a screen, one live interactive night will ruin the couch version for you. <a href='/tickets'>Grab a ticket</a> and see why.",
+      },
+    ],
+    ctaConfig: {
+      intent: "show",
+      topCta: {
+        text: "See an interactive dating show live",
+        href: "/tickets",
+        ctaId: "tickets",
+        variant: "primary",
+      },
+      midCta: {
+        text: "Apply to be a contestant",
+        href: "/apply",
+        ctaId: "apply",
+        variant: "secondary",
+      },
+      bottomCta: {
+        text: "Get your tickets",
+        href: "/tickets",
+        ctaId: "tickets",
+        variant: "primary",
+      },
+      cityLinks: ["manhattan", "jersey-city", "boston", "los-angeles"],
+    },
+  },
 ];

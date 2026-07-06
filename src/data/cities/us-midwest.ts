@@ -144,6 +144,34 @@ export const usMidwestCities: Record<string, CityData> = {
         q: "Can I apply to be a contestant?",
         a: "Yes. Apply now. Applications stay active for 12 months. Champaign applicants will be prioritized when we confirm a date.",
       },
+      {
+        q: "Is there Indian speed dating in Champaign-Urbana?",
+        a: "ISA and grad org mixers exist, dating events do not. On a campus with one of the largest Indian student bodies in America, a live dating show sells itself. Literally, we barely have to advertise in college towns.",
+      },
+      {
+        q: "Where do UIUC desi students actually meet?",
+        a: "Grainger library floors, Green Street food runs and department clusters that never cross. The engineering quad alone holds more single desis than most cities, all waiting for an occasion.",
+      },
+      {
+        q: "Will the show survive semester turnover?",
+        a: "College town shows are built for turnover: the audience refreshes every year, which keeps the format permanently new. Alumni within driving distance count double, Chambana.",
+      },
+    ],
+    sections: [
+      {
+        heading: "UIUC is a desi mega-campus with no dating layer",
+        paragraphs: [
+          "Illinois runs one of the largest Indian and South Asian student populations in the country, dense enough that entire apartment blocks and course sections run desi by default. The social infrastructure is all study groups, student orgs and Green Street late nights, none of which are designed for actually meeting someone romantically. The apps are a closed loop of the same campus faces, and Chicago is a two and a half hour bus ride that nobody takes twice for a first date.",
+          "A campus-scale live show turns that density into an asset. One room, one night, every discipline and year mixed on purpose.",
+        ],
+      },
+      {
+        heading: "What a Garam Masala night in Chambana looks like",
+        paragraphs: [
+          "A CS PhD and a Gies MBA who have never met, on stage, going on a first date while half of Grainger loses its mind in the audience. Comedian hosts, live votes and a mixer where the walk home down Green Street becomes the second date by default.",
+          "Join the waitlist to bring the show to the cornfields, or apply to be a contestant and become the engineering quad's favorite case study.",
+        ],
+      },
     ],
   },
 
@@ -202,6 +230,35 @@ export const usMidwestCities: Record<string, CityData> = {
         q: "Can I apply to be a contestant?",
         a: "Yes. Apply now. Applications stay active for 12 months. Detroit area applicants will be prioritized when we confirm a date.",
       },
+      {
+        q: "Is there Indian speed dating in Detroit or Troy?",
+        a: "Metro Detroit's desi events are community-run and family-flavored. A live comedy dating show with a mixer is the singles-first night Troy, Novi and Canton have never had, and the waitlist says they want it.",
+      },
+      {
+        q: "Where do South Asian singles in metro Detroit actually meet?",
+        a: "Automotive campuses, the hospital systems, Troy and Novi community events and each other's family weddings. The suburbs built everything except a room for the single ones. That is our department.",
+      },
+      {
+        q: "Troy or downtown for the venue?",
+        a: "Somewhere on the Woodward corridor that both can reach, realistically. The suburbs have the density, downtown has the rooms and the waitlist zip codes referee the final call.",
+      },
+    ],
+    sections: [
+      {
+        heading:
+          "Metro Detroit built desi suburbia and skipped the singles scene",
+        paragraphs: [
+          "Troy, Novi, Canton and Farmington Hills form one of the most complete desi suburban ecosystems in America: temples and gurdwaras, groceries at scale, weekend language schools and an automotive engineering workforce that has recruited South Asians for two generations. It is a fantastic place to raise a desi family and a strangely hard place to start one, because every community event assumes the family already exists. The singles either work the apps across forty suburbs of sprawl or wait for the network to produce a rishta.",
+          "One show gives the metro's scattered singles a common room. Automotive engineers, med residents, second gen kids back home after college, all in one place with a reason to talk.",
+        ],
+      },
+      {
+        heading: "What a Garam Masala night in the D looks like",
+        paragraphs: [
+          "A Troy product engineer and a Henry Ford resident who have never met, on stage, going on a first date while a room full of metro Detroit desis votes with union-hall conviction. Then the mixer, where 'which suburb' finally becomes an icebreaker instead of a dealbreaker.",
+          "Join the waitlist to lock in Detroit's date, or apply to be a contestant and give the group chats of Oakland County a season finale.",
+        ],
+      },
     ],
   },
 
@@ -258,6 +315,34 @@ export const usMidwestCities: Record<string, CityData> = {
       {
         q: "Can I apply to be a contestant?",
         a: "Yes. Apply now. Applications stay active for 12 months. Ann Arbor applicants will be prioritized when we confirm a date.",
+      },
+      {
+        q: "Is there Indian speed dating in Ann Arbor?",
+        a: "Ann Arbor has every kind of event except this one. The UMich desi community socializes through orgs and departments, which produces friendships and thesis committees, not dates. We handle the missing category.",
+      },
+      {
+        q: "Where do South Asian singles in Ann Arbor actually meet?",
+        a: "Ross study rooms, the med campus, North Campus engineering labs and the same four coffee shops on State Street. The fishbowl is real: everyone recognizes everyone and nobody makes the first move. A live show makes it for you.",
+      },
+      {
+        q: "Will Detroit metro people come to an Ann Arbor show?",
+        a: "The drive is 40 minutes and the crowds want to mix anyway. An Ann Arbor room always ends up part campus, part Canton and part Troy, which is exactly the fresh-faces effect a fishbowl town needs.",
+      },
+    ],
+    sections: [
+      {
+        heading: "The fishbowl problem, Michigan edition",
+        paragraphs: [
+          "Michigan's desi community is large, accomplished and trapped in the smallest social space imaginable: the same orgs, the same Diag walks, the same weekend spots, year after year. By second year everyone has full context on everyone, which turns every potential date into a known quantity before the first coffee. The escape routes are apps that recycle the same campus pool or a drive to Detroit's suburbs where the crowd skews family.",
+          "Fresh context is the cure, and a live dating show is fresh context by design: new format, mixed crowd and 90 minutes of shared laughter to reset how everyone sees each other.",
+        ],
+      },
+      {
+        heading: "What a Garam Masala night in Ann Arbor looks like",
+        paragraphs: [
+          "A Ross MBA and a North Campus robotics PhD who have never met, on stage, going on a first date while a room that shares eleven mutual friends per capita reacts live. Comedian hosts, audience votes and a mixer that migrates down Main Street when the venue closes.",
+          "Join the waitlist to give the fishbowl fresh water, or apply to be a contestant and let Michigan watch you shoot your shot.",
+        ],
       },
     ],
   },
@@ -317,6 +402,34 @@ export const usMidwestCities: Record<string, CityData> = {
         q: "Can I apply to be a contestant?",
         a: "Yes. Apply now. Applications stay active for 12 months. Columbus applicants will be prioritized when we confirm a date.",
       },
+      {
+        q: "Is there Indian speed dating in Columbus?",
+        a: "Columbus desi life runs through Dublin community events and OSU circles, with no singles events between them. One live show fills the gap for the fastest growing desi metro in the Midwest.",
+      },
+      {
+        q: "Where do South Asian singles in Columbus actually meet?",
+        a: "Dublin and Powell community circuits, OSU's campus orbit, the Short North on weekends and yes, the Sawmill Patel Brothers parking lot. Everyone jokes about it because it is true. We offer an upgrade.",
+      },
+      {
+        q: "Is Columbus really a priority market?",
+        a: "The growth numbers say yes: tech investment, an expanding desi suburb belt and a big university pipeline. Mid-size metros on a growth curve are exactly where a recurring show becomes an institution.",
+      },
+    ],
+    sections: [
+      {
+        heading: "Columbus is the Midwest's quietest desi boom",
+        paragraphs: [
+          "Dublin, Powell and the northwest suburbs have been absorbing South Asian tech and healthcare professionals at a pace that outran the community's own institutions, and the new chip and tech investments around the metro are accelerating it. OSU adds tens of thousands of students with a solid desi contingent. The dating reality lags all of it: the community events are family affairs, the apps are thin and the singles commute to Chicago events four hours away when they get desperate enough.",
+          "This is the profile we route for. Growing metro, no incumbent scene, one show away from having its own.",
+        ],
+      },
+      {
+        heading: "What a Garam Masala night in Columbus looks like",
+        paragraphs: [
+          "A Dublin cloud engineer and an OSU med student who have never met, on a first date on stage, while the 614's desi crowd reacts like it is a rivalry game. Comedian hosts, live votes and a mixer in the Short North where the second dates plan themselves.",
+          "Join the waitlist to move Columbus up the calendar, or apply to be a contestant and give Sawmill Road something better than produce-aisle eye contact.",
+        ],
+      },
     ],
   },
 
@@ -373,6 +486,34 @@ export const usMidwestCities: Record<string, CityData> = {
       {
         q: "Can I apply to be a contestant?",
         a: "Yes. Apply now. Applications stay active for 12 months. Cincinnati applicants will be prioritized when we confirm a date.",
+      },
+      {
+        q: "Is there Indian speed dating in Cincinnati?",
+        a: "The Cincinnati desi calendar is temple events, cultural programs and corporate affinity groups. Zero singles nights. One show would instantly be the biggest desi singles event in southwest Ohio history, a bar we intend to set properly.",
+      },
+      {
+        q: "Where do South Asian singles in Cincinnati actually meet?",
+        a: "P&G and Kroger corporate floors, UC and Children's Hospital circles and the Mason and West Chester suburb circuit. The community is prosperous, concentrated and completely without occasions built for singles.",
+      },
+      {
+        q: "Would the show be up in Mason or downtown?",
+        a: "Downtown and OTR have the venues, Mason has the density. The waitlist zip codes make the call, and either way the drive is twenty minutes because this is Cincinnati.",
+      },
+    ],
+    sections: [
+      {
+        heading: "Cincinnati's desi corporate class needs a third place",
+        paragraphs: [
+          "P&G and Kroger built Cincinnati's South Asian professional base and the northern suburbs housed it: Mason, West Chester and Blue Ash run deep with desi families, weekend cricket and some of the best Indian food between Chicago and Atlanta. For the single professionals inside that ecosystem, life is work, gym and community events where everyone asks about your marriage timeline. There is no third place where being single is the point.",
+          "We build third places for a living. One night at a time, with a stage and a bar involved.",
+        ],
+      },
+      {
+        heading: "What a Garam Masala night in Cincinnati looks like",
+        paragraphs: [
+          "A P&G brand manager and a UC med resident who have never met, on stage, going on a first date while a room from OTR to West Chester votes live. Comedian hosts, real chaos and a mixer where the chili debate does more icebreaking than any app prompt ever has.",
+          "Join the waitlist to give the 513 its night, or apply to be a contestant and let the suburbs finally see some drama that is not a school board meeting.",
+        ],
       },
     ],
   },
@@ -432,6 +573,34 @@ export const usMidwestCities: Record<string, CityData> = {
         q: "Can I apply to be a contestant?",
         a: "Yes. Apply now. Applications stay active for 12 months. Cleveland applicants will be prioritized when we confirm a date.",
       },
+      {
+        q: "Is there Indian speed dating in Cleveland?",
+        a: "Northeast Ohio's desi singles have community events and the Clinic cafeteria, and that is the whole list. A live comedy dating show would be the region's first real singles night and the Clinic residents alone could fill half the room.",
+      },
+      {
+        q: "Where do South Asian singles in Cleveland actually meet?",
+        a: "Cleveland Clinic and University Hospitals cohorts, CWRU circles and the Solon and Westlake community events. The medical grind means everyone is brilliant, exhausted and dating nobody. Sound familiar? We built a show for you.",
+      },
+      {
+        q: "Is the Cleveland desi scene big enough?",
+        a: "Tight beats big for this format. A room where half the crowd shares an employer produces the most invested audience votes on tour, and the Clinic is functionally a small desi city.",
+      },
+    ],
+    sections: [
+      {
+        heading: "Cleveland's desi scene runs on hospital time",
+        paragraphs: [
+          "The Cleveland Clinic and University Hospitals import South Asian residents, fellows and attendings on a conveyor that never stops, and CWRU adds the grad student layer. The result is a desi community whose single members work 70 hour weeks, live within two miles of a hospital and have social calendars made entirely of shift trades. The settled families out in Solon, Westlake and Brecksville run a parallel world of community events the residents never see.",
+          "A show collapses the parallel worlds for one night and hands the hospital crowd the only thing their schedule lacks: an occasion worth protecting a Saturday for.",
+        ],
+      },
+      {
+        heading: "What a Garam Masala night in Cleveland looks like",
+        paragraphs: [
+          "A Clinic cardiology fellow and a CWRU engineer who have never met, on stage, going on a first date while a room that understands call schedules votes on their chemistry. Comedian hosts, live chaos and a mixer where 'what service are you on' is somehow a flirtation.",
+          "Join the waitlist to bring the show to the North Coast, or apply to be a contestant and give the Clinic group chats a case report to remember.",
+        ],
+      },
     ],
   },
 
@@ -489,6 +658,34 @@ export const usMidwestCities: Record<string, CityData> = {
       {
         q: "Can I apply to be a contestant?",
         a: "Yes. Apply now. Applications stay active for 12 months. Minneapolis applicants will be prioritized when we confirm a date.",
+      },
+      {
+        q: "Is there Indian speed dating in Minneapolis?",
+        a: "The Twin Cities have corporate desi affinity groups and community festivals, but singles events are basically absent. Minnesota Nice will chat with you at the co-op forever and never ask for your number. Our format forces the issue, pleasantly.",
+      },
+      {
+        q: "Where do South Asian singles in the Twin Cities actually meet?",
+        a: "Target, UnitedHealth and Medtronic campuses, UMN circles and Eden Prairie community events. Work is the whole social scene, which is precisely the problem a third-party room solves.",
+      },
+      {
+        q: "Minneapolis or St Paul?",
+        a: "Minneapolis has the venues and the after-mixer options, but the room will be full of both cities plus the 494 suburb belt. Nobody is checking which side of the river you sleep on.",
+      },
+    ],
+    sections: [
+      {
+        heading: "Minnesota Nice is a dating strategy with no second step",
+        paragraphs: [
+          "The Twin Cities desi community is corporate America's best kept secret: Target, UnitedHealth, Medtronic, 3M and General Mills have quietly assembled thousands of South Asian professionals across Minneapolis and the southwest suburbs, with UMN feeding the pipeline. Everyone is friendly, everyone waves, nobody converts a conversation into a date because the local culture treats directness as a misdemeanor. Desi singles here report the most polite loneliness in America.",
+          "A live dating show is structurally rude in the best way: it makes intent public, makes the room laugh about it and hands everyone a mixer where the first move is already made.",
+        ],
+      },
+      {
+        heading: "What a Garam Masala night in Minneapolis looks like",
+        paragraphs: [
+          "A Target engineer and a UMN resident who have never met, on stage, going on a first date while a room full of people who apologize when someone else bumps them votes with shocking aggression. The mixer after proves the thesis: give Minnesotans a shared experience and the freeze thaws instantly.",
+          "Join the waitlist for first access when we announce, or apply to be a contestant. And yes, indoor venue, climate controlled, we respect the winters.",
+        ],
       },
     ],
   },
@@ -548,6 +745,34 @@ export const usMidwestCities: Record<string, CityData> = {
         q: "Can I apply to be a contestant?",
         a: "Yes. Apply now. Applications stay active for 12 months. Indianapolis applicants will be prioritized when we confirm a date.",
       },
+      {
+        q: "Is there Indian speed dating in Indianapolis?",
+        a: "Indy's desi social calendar is Carmel community events, cricket leagues and corporate mixers at Lilly. Singles events do not exist here yet, which is exactly the kind of blank map we like drawing on first.",
+      },
+      {
+        q: "Where do South Asian singles in Indy actually meet?",
+        a: "Lilly and Salesforce floors, IU Health systems, Carmel and Fishers community circuits and Purdue alumni networks. Hamilton County has the density of a coastal desi suburb with none of the singles infrastructure.",
+      },
+      {
+        q: "Carmel or downtown Indy for the show?",
+        a: "Broad Ripple and downtown have the rooms, Carmel has the crowd. Waitlist zip codes make the call. Either way it is a 25 minute drive because Indy traffic is a rumor.",
+      },
+    ],
+    sections: [
+      {
+        heading: "Hamilton County is a desi suburb without a singles valve",
+        paragraphs: [
+          "Carmel and Fishers built one of the Midwest's most impressive desi suburban communities: top school districts, temple and cultural infrastructure and a professional base anchored by Lilly, the med device corridor and a growing tech scene. Indiana's settle-down-young culture makes it a wonderful place to be married and a quietly brutal place to be 29 and single, because every community space assumes you have already found your person or that your parents are actively procuring one.",
+          "The singles valve is a night that belongs to them alone. One show, no aunties in operational roles, a mixer where the question is 'what do you do' instead of 'when is your turn'.",
+        ],
+      },
+      {
+        heading: "What a Garam Masala night in Indy looks like",
+        paragraphs: [
+          "A Lilly scientist and a Fishers software engineer who have never met, on stage, going on a first date while Hamilton County finally gets the drama it pretends not to want. Comedian hosts, live votes and a mixer where the Trader Joe's in Carmel gets demoted from primary meeting venue.",
+          "Join the waitlist to set Indy's date, or apply to be a contestant and give the group chats of the 317 their main event.",
+        ],
+      },
     ],
   },
 
@@ -604,6 +829,34 @@ export const usMidwestCities: Record<string, CityData> = {
       {
         q: "Can I apply to be a contestant?",
         a: "Yes. Apply now. Applications stay active for 12 months. West Lafayette applicants will be prioritized when we confirm a date.",
+      },
+      {
+        q: "Is there Indian speed dating at Purdue?",
+        a: "Grad org mixers, yes. Dating events, no. For one of the largest Indian graduate populations in America, that is a remarkable oversight and a very easy one for us to correct.",
+      },
+      {
+        q: "Where do Purdue desi students actually meet?",
+        a: "Neil Armstrong Hall, the co-rec, Chauncey Hill food runs and apartment complexes that are functionally Indian graduate housing. Proximity without occasions, the classic college town equation.",
+      },
+      {
+        q: "Would Indianapolis people drive up?",
+        a: "The 65 corridor works both ways: Indy desis drive up for Purdue events and Boilermaker alumni drive back for nostalgia. A West Lafayette show pulls both directions.",
+      },
+    ],
+    sections: [
+      {
+        heading: "Purdue's Indian grad community is a city inside a town",
+        paragraphs: [
+          "Purdue holds one of the largest Indian graduate student populations in the country, dense enough that entire research groups, apartment buildings and intramural leagues run desi by default. The dating reality inside that density is grim in a specific way: the pool is huge but the visibility is zero, because everyone socializes inside their lab, their batch and their apartment block. Three years can pass without meeting anyone outside a five person radius.",
+          "The show is an anti-silo machine. One room, every department, every year, plus the Lafayette professionals nobody remembers exist. The density finally gets to act like a scene.",
+        ],
+      },
+      {
+        heading: "What a Garam Masala night in West Lafayette looks like",
+        paragraphs: [
+          "An aero PhD and a Krannert masters student who have never met, on stage, going on a first date while half the graduate school reacts like it is a qualifier defense. Comedian hosts, live votes and a mixer at Chauncey Hill where the second dates schedule themselves around lab hours.",
+          "Join the waitlist to bring the show to the Wabash, or apply to be a contestant and give Purdue a result that beats any conference paper.",
+        ],
       },
     ],
   },
@@ -662,6 +915,34 @@ export const usMidwestCities: Record<string, CityData> = {
         q: "Can I apply to be a contestant?",
         a: "Yes. Apply now. Applications stay active for 12 months. Bloomington applicants will be prioritized when we confirm a date.",
       },
+      {
+        q: "Is there Indian speed dating in Bloomington?",
+        a: "IU's desi scene runs on cultural shows and org events, not dating events. In a town built around one campus, the first real singles night becomes the story of the semester, and we are happy to be the story.",
+      },
+      {
+        q: "Where do IU desi students actually meet?",
+        a: "Kelley team rooms, Luddy labs, the Sample Gates coffee circuit and Kirkwood on weekends. Small circles, endless mutuals and no format for turning familiarity into a date. That is our entire niche.",
+      },
+      {
+        q: "Is Bloomington too small for this?",
+        a: "College towns are our best rooms precisely because they are small: everyone hears about it, everyone comes and the mixer is the whole desi scene in one bar. Small is the strategy.",
+      },
+    ],
+    sections: [
+      {
+        heading: "Bloomington's charm has a dating-shaped hole",
+        paragraphs: [
+          "IU gives Bloomington a real South Asian community: Kelley and Luddy pull in students from every corner of the diaspora, the cultural orgs are active and B-town's compact, walkable core makes the social life easy. The dating layer is the missing part. Circles are small, context is total and the only alternatives are apps that run out of new faces by October or a drive to Indy that nobody makes twice.",
+          "A live show in a town like this converts the smallness into electricity. The room will contain everyone's mutuals, and that is exactly why the votes and the mixer will run hot.",
+        ],
+      },
+      {
+        heading: "What a Garam Masala night in Bloomington looks like",
+        paragraphs: [
+          "Two Hoosiers who have never met, a Kelley MBA and a Luddy PhD maybe, on stage, going on a first date while a room of mutuals reacts with zero poker face. Comedian hosts, live votes and a mixer that pours out onto Kirkwood after, because in Bloomington everything does.",
+          "Join the waitlist to make the case, or apply to be a contestant and give Sample Gates a story to keep.",
+        ],
+      },
     ],
   },
 
@@ -718,6 +999,35 @@ export const usMidwestCities: Record<string, CityData> = {
       {
         q: "Can I apply to be a contestant?",
         a: "Yes. Apply now. Applications stay active for 12 months. Milwaukee applicants will be prioritized when we confirm a date.",
+      },
+      {
+        q: "Is there Indian speed dating in Milwaukee?",
+        a: "MKE's desi singles get community events in Brookfield and a 90 minute drive to Chicago for everything else. A local show ends the commute era, and Milwaukee crowds are famously better anyway.",
+      },
+      {
+        q: "Where do South Asian singles in Milwaukee actually meet?",
+        a: "The Medical College and hospital systems, GE HealthCare and the engineering employers, Marquette and UWM circles and Brookfield community events. Tight community, zero singles occasions. Familiar math, known fix.",
+      },
+      {
+        q: "Would Chicago desis come up for an MKE show?",
+        a: "Some will, the train makes it easy. But this show is built for Milwaukee's own scene, which has been driving south for years and deserves a night where the last call is in its own city.",
+      },
+    ],
+    sections: [
+      {
+        heading:
+          "Milwaukee's desi scene lives in Chicago's shadow by choice, not necessity",
+        paragraphs: [
+          "The MKE desi community is small, established and used to being an afterthought: Brookfield, Wauwatosa and Mequon hold the families, the Medical College and GE HealthCare bring the professionals and every single South Asian under 35 has a Chicago events habit and an I-94 loyalty card. The assumption is that Milwaukee cannot sustain its own desi nightlife. Nobody has actually tested it.",
+          "We like testing exactly this. Mid-size, loyal, underserved communities throw the best first shows because the night means something. Milwaukee will show up for its own.",
+        ],
+      },
+      {
+        heading: "What a Garam Masala night in Milwaukee looks like",
+        paragraphs: [
+          "A Medical College resident and a GE engineer who have never met, on stage, going on a first date while the Third Ward fills with the whole 414 desi scene at once. Comedian hosts, live votes and a mixer with the lake three blocks away for the walk-and-talk second act.",
+          "Join the waitlist to retire the Chicago commute, or apply to be a contestant and put MKE on the map yourself.",
+        ],
       },
     ],
   },
@@ -777,6 +1087,34 @@ export const usMidwestCities: Record<string, CityData> = {
         q: "Can I apply to be a contestant?",
         a: "Yes. Apply now. Applications stay active for 12 months. Madison applicants will be prioritized when we confirm a date.",
       },
+      {
+        q: "Is there Indian speed dating in Madison?",
+        a: "Madison has trivia nights, farmers markets and zero desi singles events. For a city with Epic's desi workforce plus UW's student body, the absence is almost comic. We do comedy.",
+      },
+      {
+        q: "Where do South Asian singles in Madison actually meet?",
+        a: "Epic's Verona campus, UW labs, State Street and the Capitol Square loop. The Epic crowd famously lives in a company bubble twenty minutes out of town, which makes a neutral downtown room the entire value proposition.",
+      },
+      {
+        q: "Is this an Epic employees event?",
+        a: "No, it is a Madison event that Epic employees will heavily attend, which is different and healthier. UW students, hospital staff and the Verona commuters all get the same room and the same mixer.",
+      },
+    ],
+    sections: [
+      {
+        heading: "Epic built a desi campus town and forgot the exits",
+        paragraphs: [
+          "Epic recruits thousands of young engineers and analysts, a hefty share of them South Asian, straight out of college into a spaceship campus in Verona, twenty minutes from downtown Madison. The company provides everything except a social life outside itself, and dating a coworker at a company that intense is a documented hazard. Meanwhile UW's desi grad community runs its own parallel loop on the isthmus, and the two populations, ten miles apart, essentially never meet.",
+          "One downtown show merges the bubbles. Epic gets an exit, UW gets fresh faces and Madison's desi singles finally have an event that is not a sprint planning meeting.",
+        ],
+      },
+      {
+        heading: "What a Garam Masala night in Madison looks like",
+        paragraphs: [
+          "An Epic implementation consultant and a UW biochem PhD who have never met, on stage, going on a first date between the lakes while the isthmus votes live. Comedian hosts, real chaos and a mixer on State Street where the bubbles stay merged well past close.",
+          "Join the waitlist to give Madison its night, or apply to be a contestant and give Verona something to discuss at stand-up that is not a ticket queue.",
+        ],
+      },
     ],
   },
 
@@ -835,6 +1173,35 @@ export const usMidwestCities: Record<string, CityData> = {
         q: "Can I apply to be a contestant?",
         a: "Yes. Apply now. Applications stay active for 12 months. Kansas City applicants will be prioritized when we confirm a date.",
       },
+      {
+        q: "Is there Indian speed dating in Kansas City?",
+        a: "KC's desi singles have community events split across two states and no singles night in either. One central show unifies the metro for a night, which is more than the state line has ever managed.",
+      },
+      {
+        q: "Where do South Asian singles in KC actually meet?",
+        a: "Overland Park community circuits, Cerner-legacy health tech floors, KU Med and UMKC circles and the occasional drive to Chicago or Dallas. The metro's desi professionals are spread across forty suburbs waiting for a center of gravity.",
+      },
+      {
+        q: "Missouri side or Kansas side for the venue?",
+        a: "Crossroads or Westport most likely, central enough that both sides can claim it. The waitlist zip codes will settle the border dispute like adults.",
+      },
+    ],
+    sections: [
+      {
+        heading:
+          "KC's desi community is bigger than its two-state split makes it feel",
+        paragraphs: [
+          "Kansas City's South Asian population concentrates in Overland Park and Johnson County on one side and spreads through the Northland and Lee's Summit on the other, with the health tech corridor, the hospital systems and the engineering firms employing most of it. The state line does something subtle and destructive to the social scene: every community event feels regional instead of metro-wide, so the singles never see the full size of their own pool.",
+          "A single central show is a census as much as an event. The first time KC's desi singles share one room, the scene stops feeling small forever.",
+        ],
+      },
+      {
+        heading: "What a Garam Masala night in KC looks like",
+        paragraphs: [
+          "An Overland Park health tech PM and a KU Med resident who have never met, on stage, going on a first date while both sides of the state line vote as one electorate for once. Comedian hosts, live chaos and a mixer where the burnt ends recommendation is a love language.",
+          "Join the waitlist to give KC its unifying night, or apply to be a contestant and become bi-state famous.",
+        ],
+      },
     ],
   },
 
@@ -892,6 +1259,35 @@ export const usMidwestCities: Record<string, CityData> = {
         q: "Can I apply to be a contestant?",
         a: "Yes. Apply now. Applications stay active for 12 months. St. Louis applicants will be prioritized when we confirm a date.",
       },
+      {
+        q: "Is there Indian speed dating in St. Louis?",
+        a: "STL's desi calendar is temple events, cultural programs and the same hundred faces. No singles events, no live formats, nothing new since forever. That staleness is exactly what a live show detonates.",
+      },
+      {
+        q: "Where do South Asian singles in St. Louis actually meet?",
+        a: "WashU and SLU circles, the BJC medical systems, Chesterfield and Creve Coeur community events and each other's LinkedIn notifications. Everyone knows the pool feels small. It is not small. It is unmixed.",
+      },
+      {
+        q: "Would the show pull from Illinois side too?",
+        a: "Metro East counts, obviously. A Central West End or Clayton venue keeps everyone within twenty five minutes, which by STL standards is basically next door.",
+      },
+    ],
+    sections: [
+      {
+        heading:
+          "St. Louis has a hundred-face problem, not a population problem",
+        paragraphs: [
+          "STL's South Asian community concentrates in Chesterfield, Creve Coeur and Maryland Heights, with WashU and the BJC medical machine importing students, residents and researchers every year. The singles all report the identical experience: the same hundred faces at every Diwali event, every cultural program, every birthday party. The conclusion everyone draws, that the pool is tiny, is wrong. The pool is fragmented: the med campus never meets the county suburbs, the WashU crowd never meets the professionals.",
+          "One show defragments the scene. The room will hold faces nobody has seen before, all of whom live fifteen minutes away and have been reaching the same wrong conclusion.",
+        ],
+      },
+      {
+        heading: "What a Garam Masala night in St. Louis looks like",
+        paragraphs: [
+          "A WashU postdoc and a Chesterfield consultant who have never met, on stage, going on a first date while the Central West End fills with every desi single the metro forgot it had. Comedian hosts, live votes and a mixer where 'wait, where have you been' is the most common opener.",
+          "Join the waitlist to break the hundred-face cycle, or apply to be a contestant and give the Lou a fresh story.",
+        ],
+      },
     ],
   },
 
@@ -942,6 +1338,34 @@ export const usMidwestCities: Record<string, CityData> = {
       {
         q: "Can I apply to be a contestant?",
         a: "Yes. Apply now. Applications stay active for 12 months. Iowa City applicants will be prioritized when we confirm a date.",
+      },
+      {
+        q: "Is there Indian speed dating in Iowa City?",
+        a: "There is nothing of the kind within two hours, which is the entire pitch. The first desi singles event in eastern Iowa history gets a motivated crowd by definition.",
+      },
+      {
+        q: "Where do South Asian singles in Iowa City actually meet?",
+        a: "The university hospital systems, engineering and grad school circles and the downtown ped mall on weekends. Small, sharp community with a completely blank social calendar for singles.",
+      },
+      {
+        q: "Would Cedar Rapids people come?",
+        a: "The corridor is twenty five minutes and Cedar Rapids' desi engineers have even fewer options. An Iowa City show is a corridor show, and the corridor knows it.",
+      },
+    ],
+    sections: [
+      {
+        heading: "Eastern Iowa's desi scene is a corridor waiting for a room",
+        paragraphs: [
+          "The University of Iowa's medical and graduate programs anchor a modest but real South Asian community, and the Cedar Rapids engineering employers up the corridor add a professional layer that outsiders never count. The singles inside it live the small market desi experience at its purest: a dating app radius made of farmland, a community small enough that everyone is pre-introduced and a two hour drive to Des Moines or four to Chicago for anything resembling an event.",
+          "Small markets reward the first mover absurdly well. One good night here owns the entire scene's memory for years.",
+        ],
+      },
+      {
+        heading: "What a Garam Masala night in Iowa City looks like",
+        paragraphs: [
+          "A UIHC resident and a Rockwell engineer who have never met, on stage, going on a first date while the corridor's whole desi scene fits in one downtown room and knows it. Comedian hosts, live votes and a mixer on the ped mall where the follow-up plans write themselves.",
+          "Join the waitlist to prove eastern Iowa out, or apply to be a contestant and make corridor history.",
+        ],
       },
     ],
   },
@@ -997,6 +1421,34 @@ export const usMidwestCities: Record<string, CityData> = {
         q: "Can I apply to be a contestant?",
         a: "Yes. Apply now. Applications stay active for 12 months. Ames applicants will be prioritized when we confirm a date.",
       },
+      {
+        q: "Is there Indian speed dating in Ames?",
+        a: "Ames has never had a desi singles event. Iowa State's Indian grad community socializes through department potlucks and cricket, which build friendships and precisely zero dates. We supply the missing format.",
+      },
+      {
+        q: "Where do Iowa State desi students actually meet?",
+        a: "Howe Hall, Parks Library, the same two apartment complexes and Welch Ave on brave nights. The pool is real and the visibility is zero, the classic isolated campus equation.",
+      },
+      {
+        q: "Would Des Moines desis drive up?",
+        a: "Thirty five minutes for the only desi singles night in Iowa? Des Moines' young professionals will be in the front row, and honestly they have been the louder half of the waitlist.",
+      },
+    ],
+    sections: [
+      {
+        heading: "Ames is the most isolated desi campus community we route for",
+        paragraphs: [
+          "Iowa State's engineering and agronomy programs quietly maintain a strong Indian graduate community in a town surrounded by two hours of fields in every direction. The isolation compounds the usual campus dating problems: circles are departmental, the app radius is agricultural and the nearest alternative scene is Des Moines, which has its own desi professionals and equally few occasions. Everyone within sixty miles is waiting for someone to build the night.",
+          "Captive geography makes legendary rooms. When the only event in a hundred miles happens, attendance is not a decision. It is a reflex.",
+        ],
+      },
+      {
+        heading: "What a Garam Masala night in Ames looks like",
+        paragraphs: [
+          "An ISU mechanical engineering PhD and a Des Moines actuary who have never met, on stage, going on a first date while central Iowa's entire desi scene shares one room for the first time ever. Comedian hosts, live votes and a mixer that becomes the origin story of every couple in the region for the next decade.",
+          "Join the waitlist to make it real, or apply to be a contestant and put Ames on a map it has never been on.",
+        ],
+      },
     ],
   },
 
@@ -1044,6 +1496,34 @@ export const usMidwestCities: Record<string, CityData> = {
       {
         q: "Can I apply to be a contestant?",
         a: "Yes. Apply now. Applications stay active for 12 months. Nebraska applicants will be prioritized when we confirm a date.",
+      },
+      {
+        q: "Is there Indian speed dating in Omaha?",
+        a: "Nebraska has no desi singles events at all, which means the first one is automatically statewide news in the community. We are comfortable being news.",
+      },
+      {
+        q: "Where do South Asian singles in Nebraska actually meet?",
+        a: "UNMC and the hospital systems, UNL's grad circles in Lincoln, the insurance and banking floors downtown and community events where the median attendee is a family of four. The singles have no room of their own between the two cities.",
+      },
+      {
+        q: "Omaha or Lincoln for the show?",
+        a: "Omaha most likely, with Lincoln fifty minutes down I-80 and heavily represented. One Nebraska room covers both scenes, and the carpools are half the fun.",
+      },
+    ],
+    sections: [
+      {
+        heading: "Nebraska's desi singles are split between two quiet cities",
+        paragraphs: [
+          "Omaha and Lincoln hold Nebraska's South Asian community between them: UNMC's medical machine and the insurance and banking employers in Omaha, UNL's graduate programs and state government in Lincoln. Both scenes are small, professional and completely without singles infrastructure, and each assumes the interesting people are in the other city. The apps confirm nothing because nobody's radius covers both.",
+          "One show, one room, both cities. The discovery that Nebraska's desi dating pool is twice what either city believed is worth the ticket alone.",
+        ],
+      },
+      {
+        heading: "What a Garam Masala night in Omaha looks like",
+        paragraphs: [
+          "A UNMC resident and a Lincoln software engineer who have never met, on stage, going on a first date while the whole state's desi scene votes in one room for the first time. Comedian hosts, live chaos and a mixer where 'you drove in too?' does the icebreaking.",
+          "Join the waitlist to give Nebraska its first, or apply to be a contestant and become the community's favorite story.",
+        ],
       },
     ],
   },

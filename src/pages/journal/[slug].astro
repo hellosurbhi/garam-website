@@ -16,7 +16,8 @@ import { Picture } from "astro:assets";
 import { HF_IMAGES_ASSETS } from "@/assets/backgrounds";
 import { slugToImageIndex } from "@/data/images";
 import { gitDates } from "virtual:git-dates";
-import { VERDICT_BOX } from "@/data/copy";
+import { VERDICT_BOX, JOURNAL_FOLLOW } from "@/data/copy";
+import { SOCIAL_URLS } from "@/data/socials";
 
 export function getStaticPaths() {
   return journalPostsPublished.map((post, idx) => {
@@ -371,6 +372,34 @@ const cityLinks =
           />
         )
       }
+
+      <aside class="journal-follow" aria-label={JOURNAL_FOLLOW.ariaLabel}>
+        <p class="journal-follow__text">
+          {JOURNAL_FOLLOW.before}<a
+            href={SOCIAL_URLS.youtube}
+            target="_blank"
+            rel="noopener noreferrer"
+            data-ph-capture="cta_clicked"
+            data-ph-cta="journal_follow_youtube"
+            data-ph-section="journal_follow"
+            data-cta-position="journal_follow"
+            data-cta-text={JOURNAL_FOLLOW.youtubeText}
+            data-article-slug={post.slug}
+            data-destination-url={SOCIAL_URLS.youtube}
+          >{JOURNAL_FOLLOW.youtubeText}</a>{JOURNAL_FOLLOW.middle}<a
+            href={SOCIAL_URLS.instagram}
+            target="_blank"
+            rel="noopener noreferrer"
+            data-ph-capture="cta_clicked"
+            data-ph-cta="journal_follow_instagram"
+            data-ph-section="journal_follow"
+            data-cta-position="journal_follow"
+            data-cta-text={JOURNAL_FOLLOW.instagramText}
+            data-article-slug={post.slug}
+            data-destination-url={SOCIAL_URLS.instagram}
+          >{JOURNAL_FOLLOW.instagramText}</a>{JOURNAL_FOLLOW.after}
+        </p>
+      </aside>
 
       {
         cityLinks.length > 0 && (
@@ -807,6 +836,31 @@ const cityLinks =
   }
 
   /* Mid-article CTA banner */
+  .journal-follow {
+    background: rgba(var(--brand-red-rgb), 0.05);
+    border-left: 3px solid var(--brand-red);
+    border-radius: 0 8px 8px 0;
+    padding: 16px 20px;
+    margin: 30px 0 6px;
+  }
+  .journal-follow__text {
+    font-family: var(--font-body);
+    font-size: 16px;
+    line-height: 1.6;
+    color: var(--charcoal);
+    margin: 0;
+  }
+  .journal-follow__text a {
+    color: var(--brand-red);
+    font-weight: 700;
+    text-decoration: underline;
+    text-underline-offset: 2px;
+  }
+  .journal-follow__text a:focus-visible {
+    outline: 2px solid var(--brand-red);
+    outline-offset: 2px;
+  }
+
   .verdict-box {
     background: var(--white);
     border: 1px solid rgba(var(--brand-red-rgb), 0.15);

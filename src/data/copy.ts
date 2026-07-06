@@ -227,6 +227,19 @@ export const EXPERIENCE_STEPS = [
   },
 ];
 
+/**
+ * Follow block shown after every journal article body. Split into
+ * segments so the component can wrap the platform names in tracked links.
+ */
+export const JOURNAL_FOLLOW = {
+  ariaLabel: "Follow the show",
+  before: "This journal comes from a show that sells out weekly in NYC. ",
+  youtubeText: "YouTube",
+  middle: " has full episodes, ",
+  instagramText: "Instagram",
+  after: " has the moments people will not stop tagging their friends in. Watch a date before you attend one.",
+} as const;
+
 /** Labels for the visible review verdict box on app review journal posts. */
 export const VERDICT_BOX = {
   eyebrow: "The Verdict",

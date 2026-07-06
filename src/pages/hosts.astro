@@ -12,6 +12,12 @@ const breadcrumbJsonLd = buildBreadcrumbJsonLd([
   { name: "Hosts" },
 ]);
 
+const orgRef = {
+  "@type": "Organization",
+  "@id": "https://garammasaladating.com/#organization",
+  name: "Garam Masala Dating",
+};
+
 const personJsonLd = JSON.stringify([
   {
     "@context": "https://schema.org",
@@ -19,7 +25,15 @@ const personJsonLd = JSON.stringify([
     name: "Surbhi",
     jobTitle: "Stand-Up Comedian & Co-Creator",
     url: CREATOR_URLS.surbhi,
-    worksFor: { "@type": "Organization", name: "Garam Masala Dating" },
+    sameAs: [CREATOR_URLS.surbhi],
+    knowsAbout: [
+      "stand-up comedy",
+      "South Asian dating",
+      "live dating shows",
+      "matchmaking",
+    ],
+    worksFor: orgRef,
+    founderOf: orgRef,
   },
   {
     "@context": "https://schema.org",
@@ -27,7 +41,9 @@ const personJsonLd = JSON.stringify([
     name: "Wyatt Feegrado",
     jobTitle: "Stand-Up Comedian & Co-Host",
     url: CREATOR_URLS.wyatt,
-    worksFor: { "@type": "Organization", name: "Garam Masala Dating" },
+    sameAs: [CREATOR_URLS.wyatt],
+    knowsAbout: ["stand-up comedy", "live dating shows", "crowd work"],
+    worksFor: orgRef,
   },
 ]);
 ---

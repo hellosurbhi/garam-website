@@ -1,5 +1,3 @@
-export const EMAIL_FROM = "Garam Masala Dating <casting@garammasaladating.com>";
-
 export interface EmailTemplate {
   subject: string;
   text: string;

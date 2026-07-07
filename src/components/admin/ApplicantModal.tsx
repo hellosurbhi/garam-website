@@ -20,6 +20,7 @@ import {
 } from "@/types/application";
 import { formatLocation } from "@/utils/locationDisplay";
 import { getApplicantPhotos } from "@/utils/applicantPhotos";
+import { instagramUrl } from "@/utils/instagram";
 import { Modal } from "@/components/ui/Modal";
 import Spinner from "@/components/ui/Spinner";
 import { events } from "@/data/events";
@@ -405,7 +406,7 @@ export default function ApplicantModal({
           <div>
             <p className={styles.infoLabel}>Instagram</p>
             <a
-              href={`https://instagram.com/${handle}`}
+              href={instagramUrl(handle)}
               target="_blank"
               rel="noopener noreferrer"
               className={styles.igLink}

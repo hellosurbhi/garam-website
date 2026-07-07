@@ -4,8 +4,7 @@
  */
 
 export const SPONSORSHIP_COPY = {
-  contactEmail: "caleb@garammasaladating.com",
-  contactName: "Caleb",
+  contactEmail: "contact@garammasaladating.com",
   contactTitle: "Manager",
   heroHeadline: "Reach NYC's Most Engaged South Asian Audience",
   heroSub:
@@ -14,7 +13,7 @@ export const SPONSORSHIP_COPY = {
     "South Asian, desi diaspora, and culturally engaged non-South Asian guests in NYC metro. They share the clips, tag the brands, and come back every two weeks.",
   ctaHeadline: "Ready to be in the room?",
   ctaBody:
-    "Email Caleb, our manager, with your brand, goal, and budget. He'll respond within 48 hours.",
+    "Email us with your brand, goal, and budget. We respond within 48 hours.",
 } as const;
 
 export interface SponsorTier {
@@ -164,6 +163,6 @@ export const SPONSORSHIP_FAQS: SponsorFaq[] = [
   },
   {
     q: "How do I get started?",
-    a: `Email ${SPONSORSHIP_COPY.contactEmail} with your brand, goal, and budget. ${SPONSORSHIP_COPY.contactName}, our manager, responds within 48 hours.`,
+    a: `Email ${SPONSORSHIP_COPY.contactEmail} with your brand, goal, and budget. We respond within 48 hours.`,
   },
 ];

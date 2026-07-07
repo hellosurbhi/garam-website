@@ -21,6 +21,7 @@ describe("event location data", () => {
     expect(labels).toContain("San Diego, CA");
     expect(labels).toContain("Los Angeles, CA");
     expect(labels).toContain("Washington, DC");
+    expect(labels).toContain("Philadelphia, PA");
   });
 
   it("does not duplicate state abbreviations in formatted labels", () => {
@@ -28,5 +29,6 @@ describe("event location data", () => {
 
     expect(labels).not.toContain("Manhattan, NY, NY");
     expect(labels).not.toContain("San Francisco, CA, CA");
+    expect(labels).not.toContain("Philadelphia, PA, PA");
   });
 });

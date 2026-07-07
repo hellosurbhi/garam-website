@@ -4,15 +4,11 @@ import type { APIRoute } from "astro";
 import { fsPatch, fsAdd, fsListAll } from "@/lib/firestoreRest";
 import { sendMail } from "@/lib/zohoMailer";
 import { postShow } from "@/data/emails";
+import { verifyCronSecret } from "@/lib/cronAuth";
+import { jsonResponse } from "@/lib/http";
 
 const D3 = 3 * 24 * 60 * 60 * 1000;
 const D10 = 10 * 24 * 60 * 60 * 1000;
-
-function verifyCronSecret(request: Request): boolean {
-  const cronSecret = import.meta.env.CRON_SECRET;
-  if (!cronSecret) return false;
-  return request.headers.get("authorization") === `Bearer ${cronSecret}`;
-}
 
 function toMs(val: unknown): number | null {
   if (typeof val !== "string") return null;
@@ -20,15 +16,9 @@ function toMs(val: unknown): number | null {
   return isNaN(ms) ? null : ms;
 }
 
-function json(data: Record<string, unknown>, status = 200) {
-  return new Response(JSON.stringify(data), {
-    status,
-    headers: { "Content-Type": "application/json" },
-  });
-}
-
 export const GET: APIRoute = async ({ request }) => {
-  if (!verifyCronSecret(request)) return json({ error: "Unauthorized" }, 401);
+  if (!verifyCronSecret(request))
+    return jsonResponse({ error: "Unauthorized" }, 401);
 
   const now = Date.now();
   let sent = 0;
@@ -63,17 +53,21 @@ export const GET: APIRoute = async ({ request }) => {
     }
 
     const sentAt = new Date().toISOString();
-    await fsPatch(`applications/${app.id as string}`, {
-      postShowSentAt: sentAt,
-    });
-    await fsAdd(`applications/${app.id as string}/events`, {
-      type: "post_show_sent",
-      timestamp: sentAt,
-      actor: "system",
-      payload: {},
-    });
+    try {
+      await fsPatch(`applications/${app.id as string}`, {
+        postShowSentAt: sentAt,
+      });
+      await fsAdd(`applications/${app.id as string}/events`, {
+        type: "post_show_sent",
+        timestamp: sentAt,
+        actor: "system",
+        payload: {},
+      });
+    } catch (err) {
+      console.error("[post-show] Firestore write failed after send:", err);
+    }
     sent++;
   }
 
-  return json({ ok: true, sent });
+  return jsonResponse({ ok: true, sent });
 };

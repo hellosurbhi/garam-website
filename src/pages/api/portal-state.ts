@@ -4,15 +4,9 @@ import { verifyPortalToken } from "@/lib/portalToken";
 import { events } from "@/data/events";
 import { isEventPast } from "@/utils/eventDate";
 import { enforceRateLimit, RATE_LIMITS } from "@/lib/rateLimit";
+import { jsonResponse as json } from "@/lib/http";
 
 export const prerender = false;
-
-function json(data: Record<string, unknown>, status = 200) {
-  return new Response(JSON.stringify(data), {
-    status,
-    headers: { "Content-Type": "application/json" },
-  });
-}
 
 function parseCookies(header: string | null): Record<string, string> {
   if (!header) return {};

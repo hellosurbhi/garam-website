@@ -19,6 +19,12 @@
   var JOTFORM_FORM_ID = "261031391833047";
   window.addEventListener("message", function (e) {
     if (!JOTFORM_ORIGINS.has(e.origin)) return;
+    // JotForm sends resize events as colon-delimited strings (e.g. "setHeight:539"),
+    // not JSON. Handle this format first so the loader is dismissed immediately.
+    if (typeof e.data === "string" && e.data.indexOf("setHeight:") === 0) {
+      hideLoader();
+      return;
+    }
     try {
       var data = typeof e.data === "string" ? JSON.parse(e.data) : e.data;
       if (

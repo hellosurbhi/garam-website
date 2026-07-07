@@ -88,10 +88,7 @@ export const POST: APIRoute = async ({ request }) => {
       });
       emailSent = true;
     } catch (e) {
-      console.error(
-        `Rejection email failed for application ${applicationId}`,
-        e,
-      );
+      console.error("Rejection email failed", e);
     }
 
     if (emailSent) {

@@ -17,6 +17,7 @@ export const GET: APIRoute = async ({ request }) => {
 
   const now = Date.now();
   let sent = 0;
+  let persistenceFailures = 0;
 
   const allApps = await fsListAll("applications");
 
@@ -58,11 +59,15 @@ export const GET: APIRoute = async ({ request }) => {
         actor: "system",
         payload: {},
       });
+      sent++;
     } catch (err) {
+      persistenceFailures++;
       console.error("[post-show] Firestore write failed after send:", err);
     }
-    sent++;
   }
 
-  return jsonResponse({ ok: true, sent });
+  return jsonResponse(
+    { ok: persistenceFailures === 0, sent, persistenceFailures },
+    persistenceFailures === 0 ? 200 : 500,
+  );
 };

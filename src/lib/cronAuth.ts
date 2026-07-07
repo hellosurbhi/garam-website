@@ -5,6 +5,8 @@ export function verifyCronSecret(request: Request): boolean {
   if (!cronSecret) return false;
   const provided = request.headers.get("authorization") ?? "";
   const expected = `Bearer ${cronSecret}`;
-  if (provided.length !== expected.length) return false;
-  return timingSafeEqual(Buffer.from(provided), Buffer.from(expected));
+  const providedBuffer = Buffer.from(provided);
+  const expectedBuffer = Buffer.from(expected);
+  if (providedBuffer.length !== expectedBuffer.length) return false;
+  return timingSafeEqual(providedBuffer, expectedBuffer);
 }

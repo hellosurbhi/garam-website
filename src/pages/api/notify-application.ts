@@ -64,7 +64,7 @@ function buildAdminEmailHtml(data: ApplicationNotification): string {
     ],
     [
       "Instagram",
-      `<a href="${instagramUrl(cleanInstagramHandle(data.instagram))}" style="color:#DC2626;">@${cleanInstagramHandle(escapeHtml(data.instagram))}</a>`,
+      `<a href="${escapeHtml(instagramUrl(cleanInstagramHandle(data.instagram)))}" style="color:#DC2626;">@${cleanInstagramHandle(escapeHtml(data.instagram))}</a>`,
     ],
     ["Community", escapeHtml(data.community)],
     ["Income", escapeHtml(data.income)],

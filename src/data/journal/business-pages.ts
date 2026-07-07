@@ -138,6 +138,12 @@ export const businessPagesPosts: JournalPost[] = [
     ],
     ctaConfig: {
       intent: "show",
+      topCta: {
+        text: "Book a corporate show",
+        href: "/corporate",
+        ctaId: "corporate_article_top",
+        variant: "primary",
+      },
       midCta: {
         text: "Book a corporate show",
         href: "/corporate",
@@ -307,6 +313,12 @@ export const businessPagesPosts: JournalPost[] = [
     ],
     ctaConfig: {
       intent: "show",
+      topCta: {
+        text: "Explore sponsorship opportunities",
+        href: "/sponsorship",
+        ctaId: "sponsorship_article_top",
+        variant: "primary",
+      },
       midCta: {
         text: "Explore sponsorship opportunities",
         href: "/sponsorship",

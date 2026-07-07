@@ -146,6 +146,12 @@ export const celebrationsPosts: JournalPost[] = [
     ],
     ctaConfig: {
       intent: "show",
+      topCta: {
+        text: "Plan a private birthday show",
+        href: "/celebrate",
+        ctaId: "celebrate_birthday_top",
+        variant: "primary",
+      },
       midCta: {
         text: "Book a private show for your birthday",
         href: "/celebrate",
@@ -290,6 +296,12 @@ export const celebrationsPosts: JournalPost[] = [
     ],
     ctaConfig: {
       intent: "show",
+      topCta: {
+        text: "Book a private desi birthday show",
+        href: "/desi-events",
+        ctaId: "desi_birthday_top",
+        variant: "primary",
+      },
       midCta: {
         text: "Book a private desi birthday show",
         href: "/desi-events",
@@ -433,6 +445,12 @@ export const celebrationsPosts: JournalPost[] = [
     ],
     ctaConfig: {
       intent: "show",
+      topCta: {
+        text: "Book a private retirement party show",
+        href: "/celebrate",
+        ctaId: "celebrate_retirement_top",
+        variant: "primary",
+      },
       midCta: {
         text: "Book a retirement party show",
         href: "/celebrate",
@@ -577,6 +595,12 @@ export const celebrationsPosts: JournalPost[] = [
     ],
     ctaConfig: {
       intent: "show",
+      topCta: {
+        text: "Book a private desi retirement show",
+        href: "/desi-events",
+        ctaId: "desi_retirement_top",
+        variant: "primary",
+      },
       midCta: {
         text: "Book a private desi retirement show",
         href: "/desi-events",
@@ -721,6 +745,12 @@ export const celebrationsPosts: JournalPost[] = [
     ],
     ctaConfig: {
       intent: "show",
+      topCta: {
+        text: "Book a private roka show",
+        href: "/desi-events",
+        ctaId: "desi_roka_top",
+        variant: "primary",
+      },
       midCta: {
         text: "Book a private roka show",
         href: "/desi-events",
@@ -864,6 +894,12 @@ export const celebrationsPosts: JournalPost[] = [
     ],
     ctaConfig: {
       intent: "show",
+      topCta: {
+        text: "Book a private sangeet show",
+        href: "/desi-events",
+        ctaId: "desi_sangeet_top",
+        variant: "primary",
+      },
       midCta: {
         text: "Book a private sangeet show",
         href: "/desi-events",
@@ -1008,6 +1044,12 @@ export const celebrationsPosts: JournalPost[] = [
     ],
     ctaConfig: {
       intent: "show",
+      topCta: {
+        text: "Book a private Indian reception show",
+        href: "/desi-events",
+        ctaId: "desi_reception_top",
+        variant: "primary",
+      },
       midCta: {
         text: "Book a private reception show",
         href: "/desi-events",
@@ -1160,6 +1202,12 @@ export const celebrationsPosts: JournalPost[] = [
     ],
     ctaConfig: {
       intent: "show",
+      topCta: {
+        text: "Book a private reception show",
+        href: "/celebrate",
+        ctaId: "celebrate_reception_top",
+        variant: "primary",
+      },
       midCta: {
         text: "Book a private reception show",
         href: "/celebrate",

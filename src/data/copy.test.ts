@@ -2,7 +2,8 @@ import { describe, it, expect } from "vitest";
 import {
   SITE,
   CITY_FOLLOW,
-  JOURNAL_FOLLOW,
+  JOURNAL_CTA_SOCIAL,
+  JOURNAL_CTA_WAITLIST,
   VERDICT_BOX,
   MARQUEE_ITEMS,
 } from "./copy";
@@ -30,9 +31,9 @@ describe("SITE brand line", () => {
 });
 
 describe("CITY_FOLLOW copy", () => {
-  it("intro and support carry the {city} placeholder for render-time replacement", () => {
+  it("intro and waitlistIntro carry the {city} placeholder for render-time replacement", () => {
     expect(CITY_FOLLOW.intro).toContain("{city}");
-    expect(CITY_FOLLOW.waitlistSupport).toContain("{city}");
+    expect(CITY_FOLLOW.waitlistIntro).toContain("{city}");
   });
 
   it("names both platforms in the button labels", () => {
@@ -48,11 +49,18 @@ describe("CITY_FOLLOW copy", () => {
   });
 });
 
-describe("JOURNAL_FOLLOW copy", () => {
+describe("JOURNAL_CTA_SOCIAL copy", () => {
   it("has an intro plus both platform button labels", () => {
-    expect(JOURNAL_FOLLOW.intro.length).toBeGreaterThan(0);
-    expect(JOURNAL_FOLLOW.youtubeLabel).toContain("YouTube");
-    expect(JOURNAL_FOLLOW.instagramLabel).toContain("Instagram");
+    expect(JOURNAL_CTA_SOCIAL.intro.length).toBeGreaterThan(0);
+    expect(JOURNAL_CTA_SOCIAL.youtubeLabel).toContain("YouTube");
+    expect(JOURNAL_CTA_SOCIAL.instagramLabel).toContain("Instagram");
+  });
+});
+
+describe("JOURNAL_CTA_WAITLIST copy", () => {
+  it("has an intro and a CTA label", () => {
+    expect(JOURNAL_CTA_WAITLIST.intro.length).toBeGreaterThan(0);
+    expect(JOURNAL_CTA_WAITLIST.ctaLabel.length).toBeGreaterThan(0);
   });
 });
 

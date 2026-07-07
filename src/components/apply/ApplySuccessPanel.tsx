@@ -273,7 +273,7 @@ export function ApplySuccessPanel() {
                       data-eb-event-id={show.eventbriteId}
                       className={styles.successTicketButton}
                     >
-                      Get Tickets | {show.date} in {cityLabel}
+                      Get Tickets: {show.date} in {cityLabel}
                     </button>
                   ) : (
                     <a
@@ -282,7 +282,7 @@ export function ApplySuccessPanel() {
                       rel="noopener noreferrer"
                       className={styles.successTicketButton}
                     >
-                      Get Tickets | {show.date} in {cityLabel}
+                      Get Tickets: {show.date} in {cityLabel}
                     </a>
                   )}
                 </li>

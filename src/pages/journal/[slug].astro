@@ -1,7 +1,9 @@
 ---
 import BaseLayout from "@/layouts/BaseLayout.astro";
 import AuthorBio from "@/components/AuthorBio.astro";
-import ArticleCta from "@/components/journal/ArticleCta.astro";
+import JournalCtaSocial from "@/components/journal/JournalCtaSocial.astro";
+import JournalCtaWaitlist from "@/components/journal/JournalCtaWaitlist.astro";
+import JournalCtaTickets from "@/components/journal/JournalCtaTickets.astro";
 import LeadCaptureModal from "@/components/LeadCaptureModal.astro";
 import { getCityBySlug } from "@/data/cities";
 import {
@@ -16,31 +18,21 @@ import { Picture } from "astro:assets";
 import { HF_IMAGES_ASSETS } from "@/assets/backgrounds";
 import { slugToImageIndex } from "@/data/images";
 import { gitDates } from "virtual:git-dates";
-import { VERDICT_BOX, JOURNAL_FOLLOW } from "@/data/copy";
-import { SOCIAL_URLS } from "@/data/socials";
+import { VERDICT_BOX } from "@/data/copy";
 import { BRAND_LOGO_URL } from "@/data/brand";
 
 export function getStaticPaths() {
-  return journalPostsPublished.map((post, idx) => {
-    const prev =
-      idx < journalPostsPublished.length - 1
-        ? journalPostsPublished[idx + 1]
-        : null;
-    const next = idx > 0 ? journalPostsPublished[idx - 1] : null;
-    return {
-      params: { slug: post.slug },
-      props: { post, prev, next },
-    };
-  });
+  return journalPostsPublished.map((post) => ({
+    params: { slug: post.slug },
+    props: { post },
+  }));
 }
 
 interface Props {
   post: JournalPost;
-  prev: JournalPost | null;
-  next: JournalPost | null;
 }
 
-const { post, prev, next } = Astro.props;
+const { post } = Astro.props;
 const publishedSlugs = new Set(journalPostsPublished.map((p) => p.slug));
 const related = post.relatedSlugs
   .map((s) => getPostBySlug(s))
@@ -171,14 +163,16 @@ const speakableJsonLd = post.keyTakeaway
 
 const seoTitle = post.seoTitle ?? deriveSeoTitle(post.title);
 
-const cfg = post.ctaConfig;
-const hasModalCta =
-  cfg?.topCta?.modal || cfg?.midCta?.modal || cfg?.bottomCta?.modal;
+const hasModalCta = true;
 const cityLinks =
-  cfg?.cityLinks
+  post.ctaConfig?.cityLinks
     ?.map((slug) => getCityBySlug(slug))
     .filter((city): city is NonNullable<typeof city> => city !== undefined) ??
   [];
+
+const cta1Idx = 2;
+const cta2Idx = Math.max(Math.floor(post.body.length / 2), 4);
+const cta3Idx = Math.max(post.body.length - 2, cta2Idx + 2);
 ---
 
 <BaseLayout
@@ -301,67 +295,19 @@ const cityLinks =
       }
 
       <!-- Article body -->
-      {
-        post.ctaConfig?.topCta && (
-          <ArticleCta
-            cta={post.ctaConfig.topCta}
-            placement="top"
-            articleSlug={post.slug}
-          />
-        )
-      }
       <article class="post-body">
         {
           post.body.map((block, i) => {
-            const cfg = post.ctaConfig;
-            const midCta =
-              i === 3 ? (
-                cfg?.midCta ? (
-                  <ArticleCta
-                    cta={cfg.midCta}
-                    placement="mid"
-                    articleSlug={post.slug}
-                  />
-                ) : (
-                  <aside class="article-cta" aria-label="Show promotion">
-                    <p class="article-cta__text">
-                      We host the #1 desi comedy dating show, weekly in NYC,
-                      traveling to new cities.
-                      <a
-                        href="/tickets"
-                        data-ph-capture="ticket_click"
-                        data-ph-cta="journal_mid_tickets"
-                        data-ph-section="journal"
-                        data-cta-position="journal_mid"
-                        data-cta-text="Get tickets"
-                        data-article-slug={post.slug}
-                        data-destination-url="/tickets"
-                      >
-                        Get tickets
-                      </a>{" "}
-                      or{" "}
-                      <a
-                        href="/apply"
-                        data-ph-capture="apply_click"
-                        data-ph-cta="journal_mid_apply"
-                        data-ph-section="journal"
-                        data-cta-position="journal_mid"
-                        data-cta-text="apply to be on stage"
-                        data-article-slug={post.slug}
-                        data-destination-url="/apply"
-                      >
-                        apply to be on stage
-                      </a>
-                      .
-                    </p>
-                  </aside>
-                )
-              ) : null;
+            const injectCta1 = i === cta1Idx;
+            const injectCta2 = i === cta2Idx;
+            const injectCta3 = i === cta3Idx;
 
             if (block.type === "h2") {
               return (
                 <>
-                  {midCta}
+                  {injectCta1 && <JournalCtaSocial articleSlug={post.slug} />}
+                  {injectCta2 && <JournalCtaWaitlist articleSlug={post.slug} />}
+                  {injectCta3 && <JournalCtaTickets articleSlug={post.slug} />}
                   <h2
                     class="post-h2"
                     style={i === 0 ? "margin-top: 0;" : "margin-top: 16px;"}
@@ -374,7 +320,9 @@ const cityLinks =
             if (block.type === "h3") {
               return (
                 <>
-                  {midCta}
+                  {injectCta1 && <JournalCtaSocial articleSlug={post.slug} />}
+                  {injectCta2 && <JournalCtaWaitlist articleSlug={post.slug} />}
+                  {injectCta3 && <JournalCtaTickets articleSlug={post.slug} />}
                   <h3
                     class="post-h3"
                     style={i === 0 ? "margin-top: 0;" : "margin-top: 12px;"}
@@ -386,91 +334,20 @@ const cityLinks =
             }
             return (
               <>
-                {midCta}
+                {injectCta1 && <JournalCtaSocial articleSlug={post.slug} />}
+                {injectCta2 && <JournalCtaWaitlist articleSlug={post.slug} />}
+                {injectCta3 && <JournalCtaTickets articleSlug={post.slug} />}
                 <p class="post-p" set:html={block.text} />
               </>
             );
           })
         }
       </article>
-      {
-        post.ctaConfig?.bottomCta && (
-          <ArticleCta
-            cta={post.ctaConfig.bottomCta}
-            placement="bottom"
-            articleSlug={post.slug}
-          />
-        )
-      }
-
-      <aside class="journal-follow" aria-label={JOURNAL_FOLLOW.ariaLabel}>
-        <p class="journal-follow__intro">{JOURNAL_FOLLOW.intro}</p>
-        <div class="journal-follow__btns">
-          <a
-            href={SOCIAL_URLS.youtube}
-            target="_blank"
-            rel="noopener noreferrer"
-            class="journal-follow__btn journal-follow__btn--youtube"
-            data-ph-capture="cta_clicked"
-            data-ph-cta="journal_follow_youtube"
-            data-ph-section="journal_follow"
-            data-cta-position="journal_follow"
-            data-cta-text={JOURNAL_FOLLOW.youtubeLabel}
-            data-article-slug={post.slug}
-            data-destination-url={SOCIAL_URLS.youtube}
-          >
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              width="18"
-              height="18"
-              viewBox="0 0 24 24"
-              fill="currentColor"
-              aria-hidden="true"
-            >
-              <path
-                d="M23 12s0-3.5-.44-5.17a2.78 2.78 0 0 0-1.96-1.96C18.93 4.43 12 4.43 12 4.43s-6.93 0-8.6.44a2.78 2.78 0 0 0-1.96 1.96C1 8.5 1 12 1 12s0 3.5.44 5.17a2.78 2.78 0 0 0 1.96 1.96c1.67.44 8.6.44 8.6.44s6.93 0 8.6-.44a2.78 2.78 0 0 0 1.96-1.96C23 15.5 23 12 23 12ZM9.75 15.02V8.98L15.5 12l-5.75 3.02Z"
-              ></path>
-            </svg>
-            <span>{JOURNAL_FOLLOW.youtubeLabel}</span>
-          </a>
-          <a
-            href={SOCIAL_URLS.instagram}
-            target="_blank"
-            rel="noopener noreferrer"
-            class="journal-follow__btn journal-follow__btn--instagram"
-            data-ph-capture="cta_clicked"
-            data-ph-cta="journal_follow_instagram"
-            data-ph-section="journal_follow"
-            data-cta-position="journal_follow"
-            data-cta-text={JOURNAL_FOLLOW.instagramLabel}
-            data-article-slug={post.slug}
-            data-destination-url={SOCIAL_URLS.instagram}
-          >
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              width="18"
-              height="18"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              stroke-width="2"
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              aria-hidden="true"
-            >
-              <rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect>
-              <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37Z"></path>
-              <line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line>
-            </svg>
-            <span>{JOURNAL_FOLLOW.instagramLabel}</span>
-          </a>
-        </div>
-      </aside>
 
       {
         cityLinks.length > 0 && (
           <section class="article-city-links" aria-label="City show pages">
-            <h2 class="article-city-links__title">Find a show near you</h2>
+            <h2 class="article-city-links__title">Also in the area</h2>
             <div class="article-city-links__grid">
               {cityLinks.map((city) => (
                 <a
@@ -529,49 +406,19 @@ const cityLinks =
         )
       }
 
-      <!-- Prev / Next navigation -->
-      <nav class="post-nav" aria-label="Article navigation">
-        {
-          prev ? (
-            <a
-              href={`/journal/${prev.slug}`}
-              class="post-nav-link post-nav-prev"
-            >
-              <span class="post-nav-label">&larr; Previous</span>
-              <span class="post-nav-title">{prev.title}</span>
-            </a>
-          ) : (
-            <span />
-          )
-        }
-        {
-          next ? (
-            <a
-              href={`/journal/${next.slug}`}
-              class="post-nav-link post-nav-next"
-            >
-              <span class="post-nav-label">Next &rarr;</span>
-              <span class="post-nav-title">{next.title}</span>
-            </a>
-          ) : (
-            <span />
-          )
-        }
-      </nav>
-
       <!-- Footer -->
       <div class="post-footer">
         <a href="/journal" class="post-footer-back">&larr; All posts</a>
         <a
-          href="/apply"
+          href="/tickets"
           class="post-footer-cta"
-          data-ph-capture="apply_click"
-          data-ph-cta="journal_footer_apply"
+          data-ph-capture="ticket_click"
+          data-ph-cta="journal_footer_tickets"
           data-ph-section="journal_footer"
           data-cta-position="journal_footer"
-          data-cta-text="Apply to be on the show"
+          data-cta-text="Get Tickets"
           data-article-slug={post.slug}
-          data-destination-url="/apply">Apply to be on the show &rarr;</a
+          data-destination-url="/tickets">Get Tickets &rarr;</a
         >
       </div>
     </div>
@@ -841,68 +688,6 @@ const cityLinks =
     }
   }
 
-  /* Prev / Next navigation */
-  .post-nav {
-    margin-top: 40px;
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 12px;
-  }
-
-  .post-nav-link {
-    display: flex;
-    flex-direction: column;
-    gap: 4px;
-    padding: 14px 16px;
-    border: 1px solid rgba(0, 0, 0, 0.08);
-    border-radius: 8px;
-    text-decoration: none;
-    transition: border-color 0.15s ease;
-  }
-
-  .post-nav-link:hover {
-    border-color: var(--brand-red);
-  }
-
-  .post-nav-prev {
-    text-align: left;
-  }
-
-  .post-nav-next {
-    text-align: right;
-    grid-column: 2;
-  }
-
-  .post-nav-label {
-    font-family: var(--font-body);
-    font-size: 10px;
-    text-transform: uppercase;
-    letter-spacing: 0.1em;
-    color: #888;
-  }
-
-  .post-nav-title {
-    font-family: var(--font-body);
-    font-size: 13px;
-    font-weight: 500;
-    color: var(--charcoal);
-    line-height: 1.3;
-    display: -webkit-box;
-    -webkit-line-clamp: 2;
-    -webkit-box-orient: vertical;
-    overflow: hidden;
-  }
-
-  @media (max-width: 480px) {
-    .post-nav {
-      grid-template-columns: 1fr;
-    }
-    .post-nav-next {
-      text-align: left;
-      grid-column: 1;
-    }
-  }
-
   .post-footer {
     display: flex;
     align-items: center;
@@ -925,74 +710,6 @@ const cityLinks =
     font-weight: 500;
     color: var(--brand-red);
     text-decoration: none;
-  }
-
-  /* Mid-article CTA banner */
-  .journal-follow {
-    background: rgba(var(--brand-red-rgb), 0.05);
-    border: 1px solid rgba(var(--brand-red-rgb), 0.12);
-    border-radius: 12px;
-    padding: 20px;
-    margin: 30px 0 6px;
-  }
-  .journal-follow__intro {
-    font-family: var(--font-body);
-    font-size: 16px;
-    line-height: 1.6;
-    color: var(--charcoal);
-    margin: 0 0 14px;
-  }
-  .journal-follow__btns {
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-  }
-  .journal-follow__btn {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 10px;
-    padding: 14px 20px;
-    border-radius: 12px;
-    border: 1px solid;
-    font-family: var(--font-body);
-    font-size: 16px;
-    font-weight: 600;
-    text-decoration: none;
-    transition:
-      background 0.15s,
-      border-color 0.15s,
-      transform 0.15s;
-  }
-  .journal-follow__btn:active {
-    transform: scale(0.97);
-  }
-  .journal-follow__btn svg {
-    flex-shrink: 0;
-  }
-  .journal-follow__btn--youtube {
-    border-color: var(--brand-red);
-    background: var(--brand-red);
-    color: var(--white);
-  }
-  .journal-follow__btn--instagram {
-    border-color: rgba(var(--brand-red-rgb), 0.5);
-    background: transparent;
-    color: var(--brand-red);
-  }
-  @media (hover: hover) and (pointer: fine) {
-    .journal-follow__btn--youtube:hover {
-      background: var(--brand-red-dark, #b91c1c);
-      border-color: var(--brand-red-dark, #b91c1c);
-    }
-    .journal-follow__btn--instagram:hover {
-      border-color: rgba(var(--brand-red-rgb), 0.7);
-      background: rgba(var(--brand-red-rgb), 0.08);
-    }
-  }
-  .journal-follow__btn:focus-visible {
-    outline: 2px solid var(--brand-red);
-    outline-offset: 2px;
   }
 
   .verdict-box {

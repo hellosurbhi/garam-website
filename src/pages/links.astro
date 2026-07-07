@@ -36,7 +36,7 @@ function iconSvg(name: IconName): string {
 
 const primaryActions = [
   {
-    label: "Buy Tickets",
+    label: "Grab My Spot",
     href: "/tickets",
     icon: "ticket",
     eventName: "cta_clicked",
@@ -47,7 +47,7 @@ const primaryActions = [
         : "See the next drop",
   },
   {
-    label: "Apply",
+    label: "Apply to Be on Stage",
     href: "/apply",
     icon: "heart",
     eventName: "apply_click",
@@ -55,7 +55,7 @@ const primaryActions = [
     description: "Get cast on stage",
   },
   {
-    label: "Join City Waitlist",
+    label: "Join the Waitlist!",
     dialog: "links-spice-modal",
     icon: "mail",
     eventName: "waitlist_click",
@@ -209,7 +209,7 @@ const pressLinks = pressItems
                       <strong>{city}</strong>
                       <small>{event.date}</small>
                     </span>
-                    <span class="event-link__cta">Tickets</span>
+                    <span class="event-link__cta">Get Tickets</span>
                   </a>
                 );
               })}
@@ -297,7 +297,7 @@ const pressLinks = pressItems
     heading="Get on the List"
     subheading="Cheap and free tickets, exclusive discount codes, city drops."
     submitLabel="Count Me In"
-    successMessage="You're on the list. Deals incoming."
+    successMessage="You're on the list. Deals incoming!"
     collectCity={true}
   />
 </BaseLayout>

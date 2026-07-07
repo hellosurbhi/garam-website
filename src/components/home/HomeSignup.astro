@@ -35,6 +35,7 @@ const leadSource = `spice-list-${pageName}`;
           type="email"
           id="nl-email"
           class="ph-mask"
+          data-testid="signup-email-input"
           placeholder="Your email"
           required
           aria-label="Email address"
@@ -50,7 +51,9 @@ const leadSource = `spice-list-${pageName}`;
           toolparamdescription="City the subscriber lives in, used to alert them when a show comes near them (optional)"
         />
         <p id="nl-email-error" class="spicelist-error" hidden role="alert"></p>
-        <button type="submit">Get My Discount Code</button>
+        <button type="submit" data-testid="signup-submit"
+          >Get My Discount Code</button
+        >
       </form>
       <p class="spicelist-trust">Just discount codes and show announcements.</p>
     </div>
@@ -81,7 +84,13 @@ const leadSource = `spice-list-${pageName}`;
       >
     </div>
 
-    <div id="nl-success" hidden role="status" aria-live="polite">
+    <div
+      id="nl-success"
+      data-testid="signup-success"
+      hidden
+      role="status"
+      aria-live="polite"
+    >
       <p class="nl-done-text">You're on the list!</p>
     </div>
   </div>

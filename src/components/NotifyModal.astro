@@ -51,6 +51,7 @@ const { source = "notify-modal" } = Astro.props;
             type="email"
             id="notify-email"
             class="ph-mask"
+            data-testid="notify-email-input"
             placeholder="Your email"
             required
             aria-label="Email address"
@@ -60,7 +61,9 @@ const { source = "notify-modal" } = Astro.props;
           <input type="hidden" id="notify-city-slug" />
           <p id="notify-error" class="modal-error" hidden aria-live="assertive">
           </p>
-          <button type="submit" class="modal-submit">Notify Me</button>
+          <button type="submit" class="modal-submit" data-testid="notify-submit"
+            >Notify Me</button
+          >
         </form>
       </div>
       <div id="notify-phone-view" hidden>
@@ -97,6 +100,7 @@ const { source = "notify-modal" } = Astro.props;
       </div>
       <div
         id="notify-success"
+        data-testid="notify-success"
         class="modal-success"
         role="status"
         aria-live="polite"

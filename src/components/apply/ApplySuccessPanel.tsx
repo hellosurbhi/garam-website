@@ -221,7 +221,12 @@ export function ApplySuccessPanel() {
   }, [showsWithWidget]);
 
   return (
-    <div className={styles.successPanel} role="status" aria-live="polite">
+    <div
+      className={styles.successPanel}
+      role="status"
+      aria-live="polite"
+      data-testid="apply-success"
+    >
       <div className={styles.successEmoji}>🌶️</div>
       <h1 ref={headingRef} tabIndex={-1} className={styles.successTitle}>
         Thanks for applying!

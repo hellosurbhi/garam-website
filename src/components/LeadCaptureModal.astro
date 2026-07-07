@@ -73,6 +73,7 @@ const showCityInput = collectCity && !cityMode;
         <input
           type="email"
           data-lc-email
+          data-testid="lead-capture-email-input"
           placeholder="Your email"
           required
           aria-label="Email address"
@@ -91,7 +92,11 @@ const showCityInput = collectCity && !cityMode;
           )
         }
         <p data-lc-error class="lc-error" hidden aria-live="assertive"></p>
-        <button type="submit" class="lc-submit">{submitLabel}</button>
+        <button
+          type="submit"
+          class="lc-submit"
+          data-testid="lead-capture-submit">{submitLabel}</button
+        >
       </form>
     </div>
     <!-- Step 2: Phone (optional) -->
@@ -114,6 +119,7 @@ const showCityInput = collectCity && !cityMode;
     <!-- Step 3: Success -->
     <div
       data-lc-step="success"
+      data-testid="lead-capture-success"
       class="lc-success"
       role="status"
       aria-live="polite"

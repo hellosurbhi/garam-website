@@ -1,0 +1,127 @@
+---
+import { JOURNAL_CTA_TICKETS } from "@/data/copy";
+
+interface Props {
+  articleSlug: string;
+}
+
+const { articleSlug } = Astro.props;
+---
+
+<aside class="jcta-tickets" aria-label="Get tickets or apply to the show">
+  <p class="jcta-tickets__intro">
+    We tour nationally and internationally. Find out if we're <a
+      href="/tickets"
+      class="jcta-tickets__inline-link"
+      data-ph-capture="ticket_click"
+      data-ph-section="journal_inline"
+      data-article-slug={articleSlug}>performing near you</a
+    >, or <a
+      href="/apply"
+      class="jcta-tickets__inline-link"
+      data-ph-capture="apply_click"
+      data-ph-section="journal_inline"
+      data-article-slug={articleSlug}>apply to get on stage</a
+    > yourself!
+  </p>
+  <div class="jcta-tickets__btns">
+    <a
+      href="/tickets"
+      class="jcta-tickets__btn jcta-tickets__btn--primary"
+      data-cta-position="journal_cta3_tickets"
+      data-cta-text={JOURNAL_CTA_TICKETS.ticketsLabel}
+      data-article-slug={articleSlug}
+      data-ph-capture="ticket_click"
+      data-ph-cta="tickets"
+      data-ph-section="journal"
+    >
+      {JOURNAL_CTA_TICKETS.ticketsLabel}
+    </a>
+    <a
+      href="/apply"
+      class="jcta-tickets__btn jcta-tickets__btn--secondary"
+      data-cta-position="journal_cta3_tickets"
+      data-cta-text={JOURNAL_CTA_TICKETS.applyLabel}
+      data-article-slug={articleSlug}
+      data-ph-capture="apply_click"
+      data-ph-cta="apply"
+      data-ph-section="journal"
+    >
+      {JOURNAL_CTA_TICKETS.applyLabel}
+    </a>
+  </div>
+</aside>
+
+<style>
+  .jcta-tickets {
+    background: rgba(var(--brand-red-rgb), 0.055);
+    border: 1px solid rgba(var(--brand-red-rgb), 0.18);
+    border-radius: 8px;
+    padding: 20px 24px;
+    margin: 28px 0;
+  }
+
+  .jcta-tickets__intro {
+    font-family: var(--font-body), sans-serif;
+    font-size: 15px;
+    line-height: 1.6;
+    color: var(--charcoal);
+    margin: 0 0 16px;
+  }
+
+  .jcta-tickets__inline-link {
+    color: var(--brand-red);
+    font-weight: 600;
+    text-decoration: underline;
+    text-underline-offset: 2px;
+  }
+
+  .jcta-tickets__inline-link:hover {
+    color: var(--brand-red-dark);
+  }
+
+  .jcta-tickets__btns {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .jcta-tickets__btn {
+    display: block;
+    width: 100%;
+    padding: 12px 16px;
+    border-radius: 6px;
+    font-family: var(--font-body), sans-serif;
+    font-size: 15px;
+    font-weight: 600;
+    text-align: center;
+    text-decoration: none;
+    cursor: pointer;
+    transition: opacity 0.15s ease;
+  }
+
+  .jcta-tickets__btn:active {
+    transform: scale(0.97);
+  }
+
+  .jcta-tickets__btn--primary {
+    background: var(--brand-red);
+    color: #fff;
+    border: 2px solid var(--brand-red);
+  }
+
+  .jcta-tickets__btn--primary:hover {
+    background: var(--brand-red-dark);
+    border-color: var(--brand-red-dark);
+  }
+
+  .jcta-tickets__btn--secondary {
+    background: transparent;
+    color: var(--brand-red);
+    border: 2px solid var(--brand-red);
+  }
+
+  .jcta-tickets__btn--secondary:hover {
+    background: rgba(var(--brand-red-rgb), 0.06);
+  }
+</style>

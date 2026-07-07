@@ -1,0 +1,68 @@
+---
+import { JOURNAL_CTA_WAITLIST } from "@/data/copy";
+
+interface Props {
+  articleSlug: string;
+}
+
+const { articleSlug } = Astro.props;
+---
+
+<aside class="jcta-waitlist" aria-label="Join the tour notification list">
+  <p class="jcta-waitlist__intro">{JOURNAL_CTA_WAITLIST.intro}</p>
+  <button
+    type="button"
+    class="jcta-waitlist__btn"
+    data-open-modal="links-spice-modal"
+    data-cta-position="journal_cta2_waitlist"
+    data-cta-text={JOURNAL_CTA_WAITLIST.ctaLabel}
+    data-article-slug={articleSlug}
+    data-ph-capture="waitlist_click"
+    data-ph-cta="waitlist"
+    data-ph-section="journal"
+  >
+    {JOURNAL_CTA_WAITLIST.ctaLabel}
+  </button>
+</aside>
+
+<style>
+  .jcta-waitlist {
+    background: rgba(var(--electric-yellow-rgb, 255, 214, 0), 0.12);
+    border: 1px solid rgba(var(--electric-yellow-rgb, 255, 214, 0), 0.4);
+    border-radius: 8px;
+    padding: 20px 24px;
+    margin: 28px 0;
+  }
+
+  .jcta-waitlist__intro {
+    font-family: var(--font-body), sans-serif;
+    font-size: 15px;
+    line-height: 1.6;
+    color: var(--charcoal);
+    margin: 0 0 16px;
+  }
+
+  .jcta-waitlist__btn {
+    display: block;
+    width: 100%;
+    padding: 12px 16px;
+    border-radius: 6px;
+    background: var(--electric-yellow);
+    color: var(--charcoal);
+    border: none;
+    font-family: var(--font-body), sans-serif;
+    font-size: 15px;
+    font-weight: 700;
+    text-align: center;
+    cursor: pointer;
+    transition: opacity 0.15s ease;
+  }
+
+  .jcta-waitlist__btn:hover {
+    opacity: 0.88;
+  }
+
+  .jcta-waitlist__btn:active {
+    transform: scale(0.97);
+  }
+</style>

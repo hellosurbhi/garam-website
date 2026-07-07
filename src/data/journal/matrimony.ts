@@ -33,7 +33,7 @@ export const matrimonyPosts: JournalPost[] = [
     body: [
       {
         type: "p",
-        text: "Shaadi.com has 35 million registered profiles and 15,000 new ones every single day. That sounds great until you\u2019re the one wading through them at midnight wondering if anyone on here is actually serious. I\u2019ve talked to hundreds of South Asian singles at Garam Masala Dating events in NYC, and Shaadi.com comes up constantly \u2014 as both a starting point and a cautionary tale.",
+        text: "Shaadi.com has 35 million registered profiles and 15,000 new ones every single day. That sounds great until you\u2019re the one wading through them at midnight wondering if anyone on here is actually serious. I\u2019ve talked to hundreds of South Asian singles at Garam Masala Dating events in NYC, and Shaadi.com comes up constantly: as both a starting point and a cautionary tale.",
       },
       {
         type: "h2",
@@ -41,7 +41,7 @@ export const matrimonyPosts: JournalPost[] = [
       },
       {
         type: "p",
-        text: "Shaadi.com is the oldest and largest South Asian matrimonial platform on the internet, launched in 1997 and still pulling 4.64 million monthly visits. It operates somewhere between a matrimony site and a dating app \u2014 the profiles are more detailed than Hinge, the intent is explicitly marriage-focused, and the family involvement is baked into the interface. You can literally add a parent\u2019s email to receive match alerts. That is either a feature or a bug depending on your family situation.",
+        text: "Shaadi.com is the oldest and largest South Asian matrimonial platform on the internet, launched in 1997 and still pulling 4.64 million monthly visits. It operates somewhere between a matrimony site and a dating app. The profiles are more detailed than Hinge, the intent is explicitly marriage-focused, and the family involvement is baked into the interface. You can literally add a parent\u2019s email to receive match alerts. That is either a feature or a bug depending on your family situation.",
       },
       {
         type: "p",
@@ -57,7 +57,7 @@ export const matrimonyPosts: JournalPost[] = [
       },
       {
         type: "p",
-        text: "The platform skews heavily toward users in India, with a significant NRI presence in the US, UK, and Canada. If you\u2019re in a major metro with a large South Asian community \u2014 New York, London, Toronto, Houston \u2014 your matches will be more relevant. If you\u2019re somewhere with a smaller desi population, you may end up with matches who live 4,000 miles away and expect you to relocate.",
+        text: "The platform skews heavily toward users in India, with a significant NRI presence in the US, UK, and Canada. If you\u2019re in a major metro with a large South Asian community (New York, London, Toronto, Houston), your matches will be more relevant. If you\u2019re somewhere with a smaller desi population, you may end up with matches who live 4,000 miles away and expect you to relocate.",
       },
       {
         type: "h2",
@@ -65,11 +65,11 @@ export const matrimonyPosts: JournalPost[] = [
       },
       {
         type: "p",
-        text: "Volume is both the feature and the problem. 35 million profiles sounds like abundance. In practice, many of those profiles are inactive, incomplete, or managed by parents who signed up their adult child without telling them. Sending a thoughtful message to someone and hearing nothing back is standard \u2014 not because they\u2019re not interested, but because they haven\u2019t logged in since 2023.",
+        text: "Volume is both the feature and the problem. 35 million profiles sounds like abundance. In practice, many of those profiles are inactive, incomplete, or managed by parents who signed up their adult child without telling them. Sending a thoughtful message to someone and hearing nothing back is standard, not because they\u2019re not interested, but because they haven\u2019t logged in since 2023.",
       },
       {
         type: "p",
-        text: "The caste filter is another thing worth addressing directly. It\u2019s there, a lot of people use it, and if you\u2019re someone who finds that deeply uncomfortable, you will find Shaadi.com deeply uncomfortable. The platform doesn\u2019t enforce caste preferences \u2014 you can set your profile to visible to all castes \u2014 but the fact that the filter exists and is commonly used will tell you something about the user base\u2019s priorities.",
+        text: "The caste filter is another thing worth addressing directly. It\u2019s there, a lot of people use it, and if you\u2019re someone who finds that deeply uncomfortable, you will find Shaadi.com deeply uncomfortable. The platform doesn\u2019t enforce caste preferences (you can set your profile to visible to all castes), but the fact that the filter exists and is commonly used will tell you something about the user base\u2019s priorities.",
       },
       {
         type: "p",
@@ -81,11 +81,11 @@ export const matrimonyPosts: JournalPost[] = [
       },
       {
         type: "p",
-        text: "Shaadi.com is legitimate. It has been responsible for a massive number of marriages since 1997. The concern is not whether it\u2019s a scam \u2014 it isn\u2019t \u2014 but whether it\u2019s the right tool for where you are in your dating life. If you\u2019re ready to get married, know what you want, and can be patient with a platform that moves at a different pace than Hinge, it is absolutely worth trying.",
+        text: "Shaadi.com is legitimate. It has been responsible for a massive number of marriages since 1997. The concern is not whether it\u2019s a scam (it isn\u2019t), but whether it\u2019s the right tool for where you are in your dating life. If you\u2019re ready to get married, know what you want, and can be patient with a platform that moves at a different pace than Hinge, it is absolutely worth trying.",
       },
       {
         type: "p",
-        text: "If you\u2019re still figuring out what you want, or you\u2019re looking for something that feels more like a real conversation than a biodata review, you might find it frustrating. Which is not a knock on Shaadi.com \u2014 it\u2019s just the wrong tool for a different phase. Plenty of people use Shaadi.com and <a href='/journal/desi-dating-show-vs-dating-apps'>modern apps like Hinge</a> at the same time, which is honestly the most pragmatic approach.",
+        text: "If you\u2019re still figuring out what you want, or you\u2019re looking for something that feels more like a real conversation than a biodata review, you might find it frustrating. Which is not a knock on Shaadi.com. It\u2019s just the wrong tool for a different phase. Plenty of people use Shaadi.com and <a href='/journal/desi-dating-show-vs-dating-apps'>modern apps like Hinge</a> at the same time, which is honestly the most pragmatic approach.",
       },
       {
         type: "h2",
@@ -139,11 +139,11 @@ export const matrimonyPosts: JournalPost[] = [
     dateModified: "2026-07-30",
     author: "Surbhi",
     excerpt:
-      "Maybe Shaadi.com feels like too much. Maybe it feels like not enough. Either way, you have options \u2014 and some of them are a lot more fun than filling out a biodata form at 11pm.",
+      "Maybe Shaadi.com feels like too much. Maybe it feels like not enough. Either way, you have options, and some of them are a lot more fun than filling out a biodata form at 11pm.",
     body: [
       {
         type: "p",
-        text: "Maybe Shaadi.com feels like too much. Maybe it feels like not enough. Either way, you have options \u2014 and some of them are a lot more fun than filling out a biodata form at 11pm. After running Garam Masala Dating in NYC for four years, I\u2019ve heard what isn\u2019t working for South Asian singles on every platform that exists. Here\u2019s the honest breakdown.",
+        text: "Maybe Shaadi.com feels like too much. Maybe it feels like not enough. Either way, you have options, and some of them are a lot more fun than filling out a biodata form at 11pm. After running Garam Masala Dating in NYC for four years, I\u2019ve heard what isn\u2019t working for South Asian singles on every platform that exists. Here\u2019s the honest breakdown.",
       },
       {
         type: "h2",
@@ -151,7 +151,7 @@ export const matrimonyPosts: JournalPost[] = [
       },
       {
         type: "p",
-        text: "BharatMatrimony is the largest matrimonial service in India by claimed user base. Its main differentiator is the community-specific sub-sites: TamilMatrimony, PunjabiMatrimony, KeralaMatrimony, TeluguMatrimony, and dozens more. If your community identity is a core part of who you\u2019re looking for \u2014 and for a lot of people, it genuinely is \u2014 BharatMatrimony\u2019s community focus is more granular than Shaadi.com\u2019s.",
+        text: "BharatMatrimony is the largest matrimonial service in India by claimed user base. Its main differentiator is the community-specific sub-sites: TamilMatrimony, PunjabiMatrimony, KeralaMatrimony, TeluguMatrimony, and dozens more. If your community identity is a core part of who you\u2019re looking for (and for a lot of people, it genuinely is), BharatMatrimony\u2019s community focus is more granular than Shaadi.com\u2019s.",
       },
       {
         type: "p",
@@ -175,7 +175,7 @@ export const matrimonyPosts: JournalPost[] = [
       },
       {
         type: "p",
-        text: "Dil Mil is the closest thing to a modern dating app built specifically for South Asians. It operates like Hinge or Bumble \u2014 swipe-based, photo-forward, conversation-driven \u2014 but filters for South Asian identity by default. The user base skews heavily toward diaspora South Asians in the US, UK, and Canada, which makes it significantly more useful for someone based in New York or London than a matrimony site full of India-based profiles.",
+        text: "Dil Mil is the closest thing to a modern dating app built specifically for South Asians. It operates like Hinge or Bumble (swipe-based, photo-forward, conversation-driven), but filters for South Asian identity by default. The user base skews heavily toward diaspora South Asians in the US, UK, and Canada, which makes it significantly more useful for someone based in New York or London than a matrimony site full of India-based profiles.",
       },
       {
         type: "p",
@@ -187,7 +187,7 @@ export const matrimonyPosts: JournalPost[] = [
       },
       {
         type: "p",
-        text: "Betterhalf is a newer platform that positions itself as AI-powered matchmaking for educated South Asian professionals. Instead of the endless browse-and-filter approach of traditional matrimony sites, Betterhalf sends you a curated daily set of matches. The idea is quality over volume. It targets a more specific user \u2014 career-oriented, urban, marriage-minded \u2014 and the interface is considerably more modern than any of the big three.",
+        text: "Betterhalf is a newer platform that positions itself as AI-powered matchmaking for educated South Asian professionals. Instead of the endless browse-and-filter approach of traditional matrimony sites, Betterhalf sends you a curated daily set of matches. The idea is quality over volume. It targets a more specific user (career-oriented, urban, marriage-minded), and the interface is considerably more modern than any of the big three.",
       },
       {
         type: "p",
@@ -203,7 +203,7 @@ export const matrimonyPosts: JournalPost[] = [
       },
       {
         type: "p",
-        text: "The people who come to our show in NYC who are also using matrimony sites consistently say the same thing: they know much faster at a live event whether they have chemistry with someone than they ever do messaging back and forth online. That\u2019s not a knock on the platforms \u2014 use them \u2014 but consider pairing any matrimony site with real-world experiences. <a href='/journal/south-asian-singles-events-nyc'>South Asian singles events</a> exist in most major cities, and they are a genuinely different kind of filtering tool.",
+        text: "The people who come to our show in NYC who are also using matrimony sites consistently say the same thing: they know much faster at a live event whether they have chemistry with someone than they ever do messaging back and forth online. That\u2019s not a knock on the platforms (use them), but consider pairing any matrimony site with real-world experiences. <a href='/journal/south-asian-singles-events-nyc'>South Asian singles events</a> exist in most major cities, and they are a genuinely different kind of filtering tool.",
       },
       {
         type: "h2",
@@ -249,12 +249,12 @@ export const matrimonyPosts: JournalPost[] = [
       "BharatMatrimony vs Shaadi.com vs Jeevansathi: Which Actually Works?",
     seoTitle: "BharatMatrimony vs Shaadi vs Jeevansathi",
     metaDescription:
-      "BharatMatrimony vs Shaadi.com vs Jeevansathi \u2014 an honest comparison of the three biggest Indian matrimony platforms for 2026. Which one is worth your time?",
+      "BharatMatrimony vs Shaadi.com vs Jeevansathi: an honest comparison of the three biggest Indian matrimony platforms for 2026. Which one is worth your time?",
     datePublished: "2026-06-04",
     dateModified: "2026-08-01",
     author: "Surbhi",
     excerpt:
-      "Every desi who\u2019s tried online matrimony has a strong opinion about which platform is trash. Here\u2019s what actually separates BharatMatrimony, Shaadi.com, and Jeevansathi \u2014 and which one makes sense for where you are right now.",
+      "Every desi who\u2019s tried online matrimony has a strong opinion about which platform is trash. Here\u2019s what actually separates BharatMatrimony, Shaadi.com, and Jeevansathi, and which one makes sense for where you are right now.",
     body: [
       {
         type: "p",
@@ -274,7 +274,7 @@ export const matrimonyPosts: JournalPost[] = [
       },
       {
         type: "p",
-        text: "Jeevansathi is the smallest of the three by volume. It\u2019s majority owned by Info Edge (which also owns Naukri and 99acres) and has been around since 1996. It\u2019s more popular in North India \u2014 particularly among Hindi-speaking communities \u2014 than in the South, and its NRI presence is smaller than the other two.",
+        text: "Jeevansathi is the smallest of the three by volume. It\u2019s majority owned by Info Edge (which also owns Naukri and 99acres) and has been around since 1996. It\u2019s more popular in North India (particularly among Hindi-speaking communities) than in the South, and its NRI presence is smaller than the other two.",
       },
       {
         type: "h2",
@@ -326,7 +326,7 @@ export const matrimonyPosts: JournalPost[] = [
       },
       {
         type: "p",
-        text: "The smart move is to treat these platforms as a first pass \u2014 useful for narrowing the field \u2014 and then get off them as fast as possible. Phone call, video call, in-person meeting. The longer you stay in message-exchange mode, the more you\u2019re building a relationship with someone\u2019s profile rather than the actual person. <a href='/journal/how-to-use-indian-matrimony-sites'>Using matrimony sites effectively</a> means treating the online part as the beginning, not the whole process.",
+        text: "The smart move is to treat these platforms as a first pass (useful for narrowing the field) and then get off them as fast as possible. Phone call, video call, in-person meeting. The longer you stay in message-exchange mode, the more you\u2019re building a relationship with someone\u2019s profile rather than the actual person. <a href='/journal/how-to-use-indian-matrimony-sites'>Using matrimony sites effectively</a> means treating the online part as the beginning, not the whole process.",
       },
     ],
     faqs: [
@@ -344,7 +344,7 @@ export const matrimonyPosts: JournalPost[] = [
       },
       {
         q: "Are Indian matrimony sites worth it?",
-        a: "They are worth it if you are genuinely marriage-ready and treat the process seriously \u2014 complete profile, regular activity, paid plan for messaging. They are not worth it if you are testing the waters or expect results from a minimal effort profile. The volume of inactive profiles on all three platforms means you have to be proactive.",
+        a: "They are worth it if you are genuinely marriage-ready and treat the process seriously: complete profile, regular activity, paid plan for messaging. They are not worth it if you are testing the waters or expect results from a minimal effort profile. The volume of inactive profiles on all three platforms means you have to be proactive.",
       },
       {
         q: "Is BharatMatrimony safe?",
@@ -392,7 +392,7 @@ export const matrimonyPosts: JournalPost[] = [
       },
       {
         type: "p",
-        text: "Matrimonial biodata is a uniquely South Asian format \u2014 more detailed than a dating profile, more personal than a CV. On most platforms, it includes your religion, caste, height, education, income range, family background, and a written description. The written section is where most people either stand out or blend into the noise.",
+        text: "Matrimonial biodata is a uniquely South Asian format: more detailed than a dating profile, more personal than a CV. On most platforms, it includes your religion, caste, height, education, income range, family background, and a written description. The written section is where most people either stand out or blend into the noise.",
       },
       {
         type: "p",
@@ -412,11 +412,11 @@ export const matrimonyPosts: JournalPost[] = [
       },
       {
         type: "p",
-        text: "Something like: \u2018Your mention of working with refugee settlement programs caught my attention \u2014 I have been volunteering with a similar organization for the past two years. What drew you to that work?\u2019 is a thousand times more effective than \u2018Hi, I liked your profile.\u2019 It tells them you actually read their profile, gives them a specific thing to respond to, and immediately sets a tone that is more interesting than the average inbox message.",
+        text: "Something like: \u2018Your mention of working with refugee settlement programs caught my attention. I have been volunteering with a similar organization for the past two years. What drew you to that work?\u2019 is a thousand times more effective than \u2018Hi, I liked your profile.\u2019 It tells them you actually read their profile, gives them a specific thing to respond to, and immediately sets a tone that is more interesting than the average inbox message.",
       },
       {
         type: "h2",
-        text: "How to handle the timeline and volume problem",
+        text: "Pace yourself: matrimony sites are not Hinge",
       },
       {
         type: "p",
@@ -432,15 +432,15 @@ export const matrimonyPosts: JournalPost[] = [
       },
       {
         type: "p",
-        text: "The rule I give everyone: if a conversation has been going for more than two weeks and you still haven\u2019t had a phone or video call, you are building a relationship with a profile, not a person. After a few message exchanges, suggest a phone call. After the phone call, if there\u2019s still interest, suggest meeting in person \u2014 public place, casual, low pressure.",
+        text: "The rule I give everyone: if a conversation has been going for more than two weeks and you still haven\u2019t had a phone or video call, you are building a relationship with a profile, not a person. After a few message exchanges, suggest a phone call. After the phone call, if there\u2019s still interest, suggest meeting in person (public place, casual, low pressure).",
       },
       {
         type: "p",
-        text: "The temptation to keep chatting online indefinitely is real, especially if the conversation is enjoyable. Resist it. The information you get from ten minutes in person is worth more than ten days of messages. And the sooner you get that information, the sooner you know whether to invest more time or move on. <a href='/journal/what-actually-happens-at-a-live-comedy-dating-show'>Live environments accelerate that process</a> even further \u2014 which is part of why I run one.",
+        text: "The temptation to keep chatting online indefinitely is real, especially if the conversation is enjoyable. Resist it. The information you get from ten minutes in person is worth more than ten days of messages. And the sooner you get that information, the sooner you know whether to invest more time or move on. <a href='/journal/what-actually-happens-at-a-live-comedy-dating-show'>Live environments accelerate that process</a> even further, which is part of why I run one.",
       },
       {
         type: "p",
-        text: "One more thing: track your activity. Matrimony site browsing can become a passive scroll habit that feels productive but produces nothing. Every few weeks, audit your account. How many conversations did you start? How many progressed to a call? How many led to an in-person meeting? If the numbers are all zeroes below the first step, something in your process needs to change \u2014 not the platform.",
+        text: "One more thing: track your activity. Matrimony site browsing can become a passive scroll habit that feels productive but produces nothing. Every few weeks, audit your account. How many conversations did you start? How many progressed to a call? How many led to an in-person meeting? If the numbers are all zeroes below the first step, something in your process needs to change, not the platform.",
       },
     ],
     faqs: [
@@ -511,11 +511,11 @@ export const matrimonyPosts: JournalPost[] = [
       },
       {
         type: "p",
-        text: "Betterhalf launched in India and now has a growing diaspora user base. The core idea is AI-powered matchmaking: instead of building a profile and searching a database, you answer a detailed set of questions about your personality, values, lifestyle, and preferences. The platform then sends you a small number of curated daily matches \u2014 typically in the range of five to ten \u2014 rather than giving you a pool of thousands to scroll through.",
+        text: "Betterhalf launched in India and now has a growing diaspora user base. The core idea is AI-powered matchmaking: instead of building a profile and searching a database, you answer a detailed set of questions about your personality, values, lifestyle, and preferences. The platform then sends you a small number of curated daily matches (typically five to ten) rather than giving you a pool of thousands to scroll through.",
       },
       {
         type: "p",
-        text: "The profile setup is more conversational than traditional matrimony sites. You are asked about things like your communication style, your relationship with your family, how you handle conflict, and what you are looking for in a life partner \u2014 not just the standard religion-height-income fields. This makes the initial setup slower, but the resulting matches are theoretically better calibrated to who you actually are.",
+        text: "The profile setup is more conversational than traditional matrimony sites. You are asked about things like your communication style, your relationship with your family, how you handle conflict, and what you are looking for in a life partner, not just the standard religion-height-income fields. This makes the initial setup slower, but the resulting matches are theoretically better calibrated to who you actually are.",
       },
       {
         type: "h2",
@@ -539,7 +539,7 @@ export const matrimonyPosts: JournalPost[] = [
       },
       {
         type: "p",
-        text: "The curation model has a flip side too: you cannot browse. You get what the algorithm sends you. If you are someone who wants control over your own search \u2014 who prefers to set filters and find matches yourself \u2014 Betterhalf will feel limiting. It is the opposite of Shaadi.com\u2019s browse-everything approach.",
+        text: "The curation model has a flip side too: you cannot browse. You get what the algorithm sends you. If you are someone who wants control over your own search (who prefers to set filters and find matches yourself), Betterhalf will feel limiting. It is the opposite of Shaadi.com\u2019s browse-everything approach.",
       },
       {
         type: "h2",
@@ -559,11 +559,11 @@ export const matrimonyPosts: JournalPost[] = [
       },
       {
         type: "p",
-        text: "For the specific user Betterhalf is designed for \u2014 professional, urban, South Asian, marriage-ready, and allergic to the traditional matrimony site experience \u2014 yes. The interface is genuinely better, the matching approach is more sophisticated, and the absence of parent-managed profiles is a feature, not a bug.",
+        text: "For the specific user Betterhalf is designed for (professional, urban, South Asian, marriage-ready, and allergic to the traditional matrimony site experience): yes. The interface is genuinely better, the matching approach is more sophisticated, and the absence of parent-managed profiles is a feature, not a bug.",
       },
       {
         type: "p",
-        text: "The caveat is match pool size, especially in the diaspora. If you\u2019re US or UK based, treat Betterhalf as one part of a multi-platform strategy rather than the whole strategy. Pair it with something with larger diaspora volume \u2014 Shaadi.com, Dil Mil, or <a href='/journal/best-shaadi-com-alternatives'>other alternatives</a> \u2014 and use Betterhalf for the quality track while you run a higher-volume search in parallel.",
+        text: "The caveat is match pool size, especially in the diaspora. If you\u2019re US or UK based, treat Betterhalf as one part of a multi-platform strategy rather than the whole strategy. Pair it with something with larger diaspora volume (Shaadi.com, Dil Mil, or <a href='/journal/best-shaadi-com-alternatives'>other alternatives</a>) and use Betterhalf for the quality track while you run a higher-volume search in parallel.",
       },
       {
         type: "p",
@@ -609,7 +609,7 @@ export const matrimonyPosts: JournalPost[] = [
     body: [
       {
         type: "p",
-        text: "Finding a South Asian partner when you live abroad and your prospective matches are 8,000 miles away requires a completely different strategy than domestic matrimony. I see this play out constantly at Garam Masala Dating \u2014 NRI singles in NYC navigating the collision between life abroad and family expectations back home. Here is what actually works, and what makes it harder than anyone admits.",
+        text: "Finding a South Asian partner when you live abroad and your prospective matches are 8,000 miles away requires a completely different strategy than domestic matrimony. I see this play out constantly at Garam Masala Dating: NRI singles in NYC navigating the collision between life abroad and family expectations back home. Here is what actually works, and what makes it harder than anyone admits.",
       },
       {
         type: "h2",
@@ -617,7 +617,7 @@ export const matrimonyPosts: JournalPost[] = [
       },
       {
         type: "p",
-        text: "NRI matrimony (Non-Resident Indian) refers to South Asians living abroad \u2014 primarily in the US, UK, Canada, and Australia \u2014 who are searching for a marriage partner, either within the diaspora or with someone willing to relocate from India. The search is structurally different from domestic Indian matrimony because it adds geography, visa status, and an often-complicated set of expectations from both sides of the equation.",
+        text: "NRI matrimony (Non-Resident Indian) refers to South Asians living abroad (primarily in the US, UK, Canada, and Australia) who are searching for a marriage partner, either within the diaspora or with someone willing to relocate from India. The search is structurally different from domestic Indian matrimony because it adds geography, visa status, and an often-complicated set of expectations from both sides of the equation.",
       },
       {
         type: "p",
@@ -629,7 +629,7 @@ export const matrimonyPosts: JournalPost[] = [
       },
       {
         type: "p",
-        text: "A significant portion of NRI matrimony involves someone abroad matched with someone in India. Families often drive this \u2014 many families in India still consider an NRI match to be a status upgrade \u2014 and the platforms facilitate it. But the practical realities are worth naming directly.",
+        text: "A significant portion of NRI matrimony involves someone abroad matched with someone in India. Families often drive this (many families in India still consider an NRI match to be a status upgrade), and the platforms facilitate it. But the practical realities are worth naming directly.",
       },
       {
         type: "p",
@@ -645,7 +645,7 @@ export const matrimonyPosts: JournalPost[] = [
       },
       {
         type: "p",
-        text: "If you are specifically looking for another NRI \u2014 someone who already lives in the US or UK, has navigated building a life abroad, and shares the particular identity that comes with growing up between cultures \u2014 your search is more concentrated but also more competitive. The pool of NRIs on matrimony platforms in any given city is much smaller than the pool back in India.",
+        text: "If you are specifically looking for another NRI (someone who already lives in the US or UK, has navigated building a life abroad, and shares the particular identity that comes with growing up between cultures), your search is more concentrated but also more competitive. The pool of NRIs on matrimony platforms in any given city is much smaller than the pool back in India.",
       },
       {
         type: "p",
@@ -673,7 +673,7 @@ export const matrimonyPosts: JournalPost[] = [
       },
       {
         type: "p",
-        text: "If you are in a major diaspora city, you have an enormous advantage that people routinely underuse: community. South Asian events, cultural organizations, professional networks, and yes, <a href='/journal/south-asian-singles-events-nyc'>live events for South Asian singles</a> exist in most major metros. The people at these events are already sorted by one of your most important filters \u2014 they live where you live.",
+        text: "If you are in a major diaspora city, you have an enormous advantage that people routinely underuse: community. South Asian events, cultural organizations, professional networks, and yes, <a href='/journal/south-asian-singles-events-nyc'>live events for South Asian singles</a> exist in most major metros. The people at these events are already sorted by one of your most important filters: they live where you live.",
       },
       {
         type: "p",
@@ -695,7 +695,7 @@ export const matrimonyPosts: JournalPost[] = [
       },
       {
         q: "Is Dil Mil good for NRI matrimony?",
-        a: "Dil Mil is an excellent option for NRIs looking for other diaspora South Asians in the US, UK, or Canada. It is not a traditional matrimony site \u2014 it functions more like a dating app \u2014 but its user base is heavily diaspora-focused, which makes geographic filtering much more relevant than on India-centric matrimony platforms.",
+        a: "Dil Mil is an excellent option for NRIs looking for other diaspora South Asians in the US, UK, or Canada. It is not a traditional matrimony site (it functions more like a dating app), but its user base is heavily diaspora-focused, which makes geographic filtering much more relevant than on India-centric matrimony platforms.",
       },
       {
         q: "Can I find a South Asian match in NYC without using apps?",
@@ -722,7 +722,7 @@ export const matrimonyPosts: JournalPost[] = [
     body: [
       {
         type: "p",
-        text: "When community matters as much as compatibility, generic matrimony sites often miss the mark. For a lot of South Asian singles, matching within a specific linguistic, regional, or religious community is not a preference \u2014 it is a requirement. The community-specific matrimony platforms exist to serve that reality. Here is what they are, who runs them, and which ones are actually worth your time.",
+        text: "Generic matrimony sites were built for South Asians broadly. That is also their weakness. For a lot of South Asian singles, matching within a specific linguistic, regional, or religious community is not a preference: it is a requirement. The community-specific matrimony platforms exist for exactly that reason. Here is what they are, who runs them, and which ones are actually worth your time.",
       },
       {
         type: "h2",
@@ -730,7 +730,7 @@ export const matrimonyPosts: JournalPost[] = [
       },
       {
         type: "p",
-        text: "The vast majority of community-specific South Asian matrimony sites in India are owned and operated by BharatMatrimony. This includes TamilMatrimony, PunjabiMatrimony, KeralaMatrimony, TeluguMatrimony, BengaliMatrimony, MarathiMatrimony, GujaratiMatrimony, KannadaMatrimony, and dozens more. They share the same underlying platform, database, and payment infrastructure \u2014 your profile on one is accessible across the network \u2014 but each site presents a community-specific front end and filtered user base.",
+        text: "The vast majority of community-specific South Asian matrimony sites in India are owned and operated by BharatMatrimony. This includes TamilMatrimony, PunjabiMatrimony, KeralaMatrimony, TeluguMatrimony, BengaliMatrimony, MarathiMatrimony, GujaratiMatrimony, KannadaMatrimony, and dozens more. They share the same underlying platform, database, and payment infrastructure (your profile on one is accessible across the network), but each site presents a community-specific front end and filtered user base.",
       },
       {
         type: "p",
@@ -754,7 +754,7 @@ export const matrimonyPosts: JournalPost[] = [
       },
       {
         type: "p",
-        text: "PunjabiMatrimony covers Punjabi-speaking South Asians across religious lines \u2014 Punjabi Hindu, Sikh, and Punjabi Muslim communities each have significant representation. The Sikh diaspora in particular has a strong presence in the UK (notably around Birmingham and Southall), Canada (Vancouver and Toronto), and the US, which makes PunjabiMatrimony one of the more globally distributed of the community sites.",
+        text: "PunjabiMatrimony covers Punjabi-speaking South Asians across religious lines. Punjabi Hindu, Sikh, and Punjabi Muslim communities each have significant representation. The Sikh diaspora in particular has a strong presence in the UK (notably around Birmingham and Southall), Canada (Vancouver and Toronto), and the US, which makes PunjabiMatrimony one of the more globally distributed of the community sites.",
       },
       {
         type: "p",
@@ -766,7 +766,7 @@ export const matrimonyPosts: JournalPost[] = [
       },
       {
         type: "p",
-        text: "KeralaMatrimony is the primary platform for Malayali South Asians. The Malayali community has a significant global diaspora \u2014 particularly in the Middle East (UAE, Qatar, Kuwait), the US, and the UK \u2014 and KeralaMatrimony reflects that. Religious diversity is more pronounced in the Malayalam community than in some other regional groups: there are substantial Malayali Hindu, Malayali Christian (both Catholic and Jacobite/Orthodox), and Malayali Muslim communities, each with specific cultural norms around matrimony.",
+        text: "KeralaMatrimony is the primary platform for Malayali South Asians. The Malayali community has a significant global diaspora (particularly in the Middle East, the US, and the UK) and KeralaMatrimony reflects that. Religious diversity is more pronounced in the Malayalam community than in some other regional groups: there are substantial Malayali Hindu, Malayali Christian (both Catholic and Jacobite/Orthodox), and Malayali Muslim communities, each with specific cultural norms around matrimony.",
       },
       {
         type: "p",
@@ -794,7 +794,7 @@ export const matrimonyPosts: JournalPost[] = [
       },
       {
         type: "p",
-        text: "If you are more open about community and prioritizing other factors \u2014 personality, values, geography, professional background \u2014 a generic platform like Shaadi.com with community filters set will serve you just as well while giving you a larger initial pool. <a href='/journal/bharatmatrimony-vs-shaadi-vs-jeevansathi'>The BharatMatrimony vs Shaadi comparison</a> is worth reading before you decide which ecosystem to invest in. And in person, community often shows up in ways that apps can\u2019t measure \u2014 which is exactly why <a href='/journal/what-actually-happens-at-a-live-comedy-dating-show'>live events</a> remain a useful complement.",
+        text: "If you are more open about community and prioritizing other factors (personality, values, geography, professional background), a generic platform like Shaadi.com with community filters set will serve you just as well while giving you a larger initial pool. <a href='/journal/bharatmatrimony-vs-shaadi-vs-jeevansathi'>The BharatMatrimony vs Shaadi comparison</a> is worth reading before you decide which ecosystem to invest in. And in person, community often shows up in ways that apps can\u2019t measure, which is exactly why <a href='/journal/what-actually-happens-at-a-live-comedy-dating-show'>live events</a> remain a useful complement.",
       },
     ],
     faqs: [
@@ -840,15 +840,15 @@ export const matrimonyPosts: JournalPost[] = [
     body: [
       {
         type: "p",
-        text: "Divorce rates among South Asians are rising, the stigma is slowly reducing, and the people navigating second marriages are doing so with a clarity that first-timers rarely have. I see second-marriage seekers at Garam Masala Dating events frequently \u2014 often some of the most self-aware people in the room. Here is what actually works for Indian divorcee matrimony, including which platforms are worth your time and what to watch out for.",
+        text: "Divorce rates among South Asians are rising, the stigma is slowly reducing, and the people navigating second marriages are doing so with a clarity that first-timers rarely have. I see second-marriage seekers at Garam Masala Dating events frequently, often some of the most self-aware people in the room. Here is what actually works for Indian divorcee matrimony, including which platforms are worth your time and what to watch out for.",
       },
       {
         type: "h2",
-        text: "The second marriage landscape for South Asians in 2026",
+        text: "What the platforms look like now for divorcees",
       },
       {
         type: "p",
-        text: "All three major matrimony platforms \u2014 Shaadi.com, BharatMatrimony, and Jeevansathi \u2014 have explicit divorcee or second marriage filters. You can search specifically for divorced or separated profiles, and you can identify yourself as divorced or separated on your own profile. This is a meaningfully different situation than it was even ten years ago, when divorcee profiles were buried or stigmatized on these platforms.",
+        text: "All three major matrimony platforms (Shaadi.com, BharatMatrimony, and Jeevansathi) have explicit divorcee or second marriage filters. You can search specifically for divorced or separated profiles, and you can identify yourself as divorced or separated on your own profile. This is a meaningfully different situation than it was even ten years ago, when divorcee profiles were buried or stigmatized on these platforms.",
       },
       {
         type: "p",
@@ -856,7 +856,7 @@ export const matrimonyPosts: JournalPost[] = [
       },
       {
         type: "h2",
-        text: "Platform-specific advice for divorcees",
+        text: "Which platform to try first if you have been married before",
       },
       {
         type: "p",
@@ -876,7 +876,7 @@ export const matrimonyPosts: JournalPost[] = [
       },
       {
         type: "p",
-        text: "Divorcee matrimony has a few specific conversations that need to happen early. The first is children: do you have them? Does your potential match? Are they open to a partner with children, and are you? This is not an awkward question \u2014 it is a necessary one. Getting to month three before surfacing this is not protecting yourself, it is wasting both people\u2019s time.",
+        text: "Divorcee matrimony has a few specific conversations that need to happen early. The first is children: do you have them? Does your potential match? Are they open to a partner with children, and are you? This is not an awkward question: it is a necessary one. Getting to month three before surfacing this is not protecting yourself, it is wasting both people\u2019s time.",
       },
       {
         type: "p",
@@ -888,7 +888,7 @@ export const matrimonyPosts: JournalPost[] = [
       },
       {
         type: "h2",
-        text: "The real advantage of second marriages",
+        text: "Why second marriage seekers are actually better at this",
       },
       {
         type: "p",
@@ -900,11 +900,11 @@ export const matrimonyPosts: JournalPost[] = [
       },
       {
         type: "h2",
-        text: "Beyond the platforms: in-person and community options",
+        text: "Why in-person matters more the second time around",
       },
       {
         type: "p",
-        text: "For divorcee South Asian singles, live events and in-person community connections have a particular value. The community filter \u2014 people who share your cultural background and are actively social \u2014 is already applied. And in a room with a live event energy, nobody is leading with their marital history. You meet as the person you are right now, not the person defined by a previous marriage. <a href='/journal/the-realest-way-to-meet-desi-singles-in-nyc'>In-person community connections</a> for South Asian singles exist in most major metros, and they are worth using alongside the matrimony platforms.",
+        text: "For divorcee South Asian singles, live events and in-person community connections have a particular value. The community filter (people who share your cultural background and are actively social) is already applied. And in a room with a live event energy, nobody is leading with their marital history. You meet as the person you are right now, not the person defined by a previous marriage. <a href='/journal/the-realest-way-to-meet-desi-singles-in-nyc'>In-person community connections</a> for South Asian singles exist in most major metros, and they are worth using alongside the matrimony platforms.",
       },
       {
         type: "p",
@@ -922,7 +922,7 @@ export const matrimonyPosts: JournalPost[] = [
       },
       {
         q: "Should I disclose my divorce on a matrimony profile?",
-        a: "Yes. All major matrimony platforms have a marital status field, and selecting your accurate status is both honest and functionally useful \u2014 it ensures your profile appears to people who have already indicated they are open to matches with divorced status. Hiding it and disclosing later creates trust problems that rarely end well.",
+        a: "Yes. All major matrimony platforms have a marital status field, and selecting your accurate status is both honest and functionally useful: it ensures your profile appears to people who have already indicated they are open to matches with divorced status. Hiding it and disclosing later creates trust problems that rarely end well.",
       },
       {
         q: "How do I handle my children in a matrimony search?",

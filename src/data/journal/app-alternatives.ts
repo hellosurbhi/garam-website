@@ -6,16 +6,16 @@ export const appAlternativesPosts: JournalPost[] = [
     title: "Tired of Dating Apps? Why Desi Singles Are Choosing IRL Events",
     seoTitle: "Tired of Dating Apps? IRL Events for Desis",
     metaDescription:
-      "Tired of dating apps and endless swiping? Here\u2019s why more desi singles are ditching Hinge and Dil Mil for IRL events \u2014 and what to do instead.",
+      "Tired of dating apps and endless swiping? Here\u2019s why more desi singles are ditching Hinge and Dil Mil for IRL events, and what to do instead.",
     datePublished: "2026-04-17",
     dateModified: "2026-07-01",
     author: "Surbhi",
     excerpt:
-      "Dating app fatigue is real, and South Asian singles are feeling it harder than most. Here\u2019s why the swipe-and-hope model was never built for us \u2014 and what\u2019s actually working.",
+      "Dating app fatigue is real, and South Asian singles are feeling it harder than most. Here\u2019s why the swipe-and-hope model was never built for us, and what\u2019s actually working.",
     body: [
       {
         type: "p",
-        text: "At some point in the last year or two, something shifted. I started getting applications from people who weren\u2019t just looking for a date \u2014 they were exhausted. They\u2019d been on the apps for two, three, sometimes five years. They had hundreds of matches and nothing to show for it. The phrase I hear most often is \u201cI\u2019m just so tired.\u201d Dating app fatigue is real, and among South Asian singles it hits differently because the apps were never really built for us to begin with.",
+        text: "At some point in the last year or two, something shifted. I started getting applications from people who weren\u2019t just looking for a date: they were exhausted. They\u2019d been on the apps for two, three, sometimes five years. They had hundreds of matches and nothing to show for it. The phrase I hear most often is \u201cI\u2019m just so tired.\u201d Dating app fatigue is real, and among South Asian singles it hits differently because the apps were never really built for us to begin with.",
       },
       {
         type: "h2",
@@ -23,11 +23,11 @@ export const appAlternativesPosts: JournalPost[] = [
       },
       {
         type: "p",
-        text: "It\u2019s not just swiping burnout. It\u2019s the specific exhaustion of filtering for someone who fits your life \u2014 culturally, religiously, linguistically, professionally \u2014 and still ending up on dates that feel completely disconnected from who you actually are. Desi singles carry an extra layer of filtering. You\u2019re not just assessing whether you find someone attractive. You\u2019re assessing whether they\u2019ll understand why you can\u2019t miss Diwali with your parents, why your mom still cooks for twelve even when it\u2019s just three of you, or why certain aunty conversations make you want to fake a phone call.",
+        text: "It\u2019s not just swiping burnout. It\u2019s the specific exhaustion of filtering for someone who fits your life (culturally, religiously, linguistically, professionally) and still ending up on dates that feel completely disconnected from who you actually are. Desi singles carry an extra layer of filtering. You\u2019re not just assessing whether you find someone attractive. You\u2019re assessing whether they\u2019ll understand why you can\u2019t miss Diwali with your parents, why your mom still cooks for twelve even when it\u2019s just three of you, or why certain aunty conversations make you want to fake a phone call.",
       },
       {
         type: "p",
-        text: "Apps don\u2019t have a filter for that. They have height, religion, and prompts. So you show up to dates and spend the first twenty minutes doing archaeology \u2014 excavating whether this person grew up in a house like yours. By the time you have the answer, you\u2019ve already lost the energy to find out if you actually like them.",
+        text: "Apps don\u2019t have a filter for that. They have height, religion, and prompts. So you show up to dates and spend the first twenty minutes doing archaeology: excavating whether this person grew up in a house like yours. By the time you have the answer, you\u2019ve already lost the energy to find out if you actually like them.",
       },
       {
         type: "h2",
@@ -35,7 +35,7 @@ export const appAlternativesPosts: JournalPost[] = [
       },
       {
         type: "p",
-        text: "The data is starting to catch up to what I\u2019ve been watching anecdotally. App retention for South Asian users is low. Dil Mil has around a million users but the engagement patterns are rough \u2014 lots of downloads, lots of dropping off. Shaadi.com has 35 million registered users and charges $50 a month, which implies serious intent, but the experience is clinical in a way that doesn\u2019t feel like connection. It feels like a job application.",
+        text: "The data is starting to catch up to what I\u2019ve been watching anecdotally. App retention for South Asian users is low. Dil Mil has around a million users but the engagement patterns are rough: lots of downloads, lots of dropping off. Shaadi.com has 35 million registered users and charges $50 a month, which implies serious intent, but the experience is clinical in a way that doesn\u2019t feel like connection. It feels like a job application.",
       },
       {
         type: "p",
@@ -51,7 +51,7 @@ export const appAlternativesPosts: JournalPost[] = [
       },
       {
         type: "p",
-        text: "There\u2019s also something about shared context. When you\u2019re at a desi event \u2014 a mixer, a comedy show, a cultural night \u2014 you already know something important about everyone in the room. They showed up. They\u2019re willing to be in desi spaces. That baseline gets you further in the first conversation than any algorithm ever has.",
+        text: "There\u2019s also something about shared context. When you\u2019re at a desi event (a mixer, a comedy show, a cultural night), you already know something important about everyone in the room. They showed up. They\u2019re willing to be in desi spaces. That baseline gets you further in the first conversation than any algorithm ever has.",
       },
       {
         type: "h3",
@@ -59,7 +59,7 @@ export const appAlternativesPosts: JournalPost[] = [
       },
       {
         type: "p",
-        text: "At <a href='/journal/what-actually-happens-at-a-live-comedy-dating-show'>Garam Masala Dating</a>, the show ends and the mixer starts. The room is already warm \u2014 250 people just watched strangers go on blind dates on stage. The ice is destroyed. Nobody is standing in a corner pretending to check their phone. That energy carries into every conversation in the bar after. It\u2019s not an accident. It\u2019s the design.",
+        text: "At <a href='/journal/what-actually-happens-at-a-live-comedy-dating-show'>Garam Masala Dating</a>, the show ends and the mixer starts. The room is already warm: 250 people just watched strangers go on blind dates on stage. The ice is destroyed. Nobody is standing in a corner pretending to check their phone. That energy carries into every conversation in the bar after. It\u2019s not an accident. It\u2019s the design.",
       },
       {
         type: "h2",
@@ -79,11 +79,11 @@ export const appAlternativesPosts: JournalPost[] = [
       },
       {
         type: "p",
-        text: "Desi singles mixers, South Asian cultural events, comedy nights, food pop-ups, and yes \u2014 live dating shows. The options are growing because the demand is real. People want to be in the same room. They want to stop performing for an algorithm and start having actual conversations.",
+        text: "Desi singles mixers, South Asian cultural events, comedy nights, food pop-ups and yes, live dating shows. The options are growing because the demand is real. People want to be in the same room. They want to stop performing for an algorithm and start having actual conversations.",
       },
       {
         type: "p",
-        text: "If you\u2019re tired of the apps and you\u2019re in or near NYC, come to Garam Masala Dating. You can come as an audience member and watch three blind dates happen on stage \u2014 which is honestly one of the best nights out in the city \u2014 or you can <a href='/apply'>apply to be a contestant</a>. Either way, you leave having actually talked to people. That\u2019s more than most apps can promise.",
+        text: "If you\u2019re tired of the apps and you\u2019re in or near NYC, come to Garam Masala Dating. You can come as an audience member and watch three blind dates happen on stage (which is honestly one of the best nights out in the city) or you can <a href='/apply'>apply to be a contestant</a>. Either way, you leave having actually talked to people. That\u2019s more than most apps can promise.",
       },
     ],
     faqs: [
@@ -93,7 +93,7 @@ export const appAlternativesPosts: JournalPost[] = [
       },
       {
         q: "What should I do instead of dating apps?",
-        a: "IRL events \u2014 mixers, cultural nights, comedy shows, live dating events \u2014 give you more information in five minutes than a week of app conversations. If you\u2019re in NYC, Garam Masala Dating is the #1 desi comedy dating show where South Asian singles meet on stage and at post-show mixers.",
+        a: "IRL events (mixers, cultural nights, comedy shows, live dating events) give you more information in five minutes than a week of app conversations. If you\u2019re in NYC, Garam Masala Dating is the #1 desi comedy dating show where South Asian singles meet on stage and at post-show mixers.",
       },
       {
         q: "Are there good events for desi singles?",
@@ -166,7 +166,7 @@ export const appAlternativesPosts: JournalPost[] = [
       },
       {
         type: "p",
-        text: "Also for Muslim South Asians, Salams has 6 million users but runs roughly 80% male. If you\u2019re a woman, that gender imbalance can actually work in your favor \u2014 you\u2019ll have more matches than you can manage. If you\u2019re a man, the competition is steep. Know what you\u2019re walking into.",
+        text: "Also for Muslim South Asians, Salams has 6 million users but runs roughly 80% male. If you\u2019re a woman, that gender imbalance can actually work in your favor: you\u2019ll have more matches than you can manage. If you\u2019re a man, the competition is steep. Know what you\u2019re walking into.",
       },
       {
         type: "h3",
@@ -174,7 +174,7 @@ export const appAlternativesPosts: JournalPost[] = [
       },
       {
         type: "p",
-        text: "Aisle is an Indian dating app that positions itself as more serious than Dil Mil \u2014 it charges for connections to filter out low-intent users. The South Asian focus is real and the intent level is genuinely higher. Like Salams it skews heavily male (around 70%) which shapes the experience differently depending on your gender. Aisle is best for people who are done with casual swiping and want to commit to the process.",
+        text: "Aisle is an Indian dating app that positions itself as more serious than Dil Mil. It charges for connections to filter out low-intent users. The South Asian focus is real and the intent level is genuinely higher. Like Salams it skews heavily male (around 70%) which shapes the experience differently depending on your gender. Aisle is best for people who are done with casual swiping and want to commit to the process.",
       },
       {
         type: "h3",
@@ -182,7 +182,7 @@ export const appAlternativesPosts: JournalPost[] = [
       },
       {
         type: "p",
-        text: "Ishq launched in October 2024 as an invite-only app specifically for South Asian singles. The exclusivity is a feature \u2014 the intent is to keep the pool curated. It\u2019s early, the user base is small, but the signal-to-noise ratio is reportedly high. If you can get an invite, it\u2019s worth trying.",
+        text: "Ishq launched in October 2024 as an invite-only app specifically for South Asian singles. The exclusivity is a feature: the intent is to keep the pool curated. It\u2019s early, the user base is small, but the signal-to-noise ratio is reportedly high. If you can get an invite, it\u2019s worth trying.",
       },
       {
         type: "h2",
@@ -272,7 +272,7 @@ export const appAlternativesPosts: JournalPost[] = [
       },
       {
         type: "p",
-        text: "The app works like most swipe-based apps. You build a profile, set preferences, and swipe. Matches can message each other. Premium tiers unlock features like seeing who liked you, unlimited likes, and advanced filters. Dil Mil\u2019s premium pricing runs around $30\u201340 per month, which is in line with Hinge\u2019s preferred tier but more expensive than Bumble Boost.",
+        text: "The app works like most swipe-based apps. You build a profile, set preferences, and swipe. Matches can message each other. Premium tiers unlock features like seeing who liked you, unlimited likes, and advanced filters. Dil Mil\u2019s premium pricing runs around $30 to $40 per month, which is in line with Hinge\u2019s preferred tier but more expensive than Bumble Boost.",
       },
       {
         type: "h2",
@@ -280,7 +280,7 @@ export const appAlternativesPosts: JournalPost[] = [
       },
       {
         type: "p",
-        text: "The cultural filtering is genuinely valuable. If you\u2019re South Asian and looking for another South Asian, Dil Mil saves you the labor of figuring out who on Hinge is also navigating desi family dynamics. Everyone on Dil Mil is there for that specific reason. That shared context matters more than most people give it credit for \u2014 until they\u2019ve spent time on Hinge and had to explain what a mandir is for the fourth time.",
+        text: "The cultural filtering is genuinely valuable. If you\u2019re South Asian and looking for another South Asian, Dil Mil saves you the labor of figuring out who on Hinge is also navigating desi family dynamics. Everyone on Dil Mil is there for that specific reason. That shared context matters more than most people give it credit for, until they\u2019ve spent time on Hinge and had to explain what a mandir is for the fourth time.",
       },
       {
         type: "p",
@@ -334,7 +334,7 @@ export const appAlternativesPosts: JournalPost[] = [
     faqs: [
       {
         q: "Is Dil Mil worth the money?",
-        a: "It depends on your location. In major South Asian metro areas like NYC, Chicago, or the Bay Area, Dil Mil\u2019s premium features can be worth the $30\u201340/month if you\u2019re serious about finding someone with South Asian cultural context. In smaller cities, the user pool may be too thin to justify the cost.",
+        a: "It depends on your location. In major South Asian metro areas like NYC, Chicago, or the Bay Area, Dil Mil\u2019s premium features can be worth the $30 to $40 per month if you\u2019re serious about finding someone with South Asian cultural context. In smaller cities, the user pool may be too thin to justify the cost.",
       },
       {
         q: "How many users does Dil Mil have?",
@@ -342,11 +342,11 @@ export const appAlternativesPosts: JournalPost[] = [
       },
       {
         q: "Is Dil Mil only for Indians?",
-        a: "Dil Mil is designed for South Asian singles broadly \u2014 Indian, Pakistani, Bangladeshi, Sri Lankan, and diaspora members across backgrounds. It\u2019s not exclusively Indian, though Indian users make up the majority of the user base.",
+        a: "Dil Mil is designed for South Asian singles broadly: Indian, Pakistani, Bangladeshi, Sri Lankan and diaspora members across backgrounds. It\u2019s not exclusively Indian, though Indian users make up the majority of the user base.",
       },
       {
         q: "What is the success rate of Dil Mil?",
-        a: "Dil Mil doesn\u2019t publish success rate data publicly. Anecdotally, conversion from match to real relationship is similar to other swipe-based apps \u2014 low overall but higher when users actively invest in conversations rather than accumulating matches.",
+        a: "Dil Mil doesn\u2019t publish success rate data publicly. Anecdotally, conversion from match to real relationship is similar to other swipe-based apps: low overall but higher when users actively invest in conversations rather than accumulating matches.",
       },
       {
         q: "What\u2019s a better alternative to Dil Mil?",
@@ -382,7 +382,7 @@ export const appAlternativesPosts: JournalPost[] = [
       },
       {
         type: "p",
-        text: "Hinge was built for a particular kind of American dating culture. The prompts, the vibe, the unspoken norms around who messages first and what counts as a date and how fast things should move \u2014 all of that is calibrated for a specific demographic. South Asian users are layered on top of that infrastructure, and the gaps show.",
+        text: "Hinge was built for a particular kind of American dating culture. The prompts, the vibe, the unspoken norms around who messages first and what counts as a date and how fast things should move: all of that is calibrated for a specific demographic. South Asian users are layered on top of that infrastructure, and the gaps show.",
       },
       {
         type: "p",
@@ -398,7 +398,7 @@ export const appAlternativesPosts: JournalPost[] = [
       },
       {
         type: "p",
-        text: "South Asian men on Hinge have their own version of this \u2014 the Apu effect, which hasn\u2019t fully gone away despite the character being retired. Being reduced to a caricature before you\u2019ve said anything is exhausting in a way that\u2019s hard to explain to people who haven\u2019t experienced it.",
+        text: "South Asian men on Hinge have their own version of this: the Apu effect, which hasn\u2019t fully gone away despite the character being retired. Being reduced to a caricature before you\u2019ve said anything is exhausting in a way that\u2019s hard to explain to people who haven\u2019t experienced it.",
       },
       {
         type: "h2",
@@ -406,7 +406,7 @@ export const appAlternativesPosts: JournalPost[] = [
       },
       {
         type: "p",
-        text: "Hinge\u2019s algorithm isn\u2019t built to optimize for cultural compatibility. It optimizes for engagement \u2014 likes, comments, conversations. Those metrics don\u2019t map neatly to what South Asian singles actually need from a match. The result is that you can have high Hinge engagement and zero dates that go anywhere.",
+        text: "Hinge\u2019s algorithm isn\u2019t built to optimize for cultural compatibility. It optimizes for engagement: likes, comments, conversations. Those metrics don\u2019t map neatly to what South Asian singles actually need from a match. The result is that you can have high Hinge engagement and zero dates that go anywhere.",
       },
       {
         type: "p",
@@ -426,7 +426,7 @@ export const appAlternativesPosts: JournalPost[] = [
       },
       {
         type: "p",
-        text: "For app-based dating: Dil Mil for cultural context, Hinge for volume, Aisle for intent. If you\u2019re Muslim: Muzz. Using two or three apps simultaneously is common and sensible \u2014 treating each as a single solution is how people end up burned out.",
+        text: "For app-based dating: Dil Mil for cultural context, Hinge for volume, Aisle for intent. If you\u2019re Muslim: Muzz. Using two or three apps simultaneously is common and sensible, but treating each as a single solution is how people end up burned out.",
       },
       {
         type: "p",
@@ -664,7 +664,7 @@ export const appAlternativesPosts: JournalPost[] = [
     dateModified: "2026-05-07",
     author: "Surbhi",
     excerpt:
-      "Muzz is the biggest Muslim dating app in the world, but it\u2019s not the right fit for everyone. Here\u2019s what South Asian Muslim singles are using instead \u2014 and why IRL is making a comeback.",
+      "Muzz is the biggest Muslim dating app in the world, but it\u2019s not the right fit for everyone. Here\u2019s what South Asian Muslim singles are using instead, and why IRL is making a comeback.",
     body: [
       {
         type: "p",
@@ -676,11 +676,11 @@ export const appAlternativesPosts: JournalPost[] = [
       },
       {
         type: "p",
-        text: "Muzz\u2019s scale is global, which means the South Asian Muslim experience on the app is diluted by users from Arab, Southeast Asian, African, and Western Muslim communities. That\u2019s not necessarily bad \u2014 but it means the cultural specificity that South Asian Muslims often want isn\u2019t fully there. A Pakistani woman in NYC looking for a desi Muslim man who understands the cultural texture of her family life is on the same platform as users from completely different contexts. The filtering tools help, but they don\u2019t fully solve for that.",
+        text: "Muzz\u2019s scale is global, which means the South Asian Muslim experience on the app is diluted by users from Arab, Southeast Asian, African, and Western Muslim communities. That\u2019s not necessarily bad, but it means the cultural specificity that South Asian Muslims often want isn\u2019t fully there. A Pakistani woman in NYC looking for a desi Muslim man who understands the cultural texture of her family life is on the same platform as users from completely different contexts. The filtering tools help, but they don\u2019t fully solve for that.",
       },
       {
         type: "p",
-        text: "There\u2019s also the intent problem that plagues every app. Muzz has millions of users but many of them aren\u2019t actively dating \u2014 they downloaded the app out of curiosity or social pressure and haven\u2019t been back since. Active users are a fraction of the total count. In smaller US cities, that fraction can be very small.",
+        text: "There\u2019s also the intent problem that plagues every app. Muzz has millions of users but many of them aren\u2019t actively dating: they downloaded the app out of curiosity or social pressure and haven\u2019t been back since. Active users are a fraction of the total count. In smaller US cities, that fraction can be very small.",
       },
       {
         type: "h2",
@@ -692,7 +692,7 @@ export const appAlternativesPosts: JournalPost[] = [
       },
       {
         type: "p",
-        text: "Salams is the closest direct competitor to Muzz with 6 million users. It\u2019s built for Muslim singles broadly and has a significant South Asian user base. The biggest issue with Salams is the gender imbalance \u2014 roughly 80% male. Women on Salams will have more matches than they can manage. Men will face significant competition. That asymmetry shapes the entire experience.",
+        text: "Salams is the closest direct competitor to Muzz with 6 million users. It\u2019s built for Muslim singles broadly and has a significant South Asian user base. The biggest issue with Salams is the gender imbalance: roughly 80% male. Women on Salams will have more matches than they can manage. Men will face significant competition. That asymmetry shapes the entire experience.",
       },
       {
         type: "h3",
@@ -716,7 +716,7 @@ export const appAlternativesPosts: JournalPost[] = [
       },
       {
         type: "p",
-        text: "Muslim community events \u2014 halal mixers, mosque social events, South Asian Muslim cultural nights \u2014 have been growing in major cities. The shared faith context is built-in rather than filtered for. In New York, Chicago, and Houston in particular, the Muslim South Asian event scene has expanded significantly. These events don\u2019t get written about much because they\u2019re organized through community channels, not through mainstream event platforms. Ask around.",
+        text: "Muslim community events (halal mixers, mosque social events, South Asian Muslim cultural nights) have been growing in major cities. The shared faith context is built-in rather than filtered for. In New York, Chicago, and Houston in particular, the Muslim South Asian event scene has expanded significantly. These events don\u2019t get written about much because they\u2019re organized through community channels, not through mainstream event platforms. Ask around.",
       },
       {
         type: "p",
@@ -728,7 +728,7 @@ export const appAlternativesPosts: JournalPost[] = [
       },
       {
         type: "p",
-        text: "None of the Muslim dating apps have solved the fundamental tension of Muslim South Asian dating in the diaspora. The apps treat faith and culture as separate axes you can filter on independently. But for most South Asian Muslims, faith and culture are completely intertwined \u2014 a Pakistani American from Karachi has a very different dating context than a Bangladeshi American from Dhaka, even though both might identify as Muslim South Asian on an app.",
+        text: "None of the Muslim dating apps have solved the fundamental tension of Muslim South Asian dating in the diaspora. The apps treat faith and culture as separate axes you can filter on independently. But for most South Asian Muslims, faith and culture are completely intertwined. A Pakistani American from Karachi has a very different dating context than a Bangladeshi American from Dhaka, even though both might identify as Muslim South Asian on an app.",
       },
       {
         type: "p",
@@ -740,7 +740,7 @@ export const appAlternativesPosts: JournalPost[] = [
       },
       {
         type: "p",
-        text: "Garam Masala Dating is not a Muslim-specific show, but our audience and contestants include South Asian Muslims alongside Hindus, Sikhs, and secular desis. The shared South Asian context is what brings people together, and within that there\u2019s real diversity. If you\u2019re Muslim and looking, the show is a good room to be in. Come watch or <a href='/apply'>apply to be on stage</a> \u2014 we\u2019ve had Muslim contestants have genuinely memorable dates. The shared brownness goes further than you\u2019d think as a starting point.",
+        text: "Garam Masala Dating is not a Muslim-specific show, but our audience and contestants include South Asian Muslims alongside Hindus, Sikhs, and secular desis. The shared South Asian context is what brings people together, and within that there\u2019s real diversity. If you\u2019re Muslim and looking, the show is a good room to be in. Come watch or <a href='/apply'>apply to be on stage</a>. We\u2019ve had Muslim contestants have genuinely memorable dates. The shared brownness goes further than you\u2019d think as a starting point.",
       },
     ],
     faqs: [
@@ -771,7 +771,7 @@ export const appAlternativesPosts: JournalPost[] = [
     slug: "dating-apps-for-brown-people",
     title: "Dating Apps for Brown People: What Actually Works in 2026",
     metaDescription:
-      "Dating apps for brown people \u2014 what\u2019s worth your time in 2026? Honest breakdown of every major app and why IRL events are winning back South Asian singles.",
+      "Dating apps for brown people: what\u2019s worth your time in 2026? Honest breakdown of every major app and why IRL events are winning back South Asian singles.",
     datePublished: "2026-04-23",
     dateModified: "2026-05-09",
     author: "Surbhi",
@@ -788,11 +788,11 @@ export const appAlternativesPosts: JournalPost[] = [
       },
       {
         type: "p",
-        text: "The apps were built by and for a particular demographic. That demographic is not us. Which means that the default experience \u2014 the prompts, the matching logic, the cultural assumptions embedded in the UX \u2014 is slightly off for brown users in ways that compound over time. It\u2019s not one big thing. It\u2019s a hundred small things that add up to an experience that never quite fits.",
+        text: "The apps were built by and for a particular demographic. That demographic is not us. Which means that the default experience (the prompts, the matching logic, the cultural assumptions embedded in the UX) is slightly off for brown users in ways that compound over time. It\u2019s not one big thing. It\u2019s a hundred small things that add up to an experience that never quite fits.",
       },
       {
         type: "p",
-        text: "Some of it is representation. You scroll and scroll and the pool of people who look like you, sound like you, grew up like you is small. Some of it is the way profiles are evaluated \u2014 studies have documented racial preference patterns on dating apps that disadvantage South Asian men specifically. Some of it is the fetishization that South Asian women encounter regularly on non-niche apps.",
+        text: "Some of it is representation. You scroll and scroll and the pool of people who look like you, sound like you, grew up like you is small. Some of it is the way profiles are evaluated. Studies have documented racial preference patterns on dating apps that disadvantage South Asian men specifically. Some of it is the fetishization that South Asian women encounter regularly on non-niche apps.",
       },
       {
         type: "h2",
@@ -812,7 +812,7 @@ export const appAlternativesPosts: JournalPost[] = [
       },
       {
         type: "p",
-        text: "Hinge is where you go for volume. The prompts format helps. The pool is large. The cultural miss rate is also large. I\u2019ve written about <a href='/journal/why-hinge-doesnt-work-for-indians'>why Hinge specifically underperforms for Indian singles</a> \u2014 the short version is that the app\u2019s cultural defaults don\u2019t account for the South Asian dating experience. But the pool is big enough that you can find people who fit despite the friction, especially if your bio does the filtering work upfront.",
+        text: "Hinge is where you go for volume. The prompts format helps. The pool is large. The cultural miss rate is also large. I\u2019ve written about <a href='/journal/why-hinge-doesnt-work-for-indians'>why Hinge specifically underperforms for Indian singles</a>. The short version is that the app\u2019s cultural defaults don\u2019t account for the South Asian dating experience. But the pool is big enough that you can find people who fit despite the friction, especially if your bio does the filtering work upfront.",
       },
       {
         type: "h3",
@@ -828,7 +828,7 @@ export const appAlternativesPosts: JournalPost[] = [
       },
       {
         type: "p",
-        text: "If you\u2019re Muslim, Muzz is your starting point. 15 million users, actual halal features, real intent. Salams is the alternative with more volume but a steep gender imbalance. I covered the Muzz landscape in depth in <a href='/journal/muzz-alternative-south-asian-love'>my piece on Muzz alternatives</a> \u2014 the short version is use both and supplement with IRL community events.",
+        text: "If you\u2019re Muslim, Muzz is your starting point. 15 million users, actual halal features, real intent. Salams is the alternative with more volume but a steep gender imbalance. I covered the Muzz landscape in depth in <a href='/journal/muzz-alternative-south-asian-love'>my piece on Muzz alternatives</a>: use both and supplement with IRL community events.",
       },
       {
         type: "h2",
@@ -844,7 +844,7 @@ export const appAlternativesPosts: JournalPost[] = [
       },
       {
         type: "p",
-        text: "Something is shifting. The brown singles I\u2019m talking to in 2026 are more willing to try IRL events than they were two or three years ago. The app exhaustion is real and people are looking for something that feels more human. Desi mixers, South Asian cultural nights, comedy shows with desi audiences \u2014 these are filling up.",
+        text: "Something is shifting. The brown singles I\u2019m talking to in 2026 are more willing to try IRL events than they were two or three years ago. The app exhaustion is real and people are looking for something that feels more human. Desi mixers, South Asian cultural nights, comedy shows with desi audiences: these are filling up.",
       },
       {
         type: "p",
@@ -908,7 +908,7 @@ export const appAlternativesPosts: JournalPost[] = [
     title:
       "Why Dating Apps Don\u2019t Work for South Asians (And What to Do Instead)",
     metaDescription:
-      "Why don\u2019t dating apps work for South Asians? The cultural, algorithmic, and structural reasons \u2014 and what actually works better for desi singles in 2026.",
+      "Why don\u2019t dating apps work for South Asians? The cultural, algorithmic and structural reasons, and what actually works better for desi singles in 2026.",
     datePublished: "2026-04-24",
     dateModified: "2026-05-11",
     author: "Surbhi",
@@ -925,7 +925,7 @@ export const appAlternativesPosts: JournalPost[] = [
       },
       {
         type: "p",
-        text: "Modern dating apps were designed and optimized for a particular kind of Western dating culture \u2014 individualistic, family-independent, relatively low-stakes in terms of community judgment. That framework doesn\u2019t map onto South Asian dating. For desis, dating is rarely a purely individual decision. Family opinions matter. Community context matters. The question isn\u2019t just \u201cdo I like this person\u201d \u2014 it\u2019s \u201cwould my parents be okay with this,\u201d \u201cwill this person understand my life,\u201d \u201cdo we share enough cultural context to actually build something.\u201d",
+        text: "Modern dating apps were designed and optimized for a particular kind of Western dating culture: individualistic, family-independent, relatively low-stakes in terms of community judgment. That framework doesn\u2019t map onto South Asian dating. For desis, dating is rarely a purely individual decision. Family opinions matter. Community context matters. The question isn\u2019t just \u201cdo I like this person\u201d: it\u2019s \u201cwould my parents be okay with this,\u201d \u201cwill this person understand my life,\u201d \u201cdo we share enough cultural context to actually build something.\u201d",
       },
       {
         type: "p",
@@ -937,11 +937,11 @@ export const appAlternativesPosts: JournalPost[] = [
       },
       {
         type: "p",
-        text: "Dating app algorithms optimize for engagement, not compatibility. The profiles that get shown most are the ones that generate the most swipes and interactions. That metric has a racial dimension that has been documented in research \u2014 South Asian men in particular receive fewer right swipes than the platform average on non-niche apps. The algorithm responds by showing those profiles less. The cycle compounds.",
+        text: "Dating app algorithms optimize for engagement, not compatibility. The profiles that get shown most are the ones that generate the most swipes and interactions. That metric has a racial dimension that has been documented in research. South Asian men in particular receive fewer right swipes than the platform average on non-niche apps. The algorithm responds by showing those profiles less. The cycle compounds.",
       },
       {
         type: "p",
-        text: "For South Asian women, the algorithm problem is different but equally real. The fetishization dynamic \u2014 being seen as exotic or interesting for reasons that have nothing to do with your actual personality \u2014 generates swipes without generating quality connections. High match rates, low relationship rates. The numbers look good. The experience doesn\u2019t.",
+        text: "For South Asian women, the algorithm problem is different but equally real. The fetishization dynamic (being seen as exotic or interesting for reasons that have nothing to do with your actual personality) generates swipes without generating quality connections. High match rates, low relationship rates. The numbers look good. The experience doesn\u2019t.",
       },
       {
         type: "h2",
@@ -949,7 +949,7 @@ export const appAlternativesPosts: JournalPost[] = [
       },
       {
         type: "p",
-        text: "The things that matter most for South Asian compatibility \u2014 relationship with family, expectations around marriage timelines, cultural and religious practice, community identity, attitudes toward caste \u2014 are not things you can put in a dropdown. They come out in conversation over time. Apps accelerate the early part of dating but they can\u2019t accelerate the part where you actually figure out if someone fits your life.",
+        text: "The things that matter most for South Asian compatibility (relationship with family, expectations around marriage timelines, cultural and religious practice, community identity, attitudes toward caste) are not things you can put in a dropdown. They come out in conversation over time. Apps accelerate the early part of dating but they can\u2019t accelerate the part where you actually figure out if someone fits your life.",
       },
       {
         type: "p",
@@ -965,7 +965,7 @@ export const appAlternativesPosts: JournalPost[] = [
       },
       {
         type: "p",
-        text: "I see this on stage constantly. Contestants who seemed average on paper are magnetic in person. The profile\u2014 their carefully optimized app profile \u2014 didn\u2019t capture what\u2019s interesting about them. The stage did, in about two minutes. That\u2019s the fundamental problem with apps: the format optimizes for a kind of attractiveness that doesn\u2019t predict chemistry.",
+        text: "I see this on stage constantly. Contestants who seemed average on paper are magnetic in person. The profile (their carefully optimized app profile) didn\u2019t capture what\u2019s interesting about them. The stage did, in about two minutes. That\u2019s the fundamental problem with apps: the format optimizes for a kind of attractiveness that doesn\u2019t predict chemistry.",
       },
       {
         type: "h2",
@@ -977,7 +977,7 @@ export const appAlternativesPosts: JournalPost[] = [
       },
       {
         type: "p",
-        text: "A combination of targeted app use \u2014 Dil Mil for cultural context, Hinge for volume, Aisle for intent \u2014 and IRL investment is the most effective strategy I\u2019ve seen. The apps are a supplement to a real social life, not a replacement for it. The people who have the best outcomes aren\u2019t the ones who optimize their profiles the most. They\u2019re the ones who show up in real spaces.",
+        text: "A combination of targeted app use (Dil Mil for cultural context, Hinge for volume, Aisle for intent) and IRL investment is the most effective strategy I\u2019ve seen. The apps are a supplement to a real social life, not a replacement for it. The people who have the best outcomes aren\u2019t the ones who optimize their profiles the most. They\u2019re the ones who show up in real spaces.",
       },
       {
         type: "h3",
@@ -985,7 +985,7 @@ export const appAlternativesPosts: JournalPost[] = [
       },
       {
         type: "p",
-        text: "If you\u2019ve been on the apps for two or more years with nothing to show for it, you don\u2019t need a better profile. You need a different approach. Try the IRL events. Go to the desi mixers. Go to the comedy nights. And if you\u2019re in NYC, read <a href='/journal/tired-of-dating-apps-desi-singles-irl-events'>why South Asian singles are choosing IRL events in 2026</a> \u2014 the research and the anecdotes point in the same direction.",
+        text: "If you\u2019ve been on the apps for two or more years with nothing to show for it, you don\u2019t need a better profile. You need a different approach. Try the IRL events. Go to the desi mixers. Go to the comedy nights. And if you\u2019re in NYC, read <a href='/journal/tired-of-dating-apps-desi-singles-irl-events'>why South Asian singles are choosing IRL events in 2026</a>: the research and the anecdotes point in the same direction.",
       },
       {
         type: "h2",

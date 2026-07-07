@@ -23,11 +23,11 @@ export const communitySinglesPosts: JournalPost[] = [
       },
       {
         type: "p",
-        text: "Part of it is geography. The Sikh diaspora in North America is heavily concentrated in a few places \u2014 the Bay Area, the Toronto-Brampton corridor, Vancouver, New York, New Jersey. Outside those pockets, the community is spread thin, and organizing a singles event requires critical mass. A speed dating night needs at least 20 people to not feel like a dentist\u2019s waiting room.",
+        text: "Part of it is geography. The Sikh diaspora in North America is heavily concentrated in a few places: the Bay Area, the Toronto-Brampton corridor, Vancouver, New York and New Jersey. Outside those pockets, the community is spread thin, and organizing a singles event requires critical mass. A speed dating night needs at least 20 people to not feel like a dentist\u2019s waiting room.",
       },
       {
         type: "p",
-        text: "Part of it is culture. Sikh families \u2014 like most South Asian families \u2014 have traditionally handled marriage through family networks, gurdwara connections, and community introductions. The idea of a Sikh singles event where you openly show up looking for a partner feels transgressive to some families, even when it\u2019s the exact same thing the aunties are doing on the phone at 11pm. The difference is that events are visible and the family grapevine is not.",
+        text: "Part of it is culture. Sikh families (like most South Asian families) have traditionally handled marriage through family networks, gurdwara connections, and community introductions. The idea of a Sikh singles event where you openly show up looking for a partner feels transgressive to some families, even when it\u2019s the exact same thing the aunties are doing on the phone at 11pm. The difference is that events are visible and the family grapevine is not.",
       },
       {
         type: "p",
@@ -39,7 +39,7 @@ export const communitySinglesPosts: JournalPost[] = [
       },
       {
         type: "p",
-        text: "The Sikh speed dating events that do exist tend to fall into a few categories. Some are organized by diaspora community organizations \u2014 cultural groups, regional associations, or gurdwara-adjacent orgs that have decided to be practical about the marriage problem. These tend to be well-attended but also well-chaperoned, which changes the vibe significantly.",
+        text: "The Sikh speed dating events that do exist tend to fall into a few categories. Some are organized by diaspora community organizations (cultural groups, regional associations, or gurdwara-adjacent orgs that have decided to be practical about the marriage problem). These tend to be well-attended but also well-chaperoned, which changes the vibe significantly.",
       },
       {
         type: "p",
@@ -151,11 +151,11 @@ export const communitySinglesPosts: JournalPost[] = [
     dateModified: "2026-08-15",
     author: "Surbhi",
     excerpt:
-      "Garba is genuinely great for meeting Gujarati singles \u2014 but it happens once a year, and you can\u2019t build a relationship on nine nights of dandiya and one too many glasses of chaas.",
+      "Garba is genuinely great for meeting Gujarati singles, but it happens once a year, and you can\u2019t build a relationship on nine nights of dandiya and one too many glasses of chaas.",
     body: [
       {
         type: "p",
-        text: "Garba is genuinely great for meeting Gujarati singles \u2014 but it happens once a year, and you can\u2019t build a relationship on nine nights of dandiya and one too many glasses of chaas. The Gujarati diaspora is one of the most tightly networked South Asian communities in North America, and yet outside Navratri season, the singles calendar is surprisingly thin.",
+        text: "Garba is genuinely great for meeting Gujarati singles, but it happens once a year, and you can\u2019t build a relationship on nine nights of dandiya and one too many glasses of chaas. The Gujarati diaspora is one of the most tightly networked South Asian communities in North America, and yet outside Navratri season, the singles calendar is surprisingly thin.",
       },
       {
         type: "h2",
@@ -163,7 +163,7 @@ export const communitySinglesPosts: JournalPost[] = [
       },
       {
         type: "p",
-        text: "Gujarati families have historically placed enormous value on in-community marriage \u2014 not just South Asian, but specifically Gujarati, and in many families specifically Jain or Hindu Gujarati, and in some families down to the specific community within that. Patel-to-Patel marriages were not a stereotype; for several generations they were a functional sorting system that everyone in the community understood and most families enforced.",
+        text: "Gujarati families have historically placed enormous value on in-community marriage, not just South Asian, but specifically Gujarati, and in many families specifically Jain or Hindu Gujarati, and in some families down to the specific community within that. Patel-to-Patel marriages were not a stereotype; for several generations they were a functional sorting system that everyone in the community understood and most families enforced.",
       },
       {
         type: "p",
@@ -183,11 +183,11 @@ export const communitySinglesPosts: JournalPost[] = [
       },
       {
         type: "p",
-        text: "Dandiya nights \u2014 the partner-based partner-rotation variation \u2014 are especially efficient. You change partners every few rotations, you make brief eye contact at close range, and then you either find a reason to circle back or you don\u2019t. The structure does the work. It\u2019s basically desi speed dating with sticks.",
+        text: "Dandiya nights (the partner-rotation variation) are especially efficient. You change partners every few rotations, you make brief eye contact at close range, and then you either find a reason to circle back or you don\u2019t. The structure does the work. It\u2019s basically desi speed dating with sticks.",
       },
       {
         type: "p",
-        text: "But garba has limits. It\u2019s loud. It\u2019s crowded. The actual conversation window is about 45 seconds before the music pulls you away. And it\u2019s seasonal. If you miss the two weeks of Navratri events in your city, the next opening is eleven months away. As I\u2019ve written before about <a href='/journal/tired-of-dating-apps-desi-singles-irl-events'>why desi singles are going back to in-person events</a>, the value of IRL isn\u2019t the event itself \u2014 it\u2019s the repeated exposure and the community context that builds over time.",
+        text: "But garba has limits. It\u2019s loud. It\u2019s crowded. The actual conversation window is about 45 seconds before the music pulls you away. And it\u2019s seasonal. If you miss the two weeks of Navratri events in your city, the next opening is eleven months away. As I\u2019ve written before about <a href='/journal/tired-of-dating-apps-desi-singles-irl-events'>why desi singles are going back to in-person events</a>, the value of IRL isn\u2019t the event itself: it\u2019s the repeated exposure and the community context that builds over time.",
       },
       {
         type: "h2",
@@ -199,7 +199,7 @@ export const communitySinglesPosts: JournalPost[] = [
       },
       {
         type: "p",
-        text: "The Gujarati Students Association and Gujarati Samaj chapters in major cities occasionally run or co-sponsor singles and social events. These are worth checking even if you\u2019ve been out of college for years \u2014 the guest lists tend to skew toward the broader diaspora network rather than strictly current students.",
+        text: "The Gujarati Students Association and Gujarati Samaj chapters in major cities occasionally run or co-sponsor singles and social events. These are worth checking even if you\u2019ve been out of college for years: the guest lists tend to skew toward the broader diaspora network rather than strictly current students.",
       },
       {
         type: "p",
@@ -215,7 +215,7 @@ export const communitySinglesPosts: JournalPost[] = [
       },
       {
         type: "p",
-        text: "In New York, Garam Masala Dating consistently draws a diverse South Asian crowd including a strong Gujarati contingent. It\u2019s not Gujarati-specific, but the format \u2014 the biggest live comedy dating show followed by a mixer \u2014 is genuinely fun rather than awkward, which changes the energy in the room completely. People arrive as an audience and stay to meet each other.",
+        text: "In New York, Garam Masala Dating consistently draws a diverse South Asian crowd including a strong Gujarati contingent. It\u2019s not Gujarati-specific, but the format (the biggest live comedy dating show followed by a mixer) is genuinely fun rather than awkward, which changes the energy in the room completely. People arrive as an audience and stay to meet each other.",
       },
       {
         type: "p",
@@ -323,7 +323,7 @@ export const communitySinglesPosts: JournalPost[] = [
       },
       {
         type: "p",
-        text: "Punjabi families have a high social profile within South Asian diaspora communities. Punjabi culture is loud in the best sense \u2014 vibrant, celebratory, deeply communal. That visibility means that marriages and relationships are more visible too. Who you date is community information. A Punjabi wedding is a statement. There is no quiet, private relationship that slips under the radar when your mom knows everyone\u2019s mom.",
+        text: "Punjabi families have a high social profile within South Asian diaspora communities. Punjabi culture is loud in the best sense: vibrant, celebratory, deeply communal. That visibility means that marriages and relationships are more visible too. Who you date is community information. A Punjabi wedding is a statement. There is no quiet, private relationship that slips under the radar when your mom knows everyone\u2019s mom.",
       },
       {
         type: "p",
@@ -347,7 +347,7 @@ export const communitySinglesPosts: JournalPost[] = [
       },
       {
         type: "p",
-        text: "For Hindu Punjabi families, the conversation often centers more on caste, professional background, and whether the other family is \u201Cour type of people\u201D \u2014 a phrase that is doing a lot of work and everyone in the room understands completely. As I explored in <a href='/journal/modern-arranged-marriage-2026'>modern arranged marriage in 2026</a>, the shape of family involvement in South Asian dating has evolved but not disappeared. It\u2019s just more negotiated now.",
+        text: "For Hindu Punjabi families, the conversation often centers more on caste, professional background, and whether the other family is \u201Cour type of people\u201D (a phrase that is doing a lot of work and everyone in the room understands completely). As I explored in <a href='/journal/modern-arranged-marriage-2026'>modern arranged marriage in 2026</a>, the shape of family involvement in South Asian dating has evolved but not disappeared. It\u2019s just more negotiated now.",
       },
       {
         type: "h2",
@@ -359,11 +359,11 @@ export const communitySinglesPosts: JournalPost[] = [
       },
       {
         type: "p",
-        text: "For Punjabi singles who want to meet people outside the family referral system, South Asian singles events have become a real option. Events like Garam Masala Dating in NYC draw a mixed South Asian crowd with a consistently strong Punjabi contingent. The format \u2014 the biggest live comedy dating show followed by a mixer \u2014 creates a social context that\u2019s genuinely fun rather than an awkward biodata exchange. More importantly, it puts you in a room with people who get the cultural context without needing it explained.",
+        text: "For Punjabi singles who want to meet people outside the family referral system, South Asian singles events have become a real option. Events like Garam Masala Dating in NYC draw a mixed South Asian crowd with a consistently strong Punjabi contingent. The format (the biggest live comedy dating show followed by a mixer) creates a social context that\u2019s genuinely fun rather than an awkward biodata exchange. More importantly, it puts you in a room with people who get the cultural context without needing it explained.",
       },
       {
         type: "p",
-        text: "Apps are used widely, with Dil Mil being the most specifically South Asian option. But a lot of Punjabi singles find that apps reward a sanitized self-presentation that doesn\u2019t capture what actually makes them interesting. <a href='/journal/how-to-meet-indian-singles-without-apps'>Meeting Indian singles without apps</a> is genuinely possible and often more satisfying \u2014 the community is big enough and connected enough that the people are out there, in rooms you can actually walk into.",
+        text: "Apps are used widely, with Dil Mil being the most specifically South Asian option. But a lot of Punjabi singles find that apps reward a sanitized self-presentation that doesn\u2019t capture what actually makes them interesting. <a href='/journal/how-to-meet-indian-singles-without-apps'>Meeting Indian singles without apps</a> is genuinely possible and often more satisfying: the community is big enough and connected enough that the people are out there, in rooms you can actually walk into.",
       },
       {
         type: "h2",
@@ -371,11 +371,11 @@ export const communitySinglesPosts: JournalPost[] = [
       },
       {
         type: "p",
-        text: "Here\u2019s the thing that doesn\u2019t get said enough: a lot of Punjabi singles actually want to date within the community. Not because their family told them to, but because shared cultural reference points matter. Because the experience of growing up Punjabi in the diaspora is genuinely specific. Because explaining why you can\u2019t miss your cousin\u2019s wedding, why your mom answers the phone in Punjabi, why Diljit Dosanjh playing at your engagement would be genuinely perfect \u2014 all of that is exhausting to negotiate with someone who has no frame for any of it.",
+        text: "Here\u2019s the thing that doesn\u2019t get said enough: a lot of Punjabi singles actually want to date within the community. Not because their family told them to, but because shared cultural reference points matter. Because the experience of growing up Punjabi in the diaspora is genuinely specific. Because explaining why you can\u2019t miss your cousin\u2019s wedding, why your mom answers the phone in Punjabi, why Diljit Dosanjh playing at your engagement would be genuinely perfect, all of that is exhausting to negotiate with someone who has no frame for any of it.",
       },
       {
         type: "p",
-        text: "The Bollywood version of Punjabi romance makes it look like the family is the obstacle and love is the solution. The more honest version is that the family, the culture, and the community are the context \u2014 and finding someone who fits into that context is what you actually want, not what you\u2019re being forced into. That\u2019s a different relationship with tradition than the cinematic version acknowledges.",
+        text: "The Bollywood version of Punjabi romance makes it look like the family is the obstacle and love is the solution. The more honest version is that the family, the culture, and the community are the context. Finding someone who fits into that context is what you actually want, not what you\u2019re being forced into. That\u2019s a different relationship with tradition than the cinematic version acknowledges.",
       },
       {
         type: "h2",
@@ -403,7 +403,7 @@ export const communitySinglesPosts: JournalPost[] = [
       },
       {
         type: "p",
-        text: "It\u2019s communal, high-visibility, and deeply shaped by family and cultural expectations. It\u2019s also increasingly hybrid \u2014 many Punjabi singles are independently dating while managing family timelines. The gap between the Bollywood romance version and the real thing is significant, and most Punjabi singles are navigating that gap on their own.",
+        text: "It\u2019s communal, high-visibility, and deeply shaped by family and cultural expectations. It\u2019s also increasingly hybrid, with many Punjabi singles independently dating while managing family timelines. The gap between the Bollywood romance version and the real thing is significant, and most Punjabi singles are navigating that gap on their own.",
       },
       {
         type: "p",
@@ -421,7 +421,7 @@ export const communitySinglesPosts: JournalPost[] = [
       },
       {
         q: "What is Punjabi dating culture really like?",
-        a: "Communal, high-visibility, and deeply shaped by family and cultural expectations. Increasingly hybrid \u2014 many Punjabi singles independently date while managing family timelines. The gap between Bollywood\u2019s version and reality is significant, and most navigate it on their own.",
+        a: "Communal, high-visibility, and deeply shaped by family and cultural expectations. Increasingly hybrid, with many Punjabi singles independently dating while managing family timelines. The gap between Bollywood\u2019s version and reality is significant, and most navigate it on their own.",
       },
       {
         q: "What are the best dating apps for Punjabi singles?",
@@ -439,7 +439,7 @@ export const communitySinglesPosts: JournalPost[] = [
     title: "Jain Singles: Finding a Match Who Shares Your Values",
     seoTitle: "Jain Singles: Dating With Shared Values",
     metaDescription:
-      "For Jain singles, shared values aren\u2019t a nice-to-have \u2014 they\u2019re foundational. Here\u2019s where to find Jain dating events and what actually matters when matching within the community.",
+      "For Jain singles, shared values aren\u2019t a nice-to-have: they\u2019re foundational. Here\u2019s where to find Jain dating events and what actually matters when matching within the community.",
     datePublished: "2026-06-13",
     dateModified: "2026-08-19",
     author: "Surbhi",
@@ -456,7 +456,7 @@ export const communitySinglesPosts: JournalPost[] = [
       },
       {
         type: "p",
-        text: "The Jain community in North America is relatively small but economically prominent and highly educated. It\u2019s also remarkably cohesive \u2014 Jain families tend to know other Jain families across city lines, and the community\u2019s social networks are dense in a way that creates both opportunity and pressure. When you\u2019re Jain, the people your parents want you to meet are also the children of people your parents already know. The six degrees of separation becomes about two.",
+        text: "The Jain community in North America is relatively small but economically prominent and highly educated. It\u2019s also remarkably cohesive. Jain families tend to know other Jain families across city lines, and the community\u2019s social networks are dense in a way that creates both opportunity and pressure. When you\u2019re Jain, the people your parents want you to meet are also the children of people your parents already know. The six degrees of separation becomes about two.",
       },
       {
         type: "p",
@@ -480,7 +480,7 @@ export const communitySinglesPosts: JournalPost[] = [
       },
       {
         type: "p",
-        text: "The other gap is for Jain singles who are culturally Jain but less religiously observant, or who are open to partners outside the community. The traditional system is largely designed for matches within the community and has few mechanisms for navigating the middle ground. As I\u2019ve written in <a href='/journal/rishta-culture-decoded'>decoding rishta culture</a>, the modern South Asian dating landscape is full of people who want something between a fully arranged match and fully independent Western-style dating \u2014 and not enough infrastructure exists to serve that space.",
+        text: "The other gap is for Jain singles who are culturally Jain but less religiously observant, or who are open to partners outside the community. The traditional system is largely designed for matches within the community and has few mechanisms for navigating the middle ground. As I\u2019ve written in <a href='/journal/rishta-culture-decoded'>decoding rishta culture</a>, the modern South Asian dating landscape is full of people who want something between a fully arranged match and fully independent Western-style dating, and not enough infrastructure exists to serve that space.",
       },
       {
         type: "h2",
@@ -508,11 +508,11 @@ export const communitySinglesPosts: JournalPost[] = [
       },
       {
         type: "p",
-        text: "The values alignment question is more complex than it looks from the outside. It\u2019s not just \u201Cdoes this person eat meat\u201D \u2014 it\u2019s whether they understand why that matters, whether they respect the practice even if they don\u2019t share it, whether their vision of daily life and family life is compatible with yours. You can be technically vegetarian and still not understand what Jain vegetarianism means in practice. You can respect someone\u2019s faith without wanting to build a life that accommodates it.",
+        text: "The values alignment question is more complex than it looks from the outside. It\u2019s not just \u201Cdoes this person eat meat\u201D : it\u2019s whether they understand why that matters, whether they respect the practice even if they don\u2019t share it, whether their vision of daily life and family life is compatible with yours. You can be technically vegetarian and still not understand what Jain vegetarianism means in practice. You can respect someone\u2019s faith without wanting to build a life that accommodates it.",
       },
       {
         type: "p",
-        text: "For many Jain singles, especially those from observant families, the conversation about values is the most important first conversation \u2014 and it\u2019s one that\u2019s very hard to have productively on a first date or in a dating app profile. The depth of the question doesn\u2019t fit in a prompt. It requires actual conversation, ideally in a context where you already have some shared baseline rather than explaining your entire religious and cultural framework to someone who is encountering it for the first time.",
+        text: "For many Jain singles, especially those from observant families, the conversation about values is the most important first conversation, and it\u2019s one that\u2019s very hard to have productively on a first date or in a dating app profile. The depth of the question doesn\u2019t fit in a prompt. It requires actual conversation, ideally in a context where you already have some shared baseline rather than explaining your entire religious and cultural framework to someone who is encountering it for the first time.",
       },
       {
         type: "p",
@@ -524,11 +524,11 @@ export const communitySinglesPosts: JournalPost[] = [
       },
       {
         type: "p",
-        text: "A significant number of Jain diaspora singles do end up in relationships with non-Jain partners \u2014 sometimes Hindu, sometimes South Asian from other backgrounds, sometimes non-South Asian entirely. These relationships work when the non-Jain partner genuinely respects and accommodates the values rather than treating them as inconveniences to negotiate around. They struggle when the values differences compound over time in ways neither person fully anticipated.",
+        text: "A significant number of Jain diaspora singles do end up in relationships with non-Jain partners (sometimes Hindu, sometimes South Asian from other backgrounds, sometimes non-South Asian entirely). These relationships work when the non-Jain partner genuinely respects and accommodates the values rather than treating them as inconveniences to negotiate around. They struggle when the values differences compound over time in ways neither person fully anticipated.",
       },
       {
         type: "p",
-        text: "If you\u2019re open to meeting outside the community, the thing that matters most isn\u2019t whether someone is technically Jain. It\u2019s whether they are the kind of person who can hold space for a set of values that are genuinely non-negotiable for you. <a href='/journal/tired-of-dating-apps-desi-singles-irl-events'>Getting off dating apps and into real rooms</a> helps with this \u2014 you learn very quickly in person how someone responds to values they haven\u2019t encountered before, and that information is worth far more than anything in a written profile.",
+        text: "If you\u2019re open to meeting outside the community, the thing that matters most isn\u2019t whether someone is technically Jain. It\u2019s whether they are the kind of person who can hold space for a set of values that are genuinely non-negotiable for you. <a href='/journal/tired-of-dating-apps-desi-singles-irl-events'>Getting off dating apps and into real rooms</a> helps with this: you learn very quickly in person how someone responds to values they haven\u2019t encountered before, and that information is worth far more than anything in a written profile.",
       },
       {
         type: "h2",
@@ -556,7 +556,7 @@ export const communitySinglesPosts: JournalPost[] = [
       },
       {
         type: "p",
-        text: "This varies significantly by family and level of observance. For many Jain families, especially in the first generation, in-community marriage is strongly preferred. For second and third generation diaspora, preferences range from strictly in-community to open to any South Asian to fully open. The shared values dimension \u2014 particularly vegetarianism and respect for Jain practice \u2014 tends to be more consistently non-negotiable than strict community membership.",
+        text: "This varies significantly by family and level of observance. For many Jain families, especially in the first generation, in-community marriage is strongly preferred. For second and third generation diaspora, preferences range from strictly in-community to open to any South Asian to fully open. The shared values dimension (particularly vegetarianism and respect for Jain practice) tends to be more consistently non-negotiable than strict community membership.",
       },
       {
         type: "h3",
@@ -582,7 +582,7 @@ export const communitySinglesPosts: JournalPost[] = [
       },
       {
         q: "How important is it for Jain singles to marry within the community?",
-        a: "This varies by family and level of observance. For many Jain families, especially first generation, in-community marriage is strongly preferred. The shared values dimension \u2014 particularly vegetarianism and respect for Jain practice \u2014 tends to be more consistently non-negotiable than strict community membership.",
+        a: "This varies by family and level of observance. For many Jain families, especially first generation, in-community marriage is strongly preferred. The shared values dimension (particularly vegetarianism and respect for Jain practice) tends to be more consistently non-negotiable than strict community membership.",
       },
       {
         q: "What are the biggest challenges for Jain singles?",

@@ -131,11 +131,11 @@ export const CORPORATE_FAQS: CorporateFaq[] = [
   },
   {
     q: "How far in advance do we need to book?",
-    a: "Four to six weeks is ideal. We've done it in two. Email caleb@garammasaladating.com and he'll check availability.",
+    a: `Four to six weeks is ideal. We've done it in two. Email ${CORPORATE_COPY.agentEmail} and he'll check availability.`,
   },
   {
     q: "How much does it cost?",
-    a: "Depends on audience size, venue, and customization. Email caleb@garammasaladating.com with your details and Caleb, our manager, will send a custom quote within 24 hours.",
+    a: `Depends on audience size, venue, and customization. Email ${CORPORATE_COPY.agentEmail} with your details and ${CORPORATE_COPY.agentName}, our manager, will send a custom quote within 24 hours.`,
   },
   {
     q: "Can you customize the show?",

@@ -1,4 +1,4 @@
-const BASE = "https://garammasaladating.com";
+const BASE = import.meta.env.SITE ?? "https://garammasaladating.com";
 
 interface Crumb {
   name: string;

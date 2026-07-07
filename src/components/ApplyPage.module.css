@@ -16,16 +16,16 @@
 .page textarea:focus {
   border-color: var(--brand-red) !important;
   box-shadow: 0 0 0 3px rgba(var(--brand-red-rgb), 0.1) !important;
+  outline: none !important;
 }
 
 .page input::placeholder,
 .page textarea::placeholder {
-  color: rgba(61, 53, 50, 0.35);
+  color: rgba(17, 17, 17, 0.3);
 }
 
 /* ─── Layout ─────────────────────────────────────────────────── */
 
-/* Wraps all form content; disabled={submitting} locks every input/select/button */
 .formFieldset {
   border: none;
   margin: 0;
@@ -34,7 +34,7 @@
 }
 
 .page {
-  background: transparent;
+  background: var(--cream-warm);
   position: relative;
 }
 
@@ -43,7 +43,7 @@
   z-index: 1;
   max-width: 640px;
   margin: 0 auto;
-  padding: 0 20px 20px;
+  padding: 0 20px 48px;
 }
 
 /* ─── Header ─────────────────────────────────────────────────── */
@@ -57,9 +57,12 @@
   display: inline-flex;
   align-items: center;
   gap: 6px;
-  color: var(--charcoal);
-  font-family: var(--font-body);
-  font-size: 16px;
+  color: rgba(17, 17, 17, 0.65);
+  font-family: var(--font-cormorant);
+  font-size: 10px;
+  font-weight: 400;
+  text-transform: uppercase;
+  letter-spacing: 0.14em;
   text-decoration: none;
   background: none;
   border: none;
@@ -69,38 +72,59 @@
 }
 
 .titleArea {
-  text-align: center;
+  text-align: left;
   margin-bottom: 24px;
 }
 
 .title {
-  font-family: var(--font-playfair);
-  font-size: clamp(36px, 5vw, 48px);
-  font-weight: 700;
-  color: var(--charcoal);
-  line-height: 1.1;
+  font-family: var(--font-cormorant);
+  font-size: clamp(44px, 7vw, 84px);
+  font-weight: 400;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--ink);
+  line-height: 1;
   margin-bottom: 10px;
 }
 
 .subtitle {
-  font-family: var(--font-body);
-  font-size: 18px;
-  color: var(--text-secondary);
-  line-height: 1.5;
+  font-family: var(--font-playfair);
+  font-size: clamp(20px, 3vw, 32px);
+  font-weight: 400;
+  color: var(--ink);
+  line-height: 1.15;
 }
 
 .divider {
   display: none;
 }
 
-/* ─── Panel ──────────────────────────────────────────────────── */
+/* ─── Panel (form card) ──────────────────────────────────────── */
 
+/* Mobile: minimal, sits on cream background */
 .panel {
   background: transparent;
-  border-radius: 0;
-  padding: 0;
-  box-shadow: none;
   border: none;
+  padding: 0;
+  position: relative;
+}
+
+/* Desktop: heavy card with double-border inset effect */
+@media (min-width: 768px) {
+  .panel {
+    background: var(--poster-panel);
+    border: 3px solid var(--ink);
+    padding: clamp(20px, 3vw, 36px);
+  }
+
+  .panel::before {
+    content: "";
+    position: absolute;
+    inset: 6px;
+    border: 1px solid var(--ink);
+    pointer-events: none;
+    z-index: 0;
+  }
 }
 
 /* ─── Form elements ──────────────────────────────────────────── */
@@ -112,12 +136,12 @@
 .label {
   display: block;
   font-family: var(--font-body);
-  font-size: 11px;
-  font-weight: 600;
+  font-size: 10px;
+  font-weight: 800;
   text-transform: uppercase;
-  letter-spacing: 0.15em;
-  color: var(--brand-red);
-  margin-bottom: 7px;
+  letter-spacing: 0.14em;
+  color: rgba(17, 17, 17, 0.55);
+  margin-bottom: 6px;
 }
 
 .requiredMark {
@@ -136,55 +160,88 @@
   width: 100%;
   min-height: var(--touch-target);
   padding: 14px 16px;
-  border-radius: 12px;
-  border: 1px dashed rgba(0, 0, 0, 0.15);
+  border: 1px dashed var(--ink);
+  border-radius: 0;
   font-family: var(--font-body);
   font-size: 15px;
   color: var(--brand-red);
-  background: rgba(var(--brand-red-rgb), 0.04);
+  background: var(--poster-panel);
   cursor: pointer;
   text-align: center;
-  transition:
-    background 0.2s,
-    border-color 0.2s;
+  transition: background 0.2s;
 }
 
 .retryButton:hover {
-  background: rgba(var(--brand-red-rgb), 0.08);
-  border-color: var(--brand-red);
+  background: rgba(var(--brand-red-rgb), 0.06);
 }
+
+/* ─── Inputs — mobile: underline only ───────────────────────── */
 
 .input {
   width: 100%;
-  padding: 16px 18px;
-  border-radius: 16px;
-  border: 1px solid var(--border);
-  font-family: var(--font-body);
-  font-size: 16px;
-  color: var(--apply-brown);
-  background: #fff;
+  padding: 11px 2px;
+  border: none;
+  border-bottom: 1.5px solid var(--ink);
+  border-radius: 0;
+  background: transparent;
+  font-family: var(--font-playfair);
+  font-size: 18px;
+  font-weight: 400;
+  color: var(--ink);
   box-sizing: border-box;
-  transition:
-    border-color 0.2s,
-    box-shadow 0.2s;
+  transition: border-color 0.2s;
   appearance: none;
+}
+
+/* ─── Inputs — desktop: boxed ────────────────────────────────── */
+
+@media (min-width: 768px) {
+  .input {
+    padding: 13px 15px;
+    border: 1.5px solid var(--ink);
+    border-bottom: 1.5px solid var(--ink);
+    background: var(--paper-card);
+    font-family: var(--font-body);
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--ink);
+  }
 }
 
 .select {
   composes: input;
   cursor: pointer;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%237A6F66' stroke-width='2'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%23111111' stroke-width='2'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");
   background-repeat: no-repeat;
-  background-position: right 16px center;
-  padding-right: 42px;
+  background-position: right 6px center;
+  padding-right: 30px;
 }
 
+@media (min-width: 768px) {
+  .select {
+    background-position: right 14px center;
+    padding-right: 42px;
+  }
+}
+
+/* Textarea: always boxed (both mobile and desktop) */
 .textarea {
   composes: input;
-  border-radius: 16px;
   resize: vertical;
   min-height: 100px;
   line-height: 1.55;
+  border: 1.5px solid var(--ink);
+  padding: 13px 15px;
+  background: var(--paper-card);
+  font-size: 17px;
+}
+
+/* Mobile textarea: rounded per design spec */
+@media (max-width: 767px) {
+  .textarea {
+    border-radius: 14px;
+    font-family: var(--font-playfair);
+  }
 }
 
 .anythingElse {
@@ -192,21 +249,18 @@
 }
 
 .sectionTitle {
-  font-family: var(--font-playfair);
-  font-size: 28px;
-  font-weight: 600;
-  color: var(--charcoal);
+  font-family: var(--font-cormorant);
+  font-size: 15px;
+  font-weight: 400;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--ink);
   margin-bottom: 20px;
-  padding-bottom: 12px;
-  border-bottom: none;
+  padding-bottom: 0;
 }
+
 .sectionTitle::after {
-  content: "";
-  display: block;
-  width: 48px;
-  height: 1px;
-  background: rgba(var(--brand-red-rgb), 0.3);
-  margin-top: 12px;
+  display: none;
 }
 
 /* ─── Sections ───────────────────────────────────────────────── */
@@ -219,7 +273,6 @@
   margin-bottom: 40px;
 }
 
-/* Left-border distinction between Self and Nomination modes */
 .formFieldset[data-application-type="Nomination"] .section,
 .formFieldset[data-application-type="Nomination"] .sectionLarge {
   border-left: 4px solid var(--spice-orange);
@@ -237,15 +290,15 @@
 .selectivityNote {
   margin-bottom: 28px;
   padding: 14px 18px;
-  border-radius: 12px;
-  background: rgba(var(--brand-red-rgb), 0.04);
-  border: 1px solid rgba(var(--brand-red-rgb), 0.15);
+  border-radius: 0;
+  background: var(--poster-panel);
+  border: 1px dashed var(--ink);
 }
 
 .selectivityNote p {
   font-family: var(--font-body);
   font-size: 14px;
-  color: var(--apply-brown);
+  color: var(--ink);
   line-height: 1.55;
   margin: 0;
 }
@@ -253,15 +306,15 @@
 .contactAccuracyNote {
   margin-bottom: 18px;
   padding: 10px 14px;
-  border-radius: 10px;
-  background: rgba(var(--brand-red-rgb), 0.04);
-  border-left: 3px solid var(--brand-red);
+  border-radius: 0;
+  background: var(--poster-panel);
+  border: 1px dashed var(--ink);
 }
 
 .contactAccuracyNote p {
   font-family: var(--font-body);
   font-size: 13px;
-  color: var(--apply-brown);
+  color: var(--ink);
   line-height: 1.5;
   margin: 0;
 }
@@ -269,15 +322,15 @@
 .nominationNotice {
   margin-bottom: 20px;
   padding: 12px 16px;
-  border-radius: 10px;
-  background: rgba(255, 109, 0, 0.06);
-  border: 1px solid rgba(255, 109, 0, 0.2);
+  border-radius: 0;
+  background: rgba(255, 122, 47, 0.06);
+  border: 1px dashed rgba(255, 122, 47, 0.4);
 }
 
 .nominationNotice p {
   font-family: var(--font-body);
   font-size: 14px;
-  color: var(--apply-brown);
+  color: var(--ink);
   line-height: 1.55;
   margin: 0;
 }
@@ -285,10 +338,12 @@
 /* ─── Type toggle ────────────────────────────────────────────── */
 
 .applicationModeHeading {
-  font-family: var(--font-playfair);
-  font-size: 20px;
-  font-weight: 700;
-  color: var(--charcoal);
+  font-family: var(--font-cormorant);
+  font-size: 15px;
+  font-weight: 400;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--ink);
   margin-bottom: 8px;
 }
 
@@ -298,11 +353,11 @@
 
 .typeLabel {
   font-family: var(--font-body);
-  font-size: 11px;
-  font-weight: 500;
+  font-size: 10px;
+  font-weight: 800;
   text-transform: uppercase;
   letter-spacing: 0.2em;
-  color: var(--text-secondary);
+  color: rgba(17, 17, 17, 0.55);
   margin-bottom: 12px;
 }
 
@@ -311,31 +366,41 @@
   gap: 10px;
 }
 
+/* Mobile: pill */
 .typeButton {
   flex: 1;
   padding: 12px 16px;
   min-height: var(--touch-target);
-  border-radius: 100px;
-  border: 1px solid rgba(0, 0, 0, 0.15);
+  border-radius: 999px;
+  border: 1.5px solid var(--ink);
   background: transparent;
-  color: var(--charcoal);
-  font-family: var(--font-body);
-  font-size: 15px;
-  font-weight: 500;
+  color: var(--ink);
+  font-family: var(--font-cormorant);
+  font-size: 12px;
+  font-weight: 400;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
   cursor: pointer;
   transition: all 0.2s;
 }
 
 .typeButton[data-active] {
-  border: none;
   background: var(--brand-red);
-  color: white;
+  border-color: var(--brand-red);
+  color: var(--cream);
 }
 
-/* Nomination pill uses spice-orange accent */
+/* Desktop: square */
+@media (min-width: 768px) {
+  .typeButton {
+    border-radius: 0;
+  }
+}
+
 .formFieldset[data-application-type="Nomination"]
   .typeButton[data-active][data-for="Nomination"] {
   background: var(--spice-orange);
+  border-color: var(--spice-orange);
 }
 
 /* ─── Grid layouts ───────────────────────────────────────────── */
@@ -356,6 +421,7 @@
   .gridTwo {
     grid-template-columns: 1fr 1fr;
   }
+
   .gridThree {
     grid-template-columns: 1fr 1fr 1fr;
   }
@@ -369,24 +435,38 @@
 
 .igPrefix {
   position: absolute;
-  left: 16px;
+  left: 4px;
   top: 50%;
   transform: translateY(-50%);
-  color: var(--brand-red);
-  font-family: var(--font-body);
-  font-size: 16px;
+  color: rgba(17, 17, 17, 0.55);
+  font-family: var(--font-playfair);
+  font-size: 18px;
   pointer-events: none;
+}
+
+@media (min-width: 768px) {
+  .igPrefix {
+    left: 14px;
+    font-family: var(--font-body);
+    font-size: 14px;
+  }
 }
 
 .igInput {
   composes: input;
-  padding-left: 34px;
+  padding-left: 22px;
+}
+
+@media (min-width: 768px) {
+  .igInput {
+    padding-left: 30px;
+  }
 }
 
 .igHint {
   font-family: var(--font-body);
   font-size: 13px;
-  color: var(--muted);
+  color: rgba(17, 17, 17, 0.5);
   margin-top: 8px;
   padding-left: 4px;
   line-height: 1.5;
@@ -395,7 +475,7 @@
 .igHintLink {
   color: var(--brand-red);
   text-decoration: none;
-  font-weight: 500;
+  font-weight: 600;
 }
 
 /* ─── Photo upload ───────────────────────────────────────────── */
@@ -409,35 +489,33 @@
   display: none;
 }
 
-/* ── Multi-photo guidance ── */
-
 .photoGuidance {
   margin-bottom: 16px;
   padding: 12px 16px;
-  border-radius: 10px;
-  background: rgba(var(--brand-red-rgb), 0.03);
-  border: 1px solid rgba(var(--brand-red-rgb), 0.1);
+  border-radius: 0;
+  background: var(--poster-panel);
+  border: 1px dashed var(--ink);
 }
 
 .photoGuidanceHeading {
   font-family: var(--font-body);
   font-size: 14px;
   font-weight: 700;
-  color: var(--charcoal);
+  color: var(--ink);
   margin: 0 0 4px;
 }
 
 .photoGuidanceIntro {
   font-family: var(--font-body);
   font-size: 13px;
-  color: var(--apply-brown);
+  color: var(--ink);
   margin: 0 0 6px;
 }
 
 .photoGuidanceList {
   font-family: var(--font-body);
   font-size: 13px;
-  color: var(--apply-brown);
+  color: var(--ink);
   margin: 0 0 6px;
   padding-left: 18px;
   line-height: 1.7;
@@ -446,12 +524,10 @@
 .photoGuidanceFooter {
   font-family: var(--font-body);
   font-size: 12px;
-  color: var(--muted);
+  color: rgba(17, 17, 17, 0.5);
   margin: 0;
   font-style: italic;
 }
-
-/* ── Photo grid ── */
 
 .photoGrid {
   display: grid;
@@ -468,10 +544,10 @@
 
 .photoThumbWrapper {
   position: relative;
-  border-radius: 10px;
+  border-radius: 0;
   overflow: hidden;
   aspect-ratio: 3/4;
-  background: var(--border);
+  background: rgba(17, 17, 17, 0.08);
 }
 
 .photoThumbImg {
@@ -487,7 +563,7 @@
   right: 4px;
   width: 24px;
   height: 24px;
-  border-radius: 100px;
+  border-radius: 0;
   border: none;
   background: rgba(0, 0, 0, 0.55);
   color: #fff;
@@ -501,7 +577,7 @@
 }
 
 .photoRemoveBtn:hover {
-  background: rgba(220, 38, 38, 0.85);
+  background: rgba(var(--brand-red-rgb), 0.85);
 }
 
 .photoRemoveBtn:focus-visible {
@@ -516,17 +592,17 @@
   align-items: center;
   justify-content: center;
   aspect-ratio: 3/4;
-  border: 2px dashed rgba(var(--brand-red-rgb), 0.3);
-  border-radius: 10px;
+  border: 1.5px dashed rgba(17, 17, 17, 0.35);
+  border-radius: 0;
   cursor: pointer;
-  background: rgba(var(--brand-red-rgb), 0.03);
+  background: rgba(17, 17, 17, 0.02);
   transition: border-color 0.2s;
   text-align: center;
   padding: 8px;
 }
 
 .photoAddTile:hover {
-  border-color: var(--brand-red);
+  border-color: var(--ink);
 }
 
 .photoAddTileError {
@@ -541,25 +617,25 @@
 .photoAddLabel {
   font-family: var(--font-body);
   font-size: 12px;
-  color: var(--brand-red);
-  font-weight: 500;
+  color: rgba(17, 17, 17, 0.55);
+  font-weight: 700;
 }
 
 /* Legacy single-photo classes kept to avoid stale-import errors */
 .photoDropzone {
   display: block;
-  border: 2px dashed rgba(var(--brand-red-rgb), 0.3);
-  border-radius: 14px;
+  border: 1.5px dashed rgba(17, 17, 17, 0.35);
+  border-radius: 0;
   padding: 24px;
   text-align: center;
   cursor: pointer;
   transition: border-color 0.2s;
-  background: rgba(var(--brand-red-rgb), 0.03);
+  background: rgba(17, 17, 17, 0.02);
   overflow: hidden;
 }
 
 .photoDropzone:hover {
-  border-color: var(--brand-red);
+  border-color: var(--ink);
 }
 
 .photoDropzoneError {
@@ -575,21 +651,21 @@
   composes: photoDropzone;
   padding: 0;
   border-style: solid;
-  border-color: rgba(var(--brand-red-rgb), 0.2);
+  border-color: rgba(17, 17, 17, 0.2);
   overflow: hidden;
 }
 
 .photoDropzoneWithPreview:hover {
-  border-color: var(--brand-red);
+  border-color: var(--ink);
 }
 
 .photoPreview {
   width: 100%;
   height: 280px;
   object-fit: contain;
-  border-radius: 8px;
+  border-radius: 0;
   display: block;
-  background: var(--off-white);
+  background: var(--cream);
 }
 
 .photoEmoji {
@@ -600,7 +676,7 @@
 .photoPrompt {
   font-family: var(--font-body);
   font-size: 16px;
-  color: var(--brand-red);
+  color: var(--ink);
 }
 
 .changePhoto {
@@ -622,60 +698,81 @@
 
 /* ─── Submit button ──────────────────────────────────────────── */
 
+/* Mobile: pill with glow */
 .submitButton {
   width: 100%;
-  padding: 18px 32px;
+  padding: 19px 32px;
   white-space: nowrap;
-  border-radius: 100px;
+  border-radius: 999px;
   border: none;
   background: var(--brand-red);
-  color: white;
-  font-family: var(--font-body);
-  font-size: 18px;
-  font-weight: 700;
+  color: var(--cream);
+  font-family: var(--font-cormorant);
+  font-size: 17px;
+  font-weight: 400;
   text-transform: uppercase;
-  letter-spacing: 1px;
+  letter-spacing: 0.06em;
   cursor: pointer;
   transition:
-    background 0.2s,
-    box-shadow 0.2s,
-    transform 160ms ease-out;
+    transform 160ms ease-out,
+    box-shadow 200ms ease-out;
   display: flex;
   align-items: center;
   justify-content: center;
   gap: 10px;
+  box-shadow: 0 14px 34px rgba(var(--brand-red-rgb), 0.45);
 }
 
 .submitButton:not(:disabled):hover {
-  background: var(--brand-red-dark);
-  box-shadow: 0 4px 20px rgba(var(--brand-red-rgb), 0.3);
+  transform: translateY(-2px);
 }
 
 .submitButton:not(:disabled):active {
   transform: scale(0.97);
 }
 
-/* Form incomplete: clearly disabled, not-allowed cursor */
 .submitButton:disabled:not([data-submitting]) {
   background: rgba(var(--brand-red-rgb), 0.35);
+  box-shadow: none;
   cursor: not-allowed;
 }
 
 .submitButton:disabled:not([data-submitting]):hover {
-  background: rgba(var(--brand-red-rgb), 0.35);
-  box-shadow: none;
+  transform: none;
 }
 
-/* Actively submitting: keep brand color, slight opacity */
 .submitButton[data-submitting] {
   background: var(--brand-red);
   opacity: 0.8;
   cursor: wait;
+  box-shadow: none;
 }
 
 .submitButton[data-submitting]:hover {
-  background: var(--brand-red);
-  box-shadow: none;
+  transform: none;
+}
+
+/* Desktop: square with hard offset shadow */
+@media (min-width: 768px) {
+  .submitButton {
+    border-radius: 0;
+    box-shadow: 4px 4px 0 var(--ink);
+    padding: 17px 32px;
+  }
+
+  .submitButton:not(:disabled):hover {
+    transform: translateY(-2px);
+    box-shadow: 6px 6px 0 var(--ink);
+  }
+
+  .submitButton:not(:disabled):active {
+    transform: translate(2px, 2px);
+    box-shadow: 2px 2px 0 var(--ink);
+  }
+
+  .submitButton:disabled:not([data-submitting]) {
+    box-shadow: none;
+  }
 }
 
 /* ─── Consent sections ───────────────────────────────────────── */
@@ -690,13 +787,14 @@
 
 .consentSection[data-error] {
   border: 1px solid var(--brand-red);
-  background: rgba(220, 38, 38, 0.03);
+  background: rgba(var(--brand-red-rgb), 0.03);
+  padding: 8px;
 }
 
 .consentQuestion {
   font-family: var(--font-body);
   font-size: 15px;
-  color: var(--apply-brown);
+  color: var(--ink);
   margin-bottom: 14px;
   line-height: 1.5;
   font-weight: 500;
@@ -713,7 +811,7 @@
   gap: 8px;
   font-family: var(--font-body);
   font-size: 15px;
-  color: var(--apply-brown);
+  color: var(--ink);
   cursor: pointer;
   min-height: var(--touch-target);
 }
@@ -733,14 +831,14 @@
   cursor: pointer;
   font-family: var(--font-body);
   font-size: 15px;
-  color: var(--apply-brown);
+  color: var(--ink);
   line-height: 1.5;
   min-height: var(--touch-target);
 }
 
 .checkInput {
-  width: 18px;
-  height: 18px;
+  width: 20px;
+  height: 20px;
   accent-color: var(--brand-red);
   cursor: pointer;
   flex-shrink: 0;
@@ -776,9 +874,8 @@
 .disclaimer {
   text-align: center;
   font-family: var(--font-body);
-  font-size: 14px;
-  color: var(--apply-brown);
-  opacity: 0.6;
+  font-size: 13px;
+  color: rgba(17, 17, 17, 0.5);
   margin-top: 16px;
   line-height: 1.5;
 }
@@ -794,13 +891,13 @@
   align-items: flex-start;
   gap: 10px;
   padding: 14px 20px;
-  border-radius: 12px;
+  border-radius: 0;
   color: #fff;
   font-family: var(--font-body);
   font-size: 15px;
   font-weight: 600;
   line-height: 1.4;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+  box-shadow: 4px 4px 0 var(--ink);
   z-index: 9999;
   max-width: 480px;
   margin: 0 auto;
@@ -851,17 +948,19 @@
 }
 
 .successTitle {
-  font-family: var(--font-body);
+  font-family: var(--font-cormorant);
   font-size: 28px;
-  font-weight: 700;
-  color: var(--charcoal);
+  font-weight: 400;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--ink);
   margin: 0 0 8px;
 }
 
 .successTitle:focus-visible {
   outline: 2px solid var(--brand-red);
   outline-offset: 4px;
-  border-radius: 4px;
+  border-radius: 0;
 }
 
 .successTitle:focus:not(:focus-visible) {
@@ -869,16 +968,18 @@
 }
 
 .successText {
-  font-size: 16px;
-  color: var(--muted);
+  font-family: var(--font-playfair);
+  font-style: italic;
+  font-size: 18px;
+  color: rgba(17, 17, 17, 0.65);
   margin: 0 0 24px;
-  line-height: 1.5;
+  line-height: 1.4;
 }
 
 .successCard {
-  background: #fff;
-  border: 1px solid var(--border-light);
-  border-radius: 12px;
+  background: var(--paper-card);
+  border: 1.5px solid var(--ink);
+  border-radius: 0;
   padding: 20px 24px;
   margin-bottom: 16px;
   text-align: left;
@@ -888,13 +989,13 @@
   font-family: var(--font-body);
   font-size: 18px;
   font-weight: 700;
-  color: var(--charcoal);
+  color: var(--ink);
   margin: 0 0 8px;
 }
 
 .successCardText {
   font-size: 15px;
-  color: var(--text-secondary);
+  color: rgba(17, 17, 17, 0.65);
   margin: 0;
   line-height: 1.5;
 }
@@ -911,11 +1012,11 @@
 
 .successCoupon {
   font-size: 15px;
-  color: var(--charcoal);
+  color: var(--ink);
   margin: 12px 0 0;
   padding: 10px 14px;
-  background: var(--off-white);
-  border-radius: 8px;
+  background: var(--poster-panel);
+  border: 1px dashed var(--ink);
   line-height: 1.4;
 }
 
@@ -937,34 +1038,50 @@
   margin-top: 0;
 }
 
+/* Mobile: pill with glow */
 .successTicketButton {
   display: block;
   width: 100%;
   margin-top: 16px;
   padding: 14px 28px;
   background: var(--brand-red);
-  color: #fff;
-  font-family: var(--font-body);
+  color: var(--cream);
+  font-family: var(--font-cormorant);
   font-size: 16px;
-  font-weight: 700;
+  font-weight: 400;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
   border: none;
-  border-radius: 100px;
+  border-radius: 999px;
   text-decoration: none;
   text-align: center;
   cursor: pointer;
   transition:
     background 200ms ease-out,
-    transform 160ms ease-out;
+    transform 160ms ease-out,
+    box-shadow 200ms ease-out;
   min-height: var(--touch-target);
   box-sizing: border-box;
+  box-shadow: 0 14px 34px rgba(var(--brand-red-rgb), 0.35);
 }
 
 .successTicketButton:hover {
-  background: var(--brand-red-dark);
+  transform: translateY(-2px);
 }
 
 .successTicketButton:active {
   transform: scale(0.97);
+}
+
+@media (min-width: 768px) {
+  .successTicketButton {
+    border-radius: 0;
+    box-shadow: 4px 4px 0 var(--ink);
+  }
+
+  .successTicketButton:hover {
+    box-shadow: 6px 6px 0 var(--ink);
+  }
 }
 
 /* ─── Seen show nudge ────────────────────────────────────────── */
@@ -979,7 +1096,7 @@
 .seenYes {
   font-family: var(--font-body);
   font-size: 13px;
-  color: var(--muted);
+  color: rgba(17, 17, 17, 0.5);
   margin-top: 8px;
   font-style: italic;
 }

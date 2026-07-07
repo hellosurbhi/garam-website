@@ -1,9 +1,7 @@
 ---
-import { Picture } from "astro:assets";
 import BaseLayout from "@/layouts/BaseLayout.astro";
 import { buildBreadcrumbJsonLd } from "@/utils/breadcrumbs";
 import ApplyPage from "@/components/ApplyPage";
-import { heroImg } from "@/assets/backgrounds";
 import { APPLY_PAGE } from "@/data/copy";
 
 const breadcrumbJsonLd = buildBreadcrumbJsonLd([
@@ -46,19 +44,6 @@ const breadcrumbJsonLd = buildBreadcrumbJsonLd([
   </Fragment>
 
   <main id="main-content" class="apply-main">
-    <Picture
-      class="apply-bg"
-      src={heroImg}
-      formats={["avif", "webp"]}
-      widths={[640, 1024, 1600]}
-      sizes="100vw"
-      alt=""
-      aria-hidden="true"
-      loading="eager"
-      decoding="async"
-      fetchpriority="high"
-    />
-
     <!--
       One shared container for all static + skeleton content.
       Individual sections hide via :has() — no double-padding between them.
@@ -138,21 +123,8 @@ const breadcrumbJsonLd = buildBreadcrumbJsonLd([
 <style>
   .apply-main {
     position: relative;
-    overflow: hidden;
     min-height: 100vh;
-  }
-
-  .apply-bg {
-    position: fixed;
-    inset: 0;
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    object-position: center 40%;
-    display: block;
-    z-index: 0;
-    opacity: 0.06;
-    pointer-events: none;
+    background: var(--cream-warm);
   }
 
   /* Single wrapper: positioning only, sections own their vertical spacing */
@@ -167,7 +139,7 @@ const breadcrumbJsonLd = buildBreadcrumbJsonLd([
     padding: 0 20px;
   }
 
-  /* Header provides the top breathing room for the whole page */
+  /* Header: top breathing room + newsprint rule below title area */
   .apply-static-header {
     padding-top: 20px;
   }
@@ -179,13 +151,17 @@ const breadcrumbJsonLd = buildBreadcrumbJsonLd([
     align-items: center;
   }
 
+  /* Back button: small uppercase Anton treatment */
   .apply-back-btn {
     display: inline-flex;
     align-items: center;
     gap: 6px;
-    color: var(--charcoal);
-    font-family: var(--font-body);
-    font-size: 16px;
+    color: rgba(17, 17, 17, 0.65);
+    font-family: var(--font-cormorant);
+    font-size: 10px;
+    font-weight: 400;
+    text-transform: uppercase;
+    letter-spacing: 0.14em;
     background: none;
     border: none;
     cursor: pointer;
@@ -193,54 +169,82 @@ const breadcrumbJsonLd = buildBreadcrumbJsonLd([
     min-height: var(--touch-target);
   }
 
-  /* Title */
+  /* Title area: left-aligned, double rule below */
   .apply-skeleton-title-area {
-    text-align: center;
+    text-align: left;
+    margin-bottom: 0;
+    padding: 12px 0 10px;
+    border-top: 1.5px solid var(--ink);
+    border-bottom: 4px double var(--ink);
     margin-bottom: 24px;
   }
+
+  /* Main title: Anton display treatment */
   .apply-skeleton-title {
-    font-family: var(--font-playfair);
-    font-size: clamp(36px, 5vw, 48px);
-    font-weight: 700;
-    color: var(--charcoal);
-    line-height: 1.1;
-    margin: 0 0 10px;
+    font-family: var(--font-cormorant);
+    font-size: clamp(44px, 7vw, 84px);
+    font-weight: 400;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color: var(--ink);
+    line-height: 1;
+    margin: 0 0 8px;
   }
+
+  /* Subtitle: Instrument Serif editorial */
   .apply-skeleton-subtitle {
-    font-family: var(--font-body);
-    font-size: 18px;
-    color: var(--text-secondary);
-    line-height: 1.5;
+    font-family: var(--font-playfair);
+    font-size: clamp(18px, 2.8vw, 28px);
+    font-weight: 400;
+    font-style: italic;
+    color: var(--ink);
+    line-height: 1.2;
     margin: 0;
   }
 
-  /* Casting intro */
+  /* Casting intro: left-aligned */
   .apply-skeleton-intro {
     margin-bottom: 32px;
     font-family: var(--font-body);
     font-size: 15px;
-    color: #3d3532;
+    color: var(--ink);
     line-height: 1.6;
-    text-align: center;
+    text-align: left;
   }
+
   .apply-skeleton-intro p {
     margin: 0 0 12px;
   }
+
   .apply-skeleton-must-be {
-    font-weight: 700;
-    margin-bottom: 4px;
+    font-family: var(--font-cormorant);
+    font-size: 10px;
+    font-weight: 400;
+    text-transform: uppercase;
+    letter-spacing: 0.14em;
+    color: rgba(17, 17, 17, 0.55);
+    margin-bottom: 8px;
   }
+
   .apply-skeleton-reqs {
     list-style: none;
     padding: 0;
     margin: 0;
     display: flex;
     flex-direction: column;
-    align-items: center;
-    gap: 4px;
+    gap: 0;
   }
+
+  .apply-skeleton-reqs li {
+    border-bottom: 1px dotted rgba(17, 17, 17, 0.3);
+    padding: 8px 0;
+    font-family: var(--font-body);
+    font-size: 14px;
+    color: var(--ink);
+  }
+
   .apply-skeleton-reqs li::before {
-    content: "• ";
+    content: "\00B7\00A0";
     color: var(--brand-red);
     font-weight: 700;
   }
@@ -249,60 +253,72 @@ const breadcrumbJsonLd = buildBreadcrumbJsonLd([
   .apply-skeleton-type {
     margin-bottom: 36px;
   }
+
   .apply-skeleton-type-label {
     font-family: var(--font-body);
-    font-size: 11px;
-    font-weight: 500;
+    font-size: 10px;
+    font-weight: 800;
     text-transform: uppercase;
     letter-spacing: 0.2em;
-    color: var(--text-secondary);
+    color: rgba(17, 17, 17, 0.55);
     margin: 0 0 12px;
   }
+
   .apply-skeleton-type-group {
     display: flex;
     gap: 10px;
   }
+
+  /* Mobile: pill skeleton buttons */
   .apply-skeleton-type-btn {
     flex: 1;
     padding: 12px 16px;
     min-height: var(--touch-target);
-    border-radius: 100px;
-    border: 1px solid rgba(0, 0, 0, 0.15);
+    border-radius: 999px;
+    border: 1.5px solid var(--ink);
     background: transparent;
-    color: var(--charcoal);
-    font-family: var(--font-body);
-    font-size: 15px;
-    font-weight: 500;
+    color: var(--ink);
+    font-family: var(--font-cormorant);
+    font-size: 12px;
+    font-weight: 400;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
     text-align: center;
     display: inline-flex;
     align-items: center;
     justify-content: center;
   }
+
   .apply-skeleton-type-active {
-    border: none;
     background: var(--brand-red);
-    color: white;
+    border-color: var(--brand-red);
+    color: var(--cream);
+  }
+
+  /* Desktop: square skeleton buttons */
+  @media (min-width: 768px) {
+    .apply-skeleton-type-btn {
+      border-radius: 0;
+    }
   }
 
   /* Section heading — matches .sectionTitle in ApplyPage.module.css */
   .apply-skeleton-section {
-    font-family: var(--font-playfair);
-    font-size: 28px;
-    font-weight: 600;
-    color: var(--charcoal);
+    font-family: var(--font-cormorant);
+    font-size: 15px;
+    font-weight: 400;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--ink);
     margin: 0 0 20px;
-    padding-bottom: 12px;
-  }
-  .apply-skeleton-section::after {
-    content: "";
-    display: block;
-    width: 48px;
-    height: 1px;
-    background: rgba(var(--brand-red-rgb), 0.3);
-    margin-top: 12px;
+    padding-bottom: 0;
   }
 
-  /* Shimmer bars */
+  .apply-skeleton-section::after {
+    display: none;
+  }
+
+  /* Shimmer bars: newsprint tones */
   @keyframes shimmer-sweep {
     0% {
       background-position: -400px 0;
@@ -319,24 +335,26 @@ const breadcrumbJsonLd = buildBreadcrumbJsonLd([
   }
 
   .shimmer-bar {
-    height: 52px;
+    height: 44px;
     width: 100%;
-    border-radius: 12px;
-    background-color: #ebebeb;
+    border-radius: 0;
+    background-color: var(--cream-warm);
     background-image: linear-gradient(
       90deg,
-      #ebebeb 0px,
-      #f5f5f5 40px,
-      #ebebeb 80px
+      var(--cream-warm) 0px,
+      var(--poster-panel, #fbf3e4) 40px,
+      var(--cream-warm) 80px
     );
     background-size: 400px 100%;
     background-repeat: no-repeat;
     animation: shimmer-sweep 1.4s ease-in-out infinite;
+    border-bottom: 1.5px solid rgba(17, 17, 17, 0.15);
   }
 
   .shimmer-bar--medium {
     width: 75%;
   }
+
   .shimmer-bar--short {
     width: 55%;
   }

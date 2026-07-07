@@ -1,58 +1,47 @@
-/* Playfair Display — headings (variable font covers 400-700) */
+/* Anton — display headlines (400 only) */
 @font-face {
-  font-family: "Playfair Display";
+  font-family: "Anton";
   font-style: normal;
-  font-weight: 400 700;
-  font-display: swap;
-  src: url("/fonts/playfair-display-latin.woff2") format("woff2");
-  unicode-range:
-    U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC,
-    U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212,
-    U+2215, U+FEFF, U+FFFD;
-}
-@font-face {
-  font-family: "Playfair Display";
-  font-style: italic;
   font-weight: 400;
   font-display: swap;
-  src: url("/fonts/playfair-display-latin-400i.woff2") format("woff2");
+  src: url("/fonts/anton-latin-400.woff2") format("woff2");
   unicode-range:
     U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC,
     U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212,
     U+2215, U+FEFF, U+FFFD;
 }
 
-/* Cormorant Garamond — accent (variable font covers 400-500) */
+/* Instrument Serif — editorial headings + italic accent */
 @font-face {
-  font-family: "Cormorant Garamond";
+  font-family: "Instrument Serif";
   font-style: normal;
-  font-weight: 400 500;
+  font-weight: 400;
   font-display: swap;
-  src: url("/fonts/cormorant-garamond-latin.woff2") format("woff2");
+  src: url("/fonts/instrument-serif-latin-400.woff2") format("woff2");
   unicode-range:
     U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC,
     U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212,
     U+2215, U+FEFF, U+FFFD;
 }
 @font-face {
-  font-family: "Cormorant Garamond";
+  font-family: "Instrument Serif";
   font-style: italic;
   font-weight: 400;
   font-display: swap;
-  src: url("/fonts/cormorant-garamond-latin-400i.woff2") format("woff2");
+  src: url("/fonts/instrument-serif-latin-400i.woff2") format("woff2");
   unicode-range:
     U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC,
     U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212,
     U+2215, U+FEFF, U+FFFD;
 }
 
-/* Nunito — body (variable font 200-1000) */
+/* Hanken Grotesk — body + UI (variable font 100-900) */
 @font-face {
-  font-family: "Nunito";
+  font-family: "Hanken Grotesk";
   font-style: normal;
-  font-weight: 200 1000;
+  font-weight: 100 900;
   font-display: swap;
-  src: url("/fonts/nunito-latin-var.woff2") format("woff2");
+  src: url("/fonts/hanken-grotesk-latin-var.woff2") format("woff2");
   unicode-range:
     U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC,
     U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212,
@@ -60,36 +49,40 @@
 }
 
 :root {
-  --font-playfair: "Playfair Display";
-  --font-body: "Nunito";
-  --font-cormorant: "Cormorant Garamond";
+  --font-playfair: "Instrument Serif";
+  --font-body: "Hanken Grotesk";
+  --font-cormorant: "Anton";
   /* legacy aliases — used only by admin components */
-  --cream: #fff8f0;
-  --text: #1a1a1a;
+  --cream: #fff6ec;
+  --text: #111111;
   --text-light: #595959;
   --border: rgba(0, 0, 0, 0.1);
   --success: #22c55e;
 
   /* brand palette */
-  --brand-red: #dc2626;
-  --brand-red-rgb: 220, 38, 38;
-  --brand-red-dark: #b91c1c;
-  --electric-yellow: #ffd600;
-  --off-white: #fff8f0;
-  --charcoal: #1a1a1a;
-  --ink: #111;
-  --spice-orange: #ff6d00;
+  --brand-red: #ff2e88;
+  --brand-red-rgb: 255, 46, 136;
+  --brand-red-dark: #cc0070;
+  --electric-yellow: #ff7a2f;
+  --off-white: #fff6ec;
+  --charcoal: #111111;
+  --ink: #111111;
+  --spice-orange: #ff7a2f;
   --muted: #6b6b6b;
   --text-secondary: #555;
   --text-tertiary: #777;
-  --cream-warm: #fff0e2;
-  --off-white-rgb: 255, 248, 240;
+  --cream-warm: #f6ecda;
+  --off-white-rgb: 255, 246, 236;
   --white: #ffffff;
   --white-rgb: 255, 255, 255;
   --gray-light: #999;
   --gray-lighter: #bbb;
   --gray-mid: #888;
   --black-rgb: 0, 0, 0;
+
+  /* rebrand tokens */
+  --paper-card: #fffdf8;
+  --poster-panel: #fbf3e4;
 
   /* apply form palette */
   --apply-brown: #3d3532;
@@ -127,7 +120,7 @@ body {
   margin: 0;
   background: var(--off-white);
   color: var(--charcoal);
-  font-family: Nunito, sans-serif;
+  font-family: var(--font-body), sans-serif;
   overflow-x: hidden;
   min-width: 320px;
   display: flex;

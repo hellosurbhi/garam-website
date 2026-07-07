@@ -153,7 +153,7 @@ export const outsidePerspectivePosts: JournalPost[] = [
     excerpt:
       "The relationship part is fine. The cultural navigation around it is where you need a guide.",
     keyTakeaway:
-      "Dating an Indian person as a non-Indian means navigating a family and community context that operates differently from what you’re used to. Understanding these dynamics makes you a better partner, not a perfect one.",
+      "Dating an Indian person as a non-Indian means navigating a family and community context that operates quite differently from what you’re used to. Understanding these dynamics makes you a better partner, not a perfect one.",
     relatedSlugs: [
       "dating-an-indian-girl-guide",
       "meeting-indian-girlfriends-parents-first-time",

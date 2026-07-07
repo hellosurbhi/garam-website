@@ -1,4 +1,5 @@
 import { SOCIAL_URLS, CREATOR_URLS } from "@/data/socials";
+import { BRAND_LOGO_URL } from "@/data/brand";
 
 /**
  * Organization entity for Garam Masala Dating.
@@ -24,7 +25,7 @@ export function buildOrganizationJsonLd(): string {
       "NYC Desi Dating Show",
     ],
     url: "https://garammasaladating.com",
-    logo: "https://garammasaladating.com/images/logo.svg",
+    logo: BRAND_LOGO_URL,
     slogan: "America's #1 Live Desi Comedy Dating Show",
     description:
       "Garam Masala Dating is America's #1 live desi comedy dating show and South Asian singles mixer, based in New York City. Real singles go on blind dates on stage in front of a 250-person live audience. Weekly in Manhattan, monthly in Jersey City.",

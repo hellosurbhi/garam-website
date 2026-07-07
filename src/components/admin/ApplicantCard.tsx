@@ -2,6 +2,7 @@ import { Trash2, ArchiveRestore, CheckCircle } from "lucide-react";
 import { type Application, STATUS_COLORS } from "@/types/application";
 import { formatLocation } from "@/utils/locationDisplay";
 import { getApplicantPhotos } from "@/utils/applicantPhotos";
+import { instagramUrl } from "@/utils/instagram";
 
 interface ApplicantCardProps {
   app: Application;
@@ -63,6 +64,7 @@ export default function ApplicantCard({
   dimmed,
 }: ApplicantCardProps) {
   const handle = app.instagram.replace(/^@/, "");
+  const igUrl = instagramUrl(handle);
   const photos = getApplicantPhotos(app);
   const firstPhoto = photos[0];
   const photoCount = photos.length;
@@ -294,7 +296,7 @@ export default function ApplicantCard({
         </div>
 
         <a
-          href={`https://instagram.com/${handle}`}
+          href={igUrl}
           target="_blank"
           rel="noopener noreferrer"
           onClick={(e) => e.stopPropagation()}

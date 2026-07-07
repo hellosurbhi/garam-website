@@ -242,6 +242,11 @@ export const JOURNAL_CTA_WAITLIST = {
 } as const;
 
 export const JOURNAL_CTA_TICKETS = {
+  introPre: "We tour nationally and internationally. Find out if we're ",
+  introPerformingText: "performing near you",
+  introMid: ", or ",
+  introApplyText: "apply to get on stage",
+  introPost: " yourself!",
   ticketsLabel: "See Upcoming Shows",
   applyLabel: "Apply to Be a Contestant",
 } as const;

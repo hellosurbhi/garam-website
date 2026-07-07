@@ -10,19 +10,19 @@ const { articleSlug } = Astro.props;
 
 <aside class="jcta-tickets" aria-label="Get tickets or apply to the show">
   <p class="jcta-tickets__intro">
-    We tour nationally and internationally. Find out if we're <a
+    {JOURNAL_CTA_TICKETS.introPre}<a
       href="/tickets"
       class="jcta-tickets__inline-link"
       data-ph-capture="ticket_click"
       data-ph-section="journal_inline"
-      data-article-slug={articleSlug}>performing near you</a
-    >, or <a
+      data-article-slug={articleSlug}>{JOURNAL_CTA_TICKETS.introPerformingText}</a
+    >{JOURNAL_CTA_TICKETS.introMid}<a
       href="/apply"
       class="jcta-tickets__inline-link"
       data-ph-capture="apply_click"
       data-ph-section="journal_inline"
-      data-article-slug={articleSlug}>apply to get on stage</a
-    > yourself!
+      data-article-slug={articleSlug}>{JOURNAL_CTA_TICKETS.introApplyText}</a
+    >{JOURNAL_CTA_TICKETS.introPost}
   </p>
   <div class="jcta-tickets__btns">
     <a
@@ -71,6 +71,7 @@ const { articleSlug } = Astro.props;
 
   .jcta-tickets__inline-link {
     color: var(--brand-red);
+    font-size: 16px;
     font-weight: 600;
     text-decoration: underline;
     text-underline-offset: 2px;
@@ -89,10 +90,10 @@ const { articleSlug } = Astro.props;
   .jcta-tickets__btn {
     display: block;
     width: 100%;
-    padding: 12px 16px;
+    padding: 15px 16px;
     border-radius: 6px;
     font-family: var(--font-body), sans-serif;
-    font-size: 15px;
+    font-size: 16px;
     font-weight: 600;
     text-align: center;
     text-decoration: none;

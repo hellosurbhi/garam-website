@@ -1099,7 +1099,7 @@ export const corePosts: JournalPost[] = [
       },
       {
         type: "p",
-        text: "They\u2019ve thought about their answers. They know what they want to say. They\u2019ve workshopped their opener. And they land with a thud. The contestants who win the crowd \u2014 and usually the date \u2014 are the ones who just respond. No performance. The audience can feel the difference immediately.",
+        text: "They\u2019ve thought about their answers. They know what they want to say. They\u2019ve workshopped their opener. And they land with a thud. The contestants who win the crowd (and usually the date) are the ones who just respond. No performance. The audience can feel the difference immediately.",
       },
       {
         type: "h3",
@@ -1131,7 +1131,7 @@ export const corePosts: JournalPost[] = [
       },
       {
         type: "p",
-        text: "We were worried that the crowd would be cruel \u2014 this is a comedy show, after all. The opposite is true. When a date is going well, the audience is genuinely invested. When it\u2019s going badly, they want someone to rescue the person on stage. People want other people to find something real. That hasn\u2019t changed in a single show.",
+        text: "We were worried that the crowd would be cruel (this is a comedy show, after all). The opposite is true. When a date is going well, the audience is genuinely invested. When it\u2019s going badly, they want someone to rescue the person on stage. People want other people to find something real. That hasn\u2019t changed in a single show.",
       },
       {
         type: "p",
@@ -1144,7 +1144,7 @@ export const corePosts: JournalPost[] = [
     title:
       "How to Prepare for a Live Matchmaking Show (Without Psyching Yourself Out)",
     metaDescription:
-      "You got cast on Garam Masala Dating. Here\u2019s exactly how to prepare \u2014 what to wear, what to expect on stage, and how to not be the person who chokes in front of 250 people.",
+      "You got cast on Garam Masala Dating. Here\u2019s exactly how to prepare: what to wear, what to expect on stage, and how to not be the person who chokes in front of 250 people.",
     datePublished: "2026-04-07",
     dateModified: "2026-07-01",
     relatedSlugs: [

@@ -661,7 +661,7 @@ export const datingCulturePosts: JournalPost[] = [
       },
       {
         type: "h2",
-        text: "The dual operating system problem",
+        text: "You're Running Two Incompatible Dating Frameworks Simultaneously",
       },
       {
         type: "p",

@@ -252,7 +252,7 @@ ${journalRestSection}
 Garam Masala Dating offers private show bookings for corporate teams, Diwali parties, client entertainment, and private events in NYC.
 
 **URL:** https://garammasaladating.com/corporate
-**Booking contact:** ${CORPORATE_COPY.agentEmail}
+**Booking contact:** ${CORPORATE_COPY.bookingEmail}
 
 ### Audience Size Options
 
@@ -273,7 +273,7 @@ ${CORPORATE_FAQS.map((f) => `Q: ${f.q}\nA: ${f.a}`).join("\n\n")}
 Garam Masala Dating offers sponsorship packages for brands seeking to reach NYC's South Asian professional audience.
 
 **URL:** https://garammasaladating.com/sponsorship
-**Contact:** ${CORPORATE_COPY.agentEmail}
+**Contact:** ${CORPORATE_COPY.bookingEmail}
 
 ### Audience Statistics
 

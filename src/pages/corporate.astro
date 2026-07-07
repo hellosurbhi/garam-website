@@ -12,7 +12,7 @@ import {
 
 const TITLE = "Private & Corporate Events NYC";
 const DESC =
-  "Book Garam Masala Dating for your next corporate team event, Diwali party, or private show in NYC. 50 to 250 guests. Professional hosts, full production, venue coordination. Email our manager Caleb at caleb@garammasaladating.com to book.";
+  "Book Garam Masala Dating for your next corporate team event, Diwali party, or private show in NYC. 50 to 250 guests. Professional hosts, full production, venue coordination. Email contact@garammasaladating.com to book.";
 
 const SITE_URL = "https://garammasaladating.com";
 
@@ -73,9 +73,7 @@ const speakableJsonLd = JSON.stringify({
         <h1 id="corp-heading">{CORPORATE_COPY.heroHeadline}</h1>
         <p class="corp-hero-sub">{CORPORATE_COPY.heroSub}</p>
         <div class="corp-email-block">
-          <p class="corp-email-label">
-            Email our {CORPORATE_COPY.agentTitle}, {CORPORATE_COPY.agentName}:
-          </p>
+          <p class="corp-email-label">Email us:</p>
           <a
             href={`mailto:${CORPORATE_COPY.agentEmail}?subject=Private%20Show%20Inquiry`}
             class="corp-email-link"
@@ -86,10 +84,10 @@ const speakableJsonLd = JSON.stringify({
             data-cta-text={CORPORATE_COPY.agentEmail}
             data-destination-url={`mailto:${CORPORATE_COPY.agentEmail}?subject=Private%20Show%20Inquiry`}
             toolname="email-corporate-booking"
-            tooldescription="Email Caleb, the manager at Garam Masala Dating, to book a private or corporate show in NYC."
+            tooldescription="Email Garam Masala Dating to book a private or corporate show in NYC."
             >{CORPORATE_COPY.agentEmail}</a
           >
-          <p class="corp-email-note">{CORPORATE_COPY.heroNote}</p>
+          <p class="corp-email-note">{CORPORATE_COPY.ctaNote}</p>
         </div>
       </div>
     </section>
@@ -244,7 +242,7 @@ const speakableJsonLd = JSON.stringify({
           data-cta-text={CORPORATE_COPY.agentEmail}
           data-destination-url={`mailto:${CORPORATE_COPY.agentEmail}?subject=Private%20Show%20Inquiry`}
           toolname="email-corporate-booking"
-          tooldescription="Email Caleb, the manager at Garam Masala Dating, to book a private or corporate show in NYC."
+          tooldescription="Email Garam Masala Dating to book a private or corporate show in NYC."
           >{CORPORATE_COPY.agentEmail}</a
         >
         <p class="corp-cta-note">{CORPORATE_COPY.ctaNote}</p>

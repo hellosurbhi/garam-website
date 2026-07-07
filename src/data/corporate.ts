@@ -4,14 +4,11 @@
  */
 
 export const CORPORATE_COPY = {
-  agentEmail: "caleb@garammasaladating.com",
-  agentName: "Caleb",
+  agentEmail: "contact@garammasaladating.com",
   agentTitle: "Manager",
   heroHeadline: "Your Team Deserves a Better Happy Hour",
   heroSub:
     "America's #1 live desi comedy dating show for your team, your clients, or your next milestone. 50 to 250 guests. We handle everything.",
-  heroNote:
-    "Caleb is our manager. He handles all private bookings and responds within 24 hours.",
   showFormatBody: [
     "We bring the full Garam Masala Dating show to your event. Real singles go on blind dates on stage while Surbhi and Wyatt run the comedy, the crowd work, and the matchmaking live.",
     "Your guests arrive. The lights go down. By the third date, the room is electric. Nobody checks their phone. People who've never spoken outside of Slack are suddenly screaming at contestants to pick each other.",
@@ -19,8 +16,8 @@ export const CORPORATE_COPY = {
   ],
   ctaHeadline: "Ready to Book?",
   ctaBody:
-    "Email Caleb, our manager, with your date, guest count, and venue. He'll respond within 24 hours.",
-  ctaNote: 'Subject line "Private Show Inquiry" goes straight to Caleb.',
+    "Email us with your date, guest count, and venue. We respond within 24 hours.",
+  ctaNote: 'Subject line "Private Show Inquiry" reaches the right person fast.',
 } as const;
 
 export interface AudienceTier {
@@ -127,15 +124,15 @@ export const CORPORATE_FAQS: CorporateFaq[] = [
   },
   {
     q: "What venues work?",
-    a: "Restaurant private rooms, rooftop bars, coworking spaces, hotel ballrooms. We need seating for your group plus a small stage area. If you need a venue, Caleb can recommend one.",
+    a: "Restaurant private rooms, rooftop bars, coworking spaces, hotel ballrooms. We need seating for your group plus a small stage area. If you need a venue, we can recommend one.",
   },
   {
     q: "How far in advance do we need to book?",
-    a: `Four to six weeks is ideal. We've done it in two. Email ${CORPORATE_COPY.agentEmail} and he'll check availability.`,
+    a: `Four to six weeks is ideal. We've done it in two. Email ${CORPORATE_COPY.agentEmail} and we'll check availability.`,
   },
   {
     q: "How much does it cost?",
-    a: `Depends on audience size, venue, and customization. Email ${CORPORATE_COPY.agentEmail} with your details and ${CORPORATE_COPY.agentName}, our manager, will send a custom quote within 24 hours.`,
+    a: `Depends on audience size, venue, and customization. Email ${CORPORATE_COPY.agentEmail} with your details and we'll send a custom quote within 24 hours.`,
   },
   {
     q: "Can you customize the show?",

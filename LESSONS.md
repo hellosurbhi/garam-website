@@ -159,3 +159,17 @@
 **Why:** On a stacked rewrite, narrow local patches can duplicate prior work or miss the durable shared layer the user actually needs.
 
 **Rule:** For broad analytics, conversion, SEO, or performance work, inspect the active/open PR stack first, then make sustainable shared-system improvements that build on it. Do not default to the smallest patch when the user explicitly asks for the durable rewrite path.
+
+## NEVER remove 'unsafe-inline' from script-src in the CSP
+
+<!-- Hey, we never want to remove this lesson. Astro's island hydration breaks without unsafe-inline and the apply form will silently become a forever-skeleton. -->
+
+**What went wrong:** PR #121 removed `'unsafe-inline'` from `script-src` in `vercel.json` to harden the CSP. This immediately broke the apply form — the skeleton stayed forever and the React component never mounted.
+
+**Why 'unsafe-inline' is non-negotiable here:** Astro's island hydration system generates two inline `<script>` tags at build time that it cannot externalize: the `astro:only` runtime bootstrap and the `<astro-island>` component registration script. Both are inlined in every HTML page. Without `'unsafe-inline'` in `script-src`, the browser blocks them silently, the React island never hydrates, and any `client:only="react"` component (apply form, admin, contestant portal) becomes a dead skeleton.
+
+Astro SSG cannot use nonces (requires a server per request) and cannot hash these scripts (they change every build). `'unsafe-inline'` is the only viable option for this static architecture.
+
+The real XSS guards on this site are Firebase security rules and Firestore field-level validation, not the CSP. The meaningful CSP work from PR #121 (externalizing GTM, PostHog, and Meta Pixel as allowlisted external scripts) is preserved and stays.
+
+**Rule:** Do not remove `'unsafe-inline'` from `script-src` in `vercel.json` unless Astro introduces a CSP-compatible static build mode. Their experimental nonce feature is server-rendered only. Check https://docs.astro.build/en/guides/content-security-policy/ before touching this.

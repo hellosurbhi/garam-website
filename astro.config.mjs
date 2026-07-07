@@ -180,7 +180,10 @@ export default defineConfig({
         if (
           page.includes("/admin") ||
           page.includes("/contestant-prep") ||
-          page.includes("/waiver")
+          page.includes("/waiver") ||
+          page.includes("/consent") ||
+          page.includes("/thank-you") ||
+          page.includes("/contestant-portal")
         )
           return false;
         if (page.includes("/journal/")) {

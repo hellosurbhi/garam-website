@@ -6,15 +6,10 @@ import { sendMail } from "@/lib/zohoMailer";
 import { postShow } from "@/data/emails";
 import { verifyCronSecret } from "@/lib/cronAuth";
 import { jsonResponse } from "@/lib/http";
+import { toMs } from "@/utils/date";
 
 const D3 = 3 * 24 * 60 * 60 * 1000;
 const D10 = 10 * 24 * 60 * 60 * 1000;
-
-function toMs(val: unknown): number | null {
-  if (typeof val !== "string") return null;
-  const ms = Date.parse(val);
-  return isNaN(ms) ? null : ms;
-}
 
 export const GET: APIRoute = async ({ request }) => {
   if (!verifyCronSecret(request))

@@ -152,7 +152,7 @@ export const SPONSORSHIP_FAQS: SponsorFaq[] = [
   },
   {
     q: "Can I sponsor multiple shows?",
-    a: "Yes. Multi-show discounts available. Email caleb@garammasaladating.com for a season proposal.",
+    a: `Yes. Multi-show discounts available. Email ${SPONSORSHIP_COPY.contactEmail} for a season proposal.`,
   },
   {
     q: "What does category exclusivity mean?",
@@ -164,6 +164,6 @@ export const SPONSORSHIP_FAQS: SponsorFaq[] = [
   },
   {
     q: "How do I get started?",
-    a: "Email caleb@garammasaladating.com with your brand, goal, and budget. Caleb, our manager, responds within 48 hours.",
+    a: `Email ${SPONSORSHIP_COPY.contactEmail} with your brand, goal, and budget. ${SPONSORSHIP_COPY.contactName}, our manager, responds within 48 hours.`,
   },
 ];

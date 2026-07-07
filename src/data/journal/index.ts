@@ -38,6 +38,12 @@ import { desiCultureValuesPosts } from "./desi-culture-values";
 import { relationshipMilestonesPosts } from "./relationship-milestones";
 import { popCultureDatingPosts } from "./pop-culture-dating";
 import { searchAnswersPosts } from "./search-answers";
+import { careerLifeDatingPosts } from "./career-life-dating";
+import { attachmentPsychologyDesiPosts } from "./attachment-psychology-desi";
+import { religionDatingDeepPosts } from "./religion-dating-deep";
+import { lifestyleCompatibilityPosts } from "./lifestyle-compatibility";
+import { appGuideExtendedPosts } from "./app-guide-extended";
+import { socialMediaDesiDatingPosts } from "./social-media-desi-dating";
 
 /** All journal posts combined */
 export const journalPosts: JournalPost[] = [
@@ -68,6 +74,12 @@ export const journalPosts: JournalPost[] = [
   ...relationshipMilestonesPosts,
   ...popCultureDatingPosts,
   ...searchAnswersPosts,
+  ...careerLifeDatingPosts,
+  ...attachmentPsychologyDesiPosts,
+  ...religionDatingDeepPosts,
+  ...lifestyleCompatibilityPosts,
+  ...appGuideExtendedPosts,
+  ...socialMediaDesiDatingPosts,
 ];
 
 /** Sorted newest-first by datePublished. */

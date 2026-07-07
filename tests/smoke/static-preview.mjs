@@ -49,7 +49,9 @@ function sendJson(res, status, body) {
 
 function normalizeUrlPath(reqUrl) {
   try {
-    return decodeURIComponent(new URL(reqUrl ?? "/", `http://${host}`).pathname);
+    return decodeURIComponent(
+      new URL(reqUrl ?? "/", `http://${host}`).pathname,
+    );
   } catch {
     return "/";
   }
@@ -107,6 +109,16 @@ const server = createServer(async (req, res) => {
 
   if (urlPath === "/api/update-lead" && req.method === "POST") {
     sendJson(res, 200, { ok: true });
+    return;
+  }
+
+  if (urlPath === "/api/verify-turnstile" && req.method === "POST") {
+    sendJson(res, 200, { success: true });
+    return;
+  }
+
+  if (urlPath === "/api/notify-application" && req.method === "POST") {
+    sendJson(res, 200, { sent: true });
     return;
   }
 

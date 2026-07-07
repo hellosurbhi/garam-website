@@ -17,13 +17,16 @@ describe("events data", () => {
       expect(typeof event.city).toBe("string");
       expect(event.city.trim()).not.toBe("");
       expect(typeof event.url).toBe("string");
-      expect(event.url.trim()).not.toBe("");
+      // TBA events have no URL yet — url is intentionally empty until dates are confirmed
+      if (event.date !== "TBA") {
+        expect(event.url.trim()).not.toBe("");
+      }
     }
   });
 
   it("every event.url is a valid URL or '#'", () => {
     for (const event of events) {
-      if (event.url === "#") continue;
+      if (!event.url || event.url === "#") continue;
       expect(() => new URL(event.url)).not.toThrow();
     }
   });
@@ -107,7 +110,7 @@ describe("events data", () => {
 
   it("eventbrite URLs use https", () => {
     for (const event of events) {
-      if (event.url !== "#") {
+      if (event.url && event.url !== "#") {
         expect(event.url.startsWith("https://")).toBe(true);
       }
     }

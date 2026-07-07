@@ -56,15 +56,6 @@ const VENUE_FAIGHT_COLLECTIVE: EventVenue = {
   addressCountry: "US",
 };
 
-const VENUE_NEXT_IN_LINE: EventVenue = {
-  name: "Next In Line Comedy",
-  streetAddress: "1025 Hamilton Street",
-  addressLocality: "Philadelphia",
-  addressRegion: "PA",
-  postalCode: "19123",
-  addressCountry: "US",
-};
-
 const VENUE_LYRIC_HYPERION: EventVenue = {
   name: "Lyric Hyperion Theater & Cafe",
   streetAddress: "2106 Hyperion Ave",
@@ -89,13 +80,6 @@ const VENUE_ELEPHANT_CASTLE: EventVenue = {
   addressLocality: "Boston",
   addressRegion: "MA",
   postalCode: "02110",
-  addressCountry: "US",
-};
-
-const VENUE_KOMIC_KARMA: EventVenue = {
-  name: "Komic Karma Entertainment",
-  addressLocality: "North Brunswick Township",
-  addressRegion: "NJ",
   addressCountry: "US",
 };
 
@@ -268,34 +252,6 @@ export const events: EventEntry[] = [
     venue: VENUE_FAIGHT_COLLECTIVE,
     price: "15",
     eventbriteId: "1989633237573",
-  },
-  {
-    date: "Jul 11",
-    city: "Edison",
-    state: "New Jersey",
-    stateAbbr: "NJ",
-    citySlug: "edison",
-    url: "https://www.eventbrite.com/e/garam-masala-comedy-dating-show-laughter-is-the-best-edison-tickets-1992185715102",
-    isoDate: "2026-07-11",
-    startTime: "18:00",
-    endTime: "20:00",
-    venue: VENUE_KOMIC_KARMA,
-    price: "15",
-    eventbriteId: "1992185715102",
-  },
-  {
-    date: "Jul 12",
-    city: "Philadelphia",
-    state: "Pennsylvania",
-    stateAbbr: "PA",
-    citySlug: "philadelphia",
-    url: "https://www.eventbrite.com/e/garam-masala-1-desi-dating-show-tickets-1989618938805",
-    isoDate: "2026-07-12",
-    startTime: "19:30",
-    endTime: "21:30",
-    venue: VENUE_NEXT_IN_LINE,
-    price: "15",
-    eventbriteId: "1989618938805",
   },
   {
     date: "Jul 19",

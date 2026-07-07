@@ -17,7 +17,6 @@ describe("event location data", () => {
 
     expect(labels).toContain("Manhattan, NY");
     expect(labels).toContain("Jersey City, NJ");
-    expect(labels).toContain("Philadelphia, PA");
     expect(labels).toContain("San Francisco, CA");
     expect(labels).toContain("San Diego, CA");
     expect(labels).toContain("Los Angeles, CA");
@@ -28,7 +27,6 @@ describe("event location data", () => {
     const labels = allEvents.map(formatEventLocation);
 
     expect(labels).not.toContain("Manhattan, NY, NY");
-    expect(labels).not.toContain("Philadelphia, PA, PA");
     expect(labels).not.toContain("San Francisco, CA, CA");
   });
 });

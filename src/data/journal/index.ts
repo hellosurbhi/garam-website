@@ -44,6 +44,8 @@ import { religionDatingDeepPosts } from "./religion-dating-deep";
 import { lifestyleCompatibilityPosts } from "./lifestyle-compatibility";
 import { appGuideExtendedPosts } from "./app-guide-extended";
 import { socialMediaDesiDatingPosts } from "./social-media-desi-dating";
+import { businessPagesPosts } from "./business-pages";
+import { celebrationsPosts } from "./celebrations";
 
 /** All journal posts combined */
 export const journalPosts: JournalPost[] = [
@@ -80,6 +82,8 @@ export const journalPosts: JournalPost[] = [
   ...lifestyleCompatibilityPosts,
   ...appGuideExtendedPosts,
   ...socialMediaDesiDatingPosts,
+  ...businessPagesPosts,
+  ...celebrationsPosts,
 ];
 
 /** Sorted newest-first by datePublished. */

@@ -9,6 +9,7 @@ import {
 import { trackError, trackLeadEvent, identifyLead } from "@/lib/analytics";
 import { buildLeadAttribution } from "@/lib/leadAttribution";
 import { validateEmail } from "@/utils/validateEmail";
+import { withTimeout } from "@/utils/withTimeout";
 
 export interface FormState {
   applicationType: "Self" | "Nomination";
@@ -360,11 +361,18 @@ export function useApplyForm() {
     const turnstileSiteKey = import.meta.env.PUBLIC_TURNSTILE_SITE_KEY;
     if (turnstileSiteKey && turnstileToken) {
       try {
-        await fetch("/api/verify-turnstile", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ token: turnstileToken }),
-        });
+        const ctrl = new AbortController();
+        const timerId = setTimeout(() => ctrl.abort(), 8_000);
+        try {
+          await fetch("/api/verify-turnstile", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ token: turnstileToken }),
+            signal: ctrl.signal,
+          });
+        } finally {
+          clearTimeout(timerId);
+        }
         // Token is one-time-use — reset widget regardless of result
         setTurnstileToken("");
         if (window.turnstile && turnstileWidgetIdRef.current) {
@@ -372,7 +380,7 @@ export function useApplyForm() {
         }
         // Allow through even on verify failure — widget issues must not block real applicants
       } catch {
-        // Network error — allow submission through
+        // Network error or timeout — allow submission through
         setTurnstileToken("");
         if (window.turnstile && turnstileWidgetIdRef.current) {
           window.turnstile.reset(turnstileWidgetIdRef.current);
@@ -387,14 +395,18 @@ export function useApplyForm() {
         auth,
         { ref, uploadBytesResumable, getDownloadURL },
         storage,
-      ] = await Promise.all([
-        import("firebase/auth"),
-        getFirebaseAuth(),
-        import("firebase/storage"),
-        getFirebaseStorage(),
-      ]);
+      ] = await withTimeout(
+        Promise.all([
+          import("firebase/auth"),
+          getFirebaseAuth(),
+          import("firebase/storage"),
+          getFirebaseStorage(),
+        ]),
+        12_000,
+        "Firebase init",
+      );
 
-      await signInAnonymously(auth);
+      await withTimeout(signInAnonymously(auth), 10_000, "Firebase auth");
 
       const photoUrls = await Promise.all(
         photoFiles.map(async (file, i) => {
@@ -448,19 +460,24 @@ export function useApplyForm() {
         ...(form.howHeard ? { howHeard: form.howHeard } : {}),
       };
 
-      const [{ collection, addDoc, serverTimestamp }, db] = await Promise.all([
-        import("firebase/firestore"),
-        getFirebaseDb(),
-      ]);
-      await addDoc(collection(db, "applications"), {
-        ...applicationData,
-        emailNormalized: form.email.trim().toLowerCase(),
-        marketingConsent: form.marketingConsent,
-        termsAgreedAt: serverTimestamp(),
-        status: "New",
-        notes: "",
-        submittedAt: serverTimestamp(),
-      });
+      const [{ collection, addDoc, serverTimestamp }, db] = await withTimeout(
+        Promise.all([import("firebase/firestore"), getFirebaseDb()]),
+        12_000,
+        "Firestore init",
+      );
+      await withTimeout(
+        addDoc(collection(db, "applications"), {
+          ...applicationData,
+          emailNormalized: form.email.trim().toLowerCase(),
+          marketingConsent: form.marketingConsent,
+          termsAgreedAt: serverTimestamp(),
+          status: "New",
+          notes: "",
+          submittedAt: serverTimestamp(),
+        }),
+        15_000,
+        "Firestore write",
+      );
       // All uploaded — no cleanup needed
       uploadedRefs.fill(null);
 
@@ -484,12 +501,18 @@ export function useApplyForm() {
         country: form.country,
       });
 
-      // Fire-and-forget: email notification (does not affect submission)
+      // Fire-and-forget: email notification (does not affect submission outcome)
       fetch("/api/notify-application", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(applicationData),
-      }).catch(() => {});
+      }).catch((err: unknown) => {
+        trackError({
+          error_message: err instanceof Error ? err.message : String(err),
+          error_type: "api_error",
+          component: "useApplyForm",
+        });
+      });
 
       setForm(INITIAL);
       setCityInput("");

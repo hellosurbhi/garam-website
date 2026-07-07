@@ -144,6 +144,14 @@
 
 **Rule:** Footer Shows must stay capped at five city links plus one `/cities` All Cities link, the footer Explore list must not include `/links`, and `noindex` pages must not render or enable the custom cursor. Add or update regression tests whenever touching these areas.
 
+## Removing `unsafe-inline` from CSP breaks Astro island hydration
+
+**What went wrong:** PR #121 externalized GTM, PostHog and Meta Pixel scripts and tightened CSP by removing `unsafe-inline` from `script-src`. The apply form stopped working: the React island skeleton rendered but never mounted. The browser blocked Astro's hydration bootstrap because Astro generates inline scripts at build time for island registration and the component runtime.
+
+**Why:** Astro's island hydration depends on inline `<script>` tags it injects at build time. These are framework internals — they cannot be externalized to a `.js` file. Without `unsafe-inline`, every Astro `client:only` island silently fails to mount. The error is not obvious: the page renders server HTML correctly, only client interactivity is dead.
+
+**Rule:** On this site, `script-src` CSP must keep `unsafe-inline` permanently because of Astro island hydration. The correct tightening strategy is to externalize third-party scripts (GTM, PostHog, Meta Pixel) into `public/js/` files — which PR #121 did successfully — and add their domains to the CSP allow-list. Do not remove `unsafe-inline` from `script-src` without first migrating away from Astro islands entirely.
+
 ## Review the active PR stack before broad production rewrites
 
 **What went wrong:** I initially framed the analytics/performance cleanup too narrowly, even though several open PRs were already part of a broad rewrite stack.

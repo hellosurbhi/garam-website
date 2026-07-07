@@ -565,8 +565,8 @@ test.describe("FAQ page deep", () => {
 test.describe("Apply page deep", () => {
   test.beforeEach(async ({ page }) => {
     await page.goto("/apply", { waitUntil: "domcontentloaded" });
-    // Wait for React hydration
-    await page.waitForSelector("input#field-name", {
+    // Wait for React hydration — apply-form appears once the island mounts
+    await page.waitForSelector("[data-testid=apply-form]", {
       state: "visible",
       timeout: 15000,
     });

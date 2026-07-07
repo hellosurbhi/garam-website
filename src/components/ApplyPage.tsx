@@ -211,7 +211,7 @@ function ApplyPageInner() {
                 <p>{APPLY_PAGE.selectivityNote}</p>
               </div>
 
-              <form onSubmit={handleSubmit} noValidate>
+              <form onSubmit={handleSubmit} noValidate data-testid="apply-form">
                 <fieldset
                   disabled={submitting}
                   className={styles.formFieldset}
@@ -843,6 +843,7 @@ function ApplyPageInner() {
                     type="submit"
                     disabled={submitting || !isValid}
                     data-submitting={submitting || undefined}
+                    data-testid="apply-submit"
                     className={styles.submitButton}
                   >
                     {submitting ? (

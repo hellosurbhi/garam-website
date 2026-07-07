@@ -521,7 +521,7 @@ export const diasporaDeepDivesPosts: JournalPost[] = [
     ],
     relatedSlugs: [
       "south-indian-dating-culture",
-      "christian-south-asian-dating",
+      "christian-south-asian-dating-guide",
       "first-gen-indian-american-dating",
     ],
     body: [
@@ -1218,7 +1218,7 @@ export const diasporaDeepDivesPosts: JournalPost[] = [
     ],
     relatedSlugs: [
       "south-indian-dating-culture",
-      "christian-south-asian-dating",
+      "christian-south-asian-dating-guide",
       "third-culture-kid-dating",
     ],
     body: [

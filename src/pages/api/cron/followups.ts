@@ -11,6 +11,7 @@ import {
 } from "@/data/emails";
 import { verifyCronSecret } from "@/lib/cronAuth";
 import { jsonResponse } from "@/lib/http";
+import { toMs } from "@/utils/date";
 
 const SKIP_FOLLOWUP_STATUSES = new Set([
   "Rejected",
@@ -28,12 +29,6 @@ const D7 = 7 * 24 * 60 * 60 * 1000;
 const H24 = 24 * 60 * 60 * 1000;
 // Hard cap per section to bound cron execution time within Vercel's function limit.
 const MAX_PER_RUN = 50;
-
-function toMs(val: unknown): number | null {
-  if (typeof val !== "string") return null;
-  const ms = Date.parse(val);
-  return isNaN(ms) ? null : ms;
-}
 
 function todayNYC(): string {
   return new Date().toLocaleDateString("en-CA", {

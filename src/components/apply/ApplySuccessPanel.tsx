@@ -4,7 +4,7 @@ import { SOCIAL_URLS } from "@/data/socials";
 import { buildTicketUrl } from "@/utils/eventUrl";
 import { formatEventLocation } from "@/utils/eventCity";
 import { buildLeadAttribution } from "@/lib/leadAttribution";
-import { capture } from "@/lib/analyticsCapture";
+import { capture } from "@/lib/analytics";
 import styles from "@/components/ApplyPage.module.css";
 
 export function ApplySuccessPanel() {

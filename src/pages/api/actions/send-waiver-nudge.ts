@@ -7,6 +7,7 @@ import { fsGet, fsPatch, fsAdd } from "@/lib/firestoreRest";
 import { sendMail } from "@/lib/zohoMailer";
 import { waiverNudge } from "@/data/emails";
 import { events } from "@/data/events";
+import { jsonResponse as json } from "@/lib/http";
 
 const Schema = z.object({
   applicationId: z
@@ -15,13 +16,6 @@ const Schema = z.object({
     .max(200)
     .refine((v) => !v.includes("/"), { message: "Invalid applicationId" }),
 });
-
-function json(data: Record<string, unknown>, status = 200) {
-  return new Response(JSON.stringify(data), {
-    status,
-    headers: { "Content-Type": "application/json" },
-  });
-}
 
 export const POST: APIRoute = async ({ request }) => {
   const identity = await verifyAdminIdentity(

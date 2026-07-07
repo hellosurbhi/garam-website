@@ -1,5 +1,12 @@
 import { getFirestoreAccessToken } from "./firestoreAdmin";
 
+function assertSafePath(path: string): void {
+  const segments = path.split("/");
+  if (segments.some((s) => s === ".." || s === "." || s === "")) {
+    throw new Error(`Unsafe Firestore path segment in: ${path}`);
+  }
+}
+
 type FirestoreValue =
   | { nullValue: null }
   | { booleanValue: boolean }
@@ -64,6 +71,7 @@ function baseUrl(): string {
 export async function fsGet(
   docPath: string,
 ): Promise<Record<string, unknown> | null> {
+  assertSafePath(docPath);
   const token = await getFirestoreAccessToken();
   const res = await fetch(`${baseUrl()}/${docPath}`, {
     headers: { Authorization: `Bearer ${token}` },
@@ -79,6 +87,7 @@ export async function fsPatch(
   docPath: string,
   fields: Record<string, unknown>,
 ): Promise<void> {
+  assertSafePath(docPath);
   const token = await getFirestoreAccessToken();
   const fieldNames = Object.keys(fields);
   const mask = fieldNames
@@ -104,6 +113,7 @@ export async function fsAdd(
   collectionPath: string,
   fields: Record<string, unknown>,
 ): Promise<string> {
+  assertSafePath(collectionPath);
   const token = await getFirestoreAccessToken();
   const res = await fetch(`${baseUrl()}/${collectionPath}`, {
     method: "POST",
@@ -233,6 +243,7 @@ export async function fsDeleteFields(
   docPath: string,
   fieldNames: string[],
 ): Promise<void> {
+  assertSafePath(docPath);
   const token = await getFirestoreAccessToken();
   const mask = fieldNames
     .map((f) => `updateMask.fieldPaths=${encodeURIComponent(f)}`)

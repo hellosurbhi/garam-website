@@ -6,6 +6,7 @@ import { verifyAdminIdentity } from "@/lib/verifyToken";
 import { fsGet, fsPatch, fsAdd } from "@/lib/firestoreRest";
 import { sendMail } from "@/lib/zohoMailer";
 import { rejection } from "@/data/emails";
+import { jsonResponse as json } from "@/lib/http";
 
 const Schema = z.object({
   applicationId: z
@@ -19,13 +20,6 @@ const Schema = z.object({
   decision: z.enum(["approve", "reject", "unsure"]),
   note: z.string().max(2000).optional(),
 });
-
-function json(data: Record<string, unknown>, status = 200) {
-  return new Response(JSON.stringify(data), {
-    status,
-    headers: { "Content-Type": "application/json" },
-  });
-}
 
 export const POST: APIRoute = async ({ request }) => {
   const identity = await verifyAdminIdentity(
@@ -94,7 +88,10 @@ export const POST: APIRoute = async ({ request }) => {
       });
       emailSent = true;
     } catch (e) {
-      console.error(`Rejection email failed for application ${applicationId}`, e);
+      console.error(
+        `Rejection email failed for application ${applicationId}`,
+        e,
+      );
     }
 
     if (emailSent) {

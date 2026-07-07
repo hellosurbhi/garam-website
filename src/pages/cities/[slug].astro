@@ -15,7 +15,7 @@ import { isPublished } from "@/utils/date";
 import { SOCIAL_URLS } from "@/data/socials";
 import CityEventTicketEmbed from "@/components/cities/CityEventTicketEmbed.astro";
 import { buildTicketUrl } from "@/utils/eventUrl";
-import { domainFromUrl, vendorFromUrl } from "@/lib/analyticsCapture";
+import { domainFromUrl, vendorFromUrl } from "@/lib/analytics";
 import { EVENTS, CITY_FOLLOW } from "@/data/copy";
 
 export function getStaticPaths() {
@@ -822,7 +822,8 @@ function renderCityText(text: string, href: string): string {
         const errorEl = document.getElementById("waitlist-error");
         if (phoneRaw && !phone) {
           if (errorEl) {
-            errorEl.textContent = "Please enter a valid phone number or leave it blank.";
+            errorEl.textContent =
+              "Please enter a valid phone number or leave it blank.";
             errorEl.removeAttribute("hidden");
           }
           return;

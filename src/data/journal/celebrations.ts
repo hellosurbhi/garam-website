@@ -141,7 +141,7 @@ export const celebrationsPosts: JournalPost[] = [
     ],
     relatedSlugs: [
       "retirement-party-entertainment-ideas",
-      "bachelor-party-ideas-nyc",
+      "sangeet-entertainment-ideas",
       "what-actually-happens-at-a-live-comedy-dating-show",
     ],
     ctaConfig: {
@@ -479,7 +479,7 @@ export const celebrationsPosts: JournalPost[] = [
     excerpt:
       "Every desi retiree has the same fantasy. They've worked for 35 years. Their kids are settled. Their grandkids are old enough. And the one thing they want to do before they retire their matchmaking ambitions along with their career is get at least one more grandkid paired off. The retirement party is the perfect opportunity.",
     keyTakeaway:
-      "For a desi retirement party: book a private live dating show where the retiree nominates single grandkids, nieces and nephews as contestants. The whole family plays matchmaker. Complete privacy. No content recorded. Flat fee.",
+      "For a desi retirement party: book a private live dating show where the retiree nominates their single grandkids, nieces and nephews as contestants. The whole family plays matchmaker. Complete privacy. No content recorded. Flat fee.",
     body: [
       {
         type: "p",
@@ -1197,7 +1197,7 @@ export const celebrationsPosts: JournalPost[] = [
     ],
     relatedSlugs: [
       "indian-wedding-reception-entertainment",
-      "bachelor-party-ideas-nyc",
+      "birthday-party-entertainment-ideas-nyc",
       "live-shows-where-meet-people-nyc",
     ],
     ctaConfig: {

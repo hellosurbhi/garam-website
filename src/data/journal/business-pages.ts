@@ -173,7 +173,7 @@ export const businessPagesPosts: JournalPost[] = [
     excerpt:
       "Social media advertising in 2026 is more expensive, less effective and more annoying than it has ever been. Every brand knows this. The ones paying attention are quietly moving budget somewhere else.",
     keyTakeaway:
-      "Sponsoring a live event like Garam Masala Dating gives brands direct access to 250 young professional South Asian New Yorkers per show: a high-intent, underserved demographic that social media ads rarely reach effectively.",
+      "Sponsoring a live event like Garam Masala Dating gives brands direct access to 250 young professional South Asian New Yorkers per show: a high-intent, culturally specific and underserved demographic that social media ads rarely reach effectively.",
     body: [
       {
         type: "p",

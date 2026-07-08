@@ -909,7 +909,7 @@ export const religionDatingDeepPosts: JournalPost[] = [
     excerpt:
       "You're in love. Religion feels manageable. Then someone says 'but what about the children?' And suddenly it's not manageable at all.",
     keyTakeaway:
-      "For interfaith South Asian couples, the children's religious upbringing is the most likely flashpoint for family conflict after marriage. Have this conversation explicitly before the engagement. 'We'll figure it out' is not a plan.",
+      "For interfaith South Asian couples, the children's religious upbringing is the most likely flashpoint for family conflict after marriage. Have this conversation explicitly, well before the engagement. 'We'll figure it out' is not a plan.",
     faqs: [
       {
         q: "When should an interfaith couple have the children conversation?",

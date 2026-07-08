@@ -439,7 +439,7 @@ export const searchAnswersPosts: JournalPost[] = [
     relatedSlugs: [
       "modern-arranged-marriage-2026",
       "how-to-tell-indian-parents-about-partner",
-      "is-it-normal-desi-parents-vet-date",
+      "desi-red-flags-green-flags",
     ],
   },
   {

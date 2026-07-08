@@ -429,7 +429,7 @@ export const desiCultureValuesPosts: JournalPost[] = [
     relatedSlugs: [
       "abcd-vs-fob-dating-divide",
       "third-culture-kid-dating",
-      "when-youre-more-american-than-desi-partner-knows",
+      "first-gen-indian-american-dating",
     ],
     faqs: [
       {

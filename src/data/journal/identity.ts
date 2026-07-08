@@ -765,15 +765,15 @@ export const identityPosts: JournalPost[] = [
       },
       {
         type: "p",
-        text: "NRI dating is a specific flavor of the desi dating challenge. You share DNA with <a href='/journal/first-gen-indian-american-dating'>first-gen Indian Americans</a> but you're not the same. You grew up in India, which means your formative cultural experiences were Indian, the language, the food, the festivals, the specific social textures that don't translate into a profile. You moved abroad as an adult, which means you've built a whole second self that is also genuinely you. Now you're dating from the intersection of those two selves.",
+        text: "NRI dating is its own category. The first-gen desi experience is not yours. You share surface-level overlap with <a href='/journal/first-gen-indian-american-dating'>first-gen Indian Americans</a> but you're not the same. You grew up in India, which means your formative cultural experiences were Indian, the language, the food, the festivals, the specific social textures that don't translate into a profile. You moved abroad as an adult, which means you've built a whole second self that is also genuinely you. Now you're dating from the intersection of those two selves.",
       },
       {
         type: "h2",
-        text: "The cultural hybridity problem in NRI dating",
+        text: "You Don't Quite Fit Either Dating Pool. That's the Real Issue.",
       },
       {
         type: "p",
-        text: "You don't quite fit the 'traditional Indian' dating pool because you've changed. The person you were at 22 in Delhi or Mumbai is not the person who has spent five years building a career in New York or London. You have different expectations now. Different freedoms you've claimed for yourself. Different ideas about what a relationship looks like that weren't available to you in your parents' framework.",
+        text: "The 'traditional Indian' dating pool doesn't quite fit anymore. The person you were at 22 in Delhi or Mumbai is not the person who has spent five years building a career in New York or London. You have different expectations now. Different freedoms you've claimed for yourself. Different ideas about what a relationship looks like that weren't available to you in your parents' framework.",
       },
       {
         type: "p",

@@ -58,6 +58,8 @@ export const FOOTER_INVOLVED_LINKS: FooterLink[] = [
   { label: "Apply to Date on Stage", href: "/apply" },
   { label: "Buy Tickets", href: "/tickets" },
   { label: "Corporate Events", href: "/corporate" },
+  { label: "Parties & Celebrations", href: "/celebrate" },
+  { label: "South Asian Events", href: "/desi-events" },
   { label: "Sponsorship", href: "/sponsorship" },
 ];
 

@@ -65,11 +65,11 @@ export const arrangedMarriagePosts: JournalPost[] = [
       },
       {
         type: "h2",
-        text: "What satisfaction surveys actually measure",
+        text: "Why the satisfaction surveys are even messier than the divorce numbers",
       },
       {
         type: "p",
-        text: "Satisfaction surveys are the second weapon in this debate, and they are equally complicated. Several studies, including a widely cited one from Robert Epstein at Harvard, found that arranged marriage couples reported higher love and satisfaction scores after ten years than love marriage couples. This gets shared as proof that arranged marriages are happier.",
+        text: "The second weapon in this debate is satisfaction surveys, and they are just as compromised. Several studies, including a widely cited one from Robert Epstein at Harvard, found that arranged marriage couples reported higher love and satisfaction scores after ten years than love marriage couples. This gets shared constantly as proof that arranged marriages are happier. It is not clean proof of anything.",
       },
       {
         type: "p",
@@ -81,7 +81,7 @@ export const arrangedMarriagePosts: JournalPost[] = [
       },
       {
         type: "h2",
-        text: "How the modern version differs from the traditional one",
+        text: "Semi-arranged is not the same as arranged",
       },
       {
         type: "p",
@@ -105,7 +105,7 @@ export const arrangedMarriagePosts: JournalPost[] = [
       },
       {
         type: "h2",
-        text: "Where that leaves you in 2026",
+        text: "What the data actually means for the decision you are making",
       },
       {
         type: "p",
@@ -544,7 +544,7 @@ export const arrangedMarriagePosts: JournalPost[] = [
       },
       {
         type: "h2",
-        text: "The sections that actually matter",
+        text: "What the biodata actually needs to do",
       },
       {
         type: "p",
@@ -560,7 +560,7 @@ export const arrangedMarriagePosts: JournalPost[] = [
       },
       {
         type: "h2",
-        text: "What to skip",
+        text: "What to cut from your biodata right now",
       },
       {
         type: "p",
@@ -572,7 +572,7 @@ export const arrangedMarriagePosts: JournalPost[] = [
       },
       {
         type: "h2",
-        text: "NRI-specific considerations",
+        text: "What NRI biodatas need to say that others can skip",
       },
       {
         type: "p",
@@ -785,7 +785,7 @@ export const arrangedMarriagePosts: JournalPost[] = [
       },
       {
         type: "h2",
-        text: "The cultural expectations gap",
+        text: "The expectations mismatch nobody warns you about",
       },
       {
         type: "p",
@@ -813,7 +813,7 @@ export const arrangedMarriagePosts: JournalPost[] = [
       },
       {
         type: "h2",
-        text: "What works for NRIs",
+        text: "What NRIs who navigate this well do differently",
       },
       {
         type: "p",
@@ -894,11 +894,11 @@ export const arrangedMarriagePosts: JournalPost[] = [
       },
       {
         type: "h2",
-        text: "What happens when you control for exit barriers",
+        text: "What the diaspora data actually shows",
       },
       {
         type: "p",
-        text: "When researchers study South Asian diaspora communities in the UK and US, where divorce is legally easy, financially accessible, and socially more accepted, the divorce rate for arranged marriages rises significantly. It does not reach the rates of the general Western population, but the gap is much smaller than the India comparison suggests. This is not because diaspora arranged marriages are less 'real.' It is because the exit barrier is lower, which means the statistic is measuring something closer to actual preference.",
+        text: "Move the study to the UK or US, where divorce is legally simple and socially far more accepted, and the arranged marriage divorce rate rises. Significantly. It still does not reach the general Western population average, but the gap is a fraction of what the India comparison implies. This is not because diaspora arranged marriages are less committed. It is because when exiting a marriage is actually possible, the divorce rate starts measuring something closer to what people actually want.",
       },
       {
         type: "p",
@@ -922,7 +922,7 @@ export const arrangedMarriagePosts: JournalPost[] = [
       },
       {
         type: "h2",
-        text: "What we should actually measure",
+        text: "Better questions than the divorce rate",
       },
       {
         type: "p",
@@ -934,7 +934,7 @@ export const arrangedMarriagePosts: JournalPost[] = [
       },
       {
         type: "h2",
-        text: "What this means for decisions you are making now",
+        text: "What it means when you are actually in the decision",
       },
       {
         type: "p",

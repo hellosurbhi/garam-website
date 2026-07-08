@@ -28,6 +28,24 @@ import { arrangedMarriagePosts } from "./arranged-marriage";
 import { communityDeepDivesPosts } from "./community-deep-dives";
 import { tipsPosts } from "./tips";
 import { liveShowsPosts } from "./live-shows";
+import { outsidePerspectivePosts } from "./outside-perspective";
+import { mentalHealthDatingPosts } from "./mental-health-dating";
+import { diasporaDeepDivesPosts } from "./diaspora-deep-dives";
+import { cityDatingGuidesPosts } from "./city-dating-guides";
+import { relationshipAdvicePosts } from "./relationship-advice";
+import { nycExperiencesPosts } from "./nyc-experiences";
+import { desiCultureValuesPosts } from "./desi-culture-values";
+import { relationshipMilestonesPosts } from "./relationship-milestones";
+import { popCultureDatingPosts } from "./pop-culture-dating";
+import { searchAnswersPosts } from "./search-answers";
+import { careerLifeDatingPosts } from "./career-life-dating";
+import { attachmentPsychologyDesiPosts } from "./attachment-psychology-desi";
+import { religionDatingDeepPosts } from "./religion-dating-deep";
+import { lifestyleCompatibilityPosts } from "./lifestyle-compatibility";
+import { appGuideExtendedPosts } from "./app-guide-extended";
+import { socialMediaDesiDatingPosts } from "./social-media-desi-dating";
+import { businessPagesPosts } from "./business-pages";
+import { celebrationsPosts } from "./celebrations";
 
 /** All journal posts combined */
 export const journalPosts: JournalPost[] = [
@@ -48,6 +66,24 @@ export const journalPosts: JournalPost[] = [
   ...communityDeepDivesPosts,
   ...tipsPosts,
   ...liveShowsPosts,
+  ...outsidePerspectivePosts,
+  ...mentalHealthDatingPosts,
+  ...diasporaDeepDivesPosts,
+  ...cityDatingGuidesPosts,
+  ...relationshipAdvicePosts,
+  ...nycExperiencesPosts,
+  ...desiCultureValuesPosts,
+  ...relationshipMilestonesPosts,
+  ...popCultureDatingPosts,
+  ...searchAnswersPosts,
+  ...careerLifeDatingPosts,
+  ...attachmentPsychologyDesiPosts,
+  ...religionDatingDeepPosts,
+  ...lifestyleCompatibilityPosts,
+  ...appGuideExtendedPosts,
+  ...socialMediaDesiDatingPosts,
+  ...businessPagesPosts,
+  ...celebrationsPosts,
 ];
 
 /** Sorted newest-first by datePublished. */

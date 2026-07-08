@@ -1,0 +1,107 @@
+---
+import { JOURNAL_CTA_SOCIAL } from "@/data/copy";
+import { SOCIAL_URLS } from "@/data/socials";
+
+interface Props {
+  articleSlug: string;
+}
+
+const { articleSlug } = Astro.props;
+---
+
+<aside class="jcta-social" aria-label={JOURNAL_CTA_SOCIAL.ariaLabel}>
+  <p class="jcta-social__intro">{JOURNAL_CTA_SOCIAL.intro}</p>
+  <div class="jcta-social__btns">
+    <a
+      href={SOCIAL_URLS.youtube}
+      class="jcta-social__btn jcta-social__btn--youtube"
+      target="_blank"
+      rel="noopener noreferrer"
+      data-cta-position="journal_cta1_social"
+      data-cta-text={JOURNAL_CTA_SOCIAL.youtubeLabel}
+      data-article-slug={articleSlug}
+      data-ph-capture="youtube_click"
+      data-ph-cta="youtube"
+      data-ph-section="journal"
+    >
+      {JOURNAL_CTA_SOCIAL.youtubeLabel}
+    </a>
+    <a
+      href={SOCIAL_URLS.instagram}
+      class="jcta-social__btn jcta-social__btn--instagram"
+      target="_blank"
+      rel="noopener noreferrer"
+      data-cta-position="journal_cta1_social"
+      data-cta-text={JOURNAL_CTA_SOCIAL.instagramLabel}
+      data-article-slug={articleSlug}
+      data-ph-capture="instagram_click"
+      data-ph-cta="instagram"
+      data-ph-section="journal"
+    >
+      {JOURNAL_CTA_SOCIAL.instagramLabel}
+    </a>
+  </div>
+</aside>
+
+<style>
+  .jcta-social {
+    background: rgba(var(--brand-red-rgb), 0.055);
+    border: 1px solid rgba(var(--brand-red-rgb), 0.18);
+    border-radius: 8px;
+    padding: 20px 24px;
+    margin: 28px 0;
+  }
+
+  .jcta-social__intro {
+    font-family: var(--font-body), sans-serif;
+    font-size: 15px;
+    line-height: 1.6;
+    color: var(--charcoal);
+    margin: 0 0 16px;
+  }
+
+  .jcta-social__btns {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .jcta-social__btn {
+    display: block;
+    width: 100%;
+    padding: 15px 16px;
+    border-radius: 6px;
+    font-family: var(--font-body), sans-serif;
+    font-size: 16px;
+    font-weight: 600;
+    text-align: center;
+    text-decoration: none;
+    cursor: pointer;
+    transition: opacity 0.15s ease;
+  }
+
+  .jcta-social__btn:active {
+    transform: scale(0.97);
+  }
+
+  .jcta-social__btn--youtube {
+    background: var(--brand-red);
+    color: #fff;
+    border: 2px solid var(--brand-red);
+  }
+
+  .jcta-social__btn--youtube:hover {
+    background: var(--brand-red-dark);
+    border-color: var(--brand-red-dark);
+  }
+
+  .jcta-social__btn--instagram {
+    background: transparent;
+    color: var(--brand-red);
+    border: 2px solid var(--brand-red);
+  }
+
+  .jcta-social__btn--instagram:hover {
+    background: rgba(var(--brand-red-rgb), 0.06);
+  }
+</style>

@@ -138,7 +138,7 @@ const staticSecondaryCtas = applyCtas;
 // State C copy: no live event, so follow CTAs are primary and the waitlist
 // is the data capture beneath. {city} placeholders resolved here.
 const followIntro = CITY_FOLLOW.intro.replace("{city}", city.displayName);
-const followWaitlistSupport = CITY_FOLLOW.waitlistSupport.replace(
+const followWaitlistIntro = CITY_FOLLOW.waitlistIntro.replace(
   "{city}",
   city.displayName,
 );
@@ -158,12 +158,12 @@ const cityStatus = cityEvents.length
       }
     : city.status === "coming-soon"
       ? {
-          label: "Collecting demand",
-          text: "Waitlist signups determine where we announce next.",
+          label: `We're Coming to ${city.displayName}!`,
+          text: `${city.displayName} is on the tour list. Sign up below and help us get there! Everyone on the list gets tickets first when we announce.`,
         }
       : {
-          label: "Waitlist",
-          text: "No public ticket link is live right now.",
+          label: `${city.displayName} Waitlist`,
+          text: "No date is live yet. Get on the list and be first when tickets drop.",
         };
 
 function renderCityText(text: string, href: string): string {
@@ -231,10 +231,13 @@ function renderCityText(text: string, href: string): string {
 
       {
         cityEvents.length === 0 && (
-          <div class="city-status" data-status={cityStatus.label.toLowerCase()}>
-            <span>{cityStatus.label}</span>
-            <p>{cityStatus.text}</p>
-          </div>
+          <a
+            href="#waitlist"
+            class="city-status city-status--demand"
+          >
+            <span class="city-status__label">{cityStatus.label}</span>
+            <p class="city-status__text">{cityStatus.text}</p>
+          </a>
         )
       }
 
@@ -263,34 +266,6 @@ function renderCityText(text: string, href: string): string {
             ))}
           </section>
         ))
-      }
-
-      {/* Related journal articles */}
-      {
-        relatedPosts.length > 0 && (
-          <div class="city-articles">
-            <h3 class="city-articles__title">From the Journal</h3>
-            <div class="city-articles__list">
-              {relatedPosts.map((post) => (
-                <a
-                  href={`/journal/${post.slug}`}
-                  class="city-articles__card"
-                  data-ph-capture="cta_clicked"
-                  data-ph-cta="city_related_journal"
-                  data-ph-section="city_articles"
-                  data-cta-position="city_related_journal"
-                  data-cta-text={post.title}
-                  data-destination-url={`/journal/${post.slug}`}
-                  data-event-city={city.displayName}
-                  data-city-slug={city.slug}
-                >
-                  <span class="city-articles__card-title">{post.title}</span>
-                  <span class="city-articles__card-arrow">&rarr;</span>
-                </a>
-              ))}
-            </div>
-          </div>
-        )
       }
 
       {/* CTAs */}
@@ -451,7 +426,21 @@ function renderCityText(text: string, href: string): string {
                   <line x1="17.5" y1="6.5" x2="17.51" y2="6.5" />
                 </svg>
               </a>
-              <p class="city-follow__support">{followWaitlistSupport}</p>
+              <p class="city-follow__support">{followWaitlistIntro}</p>
+              <a
+                href="/tickets"
+                class="city-cta city-follow__btn city-follow__btn--nearby"
+                data-ph-capture="ticket_click"
+                data-ph-cta="city_follow_nearby"
+                data-ph-section="city_follow"
+                data-cta-position="city_follow_nearby"
+                data-cta-text={CITY_FOLLOW.nearbyCtaLabel}
+                data-destination-url="/tickets"
+                data-event-city={city.displayName}
+                data-city-slug={city.slug}
+              >
+                <span>{CITY_FOLLOW.nearbyCtaLabel}</span>
+              </a>
             </div>
           )
         }
@@ -630,7 +619,7 @@ function renderCityText(text: string, href: string): string {
       }
       {
         (
-          <div class="city-notify">
+          <div id="waitlist" class="city-notify">
             <div class="city-notify__steps">
               <div id="city-notify-step1">
                 <h3 class="city-notify__title">Stay in the Loop</h3>
@@ -722,6 +711,34 @@ function renderCityText(text: string, href: string): string {
                     set:html={renderCityText(item.a, applyHref)}
                   />
                 </details>
+              ))}
+            </div>
+          </div>
+        )
+      }
+
+      {/* Related journal articles */}
+      {
+        relatedPosts.length > 0 && (
+          <div class="city-articles">
+            <h3 class="city-articles__title">From the Journal</h3>
+            <div class="city-articles__list">
+              {relatedPosts.map((post) => (
+                <a
+                  href={`/journal/${post.slug}`}
+                  class="city-articles__card"
+                  data-ph-capture="cta_clicked"
+                  data-ph-cta="city_related_journal"
+                  data-ph-section="city_articles"
+                  data-cta-position="city_related_journal"
+                  data-cta-text={post.title}
+                  data-destination-url={`/journal/${post.slug}`}
+                  data-event-city={city.displayName}
+                  data-city-slug={city.slug}
+                >
+                  <span class="city-articles__card-title">{post.title}</span>
+                  <span class="city-articles__card-arrow">&rarr;</span>
+                </a>
               ))}
             </div>
           </div>
@@ -822,7 +839,8 @@ function renderCityText(text: string, href: string): string {
         const errorEl = document.getElementById("waitlist-error");
         if (phoneRaw && !phone) {
           if (errorEl) {
-            errorEl.textContent = "Please enter a valid phone number or leave it blank.";
+            errorEl.textContent =
+              "Please enter a valid phone number or leave it blank.";
             errorEl.removeAttribute("hidden");
           }
           return;
@@ -1056,29 +1074,39 @@ function renderCityText(text: string, href: string): string {
   }
 
   .city-status {
-    display: grid;
-    gap: 4px;
+    display: block;
     margin: 0 0 28px;
-    padding: 12px 14px;
-    border: 1px solid rgba(var(--brand-red-rgb), 0.16);
-    border-radius: 8px;
-    background: rgba(var(--brand-red-rgb), 0.04);
+    padding: 16px 18px;
+    border: 1.5px solid rgba(var(--brand-red-rgb), 0.28);
+    border-radius: 10px;
+    background: rgba(var(--brand-red-rgb), 0.05);
+    text-decoration: none;
+    transition:
+      background 0.15s ease,
+      border-color 0.15s ease;
   }
 
-  .city-status span {
+  .city-status--demand:hover {
+    background: rgba(var(--brand-red-rgb), 0.09);
+    border-color: rgba(var(--brand-red-rgb), 0.4);
+  }
+
+  .city-status__label {
+    display: block;
     font-family: var(--font-body), sans-serif;
     font-size: 12px;
     font-weight: 800;
     letter-spacing: 0.08em;
     text-transform: uppercase;
     color: var(--brand-red);
+    margin-bottom: 6px;
   }
 
-  .city-status p {
+  .city-status__text {
     margin: 0;
     font-family: var(--font-body), sans-serif;
     font-size: 14px;
-    line-height: 1.45;
+    line-height: 1.5;
     color: var(--charcoal);
   }
 
@@ -1235,6 +1263,19 @@ function renderCityText(text: string, href: string): string {
     line-height: 1.55;
     color: var(--muted);
     margin: 6px 0 2px;
+  }
+
+  .city-follow__btn--nearby {
+    border-color: var(--charcoal);
+    background: transparent;
+    color: var(--charcoal);
+    margin-top: 4px;
+  }
+
+  @media (hover: hover) and (pointer: fine) {
+    .city-follow__btn--nearby:hover {
+      background: rgba(0, 0, 0, 0.04);
+    }
   }
 
   .city-ctas {

@@ -122,7 +122,7 @@ export const PAGES = {
     contestantHeading: "Want to be on stage?",
     contestantBody:
       "We cast contestants from the audience all the time. Apply now and we might just put you on a blind date in front of 250 people.",
-    contestantCta: "Apply to Be a Contestant",
+    contestantCta: "Apply to Be a Contestant!",
     shareHeading: "Tell a friend",
     shareBody:
       "The more the merrier. Share the show and bring someone who needs a night out.",
@@ -130,7 +130,7 @@ export const PAGES = {
     emailHeading: "Stay in the loop",
     emailBody:
       "New shows drop fast and sell out faster. Get on the list and you'll hear first.",
-    emailCta: "Join the List",
+    emailCta: "Join the List!",
     backCta: "See All Shows",
   },
 } as const;
@@ -227,32 +227,42 @@ export const EXPERIENCE_STEPS = [
   },
 ];
 
-/**
- * Follow block shown after every journal article body. Split into
- * segments so the component can wrap the platform names in tracked links.
- */
-export const JOURNAL_FOLLOW = {
-  ariaLabel: "Follow the show",
+export const JOURNAL_CTA_SOCIAL = {
   intro:
-    "This journal comes from Garam Masala Dating, a show that sells out weekly in NYC. Watch a date before you attend one.",
-  youtubeLabel: "Watch full episodes on YouTube",
+    "Garam Masala Dating is a live comedy dating show on a national and international tour. Real singles. Real blind dates. Real chaos on stage.",
+  youtubeLabel: "Watch Full Episodes on YouTube",
   instagramLabel: "Follow on Instagram",
+  ariaLabel: "Watch the show",
+} as const;
+
+export const JOURNAL_CTA_WAITLIST = {
+  intro:
+    "We're on a national tour and adding new cities fast. Drop your email and we'll let you know when we hit your city!",
+  ctaLabel: "Alert Me When You're Near",
+} as const;
+
+export const JOURNAL_CTA_TICKETS = {
+  introPre: "We tour nationally and internationally. Find out if we're ",
+  introPerformingText: "performing near you",
+  introMid: ", or ",
+  introApplyText: "apply to get on stage",
+  introPost: " yourself!",
+  ticketsLabel: "See Upcoming Shows",
+  applyLabel: "Apply to Be a Contestant",
 } as const;
 
 /**
  * Follow CTA shown as the PRIMARY action on city pages with no live event.
- * When the event does not exist, the show only exists on YouTube and
- * Instagram, so those become the main call to action, with the waitlist
- * beneath as the data capture for future tickets.
  */
 export const CITY_FOLLOW = {
   // {city} is replaced at render time with the city display name.
   intro:
-    "There's no {city} show on sale yet. The show sells out weekly in NYC, so watch it there until we bring it to you.",
-  youtubeLabel: "Watch full episodes on YouTube",
+    "No {city} dates are live yet. The show tours nationally and sells out every stop. Watch full episodes while we make our way to you!",
+  youtubeLabel: "Watch Full Episodes on YouTube",
   instagramLabel: "Follow on Instagram",
-  waitlistSupport:
-    "Tickets for {city} don't exist yet. Waitlist signups decide where we go next, and the list gets tickets first.",
+  waitlistIntro:
+    "Help bring us to {city}! Everyone on the list gets first access when tickets drop.",
+  nearbyCtaLabel: "See All Upcoming Shows",
 } as const;
 
 /** Labels for the visible review verdict box on app review journal posts. */

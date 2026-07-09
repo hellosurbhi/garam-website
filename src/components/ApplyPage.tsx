@@ -34,6 +34,7 @@ import { TermsModal } from "./apply/TermsModal";
 import { ApplySuccessPanel } from "./apply/ApplySuccessPanel";
 import { PhotoUploadField } from "./apply/PhotoUploadField";
 import { useApplyForm } from "./apply/useApplyForm";
+import { getFriendFirstName } from "@/utils/nomination";
 
 type NavWithMC = Navigator & {
   modelContext: {
@@ -193,6 +194,9 @@ function ApplyPageInner() {
   }, [setTurnstileToken, turnstileWidgetIdRef]);
 
   const isNomination = form.applicationType === "Nomination";
+  const friendFirstName = isNomination
+    ? getFriendFirstName(form.name)
+    : undefined;
 
   return (
     <>
@@ -248,16 +252,16 @@ function ApplyPageInner() {
                   {isNomination && (
                     <div className={styles.nominationNotice}>
                       <p>
-                        All contact info you fill in below is your{" "}
-                        <strong>friend's</strong>, not yours.{" "}
-                        {APPLY_PAGE.nominationContactNote}
+                        {APPLY_PAGE.nominationContactNote(friendFirstName)}
                       </p>
                     </div>
                   )}
 
                   <div className={styles.section}>
                     <SectionTitle>
-                      {isNomination ? "About Your Friend" : "About You"}
+                      {isNomination
+                        ? `About ${friendFirstName ?? "Your Friend"}`
+                        : "About You"}
                     </SectionTitle>
 
                     <div className={styles.gridTwo}>
@@ -370,7 +374,7 @@ function ApplyPageInner() {
                     <fieldset className={styles.seenShowSection}>
                       <legend className={styles.consentQuestion}>
                         {isNomination
-                          ? "Has your friend attended a Garam Masala Dating show before?"
+                          ? `Has ${friendFirstName ?? "your friend"} attended a Garam Masala Dating show before?`
                           : "Have you attended a Garam Masala Dating show before?"}
                       </legend>
                       <div className={styles.radioGroup}>
@@ -407,7 +411,7 @@ function ApplyPageInner() {
                           Almost every contestant we cast came to a show as a
                           Stealer first. Without that,{" "}
                           {isNomination
-                            ? "they likely won't be selected."
+                            ? `${friendFirstName ?? "they"} likely won't be selected.`
                             : "you likely won't be selected."}{" "}
                           Use code <strong>STEALER</strong> for 20% off (only
                           valid for Garam Masala produced events).{" "}
@@ -463,7 +467,7 @@ function ApplyPageInner() {
                     <FieldGroup
                       label={
                         isNomination
-                          ? "Instagram handle @ we wanna stalk them 👀"
+                          ? `Instagram handle @ we wanna stalk ${friendFirstName ?? "them"} 👀`
                           : "Instagram handle @ we wanna stalk you 👀"
                       }
                       required
@@ -511,7 +515,12 @@ function ApplyPageInner() {
 
                     {/* ── Contact accuracy note ────────────── */}
                     <div className={styles.contactAccuracyNote}>
-                      <p>{APPLY_PAGE.contactAccuracyNote}</p>
+                      <p>
+                        {APPLY_PAGE.contactAccuracyNote(
+                          isNomination,
+                          friendFirstName,
+                        )}
+                      </p>
                     </div>
 
                     <FieldGroup
@@ -549,7 +558,7 @@ function ApplyPageInner() {
                         onChange={(e) => set("phone", e.target.value)}
                         placeholder={
                           isNomination
-                            ? "Friend's phone number"
+                            ? `${friendFirstName ?? "Friend"}'s phone number`
                             : "+1 (555) 000-0000"
                         }
                         className={styles.input}
@@ -673,7 +682,9 @@ function ApplyPageInner() {
                             }
                           />
                           <span>
-                            {APPLY_PAGE.nominationConsentLabel}
+                            {APPLY_PAGE.nominationConsentLabel(
+                              friendFirstName,
+                            )}
                             <span className={styles.requiredMark}>*</span>
                           </span>
                         </label>
@@ -704,7 +715,7 @@ function ApplyPageInner() {
                     <FieldGroup
                       label={
                         isNomination
-                          ? "What's your friend's type... (we will do our best to match them)"
+                          ? `What's ${friendFirstName ? `${friendFirstName}'s` : "your friend's"} type... (we will do our best to match ${friendFirstName ?? "them"})`
                           : "What's your type... (we will do our best to match you)"
                       }
                       htmlFor="field-type"
@@ -722,7 +733,7 @@ function ApplyPageInner() {
                     <FieldGroup
                       label={
                         isNomination
-                          ? "Why would your friend be a great fit? (optional)"
+                          ? `Why would ${friendFirstName ?? "your friend"} be a great fit? (optional)`
                           : "Why would you be a great fit?"
                       }
                     >
@@ -749,8 +760,10 @@ function ApplyPageInner() {
                     }
                   >
                     <legend className={styles.consentQuestion}>
-                      I grant Garam Masala Dating permission to use any of these
-                      responses and casting submissions for marketing purposes.
+                      {APPLY_PAGE.marketingConsentQuestion(
+                        isNomination,
+                        friendFirstName,
+                      )}
                       <span className={styles.requiredMark}>*</span>
                     </legend>
                     <div className={styles.radioGroup}>
@@ -790,7 +803,10 @@ function ApplyPageInner() {
                     )}
                     {form.marketingConsent === "no" && (
                       <p className={styles.noConsentWarning} role="alert">
-                        {APPLY_PAGE.noConsentWarning}
+                        {APPLY_PAGE.noConsentWarning(
+                          isNomination,
+                          friendFirstName,
+                        )}
                       </p>
                     )}
                   </fieldset>

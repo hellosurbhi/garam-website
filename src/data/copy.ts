@@ -145,16 +145,30 @@ export const APPLY_PAGE = {
     "Comfortable on camera",
     "Single (for the night 👀)",
   ] as readonly string[],
-  noConsentWarning:
-    "Selecting No means you will not be considered. You must be okay going viral to apply.",
+  noConsentWarning: (isNomination: boolean, friendName?: string): string => {
+    if (!isNomination) {
+      return "Selecting No means you will not be considered. You must be okay going viral to apply.";
+    }
+    const subject = friendName ?? "your friend";
+    return `Selecting No means ${subject} will not be considered. Being okay with going viral is required for ${subject} to apply.`;
+  },
   selectivityNote:
-    "We receive 2,000+ applications and cast a handful per show. If you were not selected, please do not take it personally. The best way to get on stage is to come to a show as a Stealer. That is how most of our main contestants are found. It is your real audition. Use code STEALER for 20% off any Garam Masala event.",
-  contactAccuracyNote:
-    "Real email, real phone, real Instagram. No burner accounts, no fake info. If we cannot reach you, you will not hear from us for next steps.",
-  nominationConsentLabel:
-    "I am submitting this on behalf of someone I know, with their permission. They will not be shocked to hear from us.",
-  nominationContactNote:
-    "All contact info above is your friend's, not yours. Double-check every detail. If we cannot reach them, they will never hear from us.",
+    "We receive 2,000+ applications and cast a handful per show. If you were not selected, please do not take it personally. The best way to get on stage is to come to a show as a Stealer. That is how most of our main contestants are found. It is your real audition. Use code STEALER for 20% off (only valid for Garam Masala produced events).",
+  contactAccuracyNote: (isNomination: boolean, friendName?: string): string => {
+    if (!isNomination) {
+      return "Real email, real phone, real Instagram. No burner accounts, no fake info. If we cannot reach you, you will not hear from us for next steps.";
+    }
+    const subject = friendName ?? "your friend";
+    return `Real email, real phone, real Instagram, all ${subject}'s. No burner accounts, no fake info. If we cannot reach ${subject}, they will not hear from us for next steps.`;
+  },
+  marketingConsentQuestion: (isNomination: boolean, friendName?: string): string =>
+    isNomination
+      ? `I grant Garam Masala Dating permission to use ${friendName ? `${friendName}'s` : "my friend's"} responses and casting submissions for marketing purposes.`
+      : "I grant Garam Masala Dating permission to use any of these responses and casting submissions for marketing purposes.",
+  nominationConsentLabel: (friendName?: string): string =>
+    `I am submitting this on behalf of ${friendName ?? "someone I know"}, with their permission. They will not be shocked to hear from us.`,
+  nominationContactNote: (friendName?: string): string =>
+    `All contact info below is ${friendName ? `${friendName}'s` : "your friend's"}, not yours. Double-check every detail. If we cannot reach them, they will never hear from us.`,
   headingSelf: "Applying for yourself",
   headingNomination: "Nominating a friend",
   photoGuidanceHeading: "Photos: up to 10",

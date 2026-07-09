@@ -173,3 +173,11 @@ Astro SSG cannot use nonces (requires a server per request) and cannot hash thes
 The real XSS guards on this site are Firebase security rules and Firestore field-level validation, not the CSP. The meaningful CSP work from PR #121 (externalizing GTM, PostHog, and Meta Pixel as allowlisted external scripts) is preserved and stays.
 
 **Rule:** Do not remove `'unsafe-inline'` from `script-src` in `vercel.json` unless Astro introduces a CSP-compatible static build mode. Their experimental nonce feature is server-rendered only. Check https://docs.astro.build/en/guides/content-security-policy/ before touching this.
+
+## Client-side error handlers must not show raw browser exceptions to users
+
+**What went wrong:** A contestant hit `net::ERR_NETWORK_CHANGED` mid-submit on `/contestant-portal` (a wifi/cellular handoff), and the UI showed the literal string "Failed to fetch" as the on-screen error, instead of the site's written fallback copy.
+
+**Why:** `ContestantPortal.tsx`'s catch blocks did `err instanceof Error ? err.message : fallback`. Both a curated server error (`throw new Error(responseErrorMessage(...))`) and a raw browser `TypeError` from a failed `fetch()` satisfy `instanceof Error`, so the technical message won every time a request failed before reaching the server. The same fetches also had no timeout, so a hung request left the "Loading..."/"Completing..." state stuck forever (the same class of bug fixed for the apply form in `useApplyForm.ts` on 2026-07-07, but never carried over to the contestant portal).
+
+**Rule:** When a catch block chooses between a curated message and a fallback, never gate on `instanceof Error` — it's true for both. Throw a dedicated error subclass (e.g. `PortalApiError`) only for messages that were authored for display, and treat every other exception as "show the fallback copy." Any fetch that can leave a user-facing loading/submitting state open must carry an `AbortController` timeout so it always resolves.

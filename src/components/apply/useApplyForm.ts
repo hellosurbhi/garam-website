@@ -10,6 +10,7 @@ import { trackError, trackLeadEvent, identifyLead } from "@/lib/analytics";
 import { buildLeadAttribution } from "@/lib/leadAttribution";
 import { validateEmail } from "@/utils/validateEmail";
 import { withTimeout } from "@/utils/withTimeout";
+import { getFriendFirstName } from "@/utils/nomination";
 
 export interface FormState {
   applicationType: "Self" | "Nomination";
@@ -97,16 +98,23 @@ function getFieldErrors(
   if (emailErr) errs.email = emailErr;
   if (!form.instagram.trim().replace(/^@/, "")) errs.instagram = "Required";
   if (photoFiles.length === 0) errs.photo = "A photo is required";
-  if (form.applicationType === "Nomination") {
+  const isNomination = form.applicationType === "Nomination";
+  const friendFirstName = isNomination
+    ? getFriendFirstName(form.name)
+    : undefined;
+  if (isNomination) {
     if (!form.referrerName.trim()) errs.referrerName = "Required";
     if (!nominationConsent)
-      errs.nominationConsent =
-        "Please confirm you have permission to nominate this person";
+      errs.nominationConsent = friendFirstName
+        ? `Please confirm you have permission to nominate ${friendFirstName}`
+        : "Please confirm you have permission to nominate this person";
   }
   if (!form.marketingConsent) {
     errs.marketingConsent = "Please select Yes or No.";
   } else if (form.marketingConsent === "no") {
-    errs.marketingConsent = "You must select Yes to apply.";
+    errs.marketingConsent = isNomination
+      ? `${friendFirstName ?? "Your friend"} must select Yes to apply.`
+      : "You must select Yes to apply.";
   }
   if (!termsAgreed)
     errs.termsAgreed = "You must agree to the Terms & Conditions";

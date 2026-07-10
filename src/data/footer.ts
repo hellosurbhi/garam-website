@@ -2,7 +2,7 @@ import { SOCIAL_URLS } from "@/data/socials";
 import { cities } from "@/data/cities";
 import type { CityData } from "@/data/cities";
 import { allEvents, TBA_CITY_SLUGS } from "@/data/events";
-import { isEventPast } from "@/utils/eventDate";
+import { getUpcomingDated } from "@/utils/eventFilters";
 
 export interface FooterLink {
   label: string;
@@ -16,20 +16,26 @@ function cityLabel(c: CityData): string {
 }
 
 function buildFooterShowLinks(): FooterLink[] {
-  // Mirror the tickets page: confirmed upcoming cities first, then TBA cities.
-  // allEvents already dedups TBA entries when a confirmed show exists for that city.
+  // Mirror the tickets page (src/pages/tickets.astro): confirmed upcoming cities
+  // first (soonest date first), then TBA cities. A prior version interleaved TBA
+  // and confirmed cities in raw array order, so a cancelled/TBA city (no active
+  // show) could outrank cities with real, ticketed upcoming shows. Partitioning
+  // confirmed-vs-TBA via the same getUpcomingDated() util the tickets page uses
+  // keeps the two pages consistent and guarantees confirmed shows always rank first.
+  const today = new Date().toISOString().slice(0, 10);
   const seen = new Set<string>();
   const slugs: string[] = [];
 
-  for (const e of allEvents) {
+  for (const e of getUpcomingDated(allEvents, today)) {
     if (!e.citySlug || seen.has(e.citySlug)) continue;
-    const isConfirmedUpcoming =
-      !e.hidden && e.date !== "TBA" && !isEventPast(e.date) && !!e.url;
-    const isTba = !e.hidden && e.date === "TBA";
-    if (isConfirmedUpcoming || isTba) {
-      seen.add(e.citySlug);
-      slugs.push(e.citySlug);
-    }
+    seen.add(e.citySlug);
+    slugs.push(e.citySlug);
+  }
+
+  for (const e of allEvents) {
+    if (!e.citySlug || seen.has(e.citySlug) || e.hidden || e.isoDate) continue;
+    seen.add(e.citySlug);
+    slugs.push(e.citySlug);
   }
 
   const links: FooterLink[] = slugs

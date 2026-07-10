@@ -126,16 +126,33 @@ function formatCallTime(startTime?: string | null): string | null {
   return `${hour12}:${String(callMinutes).padStart(2, "0")} ${suffix}`;
 }
 
+// WHY: distinguishes a curated server-side error message (safe to show verbatim)
+// from a raw browser/network exception (TypeError: Failed to fetch, AbortError, etc.)
+// which must never reach the user as-is. Without this, a mid-request network
+// change surfaces the literal string "Failed to fetch" in the UI.
+class PortalApiError extends Error {}
+
 async function claimPortal(endpoint: string, body: Record<string, unknown>) {
-  const response = await fetch(endpoint, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    credentials: "same-origin",
-    body: JSON.stringify(body),
-  });
-  const data = await readPortalResponse(response);
-  if (!response.ok) {
-    throw new Error(responseErrorMessage(data, CLAIM_ERROR_MESSAGE));
+  const ctrl = new AbortController();
+  const timerId = setTimeout(() => ctrl.abort(), 15_000);
+  try {
+    const response = await fetch(endpoint, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      credentials: "same-origin",
+      body: JSON.stringify(body),
+      signal: ctrl.signal,
+    });
+    // WHY: readPortalResponse must stay inside this try block so the abort
+    // signal (cleared in finally) still covers response.text(). Reading the
+    // body after clearTimeout leaves a stalled body read with no timeout,
+    // hanging the UI in the submitting phase.
+    const data = await readPortalResponse(response);
+    if (!response.ok) {
+      throw new PortalApiError(responseErrorMessage(data, CLAIM_ERROR_MESSAGE));
+    }
+  } finally {
+    clearTimeout(timerId);
   }
 }
 
@@ -156,11 +173,14 @@ export default function ContestantPortal() {
       window.history.replaceState(null, "", "/contestant-portal");
     }
 
-    fetch(url, { credentials: "same-origin" })
+    const ctrl = new AbortController();
+    const timerId = setTimeout(() => ctrl.abort(), 12_000);
+
+    fetch(url, { credentials: "same-origin", signal: ctrl.signal })
       .then(async (response) => {
         const data = await readPortalResponse(response);
         if (!response.ok) {
-          throw new Error(
+          throw new PortalApiError(
             responseErrorMessage(
               data,
               "Could not load portal. Please try again.",
@@ -236,11 +256,17 @@ export default function ContestantPortal() {
         setState({
           type: "error",
           message:
-            err instanceof Error
+            err instanceof PortalApiError
               ? err.message
               : "Could not load portal. Please try again.",
         }),
-      );
+      )
+      .finally(() => clearTimeout(timerId));
+
+    return () => {
+      ctrl.abort();
+      clearTimeout(timerId);
+    };
   }, []);
 
   if (state.type === "loading") {
@@ -279,7 +305,7 @@ export default function ContestantPortal() {
             });
           } catch (err) {
             setFormError(
-              err instanceof Error ? err.message : CLAIM_ERROR_MESSAGE,
+              err instanceof PortalApiError ? err.message : CLAIM_ERROR_MESSAGE,
             );
           } finally {
             setFormPhase("form");
@@ -319,7 +345,7 @@ export default function ContestantPortal() {
             });
           } catch (err) {
             setFormError(
-              err instanceof Error ? err.message : CLAIM_ERROR_MESSAGE,
+              err instanceof PortalApiError ? err.message : CLAIM_ERROR_MESSAGE,
             );
           } finally {
             setFormPhase("form");
@@ -360,7 +386,7 @@ export default function ContestantPortal() {
             });
           } catch (err) {
             setFormError(
-              err instanceof Error ? err.message : CLAIM_ERROR_MESSAGE,
+              err instanceof PortalApiError ? err.message : CLAIM_ERROR_MESSAGE,
             );
           } finally {
             setFormPhase("form");

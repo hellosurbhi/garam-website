@@ -135,21 +135,24 @@ class PortalApiError extends Error {}
 async function claimPortal(endpoint: string, body: Record<string, unknown>) {
   const ctrl = new AbortController();
   const timerId = setTimeout(() => ctrl.abort(), 15_000);
-  let response: Response;
   try {
-    response = await fetch(endpoint, {
+    const response = await fetch(endpoint, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       credentials: "same-origin",
       body: JSON.stringify(body),
       signal: ctrl.signal,
     });
+    // WHY: readPortalResponse must stay inside this try block so the abort
+    // signal (cleared in finally) still covers response.text(). Reading the
+    // body after clearTimeout leaves a stalled body read with no timeout,
+    // hanging the UI in the submitting phase.
+    const data = await readPortalResponse(response);
+    if (!response.ok) {
+      throw new PortalApiError(responseErrorMessage(data, CLAIM_ERROR_MESSAGE));
+    }
   } finally {
     clearTimeout(timerId);
-  }
-  const data = await readPortalResponse(response);
-  if (!response.ok) {
-    throw new PortalApiError(responseErrorMessage(data, CLAIM_ERROR_MESSAGE));
   }
 }
 

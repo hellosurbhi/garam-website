@@ -213,3 +213,19 @@ The real XSS guards on this site are Firebase security rules and Firestore field
 **Why:** `.husky/pre-commit` and `.husky/pre-push` were committed with file mode 100644. Git refuses to run non-executable hook files and treats that as advisory (a "hint"), not an error. Checkouts where someone had run `chmod +x` locally kept working, which masked the bug: the same commit could be gated on one machine and ungated on another. The chmod never made it into the index, so every fresh checkout and worktree was born ungated.
 
 **Rule:** Hook files must be committed with the executable bit (`git ls-files -s .husky/` must show 100755 for every hook). After adding or editing any hook file, verify with that command, not with `ls -l` on your own checkout. A gate that can be skipped silently is not a gate: if a hook is ever observed printing "ignored because it's not set as executable", treat it as a broken-build incident, not a hint.
+
+## Security-rules changes must be tested against every client operation in the flow
+
+**What went wrong:** PR #115 locked photo reads in `storage.rules` to admins only (correct: applicant photos are PII). The apply flow calls `getDownloadURL()` right after uploading, as the anonymous applicant. That call is a READ, so every submission threw `storage/unauthorized` before the Firestore write, and every applicant from July 7 to July 13 was lost. The PR comment even asserted the apply flow was unaffected because applicants "only write."
+
+**Why:** `getDownloadURL()` does not feel like a read when writing the upload code, but rules treat it as one. Nothing in the toolchain connected the rules change to the client call: unit tests mock Firebase entirely, smoke tests mock the network layer and the rules deploy is a manual `firebase deploy` disconnected from CI. The breakage was structurally invisible before production.
+
+**Rule:** Any change to `firestore.rules` or `storage.rules` must keep `npm run test:rules` green: emulator tests in `test/rules/` that execute the REAL client operations of the affected flows (upload, `getDownloadURL`, delete, document create/read). When adding a new client Firebase call, add it to those tests in the same PR. Remember: `getDownloadURL()` and `getBlob()` are reads; `deleteObject()` needs its own `allow delete` (a combined `write` rule that touches `request.resource.size` always denies deletes because `request.resource` is null).
+
+## Weekly error digests cannot page you about a dying form, and third-party noise buries the signal
+
+**What went wrong:** The apply-form outage above sat in PostHog error tracking for a week. The weekly digest that finally surfaced it was dominated by `window.webkit.messageHandlers` TypeErrors that are not site code at all: Instagram/Facebook in-app browsers inject their own scripts into every page and those crash constantly, so the one real `form_submission` error per lost applicant drowned in dozens of injected-script errors.
+
+**Why:** The global error handler captured every `window` error as a site error, and no channel existed that alerts on the first failed submission. In-app-browser scripts are injected inline, so `event.filename` equals the page URL and an origin check cannot identify them; only message signatures can.
+
+**Rule:** Revenue-critical failures (apply submissions) must page in real time through a first-party channel (`/api/alert-apply-failure` email path), never only through an analytics SDK that ad blockers and in-app browsers routinely block. Known injected-webview errors (`window.webkit.messageHandlers`, "Java object is gone", `iabjs://` sources, bare "Script error." without a stack) are captured as `third_party_error`, never as `client_error`, so first-party issues stay readable. Do not delete the noise; reroute it.

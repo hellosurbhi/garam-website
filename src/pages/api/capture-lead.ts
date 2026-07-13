@@ -3,6 +3,7 @@ import { validateEmail } from "@/utils/validateEmail";
 import { addKitSubscriber, type KitSubscriberFields } from "@/lib/kit";
 import { enforceRateLimit, RATE_LIMITS } from "@/lib/rateLimit";
 import { issueLeadToken } from "@/lib/leadToken";
+import { alertOps } from "@/lib/opsAlert";
 
 export const prerender = false;
 
@@ -172,6 +173,15 @@ export const POST: APIRoute = async ({ request }) => {
     if (!res.ok) {
       const errText = await res.text();
       console.error("[capture-lead] Firestore write failed:", errText);
+      // A 500 here is a lost lead; page with the email so the person is
+      // recoverable (the client also reports, but server-side coverage does
+      // not depend on the client surviving).
+      await alertOps({
+        flow: "lead",
+        stage: "firestore_write",
+        errorMessage: errText.slice(0, 2000),
+        context: { email, city: body.city },
+      });
       return new Response(JSON.stringify({ error: "Failed to save lead" }), {
         status: 500,
         headers: { "Content-Type": "application/json" },
@@ -213,7 +223,13 @@ export const POST: APIRoute = async ({ request }) => {
         headers: { "Content-Type": "application/json" },
       },
     );
-  } catch {
+  } catch (err) {
+    await alertOps({
+      flow: "lead",
+      stage: "capture_unhandled",
+      errorMessage: err instanceof Error ? err.message : String(err),
+      context: { email, city: body.city },
+    });
     return new Response(JSON.stringify({ error: "Server error" }), {
       status: 500,
       headers: { "Content-Type": "application/json" },

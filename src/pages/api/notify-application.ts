@@ -5,6 +5,7 @@ import { applicationReceived, escapeHtml, subjectSafe } from "@/data/emails";
 import { enforceRateLimit, RATE_LIMITS } from "@/lib/rateLimit";
 import { isAllowedOrigin } from "@/lib/allowedOrigin";
 import { isSyntheticSubmission } from "@/lib/syntheticMonitor";
+import { alertOps } from "@/lib/opsAlert";
 
 export const prerender = false;
 
@@ -212,7 +213,20 @@ export const POST: APIRoute = async ({ request }) => {
       status: 200,
       headers: { "Content-Type": "application/json" },
     });
-  } catch {
+  } catch (err) {
+    // The application IS saved in Firestore at this point; a dead mailer
+    // means an invisible applicant. alertOps' email may fail for the same
+    // reason, which is exactly what the ALERT_WEBHOOK_URL channel is for.
+    await alertOps({
+      flow: "apply",
+      stage: "admin_email",
+      errorMessage: err instanceof Error ? err.message : String(err),
+      context: {
+        name: body.name,
+        email: body.email,
+        instagram: body.instagram,
+      },
+    });
     return new Response(
       JSON.stringify({ error: "Failed to send notification" }),
       {

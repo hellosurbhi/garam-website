@@ -1477,3 +1477,19 @@ If the ambiguity matters there too, rename both with Surbhi's approval on the ex
 - 2026-07-13T14:18Z | tier=E | primary=codex | reason=error_or_timeout | fallback_used=deepseek | commit=c632e66 | diff_sha=de07acb31b1046222c912bf32176941ee3f4ad03138575e556c21c92240280c0
 - 2026-07-13T14:21Z | tier=F | primary=coderabbit | reason=error | fallback_used=gemini | commit=c632e66 | diff_sha=de07acb31b1046222c912bf32176941ee3f4ad03138575e556c21c92240280c0
 - 2026-07-13T18:27Z | tier=E | primary=codex | reason=error_or_timeout | fallback_used=deepseek | commit=c632e66 | diff_sha=5a053421b4d64aea28b915648574c67cc0db170eac03cf28f4ee5bc42bedbcee
+
+- 2026-07-13T20:44Z | tier=E | primary=codex | reason=error_or_timeout | fallback_used=deepseek | commit=b7283c5 | diff_sha=5f77712c4b23f4384da3c7cb52231034d8dc7977d14da7a17538911188121da6
+
+- 2026-07-13T20:47Z | tier=E | primary=codex | reason=error_or_timeout | fallback_used=deepseek | commit=b7283c5 | diff_sha=27549cd4222173b300c0f4b35fd1d200c6060ae78c44c063d2936d942804bc46
+- 2026-07-13T20:47Z | tier=F | primary=coderabbit | reason=error | fallback_used=gemini | commit=b7283c5 | diff_sha=27549cd4222173b300c0f4b35fd1d200c6060ae78c44c063d2936d942804bc46
+
+- 2026-07-13T20:51Z | tier=E | primary=codex | reason=error_or_timeout | fallback_used=deepseek | commit=b7283c5 | diff_sha=62dcea0150a678f2a1318562584a2f3c88d520482847d931ad73a30fa5710ba7
+- 2026-07-13T20:51Z | tier=F | primary=coderabbit | reason=error | fallback_used=gemini | commit=b7283c5 | diff_sha=62dcea0150a678f2a1318562584a2f3c88d520482847d931ad73a30fa5710ba7
+- 2026-07-13T20:53Z | tier=E | primary=codex | reason=error_or_timeout | fallback_used=deepseek | commit=cc33f13 | diff_sha=792300f61baae3694258927633d9b4b5b636290e28c822fde0b59509b6340748
+- 2026-07-13T20:53Z | tier=F | primary=coderabbit | reason=error | fallback_used=gemini | commit=cc33f13 | diff_sha=792300f61baae3694258927633d9b4b5b636290e28c822fde0b59509b6340748
+
+- 2026-07-13T20:56Z | tier=E | primary=codex | reason=error_or_timeout | fallback_used=deepseek | commit=cc33f13 | diff_sha=49c071425e7d368e6c395b50375c366ae9489d1de40a22a911f27d37008968e0
+- 2026-07-13T20:56Z | tier=F | primary=coderabbit | reason=error | fallback_used=gemini | commit=cc33f13 | diff_sha=49c071425e7d368e6c395b50375c366ae9489d1de40a22a911f27d37008968e0
+- 2026-07-13T20:59Z | tier=E | primary=codex | reason=error_or_timeout | fallback_used=deepseek | commit=5f8a97a | diff_sha=34b48fea48bbe348043200b998329f88cef4a17723d1a8bc12c6a3773a0caab8
+- 2026-07-13T21:10Z | tier=E | primary=codex | reason=error_or_timeout | fallback_used=deepseek | commit=5f8a97a | diff_sha=d58b91c239276eace2d026c18cd8ab96853ea2f58466db7e30a49b599bd85d26
+- 2026-07-13T21:10Z | tier=F | primary=coderabbit | reason=error | fallback_used=gemini | commit=5f8a97a | diff_sha=d58b91c239276eace2d026c18cd8ab96853ea2f58466db7e30a49b599bd85d26

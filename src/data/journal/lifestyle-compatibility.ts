@@ -143,7 +143,7 @@ export const lifestyleCompatibilityPosts: JournalPost[] = [
     ],
     ctaConfig: {
       intent: "show",
-      cityLinks: ["/cities/manhattan"],
+      cityLinks: ["manhattan"],
     },
   },
   {
@@ -280,7 +280,7 @@ export const lifestyleCompatibilityPosts: JournalPost[] = [
     ],
     ctaConfig: {
       intent: "show",
-      cityLinks: ["/cities/manhattan"],
+      cityLinks: ["manhattan"],
     },
   },
   {
@@ -421,7 +421,7 @@ export const lifestyleCompatibilityPosts: JournalPost[] = [
     ],
     ctaConfig: {
       intent: "show",
-      cityLinks: ["/cities/manhattan"],
+      cityLinks: ["manhattan"],
     },
   },
   {
@@ -554,7 +554,7 @@ export const lifestyleCompatibilityPosts: JournalPost[] = [
     ],
     ctaConfig: {
       intent: "show",
-      cityLinks: ["/cities/manhattan"],
+      cityLinks: ["manhattan"],
     },
   },
   {
@@ -684,7 +684,7 @@ export const lifestyleCompatibilityPosts: JournalPost[] = [
     ],
     ctaConfig: {
       intent: "show",
-      cityLinks: ["/cities/manhattan"],
+      cityLinks: ["manhattan"],
     },
   },
   {
@@ -825,7 +825,7 @@ export const lifestyleCompatibilityPosts: JournalPost[] = [
     ],
     ctaConfig: {
       intent: "show",
-      cityLinks: ["/cities/manhattan"],
+      cityLinks: ["manhattan"],
     },
   },
   {
@@ -962,7 +962,7 @@ export const lifestyleCompatibilityPosts: JournalPost[] = [
     ],
     ctaConfig: {
       intent: "show",
-      cityLinks: ["/cities/manhattan"],
+      cityLinks: ["manhattan"],
     },
   },
   {
@@ -1125,7 +1125,7 @@ export const lifestyleCompatibilityPosts: JournalPost[] = [
     ],
     ctaConfig: {
       intent: "show",
-      cityLinks: ["/cities/manhattan"],
+      cityLinks: ["manhattan"],
     },
   },
 ];

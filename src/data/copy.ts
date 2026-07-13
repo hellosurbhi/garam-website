@@ -161,7 +161,10 @@ export const APPLY_PAGE = {
     const subject = friendName ?? "your friend";
     return `Real email, real phone, real Instagram, all ${subject}'s. No burner accounts, no fake info. If we cannot reach ${subject}, they will not hear from us for next steps.`;
   },
-  marketingConsentQuestion: (isNomination: boolean, friendName?: string): string =>
+  marketingConsentQuestion: (
+    isNomination: boolean,
+    friendName?: string,
+  ): string =>
     isNomination
       ? `I grant Garam Masala Dating permission to use ${friendName ? `${friendName}'s` : "my friend's"} responses and casting submissions for marketing purposes.`
       : "I grant Garam Masala Dating permission to use any of these responses and casting submissions for marketing purposes.",
@@ -261,8 +264,20 @@ export const JOURNAL_CTA_TICKETS = {
   introMid: ", or ",
   introApplyText: "apply to get on stage",
   introPost: " yourself!",
-  ticketsLabel: "See Upcoming Shows",
+  ticketsLabel: "Catch Us Live",
   applyLabel: "Apply to Be a Contestant",
+} as const;
+
+/**
+ * City links grid at the bottom of journal articles. Cities with tickets on
+ * sale are derived from events.ts at build time; curated per-article cities
+ * without a live show render as waitlist links.
+ */
+export const JOURNAL_CITY_LINKS = {
+  heading: "Find a show near you",
+  ticketsLabel: "Tickets and dates",
+  waitlistLabel: "Waitlist",
+  ariaLabel: "City show pages",
 } as const;
 
 /**

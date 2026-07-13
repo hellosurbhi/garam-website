@@ -1,0 +1,126 @@
+---
+import { JOURNAL_CITY_LINKS } from "@/data/copy";
+import { getCityBySlug, type CityData } from "@/data/cities";
+import { citySlugsWithUpcomingEvents } from "@/utils/cityEvents";
+
+interface Props {
+  articleSlug: string;
+  /** Hand-picked city slugs from the article; rendered as waitlist links when the city has no upcoming show. */
+  curatedSlugs?: string[];
+  /** PostHog CTA name, kept per surface so existing dashboards stay intact. */
+  ctaName?: string;
+}
+
+const {
+  articleSlug,
+  curatedSlugs = [],
+  ctaName = "journal_city_link",
+} = Astro.props;
+
+const liveSlugs = citySlugsWithUpcomingEvents();
+const liveSet = new Set(liveSlugs);
+
+const resolveCities = (slugs: string[]): CityData[] =>
+  slugs
+    .map((slug) => getCityBySlug(slug))
+    .filter((city): city is CityData => city !== undefined);
+
+const entries = [
+  ...resolveCities(liveSlugs).map((city) => ({ city, hasTickets: true })),
+  ...resolveCities(
+    [...new Set(curatedSlugs)].filter((slug) => !liveSet.has(slug)),
+  ).map((city) => ({ city, hasTickets: false })),
+];
+---
+
+{
+  entries.length > 0 && (
+    <section
+      class="article-city-links"
+      aria-label={JOURNAL_CITY_LINKS.ariaLabel}
+    >
+      <h2 class="article-city-links__title">{JOURNAL_CITY_LINKS.heading}</h2>
+      <div class="article-city-links__grid">
+        {entries.map(({ city, hasTickets }) => (
+          <a
+            href={`/cities/${city.slug}`}
+            class="article-city-links__item"
+            data-ph-capture="cta_clicked"
+            data-ph-cta={ctaName}
+            data-ph-section="journal_city_links"
+            data-cta-position="journal_city_links"
+            data-cta-text={city.displayName}
+            data-article-slug={articleSlug}
+            data-destination-url={`/cities/${city.slug}`}
+            data-event-city={city.displayName}
+            data-city-slug={city.slug}
+          >
+            <span>{city.displayName}</span>
+            <small>
+              {hasTickets
+                ? JOURNAL_CITY_LINKS.ticketsLabel
+                : JOURNAL_CITY_LINKS.waitlistLabel}
+            </small>
+          </a>
+        ))}
+      </div>
+    </section>
+  )
+}
+
+<style>
+  .article-city-links {
+    margin: 36px 0 32px;
+    padding: 24px 0 4px;
+    border-top: 1px solid rgba(0, 0, 0, 0.08);
+  }
+
+  .article-city-links__title {
+    margin: 0 0 14px;
+    font-family: var(--font-body), sans-serif;
+    font-size: 13px;
+    font-weight: 800;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--brand-red);
+  }
+
+  .article-city-links__grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 10px;
+  }
+
+  .article-city-links__item {
+    display: flex;
+    min-height: 48px;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    padding: 12px 14px;
+    border: 1px solid rgba(var(--brand-red-rgb), 0.16);
+    border-radius: 8px;
+    color: var(--charcoal);
+    text-decoration: none;
+    background: rgba(var(--brand-red-rgb), 0.035);
+  }
+
+  .article-city-links__item span {
+    font-family: var(--font-body), sans-serif;
+    font-size: 16px;
+    font-weight: 700;
+  }
+
+  .article-city-links__item small {
+    font-family: var(--font-body), sans-serif;
+    font-size: 16px;
+    color: var(--muted);
+    white-space: nowrap;
+  }
+
+  @media (min-width: 640px) {
+    .article-city-links__grid {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+</style>

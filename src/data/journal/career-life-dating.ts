@@ -5,7 +5,8 @@ export const careerLifeDatingPosts: JournalPost[] = [
     slug: "desi-dating-residency-medicine",
     title:
       "Dating During Medical Residency as a Desi: Surviving the Schedule, the Family and Each Other",
-    seoTitle: "Desi Dating in Medical Residency: Schedule, Family and Each Other",
+    seoTitle:
+      "Desi Dating in Medical Residency: Schedule, Family and Each Other",
     metaDescription:
       "Post-call on hour 28, parents texting about a cardiologist. The honest survival guide for South Asian medical trainees trying to date during residency.",
     datePublished: "2026-11-13",
@@ -144,7 +145,7 @@ export const careerLifeDatingPosts: JournalPost[] = [
     ],
     ctaConfig: {
       intent: "show",
-      cityLinks: ["/cities/manhattan"],
+      cityLinks: ["manhattan"],
     },
   },
   {
@@ -282,7 +283,7 @@ export const careerLifeDatingPosts: JournalPost[] = [
     ],
     ctaConfig: {
       intent: "show",
-      cityLinks: ["/cities/san-francisco", "/cities/manhattan"],
+      cityLinks: ["san-francisco", "manhattan"],
     },
   },
   {
@@ -412,7 +413,7 @@ export const careerLifeDatingPosts: JournalPost[] = [
     ],
     ctaConfig: {
       intent: "show",
-      cityLinks: ["/cities/manhattan", "/cities/jersey-city"],
+      cityLinks: ["manhattan", "jersey-city"],
     },
   },
   {
@@ -538,7 +539,7 @@ export const careerLifeDatingPosts: JournalPost[] = [
     ],
     ctaConfig: {
       intent: "show",
-      cityLinks: ["/cities/manhattan", "/cities/jersey-city"],
+      cityLinks: ["manhattan", "jersey-city"],
     },
   },
   {
@@ -664,7 +665,7 @@ export const careerLifeDatingPosts: JournalPost[] = [
     ],
     ctaConfig: {
       intent: "show",
-      cityLinks: ["/cities/manhattan"],
+      cityLinks: ["manhattan"],
     },
   },
   {
@@ -794,7 +795,7 @@ export const careerLifeDatingPosts: JournalPost[] = [
     ],
     ctaConfig: {
       intent: "show",
-      cityLinks: ["/cities/manhattan"],
+      cityLinks: ["manhattan"],
     },
   },
   {
@@ -920,7 +921,7 @@ export const careerLifeDatingPosts: JournalPost[] = [
     ],
     ctaConfig: {
       intent: "show",
-      cityLinks: ["/cities/manhattan"],
+      cityLinks: ["manhattan"],
     },
   },
   {
@@ -1040,7 +1041,7 @@ export const careerLifeDatingPosts: JournalPost[] = [
     ],
     ctaConfig: {
       intent: "show",
-      cityLinks: ["/cities/manhattan", "/cities/jersey-city"],
+      cityLinks: ["manhattan", "jersey-city"],
     },
   },
   {
@@ -1166,7 +1167,7 @@ export const careerLifeDatingPosts: JournalPost[] = [
     ],
     ctaConfig: {
       intent: "show",
-      cityLinks: ["/cities/manhattan"],
+      cityLinks: ["manhattan"],
     },
   },
 ];

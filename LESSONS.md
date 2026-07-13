@@ -189,3 +189,11 @@ The real XSS guards on this site are Firebase security rules and Firestore field
 **Why:** Real browsers suppress click events on disabled form controls entirely, so nothing bubbles. jsdom (via fireEvent) dispatches the MouseEvent regardless, and React's root delegation runs ancestor handlers. The test therefore exercised a code path (card click opening the modal) that cannot happen in production, and the failure surfaced as an unhandled rejection attributed to the wrong test.
 
 **Rule:** Any test file whose interactions could mount `ApplicantModal` (directly or via a bubbled click on a card) must include `onSnapshot` in its `firebase/firestore` mock, returning an unsubscribe no-op. More generally: clicking a disabled element in jsdom still bubbles, so never treat "the button is disabled" as proof a parent handler cannot fire in tests.
+
+## Journal city sections drifted because they bypassed events.ts
+
+**What went wrong:** Journal articles and the situationship masterclass showed "Tickets and dates" for Jersey City (last show already passed) and listed Seattle (no show at all) while Philadelphia and Washington DC, which had tickets on sale, never appeared. A related latent bug: about 40 articles stored `cityLinks` as `"/cities/x"` paths instead of bare slugs, so `getCityBySlug()` returned undefined and their city section silently never rendered.
+
+**Why:** The sections were built from hand-maintained data (a hardcoded city array on the masterclass, the static `city.status` field and per-article `cityLinks` on the dynamic page) instead of deriving state from `src/data/events.ts`. Hand-maintained "tickets on sale" claims go stale the moment the events data changes.
+
+**Rule:** Any surface that pairs a city name with ticket availability must derive that state from `src/utils/cityEvents.ts` (`isUpcomingEvent`, `getUpcomingEventsForCity`, `citySlugsWithUpcomingEvents`), never from `city.status`, hardcoded lists or copy. Curated lists are only allowed for waitlist/internal-link entries, and slugs in data files are always bare (`"manhattan"`, never `"/cities/manhattan"`).

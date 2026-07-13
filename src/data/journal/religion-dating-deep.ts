@@ -141,12 +141,13 @@ export const religionDatingDeepPosts: JournalPost[] = [
     ],
     ctaConfig: {
       intent: "show",
-      cityLinks: ["/cities/manhattan"],
+      cityLinks: ["manhattan"],
     },
   },
   {
     slug: "sikh-dating-modern-guide",
-    title: "Sikh Dating in 2026: Beyond the Stereotypes, Into the Real Conversations",
+    title:
+      "Sikh Dating in 2026: Beyond the Stereotypes, Into the Real Conversations",
     seoTitle: "Sikh Dating in America: The Modern Guide",
     metaDescription:
       "A real guide to Sikh dating in America: the community network, Anand Karaj, kesh and turban questions and what Sikh families actually want in a partner.",
@@ -274,12 +275,13 @@ export const religionDatingDeepPosts: JournalPost[] = [
     ],
     ctaConfig: {
       intent: "show",
-      cityLinks: ["/cities/manhattan"],
+      cityLinks: ["manhattan"],
     },
   },
   {
     slug: "muslim-hindu-couple-america",
-    title: "Muslim-Hindu Couples in America: The Real Challenges and What Makes It Work",
+    title:
+      "Muslim-Hindu Couples in America: The Real Challenges and What Makes It Work",
     metaDescription:
       "An honest guide to Muslim-Hindu relationships in America: family tensions, religious logistics, the children question and what couples who succeed actually do.",
     datePublished: "2026-11-27",
@@ -398,7 +400,7 @@ export const religionDatingDeepPosts: JournalPost[] = [
     ],
     ctaConfig: {
       intent: "show",
-      cityLinks: ["/cities/manhattan"],
+      cityLinks: ["manhattan"],
     },
   },
   {
@@ -520,12 +522,13 @@ export const religionDatingDeepPosts: JournalPost[] = [
     ],
     ctaConfig: {
       intent: "show",
-      cityLinks: ["/cities/manhattan"],
+      cityLinks: ["manhattan"],
     },
   },
   {
     slug: "christian-south-asian-dating-guide",
-    title: "Christian South Asian Dating: A Community That Often Gets Forgotten",
+    title:
+      "Christian South Asian Dating: A Community That Often Gets Forgotten",
     metaDescription:
       "South Asian Christians (Goan, Keralite, Tamil Christian, converted) navigate unique dating dynamics. Here's the guide nobody wrote for them.",
     datePublished: "2026-12-09",
@@ -640,12 +643,13 @@ export const religionDatingDeepPosts: JournalPost[] = [
     ],
     ctaConfig: {
       intent: "show",
-      cityLinks: ["/cities/manhattan"],
+      cityLinks: ["manhattan"],
     },
   },
   {
     slug: "secular-desi-religious-family",
-    title: "When You're Secular but Your Family Is Religious: Navigating Desi Dating",
+    title:
+      "When You're Secular but Your Family Is Religious: Navigating Desi Dating",
     metaDescription:
       "You're culturally Hindu but not religious. Your family disagrees. Here's how to navigate dating when your actual values and your family's expectations don't match.",
     datePublished: "2026-12-15",
@@ -764,12 +768,13 @@ export const religionDatingDeepPosts: JournalPost[] = [
     ],
     ctaConfig: {
       intent: "show",
-      cityLinks: ["/cities/manhattan"],
+      cityLinks: ["manhattan"],
     },
   },
   {
     slug: "religious-compatibility-assessment",
-    title: "How to Actually Assess Religious Compatibility Before It Becomes a Problem",
+    title:
+      "How to Actually Assess Religious Compatibility Before It Becomes a Problem",
     seoTitle: "Assessing Religious Compatibility in Desi Dating",
     metaDescription:
       "How to assess religious compatibility in a South Asian relationship before it becomes a crisis. The actual questions to ask by date three.",
@@ -895,12 +900,13 @@ export const religionDatingDeepPosts: JournalPost[] = [
     ],
     ctaConfig: {
       intent: "show",
-      cityLinks: ["/cities/manhattan"],
+      cityLinks: ["manhattan"],
     },
   },
   {
     slug: "interfaith-children-south-asian-couples",
-    title: "The Interfaith Children Conversation Every South Asian Couple Must Have Before Marriage",
+    title:
+      "The Interfaith Children Conversation Every South Asian Couple Must Have Before Marriage",
     metaDescription:
       "The interfaith children conversation every South Asian couple needs to have before marriage. What to decide, when to decide it and how to do it without a crisis.",
     datePublished: "2026-12-27",
@@ -1029,7 +1035,7 @@ export const religionDatingDeepPosts: JournalPost[] = [
     ],
     ctaConfig: {
       intent: "show",
-      cityLinks: ["/cities/manhattan"],
+      cityLinks: ["manhattan"],
     },
   },
 ];

@@ -1,3 +1,4 @@
+#!/bin/sh
 npm run check
 # Run global pre-push chain (Playwright + Stryker + fetch-divergence check).
 if [ -x "$HOME/.git-hooks/pre-push" ]; then

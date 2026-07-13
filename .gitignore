@@ -66,3 +66,8 @@ reports/
 link-results.json
 .lighthouseci/
 
+
+# Local review-pipeline state (pre-commit reviewer outputs; never commit)
+reviews/
+# Legacy husky-generated shims (hooksPath now points at .husky directly)
+.husky/_/

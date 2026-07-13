@@ -197,6 +197,7 @@ The real XSS guards on this site are Firebase security rules and Firestore field
 **Why:** The sections were built from hand-maintained data (a hardcoded city array on the masterclass, the static `city.status` field and per-article `cityLinks` on the dynamic page) instead of deriving state from `src/data/events.ts`. Hand-maintained "tickets on sale" claims go stale the moment the events data changes.
 
 **Rule:** Any surface that pairs a city name with ticket availability must derive that state from `src/utils/cityEvents.ts` (`isUpcomingEvent`, `getUpcomingEventsForCity`, `citySlugsWithUpcomingEvents`), never from `city.status`, hardcoded lists or copy. Curated lists are only allowed for waitlist/internal-link entries, and slugs in data files are always bare (`"manhattan"`, never `"/cities/manhattan"`).
+
 ## Security-rules changes must be tested against every client operation in the flow
 
 **What went wrong:** PR #115 locked photo reads in `storage.rules` to admins only (correct: applicant photos are PII). The apply flow calls `getDownloadURL()` right after uploading, as the anonymous applicant. That call is a READ, so every submission threw `storage/unauthorized` before the Firestore write, and every applicant from July 7 to July 13 was lost. The PR comment even asserted the apply flow was unaffected because applicants "only write."
@@ -228,3 +229,11 @@ The real XSS guards on this site are Firebase security rules and Firestore field
 **Why:** Rules, CSP headers and env ship on different pipelines than code (manual Firebase CLI vs automatic Vercel), so repo history says nothing about what production enforces. Every conclusion drawn from "PR X merged on date Y" inherited that false assumption.
 
 **Rule:** Before stating a production root cause, verify the live artifact directly: curl the deployed headers, exercise the deployed rules with a real probe, or read the deployed config via API. A repo diff plus a merge date is a hypothesis, not evidence. The rules-drift check (scripts/check-rules-drift.mjs, every 6 hours) now makes the rules half of this automatic; the same discipline applies manually to headers and env.
+
+## A hooks path that points at generated files silently disables every quality gate
+
+**What went wrong:** Six broken tests and a dependency regression reached GitHub across seventeen commits with zero local gate failures. `core.hooksPath` pointed at `.husky/_`, a gitignored directory that husky generates during `npm install`. Session worktrees are provisioned without running install, so the directory did not exist and git silently ran no hooks at all: no lint-staged, no astro check, no vitest, no reviewer chain, no Verified check. Everything switched on mid-session as a side effect of an unrelated `npm install`, which is why late commits hit blocks that early commits never saw.
+
+**Why:** Git treats a missing hooks directory as "no hooks configured" without any warning, and the hook scheme depended on a generated artifact existing in every worktree. The gates were all correctly written; they were never invoked.
+
+**Rule:** `core.hooksPath` must point at checked-in, executable files (`.husky/` with shebangs), never at generated ones; `npm run prepare` sets that config so it self-heals. When diagnosing "how did this get past the hooks," first verify hooks RAN (`git config core.hooksPath` and that the target exists in the current worktree) before reading a single hook line.

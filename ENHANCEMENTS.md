@@ -2,30 +2,24 @@
 
 Items from the GMD website audit checklists (site audit, codebase cleanup, conversion audit, mobile audit) that need content, design decisions, or external work. Sorted by impact.
 
+<!-- Doc routing (2026-07-13): this file is an OPEN backlog only. It holds
+enhancements not yet built, plus deferred or blocked items with their reason.
+When an item ships, DELETE it here in the same commit and record the work in
+CHANGELOG.md. Never add completed or superseded entries to this file. -->
+
 ---
 
-## City Page Enrichment: Remaining Batches (2026-07-06)
+## Future city additions: batch recipe (2026-07-06)
 
-### Extend the deep-content pattern to the remaining ~290 city pages
+**Priority:** Reference for any new city page
+**Status:** Open reference
 
-**Priority:** High
-**Status:** COMPLETE 2026-07-06. All 307 city pages enriched on feat/seo-powerhouse-wave1 (all batches shipped in one wave at the operator's request: US, Canada, UK, Australia, Europe, India, Southeast Asia, East Asia, Pacific, Africa, Caribbean). Median indexable body text went from 239 to 417 words plus 6 city-specific FAQs per page. The batch recipe below remains the reference for any future city additions.
-
-GSC (Apr to Jun 2026) shows 66 pages crawled or discovered but not indexed, driven by thin city pages (median 239 body words, one templated paragraph shared across all 307). Batch 1 enriched the 14 priority diaspora metros (Toronto, London, Austin, Chicago, Houston, Dallas, Atlanta, Washington DC, Seattle, Vancouver, Sydney, Melbourne, Leicester, San Jose) using the `sections` field on `CityData`: each got 2 unique h2 sections (~150 to 200 words each) plus 3 extra city-specific FAQ items, roughly doubling indexable text.
-
-**Batch recipe (repeat per city):**
+The 2026-07-06 enrichment pass took all 307 city pages to 2 unique sections plus 6 city-specific FAQs each (shipped on feat/seo-powerhouse-wave1, recorded in CHANGELOG.md). Any city page added later must follow the same recipe:
 
 1. Two `sections` entries: one on where that city's desi singles actually meet today (grounded in real, widely documented neighborhoods, universities and festivals; no invented venues or unsourced statistics) and one "what a Garam Masala night here will look like" tied to the tour narrative.
 2. Three extra `faqItems` targeting long-tail queries: "indian speed dating {city}", "where do south asian singles meet in {city}" and one city-specific question (venue geography, pricing, community mix).
 3. Keep the copy voice: no separator dashes, no Oxford commas, lowercase "join the waitlist" and "apply to be a contestant" phrases intact so `renderCityText` converts them into inline CTAs.
 4. Tests: add the new slugs to the enriched list in `src/data/cities.test.ts` so the 2-section 6-FAQ floor is enforced.
-
-**Suggested batch order (by GSC country impressions + diaspora size):**
-
-- Batch 2 (US): san-diego area pages not yet active, phoenix, denver metro pages, tampa, orlando, raleigh, charlotte, nashville, detroit, minneapolis, columbus-oh, pittsburgh, st-louis
-- Batch 3 (Canada + UK, GSC shows 361 + 306 impressions): calgary, ottawa, montreal, edmonton, winnipeg, birmingham, manchester, bradford, wolverhampton, glasgow
-- Batch 4 (Australia + NZ + rest of world): brisbane, perth, adelaide, canberra, auckland, singapore, dubai, hong-kong
-- Batch 5+: India metros and remaining international pages
 
 ---
 
@@ -222,143 +216,6 @@ export async function POST(req: Request) {
 ```
 
 Requires: Twitter Ads API access token, pixel ID, and event type IDs from Twitter Ads dashboard.
-
----
-
-## Lead Attribution Follow-ups (2026-04-10)
-
-Surfaced while fixing the `tickets-notify` source-per-city attribution. Both items were deliberately deferred out of that change because their blast radius is larger than the one-file fix deserved. Execute these in their own atomic PRs.
-
-### Geo fetch race condition in `bootstrapGeoData()`
-
-**Priority:** Medium
-**Status:** Fixed in feat/wave2-conversion
-
-`src/lib/leadAttribution.ts` (around lines 75 to 92) fires `fetch("/api/geo")` as a fire-and-forget call from `bootstrapGeoData()`, which is invoked by `bootstrapLeadAttribution()` on page load via `BaseLayout.astro` (around line 116 in the body-tail script). The response populates `sessionStorage` keys `gmd-geo-city`, `gmd-geo-region`, `gmd-geo-country`, `gmd-geo-latitude`, `gmd-geo-longitude`, `gmd-geo-timezone`, gated by `gmd-geo-fetched`. `buildLeadAttribution()` reads those keys synchronously (around lines 147 to 164) and silently omits any that are missing.
-
-**The bug:** a user who submits any lead form (Spice List on any page, tickets-notify modal on `/tickets`, apply page) within roughly 100 to 200 milliseconds of page load can win the race and write a Firestore lead before the geo response lands. Those leads end up with no `geoCity`, `geoRegion`, `geoCountry`, `geoLatitude`, `geoLongitude`, or `geoTimezone` fields even in production, which silently corrupts any funnel or attribution that depends on geo.
-
-**Fix:** track the in-flight fetch promise at module scope and let `buildLeadAttribution` await it. This makes `buildLeadAttribution` async, which ripples through the callers listed below.
-
-**Implementation steps:**
-
-1. In `src/lib/leadAttribution.ts`, add a module-level `let geoFetchPromise: Promise<void> | null = null;`.
-2. Rewrite `bootstrapGeoData()` to populate `geoFetchPromise` the first time it is called and return early on subsequent calls. Set it back to `null` only on error so a retry is possible.
-
-   ```ts
-   let geoFetchPromise: Promise<void> | null = null;
-
-   function bootstrapGeoData() {
-     if (sessionStorage.getItem(GEO_FETCHED_KEY)) return;
-     if (geoFetchPromise) return;
-
-     geoFetchPromise = fetch("/api/geo")
-       .then((res) => (res.ok ? (res.json() as Promise<GeoResponse>) : null))
-       .then((geo) => {
-         if (!geo) return;
-         if (geo.city) sessionStorage.setItem(GEO_CITY_KEY, geo.city);
-         if (geo.region) sessionStorage.setItem(GEO_REGION_KEY, geo.region);
-         if (geo.country) sessionStorage.setItem(GEO_COUNTRY_KEY, geo.country);
-         if (geo.latitude)
-           sessionStorage.setItem(GEO_LATITUDE_KEY, geo.latitude);
-         if (geo.longitude)
-           sessionStorage.setItem(GEO_LONGITUDE_KEY, geo.longitude);
-         if (geo.timezone)
-           sessionStorage.setItem(GEO_TIMEZONE_KEY, geo.timezone);
-         sessionStorage.setItem(GEO_FETCHED_KEY, "1");
-       })
-       .catch((err) => {
-         console.error(err);
-         geoFetchPromise = null; // allow a retry next time
-       });
-   }
-   ```
-
-3. Change `buildLeadAttribution` to `async` and await `geoFetchPromise` before reading the geo session-storage keys, capped by a timeout so a slow `/api/geo` never blocks lead writes forever:
-
-   ```ts
-   export async function buildLeadAttribution(params: {
-     source: string;
-     sourceCitySlug?: string;
-   }): Promise<LeadAttribution> {
-     bootstrapLeadAttribution();
-     if (geoFetchPromise) {
-       await Promise.race([
-         geoFetchPromise,
-         new Promise<void>((resolve) => setTimeout(resolve, 1500)),
-       ]);
-     }
-     // rest unchanged
-   }
-   ```
-
-4. Update all callers to `await` the new async function. As of 2026-04-10 these are:
-   - `src/components/home/HomeSignup.astro`: email and phone submit handlers. Both are already inside `async` submit callbacks, so add `await`.
-   - `src/components/NotifyModal.astro`: email and phone submit handlers. Both already `async`, add `await`.
-   - `src/components/ApplyPage.tsx`: search for `buildLeadAttribution(` in this file, wrap in `await`, and mark the containing React submit handler `async` if it is not already.
-   - Anywhere else `grep -rn "buildLeadAttribution(" src/` finds a caller.
-5. Update `src/lib/leadAttribution.test.ts`. The existing suite tests a synchronous `buildLeadAttribution`. Convert the relevant assertions to `await buildLeadAttribution(...)` and add one new test that mocks a slow `/api/geo` via `global.fetch = vi.fn().mockImplementation(() => new Promise((resolve) => setTimeout(() => resolve({ ok: true, json: () => Promise.resolve({ city: "NYC" }) }), 50)))` and asserts the awaited call returns `geoCity: "NYC"` instead of `undefined`. Add one more test asserting the 1500 ms timeout cap by making the mock never resolve and asserting the call still returns with geo fields absent rather than hanging.
-6. Verification: run `npm run test`. Hit `/tickets` in a production-like preview deploy, submit a notify lead immediately after page load, confirm the Firestore doc includes all six `geo*` fields.
-
-**Files to touch:**
-
-- `src/lib/leadAttribution.ts`: module-level promise, async `buildLeadAttribution`, `Promise.race` timeout.
-- `src/lib/leadAttribution.test.ts`: convert to async, add two new tests.
-- `src/components/home/HomeSignup.astro`: `await` both submit handlers.
-- `src/components/NotifyModal.astro`: `await` both submit handlers.
-- `src/components/ApplyPage.tsx`: `await` wherever `buildLeadAttribution` is called.
-
-### Dev-mode fallback for `/api/geo`
-
-**Priority:** Low
-**Status:** Fixed (already present in src/pages/api/geo.ts)
-
-`src/pages/api/geo.ts` reads Vercel's `x-vercel-ip-*` headers, which do not exist on the local Astro dev server. As a result every localhost test of any lead form writes a Firestore doc with zero `geo*` fields, which makes it impossible to verify the geo plumbing end-to-end in dev and causes repeated confusion ("why is my lead doc missing metadata?"). This was the exact cause of the 2026-04-10 tickets-notify question.
-
-**Fix:** when running under `import.meta.env.DEV`, fall back to a static mock (or a public IP geolocation service) so the dev experience matches production.
-
-**Implementation steps:**
-
-1. In `src/pages/api/geo.ts`, after the header reads, detect the all-undefined case and check `import.meta.env.DEV`.
-2. When both conditions hold, pick one of:
-   - **Option A, preferred, no network dependency:** return a hardcoded static mock that mirrors the shape Vercel would return. Keeps the dev experience offline-friendly.
-
-     ```ts
-     const allEmpty = Object.values(geo).every((v) => !v);
-     if (allEmpty && import.meta.env.DEV) {
-       return new Response(
-         JSON.stringify({
-           city: "New York",
-           region: "NY",
-           country: "US",
-           latitude: "40.7128",
-           longitude: "-74.0060",
-           timezone: "America/New_York",
-         }),
-         {
-           status: 200,
-           headers: {
-             "Content-Type": "application/json",
-             "Cache-Control": "no-store",
-           },
-         },
-       );
-     }
-     ```
-
-   - **Option B, live data, needs network:** call `https://ipapi.co/json/` from the server, map the response fields to the existing shape, and return that. Free tier is rate-limited to 1000 per day, fine for dev. Add a fetch timeout so it does not hang the dev server if ipapi is down.
-
-3. Make sure the fallback is only active when `import.meta.env.DEV` is true, so production never accidentally reads a mock. Add a unit test, or at least a manual smoke step, that asserts the production path still returns the Vercel headers unchanged.
-4. Verification: `npm run dev`, open any page, submit a lead form, confirm the resulting Firestore doc now contains `geoCity: "New York"`, etc.
-
-**Files to touch:**
-
-- `src/pages/api/geo.ts`: add the DEV fallback branch.
-
-**Trade-offs:**
-
-- Option A is simpler and deterministic but always returns the same fake NYC values in dev, which can mask bugs where attribution uses the wrong field.
-- Option B is more realistic but adds a network dependency and rate limit. Pick A unless you specifically need real geo in dev.
 
 ---
 
@@ -643,121 +500,6 @@ The highest-leverage AEO item. Implemented as Astro endpoints that generate both
 - **Source:** CodeRabbit PR #11
 - **Comment:** Only `#notify-error` and visibility flags are reset — email, phone, and phone-error keep previous state, so reopening shows stale input.
 - **Link:** https://github.com/hellosurbhi/garam-website/pull/11#discussion_r3051901287
-
----
-
-# From CLS Audit & Performance (formerly ENHANCEMENT.md)
-
-## Prefetch/preload key pages + skeleton loaders to eliminate CLS
-
-**Priority:** High
-**Logged:** 2026-04-07
-
-### Problem
-
-The Apply and Get Tickets pages take noticeable time to load on first navigation. There is no skeleton or placeholder UI, so the page jumps from blank → content (CLS). These are the two highest-traffic destinations from the homepage nav.
-
-### What to do
-
-**1. Prefetch Apply and Tickets on homepage load**
-
-Add `<link rel="prefetch">` tags in `BaseLayout.astro` (or the homepage `index.astro`) so the browser fetches those pages in the background while the user is on the homepage:
-
-```html
-<link rel="prefetch" href="/apply" /> <link rel="prefetch" href="/tickets" />
-```
-
-For Astro pages, `prefetch` is enough — no JS chunk prefetching needed since both pages are SSG.
-
-Alternatively, use Astro's built-in prefetch:
-
-- Enable `prefetch: true` in `astro.config.mjs`
-- Add `data-astro-prefetch` to the nav links in `HomeNav.astro` and `PageNav.astro`
-
-**2. Skeleton loaders on Apply page**
-
-The Apply page hydrates a React island (`ApplyPage.tsx`) — there's a gap between HTML arriving and the form being interactive. Add a CSS skeleton that matches the form layout:
-
-- Show the skeleton in the static Astro shell (`apply.astro`) until React hydrates
-- Use `client:visible` or `client:idle` directive instead of `client:load` to defer hydration if above-the-fold content doesn't need it immediately
-- Skeleton should reserve the exact height of the form to prevent CLS
-
-**3. Skeleton on Tickets page**
-
-Similar to Apply — if any dynamic content loads after HTML, add a skeleton placeholder that reserves layout space.
-
-### Files to touch
-
-- `src/layouts/BaseLayout.astro` — add prefetch link tags
-- `src/components/home/HomeNav.astro` and `src/components/layout/PageNav.astro` — add `data-astro-prefetch` to Apply and Tickets links
-- `src/pages/apply.astro` — add skeleton shell / adjust client directive
-- `src/pages/tickets.astro` — add skeleton shell if needed
-- `astro.config.mjs` — enable prefetch integration
-
-### Notes
-
-- Do NOT add `rel="preload"` (that's for critical resources on the current page). Use `rel="prefetch"` (background, lower priority).
-- Test that prefetch doesn't increase LCP on the homepage (it should be fine since prefetch is low-priority).
-- The goal is zero visible layout shift when navigating to Apply or Tickets from any page.
-
----
-
-## Full-site CLS audit
-
-**Priority:** Medium
-**Logged:** 2026-04-07
-
-Audit of all Cumulative Layout Shift sources across the site. 13 instances identified.
-
-### HIGH — Fix these first (user-visible, happens in primary flows)
-
-| #   | Location                                             | Trigger                                                                                                  | Fix                                                                                                                                       |
-| --- | ---------------------------------------------------- | -------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------- |
-| 1   | `src/pages/apply.astro` + `ApplyPage.tsx`            | React island hydrates after static HTML → form renders below a blank stub                                | Add height-reserving CSS skeleton in `apply.astro` Astro shell; switch to `client:visible`                                                |
-| 2   | `src/components/admin/ApplicantModal.tsx`            | Error message inserted above form fields when validation fires → shifts fields down                      | Reserve space with `min-height` on the error container; always render it (empty), toggle visibility only                                  |
-| 3   | `src/pages/apply.astro` (photo upload)               | Photo thumbnail appears after upload → section height changes                                            | Pre-reserve thumbnail slot with a fixed-size placeholder div before upload completes                                                      |
-| 4   | `src/pages/apply.astro` (nomination section)         | Nomination fields revealed via `data-reveal` / `hidden` toggle → content below shifts                    | Use `max-height` / `overflow: hidden` transition instead of `hidden` attribute; reserve max possible height                               |
-| 5   | `src/hooks/useGeoData.ts` → apply form geo dropdowns | State dropdown populates after country selected → city dropdown appears after state → double CLS cascade | Render all three dropdowns always (empty/disabled state); never insert new DOM nodes on selection                                         |
-| 6   | Apply page terms modal                               | `document.body` scroll-lock (`overflow: hidden`) removes scrollbar → body shifts right                   | Add `padding-right: var(--scrollbar-width)` to body when locking; measure with `window.innerWidth - document.documentElement.clientWidth` |
-| 7   | Any `<dialog>` open (NotifyModal, RequestCity, etc.) | Same scroll-lock issue as above                                                                          | Same fix — apply scrollbar-width compensation on `dialog.showModal()`                                                                     |
-
-### MEDIUM — Address in next polish pass
-
-| #   | Location                                  | Trigger                                                             | Fix                                                                                      |
-| --- | ----------------------------------------- | ------------------------------------------------------------------- | ---------------------------------------------------------------------------------------- |
-| 8   | `src/components/admin/AdminDashboard.tsx` | "Deleted" toggle reveals replacement text → row height changes      | Reserve row height; use `opacity`/`pointer-events` toggle instead of content replacement |
-| 9   | `src/components/admin/AdminDashboard.tsx` | Loading spinner replaced by content on fetch complete → height jump | Render skeleton rows with fixed heights matching content rows                            |
-| 10  | `src/pages/contestant-prep.astro`         | Gender-reveal section animates in via JS → pushes content below     | Pre-reserve section height; use transform/opacity animation only (no height change)      |
-| 11  | Any admin modal                           | Same scroll-lock body-shift as item 6                               | Same scrollbar-width fix                                                                 |
-
-### LOW — Nice to have
-
-| #   | Location                                                       | Trigger                                                                                         | Fix                                                                                                                                 |
-| --- | -------------------------------------------------------------- | ----------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------- |
-| 12  | `src/layouts/BaseLayout.astro` skip-link                       | Skip-link rendered `position: absolute` shifts to `fixed` on focus → minor repaint              | Use `position: fixed` always with negative `top` offset; transition `top` on focus                                                  |
-| 13  | `src/components/home/HomeShows.astro` + `HomeStats.astro` etc. | `data-reveal` adds `.revealed` class via IntersectionObserver → opacity + translateY transition | Already progressive-enhancement but translateY can cause subpixel repaints; switch to `will-change: transform` on observed elements |
-
-### Already fixed in this branch
-
-- Email form step transitions (HomeSignup, popup, NotifyModal, city notify) — wrapped in `min-height` containers (220–260px) so step 1→2 swap never shifts content below.
-
----
-
-## International phone input with country selector
-
-**Priority:** Low (Later Later)
-**Logged:** 2026-04-08
-
-Right now we accept any phone number and auto-format US numbers to E.164 (`+1XXXXXXXXXX`). International numbers are stored as-is with basic digit cleanup. This works fine at current scale.
-
-When we start actually texting international numbers (via Twilio/MessageBird/etc.), add a proper country-code dropdown + phone input that validates per-country format. Packages like `react-phone-number-input` or `intl-tel-input` handle this well.
-
-**Why not now:**
-
-- We don't have an international texting service yet
-- No confirmed international show dates
-- The npm package adds bundle weight to every page with a phone field
-- Current approach (accept anything, clean up later) is good enough for lead capture
 
 ---
 
@@ -1398,52 +1140,6 @@ When we start actually texting international numbers (via Twilio/MessageBird/etc
 
 ---
 
-## Recovered from bugs worktree (2026-07-03)
-
-Content from `bugs` branch (tip `c33936a`) not present in the main line. Preserved for provenance; the P1-P5 contestant workflow control tower (already in this file above) supersedes the rollout plan here, but the acceptance criteria and file list remain useful reference.
-
-## Contestant Casting Automation (2026-05-16)
-
-### Admin-selected contestants should get automated packet and confirmation emails
-
-**Priority:** High
-**Status:** Superseded by P1-P5 contestant workflow control tower (implemented July 2026)
-
-The intended workflow is: everyone applies through the public form, the operator chooses an applicant internally for a specific show, and the applicant receives a polished "you've been selected" email with their contestant packet link. After they sign the waiver, the portal unlocks the prep guide and shows their call time as 45 minutes before the listed show time.
-
-The system should also send a day-before confirmation email automatically so the team does not need to manually chase contestants. That email should include the venue, exact arrival point, call time, a clear "do not be on Indian time" arrival warning, and a team contact name/phone number for questions.
-
-**Rollout plan:**
-
-1. Extend the admin "Cast Contestant" action so the operator selects the applicant, show, role, and production contact phone number in one place.
-2. Store show metadata on the invite at creation time: show display date, start time, venue name/address, timezone, role, applicant email, and production contact.
-3. Send the selected-contestant email automatically with the private `/contestant-portal?invite=...` link.
-4. After waiver signing, show the prep portal with call time calculated as `showStartTime - 45 minutes`.
-5. Add a scheduled job that finds contestants for shows happening tomorrow and sends the confirmation email once.
-6. Track delivery state on each contestant record: `inviteSentAt`, `waiverSignedAt`, `confirmationEmailSentAt`, and last email error if delivery fails.
-7. Add admin visibility for each contestant's status so the team can see invited, waiver signed, and confirmation sent without asking the operator.
-
-**Acceptance criteria:**
-
-1. A logged-in admin can choose an applicant for a specific show and send the contestant packet without copying links manually.
-2. The contestant packet email feels like a casting selection, not a generic waiver reminder.
-3. The portal displays role-specific prep and call time equal to 45 minutes before show start when a show is attached.
-4. The day-before confirmation email sends automatically with venue, call time, arrival instructions, and the team contact phone number.
-5. The confirmation job is idempotent and cannot send duplicate reminders for the same contestant/show.
-6. Admin can see invite, waiver, and confirmation status for each contestant.
-
-**Files likely to touch:**
-
-- `src/components/admin/ContestantInviteModal.tsx`
-- `src/components/admin/ContestantsTab.tsx`
-- `src/pages/api/create-invite.ts`
-- `src/pages/api/contestant-claim.ts`
-- `src/pages/api/portal-state.ts`
-- `src/components/ContestantPortal.tsx`
-- `src/emails/InviteEmail.tsx`
-- `src/emails/ContestantConfirmationEmail.tsx` (new)
-- Scheduled email endpoint/job configuration
-
 ## Ambiguous "shows" phrasing outside the journal (2026-07-13)
 
 The journal tickets CTA was renamed from "See Upcoming Shows" to "Catch Us Live" because "shows" next to a YouTube CTA reads like episodes, not live tickets. Two other surfaces still use the old phrasing and sit near YouTube CTAs, but were out of scope for that fix (user scoped it to the journal):
@@ -1463,18 +1159,12 @@ If the ambiguity matters there too, rename both with Surbhi's approval on the ex
 - 2026-07-13T14:21Z | tier=F | primary=coderabbit | reason=error | fallback_used=gemini | commit=c632e66 | diff_sha=aa14f0405fb398ccc172f7d23e2c9751ee8c0ea5f24ddfb43a0f0bc1380bc5c6
 - 2026-07-13T14:23Z | tier=E | primary=codex | reason=error_or_timeout | fallback_used=deepseek | commit=ba6728a | diff_sha=4fda69b1208df08e4e0d4b9c77ef4613feb0ca8b9bc76f065441e8676120a62b
 - 2026-07-13T14:23Z | tier=F | primary=coderabbit | reason=error | fallback_used=gemini | commit=ba6728a | diff_sha=4fda69b1208df08e4e0d4b9c77ef4613feb0ca8b9bc76f065441e8676120a62b
-
-## Low priority enhancements
-
-### CodeRabbit — 20260713-102329
-
-- LOW: Inconsistent heading levels are used for items in the "Indian Dating App Landscape in 2026" ranked list. Items 7, 6, and 5 use `h3`, while items 4 through 1 use `h2`. For semantic HTML and accessibility, all items in a single ranked list should use the same heading level.
-
-### CodeRabbit — 20260713-103031
-
-- LOW: Inconsistent heading levels are used for items in the "Indian Dating App Landscape in 2026" ranked list. Items 7, 6, and 5 use `h3`, while items 4 through 1 use `h2`. For semantic HTML and accessibility, all items in a single ranked list should use the same heading level.
-
 - 2026-07-13T14:35Z | tier=E | primary=codex | reason=error_or_timeout | fallback_used=deepseek | commit=ba6728a | diff_sha=4fda69b1208df08e4e0d4b9c77ef4613feb0ca8b9bc76f065441e8676120a62b
+- 2026-07-13T18:40Z | tier=E | primary=codex | reason=error_or_timeout | fallback_used=deepseek | commit=c632e66 | diff_sha=3e1db579ae60b215d3d81431d9225473e867fabdb1f9b20bf3fb55cfb8178c1f
+- 2026-07-13T18:48Z | tier=E | primary=codex | reason=error_or_timeout | fallback_used=deepseek | commit=c632e66 | diff_sha=ea227aab2630940192ca9df9468e1601b24d48e1b85df98ccd6c3f3d52a6ac6c
+- 2026-07-13T18:48Z | tier=F | primary=coderabbit | reason=error | fallback_used=gemini | commit=c632e66 | diff_sha=ea227aab2630940192ca9df9468e1601b24d48e1b85df98ccd6c3f3d52a6ac6c
+- 2026-07-13T18:57Z | tier=E | primary=codex | reason=error_or_timeout | fallback_used=deepseek | commit=adb24f9 | diff_sha=b2eeae5696cfc850c0b28e6c73ccaa3f7773c08fee4c96d5c0c6ab41b5c2fd8a
+- 2026-07-13T18:57Z | tier=F | primary=coderabbit | reason=error | fallback_used=gemini | commit=adb24f9 | diff_sha=b2eeae5696cfc850c0b28e6c73ccaa3f7773c08fee4c96d5c0c6ab41b5c2fd8a
 - 2026-07-13T21:30Z | tier=E | primary=codex | reason=error_or_timeout | fallback_used=deepseek | commit=ba6728a | diff_sha=20a149d8de616e12be47d70ad78ddfcb63396c294c66268653770baf52f5718f
 - 2026-07-13T21:30Z | tier=F | primary=coderabbit | reason=error | fallback_used=gemini | commit=ba6728a | diff_sha=20a149d8de616e12be47d70ad78ddfcb63396c294c66268653770baf52f5718f
 - 2026-07-13T21:32Z | tier=E | primary=codex | reason=error_or_timeout | fallback_used=deepseek | commit=d64b1a7 | diff_sha=93c5a476f2cf0cfb519ba62d8f7cbc2ac0b875cdfab5a416dbd48c7ec3b9f988
@@ -1482,6 +1172,7 @@ If the ambiguity matters there too, rename both with Surbhi's approval on the ex
 - 2026-07-13T21:49Z | tier=E | primary=codex | reason=error_or_timeout | fallback_used=deepseek | commit=31350a3 | diff_sha=e35f355d8ce66d3bee2b4cb0a3a46beb9e293044bcb8a954a72352747f0ec6ce
 - 2026-07-13T21:54Z | tier=E | primary=codex | reason=error_or_timeout | fallback_used=deepseek | commit=31350a3 | diff_sha=b85bc6ec208be3e9c39090376efd6fb019be6269f674a405c12822b01884ae11
 - 2026-07-14T04:12Z | tier=E | primary=codex | reason=error_or_timeout | fallback_used=deepseek | commit=31350a3 | diff_sha=a457f9f43c890a3896d690da506abb79097a4a3ef66a6f7940892657c149ea39
+- 2026-07-13T21:57Z | tier=E | primary=codex | reason=error_or_timeout | fallback_used=deepseek | commit=9190990 | diff_sha=7bca21da891889b6dae89b49b16d6084eb7de5e87fdb501a153605027db634dd
 - 2026-07-13T21:58Z | tier=E | primary=codex | reason=error_or_timeout | fallback_used=deepseek | commit=31350a3 | diff_sha=e99328d390b12ce56298326ab4de0bbe0dc52589de496f6c32de51a45e6bfc6d
 - 2026-07-13T21:58Z | tier=F | primary=coderabbit | reason=error | fallback_used=gemini | commit=31350a3 | diff_sha=e99328d390b12ce56298326ab4de0bbe0dc52589de496f6c32de51a45e6bfc6d
 - 2026-07-13T22:03Z | tier=E | primary=codex | reason=error_or_timeout | fallback_used=deepseek | commit=be735b9 | diff_sha=aad31620a68713c8d429e0c119d83b6d351d4e2eaa7a4338546eecdd1ac0d095
@@ -1490,3 +1181,9 @@ If the ambiguity matters there too, rename both with Surbhi's approval on the ex
 - 2026-07-13T22:07Z | tier=F | primary=coderabbit | reason=error | fallback_used=gemini | commit=37cde64 | diff_sha=9506d1aa157f1daade093c8e9414c34d99e8046112fb55278553d9723010625c
 - 2026-07-14T18:04Z | tier=F | primary=coderabbit | reason=error | fallback_used=gemini | commit=8b4d379 | diff_sha=21cb57ca33a0bc568eacd8e142d7932bb30af7a382fa25b557f2c6dda526c07e
 - 2026-07-15T01:57Z | tier=F | primary=coderabbit | reason=error | fallback_used=gemini | commit=59ce89e | diff_sha=79d49c2634be8fd8ec7a52e9739360de8ba9bb45ede67b3359c69ac05ca02d7a
+
+## Low priority enhancements
+
+### CodeRabbit — 20260713-145745
+
+- LOW: The copy voice mandate prohibits Oxford commas. The comma before "and" in this list should be removed.

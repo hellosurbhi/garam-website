@@ -8,8 +8,9 @@ const mockUploadBytesResumable = vi
   .mockImplementation(() =>
     Object.assign(Promise.resolve({}), { cancel: vi.fn() }),
   );
-const mockGetDownloadURL = vi.fn();
-const mockSignInAnonymously = vi.fn().mockResolvedValue({ user: {} });
+const mockSignInAnonymously = vi
+  .fn()
+  .mockResolvedValue({ user: { uid: "anon-uid-1" } });
 
 vi.mock("firebase/firestore", () => ({
   collection: vi.fn(),
@@ -18,10 +19,9 @@ vi.mock("firebase/firestore", () => ({
 }));
 
 vi.mock("firebase/storage", () => ({
-  ref: vi.fn(),
+  ref: vi.fn((_storage: unknown, path: string) => ({ fullPath: path })),
   uploadBytesResumable: (...args: unknown[]) =>
     mockUploadBytesResumable(...args),
-  getDownloadURL: (...args: unknown[]) => mockGetDownloadURL(...args),
 }));
 
 vi.mock("firebase/auth", () => ({
@@ -56,7 +56,6 @@ describe("ApplyPage", () => {
     mockUploadBytesResumable.mockImplementation(() =>
       Object.assign(Promise.resolve({}), { cancel: vi.fn() }),
     );
-    mockGetDownloadURL.mockResolvedValue("https://example.com/photo.jpg");
     // Mock fetch for notify-application
     vi.spyOn(globalThis, "fetch").mockResolvedValue(new Response("{}"));
     // Mock crypto.randomUUID

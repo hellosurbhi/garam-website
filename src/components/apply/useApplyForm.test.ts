@@ -9,11 +9,10 @@ const mockUploadBytesResumable = vi
   .mockImplementation(() =>
     Object.assign(Promise.resolve({}), { cancel: vi.fn() }),
   );
-const mockGetDownloadURL = vi
-  .fn()
-  .mockResolvedValue("https://example.com/photo.jpg");
 const mockDeleteObject = vi.fn().mockResolvedValue(undefined);
-const mockSignInAnonymously = vi.fn().mockResolvedValue({ user: {} });
+const mockSignInAnonymously = vi
+  .fn()
+  .mockResolvedValue({ user: { uid: "anon-uid-1" } });
 
 vi.mock("firebase/firestore", () => ({
   collection: vi.fn(),
@@ -22,10 +21,11 @@ vi.mock("firebase/firestore", () => ({
 }));
 
 vi.mock("firebase/storage", () => ({
-  ref: vi.fn(() => "mock-ref"),
+  // The hook stores ref.fullPath in the application doc, so the mock ref must
+  // carry the requested path through.
+  ref: vi.fn((_storage: unknown, path: string) => ({ fullPath: path })),
   uploadBytesResumable: (...args: unknown[]) =>
     mockUploadBytesResumable(...args),
-  getDownloadURL: (...args: unknown[]) => mockGetDownloadURL(...args),
   deleteObject: (...args: unknown[]) => mockDeleteObject(...args),
 }));
 
@@ -52,6 +52,11 @@ const mockBuildLeadAttribution = vi.fn().mockReturnValue({ source: "apply" });
 vi.mock("@/lib/leadAttribution", () => ({
   buildLeadAttribution: (...args: unknown[]) =>
     mockBuildLeadAttribution(...args),
+}));
+
+const mockReportApplyFailure = vi.fn();
+vi.mock("@/lib/applyFailureAlert", () => ({
+  reportApplyFailure: (...args: unknown[]) => mockReportApplyFailure(...args),
 }));
 
 import { useApplyForm, type FormState } from "./useApplyForm";
@@ -389,8 +394,13 @@ describe("useApplyForm", () => {
     expect(result.current.submitted).toBe(true);
     expect(result.current.submitting).toBe(false);
     expect(mockSignInAnonymously).toHaveBeenCalledWith("mock-auth");
-    expect(mockUploadBytesResumable).toHaveBeenCalled();
-    expect(mockGetDownloadURL).toHaveBeenCalled();
+    // Upload must tag the anonymous uid so storage.rules authorizes cleanup
+    // deletes, and must never be followed by getDownloadURL (admin-only read).
+    expect(mockUploadBytesResumable).toHaveBeenCalledWith(
+      expect.objectContaining({ fullPath: expect.stringMatching(/^photos\//) }),
+      expect.any(File),
+      { customMetadata: { owner: "anon-uid-1" } },
+    );
     expect(mockAddDoc).toHaveBeenCalled();
     expect(mockTrackLeadEvent).toHaveBeenCalledWith(
       "apply_submitted",
@@ -529,7 +539,10 @@ describe("useApplyForm", () => {
     expect(docData.marketingConsent).toBe("yes");
     expect(docData.termsAgreedAt).toBe("mock-timestamp");
     expect(docData.submittedAt).toBe("mock-timestamp");
-    expect(docData.photoUrls).toEqual(["https://example.com/photo.jpg"]);
+    expect(docData.photoPaths).toEqual([
+      expect.stringMatching(/^photos\/[0-9a-f-]+\.jpg$/),
+    ]);
+    expect(docData.isSynthetic).toBeUndefined();
   });
 
   /* ── handleSubmit error flow ──────────────────────────── */
@@ -555,6 +568,15 @@ describe("useApplyForm", () => {
       expect.objectContaining({ ok: false }),
     );
     expect(result.current.submitted).toBe(false);
+    // One failed submission must page a human immediately, with enough
+    // contact info to recover the applicant.
+    expect(mockReportApplyFailure).toHaveBeenCalledWith(
+      expect.objectContaining({
+        stage: "submit",
+        errorMessage: "Firestore error",
+        applicant: expect.objectContaining({ email: expect.any(String) }),
+      }),
+    );
   });
 
   it("submit failure calls deleteObject for orphaned photo cleanup", async () => {
@@ -1217,7 +1239,9 @@ describe("useApplyForm", () => {
     const body = JSON.parse(fetchCall[1].body);
     expect(body.name).toBe("Jane Doe");
     expect(body.age).toBe(25);
-    expect(body.photoUrls).toEqual(["https://example.com/photo.jpg"]);
+    expect(body.photoPaths).toEqual([
+      expect.stringMatching(/^photos\/[0-9a-f-]+\.jpg$/),
+    ]);
   });
 
   it("set() clears specific field error without affecting others", async () => {

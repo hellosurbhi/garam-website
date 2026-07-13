@@ -40,8 +40,8 @@ service cloud.firestore {
           'email', 'emailNormalized', 'phone', 'height', 'instagram', 'community', 'income',
           'applicationType', 'referrerName', 'nominationConsent',
           'pitch', 'type', 'notes', 'seenShowBefore', 'howHeard', 'marketingConsent',
-          'termsAgreedAt', 'photoUrl', 'photoUrls', 'castEventId', 'deletedAt',
-          'status', 'submittedAt',
+          'termsAgreedAt', 'photoUrl', 'photoUrls', 'photoPaths', 'castEventId', 'deletedAt',
+          'status', 'submittedAt', 'isSynthetic',
           'source', 'sourcePage', 'landingPage', 'referrerHost',
           'utmSource', 'utmMedium', 'utmCampaign', 'utmContent', 'utmTerm',
           'fbclid', 'gclid', 'posthogDistinctId', 'sourceCitySlug'
@@ -75,6 +75,8 @@ service cloud.firestore {
         && (!('termsAgreedAt' in d.keys()) || d.termsAgreedAt is timestamp)
         && (!('photoUrl' in d.keys()) || (d.photoUrl is string && d.photoUrl.size() > 0 && d.photoUrl.size() <= 500))
         && (!('photoUrls' in d.keys()) || (d.photoUrls is list && d.photoUrls.size() <= 10))
+        && (!('photoPaths' in d.keys()) || (d.photoPaths is list && d.photoPaths.size() > 0 && d.photoPaths.size() <= 10))
+        && (!('isSynthetic' in d.keys()) || d.isSynthetic is bool)
         && (!('castEventId' in d.keys()) || (d.castEventId is string && d.castEventId.size() > 0 && d.castEventId.size() <= 100))
         && (!('deletedAt' in d.keys()) || d.deletedAt == null || d.deletedAt is timestamp)
         && (!('source' in d.keys()) || (d.source is string && d.source.size() > 0 && d.source.size() <= 50))

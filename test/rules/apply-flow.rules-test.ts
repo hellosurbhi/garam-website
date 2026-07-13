@@ -93,6 +93,15 @@ describe("storage.rules: photos/", () => {
     );
   });
 
+  it("any image/* content type is accepted (client normalizes to JPEG; fallback uploads originals)", async () => {
+    const storage = anonContext("anon-1").storage();
+    await assertSucceeds(
+      uploadBytes(ref(storage, "photos/a.avif"), JPEG_BYTES, {
+        contentType: "image/avif",
+      }),
+    );
+  });
+
   it("REGRESSION: the apply flow must never call getDownloadURL — reads are admin-only", async () => {
     await uploadAsOwner("anon-1", "photos/a.jpg");
     const storage = anonContext("anon-1").storage();

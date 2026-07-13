@@ -12,6 +12,7 @@ import { isSyntheticSubmission } from "@/lib/syntheticMonitor";
 import { reportApplyFailure } from "@/lib/applyFailureAlert";
 import { validateEmail } from "@/utils/validateEmail";
 import { withTimeout } from "@/utils/withTimeout";
+import { compressImage } from "@/utils/compressImage";
 import { getFriendFirstName } from "@/utils/nomination";
 
 export interface FormState {
@@ -69,9 +70,14 @@ export type FormErrors = Partial<
 export type SelectOption = { value: string; label: string };
 
 const MAX_PHOTOS = 10;
-// 15 MB: recent iPhone photos (HEIC, 48 MP) run up to ~10 MB; the old 5 MB
-// cap rejected them. Must stay aligned with storage.rules (strict less-than).
-const MAX_PHOTO_BYTES = 15 * 1024 * 1024;
+// Industry-standard upload posture: accept any image the phone produces, at
+// generous original sizes, and normalize client-side (compressImage → ~2048px
+// JPEG) before upload. 50 MB covers ProRAW-era originals.
+const MAX_PHOTO_BYTES = 50 * 1024 * 1024;
+// The rare fallback path (compressImage could not decode the format) uploads
+// the ORIGINAL file, so it must fit storage.rules' 25 MB create limit. Must
+// stay aligned with storage.rules (strict less-than).
+export const MAX_UPLOAD_BYTES = 25 * 1024 * 1024;
 
 function getUrlCityParams() {
   if (typeof window === "undefined") return null;
@@ -230,18 +236,15 @@ export function useApplyForm() {
     const incoming = Array.from(e.target.files ?? []);
     if (incoming.length === 0) return;
 
-    const ALLOWED_TYPES = new Set([
-      "image/jpeg",
-      "image/png",
-      "image/webp",
-      "image/heic",
-    ]);
+    // Accept anything the phone calls an image (HEIC, AVIF, WebP, GIF...);
+    // compressImage normalizes everything to JPEG before upload.
+    const isImage = (f: File) => f.type.startsWith("image/");
 
-    const invalidType = incoming.filter((f) => !ALLOWED_TYPES.has(f.type));
+    const invalidType = incoming.filter((f) => !isImage(f));
     if (invalidType.length > 0) {
       setErrors((prev) => ({
         ...prev,
-        photo: "Only JPEG, PNG and WEBP files are allowed",
+        photo: "Please choose photo files (JPEG, HEIC, PNG and similar)",
       }));
       e.target.value = "";
       return;
@@ -251,12 +254,12 @@ export function useApplyForm() {
     if (oversized.length > 0) {
       setErrors((prev) => ({
         ...prev,
-        photo: "Photo must be under 15 MB",
+        photo: "Photo must be under 50 MB",
       }));
     }
 
     const valid = incoming.filter(
-      (f) => f.size < MAX_PHOTO_BYTES && ALLOWED_TYPES.has(f.type),
+      (f) => f.size < MAX_PHOTO_BYTES && isImage(f),
     );
     if (valid.length === 0) {
       e.target.value = "";
@@ -429,12 +432,21 @@ export function useApplyForm() {
       // resolves paths with its own authenticated session instead.
       const photoPaths = await Promise.all(
         photoFiles.map(async (file, i) => {
-          const ext = file.name.split(".").pop() ?? "jpg";
+          // Normalize to ~2048px JPEG so 3 iPhone originals never blow the
+          // upload timeout on cellular; falls back to the original file when
+          // the browser cannot decode the format.
+          const uploadFile = await compressImage(file);
+          if (uploadFile.size >= MAX_UPLOAD_BYTES) {
+            throw new Error(
+              "One of your photos could not be optimized and is too large to upload. Please pick a version under 25 MB.",
+            );
+          }
+          const ext = uploadFile.name.split(".").pop() ?? "jpg";
           const photoRef = ref(storage, `photos/${crypto.randomUUID()}.${ext}`);
           uploadedRefs[i] = photoRef;
           // The owner tag is what authorizes this session's failure cleanup
           // (storage.rules only lets the uploader delete their own object).
-          const task = uploadBytesResumable(photoRef, file, {
+          const task = uploadBytesResumable(photoRef, uploadFile, {
             customMetadata: { owner: credential.user.uid },
           });
           await new Promise<void>((resolve, reject) => {
@@ -505,25 +517,29 @@ export function useApplyForm() {
       // All uploaded — no cleanup needed
       uploadedRefs.fill(null);
 
-      const attribution = await buildLeadAttribution({ source: "apply" });
-      const igHandle = form.instagram.trim().replace(/^@/, "");
-      const identifier = form.email.trim();
-      if (identifier) {
-        identifyLead(identifier, {
-          name: form.name,
+      // The synthetic monitor submits 4x/day; keeping it out of analytics at
+      // the source means conversion metrics never depend on dashboard filters.
+      if (!isSyntheticSubmission(form.email)) {
+        const attribution = await buildLeadAttribution({ source: "apply" });
+        const igHandle = form.instagram.trim().replace(/^@/, "");
+        const identifier = form.email.trim();
+        if (identifier) {
+          identifyLead(identifier, {
+            name: form.name,
+            city: form.city,
+            country: form.country,
+            applicationType: form.applicationType,
+            ...(igHandle ? { instagram: igHandle } : {}),
+            ...attribution,
+          });
+        }
+        trackLeadEvent("apply_submitted", {
+          ...attribution,
+          applicationType: form.applicationType,
           city: form.city,
           country: form.country,
-          applicationType: form.applicationType,
-          ...(igHandle ? { instagram: igHandle } : {}),
-          ...attribution,
         });
       }
-      trackLeadEvent("apply_submitted", {
-        ...attribution,
-        applicationType: form.applicationType,
-        city: form.city,
-        country: form.country,
-      });
 
       // Fire-and-forget: email notification (does not affect submission outcome)
       fetch("/api/notify-application", {

@@ -208,7 +208,7 @@ describe("useApplyForm", () => {
 
   /* ── handleAddPhotos ────────────────────────────────── */
 
-  it("handleAddPhotos accepts file under 15MB", () => {
+  it("handleAddPhotos accepts file under 50MB", () => {
     const { result } = renderHook(() => useApplyForm());
     act(() =>
       result.current.handleAddPhotos(makeChangeEvent(makeFile("p.jpg", 1024))),
@@ -216,14 +216,36 @@ describe("useApplyForm", () => {
     expect(result.current.errors.photo).toBeUndefined();
   });
 
-  it("handleAddPhotos rejects file over 15MB", () => {
+  it("handleAddPhotos accepts any image mime type (AVIF, HEIF...)", () => {
+    const { result } = renderHook(() => useApplyForm());
+    const avif = new File([new ArrayBuffer(1024)], "p.avif", {
+      type: "image/avif",
+    });
+    act(() => result.current.handleAddPhotos(makeChangeEvent(avif)));
+    expect(result.current.errors.photo).toBeUndefined();
+    expect(result.current.photoFiles).toHaveLength(1);
+  });
+
+  it("handleAddPhotos rejects non-image files", () => {
+    const { result } = renderHook(() => useApplyForm());
+    const pdf = new File([new ArrayBuffer(1024)], "resume.pdf", {
+      type: "application/pdf",
+    });
+    act(() => result.current.handleAddPhotos(makeChangeEvent(pdf)));
+    expect(result.current.errors.photo).toBe(
+      "Please choose photo files (JPEG, HEIC, PNG and similar)",
+    );
+    expect(result.current.photoFiles).toHaveLength(0);
+  });
+
+  it("handleAddPhotos rejects file over 50MB", () => {
     const { result } = renderHook(() => useApplyForm());
     act(() =>
       result.current.handleAddPhotos(
-        makeChangeEvent(makeFile("huge.jpg", 16 * 1024 * 1024)),
+        makeChangeEvent(makeFile("huge.jpg", 51 * 1024 * 1024)),
       ),
     );
-    expect(result.current.errors.photo).toBe("Photo must be under 15 MB");
+    expect(result.current.errors.photo).toBe("Photo must be under 50 MB");
   });
 
   it("handleAddPhotos with no file selected does not change photo state", () => {
@@ -543,6 +565,30 @@ describe("useApplyForm", () => {
       expect.stringMatching(/^photos\/[0-9a-f-]+\.jpg$/),
     ]);
     expect(docData.isSynthetic).toBeUndefined();
+  });
+
+  it("synthetic monitor submission is flagged and kept out of analytics", async () => {
+    const { result } = renderHook(() => useApplyForm());
+    act(() =>
+      fillRequired(
+        result.current.set,
+        result.current.handleTermsCheckbox,
+        result.current.handleAddPhotos,
+      ),
+    );
+    act(() =>
+      result.current.set("email", "synthetic-monitor@garammasaladating.com"),
+    );
+
+    await act(async () => {
+      await result.current.handleSubmit(makeSubmitEvent());
+    });
+
+    const docData = mockAddDoc.mock.calls[0][1];
+    expect(docData.isSynthetic).toBe(true);
+    // 4 runs/day must never appear as conversions in PostHog or GTM.
+    expect(mockTrackLeadEvent).not.toHaveBeenCalled();
+    expect(mockIdentifyLead).not.toHaveBeenCalled();
   });
 
   /* ── handleSubmit error flow ──────────────────────────── */
@@ -919,39 +965,39 @@ describe("useApplyForm", () => {
 
   /* ── Group 8: File size boundary ─────────────────────── */
 
-  it("handleAddPhotos accepts file just under 15MB", () => {
+  it("handleAddPhotos accepts file just under 50MB", () => {
     const { result } = renderHook(() => useApplyForm());
     act(() =>
       result.current.handleAddPhotos(
-        makeChangeEvent(makeFile("exact.jpg", 15 * 1024 * 1024 - 1)),
+        makeChangeEvent(makeFile("exact.jpg", 50 * 1024 * 1024 - 1)),
       ),
     );
     expect(result.current.errors.photo).toBeUndefined();
   });
 
-  it("handleAddPhotos rejects file exactly at 15MB (storage.rules strict less-than)", () => {
+  it("handleAddPhotos rejects file exactly at 50MB (strict less-than)", () => {
     const { result } = renderHook(() => useApplyForm());
     act(() =>
       result.current.handleAddPhotos(
-        makeChangeEvent(makeFile("exact.jpg", 15 * 1024 * 1024)),
+        makeChangeEvent(makeFile("exact.jpg", 50 * 1024 * 1024)),
       ),
     );
-    expect(result.current.errors.photo).toBe("Photo must be under 15 MB");
+    expect(result.current.errors.photo).toBe("Photo must be under 50 MB");
   });
 
-  it("handleAddPhotos rejects file at 15MB + 1 byte", () => {
+  it("handleAddPhotos rejects file at 50MB + 1 byte", () => {
     const { result } = renderHook(() => useApplyForm());
     act(() =>
       result.current.handleAddPhotos(
-        makeChangeEvent(makeFile("big.jpg", 15 * 1024 * 1024 + 1)),
+        makeChangeEvent(makeFile("big.jpg", 50 * 1024 * 1024 + 1)),
       ),
     );
-    expect(result.current.errors.photo).toBe("Photo must be under 15 MB");
+    expect(result.current.errors.photo).toBe("Photo must be under 50 MB");
   });
 
   it("handleAddPhotos resets input value on rejection", () => {
     const { result } = renderHook(() => useApplyForm());
-    const event = makeChangeEvent(makeFile("huge.jpg", 16 * 1024 * 1024));
+    const event = makeChangeEvent(makeFile("huge.jpg", 51 * 1024 * 1024));
     act(() => result.current.handleAddPhotos(event));
     expect(event.target.value).toBe("");
   });
@@ -960,10 +1006,10 @@ describe("useApplyForm", () => {
     const { result } = renderHook(() => useApplyForm());
     act(() =>
       result.current.handleAddPhotos(
-        makeChangeEvent(makeFile("big.jpg", 16 * 1024 * 1024)),
+        makeChangeEvent(makeFile("big.jpg", 51 * 1024 * 1024)),
       ),
     );
-    expect(result.current.errors.photo).toBe("Photo must be under 15 MB");
+    expect(result.current.errors.photo).toBe("Photo must be under 50 MB");
     act(() =>
       result.current.handleAddPhotos(makeChangeEvent(makeFile("ok.jpg", 1024))),
     );

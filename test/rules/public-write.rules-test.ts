@@ -87,7 +87,8 @@ describe("firestore.rules: leads", () => {
 
   it("missing required fields are rejected", async () => {
     const db = testEnv.unauthenticatedContext().firestore();
-    const { source: _dropped, ...withoutSource } = validLead;
+    const withoutSource: Partial<typeof validLead> = { ...validLead };
+    delete withoutSource.source;
     await assertFails(
       setDoc(doc(collection(db, "leads"), "lead-1"), withoutSource),
     );
@@ -177,7 +178,10 @@ describe("firestore.rules: applications invalid creates", () => {
 
   it("missing required field is rejected", async () => {
     const db = anonContext("anon-1").firestore();
-    const { city: _dropped, ...withoutCity } = validApplication;
+    const withoutCity: Partial<typeof validApplication> = {
+      ...validApplication,
+    };
+    delete withoutCity.city;
     await assertFails(
       setDoc(doc(collection(db, "applications"), "app-1"), withoutCity),
     );

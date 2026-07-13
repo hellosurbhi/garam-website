@@ -220,3 +220,11 @@ The real XSS guards on this site are Firebase security rules and Firestore field
 **Why:** A third-party embed is invisible to every safeguard this site has. CSP changes cannot know about it unless it is documented, error tracking cannot see inside it, and failure paging cannot be wired into it. The dependency also was not needed: the native waiver form and the `/api/stage-waiver` endpoint already existed for the contestant portal.
 
 **Rule:** Legal and revenue flows (waiver signing, applications, lead capture, payments) must be first-party pages posting to first-party endpoints, never third-party embeds. When a third-party script is genuinely required, adding its host to the CSP allowlist and a smoke test that asserts the script actually loads are part of the same PR that introduces it.
+
+## Diagnose production against the DEPLOYED config, never the repo's
+
+**What went wrong:** The apply-outage analysis concluded "every application since July 7 failed" by assuming the #115 security rules were deployed when they merged. Production disproved it: submissions kept working because the rules deploy never happened. The real failure was #110's client-side 15 MB cap outrunning the still-deployed 5 MB storage rule, losing only large-photo applicants. Meanwhile the undeployed #115 rules meant the PII lockdown everyone believed was live was not.
+
+**Why:** Rules, CSP headers and env ship on different pipelines than code (manual Firebase CLI vs automatic Vercel), so repo history says nothing about what production enforces. Every conclusion drawn from "PR X merged on date Y" inherited that false assumption.
+
+**Rule:** Before stating a production root cause, verify the live artifact directly: curl the deployed headers, exercise the deployed rules with a real probe, or read the deployed config via API. A repo diff plus a merge date is a hypothesis, not evidence. The rules-drift check (scripts/check-rules-drift.mjs, every 6 hours) now makes the rules half of this automatic; the same discipline applies manually to headers and env.

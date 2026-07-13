@@ -35,12 +35,25 @@ const breadcrumbJsonLd = buildBreadcrumbJsonLd([
     />
     {
       import.meta.env.PUBLIC_TURNSTILE_SITE_KEY && (
-        <script
-          is:inline
-          src="https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit&onload=__gmd_turnstile_load"
-          async
-          defer
-        />
+        <Fragment>
+          {/* WHY: Turnstile's api.js invokes window.__gmd_turnstile_load the
+              moment it finishes loading, but the real callback is only
+              assigned when the React island mounts (client:only hydration is
+              slow on mobile). If Turnstile wins that race it evaluates an
+              undefined global inside a cross-origin script, which surfaces as
+              an opaque "Script error." in tracking. The no-op placeholder
+              closes the race; ApplyPage checks window.turnstile on mount and
+              renders the widget in either load order. */}
+          <script is:inline>
+            window.__gmd_turnstile_load = window.__gmd_turnstile_load || function () {};
+          </script>
+          <script
+            is:inline
+            src="https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit&onload=__gmd_turnstile_load"
+            async
+            defer
+          />
+        </Fragment>
       )
     }
   </Fragment>

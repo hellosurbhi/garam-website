@@ -22,6 +22,8 @@ vi.mock("firebase/storage", () => ({
   ref: vi.fn((_storage: unknown, path: string) => ({ fullPath: path })),
   uploadBytesResumable: (...args: unknown[]) =>
     mockUploadBytesResumable(...args),
+  // The failure path cleans up uploaded photos, so the mock must cover it.
+  deleteObject: vi.fn().mockResolvedValue(undefined),
 }));
 
 vi.mock("firebase/auth", () => ({

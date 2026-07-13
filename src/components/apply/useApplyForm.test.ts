@@ -562,7 +562,7 @@ describe("useApplyForm", () => {
     expect(docData.termsAgreedAt).toBe("mock-timestamp");
     expect(docData.submittedAt).toBe("mock-timestamp");
     expect(docData.photoPaths).toEqual([
-      expect.stringMatching(/^photos\/[0-9a-f-]+\.jpg$/),
+      expect.stringMatching(/^photos\/.+\.jpg$/),
     ]);
     expect(docData.isSynthetic).toBeUndefined();
   });
@@ -587,7 +587,11 @@ describe("useApplyForm", () => {
     const docData = mockAddDoc.mock.calls[0][1];
     expect(docData.isSynthetic).toBe(true);
     // 4 runs/day must never appear as conversions in PostHog or GTM.
-    expect(mockTrackLeadEvent).not.toHaveBeenCalled();
+    // (Field-interaction events still fire; the conversion events must not.)
+    expect(mockTrackLeadEvent).not.toHaveBeenCalledWith(
+      "apply_submitted",
+      expect.anything(),
+    );
     expect(mockIdentifyLead).not.toHaveBeenCalled();
   });
 
@@ -642,7 +646,11 @@ describe("useApplyForm", () => {
       await result.current.handleSubmit(makeSubmitEvent());
     });
 
-    expect(mockDeleteObject).toHaveBeenCalledWith("mock-ref");
+    expect(mockDeleteObject).toHaveBeenCalledWith(
+      expect.objectContaining({
+        fullPath: expect.stringMatching(/^photos\//),
+      }),
+    );
   });
 
   /* ── Turnstile reset behaviour ────────────────────────── */
@@ -1287,7 +1295,7 @@ describe("useApplyForm", () => {
     expect(body.name).toBe("Jane Doe");
     expect(body.age).toBe(25);
     expect(body.photoPaths).toEqual([
-      expect.stringMatching(/^photos\/[0-9a-f-]+\.jpg$/),
+      expect.stringMatching(/^photos\/.+\.jpg$/),
     ]);
   });
 

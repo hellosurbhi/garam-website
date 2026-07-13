@@ -8,6 +8,8 @@ import {
 } from "@/lib/firebase";
 import { trackError, trackLeadEvent, identifyLead } from "@/lib/analytics";
 import { buildLeadAttribution } from "@/lib/leadAttribution";
+import { isSyntheticSubmission } from "@/lib/syntheticMonitor";
+import { reportApplyFailure } from "@/lib/applyFailureAlert";
 import { validateEmail } from "@/utils/validateEmail";
 import { withTimeout } from "@/utils/withTimeout";
 import { getFriendFirstName } from "@/utils/nomination";
@@ -401,7 +403,7 @@ export function useApplyForm() {
       const [
         { signInAnonymously },
         auth,
-        { ref, uploadBytesResumable, getDownloadURL },
+        { ref, uploadBytesResumable },
         storage,
       ] = await withTimeout(
         Promise.all([
@@ -414,14 +416,27 @@ export function useApplyForm() {
         "Firebase init",
       );
 
-      await withTimeout(signInAnonymously(auth), 10_000, "Firebase auth");
+      const credential = await withTimeout(
+        signInAnonymously(auth),
+        10_000,
+        "Firebase auth",
+      );
 
-      const photoUrls = await Promise.all(
+      // WHY: we store storage PATHS, never getDownloadURL() results. Photo
+      // reads are admin-only in storage.rules (applicant photos are PII), and
+      // getDownloadURL is a READ: calling it from this anonymous session gets
+      // denied and killed every submission in July 2026. The admin dashboard
+      // resolves paths with its own authenticated session instead.
+      const photoPaths = await Promise.all(
         photoFiles.map(async (file, i) => {
           const ext = file.name.split(".").pop() ?? "jpg";
           const photoRef = ref(storage, `photos/${crypto.randomUUID()}.${ext}`);
           uploadedRefs[i] = photoRef;
-          const task = uploadBytesResumable(photoRef, file);
+          // The owner tag is what authorizes this session's failure cleanup
+          // (storage.rules only lets the uploader delete their own object).
+          const task = uploadBytesResumable(photoRef, file, {
+            customMetadata: { owner: credential.user.uid },
+          });
           await new Promise<void>((resolve, reject) => {
             const timer = setTimeout(() => {
               task.cancel();
@@ -437,7 +452,7 @@ export function useApplyForm() {
                 reject(err);
               });
           });
-          return getDownloadURL(photoRef);
+          return photoRef.fullPath;
         }),
       );
 
@@ -461,7 +476,8 @@ export function useApplyForm() {
         ...(form.applicationType === "Nomination" ? { nominationConsent } : {}),
         pitch: form.pitch.trim(),
         type: form.type.trim(),
-        photoUrls,
+        photoPaths,
+        ...(isSyntheticSubmission(form.email) ? { isSynthetic: true } : {}),
         ...(form.seenShowBefore !== ""
           ? { seenShowBefore: form.seenShowBefore === "yes" }
           : {}),
@@ -520,6 +536,18 @@ export function useApplyForm() {
           error_type: "api_error",
           component: "useApplyForm",
         });
+        // The application IS saved at this point; alert so the admin email
+        // silently not arriving never hides an applicant.
+        reportApplyFailure({
+          stage: "notify_email",
+          errorMessage: err instanceof Error ? err.message : String(err),
+          applicant: {
+            name: form.name,
+            email: form.email,
+            phone: form.phone,
+            instagram: form.instagram,
+          },
+        });
       });
 
       setForm(INITIAL);
@@ -552,6 +580,19 @@ export function useApplyForm() {
         component: "useApplyForm",
         form_step: "auth_or_upload_or_firestore",
         application_type: form.applicationType,
+      });
+      // Real-time page: one failed submission = one immediate email, with the
+      // applicant's contact info so they can be recovered even though the
+      // application never reached Firestore.
+      reportApplyFailure({
+        stage: "submit",
+        errorMessage: error.message,
+        applicant: {
+          name: form.name,
+          email: form.email,
+          phone: form.phone,
+          instagram: form.instagram,
+        },
       });
       setToast({
         msg: "Sorry, the form isn't working right now. DM us on @garammasaladating on Instagram and we'll sort it out!",

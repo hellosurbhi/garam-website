@@ -124,7 +124,6 @@ export function WaiverPanel({
           value={signature}
           onChange={(e) => onSignatureChange(e.target.value)}
           className="portal-input portal-input-sig"
-          aria-label="Signature"
           aria-describedby={
             !scrolled
               ? "waiver-locked-hint"

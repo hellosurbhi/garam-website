@@ -123,6 +123,21 @@ test.describe("Apply form", () => {
     await page.route("**/firestore.googleapis.com/**", (route) =>
       route.abort(),
     );
+    // The static preview has no API routes; fulfill the alert endpoint so the
+    // fire-and-forget request is observable.
+    await page.route("**/api/alert-apply-failure", (route) =>
+      route.fulfill({
+        status: 200,
+        contentType: "application/json",
+        body: JSON.stringify({ sent: true }),
+      }),
+    );
+    const alertRequest = page.waitForRequest(
+      (req) =>
+        req.url().includes("/api/alert-apply-failure") &&
+        req.method() === "POST",
+      { timeout: 20_000 },
+    );
 
     await page.goto("/apply", { waitUntil: "domcontentloaded" });
     await page.waitForSelector("[data-testid=apply-form]", {
@@ -141,6 +156,16 @@ test.describe("Apply form", () => {
     await expect(submit).not.toBeDisabled({ timeout: 15_000 });
     const alert = page.locator('[role="alert"]');
     await expect(alert.first()).toBeVisible({ timeout: 15_000 });
+
+    // One failed submission = one immediate producer alert, carrying the
+    // applicant's contact fields for recovery.
+    const req = await alertRequest;
+    const body = req.postDataJSON() as {
+      stage: string;
+      applicant?: { email?: string };
+    };
+    expect(body.stage).toBe("submit");
+    expect(body.applicant?.email).toBe("smoketest@example.com");
   });
 });
 

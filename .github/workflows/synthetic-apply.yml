@@ -1,0 +1,68 @@
+# Daily synthetic apply-form monitor.
+#
+# Submits ONE real application on production with reserved synthetic markers
+# (name "SYNTHETIC MONITOR", email synthetic-monitor@garammasaladating.com,
+# isSynthetic flag), verifies the document actually landed in Firestore via
+# the service account, then deletes only documents carrying all synthetic
+# markers (see scripts/synthetic-apply-verify.mjs for the delete safety
+# rules). notify-application skips emails for it; the admin dashboard hides it.
+#
+# This is the only check that exercises the deployed stack end to end
+# (security rules, Firebase config, Vercel env, CSP) — the class of breakage
+# that mocked tests can never catch and that cost a week of applicants in
+# July 2026. On any failure it fires the same real-time alert email a real
+# failed applicant would.
+#
+# Required repo secrets: FIREBASE_ADMIN_CLIENT_EMAIL, FIREBASE_ADMIN_PRIVATE_KEY,
+# FIREBASE_PROJECT_ID, FIREBASE_STORAGE_BUCKET.
+name: Synthetic Apply Monitor
+
+on:
+  schedule:
+    - cron: "30 13 * * *" # daily 13:30 UTC (9:30am ET)
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: synthetic-apply
+  cancel-in-progress: false
+
+jobs:
+  synthetic:
+    name: Real submission + verify + cleanup
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v6
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - name: Install Playwright
+        run: npx playwright install chromium --with-deps
+      - name: Submit synthetic application on production
+        run: npx playwright test --config playwright.synthetic.config.ts
+        env:
+          PLAYWRIGHT_BASE_URL: https://garammasaladating.com
+      - name: Verify document landed and clean up
+        run: node scripts/synthetic-apply-verify.mjs
+        env:
+          FIREBASE_ADMIN_CLIENT_EMAIL: ${{ secrets.FIREBASE_ADMIN_CLIENT_EMAIL }}
+          FIREBASE_ADMIN_PRIVATE_KEY: ${{ secrets.FIREBASE_ADMIN_PRIVATE_KEY }}
+          FIREBASE_PROJECT_ID: ${{ secrets.FIREBASE_PROJECT_ID }}
+          FIREBASE_STORAGE_BUCKET: ${{ secrets.FIREBASE_STORAGE_BUCKET }}
+      - name: Page the producer on failure
+        if: failure()
+        run: |
+          curl -sS -X POST https://garammasaladating.com/api/alert-apply-failure \
+            -H "Content-Type: application/json" \
+            -d '{"stage":"submit","errorMessage":"Daily synthetic apply monitor FAILED: the production apply form is likely broken. Check the GitHub Actions run for details.","pageUrl":"https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}","userAgent":"synthetic-apply-monitor"}'
+      - name: Upload report on failure
+        uses: actions/upload-artifact@v4
+        if: failure()
+        with:
+          name: synthetic-apply-report
+          path: playwright-report/
+          retention-days: 7

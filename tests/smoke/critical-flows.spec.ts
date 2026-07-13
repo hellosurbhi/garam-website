@@ -190,6 +190,91 @@ test.describe("HomeSignup (Spice List)", () => {
   });
 });
 
+test.describe("Standalone waiver (/waiver)", () => {
+  async function fillWaiverForm(page: Page) {
+    await page.fill("#waiver-first-name", "Smoke");
+    await page.fill("#waiver-last-name", "Tester");
+    await page.fill("#waiver-email", "smoketest@example.com");
+    await page.fill("#waiver-phone", "5551230100");
+    // The waiver panel requires a scroll-through before agreeing.
+    await page
+      .locator("[data-testid=waiver-scroll]")
+      .evaluate((el) => el.scrollTo(0, el.scrollHeight));
+    await page.fill("#waiver-signature", "Smoke Tester");
+    await page.check('input[type="checkbox"]');
+  }
+
+  test("happy path: reads, signs, submits, sees confirmation", async ({
+    page,
+  }) => {
+    await page.route("**/api/stage-waiver", (route) =>
+      route.fulfill({
+        status: 200,
+        contentType: "application/json",
+        body: JSON.stringify({ ok: true }),
+      }),
+    );
+
+    await page.goto("/waiver", { waitUntil: "domcontentloaded" });
+    await page.waitForSelector("[data-testid=waiver-form]", {
+      state: "visible",
+      timeout: 15_000,
+    });
+
+    const submit = page.locator("[data-testid=waiver-submit]");
+    await expect(submit).toBeDisabled();
+    await fillWaiverForm(page);
+    await expect(submit).not.toBeDisabled({ timeout: 5_000 });
+    await submit.click();
+
+    await expect(page.locator("[data-testid=waiver-success]")).toBeVisible({
+      timeout: 10_000,
+    });
+  });
+
+  test("failure path: shows the error and fires the producer alert", async ({
+    page,
+  }) => {
+    await page.route("**/api/stage-waiver", (route) =>
+      route.fulfill({
+        status: 500,
+        contentType: "application/json",
+        body: JSON.stringify({ error: "Could not save your waiver." }),
+      }),
+    );
+    await page.route("**/api/alert-failure", (route) =>
+      route.fulfill({
+        status: 200,
+        contentType: "application/json",
+        body: JSON.stringify({ ok: true }),
+      }),
+    );
+    const alertRequest = page.waitForRequest(
+      (req) =>
+        req.url().includes("/api/alert-failure") && req.method() === "POST",
+      { timeout: 15_000 },
+    );
+
+    await page.goto("/waiver", { waitUntil: "domcontentloaded" });
+    await page.waitForSelector("[data-testid=waiver-form]", {
+      state: "visible",
+      timeout: 15_000,
+    });
+    await fillWaiverForm(page);
+    await page.click("[data-testid=waiver-submit]");
+
+    await expect(page.locator('[role="alert"]').first()).toBeVisible({
+      timeout: 10_000,
+    });
+    const body = (await alertRequest).postDataJSON() as {
+      flow: string;
+      contact?: { email?: string };
+    };
+    expect(body.flow).toBe("waiver");
+    expect(body.contact?.email).toBe("smoketest@example.com");
+  });
+});
+
 test.describe("LeadCaptureModal", () => {
   test("submits email and shows success state", async ({ page }) => {
     await page.goto("/links", { waitUntil: "domcontentloaded" });

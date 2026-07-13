@@ -1,5 +1,13 @@
 # Lessons
 
+## A new endpoint's required env vars ship with the endpoint or it ships broken
+
+**What went wrong:** The contestant portal claim endpoints 500 in production. `signPortalToken` requires `CONTESTANT_PORTAL_SECRET`, but the secret appeared in no `.env.example` entry, no docs and (most likely) no Vercel environment, so the endpoints could never succeed after deploy. Same shape as the July apply outage, where the fix stayed inert until operator secrets were added.
+
+**Why:** The env var was introduced deep in a library (`src/lib/portalToken.ts`) during a multi-feature recovery branch, and nothing forces a new `import.meta.env` read to surface as a deploy requirement.
+
+**Rule:** Any commit that adds a new required `import.meta.env`/`process.env` read must, in the same commit, add the var to `.env.example` with a generation command, and the PR description must list it as an operator step (add in Vercel, then redeploy). Grep for `import.meta.env` in the diff before shipping any server endpoint.
+
 ## Production signup failures need server logs first
 
 **What went wrong:** I treated contestant portal signup failures like client-side fallback problems before checking the live API exception.

@@ -2,6 +2,11 @@
   display: inline-block;
   border-radius: 50%;
   border-style: solid;
+  /* Inherits currentColor so the spinner matches the text color of whatever
+     button or context hosts it (white on dark pills, red on outline delete,
+     green on restore) without per-surface variants. */
+  border-color: color-mix(in srgb, currentColor 25%, transparent);
+  border-top-color: currentColor;
   animation: spinner-spin 0.7s linear infinite;
   flex-shrink: 0;
 }
@@ -10,16 +15,12 @@
   width: 32px;
   height: 32px;
   border-width: 2px;
-  border-color: rgba(0, 0, 0, 0.08);
-  border-top-color: var(--brand-red);
 }
 
 .sm {
   width: 16px;
   height: 16px;
   border-width: 2px;
-  border-color: rgba(255, 255, 255, 0.3);
-  border-top-color: #fff;
 }
 
 @keyframes spinner-spin {

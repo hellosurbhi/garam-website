@@ -21,6 +21,7 @@ import {
 import { formatLocation } from "@/utils/locationDisplay";
 import { getApplicantPhotos } from "@/utils/applicantPhotos";
 import { Modal } from "@/components/ui/Modal";
+import Spinner from "@/components/ui/Spinner";
 import { events } from "@/data/events";
 import styles from "./ApplicantModal.module.css";
 
@@ -31,6 +32,10 @@ interface ApplicantModalProps {
   onDelete?: (id: string) => void;
   onRestore?: (id: string) => void;
   onParticipated?: (id: string) => void;
+  /** This applicant's action in flight: shows a pending state on that button. */
+  pendingAction?: "delete" | "restore" | "participated" | null;
+  /** Any action in flight anywhere: keeps the modal action buttons inert. */
+  actionsDisabled?: boolean;
 }
 
 function InfoRow({ label, value }: { label: string; value?: string | number }) {
@@ -94,6 +99,8 @@ export default function ApplicantModal({
   onUpdate,
   onDelete,
   onRestore,
+  pendingAction,
+  actionsDisabled,
 }: ApplicantModalProps) {
   const [status, setStatus] = useState<ApplicantStatus>(
     app.status as ApplicantStatus,
@@ -512,18 +519,38 @@ export default function ApplicantModal({
                 <button
                   onClick={() => onRestore(app.id)}
                   className={styles.restoreButton}
+                  disabled={actionsDisabled || pendingAction != null}
                 >
-                  <ArchiveRestore size={16} />
-                  Restore
+                  {pendingAction === "restore" ? (
+                    <>
+                      <Spinner size="sm" label="" />
+                      Restoring...
+                    </>
+                  ) : (
+                    <>
+                      <ArchiveRestore size={16} />
+                      Restore
+                    </>
+                  )}
                 </button>
               )
             : onDelete && (
                 <button
                   onClick={() => onDelete(app.id)}
                   className={styles.deleteButton}
+                  disabled={actionsDisabled || pendingAction != null}
                 >
-                  <Trash2 size={16} />
-                  Move to Deleted
+                  {pendingAction === "delete" ? (
+                    <>
+                      <Spinner size="sm" label="" />
+                      Deleting...
+                    </>
+                  ) : (
+                    <>
+                      <Trash2 size={16} />
+                      Move to Deleted
+                    </>
+                  )}
                 </button>
               )}
         </div>

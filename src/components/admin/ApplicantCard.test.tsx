@@ -89,6 +89,79 @@ describe("ApplicantCard", () => {
     expect(onClick).not.toHaveBeenCalled();
   });
 
+  it("shows a disabled spinner button while deleting", () => {
+    const onDelete = vi.fn();
+    render(
+      <ApplicantCard
+        app={makeApp()}
+        onClick={vi.fn()}
+        onDelete={onDelete}
+        pendingAction="delete"
+        actionsDisabled
+      />,
+    );
+    const pendingBtn = screen.getByLabelText("Deleting application");
+    expect(pendingBtn).toBeDisabled();
+    fireEvent.click(pendingBtn);
+    expect(onDelete).not.toHaveBeenCalled();
+  });
+
+  it("keeps all action buttons inert while another action is in flight", () => {
+    const onDelete = vi.fn();
+    const onParticipated = vi.fn();
+    render(
+      <ApplicantCard
+        app={makeApp()}
+        onClick={vi.fn()}
+        onDelete={onDelete}
+        onParticipated={onParticipated}
+        actionsDisabled
+      />,
+    );
+    const deleteBtn = screen.getByLabelText("Delete application");
+    const participatedBtn = screen.getByLabelText("Mark as participated");
+    expect(deleteBtn).toBeDisabled();
+    expect(participatedBtn).toBeDisabled();
+    fireEvent.click(deleteBtn);
+    fireEvent.click(participatedBtn);
+    expect(onDelete).not.toHaveBeenCalled();
+    expect(onParticipated).not.toHaveBeenCalled();
+  });
+
+  it("shows a disabled spinner while marking participated", () => {
+    const onParticipated = vi.fn();
+    render(
+      <ApplicantCard
+        app={makeApp()}
+        onClick={vi.fn()}
+        onParticipated={onParticipated}
+        pendingAction="participated"
+        actionsDisabled
+      />,
+    );
+    const pendingBtn = screen.getByLabelText("Marking as participated");
+    expect(pendingBtn).toBeDisabled();
+    fireEvent.click(pendingBtn);
+    expect(onParticipated).not.toHaveBeenCalled();
+  });
+
+  it("shows a disabled spinner while restoring", () => {
+    const onRestore = vi.fn();
+    render(
+      <ApplicantCard
+        app={makeApp()}
+        onClick={vi.fn()}
+        onRestore={onRestore}
+        pendingAction="restore"
+        actionsDisabled
+      />,
+    );
+    const pendingBtn = screen.getByLabelText("Restoring application");
+    expect(pendingBtn).toBeDisabled();
+    fireEvent.click(pendingBtn);
+    expect(onRestore).not.toHaveBeenCalled();
+  });
+
   it("renders restore button when onRestore is provided", () => {
     const onRestore = vi.fn();
     render(

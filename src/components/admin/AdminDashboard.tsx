@@ -65,6 +65,7 @@ interface StatusSectionProps {
   onCardClick: (app: Application) => void;
   onDelete: (id: string) => void;
   onParticipated: (id: string) => void;
+  pendingAction: PendingAdminAction | null;
 }
 
 function StatusSection({
@@ -73,6 +74,7 @@ function StatusSection({
   onCardClick,
   onDelete,
   onParticipated,
+  pendingAction,
 }: StatusSectionProps) {
   const [isOpen, setIsOpen] = useState(STATUS_SECTION_DEFAULTS[status]);
   const id = sectionId(status);
@@ -112,6 +114,10 @@ function StatusSection({
                   onDelete={() => onDelete(app.id)}
                   onParticipated={() => onParticipated(app.id)}
                   dimmed={isDimmed}
+                  pendingAction={
+                    pendingAction?.id === app.id ? pendingAction.action : null
+                  }
+                  actionsDisabled={pendingAction !== null}
                 />
               ))}
             </div>
@@ -135,10 +141,16 @@ const INBOX_EXCLUDED_STATUSES: ApplicantStatus[] = [
 
 const PAGE_SIZE = 50;
 
+// A card action whose Firestore write is in flight. Tracked one at a time.
+export type PendingAdminAction = {
+  id: string;
+  action: "delete" | "restore" | "participated";
+};
+
 export default function AdminDashboard({ onLogout }: AdminDashboardProps) {
   const [activeTab, setActiveTab] = useState<
     "today" | "applicants" | "analytics" | "waitlist"
-  >("today");
+  >("applicants");
   const [applications, setApplications] = useState<Application[]>([]);
   const [loading, setLoading] = useState(true);
   const [fetchError, setFetchError] = useState(false);
@@ -149,6 +161,9 @@ export default function AdminDashboard({ onLogout }: AdminDashboardProps) {
   const [toast, setToast] = useState<{ msg: string; ok: boolean } | null>(null);
   const [deletedOpen, setDeletedOpen] = useState(false);
   const [participatedOpen, setParticipatedOpen] = useState(false);
+  const [pendingAction, setPendingAction] = useState<PendingAdminAction | null>(
+    null,
+  );
 
   const [lastDoc, setLastDoc] =
     useState<QueryDocumentSnapshot<DocumentData> | null>(null);
@@ -271,39 +286,63 @@ export default function AdminDashboard({ onLogout }: AdminDashboardProps) {
     }
   }
 
+  // WHY: single-flight guard on every card action. These writes take a full
+  // Firestore round-trip (seconds on a slow connection). Without the guard, a
+  // second click while the first write is pending, or one landing on the next
+  // card after the grid reflows, fires the action on a second applicant (this
+  // caused a real accidental double delete). All action buttons stay disabled
+  // until the in-flight write settles; removing this reintroduces the bug.
   async function handleDelete(id: string) {
-    await handleUpdate(id, { deletedAt: Timestamp.now() } as Partial<
-      Omit<Application, "id">
-    >);
-    setSelectedApp(null);
+    if (pendingAction) return;
+    setPendingAction({ id, action: "delete" });
+    try {
+      await handleUpdate(id, { deletedAt: Timestamp.now() } as Partial<
+        Omit<Application, "id">
+      >);
+      setSelectedApp(null);
+    } finally {
+      setPendingAction(null);
+    }
   }
 
-  function handleRestore(id: string) {
-    handleUpdate(id, { deletedAt: null });
+  async function handleRestore(id: string) {
+    if (pendingAction) return;
+    setPendingAction({ id, action: "restore" });
+    try {
+      await handleUpdate(id, { deletedAt: null });
+    } finally {
+      setPendingAction(null);
+    }
   }
 
   async function handleParticipated(id: string) {
-    const ok = await handleUpdate(id, {
-      status: "Participated",
-      participatedAt: serverTimestamp(),
-    } as Partial<Omit<Application, "id">>);
-    if (!ok) {
-      setSelectedApp(null);
-      return;
-    }
+    if (pendingAction) return;
+    setPendingAction({ id, action: "participated" });
     try {
-      const auth = await getFirebaseAuth();
-      const db = await getFirebaseDb();
-      await addDoc(collection(db, "applications", id, "events"), {
-        type: "participated",
-        timestamp: serverTimestamp(),
-        actor: auth.currentUser?.email ?? "admin",
-        payload: {},
-      });
-    } catch {
-      // non-fatal event log failure
+      const ok = await handleUpdate(id, {
+        status: "Participated",
+        participatedAt: serverTimestamp(),
+      } as Partial<Omit<Application, "id">>);
+      if (!ok) {
+        setSelectedApp(null);
+        return;
+      }
+      try {
+        const auth = await getFirebaseAuth();
+        const db = await getFirebaseDb();
+        await addDoc(collection(db, "applications", id, "events"), {
+          type: "participated",
+          timestamp: serverTimestamp(),
+          actor: auth.currentUser?.email ?? "admin",
+          payload: {},
+        });
+      } catch {
+        // non-fatal event log failure
+      }
+      setSelectedApp(null);
+    } finally {
+      setPendingAction(null);
     }
-    setSelectedApp(null);
   }
 
   const cityOptions = useMemo(() => {
@@ -642,6 +681,7 @@ export default function AdminDashboard({ onLogout }: AdminDashboardProps) {
                   onCardClick={setSelectedApp}
                   onDelete={handleDelete}
                   onParticipated={handleParticipated}
+                  pendingAction={pendingAction}
                 />
               ))}
 
@@ -700,6 +740,12 @@ export default function AdminDashboard({ onLogout }: AdminDashboardProps) {
                           onClick={() => setSelectedApp(app)}
                           onRestore={() => handleRestore(app.id)}
                           dimmed
+                          pendingAction={
+                            pendingAction?.id === app.id
+                              ? pendingAction.action
+                              : null
+                          }
+                          actionsDisabled={pendingAction !== null}
                         />
                       ))}
                     </div>
@@ -719,6 +765,10 @@ export default function AdminDashboard({ onLogout }: AdminDashboardProps) {
           onDelete={handleDelete}
           onRestore={handleRestore}
           onParticipated={handleParticipated}
+          pendingAction={
+            pendingAction?.id === selectedApp.id ? pendingAction.action : null
+          }
+          actionsDisabled={pendingAction !== null}
         />
       )}
 

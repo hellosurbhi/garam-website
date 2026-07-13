@@ -23,8 +23,7 @@ function loadPostHog() {
       return "third_party_error";
     if (msg.indexOf("Java object is gone") !== -1) return "third_party_error";
     if (file.indexOf("iabjs://") === 0) return "third_party_error";
-    if (msg.indexOf("Script error") === 0 && !stack)
-      return "third_party_error";
+    if (msg.indexOf("Script error") === 0 && !stack) return "third_party_error";
     if (msg.indexOf("WebGL not supported") !== -1) return "third_party_error";
     return "client_error";
   }
@@ -38,7 +37,9 @@ function loadPostHog() {
   }
 
   window.addEventListener("error", function (event) {
-    var stack = event.error ? String(event.error.stack || "").slice(0, 2000) : "";
+    var stack = event.error
+      ? String(event.error.stack || "").slice(0, 2000)
+      : "";
     var props = {
       error_message: event.message || "Unknown error",
       error_stack: stack,
@@ -48,7 +49,10 @@ function loadPostHog() {
       error_colno: event.colno || 0,
       page_url: window.location.href,
     };
-    captureError(classifyErrorEvent(event.message, event.filename, stack), props);
+    captureError(
+      classifyErrorEvent(event.message, event.filename, stack),
+      props,
+    );
   });
 
   window.addEventListener("unhandledrejection", function (event) {
@@ -123,6 +127,27 @@ function loadPostHog() {
     session_recording: { maskTextSelector: ".ph-mask" },
     autocapture: { capture_copied_text: true },
     custom_campaign_params: ["source"],
+    // WHY: PostHog's Error Tracking issues (and its weekly digest) are fed
+    // by the SDK's own $exception autocapture, which the handler-level
+    // reroute above cannot touch. Without this, injected in-app-browser
+    // errors keep polluting the issues UI even though our custom events are
+    // clean. Matching events are dropped here because the handlers above
+    // already preserve them as third_party_error; real exceptions pass
+    // through untouched. A non-empty stack sentinel is passed so the
+    // stackless "Script error" heuristic never drops a real exception here.
+    before_send: function (event) {
+      if (!event || event.event !== "$exception") return event;
+      var list = (event.properties && event.properties.$exception_list) || [];
+      for (var k = 0; k < list.length; k++) {
+        var message = String((list[k] && list[k].value) || "");
+        if (
+          classifyErrorEvent(message, "", "has-stack") === "third_party_error"
+        ) {
+          return null;
+        }
+      }
+      return event;
+    },
   });
 
   var queue = window.__garamErrorQueue || [];

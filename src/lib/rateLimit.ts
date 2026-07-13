@@ -26,8 +26,8 @@ export const RATE_LIMITS = {
     limit: 5,
     windowSeconds: 60,
   },
-  alertApplyFailure: {
-    prefix: "ratelimit:alert-apply-failure",
+  alertFailure: {
+    prefix: "ratelimit:alert-failure",
     limit: 5,
     windowSeconds: 60,
   },

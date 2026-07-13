@@ -3,17 +3,10 @@ import { z } from "zod";
 import { sendMail } from "@/lib/zohoMailer";
 import { applicationReceived, escapeHtml, subjectSafe } from "@/data/emails";
 import { enforceRateLimit, RATE_LIMITS } from "@/lib/rateLimit";
+import { isAllowedOrigin } from "@/lib/allowedOrigin";
 import { isSyntheticSubmission } from "@/lib/syntheticMonitor";
 
 export const prerender = false;
-
-function isAllowedOrigin(origin: string | null): boolean {
-  if (!origin) return false;
-  if (origin === "https://garammasaladating.com") return true;
-  if (/^https:\/\/[\w-]+-hellosurbhi\.vercel\.app$/.test(origin)) return true;
-  if (/^http:\/\/localhost(:\d+)?$/.test(origin)) return true;
-  return false;
-}
 
 const ApplicationSchema = z.object({
   name: z.string().min(1).max(200),

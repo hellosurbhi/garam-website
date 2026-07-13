@@ -54,9 +54,9 @@ vi.mock("@/lib/leadAttribution", () => ({
     mockBuildLeadAttribution(...args),
 }));
 
-const mockReportApplyFailure = vi.fn();
-vi.mock("@/lib/applyFailureAlert", () => ({
-  reportApplyFailure: (...args: unknown[]) => mockReportApplyFailure(...args),
+const mockReportFailure = vi.fn();
+vi.mock("@/lib/failureAlert", () => ({
+  reportFailure: (...args: unknown[]) => mockReportFailure(...args),
 }));
 
 import { useApplyForm, type FormState } from "./useApplyForm";
@@ -616,11 +616,12 @@ describe("useApplyForm", () => {
     expect(result.current.submitted).toBe(false);
     // One failed submission must page a human immediately, with enough
     // contact info to recover the applicant.
-    expect(mockReportApplyFailure).toHaveBeenCalledWith(
+    expect(mockReportFailure).toHaveBeenCalledWith(
       expect.objectContaining({
+        flow: "apply",
         stage: "submit",
         errorMessage: "Firestore error",
-        applicant: expect.objectContaining({ email: expect.any(String) }),
+        contact: expect.objectContaining({ email: expect.any(String) }),
       }),
     );
   });

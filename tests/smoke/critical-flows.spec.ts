@@ -125,7 +125,7 @@ test.describe("Apply form", () => {
     );
     // The static preview has no API routes; fulfill the alert endpoint so the
     // fire-and-forget request is observable.
-    await page.route("**/api/alert-apply-failure", (route) =>
+    await page.route("**/api/alert-failure", (route) =>
       route.fulfill({
         status: 200,
         contentType: "application/json",
@@ -134,8 +134,7 @@ test.describe("Apply form", () => {
     );
     const alertRequest = page.waitForRequest(
       (req) =>
-        req.url().includes("/api/alert-apply-failure") &&
-        req.method() === "POST",
+        req.url().includes("/api/alert-failure") && req.method() === "POST",
       { timeout: 20_000 },
     );
 
@@ -161,11 +160,13 @@ test.describe("Apply form", () => {
     // applicant's contact fields for recovery.
     const req = await alertRequest;
     const body = req.postDataJSON() as {
+      flow: string;
       stage: string;
-      applicant?: { email?: string };
+      contact?: { email?: string };
     };
+    expect(body.flow).toBe("apply");
     expect(body.stage).toBe("submit");
-    expect(body.applicant?.email).toBe("smoketest@example.com");
+    expect(body.contact?.email).toBe("smoketest@example.com");
   });
 });
 

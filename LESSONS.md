@@ -181,3 +181,11 @@ The real XSS guards on this site are Firebase security rules and Firestore field
 **Why:** `ContestantPortal.tsx`'s catch blocks did `err instanceof Error ? err.message : fallback`. Both a curated server error (`throw new Error(responseErrorMessage(...))`) and a raw browser `TypeError` from a failed `fetch()` satisfy `instanceof Error`, so the technical message won every time a request failed before reaching the server. The same fetches also had no timeout, so a hung request left the "Loading..."/"Completing..." state stuck forever (the same class of bug fixed for the apply form in `useApplyForm.ts` on 2026-07-07, but never carried over to the contestant portal).
 
 **Rule:** When a catch block chooses between a curated message and a fallback, never gate on `instanceof Error` — it's true for both. Throw a dedicated error subclass (e.g. `PortalApiError`) only for messages that were authored for display, and treat every other exception as "show the fallback copy." Any fetch that can leave a user-facing loading/submitting state open must carry an `AbortController` timeout so it always resolves.
+
+## jsdom fires click events on disabled buttons and they bubble to parent handlers
+
+**What went wrong:** A new AdminDashboard test clicked a disabled card delete button to prove the single-flight guard blocks a second write. All 1095 tests passed, but vitest reported an unhandled rejection: the click bubbled to the card's `onClick`, mounted `ApplicantModal`, and the modal's `onSnapshot` subscription hit a Firestore mock that didn't define `onSnapshot`.
+
+**Why:** Real browsers suppress click events on disabled form controls entirely, so nothing bubbles. jsdom (via fireEvent) dispatches the MouseEvent regardless, and React's root delegation runs ancestor handlers. The test therefore exercised a code path (card click opening the modal) that cannot happen in production, and the failure surfaced as an unhandled rejection attributed to the wrong test.
+
+**Rule:** Any test file whose interactions could mount `ApplicantModal` (directly or via a bubbled click on a card) must include `onSnapshot` in its `firebase/firestore` mock, returning an unsubscribe no-op. More generally: clicking a disabled element in jsdom still bubbles, so never treat "the button is disabled" as proof a parent handler cannot fire in tests.

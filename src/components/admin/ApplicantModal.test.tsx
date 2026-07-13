@@ -14,10 +14,12 @@ vi.mock("firebase/firestore", () => ({
   collection: vi.fn(() => "mock-collection-ref"),
   query: vi.fn((...args: unknown[]) => args[0]),
   orderBy: vi.fn(() => "mock-order"),
-  onSnapshot: vi.fn((_ref: unknown, cb: (snap: { docs: unknown[] }) => void) => {
-    cb({ docs: [] }); // empty events list on mount
-    return vi.fn(); // unsubscribe no-op
-  }),
+  onSnapshot: vi.fn(
+    (_ref: unknown, cb: (snap: { docs: unknown[] }) => void) => {
+      cb({ docs: [] }); // empty events list on mount
+      return vi.fn(); // unsubscribe no-op
+    },
+  ),
   updateDoc: vi.fn(() => Promise.resolve()),
   doc: vi.fn(() => "mock-doc-ref"),
   serverTimestamp: vi.fn(() => "mock-ts"),
@@ -205,6 +207,46 @@ describe("ApplicantModal", () => {
     );
     fireEvent.click(screen.getByText("Move to Deleted"));
     expect(onDelete).toHaveBeenCalledWith("test-1");
+  });
+
+  it("shows a disabled Deleting... state while the delete is in flight", () => {
+    const onDelete = vi.fn();
+    render(
+      <ApplicantModal
+        app={makeApp()}
+        {...defaultProps}
+        onDelete={onDelete}
+        pendingAction="delete"
+      />,
+    );
+    const pendingBtn = screen.getByText("Deleting...").closest("button");
+    expect(pendingBtn).toBeDisabled();
+    expect(screen.queryByText("Move to Deleted")).not.toBeInTheDocument();
+    if (pendingBtn) fireEvent.click(pendingBtn);
+    expect(onDelete).not.toHaveBeenCalled();
+  });
+
+  it("shows a disabled Restoring... state while the restore is in flight", () => {
+    const onRestore = vi.fn();
+    const app = makeApp({
+      deletedAt: {
+        toDate: () => new Date(),
+        seconds: 1742054400,
+      } as unknown as Application["deletedAt"],
+    });
+    render(
+      <ApplicantModal
+        app={app}
+        {...defaultProps}
+        onRestore={onRestore}
+        pendingAction="restore"
+      />,
+    );
+    const pendingBtn = screen.getByText("Restoring...").closest("button");
+    expect(pendingBtn).toBeDisabled();
+    expect(screen.queryByText("Restore")).not.toBeInTheDocument();
+    if (pendingBtn) fireEvent.click(pendingBtn);
+    expect(onRestore).not.toHaveBeenCalled();
   });
 
   it("renders as a modal dialog element", () => {

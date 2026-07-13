@@ -54,6 +54,15 @@ vi.mock("firebase/firestore", () => ({
   orderBy: vi.fn(),
   limit: vi.fn(),
   startAfter: vi.fn(),
+  // jsdom dispatches clicks on disabled buttons (real browsers do not), so a
+  // click on a disabled card delete button bubbles to the card and mounts
+  // ApplicantModal, which subscribes to the events feed on mount.
+  onSnapshot: vi.fn(
+    (_ref: unknown, cb: (snap: { docs: unknown[] }) => void) => {
+      cb({ docs: [] });
+      return vi.fn();
+    },
+  ),
   Timestamp: {
     now: vi.fn(() => ({ seconds: 1742054400, toDate: () => new Date() })),
   },
@@ -106,10 +115,29 @@ describe("AdminDashboard", () => {
   it("shows loading state while fetching", () => {
     mockGetDocs.mockReturnValue(new Promise(() => {})); // never resolves
     render(<AdminDashboard onLogout={onLogout} />);
-    // The Today tab is shown by default; it uses inboxLoading state
+    // The Applicants tab is shown by default; it uses the loading state
     expect(
-      screen.getByRole("status", { name: "Loading today's tasks" }),
+      screen.getByRole("status", { name: "Loading applications" }),
     ).toBeInTheDocument();
+  });
+
+  it("defaults to the Applicants tab", async () => {
+    mockGetDocs.mockResolvedValue({ docs: [] });
+    render(<AdminDashboard onLogout={onLogout} />);
+    const tab = screen.getByRole("button", { name: /applicants/i });
+    expect(tab).toHaveAttribute("data-active", "true");
+    await waitFor(() => {
+      expect(screen.getByText(/No applications yet/)).toBeInTheDocument();
+    });
+  });
+
+  it("switches to the Today tab on click", async () => {
+    mockGetDocs.mockResolvedValue({ docs: [] });
+    render(<AdminDashboard onLogout={onLogout} />);
+    fireEvent.click(screen.getByRole("button", { name: "Today" }));
+    await waitFor(() => {
+      expect(screen.getByText(/You're all caught up/)).toBeInTheDocument();
+    });
   });
 
   it("shows error state when fetch fails", async () => {
@@ -133,9 +161,9 @@ describe("AdminDashboard", () => {
   it("shows empty state when no applications exist", async () => {
     mockGetDocs.mockResolvedValue({ docs: [] });
     render(<AdminDashboard onLogout={onLogout} />);
-    // Today tab shows TaskInbox empty state when inboxApps is empty
+    // Applicants tab shows its empty state when no applications exist
     await waitFor(() => {
-      expect(screen.getByText(/You're all caught up/)).toBeInTheDocument();
+      expect(screen.getByText(/No applications yet/)).toBeInTheDocument();
     });
   });
 
@@ -201,18 +229,61 @@ describe("AdminDashboard", () => {
   });
 
   it("retry button re-fetches applications", async () => {
-    // Both initial queries (fetchApps + fetchInboxApps) must fail to show error in Today tab
     mockGetDocs.mockRejectedValue(new Error("fail"));
     render(<AdminDashboard onLogout={onLogout} />);
     await waitFor(() => {
       expect(screen.getByText("Try again")).toBeInTheDocument();
     });
-    // Override to succeed; clicking Try again retries fetchInboxApps
+    // Override to succeed; clicking Try again retries fetchApps
     mockGetDocs.mockResolvedValue({ docs: [] });
     fireEvent.click(screen.getByText("Try again"));
-    // Today tab empty state after successful retry with no inbox items
+    // Applicants tab empty state after successful retry with no applications
     await waitFor(() => {
-      expect(screen.getByText(/You're all caught up/)).toBeInTheDocument();
+      expect(screen.getByText(/No applications yet/)).toBeInTheDocument();
     });
+  });
+
+  it("shows pending state and blocks further deletes while one is in flight", async () => {
+    mockGetDocs.mockResolvedValue({
+      docs: [
+        { id: "1", data: () => ({ ...makeApp({ id: "1", name: "Priya" }) }) },
+        { id: "2", data: () => ({ ...makeApp({ id: "2", name: "Anika" }) }) },
+      ],
+    });
+    let resolveDelete!: () => void;
+    mockUpdateDoc.mockImplementation(
+      () =>
+        new Promise<void>((res) => {
+          resolveDelete = res;
+        }),
+    );
+    render(<AdminDashboard onLogout={onLogout} />);
+    await waitFor(() => {
+      expect(screen.getByText("Priya")).toBeInTheDocument();
+    });
+
+    fireEvent.click(screen.getAllByLabelText("Delete application")[0]);
+
+    // The clicked button flips to a disabled pending state with a spinner
+    const pendingBtn = await screen.findByLabelText("Deleting application");
+    expect(pendingBtn).toBeDisabled();
+
+    // Every other delete button is inert while the delete is in flight
+    for (const btn of screen.getAllByLabelText("Delete application")) {
+      expect(btn).toBeDisabled();
+    }
+
+    // Hammering buttons during the flight fires no additional writes
+    fireEvent.click(pendingBtn);
+    fireEvent.click(screen.getAllByLabelText("Delete application")[0]);
+    expect(mockUpdateDoc).toHaveBeenCalledTimes(1);
+
+    resolveDelete();
+    await waitFor(() => {
+      expect(
+        screen.queryByLabelText("Deleting application"),
+      ).not.toBeInTheDocument();
+    });
+    expect(mockUpdateDoc).toHaveBeenCalledTimes(1);
   });
 });

@@ -1445,3 +1445,5 @@ The system should also send a day-before confirmation email automatically so the
 - Scheduled email endpoint/job configuration
 
 ## Skipped reviews (pending retry)
+
+- 2026-07-13T18:27Z | tier=E | primary=codex | reason=error_or_timeout | fallback_used=deepseek | commit=c632e66 | diff_sha=5a053421b4d64aea28b915648574c67cc0db170eac03cf28f4ee5bc42bedbcee

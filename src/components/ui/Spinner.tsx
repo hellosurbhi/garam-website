@@ -6,11 +6,9 @@ interface Props {
 }
 
 export default function Spinner({ size = "md", label = "Loading..." }: Props) {
-  return (
-    <span
-      className={`${styles.spinner} ${styles[size]}`}
-      role="status"
-      aria-label={label}
-    />
-  );
+  const className = `${styles.spinner} ${styles[size]}`;
+  if (!label) {
+    return <span className={className} aria-hidden="true" />;
+  }
+  return <span className={className} role="status" aria-label={label} />;
 }

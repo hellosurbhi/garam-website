@@ -325,8 +325,17 @@
   transition: background 0.15s;
 }
 
-.deleteButton:hover {
+.deleteButton:hover:not(:disabled) {
   background: rgba(220, 38, 38, 0.06);
+}
+
+.deleteButton:active:not(:disabled) {
+  transform: scale(0.97);
+}
+
+.deleteButton:disabled {
+  opacity: 0.55;
+  cursor: default;
 }
 
 .restoreButton {
@@ -345,7 +354,16 @@
   transition: background 0.15s;
 }
 
-.restoreButton:hover {
+.restoreButton:active:not(:disabled) {
+  transform: scale(0.97);
+}
+
+.restoreButton:disabled {
+  opacity: 0.55;
+  cursor: default;
+}
+
+.restoreButton:hover:not(:disabled) {
   background: rgba(34, 197, 94, 0.04);
 }
 

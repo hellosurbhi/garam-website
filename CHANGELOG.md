@@ -1,5 +1,13 @@
 # Changelog
 
+## fix(admin): Applicants tab default plus pending state on card actions (2026-07-13)
+
+Two operator-requested admin fixes following a real double-delete incident during applicant triage:
+
+- `/admin` now lands on the Applicants tab instead of Today. Explicit operator request ("show me applicants first, not today"). This intentionally reverses the P3 "default landing" choice below; the Today inbox stays one click away.
+- Single-flight `pendingAction` guard in `AdminDashboard.tsx`: delete, restore and mark-participated now disable every card and modal action button and show a spinner in the acting button until the Firestore write settles. A slow delete with no visible feedback caused a second click to soft-delete a second applicant; this makes that impossible.
+- `Spinner` derives its color from `currentColor` so one component reads correctly on dark pills, outline buttons and light surfaces.
+
 ## feat(contestant-workflow): Contestant Workflow Control Tower -- P1 through P5 (2026-07-03)
 
 End-to-end contestant pipeline management built into the admin dashboard. Replaces manual juggling of Zoho mail, cal.com, Tally, and a paper notebook with one consolidated tool.

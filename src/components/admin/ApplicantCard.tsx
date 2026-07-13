@@ -2,6 +2,7 @@ import { Trash2, ArchiveRestore, CheckCircle } from "lucide-react";
 import { type Application, STATUS_COLORS } from "@/types/application";
 import { formatLocation } from "@/utils/locationDisplay";
 import { getApplicantPhotos } from "@/utils/applicantPhotos";
+import Spinner from "../ui/Spinner";
 
 interface ApplicantCardProps {
   app: Application;
@@ -10,6 +11,10 @@ interface ApplicantCardProps {
   onRestore?: () => void;
   onParticipated?: () => void;
   dimmed?: boolean;
+  /** This card's action in flight: shows a spinner in that button. */
+  pendingAction?: "delete" | "restore" | "participated" | null;
+  /** Any action in flight anywhere: keeps all action buttons inert. */
+  actionsDisabled?: boolean;
 }
 
 function StatusBadge({ status }: { status: Application["status"] }) {
@@ -61,6 +66,8 @@ export default function ApplicantCard({
   onRestore,
   onParticipated,
   dimmed,
+  pendingAction,
+  actionsDisabled,
 }: ApplicantCardProps) {
   const handle = app.instagram.replace(/^@/, "");
   const photos = getApplicantPhotos(app);
@@ -87,6 +94,8 @@ export default function ApplicantCard({
               e.stopPropagation();
               onParticipated();
             }}
+            disabled={actionsDisabled}
+            data-pending={pendingAction === "participated" || undefined}
             style={{
               background: "rgba(139, 92, 246, 0.9)",
               border: "none",
@@ -94,24 +103,33 @@ export default function ApplicantCard({
               minWidth: "48px",
               minHeight: "48px",
               padding: "10px",
-              cursor: "pointer",
+              cursor: actionsDisabled ? "default" : "pointer",
               display: "flex",
               alignItems: "center",
               justifyContent: "center",
               color: "#fff",
-              opacity: 0,
+              opacity: pendingAction === "participated" ? 1 : 0,
               transition: "opacity 0.15s, background 0.15s",
             }}
-            onMouseEnter={(e) =>
-              (e.currentTarget.style.background = "rgba(139, 92, 246, 1)")
-            }
+            onMouseEnter={(e) => {
+              if (!e.currentTarget.disabled)
+                e.currentTarget.style.background = "rgba(139, 92, 246, 1)";
+            }}
             onMouseLeave={(e) =>
               (e.currentTarget.style.background = "rgba(139, 92, 246, 0.9)")
             }
-            aria-label="Mark as participated"
+            aria-label={
+              pendingAction === "participated"
+                ? "Marking as participated"
+                : "Mark as participated"
+            }
             className="card-action-btn"
           >
-            <CheckCircle size={18} />
+            {pendingAction === "participated" ? (
+              <Spinner size="sm" label="" />
+            ) : (
+              <CheckCircle size={18} />
+            )}
           </button>
         )}
         {(onDelete || onRestore) && (
@@ -121,6 +139,12 @@ export default function ApplicantCard({
               if (onDelete) onDelete();
               else onRestore?.();
             }}
+            disabled={actionsDisabled}
+            data-pending={
+              pendingAction === "delete" || pendingAction === "restore"
+                ? true
+                : undefined
+            }
             style={{
               background: "rgba(0,0,0,0.45)",
               border: "none",
@@ -128,24 +152,42 @@ export default function ApplicantCard({
               minWidth: "48px",
               minHeight: "48px",
               padding: "10px",
-              cursor: "pointer",
+              cursor: actionsDisabled ? "default" : "pointer",
               display: "flex",
               alignItems: "center",
               justifyContent: "center",
               color: "#fff",
-              opacity: 0,
+              opacity:
+                pendingAction === "delete" || pendingAction === "restore"
+                  ? 1
+                  : 0,
               transition: "opacity 0.15s, background 0.15s",
             }}
-            onMouseEnter={(e) =>
-              (e.currentTarget.style.background = "rgba(0,0,0,0.65)")
-            }
+            onMouseEnter={(e) => {
+              if (!e.currentTarget.disabled)
+                e.currentTarget.style.background = "rgba(0,0,0,0.65)";
+            }}
             onMouseLeave={(e) =>
               (e.currentTarget.style.background = "rgba(0,0,0,0.45)")
             }
-            aria-label={onDelete ? "Delete application" : "Restore application"}
+            aria-label={
+              pendingAction === "delete"
+                ? "Deleting application"
+                : pendingAction === "restore"
+                  ? "Restoring application"
+                  : onDelete
+                    ? "Delete application"
+                    : "Restore application"
+            }
             className="card-action-btn"
           >
-            {onDelete ? <Trash2 size={18} /> : <ArchiveRestore size={18} />}
+            {pendingAction === "delete" || pendingAction === "restore" ? (
+              <Spinner size="sm" label="" />
+            ) : onDelete ? (
+              <Trash2 size={18} />
+            ) : (
+              <ArchiveRestore size={18} />
+            )}
           </button>
         )}
       </div>
@@ -193,7 +235,10 @@ export default function ApplicantCard({
           ".card-action-btn",
         ) as NodeListOf<HTMLElement>;
         btns.forEach((btn) => {
-          btn.style.opacity = "0";
+          // WHY: a delete in flight must stay visible after the pointer leaves,
+          // or the loader vanishes and the admin assumes the click never
+          // registered (the exact misread that caused a double delete).
+          if (btn.dataset.pending !== "true") btn.style.opacity = "0";
         });
       }}
     >

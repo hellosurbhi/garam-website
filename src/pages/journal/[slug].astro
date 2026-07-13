@@ -109,7 +109,9 @@ const itemListJsonLd = post.rankedItems?.length
   : null;
 
 // Third party app reviews emit Review JSON-LD; the rating is also rendered
-// visibly in the verdict box below, as Google's review snippet policy requires
+// visibly in the verdict box at the end of the article, which satisfies
+// Google's review snippet policy (the rating must be on the page; its
+// position is not constrained)
 const reviewJsonLd = post.appReview
   ? JSON.stringify({
       "@context": "https://schema.org",
@@ -232,54 +234,6 @@ const cta3Idx = Math.max(post.body.length - 2, cta2Idx + 2);
       <!-- Divider -->
       <div class="post-divider"></div>
 
-      {
-        post.appReview && (
-          <aside
-            class="verdict-box"
-            aria-label={`${VERDICT_BOX.eyebrow}: ${post.appReview.appName}`}
-          >
-            <p class="verdict-box__eyebrow">{VERDICT_BOX.eyebrow}</p>
-            <div class="verdict-box__header">
-              <span class="verdict-box__app">{post.appReview.appName}</span>
-              <span
-                class="verdict-box__rating"
-                role="img"
-                aria-label={`Rated ${post.appReview.ratingValue} ${VERDICT_BOX.outOfLabel}`}
-              >
-                <span class="verdict-box__score" aria-hidden="true">
-                  {post.appReview.ratingValue}
-                </span>
-                <span class="verdict-box__outof" aria-hidden="true">
-                  {VERDICT_BOX.outOfLabel}
-                </span>
-              </span>
-            </div>
-            <div class="verdict-box__cols">
-              <div class="verdict-box__col">
-                <p class="verdict-box__label verdict-box__label--pros">
-                  {VERDICT_BOX.prosLabel}
-                </p>
-                <ul class="verdict-box__list">
-                  {post.appReview.pros.map((item) => (
-                    <li>{item}</li>
-                  ))}
-                </ul>
-              </div>
-              <div class="verdict-box__col">
-                <p class="verdict-box__label verdict-box__label--cons">
-                  {VERDICT_BOX.consLabel}
-                </p>
-                <ul class="verdict-box__list">
-                  {post.appReview.cons.map((item) => (
-                    <li>{item}</li>
-                  ))}
-                </ul>
-              </div>
-            </div>
-          </aside>
-        )
-      }
-
       <!-- Article body -->
       <article class="post-body">
         {
@@ -331,14 +285,63 @@ const cta3Idx = Math.max(post.body.length - 2, cta2Idx + 2);
       </article>
 
       {
-        /* WHY: this recap renders at the END of the article on purpose. It
-          started life as a top-of-page "Quick answer" callout (commit 6c1a8dd)
-          and killed retention: readers got the full answer above the fold and
-          bounced before the mid-article CTAs, and on ranked articles it spoiled
-          the entire countdown. The Speakable JSON-LD above targets the
-          .post-answer__text selector, which is position-independent, so AI
-          answer engines still extract it from down here. Moving this block
-          back above the body re-introduces the bounce and the spoiler. */
+        /* WHY: the verdict box and the recap below render at the END of the
+          article on purpose. Both started life above the body (the recap as a
+          top-of-page "Quick answer" callout, commit 6c1a8dd) and killed
+          retention: readers got the verdict or the full answer above the fold
+          and bounced before the mid-article CTAs, and on ranked articles the
+          answer spoiled the entire countdown. The Speakable JSON-LD above
+          targets the .post-answer__text selector and Google's review snippet
+          policy only requires the rating to be visible on the page; neither
+          constrains position. Moving either block back above the body
+          re-introduces the bounce and the spoiler. */
+      }
+      {
+        post.appReview && (
+          <aside
+            class="verdict-box"
+            aria-label={`${VERDICT_BOX.eyebrow}: ${post.appReview.appName}`}
+          >
+            <p class="verdict-box__eyebrow">{VERDICT_BOX.eyebrow}</p>
+            <div class="verdict-box__header">
+              <span class="verdict-box__app">{post.appReview.appName}</span>
+              <span
+                class="verdict-box__rating"
+                role="img"
+                aria-label={`Rated ${post.appReview.ratingValue} ${VERDICT_BOX.outOfLabel}`}
+              >
+                <span class="verdict-box__score" aria-hidden="true">
+                  {post.appReview.ratingValue}
+                </span>
+                <span class="verdict-box__outof" aria-hidden="true">
+                  {VERDICT_BOX.outOfLabel}
+                </span>
+              </span>
+            </div>
+            <div class="verdict-box__cols">
+              <div class="verdict-box__col">
+                <p class="verdict-box__label verdict-box__label--pros">
+                  {VERDICT_BOX.prosLabel}
+                </p>
+                <ul class="verdict-box__list">
+                  {post.appReview.pros.map((item) => (
+                    <li>{item}</li>
+                  ))}
+                </ul>
+              </div>
+              <div class="verdict-box__col">
+                <p class="verdict-box__label verdict-box__label--cons">
+                  {VERDICT_BOX.consLabel}
+                </p>
+                <ul class="verdict-box__list">
+                  {post.appReview.cons.map((item) => (
+                    <li>{item}</li>
+                  ))}
+                </ul>
+              </div>
+            </div>
+          </aside>
+        )
       }
       {
         post.keyTakeaway && (
@@ -636,16 +639,20 @@ const cta3Idx = Math.max(post.body.length - 2, cta2Idx + 2);
     text-decoration: none;
   }
 
+  /* Closing verdict card: the review's payoff, rendered after the body.
+     Strong where the recap below is muted; neutral hairlines match the other
+     end-of-article sections, the red score stays the single focal accent. */
   .verdict-box {
     background: var(--white);
-    border: 1px solid rgba(var(--brand-red-rgb), 0.15);
+    border: 1px solid rgba(var(--black-rgb), 0.08);
     border-radius: 10px;
     padding: 20px;
-    margin-bottom: 30px;
+    margin-top: 36px;
   }
   .verdict-box__eyebrow {
     font-family: var(--font-body);
     font-size: 11px;
+    font-weight: 700;
     text-transform: uppercase;
     letter-spacing: 0.12em;
     color: var(--brand-red);
@@ -656,7 +663,7 @@ const cta3Idx = Math.max(post.body.length - 2, cta2Idx + 2);
     align-items: baseline;
     justify-content: space-between;
     gap: 12px;
-    border-bottom: 1px solid rgba(var(--brand-red-rgb), 0.12);
+    border-bottom: 1px solid rgba(var(--black-rgb), 0.08);
     padding-bottom: 14px;
     margin-bottom: 14px;
   }

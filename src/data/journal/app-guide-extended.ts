@@ -159,7 +159,8 @@ export const appGuideExtendedPosts: JournalPost[] = [
   {
     slug: "dil-mil-complete-guide-2026",
     title: "Dil Mil in 2026: The Complete Guide for South Asian Singles",
-    seoTitle: "Dil Mil Complete Guide 2026: Everything South Asian Singles Need to Know",
+    seoTitle:
+      "Dil Mil Complete Guide 2026: Everything South Asian Singles Need to Know",
     metaDescription:
       "The complete Dil Mil guide for 2026. How the app works, whether premium is worth it and how to use it alongside Hinge for the best results as a desi single.",
     datePublished: "2026-11-23",
@@ -315,7 +316,8 @@ export const appGuideExtendedPosts: JournalPost[] = [
   },
   {
     slug: "bumble-vs-hinge-desi-singles",
-    title: "Bumble vs. Hinge for Desi Singles: Which One Actually Works Better?",
+    title:
+      "Bumble vs. Hinge for Desi Singles: Which One Actually Works Better?",
     seoTitle: "Bumble vs Hinge for South Asian Singles: The Verdict",
     metaDescription:
       "Bumble or Hinge? For South Asian singles the experience on each is genuinely different. Here’s the honest comparison of pool size, match quality and which app to prioritize.",
@@ -450,7 +452,8 @@ export const appGuideExtendedPosts: JournalPost[] = [
   },
   {
     slug: "dating-profile-photos-south-asian",
-    title: "Dating Profile Photos for South Asian Singles: What Works and What Doesn’t",
+    title:
+      "Dating Profile Photos for South Asian Singles: What Works and What Doesn’t",
     seoTitle: "Dating Profile Photos South Asian Singles: The Guide",
     metaDescription:
       "Your first photo is doing more work than any bio you write. Here’s what actually works for South Asian singles on dating apps and what to stop doing immediately.",
@@ -881,7 +884,7 @@ export const appGuideExtendedPosts: JournalPost[] = [
       "You’ve been on Hinge for three years. You recognize your own match queue. You want to quit but you feel like you’ll miss something. You need a break protocol.",
     ctaConfig: {
       intent: "show",
-      cityLinks: ["/cities/manhattan"],
+      cityLinks: ["manhattan"],
     },
     body: [
       {
@@ -1007,7 +1010,8 @@ export const appGuideExtendedPosts: JournalPost[] = [
   },
   {
     slug: "video-date-tips-desi-singles",
-    title: "Video Dates for South Asian Singles: How to Make Them Actually Work",
+    title:
+      "Video Dates for South Asian Singles: How to Make Them Actually Work",
     metaDescription:
       "The video pre-date is back as a screening call before you meet in person. Here’s how to set one up, what to ask and how to turn 30 minutes into a real first date.",
     datePublished: "2026-12-29",

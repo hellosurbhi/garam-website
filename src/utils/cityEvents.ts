@@ -33,11 +33,22 @@ export function getUpcomingEventsForCity(citySlug: string): EventEntry[] {
   );
 }
 
-export function citySlugsWithUpcomingEvents(): string[] {
-  const today = currentDay();
+/**
+ * Unique slugs of cities with at least one upcoming event, ordered by each
+ * city's soonest show date. Consumers render these as "tickets on sale"
+ * lists, so the order must not depend on how events.ts happens to be
+ * arranged. `today` and `eventList` are injectable for tests.
+ */
+export function citySlugsWithUpcomingEvents(
+  today: string = currentDay(),
+  eventList: EventEntry[] = events,
+): string[] {
+  const upcoming = eventList
+    .filter((e) => isUpcomingEvent(e, today))
+    .sort((a, b) => (a.isoDate ?? "").localeCompare(b.isoDate ?? ""));
   const slugs = new Set<string>();
-  for (const e of events) {
-    if (isUpcomingEvent(e, today) && e.citySlug) {
+  for (const e of upcoming) {
+    if (e.citySlug) {
       slugs.add(e.citySlug);
     }
   }

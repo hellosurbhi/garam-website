@@ -5,7 +5,8 @@ export const attachmentPsychologyDesiPosts: JournalPost[] = [
     slug: "anxious-attachment-desi-dating",
     title:
       "Anxious Attachment in Desi Dating: Why It's So Common and What to Do About It",
-    seoTitle: "Anxious Attachment in Desi Dating: Why It Happens and What Helps",
+    seoTitle:
+      "Anxious Attachment in Desi Dating: Why It Happens and What Helps",
     metaDescription:
       "You check your phone every three minutes after a date. You overanalyze every text. You know this is not good but you can't stop. There's a reason and there's a path forward.",
     datePublished: "2026-11-14",
@@ -126,7 +127,7 @@ export const attachmentPsychologyDesiPosts: JournalPost[] = [
     ],
     ctaConfig: {
       intent: "show",
-      cityLinks: ["/cities/manhattan"],
+      cityLinks: ["manhattan"],
     },
   },
   {
@@ -252,7 +253,7 @@ export const attachmentPsychologyDesiPosts: JournalPost[] = [
     ],
     ctaConfig: {
       intent: "show",
-      cityLinks: ["/cities/manhattan"],
+      cityLinks: ["manhattan"],
     },
   },
   {
@@ -376,7 +377,7 @@ export const attachmentPsychologyDesiPosts: JournalPost[] = [
     ],
     ctaConfig: {
       intent: "show",
-      cityLinks: ["/cities/manhattan"],
+      cityLinks: ["manhattan"],
     },
   },
   {
@@ -504,7 +505,7 @@ export const attachmentPsychologyDesiPosts: JournalPost[] = [
     ],
     ctaConfig: {
       intent: "show",
-      cityLinks: ["/cities/manhattan"],
+      cityLinks: ["manhattan"],
     },
   },
   {
@@ -628,7 +629,7 @@ export const attachmentPsychologyDesiPosts: JournalPost[] = [
     ],
     ctaConfig: {
       intent: "show",
-      cityLinks: ["/cities/manhattan", "/cities/jersey-city"],
+      cityLinks: ["manhattan", "jersey-city"],
     },
   },
   {
@@ -754,13 +755,12 @@ export const attachmentPsychologyDesiPosts: JournalPost[] = [
     ],
     ctaConfig: {
       intent: "show",
-      cityLinks: ["/cities/manhattan"],
+      cityLinks: ["manhattan"],
     },
   },
   {
     slug: "desi-men-therapy-resistance",
-    title:
-      "Why Desi Men Resist Therapy and What Happens When They Finally Go",
+    title: "Why Desi Men Resist Therapy and What Happens When They Finally Go",
     metaDescription:
       "The men who would benefit most from therapy are often the most resistant to it. In South Asian communities, that resistance has specific cultural logic and specific costs to relationships.",
     datePublished: "2026-12-20",
@@ -879,7 +879,7 @@ export const attachmentPsychologyDesiPosts: JournalPost[] = [
     ],
     ctaConfig: {
       intent: "show",
-      cityLinks: ["/cities/manhattan"],
+      cityLinks: ["manhattan"],
     },
   },
   {
@@ -1005,7 +1005,7 @@ export const attachmentPsychologyDesiPosts: JournalPost[] = [
     ],
     ctaConfig: {
       intent: "show",
-      cityLinks: ["/cities/manhattan"],
+      cityLinks: ["manhattan"],
     },
   },
 ];

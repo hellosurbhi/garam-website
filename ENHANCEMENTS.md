@@ -1444,6 +1444,17 @@ The system should also send a day-before confirmation email automatically so the
 - `src/emails/ContestantConfirmationEmail.tsx` (new)
 - Scheduled email endpoint/job configuration
 
+## Ambiguous "shows" phrasing outside the journal (2026-07-13)
+
+The journal tickets CTA was renamed from "See Upcoming Shows" to "Catch Us Live" because "shows" next to a YouTube CTA reads like episodes, not live tickets. Two other surfaces still use the old phrasing and sit near YouTube CTAs, but were out of scope for that fix (user scoped it to the journal):
+
+1. `src/pages/press.astro` bottom link: hardcoded "See upcoming shows →" (also violates the content architecture rule: copy hardcoded in a component instead of `src/data/`).
+2. `CITY_FOLLOW.nearbyCtaLabel` in `src/data/copy.ts`: "See All Upcoming Shows", shown on city pages directly under "Watch Full Episodes on YouTube".
+
+If the ambiguity matters there too, rename both with Surbhi's approval on the exact copy.
+
 ## Skipped reviews (pending retry)
 
+- 2026-07-13T14:18Z | tier=E | primary=codex | reason=error_or_timeout | fallback_used=deepseek | commit=c632e66 | diff_sha=de07acb31b1046222c912bf32176941ee3f4ad03138575e556c21c92240280c0
+- 2026-07-13T14:21Z | tier=F | primary=coderabbit | reason=error | fallback_used=gemini | commit=c632e66 | diff_sha=de07acb31b1046222c912bf32176941ee3f4ad03138575e556c21c92240280c0
 - 2026-07-13T18:27Z | tier=E | primary=codex | reason=error_or_timeout | fallback_used=deepseek | commit=c632e66 | diff_sha=5a053421b4d64aea28b915648574c67cc0db170eac03cf28f4ee5bc42bedbcee

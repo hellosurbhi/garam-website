@@ -1,6 +1,7 @@
 ---
 import BaseLayout from "@/layouts/BaseLayout.astro";
 import AuthorBio from "@/components/AuthorBio.astro";
+import JournalCityLinks from "@/components/journal/JournalCityLinks.astro";
 import { masterclassPosts } from "@/data/masterclasses";
 import { buildBreadcrumbJsonLd } from "@/utils/breadcrumbs";
 
@@ -343,40 +344,17 @@ const breadcrumbJsonLd = buildBreadcrumbJsonLd([
           }
         </dl>
         <AuthorBio />
-        <section class="mc-city-links" aria-label="City show pages">
-          <h2>Find a show near you</h2>
-          <div class="mc-city-links-grid">
-            {
-              [
-                ["Manhattan", "/cities/manhattan"],
-                ["Jersey City", "/cities/jersey-city"],
-                ["San Francisco", "/cities/san-francisco"],
-                ["Seattle", "/cities/seattle"],
-                ["Los Angeles", "/cities/los-angeles"],
-              ].map(([label, href]) => (
-                <a
-                  href={href}
-                  data-ph-capture="cta_clicked"
-                  data-ph-cta="situationship_city_link"
-                  data-ph-section="journal_city_links"
-                  data-cta-position="journal_city_links"
-                  data-cta-text={label}
-                  data-article-slug={post.slug}
-                  data-destination-url={href}
-                  data-event-city={label}
-                  data-city-slug={href.replace("/cities/", "")}
-                >
-                  <span>{label}</span>
-                  <small>
-                    {label === "Manhattan" || label === "Jersey City"
-                      ? "Tickets and dates"
-                      : "Waitlist"}
-                  </small>
-                </a>
-              ))
-            }
-          </div>
-        </section>
+        <JournalCityLinks
+          articleSlug={post.slug}
+          curatedSlugs={[
+            "manhattan",
+            "jersey-city",
+            "san-francisco",
+            "seattle",
+            "los-angeles",
+          ]}
+          ctaName="situationship_city_link"
+        />
       </div>
     </section>
 
@@ -944,61 +922,6 @@ const breadcrumbJsonLd = buildBreadcrumbJsonLd([
     color: var(--text-secondary);
     line-height: 1.75;
     margin: 0;
-  }
-
-  .mc-city-links {
-    margin-top: 36px;
-    padding-top: 28px;
-    border-top: 1px solid rgba(var(--black-rgb), 0.06);
-  }
-
-  .mc-city-links h2 {
-    margin: 0 0 14px;
-    font-family: var(--font-body), sans-serif;
-    font-size: 13px;
-    font-weight: 800;
-    letter-spacing: 0.08em;
-    text-transform: uppercase;
-    color: var(--brand-red);
-  }
-
-  .mc-city-links-grid {
-    display: grid;
-    grid-template-columns: 1fr;
-    gap: 10px;
-  }
-
-  .mc-city-links a {
-    display: flex;
-    min-height: 48px;
-    align-items: center;
-    justify-content: space-between;
-    gap: 16px;
-    padding: 12px 14px;
-    border: 1px solid rgba(var(--brand-red-rgb), 0.16);
-    border-radius: 8px;
-    color: var(--charcoal);
-    text-decoration: none;
-    background: rgba(var(--brand-red-rgb), 0.035);
-  }
-
-  .mc-city-links span {
-    font-family: var(--font-body), sans-serif;
-    font-size: 15px;
-    font-weight: 700;
-  }
-
-  .mc-city-links small {
-    font-family: var(--font-body), sans-serif;
-    font-size: 12px;
-    color: var(--gray-mid);
-    white-space: nowrap;
-  }
-
-  @media (min-width: 640px) {
-    .mc-city-links-grid {
-      grid-template-columns: repeat(2, minmax(0, 1fr));
-    }
   }
 
   /* ── Closing CTA section ─────────────────────────────────── */

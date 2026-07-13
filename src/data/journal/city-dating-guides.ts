@@ -37,7 +37,7 @@ export const cityDatingGuidesPosts: JournalPost[] = [
     ],
     ctaConfig: {
       intent: "show",
-      cityLinks: ["/cities/los-angeles", "/cities/manhattan"],
+      cityLinks: ["los-angeles", "manhattan"],
     },
     body: [
       {
@@ -276,7 +276,7 @@ export const cityDatingGuidesPosts: JournalPost[] = [
     ],
     ctaConfig: {
       intent: "show",
-      cityLinks: ["/cities/san-francisco", "/cities/manhattan"],
+      cityLinks: ["san-francisco", "manhattan"],
     },
     body: [
       {
@@ -515,7 +515,7 @@ export const cityDatingGuidesPosts: JournalPost[] = [
     ],
     ctaConfig: {
       intent: "show",
-      cityLinks: ["/cities/philadelphia", "/cities/manhattan"],
+      cityLinks: ["philadelphia", "manhattan"],
     },
     body: [
       {
@@ -636,7 +636,7 @@ export const cityDatingGuidesPosts: JournalPost[] = [
     ],
     ctaConfig: {
       intent: "show",
-      cityLinks: ["/cities/jersey-city", "/cities/manhattan"],
+      cityLinks: ["jersey-city", "manhattan"],
     },
     body: [
       {
@@ -757,7 +757,7 @@ export const cityDatingGuidesPosts: JournalPost[] = [
     ],
     ctaConfig: {
       intent: "show",
-      cityLinks: ["/cities/san-diego", "/cities/los-angeles"],
+      cityLinks: ["san-diego", "los-angeles"],
     },
     body: [
       {
@@ -878,7 +878,7 @@ export const cityDatingGuidesPosts: JournalPost[] = [
     ],
     ctaConfig: {
       intent: "show",
-      cityLinks: ["/cities/denver", "/cities/manhattan"],
+      cityLinks: ["denver", "manhattan"],
     },
     body: [
       {

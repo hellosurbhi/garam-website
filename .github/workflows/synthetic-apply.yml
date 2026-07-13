@@ -1,4 +1,4 @@
-# Daily synthetic apply-form monitor.
+# Synthetic apply-form monitor, every 6 hours.
 #
 # Submits ONE real application on production with reserved synthetic markers
 # (name "SYNTHETIC MONITOR", email synthetic-monitor@garammasaladating.com,
@@ -19,7 +19,7 @@ name: Synthetic Apply Monitor
 
 on:
   schedule:
-    - cron: "30 13 * * *" # daily 13:30 UTC (9:30am ET)
+    - cron: "30 1,7,13,19 * * *" # every 6 hours; bounds prod-only breakage to ~6h
   workflow_dispatch:
 
 permissions:
@@ -53,6 +53,20 @@ jobs:
           FIREBASE_ADMIN_PRIVATE_KEY: ${{ secrets.FIREBASE_ADMIN_PRIVATE_KEY }}
           FIREBASE_PROJECT_ID: ${{ secrets.FIREBASE_PROJECT_ID }}
           FIREBASE_STORAGE_BUCKET: ${{ secrets.FIREBASE_STORAGE_BUCKET }}
+      - name: Weekly pager heartbeat (Mondays 13:30 UTC run only)
+        if: success()
+        run: |
+          # A silently dead alert channel (expired SMTP password, broken env)
+          # looks identical to "no failures". One heartbeat email per week
+          # through the REAL alert path proves the pager itself still works.
+          if [ "$(date -u +%u-%H)" = "1-13" ]; then
+            curl -sS -X POST https://garammasaladating.com/api/alert-failure \
+              -H "Content-Type: application/json" \
+              -H "Origin: https://garammasaladating.com" \
+              -d '{"flow":"ops","stage":"heartbeat","errorMessage":"Weekly pager test: the synthetic monitor and the alert channel are both working. No action needed."}'
+          else
+            echo "Not the Monday 13:30 run; skipping heartbeat."
+          fi
       - name: Page the producer on failure
         if: failure()
         run: |

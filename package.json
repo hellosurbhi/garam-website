@@ -95,10 +95,12 @@
     "vitest": "^4.1.10"
   },
   "overrides": {
-    "path-to-regexp": "^6.3.0",
     "qs": "^6.15.2",
     "tmp": "^0.2.6",
-    "uuid": ">=11.1.1"
+    "uuid": ">=11.1.1",
+    "@vercel/routing-utils": {
+      "path-to-regexp": "^6.3.0"
+    }
   },
   "lint-staged": {
     "*.{ts,tsx,js,jsx}": [

@@ -229,3 +229,11 @@ The real XSS guards on this site are Firebase security rules and Firestore field
 **Why:** The global error handler captured every `window` error as a site error, and no channel existed that alerts on the first failed submission. In-app-browser scripts are injected inline, so `event.filename` equals the page URL and an origin check cannot identify them; only message signatures can.
 
 **Rule:** Revenue-critical failures (apply submissions) must page in real time through a first-party channel (`/api/alert-apply-failure` email path), never only through an analytics SDK that ad blockers and in-app browsers routinely block. Known injected-webview errors (`window.webkit.messageHandlers`, "Java object is gone", `iabjs://` sources, bare "Script error." without a stack) are captured as `third_party_error`, never as `client_error`, so first-party issues stay readable. Do not delete the noise; reroute it.
+
+## Critical flows must not live inside third-party embeds
+
+**What went wrong:** The July 7 CSP hardening allowlisted known scripts but nobody knew /waiver depended on `form.jotform.com`, so the embed was blocked and the waiver page showed a spinner forever for six days. Nothing alerted: the failure happened inside a third-party iframe loader where no first-party code runs.
+
+**Why:** A third-party embed is invisible to every safeguard this site has. CSP changes cannot know about it unless it is documented, error tracking cannot see inside it, and failure paging cannot be wired into it. The dependency also was not needed: the native waiver form and the `/api/stage-waiver` endpoint already existed for the contestant portal.
+
+**Rule:** Legal and revenue flows (waiver signing, applications, lead capture, payments) must be first-party pages posting to first-party endpoints, never third-party embeds. When a third-party script is genuinely required, adding its host to the CSP allowlist and a smoke test that asserts the script actually loads are part of the same PR that introduces it.

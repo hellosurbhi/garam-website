@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { WAIVER_VERSION, WAIVER_TEXT } from "@/data/waiver";
 import { SOCIAL_URLS } from "@/data/socials";
 import {
@@ -19,6 +19,7 @@ import {
   claimErrorMessage,
 } from "@/data/contestantPortal";
 import { WaiverDocument } from "@/components/WaiverDocument";
+import { useWaiverSignature } from "@/components/waiver/useWaiverSignature";
 import { reportFailure } from "@/lib/failureAlert";
 
 type ContestantRole = "female" | "male";
@@ -495,23 +496,19 @@ function ContestantPacketGate({
   const [selectedRole, setSelectedRole] = useState<ContestantRole | "">(
     role ?? "",
   );
-  const [signature, setSignature] = useState("");
-  const [waiverScrolled, setWaiverScrolled] = useState(false);
   const [agreed, setAgreed] = useState(false);
-  // Callback ref: set waiverScrolled immediately if no scroll is needed.
-  const waiverRef = useCallback((el: HTMLDivElement | null) => {
-    if (!el) return;
-    if (el.scrollHeight <= el.clientHeight + 4) {
-      setWaiverScrolled(true);
-    }
-  }, []);
   const resolvedRole = role ?? selectedRole;
   const callTime = formatCallTime(startTime);
 
   const fullName = `${firstName.trim()} ${lastName.trim()}`.trim();
-  const signatureValid =
-    signature.trim().length > 0 &&
-    signature.trim().toLowerCase() === fullName.toLowerCase();
+  const {
+    signature,
+    setSignature,
+    signatureValid,
+    waiverScrolled,
+    waiverRef,
+    handleWaiverScroll,
+  } = useWaiverSignature(fullName);
   const canSubmit =
     firstName.trim().length > 0 &&
     lastName.trim().length > 0 &&
@@ -522,14 +519,6 @@ function ContestantPacketGate({
     waiverScrolled &&
     agreed &&
     formPhase !== "submitting";
-
-  function handleWaiverScroll(el: HTMLDivElement) {
-    const canScroll = el.scrollHeight > el.clientHeight + 4;
-    const reachedBottom = el.scrollTop + el.clientHeight >= el.scrollHeight - 8;
-    if (canScroll && reachedBottom) {
-      setWaiverScrolled(true);
-    }
-  }
 
   return (
     <div className="portal-form-wrap">

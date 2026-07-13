@@ -9,7 +9,7 @@ import {
 import { trackError, trackLeadEvent, identifyLead } from "@/lib/analytics";
 import { buildLeadAttribution } from "@/lib/leadAttribution";
 import { isSyntheticSubmission } from "@/lib/syntheticMonitor";
-import { reportApplyFailure } from "@/lib/applyFailureAlert";
+import { reportFailure } from "@/lib/failureAlert";
 import { validateEmail } from "@/utils/validateEmail";
 import { withTimeout } from "@/utils/withTimeout";
 import { compressImage } from "@/utils/compressImage";
@@ -546,25 +546,32 @@ export function useApplyForm() {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(applicationData),
-      }).catch((err: unknown) => {
-        trackError({
-          error_message: err instanceof Error ? err.message : String(err),
-          error_type: "api_error",
-          component: "useApplyForm",
+      })
+        .then((res) => {
+          // fetch only rejects on network failure; a 500 resolves. Both mean
+          // the admin email never went out, and both must page.
+          if (!res.ok) throw new Error(`notify-application HTTP ${res.status}`);
+        })
+        .catch((err: unknown) => {
+          trackError({
+            error_message: err instanceof Error ? err.message : String(err),
+            error_type: "api_error",
+            component: "useApplyForm",
+          });
+          // The application IS saved at this point; alert so the admin email
+          // silently not arriving never hides an applicant.
+          reportFailure({
+            flow: "apply",
+            stage: "notify_email",
+            errorMessage: err instanceof Error ? err.message : String(err),
+            contact: {
+              name: form.name,
+              email: form.email,
+              phone: form.phone,
+              instagram: form.instagram,
+            },
+          });
         });
-        // The application IS saved at this point; alert so the admin email
-        // silently not arriving never hides an applicant.
-        reportApplyFailure({
-          stage: "notify_email",
-          errorMessage: err instanceof Error ? err.message : String(err),
-          applicant: {
-            name: form.name,
-            email: form.email,
-            phone: form.phone,
-            instagram: form.instagram,
-          },
-        });
-      });
 
       setForm(INITIAL);
       setCityInput("");
@@ -600,10 +607,11 @@ export function useApplyForm() {
       // Real-time page: one failed submission = one immediate email, with the
       // applicant's contact info so they can be recovered even though the
       // application never reached Firestore.
-      reportApplyFailure({
+      reportFailure({
+        flow: "apply",
         stage: "submit",
         errorMessage: error.message,
-        applicant: {
+        contact: {
           name: form.name,
           email: form.email,
           phone: form.phone,

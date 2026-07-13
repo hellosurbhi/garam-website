@@ -1,7 +1,7 @@
 import { Component, type ReactNode } from "react";
 import { SOCIAL_URLS } from "@/data/socials";
 import { trackError } from "@/lib/analytics";
-import { reportApplyFailure } from "@/lib/applyFailureAlert";
+import { reportFailure } from "@/lib/failureAlert";
 import styles from "./ErrorBoundary.module.css";
 
 interface Props {
@@ -28,7 +28,8 @@ export class ErrorBoundary extends Component<Props, State> {
     });
     // This boundary only wraps the apply island; a crash here means an
     // applicant hit a dead form, which must page a human immediately.
-    reportApplyFailure({
+    reportFailure({
+      flow: "apply",
       stage: "react_boundary",
       errorMessage: error.message,
     });

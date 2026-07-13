@@ -56,9 +56,10 @@ jobs:
       - name: Page the producer on failure
         if: failure()
         run: |
-          curl -sS -X POST https://garammasaladating.com/api/alert-apply-failure \
+          curl -sS -X POST https://garammasaladating.com/api/alert-failure \
             -H "Content-Type: application/json" \
-            -d '{"stage":"submit","errorMessage":"Daily synthetic apply monitor FAILED: the production apply form is likely broken. Check the GitHub Actions run for details.","pageUrl":"https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}","userAgent":"synthetic-apply-monitor"}'
+            -H "Origin: https://garammasaladating.com" \
+            -d '{"flow":"ops","stage":"synthetic_monitor","errorMessage":"Synthetic apply monitor FAILED: the production apply form is likely broken. Check the GitHub Actions run for details.","pageUrl":"https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}","userAgent":"synthetic-apply-monitor"}'
       - name: Upload report on failure
         uses: actions/upload-artifact@v4
         if: failure()

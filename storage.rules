@@ -23,13 +23,13 @@ service firebase.storage {
 
     match /photos/{photoId} {
       allow read: if isAdmin();
-      // Applicants upload from an anonymous session; size and type stay enforced.
+      // Applicants upload from an anonymous session; size and type stay
+      // enforced. Any image type is accepted (the client normalizes to JPEG
+      // via compressImage; originals only arrive on its rare fallback path).
+      // 25 MB must stay aligned with MAX_UPLOAD_BYTES in useApplyForm.ts.
       allow create: if request.auth != null
-        && request.resource.size < 15 * 1024 * 1024
-        && (request.resource.contentType == "image/jpeg"
-            || request.resource.contentType == "image/png"
-            || request.resource.contentType == "image/webp"
-            || request.resource.contentType == "image/heic");
+        && request.resource.size < 25 * 1024 * 1024
+        && request.resource.contentType.matches('image/.*');
       // WHY: delete used to fall under a single `write` rule that evaluated
       // request.resource.size, which is null on deletes, so the apply form's
       // failure cleanup always got denied and orphaned uploaded photos. The

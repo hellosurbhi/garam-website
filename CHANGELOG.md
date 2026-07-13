@@ -1,5 +1,14 @@
 # Changelog
 
+## fix(portal): industry-standard clickwrap waiver panel + portal secret documented (2026-07-13)
+
+Contestant portal waiver rebuilt after a contestant hit the scroll-to-unlock wall without knowing it existed, on top of a production 500 from `/api/contestant-open-claim`:
+
+- New `WaiverPanel.tsx` (fully controlled, extracted from the 829-line `ContestantPortal.tsx`): instruction above the waiver, bottom fade + "Scroll to keep reading" pill that disappear at the end, `role="status"` unlock announcement, and the signature input now locks until the contestant scrolls through the whole waiver (previously only the checkbox locked, with the only hint below it).
+- Waiver box restyled to a clickwrap document: white paper surface, `--border-light` border replacing the harsh `rgba(0,0,0,0.1)` one, real internal padding, taller `clamp(260px, 45vh, 340px)` viewport, and first-ever typography for the `waiver-doc-*` classes.
+- All waiver strings moved to `src/data/contestantPortal.ts` (`WAIVER_PANEL`).
+- Scroll unlock hardened per review: `ResizeObserver` rechecks the fits-without-scroll case on container or content resize, a zero-height layout guard prevents unlocking before the box is laid out and a once-guard stops duplicate unlock calls.
+
 ## fix(admin): Applicants tab default plus pending state on card actions (2026-07-13)
 
 Two operator-requested admin fixes following a real double-delete incident during applicant triage:

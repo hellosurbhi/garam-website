@@ -4,6 +4,7 @@ import type { APIRoute } from "astro";
 import { getFirestoreAccessToken } from "@/lib/firestoreAdmin";
 import { addKitSubscriber, type KitSubscriberFields } from "@/lib/kit";
 import { enforceRateLimit, RATE_LIMITS } from "@/lib/rateLimit";
+import { alertOps } from "@/lib/opsAlert";
 
 interface FirestoreStringValue {
   stringValue: string;
@@ -76,6 +77,11 @@ export const POST: APIRoute = async ({ request }) => {
   } catch (err) {
     const detail = err instanceof Error ? err.message : String(err);
     console.error("[sync-leads-to-kit] Firestore auth failed:", detail);
+    await alertOps({
+      flow: "ops",
+      stage: "kit_sync_auth",
+      errorMessage: detail.slice(0, 2000),
+    });
     return new Response(JSON.stringify({ error: "Firestore auth failed" }), {
       status: 500,
       headers: { "Content-Type": "application/json" },
@@ -95,6 +101,11 @@ export const POST: APIRoute = async ({ request }) => {
     if (!res.ok) {
       const body = await res.text();
       console.error("[sync-leads-to-kit] Failed to list leads:", body);
+      await alertOps({
+        flow: "ops",
+        stage: "kit_sync_list",
+        errorMessage: body.slice(0, 2000),
+      });
       return new Response(JSON.stringify({ error: "Failed to list leads" }), {
         status: 500,
         headers: { "Content-Type": "application/json" },
@@ -140,6 +151,16 @@ export const POST: APIRoute = async ({ request }) => {
 
     pageToken = data.nextPageToken;
   } while (pageToken);
+
+  if (errors > 0) {
+    // Kit sync lag is recoverable, but a whole run of errors means leads are
+    // not reaching the CRM; one summary page per run.
+    await alertOps({
+      flow: "ops",
+      stage: "kit_sync",
+      errorMessage: `${errors} of ${errors + synced} lead syncs to Kit failed this run.`,
+    });
+  }
 
   return new Response(JSON.stringify({ ok: true, synced, errors }), {
     status: 200,

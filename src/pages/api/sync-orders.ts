@@ -5,6 +5,7 @@ import { enforceRateLimit, RATE_LIMITS } from "@/lib/rateLimit";
 import { verifyAdminToken } from "@/lib/verifyToken";
 import { getFirestoreAccessToken } from "@/lib/firestoreAdmin";
 import { fetchEventOrders } from "@/lib/eventbrite";
+import { alertOps } from "@/lib/opsAlert";
 import { events } from "@/data/events";
 import type { Order, SyncMeta } from "@/types/analytics";
 
@@ -410,6 +411,13 @@ export const POST: APIRoute = async ({ request }) => {
   } catch (err) {
     const msg = err instanceof Error ? err.message : String(err);
     console.error(`[sync-orders] Fatal error: ${msg}`);
+    // A dead order sync silently stops ticket revenue attribution; page once
+    // per failed run.
+    await alertOps({
+      flow: "ops",
+      stage: "order_sync",
+      errorMessage: msg.slice(0, 2000),
+    });
     return new Response(JSON.stringify({ error: "Sync failed" }), {
       status: 500,
       headers: { "Content-Type": "application/json" },

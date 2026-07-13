@@ -4,6 +4,7 @@ import { timingSafeEqual } from "node:crypto";
 import type { APIRoute } from "astro";
 import { fsGet, fsPatch, fsAdd, fsListAll, fsQuery } from "@/lib/firestoreRest";
 import { sendMail } from "@/lib/zohoMailer";
+import { alertOps } from "@/lib/opsAlert";
 import {
   schedulingFollowup,
   waiverNudge,
@@ -67,6 +68,14 @@ export const GET: APIRoute = async ({ request }) => {
     briefingSent: false,
     briefingSkipped: false,
   };
+  // Per-item failures are collected and paged ONCE at the end of the run
+  // (one summary email, never one email per applicant).
+  const failures: string[] = [];
+  const recordFailure = (what: string, err: unknown) => {
+    failures.push(
+      `${what}: ${err instanceof Error ? err.message : String(err)}`,
+    );
+  };
 
   const allApps = await fsListAll("applications");
   const calUrl =
@@ -96,7 +105,8 @@ export const GET: APIRoute = async ({ request }) => {
         text: template.text,
         html: template.html,
       });
-    } catch {
+    } catch (err) {
+      recordFailure(`scheduling followup email to ${email}`, err);
       continue;
     }
 
@@ -112,8 +122,9 @@ export const GET: APIRoute = async ({ request }) => {
         payload: {},
       });
       results.schedulingFollowups++;
-    } catch {
-      // Email already sent; persistence failure logged for manual follow-up.
+    } catch (err) {
+      // Email already sent; persistence failure means a duplicate next run.
+      recordFailure(`followup persistence for ${app.id as string}`, err);
     }
   }
 
@@ -160,7 +171,8 @@ export const GET: APIRoute = async ({ request }) => {
         text: template.text,
         html: template.html,
       });
-    } catch {
+    } catch (err) {
+      recordFailure(`waiver nudge email to ${email}`, err);
       continue;
     }
 
@@ -176,8 +188,9 @@ export const GET: APIRoute = async ({ request }) => {
         payload: {},
       });
       results.waiverNudges++;
-    } catch {
-      // Email already sent; persistence failure logged for manual follow-up.
+    } catch (err) {
+      // Email already sent; persistence failure means a duplicate next run.
+      recordFailure(`waiver nudge persistence for ${app.id as string}`, err);
     }
   }
 
@@ -203,8 +216,9 @@ export const GET: APIRoute = async ({ request }) => {
         payload: {},
       });
       results.autoDecayed++;
-    } catch {
+    } catch (err) {
       // Persistence failure; will retry on next cron run.
+      recordFailure(`auto-decay for ${app.id as string}`, err);
     }
   }
 
@@ -267,8 +281,9 @@ export const GET: APIRoute = async ({ request }) => {
             text: template.text,
             html: template.html,
           });
-        } catch {
-          // log but don't block saving lastBriefingDate
+        } catch (err) {
+          // Don't block saving lastBriefingDate; page in the run summary.
+          recordFailure(`host briefing email to ${hostEmail}`, err);
         }
       }
     }
@@ -277,5 +292,17 @@ export const GET: APIRoute = async ({ request }) => {
     results.briefingSent = upcomingApps.length > 0;
   }
 
-  return json({ ok: true, ...results });
+  if (failures.length > 0) {
+    await alertOps({
+      flow: "ops",
+      stage: "cron_followups",
+      errorMessage:
+        `${failures.length} failure${failures.length === 1 ? "" : "s"} in this run:\n${failures.join("\n")}`.slice(
+          0,
+          2000,
+        ),
+    });
+  }
+
+  return json({ ok: true, ...results, failures: failures.length });
 };

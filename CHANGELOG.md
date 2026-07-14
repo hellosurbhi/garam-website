@@ -4,6 +4,14 @@
 
 The ruleset "Protect Main" requires the "Lint, Types, Test, Build" check, but ci.yml ignored markdown and docs paths, so docs-only PRs never started the check and sat permanently blocked (hit on PR #139). The paths-ignore block is gone: full CI runs on every PR to main. Owner decision: no conditional skips and no success reported without the checks actually running.
 
+## chore(deps-dev): bump typescript from 5.9.3 to 6.0.3 (2026-07-14)
+
+Dependabot's TypeScript 7.0.2 bump (PR #134) could never merge: `@astrojs/check` (peer `^5 || ^6`) and `typescript-eslint` (peer `<6.1.0`) do not support TypeScript 7 (the native compiler), so `npm ci` failed with ERESOLVE in CI and on Vercel.
+
+- `package.json` retargeted to `typescript@~6.0.3`, the latest stable both peer ranges accept and the same version `astro@7.0.7` builds against. Lockfile regenerated.
+- `.github/dependabot.yml` now ignores TypeScript major bumps (with a WHY comment) so Dependabot stops re-filing a permanently red TS 7 PR weekly. Remove the rule once the Astro toolchain declares TS 7 peer support.
+- Branch merged up to date with main.
+
 ## fix(portal): industry-standard clickwrap waiver panel + portal secret documented (2026-07-13)
 
 Contestant portal waiver rebuilt after a contestant hit the scroll-to-unlock wall without knowing it existed, on top of a production 500 from `/api/contestant-open-claim`:

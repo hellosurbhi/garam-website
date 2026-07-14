@@ -1,5 +1,13 @@
 # Lessons
 
+## Git hooks must be tracked with the executable bit or the gate silently dies
+
+**What went wrong:** A commit sailed through with no review gate. Git printed "The '.husky/pre-commit' hook was ignored because it's not set as executable" and committed anyway. The same hint had appeared in the main checkout without anyone connecting it to a disabled gate.
+
+**Why:** `core.hooksPath` in this repo flips between two states. After `npm install` runs husky's prepare step it is `.husky/_` (husky 9 dispatchers that invoke the tracked files through `sh`, executable bit irrelevant). But it was measured as `.husky` (direct execution of the tracked files) on 2026-07-14, and in that state git silently skips any hook tracked as mode 100644. `pre-commit` and `pre-push` were 100644 while `commit-msg` was 100755, so fresh checkouts and index-mode restores produced dead hooks whenever the config was in the direct state. PR #142 tracks all hooks as 100755, which works in both states.
+
+**Rule:** Every hook file ships as mode 100755 (`git ls-files -s .husky/` must show 100755 for all of them) so the gate survives both hooksPath states. Treat the "hook was ignored" hint as a broken gate, never as noise: stop and fix the cause before committing anything else.
+
 ## A new endpoint's required env vars ship with the endpoint or it ships broken
 
 **What went wrong:** The contestant portal claim endpoints 500 in production. `signPortalToken` requires `CONTESTANT_PORTAL_SECRET`, but the secret appeared in no `.env.example` entry, no docs and (most likely) no Vercel environment, so the endpoints could never succeed after deploy. Same shape as the July apply outage, where the fix stayed inert until operator secrets were added.

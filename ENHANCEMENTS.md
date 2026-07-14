@@ -1482,3 +1482,10 @@ If the ambiguity matters there too, rename both with Surbhi's approval on the ex
 - 2026-07-13T21:49Z | tier=E | primary=codex | reason=error_or_timeout | fallback_used=deepseek | commit=31350a3 | diff_sha=e35f355d8ce66d3bee2b4cb0a3a46beb9e293044bcb8a954a72352747f0ec6ce
 - 2026-07-13T21:54Z | tier=E | primary=codex | reason=error_or_timeout | fallback_used=deepseek | commit=31350a3 | diff_sha=b85bc6ec208be3e9c39090376efd6fb019be6269f674a405c12822b01884ae11
 - 2026-07-14T04:12Z | tier=E | primary=codex | reason=error_or_timeout | fallback_used=deepseek | commit=31350a3 | diff_sha=a457f9f43c890a3896d690da506abb79097a4a3ef66a6f7940892657c149ea39
+- 2026-07-13T21:58Z | tier=E | primary=codex | reason=error_or_timeout | fallback_used=deepseek | commit=31350a3 | diff_sha=e99328d390b12ce56298326ab4de0bbe0dc52589de496f6c32de51a45e6bfc6d
+- 2026-07-13T21:58Z | tier=F | primary=coderabbit | reason=error | fallback_used=gemini | commit=31350a3 | diff_sha=e99328d390b12ce56298326ab4de0bbe0dc52589de496f6c32de51a45e6bfc6d
+- 2026-07-13T22:03Z | tier=E | primary=codex | reason=error_or_timeout | fallback_used=deepseek | commit=be735b9 | diff_sha=aad31620a68713c8d429e0c119d83b6d351d4e2eaa7a4338546eecdd1ac0d095
+- 2026-07-13T22:03Z | tier=F | primary=coderabbit | reason=error | fallback_used=gemini | commit=be735b9 | diff_sha=aad31620a68713c8d429e0c119d83b6d351d4e2eaa7a4338546eecdd1ac0d095
+- 2026-07-13T22:07Z | tier=E | primary=codex | reason=error_or_timeout | fallback_used=deepseek | commit=37cde64 | diff_sha=9506d1aa157f1daade093c8e9414c34d99e8046112fb55278553d9723010625c
+- 2026-07-13T22:07Z | tier=F | primary=coderabbit | reason=error | fallback_used=gemini | commit=37cde64 | diff_sha=9506d1aa157f1daade093c8e9414c34d99e8046112fb55278553d9723010625c
+- 2026-07-14T18:04Z | tier=F | primary=coderabbit | reason=error | fallback_used=gemini | commit=8b4d379 | diff_sha=21cb57ca33a0bc568eacd8e142d7932bb30af7a382fa25b557f2c6dda526c07e

@@ -525,7 +525,7 @@ export const appAlternativesPosts: JournalPost[] = [
         text: "I\u2019m not ranking by marketing copy or app store ratings. I\u2019m ranking by one question: how likely is a real South Asian single in the US to find a real relationship here? That means I\u2019m weighing user base size, cultural context, match quality, conversation conversion, and what I hear from actual users at our shows and in our contestant applications.",
       },
       {
-        type: "h3",
+        type: "h2",
         text: "7. Yuzu: new entry from Match Group",
       },
       {
@@ -533,7 +533,7 @@ export const appAlternativesPosts: JournalPost[] = [
         text: "Yuzu launched in February 2024 from Match Group, targeting Asian Americans broadly. It\u2019s backed by the largest dating company in the world, which means distribution and resources. Whether the cultural calibration is actually right for South Asian users is still TBD. Watch this space.",
       },
       {
-        type: "h3",
+        type: "h2",
         text: "6. Ishq: best signal-to-noise ratio (if you can get in)",
       },
       {
@@ -541,7 +541,7 @@ export const appAlternativesPosts: JournalPost[] = [
         text: "Ishq launched in October 2024 as an invite-only South Asian dating app. The exclusivity keeps the pool curated and the intent level high. It\u2019s too early to rank definitively, but the early reports are encouraging. If you have an invite or know someone who can get you one, it\u2019s worth trying.",
       },
       {
-        type: "h3",
+        type: "h2",
         text: "5. Salams: high volume for Muslim singles with caveats",
       },
       {

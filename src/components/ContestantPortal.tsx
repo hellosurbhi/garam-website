@@ -18,7 +18,7 @@ import {
   missingRoleError,
   claimErrorMessage,
 } from "@/data/contestantPortal";
-import { WaiverDocument } from "@/components/WaiverDocument";
+import { WaiverPanel } from "@/components/WaiverPanel";
 
 type ContestantRole = "female" | "male";
 
@@ -478,13 +478,7 @@ function ContestantPacketGate({
   const [signature, setSignature] = useState("");
   const [waiverScrolled, setWaiverScrolled] = useState(false);
   const [agreed, setAgreed] = useState(false);
-  // Callback ref: set waiverScrolled immediately if no scroll is needed.
-  const waiverRef = useCallback((el: HTMLDivElement | null) => {
-    if (!el) return;
-    if (el.scrollHeight <= el.clientHeight + 4) {
-      setWaiverScrolled(true);
-    }
-  }, []);
+  const handleWaiverUnlock = useCallback(() => setWaiverScrolled(true), []);
   const resolvedRole = role ?? selectedRole;
   const callTime = formatCallTime(startTime);
 
@@ -502,14 +496,6 @@ function ContestantPacketGate({
     waiverScrolled &&
     agreed &&
     formPhase !== "submitting";
-
-  function handleWaiverScroll(el: HTMLDivElement) {
-    const canScroll = el.scrollHeight > el.clientHeight + 4;
-    const reachedBottom = el.scrollTop + el.clientHeight >= el.scrollHeight - 8;
-    if (canScroll && reachedBottom) {
-      setWaiverScrolled(true);
-    }
-  }
 
   return (
     <div className="portal-form-wrap">
@@ -624,62 +610,16 @@ function ContestantPacketGate({
           className="portal-input"
           aria-label="Phone number"
         />
-        <div
-          ref={waiverRef}
-          className="portal-waiver-scroll"
-          aria-label="Waiver text"
-          role="region"
-          tabIndex={0}
-          onScroll={(e) => handleWaiverScroll(e.currentTarget)}
-        >
-          <WaiverDocument text={WAIVER_TEXT} />
-        </div>
-        <div>
-          <label className="portal-label" htmlFor="portal-signature">
-            Type your full legal name as your signature
-          </label>
-          <input
-            id="portal-signature"
-            type="text"
-            placeholder="First Last"
-            required
-            value={signature}
-            onChange={(e) => setSignature(e.target.value)}
-            className="portal-input portal-input-sig"
-            aria-label="Signature"
-            aria-describedby={
-              signature.trim() && !signatureValid
-                ? "portal-signature-error"
-                : undefined
-            }
-          />
-          {signature.trim() && !signatureValid && (
-            <p
-              id="portal-signature-error"
-              role="alert"
-              className="portal-error-inline"
-            >
-              Signature must match your legal name above.
-            </p>
-          )}
-        </div>
-        <label className="portal-checkbox">
-          <input
-            type="checkbox"
-            checked={agreed}
-            disabled={!waiverScrolled}
-            onChange={(e) => setAgreed(e.target.checked)}
-          />
-          <span>
-            I have read and agree to the waiver. I understand the typed legal
-            signature above is my electronic signature.
-          </span>
-        </label>
-        {!waiverScrolled && (
-          <p className="portal-checkbox-muted">
-            Scroll through the full waiver to enable agreement.
-          </p>
-        )}
+        <WaiverPanel
+          waiverText={WAIVER_TEXT}
+          scrolled={waiverScrolled}
+          onScrolledToEnd={handleWaiverUnlock}
+          signature={signature}
+          onSignatureChange={setSignature}
+          signatureValid={signatureValid}
+          agreed={agreed}
+          onAgreedChange={setAgreed}
+        />
         <p className="portal-muted">{MAILING_LIST_DISCLOSURE}</p>
         {formError && (
           <p role="alert" className="portal-error">

@@ -197,3 +197,11 @@ The real XSS guards on this site are Firebase security rules and Firestore field
 **Why:** The sections were built from hand-maintained data (a hardcoded city array on the masterclass, the static `city.status` field and per-article `cityLinks` on the dynamic page) instead of deriving state from `src/data/events.ts`. Hand-maintained "tickets on sale" claims go stale the moment the events data changes.
 
 **Rule:** Any surface that pairs a city name with ticket availability must derive that state from `src/utils/cityEvents.ts` (`isUpcomingEvent`, `getUpcomingEventsForCity`, `citySlugsWithUpcomingEvents`), never from `city.status`, hardcoded lists or copy. Curated lists are only allowed for waitlist/internal-link entries, and slugs in data files are always bare (`"manhattan"`, never `"/cities/manhattan"`).
+
+## The entire pre-commit gauntlet was silently skipped for a week
+
+**What went wrong:** Commits from fresh checkouts and worktrees ran zero gates: no prettier, no astro check, no vitest, no AI reviewers. A commit with unreviewed data changes landed on a PR branch with nothing but a one-line hint from git. The pipeline had been dead for those checkouts since Jul 5 and nobody noticed because a skipped hook prints a hint and exits 0.
+
+**Why:** `.husky/pre-commit` and `.husky/pre-push` were committed with file mode 100644. Git refuses to run non-executable hook files and treats that as advisory (a "hint"), not an error. Checkouts where someone had run `chmod +x` locally kept working, which masked the bug: the same commit could be gated on one machine and ungated on another. The chmod never made it into the index, so every fresh checkout and worktree was born ungated.
+
+**Rule:** Hook files must be committed with the executable bit (`git ls-files -s .husky/` must show 100755 for every hook). After adding or editing any hook file, verify with that command, not with `ls -l` on your own checkout. A gate that can be skipped silently is not a gate: if a hook is ever observed printing "ignored because it's not set as executable", treat it as a broken-build incident, not a hint.

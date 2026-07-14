@@ -66,3 +66,9 @@ reports/
 link-results.json
 .lighthouseci/
 
+
+# Review pipeline artifacts (pre-commit reviewer outputs + verdict cache).
+# Untracked AND ignored on purpose: CodeRabbit CLI scans untracked files, so
+# unignored review records made the pipeline review its own exhaust and block
+# commits over stale artifact contents (hit 2026-07-14).
+reviews/

@@ -144,6 +144,53 @@ describe("journalPosts", () => {
     }
   });
 
+  // WHY: ranked listicles are countdowns by editorial doctrine. The original
+  // best-first order revealed the winner in the first heading and readers
+  // bounced without reaching the mid-article CTAs. Body order is hand-written
+  // heading text, so without this test a future ranked article written 1..n
+  // would silently regress. rankedItems keeps ascending schema positions
+  // (1 = best) while the body presents worst first; that mismatch is the
+  // design, not a bug.
+  it("ranked posts present body headings as a countdown (n down to 1)", () => {
+    for (const post of journalPosts) {
+      if (!post.rankedItems) continue;
+      const headingRanks = post.body
+        .filter((block) => block.type === "h2" || block.type === "h3")
+        .map((block) => block.text.match(/^(\d+)\.\s/)?.[1])
+        .filter((rank): rank is string => rank !== undefined)
+        .map(Number);
+      expect(
+        headingRanks.length,
+        `${post.slug} has rankedItems but no numbered body headings`,
+      ).toBe(post.rankedItems.length);
+      const expected = [...post.rankedItems]
+        .map((item) => item.position)
+        .sort((a, b) => b - a);
+      expect(
+        headingRanks,
+        `${post.slug} ranked headings must count down (worst first, winner last)`,
+      ).toEqual(expected);
+    }
+  });
+
+  it("posts titled as rankings declare rankedItems so countdown order is enforced", () => {
+    for (const post of journalPosts) {
+      const titledAsRanking =
+        /rank/i.test(post.title) || /rank/i.test(post.seoTitle ?? "");
+      const numberedHeadings = post.body.filter(
+        (block) =>
+          (block.type === "h2" || block.type === "h3") &&
+          /^\d+\.\s/.test(block.text),
+      ).length;
+      if (titledAsRanking && numberedHeadings >= 3) {
+        expect(
+          post.rankedItems,
+          `${post.slug} reads as a ranking (title mentions rank, ${numberedHeadings} numbered headings) but has no rankedItems, so the countdown test cannot protect it`,
+        ).toBeDefined();
+      }
+    }
+  });
+
   it("appReview, when present, has a 1-5 rating and non-empty verdict content", () => {
     for (const post of journalPosts) {
       if (!post.appReview) continue;

@@ -6,6 +6,15 @@ updates:
       interval: weekly
       day: monday
     open-pull-requests-limit: 5
+    ignore:
+      # WHY: @astrojs/check (<=0.9.9, peer typescript ^5 || ^6) and
+      # typescript-eslint (peer typescript <6.1.0) do not support TypeScript 7
+      # (the native compiler). A TS 7 bump fails npm ci with ERESOLVE, so the
+      # PR can never go green (see PR #134, retargeted to 6.0.3). Removing this
+      # rule before the Astro toolchain declares TS 7 peer support just re-files
+      # a permanently red PR every Monday.
+      - dependency-name: typescript
+        update-types: ["version-update:semver-major"]
     groups:
       minor-and-patch:
         update-types: [minor, patch]

@@ -514,7 +514,7 @@ export const appAlternativesPosts: JournalPost[] = [
     body: [
       {
         type: "p",
-        text: "Every year there\u2019s a new app, a new pitch, a new promise to finally solve South Asian dating. I\u2019ve watched this space closely for four years while running Garam Masala Dating, and I\u2019ve talked to hundreds of people about what they\u2019re using and whether it\u2019s working. Here\u2019s my honest ranking of the Indian dating app landscape in 2026, including a few options that might surprise you.",
+        text: "Every year there\u2019s a new app, a new pitch, a new promise to finally solve South Asian dating. I\u2019ve watched this space closely for four years while running Garam Masala Dating, and I\u2019ve talked to hundreds of people about what they\u2019re using and whether it\u2019s working. Here\u2019s my honest ranking of the Indian dating app landscape in 2026, counted down from the long shots to the one clear winner, including a few options that might surprise you.",
       },
       {
         type: "h2",
@@ -525,44 +525,12 @@ export const appAlternativesPosts: JournalPost[] = [
         text: "I\u2019m not ranking by marketing copy or app store ratings. I\u2019m ranking by one question: how likely is a real South Asian single in the US to find a real relationship here? That means I\u2019m weighing user base size, cultural context, match quality, conversation conversion, and what I hear from actual users at our shows and in our contestant applications.",
       },
       {
-        type: "h2",
-        text: "1. Dil Mil: best for South Asian cultural context in major metros",
-      },
-      {
-        type: "p",
-        text: "Dil Mil is still the flagship. Around a million users, South Asian-specific matching, and cultural context baked into the experience. Its major weakness is thin pools outside of major metros. If you\u2019re in NYC, Chicago, Houston, the Bay Area, or Toronto, Dil Mil is worth being on. If you\u2019re not, it may frustrate you. As I covered in my <a href='/journal/is-dil-mil-worth-it'>honest Dil Mil review</a>, the app is best when combined with realistic expectations about volume.",
-      },
-      {
-        type: "h2",
-        text: "2. Hinge: best for volume and major metro reach",
-      },
-      {
-        type: "p",
-        text: "Hinge is the second-largest dating app in the US and has a substantial Indian user base. The prompts format creates better conversation starters than Dil Mil, and the pool is much larger. The cost is cultural dilution: you\u2019ll spend more time filtering for cultural fit. Best used alongside Dil Mil, not instead of it. I\u2019ve written more about <a href='/journal/why-hinge-doesnt-work-for-indians'>why Hinge specifically struggles for Indian users</a> and what you can do about it.",
-      },
-      {
-        type: "h2",
-        text: "3. Aisle: best for high intent",
-      },
-      {
-        type: "p",
-        text: "Aisle charges for connections, which filters for intent in a way free apps don\u2019t. If you\u2019re done with casual swiping and you want to be matched with someone who is genuinely looking for a relationship, Aisle\u2019s friction is a feature. The South Asian focus is real. The user base skews about 70% male, which affects the experience depending on your gender. Best for: people who\u2019ve tried the free apps and want something more deliberate.",
-      },
-      {
-        type: "h2",
-        text: "4. Muzz: best for Muslim South Asians",
-      },
-      {
-        type: "p",
-        text: "For Muslim South Asians, Muzz is in a category of its own. 15 million users globally, real features for halal dating, and a community that understands the specific constraints and expectations of Muslim dating. The chaperon mode is genuinely thoughtful. If you\u2019re Muslim and South Asian, Muzz should be your primary app before everything else.",
-      },
-      {
         type: "h3",
-        text: "5. Salams: high volume for Muslim singles with caveats",
+        text: "7. Yuzu: new entry from Match Group",
       },
       {
         type: "p",
-        text: "Salams has 6 million users and is the main Muzz competitor for Muslim South Asians. The gender imbalance (roughly 80% male) is significant. Women will have more matches than they can handle. Men face steep competition. Worth using alongside Muzz if you\u2019re Muslim, with adjusted expectations.",
+        text: "Yuzu launched in February 2024 from Match Group, targeting Asian Americans broadly. It\u2019s backed by the largest dating company in the world, which means distribution and resources. Whether the cultural calibration is actually right for South Asian users is still TBD. Watch this space.",
       },
       {
         type: "h3",
@@ -574,11 +542,43 @@ export const appAlternativesPosts: JournalPost[] = [
       },
       {
         type: "h3",
-        text: "7. Yuzu: new entry from Match Group",
+        text: "5. Salams: high volume for Muslim singles with caveats",
       },
       {
         type: "p",
-        text: "Yuzu launched in February 2024 from Match Group, targeting Asian Americans broadly. It\u2019s backed by the largest dating company in the world, which means distribution and resources. Whether the cultural calibration is actually right for South Asian users is still TBD. Watch this space.",
+        text: "Salams has 6 million users and is the main Muzz competitor for Muslim South Asians. The gender imbalance (roughly 80% male) is significant. Women will have more matches than they can handle. Men face steep competition. Worth using alongside Muzz if you\u2019re Muslim, with adjusted expectations.",
+      },
+      {
+        type: "h2",
+        text: "4. Muzz: best for Muslim South Asians",
+      },
+      {
+        type: "p",
+        text: "For Muslim South Asians, Muzz is in a category of its own. 15 million users globally, real features for halal dating, and a community that understands the specific constraints and expectations of Muslim dating. The chaperon mode is genuinely thoughtful. If you\u2019re Muslim and South Asian, Muzz should be your primary app before everything else.",
+      },
+      {
+        type: "h2",
+        text: "3. Aisle: best for high intent",
+      },
+      {
+        type: "p",
+        text: "Aisle charges for connections, which filters for intent in a way free apps don\u2019t. If you\u2019re done with casual swiping and you want to be matched with someone who is genuinely looking for a relationship, Aisle\u2019s friction is a feature. The South Asian focus is real. The user base skews about 70% male, which affects the experience depending on your gender. Best for: people who\u2019ve tried the free apps and want something more deliberate.",
+      },
+      {
+        type: "h2",
+        text: "2. Hinge: best for volume and major metro reach",
+      },
+      {
+        type: "p",
+        text: "Hinge is the second-largest dating app in the US and has a substantial Indian user base. The prompts format creates better conversation starters than most desi-specific apps, and the pool is much larger. The cost is cultural dilution: you\u2019ll spend more time filtering for cultural fit. Best used alongside a desi-specific app, not instead of one. I\u2019ve written more about <a href='/journal/why-hinge-doesnt-work-for-indians'>why Hinge specifically struggles for Indian users</a> and what you can do about it.",
+      },
+      {
+        type: "h2",
+        text: "1. Dil Mil: best for South Asian cultural context in major metros",
+      },
+      {
+        type: "p",
+        text: "Dil Mil is still the flagship. Around a million users, South Asian-specific matching, and cultural context baked into the experience. Its major weakness is thin pools outside of major metros. If you\u2019re in NYC, Chicago, Houston, the Bay Area, or Toronto, Dil Mil is worth being on. If you\u2019re not, it may frustrate you. As I covered in my <a href='/journal/is-dil-mil-worth-it'>honest Dil Mil review</a>, the app is best when combined with realistic expectations about volume.",
       },
       {
         type: "h2",
@@ -1063,7 +1063,7 @@ export const appAlternativesPosts: JournalPost[] = [
     body: [
       {
         type: "p",
-        text: "Canada has one of the densest South Asian populations outside South Asia, so you'd expect the apps to work here. Density is not the same as a dating scene, and Canadian desis know the difference. I run the #1 live desi comedy dating show in NYC, our Canadian waitlists are the loudest outside the US, and I talk to Canadian desi singles constantly about what is and is not working. Here is the honest ranking for 2026.",
+        text: "Canada has one of the densest South Asian populations outside South Asia, so you'd expect the apps to work here. Density is not the same as a dating scene, and Canadian desis know the difference. I run the #1 live desi comedy dating show in NYC, our Canadian waitlists are the loudest outside the US, and I talk to Canadian desi singles constantly about what is and is not working. Here is the honest ranking for 2026, counted down to the winner.",
       },
       {
         type: "h2",
@@ -1075,19 +1075,11 @@ export const appAlternativesPosts: JournalPost[] = [
       },
       {
         type: "h2",
-        text: "1. Dil Mil, best for the GTA and Vancouver",
+        text: "4. Shaadi.com and matrimony sites, for the marriage-ready",
       },
       {
         type: "p",
-        text: "Dil Mil's Canadian pools in Toronto, Brampton, Mississauga and Metro Vancouver are genuinely deep, deeper relative to the general population than in most US cities. The cultural filtering is built in, which the Canadian desi community, with its strong family expectations, tends to want. The weakness is the same everywhere: thin pools the moment you leave the big two metros. For a full breakdown of Dil Mil's strengths and costs, see our <a href='/journal/is-dil-mil-worth-it'>honest Dil Mil review</a>.",
-      },
-      {
-        type: "h2",
-        text: "2. Hinge, best for overall reach in major cities",
-      },
-      {
-        type: "p",
-        text: "Hinge is the mainstream default in Toronto, Vancouver, Montreal and Calgary, and it has a substantial South Asian user base in all four. The prompts format produces better conversation starters than Dil Mil, but you spend more time filtering for cultural fit. Best used alongside Dil Mil, not instead of it. Our piece on <a href='/journal/why-hinge-doesnt-work-for-indians'>why Hinge struggles for Indian users</a> applies just as much north of the border.",
+        text: "Canada's large NRI population means Shaadi.com and BharatMatrimony both have real usage here, especially in Toronto, Vancouver and Calgary. They function as matrimonial databases rather than dating apps, so treat them accordingly. If you want the honest verdict, read our <a href='/journal/shaadi-com-review-2026'>Shaadi.com review</a>.",
       },
       {
         type: "h2",
@@ -1099,11 +1091,19 @@ export const appAlternativesPosts: JournalPost[] = [
       },
       {
         type: "h2",
-        text: "4. Shaadi.com and matrimony sites, for the marriage-ready",
+        text: "2. Hinge, best for overall reach in major cities",
       },
       {
         type: "p",
-        text: "Canada's large NRI population means Shaadi.com and BharatMatrimony both have real usage here, especially in Toronto, Vancouver and Calgary. They function as matrimonial databases rather than dating apps, so treat them accordingly. If you want the honest verdict, read our <a href='/journal/shaadi-com-review-2026'>Shaadi.com review</a>.",
+        text: "Hinge is the mainstream default in Toronto, Vancouver, Montreal and Calgary, and it has a substantial South Asian user base in all four. The prompts format produces better conversation starters than most desi-specific apps, but you spend more time filtering for cultural fit. Best used alongside a desi-specific app, not instead of one. Our piece on <a href='/journal/why-hinge-doesnt-work-for-indians'>why Hinge struggles for Indian users</a> applies just as much north of the border.",
+      },
+      {
+        type: "h2",
+        text: "1. Dil Mil, best for the GTA and Vancouver",
+      },
+      {
+        type: "p",
+        text: "Dil Mil's Canadian pools in Toronto, Brampton, Mississauga and Metro Vancouver are genuinely deep, deeper relative to the general population than in most US cities. The cultural filtering is built in, which the Canadian desi community, with its strong family expectations, tends to want. The weakness is the same everywhere: thin pools the moment you leave the big two metros. For a full breakdown of Dil Mil's strengths and costs, see our <a href='/journal/is-dil-mil-worth-it'>honest Dil Mil review</a>.",
       },
       {
         type: "h2",
@@ -1113,6 +1113,12 @@ export const appAlternativesPosts: JournalPost[] = [
         type: "p",
         text: "Every Canadian desi single I talk to describes the same wall: the community is huge, the family network is efficient, and yet meeting someone you actually chose, outside a wedding or an app, is nearly impossible. The scene is all festivals and family functions, none of it singles-first. That is the exact gap a live show fills, which is why Toronto, Vancouver, Brampton, Surrey and Mississauga sit at the top of our waitlist. Get on your city's list at garammasaladating.com and the community decides where we bring the show first.",
       },
+    ],
+    rankedItems: [
+      { position: 1, name: "Dil Mil" },
+      { position: 2, name: "Hinge" },
+      { position: 3, name: "Muzz" },
+      { position: 4, name: "Shaadi.com and matrimony sites" },
     ],
     ctaConfig: {
       intent: "advice",
@@ -1176,7 +1182,7 @@ export const appAlternativesPosts: JournalPost[] = [
     body: [
       {
         type: "p",
-        text: "India is one of the fastest growing sources of migration to Australia, but the dating apps have not caught up. Australian desi singles work with thinner pools than their London or Toronto cousins, and it shows. I run the #1 live desi comedy dating show in NYC and Sydney and Melbourne are near the top of our international waitlist, so here is the honest ranking for meeting South Asian singles in Australia in 2026.",
+        text: "India is one of the fastest growing sources of migration to Australia, but the dating apps have not caught up. Australian desi singles work with thinner pools than their London or Toronto cousins, and it shows. I run the #1 live desi comedy dating show in NYC and Sydney and Melbourne are near the top of our international waitlist, so here is the honest ranking for meeting South Asian singles in Australia in 2026, counted down to the winner.",
       },
       {
         type: "h2",
@@ -1188,11 +1194,11 @@ export const appAlternativesPosts: JournalPost[] = [
       },
       {
         type: "h2",
-        text: "1. Hinge, best for overall reach",
+        text: "3. Muzz, best for Muslim South Asians",
       },
       {
         type: "p",
-        text: "Hinge has the largest usable pool for South Asian singles in Sydney and Melbourne simply because it is where everyone is. You will filter more for cultural fit, but the volume is there in a way the niche apps cannot match yet in Australia. Our piece on <a href='/journal/why-hinge-doesnt-work-for-indians'>why Hinge struggles for Indian users</a> still applies, so treat it as one tool, not the whole toolbox.",
+        text: "For Muslim South Asians across Australia, Muzz is the primary app, with the strongest pools in Sydney and Melbourne. The halal dating features and community norms are the reason to start here before anything else.",
       },
       {
         type: "h2",
@@ -1200,15 +1206,15 @@ export const appAlternativesPosts: JournalPost[] = [
       },
       {
         type: "p",
-        text: "Dil Mil works in Sydney and Melbourne, with the cultural filtering the community wants, but the pools are noticeably thinner than in North America. Outside the two big cities, Brisbane, Perth, Adelaide, it gets sparse fast. Run it alongside Hinge. Our <a href='/journal/is-dil-mil-worth-it'>Dil Mil review</a> covers what to expect.",
+        text: "Dil Mil works in Sydney and Melbourne, with the cultural filtering the community wants, but the pools are noticeably thinner than in North America. Outside the two big cities, Brisbane, Perth, Adelaide, it gets sparse fast. Run it alongside a bigger mainstream app. Our <a href='/journal/is-dil-mil-worth-it'>Dil Mil review</a> covers what to expect.",
       },
       {
         type: "h2",
-        text: "3. Muzz, best for Muslim South Asians",
+        text: "1. Hinge, best for overall reach",
       },
       {
         type: "p",
-        text: "For Muslim South Asians across Australia, Muzz is the primary app, with the strongest pools in Sydney and Melbourne. The halal dating features and community norms are the reason to start here before anything else.",
+        text: "Hinge has the largest usable pool for South Asian singles in Sydney and Melbourne simply because it is where everyone is. You will filter more for cultural fit, but the volume is there in a way the niche apps cannot match yet in Australia. Our piece on <a href='/journal/why-hinge-doesnt-work-for-indians'>why Hinge struggles for Indian users</a> still applies, so treat it as one tool, not the whole toolbox.",
       },
       {
         type: "h2",
@@ -1218,6 +1224,11 @@ export const appAlternativesPosts: JournalPost[] = [
         type: "p",
         text: "When the app pools are thinner, the value of getting everyone in one room goes up, not down. Australia's desi singles are interesting, employed and scattered across enormous cities with no singles-first event to gather them. That is the exact gap a live show fills, and it is why Sydney and Melbourne lead our Australian waitlist. Get on your city's list at garammasaladating.com and help decide where we bring the show first.",
       },
+    ],
+    rankedItems: [
+      { position: 1, name: "Hinge" },
+      { position: 2, name: "Dil Mil" },
+      { position: 3, name: "Muzz" },
     ],
     ctaConfig: {
       intent: "advice",

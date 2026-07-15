@@ -1,13 +1,13 @@
 /* ─── Animations ──────────────────────────────────────────────── */
 
+/* Opacity-only: a translateY on the container reveal reads as one more
+   layout shift on a page tuned for zero CLS. */
 @keyframes fade-in {
   from {
     opacity: 0;
-    transform: translateY(12px);
   }
   to {
     opacity: 1;
-    transform: translateY(0);
   }
 }
 

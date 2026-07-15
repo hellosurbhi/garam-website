@@ -1,5 +1,9 @@
 # Changelog
 
+## fix(ci): required check runs on every PR, docs included (2026-07-14)
+
+The ruleset "Protect Main" requires the "Lint, Types, Test, Build" check, but ci.yml ignored markdown and docs paths, so docs-only PRs never started the check and sat permanently blocked (hit on PR #139). The paths-ignore block is gone: full CI runs on every PR to main. Owner decision: no conditional skips and no success reported without the checks actually running.
+
 ## fix(portal): industry-standard clickwrap waiver panel + portal secret documented (2026-07-13)
 
 Contestant portal waiver rebuilt after a contestant hit the scroll-to-unlock wall without knowing it existed, on top of a production 500 from `/api/contestant-open-claim`:

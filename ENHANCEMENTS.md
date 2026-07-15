@@ -1463,6 +1463,9 @@ If the ambiguity matters there too, rename both with Surbhi's approval on the ex
 - 2026-07-13T14:21Z | tier=F | primary=coderabbit | reason=error | fallback_used=gemini | commit=c632e66 | diff_sha=aa14f0405fb398ccc172f7d23e2c9751ee8c0ea5f24ddfb43a0f0bc1380bc5c6
 - 2026-07-13T14:23Z | tier=E | primary=codex | reason=error_or_timeout | fallback_used=deepseek | commit=ba6728a | diff_sha=4fda69b1208df08e4e0d4b9c77ef4613feb0ca8b9bc76f065441e8676120a62b
 - 2026-07-13T14:23Z | tier=F | primary=coderabbit | reason=error | fallback_used=gemini | commit=ba6728a | diff_sha=4fda69b1208df08e4e0d4b9c77ef4613feb0ca8b9bc76f065441e8676120a62b
+- 2026-07-15T19:41Z | tier=E | primary=codex | reason=error_or_timeout | fallback_used=gemini | commit=8ecc6b2 | diff_sha=cd75cca2e1162551848ad7e7bd36b8eaafea48695da51c508f24dc4b385ae6c7
+- 2026-07-15T19:41Z | tier=F | primary=coderabbit | reason=error | fallback_used=gemini | commit=8ecc6b2 | diff_sha=cd75cca2e1162551848ad7e7bd36b8eaafea48695da51c508f24dc4b385ae6c7
+- 2026-07-15T20:02Z | tier=E | primary=codex | reason=error_or_timeout | fallback_used=gemini | commit=ad03ccb | diff_sha=8f7496694dfa7a06a1b1dbf0b403469de24530653c93388269f0d5f1898fea65
 
 ## Low priority enhancements
 

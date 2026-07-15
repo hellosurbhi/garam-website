@@ -1,5 +1,23 @@
 # Changelog
 
+## feat(redesign): full visual overhaul — new type system, dark hero, squared buttons (2026-07-15)
+
+Complete website redesign across all pages and components:
+
+**New design system (index.css):** Anton replaces Playfair Display (condensed bold impact), Instrument Serif replaces Cormorant Garamond (elegant editorial italic), Hanken Grotesk replaces Nunito (clean variable sans). New surface palette: `--page` (#fdf8f2), `--warm` (#f5ede0), `--gold` (#c4992a). Backward-compat aliases (`--font-playfair: "Anton"`, `--font-cormorant: "Instrument Serif"`) cascade the new fonts to all existing components without individual edits. Self-hosted woff2 font files added to `public/fonts/`.
+
+**Dark hero (HomeHero.astro):** WebGL shader canvas removed. CSS-only dark hero (`--ink` background, `#0C0C0C`) with hot-club radial gradient light spills. Anton headline at clamp(76px–148px), `text-transform: uppercase`, line-height 0.88. Mixed-font `em` pattern: Anton for the heading word, Instrument Serif italic for emphasized text (Anton has no italic). Custom cursor and grain overlay removed from BaseLayout.
+
+**Nav (HomeNav + PageNav):** Transparent over dark hero, scrolls to cream backdrop. CSS mask logo switches white→brand-red on scroll. Squared border (3px) for nav pill button.
+
+**Squared button system:** All buttons changed from `border-radius: 50px` (pill) to `border-radius: 4px` (squared). Applied to all CTAs, modals, form inputs, and nav pills across every page. `:active { transform: scale(0.97) }` press feedback added throughout.
+
+**Section-by-section rewrite:** HomeMarquee (Anton uppercase strip), HomeExperience (Anton h2, brand-red step numbers), HomeShows (ink bg, Anton headline), HomeStats (Anton numbers in electric-yellow), HomePress (Instrument Serif for italic press names), HomeTestimonials (dark/photo bg, grid layout), HomeFAQ (Anton h2 clamp 36-64px), HomeCreators (Anton h2), HomeVideo (warm bg, Anton h2), HomeJournal (Anton h2, Instrument Serif card titles), HomeSignup (squared inputs + button).
+
+**All inner pages:** Anton h1 on tickets, hosts, faq, 404, press, journal index, cities index/slug, apply, links, thank-you, desi-events, corporate, sponsorship, celebrate. Instrument Serif for editorial contexts (journal article titles, body h2/h3, press card titles, journal card titles). All modal titles updated to Anton uppercase across NotifyModal, LeadCaptureModal, ui/Modal, HomeShows modal, cities slug modal.
+
+**Anton em-italic pattern:** Any `em { font-style: italic }` inside an Anton heading switches to Instrument Serif to avoid faux italic. Applied to HomeExperience, HomeVideo, HomeJournal, 404.astro, faq.astro, journal/index.astro.
+
 ## fix(ci): required check runs on every PR, docs included (2026-07-14)
 
 The ruleset "Protect Main" requires the "Lint, Types, Test, Build" check, but ci.yml ignored markdown and docs paths, so docs-only PRs never started the check and sat permanently blocked (hit on PR #139). The paths-ignore block is gone: full CI runs on every PR to main. Owner decision: no conditional skips and no success reported without the checks actually running.

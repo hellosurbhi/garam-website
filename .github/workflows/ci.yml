@@ -1,20 +1,28 @@
 # .github/workflows/ci.yml
 #
-# NOTE: These checks run on every PR but do NOT block merges yet.
-# Blocking requires branch protection, which requires GitHub Pro (private repo)
-# or making the repo public. When you're ready:
-#   → Run scripts/setup-branch-protection.sh (instructions inside)
+# The "Lint, Types, Test, Build" check below is REQUIRED by the repo ruleset
+# "Protect Main" (managed in GitHub Settings, Rules). Two constraints follow:
 #
+# WHY there is no paths-ignore on the trigger (2026-07-14): a required check
+# that never starts blocks the PR forever. The old `paths-ignore: **.md` meant
+# every docs-only PR (BUGS.md/ENHANCEMENTS.md routing produces them routinely)
+# sat permanently BLOCKED waiting for a check that would never report (hit on
+# PR #139). Full CI now runs on EVERY PR by owner decision: no conditional
+# skips and no success reported without the checks actually running, because
+# a green check whose meaning varies by code path is a latent trap. Re-adding
+# paths-ignore re-creates the deadlock; skip-but-report-success patterns were
+# explicitly rejected as false success reporting.
+#
+# WHY the job name must not change: the ruleset matches the check by the exact
+# string "Lint, Types, Test, Build". Renaming the job here without renaming the
+# required check in the ruleset means the required name never reports again and
+# every PR is permanently BLOCKED (the same deadlock, different trigger).
+# Rename both together or neither.
 name: CI
 
 on:
   pull_request:
     branches: [main]
-    paths-ignore:
-      - "**.md"
-      - "CHANGELOG.md"
-      - "docs/**"
-      - ".github/ISSUE_TEMPLATE/**"
 
 permissions:
   contents: read

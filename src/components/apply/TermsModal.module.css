@@ -40,9 +40,11 @@
 }
 
 .title {
-  font-family: var(--font-playfair);
+  font-family: var(--font-display), sans-serif;
   font-size: 20px;
-  font-weight: 700;
+  font-weight: 400;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
   color: var(--apply-brown);
   margin: 0;
 }

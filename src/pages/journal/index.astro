@@ -183,12 +183,14 @@ const breadcrumbJsonLd = buildBreadcrumbJsonLd([
   }
 
   .journal-title {
-    font-family: var(--font-playfair);
-    font-size: 32px;
-    font-weight: 700;
+    font-family: var(--font-display), sans-serif;
+    font-size: clamp(36px, 8vw, 60px);
+    font-weight: 400;
+    text-transform: uppercase;
+    letter-spacing: -0.01em;
     color: var(--charcoal);
-    line-height: 1.15;
-    margin-bottom: 14px;
+    line-height: 0.92;
+    margin-bottom: 16px;
   }
 
   .journal-title em {
@@ -299,9 +301,9 @@ const breadcrumbJsonLd = buildBreadcrumbJsonLd([
   }
 
   .journal-card-title {
-    font-family: var(--font-playfair);
-    font-size: 20px;
-    font-weight: 600;
+    font-family: var(--font-serif), serif;
+    font-size: 21px;
+    font-weight: 400;
     color: var(--charcoal);
     line-height: 1.25;
     margin-bottom: 10px;

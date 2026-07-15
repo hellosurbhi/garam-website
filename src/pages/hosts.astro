@@ -206,11 +206,13 @@ const personJsonLd = JSON.stringify([
     margin-bottom: 16px;
   }
   h1 {
-    font-family: var(--font-playfair), serif;
-    font-size: clamp(32px, 5vw, 52px);
-    font-weight: 900;
+    font-family: var(--font-display), sans-serif;
+    font-size: clamp(40px, 7vw, 72px);
+    font-weight: 400;
+    text-transform: uppercase;
+    letter-spacing: -0.01em;
     color: var(--charcoal);
-    line-height: 1.05;
+    line-height: 0.9;
     margin-bottom: 20px;
   }
   .hosts-intro {
@@ -314,14 +316,14 @@ const personJsonLd = JSON.stringify([
     background: var(--brand-red);
     color: white;
     padding: 16px 36px;
-    border-radius: 50px;
+    border-radius: 4px;
     font-family: var(--font-body), sans-serif;
     font-size: 14px;
     font-weight: 700;
     text-transform: uppercase;
     letter-spacing: 1.5px;
     text-decoration: none;
-    transition: background 0.2s;
+    transition: background 0.2s, transform 0.15s;
     min-height: var(--touch-target);
     display: inline-flex;
     align-items: center;
@@ -329,10 +331,13 @@ const personJsonLd = JSON.stringify([
   .hosts-cta-primary:hover {
     background: var(--brand-red-dark);
   }
+  .hosts-cta-primary:active {
+    transform: scale(0.97);
+  }
   .hosts-cta-outline {
     color: var(--charcoal);
     padding: 16px 36px;
-    border-radius: 50px;
+    border-radius: 4px;
     border: 1.5px solid rgba(0, 0, 0, 0.15);
     font-family: var(--font-body), sans-serif;
     font-size: 14px;
@@ -347,6 +352,9 @@ const personJsonLd = JSON.stringify([
   }
   .hosts-cta-outline:hover {
     border-color: var(--charcoal);
+  }
+  .hosts-cta-outline:active {
+    transform: scale(0.97);
   }
 
   @media (min-width: 768px) {

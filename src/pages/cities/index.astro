@@ -222,12 +222,14 @@ const regions = citiesByRegion();
   }
 
   .cities-h1 {
-    font-family: var(--font-playfair);
-    font-size: 32px;
-    font-weight: 700;
+    font-family: var(--font-display), sans-serif;
+    font-size: clamp(36px, 8vw, 60px);
+    font-weight: 400;
+    text-transform: uppercase;
+    letter-spacing: -0.01em;
     color: var(--charcoal);
-    line-height: 1.15;
-    margin-bottom: 14px;
+    line-height: 0.92;
+    margin-bottom: 16px;
   }
 
   .cities-desc {

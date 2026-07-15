@@ -1,8 +1,11 @@
 import { useCallback, useEffect, useState } from "react";
+import ReactSkeleton from "react-loading-skeleton";
+import "react-loading-skeleton/dist/skeleton.css";
 import { WAIVER_VERSION, WAIVER_TEXT } from "@/data/waiver";
 import { SOCIAL_URLS } from "@/data/socials";
 import {
   PORTAL_CONTACT_EMAIL,
+  PORTAL_LOADING_ANNOUNCEMENT,
   ERROR_VIEW,
   EXPIRED_VIEW,
   PACKET_HERO,
@@ -15,47 +18,21 @@ import {
   DAY_OF,
   ARRIVAL_NOTES,
   MAILING_LIST_DISCLOSURE,
-  missingRoleError,
   claimErrorMessage,
 } from "@/data/contestantPortal";
+import styles from "@/components/ContestantPortal.module.css";
+import {
+  startPortalStateLoad,
+  resolvePortalState,
+  clearStoredPortalContext,
+  parsePortalResponseBody,
+  type ContestantRole,
+  type PortalResolution,
+  type PortalResponseData,
+} from "@/lib/portalBootstrap";
 import { WaiverPanel } from "@/components/WaiverPanel";
 
-type ContestantRole = "female" | "male";
-
-type PortalState =
-  | { type: "loading" }
-  | { type: "open" }
-  | {
-      type: "invite";
-      inviteId: string;
-      showCity: string;
-      showDate: string;
-      showDisplayDate?: string;
-      startTime?: string | null;
-      venueName?: string | null;
-      role: ContestantRole;
-    }
-  | {
-      type: "show";
-      showId: string;
-      showCity: string;
-      showDate: string;
-      showDisplayDate?: string;
-      startTime?: string | null;
-      venueName?: string | null;
-    }
-  | {
-      type: "active";
-      firstName: string;
-      role: ContestantRole;
-      showCity: string;
-      showDate: string;
-      showDisplayDate?: string;
-      startTime?: string | null;
-      venueName?: string | null;
-    }
-  | { type: "expired" }
-  | { type: "error"; message: string };
+type PortalState = { type: "loading" } | PortalResolution;
 
 type PortalSignupData = {
   firstName: string;
@@ -70,41 +47,7 @@ type PortalSignupData = {
 
 type FormPhase = "form" | "submitting";
 
-type PortalResponseData = {
-  state?: string;
-  inviteId?: string;
-  showId?: string;
-  showCity?: string;
-  showDate?: string;
-  showDisplayDate?: string;
-  startTime?: string | null;
-  venueName?: string | null;
-  role?: string | null;
-  firstName?: string;
-  message?: string;
-  error?: string;
-};
-
 const CLAIM_ERROR_MESSAGE = claimErrorMessage(PORTAL_CONTACT_EMAIL);
-
-function normalizeRole(role?: string | null): ContestantRole | null {
-  if (role === "female" || role === "male") {
-    return role;
-  }
-  return null;
-}
-
-async function readPortalResponse(
-  response: Response,
-): Promise<PortalResponseData> {
-  const text = await response.text();
-  if (!text.trim()) return {};
-  try {
-    return JSON.parse(text) as PortalResponseData;
-  } catch {
-    return {};
-  }
-}
 
 function responseErrorMessage(data: PortalResponseData, fallback: string) {
   return data.error ?? data.message ?? fallback;
@@ -143,14 +86,18 @@ async function claimPortal(endpoint: string, body: Record<string, unknown>) {
       body: JSON.stringify(body),
       signal: ctrl.signal,
     });
-    // WHY: readPortalResponse must stay inside this try block so the abort
-    // signal (cleared in finally) still covers response.text(). Reading the
-    // body after clearTimeout leaves a stalled body read with no timeout,
+    // WHY: parsePortalResponseBody must stay inside this try block so the
+    // abort signal (cleared in finally) still covers response.text(). Reading
+    // the body after clearTimeout leaves a stalled body read with no timeout,
     // hanging the UI in the submitting phase.
-    const data = await readPortalResponse(response);
+    const data = await parsePortalResponseBody(response);
     if (!response.ok) {
       throw new PortalApiError(responseErrorMessage(data, CLAIM_ERROR_MESSAGE));
     }
+    // The link is spent the moment a claim succeeds; the portal_session
+    // cookie owns access from here. A stale stored context would resolve to
+    // "already used" on the next refresh.
+    clearStoredPortalContext();
   } finally {
     clearTimeout(timerId);
   }
@@ -162,115 +109,23 @@ export default function ContestantPortal() {
   const [formError, setFormError] = useState("");
 
   useEffect(() => {
-    const params = new URLSearchParams(window.location.search);
-    const invite = params.get("invite");
-    const show = params.get("show");
-    let url = "/api/portal-state";
-    if (invite) {
-      url += `?invite=${encodeURIComponent(invite)}`;
-    } else if (show) {
-      url += `?show=${encodeURIComponent(show)}`;
-      window.history.replaceState(null, "", "/contestant-portal");
-    }
-
-    const ctrl = new AbortController();
-    const timerId = setTimeout(() => ctrl.abort(), 12_000);
-
-    fetch(url, { credentials: "same-origin", signal: ctrl.signal })
-      .then(async (response) => {
-        const data = await readPortalResponse(response);
-        if (!response.ok) {
-          throw new PortalApiError(
-            responseErrorMessage(
-              data,
-              "Could not load portal. Please try again.",
-            ),
-          );
-        }
-        return data;
-      })
-      .then((data) => {
-        if (data.state === "open") {
-          setState({ type: "open" });
-        } else if (data.state === "invite") {
-          const role = normalizeRole(data.role);
-          if (!role) {
-            setState({
-              type: "error",
-              message: missingRoleError(PORTAL_CONTACT_EMAIL),
-            });
-            return;
-          }
-          setState({
-            type: "invite",
-            inviteId: data.inviteId ?? "",
-            showCity: data.showCity ?? "",
-            showDate: data.showDate ?? "",
-            showDisplayDate: data.showDisplayDate ?? undefined,
-            startTime: data.startTime ?? null,
-            venueName: data.venueName ?? null,
-            role,
-          });
-        } else if (data.state === "show") {
-          setState({
-            type: "show",
-            showId: data.showId ?? "",
-            showCity: data.showCity ?? "",
-            showDate: data.showDate ?? "",
-            showDisplayDate: data.showDisplayDate ?? undefined,
-            startTime: data.startTime ?? null,
-            venueName: data.venueName ?? null,
-          });
-        } else if (data.state === "active") {
-          const role = normalizeRole(data.role);
-          if (!role) {
-            setState({
-              type: "open",
-            });
-            return;
-          }
-          setState({
-            type: "active",
-            firstName: data.firstName ?? "",
-            role,
-            showCity: data.showCity ?? "",
-            showDate: data.showDate ?? "",
-            showDisplayDate: data.showDisplayDate ?? undefined,
-            startTime: data.startTime ?? null,
-            venueName: data.venueName ?? null,
-          });
-        } else if (data.state === "error") {
-          setState({ type: "error", message: data.message ?? "" });
-        } else if (data.state === "no-access") {
-          setState({ type: "open" });
-        } else if (data.state === "expired") {
-          setState({ type: "expired" });
-        } else {
-          setState({
-            type: "error",
-            message: "Could not load portal. Please try again.",
-          });
-        }
-      })
-      .catch((err) =>
-        setState({
-          type: "error",
-          message:
-            err instanceof PortalApiError
-              ? err.message
-              : "Could not load portal. Please try again.",
-        }),
-      )
-      .finally(() => clearTimeout(timerId));
-
+    // WHY: the shared load is started by the page script before hydration
+    // (see src/lib/portalBootstrap.ts) and must not be aborted on unmount:
+    // React StrictMode's mount/unmount/mount cycle would kill the in-flight
+    // request for the second mount. The cancelled flag only stops setState
+    // from firing on an unmounted component.
+    let cancelled = false;
+    startPortalStateLoad().then((result) => {
+      if (cancelled) return;
+      setState(resolvePortalState(result, PORTAL_CONTACT_EMAIL));
+    });
     return () => {
-      ctrl.abort();
-      clearTimeout(timerId);
+      cancelled = true;
     };
   }, []);
 
   if (state.type === "loading") {
-    return <div className="portal-loading">Loading...</div>;
+    return <PortalLoading />;
   }
   if (state.type === "error") return <ErrorView message={state.message} />;
   if (state.type === "expired") return <ExpiredView />;
@@ -292,7 +147,6 @@ export default function ContestantPortal() {
               ...data,
               role: selectedRole,
             });
-            window.history.replaceState(null, "", "/contestant-portal");
             setState({
               type: "active",
               firstName: data.firstName,
@@ -332,7 +186,6 @@ export default function ContestantPortal() {
               ...data,
               inviteId: state.inviteId,
             });
-            window.history.replaceState(null, "", "/contestant-portal");
             setState({
               type: "active",
               firstName: data.firstName,
@@ -373,7 +226,6 @@ export default function ContestantPortal() {
               showId: state.showId,
               role: selectedRole,
             });
-            window.history.replaceState(null, "", "/contestant-portal");
             setState({
               type: "active",
               firstName: data.firstName,
@@ -408,40 +260,76 @@ export default function ContestantPortal() {
   );
 }
 
+// Mirrors the packet-form card so the resolve swap happens in place:
+// hero block, role panel, name row, email, phone, waiver box, submit.
+function PortalLoading() {
+  return (
+    <div className={styles.skeletonWrap} aria-busy="true">
+      <p role="status" className={styles.srOnly}>
+        {PORTAL_LOADING_ANNOUNCEMENT}
+      </p>
+      <div className={styles.skeletonCard} aria-hidden="true">
+        <div className={styles.skeletonHero}>
+          <ReactSkeleton width={56} height={56} circle />
+          <ReactSkeleton width={150} height={13} borderRadius={7} />
+          <ReactSkeleton width={250} height={34} borderRadius={8} />
+          <ReactSkeleton width={280} height={16} borderRadius={8} />
+        </div>
+        <ReactSkeleton height={88} borderRadius={12} />
+        <div className={styles.skeletonRow}>
+          <ReactSkeleton height={52} borderRadius={12} />
+          <ReactSkeleton height={52} borderRadius={12} />
+        </div>
+        <ReactSkeleton height={52} borderRadius={12} />
+        <ReactSkeleton height={52} borderRadius={12} />
+        <ReactSkeleton height={300} borderRadius={12} />
+        <ReactSkeleton height={52} borderRadius={12} />
+        <ReactSkeleton height={56} borderRadius={50} />
+      </div>
+    </div>
+  );
+}
+
 function ErrorView({ message }: { message: string }) {
   return (
-    <div className="portal-center">
-      <h1 className="portal-heading">{ERROR_VIEW.heading}</h1>
-      <p className="portal-body">{message}</p>
-      <p className="portal-muted">
-        {ERROR_VIEW.supportLabel}{" "}
-        <a href={SOCIAL_URLS.email} className="portal-link">
-          {PORTAL_CONTACT_EMAIL}
-        </a>
-      </p>
+    <div className={styles.center}>
+      <div role="alert" className={styles.centerCard}>
+        <h1 className={styles.heading}>{ERROR_VIEW.heading}</h1>
+        <p className={styles.body}>{message}</p>
+        <p className={styles.muted}>
+          {ERROR_VIEW.supportLabel}{" "}
+          <a href={SOCIAL_URLS.email} className={styles.link}>
+            {PORTAL_CONTACT_EMAIL}
+          </a>
+        </p>
+      </div>
     </div>
   );
 }
 
 function ExpiredView() {
   return (
-    <div className="portal-center">
-      <p className="portal-emoji">🌶️</p>
-      <h1 className="portal-heading">{EXPIRED_VIEW.heading}</h1>
-      <p className="portal-body">
-        {EXPIRED_VIEW.body}{" "}
-        <a href={SOCIAL_URLS.email} className="portal-link">
-          {PORTAL_CONTACT_EMAIL}
-        </a>{" "}
-        {EXPIRED_VIEW.bodyTail}
-      </p>
-      <div className="portal-btn-row">
-        <a href="/" className="portal-btn-outline">
-          Home
-        </a>
-        <a href="/tickets" className="portal-btn-outline">
-          Upcoming Shows
-        </a>
+    <div className={styles.center}>
+      <div className={styles.centerCard}>
+        <p className={styles.emoji} aria-hidden="true">
+          🌶️
+        </p>
+        <h1 className={styles.heading}>{EXPIRED_VIEW.heading}</h1>
+        <p className={styles.body}>
+          {EXPIRED_VIEW.body}{" "}
+          <a href={SOCIAL_URLS.email} className={styles.link}>
+            {PORTAL_CONTACT_EMAIL}
+          </a>{" "}
+          {EXPIRED_VIEW.bodyTail}
+        </p>
+        <div className={styles.btnRow}>
+          <a href="/" className={styles.btnOutline}>
+            Home
+          </a>
+          <a href="/tickets" className={styles.btnOutline}>
+            Upcoming Shows
+          </a>
+        </div>
       </div>
     </div>
   );
@@ -498,7 +386,7 @@ function ContestantPacketGate({
     formPhase !== "submitting";
 
   return (
-    <div className="portal-form-wrap">
+    <div className={styles.formWrap}>
       <form
         onSubmit={async (e) => {
           e.preventDefault();
@@ -517,14 +405,16 @@ function ContestantPacketGate({
             resolvedRole,
           );
         }}
-        className="portal-form"
+        className={styles.form}
       >
-        <div className="portal-packet-hero">
-          <p className="portal-emoji">🌶️</p>
-          <p className="portal-kicker">{PACKET_HERO.kicker}</p>
-          <h1 className="portal-heading-lg">{PACKET_HERO.heading}</h1>
-          <p className="portal-body">{PACKET_HERO.body}</p>
-          <p className="portal-muted">
+        <div className={styles.packetHero}>
+          <p className={styles.emoji} aria-hidden="true">
+            🌶️
+          </p>
+          <p className={styles.kicker}>{PACKET_HERO.kicker}</p>
+          <h1 className={styles.headingLg}>{PACKET_HERO.heading}</h1>
+          <p className={styles.body}>{PACKET_HERO.body}</p>
+          <p className={styles.muted}>
             {showCity && showDate
               ? `${showCity} · ${showDisplayDate || showDate}`
               : "Casting will send your exact show date separately."}
@@ -532,23 +422,23 @@ function ContestantPacketGate({
         </div>
 
         {role ? (
-          <div className="portal-role-locked">
-            <span className="portal-label">Casting track</span>
+          <div className={styles.roleLocked}>
+            <span className={styles.label}>Casting track</span>
             <strong>
               {role === "female" ? "Women contestants" : "Men contestants"}
             </strong>
             {callTime && (
-              <span className="portal-role-detail">
+              <span className={styles.roleDetail}>
                 Call time: {callTime} sharp
               </span>
             )}
           </div>
         ) : (
-          <fieldset className="portal-role-select">
+          <fieldset className={styles.roleSelect}>
             <legend>{ROLE_SELECT.legend}</legend>
             <p>{ROLE_SELECT.description}</p>
-            <div className="portal-role-options">
-              <label className="portal-role-option">
+            <div className={styles.roleOptions}>
+              <label className={styles.roleOption}>
                 <input
                   type="radio"
                   name="contestant-role"
@@ -558,7 +448,7 @@ function ContestantPacketGate({
                 />
                 <span>Female contestant</span>
               </label>
-              <label className="portal-role-option">
+              <label className={styles.roleOption}>
                 <input
                   type="radio"
                   name="contestant-role"
@@ -572,14 +462,14 @@ function ContestantPacketGate({
           </fieldset>
         )}
 
-        <div className="portal-field-row">
+        <div className={styles.fieldRow}>
           <input
             type="text"
             placeholder="Legal first name"
             required
             value={firstName}
             onChange={(e) => setFirstName(e.target.value)}
-            className="portal-input"
+            className={styles.input}
             aria-label="Legal first name"
           />
           <input
@@ -588,7 +478,7 @@ function ContestantPacketGate({
             required
             value={lastName}
             onChange={(e) => setLastName(e.target.value)}
-            className="portal-input"
+            className={styles.input}
             aria-label="Legal last name"
           />
         </div>
@@ -598,7 +488,7 @@ function ContestantPacketGate({
           required
           value={email}
           onChange={(e) => setEmail(e.target.value)}
-          className="portal-input"
+          className={styles.input}
           aria-label="Email"
         />
         <input
@@ -607,7 +497,7 @@ function ContestantPacketGate({
           required
           value={phone}
           onChange={(e) => setPhone(e.target.value)}
-          className="portal-input"
+          className={styles.input}
           aria-label="Phone number"
         />
         <WaiverPanel
@@ -620,17 +510,18 @@ function ContestantPacketGate({
           agreed={agreed}
           onAgreedChange={setAgreed}
         />
-        <p className="portal-muted">{MAILING_LIST_DISCLOSURE}</p>
-        {formError && (
-          <p role="alert" className="portal-error">
-            {formError}
-          </p>
-        )}
-        <button type="submit" disabled={!canSubmit} className="portal-submit">
+        <p className={styles.muted}>{MAILING_LIST_DISCLOSURE}</p>
+        <button type="submit" disabled={!canSubmit} className={styles.submit}>
           {formPhase === "submitting"
             ? "Completing..."
             : "Complete Packet & Open Prep"}
         </button>
+        {/* Below the button and always rendered: a claim error arriving
+            after the network round trip may grow the card downward but can
+            never move the button the contestant is interacting with. */}
+        <p role="alert" className={styles.error}>
+          {formError}
+        </p>
       </form>
     </div>
   );
@@ -658,33 +549,35 @@ function ActivePortal({
   const callTime = formatCallTime(startTime);
 
   return (
-    <div className="portal-content">
-      <header className="portal-header">
-        <p className="portal-emoji">🌶️</p>
-        <h1 className="portal-heading-lg">Welcome, {firstName}!</h1>
-        <p className="portal-body">
+    <div className={styles.content}>
+      <header className={styles.header}>
+        <p className={styles.emoji} aria-hidden="true">
+          🌶️
+        </p>
+        <h1 className={styles.headingLg}>Welcome, {firstName}!</h1>
+        <p className={styles.body}>
           {showCity && showDate
             ? `Your prep guide for ${showCity} on ${showDisplayDate || showDate}`
             : "Your prep guide is unlocked. Casting will send your exact show date separately."}
         </p>
-        <p className="portal-muted">
+        <p className={styles.muted}>
           {showCity && showDate
             ? "Access expires at midnight on show day"
             : "Access stays open while casting finalizes your show date."}
         </p>
       </header>
 
-      <section className="portal-section portal-section-intro">
-        <p className="portal-body-text">{PORTAL_INTRO.body}</p>
-        <p className="portal-core-line">{PORTAL_INTRO.coreLine}</p>
+      <section className={`${styles.section} ${styles.sectionIntro}`}>
+        <p className={styles.bodyText}>{PORTAL_INTRO.body}</p>
+        <p className={styles.coreLine}>{PORTAL_INTRO.coreLine}</p>
       </section>
 
-      <section className="portal-section">
-        <h2 className="portal-section-title">The Golden Rules</h2>
-        <p className="portal-lead">
+      <section className={styles.section}>
+        <h2 className={styles.sectionTitle}>The Golden Rules</h2>
+        <p className={styles.lead}>
           These apply to every contestant, every show. No exceptions.
         </p>
-        <ol className="portal-list">
+        <ol className={styles.list}>
           {GOLDEN_RULES.map(({ rule, detail }) => (
             <li key={rule}>
               <strong>{rule}</strong> {detail}
@@ -693,24 +586,24 @@ function ActivePortal({
         </ol>
       </section>
 
-      <section className="portal-section">
-        <h2 className="portal-section-title">Questions You May Be Asked</h2>
-        <p className="portal-lead">
+      <section className={styles.section}>
+        <h2 className={styles.sectionTitle}>Questions You May Be Asked</h2>
+        <p className={styles.lead}>
           Prepare a 30 to 60 second answer for each. The host may go off-script.
         </p>
-        <ol className="portal-list">
+        <ol className={styles.list}>
           {SAMPLE_QUESTIONS.map((q) => (
             <li key={q}>{q}</li>
           ))}
         </ol>
       </section>
 
-      <section className="portal-section">
-        <h2 className="portal-section-title">Come Prepared With</h2>
-        <p className="portal-lead">
+      <section className={styles.section}>
+        <h2 className={styles.sectionTitle}>Come Prepared With</h2>
+        <p className={styles.lead}>
           Not suggestions. Have all four ready before you arrive.
         </p>
-        <ul className="portal-list">
+        <ul className={styles.list}>
           {COME_PREPARED_WITH.map(({ prompt, detail }) => (
             <li key={prompt}>
               <strong>{prompt}</strong> {detail}
@@ -719,38 +612,36 @@ function ActivePortal({
         </ul>
       </section>
 
-      <section className="portal-section">
-        <h2 className="portal-section-title">{WARDROBE.heading}</h2>
-        <p className="portal-body-text">{WARDROBE.body}</p>
+      <section className={styles.section}>
+        <h2 className={styles.sectionTitle}>{WARDROBE.heading}</h2>
+        <p className={styles.bodyText}>{WARDROBE.body}</p>
       </section>
 
-      <section className="portal-section">
-        <h2 className="portal-section-title">{DAY_OF.heading}</h2>
-        <p className="portal-body-text">{DAY_OF.body}</p>
+      <section className={styles.section}>
+        <h2 className={styles.sectionTitle}>{DAY_OF.heading}</h2>
+        <p className={styles.bodyText}>{DAY_OF.body}</p>
       </section>
 
-      <section className="portal-section">
-        <h2 className="portal-section-title">{ARRIVAL_NOTES.heading}</h2>
-        <p className="portal-arrival-time">
+      <section className={styles.section}>
+        <h2 className={styles.sectionTitle}>{ARRIVAL_NOTES.heading}</h2>
+        <p className={styles.arrivalTime}>
           {callTime
             ? `Call time: ${callTime} sharp.`
             : "Casting will send your exact call time before the show."}
         </p>
-        {venueName && (
-          <p className="portal-body-text">Arrive at {venueName}.</p>
-        )}
+        {venueName && <p className={styles.bodyText}>Arrive at {venueName}.</p>}
         {ARRIVAL_NOTES[role].map((line) => (
-          <p key={line} className="portal-body-text">
+          <p key={line} className={styles.bodyText}>
             {line}
           </p>
         ))}
       </section>
 
-      <footer className="portal-footer">
+      <footer className={styles.footer}>
         <p>See you on stage. 🌶️</p>
         <p>
           Questions? Email{" "}
-          <a href={SOCIAL_URLS.email} className="portal-link">
+          <a href={SOCIAL_URLS.email} className={styles.link}>
             {PORTAL_CONTACT_EMAIL}
           </a>{" "}
           or DM{" "}
@@ -758,7 +649,7 @@ function ActivePortal({
             href={SOCIAL_URLS.instagram}
             target="_blank"
             rel="noopener noreferrer"
-            className="portal-link"
+            className={styles.link}
           >
             @garammasaladating
           </a>

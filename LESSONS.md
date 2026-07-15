@@ -1,5 +1,13 @@
 # Lessons
 
+## SSG bakes whatever branch runs without window, then hydration swaps it
+
+**What went wrong:** `/contestant-prep` flashed the full guide, collapsed to a skeleton, then re-expanded after auth on every emailed link: a full-page double layout shift. `/contestant-portal` had the sibling problem, a one-line "Loading..." div that a ~2,000px form replaced.
+
+**Why:** The page is statically prerendered, and its `useState` initializers read `window.location` and `sessionStorage`. At build time those reads evaluate to the no-params branch, so the build baked the FULL guide into the HTML while real visitors hydrate into the loading branch. React then discards the baked DOM and re-renders. The bake always follows the no-window branch, whatever that happens to be.
+
+**Rule:** On statically prerendered pages, the first client render must match the build output exactly. Never read `window`, URL params or storage in a state initializer when that state decides WHAT the island renders (gates, auth branches, layout-bearing content); reads that cannot change the first paint are fine. Derive gate state after a `useSyncExternalStore` hydration flag (server snapshot pins the bake), and make the baked state a layout-reserving skeleton, never the content-bearing branch. Guard it with an SSR test: `renderToString` must contain the skeleton and must not contain the gated content.
+
 ## Git hooks must be tracked with the executable bit or the gate silently dies
 
 **What went wrong:** A commit sailed through with no review gate. Git printed "The '.husky/pre-commit' hook was ignored because it's not set as executable" and committed anyway. The same hint had appeared in the main checkout without anyone connecting it to a disabled gate.

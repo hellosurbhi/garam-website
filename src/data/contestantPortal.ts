@@ -151,6 +151,12 @@ export const WAIVER_PANEL = {
     "I have read and agree to the waiver. I understand the typed legal signature above is my electronic signature.",
 } as const;
 
+/** Generic failure copy for the initial portal-state load. */
+export const PORTAL_LOAD_ERROR = "Could not load portal. Please try again.";
+
+/** Screen-reader announcement while the portal skeleton is showing. */
+export const PORTAL_LOADING_ANNOUNCEMENT = "Loading your contestant packet.";
+
 export function missingRoleError(email: string): string {
   return `This contestant packet link is missing its casting role. Email ${email} and we'll resend it.`;
 }

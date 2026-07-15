@@ -1,24 +1,47 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo, useSyncExternalStore } from "react";
 import styles from "./ContestantPrepPage.module.css";
 import Skeleton from "./ui/Skeleton";
+
+/* ─── Hydration gate ───────────────────────────────────────────── */
+
+const emptySubscribe = () => () => {};
+
+// WHY: this page is statically prerendered, so the first client render must
+// match the baked HTML exactly. Reading window.location or sessionStorage in
+// a state initializer bakes the no-params "authed" branch at build time; a
+// real visitor arrives with ?date&sig, hydrates into "checking", and React
+// swaps the baked guide for a short skeleton, then re-expands it after auth:
+// a full-page double layout shift. useSyncExternalStore's server snapshot
+// pins both the build output and the hydration pass to the skeleton; the
+// real gate is derived at render only after hydration.
+function useHydrated(): boolean {
+  return useSyncExternalStore(
+    emptySubscribe,
+    () => true,
+    () => false,
+  );
+}
 
 /* ─── Session helpers ──────────────────────────────────────────── */
 
 const TOKEN_KEY = "gm-prep-token";
 const EXPIRES_KEY = "gm-prep-expires";
 
-function getSession(): { token: string; expiresAt: number } | null {
-  if (typeof window === "undefined") return null;
+/** Pure read: an expired or malformed session is treated as absent. */
+function readSession(): { token: string; expiresAt: number } | null {
   const token = sessionStorage.getItem(TOKEN_KEY);
   const expires = sessionStorage.getItem(EXPIRES_KEY);
   if (!token || !expires) return null;
   const expiresAt = parseInt(expires, 10);
-  if (Number.isNaN(expiresAt) || Date.now() >= expiresAt) {
-    sessionStorage.removeItem(TOKEN_KEY);
-    sessionStorage.removeItem(EXPIRES_KEY);
-    return null;
-  }
+  if (Number.isNaN(expiresAt) || Date.now() >= expiresAt) return null;
   return { token, expiresAt };
+}
+
+/** Storage hygiene, called from the effect (never during render). */
+function clearExpiredSession() {
+  if (readSession() !== null) return;
+  sessionStorage.removeItem(TOKEN_KEY);
+  sessionStorage.removeItem(EXPIRES_KEY);
 }
 
 function saveSession(token: string, expiresAt: number) {
@@ -30,8 +53,8 @@ function saveSession(token: string, expiresAt: number) {
 
 function PrepLoading() {
   return (
-    <div className={styles.loadingWrapper}>
-      <Skeleton count={4} />
+    <div className={styles.loadingWrapper} aria-busy="true">
+      <Skeleton count={8} />
     </div>
   );
 }
@@ -41,7 +64,7 @@ function PrepLoading() {
 function PrepError() {
   return (
     <div className={styles.errorWrapper}>
-      <div className={styles.errorCard}>
+      <div role="alert" className={styles.errorCard}>
         <p className={styles.errorEmoji}>🌶️</p>
         <h1 className={styles.errorTitle}>Link expired</h1>
         <p className={styles.errorText}>
@@ -260,27 +283,30 @@ function PrepGuide() {
 /* ─── Page ─────────────────────────────────────────────────────── */
 
 export default function ContestantPrepPage() {
-  const [params] = useState(() => {
-    if (typeof window === "undefined")
-      return { date: null as string | null, sig: null as string | null };
+  const hydrated = useHydrated();
+  // Only the emailed-link verification is stateful; every other gate branch
+  // is derived at render time from the URL and the stored session.
+  const [authResult, setAuthResult] = useState<"pending" | "ok" | "fail">(
+    "pending",
+  );
+
+  const link = useMemo(() => {
+    if (!hydrated) return null;
     const sp = new URLSearchParams(window.location.search);
     return { date: sp.get("date"), sig: sp.get("sig") };
-  });
-
-  const [state, setState] = useState<"checking" | "authed" | "error">(() => {
-    if (getSession() !== null) return "authed";
-    if (!params.date && !params.sig) return "authed";
-    if (!params.date || !params.sig) return "error";
-    return "checking";
-  });
+  }, [hydrated]);
 
   useEffect(() => {
-    if (state !== "checking") return;
+    if (!hydrated || link === null) return;
+    clearExpiredSession();
+    if (readSession() !== null) return;
+    if (!link.date || !link.sig) return;
 
+    let cancelled = false;
     fetch("/api/contestant-prep-auth", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ date: params.date, sig: params.sig }),
+      body: JSON.stringify({ date: link.date, sig: link.sig }),
     })
       .then(async (res) => {
         if (res.ok) {
@@ -288,14 +314,37 @@ export default function ContestantPrepPage() {
             token: string;
             expiresAt: number;
           };
+          if (cancelled) return;
           saveSession(data.token, data.expiresAt);
-          setState("authed");
-        } else {
-          setState("error");
+          setAuthResult("ok");
+        } else if (!cancelled) {
+          setAuthResult("fail");
         }
       })
-      .catch(() => setState("error"));
-  }, [state, params]);
+      .catch(() => {
+        if (!cancelled) setAuthResult("fail");
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, [hydrated, link]);
+
+  // Pre-hydration (and at build time) this is always the skeleton, so the
+  // baked HTML and the hydration pass agree and nothing shifts.
+  let state: "checking" | "authed" | "error";
+  if (!hydrated || link === null) {
+    state = "checking";
+  } else if (readSession() !== null) {
+    state = "authed";
+  } else if (!link.date && !link.sig) {
+    state = "authed";
+  } else if (!link.date || !link.sig) {
+    state = "error";
+  } else if (authResult === "pending") {
+    state = "checking";
+  } else {
+    state = authResult === "ok" ? "authed" : "error";
+  }
 
   if (state === "authed") return <PrepGuide />;
   if (state === "checking") return <PrepLoading />;

@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useRef } from "react";
 import { WAIVER_PANEL } from "@/data/contestantPortal";
 import { WaiverDocument } from "@/components/WaiverDocument";
+import styles from "@/components/ContestantPortal.module.css";
 
 interface WaiverPanelProps {
   waiverText: string;
@@ -81,15 +82,17 @@ export function WaiverPanel({
     scrolled && signature.trim().length > 0 && !signatureValid;
 
   return (
-    <section className="waiver-panel" aria-label="Waiver agreement">
-      <p id="waiver-panel-instruction" className="waiver-panel-instruction">
+    <section className={styles.waiverPanel} aria-label="Waiver agreement">
+      <p id="waiver-panel-instruction" className={styles.waiverInstruction}>
         {WAIVER_PANEL.instruction}
       </p>
 
-      <div className={`waiver-scroll-wrap${scrolled ? " is-read" : ""}`}>
+      <div
+        className={`${styles.waiverScrollWrap}${scrolled ? ` ${styles.isRead}` : ""}`}
+      >
         <div
           ref={scrollElRef}
-          className="portal-waiver-scroll"
+          className={styles.waiverScroll}
           role="region"
           aria-label="Waiver document"
           aria-describedby="waiver-panel-instruction"
@@ -98,21 +101,40 @@ export function WaiverPanel({
         >
           <WaiverDocument text={waiverText} />
         </div>
-        <div className="waiver-scroll-fade" aria-hidden="true" />
-        <p className="waiver-scroll-hint" aria-hidden="true">
+        <div className={styles.waiverFade} aria-hidden="true" />
+        <p className={styles.waiverHint} aria-hidden="true">
           {WAIVER_PANEL.scrollHint}
-          <span className="waiver-scroll-hint-arrow">↓</span>
+          <span className={styles.waiverHintArrow}>↓</span>
         </p>
       </div>
 
-      {/* Rendered from first paint so the unlock text change is announced
-          politely by screen readers without a layout shift. */}
-      <p role="status" className="waiver-status">
-        {scrolled ? `✓ ${WAIVER_PANEL.endReached}` : ""}
+      {/* Both mutually exclusive messages (locked hint / unlock
+          confirmation) stay laid out in one stacked slot; visibility picks
+          the visible one. The slot is always as tall as the TALLER message
+          at the current width, so the swap cannot move the controls below
+          even where one message wraps and the other does not. The visually
+          hidden live region announces the swap for screen readers and is
+          the aria-describedby target while locked. */}
+      <div className={styles.messageSlot} aria-hidden="true">
+        <p
+          className={`${styles.waiverStatus}${scrolled ? ` ${styles.slotHidden}` : ""}`}
+        >
+          {WAIVER_PANEL.signatureLockedHint}
+        </p>
+        <p
+          className={`${styles.waiverStatus}${scrolled ? "" : ` ${styles.slotHidden}`}`}
+        >
+          ✓ {WAIVER_PANEL.endReached}
+        </p>
+      </div>
+      <p id="waiver-locked-hint" role="status" className={styles.srOnly}>
+        {scrolled
+          ? `✓ ${WAIVER_PANEL.endReached}`
+          : WAIVER_PANEL.signatureLockedHint}
       </p>
 
       <div>
-        <label className="portal-label" htmlFor="portal-signature">
+        <label className={styles.label} htmlFor="portal-signature">
           {WAIVER_PANEL.signatureLabel}
         </label>
         <input
@@ -123,7 +145,7 @@ export function WaiverPanel({
           disabled={!scrolled}
           value={signature}
           onChange={(e) => onSignatureChange(e.target.value)}
-          className="portal-input portal-input-sig"
+          className={`${styles.input} ${styles.inputSig}`}
           aria-describedby={
             !scrolled
               ? "waiver-locked-hint"
@@ -132,18 +154,28 @@ export function WaiverPanel({
                 : undefined
           }
         />
-        {showMismatch && (
+        {/* An invisible twin of the mismatch message keeps its full wrapped
+            height reserved at every width; the alert twin carries the
+            announcement. Appearing text can therefore never push the
+            checkbox down. */}
+        <div className={styles.messageSlot}>
           <p
-            id="portal-signature-error"
-            role="alert"
-            className="portal-error-inline"
+            className={`${styles.errorInline} ${styles.slotHidden}`}
+            aria-hidden="true"
           >
             {WAIVER_PANEL.signatureMismatch}
           </p>
-        )}
+          <p
+            id="portal-signature-error"
+            role="alert"
+            className={styles.errorInline}
+          >
+            {showMismatch ? WAIVER_PANEL.signatureMismatch : ""}
+          </p>
+        </div>
       </div>
 
-      <label className="portal-checkbox">
+      <label className={styles.checkbox}>
         <input
           type="checkbox"
           checked={agreed}
@@ -153,12 +185,6 @@ export function WaiverPanel({
         />
         <span>{WAIVER_PANEL.checkboxLabel}</span>
       </label>
-
-      {!scrolled && (
-        <p id="waiver-locked-hint" className="waiver-locked-hint">
-          {WAIVER_PANEL.signatureLockedHint}
-        </p>
-      )}
     </section>
   );
 }

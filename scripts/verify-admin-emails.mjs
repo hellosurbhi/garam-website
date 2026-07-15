@@ -115,7 +115,7 @@ async function lookupAccounts(email, accessToken) {
   return data.users ?? [];
 }
 
-async function markVerified(uid, accessToken) {
+async function markVerified(uid, accessToken, entryNum) {
   const url = `https://identitytoolkit.googleapis.com/v1/projects/${projectId}/accounts:update`;
   const res = await fetch(url, {
     method: "POST",
@@ -126,7 +126,8 @@ async function markVerified(uid, accessToken) {
     body: JSON.stringify({ localId: uid, emailVerified: true }),
   });
   if (!res.ok) {
-    console.error(`  ✗ update ${uid}: ${res.status} ${await res.text()}`);
+    // WHY: log entry index, not uid — uid is env-derived and trips CodeQL js/clear-text-logging
+    console.error(`  ✗ entry ${entryNum}: ${res.status} ${await res.text()}`);
     return false;
   }
   return true;
@@ -188,16 +189,19 @@ if (confirmUids.length === 0) {
 }
 
 let ok = 0;
+let entryNum = 0;
 for (const uid of confirmUids) {
+  entryNum++;
   const email = allowlistedUids.get(uid);
   if (!email) {
+    // WHY: log entry index, not uid — uid is env-derived and trips CodeQL js/clear-text-logging
     console.error(
-      `  ✗ ${uid}: not an account holding an allowlisted email, skipping`,
+      `  ✗ entry ${entryNum}: not an account holding an allowlisted email, skipping`,
     );
     continue;
   }
-  if (await markVerified(uid, token)) {
-    console.log(`  ✓ ${email} (${uid}) marked verified`);
+  if (await markVerified(uid, token, entryNum)) {
+    console.log(`  ✓ ${email} (entry ${entryNum}) marked verified`);
     ok += 1;
   }
 }

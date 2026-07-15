@@ -1523,3 +1523,27 @@ If the ambiguity matters there too, rename both with Surbhi's approval on the ex
 - LOW: The new headings in `BUGS.md` and `ENHANCEMENTS.md` use an em dash (`—`), which is forbidden by the copy voice mandate.
   - `BUGS.md:641`: `### DeepSeek — 20260715-153050`
   - `ENHANCEMENTS.md:1501`: `### DeepSeek — 20260715-153050`
+- 2026-07-15T19:44Z | tier=F | primary=coderabbit | reason=error | fallback_used=gemini | commit=59ce89e | diff_sha=3cabdcd14cf59183d7b909e9be68a68c38717dc9b5c23e17e60a6748e1f7dd4c
+- 2026-07-15T19:44Z | tier=E | primary=codex | reason=error_or_timeout | fallback_used=gemini | commit=59ce89e | diff_sha=3cabdcd14cf59183d7b909e9be68a68c38717dc9b5c23e17e60a6748e1f7dd4c
+
+### CodeRabbit — 20260715-154413
+
+- LOW: [COPY-MANDATE] The diff introduces multiple headings that use the em dash (`—`), which is forbidden by the copy voice mandate. This occurs even though the diff also records findings from other tools that correctly flag this same violation.
+  - `BUGS.md`: `### DeepSeek — 20260714-001615`
+  - `BUGS.md`: `### DeepSeek — 20260715-153050`
+  - `ENHANCEMENTS.md`: `### DeepSeek — 20260714-001615`
+  - `ENHANCEMENTS.md`: `### DeepSeek — 20260715-153050`
+  - `ENHANCEMENTS.md`: `### CodeRabbit — 20260715-154138`
+  - `ENHANCEMENTS.md`: `### DeepSeek — 20260715-154138`
+  - `ENHANCEMENTS.md`: `### Gemini — 20260715-154138`
+
+### DeepSeek — 20260715-154413
+
+- LOW: [COPY-VOICE] The new headings in `BUGS.md` and `ENHANCEMENTS.md` use the em dash character (`—`), which is forbidden by the copy voice mandate.
+  - `BUGS.md`: `### DeepSeek — 20260714-001615`
+  - `BUGS.md`: `### DeepSeek — 20260715-153050`
+  - `ENHANCEMENTS.md`: `### DeepSeek — 20260714-001615`
+  - `ENHANCEMENTS.md`: `### DeepSeek — 20260715-153050`
+  - `ENHANCEMENTS.md`: `### CodeRabbit — 20260715-154138`
+  - `ENHANCEMENTS.md`: `### DeepSeek — 20260715-154138`
+  - `ENHANCEMENTS.md`: `### Gemini — 20260715-154138`

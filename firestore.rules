@@ -114,11 +114,20 @@ service cloud.firestore {
     // session with the public Firebase config. Admin operations therefore
     // require a non-anonymous account that is on the email allowlist or
     // carries an `admin` custom claim. If the admin login email ever
-    // changes, update the allowlist below.
+    // changes, update the allowlist below (and every copy listed in
+    // src/lib/adminAllowlist.ts; a drift test parses this file).
+    // WHY: the email branch requires email_verified because anyone can
+    // register a Firebase password account claiming a not-yet-registered
+    // email, but nobody can verify an inbox they do not own. Mirrors
+    // src/lib/verifyToken.ts isAdminPayload(). Run
+    // `npm run admin:verify-emails` until it prints safe BEFORE merging the
+    // API change or deploying these rules, otherwise the admin dashboard
+    // loses access until the accounts are verified.
     function isAdmin() {
       return request.auth != null
         && request.auth.token.firebase.sign_in_provider != 'anonymous'
-        && (request.auth.token.email in ['messagesurbhi@gmail.com', 'contact@garammasaladating.com']
+        && ((request.auth.token.email in ['messagesurbhi@gmail.com', 'contact@garammasaladating.com']
+             && request.auth.token.email_verified == true)
             || ('admin' in request.auth.token && request.auth.token.admin == true));
     }
 

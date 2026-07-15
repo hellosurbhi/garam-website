@@ -22,6 +22,7 @@
     "check": "astro check",
     "migrate:locations": "npx tsx scripts/migrate-locations.ts",
     "admin:grant-claims": "node --env-file=.env.local scripts/grant-admin-claims.mjs",
+    "admin:verify-emails": "node --env-file=.env.local scripts/verify-admin-emails.mjs",
     "test": "vitest run",
     "test:coverage": "vitest run --coverage",
     "prepare": "husky",

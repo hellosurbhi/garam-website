@@ -1,5 +1,13 @@
 # Lessons
 
+## One permission, one predicate: parallel allowlists rot into outages
+
+**What went wrong:** Every admin API route 401'd ("Unauthorized. Try again" in the Waitlist and Analytics tabs) while the Applicants tab kept working, so the failure looked like a partial breakage instead of what it was: the entire API-backed admin surface dead since it shipped.
+
+**Why:** Admin authorization existed twice with different keys. `firestore.rules` `isAdmin()` checked the token email (used by tabs that read Firestore directly); the admin API checked the uid against an `ADMIN_UIDS` env var. That check fails closed with an identical 401 whether the var is unset, empty or holds a stale uid, so the breakage was invisible to code review and indistinguishable from a permissions bug.
+
+**Rule:** The admin allowlist predicate is owned by `src/lib/adminAllowlist.ts` and `verifyToken.ts`. Copies that cannot import it (the two Firebase rules files, `scripts/verify-admin-emails.mjs`) carry drift tests that fail the commit gate, so a change to any copy forces all copies to change in the same commit. Do not reintroduce an env-var gate such as `ADMIN_UIDS` for this predicate.
+
 ## Git hooks must be tracked with the executable bit or the gate silently dies
 
 **What went wrong:** A commit sailed through with no review gate. Git printed "The '.husky/pre-commit' hook was ignored because it's not set as executable" and committed anyway. The same hint had appeared in the main checkout without anyone connecting it to a disabled gate.

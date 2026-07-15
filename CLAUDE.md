@@ -112,7 +112,7 @@ Colors from `:root` in `src/index.css`:
 - `--off-white` #FFF8F0 (page background)
 - `--charcoal` #1A1A1A (body text)
 - `--spice-orange` #FF6D00 (secondary accent)
-- `--muted` #888 (secondary text: needs contrast fix, see BUGS.md)
+- `--muted` #6b6b6b (secondary text, WCAG AA on off-white)
 
 Fonts: Playfair Display (headings), Nunito (body), Cormorant Garamond (decorative italic). Self-hosted woff2.
 

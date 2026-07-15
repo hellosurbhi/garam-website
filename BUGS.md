@@ -634,3 +634,11 @@
 
 - [x] MEDIUM: `ResizeObserver` observes `el.firstElementChild` and never re-observes if the child changes. at src/components/WaiverPanel.tsx — Resolved by design: `observer.disconnect()` in the effect cleanup drops every observed target per spec (no leak), and the child is the `WaiverDocument` article rendered from a compile-time constant, so its identity never changes within a mount.
 - [x] MEDIUM: `handleScroll` is recreated each render and passed to `onScroll`. at src/components/WaiverPanel.tsx — Resolved by design: React delegates synthetic events at the root; a new handler identity per render does not re-register DOM listeners. Wrapping in useCallback would add noise with no behavior change.
+
+### DeepSeek — 20260714-001615
+
+(Empty section: zero-finding COMMIT_BLOCK, same capture-bug pattern as 20260713-103550 above. Nothing to queue.)
+
+### DeepSeek — 20260715-153050
+
+- [ ] MEDIUM: [DOCUMENT-STRUCTURE] `ENHANCEMENTS.md:1492-1501` places retry telemetry under a duplicate `Low priority enhancements` heading instead of the existing `Skipped reviews (pending retry)` section.

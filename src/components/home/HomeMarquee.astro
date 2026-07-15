@@ -29,18 +29,17 @@ import { MARQUEE_ITEMS as phrases } from "@/data/copy";
     animation: marquee 22s linear infinite;
   }
   .marquee-inner span {
-    font-family: var(--font-playfair), serif;
+    font-family: var(--font-display), sans-serif;
     font-size: 15px;
-    font-weight: 700;
-    font-style: italic;
-    color: white;
+    font-weight: 400;
+    text-transform: uppercase;
+    color: rgba(255, 255, 255, 0.9);
     padding: 0 32px;
-    letter-spacing: 0.5px;
+    letter-spacing: 0.08em;
   }
   .marquee-inner .dot {
-    color: white;
+    color: rgba(255, 255, 255, 0.5);
     padding: 0 10px;
-    font-style: normal;
   }
   @keyframes marquee {
     0% {

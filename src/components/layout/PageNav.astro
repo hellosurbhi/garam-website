@@ -1,23 +1,29 @@
 ---
 const pathname = Astro.url.pathname;
+const onHome = pathname === "/";
 ---
 
-<div class="page-nav-spacer"></div>
-<nav class="page-nav" id="page-nav" aria-label="Main navigation">
+<div class="page-nav-spacer" class:list={[{ "spacer-dark": onHome }]}></div>
+<nav
+  class="page-nav"
+  class:list={[{ "nav-dark": onHome }]}
+  id="page-nav"
+  aria-label="Main navigation"
+>
   <a href="/" class="page-nav-logo-link" aria-label="Garam Masala Dating: Home">
     <div class="page-nav-logo" role="img" aria-hidden="true"></div>
   </a>
   <div class="page-nav-right">
     <a
       href="/apply"
-      class="page-nav-pill"
+      class="page-nav-link"
       aria-current={pathname.startsWith("/apply") ? "page" : undefined}
       data-ph-capture="nav_clicked"
       data-ph-destination="/apply">Apply</a
     >
     <a
       href="/tickets"
-      class="page-nav-pill page-nav-pill--primary"
+      class="page-nav-pill"
       aria-current={pathname.startsWith("/tickets") ? "page" : undefined}
       data-ph-capture="nav_clicked"
       data-ph-destination="/tickets">Get Tickets</a
@@ -28,14 +34,25 @@ const pathname = Astro.url.pathname;
 <script>
   const nav = document.getElementById("page-nav");
   if (nav) {
-    const updateScrolled = () =>
-      nav.classList.toggle("scrolled", window.scrollY > 10);
-    updateScrolled();
-    window.addEventListener("scroll", updateScrolled, { passive: true });
+    const update = () => {
+      const scrolled = window.scrollY > 60;
+      nav.classList.toggle("scrolled", scrolled);
+    };
+    update();
+    window.addEventListener("scroll", update, { passive: true });
   }
 </script>
 
 <style>
+  /* Spacer height must match nav height so content isn't hidden behind fixed nav */
+  .page-nav-spacer {
+    height: 64px;
+  }
+  /* On the homepage the hero is dark full-height — no space needed above it */
+  .spacer-dark {
+    height: 0;
+  }
+
   .page-nav {
     position: fixed;
     top: 0;
@@ -46,25 +63,31 @@ const pathname = Astro.url.pathname;
     display: flex;
     justify-content: space-between;
     align-items: center;
-    background: rgba(255, 248, 240, 0.95);
-    backdrop-filter: blur(16px);
-    -webkit-backdrop-filter: blur(16px);
-    border-bottom: 2px solid transparent;
-    /* Transition only border-bottom-color (compositor-friendly, no layout recalc).
-       The 4px padding snap is imperceptible — scrolling past 10px is already a
-       committed gesture, not a precise threshold. */
-    transition: border-bottom-color 0.3s ease-out;
-  }
-  .page-nav.scrolled {
-    padding: 12px 20px;
-    border-bottom-color: rgba(26, 26, 26, 0.06);
+    background: rgba(253, 248, 242, 0.97);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+    transition:
+      background 0.3s ease,
+      border-color 0.3s ease;
   }
 
-  /* Logo */
+  /* Dark nav over hero */
+  .page-nav.nav-dark {
+    background: transparent;
+    border-color: transparent;
+  }
+  .page-nav.nav-dark.scrolled {
+    background: rgba(12, 12, 12, 0.96);
+    border-color: rgba(255, 255, 255, 0.06);
+  }
+
+  /* ── Logo ── */
   .page-nav-logo-link {
     text-decoration: none;
     display: flex;
     align-items: center;
+    flex-shrink: 0;
   }
   .page-nav-logo {
     height: 28px;
@@ -76,75 +99,105 @@ const pathname = Astro.url.pathname;
     mask-size: contain;
     -webkit-mask-repeat: no-repeat;
     mask-repeat: no-repeat;
-    transition: opacity 0.2s;
+    transition: background-color 0.3s ease, opacity 0.2s;
+  }
+  /* Logo is white on dark nav */
+  .nav-dark .page-nav-logo {
+    background-color: white;
+  }
+  .nav-dark.scrolled .page-nav-logo {
+    background-color: white;
   }
   .page-nav-logo-link:hover .page-nav-logo {
-    opacity: 0.7;
+    opacity: 0.75;
   }
 
-  /* Pills */
+  /* ── Right side links ── */
   .page-nav-right {
     display: flex;
     align-items: center;
-    gap: 10px;
+    gap: 4px;
   }
-  .page-nav-pill {
+
+  /* Ghost text link (Apply) */
+  .page-nav-link {
     font-family: var(--font-body), sans-serif;
-    font-size: 13px;
-    font-weight: 700;
+    font-size: 12px;
+    font-weight: 600;
     text-transform: uppercase;
-    letter-spacing: 1px;
+    letter-spacing: 0.15em;
     text-decoration: none;
     color: var(--charcoal);
-    padding: 8px 12px;
-    border-radius: 50px;
-    border: 1.5px solid transparent;
-    transition: all 0.2s;
+    padding: 10px 14px;
+    border-radius: 3px;
+    transition: color 0.2s;
+    min-height: var(--touch-target);
+    display: inline-flex;
+    align-items: center;
+  }
+  .page-nav-link:hover {
+    color: var(--brand-red);
+  }
+  .page-nav-link:focus-visible {
+    outline: 2px solid var(--brand-red);
+    outline-offset: 2px;
+  }
+
+  /* Light text on dark nav */
+  .nav-dark .page-nav-link {
+    color: rgba(255, 255, 255, 0.7);
+  }
+  .nav-dark .page-nav-link:hover {
+    color: white;
+  }
+
+  /* Filled ticket button */
+  .page-nav-pill {
+    font-family: var(--font-body), sans-serif;
+    font-size: 12px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.15em;
+    text-decoration: none;
+    color: white;
+    background: var(--brand-red);
+    padding: 10px 18px;
+    border-radius: 3px;
+    transition: background 0.2s;
     display: inline-flex;
     align-items: center;
     white-space: nowrap;
     min-height: var(--touch-target);
   }
   .page-nav-pill:hover {
-    border-color: rgba(26, 26, 26, 0.2);
+    background: var(--brand-red-dark);
   }
   .page-nav-pill:focus-visible {
     outline: 2px solid var(--brand-red);
     outline-offset: 2px;
   }
-  .page-nav-pill--primary {
-    background: var(--brand-red);
-    color: white;
-    border-color: var(--brand-red);
-  }
-  .page-nav-pill--primary:hover {
-    background: var(--brand-red-dark);
-    border-color: var(--brand-red-dark);
-  }
-
-  /* Spacer to push content below the fixed nav */
-  .page-nav-spacer {
-    height: 68px;
+  .page-nav-pill:active {
+    transform: scale(0.97);
   }
 
   @media (min-width: 768px) {
     .page-nav {
       padding: 20px 48px;
     }
-    .page-nav.scrolled {
-      padding: 14px 48px;
+    .page-nav-spacer:not(.spacer-dark) {
+      height: 80px;
     }
     .page-nav-logo {
-      height: 40px;
-      width: 180px;
+      height: 36px;
+      width: 160px;
+    }
+    .page-nav-link {
+      font-size: 12px;
+      padding: 12px 18px;
     }
     .page-nav-pill {
-      font-size: 13px;
-      letter-spacing: 1.5px;
-      padding: 12px 22px;
-    }
-    .page-nav-spacer {
-      height: 80px;
+      font-size: 12px;
+      padding: 12px 24px;
     }
   }
 </style>

@@ -13,16 +13,20 @@ import { TESTIMONIALS as testimonials } from "@/data/copy";
     decoding="async"
     aria-hidden="true"
   />
+  <div class="testi-overlay" aria-hidden="true"></div>
+
   <div class="testimonials-inner">
-    <h2 data-reveal>What They're <em>Saying</em></h2>
+    <p class="testi-label" data-reveal>What they said</p>
+    <h2 data-reveal>The audience<br /><em>loved it.</em></h2>
     <div class="testi-grid" data-reveal-stagger>
       {
         testimonials.map((t) => (
           <div class="testi-card" data-reveal>
-            <div class="testi-quote">{t.quote}</div>
-            <div class="testi-author">
+            <div class="testi-mark" aria-hidden="true">"</div>
+            <blockquote class="testi-quote">{t.quote}</blockquote>
+            <cite class="testi-author">
               {t.author} · {t.location}
-            </div>
+            </cite>
           </div>
         ))
       }
@@ -35,6 +39,7 @@ import { TESTIMONIALS as testimonials } from "@/data/copy";
     padding: 80px 20px;
     position: relative;
     overflow: hidden;
+    background: var(--ink);
   }
   .testi-bg {
     position: absolute;
@@ -46,29 +51,51 @@ import { TESTIMONIALS as testimonials } from "@/data/copy";
     display: block;
     z-index: 0;
   }
-  @media (min-width: 768px) {
-    .testi-bg {
-      object-position: center 55%;
-    }
+  .testi-overlay {
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+    background: linear-gradient(
+      135deg,
+      rgba(12, 12, 12, 0.88) 0%,
+      rgba(12, 12, 12, 0.72) 50%,
+      rgba(12, 12, 12, 0.85) 100%
+    );
   }
   .testimonials-inner {
     max-width: 1200px;
     margin: 0 auto;
     position: relative;
-    z-index: 1;
+    z-index: 2;
+  }
+  .testi-label {
+    font-family: var(--font-body), sans-serif;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin-bottom: 16px;
   }
   .testimonials-inner > h2 {
-    font-family: var(--font-playfair), serif;
-    font-size: clamp(32px, 5vw, 60px);
-    font-weight: 900;
+    font-family: var(--font-display), sans-serif;
+    font-size: clamp(48px, 8vw, 96px);
+    font-weight: 400;
     color: white;
-    margin-bottom: 40px;
-    line-height: 1;
-    text-shadow: 0 2px 12px rgba(0, 0, 0, 0.5);
+    line-height: 0.9;
+    text-transform: uppercase;
+    margin-bottom: 48px;
+    letter-spacing: -0.01em;
   }
   .testimonials-inner > h2 em {
-    color: var(--electric-yellow);
+    font-family: var(--font-serif), serif;
     font-style: italic;
+    font-size: 0.75em;
+    text-transform: none;
+    color: var(--electric-yellow);
+    display: block;
+    line-height: 1.1;
+    letter-spacing: 0;
   }
   .testi-grid {
     display: flex;
@@ -77,75 +104,54 @@ import { TESTIMONIALS as testimonials } from "@/data/copy";
   }
   .testi-card {
     padding: 32px;
+    background: rgba(255, 255, 255, 0.04);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 4px;
     position: relative;
-    background: rgba(0, 0, 0, 0.45);
-    -webkit-backdrop-filter: blur(4px);
-    border-radius: 16px;
   }
-  .testi-card:nth-child(1) {
-    --quote-color: var(--electric-yellow);
-  }
-  .testi-card:nth-child(2) {
-    --quote-color: var(--brand-red);
-  }
-  .testi-card:nth-child(3) {
-    --quote-color: var(--spice-orange);
-  }
-  .testi-card::before {
-    content: "\201C";
-    font-family: var(--font-playfair), serif;
-    font-size: 64px;
-    color: var(--quote-color, var(--electric-yellow));
-    line-height: 0.6;
+  .testi-mark {
+    font-family: var(--font-serif), serif;
+    font-size: 72px;
+    line-height: 0.5;
+    color: var(--brand-red);
+    margin-bottom: 16px;
     display: block;
-    margin-bottom: 12px;
+    opacity: 0.7;
   }
   .testi-quote {
-    font-family: var(--font-cormorant), serif;
-    font-size: 18px;
+    font-family: var(--font-serif), serif;
     font-style: italic;
-    line-height: 1.5;
-    color: white;
+    font-size: 20px;
+    line-height: 1.55;
+    color: rgba(255, 255, 255, 0.88);
     margin-bottom: 20px;
-    text-shadow:
-      0 2px 12px rgba(0, 0, 0, 0.7),
-      0 0 40px rgba(0, 0, 0, 0.3);
   }
   .testi-author {
-    font-size: 12px;
-    font-weight: 700;
+    font-family: var(--font-body), sans-serif;
+    font-size: 11px;
+    font-weight: 600;
+    font-style: normal;
     text-transform: uppercase;
-    letter-spacing: 1.5px;
-    color: rgba(255, 255, 255, 0.8);
-    text-shadow: 0 1px 8px rgba(0, 0, 0, 0.6);
+    letter-spacing: 0.15em;
+    color: rgba(255, 255, 255, 0.4);
+    display: block;
   }
 
   @media (min-width: 768px) {
-    .testimonials {
-      padding: 120px 48px;
-    }
-    .testimonials-inner > h2 {
-      margin-bottom: 60px;
-    }
+    .testimonials { padding: 120px 48px; }
+    .testimonials-inner > h2 { margin-bottom: 64px; }
     .testi-grid {
       display: grid;
       grid-template-columns: repeat(3, 1fr);
       gap: 20px;
       align-items: start;
     }
-    .testi-card {
-      padding: 36px;
-    }
-    .testi-card:nth-child(2) {
-      margin-top: 32px;
-    }
-    .testi-card::before {
-      font-size: 80px;
-      margin-bottom: 16px;
-    }
-    .testi-quote {
-      font-size: 20px;
-      margin-bottom: 24px;
-    }
+    .testi-card { padding: 36px; }
+    .testi-card:nth-child(2) { margin-top: 40px; }
+    .testi-quote { font-size: 19px; }
+  }
+
+  @media (min-width: 768px) {
+    .testi-bg { object-position: center 55%; }
   }
 </style>

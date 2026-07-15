@@ -32,17 +32,22 @@ function getHeroCity(city: string): string {
 ---
 
 <section class="hero" aria-label="Hero">
-  <canvas id="glCanvas" class="hero-shader" aria-hidden="true"></canvas>
+  <div class="hero-bg" aria-hidden="true"></div>
 
   <div class="hero-content">
-    <div class="hero-eyebrow">{SITE.heroEyebrow}</div>
+    <div class="hero-eyebrow">
+      <span class="eyebrow-line"></span>
+      <span>{SITE.heroEyebrow}</span>
+      <span class="eyebrow-line"></span>
+    </div>
+
     <h1>
       Garam<br />
       Mas<em>ala</em><br />
-      <span class="line-accent">Dating Show</span>
+      <span class="h1-sub">Dating Show</span>
     </h1>
+
     <p class="hero-sub">
-      America's #1 live desi comedy dating show.<br />
       Real singles. Real sparks. Real chaos.
     </p>
 
@@ -54,20 +59,14 @@ function getHeroCity(city: string): string {
             const cityLabel = formatEventLocation(event);
             const pillInner = (
               <>
-                <span class="next-show-pill-date">
+                <span class="pill-date">
                   {event.date.split(" ")[0]} {event.date.split(" ")[1]}
                 </span>
-                <span class="next-show-pill-sep" aria-hidden="true">
-                  ·
-                </span>
+                <span class="pill-sep" aria-hidden="true">·</span>
                 <span>{getHeroCity(cityLabel)}</span>
-                <span class="next-show-pill-sep" aria-hidden="true">
-                  ·
-                </span>
+                <span class="pill-sep" aria-hidden="true">·</span>
                 <span>{formatTime(event.startTime ?? "20:00")}</span>
-                <span class="next-show-pill-cta" aria-hidden="true">
-                  →
-                </span>
+                <span class="pill-arrow" aria-hidden="true">→</span>
               </>
             );
             return event.eventbriteId && !isSoldOut ? (
@@ -122,72 +121,20 @@ function getHeroCity(city: string): string {
         class="btn btn-outline"
         data-ph-capture="cta_clicked"
         data-ph-cta="apply"
-        data-ph-section="hero">Fall In Love</a
+        data-ph-section="hero">Apply to the Show</a
       >
     </div>
   </div>
 
   <div class="scroll-cue" aria-hidden="true">
-    <svg
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      stroke-width="2"
-      width="20"
-      height="20"
-    >
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" width="18" height="18">
       <path d="M12 5v14M5 12l7 7 7-7"></path>
     </svg>
-    <span>scroll</span>
   </div>
 </section>
 
 <script>
-  {
-    type Nav = Navigator & {
-      connection?: { saveData?: boolean; effectiveType?: string };
-    };
-    const idle =
-      (
-        window as unknown as {
-          requestIdleCallback?: (
-            cb: () => void,
-            opts?: { timeout: number },
-          ) => void;
-        }
-      ).requestIdleCallback ?? ((cb: () => void) => setTimeout(cb, 2500));
-
-    function shouldLoadShader(): boolean {
-      if (typeof window === "undefined") return false;
-      if (window.matchMedia("(prefers-reduced-motion: reduce)").matches)
-        return false;
-      const nav = navigator as Nav;
-      if (nav.connection?.saveData) return false;
-      if (
-        nav.connection?.effectiveType &&
-        ["slow-2g", "2g"].includes(nav.connection.effectiveType)
-      )
-        return false;
-      return true;
-    }
-
-    if (shouldLoadShader()) {
-      idle(
-        () => {
-          const s = document.createElement("script");
-          s.src = "/js/shader-app.js";
-          s.defer = true;
-          document.head.appendChild(s);
-        },
-        { timeout: 4000 },
-      );
-    }
-  }
-</script>
-
-<script>
-  // Pick the first upcoming event that hasn't ended yet; switch to next when it does
-  const BUFFER_H = 1; // hide pill 1h after event endTime
+  const BUFFER_H = 1;
   const pills = Array.from(
     document.querySelectorAll<HTMLElement>(".next-show-pill[data-iso-date]"),
   );
@@ -205,10 +152,8 @@ function getHeroCity(city: string): string {
       const isoDate = pill.dataset.isoDate!;
       const endTime = pill.dataset.endTime ?? "22:00";
       const end = getEventEnd(isoDate, endTime);
-
       if (now < end) {
         pill.removeAttribute("hidden");
-        // Schedule auto-hide when this show's window closes
         const msUntilEnd = end.getTime() - now.getTime();
         setTimeout(() => {
           pill.setAttribute("hidden", "");
@@ -217,7 +162,6 @@ function getHeroCity(city: string): string {
         return;
       }
     }
-    // No upcoming events — pill area stays empty
   }
 
   showNextPill();
@@ -229,134 +173,102 @@ function getHeroCity(city: string): string {
     place-items: center;
     position: relative;
     overflow: hidden;
-    background:
-      radial-gradient(
-        ellipse at 30% 50%,
-        rgba(220, 38, 38, 0.15) 0%,
-        transparent 60%
-      ),
-      radial-gradient(
-        ellipse at 70% 40%,
-        rgba(255, 214, 0, 0.12) 0%,
-        transparent 50%
-      ),
-      radial-gradient(
-        ellipse at 50% 60%,
-        rgba(185, 28, 28, 0.1) 0%,
-        transparent 55%
-      ),
-      #fff;
-    padding: 80px 20px 56px;
+    background: var(--ink);
+    min-height: 100svh;
+    padding: 100px 20px 80px;
   }
 
-  /* Shader fills hero — subtle wash over white bg */
-  .hero-shader {
+  /* Hot-club lighting: colored light spills on dark stage */
+  .hero-bg {
     position: absolute;
     inset: 0;
-    width: 100%;
-    height: 100%;
+    background:
+      radial-gradient(ellipse at 15% 55%, rgba(220, 38, 38, 0.28) 0%, transparent 55%),
+      radial-gradient(ellipse at 85% 25%, rgba(196, 153, 42, 0.18) 0%, transparent 50%),
+      radial-gradient(ellipse at 55% 85%, rgba(255, 92, 0, 0.12) 0%, transparent 45%);
     pointer-events: none;
-    z-index: 0;
-    opacity: 0.5;
   }
 
   .hero-content {
     position: relative;
     z-index: 2;
     text-align: center;
-    max-width: 980px;
-    padding: 8px 16px;
-    background: radial-gradient(
-      ellipse at center,
-      rgba(255, 255, 255, 0.6) 0%,
-      rgba(255, 255, 255, 0) 70%
-    );
+    max-width: 900px;
+    width: 100%;
   }
 
+  /* Eyebrow: two short lines flanking the text */
   .hero-eyebrow {
     display: inline-flex;
     align-items: center;
-    gap: 8px;
-    background: rgba(255, 255, 255, 0.15);
-    backdrop-filter: blur(12px);
-    -webkit-backdrop-filter: blur(12px);
-    border: 1px solid rgba(255, 255, 255, 0.25);
-    color: var(--brand-red);
+    gap: 14px;
     font-family: var(--font-body), sans-serif;
-    font-size: 12px;
-    font-weight: 700;
-    font-style: italic;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.2em;
     text-transform: uppercase;
-    letter-spacing: 1.5px;
-    padding: 12px 24px;
-    border-radius: 50px;
-    margin-bottom: 14px;
-    animation: pop 0.6s cubic-bezier(0.22, 1, 0.36, 1) both;
+    color: var(--gold);
+    margin-bottom: 28px;
+    animation: fadeUp 0.7s ease-out both;
   }
-
-  @keyframes pop {
-    from {
-      opacity: 0;
-      transform: scale(0.8);
-    }
-    to {
-      opacity: 1;
-      transform: scale(1);
-    }
-  }
-
-  .hero h1 {
-    font-family: var(--font-playfair), serif;
-    font-size: clamp(70px, 11vw, 116px);
-    font-weight: 900;
-    line-height: 0.9;
-    letter-spacing: -2px;
-    color: var(--charcoal);
-    margin-bottom: 14px;
-    animation: rise 0.9s cubic-bezier(0.22, 1, 0.36, 1) 0.2s both;
-  }
-
-  @keyframes rise {
-    from {
-      opacity: 0;
-      transform: translateY(40px);
-    }
-    to {
-      opacity: 1;
-      transform: translateY(0);
-    }
-  }
-
-  .hero h1 em {
-    color: var(--brand-red);
-    font-style: italic;
-  }
-
-  .line-accent {
+  .eyebrow-line {
     display: block;
-    font-size: 0.55em;
-    font-weight: 400;
+    width: 32px;
+    height: 1px;
+    background: var(--gold);
+    opacity: 0.6;
+  }
+
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  h1 {
+    font-family: var(--font-display), sans-serif;
+    font-size: clamp(76px, 13vw, 148px);
+    font-weight: 400; /* Anton only has weight 400 */
+    line-height: 0.88;
+    letter-spacing: -0.01em;
+    text-transform: uppercase;
+    color: white;
+    margin-bottom: 24px;
+    animation: fadeUp 0.85s ease-out 0.15s both;
+  }
+
+  h1 em {
+    color: var(--brand-red);
+    font-style: normal; /* Anton has no italic; use color accent instead */
+  }
+
+  .h1-sub {
+    display: block;
+    font-family: var(--font-serif), serif;
     font-style: italic;
-    color: var(--charcoal);
-    letter-spacing: 0;
-    margin-top: 4px;
+    font-size: clamp(28px, 4.5vw, 54px);
+    font-weight: 400;
+    line-height: 1.1;
+    color: rgba(255, 255, 255, 0.6);
+    letter-spacing: 0.02em;
+    text-transform: none;
+    margin-top: 8px;
   }
 
   .hero-sub {
-    font-family: var(--font-cormorant), serif;
-    font-size: 20px;
-    font-style: italic;
-    color: var(--charcoal);
-    margin-bottom: 20px;
-    line-height: 1.5;
-    animation: rise 0.9s cubic-bezier(0.22, 1, 0.36, 1) 0.35s both;
+    font-family: var(--font-body), sans-serif;
+    font-size: 16px;
+    font-weight: 500;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: rgba(255, 255, 255, 0.45);
+    margin-bottom: 32px;
+    animation: fadeUp 0.85s ease-out 0.3s both;
   }
 
   /* Next show pill */
-  /* Wrapper reserves vertical space before JS reveals the pill, preventing CLS */
   .pill-slot {
-    min-height: 36px;
-    margin-bottom: 20px;
+    min-height: 40px;
+    margin-bottom: 32px;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -367,197 +279,72 @@ function getHeroCity(city: string): string {
   .next-show-pill {
     display: inline-flex;
     align-items: center;
-    gap: 8px;
-    appearance: none;
-    background: rgba(var(--brand-red-rgb), 0.08);
-    backdrop-filter: blur(8px);
-    -webkit-backdrop-filter: blur(8px);
-    border: 1px solid rgba(var(--brand-red-rgb), 0.2);
-    color: var(--charcoal);
+    gap: 10px;
+    background: rgba(255, 255, 255, 0.06);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    color: rgba(255, 255, 255, 0.85);
     font-family: var(--font-body), sans-serif;
     font-size: 13px;
     font-weight: 600;
-    padding: 10px 20px;
-    border-radius: 50px;
+    letter-spacing: 0.08em;
+    padding: 12px 24px;
+    border-radius: 2px;
     text-decoration: none;
-    cursor: pointer;
-    transition:
-      background 0.2s,
-      border-color 0.2s;
-    animation: rise 0.9s cubic-bezier(0.22, 1, 0.36, 1) 0.45s both;
-    max-width: 100%;
+    transition: background 0.2s, border-color 0.2s;
+    animation: fadeUp 0.85s ease-out 0.4s both;
   }
   .next-show-pill:hover {
-    background: rgba(var(--brand-red-rgb), 0.14);
-    border-color: rgba(var(--brand-red-rgb), 0.35);
+    background: rgba(255, 255, 255, 0.1);
+    border-color: rgba(255, 255, 255, 0.2);
   }
-  .next-show-pill-date {
-    color: var(--brand-red);
+  .pill-date {
+    color: var(--electric-yellow);
     font-weight: 700;
     text-transform: uppercase;
-    letter-spacing: 0.5px;
-    flex-shrink: 0;
+    letter-spacing: 0.1em;
   }
-  .next-show-pill-sep {
-    color: rgba(26, 26, 26, 0.3);
-    flex-shrink: 0;
+  .pill-sep {
+    color: rgba(255, 255, 255, 0.25);
   }
-  .next-show-pill-cta {
+  .pill-arrow {
     color: var(--brand-red);
-    flex-shrink: 0;
-    margin-left: 2px;
+    margin-left: 4px;
   }
 
+  /* CTAs */
   .hero-ctas {
     display: flex;
     gap: 12px;
     flex-direction: column;
     align-items: stretch;
-    animation: rise 0.9s cubic-bezier(0.22, 1, 0.36, 1) 0.5s both;
+    animation: fadeUp 0.85s ease-out 0.5s both;
   }
 
-  /* .btn base + variants live in src/index.css.
-     Only hero-specific responsive overrides remain below (in the
-     media queries), scoped to HomeHero via Astro's data-cid. */
-
+  /* Scroll cue */
   .scroll-cue {
     position: absolute;
-    bottom: 24px;
+    bottom: 28px;
     left: 50%;
     transform: translateX(-50%);
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 6px;
-    opacity: 0.45;
-    animation: scrollHint 2.4s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+    color: rgba(255, 255, 255, 0.2);
+    animation: bounce 2.5s ease-in-out infinite;
     z-index: 2;
-    color: rgba(26, 26, 26, 0.4);
   }
 
-  .scroll-cue span {
-    font-size: 10px;
-    letter-spacing: 2px;
-    text-transform: uppercase;
+  @keyframes bounce {
+    0%, 100% { transform: translateX(-50%) translateY(0); opacity: 0.2; }
+    50%       { transform: translateX(-50%) translateY(8px); opacity: 0.4; }
   }
 
-  @keyframes scrollHint {
-    0% {
-      transform: translateX(-50%) translateY(0);
-      opacity: 0.45;
-    }
-    30% {
-      transform: translateX(-50%) translateY(7px);
-      opacity: 0.3;
-    }
-    55% {
-      transform: translateX(-50%) translateY(3px);
-      opacity: 0.4;
-    }
-    70% {
-      transform: translateX(-50%) translateY(8px);
-      opacity: 0.3;
-    }
-    100% {
-      transform: translateX(-50%) translateY(0);
-      opacity: 0.45;
-    }
-  }
-
-  /* Narrow phones (<=430px) */
-  @media (max-width: 430px) {
-    .hero {
-      padding-left: 12px;
-      padding-right: 12px;
-    }
-    .hero-content {
-      padding-left: 8px;
-      padding-right: 8px;
-    }
-    .hero-eyebrow {
-      display: block;
-      width: max-content;
-      max-width: 100%;
-      margin-left: auto;
-      margin-right: auto;
-      white-space: normal;
-      text-align: center;
-      padding: 10px 14px;
-      letter-spacing: 1px;
-      font-size: 11px;
-    }
-    .next-show-pill {
-      font-size: 12px;
-      padding: 9px 14px;
-      gap: 6px;
-    }
-    .btn {
-      white-space: normal;
-      padding: 14px 16px;
-      letter-spacing: 1px;
-    }
-  }
-
-  /* Very narrow phones (<=390px) */
-  @media (max-width: 390px) {
-    .hero h1 {
-      font-size: clamp(52px, 18vw, 70px);
-    }
-    .hero-sub {
-      font-size: 18px;
-      word-break: normal;
-      overflow-wrap: break-word;
-    }
-    .btn {
-      padding: 14px 14px;
-      letter-spacing: 0.5px;
-      font-size: 14px;
-    }
-  }
-
-  /* Ultra-narrow phones (<=340px) — Galaxy Fold outer screen */
-  @media (max-width: 340px) {
-    .hero {
-      padding-left: 8px;
-      padding-right: 8px;
-    }
-    .hero-content {
-      padding-left: 4px;
-      padding-right: 4px;
-    }
-    .hero h1 {
-      font-size: clamp(44px, 16vw, 52px);
-    }
-    .hero-sub {
-      font-size: 16px;
-    }
-    .hero-eyebrow {
-      font-size: 10px;
-      letter-spacing: 0.5px;
-      padding: 8px 10px;
-    }
-  }
-
+  /* Desktop */
   @media (min-width: 768px) {
     .hero {
-      min-height: 100vh;
-      min-height: 100dvh;
-      padding: 80px 48px 60px;
-    }
-    .hero-content {
-      padding: 32px 48px;
-    }
-    .hero-eyebrow {
-      font-size: 14px;
-      padding: 16px 36px;
+      padding: 120px 48px 100px;
     }
     .hero-sub {
-      font-size: 22px;
-      margin-bottom: 32px;
-    }
-    .btn {
-      font-size: 16px;
-      padding: 18px 44px;
+      font-size: 13px;
     }
   }
 
@@ -575,23 +362,21 @@ function getHeroCity(city: string): string {
   }
 
   @media (max-width: 1024px) {
-    .scroll-cue {
-      display: none;
-    }
-    .hero-sub br {
-      display: none;
-    }
+    .scroll-cue { display: none; }
+  }
+
+  /* Narrow phones */
+  @media (max-width: 390px) {
+    h1 { font-size: clamp(58px, 18vw, 80px); }
+    .h1-sub { font-size: clamp(22px, 6vw, 32px); }
   }
 
   @media (prefers-reduced-motion: reduce) {
-    .scroll-cue {
-      animation: none;
-    }
+    .scroll-cue { animation: none; }
     .hero-eyebrow,
-    .hero h1,
+    h1,
     .hero-sub,
     .next-show-pill,
-    .pill-slot,
     .hero-ctas {
       animation: none;
       opacity: 1;

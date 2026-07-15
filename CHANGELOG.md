@@ -1,5 +1,16 @@
 # Changelog
 
+## fix(admin): admin API 401 fixed by unifying auth on the rules email allowlist (2026-07-14)
+
+Every admin-restricted API route (Waitlist/Email List, Analytics, all applicant action buttons) returned 401 "Unauthorized" because `verifyToken.ts` required the admin's uid to be listed in an `ADMIN_UIDS` env var, while `firestore.rules` authorizes by email. The env check fails closed with the same 401 whether the var is unset, empty or holds a stale uid, and no code review can inspect which. Unifying on the email allowlist removes the dependency in every one of those states.
+
+- New `src/lib/adminAllowlist.ts`: single `ADMIN_EMAILS` source of truth for API auth, mirroring `firestore.rules` `isAdmin()`.
+- `verifyToken.ts` now authorizes on a hardened mirror of the rules predicate: non-anonymous provider AND (`admin` custom claim OR allowlisted email with `email_verified: true`). The verified requirement is what stops an attacker from registering a not-yet-claimed allowlisted address; they can never verify an inbox they do not own. No runtime env var involved.
+- `firestore.rules` and `storage.rules` `isAdmin()` now require `email_verified` on the email branch too. Rollout order matters: the verify script below must pass BEFORE merging this change (the API enforces `email_verified` the moment Vercel deploys it) and before deploying the rules files.
+- New `npm run admin:verify-emails` (`scripts/verify-admin-emails.mjs`): two-step service-account script. Without arguments it only lists every account holding an allowlisted email (uid, created, last login, providers); it marks accounts verified only for uids the operator explicitly passes via `CONFIRM_UIDS`, so a squatter account can never be verified by accident.
+- Drift-guard unit tests parse `firestore.rules`, `storage.rules` and the script. They fail the gate if any allowlist copy diverges from `ADMIN_EMAILS` and assert both rules files keep the `email_verified` requirement conjunctive with the allowlist.
+- `ADMIN_UIDS` remains only as local input to `npm run admin:grant-claims` (documented in `.env.example`). `architecture-map.md` updated to match.
+
 ## fix(ci): required check runs on every PR, docs included (2026-07-14)
 
 The ruleset "Protect Main" requires the "Lint, Types, Test, Build" check, but ci.yml ignored markdown and docs paths, so docs-only PRs never started the check and sat permanently blocked (hit on PR #139). The paths-ignore block is gone: full CI runs on every PR to main. Owner decision: no conditional skips and no success reported without the checks actually running.

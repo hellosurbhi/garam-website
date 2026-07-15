@@ -7,10 +7,14 @@ service firebase.storage {
     // non-anonymous allowlisted account or an admin custom claim. The
     // admin dashboard displays photos via tokened download URLs, which are
     // unaffected by this rule.
+    // WHY: email_verified required for the same reason as firestore.rules
+    // isAdmin(): an unverified password account can claim an allowlisted
+    // address, a verified one cannot. Drift-tested from verifyToken.test.ts.
     function isAdmin() {
       return request.auth != null
         && request.auth.token.firebase.sign_in_provider != 'anonymous'
-        && (request.auth.token.email in ['messagesurbhi@gmail.com', 'contact@garammasaladating.com']
+        && ((request.auth.token.email in ['messagesurbhi@gmail.com', 'contact@garammasaladating.com']
+             && request.auth.token.email_verified == true)
             || ('admin' in request.auth.token && request.auth.token.admin == true));
     }
 

@@ -1490,3 +1490,106 @@ If the ambiguity matters there too, rename both with Surbhi's approval on the ex
 - 2026-07-13T22:07Z | tier=F | primary=coderabbit | reason=error | fallback_used=gemini | commit=37cde64 | diff_sha=9506d1aa157f1daade093c8e9414c34d99e8046112fb55278553d9723010625c
 - 2026-07-14T18:04Z | tier=F | primary=coderabbit | reason=error | fallback_used=gemini | commit=8b4d379 | diff_sha=21cb57ca33a0bc568eacd8e142d7932bb30af7a382fa25b557f2c6dda526c07e
 - 2026-07-15T01:57Z | tier=F | primary=coderabbit | reason=error | fallback_used=gemini | commit=59ce89e | diff_sha=79d49c2634be8fd8ec7a52e9739360de8ba9bb45ede67b3359c69ac05ca02d7a
+- 2026-07-15T02:02Z | tier=F | primary=coderabbit | reason=error | fallback_used=gemini | commit=59ce89e | diff_sha=d6ece8cba2e797f0ed41ecf4a9b3d4d07eb5c39ff204a61cae9085c8267d404c
+
+### CodeRabbit — 20260714-221052
+
+- LOW: [CodeRabbit] BUGS.md: Verify each finding against current code. Fix only still-valid issues, skip the rest with a brief reason, keep changes minimal, and validate. In @BUGS.md around lines 637 - 638, Remove the empty “DeepSeek — 20260714-220256” tracking header from BUGS.md, unless the corresponding bug details and status are available to complete the entry.
+- LOW: [CodeRabbit] CHANGELOG.md: Verify each finding against current code. Fix only still-valid issues, skip the rest with a brief reason, keep changes minimal, and validate. In @CHANGELOG.md at line 5, Update the changelog statement to qualify the scope as “every admin-restricted API route” or explicitly enumerate only the affected routes, excluding generate-contestant-link.ts because it accepts any valid Firebase user. Pre...
+
+### DeepSeek — 20260714-221052
+
+- LOW: COPY-VOICE: `BUGS.md:638` introduces a prohibited em dash. `LESSONS.md:5-9` uses the prohibited bold-term-colon explanation format.
+- 2026-07-15T02:17Z | tier=F | primary=coderabbit | reason=error | fallback_used=gemini | commit=59ce89e | diff_sha=a2a3fcea96c285ac86b09e0e63016839919289881f48f8e257e2af60a5a09532
+
+### CodeRabbit — 20260714-221710
+
+- LOW: COPY-VOICE: `LESSONS.md:5-9` uses the prohibited bold-term-colon explanation format.
+
+### DeepSeek — 20260714-221710
+
+- LOW: COPY-VOICE: `BUGS.md:638`, `ENHANCEMENTS.md:1494,1499` add prohibited em dashes. `LESSONS.md:5-9` adds prohibited bold-term-colon explanations.
+
+### Gemini — 20260714-221710
+
+- LOW: The new lesson in `LESSONS.md` uses a "bold-term-colon" format, which is disallowed by the project's copy voice mandate. at LESSONS.md:5, LESSONS.md:7, LESSONS.md:9
+
+### CodeRabbit — 20260714-222246
+
+- LOW: [CodeRabbit] ENHANCEMENTS.md: Verify each finding against current code. Fix only still-valid issues, skip the rest with a brief reason, keep changes minimal, and validate. In @ENHANCEMENTS.md around lines 1494 - 1499, Update the CodeRabbit and DeepSeek reviewer headings in ENHANCEMENTS.md to replace prohibited em dashes with the repository-approved heading separator, preserving the existing dates and heading text.
+- LOW: [CodeRabbit] BUGS.md: Verify each finding against current code. Fix only still-valid issues, skip the rest with a brief reason, keep changes minimal, and validate. In @BUGS.md around lines 638 - 640, Update the DeepSeek heading in BUGS.md to replace the prohibited em dash separator with the repository-approved heading separator, preserving the existing title and timestamp.
+- LOW: [CodeRabbit] ENHANCEMENTS.md: Verify each finding against current code. Fix only still-valid issues, skip the rest with a brief reason, keep changes minimal, and validate. In @ENHANCEMENTS.md at line 1497, Complete the enhancement entry at the truncated `Pre...` text by restoring the intended remaining instruction, or remove the truncation marker if no additional text is required. Preserve the entry’s existing meaning and f...
+- LOW: [CodeRabbit] LESSONS.md: Verify each finding against current code. Fix only still-valid issues, skip the rest with a brief reason, keep changes minimal, and validate. In @LESSONS.md around lines 5 - 9, Update the lesson entry in LESSONS.md to remove bold formatting and trailing colons from the “What went wrong”, “Why”, and “Rule” labels, while preserving all surrounding content and the approved lesson structu...
+- LOW: [CodeRabbit] architecture-map.md: Verify each finding against current code. Fix only still-valid issues, skip the rest with a brief reason, keep changes minimal, and validate. In @architecture-map.md at line 58, Update the Admin heading in architecture-map.md to document both authorization paths: the email allowlist in src/lib/adminAllowlist.ts and verifyAdminToken accepting non-anonymous Firebase ID tokens with the admin custom ...
+
+### DeepSeek — 20260714-222246
+
+- LOW: COPY-VOICE: `BUGS.md:638,642` and `ENHANCEMENTS.md:1494,1499` add prohibited em dashes. `LESSONS.md:5-9` uses prohibited bold-term-colon explanations. `CHANGELOG.md:5,10` adds Oxford commas.
+
+- 2026-07-15T02:29Z | tier=F | primary=coderabbit | reason=error | fallback_used=gemini | commit=59ce89e | diff_sha=38b04cd8e642f52e3f4348103b14d4905ff1679befaae6bd47d14c732f74f8af
+
+### DeepSeek — 20260714-222927
+
+- LOW: COPY-VOICE: Added headings in `BUGS.md` and `ENHANCEMENTS.md` use prohibited em dashes. `LESSONS.md:5-9` uses prohibited bold-term-colon explanations. `CHANGELOG.md:5` contains an Oxford comma.
+- LOW: `.env.example:18-19`, `CHANGELOG.md:7` and `architecture-map.md:58` imply the email allowlist is the sole runtime authorization source, but `verifyToken.ts:112` also authorizes the `admin` custom claim. Document both authorization paths consistently.
+- LOW: `ENHANCEMENTS.md` commits an incomplete reviewer entry ending in `Pre...`, so the claimed bookkeeping cleanup remains truncated.
+- 2026-07-15T02:37Z | tier=F | primary=coderabbit | reason=error | fallback_used=gemini | commit=59ce89e | diff_sha=9e106d655eb275f66540664c3c92f51763c43afe0ef192b500a960070b8e6bd4
+
+### CodeRabbit — 20260714-223725
+
+- LOW: COPY-VOICE: `LESSONS.md` uses the prohibited "bold-term-colon" format for explanations. at LESSONS.md:5, LESSONS.md:7, LESSONS.md:9
+  - COPY-VOICE: `CHANGELOG.md` contains a prohibited Oxford comma. at CHANGELOG.md:10
+  - COPY-VOICE: `BUGS.md` and `ENHANCEMENTS.md` use prohibited em dashes in multiple auto-generated headers. at BUGS.md:638, BUGS.md:642, ENHANCEMENTS.md:1494, ENHANCEMENTS.md:1499, ENHANCEMENTS.md:1502, ENHANCEMENTS.md:1506, ENHANCEMENTS.md:1511, ENHANCEMENTS.md:1518, ENHANCEMENTS.md:1523, ENHANCEMENTS.md:1528, ENHANCEMENTS.md:1531
+
+### DeepSeek — 20260714-223725
+
+- LOW: COPY-VOICE: Added headings in `BUGS.md` and `ENHANCEMENTS.md` use prohibited em dashes. `LESSONS.md:5-9` uses prohibited bold-term-colon labels. `CHANGELOG.md:5,10` contains Oxford commas.
+- LOW: `ENHANCEMENTS.md:1497,1520-1522` commits truncated reviewer records ending in `Pre...`, `f...` and `structu...`.
+
+### DeepSeek — 20260714-224257
+
+- LOW: Added copy violates repository rules: prohibited em dashes appear in `BUGS.md:638-646` and multiple `ENHANCEMENTS.md` headings, `LESSONS.md:5-9` uses bold-term-colon formatting and `CHANGELOG.md:5,10` contains Oxford commas. `ENHANCEMENTS.md:1497,1520-1522` also commits truncated reviewer records.
+
+### DeepSeek — 20260714-224929
+
+- LOW: [COPY-VOICE] New copy violates repository rules through em-dash reviewer headings in `BUGS.md` and `ENHANCEMENTS.md`, bold-term-colon labels in `LESSONS.md:5-9` and Oxford commas in `CHANGELOG.md:5,10`.
+
+### Gemini — 20260714-224929
+
+- LOW: The new lesson in `LESSONS.md` uses a "bold-term-colon" format, which is disallowed by the project's copy voice mandate. at LESSONS.md:5-9
+  - Auto-generated reviewer headings in `BUGS.md` and `ENHANCEMENTS.md` use prohibited em dashes. at BUGS.md:641, BUGS.md:645, BUGS.md:649, BUGS.md:651, BUGS.md:653, ENHANCEMENTS.md:1494, ENHANCEMENTS.md:1499, ENHANCEMENTS.md:1502, ENHANCEMENTS.md:1506, ENHANCEMENTS.md:1511, ENHANCEMENTS.md:1515, ENHANCEMENTS.md:1522, ENHANCEMENTS.md:1527, ENHANCEMENTS.md:1531, ENHANCEMENTS.md:1536, ENHANCEMENTS.md:1541, ENHANCEMENTS.md:1544
+- 2026-07-15T02:57Z | tier=F | primary=coderabbit | reason=error | fallback_used=gemini | commit=59ce89e | diff_sha=ca5bd94c3cdd21f19a3646d1757de46e5b8d518df076ccdc97623bacbca2a8e2
+
+### CodeRabbit — 20260714-225702
+
+- LOW: Copy in `LESSONS.md` violates the "bold-term-colon" copy voice rule.
+  - `LESSONS.md:5`: `**What went wrong:** Every admin API route 401'd ("Unauthorized. Try again" in the Waitlist and Analytics tabs) while the Applicants tab kept working, so the failure looked like a partial breakage instead of what it was: the entire API-backed admin surface dead since it shipped.`
+  - `LESSONS.md:7`: `**Why:** Admin authorization existed twice with different keys. \`firestore.rules\` \`isAdmin()\` checked the token email (used by tabs that read Firestore directly); the admin API checked the uid against an \`ADMIN_UIDS\` env var. That check fails closed with an identical 401 whether the var is unset, empty or holds a stale uid, so the breakage was invisible to code review and indistinguishable from a permissions bug.`
+  - `LESSONS.md:9`: `**Rule:** The admin allowlist predicate is owned by \`src/lib/adminAllowlist.ts\` and \`verifyToken.ts\`. Copies that cannot import it (the two Firebase rules files, \`scripts/verify-admin-emails.mjs\`) carry drift tests that fail the commit gate, so a change to any copy forces all copies to change in the same commit. Do not reintroduce an env-var gate such as \`ADMIN_UIDS\` for this predicate.`
+- LOW: Copy in `CHANGELOG.md` includes a prohibited Oxford comma.
+  - `CHANGELOG.md:12`: `Drift-guard unit tests parse \`firestore.rules\`, \`storage.rules\` and the script, fail the gate if any allowlist copy diverges from \`ADMIN_EMAILS\`, and assert both rules files keep the \`email_verified\` requirement.`
+
+### DeepSeek — 20260714-225702
+
+- LOW: The claimed exact predicate drift guard is incomplete. `src/lib/verifyToken.test.ts:312-372` checks copied email lists and the rules’ verified-email conjunct, but it does not guard the provider check or custom-claim branch despite `src/lib/verifyToken.ts:92-93` claiming all predicate copies are held together.
+- LOW: [COPY-VOICE] New content violates repository copy rules: prohibited em-dash headings appear in `BUGS.md:638-652` and `ENHANCEMENTS.md:1494-1556`; `LESSONS.md:5-9` uses bold-term-colon labels; `CHANGELOG.md:5,10` contains Oxford commas.
+
+### DeepSeek — 20260714-230357
+
+- LOW: `src/lib/verifyToken.ts:92-93` claims the drift test holds the complete predicates together, but `src/lib/verifyToken.test.ts:312-372` does not guard the rules’ provider check or custom-claim branch.
+  - [COPY-VOICE] New content uses prohibited em dash headings in `BUGS.md` and `ENHANCEMENTS.md`, bold-term-colon labels in `LESSONS.md:5-9` and Oxford commas in `CHANGELOG.md:5,10`.
+
+### Gemini — 20260714-230357
+
+- LOW: The new lesson in `LESSONS.md` uses a "bold-term-colon" format, which is disallowed by the project's copy voice mandate.
+  - `LESSONS.md:5`: `**What went wrong:** Every admin API route 401'd ("Unauthorized. Try again" in the Waitlist and Analytics tabs) while the Applicants tab kept working, so the failure looked like a partial breakage instead of what it was: the entire API-backed admin surface dead since it shipped.`
+  - `LESSONS.md:7`: `**Why:** Admin authorization existed twice with different keys. \`firestore.rules\` \`isAdmin()\` checked the token email (used by tabs that read Firestore directly); the admin API checked the uid against an \`ADMIN_UIDS\` env var. That check fails closed with an identical 401 whether the var is unset, empty or holds a stale uid, so the breakage was invisible to code review and indistinguishable from a permissions bug.`
+  - `LESSONS.md:9`: `**Rule:** The admin allowlist predicate is owned by \`src/lib/adminAllowlist.ts\` and \`verifyToken.ts\`. Copies that cannot import it (the two Firebase rules files, \`scripts/verify-admin-emails.mjs\`) carry drift tests that fail the commit gate, so a change to any copy forces all copies to change in the same commit. Do not reintroduce an env-var gate such as \`ADMIN_UIDS\` for this predicate.`
+  - Auto-generated reviewer headings in `BUGS.md` and `ENHANCEMENTS.md` use prohibited em dashes.
+    - `BUGS.md:637`: `### DeepSeek — 20260714-221052`
+    - `ENHANCEMENTS.md:1493`: `### CodeRabbit — 20260714-221052`
+  - Copy in `CHANGELOG.md` includes a prohibited Oxford comma.
+    - `CHANGELOG.md:12`: `Drift-guard unit tests parse \`firestore.rules\`, \`storage.rules\` and the script, fail the gate if any allowlist copy diverges from \`ADMIN_EMAILS\`, and assert both rules files keep the \`email_verified\` requirement conjunctive with the allowlist.`
+
+- 2026-07-15T03:08Z | tier=F | primary=coderabbit | reason=error | fallback_used=gemini | commit=59ce89e | diff_sha=9f0ce6ba81833f1cc0939bad88ed7651e49bf8670cd55c6b2ad3a41748aed086
+- 2026-07-15T18:55Z | tier=E | primary=codex | reason=error_or_timeout | fallback_used=gemini | commit=59ce89e | diff_sha=9f0ce6ba81833f1cc0939bad88ed7651e49bf8670cd55c6b2ad3a41748aed086

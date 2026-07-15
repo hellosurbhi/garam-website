@@ -634,3 +634,41 @@
 
 - [x] MEDIUM: `ResizeObserver` observes `el.firstElementChild` and never re-observes if the child changes. at src/components/WaiverPanel.tsx — Resolved by design: `observer.disconnect()` in the effect cleanup drops every observed target per spec (no leak), and the child is the `WaiverDocument` article rendered from a compile-time constant, so its identity never changes within a mount.
 - [x] MEDIUM: `handleScroll` is recreated each render and passed to `onScroll`. at src/components/WaiverPanel.tsx — Resolved by design: React delegates synthetic events at the root; a new handler identity per render does not re-register DOM listeners. Wrapping in useCallback would add noise with no behavior change.
+
+### DeepSeek — 20260714-221052
+
+- [x] MEDIUM: UNASKED-CHANGE: `BUGS.md:638` empty reviewer heading and `ENHANCEMENTS.md:1492` reviewer telemetry. Resolved: the empty heading is removed in the same commit; the ENHANCEMENTS line is the reviewer router's own fallback telemetry, appended by the pre-commit pipeline itself, and is committed as pipeline bookkeeping, not an agent change.
+
+### DeepSeek — 20260714-222246
+
+- [x] MEDIUM: reviewer telemetry in BUGS/ENHANCEMENTS plus missing `admin/leads.ts` row in architecture-map. Resolved: empty headings removed and the `admin/leads.ts` row added in the same commit; the telemetry lines are the review pipeline's own bookkeeping, appended by the pre-commit hook itself on every attempt, and cannot be excluded from the stated intent.
+
+### DeepSeek — 20260714-223725
+
+### DeepSeek — 20260714-224257
+
+### Gemini — 20260714-224257
+
+### DeepSeek — 20260714-224929
+
+- [ ] MEDIUM: [UNASKED-CHANGE] `BUGS.md:638-650` and `ENHANCEMENTS.md:1492-1550` add reviewer telemetry unrelated to the stated implementation, including empty headings and truncated records. `BUGS.md:644` incorrectly claims this bookkeeping cannot be excluded, although the hook writes it after staging and it can remain unstaged. `architecture-map.md:58`, `.env.example:18-19` and `CHANGELOG.md:7` also describe the email allowlist as the sole runtime authorization path while `src/lib/verifyToken.ts:112` independently authorizes the `admin` custom claim.
+
+- [ ] MEDIUM: `scripts/grant-admin-claims.mjs:52` requests only the identitytoolkit OAuth scope; the Identity Toolkit v1 discovery doc requires cloud-platform for project-scoped accounts:update, so the script may fail authorization. verify-admin-emails.mjs now requests both scopes; mirror that here if a grant run fails. (found during the 2026-07-14 admin auth fix review)
+
+### CodeRabbit — 20260714-225702
+
+- [ ] MEDIUM: The documentation in `.env.example` and `architecture-map.md` incorrectly describes the email allowlist as the sole runtime authorization method, omitting the `admin` custom claim path that is supported in the implementation (`src/lib/verifyToken.ts`, `firestore.rules`, and `storage.rules`). This inconsistency could lead to future configuration errors where an admin is believed to be removed but still has access via the custom claim.
+  - `.env.example:16`: `Runtime admin auth uses the email # allowlist in src/lib/adminAllowlist.ts instead.`
+  - `architecture-map.md:65`: `### Admin (Firebase ID token, email allowlist in src/lib/adminAllowlist.ts)`
+
+### DeepSeek — 20260714-225702
+
+- [ ] MEDIUM: [UNASKED-CHANGE] `BUGS.md:638-654` and `ENHANCEMENTS.md:1492-1559` stage unrelated reviewer telemetry, empty headings and truncated records outside the stated implementation. The grant-script scope bug at `BUGS.md:656` is explicitly in scope, but the other bookkeeping is not.
+- [ ] MEDIUM: `.env.example:18-19`, `architecture-map.md:58` and `CHANGELOG.md:7` describe the email allowlist as the runtime authorization source, but `src/lib/verifyToken.ts:112` independently authorizes the `admin` custom claim. This can mislead operators about revocation and is already acknowledged as unresolved in `BUGS.md:654`.
+- [ ] MEDIUM: [UNSUPPORTED-CLAIM] `LESSONS.md:5` still asserts that the entire API-backed admin surface was dead “since it shipped.” Repository code verifies the identical fail-closed behavior, but not that production deployment history.
+
+### DeepSeek — 20260714-230357
+
+- [ ] MEDIUM: [UNASKED-CHANGE] `BUGS.md:638-668` and `ENHANCEMENTS.md:1492-1574` add unrelated reviewer telemetry, empty headings, stale findings and truncated records outside the stated commit intent.
+  - [UNSUPPORTED-CLAIM] `LESSONS.md:5` states the API-backed admin surface was dead “since it shipped.” The repository verifies the fail-closed behavior but cannot establish production deployment history.
+  - `architecture-map.md:58` and `.env.example:18-21` describe an `admin` custom claim as sufficient runtime authorization, but the endpoints using `verifyAdminIdentity` at `architecture-map.md:64,66-70` additionally require a non-empty email at `src/lib/verifyToken.ts:139-151`. Document that prerequisite or provide a fallback attribution identity.

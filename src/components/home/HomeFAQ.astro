@@ -133,12 +133,14 @@ import { HOME_FAQS as faqs } from "@/data/copy";
     margin-bottom: 16px;
   }
   .faq-inner > h2 {
-    font-family: var(--font-playfair), serif;
-    font-size: clamp(30px, 4vw, 52px);
-    font-weight: 900;
+    font-family: var(--font-display), sans-serif;
+    font-size: clamp(36px, 5vw, 64px);
+    font-weight: 400;
+    text-transform: uppercase;
+    letter-spacing: -0.01em;
     color: var(--charcoal);
     margin-bottom: 48px;
-    line-height: 1.05;
+    line-height: 0.92;
   }
   .faq-list {
     display: flex;
@@ -250,18 +252,22 @@ import { HOME_FAQS as faqs } from "@/data/copy";
     background: var(--brand-red);
     color: white;
     font-family: var(--font-body), sans-serif;
-    font-size: 14px;
+    font-size: 13px;
     font-weight: 700;
     text-transform: uppercase;
-    letter-spacing: 1.5px;
+    letter-spacing: 0.15em;
     padding: 14px 32px;
-    border-radius: 50px;
+    border-radius: 4px;
     text-decoration: none;
     min-height: var(--touch-target);
-    transition: background 0.2s;
+    transition: background 0.2s, transform 0.15s;
   }
   .faq-cta-btn:hover {
     background: var(--brand-red-dark);
+    transform: translateY(-2px);
+  }
+  .faq-cta-btn:active {
+    transform: scale(0.97);
   }
   .faq-cta-link {
     font-family: var(--font-cormorant), serif;

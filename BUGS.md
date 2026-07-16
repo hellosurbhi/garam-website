@@ -658,3 +658,7 @@
 ### Codex (2026-07-16T19:17Z)
 
 - [ ] MEDIUM: [UNASKED-CHANGE] `ENHANCEMENTS.md:1502` is unrelated reviewer telemetry. `BUGS.md:640`, `BUGS.md:648`, `BUGS.md:652` and `BUGS.md:656` then preserve the same issue as multiple open backlog entries instead of deduplicating or resolving it.
+
+### Codex (2026-07-16T19:23Z)
+
+- [ ] MEDIUM: `BUGS.md:638-660` adds six open findings although the commit message claims five. Five duplicate a telemetry complaint explicitly covered by the stated intent while the owner-filter finding is resolved by `CHANGELOG.md:11`, leaving stale backlog entries.

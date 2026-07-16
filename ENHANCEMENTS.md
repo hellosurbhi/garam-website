@@ -1504,3 +1504,7 @@ If the ambiguity matters there too, rename both with Surbhi's approval on the ex
 ### Codex (2026-07-16T19:17Z)
 
 - LOW: New `BUGS.md` headings use em dashes and `CHANGELOG.md:11` adds an Oxford comma, both violating the repository copy mandate.
+
+### Codex (2026-07-16T19:23Z)
+
+- LOW: `BUGS.md:638`, `BUGS.md:642` and `BUGS.md:646` use prohibited em dashes. `CHANGELOG.md:11` uses a prohibited Oxford comma.

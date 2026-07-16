@@ -662,3 +662,7 @@
 ### Codex (2026-07-16T19:23Z)
 
 - [ ] MEDIUM: `BUGS.md:638-660` adds six open findings although the commit message claims five. Five duplicate a telemetry complaint explicitly covered by the stated intent while the owner-filter finding is resolved by `CHANGELOG.md:11`, leaving stale backlog entries.
+
+### Codex (2026-07-16T19:28Z)
+
+- [ ] MEDIUM: [UNASKED-CHANGE] `BUGS.md:662-664` and `ENHANCEMENTS.md:1508-1510` add reviewer telemetry unrelated to the stated comma-only intent. The enhancement also falsely claims `CHANGELOG.md:11` still contains the Oxford comma removed by this commit.

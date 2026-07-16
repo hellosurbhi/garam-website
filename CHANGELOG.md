@@ -1,8 +1,6 @@
 # Changelog
 
-## feat(photos): add 5 new show photos + remove homepage email popup (2026-07-16)
-
-Removed the homepage email popup dialog entirely (`src/pages/index.astro`): deleted the `<dialog>` HTML, all popup JS (exit-intent, scroll-depth, form handlers, localStorage keys), and all popup CSS classes. Rationale: cannot promise a consistent discount across all future events, so the offer copy was unresolvable.
+## feat(photos): add 5 new show photos (2026-07-16)
 
 Converted 5 new professional show photos to webp at canonical promo dimensions (Q82) and wired into the site:
 - `_LEO7701.jpg` (4000x6000) → `hosts-portrait.webp` (800x1200): replaces the older hosts action shot on the hosts page. Better portrait composition of Surbhi and Wyatt at Top Secret Comedy Club.
@@ -11,7 +9,7 @@ Converted 5 new professional show photos to webp at canonical promo dimensions (
 - `_LEO8613.jpg` (6000x4000) → `intimate-moment.webp` (1200x800): replaces `after-party.webp` as the Testimonials section background. More emotional, intimate show moment.
 - `Garammasaladating-35.jpg` (2000x1333) → `crowd-piggyback.webp` (1200x800): added to `public/images/promo/` for future use.
 
-Cleared BUGS.md of all completed and now-resolved deferred entries: journal cupid artwork, popup CTA copy, HomeCreators avatars (owner accepted current state), hosts page avatars (owner accepted current state), Experience section photo, Testimonials accent photo.
+Cleared BUGS.md of all completed and now-resolved deferred entries: journal cupid artwork, HomeCreators avatars (owner accepted current state), hosts page avatars (owner accepted current state), Experience section photo, Testimonials accent photo. Popup CTA copy moved to ENHANCEMENTS.md pending a concrete offer decision.
 
 ## fix(security): remove unsafe-inline from CSP via Astro security.csp (2026-07-16)
 

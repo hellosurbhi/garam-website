@@ -103,7 +103,6 @@ const leadSource = `spice-list-${pageName}`;
   import {
     captureLead,
     updateLeadPhone,
-    type LeadCaptureResult,
   } from "@/lib/leadSubmission";
 
   if (localStorage.getItem("gmd-popup-subscribed")) {
@@ -116,21 +115,19 @@ const leadSource = `spice-list-${pageName}`;
   }
 
   let savedEmail = "";
-  let nlDocId: LeadCaptureResult | null = null;
+  let nlDocId = null;
 
   // Per-page source set by the Astro frontmatter (e.g. "spice-list-home",
   // "spice-list-apply"). Falls back to the bare component name only if the
   // data attribute is missing, which should never happen in practice.
   const leadSource =
-    document.querySelector<HTMLElement>(".spicelist[data-lead-source]")?.dataset
+    document.querySelector(".spicelist[data-lead-source]")?.dataset
       .leadSource ?? "spice-list";
 
   // Prefill the optional city from IP geo once it resolves. The geo fetch is
   // fired on page load; poll briefly so the value appears without the user
   // typing. Never overwrites a value the user has entered.
-  const nlCityInput = document.getElementById(
-    "nl-city",
-  ) as HTMLInputElement | null;
+  const nlCityInput = document.getElementById("nl-city");
   if (nlCityInput) {
     const prefillCity = () => {
       const geoCity = sessionStorage.getItem("gmd-geo-city");
@@ -149,15 +146,10 @@ const leadSource = `spice-list-${pageName}`;
     .getElementById("nl-email-form")
     ?.addEventListener("submit", async (e) => {
       e.preventDefault();
-      savedEmail = (document.getElementById("nl-email") as HTMLInputElement)
-        .value;
-      const nlCity = (
-        document.getElementById("nl-city") as HTMLInputElement | null
-      )?.value.trim();
+      savedEmail = document.getElementById("nl-email").value;
+      const nlCity = document.getElementById("nl-city")?.value.trim();
       const errorEl = document.getElementById("nl-email-error");
-      const submitBtn = (
-        e.target as HTMLFormElement
-      ).querySelector<HTMLButtonElement>('[type="submit"]');
+      const submitBtn = e.target.querySelector('[type="submit"]');
       const originalBtnText = submitBtn?.textContent ?? "";
       if (submitBtn) {
         submitBtn.disabled = true;
@@ -198,8 +190,7 @@ const leadSource = `spice-list-${pageName}`;
     .getElementById("nl-phone-form")
     ?.addEventListener("submit", async (e) => {
       e.preventDefault();
-      const raw = (document.getElementById("nl-phone") as HTMLInputElement)
-        .value;
+      const raw = document.getElementById("nl-phone").value;
       const cleaned = cleanPhone(raw);
       const phoneErrorEl = document.getElementById("nl-phone-error");
 
@@ -223,9 +214,7 @@ const leadSource = `spice-list-${pageName}`;
         return;
       }
 
-      const submitBtn = (
-        e.target as HTMLFormElement
-      ).querySelector<HTMLButtonElement>('[type="submit"]');
+      const submitBtn = e.target.querySelector('[type="submit"]');
       const originalBtnText = submitBtn?.textContent ?? "";
       if (submitBtn) {
         submitBtn.disabled = true;

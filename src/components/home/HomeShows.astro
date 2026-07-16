@@ -243,17 +243,12 @@ const taglineMap = buildTaglineMap(events);
   import { buildLeadAttribution } from "@/lib/leadAttribution";
   import {
     captureLead,
-    type LeadSubmissionPayload,
   } from "@/lib/leadSubmission";
 
   // Request City modal
-  const cityDialog = document.getElementById(
-    "request-city-modal",
-  ) as HTMLDialogElement;
+  const cityDialog = document.getElementById("request-city-modal");
   if (cityDialog) {
-    const cityInput = document.getElementById(
-      "city-name",
-    ) as HTMLInputElement | null;
+    const cityInput = document.getElementById("city-name");
     const errorEl = document.getElementById("city-form-error");
 
     document
@@ -262,9 +257,7 @@ const taglineMap = buildTaglineMap(events);
         // Reset to form state before opening
         document.getElementById("city-form-view")?.removeAttribute("hidden");
         document.getElementById("city-success")?.setAttribute("hidden", "");
-        const emailInput = document.getElementById(
-          "city-email",
-        ) as HTMLInputElement;
+        const emailInput = document.getElementById("city-email");
         if (cityInput) cityInput.value = "";
         if (emailInput) emailInput.value = "";
         if (errorEl) {
@@ -281,9 +274,7 @@ const taglineMap = buildTaglineMap(events);
     let isClosing = false;
     const closeCityDialog = () => {
       if (isClosing) return;
-      const inner = cityDialog.querySelector(
-        ".modal-inner",
-      ) as HTMLElement | null;
+      const inner = cityDialog.querySelector(".modal-inner");
       const reduced = window.matchMedia(
         "(prefers-reduced-motion: reduce)",
       ).matches;
@@ -319,9 +310,7 @@ const taglineMap = buildTaglineMap(events);
       .getElementById("city-form")
       ?.addEventListener("submit", async (e) => {
         e.preventDefault();
-        const submitBtn = (
-          e.target as HTMLFormElement
-        ).querySelector<HTMLButtonElement>('[type="submit"]');
+        const submitBtn = e.target.querySelector('[type="submit"]');
         const originalBtnText = submitBtn?.textContent ?? "";
         if (submitBtn) {
           submitBtn.disabled = true;
@@ -329,13 +318,11 @@ const taglineMap = buildTaglineMap(events);
         }
         try {
           const city = (cityInput?.value ?? "").trim();
-          const email = (
-            document.getElementById("city-email") as HTMLInputElement
-          ).value;
+          const email = document.getElementById("city-email").value;
           const attribution = await buildLeadAttribution({
             source: "request-city",
           });
-          const payload: LeadSubmissionPayload = {
+          const payload = {
             email,
             ...attribution,
           };

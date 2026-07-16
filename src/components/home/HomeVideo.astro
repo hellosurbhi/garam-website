@@ -69,9 +69,9 @@ import { YOUTUBE_VIDEO_ID, INSTAGRAM_REEL_URLS } from "@/lib/constants";
 
   // YouTube: swap facade for iframe on click
   document
-    .querySelector<HTMLButtonElement>(".video-facade")
+    .querySelector(".video-facade")
     ?.addEventListener("click", (e) => {
-      const btn = e.currentTarget as HTMLButtonElement;
+      const btn = e.currentTarget;
       const id = btn.dataset.youtubeId;
       if (!id) return;
       trackLeadEvent("video_played", {

@@ -152,12 +152,12 @@ const {
       }
       bootstrapLeadAttribution();
       preserveUtmsOnInternalLinks();
-      function preserveTicketVendorUtms(anchor: HTMLAnchorElement): void {
+      function preserveTicketVendorUtms(anchor) {
         if (isTicketVendorUrl(anchor.href)) {
           anchor.href = forceStoredUtmsToUrl(anchor.href, getStoredUtms());
         }
       }
-      document.querySelectorAll<HTMLAnchorElement>("a[href]").forEach((a) => {
+      document.querySelectorAll("a[href]").forEach((a) => {
         preserveTicketVendorUtms(a);
       });
 
@@ -165,9 +165,7 @@ const {
       // The event name is taken from data-ph-capture so callers can emit
       // named events (apply_click, ticket_click, cta_clicked, etc.) directly.
       document.addEventListener("click", (e) => {
-        const el = (e.target as HTMLElement).closest<HTMLElement>(
-          "[data-ph-capture]",
-        );
+        const el = e.target.closest("[data-ph-capture]");
         if (!el) return;
         const eventName = el.dataset.phCapture!;
         const props: Record<string, string | null | boolean> = {
@@ -198,7 +196,7 @@ const {
           "eventVendor",
           "articleSlug",
           "citySlug",
-        ] as const;
+        ];
         for (const camel of extraKeys) {
           const val = el.dataset[camel];
           if (val) {
@@ -206,7 +204,7 @@ const {
             props[snake] = val;
           }
         }
-        const linked = el.closest<HTMLAnchorElement>("a[href]");
+        const linked = el.closest("a[href]");
         if (linked?.href) {
           preserveTicketVendorUtms(linked);
           props.destination_url ??= linked.href;
@@ -234,7 +232,7 @@ const {
         capture(eventName, props);
 
         if (linked?.href) {
-          let linkUrl: URL | null = null;
+          let linkUrl = null;
           try {
             linkUrl = new URL(linked.href);
           } catch {
@@ -271,13 +269,11 @@ const {
       // For same-tab clicks, prevent default and delay navigation ~100ms so the
       // PostHog XHR has time to flush before the browser navigates away.
       document.addEventListener("click", (e) => {
-        const link = (e.target as HTMLElement).closest<HTMLAnchorElement>(
-          "a[href]",
-        );
+        const link = e.target.closest("a[href]");
         if (!link?.href) return;
         if (link.href.startsWith("mailto:") || link.href.startsWith("tel:"))
           return;
-        let url: URL;
+        let url;
         try {
           url = new URL(link.href);
         } catch {
@@ -285,13 +281,12 @@ const {
         }
         if (url.origin === window.location.origin) return;
 
-        const me = e as MouseEvent;
         const isModified =
-          me.metaKey ||
-          me.ctrlKey ||
-          me.shiftKey ||
-          me.altKey ||
-          me.button !== 0;
+          e.metaKey ||
+          e.ctrlKey ||
+          e.shiftKey ||
+          e.altKey ||
+          e.button !== 0;
         const targetSelf = !link.target || link.target === "_self";
 
         let linkType = "outbound";
@@ -300,7 +295,7 @@ const {
           linkType = "ticket_vendor";
         } else if (isSocialUrl(link.href)) linkType = "social";
 
-        const dataCapture = link.closest<HTMLElement>("[data-ph-capture]");
+        const dataCapture = link.closest("[data-ph-capture]");
 
         // Always fire outbound_link_clicked with full destination URL unless a
         // declarative handler on the same click already emitted that raw event.

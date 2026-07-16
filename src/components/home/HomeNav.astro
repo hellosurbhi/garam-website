@@ -30,7 +30,7 @@ const pathname = Astro.url.pathname;
 
 <script>
   const nav = document.getElementById("home-nav");
-  const marquee = document.querySelector(".marquee") as HTMLElement;
+  const marquee = document.querySelector(".marquee");
   if (nav && marquee) {
     const update = () => {
       const navH = nav.offsetHeight;

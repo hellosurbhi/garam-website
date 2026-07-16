@@ -568,9 +568,7 @@ const notifyTrackingAttrs = {
 
 <script>
   document.addEventListener("click", async (e) => {
-    const btn = (e.target as Element).closest<HTMLButtonElement>(
-      ".ticket-card__share",
-    );
+    const btn = e.target.closest(".ticket-card__share");
     if (!btn) return;
     // Stop propagation so the parent card link doesn't fire
     e.preventDefault();

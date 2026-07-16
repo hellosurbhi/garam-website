@@ -8,51 +8,14 @@
   import { buildLeadAttribution } from "@/lib/leadAttribution";
   import { capture } from "@/lib/analyticsCapture";
 
-  interface EBCfg {
-    eventId: string;
-    triggerId: string | undefined;
-    containerId: string | undefined;
-    isModal: boolean;
-    fallbackUrl: string;
-    city: string;
-    section: string;
-    price: string;
-    eventDate: string;
-    eventTitle: string;
-    destinationUrl: string;
-    linkDomain: string;
-    ctaText: string;
-    ctaPosition: string;
-  }
-
-  interface EBWidgetModalConfig {
-    widgetType: string;
-    eventId: string;
-    modal: true;
-    modalTriggerElementId: string;
-    themeSettings?: Record<string, string>;
-    onOrderComplete?: () => void;
-  }
-
-  interface EBWidgetEmbedConfig {
-    widgetType: string;
-    eventId: string;
-    iframeContainerId: string;
-    iframeContainerHeight?: number;
-    themeSettings?: Record<string, string>;
-    onOrderComplete?: () => void;
-  }
-
-  type EBWidgetConfig = EBWidgetModalConfig | EBWidgetEmbedConfig;
-
-  (function initEBWidgets(): void {
+  (function initEBWidgets() {
     const modalButtons = Array.from(
-      document.querySelectorAll<HTMLElement>(
+      document.querySelectorAll(
         '[id^="eventbrite-widget-modal-trigger-"]',
       ),
     );
     const embedContainers = Array.from(
-      document.querySelectorAll<HTMLElement>(
+      document.querySelectorAll(
         '[id^="eventbrite-widget-container-"]',
       ),
     );
@@ -60,15 +23,11 @@
     if (!modalButtons.length && !embedContainers.length) return;
     if (["localhost", "127.0.0.1"].includes(window.location.hostname)) return;
 
-    type EBWidgetsAPI = { createWidget: (config: EBWidgetConfig) => void };
-    const w = window as typeof window & {
-      EBWidgets: EBWidgetsAPI;
-      dataLayer?: Record<string, unknown>[];
-    };
+    const w = window;
 
     // ── Shared helpers ──────────────────────────────────────────────────────
 
-    function readCfg(el: HTMLElement, isModal: boolean): EBCfg {
+    function readCfg(el, isModal) {
       const prefix = isModal
         ? "eventbrite-widget-modal-trigger-"
         : "eventbrite-widget-container-";
@@ -96,11 +55,11 @@
       };
     }
 
-    function makeOrderCompleteHandler(cfg: EBCfg): () => void {
-      return async function onOrderComplete(): Promise<void> {
+    function makeOrderCompleteHandler(cfg) {
+      return async function onOrderComplete() {
         orderCompleted = true;
         const raw = sessionStorage.getItem("eb_cta_source");
-        const src = raw ? (JSON.parse(raw) as Record<string, string>) : null;
+        const src = raw ? JSON.parse(raw) : null;
         sessionStorage.removeItem("eb_cta_source");
         const attr = await buildLeadAttribution({ source: "ticket_purchase" });
         capture("order_complete", {
@@ -177,21 +136,21 @@
 
     // ── Widget initialisation ───────────────────────────────────────────────
 
-    function initWidgets(): void {
+    function initWidgets() {
       // Modal triggers — unchanged behaviour
       modalCfgs.forEach((cfg) => {
-        const config: EBWidgetModalConfig = {
+        const config = {
           widgetType: "checkout",
           eventId: cfg.eventId,
           modal: true,
-          modalTriggerElementId: cfg.triggerId!,
+          modalTriggerElementId: cfg.triggerId,
           themeSettings: { brandColor, fontColor, background: bgColor },
           onOrderComplete: makeOrderCompleteHandler(cfg),
         };
         try {
           w.EBWidgets.createWidget(config);
           document
-            .getElementById(cfg.triggerId!)
+            .getElementById(cfg.triggerId)
             ?.addEventListener("click", (e) => {
               e.preventDefault();
             });
@@ -210,13 +169,13 @@
 
       // Inline embed containers — non-modal behaviour
       embedCfgs.forEach((cfg) => {
-        const containerEl = document.getElementById(cfg.containerId!);
+        const containerEl = document.getElementById(cfg.containerId);
         if (!containerEl) return;
-        const wrapperEl = containerEl.closest<HTMLElement>(".eb-embed");
-        const config: EBWidgetEmbedConfig = {
+        const wrapperEl = containerEl.closest(".eb-embed");
+        const config = {
           widgetType: "checkout",
           eventId: cfg.eventId,
-          iframeContainerId: cfg.containerId!,
+          iframeContainerId: cfg.containerId,
           // Reads --eb-embed-height from :root (src/index.css) so the height
           // has one source of truth shared by CSS and the EB widget runtime.
           iframeContainerHeight:
@@ -291,9 +250,9 @@
     // Guards against concurrent signals triggering a double-injection.
 
     let scriptInjected = false;
-    let io: IntersectionObserver | undefined;
+    let io;
 
-    function loadEBScript(): void {
+    function loadEBScript() {
       if (scriptInjected) return;
       scriptInjected = true;
       io?.disconnect();
@@ -367,10 +326,10 @@
 
     // popstate fires when the user presses the hardware/browser back button.
     // If our dummy entry is active, close the EB modal instead of leaving the page.
-    window.addEventListener("popstate", (_e: PopStateEvent) => {
+    window.addEventListener("popstate", (_e) => {
       if (historyEntryPushed) {
         historyEntryPushed = false;
-        const closeBtn = document.querySelector<HTMLButtonElement>(
+        const closeBtn = document.querySelector(
           ".eds-modal__close-button button",
         );
         closeBtn?.click();
@@ -385,9 +344,9 @@
     //   - restore scroll after EB scrolls to top (Bug 6)
     //   - push a dummy history entry so the back button closes the modal (Bug 10)
     //   - pop that history entry when the modal closes
-    let modalObserverTimeout: ReturnType<typeof setTimeout>;
+    let modalObserverTimeout;
     const modalObserver = new MutationObserver(() => {
-      const ebStructure = document.querySelector<HTMLElement>(
+      const ebStructure = document.querySelector(
         "div.eds-structure_main",
       );
 
@@ -397,9 +356,7 @@
         orderCompleted = false;
         modalOpenedAt = Date.now();
         const openSrc = sessionStorage.getItem("eb_cta_source");
-        const openData = openSrc
-          ? (JSON.parse(openSrc) as Record<string, string>)
-          : null;
+        const openData = openSrc ? JSON.parse(openSrc) : null;
         capture("checkout_opened", {
           event_id: openData?.event_id ?? "",
           city: openData?.city ?? "",
@@ -428,10 +385,10 @@
         }
 
         // Outside-click closes the modal.
-        const onEBSClick = (e: MouseEvent): void => {
-          const target = e.target as HTMLElement;
+        const onEBSClick = (e) => {
+          const target = e.target;
           if (!target.closest(".eds-modal")) {
-            const closeBtn = document.querySelector<HTMLButtonElement>(
+            const closeBtn = document.querySelector(
               ".eds-modal__close-button button",
             );
             closeBtn?.click();
@@ -447,9 +404,7 @@
             if (!orderCompleted) {
               const durationMs = modalOpenedAt ? Date.now() - modalOpenedAt : 0;
               const closeSrc = sessionStorage.getItem("eb_cta_source");
-              const closeData = closeSrc
-                ? (JSON.parse(closeSrc) as Record<string, string>)
-                : null;
+              const closeData = closeSrc ? JSON.parse(closeSrc) : null;
               capture("checkout_abandoned", {
                 event_id: closeData?.event_id ?? "",
                 city: closeData?.city ?? "",

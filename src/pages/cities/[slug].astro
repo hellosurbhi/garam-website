@@ -791,10 +791,9 @@ function renderCityText(text: string, href: string): string {
   import {
     captureLead,
     updateLeadPhone,
-    type LeadCaptureResult,
   } from "@/lib/leadSubmission";
 
-  const dialog = document.getElementById("waitlist-modal") as HTMLDialogElement;
+  const dialog = document.getElementById("waitlist-modal");
   const citySlug =
     window.location.pathname.split("/").filter(Boolean).at(-1) ?? "";
   if (dialog) {
@@ -825,17 +824,11 @@ function renderCityText(text: string, href: string): string {
       .getElementById("waitlist-form")
       ?.addEventListener("submit", async (e) => {
         e.preventDefault();
-        const email = (
-          document.getElementById("waitlist-email") as HTMLInputElement
-        ).value;
-        const phoneRaw = (
-          document.getElementById("waitlist-phone") as HTMLInputElement | null
-        )?.value.trim();
+        const email = document.getElementById("waitlist-email").value;
+        const phoneRaw = document.getElementById("waitlist-phone")?.value.trim();
         const phone = phoneRaw ? cleanPhone(phoneRaw) : "";
         const city = document.querySelector(".city-eyebrow")?.textContent ?? "";
-        const submitBtn = (
-          e.target as HTMLFormElement
-        ).querySelector<HTMLButtonElement>('[type="submit"]');
+        const submitBtn = e.target.querySelector('[type="submit"]');
         const errorEl = document.getElementById("waitlist-error");
         if (phoneRaw && !phone) {
           if (errorEl) {
@@ -880,20 +873,16 @@ function renderCityText(text: string, href: string): string {
 
   // City page email + phone signup
   let cityNotifyEmail = "";
-  let cityNotifyDocId: LeadCaptureResult | null = null;
+  let cityNotifyDocId = null;
   const cityName = document.querySelector(".city-eyebrow")?.textContent ?? "";
 
   document
     .getElementById("city-notify-email-form")
     ?.addEventListener("submit", async (e) => {
       e.preventDefault();
-      cityNotifyEmail = (
-        document.getElementById("city-notify-email") as HTMLInputElement
-      ).value;
+      cityNotifyEmail = document.getElementById("city-notify-email").value;
       const errorEl = document.getElementById("city-notify-email-error");
-      const submitBtn = (
-        e.target as HTMLFormElement
-      ).querySelector<HTMLButtonElement>('[type="submit"]');
+      const submitBtn = e.target.querySelector('[type="submit"]');
       if (submitBtn) submitBtn.disabled = true;
       try {
         const attribution = await buildLeadAttribution({
@@ -937,9 +926,7 @@ function renderCityText(text: string, href: string): string {
     .getElementById("city-notify-phone-form")
     ?.addEventListener("submit", async (e) => {
       e.preventDefault();
-      const raw = (
-        document.getElementById("city-notify-phone") as HTMLInputElement
-      ).value;
+      const raw = document.getElementById("city-notify-phone").value;
       const cleaned = cleanPhone(raw);
       const phoneErrorEl = document.getElementById("city-notify-phone-error");
 
@@ -961,9 +948,7 @@ function renderCityText(text: string, href: string): string {
         return;
       }
 
-      const submitBtn = (
-        e.target as HTMLFormElement
-      ).querySelector<HTMLButtonElement>('[type="submit"]');
+      const submitBtn = e.target.querySelector('[type="submit"]');
       if (submitBtn) submitBtn.disabled = true;
       try {
         if (cityNotifyDocId) {

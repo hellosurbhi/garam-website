@@ -1132,7 +1132,7 @@ const breadcrumbJsonLd = buildBreadcrumbJsonLd([
   // Keyboard arrow navigation between sections
   (function () {
     const navSections = Array.from(
-      document.querySelectorAll<HTMLElement>(".mc-section, .mc-faqs"),
+      document.querySelectorAll(".mc-section, .mc-faqs"),
     );
     const reducedMotion = window.matchMedia(
       "(prefers-reduced-motion: reduce)",
@@ -1155,7 +1155,7 @@ const breadcrumbJsonLd = buildBreadcrumbJsonLd([
 
     document.addEventListener("keydown", (e) => {
       if (e.altKey || e.ctrlKey || e.metaKey || e.shiftKey) return;
-      const el = document.activeElement as HTMLElement | null;
+      const el = document.activeElement;
       const tag = (el?.tagName ?? "").toLowerCase();
       const role = el?.getAttribute("role") ?? "";
       if (
@@ -1197,7 +1197,7 @@ const breadcrumbJsonLd = buildBreadcrumbJsonLd([
         entries.forEach((entry) => {
           if (entry.isIntersecting) {
             const section = entry.target;
-            section.querySelectorAll<HTMLElement>(".reveal").forEach((el) => {
+            section.querySelectorAll(".reveal").forEach((el) => {
               const delay = parseInt(el.dataset.delay ?? "0", 10);
               setTimeout(() => el.classList.add("is-visible"), delay);
             });

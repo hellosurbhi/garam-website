@@ -1505,3 +1505,10 @@ If the ambiguity matters there too, rename both with Surbhi's approval on the ex
 ### CodeRabbit — 20260715-160549
 
 - LOW: [CodeRabbit] ENHANCEMENTS.md: Verify each finding against current code. Fix only still-valid issues, skip the rest with a brief reason, keep changes minimal, and validate. In @ENHANCEMENTS.md at line 1493, Update the metadata timestamp entry in ENHANCEMENTS.md to use the repository-approved dash-free separator format instead of the hyphenated date in the 2026-07-15T20:02Z value. Preserve the remaining metadata fields unchange...
+- 2026-07-15T20:09Z | tier=E | primary=codex | reason=error_or_timeout | fallback_used=gemini | commit=93fe5a9 | diff_sha=a31236d356caa725b1069536731a9386a9b777862aa98b6f7c956a16f61aec04
+- 2026-07-15T20:09Z | tier=F | primary=coderabbit | reason=error | fallback_used=gemini | commit=93fe5a9 | diff_sha=a31236d356caa725b1069536731a9386a9b777862aa98b6f7c956a16f61aec04
+
+### DeepSeek — 20260715-160953
+
+- LOW: The heading '### CodeRabbit — 20260715-160549' uses an em dash, which violates the project's copy voice mandate.
+  > a/ENHANCEMENTS.md:1496 | +### CodeRabbit — 20260715-160549

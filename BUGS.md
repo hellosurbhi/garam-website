@@ -2,6 +2,16 @@
 
 ## Open
 
+### [HIGH] Contestant workflow features (P1 to P5) have no unit test coverage
+
+- **Date:** 2026-07-16
+- **File:** `src/lib/zohoMailer.ts` (#90), `src/pages/api/webhooks/cal.ts` (#91), `src/components/admin/TaskInbox.tsx` + `src/components/ContestantPortal.tsx` (#97), `src/pages/api/cron/post-show.ts` + `src/pages/api/cron/followups.ts` (#98), `src/components/admin/ContestantFunnel.tsx` (#99)
+- **Status:** Open
+- **Severity:** High
+- **What happened:** All five phases of the contestant workflow project (Zoho SMTP mailer, cal.com webhook auto-scheduling, Task Inbox, cron nudges/decay/post-show jobs, funnel analytics) merged 2026-07-03 to 2026-07-05 with zero accompanying unit tests. A Stryker mutation report run on 2026-07-16 confirms it: these files score 0 to 8% mutation coverage, meaning almost every mutant introduced into them ran with no test executing that code at all. None of these PRs touched a test file, so the pre-push mutation gate (`~/.claude/config/git-hooks/pre-push`, `run_stryker`) skips itself whenever no test file changed in the last 7 days, so the gap was never flagged until an unrelated Playwright smoke-test commit incidentally re-triggered it.
+- **Impact:** If a change breaks contestant email sending, calendar webhook auto-scheduling, the Task Inbox admin screen, or the nightly cron jobs, nothing in the test suite would catch it. Only a real user or manual QA would notice.
+- **Fix:** Write unit tests (vitest) for the five files/areas above, at minimum covering their core success and failure paths, so Stryker actually has something to mutate against.
+
 ### [HIGH] Dev server cannot transform TypeScript in astro component scripts
 
 - **Date:** 2026-07-05
@@ -634,3 +644,8 @@
 
 - [x] MEDIUM: `ResizeObserver` observes `el.firstElementChild` and never re-observes if the child changes. at src/components/WaiverPanel.tsx — Resolved by design: `observer.disconnect()` in the effect cleanup drops every observed target per spec (no leak), and the child is the `WaiverDocument` article rendered from a compile-time constant, so its identity never changes within a mount.
 - [x] MEDIUM: `handleScroll` is recreated each render and passed to `onScroll`. at src/components/WaiverPanel.tsx — Resolved by design: React delegates synthetic events at the root; a new handler identity per render does not re-register DOM listeners. Wrapping in useCallback would add noise with no behavior change.
+
+### DeepSeek — 20260715-160953
+
+- [ ] MEDIUM: The finding logged from CodeRabbit appears to be truncated ("...unchange..."). This could hide the full context of the finding.
+  > a/ENHANCEMENTS.md:1498 | + - LOW: [CodeRabbit] ENHANCEMENTS.md: Verify each finding against current code. Fix only still-valid issues, skip the rest with a brief reason, keep changes minimal, and validate. In @ENHANCEMENTS.md at line 1493, Update the metadata timestamp entry in ENHANCEMENTS.md to use the repository-approved dash-free separator format instead of the hyphenated date in the 2026-07-15T20:02Z value. Preserve the remaining metadata fields unchange...

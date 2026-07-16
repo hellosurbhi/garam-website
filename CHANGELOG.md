@@ -1,5 +1,15 @@
 # Changelog
 
+## fix(tickets): recover from silent Eventbrite modal failures on mobile (2026-07-16)
+
+Seven PostHog-filed issues (#136, #151, #152, #153, #154, #155, #156) traced back to one root cause: Eventbrite's own `eb_widgets.js` click handler throws asynchronously in specific mobile in-app browsers (Instagram/Facebook WKWebView bridge probing, Firefox iOS reader mode, a ChunkLoadError from EB's webpack runtime resolving against our origin). `createWidget()` succeeding only proves EB registered a handler, not that the modal opens, and because our trigger buttons call `preventDefault()`, a failure inside EB's handler left the Buy Tickets CTA completely dead with no fallback, on 70% mobile traffic.
+
+- Extended the existing timeout + `MutationObserver` recovery pattern (already used for inline embed widgets) to the modal-trigger path in `EventbriteWidgetInit.astro` (tickets, cities, home) and `ApplySuccessPanel.tsx` (apply success upsell)
+- Detects the missing `div.eds-structure_main` modal DOM within one open attempt, fires a `widget_load_failed` analytics event, and recovers by opening the same Eventbrite checkout URL the trigger would have used natively
+- Wired up `cfg.fallbackUrl`, which `readCfg()` already computed but nothing consumed
+
+**Files:** `src/components/EventbriteWidgetInit.astro`, `src/components/apply/ApplySuccessPanel.tsx`
+
 ## fix(ci): required check runs on every PR, docs included (2026-07-14)
 
 The ruleset "Protect Main" requires the "Lint, Types, Test, Build" check, but ci.yml ignored markdown and docs paths, so docs-only PRs never started the check and sat permanently blocked (hit on PR #139). The paths-ignore block is gone: full CI runs on every PR to main. Owner decision: no conditional skips and no success reported without the checks actually running.

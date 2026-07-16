@@ -1,5 +1,13 @@
 # Lessons
 
+## A third-party widget's init call succeeding does not mean the interaction will work
+
+**What went wrong:** Eventbrite's ticket-buy CTA silently died for a subset of mobile users. It surfaced as seven separate PostHog-filed GitHub issues (#136, #151, #152, #153, #154, #155, #156) over several days before anyone connected them to one cause. `EBWidgets.createWidget()` returned successfully on every affected page load, so none of the existing error handling ever fired.
+
+**Why:** `createWidget()` only registers a click handler; it doesn't verify the checkout modal actually opens. In specific mobile in-app browsers (Instagram/Facebook WKWebView bridge probing, Firefox iOS reader mode) Eventbrite's own `eb_widgets.js` threw asynchronously inside that handler, after our trigger's click listener had already called `preventDefault()`. With no href to fall back on and nothing watching for the modal's DOM to appear, the click did nothing: no error reached Eventbrite, PostHog, or the user, and the CTA looked simply dead with no diagnostic signal beyond an async exception buried in a third-party script.
+
+**Rule:** Any integration where our code calls `preventDefault()` on a native fallback (a link, a form submit) in favor of a third-party JS SDK must pair that override with a timeout that verifies the expected DOM or behavior actually appeared, plus a recovery path that restores the native fallback on failure. A successful SDK init call is not proof the interaction will complete.
+
 ## Git hooks must be tracked with the executable bit or the gate silently dies
 
 **What went wrong:** A commit sailed through with no review gate. Git printed "The '.husky/pre-commit' hook was ignored because it's not set as executable" and committed anyway. The same hint had appeared in the main checkout without anyone connecting it to a disabled gate.

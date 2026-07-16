@@ -4,6 +4,7 @@ import AuthorBio from "@/components/AuthorBio.astro";
 import JournalCityLinks from "@/components/journal/JournalCityLinks.astro";
 import { masterclassPosts } from "@/data/masterclasses";
 import { buildBreadcrumbJsonLd } from "@/utils/breadcrumbs";
+import { BRAND_LOGO_URL } from "@/data/brand";
 
 const post = masterclassPosts.find(
   (p) => p.slug === "situationship-masterclass",
@@ -59,7 +60,7 @@ const articleJsonLd = JSON.stringify({
     url: "https://garammasaladating.com",
     logo: {
       "@type": "ImageObject",
-      url: "https://garammasaladating.com/images/logo.svg",
+      url: BRAND_LOGO_URL,
     },
   },
   description: post.metaDescription,

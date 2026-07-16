@@ -1,6 +1,5 @@
 export const prerender = false;
 
-import { timingSafeEqual } from "node:crypto";
 import type { APIRoute } from "astro";
 import { fsGet, fsPatch, fsAdd, fsListAll, fsQuery } from "@/lib/firestoreRest";
 import { sendMail } from "@/lib/zohoMailer";
@@ -10,6 +9,9 @@ import {
   hostBriefing,
   type InterviewSummary,
 } from "@/data/emails";
+import { verifyCronSecret } from "@/lib/cronAuth";
+import { jsonResponse } from "@/lib/http";
+import { toMs } from "@/utils/date";
 
 const SKIP_FOLLOWUP_STATUSES = new Set([
   "Rejected",
@@ -28,36 +30,15 @@ const H24 = 24 * 60 * 60 * 1000;
 // Hard cap per section to bound cron execution time within Vercel's function limit.
 const MAX_PER_RUN = 50;
 
-function verifyCronSecret(request: Request): boolean {
-  const cronSecret = import.meta.env.CRON_SECRET;
-  if (!cronSecret) return false;
-  const provided = request.headers.get("authorization") ?? "";
-  const expected = `Bearer ${cronSecret}`;
-  if (provided.length !== expected.length) return false;
-  return timingSafeEqual(Buffer.from(provided), Buffer.from(expected));
-}
-
-function toMs(val: unknown): number | null {
-  if (typeof val !== "string") return null;
-  const ms = Date.parse(val);
-  return isNaN(ms) ? null : ms;
-}
-
 function todayNYC(): string {
   return new Date().toLocaleDateString("en-CA", {
     timeZone: "America/New_York",
   });
 }
 
-function json(data: Record<string, unknown>, status = 200) {
-  return new Response(JSON.stringify(data), {
-    status,
-    headers: { "Content-Type": "application/json" },
-  });
-}
-
 export const GET: APIRoute = async ({ request }) => {
-  if (!verifyCronSecret(request)) return json({ error: "Unauthorized" }, 401);
+  if (!verifyCronSecret(request))
+    return jsonResponse({ error: "Unauthorized" }, 401);
 
   const now = Date.now();
   const results = {
@@ -277,5 +258,5 @@ export const GET: APIRoute = async ({ request }) => {
     results.briefingSent = upcomingApps.length > 0;
   }
 
-  return json({ ok: true, ...results });
+  return jsonResponse({ ok: true, ...results });
 };

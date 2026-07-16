@@ -63,11 +63,6 @@ export const LeadPayloadSchema = z.object({
   company: normalizeOptionalString(200),
 });
 
-export const UpdateLeadSchema = z.object({
-  phone: normalizeRequiredString(1, 30),
-  updateToken: normalizeRequiredString(1, 512),
-});
-
 export const ContestantClaimSchema = z.object({
   inviteId: normalizeRequiredString(1, 100),
   firstName: normalizeRequiredString(1, 50),
@@ -138,7 +133,6 @@ export type ApplicationNotification = z.infer<
   typeof ApplicationNotificationSchema
 >;
 export type LeadPayload = z.infer<typeof LeadPayloadSchema>;
-export type UpdatePayload = z.infer<typeof UpdateLeadSchema>;
 export type ContestantClaimPayload = z.infer<typeof ContestantClaimSchema>;
 export type ContestantShowClaimPayload = z.infer<
   typeof ContestantShowClaimSchema

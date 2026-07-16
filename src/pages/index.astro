@@ -17,6 +17,7 @@ import StickyCTA from "@/components/StickyCTA.astro";
 import { CREATOR_URLS } from "@/data/socials";
 import { PAGES } from "@/data/copy";
 import { buildOrganizationJsonLd } from "@/utils/organizationSchema";
+import { BRAND_LOGO_URL } from "@/data/brand";
 import { YOUTUBE_VIDEO_ID, VIDEO_METADATA } from "@/lib/constants";
 import { events, allEvents } from "@/data/events";
 import { isUpcomingByIso } from "@/utils/eventDate";
@@ -65,7 +66,7 @@ const videoJsonLd = JSON.stringify({
     url: "https://garammasaladating.com",
     logo: {
       "@type": "ImageObject",
-      url: "https://garammasaladating.com/images/logo.svg",
+      url: BRAND_LOGO_URL,
     },
   },
 });

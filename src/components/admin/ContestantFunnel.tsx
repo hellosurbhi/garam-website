@@ -1,5 +1,6 @@
 import { useState, useMemo } from "react";
 import { type Application } from "@/types/application";
+import { toMs } from "@/utils/date";
 import styles from "./ContestantFunnel.module.css";
 
 interface ContestantFunnelProps {
@@ -13,22 +14,6 @@ const WINDOWS: { value: FunnelWindow; label: string }[] = [
   { value: 30, label: "30D" },
   { value: 90, label: "90D" },
 ];
-
-function toMs(val: unknown): number | null {
-  if (!val) return null;
-  if (typeof val === "string") {
-    const ms = Date.parse(val);
-    return isNaN(ms) ? null : ms;
-  }
-  if (
-    typeof val === "object" &&
-    val !== null &&
-    typeof (val as Record<string, unknown>).toDate === "function"
-  ) {
-    return (val as { toDate: () => Date }).toDate().getTime();
-  }
-  return null;
-}
 
 function inWindow(val: unknown, start: number): boolean {
   const ms = toMs(val);

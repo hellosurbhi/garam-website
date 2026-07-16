@@ -1,6 +1,7 @@
 import { type ReactNode, useState } from "react";
 import { getFirebaseAuth } from "@/lib/firebase";
 import { type Application } from "@/types/application";
+import { toMs } from "@/utils/date";
 import ContestantInviteModal from "./ContestantInviteModal";
 import styles from "./TaskInbox.module.css";
 
@@ -8,26 +9,6 @@ interface TaskInboxProps {
   applications: Application[];
   onOpenApp: (app: Application) => void;
   onRefresh: (id: string, patch: Partial<Application>) => void;
-}
-
-// ── Timestamp helpers ─────────────────────────────────────────────────────────
-// Fields set via Firestore REST API arrive as ISO strings; fields set via the
-// Firebase client SDK arrive as Firestore Timestamps. Handle both.
-
-function toMs(val: unknown): number | null {
-  if (!val) return null;
-  if (typeof val === "string") {
-    const ms = Date.parse(val);
-    return isNaN(ms) ? null : ms;
-  }
-  if (
-    typeof val === "object" &&
-    val !== null &&
-    typeof (val as Record<string, unknown>).toDate === "function"
-  ) {
-    return (val as { toDate: () => Date }).toDate().getTime();
-  }
-  return null;
 }
 
 function hoursAgo(val: unknown): number {
@@ -321,7 +302,9 @@ export default function TaskInbox({
       onRefresh(appId, patch);
     } catch (e) {
       console.error(e);
-      setActionError(e instanceof Error ? e.message : "Action failed. Please try again.");
+      setActionError(
+        e instanceof Error ? e.message : "Action failed. Please try again.",
+      );
     } finally {
       setLoadingId(null);
     }

@@ -1,5 +1,13 @@
 import { getFirestoreAccessToken } from "./firestoreAdmin";
 
+function safePath(path: string): string {
+  const segments = path.split("/");
+  if (segments.some((s) => s === ".." || s === "." || s === "")) {
+    throw new Error(`Unsafe Firestore path segment in: ${path}`);
+  }
+  return segments.map(encodeURIComponent).join("/");
+}
+
 type FirestoreValue =
   | { nullValue: null }
   | { booleanValue: boolean }
@@ -64,8 +72,9 @@ function baseUrl(): string {
 export async function fsGet(
   docPath: string,
 ): Promise<Record<string, unknown> | null> {
+  const encoded = safePath(docPath);
   const token = await getFirestoreAccessToken();
-  const res = await fetch(`${baseUrl()}/${docPath}`, {
+  const res = await fetch(`${baseUrl()}/${encoded}`, {
     headers: { Authorization: `Bearer ${token}` },
   });
   if (res.status === 404) return null;
@@ -79,13 +88,14 @@ export async function fsPatch(
   docPath: string,
   fields: Record<string, unknown>,
 ): Promise<void> {
+  const encoded = safePath(docPath);
   const token = await getFirestoreAccessToken();
   const fieldNames = Object.keys(fields);
   const mask = fieldNames
     .map((f) => `updateMask.fieldPaths=${encodeURIComponent(f)}`)
     .join("&");
 
-  const res = await fetch(`${baseUrl()}/${docPath}?${mask}`, {
+  const res = await fetch(`${baseUrl()}/${encoded}?${mask}`, {
     method: "PATCH",
     headers: {
       Authorization: `Bearer ${token}`,
@@ -104,8 +114,9 @@ export async function fsAdd(
   collectionPath: string,
   fields: Record<string, unknown>,
 ): Promise<string> {
+  const encoded = safePath(collectionPath);
   const token = await getFirestoreAccessToken();
-  const res = await fetch(`${baseUrl()}/${collectionPath}`, {
+  const res = await fetch(`${baseUrl()}/${encoded}`, {
     method: "POST",
     headers: {
       Authorization: `Bearer ${token}`,
@@ -198,7 +209,7 @@ export async function fsListAll(
   let pageToken: string | undefined;
 
   do {
-    const url = new URL(`${baseUrl()}/${collectionId}`);
+    const url = new URL(`${baseUrl()}/${safePath(collectionId)}`);
     url.searchParams.set("pageSize", "300");
     if (pageToken) url.searchParams.set("pageToken", pageToken);
 
@@ -233,13 +244,14 @@ export async function fsDeleteFields(
   docPath: string,
   fieldNames: string[],
 ): Promise<void> {
+  const encoded = safePath(docPath);
   const token = await getFirestoreAccessToken();
   const mask = fieldNames
     .map((f) => `updateMask.fieldPaths=${encodeURIComponent(f)}`)
     .join("&");
 
   // Sending an empty fields object with the updateMask removes those fields
-  const res = await fetch(`${baseUrl()}/${docPath}?${mask}`, {
+  const res = await fetch(`${baseUrl()}/${encoded}?${mask}`, {
     method: "PATCH",
     headers: {
       Authorization: `Bearer ${token}`,

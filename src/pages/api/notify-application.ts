@@ -2,6 +2,7 @@ import type { APIRoute } from "astro";
 import { z } from "zod";
 import { sendMail } from "@/lib/zohoMailer";
 import { applicationReceived, escapeHtml, subjectSafe } from "@/data/emails";
+import { instagramUrl, cleanInstagramHandle } from "@/utils/instagram";
 import { enforceRateLimit, RATE_LIMITS } from "@/lib/rateLimit";
 
 export const prerender = false;
@@ -63,7 +64,7 @@ function buildAdminEmailHtml(data: ApplicationNotification): string {
     ],
     [
       "Instagram",
-      `<a href="https://instagram.com/${escapeHtml(data.instagram)}" style="color:#DC2626;">@${escapeHtml(data.instagram)}</a>`,
+      `<a href="${escapeHtml(instagramUrl(cleanInstagramHandle(data.instagram)))}" style="color:#DC2626;">@${cleanInstagramHandle(escapeHtml(data.instagram))}</a>`,
     ],
     ["Community", escapeHtml(data.community)],
     ["Income", escapeHtml(data.income)],

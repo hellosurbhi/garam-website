@@ -4,34 +4,20 @@ import type { APIRoute } from "astro";
 import { fsPatch, fsAdd, fsListAll } from "@/lib/firestoreRest";
 import { sendMail } from "@/lib/zohoMailer";
 import { postShow } from "@/data/emails";
+import { verifyCronSecret } from "@/lib/cronAuth";
+import { jsonResponse } from "@/lib/http";
+import { toMs } from "@/utils/date";
 
 const D3 = 3 * 24 * 60 * 60 * 1000;
 const D10 = 10 * 24 * 60 * 60 * 1000;
 
-function verifyCronSecret(request: Request): boolean {
-  const cronSecret = import.meta.env.CRON_SECRET;
-  if (!cronSecret) return false;
-  return request.headers.get("authorization") === `Bearer ${cronSecret}`;
-}
-
-function toMs(val: unknown): number | null {
-  if (typeof val !== "string") return null;
-  const ms = Date.parse(val);
-  return isNaN(ms) ? null : ms;
-}
-
-function json(data: Record<string, unknown>, status = 200) {
-  return new Response(JSON.stringify(data), {
-    status,
-    headers: { "Content-Type": "application/json" },
-  });
-}
-
 export const GET: APIRoute = async ({ request }) => {
-  if (!verifyCronSecret(request)) return json({ error: "Unauthorized" }, 401);
+  if (!verifyCronSecret(request))
+    return jsonResponse({ error: "Unauthorized" }, 401);
 
   const now = Date.now();
   let sent = 0;
+  let persistenceFailures = 0;
 
   const allApps = await fsListAll("applications");
 
@@ -63,17 +49,25 @@ export const GET: APIRoute = async ({ request }) => {
     }
 
     const sentAt = new Date().toISOString();
-    await fsPatch(`applications/${app.id as string}`, {
-      postShowSentAt: sentAt,
-    });
-    await fsAdd(`applications/${app.id as string}/events`, {
-      type: "post_show_sent",
-      timestamp: sentAt,
-      actor: "system",
-      payload: {},
-    });
-    sent++;
+    try {
+      await fsPatch(`applications/${app.id as string}`, {
+        postShowSentAt: sentAt,
+      });
+      await fsAdd(`applications/${app.id as string}/events`, {
+        type: "post_show_sent",
+        timestamp: sentAt,
+        actor: "system",
+        payload: {},
+      });
+      sent++;
+    } catch (err) {
+      persistenceFailures++;
+      console.error("[post-show] Firestore write failed after send:", err);
+    }
   }
 
-  return json({ ok: true, sent });
+  return jsonResponse(
+    { ok: persistenceFailures === 0, sent, persistenceFailures },
+    persistenceFailures === 0 ? 200 : 500,
+  );
 };

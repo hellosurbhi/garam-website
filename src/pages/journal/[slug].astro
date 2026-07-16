@@ -19,6 +19,7 @@ import { HF_IMAGES_ASSETS } from "@/assets/backgrounds";
 import { slugToImageIndex } from "@/data/images";
 import { gitDates } from "virtual:git-dates";
 import { VERDICT_BOX } from "@/data/copy";
+import { BRAND_LOGO_URL } from "@/data/brand";
 
 export function getStaticPaths() {
   return journalPostsPublished.map((post) => ({
@@ -72,7 +73,7 @@ const articleJsonLd = JSON.stringify({
     url: "https://garammasaladating.com",
     logo: {
       "@type": "ImageObject",
-      url: "https://garammasaladating.com/images/logo.svg",
+      url: BRAND_LOGO_URL,
     },
   },
   description: post.metaDescription,

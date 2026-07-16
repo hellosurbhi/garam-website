@@ -1499,3 +1499,8 @@ If the ambiguity matters there too, rename both with Surbhi's approval on the ex
 - 2026-07-15T19:26Z | tier=F | primary=coderabbit | reason=error | fallback_used=gemini | commit=8ecc6b2 | diff_sha=c9f20eceb0d2132fd116a62263d47c0c3d5f314a576755c1dfc0e7cb6dd8f18b
 - 2026-07-15T19:37Z | tier=E | primary=codex | reason=error_or_timeout | fallback_used=gemini | commit=8ecc6b2 | diff_sha=0dcddf1f107891ad33ffb99d2cd75f10b3ad2973464c41b886f960166a096a50
 - 2026-07-15T19:37Z | tier=F | primary=coderabbit | reason=error | fallback_used=gemini | commit=8ecc6b2 | diff_sha=0dcddf1f107891ad33ffb99d2cd75f10b3ad2973464c41b886f960166a096a50
+- 2026-07-16T18:17Z | tier=E | primary=ALL | reason=OUTAGE | fallback_used=NONE | commit=5ddedb4 | diff_sha=ed14541b82dc007ce4624509b649e2da8f71e4fe8c02799ab276ad30e4d08254
+
+### Codex (2026-07-16T19:17Z)
+
+- LOW: New `BUGS.md` headings use em dashes and `CHANGELOG.md:11` adds an Oxford comma, both violating the repository copy mandate.

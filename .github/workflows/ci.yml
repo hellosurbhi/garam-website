@@ -41,6 +41,16 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+        with:
+          # WHY fetch-depth: 0 (not the default shallow clone): the patch-coverage
+          # step below diffs the PR head against its base commit. A shallow clone
+          # only has the tip commit, so `git diff <base> <head>` fails with
+          # "unknown revision" the moment the base isn't the immediate parent.
+          fetch-depth: 0
+          # Check out the PR's actual head commit, not GitHub's ephemeral test-merge
+          # commit (the default for pull_request events). The merge commit has no
+          # stable SHA to diff against and changes shape independent of the PR itself.
+          ref: ${{ github.event.pull_request.head.sha }}
       - uses: actions/setup-node@v6
         with:
           node-version: 22
@@ -49,7 +59,12 @@ jobs:
       - run: npm ci
       - run: npm run lint
       - run: npx astro check
-      - run: npm test
+      - run: npm run test:coverage
+      - name: Patch coverage gate (new/changed lines must be tested)
+        env:
+          DIFF_BASE_SHA: ${{ github.event.pull_request.base.sha }}
+          DIFF_HEAD_SHA: ${{ github.event.pull_request.head.sha }}
+        run: node scripts/diff-coverage.mjs
       - run: npm run build
       - name: Security audit
         run: npm audit --audit-level=high --omit=dev

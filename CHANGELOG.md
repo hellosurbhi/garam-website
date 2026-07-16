@@ -1,5 +1,15 @@
 # Changelog
 
+## fix(test-gate): CI patch-coverage gate + weekly scheduled mutation audit, replacing the toothless push-time Stryker check (2026-07-16)
+
+Rearchitects the test and mutation gate into layers, the standard split between a fast blocking check and a slow periodic audit (see LESSONS.md).
+
+- `scripts/diff-coverage.mjs`, wired into `.github/workflows/ci.yml`'s required "Lint, Types, Test, Build" job, fails a PR when the lines it actually changed in `src/**/*.{ts,tsx}` or `api/**/*.ts` are under 80% covered, using the vitest v8 coverage provider (`@vitest/coverage-v8`, new `coverage` block in `vitest.config.ts`). This is the real enforcement of "new code needs a test." A global coverage threshold would block unrelated PRs on the admin dashboard's pre-existing near-zero coverage, pending its rewrite (see ENHANCEMENTS.md), but patch coverage only judges the lines a PR touches.
+- `.github/workflows/mutation-audit.yml` (new) runs Stryker on a Monday-morning schedule, or on demand via `workflow_dispatch`, decoupled entirely from the push and PR path, and opens a draft PR updating `MUTATION-AUDIT.md` (built by `scripts/mutation-audit-summary.mjs`) with the score and any surviving or uncovered mutants. This is informational only and never auto-merges: some surviving mutants are equivalent mutants with no real behavior difference, not real gaps, and only a human can tell the difference.
+- Corrected a stale comment in `stryker.config.mjs` claiming `.husky/pre-push` falls through to `scripts/mutation-ratchet.sh` when the global hook is absent. It never did. `mutation:ratchet` remains available as an optional manual command, not an enforced gate.
+
+Not done in this PR: the global hook (`~/.claude/config/git-hooks/pre-push`) still runs `run_stryker || true` on every push, burning several minutes each time, and its failure message ("STRYKER FAILED...") is immediately followed by "All pre-push checks passed" regardless, a contradiction reconfirmed on a push earlier today. Removing that call needs explicit, per-instance authorization on that specific cross-repo file; it isn't a change this PR can make unilaterally. A second planned item, adding an affected-tests-only step to local pre-push, was dropped as redundant: `.husky/pre-commit` already runs the full 1157-test vitest suite (18 to 46 seconds) on every commit, which is strictly stronger than an affected-only check would be at push time on the same already-tested commits.
+
 ## fix(ci): required check runs on every PR, docs included (2026-07-14)
 
 The ruleset "Protect Main" requires the "Lint, Types, Test, Build" check, but ci.yml ignored markdown and docs paths, so docs-only PRs never started the check and sat permanently blocked (hit on PR #139). The paths-ignore block is gone: full CI runs on every PR to main. Owner decision: no conditional skips and no success reported without the checks actually running.

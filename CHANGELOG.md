@@ -1,5 +1,16 @@
 # Changelog
 
+## test(contestant-workflow): backend unit coverage for zohoMailer, cal.com webhook, and cron jobs (2026-07-16)
+
+Closes the backend half of the P1 to P5 contestant workflow test-coverage gap (see BUGS.md): a Stryker mutation report found these files at 0 to 8% mutation coverage since none had a single unit test.
+
+- `src/lib/zohoMailer.test.ts` (new): missing-credential throws, SMTP transport config, from-name and reply-to defaults and overrides, error propagation from the underlying transport.
+- `test/cal-webhook.test.ts` (new): HMAC signature verification (missing signature, wrong signature, unconfigured secret), invalid JSON body, unknown trigger events, missing attendee email, New to Contacted status transition, and the reschedule/cancel `calBookingId` mismatch guards.
+- `test/post-show.test.ts` (new): auth guard, status filter, the D3 to D10 day send window boundaries, already-sent/soft-deleted/missing-participatedAt/missing-email skips, and confirming a `sendMail` failure does not mark the applicant as sent.
+- `test/followups.test.ts` (extended): all four passes now covered, scheduling follow-up (with the `MAX_PER_RUN` cap), waiver nudge (including invite-link resolution via `fsQuery`), auto-decay, and the NYC-timezone-deduped host briefing.
+
+`src/components/ContestantPortal.tsx` and the admin `TaskInbox.tsx`/`ContestantFunnel.tsx` remain untested; see ENHANCEMENTS.md for why and what ships next.
+
 ## fix(ci): required check runs on every PR, docs included (2026-07-14)
 
 The ruleset "Protect Main" requires the "Lint, Types, Test, Build" check, but ci.yml ignored markdown and docs paths, so docs-only PRs never started the check and sat permanently blocked (hit on PR #139). The paths-ignore block is gone: full CI runs on every PR to main. Owner decision: no conditional skips and no success reported without the checks actually running.

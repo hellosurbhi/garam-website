@@ -1,6 +1,6 @@
 /* Anton — display (condensed bold, ALL CAPS headlines) */
 @font-face {
-  font-family: "Anton";
+  font-family: Anton;
   font-style: normal;
   font-weight: 400;
   font-display: swap;
@@ -123,7 +123,7 @@ body {
   margin: 0;
   background: var(--page);
   color: var(--charcoal);
-  font-family: "Hanken Grotesk", sans-serif;
+  font-family: var(--font-body), sans-serif;
   overflow-x: hidden;
   min-width: 320px;
   display: flex;
@@ -154,7 +154,7 @@ button:disabled {
 /* ─── Shared pill buttons ─── */
 .btn {
   font-family: var(--font-body), sans-serif;
-  font-size: 15px;
+  font-size: 16px;
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 2px;
@@ -197,18 +197,18 @@ button:disabled {
 /* Dark-context outline button (on --ink sections) */
 .btn-outline {
   background: transparent;
-  color: white;
-  border-color: rgba(255, 255, 255, 0.35);
+  color: var(--white);
+  border-color: rgba(var(--white-rgb), 0.35);
 }
 
 .btn-outline:hover {
-  border-color: white;
+  border-color: var(--white);
   transform: translateY(-2px);
 }
 
 .btn-outline:focus-visible {
-  border-color: white;
-  outline: 2px solid white;
+  border-color: var(--white);
+  outline: 2px solid var(--white);
   outline-offset: 3px;
 }
 

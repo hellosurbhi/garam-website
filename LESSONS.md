@@ -1,5 +1,13 @@
 # Lessons
 
+## A push-time test gate that's backwards is worse than no gate
+
+**What went wrong:** Five contestant-workflow PRs (P1 to P5) shipped 2026-07-03 to 07-05 with zero unit tests, and the pre-push Stryker mutation gate never caught it. A later push then printed "STRYKER FAILED: Mutation score dropped" immediately followed by "All pre-push checks passed", the exact opposite conclusion, in the same output.
+
+**Why:** Two separate bugs compounded. First, the gate's own condition ran Stryker only if a test file had changed in the last 7 days, meant to save time on unrelated pushes, but this is backwards: it skips exactly the PRs that add production code with no test at all, which is the case that most needs catching. Second, the invocation was `run_stryker || true`, so even a real regression could never fail the push; the "All pre-push checks passed" line printed unconditionally afterward regardless of what Stryker actually found.
+
+**Rule:** A slow, thorough check (mutation testing, 15 to 20 minutes) does not belong on the push path at all, gated or not; it belongs on a schedule, reviewed by a human (see CHANGELOG.md, 2026-07-16, `.github/workflows/mutation-audit.yml`). The checks that do belong on the push/PR path are fast and precise: the full test suite on every commit (already `.husky/pre-commit`) and patch/diff coverage in CI on the lines a PR actually changed (`scripts/diff-coverage.mjs`), not a proxy like "did a test file change in the last N days" or a ratchet that can invoke its own failure branch with `|| true` and still report success.
+
 ## Git hooks must be tracked with the executable bit or the gate silently dies
 
 **What went wrong:** A commit sailed through with no review gate. Git printed "The '.husky/pre-commit' hook was ignored because it's not set as executable" and committed anyway. The same hint had appeared in the main checkout without anyone connecting it to a disabled gate.

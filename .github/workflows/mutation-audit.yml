@@ -1,0 +1,94 @@
+# Weekly Mutation Audit — informational only, never blocks a push or a PR.
+#
+# WHY this exists: mutation testing (Stryker) takes 15-20 minutes. It used to
+# run on every push via the global hook (~/.claude/config/git-hooks/pre-push,
+# run_stryker), invoked as `run_stryker || true` so it could never actually
+# block anything while still costing every push several minutes -- backwards
+# and toothless at the same time. This moves it to a schedule, decoupled from
+# the push path entirely, that opens a draft PR with findings for a human to
+# act on. See BUGS.md / CHANGELOG.md (2026-07-16) for the full incident.
+name: Weekly Mutation Audit
+
+on:
+  schedule:
+    - cron: "0 6 * * 1" # Mondays at 6am UTC
+  workflow_dispatch: {} # Allow manual trigger
+
+permissions:
+  contents: write
+  pull-requests: write
+
+concurrency:
+  group: mutation-audit
+  cancel-in-progress: false
+
+jobs:
+  audit:
+    name: Run Stryker and open a findings PR
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v6
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+
+      # Incremental mode skips re-testing mutants whose surrounding code and
+      # tests haven't changed since the last recorded run. On ephemeral CI
+      # runners that only means anything if the incremental file survives
+      # between runs, which is what this cache is for. A unique key per run
+      # (github.run_id) plus a prefix restore-key means every run both
+      # restores the most recent prior state AND saves a fresh one, rather
+      # than freezing on the first run's cache forever.
+      - name: Restore incremental mutation cache
+        uses: actions/cache@v4
+        with:
+          path: reports/stryker-incremental.json
+          key: stryker-incremental-${{ github.run_id }}
+          restore-keys: |
+            stryker-incremental-
+
+      - name: Run Stryker
+        run: npx stryker run --incremental 2>&1 | tee stryker-output.log
+
+      - name: Build MUTATION-AUDIT.md
+        run: node scripts/mutation-audit-summary.mjs stryker-output.log
+
+      - name: Upload HTML report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: mutation-report
+          path: reports/mutation/
+          retention-days: 30
+
+      # Opens/updates a draft PR with only MUTATION-AUDIT.md staged (add-paths),
+      # regardless of what else may be sitting untracked in the working tree.
+      # WHY draft, and why this never writes fix code: mutation testing surfaces
+      # weak or missing assertions, but plenty of "surviving" mutants are
+      # equivalent mutants with no real behavior difference, not real gaps.
+      # Auto-generating tests to silence them risks locking in whatever the
+      # current (possibly buggy) behavior happens to be. A human reads the
+      # findings and decides what, if anything, to write -- this PR never
+      # auto-merges.
+      - name: Open draft PR with findings
+        uses: peter-evans/create-pull-request@v6
+        with:
+          commit-message: "chore(mutation): weekly audit update"
+          title: "Weekly mutation audit"
+          body: >
+            Automated weekly Stryker mutation run. See MUTATION-AUDIT.md for
+            the summary and the mutation-report artifact on this workflow run
+            for the full interactive HTML report.
+
+
+            This PR is informational only and never auto-merges: mutation
+            testing surfaces weak or missing assertions, but a human has to
+            judge each finding before writing a test, since some surviving
+            mutants are equivalent mutants with no real behavior difference
+            rather than real gaps.
+          branch: mutation-audit/weekly
+          delete-branch: true
+          draft: true
+          add-paths: MUTATION-AUDIT.md

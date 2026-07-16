@@ -1,5 +1,15 @@
 # Changelog
 
+## feat(events): tracked per-event landing pages + CAPI conversion tracking (2026-07-16)
+
+Shows expanding onto venues and third-party organizers' own Eventbrite accounts produced zero conversion signal, since the only tracked checkout path was the inline Eventbrite embed/modal, which never loads for a listing we don't own. Resolves the `checkout_started` / `ticket_purchased` Eventbrite tracking item from ENHANCEMENTS.md (entry removed, "Option A" webhook approach implemented as a cron-based sync instead, see the new Eventbrite order webhook enhancement entry for the latency tradeoff):
+
+- New `/events/[slug]` landing page per show, built from `src/data/events.ts` + new `src/data/lineup.ts`, with Eventbrite API content pulled at build time for owned events (`src/lib/eventbriteContent.ts`) and manual content for third-party shows.
+- "Get Tickets" now routes through `/api/go/[slug]`, firing server-side Meta CAPI `InitiateCheckout` (`src/lib/capi.ts`) before a 302 to the real checkout, deduped against the browser pixel via a shared `event_id`. Works even when the browser pixel is blocked, and works for shows we don't own.
+- Removed the Eventbrite inline iframe embed and checkout-modal widget everywhere (city pages, `/tickets`, home, apply-success) in favor of one consistent ticket card + tracked redirect.
+- Removed every visible ticket price from the UI, including six hardcoded "$15" mentions in city-page FAQ/hero copy (Edison NJ, Dallas, Toronto) that didn't match real per-show Eventbrite pricing. Price now lives only in Event JSON-LD, sourced from real Eventbrite order data via `sync-orders.ts`'s CAPI Purchase sync.
+- Logged an unrelated pre-existing bug found along the way: Event JSON-LD hardcodes the New York UTC offset for every city.
+
 ## fix(ci): required check runs on every PR, docs included (2026-07-14)
 
 The ruleset "Protect Main" requires the "Lint, Types, Test, Build" check, but ci.yml ignored markdown and docs paths, so docs-only PRs never started the check and sat permanently blocked (hit on PR #139). The paths-ignore block is gone: full CI runs on every PR to main. Owner decision: no conditional skips and no success reported without the checks actually running.

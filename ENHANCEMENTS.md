@@ -1499,3 +1499,4 @@ If the ambiguity matters there too, rename both with Surbhi's approval on the ex
 - 2026-07-15T19:26Z | tier=F | primary=coderabbit | reason=error | fallback_used=gemini | commit=8ecc6b2 | diff_sha=c9f20eceb0d2132fd116a62263d47c0c3d5f314a576755c1dfc0e7cb6dd8f18b
 - 2026-07-15T19:37Z | tier=E | primary=codex | reason=error_or_timeout | fallback_used=gemini | commit=8ecc6b2 | diff_sha=0dcddf1f107891ad33ffb99d2cd75f10b3ad2973464c41b886f960166a096a50
 - 2026-07-15T19:37Z | tier=F | primary=coderabbit | reason=error | fallback_used=gemini | commit=8ecc6b2 | diff_sha=0dcddf1f107891ad33ffb99d2cd75f10b3ad2973464c41b886f960166a096a50
+- 2026-07-16T18:25Z | tier=E | primary=ALL | reason=OUTAGE | fallback_used=NONE | commit=f1d5483 | diff_sha=082f7bb0e23255ee6634a79539f3161de20a35f7ddbba111e74e630c08eaa40b

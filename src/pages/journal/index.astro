@@ -64,14 +64,25 @@ const breadcrumbJsonLd = buildBreadcrumbJsonLd([
     <div class="journal-container">
       <!-- Header -->
       <div class="journal-header">
-        <p class="journal-eyebrow">Journal</p>
-        <h1 class="journal-title">
-          Garam Mas<em>ala</em> Dating
-        </h1>
-        <p class="journal-desc">
-          Essays on desi dating, the live show, and what we've learned from
-          watching it all unfold on stage.
-        </p>
+        <div class="journal-header-text">
+          <p class="journal-eyebrow">Journal</p>
+          <h1 class="journal-title">
+            Garam Mas<em>ala</em> Dating
+          </h1>
+          <p class="journal-desc">
+            Essays on desi dating, the live show, and what we've learned from
+            watching it all unfold on stage.
+          </p>
+        </div>
+        <img
+          class="journal-cupid"
+          src="/images/ai-art/cupid-garden.webp"
+          alt=""
+          width="1152"
+          height="928"
+          aria-hidden="true"
+          loading="eager"
+        />
       </div>
 
       <!-- Divider -->
@@ -169,7 +180,30 @@ const breadcrumbJsonLd = buildBreadcrumbJsonLd([
   }
 
   .journal-header {
+    display: grid;
+    grid-template-columns: 1fr 160px;
+    gap: 24px;
+    align-items: center;
     margin-bottom: 32px;
+  }
+
+  .journal-cupid {
+    width: 160px;
+    height: 129px;
+    object-fit: cover;
+    object-position: center top;
+    border-radius: 8px;
+    opacity: 0.88;
+    display: block;
+  }
+
+  @media (max-width: 560px) {
+    .journal-header {
+      grid-template-columns: 1fr;
+    }
+    .journal-cupid {
+      display: none;
+    }
   }
 
   .journal-eyebrow {

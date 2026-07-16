@@ -1,5 +1,19 @@
 # Changelog
 
+## fix(security): remove unsafe-inline from CSP via Astro security.csp (2026-07-16)
+
+Enabled Astro 7's `security.csp` in `astro.config.mjs`. At build time Astro computes sha256 hashes for every inline `<script>` and `<style>` block and injects a `<meta http-equiv="content-security-policy">` into every page. Both the HTTP header (vercel.json) and the meta tag must pass, so inline content requires a hash match — `unsafe-inline` is effectively negated per the CSP spec (when a hash or nonce is present, unsafe-inline is ignored in that policy by modern browsers).
+
+Removed `'unsafe-inline'` from `script-src` and `style-src` in `vercel.json` to reflect the actual security state; the external script domain allowlist remains for legacy CSP2 browser fallback. `scriptDirective.resources` lists all 14 third-party script domains (GTM, EB, PostHog, Meta, TikTok, Twitter, Cloudflare Turnstile) so they remain trusted. Feature does not run in `dev` mode (vite HMR injects un-hashed scripts) — only enforced after `build`/`preview`.
+
+## feat(journal): wire cupid-garden.webp decorative artwork into journal index (2026-07-16)
+
+Added `public/images/ai-art/cupid-garden.webp` (1152x928, had existed unused since April) to the journal index page header. Two-column grid layout on tablet/desktop: header text left, 160x129px cropped thumbnail right. Hidden on screens below 560px. `loading="eager"` since it's above the fold.
+
+## fix(dev): strip TS syntax from all inline astro scripts; clean up BUGS.md (2026-07-16)
+
+Swept all 12 .astro files where `vite:oxc` (Rolldown) threw `[PARSE_ERROR]` in `npm run dev` due to TypeScript syntax in inline `<script>` blocks. Removed type imports, `as HTML*` casts, generic querySelector calls, function type annotations, non-null `!` operators, and interface/type declarations from: EventbriteWidgetInit, BaseLayout, HomeNav, HomeVideo, TicketCard, situationship-masterclass, HomeSignup, HomeShows, NotifyModal, LeadCaptureModal, index.astro, cities/[slug].astro. Business logic and full typing preserved in the `.ts` lib modules these scripts import from. Purged all completed entries from BUGS.md per doc routing mandate.
+
 ## feat(redesign): full visual overhaul — new type system, dark hero, squared buttons (2026-07-15)
 
 Complete website redesign across all pages and components:

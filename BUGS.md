@@ -1,16 +1,5 @@
 # Bugs
 
-## Open
-
-### [LOW] CSP uses unsafe-inline weakening XSS protection
-
-- **Date:** 2026-04-04
-- **File:** `vercel.json`
-- **Severity:** Low
-- **What's happening:** Both script-src and style-src include 'unsafe-inline', weakening CSP XSS protection.
-- **What should happen:** Since the site is SSG, nonces do not apply; hashes do. Migrate to Astro's `experimental.csp` support, which computes hashes for inline scripts and styles at build time, then move the Content-Security-Policy header out of `vercel.json` so there is one source of truth.
-- **Fix:** Dedicated PR (2026-07-05 triage decision): the migration touches every page's inline scripts and needs its own smoke-test pass, so it stays out of batch fixes.
-
 ## Deferred
 
 ### [MEDIUM] Home creators avatars not upgraded to larger host photos

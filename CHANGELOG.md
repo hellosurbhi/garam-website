@@ -1,5 +1,18 @@
 # Changelog
 
+## feat(photos): add 5 new show photos + remove homepage email popup (2026-07-16)
+
+Removed the homepage email popup dialog entirely (`src/pages/index.astro`): deleted the `<dialog>` HTML, all popup JS (exit-intent, scroll-depth, form handlers, localStorage keys), and all popup CSS classes. Rationale: cannot promise a consistent discount across all future events, so the offer copy was unresolvable.
+
+Converted 5 new professional show photos to webp at canonical promo dimensions (Q82) and wired into the site:
+- `_LEO7701.jpg` (4000x6000) → `hosts-portrait.webp` (800x1200): replaces the older hosts action shot on the hosts page. Better portrait composition of Surbhi and Wyatt at Top Secret Comedy Club.
+- `GMDS SF 2026 EDITS-10.jpg` (6841x4561) → `on-stage-sf.webp` (1200x800): replaces `magic-moment.webp` as the Experience section left-panel background. Shows both hosts on stage at The Faight (SF 2026 show).
+- `Garammasaladating-2.jpg` (2000x1333) → `stage-hug.webp` (1200x800): replaces `pure-chaos.webp` as the Experience section right-panel background.
+- `_LEO8613.jpg` (6000x4000) → `intimate-moment.webp` (1200x800): replaces `after-party.webp` as the Testimonials section background. More emotional, intimate show moment.
+- `Garammasaladating-35.jpg` (2000x1333) → `crowd-piggyback.webp` (1200x800): added to `public/images/promo/` for future use.
+
+Cleared BUGS.md of all completed and now-resolved deferred entries: journal cupid artwork, popup CTA copy, HomeCreators avatars (owner accepted current state), hosts page avatars (owner accepted current state), Experience section photo, Testimonials accent photo.
+
 ## fix(security): remove unsafe-inline from CSP via Astro security.csp (2026-07-16)
 
 Enabled Astro 7's `security.csp` in `astro.config.mjs`. At build time Astro computes sha256 hashes for every inline `<script>` and `<style>` block and injects a `<meta http-equiv="content-security-policy">` into every page. Both the HTTP header (vercel.json) and the meta tag must pass, so inline content requires a hash match — `unsafe-inline` is effectively negated per the CSP spec (when a hash or nonce is present, unsafe-inline is ignored in that policy by modern browsers).

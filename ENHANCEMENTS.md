@@ -1499,3 +1499,16 @@ If the ambiguity matters there too, rename both with Surbhi's approval on the ex
 - 2026-07-15T19:26Z | tier=F | primary=coderabbit | reason=error | fallback_used=gemini | commit=8ecc6b2 | diff_sha=c9f20eceb0d2132fd116a62263d47c0c3d5f314a576755c1dfc0e7cb6dd8f18b
 - 2026-07-15T19:37Z | tier=E | primary=codex | reason=error_or_timeout | fallback_used=gemini | commit=8ecc6b2 | diff_sha=0dcddf1f107891ad33ffb99d2cd75f10b3ad2973464c41b886f960166a096a50
 - 2026-07-15T19:37Z | tier=F | primary=coderabbit | reason=error | fallback_used=gemini | commit=8ecc6b2 | diff_sha=0dcddf1f107891ad33ffb99d2cd75f10b3ad2973464c41b886f960166a096a50
+- 2026-07-15T20:02Z | tier=E | primary=codex | reason=error_or_timeout | fallback_used=gemini | commit=6d4ffce | diff_sha=b08d7547b063f0d65a61651faeee2b1aa1873cd6e19f1e53b053088d83326903
+- 2026-07-15T20:05Z | tier=E | primary=codex | reason=error_or_timeout | fallback_used=gemini | commit=6d4ffce | diff_sha=6f33d9df6bc37013fa4dff92a4c984aef976932b116a1d6b01b650717df28de7
+
+### CodeRabbit — 20260715-160549
+
+- LOW: [CodeRabbit] ENHANCEMENTS.md: Verify each finding against current code. Fix only still-valid issues, skip the rest with a brief reason, keep changes minimal, and validate. In @ENHANCEMENTS.md at line 1493, Update the metadata timestamp entry in ENHANCEMENTS.md to use the repository-approved dash-free separator format instead of the hyphenated date in the 2026-07-15T20:02Z value. Preserve the remaining metadata fields unchange...
+- 2026-07-15T20:09Z | tier=E | primary=codex | reason=error_or_timeout | fallback_used=gemini | commit=93fe5a9 | diff_sha=a31236d356caa725b1069536731a9386a9b777862aa98b6f7c956a16f61aec04
+- 2026-07-15T20:09Z | tier=F | primary=coderabbit | reason=error | fallback_used=gemini | commit=93fe5a9 | diff_sha=a31236d356caa725b1069536731a9386a9b777862aa98b6f7c956a16f61aec04
+
+### DeepSeek — 20260715-160953
+
+- LOW: The heading '### CodeRabbit — 20260715-160549' uses an em dash, which violates the project's copy voice mandate.
+  > a/ENHANCEMENTS.md:1496 | +### CodeRabbit — 20260715-160549

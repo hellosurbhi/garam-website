@@ -34,7 +34,7 @@
 .reloadButton {
   margin-top: 24px;
   padding: 14px 32px;
-  border-radius: 50px;
+  border-radius: 4px;
   border: none;
   background: var(--brand-red);
   color: white;

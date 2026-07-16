@@ -74,11 +74,12 @@
 }
 
 .title {
-  font-family: var(--font-playfair);
+  font-family: var(--font-display), sans-serif;
   font-size: clamp(36px, 5vw, 48px);
-  font-weight: 700;
+  font-weight: 400;
+  text-transform: uppercase;
   color: var(--charcoal);
-  line-height: 1.1;
+  line-height: 0.92;
   margin-bottom: 10px;
 }
 
@@ -192,9 +193,11 @@
 }
 
 .sectionTitle {
-  font-family: var(--font-playfair);
+  font-family: var(--font-display), sans-serif;
   font-size: 28px;
-  font-weight: 600;
+  font-weight: 400;
+  text-transform: uppercase;
+  line-height: 0.92;
   color: var(--charcoal);
   margin-bottom: 20px;
   padding-bottom: 12px;
@@ -285,9 +288,11 @@
 /* ─── Type toggle ────────────────────────────────────────────── */
 
 .applicationModeHeading {
-  font-family: var(--font-playfair);
+  font-family: var(--font-display), sans-serif;
   font-size: 20px;
-  font-weight: 700;
+  font-weight: 400;
+  text-transform: uppercase;
+  line-height: 0.92;
   color: var(--charcoal);
   margin-bottom: 8px;
 }
@@ -315,7 +320,7 @@
   flex: 1;
   padding: 12px 16px;
   min-height: var(--touch-target);
-  border-radius: 100px;
+  border-radius: 4px;
   border: 1px solid rgba(0, 0, 0, 0.15);
   background: transparent;
   color: var(--charcoal);
@@ -487,7 +492,7 @@
   right: 4px;
   width: 24px;
   height: 24px;
-  border-radius: 100px;
+  border-radius: 4px;
   border: none;
   background: rgba(0, 0, 0, 0.55);
   color: #fff;
@@ -626,7 +631,7 @@
   width: 100%;
   padding: 18px 32px;
   white-space: nowrap;
-  border-radius: 100px;
+  border-radius: 4px;
   border: none;
   background: var(--brand-red);
   color: white;
@@ -948,7 +953,7 @@
   font-size: 16px;
   font-weight: 700;
   border: none;
-  border-radius: 100px;
+  border-radius: 4px;
   text-decoration: none;
   text-align: center;
   cursor: pointer;

@@ -41,7 +41,7 @@
 .sectionCount {
   background: var(--charcoal);
   color: var(--off-white);
-  border-radius: 100px;
+  border-radius: 4px;
   font-size: 0.7rem;
   padding: 1px 7px;
   font-weight: 600;

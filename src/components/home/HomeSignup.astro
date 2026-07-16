@@ -100,6 +100,7 @@ const leadSource = `spice-list-${pageName}`;
   import { cleanPhone } from "@/lib/phone";
   import { identifyLead, trackLeadEvent } from "@/lib/analytics";
   import { buildLeadAttribution } from "@/lib/leadAttribution";
+  import { reportFailure } from "@/lib/failureAlert";
   import {
     captureLead,
     updateLeadPhone,
@@ -186,6 +187,14 @@ const leadSource = `spice-list-${pageName}`;
           errorEl.textContent = "Something went wrong. Please try again.";
           errorEl.removeAttribute("hidden");
         }
+        // A failed capture is a silently lost lead; page with the email so
+        // the person is recoverable.
+        reportFailure({
+          flow: "lead",
+          stage: "email",
+          errorMessage: err instanceof Error ? err.message : String(err),
+          contact: { email: savedEmail },
+        });
       } finally {
         if (submitBtn) {
           submitBtn.disabled = false;
@@ -261,6 +270,12 @@ const leadSource = `spice-list-${pageName}`;
             "Something went wrong. Please try again or skip.";
           phoneErrorEl.removeAttribute("hidden");
         }
+        reportFailure({
+          flow: "lead",
+          stage: "phone",
+          errorMessage: err instanceof Error ? err.message : String(err),
+          contact: { email: savedEmail, phone: cleaned },
+        });
       } finally {
         if (submitBtn) {
           submitBtn.disabled = false;

@@ -39,8 +39,10 @@ export interface Application {
   howHeard?: string;
   marketingConsent?: "yes" | "no";
   termsAgreedAt?: Timestamp;
-  photoUrl?: string; // legacy single-photo field — use getApplicantPhotos() to read
-  photoUrls?: string[]; // canonical multi-photo array for new applications
+  photoUrl?: string; // legacy single-photo field, read via getApplicantPhotoSources()
+  photoUrls?: string[]; // legacy multi-photo tokened URLs (pre July 2026 docs)
+  photoPaths?: string[]; // canonical: Storage paths, resolved by admin session (getBlob)
+  isSynthetic?: boolean; // true only for the daily synthetic monitor submission
   castEventId?: string; // composite key "{isoDate}__{citySlug}" when status = Cast
   deletedAt?: Timestamp | null;
   status: ApplicantStatus;

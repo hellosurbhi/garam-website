@@ -9,6 +9,7 @@ import { createHash } from "node:crypto";
 import { enforceRateLimit, RATE_LIMITS, getClientIp } from "@/lib/rateLimit";
 import { jsonResponse, parseJsonRequest } from "@/lib/http";
 import { ContestantOpenClaimSchema } from "@/lib/schemas";
+import { alertOps } from "@/lib/opsAlert";
 
 export const prerender = false;
 
@@ -86,13 +87,35 @@ export const POST: APIRoute = async ({ request }) => {
     createdAt: signedAtIso,
   };
 
-  const contestantId = await fsAdd("contestants", contestantData);
-  const token = await signPortalToken(
-    contestantId,
-    OPEN_PACKET_SHOW_ID,
-    accessUntil,
-    OPEN_PACKET_TIMEZONE,
-  );
+  const claimContext = {
+    name: `${firstName.trim()} ${lastName.trim()}`,
+    email: email.trim().toLowerCase(),
+    phone,
+  };
+
+  let token: string;
+  try {
+    const contestantId = await fsAdd("contestants", contestantData);
+    token = await signPortalToken(
+      contestantId,
+      OPEN_PACKET_SHOW_ID,
+      accessUntil,
+      OPEN_PACKET_TIMEZONE,
+    );
+  } catch (err) {
+    // A failed open claim blocks a contestant's packet; page with their
+    // contact fields so they can be walked through it.
+    await alertOps({
+      flow: "waiver",
+      stage: "open_claim_write",
+      errorMessage: err instanceof Error ? err.message : String(err),
+      context: claimContext,
+    });
+    return jsonResponse(
+      { error: "Could not save your waiver. Please try again." },
+      500,
+    );
+  }
 
   try {
     const template = waiverReceiptWithText({
@@ -107,8 +130,15 @@ export const POST: APIRoute = async ({ request }) => {
       text: template.text,
       html: template.html,
     });
-  } catch {
-    // Email failure should not block packet completion
+  } catch (err) {
+    // Email failure should not block packet completion, but a silently dead
+    // mailer must still page.
+    await alertOps({
+      flow: "waiver",
+      stage: "receipt_email",
+      errorMessage: err instanceof Error ? err.message : String(err),
+      context: claimContext,
+    });
   }
 
   const expireSec = _midnightLocalUnix(accessUntil, OPEN_PACKET_TIMEZONE);

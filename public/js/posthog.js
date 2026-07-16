@@ -6,26 +6,53 @@ function loadPostHog() {
 
   window.__garamErrorQueue = window.__garamErrorQueue || [];
 
+  // WHY: Instagram/Facebook in-app browsers inject their own scripts into
+  // every page and those scripts crash constantly ("window.webkit
+  // .messageHandlers" on iOS, "Java object is gone" on Android). They are
+  // injected INLINE, so event.filename is the page URL, not a foreign origin:
+  // an origin check cannot catch them, only these signatures can. In July
+  // 2026 this noise made up 80% of tracked "site" errors and buried a real
+  // apply-form outage for a week. Matches are still captured (as
+  // third_party_error) so the data exists, but they must never pollute
+  // first-party issues or alerts. The shader's "WebGL not supported" is that
+  // asset's intentional no-WebGL fallback (it hides the canvas), not a bug.
+  function classifyErrorEvent(message, filename, stack) {
+    var msg = String(message || "");
+    var file = String(filename || "");
+    if (msg.indexOf("window.webkit.messageHandlers") !== -1)
+      return "third_party_error";
+    if (msg.indexOf("Java object is gone") !== -1) return "third_party_error";
+    if (file.indexOf("iabjs://") === 0) return "third_party_error";
+    if (msg.indexOf("Script error") === 0 && !stack) return "third_party_error";
+    if (msg.indexOf("WebGL not supported") !== -1) return "third_party_error";
+    return "client_error";
+  }
+
+  function captureError(eventName, props) {
+    if (window.posthog && window.posthog.capture) {
+      window.posthog.capture(eventName, props);
+    } else {
+      window.__garamErrorQueue.push({ event: eventName, properties: props });
+    }
+  }
+
   window.addEventListener("error", function (event) {
+    var stack = event.error
+      ? String(event.error.stack || "").slice(0, 2000)
+      : "";
     var props = {
       error_message: event.message || "Unknown error",
-      error_stack: event.error
-        ? String(event.error.stack || "").slice(0, 2000)
-        : "",
+      error_stack: stack,
       error_type: "uncaught",
       error_filename: event.filename || "",
       error_lineno: event.lineno || 0,
       error_colno: event.colno || 0,
       page_url: window.location.href,
     };
-    if (window.posthog && window.posthog.capture) {
-      window.posthog.capture("client_error", props);
-    } else {
-      window.__garamErrorQueue.push({
-        event: "client_error",
-        properties: props,
-      });
-    }
+    captureError(
+      classifyErrorEvent(event.message, event.filename, stack),
+      props,
+    );
   });
 
   window.addEventListener("unhandledrejection", function (event) {
@@ -42,14 +69,7 @@ function loadPostHog() {
       error_type: "unhandled_rejection",
       page_url: window.location.href,
     };
-    if (window.posthog && window.posthog.capture) {
-      window.posthog.capture("client_error", props);
-    } else {
-      window.__garamErrorQueue.push({
-        event: "client_error",
-        properties: props,
-      });
-    }
+    captureError(classifyErrorEvent(message, "", stack), props);
   });
 
   window.__garamAnalytics = window.__garamAnalytics || {};
@@ -107,6 +127,27 @@ function loadPostHog() {
     session_recording: { maskTextSelector: ".ph-mask" },
     autocapture: { capture_copied_text: true },
     custom_campaign_params: ["source"],
+    // WHY: PostHog's Error Tracking issues (and its weekly digest) are fed
+    // by the SDK's own $exception autocapture, which the handler-level
+    // reroute above cannot touch. Without this, injected in-app-browser
+    // errors keep polluting the issues UI even though our custom events are
+    // clean. Matching events are dropped here because the handlers above
+    // already preserve them as third_party_error; real exceptions pass
+    // through untouched. A non-empty stack sentinel is passed so the
+    // stackless "Script error" heuristic never drops a real exception here.
+    before_send: function (event) {
+      if (!event || event.event !== "$exception") return event;
+      var list = (event.properties && event.properties.$exception_list) || [];
+      for (var k = 0; k < list.length; k++) {
+        var message = String((list[k] && list[k].value) || "");
+        if (
+          classifyErrorEvent(message, "", "has-stack") === "third_party_error"
+        ) {
+          return null;
+        }
+      }
+      return event;
+    },
   });
 
   var queue = window.__garamErrorQueue || [];

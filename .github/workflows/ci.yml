@@ -54,6 +54,28 @@ jobs:
       - name: Security audit
         run: npm audit --audit-level=high --omit=dev
 
+  # ==========================================
+  # JOB 2: Security rules against the Firebase emulator.
+  # The only test class that exercises firestore.rules/storage.rules with the
+  # REAL client operations of the apply flow (a rules/client mismatch took
+  # the form down for a week in July 2026). Too heavy for local pre-commit.
+  # ==========================================
+  rules:
+    name: Firestore/Storage rules (emulator)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v6
+        with:
+          node-version: 22
+          cache: npm
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 21
+      - run: npm ci
+      - run: npm run test:rules
+
   # Playwright smoke tests moved to local pre-push hook (~/.git-hooks/pre-push).
   # This eliminates the primary GitHub Actions minute consumer.
   # Production coverage: smoke-tests.yml runs weekly against all 4 viewports on schedule.

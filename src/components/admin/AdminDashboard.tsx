@@ -208,9 +208,9 @@ export default function AdminDashboard({ onLogout }: AdminDashboardProps) {
             )
           : query(colRef, orderBy("submittedAt", "desc"), limit(PAGE_SIZE));
         const snap = await getDocs(q);
-        const docs = snap.docs.map(
-          (d) => ({ id: d.id, ...d.data() }) as Application,
-        );
+        const docs = snap.docs
+          .map((d) => ({ id: d.id, ...d.data() }) as Application)
+          .filter((a) => !a.isSynthetic);
         setHasMore(snap.docs.length === PAGE_SIZE);
         setLastDoc(snap.docs[snap.docs.length - 1] ?? null);
         if (after) {
@@ -251,7 +251,7 @@ export default function AdminDashboard({ onLogout }: AdminDashboardProps) {
       const snap = await getDocs(q);
       const docs = snap.docs
         .map((d) => ({ id: d.id, ...d.data() }) as Application)
-        .filter((a) => !a.deletedAt);
+        .filter((a) => !a.deletedAt && !a.isSynthetic);
       setInboxApps(docs);
     } catch {
       setInboxError(true);

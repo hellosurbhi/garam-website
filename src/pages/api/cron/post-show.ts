@@ -4,6 +4,7 @@ import type { APIRoute } from "astro";
 import { fsPatch, fsAdd, fsListAll } from "@/lib/firestoreRest";
 import { sendMail } from "@/lib/zohoMailer";
 import { postShow } from "@/data/emails";
+import { alertOps } from "@/lib/opsAlert";
 
 const D3 = 3 * 24 * 60 * 60 * 1000;
 const D10 = 10 * 24 * 60 * 60 * 1000;
@@ -32,6 +33,8 @@ export const GET: APIRoute = async ({ request }) => {
 
   const now = Date.now();
   let sent = 0;
+  // Per-item failures page ONCE at the end of the run, never per applicant.
+  const failures: string[] = [];
 
   const allApps = await fsListAll("applications");
 
@@ -58,22 +61,45 @@ export const GET: APIRoute = async ({ request }) => {
         text: template.text,
         html: template.html,
       });
-    } catch {
+    } catch (err) {
+      failures.push(
+        `post-show email to ${email}: ${err instanceof Error ? err.message : String(err)}`,
+      );
       continue;
     }
 
     const sentAt = new Date().toISOString();
-    await fsPatch(`applications/${app.id as string}`, {
-      postShowSentAt: sentAt,
-    });
-    await fsAdd(`applications/${app.id as string}/events`, {
-      type: "post_show_sent",
-      timestamp: sentAt,
-      actor: "system",
-      payload: {},
-    });
-    sent++;
+    try {
+      await fsPatch(`applications/${app.id as string}`, {
+        postShowSentAt: sentAt,
+      });
+      await fsAdd(`applications/${app.id as string}/events`, {
+        type: "post_show_sent",
+        timestamp: sentAt,
+        actor: "system",
+        payload: {},
+      });
+      sent++;
+    } catch (err) {
+      // Email already sent; a persistence failure means a duplicate email on
+      // the next run, which is worth a page rather than a silent repeat.
+      failures.push(
+        `post-show persistence for ${app.id as string}: ${err instanceof Error ? err.message : String(err)}`,
+      );
+    }
   }
 
-  return json({ ok: true, sent });
+  if (failures.length > 0) {
+    await alertOps({
+      flow: "ops",
+      stage: "cron_post_show",
+      errorMessage:
+        `${failures.length} failure${failures.length === 1 ? "" : "s"} in this run:\n${failures.join("\n")}`.slice(
+          0,
+          2000,
+        ),
+    });
+  }
+
+  return json({ ok: true, sent, failures: failures.length });
 };

@@ -44,7 +44,7 @@ const validBody = {
   applicationType: "Self",
   referrerName: "",
   pitch: "I love masala chai and long walks.",
-  photoUrls: ["https://example.com/photo.jpg"],
+  photoPaths: ["photos/0f8b3a52-1c9e-4a7d-9b21-6de84c3f5a10.jpg"],
 };
 
 describe("notify-application handler", () => {
@@ -219,11 +219,13 @@ describe("notify-application handler", () => {
     expect(html).not.toContain("Nominated by");
   });
 
-  it("email HTML includes photo link when photoUrls are provided", async () => {
+  it("email HTML links to the admin dashboard for photos, never raw URLs", async () => {
     await POST(makeContext(makeRequest(validBody)));
     const html: string = mockSend.mock.calls[0][0].html;
-    expect(html).toContain("View Photo");
-    expect(html).toContain("https://example.com/photo.jpg");
+    expect(html).toContain("View 1 photo in the admin dashboard");
+    expect(html).toContain("https://garammasaladating.com/admin");
+    // Photo reads are admin-only; a tokened URL in email would bypass that.
+    expect(html).not.toContain("photos/0f8b3a52");
   });
 
   it("email HTML includes location built from city, state, country", async () => {
@@ -234,23 +236,44 @@ describe("notify-application handler", () => {
     expect(html).toContain("USA");
   });
 
-  it("returns 400 for non-https photo URL", async () => {
+  it("returns 400 when photoPaths escape the photos/ prefix", async () => {
     const res = await POST(
       makeContext(
         makeRequest({
           ...validBody,
-          photoUrls: ["http://example.com/photo.jpg"],
+          photoPaths: ["../secrets/config.json"],
         }),
       ),
     );
     expect(res.status).toBe(400);
   });
 
-  it("returns 400 for invalid photo URL", async () => {
+  it("returns 400 when photoPaths is a URL instead of a path", async () => {
     const res = await POST(
-      makeContext(makeRequest({ ...validBody, photoUrls: ["not a url"] })),
+      makeContext(
+        makeRequest({
+          ...validBody,
+          photoPaths: ["https://example.com/photo.jpg"],
+        }),
+      ),
     );
     expect(res.status).toBe(400);
+  });
+
+  it("skips all emails for the synthetic monitor submission", async () => {
+    const res = await POST(
+      makeContext(
+        makeRequest({
+          ...validBody,
+          email: "synthetic-monitor@garammasaladating.com",
+          isSynthetic: true,
+        }),
+      ),
+    );
+    expect(res.status).toBe(200);
+    const body = await res.json();
+    expect(body.synthetic).toBe(true);
+    expect(mockSend).not.toHaveBeenCalled();
   });
 
   it("returns 500 when sendMail throws an error", async () => {

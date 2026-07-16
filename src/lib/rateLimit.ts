@@ -26,6 +26,11 @@ export const RATE_LIMITS = {
     limit: 5,
     windowSeconds: 60,
   },
+  alertFailure: {
+    prefix: "ratelimit:alert-failure",
+    limit: 5,
+    windowSeconds: 60,
+  },
   contestantPrepAuth: {
     prefix: "ratelimit:contestant-prep-auth",
     limit: 5,

@@ -2,6 +2,22 @@
 
 ## Open
 
+### [HIGH] /waiver page dead in production: JotForm embed blocked by CSP
+
+- **Date:** 2026-07-13 (broken since 2026-07-07)
+- **File:** `src/pages/waiver.astro`
+- **Status:** Fixed (2026-07-13)
+- **Severity:** High (on-stage participants could not sign the waiver online)
+- **What happened:** The July 7 CSP hardening allowlisted first-party and known analytics scripts but never included `form.jotform.com`, so the browser blocked the embed script and `/waiver` showed its loading spinner forever. Nothing alerted because the failure lived inside a third-party embed. Fixed by replacing the embed with a native first-party signing form (`StandaloneWaiverForm`) posting to the existing `/api/stage-waiver` endpoint, sharing the scroll-through + typed-signature logic with the contestant portal via `useWaiverSignature`, with failure paging and smoke coverage.
+
+### [CRITICAL] Apply form lost every application for a week (storage/unauthorized on photo upload)
+
+- **Date:** 2026-07-13 (broken since 2026-07-07)
+- **File:** `storage.rules`, `src/components/apply/useApplyForm.ts`
+- **Status:** Fixed (2026-07-13), pending `firebase deploy --only storage`
+- **Severity:** Critical (revenue pipeline: zero applications could be saved)
+- **What happened:** PR #115 locked photo reads to admins (correct PII protection) but the apply flow called `getDownloadURL()` as the anonymous applicant right after upload. Rules denied the read, the error threw before the Firestore write, and the application was lost. Photos are required, so every completed submission failed from the rules deploy (~July 7) until this fix. Confirmed lost applicants on July 7, 9, 12 and 13, including paid LA campaign traffic. Fix: store Storage paths (`photoPaths`) instead of URLs, admin dashboard resolves photos with its own authenticated session via `getBlob()`, uploads carry `customMetadata.owner` so failure cleanup can delete, and `test/rules/apply-flow.rules-test.ts` locks the contract. Real-time failure alerting (`/api/alert-apply-failure`) plus a daily synthetic production submission now bound any recurrence to hours, not weeks.
+
 ### [HIGH] Dev server cannot transform TypeScript in astro component scripts
 
 - **Date:** 2026-07-05

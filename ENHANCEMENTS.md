@@ -4,6 +4,25 @@ Items from the GMD website audit checklists (site audit, codebase cleanup, conve
 
 ---
 
+## Apply-form outage follow-ups (2026-07-13)
+
+### Revoke legacy photo download tokens on pre-July-2026 application docs
+
+**Priority:** Medium
+**Status:** SHIPPED 2026-07-13 as `scripts/migrate-legacy-photo-urls.mjs` (dry-run by default, `--execute` to apply; operator runs it with `node --env-file=.env.local`). Converts old docs to `photoPaths` and revokes the outstanding download tokens.
+
+### Push channel so email is not a single alerting point of failure
+
+**Priority:** Medium
+**Status:** SHIPPED 2026-07-13. Set `ALERT_WEBHOOK_URL` in Vercel (e.g. an ntfy.sh topic subscribed on the phone) and every page also fires a push. A PostHog CDP realtime destination on `client_error` remains an optional third channel (PostHog UI, no code).
+
+### Add the synthetic monitor identity to PostHog's internal-user filter
+
+**Priority:** Low
+**Why:** Synthetic submissions no longer emit conversion events at all (skipped at the source), but their pageviews still occur. Adding `synthetic-monitor@garammasaladating.com` to PostHog's "filter out internal and test users" definition keeps session/pageview analytics clean.
+
+---
+
 ## City Page Enrichment: Remaining Batches (2026-07-06)
 
 ### Extend the deep-content pattern to the remaining ~290 city pages

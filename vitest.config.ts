@@ -14,6 +14,7 @@ export default defineConfig({
     exclude: [
       "node_modules/**",
       "tests/smoke/**",
+      "test/rules/**",
       ".stryker-tmp/**",
       ".worktrees/**",
       "dist/**",

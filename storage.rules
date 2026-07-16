@@ -5,8 +5,15 @@ service firebase.storage {
     // anonymously to upload photos, so plain `request.auth != null` is not
     // an admin check. Reads (applicant photos are PII) require a
     // non-anonymous allowlisted account or an admin custom claim. The
-    // admin dashboard displays photos via tokened download URLs, which are
-    // unaffected by this rule.
+    // apply flow stores storage PATHS in Firestore (never download URLs), so
+    // applicants need zero read access: the admin dashboard resolves paths
+    // with its own authenticated session (getBlob).
+    // WHY: the previous revision allowed reads to any signed-in user and the
+    // client called getDownloadURL() after upload. Locking reads to admins
+    // without removing that client read call took the apply form down for
+    // every applicant (storage/unauthorized, July 2026). Reads must stay
+    // admin-only AND the client must never read; change either side only
+    // together with test/rules/storage-rules.test.ts.
     function isAdmin() {
       return request.auth != null
         && request.auth.token.firebase.sign_in_provider != 'anonymous'
@@ -16,13 +23,21 @@ service firebase.storage {
 
     match /photos/{photoId} {
       allow read: if isAdmin();
-      // Applicants upload from an anonymous session; size and type stay enforced.
-      allow write: if request.auth != null
-        && request.resource.size < 15 * 1024 * 1024
-        && (request.resource.contentType == "image/jpeg"
-            || request.resource.contentType == "image/png"
-            || request.resource.contentType == "image/webp"
-            || request.resource.contentType == "image/heic");
+      // Applicants upload from an anonymous session; size and type stay
+      // enforced. Any image type is accepted (the client normalizes to JPEG
+      // via compressImage; originals only arrive on its rare fallback path).
+      // 25 MB must stay aligned with MAX_UPLOAD_BYTES in useApplyForm.ts.
+      allow create: if request.auth != null
+        && request.resource.size < 25 * 1024 * 1024
+        && request.resource.contentType.matches('image/.*');
+      // WHY: delete used to fall under a single `write` rule that evaluated
+      // request.resource.size, which is null on deletes, so the apply form's
+      // failure cleanup always got denied and orphaned uploaded photos. The
+      // uploader tags customMetadata.owner with their anonymous uid at create
+      // time; only that session (or an admin) may delete the object.
+      allow delete: if isAdmin()
+        || (request.auth != null
+            && resource.metadata.owner == request.auth.uid);
     }
   }
 }

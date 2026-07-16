@@ -3,16 +3,11 @@ import { z } from "zod";
 import { sendMail } from "@/lib/zohoMailer";
 import { applicationReceived, escapeHtml, subjectSafe } from "@/data/emails";
 import { enforceRateLimit, RATE_LIMITS } from "@/lib/rateLimit";
+import { isAllowedOrigin } from "@/lib/allowedOrigin";
+import { isSyntheticSubmission } from "@/lib/syntheticMonitor";
+import { alertOps } from "@/lib/opsAlert";
 
 export const prerender = false;
-
-function isAllowedOrigin(origin: string | null): boolean {
-  if (!origin) return false;
-  if (origin === "https://garammasaladating.com") return true;
-  if (/^https:\/\/[\w-]+-hellosurbhi\.vercel\.app$/.test(origin)) return true;
-  if (/^http:\/\/localhost(:\d+)?$/.test(origin)) return true;
-  return false;
-}
 
 const ApplicationSchema = z.object({
   name: z.string().min(1).max(200),
@@ -34,7 +29,13 @@ const ApplicationSchema = z.object({
   height: z.string().max(50).optional(),
   type: z.string().max(200).optional(),
   seenShowBefore: z.boolean().optional(),
-  photoUrls: z.array(z.string().url().startsWith("https://")).min(1).max(10),
+  // Storage paths, not URLs: photo reads are admin-only, so the email links
+  // to the dashboard instead of exposing tokened photo URLs.
+  photoPaths: z
+    .array(z.string().regex(/^photos\/[A-Za-z0-9._-]+$/))
+    .min(1)
+    .max(10),
+  isSynthetic: z.boolean().optional(),
 });
 
 type ApplicationNotification = z.infer<typeof ApplicationSchema>;
@@ -101,25 +102,9 @@ function buildAdminEmailHtml(data: ApplicationNotification): string {
       </div>`
     : "";
 
-  const validPhotos = data.photoUrls.filter((url) => {
-    try {
-      return new URL(url).protocol === "https:";
-    } catch {
-      return false;
-    }
-  });
-
-  const photoSection =
-    validPhotos.length > 0
-      ? `<div style="margin-top:12px;">
-          ${validPhotos
-            .map(
-              (url, i) =>
-                `<a href="${escapeHtml(url)}" style="color:#DC2626;margin-right:12px;">View Photo ${i + 1}</a>`,
-            )
-            .join("")}
-        </div>`
-      : "";
+  const photoSection = `<div style="margin-top:12px;">
+      <a href="https://garammasaladating.com/admin" style="color:#DC2626;">View ${data.photoPaths.length} photo${data.photoPaths.length === 1 ? "" : "s"} in the admin dashboard</a>
+    </div>`;
 
   return `<div style="font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;max-width:600px;margin:0 auto;padding:20px;">
     <h2 style="color:#DC2626;margin:0 0 16px;">New ${isNomination ? "Nomination" : "Self-Application"}</h2>
@@ -199,6 +184,15 @@ export const POST: APIRoute = async ({ request }) => {
     });
   }
 
+  // The daily synthetic monitor exercises the full production flow; its
+  // submission must not email the producer or "welcome" a robot.
+  if (body.isSynthetic || isSyntheticSubmission(body.email)) {
+    return new Response(JSON.stringify({ sent: false, synthetic: true }), {
+      status: 200,
+      headers: { "Content-Type": "application/json" },
+    });
+  }
+
   const isNomination = body.applicationType === "Nomination";
 
   try {
@@ -219,7 +213,20 @@ export const POST: APIRoute = async ({ request }) => {
       status: 200,
       headers: { "Content-Type": "application/json" },
     });
-  } catch {
+  } catch (err) {
+    // The application IS saved in Firestore at this point; a dead mailer
+    // means an invisible applicant. alertOps' email may fail for the same
+    // reason, which is exactly what the ALERT_WEBHOOK_URL channel is for.
+    await alertOps({
+      flow: "apply",
+      stage: "admin_email",
+      errorMessage: err instanceof Error ? err.message : String(err),
+      context: {
+        name: body.name,
+        email: body.email,
+        instagram: body.instagram,
+      },
+    });
     return new Response(
       JSON.stringify({ error: "Failed to send notification" }),
       {

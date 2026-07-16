@@ -1,0 +1,219 @@
+---
+/**
+ * The one "get me to checkout" CTA for a /events/[slug] page. Renders exactly
+ * one of five states depending on the event's actual data, never a dead
+ * button. Every live/presale anchor below carries `data-go-ticket`; the
+ * click/tracking behavior itself lives in the shared
+ * src/lib/ticketCtaTracking.ts module (wireTicketCtaTracking()), which every
+ * other ticket CTA on the site (TicketCard, HomeShows, HomeHero,
+ * CityEventTicketEmbed) also calls, so there is one click handler instead of
+ * five near-duplicates.
+ */
+import type { EventEntry } from "@/data/events";
+import { formatEventLocation } from "@/utils/eventCity";
+import { formatOnSaleDate, isEventPast } from "@/utils/eventDate";
+
+interface Props {
+  event: EventEntry;
+  /** data-cta-position value for analytics, e.g. "event_hero" or "event_bottom". */
+  position: string;
+}
+
+const { event, position } = Astro.props;
+
+const cityLabel = formatEventLocation(event);
+const eventTitle = `Garam Masala Dating - ${cityLabel} - ${event.date}`;
+const isPast = isEventPast(event.date);
+const isSoldOut = event.soldOut ?? false;
+const isLive = Boolean(event.url) && event.url !== "#";
+const isPresale =
+  Boolean(event.onSaleAt) && new Date(event.onSaleAt!) > new Date();
+const onSaleLabel = event.onSaleAt ? formatOnSaleDate(event.onSaleAt) : "";
+
+const goHref = `/api/go/${event.slug}`;
+
+const sharedTrackingAttrs = {
+  "data-ph-section": position,
+  "data-ph-city": cityLabel,
+  "data-ph-event-date": event.isoDate ?? event.date,
+  "data-ph-event-title": eventTitle,
+  "data-cta-position": position,
+  "data-event-city": cityLabel,
+  "data-event-date": event.isoDate ?? event.date,
+  "data-event-title": eventTitle,
+};
+---
+
+{
+  isPast && (
+    <div class="event-cta event-cta--past">
+      <p class="event-cta__note">This show has already happened.</p>
+      <a href="/tickets" class="event-cta__button event-cta__button--outline">
+        See Upcoming Shows
+      </a>
+    </div>
+  )
+}
+
+{
+  !isPast && isSoldOut && (
+    <button
+      type="button"
+      class="event-cta__button event-cta__button--notify"
+      data-notify-city={cityLabel}
+      data-notify-city-slug={event.citySlug}
+      data-ph-capture="cta_clicked"
+      data-ph-cta="notify_me"
+      data-cta-text="Sold Out, Get Notified"
+      {...sharedTrackingAttrs}
+    >
+      Sold Out. Get Notified for the Next Show
+    </button>
+  )
+}
+
+{
+  !isPast && !isSoldOut && isPresale && (
+    <>
+      <button
+        type="button"
+        class="event-cta__button event-cta__button--notify"
+        data-notify-city={cityLabel}
+        data-notify-city-slug={event.citySlug}
+        data-notify-on-sale-at={event.onSaleAt}
+        data-presale-notify={event.onSaleAt}
+        data-ph-capture="cta_clicked"
+        data-ph-cta="notify_me"
+        data-cta-text="Notify Me"
+        {...sharedTrackingAttrs}
+      >
+        Notify Me. On Sale {onSaleLabel}
+      </button>
+      <a
+        href={goHref}
+        class="event-cta__button event-cta__button--primary"
+        data-go-ticket
+        data-presale-live
+        hidden
+        data-event-slug={event.slug}
+        data-event-vendor={event.ticketSource}
+        data-ph-capture="cta_clicked"
+        data-ph-cta="get_tickets"
+        data-cta-text="Get Tickets"
+        {...sharedTrackingAttrs}
+      >
+        Get Tickets
+      </a>
+    </>
+  )
+}
+
+{
+  !isPast && !isSoldOut && !isPresale && !isLive && (
+    <button
+      type="button"
+      class="event-cta__button event-cta__button--notify"
+      data-notify-city={cityLabel}
+      data-notify-city-slug={event.citySlug}
+      data-ph-capture="cta_clicked"
+      data-ph-cta="notify_me"
+      data-cta-text="Notify Me"
+      {...sharedTrackingAttrs}
+    >
+      Notify Me When Tickets Drop
+    </button>
+  )
+}
+
+{
+  !isPast && !isSoldOut && !isPresale && isLive && (
+    <a
+      href={goHref}
+      class="event-cta__button event-cta__button--primary"
+      data-go-ticket
+      data-event-slug={event.slug}
+      data-event-vendor={event.ticketSource}
+      data-ph-capture="cta_clicked"
+      data-ph-cta="get_tickets"
+      data-cta-text="Get Tickets"
+      {...sharedTrackingAttrs}
+    >
+      Get Tickets
+    </a>
+  )
+}
+
+<script>
+  import { wireTicketCtaTracking } from "@/lib/ticketCtaTracking";
+  wireTicketCtaTracking();
+</script>
+
+<style>
+  .event-cta {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 12px;
+    text-align: center;
+  }
+
+  .event-cta__note {
+    font-size: 15px;
+    color: var(--text-secondary, var(--muted));
+  }
+
+  .event-cta__button {
+    display: block;
+    width: 100%;
+    max-width: 360px;
+    padding: 18px 36px;
+    border-radius: 50px;
+    font-family: var(--font-body), sans-serif;
+    font-size: 15px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    text-decoration: none;
+    text-align: center;
+    min-height: var(--touch-target);
+    border: none;
+    cursor: pointer;
+    transition:
+      background 0.2s,
+      border-color 0.2s,
+      transform 0.06s;
+  }
+
+  .event-cta__button:active {
+    transform: scale(0.97);
+  }
+
+  .event-cta__button--primary {
+    background: var(--brand-red);
+    color: white;
+  }
+
+  .event-cta__button--primary:hover {
+    background: var(--brand-red-dark);
+  }
+
+  .event-cta__button--notify {
+    background: rgba(var(--brand-red-rgb), 0.08);
+    color: var(--brand-red);
+    border: 1.5px solid rgba(var(--brand-red-rgb), 0.35);
+  }
+
+  .event-cta__button--notify:hover {
+    background: rgba(var(--brand-red-rgb), 0.15);
+  }
+
+  .event-cta__button--outline {
+    background: transparent;
+    color: var(--charcoal);
+    border: 1.5px solid rgba(0, 0, 0, 0.15);
+  }
+
+  .event-cta__button--outline:hover {
+    border-color: var(--charcoal);
+  }
+</style>

@@ -52,6 +52,13 @@ function getHeroCity(city: string): string {
           {heroEvents.map((event) => {
             const isSoldOut = event.soldOut ?? false;
             const cityLabel = formatEventLocation(event);
+            // The tracked redirect (fires server + browser InitiateCheckout,
+            // then 302s to the real checkout): see src/pages/api/go/[slug].ts
+            // and src/lib/ticketCtaTracking.ts. Sold-out pills skip this and
+            // link straight to the vendor URL instead: there's no checkout to
+            // initiate, so routing them through /api/go would misreport a
+            // non-purchase as checkout intent.
+            const goHref = `/api/go/${event.slug}`;
             const pillInner = (
               <>
                 <span class="next-show-pill-date">
@@ -70,36 +77,30 @@ function getHeroCity(city: string): string {
                 </span>
               </>
             );
-            return event.eventbriteId && !isSoldOut ? (
+            return (
               <a
-                href={buildTicketUrl(event.url, "home", "hero")}
+                href={
+                  isSoldOut ? buildTicketUrl(event.url, "home", "hero") : goHref
+                }
                 target="_blank"
                 rel="noopener noreferrer"
-                id={`eventbrite-widget-modal-trigger-${event.eventbriteId}`}
-                data-eb-event-id={event.eventbriteId}
                 class="next-show-pill"
                 hidden
                 data-iso-date={event.isoDate}
                 data-start-time={event.startTime ?? "20:00"}
                 data-end-time={event.endTime ?? "22:00"}
                 data-city={cityLabel}
+                data-go-ticket={isSoldOut ? undefined : true}
+                data-event-slug={event.slug}
+                data-event-vendor={event.ticketSource}
+                data-cta-position="hero_pill"
+                data-event-city={cityLabel}
+                data-event-date={event.isoDate ?? event.date}
+                data-ph-capture="cta_clicked"
+                data-ph-cta="get_tickets"
                 data-ph-section="hero"
                 data-ph-price={event.price}
                 data-ph-event-date={event.date}
-              >
-                {pillInner}
-              </a>
-            ) : (
-              <a
-                href={buildTicketUrl(event.url, "home", "hero")}
-                target="_blank"
-                rel="noopener noreferrer"
-                class="next-show-pill"
-                hidden
-                data-iso-date={event.isoDate}
-                data-start-time={event.startTime ?? "20:00"}
-                data-end-time={event.endTime ?? "22:00"}
-                data-city={cityLabel}
               >
                 {pillInner}
               </a>
@@ -221,6 +222,11 @@ function getHeroCity(city: string): string {
   }
 
   showNextPill();
+</script>
+
+<script>
+  import { wireTicketCtaTracking } from "@/lib/ticketCtaTracking";
+  wireTicketCtaTracking();
 </script>
 
 <style>

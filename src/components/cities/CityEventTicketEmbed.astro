@@ -15,16 +15,16 @@ const { event, citySlug } = Astro.props;
 
 const isSoldOut = event.soldOut ?? false;
 const eventLocation = formatEventLocation(event);
-const ticketUrl = buildTicketUrl(event.url, "cities", citySlug);
+// Sold-out clicks go straight to the Eventbrite/vendor listing (there's no
+// checkout to track), so this is the only place the tagged direct URL is
+// still needed. Live events route through the tracked redirect below.
+const soldOutUrl = buildTicketUrl(event.url, "cities", citySlug);
+const goHref = `/api/go/${event.slug}`;
 const eventTitle = `Garam Masala Dating - ${eventLocation} - ${event.date}`;
 const ctaText = isSoldOut ? "Sold Out" : `${event.date}: ${EVENTS.ticketCta}`;
 
-const containerId = event.eventbriteId
-  ? `eventbrite-widget-container-${event.eventbriteId}`
-  : undefined;
-
 /*
- * Card display data for the fallback layer.
+ * Card display data.
  * Strip bureaucratic "Township" suffix so "North Brunswick Township" reads
  * as "North Brunswick" to the user.
  */
@@ -41,20 +41,15 @@ const timeDisplay = event.startTime ? formatDisplayTime(event.startTime) : null;
 
 const sharedAttrs = {
   "data-ph-capture": "ticket_click",
-  "data-ph-cta": "city_hero_embed",
+  "data-ph-cta": "city_card",
   "data-ph-section": "cities",
-  "data-ph-price": event.price,
   "data-ph-event-date": event.isoDate ?? event.date,
   "data-ph-event-title": eventTitle,
-  "data-cta-position": "city_hero_embed",
+  "data-cta-position": "city_card",
   "data-cta-text": ctaText,
-  "data-destination-url": ticketUrl,
-  "data-link-url": ticketUrl,
-  "data-link-domain": domainFromUrl(ticketUrl),
   "data-event-city": eventLocation,
   "data-event-date": event.isoDate ?? event.date,
   "data-event-title": eventTitle,
-  "data-event-vendor": vendorFromUrl(ticketUrl),
   "data-city-slug": citySlug,
 };
 
@@ -63,96 +58,28 @@ const arrowPath2 = "m12 5 7 7-7 7";
 ---
 
 {
-  containerId && !isSoldOut ? (
-    /*
-     * The container reserves 425px and shows a neutral skeleton while Eventbrite
-     * loads. The info card is hidden by default and only revealed when JS adds
-     * "eb-embed--failed" after an 8s timeout or a createWidget catch.
-     * No-JS users get the noscript link below.
-     */
-    <div class="eb-embed" id={`buy-${event.eventbriteId}`}>
-      {/* Skeleton: dedicated element so EB cannot interfere with its styles */}
-      <div class="eb-embed__skeleton" aria-hidden="true" />
-      {/* Info card: hidden by default, shown only on widget failure */}
-      <div class="eb-embed__card">
-        <p class="eb-embed__card-name">{EVENTS.showName}</p>
-        <p class="eb-embed__card-details">
-          {event.date}
-          {timeDisplay && (
-            <>
-              {" "}
-              · {EVENTS.doorsLabel} {timeDisplay}
-            </>
-          )}
-        </p>
-        <p class="eb-embed__card-venue">{venueDisplay}</p>
-        <p class="eb-embed__card-price">
-          {EVENTS.priceFromLabel} ${event.price}
-        </p>
-        <a
-          href={ticketUrl}
-          target="_blank"
-          rel="noopener noreferrer"
-          class="city-cta city-cta--primary eb-embed__card-cta"
-          {...sharedAttrs}
-        >
-          <span>{EVENTS.getTicketsCta}</span>
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            width="16"
-            height="16"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            stroke-width="2"
-            stroke-linecap="round"
-            stroke-linejoin="round"
-            class="city-cta__arrow"
-            aria-hidden="true"
-          >
-            <path d={arrowPath1} />
-            <path d={arrowPath2} />
-          </svg>
-        </a>
-      </div>
-      {/* EB target: transparent overlay; opaque iframe from EB covers the skeleton on mount */}
-      <div
-        id={containerId}
-        class="eb-embed__container"
-        data-eb-event-id={event.eventbriteId}
-        data-eb-url={ticketUrl}
-        data-city={eventLocation}
-        {...sharedAttrs}
-      />
-      <noscript>
-        <a
-          href={ticketUrl}
-          target="_blank"
-          rel="noopener noreferrer"
-          class="city-cta city-cta--primary"
-        >
-          <span>
-            {event.date} · Get tickets from ${event.price}
-          </span>
-        </a>
-      </noscript>
-    </div>
-  ) : isSoldOut ? (
+  isSoldOut ? (
     <a
-      href={ticketUrl}
+      href={soldOutUrl}
       target="_blank"
       rel="noopener noreferrer"
       class="city-cta city-cta--primary city-cta--soldout"
+      data-link-domain={domainFromUrl(soldOutUrl)}
+      data-event-vendor={vendorFromUrl(soldOutUrl)}
       {...sharedAttrs}
     >
       <span>{ctaText}</span>
     </a>
   ) : (
     /*
-     * State B: a live event sold on a non-Eventbrite vendor (e.g. DC Comedy
-     * Loft). No embeddable widget, so render a full-strength always-visible
-     * ticket card with venue, date, doors and price, and a full-width Buy
-     * Tickets button that names the vendor for trust.
+     * One clean card for every live event, ours or third-party: venue,
+     * date, doors, "Get Tickets" routed through the tracked redirect
+     * (src/pages/api/go/[slug].ts), no iframe, no modal, no visible price
+     * (pricing is never shown in the UI, see CLAUDE.md). This branch used
+     * to be reserved for non-Eventbrite vendors only, while Eventbrite-owned
+     * shows rendered a raw inline iframe embed above it; that embed (and
+     * EventbriteWidgetInit.astro, which mounted it) is retired in favor of
+     * this single consistent treatment for both.
      */
     <div class="vendor-card">
       <p class="vendor-card__eyebrow">{EVENTS.showName}</p>
@@ -166,14 +93,14 @@ const arrowPath2 = "m12 5 7 7-7 7";
         )}
       </p>
       <p class="vendor-card__venue">{venueDisplay}</p>
-      <p class="vendor-card__price">
-        {EVENTS.priceFromLabel} ${event.price}
-      </p>
       <a
-        href={ticketUrl}
+        href={goHref}
         target="_blank"
         rel="noopener noreferrer"
         class="city-cta city-cta--primary vendor-card__cta"
+        data-go-ticket
+        data-event-slug={event.slug}
+        data-event-vendor={event.ticketSource}
         {...sharedAttrs}
       >
         <span>{EVENTS.getTicketsCta}</span>
@@ -198,139 +125,15 @@ const arrowPath2 = "m12 5 7 7-7 7";
   )
 }
 
+<script>
+  import { wireTicketCtaTracking } from "@/lib/ticketCtaTracking";
+  wireTicketCtaTracking();
+</script>
+
 <style>
   /*
-   * Wrapper: fixed height is the CLS reservation. Collapses to card height on
-   * failure via height:auto override. Scroll anchor clears the sticky nav.
-   */
-  .eb-embed {
-    position: relative;
-    height: var(--eb-embed-height);
-    scroll-margin-top: 80px;
-  }
-
-  /*
-   * Skeleton: dedicated absolutely-positioned element so the Eventbrite widget
-   * JS cannot interfere with its styles. Sits at z-index 0; the opaque iframe
-   * (injected into .eb-embed__container above it) covers it on success.
-   */
-  .eb-embed__skeleton {
-    position: absolute;
-    inset: 0;
-    border-radius: 12px;
-    background: #ebebeb;
-    overflow: hidden;
-  }
-
-  @media (prefers-reduced-motion: no-preference) {
-    .eb-embed__skeleton::after {
-      content: "";
-      position: absolute;
-      inset: 0;
-      background: linear-gradient(
-        90deg,
-        transparent 0%,
-        rgba(255, 255, 255, 0.55) 50%,
-        transparent 100%
-      );
-      transform: translateX(-100%);
-      animation: eb-shimmer 1.5s ease-in-out infinite;
-    }
-  }
-
-  @keyframes eb-shimmer {
-    100% {
-      transform: translateX(200%);
-    }
-  }
-
-  /*
-   * EB target: transparent overlay above the skeleton at z-index 1.
-   * EB injects an opaque iframe here which covers the skeleton on mount.
-   * overflow:hidden clips iframe corners to the border-radius.
-   */
-  .eb-embed__container {
-    position: absolute;
-    inset: 0;
-    z-index: 1;
-    border-radius: 12px;
-    overflow: hidden;
-  }
-
-  /*
-   * Info card: hidden during load, shown only when JS adds eb-embed--failed.
-   * Sits above skeleton and container at z-index 2 on failure.
-   * Sized to its own content so there is no dead whitespace.
-   */
-  .eb-embed__card {
-    display: none;
-    flex-direction: column;
-    align-items: center;
-    gap: 8px;
-    padding: 28px 24px;
-    background: var(--white);
-    border: 1px solid rgba(var(--black-rgb), 0.08);
-    border-radius: 12px;
-    text-align: center;
-  }
-
-  .eb-embed--failed {
-    height: auto;
-  }
-
-  .eb-embed--failed .eb-embed__skeleton,
-  .eb-embed--failed .eb-embed__container {
-    display: none;
-  }
-
-  .eb-embed--failed .eb-embed__card {
-    position: relative;
-    z-index: 2;
-    display: flex;
-  }
-
-  .eb-embed__card-name {
-    font-family: var(--font-body);
-    font-size: 11px;
-    font-weight: 700;
-    text-transform: uppercase;
-    letter-spacing: 0.12em;
-    color: var(--brand-red);
-    margin: 0;
-  }
-
-  .eb-embed__card-details {
-    font-family: var(--font-body);
-    font-size: 17px;
-    font-weight: 600;
-    color: var(--charcoal);
-    margin: 0;
-  }
-
-  .eb-embed__card-venue {
-    font-family: var(--font-body);
-    font-size: 14px;
-    font-weight: 400;
-    color: var(--muted);
-    margin: 0;
-  }
-
-  .eb-embed__card-price {
-    font-family: var(--font-body);
-    font-size: 15px;
-    font-weight: 500;
-    color: var(--charcoal);
-    margin: 0 0 10px;
-  }
-
-  .eb-embed__card-cta {
-    width: 100%;
-    white-space: nowrap;
-  }
-
-  /*
-   * State B vendor card: always visible (not gated behind widget failure).
-   * Reuses the fallback card's visual language but stands on its own.
+   * Clean card: always visible (never gated behind widget load/failure,
+   * there is no widget anymore).
    */
   .vendor-card {
     display: flex;
@@ -368,14 +171,6 @@ const arrowPath2 = "m12 5 7 7-7 7";
     font-size: 14px;
     font-weight: 400;
     color: var(--muted);
-    margin: 0;
-  }
-
-  .vendor-card__price {
-    font-family: var(--font-body);
-    font-size: 15px;
-    font-weight: 500;
-    color: var(--charcoal);
     margin: 0 0 10px;
   }
 

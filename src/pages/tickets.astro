@@ -9,7 +9,6 @@ import { buildTaglineMap } from "@/utils/eventTaglines";
 import { getUpcomingDated } from "@/utils/eventFilters";
 import { PAGES } from "@/data/copy";
 import TicketCard from "@/components/tickets/TicketCard.astro";
-import EventbriteWidgetInit from "@/components/EventbriteWidgetInit.astro";
 import StickyCTA from "@/components/StickyCTA.astro";
 
 const TITLE = "Tickets & Upcoming Shows";
@@ -181,8 +180,6 @@ const eventSeriesJsonLd = JSON.stringify({
       </div>
     </div>
   </main>
-
-  <EventbriteWidgetInit />
 
   <script>
     import "@/lib/presaleReveal";

@@ -2,6 +2,17 @@
 
 ## Open
 
+### [MEDIUM] Event JSON-LD always uses New York's UTC offset, even for non-NY shows
+
+- **Date:** 2026-07-16
+- **File:** `src/utils/eventSchema.ts:2` (`nyOffset` from `src/utils/timezone.ts`), `src/data/events.ts` (`EventEntry.timezone` field)
+- **Status:** Open
+- **Severity:** Medium
+- **What's happening:** `buildEventSchemas()` calls `nyOffset(e.isoDate, time)` unconditionally for every event's `startDate`/`endDate`/`doorTime`, regardless of the event's actual city. `EventEntry` already has an optional `timezone` field (IANA identifier, e.g. `"America/New_York"`) intended for exactly this, but nothing reads it: `nyOffset` is hardcoded to the `America/New_York` zone. Every non-NY show (San Diego, Chicago, and any future city) ships Event structured data with the wrong UTC offset baked into `startDate`/`endDate`. This is silent: it doesn't throw or fail a build, it just publishes incorrect machine-readable event times, which can make Google's Event rich results (and "Add to calendar" actions derived from them) show the wrong local time for that city.
+- **Confirmed pre-existing:** `git diff main -- src/utils/eventSchema.ts src/utils/timezone.ts` shows this logic is untouched by the current per-event-landing-page work; it predates that effort and was never exercised for non-NY cities' individual event pages until now.
+- **What should happen:** `buildEventSchemas` should resolve each event's actual IANA zone (`e.timezone ?? "America/New_York"`) and `nyOffset` should be generalized to accept a zone parameter (e.g. `offsetForZone(isoDate, time, timezone)`) instead of hardcoding New York.
+- **Fix:** Not applied here, out of scope for the ad-tracking/checkout-redirect PR that surfaced it. Needs its own pass with a schema/timezone-focused smoke test (Rich Results Test on a San Diego or Chicago event page) rather than a drive-by fix.
+
 ### [HIGH] Dev server cannot transform TypeScript in astro component scripts
 
 - **Date:** 2026-07-05

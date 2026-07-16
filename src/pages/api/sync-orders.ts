@@ -5,8 +5,17 @@ import { enforceRateLimit, RATE_LIMITS } from "@/lib/rateLimit";
 import { verifyAdminToken } from "@/lib/verifyToken";
 import { getFirestoreAccessToken } from "@/lib/firestoreAdmin";
 import { fetchEventOrders } from "@/lib/eventbrite";
+import { sendCapiEvent } from "@/lib/capi";
+import { withTimeout } from "@/utils/withTimeout";
 import { events } from "@/data/events";
 import type { Order, SyncMeta } from "@/types/analytics";
+
+// Bounded per-call, not per-run: this loop can touch many orders in one
+// sync, so a hanging Meta API call must not compound across all of them and
+// eat the serverless function's execution ceiling. No user is waiting on
+// this (unlike the go-redirect's InitiateCheckout call), so it's slightly
+// more lenient than that route's 2s guard.
+const CAPI_TIMEOUT_MS = 3000;
 
 // ─── Firestore REST types ─────────────────────────────────────────────────────
 
@@ -207,6 +216,40 @@ async function findLeadByEmail(
   return name.split("/").pop() ?? null;
 }
 
+/**
+ * Whether this order already exists in Firestore, i.e. whether it has been
+ * through this sync loop before. This is the sole idempotency guard for
+ * Purchase CAPI firing: `orders/{orderId}` is only ever written by this
+ * route, so a 404 here means "first time we've ever seen this order" and a
+ * 200 means "already processed at least once", regardless of how its
+ * status may have changed since (e.g. later refunded). Firing Purchase
+ * exactly once per order, on first sight while still "placed", is what
+ * prevents a repeat sync (incremental `changed_since` re-fetches orders
+ * that were merely updated, such as refunds) from double-counting revenue
+ * in Meta.
+ */
+async function orderAlreadySynced(
+  projectId: string,
+  accessToken: string,
+  orderId: string,
+): Promise<boolean> {
+  const url = `https://firestore.googleapis.com/v1/projects/${projectId}/databases/(default)/documents/orders/${orderId}`;
+  const res = await fetch(url, {
+    headers: { Authorization: `Bearer ${accessToken}` },
+  });
+
+  if (res.status === 404) return false;
+
+  if (!res.ok) {
+    const body = (await res.json()) as FirestoreErrorBody;
+    throw new Error(
+      `Failed to check order ${orderId}: ${res.status} ${body.error?.message ?? ""}`,
+    );
+  }
+
+  return true;
+}
+
 async function upsertOrder(
   projectId: string,
   accessToken: string,
@@ -284,6 +327,9 @@ export const POST: APIRoute = async ({ request }) => {
 
   const projectId = import.meta.env.PUBLIC_FIREBASE_PROJECT_ID;
   const eventbriteToken = import.meta.env.EVENTBRITE_API_TOKEN;
+  // Optional: sync still runs (and still records order data) without it,
+  // only Purchase CAPI firing is skipped. See src/lib/capi.ts.
+  const capiAccessToken = import.meta.env.META_CAPI_ACCESS_TOKEN;
 
   if (!projectId) {
     return new Response(
@@ -371,6 +417,65 @@ export const POST: APIRoute = async ({ request }) => {
           }
 
           const orderWithMatch: Order = { ...order, matchedLeadId };
+
+          // Purchase CAPI: the sole remaining Purchase signal now that the
+          // Eventbrite modal embed (and its browser-side fbq("track",
+          // "Purchase", ...) call in the retired EventbriteWidgetInit.astro)
+          // is gone. Fired at most once per order, see orderAlreadySynced.
+          if (capiAccessToken) {
+            try {
+              const alreadySynced = await orderAlreadySynced(
+                projectId,
+                accessToken,
+                order.orderId,
+              );
+              if (!alreadySynced && order.status === "placed") {
+                const result = await withTimeout(
+                  sendCapiEvent(
+                    {
+                      eventName: "Purchase",
+                      eventId: order.orderId,
+                      eventTime: Math.floor(
+                        new Date(order.createdAt).getTime() / 1000,
+                      ),
+                      eventSourceUrl: `https://garammasaladating.com/events/${event.slug}`,
+                      userData: { email: order.email },
+                      customData: {
+                        value: order.grossRevenue,
+                        currency: order.currency,
+                        contentIds: [event.slug],
+                        contentType: "event",
+                        numItems: order.quantity,
+                      },
+                    },
+                    capiAccessToken,
+                  ),
+                  CAPI_TIMEOUT_MS,
+                  "Meta CAPI Purchase",
+                );
+                if (!result.ok) {
+                  console.error(
+                    `[sync-orders] CAPI Purchase failed for order ${order.orderId}: ${result.error}`,
+                  );
+                }
+              }
+            } catch (err) {
+              const msg = err instanceof Error ? err.message : String(err);
+              console.error(
+                `[sync-orders] CAPI Purchase check failed for order ${order.orderId}: ${msg}`,
+              );
+              // Non-fatal and, in this one case, unrecoverable: the order
+              // is still upserted below regardless (order data must never
+              // be lost over a tracking hiccup), which means a transient
+              // failure here permanently forfeits that order's Purchase
+              // signal: the existence check will read "already synced" on
+              // every later run. Acceptable: this is the same best-effort
+              // posture CAPI takes everywhere else (see src/lib/capi.ts),
+              // and a Firestore GET failing right as we first see a brand
+              // new order is rare.
+            }
+          }
+
           await upsertOrder(projectId, accessToken, orderWithMatch);
 
           totalProcessed += 1;
@@ -385,7 +490,7 @@ export const POST: APIRoute = async ({ request }) => {
       }
     }
 
-    // Persist sync metadata — keep last 10 errors
+    // Persist sync metadata, keeping last 10 errors
     const now = new Date().toISOString();
     const allErrors = [...(prevMeta?.errors ?? []), ...syncErrors].slice(-10);
     const newMeta: SyncMeta = {
@@ -416,3 +521,11 @@ export const POST: APIRoute = async ({ request }) => {
     });
   }
 };
+
+// Vercel Cron Jobs only ever issue GET requests, and automatically attach
+// `Authorization: Bearer $CRON_SECRET` to them for any env var literally
+// named CRON_SECRET (see vercel.json's crons entry for this path): the
+// exact header POST above already checks first, before falling back to
+// Firebase admin-token auth for the manual "Sync Now" button in
+// AnalyticsDashboard.tsx. Same handler, no separate implementation needed.
+export const GET: APIRoute = POST;

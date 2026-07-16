@@ -85,7 +85,6 @@ export const GET: APIRoute = () => {
               );
             if (e.startTime)
               lines.push(`Time: ${e.startTime} to ${e.endTime ?? "22:00"} ET`);
-            if (e.price) lines.push(`Tickets: $${e.price}`);
             const status = getEventDisplayStatus(e);
             if (status) lines.push(`Status: ${status}`);
             lines.push(`Ticket URL: ${e.url}`);

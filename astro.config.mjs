@@ -67,6 +67,23 @@ function buildCityLastmodMap() {
 const cityLastmodMap = buildCityLastmodMap();
 
 /**
+ * Map each event slug to a lastmod date for /events/[slug] sitemap entries.
+ * Unlike cities/journal (one file per item), all events live in a single
+ * src/data/events.ts, so there is no per-event git history to read: every
+ * slug shares that file's git-lastmod date. Still strictly better than the
+ * DEFAULT_LASTMOD fallback, which recomputes to "today" on every build/deploy
+ * and would make an unchanged event page's lastmod churn on every deploy.
+ */
+function buildEventLastmodMap() {
+  const gitDate = getGitDate("src/data/events.ts") || TODAY_STR;
+  const map = {};
+  for (const e of events) map[e.slug] = gitDate;
+  return map;
+}
+
+const eventLastmodMap = buildEventLastmodMap();
+
+/**
  * Scan src/pages/ and build a URL → git-lastmod map for all non-dynamic static pages.
  * Skips dynamic routes ([slug].astro), 404, and admin-only pages.
  * New pages are picked up automatically — no manual registration needed.
@@ -75,7 +92,12 @@ function buildStaticLastmod() {
   const SKIP = new Set(["404.astro", "admin.astro", "contestant-prep.astro"]);
   const files = readdirSync("src/pages", { recursive: true })
     .map((f) => f.toString())
-    .filter((f) => f.endsWith(".astro") && !f.includes("[") && !SKIP.has(f.split("/").pop()));
+    .filter(
+      (f) =>
+        f.endsWith(".astro") &&
+        !f.includes("[") &&
+        !SKIP.has(f.split("/").pop()),
+    );
 
   const map = {};
   for (const f of files) {
@@ -120,20 +142,28 @@ const contentLastmod = new Map(
   journalPostsPublished.map((p) => [
     `${SITE}/journal/${p.slug}`,
     new Date(effectiveDate(p.dateModified, p.slug)),
-  ])
+  ]),
 );
 
 /** City slugs that have at least one upcoming confirmed event. */
 const citiesWithEvents = new Set(
   events
-    .filter((e) => !e.hidden && e.isoDate && e.isoDate >= TODAY_STR && e.url && e.citySlug)
+    .filter(
+      (e) =>
+        !e.hidden && e.isoDate && e.isoDate >= TODAY_STR && e.url && e.citySlug,
+    )
     .map((e) => e.citySlug),
 );
 
 /** Assign sitemap priority by page type. */
 function getPriority(url) {
   if (url === `${SITE}/`) return 1.0;
-  if (/\/(tickets|apply|faq|hosts|corporate|sponsorship)$/.test(url)) return 0.8;
+  if (/\/(tickets|apply|faq|hosts|corporate|sponsorship)$/.test(url))
+    return 0.8;
+  // Per-event landing pages: the page paid ads land on and the highest-intent
+  // conversion surface on the site (single show, single "get tickets" goal),
+  // grouped with /tickets rather than with the city index pages below.
+  if (/\/events\//.test(url)) return 0.8;
   if (/\/(journal|cities)$/.test(url)) return 0.7;
   if (/\/journal\//.test(url)) return 0.6;
   if (/\/cities\//.test(url)) {
@@ -151,6 +181,7 @@ function getChangefreq(url) {
   if (url === `${SITE}/`) return "daily";
   if (/\/(journal|cities)$/.test(url)) return "weekly";
   if (/\/(journal|cities)\//.test(url)) return "monthly";
+  if (/\/events\//.test(url)) return "monthly";
   return "monthly";
 }
 
@@ -198,11 +229,19 @@ export default defineConfig({
           if (item.url.includes("/cities/")) {
             const slug = item.url.split("/cities/")[1];
             const cityDate = cityLastmodMap[slug];
-            if (!cityDate) console.warn(`[sitemap] no lastmod for city slug: ${slug}`);
+            if (!cityDate)
+              console.warn(`[sitemap] no lastmod for city slug: ${slug}`);
             lastmod = cityDate ? new Date(cityDate) : DEFAULT_LASTMOD;
+          } else if (item.url.includes("/events/")) {
+            const slug = item.url.split("/events/")[1];
+            const eventDate = eventLastmodMap[slug];
+            if (!eventDate)
+              console.warn(`[sitemap] no lastmod for event slug: ${slug}`);
+            lastmod = eventDate ? new Date(eventDate) : DEFAULT_LASTMOD;
           } else {
             const staticDate = staticLastmod[item.url];
-            if (!staticDate) console.warn(`[sitemap] unmapped page: ${item.url}`);
+            if (!staticDate)
+              console.warn(`[sitemap] unmapped page: ${item.url}`);
             lastmod = staticDate ? new Date(staticDate) : DEFAULT_LASTMOD;
           }
         }

@@ -1,6 +1,5 @@
 ---
 import BaseLayout from "@/layouts/BaseLayout.astro";
-import EventbriteWidgetInit from "@/components/EventbriteWidgetInit.astro";
 import { cities } from "@/data/cities";
 import type { CityData } from "@/data/cities";
 import { getUpcomingEventsForCity } from "@/utils/cityEvents";
@@ -15,7 +14,7 @@ import { isPublished } from "@/utils/date";
 import { SOCIAL_URLS } from "@/data/socials";
 import CityEventTicketEmbed from "@/components/cities/CityEventTicketEmbed.astro";
 import { buildTicketUrl } from "@/utils/eventUrl";
-import { domainFromUrl, vendorFromUrl } from "@/lib/analyticsCapture";
+import { domainFromUrl } from "@/lib/analyticsCapture";
 import { EVENTS, CITY_FOLLOW } from "@/data/copy";
 
 export function getStaticPaths() {
@@ -231,10 +230,7 @@ function renderCityText(text: string, href: string): string {
 
       {
         cityEvents.length === 0 && (
-          <a
-            href="#waitlist"
-            class="city-status city-status--demand"
-          >
+          <a href="#waitlist" class="city-status city-status--demand">
             <span class="city-status__label">{cityStatus.label}</span>
             <p class="city-status__text">{cityStatus.text}</p>
           </a>
@@ -271,7 +267,11 @@ function renderCityText(text: string, href: string): string {
       {/* CTAs */}
       <div class="city-ctas">
         {
-          /* Per-event scroll anchors: scroll up to the inline embed in the hero */
+          /* Per-event repeat CTA, lower on the page than the CityEventTicketEmbed
+             card above. Used to be a same-page scroll anchor (`#buy-{eventbriteId}`)
+             jumping up to the inline Eventbrite embed; that embed is retired (see
+             CityEventTicketEmbed.astro), so it now routes through the same tracked
+             redirect as every other "Get Tickets" CTA on the site instead. */
         }
         {
           cityEvents.map((event) => {
@@ -282,18 +282,15 @@ function renderCityText(text: string, href: string): string {
             const evCtaText = isSoldOut
               ? "Sold Out"
               : `${event.date}: ${EVENTS.ticketCta}`;
-            const scrollHref =
-              event.eventbriteId && !isSoldOut
-                ? `#buy-${event.eventbriteId}`
-                : evTicketUrl;
-            const isExternal = !event.eventbriteId || isSoldOut;
+            const goHref = `/api/go/${event.slug}`;
+            const ticketHref = isSoldOut ? evTicketUrl : goHref;
             return (
               <a
-                href={scrollHref}
-                {...(isExternal
-                  ? { target: "_blank", rel: "noopener noreferrer" }
-                  : {})}
+                href={ticketHref}
+                target="_blank"
+                rel="noopener noreferrer"
                 class={`city-cta city-cta--primary${isSoldOut ? " city-cta--soldout" : ""}`}
+                data-go-ticket={isSoldOut ? undefined : true}
                 data-ph-capture="ticket_click"
                 data-ph-cta="city_event_ticket"
                 data-ph-section="cities"
@@ -302,14 +299,19 @@ function renderCityText(text: string, href: string): string {
                 data-ph-event-title={evTitle}
                 data-cta-position="city_event_ticket"
                 data-cta-text={evCtaText}
-                data-destination-url={evTicketUrl}
-                data-link-url={evTicketUrl}
-                data-link-domain={domainFromUrl(evTicketUrl)}
+                data-event-slug={event.slug}
                 data-event-city={evLocation}
                 data-event-date={event.isoDate ?? event.date}
                 data-event-title={evTitle}
-                data-event-vendor={vendorFromUrl(evTicketUrl)}
+                data-event-vendor={event.ticketSource}
                 data-city-slug={city.slug}
+                {...(isSoldOut
+                  ? {
+                      "data-destination-url": evTicketUrl,
+                      "data-link-url": evTicketUrl,
+                      "data-link-domain": domainFromUrl(evTicketUrl),
+                    }
+                  : {})}
               >
                 <span>{evCtaText}</span>
                 {!isSoldOut && (
@@ -781,7 +783,6 @@ function renderCityText(text: string, href: string): string {
       </div>
     </div>
   </main>
-  <EventbriteWidgetInit />
 </BaseLayout>
 
 <script>

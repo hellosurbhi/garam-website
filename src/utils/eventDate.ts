@@ -91,6 +91,17 @@ export function isUpcomingByIso(
 }
 
 /**
+ * Adds (or subtracts, for a negative value) minutes to a 24h "HH:MM" string.
+ * Wraps within a single day; show run-of-show never crosses midnight.
+ */
+export function addMinutesToTime(hhmm: string, minutes: number): string {
+  const [h, m] = hhmm.split(":").map(Number);
+  const total = h * 60 + m + minutes;
+  const wrapped = ((total % 1440) + 1440) % 1440;
+  return `${String(Math.floor(wrapped / 60)).padStart(2, "0")}:${String(wrapped % 60).padStart(2, "0")}`;
+}
+
+/**
  * Formats a 24-hour "HH:MM" string for display.
  * "18:00" → "6 PM", "19:30" → "7:30 PM", "00:00" → "12 AM".
  */

@@ -1,8 +1,10 @@
 ---
 /**
  * Shared loading spinner.
- * size="sm"  → 16px white border (button loading states)
- * size="md"  → 32px brand-red (page/section loading states, default)
+ * size="sm"  → 16px, size="md" → 32px (default).
+ * Border color inherits currentColor from the host element so it matches
+ * whatever surface it sits on (white on dark pills, red on outline delete,
+ * green on restore) without per-tone variants.
  */
 import styles from "./Spinner.module.css";
 

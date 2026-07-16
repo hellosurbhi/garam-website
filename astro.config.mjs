@@ -162,6 +162,35 @@ export default defineConfig({
   build: {
     inlineStylesheets: "auto",
   },
+  // WHY: Astro computes sha256 hashes for every inline script and style at
+  // build time and injects a <meta http-equiv="content-security-policy"> into
+  // every page. The vercel.json header no longer carries unsafe-inline for
+  // script-src/style-src; both policies must pass, so inline content needs a
+  // hash match. External scripts (GTM, EB, pixels) are listed as resources so
+  // they remain trusted. Not active in dev mode (vite HMR injects un-hashed
+  // scripts), only enforced after build/preview.
+  security: {
+    csp: {
+      scriptDirective: {
+        resources: [
+          "https://www.eventbrite.com",
+          "https://www.googletagmanager.com",
+          "https://www.google-analytics.com",
+          "https://connect.facebook.net",
+          "https://us.i.posthog.com",
+          "https://us-assets.i.posthog.com",
+          "https://us.posthog.com",
+          "https://www.facebook.com",
+          "https://vercel.live",
+          "https://*.vercel-scripts.com",
+          "https://analytics.tiktok.com",
+          "https://static.ads-twitter.com",
+          "https://www.instagram.com",
+          "https://challenges.cloudflare.com",
+        ],
+      },
+    },
+  },
   adapter: vercel(),
   redirects: {
     "/south-asian-dating-tips": "/journal",

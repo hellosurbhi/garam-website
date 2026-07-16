@@ -68,7 +68,7 @@
   right: 12px;
   background: rgba(0, 0, 0, 0.45);
   border: none;
-  border-radius: 100px;
+  border-radius: 4px;
   padding: 6px;
   min-width: var(--modal-close-size);
   min-height: var(--modal-close-size);
@@ -177,7 +177,7 @@
 .appTypePill {
   display: inline-block;
   padding: 3px 10px;
-  border-radius: 100px;
+  border-radius: 4px;
   font-size: 11px;
   font-weight: 600;
   letter-spacing: 0.02em;
@@ -192,15 +192,16 @@
 }
 
 .name {
-  font-family: var(--font-playfair);
+  font-family: var(--font-display), sans-serif;
   font-size: 24px;
-  font-weight: 700;
+  font-weight: 400;
+  text-transform: uppercase;
   color: var(--text);
 }
 
 .statusBadge {
   padding: 3px 10px;
-  border-radius: 100px;
+  border-radius: 4px;
   font-size: 12px;
   font-weight: 600;
   background: color-mix(in srgb, var(--status-color) 13%, transparent);
@@ -281,7 +282,7 @@
 
 .statusSelect {
   padding: 10px 14px;
-  border-radius: 100px;
+  border-radius: 4px;
   border: 1px solid var(--border);
   font-family: var(--font-body);
   font-size: 16px;
@@ -314,7 +315,7 @@
   align-items: center;
   gap: 6px;
   padding: 10px 18px;
-  border-radius: 100px;
+  border-radius: 4px;
   border: 1px solid var(--brand-red);
   background: transparent;
   font-family: var(--font-body);
@@ -343,7 +344,7 @@
   align-items: center;
   gap: 6px;
   padding: 10px 18px;
-  border-radius: 100px;
+  border-radius: 4px;
   border: 1px solid var(--success);
   background: transparent;
   font-family: var(--font-body);
@@ -374,7 +375,7 @@
   gap: 8px;
   width: 100%;
   padding: 12px 18px;
-  border-radius: 100px;
+  border-radius: 4px;
   border: 1.5px solid var(--brand-red);
   background: var(--brand-red);
   font-family: var(--font-body);

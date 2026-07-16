@@ -16,9 +16,10 @@
 }
 
 .title {
-  font-family: var(--font-playfair);
+  font-family: var(--font-display), sans-serif;
   font-size: 17px;
-  font-weight: 700;
+  font-weight: 400;
+  text-transform: uppercase;
   color: var(--text);
   margin: 0;
 }
@@ -29,13 +30,13 @@
   gap: 4px;
   background: var(--off-white);
   border: 1px solid var(--border);
-  border-radius: 100px;
+  border-radius: 4px;
   padding: 4px;
 }
 
 .windowBtn {
   padding: 5px 14px;
-  border-radius: 100px;
+  border-radius: 4px;
   border: none;
   background: transparent;
   font-family: var(--font-body);
@@ -83,13 +84,13 @@
 .barTrack {
   height: 8px;
   background: var(--border);
-  border-radius: 100px;
+  border-radius: 4px;
   overflow: hidden;
 }
 
 .barFill {
   height: 100%;
-  border-radius: 100px;
+  border-radius: 4px;
   transition: width 0.4s ease;
 }
 
@@ -125,9 +126,10 @@
 }
 
 .cityTitle {
-  font-family: var(--font-playfair);
+  font-family: var(--font-display), sans-serif;
   font-size: 14px;
-  font-weight: 700;
+  font-weight: 400;
+  text-transform: uppercase;
   color: var(--text);
   margin: 0 0 14px;
 }

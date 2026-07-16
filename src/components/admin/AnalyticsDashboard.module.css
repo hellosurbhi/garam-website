@@ -18,13 +18,13 @@
   gap: 4px;
   background: #fff;
   border: 1px solid var(--border);
-  border-radius: 100px;
+  border-radius: 4px;
   padding: 4px;
 }
 
 .periodButton {
   padding: 5px 14px;
-  border-radius: 100px;
+  border-radius: 4px;
   border: none;
   background: transparent;
   font-family: var(--font-body);
@@ -43,7 +43,7 @@
 .syncButton {
   margin-left: auto;
   padding: 7px 18px;
-  border-radius: 100px;
+  border-radius: 4px;
   border: 1px solid var(--border);
   background: #fff;
   font-family: var(--font-body);
@@ -106,11 +106,11 @@
 }
 
 .metricValue {
-  font-family: var(--font-playfair);
+  font-family: var(--font-display), sans-serif;
   font-size: 28px;
-  font-weight: 700;
+  font-weight: 400;
   color: var(--text);
-  line-height: 1.1;
+  line-height: 1;
 }
 
 .metricSub {
@@ -128,9 +128,10 @@
 }
 
 .sectionTitle {
-  font-family: var(--font-playfair);
+  font-family: var(--font-display), sans-serif;
   font-size: 17px;
-  font-weight: 700;
+  font-weight: 400;
+  text-transform: uppercase;
   color: var(--text);
   margin-bottom: 20px;
 }
@@ -180,7 +181,7 @@
 .pill {
   display: inline-block;
   padding: 2px 10px;
-  border-radius: 100px;
+  border-radius: 4px;
   font-size: 12px;
   font-weight: 600;
   background: rgba(var(--brand-red-rgb), 0.08);
@@ -198,14 +199,14 @@
   flex: 1;
   height: 8px;
   background: var(--border);
-  border-radius: 100px;
+  border-radius: 4px;
   overflow: hidden;
 }
 
 .funnelFill {
   height: 100%;
   background: var(--brand-red);
-  border-radius: 100px;
+  border-radius: 4px;
   transition: width 0.4s ease;
 }
 
@@ -262,9 +263,9 @@
 }
 
 .conversionBig {
-  font-family: var(--font-playfair);
+  font-family: var(--font-display), sans-serif;
   font-size: 40px;
-  font-weight: 700;
+  font-weight: 400;
   color: var(--brand-red);
   line-height: 1;
   margin-bottom: 4px;
@@ -306,7 +307,7 @@
 .purchasedBadge {
   display: inline-block;
   padding: 2px 8px;
-  border-radius: 100px;
+  border-radius: 4px;
   font-size: 11px;
   font-weight: 600;
   background: rgba(34, 197, 94, 0.1);

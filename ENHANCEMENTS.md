@@ -4,6 +4,27 @@ Items from the GMD website audit checklists (site audit, codebase cleanup, conve
 
 ---
 
+## Homepage Email Popup: Replace Placeholder Copy with Real Offer (2026-07-16)
+
+### Update popup headline, subtitle and CTA once a concrete offer is confirmed
+
+**Priority:** High
+**Status:** Deferred — blocked on business decision
+
+The homepage email popup (`src/pages/index.astro`) fires after 15 seconds or at 65% scroll depth. The current copy ("Want Cheaper Tickets?" / "Join our list for exclusive discount codes and early access." / "Get My Discount Code!") implies a discount that does not exist yet and cannot be promised across all future events.
+
+**What needs to happen first:**
+Decide on a concrete, deliverable incentive. Options: a fixed % off at checkout for confirmed shows, priority-access notification before public sale, a free-ticket draw for subscribers, or early-bird pricing for returning attendees. Pick one that can actually be honored regardless of which city/event the subscriber attends.
+
+**What to change once decided:**
+- `popup-title`: replace "Want Cheaper Tickets?" with the offer headline
+- `popup-subtitle`: replace the current placeholder with the actual benefit
+- `popup-submit` button: replace "Get My Discount Code!" with an action phrase matching the real offer (e.g. "Claim My Spot", "Get Early Access")
+
+All in `src/pages/index.astro` lines 178-211. No JS or CSS changes needed.
+
+---
+
 ## City Page Enrichment: Remaining Batches (2026-07-06)
 
 ### Extend the deep-content pattern to the remaining ~290 city pages

@@ -146,9 +146,11 @@ const showCityInput = collectCity && !cityMode;
     justify-content: center;
   }
   .lc-title {
-    font-family: var(--font-playfair), serif;
+    font-family: var(--font-display), sans-serif;
     font-size: 22px;
-    font-weight: 600;
+    font-weight: 400;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
     color: var(--charcoal);
     margin-bottom: 8px;
   }
@@ -166,7 +168,7 @@ const showCityInput = collectCity && !cityMode;
   .lc-form input {
     padding: 14px 20px;
     border: 1.5px solid var(--border);
-    border-radius: 50px;
+    border-radius: 4px;
     font-size: 16px;
     font-family: var(--font-body), sans-serif;
     outline: none;
@@ -189,7 +191,7 @@ const showCityInput = collectCity && !cityMode;
     color: white;
     border: none;
     padding: 14px;
-    border-radius: 50px;
+    border-radius: 4px;
     font-family: var(--font-body), sans-serif;
     font-size: 16px;
     font-weight: 700;
@@ -252,23 +254,21 @@ const showCityInput = collectCity && !cityMode;
   import {
     captureLead,
     updateLeadPhone,
-    type LeadCaptureResult,
-    type LeadSubmissionPayload,
   } from "@/lib/leadSubmission";
 
   // Wire up all LeadCaptureModal instances on the page
-  document.querySelectorAll<HTMLElement>(".lc-steps").forEach((root) => {
-    const dialog = root.closest("dialog") as HTMLDialogElement;
+  document.querySelectorAll(".lc-steps").forEach((root) => {
+    const dialog = root.closest("dialog");
     if (!dialog) return;
 
     const source = root.dataset.lcSource ?? "lead-capture";
     const isWaitlistSource =
       /waitlist|notify|city-request|links-page|ticket/i.test(source);
-    let leadDocId: LeadCaptureResult | null = null;
+    let leadDocId = null;
     let capturedEmail = "";
 
-    function showStep(step: "email" | "phone" | "success") {
-      root.querySelectorAll<HTMLElement>("[data-lc-step]").forEach((el) => {
+    function showStep(step) {
+      root.querySelectorAll("[data-lc-step]").forEach((el) => {
         if (el.dataset.lcStep === step) {
           el.removeAttribute("hidden");
         } else {
@@ -276,36 +276,26 @@ const showCityInput = collectCity && !cityMode;
         }
       });
       if (step === "success") {
-        (
-          root.querySelector('[data-lc-step="success"]') as HTMLElement
-        )?.focus();
+        root.querySelector('[data-lc-step="success"]')?.focus();
       }
     }
 
     function reset() {
       showStep("email");
-      const emailInput = root.querySelector(
-        "[data-lc-email]",
-      ) as HTMLInputElement | null;
+      const emailInput = root.querySelector("[data-lc-email]");
       if (emailInput) emailInput.value = "";
-      const phoneInput = root.querySelector(
-        "[data-lc-phone]",
-      ) as HTMLInputElement | null;
+      const phoneInput = root.querySelector("[data-lc-phone]");
       if (phoneInput) phoneInput.value = "";
       // Clear the visible optional city input (collectCity). The hidden
       // cityMode input is re-populated on open, so leave it alone.
-      const cityInput = root.querySelector(
-        'input[type="text"][data-lc-city]',
-      ) as HTMLInputElement | null;
+      const cityInput = root.querySelector('input[type="text"][data-lc-city]');
       if (cityInput) cityInput.value = "";
       root.querySelectorAll(".lc-error").forEach((el) => {
         el.textContent = "";
         el.setAttribute("hidden", "");
       });
       // Restore default success message text for next open
-      const successMsg = root.querySelector<HTMLElement>(
-        "[data-lc-success-msg]",
-      );
+      const successMsg = root.querySelector("[data-lc-success-msg]");
       if (successMsg)
         successMsg.textContent = successMsg.dataset.lcDefaultMsg ?? "";
       leadDocId = null;
@@ -320,21 +310,13 @@ const showCityInput = collectCity && !cityMode;
       .querySelector('[data-lc-form="email"]')
       ?.addEventListener("submit", async (e) => {
         e.preventDefault();
-        capturedEmail = (
-          root.querySelector("[data-lc-email]") as HTMLInputElement
-        ).value;
+        capturedEmail = root.querySelector("[data-lc-email]").value;
         // Reads from the hidden city input (cityMode) or the visible optional
         // city input (collectCity). Either way, geography rides along.
         const city =
-          (
-            root.querySelector("[data-lc-city]") as HTMLInputElement | null
-          )?.value.trim() ?? "";
-        const submitBtn = (
-          e.target as HTMLFormElement
-        ).querySelector<HTMLButtonElement>('[type="submit"]');
-        const errorEl = root.querySelector(
-          "[data-lc-error]",
-        ) as HTMLElement | null;
+          root.querySelector("[data-lc-city]")?.value.trim() ?? "";
+        const submitBtn = e.target.querySelector('[type="submit"]');
+        const errorEl = root.querySelector("[data-lc-error]");
         const originalBtnText = submitBtn?.textContent ?? "";
         if (submitBtn) {
           submitBtn.disabled = true;
@@ -343,7 +325,7 @@ const showCityInput = collectCity && !cityMode;
 
         try {
           const attribution = await buildLeadAttribution({ source });
-          const payload: LeadSubmissionPayload = {
+          const payload = {
             email: capturedEmail,
             ...attribution,
           };
@@ -375,9 +357,7 @@ const showCityInput = collectCity && !cityMode;
             errorEl.setAttribute("hidden", "");
           }
           showStep("phone");
-          (
-            root.querySelector("[data-lc-phone]") as HTMLInputElement | null
-          )?.focus();
+          root.querySelector("[data-lc-phone]")?.focus();
         } catch {
           if (errorEl) {
             errorEl.textContent = "Something went wrong. Please try again.";
@@ -396,12 +376,9 @@ const showCityInput = collectCity && !cityMode;
       .querySelector('[data-lc-form="phone"]')
       ?.addEventListener("submit", async (e) => {
         e.preventDefault();
-        const raw = (root.querySelector("[data-lc-phone]") as HTMLInputElement)
-          .value;
+        const raw = root.querySelector("[data-lc-phone]").value;
         const cleaned = cleanPhone(raw);
-        const phoneErrorEl = root.querySelector(
-          "[data-lc-phone-error]",
-        ) as HTMLElement | null;
+        const phoneErrorEl = root.querySelector("[data-lc-phone-error]");
 
         if (!raw.trim()) {
           showStep("success");
@@ -416,9 +393,7 @@ const showCityInput = collectCity && !cityMode;
           return;
         }
 
-        const submitBtn = (
-          e.target as HTMLFormElement
-        ).querySelector<HTMLButtonElement>('[type="submit"]');
+        const submitBtn = e.target.querySelector('[type="submit"]');
         const originalBtnText = submitBtn?.textContent ?? "";
         if (submitBtn) {
           submitBtn.disabled = true;
@@ -439,9 +414,7 @@ const showCityInput = collectCity && !cityMode;
             source,
             sourcePage: window.location.pathname,
           });
-          const successMsg = root.querySelector<HTMLElement>(
-            "[data-lc-success-msg]",
-          );
+          const successMsg = root.querySelector("[data-lc-success-msg]");
           if (successMsg)
             successMsg.textContent =
               successMsg.dataset.lcPhoneSuccessMsg ??
@@ -473,13 +446,11 @@ const showCityInput = collectCity && !cityMode;
   });
 
   // Wire up [data-open-modal] triggers anywhere on the page
-  document.querySelectorAll<HTMLElement>("[data-open-modal]").forEach((el) => {
+  document.querySelectorAll("[data-open-modal]").forEach((el) => {
     const open = () => {
       const targetId = el.dataset.openModal;
       if (!targetId) return;
-      const dialog = document.getElementById(
-        targetId,
-      ) as HTMLDialogElement | null;
+      const dialog = document.getElementById(targetId);
       if (!dialog) return;
 
       // If city mode, populate the city name
@@ -488,13 +459,11 @@ const showCityInput = collectCity && !cityMode;
         const root = dialog.querySelector(".lc-steps");
         const nameEl = root?.querySelector("[data-lc-city-name]");
         if (nameEl) nameEl.textContent = city;
-        const cityInput = root?.querySelector(
-          "[data-lc-city]",
-        ) as HTMLInputElement | null;
+        const cityInput = root?.querySelector("[data-lc-city]");
         if (cityInput) cityInput.value = city;
       }
 
-      const root = dialog.querySelector<HTMLElement>(".lc-steps");
+      const root = dialog.querySelector(".lc-steps");
       const modalSource = root?.dataset.lcSource ?? "lead-capture";
       const modalCity = el.dataset.openModalCity;
       trackLeadEvent("lead_capture_modal_opened", {
@@ -510,9 +479,7 @@ const showCityInput = collectCity && !cityMode;
         });
       }
       dialog.showModal();
-      (
-        dialog.querySelector<HTMLInputElement>("[data-lc-email]") ?? dialog
-      ).focus();
+      (dialog.querySelector("[data-lc-email]") ?? dialog).focus();
     };
     el.addEventListener("click", open);
     el.addEventListener("keydown", (e) => {

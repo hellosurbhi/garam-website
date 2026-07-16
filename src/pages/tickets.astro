@@ -246,11 +246,13 @@ const eventSeriesJsonLd = JSON.stringify({
   }
 
   .tickets-h1 {
-    font-family: var(--font-playfair);
-    font-size: 36px;
-    font-weight: 700;
+    font-family: var(--font-display), sans-serif;
+    font-size: clamp(40px, 10vw, 64px);
+    font-weight: 400;
+    text-transform: uppercase;
+    letter-spacing: -0.01em;
     color: var(--charcoal);
-    line-height: 1.15;
+    line-height: 0.9;
     margin-bottom: 14px;
   }
 
@@ -323,7 +325,7 @@ const eventSeriesJsonLd = JSON.stringify({
     border: 1.5px solid var(--brand-red);
     color: var(--brand-red);
     padding: 12px 24px;
-    border-radius: 50px;
+    border-radius: 4px;
     font-family: var(--font-body);
     font-size: 16px;
     font-weight: 600;
@@ -337,6 +339,10 @@ const eventSeriesJsonLd = JSON.stringify({
   .tickets-city-request__btn:hover {
     background: var(--brand-red);
     color: white;
+  }
+
+  .tickets-city-request__btn:active {
+    transform: scale(0.97);
   }
 
   /* ─── Footer ─────────────────────────────────────────── */

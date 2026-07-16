@@ -250,7 +250,6 @@ const speakableJsonLd = JSON.stringify({
   import {
     captureLead,
     updateLeadPhone,
-    type LeadCaptureResult,
   } from "@/lib/leadSubmission";
 
   // Email popup logic — only suppressed permanently after email submit
@@ -263,20 +262,20 @@ const speakableJsonLd = JSON.stringify({
   // regardless of how quickly they scroll or move the cursor to exit.
   const MIN_SESSION_MS = 15_000;
 
-  const popup = document.getElementById("email-popup") as HTMLDialogElement;
+  const popup = document.getElementById("email-popup");
 
   if (popup && !localStorage.getItem(POPUP_KEY)) {
     const sessionStart = Date.now();
     let popupShown = false;
 
-    function canShowPopup(): boolean {
+    function canShowPopup() {
       const dismissed = localStorage.getItem(POPUP_DISMISS_KEY);
       if (dismissed && Date.now() - Number(dismissed) < DISMISS_DURATION_MS)
         return false;
       return true;
     }
 
-    function tryShowPopup(): boolean {
+    function tryShowPopup() {
       if (popupShown) return false;
       if (!canShowPopup()) return false;
       if (Date.now() - sessionStart < MIN_SESSION_MS) return false;
@@ -284,9 +283,7 @@ const speakableJsonLd = JSON.stringify({
       popupShown = true;
       // Prefill the optional city from IP geo (resolved by now: popup only
       // fires after MIN_SESSION_MS). Leaves it blank if geo is unavailable.
-      const cityInput = document.getElementById(
-        "popup-city",
-      ) as HTMLInputElement | null;
+      const cityInput = document.getElementById("popup-city");
       const geoCity = sessionStorage.getItem("gmd-geo-city");
       if (cityInput && geoCity && !cityInput.value) cityInput.value = geoCity;
       trackLeadEvent("popup_opened", {
@@ -301,7 +298,7 @@ const speakableJsonLd = JSON.stringify({
     // the top of the viewport (user moving toward the browser's back button
     // or address bar, the highest-intent exit signal available).
     if (window.matchMedia("(pointer: fine)").matches) {
-      function handleExitIntent(e: MouseEvent): void {
+      function handleExitIntent(e) {
         if (e.clientY <= 0) {
           const shown = tryShowPopup();
           if (shown) {
@@ -315,7 +312,7 @@ const speakableJsonLd = JSON.stringify({
     // Scroll-depth trigger — fires once user has read past 65% of the page.
     // By this point they've seen the hero, stats, testimonials, and FAQ —
     // enough social proof to make the email ask feel earned rather than pushy.
-    function onScrollDepth(): void {
+    function onScrollDepth() {
       if (popupShown) {
         window.removeEventListener("scroll", onScrollDepth);
         return;
@@ -330,13 +327,13 @@ const speakableJsonLd = JSON.stringify({
     }
     window.addEventListener("scroll", onScrollDepth, { passive: true });
 
-    const close = (): void => {
+    const close = () => {
       // Save dismiss timestamp so the popup respects a 7-day cooldown.
       // Only set if user hasn't already subscribed (POPUP_KEY).
       if (!localStorage.getItem(POPUP_KEY)) {
         localStorage.setItem(POPUP_DISMISS_KEY, String(Date.now()));
       }
-      const inner = popup.querySelector(".popup-inner") as HTMLElement | null;
+      const inner = popup.querySelector(".popup-inner");
       const reduced = window.matchMedia(
         "(prefers-reduced-motion: reduce)",
       ).matches;
@@ -363,22 +360,16 @@ const speakableJsonLd = JSON.stringify({
     });
 
     let savedEmail = "";
-    let popupDocId: LeadCaptureResult | null = null;
+    let popupDocId = null;
 
     document
       .getElementById("popup-email-form")
       ?.addEventListener("submit", async (e) => {
         e.preventDefault();
-        savedEmail = (
-          document.getElementById("popup-email") as HTMLInputElement
-        ).value;
-        const popupCity = (
-          document.getElementById("popup-city") as HTMLInputElement | null
-        )?.value.trim();
+        savedEmail = document.getElementById("popup-email").value;
+        const popupCity = document.getElementById("popup-city")?.value.trim();
         const errorEl = document.getElementById("popup-email-error");
-        const submitBtn = (
-          e.target as HTMLFormElement
-        ).querySelector<HTMLButtonElement>('[type="submit"]');
+        const submitBtn = e.target.querySelector('[type="submit"]');
         const originalBtnText = submitBtn?.textContent ?? "";
         if (submitBtn) {
           submitBtn.disabled = true;
@@ -419,8 +410,7 @@ const speakableJsonLd = JSON.stringify({
       .getElementById("popup-phone-form")
       ?.addEventListener("submit", async (e) => {
         e.preventDefault();
-        const raw = (document.getElementById("popup-phone") as HTMLInputElement)
-          .value;
+        const raw = document.getElementById("popup-phone").value;
         const cleaned = cleanPhone(raw);
         const phoneErrorEl = document.getElementById("popup-phone-error");
 
@@ -437,9 +427,7 @@ const speakableJsonLd = JSON.stringify({
           return;
         }
 
-        const submitBtn = (
-          e.target as HTMLFormElement
-        ).querySelector<HTMLButtonElement>('[type="submit"]');
+        const submitBtn = e.target.querySelector('[type="submit"]');
         const originalBtnText = submitBtn?.textContent ?? "";
         if (submitBtn) {
           submitBtn.disabled = true;
@@ -491,9 +479,9 @@ const speakableJsonLd = JSON.stringify({
     // instead of snapping in together.
     const STAGGER_STEP_MS = 60;
     document
-      .querySelectorAll<HTMLElement>("[data-reveal-stagger]")
+      .querySelectorAll("[data-reveal-stagger]")
       .forEach((parent) => {
-        const children = parent.querySelectorAll<HTMLElement>("[data-reveal]");
+        const children = parent.querySelectorAll("[data-reveal]");
         children.forEach((child, i) => {
           child.style.transitionDelay = `${i * STAGGER_STEP_MS}ms`;
         });
@@ -597,9 +585,11 @@ const speakableJsonLd = JSON.stringify({
     color: var(--charcoal);
   }
   .popup-title {
-    font-family: var(--font-playfair), serif;
+    font-family: var(--font-display), sans-serif;
     font-size: 24px;
-    font-weight: 700;
+    font-weight: 400;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
     color: var(--charcoal);
     margin-bottom: 8px;
   }
@@ -617,7 +607,7 @@ const speakableJsonLd = JSON.stringify({
   .popup-form input {
     padding: 14px 20px;
     border: 1.5px solid rgba(0, 0, 0, 0.1);
-    border-radius: 50px;
+    border-radius: 4px;
     font-size: 16px;
     font-family: var(--font-body), sans-serif;
     outline: none;
@@ -632,7 +622,7 @@ const speakableJsonLd = JSON.stringify({
     color: white;
     border: none;
     padding: 14px;
-    border-radius: 50px;
+    border-radius: 4px;
     font-family: var(--font-body), sans-serif;
     font-size: 14px;
     font-weight: 700;

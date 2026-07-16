@@ -67,15 +67,13 @@ const personJsonLd = JSON.stringify([
 
       <div class="hosts-action-shot">
         <picture>
-          <source srcset="/images/hosts/hosts.avif" type="image/avif" />
-          <source srcset="/images/hosts/hosts.webp" type="image/webp" />
+          <source srcset="/images/hosts/hosts-portrait.webp" type="image/webp" />
           <img
-            src="/images/hosts/hosts.webp"
-            alt="Surbhi and Wyatt sitting together on stage at Top Secret Comedy Club"
-            width="733"
+            src="/images/hosts/hosts-portrait.webp"
+            alt="Surbhi and Wyatt sitting together at Top Secret Comedy Club"
+            width="800"
             height="1200"
             loading="lazy"
-            style="object-position: center 25%;"
           />
         </picture>
       </div>
@@ -206,11 +204,13 @@ const personJsonLd = JSON.stringify([
     margin-bottom: 16px;
   }
   h1 {
-    font-family: var(--font-playfair), serif;
-    font-size: clamp(32px, 5vw, 52px);
-    font-weight: 900;
+    font-family: var(--font-display), sans-serif;
+    font-size: clamp(40px, 7vw, 72px);
+    font-weight: 400;
+    text-transform: uppercase;
+    letter-spacing: -0.01em;
     color: var(--charcoal);
-    line-height: 1.05;
+    line-height: 0.9;
     margin-bottom: 20px;
   }
   .hosts-intro {
@@ -300,7 +300,7 @@ const personJsonLd = JSON.stringify([
     background: rgba(var(--brand-red-rgb), 0.08);
     color: var(--brand-red);
     padding: 4px 12px;
-    border-radius: 50px;
+    border-radius: 4px;
     letter-spacing: 0.5px;
   }
 
@@ -314,14 +314,14 @@ const personJsonLd = JSON.stringify([
     background: var(--brand-red);
     color: white;
     padding: 16px 36px;
-    border-radius: 50px;
+    border-radius: 4px;
     font-family: var(--font-body), sans-serif;
     font-size: 14px;
     font-weight: 700;
     text-transform: uppercase;
     letter-spacing: 1.5px;
     text-decoration: none;
-    transition: background 0.2s;
+    transition: background 0.2s, transform 0.15s;
     min-height: var(--touch-target);
     display: inline-flex;
     align-items: center;
@@ -329,10 +329,13 @@ const personJsonLd = JSON.stringify([
   .hosts-cta-primary:hover {
     background: var(--brand-red-dark);
   }
+  .hosts-cta-primary:active {
+    transform: scale(0.97);
+  }
   .hosts-cta-outline {
     color: var(--charcoal);
     padding: 16px 36px;
-    border-radius: 50px;
+    border-radius: 4px;
     border: 1.5px solid rgba(0, 0, 0, 0.15);
     font-family: var(--font-body), sans-serif;
     font-size: 14px;
@@ -347,6 +350,9 @@ const personJsonLd = JSON.stringify([
   }
   .hosts-cta-outline:hover {
     border-color: var(--charcoal);
+  }
+  .hosts-cta-outline:active {
+    transform: scale(0.97);
   }
 
   @media (min-width: 768px) {

@@ -448,9 +448,9 @@ const notifyTrackingAttrs = {
   }
 
   .ticket-card__city {
-    font-family: var(--font-playfair);
+    font-family: var(--font-body), sans-serif;
     font-size: 20px;
-    font-weight: 600;
+    font-weight: 700;
     color: var(--charcoal);
     line-height: 1.25;
   }
@@ -568,9 +568,7 @@ const notifyTrackingAttrs = {
 
 <script>
   document.addEventListener("click", async (e) => {
-    const btn = (e.target as Element).closest<HTMLButtonElement>(
-      ".ticket-card__share",
-    );
+    const btn = e.target.closest(".ticket-card__share");
     if (!btn) return;
     // Stop propagation so the parent card link doesn't fire
     e.preventDefault();

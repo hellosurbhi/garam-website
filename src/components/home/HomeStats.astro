@@ -13,8 +13,9 @@ import { STATS as stats } from "@/data/copy";
     decoding="async"
     aria-hidden="true"
   />
+  <div class="stats-overlay" aria-hidden="true"></div>
   <div class="stats-inner">
-    <h2>The Numbers Don't Lie</h2>
+    <p class="stats-label">By the numbers</p>
     <div class="stats-grid">
       {
         stats.map((stat) => (
@@ -22,7 +23,7 @@ import { STATS as stats } from "@/data/copy";
             <div class="stat-num" data-countup={stat.num}>
               {stat.num}
             </div>
-            <div class="stat-label">{stat.label}</div>
+            <div class="stat-text">{stat.label}</div>
           </div>
         ))
       }
@@ -31,10 +32,6 @@ import { STATS as stats } from "@/data/copy";
 </section>
 
 <script>
-  // Count-up animation triggered when the stats section enters viewport.
-  // Parses each .stat-num's text into a numeric target + suffix (e.g.
-  // "2K+" → 2 with "K+"), then runs a rAF easeOutCubic tween over 1500ms.
-  // Native static text is the SSR fallback; JS only replaces on scroll-in.
   const prefersReducedMotion = window.matchMedia(
     "(prefers-reduced-motion: reduce)",
   ).matches;
@@ -43,9 +40,7 @@ import { STATS as stats } from "@/data/copy";
     const nums = document.querySelectorAll<HTMLElement>(
       ".stat-num[data-countup]",
     );
-    if (nums.length === 0) {
-      // nothing to animate
-    } else {
+    if (nums.length > 0) {
       const parse = (raw: string): { target: number; suffix: string } => {
         const match = raw.match(/^(\d+)(.*)$/);
         if (!match) return { target: 0, suffix: raw };
@@ -57,20 +52,14 @@ import { STATS as stats } from "@/data/copy";
       const animate = (el: HTMLElement): void => {
         const raw = el.dataset.countup ?? el.textContent ?? "0";
         const { target, suffix } = parse(raw);
-        if (target === 0) {
-          el.textContent = raw;
-          return;
-        }
+        if (target === 0) { el.textContent = raw; return; }
         const duration = 1500;
         const start = performance.now();
         const tick = (now: number): void => {
           const elapsed = now - start;
           const progress = Math.min(elapsed / duration, 1);
-          const value = Math.round(target * easeOutCubic(progress));
-          el.textContent = value + suffix;
-          if (progress < 1) {
-            requestAnimationFrame(tick);
-          }
+          el.textContent = Math.round(target * easeOutCubic(progress)) + suffix;
+          if (progress < 1) requestAnimationFrame(tick);
         };
         el.textContent = "0" + suffix;
         requestAnimationFrame(tick);
@@ -100,101 +89,88 @@ import { STATS as stats } from "@/data/copy";
     text-align: center;
     position: relative;
     overflow: hidden;
+    background: var(--ink);
   }
   .stats-bg {
     position: absolute;
-    inset: -10%;
-    width: 120%;
-    height: 120%;
+    inset: 0;
+    width: 100%;
+    height: 100%;
     object-fit: cover;
     object-position: center 35%;
     display: block;
     z-index: 0;
   }
-  @media (min-width: 768px) {
-    .stats-bg {
-      inset: 0;
-      width: 100%;
-      height: 100%;
-      object-position: center 40%;
-    }
+  /* Dark overlay so text stays legible */
+  .stats-overlay {
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+    background: linear-gradient(
+      to bottom,
+      rgba(12, 12, 12, 0.75) 0%,
+      rgba(12, 12, 12, 0.6) 50%,
+      rgba(12, 12, 12, 0.8) 100%
+    );
   }
   .stats-inner {
     position: relative;
-    z-index: 1;
-    max-width: 900px;
+    z-index: 2;
+    max-width: 1000px;
     margin: 0 auto;
   }
-  .stats h2 {
-    font-family: var(--font-playfair), serif;
-    font-size: clamp(28px, 4vw, 52px);
-    font-weight: 900;
-    color: white;
+  .stats-label {
+    font-family: var(--font-body), sans-serif;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--gold);
     margin-bottom: 48px;
-    text-shadow:
-      0 2px 16px rgba(0, 0, 0, 0.7),
-      0 0 40px rgba(0, 0, 0, 0.3);
   }
   .stats-grid {
     display: flex;
     flex-wrap: wrap;
     justify-content: center;
-    gap: 32px 0;
+    gap: 48px 0;
   }
-  /* Single-column on the smallest phones (<480px) */
   .stat-item {
     flex: 0 1 100%;
-    padding: 0 10px;
+    padding: 0 16px;
   }
-  /* 2-column on medium-sized phones (480px to 767px) */
   @media (min-width: 480px) and (max-width: 767px) {
-    .stat-item {
-      flex: 0 1 50%;
-    }
+    .stat-item { flex: 0 1 50%; }
   }
   .stat-num {
-    font-family: var(--font-playfair), serif;
-    font-size: 32px;
-    font-weight: 900;
+    font-family: var(--font-display), sans-serif;
+    font-size: clamp(56px, 10vw, 96px);
+    font-weight: 400;
     color: var(--electric-yellow);
     line-height: 1;
-    text-shadow: 0 2px 12px rgba(0, 0, 0, 0.6);
+    letter-spacing: -0.02em;
   }
-  .stat-label {
-    font-size: 12px;
-    font-weight: 700;
+  .stat-text {
+    font-family: var(--font-body), sans-serif;
+    font-size: 11px;
+    font-weight: 600;
     text-transform: uppercase;
-    letter-spacing: 1.5px;
-    color: white;
-    margin-top: 8px;
-    text-shadow: 0 1px 8px rgba(0, 0, 0, 0.6);
+    letter-spacing: 0.2em;
+    color: rgba(255, 255, 255, 0.55);
+    margin-top: 10px;
   }
-
   @media (min-width: 768px) {
-    .stats {
-      padding: 100px 48px;
-    }
-    .stats h2 {
-      margin-bottom: 64px;
-    }
+    .stats { padding: 100px 48px; }
+    .stats-label { margin-bottom: 64px; }
     .stats-grid {
       flex-wrap: nowrap;
       gap: 0;
     }
     .stat-item {
       flex: 1;
-      padding: 0 40px;
-      border-right: 1px solid rgba(255, 255, 255, 0.2);
+      padding: 0 48px;
+      border-right: 1px solid rgba(255, 255, 255, 0.1);
     }
-    .stat-item:last-child {
-      border-right: none;
-    }
-    .stat-num {
-      font-size: 72px;
-    }
-    .stat-label {
-      font-size: 13px;
-      white-space: nowrap;
-    }
+    .stat-item:last-child { border-right: none; }
+    .stat-text { white-space: nowrap; }
   }
 </style>

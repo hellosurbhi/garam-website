@@ -47,9 +47,11 @@
 }
 
 .title {
-  font-family: var(--font-playfair);
+  font-family: var(--font-display), sans-serif;
   font-size: 28px;
-  font-weight: 700;
+  font-weight: 400;
+  text-transform: uppercase;
+  line-height: 0.92;
   color: var(--text);
   text-align: center;
   margin-bottom: 32px;
@@ -69,7 +71,7 @@
 .input {
   width: 100%;
   padding: 12px 18px;
-  border-radius: 100px;
+  border-radius: 4px;
   border: 1px solid var(--border);
   font-family: var(--font-body);
   font-size: 16px;
@@ -95,7 +97,7 @@
 .submitButton {
   width: 100%;
   padding: 13px;
-  border-radius: 100px;
+  border-radius: 4px;
   border: none;
   background: var(--brand-red);
   color: #fff;

@@ -1,5 +1,48 @@
 # Changelog
 
+## feat(photos): add 5 new show photos (2026-07-16)
+
+Converted 5 new professional show photos to webp at canonical promo dimensions (Q82) and wired into the site:
+- `_LEO7701.jpg` (4000x6000) → `hosts-portrait.webp` (800x1200): replaces the older hosts action shot on the hosts page. Better portrait composition of Surbhi and Wyatt at Top Secret Comedy Club.
+- `GMDS SF 2026 EDITS-10.jpg` (6841x4561) → `on-stage-sf.webp` (1200x800): replaces `magic-moment.webp` as the Experience section left-panel background. Shows both hosts on stage at The Faight (SF 2026 show).
+- `Garammasaladating-2.jpg` (2000x1333) → `stage-hug.webp` (1200x800): replaces `pure-chaos.webp` as the Experience section right-panel background.
+- `_LEO8613.jpg` (6000x4000) → `intimate-moment.webp` (1200x800): replaces `after-party.webp` as the Testimonials section background. More emotional, intimate show moment.
+- `Garammasaladating-35.jpg` (2000x1333) → `crowd-piggyback.webp` (1200x800): added to `public/images/promo/` for future use.
+
+Cleared BUGS.md of all completed and now-resolved deferred entries: journal cupid artwork, HomeCreators avatars (owner accepted current state), hosts page avatars (owner accepted current state), Experience section photo, Testimonials accent photo. Popup CTA copy moved to ENHANCEMENTS.md pending a concrete offer decision.
+
+## fix(security): remove unsafe-inline from CSP via Astro security.csp (2026-07-16)
+
+Enabled Astro 7's `security.csp` in `astro.config.mjs`. At build time Astro computes sha256 hashes for every inline `<script>` and `<style>` block and injects a `<meta http-equiv="content-security-policy">` into every page. Both the HTTP header (vercel.json) and the meta tag must pass, so inline content requires a hash match — `unsafe-inline` is effectively negated per the CSP spec (when a hash or nonce is present, unsafe-inline is ignored in that policy by modern browsers).
+
+Removed `'unsafe-inline'` from `script-src` and `style-src` in `vercel.json` to reflect the actual security state; the external script domain allowlist remains for legacy CSP2 browser fallback. `scriptDirective.resources` lists all 14 third-party script domains (GTM, EB, PostHog, Meta, TikTok, Twitter, Cloudflare Turnstile) so they remain trusted. Feature does not run in `dev` mode (vite HMR injects un-hashed scripts) — only enforced after `build`/`preview`.
+
+## feat(journal): wire cupid-garden.webp decorative artwork into journal index (2026-07-16)
+
+Added `public/images/ai-art/cupid-garden.webp` (1152x928, had existed unused since April) to the journal index page header. Two-column grid layout on tablet/desktop: header text left, 160x129px cropped thumbnail right. Hidden on screens below 560px. `loading="eager"` since it's above the fold.
+
+## fix(dev): strip TS syntax from all inline astro scripts; clean up BUGS.md (2026-07-16)
+
+Swept all 12 .astro files where `vite:oxc` (Rolldown) threw `[PARSE_ERROR]` in `npm run dev` due to TypeScript syntax in inline `<script>` blocks. Removed type imports, `as HTML*` casts, generic querySelector calls, function type annotations, non-null `!` operators, and interface/type declarations from: EventbriteWidgetInit, BaseLayout, HomeNav, HomeVideo, TicketCard, situationship-masterclass, HomeSignup, HomeShows, NotifyModal, LeadCaptureModal, index.astro, cities/[slug].astro. Business logic and full typing preserved in the `.ts` lib modules these scripts import from. Purged all completed entries from BUGS.md per doc routing mandate.
+
+## feat(redesign): full visual overhaul — new type system, dark hero, squared buttons (2026-07-15)
+
+Complete website redesign across all pages and components:
+
+**New design system (index.css):** Anton replaces Playfair Display (condensed bold impact), Instrument Serif replaces Cormorant Garamond (elegant editorial italic), Hanken Grotesk replaces Nunito (clean variable sans). New surface palette: `--page` (#fdf8f2), `--warm` (#f5ede0), `--gold` (#c4992a). Backward-compat aliases (`--font-playfair: "Anton"`, `--font-cormorant: "Instrument Serif"`) cascade the new fonts to all existing components without individual edits. Self-hosted woff2 font files added to `public/fonts/`.
+
+**Dark hero (HomeHero.astro):** WebGL shader canvas removed. CSS-only dark hero (`--ink` background, `#0C0C0C`) with hot-club radial gradient light spills. Anton headline at clamp(76px–148px), `text-transform: uppercase`, line-height 0.88. Mixed-font `em` pattern: Anton for the heading word, Instrument Serif italic for emphasized text (Anton has no italic). Custom cursor and grain overlay removed from BaseLayout.
+
+**Nav (HomeNav + PageNav):** Transparent over dark hero, scrolls to cream backdrop. CSS mask logo switches white→brand-red on scroll. Squared border (3px) for nav pill button.
+
+**Squared button system:** All buttons changed from `border-radius: 50px` (pill) to `border-radius: 4px` (squared). Applied to all CTAs, modals, form inputs, and nav pills across every page. `:active { transform: scale(0.97) }` press feedback added throughout.
+
+**Section-by-section rewrite:** HomeMarquee (Anton uppercase strip), HomeExperience (Anton h2, brand-red step numbers), HomeShows (ink bg, Anton headline), HomeStats (Anton numbers in electric-yellow), HomePress (Instrument Serif for italic press names), HomeTestimonials (dark/photo bg, grid layout), HomeFAQ (Anton h2 clamp 36-64px), HomeCreators (Anton h2), HomeVideo (warm bg, Anton h2), HomeJournal (Anton h2, Instrument Serif card titles), HomeSignup (squared inputs + button).
+
+**All inner pages:** Anton h1 on tickets, hosts, faq, 404, press, journal index, cities index/slug, apply, links, thank-you, desi-events, corporate, sponsorship, celebrate. Instrument Serif for editorial contexts (journal article titles, body h2/h3, press card titles, journal card titles). All modal titles updated to Anton uppercase across NotifyModal, LeadCaptureModal, ui/Modal, HomeShows modal, cities slug modal.
+
+**Anton em-italic pattern:** Any `em { font-style: italic }` inside an Anton heading switches to Instrument Serif to avoid faux italic. Applied to HomeExperience, HomeVideo, HomeJournal, 404.astro, faq.astro, journal/index.astro.
+
 ## fix(ci): required check runs on every PR, docs included (2026-07-14)
 
 The ruleset "Protect Main" requires the "Lint, Types, Test, Build" check, but ci.yml ignored markdown and docs paths, so docs-only PRs never started the check and sat permanently blocked (hit on PR #139). The paths-ignore block is gone: full CI runs on every PR to main. Owner decision: no conditional skips and no success reported without the checks actually running.

@@ -86,22 +86,27 @@ export function wireTicketCtaTracking(): void {
 
         if (isModified) return; // let the browser handle new-tab/window clicks
 
-        // Delay navigation so the PostHog/Pixel beacon has time to flush
-        // before the browser tears the page down (same pattern as
-        // trackOutbound() in src/lib/analyticsCapture.ts). Respects each
-        // anchor's own `target`: same-tab handoff on the event landing page
-        // (no target attribute) vs. new-tab on home/tickets/city cards
-        // (target="_blank"), so consolidating the tracking logic doesn't
-        // regress either page's existing navigation UX.
+        // WHY: target="_blank" anchors (home/tickets/city cards) must NOT
+        // preventDefault. Popup blockers require window.open()-equivalent
+        // navigation to happen synchronously inside the user-gesture call
+        // stack; an earlier version wrapped it in a setTimeout to match the
+        // same-tab delay below, which broke out of that stack and let
+        // browsers silently block the new tab, killing the primary CTA on
+        // every page that opens tickets in a new tab. Letting the native
+        // `target="_blank"` navigation proceed immediately keeps it inside
+        // the gesture. The current page is never torn down for a new-tab
+        // click, so capture()'s beacon (already fired above) still has the
+        // full remaining page lifetime to flush; no delay is needed here.
+        if (anchor.target === "_blank") return;
+
+        // Same-tab handoff only (the event landing page CTA, which has no
+        // target attribute): delay navigation so the PostHog/Pixel beacon
+        // has time to flush before the browser tears the current page down
+        // (same pattern as trackOutbound() in src/lib/analyticsCapture.ts).
         e.preventDefault();
         const href = anchor.href;
-        const openInNewTab = anchor.target === "_blank";
         window.setTimeout(() => {
-          if (openInNewTab) {
-            window.open(href, "_blank", "noopener");
-          } else {
-            window.location.href = href;
-          }
+          window.location.href = href;
         }, 100);
       });
     });

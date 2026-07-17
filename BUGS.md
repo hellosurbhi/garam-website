@@ -13,6 +13,15 @@
 - **What should happen:** `buildEventSchemas` should resolve each event's actual IANA zone (`e.timezone ?? "America/New_York"`) and `nyOffset` should be generalized to accept a zone parameter (e.g. `offsetForZone(isoDate, time, timezone)`) instead of hardcoding New York.
 - **Fix:** Not applied here, out of scope for the ad-tracking/checkout-redirect PR that surfaced it. Needs its own pass with a schema/timezone-focused smoke test (Rich Results Test on a San Diego or Chicago event page) rather than a drive-by fix.
 
+### [MEDIUM] Cookie consent banner does not gate Meta/marketing tracking
+
+- **Date:** 2026-07-16
+- **File:** `src/components/CookieConsent.astro`, `src/components/meta-pixel.astro`, `src/components/gtm.astro`, `src/pages/api/go/[slug].ts`, `src/pages/api/sync-orders.ts`
+- **Status:** Won't fix / by design (2026-07-16, Surbhi)
+- **Severity:** Medium
+- **What's happening:** The cookie banner writes a `marketing` boolean to localStorage, but nothing reads it before firing any Meta surface. `meta-pixel.astro` loads the Pixel unconditionally on idle and fires `fbq("init")` + `PageView` regardless of consent; `gtm.astro` loads the same way; the server-side CAPI calls added in this PR (`/api/go/[slug]`'s InitiateCheckout, `sync-orders.ts`'s Purchase) are server-to-server and were never going to be blockable by a client-side preference in the first place. Rejecting "marketing" in the banner therefore stops nothing. This predates the event-pages/CAPI work (Pixel and GTM already ignored consent); the new CAPI calls are consistent with that existing, ungated surface rather than a new gap.
+- **Decision:** Confirmed intentional (Surbhi, 2026-07-16). The show targets US audiences only, with no EU/UK-targeted traffic, so GDPR-style consent gating is not a legal requirement here, and the business call is to keep every Meta signal, including the now-unblockable server CAPI, firing regardless of banner state. Devil's-advocate note recorded and accepted: server CAPI reaches a few more users than the browser Pixel alone would (it survives ad blockers and ITP), which is exactly the tradeoff being made on purpose. No consent-gating code will be built. Logged here so future reviews don't re-flag it as a new defect.
+
 ### [HIGH] Dev server cannot transform TypeScript in astro component scripts
 
 - **Date:** 2026-07-05

@@ -34,19 +34,52 @@ import { addMinutesToTime, formatDisplayTime } from "@/utils/eventDate";
 import { buildBreadcrumbJsonLd, BASE } from "@/utils/breadcrumbs";
 import { buildEventSchemas } from "@/utils/eventSchema";
 import { deriveSeoTitle } from "@/utils/meta";
+import {
+  fetchEventbriteContent,
+  resolveEventDescription,
+} from "@/lib/eventbriteContent";
 
-export function getStaticPaths() {
-  return allEvents.map((event) => ({
-    params: { slug: event.slug },
-    props: { event },
-  }));
+/**
+ * Pulls real Eventbrite listing copy at build time for every
+ * `ticketSource === "eventbrite-owned"` event so its landing page mirrors
+ * what's actually live on Eventbrite instead of a manually-typed description
+ * silently drifting out of date. Third-party listings (`"external"`, e.g.
+ * Los Angeles) are skipped entirely: we have no right to represent someone
+ * else's Eventbrite listing as sourced content (see eventbriteContent.ts).
+ * `fetchEventbriteContent`/`resolveEventDescription` already fail soft to
+ * the manual description, so a missing token or API hiccup keeps the build
+ * green.
+ */
+export async function getStaticPaths() {
+  const token = import.meta.env.EVENTBRITE_API_TOKEN;
+
+  return Promise.all(
+    allEvents.map(async (event) => {
+      const shouldFetch =
+        event.ticketSource === "eventbrite-owned" &&
+        Boolean(event.eventbriteId) &&
+        Boolean(token);
+
+      const content = shouldFetch
+        ? await fetchEventbriteContent(event.eventbriteId!, token)
+        : null;
+
+      const description = resolveEventDescription(event.description, content);
+
+      return {
+        params: { slug: event.slug },
+        props: { event, description },
+      };
+    }),
+  );
 }
 
 interface Props {
   event: EventEntry;
+  description: string;
 }
 
-const { event } = Astro.props;
+const { event, description } = Astro.props;
 
 const cityLabel = formatEventLocation(event);
 const heroImage =
@@ -73,6 +106,13 @@ const breadcrumbJsonLd = buildBreadcrumbJsonLd([
   },
 ]);
 
+// Only a real, announced date has a real run-of-show: TBA/coming-soon
+// cities (Edison, LA/Chicago/Houston pre-launch) have no confirmed start
+// or venue yet, so a concrete "6 PM Doors / 8 PM Show" would be fabricated,
+// not sourced. isoDate is only ever set once a date is confirmed (see
+// EventEntry in src/data/events.ts), so its presence is the same signal
+// the hero meta above already uses for "Date announcing soon".
+const showAgenda = Boolean(event.isoDate);
 const startTime = event.startTime ?? "20:00";
 const endTime = event.endTime ?? "22:00";
 const agendaRows = SHOW_AGENDA.map((slot) => ({
@@ -149,7 +189,7 @@ const lineup = event.lineup.map((id) => PERFORMERS[id]);
     <section class="event-section event-section--cream">
       <div class="event-section__inner">
         <h2>{EVENT_PAGE.overviewHeading}</h2>
-        <p class="event-overview__text">{event.description}</p>
+        <p class="event-overview__text">{description}</p>
       </div>
     </section>
 
@@ -193,9 +233,15 @@ const lineup = event.lineup.map((id) => PERFORMERS[id]);
 
     {
       /* Location: always rendered (even pre-venue) so section background
-        alternation never breaks for TBA/coming-soon cities. */
+        alternation never breaks for TBA/coming-soon cities. Its own
+        background flips to off-white when Agenda (below) is omitted for
+        a TBA event, since Location would otherwise sit directly against
+        HomeFAQ's fixed cream background with nothing off-white between
+        them, repeating the same color on two adjacent sections. */
     }
-    <section class="event-section event-section--cream">
+    <section
+      class={`event-section ${showAgenda ? "event-section--cream" : "event-section--off-white"}`}
+    >
       <div class="event-section__inner">
         <h2>{EVENT_PAGE.locationHeading}</h2>
         {
@@ -227,22 +273,24 @@ const lineup = event.lineup.map((id) => PERFORMERS[id]);
       </div>
     </section>
 
-    {/* Agenda */}
-    <section class="event-section event-section--off-white">
-      <div class="event-section__inner">
-        <h2>{EVENT_PAGE.agendaHeading}</h2>
-        <ul class="event-agenda__list">
-          {
-            agendaRows.map((row) => (
-              <li class="event-agenda__row">
-                <span class="event-agenda__time">{row.time}</span>
-                <span class="event-agenda__label">{row.label}</span>
-              </li>
-            ))
-          }
-        </ul>
-      </div>
-    </section>
+    {/* Agenda: omitted entirely for TBA events, see showAgenda above. */}
+    {
+      showAgenda && (
+        <section class="event-section event-section--off-white">
+          <div class="event-section__inner">
+            <h2>{EVENT_PAGE.agendaHeading}</h2>
+            <ul class="event-agenda__list">
+              {agendaRows.map((row) => (
+                <li class="event-agenda__row">
+                  <span class="event-agenda__time">{row.time}</span>
+                  <span class="event-agenda__label">{row.label}</span>
+                </li>
+              ))}
+            </ul>
+          </div>
+        </section>
+      )
+    }
 
     {
       /* FAQ: reuses the homepage's accordion component as-is (same data,

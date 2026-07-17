@@ -35,6 +35,10 @@ interface FirestoreNullValue {
   nullValue: null;
 }
 
+interface FirestoreBooleanValue {
+  booleanValue: boolean;
+}
+
 interface FirestoreArrayValue {
   arrayValue: {
     values: FirestoreMapValue[];
@@ -52,6 +56,7 @@ type FirestoreFieldValue =
   | FirestoreIntegerValue
   | FirestoreDoubleValue
   | FirestoreNullValue
+  | FirestoreBooleanValue
   | FirestoreArrayValue
   | FirestoreMapValue;
 
@@ -89,6 +94,7 @@ function orderToFirestoreFields(
     matchedLeadId: order.matchedLeadId
       ? { stringValue: order.matchedLeadId }
       : { nullValue: null },
+    purchaseCapiSent: { booleanValue: order.purchaseCapiSent },
     attendees: {
       arrayValue: {
         values: order.attendees.map((a) => ({
@@ -217,18 +223,21 @@ async function findLeadByEmail(
 }
 
 /**
- * Whether this order already exists in Firestore, i.e. whether it has been
- * through this sync loop before. This is the sole idempotency guard for
- * Purchase CAPI firing: `orders/{orderId}` is only ever written by this
- * route, so a 404 here means "first time we've ever seen this order" and a
- * 200 means "already processed at least once", regardless of how its
- * status may have changed since (e.g. later refunded). Firing Purchase
- * exactly once per order, on first sight while still "placed", is what
- * prevents a repeat sync (incremental `changed_since` re-fetches orders
- * that were merely updated, such as refunds) from double-counting revenue
- * in Meta.
+ * Whether the Purchase CAPI event for this order has already been
+ * confirmed delivered to Meta. Deliberately NOT "does this order document
+ * exist": the order is always upserted below regardless of CAPI outcome
+ * (order/revenue data must never be lost over a tracking hiccup), so mere
+ * existence can't tell "Purchase delivered" apart from "Purchase attempt
+ * failed transiently, order was still recorded". A 404 means "first time
+ * we've ever seen this order" (nothing sent yet, hence `false`); a 200
+ * returns the stored `purchaseCapiSent` flag, which stays `false` until
+ * `sendCapiEvent` has actually returned `{ ok: true }` for it. Gating on
+ * this flag instead of existence means a transient failure leaves it
+ * `false`, and `findPendingPurchaseOrders()` below (run once per sync,
+ * after this per-event loop) picks the order back up on the very next run
+ * instead of losing that Purchase forever.
  */
-async function orderAlreadySynced(
+async function readOrderPurchaseCapiSent(
   projectId: string,
   accessToken: string,
   orderId: string,
@@ -247,7 +256,156 @@ async function orderAlreadySynced(
     );
   }
 
-  return true;
+  const doc = (await res.json()) as FirestoreDocument;
+  const field = doc.fields.purchaseCapiSent;
+  return Boolean(field && "booleanValue" in field && field.booleanValue);
+}
+
+/**
+ * Marks an order's Purchase CAPI event as delivered without touching any
+ * other field. Used only by the retry pass (`findPendingPurchaseOrders` +
+ * this), which reconstructs just enough of the order from Firestore to
+ * retry `sendCapiEvent` and does not have (and must not fabricate) the
+ * rest of the document's fields, e.g. `matchedLeadId`. An `updateMask`
+ * scoped to this one field keeps the PATCH from clobbering them.
+ */
+async function markPurchaseCapiSent(
+  projectId: string,
+  accessToken: string,
+  orderId: string,
+): Promise<void> {
+  const url = `https://firestore.googleapis.com/v1/projects/${projectId}/databases/(default)/documents/orders/${orderId}?updateMask.fieldPaths=purchaseCapiSent`;
+  const res = await fetch(url, {
+    method: "PATCH",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${accessToken}`,
+    },
+    body: JSON.stringify({
+      fields: { purchaseCapiSent: { booleanValue: true } },
+    }),
+  });
+
+  if (!res.ok) {
+    const body = (await res.json()) as FirestoreErrorBody;
+    throw new Error(
+      `Failed to mark order ${orderId} as CAPI-sent: ${res.status} ${body.error?.message ?? ""}`,
+    );
+  }
+}
+
+/** Minimal shape needed to retry a Purchase CAPI send; see PendingOrderDoc. */
+interface PendingOrderDoc {
+  orderId: string;
+  eventbriteEventId: string;
+  email: string;
+  createdAt: string;
+  grossRevenue: number;
+  currency: string;
+  quantity: number;
+}
+
+function parsePendingOrderDoc(doc: FirestoreDocument): PendingOrderDoc | null {
+  const orderId = doc.name.split("/").pop();
+  if (!orderId) return null;
+
+  const fields = doc.fields;
+  const eventbriteEventId =
+    "stringValue" in fields.eventbriteEventId
+      ? fields.eventbriteEventId.stringValue
+      : "";
+  const email = "stringValue" in fields.email ? fields.email.stringValue : "";
+  const createdAt =
+    "stringValue" in fields.createdAt ? fields.createdAt.stringValue : "";
+  const grossRevenue =
+    "doubleValue" in fields.grossRevenue ? fields.grossRevenue.doubleValue : 0;
+  const currency =
+    "stringValue" in fields.currency ? fields.currency.stringValue : "USD";
+  const quantity =
+    "integerValue" in fields.quantity
+      ? parseInt(fields.quantity.integerValue, 10)
+      : 1;
+
+  if (!eventbriteEventId || !email || !createdAt) return null;
+
+  return {
+    orderId,
+    eventbriteEventId,
+    email,
+    createdAt,
+    grossRevenue,
+    currency,
+    quantity,
+  };
+}
+
+/**
+ * Finds every "placed" order still owed a Purchase CAPI delivery. This is
+ * the retry mechanism `readOrderPurchaseCapiSent`'s doc comment refers to:
+ * Eventbrite's `changed_since` incremental sync only re-surfaces an order
+ * when something changes on Eventbrite's side (a refund, an attendee
+ * edit), not when our own delivery attempt merely failed, so the per-event
+ * fetch loop above has no way to naturally retry a stuck order. Querying
+ * Firestore directly for `purchaseCapiSent == false AND status ==
+ * "placed"` sidesteps that entirely: both are plain equality filters
+ * combined with AND, which Firestore serves without a manual composite
+ * index. `limit: 100` bounds one sync run's worst case; genuinely stuck
+ * orders (e.g. a dropped event no longer in events.ts) simply reappear on
+ * the next run since the flag is never set without a confirmed send.
+ */
+async function findPendingPurchaseOrders(
+  projectId: string,
+  accessToken: string,
+): Promise<PendingOrderDoc[]> {
+  const url = `https://firestore.googleapis.com/v1/projects/${projectId}/databases/(default)/documents:runQuery`;
+  const res = await fetch(url, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${accessToken}`,
+    },
+    body: JSON.stringify({
+      structuredQuery: {
+        from: [{ collectionId: "orders" }],
+        where: {
+          compositeFilter: {
+            op: "AND",
+            filters: [
+              {
+                fieldFilter: {
+                  field: { fieldPath: "purchaseCapiSent" },
+                  op: "EQUAL",
+                  value: { booleanValue: false },
+                },
+              },
+              {
+                fieldFilter: {
+                  field: { fieldPath: "status" },
+                  op: "EQUAL",
+                  value: { stringValue: "placed" },
+                },
+              },
+            ],
+          },
+        },
+        limit: 100,
+      },
+    }),
+  });
+
+  if (!res.ok) {
+    const body = (await res.json()) as FirestoreErrorBody;
+    throw new Error(
+      `Pending Purchase query failed: ${res.status} ${body.error?.message ?? ""}`,
+    );
+  }
+
+  const results = (await res.json()) as FirestoreQueryResult[];
+
+  return results
+    .filter((r): r is Required<FirestoreQueryResult> => Boolean(r.document))
+    .map((r) => parsePendingOrderDoc(r.document))
+    .filter((o): o is PendingOrderDoc => o !== null);
 }
 
 async function upsertOrder(
@@ -357,8 +515,14 @@ export const POST: APIRoute = async ({ request }) => {
     const lastSyncAt = prevMeta?.lastSyncAt;
     const previousTotal = prevMeta?.ordersProcessed ?? 0;
 
-    // Only process events that have an Eventbrite ID
-    const syncableEvents = events.filter((e) => e.eventbriteId);
+    // Only process events we actually sell tickets for ourselves. The Los
+    // Angeles listing (ticketSource: "external") carries a real
+    // `eventbriteId` too, but it belongs to a third party's Eventbrite
+    // account: our access token has no orders permission on it, so
+    // including it here just generates an authorization error on every run.
+    const syncableEvents = events.filter(
+      (e) => e.ticketSource === "eventbrite-owned" && e.eventbriteId,
+    );
 
     const syncErrors: string[] = [];
     let totalProcessed = 0;
@@ -416,20 +580,32 @@ export const POST: APIRoute = async ({ request }) => {
             // Non-fatal: proceed without match
           }
 
-          const orderWithMatch: Order = { ...order, matchedLeadId };
+          const orderWithMatch: Order = {
+            ...order,
+            matchedLeadId,
+            purchaseCapiSent: false,
+          };
 
           // Purchase CAPI: the sole remaining Purchase signal now that the
           // Eventbrite modal embed (and its browser-side fbq("track",
           // "Purchase", ...) call in the retired EventbriteWidgetInit.astro)
-          // is gone. Fired at most once per order, see orderAlreadySynced.
+          // is gone. Gated on purchaseCapiSent, not mere existence, so a
+          // failed attempt gets retried instead of silently forfeited: see
+          // readOrderPurchaseCapiSent's doc comment and the pending-retry
+          // pass after this loop.
           if (capiAccessToken) {
             try {
-              const alreadySynced = await orderAlreadySynced(
+              const alreadySent = await readOrderPurchaseCapiSent(
                 projectId,
                 accessToken,
                 order.orderId,
               );
-              if (!alreadySynced && order.status === "placed") {
+              if (alreadySent) {
+                // Already delivered on a prior run (this fetch re-surfaced
+                // it only because something else changed on Eventbrite's
+                // side, e.g. a refund): preserve the flag, don't resend.
+                orderWithMatch.purchaseCapiSent = true;
+              } else if (order.status === "placed") {
                 const result = await withTimeout(
                   sendCapiEvent(
                     {
@@ -453,7 +629,9 @@ export const POST: APIRoute = async ({ request }) => {
                   CAPI_TIMEOUT_MS,
                   "Meta CAPI Purchase",
                 );
-                if (!result.ok) {
+                if (result.ok) {
+                  orderWithMatch.purchaseCapiSent = true;
+                } else {
                   console.error(
                     `[sync-orders] CAPI Purchase failed for order ${order.orderId}: ${result.error}`,
                   );
@@ -464,15 +642,16 @@ export const POST: APIRoute = async ({ request }) => {
               console.error(
                 `[sync-orders] CAPI Purchase check failed for order ${order.orderId}: ${msg}`,
               );
-              // Non-fatal and, in this one case, unrecoverable: the order
-              // is still upserted below regardless (order data must never
-              // be lost over a tracking hiccup), which means a transient
-              // failure here permanently forfeits that order's Purchase
-              // signal: the existence check will read "already synced" on
-              // every later run. Acceptable: this is the same best-effort
-              // posture CAPI takes everywhere else (see src/lib/capi.ts),
-              // and a Firestore GET failing right as we first see a brand
-              // new order is rare.
+              // WHY: we don't know whether this order's flag was already
+              // true (the GET that would have told us is what just threw),
+              // so leaving purchaseCapiSent at its false default risks one
+              // redundant resend later rather than the old bug (losing the
+              // Purchase forever). That's the safe direction to be wrong in:
+              // sendCapiEvent's eventId is the stable order.orderId, and
+              // Meta dedupes repeated server events sharing an event_id, so
+              // a rare redundant send is a no-op there rather than double
+              // counted revenue. A Firestore GET failing right as we first
+              // see a brand new order is itself rare.
             }
           }
 
@@ -486,6 +665,85 @@ export const POST: APIRoute = async ({ request }) => {
             `[sync-orders] Failed to upsert order ${order.orderId}: ${msg}`,
           );
           syncErrors.push(`order:${order.orderId}: ${msg}`);
+        }
+      }
+    }
+
+    // Retry pass: pick up every order still owed a Purchase delivery from
+    // a previous run (see findPendingPurchaseOrders's doc comment for why
+    // the per-event loop above can't be relied on to naturally retry
+    // these). Runs once per sync, independent of which events were
+    // touched above.
+    let purchaseRetried = 0;
+    if (capiAccessToken) {
+      let pending: PendingOrderDoc[] = [];
+      try {
+        pending = await findPendingPurchaseOrders(projectId, accessToken);
+      } catch (err) {
+        const msg = err instanceof Error ? err.message : String(err);
+        console.error(`[sync-orders] Pending Purchase query failed: ${msg}`);
+        syncErrors.push(`pending-query: ${msg}`);
+      }
+
+      for (const pendingOrder of pending) {
+        // Cross-reference by Eventbrite event ID, not the stored
+        // `eventSlug` (that field is actually `citySlug`, e.g.
+        // "manhattan", not the per-show landing-page `slug` CAPI's
+        // eventSourceUrl needs: see EventEntry in src/data/events.ts).
+        const sourceEvent = events.find(
+          (e) => e.eventbriteId === pendingOrder.eventbriteEventId,
+        );
+        if (!sourceEvent) {
+          // The show this order belongs to is no longer in events.ts
+          // (pruned after it aged out). Nothing to build a correct
+          // eventSourceUrl from; skip rather than guess one.
+          continue;
+        }
+
+        try {
+          const result = await withTimeout(
+            sendCapiEvent(
+              {
+                eventName: "Purchase",
+                eventId: pendingOrder.orderId,
+                eventTime: Math.floor(
+                  new Date(pendingOrder.createdAt).getTime() / 1000,
+                ),
+                eventSourceUrl: `https://garammasaladating.com/events/${sourceEvent.slug}`,
+                userData: { email: pendingOrder.email },
+                customData: {
+                  value: pendingOrder.grossRevenue,
+                  currency: pendingOrder.currency,
+                  contentIds: [sourceEvent.slug],
+                  contentType: "event",
+                  numItems: pendingOrder.quantity,
+                },
+              },
+              capiAccessToken,
+            ),
+            CAPI_TIMEOUT_MS,
+            "Meta CAPI Purchase retry",
+          );
+
+          if (result.ok) {
+            await markPurchaseCapiSent(
+              projectId,
+              accessToken,
+              pendingOrder.orderId,
+            );
+            purchaseRetried += 1;
+          } else {
+            console.error(
+              `[sync-orders] Retry CAPI Purchase failed for order ${pendingOrder.orderId}: ${result.error}`,
+            );
+            syncErrors.push(`retry:${pendingOrder.orderId}: ${result.error}`);
+          }
+        } catch (err) {
+          const msg = err instanceof Error ? err.message : String(err);
+          console.error(
+            `[sync-orders] Retry CAPI Purchase threw for order ${pendingOrder.orderId}: ${msg}`,
+          );
+          syncErrors.push(`retry:${pendingOrder.orderId}: ${msg}`);
         }
       }
     }
@@ -506,6 +764,7 @@ export const POST: APIRoute = async ({ request }) => {
         ok: true,
         ordersProcessed: totalProcessed,
         leadsMatched: totalMatched,
+        purchaseRetried,
         errors: syncErrors,
         rateLimitRemaining: globalRateLimitRemaining,
         lastSyncAt: now,

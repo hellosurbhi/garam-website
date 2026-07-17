@@ -33,7 +33,14 @@ const { performer } = Astro.props;
         {performer.name}
       </a>
     </h3>
-    <p class="lineup-card__bio">{performer.bioParagraphs[0]}</p>
+    {
+      /* set:html: bioParagraphs may contain inline markup (e.g. <em>show
+        title</em>), same contract hosts.astro renders these with. Plain
+        interpolation would print the literal tags instead of italicizing
+        them. Content is static, internally authored copy, not user input,
+        so this is XSS-safe. */
+    }
+    <p class="lineup-card__bio" set:html={performer.bioParagraphs[0]} />
     <div class="lineup-card__credits">
       {performer.credits.map((credit) => <span>{credit}</span>)}
     </div>

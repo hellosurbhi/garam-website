@@ -63,6 +63,12 @@ function mapEBOrderToOrder(
       name: a.profile.name,
       email: a.profile.email,
     })),
+    // Freshly fetched from Eventbrite: sync-orders.ts hasn't attempted
+    // Purchase CAPI delivery for it yet. If this order already exists in
+    // Firestore with purchaseCapiSent: true, sync-orders.ts's own read
+    // (not this mapper) is what preserves that, since this object only
+    // represents what Eventbrite just returned, not our stored state.
+    purchaseCapiSent: false,
   };
 }
 

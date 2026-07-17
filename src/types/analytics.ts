@@ -20,6 +20,15 @@ export interface Order {
   syncedAt: string; // ISO 8601 timestamp when we synced this
   matchedLeadId: string | null; // Firestore lead doc ID if email matched
   attendees: OrderAttendee[];
+  /**
+   * Whether the Purchase CAPI event for this order has been confirmed
+   * delivered to Meta. Deliberately separate from "does this order document
+   * exist": an order can exist (we've seen it, its ticket/revenue data is
+   * recorded) while this stays false because the CAPI call itself failed or
+   * was skipped. Only sync-orders.ts sets this true, and only after
+   * sendCapiEvent returns { ok: true }. See src/pages/api/sync-orders.ts.
+   */
+  purchaseCapiSent: boolean;
 }
 
 /** Firestore document in syncMeta/eventbrite. */

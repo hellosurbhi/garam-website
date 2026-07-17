@@ -11,7 +11,7 @@
  */
 import type { EventEntry } from "@/data/events";
 import { formatEventLocation } from "@/utils/eventCity";
-import { formatOnSaleDate, isEventPast } from "@/utils/eventDate";
+import { formatOnSaleDate, isEventDatePast } from "@/utils/eventDate";
 
 interface Props {
   event: EventEntry;
@@ -23,7 +23,10 @@ const { event, position } = Astro.props;
 
 const cityLabel = formatEventLocation(event);
 const eventTitle = `Garam Masala Dating - ${cityLabel} - ${event.date}`;
-const isPast = isEventPast(event.date);
+// WHY: this page is permanent/statically generated, so a future rebuild
+// must not reclassify an old show as upcoming (see isEventDatePast's doc
+// comment for why event.date alone can't be trusted for that).
+const isPast = isEventDatePast(event);
 const isSoldOut = event.soldOut ?? false;
 const isLive = Boolean(event.url) && event.url !== "#";
 const isPresale =

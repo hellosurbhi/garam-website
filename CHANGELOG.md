@@ -4,9 +4,9 @@
 
 Seven PostHog-filed issues (#136, #151, #152, #153, #154, #155, #156) traced back to one root cause: Eventbrite's own `eb_widgets.js` click handler throws asynchronously in specific mobile in-app browsers (Instagram/Facebook WKWebView bridge probing, Firefox iOS reader mode, a ChunkLoadError from EB's webpack runtime resolving against our origin). `createWidget()` succeeding only proves EB registered a handler, not that the modal opens, and because our trigger buttons call `preventDefault()`, a failure inside EB's handler left the Buy Tickets CTA completely dead with no fallback, on 70% mobile traffic.
 
-- Extended the existing timeout + `MutationObserver` recovery pattern (already used for inline embed widgets) to the modal-trigger path in `EventbriteWidgetInit.astro` (tickets, cities, home) and `ApplySuccessPanel.tsx` (apply success upsell)
-- Detects the missing `div.eds-structure_main` modal DOM within one open attempt, fires a `widget_load_failed` analytics event, and recovers by opening the same Eventbrite checkout URL the trigger would have used natively
-- Wired up `cfg.fallbackUrl`, which `readCfg()` already computed but nothing consumed
+- Extended the existing timeout + DOM-query fallback pattern (already used by inline embed widgets, which check once after 8 seconds for the injected iframe) to the modal-trigger path in `EventbriteWidgetInit.astro` (tickets page cards, home hero pill, home shows cards; city pages use the inline embed path and were already covered) and to `ApplySuccessPanel.tsx` (apply success upsell)
+- After a trigger click, checks once at 2.5 seconds for the `div.eds-structure_main` modal DOM and fires a `widget_load_failed` analytics event when it never appeared. `EventbriteWidgetInit.astro` recovers by opening `cfg.fallbackUrl`: the anchor triggers' real href, or the `data-eb-url` attribute on the home shows button, which has no href. `ApplySuccessPanel.tsx`'s trigger is also a bare button, so it recovers by opening a URL built with `buildTicketUrl()`
+- Wired up `cfg.fallbackUrl` in `EventbriteWidgetInit.astro`, which `readCfg()` already computed but nothing consumed
 
 **Files:** `src/components/EventbriteWidgetInit.astro`, `src/components/apply/ApplySuccessPanel.tsx`
 

@@ -1500,3 +1500,8 @@ If the ambiguity matters there too, rename both with Surbhi's approval on the ex
 - 2026-07-15T19:37Z | tier=E | primary=codex | reason=error_or_timeout | fallback_used=gemini | commit=8ecc6b2 | diff_sha=0dcddf1f107891ad33ffb99d2cd75f10b3ad2973464c41b886f960166a096a50
 - 2026-07-15T19:37Z | tier=F | primary=coderabbit | reason=error | fallback_used=gemini | commit=8ecc6b2 | diff_sha=0dcddf1f107891ad33ffb99d2cd75f10b3ad2973464c41b886f960166a096a50
 - 2026-07-16T18:25Z | tier=E | primary=ALL | reason=OUTAGE | fallback_used=NONE | commit=f1d5483 | diff_sha=082f7bb0e23255ee6634a79539f3161de20a35f7ddbba111e74e630c08eaa40b
+
+### Codex LOW findings 2026-07-16 (won't fix, kept so they are not re-filed)
+
+- Bold-label sections in the new LESSONS.md Eventbrite entry: won't fix. The global CLAUDE.md LESSONS.md mandate prescribes the `**What went wrong:**` `**Why:**` `**Rule:**` template and nearly every existing entry follows it. The specific template mandate overrides the general copy-voice ban on bold-label lists for this file.
+- Em dash in the `1f0a217` commit message body: won't fix. That commit is already on origin, so rewriting its message means amending a published commit and force-pushing. The rule stands for future commit messages.

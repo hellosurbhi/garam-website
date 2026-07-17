@@ -178,7 +178,7 @@
     // ── Widget initialisation ───────────────────────────────────────────────
 
     function initWidgets(): void {
-      // Modal triggers — unchanged behaviour
+      // Modal triggers
       modalCfgs.forEach((cfg) => {
         const config: EBWidgetModalConfig = {
           widgetType: "checkout",
@@ -188,14 +188,7 @@
           themeSettings: { brandColor, fontColor, background: bgColor },
           onOrderComplete: makeOrderCompleteHandler(cfg),
         };
-        try {
-          w.EBWidgets.createWidget(config);
-          document
-            .getElementById(cfg.triggerId!)
-            ?.addEventListener("click", (e) => {
-              e.preventDefault();
-            });
-        } catch (_) {
+        const reportAndRecover = (): void => {
           capture("widget_load_failed", {
             event_id: cfg.eventId,
             city: cfg.city,
@@ -205,6 +198,39 @@
             link_domain: cfg.linkDomain,
             page: window.location.pathname,
           });
+          if (cfg.fallbackUrl) {
+            window.open(cfg.fallbackUrl, "_blank", "noopener,noreferrer");
+          }
+        };
+        try {
+          w.EBWidgets.createWidget(config);
+          document
+            .getElementById(cfg.triggerId!)
+            ?.addEventListener("click", (e) => {
+              e.preventDefault();
+              // WHY: createWidget() succeeding only means EB's script
+              // registered a click handler, not that opening actually
+              // works. In some mobile in-app browsers (Instagram/Facebook
+              // WKWebView, Firefox iOS) EB's own click handler throws
+              // asynchronously: window.webkit.messageHandlers probing, a
+              // __firefox__ reader global, or a ChunkLoadError from EB's
+              // webpack runtime resolving its chunk path against our origin
+              // instead of theirs. When that happens the modal never
+              // opens, and since we already called preventDefault() the
+              // native href never fires either, so the button goes
+              // silently dead — a real checkout-blocking bug (see GitHub
+              // #136, #151, #152, #153, #154, #155, #156), not noise to
+              // filter. Detect the missing modal within one open attempt
+              // and recover via the same URL the anchor/button would have
+              // navigated to natively.
+              window.setTimeout(() => {
+                if (!document.querySelector("div.eds-structure_main")) {
+                  reportAndRecover();
+                }
+              }, 2500);
+            });
+        } catch (_) {
+          reportAndRecover();
         }
       });
 

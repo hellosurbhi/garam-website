@@ -66,6 +66,17 @@ export function ApplySuccessPanel() {
             }),
           );
         });
+        const reportAndRecover = () => {
+          capture("widget_load_failed", {
+            event_id: show.eventbriteId ?? "",
+            city: cityLabel,
+            page: window.location.pathname,
+          });
+          const fallbackUrl = buildTicketUrl(show.url, "apply", "success");
+          if (fallbackUrl) {
+            window.open(fallbackUrl, "_blank", "noopener,noreferrer");
+          }
+        };
         try {
           window.EBWidgets?.createWidget({
             widgetType: "checkout",
@@ -129,15 +140,31 @@ export function ApplySuccessPanel() {
               });
             },
           });
-          // Prevent native click behavior once widget is bound
-          btn?.addEventListener("click", (e) => e.preventDefault());
-        } catch {
-          // Widget init failed; button stays inert (no navigation needed)
-          capture("widget_load_failed", {
-            event_id: show.eventbriteId ?? "",
-            city: cityLabel,
-            page: window.location.pathname,
+          btn?.addEventListener("click", (e) => {
+            e.preventDefault();
+            // WHY: createWidget() succeeding only means EB's script
+            // registered a click handler, not that opening actually works.
+            // In some mobile in-app browsers (Instagram/Facebook WKWebView,
+            // Firefox iOS) EB's own click handler throws asynchronously:
+            // window.webkit.messageHandlers probing, a __firefox__ reader
+            // global, or a ChunkLoadError from EB's webpack runtime
+            // resolving its chunk path against our origin instead of
+            // theirs. This button has no href to fall back on (it's a
+            // <button>, not a link), so when EB's handler fails the modal
+            // never opens and the CTA goes silently dead — a real
+            // checkout-blocking bug (GitHub #136, #151, #152, #153, #154,
+            // #155, #156), not noise to filter. Detect the missing modal
+            // within one open attempt and recover via a direct Eventbrite
+            // link, same as the non-widget fallback rendered below.
+            window.setTimeout(() => {
+              if (!document.querySelector("div.eds-structure_main")) {
+                reportAndRecover();
+              }
+            }, 2500);
           });
+        } catch {
+          // Widget init failed synchronously; recover immediately.
+          reportAndRecover();
         }
       }
     }

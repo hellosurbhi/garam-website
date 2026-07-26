@@ -1,6 +1,6 @@
 {
   "name": "garam-masala-dating",
-  "description": "Website, contestant application system, and admin dashboard for Garam Masala Dating — a live comedy dating show.",
+  "description": "Website, contestant application system, and admin dashboard for Garam Masala Dating \u2014 a live comedy dating show.",
   "private": true,
   "version": "1.0.0",
   "license": "SEE LICENSE",
@@ -37,7 +37,11 @@
     "perf:mobile": "node scripts/run-lhci.mjs lighthouserc.mobile.cjs",
     "test:mutate": "stryker run",
     "test:mutate:incremental": "stryker run --incremental",
-    "mutation:ratchet": "bash scripts/mutation-ratchet.sh"
+    "mutation:ratchet": "bash scripts/mutation-ratchet.sh",
+    "waitlist:auth": "node --env-file=.env.local scripts/waitlist/auth-gmail-v1.mjs",
+    "waitlist:dry": "node --env-file=.env.local scripts/waitlist/send-waitlist-gmail-v1.mjs",
+    "waitlist:test": "node --env-file=.env.local scripts/waitlist/send-waitlist-gmail-v1.mjs --test",
+    "waitlist:send": "node --env-file=.env.local scripts/waitlist/send-waitlist-gmail-v1.mjs --send"
   },
   "dependencies": {
     "@astrojs/react": "^6.0.1",
@@ -76,11 +80,13 @@
     "@types/nodemailer": "^8.0.1",
     "@types/react": "^19.2.17",
     "@types/react-dom": "^19.2.3",
+    "csv-parse": "^7.0.1",
     "eslint": "^10.7.0",
     "eslint-plugin-react-hooks": "~7.1.1",
     "eslint-plugin-react-refresh": "^0.5.3",
     "firebase-tools": "^15.23.0",
     "globals": "^17.7.0",
+    "googleapis": "^173.0.0",
     "husky": "^9.1.7",
     "jsdom": "^29.1.1",
     "linkinator": "^7.6.1",

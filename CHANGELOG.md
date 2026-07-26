@@ -1,5 +1,9 @@
 # Changelog
 
+## feat(waitlist): Gmail API one-to-one waitlist sender (2026-07-25)
+
+New `scripts/waitlist/` utility that emails the show waitlist one person at a time through the Gmail API (plain text, no tracking, 45-95s random gaps) so announcements land in Primary instead of Promotions, where Klaviyo and Resend campaigns kept ending up. `npm run waitlist:auth` mints the OAuth refresh token; `waitlist:dry` / `waitlist:test` / `waitlist:send` preview, test to one address and run the campaign. Crash-safe sent log keyed on an explicit per-campaign key (a derived city+day key would collide across campaigns and silently skip recipients), default 450-sends-per-run cap under free Gmail's ~500/day limit, `--limit` override. Real recipient CSV and sent log are gitignored; only a fake-data schema template is committed. Local-only: no CI, no Vercel. New devDependencies: `googleapis`, `csv-parse` (nodemailer was already present; env loading uses the repo's native `--env-file=.env.local` convention). Gmail env var names are documented in `scripts/waitlist/README.md` because the env guard blocks editing `.env.example`.
+
 ## fix(ci): required check runs on every PR, docs included (2026-07-14)
 
 The ruleset "Protect Main" requires the "Lint, Types, Test, Build" check, but ci.yml ignored markdown and docs paths, so docs-only PRs never started the check and sat permanently blocked (hit on PR #139). The paths-ignore block is gone: full CI runs on every PR to main. Owner decision: no conditional skips and no success reported without the checks actually running.

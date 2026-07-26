@@ -72,3 +72,8 @@ link-results.json
 # unignored review records made the pipeline review its own exhaust and block
 # commits over stale artifact contents (hit 2026-07-14).
 reviews/
+
+# Waitlist sender: real recipient list + send state hold personal emails.
+# Only the .example template is committed.
+scripts/waitlist/waitlist-v1.csv
+scripts/waitlist/sent-log-*.json

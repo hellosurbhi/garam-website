@@ -1,0 +1,4 @@
+first_name,email,city,unsubscribed
+Priya,priya@example.com,New York,false
+,rahul@example.com,New York,false
+Anjali,anjali@example.com,San Francisco,true

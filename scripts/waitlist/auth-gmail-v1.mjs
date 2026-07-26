@@ -1,9 +1,9 @@
 /**
  * auth-gmail-v1.mjs
- * Run once. Prints a refresh token to paste into .env.local as GMAIL_REFRESH_TOKEN.
+ * Run once. Prints a refresh token to paste into .env.waitlist.local as GMAIL_REFRESH_TOKEN.
  *
  * Usage: npm run waitlist:auth
- * Env needed first (.env.local): GMAIL_CLIENT_ID, GMAIL_CLIENT_SECRET
+ * Env needed first (.env.waitlist.local): GMAIL_CLIENT_ID, GMAIL_CLIENT_SECRET
  *
  * In Google Cloud Console, the OAuth client must list
  * http://localhost:3000/oauth2callback as an authorized redirect URI.
@@ -20,7 +20,7 @@ const missing = ["GMAIL_CLIENT_ID", "GMAIL_CLIENT_SECRET"].filter(
 if (missing.length) {
   console.error(
     `Missing env vars: ${missing.join(", ")}\n` +
-      "Add them to .env.local (block to paste is in scripts/waitlist/README.md), then rerun.",
+      "Add them to .env.waitlist.local (block to paste is in scripts/waitlist/README.md), then rerun.",
   );
   process.exit(1);
 }
@@ -55,7 +55,7 @@ const server = http.createServer(async (req, res) => {
     const { tokens } = await oauth2.getToken(code);
     console.log("\nGMAIL_REFRESH_TOKEN=" + tokens.refresh_token + "\n");
     console.log(
-      "Paste that line into .env.local, then run: npm run waitlist:dry\n",
+      "Paste that line into .env.waitlist.local, then run: npm run waitlist:dry\n",
     );
   } catch (err) {
     console.error("Token exchange failed:", err.message);

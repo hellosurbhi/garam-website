@@ -2,14 +2,14 @@
  * send-waitlist-gmail-v1.mjs
  * Personalized one to one plain text sends via the Gmail API.
  *
- * Usage (env comes from .env.local via the npm scripts):
+ * Usage (env comes from .env.waitlist.local via the npm scripts):
  *   npm run waitlist:auth                     (once, to mint a refresh token)
  *   npm run waitlist:dry
  *   npm run waitlist:test -- you@yourmail.com
  *   npm run waitlist:send
  *   npm run waitlist:send -- --limit 100      (optional lower cap for a partial run)
  *
- * Env (.env.local):
+ * Env (.env.waitlist.local):
  *   GMAIL_CLIENT_ID=
  *   GMAIL_CLIENT_SECRET=
  *   GMAIL_REFRESH_TOKEN=
@@ -70,7 +70,7 @@ const missing = REQUIRED_ENV.filter((k) => !process.env[k]);
 if (missing.length) {
   console.error(
     `Missing env vars: ${missing.join(", ")}\n` +
-      "Add them to .env.local (block to paste is in scripts/waitlist/README.md), then rerun.\n" +
+      "Add them to .env.waitlist.local (block to paste is in scripts/waitlist/README.md), then rerun.\n" +
       "GMAIL_REFRESH_TOKEN comes from: npm run waitlist:auth",
   );
   process.exit(1);

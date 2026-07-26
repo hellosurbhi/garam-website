@@ -38,10 +38,10 @@
     "test:mutate": "stryker run",
     "test:mutate:incremental": "stryker run --incremental",
     "mutation:ratchet": "bash scripts/mutation-ratchet.sh",
-    "waitlist:auth": "node --env-file=.env.local scripts/waitlist/auth-gmail-v1.mjs",
-    "waitlist:dry": "node --env-file=.env.local scripts/waitlist/send-waitlist-gmail-v1.mjs",
-    "waitlist:test": "node --env-file=.env.local scripts/waitlist/send-waitlist-gmail-v1.mjs --test",
-    "waitlist:send": "node --env-file=.env.local scripts/waitlist/send-waitlist-gmail-v1.mjs --send"
+    "waitlist:auth": "node --env-file=.env.waitlist.local scripts/waitlist/auth-gmail-v1.mjs",
+    "waitlist:dry": "node --env-file=.env.waitlist.local scripts/waitlist/send-waitlist-gmail-v1.mjs",
+    "waitlist:test": "node --env-file=.env.waitlist.local scripts/waitlist/send-waitlist-gmail-v1.mjs --test",
+    "waitlist:send": "node --env-file=.env.waitlist.local scripts/waitlist/send-waitlist-gmail-v1.mjs --send"
   },
   "dependencies": {
     "@astrojs/react": "^6.0.1",

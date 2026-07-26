@@ -5,7 +5,7 @@ One to one plain text emails from the brand Gmail, built to land in Primary inst
 ## One time setup
 
 1. Google Cloud Console (signed in as the sending Gmail): create a project, enable the Gmail API, configure the OAuth consent screen (External, then Publish app), and create a Web application OAuth client with `http://localhost:3000/oauth2callback` as an authorized redirect URI.
-2. Add this block to `.env.local` and fill in the first two values (the repo's env guard keeps these out of `.env.example`, so this README is the canonical reference):
+2. Add this block to `.env.waitlist.local` and fill in the first two values (the repo's env guard keeps these out of `.env.example`, so this README is the canonical reference):
 
    ```
    GMAIL_CLIENT_ID=
@@ -14,7 +14,7 @@ One to one plain text emails from the brand Gmail, built to land in Primary inst
    GMAIL_USER=garammasaladating@gmail.com
    FROM_NAME=Wyatt
    ```
-3. `npm run waitlist:auth`, open the printed URL, approve, paste the printed `GMAIL_REFRESH_TOKEN=...` line into `.env.local`.
+3. `npm run waitlist:auth`, open the printed URL, approve, paste the printed `GMAIL_REFRESH_TOKEN=...` line into `.env.waitlist.local`.
 
 ## Per campaign
 

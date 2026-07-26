@@ -77,3 +77,4 @@ reviews/
 # Only the .example template is committed.
 scripts/waitlist/waitlist-v1.csv
 scripts/waitlist/sent-log-*.json
+scripts/waitlist/suppressed.csv

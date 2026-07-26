@@ -30,8 +30,11 @@ const HERE = import.meta.dirname;
 const LIST_FILE = path.join(HERE, "waitlist-v1.csv");
 const SENT_LOG = path.join(HERE, "sent-log-gmail-v1.json");
 
-const MIN_DELAY_MS = 45_000;
-const MAX_DELAY_MS = 95_000;
+// WHY: 4-7s gaps, not the original 45-95s — Surbhi's deadline is that every
+// email lands before midnight ET the night before the show. ~6/min is still
+// far below burst limits; the 500/day cap is the binding constraint.
+const MIN_DELAY_MS = 4_000;
+const MAX_DELAY_MS = 7_000;
 // WHY: free Gmail hard-caps around 500 recipients per rolling 24h; exceeding
 // it can suspend outbound mail on the account for 24-72h. 450 leaves margin
 // for replies and manual mail Surbhi sends the same day. Raise only with
@@ -62,6 +65,21 @@ const sendLimit =
 if (!Number.isInteger(sendLimit) || sendLimit < 1) {
   console.error("--limit must be a positive integer");
   process.exit(1);
+}
+
+// --until HH:MM (local time, today): hard-stop before the next send once
+// the deadline passes. Whoever is left simply does not get sent.
+const untilIdx = args.indexOf("--until");
+let deadlineMs = null;
+if (untilIdx > -1) {
+  const m = /^(\d{1,2}):(\d{2})$/.exec(args[untilIdx + 1] || "");
+  if (!m) {
+    console.error("--until expects HH:MM (24h local), e.g. --until 23:58");
+    process.exit(1);
+  }
+  const d = new Date();
+  d.setHours(Number(m[1]), Number(m[2]), 0, 0);
+  deadlineMs = d.getTime();
 }
 
 const REQUIRED_ENV = [
@@ -143,10 +161,26 @@ function loadRecipients() {
     );
     process.exit(1);
   }
+  // WHY: suppressed.csv is the permanent per-address kill list (manual
+  // removals, service addresses, Surbhi's own address). It is enforced here,
+  // at the last gate before sending, so a regenerated waitlist CSV that
+  // accidentally re-includes someone still never emails them.
+  const suppressed = new Set();
+  const supFile = path.join(HERE, "suppressed.csv");
+  if (fs.existsSync(supFile)) {
+    for (const row of parse(fs.readFileSync(supFile, "utf8"), {
+      columns: true,
+      skip_empty_lines: true,
+      trim: true,
+    })) {
+      if (row.email) suppressed.add(row.email.toLowerCase());
+    }
+  }
   const raw = fs.readFileSync(LIST_FILE, "utf8");
   return parse(raw, { columns: true, skip_empty_lines: true, trim: true })
     .filter((r) => r.email && r.email.includes("@"))
-    .filter((r) => String(r.unsubscribed || "").toLowerCase() !== "true");
+    .filter((r) => String(r.unsubscribed || "").toLowerCase() !== "true")
+    .filter((r) => !suppressed.has(r.email.toLowerCase()));
 }
 
 const loadSent = () =>
@@ -187,7 +221,9 @@ async function main() {
       console.error("Usage: npm run waitlist:test -- you@yourmail.com");
       process.exit(1);
     }
-    await sendOne(testTo, "Surbhi");
+    // Optional second arg after the address personalizes the test greeting:
+    // npm run waitlist:test -- someone@x.com Mikaela
+    await sendOne(testTo, args[testIdx + 2] || "");
     console.log(`Test sent to ${testTo}. Check which Gmail tab it landed in.`);
     return;
   }
@@ -214,6 +250,12 @@ async function main() {
   }
 
   for (const [i, r] of queue.entries()) {
+    if (deadlineMs && Date.now() >= deadlineMs) {
+      console.log(
+        `Deadline reached; stopping. ${queue.length - i} of this run unsent.`,
+      );
+      break;
+    }
     try {
       await sendOne(r.email, r.first_name);
       sent[`${SHOW.campaign}:${r.email}`] = new Date().toISOString();

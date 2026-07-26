@@ -38,6 +38,10 @@ const MAX_DELAY_MS = 95_000;
 // --limit after checking how many the account already sent that day.
 const DEFAULT_SEND_LIMIT = 450;
 
+// WHY: hardcoded, not env-driven — the sender display name is campaign copy
+// and must not silently vary with whatever an old env file says.
+const FROM_NAME = "Wyatt Feegrado, Garam Masala Dating";
+
 const SHOW = {
   // WHY: campaign is the sent-log dedup key and MUST be unique per campaign.
   // It was previously derived from city + "this Sunday", which collides with
@@ -92,24 +96,41 @@ function bodyFor(firstName) {
   const hi = firstName ? `Hi ${firstName}!` : "Hi!";
   return `${hi}
 
-This is Wyatt from Garam Masala Dating. You have been to one of our shows before, and I am about to ask you for a favor.
+Thank you so much for being a fan of the show.
 
-It is Surbhi's birthday and I am quietly trying to sell out the room as a surprise for her. She has no idea I am sending this. We are doing a special birthday episode at our new venue, City Winery, and it would mean everything to her to walk out and see a packed house.
+It's my cohost Surbhi's birthday tomorrow and I'm quietly trying to sell out the room as a surprise for her. She has no idea I'm doing this. We're doing a birthday episode at our new venue, City Winery and it would mean everything to her to walk out and see a packed house.
 
-This one is an all star show too. We are bringing back fan favorites and we have a few surprises lined up that I am not allowed to say anything about yet!
+It's an all star show too. We're bringing back fan favorites and there are a few surprises lined up that I'm not allowed to talk about yet!
+
+Doors at 6pm tomorrow, Sunday July 26th, City Winery at 25 11th Ave, New York.
 
 Tickets are here: ${SHOW.link}
 
-Use code ${SHOW.code} for 20 percent off. The show is Sunday at 7, so grab your seat before they are gone.
+As a thank you for being a continued supporter, here's code ${SHOW.code} for 20 percent off.
 
-If you are not in New York anymore, just reply and tell me where you moved and I will put you on that city's list so you only hear from us when we actually come to you.
+We would love to see you there. It would mean a lot to me and it would mean the most to her!
 
-And if you would rather not get emails from us at all, reply to this one and I will make sure we never contact you again. No hard feelings at all!
+If you're not in New York anymore, reply and tell me where you moved and I'll put you on that city's list so you only hear from us when we actually come to you.
 
-Thank you for supporting live comedy. It genuinely matters right now, and it matters most to Surbhi. Would love to see you there!
+And if you'd rather not get emails from us at all, just reply to this one and I'll make sure we never contact you again. No hard feelings at all!
 
-Wyatt
+Wyatt Feegrado
 Garam Masala Dating`;
+}
+
+// WHY: the Gmail API re-encodes outgoing text/plain and hard-wraps it at
+// ~76 chars regardless of our transfer encoding, which renders as jagged
+// mid-sentence breaks in Gmail. Real Gmail-composed mail is always
+// multipart/alternative with a simple HTML part, so we mirror that: same
+// words, <br> for newlines, zero styling/images/tracking. Do not remove
+// the html part or the wrapping comes back.
+function htmlFor(firstName) {
+  const escaped = bodyFor(firstName)
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;");
+  const linked = escaped.replace(/(https?:\/\/[^\s]+)/g, '<a href="$1">$1</a>');
+  return `<div dir="ltr">${linked.replace(/\n/g, "<br>")}</div>`;
 }
 
 function loadRecipients() {
@@ -139,11 +160,13 @@ const jitter = () =>
 
 async function buildRaw(to, firstName) {
   const mail = new MailComposer({
-    from: `"${process.env.FROM_NAME || "Wyatt"}" <${process.env.GMAIL_USER}>`,
+    from: `"${FROM_NAME}" <${process.env.GMAIL_USER}>`,
     to,
     replyTo: process.env.GMAIL_USER,
     subject: subjectFor(),
     text: bodyFor(firstName),
+    html: htmlFor(firstName),
+    textEncoding: "base64",
   });
   const message = await mail.compile().build();
   return Buffer.from(message)
@@ -164,7 +187,7 @@ async function main() {
       console.error("Usage: npm run waitlist:test -- you@yourmail.com");
       process.exit(1);
     }
-    await sendOne(testTo, "Wyatt");
+    await sendOne(testTo, "Surbhi");
     console.log(`Test sent to ${testTo}. Check which Gmail tab it landed in.`);
     return;
   }
@@ -179,9 +202,7 @@ async function main() {
       `${queue.length} in this run (limit ${sendLimit}).`,
   );
   console.log(`Campaign: ${SHOW.campaign}`);
-  console.log(
-    `From: "${process.env.FROM_NAME || "Wyatt"}" <${process.env.GMAIL_USER}>`,
-  );
+  console.log(`From: "${FROM_NAME}" <${process.env.GMAIL_USER}>`);
   console.log(`Subject: ${subjectFor()}`);
   console.log("---");
   console.log(bodyFor(queue[0]?.first_name || ""));

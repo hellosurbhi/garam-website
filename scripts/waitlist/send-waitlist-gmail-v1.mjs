@@ -100,7 +100,7 @@ This one is an all star show too. We are bringing back fan favorites and we have
 
 Tickets are here: ${SHOW.link}
 
-Use code ${SHOW.code} for 20 percent off. It expires at midnight.
+Use code ${SHOW.code} for 20 percent off. The show is Sunday at 7, so grab your seat before they are gone.
 
 If you are not in New York anymore, just reply and tell me where you moved and I will put you on that city's list so you only hear from us when we actually come to you.
 

@@ -2,12 +2,17 @@
  * send-waitlist-gmail-v1.mjs
  * Personalized one to one plain text sends via the Gmail API.
  *
- * Usage (env comes from .env.waitlist.local via the npm scripts):
- *   npm run waitlist:auth                     (once, to mint a refresh token)
- *   npm run waitlist:dry
- *   npm run waitlist:test -- you@yourmail.com
- *   npm run waitlist:send
- *   npm run waitlist:send -- --limit 100      (optional lower cap for a partial run)
+ * Usage (env comes from .env.waitlist.local via the npm scripts; every
+ * recipient list must first pass sender/build_queue.py — see CLAUDE.md):
+ *   npm run auth                          (once, to mint a refresh token)
+ *   npm run send-dry
+ *   npm run send-test -- you@yourmail.com
+ *   npm run send
+ *   npm run send -- --limit 100           (optional lower cap for a partial run)
+ * WHY the scripts are named send-*: the bash guardrails gate asks Surbhi for
+ * approval on any npm script whose name contains "send"; a script literally
+ * named "test" collided with the universal `npm test` and would either
+ * bypass the gate or force it to nag on every repo's tests (Codex audit #1).
  *
  * Env (.env.waitlist.local):
  *   GMAIL_CLIENT_ID=
@@ -22,19 +27,20 @@ import path from "node:path";
 import { google } from "googleapis";
 import MailComposer from "nodemailer/lib/mail-composer/index.js";
 import { parse } from "csv-parse/sync";
+import crypto from "node:crypto";
 
 // WHY: paths are anchored to this script's directory, not process.cwd() —
 // the npm scripts run from the repo root, so cwd-relative paths would look
 // for the CSV in the wrong place and silently create a stray sent log there.
 const HERE = import.meta.dirname;
-const LIST_FILE = path.join(HERE, "waitlist-v1.csv");
-const SENT_LOG = path.join(HERE, "sent-log-gmail-v1.json");
 
-// WHY: 4-7s gaps, not the original 45-95s — Surbhi's deadline is that every
-// email lands before midnight ET the night before the show. ~6/min is still
-// far below burst limits; the 500/day cap is the binding constraint.
-const MIN_DELAY_MS = 4_000;
-const MAX_DELAY_MS = 7_000;
+// WHY 150-240s: human-correspondence pacing for the Gmail path. The one time
+// gaps were compressed to seconds to hit a deadline (2026-07-25, Zoho), the
+// provider read it as a compromised account and blocked outbound mail.
+// CLAUDE.md rule 5: never compress the gap to hit a deadline — report the
+// real ETA instead. ESP transports (Brevo/Resend) override to 55-95s below.
+const MIN_DELAY_MS = 150_000;
+const MAX_DELAY_MS = 240_000;
 // WHY: free Gmail hard-caps around 500 recipients per rolling 24h; exceeding
 // it can suspend outbound mail on the account for 24-72h. 450 leaves margin
 // for replies and manual mail Surbhi sends the same day. Raise only with
@@ -56,6 +62,7 @@ const SHOW = {
 
 const args = process.argv.slice(2);
 const isSend = args.includes("--send");
+const noHtml = args.includes("--no-html");
 const testIdx = args.indexOf("--test");
 const testTo = testIdx > -1 ? args[testIdx + 1] : null;
 const limitIdx = args.indexOf("--limit");
@@ -82,29 +89,90 @@ if (untilIdx > -1) {
   deadlineMs = d.getTime();
 }
 
-const REQUIRED_ENV = [
-  "GMAIL_CLIENT_ID",
-  "GMAIL_CLIENT_SECRET",
-  "GMAIL_REFRESH_TOKEN",
-  "GMAIL_USER",
-];
+// WHY there is NO zoho transport: batch/automated sending via Zoho Mail
+// violates their acceptable-use policy and got contact@ blocked on
+// 2026-07-25 (CLAUDE.md rule 3). The transport was removed 2026-07-28 so the
+// banned channel cannot be selected even by accident. Valid: gmail (default),
+// brevo, resend.
+const via = args.includes("--via") ? args[args.indexOf("--via") + 1] : "gmail";
+const viaBrevo = via === "brevo";
+const viaResend = via === "resend";
+if (!["gmail", "brevo", "resend"].includes(via)) {
+  console.error(
+    `Unknown transport "--via ${via}". Valid: gmail, brevo, resend. ` +
+      "(zoho was removed deliberately — Zoho bans batch sending and blocked the account for it.)",
+  );
+  process.exit(1);
+}
+const listIdx = args.indexOf("--list");
+const listArg = listIdx > -1 ? args[listIdx + 1] : "waitlist-v1.csv";
+const LIST_FILE = path.isAbsolute(listArg) ? listArg : path.join(HERE, listArg);
+// WHY: per-transport sent logs. Queues are built disjoint per channel, and
+// separate logs mean two concurrent channel runs never race on one JSON file.
+const logIdx = args.indexOf("--log");
+const logArg = logIdx > -1 ? args[logIdx + 1] : null;
+const SENT_LOG = path.join(
+  HERE,
+  logArg
+    ? logArg
+    : viaBrevo
+      ? "sent-log-brevo-v1.json"
+      : viaResend
+        ? "sent-log-resend-v1.json"
+        : "sent-log-gmail-v1.json",
+);
+// Brevo is an ESP built for batch (300/day free); mailbox providers get the
+// extra-slow drip. Both respect the 45s floor rule.
+const MIN_DELAY = viaBrevo || viaResend ? 55_000 : MIN_DELAY_MS;
+const MAX_DELAY = viaBrevo || viaResend ? 95_000 : MAX_DELAY_MS;
+
+const REQUIRED_ENV = viaResend
+  ? ["RESEND_API_KEY"]
+  : viaBrevo
+    ? ["BREVO_SMTP_LOGIN", "BREVO_SMTP_PASS"]
+    : [
+      "GMAIL_CLIENT_ID",
+      "GMAIL_CLIENT_SECRET",
+      "GMAIL_REFRESH_TOKEN",
+      "GMAIL_USER",
+    ];
 const missing = REQUIRED_ENV.filter((k) => !process.env[k]);
 if (missing.length) {
   console.error(
     `Missing env vars: ${missing.join(", ")}\n` +
-      "Add them to .env.waitlist.local (block to paste is in scripts/waitlist/README.md), then rerun.\n" +
-      "GMAIL_REFRESH_TOKEN comes from: npm run waitlist:auth",
+      "Add them to .env.waitlist.local, then rerun.\n" +
+      "GMAIL_REFRESH_TOKEN comes from: npm run auth",
   );
   process.exit(1);
 }
 
-const oauth2 = new google.auth.OAuth2(
-  process.env.GMAIL_CLIENT_ID,
-  process.env.GMAIL_CLIENT_SECRET,
-  "http://localhost:3000/oauth2callback",
-);
-oauth2.setCredentials({ refresh_token: process.env.GMAIL_REFRESH_TOKEN });
-const gmail = google.gmail({ version: "v1", auth: oauth2 });
+const SENDER_ADDRESS = viaBrevo || viaResend
+  ? "contact@garammasaladating.com"
+  : process.env.GMAIL_USER;
+const REPLY_TO = viaBrevo || viaResend ? "garammasaladating@gmail.com" : SENDER_ADDRESS;
+
+let gmail = null;
+let smtp = null;
+if (viaBrevo) {
+  const nodemailer = (await import("nodemailer")).default;
+  smtp = nodemailer.createTransport({
+    host: "smtp-relay.brevo.com",
+    port: 587,
+    secure: false,
+    auth: {
+      user: process.env.BREVO_SMTP_LOGIN,
+      pass: process.env.BREVO_SMTP_PASS,
+    },
+  });
+} else {
+  const oauth2 = new google.auth.OAuth2(
+    process.env.GMAIL_CLIENT_ID,
+    process.env.GMAIL_CLIENT_SECRET,
+    "http://localhost:3000/oauth2callback",
+  );
+  oauth2.setCredentials({ refresh_token: process.env.GMAIL_REFRESH_TOKEN });
+  gmail = google.gmail({ version: "v1", auth: oauth2 });
+}
 
 function subjectFor() {
   return "Surbhi does not know I am sending this (Garam Masala Dating)";
@@ -116,11 +184,11 @@ function bodyFor(firstName) {
 
 Thank you so much for being a fan of the show.
 
-It's my cohost Surbhi's birthday tomorrow and I'm quietly trying to sell out the room as a surprise for her. She has no idea I'm doing this. We're doing a birthday episode at our new venue, City Winery and it would mean everything to her to walk out and see a packed house.
+It's my cohost Surbhi's birthday today and I'm quietly trying to sell out the room as a surprise for her. She has no idea I'm doing this. We're doing a birthday episode at our new venue, City Winery and it would mean everything to her to walk out and see a packed house.
 
 It's an all star show too. We're bringing back fan favorites and there are a few surprises lined up that I'm not allowed to talk about yet!
 
-Doors at 6pm tomorrow, Sunday July 26th, City Winery at 25 11th Ave, New York.
+Doors at 6pm tonight, Sunday July 26th, City Winery at 25 11th Ave, New York.
 
 Tickets are here: ${SHOW.link}
 
@@ -151,33 +219,92 @@ function htmlFor(firstName) {
   return `<div dir="ltr">${linked.replace(/\n/g, "<br>")}</div>`;
 }
 
-function loadRecipients() {
-  if (!fs.existsSync(LIST_FILE)) {
+// WHY: suppressed.csv is the permanent per-address kill list (manual
+// removals, service addresses, Surbhi's own address). REQUIRED — a missing
+// kill list must stop the run, never silently disable last-mile suppression
+// (Codex audit 2026-07-28, #14).
+function loadSuppressed() {
+  // GATE_TEST_ROOT redirects to fixture data for test_build_queue.py ONLY —
+  // mirrors build_queue.py; production runs must never set it.
+  const supFile = process.env.GATE_TEST_ROOT
+    ? path.join(process.env.GATE_TEST_ROOT, "sender", "suppressed.csv")
+    : path.join(HERE, "suppressed.csv");
+  if (!fs.existsSync(supFile)) {
     console.error(
-      `Recipient list not found: ${LIST_FILE}\n` +
-        "It is gitignored on purpose (real emails never get committed). " +
-        "Copy waitlist-v1.example.csv to waitlist-v1.csv and fill it in, " +
-        "or regenerate it from the master audience workbook.",
+      `suppressed.csv missing at ${supFile} — the permanent kill list is required, always. Refusing to run.`,
     );
     process.exit(1);
   }
-  // WHY: suppressed.csv is the permanent per-address kill list (manual
-  // removals, service addresses, Surbhi's own address). It is enforced here,
-  // at the last gate before sending, so a regenerated waitlist CSV that
-  // accidentally re-includes someone still never emails them.
   const suppressed = new Set();
-  const supFile = path.join(HERE, "suppressed.csv");
-  if (fs.existsSync(supFile)) {
-    for (const row of parse(fs.readFileSync(supFile, "utf8"), {
-      columns: true,
-      skip_empty_lines: true,
-      trim: true,
-    })) {
-      if (row.email) suppressed.add(row.email.toLowerCase());
-    }
+  for (const row of parse(fs.readFileSync(supFile, "utf8"), {
+    columns: true,
+    skip_empty_lines: true,
+    trim: true,
+  })) {
+    if (row.email) suppressed.add(row.email.toLowerCase());
   }
-  const raw = fs.readFileSync(LIST_FILE, "utf8");
-  return parse(raw, { columns: true, skip_empty_lines: true, trim: true })
+  return suppressed;
+}
+
+function loadRecipients() {
+  // WHY: every list must come out of build_queue.py, which runs ALL
+  // validation (junk, typos, suppression, dedup, region, cross-channel
+  // sent-logs) and publishes a manifest binding sha256 + campaign + output
+  // name. The sender refuses anything else, which is what makes sending
+  // around the gate impossible. The manifest (vs the old bare .sig) blocks
+  // three bypasses found in the 2026-07-28 Codex audit: replaying an old
+  // campaign's CSV+sig pair (#3/#5), renaming a signed file (#3), and the
+  // read-verify/read-parse race — the SAME bytes are hashed and parsed (#3).
+  let stat;
+  try {
+    stat = fs.lstatSync(LIST_FILE);
+  } catch {
+    console.error(`Recipient list not found: ${LIST_FILE}`);
+    process.exit(1);
+  }
+  if (stat.isSymbolicLink()) {
+    console.error(`REFUSED: ${LIST_FILE} is a symlink. The gate signs real files only.`);
+    process.exit(1);
+  }
+  const manifestFile = LIST_FILE + ".manifest.json";
+  if (!fs.existsSync(manifestFile)) {
+    console.error(
+      `UNGATED LIST: ${LIST_FILE} has no .manifest.json.\n` +
+        "Run: ../.venv/bin/python build_queue.py <input.csv> " + LIST_FILE +
+        ` --campaign ${SHOW.campaign}`,
+    );
+    process.exit(1);
+  }
+  const manifest = JSON.parse(fs.readFileSync(manifestFile, "utf8"));
+  const rawBuf = fs.readFileSync(LIST_FILE);
+  const digest = crypto.createHash("sha256").update(rawBuf).digest("hex");
+  if (digest !== manifest.sha256) {
+    console.error(
+      `STALE MANIFEST: ${LIST_FILE} was modified after gating.\n` +
+        "Re-run build_queue.py — hand edits must go through the gate too.",
+    );
+    process.exit(1);
+  }
+  if (manifest.campaign !== SHOW.campaign) {
+    console.error(
+      `CAMPAIGN MISMATCH: list was gated for "${manifest.campaign}" but this sender is campaign "${SHOW.campaign}".\n` +
+        "Rebuild the queue with --campaign " + SHOW.campaign + " — a mismatched queue skips the wrong sent-log entries.",
+    );
+    process.exit(1);
+  }
+  if (manifest.output !== path.basename(LIST_FILE)) {
+    console.error(
+      `RENAMED LIST: manifest was issued for "${manifest.output}", not "${path.basename(LIST_FILE)}". Rebuild the queue.`,
+    );
+    process.exit(1);
+  }
+  const suppressed = loadSuppressed();
+  // Parse the exact bytes that were hash-verified — never a second read.
+  return parse(rawBuf.toString("utf8"), {
+    columns: true,
+    skip_empty_lines: true,
+    trim: true,
+  })
     .filter((r) => r.email && r.email.includes("@"))
     .filter((r) => String(r.unsubscribed || "").toLowerCase() !== "true")
     .filter((r) => !suppressed.has(r.email.toLowerCase()));
@@ -190,39 +317,88 @@ const saveSent = (log) =>
 
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 const jitter = () =>
-  Math.floor(MIN_DELAY_MS + Math.random() * (MAX_DELAY_MS - MIN_DELAY_MS));
+  Math.floor(MIN_DELAY + Math.random() * (MAX_DELAY - MIN_DELAY));
 
-async function buildRaw(to, firstName) {
-  const mail = new MailComposer({
-    from: `"${FROM_NAME}" <${process.env.GMAIL_USER}>`,
+function mailOptions(to, firstName) {
+  return {
+    from: `"${FROM_NAME}" <${SENDER_ADDRESS}>`,
     to,
-    replyTo: process.env.GMAIL_USER,
+    replyTo: REPLY_TO,
     subject: subjectFor(),
     text: bodyFor(firstName),
-    html: htmlFor(firstName),
+    ...(noHtml ? {} : { html: htmlFor(firstName) }),
     textEncoding: "base64",
-  });
-  const message = await mail.compile().build();
-  return Buffer.from(message)
+  };
+}
+
+async function sendOne(to, firstName) {
+  if (viaResend) {
+    const res = await fetch("https://api.resend.com/emails", {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${process.env.RESEND_API_KEY}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        from: `${FROM_NAME} <${SENDER_ADDRESS}>`,
+        to: [to],
+        reply_to: REPLY_TO,
+        subject: subjectFor(),
+        text: bodyFor(firstName),
+        ...(noHtml ? {} : { html: htmlFor(firstName) }),
+      }),
+    });
+    if (!res.ok) {
+      throw new Error(`resend ${res.status}: ${await res.text()}`);
+    }
+    return res.json();
+  }
+  if (smtp) {
+    return smtp.sendMail(mailOptions(to, firstName));
+  }
+  const message = await new MailComposer(mailOptions(to, firstName))
+    .compile()
+    .build();
+  const raw = Buffer.from(message)
     .toString("base64")
     .replace(/\+/g, "-")
     .replace(/\//g, "_")
     .replace(/=+$/, "");
-}
-
-async function sendOne(to, firstName) {
-  const raw = await buildRaw(to, firstName);
   return gmail.users.messages.send({ userId: "me", requestBody: { raw } });
 }
 
+// WHY: test sends bypass the queue+manifest path by design (one explicit
+// address), but they must NOT bypass address validation or suppression —
+// a test to a suppressed or junk address is still a real outbound email
+// (Codex audit 2026-07-28, #12). Regexes mirror build_queue.py; keep in sync.
+const TEST_EMAIL_RE = /^(?!\.)[A-Za-z0-9!#$%&'*+/=?^_`{|}~.-]+(?<!\.)@[A-Za-z0-9]([A-Za-z0-9-]*[A-Za-z0-9])?(\.[A-Za-z0-9]([A-Za-z0-9-]*[A-Za-z0-9])?)*\.[A-Za-z]{2,}$/;
+const TEST_JUNK_RE = /^(test|testing|fake|asdf+|abc+|example|sample|dummy)\d*@|@(test|example|sample|fake)\.(com|con|net|org|co)$/i;
+const TEST_TYPO_RE = /(gamail|gmial|gnail|gmal|gmaill|gmali|yahooo|hotmial|outlok|iclould)\.|\.(con|cmo|comm|ocm|vom)$/i;
+
 async function main() {
   if (testTo) {
-    if (!testTo.includes("@")) {
-      console.error("Usage: npm run waitlist:test -- you@yourmail.com");
+    if (isSend) {
+      console.error("--test and --send are mutually exclusive. Pick one mode.");
+      process.exit(1);
+    }
+    const t = testTo.trim().toLowerCase();
+    if (!TEST_EMAIL_RE.test(t) || t.includes("..")) {
+      console.error(`REFUSED: "${testTo}" is not a valid address. Usage: npm run waitlist:send-test -- you@yourmail.com`);
+      process.exit(1);
+    }
+    if (TEST_JUNK_RE.test(t) || TEST_TYPO_RE.test(t)) {
+      console.error(`REFUSED: "${testTo}" matches a junk/typo pattern — this would bounce or hit a fake mailbox.`);
+      process.exit(1);
+    }
+    if (loadSuppressed().has(t)) {
+      console.error(
+        `REFUSED: ${t} is in suppressed.csv (bounced/unsubscribed/team). ` +
+          "If this test is intentional, remove the line from suppressed.csv first — deliberately, by hand.",
+      );
       process.exit(1);
     }
     // Optional second arg after the address personalizes the test greeting:
-    // npm run waitlist:test -- someone@x.com Mikaela
+    // npm run waitlist:send-test -- someone@x.com Mikaela
     await sendOne(testTo, args[testIdx + 2] || "");
     console.log(`Test sent to ${testTo}. Check which Gmail tab it landed in.`);
     return;
@@ -238,7 +414,7 @@ async function main() {
       `${queue.length} in this run (limit ${sendLimit}).`,
   );
   console.log(`Campaign: ${SHOW.campaign}`);
-  console.log(`From: "${FROM_NAME}" <${process.env.GMAIL_USER}>`);
+  console.log(`From: "${FROM_NAME}" <${SENDER_ADDRESS}>`);
   console.log(`Subject: ${subjectFor()}`);
   console.log("---");
   console.log(bodyFor(queue[0]?.first_name || ""));

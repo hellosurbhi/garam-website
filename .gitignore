@@ -75,6 +75,11 @@ reviews/
 
 # Waitlist sender: real recipient list + send state hold personal emails.
 # Only the .example template is committed.
-scripts/waitlist/waitlist-v1.csv
+# Waitlist sender: real recipient data, queue artifacts and kill list never get committed.
+scripts/waitlist/waitlist-*.csv
+!scripts/waitlist/waitlist-v1.example.csv
+scripts/waitlist/*.manifest.json
+scripts/waitlist/*.dropped.csv
 scripts/waitlist/sent-log-*.json
 scripts/waitlist/suppressed.csv
+scripts/waitlist/location-updates.csv

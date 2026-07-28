@@ -50,9 +50,14 @@ import time
 from datetime import datetime, timezone
 from pathlib import Path
 
-GATE_VERSION = 2
+GATE_VERSION = 3
 HERE = Path(__file__).resolve().parent
 DATA_ROOT = Path(os.environ["GATE_TEST_ROOT"]) if os.environ.get("GATE_TEST_ROOT") else HERE.parent
+if os.environ.get("GATE_TEST_ROOT"):
+    # Loud, unmissable: fixture data root in use. A production shell that
+    # inherited this variable would otherwise silently validate against
+    # fixture suppression data (Codex review 2026-07-28, HIGH-3).
+    print(f"*** GATE TEST MODE: data root = {DATA_ROOT} — NOT production data ***", file=sys.stderr)
 
 # Strict-ish syntax: printable local part without leading/trailing/double
 # dots, hyphen-safe domain labels, alphabetic TLD >= 2. Stdlib on purpose —
@@ -74,15 +79,29 @@ ROLE_LOCAL = re.compile(
 )
 SERVICE_DOMAINS = {"eventbrite.com"}  # platform staff/relay, never a fan
 
-FAR_STATES = {"CA", "WA", "NV", "FL", "TX", "IL", "MA", "IN", "AR", "GA", "NP",
-              "OR", "AZ", "CO", "MN", "OH", "MI", "IA"}
-STATE_NAMES = {  # full names typed by buyers -> code (region check needs codes)
-    "california": "CA", "washington": "WA", "nevada": "NV", "florida": "FL",
-    "texas": "TX", "illinois": "IL", "massachusetts": "MA", "indiana": "IN",
-    "arkansas": "AR", "georgia": "GA", "oregon": "OR", "arizona": "AZ",
-    "colorado": "CO", "minnesota": "MN", "ohio": "OH", "michigan": "MI",
-    "iowa": "IA", "new york": "NY", "new jersey": "NJ", "connecticut": "CT",
-    "pennsylvania": "PA",
+# WHY an ALLOWLIST, not a far-state blacklist: a blacklist fails open — any
+# state nobody thought to list (Alaska, North Carolina, ...) passed as "local"
+# (Codex review 2026-07-28, HIGH-5). Region nyc keeps typed states inside the
+# ~3h radius Surbhi defined (tri-state + PA/DE/MD/DC); a BLANK state falls
+# through to the far-city check and, failing that, is kept as
+# location-unknown — that composition call belongs upstream, not to the gate.
+NYC_REGION_STATES = {"NY", "NJ", "CT", "PA", "DE", "MD", "DC"}
+STATE_NAMES = {  # full names typed by buyers -> code (allowlist needs codes)
+    "alabama": "AL", "alaska": "AK", "arizona": "AZ", "arkansas": "AR",
+    "california": "CA", "colorado": "CO", "connecticut": "CT",
+    "delaware": "DE", "district of columbia": "DC", "washington dc": "DC",
+    "florida": "FL", "georgia": "GA", "hawaii": "HI", "idaho": "ID",
+    "illinois": "IL", "indiana": "IN", "iowa": "IA", "kansas": "KS",
+    "kentucky": "KY", "louisiana": "LA", "maine": "ME", "maryland": "MD",
+    "massachusetts": "MA", "michigan": "MI", "minnesota": "MN",
+    "mississippi": "MS", "missouri": "MO", "montana": "MT", "nebraska": "NE",
+    "nevada": "NV", "new hampshire": "NH", "new jersey": "NJ",
+    "new mexico": "NM", "new york": "NY", "north carolina": "NC",
+    "north dakota": "ND", "ohio": "OH", "oklahoma": "OK", "oregon": "OR",
+    "pennsylvania": "PA", "rhode island": "RI", "south carolina": "SC",
+    "south dakota": "SD", "tennessee": "TN", "texas": "TX", "utah": "UT",
+    "vermont": "VT", "virginia": "VA", "washington": "WA",
+    "west virginia": "WV", "wisconsin": "WI", "wyoming": "WY",
 }
 # Superset of the old list, merged from score_unemailed.py so a city-only row
 # ("Santa Clara", blank state) cannot pass (Codex audit / Devang incident).
@@ -100,7 +119,7 @@ FAR_CITIES = {
     "south san francisco", "sunnyvale", "torrance", "tracy", "vallejo",
     "worcester",
 }
-IN_REGION = {"NY", "NJ", "NYC", "NY-NJ METRO"}
+IN_REGION = {"NY", "NJ", "CT", "PA", "DE", "MD", "DC", "NYC", "NY-NJ METRO"}
 TRUTHY = {"true", "yes", "1"}
 
 
@@ -143,13 +162,19 @@ def load_suppressions():
     excl_matches = sorted((DATA_ROOT / "downloads-stuff").glob("Profile Exclusions*.csv"))
     if not excl_matches:
         die(f"Klaviyo Profile Exclusions CSV missing under {DATA_ROOT / 'downloads-stuff'} — required.")
-    excl = excl_matches[-1]
+    # Newest by mtime, NOT lexicographic filename sort — a re-export named
+    # differently must win (Codex review 2026-07-28, HIGH-6).
+    excl = max(excl_matches, key=lambda p: p.stat().st_mtime)
     age_days = (time.time() - excl.stat().st_mtime) / 86400
     if age_days > 30:
         print(f"WARNING: exclusions snapshot {excl.name} is {age_days:.0f} days old — "
               f"re-export from Klaviyo if the account is still active.", file=sys.stderr)
     with open_csv(excl) as fh:
-        for r in csv.DictReader(fh):
+        rd = csv.DictReader(fh)
+        if not rd.fieldnames or "Email Address" not in rd.fieldnames:
+            die(f"{excl.name} lacks the 'Email Address' column (header: {rd.fieldnames}) — "
+                f"a malformed export must not silently contribute zero exclusions.")
+        for r in rd:
             e = norm_email(r.get("Email Address"))
             if e:
                 sup.setdefault(e, "klaviyo exclusion: " + (r.get("Exclusion Reason") or ""))
@@ -191,7 +216,10 @@ def load_moves():
         for r in csv.DictReader(fh):
             e = norm_email(r.get("email"))
             if e:
-                moved[e] = (r.get("new_region") or "").strip().upper()
+                v = (r.get("new_region") or "").strip().upper()
+                # Normalize full state names so "New York" counts as in-region
+                # (Codex review 2026-07-28, MEDIUM-3).
+                moved[e] = STATE_NAMES.get(v.lower(), v)
     return moved
 
 
@@ -205,8 +233,10 @@ def region_verdict(state_raw, city_raw, email, moved):
     st = (state_raw or "").strip().upper()
     st = STATE_NAMES.get(st.lower(), st)
     city = (city_raw or "").strip().lower()
-    if st in FAR_STATES or city in FAR_CITIES:
-        return f"far from NYC ({st or city})"
+    if st and st not in NYC_REGION_STATES:
+        return f"far from NYC ({st})"
+    if city in FAR_CITIES:
+        return f"far from NYC ({city})"
     return None
 
 
@@ -225,7 +255,39 @@ def main():
     src, dst = Path(args.src), Path(args.dst)
     if not src.exists():
         die(f"input not found: {src}")
+    if src.resolve() == dst.resolve():
+        die("input and output are the same file — that would destroy the input (Codex review MEDIUM-4).")
 
+    # Directory lock: two concurrent builds could both pass the overlap scan
+    # before either publishes its manifest (Codex review 2026-07-28, HIGH-7).
+    # mkdir is atomic; stale locks (>120s) are stolen.
+    lock_dir = dst.parent / ".gate.lock.d"
+    waited = 0
+    while True:
+        try:
+            lock_dir.mkdir()
+            break
+        except FileExistsError:
+            if time.time() - lock_dir.stat().st_mtime > 120:
+                try:
+                    lock_dir.rmdir()
+                except OSError:
+                    pass
+                continue
+            if waited >= 60:
+                die(f"another gate build holds {lock_dir}; waited 60s. Builds are one-at-a-time per directory.")
+            time.sleep(1)
+            waited += 1
+    try:
+        _build(args, src, dst)
+    finally:
+        try:
+            lock_dir.rmdir()
+        except OSError:
+            pass
+
+
+def _build(args, src, dst):
     # Invalidate any previous manifest for this output FIRST: a failed build
     # must never leave a stale-but-valid signed queue behind (Codex audit #4).
     manifest_path = Path(f"{dst}.manifest.json")
@@ -291,7 +353,9 @@ def main():
             drop("junk/test address"); continue
         if TYPO_DOMAIN.search(domain):
             drop("typo domain (will bounce)"); continue
-        if ROLE_LOCAL.match(local) and not domain.endswith("garammasaladating.com"):
+        if ROLE_LOCAL.match(local) and not (
+            domain == "garammasaladating.com" or domain.endswith(".garammasaladating.com")
+        ):
             drop("role/service address, not a person"); continue
         if domain in SERVICE_DOMAINS:
             drop("platform service domain, not a person"); continue

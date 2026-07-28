@@ -58,7 +58,16 @@ const SHOW = {
   campaign: "nyc-2026-07-26",
   link: "https://tickets.citywinery.com/event/garam-masala-comedy-dating-show-all-stars-editio-ownqgw",
   code: "SURBHI",
+  // WHY eventDate: the body says "today"/"tonight" — relative copy that goes
+  // FALSE the morning after the show. --send refuses once the event is past
+  // so a stale campaign can never be fired again by accident (Codex review
+  // 2026-07-28, HIGH-1). Update this with every new campaign.
+  eventDate: "2026-07-26",
+  // The gate stamps region into the manifest; the sender only accepts queues
+  // built under the matching region policy (HIGH-2).
+  expectedRegion: "nyc",
 };
+const EXPECTED_GATE_VERSION = 3;
 
 const args = process.argv.slice(2);
 const isSend = args.includes("--send");
@@ -80,8 +89,9 @@ const untilIdx = args.indexOf("--until");
 let deadlineMs = null;
 if (untilIdx > -1) {
   const m = /^(\d{1,2}):(\d{2})$/.exec(args[untilIdx + 1] || "");
-  if (!m) {
-    console.error("--until expects HH:MM (24h local), e.g. --until 23:58");
+  if (!m || Number(m[1]) > 23 || Number(m[2]) > 59) {
+    // JS Date would silently normalize 25:00 into tomorrow (Codex MEDIUM-1).
+    console.error("--until expects HH:MM (24h local, 00:00-23:59), e.g. --until 23:58");
     process.exit(1);
   }
   const d = new Date();
@@ -298,6 +308,20 @@ function loadRecipients() {
     );
     process.exit(1);
   }
+  if (manifest.gate_version !== EXPECTED_GATE_VERSION) {
+    console.error(
+      `OUTDATED GATE: queue was built by gate v${manifest.gate_version}, this sender requires v${EXPECTED_GATE_VERSION}. ` +
+        "Rebuild with the current build_queue.py — older gates lack checks this sender depends on.",
+    );
+    process.exit(1);
+  }
+  if (manifest.region !== SHOW.expectedRegion) {
+    console.error(
+      `REGION MISMATCH: queue was gated with region "${manifest.region}" but this campaign requires "${SHOW.expectedRegion}". ` +
+        "A region=any queue must never ride an NYC campaign. Rebuild.",
+    );
+    process.exit(1);
+  }
   const suppressed = loadSuppressed();
   // Parse the exact bytes that were hash-verified — never a second read.
   return parse(rawBuf.toString("utf8"), {
@@ -312,8 +336,15 @@ function loadRecipients() {
 
 const loadSent = () =>
   fs.existsSync(SENT_LOG) ? JSON.parse(fs.readFileSync(SENT_LOG, "utf8")) : {};
-const saveSent = (log) =>
-  fs.writeFileSync(SENT_LOG, JSON.stringify(log, null, 2));
+// WHY atomic (tmp + rename): a partial write of the sent log after a crash
+// loses dedup state for emails that WERE delivered — the resend bug class
+// (Codex review 2026-07-28, CRITICAL-1). rename on the same filesystem is
+// atomic; a crash leaves either the old complete log or the new complete log.
+const saveSent = (log) => {
+  const tmp = SENT_LOG + ".tmp";
+  fs.writeFileSync(tmp, JSON.stringify(log, null, 2));
+  fs.renameSync(tmp, SENT_LOG);
+};
 
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 const jitter = () =>
@@ -372,10 +403,60 @@ async function sendOne(to, firstName) {
 // a test to a suppressed or junk address is still a real outbound email
 // (Codex audit 2026-07-28, #12). Regexes mirror build_queue.py; keep in sync.
 const TEST_EMAIL_RE = /^(?!\.)[A-Za-z0-9!#$%&'*+/=?^_`{|}~.-]+(?<!\.)@[A-Za-z0-9]([A-Za-z0-9-]*[A-Za-z0-9])?(\.[A-Za-z0-9]([A-Za-z0-9-]*[A-Za-z0-9])?)*\.[A-Za-z]{2,}$/;
-const TEST_JUNK_RE = /^(test|testing|fake|asdf+|abc+|example|sample|dummy)\d*@|@(test|example|sample|fake)\.(com|con|net|org|co)$/i;
+const TEST_JUNK_RE = /^(test|testing|fake|asdf+|abc+|example|sample|dummy|noreply|no-reply|donotreply)\d*@|@(test|example|sample|fake)\.(com|con|net|org|co)$/i;
 const TEST_TYPO_RE = /(gamail|gmial|gnail|gmal|gmaill|gmali|yahooo|hotmial|outlok|iclould)\.|\.(con|cmo|comm|ocm|vom)$/i;
+const TEST_ROLE_RE = /^(info|contact|support|admin|sales|team|office|events?|tickets?|booking|press|marketing|billing|newsletter|service|guestlist|help|jobs|careers|hr|hello|mail|enquiries|inquiries|boxoffice)([._+-].*)?@/i;
+
+// WHY a process lock: two concurrent runs load the same sent log, pick the
+// same recipients, and double-send before either records anything (Codex
+// review 2026-07-28, CRITICAL-2). 'wx' creation is atomic; a stale lock from
+// a dead process is stolen by pid liveness check.
+const LOCK_FILE = path.join(HERE, ".sender.lock");
+function acquireLock() {
+  for (;;) {
+    try {
+      fs.writeFileSync(LOCK_FILE, String(process.pid), { flag: "wx" });
+      process.on("exit", () => {
+        try {
+          if (fs.readFileSync(LOCK_FILE, "utf8") === String(process.pid)) fs.unlinkSync(LOCK_FILE);
+        } catch {}
+      });
+      return;
+    } catch (err) {
+      if (err.code !== "EEXIST") throw err;
+      let holder = NaN;
+      try {
+        holder = Number(fs.readFileSync(LOCK_FILE, "utf8"));
+      } catch {}
+      let alive = false;
+      if (Number.isInteger(holder) && holder > 0) {
+        try {
+          process.kill(holder, 0);
+          alive = true;
+        } catch {}
+      }
+      if (alive) {
+        console.error(`REFUSED: another sender run (pid ${holder}) holds ${LOCK_FILE}. One run at a time, always.`);
+        process.exit(1);
+      }
+      try {
+        fs.unlinkSync(LOCK_FILE); // stale lock from a dead process
+      } catch {}
+    }
+  }
+}
 
 async function main() {
+  if (process.env.GATE_TEST_ROOT) {
+    // Fixture mode must be unmissable AND incapable of a real campaign send
+    // (Codex review 2026-07-28, HIGH-3).
+    console.error(`*** SENDER TEST MODE: fixture data root = ${process.env.GATE_TEST_ROOT} ***`);
+    if (isSend) {
+      console.error("REFUSED: --send is disabled under GATE_TEST_ROOT. Unset it for real runs.");
+      process.exit(1);
+    }
+  }
+  acquireLock();
   if (testTo) {
     if (isSend) {
       console.error("--test and --send are mutually exclusive. Pick one mode.");
@@ -388,6 +469,10 @@ async function main() {
     }
     if (TEST_JUNK_RE.test(t) || TEST_TYPO_RE.test(t)) {
       console.error(`REFUSED: "${testTo}" matches a junk/typo pattern — this would bounce or hit a fake mailbox.`);
+      process.exit(1);
+    }
+    if (TEST_ROLE_RE.test(t) && !/@(.*\.)?garammasaladating\.com$/.test(t)) {
+      console.error(`REFUSED: "${testTo}" is a role/service address, not a person (mirrors the queue gate).`);
       process.exit(1);
     }
     if (loadSuppressed().has(t)) {
@@ -407,11 +492,32 @@ async function main() {
   const recipients = loadRecipients();
   const sent = loadSent();
   const unsent = recipients.filter((r) => !sent[`${SHOW.campaign}:${r.email}`]);
-  const queue = unsent.slice(0, sendLimit);
+
+  // WHY rolling-24h accounting: provider caps are per rolling day, not per
+  // invocation — an immediate rerun with a fresh 450 allowance is exactly how
+  // an account gets frozen (Codex review 2026-07-28, HIGH-4). Counted from
+  // THIS transport's sent log; Brevo's free tier is 300/day so its ceiling is
+  // lower than the Gmail default.
+  const transportCap = viaBrevo ? 280 : DEFAULT_SEND_LIMIT;
+  const dayAgo = Date.now() - 24 * 3600 * 1000;
+  const sentLast24h = Object.values(sent).filter(
+    (ts) => new Date(ts).getTime() > dayAgo,
+  ).length;
+  const remainingToday = Math.max(0, transportCap - sentLast24h);
+  const effectiveLimit = Math.min(sendLimit, remainingToday);
+  if (isSend && effectiveLimit === 0) {
+    console.error(
+      `REFUSED: ${sentLast24h} sends in the last 24h on this transport (cap ${transportCap}). ` +
+        "Wait for the rolling window to free up.",
+    );
+    process.exit(1);
+  }
+  const queue = unsent.slice(0, effectiveLimit);
 
   console.log(
     `${recipients.length} on list, ${unsent.length} not yet sent, ` +
-      `${queue.length} in this run (limit ${sendLimit}).`,
+      `${queue.length} in this run (limit ${effectiveLimit}: ` +
+      `min of --limit ${sendLimit} and ${remainingToday} left in this transport's rolling 24h cap of ${transportCap}).`,
   );
   console.log(`Campaign: ${SHOW.campaign}`);
   console.log(`From: "${FROM_NAME}" <${SENDER_ADDRESS}>`);
@@ -425,6 +531,17 @@ async function main() {
     return;
   }
 
+  // WHY the stale-campaign guard sits on --send only: dry runs are previews.
+  // The body copy is relative ("today", "tonight") and goes false the morning
+  // after the show — firing a past campaign is always a mistake (HIGH-1).
+  if (new Date(`${SHOW.eventDate}T23:59:59`) < new Date()) {
+    console.error(
+      `REFUSED: campaign ${SHOW.campaign} is over (event date ${SHOW.eventDate} has passed). ` +
+        "Update the SHOW block (campaign, eventDate, copy) for the next show.",
+    );
+    process.exit(1);
+  }
+
   for (const [i, r] of queue.entries()) {
     if (deadlineMs && Date.now() >= deadlineMs) {
       console.log(
@@ -432,16 +549,32 @@ async function main() {
       );
       break;
     }
+    // WHY two separate try blocks: a send failure should skip-and-continue,
+    // but a BOOKKEEPING failure after a successful send must ABORT the run —
+    // continuing without durable dedup state is how the same person gets the
+    // email twice (Codex review 2026-07-28, CRITICAL-1).
+    let delivered = false;
     try {
       await sendOne(r.email, r.first_name);
-      sent[`${SHOW.campaign}:${r.email}`] = new Date().toISOString();
-      saveSent(sent);
-      console.log(`[${i + 1}/${queue.length}] sent ${r.email}`);
+      delivered = true;
     } catch (err) {
       console.error(
         `[${i + 1}/${queue.length}] FAILED ${r.email}`,
         err.message,
       );
+    }
+    if (delivered) {
+      try {
+        sent[`${SHOW.campaign}:${r.email}`] = new Date().toISOString();
+        saveSent(sent);
+      } catch (err) {
+        console.error(
+          `FATAL: ${r.email} WAS SENT but the sent log could not be written (${err.message}). ` +
+            "Stopping immediately — record this address by hand before rerunning, or they will be emailed twice.",
+        );
+        process.exit(1);
+      }
+      console.log(`[${i + 1}/${queue.length}] sent ${r.email}`);
     }
     if (i < queue.length - 1) {
       const wait = jitter();
@@ -451,7 +584,7 @@ async function main() {
   }
   if (unsent.length > queue.length) {
     console.log(
-      `Stopped at the ${sendLimit} send limit. ${unsent.length - queue.length} remain; ` +
+      `Stopped at the ${effectiveLimit} send limit. ${unsent.length - queue.length} remain; ` +
         "rerun after the 24h window to continue (already-sent people are skipped).",
     );
   }

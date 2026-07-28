@@ -115,6 +115,8 @@ def main():
         ("FarState", "far.state@fixture.dev", "San Jose", "CA", "false"),
         ("FarStateFull", "far.fullname@fixture.dev", "", "California", "false"),
         ("FarCityOnly", "far.cityonly@fixture.dev", "Santa Clara", "", "false"),
+        ("UnlistedFar", "unlisted.far@fixture.dev", "Charlotte", "NC", "false"),
+        ("CtKeep", "ct.person@fixture.dev", "Hartford", "CT", "false"),
         ("MovedAway", "moved.away@fixture.dev", "New York", "NY", "false"),
         ("MovedHere", "moved.here@fixture.dev", "San Francisco", "CA", "false"),
         ("UpperCase", "MiXeD.CaSe@Fixture.DEV", "", "", "false"),
@@ -132,6 +134,7 @@ def main():
         "previous.campaign@fixture.dev",    # camp-OLD send must NOT exclude from camp-a
         "moved.here@fixture.dev",           # mover INTO region wins over stale far city
         "mixed.case@fixture.dev",           # canonicalized to lowercase
+        "ct.person@fixture.dev",            # CT is inside the region allowlist
     }
     check("kept set exact", kept == expected_kept, f"got {sorted(kept)}")
 
@@ -153,6 +156,7 @@ def main():
         ("far.state@fixture.dev", "far from"),
         ("far.fullname@fixture.dev", "far from"),
         ("far.cityonly@fixture.dev", "far from"),
+        ("unlisted.far@fixture.dev", "far from"),  # allowlist regression: NC was never in any blacklist
         ("moved.away@fixture.dev", "moved away"),
     ]:
         reasons = " | ".join(dr.get(email, ["<not in dropped audit>"]))
@@ -265,10 +269,50 @@ def main():
     check("sender accepts valid gated queue (dry)", p.returncode == 0 and "on list" in p.stdout, p.stderr + p.stdout)
 
     p = run_sender("--list", str(dst), "--test", "x@y.dev", "--send")
-    check("sender refuses --test with --send", p.returncode != 0 and "mutually exclusive" in p.stderr, p.stderr)
+    check(
+        "sender refuses --test with --send",
+        p.returncode != 0 and ("mutually exclusive" in p.stderr or "disabled under GATE_TEST_ROOT" in p.stderr),
+        p.stderr,
+    )
 
     p = run_sender("--test", "test@test.com")
     check("sender test-send refuses junk address", p.returncode != 0 and "REFUSED" in p.stderr, p.stderr)
+
+    p = run_sender("--test", "info@somewhere.dev")
+    check("sender test-send refuses role address", p.returncode != 0 and "role/service" in p.stderr, p.stderr)
+
+    # gate_version binding: an older gate's manifest must be refused.
+    oldgate = work4 / "oldgate.csv"
+    shutil.copy(dst, oldgate)
+    m = json.load(open(f"{dst}.manifest.json"))
+    m["output"] = "oldgate.csv"
+    m["gate_version"] = 2
+    json.dump(m, open(f"{oldgate}.manifest.json", "w"))
+    p = run_sender("--list", str(oldgate))
+    check("sender refuses outdated gate_version", p.returncode != 0 and "OUTDATED GATE" in p.stderr, p.stderr)
+
+    # region binding: a region=any queue must never ride an NYC campaign.
+    work5 = root / "work5"
+    work5.mkdir()
+    anyq = work5 / "queue-any.csv"
+    p = run_gate(root, src, anyq, "--region", "any", campaign="nyc-2026-07-26")
+    check("region-any gate ok", p.returncode == 0, p.stderr)
+    p = run_sender("--list", str(anyq))
+    check("sender refuses region=any queue", p.returncode != 0 and "REGION MISMATCH" in p.stderr, p.stderr)
+
+    # Stale-campaign guard: --send on a past eventDate refuses BEFORE any send
+    # attempt. GATE_TEST_ROOT is stripped (it forbids --send outright) so this
+    # exercises the real path; creds are dummies and the refusal fires first.
+    env_nosandbox = {k: v for k, v in node_env.items() if k != "GATE_TEST_ROOT"}
+    p = subprocess.run(
+        ["node", str(HERE / "send-waitlist-gmail-v1.mjs"), "--list", str(dst), "--send"],
+        capture_output=True, text=True, env=env_nosandbox, cwd=HERE,
+    )
+    check("sender refuses past-event --send", p.returncode != 0 and "is over" in p.stderr, p.stderr + p.stdout)
+
+    # test-mode send refusal (the GATE_TEST_ROOT guard itself)
+    p = run_sender("--list", str(dst), "--send")
+    check("sender refuses --send in test mode", p.returncode != 0 and "disabled under GATE_TEST_ROOT" in p.stderr, p.stderr)
 
     shutil.rmtree(root)
     print()

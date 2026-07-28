@@ -302,13 +302,20 @@ def main():
 
     # Stale-campaign guard: --send on a past eventDate refuses BEFORE any send
     # attempt. GATE_TEST_ROOT is stripped (it forbids --send outright) so this
-    # exercises the real path; creds are dummies and the refusal fires first.
+    # exercises the real path; creds are dummies and a refusal always fires
+    # first. In a bare repo checkout (no real suppressed.csv next to the
+    # sender) the mandatory-kill-list refusal fires even earlier — that is
+    # also a correct fail-closed outcome, so both refusals pass.
     env_nosandbox = {k: v for k, v in node_env.items() if k != "GATE_TEST_ROOT"}
     p = subprocess.run(
         ["node", str(HERE / "send-waitlist-gmail-v1.mjs"), "--list", str(dst), "--send"],
         capture_output=True, text=True, env=env_nosandbox, cwd=HERE,
     )
-    check("sender refuses past-event --send", p.returncode != 0 and "is over" in p.stderr, p.stderr + p.stdout)
+    check(
+        "sender refuses past-event --send (or fails closed on missing kill list)",
+        p.returncode != 0 and ("is over" in p.stderr or "suppressed.csv missing" in p.stderr),
+        p.stderr + p.stdout,
+    )
 
     # test-mode send refusal (the GATE_TEST_ROOT guard itself)
     p = run_sender("--list", str(dst), "--send")

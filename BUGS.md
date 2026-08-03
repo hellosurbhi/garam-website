@@ -2,6 +2,16 @@
 
 ## Open
 
+### [MODERATE] 3 unfixed npm audit findings in @opentelemetry/core (via firebase-tools)
+
+- **Date:** 2026-08-02
+- **File:** `package-lock.json` (`firebase-tools` -> `@google-cloud/pubsub` -> `@opentelemetry/core`)
+- **Status:** Open, deliberately deferred
+- **Severity:** Moderate
+- **What happened:** `npm audit` (full, including devDependencies) reports 3 moderate findings in `@opentelemetry/core`, pulled in transitively through `firebase-tools`. All 5 CI-gating high-severity findings (astro, brace-expansion, postcss, svgo, tar) were resolved via a plain `npm audit fix` lockfile resync, which also bumped `firebase-tools` from 15.23.0 to 15.25.1 within its existing `^15.23.0` range; these 3 remain because they're only fixable with `npm audit fix --force`, which per `npm audit --json`'s `fixAvailable` field downgrades `firebase-tools` 15.25.1 -> 14.23.0.
+- **Why deferred:** all 3 findings are the same advisory, [GHSA-8988-4f7v-96qf](https://github.com/advisories/GHSA-8988-4f7v-96qf) (CWE-770, unbounded memory allocation when a service parses untrusted W3C Baggage propagation headers). `firebase-tools` is devDependency-only and does hold production credentials when run with them, so "devDependency" alone does not clear it: the advisory only fires in a process that parses trace-context headers from untrusted network input, and this project invokes `firebase-tools` as short-lived interactive/CI commands, never as a long-running service accepting external requests, so the vulnerable code path is not reachable here. CI's actual gate (`npm audit --audit-level=high --omit=dev`) also already excludes it and reports 0 vulnerabilities. Forcing a breaking downgrade of a dev tool for a moderate finding with no reachable attack path is not justified; the fix would trade a real regression (older `firebase-tools`, potential CLI incompatibilities) for closing an audit line with no exploitable exposure in how this project uses the tool.
+- **Revisit when:** a newer `firebase-tools` release (a 15.x patch or a new major) resolves the `@opentelemetry/core` chain without a downgrade, or the finding starts blocking CI (severity change, `--omit=dev` policy change).
+
 ### [HIGH] Dev server cannot transform TypeScript in astro component scripts
 
 - **Date:** 2026-07-05

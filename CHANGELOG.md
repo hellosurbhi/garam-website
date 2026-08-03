@@ -1,5 +1,9 @@
 # Changelog
 
+## fix(deps): npm audit advisories resolved in transitive dependencies (2026-08-03)
+
+CI's security audit gate failed on brace-expansion (GHSA-mh99-v99m-4gvg, high), postcss (GHSA-r28c-9q8g-f849, high) and tar (GHSA-r292-9mhp-454m, moderate). `npm audit fix` applied semver-compatible lockfile bumps only, no package.json changes. Three moderate advisories remain in firebase-tools, a dev dependency below the gate's `--audit-level=high --omit=dev` threshold.
+
 ## fix(events): Boston show moved from August 2 to August 13, start time to 7 PM (2026-08-03)
 
 Same venue (Elephant and Castle), same Eventbrite listing; show now runs 7 to 9 PM (was 6 to 8 PM). Updated everywhere the date appears: the show card data in `src/data/events.ts`, plus the Boston FAQ answer, the "when we announce a date" body paragraph and the apply FAQ in `src/data/cities/us-northeast.ts` (the city-page spots were caught over two rounds of pre-push Codex review after the first pass missed them). Resolves the queued STALE-EVENT-DATE, MISSING-CHANGELOG and stale-city-copy findings from the 2026-08-03 push reviews; their BUGS.md lines are removed in the same commits.

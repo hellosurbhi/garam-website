@@ -94,9 +94,17 @@ const rawTitle =
     ? `${event.city} Comedy Dating Show, Coming Soon`
     : `${event.city} Comedy Dating Show, ${event.date}`;
 const seoTitle = deriveSeoTitle(rawTitle);
-const metaDescription = EVENT_PAGE.metaDescription(event.description);
+// WHY `description`, not `event.description`: `description` is the prop
+// getStaticPaths already resolved via resolveEventDescription (real
+// Eventbrite listing copy for owned events when the API pull succeeds,
+// falling back to event.description otherwise). Using event.description
+// directly here would silently revert the meta description (what search
+// engines show in results) to the stale manual copy on every page that
+// successfully pulled live content, even though the visible page body
+// below correctly renders the resolved version. Caught by Codex pre-push
+// review (2026-08-03).
+const metaDescription = EVENT_PAGE.metaDescription(description);
 
-const eventPageUrl = `${BASE}/events/${event.slug}`;
 const eventSchemas = buildEventSchemas([event]);
 const breadcrumbJsonLd = buildBreadcrumbJsonLd([
   { name: "Home", url: `${BASE}/` },
@@ -145,7 +153,18 @@ const lineup = event.lineup.map((id) => PERFORMERS[id]);
 
 <BaseLayout title={seoTitle} description={metaDescription}>
   <Fragment slot="head">
-    <link rel="canonical" href={eventPageUrl} />
+    {
+      /*
+        WHY no <link rel="canonical"> here: BaseLayout already emits one,
+        defaulting to new URL(Astro.url.pathname, Astro.site) which resolves
+        to this exact page for a static /events/[slug] route. A second,
+        duplicate canonical tag here (the branch used to build one from BASE
+        + event.slug) made every event page emit two, and per Google's own
+        guidance, multiple canonical tags on one page get ignored entirely
+        in favor of Google's own canonical-selection heuristic, defeating
+        the tag's purpose. Caught by Codex pre-push review (2026-08-03).
+      */
+    }
     {
       eventSchemas.map((schema) => (
         <script type="application/ld+json" set:html={schema} />

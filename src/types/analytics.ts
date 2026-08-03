@@ -29,6 +29,18 @@ export interface Order {
    * sendCapiEvent returns { ok: true }. See src/pages/api/sync-orders.ts.
    */
   purchaseCapiSent: boolean;
+  /**
+   * True only when sync-orders.ts's retry pass gave up on ever delivering
+   * this order's Purchase CAPI event, e.g. the event it belongs to was
+   * pruned from src/data/events.ts, so there's no eventSourceUrl left to
+   * build the CAPI payload from. Distinct from purchaseCapiSent: sent=false
+   * still means "keep retrying," while unrecoverable=true means "stop
+   * retrying, this one can never succeed." Without this, an orphaned order
+   * would match the same purchaseCapiSent == false query forever and could
+   * eventually crowd out genuinely retriable orders under the query's row
+   * limit. See findPendingPurchaseOrders in sync-orders.ts.
+   */
+  purchaseCapiUnrecoverable: boolean;
 }
 
 /** Firestore document in syncMeta/eventbrite. */

@@ -6,7 +6,7 @@ import { execSync } from "child_process";
 import { readFileSync, readdirSync } from "fs";
 import { journalPostsPublished } from "./src/data/journal/index.ts";
 import { cities } from "./src/data/cities/index.ts";
-import { events } from "./src/data/events.ts";
+import { events, allEvents } from "./src/data/events.ts";
 
 const SITE = "https://garammasaladating.com";
 const TODAY_STR = new Date().toISOString().slice(0, 10);
@@ -73,11 +73,19 @@ const cityLastmodMap = buildCityLastmodMap();
  * slug shares that file's git-lastmod date. Still strictly better than the
  * DEFAULT_LASTMOD fallback, which recomputes to "today" on every build/deploy
  * and would make an unchanged event page's lastmod churn on every deploy.
+ *
+ * WHY: must iterate allEvents, not events. /events/[slug].astro generates a
+ * static page for every entry in allEvents (confirmed shows + TBA/coming-soon
+ * cities like chicago-tba), but this map used to iterate only `events`
+ * (confirmed shows). That left every TBA slug unmapped, so the sitemap
+ * serializer fell into its "no lastmod for event slug" warning branch on
+ * every build. Caught by Codex pre-push review (2026-08-03) after the build
+ * log was checked and the warnings were confirmed real.
  */
 function buildEventLastmodMap() {
   const gitDate = getGitDate("src/data/events.ts") || TODAY_STR;
   const map = {};
-  for (const e of events) map[e.slug] = gitDate;
+  for (const e of allEvents) map[e.slug] = gitDate;
   return map;
 }
 

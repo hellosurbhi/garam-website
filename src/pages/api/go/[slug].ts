@@ -6,6 +6,7 @@ import { enforceRateLimit, RATE_LIMITS, getClientIp } from "@/lib/rateLimit";
 import { applyUtmsToUrl } from "@/utils/utmForwarding";
 import { withTimeout } from "@/utils/withTimeout";
 import { sendCapiEvent } from "@/lib/capi";
+import { isBotUserAgent } from "@/lib/isBotUserAgent";
 
 // WHY a bounded timeout instead of letting the CAPI call run free: this
 // route's entire purpose is firing the tracking event, so the call is
@@ -75,8 +76,21 @@ export const GET: APIRoute = async ({ params, request }) => {
     },
   );
 
+  // WHY skip CAPI for recognized bots but still redirect them: the
+  // rateLimit.ts goRedirect policy comment already documents that
+  // Meta/iMessage/Slack unfurl bots headlessly fetch this exact route
+  // whenever a tracked link is shared, since ad and ticket links point
+  // straight here. Left unfiltered, every one of those non-human fetches
+  // was reported to Meta as a real InitiateCheckout, which doesn't just
+  // inflate a vanity metric: it's a training signal the ad algorithm uses
+  // to find more people who look like whoever converted, so bot traffic
+  // labeled as conversions actively degrades ad targeting. Caught by Codex
+  // pre-push review (2026-08-03). The redirect below still runs
+  // unconditionally for bots too, since they need the real destination to
+  // build an accurate link-preview card.
+  const userAgent = request.headers.get("user-agent");
   const accessToken = import.meta.env.META_CAPI_ACCESS_TOKEN;
-  if (accessToken) {
+  if (accessToken && !isBotUserAgent(userAgent)) {
     const cookieHeader = request.headers.get("cookie");
     try {
       const result = await withTimeout(
@@ -88,7 +102,7 @@ export const GET: APIRoute = async ({ params, request }) => {
             eventSourceUrl: requestUrl.toString(),
             userData: {
               clientIpAddress: getClientIp(request),
-              clientUserAgent: request.headers.get("user-agent") ?? undefined,
+              clientUserAgent: userAgent ?? undefined,
               fbp: readCookie(cookieHeader, "_fbp"),
               fbc: readCookie(cookieHeader, "_fbc"),
             },

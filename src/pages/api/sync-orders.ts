@@ -95,6 +95,9 @@ function orderToFirestoreFields(
       ? { stringValue: order.matchedLeadId }
       : { nullValue: null },
     purchaseCapiSent: { booleanValue: order.purchaseCapiSent },
+    purchaseCapiUnrecoverable: {
+      booleanValue: order.purchaseCapiUnrecoverable,
+    },
     attendees: {
       arrayValue: {
         values: order.attendees.map((a) => ({
@@ -294,6 +297,42 @@ async function markPurchaseCapiSent(
   }
 }
 
+/**
+ * Marks an order as a Purchase CAPI event that can never be delivered, so
+ * `findPendingPurchaseOrders` stops returning it. Used only when the retry
+ * pass can't find the order's source event in `events.ts` anymore (see the
+ * call site): there is no eventSourceUrl left to build a correct CAPI
+ * payload from, so retrying it every run forever would just burn one of
+ * the pending query's limited rows on a request that can never succeed.
+ * Deliberately a separate field from `purchaseCapiSent`, which must stay
+ * `false`: this order's Purchase was never actually delivered to Meta, and
+ * marking it "sent" would misreport that as done when it silently wasn't.
+ */
+async function markPurchaseCapiUnrecoverable(
+  projectId: string,
+  accessToken: string,
+  orderId: string,
+): Promise<void> {
+  const url = `https://firestore.googleapis.com/v1/projects/${projectId}/databases/(default)/documents/orders/${orderId}?updateMask.fieldPaths=purchaseCapiUnrecoverable`;
+  const res = await fetch(url, {
+    method: "PATCH",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${accessToken}`,
+    },
+    body: JSON.stringify({
+      fields: { purchaseCapiUnrecoverable: { booleanValue: true } },
+    }),
+  });
+
+  if (!res.ok) {
+    const body = (await res.json()) as FirestoreErrorBody;
+    throw new Error(
+      `Failed to mark order ${orderId} as CAPI-unrecoverable: ${res.status} ${body.error?.message ?? ""}`,
+    );
+  }
+}
+
 /** Minimal shape needed to retry a Purchase CAPI send; see PendingOrderDoc. */
 interface PendingOrderDoc {
   orderId: string;
@@ -346,12 +385,17 @@ function parsePendingOrderDoc(doc: FirestoreDocument): PendingOrderDoc | null {
  * when something changes on Eventbrite's side (a refund, an attendee
  * edit), not when our own delivery attempt merely failed, so the per-event
  * fetch loop above has no way to naturally retry a stuck order. Querying
- * Firestore directly for `purchaseCapiSent == false AND status ==
- * "placed"` sidesteps that entirely: both are plain equality filters
- * combined with AND, which Firestore serves without a manual composite
- * index. `limit: 100` bounds one sync run's worst case; genuinely stuck
- * orders (e.g. a dropped event no longer in events.ts) simply reappear on
- * the next run since the flag is never set without a confirmed send.
+ * Firestore directly for `purchaseCapiSent == false AND status == "placed"
+ * AND purchaseCapiUnrecoverable == false` sidesteps that entirely: all
+ * three are plain equality filters combined with AND, which Firestore
+ * serves without a manual composite index. `limit: 100` bounds one sync
+ * run's worst case. The `purchaseCapiUnrecoverable` filter exists so a
+ * genuinely stuck order (its source event was pruned from events.ts, so
+ * there's no eventSourceUrl left to retry it with, see the call site's use
+ * of markPurchaseCapiUnrecoverable) drops out of this result set for good
+ * instead of reappearing on every future run and permanently occupying one
+ * of the 100 slots, which would eventually starve real pending orders once
+ * enough dropped-event orphans accumulated.
  */
 async function findPendingPurchaseOrders(
   projectId: string,
@@ -383,6 +427,13 @@ async function findPendingPurchaseOrders(
                   field: { fieldPath: "status" },
                   op: "EQUAL",
                   value: { stringValue: "placed" },
+                },
+              },
+              {
+                fieldFilter: {
+                  field: { fieldPath: "purchaseCapiUnrecoverable" },
+                  op: "EQUAL",
+                  value: { booleanValue: false },
                 },
               },
             ],
@@ -528,6 +579,22 @@ export const POST: APIRoute = async ({ request }) => {
     let totalProcessed = 0;
     let totalMatched = 0;
     let globalRateLimitRemaining = 1000;
+    // WHY: `changed_since` is a single global cursor, not per-event, so it
+    // must only move forward when every event's orders for this window were
+    // actually fetched and persisted. If event B's fetch throws (transient
+    // network/auth blip) while event A succeeds, and lastSyncAt still
+    // advances to `now`, the next run's changed_since=now permanently skips
+    // whatever changed on event B between the old and new cursor: there is
+    // no other record of that window. Same risk if an order is fetched but
+    // its Firestore upsert throws: Eventbrite's changed_since won't return
+    // that order again unless it changes a second time. Caught by Codex
+    // pre-push review (2026-08-03). Fix: hold the cursor at its previous
+    // value on any fetch or upsert failure, so the next run re-requests the
+    // same window. Reprocessing succeeded events/orders in that replay is
+    // safe: upsertOrder is keyed by the stable Eventbrite order.orderId, and
+    // Purchase CAPI is gated on the purchaseCapiSent flag, so nothing here
+    // resends or double-writes on a retry.
+    let hadSyncFailure = false;
 
     for (const event of syncableEvents) {
       const eventbriteId = event.eventbriteId!;
@@ -547,6 +614,7 @@ export const POST: APIRoute = async ({ request }) => {
           `[sync-orders] fetchEventOrders failed for ${eventbriteId}: ${msg}`,
         );
         syncErrors.push(`fetch:${eventbriteId}: ${msg}`);
+        hadSyncFailure = true;
         continue;
       }
 
@@ -665,6 +733,7 @@ export const POST: APIRoute = async ({ request }) => {
             `[sync-orders] Failed to upsert order ${order.orderId}: ${msg}`,
           );
           syncErrors.push(`order:${order.orderId}: ${msg}`);
+          hadSyncFailure = true;
         }
       }
     }
@@ -696,7 +765,27 @@ export const POST: APIRoute = async ({ request }) => {
         if (!sourceEvent) {
           // The show this order belongs to is no longer in events.ts
           // (pruned after it aged out). Nothing to build a correct
-          // eventSourceUrl from; skip rather than guess one.
+          // eventSourceUrl from, and this will never change on a future
+          // run either, so give up for good instead of leaving
+          // purchaseCapiSent false: see markPurchaseCapiUnrecoverable's
+          // doc comment for what breaks if this order just gets skipped
+          // (`continue`) here without changing anything, as it used to.
+          try {
+            await markPurchaseCapiUnrecoverable(
+              projectId,
+              accessToken,
+              pendingOrder.orderId,
+            );
+          } catch (err) {
+            const msg = err instanceof Error ? err.message : String(err);
+            console.error(
+              `[sync-orders] Failed to mark order ${pendingOrder.orderId} unrecoverable: ${msg}`,
+            );
+            syncErrors.push(`unrecoverable:${pendingOrder.orderId}: ${msg}`);
+          }
+          syncErrors.push(
+            `orphaned:${pendingOrder.orderId}: source event ${pendingOrder.eventbriteEventId} no longer in events.ts, Purchase CAPI will never be sent`,
+          );
           continue;
         }
 
@@ -752,7 +841,10 @@ export const POST: APIRoute = async ({ request }) => {
     const now = new Date().toISOString();
     const allErrors = [...(prevMeta?.errors ?? []), ...syncErrors].slice(-10);
     const newMeta: SyncMeta = {
-      lastSyncAt: now,
+      // Hold the cursor at its previous value when any event's fetch or
+      // order upsert failed this run: see hadSyncFailure's WHY comment
+      // above the sync loop for what breaks if this advances anyway.
+      lastSyncAt: hadSyncFailure ? (lastSyncAt ?? "") : now,
       ordersProcessed: previousTotal + totalProcessed,
       errors: allErrors,
     };

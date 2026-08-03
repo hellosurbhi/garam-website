@@ -216,7 +216,7 @@ export const usNortheastCities: Record<string, CityData> = {
     faqItems: [
       {
         q: "When is Garam Masala Dating coming to Boston?",
-        a: "Sunday, August 2 at Elephant and Castle in downtown Boston. Doors at 6 PM, show runs until 8 PM. Get tickets at the link above.",
+        a: "Thursday, August 13 at Elephant and Castle in downtown Boston. Doors at 6 PM, show runs until 8 PM. Get tickets at the link above.",
       },
       {
         q: "Will the show be in Cambridge or downtown Boston?",

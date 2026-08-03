@@ -1,5 +1,9 @@
 # Changelog
 
+## fix(review): CodeRabbit reviews markdown again (2026-08-03)
+
+Removed the `!**/*.md` path filter from `.coderabbit.yaml`. On the free CodeRabbit plan the bot is often a PR's only reviewer, and the global pre-push rework (claude-global-config PR #15) makes markdown-only pushes skip local suites once merged; the blanket exclusion meant README/docs changes could reach a PR with no review anywhere.
+
 ## fix(deps): npm audit advisories resolved in transitive dependencies (2026-08-03)
 
 CI's security audit gate failed on brace-expansion (GHSA-mh99-v99m-4gvg, high), postcss (GHSA-r28c-9q8g-f849, high) and tar (GHSA-r292-9mhp-454m, moderate). `npm audit fix` applied semver-compatible lockfile bumps only, no package.json changes. Three moderate advisories remain in firebase-tools, a dev dependency below the gate's `--audit-level=high --omit=dev` threshold.

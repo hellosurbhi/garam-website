@@ -11,7 +11,10 @@ reviews:
     - "!**/*.jpeg"
     - "!**/*.jpg"
     - "!**/*.png"
-    - "!**/*.md"
+    # WHY *.md is NOT excluded (owner decision 2026-08-03): journal posts and
+    # copy are .md and are exactly the content the md-only pre-push fast path
+    # skips local checks for. CodeRabbit is the remaining reviewer for them;
+    # excluding markdown left those changes with no review before merge.
     - "!public/images/**"
     - "!src/assets/**"
     - "!public/sitemap.xml"

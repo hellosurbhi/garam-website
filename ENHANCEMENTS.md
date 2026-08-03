@@ -4,6 +4,25 @@ Items from the GMD website audit checklists (site audit, codebase cleanup, conve
 
 ---
 
+## Contestant Workflow Test Coverage: Portal + Admin Components (2026-07-16)
+
+### Write unit tests for ContestantPortal.tsx, TaskInbox.tsx, and ContestantFunnel.tsx
+
+**Priority:** High
+**Status:** Deferred
+
+Backend unit tests for the P1 to P5 contestant workflow control tower shipped alongside this entry (`src/lib/zohoMailer.ts`, the cal.com webhook, and the post-show/followups cron jobs). Three UI pieces from the same rollout remain untested, deferred for two different reasons:
+
+1. **`src/components/ContestantPortal.tsx`**: public facing waiver and prep portal, ~770 lines, stateful (needs `vi.stubGlobal("fetch")` plus `waitFor` patterns, not the `vi.mock`+dynamic-import pattern the backend tests use). Kept out of the backend test PR so that PR stayed a clean, reviewable, single-purpose change. Write its tests in a dedicated follow-up PR.
+2. **`src/components/admin/TaskInbox.tsx`** and **`src/components/admin/ContestantFunnel.tsx`**: admin dashboard screens. The operator plans a full rewrite of the admin page (2026-07-15 directive: it is not working well and is getting redone). Writing tests against components about to be replaced wastes the effort; write tests against the rewritten components once that lands.
+
+**Acceptance criteria:**
+
+1. `ContestantPortal.tsx` has vitest coverage for waiver sign-through, invite-token validation, and error states.
+2. Once the admin rewrite ships, its replacement Task Inbox and funnel views ship with unit tests as part of that PR, not as a follow-up debt item.
+
+---
+
 ## City Page Enrichment: Remaining Batches (2026-07-06)
 
 ### Extend the deep-content pattern to the remaining ~290 city pages

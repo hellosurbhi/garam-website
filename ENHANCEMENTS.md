@@ -10,6 +10,7 @@ Items from the GMD website audit checklists (site audit, codebase cleanup, conve
 
 **Priority:** High
 **Status:** Needs implementation, sequenced into the ticket card consolidation task
+**Branch context:** describes code on the unmerged `feat/event-pages-tracked-checkout` branch (`src/pages/events/[slug].astro`, `EventTicketCta.astro`, the `data-go-ticket` contract). None of it is on main yet; act on this entry with that branch.
 
 The `/events/[slug].astro` landing page (built for the tracked-checkout redirect project) is a long-scroll page: hero, overview, what to expect, lineup, location, agenda, FAQ, social proof, bottom CTA. It is the intended landing spot for paid Instagram traffic. On mobile (70% of traffic), a visitor who scrolls past the hero CTA has to scroll all the way back up or down to the bottom CTA to convert.
 

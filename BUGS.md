@@ -649,6 +649,8 @@
 
 ### Codex (2026-08-03T04:43Z)
 
+Both findings apply to the unmerged `feat/event-pages-tracked-checkout` branch (tracked per-event landing pages + CAPI conversion tracking). The referenced files (`src/pages/api/go/[slug].ts`, `src/pages/events/[slug].astro`, the extended `src/pages/api/sync-orders.ts`) exist only on that branch, not on main. Fix them there before or when that branch merges.
+
 - [ ] HIGH: `/api/go/[slug]` fires `InitiateCheckout` for every GET, including requests without the browser-generated `eid`. The fallback UUID at `src/pages/api/go/[slug].ts:61-69` turns crawlers, link previews and prefetches into conversions. The rate-limit comment at `src/lib/rateLimit.ts:61-63` explicitly anticipates these bots but does not exclude them.
 - [ ] HIGH: `findPendingPurchaseOrders()` limits results to 100 without pagination. Orders whose source event was removed are skipped without changing `purchaseCapiSent` at `src/pages/api/sync-orders.ts:693-700`, so the same permanently pending documents can occupy the first page and starve later purchases indefinitely.
 
@@ -656,5 +658,14 @@
 
 ### Codex (2026-08-03T04:43Z)
 
+Both findings apply to the unmerged `feat/event-pages-tracked-checkout` branch (see the High priority section above).
+
 - [ ] MEDIUM: Event pages emit two canonical tags: one from `src/layouts/BaseLayout.astro:79` and another from `src/pages/events/[slug].astro:148`.
 - [ ] MEDIUM: Eventbrite content overrides the visible description, but `src/pages/events/[slug].astro:91` builds the meta description from `event.description` instead of the resolved `description`, leaving SEO copy stale after a successful content pull.
+
+### Codex (2026-08-03T06:53Z)
+
+Both findings critique the "Mobile Sticky CTA" writeup in ENHANCEMENTS.md, which was authored on the unmerged `feat/event-pages-tracked-checkout` branch and describes that branch's code. Evaluate when that branch's PR is reviewed.
+
+- [ ] HIGH: [SCOPE-CREEP] `ENHANCEMENTS.md` sticky CTA entry broadens an event-page CTA request into a sitewide contract covering tickets and city pages without that universal scope appearing in the stated intent.
+- [ ] HIGH: [UNSOURCED-CLAIM] `ENHANCEMENTS.md` sticky CTA entry makes current-code, traffic and existing-task claims without `file:line` evidence or command output.

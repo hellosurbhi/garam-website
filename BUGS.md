@@ -644,3 +644,17 @@
 
 - [x] MEDIUM: `ResizeObserver` observes `el.firstElementChild` and never re-observes if the child changes. at src/components/WaiverPanel.tsx — Resolved by design: `observer.disconnect()` in the effect cleanup drops every observed target per spec (no leak), and the child is the `WaiverDocument` article rendered from a compile-time constant, so its identity never changes within a mount.
 - [x] MEDIUM: `handleScroll` is recreated each render and passed to `onScroll`. at src/components/WaiverPanel.tsx — Resolved by design: React delegates synthetic events at the root; a new handler identity per render does not re-register DOM listeners. Wrapping in useCallback would add noise with no behavior change.
+
+## High priority (from push reviews, fix first)
+
+### Codex (2026-08-03T04:43Z)
+
+- [ ] HIGH: `/api/go/[slug]` fires `InitiateCheckout` for every GET, including requests without the browser-generated `eid`. The fallback UUID at `src/pages/api/go/[slug].ts:61-69` turns crawlers, link previews and prefetches into conversions. The rate-limit comment at `src/lib/rateLimit.ts:61-63` explicitly anticipates these bots but does not exclude them.
+- [ ] HIGH: `findPendingPurchaseOrders()` limits results to 100 without pagination. Orders whose source event was removed are skipped without changing `purchaseCapiSent` at `src/pages/api/sync-orders.ts:693-700`, so the same permanently pending documents can occupy the first page and starve later purchases indefinitely.
+
+## Medium priority (auto-fix pending)
+
+### Codex (2026-08-03T04:43Z)
+
+- [ ] MEDIUM: Event pages emit two canonical tags: one from `src/layouts/BaseLayout.astro:79` and another from `src/pages/events/[slug].astro:148`.
+- [ ] MEDIUM: Eventbrite content overrides the visible description, but `src/pages/events/[slug].astro:91` builds the meta description from `event.description` instead of the resolved `description`, leaving SEO copy stale after a successful content pull.

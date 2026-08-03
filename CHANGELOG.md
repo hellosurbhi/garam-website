@@ -1,8 +1,8 @@
 # Changelog
 
-## fix(events): Boston show moved from August 2 to August 13 (2026-08-03)
+## fix(events): Boston show moved from August 2 to August 13, start time to 7 PM (2026-08-03)
 
-Same venue (Elephant and Castle), same 6 to 8 PM time, same Eventbrite listing. Updated in both places the date appears: the show card data in `src/data/events.ts` and the Boston FAQ answer in `src/data/cities/us-northeast.ts` (the second one was caught by the pre-push Codex review after the first pass missed it). Resolves the queued STALE-EVENT-DATE and MISSING-CHANGELOG findings from the 2026-08-03T06:53Z push review; their BUGS.md lines are removed in this commit.
+Same venue (Elephant and Castle), same Eventbrite listing; show now runs 7 to 9 PM (was 6 to 8 PM). Updated in both places the date appears: the show card data in `src/data/events.ts` and the Boston FAQ answer in `src/data/cities/us-northeast.ts` (the second one was caught by the pre-push Codex review after the first pass missed it). Resolves the queued STALE-EVENT-DATE and MISSING-CHANGELOG findings from the 2026-08-03T06:53Z push review; their BUGS.md lines are removed in this commit.
 
 ## test(contestant-workflow): backend unit coverage for zohoMailer, cal.com webhook, and cron jobs (2026-07-16)
 

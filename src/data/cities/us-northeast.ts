@@ -184,7 +184,7 @@ export const usNortheastCities: Record<string, CityData> = {
       "Boston might have the highest concentration of overqualified desi singles per square mile in the country. MIT, Harvard, BU, Northeastern, Tufts. The student pipeline alone is staggering. Then half of them stay for biotech, consulting, or tech jobs in Cambridge and along the 128 corridor, and suddenly you've got a city full of brilliant South Asian twentysomethings and thirtysomethings who can't figure out where to meet each other outside of Hinge.",
       "The show that runs in New York every few weeks: real contestants volunteer for live dates on stage while a packed room watches it unfold. Before and after, the whole crowd mingles. It's not a seminar. It's not a panel. It's a night out that works because everyone showed up for the same reason.",
       "The suburbs tell the same story. Lexington, Burlington, Waltham, Woburn. Indian families who moved out for the schools, young professionals who followed the jobs. The community in Greater Boston is massive, and the social infrastructure for singles is basically nonexistent unless you count your parents' WhatsApp group.",
-      "We've been getting DMs from Boston since the show started. The waitlist is growing. When we announce a date, you'll hear about it first if you sign up below. And if you want to be one of the contestants who goes on a live date on stage in front of a room full of your peers, apply now.",
+      "We've been getting DMs from Boston since the show started, and now it's official: Thursday, August 13 at Elephant and Castle downtown. Grab your tickets before the room fills up. And if you want to be one of the contestants who goes on a live date on stage in front of a room full of your peers, apply now.",
       "Cambridge, Somerville, Brookline, Back Bay. Wherever you are in the metro, this is the show Boston has been asking for.",
     ],
     ctas: [
@@ -223,8 +223,8 @@ export const usNortheastCities: Record<string, CityData> = {
         a: "Downtown Boston at Elephant and Castle, 161 Devonshire Street. Easy access from the Financial District, South Station, and all major neighborhoods.",
       },
       {
-        q: "Can I apply to be on the show before a Boston date is announced?",
-        a: "Yes. Apply now. Applications stay active for 12 months. Boston applicants will be prioritized when we confirm a date.",
+        q: "Can I apply to be on the Boston show?",
+        a: "Yes. Apply now. Applications stay active for 12 months and Boston applicants are getting priority for the August 13 show.",
       },
       {
         q: "Is there Indian speed dating in Boston?",

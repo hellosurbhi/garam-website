@@ -1598,3 +1598,7 @@ If the ambiguity matters there too, rename both with Surbhi's approval on the ex
 
 - Bold-label sections in the new LESSONS.md Eventbrite entry: won't fix. The global CLAUDE.md LESSONS.md mandate prescribes the `**What went wrong:**` `**Why:**` `**Rule:**` template and nearly every existing entry follows it. The specific template mandate overrides the general copy-voice ban on bold-label lists for this file.
 - Em dash in the `1f0a217` commit message body: won't fix. That commit is already on origin, so rewriting its message means amending a published commit and force-pushing. The rule stands for future commit messages.
+
+### Codex (2026-08-12, manual tier-E backfill review of the pre-push trim)
+
+- LOW: `.husky/pre-push:11-15` and `CHANGELOG.md:5` overstate the guarantee that pre-commit gates cover every pushed commit. Rebases and externally created commits can enter the pushed range without running this repo's pre-commit hook, and `npm run check` examines the worktree, not only staged files. CI still runs `npx astro check`, so this is inaccurate rationale wording, not a lost merge gate.

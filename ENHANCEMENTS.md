@@ -11,6 +11,18 @@ Items from the GMD website audit checklists (site audit, codebase cleanup, conve
 
 Both widget loaders (`EventbriteWidgetInit.astro`, `ApplySuccessPanel.tsx`) only call `initWidgets` from the injected script's `onload`. If `eb_widgets.js` never loads at all (network block, ad blocker), no recovery code runs: anchor triggers still navigate via their native href, but button triggers (home shows cards, apply success upsell) stay silently dead. Fix is a `script.onerror` handler that installs the same `installInitFailureFallback` from `src/lib/eventbriteRecovery.ts` on every button trigger.
 
+## Apply/admin test and UI polish deferred from the CodeRabbit PR #135 body review (2026-08-12)
+
+- Admin photo grid: `useApplicantPhotos` silently drops photos whose download fails; return a `failed` count so the dashboard can distinguish "loading" from "failed". Low value (admin-only surface); do with the planned admin rewrite.
+- `ApplyPage.test.tsx`: hoist the `deleteObject` mock and assert the failure-cleanup and owner-metadata contracts at unit level. Both contracts are enforced today by the emulator rules tests (`apply-flow.rules-test.ts`), which is the stronger guarantee; the unit assertions are belt-and-braces for refactors.
+
+## Apply-form outage follow-ups (2026-07-13)
+
+### Add the synthetic monitor identity to PostHog's internal-user filter
+
+**Priority:** Low
+**Why:** Synthetic submissions no longer emit conversion events at all (skipped at the source), but their pageviews still occur. Adding `synthetic-monitor@garammasaladating.com` to PostHog's "filter out internal and test users" definition keeps session/pageview analytics clean.
+
 ---
 
 ## Mobile Sticky CTA for Event Landing Pages (2026-07-16)
@@ -1506,6 +1518,40 @@ If the ambiguity matters there too, rename both with Surbhi's approval on the ex
 - 2026-07-13T14:18Z | tier=E | primary=codex | reason=error_or_timeout | fallback_used=deepseek | commit=c632e66 | diff_sha=de07acb31b1046222c912bf32176941ee3f4ad03138575e556c21c92240280c0
 - 2026-07-13T14:21Z | tier=F | primary=coderabbit | reason=error | fallback_used=gemini | commit=c632e66 | diff_sha=de07acb31b1046222c912bf32176941ee3f4ad03138575e556c21c92240280c0
 - 2026-07-13T18:27Z | tier=E | primary=codex | reason=error_or_timeout | fallback_used=deepseek | commit=c632e66 | diff_sha=5a053421b4d64aea28b915648574c67cc0db170eac03cf28f4ee5bc42bedbcee
+
+- 2026-07-13T20:44Z | tier=E | primary=codex | reason=error_or_timeout | fallback_used=deepseek | commit=b7283c5 | diff_sha=5f77712c4b23f4384da3c7cb52231034d8dc7977d14da7a17538911188121da6
+
+- 2026-07-13T20:47Z | tier=E | primary=codex | reason=error_or_timeout | fallback_used=deepseek | commit=b7283c5 | diff_sha=27549cd4222173b300c0f4b35fd1d200c6060ae78c44c063d2936d942804bc46
+- 2026-07-13T20:47Z | tier=F | primary=coderabbit | reason=error | fallback_used=gemini | commit=b7283c5 | diff_sha=27549cd4222173b300c0f4b35fd1d200c6060ae78c44c063d2936d942804bc46
+
+- 2026-07-13T20:51Z | tier=E | primary=codex | reason=error_or_timeout | fallback_used=deepseek | commit=b7283c5 | diff_sha=62dcea0150a678f2a1318562584a2f3c88d520482847d931ad73a30fa5710ba7
+- 2026-07-13T20:51Z | tier=F | primary=coderabbit | reason=error | fallback_used=gemini | commit=b7283c5 | diff_sha=62dcea0150a678f2a1318562584a2f3c88d520482847d931ad73a30fa5710ba7
+- 2026-07-13T20:53Z | tier=E | primary=codex | reason=error_or_timeout | fallback_used=deepseek | commit=cc33f13 | diff_sha=792300f61baae3694258927633d9b4b5b636290e28c822fde0b59509b6340748
+- 2026-07-13T20:53Z | tier=F | primary=coderabbit | reason=error | fallback_used=gemini | commit=cc33f13 | diff_sha=792300f61baae3694258927633d9b4b5b636290e28c822fde0b59509b6340748
+
+- 2026-07-13T20:56Z | tier=E | primary=codex | reason=error_or_timeout | fallback_used=deepseek | commit=cc33f13 | diff_sha=49c071425e7d368e6c395b50375c366ae9489d1de40a22a911f27d37008968e0
+- 2026-07-13T20:56Z | tier=F | primary=coderabbit | reason=error | fallback_used=gemini | commit=cc33f13 | diff_sha=49c071425e7d368e6c395b50375c366ae9489d1de40a22a911f27d37008968e0
+- 2026-07-13T20:59Z | tier=E | primary=codex | reason=error_or_timeout | fallback_used=deepseek | commit=5f8a97a | diff_sha=34b48fea48bbe348043200b998329f88cef4a17723d1a8bc12c6a3773a0caab8
+- 2026-07-13T21:10Z | tier=E | primary=codex | reason=error_or_timeout | fallback_used=deepseek | commit=5f8a97a | diff_sha=d58b91c239276eace2d026c18cd8ab96853ea2f58466db7e30a49b599bd85d26
+- 2026-07-13T21:10Z | tier=F | primary=coderabbit | reason=error | fallback_used=gemini | commit=5f8a97a | diff_sha=d58b91c239276eace2d026c18cd8ab96853ea2f58466db7e30a49b599bd85d26
+- 2026-07-13T21:27Z | tier=E | primary=codex | reason=error_or_timeout | fallback_used=deepseek | commit=6c3790a | diff_sha=679393073329dbbc68a931b4c86844c71f02c323182389c186cb11c964ee3e4a
+- 2026-07-13T21:27Z | tier=F | primary=coderabbit | reason=error | fallback_used=gemini | commit=6c3790a | diff_sha=679393073329dbbc68a931b4c86844c71f02c323182389c186cb11c964ee3e4a
+- 2026-07-13T22:11Z | tier=E | primary=codex | reason=error_or_timeout | fallback_used=deepseek | commit=a7a0407 | diff_sha=2c211f142130ad8681e4a9d1cf618f0277d935274a958c082a3e77c553091e41
+- 2026-07-13T22:11Z | tier=F | primary=coderabbit | reason=error | fallback_used=gemini | commit=a7a0407 | diff_sha=2c211f142130ad8681e4a9d1cf618f0277d935274a958c082a3e77c553091e41
+- 2026-07-13T22:14Z | tier=E | primary=codex | reason=error_or_timeout | fallback_used=deepseek | commit=a7a0407 | diff_sha=2974c587f3ec43b3238266c6d8d696bd4712d7d09c277ffcad14e647cfae9851
+- 2026-07-13T22:14Z | tier=F | primary=coderabbit | reason=error | fallback_used=gemini | commit=a7a0407 | diff_sha=2974c587f3ec43b3238266c6d8d696bd4712d7d09c277ffcad14e647cfae9851
+
+## Low priority enhancements
+
+- 2026-07-13T22:17Z | tier=E | primary=codex | reason=error_or_timeout | fallback_used=deepseek | commit=a7a0407 | diff_sha=06c49be5b23a6d9ded610b8ab3ef79264aeceaaa03517f0c6c5f9a05fcc95f79
+- 2026-07-13T22:17Z | tier=F | primary=coderabbit | reason=error | fallback_used=gemini | commit=a7a0407 | diff_sha=06c49be5b23a6d9ded610b8ab3ef79264aeceaaa03517f0c6c5f9a05fcc95f79
+
+### DeepSeek — 20260713-181721
+
+- WONT-FIX (decision, do not re-file): reviewer flagged "non-obvious" in LESSONS.md as a banned double dash. It is a single hyphen forming a compound word, which the copy rules explicitly allow. No change. At `LESSONS.md:232`.
+
+- 2026-07-13T22:22Z | tier=E | primary=codex | reason=error_or_timeout | fallback_used=deepseek | commit=a7a0407 | diff_sha=4d2f31cad6c74709015827d74115da4debe4fa3e17a3ef6a0e5224e6994968cc
+- 2026-07-14T02:21Z | tier=E | primary=codex | reason=error_or_timeout | fallback_used=deepseek | commit=84c8cef | diff_sha=a9332e6f339e116b59d265b56fcc99285a6bb8b99ab72c66d4b3f024b4792373
 - 2026-07-13T14:14Z | tier=E | primary=codex | reason=error_or_timeout | fallback_used=deepseek | commit=c632e66 | diff_sha=727f9c571636bde5fa1659a5cfe3e0752dd55bfd98a7140eba940b370ac57b25
 - 2026-07-13T14:18Z | tier=E | primary=codex | reason=error_or_timeout | fallback_used=deepseek | commit=c632e66 | diff_sha=aa14f0405fb398ccc172f7d23e2c9751ee8c0ea5f24ddfb43a0f0bc1380bc5c6
 - 2026-07-13T14:21Z | tier=F | primary=coderabbit | reason=error | fallback_used=gemini | commit=c632e66 | diff_sha=aa14f0405fb398ccc172f7d23e2c9751ee8c0ea5f24ddfb43a0f0bc1380bc5c6
@@ -1516,8 +1562,6 @@ If the ambiguity matters there too, rename both with Surbhi's approval on the ex
 - 2026-07-15T20:02Z | tier=E | primary=codex | reason=error_or_timeout | fallback_used=gemini | commit=ad03ccb | diff_sha=8f7496694dfa7a06a1b1dbf0b403469de24530653c93388269f0d5f1898fea65
 - 2026-07-15T20:19Z | tier=F | primary=coderabbit | reason=error | fallback_used=gemini | commit=ad03ccb | diff_sha=2969cbac7200a1b37f3596ee9c891fc6080090253851585901f3c863c6b35d95
 - 2026-07-15T20:19Z | tier=E | primary=codex | reason=error_or_timeout | fallback_used=gemini | commit=ad03ccb | diff_sha=2969cbac7200a1b37f3596ee9c891fc6080090253851585901f3c863c6b35d95
-
-## Low priority enhancements
 
 ### CodeRabbit — 20260713-102329
 
@@ -1548,6 +1592,7 @@ If the ambiguity matters there too, rename both with Surbhi's approval on the ex
 - 2026-07-15T19:37Z | tier=E | primary=codex | reason=error_or_timeout | fallback_used=gemini | commit=8ecc6b2 | diff_sha=0dcddf1f107891ad33ffb99d2cd75f10b3ad2973464c41b886f960166a096a50
 - 2026-07-15T19:37Z | tier=F | primary=coderabbit | reason=error | fallback_used=gemini | commit=8ecc6b2 | diff_sha=0dcddf1f107891ad33ffb99d2cd75f10b3ad2973464c41b886f960166a096a50
 - 2026-07-16T18:25Z | tier=E | primary=ALL | reason=OUTAGE | fallback_used=NONE | commit=f1d5483 | diff_sha=082f7bb0e23255ee6634a79539f3161de20a35f7ddbba111e74e630c08eaa40b
+- 2026-08-12T17:54Z | tier=R | primary=coderabbit | reason=cli-unavailable-or-failed | fallback_used=codex | commit=d1deffc | diff_sha=00d1afdf20458e182720ec1595a77e1c781b821f8021fc38aeac007e5cc9d085
 
 ### Codex LOW findings 2026-07-16 (won't fix, kept so they are not re-filed)
 

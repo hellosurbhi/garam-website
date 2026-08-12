@@ -35,7 +35,6 @@ const ApplicationSchema = z.object({
     .array(z.string().regex(/^photos\/[A-Za-z0-9._-]+$/))
     .min(1)
     .max(10),
-  isSynthetic: z.boolean().optional(),
 });
 
 type ApplicationNotification = z.infer<typeof ApplicationSchema>;
@@ -186,7 +185,10 @@ export const POST: APIRoute = async ({ request }) => {
 
   // The daily synthetic monitor exercises the full production flow; its
   // submission must not email the producer or "welcome" a robot.
-  if (body.isSynthetic || isSyntheticSubmission(body.email)) {
+  // WHY: derived from the server-verified email only, never a request-body
+  // flag: a client-supplied boolean would let any caller suppress the admin
+  // notification for a real application already written to Firestore.
+  if (isSyntheticSubmission(body.email)) {
     return new Response(JSON.stringify({ sent: false, synthetic: true }), {
       status: 200,
       headers: { "Content-Type": "application/json" },

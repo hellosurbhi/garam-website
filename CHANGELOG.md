@@ -1,5 +1,9 @@
 # Changelog
 
+## fix(review): CodeRabbit PR #135 review round, quick wins applied (2026-08-12)
+
+First CodeRabbit pass after the PR left draft (17 threads). Fixed same day: branch guards in both `.husky` hooks; real stack presence in the PostHog `before_send` filter so stackless injected "Script error." noise is dropped from the issues UI; the legacy-photo migration revokes tokens through the documented Cloud Storage JSON API, asserts the token is gone and warns on a full 1000-doc page; timeouts on the waiver-form and ops-webhook fetches; the ops webhook no longer forwards applicant PII (ntfy topics are effectively public, the email path keeps full context); `/api/notify-application` derives the synthetic flag from the server-verified email instead of trusting the request body; `firestore.rules` validates every `photoPaths` member against the `photos/` contract; `storage.rules` requires `customMetadata.owner` to match the uploader's uid at create; the apply terms checkbox got a testid so the synthetic monitor and smoke tests stop matching any checkbox; both cron routes got a top-level failure boundary that pages before dying. Heavy-lift findings deferred to BUGS.md; the duplicate-type-member "Critical" was disproven (one `contact` member per literal, see PR thread).
+
 ## fix(deps): npm audit advisories resolved in js-yaml and nanoid (2026-08-12)
 
 CI's security audit gate failed on js-yaml (CVE-2026-59870, high) and nanoid (GHSA-2v37-7h3g-55p8, high). `npm audit fix` applied semver-compatible lockfile bumps only, no package.json changes. Same pattern as the 2026-08-03 audit entry.

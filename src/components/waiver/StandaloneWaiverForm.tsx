@@ -51,6 +51,9 @@ export default function StandaloneWaiverForm() {
     try {
       const res = await fetch("/api/stage-waiver", {
         method: "POST",
+        // A stalled network otherwise leaves the form disabled in
+        // "submitting" forever; the timeout surfaces the retryable error.
+        signal: AbortSignal.timeout(20_000),
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           firstName: firstName.trim(),
@@ -74,8 +77,11 @@ export default function StandaloneWaiverForm() {
       setPhase("success");
     } catch (err) {
       setPhase("form");
+      const isTimeout =
+        err instanceof DOMException &&
+        (err.name === "TimeoutError" || err.name === "AbortError");
       setFormError(
-        err instanceof Error && err.message
+        !isTimeout && err instanceof Error && err.message
           ? err.message
           : WAIVER_PAGE.errorFallback,
       );

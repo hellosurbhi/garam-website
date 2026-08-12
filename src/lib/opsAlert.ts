@@ -64,6 +64,11 @@ function buildAlertHtml(report: OpsAlertReport): string {
 async function pushWebhook(report: OpsAlertReport): Promise<void> {
   const url = readTrimmedEnv(import.meta.env.ALERT_WEBHOOK_URL);
   if (!url) return;
+  // WHY: the webhook body carries flow/stage/error only, never the context
+  // entries. Context can hold applicant PII (name, email, phone) and ntfy
+  // topics are effectively public URLs; the full context still reaches the
+  // producer through the email path. The 5s deadline keeps a stalled webhook
+  // host from delaying every failure response that awaits alertOps.
   await fetch(url, {
     method: "POST",
     headers: {
@@ -71,7 +76,8 @@ async function pushWebhook(report: OpsAlertReport): Promise<void> {
       Priority: "urgent",
       Tags: "rotating_light",
     },
-    body: buildAlertText(report),
+    body: `Failure in ${report.flow}/${report.stage}\n\n${report.errorMessage}\n\nDetails in the alert email.`,
+    signal: AbortSignal.timeout(5000),
   });
 }
 

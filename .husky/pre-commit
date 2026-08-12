@@ -1,5 +1,11 @@
 #!/bin/sh
 set -e
+# Repo rule: never commit on main or master; work happens on feature branches.
+branch="$(git branch --show-current)"
+if [ "$branch" = "main" ] || [ "$branch" = "master" ]; then
+  echo "pre-commit: refusing to commit on $branch. Create a feature branch first." >&2
+  exit 1
+fi
 npx lint-staged
 # Type and unit gates at commit time (user rule: pre-commit must run astro check
 # and vitest — reviews without deterministic gates let regressions through).

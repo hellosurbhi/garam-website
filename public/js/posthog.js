@@ -133,16 +133,18 @@ function loadPostHog() {
     // errors keep polluting the issues UI even though our custom events are
     // clean. Matching events are dropped here because the handlers above
     // already preserve them as third_party_error; real exceptions pass
-    // through untouched. A non-empty stack sentinel is passed so the
-    // stackless "Script error" heuristic never drops a real exception here.
+    // through untouched. Stack presence comes from the item's own
+    // stacktrace so a bare "Script error." with no stack (the most common
+    // injected-webview signature per LESSONS.md) is dropped like the rest;
+    // the window-level handler has already recorded it as third_party_error,
+    // so dropping it here loses nothing.
     before_send: function (event) {
       if (!event || event.event !== "$exception") return event;
       var list = (event.properties && event.properties.$exception_list) || [];
       for (var k = 0; k < list.length; k++) {
         var message = String((list[k] && list[k].value) || "");
-        if (
-          classifyErrorEvent(message, "", "has-stack") === "third_party_error"
-        ) {
+        var stack = list[k] && list[k].stacktrace ? "has-stack" : "";
+        if (classifyErrorEvent(message, "", stack) === "third_party_error") {
           return null;
         }
       }

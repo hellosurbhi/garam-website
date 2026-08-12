@@ -266,7 +266,6 @@ describe("notify-application handler", () => {
         makeRequest({
           ...validBody,
           email: "synthetic-monitor@garammasaladating.com",
-          isSynthetic: true,
         }),
       ),
     );
@@ -274,6 +273,16 @@ describe("notify-application handler", () => {
     const body = await res.json();
     expect(body.synthetic).toBe(true);
     expect(mockSend).not.toHaveBeenCalled();
+  });
+
+  it("ignores a client-supplied isSynthetic flag: a real email still notifies", async () => {
+    const res = await POST(
+      makeContext(makeRequest({ ...validBody, isSynthetic: true })),
+    );
+    expect(res.status).toBe(200);
+    const body = await res.json();
+    expect(body.synthetic).toBeUndefined();
+    expect(mockSend).toHaveBeenCalled();
   });
 
   it("returns 500 when sendMail throws an error", async () => {

@@ -73,7 +73,7 @@ async function fillApplyForm(page: Page) {
 
   // Terms checkbox — no name attr; only 1 checkbox exists in self-application mode
   // (nomination-consent checkbox is only rendered when "For a friend" is selected)
-  await page.check('input[type="checkbox"]');
+  await page.check('[data-testid="apply-terms"]');
 }
 
 // ---------------------------------------------------------------------------
@@ -201,7 +201,7 @@ test.describe("Standalone waiver (/waiver)", () => {
       .locator("[data-testid=waiver-scroll]")
       .evaluate((el) => el.scrollTo(0, el.scrollHeight));
     await page.fill("#waiver-signature", "Smoke Tester");
-    await page.check('input[type="checkbox"]');
+    await page.check('[data-testid="apply-terms"]');
   }
 
   test("happy path: reads, signs, submits, sees confirmation", async ({

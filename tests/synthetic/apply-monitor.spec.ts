@@ -32,7 +32,7 @@ test("synthetic applicant can submit end to end on the live stack", async ({
   await page.fill("#field-instagram", "garammasaladating");
   await page.setInputFiles("#photo-input", "tests/fixtures/1x1.png");
   await page.check('input[name="marketingConsent"][value="yes"]');
-  await page.check('input[type="checkbox"]');
+  await page.check('[data-testid="apply-terms"]');
 
   const submit = page.locator("[data-testid=apply-submit]");
   await expect(submit).not.toBeDisabled({ timeout: 10_000 });

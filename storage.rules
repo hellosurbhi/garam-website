@@ -27,9 +27,14 @@ service firebase.storage {
       // enforced. Any image type is accepted (the client normalizes to JPEG
       // via compressImage; originals only arrive on its rare fallback path).
       // 25 MB must stay aligned with MAX_UPLOAD_BYTES in useApplyForm.ts.
+      // The owner tag is required AT CREATE and must be the uploader's own
+      // uid: the delete rule below authorizes cleanup through it, so an
+      // untagged or mistagged upload would leave failure cleanup silently
+      // broken (or delegable to another session) in production.
       allow create: if request.auth != null
         && request.resource.size < 25 * 1024 * 1024
-        && request.resource.contentType.matches('image/.*');
+        && request.resource.contentType.matches('image/.*')
+        && request.resource.metadata.owner == request.auth.uid;
       // WHY: delete used to fall under a single `write` rule that evaluated
       // request.resource.size, which is null on deletes, so the apply form's
       // failure cleanup always got denied and orphaned uploaded photos. The

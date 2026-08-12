@@ -98,6 +98,26 @@ describe("storage.rules: photos/", () => {
     await assertSucceeds(
       uploadBytes(ref(storage, "photos/a.avif"), JPEG_BYTES, {
         contentType: "image/avif",
+        customMetadata: { owner: "anon-1" },
+      }),
+    );
+  });
+
+  it("upload without owner metadata is rejected (cleanup would be impossible)", async () => {
+    const storage = anonContext("anon-1").storage();
+    await assertFails(
+      uploadBytes(ref(storage, "photos/a.jpg"), JPEG_BYTES, {
+        contentType: "image/jpeg",
+      }),
+    );
+  });
+
+  it("upload tagged with someone else's uid is rejected", async () => {
+    const storage = anonContext("anon-1").storage();
+    await assertFails(
+      uploadBytes(ref(storage, "photos/a.jpg"), JPEG_BYTES, {
+        contentType: "image/jpeg",
+        customMetadata: { owner: "anon-2" },
       }),
     );
   });
@@ -183,6 +203,33 @@ describe("firestore.rules: applications", () => {
         email: "synthetic-monitor@garammasaladating.com",
         emailNormalized: "synthetic-monitor@garammasaladating.com",
         isSynthetic: true,
+      }),
+    );
+  });
+
+  it("photoPaths entries outside the photos/ contract are rejected", async () => {
+    await assertFails(
+      setDoc(appDoc(anonContext("anon-1")), {
+        ...validApplication,
+        photoPaths: ["https://firebasestorage.googleapis.com/tokened.jpg"],
+      }),
+    );
+  });
+
+  it("non-string photoPaths entries are rejected", async () => {
+    await assertFails(
+      setDoc(appDoc(anonContext("anon-1")), {
+        ...validApplication,
+        photoPaths: ["photos/ok.jpg", 42],
+      }),
+    );
+  });
+
+  it("empty-string photoPaths entries are rejected", async () => {
+    await assertFails(
+      setDoc(appDoc(anonContext("anon-1")), {
+        ...validApplication,
+        photoPaths: [""],
       }),
     );
   });

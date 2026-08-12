@@ -125,20 +125,34 @@ async function patchDocToPaths(token, docName, photoPaths) {
 }
 
 async function revokeDownloadTokens(token, path) {
+  // WHY: the Cloud Storage JSON API (objects.patch), not the Firebase v0
+  // endpoint. The v0 endpoint's metadata PATCH is what the client SDK uses
+  // with Firebase Auth tokens; with a service-account OAuth bearer the
+  // documented, guaranteed path is storage.googleapis.com, and its response
+  // echoes the object metadata so revocation can be asserted, not assumed.
   const res = await fetch(
-    `https://firebasestorage.googleapis.com/v0/b/${bucket}/o/${encodeURIComponent(path)}`,
+    `https://storage.googleapis.com/storage/v1/b/${bucket}/o/${encodeURIComponent(path)}`,
     {
       method: "PATCH",
       headers: {
         Authorization: `Bearer ${token}`,
         "Content-Type": "application/json",
       },
-      body: JSON.stringify({ firebaseStorageDownloadTokens: null }),
+      body: JSON.stringify({
+        metadata: { firebaseStorageDownloadTokens: null },
+      }),
     },
   );
   // 404: the object is already gone; nothing left to revoke.
-  if (!res.ok && res.status !== 404) {
+  if (res.status === 404) return;
+  if (!res.ok) {
     throw new Error(`Token revoke failed (${res.status}) for ${path}`);
+  }
+  const updated = await res.json();
+  if (updated?.metadata?.firebaseStorageDownloadTokens) {
+    throw new Error(
+      `Token still present after revoke for ${path}; aborting so the doc keeps its photoUrls and the run stays retryable.`,
+    );
   }
 }
 
@@ -147,6 +161,13 @@ const docs = await queryLegacyDocs(token);
 console.log(
   `${execute ? "EXECUTE" : "DRY-RUN"}: found ${docs.length} application(s) with legacy photoUrls.`,
 );
+// The query caps at 1000 docs (far above the real collection size). A full
+// page means more remain: say so instead of printing a success summary.
+if (docs.length === 1000) {
+  console.warn(
+    "WARNING: query returned a full page of 1000 docs; more may remain. Re-run this script until it reports fewer than 1000.",
+  );
+}
 
 let migrated = 0;
 let skipped = 0;

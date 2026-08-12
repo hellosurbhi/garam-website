@@ -57,7 +57,8 @@ function json(data: Record<string, unknown>, status = 200) {
   });
 }
 
-export const GET: APIRoute = async ({ request }) => {
+const run: APIRoute = async (ctx) => {
+  const { request } = ctx;
   if (!verifyCronSecret(request)) return json({ error: "Unauthorized" }, 401);
 
   const now = Date.now();
@@ -305,4 +306,20 @@ export const GET: APIRoute = async ({ request }) => {
   }
 
   return json({ ok: true, ...results, failures: failures.length });
+};
+
+// Top-level boundary: a throw before the summary alert (fsListAll, fsQuery,
+// the cron-state write) would otherwise end the run with no page at all;
+// the summary path inside only alerts when the normal flow completes.
+export const GET: APIRoute = async (ctx) => {
+  try {
+    return await run(ctx);
+  } catch (err) {
+    await alertOps({
+      flow: "ops",
+      stage: "cron_followups",
+      errorMessage: err instanceof Error ? err.message : String(err),
+    });
+    return json({ error: "Cron run failed" }, 500);
+  }
 };

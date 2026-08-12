@@ -9,8 +9,7 @@ import type { Application } from "@/types/application";
  *   directly as an img src.
  */
 export type ApplicantPhotoSource =
-  | { kind: "path"; value: string }
-  | { kind: "url"; value: string };
+  { kind: "path"; value: string } | { kind: "url"; value: string };
 
 /** Returns all photo sources for an applicant across every historical document shape. */
 export function getApplicantPhotoSources(

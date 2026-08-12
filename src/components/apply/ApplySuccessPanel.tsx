@@ -5,6 +5,11 @@ import { buildTicketUrl } from "@/utils/eventUrl";
 import { formatEventLocation } from "@/utils/eventCity";
 import { buildLeadAttribution } from "@/lib/leadAttribution";
 import { capture } from "@/lib/analyticsCapture";
+import {
+  installInitFailureFallback,
+  watchModalOpenAfterClick,
+  type RecoveryOptions,
+} from "@/lib/eventbriteRecovery";
 import styles from "@/components/ApplyPage.module.css";
 
 export function ApplySuccessPanel() {
@@ -41,6 +46,7 @@ export function ApplySuccessPanel() {
 
     let orderCompleted = false;
     let modalOpenedAt = 0;
+    const watchDisposers: Array<() => void> = [];
 
     function initWidgets() {
       const rootStyle = getComputedStyle(document.documentElement);
@@ -65,6 +71,14 @@ export function ApplySuccessPanel() {
               event_date: show.date,
             }),
           );
+        });
+        const recovery = (): RecoveryOptions => ({
+          fallbackUrl: buildTicketUrl(show.url, "apply", "success"),
+          failureProps: {
+            event_id: show.eventbriteId ?? "",
+            city: cityLabel,
+            page: window.location.pathname,
+          },
         });
         try {
           window.EBWidgets?.createWidget({
@@ -129,15 +143,19 @@ export function ApplySuccessPanel() {
               });
             },
           });
-          // Prevent native click behavior once widget is bound
-          btn?.addEventListener("click", (e) => e.preventDefault());
-        } catch {
-          // Widget init failed; button stays inert (no navigation needed)
-          capture("widget_load_failed", {
-            event_id: show.eventbriteId ?? "",
-            city: cityLabel,
-            page: window.location.pathname,
+          // Silent-failure detection and recovery: see the WHY comments in
+          // src/lib/eventbriteRecovery.ts. One active watch per trigger,
+          // disposed on unmount via watchDisposers.
+          let disposeWatch: (() => void) | undefined;
+          watchDisposers.push(() => disposeWatch?.());
+          btn?.addEventListener("click", (e) => {
+            e.preventDefault();
+            disposeWatch?.();
+            disposeWatch = watchModalOpenAfterClick(recovery());
           });
+        } catch {
+          // Widget init failed synchronously; keep the button usable.
+          installInitFailureFallback(btn, recovery());
         }
       }
     }
@@ -217,6 +235,7 @@ export function ApplySuccessPanel() {
     return () => {
       clearTimeout(modalObserverTimeout);
       modalObserver.disconnect();
+      watchDisposers.forEach((dispose) => dispose());
     };
   }, [showsWithWidget]);
 

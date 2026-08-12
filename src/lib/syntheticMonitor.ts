@@ -7,7 +7,8 @@
  * (client flag, notification skip, admin dashboard filter, cleanup script)
  * keys off these values, so real applicant data can never match them.
  */
-export const SYNTHETIC_MONITOR_EMAIL = "synthetic-monitor@garammasaladating.com";
+export const SYNTHETIC_MONITOR_EMAIL =
+  "synthetic-monitor@garammasaladating.com";
 
 export const SYNTHETIC_MONITOR_NAME = "SYNTHETIC MONITOR";
 

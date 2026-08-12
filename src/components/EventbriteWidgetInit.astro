@@ -7,6 +7,11 @@
 <script>
   import { buildLeadAttribution } from "@/lib/leadAttribution";
   import { capture } from "@/lib/analyticsCapture";
+  import {
+    installInitFailureFallback,
+    watchModalOpenAfterClick,
+    type RecoveryOptions,
+  } from "@/lib/eventbriteRecovery";
 
   interface EBCfg {
     eventId: string;
@@ -178,7 +183,7 @@
     // ── Widget initialisation ───────────────────────────────────────────────
 
     function initWidgets(): void {
-      // Modal triggers — unchanged behaviour
+      // Modal triggers
       modalCfgs.forEach((cfg) => {
         const config: EBWidgetModalConfig = {
           widgetType: "checkout",
@@ -188,15 +193,9 @@
           themeSettings: { brandColor, fontColor, background: bgColor },
           onOrderComplete: makeOrderCompleteHandler(cfg),
         };
-        try {
-          w.EBWidgets.createWidget(config);
-          document
-            .getElementById(cfg.triggerId!)
-            ?.addEventListener("click", (e) => {
-              e.preventDefault();
-            });
-        } catch (_) {
-          capture("widget_load_failed", {
+        const recovery = (): RecoveryOptions => ({
+          fallbackUrl: cfg.fallbackUrl,
+          failureProps: {
             event_id: cfg.eventId,
             city: cfg.city,
             event_title: cfg.eventTitle,
@@ -204,7 +203,25 @@
             destination_url: cfg.destinationUrl,
             link_domain: cfg.linkDomain,
             page: window.location.pathname,
-          });
+          },
+        });
+        try {
+          w.EBWidgets.createWidget(config);
+          // Silent-failure detection and recovery: see the WHY comments in
+          // src/lib/eventbriteRecovery.ts. One active watch per trigger.
+          let disposeWatch: (() => void) | undefined;
+          document
+            .getElementById(cfg.triggerId!)
+            ?.addEventListener("click", (e) => {
+              e.preventDefault();
+              disposeWatch?.();
+              disposeWatch = watchModalOpenAfterClick(recovery());
+            });
+        } catch (_) {
+          installInitFailureFallback(
+            document.getElementById(cfg.triggerId!),
+            recovery(),
+          );
         }
       });
 

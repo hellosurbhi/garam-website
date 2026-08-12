@@ -228,7 +228,7 @@ The real XSS guards on this site are Firebase security rules and Firestore field
 
 **Why:** The global error handler captured every `window` error as a site error, and no channel existed that alerts on the first failed submission. In-app-browser scripts are injected inline, so `event.filename` equals the page URL and an origin check cannot identify them; only message signatures can.
 
-**Rule:** Revenue-critical failures (apply submissions) must page in real time through a first-party channel (`/api/alert-apply-failure` email path), never only through an analytics SDK that ad blockers and in-app browsers routinely block. Known injected-webview errors (`window.webkit.messageHandlers`, "Java object is gone", `iabjs://` sources, bare "Script error." without a stack) are captured as `third_party_error`, never as `client_error`, so first-party issues stay readable. Do not delete the noise; reroute it.
+**Rule:** Revenue-critical failures (apply submissions) must page in real time through a first-party channel (`/api/alert-failure` email path), never only through an analytics SDK that ad blockers and in-app browsers routinely block. Known injected-webview errors (`window.webkit.messageHandlers`, "Java object is gone", `iabjs://` sources, bare "Script error." without a stack) are captured as `third_party_error`, never as `client_error`, so first-party issues stay readable. Do not delete the noise; reroute it.
 
 ## Critical flows must not live inside third-party embeds
 

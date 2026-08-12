@@ -13,7 +13,7 @@ service firebase.storage {
     // without removing that client read call took the apply form down for
     // every applicant (storage/unauthorized, July 2026). Reads must stay
     // admin-only AND the client must never read; change either side only
-    // together with test/rules/storage-rules.test.ts.
+    // together with test/rules/apply-flow.rules-test.ts.
     function isAdmin() {
       return request.auth != null
         && request.auth.token.firebase.sign_in_provider != 'anonymous'

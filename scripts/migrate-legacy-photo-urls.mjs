@@ -172,10 +172,15 @@ for (const document of docs) {
 
   console.log(`- ${id}: ${urls.length} photo(s) -> ${paths.join(", ")}`);
   if (execute) {
-    if (!alreadyMigrated) await patchDocToPaths(token, document.name, paths);
+    // WHY: revoke BEFORE patching the doc. The patch deletes photoUrls, the
+    // field the migration query keys on; patch-first meant a failed
+    // revocation left a live public PII token on a doc the query could no
+    // longer find, so a retry was impossible. Revocation tolerates 404 and
+    // re-revoking, so a crash between revoke and patch is safely re-runnable.
     for (const path of paths) {
       await revokeDownloadTokens(token, path);
     }
+    if (!alreadyMigrated) await patchDocToPaths(token, document.name, paths);
   }
   migrated++;
 }

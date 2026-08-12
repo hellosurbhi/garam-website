@@ -691,3 +691,5 @@ This review ran on the merge of main into `fix/eventbrite-widget-silent-failure`
 ### Codex (2026-08-12T19:41Z)
 
 - [ ] MEDIUM: [UNASKED-CHANGE] `ENHANCEMENTS.md:7-12` adds a separate script-load failure backlog item that explicitly identifies itself as outside PR #159’s review findings and does not trace to the stated commit intent.
+
+The 2026-08-12T19:47Z re-review of the amended push re-filed the same three findings verbatim; they are recorded once above, not duplicated.

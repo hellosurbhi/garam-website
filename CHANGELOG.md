@@ -1,5 +1,28 @@
 # Changelog
 
+## fix(review): CodeRabbit reviews markdown again (2026-08-03)
+
+Removed the `!**/*.md` path filter from `.coderabbit.yaml`. On the free CodeRabbit plan the bot is often a PR's only reviewer, and the global pre-push rework (claude-global-config PR #15) makes markdown-only pushes skip local suites once merged; the blanket exclusion meant README/docs changes could reach a PR with no review anywhere.
+
+## fix(deps): npm audit advisories resolved in transitive dependencies (2026-08-03)
+
+CI's security audit gate failed on brace-expansion (GHSA-mh99-v99m-4gvg, high), postcss (GHSA-r28c-9q8g-f849, high) and tar (GHSA-r292-9mhp-454m, moderate). `npm audit fix` applied semver-compatible lockfile bumps only, no package.json changes. Three moderate advisories remain in firebase-tools, a dev dependency below the gate's `--audit-level=high --omit=dev` threshold.
+
+## fix(events): Boston show moved from August 2 to August 13, start time to 7 PM (2026-08-03)
+
+Same venue (Elephant and Castle), same Eventbrite listing; show now runs 7 to 9 PM (was 6 to 8 PM). Updated everywhere the date appears: the show card data in `src/data/events.ts`, plus the Boston FAQ answer, the "when we announce a date" body paragraph and the apply FAQ in `src/data/cities/us-northeast.ts` (the city-page spots were caught over two rounds of pre-push Codex review after the first pass missed them). Resolves the queued STALE-EVENT-DATE, MISSING-CHANGELOG and stale-city-copy findings from the 2026-08-03 push reviews; their BUGS.md lines are removed in the same commits.
+
+## test(contestant-workflow): backend unit coverage for zohoMailer, cal.com webhook, and cron jobs (2026-07-16)
+
+Closes the backend half of the P1 to P5 contestant workflow test-coverage gap (see BUGS.md): a Stryker mutation report found these files at 0 to 8% mutation coverage since none had a single unit test.
+
+- `src/lib/zohoMailer.test.ts` (new): missing-credential throws, SMTP transport config, from-name and reply-to defaults and overrides, error propagation from the underlying transport.
+- `test/cal-webhook.test.ts` (new): HMAC signature verification (missing signature, wrong signature, unconfigured secret), invalid JSON body, unknown trigger events, missing attendee email, New to Contacted status transition, and the reschedule/cancel `calBookingId` mismatch guards.
+- `test/post-show.test.ts` (new): auth guard, status filter, the D3 to D10 day send window boundaries, already-sent/soft-deleted/missing-participatedAt/missing-email skips, and confirming a `sendMail` failure does not mark the applicant as sent.
+- `test/followups.test.ts` (extended): all four passes now covered, scheduling follow-up (with the `MAX_PER_RUN` cap), waiver nudge (including invite-link resolution via `fsQuery`), auto-decay, and the NYC-timezone-deduped host briefing.
+
+`src/components/ContestantPortal.tsx` and the admin `TaskInbox.tsx`/`ContestantFunnel.tsx` remain untested; see ENHANCEMENTS.md for why and what ships next.
+
 ## fix(tickets): recover from silent Eventbrite modal failures on mobile (2026-07-16)
 
 Seven PostHog-filed issues (#136, #151, #152, #153, #154, #155, #156) traced back to one root cause: Eventbrite's own `eb_widgets.js` click handler throws asynchronously in specific mobile in-app browsers (Instagram/Facebook WKWebView bridge probing, Firefox iOS reader mode, a ChunkLoadError from EB's webpack runtime resolving against our origin). `createWidget()` succeeding only proves EB registered a handler, not that the modal opens, and because our trigger buttons call `preventDefault()`, a failure inside EB's handler left the Buy Tickets CTA completely dead with no fallback, on 70% mobile traffic.

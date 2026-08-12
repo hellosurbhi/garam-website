@@ -2,6 +2,16 @@
 
 ## Open
 
+### [HIGH] Contestant workflow: portal + admin components still lack unit test coverage
+
+- **Date:** 2026-07-16
+- **File:** `src/components/ContestantPortal.tsx` (#97), `src/components/admin/TaskInbox.tsx` (#97), `src/components/admin/ContestantFunnel.tsx` (#99)
+- **Status:** Open
+- **Severity:** High
+- **What happened:** All five phases of the contestant workflow project merged 2026-07-03 to 07-05 with zero unit tests, confirmed by a Stryker mutation report showing these files scoring 0 to 8% mutation coverage. The backend half of the gap (Zoho SMTP mailer, cal.com webhook, post-show and followups cron jobs) now has unit coverage, see CHANGELOG. The remaining three files are UI components: `ContestantPortal.tsx` is public facing and deferred to its own follow-up PR (not dropped, see ENHANCEMENTS.md); `TaskInbox.tsx` and `ContestantFunnel.tsx` are admin dashboard screens the operator plans to rewrite, so their tests are deferred until after that rewrite lands rather than writing tests for code about to be replaced (see ENHANCEMENTS.md).
+- **Impact:** A regression in the contestant portal waiver flow or the admin Task Inbox/funnel view would not be caught by the test suite; only manual QA would notice.
+- **Fix:** Write `ContestantPortal.tsx` tests in a dedicated follow-up PR (stateful component, needs `vi.stubGlobal("fetch")` plus `waitFor`). Write `TaskInbox.tsx`/`ContestantFunnel.tsx` tests against their post-rewrite replacements.
+
 ### [HIGH] Dev server cannot transform TypeScript in astro component scripts
 
 - **Date:** 2026-07-05
@@ -638,3 +648,22 @@
 ### Codex (2026-07-17T15:12Z)
 
 - MEDIUM `INACCURATE-HISTORY` in the `4c6e07a` commit body: won't fix, kept here so the same report is not re-filed. Both points are conceded as accurate. The em dash sits in `1f0a217`'s message, not `f1d5483`'s. And `widget_load_failed` existed before the fix in the `createWidget` catch paths and the inline embed timeout; what the fix added is firing it when the modal never opens after a click. The committed docs state both facts correctly, so the inaccuracies live only in the message of a commit already on origin, and rewriting a published commit message requires a force push, which is prohibited.
+
+### Codex (2026-07-17T15:16Z)
+
+- [ ] MEDIUM: `INACCURATE-POLICY` in the Codex 2026-07-17T15:12Z won't-fix rationale above: rewriting the published non-main commit would require a forced update, but it is not categorically prohibited. The governing rule permits `--force-with-lease` after a rebase and prohibits only bare `--force` and forced updates to main. The won't-fix choice may stand, but its stated rationale is false.
+
+## High priority (from push reviews, fix first)
+
+### Codex (2026-08-03T06:53Z)
+
+Both findings critique the "Mobile Sticky CTA" writeup in ENHANCEMENTS.md, which was authored on the unmerged `feat/event-pages-tracked-checkout` branch and describes that branch's code. Evaluate when that branch's PR is reviewed.
+
+- [ ] HIGH: [SCOPE-CREEP] `ENHANCEMENTS.md` sticky CTA entry broadens an event-page CTA request into a sitewide contract covering tickets and city pages without that universal scope appearing in the stated intent.
+- [ ] HIGH: [UNSOURCED-CLAIM] `ENHANCEMENTS.md` sticky CTA entry makes current-code, traffic and existing-task claims without `file:line` evidence or command output.
+
+### Codex (2026-08-03T07:15Z)
+
+Applies to the unmerged `feat/event-pages-tracked-checkout` branch; fix there.
+
+- [ ] HIGH: [UNRESOLVED-BACKLOG] The no-`eid` `InitiateCheckout` finding was pruned as resolved, but `f916f02` does not fully resolve it. `ticketCtaTracking.ts:42-58` adds `eid` client-side while the rendered link remains `/api/go/...`; `api/go/[slug].ts:58-60,93` still generates a fallback ID and fires CAPI for any unrecognized user agent. Browser prefetches using a normal browser user agent can therefore still be counted as conversions.

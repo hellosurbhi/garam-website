@@ -4,6 +4,45 @@ Items from the GMD website audit checklists (site audit, codebase cleanup, conve
 
 ---
 
+## Mobile Sticky CTA for Event Landing Pages (2026-07-16)
+
+### Add a sticky "Get Tickets" bar to /events/[slug] pages
+
+**Priority:** High
+**Status:** Needs implementation, sequenced into the ticket card consolidation task
+**Branch context:** describes code on the unmerged `feat/event-pages-tracked-checkout` branch (`src/pages/events/[slug].astro`, `EventTicketCta.astro`, the `data-go-ticket` contract). None of it is on main yet; act on this entry with that branch.
+
+The `/events/[slug].astro` landing page (built for the tracked-checkout redirect project) is a long-scroll page: hero, overview, what to expect, lineup, location, agenda, FAQ, social proof, bottom CTA. It is the intended landing spot for paid Instagram traffic. On mobile (70% of traffic), a visitor who scrolls past the hero CTA has to scroll all the way back up or down to the bottom CTA to convert.
+
+`StickyCTA.astro` already exists and is used on `/tickets`, but its anchor carries no `data-go-ticket` attribute and none of the per-event tracking data attributes that `EventTicketCta.astro`'s click-tracking script depends on (it wires up every `[data-go-ticket]` anchor on the page: stamps a unique `eid`, forwards UTMs, fires `checkout_opened` with the CAPI dedup id). Dropping `StickyCTA` onto the event page as-is would render an untracked link, silently reintroducing the tracking blind spot this project exists to close.
+
+**Why not built now:** the ticket card consolidation task is already scoped to unify CTA/card presentation sitewide (retiring the old Eventbrite embed/modal). That is the correct place to establish one sitewide sticky-CTA pattern with tracking built in from the start, rather than shipping a one-off sticky bar for the event page now and reworking it again immediately after.
+
+**How:** when doing the consolidation, extend the tracked-link contract (`data-go-ticket` + `data-event-*` attrs) to `StickyCTA.astro` itself, or replace it with a shared `EventTicketCta`-based sticky variant, so every page wanting a persistent mobile CTA (event pages, `/tickets`, city pages) gets full tracking automatically from one implementation.
+
+**Files to touch:** `src/components/StickyCTA.astro`, `src/pages/events/[slug].astro`, `src/pages/tickets.astro`.
+
+---
+
+## Contestant Workflow Test Coverage: Portal + Admin Components (2026-07-16)
+
+### Write unit tests for ContestantPortal.tsx, TaskInbox.tsx, and ContestantFunnel.tsx
+
+**Priority:** High
+**Status:** Deferred
+
+Backend unit tests for the P1 to P5 contestant workflow control tower shipped alongside this entry (`src/lib/zohoMailer.ts`, the cal.com webhook, and the post-show/followups cron jobs). Three UI pieces from the same rollout remain untested, deferred for two different reasons:
+
+1. **`src/components/ContestantPortal.tsx`**: public facing waiver and prep portal, ~770 lines, stateful (needs `vi.stubGlobal("fetch")` plus `waitFor` patterns, not the `vi.mock`+dynamic-import pattern the backend tests use). Kept out of the backend test PR so that PR stayed a clean, reviewable, single-purpose change. Write its tests in a dedicated follow-up PR.
+2. **`src/components/admin/TaskInbox.tsx`** and **`src/components/admin/ContestantFunnel.tsx`**: admin dashboard screens. The operator plans a full rewrite of the admin page (2026-07-15 directive: it is not working well and is getting redone). Writing tests against components about to be replaced wastes the effort; write tests against the rewritten components once that lands.
+
+**Acceptance criteria:**
+
+1. `ContestantPortal.tsx` has vitest coverage for waiver sign-through, invite-token validation, and error states.
+2. Once the admin rewrite ships, its replacement Task Inbox and funnel views ship with unit tests as part of that PR, not as a follow-up debt item.
+
+---
+
 ## City Page Enrichment: Remaining Batches (2026-07-06)
 
 ### Extend the deep-content pattern to the remaining ~290 city pages

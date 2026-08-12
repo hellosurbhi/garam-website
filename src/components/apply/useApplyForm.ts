@@ -430,7 +430,12 @@ export function useApplyForm() {
       // getDownloadURL is a READ: calling it from this anonymous session gets
       // denied and killed every submission in July 2026. The admin dashboard
       // resolves paths with its own authenticated session instead.
-      const photoPaths = await Promise.all(
+      // allSettled, not all: Promise.all rejects on the FIRST failure while
+      // sibling uploads may still be compressing or uploading. The outer
+      // catch then reads uploadedRefs before a late sibling finishes, and
+      // that sibling's object would be orphaned PII in Storage. Waiting for
+      // every operation to settle makes the cleanup list complete.
+      const settled = await Promise.allSettled(
         photoFiles.map(async (file, i) => {
           // Normalize to ~2048px JPEG so 3 iPhone originals never blow the
           // upload timeout on cellular; falls back to the original file when
@@ -466,6 +471,17 @@ export function useApplyForm() {
           });
           return photoRef.fullPath;
         }),
+      );
+      const firstFailure = settled.find(
+        (r): r is PromiseRejectedResult => r.status === "rejected",
+      );
+      if (firstFailure) {
+        throw firstFailure.reason instanceof Error
+          ? firstFailure.reason
+          : new Error(String(firstFailure.reason));
+      }
+      const photoPaths = settled.map(
+        (r) => (r as PromiseFulfilledResult<string>).value,
       );
 
       const applicationData = {

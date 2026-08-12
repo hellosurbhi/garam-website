@@ -10,6 +10,7 @@ const breadcrumbJsonLd = buildBreadcrumbJsonLd([
   { name: "Home", url: "https://garammasaladating.com/" },
   { name: "Apply" },
 ]);
+import { TURNSTILE_SCRIPT_URL } from "@/data/brand";
 ---
 
 <BaseLayout
@@ -45,14 +46,10 @@ const breadcrumbJsonLd = buildBreadcrumbJsonLd([
               closes the race; ApplyPage checks window.turnstile on mount and
               renders the widget in either load order. */}
           <script is:inline>
-            window.__gmd_turnstile_load = window.__gmd_turnstile_load || function () {};
+            window.__gmd_turnstile_load = window.__gmd_turnstile_load ||
+            function () {};
           </script>
-          <script
-            is:inline
-            src="https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit&onload=__gmd_turnstile_load"
-            async
-            defer
-          />
+          <script is:inline src={TURNSTILE_SCRIPT_URL} async defer />
         </Fragment>
       )
     }

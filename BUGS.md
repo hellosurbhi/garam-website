@@ -684,7 +684,16 @@ Applies to the unmerged `feat/event-pages-tracked-checkout` branch; fix there.
 - [ ] HIGH: [FALSE-PAGER-SUCCESS] `src/lib/opsAlert.ts:81` swallows every delivery failure with `Promise.allSettled`, and `src/pages/api/alert-failure.ts:77` always returns 200. The workflow heartbeat and failure notification can therefore report success when neither email nor webhook delivered.
 - [ ] HIGH: [NON-BLOCKING-RULES-GATE] `.github/workflows/ci.yml:63` adds the emulator suite as a separate job, but `scripts/setup-branch-protection.sh:79` requires only `Lint, Types, Test, Build`. A failed security-rules job does not block merging under the documented protection configuration.
 
-### Codex (2026-08-12T17:53Z)
-
 - [ ] MEDIUM: `.github/workflows/synthetic-apply.yml:49` runs verification and cleanup only after Playwright succeeds. A submission that reaches Firestore before a later browser assertion fails is left behind. Once older than 48 hours, it can make the cleanup script refuse subsequent cleanup runs.
 - [ ] MEDIUM: `src/data/waiverPage.ts:22` promises that a receipt was emailed, but `src/pages/api/stage-waiver.ts:131` intentionally returns success after receipt delivery fails. Users can receive a false confirmation.
+
+### Codex (2026-08-12T18:28Z)
+
+- [ ] HIGH: [PUBLIC-WEBHOOK-PII] `src/lib/opsAlert.ts:79` still sends `report.errorMessage` verbatim. Cron errors embed applicant email addresses at `src/pages/api/cron/followups.ts:110` and `src/pages/api/cron/post-show.ts:67`, so PII still reaches effectively public ntfy topics.
+- [ ] HIGH: [PUSH-GUARD-BYPASS] `.husky/pre-push:4` checks the current branch, not the remote refs supplied to the hook. From a feature branch, `git push origin HEAD:main`, `git push origin main` or deletion of remote main bypasses the guard.
+- [ ] HIGH: [BROKEN-SMOKE-SELECTOR] `tests/smoke/critical-flows.spec.ts:204` selects `apply-terms` on `/waiver`, but `StandaloneWaiverForm.tsx:205` has no such attribute. The waiver smoke flow now fails before submission.
+
+### Codex (2026-08-12T18:28Z)
+
+- [ ] MEDIUM: [PHOTO-PATH-MISMATCH] `firestore.rules:42` rejects spaces and Unicode while `useApplyForm.ts:444` copies the original filename suffix without sanitizing it. Small or fallback images can retain names such as `holiday photo`, upload successfully then have the application rejected by Firestore.
+- [ ] MEDIUM: [FALSE-POSITIVE-RULE-TEST] The non-image test at `test/rules/apply-flow.rules-test.ts:87` omits required owner metadata. It now fails regardless of the content-type rule, so removing the image restriction would not make this regression test fail.

@@ -24,6 +24,8 @@
  */
 import { SignJWT, importPKCS8 } from "jose";
 
+// Duplicated from src/lib/syntheticMonitor.ts on purpose: this script runs
+// as plain node in CI and cannot import the TypeScript module.
 const SYNTHETIC_EMAIL = "synthetic-monitor@garammasaladating.com";
 const FRESH_WINDOW_MS = 30 * 60 * 1000;
 const CLEANUP_WINDOW_MS = 48 * 60 * 60 * 1000;
@@ -146,13 +148,16 @@ const fresh = docs.some((doc) => {
     Number.isFinite(submittedAt) && Date.now() - submittedAt < FRESH_WINDOW_MS
   );
 });
+// Verification verdict is reported at the very end: cleanup below must run
+// even for a failed run, or every outage day accumulates stale synthetic
+// docs (and their photos) until the 48h guard refuses to clean at all.
 if (!fresh) {
   console.error(
     `VERIFY FAILED: no synthetic application with submittedAt in the last 30 minutes (found ${docs.length} synthetic docs total). The apply form is likely broken in production.`,
   );
-  process.exit(1);
+} else {
+  console.log("VERIFY OK: synthetic application landed in Firestore.");
 }
-console.log("VERIFY OK: synthetic application landed in Firestore.");
 
 // 2. CLEAN UP: delete verified synthetic documents and their photos.
 for (const doc of docs) {
@@ -174,3 +179,5 @@ for (const doc of docs) {
   );
 }
 console.log("CLEANUP OK.");
+
+if (!fresh) process.exit(1);

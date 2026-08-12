@@ -35,6 +35,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
       - uses: actions/setup-node@v6
         with:
           node-version: 22
@@ -76,11 +78,15 @@ jobs:
           fi
       - name: Page the producer on failure
         if: failure()
+        # Expressions come in through env, not inline interpolation, so a
+        # future attacker-controllable field can never inject into the shell.
+        env:
+          RUN_URL: https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}
         run: |
           curl -sS -X POST https://garammasaladating.com/api/alert-failure \
             -H "Content-Type: application/json" \
             -H "Origin: https://garammasaladating.com" \
-            -d '{"flow":"ops","stage":"synthetic_monitor","errorMessage":"Synthetic apply monitor FAILED: the production apply form is likely broken. Check the GitHub Actions run for details.","pageUrl":"https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}","userAgent":"synthetic-apply-monitor"}'
+            -d "{\"flow\":\"ops\",\"stage\":\"synthetic_monitor\",\"errorMessage\":\"Synthetic apply monitor FAILED: the production apply form is likely broken. Check the GitHub Actions run for details.\",\"pageUrl\":\"$RUN_URL\",\"userAgent\":\"synthetic-apply-monitor\"}"
       - name: Upload report on failure
         uses: actions/upload-artifact@v4
         if: failure()

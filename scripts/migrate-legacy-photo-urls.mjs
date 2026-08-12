@@ -170,6 +170,7 @@ if (docs.length === 1000) {
 }
 
 let migrated = 0;
+let revokedOnly = 0;
 let skipped = 0;
 
 for (const document of docs) {
@@ -203,11 +204,15 @@ for (const document of docs) {
     }
     if (!alreadyMigrated) await patchDocToPaths(token, document.name, paths);
   }
-  migrated++;
+  if (alreadyMigrated) {
+    revokedOnly++;
+  } else {
+    migrated++;
+  }
 }
 
 console.log(
-  `${execute ? "Migrated" : "Would migrate"} ${migrated} doc(s), skipped ${skipped}.`,
+  `${execute ? "Migrated" : "Would migrate"} ${migrated} doc(s), token-revoke-only ${revokedOnly}, skipped ${skipped}.`,
 );
 if (!execute) {
   console.log("Re-run with --execute to apply.");

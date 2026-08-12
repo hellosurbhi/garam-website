@@ -23,6 +23,12 @@ export interface FailureReport {
   };
 }
 
+// Mirrors FailureSchema in /api/alert-failure.ts: an over-limit field would
+// 400 the whole report and silently swallow the page. Truncating here keeps
+// a long URL or error message from costing the entire alert.
+const cut = (s: string | undefined, max: number) =>
+  s === undefined ? undefined : s.slice(0, max);
+
 export function reportFailure(report: FailureReport): void {
   try {
     // keepalive lets the request survive a page unload right after failure.
@@ -30,9 +36,21 @@ export function reportFailure(report: FailureReport): void {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
-        ...report,
-        pageUrl: window.location.href,
-        userAgent: navigator.userAgent,
+        flow: report.flow,
+        stage: report.stage.slice(0, 50),
+        errorMessage: report.errorMessage.slice(0, 2000),
+        ...(report.contact
+          ? {
+              contact: {
+                name: cut(report.contact.name, 200),
+                email: cut(report.contact.email, 320),
+                phone: cut(report.contact.phone, 30),
+                instagram: cut(report.contact.instagram, 100),
+              },
+            }
+          : {}),
+        pageUrl: window.location.href.slice(0, 2000),
+        userAgent: navigator.userAgent.slice(0, 1000),
       }),
       keepalive: true,
     }).catch(() => {

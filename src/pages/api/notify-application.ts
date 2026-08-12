@@ -1,3 +1,4 @@
+import { ADMIN_DASHBOARD_URL } from "@/data/brand";
 import type { APIRoute } from "astro";
 import { z } from "zod";
 import { sendMail } from "@/lib/zohoMailer";
@@ -102,7 +103,7 @@ function buildAdminEmailHtml(data: ApplicationNotification): string {
     : "";
 
   const photoSection = `<div style="margin-top:12px;">
-      <a href="https://garammasaladating.com/admin" style="color:#DC2626;">View ${data.photoPaths.length} photo${data.photoPaths.length === 1 ? "" : "s"} in the admin dashboard</a>
+      <a href="${ADMIN_DASHBOARD_URL}" style="color:#DC2626;">View ${data.photoPaths.length} photo${data.photoPaths.length === 1 ? "" : "s"} in the admin dashboard</a>
     </div>`;
 
   return `<div style="font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;max-width:600px;margin:0 auto;padding:20px;">
@@ -112,7 +113,7 @@ function buildAdminEmailHtml(data: ApplicationNotification): string {
     ${photoSection}
     <hr style="border:none;border-top:1px solid #eee;margin:24px 0 12px;" />
     <p style="color:#999;font-size:12px;margin:0;">
-      View all applications in the <a href="https://garammasaladating.com/admin" style="color:#DC2626;">admin dashboard</a>.
+      View all applications in the <a href="${ADMIN_DASHBOARD_URL}" style="color:#DC2626;">admin dashboard</a>.
     </p>
   </div>`;
 }
@@ -138,7 +139,7 @@ function buildAdminEmailText(data: ApplicationNotification): string {
   if (isNomination && data.referrerName)
     lines.push(`Nominated by: ${data.referrerName}`);
   if (data.pitch) lines.push("", `Pitch: ${data.pitch}`);
-  lines.push("", "https://garammasaladating.com/admin");
+  lines.push("", ADMIN_DASHBOARD_URL);
   return lines.join("\n");
 }
 

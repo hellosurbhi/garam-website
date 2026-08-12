@@ -81,10 +81,12 @@ async function deployedRules(token, releaseName) {
 }
 
 function normalize(rules) {
+  // Drop ALL blank lines: keeping "collapsed" blanks still made a single
+  // added or removed blank line register as drift and page a false alarm.
   return rules
     .split("\n")
     .map((line) => line.replace(/\s+$/, ""))
-    .filter((line, i, all) => line !== "" || all[i - 1] !== "")
+    .filter((line) => line !== "")
     .join("\n")
     .trim();
 }

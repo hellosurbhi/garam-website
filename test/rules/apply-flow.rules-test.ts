@@ -103,6 +103,16 @@ describe("storage.rules: photos/", () => {
     );
   });
 
+  it("SVG uploads are rejected (scripts execute if a blob URL is opened directly)", async () => {
+    const storage = anonContext("anon-1").storage();
+    await assertFails(
+      uploadBytes(ref(storage, "photos/a.svg"), JPEG_BYTES, {
+        contentType: "image/svg+xml",
+        customMetadata: { owner: "anon-1" },
+      }),
+    );
+  });
+
   it("upload without owner metadata is rejected (cleanup would be impossible)", async () => {
     const storage = anonContext("anon-1").storage();
     await assertFails(

@@ -80,7 +80,7 @@ export const POST: APIRoute = async ({ request }) => {
     await alertOps({
       flow: "ops",
       stage: "kit_sync_auth",
-      errorMessage: detail.slice(0, 2000),
+      errorMessage: detail,
     });
     return new Response(JSON.stringify({ error: "Firestore auth failed" }), {
       status: 500,

@@ -416,7 +416,7 @@ export const POST: APIRoute = async ({ request }) => {
     await alertOps({
       flow: "ops",
       stage: "order_sync",
-      errorMessage: msg.slice(0, 2000),
+      errorMessage: msg,
     });
     return new Response(JSON.stringify({ error: "Sync failed" }), {
       status: 500,

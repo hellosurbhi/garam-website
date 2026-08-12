@@ -9,6 +9,7 @@ vi.mock("@/lib/zohoMailer", () => ({
 
 // Import handler after mocking
 const { POST } = await import("@/pages/api/alert-failure");
+const { resetRateLimiters } = await import("@/lib/rateLimit");
 
 function makeRequest(
   body: unknown,
@@ -48,6 +49,11 @@ describe("alert-failure handler", () => {
     vi.clearAllMocks();
     import.meta.env.NOTIFICATION_EMAIL = "admin@example.com";
     delete import.meta.env.ALERT_WEBHOOK_URL;
+    // A developer's real Upstash env would otherwise rate-limit this suite's
+    // shared "unknown" test IP after five requests.
+    delete import.meta.env.UPSTASH_REDIS_REST_URL;
+    delete import.meta.env.UPSTASH_REDIS_REST_TOKEN;
+    resetRateLimiters();
     mockSend.mockResolvedValue(undefined);
   });
 

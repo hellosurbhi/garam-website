@@ -82,7 +82,12 @@ async function pushWebhook(report: OpsAlertReport): Promise<void> {
 }
 
 /** Page the producer. Never throws; safe to call from any catch block. */
-export async function alertOps(report: OpsAlertReport): Promise<void> {
+export async function alertOps(rawReport: OpsAlertReport): Promise<void> {
+  // Central bound: callers used to slice(0, 2000) by hand, inconsistently.
+  const report: OpsAlertReport = {
+    ...rawReport,
+    errorMessage: rawReport.errorMessage.slice(0, 2000),
+  };
   const notificationEmail = readTrimmedEnv(import.meta.env.NOTIFICATION_EMAIL);
   await Promise.allSettled([
     notificationEmail

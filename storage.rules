@@ -34,6 +34,10 @@ service firebase.storage {
       allow create: if request.auth != null
         && request.resource.size < 25 * 1024 * 1024
         && request.resource.contentType.matches('image/.*')
+        // SVG can carry scripts; an admin opening a resolved blob URL
+        // directly would execute them in the site origin. The client
+        // normalizes to JPEG anyway, so nothing legitimate is lost.
+        && request.resource.contentType != 'image/svg+xml'
         && request.resource.metadata.owner == request.auth.uid;
       // WHY: delete used to fall under a single `write` rule that evaluated
       // request.resource.size, which is null on deletes, so the apply form's

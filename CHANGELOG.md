@@ -1,5 +1,9 @@
 # Changelog
 
+## chore(hooks): duplicate type check removed from pre-push (2026-08-12)
+
+Owner-approved cycle-time fix. `.husky/pre-push` ran `npm run check` even though `.husky/pre-commit` runs `astro check` and vitest on every commit, so each push re-checked code that had passed the identical gate minutes earlier and paid about a minute for it. The global pre-push chain (build, Playwright, Codex review) is unchanged. Paired with the global-config cadence change that pushes once per task instead of after every commit, the per-task gate cost drops from N full gates to one.
+
 ## fix(deps): npm audit high advisories resolved in transitive dependencies (2026-08-12)
 
 CI's security audit gate failed PR #159 on js-yaml (GHSA-5p4m-2wfm-xmqj, high) and nanoid (GHSA-2v37-7h3g-55p8, high), both published after main's last CI run and unrelated to the PR's content. `npm audit fix` applied semver-compatible lockfile bumps only, no package.json changes. Three moderate advisories remain in firebase-tools, a dev dependency below the gate's `--audit-level=high --omit=dev` threshold. (PR #135 applied the same two bumps independently the same day; see its entry below.)

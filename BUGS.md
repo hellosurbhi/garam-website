@@ -781,3 +781,8 @@ This review ran on the merge of main into `fix/eventbrite-widget-silent-failure`
       [RULE-TEST-ISOLATION] Both rules suites use project `demo-garam-masala` and clear its Firestore state in `beforeEach`, while `vitest.rules.config.ts:14-19` leaves file parallelism enabled. Parallel files can erase each other’s fixtures.
       [SILENT-PHOTO-FAILURE] `src/components/admin/useApplicantPhotos.ts:77-88` converts every download failure to `null`. The modal then renders the same no-photo placeholder at `ApplicantModal.tsx:287-296`, with no failed count or error state.
       [CONTRADICTORY-INCIDENT-RECORD] `LESSONS.md:227` still says every July submission failed under deployed admin-only rules. `BUGS.md:7-11` correctly records that those rules were never deployed and only large-photo applications failed.
+
+### Codex (2026-08-12T20:19Z)
+
+- [ ] MEDIUM: Consolidate duplicate findings. (BUGS.md:761-772)
+- [ ] MEDIUM: Consolidate the repeated findings. (BUGS.md:774-783)

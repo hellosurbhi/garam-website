@@ -1,5 +1,9 @@
 # Changelog
 
+## fix(deps): npm audit advisories resolved in js-yaml and nanoid (2026-08-12)
+
+CI's security audit gate failed on js-yaml (CVE-2026-59870, high) and nanoid (GHSA-2v37-7h3g-55p8, high). `npm audit fix` applied semver-compatible lockfile bumps only, no package.json changes. Same pattern as the 2026-08-03 audit entry.
+
 ## fix(waiver): native /waiver signing form replaces the CSP-blocked JotForm embed (2026-07-13, recorded 2026-08-12)
 
 The July 7 CSP hardening never allowlisted `form.jotform.com`, so `/waiver` showed its loading spinner forever and on-stage participants could not sign online (broken 2026-07-07 to 07-13, ships in PR #135). Fix: first-party `StandaloneWaiverForm` posting to the existing `/api/stage-waiver` endpoint, sharing scroll-through and typed-signature logic with the contestant portal via `useWaiverSignature`, with failure paging and smoke coverage. BUGS.md entry removed per doc routing; root-cause rule recorded in LESSONS.md (third-party embeds).

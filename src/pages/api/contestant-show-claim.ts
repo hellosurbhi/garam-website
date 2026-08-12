@@ -1,6 +1,7 @@
 import type { APIRoute } from "astro";
 import { fsAdd } from "@/lib/firestoreRest";
 import { cleanPhone } from "@/lib/phone";
+import { alertOps } from "@/lib/opsAlert";
 import { signPortalToken, _midnightLocalUnix } from "@/lib/portalToken";
 import { WAIVER_VERSION, WAIVER_TEXT } from "@/data/waiver";
 import { events } from "@/data/events";
@@ -104,13 +105,31 @@ export const POST: APIRoute = async ({ request }) => {
     createdAt: signedAtIso,
   };
 
-  const contestantId = await fsAdd("contestants", contestantData);
-  const token = await signPortalToken(
-    contestantId,
+  const claimContext = {
+    name: `${firstName.trim()} ${lastName.trim()}`,
+    email: email.trim().toLowerCase(),
+    phone,
     showId,
-    showDate,
-    showTimezone,
-  );
+  };
+
+  let token: string;
+  try {
+    const contestantId = await fsAdd("contestants", contestantData);
+    token = await signPortalToken(contestantId, showId, showDate, showTimezone);
+  } catch (err) {
+    // A failed show claim blocks a contestant right before a show; page with
+    // their contact fields so they can be walked through it.
+    await alertOps({
+      flow: "waiver",
+      stage: "show_claim_write",
+      errorMessage: err instanceof Error ? err.message : String(err),
+      context: claimContext,
+    });
+    return jsonResponse(
+      { error: "Could not save your waiver. Please try again." },
+      500,
+    );
+  }
 
   try {
     const template = waiverReceiptWithText({
@@ -125,8 +144,15 @@ export const POST: APIRoute = async ({ request }) => {
       text: template.text,
       html: template.html,
     });
-  } catch {
-    // Email failure should not block the waiver claim
+  } catch (err) {
+    // Email failure should not block the waiver claim, but a silently dead
+    // mailer must still page.
+    await alertOps({
+      flow: "waiver",
+      stage: "receipt_email",
+      errorMessage: err instanceof Error ? err.message : String(err),
+      context: claimContext,
+    });
   }
 
   const expireSec = _midnightLocalUnix(showDate, showTimezone);

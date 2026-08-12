@@ -24,7 +24,8 @@
     "admin:grant-claims": "node --env-file=.env.local scripts/grant-admin-claims.mjs",
     "test": "vitest run",
     "test:coverage": "vitest run --coverage",
-    "prepare": "husky",
+    "test:rules": "firebase emulators:exec --only firestore,storage --project demo-garam-masala \"vitest run --config vitest.rules.config.ts\"",
+    "prepare": "chmod +x .husky/pre-commit .husky/commit-msg .husky/pre-push",
     "images:organize": "node scripts/organize-images.js",
     "images:organize:v": "VERBOSE=1 node scripts/organize-images.js",
     "images:optimize": "node scripts/optimize-images.js",
@@ -65,6 +66,7 @@
     "@astrojs/check": "^0.9.10",
     "@axe-core/playwright": "^4.12.1",
     "@eslint/js": "^9.39.4",
+    "@firebase/rules-unit-testing": "^5.0.1",
     "@lhci/cli": "^0.15.1",
     "@playwright/test": "^1.62.1",
     "@stryker-mutator/core": "^9.6.1",
@@ -81,7 +83,6 @@
     "eslint-plugin-react-refresh": "^0.5.3",
     "firebase-tools": "^15.23.0",
     "globals": "^17.8.0",
-    "husky": "^9.1.7",
     "jsdom": "^29.1.1",
     "linkinator": "^7.6.1",
     "lint-staged": "^17.2.0",
@@ -93,10 +94,12 @@
     "vitest": "^4.1.10"
   },
   "overrides": {
-    "path-to-regexp": "^6.3.0",
     "qs": "^6.15.2",
     "tmp": "^0.2.6",
-    "uuid": ">=11.1.1"
+    "uuid": ">=11.1.1",
+    "@vercel/routing-utils": {
+      "path-to-regexp": "^6.3.0"
+    }
   },
   "lint-staged": {
     "*.{ts,tsx,js,jsx}": [

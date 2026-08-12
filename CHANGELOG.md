@@ -1,5 +1,26 @@
 # Changelog
 
+## fix(review): CodeRabbit PR #135 review round, quick wins applied (2026-08-12)
+
+First CodeRabbit pass after the PR left draft (17 threads). Fixed same day: branch guards in both `.husky` hooks; real stack presence in the PostHog `before_send` filter so stackless injected "Script error." noise is dropped from the issues UI; the legacy-photo migration revokes tokens through the documented Cloud Storage JSON API, asserts the token is gone and warns on a full 1000-doc page; timeouts on the waiver-form and ops-webhook fetches; the ops webhook no longer forwards applicant PII (ntfy topics are effectively public, the email path keeps full context); `/api/notify-application` derives the synthetic flag from the server-verified email instead of trusting the request body; `firestore.rules` validates every `photoPaths` member against the `photos/` contract; `storage.rules` requires `customMetadata.owner` to match the uploader's uid at create; the apply terms checkbox got a testid so the synthetic monitor and smoke tests stop matching any checkbox; both cron routes got a top-level failure boundary that pages before dying. Heavy-lift findings deferred to BUGS.md; the duplicate-type-member "Critical" was disproven (one `contact` member per literal, see PR thread). Round 2 (the review body's outside-diff and minor/nitpick comments, same day): photo uploads settle before failure cleanup so no late sibling orphans PII; client failure reports truncate to the alert schema's limits; alertOps bounds message length centrally (caller slices dropped); the waiver CSS module uses root tokens, a mobile-first name row and a 48px agreement target; rules-drift normalization ignores all blank lines; CI and synthetic workflows stop persisting checkout credentials and pass expressions via env; the synthetic verifier cleans up even when verification fails and reports revoke-only docs separately; SVG uploads are rejected in storage.rules (script execution risk via blob URLs); the alert-failure suite isolates the rate limiter; the Turnstile script and admin dashboard URLs moved to src/data/brand.ts.
+
+## fix(deps): npm audit advisories resolved in js-yaml and nanoid (2026-08-12)
+
+CI's security audit gate failed on js-yaml (CVE-2026-59870, high) and nanoid (GHSA-2v37-7h3g-55p8, high). `npm audit fix` applied semver-compatible lockfile bumps only, no package.json changes. Same pattern as the 2026-08-03 audit entry.
+
+## fix(waiver): native /waiver signing form replaces the CSP-blocked JotForm embed (2026-07-13, recorded 2026-08-12)
+
+The July 7 CSP hardening never allowlisted `form.jotform.com`, so `/waiver` showed its loading spinner forever and on-stage participants could not sign online (broken 2026-07-07 to 07-13, ships in PR #135). Fix: first-party `StandaloneWaiverForm` posting to the existing `/api/stage-waiver` endpoint, sharing scroll-through and typed-signature logic with the contestant portal via `useWaiverSignature`, with failure paging and smoke coverage. BUGS.md entry removed per doc routing; root-cause rule recorded in LESSONS.md (third-party embeds).
+
+## fix(hooks): finish the hooks-architecture review response (2026-08-12)
+
+Closes out the July 14 Codex retry-review on the session/63763 branch (PR #135):
+
+- `.husky/pre-push` now sets `set -e`, so a failing `npm run check` blocks the push instead of falling through to a zero exit.
+- husky removed from devDependencies and the `prepare` script no longer touches `core.hooksPath`: husky 9.1.7's installer resets the hooks path to the gitignored `.husky/_`, which is the exact mechanism that silently disabled every quality gate in July. Hooks are the checked-in `.husky` files, run by the global `~/.git-hooks` chain; `prepare` only marks them executable.
+- `.gitignore` review-state entry anchored to `/reviews/` so nested directories named `reviews` are not silently ignored.
+- Trailing-newline fix for the `.husky` hook files (reviewer MEDIUM, fixed in 84c8cef) recorded here; entry removed from BUGS.md per doc routing.
+
 ## fix(review): CodeRabbit reviews markdown again (2026-08-03)
 
 Removed the `!**/*.md` path filter from `.coderabbit.yaml`. On the free CodeRabbit plan the bot is often a PR's only reviewer, and the global pre-push rework (claude-global-config PR #15) makes markdown-only pushes skip local suites once merged; the blanket exclusion meant README/docs changes could reach a PR with no review anywhere.

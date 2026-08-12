@@ -67,7 +67,8 @@ link-results.json
 .lighthouseci/
 
 
-# Local review-pipeline state (pre-commit reviewer outputs; never commit)
-reviews/
-# Legacy husky-generated shims (hooksPath now points at .husky directly)
+# Local review-pipeline state (reviewer outputs at the repo root; never commit).
+# Anchored: only the root reviews/ dir, not any nested directory of that name.
+/reviews/
+# Legacy husky-generated shims (never commit; hooks are the checked-in .husky files)
 .husky/_/

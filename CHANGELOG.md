@@ -1,5 +1,14 @@
 # Changelog
 
+## fix(hooks): finish the hooks-architecture review response (2026-08-12)
+
+Closes out the July 14 Codex retry-review on the session/63763 branch (PR #135):
+
+- `.husky/pre-push` now sets `set -e`, so a failing `npm run check` blocks the push instead of falling through to a zero exit.
+- husky removed from devDependencies and the `prepare` script no longer touches `core.hooksPath`: husky 9.1.7's installer resets the hooks path to the gitignored `.husky/_`, which is the exact mechanism that silently disabled every quality gate in July. Hooks are the checked-in `.husky` files, run by the global `~/.git-hooks` chain; `prepare` only marks them executable.
+- `.gitignore` review-state entry anchored to `/reviews/` so nested directories named `reviews` are not silently ignored.
+- Trailing-newline fix for the `.husky` hook files (reviewer MEDIUM, fixed in 84c8cef) recorded here; entry removed from BUGS.md per doc routing.
+
 ## fix(admin): Applicants tab default plus pending state on card actions (2026-07-13)
 
 Two operator-requested admin fixes following a real double-delete incident during applicant triage:

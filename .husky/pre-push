@@ -1,6 +1,8 @@
 #!/bin/sh
+set -e
 npm run check
-# Run global pre-push chain (Playwright + Stryker + fetch-divergence check).
+# Run global pre-push chain (Playwright + Codex review + fetch-divergence check).
+# The global hook has its own recursion guard for this call-back pattern.
 if [ -x "$HOME/.git-hooks/pre-push" ]; then
   bash "$HOME/.git-hooks/pre-push"
 fi

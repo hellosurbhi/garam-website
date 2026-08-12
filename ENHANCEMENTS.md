@@ -1493,3 +1493,21 @@ If the ambiguity matters there too, rename both with Surbhi's approval on the ex
 - 2026-07-13T20:59Z | tier=E | primary=codex | reason=error_or_timeout | fallback_used=deepseek | commit=5f8a97a | diff_sha=34b48fea48bbe348043200b998329f88cef4a17723d1a8bc12c6a3773a0caab8
 - 2026-07-13T21:10Z | tier=E | primary=codex | reason=error_or_timeout | fallback_used=deepseek | commit=5f8a97a | diff_sha=d58b91c239276eace2d026c18cd8ab96853ea2f58466db7e30a49b599bd85d26
 - 2026-07-13T21:10Z | tier=F | primary=coderabbit | reason=error | fallback_used=gemini | commit=5f8a97a | diff_sha=d58b91c239276eace2d026c18cd8ab96853ea2f58466db7e30a49b599bd85d26
+- 2026-07-13T21:27Z | tier=E | primary=codex | reason=error_or_timeout | fallback_used=deepseek | commit=6c3790a | diff_sha=679393073329dbbc68a931b4c86844c71f02c323182389c186cb11c964ee3e4a
+- 2026-07-13T21:27Z | tier=F | primary=coderabbit | reason=error | fallback_used=gemini | commit=6c3790a | diff_sha=679393073329dbbc68a931b4c86844c71f02c323182389c186cb11c964ee3e4a
+- 2026-07-13T22:11Z | tier=E | primary=codex | reason=error_or_timeout | fallback_used=deepseek | commit=a7a0407 | diff_sha=2c211f142130ad8681e4a9d1cf618f0277d935274a958c082a3e77c553091e41
+- 2026-07-13T22:11Z | tier=F | primary=coderabbit | reason=error | fallback_used=gemini | commit=a7a0407 | diff_sha=2c211f142130ad8681e4a9d1cf618f0277d935274a958c082a3e77c553091e41
+- 2026-07-13T22:14Z | tier=E | primary=codex | reason=error_or_timeout | fallback_used=deepseek | commit=a7a0407 | diff_sha=2974c587f3ec43b3238266c6d8d696bd4712d7d09c277ffcad14e647cfae9851
+- 2026-07-13T22:14Z | tier=F | primary=coderabbit | reason=error | fallback_used=gemini | commit=a7a0407 | diff_sha=2974c587f3ec43b3238266c6d8d696bd4712d7d09c277ffcad14e647cfae9851
+
+## Low priority enhancements
+
+- 2026-07-13T22:17Z | tier=E | primary=codex | reason=error_or_timeout | fallback_used=deepseek | commit=a7a0407 | diff_sha=06c49be5b23a6d9ded610b8ab3ef79264aeceaaa03517f0c6c5f9a05fcc95f79
+- 2026-07-13T22:17Z | tier=F | primary=coderabbit | reason=error | fallback_used=gemini | commit=a7a0407 | diff_sha=06c49be5b23a6d9ded610b8ab3ef79264aeceaaa03517f0c6c5f9a05fcc95f79
+
+### DeepSeek — 20260713-181721
+
+- WONT-FIX (decision, do not re-file): reviewer flagged "non-obvious" in LESSONS.md as a banned double dash. It is a single hyphen forming a compound word, which the copy rules explicitly allow. No change. At `LESSONS.md:232`.
+
+- 2026-07-13T22:22Z | tier=E | primary=codex | reason=error_or_timeout | fallback_used=deepseek | commit=a7a0407 | diff_sha=4d2f31cad6c74709015827d74115da4debe4fa3e17a3ef6a0e5224e6994968cc
+- 2026-07-14T02:21Z | tier=E | primary=codex | reason=error_or_timeout | fallback_used=deepseek | commit=84c8cef | diff_sha=a9332e6f339e116b59d265b56fcc99285a6bb8b99ab72c66d4b3f024b4792373

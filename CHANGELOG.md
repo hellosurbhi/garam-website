@@ -1,5 +1,9 @@
 # Changelog
 
+## fix(waiver): native /waiver signing form replaces the CSP-blocked JotForm embed (2026-07-13, recorded 2026-08-12)
+
+The July 7 CSP hardening never allowlisted `form.jotform.com`, so `/waiver` showed its loading spinner forever and on-stage participants could not sign online (broken 2026-07-07 to 07-13, ships in PR #135). Fix: first-party `StandaloneWaiverForm` posting to the existing `/api/stage-waiver` endpoint, sharing scroll-through and typed-signature logic with the contestant portal via `useWaiverSignature`, with failure paging and smoke coverage. BUGS.md entry removed per doc routing; root-cause rule recorded in LESSONS.md (third-party embeds).
+
 ## fix(hooks): finish the hooks-architecture review response (2026-08-12)
 
 Closes out the July 14 Codex retry-review on the session/63763 branch (PR #135):
@@ -8,6 +12,44 @@ Closes out the July 14 Codex retry-review on the session/63763 branch (PR #135):
 - husky removed from devDependencies and the `prepare` script no longer touches `core.hooksPath`: husky 9.1.7's installer resets the hooks path to the gitignored `.husky/_`, which is the exact mechanism that silently disabled every quality gate in July. Hooks are the checked-in `.husky` files, run by the global `~/.git-hooks` chain; `prepare` only marks them executable.
 - `.gitignore` review-state entry anchored to `/reviews/` so nested directories named `reviews` are not silently ignored.
 - Trailing-newline fix for the `.husky` hook files (reviewer MEDIUM, fixed in 84c8cef) recorded here; entry removed from BUGS.md per doc routing.
+
+## fix(review): CodeRabbit reviews markdown again (2026-08-03)
+
+Removed the `!**/*.md` path filter from `.coderabbit.yaml`. On the free CodeRabbit plan the bot is often a PR's only reviewer, and the global pre-push rework (claude-global-config PR #15) makes markdown-only pushes skip local suites once merged; the blanket exclusion meant README/docs changes could reach a PR with no review anywhere.
+
+## fix(deps): npm audit advisories resolved in transitive dependencies (2026-08-03)
+
+CI's security audit gate failed on brace-expansion (GHSA-mh99-v99m-4gvg, high), postcss (GHSA-r28c-9q8g-f849, high) and tar (GHSA-r292-9mhp-454m, moderate). `npm audit fix` applied semver-compatible lockfile bumps only, no package.json changes. Three moderate advisories remain in firebase-tools, a dev dependency below the gate's `--audit-level=high --omit=dev` threshold.
+
+## fix(events): Boston show moved from August 2 to August 13, start time to 7 PM (2026-08-03)
+
+Same venue (Elephant and Castle), same Eventbrite listing; show now runs 7 to 9 PM (was 6 to 8 PM). Updated everywhere the date appears: the show card data in `src/data/events.ts`, plus the Boston FAQ answer, the "when we announce a date" body paragraph and the apply FAQ in `src/data/cities/us-northeast.ts` (the city-page spots were caught over two rounds of pre-push Codex review after the first pass missed them). Resolves the queued STALE-EVENT-DATE, MISSING-CHANGELOG and stale-city-copy findings from the 2026-08-03 push reviews; their BUGS.md lines are removed in the same commits.
+
+## test(contestant-workflow): backend unit coverage for zohoMailer, cal.com webhook, and cron jobs (2026-07-16)
+
+Closes the backend half of the P1 to P5 contestant workflow test-coverage gap (see BUGS.md): a Stryker mutation report found these files at 0 to 8% mutation coverage since none had a single unit test.
+
+- `src/lib/zohoMailer.test.ts` (new): missing-credential throws, SMTP transport config, from-name and reply-to defaults and overrides, error propagation from the underlying transport.
+- `test/cal-webhook.test.ts` (new): HMAC signature verification (missing signature, wrong signature, unconfigured secret), invalid JSON body, unknown trigger events, missing attendee email, New to Contacted status transition, and the reschedule/cancel `calBookingId` mismatch guards.
+- `test/post-show.test.ts` (new): auth guard, status filter, the D3 to D10 day send window boundaries, already-sent/soft-deleted/missing-participatedAt/missing-email skips, and confirming a `sendMail` failure does not mark the applicant as sent.
+- `test/followups.test.ts` (extended): all four passes now covered, scheduling follow-up (with the `MAX_PER_RUN` cap), waiver nudge (including invite-link resolution via `fsQuery`), auto-decay, and the NYC-timezone-deduped host briefing.
+
+`src/components/ContestantPortal.tsx` and the admin `TaskInbox.tsx`/`ContestantFunnel.tsx` remain untested; see ENHANCEMENTS.md for why and what ships next.
+
+## fix(ci): required check runs on every PR, docs included (2026-07-14)
+
+The ruleset "Protect Main" requires the "Lint, Types, Test, Build" check, but ci.yml ignored markdown and docs paths, so docs-only PRs never started the check and sat permanently blocked (hit on PR #139). The paths-ignore block is gone: full CI runs on every PR to main. Owner decision: no conditional skips and no success reported without the checks actually running.
+
+## fix(portal): industry-standard clickwrap waiver panel + portal secret documented (2026-07-13)
+
+Contestant portal waiver rebuilt after a contestant hit the scroll-to-unlock wall without knowing it existed, on top of a production 500 from `/api/contestant-open-claim`:
+
+- New `WaiverPanel.tsx` (fully controlled, extracted from the 829-line `ContestantPortal.tsx`): instruction above the waiver, bottom fade + "Scroll to keep reading" pill that disappear at the end, `role="status"` unlock announcement, and the signature input now locks until the contestant scrolls through the whole waiver (previously only the checkbox locked, with the only hint below it).
+- Waiver box restyled to a clickwrap document: white paper surface, `--border-light` border replacing the harsh `rgba(0,0,0,0.1)` one, real internal padding, taller `clamp(260px, 45vh, 340px)` viewport, and first-ever typography for the `waiver-doc-*` classes.
+- All waiver strings moved to `src/data/contestantPortal.ts` (`WAIVER_PANEL`).
+- Scroll unlock hardened per review: `ResizeObserver` rechecks the fits-without-scroll case on container or content resize, a zero-height layout guard prevents unlocking before the box is laid out and a once-guard stops duplicate unlock calls.
+- Root cause of the production 500 documented: `signPortalToken` throws when `CONTESTANT_PORTAL_SECRET` is missing and the secret is documented nowhere, so it likely was never added to Vercel. Fix is an operator step (generate with `openssl rand -base64 32`, add in Vercel, redeploy) plus PR #135's endpoint error handling. An `.env.example` entry is written but sits uncommitted: the pre-commit secrets guard blocks staging any `.env*` file, template included.
+- `https://www.facebook.com` added to CSP `frame-src` (Meta pixel spawns a hidden facebook.com iframe that was logging CSP violations in the contestant's console).
 
 ## fix(admin): Applicants tab default plus pending state on card actions (2026-07-13)
 

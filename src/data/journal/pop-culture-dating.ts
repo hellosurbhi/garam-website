@@ -304,7 +304,7 @@ export const popCultureDatingPosts: JournalPost[] = [
       },
       {
         type: "p",
-        text: "The meet-cute: Raj and Simran do not meet on a train platform. They match on Hinge. She has a photo at a wedding and a prompt that says \"My family would describe me as\" and she answered \"dramatic.\" He thinks it is funny. He sends a meme. She replies. This is the origin story. It fits in a screenshot.",
+        text: 'The meet-cute: Raj and Simran do not meet on a train platform. They match on Hinge. She has a photo at a wedding and a prompt that says "My family would describe me as" and she answered "dramatic." He thinks it is funny. He sends a meme. She replies. This is the origin story. It fits in a screenshot.',
       },
       {
         type: "p",
@@ -461,7 +461,7 @@ export const popCultureDatingPosts: JournalPost[] = [
       },
       {
         type: "p",
-        text: "This is where I give the show real credit. Before Indian Matchmaking, most desi families did not discuss the arranged marriage process openly. It was happening but it was not talked about as a process. The show gave the whole system vocabulary, which made it discussable. Suddenly desi kids could say \"this is what my parents are doing\" and point to a Netflix episode and have their non-desi friends understand.",
+        text: 'This is where I give the show real credit. Before Indian Matchmaking, most desi families did not discuss the arranged marriage process openly. It was happening but it was not talked about as a process. The show gave the whole system vocabulary, which made it discussable. Suddenly desi kids could say "this is what my parents are doing" and point to a Netflix episode and have their non-desi friends understand.',
       },
       {
         type: "p",
@@ -518,7 +518,7 @@ export const popCultureDatingPosts: JournalPost[] = [
       },
       {
         type: "p",
-        text: "The question desi singles are asking is more complicated. It is not \"can I fall in love with someone without seeing them?\" It is \"can I fall in love with someone and then get their family to accept me, navigate our communities' expectations, align on the twenty-seven specific compatibility points my parents consider essential, and still like each other at the end of all of that?\" No pod can answer that question. No pods have aunties.",
+        text: 'The question desi singles are asking is more complicated. It is not "can I fall in love with someone without seeing them?" It is "can I fall in love with someone and then get their family to accept me, navigate our communities\' expectations, align on the twenty-seven specific compatibility points my parents consider essential, and still like each other at the end of all of that?" No pod can answer that question. No pods have aunties.',
       },
       {
         type: "h2",
@@ -645,19 +645,47 @@ export const popCultureDatingPosts: JournalPost[] = [
     body: [
       {
         type: "p",
-        text: "I run a live South Asian dating show. I have a stake in this ranking. I am going to try to be as honest as I can be about everything on this list, including my own show, because you deserve an actual assessment rather than a promotional piece. The criteria: does it produce real connections? Does it respect the cultural complexity of South Asian dating? Is it actually enjoyable?",
+        text: "I run a live South Asian dating show. I have a stake in this ranking. I am going to try to be as honest as I can be about everything on this list, including my own show, because you deserve an actual assessment rather than a promotional piece. The criteria: does it produce real connections? Does it respect the cultural complexity of South Asian dating? Is it actually enjoyable? We count down from seventh place to the winner.",
       },
       {
         type: "h2",
-        text: "1. Garam Masala Dating (live, NYC)",
+        text: "7. Shaadi.com events",
       },
       {
         type: "p",
-        text: "I am ranking my own show first and I will tell you exactly why. The live format is the only one where real connection can happen in real time, in the same room, with actual social stakes. You are not editing yourself for a camera. You are not performing for a confessional. You are meeting a real person and the room is watching.",
+        text: "Shaadi.com events tend to feel like what they are: community networking events organized by a matrimonial platform. Useful in the same way that a professional conference is useful. You might meet someone. You are unlikely to feel chemistry in that environment. The social architecture is optimized for evaluation rather than connection.",
+      },
+      {
+        type: "h2",
+        text: "6. Married at First Sight (Lifetime)",
       },
       {
         type: "p",
-        text: "The mixer after the show means that the audience, not just the contestants, gets to date. This is unique. Every other format on this list creates a boundary between the entertainment and the actual meeting. Ours removes it. A significant number of couples who met at Garam Masala Dating met in the audience, not on stage. That is the point. Read more about <a href='/journal/what-actually-happens-at-a-live-comedy-dating-show'>what actually happens at the show</a>.",
+        text: "An extreme format that produces extreme outcomes. The few South Asian contestants who have appeared on MAFS have had to navigate the additional complexity of cultural expectations in a format that was not designed for them. As entertainment it is compelling. As a model for how South Asian singles should meet, it is almost completely inapplicable.",
+      },
+      {
+        type: "h2",
+        text: "5. Dil Mil community events",
+      },
+      {
+        type: "p",
+        text: "Dil Mil is the South Asian dating app and they have organized in-person events in major cities. The advantage is built-in cultural context. The disadvantage is variable quality and the sense that many events are afterthoughts to an app business model rather than the primary product. When the events are good, they are very good. When they are not, they feel like a networking happy hour that nobody at the office organized well.",
+      },
+      {
+        type: "h2",
+        text: "4. Love Is Blind (Netflix)",
+      },
+      {
+        type: "p",
+        text: "Fascinating experiment. Genuinely entertaining television. Mostly irrelevant to South Asian dating specifically for the reasons detailed in the companion piece on this site. The pods remove the very variables that South Asian dating requires you to navigate. But as a study of how emotional connection develops without visual cues, it is genuinely interesting.",
+      },
+      {
+        type: "h2",
+        text: "3. IRL speed dating events",
+      },
+      {
+        type: "p",
+        text: "Speed dating is underrated. It is awkward and fast and sometimes the format feels like a factory. But it puts real people in front of each other with no profile optimization and no algorithm. You either have something in the first five minutes or you do not. That is honest. And the compression of the format means you get through a lot of candidates in one evening, which is genuinely efficient.",
       },
       {
         type: "h2",
@@ -673,43 +701,15 @@ export const popCultureDatingPosts: JournalPost[] = [
       },
       {
         type: "h2",
-        text: "3. IRL speed dating events",
+        text: "1. Garam Masala Dating (live, NYC)",
       },
       {
         type: "p",
-        text: "Speed dating is underrated. It is awkward and fast and sometimes the format feels like a factory. But it puts real people in front of each other with no profile optimization and no algorithm. You either have something in the first five minutes or you do not. That is honest. And the compression of the format means you get through a lot of candidates in one evening, which is genuinely efficient.",
-      },
-      {
-        type: "h2",
-        text: "4. Love Is Blind (Netflix)",
+        text: "Yes, first place goes to my own show, and I will tell you exactly why. The live format is the only one where real connection can happen in real time, in the same room, with actual social stakes. You are not editing yourself for a camera. You are not performing for a confessional. You are meeting a real person and the room is watching.",
       },
       {
         type: "p",
-        text: "Fascinating experiment. Genuinely entertaining television. Mostly irrelevant to South Asian dating specifically for the reasons detailed in the companion piece on this site. The pods remove the very variables that South Asian dating requires you to navigate. But as a study of how emotional connection develops without visual cues, it is genuinely interesting.",
-      },
-      {
-        type: "h2",
-        text: "5. Dil Mil community events",
-      },
-      {
-        type: "p",
-        text: "Dil Mil is the South Asian dating app and they have organized in-person events in major cities. The advantage is built-in cultural context. The disadvantage is variable quality and the sense that many events are afterthoughts to an app business model rather than the primary product. When the events are good, they are very good. When they are not, they feel like a networking happy hour that nobody at the office organized well.",
-      },
-      {
-        type: "h2",
-        text: "6. Married at First Sight (Lifetime)",
-      },
-      {
-        type: "p",
-        text: "An extreme format that produces extreme outcomes. The few South Asian contestants who have appeared on MAFS have had to navigate the additional complexity of cultural expectations in a format that was not designed for them. As entertainment it is compelling. As a model for how South Asian singles should meet, it is almost completely inapplicable.",
-      },
-      {
-        type: "h2",
-        text: "7. Shaadi.com events",
-      },
-      {
-        type: "p",
-        text: "Shaadi.com events tend to feel like what they are: community networking events organized by a matrimonial platform. Useful in the same way that a professional conference is useful. You might meet someone. You are unlikely to feel chemistry in that environment. The social architecture is optimized for evaluation rather than connection.",
+        text: "The mixer after the show means that the audience, not just the contestants, gets to date. This is unique. Every other format on this list creates a boundary between the entertainment and the actual meeting. Ours removes it. A significant number of couples who met at Garam Masala Dating met in the audience, not on stage. That is the point. Read more about <a href='/journal/what-actually-happens-at-a-live-comedy-dating-show'>what actually happens at the show</a>.",
       },
       {
         type: "h2",
@@ -1039,7 +1039,7 @@ export const popCultureDatingPosts: JournalPost[] = [
       },
       {
         type: "p",
-        text: "The YouTube era produced a wave of South Asian content creators who brought the conversation into shorter form. The material was sometimes broad. But it was specific in the ways that mattered: it named the aunty pressure, the biodata question, the parental GPS tracking, the \"why aren't you married yet\" interrogation at every wedding. The community recognized itself and started to laugh at itself. That laughter has political power.",
+        text: 'The YouTube era produced a wave of South Asian content creators who brought the conversation into shorter form. The material was sometimes broad. But it was specific in the ways that mattered: it named the aunty pressure, the biodata question, the parental GPS tracking, the "why aren\'t you married yet" interrogation at every wedding. The community recognized itself and started to laugh at itself. That laughter has political power.',
       },
       {
         type: "p",

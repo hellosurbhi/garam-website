@@ -6,20 +6,49 @@ Items from the GMD website audit checklists (site audit, codebase cleanup, conve
 
 ## Apply-form outage follow-ups (2026-07-13)
 
-### Revoke legacy photo download tokens on pre-July-2026 application docs
-
-**Priority:** Medium
-**Status:** SHIPPED 2026-07-13 as `scripts/migrate-legacy-photo-urls.mjs` (dry-run by default, `--execute` to apply; operator runs it with `node --env-file=.env.local`). Converts old docs to `photoPaths` and revokes the outstanding download tokens.
-
-### Push channel so email is not a single alerting point of failure
-
-**Priority:** Medium
-**Status:** SHIPPED 2026-07-13. Set `ALERT_WEBHOOK_URL` in Vercel (e.g. an ntfy.sh topic subscribed on the phone) and every page also fires a push. A PostHog CDP realtime destination on `client_error` remains an optional third channel (PostHog UI, no code).
-
 ### Add the synthetic monitor identity to PostHog's internal-user filter
 
 **Priority:** Low
 **Why:** Synthetic submissions no longer emit conversion events at all (skipped at the source), but their pageviews still occur. Adding `synthetic-monitor@garammasaladating.com` to PostHog's "filter out internal and test users" definition keeps session/pageview analytics clean.
+
+---
+
+## Mobile Sticky CTA for Event Landing Pages (2026-07-16)
+
+### Add a sticky "Get Tickets" bar to /events/[slug] pages
+
+**Priority:** High
+**Status:** Needs implementation, sequenced into the ticket card consolidation task
+**Branch context:** describes code on the unmerged `feat/event-pages-tracked-checkout` branch (`src/pages/events/[slug].astro`, `EventTicketCta.astro`, the `data-go-ticket` contract). None of it is on main yet; act on this entry with that branch.
+
+The `/events/[slug].astro` landing page (built for the tracked-checkout redirect project) is a long-scroll page: hero, overview, what to expect, lineup, location, agenda, FAQ, social proof, bottom CTA. It is the intended landing spot for paid Instagram traffic. On mobile (70% of traffic), a visitor who scrolls past the hero CTA has to scroll all the way back up or down to the bottom CTA to convert.
+
+`StickyCTA.astro` already exists and is used on `/tickets`, but its anchor carries no `data-go-ticket` attribute and none of the per-event tracking data attributes that `EventTicketCta.astro`'s click-tracking script depends on (it wires up every `[data-go-ticket]` anchor on the page: stamps a unique `eid`, forwards UTMs, fires `checkout_opened` with the CAPI dedup id). Dropping `StickyCTA` onto the event page as-is would render an untracked link, silently reintroducing the tracking blind spot this project exists to close.
+
+**Why not built now:** the ticket card consolidation task is already scoped to unify CTA/card presentation sitewide (retiring the old Eventbrite embed/modal). That is the correct place to establish one sitewide sticky-CTA pattern with tracking built in from the start, rather than shipping a one-off sticky bar for the event page now and reworking it again immediately after.
+
+**How:** when doing the consolidation, extend the tracked-link contract (`data-go-ticket` + `data-event-*` attrs) to `StickyCTA.astro` itself, or replace it with a shared `EventTicketCta`-based sticky variant, so every page wanting a persistent mobile CTA (event pages, `/tickets`, city pages) gets full tracking automatically from one implementation.
+
+**Files to touch:** `src/components/StickyCTA.astro`, `src/pages/events/[slug].astro`, `src/pages/tickets.astro`.
+
+---
+
+## Contestant Workflow Test Coverage: Portal + Admin Components (2026-07-16)
+
+### Write unit tests for ContestantPortal.tsx, TaskInbox.tsx, and ContestantFunnel.tsx
+
+**Priority:** High
+**Status:** Deferred
+
+Backend unit tests for the P1 to P5 contestant workflow control tower shipped alongside this entry (`src/lib/zohoMailer.ts`, the cal.com webhook, and the post-show/followups cron jobs). Three UI pieces from the same rollout remain untested, deferred for two different reasons:
+
+1. **`src/components/ContestantPortal.tsx`**: public facing waiver and prep portal, ~770 lines, stateful (needs `vi.stubGlobal("fetch")` plus `waitFor` patterns, not the `vi.mock`+dynamic-import pattern the backend tests use). Kept out of the backend test PR so that PR stayed a clean, reviewable, single-purpose change. Write its tests in a dedicated follow-up PR.
+2. **`src/components/admin/TaskInbox.tsx`** and **`src/components/admin/ContestantFunnel.tsx`**: admin dashboard screens. The operator plans a full rewrite of the admin page (2026-07-15 directive: it is not working well and is getting redone). Writing tests against components about to be replaced wastes the effort; write tests against the rewritten components once that lands.
+
+**Acceptance criteria:**
+
+1. `ContestantPortal.tsx` has vitest coverage for waiver sign-through, invite-token validation, and error states.
+2. Once the admin rewrite ships, its replacement Task Inbox and funnel views ship with unit tests as part of that PR, not as a follow-up debt item.
 
 ---
 
@@ -1511,3 +1540,42 @@ If the ambiguity matters there too, rename both with Surbhi's approval on the ex
 
 - 2026-07-13T22:22Z | tier=E | primary=codex | reason=error_or_timeout | fallback_used=deepseek | commit=a7a0407 | diff_sha=4d2f31cad6c74709015827d74115da4debe4fa3e17a3ef6a0e5224e6994968cc
 - 2026-07-14T02:21Z | tier=E | primary=codex | reason=error_or_timeout | fallback_used=deepseek | commit=84c8cef | diff_sha=a9332e6f339e116b59d265b56fcc99285a6bb8b99ab72c66d4b3f024b4792373
+- 2026-07-13T14:14Z | tier=E | primary=codex | reason=error_or_timeout | fallback_used=deepseek | commit=c632e66 | diff_sha=727f9c571636bde5fa1659a5cfe3e0752dd55bfd98a7140eba940b370ac57b25
+- 2026-07-13T14:18Z | tier=E | primary=codex | reason=error_or_timeout | fallback_used=deepseek | commit=c632e66 | diff_sha=aa14f0405fb398ccc172f7d23e2c9751ee8c0ea5f24ddfb43a0f0bc1380bc5c6
+- 2026-07-13T14:21Z | tier=F | primary=coderabbit | reason=error | fallback_used=gemini | commit=c632e66 | diff_sha=aa14f0405fb398ccc172f7d23e2c9751ee8c0ea5f24ddfb43a0f0bc1380bc5c6
+- 2026-07-13T14:23Z | tier=E | primary=codex | reason=error_or_timeout | fallback_used=deepseek | commit=ba6728a | diff_sha=4fda69b1208df08e4e0d4b9c77ef4613feb0ca8b9bc76f065441e8676120a62b
+- 2026-07-13T14:23Z | tier=F | primary=coderabbit | reason=error | fallback_used=gemini | commit=ba6728a | diff_sha=4fda69b1208df08e4e0d4b9c77ef4613feb0ca8b9bc76f065441e8676120a62b
+- 2026-07-15T19:41Z | tier=E | primary=codex | reason=error_or_timeout | fallback_used=gemini | commit=8ecc6b2 | diff_sha=cd75cca2e1162551848ad7e7bd36b8eaafea48695da51c508f24dc4b385ae6c7
+- 2026-07-15T19:41Z | tier=F | primary=coderabbit | reason=error | fallback_used=gemini | commit=8ecc6b2 | diff_sha=cd75cca2e1162551848ad7e7bd36b8eaafea48695da51c508f24dc4b385ae6c7
+- 2026-07-15T20:02Z | tier=E | primary=codex | reason=error_or_timeout | fallback_used=gemini | commit=ad03ccb | diff_sha=8f7496694dfa7a06a1b1dbf0b403469de24530653c93388269f0d5f1898fea65
+- 2026-07-15T20:19Z | tier=F | primary=coderabbit | reason=error | fallback_used=gemini | commit=ad03ccb | diff_sha=2969cbac7200a1b37f3596ee9c891fc6080090253851585901f3c863c6b35d95
+- 2026-07-15T20:19Z | tier=E | primary=codex | reason=error_or_timeout | fallback_used=gemini | commit=ad03ccb | diff_sha=2969cbac7200a1b37f3596ee9c891fc6080090253851585901f3c863c6b35d95
+
+### CodeRabbit — 20260713-102329
+
+- LOW: Inconsistent heading levels are used for items in the "Indian Dating App Landscape in 2026" ranked list. Items 7, 6, and 5 use `h3`, while items 4 through 1 use `h2`. For semantic HTML and accessibility, all items in a single ranked list should use the same heading level.
+
+### CodeRabbit — 20260713-103031
+
+- LOW: Inconsistent heading levels are used for items in the "Indian Dating App Landscape in 2026" ranked list. Items 7, 6, and 5 use `h3`, while items 4 through 1 use `h2`. For semantic HTML and accessibility, all items in a single ranked list should use the same heading level.
+
+- 2026-07-13T14:35Z | tier=E | primary=codex | reason=error_or_timeout | fallback_used=deepseek | commit=ba6728a | diff_sha=4fda69b1208df08e4e0d4b9c77ef4613feb0ca8b9bc76f065441e8676120a62b
+- 2026-07-13T21:30Z | tier=E | primary=codex | reason=error_or_timeout | fallback_used=deepseek | commit=ba6728a | diff_sha=20a149d8de616e12be47d70ad78ddfcb63396c294c66268653770baf52f5718f
+- 2026-07-13T21:30Z | tier=F | primary=coderabbit | reason=error | fallback_used=gemini | commit=ba6728a | diff_sha=20a149d8de616e12be47d70ad78ddfcb63396c294c66268653770baf52f5718f
+- 2026-07-13T21:32Z | tier=E | primary=codex | reason=error_or_timeout | fallback_used=deepseek | commit=d64b1a7 | diff_sha=93c5a476f2cf0cfb519ba62d8f7cbc2ac0b875cdfab5a416dbd48c7ec3b9f988
+- 2026-07-13T21:32Z | tier=F | primary=coderabbit | reason=error | fallback_used=gemini | commit=d64b1a7 | diff_sha=93c5a476f2cf0cfb519ba62d8f7cbc2ac0b875cdfab5a416dbd48c7ec3b9f988
+- 2026-07-13T21:49Z | tier=E | primary=codex | reason=error_or_timeout | fallback_used=deepseek | commit=31350a3 | diff_sha=e35f355d8ce66d3bee2b4cb0a3a46beb9e293044bcb8a954a72352747f0ec6ce
+- 2026-07-13T21:54Z | tier=E | primary=codex | reason=error_or_timeout | fallback_used=deepseek | commit=31350a3 | diff_sha=b85bc6ec208be3e9c39090376efd6fb019be6269f674a405c12822b01884ae11
+- 2026-07-14T04:12Z | tier=E | primary=codex | reason=error_or_timeout | fallback_used=deepseek | commit=31350a3 | diff_sha=a457f9f43c890a3896d690da506abb79097a4a3ef66a6f7940892657c149ea39
+- 2026-07-13T21:58Z | tier=E | primary=codex | reason=error_or_timeout | fallback_used=deepseek | commit=31350a3 | diff_sha=e99328d390b12ce56298326ab4de0bbe0dc52589de496f6c32de51a45e6bfc6d
+- 2026-07-13T21:58Z | tier=F | primary=coderabbit | reason=error | fallback_used=gemini | commit=31350a3 | diff_sha=e99328d390b12ce56298326ab4de0bbe0dc52589de496f6c32de51a45e6bfc6d
+- 2026-07-13T22:03Z | tier=E | primary=codex | reason=error_or_timeout | fallback_used=deepseek | commit=be735b9 | diff_sha=aad31620a68713c8d429e0c119d83b6d351d4e2eaa7a4338546eecdd1ac0d095
+- 2026-07-13T22:03Z | tier=F | primary=coderabbit | reason=error | fallback_used=gemini | commit=be735b9 | diff_sha=aad31620a68713c8d429e0c119d83b6d351d4e2eaa7a4338546eecdd1ac0d095
+- 2026-07-13T22:07Z | tier=E | primary=codex | reason=error_or_timeout | fallback_used=deepseek | commit=37cde64 | diff_sha=9506d1aa157f1daade093c8e9414c34d99e8046112fb55278553d9723010625c
+- 2026-07-13T22:07Z | tier=F | primary=coderabbit | reason=error | fallback_used=gemini | commit=37cde64 | diff_sha=9506d1aa157f1daade093c8e9414c34d99e8046112fb55278553d9723010625c
+- 2026-07-14T18:04Z | tier=F | primary=coderabbit | reason=error | fallback_used=gemini | commit=8b4d379 | diff_sha=21cb57ca33a0bc568eacd8e142d7932bb30af7a382fa25b557f2c6dda526c07e
+- 2026-07-15T01:57Z | tier=F | primary=coderabbit | reason=error | fallback_used=gemini | commit=59ce89e | diff_sha=79d49c2634be8fd8ec7a52e9739360de8ba9bb45ede67b3359c69ac05ca02d7a
+- 2026-07-15T02:08Z | tier=F | primary=coderabbit | reason=error | fallback_used=gemini | commit=4efe5d3 | diff_sha=b74f4259c3e8725c36ba740c55be50f41db8a256f4ac932ce24114c7160ec270
+- 2026-07-15T19:26Z | tier=F | primary=coderabbit | reason=error | fallback_used=gemini | commit=8ecc6b2 | diff_sha=c9f20eceb0d2132fd116a62263d47c0c3d5f314a576755c1dfc0e7cb6dd8f18b
+- 2026-07-15T19:37Z | tier=E | primary=codex | reason=error_or_timeout | fallback_used=gemini | commit=8ecc6b2 | diff_sha=0dcddf1f107891ad33ffb99d2cd75f10b3ad2973464c41b886f960166a096a50
+- 2026-07-15T19:37Z | tier=F | primary=coderabbit | reason=error | fallback_used=gemini | commit=8ecc6b2 | diff_sha=0dcddf1f107891ad33ffb99d2cd75f10b3ad2973464c41b886f960166a096a50

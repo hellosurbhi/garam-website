@@ -59,4 +59,11 @@ describe("useWaiverSignature", () => {
     );
     expect(result.current.waiverScrolled).toBe(true);
   });
+
+  it("markWaiverScrolled unlocks for consumers that own their scroll mechanics", () => {
+    const { result } = renderHook(() => useWaiverSignature("Priya Sharma"));
+    expect(result.current.waiverScrolled).toBe(false);
+    act(() => result.current.markWaiverScrolled());
+    expect(result.current.waiverScrolled).toBe(true);
+  });
 });

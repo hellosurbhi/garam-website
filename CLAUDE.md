@@ -43,6 +43,8 @@ Key pages: `/` `/tickets` `/apply` `/links` `/faq` `/hosts` `/journal` `/cities/
 
 When adding new content (shows, press, FAQs, testimonials), update the data file: never edit component HTML.
 
+**Ranked listicles are countdowns.** Write body headings highest number first, number 1 last: the winner is the payoff at the end, never the opener. Always populate `rankedItems` (ascending positions, 1 = best; the mismatch with body order is by design) so the countdown test in `journal.test.ts` protects the article. `keyTakeaway` may name the winner because it renders at the end of the article.
+
 ## Code rules
 
 ## No band-aid fixes: ever

@@ -27,6 +27,10 @@ export function useWaiverSignature(fullName: string) {
     }
   }
 
+  // For consumers that own their scroll mechanics (WaiverPanel's clickwrap
+  // region) and only need to report that the reader reached the end.
+  const markWaiverScrolled = useCallback(() => setWaiverScrolled(true), []);
+
   const signatureValid =
     signature.trim().length > 0 &&
     signature.trim().toLowerCase() === fullName.toLowerCase();
@@ -36,6 +40,7 @@ export function useWaiverSignature(fullName: string) {
     setSignature,
     signatureValid,
     waiverScrolled,
+    markWaiverScrolled,
     waiverRef,
     handleWaiverScroll,
   };

@@ -2,14 +2,6 @@
 
 ## Open
 
-### [HIGH] /waiver page dead in production: JotForm embed blocked by CSP
-
-- **Date:** 2026-07-13 (broken since 2026-07-07)
-- **File:** `src/pages/waiver.astro`
-- **Status:** Fixed (2026-07-13)
-- **Severity:** High (on-stage participants could not sign the waiver online)
-- **What happened:** The July 7 CSP hardening allowlisted first-party and known analytics scripts but never included `form.jotform.com`, so the browser blocked the embed script and `/waiver` showed its loading spinner forever. Nothing alerted because the failure lived inside a third-party embed. Fixed by replacing the embed with a native first-party signing form (`StandaloneWaiverForm`) posting to the existing `/api/stage-waiver` endpoint, sharing the scroll-through + typed-signature logic with the contestant portal via `useWaiverSignature`, with failure paging and smoke coverage.
-
 ### [CRITICAL] Apply submissions with large photos lost + undeployed security rules left PII readable
 
 - **Date:** 2026-07-13 (partial failures since ~2026-07-05; record corrected 2026-07-13 after production verification)
@@ -17,6 +9,16 @@
 - **Status:** Code fixed (2026-07-13), pending rules deploy via Firebase CLI (`--only firestore:rules,storage`)
 - **Severity:** Critical (lost applicants from paid traffic + live PII exposure until the rules deploy)
 - **What happened:** Two compounding problems, both traced to rules changes merging without the manual Firebase deploy. (1) PR #110 (July 5) raised the client photo cap from 5 MB to 15 MB but its `storage.rules` bump was never deployed, so applicants with photos over the deployed cap (exactly the large iPhone photos the bump was for) failed at upload with `storage/unauthorized` and their applications were lost: confirmed failure bursts July 7, 9, 12 and 13 including paid LA campaign traffic. Smaller-photo submissions kept working, which is why the pipeline looked alive. (2) PR #115's security rules (admin-only reads for applicant photos and PII docs) were also never deployed, leaving the pre-#115 posture live: any visitor with an anonymous session can read applicant photos, and per #115's own audit, applicant/lead PII documents. An earlier version of this entry claimed a total outage caused by `getDownloadURL()` under the #115 rules; production verification (successful submission + applications arriving all week) disproved that. The `getDownloadURL()` mechanism was real but latent: deploying #115's rules without this fix WOULD have taken the form fully down. Fix: path-based `photoPaths` + admin `getBlob()` rendering, client-side compression (puts every photo under any cap), owner-tagged cleanup, emulator rules tests locking the client/rules contract, real-time failure alerting, 6-hour synthetic monitor and a deployed-vs-repo rules drift check so merged-but-undeployed rules can never sit silent again.
+
+### [HIGH] Contestant workflow: portal + admin components still lack unit test coverage
+
+- **Date:** 2026-07-16
+- **File:** `src/components/ContestantPortal.tsx` (#97), `src/components/admin/TaskInbox.tsx` (#97), `src/components/admin/ContestantFunnel.tsx` (#99)
+- **Status:** Open
+- **Severity:** High
+- **What happened:** All five phases of the contestant workflow project merged 2026-07-03 to 07-05 with zero unit tests, confirmed by a Stryker mutation report showing these files scoring 0 to 8% mutation coverage. The backend half of the gap (Zoho SMTP mailer, cal.com webhook, post-show and followups cron jobs) now has unit coverage, see CHANGELOG. The remaining three files are UI components: `ContestantPortal.tsx` is public facing and deferred to its own follow-up PR (not dropped, see ENHANCEMENTS.md); `TaskInbox.tsx` and `ContestantFunnel.tsx` are admin dashboard screens the operator plans to rewrite, so their tests are deferred until after that rewrite lands rather than writing tests for code about to be replaced (see ENHANCEMENTS.md).
+- **Impact:** A regression in the contestant portal waiver flow or the admin Task Inbox/funnel view would not be caught by the test suite; only manual QA would notice.
+- **Fix:** Write `ContestantPortal.tsx` tests in a dedicated follow-up PR (stateful component, needs `vi.stubGlobal("fetch")` plus `waitFor`). Write `TaskInbox.tsx`/`ContestantFunnel.tsx` tests against their post-rewrite replacements.
 
 ### [HIGH] Dev server cannot transform TypeScript in astro component scripts
 
@@ -626,6 +628,10 @@
 
 ## Medium priority (auto-fix pending)
 
+### DeepSeek — 20260713-103550
+
+(Empty section: the reviewer emitted a zero-finding COMMIT_BLOCK; nothing was ever queued. Kept for the record.)
+
 ### DeepSeek — 20260713-142719
 
 - [x] MEDIUM: `handleRestore` at line 290 calls `handleUpdate` with no single-flight guard — same Firestore round-trip risk as the delete that was fixed. at src/components/admin/AdminDashboard.tsx:290 — Fixed same day: `pendingAction` single-flight guard now covers delete, restore and participated.
@@ -636,3 +642,32 @@
 ### DeepSeek — 20260713-181721
 
 - WONT-FIX (decision, do not re-file): reviewer asked to drop `set -e` from `.husky/pre-commit` as redundant with the `#!/bin/sh` shebang. Rejected: a shebang implies no error-exit behavior at all; `set -e` is load-bearing in a gate script and stays. At `.husky/pre-commit:2`.
+
+### CodeRabbit — 20260713-173257
+
+- [x] MEDIUM: Inconsistent heading levels in the `best-indian-dating-apps-ranked` countdown: items 7, 6, 5 used `h3` while items 4 through 1 used `h2`. (Entry was queued as an empty stub by the old header-only severity grep in the pre-commit hook; actual finding text restored by hand. Capture bug since fixed in `~/.claude/config/git-hooks/pre-commit` via `extract_severity`.) FIXED 2026-07-13: all seven items promoted to `h2` in `src/data/journal/app-alternatives.ts`, per Surbhi's call.
+
+### DeepSeek — 20260713-173257
+
+- [x] MEDIUM: `pop-culture-dating.ts` "best ways to meet" article body heading for position 4 has no corresponding `rankedItems` entry at `src/data/journal/pop-culture-dating.ts:681`
+      DISPROVEN 2026-07-13, do not auto-fix: no such article exists; the post at that location is `dating-shows-south-asians-all-ranked` and its `rankedItems` array has all 7 contiguous positions. The countdown tests in `src/data/journal.test.ts` verify heading/position correspondence on every commit and pass.
+
+### DeepSeek — 20260713-175426
+
+- [x] MEDIUM: `ResizeObserver` observes `el.firstElementChild` and never re-observes if the child changes. at src/components/WaiverPanel.tsx — Resolved by design: `observer.disconnect()` in the effect cleanup drops every observed target per spec (no leak), and the child is the `WaiverDocument` article rendered from a compile-time constant, so its identity never changes within a mount.
+- [x] MEDIUM: `handleScroll` is recreated each render and passed to `onScroll`. at src/components/WaiverPanel.tsx — Resolved by design: React delegates synthetic events at the root; a new handler identity per render does not re-register DOM listeners. Wrapping in useCallback would add noise with no behavior change.
+
+## High priority (from push reviews, fix first)
+
+### Codex (2026-08-03T06:53Z)
+
+Both findings critique the "Mobile Sticky CTA" writeup in ENHANCEMENTS.md, which was authored on the unmerged `feat/event-pages-tracked-checkout` branch and describes that branch's code. Evaluate when that branch's PR is reviewed.
+
+- [ ] HIGH: [SCOPE-CREEP] `ENHANCEMENTS.md` sticky CTA entry broadens an event-page CTA request into a sitewide contract covering tickets and city pages without that universal scope appearing in the stated intent.
+- [ ] HIGH: [UNSOURCED-CLAIM] `ENHANCEMENTS.md` sticky CTA entry makes current-code, traffic and existing-task claims without `file:line` evidence or command output.
+
+### Codex (2026-08-03T07:15Z)
+
+Applies to the unmerged `feat/event-pages-tracked-checkout` branch; fix there.
+
+- [ ] HIGH: [UNRESOLVED-BACKLOG] The no-`eid` `InitiateCheckout` finding was pruned as resolved, but `f916f02` does not fully resolve it. `ticketCtaTracking.ts:42-58` adds `eid` client-side while the rendered link remains `/api/go/...`; `api/go/[slug].ts:58-60,93` still generates a fallback ID and fires CAPI for any unrecognized user agent. Browser prefetches using a normal browser user agent can therefore still be counted as conversions.

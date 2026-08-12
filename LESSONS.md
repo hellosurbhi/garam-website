@@ -1,5 +1,21 @@
 # Lessons
 
+## Git hooks must be tracked with the executable bit or the gate silently dies
+
+**What went wrong:** A commit sailed through with no review gate. Git printed "The '.husky/pre-commit' hook was ignored because it's not set as executable" and committed anyway. The same hint had appeared in the main checkout without anyone connecting it to a disabled gate.
+
+**Why:** `core.hooksPath` in this repo flips between two states. After `npm install` runs husky's prepare step it is `.husky/_` (husky 9 dispatchers that invoke the tracked files through `sh`, executable bit irrelevant). But it was measured as `.husky` (direct execution of the tracked files) on 2026-07-14, and in that state git silently skips any hook tracked as mode 100644. `pre-commit` and `pre-push` were 100644 while `commit-msg` was 100755, so fresh checkouts and index-mode restores produced dead hooks whenever the config was in the direct state. PR #142 tracks all hooks as 100755, which works in both states.
+
+**Rule:** Every hook file ships as mode 100755 (`git ls-files -s .husky/` must show 100755 for all of them) so the gate survives both hooksPath states. Treat the "hook was ignored" hint as a broken gate, never as noise: stop and fix the cause before committing anything else.
+
+## A new endpoint's required env vars ship with the endpoint or it ships broken
+
+**What went wrong:** The contestant portal claim endpoints 500 in production. `signPortalToken` requires `CONTESTANT_PORTAL_SECRET`, but the secret appeared in no `.env.example` entry, no docs and (most likely) no Vercel environment, so the endpoints could never succeed after deploy. Same shape as the July apply outage, where the fix stayed inert until operator secrets were added.
+
+**Why:** The env var was introduced deep in a library (`src/lib/portalToken.ts`) during a multi-feature recovery branch, and nothing forces a new `import.meta.env` read to surface as a deploy requirement.
+
+**Rule:** Any commit that adds a new required `import.meta.env`/`process.env` read must, in the same commit, add the var to `.env.example` with a generation command, and the PR description must list it as an operator step (add in Vercel, then redeploy). Grep for `import.meta.env` in the diff before shipping any server endpoint.
+
 ## Production signup failures need server logs first
 
 **What went wrong:** I treated contestant portal signup failures like client-side fallback problems before checking the live API exception.
@@ -236,4 +252,12 @@ The real XSS guards on this site are Firebase security rules and Firestore field
 
 **Why:** Git treats a missing hooks directory as "no hooks configured" without any warning, and the hook scheme depended on a generated artifact existing in every worktree. The gates were all correctly written; they were never invoked.
 
-**Rule:** `core.hooksPath` must point at checked-in, executable files (`.husky/` with shebangs), never at generated ones; `npm run prepare` sets that config so it self-heals. When diagnosing "how did this get past the hooks," first verify hooks RAN (`git config core.hooksPath` and that the target exists in the current worktree) before reading a single hook line.
+**Rule:** Hooks must be checked-in, executable files (`.husky/` with shebangs), never generated ones. The repo-local `core.hooksPath` stays UNSET so the global `~/.git-hooks` chain (which runs the `.husky` hooks itself) governs; husky is removed because its installer re-points `core.hooksPath` at the generated `.husky/_` on every install, recreating the bypass. When diagnosing "how did this get past the hooks," first verify hooks RAN (`git config core.hooksPath` and that the target exists in the current worktree) before reading a single hook line.
+
+## The entire pre-commit gauntlet was silently skipped for a week
+
+**What went wrong:** Commits from fresh checkouts and worktrees ran zero gates: no prettier, no astro check, no vitest, no AI reviewers. A commit with unreviewed data changes landed on a PR branch with nothing but a one-line hint from git. The pipeline had been dead for those checkouts since Jul 5 and nobody noticed because a skipped hook prints a hint and exits 0.
+
+**Why:** `.husky/pre-commit` and `.husky/pre-push` were committed with file mode 100644. Git refuses to run non-executable hook files and treats that as advisory (a "hint"), not an error. Checkouts where someone had run `chmod +x` locally kept working, which masked the bug: the same commit could be gated on one machine and ungated on another. The chmod never made it into the index, so every fresh checkout and worktree was born ungated.
+
+**Rule:** Hook files must be committed with the executable bit (`git ls-files -s .husky/` must show 100755 for every hook). After adding or editing any hook file, verify with that command, not with `ls -l` on your own checkout. A gate that can be skipped silently is not a gate: if a hook is ever observed printing "ignored because it's not set as executable", treat it as a broken-build incident, not a hint.

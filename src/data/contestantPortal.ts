@@ -133,6 +133,24 @@ export const ARRIVAL_NOTES = {
 export const MAILING_LIST_DISCLOSURE =
   "By completing this packet, you agree to receive occasional updates from Garam Masala Dating. You can unsubscribe at any time.";
 
+/**
+ * Waiver panel copy. The signature input and the agreement checkbox stay
+ * locked until the contestant scrolls to the end of the waiver, so the
+ * instruction and the locked hint must both explain that requirement.
+ */
+export const WAIVER_PANEL = {
+  instruction:
+    "Please read the full waiver below. Scroll to the end to unlock the signature and agreement.",
+  scrollHint: "Scroll to keep reading",
+  endReached: "You have reached the end of the waiver. You can now sign below.",
+  signatureLabel: "Type your full legal name as your electronic signature",
+  signaturePlaceholder: "First Last",
+  signatureLockedHint: "Signing unlocks after you read the full waiver above.",
+  signatureMismatch: "Signature must match your legal name above.",
+  checkboxLabel:
+    "I have read and agree to the waiver. I understand the typed legal signature above is my electronic signature.",
+} as const;
+
 export function missingRoleError(email: string): string {
   return `This contestant packet link is missing its casting role. Email ${email} and we'll resend it.`;
 }

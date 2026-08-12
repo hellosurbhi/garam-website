@@ -4,6 +4,15 @@ Items from the GMD website audit checklists (site audit, codebase cleanup, conve
 
 ---
 
+## Eventbrite loader has no script.onerror fallback (2026-08-12)
+
+**Priority:** Medium
+**Status:** Queued (surfaced by the PR #159 plan audit, outside that PR's review findings)
+
+Both widget loaders (`EventbriteWidgetInit.astro`, `ApplySuccessPanel.tsx`) only call `initWidgets` from the injected script's `onload`. If `eb_widgets.js` never loads at all (network block, ad blocker), no recovery code runs: anchor triggers still navigate via their native href, but button triggers (home shows cards, apply success upsell) stay silently dead. Fix is a `script.onerror` handler that installs the same `installInitFailureFallback` from `src/lib/eventbriteRecovery.ts` on every button trigger.
+
+---
+
 ## Mobile Sticky CTA for Event Landing Pages (2026-07-16)
 
 ### Add a sticky "Get Tickets" bar to /events/[slug] pages

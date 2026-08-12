@@ -5,6 +5,11 @@ import { buildTicketUrl } from "@/utils/eventUrl";
 import { formatEventLocation } from "@/utils/eventCity";
 import { buildLeadAttribution } from "@/lib/leadAttribution";
 import { capture } from "@/lib/analyticsCapture";
+import {
+  installInitFailureFallback,
+  watchModalOpenAfterClick,
+  type RecoveryOptions,
+} from "@/lib/eventbriteRecovery";
 import styles from "@/components/ApplyPage.module.css";
 
 export function ApplySuccessPanel() {
@@ -41,6 +46,7 @@ export function ApplySuccessPanel() {
 
     let orderCompleted = false;
     let modalOpenedAt = 0;
+    const watchDisposers: Array<() => void> = [];
 
     function initWidgets() {
       const rootStyle = getComputedStyle(document.documentElement);
@@ -66,17 +72,14 @@ export function ApplySuccessPanel() {
             }),
           );
         });
-        const reportAndRecover = () => {
-          capture("widget_load_failed", {
+        const recovery = (): RecoveryOptions => ({
+          fallbackUrl: buildTicketUrl(show.url, "apply", "success"),
+          failureProps: {
             event_id: show.eventbriteId ?? "",
             city: cityLabel,
             page: window.location.pathname,
-          });
-          const fallbackUrl = buildTicketUrl(show.url, "apply", "success");
-          if (fallbackUrl) {
-            window.open(fallbackUrl, "_blank", "noopener,noreferrer");
-          }
-        };
+          },
+        });
         try {
           window.EBWidgets?.createWidget({
             widgetType: "checkout",
@@ -140,31 +143,19 @@ export function ApplySuccessPanel() {
               });
             },
           });
+          // Silent-failure detection and recovery: see the WHY comments in
+          // src/lib/eventbriteRecovery.ts. One active watch per trigger,
+          // disposed on unmount via watchDisposers.
+          let disposeWatch: (() => void) | undefined;
+          watchDisposers.push(() => disposeWatch?.());
           btn?.addEventListener("click", (e) => {
             e.preventDefault();
-            // WHY: createWidget() succeeding only means EB's script
-            // registered a click handler, not that opening actually works.
-            // In some mobile in-app browsers (Instagram/Facebook WKWebView,
-            // Firefox iOS) EB's own click handler throws asynchronously:
-            // window.webkit.messageHandlers probing, a __firefox__ reader
-            // global, or a ChunkLoadError from EB's webpack runtime
-            // resolving its chunk path against our origin instead of
-            // theirs. This button has no href to fall back on (it's a
-            // <button>, not a link), so when EB's handler fails the modal
-            // never opens and the CTA goes silently dead — a real
-            // checkout-blocking bug (GitHub #136, #151, #152, #153, #154,
-            // #155, #156), not noise to filter. Detect the missing modal
-            // within one open attempt and recover via a direct Eventbrite
-            // link, same as the non-widget fallback rendered below.
-            window.setTimeout(() => {
-              if (!document.querySelector("div.eds-structure_main")) {
-                reportAndRecover();
-              }
-            }, 2500);
+            disposeWatch?.();
+            disposeWatch = watchModalOpenAfterClick(recovery());
           });
         } catch {
-          // Widget init failed synchronously; recover immediately.
-          reportAndRecover();
+          // Widget init failed synchronously; keep the button usable.
+          installInitFailureFallback(btn, recovery());
         }
       }
     }
@@ -244,6 +235,7 @@ export function ApplySuccessPanel() {
     return () => {
       clearTimeout(modalObserverTimeout);
       modalObserver.disconnect();
+      watchDisposers.forEach((dispose) => dispose());
     };
   }, [showsWithWidget]);
 

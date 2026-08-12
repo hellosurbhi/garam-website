@@ -7,6 +7,11 @@
 <script>
   import { buildLeadAttribution } from "@/lib/leadAttribution";
   import { capture } from "@/lib/analyticsCapture";
+  import {
+    installInitFailureFallback,
+    watchModalOpenAfterClick,
+    type RecoveryOptions,
+  } from "@/lib/eventbriteRecovery";
 
   interface EBCfg {
     eventId: string;
@@ -188,8 +193,9 @@
           themeSettings: { brandColor, fontColor, background: bgColor },
           onOrderComplete: makeOrderCompleteHandler(cfg),
         };
-        const reportAndRecover = (): void => {
-          capture("widget_load_failed", {
+        const recovery = (): RecoveryOptions => ({
+          fallbackUrl: cfg.fallbackUrl,
+          failureProps: {
             event_id: cfg.eventId,
             city: cfg.city,
             event_title: cfg.eventTitle,
@@ -197,40 +203,25 @@
             destination_url: cfg.destinationUrl,
             link_domain: cfg.linkDomain,
             page: window.location.pathname,
-          });
-          if (cfg.fallbackUrl) {
-            window.open(cfg.fallbackUrl, "_blank", "noopener,noreferrer");
-          }
-        };
+          },
+        });
         try {
           w.EBWidgets.createWidget(config);
+          // Silent-failure detection and recovery: see the WHY comments in
+          // src/lib/eventbriteRecovery.ts. One active watch per trigger.
+          let disposeWatch: (() => void) | undefined;
           document
             .getElementById(cfg.triggerId!)
             ?.addEventListener("click", (e) => {
               e.preventDefault();
-              // WHY: createWidget() succeeding only means EB's script
-              // registered a click handler, not that opening actually
-              // works. In some mobile in-app browsers (Instagram/Facebook
-              // WKWebView, Firefox iOS) EB's own click handler throws
-              // asynchronously: window.webkit.messageHandlers probing, a
-              // __firefox__ reader global, or a ChunkLoadError from EB's
-              // webpack runtime resolving its chunk path against our origin
-              // instead of theirs. When that happens the modal never
-              // opens, and since we already called preventDefault() the
-              // native href never fires either, so the button goes
-              // silently dead — a real checkout-blocking bug (see GitHub
-              // #136, #151, #152, #153, #154, #155, #156), not noise to
-              // filter. Detect the missing modal within one open attempt
-              // and recover via the same URL the anchor/button would have
-              // navigated to natively.
-              window.setTimeout(() => {
-                if (!document.querySelector("div.eds-structure_main")) {
-                  reportAndRecover();
-                }
-              }, 2500);
+              disposeWatch?.();
+              disposeWatch = watchModalOpenAfterClick(recovery());
             });
         } catch (_) {
-          reportAndRecover();
+          installInitFailureFallback(
+            document.getElementById(cfg.triggerId!),
+            recovery(),
+          );
         }
       });
 

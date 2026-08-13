@@ -1,5 +1,9 @@
 # Changelog
 
+## chore(queue): review retry-queue rows moved out of the tracked ENHANCEMENTS.md (2026-08-13)
+
+The "Skipped reviews (pending retry)" section was machine telemetry living in a human backlog file, and because this repo TRACKS ENHANCEMENTS.md, every session worktree carried a duplicate copy of the same rows: the nightly retry job counted them all (~286 "pending" across the workspace) and burned three expensive reviews a night for ten nights with the count never moving. All 57 pending rows now live in the gitignored `reviews/retry-queue.md` in the primary checkout, where the (claude-global-config) retry tooling reads them once. The repo-local `core.hooksPath` override was also unset the same day: it bypassed the global safety gates and made fresh worktrees run zero hooks at all; the global hooks chain to `.husky` so nothing else changes.
+
 ## chore(hooks): duplicate type check removed from pre-push (2026-08-12)
 
 Owner-approved cycle-time fix. `.husky/pre-push` ran `npm run check` even though `.husky/pre-commit` runs `astro check` and vitest on every commit, so each push re-checked code that had passed the identical gate minutes earlier and paid about a minute for it. The global pre-push chain (build, Playwright, Codex review) is unchanged. Paired with the global-config cadence change that pushes once per task instead of after every commit, the per-task gate cost drops from N full gates to one.

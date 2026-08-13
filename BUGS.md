@@ -2,16 +2,6 @@
 
 ## Open
 
-### [HIGH] Fresh git worktrees run ZERO hooks: husky's generated shim dir does not exist there
-
-- **Date:** 2026-08-12
-- **File:** repo git config `core.hooksPath=.husky/_` (husky-generated, relative), interacts with `git worktree add`
-- **Status:** Open (session-level workaround applied; permanent fix needed in the session worktree setup)
-- **Severity:** High (silently disables every commit and push gate, including the Codex review)
-- **What happened:** `core.hooksPath` is the relative path `.husky/_`, which git resolves against the current worktree root. Husky generates that `_` shim directory during install in the primary checkout, and it is gitignored, so a fresh `git worktree add` has no `.husky/_` at all. Git treats a missing hooksPath as "no hooks": commit bb9416a on `session/74543-hooks` was committed AND pushed with no lint-staged, no `astro check`, no vitest and no Codex review, with nothing printed to indicate the bypass. That commit's `Verified:` message line is therefore inaccurate; it was written expecting the gates had run. Gates were backfilled immediately after discovery (astro check + vitest 1196/1196 pass, manual tier-E Codex review of the pushed diff) and the shim dir was copied into the worktree, so later commits on the branch are gated normally.
-- **Impact:** Any session working in a fresh worktree of this repo (the standard session flow) bypasses every quality gate without warning. The npm `prepare` script only chmods the hook files; it does not regenerate `.husky/_`.
-- **Fix direction:** The session worktree warm-up (claude-global-config `session-start`) must populate `.husky/_` (copy from the primary checkout or run `husky` after `npm ci`) for repos whose `core.hooksPath` is husky-relative, and the global pre-push chain should fail loudly when the repo's configured hooksPath does not exist. Filed in claude-global-config BUGS.md as the owning repo.
-
 ### [CRITICAL] Apply submissions with large photos lost + undeployed security rules left PII readable
 
 - **Date:** 2026-07-13 (partial failures since ~2026-07-05; record corrected 2026-07-13 after production verification)

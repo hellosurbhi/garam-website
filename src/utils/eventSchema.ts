@@ -1,15 +1,11 @@
 import { isDisplayable } from "@/data/events";
 import type { EventEntry } from "@/data/events";
 import { nyOffset } from "@/utils/timezone";
+import { addMinutesToTime } from "@/utils/eventDate";
+import { BASE } from "@/utils/breadcrumbs";
 
 const EVENT_DESCRIPTION =
   "America's #1 live desi comedy dating show where two real South Asian singles go on a blind date in front of 250 people. Hosted by comedians Surbhi and Wyatt. Singles mixer follows every show.";
-
-function subtractMinutes(time: string, mins: number): string {
-  const [h, m] = time.split(":").map(Number);
-  const total = h * 60 + m - mins;
-  return `${String(Math.floor(total / 60)).padStart(2, "0")}:${String(total % 60).padStart(2, "0")}`;
-}
 
 /**
  * Build an array of individual Event JSON-LD strings from a list of events.
@@ -45,7 +41,7 @@ export function buildEventSchemas(eventsList: EventEntry[]): string[] {
       if (venue.streetAddress) address.streetAddress = venue.streetAddress;
       if (venue.postalCode) address.postalCode = venue.postalCode;
 
-      const door = subtractMinutes(start, 30);
+      const door = addMinutesToTime(start, -30);
       const isPresale = e.onSaleAt
         ? Date.parse(e.onSaleAt) > Date.now()
         : false;
@@ -95,7 +91,13 @@ export function buildEventSchemas(eventsList: EventEntry[]): string[] {
         ],
         offers: {
           "@type": "Offer",
-          url: e.url,
+          // Points at our own landing page, not the vendor checkout: Google's
+          // structured-data spec only requires offers.url to "clearly and
+          // predominantly provide the opportunity to buy a ticket," which our
+          // page does. Landing here first (instead of deep-linking straight to
+          // Eventbrite/the venue) is also where InitiateCheckout tracking and
+          // ad-trust content live, see /api/go/[slug].
+          url: `${BASE}/events/${e.slug}`,
           price: e.price ?? "15",
           priceCurrency: "USD",
           availability,

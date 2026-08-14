@@ -13,13 +13,6 @@ New invites and new claims for a canceled show are blocked (the events.ts lookup
 
 ---
 
-## Eventbrite loader has no script.onerror fallback (2026-08-12)
-
-**Priority:** Medium
-**Status:** Queued (surfaced by the PR #159 plan audit, outside that PR's review findings)
-
-Both widget loaders (`EventbriteWidgetInit.astro`, `ApplySuccessPanel.tsx`) only call `initWidgets` from the injected script's `onload`. If `eb_widgets.js` never loads at all (network block, ad blocker), no recovery code runs: anchor triggers still navigate via their native href, but button triggers (home shows cards, apply success upsell) stay silently dead. Fix is a `script.onerror` handler that installs the same `installInitFailureFallback` from `src/lib/eventbriteRecovery.ts` on every button trigger.
-
 ## Apply/admin test and UI polish deferred from the CodeRabbit PR #135 body review (2026-08-12)
 
 - Admin photo grid: `useApplicantPhotos` silently drops photos whose download fails; return a `failed` count so the dashboard can distinguish "loading" from "failed". Low value (admin-only surface); do with the planned admin rewrite.
@@ -207,31 +200,6 @@ async function shareEvent(event: EventEntry) {
 - `src/pages/tickets.astro` — add share button to each live ticket card
 - `src/components/home/HomeShows.astro` — add share button to each show card
 
-### `checkout_started` / `ticket_purchased` — Eventbrite conversion tracking
-
-**Priority:** Medium
-**Status:** Blocked — requires Eventbrite API access
-
-Checkout and purchase happen on Eventbrite's domain. Three options:
-
-**Option A: Eventbrite Webhook (recommended)**
-
-Set up an [Eventbrite webhook](https://www.eventbrite.com/platform/api#/reference/webhooks) for `order.placed` events. Create a serverless function at `/api/eventbrite-webhook` that:
-
-1. Receives the webhook payload (event ID, order details, attendee info)
-2. Forwards to PostHog server-side via `posthog-node` SDK
-3. Correlates with PostHog distinct ID via the `aff=garamsite` param or email match
-
-Requires: Eventbrite API key + Organization ID.
-
-**Option B: UTM attribution (passive, already working)**
-
-Eventbrite URLs already include `aff=garamsite`. Eventbrite's own analytics dashboard shows conversions by affiliate tag: Eventbrite dashboard → Marketing → Tracking Links.
-
-**Option C: Eventbrite Tracking Pixel**
-
-Eventbrite supports a [conversion tracking pixel](https://www.eventbrite.com/support/articles/en_US/How_To/how-to-use-conversion-tracking) for checkout page tracking. Limited — only shows someone started checkout from your site, not full purchase details.
-
 ### Twitter/X pixel: move from GTM-only to direct code
 
 **Priority:** Medium
@@ -240,16 +208,32 @@ Eventbrite supports a [conversion tracking pixel](https://www.eventbrite.com/sup
 The Twitter/X pixel currently fires only through GTM (`GTM-KQCBBL2W`). Chrome's Enhanced Tracking Protection blocks `static.ads-twitter.com` client-side regardless of whether the script tag comes from GTM or direct code, but moving it to a dedicated `twitter-pixel.astro` component (same deferred `requestIdleCallback` pattern as `meta-pixel.astro`) gives:
 
 - Reliable PageView on every page load independent of GTM initialization timing
-- A `twq('event', 'Purchase', {...})` call in the Eventbrite `onOrderComplete` callback in `tickets.astro` (hook already exists)
+- A `twq('event', 'InitiateCheckout', {...})` call from the shared `wireTicketCtaTracking()` click handler (`src/lib/ticketCtaTracking.ts`), the one place every "Get Tickets" click across the site now fires from
 - Source of truth in version control rather than GTM UI
+
+Note: the old `onOrderComplete` callback in `tickets.astro` this entry originally referenced no longer exists (the Eventbrite checkout-modal widget was retired; see the `feat(events)` PR). Purchase-level tracking now needs its own server-side path analogous to `src/lib/capi.ts`, since Twitter/X's Conversions API is a separate integration from Meta's.
 
 **Files to touch:**
 
 - `src/components/twitter-pixel.astro` — new component, same shape as `meta-pixel.astro`
 - `src/layouts/BaseLayout.astro` — import and render alongside PostHog/GTM/Meta
-- `src/pages/tickets.astro` — add `twq('event', 'Purchase', { value, currency, event_id })` in `onOrderComplete`
+- `src/lib/ticketCtaTracking.ts`: add `twq('event', 'InitiateCheckout', { event_id })` alongside the existing `capture("checkout_opened", ...)` call
 
 Requires: Twitter Ads pixel ID (found in Twitter Ads dashboard under Tools > Conversion Tracking).
+
+### Eventbrite order webhook for near-real-time Purchase tracking (2026-07-16)
+
+**Priority:** Low
+**Status:** Working via daily cron, webhook would tighten latency
+
+Purchase CAPI events (`src/pages/api/sync-orders.ts`) currently fire from the existing daily order-sync cron (`vercel.json`'s `/api/sync-orders` cron, 13:00 UTC), not a push webhook. This means a real purchase can take up to 24 hours to register as a Meta `Purchase` conversion, which under-reports same-day ad performance in Meta Ads Manager. An [Eventbrite webhook](https://www.eventbrite.com/platform/api#/reference/webhooks) for `order.placed` calling a new `/api/webhooks/eventbrite-order` endpoint (signature-verified, same CAPI Purchase logic as the cron path) would make this near-real-time. Deferred because the daily cron already delivers a correct, just delayed, signal, and this PR's scope was closing the "zero signal" gap, not optimizing latency on the signal that already exists.
+
+### Vercel Deploy Hook for Eventbrite-sourced event page content (2026-07-16)
+
+**Priority:** Low
+**Status:** Needs implementation
+
+`/events/[slug]` pages pull their description/summary from the Eventbrite API at build time (`src/lib/eventbriteContent.ts`, called from `getStaticPaths`). Astro's SSG means that content is only as fresh as the last deploy: if someone edits an event's listing on Eventbrite directly, the corresponding `/events/[slug]` page won't reflect it until the next `git push` to `main` triggers a rebuild. A Vercel Deploy Hook, triggered on a schedule (piggyback on an existing cron) or from an Eventbrite webhook, would keep this current without requiring a code change every time. Until this exists, anyone editing an Eventbrite listing's copy should know the site needs a redeploy (even a no-op commit) to pick it up.
 
 ### Twitter/X Conversions API (server-side pixel)
 

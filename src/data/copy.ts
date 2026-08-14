@@ -203,7 +203,6 @@ export const EVENTS = {
   ticketCta: "Grab My Spot",
   stickyCta: "Get Tickets",
   doorsLabel: "Doors",
-  priceFromLabel: "Tickets from",
   getTicketsCta: "Get tickets",
 } as const;
 
@@ -243,6 +242,50 @@ export const EXPERIENCE_STEPS = [
     text: "After the show, the venue transforms into a singles mixer. Same room, live DJ, and the energy from the show carries everyone forward. Included with your ticket.",
   },
 ];
+
+export interface AgendaSlot {
+  label: string;
+  /** Which event field this offset is measured against. */
+  anchor: "start" | "end";
+  /** Minutes from the anchor time; negative is earlier. */
+  offsetMinutes: number;
+}
+
+/**
+ * Run-of-show agenda for the per-event landing page. Offsets are computed
+ * against each event's actual startTime/endTime so the displayed clock times
+ * are always correct, even though the copy here is shared across every show.
+ */
+export const SHOW_AGENDA: AgendaSlot[] = [
+  { label: "Doors open", anchor: "start", offsetMinutes: -30 },
+  { label: "Show begins", anchor: "start", offsetMinutes: 0 },
+  { label: "Audience votes", anchor: "end", offsetMinutes: -15 },
+  { label: "Singles mixer begins", anchor: "end", offsetMinutes: 0 },
+  { label: "Mixer wraps", anchor: "end", offsetMinutes: 60 },
+];
+
+/**
+ * Section copy for the per-event landing page (src/pages/events/[slug].astro).
+ * No faqHeading here: the page mounts <HomeFAQ /> as-is (same accordion
+ * component the homepage uses) rather than rebuilding the FAQ interaction,
+ * so its own "Everything You Need to Know" heading applies instead.
+ */
+export const EVENT_PAGE = {
+  eyebrow: "Live Comedy Dating Show",
+  overviewHeading: "About This Show",
+  whatToExpectHeading: "What to Expect",
+  lineupHeading: "On Stage",
+  locationHeading: "Location",
+  getDirectionsCta: "Get Directions",
+  agendaHeading: "Run of Show",
+  socialProofHeading: "What People Are Saying",
+  bottomCtaHeading: "Ready to Grab Your Spot?",
+  /** Unique per-event meta description, built from the event's own description copy. */
+  metaDescription: (eventDescription: string): string =>
+    eventDescription.length <= 155
+      ? eventDescription
+      : `${eventDescription.slice(0, 152).trimEnd()}...`,
+} as const;
 
 export const JOURNAL_CTA_SOCIAL = {
   intro:

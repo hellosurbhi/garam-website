@@ -63,7 +63,7 @@ export const canadaCities: Record<string, CityData> = {
       },
       {
         q: "How much will Toronto tickets cost?",
-        a: "Our NYC tickets start around $15 US and touring shows are priced similarly for the market. Waitlist members get presale pricing before tickets go public.",
+        a: "Ticket prices vary by venue and market, and touring shows are priced for the local audience. Waitlist members get presale pricing before tickets go public.",
       },
     ],
     sections: [

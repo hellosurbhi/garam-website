@@ -6,7 +6,7 @@ export const usNortheastCities: Record<string, CityData> = {
     displayName: "Edison/New Brunswick",
     titleTag: "Live Desi Dating Show in Edison NJ",
     metaDescription:
-      "Garam Masala Dating comes to Edison NJ on July 11. Real South Asian singles on live dates on stage. Tickets are $15. The show that sold out NYC is now in Jersey.",
+      "Garam Masala Dating comes to Edison NJ on July 11. Real South Asian singles on live dates on stage, mixer included. The show that sold out NYC is now in Jersey.",
     h1: "Single and Desi in Jersey? This Is Your Night.",
     status: "active",
     badgeLabel: "Tickets Live",
@@ -14,7 +14,7 @@ export const usNortheastCities: Record<string, CityData> = {
       "Your aunties have been asking. Your cousins keep sending biodata over WhatsApp. You have been on Dil Mil long enough to recognize faces from the last shaadi you attended. You are not alone. You are just in the wrong room.",
       "Garam Masala Dating is a live comedy dating show. Real South Asian singles go on actual dates in front of a full room. It is funny, warm and chaotic in the best way and nothing like the apps. The NYC show has been selling out for months.",
       "On July 11 we are bringing the show to Komic Karma Entertainment in North Brunswick. This is a room built for Jersey desi singles. You can come to watch, to meet people in the crowd or to apply to be a contestant and get on stage.",
-      "Tickets are $15. The NYC show sells out weeks in advance. Grab yours from the box above so you are not scrambling the day before, and if you want to be on stage, apply to be a contestant before the spots fill up.",
+      "Tickets are on sale now. The NYC show sells out weeks in advance. Grab yours from the box above so you are not scrambling the day before, and if you want to be on stage, apply to be a contestant before the spots fill up.",
     ],
     ctas: [
       { label: "Join the Edison Waitlist", href: "#waitlist" },
@@ -53,7 +53,7 @@ export const usNortheastCities: Record<string, CityData> = {
       },
       {
         q: "What is the format and how much does it cost?",
-        a: "Tickets are $15. Real South Asian singles go on live dates on stage while the audience watches. There are laughs, moments and a mixer afterward. Think of it as a comedy show where the dates are real.",
+        a: "Tickets are budget friendly and shown at checkout on the ticket page above, since pricing shifts with presale tiers. Real South Asian singles go on live dates on stage while the audience watches. There are laughs, moments and a mixer afterward. Think of it as a comedy show where the dates are real.",
       },
       {
         q: "Is there Indian speed dating in Edison or Central Jersey?",
@@ -80,7 +80,7 @@ export const usNortheastCities: Record<string, CityData> = {
         heading: "What the Central Jersey show night looks like",
         paragraphs: [
           "The room at Komic Karma in North Brunswick fills with exactly who you would expect: Rutgers grads, pharma and finance commuters, first gen kids whose parents live ten minutes away and do not know they are here. Two local singles go on a real blind date on stage, the crowd reacts in three languages and the mixer after is the rare Central Jersey space where being single is the whole point instead of the problem.",
-          "Tickets are $15 and the NYC shows sell out weeks ahead, so do not gamble on the door. Grab a seat, or apply to be a contestant and give Oak Tree Road something new to discuss over chaat.",
+          "Tickets go fast and the NYC shows sell out weeks ahead, so do not gamble on the door. Grab a seat, or apply to be a contestant and give Oak Tree Road something new to discuss over chaat.",
         ],
       },
     ],

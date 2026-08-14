@@ -1,5 +1,13 @@
 # Lessons
 
+## A fix that was never pushed is a fix that never happened
+
+**What went wrong:** The Eventbrite embedded-checkout removal (tracked redirect, per-show landing pages, Meta CAPI) was fully built and Codex-reviewed by 2026-08-03 on `feat/event-pages-tracked-checkout`, but the branch was never pushed: no remote ref, no PR, nothing visible on GitHub. For four weeks the live site kept the embedded popup with its 2.5 second silent-failure fallback, and the owner experienced 5 to 10 second ticket clicks she believed had been fixed. The gap only surfaced when she reported the symptom on 2026-08-14.
+
+**Why:** The session that built it ended after the last local commit without completing the push, and nothing audits local-only branches. Every safety net in the pipeline (pre-push review, auto-PR, ready-check notifications, nightly review of the main delta) triggers on push or later, so work that never reaches `git push` is invisible to all of it. The owner cannot see local branches, so "built and reviewed" looked identical to "shipped".
+
+**Rule:** When a fix the owner believes shipped is still misbehaving, check for local-only branches first: `git branch -a` entries with no `origin/` counterpart and no PR are the prime suspect. And a task is not done at the last commit; it is done when the branch is pushed and a PR exists, which is why ending a session with unpushed work requires an explicit, stated blocker.
+
 ## "Remove this show" never means delete the data
 
 **What went wrong:** Asked to "remove the August 16th New York date", I deleted the whole entry from `events.ts`. The owner had to intervene: she wants every show ever scheduled kept forever, just hidden from the site. The same deletion pattern had already happened on 2026-07-07 (commit 1b80acf erased the canceled Jul 11 Edison and Jul 12 Philadelphia dates while converting the entries to TBA).

@@ -1,5 +1,9 @@
 # Changelog
 
+## fix(ci): one npm major everywhere, npm 11 pinned at every CI npm ci site (2026-08-14)
+
+Closes the Codex HIGH recurrence finding on the lockfile incident below: ci.yml's main job upgraded to npm 11 while the rules job and three other workflows ran node 22's bundled npm 10, so any npm 11 lockfile rewrite would fail half of CI again. All five npm ci sites (ci.yml both jobs, smoke-tests, synthetic-apply, link-check) now run npm install -g npm@11 first, and package-lock.json is regenerated with npm 11 to match the enforced toolchain. Both Codex findings from this branch's pushes are fixed in-session and their BUGS.md lines deleted.
+
 ## fix(deps): lockfile regenerated with npm 10 so CI's npm ci accepts it (2026-08-14)
 
 The combined dependency PR's first CI run failed npm ci on a missing proxy-agent subtree. @puppeteer/browsers 3.2.0 declares proxy-agent as an optional peer dependency; npm 10 (CI) resolves optional peers into the lockfile and requires their entries, npm 11 (local) omits them. Regenerated package-lock.json with npx npm@10 install; the result validates under both npm majors. Rule recorded in LESSONS.md: validate lockfile changes with npx npm@10 ci --dry-run before pushing.

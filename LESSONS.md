@@ -6,7 +6,7 @@
 
 **Why:** @puppeteer/browsers 3.2.0 declares proxy-agent as an optional peer dependency (peerDependencies plus peerDependenciesMeta optional: true). npm 10, which node 22 bundles on CI, resolves optional peers into the lockfile and its `npm ci` validator requires those entries; local npm 11 leaves them out of the lockfile it writes. Same package.json, two npm majors, two opinions about what a complete lockfile is.
 
-**Rule:** After any change that rewrites package-lock.json, validate it with CI's npm major before pushing: `npx -y npm@10 ci --dry-run` (fast, no install). If it fails, regenerate the lockfile with that same npm major (`npx -y npm@10 install`); the npm 10 output is accepted by npm 11 as well, the reverse is not guaranteed.
+**Rule:** Every environment that runs `npm ci` must use the same npm major that wrote the lockfile. All five CI `npm ci` sites now run `npm install -g npm@11` first, matching local. When the pinned npm major changes, change it in every workflow and regenerate package-lock.json in the same commit; after any lockfile rewrite, `npm ci --dry-run` with the pinned major is the cheap pre-push validation.
 
 **What went wrong:** Asked to "remove the August 16th New York date", I deleted the whole entry from `events.ts`. The owner had to intervene: she wants every show ever scheduled kept forever, just hidden from the site. The same deletion pattern had already happened on 2026-07-07 (commit 1b80acf erased the canceled Jul 11 Edison and Jul 12 Philadelphia dates while converting the entries to TBA).
 

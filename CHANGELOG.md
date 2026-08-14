@@ -1,5 +1,9 @@
 # Changelog
 
+## chore(deps): TypeScript 5.9.3 to 6.0.3 (2026-08-14)
+
+Applies Dependabot PR #134 as part of the combined dependency PR. Major version bump, verified compatible before landing: typescript-eslint 8.66 supports TypeScript up to 6.1 and @astrojs/check 0.9.10 supports ^6.0.0. Full verification on 6.0.3: eslint clean, astro check 0 errors across 301 files, vitest 1214/1214, production build succeeds.
+
 ## fix(deps): Dependabot alert 49 resolved, extract-zip removed from the tree (2026-08-14)
 
 Alert 49 (high, GHSA-jmr9-qjv8-65gv) flagged extract-zip <= 2.0.1 for unvalidated symlink path traversal. No patched release exists (2.0.1 is the latest ever published), so Dependabot could not open a PR. The package reached us through @lhci/cli, lighthouse 12.6.1, puppeteer-core 24.x and @puppeteer/browsers 2.13.2, all dev-only tooling for the perf:lighthouse scripts. Fix: npm override pinning @puppeteer/browsers to ^3.2.0, which dropped extract-zip entirely in favor of modern-tar. Verified extract-zip is gone from package-lock.json and puppeteer-core still resolves and loads the overridden 3.2.0. The override can be removed once lighthouse ships a puppeteer-core 25+ requirement (lighthouse 13.4+ already does; @lhci/cli still pins lighthouse 12.6.1).

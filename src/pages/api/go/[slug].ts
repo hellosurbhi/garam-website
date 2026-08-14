@@ -50,6 +50,21 @@ export const GET: APIRoute = async ({ params, request }) => {
     return new Response("Not found", { status: 404 });
   }
 
+  // WHY canceled shows redirect to /tickets instead of the stored url: a
+  // canceled show keeps its entry forever (never-delete events rule) and its
+  // url still points at the dead Eventbrite listing. Old shared/bookmarked
+  // /api/go links keep arriving after cancellation; sending those visitors
+  // to a listing that cannot sell anything strands them, and firing
+  // InitiateCheckout for an unbuyable show feeds Meta's ad optimization a
+  // false conversion signal. EventTicketCta.astro applies the same guard in
+  // the page UI.
+  if (event.status === "canceled") {
+    return new Response(null, {
+      status: 302,
+      headers: { Location: "/tickets" },
+    });
+  }
+
   const requestUrl = new URL(request.url);
 
   // Generated client-side by the "Get Tickets" click handler and passed

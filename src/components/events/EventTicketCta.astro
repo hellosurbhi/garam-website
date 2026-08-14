@@ -1,7 +1,7 @@
 ---
 /**
  * The one "get me to checkout" CTA for a /events/[slug] page. Renders exactly
- * one of five states depending on the event's actual data, never a dead
+ * one of six states depending on the event's actual data, never a dead
  * button. Every live/presale anchor below carries `data-go-ticket`; the
  * click/tracking behavior itself lives in the shared
  * src/lib/ticketCtaTracking.ts module (wireTicketCtaTracking()), which every
@@ -27,6 +27,13 @@ const eventTitle = `Garam Masala Dating - ${cityLabel} - ${event.date}`;
 // must not reclassify an old show as upcoming (see isEventDatePast's doc
 // comment for why event.date alone can't be trusted for that).
 const isPast = isEventDatePast(event);
+// WHY canceled outranks every other state, including isPast: a canceled
+// show keeps its permanent landing page (never-delete events rule) and its
+// url field still points at the dead Eventbrite listing, so any branch that
+// renders a checkout anchor would send visitors to a listing that cannot
+// sell them anything. /api/go/[slug].ts applies the same guard server-side
+// for old shared links that bypass this page.
+const isCanceled = event.status === "canceled";
 const isSoldOut = event.soldOut ?? false;
 const isLive = Boolean(event.url) && event.url !== "#";
 const isPresale =
@@ -48,7 +55,18 @@ const sharedTrackingAttrs = {
 ---
 
 {
-  isPast && (
+  isCanceled && (
+    <div class="event-cta event-cta--past">
+      <p class="event-cta__note">This show was canceled.</p>
+      <a href="/tickets" class="event-cta__button event-cta__button--outline">
+        See Upcoming Shows
+      </a>
+    </div>
+  )
+}
+
+{
+  !isCanceled && isPast && (
     <div class="event-cta event-cta--past">
       <p class="event-cta__note">This show has already happened.</p>
       <a href="/tickets" class="event-cta__button event-cta__button--outline">
@@ -59,7 +77,7 @@ const sharedTrackingAttrs = {
 }
 
 {
-  !isPast && isSoldOut && (
+  !isCanceled && !isPast && isSoldOut && (
     <button
       type="button"
       class="event-cta__button event-cta__button--notify"
@@ -76,7 +94,7 @@ const sharedTrackingAttrs = {
 }
 
 {
-  !isPast && !isSoldOut && isPresale && (
+  !isCanceled && !isPast && !isSoldOut && isPresale && (
     <>
       <button
         type="button"
@@ -112,7 +130,7 @@ const sharedTrackingAttrs = {
 }
 
 {
-  !isPast && !isSoldOut && !isPresale && !isLive && (
+  !isCanceled && !isPast && !isSoldOut && !isPresale && !isLive && (
     <button
       type="button"
       class="event-cta__button event-cta__button--notify"
@@ -129,7 +147,7 @@ const sharedTrackingAttrs = {
 }
 
 {
-  !isPast && !isSoldOut && !isPresale && isLive && (
+  !isCanceled && !isPast && !isSoldOut && !isPresale && isLive && (
     <a
       href={goHref}
       class="event-cta__button event-cta__button--primary"

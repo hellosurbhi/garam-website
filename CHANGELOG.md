@@ -1,5 +1,9 @@
 # Changelog
 
+## fix(deps): lockfile regenerated with npm 10 so CI's npm ci accepts it (2026-08-14)
+
+The combined dependency PR's first CI run failed npm ci on a missing proxy-agent subtree. @puppeteer/browsers 3.2.0 declares proxy-agent as an optional peer dependency; npm 10 (CI) resolves optional peers into the lockfile and requires their entries, npm 11 (local) omits them. Regenerated package-lock.json with npx npm@10 install; the result validates under both npm majors. Rule recorded in LESSONS.md: validate lockfile changes with npx npm@10 ci --dry-run before pushing.
+
 ## chore(ci): actions/setup-node v6 to v7 in all workflows (2026-08-14)
 
 Applies Dependabot PR #174 as part of the combined dependency PR. Six occurrences across ci.yml, smoke-tests.yml, synthetic-apply.yml, link-check.yml and article-refresh.yml. All workflows keep node-version 22; the PR's own CI run validates the new action version.

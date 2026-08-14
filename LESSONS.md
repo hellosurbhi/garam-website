@@ -4,7 +4,7 @@
 
 **What went wrong:** A dependency change (npm override forcing @puppeteer/browsers 3.2.0) produced a lockfile that installed and passed every local gate, then failed CI's `npm ci` with "package.json and package-lock.json are in sync" errors about a proxy-agent subtree nobody visibly depends on.
 
-**Why:** @puppeteer/browsers 3.2.0 declares proxy-agent as an optionalDependency. Local npm 11 omits unresolvable-or-skipped optional subtrees from the lockfile it writes; CI's node 22 bundles npm 10, whose `npm ci` validator requires those entries to be present. Same package.json, two npm majors, two opinions about what a complete lockfile is.
+**Why:** @puppeteer/browsers 3.2.0 declares proxy-agent as an optional peer dependency (peerDependencies plus peerDependenciesMeta optional: true). npm 10, which node 22 bundles on CI, resolves optional peers into the lockfile and its `npm ci` validator requires those entries; local npm 11 leaves them out of the lockfile it writes. Same package.json, two npm majors, two opinions about what a complete lockfile is.
 
 **Rule:** After any change that rewrites package-lock.json, validate it with CI's npm major before pushing: `npx -y npm@10 ci --dry-run` (fast, no install). If it fails, regenerate the lockfile with that same npm major (`npx -y npm@10 install`); the npm 10 output is accepted by npm 11 as well, the reverse is not guaranteed.
 

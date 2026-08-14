@@ -1,6 +1,12 @@
 # Lessons
 
-## "Remove this show" never means delete the data
+## A lockfile that installs locally can still fail CI's npm ci
+
+**What went wrong:** A dependency change (npm override forcing @puppeteer/browsers 3.2.0) produced a lockfile that installed and passed every local gate, then failed CI's `npm ci` with "package.json and package-lock.json are in sync" errors about a proxy-agent subtree nobody visibly depends on.
+
+**Why:** @puppeteer/browsers 3.2.0 declares proxy-agent as an optionalDependency. Local npm 11 omits unresolvable-or-skipped optional subtrees from the lockfile it writes; CI's node 22 bundles npm 10, whose `npm ci` validator requires those entries to be present. Same package.json, two npm majors, two opinions about what a complete lockfile is.
+
+**Rule:** After any change that rewrites package-lock.json, validate it with CI's npm major before pushing: `npx -y npm@10 ci --dry-run` (fast, no install). If it fails, regenerate the lockfile with that same npm major (`npx -y npm@10 install`); the npm 10 output is accepted by npm 11 as well, the reverse is not guaranteed.
 
 **What went wrong:** Asked to "remove the August 16th New York date", I deleted the whole entry from `events.ts`. The owner had to intervene: she wants every show ever scheduled kept forever, just hidden from the site. The same deletion pattern had already happened on 2026-07-07 (commit 1b80acf erased the canceled Jul 11 Edison and Jul 12 Philadelphia dates while converting the entries to TBA).
 

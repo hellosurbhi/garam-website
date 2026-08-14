@@ -1,5 +1,9 @@
 # Changelog
 
+## fix(tooling): npm 11 enforced repo-wide, not just in CI (2026-08-14)
+
+Closes the two Codex HIGH findings from this branch's later review rounds: npm 11 was pinned in CI only, so a fresh local clone (or Vercel) on node 22's bundled npm 10 could still rewrite the lockfile into the shape npm 11 rejects. Now package.json declares engines.npm >=11.0.0 and a checked-in .npmrc sets engine-strict=true, turning that constraint into a hard install-time error (verified: npm 10 install fails with EBADENGINE, npm 11 passes, and the npm-10-driven `npm install -g npm@11` bootstrap in CI is unaffected). Vercel's install is pinned via installCommand in vercel.json since its build image also bundles npm 10, and README's Quick Start now tells contributors to install npm 11 first. Both BUGS.md lines deleted per the same-session close-out rule.
+
 ## fix(ci): one npm major everywhere, npm 11 pinned at every CI npm ci site (2026-08-14)
 
 Closes the Codex HIGH recurrence finding on the lockfile incident below: ci.yml's main job upgraded to npm 11 while the rules job and three other workflows ran node 22's bundled npm 10, so any npm 11 lockfile rewrite would fail half of CI again. All five npm ci sites (ci.yml both jobs, smoke-tests, synthetic-apply, link-check) now run npm install -g npm@11 first, and package-lock.json is regenerated with npm 11 to match the enforced toolchain. Both Codex findings from this branch's pushes are fixed in-session and their BUGS.md lines deleted.

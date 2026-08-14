@@ -1624,3 +1624,8 @@ If the ambiguity matters there too, rename both with Surbhi's approval on the ex
 - Em dash in the `1f0a217` commit message body: won't fix. That commit is already on origin, so rewriting its message means amending a published commit and force-pushing. The rule stands for future commit messages.
 - 2026-08-13T19:10Z | tier=E | primary=ALL | reason=RC_143 | fallback_used=NONE | commit=38cb5df | diff_sha=6ade649dbb262cb1294f3a55a01d603b15ec09f93217ea52b1579b01af756d3b
 - 2026-08-13T19:11Z | tier=E | primary=ALL | reason=OUTAGE | fallback_used=NONE | commit=38cb5df | diff_sha=6ade649dbb262cb1294f3a55a01d603b15ec09f93217ea52b1579b01af756d3b
+
+### Codex (2026-08-14T19:29Z)
+
+- LOW: [COPY-VOICE] The commit message contains a prohibited em dash in “npm 10 — the exact split.”
+- Decision (2026-08-14): won't fix, same rationale as the `1f0a217` entry above. Commit `0961d06` is already on origin, so rewriting its message means amending a published commit and force-pushing. The rule stands for future commit messages.

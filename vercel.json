@@ -1,5 +1,6 @@
 {
   "buildCommand": "npm run build",
+  "installCommand": "npm install -g npm@11 && npm ci",
   "crons": [
     { "path": "/api/cron/followups", "schedule": "0 14 * * *" },
     { "path": "/api/cron/post-show", "schedule": "0 15 * * 1" }

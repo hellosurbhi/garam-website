@@ -14,7 +14,7 @@ import { isPublished } from "@/utils/date";
 import { SOCIAL_URLS } from "@/data/socials";
 import CityEventTicketEmbed from "@/components/cities/CityEventTicketEmbed.astro";
 import { buildTicketUrl } from "@/utils/eventUrl";
-import { domainFromUrl } from "@/lib/analyticsCapture";
+import { domainFromUrl, vendorFromUrl } from "@/lib/analyticsCapture";
 import { EVENTS, CITY_FOLLOW } from "@/data/copy";
 
 export function getStaticPaths() {
@@ -303,7 +303,7 @@ function renderCityText(text: string, href: string): string {
                 data-event-city={evLocation}
                 data-event-date={event.isoDate ?? event.date}
                 data-event-title={evTitle}
-                data-event-vendor={event.ticketSource}
+                data-event-vendor={vendorFromUrl(event.url)}
                 data-city-slug={city.slug}
                 {...(isSoldOut
                   ? {

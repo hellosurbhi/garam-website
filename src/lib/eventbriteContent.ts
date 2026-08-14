@@ -46,6 +46,12 @@ export async function fetchEventbriteContent(
         Authorization: `Bearer ${token}`,
         Accept: "application/json",
       },
+      // WHY a timeout on a build-time call: getStaticPaths awaits this fetch
+      // for every owned event during `astro build`, so a single hung
+      // Eventbrite request (no response, not an error) would stall the whole
+      // deployment forever. Errors already fail soft to manual content via
+      // the surrounding catch; the abort turns a hang into that same path.
+      signal: AbortSignal.timeout(10_000),
     });
 
     if (!res.ok) {

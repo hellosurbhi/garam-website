@@ -16,6 +16,7 @@ Shows expanding onto venues and third-party organizers' own Eventbrite accounts 
 - The Agenda section on `/events/[slug]` is now omitted for TBA/coming-soon shows (no confirmed `isoDate`) instead of showing a fabricated default 8 PM run of show; the Location section's background flips to off-white in that case so section-background alternation still never repeats two adjacent colors.
 - Logged an unrelated pre-existing bug found along the way: Event JSON-LD hardcodes the New York UTC offset for every city.
 - Logged a won't-fix/by-design decision in BUGS.md: the cookie consent banner does not gate Meta Pixel, GTM, or the new server CAPI calls, and never has, by deliberate choice (US-only audience, no EU-targeted traffic).
+- Third pre-push review pass (2026-08-14, on the merged-with-main ship branch) caught and fixed: the go redirect returned the rate limiter's 429 before resolving the destination (now the event resolves first, canceled and past shows 302 to /tickets, and a tripped limit only suppresses the CAPI call, never the redirect; new test/go-redirect.test.ts covers all branches); the build-time Eventbrite content fetch had no timeout, letting one hung request stall the whole deployment (10s AbortSignal.timeout, failing soft to manual copy); `data-event-vendor` mixed real vendors with ticketSource ownership categories across seven CTA sites (standardized on `vendorFromUrl`); formatter-escaped merge-conflict markers in this file; and a stale ENHANCEMENTS.md entry describing the deleted widget loaders. UNBOUNDED-SYNC-RUNTIME and the remaining coverage gap are queued in BUGS.md with the overnight fix lane as executor; EVENT-ID-REUSE recorded as won't-fix by design.
 - Second pre-push review pass (2026-08-03) caught six more issues, all fixed before shipping:
   - `astro.config.mjs`'s sitemap lastmod map iterated `events` only; `/events/[slug].astro` generates a page for every entry in `allEvents` (confirmed shows plus TBA cities), so every TBA slug was unmapped and hit the sitemap serializer's "no lastmod" warning on every build. Now iterates `allEvents`.
   - `sync-orders.ts` advanced its global `changed_since` cursor to `now` even when a per-event fetch or per-order Firestore upsert failed mid-run, permanently skipping whatever changed on Eventbrite's side during that window (it never resurfaces on its own). The cursor now only advances on a run with zero failures; a partial failure holds it at the previous value so the next run re-requests the same window (safe to replay: order upserts are keyed by the stable Eventbrite order ID, and Purchase CAPI is gated on the `purchaseCapiSent` flag).
@@ -23,7 +24,6 @@ Shows expanding onto venues and third-party organizers' own Eventbrite accounts 
   - `sync-orders.ts`'s Purchase-CAPI retry pass silently skipped orders whose source event had been pruned from `events.ts`, leaving `purchaseCapiSent` at `false` forever; since the retry query has no ordering and a 100-row limit, enough of these permanent orphans could crowd out genuinely retriable orders. Added a `purchaseCapiUnrecoverable` flag (new `markPurchaseCapiUnrecoverable`, added to the query's filters) so an orphaned order drops out of the retry set for good instead of occupying a slot on every future run.
   - `/events/[slug]` emitted two `<link rel="canonical">` tags: one from `BaseLayout.astro`'s existing default (`Astro.url.pathname` resolved against `Astro.site`) and a second, redundant one built locally from `BASE` + the event slug. Removed the local one; Google ignores all canonical tags on a page once there's more than one.
   - `/events/[slug]`'s `<meta name="description">` was built from the raw `event.description` instead of the `description` prop `getStaticPaths` already resolves through `resolveEventDescription` (real Eventbrite listing copy when the API pull succeeds). The visible page body used the resolved copy; the meta tag search engines read did not. Now both use the same resolved `description`.
-    \=======
 
 ## feat(events): shows are never deleted, canceled status + permanent history log (2026-08-14)
 
@@ -87,8 +87,6 @@ Seven PostHog-filed issues (#136, #151, #152, #153, #154, #155, #156) traced bac
 - Wired up `cfg.fallbackUrl` in `EventbriteWidgetInit.astro`, which `readCfg()` already computed but nothing consumed
 
 **Files:** `src/components/EventbriteWidgetInit.astro`, `src/components/apply/ApplySuccessPanel.tsx`, `src/lib/eventbriteRecovery.ts`, `src/lib/navigation.ts`
-
-> > > > > > > origin/main
 
 ## fix(ci): required check runs on every PR, docs included (2026-07-14)
 

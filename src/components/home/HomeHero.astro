@@ -3,6 +3,7 @@ import { SITE } from "@/data/copy";
 import type { EventEntry } from "@/data/events";
 import { buildTicketUrl } from "@/utils/eventUrl";
 import { formatEventLocation } from "@/utils/eventCity";
+import { vendorFromUrl } from "@/lib/analyticsCapture";
 
 interface Props {
   ticketsUrl: string;
@@ -92,7 +93,7 @@ function getHeroCity(city: string): string {
                 data-city={cityLabel}
                 data-go-ticket={isSoldOut ? undefined : true}
                 data-event-slug={event.slug}
-                data-event-vendor={event.ticketSource}
+                data-event-vendor={vendorFromUrl(event.url)}
                 data-cta-position="hero_pill"
                 data-event-city={cityLabel}
                 data-event-date={event.isoDate ?? event.date}

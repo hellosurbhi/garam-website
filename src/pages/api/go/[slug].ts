@@ -2,6 +2,7 @@ export const prerender = false;
 
 import type { APIRoute } from "astro";
 import { getEventBySlug } from "@/data/events";
+import { isEventDatePast } from "@/utils/eventDate";
 import { enforceRateLimit, RATE_LIMITS, getClientIp } from "@/lib/rateLimit";
 import { applyUtmsToUrl } from "@/utils/utmForwarding";
 import { withTimeout } from "@/utils/withTimeout";
@@ -40,9 +41,6 @@ function readCookie(
  * real checkout destination yet (TBA/coming-soon shows use url: ""), 404.
  */
 export const GET: APIRoute = async ({ params, request }) => {
-  const limited = await enforceRateLimit(request, RATE_LIMITS.goRedirect);
-  if (limited) return limited;
-
   const slug = params.slug;
   const event = slug ? getEventBySlug(slug) : undefined;
 
@@ -50,20 +48,31 @@ export const GET: APIRoute = async ({ params, request }) => {
     return new Response("Not found", { status: 404 });
   }
 
-  // WHY canceled shows redirect to /tickets instead of the stored url: a
-  // canceled show keeps its entry forever (never-delete events rule) and its
-  // url still points at the dead Eventbrite listing. Old shared/bookmarked
-  // /api/go links keep arriving after cancellation; sending those visitors
-  // to a listing that cannot sell anything strands them, and firing
-  // InitiateCheckout for an unbuyable show feeds Meta's ad optimization a
-  // false conversion signal. EventTicketCta.astro applies the same guard in
-  // the page UI.
-  if (event.status === "canceled") {
+  // WHY canceled and past shows redirect to /tickets instead of the stored
+  // url: entries are never deleted (never-delete events rule), landing pages
+  // are permanent, and old shared/bookmarked /api/go links keep arriving
+  // after a show is canceled or over. The stored url then points at a
+  // listing that cannot sell anything, and the past check in
+  // EventTicketCta.astro is frozen at build time, so without this runtime
+  // guard a stale static page would keep handing out live checkout links
+  // between deploys. Skipping the redirect to the dead listing also means
+  // no InitiateCheckout fires for an unbuyable show, which would otherwise
+  // feed Meta's ad optimization a false conversion signal.
+  if (event.status === "canceled" || isEventDatePast(event)) {
     return new Response(null, {
       status: 302,
       headers: { Location: "/tickets" },
     });
   }
+
+  // WHY the rate limit only suppresses tracking instead of returning its
+  // 429: every real "Get Tickets" click routes through here, so a
+  // shared-IP burst (one venue/campus/office NAT, or a viral moment) that
+  // trips the limit must still deliver every buyer to checkout. The
+  // expensive, abusable part of this route is the Meta CAPI call, so that
+  // is what the limit gates; the redirect itself is a cheap, server-resolved
+  // 302 that never uses client-supplied URLs.
+  const limited = await enforceRateLimit(request, RATE_LIMITS.goRedirect);
 
   const requestUrl = new URL(request.url);
 
@@ -105,7 +114,7 @@ export const GET: APIRoute = async ({ params, request }) => {
   // build an accurate link-preview card.
   const userAgent = request.headers.get("user-agent");
   const accessToken = import.meta.env.META_CAPI_ACCESS_TOKEN;
-  if (accessToken && !isBotUserAgent(userAgent)) {
+  if (accessToken && !limited && !isBotUserAgent(userAgent)) {
     const cookieHeader = request.headers.get("cookie");
     try {
       const result = await withTimeout(

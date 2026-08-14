@@ -12,6 +12,7 @@
 import type { EventEntry } from "@/data/events";
 import { formatEventLocation } from "@/utils/eventCity";
 import { formatOnSaleDate, isEventDatePast } from "@/utils/eventDate";
+import { vendorFromUrl } from "@/lib/analyticsCapture";
 
 interface Props {
   event: EventEntry;
@@ -117,7 +118,7 @@ const sharedTrackingAttrs = {
         data-presale-live
         hidden
         data-event-slug={event.slug}
-        data-event-vendor={event.ticketSource}
+        data-event-vendor={vendorFromUrl(event.url)}
         data-ph-capture="cta_clicked"
         data-ph-cta="get_tickets"
         data-cta-text="Get Tickets"
@@ -153,7 +154,7 @@ const sharedTrackingAttrs = {
       class="event-cta__button event-cta__button--primary"
       data-go-ticket
       data-event-slug={event.slug}
-      data-event-vendor={event.ticketSource}
+      data-event-vendor={vendorFromUrl(event.url)}
       data-ph-capture="cta_clicked"
       data-ph-cta="get_tickets"
       data-cta-text="Get Tickets"

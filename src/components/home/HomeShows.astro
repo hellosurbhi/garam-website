@@ -5,6 +5,7 @@ import { buildTicketUrl } from "@/utils/eventUrl";
 import { parseMonth, parseDay, formatOnSaleDate } from "@/utils/eventDate";
 import { buildTaglineMap } from "@/utils/eventTaglines";
 import { formatEventLocation } from "@/utils/eventCity";
+import { vendorFromUrl } from "@/lib/analyticsCapture";
 
 interface Props {
   events: EventEntry[];
@@ -95,7 +96,7 @@ const taglineMap = buildTaglineMap(events);
               data-presale-live
               hidden
               data-event-slug={event.slug}
-              data-event-vendor={event.ticketSource}
+              data-event-vendor={vendorFromUrl(event.url)}
               data-cta-position="shows"
               data-event-city={cityLabel}
               data-event-date={event.isoDate ?? event.date}
@@ -120,7 +121,7 @@ const taglineMap = buildTaglineMap(events);
             data-reveal
             data-go-ticket={isSoldOut ? undefined : true}
             data-event-slug={event.slug}
-            data-event-vendor={event.ticketSource}
+            data-event-vendor={vendorFromUrl(event.url)}
             data-cta-position="shows"
             data-event-city={cityLabel}
             data-event-date={event.isoDate ?? event.date}

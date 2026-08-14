@@ -3,6 +3,7 @@ import { events, isDisplayable } from "@/data/events";
 import { SOCIAL_URLS } from "@/data/socials";
 import { formatEventLocation } from "@/utils/eventCity";
 import { wireTicketCtaTracking } from "@/lib/ticketCtaTracking";
+import { vendorFromUrl } from "@/lib/analyticsCapture";
 import styles from "@/components/ApplyPage.module.css";
 
 export function ApplySuccessPanel() {
@@ -102,7 +103,7 @@ export function ApplySuccessPanel() {
                     className={styles.successTicketButton}
                     data-go-ticket
                     data-event-slug={show.slug}
-                    data-event-vendor={show.ticketSource}
+                    data-event-vendor={vendorFromUrl(show.url)}
                     data-cta-position="apply_success"
                     data-cta-text={`Get Tickets: ${show.date} in ${cityLabel}`}
                     data-event-city={cityLabel}

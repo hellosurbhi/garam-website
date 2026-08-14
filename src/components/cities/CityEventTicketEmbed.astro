@@ -100,7 +100,7 @@ const arrowPath2 = "m12 5 7 7-7 7";
         class="city-cta city-cta--primary vendor-card__cta"
         data-go-ticket
         data-event-slug={event.slug}
-        data-event-vendor={event.ticketSource}
+        data-event-vendor={vendorFromUrl(event.url)}
         {...sharedAttrs}
       >
         <span>{EVENTS.getTicketsCta}</span>

@@ -3,7 +3,7 @@ import type { EventEntry } from "@/data/events";
 import { buildTicketUrl } from "@/utils/eventUrl";
 import { formatEventLocation } from "@/utils/eventCity";
 import { formatOnSaleDate } from "@/utils/eventDate";
-import { domainFromUrl } from "@/lib/analyticsCapture";
+import { domainFromUrl, vendorFromUrl } from "@/lib/analyticsCapture";
 
 interface Props {
   event: EventEntry;
@@ -55,7 +55,7 @@ const trackingAttrs = {
   "data-event-date": event.isoDate ?? event.date,
   "data-event-title": eventTitle,
   "data-event-slug": event.slug,
-  "data-event-vendor": event.ticketSource,
+  "data-event-vendor": vendorFromUrl(event.url),
 };
 // Only the sold-out anchor still links directly to the external ticketUrl
 // (see above), so it's the only one that needs the generic outbound-link

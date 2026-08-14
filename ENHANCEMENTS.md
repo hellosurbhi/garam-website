@@ -1515,6 +1515,8 @@ If the ambiguity matters there too, rename both with Surbhi's approval on the ex
 
 ## Low priority enhancements
 
+## Low priority enhancements
+
 ### DeepSeek — 20260713-181721
 
 - WONT-FIX (decision, do not re-file): reviewer flagged "non-obvious" in LESSONS.md as a banned double dash. It is a single hyphen forming a compound word, which the copy rules explicitly allow. No change. At `LESSONS.md:232`.
@@ -1526,6 +1528,15 @@ If the ambiguity matters there too, rename both with Surbhi's approval on the ex
 ### CodeRabbit — 20260713-103031
 
 - LOW: Inconsistent heading levels are used for items in the "Indian Dating App Landscape in 2026" ranked list. Items 7, 6, and 5 use `h3`, while items 4 through 1 use `h2`. For semantic HTML and accessibility, all items in a single ranked list should use the same heading level.
+
+### CodeRabbit — 20260715-160549
+
+- LOW: [CodeRabbit] ENHANCEMENTS.md: Verify each finding against current code. Fix only still-valid issues, skip the rest with a brief reason, keep changes minimal, and validate. In @ENHANCEMENTS.md at line 1493, Update the metadata timestamp entry in ENHANCEMENTS.md to use the repository-approved dash-free separator format instead of the hyphenated date in the 2026-07-15T20:02Z value. Preserve the remaining metadata fields unchange...
+
+### DeepSeek — 20260715-160953
+
+- LOW: The heading '### CodeRabbit — 20260715-160549' uses an em dash, which violates the project's copy voice mandate.
+  > a/ENHANCEMENTS.md:1496 | +### CodeRabbit — 20260715-160549
 
 ### Codex LOW findings 2026-07-16 (won't fix, kept so they are not re-filed)
 

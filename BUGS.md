@@ -786,3 +786,8 @@ This review ran on the merge of main into `fix/eventbrite-widget-silent-failure`
 
 - [ ] MEDIUM: Consolidate duplicate findings. (BUGS.md:761-772)
 - [ ] MEDIUM: Consolidate the repeated findings. (BUGS.md:774-783)
+
+### Codex (2026-08-13T19:14Z): both findings describe the pre-merge transition window, resolved when claude-global-config PR #18 merges (kept so they are not re-filed)
+
+- HIGH: [ORPHANED-QUEUE] True only until PR #18 merges: the LIVE retry tooling (the reviewer's vantage) still reads legacy ENHANCEMENTS.md, while PR #18's code reads reviews/retry-queue.md first with a legacy transition leg and a nightly migrator sweep, and excludes .worktrees so stale tracked copies in old session worktrees stop being counted. The 57 moved rows wait out the window exactly as pre-migration entries waited before.
+- HIGH: [HOOK-GUARD-NOT-IMPLEMENTED] The guard exists on PR #18 (bash-guardrails denies commit/push into any repo with a local core.hooksPath, self-test fixtures included); it is not yet in the LIVE hook the reviewer read. Until merge, the unset already applied to this repo is the protection.

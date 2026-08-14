@@ -1,5 +1,9 @@
 # Changelog
 
+## feat(events): shows are never deleted, canceled status + permanent history log (2026-08-14)
+
+Owner rule: "remove a show" means hide it, never erase it. `EventEntry` gains `status: "canceled"`, `previousDate` and `note`; the shared `isDisplayable()` predicate keeps canceled shows off every surface (tickets, home hero and shows, city CTAs, footer, apply success list, llms.txt routes, admin pickers, invite/claim/portal/waiver APIs). The Aug 16 Manhattan show deleted earlier the same day is restored as canceled; six rescheduled shows carry their original dates (`previousStartDate` + `EventRescheduled` in JSON-LD); canceled shows emit no JSON-LD because their cards are not rendered. New `EVENTS-HISTORY.md` seeds the full change log mined from all 44 commits that ever touched events.ts, including six shows deleted before tickets existed. Notify-me roster set to the standing three: LA, SF, New York; Chicago and Houston removed, Edison TBA hidden. TBA suppression extracted as pure `computeAllEvents()` and canceled shows no longer suppress notify cards. Plan audited by Codex (3 rounds, final verdict WARNING, all findings incorporated).
+
 ## fix(deps): npm audit high advisories resolved in transitive dependencies (2026-08-12)
 
 CI's security audit gate failed PR #159 on js-yaml (GHSA-5p4m-2wfm-xmqj, high) and nanoid (GHSA-2v37-7h3g-55p8, high), both published after main's last CI run and unrelated to the PR's content. `npm audit fix` applied semver-compatible lockfile bumps only, no package.json changes. Three moderate advisories remain in firebase-tools, a dev dependency below the gate's `--audit-level=high --omit=dev` threshold. (PR #135 applied the same two bumps independently the same day; see its entry below.)

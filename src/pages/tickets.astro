@@ -2,11 +2,11 @@
 import BaseLayout from "@/layouts/BaseLayout.astro";
 import NotifyModal from "@/components/NotifyModal.astro";
 import { buildBreadcrumbJsonLd } from "@/utils/breadcrumbs";
-import { events, allEvents } from "@/data/events";
+import { events, allEvents, isDisplayable } from "@/data/events";
 import { buildEventSchemas } from "@/utils/eventSchema";
 import LeadCaptureModal from "@/components/LeadCaptureModal.astro";
 import { buildTaglineMap } from "@/utils/eventTaglines";
-import { getUpcomingDated } from "@/utils/eventFilters";
+import { getUpcomingDated, getSchemaDated } from "@/utils/eventFilters";
 import { PAGES } from "@/data/copy";
 import TicketCard from "@/components/tickets/TicketCard.astro";
 import EventbriteWidgetInit from "@/components/EventbriteWidgetInit.astro";
@@ -18,7 +18,7 @@ const DESC =
 
 const today = new Date().toISOString().slice(0, 10);
 const datedUpcoming = getUpcomingDated(allEvents, today);
-const tbaEvents = allEvents.filter((e) => !e.hidden && !e.isoDate);
+const tbaEvents = allEvents.filter((e) => isDisplayable(e) && !e.isoDate);
 const upcomingEvents = [...datedUpcoming, ...tbaEvents];
 
 const taglineMap = buildTaglineMap(upcomingEvents);
@@ -29,9 +29,7 @@ const breadcrumbJsonLd = buildBreadcrumbJsonLd([
 ]);
 
 // Individual Event JSON-LD blocks (one per upcoming dated show)
-const eventSchemas = buildEventSchemas(
-  events.filter((e) => !e.hidden && e.isoDate && e.isoDate >= today),
-);
+const eventSchemas = buildEventSchemas(getSchemaDated(events, today));
 
 // EventSeries JSON-LD — signals this is a recurring show, not a one-off
 const eventSeriesJsonLd = JSON.stringify({

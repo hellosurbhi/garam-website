@@ -57,7 +57,11 @@ export const POST: APIRoute = async ({ request }) => {
     parsed.data;
 
   const event = events.find(
-    (e) => !e.hidden && e.isoDate && `${e.citySlug}-${e.isoDate}` === showId,
+    (e) =>
+      !e.hidden &&
+      e.status !== "canceled" &&
+      e.isoDate &&
+      `${e.citySlug}-${e.isoDate}` === showId,
   );
   if (!event) return json({ error: "Invalid showId or show not found" }, 400);
 

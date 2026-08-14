@@ -1,5 +1,5 @@
 import { useMemo, useEffect, useRef } from "react";
-import { events } from "@/data/events";
+import { events, isDisplayable } from "@/data/events";
 import { SOCIAL_URLS } from "@/data/socials";
 import { buildTicketUrl } from "@/utils/eventUrl";
 import { formatEventLocation } from "@/utils/eventCity";
@@ -23,7 +23,11 @@ export function ApplySuccessPanel() {
     const today = new Date().toLocaleDateString("en-CA");
     return events.filter(
       (e) =>
-        !e.hidden && !e.soldOut && e.isoDate && e.isoDate >= today && e.url,
+        isDisplayable(e) &&
+        !e.soldOut &&
+        e.isoDate &&
+        e.isoDate >= today &&
+        e.url,
     );
   }, []);
 

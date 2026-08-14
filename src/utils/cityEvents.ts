@@ -1,4 +1,4 @@
-import { events } from "@/data/events";
+import { events, isDisplayable } from "@/data/events";
 import type { EventEntry } from "@/data/events";
 
 function currentDay(): string {
@@ -6,18 +6,19 @@ function currentDay(): string {
 }
 
 /**
- * An event is "upcoming" for a city when it is not hidden, has an ISO date on
- * or after `today`, a real ticket URL and a city slug. This is the single
- * gate behind the city page CTA state machine: once an event's isoDate falls
- * before today, it drops out here and the page reverts to the no-event state
- * automatically on the next build. `today` is injectable for tests.
+ * An event is "upcoming" for a city when it is displayable (not hidden, not
+ * canceled), has an ISO date on or after `today`, a real ticket URL and a
+ * city slug. This is the single gate behind the city page CTA state machine:
+ * once an event's isoDate falls before today or the show is canceled, it
+ * drops out here and the page reverts to the no-event state automatically on
+ * the next build. `today` is injectable for tests.
  */
 export function isUpcomingEvent(
   e: EventEntry,
   today: string = currentDay(),
 ): boolean {
   return (
-    !e.hidden &&
+    isDisplayable(e) &&
     !!e.isoDate &&
     e.isoDate >= today &&
     e.url !== "#" &&

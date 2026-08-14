@@ -4,6 +4,15 @@ Items from the GMD website audit checklists (site audit, codebase cleanup, conve
 
 ---
 
+## Canceling a show does not invalidate already-issued contestant invites or active portal sessions (2026-08-14)
+
+**Priority:** Medium
+**Status:** Deferred pending an owner decision (surfaced by the Codex audit of the never-delete-events plan)
+
+New invites and new claims for a canceled show are blocked (the events.ts lookups in create-invite, contestant-show-claim, portal-state and send-waiver-nudge all exclude `status: "canceled"`). But `portal-state`'s invite branch and `contestant-claim.ts` trust stored Firestore invite data and never consult events.ts, so a contestant invited BEFORE a cancellation can still claim and keep portal access. That may be desired (the team contacts affected contestants personally) or not; blocking it automatically is a product decision. If wanted: re-validate the stored `showId` against events.ts status in both flows and return a clear "show canceled" state.
+
+---
+
 ## Eventbrite loader has no script.onerror fallback (2026-08-12)
 
 **Priority:** Medium
@@ -1591,14 +1600,14 @@ If the ambiguity matters there too, rename both with Surbhi's approval on the ex
 - 2026-07-15T19:26Z | resolved=unretryable-no-diff | tier=F | primary=coderabbit | reason=error | fallback_used=gemini | commit=8ecc6b2 | diff_sha=c9f20eceb0d2132fd116a62263d47c0c3d5f314a576755c1dfc0e7cb6dd8f18b
 - 2026-07-15T19:37Z | resolved=unretryable-no-diff | tier=E | primary=codex | reason=error_or_timeout | fallback_used=gemini | commit=8ecc6b2 | diff_sha=0dcddf1f107891ad33ffb99d2cd75f10b3ad2973464c41b886f960166a096a50
 - 2026-07-15T19:37Z | resolved=unretryable-no-diff | tier=F | primary=coderabbit | reason=error | fallback_used=gemini | commit=8ecc6b2 | diff_sha=0dcddf1f107891ad33ffb99d2cd75f10b3ad2973464c41b886f960166a096a50
-- 2026-07-15T20:02Z | tier=E | primary=codex | reason=error_or_timeout | fallback_used=gemini | commit=6d4ffce | diff_sha=b08d7547b063f0d65a61651faeee2b1aa1873cd6e19f1e53b053088d83326903
-- 2026-07-15T20:05Z | tier=E | primary=codex | reason=error_or_timeout | fallback_used=gemini | commit=6d4ffce | diff_sha=6f33d9df6bc37013fa4dff92a4c984aef976932b116a1d6b01b650717df28de7
+- 2026-07-15T20:02Z | resolved=unretryable-no-diff | tier=E | primary=codex | reason=error_or_timeout | fallback_used=gemini | commit=6d4ffce | diff_sha=b08d7547b063f0d65a61651faeee2b1aa1873cd6e19f1e53b053088d83326903
+- 2026-07-15T20:05Z | resolved=unretryable-no-diff | tier=E | primary=codex | reason=error_or_timeout | fallback_used=gemini | commit=6d4ffce | diff_sha=6f33d9df6bc37013fa4dff92a4c984aef976932b116a1d6b01b650717df28de7
 
 ### CodeRabbit — 20260715-160549
 
 - LOW: [CodeRabbit] ENHANCEMENTS.md: Verify each finding against current code. Fix only still-valid issues, skip the rest with a brief reason, keep changes minimal, and validate. In @ENHANCEMENTS.md at line 1493, Update the metadata timestamp entry in ENHANCEMENTS.md to use the repository-approved dash-free separator format instead of the hyphenated date in the 2026-07-15T20:02Z value. Preserve the remaining metadata fields unchange...
-- 2026-07-15T20:09Z | tier=E | primary=codex | reason=error_or_timeout | fallback_used=gemini | commit=93fe5a9 | diff_sha=a31236d356caa725b1069536731a9386a9b777862aa98b6f7c956a16f61aec04
-- 2026-07-15T20:09Z | tier=F | primary=coderabbit | reason=error | fallback_used=gemini | commit=93fe5a9 | diff_sha=a31236d356caa725b1069536731a9386a9b777862aa98b6f7c956a16f61aec04
+- 2026-07-15T20:09Z | resolved=unretryable-no-diff | tier=E | primary=codex | reason=error_or_timeout | fallback_used=gemini | commit=93fe5a9 | diff_sha=a31236d356caa725b1069536731a9386a9b777862aa98b6f7c956a16f61aec04
+- 2026-07-15T20:09Z | resolved=unretryable-no-diff | tier=F | primary=coderabbit | reason=error | fallback_used=gemini | commit=93fe5a9 | diff_sha=a31236d356caa725b1069536731a9386a9b777862aa98b6f7c956a16f61aec04
 
 ### DeepSeek — 20260715-160953
 
@@ -1613,3 +1622,5 @@ If the ambiguity matters there too, rename both with Surbhi's approval on the ex
 
 - Bold-label sections in the new LESSONS.md Eventbrite entry: won't fix. The global CLAUDE.md LESSONS.md mandate prescribes the `**What went wrong:**` `**Why:**` `**Rule:**` template and nearly every existing entry follows it. The specific template mandate overrides the general copy-voice ban on bold-label lists for this file.
 - Em dash in the `1f0a217` commit message body: won't fix. That commit is already on origin, so rewriting its message means amending a published commit and force-pushing. The rule stands for future commit messages.
+- 2026-08-13T19:10Z | tier=E | primary=ALL | reason=RC_143 | fallback_used=NONE | commit=38cb5df | diff_sha=6ade649dbb262cb1294f3a55a01d603b15ec09f93217ea52b1579b01af756d3b
+- 2026-08-13T19:11Z | tier=E | primary=ALL | reason=OUTAGE | fallback_used=NONE | commit=38cb5df | diff_sha=6ade649dbb262cb1294f3a55a01d603b15ec09f93217ea52b1579b01af756d3b

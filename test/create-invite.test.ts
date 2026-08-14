@@ -27,6 +27,17 @@ vi.mock("@/data/events", () => ({
       venue: { name: "Top Secret", streetAddress: "44 Ave A" },
       hidden: false,
     },
+    {
+      city: "New York",
+      citySlug: "nyc",
+      isoDate: "2099-11-30",
+      date: "Nov 30",
+      startTime: "20:00",
+      timezone: "America/New_York",
+      venue: { name: "Top Secret", streetAddress: "44 Ave A" },
+      hidden: false,
+      status: "canceled",
+    },
   ],
 }));
 
@@ -77,6 +88,14 @@ describe("create-invite POST /api/create-invite", () => {
       request: makeRequest({ ...validBody, showId: "nope-2099-01-01" }),
     } as Parameters<typeof POST>[0]);
     expect(res.status).toBe(400);
+  });
+
+  it("rejects a canceled show's showId with 400", async () => {
+    const res = await POST({
+      request: makeRequest({ ...validBody, showId: "nyc-2099-11-30" }),
+    } as Parameters<typeof POST>[0]);
+    expect(res.status).toBe(400);
+    expect(mocks.fsAdd).not.toHaveBeenCalled();
   });
 
   it("emails the native Cast Portal link (not the JotForm waiver)", async () => {

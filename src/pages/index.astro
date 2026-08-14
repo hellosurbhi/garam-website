@@ -18,8 +18,9 @@ import { CREATOR_URLS } from "@/data/socials";
 import { PAGES } from "@/data/copy";
 import { buildOrganizationJsonLd } from "@/utils/organizationSchema";
 import { YOUTUBE_VIDEO_ID, VIDEO_METADATA } from "@/lib/constants";
-import { events, allEvents } from "@/data/events";
+import { events, allEvents, isDisplayable } from "@/data/events";
 import { isUpcomingByIso } from "@/utils/eventDate";
+import { getSchemaDated } from "@/utils/eventFilters";
 import { buildEventSchemas } from "@/utils/eventSchema";
 
 const HIDDEN_FROM_HOME = ["Salt Lake City", "Denver"];
@@ -29,7 +30,7 @@ const upcomingEvents = allEvents.filter(
 );
 const firstTicketUrl = "/tickets";
 const heroEvents = events
-  .filter((e) => !e.hidden && e.isoDate && e.isoDate >= today && e.url)
+  .filter((e) => isDisplayable(e) && e.isoDate && e.isoDate >= today && e.url)
   .slice(0, 5);
 
 // Organization JSON-LD
@@ -44,9 +45,7 @@ const websiteJsonLd = JSON.stringify({
 });
 
 // Individual Event JSON-LD blocks (one per upcoming show with a real date+url)
-const eventSchemas = buildEventSchemas(
-  events.filter((e) => !e.hidden && e.isoDate && e.isoDate >= today),
-);
+const eventSchemas = buildEventSchemas(getSchemaDated(events, today));
 
 // VideoObject JSON-LD
 const videoJsonLd = JSON.stringify({

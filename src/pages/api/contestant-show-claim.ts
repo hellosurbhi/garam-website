@@ -57,6 +57,7 @@ export const POST: APIRoute = async ({ request }) => {
   const event = events.find(
     (e) =>
       !e.hidden &&
+      e.status !== "canceled" &&
       e.citySlug &&
       e.isoDate &&
       `${e.citySlug}-${e.isoDate}` === showId,

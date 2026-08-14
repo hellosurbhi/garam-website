@@ -1,3 +1,5 @@
+import { isDisplayable } from "@/data/events";
+
 const MONTHS: Record<string, number> = {
   Jan: 0,
   Feb: 1,
@@ -79,13 +81,15 @@ export function formatOnSaleDate(iso: string): string {
 /**
  * Returns true if an event should be shown as upcoming.
  * Uses isoDate for dated events (reliable ISO comparison) and passes TBA events
- * (no isoDate) through as upcoming. Hidden events always return false.
+ * (no isoDate) through as upcoming. Hidden and canceled events always return
+ * false (canceled shows stay in events.ts as permanent records; see
+ * EVENTS-HISTORY.md).
  */
 export function isUpcomingByIso(
-  event: { isoDate?: string; hidden?: boolean },
+  event: { isoDate?: string; hidden?: boolean; status?: "canceled" },
   today: string = new Date().toISOString().slice(0, 10),
 ): boolean {
-  if (event.hidden) return false;
+  if (!isDisplayable(event)) return false;
   if (!event.isoDate) return true;
   return event.isoDate >= today;
 }

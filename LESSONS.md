@@ -1,5 +1,13 @@
 # Lessons
 
+## "Remove this show" never means delete the data
+
+**What went wrong:** Asked to "remove the August 16th New York date", I deleted the whole entry from `events.ts`. The owner had to intervene: she wants every show ever scheduled kept forever, just hidden from the site. The same deletion pattern had already happened on 2026-07-07 (commit 1b80acf erased the canceled Jul 11 Edison and Jul 12 Philadelphia dates while converting the entries to TBA).
+
+**Why:** "Remove" was read as a code operation (delete the object) instead of a content operation (stop showing it). The events file is not code, it is the business's historical record of every show; git history is not a usable archive for a non-coding owner. The repo even had the right precedent already (commit f5124be hid Chicago "without removing from data") and it was not followed.
+
+**Rule:** Destructive-sounding requests against `src/data/` content ("remove", "take down", "cancel") mean hide, not erase: set the status/hidden flag, keep every field, log the change in EVENTS-HISTORY.md. Deleting a data entry requires the owner explicitly confirming the record itself should not exist. Venue constants follow the same rule.
+
 ## A third-party widget's init call succeeding does not mean the interaction will work
 
 **What went wrong:** Eventbrite's ticket-buy CTA silently died for a subset of mobile users. It surfaced as seven separate PostHog-filed GitHub issues (#136, #151, #152, #153, #154, #155, #156) over several days before anyone connected them to one cause. `EBWidgets.createWidget()` returned successfully on every affected page load, so none of the existing error handling ever fired.

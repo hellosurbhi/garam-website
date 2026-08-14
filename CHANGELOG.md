@@ -1,5 +1,9 @@
 # Changelog
 
+## chore(ci): actions/setup-node v6 to v7 in all workflows (2026-08-14)
+
+Applies Dependabot PR #174 as part of the combined dependency PR. Six occurrences across ci.yml, smoke-tests.yml, synthetic-apply.yml, link-check.yml and article-refresh.yml. All workflows keep node-version 22; the PR's own CI run validates the new action version.
+
 ## chore(deps): TypeScript 5.9.3 to 6.0.3 (2026-08-14)
 
 Applies Dependabot PR #134 as part of the combined dependency PR. Major version bump, verified compatible before landing: typescript-eslint 8.66 supports TypeScript up to 6.1 and @astrojs/check 0.9.10 supports ^6.0.0. Full verification on 6.0.3: eslint clean, astro check 0 errors across 301 files, vitest 1214/1214, production build succeeds.

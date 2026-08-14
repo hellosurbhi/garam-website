@@ -1627,5 +1627,5 @@ If the ambiguity matters there too, rename both with Surbhi's approval on the ex
 
 ### Codex (2026-08-14T19:29Z)
 
-- LOW: [COPY-VOICE] The commit message contains a prohibited em dash in “npm 10 — the exact split.”
+- LOW: [COPY-VOICE] The commit message for `0961d06` contains a prohibited em dash in the phrase "npm 10 [em dash] the exact split" (character replaced with a placeholder here so this file does not reproduce it).
 - Decision (2026-08-14): won't fix, same rationale as the `1f0a217` entry above. Commit `0961d06` is already on origin, so rewriting its message means amending a published commit and force-pushing. The rule stands for future commit messages.

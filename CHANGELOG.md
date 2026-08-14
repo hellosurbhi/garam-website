@@ -1,6 +1,6 @@
 # Changelog
 
-## feat(events): tracked per-event landing pages + CAPI conversion tracking (2026-07-16)
+## feat(events): tracked per-event landing pages + CAPI conversion tracking (built 2026-07-16, shipped 2026-08-14)
 
 Shows expanding onto venues and third-party organizers' own Eventbrite accounts produced zero conversion signal, since the only tracked checkout path was the inline Eventbrite embed/modal, which never loads for a listing we don't own. Resolves the `checkout_started` / `ticket_purchased` Eventbrite tracking item from ENHANCEMENTS.md (entry removed, "Option A" webhook approach implemented as a cron-based sync instead, see the new Eventbrite order webhook enhancement entry for the latency tradeoff):
 
@@ -23,6 +23,72 @@ Shows expanding onto venues and third-party organizers' own Eventbrite accounts 
   - `sync-orders.ts`'s Purchase-CAPI retry pass silently skipped orders whose source event had been pruned from `events.ts`, leaving `purchaseCapiSent` at `false` forever; since the retry query has no ordering and a 100-row limit, enough of these permanent orphans could crowd out genuinely retriable orders. Added a `purchaseCapiUnrecoverable` flag (new `markPurchaseCapiUnrecoverable`, added to the query's filters) so an orphaned order drops out of the retry set for good instead of occupying a slot on every future run.
   - `/events/[slug]` emitted two `<link rel="canonical">` tags: one from `BaseLayout.astro`'s existing default (`Astro.url.pathname` resolved against `Astro.site`) and a second, redundant one built locally from `BASE` + the event slug. Removed the local one; Google ignores all canonical tags on a page once there's more than one.
   - `/events/[slug]`'s `<meta name="description">` was built from the raw `event.description` instead of the `description` prop `getStaticPaths` already resolves through `resolveEventDescription` (real Eventbrite listing copy when the API pull succeeds). The visible page body used the resolved copy; the meta tag search engines read did not. Now both use the same resolved `description`.
+    \=======
+
+## feat(events): shows are never deleted, canceled status + permanent history log (2026-08-14)
+
+Owner rule: "remove a show" means hide it, never erase it. `EventEntry` gains `status: "canceled"`, `previousDate` and `note`; the shared `isDisplayable()` predicate keeps canceled shows off every surface (tickets, home hero and shows, city CTAs, footer, apply success list, llms.txt routes, admin pickers, invite/claim/portal/waiver APIs). The Aug 16 Manhattan show deleted earlier the same day is restored as canceled; six rescheduled shows carry their original dates (`previousStartDate` + `EventRescheduled` in JSON-LD); canceled shows emit no JSON-LD because their cards are not rendered. New `EVENTS-HISTORY.md` seeds the full change log mined from the complete `git log --follow` patch history of events.ts, including six shows deleted while their ticket links were still placeholders. (Correction 2026-08-14: the commit message for 310a9b0 says "16 new tests" and "all 44 commits"; the diff adds 18 test cases and the history count moves as new commits touch the file. The mining pass reviewed every commit in the file's history at the time it ran.) Notify-me roster set to the standing three: LA, SF, New York; Chicago and Houston removed, Edison TBA hidden. TBA suppression extracted as pure `computeAllEvents()` and canceled shows no longer suppress notify cards. Plan audited by Codex (3 rounds, final verdict WARNING, all findings incorporated).
+
+## fix(deps): npm audit high advisories resolved in transitive dependencies (2026-08-12)
+
+CI's security audit gate failed PR #159 on js-yaml (GHSA-5p4m-2wfm-xmqj, high) and nanoid (GHSA-2v37-7h3g-55p8, high), both published after main's last CI run and unrelated to the PR's content. `npm audit fix` applied semver-compatible lockfile bumps only, no package.json changes. Three moderate advisories remain in firebase-tools, a dev dependency below the gate's `--audit-level=high --omit=dev` threshold. (PR #135 applied the same two bumps independently the same day; see its entry below.)
+
+## fix(review): CodeRabbit PR #135 review round, quick wins applied (2026-08-12)
+
+First CodeRabbit pass after the PR left draft (17 threads). Fixed same day: branch guards in both `.husky` hooks; real stack presence in the PostHog `before_send` filter so stackless injected "Script error." noise is dropped from the issues UI; the legacy-photo migration revokes tokens through the documented Cloud Storage JSON API, asserts the token is gone and warns on a full 1000-doc page; timeouts on the waiver-form and ops-webhook fetches; the ops webhook no longer forwards applicant PII (ntfy topics are effectively public, the email path keeps full context); `/api/notify-application` derives the synthetic flag from the server-verified email instead of trusting the request body; `firestore.rules` validates every `photoPaths` member against the `photos/` contract; `storage.rules` requires `customMetadata.owner` to match the uploader's uid at create; the apply terms checkbox got a testid so the synthetic monitor and smoke tests stop matching any checkbox; both cron routes got a top-level failure boundary that pages before dying. Heavy-lift findings deferred to BUGS.md; the duplicate-type-member "Critical" was disproven (one `contact` member per literal, see PR thread). Round 2 (the review body's outside-diff and minor/nitpick comments, same day): photo uploads settle before failure cleanup so no late sibling orphans PII; client failure reports truncate to the alert schema's limits; alertOps bounds message length centrally (caller slices dropped); the waiver CSS module uses root tokens, a mobile-first name row and a 48px agreement target; rules-drift normalization ignores all blank lines; CI and synthetic workflows stop persisting checkout credentials and pass expressions via env; the synthetic verifier cleans up even when verification fails and reports revoke-only docs separately; SVG uploads are rejected in storage.rules (script execution risk via blob URLs); the alert-failure suite isolates the rate limiter; the Turnstile script and admin dashboard URLs moved to src/data/brand.ts.
+
+## fix(deps): npm audit advisories resolved in js-yaml and nanoid (2026-08-12)
+
+CI's security audit gate failed on js-yaml (CVE-2026-59870, high) and nanoid (GHSA-2v37-7h3g-55p8, high). `npm audit fix` applied semver-compatible lockfile bumps only, no package.json changes. Same pattern as the 2026-08-03 audit entry.
+
+## fix(waiver): native /waiver signing form replaces the CSP-blocked JotForm embed (2026-07-13, recorded 2026-08-12)
+
+The July 7 CSP hardening never allowlisted `form.jotform.com`, so `/waiver` showed its loading spinner forever and on-stage participants could not sign online (broken 2026-07-07 to 07-13, ships in PR #135). Fix: first-party `StandaloneWaiverForm` posting to the existing `/api/stage-waiver` endpoint, sharing scroll-through and typed-signature logic with the contestant portal via `useWaiverSignature`, with failure paging and smoke coverage. BUGS.md entry removed per doc routing; root-cause rule recorded in LESSONS.md (third-party embeds).
+
+## fix(hooks): finish the hooks-architecture review response (2026-08-12)
+
+Closes out the July 14 Codex retry-review on the session/63763 branch (PR #135):
+
+- `.husky/pre-push` now sets `set -e`, so a failing `npm run check` blocks the push instead of falling through to a zero exit.
+- husky removed from devDependencies and the `prepare` script no longer touches `core.hooksPath`: husky 9.1.7's installer resets the hooks path to the gitignored `.husky/_`, which is the exact mechanism that silently disabled every quality gate in July. Hooks are the checked-in `.husky` files, run by the global `~/.git-hooks` chain; `prepare` only marks them executable.
+- `.gitignore` review-state entry anchored to `/reviews/` so nested directories named `reviews` are not silently ignored.
+- Trailing-newline fix for the `.husky` hook files (reviewer MEDIUM, fixed in 84c8cef) recorded here; entry removed from BUGS.md per doc routing.
+
+## fix(review): CodeRabbit reviews markdown again (2026-08-03)
+
+Removed the `!**/*.md` path filter from `.coderabbit.yaml`. On the free CodeRabbit plan the bot is often a PR's only reviewer, and the global pre-push rework (claude-global-config PR #15) makes markdown-only pushes skip local suites once merged; the blanket exclusion meant README/docs changes could reach a PR with no review anywhere.
+
+## fix(deps): npm audit advisories resolved in transitive dependencies (2026-08-03)
+
+CI's security audit gate failed on brace-expansion (GHSA-mh99-v99m-4gvg, high), postcss (GHSA-r28c-9q8g-f849, high) and tar (GHSA-r292-9mhp-454m, moderate). `npm audit fix` applied semver-compatible lockfile bumps only, no package.json changes. Three moderate advisories remain in firebase-tools, a dev dependency below the gate's `--audit-level=high --omit=dev` threshold.
+
+## fix(events): Boston show moved from August 2 to August 13, start time to 7 PM (2026-08-03)
+
+Same venue (Elephant and Castle), same Eventbrite listing; show now runs 7 to 9 PM (was 6 to 8 PM). Updated everywhere the date appears: the show card data in `src/data/events.ts`, plus the Boston FAQ answer, the "when we announce a date" body paragraph and the apply FAQ in `src/data/cities/us-northeast.ts` (the city-page spots were caught over two rounds of pre-push Codex review after the first pass missed them). Resolves the queued STALE-EVENT-DATE, MISSING-CHANGELOG and stale-city-copy findings from the 2026-08-03 push reviews; their BUGS.md lines are removed in the same commits.
+
+## test(contestant-workflow): backend unit coverage for zohoMailer, cal.com webhook, and cron jobs (2026-07-16)
+
+Closes the backend half of the P1 to P5 contestant workflow test-coverage gap (see BUGS.md): a Stryker mutation report found these files at 0 to 8% mutation coverage since none had a single unit test.
+
+- `src/lib/zohoMailer.test.ts` (new): missing-credential throws, SMTP transport config, from-name and reply-to defaults and overrides, error propagation from the underlying transport.
+- `test/cal-webhook.test.ts` (new): HMAC signature verification (missing signature, wrong signature, unconfigured secret), invalid JSON body, unknown trigger events, missing attendee email, New to Contacted status transition, and the reschedule/cancel `calBookingId` mismatch guards.
+- `test/post-show.test.ts` (new): auth guard, status filter, the D3 to D10 day send window boundaries, already-sent/soft-deleted/missing-participatedAt/missing-email skips, and confirming a `sendMail` failure does not mark the applicant as sent.
+- `test/followups.test.ts` (extended): all four passes now covered, scheduling follow-up (with the `MAX_PER_RUN` cap), waiver nudge (including invite-link resolution via `fsQuery`), auto-decay, and the NYC-timezone-deduped host briefing.
+
+`src/components/ContestantPortal.tsx` and the admin `TaskInbox.tsx`/`ContestantFunnel.tsx` remain untested; see ENHANCEMENTS.md for why and what ships next.
+
+## fix(tickets): recover from silent Eventbrite modal failures on mobile (2026-07-16)
+
+Seven PostHog-filed issues (#136, #151, #152, #153, #154, #155, #156) traced back to one root cause: Eventbrite's own `eb_widgets.js` click handler throws asynchronously in specific mobile in-app browsers (Instagram/Facebook WKWebView bridge probing, Firefox iOS reader mode, a ChunkLoadError from EB's webpack runtime resolving against our origin). `createWidget()` succeeding only proves EB registered a handler, not that the modal opens, and because our trigger buttons call `preventDefault()`, a failure inside EB's handler left the Buy Tickets CTA completely dead with no fallback, on 70% mobile traffic.
+
+- Added silent-failure detection and recovery to the modal-trigger path in `EventbriteWidgetInit.astro` (tickets page cards, home hero pill, home shows cards; city pages use the inline embed path, which keeps its existing 8 second iframe check) and to `ApplySuccessPanel.tsx` (apply success upsell). The shared logic lives in `src/lib/eventbriteRecovery.ts` with unit tests
+- After a trigger click, a per-click MutationObserver watches 2.5 seconds for the `div.eds-structure_main` modal to be inserted. A modal that appears counts as success even if the user closes it again before the deadline (a plain presence check at the deadline would misread that as a failure). If it never appears the helper fires a `widget_load_failed` analytics event and recovers by navigating the current tab to the fallback URL: the anchor triggers' real href, the `data-eb-url` attribute on the home shows button, or a URL built with `buildTicketUrl()` on the apply success panel. Same-tab navigation because 2.5 seconds is past the browser's transient activation window, where `window.open` gets popup-blocked
+- When `createWidget()` itself throws, the helper records the failure and installs a direct click fallback on the trigger (buttons always navigate; anchors only when something suppressed their native navigation) instead of opening checkout with no user gesture
+- Wired up `cfg.fallbackUrl` in `EventbriteWidgetInit.astro`, which `readCfg()` already computed but nothing consumed
+
+**Files:** `src/components/EventbriteWidgetInit.astro`, `src/components/apply/ApplySuccessPanel.tsx`, `src/lib/eventbriteRecovery.ts`, `src/lib/navigation.ts`
+
+> > > > > > > origin/main
 
 ## fix(ci): required check runs on every PR, docs included (2026-07-14)
 

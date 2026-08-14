@@ -1,3 +1,4 @@
+import { isDisplayable } from "@/data/events";
 import type { EventEntry } from "@/data/events";
 import { nyOffset } from "@/utils/timezone";
 import { addMinutesToTime } from "@/utils/eventDate";
@@ -8,11 +9,15 @@ const EVENT_DESCRIPTION =
 
 /**
  * Build an array of individual Event JSON-LD strings from a list of events.
- * Only events with an isoDate and venue produce schema output.
+ * Only displayable events with an isoDate and venue produce schema output.
+ * Canceled shows emit nothing: their cards are not rendered and structured
+ * data must describe user-visible page content.
  */
 export function buildEventSchemas(eventsList: EventEntry[]): string[] {
   return eventsList
-    .filter((e) => !e.hidden && e.isoDate && e.venue && e.url && e.url !== "#")
+    .filter(
+      (e) => isDisplayable(e) && e.isoDate && e.venue && e.url && e.url !== "#",
+    )
     .map((e) => {
       const start = e.startTime ?? "20:00";
       const end = e.endTime ?? "22:00";
@@ -53,7 +58,10 @@ export function buildEventSchemas(eventsList: EventEntry[]): string[] {
         startDate: `${e.isoDate}T${start}:00${nyOffset(e.isoDate!, start)}`,
         endDate: `${e.isoDate}T${end}:00${nyOffset(e.isoDate!, end)}`,
         doorTime: `${e.isoDate}T${door}:00${nyOffset(e.isoDate!, door)}`,
-        eventStatus: "https://schema.org/EventScheduled",
+        eventStatus: e.previousDate
+          ? "https://schema.org/EventRescheduled"
+          : "https://schema.org/EventScheduled",
+        ...(e.previousDate ? { previousStartDate: e.previousDate } : {}),
         eventAttendanceMode: "https://schema.org/OfflineEventAttendanceMode",
         maximumAttendeeCapacity: 250,
         typicalAgeRange: "21-",

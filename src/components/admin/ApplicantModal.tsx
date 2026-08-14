@@ -19,7 +19,7 @@ import {
   STATUS_ORDER,
 } from "@/types/application";
 import { formatLocation } from "@/utils/locationDisplay";
-import { getApplicantPhotos } from "@/utils/applicantPhotos";
+import { useApplicantPhotos } from "@/components/admin/useApplicantPhotos";
 import { Modal } from "@/components/ui/Modal";
 import Spinner from "@/components/ui/Spinner";
 import { events } from "@/data/events";
@@ -120,11 +120,15 @@ export default function ApplicantModal({
   const isDeleted = !!app.deletedAt;
   const isNomination = app.applicationType === "Nomination";
 
-  const photos = useMemo(() => getApplicantPhotos(app), [app]);
+  const { photos } = useApplicantPhotos(app);
   const currentPhoto = photos[selectedPhotoIndex] ?? photos[0];
 
   const upcomingEvents = useMemo(
-    () => events.filter((e) => e.isoDate && e.isoDate >= TODAY_ISO),
+    // Admin deliberately sees hidden shows; only canceled ones are unpickable.
+    () =>
+      events.filter(
+        (e) => e.status !== "canceled" && e.isoDate && e.isoDate >= TODAY_ISO,
+      ),
     [],
   );
 

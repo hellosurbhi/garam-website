@@ -8,6 +8,7 @@ import {
   fsAdd,
   fsDeleteFields,
 } from "../../../lib/firestoreRest";
+import { alertOps } from "../../../lib/opsAlert";
 
 // ---------------------------------------------------------------------------
 // IMPORTANT: cal.com payload field paths
@@ -133,6 +134,29 @@ export const POST: APIRoute = async ({ request }) => {
     });
   }
 
+  try {
+    return await handleBookingEvent(triggerEvent, payload, attendeeEmail);
+  } catch (err) {
+    // A dropped booking event silently desyncs interview scheduling; page,
+    // and return 500 so cal.com retries the delivery.
+    await alertOps({
+      flow: "ops",
+      stage: "cal_webhook",
+      errorMessage: err instanceof Error ? err.message : String(err),
+      context: { triggerEvent, attendeeEmail },
+    });
+    return new Response(JSON.stringify({ error: "processing failed" }), {
+      status: 500,
+      headers: { "Content-Type": "application/json" },
+    });
+  }
+};
+
+async function handleBookingEvent(
+  triggerEvent: CalWebhookBody["triggerEvent"],
+  payload: CalWebhookBody["payload"],
+  attendeeEmail: string,
+): Promise<Response> {
   const app = await findApplication(attendeeEmail);
   if (!app) {
     console.log(`cal-webhook: no-match: ${attendeeEmail.toLowerCase()}`);
@@ -209,4 +233,4 @@ export const POST: APIRoute = async ({ request }) => {
     status: 200,
     headers: { "Content-Type": "application/json" },
   });
-};
+}

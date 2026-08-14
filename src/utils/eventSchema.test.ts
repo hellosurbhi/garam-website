@@ -61,6 +61,28 @@ describe("buildEventSchemas", () => {
     expect(schemas).toHaveLength(1);
   });
 
+  it("filters out canceled events (no card rendered, so no markup)", () => {
+    const events = [makeEvent({ status: "canceled" }), makeEvent()];
+    const schemas = buildEventSchemas(events);
+    expect(schemas).toHaveLength(1);
+    expect(schemas[0]).not.toContain("EventCancelled");
+  });
+
+  it("emits EventRescheduled and previousStartDate for a moved show", () => {
+    const schemas = buildEventSchemas([
+      makeEvent({ previousDate: "2026-05-03" }),
+    ]);
+    const parsed = JSON.parse(schemas[0]);
+    expect(parsed.eventStatus).toBe("https://schema.org/EventRescheduled");
+    expect(parsed.previousStartDate).toBe("2026-05-03");
+  });
+
+  it("emits EventScheduled and no previousStartDate by default", () => {
+    const parsed = JSON.parse(buildEventSchemas([makeEvent()])[0]);
+    expect(parsed.eventStatus).toBe("https://schema.org/EventScheduled");
+    expect(parsed.previousStartDate).toBeUndefined();
+  });
+
   it("filters out events without isoDate", () => {
     const events = [makeEvent({ isoDate: undefined })];
     expect(buildEventSchemas(events)).toEqual([]);

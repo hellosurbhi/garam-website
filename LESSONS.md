@@ -1,5 +1,21 @@
 # Lessons
 
+## "Remove this show" never means delete the data
+
+**What went wrong:** Asked to "remove the August 16th New York date", I deleted the whole entry from `events.ts`. The owner had to intervene: she wants every show ever scheduled kept forever, just hidden from the site. The same deletion pattern had already happened on 2026-07-07 (commit 1b80acf erased the canceled Jul 11 Edison and Jul 12 Philadelphia dates while converting the entries to TBA).
+
+**Why:** "Remove" was read as a code operation (delete the object) instead of a content operation (stop showing it). The events file is not code, it is the business's historical record of every show; git history is not a usable archive for a non-coding owner. The repo even had the right precedent already (commit f5124be hid Chicago "without removing from data") and it was not followed.
+
+**Rule:** Destructive-sounding requests against `src/data/` content ("remove", "take down", "cancel") mean hide, not erase: set the status/hidden flag, keep every field, log the change in EVENTS-HISTORY.md. Deleting a data entry requires the owner explicitly confirming the record itself should not exist. Venue constants follow the same rule.
+
+## A third-party widget's init call succeeding does not mean the interaction will work
+
+**What went wrong:** Eventbrite's ticket-buy CTA silently died for a subset of mobile users. It surfaced as seven separate PostHog-filed GitHub issues (#136, #151, #152, #153, #154, #155, #156) over several days before anyone connected them to one cause. `EBWidgets.createWidget()` returned successfully on every affected page load, so none of the existing error handling ever fired.
+
+**Why:** `createWidget()` only registers a click handler; it doesn't verify the checkout modal actually opens. In specific mobile in-app browsers (Instagram/Facebook WKWebView bridge probing, Firefox iOS reader mode) Eventbrite's own `eb_widgets.js` threw asynchronously inside that handler, after our trigger's click listener had already called `preventDefault()`. The raw exceptions reached PostHog error tracking through the global `error` listener in `public/js/posthog.js` and became the seven issues, but no structured `widget_load_failed` event ever fired: the existing modal observers only reacted when the modal appeared (to fire `checkout_opened` and track abandonment) and nothing checked for its absence after a click. Anchor triggers had a real href the suppressed default never used and button triggers had no href at all, so either way the CTA looked simply dead.
+
+**Rule:** Any integration where our code calls `preventDefault()` on a native fallback (a link, a form submit) in favor of a third-party JS SDK must pair that override with a check that verifies the expected DOM or behavior actually appeared, plus a recovery path that restores the native fallback on failure. A successful SDK init call is not proof the interaction will complete. Two constraints on that recovery: observe the appearance itself (a presence check at the deadline misreads an opened-then-closed modal as a failure) and navigate in the same tab, because the deadline fires past the browser's transient activation window and `window.open` gets popup-blocked there.
+
 ## Git hooks must be tracked with the executable bit or the gate silently dies
 
 **What went wrong:** A commit sailed through with no review gate. Git printed "The '.husky/pre-commit' hook was ignored because it's not set as executable" and committed anyway. The same hint had appeared in the main checkout without anyone connecting it to a disabled gate.
@@ -214,6 +230,46 @@ The real XSS guards on this site are Firebase security rules and Firestore field
 
 **Rule:** Any surface that pairs a city name with ticket availability must derive that state from `src/utils/cityEvents.ts` (`isUpcomingEvent`, `getUpcomingEventsForCity`, `citySlugsWithUpcomingEvents`), never from `city.status`, hardcoded lists or copy. Curated lists are only allowed for waitlist/internal-link entries, and slugs in data files are always bare (`"manhattan"`, never `"/cities/manhattan"`).
 
+## Security-rules changes must be tested against every client operation in the flow
+
+**What went wrong:** PR #115 locked photo reads in `storage.rules` to admins only (correct: applicant photos are PII). The apply flow calls `getDownloadURL()` right after uploading, as the anonymous applicant. That call is a READ, so every submission threw `storage/unauthorized` before the Firestore write, and every applicant from July 7 to July 13 was lost. The PR comment even asserted the apply flow was unaffected because applicants "only write."
+
+**Why:** `getDownloadURL()` does not feel like a read when writing the upload code, but rules treat it as one. Nothing in the toolchain connected the rules change to the client call: unit tests mock Firebase entirely, smoke tests mock the network layer and the rules deploy is a manual `firebase deploy` disconnected from CI. The breakage was structurally invisible before production.
+
+**Rule:** Any change to `firestore.rules` or `storage.rules` must keep `npm run test:rules` green: emulator tests in `test/rules/` that execute the REAL client operations of the affected flows (upload, `getDownloadURL`, delete, document create/read). When adding a new client Firebase call, add it to those tests in the same PR. Remember: `getDownloadURL()` and `getBlob()` are reads; `deleteObject()` needs its own `allow delete` (a combined `write` rule that touches `request.resource.size` always denies deletes because `request.resource` is null).
+
+## Weekly error digests cannot page you about a dying form, and third-party noise buries the signal
+
+**What went wrong:** The apply-form outage above sat in PostHog error tracking for a week. The weekly digest that finally surfaced it was dominated by `window.webkit.messageHandlers` TypeErrors that are not site code at all: Instagram/Facebook in-app browsers inject their own scripts into every page and those crash constantly, so the one real `form_submission` error per lost applicant drowned in dozens of injected-script errors.
+
+**Why:** The global error handler captured every `window` error as a site error, and no channel existed that alerts on the first failed submission. In-app-browser scripts are injected inline, so `event.filename` equals the page URL and an origin check cannot identify them; only message signatures can.
+
+**Rule:** Revenue-critical failures (apply submissions) must page in real time through a first-party channel (`/api/alert-failure` email path), never only through an analytics SDK that ad blockers and in-app browsers routinely block. Known injected-webview errors (`window.webkit.messageHandlers`, "Java object is gone", `iabjs://` sources, bare "Script error." without a stack) are captured as `third_party_error`, never as `client_error`, so first-party issues stay readable. Do not delete the noise; reroute it.
+
+## Critical flows must not live inside third-party embeds
+
+**What went wrong:** The July 7 CSP hardening allowlisted known scripts but nobody knew /waiver depended on `form.jotform.com`, so the embed was blocked and the waiver page showed a spinner forever for six days. Nothing alerted: the failure happened inside a third-party iframe loader where no first-party code runs.
+
+**Why:** A third-party embed is invisible to every safeguard this site has. CSP changes cannot know about it unless it is documented, error tracking cannot see inside it, and failure paging cannot be wired into it. The dependency also was not needed: the native waiver form and the `/api/stage-waiver` endpoint already existed for the contestant portal.
+
+**Rule:** Legal and revenue flows (waiver signing, applications, lead capture, payments) must be first-party pages posting to first-party endpoints, never third-party embeds. When a third-party script is genuinely required, adding its host to the CSP allowlist and a smoke test that asserts the script actually loads are part of the same PR that introduces it.
+
+## Diagnose production against the DEPLOYED config, never the repo's
+
+**What went wrong:** The apply-outage analysis concluded "every application since July 7 failed" by assuming the #115 security rules were deployed when they merged. Production disproved it: submissions kept working because the rules deploy never happened. The real failure was #110's client-side 15 MB cap outrunning the still-deployed 5 MB storage rule, losing only large-photo applicants. Meanwhile the undeployed #115 rules meant the PII lockdown everyone believed was live was not.
+
+**Why:** Rules, CSP headers and env ship on different pipelines than code (manual Firebase CLI vs automatic Vercel), so repo history says nothing about what production enforces. Every conclusion drawn from "PR X merged on date Y" inherited that false assumption.
+
+**Rule:** Before stating a production root cause, verify the live artifact directly: curl the deployed headers, exercise the deployed rules with a real probe, or read the deployed config via API. A repo diff plus a merge date is a hypothesis, not evidence. The rules-drift check (scripts/check-rules-drift.mjs, every 6 hours) now makes the rules half of this automatic; the same discipline applies manually to headers and env.
+
+## A hooks path that points at generated files silently disables every quality gate
+
+**What went wrong:** Six broken tests and a dependency regression reached GitHub across seventeen commits with zero local gate failures. `core.hooksPath` pointed at `.husky/_`, a gitignored directory that husky generates during `npm install`. Session worktrees are provisioned without running install, so the directory did not exist and git silently ran no hooks at all: no lint-staged, no astro check, no vitest, no reviewer chain, no Verified check. Everything switched on mid-session as a side effect of an unrelated `npm install`, which is why late commits hit blocks that early commits never saw.
+
+**Why:** Git treats a missing hooks directory as "no hooks configured" without any warning, and the hook scheme depended on a generated artifact existing in every worktree. The gates were all correctly written; they were never invoked.
+
+**Rule:** Hooks must be checked-in, executable files (`.husky/` with shebangs), never generated ones. The repo-local `core.hooksPath` stays UNSET so the global `~/.git-hooks` chain (which runs the `.husky` hooks itself) governs; husky is removed because its installer re-points `core.hooksPath` at the generated `.husky/_` on every install, recreating the bypass. When diagnosing "how did this get past the hooks," first verify hooks RAN (`git config core.hooksPath` and that the target exists in the current worktree) before reading a single hook line.
+
 ## The entire pre-commit gauntlet was silently skipped for a week
 
 **What went wrong:** Commits from fresh checkouts and worktrees ran zero gates: no prettier, no astro check, no vitest, no AI reviewers. A commit with unreviewed data changes landed on a PR branch with nothing but a one-line hint from git. The pipeline had been dead for those checkouts since Jul 5 and nobody noticed because a skipped hook prints a hint and exits 0.
@@ -221,3 +277,11 @@ The real XSS guards on this site are Firebase security rules and Firestore field
 **Why:** `.husky/pre-commit` and `.husky/pre-push` were committed with file mode 100644. Git refuses to run non-executable hook files and treats that as advisory (a "hint"), not an error. Checkouts where someone had run `chmod +x` locally kept working, which masked the bug: the same commit could be gated on one machine and ungated on another. The chmod never made it into the index, so every fresh checkout and worktree was born ungated.
 
 **Rule:** Hook files must be committed with the executable bit (`git ls-files -s .husky/` must show 100755 for every hook). After adding or editing any hook file, verify with that command, not with `ls -l` on your own checkout. A gate that can be skipped silently is not a gate: if a hook is ever observed printing "ignored because it's not set as executable", treat it as a broken-build incident, not a hint.
+
+## Vercel Speed Insights silently broke: NODE_ENV forced to development in prod
+
+**What went wrong:** The Speed Insights dashboard showed "No data available. Make sure you are using the latest @vercel/speed-insights package." even with live traffic, while Vercel Analytics kept working fine.
+
+**Why:** `astro.config.mjs` had a top-level `vite.define` hardcoding `process.env.NODE_ENV` to `"development"`, which text-replaces the value across every build, including production. `@vercel/speed-insights` reads `process.env.NODE_ENV` to pick its collector script and, seeing `"development"`, loaded the debug script (`script.debug.js`), which only console-logs and never reports vitals. Vercel Analytics was unaffected because `inject({ mode: "production" })` forces its own mode and bypasses NODE_ENV; `injectSpeedInsights` has no such override. The define started as a dev-only `optimizeDeps.esbuildOptions.define` shim (PR #14) and was promoted to a top-level `vite.define` during the Astro 7/Vite 8 upgrade (PR #61), silently making it apply to production too. It also meant React shipped and ran in development mode in production.
+
+**Rule:** Never hardcode `process.env.NODE_ENV` in a top-level `vite.define`. Vite/Astro already set it correctly per build mode. If a dependency truly needs a dev-only NODE_ENV shim, scope it to `optimizeDeps.esbuildOptions.define`, never the top-level `define`, and verify the built output doesn't reference `*.debug.js` third-party scripts.

@@ -62,6 +62,9 @@ export interface EventEntry {
   eventbriteId?: string; // Numeric Eventbrite event ID
   onSaleAt?: string; // ISO 8601 UTC datetime — card shows pre-sale notify state until this moment
   timezone?: string; // IANA timezone identifier, e.g. "America/New_York" (default: "America/New_York")
+  status?: "canceled"; // Canceled shows stay in this file forever; every surface hides them
+  previousDate?: string; // YYYY-MM-DD the show was originally scheduled for, set on reschedule
+  note?: string; // Human log note, e.g. "Canceled", "Moved from Aug 2"; see EVENTS-HISTORY.md
 }
 
 /** Default per-event slug: stable, unique, and human-readable in a URL. */
@@ -160,6 +163,8 @@ export const events: EventEntry[] = [
     ticketSource: "external",
     url: "https://www.eventbrite.com/e/garam-masala-dating-a-belated-valentines-day-tickets-1982103088695",
     isoDate: "2026-02-22",
+    previousDate: "2026-02-28",
+    note: "Moved from Feb 28",
     venue: VENUE_TOP_SECRET,
     startTime: "18:00",
     endTime: "20:00",
@@ -205,6 +210,8 @@ export const events: EventEntry[] = [
     ticketSource: "external",
     url: "https://www.eventbrite.com/e/garam-masala-dating-st-patricks-day-tickets-1982103088695",
     isoDate: "2026-03-15",
+    previousDate: "2026-03-14",
+    note: "Moved from Mar 14",
     venue: VENUE_TOP_SECRET,
     startTime: "18:00",
     endTime: "20:00",
@@ -225,6 +232,7 @@ export const events: EventEntry[] = [
     ticketSource: "external",
     url: "https://www.eventbrite.com/e/saturday-april-4-garam-masala-dating-tickets-1983144430376",
     hidden: true,
+    note: "Hidden from site Mar 27 2026, reason unrecorded",
     isoDate: "2026-04-04",
     venue: {
       name: "Chicago Venue",
@@ -269,6 +277,8 @@ export const events: EventEntry[] = [
     ticketSource: "eventbrite-owned",
     url: "https://www.eventbrite.com/e/garam-masala-dating-show-jersey-city-edition-tickets-1986100570270",
     isoDate: "2026-05-03",
+    previousDate: "2026-04-26",
+    note: "Moved from Apr 26",
     startTime: "18:00",
     endTime: "20:00",
     venue: VENUE_LAUGH_TOUR,
@@ -345,6 +355,8 @@ export const events: EventEntry[] = [
     ticketSource: "eventbrite-owned",
     url: "https://www.eventbrite.com/e/garam-masala-dating-show-pride-edition-tickets-1987763579375",
     isoDate: "2026-06-21",
+    previousDate: "2026-06-14",
+    note: "Moved from Jun 14",
     startTime: "18:00",
     endTime: "20:00",
     venue: VENUE_TOP_SECRET,
@@ -382,6 +394,8 @@ export const events: EventEntry[] = [
     lineup: DEFAULT_LINEUP,
     ticketSource: "eventbrite-owned",
     url: "",
+    hidden: true,
+    note: "Jul 11 date canceled Jul 7 2026; taken off notify me Aug 14 2026",
     venue: VENUE_KOMIC_KARMA,
     price: "15",
     eventbriteId: "1992185715102",
@@ -424,7 +438,7 @@ export const events: EventEntry[] = [
     price: "15",
   },
   {
-    date: "Aug 2",
+    date: "Aug 13",
     city: "Boston",
     state: "Massachusetts",
     stateAbbr: "MA",
@@ -435,9 +449,11 @@ export const events: EventEntry[] = [
     lineup: DEFAULT_LINEUP,
     ticketSource: "eventbrite-owned",
     url: "https://www.eventbrite.com/e/garam-masala-comedy-dating-show-spilling-tea-in-boston-tickets-1992075859521",
-    isoDate: "2026-08-02",
-    startTime: "18:00",
-    endTime: "20:00",
+    isoDate: "2026-08-13",
+    previousDate: "2026-08-02",
+    note: "Moved from Aug 2, start moved from 6 PM to 7 PM",
+    startTime: "19:00",
+    endTime: "21:00",
     venue: VENUE_ELEPHANT_CASTLE,
     price: "15",
     eventbriteId: "1992075859521",
@@ -455,11 +471,14 @@ export const events: EventEntry[] = [
     ticketSource: "eventbrite-owned",
     url: "https://www.eventbrite.com/e/garam-masala-comedy-dating-show-cuffing-season-coming-tickets-1990583884985",
     isoDate: "2026-08-16",
+    previousDate: "2026-08-02",
     startTime: "18:30",
     endTime: "20:30",
     venue: VENUE_TOP_SECRET,
     price: "15",
     eventbriteId: "1990583884985",
+    status: "canceled",
+    note: "Canceled Aug 14 2026; had moved from Aug 2",
   },
   {
     date: "Aug 28",
@@ -474,6 +493,8 @@ export const events: EventEntry[] = [
     ticketSource: "eventbrite-owned",
     url: "https://www.eventbrite.com/e/garam-masala-1-desi-dating-show-tickets-1989618938805?aff=oddtdtcreator",
     isoDate: "2026-08-28",
+    previousDate: "2026-07-12",
+    note: "Jul 12 date canceled Jul 7, rescheduled to Aug 28 with 7 PM start",
     startTime: "19:00",
     endTime: "21:00",
     venue: VENUE_NEXT_IN_LINE,
@@ -501,7 +522,9 @@ export const events: EventEntry[] = [
 ];
 
 // Only show TBA entries for cities with active tour planning (not all 200+ expansion pages).
-// These slugs appear as TBA cards on the tickets page and home shows section.
+// These slugs appear as notify-me TBA cards on the tickets page and home shows section.
+// Standing roster per owner instruction 2026-08-14: LA, SF and New York, always.
+// Chicago and Houston removed the same day (see EVENTS-HISTORY.md).
 const TBA_CITIES = [
   {
     city: "Los Angeles",
@@ -510,16 +533,16 @@ const TBA_CITIES = [
     citySlug: "los-angeles",
   },
   {
-    city: "Chicago",
-    state: "Illinois",
-    stateAbbr: "IL",
-    citySlug: "chicago",
+    city: "San Francisco",
+    state: "California",
+    stateAbbr: "CA",
+    citySlug: "san-francisco",
   },
   {
-    city: "Houston",
-    state: "Texas",
-    stateAbbr: "TX",
-    citySlug: "houston",
+    city: "Manhattan",
+    state: "New York",
+    stateAbbr: "NY",
+    citySlug: "manhattan",
   },
 ];
 
@@ -542,17 +565,50 @@ export const comingSoonEvents: EventEntry[] = TBA_CITIES.map(
   }),
 );
 
+/**
+ * True when an event may appear anywhere on the public site.
+ * Canceled shows are permanent records (see EVENTS-HISTORY.md), never
+ * deleted from this file; this predicate is what keeps them off every
+ * surface. All upcoming/visible filters must go through it.
+ */
+export function isDisplayable(
+  e: Pick<EventEntry, "hidden" | "status">,
+): boolean {
+  return !e.hidden && e.status !== "canceled";
+}
+
+/**
+ * Confirmed shows + TBA notify-me cards. A city's TBA card is suppressed
+ * while that city has an upcoming displayable show; a canceled show must
+ * NOT suppress it (the canceled Manhattan date is exactly when the New
+ * York notify card needs to reappear). Pure and exported for tests.
+ */
+export function computeAllEvents(
+  eventList: EventEntry[],
+  tbaList: EventEntry[],
+  todayISO: string,
+): EventEntry[] {
+  return [
+    ...eventList,
+    ...tbaList.filter(
+      (tba) =>
+        !eventList.some(
+          (e) =>
+            e.citySlug === tba.citySlug &&
+            e.status !== "canceled" &&
+            e.isoDate &&
+            e.isoDate >= todayISO,
+        ),
+    ),
+  ];
+}
+
 /** All events: confirmed shows + TBA cities (suppressed when city has an upcoming confirmed show) */
-export const allEvents: EventEntry[] = [
-  ...events,
-  ...comingSoonEvents.filter(
-    (tba) =>
-      !events.some(
-        (e) =>
-          e.citySlug === tba.citySlug && e.isoDate && e.isoDate >= TODAY_ISO,
-      ),
-  ),
-];
+export const allEvents: EventEntry[] = computeAllEvents(
+  events,
+  comingSoonEvents,
+  TODAY_ISO,
+);
 
 /**
  * Returns the canonical display status for an event.

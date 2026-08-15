@@ -1613,3 +1613,8 @@ If the ambiguity matters there too, rename both with Surbhi's approval on the ex
 
 - LOW: [COPY-VOICE] The commit message for `0961d06` contains a prohibited em dash in the phrase "npm 10 [em dash] the exact split" (character replaced with a placeholder here so this file does not reproduce it).
 - Decision (2026-08-14): won't fix, same rationale as the `1f0a217` entry above. Commit `0961d06` is already on origin, so rewriting its message means amending a published commit and force-pushing. The rule stands for future commit messages.
+
+### Codex (2026-08-15T02:23Z)
+
+- LOW: [INTERACTIVE-TYPE-SIZE] `src/components/events/EventTicketCta.astro:194` uses 15px button text and `src/pages/events/[slug].astro:541` uses 14px link text, violating the project’s 16px minimum for interactive elements.
+- LOW: [DESIGN-TOKEN-BYPASS] New event components hardcode colors such as `white`, `#444` and black RGBA values instead of using the project’s centralized color tokens.

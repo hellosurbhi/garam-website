@@ -830,3 +830,7 @@ This review ran on the merge of main into `fix/speed-insights-node-env` (PR #157
       [RULE-TEST-ISOLATION] Both rules suites share project `demo-garam-masala` and clear its state in `beforeEach`, while file parallelism remains enabled. Parallel suites can erase each other’s fixtures.
       [SILENT-PHOTO-FAILURE] `useApplicantPhotos.ts` converts download failures to missing photos, leaving the admin UI unable to distinguish access or network failures from applicants who uploaded nothing.
       [CONTRADICTORY-INCIDENT-RECORD] `LESSONS.md` says every July application failed under admin-only rules, while `BUGS.md:5-11` correctly says those rules were not deployed and only large-photo submissions failed.
+
+### Codex (2026-08-14T18:12Z)
+
+- [ ] MEDIUM: [MISSING-CHANGELOG] The production analytics fix is absent from `CHANGELOG.md`, despite the repository requiring meaningful changes to be recorded.

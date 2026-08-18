@@ -890,3 +890,18 @@ Fixed in-session the same day (entries removed per doc routing): CHECKOUT-RATE-L
 - [ ] MEDIUM: [PERMANENT-RETRY-STARVATION] `src/pages/api/sync-orders.ts:793` retains every failed CAPI delivery indefinitely, including terminal 4xx responses and events whose original timestamp has aged outside Meta’s accepted window. These orders can repeatedly occupy the unordered 100-row query and starve newer purchases. Classify terminal failures and mark them unrecoverable. (Pre-existing PR #196 code.) Executor: the 3:00 overnight fix-medium-bugs lane.
 - [ ] MEDIUM: [CONTENT-ARCHITECTURE] User-facing copy is hardcoded throughout `src/components/events/EventTicketCta.astro:61` and `src/pages/events/[slug].astro:195`, contrary to the repository rule that copy belongs in `src/data/`. Move these strings into `src/data/copy.ts`. (Pre-existing PR #196 code.) Executor: the 3:00 overnight fix-medium-bugs lane.
 - [ ] MEDIUM: [MISSING-COVERAGE] The new CAPI client, terminal retry behavior, bot detection and ticket tracking module have no direct tests. The redirect test also omits the same-day timezone boundary that exposes the checkout cutoff. (Pre-existing PR #196 gap; largely duplicates the MISSING-COVERAGE remainder entry above, which already carries the executor.) Executor: the 3:00 overnight fix-medium-bugs lane.
+
+### Codex (2026-08-18T16:11Z)
+
+- [ ] HIGH: [UNSUPPORTED-NODE-RANGE] `package.json:14` permits Node 22.0 through 22.11, but `package-lock.json:17860` requires Node 22.12 for the overridden `@puppeteer/browsers`; `.npmrc:9` makes installation fail for this declared-supported range.
+      [UTC-CALENDAR-CUTOFF] `src/utils/eventDate.ts:107-111` uses the UTC calendar date, so `src/pages/api/go/[slug].ts:61` rejects same-day West Coast ticket purchases from 5 PM local time. Compare against the event timezone and end time.
+      [UNBOUNDED-SYNC-RUNTIME] `src/pages/api/sync-orders.ts:758-838` processes up to 100 retries sequentially with a three-second timeout each. Failures can consume over 300 seconds before metadata is persisted, while `withTimeout` does not abort the underlying fetch.
+
+### Codex (2026-08-18T16:11Z)
+
+- [ ] MEDIUM: [DELIVERY-FLAG-REGRESSION] `src/pages/api/sync-orders.ts:652-656` resets `purchaseCapiSent` to false before every upsert. When the optional CAPI token is absent, or the existing-state read fails, a previously delivered order is persisted as pending again.
+      [PERMANENT-RETRY-STARVATION] `src/pages/api/sync-orders.ts:401-443` returns an unordered 100-row queue, but only missing source events become unrecoverable. Terminal Meta 4xx responses and expired events retry forever and can crowd out new purchases.
+      [FALSE-PURCHASE-CONVERSION] `src/lib/eventbrite.ts:42-46` converts every unknown Eventbrite status to `placed`; the new branch at `src/pages/api/sync-orders.ts:677` then sends those orders to Meta as purchases. Unknown statuses must fail closed.
+      [HIDDEN-EVENT-INDEXING] `src/pages/events/[slug].astro:53-73` generates pages for hidden records and `astro.config.mjs:217-232` includes them in the sitemap. This publicly indexes records such as the hidden Chicago and Edison entries.
+      [TBA-SUPPRESSION] `src/data/events.ts:595-600` checks cancellation but not `hidden`, despite claiming to test displayability. A hidden future show suppresses its city’s public notify card.
+      [WRONG-EVENT-TIMEZONE] `src/utils/eventSchema.ts:58-60` still applies New York offsets to every event, producing incorrect structured-data times for California and other non-New-York shows.

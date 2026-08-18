@@ -1543,3 +1543,7 @@ If the ambiguity matters there too, rename both with Surbhi's approval on the ex
 
 - LOW: [INTERACTIVE-TYPE-SIZE] `src/components/events/EventTicketCta.astro:194` uses 15px button text and `src/pages/events/[slug].astro:541` uses 14px link text, violating the project’s 16px minimum for interactive elements.
 - LOW: [DESIGN-TOKEN-BYPASS] New event components hardcode colors such as `white`, `#444` and black RGBA values instead of using the project’s centralized color tokens.
+
+### Fable — 20260816-094940 (PR #193)
+
+- LOW: [NO-GLOBAL-HOOK-FALLBACK] `.husky/pre-push:16`, with `npm run check` removed the hook's only remaining gate is the `-x "$HOME/.git-hooks/pre-push"` chain, so on a machine without the global hooks installed (fresh clone, new laptop, worktree before setup) a push now runs zero local checks and type-broken or `--no-verify`-committed code reaches the remote silently, caught only later in CI. Filed, not built: a repo-local fallback gate is new scope beyond the pre-push trim this PR shipped.

@@ -61,6 +61,15 @@ export const RATE_LIMITS = {
     limit: 5,
     windowSeconds: 60,
   },
+  goRedirect: {
+    prefix: "ratelimit:go-redirect",
+    // Every real "Get Tickets" click hits this route, including link-preview
+    // bots (Meta/iMessage/Slack unfurl the ad URL headlessly) and shared-IP
+    // bursts (a group behind one office/campus NAT clicking the same link).
+    // Kept generous so a viral moment never throttles a real ticket buyer.
+    limit: 30,
+    windowSeconds: 60,
+  },
 } as const satisfies Record<string, RateLimitPolicy>;
 
 export function getClientIp(request: Request): string {

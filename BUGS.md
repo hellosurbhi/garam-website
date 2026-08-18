@@ -2,6 +2,26 @@
 
 ## Open
 
+### [MEDIUM] Event JSON-LD always uses New York's UTC offset, even for non-NY shows
+
+- **Date:** 2026-07-16
+- **File:** `src/utils/eventSchema.ts:2` (`nyOffset` from `src/utils/timezone.ts`), `src/data/events.ts` (`EventEntry.timezone` field)
+- **Status:** Open
+- **Severity:** Medium
+- **What's happening:** `buildEventSchemas()` calls `nyOffset(e.isoDate, time)` unconditionally for every event's `startDate`/`endDate`/`doorTime`, regardless of the event's actual city. `EventEntry` already has an optional `timezone` field (IANA identifier, e.g. `"America/New_York"`) intended for exactly this, but nothing reads it: `nyOffset` is hardcoded to the `America/New_York` zone. Every non-NY show (San Diego, Chicago, and any future city) ships Event structured data with the wrong UTC offset baked into `startDate`/`endDate`. This is silent: it doesn't throw or fail a build, it just publishes incorrect machine-readable event times, which can make Google's Event rich results (and "Add to calendar" actions derived from them) show the wrong local time for that city.
+- **Confirmed pre-existing:** `git diff main -- src/utils/eventSchema.ts src/utils/timezone.ts` shows this logic is untouched by the current per-event-landing-page work; it predates that effort and was never exercised for non-NY cities' individual event pages until now.
+- **What should happen:** `buildEventSchemas` should resolve each event's actual IANA zone (`e.timezone ?? "America/New_York"`) and `nyOffset` should be generalized to accept a zone parameter (e.g. `offsetForZone(isoDate, time, timezone)`) instead of hardcoding New York.
+- **Fix:** Not applied here, out of scope for the ad-tracking/checkout-redirect PR that surfaced it. Needs its own pass with a schema/timezone-focused smoke test (Rich Results Test on a San Diego or Chicago event page) rather than a drive-by fix.
+
+### [MEDIUM] Cookie consent banner does not gate Meta/marketing tracking
+
+- **Date:** 2026-07-16
+- **File:** `src/components/CookieConsent.astro`, `src/components/meta-pixel.astro`, `src/components/gtm.astro`, `src/pages/api/go/[slug].ts`, `src/pages/api/sync-orders.ts`
+- **Status:** Won't fix / by design (2026-07-16, Surbhi)
+- **Severity:** Medium
+- **What's happening:** The cookie banner writes a `marketing` boolean to localStorage, but nothing reads it before firing any Meta surface. `meta-pixel.astro` loads the Pixel unconditionally on idle and fires `fbq("init")` + `PageView` regardless of consent; `gtm.astro` loads the same way; the server-side CAPI calls added in this PR (`/api/go/[slug]`'s InitiateCheckout, `sync-orders.ts`'s Purchase) are server-to-server and were never going to be blockable by a client-side preference in the first place. Rejecting "marketing" in the banner therefore stops nothing. This predates the event-pages/CAPI work (Pixel and GTM already ignored consent); the new CAPI calls are consistent with that existing, ungated surface rather than a new gap.
+- **Decision:** Confirmed intentional (Surbhi, 2026-07-16). The show targets US audiences only, with no EU/UK-targeted traffic, so GDPR-style consent gating is not a legal requirement here, and the business call is to keep every Meta signal, including the now-unblockable server CAPI, firing regardless of banner state. Devil's-advocate note recorded and accepted: server CAPI reaches a few more users than the browser Pixel alone would (it survives ad blockers and ITP), which is exactly the tradeoff being made on purpose. No consent-gating code will be built. Logged here so future reviews don't re-flag it as a new defect.
+
 ### [CRITICAL] Apply submissions with large photos lost + undeployed security rules left PII readable
 
 - **Date:** 2026-07-13 (partial failures since ~2026-07-05; record corrected 2026-07-13 after production verification)
@@ -831,6 +851,42 @@ This review ran on the merge of main into `fix/speed-insights-node-env` (PR #157
       [SILENT-PHOTO-FAILURE] `useApplicantPhotos.ts` converts download failures to missing photos, leaving the admin UI unable to distinguish access or network failures from applicants who uploaded nothing.
       [CONTRADICTORY-INCIDENT-RECORD] `LESSONS.md` says every July application failed under admin-only rules, while `BUGS.md:5-11` correctly says those rules were not deployed and only large-photo submissions failed.
 
+### Codex (2026-08-14T16:44Z)
+
+- [ ] MEDIUM: Remove the repeated findings before merge. (BUGS.md:801-827)
+
+### Codex (2026-08-14T17:40Z)
+
+- HIGH: [SCOPE-CREEP] LESSONS.md:9 broadens the show-specific retention rule to every `src/data/` record. src/data/CLAUDE.md:5 and EVENTS-HISTORY.md:29 also permanently retain unused venue constants, while src/data/events.ts:390 freezes the current TBA roster as “always.” The stated intent only retains shows and sets the current roster.
+  Decision (2026-08-14): resolved by design. The reviewer did not have the owner's mid-session instructions: venue constants were EXPLICITLY ordered permanent ("even stuff like this venue constant should say, all the log should stay even if it then ends up referencing nothing") and the standing LA/SF/NY notify roster is verbatim her ask ("add LA SF and new york should always be on notify me"). The LESSONS rule scoping to destructive-sounding requests against src/data content is the lesson she taught twice.
+
+### Codex (2026-08-14T17:40Z)
+
+- [ ] MEDIUM: [TBA-SUPPRESSION] src/data/events.ts:454-457 does not use `isDisplayable()`, so a hidden future show suppresses its city’s public TBA card despite the function’s contract. Hidden entries supplied through `tbaList` are also appended.
+      [SHARED-GATE-BYPASS] The four changed API lookups manually duplicate `hidden` and `status` checks instead of using `isDisplayable()`, contradicting the commit’s centralization claim and allowing future display-state changes to drift.
+      [CONTRADICTORY-PERMANENCE-RECORD] EVENTS-HISTORY.md:18-21 lists six removed shows that remain absent from events.ts, while LESSONS.md:5 and src/data/CLAUDE.md:5 claim every scheduled show stays there forever. Document the legacy exception or restore those records.
+      [UNASKED-CHANGE] ENHANCEMENTS.md:1603-1610 and ENHANCEMENTS.md:1625-1626 modify unrelated historical review metadata with no trace to either stated commit intent.
+      Decision on UNASKED-CHANGE (2026-08-14): resolved by design. Those telemetry lines are appended by the review hooks themselves (same pattern as commits 38cb5df and 1f56dea) and were already in the working tree at session start; committing them alongside is the established convention. TBA-SUPPRESSION, SHARED-GATE-BYPASS and CONTRADICTORY-PERMANENCE-RECORD remain open for a follow-up pass.
+
 ### Codex (2026-08-14T18:12Z)
 
 - [ ] MEDIUM: [MISSING-CHANGELOG] The production analytics fix is absent from `CHANGELOG.md`, despite the repository requiring meaningful changes to be recorded.
+
+### Codex (2026-08-14T19:09Z) on the event-pages-tracked-checkout ship push
+
+Fixed in-session the same day (entries removed per doc routing): CHECKOUT-RATE-LIMIT and STALE-PAST-CTA (go route now resolves the event first, sends canceled/past shows to /tickets, and a tripped rate limit only suppresses CAPI, never the redirect; covered by test/go-redirect.test.ts), BUILD-HANG (10s AbortSignal.timeout on the build-time Eventbrite content fetch), ANALYTICS-SEMANTICS (data-event-vendor standardized to vendorFromUrl across all seven CTA sites), MERGE-DEBRIS (formatter-escaped conflict markers removed from CHANGELOG.md) and the FABRICATED-REFERENCE critical (obsolete widget-loader entry deleted from ENHANCEMENTS.md). Remaining items below.
+
+- [ ] HIGH [UNBOUNDED-SYNC-RUNTIME] `src/pages/api/sync-orders.ts` awaits CAPI calls sequentially; the retry query permits 100 orders and each timeout is 3 seconds, so retries alone can consume 300 seconds of a run before other work. Needs bounded concurrency or a per-run time budget, plus a test. Executor: the 3:00 overnight fix-medium-bugs lane (or the next session in this repo if it runs first).
+- [ ] MEDIUM [MISSING-COVERAGE, remainder] The new redirect route now has test/go-redirect.test.ts, but the CAPI client (`src/lib/capi.ts`), bot detection (`src/lib/isBotUserAgent.ts`), ticket CTA wiring (`src/lib/ticketCtaTracking.ts`), withTimeout behavior and the sync-orders Purchase retry state machine remain untested. Executor: the 3:00 overnight fix-medium-bugs lane.
+- Decision (2026-08-14): [EVENT-ID-REUSE] in `src/lib/ticketCtaTracking.ts` is won't-fix, by design. The per-anchor event_id carries an explicit WHY comment: repeated clicks on one rendered anchor are a single checkout intent, and Meta deduping the browser Pixel, the server CAPI call and any repeat click into one InitiateCheckout is the wanted behavior. Regenerating per click would double-count intent and desynchronize the ?eid= already stamped on the href. Logged so the finding is not re-filed.
+
+### Codex (2026-08-15T02:23Z)
+
+- [ ] HIGH: [UTC-CALENDAR-CUTOFF] `src/utils/eventDate.ts:107` compares dates against UTC. At 5 PM PDT, a West Coast show is considered past, so `src/pages/api/go/[slug].ts:61` redirects buyers to `/tickets` before an evening show begins. Compare against the event’s timezone and end time. (Pre-existing PR #196 code, surfaced by the 2026-08-15 review of the merge range on the dependency branch.) Executor: the 3:00 overnight fix-medium-bugs lane (or the next session in this repo if it runs first).
+- Note (2026-08-15): the UNBOUNDED-SYNC-RUNTIME finding from this round duplicates the entry above dated 2026-08-14; that entry already carries the executor.
+
+### Codex (2026-08-15T02:23Z)
+
+- [ ] MEDIUM: [PERMANENT-RETRY-STARVATION] `src/pages/api/sync-orders.ts:793` retains every failed CAPI delivery indefinitely, including terminal 4xx responses and events whose original timestamp has aged outside Meta’s accepted window. These orders can repeatedly occupy the unordered 100-row query and starve newer purchases. Classify terminal failures and mark them unrecoverable. (Pre-existing PR #196 code.) Executor: the 3:00 overnight fix-medium-bugs lane.
+- [ ] MEDIUM: [CONTENT-ARCHITECTURE] User-facing copy is hardcoded throughout `src/components/events/EventTicketCta.astro:61` and `src/pages/events/[slug].astro:195`, contrary to the repository rule that copy belongs in `src/data/`. Move these strings into `src/data/copy.ts`. (Pre-existing PR #196 code.) Executor: the 3:00 overnight fix-medium-bugs lane.
+- [ ] MEDIUM: [MISSING-COVERAGE] The new CAPI client, terminal retry behavior, bot detection and ticket tracking module have no direct tests. The redirect test also omits the same-day timezone boundary that exposes the checkout cutoff. (Pre-existing PR #196 gap; largely duplicates the MISSING-COVERAGE remainder entry above, which already carries the executor.) Executor: the 3:00 overnight fix-medium-bugs lane.

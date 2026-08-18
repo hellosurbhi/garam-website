@@ -24,6 +24,16 @@ vi.mock("@/data/events", () => ({
       startTime: "20:00",
       venue: { name: "Test Venue" },
     },
+    {
+      hidden: false,
+      status: "canceled",
+      citySlug: "nyc",
+      isoDate: "2099-11-30",
+      city: "New York",
+      date: "November 30, 2099",
+      startTime: "20:00",
+      venue: { name: "Test Venue" },
+    },
   ],
 }));
 
@@ -58,6 +68,14 @@ describe("portal-state GET /api/portal-state", () => {
 
     it("returns 404 for an unknown showId", async () => {
       const req = makeRequest("/api/portal-state?show=unknown-2099-12-31");
+      const res = await GET({ request: req } as Parameters<typeof GET>[0]);
+      expect(res.status).toBe(404);
+      const body = await res.json();
+      expect(body.state).toBe("error");
+    });
+
+    it("returns 404 for a canceled show", async () => {
+      const req = makeRequest("/api/portal-state?show=nyc-2099-11-30");
       const res = await GET({ request: req } as Parameters<typeof GET>[0]);
       expect(res.status).toBe(404);
       const body = await res.json();

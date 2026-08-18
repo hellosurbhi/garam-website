@@ -124,7 +124,11 @@ export default function ApplicantModal({
   const currentPhoto = photos[selectedPhotoIndex] ?? photos[0];
 
   const upcomingEvents = useMemo(
-    () => events.filter((e) => e.isoDate && e.isoDate >= TODAY_ISO),
+    // Admin deliberately sees hidden shows; only canceled ones are unpickable.
+    () =>
+      events.filter(
+        (e) => e.status !== "canceled" && e.isoDate && e.isoDate >= TODAY_ISO,
+      ),
     [],
   );
 

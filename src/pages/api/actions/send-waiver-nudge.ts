@@ -60,7 +60,10 @@ export const POST: APIRoute = async ({ request }) => {
 
   const event = events.find(
     (e) =>
-      !e.hidden && e.isoDate && `${e.citySlug}-${e.isoDate}` === castEventId,
+      !e.hidden &&
+      e.status !== "canceled" &&
+      e.isoDate &&
+      `${e.citySlug}-${e.isoDate}` === castEventId,
   );
 
   const siteUrl = import.meta.env.SITE ?? "https://garammasaladating.com";

@@ -42,6 +42,17 @@ vi.mock("@/data/events", () => ({
       timezone: "America/New_York",
       venue: { name: "Test Venue", streetAddress: "123 Main St" },
     },
+    {
+      hidden: false,
+      status: "canceled",
+      citySlug: "nyc",
+      isoDate: "2099-11-30",
+      city: "New York",
+      date: "November 30, 2099",
+      startTime: "20:00",
+      timezone: "America/New_York",
+      venue: { name: "Test Venue", streetAddress: "123 Main St" },
+    },
   ],
 }));
 
@@ -143,6 +154,15 @@ describe("contestant-show-claim POST", () => {
   it("returns 404 for an unknown showId", async () => {
     const res = await POST({
       request: makeRequest({ ...VALID_BODY, showId: "unknown-2099-12-31" }),
+    } as Parameters<typeof POST>[0]);
+    expect(res.status).toBe(404);
+    const body = await res.json();
+    expect(body.error).toMatch(/invalid show/i);
+  });
+
+  it("returns 404 for a canceled show's showId", async () => {
+    const res = await POST({
+      request: makeRequest({ ...VALID_BODY, showId: "nyc-2099-11-30" }),
     } as Parameters<typeof POST>[0]);
     expect(res.status).toBe(404);
     const body = await res.json();

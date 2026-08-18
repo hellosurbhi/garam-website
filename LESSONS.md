@@ -1,5 +1,21 @@
 # Lessons
 
+## A lockfile that installs locally can still fail CI's npm ci
+
+**What went wrong:** A dependency change (npm override forcing @puppeteer/browsers 3.2.0) produced a lockfile that installed and passed every local gate, then failed CI's `npm ci` with "package.json and package-lock.json are in sync" errors about a proxy-agent subtree nobody visibly depends on.
+
+**Why:** @puppeteer/browsers 3.2.0 declares proxy-agent as an optional peer dependency (peerDependencies plus peerDependenciesMeta optional: true). npm 10, which node 22 bundles on CI, resolves optional peers into the lockfile and its `npm ci` validator requires those entries; local npm 11 leaves them out of the lockfile it writes. Same package.json, two npm majors, two opinions about what a complete lockfile is.
+
+**Rule:** Every environment that runs `npm ci` must use the same npm major that wrote the lockfile. The pin is enforced at three layers: all five CI `npm ci` sites and Vercel's installCommand run `npm install -g npm@11` first, package.json declares `engines.npm >=11.0.0 <12.0.0` (bounded above so the next npm major cannot slip through either), and the checked-in `.npmrc` sets `engine-strict=true` so a wrong-major install fails loudly instead of silently rewriting the lockfile. When the pinned npm major changes, change it in every workflow plus vercel.json plus engines.npm and regenerate package-lock.json in the same commit; after any lockfile rewrite, `npm ci --dry-run` with the pinned major is the cheap pre-push validation.
+
+## The markdown formatter rewrites conflict markers into invisible-to-grep debris
+
+**What went wrong:** A merge of main left `>>>>>>> origin/main` markers in CHANGELOG.md and LESSONS.md. The post-edit prettier hook reformatted the files between the conflict edits, turning the markers into blockquote text (`> > > > > > > origin/main`). A `grep` for `>>>>>>>` then reported the files clean, the merge commit shipped the debris and the pre-push reviewer had to catch it.
+
+**Why:** Prettier treats a leading `>` run in markdown as nested blockquotes and normalizes it with spaces. The standard marker grep only matches the literal seven-character run, so it misses the reformatted version. The two cleanup edits that "failed with string not found" were the actual warning sign: the formatter had already rewritten the target text, not removed it.
+
+**Rule:** After resolving conflicts in any markdown file in this repo, verify with a formatter-proof check: grep for the branch names themselves (`origin/main`, `HEAD`) or the word-spaced form `> > >`, not just `<<<<<<<`/`>>>>>>>`. And when an Edit fails because a just-resolved conflict region "does not exist", re-read the file; assume the formatter rewrote it, never that the cleanup already happened.
+
 ## A fix that was never pushed is a fix that never happened
 
 **What went wrong:** The Eventbrite embedded-checkout removal (tracked redirect, per-show landing pages, Meta CAPI) was fully built and Codex-reviewed by 2026-08-03 on `feat/event-pages-tracked-checkout`, but the branch was never pushed: no remote ref, no PR, nothing visible on GitHub. For four weeks the live site kept the embedded popup with its 2.5 second silent-failure fallback, and the owner experienced 5 to 10 second ticket clicks she believed had been fixed. The gap only surfaced when she reported the symptom on 2026-08-14.

@@ -1,5 +1,29 @@
 # Changelog
 
+## fix(tooling): npm 11 enforced repo-wide, not just in CI (2026-08-14)
+
+Closes the two Codex HIGH findings from this branch's later review rounds: npm 11 was pinned in CI only, so a fresh local clone (or Vercel) on node 22's bundled npm 10 could still rewrite the lockfile into the shape npm 11 rejects. Now package.json declares engines.npm >=11.0.0 <12.0.0 (bounded above so a future npm 12 cannot slip through and rewrite the lockfile either) and a checked-in .npmrc sets engine-strict=true, turning that constraint into a hard install-time error (verified: npm 10 install fails with EBADENGINE, npm 11 passes and the npm-10-driven `npm install -g npm@11` bootstrap in CI is unaffected). Vercel's install is pinned via installCommand in vercel.json since its build image also bundles npm 10, and README's Quick Start now tells contributors to install npm 11 first. Both BUGS.md lines deleted per the same-session close-out rule.
+
+## fix(ci): one npm major everywhere, npm 11 pinned at every CI npm ci site (2026-08-14)
+
+Closes the Codex HIGH recurrence finding on the lockfile incident below: ci.yml's main job upgraded to npm 11 while the rules job and three other workflows ran node 22's bundled npm 10, so any npm 11 lockfile rewrite would fail half of CI again. All five npm ci sites (ci.yml both jobs, smoke-tests, synthetic-apply, link-check) now run npm install -g npm@11 first, and package-lock.json is regenerated with npm 11 to match the enforced toolchain. Both Codex findings from this branch's pushes are fixed in-session and their BUGS.md lines deleted.
+
+## fix(deps): lockfile regenerated with npm 10 so CI's npm ci accepts it (2026-08-14)
+
+The combined dependency PR's first CI run failed npm ci on a missing proxy-agent subtree. @puppeteer/browsers 3.2.0 declares proxy-agent as an optional peer dependency; npm 10 (CI) resolves optional peers into the lockfile and requires their entries, npm 11 (local) omits them. Regenerated package-lock.json with npx npm@10 install; the result validates under both npm majors. Rule recorded in LESSONS.md: validate lockfile changes with npx npm@10 ci --dry-run before pushing.
+
+## chore(ci): actions/setup-node v6 to v7 in all workflows (2026-08-14)
+
+Applies Dependabot PR #174 as part of the combined dependency PR. Six occurrences across ci.yml, smoke-tests.yml, synthetic-apply.yml, link-check.yml and article-refresh.yml. All workflows keep node-version 22; the PR's own CI run validates the new action version.
+
+## chore(deps): TypeScript 5.9.3 to 6.0.3 (2026-08-14)
+
+Applies Dependabot PR #134 as part of the combined dependency PR. Major version bump, verified compatible before landing: typescript-eslint 8.66 supports TypeScript up to 6.1 and @astrojs/check 0.9.10 supports ^6.0.0. Full verification on 6.0.3: eslint clean, astro check 0 errors across 301 files, vitest 1214/1214, production build succeeds.
+
+## fix(deps): Dependabot alert 49 resolved, extract-zip removed from the tree (2026-08-14)
+
+Alert 49 (high, GHSA-jmr9-qjv8-65gv) flagged extract-zip <= 2.0.1 for unvalidated symlink path traversal. No patched release exists (2.0.1 is the latest ever published), so Dependabot could not open a PR. The package reached us through @lhci/cli, lighthouse 12.6.1, puppeteer-core 24.x and @puppeteer/browsers 2.13.2, all dev-only tooling for the perf:lighthouse scripts. Fix: npm override pinning @puppeteer/browsers to ^3.2.0, which dropped extract-zip entirely in favor of modern-tar. Verified extract-zip is gone from package-lock.json and puppeteer-core still resolves and loads the overridden 3.2.0. The override can be removed once lighthouse ships a puppeteer-core 25+ requirement (lighthouse 13.4+ already does; @lhci/cli still pins lighthouse 12.6.1).
+
 ## feat(events): tracked per-event landing pages + CAPI conversion tracking (built 2026-07-16, shipped 2026-08-14)
 
 Shows expanding onto venues and third-party organizers' own Eventbrite accounts produced zero conversion signal, since the only tracked checkout path was the inline Eventbrite embed/modal, which never loads for a listing we don't own. Resolves the `checkout_started` / `ticket_purchased` Eventbrite tracking item from ENHANCEMENTS.md (entry removed, "Option A" webhook approach implemented as a cron-based sync instead, see the new Eventbrite order webhook enhancement entry for the latency tradeoff):

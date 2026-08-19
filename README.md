@@ -14,6 +14,7 @@ Website, contestant application system, and admin dashboard for [Garam Masala Da
 ```bash
 git clone https://github.com/hellosurbhi/garam-masala-dating.git
 cd garam-masala-dating
+nvm install 22  # node 22.22.2 or newer 22.x required; jsdom and undici set the floor and installs are engine-gated
 npm install -g npm@11  # required: the lockfile is written by npm 11 and installs are gated on it
 npm install
 cp .env.example .env.local  # fill in your own Firebase project values

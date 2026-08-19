@@ -1,6 +1,12 @@
 # Lessons
 
-## A lockfile that installs locally can still fail CI's npm ci
+## A monitor that cannot name the root cause gets blamed instead of believed
+
+**What went wrong:** The synthetic apply monitor went red on its first run (Aug 12) and stayed red for 28 straight runs while every real application also failed. Nobody trusted the signal: the task arrived a week later as "investigate the apply monitor and fix it", when the monitor was the only healthy part of the pipeline. Two distinct root causes sat underneath: the PR #135 rules were never manually deployed (so the auto-deployed client's `photoPaths` field was rejected by the stale whitelist), and independently the client sent `""` for blank optional fields (plus `referrerName: ""` on every Self application) where the repo rules demand `size() > 0`.
+
+**Why:** Three wrong assumptions compounded. (1) The drift check that would have printed "deployed rules are stale" on day one was ordered AFTER the Playwright step, which always failed first with an opaque 45 second locator timeout, so the one diagnostic that named the cause never executed. (2) The rules test fixture claimed to be "the exact document the apply flow writes" but was hand rolled: it filled every optional field and omitted the `referrerName` key entirely, so it passed while the real payload failed. (3) The monitor and the fix it was built to verify shipped in the same PR, so the monitor's first-ever run required a manual operator step (rules deploy) that had not happened, making "monitor is broken" the natural misread of "monitor is right".
+
+**Rule:** Order monitor steps by diagnostic value, cheapest and most causal first: config/contract drift checks run before end-to-end browser steps, so a red run names its cause instead of timing out. Any fixture described as "the exact payload the client writes" must be produced by the production code path (import the real builder), never hand rolled. And a monitor must be born green: when a new monitor's first run depends on a manual operator step, the PR is not done until that step is confirmed executed, or the monitor will cry wolf from day one.
 
 **What went wrong:** A dependency change (npm override forcing @puppeteer/browsers 3.2.0) produced a lockfile that installed and passed every local gate, then failed CI's `npm ci` with "package.json and package-lock.json are in sync" errors about a proxy-agent subtree nobody visibly depends on.
 

@@ -38,7 +38,7 @@ export interface FormState {
   howHeard: string;
 }
 
-const INITIAL: FormState = {
+export const INITIAL: FormState = {
   applicationType: "Self",
   name: "",
   age: "",
@@ -127,6 +127,72 @@ function getFieldErrors(
   if (!termsAgreed)
     errs.termsAgreed = "You must agree to the Terms & Conditions";
   return errs;
+}
+
+// WHY: optional string fields are OMITTED when blank, never written as "".
+// firestore.rules enforces size() > 0 on each of these whenever the key is
+// present, so sending height: "" (or referrerName: "" on every Self
+// application, which the old inline payload did) makes Firestore reject the
+// whole document with "Missing or insufficient permissions" — the Aug 2026
+// apply outage. The omit-when-empty spread mirrors the pre-existing phone
+// pattern. pitch stays unconditional: the rules allow it to be empty.
+export function buildApplicationData(
+  form: FormState,
+  photoPaths: string[],
+  nominationConsent: boolean,
+) {
+  const isNomination = form.applicationType === "Nomination";
+  return {
+    applicationType: form.applicationType,
+    name: form.name.trim(),
+    age: parseInt(form.age),
+    gender: form.gender,
+    orientation: form.orientation,
+    ...(form.country ? { country: form.country } : {}),
+    ...(form.state ? { state: form.state } : {}),
+    city: form.city,
+    email: form.email.trim().toLowerCase(),
+    ...(form.phone.trim() ? { phone: form.phone.trim() } : {}),
+    ...(form.height.trim() ? { height: form.height.trim() } : {}),
+    instagram: form.instagram.trim().replace(/^@/, ""),
+    ...(form.community ? { community: form.community } : {}),
+    ...(form.income ? { income: form.income } : {}),
+    ...(isNomination && form.referrerName.trim()
+      ? { referrerName: form.referrerName.trim() }
+      : {}),
+    ...(isNomination ? { nominationConsent } : {}),
+    pitch: form.pitch.trim(),
+    ...(form.type.trim() ? { type: form.type.trim() } : {}),
+    photoPaths,
+    ...(isSyntheticSubmission(form.email) ? { isSynthetic: true } : {}),
+    ...(form.seenShowBefore !== ""
+      ? { seenShowBefore: form.seenShowBefore === "yes" }
+      : {}),
+    ...(form.howHeard ? { howHeard: form.howHeard } : {}),
+  };
+}
+
+// The COMPLETE Firestore document the apply flow writes, shared with the
+// emulator rules tests (test/rules/apply-flow.rules-test.ts) so the tested
+// payload can never drift from the client again — the hand-rolled fixture it
+// replaces filled every optional field and masked the empty-string bug.
+// Timestamps are injected because the browser writes serverTimestamp()
+// sentinels while the rules tests write Date instances.
+export function buildApplicationDocument<T>(
+  form: FormState,
+  photoPaths: string[],
+  nominationConsent: boolean,
+  timestamps: { termsAgreedAt: T; submittedAt: T },
+) {
+  return {
+    ...buildApplicationData(form, photoPaths, nominationConsent),
+    emailNormalized: form.email.trim().toLowerCase(),
+    marketingConsent: form.marketingConsent,
+    termsAgreedAt: timestamps.termsAgreedAt,
+    status: "New",
+    notes: "",
+    submittedAt: timestamps.submittedAt,
+  };
 }
 
 export function useApplyForm() {
@@ -484,33 +550,11 @@ export function useApplyForm() {
         (r) => (r as PromiseFulfilledResult<string>).value,
       );
 
-      const applicationData = {
-        applicationType: form.applicationType,
-        name: form.name.trim(),
-        age: parseInt(form.age),
-        gender: form.gender,
-        orientation: form.orientation,
-        country: form.country,
-        state: form.state,
-        city: form.city,
-        email: form.email.trim().toLowerCase(),
-        ...(form.phone.trim() ? { phone: form.phone.trim() } : {}),
-        height: form.height.trim(),
-        instagram: form.instagram.trim().replace(/^@/, ""),
-        community: form.community,
-        income: form.income,
-        referrerName:
-          form.applicationType === "Nomination" ? form.referrerName.trim() : "",
-        ...(form.applicationType === "Nomination" ? { nominationConsent } : {}),
-        pitch: form.pitch.trim(),
-        type: form.type.trim(),
+      const applicationData = buildApplicationData(
+        form,
         photoPaths,
-        ...(isSyntheticSubmission(form.email) ? { isSynthetic: true } : {}),
-        ...(form.seenShowBefore !== ""
-          ? { seenShowBefore: form.seenShowBefore === "yes" }
-          : {}),
-        ...(form.howHeard ? { howHeard: form.howHeard } : {}),
-      };
+        nominationConsent,
+      );
 
       const [{ collection, addDoc, serverTimestamp }, db] = await withTimeout(
         Promise.all([import("firebase/firestore"), getFirebaseDb()]),
@@ -518,15 +562,13 @@ export function useApplyForm() {
         "Firestore init",
       );
       await withTimeout(
-        addDoc(collection(db, "applications"), {
-          ...applicationData,
-          emailNormalized: form.email.trim().toLowerCase(),
-          marketingConsent: form.marketingConsent,
-          termsAgreedAt: serverTimestamp(),
-          status: "New",
-          notes: "",
-          submittedAt: serverTimestamp(),
-        }),
+        addDoc(
+          collection(db, "applications"),
+          buildApplicationDocument(form, photoPaths, nominationConsent, {
+            termsAgreedAt: serverTimestamp(),
+            submittedAt: serverTimestamp(),
+          }),
+        ),
         15_000,
         "Firestore write",
       );

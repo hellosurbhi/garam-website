@@ -59,7 +59,12 @@ vi.mock("@/lib/failureAlert", () => ({
   reportFailure: (...args: unknown[]) => mockReportFailure(...args),
 }));
 
-import { useApplyForm, type FormState } from "./useApplyForm";
+import {
+  useApplyForm,
+  buildApplicationData,
+  INITIAL,
+  type FormState,
+} from "./useApplyForm";
 
 /* ─── Helpers ────────────────────────────────────────────────────── */
 
@@ -499,7 +504,7 @@ describe("useApplyForm", () => {
     expect(docData.referrerName).toBe("Nominator");
   });
 
-  it("submit sets referrerName to empty for Self type", async () => {
+  it("submit omits referrerName for Self type (rules reject empty strings)", async () => {
     const { result } = renderHook(() => useApplyForm());
 
     act(() =>
@@ -516,7 +521,7 @@ describe("useApplyForm", () => {
 
     expect(result.current.submitted).toBe(true);
     const docData = mockAddDoc.mock.calls[0][1];
-    expect(docData.referrerName).toBe("");
+    expect("referrerName" in docData).toBe(false);
   });
 
   it("submit sends notification email as fire-and-forget", async () => {
@@ -1116,8 +1121,8 @@ describe("useApplyForm", () => {
     expect(docData.orientation).toBe("Bisexual");
     expect(docData.city).toBe("New York");
     expect(docData.email).toBe("jane@example.com");
-    expect(docData.state).toBe("");
-    expect(docData.country).toBe("");
+    expect("state" in docData).toBe(false);
+    expect("country" in docData).toBe(false);
     expect(docData.community).toBe("South Asian");
     expect(docData.income).toBe("100k+");
     expect(docData.applicationType).toBe("Self");
@@ -1370,5 +1375,73 @@ describe("useApplyForm", () => {
       "You must agree to the Terms & Conditions",
     );
     expect(result.current.submitted).toBe(false);
+  });
+});
+
+/* ── buildApplicationData: omit-when-blank contract ─────────────── */
+
+describe("buildApplicationData", () => {
+  it("omits every blank optional field instead of sending empty strings", () => {
+    const minimal: FormState = {
+      ...INITIAL,
+      name: "Jane Doe",
+      age: "25",
+      gender: "Woman",
+      orientation: "Straight",
+      city: "New York",
+      email: "jane@example.com",
+      instagram: "janedoe",
+      marketingConsent: "yes",
+    };
+    const data = buildApplicationData(minimal, ["photos/a.jpg"], false);
+    for (const key of [
+      "height",
+      "community",
+      "income",
+      "type",
+      "state",
+      "country",
+      "phone",
+      "referrerName",
+      "nominationConsent",
+      "howHeard",
+      "seenShowBefore",
+    ]) {
+      expect(key in data, `${key} must be omitted when blank`).toBe(false);
+    }
+    // pitch is the deliberate exception: rules allow it empty.
+    expect(data.pitch).toBe("");
+  });
+
+  it("includes optional fields when filled and referrerName only for nominations", () => {
+    const filled: FormState = {
+      ...INITIAL,
+      applicationType: "Nomination",
+      name: "Anika Patel",
+      age: "27",
+      gender: "Woman",
+      orientation: "Straight",
+      city: "New York",
+      state: "NY",
+      country: "USA",
+      email: "anika@example.com",
+      phone: "+15550100",
+      height: "5'6",
+      instagram: "anika",
+      community: "Hindu",
+      income: "$50k to $100k",
+      referrerName: "Rohan Mehta",
+      type: "funny",
+      marketingConsent: "yes",
+    };
+    const data = buildApplicationData(filled, ["photos/a.jpg"], true);
+    expect(data.height).toBe("5'6");
+    expect(data.community).toBe("Hindu");
+    expect(data.income).toBe("$50k to $100k");
+    expect(data.type).toBe("funny");
+    expect(data.state).toBe("NY");
+    expect(data.country).toBe("USA");
+    expect(data.referrerName).toBe("Rohan Mehta");
+    expect(data.nominationConsent).toBe(true);
   });
 });

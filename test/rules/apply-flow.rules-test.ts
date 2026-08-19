@@ -303,6 +303,15 @@ describe("firestore.rules: applications", () => {
     );
   });
 
+  it("a document missing an always-sent key is rejected (hasAll contract)", async () => {
+    const { email, ...withoutEmail } = validApplication;
+    void email;
+    await assertFails(setDoc(appDoc(anonContext("anon-1")), withoutEmail));
+    const { photoPaths, ...withoutPhotos } = validApplication;
+    void photoPaths;
+    await assertFails(setDoc(appDoc(anonContext("anon-1")), withoutPhotos));
+  });
+
   it("unknown fields are rejected (hasOnly allowlist)", async () => {
     await assertFails(
       setDoc(appDoc(anonContext("anon-1")), {

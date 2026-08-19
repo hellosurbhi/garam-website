@@ -69,12 +69,14 @@ service cloud.firestore {
           'utmSource', 'utmMedium', 'utmCampaign', 'utmContent', 'utmTerm',
           'fbclid', 'gclid', 'posthogDistinctId', 'sourceCitySlug'
         ])
-        // WHY: hasAll lists only what the UI actually requires (mirrors
-        // getFieldErrors in useApplyForm.ts). height/community/income are
-        // optional in the form; requiring them here rejected every
+        // WHY: hasAll lists exactly the keys buildApplicationDocument in
+        // useApplyForm.ts always writes (the apply form is this rule's only
+        // writer; admin updates use isAdmin(), not this function). Optional
+        // form fields (height/community/income, phone, state, country...)
+        // must stay OUT of this list: requiring them rejected every
         // submission that left one blank (Aug 2026 outage). They keep their
         // size() > 0 checks below, applied only when the key is present.
-        && d.keys().hasAll(['name', 'age', 'gender', 'orientation', 'city', 'instagram', 'applicationType', 'status', 'submittedAt'])
+        && d.keys().hasAll(['name', 'age', 'gender', 'orientation', 'city', 'email', 'emailNormalized', 'instagram', 'applicationType', 'pitch', 'notes', 'marketingConsent', 'termsAgreedAt', 'photoPaths', 'status', 'submittedAt'])
         && d.name is string && d.name.size() > 0 && d.name.size() <= 200
         && d.age is number && d.age >= 18 && d.age <= 120
         && d.gender is string && d.gender.size() > 0 && d.gender.size() <= 100

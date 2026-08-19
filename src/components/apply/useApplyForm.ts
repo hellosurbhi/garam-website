@@ -150,7 +150,7 @@ export function buildApplicationData(
     orientation: form.orientation,
     ...(form.country ? { country: form.country } : {}),
     ...(form.state ? { state: form.state } : {}),
-    city: form.city,
+    city: form.city.trim(),
     email: form.email.trim().toLowerCase(),
     ...(form.phone.trim() ? { phone: form.phone.trim() } : {}),
     ...(form.height.trim() ? { height: form.height.trim() } : {}),

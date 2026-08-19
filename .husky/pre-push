@@ -6,7 +6,15 @@ if [ "$branch" = "main" ] || [ "$branch" = "master" ]; then
   echo "pre-push: refusing to push $branch directly. Open a PR from a feature branch." >&2
   exit 1
 fi
-npm run check
+# WHY there is no `npm run check` here (removed 2026-08-12, owner-approved
+# cycle-time fix): .husky/pre-commit already runs `astro check` and vitest at
+# commit time, so most pushed commits have already passed the type check
+# minutes earlier, and the global chain below still builds the site for
+# Playwright. Re-running it here added about a minute per push and only
+# re-examined a worktree that had already cleared the same gate; it does not
+# guarantee coverage for rebased or externally created commits, which CI's
+# `npx astro check` step still catches. Re-adding it re-creates the duplicate
+# gate for the common case, not extra safety for the uncommon one.
 # Run global pre-push chain (Playwright + Codex review + fetch-divergence check).
 # The global hook has its own recursion guard for this call-back pattern.
 if [ -x "$HOME/.git-hooks/pre-push" ]; then

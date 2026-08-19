@@ -819,6 +819,11 @@ This review ran on the merge of main into `fix/speed-insights-node-env` (PR #157
 - [ ] MEDIUM: Consolidate duplicate findings. (BUGS.md:761-772)
 - [ ] MEDIUM: Consolidate the repeated findings. (BUGS.md:774-783)
 
+### Codex (2026-08-13T19:14Z): both findings describe the pre-merge transition window, resolved when claude-global-config PR #18 merges (kept so they are not re-filed)
+
+- HIGH: [ORPHANED-QUEUE] True only until PR #18 merges: the LIVE retry tooling (the reviewer's vantage) still reads legacy ENHANCEMENTS.md, while PR #18's code reads reviews/retry-queue.md first with a legacy transition leg and a nightly migrator sweep, and excludes .worktrees so stale tracked copies in old session worktrees stop being counted. The 57 moved rows wait out the window exactly as pre-migration entries waited before.
+- HIGH: [HOOK-GUARD-NOT-IMPLEMENTED] The guard exists on PR #18 (bash-guardrails denies commit/push into any repo with a local core.hooksPath, self-test fixtures included); it is not yet in the LIVE hook the reviewer read. Until merge, the unset already applied to this repo is the protection.
+
 ### Codex (2026-08-14T16:21Z)
 
 - [ ] HIGH: [FALSE-PAGER-SUCCESS] `src/lib/opsAlert.ts:72-102` neither rejects unsuccessful webhook responses nor propagates delivery failures. `src/pages/api/alert-failure.ts:75-79` always returns 200, while both workflow curls omit HTTP failure handling. The heartbeat and outage pager can pass without delivering an alert.
@@ -863,6 +868,10 @@ This review ran on the merge of main into `fix/speed-insights-node-env` (PR #157
       [UNASKED-CHANGE] ENHANCEMENTS.md:1603-1610 and ENHANCEMENTS.md:1625-1626 modify unrelated historical review metadata with no trace to either stated commit intent.
       Decision on UNASKED-CHANGE (2026-08-14): resolved by design. Those telemetry lines are appended by the review hooks themselves (same pattern as commits 38cb5df and 1f56dea) and were already in the working tree at session start; committing them alongside is the established convention. TBA-SUPPRESSION, SHARED-GATE-BYPASS and CONTRADICTORY-PERMANENCE-RECORD remain open for a follow-up pass.
 
+### Codex (2026-08-14T18:12Z)
+
+- [ ] MEDIUM: [MISSING-CHANGELOG] The production analytics fix is absent from `CHANGELOG.md`, despite the repository requiring meaningful changes to be recorded.
+
 ### Codex (2026-08-14T19:09Z) on the event-pages-tracked-checkout ship push
 
 Fixed in-session the same day (entries removed per doc routing): CHECKOUT-RATE-LIMIT and STALE-PAST-CTA (go route now resolves the event first, sends canceled/past shows to /tickets, and a tripped rate limit only suppresses CAPI, never the redirect; covered by test/go-redirect.test.ts), BUILD-HANG (10s AbortSignal.timeout on the build-time Eventbrite content fetch), ANALYTICS-SEMANTICS (data-event-vendor standardized to vendorFromUrl across all seven CTA sites), MERGE-DEBRIS (formatter-escaped conflict markers removed from CHANGELOG.md) and the FABRICATED-REFERENCE critical (obsolete widget-loader entry deleted from ENHANCEMENTS.md). Remaining items below.
@@ -892,6 +901,24 @@ Already handled elsewhere: the UTC date cutoff, UNBOUNDED-SYNC-RUNTIME, PERMANEN
 - [ ] MEDIUM: [DATA-MIGRATION-MISSING] The Purchase-CAPI retry query only matches orders where both new booleans are explicitly false | Why: order documents created before PR #196 have neither `purchaseCapiSent` field, Firestore equality filters skip documents missing the field, so pre-existing undelivered orders can never be retried without a backfill | Files: src/pages/api/sync-orders.ts | Plan: one-time backfill with a cutover rule, not a blanket one. Orders created before server-side Purchase CAPI went live (PR #196's deploy) may already have been counted by the old browser-side pixel Purchase, which had no CAPI dedup id, so re-sending them can double-count revenue: mark those pre-cutover documents `purchaseCapiSent: true` with a `migrationNote` field so they leave the retry set permanently. Only documents created after the cutover get backfilled to false for retry. A not-equal-true query is NOT a substitute for either half: Firestore inequality filters also exclude documents where the field is absent, so only an explicit backfill reaches fieldless documents | Verify: emulator test confirms a fieldless pre-cutover order is marked sent and stays out of the retry set while a fieldless post-cutover order enters it. Executor: the 3:00 overnight fix-medium-bugs lane.
 - [ ] MEDIUM: [INCOMPLETE-PRICE-REMOVAL] Journal copy still states specific ticket prices | Why: PR #196 removed visible prices from UI surfaces on the grounds they drift from real Eventbrite pricing, but journal article copy (e.g. `src/data/journal/live-shows.ts:34` and `:906`) still names Garam Masala ticket prices that can go equally stale | Files: src/data/journal/live-shows.ts | Plan: audit journal and tips data for our own show's price mentions and replace stale exact figures with durable phrasing (content-only edit, city content enrichment rules apply, no deletions of surrounding copy) | Verify: grep journal data for dollar figures tied to Garam Masala shows and confirm none contradict events.ts. Executor: the 3:00 overnight fix-medium-bugs lane.
 - WONTFIX(MEDIUM, 2026-08-18): [EVENT-SLUG-DATE-MISMATCH] The rescheduled Boston show's slug `boston-2026-08-02` keeps the original date while `isoDate` is 2026-08-13 | Reason: intentional slug stability. The slug is the published canonical URL and tracking id; regenerating it on a date change would 404 shared links and reset conversion attribution. The move is recorded the mandated way (`previousDate`, note, EVENTS-HISTORY.md) and the show has since passed. Recorded so the report is not re-filed.
+
+### Codex (2026-08-18T16:11Z) — HIGH findings
+
+Note (2026-08-19, PR #193 merge pass): this round's own [UNSUPPORTED-NODE-RANGE] finding is dropped here; main's engines.node commit (`a4e4226`) already fixed and deleted it. Split from a shared checkbox into one line per finding (Fable `[SHARED-CHECKBOX]`, 2026-08-19) so the overnight fixer's one-checkbox-per-finding parsing doesn't silently drop the co-listed items.
+
+- [ ] HIGH: [UTC-CALENDAR-CUTOFF] `src/utils/eventDate.ts:107-111` uses the UTC calendar date, so `src/pages/api/go/[slug].ts:61` rejects same-day West Coast ticket purchases from 5 PM local time. Compare against the event timezone and end time.
+- [ ] HIGH: [UNBOUNDED-SYNC-RUNTIME] `src/pages/api/sync-orders.ts:758-838` processes up to 100 retries sequentially with a three-second timeout each. Failures can consume over 300 seconds before metadata is persisted, while `withTimeout` does not abort the underlying fetch.
+
+### Codex (2026-08-18T16:11Z) — MEDIUM findings
+
+Split from a shared checkbox into one line per finding, same pass as above (Fable `[SHARED-CHECKBOX]`, `[DUP-SECTION-HEADER]`, 2026-08-19).
+
+- [ ] MEDIUM: [DELIVERY-FLAG-REGRESSION] `src/pages/api/sync-orders.ts:652-656` resets `purchaseCapiSent` to false before every upsert. When the optional CAPI token is absent, or the existing-state read fails, a previously delivered order is persisted as pending again.
+- [ ] MEDIUM: [PERMANENT-RETRY-STARVATION] `src/pages/api/sync-orders.ts:401-443` returns an unordered 100-row queue, but only missing source events become unrecoverable. Terminal Meta 4xx responses and expired events retry forever and can crowd out new purchases.
+- [ ] MEDIUM: [FALSE-PURCHASE-CONVERSION] `src/lib/eventbrite.ts:42-46` converts every unknown Eventbrite status to `placed`; the new branch at `src/pages/api/sync-orders.ts:677` then sends those orders to Meta as purchases. Unknown statuses must fail closed.
+- [ ] MEDIUM: [HIDDEN-EVENT-INDEXING] `src/pages/events/[slug].astro:53-73` generates pages for hidden records and `astro.config.mjs:217-232` includes them in the sitemap. This publicly indexes records such as the hidden Chicago and Edison entries.
+- [ ] MEDIUM: [TBA-SUPPRESSION] `src/data/events.ts:595-600` checks cancellation but not `hidden`, despite claiming to test displayability. A hidden future show suppresses its city's public notify card.
+- [ ] MEDIUM: [WRONG-EVENT-TIMEZONE] `src/utils/eventSchema.ts:58-60` still applies New York offsets to every event, producing incorrect structured-data times for California and other non-New-York shows.
 
 ### Review lane finding filed on the primary checkout (2026-08-19)
 

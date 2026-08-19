@@ -1546,25 +1546,9 @@ If the ambiguity matters there too, rename both with Surbhi's approval on the ex
 
 ## Low priority enhancements
 
-- 2026-07-13T22:17Z | resolved=unretryable-no-diff | tier=E | primary=codex | reason=error_or_timeout | fallback_used=deepseek | commit=a7a0407 | diff_sha=06c49be5b23a6d9ded610b8ab3ef79264aeceaaa03517f0c6c5f9a05fcc95f79
-- 2026-07-13T22:17Z | resolved=unretryable-no-diff | tier=F | primary=coderabbit | reason=error | fallback_used=gemini | commit=a7a0407 | diff_sha=06c49be5b23a6d9ded610b8ab3ef79264aeceaaa03517f0c6c5f9a05fcc95f79
-
 ### DeepSeek — 20260713-181721
 
 - WONT-FIX (decision, do not re-file): reviewer flagged "non-obvious" in LESSONS.md as a banned double dash. It is a single hyphen forming a compound word, which the copy rules explicitly allow. No change. At `LESSONS.md:232`.
-
-- 2026-07-13T22:22Z | resolved=unretryable-no-diff | tier=E | primary=codex | reason=error_or_timeout | fallback_used=deepseek | commit=a7a0407 | diff_sha=4d2f31cad6c74709015827d74115da4debe4fa3e17a3ef6a0e5224e6994968cc
-- 2026-07-14T02:21Z | resolved=unretryable-no-diff | tier=E | primary=codex | reason=error_or_timeout | fallback_used=deepseek | commit=84c8cef | diff_sha=a9332e6f339e116b59d265b56fcc99285a6bb8b99ab72c66d4b3f024b4792373
-- 2026-07-13T14:14Z | resolved=unretryable-no-diff | tier=E | primary=codex | reason=error_or_timeout | fallback_used=deepseek | commit=c632e66 | diff_sha=727f9c571636bde5fa1659a5cfe3e0752dd55bfd98a7140eba940b370ac57b25
-- 2026-07-13T14:18Z | resolved=unretryable-no-diff | tier=E | primary=codex | reason=error_or_timeout | fallback_used=deepseek | commit=c632e66 | diff_sha=aa14f0405fb398ccc172f7d23e2c9751ee8c0ea5f24ddfb43a0f0bc1380bc5c6
-- 2026-07-13T14:21Z | resolved=unretryable-no-diff | tier=F | primary=coderabbit | reason=error | fallback_used=gemini | commit=c632e66 | diff_sha=aa14f0405fb398ccc172f7d23e2c9751ee8c0ea5f24ddfb43a0f0bc1380bc5c6
-- 2026-07-13T14:23Z | resolved=unretryable-no-diff | tier=E | primary=codex | reason=error_or_timeout | fallback_used=deepseek | commit=ba6728a | diff_sha=4fda69b1208df08e4e0d4b9c77ef4613feb0ca8b9bc76f065441e8676120a62b
-- 2026-07-13T14:23Z | resolved=unretryable-no-diff | tier=F | primary=coderabbit | reason=error | fallback_used=gemini | commit=ba6728a | diff_sha=4fda69b1208df08e4e0d4b9c77ef4613feb0ca8b9bc76f065441e8676120a62b
-- 2026-07-15T19:41Z | resolved=unretryable-no-diff | tier=E | primary=codex | reason=error_or_timeout | fallback_used=gemini | commit=8ecc6b2 | diff_sha=cd75cca2e1162551848ad7e7bd36b8eaafea48695da51c508f24dc4b385ae6c7
-- 2026-07-15T19:41Z | resolved=unretryable-no-diff | tier=F | primary=coderabbit | reason=error | fallback_used=gemini | commit=8ecc6b2 | diff_sha=cd75cca2e1162551848ad7e7bd36b8eaafea48695da51c508f24dc4b385ae6c7
-- 2026-07-15T20:02Z | resolved=unretryable-no-diff | tier=E | primary=codex | reason=error_or_timeout | fallback_used=gemini | commit=ad03ccb | diff_sha=8f7496694dfa7a06a1b1dbf0b403469de24530653c93388269f0d5f1898fea65
-- 2026-07-15T20:19Z | resolved=unretryable-no-diff | tier=F | primary=coderabbit | reason=error | fallback_used=gemini | commit=ad03ccb | diff_sha=2969cbac7200a1b37f3596ee9c891fc6080090253851585901f3c863c6b35d95
-- 2026-07-15T20:19Z | resolved=unretryable-no-diff | tier=E | primary=codex | reason=error_or_timeout | fallback_used=gemini | commit=ad03ccb | diff_sha=2969cbac7200a1b37f3596ee9c891fc6080090253851585901f3c863c6b35d95
 
 ### CodeRabbit — 20260713-102329
 
@@ -1574,43 +1558,14 @@ If the ambiguity matters there too, rename both with Surbhi's approval on the ex
 
 - LOW: Inconsistent heading levels are used for items in the "Indian Dating App Landscape in 2026" ranked list. Items 7, 6, and 5 use `h3`, while items 4 through 1 use `h2`. For semantic HTML and accessibility, all items in a single ranked list should use the same heading level.
 
-- 2026-07-13T14:35Z | resolved=unretryable-no-diff | tier=E | primary=codex | reason=error_or_timeout | fallback_used=deepseek | commit=ba6728a | diff_sha=4fda69b1208df08e4e0d4b9c77ef4613feb0ca8b9bc76f065441e8676120a62b
-- 2026-07-13T21:30Z | resolved=unretryable-no-diff | tier=E | primary=codex | reason=error_or_timeout | fallback_used=deepseek | commit=ba6728a | diff_sha=20a149d8de616e12be47d70ad78ddfcb63396c294c66268653770baf52f5718f
-- 2026-07-13T21:30Z | resolved=unretryable-no-diff | tier=F | primary=coderabbit | reason=error | fallback_used=gemini | commit=ba6728a | diff_sha=20a149d8de616e12be47d70ad78ddfcb63396c294c66268653770baf52f5718f
-- 2026-07-13T21:32Z | resolved=unretryable-no-diff | tier=E | primary=codex | reason=error_or_timeout | fallback_used=deepseek | commit=d64b1a7 | diff_sha=93c5a476f2cf0cfb519ba62d8f7cbc2ac0b875cdfab5a416dbd48c7ec3b9f988
-- 2026-07-13T21:32Z | resolved=unretryable-no-diff | tier=F | primary=coderabbit | reason=error | fallback_used=gemini | commit=d64b1a7 | diff_sha=93c5a476f2cf0cfb519ba62d8f7cbc2ac0b875cdfab5a416dbd48c7ec3b9f988
-- 2026-07-13T21:49Z | resolved=unretryable-no-diff | tier=E | primary=codex | reason=error_or_timeout | fallback_used=deepseek | commit=31350a3 | diff_sha=e35f355d8ce66d3bee2b4cb0a3a46beb9e293044bcb8a954a72352747f0ec6ce
-- 2026-07-13T21:54Z | resolved=unretryable-no-diff | tier=E | primary=codex | reason=error_or_timeout | fallback_used=deepseek | commit=31350a3 | diff_sha=b85bc6ec208be3e9c39090376efd6fb019be6269f674a405c12822b01884ae11
-- 2026-07-14T04:12Z | resolved=unretryable-no-diff | tier=E | primary=codex | reason=error_or_timeout | fallback_used=deepseek | commit=31350a3 | diff_sha=a457f9f43c890a3896d690da506abb79097a4a3ef66a6f7940892657c149ea39
-- 2026-07-13T21:58Z | resolved=unretryable-no-diff | tier=E | primary=codex | reason=error_or_timeout | fallback_used=deepseek | commit=31350a3 | diff_sha=e99328d390b12ce56298326ab4de0bbe0dc52589de496f6c32de51a45e6bfc6d
-- 2026-07-13T21:58Z | resolved=unretryable-no-diff | tier=F | primary=coderabbit | reason=error | fallback_used=gemini | commit=31350a3 | diff_sha=e99328d390b12ce56298326ab4de0bbe0dc52589de496f6c32de51a45e6bfc6d
-- 2026-07-13T22:03Z | resolved=unretryable-no-diff | tier=E | primary=codex | reason=error_or_timeout | fallback_used=deepseek | commit=be735b9 | diff_sha=aad31620a68713c8d429e0c119d83b6d351d4e2eaa7a4338546eecdd1ac0d095
-- 2026-07-13T22:03Z | resolved=unretryable-no-diff | tier=F | primary=coderabbit | reason=error | fallback_used=gemini | commit=be735b9 | diff_sha=aad31620a68713c8d429e0c119d83b6d351d4e2eaa7a4338546eecdd1ac0d095
-- 2026-07-13T22:07Z | resolved=unretryable-no-diff | tier=E | primary=codex | reason=error_or_timeout | fallback_used=deepseek | commit=37cde64 | diff_sha=9506d1aa157f1daade093c8e9414c34d99e8046112fb55278553d9723010625c
-- 2026-07-13T22:07Z | resolved=unretryable-no-diff | tier=F | primary=coderabbit | reason=error | fallback_used=gemini | commit=37cde64 | diff_sha=9506d1aa157f1daade093c8e9414c34d99e8046112fb55278553d9723010625c
-- 2026-07-14T18:04Z | resolved=unretryable-no-diff | tier=F | primary=coderabbit | reason=error | fallback_used=gemini | commit=8b4d379 | diff_sha=21cb57ca33a0bc568eacd8e142d7932bb30af7a382fa25b557f2c6dda526c07e
-- 2026-07-15T01:57Z | resolved=unretryable-no-diff | tier=F | primary=coderabbit | reason=error | fallback_used=gemini | commit=59ce89e | diff_sha=79d49c2634be8fd8ec7a52e9739360de8ba9bb45ede67b3359c69ac05ca02d7a
-- 2026-07-15T02:08Z | resolved=unretryable-no-diff | tier=F | primary=coderabbit | reason=error | fallback_used=gemini | commit=4efe5d3 | diff_sha=b74f4259c3e8725c36ba740c55be50f41db8a256f4ac932ce24114c7160ec270
-- 2026-07-15T19:26Z | resolved=unretryable-no-diff | tier=F | primary=coderabbit | reason=error | fallback_used=gemini | commit=8ecc6b2 | diff_sha=c9f20eceb0d2132fd116a62263d47c0c3d5f314a576755c1dfc0e7cb6dd8f18b
-- 2026-07-15T19:37Z | resolved=unretryable-no-diff | tier=E | primary=codex | reason=error_or_timeout | fallback_used=gemini | commit=8ecc6b2 | diff_sha=0dcddf1f107891ad33ffb99d2cd75f10b3ad2973464c41b886f960166a096a50
-- 2026-07-15T19:37Z | resolved=unretryable-no-diff | tier=F | primary=coderabbit | reason=error | fallback_used=gemini | commit=8ecc6b2 | diff_sha=0dcddf1f107891ad33ffb99d2cd75f10b3ad2973464c41b886f960166a096a50
-- 2026-07-15T20:02Z | resolved=unretryable-no-diff | tier=E | primary=codex | reason=error_or_timeout | fallback_used=gemini | commit=6d4ffce | diff_sha=b08d7547b063f0d65a61651faeee2b1aa1873cd6e19f1e53b053088d83326903
-- 2026-07-15T20:05Z | resolved=unretryable-no-diff | tier=E | primary=codex | reason=error_or_timeout | fallback_used=gemini | commit=6d4ffce | diff_sha=6f33d9df6bc37013fa4dff92a4c984aef976932b116a1d6b01b650717df28de7
-
 ### CodeRabbit — 20260715-160549
 
 - LOW: [CodeRabbit] ENHANCEMENTS.md: Verify each finding against current code. Fix only still-valid issues, skip the rest with a brief reason, keep changes minimal, and validate. In @ENHANCEMENTS.md at line 1493, Update the metadata timestamp entry in ENHANCEMENTS.md to use the repository-approved dash-free separator format instead of the hyphenated date in the 2026-07-15T20:02Z value. Preserve the remaining metadata fields unchange...
-- 2026-07-15T20:09Z | resolved=unretryable-no-diff | tier=E | primary=codex | reason=error_or_timeout | fallback_used=gemini | commit=93fe5a9 | diff_sha=a31236d356caa725b1069536731a9386a9b777862aa98b6f7c956a16f61aec04
-- 2026-07-15T20:09Z | resolved=unretryable-no-diff | tier=F | primary=coderabbit | reason=error | fallback_used=gemini | commit=93fe5a9 | diff_sha=a31236d356caa725b1069536731a9386a9b777862aa98b6f7c956a16f61aec04
 
 ### DeepSeek — 20260715-160953
 
 - LOW: The heading '### CodeRabbit — 20260715-160549' uses an em dash, which violates the project's copy voice mandate.
-
   > a/ENHANCEMENTS.md:1496 | +### CodeRabbit — 20260715-160549
-
-- 2026-07-16T18:25Z | resolved=unretryable-no-diff | tier=E | primary=ALL | reason=OUTAGE | fallback_used=NONE | commit=f1d5483 | diff_sha=082f7bb0e23255ee6634a79539f3161de20a35f7ddbba111e74e630c08eaa40b
-- 2026-08-12T17:54Z | resolved=unretryable-no-diff | tier=R | primary=coderabbit | reason=cli-unavailable-or-failed | fallback_used=codex | commit=d1deffc | diff_sha=00d1afdf20458e182720ec1595a77e1c781b821f8021fc38aeac007e5cc9d085
 
 ### Codex LOW findings 2026-07-16 (won't fix, kept so they are not re-filed)
 
@@ -1629,6 +1584,10 @@ If the ambiguity matters there too, rename both with Surbhi's approval on the ex
 
 - LOW: [INTERACTIVE-TYPE-SIZE] `src/components/events/EventTicketCta.astro:194` uses 15px button text and `src/pages/events/[slug].astro:541` uses 14px link text, violating the project’s 16px minimum for interactive elements.
 - LOW: [DESIGN-TOKEN-BYPASS] New event components hardcode colors such as `white`, `#444` and black RGBA values instead of using the project’s centralized color tokens.
+
+### Fable — 20260816-094940 (PR #193)
+
+- [ ] ENHANCEMENT: LOW [NO-GLOBAL-HOOK-FALLBACK] Pre-push runs zero local checks on a machine without the global hooks installed | Why: `.husky/pre-push:16`, with `npm run check` removed, has its only remaining gate as the `-x "$HOME/.git-hooks/pre-push"` chain, so on a fresh clone, new laptop, or worktree before setup a push runs no local checks at all and type-broken or `--no-verify`-committed code reaches the remote silently, caught only later in CI. Filed, not built: a repo-local fallback gate is new scope beyond the pre-push trim this PR shipped | Files: .husky/pre-push | Plan: add a repo-local fallback check (e.g. run `npm run check` directly when `$HOME/.git-hooks/pre-push` is absent) so pushes are never fully ungated | Verify: rename `~/.git-hooks` locally, make a type-broken commit, confirm the push is still blocked. Executor: the 3:00 overnight fix-medium-bugs lane.
 
 ### Dependency follow-ups (2026-08-18)
 

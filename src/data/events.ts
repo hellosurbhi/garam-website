@@ -519,6 +519,25 @@ export const events: EventEntry[] = [
     endTime: "22:00",
     price: "15",
   },
+  {
+    date: "Oct 11",
+    city: "Manhattan",
+    state: "New York",
+    stateAbbr: "NY",
+    citySlug: "manhattan",
+    slug: buildEventSlug("manhattan", "2026-10-11"),
+    description:
+      "Another All Stars edition of Garam Masala Dating at The Loft at City Winery NYC, bringing back fan favorite daters for a second round on stage.",
+    lineup: DEFAULT_LINEUP,
+    ticketSource: "external",
+    url: "https://tickets.citywinery.com/event/garam-masala-comedy-dating-show-all-stars-editio-suakfs",
+    isoDate: "2026-10-11",
+    startTime: "19:00",
+    endTime: "21:00",
+    venue: VENUE_CITY_WINERY_NYC,
+    price: "15",
+    onSaleAt: "2026-08-20T19:00:00Z",
+  },
 ];
 
 // Only show TBA entries for cities with active tour planning (not all 200+ expansion pages).

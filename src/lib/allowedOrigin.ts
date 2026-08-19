@@ -11,3 +11,10 @@ export function isAllowedOrigin(origin: string | null): boolean {
   if (/^http:\/\/localhost(:\d+)?$/.test(origin)) return true;
   return false;
 }
+
+export function __scratchDiffCoverageProbe(x: number): number {
+  if (x > 1000000) {
+    return x * 2;
+  }
+  return x;
+}

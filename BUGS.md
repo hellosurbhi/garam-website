@@ -927,3 +927,11 @@ Split from a shared checkbox into one line per finding, same pass as above (Fabl
 ### Session finding 2026-08-19 (worktree close-out sweep)
 
 - [ ] CRITICAL: [SYNTHETIC-APPLY-RED, DIAGNOSED 2026-08-19] ALL apply submissions are rejected by Firestore since 2026-08-12T18:44Z, real applicants included | Root cause: PR #135 deployed its client instantly via Vercel but its firestore.rules/storage.rules were never deployed (the same undeployed-rules class as the July outage above, pending since 2026-07-13); the post-#135 client unconditionally sends photoPaths, which the DEPLOYED validApplication hasOnly list rejects, so every create fails "Missing or insufficient permissions" (trace evidence from run 32261818126: anonymous auth 200, photo upload 200, Firestore write denied, rollback photo DELETE 403 against stale storage.rules, client POSTs /api/alert-failure which returns 200 while the email behind it is swallowed) | FIX, OWNER, ONE COMMAND: in the garam-masala-dating checkout run `firebase deploy --only firestore:rules,storage` (this also closes the July entry's live PII-read exposure) | Verify: the monitor workflow dispatch goes green end to end and its always-on rules-drift step reports no drift; the fixed workflow (this branch) also pages via GitHub issue on any future failure. Executor: Surbhi (production deploy access is intentionally not automated).
+
+### Codex (2026-08-19T19:00Z)
+
+- [ ] HIGH: Make heartbeat delivery failure observable. (.github/workflows/synthetic-apply.yml:78-82)
+
+### Codex (2026-08-19T19:00Z)
+
+- [ ] MEDIUM: Do not describe the heartbeat as proof of alert delivery. (CHANGELOG.md:5-16)

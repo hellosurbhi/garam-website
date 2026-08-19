@@ -2,6 +2,44 @@
 
 ## Open
 
+### [MEDIUM] Event JSON-LD always uses New York's UTC offset, even for non-NY shows
+
+- **Date:** 2026-07-16
+- **File:** `src/utils/eventSchema.ts:2` (`nyOffset` from `src/utils/timezone.ts`), `src/data/events.ts` (`EventEntry.timezone` field)
+- **Status:** Open
+- **Severity:** Medium
+- **What's happening:** `buildEventSchemas()` calls `nyOffset(e.isoDate, time)` unconditionally for every event's `startDate`/`endDate`/`doorTime`, regardless of the event's actual city. `EventEntry` already has an optional `timezone` field (IANA identifier, e.g. `"America/New_York"`) intended for exactly this, but nothing reads it: `nyOffset` is hardcoded to the `America/New_York` zone. Every non-NY show (San Diego, Chicago, and any future city) ships Event structured data with the wrong UTC offset baked into `startDate`/`endDate`. This is silent: it doesn't throw or fail a build, it just publishes incorrect machine-readable event times, which can make Google's Event rich results (and "Add to calendar" actions derived from them) show the wrong local time for that city.
+- **Confirmed pre-existing:** `git diff main -- src/utils/eventSchema.ts src/utils/timezone.ts` shows this logic is untouched by the current per-event-landing-page work; it predates that effort and was never exercised for non-NY cities' individual event pages until now.
+- **What should happen:** `buildEventSchemas` should resolve each event's actual IANA zone (`e.timezone ?? "America/New_York"`) and `nyOffset` should be generalized to accept a zone parameter (e.g. `offsetForZone(isoDate, time, timezone)`) instead of hardcoding New York.
+- **Fix:** Not applied here, out of scope for the ad-tracking/checkout-redirect PR that surfaced it. Needs its own pass with a schema/timezone-focused smoke test (Rich Results Test on a San Diego or Chicago event page) rather than a drive-by fix.
+
+### [MEDIUM] Cookie consent banner does not gate Meta/marketing tracking
+
+- **Date:** 2026-07-16
+- **File:** `src/components/CookieConsent.astro`, `src/components/meta-pixel.astro`, `src/components/gtm.astro`, `src/pages/api/go/[slug].ts`, `src/pages/api/sync-orders.ts`
+- **Status:** Won't fix / by design (2026-07-16, Surbhi)
+- **Severity:** Medium
+- **What's happening:** The cookie banner writes a `marketing` boolean to localStorage, but nothing reads it before firing any Meta surface. `meta-pixel.astro` loads the Pixel unconditionally on idle and fires `fbq("init")` + `PageView` regardless of consent; `gtm.astro` loads the same way; the server-side CAPI calls added in this PR (`/api/go/[slug]`'s InitiateCheckout, `sync-orders.ts`'s Purchase) are server-to-server and were never going to be blockable by a client-side preference in the first place. Rejecting "marketing" in the banner therefore stops nothing. This predates the event-pages/CAPI work (Pixel and GTM already ignored consent); the new CAPI calls are consistent with that existing, ungated surface rather than a new gap.
+- **Decision:** Confirmed intentional (Surbhi, 2026-07-16). The show targets US audiences only, with no EU/UK-targeted traffic, so GDPR-style consent gating is not a legal requirement here, and the business call is to keep every Meta signal, including the now-unblockable server CAPI, firing regardless of banner state. Devil's-advocate note recorded and accepted: server CAPI reaches a few more users than the browser Pixel alone would (it survives ad blockers and ITP), which is exactly the tradeoff being made on purpose. No consent-gating code will be built. Logged here so future reviews don't re-flag it as a new defect.
+
+### [CRITICAL] Apply submissions with large photos lost + undeployed security rules left PII readable
+
+- **Date:** 2026-07-13 (partial failures since ~2026-07-05; record corrected 2026-07-13 after production verification)
+- **File:** `storage.rules`, `firestore.rules`, `src/components/apply/useApplyForm.ts`
+- **Status:** Code fixed (2026-07-13), pending rules deploy via Firebase CLI (`--only firestore:rules,storage`)
+- **Severity:** Critical (lost applicants from paid traffic + live PII exposure until the rules deploy)
+- **What happened:** Two compounding problems, both traced to rules changes merging without the manual Firebase deploy. (1) PR #110 (July 5) raised the client photo cap from 5 MB to 15 MB but its `storage.rules` bump was never deployed, so applicants with photos over the deployed cap (exactly the large iPhone photos the bump was for) failed at upload with `storage/unauthorized` and their applications were lost: confirmed failure bursts July 7, 9, 12 and 13 including paid LA campaign traffic. Smaller-photo submissions kept working, which is why the pipeline looked alive. (2) PR #115's security rules (admin-only reads for applicant photos and PII docs) were also never deployed, leaving the pre-#115 posture live: any visitor with an anonymous session can read applicant photos, and per #115's own audit, applicant/lead PII documents. An earlier version of this entry claimed a total outage caused by `getDownloadURL()` under the #115 rules; production verification (successful submission + applications arriving all week) disproved that. The `getDownloadURL()` mechanism was real but latent: deploying #115's rules without this fix WOULD have taken the form fully down. Fix: path-based `photoPaths` + admin `getBlob()` rendering, client-side compression (puts every photo under any cap), owner-tagged cleanup, emulator rules tests locking the client/rules contract, real-time failure alerting, 6-hour synthetic monitor and a deployed-vs-repo rules drift check so merged-but-undeployed rules can never sit silent again.
+
+### [HIGH] Contestant workflow: portal + admin components still lack unit test coverage
+
+- **Date:** 2026-07-16
+- **File:** `src/components/ContestantPortal.tsx` (#97), `src/components/admin/TaskInbox.tsx` (#97), `src/components/admin/ContestantFunnel.tsx` (#99)
+- **Status:** Open
+- **Severity:** High
+- **What happened:** All five phases of the contestant workflow project merged 2026-07-03 to 07-05 with zero unit tests, confirmed by a Stryker mutation report showing these files scoring 0 to 8% mutation coverage. The backend half of the gap (Zoho SMTP mailer, cal.com webhook, post-show and followups cron jobs) now has unit coverage, see CHANGELOG. The remaining three files are UI components: `ContestantPortal.tsx` is public facing and deferred to its own follow-up PR (not dropped, see ENHANCEMENTS.md); `TaskInbox.tsx` and `ContestantFunnel.tsx` are admin dashboard screens the operator plans to rewrite, so their tests are deferred until after that rewrite lands rather than writing tests for code about to be replaced (see ENHANCEMENTS.md).
+- **Impact:** A regression in the contestant portal waiver flow or the admin Task Inbox/funnel view would not be caught by the test suite; only manual QA would notice.
+- **Fix:** Write `ContestantPortal.tsx` tests in a dedicated follow-up PR (stateful component, needs `vi.stubGlobal("fetch")` plus `waitFor`). Write `TaskInbox.tsx`/`ContestantFunnel.tsx` tests against their post-rewrite replacements.
+
 ### [HIGH] Dev server cannot transform TypeScript in astro component scripts
 
 - **Date:** 2026-07-05
@@ -621,6 +659,10 @@
 - [x] MEDIUM: `handleRestore` is an async function but the caller `onRestore` in `ApplicantCard` is typed as `() => void` — the returned promise is discarded, so any error in restore is silently swallowed. at src/components/admin/AdminDashboard.tsx:290 — Not a live bug: `handleUpdate` catches every write error internally and surfaces a toast, so the discarded promise can never reject. Handlers now also wrap in try/finally.
 - [x] MEDIUM: `handleParticipated` is an async function but the caller `onParticipated` in `ApplicantCard` is typed as `() => void` — the returned promise is discarded, so any error in participated is silently swallowed. at src/components/admin/AdminDashboard.tsx:295 — Not a live bug: same reasoning as above; all rejection paths are caught inside the handler chain.
 
+### DeepSeek — 20260713-181721
+
+- WONT-FIX (decision, do not re-file): reviewer asked to drop `set -e` from `.husky/pre-commit` as redundant with the `#!/bin/sh` shebang. Rejected: a shebang implies no error-exit behavior at all; `set -e` is load-bearing in a gate script and stays. At `.husky/pre-commit:2`.
+
 ### CodeRabbit — 20260713-173257
 
 - [x] MEDIUM: Inconsistent heading levels in the `best-indian-dating-apps-ranked` countdown: items 7, 6, 5 used `h3` while items 4 through 1 used `h2`. (Entry was queued as an empty stub by the old header-only severity grep in the pre-commit hook; actual finding text restored by hand. Capture bug since fixed in `~/.claude/config/git-hooks/pre-commit` via `extract_severity`.) FIXED 2026-07-13: all seven items promoted to `h2` in `src/data/journal/app-alternatives.ts`, per Surbhi's call.
@@ -666,3 +708,254 @@
 ### Codex (2026-07-16T19:28Z)
 
 - [ ] MEDIUM: [UNASKED-CHANGE] `BUGS.md:662-664` and `ENHANCEMENTS.md:1508-1510` add reviewer telemetry unrelated to the stated comma-only intent. The enhancement also falsely claims `CHANGELOG.md:11` still contains the Oxford comma removed by this commit.
+
+### DeepSeek — 20260715-160953
+
+- [ ] MEDIUM: The finding logged from CodeRabbit appears to be truncated ("...unchange..."). This could hide the full context of the finding.
+  > a/ENHANCEMENTS.md:1498 | + - LOW: [CodeRabbit] ENHANCEMENTS.md: Verify each finding against current code. Fix only still-valid issues, skip the rest with a brief reason, keep changes minimal, and validate. In @ENHANCEMENTS.md at line 1493, Update the metadata timestamp entry in ENHANCEMENTS.md to use the repository-approved dash-free separator format instead of the hyphenated date in the 2026-07-15T20:02Z value. Preserve the remaining metadata fields unchange...
+
+### Codex (2026-07-17T15:12Z)
+
+- MEDIUM `INACCURATE-HISTORY` in the `4c6e07a` commit body: won't fix, kept here so the same report is not re-filed. Both points are conceded as accurate. The em dash sits in `1f0a217`'s message, not `f1d5483`'s. And `widget_load_failed` existed before the fix in the `createWidget` catch paths and the inline embed timeout; what the fix added is firing it when the modal never opens after a click. The committed docs state both facts correctly, so the inaccuracies live only in the message of a commit already on origin, and rewriting a published commit message requires a force push, which is prohibited.
+
+### Codex (2026-07-17T15:16Z)
+
+- [ ] MEDIUM: `INACCURATE-POLICY` in the Codex 2026-07-17T15:12Z won't-fix rationale above: rewriting the published non-main commit would require a forced update, but it is not categorically prohibited. The governing rule permits `--force-with-lease` after a rebase and prohibits only bare `--force` and forced updates to main. The won't-fix choice may stand, but its stated rationale is false.
+
+## High priority (from push reviews, fix first)
+
+### Codex (2026-08-03T06:53Z)
+
+Both findings critique the "Mobile Sticky CTA" writeup in ENHANCEMENTS.md, which was authored on the unmerged `feat/event-pages-tracked-checkout` branch and describes that branch's code. Evaluate when that branch's PR is reviewed.
+
+- [ ] HIGH: [SCOPE-CREEP] `ENHANCEMENTS.md` sticky CTA entry broadens an event-page CTA request into a sitewide contract covering tickets and city pages without that universal scope appearing in the stated intent.
+- [ ] HIGH: [UNSOURCED-CLAIM] `ENHANCEMENTS.md` sticky CTA entry makes current-code, traffic and existing-task claims without `file:line` evidence or command output.
+
+### Codex (2026-08-03T07:15Z)
+
+Applies to the unmerged `feat/event-pages-tracked-checkout` branch; fix there.
+
+- [ ] HIGH: [UNRESOLVED-BACKLOG] The no-`eid` `InitiateCheckout` finding was pruned as resolved, but `f916f02` does not fully resolve it. `ticketCtaTracking.ts:42-58` adds `eid` client-side while the rendered link remains `/api/go/...`; `api/go/[slug].ts:58-60,93` still generates a fallback ID and fires CAPI for any unrecognized user agent. Browser prefetches using a normal browser user agent can therefore still be counted as conversions.
+
+### Codex (2026-08-12T16:29Z)
+
+This review ran on the merge of main into `fix/eventbrite-widget-silent-failure` (PR #159), so its diff was dominated by content already merged to main via other PRs; every finding below targets that main-side content, none of it authored on the PR branch. The SCOPE-CREEP and UNSOURCED-CLAIM findings on the ENHANCEMENTS.md sticky CTA entry are duplicates of the Codex 2026-08-03T06:53Z entries above and are not re-listed.
+
+- [ ] HIGH: [FALSE-SUCCESS] `test/followups.test.ts:291-334` omits missing-recipient and delivery-failure cases. `src/pages/api/cron/followups.ts:256-277` records the briefing date and reports `briefingSent: true` even when no host email is configured or every send fails, preventing retries.
+- [ ] HIGH: [SWALLOWED-ERROR] `test/post-show.test.ts:178-187` normalizes an SMTP failure without requiring any observable error. `src/pages/api/cron/post-show.ts:61-62` silently suppresses the failure and returns success.
+- [ ] MEDIUM: [BOUNDARY-COVERAGE] `test/post-show.test.ts:144-166` uses days 1 and 11 but never tests the inclusive D3 and D10 boundaries claimed in the CHANGELOG entry for the contestant-workflow test coverage, leaving the relevant off-by-one mutations uncovered.
+- CRITICAL `FABRICATED-REFERENCE` on the `e520120` commit body (test and check results stated without logs stored in the repo): won't fix, kept here so the same report is not re-filed. Two grounds. First, `e520120` is already published on main, merged via PR #158; it entered this review's diff only through the merge of main into the PR branch, and rewriting a published main commit message would require force-pushing main, which is prohibited without exception. Second, this repo intentionally stores no test logs as committed artifacts. The required "Lint, Types, Test, Build" check (`.github/workflows/ci.yml`) runs on pull requests targeting `main` and runs lint, `astro check`, the full vitest suite, the build and `npm audit`; it runs neither Stryker nor the scoped test command, so the commit body's specific historical counts (scoped 53/53, Stryker 0 to 8%) are not re-verified anywhere and stand only as that commit's contemporaneous report. What CI does guarantee is that the code currently on the branch passes the full suite before merge, which is the property the repo actually relies on.
+
+### CodeRabbit PR #135 review — 2026-08-12 (deferred, heavy lifts; quick wins fixed same day)
+
+- [ ] MEDIUM: `isSynthetic` remains in the public Firestore write schema, so an anonymous client can mark its own application synthetic and hide it from the dashboard. The notification-suppression half was closed same day (server derives synthetic from the verified email in `/api/notify-application`); removing the field from the public schema needs a trusted server-side write path for the monitor and matching rules-test updates.
+- [ ] MEDIUM: photo previews in the apply form read every accepted file through `FileReader.readAsDataURL()` before compression; a multi-photo selection of large originals can hold hundreds of MB of base64 in memory on mobile. Switch previews to `URL.createObjectURL` with revocation. at src/components/apply/useApplyForm.ts:262
+- [ ] MEDIUM: `contestant-claim`, `contestant-open-claim` and `contestant-show-claim` group several non-idempotent Firestore writes in one try block and return a retryable 500; a retry after a partial failure creates duplicate contestant records and waiver submissions. Needs idempotency keys or preflighting the fallible config (portal token signing) before the first write.
+- [ ] LOW: `.github/workflows/synthetic-apply.yml` runs verification/cleanup only when Playwright succeeds; a submission written before a later assertion failure is left behind and can trip the 48-hour cleanup guard. Run cleanup unconditionally (`if: always()`).
+
+### Codex (2026-08-12T17:53Z)
+
+- [ ] HIGH: [FALSE-PAGER-SUCCESS] `src/lib/opsAlert.ts:81` swallows every delivery failure with `Promise.allSettled`, and `src/pages/api/alert-failure.ts:77` always returns 200. The workflow heartbeat and failure notification can therefore report success when neither email nor webhook delivered.
+- [ ] HIGH: [NON-BLOCKING-RULES-GATE] `.github/workflows/ci.yml:63` adds the emulator suite as a separate job, but `scripts/setup-branch-protection.sh:79` requires only `Lint, Types, Test, Build`. A failed security-rules job does not block merging under the documented protection configuration.
+
+- [ ] MEDIUM: `.github/workflows/synthetic-apply.yml:49` runs verification and cleanup only after Playwright succeeds. A submission that reaches Firestore before a later browser assertion fails is left behind. Once older than 48 hours, it can make the cleanup script refuse subsequent cleanup runs.
+- [ ] MEDIUM: `src/data/waiverPage.ts:22` promises that a receipt was emailed, but `src/pages/api/stage-waiver.ts:131` intentionally returns success after receipt delivery fails. Users can receive a false confirmation.
+
+### Codex (2026-08-12T18:28Z)
+
+- [ ] HIGH: [PUBLIC-WEBHOOK-PII] `src/lib/opsAlert.ts:79` still sends `report.errorMessage` verbatim. Cron errors embed applicant email addresses at `src/pages/api/cron/followups.ts:110` and `src/pages/api/cron/post-show.ts:67`, so PII still reaches effectively public ntfy topics.
+- [ ] HIGH: [PUSH-GUARD-BYPASS] `.husky/pre-push:4` checks the current branch, not the remote refs supplied to the hook. From a feature branch, `git push origin HEAD:main`, `git push origin main` or deletion of remote main bypasses the guard.
+- [ ] HIGH: [BROKEN-SMOKE-SELECTOR] `tests/smoke/critical-flows.spec.ts:204` selects `apply-terms` on `/waiver`, but `StandaloneWaiverForm.tsx:205` has no such attribute. The waiver smoke flow now fails before submission.
+
+### Codex (2026-08-12T18:28Z)
+
+- [ ] MEDIUM: [PHOTO-PATH-MISMATCH] `firestore.rules:42` rejects spaces and Unicode while `useApplyForm.ts:444` copies the original filename suffix without sanitizing it. Small or fallback images can retain names such as `holiday photo`, upload successfully then have the application rejected by Firestore.
+- [ ] MEDIUM: [FALSE-POSITIVE-RULE-TEST] The non-image test at `test/rules/apply-flow.rules-test.ts:87` omits required owner metadata. It now fails regardless of the content-type rule, so removing the image restriction would not make this regression test fail.
+
+## Critical (round cap reached, push allowed, fix before merge)
+
+### Codex (2026-08-12T16:37Z)
+
+- CRITICAL: [FABRICATED-REFERENCE] Re-filed against the `e520120` commit body (1157/1157 full-suite tests, 53/53 scoped tests, zero check errors, 0 to 8% Stryker result, all stated without stored evidence): same won't-fix decision as the entry above, kept so the report is not re-filed a third time. The commit is published main history and the repo stores no test logs; the won't-fix rationale above now states the CI scope accurately (PRs targeting `main`; no Stryker, no scoped command, historical counts not re-verified). This entry is a recorded decision, not an open action item.
+
+### Codex (2026-08-12T19:41Z)
+
+- [ ] HIGH: [RECOVERY-ORDERING] `src/lib/eventbriteRecovery.ts:135-138` checks `event.defaultPrevented` before later listeners or ancestor listeners execute. If a partially initialized Eventbrite handler prevents default during bubbling, this fallback has already returned and the checkout CTA remains dead. `src/lib/eventbriteRecovery.test.ts:214-234` only tests a suppressing listener registered earlier on the same element.
+- [ ] HIGH: [SCOPE-CREEP] `LESSONS.md:9` turns Eventbrite-specific timing and DOM behavior into constraints for “Any integration,” while `src/lib/navigation.ts:7-9` mandates the wrapper for all navigation. Neither universal rule is part of the stated Eventbrite recovery scope and the latter already conflicts with direct navigation at `src/layouts/BaseLayout.astro:347`.
+- [ ] MEDIUM: [UNASKED-CHANGE] `ENHANCEMENTS.md:7-12` adds a separate script-load failure backlog item that explicitly identifies itself as outside PR #159’s review findings and does not trace to the stated commit intent.
+
+The 2026-08-12T19:47Z re-review of the amended push re-filed the same three findings verbatim; they are recorded once above, not duplicated.
+
+### Codex (2026-08-12T20:05Z)
+
+This review ran on the merge of main into `fix/eventbrite-widget-silent-failure` (PR #159) after PR #135 landed on main, so its diff was dominated by PR #135's apply-outage content; every finding in this section targets that main-side content, none of it authored on the PR branch. Several overlap the 17:53Z and 18:28Z entries above with added detail.
+
+- CRITICAL `UNSAFE-ROLLOUT` (`useApplyForm.ts:507` writes `photoPaths` while the deployed Firestore allowlist may still exclude it): not fixable on this branch and not created by it. The flagged client code is already published on main via PR #135 and Vercel ships it from main regardless of whether PR #159 merges. The rollout sequencing risk is exactly the "pending rules deploy via Firebase CLI" condition already tracked by the CRITICAL apply-outage entry at the top of this file, plus PR #135's operator steps. Recorded here so the same report is not re-filed against PR #159's merge commits.
+
+### Codex (2026-08-14, PR #157 merge push)
+
+This review ran on the merge of main into `fix/speed-insights-node-env` (PR #157), so its diff was again dominated by main-side content from PRs #135, #158 and #159; nothing it flags was authored on the PR branch, whose own change is a 4 line `astro.config.mjs` deletion plus doc conflict resolution. Both CRITICALs are re-filings of decisions already recorded in this file.
+
+- CRITICAL `UNSAFE-ROLLOUT` re-filed against PR #157's merge commit: same recorded decision as the Codex 2026-08-12T20:05Z entry above, on identical grounds (client code published on main via PR #135, sequencing tracked by the apply-outage entry at the top of this file plus PR #135's operator steps). Kept so the report is not re-filed against further merge commits of main into open branches.
+- CRITICAL `FABRICATED-REFERENCE` re-filed against the `38cb5df`, `4ec96f3` and `e520120` commit bodies (exact lint and test counts stated without committed logs): same won't-fix decision as the two entries in the round-cap section below. `4ec96f3` and `e520120` are published main history and cannot be reworded without a prohibited force push. `38cb5df`'s Verified line follows the format the repo's own commit-msg hook mandates and rejects commits without (its own examples state exact counts such as "npm test -> 47/47 pass"); the counts were produced by the pre-commit gate that ran on that very commit, and the repo intentionally stores no test logs as artifacts. CI re-runs the full suite on every PR, which is the guarantee the repo relies on.
+
+- [ ] HIGH: [FALSE-PAGER-SUCCESS] `src/lib/opsAlert.ts:72` does not reject non-success webhook responses, `src/lib/opsAlert.ts:92` swallows every channel failure and `src/pages/api/alert-failure.ts:77` always returns 200. The heartbeat and failure notification curls at `.github/workflows/synthetic-apply.yml:72` and `:86` can therefore pass when no alert was delivered.
+      [PUBLIC-WEBHOOK-PII] `src/lib/opsAlert.ts:79` forwards `errorMessage` to an effectively public ntfy topic. Cron messages embed applicant addresses at `src/pages/api/cron/followups.ts:110` and `src/pages/api/cron/post-show.ts:67`.
+      [NON-BLOCKING-RULES-GATE] The new emulator suite is a separate job at `.github/workflows/ci.yml:65`, while only `Lint, Types, Test, Build` is required at `scripts/setup-branch-protection.sh:79`. Security-rule failures do not block merging.
+      [PUSH-GUARD-BYPASS] `.husky/pre-push:4` checks the checked-out branch instead of the refs received on stdin. From a feature branch, pushes such as `git push origin HEAD:main` bypass the main protection.
+      [BROKEN-SMOKE-SELECTOR] `tests/smoke/critical-flows.spec.ts:204` checks `apply-terms` on `/waiver`, but the waiver checkbox at `src/components/waiver/StandaloneWaiverForm.tsx:205` has no such attribute. Both waiver smoke flows fail before submission.
+      [NON-IDEMPOTENT-WRITES] The claim routes write a contestant before token signing or invite updates at `src/pages/api/contestant-claim.ts:110`, `contestant-open-claim.ts:98` and `contestant-show-claim.ts:117`. `stage-waiver.ts:97` similarly writes the waiver before linkage writes. Later failure returns a retryable 500, so retries create duplicate legal records.
+      [MOBILE-OOM] `useApplyForm.ts:253` accepts ten files approaching 50 MB each, then `useApplyForm.ts:275` converts every original to a base64 data URL before compression. Large iPhone selections can allocate hundreds of megabytes and kill the tab.
+      [UNTRUSTED-MIGRATION-INPUT] `firestore.rules:100` permits unvalidated public `photoUrls`, while `scripts/migrate-legacy-photo-urls.mjs:67` accepts any URL containing `/o/photos...` without validating host or bucket. A crafted application can make the privileged migration revoke a known unrelated photo token.
+      [SCOPE-CREEP] `LESSONS.md:247` turns one JotForm failure into a universal ban on third-party payments. That was not part of the stated waiver change and conflicts with the existing Eventbrite payment architecture documented at `src/data/legal.ts:73`.
+      [UNASKED-CHANGE] The apply-outage commit also changes repository-wide hook architecture through `.husky/pre-commit`, `.husky/pre-push`, `.gitignore:70` and `package.json:28`. This developer-workflow refactor does not trace to the stated apply, waiver, alerting or dependency intent.
+
+### Codex (2026-08-12T20:05Z)
+
+- [ ] MEDIUM: [NONATOMIC-MIGRATION] Despite the WHY comment, `scripts/migrate-legacy-photo-urls.mjs:197` revokes tokens before writing `photoPaths`. A patch failure leaves documents pointing only to dead URLs until an operator reruns the script.
+      [PHOTO-PATH-MISMATCH] `useApplyForm.ts:449` copies an arbitrary filename suffix into the Storage path, while `firestore.rules:42` permits only ASCII path characters. Valid image files with spaces or Unicode in the suffix upload successfully and then fail the application write.
+      [FALSE-RECEIPT-CONFIRMATION] `src/data/waiverPage.ts:22` promises that a receipt was emailed, but `src/pages/api/stage-waiver.ts:134` suppresses delivery failures and still returns success.
+      [FALSE-POSITIVE-RULE-TEST] The non-image regression at `test/rules/apply-flow.rules-test.ts:87` omits required owner metadata. It fails even if the content-type restriction is removed.
+      [STALE-SYNTHETIC-DATA] Cleanup at `.github/workflows/synthetic-apply.yml:51` runs only after Playwright succeeds. A document written before a later browser assertion fails is left behind and can eventually exceed the cleanup script’s 48-hour safety window.
+      [PUBLIC-SYNTHETIC-FLAG] `firestore.rules:102` lets anonymous writers set `isSynthetic`, while `AdminDashboard.tsx:211` hides every marked application. The monitor marker needs a trusted write path rather than a public boolean.
+      [CONTRADICTORY-INCIDENT-RECORD] `LESSONS.md:227` says every July application failed because admin-only rules were live. `LESSONS.md:251` and `BUGS.md:11` correctly state those rules were never deployed and only large-photo submissions failed.
+      [SILENT-PHOTO-FAILURE] `useApplicantPhotos.ts:81` converts download errors to `null` and `:87` removes them without exposing an error count. The dashboard renders a no-photo placeholder indistinguishable from an applicant who uploaded nothing.
+      [SVG-CONTRACT-MISMATCH] `useApplyForm.ts:241` accepts every `image/*`, but `storage.rules:40` rejects SVG. Small SVG files bypass compression and produce an avoidable submission failure.
+
+### Codex (2026-08-12T20:16Z)
+
+- [ ] HIGH: [FALSE-PAGER-SUCCESS] `src/lib/opsAlert.ts:72-102` neither rejects unsuccessful webhook responses nor propagates channel failures. `src/pages/api/alert-failure.ts:75-79` consequently returns 200 when every channel failed. The workflow curls at `.github/workflows/synthetic-apply.yml:72` and `:86` also omit HTTP failure handling, so both the heartbeat and outage page can report success without delivering anything.
+      [PUBLIC-WEBHOOK-PII] `src/lib/opsAlert.ts:79` forwards `errorMessage` to the ntfy-style URL. Cron messages embed applicant addresses at `src/pages/api/cron/followups.ts:110` and `src/pages/api/cron/post-show.ts:67`, bypassing the stated context-only PII protection.
+      [INCOMPLETE-PII-MIGRATION] `scripts/migrate-legacy-photo-urls.mjs:74-89` only queries `photoUrls`. Legacy `photoUrl` documents explicitly supported at `src/types/application.ts:42` and `src/utils/applicantPhotos.ts:24` are never migrated or revoked. Documents already containing `photoPaths` also retain `photoUrls` because the patch is skipped at `scripts/migrate-legacy-photo-urls.mjs:205`.
+      [PUSH-GUARD-BYPASS] `.husky/pre-push:4-8` checks the checked-out branch instead of the refs received on stdin. From a feature branch, `git push origin HEAD:main`, `git push origin main` and deletion of remote main all bypass the guard.
+      [NON-BLOCKING-RULES-GATE] `.github/workflows/ci.yml:65-81` adds rules testing as a separate job, but the documented required context at `scripts/setup-branch-protection.sh:76-80` remains only `Lint, Types, Test, Build`. A rules failure does not block merging.
+      [BROKEN-SMOKE-SELECTOR] `tests/smoke/critical-flows.spec.ts:204` selects `apply-terms` on `/waiver`, but the checkbox at `src/components/waiver/StandaloneWaiverForm.tsx:205-213` has no such attribute. Both new waiver smoke tests fail before submission.
+      [MOBILE-OOM] `src/components/apply/useApplyForm.ts:253-289` accepts ten files approaching 50 MB each and converts every original to a base64 data URL before compression. This can allocate hundreds of megabytes and terminate the mobile tab.
+      [NON-IDEMPOTENT-WRITES] The claim routes write contestant records before token signing or linkage at `src/pages/api/contestant-claim.ts:110-122`, `contestant-open-claim.ts:98-104` and `contestant-show-claim.ts:117-118`. `stage-waiver.ts:97-109` similarly writes the waiver first. Later failures return retryable 500 responses, so retries create duplicate legal records.
+      [SCOPE-CREEP] `LESSONS.md:247` expands one JotForm failure into a universal ban on third-party payments, despite the existing Eventbrite payment architecture documented at `src/data/legal.ts:73`.
+      [UNASKED-CHANGE] The apply-outage change also rewrites repository-wide hook architecture through `.husky/pre-commit`, `.husky/pre-push`, `.gitignore:70-77` and `package.json:28`. This does not trace to the stated apply, waiver, alerting or dependency intent.
+
+### Codex (2026-08-12T20:16Z)
+
+- [ ] MEDIUM: [PUBLIC-SYNTHETIC-FLAG] `firestore.rules:102` allows anonymous writers to set `isSynthetic`, while `src/components/admin/AdminDashboard.tsx:211-213` and `:252-254` hide every marked application.
+      [PHOTO-CONTRACT-MISMATCH] `useApplyForm.ts:239-242` accepts SVG, but small files bypass compression at `compressImage.ts:20` and are rejected by `storage.rules:40`. Arbitrary filename suffixes are also copied at `useApplyForm.ts:449`, while `firestore.rules:42` rejects spaces and Unicode.
+      [FALSE-RECEIPT-CONFIRMATION] `src/data/waiverPage.ts:22` promises an emailed receipt, but `src/pages/api/stage-waiver.ts:134-145` suppresses receipt failures and still returns success.
+      [STALE-SYNTHETIC-DATA] Verification and cleanup at `.github/workflows/synthetic-apply.yml:51-52` run only after Playwright succeeds. A submission written before a later assertion fails remains and eventually triggers the permanent 48-hour cleanup refusal at `scripts/synthetic-apply-verify.mjs:163-168`.
+      [FALSE-POSITIVE-RULE-TEST] The non-image test at `test/rules/apply-flow.rules-test.ts:87-93` omits required owner metadata, so it still fails if the content-type restriction is accidentally removed.
+      [RULE-TEST-ISOLATION] Both rules suites use project `demo-garam-masala` and clear its Firestore state in `beforeEach`, while `vitest.rules.config.ts:14-19` leaves file parallelism enabled. Parallel files can erase each other’s fixtures.
+      [SILENT-PHOTO-FAILURE] `src/components/admin/useApplicantPhotos.ts:77-88` converts every download failure to `null`. The modal then renders the same no-photo placeholder at `ApplicantModal.tsx:287-296`, with no failed count or error state.
+      [CONTRADICTORY-INCIDENT-RECORD] `LESSONS.md:227` still says every July submission failed under deployed admin-only rules. `BUGS.md:7-11` correctly records that those rules were never deployed and only large-photo applications failed.
+
+### Codex (2026-08-12T20:19Z)
+
+- [ ] MEDIUM: Consolidate duplicate findings. (BUGS.md:761-772)
+- [ ] MEDIUM: Consolidate the repeated findings. (BUGS.md:774-783)
+
+### Codex (2026-08-13T19:14Z): both findings describe the pre-merge transition window, resolved when claude-global-config PR #18 merges (kept so they are not re-filed)
+
+- HIGH: [ORPHANED-QUEUE] True only until PR #18 merges: the LIVE retry tooling (the reviewer's vantage) still reads legacy ENHANCEMENTS.md, while PR #18's code reads reviews/retry-queue.md first with a legacy transition leg and a nightly migrator sweep, and excludes .worktrees so stale tracked copies in old session worktrees stop being counted. The 57 moved rows wait out the window exactly as pre-migration entries waited before.
+- HIGH: [HOOK-GUARD-NOT-IMPLEMENTED] The guard exists on PR #18 (bash-guardrails denies commit/push into any repo with a local core.hooksPath, self-test fixtures included); it is not yet in the LIVE hook the reviewer read. Until merge, the unset already applied to this repo is the protection.
+
+### Codex (2026-08-14T16:21Z)
+
+- [ ] HIGH: [FALSE-PAGER-SUCCESS] `src/lib/opsAlert.ts:72-102` neither rejects unsuccessful webhook responses nor propagates delivery failures. `src/pages/api/alert-failure.ts:75-79` always returns 200, while both workflow curls omit HTTP failure handling. The heartbeat and outage pager can pass without delivering an alert.
+      [PUBLIC-WEBHOOK-PII] `src/lib/opsAlert.ts:79` forwards `errorMessage` to the ntfy-style URL. Cron messages embed applicant addresses at `src/pages/api/cron/followups.ts:110` and `src/pages/api/cron/post-show.ts:67`.
+      [NON-BLOCKING-RULES-GATE] `.github/workflows/ci.yml:65-81` adds rules tests as a separate job, but `scripts/setup-branch-protection.sh:76-80` requires only `Lint, Types, Test, Build`. Security-rule failures therefore do not block merging under the documented configuration.
+      [PUSH-GUARD-BYPASS] `.husky/pre-push:4-8` checks the checked-out branch instead of the refs supplied on stdin. A feature branch can still push or delete remote `main`.
+      [BROKEN-SMOKE-SELECTOR] `tests/smoke/critical-flows.spec.ts:204` selects `apply-terms` on `/waiver`, but `StandaloneWaiverForm.tsx:205-213` has no such attribute. Both new waiver smoke flows fail before submission.
+      [FALSE-BRIEFING-SUCCESS] `src/pages/api/cron/followups.ts:271-293` records the briefing date and reports `briefingSent: true` when no recipient is configured or every delivery fails, preventing a retry.
+      [NON-IDEMPOTENT-WRITES] The claim routes and `stage-waiver.ts` persist legal records before later token or linkage operations. A subsequent retryable 500 can produce duplicate contestants or waivers.
+      [MOBILE-OOM] `useApplyForm.ts:253-289` accepts ten files approaching 50 MB each, then converts every original to a base64 data URL before compression. This can exhaust memory on the mobile browsers the change targets.
+      [UNTRUSTED-MIGRATION-INPUT] `firestore.rules:100` permits unvalidated public `photoUrls`, while `migrate-legacy-photo-urls.mjs:67-71` accepts any host containing a matching `/o/photos...` path. A crafted application can make the privileged migration revoke an unrelated photo token.
+      [INCOMPLETE-PII-MIGRATION] The migration queries only `photoUrls`, missing supported legacy `photoUrl` records. It also retains `photoUrls` when `photoPaths` already exists, leaving tokened PII URLs stored.
+      [RECOVERY-ORDERING] `eventbriteRecovery.ts:135-138` checks `defaultPrevented` before later or ancestor listeners run. If one of those listeners suppresses navigation, the fallback has already returned and the CTA remains dead.
+      [SCOPE-CREEP] `LESSONS.md` expands isolated Eventbrite and JotForm failures into universal rules for every integration and all third-party payments, beyond the stated changes and in conflict with the existing Eventbrite checkout architecture.
+      [UNASKED-CHANGE] The apply-outage commit also rewrites repository-wide hook architecture through `.husky`, `.gitignore` and `package.json`, which is not named by the stated apply, waiver, alerting or dependency intent.
+
+### Codex (2026-08-14T16:21Z)
+
+- [ ] MEDIUM: [PUBLIC-SYNTHETIC-FLAG] `firestore.rules:102` lets anonymous writers set `isSynthetic`, while `AdminDashboard.tsx:211-213` and `:252-254` hide every marked application.
+      [PHOTO-CONTRACT-MISMATCH] The client accepts SVG but Storage rejects it. It also copies arbitrary filename suffixes into paths that Firestore restricts to ASCII, allowing an upload to succeed before the application write fails.
+      [FALSE-RECEIPT-CONFIRMATION] `waiverPage.ts:22` promises an emailed receipt, but `stage-waiver.ts:134-145` suppresses delivery failures and still returns success.
+      [STALE-SYNTHETIC-DATA] Verification and cleanup run only after Playwright succeeds. A document written before a later assertion failure remains and can eventually trigger the cleanup script’s permanent 48-hour refusal.
+      [FALSE-POSITIVE-RULE-TEST] The non-image test at `apply-flow.rules-test.ts:87-93` omits required owner metadata, so it still fails if the content-type restriction is removed.
+      [RULE-TEST-ISOLATION] Both rules suites share project `demo-garam-masala` and clear its state in `beforeEach`, while file parallelism remains enabled. Parallel suites can erase each other’s fixtures.
+      [SILENT-PHOTO-FAILURE] `useApplicantPhotos.ts` converts download failures to missing photos, leaving the admin UI unable to distinguish access or network failures from applicants who uploaded nothing.
+      [CONTRADICTORY-INCIDENT-RECORD] `LESSONS.md` says every July application failed under admin-only rules, while `BUGS.md:5-11` correctly says those rules were not deployed and only large-photo submissions failed.
+
+### Codex (2026-08-14T16:44Z)
+
+- [ ] MEDIUM: Remove the repeated findings before merge. (BUGS.md:801-827)
+
+### Codex (2026-08-14T17:40Z)
+
+- HIGH: [SCOPE-CREEP] LESSONS.md:9 broadens the show-specific retention rule to every `src/data/` record. src/data/CLAUDE.md:5 and EVENTS-HISTORY.md:29 also permanently retain unused venue constants, while src/data/events.ts:390 freezes the current TBA roster as “always.” The stated intent only retains shows and sets the current roster.
+  Decision (2026-08-14): resolved by design. The reviewer did not have the owner's mid-session instructions: venue constants were EXPLICITLY ordered permanent ("even stuff like this venue constant should say, all the log should stay even if it then ends up referencing nothing") and the standing LA/SF/NY notify roster is verbatim her ask ("add LA SF and new york should always be on notify me"). The LESSONS rule scoping to destructive-sounding requests against src/data content is the lesson she taught twice.
+
+### Codex (2026-08-14T17:40Z)
+
+- [ ] MEDIUM: [TBA-SUPPRESSION] src/data/events.ts:454-457 does not use `isDisplayable()`, so a hidden future show suppresses its city’s public TBA card despite the function’s contract. Hidden entries supplied through `tbaList` are also appended.
+      [SHARED-GATE-BYPASS] The four changed API lookups manually duplicate `hidden` and `status` checks instead of using `isDisplayable()`, contradicting the commit’s centralization claim and allowing future display-state changes to drift.
+      [CONTRADICTORY-PERMANENCE-RECORD] EVENTS-HISTORY.md:18-21 lists six removed shows that remain absent from events.ts, while LESSONS.md:5 and src/data/CLAUDE.md:5 claim every scheduled show stays there forever. Document the legacy exception or restore those records.
+      [UNASKED-CHANGE] ENHANCEMENTS.md:1603-1610 and ENHANCEMENTS.md:1625-1626 modify unrelated historical review metadata with no trace to either stated commit intent.
+      Decision on UNASKED-CHANGE (2026-08-14): resolved by design. Those telemetry lines are appended by the review hooks themselves (same pattern as commits 38cb5df and 1f56dea) and were already in the working tree at session start; committing them alongside is the established convention. TBA-SUPPRESSION, SHARED-GATE-BYPASS and CONTRADICTORY-PERMANENCE-RECORD remain open for a follow-up pass.
+
+### Codex (2026-08-14T18:12Z)
+
+- [ ] MEDIUM: [MISSING-CHANGELOG] The production analytics fix is absent from `CHANGELOG.md`, despite the repository requiring meaningful changes to be recorded.
+
+### Codex (2026-08-14T19:09Z) on the event-pages-tracked-checkout ship push
+
+Fixed in-session the same day (entries removed per doc routing): CHECKOUT-RATE-LIMIT and STALE-PAST-CTA (go route now resolves the event first, sends canceled/past shows to /tickets, and a tripped rate limit only suppresses CAPI, never the redirect; covered by test/go-redirect.test.ts), BUILD-HANG (10s AbortSignal.timeout on the build-time Eventbrite content fetch), ANALYTICS-SEMANTICS (data-event-vendor standardized to vendorFromUrl across all seven CTA sites), MERGE-DEBRIS (formatter-escaped conflict markers removed from CHANGELOG.md) and the FABRICATED-REFERENCE critical (obsolete widget-loader entry deleted from ENHANCEMENTS.md). Remaining items below.
+
+- [ ] HIGH [UNBOUNDED-SYNC-RUNTIME] `src/pages/api/sync-orders.ts` awaits CAPI calls sequentially; the retry query permits 100 orders and each timeout is 3 seconds, so retries alone can consume 300 seconds of a run before other work. Needs bounded concurrency or a per-run time budget, plus a test. Executor: the 3:00 overnight fix-medium-bugs lane (or the next session in this repo if it runs first).
+- [ ] MEDIUM [MISSING-COVERAGE, remainder] The new redirect route now has test/go-redirect.test.ts, but the CAPI client (`src/lib/capi.ts`), bot detection (`src/lib/isBotUserAgent.ts`), ticket CTA wiring (`src/lib/ticketCtaTracking.ts`), withTimeout behavior and the sync-orders Purchase retry state machine remain untested. Executor: the 3:00 overnight fix-medium-bugs lane.
+- Decision (2026-08-14): [EVENT-ID-REUSE] in `src/lib/ticketCtaTracking.ts` is won't-fix, by design. The per-anchor event_id carries an explicit WHY comment: repeated clicks on one rendered anchor are a single checkout intent, and Meta deduping the browser Pixel, the server CAPI call and any repeat click into one InitiateCheckout is the wanted behavior. Regenerating per click would double-count intent and desynchronize the ?eid= already stamped on the href. Logged so the finding is not re-filed.
+
+### Codex (2026-08-15T02:23Z)
+
+- [ ] HIGH: [UTC-CALENDAR-CUTOFF] `src/utils/eventDate.ts:107` compares dates against UTC. At 5 PM PDT, a West Coast show is considered past, so `src/pages/api/go/[slug].ts:61` redirects buyers to `/tickets` before an evening show begins. Compare against the event’s timezone and end time. (Pre-existing PR #196 code, surfaced by the 2026-08-15 review of the merge range on the dependency branch.) Executor: the 3:00 overnight fix-medium-bugs lane (or the next session in this repo if it runs first).
+- Note (2026-08-15): the UNBOUNDED-SYNC-RUNTIME finding from this round duplicates the entry above dated 2026-08-14; that entry already carries the executor.
+
+### Codex (2026-08-15T02:23Z)
+
+- [ ] MEDIUM: [PERMANENT-RETRY-STARVATION] `src/pages/api/sync-orders.ts:793` retains every failed CAPI delivery indefinitely, including terminal 4xx responses and events whose original timestamp has aged outside Meta’s accepted window. These orders can repeatedly occupy the unordered 100-row query and starve newer purchases. Classify terminal failures and mark them unrecoverable. (Pre-existing PR #196 code.) Executor: the 3:00 overnight fix-medium-bugs lane.
+- [ ] MEDIUM: [CONTENT-ARCHITECTURE] User-facing copy is hardcoded throughout `src/components/events/EventTicketCta.astro:61` and `src/pages/events/[slug].astro:195`, contrary to the repository rule that copy belongs in `src/data/`. Move these strings into `src/data/copy.ts`. (Pre-existing PR #196 code.) Executor: the 3:00 overnight fix-medium-bugs lane.
+- [ ] MEDIUM: [MISSING-COVERAGE] The new CAPI client, terminal retry behavior, bot detection and ticket tracking module have no direct tests. The redirect test also omits the same-day timezone boundary that exposes the checkout cutoff. (Pre-existing PR #196 gap; largely duplicates the MISSING-COVERAGE remainder entry above, which already carries the executor.) Executor: the 3:00 overnight fix-medium-bugs lane.
+
+### Outage-recovery review 2026-08-17 (recovered Codex pass over the PR #196 merge range; RETRY file processed and deleted 2026-08-18)
+
+Already handled elsewhere: the UTC date cutoff, UNBOUNDED-SYNC-RUNTIME, PERMANENT-RETRY-STARVATION and coverage findings duplicate the queued entries above; MERGE-DEBRIS was fixed in commit c04c44c before PR #195 merged; the chicago-tba stale comment example moved to ENHANCEMENTS.md as a LOW. New items, all pre-existing PR #196 code:
+
+- [ ] HIGH: [UNTRACKED-CTA] Event-specific Get Tickets links on the links page go straight to the vendor | Why: `src/pages/links.astro` renders `href={ticketUrl}` directly, bypassing `/api/go/[slug]`, so those clicks fire no server CAPI InitiateCheckout and skip browser/server dedup, undercounting the exact conversions the PR #196 migration was built to capture | Files: src/pages/links.astro, src/lib/ticketCtaTracking.ts | Plan: route the links-page event CTAs through `/api/go/[slug]` with the same `?eid=` stamping the other seven CTA sites use | Verify: click a links-page event CTA locally and confirm the /api/go redirect plus one deduped InitiateCheckout event id. Executor: the 3:00 overnight fix-medium-bugs lane.
+- [ ] HIGH: [CHECKOUT-DELAY] `/api/go/[slug]` awaits Meta CAPI for up to 2 seconds before redirecting | Why: `CAPI_TIMEOUT_MS = 2000` is awaited before the 302 (the WHY comment is right that fire-and-forget dies on Vercel, but a slow Meta response still stalls the buyer up to 2s, recreating the stall the redirect migration removed) | Files: src/pages/api/go/[slug].ts, package.json | Plan: use `waitUntil` from `@vercel/functions` so the CAPI call runs after the response is sent, keeping delivery guaranteed without blocking the redirect; keep the awaited path as fallback where waitUntil is unavailable | Verify: redirect returns immediately with CAPI mocked to a 2s delay, existing go-redirect tests stay green. Executor: the 3:00 overnight fix-medium-bugs lane.
+- [ ] MEDIUM: [STALE-STATIC-CTA] `EventTicketCta.astro` freezes past/upcoming state at build time | Why: the label and link state are computed during the static build, so once an event date passes without a redeploy the page still shows Get Tickets even though the server route now redirects past shows to /tickets (server half fixed 2026-08-14; this is the client half) | Files: src/components/events/EventTicketCta.astro | Plan: add a small inline date check on the client (or an ISR/rebuild trigger) that swaps the CTA to the past-show state when `isoDate` has passed | Verify: load a built event page with a mocked past date and confirm the CTA shows the past-show state. Executor: the 3:00 overnight fix-medium-bugs lane.
+- [ ] MEDIUM: [DATA-MIGRATION-MISSING] The Purchase-CAPI retry query only matches orders where both new booleans are explicitly false | Why: order documents created before PR #196 have neither `purchaseCapiSent` field, Firestore equality filters skip documents missing the field, so pre-existing undelivered orders can never be retried without a backfill | Files: src/pages/api/sync-orders.ts | Plan: one-time backfill with a cutover rule, not a blanket one. Orders created before server-side Purchase CAPI went live (PR #196's deploy) may already have been counted by the old browser-side pixel Purchase, which had no CAPI dedup id, so re-sending them can double-count revenue: mark those pre-cutover documents `purchaseCapiSent: true` with a `migrationNote` field so they leave the retry set permanently. Only documents created after the cutover get backfilled to false for retry. A not-equal-true query is NOT a substitute for either half: Firestore inequality filters also exclude documents where the field is absent, so only an explicit backfill reaches fieldless documents | Verify: emulator test confirms a fieldless pre-cutover order is marked sent and stays out of the retry set while a fieldless post-cutover order enters it. Executor: the 3:00 overnight fix-medium-bugs lane.
+- [ ] MEDIUM: [INCOMPLETE-PRICE-REMOVAL] Journal copy still states specific ticket prices | Why: PR #196 removed visible prices from UI surfaces on the grounds they drift from real Eventbrite pricing, but journal article copy (e.g. `src/data/journal/live-shows.ts:34` and `:906`) still names Garam Masala ticket prices that can go equally stale | Files: src/data/journal/live-shows.ts | Plan: audit journal and tips data for our own show's price mentions and replace stale exact figures with durable phrasing (content-only edit, city content enrichment rules apply, no deletions of surrounding copy) | Verify: grep journal data for dollar figures tied to Garam Masala shows and confirm none contradict events.ts. Executor: the 3:00 overnight fix-medium-bugs lane.
+- WONTFIX(MEDIUM, 2026-08-18): [EVENT-SLUG-DATE-MISMATCH] The rescheduled Boston show's slug `boston-2026-08-02` keeps the original date while `isoDate` is 2026-08-13 | Reason: intentional slug stability. The slug is the published canonical URL and tracking id; regenerating it on a date change would 404 shared links and reset conversion attribution. The move is recorded the mandated way (`previousDate`, note, EVENTS-HISTORY.md) and the show has since passed. Recorded so the report is not re-filed.
+
+### Codex (2026-08-18T16:11Z) — HIGH findings
+
+Note (2026-08-19, PR #193 merge pass): this round's own [UNSUPPORTED-NODE-RANGE] finding is dropped here; main's engines.node commit (`a4e4226`) already fixed and deleted it. Split from a shared checkbox into one line per finding (Fable `[SHARED-CHECKBOX]`, 2026-08-19) so the overnight fixer's one-checkbox-per-finding parsing doesn't silently drop the co-listed items.
+
+- [ ] HIGH: [UTC-CALENDAR-CUTOFF] `src/utils/eventDate.ts:107-111` uses the UTC calendar date, so `src/pages/api/go/[slug].ts:61` rejects same-day West Coast ticket purchases from 5 PM local time. Compare against the event timezone and end time.
+- [ ] HIGH: [UNBOUNDED-SYNC-RUNTIME] `src/pages/api/sync-orders.ts:758-838` processes up to 100 retries sequentially with a three-second timeout each. Failures can consume over 300 seconds before metadata is persisted, while `withTimeout` does not abort the underlying fetch.
+
+### Codex (2026-08-18T16:11Z) — MEDIUM findings
+
+Split from a shared checkbox into one line per finding, same pass as above (Fable `[SHARED-CHECKBOX]`, `[DUP-SECTION-HEADER]`, 2026-08-19).
+
+- [ ] MEDIUM: [DELIVERY-FLAG-REGRESSION] `src/pages/api/sync-orders.ts:652-656` resets `purchaseCapiSent` to false before every upsert. When the optional CAPI token is absent, or the existing-state read fails, a previously delivered order is persisted as pending again.
+- [ ] MEDIUM: [PERMANENT-RETRY-STARVATION] `src/pages/api/sync-orders.ts:401-443` returns an unordered 100-row queue, but only missing source events become unrecoverable. Terminal Meta 4xx responses and expired events retry forever and can crowd out new purchases.
+- [ ] MEDIUM: [FALSE-PURCHASE-CONVERSION] `src/lib/eventbrite.ts:42-46` converts every unknown Eventbrite status to `placed`; the new branch at `src/pages/api/sync-orders.ts:677` then sends those orders to Meta as purchases. Unknown statuses must fail closed.
+- [ ] MEDIUM: [HIDDEN-EVENT-INDEXING] `src/pages/events/[slug].astro:53-73` generates pages for hidden records and `astro.config.mjs:217-232` includes them in the sitemap. This publicly indexes records such as the hidden Chicago and Edison entries.
+- [ ] MEDIUM: [TBA-SUPPRESSION] `src/data/events.ts:595-600` checks cancellation but not `hidden`, despite claiming to test displayability. A hidden future show suppresses its city's public notify card.
+- [ ] MEDIUM: [WRONG-EVENT-TIMEZONE] `src/utils/eventSchema.ts:58-60` still applies New York offsets to every event, producing incorrect structured-data times for California and other non-New-York shows.
+
+### Review lane finding filed on the primary checkout (2026-08-19)
+
+- WONTFIX(HIGH, 2026-08-19): firestore.rules phone-update rule alleged to null-error and keep the "Firestore/Storage rules (emulator)" CI check red on main since 2026-06-17, blocking PRs from leaving draft | Reason: false positive, the emulator check passed on PRs #203, #204 and #205 during 2026-08-18/19 and PR #203 (named as stuck) merged 2026-08-19T17:07Z; if a null-safety hardening of validPhoneUpdate() is still wanted it should be re-filed as an enhancement with a reproducing test, since the cited failure does not reproduce in CI
+
+### Session finding 2026-08-19 (worktree close-out sweep)
+
+- [ ] HIGH: [SYNTHETIC-APPLY-RED] The Synthetic Apply Monitor has zero successes in its last 100 runs (back to at least 2026-08-12) and nobody was paged | Why: the live-stack Playwright run fills /apply, clicks submit and the button then sits in its spinner state for the full 45s timeout with no success confirmation and no visible error (artifact run 32261818126), meaning the Firebase submit path (anonymous auth, photo upload or Firestore write) hangs from the CI runner; every failure also POSTs to /api/alert-failure, but the queued FALSE-PAGER-SUCCESS bug above means delivery failures are swallowed, so a week of continuous red produced no alert to Surbhi; unknown whether real applicants are affected (the July outage postmortem showed the monitor and the human path can diverge) or whether this is the monitor's own path failing (undeployed rules for the synthetic write, pending PR #135 operator steps) | Files: tests/synthetic/apply-monitor.spec.ts, src/components/apply/useApplyForm.ts, src/lib/opsAlert.ts, firestore.rules, storage.rules | Plan: first determine blast radius by checking whether real applications have arrived in Firestore since 2026-08-12; if real submissions stopped this is a production outage to fix immediately, if they continue then debug the synthetic path specifically (rules drift check output, App Check or anonymous-auth settings, the monitor's fixture upload) and fix the alerting swallow so a red monitor can never again go unnoticed for a week | Verify: monitor workflow goes green on a manual dispatch and a forced-failure test run delivers an actual alert. Executor: next interactive session with Surbhi, this needs production Firebase console access; explicitly NOT the overnight lane.

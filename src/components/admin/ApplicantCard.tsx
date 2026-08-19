@@ -1,7 +1,7 @@
 import { Trash2, ArchiveRestore, CheckCircle } from "lucide-react";
 import { type Application, STATUS_COLORS } from "@/types/application";
 import { formatLocation } from "@/utils/locationDisplay";
-import { getApplicantPhotos } from "@/utils/applicantPhotos";
+import { useApplicantPhotos } from "@/components/admin/useApplicantPhotos";
 import Spinner from "../ui/Spinner";
 
 interface ApplicantCardProps {
@@ -70,9 +70,8 @@ export default function ApplicantCard({
   actionsDisabled,
 }: ApplicantCardProps) {
   const handle = app.instagram.replace(/^@/, "");
-  const photos = getApplicantPhotos(app);
+  const { photos, count: photoCount } = useApplicantPhotos(app, 1);
   const firstPhoto = photos[0];
-  const photoCount = photos.length;
   const isNomination = app.applicationType === "Nomination";
 
   const actionButtons =

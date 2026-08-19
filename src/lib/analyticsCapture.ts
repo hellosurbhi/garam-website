@@ -34,8 +34,13 @@ const META_EVENT_MAP: Record<string, string> = {
   waitlist_submit: "Lead",
   apply_submitted: "CompleteRegistration",
   checkout_opened: "InitiateCheckout",
-  // order_complete and Purchase are handled directly in EventbriteWidgetInit / ApplySuccessPanel
-  // with proper ecommerce fields (value, currency, content_ids) to avoid double-firing.
+  // Purchase is not in this map on purpose: it fires exclusively server-side
+  // from src/pages/api/sync-orders.ts (real Eventbrite order data, via
+  // src/lib/capi.ts) rather than through a client-side event here. That's the
+  // only reachable, unspoofable source of a real order value and currency;
+  // client-side checkout widgets used to fire fbq("track","Purchase") directly
+  // off a self-reported price (EventbriteWidgetInit.astro, ApplySuccessPanel.tsx),
+  // both retired in favor of this single server-side signal.
 };
 
 function safeReferrer(): string {
@@ -138,11 +143,26 @@ export function enrichEvent(properties: CaptureProps = {}): CaptureProps {
   };
 }
 
+export interface CaptureOptions {
+  /**
+   * Shared with a paired server-side Meta CAPI call (src/lib/capi.ts) so Meta
+   * dedupes the browser Pixel event and the server event into one conversion
+   * instead of double counting. Required for InitiateCheckout on the tracked
+   * redirect flow (src/pages/api/go/[slug].ts) and any future event that also
+   * fires server-side.
+   */
+  eventId?: string;
+}
+
 /**
  * Fire a named event to PostHog, GTM dataLayer, and (via META_EVENT_MAP) Meta Pixel.
  * Always enriches with page context. Safe to call before PostHog loads (queued internally).
  */
-export function capture(event: string, properties: CaptureProps = {}): void {
+export function capture(
+  event: string,
+  properties: CaptureProps = {},
+  options: CaptureOptions = {},
+): void {
   if (typeof window === "undefined") return;
 
   const enriched = enrichEvent(properties);
@@ -168,7 +188,12 @@ export function capture(event: string, properties: CaptureProps = {}): void {
   const metaName = META_EVENT_MAP[event];
   if (metaName) {
     try {
-      window.fbq?.("track", metaName, enriched);
+      window.fbq?.(
+        "track",
+        metaName,
+        enriched,
+        options.eventId ? { eventID: options.eventId } : undefined,
+      );
     } catch {
       /* fbq failures must never break the page */
     }

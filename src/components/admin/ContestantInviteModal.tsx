@@ -2,7 +2,7 @@ import { useState, type SyntheticEvent } from "react";
 import { X } from "lucide-react";
 import { Modal } from "@/components/ui/Modal";
 import { getFirebaseAuth } from "@/lib/firebase";
-import { events } from "@/data/events";
+import { events, isDisplayable } from "@/data/events";
 import { type Application } from "@/types/application";
 import styles from "./ContestantInviteModal.module.css";
 
@@ -42,7 +42,7 @@ export default function ContestantInviteModal({
 
   const today = new Date().toLocaleDateString("en-CA");
   const upcomingEvents = events.filter(
-    (e) => e.isoDate && e.isoDate > today && !e.hidden,
+    (e) => e.isoDate && e.isoDate > today && isDisplayable(e),
   );
 
   async function handleSubmit(e: SyntheticEvent<HTMLFormElement>) {

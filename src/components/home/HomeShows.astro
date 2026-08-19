@@ -5,6 +5,7 @@ import { buildTicketUrl } from "@/utils/eventUrl";
 import { parseMonth, parseDay, formatOnSaleDate } from "@/utils/eventDate";
 import { buildTaglineMap } from "@/utils/eventTaglines";
 import { formatEventLocation } from "@/utils/eventCity";
+import { vendorFromUrl } from "@/lib/analyticsCapture";
 
 interface Props {
   events: EventEntry[];
@@ -29,12 +30,17 @@ const taglineMap = buildTaglineMap(events);
           Boolean(event.onSaleAt) && new Date(event.onSaleAt!) > new Date();
         const isLive = Boolean(event.url);
         const isSoldOut = event.soldOut ?? false;
-        const hasWidget =
-          isLive && Boolean(event.eventbriteId) && !isSoldOut && !isPresale;
         const cityLabel = formatEventLocation(event);
         const onSaleLabel = event.onSaleAt
           ? formatOnSaleDate(event.onSaleAt)
           : "";
+        // The tracked redirect (fires server + browser InitiateCheckout, then
+        // 302s to the real checkout): see src/pages/api/go/[slug].ts and
+        // src/lib/ticketCtaTracking.ts. Sold-out clicks skip this and link
+        // straight to the vendor URL instead: there's no checkout to
+        // initiate, so routing them through /api/go would misreport a
+        // non-purchase as checkout intent.
+        const goHref = `/api/go/${event.slug}`;
         const cardInner = (
           <>
             <div class="show-date-block">
@@ -56,25 +62,7 @@ const taglineMap = buildTaglineMap(events);
             </span>
           </>
         );
-        return hasWidget ? (
-          <button
-            type="button"
-            id={`eventbrite-widget-modal-trigger-home-shows-${event.eventbriteId}`}
-            data-eb-event-id={event.eventbriteId}
-            class="show-card show-card--live"
-            data-reveal
-            data-ph-capture="cta_clicked"
-            data-ph-cta="get_tickets"
-            data-ph-section="shows"
-            data-ph-city={cityLabel}
-            data-ph-event-date={event.date}
-            data-ph-price={event.price}
-            data-eb-url={buildTicketUrl(event.url, "home", "shows")}
-            data-city={cityLabel}
-          >
-            {cardInner}
-          </button>
-        ) : isPresale ? (
+        return isPresale ? (
           <>
             <button
               type="button"
@@ -100,12 +88,18 @@ const taglineMap = buildTaglineMap(events);
               <span class="ticket-label ticket-label--notify">Notify Me</span>
             </button>
             <a
-              href={buildTicketUrl(event.url, "home", "shows")}
+              href={goHref}
               target="_blank"
               rel="noopener noreferrer"
               class="show-card show-card--live"
+              data-go-ticket
               data-presale-live
               hidden
+              data-event-slug={event.slug}
+              data-event-vendor={vendorFromUrl(event.url)}
+              data-cta-position="shows"
+              data-event-city={cityLabel}
+              data-event-date={event.isoDate ?? event.date}
               data-ph-capture="cta_clicked"
               data-ph-cta="get_tickets"
               data-ph-section="shows"
@@ -118,11 +112,19 @@ const taglineMap = buildTaglineMap(events);
           </>
         ) : isLive ? (
           <a
-            href={buildTicketUrl(event.url, "home", "shows")}
+            href={
+              isSoldOut ? buildTicketUrl(event.url, "home", "shows") : goHref
+            }
             target="_blank"
             rel="noopener noreferrer"
             class="show-card show-card--live"
             data-reveal
+            data-go-ticket={isSoldOut ? undefined : true}
+            data-event-slug={event.slug}
+            data-event-vendor={vendorFromUrl(event.url)}
+            data-cta-position="shows"
+            data-event-city={cityLabel}
+            data-event-date={event.isoDate ?? event.date}
             data-ph-capture="cta_clicked"
             data-ph-cta="get_tickets"
             data-ph-section="shows"
@@ -236,6 +238,11 @@ const taglineMap = buildTaglineMap(events);
 
 <script>
   import "@/lib/presaleReveal";
+</script>
+
+<script>
+  import { wireTicketCtaTracking } from "@/lib/ticketCtaTracking";
+  wireTicketCtaTracking();
 </script>
 
 <script>

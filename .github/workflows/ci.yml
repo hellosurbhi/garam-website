@@ -42,6 +42,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
         with:
+          persist-credentials: false
           # WHY fetch-depth: 0 (not the default shallow clone): the patch-coverage
           # step below diffs the PR head against its base commit. A shallow clone
           # only has the tip commit, so `git diff <base> <head>` fails with
@@ -51,7 +52,7 @@ jobs:
           # commit (the default for pull_request events). The merge commit has no
           # stable SHA to diff against and changes shape independent of the PR itself.
           ref: ${{ github.event.pull_request.head.sha }}
-      - uses: actions/setup-node@v6
+      - uses: actions/setup-node@v7
         with:
           node-version: 22
           cache: npm
@@ -68,6 +69,31 @@ jobs:
       - run: npm run build
       - name: Security audit
         run: npm audit --audit-level=high --omit=dev
+
+  # ==========================================
+  # JOB 2: Security rules against the Firebase emulator.
+  # The only test class that exercises firestore.rules/storage.rules with the
+  # REAL client operations of the apply flow (a rules/client mismatch took
+  # the form down for a week in July 2026). Too heavy for local pre-commit.
+  # ==========================================
+  rules:
+    name: Firestore/Storage rules (emulator)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: npm
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 21
+      - run: npm install -g npm@11
+      - run: npm ci
+      - run: npm run test:rules
 
   # Playwright smoke tests moved to local pre-push hook (~/.git-hooks/pre-push).
   # This eliminates the primary GitHub Actions minute consumer.

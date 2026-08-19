@@ -1,11 +1,13 @@
 ---
 import BaseLayout from "@/layouts/BaseLayout.astro";
-import { CREATOR_URLS } from "@/data/socials";
+import { PERFORMERS } from "@/data/lineup";
 import { buildBreadcrumbJsonLd } from "@/utils/breadcrumbs";
 
 const TITLE = "Meet the Hosts: Surbhi & Wyatt";
 const DESC =
   "Meet Surbhi and Wyatt, the stand-up comedians behind Garam Masala Dating. Learn how a one-off downtown bar experiment became NYC's biggest live dating show.";
+
+const { surbhi, wyatt } = PERFORMERS;
 
 const breadcrumbJsonLd = buildBreadcrumbJsonLd([
   { name: "Home", url: "https://garammasaladating.com/" },
@@ -22,10 +24,10 @@ const personJsonLd = JSON.stringify([
   {
     "@context": "https://schema.org",
     "@type": "Person",
-    name: "Surbhi",
+    name: surbhi.name,
     jobTitle: "Stand-Up Comedian & Co-Creator",
-    url: CREATOR_URLS.surbhi,
-    sameAs: [CREATOR_URLS.surbhi],
+    url: surbhi.instagramUrl,
+    sameAs: [surbhi.instagramUrl],
     knowsAbout: [
       "stand-up comedy",
       "South Asian dating",
@@ -38,10 +40,10 @@ const personJsonLd = JSON.stringify([
   {
     "@context": "https://schema.org",
     "@type": "Person",
-    name: "Wyatt Feegrado",
+    name: wyatt.name,
     jobTitle: "Stand-Up Comedian & Co-Host",
-    url: CREATOR_URLS.wyatt,
-    sameAs: [CREATOR_URLS.wyatt],
+    url: wyatt.instagramUrl,
+    sameAs: [wyatt.instagramUrl],
     knowsAbout: ["stand-up comedy", "live dating shows", "crowd work"],
     worksFor: orgRef,
   },
@@ -82,8 +84,8 @@ const personJsonLd = JSON.stringify([
 
       <div class="host-section">
         <img
-          src="/images/hosts/surbhi.webp"
-          alt="Surbhi"
+          src={surbhi.photo}
+          alt={surbhi.name}
           class="host-avatar"
           width="96"
           height="96"
@@ -92,48 +94,26 @@ const personJsonLd = JSON.stringify([
         <div class="host-content">
           <h2>
             <a
-              href={CREATOR_URLS.surbhi}
+              href={surbhi.instagramUrl}
               target="_blank"
-              rel="noopener noreferrer">Surbhi</a
+              rel="noopener noreferrer">{surbhi.name}</a
             >
           </h2>
-          <p class="host-role">Co-Creator & Host</p>
-          <p>
-            Surbhi is a New York-based stand-up comedian and the creative force
-            behind Garam Masala Dating. She created the show in 2022 after
-            noticing something missing in the South Asian comedy and dating
-            scene, a space where desi singles could meet in real life, in a room
-            full of energy, without the awkwardness of apps or the pressure of
-            family setups.
-          </p>
-          <p>
-            What started as a one-off experiment in a downtown bar is now
-            America's #1 live desi comedy dating show. The show sells out
-            250-seat venues weekly in Manhattan, runs monthly in Jersey City,
-            and has expanded to Los Angeles, San Francisco, and San Diego.
-            Surbhi has performed at comedy venues across the US and UK, and has
-            accidentally matched three real couples through the show, and
-            counting.
-          </p>
-          <p>
-            She handles everything from casting and producing to hosting the
-            show itself, where her ability to make strangers comfortable on
-            stage in front of hundreds of people is the reason contestants keep
-            coming back.
-          </p>
+          <p class="host-role">{surbhi.role}</p>
+          {surbhi.bioParagraphs.map((paragraph) => <p set:html={paragraph} />)}
           <div class="host-credits">
-            <span>Stand-Up Comedian</span>
-            <span>Co-Creator & Producer</span>
-            <span>NYC · LA · SF · SD</span>
+            {surbhi.credits.map((credit) => <span>{credit}</span>)}
           </div>
-          <p class="host-see-live"><a href="/tickets">See Surbhi live →</a></p>
+          <p class="host-see-live">
+            <a href="/tickets">See {surbhi.name} live →</a>
+          </p>
         </div>
       </div>
 
       <div class="host-section">
         <img
-          src="/images/hosts/wyatt.avif"
-          alt="Wyatt"
+          src={wyatt.photo}
+          alt={wyatt.name.split(" ")[0]}
           class="host-avatar"
           width="96"
           height="96"
@@ -142,42 +122,19 @@ const personJsonLd = JSON.stringify([
         <div class="host-content">
           <h2>
             <a
-              href={CREATOR_URLS.wyatt}
+              href={wyatt.instagramUrl}
               target="_blank"
-              rel="noopener noreferrer">Wyatt Feegrado</a
+              rel="noopener noreferrer">{wyatt.name}</a
             >
           </h2>
-          <p class="host-role">Co-Host & Actor</p>
-          <p>
-            Wyatt Feegrado is a stand-up comedian and actor who started sneaking
-            out of his parents' house in Walnut Creek, California to do open
-            mics at 16. He went on to attend NYU Tisch School of the Arts, then
-            landed a starring role in ESPN+'s <em>Bettor Days</em>, followed by
-            Hulu's <em>Chicano Squad</em> and the History Channel's <em
-              >Holy Marvels</em
-            >.
-          </p>
-          <p>
-            He tours the US 11 months of the year and co-hosts the podcast <em
-              >Gen Zenophobic</em
-            > with his brother Luke. On Garam Masala Dating, Wyatt is the reason no
-            awkward silence survives longer than two seconds. His improvisation keeps
-            the energy high, the contestants laughing, and the audience on the edge
-            of their seats.
-          </p>
-          <p>
-            Together with Surbhi, he's built a show that feels less like a
-            production and more like the best house party you've ever been to,
-            except two strangers are falling in love on stage while 250 people
-            lose their minds.
-          </p>
+          <p class="host-role">{wyatt.role}</p>
+          {wyatt.bioParagraphs.map((paragraph) => <p set:html={paragraph} />)}
           <div class="host-credits">
-            <span>Stand-Up Comedian</span>
-            <span>Actor: ESPN+, Hulu, History</span>
-            <span>NYU Tisch</span>
-            <span>Co-Host</span>
+            {wyatt.credits.map((credit) => <span>{credit}</span>)}
           </div>
-          <p class="host-see-live"><a href="/tickets">See Wyatt live →</a></p>
+          <p class="host-see-live">
+            <a href="/tickets">See {wyatt.name.split(" ")[0]} live →</a>
+          </p>
         </div>
       </div>
 

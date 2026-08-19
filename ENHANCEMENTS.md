@@ -4,6 +4,68 @@ Items from the GMD website audit checklists (site audit, codebase cleanup, conve
 
 ---
 
+## Canceling a show does not invalidate already-issued contestant invites or active portal sessions (2026-08-14)
+
+**Priority:** Medium
+**Status:** Deferred pending an owner decision (surfaced by the Codex audit of the never-delete-events plan)
+
+New invites and new claims for a canceled show are blocked (the events.ts lookups in create-invite, contestant-show-claim, portal-state and send-waiver-nudge all exclude `status: "canceled"`). But `portal-state`'s invite branch and `contestant-claim.ts` trust stored Firestore invite data and never consult events.ts, so a contestant invited BEFORE a cancellation can still claim and keep portal access. That may be desired (the team contacts affected contestants personally) or not; blocking it automatically is a product decision. If wanted: re-validate the stored `showId` against events.ts status in both flows and return a clear "show canceled" state.
+
+---
+
+## Apply/admin test and UI polish deferred from the CodeRabbit PR #135 body review (2026-08-12)
+
+- Admin photo grid: `useApplicantPhotos` silently drops photos whose download fails; return a `failed` count so the dashboard can distinguish "loading" from "failed". Low value (admin-only surface); do with the planned admin rewrite.
+- `ApplyPage.test.tsx`: hoist the `deleteObject` mock and assert the failure-cleanup and owner-metadata contracts at unit level. Both contracts are enforced today by the emulator rules tests (`apply-flow.rules-test.ts`), which is the stronger guarantee; the unit assertions are belt-and-braces for refactors.
+
+## Apply-form outage follow-ups (2026-07-13)
+
+### Add the synthetic monitor identity to PostHog's internal-user filter
+
+**Priority:** Low
+**Why:** Synthetic submissions no longer emit conversion events at all (skipped at the source), but their pageviews still occur. Adding `synthetic-monitor@garammasaladating.com` to PostHog's "filter out internal and test users" definition keeps session/pageview analytics clean.
+
+---
+
+## Mobile Sticky CTA for Event Landing Pages (2026-07-16)
+
+### Add a sticky "Get Tickets" bar to /events/[slug] pages
+
+**Priority:** High
+**Status:** Needs implementation, sequenced into the ticket card consolidation task
+**Branch context:** describes code on the unmerged `feat/event-pages-tracked-checkout` branch (`src/pages/events/[slug].astro`, `EventTicketCta.astro`, the `data-go-ticket` contract). None of it is on main yet; act on this entry with that branch.
+
+The `/events/[slug].astro` landing page (built for the tracked-checkout redirect project) is a long-scroll page: hero, overview, what to expect, lineup, location, agenda, FAQ, social proof, bottom CTA. It is the intended landing spot for paid Instagram traffic. On mobile (70% of traffic), a visitor who scrolls past the hero CTA has to scroll all the way back up or down to the bottom CTA to convert.
+
+`StickyCTA.astro` already exists and is used on `/tickets`, but its anchor carries no `data-go-ticket` attribute and none of the per-event tracking data attributes that `EventTicketCta.astro`'s click-tracking script depends on (it wires up every `[data-go-ticket]` anchor on the page: stamps a unique `eid`, forwards UTMs, fires `checkout_opened` with the CAPI dedup id). Dropping `StickyCTA` onto the event page as-is would render an untracked link, silently reintroducing the tracking blind spot this project exists to close.
+
+**Why not built now:** the ticket card consolidation task is already scoped to unify CTA/card presentation sitewide (retiring the old Eventbrite embed/modal). That is the correct place to establish one sitewide sticky-CTA pattern with tracking built in from the start, rather than shipping a one-off sticky bar for the event page now and reworking it again immediately after.
+
+**How:** when doing the consolidation, extend the tracked-link contract (`data-go-ticket` + `data-event-*` attrs) to `StickyCTA.astro` itself, or replace it with a shared `EventTicketCta`-based sticky variant, so every page wanting a persistent mobile CTA (event pages, `/tickets`, city pages) gets full tracking automatically from one implementation.
+
+**Files to touch:** `src/components/StickyCTA.astro`, `src/pages/events/[slug].astro`, `src/pages/tickets.astro`.
+
+---
+
+## Contestant Workflow Test Coverage: Portal + Admin Components (2026-07-16)
+
+### Write unit tests for ContestantPortal.tsx, TaskInbox.tsx, and ContestantFunnel.tsx
+
+**Priority:** High
+**Status:** Deferred
+
+Backend unit tests for the P1 to P5 contestant workflow control tower shipped alongside this entry (`src/lib/zohoMailer.ts`, the cal.com webhook, and the post-show/followups cron jobs). Three UI pieces from the same rollout remain untested, deferred for two different reasons:
+
+1. **`src/components/ContestantPortal.tsx`**: public facing waiver and prep portal, ~770 lines, stateful (needs `vi.stubGlobal("fetch")` plus `waitFor` patterns, not the `vi.mock`+dynamic-import pattern the backend tests use). Kept out of the backend test PR so that PR stayed a clean, reviewable, single-purpose change. Write its tests in a dedicated follow-up PR.
+2. **`src/components/admin/TaskInbox.tsx`** and **`src/components/admin/ContestantFunnel.tsx`**: admin dashboard screens. The operator plans a full rewrite of the admin page (2026-07-15 directive: it is not working well and is getting redone). Writing tests against components about to be replaced wastes the effort; write tests against the rewritten components once that lands.
+
+**Acceptance criteria:**
+
+1. `ContestantPortal.tsx` has vitest coverage for waiver sign-through, invite-token validation, and error states.
+2. Once the admin rewrite ships, its replacement Task Inbox and funnel views ship with unit tests as part of that PR, not as a follow-up debt item.
+
+---
+
 ## City Page Enrichment: Remaining Batches (2026-07-06)
 
 ### Extend the deep-content pattern to the remaining ~290 city pages
@@ -138,31 +200,6 @@ async function shareEvent(event: EventEntry) {
 - `src/pages/tickets.astro` — add share button to each live ticket card
 - `src/components/home/HomeShows.astro` — add share button to each show card
 
-### `checkout_started` / `ticket_purchased` — Eventbrite conversion tracking
-
-**Priority:** Medium
-**Status:** Blocked — requires Eventbrite API access
-
-Checkout and purchase happen on Eventbrite's domain. Three options:
-
-**Option A: Eventbrite Webhook (recommended)**
-
-Set up an [Eventbrite webhook](https://www.eventbrite.com/platform/api#/reference/webhooks) for `order.placed` events. Create a serverless function at `/api/eventbrite-webhook` that:
-
-1. Receives the webhook payload (event ID, order details, attendee info)
-2. Forwards to PostHog server-side via `posthog-node` SDK
-3. Correlates with PostHog distinct ID via the `aff=garamsite` param or email match
-
-Requires: Eventbrite API key + Organization ID.
-
-**Option B: UTM attribution (passive, already working)**
-
-Eventbrite URLs already include `aff=garamsite`. Eventbrite's own analytics dashboard shows conversions by affiliate tag: Eventbrite dashboard → Marketing → Tracking Links.
-
-**Option C: Eventbrite Tracking Pixel**
-
-Eventbrite supports a [conversion tracking pixel](https://www.eventbrite.com/support/articles/en_US/How_To/how-to-use-conversion-tracking) for checkout page tracking. Limited — only shows someone started checkout from your site, not full purchase details.
-
 ### Twitter/X pixel: move from GTM-only to direct code
 
 **Priority:** Medium
@@ -171,16 +208,32 @@ Eventbrite supports a [conversion tracking pixel](https://www.eventbrite.com/sup
 The Twitter/X pixel currently fires only through GTM (`GTM-KQCBBL2W`). Chrome's Enhanced Tracking Protection blocks `static.ads-twitter.com` client-side regardless of whether the script tag comes from GTM or direct code, but moving it to a dedicated `twitter-pixel.astro` component (same deferred `requestIdleCallback` pattern as `meta-pixel.astro`) gives:
 
 - Reliable PageView on every page load independent of GTM initialization timing
-- A `twq('event', 'Purchase', {...})` call in the Eventbrite `onOrderComplete` callback in `tickets.astro` (hook already exists)
+- A `twq('event', 'InitiateCheckout', {...})` call from the shared `wireTicketCtaTracking()` click handler (`src/lib/ticketCtaTracking.ts`), the one place every "Get Tickets" click across the site now fires from
 - Source of truth in version control rather than GTM UI
+
+Note: the old `onOrderComplete` callback in `tickets.astro` this entry originally referenced no longer exists (the Eventbrite checkout-modal widget was retired; see the `feat(events)` PR). Purchase-level tracking now needs its own server-side path analogous to `src/lib/capi.ts`, since Twitter/X's Conversions API is a separate integration from Meta's.
 
 **Files to touch:**
 
 - `src/components/twitter-pixel.astro` — new component, same shape as `meta-pixel.astro`
 - `src/layouts/BaseLayout.astro` — import and render alongside PostHog/GTM/Meta
-- `src/pages/tickets.astro` — add `twq('event', 'Purchase', { value, currency, event_id })` in `onOrderComplete`
+- `src/lib/ticketCtaTracking.ts`: add `twq('event', 'InitiateCheckout', { event_id })` alongside the existing `capture("checkout_opened", ...)` call
 
 Requires: Twitter Ads pixel ID (found in Twitter Ads dashboard under Tools > Conversion Tracking).
+
+### Eventbrite order webhook for near-real-time Purchase tracking (2026-07-16)
+
+**Priority:** Low
+**Status:** Working via daily cron, webhook would tighten latency
+
+Purchase CAPI events (`src/pages/api/sync-orders.ts`) currently fire from the existing daily order-sync cron (`vercel.json`'s `/api/sync-orders` cron, 13:00 UTC), not a push webhook. This means a real purchase can take up to 24 hours to register as a Meta `Purchase` conversion, which under-reports same-day ad performance in Meta Ads Manager. An [Eventbrite webhook](https://www.eventbrite.com/platform/api#/reference/webhooks) for `order.placed` calling a new `/api/webhooks/eventbrite-order` endpoint (signature-verified, same CAPI Purchase logic as the cron path) would make this near-real-time. Deferred because the daily cron already delivers a correct, just delayed, signal, and this PR's scope was closing the "zero signal" gap, not optimizing latency on the signal that already exists.
+
+### Vercel Deploy Hook for Eventbrite-sourced event page content (2026-07-16)
+
+**Priority:** Low
+**Status:** Needs implementation
+
+`/events/[slug]` pages pull their description/summary from the Eventbrite API at build time (`src/lib/eventbriteContent.ts`, called from `getStaticPaths`). Astro's SSG means that content is only as fresh as the last deploy: if someone edits an event's listing on Eventbrite directly, the corresponding `/events/[slug]` page won't reflect it until the next `git push` to `main` triggers a rebuild. A Vercel Deploy Hook, triggered on a schedule (piggyback on an existing cron) or from an Eventbrite webhook, would keep this current without requiring a code change every time. Until this exists, anyone editing an Eventbrite listing's copy should know the site needs a redeploy (even a no-op commit) to pick it up.
 
 ### Twitter/X Conversions API (server-side pixel)
 
@@ -1458,6 +1511,28 @@ If the ambiguity matters there too, rename both with Surbhi's approval on the ex
 - 2026-07-13T14:18Z | resolved=unretryable-no-diff | tier=E | primary=codex | reason=error_or_timeout | fallback_used=deepseek | commit=c632e66 | diff_sha=de07acb31b1046222c912bf32176941ee3f4ad03138575e556c21c92240280c0
 - 2026-07-13T14:21Z | resolved=unretryable-no-diff | tier=F | primary=coderabbit | reason=error | fallback_used=gemini | commit=c632e66 | diff_sha=de07acb31b1046222c912bf32176941ee3f4ad03138575e556c21c92240280c0
 - 2026-07-13T18:27Z | resolved=unretryable-no-diff | tier=E | primary=codex | reason=error_or_timeout | fallback_used=deepseek | commit=c632e66 | diff_sha=5a053421b4d64aea28b915648574c67cc0db170eac03cf28f4ee5bc42bedbcee
+
+- 2026-07-13T20:44Z | resolved=unretryable-no-diff | tier=E | primary=codex | reason=error_or_timeout | fallback_used=deepseek | commit=b7283c5 | diff_sha=5f77712c4b23f4384da3c7cb52231034d8dc7977d14da7a17538911188121da6
+
+- 2026-07-13T20:47Z | resolved=unretryable-no-diff | tier=E | primary=codex | reason=error_or_timeout | fallback_used=deepseek | commit=b7283c5 | diff_sha=27549cd4222173b300c0f4b35fd1d200c6060ae78c44c063d2936d942804bc46
+- 2026-07-13T20:47Z | resolved=unretryable-no-diff | tier=F | primary=coderabbit | reason=error | fallback_used=gemini | commit=b7283c5 | diff_sha=27549cd4222173b300c0f4b35fd1d200c6060ae78c44c063d2936d942804bc46
+
+- 2026-07-13T20:51Z | resolved=unretryable-no-diff | tier=E | primary=codex | reason=error_or_timeout | fallback_used=deepseek | commit=b7283c5 | diff_sha=62dcea0150a678f2a1318562584a2f3c88d520482847d931ad73a30fa5710ba7
+- 2026-07-13T20:51Z | resolved=unretryable-no-diff | tier=F | primary=coderabbit | reason=error | fallback_used=gemini | commit=b7283c5 | diff_sha=62dcea0150a678f2a1318562584a2f3c88d520482847d931ad73a30fa5710ba7
+- 2026-07-13T20:53Z | resolved=unretryable-no-diff | tier=E | primary=codex | reason=error_or_timeout | fallback_used=deepseek | commit=cc33f13 | diff_sha=792300f61baae3694258927633d9b4b5b636290e28c822fde0b59509b6340748
+- 2026-07-13T20:53Z | resolved=unretryable-no-diff | tier=F | primary=coderabbit | reason=error | fallback_used=gemini | commit=cc33f13 | diff_sha=792300f61baae3694258927633d9b4b5b636290e28c822fde0b59509b6340748
+
+- 2026-07-13T20:56Z | resolved=unretryable-no-diff | tier=E | primary=codex | reason=error_or_timeout | fallback_used=deepseek | commit=cc33f13 | diff_sha=49c071425e7d368e6c395b50375c366ae9489d1de40a22a911f27d37008968e0
+- 2026-07-13T20:56Z | resolved=unretryable-no-diff | tier=F | primary=coderabbit | reason=error | fallback_used=gemini | commit=cc33f13 | diff_sha=49c071425e7d368e6c395b50375c366ae9489d1de40a22a911f27d37008968e0
+- 2026-07-13T20:59Z | resolved=unretryable-no-diff | tier=E | primary=codex | reason=error_or_timeout | fallback_used=deepseek | commit=5f8a97a | diff_sha=34b48fea48bbe348043200b998329f88cef4a17723d1a8bc12c6a3773a0caab8
+- 2026-07-13T21:10Z | resolved=unretryable-no-diff | tier=E | primary=codex | reason=error_or_timeout | fallback_used=deepseek | commit=5f8a97a | diff_sha=d58b91c239276eace2d026c18cd8ab96853ea2f58466db7e30a49b599bd85d26
+- 2026-07-13T21:10Z | resolved=unretryable-no-diff | tier=F | primary=coderabbit | reason=error | fallback_used=gemini | commit=5f8a97a | diff_sha=d58b91c239276eace2d026c18cd8ab96853ea2f58466db7e30a49b599bd85d26
+- 2026-07-13T21:27Z | resolved=unretryable-no-diff | tier=E | primary=codex | reason=error_or_timeout | fallback_used=deepseek | commit=6c3790a | diff_sha=679393073329dbbc68a931b4c86844c71f02c323182389c186cb11c964ee3e4a
+- 2026-07-13T21:27Z | resolved=unretryable-no-diff | tier=F | primary=coderabbit | reason=error | fallback_used=gemini | commit=6c3790a | diff_sha=679393073329dbbc68a931b4c86844c71f02c323182389c186cb11c964ee3e4a
+- 2026-07-13T22:11Z | resolved=unretryable-no-diff | tier=E | primary=codex | reason=error_or_timeout | fallback_used=deepseek | commit=a7a0407 | diff_sha=2c211f142130ad8681e4a9d1cf618f0277d935274a958c082a3e77c553091e41
+- 2026-07-13T22:11Z | resolved=unretryable-no-diff | tier=F | primary=coderabbit | reason=error | fallback_used=gemini | commit=a7a0407 | diff_sha=2c211f142130ad8681e4a9d1cf618f0277d935274a958c082a3e77c553091e41
+- 2026-07-13T22:14Z | resolved=unretryable-no-diff | tier=E | primary=codex | reason=error_or_timeout | fallback_used=deepseek | commit=a7a0407 | diff_sha=2974c587f3ec43b3238266c6d8d696bd4712d7d09c277ffcad14e647cfae9851
+- 2026-07-13T22:14Z | resolved=unretryable-no-diff | tier=F | primary=coderabbit | reason=error | fallback_used=gemini | commit=a7a0407 | diff_sha=2974c587f3ec43b3238266c6d8d696bd4712d7d09c277ffcad14e647cfae9851
 - 2026-07-13T14:14Z | resolved=unretryable-no-diff | tier=E | primary=codex | reason=error_or_timeout | fallback_used=deepseek | commit=c632e66 | diff_sha=727f9c571636bde5fa1659a5cfe3e0752dd55bfd98a7140eba940b370ac57b25
 - 2026-07-13T14:18Z | resolved=unretryable-no-diff | tier=E | primary=codex | reason=error_or_timeout | fallback_used=deepseek | commit=c632e66 | diff_sha=aa14f0405fb398ccc172f7d23e2c9751ee8c0ea5f24ddfb43a0f0bc1380bc5c6
 - 2026-07-13T14:21Z | resolved=unretryable-no-diff | tier=F | primary=coderabbit | reason=error | fallback_used=gemini | commit=c632e66 | diff_sha=aa14f0405fb398ccc172f7d23e2c9751ee8c0ea5f24ddfb43a0f0bc1380bc5c6
@@ -1470,6 +1545,10 @@ If the ambiguity matters there too, rename both with Surbhi's approval on the ex
 - 2026-07-15T20:19Z | resolved=unretryable-no-diff | tier=E | primary=codex | reason=error_or_timeout | fallback_used=gemini | commit=ad03ccb | diff_sha=2969cbac7200a1b37f3596ee9c891fc6080090253851585901f3c863c6b35d95
 
 ## Low priority enhancements
+
+### DeepSeek — 20260713-181721
+
+- WONT-FIX (decision, do not re-file): reviewer flagged "non-obvious" in LESSONS.md as a banned double dash. It is a single hyphen forming a compound word, which the copy rules explicitly allow. No change. At `LESSONS.md:232`.
 
 ### CodeRabbit — 20260713-102329
 
@@ -1508,3 +1587,39 @@ If the ambiguity matters there too, rename both with Surbhi's approval on the ex
 ### Codex (2026-07-16T19:23Z)
 
 - LOW: `BUGS.md:638`, `BUGS.md:642` and `BUGS.md:646` use prohibited em dashes. `CHANGELOG.md:11` uses a prohibited Oxford comma.
+
+### CodeRabbit — 20260715-160549
+
+- LOW: [CodeRabbit] ENHANCEMENTS.md: Verify each finding against current code. Fix only still-valid issues, skip the rest with a brief reason, keep changes minimal, and validate. In @ENHANCEMENTS.md at line 1493, Update the metadata timestamp entry in ENHANCEMENTS.md to use the repository-approved dash-free separator format instead of the hyphenated date in the 2026-07-15T20:02Z value. Preserve the remaining metadata fields unchange...
+
+### DeepSeek — 20260715-160953
+
+- LOW: The heading '### CodeRabbit — 20260715-160549' uses an em dash, which violates the project's copy voice mandate.
+  > a/ENHANCEMENTS.md:1496 | +### CodeRabbit — 20260715-160549
+
+### Codex LOW findings 2026-07-16 (won't fix, kept so they are not re-filed)
+
+- Bold-label sections in the new LESSONS.md Eventbrite entry: won't fix. The global CLAUDE.md LESSONS.md mandate prescribes the `**What went wrong:**` `**Why:**` `**Rule:**` template and nearly every existing entry follows it. The specific template mandate overrides the general copy-voice ban on bold-label lists for this file.
+- Em dash in the `1f0a217` commit message body: won't fix. That commit is already on origin, so rewriting its message means amending a published commit and force-pushing. The rule stands for future commit messages.
+- 2026-08-13T19:10Z | tier=E | primary=ALL | reason=RC_143 | fallback_used=NONE | commit=38cb5df | diff_sha=6ade649dbb262cb1294f3a55a01d603b15ec09f93217ea52b1579b01af756d3b
+- 2026-08-13T19:11Z | tier=E | primary=ALL | reason=OUTAGE | fallback_used=NONE | commit=38cb5df | diff_sha=6ade649dbb262cb1294f3a55a01d603b15ec09f93217ea52b1579b01af756d3b
+- 2026-08-14T08:26Z | tier=E | primary=ALL | reason=OUTAGE | fallback_used=NONE | commit=e4b2b9a | diff_sha=63f7b57cf4b49691cc79e120859dc072641a01a10d1745cd7228035dbdf3e515
+
+### Codex (2026-08-14T19:29Z)
+
+- LOW: [COPY-VOICE] The commit message for `0961d06` contains a prohibited em dash in the phrase "npm 10 [em dash] the exact split" (character replaced with a placeholder here so this file does not reproduce it).
+- Decision (2026-08-14): won't fix, same rationale as the `1f0a217` entry above. Commit `0961d06` is already on origin, so rewriting its message means amending a published commit and force-pushing. The rule stands for future commit messages.
+
+### Codex (2026-08-15T02:23Z)
+
+- LOW: [INTERACTIVE-TYPE-SIZE] `src/components/events/EventTicketCta.astro:194` uses 15px button text and `src/pages/events/[slug].astro:541` uses 14px link text, violating the project’s 16px minimum for interactive elements.
+- LOW: [DESIGN-TOKEN-BYPASS] New event components hardcode colors such as `white`, `#444` and black RGBA values instead of using the project’s centralized color tokens.
+
+### Fable — 20260816-094940 (PR #193)
+
+- [ ] ENHANCEMENT: LOW [NO-GLOBAL-HOOK-FALLBACK] Pre-push runs zero local checks on a machine without the global hooks installed | Why: `.husky/pre-push:16`, with `npm run check` removed, has its only remaining gate as the `-x "$HOME/.git-hooks/pre-push"` chain, so on a fresh clone, new laptop, or worktree before setup a push runs no local checks at all and type-broken or `--no-verify`-committed code reaches the remote silently, caught only later in CI. Filed, not built: a repo-local fallback gate is new scope beyond the pre-push trim this PR shipped | Files: .husky/pre-push | Plan: add a repo-local fallback check (e.g. run `npm run check` directly when `$HOME/.git-hooks/pre-push` is absent) so pushes are never fully ungated | Verify: rename `~/.git-hooks` locally, make a type-broken commit, confirm the push is still blocked. Executor: the 3:00 overnight fix-medium-bugs lane.
+
+### Dependency follow-ups (2026-08-18)
+
+- [ ] ENHANCEMENT: Clear the 3 moderate npm audit findings in the firebase-tools chain | Why: firebase-tools 15.x depends on @google-cloud/pubsub 5.x which pins @opentelemetry/core ^1.30.1, flagged for unbounded memory allocation in W3C Baggage propagation (GHSA-8988-4f7v-96qf); dev-only CLI exposure, no upstream fix exists yet and `npm audit fix --force` would downgrade firebase-tools to 14.x, so forcing a cross-major override of a transitive dep was rejected in the 2026-08-18 dependency PR | Files: package.json, package-lock.json | Plan: wait for firebase-tools to pull pubsub 6.0.1+ (or pubsub to ship otel core 2.8+), then bump firebase-tools and confirm the audit chain clears; only if months pass with no upstream movement, test an `@opentelemetry/core` override against the emulator suite | Verify: npm audit reports 0 vulnerabilities and the Firestore/Storage rules emulator job passes. Executor: the 3:00 overnight fix-medium-bugs lane (as a periodic bump check) or the next dependency PR session.
+- [ ] ENHANCEMENT: LOW [STALE-COMMENT-EXAMPLE] The WHY comment in astro.config.mjs cites a slug that no longer exists | Why: `astro.config.mjs:79` names `chicago-tba` as an example TBA event slug, but `src/data/events.ts` has no such entry, so the example misleads future readers (flagged by the recovered 2026-08-17 outage review) | Files: astro.config.mjs | Plan: replace `chicago-tba` in the comment with a real current TBA slug from events.ts, or drop the specific example and say "TBA/coming-soon cities" | Verify: the named example slug greps to a real entry in src/data/events.ts. Executor: the 3:00 overnight fix-medium-bugs lane.

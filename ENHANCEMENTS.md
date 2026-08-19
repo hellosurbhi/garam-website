@@ -1533,6 +1533,16 @@ If the ambiguity matters there too, rename both with Surbhi's approval on the ex
 - 2026-07-13T22:11Z | resolved=unretryable-no-diff | tier=F | primary=coderabbit | reason=error | fallback_used=gemini | commit=a7a0407 | diff_sha=2c211f142130ad8681e4a9d1cf618f0277d935274a958c082a3e77c553091e41
 - 2026-07-13T22:14Z | resolved=unretryable-no-diff | tier=E | primary=codex | reason=error_or_timeout | fallback_used=deepseek | commit=a7a0407 | diff_sha=2974c587f3ec43b3238266c6d8d696bd4712d7d09c277ffcad14e647cfae9851
 - 2026-07-13T22:14Z | resolved=unretryable-no-diff | tier=F | primary=coderabbit | reason=error | fallback_used=gemini | commit=a7a0407 | diff_sha=2974c587f3ec43b3238266c6d8d696bd4712d7d09c277ffcad14e647cfae9851
+- 2026-07-13T14:14Z | resolved=unretryable-no-diff | tier=E | primary=codex | reason=error_or_timeout | fallback_used=deepseek | commit=c632e66 | diff_sha=727f9c571636bde5fa1659a5cfe3e0752dd55bfd98a7140eba940b370ac57b25
+- 2026-07-13T14:18Z | resolved=unretryable-no-diff | tier=E | primary=codex | reason=error_or_timeout | fallback_used=deepseek | commit=c632e66 | diff_sha=aa14f0405fb398ccc172f7d23e2c9751ee8c0ea5f24ddfb43a0f0bc1380bc5c6
+- 2026-07-13T14:21Z | resolved=unretryable-no-diff | tier=F | primary=coderabbit | reason=error | fallback_used=gemini | commit=c632e66 | diff_sha=aa14f0405fb398ccc172f7d23e2c9751ee8c0ea5f24ddfb43a0f0bc1380bc5c6
+- 2026-07-13T14:23Z | resolved=unretryable-no-diff | tier=E | primary=codex | reason=error_or_timeout | fallback_used=deepseek | commit=ba6728a | diff_sha=4fda69b1208df08e4e0d4b9c77ef4613feb0ca8b9bc76f065441e8676120a62b
+- 2026-07-13T14:23Z | resolved=unretryable-no-diff | tier=F | primary=coderabbit | reason=error | fallback_used=gemini | commit=ba6728a | diff_sha=4fda69b1208df08e4e0d4b9c77ef4613feb0ca8b9bc76f065441e8676120a62b
+- 2026-07-15T19:41Z | resolved=unretryable-no-diff | tier=E | primary=codex | reason=error_or_timeout | fallback_used=gemini | commit=8ecc6b2 | diff_sha=cd75cca2e1162551848ad7e7bd36b8eaafea48695da51c508f24dc4b385ae6c7
+- 2026-07-15T19:41Z | resolved=unretryable-no-diff | tier=F | primary=coderabbit | reason=error | fallback_used=gemini | commit=8ecc6b2 | diff_sha=cd75cca2e1162551848ad7e7bd36b8eaafea48695da51c508f24dc4b385ae6c7
+- 2026-07-15T20:02Z | resolved=unretryable-no-diff | tier=E | primary=codex | reason=error_or_timeout | fallback_used=gemini | commit=ad03ccb | diff_sha=8f7496694dfa7a06a1b1dbf0b403469de24530653c93388269f0d5f1898fea65
+- 2026-07-15T20:19Z | resolved=unretryable-no-diff | tier=F | primary=coderabbit | reason=error | fallback_used=gemini | commit=ad03ccb | diff_sha=2969cbac7200a1b37f3596ee9c891fc6080090253851585901f3c863c6b35d95
+- 2026-07-15T20:19Z | resolved=unretryable-no-diff | tier=E | primary=codex | reason=error_or_timeout | fallback_used=gemini | commit=ad03ccb | diff_sha=2969cbac7200a1b37f3596ee9c891fc6080090253851585901f3c863c6b35d95
 
 ## Low priority enhancements
 
@@ -1608,6 +1618,7 @@ If the ambiguity matters there too, rename both with Surbhi's approval on the ex
 - Em dash in the `1f0a217` commit message body: won't fix. That commit is already on origin, so rewriting its message means amending a published commit and force-pushing. The rule stands for future commit messages.
 - 2026-08-13T19:10Z | tier=E | primary=ALL | reason=RC_143 | fallback_used=NONE | commit=38cb5df | diff_sha=6ade649dbb262cb1294f3a55a01d603b15ec09f93217ea52b1579b01af756d3b
 - 2026-08-13T19:11Z | tier=E | primary=ALL | reason=OUTAGE | fallback_used=NONE | commit=38cb5df | diff_sha=6ade649dbb262cb1294f3a55a01d603b15ec09f93217ea52b1579b01af756d3b
+- 2026-08-14T08:26Z | tier=E | primary=ALL | reason=OUTAGE | fallback_used=NONE | commit=e4b2b9a | diff_sha=63f7b57cf4b49691cc79e120859dc072641a01a10d1745cd7228035dbdf3e515
 
 ### Codex (2026-08-14T19:29Z)
 

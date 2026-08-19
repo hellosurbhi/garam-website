@@ -24,6 +24,11 @@ on:
 
 permissions:
   contents: read
+  # issues: write exists ONLY for the failure pager step below: a broken
+  # site must never be the sole alert channel again (2026-08-19
+  # postmortem: a week of failures alerted through the site's own dead
+  # email path while every application was rejected).
+  issues: write
 
 concurrency:
   group: synthetic-apply
@@ -50,6 +55,11 @@ jobs:
         env:
           PLAYWRIGHT_BASE_URL: https://garammasaladating.com
       - name: Verify document landed and clean up
+        # if: always() (2026-08-19): these two steps ARE the diagnosis
+        # (Firestore ground truth, deployed-rules drift) and sat skipped
+        # behind the failing submit step for a week, hiding both the
+        # root cause and the real-applicant impact.
+        if: always()
         run: node scripts/synthetic-apply-verify.mjs
         env:
           FIREBASE_ADMIN_CLIENT_EMAIL: ${{ secrets.FIREBASE_ADMIN_CLIENT_EMAIL }}
@@ -57,6 +67,7 @@ jobs:
           FIREBASE_PROJECT_ID: ${{ secrets.FIREBASE_PROJECT_ID }}
           FIREBASE_STORAGE_BUCKET: ${{ secrets.FIREBASE_STORAGE_BUCKET }}
       - name: Check deployed rules match the repo
+        if: always()
         run: node scripts/check-rules-drift.mjs
         env:
           FIREBASE_ADMIN_CLIENT_EMAIL: ${{ secrets.FIREBASE_ADMIN_CLIENT_EMAIL }}
@@ -64,7 +75,11 @@ jobs:
           FIREBASE_PROJECT_ID: ${{ secrets.FIREBASE_PROJECT_ID }}
           FIREBASE_STORAGE_BUCKET: ${{ secrets.FIREBASE_STORAGE_BUCKET }}
       - name: Weekly pager heartbeat (Mondays 13:30 UTC run only)
-        if: success()
+        # always(), not success() (2026-08-19): gating the pager-liveness
+        # test on the monitor passing meant a permanently failing monitor
+        # also silenced the weekly proof that the alert channel works —
+        # the exact combination that hid this outage.
+        if: always()
         run: |
           # A silently dead alert channel (expired SMTP password, broken env)
           # looks identical to "no failures". One heartbeat email per week
@@ -76,6 +91,23 @@ jobs:
               -d '{"flow":"ops","stage":"heartbeat","errorMessage":"Weekly pager test: the synthetic monitor and the alert channel are both working. No action needed."}'
           else
             echo "Not the Monday 13:30 run; skipping heartbeat."
+          fi
+      - name: Page the producer via GitHub issue on failure
+        # Independent of the website: gh with the workflow token opens or
+        # updates one issue thread; GitHub emails the owner natively. The
+        # site-channel page below stays as the second channel.
+        if: failure()
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          RUN_URL: https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}
+        run: |
+          TITLE="Synthetic apply monitor failing"
+          BODY="The production apply form monitor FAILED. Run: $RUN_URL — check the verify and rules-drift step outputs in the same run for the cause and applicant impact."
+          EXISTING=$(gh issue list --repo "$GITHUB_REPOSITORY" --state open --search "\"$TITLE\" in:title" --json number --jq '.[0].number // empty')
+          if [ -n "$EXISTING" ]; then
+            gh issue comment "$EXISTING" --repo "$GITHUB_REPOSITORY" --body "$BODY"
+          else
+            gh issue create --repo "$GITHUB_REPOSITORY" --title "$TITLE" --body "$BODY" --assignee hellosurbhi
           fi
       - name: Page the producer on failure
         if: failure()

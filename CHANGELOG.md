@@ -1,5 +1,20 @@
 # Changelog
 
+## [Unreleased]: fix/monitor-pager-and-evidence (2026-08-19)
+
+- **Synthetic apply monitor can no longer fail silently**: on failure it
+  now opens or updates a GitHub issue assigned to the owner via the
+  workflow token (GitHub emails natively, independent of the site's own
+  alert path, which returned 200 while dropping every email for a
+  week); the weekly pager heartbeat runs on always() instead of
+  success(), because a permanently failing monitor also silenced the
+  proof that the alert channel worked; and the Firestore verify and
+  rules-drift steps run on always() so the diagnosis and the
+  real-applicant impact can never again hide behind the failing submit
+  step. Root cause of the outage itself (undeployed #135 rules
+  rejecting every application since Aug 12) is diagnosed in BUGS.md
+  with the one-command owner fix.
+
 ## chore(pr193): merged main a third time, one more bookkeeping commit landed mid-push (2026-08-19)
 
 The first push of this catch-up merge still reported PR #193 as conflicting: `main` picked up one more commit (#206, preserving overnight review-retry and skipped-review ledger lines that two automated lanes had written directly to the main checkout) after this branch's prior merge but before this branch's push registered. Merged `origin/main` again. Both conflicts were pure additions with nothing on this branch's side to reconcile: a new "Skipped reviews (pending retry)" ledger section in ENHANCEMENTS.md and three more skipped-review lines appended after the existing 2026-07-16 Codex LOW findings section, plus a new "Review lane finding filed on the primary checkout" WONTFIX and a new "Session finding 2026-08-19 (worktree close-out sweep)" HIGH in BUGS.md. No entries dropped, no conflicts required judgment calls this time.

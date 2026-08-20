@@ -26,10 +26,10 @@ export interface Application {
   email?: string;
   emailNormalized?: string; // email.toLowerCase(), set on create; used for webhook correlation
   phone?: string;
-  height: string;
+  height?: string;
   instagram: string;
-  community: string;
-  income: string;
+  community?: string;
+  income?: string;
   applicationType: string;
   referrerName?: string;
   nominationConsent?: boolean;

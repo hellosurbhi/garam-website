@@ -25,6 +25,11 @@ import {
   deleteObject,
 } from "firebase/storage";
 import { collection, doc, setDoc, getDoc } from "firebase/firestore";
+import {
+  buildApplicationDocument,
+  INITIAL,
+  type FormState,
+} from "@/components/apply/useApplyForm";
 
 const PROJECT_ID = "demo-garam-masala";
 
@@ -168,30 +173,68 @@ describe("storage.rules: photos/", () => {
 });
 
 describe("firestore.rules: applications", () => {
-  const validApplication = {
-    name: "Priya Sharma",
-    age: 27,
-    gender: "Female",
+  // Fixtures are REAL FormState values run through the REAL payload builder
+  // (buildApplicationDocument), so what these tests write is exactly what the
+  // browser writes. The hand-rolled fixture this replaced filled every
+  // optional field and omitted referrerName entirely, which is how "sends ""
+  // for blank optionals, rules demand size() > 0" shipped unnoticed and took
+  // the form down in Aug 2026.
+  const PHOTO_PATHS = ["photos/0f8b3a52.jpg"];
+
+  function docTimestamps() {
+    return { termsAgreedAt: new Date(), submittedAt: new Date() };
+  }
+
+  // Only the fields the UI actually requires (see getFieldErrors), every
+  // optional blank. Also the exact shape the synthetic monitor submits:
+  // the reserved email makes the builder set isSynthetic automatically.
+  const minimalSyntheticForm: FormState = {
+    ...INITIAL,
+    name: "SYNTHETIC MONITOR",
+    age: "30",
+    gender: "Woman",
     orientation: "Straight",
     city: "New York",
-    state: "NY",
+    email: "synthetic-monitor@garammasaladating.com",
+    instagram: "garammasaladating",
+    marketingConsent: "yes",
+  };
+
+  const fullSelfForm: FormState = {
+    ...INITIAL,
+    name: "Priya Sharma",
+    age: "27",
+    gender: "Woman",
+    orientation: "Straight",
     country: "USA",
+    state: "NY",
+    city: "New York",
     email: "priya@example.com",
-    emailNormalized: "priya@example.com",
     phone: "+15550100",
     height: `5'6"`,
     instagram: "applicant_fixture_1",
     community: "Hindu",
     income: "$50k to $100k",
-    applicationType: "Self",
     pitch: "I love masala chai.",
-    photoPaths: ["photos/0f8b3a52.jpg"],
+    type: "funny and ambitious",
     marketingConsent: "yes",
-    termsAgreedAt: new Date(),
-    status: "New",
-    notes: "",
-    submittedAt: new Date(),
+    seenShowBefore: "yes",
+    howHeard: "Instagram",
   };
+
+  const nominationForm: FormState = {
+    ...fullSelfForm,
+    applicationType: "Nomination",
+    name: "Anika Patel",
+    referrerName: "Rohan Mehta",
+  };
+
+  const validApplication = buildApplicationDocument(
+    fullSelfForm,
+    PHOTO_PATHS,
+    false,
+    docTimestamps(),
+  );
 
   function appDoc(
     ctx: ReturnType<RulesTestEnvironment["authenticatedContext"]>,
@@ -199,21 +242,37 @@ describe("firestore.rules: applications", () => {
     return doc(collection(ctx.firestore(), "applications"), "app-1");
   }
 
-  it("anonymous session can create the exact document the apply flow writes", async () => {
+  it("minimal application (every optional blank) is accepted — the synthetic monitor shape", async () => {
+    await assertSucceeds(
+      setDoc(
+        appDoc(anonContext("anon-1")),
+        buildApplicationDocument(
+          minimalSyntheticForm,
+          PHOTO_PATHS,
+          false,
+          docTimestamps(),
+        ),
+      ),
+    );
+  });
+
+  it("fully-filled self application is accepted", async () => {
     await assertSucceeds(
       setDoc(appDoc(anonContext("anon-1")), validApplication),
     );
   });
 
-  it("synthetic monitor document (isSynthetic flag) is accepted", async () => {
+  it("nomination application (referrerName + consent) is accepted", async () => {
     await assertSucceeds(
-      setDoc(appDoc(anonContext("anon-1")), {
-        ...validApplication,
-        name: "SYNTHETIC MONITOR",
-        email: "synthetic-monitor@garammasaladating.com",
-        emailNormalized: "synthetic-monitor@garammasaladating.com",
-        isSynthetic: true,
-      }),
+      setDoc(
+        appDoc(anonContext("anon-1")),
+        buildApplicationDocument(
+          nominationForm,
+          PHOTO_PATHS,
+          true,
+          docTimestamps(),
+        ),
+      ),
     );
   });
 
@@ -242,6 +301,15 @@ describe("firestore.rules: applications", () => {
         photoPaths: [""],
       }),
     );
+  });
+
+  it("a document missing an always-sent key is rejected (hasAll contract)", async () => {
+    const { email, ...withoutEmail } = validApplication;
+    void email;
+    await assertFails(setDoc(appDoc(anonContext("anon-1")), withoutEmail));
+    const { photoPaths, ...withoutPhotos } = validApplication;
+    void photoPaths;
+    await assertFails(setDoc(appDoc(anonContext("anon-1")), withoutPhotos));
   });
 
   it("unknown fields are rejected (hasOnly allowlist)", async () => {

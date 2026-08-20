@@ -4,6 +4,14 @@ Items from the GMD website audit checklists (site audit, codebase cleanup, conve
 
 ---
 
+## Apply-monitor fix follow-ups (2026-08-19)
+
+- [ ] ENHANCEMENT: CI job auto-deploys firestore.rules/storage.rules on merge to main (Surbhi approved 2026-08-19) | Why: both the July and August apply outages were rules merged but never manually deployed; executor is a dedicated follow-up PR once Surbhi creates the Firebase CI credential (steps in the apply-monitor fix PR body) | Files: .github/workflows/deploy-rules.yml (new) | Plan: workflow with explicit permissions contents: read, triggers on main-branch changes to firestore.rules/storage.rules, runs the firebase CLI rules deploy with the CI credential secret, fails loudly if the secret is missing (never skip-but-green) | Verify: merge a comment-only rules change, workflow goes green and scripts/check-rules-drift.mjs passes against production.
+- [ ] ENHANCEMENT: sweep orphaned synthetic monitor photos in Storage | Why: 28 failed runs each rolled back the Firestore write but got 403 deleting the uploaded 1x1 photo (pre-#135 storage.rules), leaving orphaned objects | Files: scripts/synthetic-apply-verify.mjs | Plan: extend the verify script cleanup to list photos/ objects and delete those older than 1 day whose owner metadata matches a synthetic-run anonymous session with no surviving application document | Verify: Storage list shows no synthetic orphans after a run.
+- [ ] ENHANCEMENT: second alert channel via ALERT_WEBHOOK_URL push | Why: alert email delivery to NOTIFICATION_EMAIL is unverified and email is a single point of failure for outage paging; opsAlert already supports a webhook | Files: src/lib/opsAlert.ts, README.md | Plan: operator sets ALERT_WEBHOOK_URL in Vercel to an ntfy topic, document the ops setup in README | Verify: test alert reaches the phone.
+
+---
+
 ## Canceling a show does not invalidate already-issued contestant invites or active portal sessions (2026-08-14)
 
 **Priority:** Medium

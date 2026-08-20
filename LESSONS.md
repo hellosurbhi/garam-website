@@ -1,5 +1,13 @@
 # Lessons
 
+## A push-time test gate that's backwards is worse than no gate
+
+**What went wrong:** Five contestant-workflow PRs (P1 to P5) shipped 2026-07-03 to 07-05 with zero unit tests, and the pre-push Stryker mutation gate never caught it. A later push then printed "STRYKER FAILED: Mutation score dropped" immediately followed by "All pre-push checks passed", the exact opposite conclusion, in the same output.
+
+**Why:** Two separate bugs compounded. First, the gate's own condition ran Stryker only if a test file had changed in the last 7 days, meant to save time on unrelated pushes, but this is backwards: it skips exactly the PRs that add production code with no test at all, which is the case that most needs catching. Second, the invocation was `run_stryker || true`, so even a real regression could never fail the push; the "All pre-push checks passed" line printed unconditionally afterward regardless of what Stryker actually found.
+
+**Rule:** A slow, thorough check (mutation testing, 15 to 20 minutes) does not belong on the push path at all, gated or not; it belongs on a schedule, reviewed by a human (see CHANGELOG.md, 2026-07-16, `.github/workflows/mutation-audit.yml`). The checks that do belong on the push/PR path are fast and precise: the full test suite on every commit (already `.husky/pre-commit`) and patch/diff coverage in CI on the lines a PR actually changed (`scripts/diff-coverage.mjs`), not a proxy like "did a test file change in the last N days" or a ratchet that can invoke its own failure branch with `|| true` and still report success.
+
 ## A monitor that cannot name the root cause gets blamed instead of believed
 
 **What went wrong:** The synthetic apply monitor went red on its first run (Aug 12) and stayed red for 28 straight runs while every real application also failed. Nobody trusted the signal: the task arrived a week later as "investigate the apply monitor and fix it", when the monitor was the only healthy part of the pipeline. Two distinct root causes sat underneath: the PR #135 rules were never manually deployed (so the auto-deployed client's `photoPaths` field was rejected by the stale whitelist), and independently the client sent `""` for blank optional fields (plus `referrerName: ""` on every Self application) where the repo rules demand `size() > 0`.
@@ -7,6 +15,8 @@
 **Why:** Three wrong assumptions compounded. (1) The drift check that would have printed "deployed rules are stale" on day one was ordered AFTER the Playwright step, which always failed first with an opaque 45 second locator timeout, so the one diagnostic that named the cause never executed. (2) The rules test fixture claimed to be "the exact document the apply flow writes" but was hand rolled: it filled every optional field and omitted the `referrerName` key entirely, so it passed while the real payload failed. (3) The monitor and the fix it was built to verify shipped in the same PR, so the monitor's first-ever run required a manual operator step (rules deploy) that had not happened, making "monitor is broken" the natural misread of "monitor is right".
 
 **Rule:** Order monitor steps by diagnostic value, cheapest and most causal first: config/contract drift checks run before end-to-end browser steps, so a red run names its cause instead of timing out. Any fixture described as "the exact payload the client writes" must be produced by the production code path (import the real builder), never hand rolled. And a monitor must be born green: when a new monitor's first run depends on a manual operator step, the PR is not done until that step is confirmed executed, or the monitor will cry wolf from day one.
+
+## A lockfile that installs locally can still fail CI's npm ci
 
 **What went wrong:** A dependency change (npm override forcing @puppeteer/browsers 3.2.0) produced a lockfile that installed and passed every local gate, then failed CI's `npm ci` with "package.json and package-lock.json are in sync" errors about a proxy-agent subtree nobody visibly depends on.
 

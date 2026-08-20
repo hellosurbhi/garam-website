@@ -69,16 +69,23 @@ service cloud.firestore {
           'utmSource', 'utmMedium', 'utmCampaign', 'utmContent', 'utmTerm',
           'fbclid', 'gclid', 'posthogDistinctId', 'sourceCitySlug'
         ])
-        && d.keys().hasAll(['name', 'age', 'gender', 'orientation', 'city', 'height', 'instagram', 'community', 'income', 'applicationType', 'status', 'submittedAt'])
+        // WHY: hasAll lists exactly the keys buildApplicationDocument in
+        // useApplyForm.ts always writes (the apply form is this rule's only
+        // writer; admin updates use isAdmin(), not this function). Optional
+        // form fields (height/community/income, phone, state, country...)
+        // must stay OUT of this list: requiring them rejected every
+        // submission that left one blank (Aug 2026 outage). They keep their
+        // size() > 0 checks below, applied only when the key is present.
+        && d.keys().hasAll(['name', 'age', 'gender', 'orientation', 'city', 'email', 'emailNormalized', 'instagram', 'applicationType', 'pitch', 'notes', 'marketingConsent', 'termsAgreedAt', 'photoPaths', 'status', 'submittedAt'])
         && d.name is string && d.name.size() > 0 && d.name.size() <= 200
         && d.age is number && d.age >= 18 && d.age <= 120
         && d.gender is string && d.gender.size() > 0 && d.gender.size() <= 100
         && d.orientation is string && d.orientation.size() > 0 && d.orientation.size() <= 100
         && d.city is string && d.city.size() > 0 && d.city.size() <= 100
-        && d.height is string && d.height.size() > 0 && d.height.size() <= 20
+        && (!('height' in d.keys()) || (d.height is string && d.height.size() > 0 && d.height.size() <= 20))
         && d.instagram is string && d.instagram.size() > 0 && d.instagram.size() <= 100
-        && d.community is string && d.community.size() > 0 && d.community.size() <= 100
-        && d.income is string && d.income.size() > 0 && d.income.size() <= 100
+        && (!('community' in d.keys()) || (d.community is string && d.community.size() > 0 && d.community.size() <= 100))
+        && (!('income' in d.keys()) || (d.income is string && d.income.size() > 0 && d.income.size() <= 100))
         && d.applicationType is string && d.applicationType.size() > 0 && d.applicationType.size() <= 50
         && d.status is string && d.status.size() > 0 && d.status.size() <= 50
         && d.submittedAt is timestamp

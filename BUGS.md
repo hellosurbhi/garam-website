@@ -961,3 +961,11 @@ Split from a shared checkbox into one line per finding, same pass as above (Fabl
 ### Codex (2026-08-19T18:58Z)
 
 - WONTFIX(MEDIUM, 2026-08-19): Trim optional text before deciding whether to include it (useApplyForm.ts payload builder) | Reason: every untrimmed inclusion check in buildApplicationData (country, state, community, income, howHeard) is a select or geo-dataset value that cannot contain whitespace; every free-text field (name, email, phone, height, instagram, referrerName, pitch, type) was already trimmed. The one real gap, city (free-text input) sent untrimmed, was fixed in the same session with city.trim().
+
+### Codex (2026-08-20T14:49Z)
+
+- [ ] HIGH: Operator step 2 falsely expects an email after a successful manual monitor run. `.github/workflows/synthetic-apply.yml:71` sends a heartbeat only during Monday 13 UTC runs, while `src/pages/api/notify-application.ts:192` explicitly suppresses synthetic-submission emails. Most successful manual runs therefore produce no email and would falsely implicate alert delivery.
+
+### Codex (2026-08-20T14:49Z)
+
+- [ ] MEDIUM: [COPY-VOICE] Added prose violates the repository ban on em dashes in `.github/workflows/synthetic-apply.yml:49`, `src/components/apply/useApplyForm.ts:136`, `src/components/apply/useApplyForm.ts:177` and `test/rules/apply-flow.rules-test.ts:245`.

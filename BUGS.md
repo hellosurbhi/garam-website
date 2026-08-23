@@ -678,6 +678,38 @@
 - [x] MEDIUM: `ResizeObserver` observes `el.firstElementChild` and never re-observes if the child changes. at src/components/WaiverPanel.tsx — Resolved by design: `observer.disconnect()` in the effect cleanup drops every observed target per spec (no leak), and the child is the `WaiverDocument` article rendered from a compile-time constant, so its identity never changes within a mount.
 - [x] MEDIUM: `handleScroll` is recreated each render and passed to `onScroll`. at src/components/WaiverPanel.tsx — Resolved by design: React delegates synthetic events at the root; a new handler identity per render does not re-register DOM listeners. Wrapping in useCallback would add noise with no behavior change.
 
+### Codex — 2026-07-16T18:30Z
+
+- [ ] MEDIUM: [UNASKED-CHANGE] `ENHANCEMENTS.md:1502` adds an unrelated reviewer-outage log entry that does not trace to the stated changelog-correction intent.
+
+### Codex — 2026-07-16T18:36Z
+
+- [ ] MEDIUM: The commit message claims repos must belong to the authenticated GitHub user, but `scripts/lib/repos.sh:58` applies that filter only when `_gh_login` returns a value. Authentication or cache failure makes discovery fail open to third-party GitHub repos.
+
+### Codex — 2026-07-16T18:43Z
+
+- [ ] MEDIUM: [UNASKED-CHANGE] `ENHANCEMENTS.md:1502` remains unrelated reviewer telemetry with no trace to the stated changelog-correction intent. Commit `3e13d42` also still overclaims the authenticated-owner filter as unconditional despite `repos.sh:58` applying it only when `_gh_login` succeeds.
+
+### Codex (2026-07-16T18:52Z)
+
+- [ ] MEDIUM: [UNASKED-CHANGE] `ENHANCEMENTS.md:1502` adds reviewer-outage telemetry unrelated to the stated changelog correction. `BUGS.md:640` and `BUGS.md:648` then duplicate that finding as open backlog work.
+
+### Codex (2026-07-16T19:10Z)
+
+- [ ] MEDIUM: [UNASKED-CHANGE] `ENHANCEMENTS.md:1502` does not trace to the stated changelog-correction intent. `BUGS.md:640`, `BUGS.md:648` and `BUGS.md:652` then queue the same finding repeatedly, leaving duplicate open backlog entries.
+
+### Codex (2026-07-16T19:17Z)
+
+- [ ] MEDIUM: [UNASKED-CHANGE] `ENHANCEMENTS.md:1502` is unrelated reviewer telemetry. `BUGS.md:640`, `BUGS.md:648`, `BUGS.md:652` and `BUGS.md:656` then preserve the same issue as multiple open backlog entries instead of deduplicating or resolving it.
+
+### Codex (2026-07-16T19:23Z)
+
+- [ ] MEDIUM: `BUGS.md:638-660` adds six open findings although the commit message claims five. Five duplicate a telemetry complaint explicitly covered by the stated intent while the owner-filter finding is resolved by `CHANGELOG.md:11`, leaving stale backlog entries.
+
+### Codex (2026-07-16T19:28Z)
+
+- [ ] MEDIUM: [UNASKED-CHANGE] `BUGS.md:662-664` and `ENHANCEMENTS.md:1508-1510` add reviewer telemetry unrelated to the stated comma-only intent. The enhancement also falsely claims `CHANGELOG.md:11` still contains the Oxford comma removed by this commit.
+
 ### DeepSeek — 20260715-160953
 
 - [ ] MEDIUM: The finding logged from CodeRabbit appears to be truncated ("...unchange..."). This could hide the full context of the finding.
@@ -929,3 +961,11 @@ Split from a shared checkbox into one line per finding, same pass as above (Fabl
 ### Codex (2026-08-19T18:58Z)
 
 - WONTFIX(MEDIUM, 2026-08-19): Trim optional text before deciding whether to include it (useApplyForm.ts payload builder) | Reason: every untrimmed inclusion check in buildApplicationData (country, state, community, income, howHeard) is a select or geo-dataset value that cannot contain whitespace; every free-text field (name, email, phone, height, instagram, referrerName, pitch, type) was already trimmed. The one real gap, city (free-text input) sent untrimmed, was fixed in the same session with city.trim().
+
+### Codex (2026-08-20T14:49Z)
+
+- [ ] HIGH: Operator step 2 falsely expects an email after a successful manual monitor run. `.github/workflows/synthetic-apply.yml:71` sends a heartbeat only during Monday 13 UTC runs, while `src/pages/api/notify-application.ts:192` explicitly suppresses synthetic-submission emails. Most successful manual runs therefore produce no email and would falsely implicate alert delivery.
+
+### Codex (2026-08-20T14:49Z)
+
+- [ ] MEDIUM: [COPY-VOICE] Added prose violates the repository ban on em dashes in `.github/workflows/synthetic-apply.yml:49`, `src/components/apply/useApplyForm.ts:136`, `src/components/apply/useApplyForm.ts:177` and `test/rules/apply-flow.rules-test.ts:245`.

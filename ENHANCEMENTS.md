@@ -4,6 +4,14 @@ Items from the GMD website audit checklists (site audit, codebase cleanup, conve
 
 ---
 
+## Apply-monitor fix follow-ups (2026-08-19)
+
+- [ ] ENHANCEMENT: CI job auto-deploys firestore.rules/storage.rules on merge to main (Surbhi approved 2026-08-19) | Why: both the July and August apply outages were rules merged but never manually deployed; executor is a dedicated follow-up PR, blocked until Surbhi completes operator step 4 of the apply-monitor fix PR (adds a FIREBASE_SERVICE_ACCOUNT repo secret, no workflow reads it yet because none exists yet) | Files: .github/workflows/deploy-rules.yml (does not exist yet, this ticket creates it) | Plan: workflow with explicit permissions contents: read, triggers on main-branch changes to firestore.rules/storage.rules, runs the firebase CLI rules deploy with the CI credential secret, fails loudly if the secret is missing (never skip-but-green) | Verify: merge a comment-only rules change, workflow goes green and scripts/check-rules-drift.mjs passes against production.
+- [ ] ENHANCEMENT: sweep orphaned synthetic monitor photos in Storage | Why: 28 failed runs each rolled back the Firestore write but got 403 deleting the uploaded 1x1 photo (pre-#135 storage.rules), leaving orphaned objects | Files: scripts/synthetic-apply-verify.mjs | Plan: extend the verify script cleanup to list photos/ objects and delete those older than 1 day whose owner metadata matches a synthetic-run anonymous session with no surviving application document | Verify: Storage list shows no synthetic orphans after a run.
+- [ ] ENHANCEMENT: second alert channel via ALERT_WEBHOOK_URL push | Why: alert email delivery to NOTIFICATION_EMAIL is unverified and email is a single point of failure for outage paging; opsAlert already supports a webhook | Files: src/lib/opsAlert.ts, README.md | Plan: operator sets ALERT_WEBHOOK_URL in Vercel to an ntfy topic, document the ops setup in README | Verify: test alert reaches the phone.
+
+---
+
 ## Canceling a show does not invalidate already-issued contestant invites or active portal sessions (2026-08-14)
 
 **Priority:** Medium
@@ -1557,6 +1565,36 @@ If the ambiguity matters there too, rename both with Surbhi's approval on the ex
 ### CodeRabbit — 20260713-103031
 
 - LOW: Inconsistent heading levels are used for items in the "Indian Dating App Landscape in 2026" ranked list. Items 7, 6, and 5 use `h3`, while items 4 through 1 use `h2`. For semantic HTML and accessibility, all items in a single ranked list should use the same heading level.
+
+- 2026-07-13T14:35Z | resolved=unretryable-no-diff | tier=E | primary=codex | reason=error_or_timeout | fallback_used=deepseek | commit=ba6728a | diff_sha=4fda69b1208df08e4e0d4b9c77ef4613feb0ca8b9bc76f065441e8676120a62b
+- 2026-07-13T21:30Z | resolved=unretryable-no-diff | tier=E | primary=codex | reason=error_or_timeout | fallback_used=deepseek | commit=ba6728a | diff_sha=20a149d8de616e12be47d70ad78ddfcb63396c294c66268653770baf52f5718f
+- 2026-07-13T21:30Z | resolved=unretryable-no-diff | tier=F | primary=coderabbit | reason=error | fallback_used=gemini | commit=ba6728a | diff_sha=20a149d8de616e12be47d70ad78ddfcb63396c294c66268653770baf52f5718f
+- 2026-07-13T21:32Z | resolved=unretryable-no-diff | tier=E | primary=codex | reason=error_or_timeout | fallback_used=deepseek | commit=d64b1a7 | diff_sha=93c5a476f2cf0cfb519ba62d8f7cbc2ac0b875cdfab5a416dbd48c7ec3b9f988
+- 2026-07-13T21:32Z | resolved=unretryable-no-diff | tier=F | primary=coderabbit | reason=error | fallback_used=gemini | commit=d64b1a7 | diff_sha=93c5a476f2cf0cfb519ba62d8f7cbc2ac0b875cdfab5a416dbd48c7ec3b9f988
+- 2026-07-13T21:49Z | resolved=unretryable-no-diff | tier=E | primary=codex | reason=error_or_timeout | fallback_used=deepseek | commit=31350a3 | diff_sha=e35f355d8ce66d3bee2b4cb0a3a46beb9e293044bcb8a954a72352747f0ec6ce
+- 2026-07-13T21:54Z | resolved=unretryable-no-diff | tier=E | primary=codex | reason=error_or_timeout | fallback_used=deepseek | commit=31350a3 | diff_sha=b85bc6ec208be3e9c39090376efd6fb019be6269f674a405c12822b01884ae11
+- 2026-07-14T04:12Z | resolved=unretryable-no-diff | tier=E | primary=codex | reason=error_or_timeout | fallback_used=deepseek | commit=31350a3 | diff_sha=a457f9f43c890a3896d690da506abb79097a4a3ef66a6f7940892657c149ea39
+- 2026-07-13T21:58Z | resolved=unretryable-no-diff | tier=E | primary=codex | reason=error_or_timeout | fallback_used=deepseek | commit=31350a3 | diff_sha=e99328d390b12ce56298326ab4de0bbe0dc52589de496f6c32de51a45e6bfc6d
+- 2026-07-13T21:58Z | resolved=unretryable-no-diff | tier=F | primary=coderabbit | reason=error | fallback_used=gemini | commit=31350a3 | diff_sha=e99328d390b12ce56298326ab4de0bbe0dc52589de496f6c32de51a45e6bfc6d
+- 2026-07-13T22:03Z | resolved=unretryable-no-diff | tier=E | primary=codex | reason=error_or_timeout | fallback_used=deepseek | commit=be735b9 | diff_sha=aad31620a68713c8d429e0c119d83b6d351d4e2eaa7a4338546eecdd1ac0d095
+- 2026-07-13T22:03Z | resolved=unretryable-no-diff | tier=F | primary=coderabbit | reason=error | fallback_used=gemini | commit=be735b9 | diff_sha=aad31620a68713c8d429e0c119d83b6d351d4e2eaa7a4338546eecdd1ac0d095
+- 2026-07-13T22:07Z | resolved=unretryable-no-diff | tier=E | primary=codex | reason=error_or_timeout | fallback_used=deepseek | commit=37cde64 | diff_sha=9506d1aa157f1daade093c8e9414c34d99e8046112fb55278553d9723010625c
+- 2026-07-13T22:07Z | resolved=unretryable-no-diff | tier=F | primary=coderabbit | reason=error | fallback_used=gemini | commit=37cde64 | diff_sha=9506d1aa157f1daade093c8e9414c34d99e8046112fb55278553d9723010625c
+- 2026-07-14T18:04Z | resolved=unretryable-no-diff | tier=F | primary=coderabbit | reason=error | fallback_used=gemini | commit=8b4d379 | diff_sha=21cb57ca33a0bc568eacd8e142d7932bb30af7a382fa25b557f2c6dda526c07e
+- 2026-07-15T01:57Z | resolved=unretryable-no-diff | tier=F | primary=coderabbit | reason=error | fallback_used=gemini | commit=59ce89e | diff_sha=79d49c2634be8fd8ec7a52e9739360de8ba9bb45ede67b3359c69ac05ca02d7a
+- 2026-07-15T02:08Z | resolved=unretryable-no-diff | tier=F | primary=coderabbit | reason=error | fallback_used=gemini | commit=4efe5d3 | diff_sha=b74f4259c3e8725c36ba740c55be50f41db8a256f4ac932ce24114c7160ec270
+- 2026-07-15T19:26Z | resolved=unretryable-no-diff | tier=F | primary=coderabbit | reason=error | fallback_used=gemini | commit=8ecc6b2 | diff_sha=c9f20eceb0d2132fd116a62263d47c0c3d5f314a576755c1dfc0e7cb6dd8f18b
+- 2026-07-15T19:37Z | resolved=unretryable-no-diff | tier=E | primary=codex | reason=error_or_timeout | fallback_used=gemini | commit=8ecc6b2 | diff_sha=0dcddf1f107891ad33ffb99d2cd75f10b3ad2973464c41b886f960166a096a50
+- 2026-07-15T19:37Z | resolved=unretryable-no-diff | tier=F | primary=coderabbit | reason=error | fallback_used=gemini | commit=8ecc6b2 | diff_sha=0dcddf1f107891ad33ffb99d2cd75f10b3ad2973464c41b886f960166a096a50
+- 2026-07-16T18:17Z | tier=E | primary=ALL | reason=OUTAGE | fallback_used=NONE | commit=5ddedb4 | diff_sha=ed14541b82dc007ce4624509b649e2da8f71e4fe8c02799ab276ad30e4d08254
+
+### Codex (2026-07-16T19:17Z)
+
+- LOW: New `BUGS.md` headings use em dashes and `CHANGELOG.md:11` adds an Oxford comma, both violating the repository copy mandate.
+
+### Codex (2026-07-16T19:23Z)
+
+- LOW: `BUGS.md:638`, `BUGS.md:642` and `BUGS.md:646` use prohibited em dashes. `CHANGELOG.md:11` uses a prohibited Oxford comma.
 
 ### CodeRabbit — 20260715-160549
 

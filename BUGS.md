@@ -26,8 +26,9 @@
 
 - **Date:** 2026-07-13 (partial failures since ~2026-07-05; record corrected 2026-07-13 after production verification)
 - **File:** `storage.rules`, `firestore.rules`, `src/components/apply/useApplyForm.ts`
-- **Status:** Code fixed (2026-07-13), pending rules deploy via Firebase CLI (`--only firestore:rules,storage`)
+- **Status:** Code fixed (2026-07-13, second contract bug fixed 2026-08-19), STILL pending the manual rules deploy. Operator steps live in the apply-monitor fix PR.
 - **Severity:** Critical (lost applicants from paid traffic + live PII exposure until the rules deploy)
+- **Update 2026-08-19:** The deploy never happened and the cost escalated. When PR #135 merged on Aug 12, Vercel auto-deployed the client (which now always writes `photoPaths`) while production kept the pre-#135 rules (whose field whitelist rejects `photoPaths`), so EVERY application has failed with "Missing or insufficient permissions" since Aug 12. The synthetic monitor caught it on run one and has been red all 28 runs; the failure was misdiagnosed as a broken monitor because the drift check ran after the always-failing Playwright step and alert emails never verifiably landed. A second, independent contract bug was found and fixed in the same investigation: the client sent `""` for blank optional fields (and `referrerName: ""` on every Self application) while the rules require `size() > 0` on those keys, so deploying the rules alone would still have failed most submissions. Client now omits empty optional keys, rules require only what the UI requires, the rules tests build their payload from the real client builder and the monitor runs the drift check first. The rules deploy remains the single blocking operator step.
 - **What happened:** Two compounding problems, both traced to rules changes merging without the manual Firebase deploy. (1) PR #110 (July 5) raised the client photo cap from 5 MB to 15 MB but its `storage.rules` bump was never deployed, so applicants with photos over the deployed cap (exactly the large iPhone photos the bump was for) failed at upload with `storage/unauthorized` and their applications were lost: confirmed failure bursts July 7, 9, 12 and 13 including paid LA campaign traffic. Smaller-photo submissions kept working, which is why the pipeline looked alive. (2) PR #115's security rules (admin-only reads for applicant photos and PII docs) were also never deployed, leaving the pre-#115 posture live: any visitor with an anonymous session can read applicant photos, and per #115's own audit, applicant/lead PII documents. An earlier version of this entry claimed a total outage caused by `getDownloadURL()` under the #115 rules; production verification (successful submission + applications arriving all week) disproved that. The `getDownloadURL()` mechanism was real but latent: deploying #115's rules without this fix WOULD have taken the form fully down. Fix: path-based `photoPaths` + admin `getBlob()` rendering, client-side compression (puts every photo under any cap), owner-tagged cleanup, emulator rules tests locking the client/rules contract, real-time failure alerting, 6-hour synthetic monitor and a deployed-vs-repo rules drift check so merged-but-undeployed rules can never sit silent again.
 
 ### [HIGH] Contestant workflow: portal + admin components still lack unit test coverage
@@ -677,6 +678,38 @@
 - [x] MEDIUM: `ResizeObserver` observes `el.firstElementChild` and never re-observes if the child changes. at src/components/WaiverPanel.tsx — Resolved by design: `observer.disconnect()` in the effect cleanup drops every observed target per spec (no leak), and the child is the `WaiverDocument` article rendered from a compile-time constant, so its identity never changes within a mount.
 - [x] MEDIUM: `handleScroll` is recreated each render and passed to `onScroll`. at src/components/WaiverPanel.tsx — Resolved by design: React delegates synthetic events at the root; a new handler identity per render does not re-register DOM listeners. Wrapping in useCallback would add noise with no behavior change.
 
+### Codex — 2026-07-16T18:30Z
+
+- [ ] MEDIUM: [UNASKED-CHANGE] `ENHANCEMENTS.md:1502` adds an unrelated reviewer-outage log entry that does not trace to the stated changelog-correction intent.
+
+### Codex — 2026-07-16T18:36Z
+
+- [ ] MEDIUM: The commit message claims repos must belong to the authenticated GitHub user, but `scripts/lib/repos.sh:58` applies that filter only when `_gh_login` returns a value. Authentication or cache failure makes discovery fail open to third-party GitHub repos.
+
+### Codex — 2026-07-16T18:43Z
+
+- [ ] MEDIUM: [UNASKED-CHANGE] `ENHANCEMENTS.md:1502` remains unrelated reviewer telemetry with no trace to the stated changelog-correction intent. Commit `3e13d42` also still overclaims the authenticated-owner filter as unconditional despite `repos.sh:58` applying it only when `_gh_login` succeeds.
+
+### Codex (2026-07-16T18:52Z)
+
+- [ ] MEDIUM: [UNASKED-CHANGE] `ENHANCEMENTS.md:1502` adds reviewer-outage telemetry unrelated to the stated changelog correction. `BUGS.md:640` and `BUGS.md:648` then duplicate that finding as open backlog work.
+
+### Codex (2026-07-16T19:10Z)
+
+- [ ] MEDIUM: [UNASKED-CHANGE] `ENHANCEMENTS.md:1502` does not trace to the stated changelog-correction intent. `BUGS.md:640`, `BUGS.md:648` and `BUGS.md:652` then queue the same finding repeatedly, leaving duplicate open backlog entries.
+
+### Codex (2026-07-16T19:17Z)
+
+- [ ] MEDIUM: [UNASKED-CHANGE] `ENHANCEMENTS.md:1502` is unrelated reviewer telemetry. `BUGS.md:640`, `BUGS.md:648`, `BUGS.md:652` and `BUGS.md:656` then preserve the same issue as multiple open backlog entries instead of deduplicating or resolving it.
+
+### Codex (2026-07-16T19:23Z)
+
+- [ ] MEDIUM: `BUGS.md:638-660` adds six open findings although the commit message claims five. Five duplicate a telemetry complaint explicitly covered by the stated intent while the owner-filter finding is resolved by `CHANGELOG.md:11`, leaving stale backlog entries.
+
+### Codex (2026-07-16T19:28Z)
+
+- [ ] MEDIUM: [UNASKED-CHANGE] `BUGS.md:662-664` and `ENHANCEMENTS.md:1508-1510` add reviewer telemetry unrelated to the stated comma-only intent. The enhancement also falsely claims `CHANGELOG.md:11` still contains the Oxford comma removed by this commit.
+
 ### DeepSeek — 20260715-160953
 
 - [ ] MEDIUM: The finding logged from CodeRabbit appears to be truncated ("...unchange..."). This could hide the full context of the finding.
@@ -922,9 +955,10 @@ Split from a shared checkbox into one line per finding, same pass as above (Fabl
 
 ### Review lane finding filed on the primary checkout (2026-08-19)
 
-- WONTFIX(HIGH, 2026-08-19): firestore.rules phone-update rule alleged to null-error and keep the "Firestore/Storage rules (emulator)" CI check red on main since 2026-06-17, blocking PRs from leaving draft | Reason: false positive, the emulator check passed on PRs #203, #204 and #205 during 2026-08-18/19 and PR #203 (named as stuck) merged 2026-08-19T17:07Z; if a null-safety hardening of validPhoneUpdate() is still wanted it should be re-filed as an enhancement with a reproducing test, since the cited failure does not reproduce in CI
+- WONTFIX(HIGH, 2026-08-19): firestore.rules phone-update rule alleged to null-error and keep the "Firestore/Storage rules (emulator)" CI check red on main since 2026-06-17, blocking PRs from leaving draft | Reason: false positive AS FILED (a permanent red since June does not match reality: the check passed on PRs #203, #204, #205 and PR #203 merged 2026-08-19T17:07Z), but the underlying test proved intermittently flaky the same day; the reproduced intermittent failure is re-filed as the open FLAKY-PHONE-UPDATE-TEST entry below
+- [ ] MEDIUM: [FLAKY-PHONE-UPDATE-TEST] "step-2 phone update may touch ONLY the phone field" (leads collection) fails intermittently in CI with PERMISSION_DENIED, passed unchanged on immediate rerun | Why: reproduced on PR #208 run 32290971770 (2026-08-19), a branch that touches neither the leads rules nor this test, then passed on rerun with zero diff; validPhoneUpdate() in firestore.rules reads resource.data via d.diff(prev), so a seedLead() write that is not yet visible to the rules evaluator under CI load would explain a transient null prev and PERMISSION_DENIED; the same run also logs a storage.rules line 41 "Property owner is undefined" evaluation warning worth checking in the same pass | Files: test/rules/public-write.rules-test.ts, firestore.rules | Plan: make the test await seed visibility (or retry the assertSucceeds once with backoff) only if investigation confirms the seed race; otherwise harden validPhoneUpdate() against missing resource.data and add a regression test that updates a just-created doc in a tight loop to reproduce | Verify: 20 consecutive CI runs of the rules job green, no PERMISSION_DENIED flakes in the run logs
 
-### Session finding 2026-08-19 (worktree close-out sweep)
+### Codex (2026-08-19T18:58Z)
 
 - [ ] CRITICAL: [SYNTHETIC-APPLY-RED, DIAGNOSED 2026-08-19] ALL apply submissions are rejected by Firestore since 2026-08-12T18:44Z, real applicants included | Root cause: PR #135 deployed its client instantly via Vercel but its firestore.rules/storage.rules were never deployed (the same undeployed-rules class as the July outage above, pending since 2026-07-13); the post-#135 client unconditionally sends photoPaths, which the DEPLOYED validApplication hasOnly list rejects, so every create fails "Missing or insufficient permissions" (trace evidence from run 32261818126: anonymous auth 200, photo upload 200, Firestore write denied, rollback photo DELETE 403 against stale storage.rules, client POSTs /api/alert-failure which returns 200 while the email behind it is swallowed) | FIX, OWNER, ONE COMMAND: in the garam-masala-dating checkout run `firebase deploy --only firestore:rules,storage` (this also closes the July entry's live PII-read exposure) | Verify: the monitor workflow dispatch goes green end to end and its always-on rules-drift step reports no drift; the fixed workflow (this branch) also pages via GitHub issue on any future failure. Executor: Surbhi (production deploy access is intentionally not automated).
 - [ ] HIGH: [FLAKY-LEADS-RULES-TEST] test/rules/public-write.rules-test.ts "leads: step-2 phone update may touch ONLY the phone field" failed then passed on identical code within 20 minutes (local emulator runs, 2026-08-19: deploy-rules run4 failed 1/34, run5 passed 34/34). A flaky rules test can block the gated rules-deploy lane at random. Files: test/rules/public-write.rules-test.ts, firestore.rules. Executor: the 3:00 overnight fixer.
@@ -937,3 +971,13 @@ Split from a shared checkbox into one line per finding, same pass as above (Fabl
 ### Codex (2026-08-19T19:00Z)
 
 - [ ] MEDIUM: Do not describe the heartbeat as proof of alert delivery. (CHANGELOG.md:5-16)
+
+- WONTFIX(MEDIUM, 2026-08-19): Trim optional text before deciding whether to include it (useApplyForm.ts payload builder) | Reason: every untrimmed inclusion check in buildApplicationData (country, state, community, income, howHeard) is a select or geo-dataset value that cannot contain whitespace; every free-text field (name, email, phone, height, instagram, referrerName, pitch, type) was already trimmed. The one real gap, city (free-text input) sent untrimmed, was fixed in the same session with city.trim().
+
+### Codex (2026-08-20T14:49Z)
+
+- [ ] HIGH: Operator step 2 falsely expects an email after a successful manual monitor run. `.github/workflows/synthetic-apply.yml:71` sends a heartbeat only during Monday 13 UTC runs, while `src/pages/api/notify-application.ts:192` explicitly suppresses synthetic-submission emails. Most successful manual runs therefore produce no email and would falsely implicate alert delivery.
+
+### Codex (2026-08-20T14:49Z)
+
+- [ ] MEDIUM: [COPY-VOICE] Added prose violates the repository ban on em dashes in `.github/workflows/synthetic-apply.yml:49`, `src/components/apply/useApplyForm.ts:136`, `src/components/apply/useApplyForm.ts:177` and `test/rules/apply-flow.rules-test.ts:245`.

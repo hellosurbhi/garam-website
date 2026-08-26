@@ -21,6 +21,11 @@ on:
   schedule:
     - cron: "30 1,7,13,19 * * *" # every 6 hours; bounds prod-only breakage to ~6h
   workflow_dispatch:
+    inputs:
+      test_pager:
+        description: "Send a test email through the Gmail pager channel"
+        type: boolean
+        default: false
 
 permissions:
   contents: read
@@ -84,15 +89,24 @@ jobs:
         # also silenced the weekly proof that the alert channel works —
         # the exact combination that hid this outage.
         if: always()
+        env:
+          GMAIL_PAGER_USER: ${{ secrets.GMAIL_PAGER_USER }}
+          GMAIL_PAGER_APP_PASSWORD: ${{ secrets.GMAIL_PAGER_APP_PASSWORD }}
+          PAGER_EMAIL_TO: ${{ secrets.PAGER_EMAIL_TO }}
+          RUN_URL: https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}
         run: |
           # A silently dead alert channel (expired SMTP password, broken env)
           # looks identical to "no failures". One heartbeat email per week
-          # through the REAL alert path proves the pager itself still works.
+          # through EACH real alert path (site email + Gmail pager) proves
+          # both pagers still work. A dead Gmail credential fails this step,
+          # which fires the failure() pagers below: a broken alert channel
+          # pages through the surviving channels instead of hiding.
           if [ "$(date -u +%u-%H)" = "1-13" ]; then
             curl -sS -X POST https://garammasaladating.com/api/alert-failure \
               -H "Content-Type: application/json" \
               -H "Origin: https://garammasaladating.com" \
               -d '{"flow":"ops","stage":"heartbeat","errorMessage":"Weekly pager test: the synthetic monitor and the alert channel are both working. No action needed."}'
+            node scripts/send-pager-email.mjs test
           else
             echo "Not the Monday 13:30 run; skipping heartbeat."
           fi
@@ -131,3 +145,25 @@ jobs:
           name: synthetic-apply-report
           path: playwright-report/
           retention-days: 7
+      - name: Email the producer from the show's Gmail
+        # Third pager channel, sent by the workflow itself through Gmail SMTP:
+        # independent of GitHub's notification sender (deleted unread) and of
+        # the site's email path (the thing that was broken in July 2026).
+        # WHY last: if this step fails (drill with missing secrets, revoked
+        # app password), the failure() pagers above have already evaluated,
+        # so a broken Gmail credential can never open a fake "production is
+        # broken" incident. Needs node_modules, so if checkout/npm ci die the
+        # GitHub-issue pager above is the surviving channel.
+        if: failure() || (github.event_name == 'workflow_dispatch' && inputs.test_pager)
+        timeout-minutes: 2
+        env:
+          GMAIL_PAGER_USER: ${{ secrets.GMAIL_PAGER_USER }}
+          GMAIL_PAGER_APP_PASSWORD: ${{ secrets.GMAIL_PAGER_APP_PASSWORD }}
+          PAGER_EMAIL_TO: ${{ secrets.PAGER_EMAIL_TO }}
+          RUN_URL: https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}
+          JOB_STATUS: ${{ job.status }}
+        run: |
+          # A test_pager dispatch whose run ALSO genuinely failed still pages
+          # for real; only a passing drill sends the test message.
+          if [ "$JOB_STATUS" = "failure" ]; then MODE=page; else MODE=test; fi
+          node scripts/send-pager-email.mjs "$MODE"

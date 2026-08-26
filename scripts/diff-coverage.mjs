@@ -51,6 +51,11 @@ if (!existsSync(COVERAGE_FILE)) {
 const coverage = JSON.parse(readFileSync(COVERAGE_FILE, "utf8"));
 
 // Any statement with a hit count > 0 marks every line in its range covered.
+// Function declarations are included too: v8-to-istanbul (unlike
+// babel-plugin-istanbul) does not give a function's own signature line a
+// statementMap entry, so a called-but-single-return-statement function (e.g.
+// `function wrap(...) { return {...}; }`) reads its signature line as
+// "uncovered" even though fnMap/f proves it ran.
 function coveredLinesFor(fileCoverage) {
   const covered = new Set();
   for (const key of Object.keys(fileCoverage.statementMap)) {
@@ -59,7 +64,40 @@ function coveredLinesFor(fileCoverage) {
       for (let line = start.line; line <= end.line; line++) covered.add(line);
     }
   }
+  for (const key of Object.keys(fileCoverage.fnMap ?? {})) {
+    if (fileCoverage.f[key] > 0) {
+      const { start, end } = fileCoverage.fnMap[key].decl;
+      for (let line = start.line; line <= end.line; line++) covered.add(line);
+    }
+  }
   return covered;
+}
+
+// Lines coverage tooling can never instrument, regardless of how well the
+// surrounding code is tested: blank lines, comments, bare closing brackets,
+// import declarations (hoisted, never given a statementMap entry by any
+// istanbul-shaped coverage tool), and type-only declarations (erased before
+// runtime). Every real patch-coverage tool (diff-cover, Codecov's patch
+// check) excludes this class of line from its denominator instead of
+// demanding tests that cannot possibly make them "covered".
+const UNINSTRUMENTABLE_RE =
+  /^\s*($|\/\/|\/\*|\*\/|\*(?!\/)|[)}\]]+[,;]?\s*$|import\s|(export\s+)?(type|interface)\s+\w)/;
+
+// A line ending in an opener/operator (Prettier wrapped it onto the next
+// line) has no statementMap entry of its own -- v8-to-istanbul attributes
+// the whole multi-line declaration to the line the initializer starts on.
+// If the very next line is proven covered, this line executed too; it is
+// not a gap, just a mapping artifact of where the statement "starts".
+const CONTINUATION_RE = /(=|[({[,]|&&|\|\||\?\?|=>)$/;
+
+function rescueContinuationLines(changedLines, covered, sourceLines) {
+  for (const line of changedLines) {
+    if (covered.has(line)) continue;
+    const text = (sourceLines[line - 1] ?? "").trimEnd();
+    if (CONTINUATION_RE.test(text) && covered.has(line + 1)) {
+      covered.add(line);
+    }
+  }
 }
 
 // coverage-final.json keys are absolute paths; normalize to repo-relative
@@ -106,11 +144,19 @@ for (const line of diff.split("\n")) {
 
 let totalChanged = 0;
 let totalCovered = 0;
+let totalExcluded = 0;
 const uncoveredByFile = new Map();
 
 for (const [file, lines] of changedLines) {
   const covered = coverageByRelPath.get(file) ?? new Set();
+  const source = sh(`git show ${headSha}:${file}`).split("\n");
+  rescueContinuationLines(lines, covered, source);
+
   for (const lineNum of lines) {
+    if (UNINSTRUMENTABLE_RE.test(source[lineNum - 1] ?? "")) {
+      totalExcluded++;
+      continue;
+    }
     totalChanged++;
     if (covered.has(lineNum)) {
       totalCovered++;
@@ -119,6 +165,12 @@ for (const [file, lines] of changedLines) {
       uncoveredByFile.get(file).push(lineNum);
     }
   }
+}
+
+if (totalExcluded > 0) {
+  console.log(
+    `${totalExcluded} changed line(s) excluded (blank/comment/import/type-only/bare-bracket -- never instrumentable).`,
+  );
 }
 
 if (totalChanged === 0) {

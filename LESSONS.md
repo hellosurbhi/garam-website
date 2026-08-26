@@ -1,5 +1,13 @@
 # Lessons
 
+## Patch-coverage gate counted statement hits only, so it failed already-tested code
+
+**What went wrong:** CI's "Lint, Types, Test, Build" check failed with "patch coverage 76.3% is below the 80% threshold" on a PR whose changed lines were, line by line, either already covered by an existing test or physically impossible to instrument (imports, blank lines, comments, type declarations). The tests were fine; the gate was wrong.
+
+**Why:** `scripts/diff-coverage.mjs` only read Istanbul's `statementMap`/`s` (statement hit counts) from `coverage/coverage-final.json`. Two gaps in that model caused false negatives: (1) `@vitest/coverage-v8` (v8-to-istanbul, unlike AST-based `babel-plugin-istanbul`) never gives a function's own signature line a `statementMap` entry, so a called function's declaration line reads as "uncovered" even with real `fnMap`/`f` hit data proving otherwise; (2) v8-to-istanbul attributes a Prettier-wrapped multi-line declaration (e.g. `const referrerHost =\n  safeSessionStorage.getItem(...) ?? undefined;`) to the line the initializer expression starts on, leaving the `const x =` opener line with zero `statementMap` coverage of its own, despite the next line's hit count proving the whole statement ran. Neither gap is a test problem: no test can make an import line or a hoisted declaration's opener line show up in `statementMap`.
+
+**Rule:** A statement-only coverage gate will always false-flag function-signature lines and Prettier-wrapped declaration openers as untested. Any custom patch-coverage script must also: credit `fnMap`/`f` hits (using the narrow `decl` range, not the full `loc` body, so a called-but-partially-tested function doesn't get its whole body waved through), exclude structurally uninstrumentable lines (blank, comment, bare bracket, import, type/interface) from the denominator entirely like `diff-cover` and Codecov's patch check do, and rescue a still-uncovered line that ends in a continuation token (`=`, an opener, `&&`, `||`, `??`, `=>`) when the very next line is proven covered. Before renaming a well-named variable or restructuring code just to dodge a coverage gate's line count, check whether the gate's line-attribution model is the actual bug.
+
 ## Two rules-test files sharing one emulator project ID race each other's `clearFirestore()`
 
 **What went wrong:** `npm run test:rules` (and CI's "Firestore/Storage rules (emulator)" check) failed intermittently with `PERMISSION_DENIED: evaluation error ... Null value error` on an `update` whose document had just been seeded a line earlier in the same test, then passed clean on an immediate retry with zero code changes. It looked like emulator flakiness worth shrugging off.

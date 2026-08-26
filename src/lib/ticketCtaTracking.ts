@@ -3,9 +3,9 @@ import { getStoredUtms } from "@/lib/leadAttribution";
 
 /**
  * Wires every `[data-go-ticket]` anchor currently in the DOM: mints a stable
- * event_id, forwards UTMs onto the `/api/go/[slug]` href, and on click fires
- * `checkout_opened` (-> InitiateCheckout) and stamps the event_id onto the
- * href before navigating to checkout.
+ * event_id, forwards UTMs onto the `/api/go/[slug]` href, and on activation
+ * (left click or middle click) fires `checkout_opened` (-> InitiateCheckout)
+ * and stamps the event_id onto the href before navigating to checkout.
  *
  * Extracted out of EventTicketCta.astro (the /events/[slug] page's CTA) so
  * every other ticket CTA on the site (TicketCard.astro on /tickets,
@@ -59,9 +59,9 @@ export function wireTicketCtaTracking(): void {
         /* keep the plain /api/go/[slug] href if URL construction fails */
       }
 
-      anchor.addEventListener("click", (e) => {
-        const me = e as MouseEvent;
-
+      // Shared by the `click` and `auxclick` listeners below: everything a
+      // ticket CTA does when the visitor actually activates it.
+      const onActivate = (me: MouseEvent): void => {
         // WHY the eid goes on at click time and not at load time with the
         // UTMs: an href that already carries it is prefetchable, and the
         // browser's own prefetch (Chrome's "preload pages", speculation
@@ -72,6 +72,12 @@ export function wireTicketCtaTracking(): void {
         // the click and cost us the conversion. Mutating href inside the
         // listener still changes where the default navigation goes, so this
         // works for new-tab clicks and the same-tab path below alike.
+        //
+        // This can only cover activations that fire a mouse event on the
+        // anchor. The activations it cannot see (context-menu "Open link in
+        // new tab", dragging the link to a tab bar) are covered instead by
+        // the `Cache-Control: no-store` the route itself returns, which keeps
+        // a prefetched response from ever standing in for a real navigation.
         try {
           const url = new URL(anchor.href, window.location.origin);
           url.searchParams.set("eid", eid);
@@ -121,11 +127,35 @@ export function wireTicketCtaTracking(): void {
         // target attribute): delay navigation so the PostHog/Pixel beacon
         // has time to flush before the browser tears the current page down
         // (same pattern as trackOutbound() in src/lib/analyticsCapture.ts).
-        e.preventDefault();
+        me.preventDefault();
         const href = anchor.href;
         window.setTimeout(() => {
           window.location.href = href;
         }, 100);
+      };
+
+      anchor.addEventListener("click", (e) => onActivate(e as MouseEvent));
+
+      // WHY auxclick and not just the `me.button !== 0` branch above: `click`
+      // only fires for the primary button. A middle-click, which every
+      // browser treats as "open this link in a new tab", fires `auxclick`
+      // instead, so it used to reach checkout with neither a
+      // `checkout_opened` event nor an `eid` on the href, and the bare URL it
+      // navigated to was exactly the one a prefetcher may already have
+      // cached. Same handler, same per-anchor id: onActivate sees
+      // `button !== 0`, so it stamps and reports, then returns without
+      // touching the native new-tab navigation. Caught by Codex review
+      // (2026-08-26).
+      //
+      // Button 2 is deliberately ignored: the right button opens a context
+      // menu, which is not yet a navigation, and counting it as one would
+      // report checkout intents for a menu the visitor may just dismiss.
+      // A tab actually opened from that menu is covered by the route's
+      // no-store response instead.
+      anchor.addEventListener("auxclick", (e) => {
+        const me = e as MouseEvent;
+        if (me.button !== 1) return;
+        onActivate(me);
       });
     });
 }

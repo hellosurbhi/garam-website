@@ -974,3 +974,4 @@ Split from a shared checkbox into one line per finding, same pass as above (Fabl
 ### Codex (2026-08-20T14:49Z)
 
 - [ ] MEDIUM: [COPY-VOICE] Added prose violates the repository ban on em dashes in `.github/workflows/synthetic-apply.yml:49`, `src/components/apply/useApplyForm.ts:136`, `src/components/apply/useApplyForm.ts:177` and `test/rules/apply-flow.rules-test.ts:245`.
+

@@ -53,6 +53,17 @@ function clickOn(
   return preventedByHandler;
 }
 
+/**
+ * Dispatches an `auxclick`, the event a non-primary button actually produces.
+ * `click` never fires for these, which is why the handler's `button !== 0`
+ * branch alone could not cover a middle-click.
+ */
+function auxClickOn(anchor: HTMLAnchorElement, button: number): void {
+  anchor.dispatchEvent(
+    new MouseEvent("auxclick", { bubbles: true, cancelable: true, button }),
+  );
+}
+
 function eidOf(anchor: HTMLAnchorElement): string | null {
   return new URL(anchor.href, window.location.origin).searchParams.get("eid");
 }
@@ -173,6 +184,79 @@ describe("wireTicketCtaTracking", () => {
     expect(prevented).toBe(false);
     expect(eidOf(anchor)).not.toBeNull();
     expect(capture).toHaveBeenCalledTimes(1);
+  });
+
+  // Regression test for the second half of the prefetch-swallowing bug: a
+  // middle-click opens the link in a new tab like a modified click does, but
+  // it fires `auxclick`, not `click`, so it used to reach checkout with no
+  // analytics event and a bare href that a prefetcher may already have cached.
+  it("stamps the eid for a middle-click, which fires auxclick and not click", () => {
+    const anchor = renderCta();
+    wireTicketCtaTracking();
+
+    auxClickOn(anchor, 1);
+
+    const eid = eidOf(anchor);
+    expect(eid).not.toBeNull();
+    expect(capture).toHaveBeenCalledTimes(1);
+    expect(capture).toHaveBeenCalledWith(
+      "checkout_opened",
+      expect.objectContaining({ event_id: eid }),
+      { eventId: eid },
+    );
+  });
+
+  it("reuses the anchor's one eid across a click and a middle-click", () => {
+    const anchor = renderCta();
+    wireTicketCtaTracking();
+
+    clickOn(anchor);
+    const first = eidOf(anchor);
+    auxClickOn(anchor, 1);
+
+    expect(eidOf(anchor)).toBe(first);
+    expect(anchor.href.match(/eid=/g)).toHaveLength(1);
+  });
+
+  it("never delays or cancels the native middle-click navigation", () => {
+    vi.useFakeTimers();
+    const anchor = renderCta();
+    wireTicketCtaTracking();
+
+    let prevented = false;
+    anchor.addEventListener("auxclick", (e) => {
+      prevented = e.defaultPrevented;
+    });
+    auxClickOn(anchor, 1);
+
+    expect(prevented).toBe(false);
+    vi.advanceTimersByTime(100);
+    expect(window.location.href).toBe(PAGE_URL);
+  });
+
+  // The right button opens a context menu, which is not yet a navigation.
+  // Counting it would report checkout intents for menus the visitor dismisses;
+  // a tab actually opened from that menu is covered by the route's no-store
+  // response instead (src/pages/api/go/[slug].ts).
+  it("ignores a right-button auxclick", () => {
+    const anchor = renderCta();
+    wireTicketCtaTracking();
+
+    auxClickOn(anchor, 2);
+
+    expect(capture).not.toHaveBeenCalled();
+    expect(eidOf(anchor)).toBeNull();
+  });
+
+  it("wires the auxclick listener once even when several components call it", () => {
+    const anchor = renderCta();
+
+    wireTicketCtaTracking();
+    wireTicketCtaTracking();
+    auxClickOn(anchor, 1);
+
+    expect(capture).toHaveBeenCalledTimes(1);
+    expect(anchor.href.match(/eid=/g)).toHaveLength(1);
   });
 
   it("delays the same-tab handoff and navigates to the stamped href", () => {

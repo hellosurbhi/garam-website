@@ -163,4 +163,84 @@ describe("/api/go/[slug] tracked redirect", () => {
     expect(res.headers.get("Location")!.startsWith(CHECKOUT_URL)).toBe(true);
     expect(sendCapiEvent).not.toHaveBeenCalled();
   });
+
+  // Every enforceRateLimit call spends one unit of the shared per-IP budget,
+  // and a prefetch arrives on the visitor's own IP. Charging fetches that can
+  // never fire CAPI let a page speculating over several ticket links exhaust
+  // the budget, so the visitor's real click found it empty and went untracked.
+  describe("does not spend the tracking budget on requests that can't fire CAPI", () => {
+    it("skips the rate limit for a speculative prefetch", async () => {
+      vi.mocked(getEventBySlug).mockReturnValue(makeEvent());
+      const res = await GET(
+        makeContext("manhattan-2099-12-31", { "sec-purpose": "prefetch" }),
+      );
+      expect(res.status).toBe(302);
+      expect(enforceRateLimit).not.toHaveBeenCalled();
+      expect(sendCapiEvent).not.toHaveBeenCalled();
+    });
+
+    it("skips the rate limit for a recognized unfurl bot", async () => {
+      vi.mocked(getEventBySlug).mockReturnValue(makeEvent());
+      const res = await GET(
+        makeContext("manhattan-2099-12-31", {
+          "user-agent": "Slackbot-LinkExpanding 1.0",
+        }),
+      );
+      expect(res.status).toBe(302);
+      expect(enforceRateLimit).not.toHaveBeenCalled();
+      expect(sendCapiEvent).not.toHaveBeenCalled();
+    });
+
+    it("skips the rate limit when CAPI is not configured at all", async () => {
+      delete import.meta.env.META_CAPI_ACCESS_TOKEN;
+      vi.mocked(getEventBySlug).mockReturnValue(makeEvent());
+      const res = await GET(makeContext("manhattan-2099-12-31"));
+      expect(res.status).toBe(302);
+      expect(enforceRateLimit).not.toHaveBeenCalled();
+    });
+
+    it("still spends it on a real navigation, which is what the budget is for", async () => {
+      vi.mocked(getEventBySlug).mockReturnValue(makeEvent());
+      await GET(
+        makeContext("manhattan-2099-12-31", {
+          "user-agent":
+            "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 Chrome/126.0 Safari/537.36",
+          "sec-fetch-mode": "navigate",
+        }),
+      );
+      expect(enforceRateLimit).toHaveBeenCalledTimes(1);
+      expect(sendCapiEvent).toHaveBeenCalledTimes(1);
+    });
+  });
+
+  // Filtering a prefetch out of CAPI is only half the job: a cached 302 can
+  // still satisfy the real activation that follows, so the click never
+  // reaches us and the conversion is lost through the other door. no-store is
+  // what covers the activation paths no client-side handler can see
+  // (context-menu "Open link in new tab", dragging the link, no-JS).
+  describe("never lets a response be cached and replayed", () => {
+    it("marks the checkout redirect no-store", async () => {
+      vi.mocked(getEventBySlug).mockReturnValue(makeEvent());
+      const res = await GET(
+        makeContext("manhattan-2099-12-31", { "sec-purpose": "prefetch" }),
+      );
+      expect(res.headers.get("Cache-Control")).toBe("no-store");
+    });
+
+    it("marks the /tickets fallback for a canceled show no-store", async () => {
+      vi.mocked(getEventBySlug).mockReturnValue(
+        makeEvent({ status: "canceled" }),
+      );
+      const res = await GET(makeContext("manhattan-2099-12-31"));
+      expect(res.headers.get("Location")).toBe("/tickets");
+      expect(res.headers.get("Cache-Control")).toBe("no-store");
+    });
+
+    it("marks the unknown-slug 404 no-store", async () => {
+      vi.mocked(getEventBySlug).mockReturnValue(undefined);
+      const res = await GET(makeContext("nope"));
+      expect(res.status).toBe(404);
+      expect(res.headers.get("Cache-Control")).toBe("no-store");
+    });
+  });
 });

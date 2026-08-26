@@ -20,6 +20,22 @@ import { isSpeculativeRequest } from "@/lib/isSpeculativeRequest";
 // checkout; a typical Graph API call completes in well under 300ms.
 const CAPI_TIMEOUT_MS = 2000;
 
+// WHY every response from this route is non-storable: filtering speculative
+// fetches out of CAPI (isSpeculativeRequest, below) stops them being counted
+// as conversions, but the prefetched 302 still lands in the browser's cache,
+// and a cached 302 can then satisfy the visitor's REAL activation without the
+// request ever reaching us. The conversion the prefetch was correctly denied
+// is then never fired by the click either, and the loss is invisible from
+// here: the click simply never arrives. Marking the redirect no-store means a
+// speculative fetch can never stand in for a real one, whichever way the
+// visitor triggers it (left click, middle click, "Open link in new tab",
+// dragging the link to a tab, a no-JS navigation), which is broader than any
+// client-side handler can cover. Caught by Codex review (2026-08-26).
+// Nothing here is worth caching anyway: it is a 302 whose whole purpose is
+// firing one tracking event, and a repeat click is a repeat intent we want to
+// see. This also keeps Vercel's edge from serving the redirect for us.
+const NO_STORE: Record<string, string> = { "Cache-Control": "no-store" };
+
 function readCookie(
   cookieHeader: string | null,
   name: string,
@@ -46,7 +62,7 @@ export const GET: APIRoute = async ({ params, request }) => {
   const event = slug ? getEventBySlug(slug) : undefined;
 
   if (!event || !event.url || event.url === "#") {
-    return new Response("Not found", { status: 404 });
+    return new Response("Not found", { status: 404, headers: NO_STORE });
   }
 
   // WHY canceled and past shows redirect to /tickets instead of the stored
@@ -62,18 +78,9 @@ export const GET: APIRoute = async ({ params, request }) => {
   if (event.status === "canceled" || isEventDatePast(event)) {
     return new Response(null, {
       status: 302,
-      headers: { Location: "/tickets" },
+      headers: { ...NO_STORE, Location: "/tickets" },
     });
   }
-
-  // WHY the rate limit only suppresses tracking instead of returning its
-  // 429: every real "Get Tickets" click routes through here, so a
-  // shared-IP burst (one venue/campus/office NAT, or a viral moment) that
-  // trips the limit must still deliver every buyer to checkout. The
-  // expensive, abusable part of this route is the Meta CAPI call, so that
-  // is what the limit gates; the redirect itself is a cheap, server-resolved
-  // 302 that never uses client-supplied URLs.
-  const limited = await enforceRateLimit(request, RATE_LIMITS.goRedirect);
 
   const requestUrl = new URL(request.url);
 
@@ -123,17 +130,41 @@ export const GET: APIRoute = async ({ params, request }) => {
   // rules, `<link rel=prefetch>`) sends the visitor's own browser UA, so it
   // sails through the denylist and was counted as a conversion for a click
   // that never happened, the same ad-targeting poison as an unfurl bot.
-  // Speculative requests still get the 302: the browser is caching a
-  // response the visitor may never use, and answering with anything else
-  // would break the navigation if they do click.
+  // Speculative requests still get the 302, and the honest one: answering
+  // them with anything else would break the navigation if the visitor does
+  // go on to click. It costs us nothing to be honest here because NO_STORE
+  // above keeps that answer out of the cache, so the click still comes back
+  // to us to be counted rather than being served from the prefetch.
   const userAgent = request.headers.get("user-agent");
   const accessToken = import.meta.env.META_CAPI_ACCESS_TOKEN;
-  if (
-    accessToken &&
-    !limited &&
+  const eligible =
+    Boolean(accessToken) &&
     !isBotUserAgent(userAgent) &&
-    !isSpeculativeRequest(request)
-  ) {
+    !isSpeculativeRequest(request);
+
+  // WHY the rate limit only suppresses tracking instead of returning its
+  // 429: every real "Get Tickets" click routes through here, so a
+  // shared-IP burst (one venue/campus/office NAT, or a viral moment) that
+  // trips the limit must still deliver every buyer to checkout. The
+  // expensive, abusable part of this route is the Meta CAPI call, so that
+  // is what the limit gates; the redirect itself is a cheap, server-resolved
+  // 302 that never uses client-supplied URLs.
+  //
+  // WHY it runs after the eligibility checks and not before: every call to
+  // enforceRateLimit SPENDS one unit of the shared per-IP budget, and a
+  // browser prefetch arrives on the visitor's own IP. Charging prefetches
+  // and unfurl bots for a Meta call they were never going to make let a
+  // page that speculates over several ticket links burn the 30/minute
+  // budget on nobody, so the visitor's real click moments later found it
+  // empty and went untracked: the rate limit meant to protect the CAPI
+  // spend was suppressing the exact conversions it exists to preserve.
+  // The budget is now only spent by requests that have earned a Meta call.
+  // Caught by Codex review (2026-08-26).
+  const limited = eligible
+    ? await enforceRateLimit(request, RATE_LIMITS.goRedirect)
+    : null;
+
+  if (eligible && !limited) {
     const cookieHeader = request.headers.get("cookie");
     try {
       const result = await withTimeout(
@@ -174,6 +205,6 @@ export const GET: APIRoute = async ({ params, request }) => {
 
   return new Response(null, {
     status: 302,
-    headers: { Location: destination },
+    headers: { ...NO_STORE, Location: destination },
   });
 };

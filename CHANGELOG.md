@@ -1,5 +1,24 @@
 # Changelog
 
+## chore(ops): apply outage blast radius counted from production data (2026-08-26)
+
+- Closes the OUTAGE-BLAST-RADIUS backlog item. Read-only queries against
+  production Firestore, Storage and the Firebase Rules release history
+  (scratchpad one-off script, admin credentials in a subshell) sized the
+  window: zero real applications landed between 2026-07-13T12:57Z and
+  2026-08-21T13:56Z, against a monthly baseline of 21 to 42, so roughly
+  35 to 45 applicants were lost. The bucket holds 572 real-sized orphaned
+  photos from failed submissions (338 of them inside the outage window in
+  22 retry clusters), left behind because the stale storage.rules also
+  blocked the client's rollback delete. Rules release history shows the
+  true timeline: a 2026-07-14T02:23Z publish opened the outage, a
+  2026-08-19T19:15Z publish partially closed it (fully-filled forms only,
+  which is how two applications landed on Aug 21 and 23) and the
+  2026-08-26T04:11Z wrapper deploy closed it completely. No FAILURE alert
+  email ever reached the owner's Gmail (searched including spam and
+  trash); the alert path only existed after Aug 12 and its sends were
+  swallowed server-side.
+
 ## fix(monitor): rules drift check reads the storage release correctly (2026-08-26)
 
 - The drift check crashed on its storage target: it URL-encoded the release

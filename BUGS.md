@@ -961,7 +961,6 @@ Split from a shared checkbox into one line per finding, same pass as above (Fabl
 ### Codex (2026-08-19T18:58Z)
 
 - [ ] HIGH: [FLAKY-LEADS-RULES-TEST] test/rules/public-write.rules-test.ts "leads: step-2 phone update may touch ONLY the phone field" failed then passed on identical code within 20 minutes (local emulator runs, 2026-08-19: deploy-rules run4 failed 1/34, run5 passed 34/34). A flaky rules test can block the gated rules-deploy lane at random. Files: test/rules/public-write.rules-test.ts, firestore.rules. Executor: the 3:00 overnight fixer.
-- [ ] HIGH: [OUTAGE-BLAST-RADIUS] Count how many real applications were rejected 2026-08-12T18:44Z onward (the undeployed-rules window): one workflow-dispatch of the monitor after PR #208 merges gives CI-credentialed Firestore access; extend scripts/synthetic-apply-verify.mjs invocation or a one-off script to count applications-collection docs since that timestamp and report the number in the run log. Executor: Claude, first session after #208 merges (listed in the config action digest).
 
 ### Codex (2026-08-19T19:00Z)
 

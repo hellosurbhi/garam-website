@@ -1,5 +1,20 @@
 # Changelog
 
+## [Unreleased]: fix/monitor-pager-and-evidence (2026-08-19)
+
+- **Synthetic apply monitor can no longer fail silently**: on failure it
+  now opens or updates a GitHub issue assigned to the owner via the
+  workflow token (GitHub emails natively, independent of the site's own
+  alert path, which returned 200 while dropping every email for a
+  week); the weekly pager heartbeat runs on always() instead of
+  success(), because a permanently failing monitor also silenced the
+  proof that the alert channel worked; and the Firestore verify and
+  rules-drift steps run on always() so the diagnosis and the
+  real-applicant impact can never again hide behind the failing submit
+  step. Root cause of the outage itself (undeployed #135 rules
+  rejecting every application since Aug 12) is diagnosed in BUGS.md
+  with the one-command owner fix.
+
 ## fix(test-gate): CI patch-coverage gate + weekly scheduled mutation audit, replacing the toothless push-time Stryker check (2026-07-16)
 
 Rearchitects the test and mutation gate into layers, the standard split between a fast blocking check and a slow periodic audit (see LESSONS.md).

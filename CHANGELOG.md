@@ -1,5 +1,16 @@
 # Changelog
 
+## fix(monitor): rules drift check reads the storage release correctly (2026-08-26)
+
+- The drift check crashed on its storage target: it URL-encoded the release
+  name "firebase.storage/bucket", and the Firebase Rules API rejects the
+  encoded slash with 400 INVALID_ARGUMENT. The release name now goes into the
+  URL verbatim. First surfaced on 2026-08-26, the first run in which the
+  monitor had working credentials; the crash also masked the drift verdict on
+  the firestore target it had already computed. Verified against the live
+  API: the fixed script reports each target separately and exits nonzero on
+  real drift.
+
 ## [Unreleased]: fix/monitor-pager-and-evidence (2026-08-19)
 
 - **Synthetic apply monitor can no longer fail silently**: on failure it

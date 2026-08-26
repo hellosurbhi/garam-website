@@ -22,9 +22,15 @@ function loadPostHog() {
     if (msg.indexOf("window.webkit.messageHandlers") !== -1)
       return "third_party_error";
     if (msg.indexOf("Java object is gone") !== -1) return "third_party_error";
+    if (msg.indexOf("Java exception was raised") !== -1)
+      return "third_party_error";
     if (file.indexOf("iabjs://") === 0) return "third_party_error";
     if (msg.indexOf("Script error") === 0 && !stack) return "third_party_error";
     if (msg.indexOf("WebGL not supported") !== -1) return "third_party_error";
+    if (msg.indexOf("must be an instance of WebGLShader") !== -1)
+      return "third_party_error";
+    if (msg.indexOf("__firefox__") !== -1) return "third_party_error";
+    if (msg.indexOf("standardSelectors") !== -1) return "third_party_error";
     return "client_error";
   }
 

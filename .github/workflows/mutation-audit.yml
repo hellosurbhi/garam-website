@@ -42,7 +42,7 @@ jobs:
       # restores the most recent prior state AND saves a fresh one, rather
       # than freezing on the first run's cache forever.
       - name: Restore incremental mutation cache
-        uses: actions/cache@v4
+        uses: actions/cache@v6
         with:
           path: reports/stryker-incremental.json
           key: stryker-incremental-${{ github.run_id }}

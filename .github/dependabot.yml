@@ -9,6 +9,10 @@ updates:
     groups:
       minor-and-patch:
         update-types: [minor, patch]
+      stryker-major:
+        patterns:
+          - "@stryker-mutator/*"
+        update-types: [major]
     reviewers:
       - hellosurbhi
 

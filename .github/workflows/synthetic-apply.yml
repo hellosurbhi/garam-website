@@ -14,7 +14,10 @@
 # failed applicant would.
 #
 # Required repo secrets: FIREBASE_ADMIN_CLIENT_EMAIL, FIREBASE_ADMIN_PRIVATE_KEY,
-# FIREBASE_PROJECT_ID, FIREBASE_STORAGE_BUCKET.
+# FIREBASE_PROJECT_ID, FIREBASE_STORAGE_BUCKET; for the Gmail pager channel:
+# GMAIL_USER, GMAIL_CLIENT_ID, GMAIL_CLIENT_SECRET, GMAIL_REFRESH_TOKEN
+# (the garam-email-outreach OAuth client, gmail.send scope; rotating it means
+# updating both repos). Optional: PAGER_EMAIL_TO.
 name: Synthetic Apply Monitor
 
 on:
@@ -90,12 +93,14 @@ jobs:
         # the exact combination that hid this outage.
         if: always()
         env:
-          GMAIL_PAGER_USER: ${{ secrets.GMAIL_PAGER_USER }}
-          GMAIL_PAGER_APP_PASSWORD: ${{ secrets.GMAIL_PAGER_APP_PASSWORD }}
+          GMAIL_USER: ${{ secrets.GMAIL_USER }}
+          GMAIL_CLIENT_ID: ${{ secrets.GMAIL_CLIENT_ID }}
+          GMAIL_CLIENT_SECRET: ${{ secrets.GMAIL_CLIENT_SECRET }}
+          GMAIL_REFRESH_TOKEN: ${{ secrets.GMAIL_REFRESH_TOKEN }}
           PAGER_EMAIL_TO: ${{ secrets.PAGER_EMAIL_TO }}
           RUN_URL: https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}
         run: |
-          # A silently dead alert channel (expired SMTP password, broken env)
+          # A silently dead alert channel (revoked OAuth token, broken env)
           # looks identical to "no failures". One heartbeat email per week
           # through EACH real alert path (site email + Gmail pager) proves
           # both pagers still work. A dead Gmail credential fails this step,
@@ -146,19 +151,23 @@ jobs:
           path: playwright-report/
           retention-days: 7
       - name: Email the producer from the show's Gmail
-        # Third pager channel, sent by the workflow itself through Gmail SMTP:
-        # independent of GitHub's notification sender (deleted unread) and of
-        # the site's email path (the thing that was broken in July 2026).
+        # Third pager channel, sent by the workflow itself through the Gmail
+        # REST API (the outreach OAuth credential is gmail.send-scoped, which
+        # SMTP cannot use): independent of GitHub's notification sender
+        # (deleted unread) and of the site's email path (the thing that was
+        # broken in July 2026).
         # WHY last: if this step fails (drill with missing secrets, revoked
-        # app password), the failure() pagers above have already evaluated,
+        # OAuth token), the failure() pagers above have already evaluated,
         # so a broken Gmail credential can never open a fake "production is
-        # broken" incident. Needs node_modules, so if checkout/npm ci die the
-        # GitHub-issue pager above is the surviving channel.
+        # broken" incident. If checkout dies the GitHub-issue pager above is
+        # the surviving channel.
         if: failure() || (github.event_name == 'workflow_dispatch' && inputs.test_pager)
         timeout-minutes: 2
         env:
-          GMAIL_PAGER_USER: ${{ secrets.GMAIL_PAGER_USER }}
-          GMAIL_PAGER_APP_PASSWORD: ${{ secrets.GMAIL_PAGER_APP_PASSWORD }}
+          GMAIL_USER: ${{ secrets.GMAIL_USER }}
+          GMAIL_CLIENT_ID: ${{ secrets.GMAIL_CLIENT_ID }}
+          GMAIL_CLIENT_SECRET: ${{ secrets.GMAIL_CLIENT_SECRET }}
+          GMAIL_REFRESH_TOKEN: ${{ secrets.GMAIL_REFRESH_TOKEN }}
           PAGER_EMAIL_TO: ${{ secrets.PAGER_EMAIL_TO }}
           RUN_URL: https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}
           JOB_STATUS: ${{ job.status }}

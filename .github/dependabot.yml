@@ -29,5 +29,14 @@ updates:
     schedule:
       interval: monthly
     open-pull-requests-limit: 3
+    groups:
+      # WHY: unlike npm above, action bumps aren't split by update-type —
+      # action version bumps carry far lower breaking-change risk than npm
+      # majors, so one group for everything is enough to stop the actual
+      # problem (3 actions bumping in the same run opened 3 separate PRs
+      # within the same minute on 2026-08-26) without extra config surface.
+      all-actions:
+        patterns:
+          - "*"
     reviewers:
       - hellosurbhi

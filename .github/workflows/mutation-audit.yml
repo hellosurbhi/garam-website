@@ -73,7 +73,7 @@ jobs:
       # findings and decides what, if anything, to write -- this PR never
       # auto-merges.
       - name: Open draft PR with findings
-        uses: peter-evans/create-pull-request@v6
+        uses: peter-evans/create-pull-request@v8
         with:
           commit-message: "chore(mutation): weekly audit update"
           title: "Weekly mutation audit"

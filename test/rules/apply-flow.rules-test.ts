@@ -31,7 +31,9 @@ import {
   type FormState,
 } from "@/components/apply/useApplyForm";
 
-const PROJECT_ID = "demo-garam-masala";
+// WHY: must differ from public-write.rules-test.ts's PROJECT_ID — see the
+// comment there for the cross-file clearFirestore() race this prevents.
+const PROJECT_ID = "demo-garam-masala-apply-flow";
 
 let testEnv: RulesTestEnvironment;
 

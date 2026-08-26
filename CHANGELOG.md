@@ -1,5 +1,25 @@
 # Changelog
 
+## fix(ci): stop the patch-coverage gate from failing already-tested code (2026-08-26)
+
+- `scripts/diff-coverage.mjs` only checked Istanbul `statementMap` hits, so it never credited function-signature lines (which `@vitest/coverage-v8` proves covered only via `fnMap`/`f`, not `statementMap`) and it counted blank lines, comments, import statements and type declarations as "uncovered" even though no coverage tool can ever instrument them. This false-flagged well-tested PR #223 at 76.3% patch coverage against the 80% threshold. Now credits `fnMap`/`f` hits, excludes structurally uninstrumentable lines from the denominator, and rescues a Prettier-wrapped declaration's opener line when the next line's hit count proves the statement ran. Re-run against the same diff: 53/53 real lines covered (100%), 27 correctly excluded. See LESSONS.md.
+- Verified with `npm run lint`, `npm run check` (0 errors), full `npx vitest run` (1228/1228 passing), and `npm run test:rules` (36/36 passing).
+
+## fix(test): stop the Firestore rules-test suite from wiping its own fixtures (2026-08-26)
+
+- `test/rules/public-write.rules-test.ts` and `test/rules/apply-flow.rules-test.ts` shared one hardcoded emulator project ID (`demo-garam-masala`), so Vitest's default parallel file execution let one file's `beforeEach(clearFirestore)` wipe a document the other file had just seeded mid-test, intermittently failing with a null `resource.data` evaluation error. Gave each file its own unique project ID so the emulator's built-in per-project isolation does the job instead of serializing the suite. See LESSONS.md.
+- Verified with 4 consecutive full runs of `npm run test:rules` (36/36 passing each time), where before the fix this failed roughly 1 in 3 to 4 runs.
+
+## fix(monitoring): close out 14 open GitHub issues from PostHog error tracking (2026-08-26)
+
+- `elementFromPoint` crash on non-finite mouse coordinates in the custom cursor script (`BaseLayout.astro`), guarded with `Number.isFinite` (#186).
+- Added `src/lib/safeStorage.ts`, a try/catch wrapper around `localStorage`/`sessionStorage`, and routed every production call site through it. WebKit throws `SecurityError` on storage access itself (not just quota) in Safari private browsing and partitioned in-app-browser storage (#197).
+- Null-guarded `gl.createShader()`'s return value in `public/js/shader-app.js` before it reaches `gl.shaderSource()`, matching the null-check the surrounding code already expected two lines later (#209).
+- Sanitized `FIREBASE_PROJECT_ID`/`FIREBASE_STORAGE_BUCKET`/`FIREBASE_ADMIN_CLIENT_EMAIL` in `scripts/check-rules-drift.mjs` and `scripts/synthetic-apply-verify.mjs` against a literal trailing `\n` in a GitHub Actions secret corrupting a constructed URL (#215, see LESSONS.md).
+- Extended `classifyErrorEvent()` in `public/js/posthog.js` with four more third-party/browser-injection signatures (Firefox's `__firefox__`, Android WebView's "Java exception was raised", LastPass's `standardSelectors`, WebGL context-loss's "must be an instance of WebGLShader") so PostHog's Error Tracking stops filing GitHub issues for noise it already knows how to classify (#191, #190, #176, #169).
+- Closed #187, #171, #167, #166 as already fixed by the `classifyErrorEvent` filter merged in PR #135 (2026-08-12): all four predate that filter and never recurred after it shipped.
+- #210 and #161 have no stack trace reachable (no PostHog API credential in the repo) and stay open, logged in BUGS.md, rather than closed on an inference.
+
 ## chore(ops): apply outage blast radius counted from production data (2026-08-26)
 
 - Closes the OUTAGE-BLAST-RADIUS backlog item. Read-only queries against
@@ -23,6 +43,7 @@
   email ever reached the owner's Gmail (searched including spam and
   trash); the alert path only existed after Aug 12 and its sends were
   swallowed server-side.
+
 ## feat(monitor): outage pages arrive from the show's own Gmail (2026-08-26)
 
 - The synthetic monitor's failure pages reached the producer only as GitHub

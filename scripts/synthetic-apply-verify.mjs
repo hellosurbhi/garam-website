@@ -24,15 +24,26 @@
  */
 import { SignJWT, importPKCS8 } from "jose";
 
-// Duplicated from src/lib/syntheticMonitor.ts on purpose: this script runs
-// as plain node in CI and cannot import the TypeScript module.
+// Duplicated from src/lib/syntheticMonitor.ts and src/lib/env.ts on purpose:
+// this script runs as plain node in CI and cannot import TypeScript modules.
 const SYNTHETIC_EMAIL = "synthetic-monitor@garammasaladating.com";
 const FRESH_WINDOW_MS = 30 * 60 * 1000;
 const CLEANUP_WINDOW_MS = 48 * 60 * 60 * 1000;
 
-const projectId = process.env.FIREBASE_PROJECT_ID;
-const bucket = process.env.FIREBASE_STORAGE_BUCKET;
-const clientEmail = process.env.FIREBASE_ADMIN_CLIENT_EMAIL;
+// WHY: a GitHub Actions secret can carry a literal trailing "\n" (the two
+// characters backslash+n, not a real newline — real whitespace is already
+// stripped by .trim()). That silently corrupted a URL built from
+// FIREBASE_PROJECT_ID (#215): "\" is a path separator in special-scheme
+// URLs, so the value's tail became an extra "/n/" path segment instead of
+// erroring. Strip both forms before any value reaches a URL.
+function readTrimmedEnv(value) {
+  const trimmed = value?.trim().replace(/\\n$/, "");
+  return trimmed ? trimmed : undefined;
+}
+
+const projectId = readTrimmedEnv(process.env.FIREBASE_PROJECT_ID);
+const bucket = readTrimmedEnv(process.env.FIREBASE_STORAGE_BUCKET);
+const clientEmail = readTrimmedEnv(process.env.FIREBASE_ADMIN_CLIENT_EMAIL);
 const rawKey = process.env.FIREBASE_ADMIN_PRIVATE_KEY;
 
 if (!projectId || !bucket || !clientEmail || !rawKey) {

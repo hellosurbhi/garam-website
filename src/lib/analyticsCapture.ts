@@ -9,6 +9,8 @@
  * enrichment, safe-navigation, and dataLayer forwarding are always applied.
  */
 
+import { safeSessionStorage } from "./safeStorage";
+
 export type CaptureProps = Record<string, unknown>;
 
 export const TICKET_VENDOR_DOMAINS = [
@@ -120,12 +122,8 @@ export function enrichEvent(properties: CaptureProps = {}): CaptureProps {
   function getUtm(key: string): string | null {
     const fromUrl = params.get(key);
     if (fromUrl) return fromUrl;
-    try {
-      const stored = sessionStorage.getItem(`gmd-${key.replace("_", "-")}`);
-      return stored || null;
-    } catch {
-      return null;
-    }
+    const stored = safeSessionStorage.getItem(`gmd-${key.replace("_", "-")}`);
+    return stored || null;
   }
 
   return {

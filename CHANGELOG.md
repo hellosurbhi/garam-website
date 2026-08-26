@@ -7,10 +7,15 @@
   (scratchpad one-off script, admin credentials in a subshell) sized the
   window: zero real applications landed between 2026-07-13T12:57Z and
   2026-08-21T13:56Z, against a monthly baseline of 21 to 42, so roughly
-  35 to 45 applicants were lost. The bucket holds 572 real-sized orphaned
+  35 to 45 applicants were lost. The bucket holds 421 real-sized orphaned
   photos from failed submissions (338 of them inside the outage window in
   22 retry clusters), left behind because the stale storage.rules also
-  blocked the client's rollback delete. Rules release history shows the
+  blocked the client's rollback delete. An earlier count said 572: it
+  subtracted only the current photoPaths field, missing the two legacy
+  schemas (photoUrl single string Mar to Jun, photoUrls array in Jul), so
+  151 photos belonging to successful applications were miscounted as
+  orphans. Of 579 real-sized photos, 158 are referenced by the 117 saved
+  applications and 421 are true orphans. Rules release history shows the
   true timeline: a 2026-07-14T02:23Z publish opened the outage, a
   2026-08-19T19:15Z publish partially closed it (fully-filled forms only,
   which is how two applications landed on Aug 21 and 23) and the

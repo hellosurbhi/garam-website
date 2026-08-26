@@ -101,13 +101,14 @@ const leadSource = `spice-list-${pageName}`;
   import { identifyLead, trackLeadEvent } from "@/lib/analytics";
   import { buildLeadAttribution } from "@/lib/leadAttribution";
   import { reportFailure } from "@/lib/failureAlert";
+  import { safeLocalStorage, safeSessionStorage } from "@/lib/safeStorage";
   import {
     captureLead,
     updateLeadPhone,
     type LeadCaptureResult,
   } from "@/lib/leadSubmission";
 
-  if (localStorage.getItem("gmd-popup-subscribed")) {
+  if (safeLocalStorage.getItem("gmd-popup-subscribed")) {
     const altCta = document.getElementById("nl-already-subscribed");
     const step1 = document.getElementById("nl-step-1");
     if (altCta && step1) {
@@ -134,7 +135,7 @@ const leadSource = `spice-list-${pageName}`;
   ) as HTMLInputElement | null;
   if (nlCityInput) {
     const prefillCity = () => {
-      const geoCity = sessionStorage.getItem("gmd-geo-city");
+      const geoCity = safeSessionStorage.getItem("gmd-geo-city");
       if (geoCity && !nlCityInput.value) nlCityInput.value = geoCity;
       return Boolean(geoCity);
     };
@@ -172,7 +173,7 @@ const leadSource = `spice-list-${pageName}`;
           ...attribution,
         });
         nlDocId = captured.id ? captured : null;
-        localStorage.setItem("gmd-popup-subscribed", "true");
+        safeLocalStorage.setItem("gmd-popup-subscribed", "true");
         identifyLead(savedEmail, attribution);
         trackLeadEvent("lead_email_submitted", attribution);
         trackLeadEvent("email_signup", attribution);

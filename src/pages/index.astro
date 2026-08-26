@@ -244,6 +244,7 @@ const speakableJsonLd = JSON.stringify({
   import { cleanPhone } from "@/lib/phone";
   import { identifyLead, trackLeadEvent } from "@/lib/analytics";
   import { buildLeadAttribution } from "@/lib/leadAttribution";
+  import { safeLocalStorage, safeSessionStorage } from "@/lib/safeStorage";
   import {
     captureLead,
     updateLeadPhone,
@@ -262,12 +263,12 @@ const speakableJsonLd = JSON.stringify({
 
   const popup = document.getElementById("email-popup") as HTMLDialogElement;
 
-  if (popup && !localStorage.getItem(POPUP_KEY)) {
+  if (popup && !safeLocalStorage.getItem(POPUP_KEY)) {
     const sessionStart = Date.now();
     let popupShown = false;
 
     function canShowPopup(): boolean {
-      const dismissed = localStorage.getItem(POPUP_DISMISS_KEY);
+      const dismissed = safeLocalStorage.getItem(POPUP_DISMISS_KEY);
       if (dismissed && Date.now() - Number(dismissed) < DISMISS_DURATION_MS)
         return false;
       return true;
@@ -284,7 +285,7 @@ const speakableJsonLd = JSON.stringify({
       const cityInput = document.getElementById(
         "popup-city",
       ) as HTMLInputElement | null;
-      const geoCity = sessionStorage.getItem("gmd-geo-city");
+      const geoCity = safeSessionStorage.getItem("gmd-geo-city");
       if (cityInput && geoCity && !cityInput.value) cityInput.value = geoCity;
       trackLeadEvent("popup_opened", {
         source: "popup",
@@ -330,8 +331,8 @@ const speakableJsonLd = JSON.stringify({
     const close = (): void => {
       // Save dismiss timestamp so the popup respects a 7-day cooldown.
       // Only set if user hasn't already subscribed (POPUP_KEY).
-      if (!localStorage.getItem(POPUP_KEY)) {
-        localStorage.setItem(POPUP_DISMISS_KEY, String(Date.now()));
+      if (!safeLocalStorage.getItem(POPUP_KEY)) {
+        safeLocalStorage.setItem(POPUP_DISMISS_KEY, String(Date.now()));
       }
       const inner = popup.querySelector(".popup-inner") as HTMLElement | null;
       const reduced = window.matchMedia(
@@ -389,7 +390,7 @@ const speakableJsonLd = JSON.stringify({
             ...attribution,
           });
           popupDocId = captured.id ? captured : null;
-          localStorage.setItem(POPUP_KEY, "true");
+          safeLocalStorage.setItem(POPUP_KEY, "true");
           identifyLead(savedEmail, attribution);
           trackLeadEvent("lead_email_submitted", attribution);
           trackLeadEvent("email_signup", attribution);

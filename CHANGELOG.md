@@ -1,5 +1,10 @@
 # Changelog
 
+## fix(test): stop the Firestore rules-test suite from wiping its own fixtures (2026-08-26)
+
+- `test/rules/public-write.rules-test.ts` and `test/rules/apply-flow.rules-test.ts` shared one hardcoded emulator project ID (`demo-garam-masala`), so Vitest's default parallel file execution let one file's `beforeEach(clearFirestore)` wipe a document the other file had just seeded mid-test, intermittently failing with a null `resource.data` evaluation error. Gave each file its own unique project ID so the emulator's built-in per-project isolation does the job instead of serializing the suite. See LESSONS.md.
+- Verified with 4 consecutive full runs of `npm run test:rules` (36/36 passing each time), where before the fix this failed roughly 1 in 3 to 4 runs.
+
 ## fix(monitoring): close out 14 open GitHub issues from PostHog error tracking (2026-08-26)
 
 - `elementFromPoint` crash on non-finite mouse coordinates in the custom cursor script (`BaseLayout.astro`), guarded with `Number.isFinite` (#186).

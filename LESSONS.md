@@ -1,5 +1,13 @@
 # Lessons
 
+## Two rules-test files sharing one emulator project ID race each other's `clearFirestore()`
+
+**What went wrong:** `npm run test:rules` (and CI's "Firestore/Storage rules (emulator)" check) failed intermittently with `PERMISSION_DENIED: evaluation error ... Null value error` on an `update` whose document had just been seeded a line earlier in the same test, then passed clean on an immediate retry with zero code changes. It looked like emulator flakiness worth shrugging off.
+
+**Why:** `test/rules/public-write.rules-test.ts` and `test/rules/apply-flow.rules-test.ts` both hardcoded the identical `PROJECT_ID = "demo-garam-masala"` and each ran its own `beforeEach(() => testEnv.clearFirestore())` against it. `vitest.rules.config.ts` has no `fileParallelism: false`, so Vitest's default parallel file execution runs both files as concurrent workers against the one running emulator instance. Since a project ID is the emulator's actual isolation boundary, both files shared the same live document store: whichever file's `beforeEach` fired in the other file's window wiped the document the other test had just seeded, so the rule evaluated `resource.data` as null mid-assertion. A same-run `Transaction lock timeout ... ABORTED` on an unrelated test was the same symptom on a different code path, not a second bug.
+
+**Rule:** Every `*.rules-test.ts` file gets its own unique `demo-`-prefixed project ID (never share one across files). The Firestore/Storage emulator is multi-tenant by project ID specifically so independent test files can run in parallel without coordinating `clearFirestore()`/`clearStorage()` calls; giving each suite its own project removes the shared mutable state instead of serializing file execution to hide it. Before writing off a "flaky, passes on retry" emulator failure, check for this pattern first: identical project IDs across files that each call a clear-all method in `beforeEach`.
+
 ## A literal backslash-n in a secret becomes a bogus URL path segment, not an error
 
 **What went wrong:** The synthetic apply monitor's rules-drift check (`scripts/check-rules-drift.mjs`) failed on 2026-08-26 with a 404 whose body echoed back `/v1/projects/***/n/releases/cloud.firestore`, an extra `/n/` segment nobody wrote. The `FIREBASE_PROJECT_ID` GitHub Actions secret carried a literal trailing `\n`, two printable characters (backslash then the letter n), not a real newline: real newline/tab/CR bytes are already stripped by the WHATWG URL parser and by `.trim()`, so this shape survives both. The run self-resolved when someone fixed the secret before the next scheduled run.

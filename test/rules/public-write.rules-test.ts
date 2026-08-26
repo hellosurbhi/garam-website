@@ -21,7 +21,14 @@ import {
 } from "@firebase/rules-unit-testing";
 import { collection, doc, setDoc, getDoc, updateDoc } from "firebase/firestore";
 
-const PROJECT_ID = "demo-garam-masala";
+// WHY: must differ from apply-flow.rules-test.ts's PROJECT_ID. Vitest runs
+// test files in parallel by default; if both files shared one emulator
+// project, one file's beforeEach(clearFirestore) could wipe the other's
+// just-seeded doc mid-test, evaluating rules against a null resource.data.
+// A distinct "demo-"-prefixed project ID gives each file its own isolated
+// data namespace inside the one running emulator, so file-level parallelism
+// stays safe with no coordination between the files needed.
+const PROJECT_ID = "demo-garam-masala-public-write";
 
 let testEnv: RulesTestEnvironment;
 

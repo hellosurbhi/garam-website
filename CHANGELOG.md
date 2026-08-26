@@ -1,5 +1,9 @@
 # Changelog
 
+## fix(deps): resolve npm audit high-severity findings via lockfile resync (2026-08-02)
+
+The required Lint/Types/Test/Build CI check (`npm audit --audit-level=high --omit=dev`) started failing on every PR because 5 transitive packages (`astro`, `svgo`, `postcss`, `brace-expansion`, `tar`) were pinned in `package-lock.json` at versions inside their existing `package.json` semver ranges that carried known high-severity advisories; the ranges themselves were never violated, so this was not a lockfile drift or an invalid-version problem. A plain `npm audit fix` (no `--force`) moved each package forward to a newer version still inside its existing range: `astro` 7.0.7 to 7.1.6, `svgo` 4.0.1 to 4.0.2, `postcss` 8.5.16 to 8.5.25, `brace-expansion` 5.0.7 to 5.0.9, `tar` 7.5.19 to 7.5.22 (all patch or minor). Zero breaking changes, `package.json` untouched. 3 remaining moderate `@opentelemetry/core` findings (via `firebase-tools`) are devDependency-only and already excluded by the CI gate; logged as an open item in `BUGS.md` rather than forcing a breaking `firebase-tools` downgrade for a non-gating finding.
+
 ## fix(ci): stop the patch-coverage gate from failing already-tested code (2026-08-26)
 
 - `scripts/diff-coverage.mjs` only checked Istanbul `statementMap` hits, so it never credited function-signature lines (which `@vitest/coverage-v8` proves covered only via `fnMap`/`f`, not `statementMap`) and it counted blank lines, comments, import statements and type declarations as "uncovered" even though no coverage tool can ever instrument them. This false-flagged well-tested PR #223 at 76.3% patch coverage against the 80% threshold. Now credits `fnMap`/`f` hits, excludes structurally uninstrumentable lines from the denominator, and rescues a Prettier-wrapped declaration's opener line when the next line's hit count proves the statement ran. Re-run against the same diff: 53/53 real lines covered (100%), 27 correctly excluded. See LESSONS.md.

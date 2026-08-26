@@ -124,7 +124,12 @@ const targets = [
 
 const drifted = [];
 for (const target of targets) {
-  const live = await deployedRules(token, encodeURIComponent(target.release));
+  // WHY: the release name goes into the URL verbatim. encodeURIComponent was
+  // tried first and broke the storage target: its release name is
+  // "firebase.storage/<bucket>" and the API 400s (INVALID_ARGUMENT) when that
+  // slash arrives encoded as %2F — release names are slash-joined resource
+  // paths, not single path segments. Verified against the live API 2026-08-26.
+  const live = await deployedRules(token, target.release);
   if (normalize(live) !== normalize(target.repo)) {
     drifted.push(target.label);
     console.error(`DRIFT: deployed ${target.label} differs from the repo.`);

@@ -2,6 +2,24 @@
 
 ## Open
 
+### [LOW] GitHub issue #210: `ReferenceError: Cannot access uninitialized variable` has no reachable stack trace
+
+- **Date:** 2026-08-26
+- **File:** Unknown, no stack trace in the PostHog-filed issue body.
+- **Status:** Open
+- **Severity:** Low
+- **What's happening:** Safari's exact wording for a temporal-dead-zone `ReferenceError`. No stack trace is attached to the issue, and no PostHog API credential exists anywhere in this repo (checked `.env.example`, `api/`, `scripts/`, `package.json`), so the actual event payload isn't reachable from the codebase, only from the PostHog dashboard directly. No sourcemap config exists either, so even a stack couldn't be de-minified without one. No commits touched any user-facing page in the week around the issue's creation date, so if this were a live first-party bug it would be expected to recur, and it hasn't since.
+- **Fix:** Needs a session with PostHog dashboard access (or an API key added to `.env.local`, never committed) to pull the actual stack trace and re-diagnose. Left open rather than closed on inference.
+
+### [LOW] GitHub issue #161: `r.close is not a function` has no reachable stack trace
+
+- **Date:** 2026-08-26
+- **File:** Unknown, no stack trace in the PostHog-filed issue body.
+- **Status:** Open
+- **Severity:** Low
+- **What's happening:** Same reachability problem as #210 (no PostHog credential in the repo, no sourcemap config). Every `.close()` call site in the codebase was checked directly: `dialog.close()`/`popup.close()` calls are on real `HTMLDialogElement`s, and `bitmap.close()` in `src/utils/compressImage.ts` is on a real `ImageBitmap` and is additionally wrapped in a `try/finally` inside an outer `try/catch`, so it cannot be the source even if it threw. Nothing in first-party source matches the minified `r.close` call.
+- **Fix:** Same as #210, needs dashboard/API access to get the real stack. Left open rather than closed on inference.
+
 ### [MEDIUM] Event JSON-LD always uses New York's UTC offset, even for non-NY shows
 
 - **Date:** 2026-07-16

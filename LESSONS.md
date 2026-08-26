@@ -1,5 +1,13 @@
 # Lessons
 
+## A literal backslash-n in a secret becomes a bogus URL path segment, not an error
+
+**What went wrong:** The synthetic apply monitor's rules-drift check (`scripts/check-rules-drift.mjs`) failed on 2026-08-26 with a 404 whose body echoed back `/v1/projects/***/n/releases/cloud.firestore`, an extra `/n/` segment nobody wrote. The `FIREBASE_PROJECT_ID` GitHub Actions secret carried a literal trailing `\n`, two printable characters (backslash then the letter n), not a real newline: real newline/tab/CR bytes are already stripped by the WHATWG URL parser and by `.trim()`, so this shape survives both. The run self-resolved when someone fixed the secret before the next scheduled run.
+
+**Why:** `\` is a path separator in special-scheme (http/https) URLs per the WHATWG URL spec, so a value ending in `\n` interpolated into a template-literal URL doesn't throw or 400, it silently becomes a new path segment (`/n/`) and the request 404s against a plausible-looking but wrong URL. This is the same secret-corruption class already documented for Vercel env vars ([[reference_vercel_env_gotchas]]: values can end in a literal `\n` that `.trim()` alone doesn't catch when it's this two-character form), now recurring in a GitHub Actions secret instead of a Vercel one.
+
+**Rule:** Any script that interpolates an env var into a URL must sanitize it first: `.trim()` for real whitespace plus an explicit `.replace(/\\n$/, "")` for the literal two-character form, matching `src/lib/env.ts`'s `readTrimmedEnv`/`readPrivateKeyEnv` pattern. Plain-node CI scripts that cannot import that TypeScript module duplicate the same two-line helper rather than reading the raw value. Never assume a 404 against a URL that "looks right" in a log means the resource is missing, print the actual constructed URL and check for a stray path segment first.
+
 ## A push-time test gate that's backwards is worse than no gate
 
 **What went wrong:** Five contestant-workflow PRs (P1 to P5) shipped 2026-07-03 to 07-05 with zero unit tests, and the pre-push Stryker mutation gate never caught it. A later push then printed "STRYKER FAILED: Mutation score dropped" immediately followed by "All pre-push checks passed", the exact opposite conclusion, in the same output.

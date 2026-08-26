@@ -118,8 +118,15 @@ async function deletePhoto(token, path) {
   if (!/^photos\/[A-Za-z0-9._-]+$/.test(path)) {
     throw new Error(`Refusing to delete non-photo path: ${path}`);
   }
+  // WHY: this targets the GCS JSON API, not Firebase's firebasestorage v0
+  // API. The v0 endpoint was tried first and returns 403 "Permission
+  // denied." for service-account OAuth tokens even with devstorage scope
+  // (it serves Firebase Auth clients under security rules; admin access
+  // goes through GCS). Verified against the live bucket 2026-08-26: same
+  // token, same object, v0 DELETE 403 vs GCS DELETE 204. Switching back
+  // breaks cleanup on every run and strands each run's synthetic doc.
   const res = await fetch(
-    `https://firebasestorage.googleapis.com/v0/b/${bucket}/o/${encodeURIComponent(path)}`,
+    `https://storage.googleapis.com/storage/v1/b/${bucket}/o/${encodeURIComponent(path)}`,
     { method: "DELETE", headers: { Authorization: `Bearer ${token}` } },
   );
   // 404 is fine: the photo may already be gone from a prior cleanup.

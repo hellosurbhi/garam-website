@@ -1,3 +1,5 @@
+import { isDisplayable } from "@/data/events";
+
 const MONTHS: Record<string, number> = {
   Jan: 0,
   Feb: 1,
@@ -79,15 +81,46 @@ export function formatOnSaleDate(iso: string): string {
 /**
  * Returns true if an event should be shown as upcoming.
  * Uses isoDate for dated events (reliable ISO comparison) and passes TBA events
- * (no isoDate) through as upcoming. Hidden events always return false.
+ * (no isoDate) through as upcoming. Hidden and canceled events always return
+ * false (canceled shows stay in events.ts as permanent records; see
+ * EVENTS-HISTORY.md).
  */
 export function isUpcomingByIso(
-  event: { isoDate?: string; hidden?: boolean },
+  event: { isoDate?: string; hidden?: boolean; status?: "canceled" },
   today: string = new Date().toISOString().slice(0, 10),
 ): boolean {
-  if (event.hidden) return false;
+  if (!isDisplayable(event)) return false;
   if (!event.isoDate) return true;
   return event.isoDate >= today;
+}
+
+/**
+ * Returns true if an event's date has passed. Prefers `isoDate` (plain ISO
+ * string comparison, same semantics as isUpcomingByIso) when present;
+ * `event.date` alone (e.g. "Feb 22") has no year, so isEventPast() has to
+ * guess one, and a future rebuild of a permanent, statically generated
+ * /events/[slug] page could guess wrong and reclassify an old show as
+ * upcoming, exposing a stale checkout link. isoDate never has that
+ * ambiguity, so it's used whenever the event has one; isEventPast() is
+ * only the fallback for TBA/yearless entries that have no isoDate at all.
+ */
+export function isEventDatePast(
+  event: { isoDate?: string; date: string },
+  today: string = new Date().toISOString().slice(0, 10),
+): boolean {
+  if (event.isoDate) return event.isoDate < today;
+  return isEventPast(event.date);
+}
+
+/**
+ * Adds (or subtracts, for a negative value) minutes to a 24h "HH:MM" string.
+ * Wraps within a single day; show run-of-show never crosses midnight.
+ */
+export function addMinutesToTime(hhmm: string, minutes: number): string {
+  const [h, m] = hhmm.split(":").map(Number);
+  const total = h * 60 + m + minutes;
+  const wrapped = ((total % 1440) + 1440) % 1440;
+  return `${String(Math.floor(wrapped / 60)).padStart(2, "0")}:${String(wrapped % 60).padStart(2, "0")}`;
 }
 
 /**

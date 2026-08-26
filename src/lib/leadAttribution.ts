@@ -1,3 +1,5 @@
+import { safeSessionStorage } from "./safeStorage";
+
 /** Attribution data collected from the visitor's session and stored on each lead submission. */
 export interface LeadAttribution {
   [key: string]: string | number | undefined;
@@ -45,7 +47,7 @@ function getPathname(): string {
 
 function setIfMissing(key: string, value?: string | null) {
   if (!value) return;
-  if (!sessionStorage.getItem(key)) sessionStorage.setItem(key, value);
+  if (!safeSessionStorage.getItem(key)) safeSessionStorage.setItem(key, value);
 }
 
 function getReferrerHost(): string | undefined {
@@ -91,23 +93,25 @@ async function readGeoResponse(res: Response): Promise<GeoResponse | null> {
 }
 
 function bootstrapGeoData(): void {
-  if (sessionStorage.getItem(GEO_FETCHED_KEY)) return;
+  if (safeSessionStorage.getItem(GEO_FETCHED_KEY)) return;
   if (geoFetchPromise) return; // already in-flight on this page
 
   geoFetchPromise = fetch("/api/geo")
     .then(readGeoResponse)
     .then((geo) => {
       if (geo) {
-        if (geo.city) sessionStorage.setItem(GEO_CITY_KEY, geo.city);
-        if (geo.region) sessionStorage.setItem(GEO_REGION_KEY, geo.region);
-        if (geo.country) sessionStorage.setItem(GEO_COUNTRY_KEY, geo.country);
-        if (geo.timezone) sessionStorage.setItem(GEO_TIMEZONE_KEY, geo.timezone);
+        if (geo.city) safeSessionStorage.setItem(GEO_CITY_KEY, geo.city);
+        if (geo.region) safeSessionStorage.setItem(GEO_REGION_KEY, geo.region);
+        if (geo.country)
+          safeSessionStorage.setItem(GEO_COUNTRY_KEY, geo.country);
+        if (geo.timezone)
+          safeSessionStorage.setItem(GEO_TIMEZONE_KEY, geo.timezone);
         // lat/lon intentionally omitted (clear-text storage of precise location — CodeQL)
       }
-      sessionStorage.setItem(GEO_FETCHED_KEY, "1");
+      safeSessionStorage.setItem(GEO_FETCHED_KEY, "1");
     })
     .catch(() => {
-      sessionStorage.setItem(GEO_FETCHED_KEY, "1"); // prevent retry storm
+      safeSessionStorage.setItem(GEO_FETCHED_KEY, "1"); // prevent retry storm
     })
     .finally(() => {
       geoFetchPromise = null; // release so test isolation and retry work correctly
@@ -151,7 +155,7 @@ export function getStoredUtms(): StoredUtms {
   if (typeof window === "undefined") return {};
   try {
     const read = (key: string): string | undefined => {
-      const v = sessionStorage.getItem(key);
+      const v = safeSessionStorage.getItem(key);
       return v && v.length > 0 ? v : undefined;
     };
     const out: StoredUtms = {};
@@ -197,31 +201,32 @@ export async function buildLeadAttribution(params: {
   const attribution: LeadAttribution = {
     source: params.source,
     sourcePage: getPathname(),
-    landingPage: sessionStorage.getItem(LANDING_PAGE_KEY) ?? getPathname(),
+    landingPage: safeSessionStorage.getItem(LANDING_PAGE_KEY) ?? getPathname(),
   };
 
-  const referrerHost = sessionStorage.getItem(REFERRER_HOST_KEY) ?? undefined;
+  const referrerHost =
+    safeSessionStorage.getItem(REFERRER_HOST_KEY) ?? undefined;
   if (referrerHost) attribution.referrerHost = referrerHost;
 
-  const utmSource = sessionStorage.getItem(UTM_SOURCE_KEY) ?? undefined;
+  const utmSource = safeSessionStorage.getItem(UTM_SOURCE_KEY) ?? undefined;
   if (utmSource) attribution.utmSource = utmSource;
 
-  const utmMedium = sessionStorage.getItem(UTM_MEDIUM_KEY) ?? undefined;
+  const utmMedium = safeSessionStorage.getItem(UTM_MEDIUM_KEY) ?? undefined;
   if (utmMedium) attribution.utmMedium = utmMedium;
 
-  const utmCampaign = sessionStorage.getItem(UTM_CAMPAIGN_KEY) ?? undefined;
+  const utmCampaign = safeSessionStorage.getItem(UTM_CAMPAIGN_KEY) ?? undefined;
   if (utmCampaign) attribution.utmCampaign = utmCampaign;
 
-  const utmContent = sessionStorage.getItem(UTM_CONTENT_KEY) ?? undefined;
+  const utmContent = safeSessionStorage.getItem(UTM_CONTENT_KEY) ?? undefined;
   if (utmContent) attribution.utmContent = utmContent;
 
-  const utmTerm = sessionStorage.getItem(UTM_TERM_KEY) ?? undefined;
+  const utmTerm = safeSessionStorage.getItem(UTM_TERM_KEY) ?? undefined;
   if (utmTerm) attribution.utmTerm = utmTerm;
 
-  const fbclid = sessionStorage.getItem(FBCLID_KEY) ?? undefined;
+  const fbclid = safeSessionStorage.getItem(FBCLID_KEY) ?? undefined;
   if (fbclid) attribution.fbclid = fbclid;
 
-  const gclid = sessionStorage.getItem(GCLID_KEY) ?? undefined;
+  const gclid = safeSessionStorage.getItem(GCLID_KEY) ?? undefined;
   if (gclid) attribution.gclid = gclid;
 
   if (typeof posthogDistinctId === "string" && posthogDistinctId.trim()) {
@@ -233,16 +238,16 @@ export async function buildLeadAttribution(params: {
   }
 
   // Geo data from /api/geo (cached in sessionStorage)
-  const geoCity = sessionStorage.getItem(GEO_CITY_KEY) ?? undefined;
+  const geoCity = safeSessionStorage.getItem(GEO_CITY_KEY) ?? undefined;
   if (geoCity) attribution.geoCity = geoCity;
 
-  const geoRegion = sessionStorage.getItem(GEO_REGION_KEY) ?? undefined;
+  const geoRegion = safeSessionStorage.getItem(GEO_REGION_KEY) ?? undefined;
   if (geoRegion) attribution.geoRegion = geoRegion;
 
-  const geoCountry = sessionStorage.getItem(GEO_COUNTRY_KEY) ?? undefined;
+  const geoCountry = safeSessionStorage.getItem(GEO_COUNTRY_KEY) ?? undefined;
   if (geoCountry) attribution.geoCountry = geoCountry;
 
-  const geoTimezone = sessionStorage.getItem(GEO_TIMEZONE_KEY) ?? undefined;
+  const geoTimezone = safeSessionStorage.getItem(GEO_TIMEZONE_KEY) ?? undefined;
   if (geoTimezone) attribution.geoTimezone = geoTimezone;
 
   return attribution;

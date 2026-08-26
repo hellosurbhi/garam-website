@@ -6,7 +6,7 @@ export const usNortheastCities: Record<string, CityData> = {
     displayName: "Edison/New Brunswick",
     titleTag: "Live Desi Dating Show in Edison NJ",
     metaDescription:
-      "Garam Masala Dating comes to Edison NJ on July 11. Real South Asian singles on live dates on stage. Tickets are $15. The show that sold out NYC is now in Jersey.",
+      "Garam Masala Dating comes to Edison NJ on July 11. Real South Asian singles on live dates on stage, mixer included. The show that sold out NYC is now in Jersey.",
     h1: "Single and Desi in Jersey? This Is Your Night.",
     status: "active",
     badgeLabel: "Tickets Live",
@@ -14,7 +14,7 @@ export const usNortheastCities: Record<string, CityData> = {
       "Your aunties have been asking. Your cousins keep sending biodata over WhatsApp. You have been on Dil Mil long enough to recognize faces from the last shaadi you attended. You are not alone. You are just in the wrong room.",
       "Garam Masala Dating is a live comedy dating show. Real South Asian singles go on actual dates in front of a full room. It is funny, warm and chaotic in the best way and nothing like the apps. The NYC show has been selling out for months.",
       "On July 11 we are bringing the show to Komic Karma Entertainment in North Brunswick. This is a room built for Jersey desi singles. You can come to watch, to meet people in the crowd or to apply to be a contestant and get on stage.",
-      "Tickets are $15. The NYC show sells out weeks in advance. Grab yours from the box above so you are not scrambling the day before, and if you want to be on stage, apply to be a contestant before the spots fill up.",
+      "Tickets are on sale now. The NYC show sells out weeks in advance. Grab yours from the box above so you are not scrambling the day before, and if you want to be on stage, apply to be a contestant before the spots fill up.",
     ],
     ctas: [
       { label: "Join the Edison Waitlist", href: "#waitlist" },
@@ -53,7 +53,7 @@ export const usNortheastCities: Record<string, CityData> = {
       },
       {
         q: "What is the format and how much does it cost?",
-        a: "Tickets are $15. Real South Asian singles go on live dates on stage while the audience watches. There are laughs, moments and a mixer afterward. Think of it as a comedy show where the dates are real.",
+        a: "Tickets are budget friendly and shown at checkout on the ticket page above, since pricing shifts with presale tiers. Real South Asian singles go on live dates on stage while the audience watches. There are laughs, moments and a mixer afterward. Think of it as a comedy show where the dates are real.",
       },
       {
         q: "Is there Indian speed dating in Edison or Central Jersey?",
@@ -80,7 +80,7 @@ export const usNortheastCities: Record<string, CityData> = {
         heading: "What the Central Jersey show night looks like",
         paragraphs: [
           "The room at Komic Karma in North Brunswick fills with exactly who you would expect: Rutgers grads, pharma and finance commuters, first gen kids whose parents live ten minutes away and do not know they are here. Two local singles go on a real blind date on stage, the crowd reacts in three languages and the mixer after is the rare Central Jersey space where being single is the whole point instead of the problem.",
-          "Tickets are $15 and the NYC shows sell out weeks ahead, so do not gamble on the door. Grab a seat, or apply to be a contestant and give Oak Tree Road something new to discuss over chaat.",
+          "Tickets go fast and the NYC shows sell out weeks ahead, so do not gamble on the door. Grab a seat, or apply to be a contestant and give Oak Tree Road something new to discuss over chaat.",
         ],
       },
     ],
@@ -184,7 +184,7 @@ export const usNortheastCities: Record<string, CityData> = {
       "Boston might have the highest concentration of overqualified desi singles per square mile in the country. MIT, Harvard, BU, Northeastern, Tufts. The student pipeline alone is staggering. Then half of them stay for biotech, consulting, or tech jobs in Cambridge and along the 128 corridor, and suddenly you've got a city full of brilliant South Asian twentysomethings and thirtysomethings who can't figure out where to meet each other outside of Hinge.",
       "The show that runs in New York every few weeks: real contestants volunteer for live dates on stage while a packed room watches it unfold. Before and after, the whole crowd mingles. It's not a seminar. It's not a panel. It's a night out that works because everyone showed up for the same reason.",
       "The suburbs tell the same story. Lexington, Burlington, Waltham, Woburn. Indian families who moved out for the schools, young professionals who followed the jobs. The community in Greater Boston is massive, and the social infrastructure for singles is basically nonexistent unless you count your parents' WhatsApp group.",
-      "We've been getting DMs from Boston since the show started. The waitlist is growing. When we announce a date, you'll hear about it first if you sign up below. And if you want to be one of the contestants who goes on a live date on stage in front of a room full of your peers, apply now.",
+      "We've been getting DMs from Boston since the show started, and now it's official: Thursday, August 13 at Elephant and Castle downtown. Grab your tickets before the room fills up. And if you want to be one of the contestants who goes on a live date on stage in front of a room full of your peers, apply now.",
       "Cambridge, Somerville, Brookline, Back Bay. Wherever you are in the metro, this is the show Boston has been asking for.",
     ],
     ctas: [
@@ -216,15 +216,15 @@ export const usNortheastCities: Record<string, CityData> = {
     faqItems: [
       {
         q: "When is Garam Masala Dating coming to Boston?",
-        a: "Sunday, August 2 at Elephant and Castle in downtown Boston. Doors at 6 PM, show runs until 8 PM. Get tickets at the link above.",
+        a: "Thursday, August 13 at Elephant and Castle in downtown Boston. Doors at 7 PM, show runs until 9 PM. Get tickets at the link above.",
       },
       {
         q: "Will the show be in Cambridge or downtown Boston?",
         a: "Downtown Boston at Elephant and Castle, 161 Devonshire Street. Easy access from the Financial District, South Station, and all major neighborhoods.",
       },
       {
-        q: "Can I apply to be on the show before a Boston date is announced?",
-        a: "Yes. Apply now. Applications stay active for 12 months. Boston applicants will be prioritized when we confirm a date.",
+        q: "Can I apply to be on the Boston show?",
+        a: "Yes. Apply now. Applications stay active for 12 months and Boston applicants are getting priority for the August 13 show.",
       },
       {
         q: "Is there Indian speed dating in Boston?",

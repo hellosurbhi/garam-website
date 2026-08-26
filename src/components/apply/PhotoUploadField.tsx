@@ -92,7 +92,7 @@ export function PhotoUploadField({
       <input
         id="photo-input"
         type="file"
-        accept="image/jpeg,image/png,image/webp,image/heic,image/heif,image/gif"
+        accept="image/*"
         multiple
         onChange={onAddPhotos}
         className={styles.hiddenInput}

@@ -19,6 +19,18 @@
   trash); the alert path only existed after Aug 12 and its sends were
   swallowed server-side.
 
+## fix(monitor): synthetic cleanup deletes photos through the GCS API (2026-08-26)
+
+- The verify step's photo cleanup called Firebase's storage v0 endpoint,
+  which returns 403 for service account tokens no matter the scope, so the
+  first run that ever reached cleanup crashed after a successful submit and
+  stranded its synthetic document. The delete now uses the GCS JSON API,
+  the surface service accounts are meant to use. Proven against the live
+  bucket with the same token and object: v0 delete 403, GCS delete 204.
+  This was the last broken step in the monitor; submit, rules drift check
+  and Firestore verification all passed on run 32929338920 after the rules
+  redeploy ended the August apply outage.
+
 ## fix(monitor): rules drift check reads the storage release correctly (2026-08-26)
 
 - The drift check crashed on its storage target: it URL-encoded the release

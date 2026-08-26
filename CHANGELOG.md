@@ -1,5 +1,22 @@
 # Changelog
 
+## feat(monitor): outage pages arrive from the show's own Gmail (2026-08-26)
+
+- The synthetic monitor's failure pages reached the producer only as GitHub
+  notification emails (deleted unread with the rest of GitHub's noise) or
+  through the site's own alert path (dead exactly when the site's email is the
+  broken thing, the July failure mode). New third channel: the workflow itself
+  emails from garammasaladating@gmail.com through the Gmail REST API
+  (scripts/send-pager-email.mjs, plain fetch, no new dependencies), placed
+  last so a failing drill can never trigger the other pagers, with 10s
+  request timeouts, a test_pager workflow_dispatch input for on-demand drills
+  and a weekly Monday heartbeat that proves the Gmail credential is still
+  alive. Reuses the garam-email-outreach OAuth client (gmail.send scope only,
+  a smaller blast radius than an app password); its four values were added as
+  repo secrets (GMAIL_USER, GMAIL_CLIENT_ID, GMAIL_CLIENT_SECRET,
+  GMAIL_REFRESH_TOKEN) so the channel shipped live with zero operator steps.
+  Rotating that credential means updating both repos.
+
 ## fix(monitor): synthetic cleanup deletes photos through the GCS API (2026-08-26)
 
 - The verify step's photo cleanup called Firebase's storage v0 endpoint,

@@ -111,6 +111,46 @@ describe("/api/go/[slug] tracked redirect", () => {
     expect(sendCapiEvent).not.toHaveBeenCalled();
   });
 
+  // A browser prefetch carries the visitor's own browser User-Agent, so the
+  // bot denylist above can never catch it; only the speculation headers can.
+  it.each([
+    ["sec-purpose", "prefetch"],
+    ["sec-purpose", "prefetch;prerender"],
+    ["purpose", "prefetch"],
+    ["x-purpose", "preview"],
+    ["x-moz", "prefetch"],
+    ["sec-fetch-mode", "no-cors"],
+  ])(
+    "redirects a speculative request (%s: %s) without firing CAPI",
+    async (header, value) => {
+      vi.mocked(getEventBySlug).mockReturnValue(makeEvent());
+      const res = await GET(
+        makeContext("manhattan-2099-12-31", {
+          "user-agent":
+            "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 Chrome/126.0 Safari/537.36",
+          [header]: value,
+        }),
+      );
+      expect(res.status).toBe(302);
+      expect(res.headers.get("Location")!.startsWith(CHECKOUT_URL)).toBe(true);
+      expect(sendCapiEvent).not.toHaveBeenCalled();
+    },
+  );
+
+  it("fires CAPI for a real top-level navigation", async () => {
+    vi.mocked(getEventBySlug).mockReturnValue(makeEvent());
+    const res = await GET(
+      makeContext("manhattan-2099-12-31", {
+        "user-agent":
+          "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 Chrome/126.0 Safari/537.36",
+        "sec-fetch-mode": "navigate",
+        "sec-fetch-dest": "document",
+      }),
+    );
+    expect(res.status).toBe(302);
+    expect(sendCapiEvent).toHaveBeenCalledTimes(1);
+  });
+
   it("redirects a recognized unfurl bot without firing CAPI", async () => {
     vi.mocked(getEventBySlug).mockReturnValue(makeEvent());
     const res = await GET(

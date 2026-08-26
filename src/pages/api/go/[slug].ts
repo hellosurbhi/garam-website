@@ -8,6 +8,7 @@ import { applyUtmsToUrl } from "@/utils/utmForwarding";
 import { withTimeout } from "@/utils/withTimeout";
 import { sendCapiEvent } from "@/lib/capi";
 import { isBotUserAgent } from "@/lib/isBotUserAgent";
+import { isSpeculativeRequest } from "@/lib/isSpeculativeRequest";
 
 // WHY a bounded timeout instead of letting the CAPI call run free: this
 // route's entire purpose is firing the tracking event, so the call is
@@ -76,11 +77,14 @@ export const GET: APIRoute = async ({ params, request }) => {
 
   const requestUrl = new URL(request.url);
 
-  // Generated client-side by the "Get Tickets" click handler and passed
-  // through as ?eid=, so the browser Pixel event and this server CAPI event
-  // share one event_id and Meta dedupes them into a single conversion. Falls
-  // back to a server-generated id for any request that arrives without one
-  // (no-JS fallback, direct link, bot): still a valid, if unpaired, signal.
+  // Stamped onto the href by the "Get Tickets" click handler at click time
+  // (src/lib/ticketCtaTracking.ts) and passed through as ?eid=, so the
+  // browser Pixel event and this server CAPI event share one event_id and
+  // Meta dedupes them into a single conversion. Falls back to a
+  // server-generated id for a real navigation that arrives without one
+  // (no-JS fallback, shared/bookmarked link): still a valid, if unpaired,
+  // signal. A missing eid is NOT what filters non-clicks: speculative
+  // fetches are caught by header, below.
   const eventId = requestUrl.searchParams.get("eid") || crypto.randomUUID();
 
   const destination = applyUtmsToUrl(
@@ -112,9 +116,24 @@ export const GET: APIRoute = async ({ params, request }) => {
   // pre-push review (2026-08-03). The redirect below still runs
   // unconditionally for bots too, since they need the real destination to
   // build an accurate link-preview card.
+  //
+  // WHY the separate speculative check: the User-Agent denylist can only
+  // catch fetches made by someone else's server. A browser prefetching this
+  // link on the visitor's behalf (Chrome's "preload pages", speculation
+  // rules, `<link rel=prefetch>`) sends the visitor's own browser UA, so it
+  // sails through the denylist and was counted as a conversion for a click
+  // that never happened, the same ad-targeting poison as an unfurl bot.
+  // Speculative requests still get the 302: the browser is caching a
+  // response the visitor may never use, and answering with anything else
+  // would break the navigation if they do click.
   const userAgent = request.headers.get("user-agent");
   const accessToken = import.meta.env.META_CAPI_ACCESS_TOKEN;
-  if (accessToken && !limited && !isBotUserAgent(userAgent)) {
+  if (
+    accessToken &&
+    !limited &&
+    !isBotUserAgent(userAgent) &&
+    !isSpeculativeRequest(request)
+  ) {
     const cookieHeader = request.headers.get("cookie");
     try {
       const result = await withTimeout(

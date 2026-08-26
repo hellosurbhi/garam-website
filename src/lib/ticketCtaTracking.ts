@@ -2,10 +2,10 @@ import { capture } from "@/lib/analytics";
 import { getStoredUtms } from "@/lib/leadAttribution";
 
 /**
- * Wires every `[data-go-ticket]` anchor currently in the DOM: stamps a
- * stable event_id, forwards UTMs onto the `/api/go/[slug]` href, and on
- * click fires `checkout_opened` (-> InitiateCheckout) before navigating to
- * checkout.
+ * Wires every `[data-go-ticket]` anchor currently in the DOM: mints a stable
+ * event_id, forwards UTMs onto the `/api/go/[slug]` href, and on click fires
+ * `checkout_opened` (-> InitiateCheckout) and stamps the event_id onto the
+ * href before navigating to checkout.
  *
  * Extracted out of EventTicketCta.astro (the /events/[slug] page's CTA) so
  * every other ticket CTA on the site (TicketCard.astro on /tickets,
@@ -40,7 +40,6 @@ export function wireTicketCtaTracking(): void {
 
       try {
         const url = new URL(anchor.href, window.location.origin);
-        url.searchParams.set("eid", eid);
         const stored = getStoredUtms();
         const params = new URLSearchParams(window.location.search);
         const forwarded: Record<string, string | undefined> = {
@@ -62,6 +61,25 @@ export function wireTicketCtaTracking(): void {
 
       anchor.addEventListener("click", (e) => {
         const me = e as MouseEvent;
+
+        // WHY the eid goes on at click time and not at load time with the
+        // UTMs: an href that already carries it is prefetchable, and the
+        // browser's own prefetch (Chrome's "preload pages", speculation
+        // rules) sends the visitor's real UA and cookies, so the server had
+        // no way to tell that speculative fetch apart from a click. Stamping
+        // it here also means the URL a click navigates to is never the URL a
+        // prefetcher already cached, so a prefetch cache hit can't swallow
+        // the click and cost us the conversion. Mutating href inside the
+        // listener still changes where the default navigation goes, so this
+        // works for new-tab clicks and the same-tab path below alike.
+        try {
+          const url = new URL(anchor.href, window.location.origin);
+          url.searchParams.set("eid", eid);
+          anchor.href = url.toString();
+        } catch {
+          /* navigate with the plain href if URL construction fails */
+        }
+
         const isModified =
           me.metaKey ||
           me.ctrlKey ||

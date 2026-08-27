@@ -7,15 +7,15 @@ export const activeCities: Record<string, CityData> = {
     displayName: "Manhattan",
     titleTag: "NYC's Live Desi Dating Show",
     metaDescription:
-      "The best South Asian singles event in Manhattan. Live dating show and mixer at Top Secret Comedy Club. Real dates on stage, real people in the room.",
-    h1: "The Live Dating Show That Took Over the East Village",
+      "The best South Asian singles event in Manhattan. Live dating show and mixer at City Winery NYC. Real dates on stage, real people in the room.",
+    h1: "The Live Dating Show That Took Over Chelsea",
     status: "active",
     badgeLabel: "Every 2 to 3 Weeks",
     bodyParagraphs: [
       "Manhattan has no shortage of things to do on a Sunday. What it’s short on is a room full of interesting, single people who are actually trying to meet someone without the pressure of a formal event or the numbness of another app.",
-      "Garam Masala Dating fills that gap. Every two to three weeks at Top Secret Comedy Club in the East Village, real singles volunteer for live dates on stage while a packed room watches it unfold. Before and after, the whole crowd mingles. It’s low-stakes, high-energy, and nothing like the so-called networking events you’ve skipped.",
+      "Garam Masala Dating fills that gap. Every two to three weeks at City Winery NYC in Chelsea, real singles volunteer for live dates on stage while a packed room watches it unfold. Before and after, the whole crowd mingles. It’s low-stakes, high-energy, and nothing like the so-called networking events you’ve skipped.",
       "Our Manhattan shows draw South Asian professionals, desi diaspora, expats, and anyone who shows up curious and leaves having actually talked to someone new. The crowd skews late 20s to mid 30s, culturally mixed, and genuinely there for a good time.",
-      "Shows happen on Sundays at Top Secret Comedy Club, 44 Avenue A. Grab tickets for the next one below.",
+      "Shows happen on Sundays at City Winery NYC, 25 11th Ave. Grab tickets for the next one below.",
       "If you’re tired of apps and tired of manufactured mixers, this is the alternative. Come watch a few strangers try to fall in love on stage, then go find your own person at the bar.",
     ],
     ctas: [
@@ -28,7 +28,7 @@ export const activeCities: Record<string, CityData> = {
     addressLocality: "Manhattan",
     addressRegion: "NY",
     addressCountry: "US",
-    venueName: "Top Secret Comedy Club",
+    venueName: "The Loft at City Winery NYC",
     region: "US Northeast",
     nearbyCities: [
       "jersey-city",
@@ -47,7 +47,7 @@ export const activeCities: Record<string, CityData> = {
     faqItems: [
       {
         q: "How often does Garam Masala Dating run in Manhattan?",
-        a: "Every two to three weeks on Sundays at Top Secret Comedy Club in the East Village. Dates are posted on our events page and tickets go on sale about a week before each show.",
+        a: "Every two to three weeks on Sundays at City Winery NYC in Chelsea. Dates are posted on our events page and tickets go on sale about a week before each show.",
       },
       {
         q: "What happens at a Garam Masala Dating show?",
@@ -79,7 +79,7 @@ export const activeCities: Record<string, CityData> = {
         heading: "The best singles event in NYC is a comedy show",
         paragraphs: [
           "Manhattan's singles infrastructure is enormous and mostly bad. Speed dating with lanyards, app-brand pop-ups, rooftop mixers where everyone stares at the skyline instead of each other. The problem is always the same: you walk in cold and the entire burden of meeting someone is on you. Our format flips it. Two real singles go on a blind date on stage, the room reacts together for 90 minutes and by the time the mixer starts the whole audience shares a night's worth of inside jokes. Talking to a stranger stops being brave and starts being obvious.",
-          "The East Village location does half the work too. Doors open 30 minutes early, drinks flow through the show and Avenue A gives you ten backup plans for wherever the night goes after.",
+          "The Chelsea waterfront location does half the work too. Doors open 30 minutes early, drinks flow through the show and Pier 57 sits minutes from Chelsea Market, the High Line and the Meatpacking District for wherever the night goes after.",
         ],
       },
       {
@@ -142,11 +142,11 @@ export const activeCities: Record<string, CityData> = {
       },
       {
         q: "Is the Jersey City show different from the Manhattan show?",
-        a: "Same format, same hosts, more intimate room. The Laugh Tour holds fewer people than our East Village venue, which makes it more personal and less anonymous.",
+        a: "Same format, same hosts, more intimate room. The Laugh Tour holds fewer people than our Manhattan venue, which makes it more personal and less anonymous.",
       },
       {
         q: "Where is The Laugh Tour Comedy Club?",
-        a: "In Jersey City, easily accessible from Hoboken, Newport, Weehawken, and the rest of Hudson County. No PATH ride to the East Village required.",
+        a: "In Jersey City, easily accessible from Hoboken, Newport, Weehawken, and the rest of Hudson County. No trip into Manhattan required.",
       },
       {
         q: "Can I apply to be a contestant for the JC show?",

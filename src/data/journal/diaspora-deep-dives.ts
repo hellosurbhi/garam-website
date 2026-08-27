@@ -836,7 +836,7 @@ export const diasporaDeepDivesPosts: JournalPost[] = [
       },
       {
         type: "p",
-        text: "The Punjabi dating scene in NYC is vibrant and in-person events are the best way into it. Shows run weekly in Manhattan at Top Secret Comedy Club and monthly in <a href='/cities/jersey-city'>Jersey City</a>. Come for the show. Stay for the mixer. See what happens when you’re actually in the room.",
+        text: "The Punjabi dating scene in NYC is vibrant and in-person events are the best way into it. Shows run weekly in Manhattan at City Winery NYC and monthly in <a href='/cities/jersey-city'>Jersey City</a>. Come for the show. Stay for the mixer. See what happens when you’re actually in the room.",
       },
     ],
   },
@@ -952,7 +952,7 @@ export const diasporaDeepDivesPosts: JournalPost[] = [
       },
       {
         type: "p",
-        text: "Garam Masala Dating brings together desis across the first-gen to second-gen spectrum in a context where the cultural conversation can happen with humor and humanity rather than judgment. Shows run weekly in Manhattan at Top Secret Comedy Club and monthly in <a href='/cities/jersey-city'>Jersey City</a>.",
+        text: "Garam Masala Dating brings together desis across the first-gen to second-gen spectrum in a context where the cultural conversation can happen with humor and humanity rather than judgment. Shows run weekly in Manhattan at City Winery NYC and monthly in <a href='/cities/jersey-city'>Jersey City</a>.",
       },
     ],
   },
@@ -1184,7 +1184,7 @@ export const diasporaDeepDivesPosts: JournalPost[] = [
       },
       {
         type: "p",
-        text: "For Maharashtrian singles in NYC and NJ, Garam Masala Dating runs weekly at Top Secret Comedy Club in Manhattan and monthly in <a href=’/cities/jersey-city’>Jersey City</a>. The South Asian community that shows up understands Maharashtrian cultural context even when they’re not Marathi themselves. Come see what happens in a room where everyone gets the reference.",
+        text: "For Maharashtrian singles in NYC and NJ, Garam Masala Dating runs weekly at City Winery NYC in Manhattan and monthly in <a href=’/cities/jersey-city’>Jersey City</a>. The South Asian community that shows up understands Maharashtrian cultural context even when they’re not Marathi themselves. Come see what happens in a room where everyone gets the reference.",
       },
     ],
   },
@@ -1292,7 +1292,7 @@ export const diasporaDeepDivesPosts: JournalPost[] = [
       },
       {
         type: "p",
-        text: "For Goan Catholic singles, the parish community is the most socially sanctioned meeting space. For those looking beyond the parish, South Asian dating events like Garam Masala Dating provide a broader community context where the South Asian cultural background is understood even if the specific Goan context requires some explanation. The show runs weekly in Manhattan at Top Secret Comedy Club and monthly in <a href=’/cities/jersey-city’>Jersey City</a>.",
+        text: "For Goan Catholic singles, the parish community is the most socially sanctioned meeting space. For those looking beyond the parish, South Asian dating events like Garam Masala Dating provide a broader community context where the South Asian cultural background is understood even if the specific Goan context requires some explanation. The show runs weekly in Manhattan at City Winery NYC and monthly in <a href=’/cities/jersey-city’>Jersey City</a>.",
       },
       {
         type: "p",

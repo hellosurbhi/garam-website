@@ -903,7 +903,7 @@ export const liveShowsPosts: JournalPost[] = [
       },
       {
         q: "Where can I see a desi dating show in NYC?",
-        a: "Garam Masala Dating runs a live desi dating show weekly in Manhattan at Top Secret Comedy Club, with a singles mixer after. Tickets start around $15 at garammasaladating.com/tickets. It is the only live, ticketed desi dating show running weekly in New York City.",
+        a: "Garam Masala Dating runs a live desi dating show weekly in Manhattan at City Winery NYC, with a singles mixer after. Tickets start around $15 at garammasaladating.com/tickets. It is the only live, ticketed desi dating show running weekly in New York City.",
       },
       {
         q: "Is a desi dating show only for South Asian people?",

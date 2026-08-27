@@ -1000,7 +1000,7 @@ export const attachmentPsychologyDesiPosts: JournalPost[] = [
       },
       {
         type: "p",
-        text: "Live events are different. At Garam Masala Dating in <a href='/cities/manhattan'>NYC</a>, you are in a room. In real time. With a person who can see your face. There is no optimization available. There is only being present or being absent, and the other person can usually tell the difference. The format forces presence by removing the alternative. Many desi daters who describe themselves as bad at dating turn out to be simply bad at apps and very capable of genuine connection when given a context that requires it. That is what we do every week at Top Secret Comedy Club. Tickets at <a href='/'>garammasaladating.com</a>.",
+        text: "Live events are different. At Garam Masala Dating in <a href='/cities/manhattan'>NYC</a>, you are in a room. In real time. With a person who can see your face. There is no optimization available. There is only being present or being absent, and the other person can usually tell the difference. The format forces presence by removing the alternative. Many desi daters who describe themselves as bad at dating turn out to be simply bad at apps and very capable of genuine connection when given a context that requires it. That is what we do every week at City Winery NYC. Tickets at <a href='/'>garammasaladating.com</a>.",
       },
     ],
     ctaConfig: {

@@ -1015,7 +1015,7 @@ export const appAlternativesPosts: JournalPost[] = [
       },
       {
         q: "Is there a live South Asian dating show in NYC?",
-        a: "Yes. Garam Masala Dating is the #1 desi comedy dating show at Top Secret Comedy Club in Manhattan featuring South Asian singles on blind dates on stage in front of 250 people. Monthly shows with a mixer after. Tickets and contestant applications at garammasaladating.com.",
+        a: "Yes. Garam Masala Dating is the #1 desi comedy dating show at City Winery NYC in Manhattan featuring South Asian singles on blind dates on stage in front of 250 people. Monthly shows with a mixer after. Tickets and contestant applications at garammasaladating.com.",
       },
     ],
     relatedSlugs: [

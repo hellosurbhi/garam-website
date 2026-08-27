@@ -1280,7 +1280,7 @@ export const relationshipAdvicePosts: JournalPost[] = [
     faqs: [
       {
         q: "Where should desi singles go for a first date if family doesn’t know yet?",
-        a: "Anywhere that isn’t a known desi neighborhood haunt. The West Village, Tribeca, Lower East Side, Williamsburg and most of Brooklyn are reliable. Avoid Jackson Heights, Flushing, the Indian restaurant district on Lexington or any place your parents’ friends go for weekend dinners. A good comedy show at a venue like Top Secret Comedy Club in the East Village is an excellent option: low community density, high entertainment value.",
+        a: "Anywhere that isn’t a known desi neighborhood haunt. The West Village, Tribeca, Lower East Side, Williamsburg and most of Brooklyn are reliable. Avoid Jackson Heights, Flushing, the Indian restaurant district on Lexington or any place your parents’ friends go for weekend dinners. A good comedy show at a venue like City Winery NYC in Chelsea is an excellent option: low community density, high entertainment value.",
       },
       {
         q: "Is it wrong to hide a relationship from desi parents at the start?",
@@ -1338,7 +1338,7 @@ export const relationshipAdvicePosts: JournalPost[] = [
       },
       {
         type: "p",
-        text: "A comedy show is genuinely one of the best first dates available in NYC and it solves the strategic problem as well. Top Secret Comedy Club in the East Village is the home of Garam Masala Dating and runs shows regularly. You’re in a comedy club audience for 90 minutes, which is not a venue most aunties frequent. And shared laughter is one of the fastest ways to create actual chemistry.",
+        text: "A comedy show is genuinely one of the best first dates available in NYC and it solves the strategic problem as well. City Winery NYC in Chelsea is the home of Garam Masala Dating and runs shows regularly. You’re in a comedy club audience for 90 minutes, which is not a venue most aunties frequent. And shared laughter is one of the fastest ways to create actual chemistry.",
       },
       {
         type: "p",

@@ -736,7 +736,7 @@ export const mentalHealthDatingPosts: JournalPost[] = [
       },
       {
         type: "p",
-        text: "This is worth naming directly: not holding your own limits has a real cost, and it is a cost paid primarily by you. Come talk to South Asians navigating exactly this. Garam Masala Dating in <a href='/cities/manhattan'>NYC</a> is every week at Top Secret Comedy Club. Tickets at <a href='/'>garammasaladating.com</a>.",
+        text: "This is worth naming directly: not holding your own limits has a real cost, and it is a cost paid primarily by you. Come talk to South Asians navigating exactly this. Garam Masala Dating in <a href='/cities/manhattan'>NYC</a> is every week at City Winery NYC. Tickets at <a href='/'>garammasaladating.com</a>.",
       },
     ],
   },
@@ -852,7 +852,7 @@ export const mentalHealthDatingPosts: JournalPost[] = [
       },
       {
         type: "p",
-        text: "Live events are different. At a Garam Masala Dating show in <a href='/cities/manhattan'>NYC</a>, there is no profile, no curated opener, no carefully managed first impression. There is just a person, in a room, in real time. The evaluation happens through genuine encounter. Many people who describe themselves as bad at dating find that they are actually very good at connection when the performance layer is removed. We run weekly at Top Secret Comedy Club. Tickets at <a href='/'>garammasaladating.com</a>.",
+        text: "Live events are different. At a Garam Masala Dating show in <a href='/cities/manhattan'>NYC</a>, there is no profile, no curated opener, no carefully managed first impression. There is just a person, in a room, in real time. The evaluation happens through genuine encounter. Many people who describe themselves as bad at dating find that they are actually very good at connection when the performance layer is removed. We run weekly at City Winery NYC. Tickets at <a href='/'>garammasaladating.com</a>.",
       },
     ],
   },

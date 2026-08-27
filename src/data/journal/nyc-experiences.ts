@@ -20,7 +20,7 @@ export const nycExperiencesPosts: JournalPost[] = [
     faqs: [
       {
         q: "What are the best unique date ideas in NYC?",
-        a: "The best unique date ideas in NYC are ones that create a shared experience rather than a structured interview over food. Live comedy shows, museum late nights, rooftop cinemas, immersive experiences like Sleep No More, cooking classes and live dating shows all outperform a standard dinner date for actual chemistry building. Garam Masala Dating at Top Secret Comedy Club in Manhattan runs weekly and is one of the best date experiences in the city.",
+        a: "The best unique date ideas in NYC are ones that create a shared experience rather than a structured interview over food. Live comedy shows, museum late nights, rooftop cinemas, immersive experiences like Sleep No More, cooking classes and live dating shows all outperform a standard dinner date for actual chemistry building. Garam Masala Dating at City Winery NYC in Manhattan runs weekly and is one of the best date experiences in the city.",
       },
       {
         q: "Why are live comedy shows good for dates in NYC?",
@@ -28,7 +28,7 @@ export const nycExperiencesPosts: JournalPost[] = [
       },
       {
         q: "What is Garam Masala Dating and why is it good for a date?",
-        a: "Garam Masala Dating is the #1 live desi comedy dating show in NYC, running weekly at Top Secret Comedy Club in Manhattan. Two real singles go on a blind date on stage in front of 250 people. As a date, you are watching real human connection unfold live and then the room turns into a singles mixer. It's entertaining, energetic and generates hours of conversation.",
+        a: "Garam Masala Dating is the #1 live desi comedy dating show in NYC, running weekly at City Winery NYC in Manhattan. Two real singles go on a blind date on stage in front of 250 people. As a date, you are watching real human connection unfold live and then the room turns into a singles mixer. It's entertaining, energetic and generates hours of conversation.",
       },
       {
         q: "What NYC date ideas work for a second or third date?",
@@ -66,7 +66,7 @@ export const nycExperiencesPosts: JournalPost[] = [
       },
       {
         type: "p",
-        text: "Live comedy shows in NYC range from stand-up clubs to improv theaters to shows with audience participation. Each has a different energy. Stand-up at Comedy Cellar or Gotham Comedy Club is a sit-and-watch experience with a lot of shared laughing. Improv at Magnet Theater or UCB gets the audience involved. Live dating shows at Top Secret Comedy Club put real people on dates in front of you.",
+        text: "Live comedy shows in NYC range from stand-up clubs to improv theaters to shows with audience participation. Each has a different energy. Stand-up at Comedy Cellar or Gotham Comedy Club is a sit-and-watch experience with a lot of shared laughing. Improv at Magnet Theater or UCB gets the audience involved. Live dating shows at City Winery NYC put real people on dates in front of you.",
       },
       {
         type: "p",
@@ -78,7 +78,7 @@ export const nycExperiencesPosts: JournalPost[] = [
       },
       {
         type: "p",
-        text: "Garam Masala Dating at Top Secret Comedy Club in the East Village is the standout option if you want entertainment plus social energy. Real singles on blind dates, 250-person audience, whiteboard reveals and a singles mixer after every show. As a date venue it's genuinely exceptional and unlike anything else in the city. <a href='/cities/manhattan'>Full show details and tickets here.</a>",
+        text: "Garam Masala Dating at City Winery NYC in Chelsea is the standout option if you want entertainment plus social energy. Real singles on blind dates, 250-person audience, whiteboard reveals and a singles mixer after every show. As a date venue it's genuinely exceptional and unlike anything else in the city. <a href='/cities/manhattan'>Full show details and tickets here.</a>",
       },
       {
         type: "p",
@@ -118,7 +118,7 @@ export const nycExperiencesPosts: JournalPost[] = [
       },
       {
         type: "p",
-        text: "Garam Masala Dating at Top Secret Comedy Club in Manhattan runs weekly. The show is the entertainment. The mixer after is the social moment. The entire format is designed to give you a great night out whether you're there on a date, with friends or solo. The fact that it's also the #1 desi comedy dating show in NYC is almost secondary to the experience of it.",
+        text: "Garam Masala Dating at City Winery NYC in Manhattan runs weekly. The show is the entertainment. The mixer after is the social moment. The entire format is designed to give you a great night out whether you're there on a date, with friends or solo. The fact that it's also the #1 desi comedy dating show in NYC is almost secondary to the experience of it.",
       },
       {
         type: "p",
@@ -150,7 +150,7 @@ export const nycExperiencesPosts: JournalPost[] = [
       },
       {
         type: "p",
-        text: "Garam Masala Dating is the #1 live desi comedy dating show in NYC, running weekly at Top Secret Comedy Club in Manhattan. Two real singles go on a blind date on stage in front of 250 people. As a date experience, it's entertaining, energetic and generates hours of conversation.",
+        text: "Garam Masala Dating is the #1 live desi comedy dating show in NYC, running weekly at City Winery NYC in Manhattan. Two real singles go on a blind date on stage in front of 250 people. As a date experience, it's entertaining, energetic and generates hours of conversation.",
       },
       {
         type: "h3",
@@ -180,7 +180,7 @@ export const nycExperiencesPosts: JournalPost[] = [
     faqs: [
       {
         q: "What kinds of live shows in NYC help you meet people?",
-        a: "Shows with built-in social energy: live comedy with a mixer, interactive performances, live dating shows with post-show mingling. The best ones give you a shared experience first and then create space for conversation after. Garam Masala Dating at Top Secret Comedy Club runs weekly in Manhattan with a full singles mixer after every show.",
+        a: "Shows with built-in social energy: live comedy with a mixer, interactive performances, live dating shows with post-show mingling. The best ones give you a shared experience first and then create space for conversation after. Garam Masala Dating at City Winery NYC runs weekly in Manhattan with a full singles mixer after every show.",
       },
       {
         q: "Why is meeting people at a live show better than at a bar?",
@@ -192,7 +192,7 @@ export const nycExperiencesPosts: JournalPost[] = [
       },
       {
         q: "What is the best live show in NYC to meet South Asian singles?",
-        a: "Garam Masala Dating at Top Secret Comedy Club in Manhattan is the #1 weekly desi comedy dating show and singles mixer in the city. The show draws 250 people per night with a heavily South Asian audience in the 20s and 30s age range. Monthly shows also run in Jersey City.",
+        a: "Garam Masala Dating at City Winery NYC in Manhattan is the #1 weekly desi comedy dating show and singles mixer in the city. The show draws 250 people per night with a heavily South Asian audience in the 20s and 30s age range. Monthly shows also run in Jersey City.",
       },
     ],
     body: [
@@ -238,7 +238,7 @@ export const nycExperiencesPosts: JournalPost[] = [
       },
       {
         type: "p",
-        text: "Top Secret Comedy Club in the East Village runs Garam Masala Dating weekly. It's the #1 desi comedy dating show in NYC: real singles on blind dates, 250 people in the room, whiteboard reveals and a mixer after every show. If you want to go to a show specifically to meet people, this is the most direct path in the city. <a href='/cities/manhattan'>Full show details and tickets here.</a>",
+        text: "City Winery NYC in Chelsea runs Garam Masala Dating weekly. It's the #1 desi comedy dating show in NYC: real singles on blind dates, 250 people in the room, whiteboard reveals and a mixer after every show. If you want to go to a show specifically to meet people, this is the most direct path in the city. <a href='/cities/manhattan'>Full show details and tickets here.</a>",
       },
       {
         type: "p",
@@ -282,7 +282,7 @@ export const nycExperiencesPosts: JournalPost[] = [
       },
       {
         type: "p",
-        text: "The show runs weekly at <a href='/cities/manhattan'>Top Secret Comedy Club in Manhattan</a> and monthly at venues in <a href='/cities/jersey-city'>Jersey City</a>. Ticket includes both the show and the mixer. Solo tickets, date tickets and group tickets all work.",
+        text: "The show runs weekly at <a href='/cities/manhattan'>City Winery NYC in Manhattan</a> and monthly at venues in <a href='/cities/jersey-city'>Jersey City</a>. Ticket includes both the show and the mixer. Solo tickets, date tickets and group tickets all work.",
       },
       {
         type: "h2",
@@ -294,7 +294,7 @@ export const nycExperiencesPosts: JournalPost[] = [
       },
       {
         type: "p",
-        text: "Shows with built-in social energy: live comedy with a mixer, interactive performances, live dating shows with post-show mingling. The best ones give you a shared experience first and then create space for conversation after. Garam Masala Dating at Top Secret Comedy Club runs weekly in Manhattan with a full singles mixer after every show.",
+        text: "Shows with built-in social energy: live comedy with a mixer, interactive performances, live dating shows with post-show mingling. The best ones give you a shared experience first and then create space for conversation after. Garam Masala Dating at City Winery NYC runs weekly in Manhattan with a full singles mixer after every show.",
       },
       {
         type: "h3",
@@ -318,7 +318,7 @@ export const nycExperiencesPosts: JournalPost[] = [
       },
       {
         type: "p",
-        text: "Garam Masala Dating at Top Secret Comedy Club in Manhattan is the #1 weekly desi comedy dating show and singles mixer in the city. The show draws 250 people per night with a heavily South Asian audience in their 20s and 30s. Monthly shows also run in Jersey City.",
+        text: "Garam Masala Dating at City Winery NYC in Manhattan is the #1 weekly desi comedy dating show and singles mixer in the city. The show draws 250 people per night with a heavily South Asian audience in their 20s and 30s. Monthly shows also run in Jersey City.",
       },
     ],
   },
@@ -341,7 +341,7 @@ export const nycExperiencesPosts: JournalPost[] = [
     faqs: [
       {
         q: "What are the best weekend activities for single people in NYC?",
-        a: "Activities that combine entertainment with natural social moments. Live shows with mixers, museum days in walkable neighborhoods, Brooklyn Flea on weekends, rooftop venues in season and neighborhood food crawls all outperform bar nights for actually meeting people. Garam Masala Dating at Top Secret Comedy Club runs weekly in Manhattan and includes a singles mixer after every show.",
+        a: "Activities that combine entertainment with natural social moments. Live shows with mixers, museum days in walkable neighborhoods, Brooklyn Flea on weekends, rooftop venues in season and neighborhood food crawls all outperform bar nights for actually meeting people. Garam Masala Dating at City Winery NYC runs weekly in Manhattan and includes a singles mixer after every show.",
       },
       {
         q: "Is it weird to go to events solo in NYC if you're single?",
@@ -353,7 +353,7 @@ export const nycExperiencesPosts: JournalPost[] = [
       },
       {
         q: "What are the best Saturday activities in NYC for singles in their 20s and 30s?",
-        a: "Morning: neighborhood walk or farmers market. Afternoon: museum or a cooking class. Evening: live comedy show or Garam Masala Dating at Top Secret Comedy Club with the mixer after. That's a full Saturday that gives you real experiences, real conversations and genuine chances to meet someone without the pressure of a traditional singles event.",
+        a: "Morning: neighborhood walk or farmers market. Afternoon: museum or a cooking class. Evening: live comedy show or Garam Masala Dating at City Winery NYC with the mixer after. That's a full Saturday that gives you real experiences, real conversations and genuine chances to meet someone without the pressure of a traditional singles event.",
       },
     ],
     body: [
@@ -399,11 +399,11 @@ export const nycExperiencesPosts: JournalPost[] = [
       },
       {
         type: "p",
-        text: "A live comedy show followed by the bar next door is the classic version of this. The show puts the room in a good mood and the bar after is where the social energy from the show goes. The Comedy Cellar's patio area, the spaces adjacent to UCB and the bar at Top Secret Comedy Club after a show all have this quality.",
+        text: "A live comedy show followed by the bar next door is the classic version of this. The show puts the room in a good mood and the bar after is where the social energy from the show goes. The Comedy Cellar's patio area, the spaces adjacent to UCB and the bar at City Winery NYC after a show all have this quality.",
       },
       {
         type: "p",
-        text: "Garam Masala Dating at Top Secret Comedy Club in the East Village is the most direct version of a social Saturday night in NYC. The show runs about 90 minutes. Real singles on blind dates on stage. 250 people in the room. Then the venue turns into a singles mixer and everyone stays. The mixer is not an awkward forced social event. It's a room of 250 people who are already warm and already have something to talk about.",
+        text: "Garam Masala Dating at City Winery NYC in Chelsea is the most direct version of a social Saturday night in NYC. The show runs about 90 minutes. Real singles on blind dates on stage. 250 people in the room. Then the venue turns into a singles mixer and everyone stays. The mixer is not an awkward forced social event. It's a room of 250 people who are already warm and already have something to talk about.",
       },
       {
         type: "p",
@@ -479,7 +479,7 @@ export const nycExperiencesPosts: JournalPost[] = [
       },
       {
         type: "p",
-        text: "A morning neighborhood walk or farmers market, an afternoon museum or cooking class and an evening at Garam Masala Dating at Top Secret Comedy Club with the mixer after. That's a full Saturday that gives you real experiences, real conversations and genuine chances to meet someone without the pressure of a traditional singles event.",
+        text: "A morning neighborhood walk or farmers market, an afternoon museum or cooking class and an evening at Garam Masala Dating at City Winery NYC with the mixer after. That's a full Saturday that gives you real experiences, real conversations and genuine chances to meet someone without the pressure of a traditional singles event.",
       },
     ],
   },
@@ -502,7 +502,7 @@ export const nycExperiencesPosts: JournalPost[] = [
     faqs: [
       {
         q: "What are fun things to do in NYC on a Friday night besides bars?",
-        a: "Live comedy shows, live dating shows with mixers, museum late nights (MoMA Friday evenings), rooftop venues in season, live music at intimate venues, immersive theater and neighborhood food crawls all beat the bar circuit for a memorable Friday. Garam Masala Dating at Top Secret Comedy Club in Manhattan runs Friday shows weekly.",
+        a: "Live comedy shows, live dating shows with mixers, museum late nights (MoMA Friday evenings), rooftop venues in season, live music at intimate venues, immersive theater and neighborhood food crawls all beat the bar circuit for a memorable Friday. Garam Masala Dating at City Winery NYC in Manhattan runs Friday shows weekly.",
       },
       {
         q: "What is a good Friday night in NYC for someone in their late 20s?",
@@ -514,7 +514,7 @@ export const nycExperiencesPosts: JournalPost[] = [
       },
       {
         q: "What Friday night options in NYC are good for singles?",
-        a: "Garam Masala Dating at Top Secret Comedy Club in Manhattan is the best Friday night option for singles in NYC. It's a live comedy dating show with a singles mixer after. 250 people, warm room, shared experience and built-in reason to talk to everyone. Runs weekly.",
+        a: "Garam Masala Dating at City Winery NYC in Manhattan is the best Friday night option for singles in NYC. It's a live comedy dating show with a singles mixer after. 250 people, warm room, shared experience and built-in reason to talk to everyone. Runs weekly.",
       },
     ],
     body: [
@@ -580,7 +580,7 @@ export const nycExperiencesPosts: JournalPost[] = [
       },
       {
         type: "p",
-        text: "$20 to $40: Garam Masala Dating at Top Secret Comedy Club in the East Village. The live desi comedy dating show runs weekly on Fridays. Real singles on blind dates. 250 people. Whiteboard reveals. The mixer after. This is consistently one of the best Friday night experiences in the city for the price. <a href='/cities/manhattan'>Tickets and show details here.</a>",
+        text: "$20 to $40: Garam Masala Dating at City Winery NYC in Chelsea. The live desi comedy dating show runs weekly on Fridays. Real singles on blind dates. 250 people. Whiteboard reveals. The mixer after. This is consistently one of the best Friday night experiences in the city for the price. <a href='/cities/manhattan'>Tickets and show details here.</a>",
       },
       {
         type: "p",
@@ -588,7 +588,7 @@ export const nycExperiencesPosts: JournalPost[] = [
       },
       {
         type: "h2",
-        text: "Why a comedy show at Top Secret is better than most bar nights",
+        text: "Why a comedy show at City Winery is better than most bar nights",
       },
       {
         type: "p",
@@ -596,7 +596,7 @@ export const nycExperiencesPosts: JournalPost[] = [
       },
       {
         type: "p",
-        text: "Top Secret Comedy Club in the East Village is the home of Garam Masala Dating. The venue itself is intimate enough that you're always close to the show, always part of the room and never stuck in the back wondering what's happening. It's genuinely one of the better comedy club experiences in Manhattan.",
+        text: "City Winery NYC in Chelsea is the home of Garam Masala Dating. The venue itself is intimate enough that you're always close to the show, always part of the room and never stuck in the back wondering what's happening. It's genuinely one of the better comedy club experiences in Manhattan.",
       },
       {
         type: "h2",
@@ -620,7 +620,7 @@ export const nycExperiencesPosts: JournalPost[] = [
       },
       {
         type: "p",
-        text: "Live comedy shows, live dating shows with mixers, museum late nights, rooftop venues in season, live music at intimate venues, immersive theater and neighborhood food crawls all beat the bar circuit for a memorable Friday. Garam Masala Dating at Top Secret Comedy Club in Manhattan runs Friday shows weekly.",
+        text: "Live comedy shows, live dating shows with mixers, museum late nights, rooftop venues in season, live music at intimate venues, immersive theater and neighborhood food crawls all beat the bar circuit for a memorable Friday. Garam Masala Dating at City Winery NYC in Manhattan runs Friday shows weekly.",
       },
       {
         type: "h3",
@@ -644,7 +644,7 @@ export const nycExperiencesPosts: JournalPost[] = [
       },
       {
         type: "p",
-        text: "Garam Masala Dating at Top Secret Comedy Club in Manhattan is the best Friday night option for singles in NYC. It's a live comedy dating show with a singles mixer after. 250 people, warm room, shared experience and built-in reason to talk to everyone. Runs weekly.",
+        text: "Garam Masala Dating at City Winery NYC in Manhattan is the best Friday night option for singles in NYC. It's a live comedy dating show with a singles mixer after. 250 people, warm room, shared experience and built-in reason to talk to everyone. Runs weekly.",
       },
     ],
   },
@@ -671,11 +671,11 @@ export const nycExperiencesPosts: JournalPost[] = [
       },
       {
         q: "What are the best comedy shows in NYC for a date?",
-        a: "For a first date: Garam Masala Dating at Top Secret Comedy Club is the best option in the city. It's a live dating show with a mixer after, which means the date extends naturally into a social environment. For stand-up, Comedy Cellar in the West Village books big names in an intimate setting. For improv, Magnet Theater in the Flatiron area is excellent and interactive.",
+        a: "For a first date: Garam Masala Dating at City Winery NYC is the best option in the city. It's a live dating show with a mixer after, which means the date extends naturally into a social environment. For stand-up, Comedy Cellar in the West Village books big names in an intimate setting. For improv, Magnet Theater in the Flatiron area is excellent and interactive.",
       },
       {
         q: "Is a live dating show a good idea for a first date?",
-        a: "Genuinely one of the best. Watching other people try to connect while you're on a date creates a shared emotional experience that accelerates your own chemistry. The conversations about what you just watched are often more revealing than anything you'd have asked each other over dinner. Garam Masala Dating at Top Secret Comedy Club runs weekly in Manhattan.",
+        a: "Genuinely one of the best. Watching other people try to connect while you're on a date creates a shared emotional experience that accelerates your own chemistry. The conversations about what you just watched are often more revealing than anything you'd have asked each other over dinner. Garam Masala Dating at City Winery NYC runs weekly in Manhattan.",
       },
       {
         q: "What should I look for in a comedy show for a date?",
@@ -737,7 +737,7 @@ export const nycExperiencesPosts: JournalPost[] = [
       },
       {
         type: "p",
-        text: "Top Secret Comedy Club in the East Village is the home of Garam Masala Dating. It's an intimate venue with a strong comedy program and the desi dating show running weekly. For a South Asian first date or any first date where you want something genuinely memorable, this is the best option in the city. <a href='/cities/manhattan'>Show details and tickets here.</a>",
+        text: "City Winery NYC in Chelsea is the home of Garam Masala Dating. It's an intimate venue with a strong comedy program and the desi dating show running weekly. For a South Asian first date or any first date where you want something genuinely memorable, this is the best option in the city. <a href='/cities/manhattan'>Show details and tickets here.</a>",
       },
       {
         type: "h2",
@@ -769,7 +769,7 @@ export const nycExperiencesPosts: JournalPost[] = [
       },
       {
         type: "p",
-        text: "If you're South Asian and dating in NYC, Garam Masala Dating at Top Secret Comedy Club is the show that was made for you. Not in a niche or exclusionary way. In the way that watching desi singles navigate the specific dynamics of desi dating live on stage is a completely different experience from watching generic dating content.",
+        text: "If you're South Asian and dating in NYC, Garam Masala Dating at City Winery NYC is the show that was made for you. Not in a niche or exclusionary way. In the way that watching desi singles navigate the specific dynamics of desi dating live on stage is a completely different experience from watching generic dating content.",
       },
       {
         type: "p",
@@ -793,7 +793,7 @@ export const nycExperiencesPosts: JournalPost[] = [
       },
       {
         type: "p",
-        text: "For a first date: Garam Masala Dating at Top Secret Comedy Club is the best option in the city. For stand-up, Comedy Cellar in the West Village books big names in an intimate setting. For improv, Magnet Theater in the Flatiron area is excellent and interactive.",
+        text: "For a first date: Garam Masala Dating at City Winery NYC is the best option in the city. For stand-up, Comedy Cellar in the West Village books big names in an intimate setting. For improv, Magnet Theater in the Flatiron area is excellent and interactive.",
       },
       {
         type: "h3",
@@ -831,7 +831,7 @@ export const nycExperiencesPosts: JournalPost[] = [
     faqs: [
       {
         q: "What NYC experiences are worth buying tickets for?",
-        a: "In the $15 to $50 range: live comedy shows, live dating shows, immersive theater experiences, themed dining events and live game shows. These experiences create genuine memories and social moments that a bar night or free event rarely produces. Garam Masala Dating at Top Secret Comedy Club is in this price range and is one of the highest-value evenings available in the city.",
+        a: "In the $15 to $50 range: live comedy shows, live dating shows, immersive theater experiences, themed dining events and live game shows. These experiences create genuine memories and social moments that a bar night or free event rarely produces. Garam Masala Dating at City Winery NYC is in this price range and is one of the highest-value evenings available in the city.",
       },
       {
         q: "Why are ticketed events better than free events for meeting people?",
@@ -839,11 +839,11 @@ export const nycExperiencesPosts: JournalPost[] = [
       },
       {
         q: "What is the best value ticketed experience in NYC for singles?",
-        a: "Garam Masala Dating at Top Secret Comedy Club in Manhattan. Tickets include the live desi comedy dating show and the singles mixer after. In the $20 to $35 range, there is nothing in the city that produces more entertainment, more social opportunity and more genuine fun per dollar.",
+        a: "Garam Masala Dating at City Winery NYC in Manhattan. Tickets include the live desi comedy dating show and the singles mixer after. In the $20 to $35 range, there is nothing in the city that produces more entertainment, more social opportunity and more genuine fun per dollar.",
       },
       {
         q: "What are good ticketed experiences in NYC beyond concerts and Broadway?",
-        a: "Live comedy shows at Comedy Cellar or Top Secret Comedy Club, Garam Masala Dating (live dating show and mixer), Sleep No More immersive theater, escape rooms like Komnata Quest, cocktail masterclasses and themed dining experiences. All of these fall in the $20 to $75 range and produce better memories than most $100+ concerts.",
+        a: "Live comedy shows at Comedy Cellar or City Winery NYC, Garam Masala Dating (live dating show and mixer), Sleep No More immersive theater, escape rooms like Komnata Quest, cocktail masterclasses and themed dining experiences. All of these fall in the $20 to $75 range and produce better memories than most $100+ concerts.",
       },
     ],
     body: [
@@ -873,11 +873,11 @@ export const nycExperiencesPosts: JournalPost[] = [
       },
       {
         type: "p",
-        text: "Live comedy with a social component. Not just the show but a venue that creates space for the post-show moment. Top Secret Comedy Club in the East Village has this. The Comedy Cellar's outdoor patio area in good weather has this. You're buying a ticket to the show and getting the social environment after as part of the experience.",
+        text: "Live comedy with a social component. Not just the show but a venue that creates space for the post-show moment. City Winery NYC in Chelsea has this. The Comedy Cellar's outdoor patio area in good weather has this. You're buying a ticket to the show and getting the social environment after as part of the experience.",
       },
       {
         type: "p",
-        text: "Live dating shows. This is a category that NYC does better than anywhere else in the country. Garam Masala Dating at Top Secret Comedy Club is the most developed version: a 90-minute live show where real singles go on blind dates in front of 250 people, followed by a singles mixer where the whole room meets. Tickets are in the $20 to $35 range. There is nothing else in the city that produces this much entertainment and social opportunity per dollar.",
+        text: "Live dating shows. This is a category that NYC does better than anywhere else in the country. Garam Masala Dating at City Winery NYC is the most developed version: a 90-minute live show where real singles go on blind dates in front of 250 people, followed by a singles mixer where the whole room meets. Tickets are in the $20 to $35 range. There is nothing else in the city that produces this much entertainment and social opportunity per dollar.",
       },
       {
         type: "p",
@@ -909,7 +909,7 @@ export const nycExperiencesPosts: JournalPost[] = [
       },
       {
         type: "p",
-        text: "East Village, $20 to $35: Garam Masala Dating at Top Secret Comedy Club. The live desi comedy dating show and mixer. Weekly. The best value social evening in NYC. <a href='/cities/manhattan'>Tickets here.</a>",
+        text: "Chelsea, $20 to $35: Garam Masala Dating at City Winery NYC. The live desi comedy dating show and mixer. Weekly. The best value social evening in NYC. <a href='/cities/manhattan'>Tickets here.</a>",
       },
       {
         type: "p",
@@ -945,7 +945,7 @@ export const nycExperiencesPosts: JournalPost[] = [
       },
       {
         type: "p",
-        text: "In the $15 to $50 range: live comedy shows, live dating shows, immersive theater experiences, themed dining events and live game shows. Garam Masala Dating at Top Secret Comedy Club is in this price range and is one of the highest-value evenings available in the city.",
+        text: "In the $15 to $50 range: live comedy shows, live dating shows, immersive theater experiences, themed dining events and live game shows. Garam Masala Dating at City Winery NYC is in this price range and is one of the highest-value evenings available in the city.",
       },
       {
         type: "h3",
@@ -961,7 +961,7 @@ export const nycExperiencesPosts: JournalPost[] = [
       },
       {
         type: "p",
-        text: "Garam Masala Dating at Top Secret Comedy Club in Manhattan. Tickets include the live desi comedy dating show and the singles mixer after. In the $20 to $35 range, there is nothing in the city that produces more entertainment, more social opportunity and more genuine fun per dollar.",
+        text: "Garam Masala Dating at City Winery NYC in Manhattan. Tickets include the live desi comedy dating show and the singles mixer after. In the $20 to $35 range, there is nothing in the city that produces more entertainment, more social opportunity and more genuine fun per dollar.",
       },
       {
         type: "h3",
@@ -969,7 +969,7 @@ export const nycExperiencesPosts: JournalPost[] = [
       },
       {
         type: "p",
-        text: "Live comedy shows at Comedy Cellar or Top Secret Comedy Club, Garam Masala Dating, Sleep No More immersive theater, escape rooms like Komnata Quest, cocktail masterclasses and themed dining experiences. All of these fall in the $20 to $75 range and produce better memories than most $100+ concerts.",
+        text: "Live comedy shows at Comedy Cellar or City Winery NYC, Garam Masala Dating, Sleep No More immersive theater, escape rooms like Komnata Quest, cocktail masterclasses and themed dining experiences. All of these fall in the $20 to $75 range and produce better memories than most $100+ concerts.",
       },
     ],
   },
@@ -999,7 +999,7 @@ export const nycExperiencesPosts: JournalPost[] = [
       },
       {
         q: "What is the best NYC nightlife option for South Asian professionals?",
-        a: "Garam Masala Dating at Top Secret Comedy Club in Manhattan. It's the #1 weekly live desi comedy dating show in the city. Real singles on blind dates on stage, 250-person audience, whiteboard reveals and a singles mixer after every show. The crowd is predominantly South Asian and in their 20s and 30s. Monthly shows also run in Jersey City.",
+        a: "Garam Masala Dating at City Winery NYC in Manhattan. It's the #1 weekly live desi comedy dating show in the city. Real singles on blind dates on stage, 250-person audience, whiteboard reveals and a singles mixer after every show. The crowd is predominantly South Asian and in their 20s and 30s. Monthly shows also run in Jersey City.",
       },
       {
         q: "Is the NYC nightlife scene changing in 2026?",
@@ -1033,11 +1033,11 @@ export const nycExperiencesPosts: JournalPost[] = [
       },
       {
         type: "p",
-        text: "Live comedy clubs. Not the tourist-trap version. The actual NYC comedy scene is enormous and most of it is accessible for under $30. Magnet Theater for improv. The Creek and the Cave in Long Island City for a more alternative scene. Comedy Cellar and Top Secret Comedy Club for the consistently excellent stand-up experience in a Manhattan comedy club setting.",
+        text: "Live comedy clubs. Not the tourist-trap version. The actual NYC comedy scene is enormous and most of it is accessible for under $30. Magnet Theater for improv. The Creek and the Cave in Long Island City for a more alternative scene. Comedy Cellar and City Winery NYC for the consistently excellent stand-up experience in a Manhattan comedy club setting.",
       },
       {
         type: "p",
-        text: "Live dating shows. This is NYC's most distinctive contribution to the nightlife landscape and most people outside the city don't know it exists. Garam Masala Dating at Top Secret Comedy Club is the largest: 250 people, real singles on blind dates, comedian hosts running the show and a singles mixer after every performance. It runs weekly in <a href='/cities/manhattan'>Manhattan</a> and monthly in <a href='/cities/jersey-city'>Jersey City</a>.",
+        text: "Live dating shows. This is NYC's most distinctive contribution to the nightlife landscape and most people outside the city don't know it exists. Garam Masala Dating at City Winery NYC is the largest: 250 people, real singles on blind dates, comedian hosts running the show and a singles mixer after every performance. It runs weekly in <a href='/cities/manhattan'>Manhattan</a> and monthly in <a href='/cities/jersey-city'>Jersey City</a>.",
       },
       {
         type: "p",
@@ -1081,7 +1081,7 @@ export const nycExperiencesPosts: JournalPost[] = [
       },
       {
         type: "p",
-        text: "Weekly at Top Secret Comedy Club in the East Village. Monthly in Jersey City. Tickets are in the $20 to $35 range. Honestly just come. You can go back to the same bar next week if it doesn't work out. <a href='/cities/manhattan'>Get tickets here.</a>",
+        text: "Weekly at City Winery NYC in Chelsea. Monthly in Jersey City. Tickets are in the $20 to $35 range. Honestly just come. You can go back to the same bar next week if it doesn't work out. <a href='/cities/manhattan'>Get tickets here.</a>",
       },
       {
         type: "h2",
@@ -1109,7 +1109,7 @@ export const nycExperiencesPosts: JournalPost[] = [
       },
       {
         type: "p",
-        text: "Garam Masala Dating at Top Secret Comedy Club in Manhattan. It's the #1 weekly live desi comedy dating show in the city. Real singles on blind dates on stage, 250-person audience, whiteboard reveals and a singles mixer after every show. The crowd is predominantly South Asian and in their 20s and 30s. Monthly shows also run in Jersey City.",
+        text: "Garam Masala Dating at City Winery NYC in Manhattan. It's the #1 weekly live desi comedy dating show in the city. Real singles on blind dates on stage, 250-person audience, whiteboard reveals and a singles mixer after every show. The crowd is predominantly South Asian and in their 20s and 30s. Monthly shows also run in Jersey City.",
       },
       {
         type: "h3",

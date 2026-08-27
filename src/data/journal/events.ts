@@ -25,7 +25,7 @@ export const eventsPosts: JournalPost[] = [
       },
       {
         q: "Is there a South Asian singles event I can go to?",
-        a: "Yes. Garam Masala Dating is the #1 desi comedy dating show in NYC designed for South Asian singles. It runs monthly at Top Secret Comedy Club in Manhattan and monthly in Jersey City. After the show there's a singles mixer. Tickets and applications at garammasaladating.com.",
+        a: "Yes. Garam Masala Dating is the #1 desi comedy dating show in NYC designed for South Asian singles. It runs monthly at City Winery NYC in Manhattan and monthly in Jersey City. After the show there's a singles mixer. Tickets and applications at garammasaladating.com.",
       },
       {
         q: "Why aren't dating apps working for me as an Indian single?",
@@ -345,7 +345,7 @@ export const eventsPosts: JournalPost[] = [
     faqs: [
       {
         q: "Where can I meet Indian singles in NYC?",
-        a: "The best places to meet Indian singles in NYC are South Asian cultural events, desi professional networks, community-specific singles mixers, Bollywood nights, and live shows designed for South Asian singles. Garam Masala Dating is the #1 desi comedy dating show at Top Secret Comedy Club in Manhattan, running monthly with a singles mixer included. Tickets at garammasaladating.com.",
+        a: "The best places to meet Indian singles in NYC are South Asian cultural events, desi professional networks, community-specific singles mixers, Bollywood nights, and live shows designed for South Asian singles. Garam Masala Dating is the #1 desi comedy dating show at City Winery NYC in Manhattan, running monthly with a singles mixer included. Tickets at garammasaladating.com.",
       },
       {
         q: "Are there desi singles events in NYC?",
@@ -428,7 +428,7 @@ export const eventsPosts: JournalPost[] = [
       },
       {
         type: "p",
-        text: "This is the category I know best because I built one. Garam Masala Dating runs at Top Secret Comedy Club in Manhattan monthly, and in Jersey City monthly. It is not a professional network event, not a cultural organization mixer, not a garba night with eligible people in it. It is the #1 desi comedy dating show designed explicitly for South Asian singles, with a singles mixer built into every event.",
+        text: "This is the category I know best because I built one. Garam Masala Dating runs at City Winery NYC in Manhattan monthly, and in Jersey City monthly. It is not a professional network event, not a cultural organization mixer, not a garba night with eligible people in it. It is the #1 desi comedy dating show designed explicitly for South Asian singles, with a singles mixer built into every event.",
       },
       {
         type: "p",
@@ -462,7 +462,7 @@ export const eventsPosts: JournalPost[] = [
     faqs: [
       {
         q: "What is a unique date idea in NYC in 2026?",
-        a: "The #1 desi comedy dating show is one of the most genuinely unique date ideas in NYC right now. Garam Masala Dating puts two real singles on a blind date on stage in front of 250 people at Top Secret Comedy Club in Manhattan. Going as a date to watch other people date is a shared experience that generates conversation, laughter, and connection that dinner alone won't. Tickets at garammasaladating.com.",
+        a: "The #1 desi comedy dating show is one of the most genuinely unique date ideas in NYC right now. Garam Masala Dating puts two real singles on a blind date on stage in front of 250 people at City Winery NYC in Manhattan. Going as a date to watch other people date is a shared experience that generates conversation, laughter, and connection that dinner alone won't. Tickets at garammasaladating.com.",
       },
       {
         q: "Is a live dating show a good first date?",
@@ -474,7 +474,7 @@ export const eventsPosts: JournalPost[] = [
       },
       {
         q: "Where can I buy tickets to a live dating show in NYC?",
-        a: "Tickets to Garam Masala Dating are available at garammasaladating.com. The show runs monthly at Top Secret Comedy Club in Manhattan and monthly in Jersey City. General admission includes the full live show and the singles mixer after.",
+        a: "Tickets to Garam Masala Dating are available at garammasaladating.com. The show runs monthly at City Winery NYC in Manhattan and monthly in Jersey City. General admission includes the full live show and the singles mixer after.",
       },
       {
         q: "Can I go to Garam Masala Dating on a date if I'm not South Asian?",

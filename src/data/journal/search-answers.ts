@@ -1534,7 +1534,7 @@ export const searchAnswersPosts: JournalPost[] = [
       },
       {
         type: "p",
-        text: "Weekly in <a href='/cities/manhattan'>Manhattan</a> at Top Secret Comedy Club. Monthly in <a href='/cities/jersey-city'>Jersey City</a>. We also tour to other cities across the US throughout the year. If you are not in New York, check the tickets page for upcoming shows in your city or nearby.",
+        text: "Weekly in <a href='/cities/manhattan'>Manhattan</a> at City Winery NYC. Monthly in <a href='/cities/jersey-city'>Jersey City</a>. We also tour to other cities across the US throughout the year. If you are not in New York, check the tickets page for upcoming shows in your city or nearby.",
       },
       {
         type: "h2",
@@ -1560,7 +1560,7 @@ export const searchAnswersPosts: JournalPost[] = [
       },
       {
         q: "How do you buy tickets to Garam Masala Dating?",
-        a: "Tickets are at garammasaladating.com/tickets. The weekly Manhattan shows at Top Secret Comedy Club sell out most weeks so buying early is recommended. The after-show singles mixer is included with every ticket.",
+        a: "Tickets are at garammasaladating.com/tickets. The weekly Manhattan shows at City Winery NYC sell out most weeks so buying early is recommended. The after-show singles mixer is included with every ticket.",
       },
       {
         q: "How do you apply to be a contestant on Garam Masala Dating?",

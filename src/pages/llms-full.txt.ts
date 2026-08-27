@@ -166,7 +166,7 @@ Garam Masala Dating is a live comedy dating show and entertainment brand. It is 
 
 ${SITE.description}
 
-The show runs weekly in Manhattan at Top Secret Comedy Club (44 Avenue A, East Village) and monthly in Jersey City at The Laugh Tour Comedy Club. It has expanded to Los Angeles, San Francisco and San Diego.
+The show runs weekly in Manhattan at City Winery NYC (25 11th Ave, Chelsea) and monthly in Jersey City at The Laugh Tour Comedy Club. It has expanded to Los Angeles, San Francisco and San Diego.
 
 **Stats:** ${statsLine}
 
@@ -317,7 +317,7 @@ ${pressSection}
 
 - Email: contact@garammasaladating.com
 - Website: https://garammasaladating.com
-- Venue (NYC): Top Secret Comedy Club, 44 Avenue A, East Village, New York, NY 10009
+- Venue (NYC): The Loft at City Winery NYC, 25 11th Ave, Chelsea, New York, NY 10011
 - Venue (Jersey City): The Laugh Tour Comedy Club, 555 Washington Blvd, Jersey City, NJ 07310
 
 ---

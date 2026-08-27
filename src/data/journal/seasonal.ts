@@ -101,7 +101,7 @@ export const seasonalPosts: JournalPost[] = [
       },
       {
         q: "Are there South Asian singles events in NYC?",
-        a: "Yes. Garam Masala Dating runs weekly at Top Secret Comedy Club in Manhattan. The show features live blind dates on stage followed by a singles mixer. Tickets and contestant applications at garammasaladating.com.",
+        a: "Yes. Garam Masala Dating runs weekly at City Winery NYC in Manhattan. The show features live blind dates on stage followed by a singles mixer. Tickets and contestant applications at garammasaladating.com.",
       },
     ],
     relatedSlugs: [
@@ -213,7 +213,7 @@ export const seasonalPosts: JournalPost[] = [
       },
       {
         q: "Is Garam Masala Dating open year-round?",
-        a: "Yes. Garam Masala Dating runs weekly at Top Secret Comedy Club in Manhattan. Monthly shows also run in Jersey City. You can buy tickets or apply to be a contestant at garammasaladating.com.",
+        a: "Yes. Garam Masala Dating runs weekly at City Winery NYC in Manhattan. Monthly shows also run in Jersey City. You can buy tickets or apply to be a contestant at garammasaladating.com.",
       },
     ],
     relatedSlugs: [
@@ -276,7 +276,7 @@ export const seasonalPosts: JournalPost[] = [
       },
       {
         type: "p",
-        text: "NYC has the most robust South Asian singles scene in the US. Look for Diwali events through Desi NYC, Brown Girl Magazine event listings, and South Asian Bar Association socials (they skew professional and tend to be well-organized). And yes: Garam Masala Dating runs through Diwali season at Top Secret Comedy Club in Manhattan. Our show is not specifically a Diwali event but the October and November shows consistently sell out because the energy of festival season is already in the room.",
+        text: "NYC has the most robust South Asian singles scene in the US. Look for Diwali events through Desi NYC, Brown Girl Magazine event listings, and South Asian Bar Association socials (they skew professional and tend to be well-organized). And yes: Garam Masala Dating runs through Diwali season at City Winery NYC in Manhattan. Our show is not specifically a Diwali event but the October and November shows consistently sell out because the energy of festival season is already in the room.",
       },
       {
         type: "h3",
@@ -318,7 +318,7 @@ export const seasonalPosts: JournalPost[] = [
     faqs: [
       {
         q: "Are there Diwali singles events in 2026?",
-        a: "Yes. Most major US cities with large South Asian communities (NYC, NJ, Chicago, Houston, Bay Area) host Diwali singles events in October and November. Search Eventbrite for \u201CDiwali singles\u201D or \u201CSouth Asian mixer\u201D starting in September. In NYC, Garam Masala Dating runs through Diwali season at Top Secret Comedy Club.",
+        a: "Yes. Most major US cities with large South Asian communities (NYC, NJ, Chicago, Houston, Bay Area) host Diwali singles events in October and November. Search Eventbrite for \u201CDiwali singles\u201D or \u201CSouth Asian mixer\u201D starting in September. In NYC, Garam Masala Dating runs through Diwali season at City Winery NYC.",
       },
       {
         q: "What makes a good Diwali singles event?",
@@ -330,7 +330,7 @@ export const seasonalPosts: JournalPost[] = [
       },
       {
         q: "What is the best South Asian singles event in NYC during Diwali?",
-        a: "Garam Masala Dating runs weekly at Top Secret Comedy Club in Manhattan through October and November. It\u2019s the #1 desi comedy dating show followed by a singles mixer. Over 40 shows in, 3 real couples out. Tickets and applications at garammasaladating.com.",
+        a: "Garam Masala Dating runs weekly at City Winery NYC in Manhattan through October and November. It\u2019s the #1 desi comedy dating show followed by a singles mixer. Over 40 shows in, 3 real couples out. Tickets and applications at garammasaladating.com.",
       },
       {
         q: "How do I meet South Asian singles at a Diwali party?",
@@ -424,7 +424,7 @@ export const seasonalPosts: JournalPost[] = [
       },
       {
         type: "p",
-        text: "If you\u2019re in NYC and want to carry the Holi energy into a room of people who are all there to meet someone, come to Garam Masala Dating. Weekly shows at Top Secret Comedy Club in Manhattan. Real blind dates on stage. A singles mixer after. Apply to be a contestant or buy a ticket to watch \u2014 either way you\u2019re showing up in person instead of swiping in your apartment. That\u2019s the whole point.",
+        text: "If you\u2019re in NYC and want to carry the Holi energy into a room of people who are all there to meet someone, come to Garam Masala Dating. Weekly shows at City Winery NYC in Manhattan. Real blind dates on stage. A singles mixer after. Apply to be a contestant or buy a ticket to watch \u2014 either way you\u2019re showing up in person instead of swiping in your apartment. That\u2019s the whole point.",
       },
     ],
     faqs: [
@@ -446,7 +446,7 @@ export const seasonalPosts: JournalPost[] = [
       },
       {
         q: "What is Garam Masala Dating?",
-        a: "Garam Masala Dating is the #1 weekly desi comedy dating show in NYC where South Asian singles go on blind dates on stage in front of 250 people. After the show there\u2019s a singles mixer. It runs at Top Secret Comedy Club in Manhattan. Three real couples have come out of it. Tickets and applications at garammasaladating.com.",
+        a: "Garam Masala Dating is the #1 weekly desi comedy dating show in NYC where South Asian singles go on blind dates on stage in front of 250 people. After the show there\u2019s a singles mixer. It runs at City Winery NYC in Manhattan. Three real couples have come out of it. Tickets and applications at garammasaladating.com.",
       },
     ],
     relatedSlugs: [
@@ -543,7 +543,7 @@ export const seasonalPosts: JournalPost[] = [
     faqs: [
       {
         q: "What should desi singles do on Valentine\u2019s Day?",
-        a: "Treat it like any other good night out: make actual plans, go somewhere you\u2019ll enjoy, be present. Singles events on Valentine\u2019s Day have a genuinely different energy because everyone in the room made an active choice to show up. Garam Masala Dating runs Valentine\u2019s shows in NYC at Top Secret Comedy Club in Manhattan.",
+        a: "Treat it like any other good night out: make actual plans, go somewhere you\u2019ll enjoy, be present. Singles events on Valentine\u2019s Day have a genuinely different energy because everyone in the room made an active choice to show up. Garam Masala Dating runs Valentine\u2019s shows in NYC at City Winery NYC in Manhattan.",
       },
       {
         q: "Why is Valentine\u2019s Day hard for South Asian singles?",
@@ -551,7 +551,7 @@ export const seasonalPosts: JournalPost[] = [
       },
       {
         q: "Are there Valentine\u2019s Day singles events for South Asians in NYC?",
-        a: "Yes. Garam Masala Dating runs Valentine\u2019s shows at Top Secret Comedy Club in Manhattan. The February shows have a different energy \u2014 the whole room is invested. Watch real blind dates happen on stage, then stay for the mixer. Tickets at garammasaladating.com.",
+        a: "Yes. Garam Masala Dating runs Valentine\u2019s shows at City Winery NYC in Manhattan. The February shows have a different energy \u2014 the whole room is invested. Watch real blind dates happen on stage, then stay for the mixer. Tickets at garammasaladating.com.",
       },
       {
         q: "Is it okay to be single on Valentine\u2019s Day?",

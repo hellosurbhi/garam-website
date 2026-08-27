@@ -22,6 +22,16 @@
 - **Why deferred:** pre-existing content this session did not write or touch; per provenance-based same-session close-out, only code this session authored gets fixed inline.
 - **Revisit when:** next overnight pass. Fix: replace "Monthly shows with a mixer after." with a non-committal cadence word ("Regular shows with a mixer after." or "Shows run regularly, with a mixer after."), consistent with every other Manhattan-cadence fix in this same file and sitewide.
 
+### [LOW] `seasonal.ts` has 13 em-dash violations of the site's no-dash content rule
+
+- **Date:** 2026-08-27
+- **File:** `src/data/journal/seasonal.ts` (lines 92, 212, 259, 267, 287, 337, 371, 423, 427, 512, 516, 528, 554, all `—` unicode escapes for em dash)
+- **Status:** Open
+- **Severity:** Low
+- **What happened:** 13 instances of the em dash (`—`, written as literal `—` escapes) as a sentence separator across journal FAQ answers and body text, violating the site's non-negotiable no-dash rule (CLAUDE.md: em/en/double dash banned from all user-facing copy). Found while grep-sweeping this file for an unrelated Jersey City cadence fix; not touched, since this session did not author the content.
+- **Why deferred:** pre-existing content this session did not write; per provenance-based same-session close-out, only code this session authored gets fixed inline.
+- **Revisit when:** next overnight pass. Fix: replace each `—` with the appropriate comma, period, colon, or parenthetical per the existing site convention (see commit `b654e07`/`b26ab4e`/`f5749e7` for the established replacement patterns used elsewhere in this same file's sibling journal posts).
+
 ### [LOW] GitHub issue #210: `ReferenceError: Cannot access uninitialized variable` has no reachable stack trace
 
 - **Date:** 2026-08-26

@@ -1,0 +1,15 @@
+{
+  "_note": "Word-for-word copy from Surbhi. Do not edit unless she gives new copy word-for-word to replace it with. {{name}} is the full name argument. {{showLine}} and {{portalLine}} are filled in by emails.ts from showLineVariants/portalLineVariants below based on which optional opts were supplied; emails.ts only selects a variant, it must never invent new wording. {{showDate}}/{{showCity}} inside showLineVariants and {{portalUrl}} inside portalLineVariants are runtime values, not copy.",
+  "subject": "You're cast! Accept your spot on Garam Masala Dating",
+  "text": "Hi {{name}},\n\nGreat news! We'd love to cast you on Garam Masala Dating. You had a wonderful energy on our call and we think the audience is going to love you.\n\n{{showLine}}\n\n{{portalLine}}\n\nReach out if you have any questions. So excited to have you!\n\nSurbhi\nGaram Masala Dating",
+  "html": "<div style=\"font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;max-width:600px;margin:0 auto;padding:24px;color:#1A1A1A;line-height:1.6;\"><p style=\"margin:0 0 16px;\">Hi {{name}},</p><p style=\"margin:0 0 16px;\">Great news! We'd love to cast you on Garam Masala Dating. You had a wonderful energy on our call and we think the audience is going to love you.</p><p style=\"margin:0 0 16px;\">{{showLine}}</p><p style=\"margin:0 0 16px;\">{{portalLine}}</p><p style=\"margin:0 0 16px;\">Reach out if you have any questions. So excited to have you!</p><p style=\"margin:0 0 16px;\">Surbhi<br>Garam Masala Dating</p></div>",
+  "showLineVariants": {
+    "withDetails": "Your show is on {{showDate}} in {{showCity}}.",
+    "fallback": "We'll send you the show details shortly."
+  },
+  "portalLineVariants": {
+    "withPortal": "Next step: head to your private Green Room to accept your casting and review the Cast Member Terms: {{portalUrl}}",
+    "fallback": "We'll send you your Green Room link shortly."
+  },
+  "portalLinkLabel": "Accept your casting"
+}

@@ -1,0 +1,7 @@
+{
+  "_note": "Word-for-word copy from Surbhi. Do not edit unless she gives new copy word-for-word to replace it with. {{firstName}} is name.split(\" \")[0], used only in the subject. {{name}} is the full name, used in the body greeting. {{portalUrl}} is the caller's portalUrl: substituted raw in text, and as a link (via the file's link() helper, using linkLabel) in html.",
+  "subject": "Quick reminder, {{firstName}}: waiver needed",
+  "text": "Hi {{name}},\n\nJust a quick reminder to sign your contestant waiver so we can confirm your spot in the show.\n\nYou can sign here: {{portalUrl}}\n\nThe link is valid for a limited time. Let me know if you run into any issues!\n\nSurbhi\nGaram Masala Dating",
+  "html": "<div style=\"font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;max-width:600px;margin:0 auto;padding:24px;color:#1A1A1A;line-height:1.6;\"><p style=\"margin:0 0 16px;\">Hi {{name}},</p><p style=\"margin:0 0 16px;\">Just a quick reminder to sign your contestant waiver so we can confirm your spot in the show.</p><p style=\"margin:0 0 16px;\">You can sign here: {{portalUrl}}</p><p style=\"margin:0 0 16px;\">The link is valid for a limited time. Let me know if you run into any issues!</p><p style=\"margin:0 0 16px;\">Surbhi<br>Garam Masala Dating</p></div>",
+  "linkLabel": "Sign waiver"
+}

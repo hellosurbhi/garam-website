@@ -11,6 +11,7 @@ import { jsonResponse, parseJsonRequest } from "@/lib/http";
 import { StageWaiverSchema } from "@/lib/schemas";
 import { verifyPortalToken } from "@/lib/portalToken";
 import { fsGet, fsAdd, fsPatch } from "@/lib/firestoreRest";
+import { alertOps } from "@/lib/opsAlert";
 
 export const POST: APIRoute = async ({ request }) => {
   const limited = await enforceRateLimit(request, RATE_LIMITS.stageWaiver);
@@ -86,19 +87,40 @@ export const POST: APIRoute = async ({ request }) => {
   if (showId?.trim()) stageWaiverData.showId = showId.trim();
   if (applicantId) stageWaiverData.applicantId = applicantId;
 
-  await fsAdd("stage_waivers", stageWaiverData);
+  const signerContext = {
+    name: `${firstName.trim()} ${lastName.trim()}`,
+    email: email.trim().toLowerCase(),
+    phone,
+  };
 
-  // Link waiver to application document when we have the applicantId
-  if (applicantId) {
-    await fsPatch(`applications/${applicantId}`, {
-      waiverSignedAt: signedAtIso,
+  try {
+    await fsAdd("stage_waivers", stageWaiverData);
+
+    // Link waiver to application document when we have the applicantId
+    if (applicantId) {
+      await fsPatch(`applications/${applicantId}`, {
+        waiverSignedAt: signedAtIso,
+      });
+      await fsAdd(`applications/${applicantId}/events`, {
+        type: "waiver_signed",
+        timestamp: signedAtIso,
+        actor: email.trim().toLowerCase(),
+        payload: { signature: signature.trim() },
+      });
+    }
+  } catch (err) {
+    // A failed waiver write blocks someone from going on stage; page with
+    // their contact fields so they can be walked through it.
+    await alertOps({
+      flow: "waiver",
+      stage: "firestore_write",
+      errorMessage: err instanceof Error ? err.message : String(err),
+      context: signerContext,
     });
-    await fsAdd(`applications/${applicantId}/events`, {
-      type: "waiver_signed",
-      timestamp: signedAtIso,
-      actor: email.trim().toLowerCase(),
-      payload: { signature: signature.trim() },
-    });
+    return jsonResponse(
+      { error: "Could not save your waiver. Please try again." },
+      500,
+    );
   }
 
   try {
@@ -109,8 +131,15 @@ export const POST: APIRoute = async ({ request }) => {
       text: template.text,
       html: template.html,
     });
-  } catch {
-    // Waiver is already signed; receipt email failure should not block the response
+  } catch (err) {
+    // Waiver is already signed; receipt email failure should not block the
+    // response, but a silently dead mailer must still page.
+    await alertOps({
+      flow: "waiver",
+      stage: "receipt_email",
+      errorMessage: err instanceof Error ? err.message : String(err),
+      context: signerContext,
+    });
   }
 
   return jsonResponse({ ok: true });

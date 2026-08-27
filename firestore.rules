@@ -33,6 +33,29 @@ service cloud.firestore {
         && (!('geoTimezone' in d.keys()) || (d.geoTimezone is string && d.geoTimezone.size() > 0 && d.geoTimezone.size() <= 100));
     }
 
+    // Rules have no loops: photoPaths members are validated per index (the
+    // list is capped at 10). matches() is a full-string match in rules, so
+    // this pins every entry to the photos/ contract the client writes and
+    // the admin dashboard resolves with getBlob().
+    function validPhotoPathAt(list, i) {
+      return list.size() <= i
+        || (list[i] is string && list[i].matches('photos/[A-Za-z0-9._-]+'));
+    }
+
+    function validPhotoPaths(list) {
+      return list is list && list.size() > 0 && list.size() <= 10
+        && validPhotoPathAt(list, 0)
+        && validPhotoPathAt(list, 1)
+        && validPhotoPathAt(list, 2)
+        && validPhotoPathAt(list, 3)
+        && validPhotoPathAt(list, 4)
+        && validPhotoPathAt(list, 5)
+        && validPhotoPathAt(list, 6)
+        && validPhotoPathAt(list, 7)
+        && validPhotoPathAt(list, 8)
+        && validPhotoPathAt(list, 9);
+    }
+
     function validApplication() {
       let d = request.resource.data;
       return d.keys().hasOnly([
@@ -40,22 +63,29 @@ service cloud.firestore {
           'email', 'emailNormalized', 'phone', 'height', 'instagram', 'community', 'income',
           'applicationType', 'referrerName', 'nominationConsent',
           'pitch', 'type', 'notes', 'seenShowBefore', 'howHeard', 'marketingConsent',
-          'termsAgreedAt', 'photoUrl', 'photoUrls', 'castEventId', 'deletedAt',
-          'status', 'submittedAt',
+          'termsAgreedAt', 'photoUrl', 'photoUrls', 'photoPaths', 'castEventId', 'deletedAt',
+          'status', 'submittedAt', 'isSynthetic',
           'source', 'sourcePage', 'landingPage', 'referrerHost',
           'utmSource', 'utmMedium', 'utmCampaign', 'utmContent', 'utmTerm',
           'fbclid', 'gclid', 'posthogDistinctId', 'sourceCitySlug'
         ])
-        && d.keys().hasAll(['name', 'age', 'gender', 'orientation', 'city', 'height', 'instagram', 'community', 'income', 'applicationType', 'status', 'submittedAt'])
+        // WHY: hasAll lists exactly the keys buildApplicationDocument in
+        // useApplyForm.ts always writes (the apply form is this rule's only
+        // writer; admin updates use isAdmin(), not this function). Optional
+        // form fields (height/community/income, phone, state, country...)
+        // must stay OUT of this list: requiring them rejected every
+        // submission that left one blank (Aug 2026 outage). They keep their
+        // size() > 0 checks below, applied only when the key is present.
+        && d.keys().hasAll(['name', 'age', 'gender', 'orientation', 'city', 'email', 'emailNormalized', 'instagram', 'applicationType', 'pitch', 'notes', 'marketingConsent', 'termsAgreedAt', 'photoPaths', 'status', 'submittedAt'])
         && d.name is string && d.name.size() > 0 && d.name.size() <= 200
         && d.age is number && d.age >= 18 && d.age <= 120
         && d.gender is string && d.gender.size() > 0 && d.gender.size() <= 100
         && d.orientation is string && d.orientation.size() > 0 && d.orientation.size() <= 100
         && d.city is string && d.city.size() > 0 && d.city.size() <= 100
-        && d.height is string && d.height.size() > 0 && d.height.size() <= 20
+        && (!('height' in d.keys()) || (d.height is string && d.height.size() > 0 && d.height.size() <= 20))
         && d.instagram is string && d.instagram.size() > 0 && d.instagram.size() <= 100
-        && d.community is string && d.community.size() > 0 && d.community.size() <= 100
-        && d.income is string && d.income.size() > 0 && d.income.size() <= 100
+        && (!('community' in d.keys()) || (d.community is string && d.community.size() > 0 && d.community.size() <= 100))
+        && (!('income' in d.keys()) || (d.income is string && d.income.size() > 0 && d.income.size() <= 100))
         && d.applicationType is string && d.applicationType.size() > 0 && d.applicationType.size() <= 50
         && d.status is string && d.status.size() > 0 && d.status.size() <= 50
         && d.submittedAt is timestamp
@@ -75,6 +105,8 @@ service cloud.firestore {
         && (!('termsAgreedAt' in d.keys()) || d.termsAgreedAt is timestamp)
         && (!('photoUrl' in d.keys()) || (d.photoUrl is string && d.photoUrl.size() > 0 && d.photoUrl.size() <= 500))
         && (!('photoUrls' in d.keys()) || (d.photoUrls is list && d.photoUrls.size() <= 10))
+        && (!('photoPaths' in d.keys()) || validPhotoPaths(d.photoPaths))
+        && (!('isSynthetic' in d.keys()) || d.isSynthetic is bool)
         && (!('castEventId' in d.keys()) || (d.castEventId is string && d.castEventId.size() > 0 && d.castEventId.size() <= 100))
         && (!('deletedAt' in d.keys()) || d.deletedAt == null || d.deletedAt is timestamp)
         && (!('source' in d.keys()) || (d.source is string && d.source.size() > 0 && d.source.size() <= 50))

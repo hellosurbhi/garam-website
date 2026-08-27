@@ -1,4 +1,6 @@
 reviews:
+  auto_review:
+    drafts: true
   request_changes_workflow: false
   high_level_summary: true
   poem: false
@@ -11,7 +13,12 @@ reviews:
     - "!**/*.jpeg"
     - "!**/*.jpg"
     - "!**/*.png"
-    - "!**/*.md"
+    # WHY *.md is NOT excluded (owner decision 2026-08-03): on the free
+    # CodeRabbit plan this bot is often the only reviewer a PR gets, and the
+    # global pre-push rework (claude-global-config PR #15) makes
+    # markdown-only pushes skip local suites entirely once merged. Blanket-
+    # excluding .md meant README/docs changes could reach a PR with zero
+    # review anywhere. Re-adding this exclusion recreates that blind spot.
     - "!public/images/**"
     - "!src/assets/**"
     - "!public/sitemap.xml"

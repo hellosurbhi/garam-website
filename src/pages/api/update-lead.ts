@@ -1,6 +1,7 @@
 import type { APIRoute } from "astro";
 import { enforceRateLimit, RATE_LIMITS } from "@/lib/rateLimit";
 import { isLeadTokenEnabled, verifyLeadToken } from "@/lib/leadToken";
+import { alertOps } from "@/lib/opsAlert";
 
 export const prerender = false;
 
@@ -92,6 +93,12 @@ export const POST: APIRoute = async ({ request }) => {
     if (!res.ok) {
       const errText = await res.text();
       console.error("[update-lead] Firestore update failed:", errText);
+      await alertOps({
+        flow: "lead",
+        stage: "phone_update",
+        errorMessage: errText.slice(0, 2000),
+        context: { leadId: id },
+      });
       return new Response(JSON.stringify({ error: "Failed to update lead" }), {
         status: 500,
         headers: { "Content-Type": "application/json" },
@@ -102,7 +109,13 @@ export const POST: APIRoute = async ({ request }) => {
       status: 200,
       headers: { "Content-Type": "application/json" },
     });
-  } catch {
+  } catch (err) {
+    await alertOps({
+      flow: "lead",
+      stage: "phone_update_unhandled",
+      errorMessage: err instanceof Error ? err.message : String(err),
+      context: { leadId: id },
+    });
     return new Response(JSON.stringify({ error: "Server error" }), {
       status: 500,
       headers: { "Content-Type": "application/json" },

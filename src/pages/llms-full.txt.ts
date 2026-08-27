@@ -7,7 +7,7 @@ import {
   EXPERIENCE_STEPS,
 } from "@/data/copy";
 import { stripHtml } from "@/utils/stripHtml";
-import { events, getEventDisplayStatus } from "@/data/events";
+import { events, getEventDisplayStatus, isDisplayable } from "@/data/events";
 import { pressItems } from "@/data/press";
 import { SOCIAL_URLS, CREATOR_URLS } from "@/data/socials";
 import { journalPostsPublished } from "@/data/journal";
@@ -40,10 +40,16 @@ export const GET: APIRoute = () => {
   const today = new Date();
 
   const upcomingEvents = events.filter(
-    (e) => e.isoDate && new Date(e.isoDate + "T00:00:00") >= today && !e.hidden,
+    (e) =>
+      e.isoDate &&
+      new Date(e.isoDate + "T00:00:00") >= today &&
+      isDisplayable(e),
   );
   const pastEvents = events.filter(
-    (e) => e.isoDate && new Date(e.isoDate + "T00:00:00") < today && !e.hidden,
+    (e) =>
+      e.isoDate &&
+      new Date(e.isoDate + "T00:00:00") < today &&
+      isDisplayable(e),
   );
 
   const activeList = Object.values(activeCities).filter(
@@ -85,7 +91,6 @@ export const GET: APIRoute = () => {
               );
             if (e.startTime)
               lines.push(`Time: ${e.startTime} to ${e.endTime ?? "22:00"} ET`);
-            if (e.price) lines.push(`Tickets: $${e.price}`);
             const status = getEventDisplayStatus(e);
             if (status) lines.push(`Status: ${status}`);
             lines.push(`Ticket URL: ${e.url}`);

@@ -1,0 +1,642 @@
+---
+/**
+ * Per-event landing page. Every show (ours or a third-party venue's) gets
+ * one of these: paid traffic lands here first, not on a raw Eventbrite/venue
+ * checkout, so the page can build trust and warm cold Instagram traffic
+ * before the "Get Tickets" click hands off to the real checkout via
+ * /api/go/[slug] (see src/pages/api/go/[slug].ts for the tracked redirect).
+ *
+ * Generates a static page for every entry in allEvents (confirmed shows +
+ * TBA/coming-soon cities), including hidden/sold-out/past ones: these pages
+ * are permanent and may be indexed, bookmarked, or shared long after a show
+ * happens, so EventTicketCta's state machine (src/components/events/
+ * EventTicketCta.astro) has to handle every one of those states gracefully
+ * rather than assuming only "upcoming and on sale" is ever rendered.
+ */
+import BaseLayout from "@/layouts/BaseLayout.astro";
+import NotifyModal from "@/components/NotifyModal.astro";
+import HomeFAQ from "@/components/home/HomeFAQ.astro";
+import EventTicketCta from "@/components/events/EventTicketCta.astro";
+import EventLineupCard from "@/components/events/EventLineupCard.astro";
+import { Picture } from "astro:assets";
+import { SHOW_IMAGES_ASSETS } from "@/assets/backgrounds";
+import { slugToImageIndex } from "@/data/images";
+import { allEvents, type EventEntry } from "@/data/events";
+import { PERFORMERS } from "@/data/lineup";
+import {
+  EXPERIENCE_STEPS,
+  SHOW_AGENDA,
+  EVENT_PAGE,
+  TESTIMONIALS,
+} from "@/data/copy";
+import { formatEventLocation } from "@/utils/eventCity";
+import { addMinutesToTime, formatDisplayTime } from "@/utils/eventDate";
+import { buildBreadcrumbJsonLd, BASE } from "@/utils/breadcrumbs";
+import { buildEventSchemas } from "@/utils/eventSchema";
+import { deriveSeoTitle } from "@/utils/meta";
+import {
+  fetchEventbriteContent,
+  resolveEventDescription,
+} from "@/lib/eventbriteContent";
+
+/**
+ * Pulls real Eventbrite listing copy at build time for every
+ * `ticketSource === "eventbrite-owned"` event so its landing page mirrors
+ * what's actually live on Eventbrite instead of a manually-typed description
+ * silently drifting out of date. Third-party listings (`"external"`, e.g.
+ * Los Angeles) are skipped entirely: we have no right to represent someone
+ * else's Eventbrite listing as sourced content (see eventbriteContent.ts).
+ * `fetchEventbriteContent`/`resolveEventDescription` already fail soft to
+ * the manual description, so a missing token or API hiccup keeps the build
+ * green.
+ */
+export async function getStaticPaths() {
+  const token = import.meta.env.EVENTBRITE_API_TOKEN;
+
+  return Promise.all(
+    allEvents.map(async (event) => {
+      const shouldFetch =
+        event.ticketSource === "eventbrite-owned" &&
+        Boolean(event.eventbriteId) &&
+        Boolean(token);
+
+      const content = shouldFetch
+        ? await fetchEventbriteContent(event.eventbriteId!, token)
+        : null;
+
+      const description = resolveEventDescription(event.description, content);
+
+      return {
+        params: { slug: event.slug },
+        props: { event, description },
+      };
+    }),
+  );
+}
+
+interface Props {
+  event: EventEntry;
+  description: string;
+}
+
+const { event, description } = Astro.props;
+
+const cityLabel = formatEventLocation(event);
+const heroImage =
+  SHOW_IMAGES_ASSETS[slugToImageIndex(event.slug, SHOW_IMAGES_ASSETS.length)];
+
+// Location-first, date-second: keeps the two things that actually make this
+// page unique (which city, which date) ahead of the generic "Comedy Dating
+// Show" phrase, so deriveSeoTitle's truncation (43-char budget) drops the
+// least-unique words first if a longer city name ever forces a trim.
+const rawTitle =
+  event.date === "TBA"
+    ? `${event.city} Comedy Dating Show, Coming Soon`
+    : `${event.city} Comedy Dating Show, ${event.date}`;
+const seoTitle = deriveSeoTitle(rawTitle);
+// WHY `description`, not `event.description`: `description` is the prop
+// getStaticPaths already resolved via resolveEventDescription (real
+// Eventbrite listing copy for owned events when the API pull succeeds,
+// falling back to event.description otherwise). Using event.description
+// directly here would silently revert the meta description (what search
+// engines show in results) to the stale manual copy on every page that
+// successfully pulled live content, even though the visible page body
+// below correctly renders the resolved version. Caught by Codex pre-push
+// review (2026-08-03).
+const metaDescription = EVENT_PAGE.metaDescription(description);
+
+const eventSchemas = buildEventSchemas([event]);
+const breadcrumbJsonLd = buildBreadcrumbJsonLd([
+  { name: "Home", url: `${BASE}/` },
+  { name: "Tickets", url: `${BASE}/tickets` },
+  {
+    name: event.date === "TBA" ? cityLabel : `${cityLabel}, ${event.date}`,
+  },
+]);
+
+// Only a real, announced date has a real run-of-show: TBA/coming-soon
+// cities (Edison, LA/Chicago/Houston pre-launch) have no confirmed start
+// or venue yet, so a concrete "6 PM Doors / 8 PM Show" would be fabricated,
+// not sourced. isoDate is only ever set once a date is confirmed (see
+// EventEntry in src/data/events.ts), so its presence is the same signal
+// the hero meta above already uses for "Date announcing soon".
+const showAgenda = Boolean(event.isoDate);
+const startTime = event.startTime ?? "20:00";
+const endTime = event.endTime ?? "22:00";
+const agendaRows = SHOW_AGENDA.map((slot) => ({
+  label: slot.label,
+  time: formatDisplayTime(
+    addMinutesToTime(
+      slot.anchor === "start" ? startTime : endTime,
+      slot.offsetMinutes,
+    ),
+  ),
+}));
+
+const venue = event.venue;
+const venueAddress = venue
+  ? [
+      venue.streetAddress,
+      venue.addressLocality,
+      venue.addressRegion,
+      venue.postalCode,
+    ]
+      .filter(Boolean)
+      .join(", ")
+  : "";
+const mapsHref = venue
+  ? `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(`${venue.name}, ${venueAddress}`)}`
+  : "";
+
+const lineup = event.lineup.map((id) => PERFORMERS[id]);
+---
+
+<BaseLayout title={seoTitle} description={metaDescription}>
+  <Fragment slot="head">
+    {
+      /*
+        WHY no <link rel="canonical"> here: BaseLayout already emits one,
+        defaulting to new URL(Astro.url.pathname, Astro.site) which resolves
+        to this exact page for a static /events/[slug] route. A second,
+        duplicate canonical tag here (the branch used to build one from BASE
+        + event.slug) made every event page emit two, and per Google's own
+        guidance, multiple canonical tags on one page get ignored entirely
+        in favor of Google's own canonical-selection heuristic, defeating
+        the tag's purpose. Caught by Codex pre-push review (2026-08-03).
+      */
+    }
+    {
+      eventSchemas.map((schema) => (
+        <script type="application/ld+json" set:html={schema} />
+      ))
+    }
+    <script type="application/ld+json" set:html={breadcrumbJsonLd} />
+  </Fragment>
+
+  <main id="main-content" class="event-page">
+    <NotifyModal source="event-page" />
+
+    {/* Hero */}
+    <section class="event-hero">
+      <Picture
+        class="event-hero__bg"
+        src={heroImage}
+        formats={["avif", "webp"]}
+        widths={[640, 1024, 1600]}
+        sizes="100vw"
+        alt=""
+        aria-hidden="true"
+        loading="lazy"
+        decoding="async"
+        fetchpriority="low"
+      />
+      <div class="event-hero__inner">
+        <p class="event-hero__eyebrow">{EVENT_PAGE.eyebrow}</p>
+        <h1 class="event-hero__title">Garam Masala Dating in {cityLabel}</h1>
+        <p class="event-hero__meta">
+          {event.date === "TBA" ? "Date announcing soon" : event.date}
+          {" · "}
+          {venue?.name ?? cityLabel}
+        </p>
+        <div class="event-hero__cta">
+          <EventTicketCta event={event} position="event_hero" />
+        </div>
+      </div>
+    </section>
+
+    {/* Overview */}
+    <section class="event-section event-section--cream">
+      <div class="event-section__inner">
+        <h2>{EVENT_PAGE.overviewHeading}</h2>
+        <p class="event-overview__text">{description}</p>
+      </div>
+    </section>
+
+    {/* What to expect */}
+    <section class="event-section event-section--off-white">
+      <div class="event-section__inner">
+        <h2>{EVENT_PAGE.whatToExpectHeading}</h2>
+        <div class="event-expect__grid">
+          {
+            EXPERIENCE_STEPS.map((step, i) => (
+              <div class="event-expect__step">
+                <div class="event-expect__num">
+                  {String(i + 1).padStart(2, "0")}
+                </div>
+                <div>
+                  <h3>{step.title}</h3>
+                  <p>{step.text}</p>
+                </div>
+              </div>
+            ))
+          }
+        </div>
+      </div>
+    </section>
+
+    {/* Lineup */}
+    {
+      lineup.length > 0 && (
+        <section class="event-section event-section--white">
+          <div class="event-section__inner">
+            <h2>{EVENT_PAGE.lineupHeading}</h2>
+            <div class="event-lineup__grid">
+              {lineup.map((performer) => (
+                <EventLineupCard performer={performer} />
+              ))}
+            </div>
+          </div>
+        </section>
+      )
+    }
+
+    {
+      /* Location: always rendered (even pre-venue) so section background
+        alternation never breaks for TBA/coming-soon cities. Its own
+        background flips to off-white when Agenda (below) is omitted for
+        a TBA event, since Location would otherwise sit directly against
+        HomeFAQ's fixed cream background with nothing off-white between
+        them, repeating the same color on two adjacent sections. */
+    }
+    <section
+      class={`event-section ${showAgenda ? "event-section--cream" : "event-section--off-white"}`}
+    >
+      <div class="event-section__inner">
+        <h2>{EVENT_PAGE.locationHeading}</h2>
+        {
+          venue ? (
+            <>
+              <p class="event-location__venue">{venue.name}</p>
+              <p class="event-location__address">{venueAddress}</p>
+              <a
+                href={mapsHref}
+                target="_blank"
+                rel="noopener noreferrer"
+                class="event-location__cta"
+                data-ph-capture="cta_clicked"
+                data-ph-cta="get_directions"
+                data-ph-section="event_location"
+                data-cta-position="event_location"
+                data-cta-text={EVENT_PAGE.getDirectionsCta}
+                data-event-city={cityLabel}
+              >
+                {EVENT_PAGE.getDirectionsCta}
+              </a>
+            </>
+          ) : (
+            <p class="event-location__venue">
+              Venue announces when tickets go on sale in {cityLabel}.
+            </p>
+          )
+        }
+      </div>
+    </section>
+
+    {/* Agenda: omitted entirely for TBA events, see showAgenda above. */}
+    {
+      showAgenda && (
+        <section class="event-section event-section--off-white">
+          <div class="event-section__inner">
+            <h2>{EVENT_PAGE.agendaHeading}</h2>
+            <ul class="event-agenda__list">
+              {agendaRows.map((row) => (
+                <li class="event-agenda__row">
+                  <span class="event-agenda__time">{row.time}</span>
+                  <span class="event-agenda__label">{row.label}</span>
+                </li>
+              ))}
+            </ul>
+          </div>
+        </section>
+      )
+    }
+
+    {
+      /* FAQ: reuses the homepage's accordion component as-is (same data,
+        same interaction, same analytics) rather than rebuilding it here. */
+    }
+    <HomeFAQ />
+
+    {/* Social proof */}
+    <section class="event-section event-section--white">
+      <div class="event-section__inner">
+        <h2>{EVENT_PAGE.socialProofHeading}</h2>
+        <div class="event-testimonials__grid">
+          {
+            TESTIMONIALS.map((t) => (
+              <blockquote class="event-testimonial">
+                <p class="event-testimonial__quote">&ldquo;{t.quote}&rdquo;</p>
+                <footer class="event-testimonial__author">
+                  {t.author} · {t.location}
+                </footer>
+              </blockquote>
+            ))
+          }
+        </div>
+      </div>
+    </section>
+
+    {/* Bottom CTA */}
+    <section class="event-section event-section--off-white">
+      <div class="event-section__inner event-section__inner--center">
+        <h2>{EVENT_PAGE.bottomCtaHeading}</h2>
+        <EventTicketCta event={event} position="event_bottom" />
+      </div>
+    </section>
+  </main>
+
+  <script>
+    import "@/lib/presaleReveal";
+  </script>
+</BaseLayout>
+
+<style>
+  .event-page {
+    overflow: hidden;
+  }
+
+  /* ── Hero ─────────────────────────────────────────────────── */
+  .event-hero {
+    position: relative;
+    background: white;
+    padding: 48px 20px;
+    text-align: center;
+  }
+
+  .event-hero__bg {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+    z-index: 0;
+    opacity: 0.06;
+  }
+
+  .event-hero__inner {
+    position: relative;
+    z-index: 1;
+    max-width: 640px;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .event-hero__eyebrow {
+    font-family: var(--font-body);
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 3px;
+    color: var(--brand-red);
+    margin-bottom: 16px;
+  }
+
+  .event-hero__title {
+    font-family: var(--font-playfair), serif;
+    font-size: clamp(30px, 5vw, 48px);
+    font-weight: 900;
+    color: var(--charcoal);
+    line-height: 1.1;
+    margin-bottom: 16px;
+  }
+
+  .event-hero__meta {
+    font-family: var(--font-cormorant), serif;
+    font-style: italic;
+    font-size: 19px;
+    color: var(--text-secondary);
+    margin-bottom: 32px;
+  }
+
+  /* column + gap: EventTicketCta's presale state renders two sibling
+     buttons (notify + hidden "get tickets") with no wrapper of its own,
+     see src/components/events/EventTicketCta.astro, so every call site
+     has to supply this layout, not just the single-button states. */
+  .event-hero__cta {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 12px;
+  }
+
+  /* ── Shared section shell ─────────────────────────────────── */
+  .event-section {
+    padding: 56px 20px;
+  }
+
+  .event-section--white {
+    background: white;
+  }
+
+  .event-section--off-white {
+    background: var(--off-white);
+  }
+
+  .event-section--cream {
+    background: var(--cream-warm);
+  }
+
+  .event-section__inner {
+    max-width: 800px;
+    margin: 0 auto;
+  }
+
+  .event-section__inner--center {
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .event-section__inner h2 {
+    font-family: var(--font-playfair), serif;
+    font-size: clamp(26px, 3.5vw, 36px);
+    font-weight: 900;
+    color: var(--charcoal);
+    margin-bottom: 24px;
+    line-height: 1.15;
+  }
+
+  /* ── Overview ─────────────────────────────────────────────── */
+  .event-overview__text {
+    font-size: 16px;
+    line-height: 1.7;
+    color: var(--charcoal);
+  }
+
+  /* ── What to expect ───────────────────────────────────────── */
+  .event-expect__grid {
+    display: flex;
+    flex-direction: column;
+    gap: 28px;
+  }
+
+  .event-expect__step {
+    display: flex;
+    gap: 18px;
+    align-items: flex-start;
+  }
+
+  .event-expect__num {
+    font-family: var(--font-playfair), serif;
+    font-size: 24px;
+    font-weight: 900;
+    color: var(--brand-red);
+    flex-shrink: 0;
+    min-width: 40px;
+  }
+
+  .event-expect__step h3 {
+    font-family: var(--font-playfair), serif;
+    font-size: 18px;
+    font-weight: 700;
+    color: var(--charcoal);
+    margin-bottom: 6px;
+  }
+
+  .event-expect__step p {
+    font-size: 15px;
+    line-height: 1.65;
+    color: var(--text-secondary);
+  }
+
+  /* ── Lineup ───────────────────────────────────────────────── */
+  .event-lineup__grid {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+
+  /* ── Location ──────────────────────────────────────────────── */
+  .event-location__venue {
+    font-family: var(--font-cormorant), serif;
+    font-size: 22px;
+    font-weight: 700;
+    color: var(--charcoal);
+    margin-bottom: 4px;
+  }
+
+  .event-location__address {
+    font-size: 15px;
+    color: var(--text-secondary);
+    margin-bottom: 20px;
+  }
+
+  .event-location__cta {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: var(--touch-target);
+    padding: 12px 28px;
+    border-radius: 50px;
+    background: rgba(var(--brand-red-rgb), 0.08);
+    color: var(--brand-red);
+    border: 1.5px solid rgba(var(--brand-red-rgb), 0.35);
+    font-family: var(--font-body), sans-serif;
+    font-size: 14px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1.2px;
+    text-decoration: none;
+    transition:
+      background 0.2s,
+      transform 0.06s;
+  }
+
+  .event-location__cta:hover {
+    background: rgba(var(--brand-red-rgb), 0.15);
+  }
+
+  .event-location__cta:active {
+    transform: scale(0.97);
+  }
+
+  /* ── Agenda ───────────────────────────────────────────────── */
+  .event-agenda__list {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .event-agenda__row {
+    display: flex;
+    gap: 20px;
+    padding: 14px 0;
+    border-bottom: 1px solid var(--border-light);
+  }
+
+  .event-agenda__row:first-child {
+    border-top: 1px solid var(--border-light);
+  }
+
+  .event-agenda__time {
+    font-family: var(--font-playfair), serif;
+    font-weight: 700;
+    color: var(--brand-red);
+    min-width: 88px;
+    flex-shrink: 0;
+  }
+
+  .event-agenda__label {
+    font-size: 15px;
+    color: var(--charcoal);
+  }
+
+  /* ── Social proof ─────────────────────────────────────────── */
+  .event-testimonials__grid {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+
+  .event-testimonial {
+    padding: 24px;
+    border-radius: 16px;
+    border: 1px solid rgba(0, 0, 0, 0.08);
+    background: var(--off-white);
+    margin: 0;
+  }
+
+  .event-testimonial__quote {
+    font-family: var(--font-cormorant), serif;
+    font-style: italic;
+    font-size: 18px;
+    line-height: 1.6;
+    color: var(--charcoal);
+    margin-bottom: 12px;
+  }
+
+  .event-testimonial__author {
+    font-size: 12px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1.2px;
+    color: var(--brand-red);
+  }
+
+  @media (min-width: 768px) {
+    .event-hero {
+      padding: 80px 48px;
+    }
+
+    .event-section {
+      padding: 80px 48px;
+    }
+
+    .event-lineup__grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 20px;
+    }
+
+    .event-testimonials__grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 20px;
+    }
+  }
+</style>

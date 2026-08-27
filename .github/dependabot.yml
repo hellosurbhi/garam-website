@@ -9,6 +9,18 @@ updates:
     groups:
       minor-and-patch:
         update-types: [minor, patch]
+      stryker-major:
+        patterns:
+          - "@stryker-mutator/*"
+        update-types: [major]
+      # WHY: any two major-bump PRs opened in the same cycle conflict each
+      # other's package-lock.json (whichever merges first invalidates the
+      # other's lockfile hash), and the generic conflict-fixer can't safely
+      # 3-way-merge a lockfile, so they park forever. Bundling every major
+      # bump into one PR per week (mirrors minor-and-patch above) removes
+      # the collision instead of resolving it after the fact.
+      major:
+        update-types: [major]
     reviewers:
       - hellosurbhi
 

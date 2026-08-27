@@ -249,6 +249,7 @@ const showCityInput = collectCity && !cityMode;
   import { cleanPhone } from "@/lib/phone";
   import { identifyLead, trackLeadEvent } from "@/lib/analytics";
   import { buildLeadAttribution } from "@/lib/leadAttribution";
+  import { reportFailure } from "@/lib/failureAlert";
   import {
     captureLead,
     updateLeadPhone,
@@ -378,11 +379,19 @@ const showCityInput = collectCity && !cityMode;
           (
             root.querySelector("[data-lc-phone]") as HTMLInputElement | null
           )?.focus();
-        } catch {
+        } catch (err) {
           if (errorEl) {
             errorEl.textContent = "Something went wrong. Please try again.";
             errorEl.removeAttribute("hidden");
           }
+          // A failed capture is a silently lost lead; page with the email so
+          // the person is recoverable.
+          reportFailure({
+            flow: "lead",
+            stage: "email",
+            errorMessage: err instanceof Error ? err.message : String(err),
+            contact: { email: capturedEmail },
+          });
         } finally {
           if (submitBtn) {
             submitBtn.disabled = false;
@@ -448,12 +457,18 @@ const showCityInput = collectCity && !cityMode;
               successMsg.dataset.lcDefaultMsg ??
               "You're on the list! Deals incoming.";
           showStep("success");
-        } catch {
+        } catch (err) {
           if (phoneErrorEl) {
             phoneErrorEl.textContent =
               "Something went wrong. Please try again or skip.";
             phoneErrorEl.removeAttribute("hidden");
           }
+          reportFailure({
+            flow: "lead",
+            stage: "phone",
+            errorMessage: err instanceof Error ? err.message : String(err),
+            contact: { email: capturedEmail, phone: cleaned },
+          });
         } finally {
           if (submitBtn) {
             submitBtn.disabled = false;

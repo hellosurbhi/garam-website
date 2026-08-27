@@ -74,7 +74,7 @@ export const liveShowsPosts: JournalPost[] = [
       },
       {
         type: "p",
-        text: "Full disclosure, this one is mine, so let me tell you exactly what it is and who it is for. Two real singles meet for the first time on stage and go on a blind date in front of 250 people. My co-host Wyatt and I steer the date with stand-up, games and crowd work. The audience votes on a second date. Then the venue flips into a singles mixer and the whole room gets to do what they just watched. It runs regularly in Manhattan and has also played <a href='/cities/jersey-city'>Jersey City</a>, <a href='/cities/boston'>Boston</a>, <a href='/cities/philadelphia'>Philadelphia</a>, <a href='/cities/edison'>Edison</a>, <a href='/cities/los-angeles'>Los Angeles</a> and <a href='/cities/san-francisco'>San Francisco</a>.",
+        text: "Full disclosure, this one is mine, so let me tell you exactly what it is and who it is for. Two real singles meet for the first time on stage and go on a blind date in front of 250 people. My co-host Wyatt and I steer the date with stand-up, games and crowd work. The audience votes on a second date. Then the venue flips into a singles mixer and the whole room gets to do what they just watched. It runs regularly in Manhattan, <a href='/cities/jersey-city'>Jersey City</a>, <a href='/cities/boston'>Boston</a>, <a href='/cities/philadelphia'>Philadelphia</a>, <a href='/cities/edison'>Edison</a>, <a href='/cities/los-angeles'>Los Angeles</a> and <a href='/cities/san-francisco'>San Francisco</a>.",
       },
       {
         type: "p",
@@ -402,7 +402,7 @@ export const liveShowsPosts: JournalPost[] = [
       },
       {
         q: "What cities have live dating shows in 2026?",
-        a: "New York City has the deepest scene. Garam Masala Dating runs regularly in Manhattan and has also played Jersey City, Boston, Philadelphia, Edison, Los Angeles and San Francisco, expanding city by city based on waitlist demand. Check garammasaladating.com/cities for your city.",
+        a: "New York City has the deepest scene. Garam Masala Dating runs regularly in Manhattan, Jersey City, Boston, Philadelphia, Edison, Los Angeles and San Francisco, expanding city by city based on waitlist demand. Check garammasaladating.com/cities for your city.",
       },
       {
         q: "How do I get tickets to a live dating show?",

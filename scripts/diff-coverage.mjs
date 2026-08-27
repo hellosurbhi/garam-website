@@ -56,6 +56,16 @@ const coverage = JSON.parse(readFileSync(COVERAGE_FILE, "utf8"));
 // statementMap entry, so a called-but-single-return-statement function (e.g.
 // `function wrap(...) { return {...}; }`) reads its signature line as
 // "uncovered" even though fnMap/f proves it ran.
+//
+// WHY rescue through loc.start, not just decl (found via this PR's own gate
+// run, 2026-08-27, on a real multi-line signature): `decl` only spans the
+// function's name (one line), but a Prettier-wrapped multi-line parameter
+// list puts the closing `): ReturnType {` on a later line than the name --
+// everything between decl and loc.start is exclusively parameter-list
+// syntax (statementMap can never instrument it; it isn't a statement), so
+// its coverage is identical to whether the function itself ran. Stopping at
+// decl.end left every multi-line signature's parameter lines permanently
+// "uncovered" no matter how well-tested the function was.
 function coveredLinesFor(fileCoverage) {
   const covered = new Set();
   for (const key of Object.keys(fileCoverage.statementMap)) {
@@ -66,8 +76,11 @@ function coveredLinesFor(fileCoverage) {
   }
   for (const key of Object.keys(fileCoverage.fnMap ?? {})) {
     if (fileCoverage.f[key] > 0) {
-      const { start, end } = fileCoverage.fnMap[key].decl;
-      for (let line = start.line; line <= end.line; line++) covered.add(line);
+      const { decl, loc } = fileCoverage.fnMap[key];
+      const endLine = Math.max(decl.end.line, loc.start.line);
+      for (let line = decl.start.line; line <= endLine; line++) {
+        covered.add(line);
+      }
     }
   }
   return covered;

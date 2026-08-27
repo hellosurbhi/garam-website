@@ -3,6 +3,17 @@ import { Redis } from "@upstash/redis";
 import { readTrimmedEnv } from "@/lib/env";
 import { jsonResponse } from "@/lib/http";
 import { API_MESSAGES } from "@/lib/messages";
+import { withTimeout } from "@/utils/withTimeout";
+
+// WHY a hard ceiling on the Redis round-trip: enforceRateLimit's catch block
+// only fails open on a *thrown* error, not a *hanging* one. Every route that
+// calls this synchronously (all of them except the backgrounded
+// src/pages/api/go/[slug].ts) would otherwise have no bound on how long a
+// slow Upstash response could hold up its own response. 1.5s comfortably
+// covers a normal Upstash REST call (typically well under 100ms) while
+// staying short enough that even a synchronous caller's visitor barely
+// notices a worst case.
+const REDIS_TIMEOUT_MS = 1500;
 
 export interface RateLimitPolicy {
   prefix: string;
@@ -143,12 +154,22 @@ export async function enforceRateLimit(
   request: Request,
   policy: RateLimitPolicy,
 ): Promise<Response | null> {
-  const limiter = getLimiter(policy);
-  if (!limiter) return null;
-
+  // WHY getLimiter() is called inside the try, not before it (caught by
+  // Codex review, 2026-08-27): the Redis/Ratelimit constructors it calls can
+  // themselves throw (e.g. a malformed UPSTASH_REDIS_REST_URL), and every
+  // caller of this function (11 routes, none of which wrap the call in their
+  // own try/catch) trusts this function's documented fail-open contract.
+  // Outside the try, that constructor throw would reject this function's
+  // promise instead of resolving to null, turning a bad env value into a
+  // 500 on every rate-limited route instead of the intended no-op.
   try {
-    const { success, limit, remaining, reset } = await limiter.limit(
-      getClientIp(request),
+    const limiter = getLimiter(policy);
+    if (!limiter) return null;
+
+    const { success, limit, remaining, reset } = await withTimeout(
+      limiter.limit(getClientIp(request)),
+      REDIS_TIMEOUT_MS,
+      "Upstash rate limit check",
     );
     if (success) return null;
 

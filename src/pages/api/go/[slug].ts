@@ -1,7 +1,8 @@
 export const prerender = false;
 
 import type { APIRoute } from "astro";
-import { getEventBySlug } from "@/data/events";
+import { waitUntil } from "@vercel/functions";
+import { getEventBySlug, type EventEntry } from "@/data/events";
 import { isEventDatePast } from "@/utils/eventDate";
 import { enforceRateLimit, RATE_LIMITS, getClientIp } from "@/lib/rateLimit";
 import { applyUtmsToUrl } from "@/utils/utmForwarding";
@@ -9,14 +10,11 @@ import { withTimeout } from "@/utils/withTimeout";
 import { sendCapiEvent } from "@/lib/capi";
 import { isBotUserAgent } from "@/lib/isBotUserAgent";
 
-// WHY a bounded timeout instead of letting the CAPI call run free: this
-// route's entire purpose is firing the tracking event, so the call is
-// awaited (not fire-and-forget): Vercel Node serverless functions are not
-// guaranteed to keep running after the response is sent, so an unawaited
-// call risks being cut off before it completes, silently losing the event.
-// The 2s ceiling caps the worst case (a slow/hanging Meta API call) so a
-// tracking hiccup never meaningfully delays the visitor's redirect to
-// checkout; a typical Graph API call completes in well under 300ms.
+// WHY a bounded timeout on the CAPI call: even though this now runs in the
+// background (see waitUntil() below), Vercel Functions still have a hard max
+// duration, and a hanging Meta API call would otherwise hold the background
+// task open indefinitely. The 2s ceiling caps the worst case; a typical
+// Graph API call completes in well under 300ms.
 const CAPI_TIMEOUT_MS = 2000;
 
 function readCookie(
@@ -28,12 +26,88 @@ function readCookie(
   return match ? decodeURIComponent(match[1]) : undefined;
 }
 
+// WHY this runs after the redirect instead of before it: the visitor is only
+// waiting on the Location header, never on the rate-limit check or the Meta
+// call. waitUntil() (see GET below) keeps this function alive past the
+// response, which is only guaranteed to actually finish because this
+// project has Fluid Compute enabled (verified in Vercel Project Settings ->
+// Functions, 2026-08-27); without it a serverless function is not guaranteed
+// to keep running once the response has been sent, and this work could be
+// silently cut off. Never throws: nothing is awaiting this call, so a thrown
+// error here would surface only as an unhandled rejection in the function
+// logs, not as anything actionable.
+async function recordClickSignals(
+  request: Request,
+  requestUrl: URL,
+  event: EventEntry,
+  eventId: string,
+): Promise<void> {
+  // WHY the rate limit only suppresses tracking instead of ever blocking the
+  // visitor: every real "Get Tickets" click routes through this route, so a
+  // shared-IP burst (one venue/campus/office NAT, or a viral moment) that
+  // trips the limit must still have delivered every buyer to checkout by the
+  // time this runs. The expensive, abusable part of this route is the Meta
+  // CAPI call, so that is what the limit gates.
+  const limited = await enforceRateLimit(request, RATE_LIMITS.goRedirect);
+
+  // WHY skip CAPI for recognized bots: the rateLimit.ts goRedirect policy
+  // comment already documents that Meta/iMessage/Slack unfurl bots
+  // headlessly fetch this exact route whenever a tracked link is shared,
+  // since ad and ticket links point straight here. Left unfiltered, every
+  // one of those non-human fetches was reported to Meta as a real
+  // InitiateCheckout, which doesn't just inflate a vanity metric: it's a
+  // training signal the ad algorithm uses to find more people who look like
+  // whoever converted, so bot traffic labeled as conversions actively
+  // degrades ad targeting. Caught by Codex pre-push review (2026-08-03).
+  const userAgent = request.headers.get("user-agent");
+  const accessToken = import.meta.env.META_CAPI_ACCESS_TOKEN;
+  if (!accessToken || limited || isBotUserAgent(userAgent)) return;
+
+  const cookieHeader = request.headers.get("cookie");
+  try {
+    const result = await withTimeout(
+      sendCapiEvent(
+        {
+          eventName: "InitiateCheckout",
+          eventId,
+          eventTime: Math.floor(Date.now() / 1000),
+          eventSourceUrl: requestUrl.toString(),
+          userData: {
+            clientIpAddress: getClientIp(request),
+            clientUserAgent: userAgent ?? undefined,
+            fbp: readCookie(cookieHeader, "_fbp"),
+            fbc: readCookie(cookieHeader, "_fbc"),
+          },
+          customData: {
+            contentIds: [event.slug],
+            contentType: "event",
+          },
+        },
+        accessToken,
+      ),
+      CAPI_TIMEOUT_MS,
+      "Meta CAPI InitiateCheckout",
+    );
+    if (!result.ok) {
+      console.error(
+        `[go] CAPI InitiateCheckout failed for ${event.slug}: ${result.error}`,
+      );
+    }
+  } catch (err) {
+    const msg = err instanceof Error ? err.message : String(err);
+    console.error(
+      `[go] CAPI InitiateCheckout did not confirm for ${event.slug}: ${msg}`,
+    );
+  }
+}
+
 /**
  * Tracked redirect: every "Get Tickets" click across the site routes through
- * here. Fires a server-side Meta CAPI InitiateCheckout (unblockable by ad
+ * here. Resolves the real checkout URL from our own event data and 302s
+ * immediately; a server-side Meta CAPI InitiateCheckout (unblockable by ad
  * blockers/ITP, and the only tracking signal possible for shows we don't
- * own, see TicketSource in src/data/events.ts), forwards the visitor's
- * UTMs, then 302s to the real checkout.
+ * own, see TicketSource in src/data/events.ts) fires afterward in the
+ * background, see recordClickSignals() above.
  *
  * The destination URL is ALWAYS resolved server-side from our own event
  * data by slug, never from a client-supplied URL param, so this can't be
@@ -65,15 +139,6 @@ export const GET: APIRoute = async ({ params, request }) => {
     });
   }
 
-  // WHY the rate limit only suppresses tracking instead of returning its
-  // 429: every real "Get Tickets" click routes through here, so a
-  // shared-IP burst (one venue/campus/office NAT, or a viral moment) that
-  // trips the limit must still deliver every buyer to checkout. The
-  // expensive, abusable part of this route is the Meta CAPI call, so that
-  // is what the limit gates; the redirect itself is a cheap, server-resolved
-  // 302 that never uses client-supplied URLs.
-  const limited = await enforceRateLimit(request, RATE_LIMITS.goRedirect);
-
   const requestUrl = new URL(request.url);
 
   // Generated client-side by the "Get Tickets" click handler and passed
@@ -100,58 +165,7 @@ export const GET: APIRoute = async ({ params, request }) => {
     },
   );
 
-  // WHY skip CAPI for recognized bots but still redirect them: the
-  // rateLimit.ts goRedirect policy comment already documents that
-  // Meta/iMessage/Slack unfurl bots headlessly fetch this exact route
-  // whenever a tracked link is shared, since ad and ticket links point
-  // straight here. Left unfiltered, every one of those non-human fetches
-  // was reported to Meta as a real InitiateCheckout, which doesn't just
-  // inflate a vanity metric: it's a training signal the ad algorithm uses
-  // to find more people who look like whoever converted, so bot traffic
-  // labeled as conversions actively degrades ad targeting. Caught by Codex
-  // pre-push review (2026-08-03). The redirect below still runs
-  // unconditionally for bots too, since they need the real destination to
-  // build an accurate link-preview card.
-  const userAgent = request.headers.get("user-agent");
-  const accessToken = import.meta.env.META_CAPI_ACCESS_TOKEN;
-  if (accessToken && !limited && !isBotUserAgent(userAgent)) {
-    const cookieHeader = request.headers.get("cookie");
-    try {
-      const result = await withTimeout(
-        sendCapiEvent(
-          {
-            eventName: "InitiateCheckout",
-            eventId,
-            eventTime: Math.floor(Date.now() / 1000),
-            eventSourceUrl: requestUrl.toString(),
-            userData: {
-              clientIpAddress: getClientIp(request),
-              clientUserAgent: userAgent ?? undefined,
-              fbp: readCookie(cookieHeader, "_fbp"),
-              fbc: readCookie(cookieHeader, "_fbc"),
-            },
-            customData: {
-              contentIds: [event.slug],
-              contentType: "event",
-            },
-          },
-          accessToken,
-        ),
-        CAPI_TIMEOUT_MS,
-        "Meta CAPI InitiateCheckout",
-      );
-      if (!result.ok) {
-        console.error(
-          `[go] CAPI InitiateCheckout failed for ${event.slug}: ${result.error}`,
-        );
-      }
-    } catch (err) {
-      const msg = err instanceof Error ? err.message : String(err);
-      console.error(
-        `[go] CAPI InitiateCheckout did not confirm for ${event.slug}: ${msg}`,
-      );
-    }
-  }
+  waitUntil(recordClickSignals(request, requestUrl, event, eventId));
 
   return new Response(null, {
     status: 302,

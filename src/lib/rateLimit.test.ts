@@ -126,6 +126,28 @@ describe("enforceRateLimit", () => {
     expect(errorSpy).toHaveBeenCalled();
   });
 
+  it("fails open when the limiter hangs past the timeout", async () => {
+    import.meta.env.UPSTASH_REDIS_REST_URL = "https://example.upstash.io";
+    import.meta.env.UPSTASH_REDIS_REST_TOKEN = "token";
+    const errorSpy = vi.spyOn(console, "error").mockImplementation(() => {});
+    mocks.limit.mockImplementation(() => new Promise(() => {}));
+
+    vi.useFakeTimers();
+    try {
+      const resultPromise = enforceRateLimit(
+        makeRequest(),
+        RATE_LIMITS.captureLead,
+      );
+      await vi.advanceTimersByTimeAsync(1500);
+      const result = await resultPromise;
+
+      expect(result).toBeNull();
+      expect(errorSpy).toHaveBeenCalled();
+    } finally {
+      vi.useRealTimers();
+    }
+  });
+
   it("reuses one limiter instance per policy prefix", async () => {
     import.meta.env.UPSTASH_REDIS_REST_URL = "https://example.upstash.io";
     import.meta.env.UPSTASH_REDIS_REST_TOKEN = "token";

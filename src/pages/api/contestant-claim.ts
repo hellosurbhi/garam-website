@@ -4,10 +4,8 @@ import { cleanPhone } from "@/lib/phone";
 import { signPortalToken, _midnightLocalUnix } from "@/lib/portalToken";
 import { WAIVER_VERSION, WAIVER_TEXT } from "@/data/waiver";
 import { sendMail } from "@/lib/zohoMailer";
-import {
-  waiverReceiptWithText,
-  producerWaiverNotification,
-} from "@/data/emails";
+import { waiverReceiptWithText } from "@/data/emails";
+import { producerWaiverNotification } from "@/data/emails";
 import { createHash } from "node:crypto";
 import { enforceRateLimit, RATE_LIMITS, getClientIp } from "@/lib/rateLimit";
 import { jsonResponse, parseJsonRequest } from "@/lib/http";

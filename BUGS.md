@@ -2,6 +2,17 @@
 
 ## Open
 
+### [HIGH] zohoMailer.sendMail has no bounded timeout, sitewide
+
+- **Date:** 2026-08-27
+- **File:** `src/lib/zohoMailer.ts` (`sendMail`, `createTransport` call), every API route that awaits it: `src/pages/api/capture-lead.ts`, `contestant-claim.ts`, `contestant-open-claim.ts`, `contestant-show-claim.ts`, `stage-waiver.ts`, `notify-application.ts`
+- **Status:** Open
+- **Severity:** High
+- **What happened:** Found while auditing the dead-mailer notification pipeline (fix/notification-pipeline-recovery). `sendMail()` calls `nodemailer.createTransport({host: "smtp.zoho.com", port: 465, secure: true, auth})` with no `connectionTimeout`, `greetingTimeout`, or `socketTimeout` set, then `await transport.sendMail(...)` with no `AbortSignal`/`Promise.race` wrapper around it. If Zoho's SMTP endpoint hangs (TCP connect stalls, TLS handshake stalls, or the server accepts the connection but never responds to `MAIL FROM`), the awaited call blocks for however long nodemailer's own internal default is (effectively unbounded for connect/greeting), which on Vercel serverless holds the function open until the platform's own execution-time limit kills it, turning one slow SMTP attempt into a full request timeout for the caller instead of a fast, retryable failure.
+- **Why deferred:** pre-existing, sitewide, cross-cutting code untouched by this session's A1-A3 work (this session only added new callers of the existing `sendMail`, it did not write `zohoMailer.ts`); out of scope for the notification-pipeline-recovery plan.
+- **Fix:** add `connectionTimeout`/`greetingTimeout`/`socketTimeout` (e.g. 10s each) to the `createTransport` options so a hung SMTP attempt fails fast with a catchable error instead of hanging the function.
+- **Verify:** point `ZOHO_SMTP_USER`/`_PASS` at an unreachable host or block outbound 465 in a test environment, confirm `sendMail()` rejects within the configured timeout instead of hanging to the platform limit.
+
 ### [MODERATE] 3 unfixed npm audit findings in @opentelemetry/core (via firebase-tools)
 
 - **Date:** 2026-08-02

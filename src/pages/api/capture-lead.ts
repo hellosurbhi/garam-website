@@ -4,6 +4,9 @@ import { addKitSubscriber, type KitSubscriberFields } from "@/lib/kit";
 import { enforceRateLimit, RATE_LIMITS } from "@/lib/rateLimit";
 import { issueLeadToken } from "@/lib/leadToken";
 import { alertOps } from "@/lib/opsAlert";
+import { sendMail } from "@/lib/zohoMailer";
+import { producerLeadNotification } from "@/data/emails";
+import { readTrimmedEnv } from "@/lib/env";
 
 export const prerender = false;
 
@@ -206,6 +209,36 @@ export const POST: APIRoute = async ({ request }) => {
     addKitSubscriber(email, kitTags, kitFields).catch(() => {
       // Kit errors are already logged inside addKitSubscriber
     });
+
+    // Notify the producer of the new signup. Awaited, not fire-and-forget:
+    // a detached promise can be dropped if the serverless function freezes
+    // right after the response is returned.
+    const notificationEmail = readTrimmedEnv(
+      import.meta.env.NOTIFICATION_EMAIL,
+    );
+    if (notificationEmail) {
+      const notifyCity = normalizedString(body.city, 100);
+      const notifyPhone = normalizedString(body.phone, 20);
+      const notifySource = normalizedString(body.source ?? "lead-capture", 50);
+      const notifySourcePage = normalizedString(body.sourcePage ?? "/", 200);
+      try {
+        const template = producerLeadNotification({
+          email,
+          city: notifyCity || undefined,
+          phone: notifyPhone || undefined,
+          source: notifySource || undefined,
+          sourcePage: notifySourcePage || undefined,
+        });
+        await sendMail({ to: notificationEmail, ...template });
+      } catch (err) {
+        await alertOps({
+          flow: "lead",
+          stage: "success_email",
+          errorMessage: err instanceof Error ? err.message : String(err),
+          context: { email, city: notifyCity },
+        });
+      }
+    }
 
     // Ownership proof for the step-2 phone update. Null while
     // LEAD_UPDATE_SECRET is unset (feature off), in which case the key is

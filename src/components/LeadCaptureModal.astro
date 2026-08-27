@@ -247,7 +247,7 @@ const showCityInput = collectCity && !cityMode;
 
 <script>
   import { cleanPhone } from "@/lib/phone";
-  import { identifyLead, trackLeadEvent } from "@/lib/analytics";
+  import { identifyLead, trackLeadEvent, trackError } from "@/lib/analytics";
   import { buildLeadAttribution } from "@/lib/leadAttribution";
   import { reportFailure } from "@/lib/failureAlert";
   import {
@@ -392,6 +392,12 @@ const showCityInput = collectCity && !cityMode;
             errorMessage: err instanceof Error ? err.message : String(err),
             contact: { email: capturedEmail },
           });
+          trackError({
+            error_message: err instanceof Error ? err.message : String(err),
+            error_type: "api_error",
+            component: "LeadCaptureModal",
+            email: capturedEmail,
+          });
         } finally {
           if (submitBtn) {
             submitBtn.disabled = false;
@@ -468,6 +474,12 @@ const showCityInput = collectCity && !cityMode;
             stage: "phone",
             errorMessage: err instanceof Error ? err.message : String(err),
             contact: { email: capturedEmail, phone: cleaned },
+          });
+          trackError({
+            error_message: err instanceof Error ? err.message : String(err),
+            error_type: "api_error",
+            component: "LeadCaptureModal",
+            email: capturedEmail,
           });
         } finally {
           if (submitBtn) {

@@ -20,6 +20,7 @@ import {
 } from "@/data/contestantPortal";
 import { useWaiverSignature } from "@/components/waiver/useWaiverSignature";
 import { reportFailure } from "@/lib/failureAlert";
+import { trackError } from "@/lib/analytics";
 import { WaiverPanel } from "@/components/WaiverPanel";
 
 type ContestantRole = "female" | "male";
@@ -147,6 +148,12 @@ function reportClaimFailure(err: unknown, data: PortalSignupData): void {
       email: data.email,
       phone: data.phone,
     },
+  });
+  trackError({
+    error_message: err instanceof Error ? err.message : String(err),
+    error_type: "api_error",
+    component: "ContestantPortal",
+    email: data.email,
   });
 }
 

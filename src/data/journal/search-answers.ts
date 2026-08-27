@@ -1777,7 +1777,7 @@ export const searchAnswersPosts: JournalPost[] = [
       },
       {
         type: "p",
-        text: "Garam Masala Dating runs frequently in <a href='/cities/manhattan'>Manhattan</a> and has also run in <a href='/cities/jersey-city'>Jersey City</a>, with regular touring shows across the US including <a href='/cities/los-angeles'>Los Angeles</a>. The format is a comedy dating show followed by a singles mixer. It is the only live format specifically designed for South Asian singles that also includes a built-in social event afterward. Most people who come once come back. Read about <a href='/journal/the-realest-way-to-meet-desi-singles-in-nyc'>the realest way to meet desi singles in NYC</a> for the full comparison of options.",
+        text: "Garam Masala Dating runs regularly in <a href='/cities/manhattan'>Manhattan</a> and has also run in <a href='/cities/jersey-city'>Jersey City</a>, with touring shows across the US including <a href='/cities/los-angeles'>Los Angeles</a>. The format is a comedy dating show followed by a singles mixer. It is the only live format specifically designed for South Asian singles that also includes a built-in social event afterward. Most people who come once come back. Read about <a href='/journal/the-realest-way-to-meet-desi-singles-in-nyc'>the realest way to meet desi singles in NYC</a> for the full comparison of options.",
       },
       {
         type: "p",

@@ -438,7 +438,7 @@ export const corePosts: JournalPost[] = [
     ],
     author: "Surbhi",
     excerpt:
-      "You meet desi singles in NYC by getting off the apps and into a room where people actually came to connect. I run that room.",
+      "You meet desi singles in NYC by getting off the apps and into a room where people actually came to connect. I run that room regularly.",
     faqs: [
       {
         q: "Where can I meet South Asian singles in NYC?",
@@ -460,7 +460,7 @@ export const corePosts: JournalPost[] = [
     body: [
       {
         type: "p",
-        text: "You meet desi singles in NYC by getting off the apps and into a room where people actually came to connect. I run that room. Here\u2019s what works.",
+        text: "You meet desi singles in NYC by getting off the apps and into a room where people actually came to connect. I run that room regularly. Here\u2019s what works.",
       },
       {
         type: "h2",
@@ -578,7 +578,7 @@ export const corePosts: JournalPost[] = [
     ],
     author: "Surbhi",
     excerpt:
-      "The #1 desi comedy dating show puts real singles on blind dates in front of a live audience. No script. No safety net. I run one, and here\u2019s what actually goes down.",
+      "The #1 desi comedy dating show puts real singles on blind dates in front of a live audience. No script. No safety net. I run one regularly, and here\u2019s what actually goes down.",
     keyTakeaway:
       "At a live comedy dating show, two real singles who have never met go on a first date on stage while comedian hosts run questions, games and crowd work, then the audience votes on a second date. At Garam Masala Dating the show runs about 90 minutes and is followed by a singles mixer for the whole room.",
     faqs: [
@@ -602,7 +602,7 @@ export const corePosts: JournalPost[] = [
     body: [
       {
         type: "p",
-        text: "The #1 desi comedy dating show puts real singles on blind dates in front of a live audience. No script. No safety net. I run one, and here\u2019s what actually goes down.",
+        text: "The #1 desi comedy dating show puts real singles on blind dates in front of a live audience. No script. No safety net. I run one regularly, and here\u2019s what actually goes down.",
       },
       { type: "h2", text: "Before the show even starts" },
       {

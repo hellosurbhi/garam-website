@@ -848,7 +848,7 @@ export const appAlternativesPosts: JournalPost[] = [
       },
       {
         type: "p",
-        text: "Garam Masala Dating is the most specific version of this. It\u2019s the #1 desi comedy dating show built for South Asian singles, running in NYC. Three blind dates on stage in front of 250 people. A mixer after where the whole room is already warm from what just happened. It\u2019s not an app. It\u2019s not a spreadsheet. It\u2019s 250 brown people in a room having a genuinely good time, and some of them are going home with each other\u2019s numbers. <a href='/apply'>Apply to be a contestant</a> or buy tickets and come watch. Either works.",
+        text: "Garam Masala Dating is the most specific version of this. It\u2019s the #1 desi comedy dating show built for South Asian singles, based in NYC. Three blind dates on stage in front of 250 people. A mixer after where the whole room is already warm from what just happened. It\u2019s not an app. It\u2019s not a spreadsheet. It\u2019s 250 brown people in a room having a genuinely good time, and some of them are going home with each other\u2019s numbers. <a href='/apply'>Apply to be a contestant</a> or buy tickets and come watch. Either works.",
       },
     ],
     faqs: [

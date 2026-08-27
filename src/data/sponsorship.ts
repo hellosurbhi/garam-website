@@ -97,7 +97,7 @@ export const MEDIA_KIT_STATS: MediaKitStat[] = [
   {
     num: "40+",
     label: "Shows produced",
-    sub: "Regular shows in Manhattan and Jersey City",
+    sub: "Manhattan home base, touring nationally",
   },
 ];
 

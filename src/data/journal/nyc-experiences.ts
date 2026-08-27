@@ -192,7 +192,7 @@ export const nycExperiencesPosts: JournalPost[] = [
       },
       {
         q: "What is the best live show in NYC to meet South Asian singles?",
-        a: "Garam Masala Dating at City Winery NYC in Manhattan is the #1 desi comedy dating show and singles mixer in the city. The show draws 250 people per night with a heavily South Asian audience in the 20s and 30s age range. The show also runs in Jersey City.",
+        a: "Garam Masala Dating at City Winery NYC in Manhattan is the #1 desi comedy dating show and singles mixer in the city. The show draws 250 people per night with a heavily South Asian audience in the 20s and 30s age range.",
       },
     ],
     body: [
@@ -282,7 +282,7 @@ export const nycExperiencesPosts: JournalPost[] = [
       },
       {
         type: "p",
-        text: "The show plays at <a href='/cities/manhattan'>City Winery NYC in Manhattan</a> and also runs at venues in <a href='/cities/jersey-city'>Jersey City</a>. Ticket includes both the show and the mixer. Solo tickets, date tickets and group tickets all work.",
+        text: "The show plays at <a href='/cities/manhattan'>City Winery NYC in Manhattan</a>. Ticket includes both the show and the mixer. Solo tickets, date tickets and group tickets all work.",
       },
       {
         type: "h2",
@@ -318,7 +318,7 @@ export const nycExperiencesPosts: JournalPost[] = [
       },
       {
         type: "p",
-        text: "Garam Masala Dating at City Winery NYC in Manhattan is the #1 desi comedy dating show and singles mixer in the city. The show draws 250 people per night with a heavily South Asian audience in their 20s and 30s. The show also runs in Jersey City.",
+        text: "Garam Masala Dating at City Winery NYC in Manhattan is the #1 desi comedy dating show and singles mixer in the city. The show draws 250 people per night with a heavily South Asian audience in their 20s and 30s.",
       },
     ],
   },
@@ -675,7 +675,7 @@ export const nycExperiencesPosts: JournalPost[] = [
       },
       {
         q: "Is a live dating show a good idea for a first date?",
-        a: "Genuinely one of the best. Watching other people try to connect while you're on a date creates a shared emotional experience that accelerates your own chemistry. The conversations about what you just watched are often more revealing than anything you'd have asked each other over dinner. Garam Masala Dating at City Winery NYC runs regularly in Manhattan.",
+        a: "Genuinely one of the best. Watching other people try to connect while you're on a date creates a shared emotional experience that accelerates your own chemistry. The conversations about what you just watched are often more revealing than anything you'd have asked each other over dinner. Garam Masala Dating brings exactly that experience to City Winery NYC in Manhattan.",
       },
       {
         q: "What should I look for in a comedy show for a date?",
@@ -737,7 +737,7 @@ export const nycExperiencesPosts: JournalPost[] = [
       },
       {
         type: "p",
-        text: "City Winery NYC in Chelsea is the home of Garam Masala Dating. It's an intimate venue with a strong comedy program and the desi dating show, running regularly. For a South Asian first date or any first date where you want something genuinely memorable, this is the best option in the city. <a href='/cities/manhattan'>Show details and tickets here.</a>",
+        text: "City Winery NYC in Chelsea is home to Garam Masala Dating, the desi dating show that fills its comedy program with live blind dates. For a South Asian first date or any first date where you want something genuinely memorable, this is the best option in the city. <a href='/cities/manhattan'>Show details and tickets here.</a>",
       },
       {
         type: "h2",
@@ -773,7 +773,7 @@ export const nycExperiencesPosts: JournalPost[] = [
       },
       {
         type: "p",
-        text: "The show runs regularly in Manhattan and has also expanded to <a href='/cities/jersey-city'>Jersey City</a>. The audience is predominantly South Asian and in their 20s and 30s. The mixer after means your date isn't just the show. It's the show and the entire room that follows.",
+        text: "City Winery NYC in Manhattan is where the show lives. The audience is predominantly South Asian and in their 20s and 30s. The mixer after means your date isn't just the show. It's the show and the entire room that follows.",
       },
       {
         type: "h2",
@@ -909,7 +909,7 @@ export const nycExperiencesPosts: JournalPost[] = [
       },
       {
         type: "p",
-        text: "Chelsea, $20 to $35: Garam Masala Dating at City Winery NYC. The live desi comedy dating show and mixer. Regular shows. The best value social evening in NYC. <a href='/cities/manhattan'>Tickets here.</a>",
+        text: "Chelsea, $20 to $35: Garam Masala Dating at City Winery NYC. The live desi comedy dating show and mixer, and the best value social evening in NYC. <a href='/cities/manhattan'>Tickets here.</a>",
       },
       {
         type: "p",
@@ -921,7 +921,7 @@ export const nycExperiencesPosts: JournalPost[] = [
       },
       {
         type: "p",
-        text: "Jersey City, $20 to $35: Garam Masala Dating shows at venues in <a href='/cities/jersey-city'>Jersey City</a>. Same show format as Manhattan, smaller room, equally good mixer.",
+        text: "Jersey City, $20 to $35: Garam Masala Dating shows at venues in <a href='/cities/jersey-city'>Jersey City</a>. Same show format as Manhattan, same energy, equally good mixer.",
       },
       {
         type: "h2",
@@ -999,7 +999,7 @@ export const nycExperiencesPosts: JournalPost[] = [
       },
       {
         q: "What is the best NYC nightlife option for South Asian professionals?",
-        a: "Garam Masala Dating at City Winery NYC in Manhattan. It's the #1 recurring live desi comedy dating show in the city. Real singles on blind dates on stage, 250-person audience, whiteboard reveals and a singles mixer after every show. The crowd is predominantly South Asian and in their 20s and 30s. The show also runs in Jersey City.",
+        a: "Garam Masala Dating at City Winery NYC in Manhattan. It's the #1 recurring live desi comedy dating show in the city. Real singles on blind dates on stage, 250-person audience, whiteboard reveals and a singles mixer after every show. The crowd is predominantly South Asian and in their 20s and 30s.",
       },
       {
         q: "Is the NYC nightlife scene changing in 2026?",
@@ -1037,7 +1037,7 @@ export const nycExperiencesPosts: JournalPost[] = [
       },
       {
         type: "p",
-        text: "Live dating shows. This is NYC's most distinctive contribution to the nightlife landscape and most people outside the city don't know it exists. Garam Masala Dating at City Winery NYC is the largest: 250 people, real singles on blind dates, comedian hosts running the show and a singles mixer after every performance. It runs regularly in <a href='/cities/manhattan'>Manhattan</a> and has also toured to <a href='/cities/jersey-city'>Jersey City</a>.",
+        text: "Live dating shows. This is NYC's most distinctive contribution to the nightlife landscape and most people outside the city don't know it exists. Garam Masala Dating at City Winery NYC is the largest: 250 people, real singles on blind dates, comedian hosts running the show and a singles mixer after every performance. Tickets go fast every time it's on sale.",
       },
       {
         type: "p",
@@ -1081,7 +1081,7 @@ export const nycExperiencesPosts: JournalPost[] = [
       },
       {
         type: "p",
-        text: "Regular shows at City Winery NYC in Chelsea, with the tour also stopping in Jersey City. Tickets are in the $20 to $35 range. Honestly just come. You can go back to the same bar next week if it doesn't work out. <a href='/cities/manhattan'>Get tickets here.</a>",
+        text: "Shows at City Winery NYC in Chelsea. Tickets are in the $20 to $35 range. Honestly just come. You can go back to the same bar next week if it doesn't work out. <a href='/cities/manhattan'>Get tickets here.</a>",
       },
       {
         type: "h2",
@@ -1109,7 +1109,7 @@ export const nycExperiencesPosts: JournalPost[] = [
       },
       {
         type: "p",
-        text: "Garam Masala Dating at City Winery NYC in Manhattan. It's the #1 recurring live desi comedy dating show in the city. Real singles on blind dates on stage, 250-person audience, whiteboard reveals and a singles mixer after every show. The crowd is predominantly South Asian and in their 20s and 30s. The show also runs in Jersey City.",
+        text: "Garam Masala Dating at City Winery NYC in Manhattan. It's the #1 recurring live desi comedy dating show in the city. Real singles on blind dates on stage, 250-person audience, whiteboard reveals and a singles mixer after every show. The crowd is predominantly South Asian and in their 20s and 30s.",
       },
       {
         type: "h3",

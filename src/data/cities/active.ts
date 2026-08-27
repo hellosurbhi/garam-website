@@ -8,14 +8,14 @@ export const activeCities: Record<string, CityData> = {
     titleTag: "NYC's Live Desi Dating Show",
     metaDescription:
       "The best South Asian singles event in Manhattan. Live dating show and mixer at City Winery NYC. Real dates on stage, real people in the room.",
-    h1: "The Live Dating Show That Took Over Chelsea",
+    h1: "The Live Dating Show New York Can't Stop Talking About",
     status: "active",
     badgeLabel: "Tickets Live",
     bodyParagraphs: [
-      "Manhattan has no shortage of things to do on a Sunday. What it’s short on is a room full of interesting, single people who are actually trying to meet someone without the pressure of a formal event or the numbness of another app.",
-      "Garam Masala Dating fills that gap. At City Winery NYC in Chelsea, real singles regularly volunteer for live dates on stage while a packed room watches it unfold. Before and after, the whole crowd mingles. It’s low-stakes, high-energy, and nothing like the so-called networking events you’ve skipped.",
+      "Manhattan has no shortage of ways to spend a night out. What it’s short on is a room full of interesting, single people who are actually trying to meet someone without the pressure of a formal event or the numbness of another app.",
+      "Garam Masala Dating fills that gap. At City Winery NYC in Chelsea, real singles volunteer for live dates on stage while a packed room watches it unfold. Before and after, the whole crowd mingles. It’s low-stakes, high-energy, and nothing like the so-called networking events you’ve skipped.",
       "Our Manhattan shows draw South Asian professionals, desi diaspora, expats, and anyone who shows up curious and leaves having actually talked to someone new. The crowd skews late 20s to mid 30s, culturally mixed, and genuinely there for a good time.",
-      "Shows happen on Sundays at City Winery NYC, 25 11th Ave. Grab tickets for the next one below.",
+      "Shows are at City Winery NYC, 25 11th Ave. Grab tickets for the next one below.",
       "If you’re tired of apps and tired of manufactured mixers, this is the alternative. Come watch a few strangers try to fall in love on stage, then go find your own person at the bar.",
     ],
     ctas: [
@@ -47,11 +47,11 @@ export const activeCities: Record<string, CityData> = {
     faqItems: [
       {
         q: "How often does Garam Masala Dating run in Manhattan?",
-        a: "Shows happen on Sundays at City Winery NYC in Chelsea, but not on a fixed schedule. Check our tickets page for the next confirmed date.",
+        a: "Shows are at City Winery NYC in Chelsea. Check our tickets page for the next confirmed date.",
       },
       {
         q: "Did Garam Masala Dating change venues in Manhattan?",
-        a: "Yes. The Manhattan show now runs at City Winery NYC, 25 11th Ave in Chelsea. It previously ran at Top Secret Comedy Club in the East Village. Same show, new home.",
+        a: "The show has developed at some of New York's most respected comedy rooms, from Broadway Comedy Club to Top Secret Comedy Club, and now calls City Winery NYC in Chelsea home.",
       },
       {
         q: "What happens at a Garam Masala Dating show?",
@@ -83,14 +83,14 @@ export const activeCities: Record<string, CityData> = {
         heading: "The best singles event in NYC is a comedy show",
         paragraphs: [
           "Manhattan's singles infrastructure is enormous and mostly bad. Speed dating with lanyards, app-brand pop-ups, rooftop mixers where everyone stares at the skyline instead of each other. The problem is always the same: you walk in cold and the entire burden of meeting someone is on you. Our format flips it. Two real singles go on a blind date on stage, the room reacts together for 90 minutes and by the time the mixer starts the whole audience shares a night's worth of inside jokes. Talking to a stranger stops being brave and starts being obvious.",
-          "The Chelsea waterfront location does half the work too. Doors open 30 minutes early, drinks flow through the show and Pier 57 sits minutes from Chelsea Market, the High Line and the Meatpacking District for wherever the night goes after.",
+          "The swanky lower Manhattan location does half the work too. Doors open 30 minutes early, drinks flow through the show and Pier 57 sits minutes from Chelsea Market, the High Line and the Meatpacking District for wherever the night goes after.",
         ],
       },
       {
         heading: "Who you'll actually meet at the Manhattan show",
         paragraphs: [
           "The stereotype is that desi events in NYC are either fresh-off-the-boat student nights or aunty-run matrimonial mixers. This room is neither. Expect consultants who moved from Bombay via business school, second gen Jersey kids who commute in, doctors escaping their residencies for one night, artists, founders and roughly forty percent non desi friends, partners and the culturally curious. The common thread is that everyone chose a live show over another night of swiping.",
-          "Tickets sell out fast, so grab a seat now, and if watching makes you want the stage, apply to be a contestant. Half our best daters started in the audience.",
+          "Every show sells out quickly, so buy your tickets as soon as they go on sale, and if watching makes you want the stage, apply to be a contestant. Half our best daters started in the audience.",
         ],
       },
     ],
@@ -107,10 +107,10 @@ export const activeCities: Record<string, CityData> = {
     badgeLabel: "Now in Jersey City",
     bodyParagraphs: [
       "If you’ve been skipping the NYC show because you didn’t feel like dealing with the commute home, this one’s for you.",
-      "Garam Masala Dating has brought the show to Jersey City. Same format as the Manhattan show, same hosts, smaller room. Contestants go on live dates while the crowd watches and roots for them. Before and after, the whole room mingles.",
+      "Garam Masala Dating has brought the show to Jersey City. Same format as the Manhattan show, same hosts. Contestants go on live dates while the crowd watches and roots for them. Before and after, the whole room mingles.",
       "The JC show draws from Jersey City, Hoboken, Newport, Weehawken, and the rest of Hudson County. The South Asian and desi community in this pocket of NJ is massive and concentrated, which means the odds that you already have a mutual with someone in the room are higher than you’d think. That’s not a bug.",
-      "The Jersey City room runs more intimate than our 250-person Manhattan venue. Less anonymous, more personal. If you’ve ever wanted to do the show but felt like the NYC crowd was too big, this is the one to start with.",
-      "New dates are posted on the events page. Tickets go fast because the room is smaller. Don’t wait.",
+      "This one is for Hudson County singles who’d rather not deal with the commute home after a Manhattan show. Same real dates, same mixer, no PATH train at midnight.",
+      "New dates are posted on the events page. Tickets go fast. Don’t wait.",
     ],
     ctas: [
       {
@@ -140,11 +140,11 @@ export const activeCities: Record<string, CityData> = {
     faqItems: [
       {
         q: "How often does the Jersey City show run?",
-        a: "There's no fixed schedule yet. New dates post on our events page as they're added. The JC room is smaller than Manhattan so tickets sell out faster.",
+        a: "New dates are posted on our events page as they're confirmed. Follow along there and grab tickets as soon as they go live.",
       },
       {
         q: "Is the Jersey City show different from the Manhattan show?",
-        a: "Same format, same hosts, more intimate room. The Jersey City venue holds fewer people than our Manhattan venue, which makes it more personal and less anonymous.",
+        a: "Same format, same hosts, same energy. The difference is geography: this one's in Jersey City, so there's no trip into Manhattan required.",
       },
       {
         q: "Where is the Jersey City show?",
@@ -176,10 +176,10 @@ export const activeCities: Record<string, CityData> = {
         ],
       },
       {
-        heading: "Why the smaller room works in your favor",
+        heading: "The advantage of staying on this side of the river",
         paragraphs: [
-          "The Jersey City room runs more intimate than our 250 seat Manhattan show, and intimate is an advantage when the goal is actually meeting people. You see everyone. Everyone sees you. The mixer after the show is dense with locals instead of a diaspora of boroughs, and the follow-up date is a neighborhood walk instead of a calendar negotiation.",
-          "New dates post on the events page and the smaller room means tickets genuinely run out. Grab yours early, or apply to be a contestant and let Hudson County watch you flirt.",
+          "The mixer after the show is dense with locals who actually live nearby instead of a diaspora scattered across boroughs, so the follow-up date is a neighborhood walk instead of a calendar negotiation.",
+          "New dates post on the events page and tickets genuinely run out. Grab yours early, or apply to be a contestant and let Hudson County watch you flirt.",
         ],
       },
     ],

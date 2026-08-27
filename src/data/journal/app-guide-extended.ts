@@ -957,7 +957,7 @@ export const appGuideExtendedPosts: JournalPost[] = [
       },
       {
         type: "p",
-        text: "If you’re in New York, <a href='/cities/manhattan'>Garam Masala Dating in Manhattan</a> runs regularly. You don’t need to apply to be a contestant. Come as an audience member, watch three real blind dates happen on stage and stay for the mixer. It’s the most effective reset for app burnout I’ve seen because it reminds you that the point is a real person, not a perfect profile.",
+        text: "If you’re in New York, <a href='/cities/manhattan'>Garam Masala Dating in Manhattan</a> is worth experiencing firsthand. You don’t need to apply to be a contestant. Come as an audience member, watch three real blind dates happen on stage and stay for the mixer. It’s the most effective reset for app burnout I’ve seen because it reminds you that the point is a real person, not a perfect profile.",
       },
       {
         type: "h2",

@@ -1338,7 +1338,7 @@ export const relationshipAdvicePosts: JournalPost[] = [
       },
       {
         type: "p",
-        text: "A comedy show is genuinely one of the best first dates available in NYC and it solves the strategic problem as well. City Winery NYC in Chelsea is the home of Garam Masala Dating and runs shows regularly. You’re in a comedy club audience for 90 minutes, which is not a venue most aunties frequent. And shared laughter is one of the fastest ways to create actual chemistry.",
+        text: "A comedy show is genuinely one of the best first dates available in NYC and it solves the strategic problem as well. City Winery NYC in Chelsea is home to Garam Masala Dating. You’re in a comedy club audience for 90 minutes, which is not a venue most aunties frequent. And shared laughter is one of the fastest ways to create actual chemistry.",
       },
       {
         type: "p",

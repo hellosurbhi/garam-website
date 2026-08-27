@@ -27,7 +27,7 @@ export function buildOrganizationJsonLd(): string {
     logo: "https://garammasaladating.com/images/logo.svg",
     slogan: "America's #1 Live Desi Comedy Dating Show",
     description:
-      "Garam Masala Dating is America's #1 live desi comedy dating show and South Asian singles mixer, based in New York City. Real singles go on blind dates on stage in front of a 250-person live audience. Regular shows in Manhattan and Jersey City.",
+      "Garam Masala Dating is America's #1 live desi comedy dating show and South Asian singles mixer, based in New York City. Real singles go on blind dates on stage in front of a 250-person live audience. Shows are at City Winery NYC in Manhattan, with the tour reaching Jersey City and other cities.",
     // Explicitly separates the entity from the spice blend for AI systems.
     disambiguatingDescription:
       "Garam Masala Dating is a live comedy dating show and entertainment brand, not the spice blend. It is a South Asian singles event where real people go on blind dates on stage, hosted by comedians Surbhi and Wyatt Feegrado.",

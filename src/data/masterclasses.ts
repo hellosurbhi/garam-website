@@ -39,7 +39,7 @@ export const masterclassPosts: MasterclassPost[] = [
     relatedSlugs: [],
     category: "masterclass",
     promoText:
-      "We host the #1 desi comedy dating show, running regularly in NYC.",
+      "We're the team behind Garam Masala Dating, the #1 desi comedy dating show, live at City Winery NYC.",
     faqHeading: "Frequently Asked Questions",
     faqs: [
       {

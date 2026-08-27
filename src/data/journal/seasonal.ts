@@ -101,7 +101,7 @@ export const seasonalPosts: JournalPost[] = [
       },
       {
         q: "Are there South Asian singles events in NYC?",
-        a: "Yes. Garam Masala Dating runs regularly at City Winery NYC in Manhattan. The show features live blind dates on stage followed by a singles mixer. Tickets and contestant applications at garammasaladating.com.",
+        a: "Yes. City Winery NYC in Manhattan is home to Garam Masala Dating. The show features live blind dates on stage followed by a singles mixer. Tickets and contestant applications at garammasaladating.com.",
       },
     ],
     relatedSlugs: [
@@ -209,11 +209,11 @@ export const seasonalPosts: JournalPost[] = [
       },
       {
         q: "What are the best ways to meet South Asian singles in person?",
-        a: "Live events, community gatherings, and shows where the shared activity is the draw and any connection is a bonus. Garam Masala Dating runs regularly in NYC: the #1 desi comedy dating show followed by a singles mixer. It\u2019s low-stakes, high-energy, and full of people who are there to have fun, not to be desperate.",
+        a: "Live events, community gatherings, and shows where the shared activity is the draw and any connection is a bonus. Garam Masala Dating is the #1 desi comedy dating show in NYC, followed by a singles mixer. It\u2019s low-stakes, high-energy, and full of people who are there to have fun, not to be desperate.",
       },
       {
         q: "Is Garam Masala Dating open year-round?",
-        a: "Yes. Garam Masala Dating runs regularly at City Winery NYC in Manhattan. The show has also run in Jersey City. You can buy tickets or apply to be a contestant at garammasaladating.com.",
+        a: "Yes. City Winery NYC in Manhattan is home to Garam Masala Dating year-round. You can buy tickets or apply to be a contestant at garammasaladating.com.",
       },
     ],
     relatedSlugs: [
@@ -284,7 +284,7 @@ export const seasonalPosts: JournalPost[] = [
       },
       {
         type: "p",
-        text: "The desi diaspora is dense in NJ and the events reflect it. Jersey City specifically has a growing scene. Garam Masala Dating has also run a show in Jersey City. Beyond that, look for temple-community events that have added a young professionals mixer component: these often have the best food and the most genuine crowd.",
+        text: "The desi diaspora is dense in NJ and the events reflect it. Jersey City specifically has a growing scene. Garam Masala Dating has run a show there. Beyond that, look for temple-community events that have added a young professionals mixer component: these often have the best food and the most genuine crowd.",
       },
       {
         type: "h3",
@@ -330,7 +330,7 @@ export const seasonalPosts: JournalPost[] = [
       },
       {
         q: "What is the best South Asian singles event in NYC during Diwali?",
-        a: "Garam Masala Dating runs regularly at City Winery NYC in Manhattan through October and November. It\u2019s the #1 desi comedy dating show followed by a singles mixer. Over 40 shows in, 3 real couples out. Tickets and applications at garammasaladating.com.",
+        a: "Garam Masala Dating is at City Winery NYC in Manhattan through October and November. It\u2019s the #1 desi comedy dating show followed by a singles mixer. Over 40 shows in, 3 real couples out. Tickets and applications at garammasaladating.com.",
       },
       {
         q: "How do I meet South Asian singles at a Diwali party?",
@@ -424,7 +424,7 @@ export const seasonalPosts: JournalPost[] = [
       },
       {
         type: "p",
-        text: "If you\u2019re in NYC and want to carry the Holi energy into a room of people who are all there to meet someone, come to Garam Masala Dating. Regular shows at City Winery NYC in Manhattan. Real blind dates on stage. A singles mixer after. Apply to be a contestant or buy a ticket to watch: either way you\u2019re showing up in person instead of swiping in your apartment. That\u2019s the whole point.",
+        text: "If you\u2019re in NYC and want to carry the Holi energy into a room of people who are all there to meet someone, come to Garam Masala Dating, live at City Winery NYC in Manhattan. Real blind dates on stage. A singles mixer after. Apply to be a contestant or buy a ticket to watch: either way you\u2019re showing up in person instead of swiping in your apartment. That\u2019s the whole point.",
       },
     ],
     faqs: [

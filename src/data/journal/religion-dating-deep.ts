@@ -395,7 +395,7 @@ export const religionDatingDeepPosts: JournalPost[] = [
       },
       {
         type: "p",
-        text: "None of this is simple. But none of it is impossible either. The Muslim-Hindu relationship is one of the most culturally loaded in South Asian dating and also one of the most common in the US diaspora. The couples who navigate it do so through conversation, not hope. Start those conversations now. Garam Masala Dating runs regularly in NYC. Upcoming shows at <a href='/'>garammasaladating.com</a>.",
+        text: "None of this is simple. But none of it is impossible either. The Muslim-Hindu relationship is one of the most culturally loaded in South Asian dating and also one of the most common in the US diaspora. The couples who navigate it do so through conversation, not hope. Start those conversations now. City Winery NYC is home to Garam Masala Dating, where you can watch that exact dynamic play out live. Upcoming shows at <a href='/'>garammasaladating.com</a>.",
       },
     ],
     ctaConfig: {

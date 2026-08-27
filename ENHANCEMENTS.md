@@ -10,6 +10,7 @@ CHANGELOG.md. Never add completed or superseded entries to this file. -->
 ---
 
 ## Future city additions: batch recipe (2026-07-06)
+
 ## Apply-monitor fix follow-ups (2026-08-19)
 
 - [ ] ENHANCEMENT: CI job auto-deploys firestore.rules/storage.rules on merge to main (Surbhi approved 2026-08-19) | Why: both the July and August apply outages were rules merged but never manually deployed; executor is a dedicated follow-up PR, blocked until Surbhi completes operator step 4 of the apply-monitor fix PR (adds a FIREBASE_SERVICE_ACCOUNT repo secret, no workflow reads it yet because none exists yet) | Files: .github/workflows/deploy-rules.yml (does not exist yet, this ticket creates it) | Plan: workflow with explicit permissions contents: read, triggers on main-branch changes to firestore.rules/storage.rules, runs the firebase CLI rules deploy with the CI credential secret, fails loudly if the secret is missing (never skip-but-green) | Verify: merge a comment-only rules change, workflow goes green and scripts/check-rules-drift.mjs passes against production.
@@ -737,15 +738,11 @@ Items flagged during the 2026-04-08 cleanup audit. Not confirmed dead — may ha
 - **Comment:** `searchCities()` is called at line 287, before the `try` block starts at line 296. If the fetch fails, the promise rejects unhandled and the modal error UI never shows.
 - **Link:** https://github.com/hellosurbhi/garam-website/pull/13#discussion_r3056485597
 
-# Enhancements
-
-Future improvements that are logged but not currently prioritized.
-
----
+# From CLS Audit & Performance (formerly ENHANCEMENT.md)
 
 ## Prefetch/preload key pages + skeleton loaders to eliminate CLS
 
-**Priority:** High  
+**Priority:** High
 **Logged:** 2026-04-07
 
 ### Problem
@@ -799,32 +796,38 @@ Similar to Apply — if any dynamic content loads after HTML, add a skeleton pla
 
 ## Full-site CLS audit
 
-**Priority:** Medium  
+**Priority:** Medium
 **Logged:** 2026-04-07
 
 Audit of all Cumulative Layout Shift sources across the site. 13 instances identified.
 
 ### HIGH — Fix these first (user-visible, happens in primary flows)
 
-| 1 | `src/pages/apply.astro` + `ApplyPage.tsx` | React island hydrates after static HTML → form renders below a blank stub | Add height-reserving CSS skeleton in `apply.astro` Astro shell; switch to `client:visible` |
-| 2 | `src/components/admin/ApplicantModal.tsx` | Error message inserted above form fields when validation fires → shifts fields down | Reserve space with `min-height` on the error container; always render it (empty), toggle visibility only |
-| 3 | `src/pages/apply.astro` (photo upload) | Photo thumbnail appears after upload → section height changes | Pre-reserve thumbnail slot with a fixed-size placeholder div before upload completes |
-| 4 | `src/pages/apply.astro` (nomination section) | Nomination fields revealed via `data-reveal` / `hidden` toggle → content below shifts | Use `max-height` / `overflow: hidden` transition instead of `hidden` attribute; reserve max possible height |
-| 5 | `src/hooks/useGeoData.ts` → apply form geo dropdowns | State dropdown populates after country selected → city dropdown appears after state → double CLS cascade | Render all three dropdowns always (empty/disabled state); never insert new DOM nodes on selection |
-| 6 | Apply page terms modal | `document.body` scroll-lock (`overflow: hidden`) removes scrollbar → body shifts right | Add `padding-right: var(--scrollbar-width)` to body when locking; measure with `window.innerWidth - document.documentElement.clientWidth` |
-| 7 | Any `<dialog>` open (NotifyModal, RequestCity, etc.) | Same scroll-lock issue as above | Same fix — apply scrollbar-width compensation on `dialog.showModal()` |
+| #   | Location                                             | Trigger                                                                                                  | Fix                                                                                                                                       |
+| --- | ---------------------------------------------------- | -------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------- |
+| 1   | `src/pages/apply.astro` + `ApplyPage.tsx`            | React island hydrates after static HTML → form renders below a blank stub                                | Add height-reserving CSS skeleton in `apply.astro` Astro shell; switch to `client:visible`                                                |
+| 2   | `src/components/admin/ApplicantModal.tsx`            | Error message inserted above form fields when validation fires → shifts fields down                      | Reserve space with `min-height` on the error container; always render it (empty), toggle visibility only                                  |
+| 3   | `src/pages/apply.astro` (photo upload)               | Photo thumbnail appears after upload → section height changes                                            | Pre-reserve thumbnail slot with a fixed-size placeholder div before upload completes                                                      |
+| 4   | `src/pages/apply.astro` (nomination section)         | Nomination fields revealed via `data-reveal` / `hidden` toggle → content below shifts                    | Use `max-height` / `overflow: hidden` transition instead of `hidden` attribute; reserve max possible height                               |
+| 5   | `src/hooks/useGeoData.ts` → apply form geo dropdowns | State dropdown populates after country selected → city dropdown appears after state → double CLS cascade | Render all three dropdowns always (empty/disabled state); never insert new DOM nodes on selection                                         |
+| 6   | Apply page terms modal                               | `document.body` scroll-lock (`overflow: hidden`) removes scrollbar → body shifts right                   | Add `padding-right: var(--scrollbar-width)` to body when locking; measure with `window.innerWidth - document.documentElement.clientWidth` |
+| 7   | Any `<dialog>` open (NotifyModal, RequestCity, etc.) | Same scroll-lock issue as above                                                                          | Same fix — apply scrollbar-width compensation on `dialog.showModal()`                                                                     |
 
 ### MEDIUM — Address in next polish pass
 
-| 8 | `src/components/admin/AdminDashboard.tsx` | "Deleted" toggle reveals replacement text → row height changes | Reserve row height; use `opacity`/`pointer-events` toggle instead of content replacement |
-| 9 | `src/components/admin/AdminDashboard.tsx` | Loading spinner replaced by content on fetch complete → height jump | Render skeleton rows with fixed heights matching content rows |
-| 10 | `src/pages/contestant-prep.astro` | Gender-reveal section animates in via JS → pushes content below | Pre-reserve section height; use transform/opacity animation only (no height change) |
-| 11 | Any admin modal | Same scroll-lock body-shift as item 6 | Same scrollbar-width fix |
+| #   | Location                                  | Trigger                                                             | Fix                                                                                      |
+| --- | ----------------------------------------- | ------------------------------------------------------------------- | ---------------------------------------------------------------------------------------- |
+| 8   | `src/components/admin/AdminDashboard.tsx` | "Deleted" toggle reveals replacement text → row height changes      | Reserve row height; use `opacity`/`pointer-events` toggle instead of content replacement |
+| 9   | `src/components/admin/AdminDashboard.tsx` | Loading spinner replaced by content on fetch complete → height jump | Render skeleton rows with fixed heights matching content rows                            |
+| 10  | `src/pages/contestant-prep.astro`         | Gender-reveal section animates in via JS → pushes content below     | Pre-reserve section height; use transform/opacity animation only (no height change)      |
+| 11  | Any admin modal                           | Same scroll-lock body-shift as item 6                               | Same scrollbar-width fix                                                                 |
 
 ### LOW — Nice to have
 
-| 12 | `src/layouts/BaseLayout.astro` skip-link | Skip-link rendered `position: absolute` shifts to `fixed` on focus → minor repaint | Use `position: fixed` always with negative `top` offset; transition `top` on focus |
-| 13 | `src/components/home/HomeShows.astro` + `HomeStats.astro` etc. | `data-reveal` adds `.revealed` class via IntersectionObserver → opacity + translateY transition | Already progressive-enhancement (only active if JS+IntersectionObserver available) but translateY can cause subpixel repaints on some browsers; switch to `will-change: transform` on observed elements |
+| #   | Location                                                       | Trigger                                                                                         | Fix                                                                                                                                 |
+| --- | -------------------------------------------------------------- | ----------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------- |
+| 12  | `src/layouts/BaseLayout.astro` skip-link                       | Skip-link rendered `position: absolute` shifts to `fixed` on focus → minor repaint              | Use `position: fixed` always with negative `top` offset; transition `top` on focus                                                  |
+| 13  | `src/components/home/HomeShows.astro` + `HomeStats.astro` etc. | `data-reveal` adds `.revealed` class via IntersectionObserver → opacity + translateY transition | Already progressive-enhancement but translateY can cause subpixel repaints; switch to `will-change: transform` on observed elements |
 
 ### Already fixed in this branch
 
@@ -832,19 +835,14 @@ Audit of all Cumulative Layout Shift sources across the site. 13 instances ident
 
 ---
 
-add A press page with design packet and photos and stuff for the press inquiry
+## International phone input with country selector
 
-## Later Later
-
-Low-priority ideas that only make sense at significant scale. Revisit when the product warrants it.
-
-### International phone input with country selector
-
+**Priority:** Low (Later Later)
 **Logged:** 2026-04-08
 
 Right now we accept any phone number and auto-format US numbers to E.164 (`+1XXXXXXXXXX`). International numbers are stored as-is with basic digit cleanup. This works fine at current scale.
 
-When we start actually texting international numbers (via Twilio/MessageBird/etc.), add a proper country-code dropdown + phone input that validates per-country format. Packages like `react-phone-number-input` or `intl-tel-input` handle this well — country flag dropdown, auto-formatting, per-country length validation.
+When we start actually texting international numbers (via Twilio/MessageBird/etc.), add a proper country-code dropdown + phone input that validates per-country format. Packages like `react-phone-number-input` or `intl-tel-input` handle this well.
 
 **Why not now:**
 
@@ -1213,17 +1211,14 @@ If the ambiguity matters there too, rename both with Surbhi's approval on the ex
 
 ## Skipped reviews (pending retry)
 
-- 2026-07-13T14:18Z | tier=E | primary=codex | reason=error_or_timeout | fallback_used=deepseek | commit=c632e66 | diff_sha=de07acb31b1046222c912bf32176941ee3f4ad03138575e556c21c92240280c0
-- 2026-07-13T14:21Z | tier=F | primary=coderabbit | reason=error | fallback_used=gemini | commit=c632e66 | diff_sha=de07acb31b1046222c912bf32176941ee3f4ad03138575e556c21c92240280c0
-- 2026-07-13T18:27Z | tier=E | primary=codex | reason=error_or_timeout | fallback_used=deepseek | commit=c632e66 | diff_sha=5a053421b4d64aea28b915648574c67cc0db170eac03cf28f4ee5bc42bedbcee
-- 2026-07-13T14:14Z | tier=E | primary=codex | reason=error_or_timeout | fallback_used=deepseek | commit=c632e66 | diff_sha=727f9c571636bde5fa1659a5cfe3e0752dd55bfd98a7140eba940b370ac57b25
-- 2026-07-13T14:18Z | tier=E | primary=codex | reason=error_or_timeout | fallback_used=deepseek | commit=c632e66 | diff_sha=aa14f0405fb398ccc172f7d23e2c9751ee8c0ea5f24ddfb43a0f0bc1380bc5c6
-- 2026-07-13T14:21Z | tier=F | primary=coderabbit | reason=error | fallback_used=gemini | commit=c632e66 | diff_sha=aa14f0405fb398ccc172f7d23e2c9751ee8c0ea5f24ddfb43a0f0bc1380bc5c6
-- 2026-07-13T14:23Z | tier=E | primary=codex | reason=error_or_timeout | fallback_used=deepseek | commit=ba6728a | diff_sha=4fda69b1208df08e4e0d4b9c77ef4613feb0ca8b9bc76f065441e8676120a62b
-- 2026-07-13T14:23Z | tier=F | primary=coderabbit | reason=error | fallback_used=gemini | commit=ba6728a | diff_sha=4fda69b1208df08e4e0d4b9c77ef4613feb0ca8b9bc76f065441e8676120a62b
 - 2026-07-13T14:18Z | resolved=unretryable-no-diff | tier=E | primary=codex | reason=error_or_timeout | fallback_used=deepseek | commit=c632e66 | diff_sha=de07acb31b1046222c912bf32176941ee3f4ad03138575e556c21c92240280c0
 - 2026-07-13T14:21Z | resolved=unretryable-no-diff | tier=F | primary=coderabbit | reason=error | fallback_used=gemini | commit=c632e66 | diff_sha=de07acb31b1046222c912bf32176941ee3f4ad03138575e556c21c92240280c0
 - 2026-07-13T18:27Z | resolved=unretryable-no-diff | tier=E | primary=codex | reason=error_or_timeout | fallback_used=deepseek | commit=c632e66 | diff_sha=5a053421b4d64aea28b915648574c67cc0db170eac03cf28f4ee5bc42bedbcee
+- 2026-07-13T18:40Z | resolved=unretryable-no-diff | tier=E | primary=codex | reason=error_or_timeout | fallback_used=deepseek | commit=c632e66 | diff_sha=3e1db579ae60b215d3d81431d9225473e867fabdb1f9b20bf3fb55cfb8178c1f
+- 2026-07-13T18:48Z | resolved=unretryable-no-diff | tier=E | primary=codex | reason=error_or_timeout | fallback_used=deepseek | commit=c632e66 | diff_sha=ea227aab2630940192ca9df9468e1601b24d48e1b85df98ccd6c3f3d52a6ac6c
+- 2026-07-13T18:48Z | resolved=unretryable-no-diff | tier=F | primary=coderabbit | reason=error | fallback_used=gemini | commit=c632e66 | diff_sha=ea227aab2630940192ca9df9468e1601b24d48e1b85df98ccd6c3f3d52a6ac6c
+- 2026-07-13T18:57Z | resolved=unretryable-no-diff | tier=E | primary=codex | reason=error_or_timeout | fallback_used=deepseek | commit=adb24f9 | diff_sha=b2eeae5696cfc850c0b28e6c73ccaa3f7773c08fee4c96d5c0c6ab41b5c2fd8a
+- 2026-07-13T18:57Z | resolved=unretryable-no-diff | tier=F | primary=coderabbit | reason=error | fallback_used=gemini | commit=adb24f9 | diff_sha=b2eeae5696cfc850c0b28e6c73ccaa3f7773c08fee4c96d5c0c6ab41b5c2fd8a
 
 - 2026-07-13T20:44Z | resolved=unretryable-no-diff | tier=E | primary=codex | reason=error_or_timeout | fallback_used=deepseek | commit=b7283c5 | diff_sha=5f77712c4b23f4384da3c7cb52231034d8dc7977d14da7a17538911188121da6
 
@@ -1242,6 +1237,7 @@ If the ambiguity matters there too, rename both with Surbhi's approval on the ex
 - 2026-07-13T21:10Z | resolved=unretryable-no-diff | tier=F | primary=coderabbit | reason=error | fallback_used=gemini | commit=5f8a97a | diff_sha=d58b91c239276eace2d026c18cd8ab96853ea2f58466db7e30a49b599bd85d26
 - 2026-07-13T21:27Z | resolved=unretryable-no-diff | tier=E | primary=codex | reason=error_or_timeout | fallback_used=deepseek | commit=6c3790a | diff_sha=679393073329dbbc68a931b4c86844c71f02c323182389c186cb11c964ee3e4a
 - 2026-07-13T21:27Z | resolved=unretryable-no-diff | tier=F | primary=coderabbit | reason=error | fallback_used=gemini | commit=6c3790a | diff_sha=679393073329dbbc68a931b4c86844c71f02c323182389c186cb11c964ee3e4a
+- 2026-07-13T21:57Z | resolved=unretryable-no-diff | tier=E | primary=codex | reason=error_or_timeout | fallback_used=deepseek | commit=9190990 | diff_sha=7bca21da891889b6dae89b49b16d6084eb7de5e87fdb501a153605027db634dd
 - 2026-07-13T22:11Z | resolved=unretryable-no-diff | tier=E | primary=codex | reason=error_or_timeout | fallback_used=deepseek | commit=a7a0407 | diff_sha=2c211f142130ad8681e4a9d1cf618f0277d935274a958c082a3e77c553091e41
 - 2026-07-13T22:11Z | resolved=unretryable-no-diff | tier=F | primary=coderabbit | reason=error | fallback_used=gemini | commit=a7a0407 | diff_sha=2c211f142130ad8681e4a9d1cf618f0277d935274a958c082a3e77c553091e41
 - 2026-07-13T22:14Z | resolved=unretryable-no-diff | tier=E | primary=codex | reason=error_or_timeout | fallback_used=deepseek | commit=a7a0407 | diff_sha=2974c587f3ec43b3238266c6d8d696bd4712d7d09c277ffcad14e647cfae9851
@@ -1272,11 +1268,6 @@ If the ambiguity matters there too, rename both with Surbhi's approval on the ex
 - LOW: Inconsistent heading levels are used for items in the "Indian Dating App Landscape in 2026" ranked list. Items 7, 6, and 5 use `h3`, while items 4 through 1 use `h2`. For semantic HTML and accessibility, all items in a single ranked list should use the same heading level.
 
 - 2026-07-13T14:35Z | tier=E | primary=codex | reason=error_or_timeout | fallback_used=deepseek | commit=ba6728a | diff_sha=4fda69b1208df08e4e0d4b9c77ef4613feb0ca8b9bc76f065441e8676120a62b
-- 2026-07-13T18:40Z | tier=E | primary=codex | reason=error_or_timeout | fallback_used=deepseek | commit=c632e66 | diff_sha=3e1db579ae60b215d3d81431d9225473e867fabdb1f9b20bf3fb55cfb8178c1f
-- 2026-07-13T18:48Z | tier=E | primary=codex | reason=error_or_timeout | fallback_used=deepseek | commit=c632e66 | diff_sha=ea227aab2630940192ca9df9468e1601b24d48e1b85df98ccd6c3f3d52a6ac6c
-- 2026-07-13T18:48Z | tier=F | primary=coderabbit | reason=error | fallback_used=gemini | commit=c632e66 | diff_sha=ea227aab2630940192ca9df9468e1601b24d48e1b85df98ccd6c3f3d52a6ac6c
-- 2026-07-13T18:57Z | tier=E | primary=codex | reason=error_or_timeout | fallback_used=deepseek | commit=adb24f9 | diff_sha=b2eeae5696cfc850c0b28e6c73ccaa3f7773c08fee4c96d5c0c6ab41b5c2fd8a
-- 2026-07-13T18:57Z | tier=F | primary=coderabbit | reason=error | fallback_used=gemini | commit=adb24f9 | diff_sha=b2eeae5696cfc850c0b28e6c73ccaa3f7773c08fee4c96d5c0c6ab41b5c2fd8a
 - 2026-07-13T21:30Z | tier=E | primary=codex | reason=error_or_timeout | fallback_used=deepseek | commit=ba6728a | diff_sha=20a149d8de616e12be47d70ad78ddfcb63396c294c66268653770baf52f5718f
 - 2026-07-13T21:30Z | tier=F | primary=coderabbit | reason=error | fallback_used=gemini | commit=ba6728a | diff_sha=20a149d8de616e12be47d70ad78ddfcb63396c294c66268653770baf52f5718f
 - 2026-07-13T21:32Z | tier=E | primary=codex | reason=error_or_timeout | fallback_used=deepseek | commit=d64b1a7 | diff_sha=93c5a476f2cf0cfb519ba62d8f7cbc2ac0b875cdfab5a416dbd48c7ec3b9f988
@@ -1284,7 +1275,6 @@ If the ambiguity matters there too, rename both with Surbhi's approval on the ex
 - 2026-07-13T21:49Z | tier=E | primary=codex | reason=error_or_timeout | fallback_used=deepseek | commit=31350a3 | diff_sha=e35f355d8ce66d3bee2b4cb0a3a46beb9e293044bcb8a954a72352747f0ec6ce
 - 2026-07-13T21:54Z | tier=E | primary=codex | reason=error_or_timeout | fallback_used=deepseek | commit=31350a3 | diff_sha=b85bc6ec208be3e9c39090376efd6fb019be6269f674a405c12822b01884ae11
 - 2026-07-14T04:12Z | tier=E | primary=codex | reason=error_or_timeout | fallback_used=deepseek | commit=31350a3 | diff_sha=a457f9f43c890a3896d690da506abb79097a4a3ef66a6f7940892657c149ea39
-- 2026-07-13T21:57Z | tier=E | primary=codex | reason=error_or_timeout | fallback_used=deepseek | commit=9190990 | diff_sha=7bca21da891889b6dae89b49b16d6084eb7de5e87fdb501a153605027db634dd
 - 2026-07-13T21:58Z | tier=E | primary=codex | reason=error_or_timeout | fallback_used=deepseek | commit=31350a3 | diff_sha=e99328d390b12ce56298326ab4de0bbe0dc52589de496f6c32de51a45e6bfc6d
 - 2026-07-13T21:58Z | tier=F | primary=coderabbit | reason=error | fallback_used=gemini | commit=31350a3 | diff_sha=e99328d390b12ce56298326ab4de0bbe0dc52589de496f6c32de51a45e6bfc6d
 - 2026-07-13T22:03Z | tier=E | primary=codex | reason=error_or_timeout | fallback_used=deepseek | commit=be735b9 | diff_sha=aad31620a68713c8d429e0c119d83b6d351d4e2eaa7a4338546eecdd1ac0d095
@@ -1293,12 +1283,6 @@ If the ambiguity matters there too, rename both with Surbhi's approval on the ex
 - 2026-07-13T22:07Z | tier=F | primary=coderabbit | reason=error | fallback_used=gemini | commit=37cde64 | diff_sha=9506d1aa157f1daade093c8e9414c34d99e8046112fb55278553d9723010625c
 - 2026-07-14T18:04Z | tier=F | primary=coderabbit | reason=error | fallback_used=gemini | commit=8b4d379 | diff_sha=21cb57ca33a0bc568eacd8e142d7932bb30af7a382fa25b557f2c6dda526c07e
 - 2026-07-15T01:57Z | tier=F | primary=coderabbit | reason=error | fallback_used=gemini | commit=59ce89e | diff_sha=79d49c2634be8fd8ec7a52e9739360de8ba9bb45ede67b3359c69ac05ca02d7a
-
-## Low priority enhancements
-
-### CodeRabbit — 20260713-145745
-
-- LOW: The copy voice mandate prohibits Oxford commas. The comma before "and" in this list should be removed.
 - 2026-07-15T02:08Z | tier=F | primary=coderabbit | reason=error | fallback_used=gemini | commit=4efe5d3 | diff_sha=b74f4259c3e8725c36ba740c55be50f41db8a256f4ac932ce24114c7160ec270
 - 2026-07-15T19:26Z | tier=F | primary=coderabbit | reason=error | fallback_used=gemini | commit=8ecc6b2 | diff_sha=c9f20eceb0d2132fd116a62263d47c0c3d5f314a576755c1dfc0e7cb6dd8f18b
 - 2026-07-15T19:37Z | tier=E | primary=codex | reason=error_or_timeout | fallback_used=gemini | commit=8ecc6b2 | diff_sha=0dcddf1f107891ad33ffb99d2cd75f10b3ad2973464c41b886f960166a096a50
@@ -1384,34 +1368,6 @@ If the ambiguity matters there too, rename both with Surbhi's approval on the ex
 - [ ] LOW: [CONTRACT] .github/workflows/ci.yml:52, checking out `head.sha` instead of GitHub's test-merge commit means the required job never builds or tests the PR merged with current main, so a PR that is green in isolation can still break main at merge time (the inline rationale conflates the diff step's SHA needs, which are env vars, with what commit must be checked out). | Files: .github/workflows/ci.yml head.sha | PR: #160 | Head: c251ea7abaa5a9862f3477db86cf0f37d27695f8
 
 <!-- fable-routed PR #160 head c251ea7abaa5a9862f3477db86cf0f37d27695f8 -->
-
-- [ ] LOW: [STALE-REF] BUGS.md:644, the queued MEDIUM cites ENHANCEMENTS.md:1492-1501 as the location of the misplaced retry telemetry, but this same PR overwrites those exact lines with new log entries and DeepSeek sections, so the fixer acting on this queue item after merge will open lines that no longer contain the referenced "Low priority enhancements" heading. | Files: BUGS.md ENHANCEMENTS.md | PR: #149 | Head: c299b42be3d24b4905941b6898595d842e0af5f6
-- [ ] LOW: [QUEUE-VISIBILITY] ENHANCEMENTS.md:1504, the recorded LOW findings use plain "- LOW:" bullets with no "- [ ]" checkbox (unlike the BUGS.md entry at 644) and no Files/Plan fields, so if the backlog tooling keys on checkboxes to build its work list these findings are recorded but never picked up, and the 2026-07-14T04:16Z log line at ENHANCEMENTS.md:1493 also lands after the existing 2026-07-15T01:57Z entry, breaking the log's time ordering for anything that assumes last-line-is-latest. | Files: BUGS.md ENHANCEMENTS.md | PR: #149 | Head: c299b42be3d24b4905941b6898595d842e0af5f6
-
-<!-- fable-routed PR #149 head c299b42be3d24b4905941b6898595d842e0af5f6 -->
-
-- [ ] LOW: [correctness] src/components/ContestantPrepPage.tsx:31, `readSession` (called during render and in the auth effect) and `saveSession` access `sessionStorage` with no try/catch, so in storage-blocked browsers (Chrome "block all cookies", some private modes) the render throws and blanks the page, or a successful auth response throws in `saveSession` and is caught as a failure — a contestant with a valid emailed link sees "Link expired"; the sibling portalBootstrap module guards exactly this but the prep page rewrite did not. | Files: src/components/ContestantPrepPage.tsx | PR: #147 | Head: 177c6e2f7a0aaca2ca43f31a74aa6d20a59ff829
-- [ ] LOW: [security] src/components/ContestantPrepPage.tsx:293, the prep page's `?date&sig` bearer credentials are read but never scrubbed from the URL, so they remain visible to the deferred GTM/PostHog/Meta scripts, browser history and shared screenshots for the whole session — the same exposure this PR eliminates for portal `?invite=` tokens is left in place on the adjacent page. | Files: src/components/ContestantPrepPage.tsx | PR: #147 | Head: 177c6e2f7a0aaca2ca43f31a74aa6d20a59ff829
-
-<!-- fable-routed PR #147 head 177c6e2f7a0aaca2ca43f31a74aa6d20a59ff829 -->
-
-- [ ] LOW: [duplication] src/lib/homeSignupInit.ts:52, the email-then-phone lead-capture flow is now maintained as three near-identical copies (homeSignupInit.ts, homepageInit.ts, notifyModalInit.ts) instead of one shared helper; failure scenario: a future bug fix or API change (e.g. a new required field in captureLead) gets applied to one module and silently skipped in the other two, so leads from the un-fixed forms are captured wrong or dropped without any error. | Files: e.g homeSignupInit.ts homepageInit.ts notifyModalInit.ts src/lib/homeSignupInit.ts | PR: #146 | Head: 81273d0b35ae67a94a9e2956218c866c07685707
-- [ ] LOW: [refactor-verification] src/lib/notifyModalInit.ts:12, the extraction moves ~740 lines of live signup code verbatim into modules with no accompanying test or smoke check in the PR, so any transcription slip in the copy (the highest-risk part of this change) would only surface as a runtime failure on a production signup form; failure scenario: a missed line in one handler throws in the browser, the form's catch block shows "Something went wrong," and signups from that surface quietly stop until someone notices the lead count dropped. | Files: src/lib/notifyModalInit.ts | PR: #146 | Head: 81273d0b35ae67a94a9e2956218c866c07685707
-
-<!-- fable-routed PR #146 head 81273d0b35ae67a94a9e2956218c866c07685707 -->
-
-- [ ] LOW: [EXIT-CODE] scripts/verify-admin-emails.mjs:232, the final exit code is `ok === confirmUids.length ? 0 : 1`, so a run where one CONFIRM_UIDS entry was skipped (e.g. a deleted account) but the post-run recheck proved every allowlisted email verified prints "Safe to merge" yet exits 1, contradicting stdout for any wrapper gating on the exit code (fails closed, so blocking not dangerous). | Files: confirmUids.length e.g scripts/verify-admin-emails.mjs | PR: #145 | Head: a7c96eeb700313f56cfbf3a7c2063ac4e4defcf3
-- [ ] LOW: [DOC-CONTRACT] architecture-map.md:58, the admin section heading states "allowlisted verified email OR `admin` custom claim" for the whole table, but every `verifyAdminIdentity` row additionally requires a non-empty `email` claim (src/lib/verifyToken.ts:151), so a claim-only admin with no email would 401 on those routes despite the docs saying they qualify. | Files: architecture-map.md src/lib/verifyToken.ts | PR: #145 | Head: a7c96eeb700313f56cfbf3a7c2063ac4e4defcf3
-- [ ] LOW: [COPY-VOICE] LESSONS.md:5, the new lesson uses the bold-term-colon format and the CHANGELOG adds Oxford commas that the repo's own copy-voice gate has repeatedly flagged across multiple reviewer passes in this same diff, so the commit knowingly lands style violations the gate will keep re-reporting. | Files: LESSONS.md | PR: #145 | Head: a7c96eeb700313f56cfbf3a7c2063ac4e4defcf3
-- [ ] LOW: [TRUNCATED-RECORDS] ENHANCEMENTS.md:1497, several committed reviewer bookkeeping entries end mid-sentence ("Pre...", "f...", "structu..."), permanently storing incomplete records that later audits of past review findings cannot reconstruct. | Files: ENHANCEMENTS.md | PR: #145 | Head: a7c96eeb700313f56cfbf3a7c2063ac4e4defcf3
-
-<!-- fable-routed PR #145 head a7c96eeb700313f56cfbf3a7c2063ac4e4defcf3 -->
-
-- [ ] LOW: [CONTRACT] BUGS.md:8, the new routing comment mandates that fixed entries be deleted "in the same commit" the fix is "record[ed] in CHANGELOG.md", but this PR deletes ~60 fixed/historical entries (CSP Firebase Auth outage, admin password, PII console leak, etc.) while touching no CHANGELOG.md — the very first commit under the new policy breaks the policy, and anyone auditing past security fixes must resort to git archaeology. | Files: BUGS.md CHANGELOG.md | PR: #139 | Head: 4db91e278d8c9077471bd056160c2d57390339c7
-- [ ] LOW: [DATA-LOSS] BUGS.md:24, the deleted photo-upload-limit entry contained the still-actionable operational note "storage.rules needs a Firebase deploy to take effect" — if that deploy was never run, the server still enforces the old 5 MB cap while the client accepts 15 MB, so large iPhone photo uploads pass client validation then fail server-side, and the only written reminder of the pending deploy is now gone. | Files: BUGS.md storage.rules | PR: #139 | Head: 4db91e278d8c9077471bd056160c2d57390339c7
-- [ ] LOW: [CORRECTNESS] ENHANCEMENTS.md:1175, the added fallback-log line "2026-07-13T21:57Z" is inserted after the existing "2026-07-14T04:12Z" line, breaking the log's chronological ordering — any tooling or person reading the tail of the log to find the most recent reviewer-fallback event reads a stale entry as the latest. | Files: ENHANCEMENTS.md | PR: #139 | Head: 4db91e278d8c9077471bd056160c2d57390339c7
-
-<!-- fable-routed PR #139 head 4db91e278d8c9077471bd056160c2d57390339c7 -->
 
 - [ ] LOW: [DEPS] package-lock.json:19061, the transitive markdown engine `satteri` jumps from 0.9.5 to 0.10.5 (a breaking-range 0.x minor pulled in by the `@astrojs/markdown-satteri` 0.3.7 patch, which also drops its `hast-util-from-html` parsing dependency), so markdown/MDX rendering behavior can change even though this PR is labeled minor-and-patch; a content page that previously rendered inline HTML or generated heading anchors one way could silently emit different HTML after this merge, breaking styling, in-page links, or SEO markup with no code change to blame. | Files: 0.x package-lock.json | PR: #211 | Head: 5b05fe0af2c34293edcdf69ec3b1655bd8c3d9df
 

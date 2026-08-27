@@ -9,6 +9,8 @@ fixed entries, [x] checkboxes or "Status: Fixed" records to this file. -->
 
 ## Open
 
+- [ ] MEDIUM: Upstash Redis rate-limit check times out on every real production request (2/2 observed), so click-spam protection on /api/go/[slug] is currently non-functional | Why: production logs right after the 2026-08-27 tracked-redirect fix deploy show `[rateLimit] limiter error, failing open: Error: Timeout: Upstash rate limit check (1500ms)` on both real test clicks (philadelphia-2026-08-28, washington-dc-2026-08-30); design intent is fail-open so checkout/tracking still work correctly (confirmed, not a user-facing bug), but the rate limiter itself appears to always be losing the race against its own 1500ms ceiling, meaning spam-click abuse protection is silently disabled | Files: src/lib/rateLimit.ts | Plan: check whether UPSTASH_REDIS_REST_URL points at a region far from Vercel's iad1, confirm the Upstash database is actually reachable/not paused, and consider whether 1500ms is too aggressive for actual observed latency vs raising it or diagnosing the real network cause | Verify: trigger a real /api/go/[slug] request and confirm no "[rateLimit] limiter error" line appears in Vercel function logs, or if latency is inherently higher than 1500ms, confirm a revised timeout no longer times out on 5 consecutive real requests
+
 ### [MODERATE] 3 unfixed npm audit findings in @opentelemetry/core (via firebase-tools)
 
 - **Date:** 2026-08-02

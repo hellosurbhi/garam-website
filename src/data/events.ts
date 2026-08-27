@@ -254,7 +254,7 @@ export const events: EventEntry[] = [
     description:
       "A 420 themed edition of Garam Masala Dating at Top Secret Comedy Club. Two singles meet for the first time on stage while the audience decides if sparks fly.",
     lineup: DEFAULT_LINEUP,
-    ticketSource: "external",
+    ticketSource: "eventbrite-owned",
     url: "https://www.eventbrite.com/e/garam-masala-dating-420-blazin-in-love-tickets-1985330936274",
     isoDate: "2026-04-19",
     startTime: "18:00",
@@ -274,7 +274,7 @@ export const events: EventEntry[] = [
     description:
       "Garam Masala Dating's Jersey City edition at The Laugh Tour Comedy Club. A live blind date, real singles, and a singles mixer after the show.",
     lineup: DEFAULT_LINEUP,
-    ticketSource: "external",
+    ticketSource: "eventbrite-owned",
     url: "https://www.eventbrite.com/e/garam-masala-dating-show-jersey-city-edition-tickets-1986100570270",
     isoDate: "2026-05-03",
     previousDate: "2026-04-26",
@@ -295,7 +295,7 @@ export const events: EventEntry[] = [
     description:
       "Garam Masala Dating comes to The Faight Collective in San Francisco for a night of live comedy and real blind dates on stage.",
     lineup: DEFAULT_LINEUP,
-    ticketSource: "external",
+    ticketSource: "eventbrite-owned",
     url: "https://www.eventbrite.com/e/garam-masala-dating-show-san-francisco-tickets-1988516311818",
     isoDate: "2026-05-10",
     startTime: "18:30",
@@ -314,7 +314,7 @@ export const events: EventEntry[] = [
     description:
       "A May flowers bring June bridal showers edition of Garam Masala Dating at Top Secret Comedy Club, with two real singles on a blind date in front of a packed house.",
     lineup: DEFAULT_LINEUP,
-    ticketSource: "external",
+    ticketSource: "eventbrite-owned",
     url: "https://www.eventbrite.com/e/garam-masala-comedy-dating-show-may-flowers-bring-june-bridal-showers-tickets-1990168950906",
     isoDate: "2026-05-31",
     startTime: "18:30",
@@ -333,7 +333,7 @@ export const events: EventEntry[] = [
     description:
       "A Summer of Love edition of Garam Masala Dating at Top Secret Comedy Club. Real singles, live comedy, and a singles mixer to close out the night.",
     lineup: DEFAULT_LINEUP,
-    ticketSource: "external",
+    ticketSource: "eventbrite-owned",
     url: "https://www.eventbrite.com/e/garam-masala-comedy-dating-show-summer-of-love-tickets-1990821381343",
     isoDate: "2026-06-07",
     startTime: "18:00",
@@ -352,7 +352,7 @@ export const events: EventEntry[] = [
     description:
       "A Pride edition of Garam Masala Dating at Top Secret Comedy Club, celebrating every kind of love with a live blind date on stage.",
     lineup: DEFAULT_LINEUP,
-    ticketSource: "external",
+    ticketSource: "eventbrite-owned",
     url: "https://www.eventbrite.com/e/garam-masala-dating-show-pride-edition-tickets-1987763579375",
     isoDate: "2026-06-21",
     previousDate: "2026-06-14",
@@ -373,7 +373,7 @@ export const events: EventEntry[] = [
     description:
       "A Seed Round edition of Garam Masala Dating at The Faight Collective in San Francisco, with two real singles pitching for a second date.",
     lineup: DEFAULT_LINEUP,
-    ticketSource: "external",
+    ticketSource: "eventbrite-owned",
     url: "https://www.eventbrite.com/e/garam-masala-comedy-dating-show-san-francisco-seed-round-tickets-1989633237573",
     isoDate: "2026-06-25",
     startTime: "18:30",
@@ -447,7 +447,7 @@ export const events: EventEntry[] = [
     description:
       "A Spilling Tea in Boston edition of Garam Masala Dating at Elephant & Castle, with two real singles on a blind date in front of a live audience.",
     lineup: DEFAULT_LINEUP,
-    ticketSource: "external",
+    ticketSource: "eventbrite-owned",
     url: "https://www.eventbrite.com/e/garam-masala-comedy-dating-show-spilling-tea-in-boston-tickets-1992075859521",
     isoDate: "2026-08-13",
     previousDate: "2026-08-02",
@@ -468,7 +468,7 @@ export const events: EventEntry[] = [
     description:
       "A Cuffing Season Coming edition of Garam Masala Dating at Top Secret Comedy Club, just in time to find your person before the cold sets in.",
     lineup: DEFAULT_LINEUP,
-    ticketSource: "external",
+    ticketSource: "eventbrite-owned",
     url: "https://www.eventbrite.com/e/garam-masala-comedy-dating-show-cuffing-season-coming-tickets-1990583884985",
     isoDate: "2026-08-16",
     previousDate: "2026-08-02",

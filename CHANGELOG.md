@@ -1,10 +1,12 @@
 # Changelog
 
-## fix(data): no show is currently eventbrite-owned, correct ticketSource labels (2026-08-27)
+## fix(data): correct ticketSource for shows we no longer control on Eventbrite, going forward only (2026-08-27)
 
-- `src/data/events.ts` marked 11 shows `ticketSource: "eventbrite-owned"`, the flag that gates whether `src/pages/api/sync-orders.ts`'s daily cron attempts real Purchase tracking to Meta for that show. User confirmed directly the business does not currently control any Eventbrite organizer account for any scheduled show (maybe 1 in 10 shows going forward might), so server-side Purchase tracking has likely never fired correctly for any show since this system shipped 2026-08-14. All 11 entries flipped to `ticketSource: "external"`. `eventbriteId` fields were left untouched since they still drive public event-page content fetches (`src/lib/eventbriteContent.ts`), a separate, still-valid, public-data use unrelated to order access.
-- `LESSONS.md`: recorded the rule that `ticketSource` is unvalidated, manually set business knowledge with no automatic drift detection and a silent failure mode.
-- Verified: pre-commit hook ran `astro check` + full `vitest`, all passing. Manually confirmed via grep that no event entries carry `ticketSource: "eventbrite-owned"` anymore.
+- `src/data/events.ts`: `ticketSource` gates whether `src/pages/api/sync-orders.ts`'s daily cron attempts real Purchase tracking to Meta for a show. User confirmed the business does not currently control an Eventbrite organizer account for scheduled shows going forward (maybe 1 in 10 might, the rest run on the venue's own platform), so server-side Purchase tracking cannot fire correctly for those. This applies to shows not yet run under a business-owned account, not to history: Philadelphia (Aug 28 2026, explicitly named as not-ours) and Edison (TBA, tickets not yet on sale) are set to `ticketSource: "external"`.
+- A first pass at this fix wrongly flipped 9 already-completed past shows (Apr 19 through Aug 16 2026) to `"external"` too, rewriting true history: those were genuinely run through the business's own Eventbrite account at the time they happened. Reverted all 9 back to `ticketSource: "eventbrite-owned"`, which is what they actually were.
+- `eventbriteId` fields were left untouched throughout, they drive a separate, still-valid public event-page content fetch (`src/lib/eventbriteContent.ts`) unrelated to order access.
+- `LESSONS.md`: recorded the rule that `ticketSource` is unvalidated, manually set business knowledge with no automatic drift detection and a silent failure mode, and that a correction to it must be scoped to the shows the correction is actually about, not applied retroactively to history.
+- Verified: pre-commit hook ran `astro check` + full `vitest`, all passing. Manually confirmed via grep that exactly Edison and Philadelphia carry `ticketSource: "external"` among the 11 originally-touched entries, and the other 9 are back to `"eventbrite-owned"`.
 
 **Files:** `src/data/events.ts`, `LESSONS.md`, `BUGS.md`
 

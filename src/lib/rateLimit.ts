@@ -26,6 +26,11 @@ export const RATE_LIMITS = {
     limit: 5,
     windowSeconds: 60,
   },
+  alertFailure: {
+    prefix: "ratelimit:alert-failure",
+    limit: 5,
+    windowSeconds: 60,
+  },
   contestantPrepAuth: {
     prefix: "ratelimit:contestant-prep-auth",
     limit: 5,
@@ -54,6 +59,15 @@ export const RATE_LIMITS = {
   contestantClaim: {
     prefix: "ratelimit:contestant-claim",
     limit: 5,
+    windowSeconds: 60,
+  },
+  goRedirect: {
+    prefix: "ratelimit:go-redirect",
+    // Every real "Get Tickets" click hits this route, including link-preview
+    // bots (Meta/iMessage/Slack unfurl the ad URL headlessly) and shared-IP
+    // bursts (a group behind one office/campus NAT clicking the same link).
+    // Kept generous so a viral moment never throttles a real ticket buyer.
+    limit: 30,
     windowSeconds: 60,
   },
 } as const satisfies Record<string, RateLimitPolicy>;

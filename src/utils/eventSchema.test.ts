@@ -1,5 +1,6 @@
 import { describe, it, expect, vi } from "vitest";
 import type { EventEntry, EventVenue } from "@/data/events";
+import { DEFAULT_LINEUP } from "@/data/lineup";
 
 vi.mock("@/utils/timezone", () => ({
   nyOffset: vi.fn(() => "-04:00"),
@@ -29,6 +30,10 @@ function makeEvent(overrides: Partial<EventEntry> = {}): EventEntry {
     city: "Manhattan",
     state: "New York",
     stateAbbr: "NY",
+    slug: "manhattan-2026-05-10",
+    description: "Test event description.",
+    lineup: DEFAULT_LINEUP,
+    ticketSource: "eventbrite-owned",
     url: "https://eventbrite.com/e/123",
     isoDate: "2026-05-10",
     venue: TEST_VENUE,
@@ -54,6 +59,28 @@ describe("buildEventSchemas", () => {
     const events = [makeEvent({ hidden: true }), makeEvent({ hidden: false })];
     const schemas = buildEventSchemas(events);
     expect(schemas).toHaveLength(1);
+  });
+
+  it("filters out canceled events (no card rendered, so no markup)", () => {
+    const events = [makeEvent({ status: "canceled" }), makeEvent()];
+    const schemas = buildEventSchemas(events);
+    expect(schemas).toHaveLength(1);
+    expect(schemas[0]).not.toContain("EventCancelled");
+  });
+
+  it("emits EventRescheduled and previousStartDate for a moved show", () => {
+    const schemas = buildEventSchemas([
+      makeEvent({ previousDate: "2026-05-03" }),
+    ]);
+    const parsed = JSON.parse(schemas[0]);
+    expect(parsed.eventStatus).toBe("https://schema.org/EventRescheduled");
+    expect(parsed.previousStartDate).toBe("2026-05-03");
+  });
+
+  it("emits EventScheduled and no previousStartDate by default", () => {
+    const parsed = JSON.parse(buildEventSchemas([makeEvent()])[0]);
+    expect(parsed.eventStatus).toBe("https://schema.org/EventScheduled");
+    expect(parsed.previousStartDate).toBeUndefined();
   });
 
   it("filters out events without isoDate", () => {
@@ -143,10 +170,16 @@ describe("buildEventSchemas", () => {
     expect(parsed.location.name).toBe("Top Secret Comedy Club");
   });
 
-  it("includes event URL in offers", () => {
+  it("points offers.url at our own /events/[slug] landing page, not the vendor checkout", () => {
+    // offers.url intentionally does NOT echo the raw vendor URL (e.url):
+    // ads/search traffic should land on our page first, where InitiateCheckout
+    // tracking and ad-trust content live, then hand off via /api/go/[slug].
+    // See the matching WHY comment in eventSchema.ts.
     const schemas = buildEventSchemas([makeEvent()]);
     const parsed = JSON.parse(schemas[0]);
-    expect(parsed.offers.url).toBe("https://eventbrite.com/e/123");
+    expect(parsed.offers.url).toBe(
+      "https://garammasaladating.com/events/manhattan-2026-05-10",
+    );
   });
 
   it("appends NY timezone offset to start and end dates", () => {

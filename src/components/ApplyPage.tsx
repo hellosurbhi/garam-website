@@ -251,9 +251,7 @@ function ApplyPageInner() {
                   {/* ── Nomination intro message ───────────── */}
                   {isNomination && (
                     <div className={styles.nominationNotice}>
-                      <p>
-                        {APPLY_PAGE.nominationContactNote(friendFirstName)}
-                      </p>
+                      <p>{APPLY_PAGE.nominationContactNote(friendFirstName)}</p>
                     </div>
                   )}
 
@@ -682,9 +680,7 @@ function ApplyPageInner() {
                             }
                           />
                           <span>
-                            {APPLY_PAGE.nominationConsentLabel(
-                              friendFirstName,
-                            )}
+                            {APPLY_PAGE.nominationConsentLabel(friendFirstName)}
                             <span className={styles.requiredMark}>*</span>
                           </span>
                         </label>
@@ -819,6 +815,7 @@ function ApplyPageInner() {
                     <label className={styles.checkRow}>
                       <input
                         type="checkbox"
+                        data-testid="apply-terms"
                         checked={termsAgreed}
                         onChange={(e) => handleTermsCheckbox(e.target.checked)}
                         className={styles.checkInput}

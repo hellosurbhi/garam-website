@@ -30,6 +30,14 @@ vi.mock("@/data/events", () => ({
       date: "Dec 31 2099",
       hidden: false,
     },
+    {
+      city: "New York",
+      citySlug: "nyc",
+      isoDate: "2099-11-30",
+      date: "Nov 30 2099",
+      hidden: false,
+      status: "canceled",
+    },
   ],
 }));
 
@@ -84,5 +92,17 @@ describe("send-waiver-nudge POST", () => {
     const res = await POST({ request: req } as Parameters<typeof POST>[0]);
     expect(res.status).toBe(404);
     expect(mocks.fsGet).toHaveBeenCalledWith("applications/app-123");
+  });
+
+  it("returns 400 when the cast event is canceled", async () => {
+    mocks.fsGet.mockResolvedValue({
+      email: "priya@example.com",
+      castEventId: "nyc-2099-11-30",
+    });
+    const req = makeRequest({ applicationId: "app-123" });
+    const res = await POST({ request: req } as Parameters<typeof POST>[0]);
+    expect(res.status).toBe(400);
+    const body = await res.json();
+    expect(body.error).toMatch(/cast event not found/i);
   });
 });

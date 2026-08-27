@@ -1,0 +1,178 @@
+# Synthetic apply-form monitor, every 6 hours.
+#
+# Submits ONE real application on production with reserved synthetic markers
+# (name "SYNTHETIC MONITOR", email synthetic-monitor@garammasaladating.com,
+# isSynthetic flag), verifies the document actually landed in Firestore via
+# the service account, then deletes only documents carrying all synthetic
+# markers (see scripts/synthetic-apply-verify.mjs for the delete safety
+# rules). notify-application skips emails for it; the admin dashboard hides it.
+#
+# This is the only check that exercises the deployed stack end to end
+# (security rules, Firebase config, Vercel env, CSP) — the class of breakage
+# that mocked tests can never catch and that cost a week of applicants in
+# July 2026. On any failure it fires the same real-time alert email a real
+# failed applicant would.
+#
+# Required repo secrets: FIREBASE_ADMIN_CLIENT_EMAIL, FIREBASE_ADMIN_PRIVATE_KEY,
+# FIREBASE_PROJECT_ID, FIREBASE_STORAGE_BUCKET; for the Gmail pager channel:
+# GMAIL_USER, GMAIL_CLIENT_ID, GMAIL_CLIENT_SECRET, GMAIL_REFRESH_TOKEN
+# (the garam-email-outreach OAuth client, gmail.send scope; rotating it means
+# updating both repos). Optional: PAGER_EMAIL_TO.
+name: Synthetic Apply Monitor
+
+on:
+  schedule:
+    - cron: "30 1,7,13,19 * * *" # every 6 hours; bounds prod-only breakage to ~6h
+  workflow_dispatch:
+    inputs:
+      test_pager:
+        description: "Send a test email through the Gmail pager channel"
+        type: boolean
+        default: false
+
+permissions:
+  contents: read
+  # issues: write exists ONLY for the failure pager step below: a broken
+  # site must never be the sole alert channel again (2026-08-19
+  # postmortem: a week of failures alerted through the site's own dead
+  # email path while every application was rejected).
+  issues: write
+
+concurrency:
+  group: synthetic-apply
+  cancel-in-progress: false
+
+jobs:
+  synthetic:
+    name: Real submission + verify + cleanup
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm install -g npm@11
+      - run: npm ci
+      # WHY: drift check runs FIRST. It is the cheapest step and the most
+      # likely root cause (rules deploys are manual). When it ran last, the
+      # Playwright step always failed first with an opaque 45s locator
+      # timeout and this diagnosis never printed — the Aug 2026 outage sat
+      # misdiagnosed for a week.
+      - name: Check deployed rules match the repo
+        run: node scripts/check-rules-drift.mjs
+        env:
+          FIREBASE_ADMIN_CLIENT_EMAIL: ${{ secrets.FIREBASE_ADMIN_CLIENT_EMAIL }}
+          FIREBASE_ADMIN_PRIVATE_KEY: ${{ secrets.FIREBASE_ADMIN_PRIVATE_KEY }}
+          FIREBASE_PROJECT_ID: ${{ secrets.FIREBASE_PROJECT_ID }}
+          FIREBASE_STORAGE_BUCKET: ${{ secrets.FIREBASE_STORAGE_BUCKET }}
+      - name: Install Playwright
+        run: npx playwright install chromium --with-deps
+      - name: Submit synthetic application on production
+        run: npx playwright test --config playwright.synthetic.config.ts
+        env:
+          PLAYWRIGHT_BASE_URL: https://garammasaladating.com
+      - name: Verify document landed and clean up
+        # if: always() (2026-08-19): these two steps ARE the diagnosis
+        # (Firestore ground truth, deployed-rules drift) and sat skipped
+        # behind the failing submit step for a week, hiding both the
+        # root cause and the real-applicant impact.
+        if: always()
+        run: node scripts/synthetic-apply-verify.mjs
+        env:
+          FIREBASE_ADMIN_CLIENT_EMAIL: ${{ secrets.FIREBASE_ADMIN_CLIENT_EMAIL }}
+          FIREBASE_ADMIN_PRIVATE_KEY: ${{ secrets.FIREBASE_ADMIN_PRIVATE_KEY }}
+          FIREBASE_PROJECT_ID: ${{ secrets.FIREBASE_PROJECT_ID }}
+          FIREBASE_STORAGE_BUCKET: ${{ secrets.FIREBASE_STORAGE_BUCKET }}
+      - name: Weekly pager heartbeat (Mondays 13:30 UTC run only)
+        # always(), not success() (2026-08-19): gating the pager-liveness
+        # test on the monitor passing meant a permanently failing monitor
+        # also silenced the weekly proof that the alert channel works —
+        # the exact combination that hid this outage.
+        if: always()
+        env:
+          GMAIL_USER: ${{ secrets.GMAIL_USER }}
+          GMAIL_CLIENT_ID: ${{ secrets.GMAIL_CLIENT_ID }}
+          GMAIL_CLIENT_SECRET: ${{ secrets.GMAIL_CLIENT_SECRET }}
+          GMAIL_REFRESH_TOKEN: ${{ secrets.GMAIL_REFRESH_TOKEN }}
+          PAGER_EMAIL_TO: ${{ secrets.PAGER_EMAIL_TO }}
+          RUN_URL: https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}
+        run: |
+          # A silently dead alert channel (revoked OAuth token, broken env)
+          # looks identical to "no failures". One heartbeat email per week
+          # through EACH real alert path (site email + Gmail pager) proves
+          # both pagers still work. A dead Gmail credential fails this step,
+          # which fires the failure() pagers below: a broken alert channel
+          # pages through the surviving channels instead of hiding.
+          if [ "$(date -u +%u-%H)" = "1-13" ]; then
+            curl -sS -X POST https://garammasaladating.com/api/alert-failure \
+              -H "Content-Type: application/json" \
+              -H "Origin: https://garammasaladating.com" \
+              -d '{"flow":"ops","stage":"heartbeat","errorMessage":"Weekly pager test: the synthetic monitor and the alert channel are both working. No action needed."}'
+            node scripts/send-pager-email.mjs test
+          else
+            echo "Not the Monday 13:30 run; skipping heartbeat."
+          fi
+      - name: Page the producer via GitHub issue on failure
+        # Independent of the website: gh with the workflow token opens or
+        # updates one issue thread; GitHub emails the owner natively. The
+        # site-channel page below stays as the second channel.
+        if: failure()
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          RUN_URL: https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}
+        run: |
+          TITLE="Synthetic apply monitor failing"
+          BODY="The production apply form monitor FAILED. Run: $RUN_URL — check the verify and rules-drift step outputs in the same run for the cause and applicant impact."
+          EXISTING=$(gh issue list --repo "$GITHUB_REPOSITORY" --state open --search "\"$TITLE\" in:title" --json number --jq '.[0].number // empty')
+          if [ -n "$EXISTING" ]; then
+            gh issue comment "$EXISTING" --repo "$GITHUB_REPOSITORY" --body "$BODY"
+          else
+            gh issue create --repo "$GITHUB_REPOSITORY" --title "$TITLE" --body "$BODY" --assignee hellosurbhi
+          fi
+      - name: Page the producer on failure
+        if: failure()
+        # Expressions come in through env, not inline interpolation, so a
+        # future attacker-controllable field can never inject into the shell.
+        env:
+          RUN_URL: https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}
+        run: |
+          curl -sS -X POST https://garammasaladating.com/api/alert-failure \
+            -H "Content-Type: application/json" \
+            -H "Origin: https://garammasaladating.com" \
+            -d "{\"flow\":\"ops\",\"stage\":\"synthetic_monitor\",\"errorMessage\":\"Synthetic apply monitor FAILED: the production apply form is likely broken. Check the GitHub Actions run for details.\",\"pageUrl\":\"$RUN_URL\",\"userAgent\":\"synthetic-apply-monitor\"}"
+      - name: Upload report on failure
+        uses: actions/upload-artifact@v4
+        if: failure()
+        with:
+          name: synthetic-apply-report
+          path: playwright-report/
+          retention-days: 7
+      - name: Email the producer from the show's Gmail
+        # Third pager channel, sent by the workflow itself through the Gmail
+        # REST API (the outreach OAuth credential is gmail.send-scoped, which
+        # SMTP cannot use): independent of GitHub's notification sender
+        # (deleted unread) and of the site's email path (the thing that was
+        # broken in July 2026).
+        # WHY last: if this step fails (drill with missing secrets, revoked
+        # OAuth token), the failure() pagers above have already evaluated,
+        # so a broken Gmail credential can never open a fake "production is
+        # broken" incident. If checkout dies the GitHub-issue pager above is
+        # the surviving channel.
+        if: failure() || (github.event_name == 'workflow_dispatch' && inputs.test_pager)
+        timeout-minutes: 2
+        env:
+          GMAIL_USER: ${{ secrets.GMAIL_USER }}
+          GMAIL_CLIENT_ID: ${{ secrets.GMAIL_CLIENT_ID }}
+          GMAIL_CLIENT_SECRET: ${{ secrets.GMAIL_CLIENT_SECRET }}
+          GMAIL_REFRESH_TOKEN: ${{ secrets.GMAIL_REFRESH_TOKEN }}
+          PAGER_EMAIL_TO: ${{ secrets.PAGER_EMAIL_TO }}
+          RUN_URL: https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}
+          JOB_STATUS: ${{ job.status }}
+        run: |
+          # A test_pager dispatch whose run ALSO genuinely failed still pages
+          # for real; only a passing drill sends the test message.
+          if [ "$JOB_STATUS" = "failure" ]; then MODE=page; else MODE=test; fi
+          node scripts/send-pager-email.mjs "$MODE"

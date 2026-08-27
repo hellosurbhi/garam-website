@@ -209,7 +209,7 @@ export const POST: APIRoute = async ({ request }) => {
 
     // Welcome email to applicant — non-fatal if it fails, but awaited so the
     // serverless function doesn't exit before the send attempt completes.
-    const welcome = applicationReceived(body.name, body.city);
+    const welcome = applicationReceived(body.name);
     await Promise.allSettled([sendMail({ to: body.email, ...welcome })]);
 
     return new Response(JSON.stringify({ sent: true }), {

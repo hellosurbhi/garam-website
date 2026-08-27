@@ -1,3 +1,5 @@
+import applicantWelcomeCopy from "./email-copy/applicant-welcome.json";
+
 export interface EmailTemplate {
   subject: string;
   text: string;
@@ -388,37 +390,19 @@ export function postShow(name: string): EmailTemplate {
   return { subject, text, html };
 }
 
-export function applicationReceived(name: string, city: string): EmailTemplate {
+export function applicationReceived(name: string): EmailTemplate {
   const firstName = name.split(" ")[0];
-  const subject = `We got your application, ${subjectSafe(firstName)}!`;
   const safeFirstName = escapeHtml(firstName);
-  const safeCity = escapeHtml(city);
-  const text = [
-    `Hi ${firstName},`,
-    "",
-    `Thank you so much for applying to Garam Masala Dating${city ? ` (${city})` : ""}! We're so excited you want to be on the show.`,
-    "",
-    "We go through applications personally and will be in touch soon. In the meantime, follow us on Instagram for show updates and behind-the-scenes content.",
-    "",
-    "Talk soon!",
-    "",
-    "Surbhi",
-    "Garam Masala Dating",
-  ].join("\n");
+  const subjectFirstName = subjectSafe(firstName);
 
-  const html = wrap(
-    p(`Hi ${safeFirstName},`) +
-      p(
-        `Thank you so much for applying to Garam Masala Dating${safeCity ? ` (${safeCity})` : ""}! We're so excited you want to be on the show.`,
-      ) +
-      p(
-        `We go through applications personally and will be in touch soon. In the meantime, follow us on ${link("https://www.instagram.com/garammasaladating/", "@garammasaladating")} for show updates and behind-the-scenes content.`,
-      ) +
-      p("Talk soon!") +
-      p("Surbhi<br>Garam Masala Dating"),
-  );
-
-  return { subject, text, html };
+  return {
+    subject: applicantWelcomeCopy.subject.replaceAll(
+      "{{firstName}}",
+      subjectFirstName,
+    ),
+    text: applicantWelcomeCopy.text.replaceAll("{{firstName}}", firstName),
+    html: applicantWelcomeCopy.html.replaceAll("{{firstName}}", safeFirstName),
+  };
 }
 
 export function newShowAnnouncement(opts: {

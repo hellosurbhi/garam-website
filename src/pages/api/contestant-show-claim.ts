@@ -7,10 +7,12 @@ import { WAIVER_VERSION, WAIVER_TEXT } from "@/data/waiver";
 import { events } from "@/data/events";
 import { sendMail } from "@/lib/zohoMailer";
 import { waiverReceiptWithText } from "@/data/emails";
+import { producerWaiverNotification } from "@/data/emails";
 import { createHash } from "node:crypto";
 import { enforceRateLimit, RATE_LIMITS, getClientIp } from "@/lib/rateLimit";
 import { jsonResponse, parseJsonRequest } from "@/lib/http";
 import { ContestantShowClaimSchema } from "@/lib/schemas";
+import { readTrimmedEnv } from "@/lib/env";
 
 export const prerender = false;
 
@@ -132,26 +134,55 @@ export const POST: APIRoute = async ({ request }) => {
     );
   }
 
-  try {
-    const template = waiverReceiptWithText({
-      firstName: firstName.trim(),
-      signature: signature.trim(),
-      signedAtIso,
-      waiverText: WAIVER_TEXT,
-    });
-    await sendMail({
+  const notificationEmail = readTrimmedEnv(import.meta.env.NOTIFICATION_EMAIL);
+  const showLabel = [event.city, showDate].filter(Boolean).join(", ");
+  const template = waiverReceiptWithText({
+    firstName: firstName.trim(),
+    signature: signature.trim(),
+    signedAtIso,
+    waiverText: WAIVER_TEXT,
+  });
+  const [signerResult, producerResult] = await Promise.allSettled([
+    sendMail({
       to: email.trim().toLowerCase(),
       subject: template.subject,
       text: template.text,
       html: template.html,
-    });
-  } catch (err) {
+    }),
+    notificationEmail
+      ? sendMail({
+          to: notificationEmail,
+          ...producerWaiverNotification({
+            name: claimContext.name,
+            email: claimContext.email,
+            phone: claimContext.phone,
+            flow: "Show-day claim",
+            showLabel: showLabel || undefined,
+          }),
+        })
+      : Promise.resolve(),
+  ]);
+  if (signerResult.status === "rejected") {
     // Email failure should not block the waiver claim, but a silently dead
     // mailer must still page.
     await alertOps({
       flow: "waiver",
       stage: "receipt_email",
-      errorMessage: err instanceof Error ? err.message : String(err),
+      errorMessage:
+        signerResult.reason instanceof Error
+          ? signerResult.reason.message
+          : String(signerResult.reason),
+      context: claimContext,
+    });
+  }
+  if (notificationEmail && producerResult.status === "rejected") {
+    await alertOps({
+      flow: "waiver",
+      stage: "producer_notify_email",
+      errorMessage:
+        producerResult.reason instanceof Error
+          ? producerResult.reason.message
+          : String(producerResult.reason),
       context: claimContext,
     });
   }

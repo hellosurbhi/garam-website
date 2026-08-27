@@ -9,6 +9,11 @@ CHANGELOG.md. Never add completed or superseded entries to this file. -->
 
 ---
 
+## Coverage-gate follow-ups (2026-08-26)
+
+- [ ] ENHANCEMENT: diff-coverage.mjs's uninstrumentable-line regex doesn't recognize multi-line named imports as excludable, false-flagging them as uncovered | Why: a single-line `import { a, b } from "x"` is matched by the `import\s` exclusion pattern, but once Prettier wraps it across lines, only the opening `import {` line matches; the interior identifiers and the closing `} from "...";` line match no exclusion pattern, and since import statements are hoisted (never appear in Istanbul's statementMap) that closing line can never register as "covered," which also breaks CONTINUATION_RE's backward-rescue chain for the whole block. Hit this on PR #230: contestant-claim.ts, contestant-open-claim.ts, and contestant-show-claim.ts all false-flagged a 3-line import even though the imported functions were already fully exercised by existing tests; worked around in-session by splitting each into single-line imports rather than editing this shared gate script, since the script is pre-existing infra outside this session's scope | Files: scripts/diff-coverage.mjs | Plan: extend UNINSTRUMENTABLE_RE (or add a dedicated multi-line-import scanner) to recognize a `import {` ... `} from "...";` block spanning multiple diff lines as fully excludable, regardless of interior line content | Verify: reproduce with a synthetic multi-line named import in a throwaway diff, confirm diff-coverage.mjs no longer counts its interior/closing lines as uncovered; re-run against PR #230's original commit (0beb896) diff and confirm the three files no longer need the import-splitting workaround.
+
+---
 ## Future city additions: batch recipe (2026-07-06)
 
 ## Apply-monitor fix follow-ups (2026-08-19)

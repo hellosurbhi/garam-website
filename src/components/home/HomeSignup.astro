@@ -98,7 +98,7 @@ const leadSource = `spice-list-${pageName}`;
 
 <script>
   import { cleanPhone } from "@/lib/phone";
-  import { identifyLead, trackLeadEvent } from "@/lib/analytics";
+  import { identifyLead, trackLeadEvent, trackError } from "@/lib/analytics";
   import { buildLeadAttribution } from "@/lib/leadAttribution";
   import { reportFailure } from "@/lib/failureAlert";
   import { safeLocalStorage, safeSessionStorage } from "@/lib/safeStorage";
@@ -196,6 +196,12 @@ const leadSource = `spice-list-${pageName}`;
           errorMessage: err instanceof Error ? err.message : String(err),
           contact: { email: savedEmail },
         });
+        trackError({
+          error_message: err instanceof Error ? err.message : String(err),
+          error_type: "api_error",
+          component: "HomeSignup",
+          email: savedEmail,
+        });
       } finally {
         if (submitBtn) {
           submitBtn.disabled = false;
@@ -276,6 +282,12 @@ const leadSource = `spice-list-${pageName}`;
           stage: "phone",
           errorMessage: err instanceof Error ? err.message : String(err),
           contact: { email: savedEmail, phone: cleaned },
+        });
+        trackError({
+          error_message: err instanceof Error ? err.message : String(err),
+          error_type: "api_error",
+          component: "HomeSignup",
+          email: savedEmail,
         });
       } finally {
         if (submitBtn) {

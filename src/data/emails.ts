@@ -421,6 +421,79 @@ export function applicationReceived(name: string, city: string): EmailTemplate {
   return { subject, text, html };
 }
 
+function producerNotificationTable(
+  heading: string,
+  rows: [string, string][],
+): string {
+  const tableRows = rows
+    .map(
+      ([label, value]) =>
+        `<tr>
+          <td style="padding:8px 12px;font-weight:600;color:#1A1A1A;border-bottom:1px solid #eee;white-space:nowrap;">${escapeHtml(label)}</td>
+          <td style="padding:8px 12px;color:#333;border-bottom:1px solid #eee;">${escapeHtml(value)}</td>
+        </tr>`,
+    )
+    .join("");
+  return wrap(
+    p(`<strong>${escapeHtml(heading)}</strong>`) +
+      `<table style="width:100%;border-collapse:collapse;">${tableRows}</table>`,
+  );
+}
+
+export function producerLeadNotification(opts: {
+  email: string;
+  city?: string;
+  phone?: string;
+  source?: string;
+  sourcePage?: string;
+}): EmailTemplate {
+  const subject = `New Spice List Signup: ${subjectSafe(opts.email)}`;
+
+  const rows: [string, string][] = [["Email", opts.email]];
+  if (opts.city) rows.push(["City", opts.city]);
+  if (opts.phone) rows.push(["Phone", opts.phone]);
+  if (opts.source) rows.push(["Source", opts.source]);
+  if (opts.sourcePage) rows.push(["Page", opts.sourcePage]);
+
+  const text = [
+    "New Spice List signup",
+    "",
+    ...rows.map(([label, value]) => `${label}: ${value}`),
+  ].join("\n");
+
+  const html = producerNotificationTable("New Spice List signup", rows);
+
+  return { subject, text, html };
+}
+
+export function producerWaiverNotification(opts: {
+  name: string;
+  email: string;
+  phone: string;
+  flow: string;
+  showLabel?: string;
+}): EmailTemplate {
+  const subject = `New waiver signed: ${subjectSafe(opts.name)}`;
+
+  const rows: [string, string][] = [
+    ["Name", opts.name],
+    ["Email", opts.email],
+    ["Phone", opts.phone],
+    ["Flow", opts.flow],
+  ];
+  if (opts.showLabel) rows.push(["Show", opts.showLabel]);
+
+  const text = [
+    "New waiver signed",
+    "",
+    ...rows.map(([label, value]) => `${label}: ${value}`),
+  ].join("\n");
+
+  const html = producerNotificationTable("New waiver signed", rows);
+
+  return { subject, text, html };
+}
+
 export function newShowAnnouncement(opts: {
   subject: string;
   city: string;

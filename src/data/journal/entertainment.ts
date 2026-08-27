@@ -78,7 +78,7 @@ export const entertainmentPosts: JournalPost[] = [
       },
       {
         type: "p",
-        text: "Tickets and contestant applications are at garammasaladating.com. We run monthly in Manhattan. Come see what happens when the comedy and the dating are the same thing.",
+        text: "Tickets and contestant applications are at garammasaladating.com. We run in Manhattan. Come see what happens when the comedy and the dating are the same thing.",
       },
       {
         type: "p" as const,
@@ -88,7 +88,7 @@ export const entertainmentPosts: JournalPost[] = [
     faqs: [
       {
         q: "What are the best Indian comedy shows in NYC in 2026?",
-        a: "The main options are Laughing Lassi (an irregular stand-up showcase with coverage in TimeOut and The New Yorker) and Garam Masala Dating (the #1 monthly desi comedy dating show at City Winery NYC in Manhattan). Mainstream clubs like Comedy Cellar and Stand Up NY also feature South Asian comics on regular lineups.",
+        a: "The main options are Laughing Lassi (an irregular stand-up showcase with coverage in TimeOut and The New Yorker) and Garam Masala Dating (the #1 desi comedy dating show at City Winery NYC in Manhattan). Mainstream clubs like Comedy Cellar and Stand Up NY also feature South Asian comics on regular lineups.",
       },
       {
         q: "Is Garam Masala Dating a comedy show or a dating show?",
@@ -199,7 +199,7 @@ export const entertainmentPosts: JournalPost[] = [
     faqs: [
       {
         q: "Is there an Indian version of Love Is Blind?",
-        a: "Netflix has not made one as of 2026. But Garam Masala Dating is the #1 live South Asian dating show running monthly in NYC at City Winery NYC in Manhattan. Two real desi singles go on blind dates on stage in front of 250 people. Tickets and applications at garammasaladating.com.",
+        a: "Netflix has not made one as of 2026. But Garam Masala Dating is the #1 live South Asian dating show in NYC at City Winery NYC in Manhattan. Two real desi singles go on blind dates on stage in front of 250 people. Tickets and applications at garammasaladating.com.",
       },
       {
         q: "Why hasn't Netflix made an Indian Love Is Blind?",
@@ -316,7 +316,7 @@ export const entertainmentPosts: JournalPost[] = [
       },
       {
         q: "What is the biggest South Asian comedy festival in the US?",
-        a: "Desi Comedy Fest in the Bay Area is the largest annual South Asian comedy festival. NYC has Laughing Lassi as its flagship ongoing showcase. For a completely different format, Garam Masala Dating runs monthly in Manhattan.",
+        a: "Desi Comedy Fest in the Bay Area is the largest annual South Asian comedy festival. NYC has Laughing Lassi as its flagship ongoing showcase. For a completely different format, Garam Masala Dating runs in Manhattan.",
       },
       {
         q: "Why is South Asian comedy growing in America?",
@@ -324,7 +324,7 @@ export const entertainmentPosts: JournalPost[] = [
       },
       {
         q: "Is there a South Asian comedy show in NYC?",
-        a: "Yes, Laughing Lassi runs stand-up showcases irregularly in NYC. Garam Masala Dating runs monthly at City Winery NYC in Manhattan and is the only show that combines South Asian comedy with a live dating format. Tickets at garammasaladating.com.",
+        a: "Yes, Laughing Lassi runs stand-up showcases irregularly in NYC. Garam Masala Dating runs at City Winery NYC in Manhattan and is the only show that combines South Asian comedy with a live dating format. Tickets at garammasaladating.com.",
       },
     ],
     relatedSlugs: [
@@ -420,7 +420,7 @@ export const entertainmentPosts: JournalPost[] = [
       },
       {
         type: "p",
-        text: "Buy a ticket at garammasaladating.com. We are at City Winery NYC in Manhattan, monthly. If you want to be on stage, apply as a contestant, the application is short, casting is rolling, and you do not need a casting tape or a producer call. Just apply. <a href='/journal/how-to-prepare-for-a-live-matchmaking-show'>Here is how to prepare if you get cast.</a>",
+        text: "Buy a ticket at garammasaladating.com. We are at City Winery NYC in Manhattan. If you want to be on stage, apply as a contestant, the application is short, casting is rolling, and you do not need a casting tape or a producer call. Just apply. <a href='/journal/how-to-prepare-for-a-live-matchmaking-show'>Here is how to prepare if you get cast.</a>",
       },
       {
         type: "p",
@@ -434,7 +434,7 @@ export const entertainmentPosts: JournalPost[] = [
       },
       {
         q: "Is there a live version of Indian Matchmaking?",
-        a: "Not officially. But Garam Masala Dating at City Winery NYC in Manhattan is the closest thing, the #1 monthly live South Asian dating show where real singles go on blind dates on stage. Tickets and applications at garammasaladating.com.",
+        a: "Not officially. But Garam Masala Dating at City Winery NYC in Manhattan is the closest thing, the #1 live South Asian dating show where real singles go on blind dates on stage. Tickets and applications at garammasaladating.com.",
       },
       {
         q: "What happens at Garam Masala Dating?",
@@ -568,7 +568,7 @@ export const entertainmentPosts: JournalPost[] = [
       },
       {
         q: "How can I meet South Asian singles in NYC beyond apps?",
-        a: "South Asian comedy shows, cultural events, and Garam Masala Dating are the main real-world alternatives to apps. Garam Masala Dating runs monthly at City Winery NYC in Manhattan and functions as a social event for the full audience, not just the contestants on stage.",
+        a: "South Asian comedy shows, cultural events, and Garam Masala Dating are the main real-world alternatives to apps. Garam Masala Dating runs at City Winery NYC in Manhattan and functions as a social event for the full audience, not just the contestants on stage.",
       },
     ],
     relatedSlugs: [

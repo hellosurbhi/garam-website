@@ -10,10 +10,10 @@ export const activeCities: Record<string, CityData> = {
       "The best South Asian singles event in Manhattan. Live dating show and mixer at City Winery NYC. Real dates on stage, real people in the room.",
     h1: "The Live Dating Show That Took Over Chelsea",
     status: "active",
-    badgeLabel: "Every 2 to 3 Weeks",
+    badgeLabel: "Tickets Live",
     bodyParagraphs: [
       "Manhattan has no shortage of things to do on a Sunday. What it’s short on is a room full of interesting, single people who are actually trying to meet someone without the pressure of a formal event or the numbness of another app.",
-      "Garam Masala Dating fills that gap. Every two to three weeks at City Winery NYC in Chelsea, real singles volunteer for live dates on stage while a packed room watches it unfold. Before and after, the whole crowd mingles. It’s low-stakes, high-energy, and nothing like the so-called networking events you’ve skipped.",
+      "Garam Masala Dating fills that gap. At City Winery NYC in Chelsea, real singles volunteer for live dates on stage while a packed room watches it unfold. Before and after, the whole crowd mingles. It’s low-stakes, high-energy, and nothing like the so-called networking events you’ve skipped.",
       "Our Manhattan shows draw South Asian professionals, desi diaspora, expats, and anyone who shows up curious and leaves having actually talked to someone new. The crowd skews late 20s to mid 30s, culturally mixed, and genuinely there for a good time.",
       "Shows happen on Sundays at City Winery NYC, 25 11th Ave. Grab tickets for the next one below.",
       "If you’re tired of apps and tired of manufactured mixers, this is the alternative. Come watch a few strangers try to fall in love on stage, then go find your own person at the bar.",
@@ -47,7 +47,11 @@ export const activeCities: Record<string, CityData> = {
     faqItems: [
       {
         q: "How often does Garam Masala Dating run in Manhattan?",
-        a: "Every two to three weeks on Sundays at City Winery NYC in Chelsea. Dates are posted on our events page and tickets go on sale about a week before each show.",
+        a: "Shows happen on Sundays at City Winery NYC in Chelsea, but not on a fixed schedule. Check our tickets page for the next confirmed date.",
+      },
+      {
+        q: "Did Garam Masala Dating change venues in Manhattan?",
+        a: "Yes. The Manhattan show now runs at City Winery NYC, 25 11th Ave in Chelsea. It previously ran at Top Secret Comedy Club in the East Village. Same show, new home.",
       },
       {
         q: "What happens at a Garam Masala Dating show?",
@@ -86,7 +90,7 @@ export const activeCities: Record<string, CityData> = {
         heading: "Who you'll actually meet at the Manhattan show",
         paragraphs: [
           "The stereotype is that desi events in NYC are either fresh-off-the-boat student nights or aunty-run matrimonial mixers. This room is neither. Expect consultants who moved from Bombay via business school, second gen Jersey kids who commute in, doctors escaping their residencies for one night, artists, founders and roughly forty percent non desi friends, partners and the culturally curious. The common thread is that everyone chose a live show over another night of swiping.",
-          "Tickets sell out most weeks, so grab a seat now, and if watching makes you want the stage, apply to be a contestant. Half our best daters started in the audience.",
+          "Tickets sell out fast, so grab a seat now, and if watching makes you want the stage, apply to be a contestant. Half our best daters started in the audience.",
         ],
       },
     ],

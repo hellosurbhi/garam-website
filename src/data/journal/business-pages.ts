@@ -217,7 +217,7 @@ export const businessPagesPosts: JournalPost[] = [
       },
       {
         type: "p",
-        text: "Garam Masala Dating runs monthly in NYC and draws 250 people per show. The audience is majority South Asian, skewing 25 to 38 years old, predominantly young professionals in finance, tech, medicine and law. These are people with real disposable income who are actively making purchasing decisions. Not aspirational consumers. Actual buyers.",
+        text: "Garam Masala Dating runs in NYC and draws 250 people per show. The audience is majority South Asian, skewing 25 to 38 years old, predominantly young professionals in finance, tech, medicine and law. These are people with real disposable income who are actively making purchasing decisions. Not aspirational consumers. Actual buyers.",
       },
       {
         type: "p",
@@ -225,7 +225,7 @@ export const businessPagesPosts: JournalPost[] = [
       },
       {
         type: "p",
-        text: "Over four years and 40+ shows, the audience has grown and deepened. The show draws from across the tri-state area and has toured to other cities. The community that has formed around it includes monthly regulars, social-media followers who attend when they can and people who heard about it from someone who was in the room. That kind of word-of-mouth reach is not manufactured. It is built one show at a time.",
+        text: "Over four years and 40+ shows, the audience has grown and deepened. The show draws from across the tri-state area and has toured to other cities. The community that has formed around it includes repeat regulars, social-media followers who attend when they can and people who heard about it from someone who was in the room. That kind of word-of-mouth reach is not manufactured. It is built one show at a time.",
       },
       {
         type: "h2",

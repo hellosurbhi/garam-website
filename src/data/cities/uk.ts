@@ -64,7 +64,7 @@ export const ukCities: Record<string, CityData> = {
       {
         heading: "London already has every desi scene except this one",
         paragraphs: [
-          "London's British Asian social calendar is the busiest in the western world. There are Bollywood and bhangra nights every weekend, comedy lineups full of British Asian acts, shaadi season running eight months of the year and aunties running informal matchmaking operations with better data than any app. What London does not have is a live show where two real singles go on a first date on stage while the city watches and votes. New York proved the format sells out weekly. London's community is three times the size.",
+          "London's British Asian social calendar is the busiest in the western world. There are Bollywood and bhangra nights every weekend, comedy lineups full of British Asian acts, shaadi season running eight months of the year and aunties running informal matchmaking operations with better data than any app. What London does not have is a live show where two real singles go on a first date on stage while the city watches and votes. New York proved the format sells out. London's community is three times the size.",
           "The apps do not carry the load here either. Dil Mil is thinner in the UK than the US, Hinge is saturated, and Muzz works only for the Muslim side of a very plural community. Everyone is on them and nobody is happy, which is London's most transferable dating fact.",
         ],
       },

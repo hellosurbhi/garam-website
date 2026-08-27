@@ -126,6 +126,22 @@ describe("enforceRateLimit", () => {
     expect(errorSpy).toHaveBeenCalled();
   });
 
+  it("fails open when constructing the Redis client throws", async () => {
+    import.meta.env.UPSTASH_REDIS_REST_URL = "not a valid url";
+    import.meta.env.UPSTASH_REDIS_REST_TOKEN = "token";
+    const errorSpy = vi.spyOn(console, "error").mockImplementation(() => {});
+    mocks.redisCtor.mockImplementationOnce(() => {
+      throw new Error("invalid redis url");
+    });
+
+    const result = await enforceRateLimit(
+      makeRequest(),
+      RATE_LIMITS.captureLead,
+    );
+    expect(result).toBeNull();
+    expect(errorSpy).toHaveBeenCalled();
+  });
+
   it("fails open when the limiter hangs past the timeout", async () => {
     import.meta.env.UPSTASH_REDIS_REST_URL = "https://example.upstash.io";
     import.meta.env.UPSTASH_REDIS_REST_TOKEN = "token";

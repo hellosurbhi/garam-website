@@ -1,5 +1,15 @@
 # Changelog
 
+## fix(tickets): stop blocking the redirect on tracking calls, add loading state to same-tab CTA (2026-08-27)
+
+- `/api/go/[slug].ts` was awaiting an unbounded Redis rate-limit check and a Meta CAPI call before sending the 302, so a slow Redis/Meta response stalled the entire ticket flow for up to ~10s. Both now run after the redirect via Vercel's `waitUntil()`, with a new 1.5s timeout ceiling on the Redis call (`src/lib/rateLimit.ts`) so it can never hang unbounded again.
+- The same-tab "Get Tickets" CTA (`EventTicketCta.astro`, the page paid Instagram ads land visitors on, deliberately same-tab rather than `target="_blank"` because in-app browsers handle popups unreliably) gave no feedback while waiting. Added an instant loading state: label swap, spinner, `aria-busy`, click-guard, and bfcache restore (`src/lib/ticketCtaTracking.ts`).
+- Post-review fixes (Codex, tier E): moved `getLimiter()` inside `enforceRateLimit()`'s try block so a malformed Upstash env value fails open instead of rejecting every one of the 11 routes that call it; the click-guard now calls `preventDefault()` so a second Enter/click during the loading window can't outrun the beacon-flush delay; added a regression test proving the redirect resolves before the backgrounded rate-limit/CAPI work settles.
+- `LESSONS.md`: this exact symptom ("nothing happens for 5 to 10s after tapping Get Tickets") has now recurred twice for two different root causes. Recorded the rule that any checkout hop with a network dependency needs both a non-blocking backend and instant click feedback, not just one.
+- Verified with `npm run check` (0 errors), `npm run build`, `npm run lint`, and `npm test`.
+
+**Files:** `src/pages/api/go/[slug].ts`, `src/lib/rateLimit.ts`, `src/lib/rateLimit.test.ts`, `src/lib/ticketCtaTracking.ts`, `src/components/events/EventTicketCta.astro`, `test/go-redirect.test.ts`, `LESSONS.md`
+
 ## fix(deps): resolve npm audit high-severity findings via lockfile resync (2026-08-02)
 
 The required Lint/Types/Test/Build CI check (`npm audit --audit-level=high --omit=dev`) started failing on every PR because 5 transitive packages (`astro`, `svgo`, `postcss`, `brace-expansion`, `tar`) were pinned in `package-lock.json` at versions inside their existing `package.json` semver ranges that carried known high-severity advisories; the ranges themselves were never violated, so this was not a lockfile drift or an invalid-version problem. A plain `npm audit fix` (no `--force`) moved each package forward to a newer version still inside its existing range: `astro` 7.0.7 to 7.1.6, `svgo` 4.0.1 to 4.0.2, `postcss` 8.5.16 to 8.5.25, `brace-expansion` 5.0.7 to 5.0.9, `tar` 7.5.19 to 7.5.22 (all patch or minor). Zero breaking changes, `package.json` untouched. 3 remaining moderate `@opentelemetry/core` findings (via `firebase-tools`) are devDependency-only and already excluded by the CI gate; logged as an open item in `BUGS.md` rather than forcing a breaking `firebase-tools` downgrade for a non-gating finding.

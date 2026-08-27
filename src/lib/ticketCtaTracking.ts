@@ -98,8 +98,17 @@ export function wireTicketCtaTracking(): void {
         // Click-guard: a second click/tap/Enter during the loading window
         // (CSS also sets pointer-events: none on [aria-busy], but that
         // doesn't stop keyboard activation) must not re-fire capture() below
-        // or restart the delayed navigation.
-        if (anchor.dataset.ctaLoading === "true") return;
+        // or restart the delayed navigation. preventDefault() here too
+        // (caught by Codex review, 2026-08-27): this flag is only ever set
+        // by the same-tab branch below, so a guarded return always means
+        // "this anchor's native navigation must stay deferred to the
+        // setTimeout below" — without it, a second Enter/click inside the
+        // 100ms window navigates immediately via the browser's default
+        // action, which can outrun the beacon flush that delay exists for.
+        if (anchor.dataset.ctaLoading === "true") {
+          e.preventDefault();
+          return;
+        }
 
         const me = e as MouseEvent;
         const isModified =

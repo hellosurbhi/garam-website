@@ -1534,7 +1534,7 @@ export const searchAnswersPosts: JournalPost[] = [
       },
       {
         type: "p",
-        text: "Regular shows in <a href='/cities/manhattan'>Manhattan</a> at City Winery NYC. Monthly in <a href='/cities/jersey-city'>Jersey City</a>. We also tour to other cities across the US throughout the year. If you are not in New York, check the tickets page for upcoming shows in your city or nearby.",
+        text: "Regular shows in <a href='/cities/manhattan'>Manhattan</a> at City Winery NYC. Also in <a href='/cities/jersey-city'>Jersey City</a>. We also tour to other cities across the US throughout the year. If you are not in New York, check the tickets page for upcoming shows in your city or nearby.",
       },
       {
         type: "h2",
@@ -1777,7 +1777,7 @@ export const searchAnswersPosts: JournalPost[] = [
       },
       {
         type: "p",
-        text: "Garam Masala Dating runs frequently in <a href='/cities/manhattan'>Manhattan</a> and monthly in <a href='/cities/jersey-city'>Jersey City</a>, with regular touring shows across the US including <a href='/cities/los-angeles'>Los Angeles</a>. The format is a comedy dating show followed by a singles mixer. It is the only live format specifically designed for South Asian singles that also includes a built-in social event afterward. Most people who come once come back. Read about <a href='/journal/the-realest-way-to-meet-desi-singles-in-nyc'>the realest way to meet desi singles in NYC</a> for the full comparison of options.",
+        text: "Garam Masala Dating runs frequently in <a href='/cities/manhattan'>Manhattan</a> and has also run in <a href='/cities/jersey-city'>Jersey City</a>, with regular touring shows across the US including <a href='/cities/los-angeles'>Los Angeles</a>. The format is a comedy dating show followed by a singles mixer. It is the only live format specifically designed for South Asian singles that also includes a built-in social event afterward. Most people who come once come back. Read about <a href='/journal/the-realest-way-to-meet-desi-singles-in-nyc'>the realest way to meet desi singles in NYC</a> for the full comparison of options.",
       },
       {
         type: "p",
@@ -1803,7 +1803,7 @@ export const searchAnswersPosts: JournalPost[] = [
       },
       {
         q: "What are the best in-person alternatives to dating apps for desi singles?",
-        a: "Garam Masala Dating (regularly in Manhattan, monthly in Jersey City, touring nationally), South Asian cultural events with genuine social programming, semi-arranged introductions through community networks and South Asian-focused professional networking events. The best formats have shared experience as their anchor.",
+        a: "Garam Masala Dating (regularly in Manhattan, also in Jersey City, touring nationally), South Asian cultural events with genuine social programming, semi-arranged introductions through community networks and South Asian-focused professional networking events. The best formats have shared experience as their anchor.",
       },
       {
         q: "Is in-person dating better than apps for South Asian singles?",

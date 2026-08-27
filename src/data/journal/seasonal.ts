@@ -213,7 +213,7 @@ export const seasonalPosts: JournalPost[] = [
       },
       {
         q: "Is Garam Masala Dating open year-round?",
-        a: "Yes. Garam Masala Dating runs regularly at City Winery NYC in Manhattan. Monthly shows also run in Jersey City. You can buy tickets or apply to be a contestant at garammasaladating.com.",
+        a: "Yes. Garam Masala Dating runs regularly at City Winery NYC in Manhattan. The show has also run in Jersey City. You can buy tickets or apply to be a contestant at garammasaladating.com.",
       },
     ],
     relatedSlugs: [
@@ -284,7 +284,7 @@ export const seasonalPosts: JournalPost[] = [
       },
       {
         type: "p",
-        text: "The desi diaspora is dense in NJ and the events reflect it. Jersey City specifically has a growing scene. Garam Masala Dating runs monthly in Jersey City. Beyond that, look for temple-community events that have added a young professionals mixer component \u2014 these often have the best food and the most genuine crowd.",
+        text: "The desi diaspora is dense in NJ and the events reflect it. Jersey City specifically has a growing scene. Garam Masala Dating has also run a show in Jersey City. Beyond that, look for temple-community events that have added a young professionals mixer component \u2014 these often have the best food and the most genuine crowd.",
       },
       {
         type: "h3",

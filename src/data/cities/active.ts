@@ -101,16 +101,16 @@ export const activeCities: Record<string, CityData> = {
     displayName: "Jersey City",
     titleTag: "Desi Dating Night Jersey City NJ",
     metaDescription:
-      "Garam Masala Dating runs monthly at The Laugh Tour Comedy Club in Jersey City. Live desi dating show and mixer. No PATH anxiety required.",
+      "Garam Masala Dating comes to The Laugh Tour Comedy Club in Jersey City. Live desi dating show and mixer. No PATH anxiety required.",
     h1: "No PATH Required. The Show Comes to Jersey City.",
     status: "active",
-    badgeLabel: "Monthly Shows",
+    badgeLabel: "Now in Jersey City",
     bodyParagraphs: [
       "If you’ve been skipping the NYC show because you didn’t feel like dealing with the commute home, this one’s for you.",
-      "Garam Masala Dating runs a monthly show at The Laugh Tour Comedy Club in Jersey City. Same format as the Manhattan show, same hosts, smaller room. Contestants go on live dates while the crowd watches and roots for them. Before and after, the whole room mingles.",
+      "Garam Masala Dating brings the show to The Laugh Tour Comedy Club in Jersey City. Same format as the Manhattan show, same hosts, smaller room. Contestants go on live dates while the crowd watches and roots for them. Before and after, the whole room mingles.",
       "The JC show draws from Jersey City, Hoboken, Newport, Weehawken, and the rest of Hudson County. The South Asian and desi community in this pocket of NJ is massive and concentrated, which means the odds that you already have a mutual with someone in the room are higher than you’d think. That’s not a bug.",
       "The room at The Laugh Tour is more intimate than our 250-person Manhattan venue. Less anonymous, more personal. If you’ve ever wanted to do the show but felt like the NYC crowd was too big, this is the one to start with.",
-      "Monthly dates are posted on the events page. Tickets go fast because the room is smaller. Don’t wait.",
+      "New dates are posted on the events page. Tickets go fast because the room is smaller. Don’t wait.",
     ],
     ctas: [
       {
@@ -123,7 +123,6 @@ export const activeCities: Record<string, CityData> = {
     addressRegion: "NJ",
     addressCountry: "US",
     venueName: "The Laugh Tour Comedy Club",
-    eventScheduleFrequency: "P1M",
     region: "US Northeast",
     nearbyCities: [
       "manhattan",
@@ -142,7 +141,7 @@ export const activeCities: Record<string, CityData> = {
     faqItems: [
       {
         q: "How often does the Jersey City show run?",
-        a: "Monthly. Dates are posted on our events page. The JC room is smaller than Manhattan so tickets sell out faster.",
+        a: "There's no fixed schedule yet. New dates post on our events page as they're added. The JC room is smaller than Manhattan so tickets sell out faster.",
       },
       {
         q: "Is the Jersey City show different from the Manhattan show?",
@@ -181,7 +180,7 @@ export const activeCities: Record<string, CityData> = {
         heading: "Why the smaller room works in your favor",
         paragraphs: [
           "The Laugh Tour runs more intimate than our 250 seat Manhattan show, and intimate is an advantage when the goal is actually meeting people. You see everyone. Everyone sees you. The mixer after the show is dense with locals instead of a diaspora of boroughs, and the follow-up date is a neighborhood walk instead of a calendar negotiation.",
-          "Monthly dates post on the events page and the smaller room means tickets genuinely run out. Grab yours early, or apply to be a contestant and let Hudson County watch you flirt.",
+          "New dates post on the events page and the smaller room means tickets genuinely run out. Grab yours early, or apply to be a contestant and let Hudson County watch you flirt.",
         ],
       },
     ],

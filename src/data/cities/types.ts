@@ -55,8 +55,6 @@ export interface CityData {
   addressCountry: string;
   /** Named venue for Event schema location.name */
   venueName?: string;
-  /** ISO 8601 duration for eventSchedule.repeatFrequency */
-  eventScheduleFrequency?: string;
   /** Region grouping for the /cities hub page */
   region: CityRegion;
   /** Slugs of 3-5 nearby cities for cross-linking */

@@ -1534,7 +1534,7 @@ export const searchAnswersPosts: JournalPost[] = [
       },
       {
         type: "p",
-        text: "Regular shows in <a href='/cities/manhattan'>Manhattan</a> at City Winery NYC. Also in <a href='/cities/jersey-city'>Jersey City</a>. We also tour to other cities across the US throughout the year. If you are not in New York, check the tickets page for upcoming shows in your city or nearby.",
+        text: "Regular shows in <a href='/cities/manhattan'>Manhattan</a> at City Winery NYC, with the tour also stopping in <a href='/cities/jersey-city'>Jersey City</a>. We also tour to other cities across the US throughout the year. If you are not in New York, check the tickets page for upcoming shows in your city or nearby.",
       },
       {
         type: "h2",
@@ -1560,7 +1560,7 @@ export const searchAnswersPosts: JournalPost[] = [
       },
       {
         q: "How do you buy tickets to Garam Masala Dating?",
-        a: "Tickets are at garammasaladating.com/tickets. The regular Manhattan shows at City Winery NYC sell out fast so buying early is recommended. The after-show singles mixer is included with every ticket.",
+        a: "Tickets are at garammasaladating.com/tickets. Shows sell out fast, so buying early is recommended. The after-show singles mixer is included with every ticket.",
       },
       {
         q: "How do you apply to be a contestant on Garam Masala Dating?",
@@ -1777,7 +1777,7 @@ export const searchAnswersPosts: JournalPost[] = [
       },
       {
         type: "p",
-        text: "Garam Masala Dating runs regularly in <a href='/cities/manhattan'>Manhattan</a> and <a href='/cities/jersey-city'>Jersey City</a>, with touring shows across the US including <a href='/cities/los-angeles'>Los Angeles</a>. The format is a comedy dating show followed by a singles mixer. It is the only live format specifically designed for South Asian singles that also includes a built-in social event afterward. Most people who come once come back. Read about <a href='/journal/the-realest-way-to-meet-desi-singles-in-nyc'>the realest way to meet desi singles in NYC</a> for the full comparison of options.",
+        text: "Garam Masala Dating runs regularly in <a href='/cities/manhattan'>Manhattan</a> and has also taken the show on the road to <a href='/cities/jersey-city'>Jersey City</a>, <a href='/cities/los-angeles'>Los Angeles</a> and other cities across the US. The format is a comedy dating show followed by a singles mixer. It is the only live format specifically designed for South Asian singles that also includes a built-in social event afterward. Most people who come once come back. Read about <a href='/journal/the-realest-way-to-meet-desi-singles-in-nyc'>the realest way to meet desi singles in NYC</a> for the full comparison of options.",
       },
       {
         type: "p",

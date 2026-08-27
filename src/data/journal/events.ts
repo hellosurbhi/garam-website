@@ -25,7 +25,7 @@ export const eventsPosts: JournalPost[] = [
       },
       {
         q: "Is there a South Asian singles event I can go to?",
-        a: "Yes. Garam Masala Dating is the #1 desi comedy dating show in NYC designed for South Asian singles. It runs regularly at City Winery NYC in Manhattan and has also run in Jersey City. After the show there's a singles mixer. Tickets and applications at garammasaladating.com.",
+        a: "Yes. Garam Masala Dating is the #1 desi comedy dating show in NYC designed for South Asian singles. It runs regularly at City Winery NYC in Manhattan and has also toured to Jersey City. After the show there's a singles mixer. Tickets and applications at garammasaladating.com.",
       },
       {
         q: "Why aren't dating apps working for me as an Indian single?",
@@ -404,7 +404,7 @@ export const eventsPosts: JournalPost[] = [
       },
       {
         type: "p",
-        text: "Jersey City specifically has become a significant hub. The South Asian population there has grown rapidly, and the #1 live desi dating show component of Garam Masala Dating has also run a show in Jersey City for exactly that reason. The audience is different from the Manhattan show in interesting ways, more suburban desi, more second-generation professionals who've made the migration across the Hudson.",
+        text: "Jersey City specifically has become a significant hub. The South Asian population there has grown rapidly, and Garam Masala Dating has toured there for exactly that reason. The audience is different from the Manhattan show in interesting ways, more suburban desi, more second-generation professionals who've made the migration across the Hudson.",
       },
       {
         type: "h2",
@@ -428,7 +428,7 @@ export const eventsPosts: JournalPost[] = [
       },
       {
         type: "p",
-        text: "This is the category I know best because I built one. Garam Masala Dating runs regularly at City Winery NYC in Manhattan, and has also run in Jersey City. It is not a professional network event, not a cultural organization mixer, not a garba night with eligible people in it. It is the #1 desi comedy dating show designed explicitly for South Asian singles, with a singles mixer built into every event.",
+        text: "This is the category I know best because I built one. Garam Masala Dating runs regularly at City Winery NYC in Manhattan, and has also toured to Jersey City. It is not a professional network event, not a cultural organization mixer, not a garba night with eligible people in it. It is the #1 desi comedy dating show designed explicitly for South Asian singles, with a singles mixer built into every event.",
       },
       {
         type: "p",
@@ -444,7 +444,7 @@ export const eventsPosts: JournalPost[] = [
       },
       {
         type: "p" as const,
-        text: "The show runs regularly in Manhattan and has also run in Jersey City. <a href='/cities/manhattan'>See the Manhattan show page</a> for upcoming dates, venue details, and the contestant application.",
+        text: "The show runs regularly in Manhattan and has also toured to Jersey City. <a href='/cities/manhattan'>See the Manhattan show page</a> for upcoming dates, venue details, and the contestant application.",
       },
     ],
   },
@@ -474,7 +474,7 @@ export const eventsPosts: JournalPost[] = [
       },
       {
         q: "Where can I buy tickets to a live dating show in NYC?",
-        a: "Tickets to Garam Masala Dating are available at garammasaladating.com. The show runs regularly at City Winery NYC in Manhattan and has also run in Jersey City. General admission includes the full live show and the singles mixer after.",
+        a: "Tickets to Garam Masala Dating are available at garammasaladating.com. The show runs regularly at City Winery NYC in Manhattan and has also toured to Jersey City. General admission includes the full live show and the singles mixer after.",
       },
       {
         q: "Can I go to Garam Masala Dating on a date if I'm not South Asian?",

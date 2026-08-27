@@ -133,7 +133,7 @@ export const outsidePerspectivePosts: JournalPost[] = [
       },
       {
         type: "p",
-        text: "If you want to understand this world from the inside, come to a Garam Masala Dating show in <a href='/cities/manhattan'>New York City</a>. The show runs regularly at City Winery NYC in Manhattan and has also run in Jersey City. You will hear South Asian singles talk about their actual lives, what they want, what their families want, and the very funny gap between those two things. It is the fastest way to understand the context you are navigating.",
+        text: "If you want to understand this world from the inside, come to a Garam Masala Dating show in <a href='/cities/manhattan'>New York City</a>. The show runs regularly at City Winery NYC in Manhattan and has also toured to Jersey City. You will hear South Asian singles talk about their actual lives, what they want, what their families want, and the very funny gap between those two things. It is the fastest way to understand the context you are navigating.",
       },
       {
         type: "p",
@@ -410,7 +410,7 @@ export const outsidePerspectivePosts: JournalPost[] = [
       },
       {
         type: "p",
-        text: "If you are navigating cross-cultural dynamics and want to be in a room with other people doing the same thing, come to a Garam Masala Dating show in <a href='/cities/manhattan'>Manhattan</a>. We run regularly at City Winery NYC in NYC and have also run in Jersey City. The community in that room understands this territory. Tickets at <a href='/'>garammasaladating.com</a>.",
+        text: "If you are navigating cross-cultural dynamics and want to be in a room with other people doing the same thing, come to a Garam Masala Dating show in <a href='/cities/manhattan'>Manhattan</a>. We run regularly at City Winery NYC in NYC and have also toured to Jersey City. The community in that room understands this territory. Tickets at <a href='/'>garammasaladating.com</a>.",
       },
     ],
   },
@@ -1142,7 +1142,7 @@ export const outsidePerspectivePosts: JournalPost[] = [
       },
       {
         type: "p",
-        text: "Come to Garam Masala Dating in <a href='/cities/manhattan'>NYC</a> to see what South Asian dating actually looks like when it is honest and in person. We run regularly at City Winery NYC in Manhattan and have also run in <a href='/cities/jersey-city'>Jersey City</a>. Tickets at <a href='/'>garammasaladating.com</a>.",
+        text: "Come to Garam Masala Dating in <a href='/cities/manhattan'>NYC</a> to see what South Asian dating actually looks like when it is honest and in person. We run regularly at City Winery NYC in Manhattan and have also toured to <a href='/cities/jersey-city'>Jersey City</a>. Tickets at <a href='/'>garammasaladating.com</a>.",
       },
     ],
   },

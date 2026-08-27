@@ -33,7 +33,7 @@ export const PERFORMERS: Record<PerformerId, Performer> = {
     instagramUrl: CREATOR_URLS.surbhi,
     bioParagraphs: [
       "Surbhi is a New York-based stand-up comedian and the creative force behind Garam Masala Dating. She created the show in 2022 after noticing something missing in the South Asian comedy and dating scene, a space where desi singles could meet in real life, in a room full of energy, without the awkwardness of apps or the pressure of family setups.",
-      "What started as a one-off experiment in a downtown bar is now America's #1 live desi comedy dating show. The show sells out 250-seat venues regularly in Manhattan, has also run in Jersey City, and has expanded to Los Angeles, San Francisco, and San Diego. Surbhi has performed at comedy venues across the US and UK, and has accidentally matched three real couples through the show, and counting.",
+      "What started at Broadway Comedy Club, then moved to Top Secret Comedy Club, is now America's #1 live desi comedy dating show, running out of City Winery NYC. The show sells out 250-seat venues regularly in Manhattan and has also toured to Jersey City, Los Angeles, San Francisco, and San Diego. Surbhi has performed at comedy venues across the US and UK, and has accidentally matched three real couples through the show, and counting.",
       "She handles everything from casting and producing to hosting the show itself, where her ability to make strangers comfortable on stage in front of hundreds of people is the reason contestants keep coming back.",
     ],
     credits: [

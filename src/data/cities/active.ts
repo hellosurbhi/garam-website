@@ -107,7 +107,7 @@ export const activeCities: Record<string, CityData> = {
     badgeLabel: "Now in Jersey City",
     bodyParagraphs: [
       "If you’ve been skipping the NYC show because you didn’t feel like dealing with the commute home, this one’s for you.",
-      "Garam Masala Dating has brought the show to Jersey City, most recently at The Laugh Tour Comedy Club. Same format as the Manhattan show, same hosts, smaller room. Contestants go on live dates while the crowd watches and roots for them. Before and after, the whole room mingles.",
+      "Garam Masala Dating has brought the show to Jersey City. Same format as the Manhattan show, same hosts, smaller room. Contestants go on live dates while the crowd watches and roots for them. Before and after, the whole room mingles.",
       "The JC show draws from Jersey City, Hoboken, Newport, Weehawken, and the rest of Hudson County. The South Asian and desi community in this pocket of NJ is massive and concentrated, which means the odds that you already have a mutual with someone in the room are higher than you’d think. That’s not a bug.",
       "The Jersey City room runs more intimate than our 250-person Manhattan venue. Less anonymous, more personal. If you’ve ever wanted to do the show but felt like the NYC crowd was too big, this is the one to start with.",
       "New dates are posted on the events page. Tickets go fast because the room is smaller. Don’t wait.",
@@ -122,7 +122,6 @@ export const activeCities: Record<string, CityData> = {
     addressLocality: "Jersey City",
     addressRegion: "NJ",
     addressCountry: "US",
-    venueName: "The Laugh Tour Comedy Club",
     region: "US Northeast",
     nearbyCities: [
       "manhattan",
@@ -148,8 +147,8 @@ export const activeCities: Record<string, CityData> = {
         a: "Same format, same hosts, more intimate room. The Jersey City venue holds fewer people than our Manhattan venue, which makes it more personal and less anonymous.",
       },
       {
-        q: "Where is The Laugh Tour Comedy Club?",
-        a: "In Jersey City, easily accessible from Hoboken, Newport, Weehawken, and the rest of Hudson County. No trip into Manhattan required.",
+        q: "Where is the Jersey City show?",
+        a: "In Jersey City, easily accessible from Hoboken, Newport, Weehawken, and the rest of Hudson County. No trip into Manhattan required. Exact venue is posted with each show date on our events page.",
       },
       {
         q: "Can I apply to be a contestant for the JC show?",

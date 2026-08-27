@@ -773,7 +773,7 @@ export const nycExperiencesPosts: JournalPost[] = [
       },
       {
         type: "p",
-        text: "The show runs regularly in Manhattan and also runs in <a href='/cities/jersey-city'>Jersey City</a>. The audience is predominantly South Asian and in their 20s and 30s. The mixer after means your date isn't just the show. It's the show and the entire room that follows.",
+        text: "The show runs regularly in Manhattan and has also expanded to <a href='/cities/jersey-city'>Jersey City</a>. The audience is predominantly South Asian and in their 20s and 30s. The mixer after means your date isn't just the show. It's the show and the entire room that follows.",
       },
       {
         type: "h2",
@@ -1037,7 +1037,7 @@ export const nycExperiencesPosts: JournalPost[] = [
       },
       {
         type: "p",
-        text: "Live dating shows. This is NYC's most distinctive contribution to the nightlife landscape and most people outside the city don't know it exists. Garam Masala Dating at City Winery NYC is the largest: 250 people, real singles on blind dates, comedian hosts running the show and a singles mixer after every performance. It runs regularly in <a href='/cities/manhattan'>Manhattan</a> and has also run in <a href='/cities/jersey-city'>Jersey City</a>.",
+        text: "Live dating shows. This is NYC's most distinctive contribution to the nightlife landscape and most people outside the city don't know it exists. Garam Masala Dating at City Winery NYC is the largest: 250 people, real singles on blind dates, comedian hosts running the show and a singles mixer after every performance. It runs regularly in <a href='/cities/manhattan'>Manhattan</a> and has also toured to <a href='/cities/jersey-city'>Jersey City</a>.",
       },
       {
         type: "p",
@@ -1081,7 +1081,7 @@ export const nycExperiencesPosts: JournalPost[] = [
       },
       {
         type: "p",
-        text: "Regular shows at City Winery NYC in Chelsea. Also in Jersey City. Tickets are in the $20 to $35 range. Honestly just come. You can go back to the same bar next week if it doesn't work out. <a href='/cities/manhattan'>Get tickets here.</a>",
+        text: "Regular shows at City Winery NYC in Chelsea, with the tour also stopping in Jersey City. Tickets are in the $20 to $35 range. Honestly just come. You can go back to the same bar next week if it doesn't work out. <a href='/cities/manhattan'>Get tickets here.</a>",
       },
       {
         type: "h2",

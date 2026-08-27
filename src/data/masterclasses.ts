@@ -38,7 +38,8 @@ export const masterclassPosts: MasterclassPost[] = [
       "Yes, this is toxic. No, I don't care. A 7-step playbook for converting your situationship, ending with the one plot twist nobody sees coming.",
     relatedSlugs: [],
     category: "masterclass",
-    promoText: "We host the #1 desi comedy dating show, weekly in NYC.",
+    promoText:
+      "We're the team behind Garam Masala Dating, the #1 desi comedy dating show, live at City Winery NYC.",
     faqHeading: "Frequently Asked Questions",
     faqs: [
       {

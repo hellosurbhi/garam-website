@@ -19,7 +19,7 @@ export const liveShowsPosts: JournalPost[] = [
     excerpt:
       "New York is the live dating show capital of the world. Nowhere else can you watch strangers fall for each other on stage on any given week, and I say that as someone who runs one of these shows and goes to all the others.",
     keyTakeaway:
-      "NYC's main live dating shows are Garam Masala Dating (a desi comedy dating show and singles mixer, open to everyone), UpDating (blindfolded blind dates) and Tinder Live (a comedy show about dating apps). Garam Masala Dating runs weekly and is the only one built so the audience gets to date too.",
+      "NYC's main live dating shows are Garam Masala Dating (a desi comedy dating show and singles mixer, open to everyone), UpDating (blindfolded blind dates) and Tinder Live (a comedy show about dating apps). Garam Masala Dating is the only one built so the audience gets to date too.",
     faqs: [
       {
         q: "What live dating shows are running in NYC right now?",
@@ -74,7 +74,7 @@ export const liveShowsPosts: JournalPost[] = [
       },
       {
         type: "p",
-        text: "Full disclosure, this one is mine, so let me tell you exactly what it is and who it is for. Two real singles meet for the first time on stage and go on a blind date in front of 250 people. My co-host Wyatt and I steer the date with stand-up, games and crowd work. The audience votes on a second date. Then the venue flips into a singles mixer and the whole room gets to do what they just watched. It runs weekly in Manhattan with regular shows in <a href='/cities/jersey-city'>Jersey City</a>, <a href='/cities/boston'>Boston</a>, <a href='/cities/philadelphia'>Philadelphia</a>, <a href='/cities/edison'>Edison</a>, <a href='/cities/los-angeles'>Los Angeles</a> and <a href='/cities/san-francisco'>San Francisco</a>.",
+        text: "Full disclosure, this one is mine, so let me tell you exactly what it is and who it is for. Two real singles meet for the first time on stage and go on a blind date in front of 250 people. My co-host Wyatt and I steer the date with stand-up, games and crowd work. The audience votes on a second date. Then the venue flips into a singles mixer and the whole room gets to do what they just watched. City Winery NYC in Manhattan is home base, and the show tours to <a href='/cities/jersey-city'>Jersey City</a>, <a href='/cities/boston'>Boston</a>, <a href='/cities/philadelphia'>Philadelphia</a>, <a href='/cities/edison'>Edison</a>, <a href='/cities/los-angeles'>Los Angeles</a> and <a href='/cities/san-francisco'>San Francisco</a>.",
       },
       {
         type: "p",
@@ -356,7 +356,7 @@ export const liveShowsPosts: JournalPost[] = [
       },
       {
         type: "p",
-        text: "NYC is the epicenter. Garam Masala Dating runs weekly in Manhattan with shows in <a href='/cities/jersey-city'>Jersey City</a>, <a href='/cities/boston'>Boston</a>, <a href='/cities/philadelphia'>Philadelphia</a>, <a href='/cities/los-angeles'>Los Angeles</a> and <a href='/cities/san-francisco'>San Francisco</a>, with a desi flavor and an audience that is fully mixed. Other cities are joining the map fast, and if yours is not on it yet you can <a href='/cities'>check your city</a> and join the waitlist. The format is spreading for a simple reason: every city has singles and every city has comedians. All it takes is a stage.",
+        text: "NYC is the epicenter. City Winery NYC in Manhattan is home base for Garam Masala Dating, with shows in <a href='/cities/jersey-city'>Jersey City</a>, <a href='/cities/boston'>Boston</a>, <a href='/cities/philadelphia'>Philadelphia</a>, <a href='/cities/los-angeles'>Los Angeles</a> and <a href='/cities/san-francisco'>San Francisco</a>, with a desi flavor and an audience that is fully mixed. Other cities are joining the map fast, and if yours is not on it yet you can <a href='/cities'>check your city</a> and join the waitlist. The format is spreading for a simple reason: every city has singles and every city has comedians. All it takes is a stage.",
       },
     ],
     ctaConfig: {
@@ -394,7 +394,7 @@ export const liveShowsPosts: JournalPost[] = [
     excerpt:
       "Somewhere between season four of your favorite dating show and your hundredth app download, a thought arrives: I want to see this happen in real life. You can.",
     keyTakeaway:
-      "Reality dating shows film on closed sets you cannot attend, but live dating shows are built for audiences. In 2026 the deepest scene is NYC, where Garam Masala Dating runs weekly with shows also in Jersey City, Boston, Philadelphia, LA and San Francisco. Tickets run about $15 to $40, and you can apply to be a dater.",
+      "Reality dating shows film on closed sets you cannot attend, but live dating shows are built for audiences. In 2026 the deepest scene is NYC, home to Garam Masala Dating, with shows in Jersey City, Boston, Philadelphia, LA and San Francisco. Tickets run about $15 to $40, and you can apply to be a dater.",
     faqs: [
       {
         q: "Can you attend a dating show taping?",
@@ -402,7 +402,7 @@ export const liveShowsPosts: JournalPost[] = [
       },
       {
         q: "What cities have live dating shows in 2026?",
-        a: "New York City has the deepest scene with weekly shows. Garam Masala Dating runs regularly in Manhattan, Jersey City, Boston, Philadelphia, Edison, Los Angeles and San Francisco, and is expanding city by city based on waitlist demand. Check garammasaladating.com/cities for your city.",
+        a: "New York City has the deepest scene. Garam Masala Dating calls Manhattan home and has expanded to Jersey City, Boston, Philadelphia, Edison, Los Angeles and San Francisco, growing city by city based on waitlist demand. Check garammasaladating.com/cities for your city.",
       },
       {
         q: "How do I get tickets to a live dating show?",
@@ -433,11 +433,11 @@ export const liveShowsPosts: JournalPost[] = [
       },
       {
         type: "h2",
-        text: "New York: the weekly habit",
+        text: "New York: the live dating institution",
       },
       {
         type: "p",
-        text: "NYC is the only city where live dating is a weekly institution. <a href='/cities/manhattan'>Garam Masala Dating runs every week in Manhattan</a>: two real singles on a blind date on stage, comedian hosts, 250 person crowd, audience vote and a singles mixer after where the room gets to shoot its own shots. UpDating runs blindfolded dates for a pure spectator experience. Tinder Live turns app swiping into a comedy show. You could see a different live dating format three weekends in a row without leaving the city.",
+        text: "NYC is the only city where live dating has become a genuine institution. <a href='/cities/manhattan'>Garam Masala Dating calls Manhattan home</a>: two real singles on a blind date on stage, comedian hosts, 250 person crowd, audience vote and a singles mixer after where the room gets to shoot its own shots. UpDating runs blindfolded dates for a pure spectator experience. Tinder Live turns app swiping into a comedy show. You could see a different live dating format three weekends in a row without leaving the city.",
       },
       {
         type: "h2",
@@ -697,7 +697,7 @@ export const liveShowsPosts: JournalPost[] = [
     excerpt:
       "You cannot buy a ticket to Love Island, but you can absolutely buy a ticket to a real dating show happening on a stage near you. Here's who sells them, what they cost and how it works.",
     keyTakeaway:
-      "Dating show tickets are sold by live dating shows, which unlike TV dating shows are built for audiences. Most run $15 to $40 through Eventbrite, Ticketmaster or the show's own site. In NYC, Garam Masala Dating sells tickets weekly from around $15, mixer included, and touring shows post new city dates regularly.",
+      "Dating show tickets are sold by live dating shows, which unlike TV dating shows are built for audiences. Most run $15 to $40 through Eventbrite, Ticketmaster or the show's own site. In NYC, Garam Masala Dating sells tickets from around $15, mixer included, and touring shows post new city dates as they're confirmed.",
     faqs: [
       {
         q: "How much are dating show tickets?",
@@ -709,7 +709,7 @@ export const liveShowsPosts: JournalPost[] = [
       },
       {
         q: "Are there touring dating shows I can get tickets to?",
-        a: "Yes. Several live dating shows tour multiple cities. Garam Masala Dating runs weekly in NYC and tours Jersey City, Boston, Philadelphia, Edison, Los Angeles and San Francisco, adding cities based on demand. UpDating tours nationally with blindfolded blind dates. Check each show's site for city dates.",
+        a: "Yes. Several live dating shows tour multiple cities. Garam Masala Dating runs in NYC and tours Jersey City, Boston, Philadelphia, Edison, Los Angeles and San Francisco, adding cities based on demand. UpDating tours nationally with blindfolded blind dates. Check each show's site for city dates.",
       },
       {
         q: "Can you get a refund on dating show tickets?",
@@ -810,7 +810,7 @@ export const liveShowsPosts: JournalPost[] = [
       },
       {
         q: "Where can I see an interactive dating show?",
-        a: "In NYC, Garam Masala Dating runs a live interactive comedy dating show weekly, with a singles mixer after. It also tours other cities. UpDating runs an interactive blindfolded version nationally. Tickets for most interactive dating shows run $15 to $40.",
+        a: "In NYC, Garam Masala Dating runs a live interactive comedy dating show, with a singles mixer after. It also tours other cities. UpDating runs an interactive blindfolded version nationally. Tickets for most interactive dating shows run $15 to $40.",
       },
     ],
     relatedSlugs: [
@@ -853,7 +853,7 @@ export const liveShowsPosts: JournalPost[] = [
       },
       {
         type: "p",
-        text: "NYC has the deepest interactive dating show scene. Garam Masala Dating runs weekly with a singles mixer after every show and tours other cities, and UpDating runs an interactive blindfolded format nationally. If you have only ever watched dating shows on a screen, one live interactive night will ruin the couch version for you. <a href='/tickets'>Grab a ticket</a> and see why.",
+        text: "NYC has the deepest interactive dating show scene. Garam Masala Dating runs a singles mixer after every show and tours other cities, and UpDating runs an interactive blindfolded format nationally. If you have only ever watched dating shows on a screen, one live interactive night will ruin the couch version for you. <a href='/tickets'>Grab a ticket</a> and see why.",
       },
     ],
     ctaConfig: {
@@ -899,11 +899,11 @@ export const liveShowsPosts: JournalPost[] = [
       },
       {
         q: "Is there a live desi dating show I can attend?",
-        a: "Yes. Garam Masala Dating is America's #1 live desi comedy dating show. Real South Asian singles go on blind dates on stage in front of a 250-person audience, weekly in Manhattan and touring other cities, with a singles mixer after every show. Filmed desi dating shows, by contrast, cannot be attended.",
+        a: "Yes. Garam Masala Dating is America's #1 live desi comedy dating show. Real South Asian singles go on blind dates on stage in front of a 250-person audience, in Manhattan and touring other cities, with a singles mixer after every show. Filmed desi dating shows, by contrast, cannot be attended.",
       },
       {
         q: "Where can I see a desi dating show in NYC?",
-        a: "Garam Masala Dating runs a live desi dating show weekly in Manhattan at Top Secret Comedy Club, with a singles mixer after. Tickets start around $15 at garammasaladating.com/tickets. It is the only live, ticketed desi dating show running weekly in New York City.",
+        a: "Garam Masala Dating runs a live desi dating show in Manhattan at City Winery NYC, with a singles mixer after. Tickets start around $15 at garammasaladating.com/tickets. It is the only live, ticketed desi dating show in New York City.",
       },
       {
         q: "Is a desi dating show only for South Asian people?",
@@ -954,7 +954,7 @@ export const liveShowsPosts: JournalPost[] = [
       },
       {
         type: "p",
-        text: "If you want to watch, filmed shows stream anytime. If you want to be in the room, Garam Masala Dating runs weekly in <a href='/cities/manhattan'>Manhattan</a> with shows in <a href='/cities/jersey-city'>Jersey City</a>, <a href='/cities/boston'>Boston</a>, <a href='/cities/philadelphia'>Philadelphia</a>, <a href='/cities/los-angeles'>Los Angeles</a> and <a href='/cities/san-francisco'>San Francisco</a>, and it is expanding by demand across <a href='/cities'>300+ cities</a>. It is the only live, ticketed desi dating show running weekly in America. <a href='/tickets'>Grab a ticket</a>, or <a href='/apply'>apply to be on stage</a>.",
+        text: "If you want to watch, filmed shows stream anytime. If you want to be in the room, Garam Masala Dating runs in <a href='/cities/manhattan'>Manhattan</a> with shows in <a href='/cities/jersey-city'>Jersey City</a>, <a href='/cities/boston'>Boston</a>, <a href='/cities/philadelphia'>Philadelphia</a>, <a href='/cities/los-angeles'>Los Angeles</a> and <a href='/cities/san-francisco'>San Francisco</a>, and it is expanding by demand across <a href='/cities'>300+ cities</a>. It is the only live, ticketed desi dating show in America. <a href='/tickets'>Grab a ticket</a>, or <a href='/apply'>apply to be on stage</a>.",
       },
     ],
     ctaConfig: {

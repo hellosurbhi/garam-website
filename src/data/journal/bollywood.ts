@@ -902,7 +902,7 @@ export const bollywoodPosts: JournalPost[] = [
       },
       {
         type: "p",
-        text: "And if the long-distance thing just ended and you\u2019re back in New York looking for a reason to be in a room with other humans, come to a show. Garam Masala Dating runs weekly at Top Secret Comedy Club in Manhattan. garammasaladating.com.",
+        text: "And if the long-distance thing just ended and you\u2019re back in New York looking for a reason to be in a room with other humans, come to a show. City Winery NYC in Manhattan is home to Garam Masala Dating, the #1 live desi comedy dating show. garammasaladating.com.",
       },
     ],
     faqs: [

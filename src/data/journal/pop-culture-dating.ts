@@ -739,7 +739,7 @@ export const popCultureDatingPosts: JournalPost[] = [
       },
       {
         q: "What live dating shows exist for South Asian singles?",
-        a: "Garam Masala Dating runs weekly in Manhattan with regular shows in Jersey City and touring nationally. It is the only recurring live comedy dating show specifically for South Asian singles.",
+        a: "Garam Masala Dating calls City Winery NYC in Manhattan home and tours nationally. It is the only recurring live comedy dating show specifically for South Asian singles.",
       },
     ],
     relatedSlugs: [

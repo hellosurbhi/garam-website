@@ -4,6 +4,8 @@ Permanent record of every show change: cancellations, date moves, time moves, ro
 
 ## Log
 
+- 2026-08-26: Aug 30 Washington DC show start time moved from 8 PM to 6 PM (end time moved from 10 PM to 8 PM accordingly), date unchanged, still DC Comedy Loft.
+- 2026-08-26: Manhattan regular show venue changed from Top Secret Comedy Club to City Winery NYC (The Loft at City Winery NYC, 25 11th Ave), future/general copy only (homepage, tickets page, Manhattan city page, journal articles, llms-full feed). Past show entries and the VENUE_TOP_SECRET constant are untouched; the Oct 11 All Stars show already used City Winery NYC before this change.
 - 2026-08-14: Notify-me roster changed to the standing three: Los Angeles, San Francisco and New York (Manhattan). Chicago and Houston removed from the roster. Edison's TBA card taken off the site (`hidden: true`, entry kept).
 - 2026-08-14: Aug 16 Manhattan "Cuffing Season" at Top Secret canceled. Entry restored with `status: "canceled"` after briefly being deleted the same day (commit 9ff0b67, reverted by this change).
 - 2026-08-03: Boston show moved from Aug 2 to Aug 13, start moved from 6 PM to 7 PM, still Elephant & Castle (commit f4b006f).

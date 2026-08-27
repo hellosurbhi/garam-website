@@ -117,7 +117,7 @@ export const communityDeepDivesPosts: JournalPost[] = [
       },
       {
         type: "p",
-        text: "Come to Garam Masala Dating if you want to see what happens when South Indian singles stop performing the version their families expect and start actually talking to each other. The show runs monthly in NYC, find upcoming dates on the tickets page.",
+        text: "Come to Garam Masala Dating if you want to see what happens when South Indian singles stop performing the version their families expect and start actually talking to each other. Find upcoming dates on the tickets page.",
       },
     ],
   },

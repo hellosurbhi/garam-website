@@ -9,9 +9,9 @@ export const SPONSORSHIP_COPY = {
   contactTitle: "Manager",
   heroHeadline: "Reach NYC's Most Engaged South Asian Audience",
   heroSub:
-    "250 people in a room every two weeks. 70%+ South Asian professionals, 22 to 40, high income. 10M+ social views. They're not scrolling past your brand. They're watching a live show.",
+    "250 people in a room every show. 70%+ South Asian professionals, 22 to 40, high income. 10M+ social views. They're not scrolling past your brand. They're watching a live show.",
   demoBlurb:
-    "South Asian, desi diaspora, and culturally engaged non-South Asian guests in NYC metro. They share the clips, tag the brands, and come back every two weeks.",
+    "South Asian, desi diaspora, and culturally engaged non-South Asian guests in NYC metro. They share the clips, tag the brands, and come back for the next one.",
   ctaHeadline: "Ready to be in the room?",
   ctaBody:
     "Email Caleb, our manager, with your brand, goal, and budget. He'll respond within 48 hours.",
@@ -97,7 +97,7 @@ export const MEDIA_KIT_STATS: MediaKitStat[] = [
   {
     num: "40+",
     label: "Shows produced",
-    sub: "Bi-weekly in Manhattan",
+    sub: "Manhattan home base, touring nationally",
   },
 ];
 

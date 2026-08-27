@@ -118,7 +118,7 @@ export const cityDatingGuidesPosts: JournalPost[] = [
       },
       {
         type: "p",
-        text: "Garam Masala Dating brings its show to <a href='/cities/los-angeles'>Los Angeles</a> for special events. Follow us for announcements about LA shows. The weekly home is Manhattan and the monthly home is <a href='/cities/jersey-city'>Jersey City</a>, but when we come to LA, the South Asian singles scene shows up in a big way.",
+        text: "Garam Masala Dating brings its show to <a href='/cities/los-angeles'>Los Angeles</a> for special events. Follow us for announcements about LA shows. The Manhattan home is City Winery NYC, and when we come to LA, the South Asian singles scene shows up in a big way.",
       },
     ],
   },
@@ -236,7 +236,7 @@ export const cityDatingGuidesPosts: JournalPost[] = [
       },
       {
         type: "p",
-        text: "For Chicago desi singles who make it to New York, Garam Masala Dating runs weekly at Top Secret Comedy Club in <a href='/cities/manhattan'>Manhattan</a> and monthly in <a href='/cities/jersey-city'>Jersey City</a>. The show draws South Asian singles from across the Northeast and beyond. Come see what happens when you get out of the community you already know.",
+        text: "For Chicago desi singles who make it to New York, Garam Masala Dating is at City Winery NYC in <a href='/cities/manhattan'>Manhattan</a>, with shows in <a href='/cities/jersey-city'>Jersey City</a> too. The show draws South Asian singles from across the Northeast and beyond. Come see what happens when you get out of the community you already know.",
       },
     ],
   },
@@ -357,7 +357,7 @@ export const cityDatingGuidesPosts: JournalPost[] = [
       },
       {
         type: "p",
-        text: "Garam Masala Dating brings its show to the <a href='/cities/san-francisco'>San Francisco Bay Area</a> for special events. The home base is Manhattan (weekly) and <a href='/cities/jersey-city'>Jersey City</a> (monthly), and Bay Area South Asian singles regularly travel to the NYC shows. Follow our channels for Bay Area date announcements. The live format gives you real information about chemistry that no profile can.",
+        text: "Garam Masala Dating brings its show to the <a href='/cities/san-francisco'>San Francisco Bay Area</a> for special events. The home base is Manhattan, with shows in <a href='/cities/jersey-city'>Jersey City</a> too. Bay Area South Asian singles regularly travel to the NYC shows. Follow our channels for Bay Area date announcements. The live format gives you real information about chemistry that no profile can.",
       },
     ],
   },
@@ -474,7 +474,7 @@ export const cityDatingGuidesPosts: JournalPost[] = [
       },
       {
         type: "p",
-        text: "For Houston desi singles who visit New York, Garam Masala Dating runs weekly in <a href='/cities/manhattan'>Manhattan</a> at Top Secret Comedy Club and monthly in <a href='/cities/jersey-city'>Jersey City</a>. The live show format, real people, real chemistry, real conversation in front of 250 people who understand the cultural context, gives you information about compatibility that no profile or text conversation can replicate.",
+        text: "For Houston desi singles who visit New York, Garam Masala Dating runs at City Winery NYC in <a href='/cities/manhattan'>Manhattan</a>. The live show format, real people, real chemistry, real conversation in front of 250 people who understand the cultural context, gives you information about compatibility that no profile or text conversation can replicate.",
       },
     ],
   },
@@ -596,7 +596,7 @@ export const cityDatingGuidesPosts: JournalPost[] = [
       },
       {
         type: "p",
-        text: "Garam Masala Dating runs events in <a href='/cities/philadelphia'>Philadelphia</a> and is the closest thing to a regular live South Asian dating show in the region. The weekly home is <a href='/cities/manhattan'>Manhattan</a> at Top Secret Comedy Club and monthly in Jersey City. Philadelphia desi singles regularly make the Amtrak trip for the NYC shows. Check the Philadelphia city page for upcoming local events.",
+        text: "Garam Masala Dating runs events in <a href='/cities/philadelphia'>Philadelphia</a> and is the closest thing to a live South Asian dating show in the region. The home base is <a href='/cities/manhattan'>Manhattan</a> at City Winery NYC, with shows in Jersey City too. Philadelphia desi singles regularly make the Amtrak trip for the NYC shows. Check the Philadelphia city page for upcoming local events.",
       },
     ],
   },
@@ -622,7 +622,7 @@ export const cityDatingGuidesPosts: JournalPost[] = [
       },
       {
         q: "What are the best desi social events in New Jersey?",
-        a: "Navratri garba events in Edison and Iselin are among the largest in the Northeast. Diwali events across multiple NJ venues are significant. Holi events draw younger crowds. Eid celebrations through NJ mosque communities are major events for the Muslim South Asian community. The Gujarati community's events are particularly well-organized. South Asian singles mixers and speed dating events happen periodically and are listed on Eventbrite. Garam Masala Dating runs monthly in Jersey City.",
+        a: "Navratri garba events in Edison and Iselin are among the largest in the Northeast. Diwali events across multiple NJ venues are significant. Holi events draw younger crowds. Eid celebrations through NJ mosque communities are major events for the Muslim South Asian community. The Gujarati community's events are particularly well-organized. South Asian singles mixers and speed dating events happen periodically and are listed on Eventbrite. Garam Masala Dating has run a show in Jersey City.",
       },
       {
         q: "Is New Jersey a good place for South Asian singles to meet people?",
@@ -689,7 +689,7 @@ export const cityDatingGuidesPosts: JournalPost[] = [
       },
       {
         type: "p",
-        text: "Garam Masala Dating runs monthly in <a href='/cities/jersey-city'>Jersey City</a>, making it a regular fixture in the NJ desi social calendar. The show brings a live comedy dating format to a South Asian audience: real singles on stage, real chemistry in real time, and a singles mixer after where the whole audience gets to meet each other. Jersey City's hybrid urban-community character makes it the right venue for a show that sits between the traditional community event and the fully secular NYC experience.",
+        text: "Garam Masala Dating has brought its show to <a href='/cities/jersey-city'>Jersey City</a>, adding to the NJ desi social calendar. The show brings a live comedy dating format to a South Asian audience: real singles on stage, real chemistry in real time, and a singles mixer after where the whole audience gets to meet each other. Jersey City's hybrid urban-community character makes it the right venue for a show that sits between the traditional community event and the fully secular NYC experience.",
       },
       {
         type: "h2",
@@ -717,7 +717,7 @@ export const cityDatingGuidesPosts: JournalPost[] = [
       },
       {
         type: "p",
-        text: "If you're in NJ and you want to experience the live comedy dating show format that Garam Masala Dating runs in Manhattan every week, our monthly Jersey City shows give you a local option. Upcoming dates for <a href='/cities/jersey-city'>Jersey City</a> shows and our weekly <a href='/cities/manhattan'>Manhattan</a> shows are on the tickets page.",
+        text: "If you're in NJ and you want to experience the live comedy dating show format that Garam Masala Dating runs in Manhattan, our Jersey City shows give you a local option. Upcoming dates for <a href='/cities/jersey-city'>Jersey City</a> shows and our <a href='/cities/manhattan'>Manhattan</a> shows are on the tickets page.",
       },
     ],
   },
@@ -959,7 +959,7 @@ export const cityDatingGuidesPosts: JournalPost[] = [
       },
       {
         type: "p",
-        text: "For Denver desi singles who want the full live comedy dating show experience, Garam Masala Dating runs weekly in <a href='/cities/manhattan'>Manhattan</a> and monthly in <a href='/cities/jersey-city'>Jersey City</a>. Check the <a href='/cities/denver'>Denver city page</a> for any local shows. The Denver community has been asking for the show and we are paying attention.",
+        text: "For Denver desi singles who want the full live comedy dating show experience, Garam Masala Dating runs at City Winery NYC in <a href='/cities/manhattan'>Manhattan</a>. Check the <a href='/cities/denver'>Denver city page</a> for any local shows. The Denver community has been asking for the show and we are paying attention.",
       },
     ],
   },

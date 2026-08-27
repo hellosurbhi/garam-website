@@ -284,17 +284,15 @@ export function postShow(name: string): EmailTemplate {
 
 export function applicationReceived(name: string): EmailTemplate {
   const firstName = name.split(" ")[0];
-  const safeFirstName = escapeHtml(firstName);
-  const subjectFirstName = subjectSafe(firstName);
+  const copy = applicantWelcomeCopy;
 
-  return {
-    subject: applicantWelcomeCopy.subject.replaceAll(
-      "{{firstName}}",
-      subjectFirstName,
-    ),
-    text: applicantWelcomeCopy.text.replaceAll("{{firstName}}", firstName),
-    html: applicantWelcomeCopy.html.replaceAll("{{firstName}}", safeFirstName),
-  };
+  const subject = fillTemplate(copy.subject, {
+    firstName: subjectSafe(firstName),
+  });
+  const text = fillTemplate(copy.text, { firstName });
+  const html = fillTemplate(copy.html, { firstName: escapeHtml(firstName) });
+
+  return { subject, text, html };
 }
 
 export function newShowAnnouncement(opts: {

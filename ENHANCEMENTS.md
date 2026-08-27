@@ -1529,7 +1529,6 @@ If the ambiguity matters there too, rename both with Surbhi's approval on the ex
 - 2026-07-13T20:51Z | resolved=unretryable-no-diff | tier=F | primary=coderabbit | reason=error | fallback_used=gemini | commit=b7283c5 | diff_sha=62dcea0150a678f2a1318562584a2f3c88d520482847d931ad73a30fa5710ba7
 - 2026-07-13T20:53Z | resolved=unretryable-no-diff | tier=E | primary=codex | reason=error_or_timeout | fallback_used=deepseek | commit=cc33f13 | diff_sha=792300f61baae3694258927633d9b4b5b636290e28c822fde0b59509b6340748
 - 2026-07-13T20:53Z | resolved=unretryable-no-diff | tier=F | primary=coderabbit | reason=error | fallback_used=gemini | commit=cc33f13 | diff_sha=792300f61baae3694258927633d9b4b5b636290e28c822fde0b59509b6340748
-
 - 2026-07-13T20:56Z | resolved=unretryable-no-diff | tier=E | primary=codex | reason=error_or_timeout | fallback_used=deepseek | commit=cc33f13 | diff_sha=49c071425e7d368e6c395b50375c366ae9489d1de40a22a911f27d37008968e0
 - 2026-07-13T20:56Z | resolved=unretryable-no-diff | tier=F | primary=coderabbit | reason=error | fallback_used=gemini | commit=cc33f13 | diff_sha=49c071425e7d368e6c395b50375c366ae9489d1de40a22a911f27d37008968e0
 - 2026-07-13T20:59Z | resolved=unretryable-no-diff | tier=E | primary=codex | reason=error_or_timeout | fallback_used=deepseek | commit=5f8a97a | diff_sha=34b48fea48bbe348043200b998329f88cef4a17723d1a8bc12c6a3773a0caab8
@@ -1551,6 +1550,14 @@ If the ambiguity matters there too, rename both with Surbhi's approval on the ex
 - 2026-07-15T20:02Z | resolved=unretryable-no-diff | tier=E | primary=codex | reason=error_or_timeout | fallback_used=gemini | commit=ad03ccb | diff_sha=8f7496694dfa7a06a1b1dbf0b403469de24530653c93388269f0d5f1898fea65
 - 2026-07-15T20:19Z | resolved=unretryable-no-diff | tier=F | primary=coderabbit | reason=error | fallback_used=gemini | commit=ad03ccb | diff_sha=2969cbac7200a1b37f3596ee9c891fc6080090253851585901f3c863c6b35d95
 - 2026-07-15T20:19Z | resolved=unretryable-no-diff | tier=E | primary=codex | reason=error_or_timeout | fallback_used=gemini | commit=ad03ccb | diff_sha=2969cbac7200a1b37f3596ee9c891fc6080090253851585901f3c863c6b35d95
+- 2026-07-14T04:16Z | resolved=unretryable-no-diff | tier=E | primary=codex | reason=error_or_timeout | fallback_used=deepseek | commit=31350a3 | diff_sha=63902a1c8047ddcb81fa6b730cd65b95ec9e08cfaa0bb4a4a38b58d91770886b
+- 2026-07-14T04:23Z | resolved=unretryable-no-diff | tier=E | primary=codex | reason=error_or_timeout | fallback_used=gemini | commit=31350a3 | diff_sha=03c8b8b21d387c28dc89ac40747d9fa2043dbace5c90e230826b3ce4571946ee
+- 2026-07-14T04:23Z | resolved=unretryable-no-diff | tier=F | primary=coderabbit | reason=error | fallback_used=gemini | commit=31350a3 | diff_sha=03c8b8b21d387c28dc89ac40747d9fa2043dbace5c90e230826b3ce4571946ee
+- 2026-07-15T19:30Z | resolved=unretryable-no-diff | tier=F | primary=coderabbit | reason=error | fallback_used=gemini | commit=59ce89e | diff_sha=88698c0745250b933e00b06b7a2aa231ce4a06f1eba6493454f27ff17b9fa5c5
+- 2026-07-15T19:41Z | resolved=unretryable-no-diff | tier=E | primary=codex | reason=error_or_timeout | fallback_used=gemini | commit=59ce89e | diff_sha=150fdc6d7ed893e4bfa548355de934e7a42d44adb01c86c617353b7fcd950253
+- 2026-07-15T19:41Z | resolved=unretryable-no-diff | tier=F | primary=coderabbit | reason=error | fallback_used=gemini | commit=59ce89e | diff_sha=150fdc6d7ed893e4bfa548355de934e7a42d44adb01c86c617353b7fcd950253
+- 2026-07-15T19:44Z | resolved=unretryable-no-diff | tier=E | primary=codex | reason=error_or_timeout | fallback_used=gemini | commit=59ce89e | diff_sha=3cabdcd14cf59183d7b909e9be68a68c38717dc9b5c23e17e60a6748e1f7dd4c
+- 2026-07-15T19:44Z | resolved=unretryable-no-diff | tier=F | primary=coderabbit | reason=error | fallback_used=gemini | commit=59ce89e | diff_sha=3cabdcd14cf59183d7b909e9be68a68c38717dc9b5c23e17e60a6748e1f7dd4c
 
 ## Low priority enhancements
 
@@ -1582,63 +1589,6 @@ If the ambiguity matters there too, rename both with Surbhi's approval on the ex
 - 2026-07-13T22:07Z | tier=F | primary=coderabbit | reason=error | fallback_used=gemini | commit=37cde64 | diff_sha=9506d1aa157f1daade093c8e9414c34d99e8046112fb55278553d9723010625c
 - 2026-07-14T18:04Z | tier=F | primary=coderabbit | reason=error | fallback_used=gemini | commit=8b4d379 | diff_sha=21cb57ca33a0bc568eacd8e142d7932bb30af7a382fa25b557f2c6dda526c07e
 - 2026-07-15T01:57Z | tier=F | primary=coderabbit | reason=error | fallback_used=gemini | commit=59ce89e | diff_sha=79d49c2634be8fd8ec7a52e9739360de8ba9bb45ede67b3359c69ac05ca02d7a
-- 2026-07-14T04:16Z | tier=E | primary=codex | reason=error_or_timeout | fallback_used=deepseek | commit=31350a3 | diff_sha=63902a1c8047ddcb81fa6b730cd65b95ec9e08cfaa0bb4a4a38b58d91770886b
-
-### DeepSeek — 20260714-001615
-
-(Empty section: zero-finding COMMIT_BLOCK, same capture-bug pattern as the MEDIUM stub in BUGS.md. Nothing to queue.)
-
-- 2026-07-14T04:23Z | tier=E | primary=codex | reason=error_or_timeout | fallback_used=gemini | commit=31350a3 | diff_sha=03c8b8b21d387c28dc89ac40747d9fa2043dbace5c90e230826b3ce4571946ee
-- 2026-07-14T04:23Z | tier=F | primary=coderabbit | reason=error | fallback_used=gemini | commit=31350a3 | diff_sha=03c8b8b21d387c28dc89ac40747d9fa2043dbace5c90e230826b3ce4571946ee
-- 2026-07-15T19:30Z | tier=F | primary=coderabbit | reason=error | fallback_used=gemini | commit=59ce89e | diff_sha=88698c0745250b933e00b06b7a2aa231ce4a06f1eba6493454f27ff17b9fa5c5
-
-### DeepSeek — 20260715-153050
-
-- LOW: [COPY-MANDATE] The new headings at `BUGS.md:638` and `ENHANCEMENTS.md:1496` use the explicitly forbidden em dash character.
-- 2026-07-15T19:41Z | tier=E | primary=codex | reason=error_or_timeout | fallback_used=gemini | commit=59ce89e | diff_sha=150fdc6d7ed893e4bfa548355de934e7a42d44adb01c86c617353b7fcd950253
-- 2026-07-15T19:41Z | tier=F | primary=coderabbit | reason=error | fallback_used=gemini | commit=59ce89e | diff_sha=150fdc6d7ed893e4bfa548355de934e7a42d44adb01c86c617353b7fcd950253
-
-### CodeRabbit — 20260715-154138
-
-- LOW: [COPY-MANDATE] The new headings in `BUGS.md` and `ENHANCEMENTS.md` use the forbidden em dash character (`—`), which violates the copy voice mandate.
-  - `BUGS.md:638`: `### DeepSeek — 20260714-001615`
-  - `BUGS.md:642`: `### DeepSeek — 20260715-153050`
-  - `ENHANCEMENTS.md:1496`: `### DeepSeek — 20260714-001615`
-  - `ENHANCEMENTS.md:1503`: `### DeepSeek — 20260715-153050`
-
-### DeepSeek — 20260715-154138
-
-- LOW: [COPY-MANDATE] The new headings added to `BUGS.md` and `ENHANCEMENTS.md` use an em dash (`—`), which is forbidden by the copy voice mandate. The diff itself adds a finding for this, but adds the violating text nonetheless.
-
-### Gemini — 20260715-154138
-
-- LOW: The new headings in `BUGS.md` and `ENHANCEMENTS.md` use an em dash (`—`), which is forbidden by the copy voice mandate.
-  - `BUGS.md:641`: `### DeepSeek — 20260715-153050`
-  - `ENHANCEMENTS.md:1501`: `### DeepSeek — 20260715-153050`
-- 2026-07-15T19:44Z | tier=F | primary=coderabbit | reason=error | fallback_used=gemini | commit=59ce89e | diff_sha=3cabdcd14cf59183d7b909e9be68a68c38717dc9b5c23e17e60a6748e1f7dd4c
-- 2026-07-15T19:44Z | tier=E | primary=codex | reason=error_or_timeout | fallback_used=gemini | commit=59ce89e | diff_sha=3cabdcd14cf59183d7b909e9be68a68c38717dc9b5c23e17e60a6748e1f7dd4c
-
-### CodeRabbit — 20260715-154413
-
-- LOW: [COPY-MANDATE] The diff introduces multiple headings that use the em dash (`—`), which is forbidden by the copy voice mandate. This occurs even though the diff also records findings from other tools that correctly flag this same violation.
-  - `BUGS.md`: `### DeepSeek — 20260714-001615`
-  - `BUGS.md`: `### DeepSeek — 20260715-153050`
-  - `ENHANCEMENTS.md`: `### DeepSeek — 20260714-001615`
-  - `ENHANCEMENTS.md`: `### DeepSeek — 20260715-153050`
-  - `ENHANCEMENTS.md`: `### CodeRabbit — 20260715-154138`
-  - `ENHANCEMENTS.md`: `### DeepSeek — 20260715-154138`
-  - `ENHANCEMENTS.md`: `### Gemini — 20260715-154138`
-
-### DeepSeek — 20260715-154413
-
-- LOW: [COPY-VOICE] The new headings in `BUGS.md` and `ENHANCEMENTS.md` use the em dash character (`—`), which is forbidden by the copy voice mandate.
-  - `BUGS.md`: `### DeepSeek — 20260714-001615`
-  - `BUGS.md`: `### DeepSeek — 20260715-153050`
-  - `ENHANCEMENTS.md`: `### DeepSeek — 20260714-001615`
-  - `ENHANCEMENTS.md`: `### DeepSeek — 20260715-153050`
-  - `ENHANCEMENTS.md`: `### CodeRabbit — 20260715-154138`
-  - `ENHANCEMENTS.md`: `### DeepSeek — 20260715-154138`
-  - `ENHANCEMENTS.md`: `### Gemini — 20260715-154138`
 - 2026-07-15T02:08Z | tier=F | primary=coderabbit | reason=error | fallback_used=gemini | commit=4efe5d3 | diff_sha=b74f4259c3e8725c36ba740c55be50f41db8a256f4ac932ce24114c7160ec270
 - 2026-07-15T19:26Z | tier=F | primary=coderabbit | reason=error | fallback_used=gemini | commit=8ecc6b2 | diff_sha=c9f20eceb0d2132fd116a62263d47c0c3d5f314a576755c1dfc0e7cb6dd8f18b
 - 2026-07-15T19:37Z | tier=E | primary=codex | reason=error_or_timeout | fallback_used=gemini | commit=8ecc6b2 | diff_sha=0dcddf1f107891ad33ffb99d2cd75f10b3ad2973464c41b886f960166a096a50
@@ -1724,11 +1674,6 @@ If the ambiguity matters there too, rename both with Surbhi's approval on the ex
 - [ ] LOW: [CONTRACT] .github/workflows/ci.yml:52, checking out `head.sha` instead of GitHub's test-merge commit means the required job never builds or tests the PR merged with current main, so a PR that is green in isolation can still break main at merge time (the inline rationale conflates the diff step's SHA needs, which are env vars, with what commit must be checked out). | Files: .github/workflows/ci.yml head.sha | PR: #160 | Head: c251ea7abaa5a9862f3477db86cf0f37d27695f8
 
 <!-- fable-routed PR #160 head c251ea7abaa5a9862f3477db86cf0f37d27695f8 -->
-
-- [ ] LOW: [STALE-REF] BUGS.md:644, the queued MEDIUM cites ENHANCEMENTS.md:1492-1501 as the location of the misplaced retry telemetry, but this same PR overwrites those exact lines with new log entries and DeepSeek sections, so the fixer acting on this queue item after merge will open lines that no longer contain the referenced "Low priority enhancements" heading. | Files: BUGS.md ENHANCEMENTS.md | PR: #149 | Head: c299b42be3d24b4905941b6898595d842e0af5f6
-- [ ] LOW: [QUEUE-VISIBILITY] ENHANCEMENTS.md:1504, the recorded LOW findings use plain "- LOW:" bullets with no "- [ ]" checkbox (unlike the BUGS.md entry at 644) and no Files/Plan fields, so if the backlog tooling keys on checkboxes to build its work list these findings are recorded but never picked up, and the 2026-07-14T04:16Z log line at ENHANCEMENTS.md:1493 also lands after the existing 2026-07-15T01:57Z entry, breaking the log's time ordering for anything that assumes last-line-is-latest. | Files: BUGS.md ENHANCEMENTS.md | PR: #149 | Head: c299b42be3d24b4905941b6898595d842e0af5f6
-
-<!-- fable-routed PR #149 head c299b42be3d24b4905941b6898595d842e0af5f6 -->
 
 - [ ] LOW: [correctness] src/components/ContestantPrepPage.tsx:31, `readSession` (called during render and in the auth effect) and `saveSession` access `sessionStorage` with no try/catch, so in storage-blocked browsers (Chrome "block all cookies", some private modes) the render throws and blanks the page, or a successful auth response throws in `saveSession` and is caught as a failure — a contestant with a valid emailed link sees "Link expired"; the sibling portalBootstrap module guards exactly this but the prep page rewrite did not. | Files: src/components/ContestantPrepPage.tsx | PR: #147 | Head: 177c6e2f7a0aaca2ca43f31a74aa6d20a59ff829
 - [ ] LOW: [security] src/components/ContestantPrepPage.tsx:293, the prep page's `?date&sig` bearer credentials are read but never scrubbed from the URL, so they remain visible to the deferred GTM/PostHog/Meta scripts, browser history and shared screenshots for the whole session — the same exposure this PR eliminates for portal `?invite=` tokens is left in place on the adjacent page. | Files: src/components/ContestantPrepPage.tsx | PR: #147 | Head: 177c6e2f7a0aaca2ca43f31a74aa6d20a59ff829

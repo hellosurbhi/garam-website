@@ -515,8 +515,9 @@ export const events: EventEntry[] = [
     venue: VENUE_DC_COMEDY_LOFT,
     url: "https://www.dccomedyloft.com/shows/378527",
     isoDate: "2026-08-30",
-    startTime: "20:00",
-    endTime: "22:00",
+    startTime: "18:00",
+    endTime: "20:00",
+    note: "Start time moved from 8 PM to 6 PM, still Aug 30.",
     price: "15",
   },
   {

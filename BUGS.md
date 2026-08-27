@@ -620,11 +620,6 @@ Split from a shared checkbox into one line per finding, same pass as above (Fabl
 
 <!-- fable-routed PR #160 head c251ea7abaa5a9862f3477db86cf0f37d27695f8 -->
 
-- [ ] MEDIUM: [DOC-STRUCTURE] ENHANCEMENTS.md:1499, three fallback-telemetry log lines (2026-07-14T04:23Z x2, 2026-07-15T19:30Z) are appended inside the "### DeepSeek — 20260714-001615" review section instead of the contiguous log block ending at line 1493, so any parser or the overnight fixer reading that section will treat telemetry rows as review findings, while a scanner of the contiguous log block silently drops these six new entries (the 19:41Z and 19:44Z pairs are likewise trapped inside the 20260715-153050 and Gemini 154138 sections). | Files: ENHANCEMENTS.md | PR: #149 | Head: c299b42be3d24b4905941b6898595d842e0af5f6
-- [ ] MEDIUM: [NON-CONVERGENT-LOOP] ENHANCEMENTS.md:1496, every repair section heading uses the em dash the repo's copy mandate forbids, and recording each em-dash finding requires adding another em-dash heading — the diff already shows the loop running (the 154138 reviews flag the headings created to record 153050, then 154413 flags the 154138 headings), so each future review cycle appends new violating headings and new findings without ever converging. | Files: ENHANCEMENTS.md | PR: #149 | Head: c299b42be3d24b4905941b6898595d842e0af5f6
-
-<!-- fable-routed PR #149 head c299b42be3d24b4905941b6898595d842e0af5f6 -->
-
 - [ ] MEDIUM: [contract-violation] src/lib/portalBootstrap.ts:215, `isDefinitiveRejection` only recognizes a 2xx body with `state:"error"` as definitive, so a stored context whose link dies via a non-2xx status (e.g. the 404 "Invalid invite link." shape the mapping tests model) or resolves to `state:"expired"` is never cleared — every subsequent visit that session replays the dead link and the visitor can never reach the bare/open portal or the cookie-authed branch, contradicting the changelog's "clears on definitive server rejection" claim. | Files: e.g src/lib/portalBootstrap.ts | PR: #147 | Head: 177c6e2f7a0aaca2ca43f31a74aa6d20a59ff829
 
 <!-- fable-routed PR #147 head 177c6e2f7a0aaca2ca43f31a74aa6d20a59ff829 -->

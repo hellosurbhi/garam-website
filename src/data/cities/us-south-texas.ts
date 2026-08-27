@@ -66,7 +66,7 @@ export const usSouthTexasCities: Record<string, CityData> = {
       },
       {
         q: "What will Dallas tickets cost?",
-        a: "NYC tickets start around $15 and touring stops are priced for the market. Waitlist members get presale pricing and first pick of seats before tickets go public.",
+        a: "Ticket prices vary by venue and city, and touring stops are priced for the local market. Waitlist members get presale pricing and first pick of seats before tickets go public.",
       },
     ],
     sections: [

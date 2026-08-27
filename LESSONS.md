@@ -1,5 +1,13 @@
 # Lessons
 
+## `ticketSource: "eventbrite-owned"` silently drove purchase tracking off reality for two weeks
+
+**What went wrong:** 11 shows in `events.ts` were labeled `ticketSource: "eventbrite-owned"`, the flag that gates whether the daily order-sync cron attempts to pull real purchase data and report it to Meta. The business does not currently control any Eventbrite organizer account for any scheduled show. Nothing in the code or logs surfaced this: the sync job is silent on success and only logs actual API errors, so a token with no real access to these events would either fail quietly or, worse, succeed against unrelated data, neither of which looks different from a healthy run in the logs.
+
+**Why:** `ticketSource` is manually set, per-event business knowledge (see the field's own doc comment in `events.ts`), not derivable from any other field, so nothing in the codebase could ever catch it drifting out of sync with reality. It was set when the field was introduced 2026-08-14 and never revisited as the business's actual Eventbrite access changed.
+
+**Rule:** A business-fact flag that gates a real external side effect (an API call to a third-party account, a paid ad platform signal) needs periodic confirmation from whoever owns that fact, not a one-time-set label trusted forever. Before relying on a `ticketSource`-style flag, confirm current account access with the business owner rather than assuming a prior PR's label is still true.
+
 ## Patch-coverage gate counted statement hits only, so it failed already-tested code
 
 **What went wrong:** CI's "Lint, Types, Test, Build" check failed with "patch coverage 76.3% is below the 80% threshold" on a PR whose changed lines were, line by line, either already covered by an existing test or physically impossible to instrument (imports, blank lines, comments, type declarations). The tests were fine; the gate was wrong.

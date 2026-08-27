@@ -1,5 +1,13 @@
 # Changelog
 
+## fix(data): no show is currently eventbrite-owned, correct ticketSource labels (2026-08-27)
+
+- `src/data/events.ts` marked 11 shows `ticketSource: "eventbrite-owned"`, the flag that gates whether `src/pages/api/sync-orders.ts`'s daily cron attempts real Purchase tracking to Meta for that show. User confirmed directly the business does not currently control any Eventbrite organizer account for any scheduled show (maybe 1 in 10 shows going forward might), so server-side Purchase tracking has likely never fired correctly for any show since this system shipped 2026-08-14. All 11 entries flipped to `ticketSource: "external"`. `eventbriteId` fields were left untouched since they still drive public event-page content fetches (`src/lib/eventbriteContent.ts`), a separate, still-valid, public-data use unrelated to order access.
+- `LESSONS.md`: recorded the rule that `ticketSource` is unvalidated, manually set business knowledge with no automatic drift detection and a silent failure mode.
+- Verified: pre-commit hook ran `astro check` + full `vitest`, all passing. Manually confirmed via grep that no event entries carry `ticketSource: "eventbrite-owned"` anymore.
+
+**Files:** `src/data/events.ts`, `LESSONS.md`, `BUGS.md`
+
 ## fix(tickets): stop blocking the redirect on tracking calls, add loading state to same-tab CTA (2026-08-27)
 
 - `/api/go/[slug].ts` was awaiting an unbounded Redis rate-limit check and a Meta CAPI call before sending the 302, so a slow Redis/Meta response stalled the entire ticket flow for up to ~10s. Both now run after the redirect via Vercel's `waitUntil()`, with a new 1.5s timeout ceiling on the Redis call (`src/lib/rateLimit.ts`) so it can never hang unbounded again.

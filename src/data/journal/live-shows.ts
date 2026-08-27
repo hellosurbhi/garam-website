@@ -74,7 +74,7 @@ export const liveShowsPosts: JournalPost[] = [
       },
       {
         type: "p",
-        text: "Full disclosure, this one is mine, so let me tell you exactly what it is and who it is for. Two real singles meet for the first time on stage and go on a blind date in front of 250 people. My co-host Wyatt and I steer the date with stand-up, games and crowd work. The audience votes on a second date. Then the venue flips into a singles mixer and the whole room gets to do what they just watched. It runs in Manhattan with regular shows in <a href='/cities/jersey-city'>Jersey City</a>, <a href='/cities/boston'>Boston</a>, <a href='/cities/philadelphia'>Philadelphia</a>, <a href='/cities/edison'>Edison</a>, <a href='/cities/los-angeles'>Los Angeles</a> and <a href='/cities/san-francisco'>San Francisco</a>.",
+        text: "Full disclosure, this one is mine, so let me tell you exactly what it is and who it is for. Two real singles meet for the first time on stage and go on a blind date in front of 250 people. My co-host Wyatt and I steer the date with stand-up, games and crowd work. The audience votes on a second date. Then the venue flips into a singles mixer and the whole room gets to do what they just watched. It runs frequently in Manhattan with regular shows in <a href='/cities/jersey-city'>Jersey City</a>, <a href='/cities/boston'>Boston</a>, <a href='/cities/philadelphia'>Philadelphia</a>, <a href='/cities/edison'>Edison</a>, <a href='/cities/los-angeles'>Los Angeles</a> and <a href='/cities/san-francisco'>San Francisco</a>.",
       },
       {
         type: "p",
@@ -356,7 +356,7 @@ export const liveShowsPosts: JournalPost[] = [
       },
       {
         type: "p",
-        text: "NYC is the epicenter. Garam Masala Dating runs in Manhattan with shows in <a href='/cities/jersey-city'>Jersey City</a>, <a href='/cities/boston'>Boston</a>, <a href='/cities/philadelphia'>Philadelphia</a>, <a href='/cities/los-angeles'>Los Angeles</a> and <a href='/cities/san-francisco'>San Francisco</a>, with a desi flavor and an audience that is fully mixed. Other cities are joining the map fast, and if yours is not on it yet you can <a href='/cities'>check your city</a> and join the waitlist. The format is spreading for a simple reason: every city has singles and every city has comedians. All it takes is a stage.",
+        text: "NYC is the epicenter. Garam Masala Dating runs regularly in Manhattan with shows in <a href='/cities/jersey-city'>Jersey City</a>, <a href='/cities/boston'>Boston</a>, <a href='/cities/philadelphia'>Philadelphia</a>, <a href='/cities/los-angeles'>Los Angeles</a> and <a href='/cities/san-francisco'>San Francisco</a>, with a desi flavor and an audience that is fully mixed. Other cities are joining the map fast, and if yours is not on it yet you can <a href='/cities'>check your city</a> and join the waitlist. The format is spreading for a simple reason: every city has singles and every city has comedians. All it takes is a stage.",
       },
     ],
     ctaConfig: {
@@ -437,7 +437,7 @@ export const liveShowsPosts: JournalPost[] = [
       },
       {
         type: "p",
-        text: "NYC is the only city where live dating has become a genuine institution. <a href='/cities/manhattan'>Garam Masala Dating runs in Manhattan</a>: two real singles on a blind date on stage, comedian hosts, 250 person crowd, audience vote and a singles mixer after where the room gets to shoot its own shots. UpDating runs blindfolded dates for a pure spectator experience. Tinder Live turns app swiping into a comedy show. You could see a different live dating format three weekends in a row without leaving the city.",
+        text: "NYC is the only city where live dating has become a genuine institution. <a href='/cities/manhattan'>Garam Masala Dating runs regularly in Manhattan</a>: two real singles on a blind date on stage, comedian hosts, 250 person crowd, audience vote and a singles mixer after where the room gets to shoot its own shots. UpDating runs blindfolded dates for a pure spectator experience. Tinder Live turns app swiping into a comedy show. You could see a different live dating format three weekends in a row without leaving the city.",
       },
       {
         type: "h2",

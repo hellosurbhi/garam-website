@@ -13,7 +13,7 @@ export const activeCities: Record<string, CityData> = {
     badgeLabel: "Tickets Live",
     bodyParagraphs: [
       "Manhattan has no shortage of things to do on a Sunday. What it’s short on is a room full of interesting, single people who are actually trying to meet someone without the pressure of a formal event or the numbness of another app.",
-      "Garam Masala Dating fills that gap. At City Winery NYC in Chelsea, real singles volunteer for live dates on stage while a packed room watches it unfold. Before and after, the whole crowd mingles. It’s low-stakes, high-energy, and nothing like the so-called networking events you’ve skipped.",
+      "Garam Masala Dating fills that gap. At City Winery NYC in Chelsea, real singles regularly volunteer for live dates on stage while a packed room watches it unfold. Before and after, the whole crowd mingles. It’s low-stakes, high-energy, and nothing like the so-called networking events you’ve skipped.",
       "Our Manhattan shows draw South Asian professionals, desi diaspora, expats, and anyone who shows up curious and leaves having actually talked to someone new. The crowd skews late 20s to mid 30s, culturally mixed, and genuinely there for a good time.",
       "Shows happen on Sundays at City Winery NYC, 25 11th Ave. Grab tickets for the next one below.",
       "If you’re tired of apps and tired of manufactured mixers, this is the alternative. Come watch a few strangers try to fall in love on stage, then go find your own person at the bar.",

@@ -78,7 +78,7 @@ export const entertainmentPosts: JournalPost[] = [
       },
       {
         type: "p",
-        text: "Tickets and contestant applications are at garammasaladating.com. We run in Manhattan. Come see what happens when the comedy and the dating are the same thing.",
+        text: "Tickets and contestant applications are at garammasaladating.com. We run regularly in Manhattan. Come see what happens when the comedy and the dating are the same thing.",
       },
       {
         type: "p" as const,
@@ -316,7 +316,7 @@ export const entertainmentPosts: JournalPost[] = [
       },
       {
         q: "What is the biggest South Asian comedy festival in the US?",
-        a: "Desi Comedy Fest in the Bay Area is the largest annual South Asian comedy festival. NYC has Laughing Lassi as its flagship ongoing showcase. For a completely different format, Garam Masala Dating runs in Manhattan.",
+        a: "Desi Comedy Fest in the Bay Area is the largest annual South Asian comedy festival. NYC has Laughing Lassi as its flagship ongoing showcase. For a completely different format, Garam Masala Dating runs regularly in Manhattan.",
       },
       {
         q: "Why is South Asian comedy growing in America?",
@@ -324,7 +324,7 @@ export const entertainmentPosts: JournalPost[] = [
       },
       {
         q: "Is there a South Asian comedy show in NYC?",
-        a: "Yes, Laughing Lassi runs stand-up showcases irregularly in NYC. Garam Masala Dating runs at City Winery NYC in Manhattan and is the only show that combines South Asian comedy with a live dating format. Tickets at garammasaladating.com.",
+        a: "Yes, Laughing Lassi runs stand-up showcases irregularly in NYC. Garam Masala Dating runs regularly at City Winery NYC in Manhattan and is the only show that combines South Asian comedy with a live dating format. Tickets at garammasaladating.com.",
       },
     ],
     relatedSlugs: [
@@ -568,7 +568,7 @@ export const entertainmentPosts: JournalPost[] = [
       },
       {
         q: "How can I meet South Asian singles in NYC beyond apps?",
-        a: "South Asian comedy shows, cultural events, and Garam Masala Dating are the main real-world alternatives to apps. Garam Masala Dating runs at City Winery NYC in Manhattan and functions as a social event for the full audience, not just the contestants on stage.",
+        a: "South Asian comedy shows, cultural events, and Garam Masala Dating are the main real-world alternatives to apps. Garam Masala Dating runs regularly at City Winery NYC in Manhattan and functions as a social event for the full audience, not just the contestants on stage.",
       },
     ],
     relatedSlugs: [

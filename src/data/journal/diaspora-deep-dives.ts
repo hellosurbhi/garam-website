@@ -133,7 +133,7 @@ export const diasporaDeepDivesPosts: JournalPost[] = [
       },
       {
         type: "p",
-        text: "If you’re Telugu and you’re tired of the ambiguity, Garam Masala Dating is a place where you can be unambiguously yourself in front of 250 people who get the cultural context without requiring you to explain it. The show runs in Manhattan and monthly in <a href='/cities/jersey-city'>Jersey City</a>. Come find out if the chemistry is there in real time.",
+        text: "If you’re Telugu and you’re tired of the ambiguity, Garam Masala Dating is a place where you can be unambiguously yourself in front of 250 people who get the cultural context without requiring you to explain it. The show runs regularly in Manhattan and monthly in <a href='/cities/jersey-city'>Jersey City</a>. Come find out if the chemistry is there in real time.",
       },
     ],
   },
@@ -370,7 +370,7 @@ export const diasporaDeepDivesPosts: JournalPost[] = [
       },
       {
         type: "p",
-        text: "For Sri Lankan singles who want to meet people in a South Asian context that understands community dynamics without requiring you to explain the civil war to your date, Garam Masala Dating runs in Manhattan and monthly in <a href=’/cities/jersey-city’>Jersey City</a>. The pan-South Asian crowd means the community context is understood even when the community-specific details are not.",
+        text: "For Sri Lankan singles who want to meet people in a South Asian context that understands community dynamics without requiring you to explain the civil war to your date, Garam Masala Dating runs regularly in Manhattan and monthly in <a href=’/cities/jersey-city’>Jersey City</a>. The pan-South Asian crowd means the community context is understood even when the community-specific details are not.",
       },
     ],
   },
@@ -486,7 +486,7 @@ export const diasporaDeepDivesPosts: JournalPost[] = [
       },
       {
         type: "p",
-        text: "Garam Masala Dating runs in Manhattan and monthly in <a href='/cities/jersey-city'>Jersey City</a>. Nepali singles are part of the South Asian community that shows up, and the pan-South Asian context means the community understanding is there without the community surveillance being quite as intense as at a specifically Nepali event.",
+        text: "Garam Masala Dating runs regularly in Manhattan and monthly in <a href='/cities/jersey-city'>Jersey City</a>. Nepali singles are part of the South Asian community that shows up, and the pan-South Asian context means the community understanding is there without the community surveillance being quite as intense as at a specifically Nepali event.",
       },
     ],
   },
@@ -603,7 +603,7 @@ export const diasporaDeepDivesPosts: JournalPost[] = [
       },
       {
         type: "p",
-        text: "Garam Masala Dating brings South Asian singles together in a context where the cultural specificity is understood and appreciated. Shows run in Manhattan and monthly in <a href='/cities/jersey-city'>Jersey City</a>. Malayali singles are part of the community and the show gives you actual conversation time in a low-pressure, high-energy environment.",
+        text: "Garam Masala Dating brings South Asian singles together in a context where the cultural specificity is understood and appreciated. Shows run regularly in Manhattan and monthly in <a href='/cities/jersey-city'>Jersey City</a>. Malayali singles are part of the community and the show gives you actual conversation time in a low-pressure, high-energy environment.",
       },
     ],
   },
@@ -720,7 +720,7 @@ export const diasporaDeepDivesPosts: JournalPost[] = [
       },
       {
         type: "p",
-        text: "For Hyderabadi singles across California, New Jersey and Texas, Garam Masala Dating offers a pan-South Asian space with the cultural context built in. Shows run in Manhattan and monthly in <a href=’/cities/jersey-city’>Jersey City</a>. Come see what happens when you stop performing and start actually connecting.",
+        text: "For Hyderabadi singles across California, New Jersey and Texas, Garam Masala Dating offers a pan-South Asian space with the cultural context built in. Shows run regularly in Manhattan and monthly in <a href=’/cities/jersey-city’>Jersey City</a>. Come see what happens when you stop performing and start actually connecting.",
       },
     ],
   },
@@ -737,7 +737,7 @@ export const diasporaDeepDivesPosts: JournalPost[] = [
     faqs: [
       {
         q: "Where can I find Punjabi speed dating events in 2026?",
-        a: "Search Eventbrite, Facebook Events and Meetup with terms like “Punjabi speed dating NYC,” “South Asian singles Toronto” or “Punjabi singles events NJ.” Instagram is often where organizers announce events before listing them formally, so following South Asian event accounts in your city matters. Garam Masala Dating, which runs in NYC and monthly in Jersey City, draws a strong Punjabi audience and includes a singles mixer after every show, giving you real conversation time beyond a three-minute rotation.",
+        a: "Search Eventbrite, Facebook Events and Meetup with terms like “Punjabi speed dating NYC,” “South Asian singles Toronto” or “Punjabi singles events NJ.” Instagram is often where organizers announce events before listing them formally, so following South Asian event accounts in your city matters. Garam Masala Dating, which runs regularly in NYC and monthly in Jersey City, draws a strong Punjabi audience and includes a singles mixer after every show, giving you real conversation time beyond a three-minute rotation.",
       },
       {
         q: "What is Punjabi speed dating actually like versus regular speed dating?",
@@ -836,7 +836,7 @@ export const diasporaDeepDivesPosts: JournalPost[] = [
       },
       {
         type: "p",
-        text: "The Punjabi dating scene in NYC is vibrant and in-person events are the best way into it. Shows run in Manhattan at City Winery NYC and monthly in <a href='/cities/jersey-city'>Jersey City</a>. Come for the show. Stay for the mixer. See what happens when you’re actually in the room.",
+        text: "The Punjabi dating scene in NYC is vibrant and in-person events are the best way into it. Shows run regularly in Manhattan at City Winery NYC and monthly in <a href='/cities/jersey-city'>Jersey City</a>. Come for the show. Stay for the mixer. See what happens when you’re actually in the room.",
       },
     ],
   },
@@ -952,7 +952,7 @@ export const diasporaDeepDivesPosts: JournalPost[] = [
       },
       {
         type: "p",
-        text: "Garam Masala Dating brings together desis across the first-gen to second-gen spectrum in a context where the cultural conversation can happen with humor and humanity rather than judgment. Shows run in Manhattan at City Winery NYC and monthly in <a href='/cities/jersey-city'>Jersey City</a>.",
+        text: "Garam Masala Dating brings together desis across the first-gen to second-gen spectrum in a context where the cultural conversation can happen with humor and humanity rather than judgment. Shows run regularly in Manhattan at City Winery NYC and monthly in <a href='/cities/jersey-city'>Jersey City</a>.",
       },
     ],
   },
@@ -1068,7 +1068,7 @@ export const diasporaDeepDivesPosts: JournalPost[] = [
       },
       {
         type: "p",
-        text: "For desis in the American northeast, Garam Masala Dating runs in Manhattan and monthly in <a href=’/cities/jersey-city’>Jersey City</a>. Canadian desis visit New York regularly and the show is worth checking out when you’re in town. The pan-South Asian crowd and the live dating format give you actual information about chemistry and compatibility that a profile cannot.",
+        text: "For desis in the American northeast, Garam Masala Dating runs frequently in Manhattan and monthly in <a href=’/cities/jersey-city’>Jersey City</a>. Canadian desis visit New York regularly and the show is worth checking out when you’re in town. The pan-South Asian crowd and the live dating format give you actual information about chemistry and compatibility that a profile cannot.",
       },
     ],
   },
@@ -1184,7 +1184,7 @@ export const diasporaDeepDivesPosts: JournalPost[] = [
       },
       {
         type: "p",
-        text: "For Maharashtrian singles in NYC and NJ, Garam Masala Dating runs at City Winery NYC in Manhattan and monthly in <a href=’/cities/jersey-city’>Jersey City</a>. The South Asian community that shows up understands Maharashtrian cultural context even when they’re not Marathi themselves. Come see what happens in a room where everyone gets the reference.",
+        text: "For Maharashtrian singles in NYC and NJ, Garam Masala Dating runs regularly at City Winery NYC in Manhattan and monthly in <a href=’/cities/jersey-city’>Jersey City</a>. The South Asian community that shows up understands Maharashtrian cultural context even when they’re not Marathi themselves. Come see what happens in a room where everyone gets the reference.",
       },
     ],
   },
@@ -1292,7 +1292,7 @@ export const diasporaDeepDivesPosts: JournalPost[] = [
       },
       {
         type: "p",
-        text: "For Goan Catholic singles, the parish community is the most socially sanctioned meeting space. For those looking beyond the parish, South Asian dating events like Garam Masala Dating provide a broader community context where the South Asian cultural background is understood even if the specific Goan context requires some explanation. The show runs in Manhattan at City Winery NYC and monthly in <a href=’/cities/jersey-city’>Jersey City</a>.",
+        text: "For Goan Catholic singles, the parish community is the most socially sanctioned meeting space. For those looking beyond the parish, South Asian dating events like Garam Masala Dating provide a broader community context where the South Asian cultural background is understood even if the specific Goan context requires some explanation. The show runs regularly in Manhattan at City Winery NYC and monthly in <a href=’/cities/jersey-city’>Jersey City</a>.",
       },
       {
         type: "p",

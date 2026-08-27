@@ -296,7 +296,7 @@ export const identityPosts: JournalPost[] = [
       },
       {
         q: "What's the best dating event for first-gen Indian Americans in NYC?",
-        a: "Garam Masala Dating is the #1 live South Asian dating show in NYC. It's a full evening: live blind dates on stage, audience participation, a mixer after. The crowd is heavily first-gen and second-gen desis who are done with apps and want to meet people in a room that actually gets their experience.",
+        a: "Garam Masala Dating is the #1 recurring live South Asian dating show in NYC. It's a full evening: live blind dates on stage, audience participation, a mixer after. The crowd is heavily first-gen and second-gen desis who are done with apps and want to meet people in a room that actually gets their experience.",
       },
     ],
     body: [

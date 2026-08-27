@@ -388,20 +388,24 @@ export function postShow(name: string): EmailTemplate {
   return { subject, text, html };
 }
 
-export function applicationReceived(name: string, city: string): EmailTemplate {
+export function applicationReceived(name: string): EmailTemplate {
   const firstName = name.split(" ")[0];
-  const subject = `We got your application, ${subjectSafe(firstName)}!`;
+  const subject = "Thanks for applying to Garam Masala Dating!";
   const safeFirstName = escapeHtml(firstName);
-  const safeCity = escapeHtml(city);
   const text = [
     `Hi ${firstName},`,
     "",
-    `Thank you so much for applying to Garam Masala Dating${city ? ` (${city})` : ""}! We're so excited you want to be on the show.`,
+    "Thanks for applying to Garam Masala Dating! We're excited you want to be part of the show.",
     "",
-    "We go through applications personally and will be in touch soon. In the meantime, follow us on Instagram for show updates and behind-the-scenes content.",
+    "We're going through more than 3,000 applications right now, and reviewing everyone takes time. I read each one myself. The fastest way to actually get on stage is to come to one of our live shows and volunteer when we call for a stealer. That is how most of our current cast got picked, so showing up in person beats waiting on us to get through the backlog.",
     "",
-    "Talk soon!",
+    "Grab tickets for an upcoming show here: garammasaladating.com/tickets",
     "",
+    "Either way, thank you for putting yourself out there. We can't wait to see you at a future show.",
+    "",
+    "Follow @garammasaladating for updates and behind the scenes content in the meantime.",
+    "",
+    "See you soon,",
     "Surbhi",
     "Garam Masala Dating",
   ].join("\n");
@@ -409,13 +413,21 @@ export function applicationReceived(name: string, city: string): EmailTemplate {
   const html = wrap(
     p(`Hi ${safeFirstName},`) +
       p(
-        `Thank you so much for applying to Garam Masala Dating${safeCity ? ` (${safeCity})` : ""}! We're so excited you want to be on the show.`,
+        "Thanks for applying to Garam Masala Dating! We're excited you want to be part of the show.",
       ) +
       p(
-        `We go through applications personally and will be in touch soon. In the meantime, follow us on ${link("https://www.instagram.com/garammasaladating/", "@garammasaladating")} for show updates and behind-the-scenes content.`,
+        "We're going through more than 3,000 applications right now, and reviewing everyone takes time. I read each one myself. The fastest way to actually get on stage is to come to one of our live shows and volunteer when we call for a stealer. That is how most of our current cast got picked, so showing up in person beats waiting on us to get through the backlog.",
       ) +
-      p("Talk soon!") +
-      p("Surbhi<br>Garam Masala Dating"),
+      p(
+        `Grab tickets for an upcoming show here: ${link("https://garammasaladating.com/tickets", "garammasaladating.com/tickets")}`,
+      ) +
+      p(
+        "Either way, thank you for putting yourself out there. We can't wait to see you at a future show.",
+      ) +
+      p(
+        `Follow ${link("https://www.instagram.com/garammasaladating/", "@garammasaladating")} for updates and behind the scenes content in the meantime.`,
+      ) +
+      p("See you soon,<br>Surbhi<br>Garam Masala Dating"),
   );
 
   return { subject, text, html };

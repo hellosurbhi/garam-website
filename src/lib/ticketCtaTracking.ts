@@ -102,7 +102,7 @@ export function wireTicketCtaTracking(): void {
         // (caught by Codex review, 2026-08-27): this flag is only ever set
         // by the same-tab branch below, so a guarded return always means
         // "this anchor's native navigation must stay deferred to the
-        // setTimeout below" — without it, a second Enter/click inside the
+        // setTimeout below" -- without it, a second Enter/click inside the
         // 100ms window navigates immediately via the browser's default
         // action, which can outrun the beacon flush that delay exists for.
         if (anchor.dataset.ctaLoading === "true") {

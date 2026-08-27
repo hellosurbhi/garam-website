@@ -1,3 +1,5 @@
+import applicantWelcomeCopy from "./email-copy/applicant-welcome.json";
+
 export interface EmailTemplate {
   subject: string;
   text: string;
@@ -390,47 +392,17 @@ export function postShow(name: string): EmailTemplate {
 
 export function applicationReceived(name: string): EmailTemplate {
   const firstName = name.split(" ")[0];
-  const subject = "Thanks for applying to Garam Masala Dating!";
   const safeFirstName = escapeHtml(firstName);
-  const text = [
-    `Hi ${firstName},`,
-    "",
-    "Thanks for applying to Garam Masala Dating! We're excited you want to be part of the show.",
-    "",
-    "We're going through more than 3,000 applications right now, and reviewing everyone takes time. I read each one myself. The fastest way to actually get on stage is to come to one of our live shows and volunteer when we call for a stealer. That is how most of our current cast got picked, so showing up in person beats waiting on us to get through the backlog.",
-    "",
-    "Grab tickets for an upcoming show here: garammasaladating.com/tickets",
-    "",
-    "Either way, thank you for putting yourself out there. We can't wait to see you at a future show.",
-    "",
-    "Follow @garammasaladating for updates and behind the scenes content in the meantime.",
-    "",
-    "See you soon,",
-    "Surbhi",
-    "Garam Masala Dating",
-  ].join("\n");
+  const subjectFirstName = subjectSafe(firstName);
 
-  const html = wrap(
-    p(`Hi ${safeFirstName},`) +
-      p(
-        "Thanks for applying to Garam Masala Dating! We're excited you want to be part of the show.",
-      ) +
-      p(
-        "We're going through more than 3,000 applications right now, and reviewing everyone takes time. I read each one myself. The fastest way to actually get on stage is to come to one of our live shows and volunteer when we call for a stealer. That is how most of our current cast got picked, so showing up in person beats waiting on us to get through the backlog.",
-      ) +
-      p(
-        `Grab tickets for an upcoming show here: ${link("https://garammasaladating.com/tickets", "garammasaladating.com/tickets")}`,
-      ) +
-      p(
-        "Either way, thank you for putting yourself out there. We can't wait to see you at a future show.",
-      ) +
-      p(
-        `Follow ${link("https://www.instagram.com/garammasaladating/", "@garammasaladating")} for updates and behind the scenes content in the meantime.`,
-      ) +
-      p("See you soon,<br>Surbhi<br>Garam Masala Dating"),
-  );
-
-  return { subject, text, html };
+  return {
+    subject: applicantWelcomeCopy.subject.replaceAll(
+      "{{firstName}}",
+      subjectFirstName,
+    ),
+    text: applicantWelcomeCopy.text.replaceAll("{{firstName}}", firstName),
+    html: applicantWelcomeCopy.html.replaceAll("{{firstName}}", safeFirstName),
+  };
 }
 
 export function newShowAnnouncement(opts: {

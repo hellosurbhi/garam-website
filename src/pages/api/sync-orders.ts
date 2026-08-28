@@ -9,7 +9,38 @@ import { sendCapiEvent } from "@/lib/capi";
 import { withTimeout } from "@/utils/withTimeout";
 import { alertOps } from "@/lib/opsAlert";
 import { events } from "@/data/events";
+import type { EventEntry } from "@/data/events";
 import type { Order, SyncMeta } from "@/types/analytics";
+
+// 3 days past the show covers late walk-up orders finalizing after doors; a
+// show that old has no realistic new orders left to sync. See the WHY
+// comment on `getSyncableEvents`'s call site below for why this window
+// exists at all.
+export const SYNC_WINDOW_DAYS = 3;
+
+/**
+ * Events eligible for order sync: business-owned Eventbrite listings with a
+ * real Eventbrite ID, bounded to a trailing window so a show past that
+ * window can never affect the sync run regardless of its `ticketSource`
+ * value. Pure and exported so it's unit-testable without exercising the
+ * full POST handler (Firestore/Eventbrite/CAPI side effects).
+ */
+export function getSyncableEvents(
+  allEvents: EventEntry[],
+  now: Date = new Date(),
+): EventEntry[] {
+  const syncCutoffISO = new Date(
+    now.getTime() - SYNC_WINDOW_DAYS * 24 * 60 * 60 * 1000,
+  )
+    .toISOString()
+    .slice(0, 10);
+  return allEvents.filter(
+    (e) =>
+      e.ticketSource === "eventbrite-owned" &&
+      e.eventbriteId &&
+      (!e.isoDate || e.isoDate >= syncCutoffISO),
+  );
+}
 
 // Bounded per-call, not per-run: this loop can touch many orders in one
 // sync, so a hanging Meta API call must not compound across all of them and
@@ -582,21 +613,8 @@ export const POST: APIRoute = async ({ request }) => {
     // `ticketSource` is manually set business knowledge with no drift
     // detection (see its doc comment in events.ts), so this can't be
     // prevented at the source; bounding which events are even eligible caps
-    // the blast radius instead. 3 days past the show covers late walk-up
-    // orders finalizing after doors; a show that old has no realistic new
-    // orders left to sync.
-    const SYNC_WINDOW_DAYS = 3;
-    const syncCutoffISO = new Date(
-      Date.now() - SYNC_WINDOW_DAYS * 24 * 60 * 60 * 1000,
-    )
-      .toISOString()
-      .slice(0, 10);
-    const syncableEvents = events.filter(
-      (e) =>
-        e.ticketSource === "eventbrite-owned" &&
-        e.eventbriteId &&
-        (!e.isoDate || e.isoDate >= syncCutoffISO),
-    );
+    // the blast radius instead.
+    const syncableEvents = getSyncableEvents(events);
 
     const syncErrors: string[] = [];
     let totalProcessed = 0;

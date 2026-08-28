@@ -572,8 +572,30 @@ export const POST: APIRoute = async ({ request }) => {
     // `eventbriteId` too, but it belongs to a third party's Eventbrite
     // account: our access token has no orders permission on it, so
     // including it here just generates an authorization error on every run.
+    //
+    // WHY the trailing-window cutoff: a fetch failure on any one event holds
+    // the shared `changed_since` cursor at its previous value for every
+    // event this run (see the WHY comment on hadSyncFailure below), so a
+    // long-past show wrongly (or no longer accurately) marked
+    // "eventbrite-owned" would silently jam Purchase syncing for every
+    // currently relevant show too, not just fail to sync itself.
+    // `ticketSource` is manually set business knowledge with no drift
+    // detection (see its doc comment in events.ts), so this can't be
+    // prevented at the source; bounding which events are even eligible caps
+    // the blast radius instead. 3 days past the show covers late walk-up
+    // orders finalizing after doors; a show that old has no realistic new
+    // orders left to sync.
+    const SYNC_WINDOW_DAYS = 3;
+    const syncCutoffISO = new Date(
+      Date.now() - SYNC_WINDOW_DAYS * 24 * 60 * 60 * 1000,
+    )
+      .toISOString()
+      .slice(0, 10);
     const syncableEvents = events.filter(
-      (e) => e.ticketSource === "eventbrite-owned" && e.eventbriteId,
+      (e) =>
+        e.ticketSource === "eventbrite-owned" &&
+        e.eventbriteId &&
+        (!e.isoDate || e.isoDate >= syncCutoffISO),
     );
 
     const syncErrors: string[] = [];

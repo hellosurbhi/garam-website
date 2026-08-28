@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { getSyncableEvents, SYNC_WINDOW_DAYS } from "./sync-orders";
+import { getSyncableEvents, SYNC_WINDOW_DAYS } from "../sync-orders";
 import type { EventEntry } from "@/data/events";
 
 function makeEvent(overrides: Partial<EventEntry>): EventEntry {

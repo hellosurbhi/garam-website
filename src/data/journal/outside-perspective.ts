@@ -133,7 +133,7 @@ export const outsidePerspectivePosts: JournalPost[] = [
       },
       {
         type: "p",
-        text: "If you want to understand this world from the inside, come to a Garam Masala Dating show in <a href='/cities/manhattan'>New York City</a>. The show runs weekly at Top Secret Comedy Club in Manhattan and monthly in Jersey City. You will hear South Asian singles talk about their actual lives, what they want, what their families want, and the very funny gap between those two things. It is the fastest way to understand the context you are navigating.",
+        text: "If you want to understand this world from the inside, come to a Garam Masala Dating show in <a href='/cities/manhattan'>New York City</a>. It's at City Winery NYC in Manhattan. You will hear South Asian singles talk about their actual lives, what they want, what their families want, and the very funny gap between those two things. It is the fastest way to understand the context you are navigating.",
       },
       {
         type: "p",
@@ -276,7 +276,7 @@ export const outsidePerspectivePosts: JournalPost[] = [
       },
       {
         type: "p",
-        text: "If you want to understand the world your partner is navigating from the inside, come to a Garam Masala Dating show in <a href='/cities/manhattan'>Manhattan</a>. We run weekly at Top Secret Comedy Club. You will see South Asian singles talk about their actual lives, what they want, what their families are doing, and how they are navigating the gap between the two. It is more useful than any guide.",
+        text: "If you want to understand the world your partner is navigating from the inside, come to a Garam Masala Dating show in <a href='/cities/manhattan'>Manhattan</a>. We're at City Winery NYC. You will see South Asian singles talk about their actual lives, what they want, what their families are doing, and how they are navigating the gap between the two. It is more useful than any guide.",
       },
       {
         type: "p",
@@ -410,7 +410,7 @@ export const outsidePerspectivePosts: JournalPost[] = [
       },
       {
         type: "p",
-        text: "If you are navigating cross-cultural dynamics and want to be in a room with other people doing the same thing, come to a Garam Masala Dating show in <a href='/cities/manhattan'>Manhattan</a>. We run weekly at Top Secret Comedy Club in NYC and monthly in Jersey City. The community in that room understands this territory. Tickets at <a href='/'>garammasaladating.com</a>.",
+        text: "If you are navigating cross-cultural dynamics and want to be in a room with other people doing the same thing, come to a Garam Masala Dating show in <a href='/cities/manhattan'>Manhattan</a>. We're at City Winery NYC. The community in that room understands this territory. Tickets at <a href='/'>garammasaladating.com</a>.",
       },
     ],
   },
@@ -527,7 +527,7 @@ export const outsidePerspectivePosts: JournalPost[] = [
       },
       {
         type: "p",
-        text: "The relationships that thrive are the ones where both partners have genuinely talked about this and both genuinely accept it. Not grudgingly, not as a compromise to manage, but as the actual life they are building. Come see what South Asian dating looks like when it is fully honest, Garam Masala Dating runs weekly in <a href='/cities/manhattan'>Manhattan</a> at Top Secret Comedy Club. Tickets at <a href='/'>garammasaladating.com</a>.",
+        text: "The relationships that thrive are the ones where both partners have genuinely talked about this and both genuinely accept it. Not grudgingly, not as a compromise to manage, but as the actual life they are building. Come see what South Asian dating looks like when it is fully honest, at Garam Masala Dating in <a href='/cities/manhattan'>Manhattan</a>, City Winery NYC. Tickets at <a href='/'>garammasaladating.com</a>.",
       },
     ],
   },
@@ -1142,7 +1142,7 @@ export const outsidePerspectivePosts: JournalPost[] = [
       },
       {
         type: "p",
-        text: "Come to Garam Masala Dating in <a href='/cities/manhattan'>NYC</a> to see what South Asian dating actually looks like when it is honest and in person. We run weekly at Top Secret Comedy Club in Manhattan and monthly in <a href='/cities/jersey-city'>Jersey City</a>. Tickets at <a href='/'>garammasaladating.com</a>.",
+        text: "Come to Garam Masala Dating in <a href='/cities/manhattan'>NYC</a> to see what South Asian dating actually looks like when it is honest and in person. We're at City Winery NYC in Manhattan. Tickets at <a href='/'>garammasaladating.com</a>.",
       },
     ],
   },
@@ -1256,7 +1256,7 @@ export const outsidePerspectivePosts: JournalPost[] = [
       },
       {
         type: "p",
-        text: "Come to Garam Masala Dating in <a href='/cities/manhattan'>NYC</a> and hear South Asian singles talk about exactly this territory from the inside. We run weekly at Top Secret Comedy Club. Tickets at <a href='/'>garammasaladating.com</a>.",
+        text: "Come to Garam Masala Dating in <a href='/cities/manhattan'>NYC</a> and hear South Asian singles talk about exactly this territory from the inside. We're at City Winery NYC. Tickets at <a href='/'>garammasaladating.com</a>.",
       },
     ],
   },

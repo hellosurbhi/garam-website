@@ -23,6 +23,26 @@ fixed entries, [x] checkboxes or "Status: Fixed" records to this file. -->
 - **Why deferred:** all 3 findings are the same advisory, [GHSA-8988-4f7v-96qf](https://github.com/advisories/GHSA-8988-4f7v-96qf) (CWE-770, unbounded memory allocation when a service parses untrusted W3C Baggage propagation headers). `firebase-tools` is devDependency-only and does hold production credentials when run with them, so "devDependency" alone does not clear it: the advisory only fires in a process that parses trace-context headers from untrusted network input, and this project invokes `firebase-tools` as short-lived interactive/CI commands, never as a long-running service accepting external requests, so the vulnerable code path is not reachable here. CI's actual gate (`npm audit --audit-level=high --omit=dev`) also already excludes it and reports 0 vulnerabilities. Forcing a breaking downgrade of a dev tool for a moderate finding with no reachable attack path is not justified; the fix would trade a real regression (older `firebase-tools`, potential CLI incompatibilities) for closing an audit line with no exploitable exposure in how this project uses the tool.
 - **Revisit when:** a newer `firebase-tools` release (a 15.x patch or a new major) resolves the `@opentelemetry/core` chain without a downgrade, or the finding starts blocking CI (severity change, `--omit=dev` policy change).
 
+### [LOW] `app-alternatives.ts` FAQ answer falsely claims the Manhattan show is "Monthly"
+
+- **Date:** 2026-08-27
+- **File:** `src/data/journal/app-alternatives.ts` (line ~1018, the FAQ answer starting "Yes. Garam Masala Dating is the #1 desi comedy dating show at City Winery NYC in Manhattan...")
+- **Status:** Open
+- **Severity:** Low
+- **What happened:** The answer states "Monthly shows with a mixer after," but only the Jersey City show runs monthly; the Manhattan show's schedule is erratic (roughly every 6 to 7 weeks, not a fixed interval). This is the same false-cadence defect fixed sitewide in commit `b654e07` and this session's follow-up commit, but this exact line wasn't caught by either sweep because it says "Monthly" rather than "weekly"/"bi-weekly", and it predates both commits, so it's queued here rather than fixed inline.
+- **Why deferred:** pre-existing content this session did not write or touch; per provenance-based same-session close-out, only code this session authored gets fixed inline.
+- **Revisit when:** next overnight pass. Fix: replace "Monthly shows with a mixer after." with a non-committal cadence word ("Regular shows with a mixer after." or "Shows run regularly, with a mixer after."), consistent with every other Manhattan-cadence fix in this same file and sitewide.
+
+### [LOW] `diaspora-deep-dives.ts` has 5 curly-quote hrefs instead of straight quotes
+
+- **Date:** 2026-08-27
+- **File:** `src/data/journal/diaspora-deep-dives.ts` (lines 373, 723, 1071, 1187, 1295, pattern `href=’/cities/jersey-city’` instead of `href='/cities/jersey-city'`)
+- **Status:** Open
+- **Severity:** Low
+- **What happened:** 5 anchor tags use curly single quotes (`’`) instead of straight quotes (`'`) around the `href` attribute value. Likely renders as a broken/unquoted attribute in the compiled HTML rather than a working link. Found while fixing an unrelated ambiguous-scope wording bug on these same lines (this session's fix touched only the surrounding prose, not the href markup itself). Confirmed pre-existing via `git diff` (present before this session's commits touched these lines).
+- **Why deferred:** pre-existing content this session did not write; per provenance-based same-session close-out, only code this session authored gets fixed inline.
+- **Revisit when:** next overnight pass. Fix: replace `href=’/cities/jersey-city’` with `href='/cities/jersey-city'` on all 5 lines; verify the anchor renders as a working link afterward (check compiled HTML or a dev-server render of one of the affected articles).
+
 ### [LOW] GitHub issue #210: `ReferenceError: Cannot access uninitialized variable` has no reachable stack trace
 
 - **Date:** 2026-08-26

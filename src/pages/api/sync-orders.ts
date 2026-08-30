@@ -9,7 +9,46 @@ import { sendCapiEvent } from "@/lib/capi";
 import { withTimeout } from "@/utils/withTimeout";
 import { alertOps } from "@/lib/opsAlert";
 import { events } from "@/data/events";
+import type { EventEntry } from "@/data/events";
 import type { Order, SyncMeta } from "@/types/analytics";
+
+// 3 days past the show covers late walk-up orders finalizing after doors; a
+// show that old has no realistic new orders left to sync. See the WHY
+// comment on `getSyncableEvents`'s call site below for why this window
+// exists at all.
+export const SYNC_WINDOW_DAYS = 3;
+
+// `isoDate` is a calendar date in the event's own local timezone, not UTC.
+// toISOString().slice(0, 10) reads the wrong calendar day for part of the
+// evening in US timezones (e.g. 9pm ET is already "tomorrow" in UTC), which
+// silently shifts the cutoff by a day. `en-CA` is the locale that gets
+// Intl.DateTimeFormat to emit YYYY-MM-DD directly.
+function dateInZone(instant: Date, timeZone: string): string {
+  return new Intl.DateTimeFormat("en-CA", { timeZone }).format(instant);
+}
+
+/**
+ * Events eligible for order sync: business-owned Eventbrite listings with a
+ * real Eventbrite ID, bounded to a trailing window so a show past that
+ * window can never affect the sync run regardless of its `ticketSource`
+ * value. Pure and exported so it's unit-testable without exercising the
+ * full POST handler (Firestore/Eventbrite/CAPI side effects).
+ */
+export function getSyncableEvents(
+  allEvents: EventEntry[],
+  now: Date = new Date(),
+): EventEntry[] {
+  const cutoffInstant = new Date(
+    now.getTime() - SYNC_WINDOW_DAYS * 24 * 60 * 60 * 1000,
+  );
+  return allEvents.filter((e) => {
+    if (e.ticketSource !== "eventbrite-owned" || !e.eventbriteId) return false;
+    if (!e.isoDate) return true;
+    return (
+      e.isoDate >= dateInZone(cutoffInstant, e.timezone ?? "America/New_York")
+    );
+  });
+}
 
 // Bounded per-call, not per-run: this loop can touch many orders in one
 // sync, so a hanging Meta API call must not compound across all of them and
@@ -572,9 +611,18 @@ export const POST: APIRoute = async ({ request }) => {
     // `eventbriteId` too, but it belongs to a third party's Eventbrite
     // account: our access token has no orders permission on it, so
     // including it here just generates an authorization error on every run.
-    const syncableEvents = events.filter(
-      (e) => e.ticketSource === "eventbrite-owned" && e.eventbriteId,
-    );
+    //
+    // WHY the trailing-window cutoff: a fetch failure on any one event holds
+    // the shared `changed_since` cursor at its previous value for every
+    // event this run (see the WHY comment on hadSyncFailure below), so a
+    // long-past show wrongly (or no longer accurately) marked
+    // "eventbrite-owned" would silently jam Purchase syncing for every
+    // currently relevant show too, not just fail to sync itself.
+    // `ticketSource` is manually set business knowledge with no drift
+    // detection (see its doc comment in events.ts), so this can't be
+    // prevented at the source; bounding which events are even eligible caps
+    // the blast radius instead.
+    const syncableEvents = getSyncableEvents(events);
 
     const syncErrors: string[] = [];
     let totalProcessed = 0;

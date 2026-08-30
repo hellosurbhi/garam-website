@@ -392,7 +392,7 @@ export const events: EventEntry[] = [
     description:
       "Garam Masala Dating comes to Edison, New Jersey with Komic Karma Entertainment. Tickets are not on sale yet, join the list to be first to know when they drop.",
     lineup: DEFAULT_LINEUP,
-    ticketSource: "eventbrite-owned",
+    ticketSource: "external",
     url: "",
     hidden: true,
     note: "Jul 11 date canceled Jul 7 2026; taken off notify me Aug 14 2026",
@@ -490,7 +490,7 @@ export const events: EventEntry[] = [
     description:
       "Garam Masala Dating's Philadelphia debut at Next In Line Comedy, with two real singles on a blind date in front of a live audience.",
     lineup: DEFAULT_LINEUP,
-    ticketSource: "eventbrite-owned",
+    ticketSource: "external",
     url: "https://www.eventbrite.com/e/garam-masala-1-desi-dating-show-tickets-1989618938805?aff=oddtdtcreator",
     isoDate: "2026-08-28",
     previousDate: "2026-07-12",

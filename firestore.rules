@@ -2,16 +2,28 @@ rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
 
+    // WHY the odd-looking 200/400/4000 text caps here and in
+    // validApplication(): the owner's rule is that no real person may ever
+    // hit a length limit, so free-text ceilings are anti-bot-flood bounds
+    // only, set far beyond human writing. Each cap is 4x the client-side
+    // check in src/lib/applicationFieldLimits.ts because rules size() and
+    // JS .length count multi-byte text differently (up to 4 bytes per
+    // UTF-16 pair); 4x guarantees any string the client accepts passes
+    // here under any counting scheme. Lowering these re-creates the Aug
+    // 2026 "Missing or insufficient permissions" rejections of real
+    // applicants (long pitch, spelled-out height, formatted phone).
     function validLead() {
       let d = request.resource.data;
-      return d.keys().hasOnly(['email', 'city', 'state', 'country', 'phone', 'source', 'sourcePage', 'landingPage', 'referrerHost', 'utmSource', 'utmMedium', 'utmCampaign', 'utmContent', 'utmTerm', 'fbclid', 'gclid', 'posthogDistinctId', 'sourceCitySlug', 'createdAt', 'geoCity', 'geoRegion', 'geoCountry', 'geoLatitude', 'geoLongitude', 'geoTimezone'])
+      return d.keys().hasOnly(['email', 'city', 'state', 'country', 'phone', 'name', 'instagram', 'source', 'sourcePage', 'landingPage', 'referrerHost', 'utmSource', 'utmMedium', 'utmCampaign', 'utmContent', 'utmTerm', 'fbclid', 'gclid', 'posthogDistinctId', 'sourceCitySlug', 'createdAt', 'geoCity', 'geoRegion', 'geoCountry', 'geoLatitude', 'geoLongitude', 'geoTimezone'])
         && d.keys().hasAll(['email', 'source', 'sourcePage', 'createdAt'])
-        && d.email is string && d.email.size() > 0 && d.email.size() <= 320
+        && d.email is string && d.email.size() > 0 && d.email.size() <= 1280
         && d.source is string && d.source.size() > 0 && d.source.size() <= 50
         && d.sourcePage is string && d.sourcePage.size() > 0 && d.sourcePage.size() <= 200
         && d.createdAt is string && d.createdAt.size() > 0 && d.createdAt.size() <= 30
-        && (!('phone' in d.keys()) || (d.phone is string && d.phone.size() > 0 && d.phone.size() <= 20))
-        && (!('city' in d.keys()) || (d.city is string && d.city.size() > 0 && d.city.size() <= 100))
+        && (!('phone' in d.keys()) || (d.phone is string && d.phone.size() > 0 && d.phone.size() <= 200))
+        && (!('name' in d.keys()) || (d.name is string && d.name.size() > 0 && d.name.size() <= 4000))
+        && (!('instagram' in d.keys()) || (d.instagram is string && d.instagram.size() > 0 && d.instagram.size() <= 400))
+        && (!('city' in d.keys()) || (d.city is string && d.city.size() > 0 && d.city.size() <= 4000))
         && (!('state' in d.keys()) || (d.state is string && d.state.size() > 0 && d.state.size() <= 100))
         && (!('country' in d.keys()) || (d.country is string && d.country.size() > 0 && d.country.size() <= 100))
         && (!('landingPage' in d.keys()) || (d.landingPage is string && d.landingPage.size() > 0 && d.landingPage.size() <= 200))
@@ -42,8 +54,13 @@ service cloud.firestore {
         || (list[i] is string && list[i].matches('photos/[A-Za-z0-9._-]+'));
     }
 
+    // WHY an empty list is allowed: when every photo upload fails, the client
+    // still submits the application with photoPaths: [] and
+    // photoUploadFailed: true (owner rule 2026-08-30: a photo failure must
+    // never cost the whole applicant). Requiring size() > 0 here would turn
+    // any Storage hiccup back into a silently lost application.
     function validPhotoPaths(list) {
-      return list is list && list.size() > 0 && list.size() <= 10
+      return list is list && list.size() <= 10
         && validPhotoPathAt(list, 0)
         && validPhotoPathAt(list, 1)
         && validPhotoPathAt(list, 2)
@@ -63,7 +80,7 @@ service cloud.firestore {
           'email', 'emailNormalized', 'phone', 'height', 'instagram', 'community', 'income',
           'applicationType', 'referrerName', 'nominationConsent',
           'pitch', 'type', 'notes', 'seenShowBefore', 'howHeard', 'marketingConsent',
-          'termsAgreedAt', 'photoUrl', 'photoUrls', 'photoPaths', 'castEventId', 'deletedAt',
+          'termsAgreedAt', 'photoUrl', 'photoUrls', 'photoPaths', 'photoUploadFailed', 'castEventId', 'deletedAt',
           'status', 'submittedAt', 'isSynthetic',
           'source', 'sourcePage', 'landingPage', 'referrerHost',
           'utmSource', 'utmMedium', 'utmCampaign', 'utmContent', 'utmTerm',
@@ -77,13 +94,13 @@ service cloud.firestore {
         // submission that left one blank (Aug 2026 outage). They keep their
         // size() > 0 checks below, applied only when the key is present.
         && d.keys().hasAll(['name', 'age', 'gender', 'orientation', 'city', 'email', 'emailNormalized', 'instagram', 'applicationType', 'pitch', 'notes', 'marketingConsent', 'termsAgreedAt', 'photoPaths', 'status', 'submittedAt'])
-        && d.name is string && d.name.size() > 0 && d.name.size() <= 200
+        && d.name is string && d.name.size() > 0 && d.name.size() <= 4000
         && d.age is number && d.age >= 18 && d.age <= 120
         && d.gender is string && d.gender.size() > 0 && d.gender.size() <= 100
         && d.orientation is string && d.orientation.size() > 0 && d.orientation.size() <= 100
-        && d.city is string && d.city.size() > 0 && d.city.size() <= 100
-        && (!('height' in d.keys()) || (d.height is string && d.height.size() > 0 && d.height.size() <= 20))
-        && d.instagram is string && d.instagram.size() > 0 && d.instagram.size() <= 100
+        && d.city is string && d.city.size() > 0 && d.city.size() <= 4000
+        && (!('height' in d.keys()) || (d.height is string && d.height.size() > 0 && d.height.size() <= 4000))
+        && d.instagram is string && d.instagram.size() > 0 && d.instagram.size() <= 400
         && (!('community' in d.keys()) || (d.community is string && d.community.size() > 0 && d.community.size() <= 100))
         && (!('income' in d.keys()) || (d.income is string && d.income.size() > 0 && d.income.size() <= 100))
         && d.applicationType is string && d.applicationType.size() > 0 && d.applicationType.size() <= 50
@@ -91,13 +108,13 @@ service cloud.firestore {
         && d.submittedAt is timestamp
         && (!('state' in d.keys()) || (d.state is string && d.state.size() > 0 && d.state.size() <= 100))
         && (!('country' in d.keys()) || (d.country is string && d.country.size() > 0 && d.country.size() <= 100))
-        && (!('email' in d.keys()) || (d.email is string && d.email.size() > 0 && d.email.size() <= 320))
+        && (!('email' in d.keys()) || (d.email is string && d.email.size() > 0 && d.email.size() <= 1280))
         && (!('emailNormalized' in d.keys()) || (d.emailNormalized is string && d.emailNormalized == d.email.lower()))
-        && (!('phone' in d.keys()) || (d.phone is string && d.phone.size() > 0 && d.phone.size() <= 20))
-        && (!('referrerName' in d.keys()) || (d.referrerName is string && d.referrerName.size() > 0 && d.referrerName.size() <= 200))
+        && (!('phone' in d.keys()) || (d.phone is string && d.phone.size() > 0 && d.phone.size() <= 200))
+        && (!('referrerName' in d.keys()) || (d.referrerName is string && d.referrerName.size() > 0 && d.referrerName.size() <= 4000))
         && (!('nominationConsent' in d.keys()) || d.nominationConsent is bool)
-        && (!('pitch' in d.keys()) || (d.pitch is string && d.pitch.size() <= 2000))
-        && (!('type' in d.keys()) || (d.type is string && d.type.size() > 0 && d.type.size() <= 50))
+        && (!('pitch' in d.keys()) || (d.pitch is string && d.pitch.size() <= 200000))
+        && (!('type' in d.keys()) || (d.type is string && d.type.size() > 0 && d.type.size() <= 4000))
         && (!('notes' in d.keys()) || (d.notes is string && d.notes.size() <= 2000))
         && (!('seenShowBefore' in d.keys()) || d.seenShowBefore is bool)
         && (!('howHeard' in d.keys()) || (d.howHeard is string && d.howHeard.size() > 0 && d.howHeard.size() <= 50))
@@ -106,6 +123,7 @@ service cloud.firestore {
         && (!('photoUrl' in d.keys()) || (d.photoUrl is string && d.photoUrl.size() > 0 && d.photoUrl.size() <= 500))
         && (!('photoUrls' in d.keys()) || (d.photoUrls is list && d.photoUrls.size() <= 10))
         && (!('photoPaths' in d.keys()) || validPhotoPaths(d.photoPaths))
+        && (!('photoUploadFailed' in d.keys()) || d.photoUploadFailed is bool)
         && (!('isSynthetic' in d.keys()) || d.isSynthetic is bool)
         && (!('castEventId' in d.keys()) || (d.castEventId is string && d.castEventId.size() > 0 && d.castEventId.size() <= 100))
         && (!('deletedAt' in d.keys()) || d.deletedAt == null || d.deletedAt is timestamp)
@@ -124,20 +142,26 @@ service cloud.firestore {
         && (!('sourceCitySlug' in d.keys()) || (d.sourceCitySlug is string && d.sourceCitySlug.size() > 0 && d.sourceCitySlug.size() <= 100));
     }
 
-    // Intentional: the step-2 phone capture flow runs from the browser without auth.
-    // A caller needs the Firestore document ID (returned by /api/capture-lead) to
-    // reach this path, so the exposure is bounded. The rule restricts the update
-    // to the phone field only and enforces type and length constraints.
+    // Intentional: the step-2 contact capture flow runs from the browser without
+    // auth. A caller needs the Firestore document ID (returned by
+    // /api/capture-lead) to reach this path, so the exposure is bounded. The
+    // rule restricts the update to progressive-capture contact fields plus
+    // source (so a completed application can mark its partial lead as
+    // superseded) and enforces type and length constraints.
     // Additionally, once LEAD_UPDATE_SECRET is configured, /api/update-lead
     // requires an HMAC-signed 10 minute token issued by /api/capture-lead
     // (src/lib/leadToken.ts) and derives the doc id from that token. This rule
     // stays as the defense for writes that bypass the API and hit Firestore
     // REST directly; rules cannot verify HMACs.
-    function validPhoneUpdate() {
+    function validLeadContactUpdate() {
       let d = request.resource.data;
-      let prev = resource.data;
-      return d.diff(prev).affectedKeys().hasOnly(['phone'])
-        && d.phone is string && d.phone.size() > 0 && d.phone.size() <= 20;
+      let changed = d.diff(resource.data).affectedKeys();
+      return changed.hasOnly(['phone', 'instagram', 'name', 'source'])
+        && changed.size() > 0
+        && (!changed.hasAny(['phone']) || (d.phone is string && d.phone.size() > 0 && d.phone.size() <= 200))
+        && (!changed.hasAny(['instagram']) || (d.instagram is string && d.instagram.size() > 0 && d.instagram.size() <= 400))
+        && (!changed.hasAny(['name']) || (d.name is string && d.name.size() > 0 && d.name.size() <= 4000))
+        && (!changed.hasAny(['source']) || (d.source is string && d.source.size() > 0 && d.source.size() <= 50));
     }
 
     // Admin gate for all PII reads and management. The public apply flow
@@ -165,11 +189,11 @@ service cloud.firestore {
       allow read, create, update, delete: if isAdmin();
     }
     match /leads/{doc} {
-      // Public email capture stays open; the phone step is bounded to the
-      // phone field only. Reads/deletes are admin-only so the waitlist can
-      // never be enumerated by an anonymous session.
+      // Public email capture stays open; follow-up updates are bounded to
+      // the progressive-capture contact fields. Reads/deletes are admin-only
+      // so the waitlist can never be enumerated by an anonymous session.
       allow create: if validLead();
-      allow update: if validPhoneUpdate() || isAdmin();
+      allow update: if validLeadContactUpdate() || isAdmin();
       allow read, delete: if isAdmin();
     }
     match /orders/{orderId} {

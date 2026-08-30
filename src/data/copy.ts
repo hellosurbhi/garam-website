@@ -174,6 +174,9 @@ export const APPLY_PAGE = {
     `All contact info below is ${friendName ? `${friendName}'s` : "your friend's"}, not yours. Double-check every detail. If we cannot reach them, they will never hear from us.`,
   headingSelf: "Applying for yourself",
   headingNomination: "Nominating a friend",
+  photosFailedTitle: "One thing: your photos did not come through",
+  photosFailedNote:
+    "Your application is safely with us, but the photo upload failed on your connection. DM your photos to @garammasaladating on Instagram and we will attach them for you.",
   photoGuidanceHeading: "Photos: up to 10",
   photoGuidanceIntro: "We need to be able to tell what you look like. Include:",
   photoGuidanceItems: [

@@ -1,8 +1,11 @@
 import type { APIRoute } from "astro";
 import { z } from "zod";
+import { Redis } from "@upstash/redis";
 import { alertOps, type OpsAlertReport } from "@/lib/opsAlert";
 import { isAllowedOrigin } from "@/lib/allowedOrigin";
 import { enforceRateLimit, RATE_LIMITS } from "@/lib/rateLimit";
+import { readTrimmedEnv } from "@/lib/env";
+import { withTimeout } from "@/utils/withTimeout";
 
 export const prerender = false;
 
@@ -26,11 +29,44 @@ const FailureSchema = z.object({
     .object({
       name: z.string().max(200).optional(),
       email: z.string().max(320).optional(),
-      phone: z.string().max(30).optional(),
+      phone: z.string().max(50).optional(),
       instagram: z.string().max(100).optional(),
     })
     .optional(),
 });
+
+// One failure incident = one email. A user who retries a broken form five
+// times (Dua, Aug 27 2026: four duplicate pages for one outage) produces one
+// alert per hour per (flow, stage, identity). SET NX EX is atomic: the first
+// reporter wins the key and sends; everyone else inside the window is
+// suppressed. Redis down or unconfigured = fail OPEN and send: an alert
+// channel must never fail closed.
+const ALERT_DEDUPE_SECONDS = 3600;
+
+async function isDuplicateAlert(
+  report: z.infer<typeof FailureSchema>,
+): Promise<boolean> {
+  try {
+    const url = readTrimmedEnv(import.meta.env.UPSTASH_REDIS_REST_URL);
+    const token = readTrimmedEnv(import.meta.env.UPSTASH_REDIS_REST_TOKEN);
+    if (!url || !token) return false;
+
+    const identity = report.contact?.email || report.pageUrl || "unknown";
+    const key = `alert:${report.flow}:${report.stage}:${identity}`;
+    const redis = new Redis({ url, token });
+    const result = await withTimeout(
+      redis.set(key, "1", { nx: true, ex: ALERT_DEDUPE_SECONDS }),
+      1500,
+      "Upstash alert dedupe",
+    );
+    // Upstash returns "OK" when the key was set (first alert) and null when
+    // it already existed (duplicate inside the window).
+    return result === null;
+  } catch (error) {
+    console.error("[alert-failure] dedupe check failed, sending:", error);
+    return false;
+  }
+}
 
 export const POST: APIRoute = async ({ request }) => {
   const limited = await enforceRateLimit(request, RATE_LIMITS.alertFailure);
@@ -57,6 +93,17 @@ export const POST: APIRoute = async ({ request }) => {
   } catch {
     return new Response(JSON.stringify({ error: "Bad request" }), {
       status: 400,
+      headers: { "Content-Type": "application/json" },
+    });
+  }
+
+  if (await isDuplicateAlert(report)) {
+    // Logged, never mailed: the first alert of the incident already paged.
+    console.log(
+      `[alert-failure] suppressed duplicate alert for ${report.flow}/${report.stage}`,
+    );
+    return new Response(JSON.stringify({ ok: true, suppressed: true }), {
+      status: 200,
       headers: { "Content-Type": "application/json" },
     });
   }

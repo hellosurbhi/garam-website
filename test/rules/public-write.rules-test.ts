@@ -102,11 +102,28 @@ describe("firestore.rules: leads", () => {
   });
 
   it("oversized field values are rejected", async () => {
+    // WHY 1300: the rules email cap is 1280 (4x the client's 320, the RFC
+    // maximum, to absorb rules-vs-JS multi-byte counting differences). The
+    // fixture must exceed the RULES cap, not the client cap, to stay a
+    // meaningful rejection test.
     const db = testEnv.unauthenticatedContext().firestore();
     await assertFails(
       setDoc(doc(collection(db, "leads"), "lead-1"), {
         ...validLead,
-        email: `${"a".repeat(320)}@example.com`,
+        email: `${"a".repeat(1300)}@example.com`,
+      }),
+    );
+  });
+
+  it("progressive apply capture lead (name, instagram and phone) is accepted", async () => {
+    const db = testEnv.unauthenticatedContext().firestore();
+    await assertSucceeds(
+      setDoc(doc(collection(db, "leads"), "lead-2"), {
+        ...validLead,
+        source: "apply_form_partial",
+        name: "Priya Sharma",
+        instagram: "priya_applies",
+        phone: "+1 (555) 010-0000",
       }),
     );
   });
@@ -117,6 +134,29 @@ describe("firestore.rules: leads", () => {
     await assertSucceeds(
       updateDoc(doc(collection(db, "leads"), "lead-1"), {
         phone: "+15550100",
+      }),
+    );
+  });
+
+  it("step-2 contact update can add instagram, name and source (progressive capture)", async () => {
+    await seedLead();
+    const db = testEnv.unauthenticatedContext().firestore();
+    await assertSucceeds(
+      updateDoc(doc(collection(db, "leads"), "lead-1"), {
+        phone: "+1 (555) 010-0000",
+        instagram: "priya_applies",
+        name: "Priya Sharma",
+        source: "apply_form_completed",
+      }),
+    );
+  });
+
+  it("oversized contact update values are rejected", async () => {
+    await seedLead();
+    const db = testEnv.unauthenticatedContext().firestore();
+    await assertFails(
+      updateDoc(doc(collection(db, "leads"), "lead-1"), {
+        instagram: "x".repeat(500),
       }),
     );
   });

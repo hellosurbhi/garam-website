@@ -10,6 +10,13 @@ import { trackError, trackLeadEvent, identifyLead } from "@/lib/analytics";
 import { buildLeadAttribution } from "@/lib/leadAttribution";
 import { isSyntheticSubmission } from "@/lib/syntheticMonitor";
 import { reportFailure } from "@/lib/failureAlert";
+import { FIELD_LIMITS, overLimitMessage } from "@/lib/applicationFieldLimits";
+import {
+  captureLead,
+  updateLeadFields,
+  type LeadCaptureResult,
+  type LeadUpdateFields,
+} from "@/lib/leadSubmission";
 import { validateEmail } from "@/utils/validateEmail";
 import { withTimeout } from "@/utils/withTimeout";
 import { compressImage } from "@/utils/compressImage";
@@ -126,6 +133,30 @@ function getFieldErrors(
   }
   if (!termsAgreed)
     errs.termsAgreed = "You must agree to the Terms & Conditions";
+  // Invisible anti-bot ceilings (see applicationFieldLimits.ts). No maxLength,
+  // no counters: the only user-visible surface is this inline error in the
+  // rare case a ceiling is actually crossed, so a rejection reason is always
+  // named on the field that caused it and submit stays disabled until fixed.
+  // Over-limit implies non-empty, so these never mask a "Required" error;
+  // for email the over-limit message intentionally wins over format checks.
+  if (form.name.length > FIELD_LIMITS.freeText)
+    errs.name = overLimitMessage(FIELD_LIMITS.freeText);
+  if (form.city.length > FIELD_LIMITS.freeText)
+    errs.city = overLimitMessage(FIELD_LIMITS.freeText);
+  if (form.height.length > FIELD_LIMITS.freeText)
+    errs.height = overLimitMessage(FIELD_LIMITS.freeText);
+  if (form.type.length > FIELD_LIMITS.freeText)
+    errs.type = overLimitMessage(FIELD_LIMITS.freeText);
+  if (form.referrerName.length > FIELD_LIMITS.freeText)
+    errs.referrerName = overLimitMessage(FIELD_LIMITS.freeText);
+  if (form.pitch.length > FIELD_LIMITS.pitch)
+    errs.pitch = overLimitMessage(FIELD_LIMITS.pitch);
+  if (form.email.length > FIELD_LIMITS.email)
+    errs.email = overLimitMessage(FIELD_LIMITS.email);
+  if (form.phone.length > FIELD_LIMITS.phone)
+    errs.phone = overLimitMessage(FIELD_LIMITS.phone);
+  if (form.instagram.length > FIELD_LIMITS.instagram)
+    errs.instagram = overLimitMessage(FIELD_LIMITS.instagram);
   return errs;
 }
 
@@ -140,6 +171,7 @@ export function buildApplicationData(
   form: FormState,
   photoPaths: string[],
   nominationConsent: boolean,
+  photoUploadFailed = false,
 ) {
   const isNomination = form.applicationType === "Nomination";
   return {
@@ -164,6 +196,10 @@ export function buildApplicationData(
     pitch: form.pitch.trim(),
     ...(form.type.trim() ? { type: form.type.trim() } : {}),
     photoPaths,
+    // WHY: a photo-upload failure must never cost the applicant. The document
+    // is written anyway (photoPaths possibly empty) with this flag so the
+    // admin dashboard can chase them for photos. Only ever sent as true.
+    ...(photoUploadFailed ? { photoUploadFailed: true } : {}),
     ...(isSyntheticSubmission(form.email) ? { isSynthetic: true } : {}),
     ...(form.seenShowBefore !== ""
       ? { seenShowBefore: form.seenShowBefore === "yes" }
@@ -183,9 +219,15 @@ export function buildApplicationDocument<T>(
   photoPaths: string[],
   nominationConsent: boolean,
   timestamps: { termsAgreedAt: T; submittedAt: T },
+  photoUploadFailed = false,
 ) {
   return {
-    ...buildApplicationData(form, photoPaths, nominationConsent),
+    ...buildApplicationData(
+      form,
+      photoPaths,
+      nominationConsent,
+      photoUploadFailed,
+    ),
     emailNormalized: form.email.trim().toLowerCase(),
     marketingConsent: form.marketingConsent,
     termsAgreedAt: timestamps.termsAgreedAt,
@@ -220,7 +262,17 @@ export function useApplyForm() {
   const [toast, setToast] = useState<{ msg: string; ok: boolean } | null>(null);
   const [formStarted, setFormStarted] = useState(false);
   const [turnstileToken, setTurnstileToken] = useState("");
+  // True when the application saved but one or more photos did not upload;
+  // drives the note on the success panel.
+  const [photosFailed, setPhotosFailed] = useState(false);
   const turnstileWidgetIdRef = useRef<string | undefined>(undefined);
+  // Progressive contact capture state: one partial lead per email typed into
+  // the form, plus the contact fields already synced to it (so blur events
+  // only send changes). Refs, not state: nothing here renders.
+  const partialLeadRef = useRef<LeadCaptureResult | null>(null);
+  const partialLeadEmailRef = useRef("");
+  const syncedContactRef = useRef<LeadUpdateFields>({});
+  const partialCaptureBusyRef = useRef(false);
   const [cityInput, setCityInput] = useState(() => {
     const urlParams = getUrlCityParams();
     if (!urlParams) return "";
@@ -418,6 +470,64 @@ export function useApplyForm() {
     return Object.keys(errs).length === 0;
   }
 
+  // Progressive contact capture (owner mandate 2026-08-30): the moment a
+  // valid email is typed, even an abandoned form leaves a recoverable lead.
+  // Silent by design: any failure in here must never disturb the applicant,
+  // so every path swallows. Synthetic monitor emails never become leads.
+  async function syncPartialLead() {
+    if (submitting || submitted) return;
+    const email = form.email.trim().toLowerCase();
+    if (!email || validateEmail(email)) return;
+    if (email.length > FIELD_LIMITS.email) return;
+    if (isSyntheticSubmission(email)) return;
+
+    const phone = form.phone.trim();
+    const instagram = form.instagram.trim().replace(/^@/, "");
+    const name = form.name.trim();
+
+    if (!partialLeadRef.current || partialLeadEmailRef.current !== email) {
+      if (partialCaptureBusyRef.current) return;
+      partialCaptureBusyRef.current = true;
+      try {
+        const attribution = await buildLeadAttribution({
+          source: "apply_form_partial",
+        });
+        const contact: LeadUpdateFields = {
+          ...(phone ? { phone } : {}),
+          ...(instagram ? { instagram } : {}),
+          ...(name ? { name } : {}),
+        };
+        partialLeadRef.current = await captureLead({
+          ...attribution,
+          email,
+          ...(form.city.trim() ? { city: form.city.trim() } : {}),
+          ...contact,
+        });
+        partialLeadEmailRef.current = email;
+        syncedContactRef.current = contact;
+      } catch {
+        // Progressive capture is a bonus, never a gate.
+      } finally {
+        partialCaptureBusyRef.current = false;
+      }
+      return;
+    }
+
+    const updates: LeadUpdateFields = {};
+    if (phone && phone !== syncedContactRef.current.phone)
+      updates.phone = phone;
+    if (instagram && instagram !== syncedContactRef.current.instagram)
+      updates.instagram = instagram;
+    if (name && name !== syncedContactRef.current.name) updates.name = name;
+    if (Object.keys(updates).length === 0) return;
+    try {
+      await updateLeadFields(partialLeadRef.current, updates);
+      syncedContactRef.current = { ...syncedContactRef.current, ...updates };
+    } catch {
+      // Progressive capture is a bonus, never a gate.
+    }
+  }
+
   function handleBlur(field: keyof FormErrors) {
     setTouched((prev) => ({ ...prev, [field]: true }));
     const errs = getFieldErrors(
@@ -427,6 +537,14 @@ export function useApplyForm() {
       nominationConsent,
     );
     setErrors((prev) => ({ ...prev, [field]: errs[field] }));
+    if (
+      field === "email" ||
+      field === "phone" ||
+      field === "instagram" ||
+      field === "name"
+    ) {
+      void syncPartialLead();
+    }
   }
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
@@ -434,6 +552,7 @@ export function useApplyForm() {
     if (!validate()) return;
 
     setSubmitting(true);
+    setPhotosFailed(false);
 
     // Best-effort bot check: verify token when available, fail open when not.
     // The real security gate is Firestore auth (signInAnonymously + rules).
@@ -512,7 +631,11 @@ export function useApplyForm() {
               "One of your photos could not be optimized and is too large to upload. Please pick a version under 25 MB.",
             );
           }
-          const ext = uploadFile.name.split(".").pop() ?? "jpg";
+          // Sanitize the extension: a dotless or unicode filename must never
+          // produce a Storage path the rules reject (compressImage output is
+          // JPEG in the normal path anyway).
+          const rawExt = uploadFile.name.split(".").pop() ?? "";
+          const ext = /^[A-Za-z0-9]{1,10}$/.test(rawExt) ? rawExt : "jpg";
           const photoRef = ref(storage, `photos/${crypto.randomUUID()}.${ext}`);
           uploadedRefs[i] = photoRef;
           // The owner tag is what authorizes this session's failure cleanup
@@ -538,22 +661,54 @@ export function useApplyForm() {
           return photoRef.fullPath;
         }),
       );
-      const firstFailure = settled.find(
+      // WHY: photo failures no longer throw away the application. Until Aug
+      // 2026 a single failed upload aborted the whole submission and the
+      // applicant was lost. Now every upload that DID land is kept, the
+      // document is written anyway (photoPaths possibly empty) with
+      // photoUploadFailed: true, and ops gets paged so the applicant can be
+      // chased for photos. Failed slots keep their refs in uploadedRefs: if
+      // the Firestore write below also fails, the outer catch still cleans
+      // up every object that exists.
+      const failures = settled.filter(
         (r): r is PromiseRejectedResult => r.status === "rejected",
       );
-      if (firstFailure) {
-        throw firstFailure.reason instanceof Error
-          ? firstFailure.reason
-          : new Error(String(firstFailure.reason));
+      const photoPaths = settled
+        .filter(
+          (r): r is PromiseFulfilledResult<string> => r.status === "fulfilled",
+        )
+        .map((r) => r.value);
+      const photoUploadFailed = failures.length > 0;
+      if (photoUploadFailed) {
+        const reason = failures[0].reason;
+        const message =
+          reason instanceof Error ? reason.message : String(reason);
+        trackError({
+          error_message: message,
+          error_type: "form_submission",
+          component: "useApplyForm",
+          form_step: "photo_upload_partial",
+          application_type: form.applicationType,
+          failed_photo_count: failures.length,
+          total_photo_count: photoFiles.length,
+        });
+        reportFailure({
+          flow: "apply",
+          stage: "photo_upload",
+          errorMessage: `Application saved but ${failures.length} of ${photoFiles.length} photos failed to upload: ${message}`,
+          contact: {
+            name: form.name,
+            email: form.email,
+            phone: form.phone,
+            instagram: form.instagram,
+          },
+        });
       }
-      const photoPaths = settled.map(
-        (r) => (r as PromiseFulfilledResult<string>).value,
-      );
 
       const applicationData = buildApplicationData(
         form,
         photoPaths,
         nominationConsent,
+        photoUploadFailed,
       );
 
       const [{ collection, addDoc, serverTimestamp }, db] = await withTimeout(
@@ -564,10 +719,16 @@ export function useApplyForm() {
       await withTimeout(
         addDoc(
           collection(db, "applications"),
-          buildApplicationDocument(form, photoPaths, nominationConsent, {
-            termsAgreedAt: serverTimestamp(),
-            submittedAt: serverTimestamp(),
-          }),
+          buildApplicationDocument(
+            form,
+            photoPaths,
+            nominationConsent,
+            {
+              termsAgreedAt: serverTimestamp(),
+              submittedAt: serverTimestamp(),
+            },
+            photoUploadFailed,
+          ),
         ),
         15_000,
         "Firestore write",
@@ -597,6 +758,14 @@ export function useApplyForm() {
           city: form.city,
           country: form.country,
         });
+        // A completed application supersedes its partial lead: flip the
+        // source so the admin dashboard can tell abandoned forms from
+        // completed ones. Fire-and-forget, failure changes nothing.
+        if (partialLeadRef.current) {
+          updateLeadFields(partialLeadRef.current, {
+            source: "apply_form_completed",
+          }).catch(() => {});
+        }
       }
 
       // Fire-and-forget: email notification (does not affect submission outcome)
@@ -641,6 +810,7 @@ export function useApplyForm() {
       // Instant scroll before state swap — single frame, imperceptible.
       // Prevents the height collapse from leaving the viewport past end-of-content.
       window.scrollTo({ top: 0, behavior: "instant" as ScrollBehavior });
+      setPhotosFailed(photoUploadFailed);
       setSubmitted(true);
     } catch (err) {
       const error = err instanceof Error ? err : new Error(String(err));
@@ -654,6 +824,10 @@ export function useApplyForm() {
             .map((r) => deleteObject(r!).catch(() => {})),
         );
       }
+      const isPermissionDenied =
+        typeof err === "object" &&
+        err !== null &&
+        (err as { code?: unknown }).code === "permission-denied";
       trackError({
         error_message: error.message,
         error_stack: (error.stack ?? "").slice(0, 2000),
@@ -661,6 +835,25 @@ export function useApplyForm() {
         component: "useApplyForm",
         form_step: "auth_or_upload_or_firestore",
         application_type: form.applicationType,
+        // On a rules rejection, report every text field's LENGTH (never its
+        // value) so the next client/rules drift names the offending field
+        // instead of hiding behind "Missing or insufficient permissions".
+        ...(isPermissionDenied
+          ? {
+              field_lengths: JSON.stringify({
+                name: form.name.length,
+                city: form.city.length,
+                email: form.email.length,
+                phone: form.phone.length,
+                height: form.height.length,
+                instagram: form.instagram.length,
+                referrerName: form.referrerName.length,
+                pitch: form.pitch.length,
+                type: form.type.length,
+                howHeard: form.howHeard.length,
+              }),
+            }
+          : {}),
       });
       // Real-time page: one failed submission = one immediate email, with the
       // applicant's contact info so they can be recovered even though the
@@ -697,6 +890,7 @@ export function useApplyForm() {
     errors,
     submitting,
     submitted,
+    photosFailed,
     isValid,
     termsAgreed,
     setTermsAgreed,

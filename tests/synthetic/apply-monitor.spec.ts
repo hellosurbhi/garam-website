@@ -30,6 +30,21 @@ test("synthetic applicant can submit end to end on the live stack", async ({
   await page.fill("#geo-place", "New York");
   await page.fill("#field-email", SYNTHETIC_MONITOR_EMAIL);
   await page.fill("#field-instagram", "garammasaladating");
+  // WHY these long, formatted values: for a month the monitor filled only
+  // short required fields while the rules' length caps silently rejected
+  // every real applicant who wrote a long pitch, a spelled-out height or a
+  // formatted phone number (Aug 2026). The monitor must submit like a REAL
+  // person so a client/rules length-contract break pages within 6 hours.
+  await page.fill("#field-height", `5'8" (172 cm)`);
+  await page.fill("#field-phone", "+1 (555) 010-0000");
+  await page.fill(
+    "#field-pitch",
+    [
+      "I grew up between two cities and two kitchens, and I have opinions about both.",
+      "My friends say I am the one who talks to strangers at weddings, remembers everyone's chai order and stays for the cleanup.",
+      "I am applying because my aunties have officially run out of suggestions and I would rather be roasted on stage than at the dinner table.",
+    ].join("\n\n"),
+  );
   await page.setInputFiles("#photo-input", "tests/fixtures/1x1.png");
   await page.check('input[name="marketingConsent"][value="yes"]');
   await page.check('[data-testid="apply-terms"]');

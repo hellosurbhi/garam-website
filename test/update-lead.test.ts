@@ -43,9 +43,40 @@ describe("update-lead handler", () => {
     expect(res.status).toBe(400);
   });
 
-  it("requires a phone number", async () => {
+  it("requires at least one updatable field", async () => {
     const res = await POST(makeContext(makeRequest({ id: "lead123" })));
     expect(res.status).toBe(400);
+  });
+
+  it("patches instagram, name and source with a matching field mask (progressive capture)", async () => {
+    const fetchSpy = mockFirestoreOk();
+
+    const res = await POST(
+      makeContext(
+        makeRequest({
+          id: "lead123",
+          instagram: "priya_applies",
+          name: "Priya Sharma",
+          source: "apply_form_completed",
+        }),
+      ),
+    );
+
+    expect(res.status).toBe(200);
+    const url = String(fetchSpy.mock.calls[0][0]);
+    expect(url).toContain("updateMask.fieldPaths=instagram");
+    expect(url).toContain("updateMask.fieldPaths=name");
+    expect(url).toContain("updateMask.fieldPaths=source");
+    expect(url).not.toContain("updateMask.fieldPaths=phone");
+    const init = fetchSpy.mock.calls[0][1] as RequestInit;
+    const sent = JSON.parse(String(init.body)) as {
+      fields: Record<string, { stringValue: string }>;
+    };
+    expect(sent.fields).toEqual({
+      instagram: { stringValue: "priya_applies" },
+      name: { stringValue: "Priya Sharma" },
+      source: { stringValue: "apply_form_completed" },
+    });
   });
 
   describe("legacy path (LEAD_UPDATE_SECRET unset)", () => {

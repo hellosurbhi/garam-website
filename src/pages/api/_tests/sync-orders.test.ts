@@ -65,4 +65,19 @@ describe("getSyncableEvents", () => {
     });
     expect(getSyncableEvents([tba], now)).toEqual([tba]);
   });
+
+  it("uses the event's local timezone for the cutoff, not UTC", () => {
+    // 2026-08-28T01:00:00Z is 2026-08-27 9pm in America/New_York (EDT). A
+    // naive UTC cutoff lands on 2026-08-25, wrongly excluding a show still
+    // dated 2026-08-24 in the event's own timezone (only 3 days ago there).
+    const eveningUtc = new Date("2026-08-28T01:00:00Z");
+    const stillWithinLocalWindow = makeEvent({
+      slug: "still-within-local-window",
+      isoDate: "2026-08-24",
+      eventbriteId: "321",
+    });
+    expect(getSyncableEvents([stillWithinLocalWindow], eveningUtc)).toEqual([
+      stillWithinLocalWindow,
+    ]);
+  });
 });

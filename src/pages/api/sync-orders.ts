@@ -18,6 +18,15 @@ import type { Order, SyncMeta } from "@/types/analytics";
 // exists at all.
 export const SYNC_WINDOW_DAYS = 3;
 
+// `isoDate` is a calendar date in the event's own local timezone, not UTC.
+// toISOString().slice(0, 10) reads the wrong calendar day for part of the
+// evening in US timezones (e.g. 9pm ET is already "tomorrow" in UTC), which
+// silently shifts the cutoff by a day. `en-CA` is the locale that gets
+// Intl.DateTimeFormat to emit YYYY-MM-DD directly.
+function dateInZone(instant: Date, timeZone: string): string {
+  return new Intl.DateTimeFormat("en-CA", { timeZone }).format(instant);
+}
+
 /**
  * Events eligible for order sync: business-owned Eventbrite listings with a
  * real Eventbrite ID, bounded to a trailing window so a show past that
@@ -29,17 +38,16 @@ export function getSyncableEvents(
   allEvents: EventEntry[],
   now: Date = new Date(),
 ): EventEntry[] {
-  const syncCutoffISO = new Date(
+  const cutoffInstant = new Date(
     now.getTime() - SYNC_WINDOW_DAYS * 24 * 60 * 60 * 1000,
-  )
-    .toISOString()
-    .slice(0, 10);
-  return allEvents.filter(
-    (e) =>
-      e.ticketSource === "eventbrite-owned" &&
-      e.eventbriteId &&
-      (!e.isoDate || e.isoDate >= syncCutoffISO),
   );
+  return allEvents.filter((e) => {
+    if (e.ticketSource !== "eventbrite-owned" || !e.eventbriteId) return false;
+    if (!e.isoDate) return true;
+    return (
+      e.isoDate >= dateInZone(cutoffInstant, e.timezone ?? "America/New_York")
+    );
+  });
 }
 
 // Bounded per-call, not per-run: this loop can touch many orders in one

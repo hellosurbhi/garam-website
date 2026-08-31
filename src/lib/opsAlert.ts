@@ -81,15 +81,24 @@ async function pushWebhook(report: OpsAlertReport): Promise<void> {
   });
 }
 
-/** Page the producer. Never throws; safe to call from any catch block. */
-export async function alertOps(rawReport: OpsAlertReport): Promise<void> {
+/**
+ * Page the producer. Never throws; safe to call from any catch block.
+ *
+ * Returns whether at least one CONFIGURED channel actually delivered, so
+ * callers holding a dedupe claim (alert-failure.ts) can release it when the
+ * page never went out. An unconfigured channel never counts as delivered.
+ */
+export async function alertOps(rawReport: OpsAlertReport): Promise<boolean> {
   // Central bound: callers used to slice(0, 2000) by hand, inconsistently.
   const report: OpsAlertReport = {
     ...rawReport,
     errorMessage: rawReport.errorMessage.slice(0, 2000),
   };
   const notificationEmail = readTrimmedEnv(import.meta.env.NOTIFICATION_EMAIL);
-  await Promise.allSettled([
+  const webhookConfigured = Boolean(
+    readTrimmedEnv(import.meta.env.ALERT_WEBHOOK_URL),
+  );
+  const [mailResult, webhookResult] = await Promise.allSettled([
     notificationEmail
       ? sendMail({
           to: notificationEmail,
@@ -100,4 +109,8 @@ export async function alertOps(rawReport: OpsAlertReport): Promise<void> {
       : Promise.resolve(),
     pushWebhook(report),
   ]);
+  return (
+    (Boolean(notificationEmail) && mailResult.status === "fulfilled") ||
+    (webhookConfigured && webhookResult.status === "fulfilled")
+  );
 }

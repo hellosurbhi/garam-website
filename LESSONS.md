@@ -1,5 +1,13 @@
 # Lessons
 
+## A green synthetic monitor proved the happy path while every long-form applicant was rejected
+
+**What went wrong:** The 6-hour synthetic apply monitor was green 10 runs straight while real applicants (Akshay Aug 30, Dua Aug 27 with 4 retries) got "Missing or insufficient permissions" and their applications were silently thrown away. The Firestore rules capped pitch at 2000 chars, phone at 20 and height at 20; the client validated none of these lengths, and one field (`type`) even had a form `maxLength={200}` four times larger than the deployed rules cap of 50. Anyone who wrote a long pitch, a spelled-out height or a formatted phone number was rejected at the last possible moment with a generic error, after doing all the work.
+
+**Why:** Two wrong assumptions. (1) That the monitor's green meant the form worked: the monitor filled only the short required fields, so it exercised a payload shape no rejected human ever sent. A monitor only proves the inputs it submits. (2) That the client and rules agreed on field limits: nothing pinned that contract, so the rules' caps and the form's validation (none) and the form's own maxLength attributes drifted three separate ways. The rules also count `size()` in bytes while JS `.length` counts UTF-16 units, so even equal-looking caps disagree on multi-byte text (emoji, accented names).
+
+**Rule:** Every client/rules validation pair must be provably consistent, pinned by emulator tests that build payloads through the real client builder with realistic long, multi-byte values (a 40,000-char pitch, emoji text, `5 feet 8 inches (172cm)`), and rules caps must be a 4x multiple of client caps so the byte-vs-UTF-16 counting gap can never reject what the client accepted. A synthetic monitor must submit the most realistic filled form, not the minimal valid one: any field a real user fills that the monitor leaves blank is a blind spot exactly where users diverge from tests. And any limit a user can cross must produce an inline error on the field before submit is clickable, never a generic backend rejection after.
+
 ## Patch-coverage gate counted statement hits only, so it failed already-tested code
 
 **What went wrong:** CI's "Lint, Types, Test, Build" check failed with "patch coverage 76.3% is below the 80% threshold" on a PR whose changed lines were, line by line, either already covered by an existing test or physically impossible to instrument (imports, blank lines, comments, type declarations). The tests were fine; the gate was wrong.

@@ -4,9 +4,14 @@ import { SOCIAL_URLS } from "@/data/socials";
 import { formatEventLocation } from "@/utils/eventCity";
 import { wireTicketCtaTracking } from "@/lib/ticketCtaTracking";
 import { vendorFromUrl } from "@/lib/analyticsCapture";
+import { APPLY_PAGE } from "@/data/copy";
 import styles from "@/components/ApplyPage.module.css";
 
-export function ApplySuccessPanel() {
+export function ApplySuccessPanel({
+  photosFailed = false,
+}: {
+  photosFailed?: boolean;
+}) {
   const headingRef = useRef<HTMLHeadingElement>(null);
 
   useEffect(() => {
@@ -61,6 +66,17 @@ export function ApplySuccessPanel() {
       <p className={styles.successText}>
         We review every application and will reach out if you&apos;re selected.
       </p>
+
+      {photosFailed && (
+        <div className={styles.successCard} role="alert">
+          <h3 className={styles.successCardTitle}>
+            {APPLY_PAGE.photosFailedTitle}
+          </h3>
+          <p className={styles.successCardText}>
+            {APPLY_PAGE.photosFailedNote}
+          </p>
+        </div>
+      )}
 
       <div className={styles.successCard}>
         <h3 className={styles.successCardTitle}>Want to boost your chances?</h3>

@@ -60,6 +60,7 @@ export interface WaitlistLead {
   id: string;
   email: string;
   phone: string;
+  instagram: string;
   name: string;
   city: string;
   sourceCitySlug: string;
@@ -73,6 +74,7 @@ function toLead(doc: FirestoreDocument): WaitlistLead {
     id: doc.name.split("/").pop() ?? "",
     email: str(f, "email"),
     phone: str(f, "phone"),
+    instagram: str(f, "instagram"),
     name: str(f, "name"),
     // Prefer the explicit city, fall back to IP-derived geoCity.
     city: str(f, "city") || str(f, "geoCity"),
@@ -89,9 +91,17 @@ function csvCell(value: string): string {
 }
 
 function toCsv(leads: WaitlistLead[]): string {
-  const header = ["Name", "Email", "Phone", "City", "Source", "Date"];
+  const header = [
+    "Name",
+    "Email",
+    "Phone",
+    "Instagram",
+    "City",
+    "Source",
+    "Date",
+  ];
   const rows = leads.map((l) =>
-    [l.name, l.email, l.phone, l.city, l.source, l.createdAt]
+    [l.name, l.email, l.phone, l.instagram, l.city, l.source, l.createdAt]
       .map(csvCell)
       .join(","),
   );

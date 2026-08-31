@@ -8,8 +8,24 @@ export const prerender = false;
 interface UpdatePayload {
   id?: string;
   token?: string;
-  phone: string;
+  phone?: string;
+  instagram?: string;
+  name?: string;
+  source?: string;
 }
+
+// The step-2 update path is intentionally narrow: contact fields plus source
+// only, mirroring firestore.rules validLeadContactUpdate. Caps match the
+// capture-lead ones (phone 50, instagram 100, name 1000, source 50).
+const UPDATABLE_FIELDS: ReadonlyArray<{
+  key: "phone" | "instagram" | "name" | "source";
+  maxLength: number;
+}> = [
+  { key: "phone", maxLength: 50 },
+  { key: "instagram", maxLength: 100 },
+  { key: "name", maxLength: 1000 },
+  { key: "source", maxLength: 50 },
+];
 
 export const POST: APIRoute = async ({ request }) => {
   const limited = await enforceRateLimit(request, RATE_LIMITS.updateLead);
@@ -33,13 +49,21 @@ export const POST: APIRoute = async ({ request }) => {
     });
   }
 
-  const phone =
-    typeof body.phone === "string" ? body.phone.trim().slice(0, 20) : "";
-  if (!phone) {
-    return new Response(JSON.stringify({ error: "phone required" }), {
-      status: 400,
-      headers: { "Content-Type": "application/json" },
-    });
+  const updates: Partial<Record<string, string>> = {};
+  for (const { key, maxLength } of UPDATABLE_FIELDS) {
+    const raw = body[key];
+    const value = typeof raw === "string" ? raw.trim().slice(0, maxLength) : "";
+    if (value) updates[key] = value;
+  }
+  const updateKeys = Object.keys(updates);
+  if (updateKeys.length === 0) {
+    return new Response(
+      JSON.stringify({ error: "At least one updatable field required" }),
+      {
+        status: 400,
+        headers: { "Content-Type": "application/json" },
+      },
+    );
   }
 
   // Ownership proof: when LEAD_UPDATE_SECRET is configured, the doc id must
@@ -80,12 +104,17 @@ export const POST: APIRoute = async ({ request }) => {
   }
 
   try {
-    const url = `https://firestore.googleapis.com/v1/projects/${projectId}/databases/(default)/documents/leads/${encodeURIComponent(id)}?updateMask.fieldPaths=phone`;
+    const mask = updateKeys
+      .map((key) => `updateMask.fieldPaths=${key}`)
+      .join("&");
+    const url = `https://firestore.googleapis.com/v1/projects/${projectId}/databases/(default)/documents/leads/${encodeURIComponent(id)}?${mask}`;
     const res = await fetch(url, {
       method: "PATCH",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
-        fields: { phone: { stringValue: phone } },
+        fields: Object.fromEntries(
+          updateKeys.map((key) => [key, { stringValue: updates[key] }]),
+        ),
       }),
       signal: AbortSignal.timeout(8000),
     });

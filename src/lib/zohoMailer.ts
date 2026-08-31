@@ -38,5 +38,12 @@ export async function sendMail(opts: MailOptions): Promise<void> {
     text: opts.text,
     html: opts.html,
     replyTo: opts.replyTo ?? user,
+    // WHY base64, not the default quoted-printable: QP encodes bytes as
+    // =XX sequences, and somewhere in the Zoho delivery path literal "="
+    // in body text (every URL query string, e.g. "?city=Edmonton") was
+    // being mis-decoded and rendered as "city�monton" in the failure
+    // alerts. base64 has no in-band "=" escaping, so URLs survive intact.
+    // Removing this reintroduces corrupted alert emails.
+    textEncoding: "base64",
   });
 }

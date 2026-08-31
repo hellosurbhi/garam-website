@@ -5,10 +5,12 @@ vi.mock("@/components/admin/useApplicantPhotos", () => ({
   useApplicantPhotos: vi.fn(() => ({ photos: [], count: 0, loading: false })),
 }));
 
+import { Timestamp } from "firebase/firestore";
 import ApplicantCard from "@/components/admin/ApplicantCard";
 import type { Application } from "@/types/application";
 
 const BASE_APP: Application = {
+  submittedAt: Timestamp.fromDate(new Date("2026-08-30T12:00:00Z")),
   id: "a1",
   name: "Priya Sharma",
   age: 28,

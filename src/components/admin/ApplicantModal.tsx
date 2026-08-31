@@ -373,6 +373,7 @@ export default function ApplicantModal({
         </div>
         {app.photoUploadFailed && (
           <p
+            role="alert"
             style={{
               display: "inline-block",
               margin: "8px 0 0",

@@ -372,6 +372,26 @@ describe("firestore.rules: applications", () => {
     );
   });
 
+  it("empty photoPaths WITHOUT the failure flag is rejected", async () => {
+    // An empty photo list is only legal on the declared failure path: no
+    // application may exist with zero photos and no follow-up indicator.
+    await assertFails(
+      setDoc(
+        appDoc(anonContext("anon-1")),
+        buildApplicationDocument(fullSelfForm, [], false, docTimestamps()),
+      ),
+    );
+  });
+
+  it("empty photoPaths with photoUploadFailed: false is rejected", async () => {
+    await assertFails(
+      setDoc(appDoc(anonContext("anon-1")), {
+        ...buildApplicationDocument(fullSelfForm, [], false, docTimestamps()),
+        photoUploadFailed: false,
+      }),
+    );
+  });
+
   it("photoPaths entries outside the photos/ contract are rejected", async () => {
     await assertFails(
       setDoc(appDoc(anonContext("anon-1")), {

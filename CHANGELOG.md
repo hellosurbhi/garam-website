@@ -1,5 +1,16 @@
 # Changelog
 
+## fix(apply): CodeRabbit review round on PR #244 (2026-08-31)
+
+Seven review findings addressed on the apply overhaul before merge (one refuted as a false positive):
+
+- `firestore.rules`: an empty `photoPaths` list is now only accepted together with `photoUploadFailed: true`, so no application can exist with zero photos and no follow-up indicator (two new emulator tests pin it; still safe to deploy before or after Vercel).
+- `/api/alert-failure`: the Redis dedupe key now carries a SHA-256 digest of the identity instead of the raw email or URL (no PII in key metadata), and when delivery fails on EVERY channel the dedupe claim is released so the next report of the incident pages instead of being suppressed for an hour. `alertOps` now reports whether any configured channel actually delivered.
+- `useApplyForm`: the completed-application lead flip is guarded on the captured email, so correcting your email mid-form can never mark the old email's lead as completed.
+- `ApplicantModal`: the photos-failed notice carries `role="alert"`.
+- The synthetic monitor's values now each CROSS the former caps that rejected real applicants (height 23 chars vs old 20, phone 38 vs old 20, pitch ~2,400 vs old 2000), so a regression to any old limit fails the monitor.
+- Test fixture fixes: `submittedAt` added to the ApplicantCard fixture (required by the `Application` type).
+
 ## fix(apply): no human ever hits a length limit again, photo failures stop losing applicants, abandoned forms still leave a lead (2026-08-30)
 
 The apply form worked for short answers (the synthetic monitor stayed green) but rejected real people: Firestore rules capped every text field (pitch 2000, phone 20, height 20, type 50 vs a form maxLength of 200) and the form never validated lengths, so a long pitch or "5 feet 8 inches (172cm)" died at submit with "Missing or insufficient permissions" and the whole application was thrown away. Confirmed victims since alert emails started working Aug 27: Akshay (Aug 30, Edmonton) and Dua (Aug 27, retried 4 times producing 4 duplicate alert emails).

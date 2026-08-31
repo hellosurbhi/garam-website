@@ -761,7 +761,13 @@ export function useApplyForm() {
         // A completed application supersedes its partial lead: flip the
         // source so the admin dashboard can tell abandoned forms from
         // completed ones. Fire-and-forget, failure changes nothing.
-        if (partialLeadRef.current) {
+        // Guard on the captured email: if the applicant corrected their email
+        // and submitted before the new capture settled, the ref can still
+        // point at the OLD email's lead, which must stay partial.
+        if (
+          partialLeadRef.current &&
+          partialLeadEmailRef.current === form.email.trim().toLowerCase()
+        ) {
           updateLeadFields(partialLeadRef.current, {
             source: "apply_form_completed",
           }).catch(() => {});

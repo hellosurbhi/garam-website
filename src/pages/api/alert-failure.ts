@@ -1,3 +1,4 @@
+import { createHash } from "node:crypto";
 import type { APIRoute } from "astro";
 import { z } from "zod";
 import { Redis } from "@upstash/redis";
@@ -43,16 +44,34 @@ const FailureSchema = z.object({
 // channel must never fail closed.
 const ALERT_DEDUPE_SECONDS = 3600;
 
-async function isDuplicateAlert(
+function alertKey(report: z.infer<typeof FailureSchema>): string {
+  const identity = report.contact?.email || report.pageUrl || "unknown";
+  // WHY a digest, not the raw identity: the identity is applicant PII (email
+  // or page URL) and must not sit in Redis key metadata. A plain SHA-256 is
+  // enough because the key only needs deterministic per-incident uniqueness
+  // for dedupe in a private store; a server-keyed HMAC would add a secret to
+  // rotate for no additional protection here.
+  const digest = createHash("sha256").update(identity).digest("hex");
+  return `alert:${report.flow}:${report.stage}:${digest}`;
+}
+
+interface DedupeClaim {
+  duplicate: boolean;
+  /** Frees the claim when delivery failed on every channel; no-op otherwise. */
+  release: () => Promise<void>;
+}
+
+const NO_RELEASE = async () => {};
+
+async function claimAlert(
   report: z.infer<typeof FailureSchema>,
-): Promise<boolean> {
+): Promise<DedupeClaim> {
   try {
     const url = readTrimmedEnv(import.meta.env.UPSTASH_REDIS_REST_URL);
     const token = readTrimmedEnv(import.meta.env.UPSTASH_REDIS_REST_TOKEN);
-    if (!url || !token) return false;
+    if (!url || !token) return { duplicate: false, release: NO_RELEASE };
 
-    const identity = report.contact?.email || report.pageUrl || "unknown";
-    const key = `alert:${report.flow}:${report.stage}:${identity}`;
+    const key = alertKey(report);
     const redis = new Redis({ url, token });
     const result = await withTimeout(
       redis.set(key, "1", { nx: true, ex: ALERT_DEDUPE_SECONDS }),
@@ -61,10 +80,23 @@ async function isDuplicateAlert(
     );
     // Upstash returns "OK" when the key was set (first alert) and null when
     // it already existed (duplicate inside the window).
-    return result === null;
+    if (result === null) return { duplicate: true, release: NO_RELEASE };
+    return {
+      duplicate: false,
+      release: async () => {
+        // Every channel failed to deliver: give the claim back so the next
+        // report of this incident pages instead of being suppressed for an
+        // hour behind an alert that never went out.
+        try {
+          await withTimeout(redis.del(key), 1500, "Upstash alert release");
+        } catch (error) {
+          console.error("[alert-failure] claim release failed:", error);
+        }
+      },
+    };
   } catch (error) {
     console.error("[alert-failure] dedupe check failed, sending:", error);
-    return false;
+    return { duplicate: false, release: NO_RELEASE };
   }
 }
 
@@ -97,7 +129,8 @@ export const POST: APIRoute = async ({ request }) => {
     });
   }
 
-  if (await isDuplicateAlert(report)) {
+  const claim = await claimAlert(report);
+  if (claim.duplicate) {
     // Logged, never mailed: the first alert of the incident already paged.
     console.log(
       `[alert-failure] suppressed duplicate alert for ${report.flow}/${report.stage}`,
@@ -120,7 +153,13 @@ export const POST: APIRoute = async ({ request }) => {
   };
 
   // alertOps never throws; the client fires and forgets either way.
-  await alertOps(opsReport);
+  const delivered = await alertOps(opsReport);
+  if (!delivered) {
+    console.error(
+      `[alert-failure] delivery failed on every channel for ${report.flow}/${report.stage}; releasing dedupe claim`,
+    );
+    await claim.release();
+  }
   return new Response(JSON.stringify({ ok: true }), {
     status: 200,
     headers: { "Content-Type": "application/json" },

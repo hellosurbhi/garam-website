@@ -1,20 +1,23 @@
+import { createHash } from "node:crypto";
 import { describe, it, expect, vi, beforeEach } from "vitest";
 
 // vi.hoisted ensures mockSend is evaluated before vi.mock hoisting
 const mockSend = vi.hoisted(() => vi.fn());
 const mockRedisSet = vi.hoisted(() => vi.fn());
+const mockRedisDel = vi.hoisted(() => vi.fn());
 
 vi.mock("@/lib/zohoMailer", () => ({
   sendMail: mockSend,
 }));
 
-// Only the dedupe path's SET NX EX is modeled. The rate limiter also builds
-// a Redis client when the env vars are set, but @upstash/ratelimit calls
-// commands this mock lacks, throws, and enforceRateLimit fails open by
+// Only the dedupe path's SET NX EX and DEL are modeled. The rate limiter also
+// builds a Redis client when the env vars are set, but @upstash/ratelimit
+// calls commands this mock lacks, throws, and enforceRateLimit fails open by
 // contract, which is exactly the production behavior on a Redis outage.
 vi.mock("@upstash/redis", () => ({
   Redis: class {
     set = mockRedisSet;
+    del = mockRedisDel;
   },
 }));
 
@@ -160,11 +163,41 @@ describe("alert-failure handler", () => {
       const res = await POST(makeContext(makeRequest(validReport)));
       expect(res.status).toBe(200);
       expect(mockSend).toHaveBeenCalledTimes(1);
+      // The key carries a SHA-256 digest of the identity, never the raw
+      // email: applicant PII must not sit in Redis key metadata.
+      const digest = createHash("sha256")
+        .update("priya@example.com")
+        .digest("hex");
       expect(mockRedisSet).toHaveBeenCalledWith(
-        "alert:apply:submit:priya@example.com",
+        `alert:apply:submit:${digest}`,
         "1",
-        { nx: true, ex: 3600 },
+        {
+          nx: true,
+          ex: 3600,
+        },
       );
+    });
+
+    it("releases the dedupe claim when delivery fails on every channel", async () => {
+      mockRedisSet.mockResolvedValue("OK");
+      mockRedisDel.mockResolvedValue(1);
+      mockSend.mockRejectedValue(new Error("SMTP down"));
+      const res = await POST(makeContext(makeRequest(validReport)));
+      expect(res.status).toBe(200);
+      // The claim is freed so the NEXT report of this incident can page,
+      // instead of an hour of suppression behind an alert that never sent.
+      expect(mockRedisDel).toHaveBeenCalledTimes(1);
+      const digest = createHash("sha256")
+        .update("priya@example.com")
+        .digest("hex");
+      expect(mockRedisDel).toHaveBeenCalledWith(`alert:apply:submit:${digest}`);
+    });
+
+    it("keeps the dedupe claim when the alert delivers", async () => {
+      mockRedisSet.mockResolvedValue("OK");
+      mockSend.mockResolvedValue(undefined);
+      await POST(makeContext(makeRequest(validReport)));
+      expect(mockRedisDel).not.toHaveBeenCalled();
     });
 
     it("a retry inside the window is suppressed, not mailed (Dua's four duplicate pages)", async () => {

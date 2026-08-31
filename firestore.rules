@@ -123,6 +123,11 @@ service cloud.firestore {
         && (!('photoUrl' in d.keys()) || (d.photoUrl is string && d.photoUrl.size() > 0 && d.photoUrl.size() <= 500))
         && (!('photoUrls' in d.keys()) || (d.photoUrls is list && d.photoUrls.size() <= 10))
         && (!('photoPaths' in d.keys()) || validPhotoPaths(d.photoPaths))
+        // An empty photo list is ONLY legal on the declared failure path: it
+        // must carry photoUploadFailed: true so no application can silently
+        // exist with zero photos and no follow-up indicator.
+        && (!('photoPaths' in d.keys()) || d.photoPaths.size() > 0
+            || ('photoUploadFailed' in d.keys() && d.photoUploadFailed == true))
         && (!('photoUploadFailed' in d.keys()) || d.photoUploadFailed is bool)
         && (!('isSynthetic' in d.keys()) || d.isSynthetic is bool)
         && (!('castEventId' in d.keys()) || (d.castEventId is string && d.castEventId.size() > 0 && d.castEventId.size() <= 100))

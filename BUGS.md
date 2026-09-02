@@ -9,6 +9,16 @@ fixed entries, [x] checkboxes or "Status: Fixed" records to this file. -->
 
 ## Open
 
+### [HIGH] Every city page fails the scheduled production smoke test: `h1.city-h1` resolves hidden on mobile viewports
+
+- **Date:** 2026-09-02
+- **File:** `tests/smoke/site.spec.ts` (line ~996, the `Cities › City page:` loop) and `src/pages/cities/[slug].astro` plus whatever component/CSS renders `h1.city-h1`
+- **Status:** Open
+- **Severity:** High (a red scheduled smoke run masks real regressions; the page itself renders for humans)
+- **What happened:** In scheduled production Smoke Tests run 33644089435 (2026-09-02), every ticket-bearing city page test (manhattan, jersey-city, san-diego, los-angeles, san-francisco, salt-lake-city and more) failed in ~5.5s with `expect(locator('h1.city-h1')).toBeVisible()` receiving `hidden`, on iphone, iphone-webkit and ipad projects, retries included. Manual check of /cities/manhattan on desktop 2026-09-02 shows the h1 rendering normally, so the failure is viewport-specific or animation-timing-specific (a reveal-on-load transition stuck at its hidden initial state under Playwright is the prime suspect), not a missing element.
+- **Why deferred:** pre-existing page code this session did not touch; the session's inline scope was the apply form rules-drift outage. Per provenance-based same-session close-out this queues.
+- **Revisit when:** next overnight pass. Plan: run the single test locally (`npx playwright test tests/smoke/site.spec.ts -g "City page: manhattan" --project=iphone`), inspect the computed style on `h1.city-h1` at failure (expect `opacity: 0` or `visibility: hidden` from an entrance animation), and fix the root cause so the heading is visible without depending on animation timing (respect `prefers-reduced-motion`, or give the test a real wait condition). Verify: that test passes on all three mobile projects and the next scheduled smoke run has zero `Cities › City page` failures.
+
 ### [MODERATE] 3 unfixed npm audit findings in @opentelemetry/core (via firebase-tools)
 
 - **Date:** 2026-08-02

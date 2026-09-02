@@ -1,5 +1,13 @@
 # Changelog
 
+## refactor(events): plain language ticket source labels + Aug 28 Philly correction (2026-09-02)
+
+The `TicketSource` values `eventbrite-owned` and `external` said nothing about who actually sells the tickets, and `external` lumped two different situations together. New values: `our-eventbrite` (our account, order data and purchase tracking available), `their-eventbrite` (a venue or promoter's Eventbrite account, clicks only), `other-platform` (non-Eventbrite ticketing like City Winery and DC Comedy Loft) and `none` (TBA notify-me cards with nothing on sale yet). Every entry remapped mechanically by URL; zero behavior change, code still only branches on "is this our account".
+
+Data correction in the same pass: the Aug 28 Philadelphia show was ticketed on Next In Line Comedy's own Eventbrite (owner confirmed), so its entry moves from our-account to their-account.
+
+**Files:** `src/data/events.ts`, `src/pages/api/sync-orders.ts`, `src/pages/events/[slug].astro`, `src/lib/eventbriteContent.ts`, `src/utils/eventSchema.test.ts`, `test/go-redirect.test.ts`
+
 ## fix(apply): CodeRabbit review round on PR #244 (2026-08-31)
 
 Seven review findings addressed on the apply overhaul before merge (one refuted as a false positive):

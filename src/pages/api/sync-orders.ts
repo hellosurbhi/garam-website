@@ -568,12 +568,12 @@ export const POST: APIRoute = async ({ request }) => {
     const previousTotal = prevMeta?.ordersProcessed ?? 0;
 
     // Only process events we actually sell tickets for ourselves. The Los
-    // Angeles listing (ticketSource: "external") carries a real
+    // Angeles listing (ticketSource: "their-eventbrite") carries a real
     // `eventbriteId` too, but it belongs to a third party's Eventbrite
     // account: our access token has no orders permission on it, so
     // including it here just generates an authorization error on every run.
     const syncableEvents = events.filter(
-      (e) => e.ticketSource === "eventbrite-owned" && e.eventbriteId,
+      (e) => e.ticketSource === "our-eventbrite" && e.eventbriteId,
     );
 
     const syncErrors: string[] = [];

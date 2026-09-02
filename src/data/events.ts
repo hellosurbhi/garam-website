@@ -22,20 +22,25 @@ export interface EventVenue {
 }
 
 /**
- * Who actually owns the Eventbrite listing for this show.
+ * Who sells the tickets for this show.
  *
- * "eventbrite-owned": ticketed through our own Eventbrite account. We can pull
- * order data and Eventbrite's native pixel/webhooks are ours to configure.
- * "external": promoter or venue runs checkout (their own Eventbrite account,
- * or a non-Eventbrite ticketing platform like City Winery/DC Comedy Loft).
- * We have no order-level access, so Purchase can never be tracked
- * server-side for these: only InitiateCheckout (browser + CAPI) applies.
+ * "our-eventbrite": our own Eventbrite account. We can pull order data and
+ * Eventbrite's native pixel/webhooks are ours to configure, so Purchase can
+ * be tracked server-side.
+ * "their-eventbrite": someone else's Eventbrite account (the venue's or a
+ * promoter's). We have no order-level access, so Purchase can never be
+ * tracked server-side: only InitiateCheckout (browser + CAPI) applies.
+ * "other-platform": a non-Eventbrite ticketing platform (City Winery,
+ * DC Comedy Loft). Same tracking limits as "their-eventbrite".
+ * "none": no tickets on sale anywhere yet (TBA notify-me cards).
  *
- * This can't be inferred from `eventbriteId` alone: a promoter-run show
- * (e.g. Los Angeles) can still carry a real, public Eventbrite ID that
- * belongs to someone else's account. Every event must set this explicitly.
+ * Ownership can't be inferred from `eventbriteId` or the URL alone: a
+ * promoter-run show (e.g. Los Angeles) still carries a real, public
+ * Eventbrite ID that belongs to someone else's account. Every event must
+ * set this explicitly.
  */
-export type TicketSource = "eventbrite-owned" | "external";
+export type TicketSource =
+  "our-eventbrite" | "their-eventbrite" | "other-platform" | "none";
 
 export interface EventEntry {
   date: string;
@@ -160,7 +165,7 @@ export const events: EventEntry[] = [
     description:
       "A belated Valentine's Day edition of America's #1 live desi comedy dating show at Top Secret Comedy Club. Two real singles go on a blind date on stage while Surbhi and Wyatt run the room. This show has sold out.",
     lineup: DEFAULT_LINEUP,
-    ticketSource: "external",
+    ticketSource: "their-eventbrite",
     url: "https://www.eventbrite.com/e/garam-masala-dating-a-belated-valentines-day-tickets-1982103088695",
     isoDate: "2026-02-22",
     previousDate: "2026-02-28",
@@ -182,7 +187,7 @@ export const events: EventEntry[] = [
     description:
       "Garam Masala Dating's San Diego debut. Two real singles, one blind date, one live audience voting on the outcome. This show has sold out.",
     lineup: DEFAULT_LINEUP,
-    ticketSource: "external",
+    ticketSource: "their-eventbrite",
     url: "https://www.eventbrite.com/e/garam-masala-dating-live-in-san-diego-tickets-1983622967694",
     isoDate: "2026-03-07",
     venue: {
@@ -207,7 +212,7 @@ export const events: EventEntry[] = [
     description:
       "A St. Patrick's Day edition of Garam Masala Dating at Top Secret Comedy Club. Real singles, real chaos, hosted by Surbhi and Wyatt. This show has sold out.",
     lineup: DEFAULT_LINEUP,
-    ticketSource: "external",
+    ticketSource: "their-eventbrite",
     url: "https://www.eventbrite.com/e/garam-masala-dating-st-patricks-day-tickets-1982103088695",
     isoDate: "2026-03-15",
     previousDate: "2026-03-14",
@@ -229,7 +234,7 @@ export const events: EventEntry[] = [
     description:
       "Garam Masala Dating comes to Chicago for a night of live comedy and blind dating on stage. This show has sold out.",
     lineup: DEFAULT_LINEUP,
-    ticketSource: "external",
+    ticketSource: "their-eventbrite",
     url: "https://www.eventbrite.com/e/saturday-april-4-garam-masala-dating-tickets-1983144430376",
     hidden: true,
     note: "Hidden from site Mar 27 2026, reason unrecorded",
@@ -254,7 +259,7 @@ export const events: EventEntry[] = [
     description:
       "A 420 themed edition of Garam Masala Dating at Top Secret Comedy Club. Two singles meet for the first time on stage while the audience decides if sparks fly.",
     lineup: DEFAULT_LINEUP,
-    ticketSource: "eventbrite-owned",
+    ticketSource: "our-eventbrite",
     url: "https://www.eventbrite.com/e/garam-masala-dating-420-blazin-in-love-tickets-1985330936274",
     isoDate: "2026-04-19",
     startTime: "18:00",
@@ -274,7 +279,7 @@ export const events: EventEntry[] = [
     description:
       "Garam Masala Dating's Jersey City edition at The Laugh Tour Comedy Club. A live blind date, real singles, and a singles mixer after the show.",
     lineup: DEFAULT_LINEUP,
-    ticketSource: "eventbrite-owned",
+    ticketSource: "our-eventbrite",
     url: "https://www.eventbrite.com/e/garam-masala-dating-show-jersey-city-edition-tickets-1986100570270",
     isoDate: "2026-05-03",
     previousDate: "2026-04-26",
@@ -295,7 +300,7 @@ export const events: EventEntry[] = [
     description:
       "Garam Masala Dating comes to The Faight Collective in San Francisco for a night of live comedy and real blind dates on stage.",
     lineup: DEFAULT_LINEUP,
-    ticketSource: "eventbrite-owned",
+    ticketSource: "our-eventbrite",
     url: "https://www.eventbrite.com/e/garam-masala-dating-show-san-francisco-tickets-1988516311818",
     isoDate: "2026-05-10",
     startTime: "18:30",
@@ -314,7 +319,7 @@ export const events: EventEntry[] = [
     description:
       "A May flowers bring June bridal showers edition of Garam Masala Dating at Top Secret Comedy Club, with two real singles on a blind date in front of a packed house.",
     lineup: DEFAULT_LINEUP,
-    ticketSource: "eventbrite-owned",
+    ticketSource: "our-eventbrite",
     url: "https://www.eventbrite.com/e/garam-masala-comedy-dating-show-may-flowers-bring-june-bridal-showers-tickets-1990168950906",
     isoDate: "2026-05-31",
     startTime: "18:30",
@@ -333,7 +338,7 @@ export const events: EventEntry[] = [
     description:
       "A Summer of Love edition of Garam Masala Dating at Top Secret Comedy Club. Real singles, live comedy, and a singles mixer to close out the night.",
     lineup: DEFAULT_LINEUP,
-    ticketSource: "eventbrite-owned",
+    ticketSource: "our-eventbrite",
     url: "https://www.eventbrite.com/e/garam-masala-comedy-dating-show-summer-of-love-tickets-1990821381343",
     isoDate: "2026-06-07",
     startTime: "18:00",
@@ -352,7 +357,7 @@ export const events: EventEntry[] = [
     description:
       "A Pride edition of Garam Masala Dating at Top Secret Comedy Club, celebrating every kind of love with a live blind date on stage.",
     lineup: DEFAULT_LINEUP,
-    ticketSource: "eventbrite-owned",
+    ticketSource: "our-eventbrite",
     url: "https://www.eventbrite.com/e/garam-masala-dating-show-pride-edition-tickets-1987763579375",
     isoDate: "2026-06-21",
     previousDate: "2026-06-14",
@@ -373,7 +378,7 @@ export const events: EventEntry[] = [
     description:
       "A Seed Round edition of Garam Masala Dating at The Faight Collective in San Francisco, with two real singles pitching for a second date.",
     lineup: DEFAULT_LINEUP,
-    ticketSource: "eventbrite-owned",
+    ticketSource: "our-eventbrite",
     url: "https://www.eventbrite.com/e/garam-masala-comedy-dating-show-san-francisco-seed-round-tickets-1989633237573",
     isoDate: "2026-06-25",
     startTime: "18:30",
@@ -392,7 +397,7 @@ export const events: EventEntry[] = [
     description:
       "Garam Masala Dating comes to Edison, New Jersey with Komic Karma Entertainment. Tickets are not on sale yet, join the list to be first to know when they drop.",
     lineup: DEFAULT_LINEUP,
-    ticketSource: "eventbrite-owned",
+    ticketSource: "our-eventbrite",
     url: "",
     hidden: true,
     note: "Jul 11 date canceled Jul 7 2026; taken off notify me Aug 14 2026",
@@ -410,7 +415,7 @@ export const events: EventEntry[] = [
     description:
       "Garam Masala Dating comes to the Lyric Hyperion Theater in Los Angeles for a night of live comedy and blind dating on stage.",
     lineup: DEFAULT_LINEUP,
-    ticketSource: "external",
+    ticketSource: "their-eventbrite",
     url: "https://www.eventbrite.com/e/garam-masala-tickets-1989799702474",
     isoDate: "2026-07-19",
     startTime: "18:30",
@@ -429,7 +434,7 @@ export const events: EventEntry[] = [
     description:
       "An All Stars edition of Garam Masala Dating at The Loft at City Winery NYC, bringing back fan favorite daters for one more round.",
     lineup: DEFAULT_LINEUP,
-    ticketSource: "external",
+    ticketSource: "other-platform",
     url: "https://tickets.citywinery.com/event/garam-masala-comedy-dating-show-all-stars-editio-ownqgw",
     isoDate: "2026-07-26",
     startTime: "19:00",
@@ -447,7 +452,7 @@ export const events: EventEntry[] = [
     description:
       "A Spilling Tea in Boston edition of Garam Masala Dating at Elephant & Castle, with two real singles on a blind date in front of a live audience.",
     lineup: DEFAULT_LINEUP,
-    ticketSource: "eventbrite-owned",
+    ticketSource: "our-eventbrite",
     url: "https://www.eventbrite.com/e/garam-masala-comedy-dating-show-spilling-tea-in-boston-tickets-1992075859521",
     isoDate: "2026-08-13",
     previousDate: "2026-08-02",
@@ -468,7 +473,7 @@ export const events: EventEntry[] = [
     description:
       "A Cuffing Season Coming edition of Garam Masala Dating at Top Secret Comedy Club, just in time to find your person before the cold sets in.",
     lineup: DEFAULT_LINEUP,
-    ticketSource: "eventbrite-owned",
+    ticketSource: "our-eventbrite",
     url: "https://www.eventbrite.com/e/garam-masala-comedy-dating-show-cuffing-season-coming-tickets-1990583884985",
     isoDate: "2026-08-16",
     previousDate: "2026-08-02",
@@ -490,7 +495,7 @@ export const events: EventEntry[] = [
     description:
       "Garam Masala Dating's Philadelphia debut at Next In Line Comedy, with two real singles on a blind date in front of a live audience.",
     lineup: DEFAULT_LINEUP,
-    ticketSource: "eventbrite-owned",
+    ticketSource: "their-eventbrite",
     url: "https://www.eventbrite.com/e/garam-masala-1-desi-dating-show-tickets-1989618938805?aff=oddtdtcreator",
     isoDate: "2026-08-28",
     previousDate: "2026-07-12",
@@ -511,7 +516,7 @@ export const events: EventEntry[] = [
     description:
       "Garam Masala Dating comes to DC Comedy Loft in Washington, D.C. for a night of live comedy and real blind dates on stage.",
     lineup: DEFAULT_LINEUP,
-    ticketSource: "external",
+    ticketSource: "other-platform",
     venue: VENUE_DC_COMEDY_LOFT,
     url: "https://www.dccomedyloft.com/shows/378527",
     isoDate: "2026-08-30",
@@ -530,7 +535,7 @@ export const events: EventEntry[] = [
     description:
       "Another All Stars edition of Garam Masala Dating at The Loft at City Winery NYC, bringing back fan favorite daters for a second round on stage.",
     lineup: DEFAULT_LINEUP,
-    ticketSource: "external",
+    ticketSource: "other-platform",
     url: "https://tickets.citywinery.com/event/garam-masala-comedy-dating-show-all-stars-editio-suakfs",
     isoDate: "2026-10-11",
     startTime: "19:00",
@@ -578,8 +583,7 @@ export const comingSoonEvents: EventEntry[] = TBA_CITIES.map(
     slug: buildEventSlug(city.citySlug),
     description: `Garam Masala Dating hasn't announced a date in ${city.city} yet. Join the list to be first to know when tickets drop.`,
     lineup: DEFAULT_LINEUP,
-    // No show exists yet, so there is no Eventbrite account to own.
-    ticketSource: "external",
+    ticketSource: "none",
     url: "",
     tagline: "Coming soon",
   }),

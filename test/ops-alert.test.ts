@@ -1,10 +1,11 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
+import { validateEmail } from "@/utils/validateEmail";
 
 const mockSend = vi.hoisted(() => vi.fn());
 
 vi.mock("@/lib/zohoMailer", () => ({ sendMail: mockSend }));
 
-const { alertOps } = await import("@/lib/opsAlert");
+const { alertOps, redactEmails } = await import("@/lib/opsAlert");
 
 const WEBHOOK = "https://ntfy.sh/gmd-alerts";
 
@@ -86,6 +87,10 @@ describe("alertOps push webhook", () => {
     "priya's.test@example.co.uk",
     "priya#tag@mail.example.com",
     "priya(x)@example.com",
+    // Domain shapes the validator accepts because its dot is inside a class
+    // that also allows dots: a doubled dot, and a dot in first position.
+    "priya@exa..mple.com",
+    "priya@.example.com",
   ])("redacts %s, which the apply form accepts", async (address) => {
     await alertOps({
       flow: "ops",
@@ -139,5 +144,61 @@ describe("alertOps push webhook", () => {
     const body = lastPushBody();
     expect(body).not.toContain("Priya Sharma");
     expect(body).not.toContain("555 0100");
+  });
+});
+
+// The redactor's contract is not "matches an email address", it is "covers
+// everything the front door LET IN": whatever validateEmail accepts can be
+// stored, then interpolated into a cron failure summary, then published to a
+// topic anyone can subscribe to. The two patterns drifted twice, once on the
+// local part and once on the domain, both times in the direction that publishes
+// the whole address, so each half is pinned here against the validator itself
+// rather than against a hand-picked idea of what an address looks like.
+const ACCEPTED_AT_THE_FRONT_DOOR = [
+  "priya@example.com",
+  // Local parts: any non-space, non-@ character, browser validation is off.
+  "priya!@example.com",
+  "priya's.test@example.co.uk",
+  "priya#tag@mail.example.com",
+  "priya(x)@example.com",
+  // Domains: the validator's `[^\s@]+\.[^\s@]+` puts dots on both sides of the
+  // required dot, so every one of these reaches a failure summary.
+  "priya@exa..mple.com",
+  "priya@.example.com",
+  "priya@..a",
+  "priya@example.com.",
+  "a@b.c",
+];
+
+describe("redactEmails covers the whole validateEmail grammar", () => {
+  it.each(ACCEPTED_AT_THE_FRONT_DOOR)(
+    "%s is accepted by the apply form and capture-lead API",
+    (address) => {
+      // Guards the table itself: an address the validator rejects would make
+      // the redaction case below prove nothing.
+      expect(validateEmail(address)).toBeUndefined();
+    },
+  );
+
+  it.each(ACCEPTED_AT_THE_FRONT_DOOR)(
+    "%s never survives into a public webhook body",
+    (address) => {
+      const redacted = redactEmails(`post-show email to ${address}: SMTP 535`);
+      expect(redacted).not.toContain(address);
+      // Not even the domain half: a bare domain still names the person on a
+      // personal address, and a partial match is what the miss looked like.
+      expect(redacted).not.toContain("@");
+      expect(redacted).toContain("[email redacted]");
+      // The diagnosis is what the page is for; only the identity goes.
+      expect(redacted).toContain("SMTP 535");
+    },
+  );
+
+  it("leaves a bare @handle alone, since an address needs a local part", () => {
+    // The apply success copy and several alert bodies name the Instagram
+    // handle; over-redaction is the safe direction but not a licence to eat
+    // every @ in the message.
+    const text = "applicant asked to DM photos to @garammasaladating";
+    expect(redactEmails(text)).toBe(text);
   });
 });

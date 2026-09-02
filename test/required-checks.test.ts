@@ -19,13 +19,19 @@ import { join } from "path";
 // 2026-07-14 ("Full CI now runs on EVERY PR ... no conditional skips and no
 // success reported without the checks actually running"), and this test is
 // where that decision is enforced rather than merely written down. An advisory
-// job is still allowed, it just has to be declared: add it to a named exception
-// list here, with the reason it does not gate, so the choice is visible instead
-// of being an omission nobody notices.
+// job is still allowed, it just has to be declared: add it to ADVISORY_JOBS
+// below, with the reason it does not gate, so the choice is visible instead of
+// being an omission nobody notices.
+//
+// Three files carry the required-check list and all three are read here: the
+// ci.yml job names, the `contexts` array in scripts/setup-branch-protection.sh,
+// and the human-facing list in docs/security/REMEDIATION.md. The doc is not
+// decoration: it is the instruction an operator follows when setting the
+// ruleset by hand, so a stale name there ships a wrong click path.
 //
 // What this test CANNOT check: the "Protect Main" ruleset itself, which lives
 // in GitHub Settings and is the only thing that actually blocks a merge. Set
-// equality across these two files is necessary, not sufficient; the ruleset
+// equality across these three files is necessary, not sufficient; the ruleset
 // half needs a human (see [NON-BLOCKING-RULES-GATE] in BUGS.md).
 
 const ciYml = readFileSync(
@@ -36,6 +42,23 @@ const protectionScript = readFileSync(
   join(process.cwd(), "scripts/setup-branch-protection.sh"),
   "utf-8",
 );
+const remediationDoc = readFileSync(
+  join(process.cwd(), "docs/security/REMEDIATION.md"),
+  "utf-8",
+);
+
+/**
+ * ci.yml jobs that deliberately do NOT gate a merge, keyed by job id, valued by
+ * the reason they are advisory. Empty on purpose: today every job is required.
+ *
+ * This is the declared exception the header describes. An advisory job costs an
+ * entry here and shows up in a diff as a decision someone made, which is the
+ * opposite of how the emulator rules job became advisory (nobody chose it; a
+ * name was simply never added to a list in another file). Jobs listed here are
+ * exempt from the set-equality checks and from the no-`if:` rule, since the
+ * report-or-deadlock hazard only applies to checks a merge waits on.
+ */
+const ADVISORY_JOBS: Record<string, string> = {};
 
 /** ci.yml lines with whole-line comments dropped, so prose about a key (the
  * header's "WHY there is no paths-ignore") is never read as the key itself. */
@@ -104,29 +127,50 @@ function parseRequiredContexts(script: string): string[] {
     );
 }
 
+/**
+ * The doc states the same list in prose, as `- Require status checks: A; B`.
+ * Semicolons separate the names because a check name contains commas of its own
+ * ("Lint, Types, Test, Build"), which is also why this cannot be split on `,`.
+ */
+function parseDocumentedContexts(doc: string): string[] {
+  const line = doc
+    .split("\n")
+    .find((candidate) => /^\s*-\s*Require status checks:/.test(candidate));
+  if (!line) return [];
+  return line
+    .replace(/^\s*-\s*Require status checks:/, "")
+    .split(";")
+    .map((name) => name.trim())
+    .filter(Boolean);
+}
+
 const jobs = parseCiJobs(ciYml);
+/** Jobs a merge actually waits on: every job that is not declared advisory. */
+const gatingJobs = jobs.filter((job) => !(job.id in ADVISORY_JOBS));
 const requiredContexts = parseRequiredContexts(protectionScript);
+const documentedContexts = parseDocumentedContexts(remediationDoc);
 
 describe("required status checks match the CI jobs", () => {
-  it("parses both CI jobs and both required contexts", () => {
+  it("parses both CI jobs and both required contexts, in both files that list them", () => {
     // Guards the test itself: a parser that silently found nothing would make
     // every set comparison below pass vacuously.
     expect(jobs.map((job) => job.id)).toEqual(["check", "rules"]);
     expect(requiredContexts).toHaveLength(2);
+    expect(documentedContexts).toHaveLength(2);
   });
 
   it("requires every job in ci.yml, so no CI job is merely advisory", () => {
-    const missing = jobs
+    const missing = gatingJobs
       .map((job) => job.checkName)
       .filter((checkName) => !requiredContexts.includes(checkName));
     expect(
       missing,
-      "add these ci.yml job names to the contexts array in scripts/setup-branch-protection.sh AND to the ruleset in GitHub Settings, Rules",
+      "add these ci.yml job names to the contexts array in scripts/setup-branch-protection.sh AND to the ruleset in GitHub Settings, Rules (or declare the job advisory in ADVISORY_JOBS above, with a reason)",
     ).toEqual([]);
   });
 
   it("requires no context that no job reports, so a merge cannot deadlock", () => {
-    const checkNames = jobs.map((job) => job.checkName);
+    const checkNames = gatingJobs.map((job) => job.checkName);
     const unreported = requiredContexts.filter(
       (context) => !checkNames.includes(context),
     );
@@ -147,15 +191,45 @@ describe("required status checks match the CI jobs", () => {
     ]);
   });
 
+  it("states the same list in docs/security/REMEDIATION.md, the operator's click path", () => {
+    // The doc is what a human reads while typing check names into the ruleset
+    // by hand, so it drifting is not a documentation nit: it hands the operator
+    // a name that matches no job, which is the PR #139 deadlock with extra
+    // steps. Order included, so the two lists cannot diverge quietly.
+    expect(
+      documentedContexts,
+      "keep the `- Require status checks:` line in docs/security/REMEDIATION.md in step with the contexts array in scripts/setup-branch-protection.sh",
+    ).toEqual(requiredContexts);
+  });
+
+  it("declares every advisory job against a real ci.yml job, with a reason", () => {
+    const jobIds = jobs.map((job) => job.id);
+    const stale = Object.keys(ADVISORY_JOBS).filter(
+      (id) => !jobIds.includes(id),
+    );
+    expect(
+      stale,
+      "ADVISORY_JOBS names a job that no longer exists in ci.yml; a stale exemption silently un-gates the next job that reuses the id",
+    ).toEqual([]);
+    const unexplained = Object.entries(ADVISORY_JOBS)
+      .filter(([, reason]) => !reason.trim())
+      .map(([id]) => id);
+    expect(
+      unexplained,
+      "an advisory job needs the reason it does not gate written down, or it is the same silent omission this test exists to catch",
+    ).toEqual([]);
+  });
+
   it("runs CI on every pull request, with no path filter", () => {
     expect(ciDirectives).toContain("pull_request:");
     expect(ciDirectives).not.toContain("paths-ignore");
     expect(ciDirectives).not.toContain("paths:");
   });
 
-  it("has no conditional job, so every required check always reports", () => {
-    expect(jobs.filter((job) => job.conditional).map((job) => job.id)).toEqual(
-      [],
-    );
+  it("has no conditional gating job, so every required check always reports", () => {
+    expect(
+      gatingJobs.filter((job) => job.conditional).map((job) => job.id),
+      "a required check behind a job-level `if:` can decline to report, which blocks the PR forever (PR #139); declare the job advisory in ADVISORY_JOBS if it genuinely should not gate",
+    ).toEqual([]);
   });
 });

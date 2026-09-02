@@ -82,15 +82,27 @@ function buildAlertHtml(report: OpsAlertReport): string {
 // cron failure summary; a local part restricted to `[\w.+-]` never matched it
 // and the full address went out over the public topic. Keep the two patterns in
 // step: loosening the validator without loosening this one reopens the leak.
+// That relation is asserted, not just written here: test/ops-alert.test.ts runs
+// each candidate through validateEmail first and then through this redactor, so
+// a widened front door fails the suite instead of shipping a leak.
 // The cost is deliberate over-redaction of non-address text shaped like one
 // (a versioned package spec such as `pkg@1.2.3`), which is the safe direction:
 // the unredacted text is one click away on the alert email.
 //
-// The domain half splits the dot out of the character class
-// (`[^\s@.]+(?:\.[^\s@.]+)+` rather than `[^\s@]+\.[^\s@]+`) so the two parts
-// cannot match the same characters. An ambiguous pair backtracks quadratically
-// on a long run that never matches, and this runs on caught-exception text.
-const EMAIL_ADDRESS = /[^\s@]+@[^\s@.]+(?:\.[^\s@.]+)+/g;
+// The domain half asserts the dot the validator requires in a lookahead and
+// then takes the whole run, rather than spelling the dot structure out inline.
+// The earlier inline form (`[^\s@.]+(?:\.[^\s@.]+)+`) was still narrower than
+// the validator it claims to mirror: `[^\s@]+\.[^\s@]+` lets dots fall anywhere
+// but the first and last position of the domain, so the app accepts
+// `priya@exa..mple.com` and `priya@.example.com`, and the inline form matched
+// NEITHER. A domain this pattern cannot match is not a partial redaction, it is
+// the whole address published, local part and domain together.
+//
+// The lookahead scans to the first dot over a class that excludes dots, so no
+// two parts of the pattern can ever match the same characters. An ambiguous
+// pair (`[^\s@]*\.[^\s@]*`) backtracks quadratically on a long run that never
+// matches, and this runs on caught-exception text.
+const EMAIL_ADDRESS = /[^\s@]+@(?=[^\s@.]*\.)[^\s@]+/g;
 
 export function redactEmails(text: string): string {
   return text.replace(EMAIL_ADDRESS, "[email redacted]");

@@ -86,9 +86,14 @@ Branch protection on `main` via GitHub Ruleset (not Classic, which is deprecated
     was added in PR #135 and left unrequired, so a `firestore.rules` or
     `storage.rules` regression could merge with a red rules job. Keep this
     list, `scripts/setup-branch-protection.sh` and the ci.yml job names in sync;
-    `test/required-checks.test.ts` fails when they drift. That test guards the
-    three files in this repo; the ruleset itself is outside its reach, which is
-    why the GitHub half needs a human to confirm.
+    `test/required-checks.test.ts` fails when they drift. It parses all three,
+    the line above included, so keep that line in the form
+    `- Require status checks: <name>; <name>` (semicolons separate the names,
+    because a name has commas of its own). A job that deliberately does not gate
+    goes in that test's `ADVISORY_JOBS` list with its reason, so the exemption is
+    a visible decision rather than a name someone forgot. The ruleset itself is
+    outside the test's reach, which is why the GitHub half needs a human to
+    confirm.
 
 ---
 

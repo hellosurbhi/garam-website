@@ -46,7 +46,10 @@
 # above. Requiring any check that does not report on PRs re-creates the
 # deadlock; adding a ci.yml job without adding it here leaves it non-blocking.
 # If you add a check here, its workflow must trigger on pull_request and the
-# string must match the job's `name:` exactly.
+# string must match the job's `name:` exactly. test/required-checks.test.ts fails
+# on any drift between this list, the ci.yml job names and the list in
+# docs/security/REMEDIATION.md; a job that should genuinely not gate goes in that
+# test's ADVISORY_JOBS with the reason, which is the only way past it.
 # =============================================================================
 
 # set -euo pipefail

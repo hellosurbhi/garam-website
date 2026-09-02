@@ -266,12 +266,24 @@ describe("required status checks match the CI jobs", () => {
       ...inherited.flatMap((id) => [`  ${id}:`, `    name: ${id} check`]),
     ].join("\n");
 
+    // What is being pinned is "exempt only if listed", not "never exempt". A
+    // prototype-named job is as declarable as any other: put it in
+    // ADVISORY_JOBS with a reason and it should be advisory, like an ordinary
+    // id would be. Asserting a bare `[]` here would instead outlaw those four
+    // ids from the escape hatch the header offers everyone else, and it would
+    // fail with a message about Object.prototype for someone whose entry is
+    // correct, which is the same "the test knows better than the list" trap the
+    // previous round removed from the parser guard above. So the expectation is
+    // read off ADVISORY_JOBS rather than hard-coded: today it lists none of
+    // them, so this is `[]` and the original regression is pinned unchanged.
+    const declaredAdvisory = inherited.filter((id) => ADVISORY_JOBS.has(id));
+
     const parsed = parseCiJobs(yaml);
     expect(parsed.map((job) => job.id)).toEqual(inherited);
     expect(
       parsed.filter((job) => isAdvisory(job.id)).map((job) => job.id),
-      "a job id that is also an Object.prototype key is being treated as advisory without an ADVISORY_JOBS entry, so it gates nothing while looking required",
-    ).toEqual([]);
+      "a job id that is also an Object.prototype key is exempt from the gating assertions without an ADVISORY_JOBS entry (it gates nothing while looking required), or a declared one is not exempt with an entry; either way membership is no longer being decided by the list alone",
+    ).toEqual(declaredAdvisory);
   });
 
   it("runs CI on every pull request, with no path filter", () => {

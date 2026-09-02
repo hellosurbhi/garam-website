@@ -33,7 +33,7 @@ function makeEvent(overrides: Partial<EventEntry> = {}): EventEntry {
     slug: "manhattan-2026-05-10",
     description: "Test event description.",
     lineup: DEFAULT_LINEUP,
-    ticketSource: "eventbrite-owned",
+    ticketSource: "our-eventbrite",
     url: "https://eventbrite.com/e/123",
     isoDate: "2026-05-10",
     venue: TEST_VENUE,

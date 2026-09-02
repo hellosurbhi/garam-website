@@ -150,13 +150,29 @@ const gatingJobs = jobs.filter((job) => !(job.id in ADVISORY_JOBS));
 const requiredContexts = parseRequiredContexts(protectionScript);
 const documentedContexts = parseDocumentedContexts(remediationDoc);
 
+/**
+ * The jobs that have to be found for the parsers to be believed. Membership,
+ * not equality, and deliberately so: adding a job to ci.yml is a legal edit,
+ * and the tests below are what decide whether it gates. A guard that pinned the
+ * whole job list would fail on that edit with a message about the parser, which
+ * turns the one-line ADVISORY_JOBS entry the header promises into a hunt
+ * through a test file the person adding the job has no reason to open.
+ */
+const PARSED_BASELINE_JOB_IDS = ["check", "rules"];
+
 describe("required status checks match the CI jobs", () => {
-  it("parses both CI jobs and both required contexts, in both files that list them", () => {
+  it("finds the known CI jobs and the required contexts, in every file that lists them", () => {
     // Guards the test itself: a parser that silently found nothing would make
     // every set comparison below pass vacuously.
-    expect(jobs.map((job) => job.id)).toEqual(["check", "rules"]);
-    expect(requiredContexts).toHaveLength(2);
-    expect(documentedContexts).toHaveLength(2);
+    expect(jobs.map((job) => job.id)).toEqual(
+      expect.arrayContaining(PARSED_BASELINE_JOB_IDS),
+    );
+    expect(requiredContexts.length).toBeGreaterThanOrEqual(
+      PARSED_BASELINE_JOB_IDS.length,
+    );
+    expect(documentedContexts.length).toBeGreaterThanOrEqual(
+      PARSED_BASELINE_JOB_IDS.length,
+    );
   });
 
   it("requires every job in ci.yml, so no CI job is merely advisory", () => {

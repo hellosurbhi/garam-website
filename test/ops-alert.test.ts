@@ -152,47 +152,119 @@ describe("alertOps push webhook", () => {
 // stored, then interpolated into a cron failure summary, then published to a
 // topic anyone can subscribe to. The two patterns drifted twice, once on the
 // local part and once on the domain, both times in the direction that publishes
-// the whole address, so each half is pinned here against the validator itself
-// rather than against a hand-picked idea of what an address looks like.
-const ACCEPTED_AT_THE_FRONT_DOOR = [
-  "priya@example.com",
-  // Local parts: any non-space, non-@ character, browser validation is off.
-  "priya!@example.com",
-  "priya's.test@example.co.uk",
-  "priya#tag@mail.example.com",
-  "priya(x)@example.com",
-  // Domains: the validator's `[^\s@]+\.[^\s@]+` puts dots on both sides of the
-  // required dot, so every one of these reaches a failure summary.
-  "priya@exa..mple.com",
-  "priya@.example.com",
-  "priya@..a",
-  "priya@example.com.",
-  "a@b.c",
+// the whole address.
+//
+// So this is not a list of addresses someone thought of. A remembered table
+// proves only that the addresses in it are covered, and a table is exactly what
+// stops being updated when the validator moves, which is the drift that already
+// happened twice. These sweeps ENUMERATE the input space instead: every string
+// up to a length over a small alphabet, plus every interesting character in
+// every structural position of an address. Each candidate is run through the
+// real validateEmail first, and only the ones it ACCEPTS are required to
+// disappear. Loosen the front door in any way these sweeps can express and the
+// suite fails here, without anyone having to remember to add a row.
+
+/** Every string over `alphabet` from length 1 to `maxLength`, in order. */
+function* everyStringUpTo(
+  alphabet: string[],
+  maxLength: number,
+): Generator<string> {
+  let current = [""];
+  for (let length = 1; length <= maxLength; length++) {
+    const next: string[] = [];
+    for (const prefix of current) {
+      for (const character of alphabet) next.push(prefix + character);
+    }
+    yield* next;
+    current = next;
+  }
+}
+
+/**
+ * Structural sweeps. `a` stands for any ordinary character, and the rest are
+ * the characters the grammar actually turns on: `@` (how many, and where), `.`
+ * (the validator's one requirement, and the doubled/leading/trailing dots its
+ * character class quietly allows), and a space (which both the validator's
+ * `trim()` and the redactor's `\s` treat as a boundary). 9,840 and 21,844
+ * candidates, a few milliseconds.
+ */
+const STRUCTURE_SWEEPS = [
+  { alphabet: ["a", "@", "."], maxLength: 8 },
+  { alphabet: ["a", "@", ".", " "], maxLength: 7 },
 ];
 
-describe("redactEmails covers the whole validateEmail grammar", () => {
-  it.each(ACCEPTED_AT_THE_FRONT_DOOR)(
-    "%s is accepted by the apply form and capture-lead API",
-    (address) => {
-      // Guards the table itself: an address the validator rejects would make
-      // the redaction case below prove nothing.
-      expect(validateEmail(address)).toBeUndefined();
-    },
-  );
+/**
+ * Character sweep: printable ASCII, plus whitespace, non-ASCII and lookalike
+ * characters that a character class can disagree about. Each one is dropped
+ * into every structural position of an address, so the redactor's classes are
+ * checked against the validator's per character rather than per example.
+ */
+const CHARACTERS = [
+  ...Array.from({ length: 94 }, (_, index) => String.fromCharCode(33 + index)),
+  " ",
+  "\t",
+  "\n",
+  " ", // non-breaking space: `\s` and `trim()` both count it
+  "é",
+  "🌶",
+  "．", // fullwidth full stop: looks like a dot, is not one
+];
 
-  it.each(ACCEPTED_AT_THE_FRONT_DOOR)(
-    "%s never survives into a public webhook body",
-    (address) => {
-      const redacted = redactEmails(`post-show email to ${address}: SMTP 535`);
-      expect(redacted).not.toContain(address);
+const POSITIONS = [
+  (character: string) => `${character}@example.com`,
+  (character: string) => `pri${character}ya@example.com`,
+  (character: string) => `priya${character}@example.com`,
+  (character: string) => `priya@${character}example.com`,
+  (character: string) => `priya@exam${character}ple.com`,
+  (character: string) => `priya@example.com${character}`,
+  (character: string) => `priya@${character}`,
+];
+
+function* everyCandidate(): Generator<string> {
+  for (const { alphabet, maxLength } of STRUCTURE_SWEEPS) {
+    yield* everyStringUpTo(alphabet, maxLength);
+  }
+  for (const character of CHARACTERS) {
+    for (const position of POSITIONS) yield position(character);
+  }
+}
+
+describe("redactEmails covers the whole validateEmail grammar", () => {
+  it("redacts every address the front door accepts, swept over the grammar", () => {
+    const survived: string[] = [];
+    let accepted = 0;
+
+    for (const candidate of everyCandidate()) {
+      // Only what the apply form and capture-lead API let through can ever
+      // reach a cron summary, so only that has to be redacted here.
+      if (validateEmail(candidate) !== undefined) continue;
+      accepted++;
+      const redacted = redactEmails(
+        `post-show email to ${candidate}: SMTP 535`,
+      );
       // Not even the domain half: a bare domain still names the person on a
-      // personal address, and a partial match is what the miss looked like.
-      expect(redacted).not.toContain("@");
-      expect(redacted).toContain("[email redacted]");
-      // The diagnosis is what the page is for; only the identity goes.
-      expect(redacted).toContain("SMTP 535");
-    },
-  );
+      // personal address, and a partial match is what both misses looked like.
+      if (redacted.includes("@") || !redacted.includes("[email redacted]")) {
+        survived.push(JSON.stringify(candidate));
+      }
+    }
+
+    // Guards the sweep itself: a validator or a generator that accepted nothing
+    // would make the assertion below pass while proving nothing. The
+    // ["a", "@", "."] sweep alone accepts 576 candidates.
+    expect(accepted).toBeGreaterThan(500);
+    expect(
+      survived.slice(0, 20),
+      "validateEmail now accepts an address shape EMAIL_ADDRESS in src/lib/opsAlert.ts does not match, so that address goes out whole on the public alert topic; widen the redactor, never narrow the sweep",
+    ).toEqual([]);
+  });
+
+  it("keeps the diagnosis while removing the identity", () => {
+    const redacted = redactEmails(
+      "post-show email to priya@example.com: SMTP 535",
+    );
+    expect(redacted).toBe("post-show email to [email redacted] SMTP 535");
+  });
 
   it("leaves a bare @handle alone, since an address needs a local part", () => {
     // The apply success copy and several alert bodies name the Instagram

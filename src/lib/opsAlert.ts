@@ -74,35 +74,39 @@ function buildAlertHtml(report: OpsAlertReport): string {
 // than at each caller so no future caller can reintroduce the leak; the
 // unredacted message still reaches the producer through the email path.
 //
-// WHY this pattern mirrors src/utils/validateEmail.ts instead of matching a
-// conventional address shape: the redactor has to cover every address the app
-// LETS IN, not every address that is well formed. The apply form and the
-// capture-lead API accept `[^\s@]+@[^\s@]+\.[^\s@]+` (native validation is off,
-// and Firestore rules only bound the length), so `priya!@example.com` reaches a
-// cron failure summary; a local part restricted to `[\w.+-]` never matched it
-// and the full address went out over the public topic. Keep the two patterns in
-// step: loosening the validator without loosening this one reopens the leak.
-// That relation is asserted, not just written here: test/ops-alert.test.ts runs
-// each candidate through validateEmail first and then through this redactor, so
-// a widened front door fails the suite instead of shipping a leak.
-// The cost is deliberate over-redaction of non-address text shaped like one
-// (a versioned package spec such as `pkg@1.2.3`), which is the safe direction:
-// the unredacted text is one click away on the alert email.
+// WHY this pattern describes no address grammar at all: the redactor has to
+// cover every address the app LETS IN, not every address that is well formed.
+// The apply form and the capture-lead API accept
+// `[^\s@]+@[^\s@]+\.[^\s@]+` (src/utils/validateEmail.ts; native validation is
+// off, and Firestore rules only bound the length), so `priya!@example.com` and
+// `priya@exa..mple.com` both reach a cron failure summary. Two earlier passes
+// tried to cover that by restating the validator's grammar here, and both
+// restatements came out narrower than the thing they claimed to mirror: a
+// `[\w.+-]` local part never matched the first, then a
+// `[^\s@.]+(?:\.[^\s@.]+)+` domain never matched the second. A half the pattern
+// cannot match is not a partial redaction, it is the whole address published,
+// local part and domain together.
 //
-// The domain half asserts the dot the validator requires in a lookahead and
-// then takes the whole run, rather than spelling the dot structure out inline.
-// The earlier inline form (`[^\s@.]+(?:\.[^\s@.]+)+`) was still narrower than
-// the validator it claims to mirror: `[^\s@]+\.[^\s@]+` lets dots fall anywhere
-// but the first and last position of the domain, so the app accepts
-// `priya@exa..mple.com` and `priya@.example.com`, and the inline form matched
-// NEITHER. A domain this pattern cannot match is not a partial redaction, it is
-// the whole address published, local part and domain together.
+// So this states none of the grammar. A local part is any run of non-space,
+// non-`@` characters, the domain is the same run, and the one thing the
+// validator additionally requires (a dot in the domain) is dropped rather than
+// copied. That makes the redactor a superset of the front door by construction
+// instead of by resemblance: there is no rule left here to fall behind a
+// loosened validator, short of the validator accepting whitespace inside an
+// address. test/ops-alert.test.ts asserts that superset relation over the
+// grammar rather than over a table of remembered addresses, so a widened front
+// door fails the suite instead of shipping a leak.
 //
-// The lookahead scans to the first dot over a class that excludes dots, so no
-// two parts of the pattern can ever match the same characters. An ambiguous
+// The cost is deliberate over-redaction of non-address text shaped like one (a
+// versioned package spec such as `pkg@1.2.3`, a Firefox stack frame such as
+// `handler@https://site/app.js:1:2`), which is the safe direction: the
+// unredacted text is one click away on the alert email.
+//
+// The two runs are separated by a literal `@` that neither class can match, so
+// no two parts of the pattern can ever match the same characters. An ambiguous
 // pair (`[^\s@]*\.[^\s@]*`) backtracks quadratically on a long run that never
 // matches, and this runs on caught-exception text.
-const EMAIL_ADDRESS = /[^\s@]+@(?=[^\s@.]*\.)[^\s@]+/g;
+const EMAIL_ADDRESS = /[^\s@]+@[^\s@]+/g;
 
 export function redactEmails(text: string): string {
   return text.replace(EMAIL_ADDRESS, "[email redacted]");
@@ -118,15 +122,17 @@ const MAX_REDACTION_INPUT_CHARS = MAX_ERROR_CHARS * 4;
 
 function boundRedactionInput(text: string): string {
   if (text.length <= MAX_REDACTION_INPUT_CHARS) return text;
-  // Drop the token the cut landed inside. Half an address no longer matches
-  // EMAIL_ADDRESS, and publishing "priya@exam" still names the applicant.
+  // Drop the token the cut landed inside. A cut before the `@` leaves a bare
+  // "priya" that no address pattern can find, and publishing that still names
+  // the applicant.
   return text.slice(0, MAX_REDACTION_INPUT_CHARS).replace(/\S+$/, "");
 }
 
 /**
  * Webhook body for `report`, redacted then bounded (never the reverse: a cut
  * that lands inside an address, which the 2000-char cron summaries make a real
- * case, would otherwise leave a half address the pattern no longer matches).
+ * case, would otherwise leave a fragment with no `@` left in it, which no
+ * address pattern can find and which still names the applicant).
  */
 export function buildWebhookBody(report: OpsAlertReport): string {
   const message = redactEmails(boundRedactionInput(report.errorMessage)).slice(

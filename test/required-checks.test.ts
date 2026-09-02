@@ -57,8 +57,25 @@ const remediationDoc = readFileSync(
  * name was simply never added to a list in another file). Jobs listed here are
  * exempt from the set-equality checks and from the no-`if:` rule, since the
  * report-or-deadlock hazard only applies to checks a merge waits on.
+ *
+ * WHY a Map and not a plain object: membership decides whether a job gates, and
+ * on an object the natural test (`job.id in ADVISORY_JOBS`) walks the prototype
+ * chain, so a ci.yml job named `constructor`, `toString`, `valueOf` or
+ * `hasOwnProperty` answers true and is silently exempted from every gating
+ * assertion with no entry here at all: an undeclared advisory job, which is the
+ * precise failure this list exists to make impossible. An object literal has
+ * the mirror problem on the writing side, where a `__proto__:` key sets the
+ * prototype instead of adding an entry. A Map has neither behaviour, so the
+ * allowlist means exactly what it lists.
  */
-const ADVISORY_JOBS: Record<string, string> = {};
+const ADVISORY_JOBS = new Map<string, string>([
+  // ["job-id", "why this job deliberately does not gate a merge"],
+]);
+
+/** The one place membership is decided, so no caller can reintroduce `in`. */
+function isAdvisory(jobId: string): boolean {
+  return ADVISORY_JOBS.has(jobId);
+}
 
 /** ci.yml lines with whole-line comments dropped, so prose about a key (the
  * header's "WHY there is no paths-ignore") is never read as the key itself. */
@@ -146,7 +163,7 @@ function parseDocumentedContexts(doc: string): string[] {
 
 const jobs = parseCiJobs(ciYml);
 /** Jobs a merge actually waits on: every job that is not declared advisory. */
-const gatingJobs = jobs.filter((job) => !(job.id in ADVISORY_JOBS));
+const gatingJobs = jobs.filter((job) => !isAdvisory(job.id));
 const requiredContexts = parseRequiredContexts(protectionScript);
 const documentedContexts = parseDocumentedContexts(remediationDoc);
 
@@ -220,19 +237,40 @@ describe("required status checks match the CI jobs", () => {
 
   it("declares every advisory job against a real ci.yml job, with a reason", () => {
     const jobIds = jobs.map((job) => job.id);
-    const stale = Object.keys(ADVISORY_JOBS).filter(
+    const stale = [...ADVISORY_JOBS.keys()].filter(
       (id) => !jobIds.includes(id),
     );
     expect(
       stale,
       "ADVISORY_JOBS names a job that no longer exists in ci.yml; a stale exemption silently un-gates the next job that reuses the id",
     ).toEqual([]);
-    const unexplained = Object.entries(ADVISORY_JOBS)
+    const unexplained = [...ADVISORY_JOBS.entries()]
       .filter(([, reason]) => !reason.trim())
       .map(([id]) => id);
     expect(
       unexplained,
       "an advisory job needs the reason it does not gate written down, or it is the same silent omission this test exists to catch",
+    ).toEqual([]);
+  });
+
+  it("exempts only the job ids actually listed, inherited property names included", () => {
+    // Regression pin for the allowlist itself. While membership was tested with
+    // `in` on a plain object, these four names were exempt from every gating
+    // assertion below without appearing in ADVISORY_JOBS, so a job called
+    // `constructor` could ship as a required check that required nothing. The
+    // parser accepts any of them as a job id (`[A-Za-z0-9_-]+`), so nothing but
+    // this stops one from being written.
+    const inherited = ["constructor", "toString", "valueOf", "hasOwnProperty"];
+    const yaml = [
+      "jobs:",
+      ...inherited.flatMap((id) => [`  ${id}:`, `    name: ${id} check`]),
+    ].join("\n");
+
+    const parsed = parseCiJobs(yaml);
+    expect(parsed.map((job) => job.id)).toEqual(inherited);
+    expect(
+      parsed.filter((job) => isAdvisory(job.id)).map((job) => job.id),
+      "a job id that is also an Object.prototype key is being treated as advisory without an ADVISORY_JOBS entry, so it gates nothing while looking required",
     ).toEqual([]);
   });
 

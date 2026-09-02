@@ -88,25 +88,40 @@ function buildAlertHtml(report: OpsAlertReport): string {
 // local part and domain together.
 //
 // So this states none of the grammar. A local part is any run of non-space,
-// non-`@` characters, the domain is the same run, and the one thing the
-// validator additionally requires (a dot in the domain) is dropped rather than
-// copied. That makes the redactor a superset of the front door by construction
-// instead of by resemblance: there is no rule left here to fall behind a
-// loosened validator, short of the validator accepting whitespace inside an
-// address. test/ops-alert.test.ts asserts that superset relation over the
-// grammar rather than over a table of remembered addresses, so a widened front
-// door fails the suite instead of shipping a leak.
+// non-`@` characters, the domain is the same run (and so is every further
+// `@`-joined run after it, for the adjacency reason below), and the one thing
+// the validator additionally requires (a dot in the domain) is dropped rather
+// than copied. That makes the redactor a superset of the front door by
+// construction instead of by resemblance: there is no rule left here to fall
+// behind a loosened validator, short of the validator accepting whitespace
+// inside an address. test/ops-alert.test.ts asserts that superset relation over
+// the grammar rather than over a table of remembered addresses, and over how
+// two addresses compose, so a widened front door fails the suite instead of
+// shipping a leak.
 //
 // The cost is deliberate over-redaction of non-address text shaped like one (a
 // versioned package spec such as `pkg@1.2.3`, a Firefox stack frame such as
 // `handler@https://site/app.js:1:2`), which is the safe direction: the
 // unredacted text is one click away on the alert email.
 //
-// The two runs are separated by a literal `@` that neither class can match, so
-// no two parts of the pattern can ever match the same characters. An ambiguous
-// pair (`[^\s@]*\.[^\s@]*`) backtracks quadratically on a long run that never
-// matches, and this runs on caught-exception text.
-const EMAIL_ADDRESS = /[^\s@]+@[^\s@]+/g;
+// WHY the `@`-joined run REPEATS instead of stopping after one pair: the runs
+// are greedy and cannot match `@`, so a single-pair pattern eats the separator
+// AND the next address's local part before it stops. On `a@b.co,c@d.co` it
+// matches `a@b.co,c` and leaves `@d.co` standing in the public body: the second
+// address is not redacted, it is merely beheaded, and its domain still names
+// the person on a personal address. Adjacency is not hypothetical here. The
+// cron summaries join their own failure lines with "\n", but each line embeds a
+// caught exception's message, and SMTP and transport errors list rejected
+// recipients comma-separated with no space ("Invalid recipients:
+// a@b.co,c@d.co"). Repeating the group redacts a whole `@`-joined chain as one
+// unit, which is the same safe direction as the rest of this pattern.
+//
+// Every run is separated from the next by a literal `@` that no run can match,
+// so no two parts of the pattern can ever match the same characters and the
+// repetition adds no ambiguity: where each run ends is forced by the input. An
+// ambiguous pair (`[^\s@]*\.[^\s@]*`) backtracks quadratically on a long run
+// that never matches, and this runs on caught-exception text.
+const EMAIL_ADDRESS = /[^\s@]+(?:@[^\s@]+)+/g;
 
 export function redactEmails(text: string): string {
   return text.replace(EMAIL_ADDRESS, "[email redacted]");

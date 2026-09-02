@@ -123,6 +123,26 @@ describe("alertOps push webhook", () => {
     expect(body).not.toContain("@");
   });
 
+  // The real shape this misses: a transport error naming several rejected
+  // recipients at once. A pattern that stopped after one `@` pair swallowed the
+  // separator and the second local part with it, publishing a bare `@d.co`.
+  it("redacts adjacent addresses joined with no space, not just the first", async () => {
+    await alertOps({
+      flow: "ops",
+      stage: "cron_followups",
+      errorMessage:
+        "550 invalid recipients: priya@example.com,raj@other.example: SMTP 553",
+    });
+    const body = lastPushBody();
+    expect(body).not.toContain("@");
+    expect(body).not.toContain("priya");
+    expect(body).not.toContain("raj");
+    // Not even the second address's domain half.
+    expect(body).not.toContain("other.example");
+    expect(body).toContain("[email redacted]");
+    expect(body).toContain("SMTP 553");
+  });
+
   it("leaves error text with no address untouched", async () => {
     await alertOps({
       flow: "apply",
@@ -256,6 +276,69 @@ describe("redactEmails covers the whole validateEmail grammar", () => {
     expect(
       survived.slice(0, 20),
       "validateEmail now accepts an address shape EMAIL_ADDRESS in src/lib/opsAlert.ts does not match, so that address goes out whole on the public alert topic; widen the redactor, never narrow the sweep",
+    ).toEqual([]);
+  });
+
+  // The sweep above feeds one address at a time, so it cannot see the class of
+  // miss that lives BETWEEN addresses: the runs in the pattern are greedy and
+  // cannot cross an `@`, so a pattern that stopped after one `@` pair matched
+  // through the separator and the second address's local part, then stopped,
+  // leaving a bare `@domain` in the public body. Composition needs its own
+  // sweep for the same reason single addresses do: the separator is chosen by
+  // whatever exception text the caller caught, not by us, so every character
+  // above is tried as the join rather than the comma someone thought of.
+  const ADJACENCY_SAMPLE_SIZE = 24;
+
+  /**
+   * What "nothing survived" means once two addresses can be joined by an `@`.
+   * A leftover `@` on its own is not a leak and never was: the redactor
+   * deliberately leaves `@garammasaladating` alone, and a join like
+   * `a@a.a @ a@a.a` leaves that lone `@` between the two redactions. What must
+   * never survive is an `@` still ATTACHED to text, which is exactly the
+   * beheaded-address shape this test exists for (`[email redacted]@d.co`). So
+   * the placeholder is blanked out first, and then any `@` with a non-space
+   * neighbour is the failure.
+   */
+  function addressFragmentSurvives(redacted: string): boolean {
+    const withoutPlaceholders = redacted.split("[email redacted]").join(" ");
+    return /[^\s@]@|@[^\s@]/.test(withoutPlaceholders);
+  }
+
+  it("redacts both addresses when two sit adjacent, whatever character joins them", () => {
+    const accepted = [...everyCandidate()].filter(
+      (candidate) => validateEmail(candidate) === undefined,
+    );
+    // Evenly spaced across the accepted set rather than the first N, so the
+    // pairs come from both structural sweeps and the per-character positions
+    // instead of one corner of the first alphabet.
+    const step = Math.max(
+      1,
+      Math.floor(accepted.length / ADJACENCY_SAMPLE_SIZE),
+    );
+    const sample = accepted
+      .filter((_, index) => index % step === 0)
+      .slice(0, ADJACENCY_SAMPLE_SIZE);
+    expect(sample).toHaveLength(ADJACENCY_SAMPLE_SIZE);
+
+    const survived: string[] = [];
+    for (const left of sample) {
+      for (const right of sample) {
+        // The empty join too: nothing says a caught exception separates them.
+        for (const join of ["", ...CHARACTERS]) {
+          const pair = `${left}${join}${right}`;
+          const redacted = redactEmails(
+            `invalid recipients: ${pair}: SMTP 553`,
+          );
+          if (addressFragmentSurvives(redacted)) {
+            survived.push(JSON.stringify(pair));
+          }
+        }
+      }
+    }
+
+    expect(
+      survived.slice(0, 20),
+      "two addresses the front door accepts, joined by one character, left address text attached to an `@`: the greedy run reached past the separator into the next local part and stopped there, so the trailing address goes out on the public alert topic with only its local part removed",
     ).toEqual([]);
   });
 

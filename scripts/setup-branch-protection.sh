@@ -14,22 +14,28 @@
 #   ./scripts/setup-branch-protection.sh
 #
 # What this does once enabled:
-#   - Requires the CI check to be green before any merge to main
+#   - Requires the CI checks to be green before any merge to main
 #   - Requires the branch to be up-to-date with main (no stale merges)
 #   - Blocks even admins from bypassing (that's how the last bad merge happened)
 #
-# The required check:
+# The required checks (every job in .github/workflows/ci.yml, which triggers on
+# every pull_request):
 #   Lint, Types, Test, Build: ESLint + astro check + Vitest + astro build
-#   (single job in .github/workflows/ci.yml, runs on every pull_request)
+#   Firestore/Storage rules (emulator): npm run test:rules against the Firebase
+#     emulator, the only gate on firestore.rules/storage.rules
 #
-# WHY only this one check (2026-07-14): a required check must come from a job
-# that reports on every PR, or merges deadlock waiting for a check that never
-# starts (hit on PR #139). "Smoke Tests" runs only on schedule and
-# workflow_dispatch, so it never reports on PRs; mutation testing (Stryker)
-# runs in the local pre-push hook and has no workflow at all. Earlier versions
-# of this script required both plus three job names ("Lint & Type Check",
-# "Unit Tests", "Build") that were consolidated into the single job above.
-# Requiring any check that does not report on PRs re-creates the deadlock.
+# WHY every ci.yml job and nothing else (2026-09-02): a required check must come
+# from a job that reports on every PR, or merges deadlock waiting for a check
+# that never starts (hit on PR #139). Both jobs above run on every PR with no
+# path filter and no conditional skip, so both always report; a CI job that is
+# not listed here is advisory only and its failure does not block a merge, which
+# is how a rules regression could have merged green. "Smoke Tests" runs only on
+# schedule and workflow_dispatch, so it never reports on PRs; mutation testing
+# (Stryker) runs in the local pre-push hook and has no workflow at all. Earlier
+# versions of this script required both plus three job names ("Lint & Type
+# Check", "Unit Tests", "Build") that were consolidated into the single job
+# above. Requiring any check that does not report on PRs re-creates the
+# deadlock; adding a ci.yml job without adding it here leaves it non-blocking.
 # If you add a check here, its workflow must trigger on pull_request and the
 # string must match the job's `name:` exactly.
 # =============================================================================
@@ -76,7 +82,8 @@
 #   "required_status_checks": {
 #     "strict": true,
 #     "contexts": [
-#       "Lint, Types, Test, Build"
+#       "Lint, Types, Test, Build",
+#       "Firestore/Storage rules (emulator)"
 #     ]
 #   },
 #   "enforce_admins": true,
@@ -85,4 +92,4 @@
 # }
 # EOF
 #
-# echo "Done. Main is locked. The CI check must pass before any merge."
+# echo "Done. Main is locked. Both CI checks must pass before any merge."

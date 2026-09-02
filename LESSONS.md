@@ -1,5 +1,21 @@
 # Lessons
 
+## Adding a CI job does not add a gate, and nothing said so out loud
+
+**What went wrong:** The Firestore/Storage emulator suite was promoted from "too heavy for pre-commit" to its own CI job in PR #135, precisely so a rules regression could not merge. It then sat unrequired for three weeks. The required-check list in `scripts/setup-branch-protection.sh`, the ruleset in GitHub Settings, and `docs/security/REMEDIATION.md` all still named one check, so a red rules job showed a red X on the PR and merged anyway. The one gate on `firestore.rules`/`storage.rules`, the exact file pair whose mismatch took the apply form down for a week in July 2026, was decorative.
+
+**Why:** Branch protection is an allowlist of check names, not "whatever the workflow reports." Adding a job to `ci.yml` is a one-file change and feels complete, because the job runs, goes green, and shows up on the PR. The second half, listing the name in the protection config, lives in a different file and a different system (a GitHub ruleset this repo cannot read), and nothing in the repo tied the two together. Both copies drifted silently for the same reason: a review would have to notice an absence, and absences do not appear in diffs.
+
+**Rule:** Every job in `ci.yml` is required, or it is advisory and should be honestly described as advisory. `test/required-checks.test.ts` enforces the set equality in both directions and fails on drift, so a new job cannot ship without a decision about whether it gates. The inverse deadlock is just as real: a required check with no job that reports on every PR blocks merges forever (PR #139), so the same test pins that CI has no path filter and no job-level `if:`. A required check name is a string match on the job's `name:`, so renaming a job is a two-system change, and the GitHub-side half can only be verified by a human looking at the ruleset.
+
+## Redact before you truncate, or the truncation undoes the redaction
+
+**What went wrong:** `alertOps` sends failure pages to an ntfy topic whose URL is effectively public. It already withheld the `context` map for that reason, but it forwarded `errorMessage` verbatim, and the cron summaries build that string out of the recipient: "post-show email to priya@example.com: SMTP 535". Applicant addresses went out over a public channel while the code carried a comment explaining that PII must not.
+
+**Why:** The protection was scoped to the field that obviously holds PII and stopped there. `errorMessage` reads as machine text, so it never got the same treatment, even though it is free text assembled by callers who legitimately want to name the person the failed operation was for. Fixing it at the two cron callers would have been the smaller diff and the wrong one: any future caller reintroduces the leak. The second, subtler trap is ordering. Redacting after a length bound means a cut landing inside an address leaves a fragment the pattern no longer matches, and multi-failure cron summaries routinely exceed the 2000-char bound, so that is a live case rather than a theoretical one.
+
+**Rule:** Strip PII at the sink that publishes it, never at the callers that produce it, so the guarantee holds for callers that do not exist yet. Redact first, bound second, always in that order. And when a channel is documented as public, treat every field crossing it as public, not just the field named `context`: the private channel (here, the alert email) is where the full detail belongs.
+
 ## A green synthetic monitor proved the happy path while every long-form applicant was rejected
 
 **What went wrong:** The 6-hour synthetic apply monitor was green 10 runs straight while real applicants (Akshay Aug 30, Dua Aug 27 with 4 retries) got "Missing or insufficient permissions" and their applications were silently thrown away. The Firestore rules capped pitch at 2000 chars, phone at 20 and height at 20; the client validated none of these lengths, and one field (`type`) even had a form `maxLength={200}` four times larger than the deployed rules cap of 50. Anyone who wrote a long pitch, a spelled-out height or a formatted phone number was rejected at the last possible moment with a generic error, after doing all the work.

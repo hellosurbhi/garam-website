@@ -12,10 +12,15 @@ import { readTrimmedEnv } from "@/lib/env";
  *
  * Channels: email to NOTIFICATION_EMAIL (primary) and, when
  * ALERT_WEBHOOK_URL is set, an ntfy-style push POST (Title/Priority headers,
- * plain-text body) so email is not a single point of failure. alertOps never
- * throws and never blocks the caller's response semantics.
+ * plain-text body) so email is not a single point of failure. The push body is
+ * treated as public: no context entries, and email addresses inside the error
+ * message are redacted. alertOps never throws and never blocks the caller's
+ * response semantics.
  */
 export type AlertFlow = "apply" | "waiver" | "portal" | "lead" | "ops";
+
+/** Bound on the error text sent over either channel. */
+const MAX_ERROR_CHARS = 2000;
 
 export interface OpsAlertReport {
   flow: AlertFlow;
@@ -61,14 +66,37 @@ function buildAlertHtml(report: OpsAlertReport): string {
   </div>`;
 }
 
+// An ntfy topic URL is a bearer secret at best: anyone who learns it can
+// subscribe, so the webhook body is treated as public. Error messages are free
+// text and routinely name the person the operation was for, e.g. the cron
+// summaries in src/pages/api/cron/*.ts read "post-show email to
+// priya@example.com: SMTP 535". Addresses are stripped at this sink rather
+// than at each caller so no future caller can reintroduce the leak; the
+// unredacted message still reaches the producer through the email path.
+const EMAIL_ADDRESS = /[\w.+-]+@[\w-]+(?:\.[\w-]+)+/g;
+
+export function redactEmails(text: string): string {
+  return text.replace(EMAIL_ADDRESS, "[email redacted]");
+}
+
+/**
+ * Webhook body for `report`, redacted then bounded (never the reverse: a cut
+ * that lands inside an address, which the 2000-char cron summaries make a real
+ * case, would otherwise leave a half address the pattern no longer matches).
+ */
+export function buildWebhookBody(report: OpsAlertReport): string {
+  const message = redactEmails(report.errorMessage).slice(0, MAX_ERROR_CHARS);
+  return `Failure in ${report.flow}/${report.stage}\n\n${message}\n\nDetails in the alert email.`;
+}
+
 async function pushWebhook(report: OpsAlertReport): Promise<void> {
   const url = readTrimmedEnv(import.meta.env.ALERT_WEBHOOK_URL);
   if (!url) return;
-  // WHY: the webhook body carries flow/stage/error only, never the context
-  // entries. Context can hold applicant PII (name, email, phone) and ntfy
-  // topics are effectively public URLs; the full context still reaches the
-  // producer through the email path. The 5s deadline keeps a stalled webhook
-  // host from delaying every failure response that awaits alertOps.
+  // WHY: the webhook body carries flow/stage plus a redacted error only, never
+  // the context entries. Context can hold applicant PII (name, email, phone);
+  // the full context still reaches the producer through the email path. The 5s
+  // deadline keeps a stalled webhook host from delaying every failure response
+  // that awaits alertOps.
   await fetch(url, {
     method: "POST",
     headers: {
@@ -76,7 +104,7 @@ async function pushWebhook(report: OpsAlertReport): Promise<void> {
       Priority: "urgent",
       Tags: "rotating_light",
     },
-    body: `Failure in ${report.flow}/${report.stage}\n\n${report.errorMessage}\n\nDetails in the alert email.`,
+    body: buildWebhookBody(report),
     signal: AbortSignal.timeout(5000),
   });
 }
@@ -92,7 +120,7 @@ export async function alertOps(rawReport: OpsAlertReport): Promise<boolean> {
   // Central bound: callers used to slice(0, 2000) by hand, inconsistently.
   const report: OpsAlertReport = {
     ...rawReport,
-    errorMessage: rawReport.errorMessage.slice(0, 2000),
+    errorMessage: rawReport.errorMessage.slice(0, MAX_ERROR_CHARS),
   };
   const notificationEmail = readTrimmedEnv(import.meta.env.NOTIFICATION_EMAIL);
   const webhookConfigured = Boolean(
@@ -107,7 +135,9 @@ export async function alertOps(rawReport: OpsAlertReport): Promise<boolean> {
           html: buildAlertHtml(report),
         })
       : Promise.resolve(),
-    pushWebhook(report),
+    // The raw message, not the bounded one: buildWebhookBody redacts before it
+    // truncates.
+    pushWebhook(rawReport),
   ]);
   return (
     (Boolean(notificationEmail) && mailResult.status === "fulfilled") ||

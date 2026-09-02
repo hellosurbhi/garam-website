@@ -73,7 +73,12 @@ Branch protection on `main` via GitHub Ruleset (not Classic, which is deprecated
 
 - Restrict deletions
 - Require pull request (1 review on external contributions; Surbhi as owner bypasses)
-- Require status checks: Lint, Types, Test, Build
+- Require status checks: Lint, Types, Test, Build; Firestore/Storage rules (emulator)
+  - Every job in `.github/workflows/ci.yml` must be listed here. The emulator job
+    was added later and left unrequired until 2026-09-02, so a `firestore.rules`
+    or `storage.rules` regression could merge with a red rules job. Keep this
+    list, `scripts/setup-branch-protection.sh` and the ci.yml job names in sync;
+    `test/required-checks.test.ts` fails when they drift.
 
 ---
 

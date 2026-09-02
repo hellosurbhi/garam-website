@@ -1,5 +1,11 @@
 # Changelog
 
+## feat(events): new Philadelphia show Sep 27 at Next In Line Comedy (2026-09-02)
+
+Sunday September 27 2026, 7:30 to 9 PM, tickets on the venue's Eventbrite (ID 1999515971095). Appears on the tickets page, home shows section and gets the `/events/philadelphia-2026-09-27` landing page with Event JSON-LD. Details verified against the live Eventbrite listing.
+
+**Files:** `src/data/events.ts`
+
 ## refactor(events): plain language ticket source labels + Aug 28 Philly correction (2026-09-02)
 
 The `TicketSource` values `eventbrite-owned` and `external` said nothing about who actually sells the tickets, and `external` lumped two different situations together. New values: `our-eventbrite` (our account, order data and purchase tracking available), `their-eventbrite` (a venue or promoter's Eventbrite account, clicks only), `other-platform` (non-Eventbrite ticketing like City Winery and DC Comedy Loft) and `none` (TBA notify-me cards with nothing on sale yet). Every entry remapped mechanically by URL; zero behavior change, code still only branches on "is this our account".

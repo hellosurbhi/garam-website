@@ -12,7 +12,9 @@ The `TicketSource` values `eventbrite-owned` and `external` said nothing about w
 
 Data correction in the same pass: the Aug 28 Philadelphia show was ticketed on Next In Line Comedy's own Eventbrite (owner confirmed), so its entry moves from our-account to their-account.
 
-**Files:** `src/data/events.ts`, `src/pages/api/sync-orders.ts`, `src/pages/events/[slug].astro`, `src/lib/eventbriteContent.ts`, `src/utils/eventSchema.test.ts`, `test/go-redirect.test.ts`
+The order-sync filter was extracted into an exported `orderSyncableEvents()` helper with its own test (`test/sync-orders.test.ts`) pinning the semantics: only our-account shows with a listing ID sync, and a their-eventbrite listing with a real public ID (the Los Angeles case) stays excluded. This satisfies the CI patch coverage gate on the changed line.
+
+**Files:** `src/data/events.ts`, `src/pages/api/sync-orders.ts`, `src/pages/events/[slug].astro`, `src/lib/eventbriteContent.ts`, `src/utils/eventSchema.test.ts`, `test/go-redirect.test.ts`, `test/sync-orders.test.ts`
 
 ## fix(apply): CodeRabbit review round on PR #244 (2026-08-31)
 

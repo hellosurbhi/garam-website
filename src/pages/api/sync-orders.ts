@@ -9,6 +9,7 @@ import { sendCapiEvent } from "@/lib/capi";
 import { withTimeout } from "@/utils/withTimeout";
 import { alertOps } from "@/lib/opsAlert";
 import { events } from "@/data/events";
+import type { EventEntry } from "@/data/events";
 import type { Order, SyncMeta } from "@/types/analytics";
 
 // Bounded per-call, not per-run: this loop can touch many orders in one
@@ -506,6 +507,19 @@ async function writeSyncMeta(
   }
 }
 
+/**
+ * Events whose orders our Eventbrite access token can actually read: shows
+ * ticketed on our own account that have a real listing ID. A
+ * "their-eventbrite" show (e.g. Los Angeles) also carries a public
+ * `eventbriteId`, but the orders API rejects our token on it, so including
+ * one just generates an authorization error on every sync run.
+ */
+export function orderSyncableEvents(list: EventEntry[]): EventEntry[] {
+  return list.filter(
+    (e) => e.ticketSource === "our-eventbrite" && e.eventbriteId,
+  );
+}
+
 // ─── Route handler ────────────────────────────────────────────────────────────
 
 export const POST: APIRoute = async ({ request }) => {
@@ -567,14 +581,7 @@ export const POST: APIRoute = async ({ request }) => {
     const lastSyncAt = prevMeta?.lastSyncAt;
     const previousTotal = prevMeta?.ordersProcessed ?? 0;
 
-    // Only process events we actually sell tickets for ourselves. The Los
-    // Angeles listing (ticketSource: "their-eventbrite") carries a real
-    // `eventbriteId` too, but it belongs to a third party's Eventbrite
-    // account: our access token has no orders permission on it, so
-    // including it here just generates an authorization error on every run.
-    const syncableEvents = events.filter(
-      (e) => e.ticketSource === "our-eventbrite" && e.eventbriteId,
-    );
+    const syncableEvents = orderSyncableEvents(events);
 
     const syncErrors: string[] = [];
     let totalProcessed = 0;

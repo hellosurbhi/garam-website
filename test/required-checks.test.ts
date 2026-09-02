@@ -14,7 +14,19 @@ import { join } from "path";
 //
 // It also pins the two properties that make requiring EVERY job safe: no path
 // filter on the trigger, and no job-level `if:`. A required check that can
-// decline to report blocks the PR forever (hit on PR #139).
+// decline to report blocks the PR forever (hit on PR #139). Neither property is
+// invented here: both are the owner decision recorded in the ci.yml header on
+// 2026-07-14 ("Full CI now runs on EVERY PR ... no conditional skips and no
+// success reported without the checks actually running"), and this test is
+// where that decision is enforced rather than merely written down. An advisory
+// job is still allowed, it just has to be declared: add it to a named exception
+// list here, with the reason it does not gate, so the choice is visible instead
+// of being an omission nobody notices.
+//
+// What this test CANNOT check: the "Protect Main" ruleset itself, which lives
+// in GitHub Settings and is the only thing that actually blocks a merge. Set
+// equality across these two files is necessary, not sufficient; the ruleset
+// half needs a human (see [NON-BLOCKING-RULES-GATE] in BUGS.md).
 
 const ciYml = readFileSync(
   join(process.cwd(), ".github/workflows/ci.yml"),

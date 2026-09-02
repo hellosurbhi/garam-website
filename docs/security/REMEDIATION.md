@@ -74,11 +74,21 @@ Branch protection on `main` via GitHub Ruleset (not Classic, which is deprecated
 - Restrict deletions
 - Require pull request (1 review on external contributions; Surbhi as owner bypasses)
 - Require status checks: Lint, Types, Test, Build; Firestore/Storage rules (emulator)
+  - **Not yet true in GitHub as of 2026-09-02:** the live ruleset still requires
+    the first check only. The second name is documented here and in
+    `scripts/setup-branch-protection.sh` as the target state; an operator has to
+    add the exact string `Firestore/Storage rules (emulator)` under "Require
+    status checks to pass" in Settings, then Rules, then "Protect Main". Until
+    then a red rules job still merges. Confirmed by opening any PR: the merge box
+    should list two required checks. Open as [NON-BLOCKING-RULES-GATE] in
+    `BUGS.md`.
   - Every job in `.github/workflows/ci.yml` must be listed here. The emulator job
-    was added later and left unrequired until 2026-09-02, so a `firestore.rules`
-    or `storage.rules` regression could merge with a red rules job. Keep this
+    was added in PR #135 and left unrequired, so a `firestore.rules` or
+    `storage.rules` regression could merge with a red rules job. Keep this
     list, `scripts/setup-branch-protection.sh` and the ci.yml job names in sync;
-    `test/required-checks.test.ts` fails when they drift.
+    `test/required-checks.test.ts` fails when they drift. That test guards the
+    three files in this repo; the ruleset itself is outside its reach, which is
+    why the GitHub half needs a human to confirm.
 
 ---
 

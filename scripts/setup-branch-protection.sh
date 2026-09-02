@@ -24,6 +24,15 @@
 #   Firestore/Storage rules (emulator): npm run test:rules against the Firebase
 #     emulator, the only gate on firestore.rules/storage.rules
 #
+# THIS SCRIPT IS NOT THE ENFORCEMENT, and while it stays commented out it changes
+# nothing at all. Protection today comes from the "Protect Main" GitHub Ruleset,
+# edited by hand in Settings, then Rules. As of 2026-09-02 that ruleset lists
+# only "Lint, Types, Test, Build", so the emulator job runs but does not block a
+# merge; adding the second string there by hand is the fix, and it is open as
+# [NON-BLOCKING-RULES-GATE] in BUGS.md until someone confirms the merge box shows
+# two required checks. The contexts array below is the same list in API form, for
+# whenever the repo is on GitHub Pro or public and this can run unattended.
+#
 # WHY every ci.yml job and nothing else (2026-09-02): a required check must come
 # from a job that reports on every PR, or merges deadlock waiting for a check
 # that never starts (hit on PR #139). Both jobs above run on every PR with no

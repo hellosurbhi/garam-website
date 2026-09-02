@@ -73,10 +73,42 @@ function buildAlertHtml(report: OpsAlertReport): string {
 // priya@example.com: SMTP 535". Addresses are stripped at this sink rather
 // than at each caller so no future caller can reintroduce the leak; the
 // unredacted message still reaches the producer through the email path.
-const EMAIL_ADDRESS = /[\w.+-]+@[\w-]+(?:\.[\w-]+)+/g;
+//
+// WHY this pattern mirrors src/utils/validateEmail.ts instead of matching a
+// conventional address shape: the redactor has to cover every address the app
+// LETS IN, not every address that is well formed. The apply form and the
+// capture-lead API accept `[^\s@]+@[^\s@]+\.[^\s@]+` (native validation is off,
+// and Firestore rules only bound the length), so `priya!@example.com` reaches a
+// cron failure summary; a local part restricted to `[\w.+-]` never matched it
+// and the full address went out over the public topic. Keep the two patterns in
+// step: loosening the validator without loosening this one reopens the leak.
+// The cost is deliberate over-redaction of non-address text shaped like one
+// (a versioned package spec such as `pkg@1.2.3`), which is the safe direction:
+// the unredacted text is one click away on the alert email.
+//
+// The domain half splits the dot out of the character class
+// (`[^\s@.]+(?:\.[^\s@.]+)+` rather than `[^\s@]+\.[^\s@]+`) so the two parts
+// cannot match the same characters. An ambiguous pair backtracks quadratically
+// on a long run that never matches, and this runs on caught-exception text.
+const EMAIL_ADDRESS = /[^\s@]+@[^\s@.]+(?:\.[^\s@.]+)+/g;
 
 export function redactEmails(text: string): string {
   return text.replace(EMAIL_ADDRESS, "[email redacted]");
+}
+
+/**
+ * Ceiling on the text handed to the redactor. Generous multiple of the output
+ * bound so nothing that could survive to the body is dropped first, but finite:
+ * `errorMessage` is whatever a caught exception carried, so it is not otherwise
+ * bounded before this point.
+ */
+const MAX_REDACTION_INPUT_CHARS = MAX_ERROR_CHARS * 4;
+
+function boundRedactionInput(text: string): string {
+  if (text.length <= MAX_REDACTION_INPUT_CHARS) return text;
+  // Drop the token the cut landed inside. Half an address no longer matches
+  // EMAIL_ADDRESS, and publishing "priya@exam" still names the applicant.
+  return text.slice(0, MAX_REDACTION_INPUT_CHARS).replace(/\S+$/, "");
 }
 
 /**
@@ -85,7 +117,10 @@ export function redactEmails(text: string): string {
  * case, would otherwise leave a half address the pattern no longer matches).
  */
 export function buildWebhookBody(report: OpsAlertReport): string {
-  const message = redactEmails(report.errorMessage).slice(0, MAX_ERROR_CHARS);
+  const message = redactEmails(boundRedactionInput(report.errorMessage)).slice(
+    0,
+    MAX_ERROR_CHARS,
+  );
   return `Failure in ${report.flow}/${report.stage}\n\n${message}\n\nDetails in the alert email.`;
 }
 

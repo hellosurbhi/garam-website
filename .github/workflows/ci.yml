@@ -1,8 +1,16 @@
 # .github/workflows/ci.yml
 #
 # Both checks below ("Lint, Types, Test, Build" and "Firestore/Storage rules
-# (emulator)") are REQUIRED by the repo ruleset "Protect Main" (managed in
-# GitHub Settings, Rules). Two constraints follow:
+# (emulator)") MUST be required by the repo ruleset "Protect Main" (managed in
+# GitHub Settings, Rules, which no file in this repo can read or write).
+#
+# STATE (2026-09-02): the ruleset requires "Lint, Types, Test, Build" only.
+# "Firestore/Storage rules (emulator)" is listed here, in
+# scripts/setup-branch-protection.sh and in docs/security/REMEDIATION.md as
+# required, but until an operator adds that exact string to the ruleset it stays
+# ADVISORY: it runs and shows a red X on the PR, and the merge goes through
+# anyway. Tracked as [NON-BLOCKING-RULES-GATE] in BUGS.md until someone confirms
+# the merge box lists two required checks. Two constraints follow:
 #
 # WHY there is no paths-ignore on the trigger (2026-07-14): a required check
 # that never starts blocks the PR forever. The old `paths-ignore: **.md` meant

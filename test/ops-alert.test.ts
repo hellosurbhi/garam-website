@@ -78,6 +78,46 @@ describe("alertOps push webhook", () => {
     expect(lastPushBody()).not.toContain("@");
   });
 
+  // The redactor has to cover every address the app ACCEPTS, not every address
+  // that is conventionally formed: validateEmail.ts allows any non-space,
+  // non-@ character in the local part, so these all reach a cron summary.
+  it.each([
+    "priya!@example.com",
+    "priya's.test@example.co.uk",
+    "priya#tag@mail.example.com",
+    "priya(x)@example.com",
+  ])("redacts %s, which the apply form accepts", async (address) => {
+    await alertOps({
+      flow: "ops",
+      stage: "cron_followups",
+      errorMessage: `post-show email to ${address}: SMTP 535`,
+    });
+    const body = lastPushBody();
+    expect(body).not.toContain(address);
+    // Nothing address-shaped survives at all, domain included.
+    expect(body).not.toContain("@");
+    expect(body).toContain("[email redacted]");
+    expect(body).toContain("SMTP 535");
+  });
+
+  // `errorMessage` is whatever a caught exception carried, so the redactor
+  // caps its input before scanning it. That cap must not become the same
+  // half-address trap the truncation ordering avoids.
+  it("drops the token its input ceiling cuts through, rather than publishing half an address", async () => {
+    // 73 chars each, so the 8000-char ceiling lands 5 chars past an `@`. Sized
+    // so redaction shrinks the 108 whole addresses before it to roughly 1900
+    // chars: the fragment would sit inside the 2000-char body if it survived.
+    const address = `${"a".repeat(60)}@example.com `;
+    await alertOps({
+      flow: "ops",
+      stage: "cron_followups",
+      errorMessage: `${"s".repeat(50)} ${address.repeat(110)}`,
+    });
+    const body = lastPushBody();
+    expect(body).toContain("[email redacted]");
+    expect(body).not.toContain("@");
+  });
+
   it("leaves error text with no address untouched", async () => {
     await alertOps({
       flow: "apply",

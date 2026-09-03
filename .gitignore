@@ -44,7 +44,8 @@ coverage/
 # (.claude-fixed-items.txt, .claude-wontfix-items.txt). The `.claude` entry
 # above only matches that exact name, so these were landing in commits; the
 # findings themselves belong in BUGS.md and CHANGELOG.md, never here.
-.claude-*
+# Anchored: only the root scratch files, so a nested .claude-* path stays visible.
+/.claude-*
 .firebaserc
 .beads
 .ralph-tui

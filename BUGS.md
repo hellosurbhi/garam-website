@@ -9,6 +9,16 @@ fixed entries, [x] checkboxes or "Status: Fixed" records to this file. -->
 
 ## Open
 
+### [HIGH] The weekly production smoke lane has been red on every run since at least 2026-07-08, so it protects nothing
+
+- **Date:** 2026-09-02
+- **File:** `.github/workflows/smoke-tests.yml`, `tests/smoke/critical-flows.spec.ts`, `tests/smoke/site.spec.ts`
+- **Status:** Open
+- **Severity:** High (a check that always fails is a check nobody reads; a real regression in these flows would be invisible)
+- **What happened:** Every scheduled Smoke Tests run (Wednesdays, PLAYWRIGHT_BASE_URL=production) from 2026-07-08 through 2026-09-02 concluded failure, ten out of ten. A manual production run on 2026-09-02 (33669864199, AFTER the rules fix was proven by synthetic monitor run 33669667257) still failed 76 of 320: the city page h1 tests (own entry below), Footer deep links, and the entire critical-flows group (apply happy path, HomeSignup, StandaloneWaiver, LeadCaptureModal, NotifyModal) with success panels never appearing. The critical-flows tests mock ALL Firebase network calls via page.route, so Firestore rules cannot be the cause; the suite passes against the static preview in the pre-push gate. Something about production mode breaks it (candidates: real /api routes behaving differently than the static preview fulfills, interception misses against the deployed bundle, marketing scripts interfering). The form itself works: the synthetic monitor submits a real application on production end to end and it lands in Firestore.
+- **Why deferred:** pre-existing test infrastructure, red since long before this session; the session's inline scope was the apply form rules-drift outage, which is fixed and proven by the lane built for that job (synthetic monitor).
+- **Revisit when:** next overnight pass. Plan: run `PLAYWRIGHT_BASE_URL=https://garammasaladating.com npx playwright test tests/smoke/critical-flows.spec.ts -g "happy path" --project=desktop` locally, read the failure trace to find where the flow diverges from the static-preview run, fix the root cause (or decide the mocked critical flows are preview-only by design and split the production schedule to a suite that can pass, keeping coverage). Verify: the next scheduled production run is green or fails only on entries still open in this file.
+
 ### [HIGH] Every city page fails the scheduled production smoke test: `h1.city-h1` resolves hidden on mobile viewports
 
 - **Date:** 2026-09-02

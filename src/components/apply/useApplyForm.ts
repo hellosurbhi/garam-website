@@ -864,10 +864,30 @@ export function useApplyForm() {
       // Real-time page: one failed submission = one immediate email, with the
       // applicant's contact info so they can be recovered even though the
       // application never reached Firestore.
+      // WHY: field_lengths was already computed above for PostHog, but
+      // PostHog is exactly what's blocked in the in-app browsers and ad
+      // blockers this flow runs in (see failureAlert.ts). Without it here,
+      // "Missing or insufficient permissions" reaches the alert email with
+      // no way to tell a stale-rules rejection from an over-limit field on
+      // a legitimate submission (confirmed 2026-09-09: no way to diagnose
+      // the Aryan Gandhi permission-denied report from the email alone).
       reportFailure({
         flow: "apply",
         stage: "submit",
-        errorMessage: error.message,
+        errorMessage: isPermissionDenied
+          ? `${error.message} | field_lengths: ${JSON.stringify({
+              name: form.name.length,
+              city: form.city.length,
+              email: form.email.length,
+              phone: form.phone.length,
+              height: form.height.length,
+              instagram: form.instagram.length,
+              referrerName: form.referrerName.length,
+              pitch: form.pitch.length,
+              type: form.type.length,
+              howHeard: form.howHeard.length,
+            })}`
+          : error.message,
         contact: {
           name: form.name,
           email: form.email,

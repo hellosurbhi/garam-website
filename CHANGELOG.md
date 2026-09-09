@@ -1,5 +1,17 @@
 # Changelog
 
+## fix(smoke): stop the apply happy-path smoke test from paging production (2026-09-09)
+
+The scheduled Smoke Tests apply happy-path test mocks the three Firebase googleapis.com endpoints but never mocked this site's own `/api/alert-failure` route. Its long-standing failure against production (open in BUGS.md) meant every Wednesday run sent a real FAILURE email to production on-call with the test's `Smoke Tester` fixture, indistinguishable at a glance from a real applicant. `/api/alert-failure` is now fulfilled inside `mockFirebase()` alongside the other three routes. The underlying test failure itself is still open and unrelated to form health; see BUGS.md.
+
+**Files:** `tests/smoke/critical-flows.spec.ts`
+
+## fix(apply): surface field lengths in the alert email on a permission-denied rejection (2026-09-09)
+
+A `permission-denied` Firestore rejection already computed each text field's length for PostHog's `trackError`, but PostHog is blocked by exactly the ad blockers and in-app browsers this failure mode shows up in (confirmed against a real applicant's unresolved report from an Instagram in-app browser). The same `field_lengths` payload now ships inside the alert email's `errorMessage`, so a future permission-denied report is diagnosable from the email alone.
+
+**Files:** `src/components/apply/useApplyForm.ts`, `src/components/apply/useApplyForm.test.ts`
+
 ## feat(events): new Philadelphia show Sep 27 at Next In Line Comedy (2026-09-02)
 
 Sunday September 27 2026, 7:30 to 9 PM, tickets on the venue's Eventbrite (ID 1999515971095). Appears on the tickets page, home shows section and gets the `/events/philadelphia-2026-09-27` landing page with Event JSON-LD. Details verified against the live Eventbrite listing.

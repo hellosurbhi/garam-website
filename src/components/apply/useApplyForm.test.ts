@@ -635,6 +635,48 @@ describe("useApplyForm", () => {
     );
   });
 
+  it("permission-denied failure includes field lengths in the alert email", async () => {
+    const deniedError = Object.assign(
+      new Error("Missing or insufficient permissions."),
+      {
+        code: "permission-denied",
+      },
+    );
+    mockAddDoc.mockRejectedValueOnce(deniedError);
+    const { result } = renderHook(() => useApplyForm());
+
+    act(() =>
+      fillRequired(
+        result.current.set,
+        result.current.handleTermsCheckbox,
+        result.current.handleAddPhotos,
+      ),
+    );
+
+    await act(async () => {
+      await result.current.handleSubmit(makeSubmitEvent());
+    });
+
+    // PostHog (where field_lengths already lands via trackError) is exactly
+    // what's blocked in the in-app browsers this failure mode shows up in,
+    // so the alert email is the only place a human can see which field a
+    // rules rejection is actually about.
+    expect(mockReportFailure).toHaveBeenCalledWith(
+      expect.objectContaining({
+        flow: "apply",
+        stage: "submit",
+        errorMessage: expect.stringContaining("field_lengths"),
+      }),
+    );
+    expect(mockReportFailure).toHaveBeenCalledWith(
+      expect.objectContaining({
+        errorMessage: expect.stringContaining(
+          "Missing or insufficient permissions.",
+        ),
+      }),
+    );
+  });
+
   it("submit failure calls deleteObject for orphaned photo cleanup", async () => {
     mockAddDoc.mockRejectedValueOnce(new Error("Firestore error"));
     const { result } = renderHook(() => useApplyForm());

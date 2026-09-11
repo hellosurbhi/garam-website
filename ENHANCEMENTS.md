@@ -13,7 +13,6 @@ CHANGELOG.md. Never add completed or superseded entries to this file. -->
 
 ## Apply-monitor fix follow-ups (2026-08-19)
 
-- [ ] ENHANCEMENT: CI job auto-deploys firestore.rules/storage.rules on merge to main (Surbhi approved 2026-08-19) | Why: both the July and August apply outages were rules merged but never manually deployed; executor is a dedicated follow-up PR, blocked until Surbhi completes operator step 4 of the apply-monitor fix PR (adds a FIREBASE_SERVICE_ACCOUNT repo secret, no workflow reads it yet because none exists yet) | Files: .github/workflows/deploy-rules.yml (does not exist yet, this ticket creates it) | Plan: workflow with explicit permissions contents: read, triggers on main-branch changes to firestore.rules/storage.rules, runs the firebase CLI rules deploy with the CI credential secret, fails loudly if the secret is missing (never skip-but-green) | Verify: merge a comment-only rules change, workflow goes green and scripts/check-rules-drift.mjs passes against production.
 - [ ] ENHANCEMENT: sweep orphaned synthetic monitor photos in Storage | Why: 28 failed runs each rolled back the Firestore write but got 403 deleting the uploaded 1x1 photo (pre-#135 storage.rules), leaving orphaned objects | Files: scripts/synthetic-apply-verify.mjs | Plan: extend the verify script cleanup to list photos/ objects and delete those older than 1 day whose owner metadata matches a synthetic-run anonymous session with no surviving application document | Verify: Storage list shows no synthetic orphans after a run.
 - [ ] ENHANCEMENT: second alert channel via ALERT_WEBHOOK_URL push | Why: alert email delivery to NOTIFICATION_EMAIL is unverified and email is a single point of failure for outage paging; opsAlert already supports a webhook | Files: src/lib/opsAlert.ts, README.md | Plan: operator sets ALERT_WEBHOOK_URL in Vercel to an ntfy topic, document the ops setup in README | Verify: test alert reaches the phone.
 
@@ -1422,6 +1421,7 @@ If the ambiguity matters there too, rename both with Surbhi's approval on the ex
 - [ ] LOW: [dependabot] .github/dependabot.yml:14, the new ignore rule for `version-update:semver-major` on typescript also applies to Dependabot security updates, so if a future TypeScript security fix ships only in a new major version, no PR is ever filed and the vulnerable version sits in the repo with no alert-driven bump until someone remembers to remove the rule. | Files: .github/dependabot.yml | PR: #134 | Head: 5da61cf89e4daf2e275c9a7e9ad2485635a6bf92
 
 <!-- fable-routed PR #134 head 5da61cf89e4daf2e275c9a7e9ad2485635a6bf92 -->
+
 - 2026-07-14T18:13Z | tier=F | primary=coderabbit | reason=error | fallback_used=gemini | commit=24f2dfb | diff_sha=3f36b82a499ff8d0d9ce02280734d6e9abbb23b752851075f3419f08ac0c1eef
 - 2026-07-14T18:18Z | tier=F | primary=coderabbit | reason=error | fallback_used=gemini | commit=e03c81e | diff_sha=84b353635e0d0759efea2b3738befa550278c5103eef7c91876532f209e284e4
 - 2026-07-14T18:22Z | tier=F | primary=coderabbit | reason=error | fallback_used=gemini | commit=e03c81e | diff_sha=d3c4345fa4b0d7370d9f353dd1522a044210e706b984ae0b5f064c2cb1a40a66

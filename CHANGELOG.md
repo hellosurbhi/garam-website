@@ -1,5 +1,13 @@
 # Changelog
 
+## ci: security rules now auto-deploy on merge to main (2026-09-11)
+
+New workflow `.github/workflows/deploy-rules.yml` closes the outage class behind the July, August and September apply-form failures: a PR would change `firestore.rules`/`storage.rules`, Vercel shipped the client instantly and the rules waited on a manual deploy that never happened, so the live site rejected every application with "Missing or insufficient permissions". Now any merge touching the rules files (or `firebase.json`) runs the emulator rules tests, deploys both rule sets with a dedicated minimal-permission service account (`github-rules-deploy`, key stored as the `FIREBASE_SERVICE_ACCOUNT` repo secret) and then runs `scripts/check-rules-drift.mjs` to prove the release landed. A missing secret fails the run red instead of skipping, and any failure pages the producer through the same single-thread GitHub issue pattern the synthetic monitor uses, in plain language.
+
+Same day, the backlog of undeployed rules was deployed manually via the sanctioned wrapper (repo at `762b807d`) and the Synthetic Apply Monitor went green end to end for the first time since Aug 12. The Sep 5 real-applicant failure (Instagram in-app browser, "Missing or insufficient permissions") is explained by that same stale-rules window and needs no separate fix.
+
+**Files:** `.github/workflows/deploy-rules.yml`, `ENHANCEMENTS.md` (completed CI-deploy ticket removed)
+
 ## feat(events): new Philadelphia show Sep 27 at Next In Line Comedy (2026-09-02)
 
 Sunday September 27 2026, 7:30 to 9 PM, tickets on the venue's Eventbrite (ID 1999515971095). Appears on the tickets page, home shows section and gets the `/events/philadelphia-2026-09-27` landing page with Event JSON-LD. Details verified against the live Eventbrite listing.

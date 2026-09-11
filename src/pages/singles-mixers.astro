@@ -320,6 +320,7 @@ const socialEventJsonLd = isMixerUpcoming
       fetch("/api/notify-mixer-rsvp", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
+        keepalive: true,
         body: JSON.stringify({ name, email, source: SOURCE }),
       }).catch(() => {
         /* owner alert is best effort; the lead is already saved */

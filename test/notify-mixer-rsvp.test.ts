@@ -6,6 +6,13 @@ vi.mock("@/lib/zohoMailer", () => ({
   sendMail: mockSend,
 }));
 
+// Every request in this suite shares the "unknown" IP bucket; without this
+// mock a run against a real Upstash instance rate limits the later tests.
+vi.mock("@/lib/rateLimit", async (importOriginal) => {
+  const actual = await importOriginal<typeof import("@/lib/rateLimit")>();
+  return { ...actual, enforceRateLimit: vi.fn(async () => null) };
+});
+
 const { POST } = await import("@/pages/api/notify-mixer-rsvp");
 
 function makeRequest(

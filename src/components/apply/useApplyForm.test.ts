@@ -665,7 +665,22 @@ describe("useApplyForm", () => {
       expect.objectContaining({
         flow: "apply",
         stage: "submit",
-        errorMessage: expect.stringContaining("field_lengths"),
+        // fillRequired sets name/city/email/instagram; every other field
+        // stays at its INITIAL "" default, so length 0.
+        errorMessage: expect.stringContaining(
+          JSON.stringify({
+            name: 8, // "Jane Doe"
+            city: 8, // "New York"
+            email: 16, // "jane@example.com"
+            phone: 0,
+            height: 0,
+            instagram: 7, // "janedoe"
+            referrerName: 0,
+            pitch: 0,
+            type: 0,
+            howHeard: 0,
+          }),
+        ),
       }),
     );
     expect(mockReportFailure).toHaveBeenCalledWith(

@@ -87,7 +87,7 @@ export const SINGLES_MIXERS = {
     },
     {
       q: "Is there a cover charge?",
-      a: "No. Entry is free and there is no drink minimum. Bring yourself and whatever you want to order.",
+      a: "No. Entry is free, and the first 50 singles through the door get two free drinks. Bring yourself.",
     },
     {
       q: "Do I need to come with a group?",

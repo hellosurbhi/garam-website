@@ -3,7 +3,7 @@ export const CUFFING_SEASON = {
   meta: {
     title: "Cuffing Season Is Here",
     description:
-      "A West Village singles mixer. Monday, September 14. Free entry, no drink minimum, singles only.",
+      "A West Village singles mixer. Monday, September 14. Free entry, two free drinks for the first 50, singles only.",
   },
   eyebrow: "Hosted by Garam Masala Dating",
   headline: "Your days of being single are numbered.",
@@ -20,5 +20,5 @@ export const CUFFING_SEASON = {
     errorMessage: "Something went wrong. Try again.",
   },
   finePrint:
-    "Monday, September 14. 6 to 9pm. Romae Cucina Italo Argentina, West Village. Free entry, no drink minimum. Singles only. Come dressed like it matters.",
+    "Monday, September 14. 6 to 9pm. Romae Cucina Italo Argentina, West Village. Free entry. Two free drinks for the first 50 singles. Come dressed like it matters.",
 };

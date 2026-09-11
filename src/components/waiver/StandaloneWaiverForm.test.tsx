@@ -29,7 +29,10 @@ function fillForm() {
   });
   // jsdom panels have zero scroll height, so the hook marks the waiver read
   // on mount and the agreement checkbox is enabled.
-  fireEvent.click(screen.getByRole("checkbox"));
+  // Queried by test id, not by role: the weekly smoke suite drives this
+  // checkbox through the same `waiver-agree` attribute, and it silently rotted
+  // once already. This runs on every PR, so the attribute can't vanish unseen.
+  fireEvent.click(screen.getByTestId("waiver-agree"));
 }
 
 describe("StandaloneWaiverForm", () => {

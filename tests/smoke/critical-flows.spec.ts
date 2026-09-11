@@ -201,7 +201,7 @@ test.describe("Standalone waiver (/waiver)", () => {
       .locator("[data-testid=waiver-scroll]")
       .evaluate((el) => el.scrollTo(0, el.scrollHeight));
     await page.fill("#waiver-signature", "Smoke Tester");
-    await page.check('[data-testid="apply-terms"]');
+    await page.check('[data-testid="waiver-agree"]');
   }
 
   test("happy path: reads, signs, submits, sees confirmation", async ({

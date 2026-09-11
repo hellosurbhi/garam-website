@@ -1,5 +1,15 @@
 # Changelog
 
+## fix(tests): waiver smoke flow drove the apply form's checkbox, so both waiver smoke tests failed before submitting (2026-09-11)
+
+`tests/smoke/critical-flows.spec.ts` checked `[data-testid="apply-terms"]` inside its `/waiver` helper, copied from the apply-form helper in the same file. The standalone waiver checkbox never carried that attribute, so `page.check()` timed out and both waiver smoke tests (happy path and producer-alert failure path) died before they ever submitted. The agreement checkbox now carries `data-testid="waiver-agree"` and the smoke helper drives that.
+
+The reason this sat broken: nothing in PR CI touched the attribute. The smoke suite runs weekly and has been red for months (that broader mobile failure is still an open BUGS.md entry), and the component's own unit test found the checkbox by role. `StandaloneWaiverForm.test.tsx` now queries it by test id instead, so the attribute is pinned by the vitest suite that gates every PR and cannot silently vanish again.
+
+Two HIGH findings from the same review round were recorded in `BUGS.md` as won't-fix rather than fixed, both stale: `RECOVERY-ORDERING` targets `src/lib/eventbriteRecovery.ts`, and the `SCOPE-CREEP` finding's second half targets `src/lib/navigation.ts`. Both files were deleted with the embedded-checkout removal in PR #196, so there is no `defaultPrevented` guard left to reorder and no navigation-wrapper mandate left to narrow.
+
+**Files:** `src/components/waiver/StandaloneWaiverForm.tsx`, `src/components/waiver/StandaloneWaiverForm.test.tsx`, `tests/smoke/critical-flows.spec.ts`, `BUGS.md`, `.gitignore`
+
 ## feat(events): new Philadelphia show Sep 27 at Next In Line Comedy (2026-09-02)
 
 Sunday September 27 2026, 7:30 to 9 PM, tickets on the venue's Eventbrite (ID 1999515971095). Appears on the tickets page, home shows section and gets the `/events/philadelphia-2026-09-27` landing page with Event JSON-LD. Details verified against the live Eventbrite listing.

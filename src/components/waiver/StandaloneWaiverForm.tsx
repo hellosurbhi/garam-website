@@ -208,6 +208,7 @@ export default function StandaloneWaiverForm() {
           checked={agreed}
           disabled={!waiverScrolled}
           onChange={(e) => setAgreed(e.target.checked)}
+          data-testid="waiver-agree"
         />
         <span>{WAIVER_PAGE.agreeLabel}</span>
       </label>

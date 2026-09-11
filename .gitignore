@@ -73,5 +73,8 @@ link-results.json
 # commits over stale artifact contents (hit 2026-07-14).
 # Anchored: only the root reviews/ dir, not any nested directory of that name.
 /reviews/
+# Same class: the fix/won't-fix worklists the review pipeline drops at the root.
+/.claude-fixed-items.txt
+/.claude-wontfix-items.txt
 # Legacy husky-generated shims (never commit; hooks are the checked-in .husky files)
 .husky/_/

@@ -1,0 +1,552 @@
+---
+import BaseLayout from "@/layouts/BaseLayout.astro";
+import FaqAccordion from "@/components/ui/FaqAccordion.astro";
+import { NEXT_MIXER, SINGLES_MIXERS } from "@/data/mixers";
+import { buildBreadcrumbJsonLd, BASE } from "@/utils/breadcrumbs";
+import { nyOffset } from "@/utils/timezone";
+import { formatDisplayTime } from "@/utils/eventDate";
+
+const PAGE_URL = `${BASE}/singles-mixers`;
+
+const mixerStartIso = `${NEXT_MIXER.isoDate}T${NEXT_MIXER.startTime}:00${nyOffset(NEXT_MIXER.isoDate, NEXT_MIXER.startTime)}`;
+const mixerEndIso = `${NEXT_MIXER.isoDate}T${NEXT_MIXER.endTime}:00${nyOffset(NEXT_MIXER.isoDate, NEXT_MIXER.endTime)}`;
+const isMixerUpcoming = Date.parse(mixerEndIso) > Date.now();
+
+const mixerDateFormatted = new Date(
+  `${NEXT_MIXER.isoDate}T12:00:00`,
+).toLocaleDateString("en-US", {
+  weekday: "long",
+  month: "long",
+  day: "numeric",
+  timeZone: "America/New_York",
+});
+const mixerTimeFormatted = `${formatDisplayTime(NEXT_MIXER.startTime)} to ${formatDisplayTime(NEXT_MIXER.endTime)}`;
+
+const breadcrumbJsonLd = buildBreadcrumbJsonLd([
+  { name: "Home", url: `${BASE}/` },
+  { name: "Singles Mixers" },
+]);
+
+const faqJsonLd = JSON.stringify({
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  mainEntity: SINGLES_MIXERS.faqs.map((faq) => ({
+    "@type": "Question",
+    name: faq.q,
+    // Google's structured-data spec expects plain text here; the on-page
+    // FaqAccordion renders the same answers with allowHtml for the inline
+    // /apply link, so this strip is local to the JSON-LD, not a copy fork.
+    acceptedAnswer: { "@type": "Answer", text: faq.a.replace(/<[^>]+>/g, "") },
+  })),
+});
+
+// Only claim an Event in structured data while it is still true: once the
+// mixer ends, the page keeps existing (it becomes a waitlist for the next
+// one) but must stop asserting a past event is scheduled.
+const socialEventJsonLd = isMixerUpcoming
+  ? JSON.stringify({
+      "@context": "https://schema.org",
+      "@type": "SocialEvent",
+      name: NEXT_MIXER.name,
+      startDate: mixerStartIso,
+      endDate: mixerEndIso,
+      eventStatus: "https://schema.org/EventScheduled",
+      eventAttendanceMode: "https://schema.org/OfflineEventAttendanceMode",
+      location: {
+        "@type": "Place",
+        name: NEXT_MIXER.venueName,
+        address: {
+          "@type": "PostalAddress",
+          streetAddress: NEXT_MIXER.streetAddress,
+          addressLocality: NEXT_MIXER.city,
+          addressRegion: NEXT_MIXER.state,
+          addressCountry: NEXT_MIXER.country,
+        },
+      },
+      organizer: {
+        "@type": "Organization",
+        name: "Garam Masala Dating",
+        url: BASE,
+      },
+      offers: {
+        "@type": "Offer",
+        // Points at this page, not Partiful: the lead gate is the point, and
+        // Google's spec only requires offers.url to lead to the opportunity
+        // to attend, same reasoning as buildEventSchemas() in eventSchema.ts.
+        url: PAGE_URL,
+        price: "0",
+        priceCurrency: "USD",
+        availability: "https://schema.org/InStock",
+      },
+      isAccessibleForFree: true,
+      image: `${BASE}/og-image.jpg`,
+    })
+  : null;
+---
+
+<BaseLayout
+  title={SINGLES_MIXERS.meta.title}
+  description={SINGLES_MIXERS.meta.description}
+>
+  <Fragment slot="head">
+    <script type="application/ld+json" set:html={breadcrumbJsonLd} />
+    <script type="application/ld+json" set:html={faqJsonLd} />
+    {
+      socialEventJsonLd && (
+        <script type="application/ld+json" set:html={socialEventJsonLd} />
+      )
+    }
+  </Fragment>
+
+  <main id="main-content" class="sm">
+    <section class="sm-section sm-hero" aria-labelledby="sm-hero-heading">
+      <div class="sm-container sm-hero-inner">
+        <p class="sm-eyebrow">{SINGLES_MIXERS.hero.eyebrow}</p>
+        <h1 id="sm-hero-heading">{SINGLES_MIXERS.hero.headline}</h1>
+        <p class="sm-hero-sub">{SINGLES_MIXERS.hero.sub}</p>
+        <a href="#mixer-form" class="btn btn-hot sm-hero-cta">
+          {SINGLES_MIXERS.hero.ctaLabel}
+        </a>
+      </div>
+    </section>
+
+    <section class="sm-section sm-cream" aria-labelledby="sm-who-heading">
+      <div class="sm-container sm-prose">
+        <p class="sm-eyebrow">{SINGLES_MIXERS.whoWeAre.eyebrow}</p>
+        <h2 id="sm-who-heading">{SINGLES_MIXERS.whoWeAre.heading}</h2>
+        <p set:html={SINGLES_MIXERS.whoWeAre.bodyHtml} />
+      </div>
+    </section>
+
+    <section class="sm-section" aria-labelledby="sm-two-ways-heading">
+      <div class="sm-container">
+        <h2 id="sm-two-ways-heading">{SINGLES_MIXERS.twoWays.heading}</h2>
+        <div class="sm-two-ways-grid">
+          <div class="sm-way-card">
+            <p set:html={SINGLES_MIXERS.twoWays.showBodyHtml} />
+            <a href="/tickets" class="btn btn-outline">Grab Tickets</a>
+          </div>
+          <div class="sm-way-card">
+            <p set:html={SINGLES_MIXERS.twoWays.mixerBodyHtml} />
+            <a href="#mixer-form" class="btn btn-outline">See the Next Mixer</a>
+          </div>
+        </div>
+        <p class="sm-two-ways-closing">{SINGLES_MIXERS.twoWays.closingLine}</p>
+      </div>
+    </section>
+
+    <section
+      id="mixer-form"
+      class="sm-section sm-cream"
+      aria-labelledby="sm-event-heading"
+      data-mixer-upcoming={isMixerUpcoming ? "true" : "false"}
+      data-partiful-url={NEXT_MIXER.partifulUrl}
+    >
+      <div class="sm-container sm-event-card">
+        {
+          isMixerUpcoming ? (
+            <>
+              <p class="sm-eyebrow">
+                {SINGLES_MIXERS.nextEventCard.eyebrowUpcoming}
+              </p>
+              <h2 id="sm-event-heading">{mixerDateFormatted}</h2>
+              <p class="sm-event-details">
+                {mixerTimeFormatted} at {NEXT_MIXER.venueName},{" "}
+                {NEXT_MIXER.neighborhood}. Free entry, no drink minimum, singles
+                only.
+              </p>
+            </>
+          ) : (
+            <>
+              <h2 id="sm-event-heading">
+                {SINGLES_MIXERS.nextEventCard.headingPast}
+              </h2>
+              <p class="sm-event-details">
+                {SINGLES_MIXERS.nextEventCard.bodyPast}
+              </p>
+            </>
+          )
+        }
+
+        <div id="mixer-form-default" class="sm-form-block">
+          <p class="sm-form-heading">{SINGLES_MIXERS.form.heading}</p>
+          <p class="sm-form-sub">{SINGLES_MIXERS.form.sub}</p>
+          <form
+            id="mixer-rsvp-form"
+            class="sm-form"
+            novalidate
+            toolname="rsvp-singles-mixer"
+            tooldescription="Get the date and location for the next Garam Masala Dating singles mixer. Provide a name and email address."
+          >
+            <input
+              type="text"
+              id="sm-name"
+              name="name"
+              class="ph-mask"
+              placeholder={SINGLES_MIXERS.form.namePlaceholder}
+              required
+              aria-label="Your name"
+              autocomplete="name"
+              toolparamdescription="Full name of the person requesting mixer details"
+            />
+            <input
+              type="email"
+              id="sm-email"
+              name="email"
+              class="ph-mask"
+              placeholder={SINGLES_MIXERS.form.emailPlaceholder}
+              required
+              aria-label="Your email"
+              autocomplete="email"
+              toolparamdescription="Email address to receive the mixer details"
+            />
+            <p id="sm-form-error" class="sm-form-error" hidden role="alert"></p>
+            <button
+              type="submit"
+              class="btn btn-hot sm-form-submit"
+              data-testid="mixer-submit"
+            >
+              {SINGLES_MIXERS.form.submitLabel}
+            </button>
+          </form>
+          <p class="sm-fine-print">{SINGLES_MIXERS.finePrint}</p>
+        </div>
+
+        <div
+          id="mixer-success-upcoming"
+          class="sm-form-block"
+          hidden
+          role="status"
+          aria-live="polite"
+        >
+          <p class="sm-form-heading">
+            {SINGLES_MIXERS.form.successHeadingUpcoming}
+          </p>
+          <p class="sm-form-sub">{SINGLES_MIXERS.form.successBodyUpcoming}</p>
+          <a href={NEXT_MIXER.partifulUrl} class="btn btn-hot sm-form-submit">
+            {SINGLES_MIXERS.form.successLinkLabel}
+          </a>
+        </div>
+
+        <div
+          id="mixer-success-past"
+          class="sm-form-block"
+          hidden
+          role="status"
+          aria-live="polite"
+        >
+          <p class="sm-form-heading">
+            {SINGLES_MIXERS.form.successHeadingPast}
+          </p>
+          <p class="sm-form-sub">{SINGLES_MIXERS.form.successBodyPast}</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="sm-section sm-faq" aria-labelledby="sm-faq-heading">
+      <div class="sm-container">
+        <h2 id="sm-faq-heading">Frequently asked questions</h2>
+        <FaqAccordion
+          items={SINGLES_MIXERS.faqs}
+          groupId="mixers-faq"
+          answerClass="sm-faq-answer"
+          allowHtml
+        />
+      </div>
+    </section>
+  </main>
+</BaseLayout>
+
+<script>
+  import { buildLeadAttribution } from "@/lib/leadAttribution";
+  import { captureLead } from "@/lib/leadSubmission";
+  import { identifyLead, trackLeadEvent, capture } from "@/lib/analytics";
+  import { reportFailure } from "@/lib/failureAlert";
+  import { safeLocalStorage } from "@/lib/safeStorage";
+  import { MIXER_STORAGE_KEY, SINGLES_MIXERS } from "@/data/mixers";
+
+  const SOURCE = "singles-mixers";
+  const section = document.getElementById("mixer-form");
+  const isUpcoming = section?.dataset.mixerUpcoming === "true";
+
+  const formBlock = document.getElementById("mixer-form-default");
+  const successUpcoming = document.getElementById("mixer-success-upcoming");
+  const successPast = document.getElementById("mixer-success-past");
+
+  function showSuccess() {
+    formBlock?.setAttribute("hidden", "");
+    if (isUpcoming) {
+      successUpcoming?.removeAttribute("hidden");
+    } else {
+      successPast?.removeAttribute("hidden");
+    }
+  }
+
+  if (safeLocalStorage.getItem(MIXER_STORAGE_KEY)) {
+    showSuccess();
+  }
+
+  const form = document.getElementById(
+    "mixer-rsvp-form",
+  ) as HTMLFormElement | null;
+  const errorEl = document.getElementById("sm-form-error");
+  const submitBtn = form?.querySelector<HTMLButtonElement>('[type="submit"]');
+
+  form?.addEventListener("submit", async (e) => {
+    e.preventDefault();
+    const name = (
+      document.getElementById("sm-name") as HTMLInputElement
+    ).value.trim();
+    const email = (
+      document.getElementById("sm-email") as HTMLInputElement
+    ).value.trim();
+
+    if (errorEl) {
+      errorEl.textContent = "";
+      errorEl.setAttribute("hidden", "");
+    }
+    if (submitBtn) submitBtn.disabled = true;
+
+    try {
+      const attribution = await buildLeadAttribution({ source: SOURCE });
+      await captureLead({ name, email, ...attribution });
+
+      try {
+        safeLocalStorage.setItem(MIXER_STORAGE_KEY, "true");
+      } catch {
+        /* returning-visitor state is a convenience, not a requirement */
+      }
+
+      fetch("/api/notify-mixer-rsvp", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ name, email, source: SOURCE }),
+      }).catch(() => {
+        /* owner alert is best effort; the lead is already saved */
+      });
+
+      identifyLead(email, { name });
+      trackLeadEvent("lead_email_submitted", { source: SOURCE });
+      trackLeadEvent("email_signup", { source: SOURCE });
+      capture("mixer_rsvp_submitted", { source: SOURCE });
+
+      showSuccess();
+    } catch (err) {
+      if (errorEl) {
+        errorEl.textContent = SINGLES_MIXERS.form.errorMessage;
+        errorEl.removeAttribute("hidden");
+      }
+      reportFailure({
+        flow: "lead",
+        stage: "mixer_rsvp",
+        errorMessage: err instanceof Error ? err.message : String(err),
+        contact: { name, email },
+      });
+      if (submitBtn) submitBtn.disabled = false;
+    }
+  });
+</script>
+
+<style>
+  .sm-section {
+    padding: 64px 0;
+    background: var(--off-white);
+  }
+
+  .sm-section.sm-cream {
+    background: var(--cream-warm);
+  }
+
+  .sm-section.sm-faq {
+    background: var(--off-white);
+  }
+
+  .sm-container {
+    max-width: 780px;
+    margin: 0 auto;
+    padding: 0 20px;
+  }
+
+  .sm-eyebrow {
+    font-family: var(--font-body), sans-serif;
+    font-size: 12px;
+    font-weight: 800;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--brand-red);
+    margin: 0 0 12px;
+  }
+
+  .sm-hero-inner {
+    text-align: center;
+  }
+
+  .sm-hero h1 {
+    font-family: var(--font-playfair), serif;
+    font-size: clamp(2rem, 6vw, 3rem);
+    line-height: 1.1;
+    color: var(--charcoal);
+    margin: 0 0 16px;
+  }
+
+  .sm-hero-sub {
+    font-family: var(--font-body), sans-serif;
+    font-size: 17px;
+    line-height: 1.6;
+    color: var(--text-secondary);
+    max-width: 60ch;
+    margin: 0 auto 28px;
+  }
+
+  .sm-hero-cta {
+    display: inline-flex;
+  }
+
+  .sm-prose h2,
+  .sm-two-ways-grid h2,
+  h2#sm-event-heading,
+  h2#sm-faq-heading,
+  h2#sm-who-heading,
+  h2#sm-two-ways-heading {
+    font-family: var(--font-playfair), serif;
+    font-size: clamp(1.6rem, 4vw, 2.2rem);
+    color: var(--charcoal);
+    margin: 0 0 16px;
+  }
+
+  .sm-prose p,
+  .sm-way-card p,
+  .sm-event-details {
+    font-family: var(--font-body), sans-serif;
+    font-size: 16px;
+    line-height: 1.7;
+    color: var(--text-secondary);
+  }
+
+  .sm-prose :global(a),
+  .sm-way-card :global(a) {
+    color: var(--brand-red);
+    font-weight: 700;
+    text-decoration: underline;
+  }
+
+  #sm-two-ways-heading {
+    text-align: center;
+  }
+
+  .sm-two-ways-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 20px;
+    margin-top: 28px;
+  }
+
+  @media (min-width: 700px) {
+    .sm-two-ways-grid {
+      grid-template-columns: 1fr 1fr;
+    }
+  }
+
+  .sm-way-card {
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+    padding: 28px;
+    background: var(--white);
+    border-radius: 20px;
+    border: 1px solid rgba(26, 26, 26, 0.08);
+  }
+
+  .sm-way-card .btn {
+    width: 100%;
+  }
+
+  .sm-two-ways-closing {
+    font-family: var(--font-cormorant), serif;
+    font-style: italic;
+    font-size: 19px;
+    text-align: center;
+    color: var(--charcoal);
+    margin: 32px 0 0;
+  }
+
+  .sm-event-card {
+    text-align: center;
+  }
+
+  .sm-event-details {
+    max-width: 50ch;
+    margin: 0 auto 32px;
+  }
+
+  .sm-form-block {
+    max-width: 420px;
+    margin: 0 auto;
+  }
+
+  .sm-form-heading {
+    font-family: var(--font-body), sans-serif;
+    font-weight: 800;
+    font-size: 17px;
+    color: var(--charcoal);
+    margin: 0 0 6px;
+  }
+
+  .sm-form-sub {
+    font-family: var(--font-body), sans-serif;
+    font-size: 14px;
+    color: var(--text-secondary);
+    margin: 0 0 18px;
+  }
+
+  .sm-form {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .sm-form input {
+    width: 100%;
+    padding: 14px 20px;
+    border: 1.5px solid rgba(26, 26, 26, 0.16);
+    border-radius: 50px;
+    background: var(--white);
+    color: var(--charcoal);
+    font-size: 16px;
+    font-family: var(--font-body), sans-serif;
+    outline: none;
+    min-height: var(--touch-target);
+    transition: border-color 0.2s;
+  }
+
+  .sm-form input::placeholder {
+    color: var(--muted);
+  }
+
+  .sm-form input:focus-visible {
+    border-color: var(--brand-red);
+  }
+
+  .sm-form-error {
+    font-size: 13px;
+    color: var(--brand-red-dark);
+    margin: 0;
+    font-family: var(--font-body), sans-serif;
+  }
+
+  .sm-form-submit {
+    width: 100%;
+  }
+
+  .sm-fine-print {
+    font-family: var(--font-body), sans-serif;
+    font-size: 12px;
+    line-height: 1.5;
+    color: var(--muted);
+    margin: 18px 0 0;
+  }
+
+  h2#sm-faq-heading {
+    text-align: center;
+  }
+</style>

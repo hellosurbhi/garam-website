@@ -52,6 +52,21 @@ async function mockFirebase(page: Page) {
       }),
     }),
   );
+  // WHY: the simplified bodies above don't match the real Firebase SDK's
+  // parsing expectations against production (googleapis.com is mocked, but
+  // /api/alert-failure is this site's own route and reaches the real
+  // handler). When the SDK chokes on a mock shape here, the app's own catch
+  // block pages production for real with this test's fixture contact
+  // (smoketest@example.com) — confirmed 2026-09-09 against five duplicate
+  // FAILURE emails matching this exact fixture. Fulfilling it keeps the
+  // happy path a pure smoke test even when it fails for an unrelated reason.
+  await page.route("**/api/alert-failure", (route) =>
+    route.fulfill({
+      status: 200,
+      contentType: "application/json",
+      body: JSON.stringify({ ok: true }),
+    }),
+  );
 }
 
 /** Fill every required apply form field so isValid becomes true. */

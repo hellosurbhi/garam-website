@@ -635,6 +635,63 @@ describe("useApplyForm", () => {
     );
   });
 
+  it("permission-denied failure includes field lengths in the alert email", async () => {
+    const deniedError = Object.assign(
+      new Error("Missing or insufficient permissions."),
+      {
+        code: "permission-denied",
+      },
+    );
+    mockAddDoc.mockRejectedValueOnce(deniedError);
+    const { result } = renderHook(() => useApplyForm());
+
+    act(() =>
+      fillRequired(
+        result.current.set,
+        result.current.handleTermsCheckbox,
+        result.current.handleAddPhotos,
+      ),
+    );
+
+    await act(async () => {
+      await result.current.handleSubmit(makeSubmitEvent());
+    });
+
+    // PostHog (where field_lengths already lands via trackError) is exactly
+    // what's blocked in the in-app browsers this failure mode shows up in,
+    // so the alert email is the only place a human can see which field a
+    // rules rejection is actually about.
+    expect(mockReportFailure).toHaveBeenCalledWith(
+      expect.objectContaining({
+        flow: "apply",
+        stage: "submit",
+        // fillRequired sets name/city/email/instagram; every other field
+        // stays at its INITIAL "" default, so length 0.
+        errorMessage: expect.stringContaining(
+          JSON.stringify({
+            name: 8, // "Jane Doe"
+            city: 8, // "New York"
+            email: 16, // "jane@example.com"
+            phone: 0,
+            height: 0,
+            instagram: 7, // "janedoe"
+            referrerName: 0,
+            pitch: 0,
+            type: 0,
+            howHeard: 0,
+          }),
+        ),
+      }),
+    );
+    expect(mockReportFailure).toHaveBeenCalledWith(
+      expect.objectContaining({
+        errorMessage: expect.stringContaining(
+          "Missing or insufficient permissions.",
+        ),
+      }),
+    );
+  });
+
   it("submit failure calls deleteObject for orphaned photo cleanup", async () => {
     mockAddDoc.mockRejectedValueOnce(new Error("Firestore error"));
     const { result } = renderHook(() => useApplyForm());

@@ -9,6 +9,37 @@ fixed entries, [x] checkboxes or "Status: Fixed" records to this file. -->
 
 ## Open
 
+### [HIGH] The weekly production smoke lane has been red on every run since at least 2026-07-08, so it protects nothing
+
+- **Date:** 2026-09-02
+- **File:** `.github/workflows/smoke-tests.yml`, `tests/smoke/critical-flows.spec.ts`, `tests/smoke/site.spec.ts`
+- **Status:** Open
+- **Severity:** High (a check that always fails is a check nobody reads; a real regression in these flows would be invisible)
+- **What happened:** Every scheduled Smoke Tests run (Wednesdays, PLAYWRIGHT_BASE_URL=production) from 2026-07-08 through 2026-09-02 concluded failure, nine out of nine. A manual production run on 2026-09-02 (33669864199, AFTER the rules fix was proven by synthetic monitor run 33669667257) still failed 76 of 320: the city page h1 tests (own entry below), Footer deep links, and the entire critical-flows group (apply happy path, HomeSignup, StandaloneWaiver, LeadCaptureModal, NotifyModal) with success panels never appearing. The critical-flows tests mock ALL Firebase network calls via page.route, so Firestore rules cannot be the cause; the suite passes against the static preview in the pre-push gate. Something about production mode breaks it (candidates: real /api routes behaving differently than the static preview fulfills, interception misses against the deployed bundle, marketing scripts interfering). The form itself works: the synthetic monitor submits a real application on production end to end and it lands in Firestore.
+- **Why deferred:** pre-existing test infrastructure, red since long before this session; the session's inline scope was the apply form rules-drift outage, which is fixed and proven by the lane built for that job (synthetic monitor).
+- **Revisit when:** next overnight pass. Plan: run `PLAYWRIGHT_BASE_URL=https://garammasaladating.com npx playwright test tests/smoke/critical-flows.spec.ts -g "happy path" --project=desktop` locally, read the failure trace to find where the flow diverges from the static-preview run, fix the root cause (or decide the mocked critical flows are preview-only by design and split the production schedule to a suite that can pass, keeping coverage). Verify: the next scheduled production run is green or fails only on entries still open in this file.
+- **Update 2026-09-09:** the always-red apply happy-path test was also paging production for real. It mocks the three Firebase googleapis.com endpoints but never mocked this site's own `/api/alert-failure` route, so when the real Firebase SDK choked on the simplified mock response bodies (this is production, not the static preview), the app's own catch block fired a genuine alert with the test's `Smoke Tester` / `smoketest@example.com` fixture. Confirmed against 5 duplicate FAILURE emails at 2026-09-09T14:5x UTC matching scheduled run 34366230286 exactly. Fixed same-session: `/api/alert-failure` now mocked inside `mockFirebase()` in `tests/smoke/critical-flows.spec.ts`, so this lane can stay red without paging anyone until the root cause above is actually fixed. The redness itself is still open.
+
+### [HIGH] Every city page fails the scheduled production smoke test: `h1.city-h1` resolves hidden on mobile viewports
+
+- **Date:** 2026-09-02
+- **File:** `tests/smoke/site.spec.ts` (line ~996, the `Cities › City page:` loop) and `src/pages/cities/[slug].astro` plus whatever component/CSS renders `h1.city-h1`
+- **Status:** Open
+- **Severity:** High (a red scheduled smoke run masks real regressions; the page itself renders for humans)
+- **What happened:** In scheduled production Smoke Tests run 33644089435 (2026-09-02), every ticket-bearing city page test (manhattan, jersey-city, san-diego, los-angeles, san-francisco, salt-lake-city and more) failed in ~5.5s with `expect(locator('h1.city-h1')).toBeVisible()` receiving `hidden`, on iphone, iphone-webkit and ipad projects, retries included. Manual check of /cities/manhattan on desktop 2026-09-02 shows the h1 rendering normally, so the failure is viewport-specific or animation-timing-specific (a reveal-on-load transition stuck at its hidden initial state under Playwright is the prime suspect), not a missing element.
+- **Why deferred:** pre-existing page code this session did not touch; the session's inline scope was the apply form rules-drift outage. Per provenance-based same-session close-out this queues.
+- **Revisit when:** next overnight pass. Plan: run the single test locally (`npx playwright test tests/smoke/site.spec.ts -g "City page: manhattan" --project=iphone`), inspect the computed style on `h1.city-h1` at failure (expect `opacity: 0` or `visibility: hidden` from an entrance animation), and fix the root cause so the heading is visible without depending on animation timing (respect `prefers-reduced-motion`, or give the test a real wait condition). Verify: that test passes on all three mobile projects and the next scheduled smoke run has zero `Cities › City page` failures.
+
+### [HIGH] A real applicant got "Missing or insufficient permissions" on apply/submit 3 days after the rules-drift fix, cause unconfirmed
+
+- **Date:** 2026-09-05 (found 2026-09-09)
+- **File:** `src/components/apply/useApplyForm.ts`, `firestore.rules`
+- **Status:** Open
+- **Severity:** High (a real applicant via Instagram, the primary acquisition channel, silently lost)
+- **What happened:** Aryan Gandhi's application failed at 2026-09-05T02:40 UTC with "Missing or insufficient permissions" from an Instagram in-app browser. The synthetic monitor's drift check was green immediately before (2026-09-04T21:36) and after (2026-09-05T05:58), ruling out a repeat of the PR #244 rules-drift outage. The Aug 2026 field-length mismatch (Akshay/Dua, see LESSONS.md) is also ruled out: client `FIELD_LIMITS` in `src/lib/applicationFieldLimits.ts` and the rules caps in `firestore.rules` are already pinned at a verified 4x ratio. No confirmed root cause yet; leading unconfirmed hypothesis is Instagram's in-app browser interfering with Firebase Auth's persistence layer so `signInAnonymously()` resolves locally but the ID token never reaches the Firestore write, but this has not been reproduced or proven.
+- **Why deferred:** pre-existing code this session did not write; no way to root-cause the specific rejected field from the data the alert email carried at the time (`field_lengths` was already computed for PostHog but PostHog is blocked in exactly the in-app browsers this shows up in). Fixed same-session: `useApplyForm.ts` now includes `field_lengths` directly in the alert email's `errorMessage` on any `permission-denied` rejection, so the next occurrence is diagnosable without code archaeology.
+- **Revisit when:** the next `permission-denied` alert email arrives. Plan: read its `field_lengths` payload. All-normal lengths confirms this isn't a caps mismatch and points at the auth-timing/in-app-browser hypothesis; check `userAgent` for another in-app browser match. If the pattern repeats from Instagram/Facebook WebViews specifically, the fix is ensuring the Firestore SDK's write waits for the resolved auth credential to actually attach (e.g. explicit `auth.currentUser` check before `addDoc`, or Firestore long-polling fallback for WebViews that block IndexedDB). Verify: no further "Missing or insufficient permissions" reports from real (non-synthetic) applicants for 2 weeks.
+
 ### [MODERATE] 3 unfixed npm audit findings in @opentelemetry/core (via firebase-tools)
 
 - **Date:** 2026-08-02

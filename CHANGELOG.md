@@ -6,9 +6,9 @@
 
 The reason this sat broken: nothing in PR CI touched the attribute. The smoke suite runs weekly and has been red for months (that broader mobile failure is still an open BUGS.md entry), and the component's own unit test found the checkbox by role. `StandaloneWaiverForm.test.tsx` now queries it by test id instead, so the attribute is pinned by the vitest suite that gates every PR and cannot silently vanish again.
 
-Two HIGH findings from the same review round were recorded in `BUGS.md` as won't-fix rather than fixed, both stale: `RECOVERY-ORDERING` targets `src/lib/eventbriteRecovery.ts`, and the `SCOPE-CREEP` finding's second half targets `src/lib/navigation.ts`. Both files were deleted with the embedded-checkout removal in PR #196, so there is no `defaultPrevented` guard left to reorder and no navigation-wrapper mandate left to narrow.
+Two HIGH findings from the same review round were dispositioned in `BUGS.md`. `RECOVERY-ORDERING` is stale: it targets `src/lib/eventbriteRecovery.ts`, deleted with the embedded-checkout removal in PR #196, so there is no `defaultPrevented` guard left to reorder. `SCOPE-CREEP` was half stale and half real. Its navigation half targets `src/lib/navigation.ts`, deleted in the same PR #196, so that wrapper mandate is already gone. Its other half was accurate: the lesson at `LESSONS.md:89` still stated Eventbrite's modal-observation and same-tab-navigation specifics as constraints on "any integration". That rule is now narrowed. It still requires a verification check and a native-fallback recovery whenever our code calls `preventDefault()` in favor of a third-party SDK, but the two DOM and timing details now read as the Eventbrite case to reason from, not as universal requirements.
 
-**Files:** `src/components/waiver/StandaloneWaiverForm.tsx`, `src/components/waiver/StandaloneWaiverForm.test.tsx`, `tests/smoke/critical-flows.spec.ts`, `BUGS.md`, `.gitignore`
+**Files:** `src/components/waiver/StandaloneWaiverForm.tsx`, `src/components/waiver/StandaloneWaiverForm.test.tsx`, `tests/smoke/critical-flows.spec.ts`, `LESSONS.md`, `BUGS.md`, `.gitignore`
 
 ## feat(events): new Philadelphia show Sep 27 at Next In Line Comedy (2026-09-02)
 

@@ -126,6 +126,7 @@ const POSTHOG_PROJECT_KEY = "phc_qqPeeEMxGcVmknbpgvkgbNUbMEaBMQu2fXWyPV6kAmxD";
           placeholder={CUFFING_SEASON.form.namePlaceholder}
           required
           aria-label="Your name"
+          aria-describedby="cuffing-error"
           autocomplete="name"
           toolparamdescription="Full name of the person RSVPing to the mixer"
         />
@@ -137,6 +138,7 @@ const POSTHOG_PROJECT_KEY = "phc_qqPeeEMxGcVmknbpgvkgbNUbMEaBMQu2fXWyPV6kAmxD";
           placeholder={CUFFING_SEASON.form.emailPlaceholder}
           required
           aria-label="Your email"
+          aria-describedby="cuffing-error"
           autocomplete="email"
           toolparamdescription="Email address to receive the mixer invite"
         />
@@ -156,89 +158,48 @@ const POSTHOG_PROJECT_KEY = "phc_qqPeeEMxGcVmknbpgvkgbNUbMEaBMQu2fXWyPV6kAmxD";
 </BaseLayout>
 
 <script>
-  import { buildLeadAttribution } from "@/lib/leadAttribution";
-  import { captureLead } from "@/lib/leadSubmission";
-  import { identifyLead, trackLeadEvent, capture } from "@/lib/analytics";
-  import { reportFailure } from "@/lib/failureAlert";
-  import { safeLocalStorage } from "@/lib/safeStorage";
-  import { NEXT_MIXER, MIXER_STORAGE_KEY } from "@/data/mixers";
+  import { initMixerRsvpForm } from "@/lib/mixerRsvpForm";
+  import { capture } from "@/lib/analytics";
+  import { NEXT_MIXER } from "@/data/mixers";
   import { CUFFING_SEASON } from "@/data/cuffing-season";
 
-  const SOURCE = "cuffing-season";
-  const form = document.getElementById(
-    "cuffing-form",
-  ) as HTMLFormElement | null;
-  const errorEl = document.getElementById("cuffing-error");
-  const submitBtn = form?.querySelector<HTMLButtonElement>('[type="submit"]');
-
-  form?.addEventListener("submit", async (e) => {
-    e.preventDefault();
-    const name = (
-      document.getElementById("cuffing-name") as HTMLInputElement
-    ).value.trim();
-    const email = (
-      document.getElementById("cuffing-email") as HTMLInputElement
-    ).value.trim();
-
-    if (errorEl) {
-      errorEl.textContent = "";
-      errorEl.setAttribute("hidden", "");
-    }
-    if (submitBtn) {
-      submitBtn.disabled = true;
-      submitBtn.textContent = CUFFING_SEASON.form.submittingLabel;
-    }
-
-    try {
-      const attribution = await buildLeadAttribution({ source: SOURCE });
-      await captureLead({ name, email, ...attribution });
-
-      try {
-        safeLocalStorage.setItem(MIXER_STORAGE_KEY, "true");
-      } catch {
-        /* returning-device redirect is a convenience, not a requirement */
-      }
-
-      fetch("/api/notify-mixer-rsvp", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        keepalive: true,
-        body: JSON.stringify({ name, email, source: SOURCE }),
-      }).catch(() => {
-        /* owner alert is best effort; the lead is already saved */
+  // No TypeScript syntax in this script on purpose: the dev server cannot
+  // transform TS inside .astro <script> tags (see BUGS.md), so all typed
+  // logic lives in src/lib/mixerRsvpForm.ts.
+  initMixerRsvpForm({
+    formId: "cuffing-form",
+    nameInputId: "cuffing-name",
+    emailInputId: "cuffing-email",
+    errorElId: "cuffing-error",
+    source: "cuffing-season",
+    copy: {
+      nameError: CUFFING_SEASON.form.nameError,
+      errorMessage: CUFFING_SEASON.form.errorMessage,
+      submittingLabel: CUFFING_SEASON.form.submittingLabel,
+    },
+    onCaptureSuccess(els) {
+      capture("mixer_redirect", {
+        trigger: "post_submit",
+        source: "cuffing-season",
       });
-
-      identifyLead(email, { name });
-      trackLeadEvent("lead_email_submitted", { source: SOURCE });
-      trackLeadEvent("email_signup", { source: SOURCE });
-      capture("mixer_rsvp_submitted", { source: SOURCE });
-      capture("mixer_redirect", { trigger: "post_submit", source: SOURCE });
-
-      if (submitBtn)
-        submitBtn.textContent = CUFFING_SEASON.form.redirectingLabel;
-      // WHY the delay before navigating: the capture()/trackLeadEvent() calls
-      // above queue on window.posthog's own request; without a beat, an
-      // immediate assign() can cancel that request mid-flight the same way
-      // trackOutbound() in analyticsCapture.ts already documents for outbound clicks.
+      els.submitBtn.textContent = CUFFING_SEASON.form.redirectingLabel;
+      // WHY the delay before navigating: the analytics calls above queue on
+      // window.posthog's own request; without a beat, an immediate assign()
+      // can cancel that request mid-flight the same way trackOutbound() in
+      // analyticsCapture.ts already documents for outbound clicks.
       setTimeout(() => {
         window.location.assign(NEXT_MIXER.partifulUrl);
       }, 150);
-    } catch (err) {
-      if (errorEl) {
-        errorEl.textContent = CUFFING_SEASON.form.errorMessage;
-        errorEl.removeAttribute("hidden");
-      }
-      reportFailure({
-        flow: "lead",
-        stage: "mixer_rsvp",
-        errorMessage: err instanceof Error ? err.message : String(err),
-        contact: { name, email },
-      });
-      if (submitBtn) {
-        submitBtn.disabled = false;
-        submitBtn.textContent = CUFFING_SEASON.form.submitLabel;
-      }
-    }
+    },
+    onCaptureFailure(els) {
+      // The invite matters more than our bookkeeping: the owner was already
+      // paged with the person's contact (reportFailure, keepalive), so send
+      // them to Partiful instead of stranding them on an error. No delay
+      // needed here: the failure path queued no PostHog events.
+      els.submitBtn.textContent = CUFFING_SEASON.form.redirectingLabel;
+      window.location.assign(NEXT_MIXER.partifulUrl);
+      return true;
+    },
   });
 </script>
 

@@ -1,5 +1,16 @@
 # Changelog
 
+## fix(mixers): RSVP failures still reach Partiful, form errors say what is wrong (2026-09-12)
+
+PR #265 follow-up covering the two functional gaps and the open CodeRabbit threads.
+
+- **Nobody misses the party on our error.** When saving the RSVP fails on valid input, the person is sent to Partiful anyway instead of being stranded on "Something went wrong": cuffing-season always redirects, singles-mixers redirects while the mixer is upcoming and falls back to an honest inline error once it has passed (no live invite to send anyone to). The owner is still paged with the person's name and email via the keepalive failure alert, so the lead is recoverable either way. The returning-visitor storage key is not set on failure.
+- **Specific errors before the server is ever involved.** Both forms now validate client-side with the same `validateEmail` the apply form and `/api/capture-lead` use: a bad email says "Please enter a valid email address", a missing name says "Please enter your name.", errors appear inline after leaving the field (with `aria-invalid` and `aria-describedby` wiring) and the submit button stays disabled until both fields are valid. The generic failure copy is now reserved for genuine server failures.
+- **One shared module instead of two near-duplicate scripts.** The whole flow lives in `src/lib/mixerRsvpForm.ts` with 9 DOM tests; each page's `<script>` is a TS-free init call, which also clears the known dev-server 500 on TypeScript inside `.astro` scripts for these two pages.
+- **BUGS.md scope correction per CodeRabbit.** `verify-turnstile.ts` was removed from the mail-spam Origin-auth entry (it sends no mail and reads no name or email) and got its own entry for the config-dependent fail-open when `TURNSTILE_SECRET_KEY` is unset.
+
+**Files:** `src/lib/mixerRsvpForm.ts`, `src/lib/mixerRsvpForm.test.ts`, `src/pages/cuffing-season.astro`, `src/pages/singles-mixers.astro`, `src/data/cuffing-season.ts`, `src/data/mixers.ts`, `BUGS.md`
+
 ## feat(events): new Philadelphia show Sep 27 at Next In Line Comedy (2026-09-02)
 
 Sunday September 27 2026, 7:30 to 9 PM, tickets on the venue's Eventbrite (ID 1999515971095). Appears on the tickets page, home shows section and gets the `/events/philadelphia-2026-09-27` landing page with Event JSON-LD. Details verified against the live Eventbrite listing.

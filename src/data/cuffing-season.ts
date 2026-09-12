@@ -17,6 +17,7 @@ export const CUFFING_SEASON = {
     submitLabel: "Find the Love of Your Life",
     submittingLabel: "Finding Them...",
     redirectingLabel: "Taking You There...",
+    nameError: "Please enter your name.",
     errorMessage: "Something went wrong. Try again.",
   },
   finePrint:

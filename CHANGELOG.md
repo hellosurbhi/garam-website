@@ -1,5 +1,15 @@
 # Changelog
 
+## fix(tests): waiver smoke flow drove the apply form's checkbox, so both waiver smoke tests failed before submitting (2026-09-11)
+
+`tests/smoke/critical-flows.spec.ts` checked `[data-testid="apply-terms"]` inside its `/waiver` helper, copied from the apply-form helper in the same file. The standalone waiver checkbox never carried that attribute, so `page.check()` timed out and both waiver smoke tests (happy path and producer-alert failure path) died before they ever submitted. The agreement checkbox now carries `data-testid="waiver-agree"` and the smoke helper drives that.
+
+The reason this sat broken: nothing in PR CI touched the attribute. The smoke suite runs weekly and has been red for months (that broader mobile failure is still an open BUGS.md entry), and the component's own unit test found the checkbox by role. `StandaloneWaiverForm.test.tsx` now queries it by test id instead, so the attribute is pinned by the vitest suite that gates every PR and cannot silently vanish again.
+
+Two HIGH findings from the same review round were dispositioned in `BUGS.md`. `RECOVERY-ORDERING` is stale: it targets `src/lib/eventbriteRecovery.ts`, deleted with the embedded-checkout removal in PR #196, so there is no `defaultPrevented` guard left to reorder. `SCOPE-CREEP` was half stale and half real. Its navigation half targets `src/lib/navigation.ts`, deleted in the same PR #196, so that wrapper mandate is already gone. Its other half was accurate: the lesson at `LESSONS.md:89` still stated Eventbrite's modal-observation and same-tab-navigation specifics as constraints on "any integration". That rule is now narrowed. It still requires a verification check and a native-fallback recovery whenever our code calls `preventDefault()` in favor of a third-party SDK, but the two DOM and timing details now read as the Eventbrite case to reason from, not as universal requirements.
+
+**Files:** `src/components/waiver/StandaloneWaiverForm.tsx`, `src/components/waiver/StandaloneWaiverForm.test.tsx`, `tests/smoke/critical-flows.spec.ts`, `LESSONS.md`, `BUGS.md`, `.gitignore`
+
 ## feat(events): new Philadelphia show Sep 27 at Next In Line Comedy (2026-09-02)
 
 Sunday September 27 2026, 7:30 to 9 PM, tickets on the venue's Eventbrite (ID 1999515971095). Appears on the tickets page, home shows section and gets the `/events/philadelphia-2026-09-27` landing page with Event JSON-LD. Details verified against the live Eventbrite listing.

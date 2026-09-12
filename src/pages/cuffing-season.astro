@@ -1,0 +1,384 @@
+---
+import BaseLayout from "@/layouts/BaseLayout.astro";
+import { NEXT_MIXER, MIXER_STORAGE_KEY } from "@/data/mixers";
+import { CUFFING_SEASON } from "@/data/cuffing-season";
+
+// WHY hardcoded here, not imported: this project API key already lives as a
+// plain string in public/js/posthog.js (the static, unbundled PostHog
+// loader). The inline redirect script below is also is:inline (see WHY on
+// that script) and cannot import a shared module, so there is nowhere to
+// import this constant from without inventing a second static-file source
+// of truth. Both copies must be changed together if the PostHog project
+// ever rotates.
+const POSTHOG_PROJECT_KEY = "phc_qqPeeEMxGcVmknbpgvkgbNUbMEaBMQu2fXWyPV6kAmxD";
+---
+
+<BaseLayout
+  title={CUFFING_SEASON.meta.title}
+  description={CUFFING_SEASON.meta.description}
+  noindex
+  hideNav
+  hideFooter
+  hideSpiceList
+  noCursor
+>
+  <Fragment slot="head">
+    <script
+      is:inline
+      define:vars={{
+        storageKey: MIXER_STORAGE_KEY,
+        partifulUrl: NEXT_MIXER.partifulUrl,
+        posthogKey: POSTHOG_PROJECT_KEY,
+      }}
+    >
+      // WHY is:inline vanilla JS instead of a normal bundled <script>: a
+      // returning device must redirect before the page paints anything, so
+      // this has to run synchronously in <head>, ahead of Astro's deferred
+      // module scripts. That means it cannot import from src/lib and
+      // duplicates a little logic (distinct_id lookup, event payload shape)
+      // that normally lives there.
+      (function () {
+        if (["localhost", "127.0.0.1"].indexOf(window.location.hostname) !== -1)
+          return;
+
+        var rsvped;
+        try {
+          rsvped = window.localStorage.getItem(storageKey);
+        } catch (e) {
+          rsvped = null;
+        }
+        if (!rsvped) return;
+
+        try {
+          var distinctId = null;
+          var phKey = "ph_" + posthogKey + "_posthog";
+          try {
+            var raw = window.localStorage.getItem(phKey);
+            if (raw) {
+              var parsed = JSON.parse(raw);
+              if (parsed && parsed.distinct_id) distinctId = parsed.distinct_id;
+            }
+          } catch (e) {
+            /* ignore */
+          }
+          if (!distinctId) {
+            var match = document.cookie.match(
+              new RegExp("(?:^|; )" + phKey + "=([^;]*)"),
+            );
+            if (match) {
+              try {
+                var decoded = JSON.parse(decodeURIComponent(match[1]));
+                if (decoded && decoded.distinct_id)
+                  distinctId = decoded.distinct_id;
+              } catch (e) {
+                /* ignore */
+              }
+            }
+          }
+          if (!distinctId) {
+            distinctId =
+              window.crypto && window.crypto.randomUUID
+                ? window.crypto.randomUUID()
+                : "anon-" + Date.now();
+          }
+          var payload = {
+            api_key: posthogKey,
+            event: "mixer_redirect",
+            properties: {
+              distinct_id: distinctId,
+              trigger: "returning_device",
+              source: "cuffing-season",
+              $current_url: window.location.href,
+            },
+          };
+          navigator.sendBeacon(
+            "/ingest/e/",
+            new Blob([JSON.stringify(payload)], { type: "text/plain" }),
+          );
+        } catch (e) {
+          /* analytics must never block the redirect */
+        }
+
+        window.location.replace(partifulUrl);
+      })();
+    </script>
+  </Fragment>
+
+  <main id="main-content" class="cuffing-page">
+    <div class="cuffing-shell">
+      <p class="cuffing-eyebrow">{CUFFING_SEASON.eyebrow}</p>
+      <h1 class="cuffing-headline">{CUFFING_SEASON.headline}</h1>
+      <p class="cuffing-subhead">{CUFFING_SEASON.subhead}</p>
+      <p class="cuffing-body">{CUFFING_SEASON.bodyLine}</p>
+
+      <form
+        id="cuffing-form"
+        class="cuffing-form"
+        novalidate
+        toolname="rsvp-cuffing-season-mixer"
+        tooldescription="RSVP to the Garam Masala Dating cuffing season singles mixer. Provide a name and email address to get the invite."
+      >
+        <input
+          type="text"
+          id="cuffing-name"
+          name="name"
+          class="ph-mask"
+          placeholder={CUFFING_SEASON.form.namePlaceholder}
+          required
+          aria-label="Your name"
+          autocomplete="name"
+          toolparamdescription="Full name of the person RSVPing to the mixer"
+        />
+        <input
+          type="email"
+          id="cuffing-email"
+          name="email"
+          class="ph-mask"
+          placeholder={CUFFING_SEASON.form.emailPlaceholder}
+          required
+          aria-label="Your email"
+          autocomplete="email"
+          toolparamdescription="Email address to receive the mixer invite"
+        />
+        <p id="cuffing-error" class="cuffing-error" hidden role="alert"></p>
+        <button
+          type="submit"
+          class="btn btn-hot cuffing-submit"
+          data-testid="cuffing-submit"
+        >
+          {CUFFING_SEASON.form.submitLabel}
+        </button>
+      </form>
+
+      <p class="cuffing-fine-print">{CUFFING_SEASON.finePrint}</p>
+    </div>
+  </main>
+</BaseLayout>
+
+<script>
+  import { buildLeadAttribution } from "@/lib/leadAttribution";
+  import { captureLead } from "@/lib/leadSubmission";
+  import { identifyLead, trackLeadEvent, capture } from "@/lib/analytics";
+  import { reportFailure } from "@/lib/failureAlert";
+  import { safeLocalStorage } from "@/lib/safeStorage";
+  import { NEXT_MIXER, MIXER_STORAGE_KEY } from "@/data/mixers";
+  import { CUFFING_SEASON } from "@/data/cuffing-season";
+
+  const SOURCE = "cuffing-season";
+  const form = document.getElementById(
+    "cuffing-form",
+  ) as HTMLFormElement | null;
+  const errorEl = document.getElementById("cuffing-error");
+  const submitBtn = form?.querySelector<HTMLButtonElement>('[type="submit"]');
+
+  form?.addEventListener("submit", async (e) => {
+    e.preventDefault();
+    const name = (
+      document.getElementById("cuffing-name") as HTMLInputElement
+    ).value.trim();
+    const email = (
+      document.getElementById("cuffing-email") as HTMLInputElement
+    ).value.trim();
+
+    if (errorEl) {
+      errorEl.textContent = "";
+      errorEl.setAttribute("hidden", "");
+    }
+    if (submitBtn) {
+      submitBtn.disabled = true;
+      submitBtn.textContent = CUFFING_SEASON.form.submittingLabel;
+    }
+
+    try {
+      const attribution = await buildLeadAttribution({ source: SOURCE });
+      await captureLead({ name, email, ...attribution });
+
+      try {
+        safeLocalStorage.setItem(MIXER_STORAGE_KEY, "true");
+      } catch {
+        /* returning-device redirect is a convenience, not a requirement */
+      }
+
+      fetch("/api/notify-mixer-rsvp", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        keepalive: true,
+        body: JSON.stringify({ name, email, source: SOURCE }),
+      }).catch(() => {
+        /* owner alert is best effort; the lead is already saved */
+      });
+
+      identifyLead(email, { name });
+      trackLeadEvent("lead_email_submitted", { source: SOURCE });
+      trackLeadEvent("email_signup", { source: SOURCE });
+      capture("mixer_rsvp_submitted", { source: SOURCE });
+      capture("mixer_redirect", { trigger: "post_submit", source: SOURCE });
+
+      if (submitBtn)
+        submitBtn.textContent = CUFFING_SEASON.form.redirectingLabel;
+      // WHY the delay before navigating: the capture()/trackLeadEvent() calls
+      // above queue on window.posthog's own request; without a beat, an
+      // immediate assign() can cancel that request mid-flight the same way
+      // trackOutbound() in analyticsCapture.ts already documents for outbound clicks.
+      setTimeout(() => {
+        window.location.assign(NEXT_MIXER.partifulUrl);
+      }, 150);
+    } catch (err) {
+      if (errorEl) {
+        errorEl.textContent = CUFFING_SEASON.form.errorMessage;
+        errorEl.removeAttribute("hidden");
+      }
+      reportFailure({
+        flow: "lead",
+        stage: "mixer_rsvp",
+        errorMessage: err instanceof Error ? err.message : String(err),
+        contact: { name, email },
+      });
+      if (submitBtn) {
+        submitBtn.disabled = false;
+        submitBtn.textContent = CUFFING_SEASON.form.submitLabel;
+      }
+    }
+  });
+</script>
+
+<style>
+  .cuffing-page {
+    min-height: 100svh;
+    display: flex;
+    align-items: center;
+    background:
+      radial-gradient(
+        circle at top right,
+        rgba(var(--brand-red-rgb), 0.16),
+        transparent 24rem
+      ),
+      radial-gradient(
+        circle at bottom left,
+        rgba(255, 214, 0, 0.14),
+        transparent 22rem
+      ),
+      linear-gradient(180deg, var(--off-white) 0%, var(--cream-warm) 100%);
+  }
+
+  .cuffing-shell {
+    width: min(100%, 480px);
+    margin: 0 auto;
+    padding: 48px 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+    text-align: center;
+    animation: cuffingRise 0.5s ease-out both;
+  }
+
+  @keyframes cuffingRise {
+    from {
+      opacity: 0;
+      transform: translateY(10px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .cuffing-shell {
+      animation: none;
+    }
+  }
+
+  .cuffing-eyebrow {
+    font-family: var(--font-body), sans-serif;
+    font-size: 12px;
+    font-weight: 800;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--brand-red);
+  }
+
+  .cuffing-headline {
+    font-family: var(--font-playfair), serif;
+    font-size: clamp(2.2rem, 8vw, 3.4rem);
+    line-height: 1.05;
+    color: var(--charcoal);
+  }
+
+  .cuffing-subhead {
+    font-family: var(--font-cormorant), serif;
+    font-style: italic;
+    font-size: clamp(1.15rem, 3.4vw, 1.5rem);
+    color: var(--charcoal);
+    line-height: 1.35;
+  }
+
+  .cuffing-body {
+    font-family: var(--font-body), sans-serif;
+    font-size: 16px;
+    line-height: 1.5;
+    color: var(--text-secondary);
+    max-width: 40ch;
+    margin: 0 auto;
+  }
+
+  .cuffing-form {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    margin-top: 10px;
+  }
+
+  .cuffing-form input {
+    width: 100%;
+    padding: 14px 20px;
+    border: 1.5px solid rgba(26, 26, 26, 0.16);
+    border-radius: 50px;
+    background: rgba(255, 255, 255, 0.75);
+    color: var(--charcoal);
+    font-size: 16px;
+    font-family: var(--font-body), sans-serif;
+    outline: none;
+    min-height: var(--touch-target);
+    transition: border-color 0.2s;
+  }
+
+  .cuffing-form input::placeholder {
+    color: var(--muted);
+  }
+
+  .cuffing-form input:focus-visible {
+    border-color: var(--brand-red);
+  }
+
+  .cuffing-error {
+    font-size: 13px;
+    color: var(--brand-red-dark);
+    margin: 0;
+    font-family: var(--font-body), sans-serif;
+  }
+
+  /* .btn.btn-hot supplies color, radius, padding, type and hover/focus
+     states. This page only adds what the shared class does not: full
+     width, the site's mandatory press-feedback, and a disabled state. */
+  .cuffing-submit {
+    width: 100%;
+  }
+
+  .cuffing-submit:active {
+    transform: scale(0.97);
+  }
+
+  .cuffing-submit:disabled {
+    opacity: 0.7;
+    cursor: not-allowed;
+  }
+
+  .cuffing-fine-print {
+    font-family: var(--font-body), sans-serif;
+    font-size: 12px;
+    line-height: 1.5;
+    color: var(--muted);
+    margin-top: 8px;
+  }
+</style>

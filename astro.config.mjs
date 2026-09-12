@@ -166,7 +166,11 @@ const citiesWithEvents = new Set(
 /** Assign sitemap priority by page type. */
 function getPriority(url) {
   if (url === `${SITE}/`) return 1.0;
-  if (/\/(tickets|apply|faq|hosts|corporate|sponsorship)$/.test(url))
+  if (
+    /\/(tickets|apply|faq|hosts|corporate|sponsorship|singles-mixers)$/.test(
+      url,
+    )
+  )
     return 0.8;
   // Per-event landing pages: the page paid ads land on and the highest-intent
   // conversion surface on the site (single show, single "get tickets" goal),
@@ -222,7 +226,9 @@ export default defineConfig({
           page.includes("/waiver") ||
           page.includes("/consent") ||
           page.includes("/thank-you") ||
-          page.includes("/contestant-portal")
+          page.includes("/contestant-portal") ||
+          // Share link only: instantly redirects and is never meant to rank.
+          page.includes("/cuffing-season")
         )
           return false;
         if (page.includes("/journal/")) {

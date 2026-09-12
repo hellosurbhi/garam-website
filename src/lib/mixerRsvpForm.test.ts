@@ -2,6 +2,7 @@ import { describe, it, expect, beforeEach, afterEach, vi } from "vitest";
 import { initMixerRsvpForm } from "./mixerRsvpForm";
 import type { MixerRsvpFormConfig } from "./mixerRsvpForm";
 import { captureLead } from "./leadSubmission";
+import { identifyLead } from "./analytics";
 import { reportFailure } from "./failureAlert";
 import { MIXER_STORAGE_KEY } from "@/data/mixers";
 
@@ -192,6 +193,23 @@ describe("initMixerRsvpForm", () => {
     expect(onCaptureFailure).toHaveBeenCalledOnce();
     expect(onCaptureSuccess).not.toHaveBeenCalled();
     expect(localStorage.getItem(MIXER_STORAGE_KEY)).toBeNull();
+  });
+
+  it("an analytics throw after a successful save still runs the success path", async () => {
+    mockCaptureLead.mockResolvedValue({ id: "lead-1" });
+    vi.mocked(identifyLead).mockImplementationOnce(() => {
+      throw new Error("posthog exploded");
+    });
+    const { onCaptureSuccess, onCaptureFailure } = init();
+    const { form, name, email } = els();
+    setField(name, "Priya");
+    setField(email, "priya@example.com");
+    await submitForm(form);
+
+    expect(onCaptureSuccess).toHaveBeenCalledOnce();
+    expect(onCaptureFailure).not.toHaveBeenCalled();
+    expect(mockReportFailure).not.toHaveBeenCalled();
+    expect(localStorage.getItem(MIXER_STORAGE_KEY)).toBe("true");
   });
 
   it("on failure with a stay-on-page handler: shows the fallback error and re-enables submit", async () => {

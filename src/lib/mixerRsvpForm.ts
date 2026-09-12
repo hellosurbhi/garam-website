@@ -145,31 +145,13 @@ export function initMixerRsvpForm(config: MixerRsvpFormConfig): void {
     submitBtn.disabled = true;
     submitBtn.textContent = config.copy.submittingLabel;
 
+    // Only the calls that decide whether the lead was saved live inside
+    // this boundary. Everything after it is post-save bookkeeping; letting
+    // an analytics throw fall into this catch would run the failure path
+    // on a lead that DID save and invite a duplicate resubmit.
     try {
       const attribution = await buildLeadAttribution({ source: config.source });
       await captureLead({ name, email, ...attribution });
-
-      try {
-        safeLocalStorage.setItem(MIXER_STORAGE_KEY, "true");
-      } catch {
-        /* returning-visitor state is a convenience, not a requirement */
-      }
-
-      fetch("/api/notify-mixer-rsvp", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        keepalive: true,
-        body: JSON.stringify({ name, email, source: config.source }),
-      }).catch(() => {
-        /* owner alert is best effort; the lead is already saved */
-      });
-
-      identifyLead(email, { name });
-      trackLeadEvent("lead_email_submitted", { source: config.source });
-      trackLeadEvent("email_signup", { source: config.source });
-      capture("mixer_rsvp_submitted", { source: config.source });
-
-      config.onCaptureSuccess(els);
     } catch (err) {
       // keepalive on the underlying fetch lets this survive an immediate
       // navigation to Partiful in onCaptureFailure.
@@ -190,7 +172,34 @@ export function initMixerRsvpForm(config: MixerRsvpFormConfig): void {
         refresh();
         showError(config.copy.errorMessage);
       }
+      return;
     }
+
+    try {
+      safeLocalStorage.setItem(MIXER_STORAGE_KEY, "true");
+    } catch {
+      /* returning-visitor state is a convenience, not a requirement */
+    }
+
+    fetch("/api/notify-mixer-rsvp", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      keepalive: true,
+      body: JSON.stringify({ name, email, source: config.source }),
+    }).catch(() => {
+      /* owner alert is best effort; the lead is already saved */
+    });
+
+    try {
+      identifyLead(email, { name });
+      trackLeadEvent("lead_email_submitted", { source: config.source });
+      trackLeadEvent("email_signup", { source: config.source });
+      capture("mixer_rsvp_submitted", { source: config.source });
+    } catch {
+      /* analytics must never turn a saved lead into an error state */
+    }
+
+    config.onCaptureSuccess(els);
   };
 
   form.addEventListener("submit", (e) => {

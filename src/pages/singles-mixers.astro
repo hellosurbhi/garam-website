@@ -186,6 +186,7 @@ const socialEventJsonLd = isMixerUpcoming
               placeholder={SINGLES_MIXERS.form.namePlaceholder}
               required
               aria-label="Your name"
+              aria-describedby="sm-form-error"
               autocomplete="name"
               toolparamdescription="Full name of the person requesting mixer details"
             />
@@ -197,6 +198,7 @@ const socialEventJsonLd = isMixerUpcoming
               placeholder={SINGLES_MIXERS.form.emailPlaceholder}
               required
               aria-label="Your email"
+              aria-describedby="sm-form-error"
               autocomplete="email"
               toolparamdescription="Email address to receive the mixer details"
             />
@@ -258,16 +260,16 @@ const socialEventJsonLd = isMixerUpcoming
 </BaseLayout>
 
 <script>
-  import { buildLeadAttribution } from "@/lib/leadAttribution";
-  import { captureLead } from "@/lib/leadSubmission";
-  import { identifyLead, trackLeadEvent, capture } from "@/lib/analytics";
-  import { reportFailure } from "@/lib/failureAlert";
+  import { initMixerRsvpForm } from "@/lib/mixerRsvpForm";
   import { safeLocalStorage } from "@/lib/safeStorage";
   import { MIXER_STORAGE_KEY, SINGLES_MIXERS } from "@/data/mixers";
 
-  const SOURCE = "singles-mixers";
+  // No TypeScript syntax in this script on purpose: the dev server cannot
+  // transform TS inside .astro <script> tags (see BUGS.md), so all typed
+  // logic lives in src/lib/mixerRsvpForm.ts.
   const section = document.getElementById("mixer-form");
   const isUpcoming = section?.dataset.mixerUpcoming === "true";
+  const partifulUrl = section?.dataset.partifulUrl;
 
   const formBlock = document.getElementById("mixer-form-default");
   const successUpcoming = document.getElementById("mixer-success-upcoming");
@@ -286,65 +288,32 @@ const socialEventJsonLd = isMixerUpcoming
     showSuccess();
   }
 
-  const form = document.getElementById(
-    "mixer-rsvp-form",
-  ) as HTMLFormElement | null;
-  const errorEl = document.getElementById("sm-form-error");
-  const submitBtn = form?.querySelector<HTMLButtonElement>('[type="submit"]');
-
-  form?.addEventListener("submit", async (e) => {
-    e.preventDefault();
-    const name = (
-      document.getElementById("sm-name") as HTMLInputElement
-    ).value.trim();
-    const email = (
-      document.getElementById("sm-email") as HTMLInputElement
-    ).value.trim();
-
-    if (errorEl) {
-      errorEl.textContent = "";
-      errorEl.setAttribute("hidden", "");
-    }
-    if (submitBtn) submitBtn.disabled = true;
-
-    try {
-      const attribution = await buildLeadAttribution({ source: SOURCE });
-      await captureLead({ name, email, ...attribution });
-
-      try {
-        safeLocalStorage.setItem(MIXER_STORAGE_KEY, "true");
-      } catch {
-        /* returning-visitor state is a convenience, not a requirement */
-      }
-
-      fetch("/api/notify-mixer-rsvp", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        keepalive: true,
-        body: JSON.stringify({ name, email, source: SOURCE }),
-      }).catch(() => {
-        /* owner alert is best effort; the lead is already saved */
-      });
-
-      identifyLead(email, { name });
-      trackLeadEvent("lead_email_submitted", { source: SOURCE });
-      trackLeadEvent("email_signup", { source: SOURCE });
-      capture("mixer_rsvp_submitted", { source: SOURCE });
-
+  initMixerRsvpForm({
+    formId: "mixer-rsvp-form",
+    nameInputId: "sm-name",
+    emailInputId: "sm-email",
+    errorElId: "sm-form-error",
+    source: "singles-mixers",
+    copy: {
+      nameError: SINGLES_MIXERS.form.nameError,
+      errorMessage: SINGLES_MIXERS.form.errorMessage,
+      submittingLabel: SINGLES_MIXERS.form.submittingLabel,
+    },
+    onCaptureSuccess() {
       showSuccess();
-    } catch (err) {
-      if (errorEl) {
-        errorEl.textContent = SINGLES_MIXERS.form.errorMessage;
-        errorEl.removeAttribute("hidden");
+    },
+    onCaptureFailure() {
+      // While the mixer is live, the invite matters more than our
+      // bookkeeping: the owner was already paged with the person's contact
+      // (reportFailure, keepalive), so send them straight to Partiful
+      // instead of stranding them on an error. Once the mixer has passed
+      // there is no invite to offer, so fall back to the inline error.
+      if (isUpcoming && partifulUrl) {
+        window.location.assign(partifulUrl);
+        return true;
       }
-      reportFailure({
-        flow: "lead",
-        stage: "mixer_rsvp",
-        errorMessage: err instanceof Error ? err.message : String(err),
-        contact: { name, email },
-      });
-      if (submitBtn) submitBtn.disabled = false;
-    }
+      return false;
+    },
   });
 </script>
 

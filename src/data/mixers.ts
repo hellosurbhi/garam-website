@@ -50,6 +50,7 @@ export const SINGLES_MIXERS = {
     emailPlaceholder: "Your email",
     submitLabel: "Send Me the Details",
     submittingLabel: "Sending...",
+    nameError: "Please enter your name.",
     errorMessage: "Something went wrong. Try again.",
     successHeadingUpcoming: "You're on the list.",
     successBodyUpcoming:

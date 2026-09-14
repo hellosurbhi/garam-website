@@ -1,7 +1,13 @@
 import type { APIRoute } from "astro";
 import { z } from "zod";
 import { sendMail } from "@/lib/zohoMailer";
-import { escapeHtml, subjectSafe } from "@/data/emails";
+import {
+  escapeHtml,
+  subjectSafe,
+  mixerRsvpDetails,
+  mixerRsvpMissed,
+} from "@/data/emails";
+import { NEXT_MIXER, isMixerUpcoming } from "@/data/mixers";
 import { enforceRateLimit, RATE_LIMITS } from "@/lib/rateLimit";
 import { isAllowedOrigin } from "@/lib/allowedOrigin";
 import { isSyntheticSubmission } from "@/lib/syntheticMonitor";
@@ -59,6 +65,21 @@ export const POST: APIRoute = async ({ request }) => {
         <p style="margin:0;"><strong>Email:</strong> <a href="mailto:${escapeHtml(body.email)}" style="color:#DC2626;">${escapeHtml(body.email)}</a></p>
       </div>`,
     });
+
+    // Guest confirmation: non-fatal if it fails, but awaited so the
+    // serverless function doesn't exit before the send attempt completes.
+    // The lead is already saved via /api/capture-lead regardless of outcome.
+    const guestTemplate = isMixerUpcoming()
+      ? mixerRsvpDetails(body.name, NEXT_MIXER)
+      : mixerRsvpMissed(body.name);
+    await Promise.allSettled([
+      sendMail({
+        to: body.email,
+        replyTo: "contact@garammasaladating.com",
+        ...guestTemplate,
+      }),
+    ]);
+
     return jsonResponse({ sent: true }, 200);
   } catch (err) {
     // The lead is already saved via /api/capture-lead by the time this fires;

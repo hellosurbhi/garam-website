@@ -1,4 +1,5 @@
 import { SOCIAL_URLS } from "@/data/socials";
+import { nyOffset } from "@/utils/timezone";
 
 /**
  * Single source of truth for the next singles mixer. Both /cuffing-season
@@ -25,6 +26,14 @@ export const NEXT_MIXER = {
 
 /** Shared localStorage key: a lead who signed up on either page skips the form on return visits to either page. */
 export const MIXER_STORAGE_KEY = "gmd-mixer-rsvped";
+
+/** True until the mixer's end time passes in America/New_York. Shared by the RSVP page (which template to render) and the RSVP email API (which confirmation to send). */
+export function isMixerUpcoming(
+  mixer: typeof NEXT_MIXER = NEXT_MIXER,
+): boolean {
+  const endIso = `${mixer.isoDate}T${mixer.endTime}:00${nyOffset(mixer.isoDate, mixer.endTime)}`;
+  return Date.parse(endIso) > Date.now();
+}
 
 export interface MixerFaq {
   q: string;

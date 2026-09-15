@@ -1,7 +1,9 @@
 ---
 import BaseLayout from "@/layouts/BaseLayout.astro";
-import { NEXT_MIXER, MIXER_STORAGE_KEY } from "@/data/mixers";
+import { NEXT_MIXER, MIXER_STORAGE_KEY, isMixerUpcoming } from "@/data/mixers";
 import { CUFFING_SEASON } from "@/data/cuffing-season";
+
+const mixerUpcoming = isMixerUpcoming(NEXT_MIXER);
 
 // WHY hardcoded here, not imported: this project API key already lives as a
 // plain string in public/js/posthog.js (the static, unbundled PostHog
@@ -15,7 +17,9 @@ const POSTHOG_PROJECT_KEY = "phc_qqPeeEMxGcVmknbpgvkgbNUbMEaBMQu2fXWyPV6kAmxD";
 
 <BaseLayout
   title={CUFFING_SEASON.meta.title}
-  description={CUFFING_SEASON.meta.description}
+  description={mixerUpcoming
+    ? CUFFING_SEASON.meta.description
+    : CUFFING_SEASON.past.meta.description}
   noindex
   hideNav
   hideFooter
@@ -29,6 +33,7 @@ const POSTHOG_PROJECT_KEY = "phc_qqPeeEMxGcVmknbpgvkgbNUbMEaBMQu2fXWyPV6kAmxD";
         storageKey: MIXER_STORAGE_KEY,
         partifulUrl: NEXT_MIXER.partifulUrl,
         posthogKey: POSTHOG_PROJECT_KEY,
+        mixerUpcoming,
       }}
     >
       // WHY is:inline vanilla JS instead of a normal bundled <script>: a
@@ -48,6 +53,9 @@ const POSTHOG_PROJECT_KEY = "phc_qqPeeEMxGcVmknbpgvkgbNUbMEaBMQu2fXWyPV6kAmxD";
           rsvped = null;
         }
         if (!rsvped) return;
+        // Once the mixer has ended there is no Partiful invite to send a
+        // returning device to; the page below now shows the waitlist state.
+        if (!mixerUpcoming) return;
 
         try {
           var distinctId = null;
@@ -105,11 +113,27 @@ const POSTHOG_PROJECT_KEY = "phc_qqPeeEMxGcVmknbpgvkgbNUbMEaBMQu2fXWyPV6kAmxD";
   </Fragment>
 
   <main id="main-content" class="cuffing-page">
-    <div class="cuffing-shell">
+    <div
+      id="cuffing-shell"
+      class="cuffing-shell"
+      data-mixer-upcoming={mixerUpcoming ? "true" : "false"}
+    >
       <p class="cuffing-eyebrow">{CUFFING_SEASON.eyebrow}</p>
-      <h1 class="cuffing-headline">{CUFFING_SEASON.headline}</h1>
-      <p class="cuffing-subhead">{CUFFING_SEASON.subhead}</p>
-      <p class="cuffing-body">{CUFFING_SEASON.bodyLine}</p>
+      {
+        mixerUpcoming ? (
+          <>
+            <h1 class="cuffing-headline">{CUFFING_SEASON.headline}</h1>
+            <p class="cuffing-subhead">{CUFFING_SEASON.subhead}</p>
+            <p class="cuffing-body">{CUFFING_SEASON.bodyLine}</p>
+          </>
+        ) : (
+          <>
+            <h1 class="cuffing-headline">{CUFFING_SEASON.past.headline}</h1>
+            <p class="cuffing-subhead">{CUFFING_SEASON.past.subhead}</p>
+            <p class="cuffing-body">{CUFFING_SEASON.past.bodyLine}</p>
+          </>
+        )
+      }
 
       <form
         id="cuffing-form"
@@ -148,11 +172,32 @@ const POSTHOG_PROJECT_KEY = "phc_qqPeeEMxGcVmknbpgvkgbNUbMEaBMQu2fXWyPV6kAmxD";
           class="btn btn-hot cuffing-submit"
           data-testid="cuffing-submit"
         >
-          {CUFFING_SEASON.form.submitLabel}
+          {
+            mixerUpcoming
+              ? CUFFING_SEASON.form.submitLabel
+              : CUFFING_SEASON.past.submitLabel
+          }
         </button>
       </form>
 
-      <p class="cuffing-fine-print">{CUFFING_SEASON.finePrint}</p>
+      <div
+        id="cuffing-success"
+        class="cuffing-form"
+        hidden
+        role="status"
+        aria-live="polite"
+      >
+        <p class="cuffing-success-heading">
+          {CUFFING_SEASON.past.successHeading}
+        </p>
+        <p class="cuffing-body">{CUFFING_SEASON.past.successBody}</p>
+      </div>
+
+      {
+        mixerUpcoming && (
+          <p class="cuffing-fine-print">{CUFFING_SEASON.finePrint}</p>
+        )
+      }
     </div>
   </main>
 </BaseLayout>
@@ -160,12 +205,31 @@ const POSTHOG_PROJECT_KEY = "phc_qqPeeEMxGcVmknbpgvkgbNUbMEaBMQu2fXWyPV6kAmxD";
 <script>
   import { initMixerRsvpForm } from "@/lib/mixerRsvpForm";
   import { capture } from "@/lib/analytics";
-  import { NEXT_MIXER } from "@/data/mixers";
+  import { safeLocalStorage } from "@/lib/safeStorage";
+  import { NEXT_MIXER, MIXER_STORAGE_KEY } from "@/data/mixers";
   import { CUFFING_SEASON } from "@/data/cuffing-season";
 
   // No TypeScript syntax in this script on purpose: the dev server cannot
   // transform TS inside .astro <script> tags (see BUGS.md), so all typed
   // logic lives in src/lib/mixerRsvpForm.ts.
+  const shell = document.getElementById("cuffing-shell");
+  const isUpcoming = shell?.dataset.mixerUpcoming === "true";
+
+  const formBlock = document.getElementById("cuffing-form");
+  const successBlock = document.getElementById("cuffing-success");
+
+  function showWaitlistSuccess() {
+    formBlock?.setAttribute("hidden", "");
+    successBlock?.removeAttribute("hidden");
+  }
+
+  // A returning device that already RSVP'd while the mixer was upcoming
+  // never reaches this script: the is:inline head script redirects it to
+  // Partiful before this page paints. Only the past-mixer case lands here.
+  if (!isUpcoming && safeLocalStorage.getItem(MIXER_STORAGE_KEY)) {
+    showWaitlistSuccess();
+  }
+
   initMixerRsvpForm({
     formId: "cuffing-form",
     nameInputId: "cuffing-name",
@@ -175,9 +239,15 @@ const POSTHOG_PROJECT_KEY = "phc_qqPeeEMxGcVmknbpgvkgbNUbMEaBMQu2fXWyPV6kAmxD";
     copy: {
       nameError: CUFFING_SEASON.form.nameError,
       errorMessage: CUFFING_SEASON.form.errorMessage,
-      submittingLabel: CUFFING_SEASON.form.submittingLabel,
+      submittingLabel: isUpcoming
+        ? CUFFING_SEASON.form.submittingLabel
+        : CUFFING_SEASON.past.submittingLabel,
     },
     onCaptureSuccess(els) {
+      if (!isUpcoming) {
+        showWaitlistSuccess();
+        return;
+      }
       capture("mixer_redirect", {
         trigger: "post_submit",
         source: "cuffing-season",
@@ -192,10 +262,14 @@ const POSTHOG_PROJECT_KEY = "phc_qqPeeEMxGcVmknbpgvkgbNUbMEaBMQu2fXWyPV6kAmxD";
       }, 150);
     },
     onCaptureFailure(els) {
-      // The invite matters more than our bookkeeping: the owner was already
-      // paged with the person's contact (reportFailure, keepalive), so send
-      // them to Partiful instead of stranding them on an error. No delay
-      // needed here: the failure path queued no PostHog events.
+      // Past the mixer's end time there is no Partiful invite to fall back
+      // to, so stay on the page and show the inline error like any other
+      // form. While the mixer is still upcoming, the invite matters more
+      // than our bookkeeping: the owner was already paged with the person's
+      // contact (reportFailure, keepalive), so send them to Partiful
+      // instead of stranding them on an error. No delay needed here: the
+      // failure path queued no PostHog events.
+      if (!isUpcoming) return false;
       els.submitBtn.textContent = CUFFING_SEASON.form.redirectingLabel;
       window.location.assign(NEXT_MIXER.partifulUrl);
       return true;
@@ -281,6 +355,14 @@ const POSTHOG_PROJECT_KEY = "phc_qqPeeEMxGcVmknbpgvkgbNUbMEaBMQu2fXWyPV6kAmxD";
     color: var(--text-secondary);
     max-width: 40ch;
     margin: 0 auto;
+  }
+
+  .cuffing-success-heading {
+    font-family: var(--font-body), sans-serif;
+    font-weight: 800;
+    font-size: 19px;
+    color: var(--charcoal);
+    margin: 0;
   }
 
   .cuffing-form {

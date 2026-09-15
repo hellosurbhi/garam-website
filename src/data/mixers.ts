@@ -84,9 +84,9 @@ export const SINGLES_MIXERS = {
   },
   nextEventCard: {
     eyebrowUpcoming: "The Next One",
-    headingPast: "The Next One Is Coming",
+    headingPast: "This Event Has Already Happened",
     bodyPast:
-      "We just wrapped a mixer at Romae in the West Village. Get on the list below and you will be the first to hear about the next one.",
+      "Add your name to the list below and we will email you the moment the next mixer is on the calendar.",
   },
   finePrint:
     "Must be 21 or older. Space is limited, so get on the list before the day of the event.",

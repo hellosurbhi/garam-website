@@ -285,6 +285,24 @@ describe("notify-application handler", () => {
     expect(mockSend).toHaveBeenCalled();
   });
 
+  it("accepts a phone number and pitch above the old stale caps but within FIELD_LIMITS", async () => {
+    const res = await POST(
+      makeContext(
+        makeRequest({
+          ...validBody,
+          // 38 chars: over the old 30-char cap, well under FIELD_LIMITS.phone (50)
+          phone: "+1 (555) 010-0000 (WhatsApp preferred)",
+          // over the old 5000-char cap, well under FIELD_LIMITS.pitch (50,000)
+          pitch: "I love masala chai and long walks. ".repeat(200),
+        }),
+      ),
+    );
+    expect(res.status).toBe(200);
+    const body = await res.json();
+    expect(body.sent).toBe(true);
+    expect(mockSend).toHaveBeenCalled();
+  });
+
   it("returns 500 when sendMail throws an error", async () => {
     mockSend.mockRejectedValue(new Error("Network failure"));
     const res = await POST(makeContext(makeRequest(validBody)));

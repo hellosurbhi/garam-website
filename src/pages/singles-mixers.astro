@@ -1,7 +1,7 @@
 ---
 import BaseLayout from "@/layouts/BaseLayout.astro";
 import FaqAccordion from "@/components/ui/FaqAccordion.astro";
-import { NEXT_MIXER, SINGLES_MIXERS } from "@/data/mixers";
+import { NEXT_MIXER, SINGLES_MIXERS, isMixerUpcoming } from "@/data/mixers";
 import { buildBreadcrumbJsonLd, BASE } from "@/utils/breadcrumbs";
 import { nyOffset } from "@/utils/timezone";
 import { formatDisplayTime } from "@/utils/eventDate";
@@ -10,7 +10,7 @@ const PAGE_URL = `${BASE}/singles-mixers`;
 
 const mixerStartIso = `${NEXT_MIXER.isoDate}T${NEXT_MIXER.startTime}:00${nyOffset(NEXT_MIXER.isoDate, NEXT_MIXER.startTime)}`;
 const mixerEndIso = `${NEXT_MIXER.isoDate}T${NEXT_MIXER.endTime}:00${nyOffset(NEXT_MIXER.isoDate, NEXT_MIXER.endTime)}`;
-const isMixerUpcoming = Date.parse(mixerEndIso) > Date.now();
+const mixerUpcoming = isMixerUpcoming(NEXT_MIXER);
 
 const mixerDateFormatted = new Date(
   `${NEXT_MIXER.isoDate}T12:00:00`,
@@ -43,7 +43,7 @@ const faqJsonLd = JSON.stringify({
 // Only claim an Event in structured data while it is still true: once the
 // mixer ends, the page keeps existing (it becomes a waitlist for the next
 // one) but must stop asserting a past event is scheduled.
-const socialEventJsonLd = isMixerUpcoming
+const socialEventJsonLd = mixerUpcoming
   ? JSON.stringify({
       "@context": "https://schema.org",
       "@type": "SocialEvent",
@@ -139,12 +139,12 @@ const socialEventJsonLd = isMixerUpcoming
       id="mixer-form"
       class="sm-section sm-cream"
       aria-labelledby="sm-event-heading"
-      data-mixer-upcoming={isMixerUpcoming ? "true" : "false"}
+      data-mixer-upcoming={mixerUpcoming ? "true" : "false"}
       data-partiful-url={NEXT_MIXER.partifulUrl}
     >
       <div class="sm-container sm-event-card">
         {
-          isMixerUpcoming ? (
+          mixerUpcoming ? (
             <>
               <p class="sm-eyebrow">
                 {SINGLES_MIXERS.nextEventCard.eyebrowUpcoming}

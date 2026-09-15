@@ -1,4 +1,5 @@
 import { SOCIAL_URLS } from "@/data/socials";
+import { nyOffset } from "@/utils/timezone";
 
 /**
  * Single source of truth for the next singles mixer. Both /cuffing-season
@@ -25,6 +26,14 @@ export const NEXT_MIXER = {
 
 /** Shared localStorage key: a lead who signed up on either page skips the form on return visits to either page. */
 export const MIXER_STORAGE_KEY = "gmd-mixer-rsvped";
+
+/** True until the mixer's end time passes in America/New_York. Shared by the RSVP page (which template to render) and the RSVP email API (which confirmation to send). */
+export function isMixerUpcoming(
+  mixer: typeof NEXT_MIXER = NEXT_MIXER,
+): boolean {
+  const endIso = `${mixer.isoDate}T${mixer.endTime}:00${nyOffset(mixer.isoDate, mixer.endTime)}`;
+  return Date.parse(endIso) > Date.now();
+}
 
 export interface MixerFaq {
   q: string;
@@ -75,9 +84,9 @@ export const SINGLES_MIXERS = {
   },
   nextEventCard: {
     eyebrowUpcoming: "The Next One",
-    headingPast: "The Next One Is Coming",
+    headingPast: "This Event Has Already Happened",
     bodyPast:
-      "We just wrapped a mixer at Romae in the West Village. Get on the list below and you will be the first to hear about the next one.",
+      "Add your name to the list below and we will email you the moment the next mixer is on the calendar.",
   },
   finePrint:
     "Must be 21 or older. Space is limited, so get on the list before the day of the event.",

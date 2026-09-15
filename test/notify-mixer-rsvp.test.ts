@@ -1,4 +1,6 @@
-import { describe, it, expect, vi, beforeEach } from "vitest";
+import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
+import { NEXT_MIXER } from "@/data/mixers";
+import { nyOffset } from "@/utils/timezone";
 
 const mockSend = vi.hoisted(() => vi.fn());
 
@@ -39,11 +41,19 @@ const validBody = {
   source: "cuffing-season",
 };
 
+const mixerEndMs = Date.parse(
+  `${NEXT_MIXER.isoDate}T${NEXT_MIXER.endTime}:00${nyOffset(NEXT_MIXER.isoDate, NEXT_MIXER.endTime)}`,
+);
+
 describe("notify-mixer-rsvp handler", () => {
   beforeEach(() => {
     vi.clearAllMocks();
     import.meta.env.NOTIFICATION_EMAIL = "admin@example.com";
     mockSend.mockResolvedValue({ id: "email-id" });
+  });
+
+  afterEach(() => {
+    vi.useRealTimers();
   });
 
   it("returns 500 when NOTIFICATION_EMAIL is missing", async () => {
@@ -90,7 +100,8 @@ describe("notify-mixer-rsvp handler", () => {
     expect(res.status).toBe(200);
     const body = await res.json();
     expect(body.sent).toBe(true);
-    expect(mockSend).toHaveBeenCalledTimes(1);
+    // Owner notification + guest confirmation.
+    expect(mockSend).toHaveBeenCalledTimes(2);
   });
 
   it("returns 200 and sends mail for singles-mixers", async () => {
@@ -98,7 +109,26 @@ describe("notify-mixer-rsvp handler", () => {
       makeContext(makeRequest({ ...validBody, source: "singles-mixers" })),
     );
     expect(res.status).toBe(200);
-    expect(mockSend).toHaveBeenCalledTimes(1);
+    expect(mockSend).toHaveBeenCalledTimes(2);
+  });
+
+  it("sends the mixer detail email to the guest while the mixer is upcoming", async () => {
+    vi.setSystemTime(mixerEndMs - 1000);
+    await POST(makeContext(makeRequest(validBody)));
+    expect(mockSend).toHaveBeenCalledTimes(2);
+    const guestCall = mockSend.mock.calls[1][0];
+    expect(guestCall.to).toBe(validBody.email);
+    expect(guestCall.replyTo).toBe("contact@garammasaladating.com");
+    expect(guestCall.subject).toContain("You're on the list");
+  });
+
+  it("sends the missed mixer email to the guest once the mixer has ended", async () => {
+    vi.setSystemTime(mixerEndMs + 1000);
+    await POST(makeContext(makeRequest(validBody)));
+    expect(mockSend).toHaveBeenCalledTimes(2);
+    const guestCall = mockSend.mock.calls[1][0];
+    expect(guestCall.to).toBe(validBody.email);
+    expect(guestCall.subject).toContain("Thanks for registering");
   });
 
   it("sends mail to the configured NOTIFICATION_EMAIL address", async () => {

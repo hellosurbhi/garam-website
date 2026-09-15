@@ -491,7 +491,7 @@ export function mixerRsvpMissed(name: string): EmailTemplate {
   const text = [
     `Hi ${firstName},`,
     "",
-    "Thank you for registering. Our mixer already took place today and it was completely sold out.",
+    "Thank you for registering. That mixer already took place and it was completely sold out.",
     "",
     "Thanks so much for checking us out. We'll email you as soon as the next mixer is on the calendar.",
     "",
@@ -503,7 +503,7 @@ export function mixerRsvpMissed(name: string): EmailTemplate {
   const html = wrap(
     p(`Hi ${safeFirstName},`) +
       p(
-        "Thank you for registering. Our mixer already took place today and it was completely sold out.",
+        "Thank you for registering. That mixer already took place and it was completely sold out.",
       ) +
       p(
         "Thanks so much for checking us out. We'll email you as soon as the next mixer is on the calendar.",

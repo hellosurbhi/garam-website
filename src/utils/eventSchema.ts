@@ -1,6 +1,6 @@
 import { isDisplayable } from "@/data/events";
 import type { EventEntry } from "@/data/events";
-import { nyOffset } from "@/utils/timezone";
+import { offsetForZone } from "@/utils/timezone";
 import { addMinutesToTime } from "@/utils/eventDate";
 import { BASE } from "@/utils/breadcrumbs";
 
@@ -42,6 +42,7 @@ export function buildEventSchemas(eventsList: EventEntry[]): string[] {
       if (venue.postalCode) address.postalCode = venue.postalCode;
 
       const door = addMinutesToTime(start, -30);
+      const timeZone = e.timezone ?? "America/New_York";
       const isPresale = e.onSaleAt
         ? Date.parse(e.onSaleAt) > Date.now()
         : false;
@@ -55,9 +56,9 @@ export function buildEventSchemas(eventsList: EventEntry[]): string[] {
         "@context": "https://schema.org",
         "@type": "ComedyEvent",
         name: "Garam Masala Dating | Live Comedy Dating Show",
-        startDate: `${e.isoDate}T${start}:00${nyOffset(e.isoDate!, start)}`,
-        endDate: `${e.isoDate}T${end}:00${nyOffset(e.isoDate!, end)}`,
-        doorTime: `${e.isoDate}T${door}:00${nyOffset(e.isoDate!, door)}`,
+        startDate: `${e.isoDate}T${start}:00${offsetForZone(e.isoDate!, start, timeZone)}`,
+        endDate: `${e.isoDate}T${end}:00${offsetForZone(e.isoDate!, end, timeZone)}`,
+        doorTime: `${e.isoDate}T${door}:00${offsetForZone(e.isoDate!, door, timeZone)}`,
         eventStatus: e.previousDate
           ? "https://schema.org/EventRescheduled"
           : "https://schema.org/EventScheduled",

@@ -115,4 +115,37 @@ describe("events data", () => {
       }
     }
   });
+
+  it("keeps the announced October Philadelphia and Chicago shows accurate", () => {
+    const philadelphia = events.find(
+      (event) => event.eventbriteId === "1999515971095",
+    );
+    const chicago = events.find(
+      (event) => event.eventbriteId === "2002169289241",
+    );
+
+    expect(philadelphia).toMatchObject({
+      date: "Oct 4",
+      isoDate: "2026-10-04",
+      previousDate: "2026-09-27",
+      startTime: "19:30",
+      endTime: "21:00",
+      slug: "philadelphia-2026-10-04",
+      ticketSource: "their-eventbrite",
+    });
+    expect(chicago).toMatchObject({
+      date: "Oct 24",
+      isoDate: "2026-10-24",
+      startTime: "18:00",
+      endTime: "19:30",
+      slug: "chicago-2026-10-24",
+      ticketSource: "our-eventbrite",
+      timezone: "America/Chicago",
+      venue: {
+        name: "The Lincoln Lodge",
+        streetAddress: "2040 North Milwaukee Avenue",
+        postalCode: "60647",
+      },
+    });
+  });
 });

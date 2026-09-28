@@ -140,6 +140,15 @@ const VENUE_NEXT_IN_LINE: EventVenue = {
   addressCountry: "US",
 };
 
+const VENUE_LINCOLN_LODGE: EventVenue = {
+  name: "The Lincoln Lodge",
+  streetAddress: "2040 North Milwaukee Avenue",
+  addressLocality: "Chicago",
+  addressRegion: "IL",
+  postalCode: "60647",
+  addressCountry: "US",
+};
+
 const VENUE_KOMIC_KARMA: EventVenue = {
   name: "Komic Karma Entertainment",
   addressLocality: "North Brunswick Township",
@@ -526,18 +535,20 @@ export const events: EventEntry[] = [
     price: "15",
   },
   {
-    date: "Sep 27",
+    date: "Oct 4",
     city: "Philadelphia",
     state: "Pennsylvania",
     stateAbbr: "PA",
     citySlug: "philadelphia",
-    slug: buildEventSlug("philadelphia", "2026-09-27"),
+    slug: buildEventSlug("philadelphia", "2026-10-04"),
     description:
       "Garam Masala Dating returns to Next In Line Comedy in Philadelphia for a BYOB night of live comedy and real blind dates on stage.",
     lineup: DEFAULT_LINEUP,
     ticketSource: "their-eventbrite",
     url: "https://www.eventbrite.com/e/garam-masala-1-desi-dating-show-byob-tickets-1999515971095",
-    isoDate: "2026-09-27",
+    isoDate: "2026-10-04",
+    previousDate: "2026-09-27",
+    note: "Moved from Sep 27 to Oct 4",
     startTime: "19:30",
     endTime: "21:00",
     venue: VENUE_NEXT_IN_LINE,
@@ -562,6 +573,26 @@ export const events: EventEntry[] = [
     venue: VENUE_CITY_WINERY_NYC,
     price: "15",
     onSaleAt: "2026-08-20T19:00:00Z",
+  },
+  {
+    date: "Oct 24",
+    city: "Chicago",
+    state: "Illinois",
+    stateAbbr: "IL",
+    citySlug: "chicago",
+    slug: buildEventSlug("chicago", "2026-10-24"),
+    description:
+      "Garam Masala Dating returns to Chicago at The Lincoln Lodge for a night of live comedy, a real blind date on stage and a singles mixer.",
+    lineup: DEFAULT_LINEUP,
+    ticketSource: "our-eventbrite",
+    url: "https://www.eventbrite.com/e/garam-masala-comedy-dating-show-shacking-up-in-chicago-tickets-2002169289241",
+    isoDate: "2026-10-24",
+    startTime: "18:00",
+    endTime: "19:30",
+    venue: VENUE_LINCOLN_LODGE,
+    price: "15",
+    eventbriteId: "2002169289241",
+    timezone: "America/Chicago",
   },
 ];
 

@@ -1,5 +1,10 @@
 # Changelog
 
+## feat(events): reschedule Philadelphia and add Chicago (2026-09-28)
+
+Philadelphia is now Sunday October 4 2026 from 7:30 to 9 PM at Next In Line Comedy. Chicago is now Saturday October 24 2026 from 6 to 7:30 PM at The Lincoln Lodge. Both shows use their live Eventbrite listings and receive updated event landing pages with Event JSON-LD. Event schema generation now respects each show's IANA timezone, so Chicago publishes its correct Central Time UTC offset.
+
+**Files:** `src/data/events.ts`, `src/utils/eventSchema.ts`, `src/utils/timezone.ts`, `test/events.test.ts`, `src/utils/eventSchema.test.ts`, `src/utils/timezone.test.ts`, `EVENTS-HISTORY.md`
 ## feat(mixers): guest confirmation emails + auto waitlist state once a mixer ends (2026-09-15)
 
 PR #272. Two related gaps in the mixer RSVP flow, both surfaced by tonight's Romae mixer.

@@ -67,6 +67,11 @@ export const RATE_LIMITS = {
     limit: 5,
     windowSeconds: 60,
   },
+  notifyMixerRsvp: {
+    prefix: "ratelimit:notify-mixer-rsvp",
+    limit: 5,
+    windowSeconds: 60,
+  },
   contestantClaim: {
     prefix: "ratelimit:contestant-claim",
     limit: 5,

@@ -5,6 +5,26 @@
 Philadelphia is now Sunday October 4 2026 from 7:30 to 9 PM at Next In Line Comedy. Chicago is now Saturday October 24 2026 from 6 to 7:30 PM at The Lincoln Lodge. Both shows use their live Eventbrite listings and receive updated event landing pages with Event JSON-LD. Event schema generation now respects each show's IANA timezone, so Chicago publishes its correct Central Time UTC offset.
 
 **Files:** `src/data/events.ts`, `src/utils/eventSchema.ts`, `src/utils/timezone.ts`, `test/events.test.ts`, `src/utils/eventSchema.test.ts`, `src/utils/timezone.test.ts`, `EVENTS-HISTORY.md`
+## feat(mixers): guest confirmation emails + auto waitlist state once a mixer ends (2026-09-15)
+
+PR #272. Two related gaps in the mixer RSVP flow, both surfaced by tonight's Romae mixer.
+
+- **RSVPs now get an email.** `/singles-mixers`' FAQ already promised "we will email you the details too", but `notify-mixer-rsvp.ts` only ever emailed the owner. It now sends a best effort guest email too, mirroring the applicant welcome pattern in `notify-application.ts`: `mixerRsvpDetails` while the mixer is still upcoming, `mixerRsvpMissed` once it has ended. `isMixerUpcoming()` is the single shared source of truth for "has this mixer ended" that the API route, `singles-mixers.astro` and `cuffing-season.astro` all read, instead of each computing it separately.
+- **cuffing-season.astro now handles a mixer that already happened.** This page (the share link for one specific event) had no such handling at all: it would keep showing the RSVP form and sending every submitter, and every returning device, to a Partiful invite for an event that was long over. It now checks `isMixerUpcoming()` the same way `singles-mixers.astro` already did: once the mixer's end time passes, the page swaps to "This Event Has Already Happened" plus a waitlist signup, the head script stops auto redirecting returning devices to a dead invite, and a failed submit shows an inline error instead of sending the person to Partiful. Pointing `NEXT_MIXER` at a real future date brings the live event copy back automatically, on both pages.
+- **singles-mixers.astro's past state copy reworded to match:** "This Event Has Already Happened. Add your name to the list below and we will email you the moment the next mixer is on the calendar."
+
+**Files:** `src/data/emails.ts`, `src/pages/api/notify-mixer-rsvp.ts`, `src/data/mixers.ts`, `src/pages/cuffing-season.astro`, `src/data/cuffing-season.ts`, `src/pages/singles-mixers.astro`, `test/notify-mixer-rsvp.test.ts`
+
+## fix(mixers): RSVP failures still reach Partiful, form errors say what is wrong (2026-09-12)
+
+PR #265 follow-up covering the two functional gaps and the open CodeRabbit threads.
+
+- **Nobody misses the party on our error.** When saving the RSVP fails on valid input, the person is sent to Partiful anyway instead of being stranded on "Something went wrong": cuffing-season always redirects, singles-mixers redirects while the mixer is upcoming and falls back to an honest inline error once it has passed (no live invite to send anyone to). The owner is still paged with the person's name and email via the keepalive failure alert, so the lead is recoverable either way. The returning-visitor storage key is not set on failure.
+- **Specific errors before the server is ever involved.** Both forms now validate client-side with the same `validateEmail` the apply form and `/api/capture-lead` use: a bad email says "Please enter a valid email address", a missing name says "Please enter your name.", errors appear inline after leaving the field (with `aria-invalid` and `aria-describedby` wiring) and the submit button stays disabled until both fields are valid. The generic failure copy is now reserved for genuine server failures.
+- **One shared module instead of two near-duplicate scripts.** The whole flow lives in `src/lib/mixerRsvpForm.ts` with 9 DOM tests; each page's `<script>` is a TS-free init call, which also clears the known dev-server 500 on TypeScript inside `.astro` scripts for these two pages.
+- **BUGS.md scope correction per CodeRabbit.** `verify-turnstile.ts` was removed from the mail-spam Origin-auth entry (it sends no mail and reads no name or email) and got its own entry for the config-dependent fail-open when `TURNSTILE_SECRET_KEY` is unset.
+
+**Files:** `src/lib/mixerRsvpForm.ts`, `src/lib/mixerRsvpForm.test.ts`, `src/pages/cuffing-season.astro`, `src/pages/singles-mixers.astro`, `src/data/cuffing-season.ts`, `src/data/mixers.ts`, `BUGS.md`
 
 ## feat(events): new Philadelphia show Sep 27 at Next In Line Comedy (2026-09-02)
 

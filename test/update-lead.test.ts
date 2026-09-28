@@ -1,5 +1,12 @@
 import { describe, it, expect, beforeEach, afterEach, vi } from "vitest";
 
+// vi.hoisted ensures mockAlertOps is evaluated before vi.mock hoisting
+const mockAlertOps = vi.hoisted(() => vi.fn().mockResolvedValue(true));
+
+vi.mock("@/lib/opsAlert", () => ({
+  alertOps: mockAlertOps,
+}));
+
 const { POST } = await import("@/pages/api/update-lead");
 const { issueLeadToken } = await import("@/lib/leadToken");
 
@@ -24,6 +31,7 @@ function mockFirestoreOk() {
 describe("update-lead handler", () => {
   beforeEach(() => {
     vi.restoreAllMocks();
+    mockAlertOps.mockClear();
     import.meta.env.PUBLIC_FIREBASE_PROJECT_ID = "test-project";
     delete import.meta.env.LEAD_UPDATE_SECRET;
   });
@@ -159,5 +167,27 @@ describe("update-lead handler", () => {
     expect(body.error).toBe("Failed to update lead");
     expect(body.detail).toBeUndefined();
     expect(errorSpy).toHaveBeenCalled();
+  });
+
+  it("reports which fields were attempted when Firestore rejects the update", async () => {
+    vi.spyOn(globalThis, "fetch").mockResolvedValue(
+      new Response(
+        '{"error":{"code":403,"message":"Missing or insufficient permissions.","status":"PERMISSION_DENIED"}}',
+        { status: 403 },
+      ),
+    );
+    vi.spyOn(console, "error").mockImplementation(() => {});
+
+    await POST(
+      makeContext(makeRequest({ id: "lead123", phone: "5551234567" })),
+    );
+
+    expect(mockAlertOps).toHaveBeenCalledWith(
+      expect.objectContaining({
+        flow: "lead",
+        stage: "phone_update",
+        context: { leadId: "lead123", fields: "phone" },
+      }),
+    );
   });
 });

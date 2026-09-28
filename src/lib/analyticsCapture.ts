@@ -107,6 +107,8 @@ function safePageType(pathname: string | undefined | null): string {
   if (path.startsWith("/journal/")) return "journal";
   if (path.startsWith("/corporate")) return "corporate";
   if (path.startsWith("/sponsorship")) return "sponsorship";
+  if (path.startsWith("/cuffing-season")) return "cuffing";
+  if (path.startsWith("/singles-mixers")) return "mixers";
   return "other";
 }
 

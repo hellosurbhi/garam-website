@@ -15,6 +15,8 @@ September 28 verification: `npm audit` with development dependencies omitted rep
 
 Overnight plan: trace the installed dependency with `npm explain undici`, update within the existing compatible range in a separate dependency branch and rerun the audit, application tests and production build. Check whether the application uses the affected WebSocket path before assigning runtime impact.
 
+The full audit also reports a high development dependency finding in `fast-uri` for GHSA-qw65-cvwx-89v3 and GHSA-58mr-gqgx-xq4g. It is absent from the production dependency audit. Include `npm explain fast-uri` and its compatible fix in that dependency branch, then verify the full audit and development tooling.
+
 ### [MEDIUM] Partial application lead updates have no token renewal after ten minutes
 
 Observed September 28: production returned 401 from `/api/update-lead` at 01:23:13 UTC on September 29, immediately after an application notification succeeded. `src/lib/leadToken.ts` gives update tokens a ten minute lifetime and `src/components/apply/useApplyForm.ts` silently ignores a failed completion marker update. The saved application is unaffected, but its earlier lead can remain marked partial. The logs do not establish whether this particular token was expired or invalid.

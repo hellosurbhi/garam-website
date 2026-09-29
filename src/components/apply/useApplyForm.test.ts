@@ -4,11 +4,18 @@ import { renderHook, act } from "@testing-library/react";
 /* ─── Mocks ──────────────────────────────────────────────────────── */
 
 const mockAddDoc = vi.fn().mockResolvedValue({ id: "doc-1" });
-const mockUploadBytesResumable = vi
-  .fn()
-  .mockImplementation(() =>
-    Object.assign(Promise.resolve({}), { cancel: vi.fn() }),
-  );
+const mockUploadBytesResumable = vi.fn().mockImplementation(() => ({
+  cancel: vi.fn(),
+  on: (
+    _event: string,
+    _next: unknown,
+    _error: unknown,
+    complete: () => void,
+  ) => {
+    queueMicrotask(complete);
+    return vi.fn();
+  },
+}));
 const mockDeleteObject = vi.fn().mockResolvedValue(undefined);
 const mockSignInAnonymously = vi
   .fn()
@@ -655,6 +662,74 @@ describe("useApplyForm", () => {
       expect.objectContaining({
         fullPath: expect.stringMatching(/^photos\//),
       }),
+    );
+  });
+
+  it("saves the application when a photo fails and only then reports it as saved", async () => {
+    mockUploadBytesResumable.mockImplementationOnce(() => ({
+      cancel: vi.fn(),
+      on: (_event: string, _next: unknown, error: (reason: Error) => void) => {
+        queueMicrotask(() => error(new Error("Upload stalled")));
+        return vi.fn();
+      },
+    }));
+    const { result } = renderHook(() => useApplyForm());
+    act(() =>
+      fillRequired(
+        result.current.set,
+        result.current.handleTermsCheckbox,
+        result.current.handleAddPhotos,
+      ),
+    );
+    mockAddDoc.mockImplementationOnce(async () => {
+      expect(mockReportFailure).not.toHaveBeenCalled();
+      return { id: "doc-1" };
+    });
+    await act(async () => {
+      await result.current.handleSubmit(makeSubmitEvent());
+    });
+    expect(mockAddDoc).toHaveBeenCalledWith(
+      undefined,
+      expect.objectContaining({
+        photoPaths: [],
+        photoUploadFailed: true,
+        email: "jane@example.com",
+      }),
+    );
+    expect(result.current.submitted).toBe(true);
+    expect(result.current.photosFailed).toBe(true);
+    expect(mockReportFailure).toHaveBeenCalledWith(
+      expect.objectContaining({
+        stage: "photo_upload",
+        errorMessage: expect.stringContaining("Application saved"),
+      }),
+    );
+  });
+
+  it("does not claim the application was saved when both the photo and document fail", async () => {
+    mockUploadBytesResumable.mockImplementationOnce(() => ({
+      cancel: vi.fn(),
+      on: (_event: string, _next: unknown, error: (reason: Error) => void) => {
+        queueMicrotask(() => error(new Error("Upload stalled")));
+        return vi.fn();
+      },
+    }));
+    mockAddDoc.mockRejectedValueOnce(new Error("Firestore error"));
+    const { result } = renderHook(() => useApplyForm());
+    act(() =>
+      fillRequired(
+        result.current.set,
+        result.current.handleTermsCheckbox,
+        result.current.handleAddPhotos,
+      ),
+    );
+    await act(async () => {
+      await result.current.handleSubmit(makeSubmitEvent());
+    });
+    expect(result.current.submitted).toBe(false);
+    expect(mockReportFailure).toHaveBeenCalledTimes(1);
+    expect(mockReportFailure).toHaveBeenCalledWith(
+      expect.objectContaining({ stage: "submit" }),
     );
   });
 

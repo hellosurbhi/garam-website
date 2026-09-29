@@ -12,6 +12,22 @@
 
 import { test, expect, type Page } from "@playwright/test";
 
+// This suite also runs on production. Mock form writes and mail endpoints
+// before navigation so fixture submissions cannot create leads or page the
+// producer. Individual tests may override these routes for failure cases.
+test.beforeEach(async ({ page }) => {
+  await page.route("**/api/**", (route) => {
+    if (route.request().method() !== "POST") return route.continue();
+    const path = new URL(route.request().url()).pathname;
+    return route.fulfill({
+      json:
+        path === "/api/capture-lead"
+          ? { ok: true, id: "smoke-lead", updateToken: "smoke-update-token" }
+          : { ok: true, sent: true },
+    });
+  });
+});
+
 // ---------------------------------------------------------------------------
 // Helpers
 // ---------------------------------------------------------------------------
@@ -175,7 +191,56 @@ test.describe("Apply form", () => {
 // ---------------------------------------------------------------------------
 
 test.describe("HomeSignup (Spice List)", () => {
-  test("submits email and shows success state", async ({ page }) => {
+  test("completes signup even when the tracking SDK throws", async ({
+    page,
+  }) => {
+    await page.goto("/", { waitUntil: "domcontentloaded" });
+    await page.fill("#nl-email", "smoketest@example.com");
+    await page.evaluate(() => {
+      const unavailable = () => {
+        throw new Error("Tracking unavailable");
+      };
+      window.posthog = {
+        get_distinct_id: unavailable,
+        identify: unavailable,
+        capture: unavailable,
+      };
+    });
+    await page.click("[data-testid=signup-submit]");
+    await expect(page.locator("#nl-phone-form")).toBeVisible();
+    await page.locator("#nl-skip").click();
+    await expect(page.locator("[data-testid=signup-success]")).toBeVisible();
+    await expect(page.locator("#nl-email-error")).toBeHidden();
+  });
+
+  test("preserves the phone after a failed request and allows a successful retry", async ({
+    page,
+  }) => {
+    let attempts = 0;
+    await page.route("**/api/update-lead", (route) => {
+      attempts++;
+      return route.fulfill(
+        attempts === 1
+          ? { status: 503, json: { error: "Temporarily unavailable" } }
+          : { json: { ok: true } },
+      );
+    });
+    await page.goto("/", { waitUntil: "domcontentloaded" });
+    await page.fill("#nl-email", "smoketest@example.com");
+    await page.click("[data-testid=signup-submit]");
+    await page.fill("#nl-phone", "+1 (555) 123-0100");
+    const submit = page.locator('#nl-phone-form button[type="submit"]');
+    await submit.click();
+    await expect(page.locator("#nl-phone-error")).toBeVisible();
+    await expect(page.locator("#nl-phone")).toHaveValue("+1 (555) 123-0100");
+    await expect(submit).toBeEnabled();
+    await submit.click();
+    await expect(page.locator("[data-testid=signup-success]")).toBeVisible();
+  });
+
+  test("saves email then phone using the returned ownership token", async ({
+    page,
+  }) => {
     await page.goto("/", { waitUntil: "domcontentloaded" });
 
     await page.fill(
@@ -184,10 +249,78 @@ test.describe("HomeSignup (Spice List)", () => {
     );
     await page.click("[data-testid=signup-submit]");
 
-    await expect(page.locator("[data-testid=signup-success]")).toBeVisible({
+    await expect(page.locator("#nl-phone-form")).toBeVisible({
       timeout: 10_000,
     });
+    const updated = page.waitForRequest(
+      (request) =>
+        request.url().endsWith("/api/update-lead") &&
+        request.method() === "POST",
+    );
+    await page.fill("#nl-phone", "+1 (555) 123-0100");
+    await page.locator('#nl-phone-form button[type="submit"]').click();
+    expect((await updated).postDataJSON()).toEqual({
+      id: "smoke-lead",
+      token: "smoke-update-token",
+      phone: "+15551230100",
+    });
+    await expect(page.locator("[data-testid=signup-success]")).toBeVisible();
   });
+});
+
+test.describe("Mixer signup forms", () => {
+  for (const { path, name, email, success, source } of [
+    {
+      path: "/singles-mixers",
+      name: "#sm-name",
+      email: "#sm-email",
+      success: "#mixer-success-upcoming, #mixer-success-past",
+      source: "singles-mixers",
+    },
+    {
+      path: "/cuffing-season",
+      name: "#cuffing-name",
+      email: "#cuffing-email",
+      success: "#cuffing-success",
+      source: "cuffing-season",
+    },
+  ]) {
+    test(`${path} saves the guest contact`, async ({ page }) => {
+      await page.route("https://partiful.com/**", (route) =>
+        route.fulfill({ body: "Test invite", contentType: "text/html" }),
+      );
+      await page.goto(path, { waitUntil: "domcontentloaded" });
+      const redirectsToInvite =
+        source === "cuffing-season" &&
+        (await page
+          .locator("#cuffing-shell")
+          .getAttribute("data-mixer-upcoming")) === "true";
+      await page.fill(name, "Smoke Tester");
+      await page.fill(email, "smoketest@example.com");
+      const saved = page.waitForRequest(
+        (request) =>
+          request.url().endsWith("/api/capture-lead") &&
+          request.method() === "POST",
+      );
+      await page
+        .locator(name)
+        .locator("..")
+        .locator('button[type="submit"]')
+        .click();
+      expect((await saved).postDataJSON()).toMatchObject({
+        name: "Smoke Tester",
+        email: "smoketest@example.com",
+        source,
+      });
+      if (redirectsToInvite) {
+        await expect(page).toHaveURL(/^https:\/\/partiful\.com\//);
+      } else {
+        await expect(
+          page.locator(success).filter({ visible: true }),
+        ).toBeVisible();
+      }
+    });
+  }
 });
 
 test.describe("Standalone waiver (/waiver)", () => {
@@ -292,6 +425,7 @@ test.describe("LeadCaptureModal", () => {
       "smoketest@example.com",
     );
     await page.click("[data-testid=lead-capture-submit]");
+    await page.locator("dialog#links-spice-modal [data-lc-skip]").click();
 
     await expect(
       page.locator("[data-testid=lead-capture-success]"),
@@ -328,6 +462,7 @@ test.describe("NotifyModal", () => {
       "smoketest@example.com",
     );
     await page.click("[data-testid=notify-submit]");
+    await page.locator("#notify-skip").click();
 
     await expect(page.locator("[data-testid=notify-success]")).toBeVisible({
       timeout: 10_000,

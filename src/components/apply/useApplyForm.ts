@@ -20,6 +20,7 @@ import {
 import { validateEmail } from "@/utils/validateEmail";
 import { withTimeout } from "@/utils/withTimeout";
 import { compressImage } from "@/utils/compressImage";
+import { settlePhotoUploads, waitForPhotoUpload } from "@/utils/photoUploads";
 import { getFriendFirstName } from "@/utils/nomination";
 
 export interface FormState {
@@ -615,52 +616,34 @@ export function useApplyForm() {
       // getDownloadURL is a READ: calling it from this anonymous session gets
       // denied and killed every submission in July 2026. The admin dashboard
       // resolves paths with its own authenticated session instead.
-      // allSettled, not all: Promise.all rejects on the FIRST failure while
-      // sibling uploads may still be compressing or uploading. The outer
-      // catch then reads uploadedRefs before a late sibling finishes, and
-      // that sibling's object would be orphaned PII in Storage. Waiting for
-      // every operation to settle makes the cleanup list complete.
-      const settled = await Promise.allSettled(
-        photoFiles.map(async (file, i) => {
-          // Normalize to ~2048px JPEG so 3 iPhone originals never blow the
-          // upload timeout on cellular; falls back to the original file when
-          // the browser cannot decode the format.
-          const uploadFile = await compressImage(file);
-          if (uploadFile.size >= MAX_UPLOAD_BYTES) {
-            throw new Error(
-              "One of your photos could not be optimized and is too large to upload. Please pick a version under 25 MB.",
-            );
-          }
-          // Sanitize the extension: a dotless or unicode filename must never
-          // produce a Storage path the rules reject (compressImage output is
-          // JPEG in the normal path anyway).
-          const rawExt = uploadFile.name.split(".").pop() ?? "";
-          const ext = /^[A-Za-z0-9]{1,10}$/.test(rawExt) ? rawExt : "jpg";
-          const photoRef = ref(storage, `photos/${crypto.randomUUID()}.${ext}`);
-          uploadedRefs[i] = photoRef;
-          // The owner tag is what authorizes this session's failure cleanup
-          // (storage.rules only lets the uploader delete their own object).
-          const task = uploadBytesResumable(photoRef, uploadFile, {
-            customMetadata: { owner: credential.user.uid },
-          });
-          await new Promise<void>((resolve, reject) => {
-            const timer = setTimeout(() => {
-              task.cancel();
-              reject(new Error("Upload timed out after 30 seconds"));
-            }, 30_000);
-            task
-              .then(() => {
-                clearTimeout(timer);
-                resolve();
-              })
-              .catch((err: unknown) => {
-                clearTimeout(timer);
-                reject(err);
-              });
-          });
-          return photoRef.fullPath;
-        }),
-      );
+      // Bound decoding and uploads to two photos at a time. Starting ten
+      // together splits mobile bandwidth. The old 30 second cutoff canceled
+      // eight photos in one application without checking their progress.
+      const settled = await settlePhotoUploads(photoFiles, async (file, i) => {
+        // Normalize to ~2048px JPEG so 3 iPhone originals never blow the
+        // upload timeout on cellular; falls back to the original file when
+        // the browser cannot decode the format.
+        const uploadFile = await compressImage(file);
+        if (uploadFile.size >= MAX_UPLOAD_BYTES) {
+          throw new Error(
+            "One of your photos could not be optimized and is too large to upload. Please pick a version under 25 MB.",
+          );
+        }
+        // Sanitize the extension: a dotless or unicode filename must never
+        // produce a Storage path the rules reject (compressImage output is
+        // JPEG in the normal path anyway).
+        const rawExt = uploadFile.name.split(".").pop() ?? "";
+        const ext = /^[A-Za-z0-9]{1,10}$/.test(rawExt) ? rawExt : "jpg";
+        const photoRef = ref(storage, `photos/${crypto.randomUUID()}.${ext}`);
+        uploadedRefs[i] = photoRef;
+        // The owner tag is what authorizes this session's failure cleanup
+        // (storage.rules only lets the uploader delete their own object).
+        const task = uploadBytesResumable(photoRef, uploadFile, {
+          customMetadata: { owner: credential.user.uid },
+        });
+        await waitForPhotoUpload(task);
+        return photoRef.fullPath;
+      });
       // WHY: photo failures no longer throw away the application. Until Aug
       // 2026 a single failed upload aborted the whole submission and the
       // applicant was lost. Now every upload that DID land is kept, the
@@ -690,17 +673,6 @@ export function useApplyForm() {
           application_type: form.applicationType,
           failed_photo_count: failures.length,
           total_photo_count: photoFiles.length,
-        });
-        reportFailure({
-          flow: "apply",
-          stage: "photo_upload",
-          errorMessage: `Application saved but ${failures.length} of ${photoFiles.length} photos failed to upload: ${message}`,
-          contact: {
-            name: form.name,
-            email: form.email,
-            phone: form.phone,
-            instagram: form.instagram,
-          },
         });
       }
 
@@ -735,6 +707,23 @@ export function useApplyForm() {
       );
       // All uploaded — no cleanup needed
       uploadedRefs.fill(null);
+
+      if (photoUploadFailed) {
+        const reason: unknown = failures[0].reason;
+        const message =
+          reason instanceof Error ? reason.message : String(reason);
+        reportFailure({
+          flow: "apply",
+          stage: "photo_upload",
+          errorMessage: `Application saved but ${failures.length} of ${photoFiles.length} photos failed to upload: ${message}`,
+          contact: {
+            name: form.name,
+            email: form.email,
+            phone: form.phone,
+            instagram: form.instagram,
+          },
+        });
+      }
 
       // The synthetic monitor submits 4x/day; keeping it out of analytics at
       // the source means conversion metrics never depend on dashboard filters.

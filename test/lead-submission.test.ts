@@ -15,7 +15,7 @@ afterEach(() => {
 
 describe("updateLeadFields (step-2 progressive contact capture)", () => {
   it("posts the lead id, token and only the given contact fields", async () => {
-    fetchMock.mockResolvedValue({ ok: true, json: async () => ({}) });
+    fetchMock.mockResolvedValue({ ok: true, json: async () => ({ ok: true }) });
 
     await updateLeadFields(
       { id: "lead-1", updateToken: "tok" },

@@ -9,6 +9,24 @@ fixed entries, [x] checkboxes or "Status: Fixed" records to this file. -->
 
 ## Open
 
+### [MEDIUM] Existing undici dependency has a moderate advisory
+
+September 28 verification: `npm audit` with development dependencies omitted reports GHSA-3wwx-pv8p-q78v in `undici`, concerning WebSocket decompression. It reports no high or critical production dependency findings. The form repair does not change dependencies.
+
+Overnight plan: trace the installed dependency with `npm explain undici`, update within the existing compatible range in a separate dependency branch and rerun the audit, application tests and production build. Check whether the application uses the affected WebSocket path before assigning runtime impact.
+
+### [MEDIUM] Partial application lead updates have no token renewal after ten minutes
+
+Observed September 28: production returned 401 from `/api/update-lead` at 01:23:13 UTC on September 29, immediately after an application notification succeeded. `src/lib/leadToken.ts` gives update tokens a ten minute lifetime and `src/components/apply/useApplyForm.ts` silently ignores a failed completion marker update. The saved application is unaffected, but its earlier lead can remain marked partial. The logs do not establish whether this particular token was expired or invalid.
+
+Overnight plan: reproduce an application held open beyond the token lifetime using an isolated API test; implement ownership-preserving renewal or a server-side completion link without weakening authorization or creating duplicate leads. Exercise both an expired legitimate token and a forged token, then check that the completed application and its lead agree. This follow-up does not block the photo upload repair.
+
+### [MEDIUM] Newsletter subscriber sync is unconfigured in production
+
+The September 28 production logs for successful `/api/capture-lead` requests contain `[kit] KIT_API_SECRET not configured, skipping subscriber sync`. Contact capture succeeds, but `src/lib/kit.ts` cannot forward those contacts to Kit.
+
+Overnight plan: confirm whether Kit is still the intended mailing destination with the owner. If it is, have the owner configure the integration through the hosting dashboard, then verify a reserved subscriber and run the existing `src/pages/api/sync-leads-to-kit.ts` reconciliation with its documented authorization. Do not edit or expose credentials. Verify both saved contacts and downstream subscriber delivery before closing this item.
+
 ### CodeRabbit PR #265 (2026-09-11)
 
 - [ ] HIGH: Mail-sending endpoints authorize by Origin header and rate limit only, both bypassable by a non-browser caller | Why: notify-application.ts, notify-mixer-rsvp.ts and alert-failure.ts all gate their POST handler on isAllowedOrigin(origin) plus enforceRateLimit alone; Origin is a client-supplied header any direct HTTP caller can set to whatever it wants, and enforceRateLimit fails open (returns null) whenever UPSTASH_REDIS_REST_URL/TOKEN aren't configured (src/lib/rateLimit.ts:134-136), so a forged request can trigger emails to NOTIFICATION_EMAIL or ops pages with attacker-chosen name/email content, rate-limited only if Upstash happens to be configured in that environment. CodeRabbit flagged this against the new notify-mixer-rsvp.ts on PR #265, but the pattern is pre-existing and shared by notify-application.ts (already on main, predates this session), so patching only the new file would leave the other endpoints inconsistent with it, which this codebase's consistency rule forbids. None of these endpoints write Firestore directly (the actual lead write goes through the separately validated capture-lead.ts), so today's exploit ceiling is inbox/alert spam, not data corruption. Scope note (CodeRabbit follow-up, 2026-09-12): verify-turnstile.ts was removed from this entry because it sends no mail and reads no name/email; its Origin gating weakness is tracked separately below. | Files: src/pages/api/notify-application.ts, src/pages/api/notify-mixer-rsvp.ts, src/pages/api/alert-failure.ts, src/lib/allowedOrigin.ts, src/lib/rateLimit.ts | Plan: give each endpoint a server-side credential to check instead of trusting Origin (e.g. a short-lived token the endpoint that already validated the real payload issues, like capture-lead.ts for the lead/notify pair); audit each endpoint's actual write exposure first since severity differs per endpoint | Verify: a request with a forged Origin header and no valid credential is rejected on all 3 endpoints; the real client flows (apply form, mixer RSVP, ops alerts) still succeed end to end

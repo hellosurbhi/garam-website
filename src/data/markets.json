@@ -1,0 +1,960 @@
+{
+  "$comment": [
+    "Sending markets: the buckets a show announcement targets. NOT the same thing as src/data/cities,",
+    "which is 307 SEO landing pages including Pune and Vilnius. A market is an audience we would actually",
+    "mail about a show, so this list is short on purpose and every entry is edited by hand.",
+    "",
+    "WHY a separate file from src/data/cities: a city page exists to rank in Google, a market exists to",
+    "address an audience, and the two sets are not the same shape. Merging them would mean either adding",
+    "coordinates and alias lists to 307 SEO records, or letting any new SEO page silently become a",
+    "sending bucket. citySlugs below is the explicit bridge, so events.ts citySlug values keep resolving.",
+    "",
+    "WHY the aliases are keyed by state: 'Arlington' is both Virginia and Texas, and 'Hollywood' is both",
+    "Florida and a Los Angeles neighborhood. markets.test.ts asserts that any alias appearing under two",
+    "markets is only ever reachable with a state, so a future edit cannot quietly create a coin flip.",
+    "",
+    "WHY stateRollup omits NY, NJ, CA, TX, FL, PA and VA: those states hold more than one market, so a",
+    "bare state is not an answer. The listed states each contain exactly one market we mail."
+  ],
+  "version": 1,
+  "stateRollup": {
+    "AZ": "phoenix",
+    "CO": "denver",
+    "DC": "washington-dc",
+    "MA": "boston",
+    "MI": "detroit",
+    "MN": "minneapolis",
+    "MO": "st-louis",
+    "NV": "las-vegas",
+    "OR": "portland",
+    "TN": "nashville",
+    "WA": "seattle"
+  },
+  "markets": [
+    {
+      "slug": "new-york",
+      "displayName": "New York City",
+      "lat": 40.7128,
+      "lon": -74.006,
+      "radiusKm": 80,
+      "citySlugs": [
+        "manhattan",
+        "brooklyn",
+        "queens",
+        "stony-brook",
+        "new-york"
+      ],
+      "aliases": {
+        "NY": [
+          "new york",
+          "new york city",
+          "nyc",
+          "manhattan",
+          "brooklyn",
+          "queens",
+          "bronx",
+          "the bronx",
+          "staten island",
+          "astoria",
+          "long island city",
+          "flushing",
+          "jackson heights",
+          "forest hills",
+          "harlem",
+          "yonkers",
+          "white plains",
+          "new rochelle",
+          "scarsdale",
+          "ardsley",
+          "irvington",
+          "harrison",
+          "port chester",
+          "great neck",
+          "syosset",
+          "valley stream",
+          "hicksville",
+          "garden city",
+          "mineola",
+          "port washington",
+          "hempstead",
+          "stony brook",
+          "nassau",
+          "suffolk",
+          "westchester",
+          "long island"
+        ],
+        "CT": ["stamford", "greenwich", "norwalk", "darien", "trumbull"]
+      }
+    },
+    {
+      "slug": "north-jersey",
+      "displayName": "North & Central Jersey",
+      "lat": 40.6,
+      "lon": -74.3,
+      "radiusKm": 45,
+      "citySlugs": ["edison", "jersey-city", "parsippany", "north-jersey"],
+      "aliases": {
+        "NJ": [
+          "edison",
+          "north brunswick",
+          "new brunswick",
+          "east brunswick",
+          "jersey city",
+          "newark",
+          "hoboken",
+          "weehawken",
+          "union city",
+          "bayonne",
+          "secaucus",
+          "parsippany",
+          "morristown",
+          "randolph",
+          "east hanover",
+          "livingston",
+          "short hills",
+          "millburn",
+          "montclair",
+          "bloomfield",
+          "clifton",
+          "paterson",
+          "passaic",
+          "hackensack",
+          "fort lee",
+          "englewood",
+          "bergenfield",
+          "teaneck",
+          "paramus",
+          "elizabeth",
+          "linden",
+          "rahway",
+          "woodbridge",
+          "iselin",
+          "colonia",
+          "piscataway",
+          "somerset",
+          "franklin park",
+          "bridgewater",
+          "somerville",
+          "whitehouse station",
+          "princeton",
+          "plainsboro",
+          "north jersey",
+          "central jersey"
+        ]
+      }
+    },
+    {
+      "slug": "philadelphia",
+      "displayName": "Philadelphia",
+      "lat": 39.9526,
+      "lon": -75.1652,
+      "radiusKm": 60,
+      "citySlugs": ["philadelphia"],
+      "aliases": {
+        "PA": [
+          "philadelphia",
+          "philly",
+          "king of prussia",
+          "conshohocken",
+          "norristown",
+          "bryn mawr",
+          "media",
+          "chester",
+          "doylestown",
+          "newtown",
+          "bethlehem",
+          "allentown",
+          "reading",
+          "lancaster"
+        ],
+        "NJ": [
+          "marlton",
+          "cherry hill",
+          "camden",
+          "voorhees",
+          "mount laurel",
+          "moorestown",
+          "haddonfield",
+          "south jersey"
+        ],
+        "DE": ["wilmington", "newark de"]
+      }
+    },
+    {
+      "slug": "washington-dc",
+      "displayName": "Washington DC",
+      "lat": 38.9072,
+      "lon": -77.0369,
+      "radiusKm": 55,
+      "citySlugs": ["washington-dc"],
+      "aliases": {
+        "DC": ["washington", "washington dc", "dc", "district of columbia"],
+        "VA": [
+          "arlington",
+          "alexandria",
+          "falls church",
+          "mclean",
+          "vienna",
+          "reston",
+          "herndon",
+          "fairfax",
+          "centreville",
+          "chantilly",
+          "ashburn",
+          "sterling",
+          "leesburg",
+          "woodbridge va",
+          "springfield va",
+          "nova",
+          "northern virginia"
+        ],
+        "MD": [
+          "bethesda",
+          "silver spring",
+          "rockville",
+          "gaithersburg",
+          "germantown",
+          "potomac",
+          "college park",
+          "greenbelt",
+          "columbia md",
+          "laurel",
+          "bowie",
+          "hyattsville"
+        ]
+      }
+    },
+    {
+      "slug": "boston",
+      "displayName": "Boston",
+      "lat": 42.3601,
+      "lon": -71.0589,
+      "radiusKm": 60,
+      "citySlugs": ["boston"],
+      "aliases": {
+        "MA": [
+          "boston",
+          "cambridge",
+          "somerville",
+          "brookline",
+          "newton",
+          "quincy",
+          "waltham",
+          "watertown",
+          "medford",
+          "malden",
+          "burlington ma",
+          "lexington",
+          "woburn",
+          "framingham",
+          "natick",
+          "worcester",
+          "lowell",
+          "andover",
+          "shrewsbury",
+          "westborough"
+        ],
+        "NH": ["nashua", "manchester nh"],
+        "RI": ["providence"]
+      }
+    },
+    {
+      "slug": "san-francisco",
+      "displayName": "SF Bay Area",
+      "lat": 37.6,
+      "lon": -122.2,
+      "radiusKm": 75,
+      "citySlugs": ["san-francisco", "san-jose", "oakland", "bay-area"],
+      "aliases": {
+        "CA": [
+          "san francisco",
+          "sf",
+          "the bay",
+          "bay area",
+          "sf bay area",
+          "south san francisco",
+          "daly city",
+          "burlingame",
+          "san mateo",
+          "foster city",
+          "redwood city",
+          "menlo park",
+          "palo alto",
+          "los altos",
+          "mountain view",
+          "sunnyvale",
+          "cupertino",
+          "santa clara",
+          "san jose",
+          "milpitas",
+          "campbell",
+          "los gatos",
+          "fremont",
+          "union city ca",
+          "newark ca",
+          "hayward",
+          "san leandro",
+          "oakland",
+          "berkeley",
+          "emeryville",
+          "alameda",
+          "albany ca",
+          "richmond ca",
+          "walnut creek",
+          "concord",
+          "pleasant hill",
+          "moraga",
+          "orinda",
+          "lafayette ca",
+          "danville",
+          "san ramon",
+          "dublin ca",
+          "pleasanton",
+          "livermore",
+          "vallejo",
+          "benicia",
+          "novato",
+          "san rafael",
+          "mill valley",
+          "petaluma",
+          "santa rosa"
+        ]
+      }
+    },
+    {
+      "slug": "los-angeles",
+      "displayName": "Los Angeles",
+      "lat": 34.0522,
+      "lon": -118.2437,
+      "radiusKm": 90,
+      "citySlugs": ["los-angeles", "orange-county", "irvine"],
+      "aliases": {
+        "CA": [
+          "los angeles",
+          "la",
+          "dtla",
+          "downtown los angeles",
+          "hollywood ca",
+          "north hollywood",
+          "west hollywood",
+          "studio city",
+          "sherman oaks",
+          "encino",
+          "tarzana",
+          "woodland hills",
+          "van nuys",
+          "burbank",
+          "glendale ca",
+          "pasadena",
+          "arcadia",
+          "alhambra",
+          "monterey park",
+          "santa monica",
+          "venice",
+          "culver city",
+          "marina del rey",
+          "el segundo",
+          "manhattan beach",
+          "redondo beach",
+          "torrance",
+          "harbor city",
+          "long beach",
+          "cerritos",
+          "artesia",
+          "norwalk ca",
+          "whittier",
+          "downey",
+          "anaheim",
+          "santa ana",
+          "irvine",
+          "tustin",
+          "costa mesa",
+          "newport beach",
+          "huntington beach",
+          "fullerton",
+          "orange county",
+          "yorba linda",
+          "riverside",
+          "corona",
+          "ontario ca",
+          "rancho cucamonga",
+          "chino hills",
+          "diamond bar",
+          "walnut ca",
+          "thousand oaks",
+          "ventura",
+          "valencia",
+          "santa clarita"
+        ]
+      }
+    },
+    {
+      "slug": "san-diego",
+      "displayName": "San Diego",
+      "lat": 32.7157,
+      "lon": -117.1611,
+      "radiusKm": 50,
+      "citySlugs": ["san-diego"],
+      "aliases": {
+        "CA": [
+          "san diego",
+          "la jolla",
+          "chula vista",
+          "carlsbad",
+          "encinitas",
+          "escondido",
+          "poway",
+          "oceanside",
+          "del mar",
+          "coronado"
+        ]
+      }
+    },
+    {
+      "slug": "chicago",
+      "displayName": "Chicago",
+      "lat": 41.8781,
+      "lon": -87.6298,
+      "radiusKm": 85,
+      "citySlugs": ["chicago", "naperville", "schaumburg"],
+      "aliases": {
+        "IL": [
+          "chicago",
+          "chi",
+          "evanston",
+          "skokie",
+          "wilmette",
+          "glenview",
+          "northbrook",
+          "des plaines",
+          "arlington heights",
+          "schaumburg",
+          "hoffman estates",
+          "palatine",
+          "elk grove village",
+          "mount prospect",
+          "oak park",
+          "oak brook",
+          "downers grove",
+          "naperville",
+          "aurora il",
+          "bolingbrook",
+          "lombard",
+          "wheaton",
+          "glen ellyn",
+          "elmhurst",
+          "lisle",
+          "woodridge",
+          "orland park",
+          "tinley park",
+          "joliet",
+          "bartlett",
+          "streamwood",
+          "hanover park",
+          "rolling meadows",
+          "buffalo grove",
+          "vernon hills",
+          "libertyville",
+          "gurnee",
+          "waukegan"
+        ],
+        "IN": [
+          "hammond",
+          "munster",
+          "merrillville",
+          "schererville",
+          "crown point",
+          "gary",
+          "south bend"
+        ],
+        "WI": ["kenosha", "racine", "milwaukee"]
+      }
+    },
+    {
+      "slug": "houston",
+      "displayName": "Houston",
+      "lat": 29.7604,
+      "lon": -95.3698,
+      "radiusKm": 70,
+      "citySlugs": ["houston"],
+      "aliases": {
+        "TX": [
+          "houston",
+          "sugar land",
+          "katy",
+          "pearland",
+          "missouri city",
+          "stafford",
+          "the woodlands",
+          "spring tx",
+          "cypress",
+          "richmond tx",
+          "league city",
+          "friendswood"
+        ]
+      }
+    },
+    {
+      "slug": "dallas",
+      "displayName": "Dallas / Fort Worth",
+      "lat": 32.8,
+      "lon": -96.9,
+      "radiusKm": 70,
+      "citySlugs": ["dallas"],
+      "aliases": {
+        "TX": [
+          "dallas",
+          "dfw",
+          "plano",
+          "frisco",
+          "irving",
+          "richardson",
+          "allen",
+          "mckinney",
+          "carrollton",
+          "garland",
+          "addison",
+          "coppell",
+          "lewisville",
+          "flower mound",
+          "grapevine",
+          "euless",
+          "arlington",
+          "fort worth",
+          "grand prairie",
+          "mansfield",
+          "denton",
+          "prosper",
+          "little elm"
+        ]
+      }
+    },
+    {
+      "slug": "austin",
+      "displayName": "Austin",
+      "lat": 30.2672,
+      "lon": -97.7431,
+      "radiusKm": 55,
+      "citySlugs": ["austin"],
+      "aliases": {
+        "TX": [
+          "austin",
+          "round rock",
+          "cedar park",
+          "pflugerville",
+          "georgetown tx",
+          "leander",
+          "san marcos",
+          "buda",
+          "kyle"
+        ]
+      }
+    },
+    {
+      "slug": "atlanta",
+      "displayName": "Atlanta",
+      "lat": 33.749,
+      "lon": -84.388,
+      "radiusKm": 70,
+      "citySlugs": ["atlanta"],
+      "aliases": {
+        "GA": [
+          "atlanta",
+          "alpharetta",
+          "johns creek",
+          "roswell",
+          "marietta",
+          "smyrna",
+          "sandy springs",
+          "dunwoody",
+          "duluth ga",
+          "suwanee",
+          "lawrenceville",
+          "norcross",
+          "decatur",
+          "kennesaw",
+          "cumming",
+          "peachtree corners"
+        ]
+      }
+    },
+    {
+      "slug": "seattle",
+      "displayName": "Seattle",
+      "lat": 47.6062,
+      "lon": -122.3321,
+      "radiusKm": 65,
+      "citySlugs": ["seattle"],
+      "aliases": {
+        "WA": [
+          "seattle",
+          "bellevue",
+          "redmond",
+          "kirkland",
+          "sammamish",
+          "issaquah",
+          "renton",
+          "bothell",
+          "lynnwood",
+          "everett",
+          "mercer island",
+          "shoreline",
+          "kent wa",
+          "federal way",
+          "tacoma"
+        ]
+      }
+    },
+    {
+      "slug": "phoenix",
+      "displayName": "Phoenix",
+      "lat": 33.4484,
+      "lon": -112.074,
+      "radiusKm": 65,
+      "citySlugs": ["phoenix"],
+      "aliases": {
+        "AZ": [
+          "phoenix",
+          "scottsdale",
+          "tempe",
+          "chandler",
+          "mesa",
+          "gilbert",
+          "glendale az",
+          "peoria az",
+          "ahwatukee",
+          "queen creek"
+        ]
+      }
+    },
+    {
+      "slug": "denver",
+      "displayName": "Denver",
+      "lat": 39.7392,
+      "lon": -104.9903,
+      "radiusKm": 65,
+      "citySlugs": ["denver"],
+      "aliases": {
+        "CO": [
+          "denver",
+          "boulder",
+          "aurora",
+          "lakewood",
+          "littleton",
+          "centennial",
+          "highlands ranch",
+          "westminster co",
+          "arvada",
+          "broomfield",
+          "superior co",
+          "louisville co"
+        ]
+      }
+    },
+    {
+      "slug": "detroit",
+      "displayName": "Detroit",
+      "lat": 42.3314,
+      "lon": -83.0458,
+      "radiusKm": 70,
+      "citySlugs": ["detroit"],
+      "aliases": {
+        "MI": [
+          "detroit",
+          "ann arbor",
+          "troy",
+          "novi",
+          "canton mi",
+          "farmington hills",
+          "west bloomfield",
+          "rochester hills",
+          "sterling heights",
+          "southfield",
+          "dearborn",
+          "livonia",
+          "northville",
+          "plymouth mi",
+          "royal oak",
+          "birmingham mi"
+        ]
+      }
+    },
+    {
+      "slug": "minneapolis",
+      "displayName": "Minneapolis / St Paul",
+      "lat": 44.9778,
+      "lon": -93.265,
+      "radiusKm": 60,
+      "citySlugs": ["minneapolis"],
+      "aliases": {
+        "MN": [
+          "minneapolis",
+          "st paul",
+          "saint paul",
+          "twin cities",
+          "eden prairie",
+          "bloomington mn",
+          "edina",
+          "minnetonka",
+          "maple grove",
+          "plymouth mn",
+          "woodbury",
+          "eagan",
+          "burnsville",
+          "brooklyn park"
+        ]
+      }
+    },
+    {
+      "slug": "charlotte",
+      "displayName": "Charlotte",
+      "lat": 35.2271,
+      "lon": -80.8431,
+      "radiusKm": 55,
+      "citySlugs": ["charlotte"],
+      "aliases": {
+        "NC": [
+          "charlotte",
+          "huntersville",
+          "matthews",
+          "concord nc",
+          "cornelius",
+          "mooresville",
+          "ballantyne"
+        ],
+        "SC": ["fort mill", "rock hill"]
+      }
+    },
+    {
+      "slug": "raleigh",
+      "displayName": "Raleigh / Durham",
+      "lat": 35.85,
+      "lon": -78.75,
+      "radiusKm": 50,
+      "citySlugs": ["raleigh", "durham"],
+      "aliases": {
+        "NC": [
+          "raleigh",
+          "durham",
+          "cary",
+          "morrisville",
+          "apex",
+          "chapel hill",
+          "wake forest",
+          "holly springs",
+          "research triangle",
+          "rtp",
+          "triangle"
+        ]
+      }
+    },
+    {
+      "slug": "tampa",
+      "displayName": "Tampa Bay",
+      "lat": 27.9506,
+      "lon": -82.4572,
+      "radiusKm": 60,
+      "citySlugs": ["tampa"],
+      "aliases": {
+        "FL": [
+          "tampa",
+          "st petersburg",
+          "saint petersburg",
+          "clearwater",
+          "brandon",
+          "wesley chapel",
+          "lutz",
+          "riverview",
+          "largo",
+          "sarasota"
+        ]
+      }
+    },
+    {
+      "slug": "orlando",
+      "displayName": "Orlando",
+      "lat": 28.5383,
+      "lon": -81.3792,
+      "radiusKm": 55,
+      "citySlugs": ["orlando"],
+      "aliases": {
+        "FL": [
+          "orlando",
+          "winter park",
+          "altamonte springs",
+          "lake mary",
+          "oviedo",
+          "kissimmee",
+          "winter garden",
+          "sanford fl"
+        ]
+      }
+    },
+    {
+      "slug": "miami",
+      "displayName": "Miami / Fort Lauderdale",
+      "lat": 25.9,
+      "lon": -80.2,
+      "radiusKm": 65,
+      "citySlugs": ["miami"],
+      "aliases": {
+        "FL": [
+          "miami",
+          "miami beach",
+          "south beach",
+          "coral gables",
+          "doral",
+          "kendall",
+          "aventura",
+          "hialeah",
+          "fort lauderdale",
+          "hollywood fl",
+          "pembroke pines",
+          "weston",
+          "sunrise fl",
+          "plantation fl",
+          "coral springs",
+          "boca raton",
+          "delray beach",
+          "west palm beach"
+        ]
+      }
+    },
+    {
+      "slug": "nashville",
+      "displayName": "Nashville",
+      "lat": 36.1627,
+      "lon": -86.7816,
+      "radiusKm": 55,
+      "citySlugs": ["nashville"],
+      "aliases": {
+        "TN": [
+          "nashville",
+          "franklin tn",
+          "brentwood tn",
+          "murfreesboro",
+          "hendersonville tn",
+          "smyrna tn",
+          "antioch tn"
+        ]
+      }
+    },
+    {
+      "slug": "columbus",
+      "displayName": "Columbus",
+      "lat": 39.9612,
+      "lon": -82.9988,
+      "radiusKm": 50,
+      "citySlugs": ["columbus-oh"],
+      "aliases": {
+        "OH": [
+          "columbus",
+          "dublin oh",
+          "westerville",
+          "hilliard",
+          "powell oh",
+          "gahanna",
+          "upper arlington",
+          "new albany oh"
+        ]
+      }
+    },
+    {
+      "slug": "las-vegas",
+      "displayName": "Las Vegas",
+      "lat": 36.1699,
+      "lon": -115.1398,
+      "radiusKm": 45,
+      "citySlugs": ["las-vegas"],
+      "aliases": {
+        "NV": [
+          "las vegas",
+          "vegas",
+          "henderson",
+          "north las vegas",
+          "summerlin",
+          "paradise nv"
+        ]
+      }
+    },
+    {
+      "slug": "sacramento",
+      "displayName": "Sacramento",
+      "lat": 38.5816,
+      "lon": -121.4944,
+      "radiusKm": 55,
+      "citySlugs": ["sacramento"],
+      "aliases": {
+        "CA": [
+          "sacramento",
+          "elk grove",
+          "folsom",
+          "roseville",
+          "rocklin",
+          "davis",
+          "citrus heights",
+          "rancho cordova"
+        ]
+      }
+    },
+    {
+      "slug": "portland",
+      "displayName": "Portland",
+      "lat": 45.5152,
+      "lon": -122.6784,
+      "radiusKm": 55,
+      "citySlugs": ["portland"],
+      "aliases": {
+        "OR": [
+          "portland",
+          "beaverton",
+          "hillsboro",
+          "tigard",
+          "lake oswego",
+          "gresham",
+          "west linn"
+        ],
+        "WA": ["vancouver wa"]
+      }
+    },
+    {
+      "slug": "pittsburgh",
+      "displayName": "Pittsburgh",
+      "lat": 40.4406,
+      "lon": -79.9959,
+      "radiusKm": 50,
+      "citySlugs": ["pittsburgh"],
+      "aliases": {
+        "PA": [
+          "pittsburgh",
+          "monroeville",
+          "cranberry township",
+          "wexford",
+          "mt lebanon",
+          "bethel park"
+        ]
+      }
+    },
+    {
+      "slug": "st-louis",
+      "displayName": "St Louis",
+      "lat": 38.627,
+      "lon": -90.1994,
+      "radiusKm": 55,
+      "citySlugs": ["st-louis"],
+      "aliases": {
+        "MO": [
+          "st louis",
+          "saint louis",
+          "chesterfield",
+          "ballwin",
+          "creve coeur",
+          "kirkwood",
+          "clayton mo",
+          "ofallon"
+        ],
+        "IL": ["edwardsville", "belleville"]
+      }
+    }
+  ]
+}

@@ -135,6 +135,15 @@ Fonts: Playfair Display (headings), Nunito (body), Cormorant Garamond (decorativ
 - `RESEND_API_KEY` / `NOTIFICATION_EMAIL`: email notifications
 - See `.env.example` for the full list. Never commit `.env.local`.
 
+## Outbound email
+
+- This repo's mailer is transactional ONLY: confirmations, alerts and receipts.
+  Never send a campaign or a bulk list from here. Batch sending through the Zoho
+  mailbox is what got `contact@garammasaladating.com` blocked on 2026-07-25.
+- Campaigns live in `~/workspace/garam-email-outreach`, behind a validation gate
+  that signs every recipient list. Its `README.md` documents all five sending
+  routes, their real daily ceilings and which one is banned for campaigns.
+
 ## JSON-LD schemas
 
 Organization + WebSite on homepage. Event schema per upcoming show. FAQPage on homepage + blog posts. Article on journal/tips posts. BreadcrumbList on all pages. Logo: `https://garammasaladating.com/images/logo.svg`.

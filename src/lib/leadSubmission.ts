@@ -51,24 +51,54 @@ async function readJson<T>(response: Response): Promise<T | null> {
   }
 }
 
+async function postLeadJson(
+  endpoint: string,
+  payload:
+    LeadSubmissionPayload | (LeadUpdateFields & { id: string; token?: string }),
+): Promise<CaptureLeadResponse> {
+  const controller = new AbortController();
+  const timer = setTimeout(() => controller.abort(), 20_000);
+  try {
+    const response = await fetch(endpoint, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(payload),
+      signal: controller.signal,
+    });
+    const result = await readJson<CaptureLeadResponse>(response);
+    if (controller.signal.aborted) {
+      throw new Error("The connection timed out. Please try again.");
+    }
+    if (!response.ok || result?.ok !== true) {
+      throw new Error(
+        result?.error ?? "Could not confirm your signup. Please try again.",
+      );
+    }
+    return result;
+  } catch (error) {
+    if (controller.signal.aborted) {
+      throw new Error("The connection timed out. Please try again.", {
+        cause: error,
+      });
+    }
+    throw error;
+  } finally {
+    clearTimeout(timer);
+  }
+}
+
 export async function captureLead(
   payload: LeadSubmissionPayload,
 ): Promise<LeadCaptureResult> {
-  const res = await fetch("/api/capture-lead", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(payload),
-  });
-  const result = await readJson<CaptureLeadResponse>(res);
-
-  if (!res.ok) {
-    throw new Error(result?.error ?? "Failed to save lead");
+  const result = await postLeadJson("/api/capture-lead", payload);
+  if (typeof result.id !== "string" || !result.id.trim()) {
+    throw new Error("Could not confirm your signup. Please try again.");
   }
 
   safeLocalStorage.setItem("gmd-popup-subscribed", "true");
 
   return {
-    id: result?.id ?? "",
+    id: result.id,
     ...(result?.updateToken ? { updateToken: result.updateToken } : {}),
   };
 }
@@ -87,20 +117,11 @@ export async function updateLeadFields(
 ): Promise<void> {
   if (!lead.id) throw new Error("Lead id required");
 
-  const res = await fetch("/api/update-lead", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({
-      id: lead.id,
-      ...(lead.updateToken ? { token: lead.updateToken } : {}),
-      ...fields,
-    }),
+  await postLeadJson("/api/update-lead", {
+    id: lead.id,
+    ...(lead.updateToken ? { token: lead.updateToken } : {}),
+    ...fields,
   });
-  const result = await readJson<CaptureLeadResponse>(res);
-
-  if (!res.ok) {
-    throw new Error(result?.error ?? "Failed to update lead");
-  }
 }
 
 export async function updateLeadPhone(

@@ -1,4 +1,4 @@
-import { describe, it, expect, beforeEach, vi } from "vitest";
+import { describe, it, expect, beforeEach, afterEach, vi } from "vitest";
 import { captureLead, updateLeadPhone } from "./leadSubmission";
 
 function jsonResponse(body: unknown, status = 200): Response {
@@ -6,6 +6,7 @@ function jsonResponse(body: unknown, status = 200): Response {
 }
 
 describe("captureLead", () => {
+  afterEach(() => vi.useRealTimers());
   beforeEach(() => {
     vi.restoreAllMocks();
     localStorage.clear();
@@ -40,6 +41,45 @@ describe("captureLead", () => {
       "Valid email required",
     );
     expect(localStorage.getItem("gmd-popup-subscribed")).toBeNull();
+  });
+
+  it.each([{ ok: true }, { ok: false, id: "lead123" }, { ok: true, id: 123 }])(
+    "does not mark a malformed success response as subscribed: %j",
+    async (body) => {
+      vi.spyOn(globalThis, "fetch").mockResolvedValue(jsonResponse(body));
+      await expect(captureLead({ email: "a@b.com" })).rejects.toThrow(
+        "Could not confirm",
+      );
+      expect(localStorage.getItem("gmd-popup-subscribed")).toBeNull();
+    },
+  );
+
+  it("rejects an HTML response instead of showing a false success", async () => {
+    vi.spyOn(globalThis, "fetch").mockResolvedValue(
+      new Response("<html>Offline</html>"),
+    );
+    await expect(captureLead({ email: "a@b.com" })).rejects.toThrow(
+      "Could not confirm",
+    );
+  });
+
+  it("aborts a stalled request so the form can leave its loading state", async () => {
+    vi.useFakeTimers();
+    vi.spyOn(globalThis, "fetch").mockImplementation(
+      (_url, init) =>
+        new Promise((_resolve, reject) => {
+          init?.signal?.addEventListener("abort", () =>
+            reject(new DOMException("Aborted", "AbortError")),
+          );
+        }),
+    );
+    const result = expect(captureLead({ email: "a@b.com" })).rejects.toThrow(
+      "connection timed out",
+    );
+    await vi.advanceTimersByTimeAsync(20_000);
+    await result;
+    expect(localStorage.getItem("gmd-popup-subscribed")).toBeNull();
+    expect(vi.getTimerCount()).toBe(0);
   });
 });
 

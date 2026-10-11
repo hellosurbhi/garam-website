@@ -1,6 +1,59 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
 import { trackError, trackLeadEvent, identifyLead } from "./analytics";
 
+describe("form analytics failures", () => {
+  afterEach(() => {
+    delete window.posthog;
+    delete window.dataLayer;
+    delete window.__garamErrorQueue;
+  });
+
+  it("queues an error when PostHog fails so photo fallback can still save the application", () => {
+    window.posthog = {
+      capture: () => {
+        throw new Error("Tracking unavailable");
+      },
+    };
+    expect(() =>
+      trackError({
+        error_message: "Photo upload failed",
+        error_type: "form_submission",
+      }),
+    ).not.toThrow();
+    expect(window.__garamErrorQueue?.[0].properties.error_message).toBe(
+      "Photo upload failed",
+    );
+  });
+
+  it("does not turn a saved signup into a failure when identification throws", () => {
+    window.posthog = {
+      identify: () => {
+        throw new Error("Tracking unavailable");
+      },
+    };
+    window.dataLayer = [];
+    expect(() => identifyLead("person@example.com")).not.toThrow();
+    expect(window.dataLayer).toContainEqual(
+      expect.objectContaining({ event: "identify" }),
+    );
+    expect(window.__garamErrorQueue?.[0].properties.component).toBe(
+      "identifyLead",
+    );
+  });
+
+  it("reports a broken dataLayer without breaking form completion", () => {
+    const layer: Record<string, unknown>[] = [];
+    vi.spyOn(layer, "push").mockImplementation(() => {
+      throw new Error("Tag manager unavailable");
+    });
+    window.dataLayer = layer;
+    expect(() => identifyLead("person@example.com")).not.toThrow();
+    expect(window.__garamErrorQueue?.[0].properties.component).toBe(
+      "identifyLead",
+    );
+  });
+});
+
 describe("trackLeadEvent", () => {
   let captureMock: ReturnType<typeof vi.fn>;
   let dataLayerPush: ReturnType<typeof vi.fn>;

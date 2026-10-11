@@ -1,5 +1,13 @@
 # Lessons
 
+## Mobile photo uploads need a progress deadline (2026-09-28)
+
+The September 28 application alert recorded eight timed out photos out of ten in Instagram's iPhone browser. Starting ten uploads together divided the connection's bandwidth, while the fixed 30 second timer ignored ongoing progress. Two concurrent uploads with an inactivity timer allow a slow transfer to complete. Keep a separate total deadline and wait for the remaining uploads before deciding which photos were saved or need cleanup.
+
+A failure alert must describe confirmed state. The photo failure alert previously said the application was saved before its database write ran. It now follows the successful write. The regression tests check both photo failure with a saved application and photo failure followed by a failed application write.
+
+The weekly browser smoke suite used production pages with mocked Firebase but left first party notification requests live. Its broken Firebase mock sent real failure emails for the fixture applicant. The suite now intercepts form POST requests before navigation; the separate synthetic monitor retains its existing live submission behavior.
+
 ## A green synthetic monitor proved the happy path while every long-form applicant was rejected
 
 **What went wrong:** The 6-hour synthetic apply monitor was green 10 runs straight while real applicants (Akshay Aug 30, Dua Aug 27 with 4 retries) got "Missing or insufficient permissions" and their applications were silently thrown away. The Firestore rules capped pitch at 2000 chars, phone at 20 and height at 20; the client validated none of these lengths, and one field (`type`) even had a form `maxLength={200}` four times larger than the deployed rules cap of 50. Anyone who wrote a long pitch, a spelled-out height or a formatted phone number was rejected at the last possible moment with a generic error, after doing all the work.

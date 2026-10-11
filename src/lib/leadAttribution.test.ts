@@ -4,6 +4,25 @@ import {
   buildLeadAttribution,
 } from "./leadAttribution";
 
+it("keeps signup attribution available when the tracking SDK throws", async () => {
+  sessionStorage.clear();
+  sessionStorage.setItem("gmd-geo-fetched", "1");
+  window.posthog = {
+    get_distinct_id: () => {
+      throw new Error("Tracking unavailable");
+    },
+  };
+  try {
+    await expect(
+      buildLeadAttribution({ source: "spice-list" }),
+    ).resolves.toMatchObject({ source: "spice-list" });
+  } finally {
+    delete window.posthog;
+    delete window.__garamErrorQueue;
+    sessionStorage.clear();
+  }
+});
+
 describe("bootstrapLeadAttribution", () => {
   beforeEach(() => {
     sessionStorage.clear();
@@ -355,8 +374,6 @@ describe("buildLeadAttribution", () => {
     expect(result.geoCountry).toBe("US");
     expect(result.geoTimezone).toBe("America/New_York");
   });
-
-
 
   /* ── posthog edge cases ─────────────────────────────── */
 

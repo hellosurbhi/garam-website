@@ -1,10 +1,21 @@
 # Changelog
 
+## fix(forms): keep mobile photo uploads progressing and bound signup requests (2026-09-28)
+
+Application photos now decode and upload in a queue of two. The upload watchdog resets when bytes advance, replacing the fixed 30 second cutoff that canceled eight of ten photos in the September 28 incident. Stalled transfers still stop after 30 seconds without progress, with a three minute ceiling per upload. The application continues to save when photos fail. A photo alert now says the application was saved only after the database confirms that write.
+
+The shared signup request helper now aborts a stalled request after 20 seconds and requires a confirmed JSON success response. Email capture also requires a document ID before marking the visitor as subscribed. This covers the Spice List, signup popups, city notifications and mixer forms through their existing shared helper.
+
+Tracking SDK exceptions are recorded without escaping the form helpers. Previously a failed attribution lookup could block capture, a failed identification call could show an error after a successful save and a failed error-reporting call could prevent an application from saving after a photo failure. Regression tests reproduce each case.
+
+Browser smoke tests intercept form writes and notification requests when run against production, preventing test contacts and fake failure emails. Signup assertions now follow the actual email and optional phone steps. Regression tests cover upload concurrency, slow progress, stalled transfers, partial photo failure and malformed signup responses.
+
 ## feat(events): reschedule Philadelphia and add Chicago (2026-09-28)
 
 Philadelphia is now Sunday October 4 2026 from 7:30 to 9 PM at Next In Line Comedy. Chicago is now Saturday October 24 2026 from 6 to 7:30 PM at The Lincoln Lodge. Both shows use their live Eventbrite listings and receive updated event landing pages with Event JSON-LD. Event schema generation now respects each show's IANA timezone, so Chicago publishes its correct Central Time UTC offset.
 
 **Files:** `src/data/events.ts`, `src/utils/eventSchema.ts`, `src/utils/timezone.ts`, `test/events.test.ts`, `src/utils/eventSchema.test.ts`, `src/utils/timezone.test.ts`, `EVENTS-HISTORY.md`
+
 ## feat(mixers): guest confirmation emails + auto waitlist state once a mixer ends (2026-09-15)
 
 PR #272. Two related gaps in the mixer RSVP flow, both surfaced by tonight's Romae mixer.

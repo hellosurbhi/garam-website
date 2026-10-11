@@ -1,5 +1,11 @@
 # Changelog
 
+## feat(events): new Philadelphia show Dec 6 at Next In Line Comedy (2026-10-11)
+
+Sunday December 6 2026, 6:30 to 8 PM, BYOB, tickets on the venue's Eventbrite (ID 2002925676616). Appears on the tickets page, home shows section and gets the `/events/philadelphia-2026-12-06` landing page with Event JSON-LD. Date, time and venue verified against the live Eventbrite listing; the venue matches the existing `VENUE_NEXT_IN_LINE` constant exactly, so no new venue was added. A pin test in `test/events.test.ts` protects the date, times and venue from accidental edits.
+
+**Files:** `src/data/events.ts`, `test/events.test.ts`, `EVENTS-HISTORY.md`
+
 ## fix(deps): clear the 11 production advisories blocking every Dependabot PR (2026-10-11)
 
 Eight Dependabot security PRs were all failing CI and none of them could ever pass. The audit gate checks the whole production dependency tree, so each PR fixed one advisory while its own CI still saw the other seven. Four of the advisories had no Dependabot fix at all: `@firebase/firestore` pins `@grpc/grpc-js: ~1.9.0` and the patch is 1.13.6 or newer, so the fix sits outside the range firebase allows and no firebase release changes that.

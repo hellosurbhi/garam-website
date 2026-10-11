@@ -1,10 +1,23 @@
 # Changelog
 
+## fix(deps): clear the 11 production advisories blocking every Dependabot PR (2026-10-11)
+
+Eight Dependabot security PRs were all failing CI and none of them could ever pass. The audit gate checks the whole production dependency tree, so each PR fixed one advisory while its own CI still saw the other seven. Four of the advisories had no Dependabot fix at all: `@firebase/firestore` pins `@grpc/grpc-js: ~1.9.0` and the patch is 1.13.6 or newer, so the fix sits outside the range firebase allows and no firebase release changes that.
+
+Resolved in one lockfile pass plus one override, taking the gate from 11 production advisories (10 high, 1 moderate) to zero. The repeat cause is fixed too: Dependabot `groups:` default to version updates only, which is why security advisories arrived one PR each, so a `security` group with `applies-to: security-updates` now batches them.
+
+`src/utils/locationDisplay.test.ts` was the other half of the deadlock. It hand rolled a Firestore `Timestamp` and asserted it with a single cast, which breaks whenever the vendor type changes shape, and that is the type error that killed the 32 package group PR #288. The four other test files that fake a `Timestamp` all use `as unknown as`, so this one now matches them. Its `income` fixture also held a stale bracket written with an en dash that `INCOME_OPTIONS` no longer contains.
+
+**Verification:** lint passed, `astro check` 0 errors across 317 files, 1303 tests passed across 99 files, build completed, and `npm audit --audit-level=high --omit=dev` reports 0 vulnerabilities.
+
+**Files:** `package.json`, `package-lock.json`, `.github/dependabot.yml`, `src/utils/locationDisplay.test.ts`, `docs/security/REMEDIATION.md`
+
 ## feat(events): reschedule Philadelphia and add Chicago (2026-09-28)
 
 Philadelphia is now Sunday October 4 2026 from 7:30 to 9 PM at Next In Line Comedy. Chicago is now Saturday October 24 2026 from 6 to 7:30 PM at The Lincoln Lodge. Both shows use their live Eventbrite listings and receive updated event landing pages with Event JSON-LD. Event schema generation now respects each show's IANA timezone, so Chicago publishes its correct Central Time UTC offset.
 
 **Files:** `src/data/events.ts`, `src/utils/eventSchema.ts`, `src/utils/timezone.ts`, `test/events.test.ts`, `src/utils/eventSchema.test.ts`, `src/utils/timezone.test.ts`, `EVENTS-HISTORY.md`
+
 ## feat(mixers): guest confirmation emails + auto waitlist state once a mixer ends (2026-09-15)
 
 PR #272. Two related gaps in the mixer RSVP flow, both surfaced by tonight's Romae mixer.

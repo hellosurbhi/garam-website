@@ -69,7 +69,7 @@ async function pushWebhook(report: OpsAlertReport): Promise<void> {
   // topics are effectively public URLs; the full context still reaches the
   // producer through the email path. The 5s deadline keeps a stalled webhook
   // host from delaying every failure response that awaits alertOps.
-  await fetch(url, {
+  const response = await fetch(url, {
     method: "POST",
     headers: {
       Title: `FAILURE ${report.flow}/${report.stage}`,
@@ -79,6 +79,7 @@ async function pushWebhook(report: OpsAlertReport): Promise<void> {
     body: `Failure in ${report.flow}/${report.stage}\n\n${report.errorMessage}\n\nDetails in the alert email.`,
     signal: AbortSignal.timeout(5000),
   });
+  if (!response.ok) throw new Error(`Alert webhook HTTP ${response.status}`);
 }
 
 /**

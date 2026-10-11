@@ -1,3 +1,4 @@
+import { waitUntil } from "@vercel/functions";
 import type { APIRoute } from "astro";
 import { fsAdd } from "@/lib/firestoreRest";
 import { cleanPhone } from "@/lib/phone";
@@ -132,29 +133,34 @@ export const POST: APIRoute = async ({ request }) => {
     );
   }
 
-  try {
-    const template = waiverReceiptWithText({
-      firstName: firstName.trim(),
-      signature: signature.trim(),
-      signedAtIso,
-      waiverText: WAIVER_TEXT,
-    });
-    await sendMail({
-      to: email.trim().toLowerCase(),
-      subject: template.subject,
-      text: template.text,
-      html: template.html,
-    });
-  } catch (err) {
-    // Email failure should not block the waiver claim, but a silently dead
-    // mailer must still page.
-    await alertOps({
-      flow: "waiver",
-      stage: "receipt_email",
-      errorMessage: err instanceof Error ? err.message : String(err),
-      context: claimContext,
-    });
-  }
+  // Receipt delivery must not delay confirmation of an already saved waiver.
+  waitUntil(
+    (async () => {
+      try {
+        const template = waiverReceiptWithText({
+          firstName: firstName.trim(),
+          signature: signature.trim(),
+          signedAtIso,
+          waiverText: WAIVER_TEXT,
+        });
+        await sendMail({
+          to: email.trim().toLowerCase(),
+          subject: template.subject,
+          text: template.text,
+          html: template.html,
+        });
+      } catch (err) {
+        // Email failure should not block the waiver claim, but a silently dead
+        // mailer must still page.
+        await alertOps({
+          flow: "waiver",
+          stage: "receipt_email",
+          errorMessage: err instanceof Error ? err.message : String(err),
+          context: claimContext,
+        });
+      }
+    })(),
+  );
 
   const expireSec = _midnightLocalUnix(showDate, showTimezone);
   const expireDate = new Date(expireSec * 1000);

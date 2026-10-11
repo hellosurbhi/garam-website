@@ -19,7 +19,7 @@ export const WAIVER_PAGE = {
   submittingLabel: "Signing...",
   successHeading: "Waiver signed",
   successBody:
-    "You are all set. A copy of the signed waiver has been emailed to you. Show this confirmation to the production team if asked.",
+    "Your signed waiver has been saved. Show this confirmation to the production team if asked.",
   errorFallback:
     "Something went wrong saving your waiver. Please try again, or find a member of the production team at the venue.",
 } as const;

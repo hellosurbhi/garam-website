@@ -9,6 +9,22 @@ fixed entries, [x] checkboxes or "Status: Fixed" records to this file. -->
 
 ## Open
 
+### Deferred: submission recovery across page reloads and multiple tabs
+
+The application form now prevents a second submission while its current Firestore write is unresolved in the same mounted page. Closing, reloading or submitting from another tab still loses that in-memory lock. The approved repair excludes a new idempotency architecture. Overnight plan: define an opaque attempt ID persisted without applicant text or photos, add an authenticated server confirmation contract and transactional deduplication, bind notifications to the stored attempt, then test lost responses, reloads and simultaneous tabs. Acceptance: one application and one notification per attempt with recovery after a lost response.
+
+### Deferred: partial waiver persistence and stalled failure cleanup
+
+`src/pages/api/stage-waiver.ts` writes the waiver before linking it to an application; claim handlers also perform multiple writes. A later failure can leave a partially completed record that a retry duplicates. Overnight plan: inventory the write sequences, implement atomic writes or durable attempt recovery, preserve receipt semantics and test failures between each write. Separately, `src/components/apply/useApplyForm.ts` still awaits Storage cleanup after a definitive rejection. Bound that cleanup and report failed deletions with retry ownership so a stalled delete cannot delay the error UI. Acceptance: preserved original failure and recoverable cleanup without orphaning applicant photos.
+
+### Deferred: synthetic pager callers ignore HTTP failure status
+
+The API now returns 503 when delivery fails, but the two alert calls in `.github/workflows/synthetic-apply.yml` still use `curl -sS` without HTTP failure handling. Overnight plan: make the heartbeat and failure-page calls fail on non-2xx responses, retain the independent GitHub issue pager and test the workflow with a simulated 503. Acceptance: failed delivery cannot leave a green heartbeat step.
+
+### Deferred: README build commands are stale
+
+`README.md` documents `build:prerender`, which is absent from `package.json`, and says the build performs type checking even though that is the separate `check` script. Overnight plan: reconcile the script and deployment descriptions against `package.json`, Astro configuration and CI, then verify each documented command. This documentation repair is unrelated to the submission fix.
+
 ### CodeRabbit PR #265 (2026-09-11)
 
 - [ ] HIGH: Mail-sending endpoints authorize by Origin header and rate limit only, both bypassable by a non-browser caller | Why: notify-application.ts, notify-mixer-rsvp.ts and alert-failure.ts all gate their POST handler on isAllowedOrigin(origin) plus enforceRateLimit alone; Origin is a client-supplied header any direct HTTP caller can set to whatever it wants, and enforceRateLimit fails open (returns null) whenever UPSTASH_REDIS_REST_URL/TOKEN aren't configured (src/lib/rateLimit.ts:134-136), so a forged request can trigger emails to NOTIFICATION_EMAIL or ops pages with attacker-chosen name/email content, rate-limited only if Upstash happens to be configured in that environment. CodeRabbit flagged this against the new notify-mixer-rsvp.ts on PR #265, but the pattern is pre-existing and shared by notify-application.ts (already on main, predates this session), so patching only the new file would leave the other endpoints inconsistent with it, which this codebase's consistency rule forbids. None of these endpoints write Firestore directly (the actual lead write goes through the separately validated capture-lead.ts), so today's exploit ceiling is inbox/alert spam, not data corruption. Scope note (CodeRabbit follow-up, 2026-09-12): verify-turnstile.ts was removed from this entry because it sends no mail and reads no name/email; its Origin gating weakness is tracked separately below. | Files: src/pages/api/notify-application.ts, src/pages/api/notify-mixer-rsvp.ts, src/pages/api/alert-failure.ts, src/lib/allowedOrigin.ts, src/lib/rateLimit.ts | Plan: give each endpoint a server-side credential to check instead of trusting Origin (e.g. a short-lived token the endpoint that already validated the real payload issues, like capture-lead.ts for the lead/notify pair); audit each endpoint's actual write exposure first since severity differs per endpoint | Verify: a request with a forged Origin header and no valid credential is rejected on all 3 endpoints; the real client flows (apply form, mixer RSVP, ops alerts) still succeed end to end
@@ -398,17 +414,14 @@ This review ran on the merge of main into `fix/eventbrite-widget-silent-failure`
 
 ### Codex (2026-08-12T17:53Z)
 
-- [ ] HIGH: [FALSE-PAGER-SUCCESS] `src/lib/opsAlert.ts:81` swallows every delivery failure with `Promise.allSettled`, and `src/pages/api/alert-failure.ts:77` always returns 200. The workflow heartbeat and failure notification can therefore report success when neither email nor webhook delivered. Executor: the 3:00 overnight fixer (product repos are in its lane per the 2026-08-19 cadence decision); the independent GitHub-issue pager covers the owner meanwhile, but real applicants' failure emails still ride this swallowing path.
 - [ ] HIGH: [NON-BLOCKING-RULES-GATE] `.github/workflows/ci.yml:63` adds the emulator suite as a separate job, but `scripts/setup-branch-protection.sh:79` requires only `Lint, Types, Test, Build`. A failed security-rules job does not block merging under the documented protection configuration.
 
 - [ ] MEDIUM: `.github/workflows/synthetic-apply.yml:49` runs verification and cleanup only after Playwright succeeds. A submission that reaches Firestore before a later browser assertion fails is left behind. Once older than 48 hours, it can make the cleanup script refuse subsequent cleanup runs.
-- [ ] MEDIUM: `src/data/waiverPage.ts:22` promises that a receipt was emailed, but `src/pages/api/stage-waiver.ts:131` intentionally returns success after receipt delivery fails. Users can receive a false confirmation.
 
 ### Codex (2026-08-12T18:28Z)
 
 - [ ] HIGH: [PUBLIC-WEBHOOK-PII] `src/lib/opsAlert.ts:79` still sends `report.errorMessage` verbatim. Cron errors embed applicant email addresses at `src/pages/api/cron/followups.ts:110` and `src/pages/api/cron/post-show.ts:67`, so PII still reaches effectively public ntfy topics.
 - [ ] HIGH: [PUSH-GUARD-BYPASS] `.husky/pre-push:4` checks the current branch, not the remote refs supplied to the hook. From a feature branch, `git push origin HEAD:main`, `git push origin main` or deletion of remote main bypasses the guard.
-- [ ] HIGH: [BROKEN-SMOKE-SELECTOR] `tests/smoke/critical-flows.spec.ts:204` selects `apply-terms` on `/waiver`, but `StandaloneWaiverForm.tsx:205` has no such attribute. The waiver smoke flow now fails before submission.
 
 ### Codex (2026-08-12T18:28Z)
 
@@ -441,11 +454,9 @@ This review ran on the merge of main into `fix/speed-insights-node-env` (PR #157
 - CRITICAL `UNSAFE-ROLLOUT` re-filed against PR #157's merge commit: same recorded decision as the Codex 2026-08-12T20:05Z entry above, on identical grounds (client code published on main via PR #135, sequencing tracked by the apply-outage entry at the top of this file plus PR #135's operator steps). Kept so the report is not re-filed against further merge commits of main into open branches.
 - CRITICAL `FABRICATED-REFERENCE` re-filed against the `38cb5df`, `4ec96f3` and `e520120` commit bodies (exact lint and test counts stated without committed logs): same won't-fix decision as the two entries in the round-cap section below. `4ec96f3` and `e520120` are published main history and cannot be reworded without a prohibited force push. `38cb5df`'s Verified line follows the format the repo's own commit-msg hook mandates and rejects commits without (its own examples state exact counts such as "npm test -> 47/47 pass"); the counts were produced by the pre-commit gate that ran on that very commit, and the repo intentionally stores no test logs as artifacts. CI re-runs the full suite on every PR, which is the guarantee the repo relies on.
 
-- [ ] HIGH: [FALSE-PAGER-SUCCESS] `src/lib/opsAlert.ts:72` does not reject non-success webhook responses, `src/lib/opsAlert.ts:92` swallows every channel failure and `src/pages/api/alert-failure.ts:77` always returns 200. The heartbeat and failure notification curls at `.github/workflows/synthetic-apply.yml:72` and `:86` can therefore pass when no alert was delivered.
-      [PUBLIC-WEBHOOK-PII] `src/lib/opsAlert.ts:79` forwards `errorMessage` to an effectively public ntfy topic. Cron messages embed applicant addresses at `src/pages/api/cron/followups.ts:110` and `src/pages/api/cron/post-show.ts:67`.
+- [ ] HIGH: [PUBLIC-WEBHOOK-PII] `src/lib/opsAlert.ts:79` forwards `errorMessage` to an effectively public ntfy topic. Cron messages embed applicant addresses at `src/pages/api/cron/followups.ts:110` and `src/pages/api/cron/post-show.ts:67`.
       [NON-BLOCKING-RULES-GATE] The new emulator suite is a separate job at `.github/workflows/ci.yml:65`, while only `Lint, Types, Test, Build` is required at `scripts/setup-branch-protection.sh:79`. Security-rule failures do not block merging.
       [PUSH-GUARD-BYPASS] `.husky/pre-push:4` checks the checked-out branch instead of the refs received on stdin. From a feature branch, pushes such as `git push origin HEAD:main` bypass the main protection.
-      [BROKEN-SMOKE-SELECTOR] `tests/smoke/critical-flows.spec.ts:204` checks `apply-terms` on `/waiver`, but the waiver checkbox at `src/components/waiver/StandaloneWaiverForm.tsx:205` has no such attribute. Both waiver smoke flows fail before submission.
       [NON-IDEMPOTENT-WRITES] The claim routes write a contestant before token signing or invite updates at `src/pages/api/contestant-claim.ts:110`, `contestant-open-claim.ts:98` and `contestant-show-claim.ts:117`. `stage-waiver.ts:97` similarly writes the waiver before linkage writes. Later failure returns a retryable 500, so retries create duplicate legal records.
       [MOBILE-OOM] `useApplyForm.ts:253` accepts ten files approaching 50 MB each, then `useApplyForm.ts:275` converts every original to a base64 data URL before compression. Large iPhone selections can allocate hundreds of megabytes and kill the tab.
       [UNTRUSTED-MIGRATION-INPUT] `firestore.rules:100` permits unvalidated public `photoUrls`, while `scripts/migrate-legacy-photo-urls.mjs:67` accepts any URL containing `/o/photos...` without validating host or bucket. A crafted application can make the privileged migration revoke a known unrelated photo token.
@@ -456,7 +467,6 @@ This review ran on the merge of main into `fix/speed-insights-node-env` (PR #157
 
 - [ ] MEDIUM: [NONATOMIC-MIGRATION] Despite the WHY comment, `scripts/migrate-legacy-photo-urls.mjs:197` revokes tokens before writing `photoPaths`. A patch failure leaves documents pointing only to dead URLs until an operator reruns the script.
       [PHOTO-PATH-MISMATCH] `useApplyForm.ts:449` copies an arbitrary filename suffix into the Storage path, while `firestore.rules:42` permits only ASCII path characters. Valid image files with spaces or Unicode in the suffix upload successfully and then fail the application write.
-      [FALSE-RECEIPT-CONFIRMATION] `src/data/waiverPage.ts:22` promises that a receipt was emailed, but `src/pages/api/stage-waiver.ts:134` suppresses delivery failures and still returns success.
       [FALSE-POSITIVE-RULE-TEST] The non-image regression at `test/rules/apply-flow.rules-test.ts:87` omits required owner metadata. It fails even if the content-type restriction is removed.
       [STALE-SYNTHETIC-DATA] Cleanup at `.github/workflows/synthetic-apply.yml:51` runs only after Playwright succeeds. A document written before a later browser assertion fails is left behind and can eventually exceed the cleanup script’s 48-hour safety window.
       [PUBLIC-SYNTHETIC-FLAG] `firestore.rules:102` lets anonymous writers set `isSynthetic`, while `AdminDashboard.tsx:211` hides every marked application. The monitor marker needs a trusted write path rather than a public boolean.
@@ -466,12 +476,10 @@ This review ran on the merge of main into `fix/speed-insights-node-env` (PR #157
 
 ### Codex (2026-08-12T20:16Z)
 
-- [ ] HIGH: [FALSE-PAGER-SUCCESS] `src/lib/opsAlert.ts:72-102` neither rejects unsuccessful webhook responses nor propagates channel failures. `src/pages/api/alert-failure.ts:75-79` consequently returns 200 when every channel failed. The workflow curls at `.github/workflows/synthetic-apply.yml:72` and `:86` also omit HTTP failure handling, so both the heartbeat and outage page can report success without delivering anything.
-      [PUBLIC-WEBHOOK-PII] `src/lib/opsAlert.ts:79` forwards `errorMessage` to the ntfy-style URL. Cron messages embed applicant addresses at `src/pages/api/cron/followups.ts:110` and `src/pages/api/cron/post-show.ts:67`, bypassing the stated context-only PII protection.
+- [ ] HIGH: [PUBLIC-WEBHOOK-PII] `src/lib/opsAlert.ts:79` forwards `errorMessage` to the ntfy-style URL. Cron messages embed applicant addresses at `src/pages/api/cron/followups.ts:110` and `src/pages/api/cron/post-show.ts:67`, bypassing the stated context-only PII protection.
       [INCOMPLETE-PII-MIGRATION] `scripts/migrate-legacy-photo-urls.mjs:74-89` only queries `photoUrls`. Legacy `photoUrl` documents explicitly supported at `src/types/application.ts:42` and `src/utils/applicantPhotos.ts:24` are never migrated or revoked. Documents already containing `photoPaths` also retain `photoUrls` because the patch is skipped at `scripts/migrate-legacy-photo-urls.mjs:205`.
       [PUSH-GUARD-BYPASS] `.husky/pre-push:4-8` checks the checked-out branch instead of the refs received on stdin. From a feature branch, `git push origin HEAD:main`, `git push origin main` and deletion of remote main all bypass the guard.
       [NON-BLOCKING-RULES-GATE] `.github/workflows/ci.yml:65-81` adds rules testing as a separate job, but the documented required context at `scripts/setup-branch-protection.sh:76-80` remains only `Lint, Types, Test, Build`. A rules failure does not block merging.
-      [BROKEN-SMOKE-SELECTOR] `tests/smoke/critical-flows.spec.ts:204` selects `apply-terms` on `/waiver`, but the checkbox at `src/components/waiver/StandaloneWaiverForm.tsx:205-213` has no such attribute. Both new waiver smoke tests fail before submission.
       [MOBILE-OOM] `src/components/apply/useApplyForm.ts:253-289` accepts ten files approaching 50 MB each and converts every original to a base64 data URL before compression. This can allocate hundreds of megabytes and terminate the mobile tab.
       [NON-IDEMPOTENT-WRITES] The claim routes write contestant records before token signing or linkage at `src/pages/api/contestant-claim.ts:110-122`, `contestant-open-claim.ts:98-104` and `contestant-show-claim.ts:117-118`. `stage-waiver.ts:97-109` similarly writes the waiver first. Later failures return retryable 500 responses, so retries create duplicate legal records.
       [SCOPE-CREEP] `LESSONS.md:247` expands one JotForm failure into a universal ban on third-party payments, despite the existing Eventbrite payment architecture documented at `src/data/legal.ts:73`.
@@ -481,7 +489,6 @@ This review ran on the merge of main into `fix/speed-insights-node-env` (PR #157
 
 - [ ] MEDIUM: [PUBLIC-SYNTHETIC-FLAG] `firestore.rules:102` allows anonymous writers to set `isSynthetic`, while `src/components/admin/AdminDashboard.tsx:211-213` and `:252-254` hide every marked application.
       [PHOTO-CONTRACT-MISMATCH] `useApplyForm.ts:239-242` accepts SVG, but small files bypass compression at `compressImage.ts:20` and are rejected by `storage.rules:40`. Arbitrary filename suffixes are also copied at `useApplyForm.ts:449`, while `firestore.rules:42` rejects spaces and Unicode.
-      [FALSE-RECEIPT-CONFIRMATION] `src/data/waiverPage.ts:22` promises an emailed receipt, but `src/pages/api/stage-waiver.ts:134-145` suppresses receipt failures and still returns success.
       [STALE-SYNTHETIC-DATA] Verification and cleanup at `.github/workflows/synthetic-apply.yml:51-52` run only after Playwright succeeds. A submission written before a later assertion fails remains and eventually triggers the permanent 48-hour cleanup refusal at `scripts/synthetic-apply-verify.mjs:163-168`.
       [FALSE-POSITIVE-RULE-TEST] The non-image test at `test/rules/apply-flow.rules-test.ts:87-93` omits required owner metadata, so it still fails if the content-type restriction is accidentally removed.
       [RULE-TEST-ISOLATION] Both rules suites use project `demo-garam-masala` and clear its Firestore state in `beforeEach`, while `vitest.rules.config.ts:14-19` leaves file parallelism enabled. Parallel files can erase each other’s fixtures.
@@ -500,11 +507,9 @@ This review ran on the merge of main into `fix/speed-insights-node-env` (PR #157
 
 ### Codex (2026-08-14T16:21Z)
 
-- [ ] HIGH: [FALSE-PAGER-SUCCESS] `src/lib/opsAlert.ts:72-102` neither rejects unsuccessful webhook responses nor propagates delivery failures. `src/pages/api/alert-failure.ts:75-79` always returns 200, while both workflow curls omit HTTP failure handling. The heartbeat and outage pager can pass without delivering an alert.
-      [PUBLIC-WEBHOOK-PII] `src/lib/opsAlert.ts:79` forwards `errorMessage` to the ntfy-style URL. Cron messages embed applicant addresses at `src/pages/api/cron/followups.ts:110` and `src/pages/api/cron/post-show.ts:67`.
+- [ ] HIGH: [PUBLIC-WEBHOOK-PII] `src/lib/opsAlert.ts:79` forwards `errorMessage` to the ntfy-style URL. Cron messages embed applicant addresses at `src/pages/api/cron/followups.ts:110` and `src/pages/api/cron/post-show.ts:67`.
       [NON-BLOCKING-RULES-GATE] `.github/workflows/ci.yml:65-81` adds rules tests as a separate job, but `scripts/setup-branch-protection.sh:76-80` requires only `Lint, Types, Test, Build`. Security-rule failures therefore do not block merging under the documented configuration.
       [PUSH-GUARD-BYPASS] `.husky/pre-push:4-8` checks the checked-out branch instead of the refs supplied on stdin. A feature branch can still push or delete remote `main`.
-      [BROKEN-SMOKE-SELECTOR] `tests/smoke/critical-flows.spec.ts:204` selects `apply-terms` on `/waiver`, but `StandaloneWaiverForm.tsx:205-213` has no such attribute. Both new waiver smoke flows fail before submission.
       [FALSE-BRIEFING-SUCCESS] `src/pages/api/cron/followups.ts:271-293` records the briefing date and reports `briefingSent: true` when no recipient is configured or every delivery fails, preventing a retry.
       [NON-IDEMPOTENT-WRITES] The claim routes and `stage-waiver.ts` persist legal records before later token or linkage operations. A subsequent retryable 500 can produce duplicate contestants or waivers.
       [MOBILE-OOM] `useApplyForm.ts:253-289` accepts ten files approaching 50 MB each, then converts every original to a base64 data URL before compression. This can exhaust memory on the mobile browsers the change targets.

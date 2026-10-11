@@ -51,15 +51,20 @@ export function trackError(properties: ErrorProperties) {
       (typeof window !== "undefined" ? window.location.href : undefined),
   };
 
-  if (window.posthog?.capture) {
-    window.posthog.capture("client_error", enriched);
-  } else {
-    window.__garamErrorQueue = window.__garamErrorQueue || [];
-    window.__garamErrorQueue.push({
-      event: "client_error",
-      properties: enriched,
-    });
+  if (typeof window === "undefined") return;
+  try {
+    if (window.posthog?.capture) {
+      window.posthog.capture("client_error", enriched);
+      return;
+    }
+  } catch {
+    // Keep the error queued when the analytics provider fails.
   }
+  window.__garamErrorQueue = window.__garamErrorQueue || [];
+  window.__garamErrorQueue.push({
+    event: "client_error",
+    properties: enriched,
+  });
 }
 
 /**
@@ -89,8 +94,25 @@ export function identifyLead(email: string, properties: AnalyticsProps = {}) {
   // PostHog automatically aliases the anonymous distinct_id to the email so all
   // prior anonymous events are attributed to this person.
   // $set: email always stays current. $set_once: attribution data locked to first-touch.
-  window.posthog?.identify?.(email, { email }, cleanProps);
+  if (typeof window === "undefined") return;
+  try {
+    window.posthog?.identify?.(email, { email }, cleanProps);
+  } catch (error) {
+    trackError({
+      error_message: String(error),
+      error_type: "api_error",
+      component: "identifyLead",
+    });
+  }
 
   // Mirror identification to GTM dataLayer for GA4 / downstream tools
-  window.dataLayer?.push({ event: "identify", email, ...cleanProps });
+  try {
+    window.dataLayer?.push({ event: "identify", email, ...cleanProps });
+  } catch (error) {
+    trackError({
+      error_message: String(error),
+      error_type: "api_error",
+      component: "identifyLead",
+    });
+  }
 }

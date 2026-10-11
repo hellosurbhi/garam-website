@@ -356,8 +356,6 @@ describe("buildLeadAttribution", () => {
     expect(result.geoTimezone).toBe("America/New_York");
   });
 
-
-
   /* ── posthog edge cases ─────────────────────────────── */
 
   it("excludes posthogDistinctId when posthog has no get_distinct_id method", async () => {
@@ -692,4 +690,19 @@ describe("bootstrapLeadAttribution — geo data", () => {
     expect(result.source).toBe("test");
     vi.useRealTimers();
   });
+});
+
+it("builds attribution when the analytics identity provider throws", async () => {
+  window.posthog = {
+    get_distinct_id: () => {
+      throw new Error("analytics unavailable");
+    },
+  } as NonNullable<Window["posthog"]>;
+  try {
+    await expect(
+      buildLeadAttribution({ source: "test" }),
+    ).resolves.toMatchObject({ source: "test" });
+  } finally {
+    delete window.posthog;
+  }
 });

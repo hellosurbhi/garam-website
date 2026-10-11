@@ -10,7 +10,28 @@
  * them at the Playwright network layer so no real Firebase account is needed.
  */
 
-import { test, expect, type Page } from "@playwright/test";
+import { test, expect, type Page, type Route } from "@playwright/test";
+
+// Smoke runs can target preview or production URLs. Keep their writes local to the test.
+test.beforeEach(async ({ page }) => {
+  await page.route("**/api/**", (route) => {
+    const path = new URL(route.request().url()).pathname;
+    const responses: Record<string, unknown> = {
+      "/api/capture-lead": {
+        ok: true,
+        id: "smoke-lead",
+        updateToken: "smoke-update",
+      },
+      "/api/update-lead": { ok: true },
+      "/api/notify-application": { sent: true },
+      "/api/alert-failure": { ok: true },
+      "/api/verify-turnstile": { success: true },
+      "/api/geo": {},
+    };
+    if (!(path in responses)) return route.abort();
+    return route.fulfill({ json: responses[path] });
+  });
+});
 
 // ---------------------------------------------------------------------------
 // Helpers
@@ -23,12 +44,16 @@ async function mockFirebase(page: Page) {
     route.fulfill({
       status: 200,
       contentType: "application/json",
-      body: JSON.stringify({
-        localId: "smoke-uid",
-        idToken: "smoke-tok",
-        refreshToken: "smoke-ref",
-        expiresIn: "3600",
-      }),
+      body: JSON.stringify(
+        route.request().url().includes("accounts:lookup")
+          ? { users: [{ localId: "smoke-uid", providerUserInfo: [] }] }
+          : {
+              localId: "smoke-uid",
+              idToken: "smoke-tok",
+              refreshToken: "smoke-ref",
+              expiresIn: "3600",
+            },
+      ),
     }),
   );
   // Storage upload (resumable and single-request)
@@ -42,16 +67,60 @@ async function mockFirebase(page: Page) {
       }),
     }),
   );
-  // Firestore write
-  await page.route("**/firestore.googleapis.com/**", (route) =>
-    route.fulfill({
-      status: 200,
-      contentType: "application/json",
-      body: JSON.stringify({
-        name: "projects/p/databases/(default)/documents/applications/smoke123",
-      }),
-    }),
-  );
+  // Firestore uses WebChannel frames, not a REST document response.
+  let channel: Route | undefined;
+  let writeReceived = false;
+  const frame = (value: unknown) => {
+    const body = JSON.stringify(value);
+    return `${body.length}\n${body}`;
+  };
+  const completeWrite = async () => {
+    if (!channel || !writeReceived) return;
+    const route = channel;
+    channel = undefined;
+    writeReceived = false;
+    const time = new Date().toISOString();
+    await route.fulfill({
+      body: frame([
+        [
+          2,
+          [
+            {
+              streamToken: "dG9rZW4=",
+              writeResults: [
+                {
+                  updateTime: time,
+                  transformResults: [
+                    { timestampValue: time },
+                    { timestampValue: time },
+                  ],
+                },
+              ],
+              commitTime: time,
+            },
+          ],
+        ],
+      ]),
+    });
+  };
+  await page.route("**/firestore.googleapis.com/**", async (route) => {
+    const url = new URL(route.request().url());
+    if (!url.searchParams.has("SID")) {
+      await route.fulfill({
+        body: frame([
+          [0, ["c", "smoke-session", "", 8, 12, 30000]],
+          [1, [{ streamId: "smoke-stream", streamToken: "dG9rZW4=" }]],
+        ]),
+      });
+    } else if (route.request().method() === "GET") {
+      channel = route;
+      await completeWrite();
+    } else {
+      writeReceived = (route.request().postData() ?? "").includes("writes");
+      await route.fulfill({ body: frame([1, 2, 0]) });
+      await completeWrite();
+    }
+  });
 }
 
 /** Fill every required apply form field so isValid becomes true. */
@@ -175,6 +244,55 @@ test.describe("Apply form", () => {
 // ---------------------------------------------------------------------------
 
 test.describe("HomeSignup (Spice List)", () => {
+  test("analytics failure does not stop a saved signup", async ({ page }) => {
+    await page.goto("/", { waitUntil: "domcontentloaded" });
+    await page.evaluate(() => {
+      const fail = () => {
+        throw new Error("analytics unavailable");
+      };
+      Object.assign(window, {
+        posthog: { identify: fail, capture: fail, get_distinct_id: fail },
+      });
+    });
+    await page.fill(
+      "[data-testid=signup-email-input]",
+      "smoketest@example.com",
+    );
+    await page.click("[data-testid=signup-submit]");
+    await page.click("#nl-skip");
+    await expect(page.locator("[data-testid=signup-success]")).toBeVisible();
+  });
+
+  test("failed signup keeps contact details and reports the failure", async ({
+    page,
+  }) => {
+    await page.route("**/api/capture-lead", (route) =>
+      route.fulfill({ status: 500, json: { error: "Could not save signup" } }),
+    );
+    await page.goto("/", { waitUntil: "domcontentloaded" });
+    const alert = page.waitForRequest(
+      (request) =>
+        request.url().includes("/api/alert-failure") &&
+        request.method() === "POST",
+    );
+    await page.fill(
+      "[data-testid=signup-email-input]",
+      "smoketest@example.com",
+    );
+    await page.click("[data-testid=signup-submit]");
+    expect((await alert).postDataJSON()).toMatchObject({
+      flow: "lead",
+      contact: { email: "smoketest@example.com" },
+    });
+    await expect(page.locator("[data-testid=signup-email-input]")).toHaveValue(
+      "smoketest@example.com",
+    );
+    await expect(page.locator("[data-testid=signup-submit]")).toBeEnabled();
+    await expect(
+      page.locator("[data-testid=signup-success]"),
+    ).not.toBeVisible();
+  });
+
   test("submits email and shows success state", async ({ page }) => {
     await page.goto("/", { waitUntil: "domcontentloaded" });
 
@@ -183,6 +301,7 @@ test.describe("HomeSignup (Spice List)", () => {
       "smoketest@example.com",
     );
     await page.click("[data-testid=signup-submit]");
+    await page.click("#nl-skip");
 
     await expect(page.locator("[data-testid=signup-success]")).toBeVisible({
       timeout: 10_000,
@@ -201,7 +320,7 @@ test.describe("Standalone waiver (/waiver)", () => {
       .locator("[data-testid=waiver-scroll]")
       .evaluate((el) => el.scrollTo(0, el.scrollHeight));
     await page.fill("#waiver-signature", "Smoke Tester");
-    await page.check('[data-testid="apply-terms"]');
+    await page.getByRole("checkbox").check();
   }
 
   test("happy path: reads, signs, submits, sees confirmation", async ({
@@ -292,6 +411,7 @@ test.describe("LeadCaptureModal", () => {
       "smoketest@example.com",
     );
     await page.click("[data-testid=lead-capture-submit]");
+    await page.click("[data-lc-skip]");
 
     await expect(
       page.locator("[data-testid=lead-capture-success]"),
@@ -328,6 +448,7 @@ test.describe("NotifyModal", () => {
       "smoketest@example.com",
     );
     await page.click("[data-testid=notify-submit]");
+    await page.click("#notify-skip");
 
     await expect(page.locator("[data-testid=notify-success]")).toBeVisible({
       timeout: 10_000,

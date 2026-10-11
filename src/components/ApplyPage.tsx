@@ -131,6 +131,7 @@ function ApplyPageInner() {
     photoPreviews,
     errors,
     submitting,
+    confirmationPending,
     submitted,
     photosFailed,
     isValid,
@@ -218,7 +219,7 @@ function ApplyPageInner() {
 
               <form onSubmit={handleSubmit} noValidate data-testid="apply-form">
                 <fieldset
-                  disabled={submitting}
+                  disabled={submitting || confirmationPending}
                   className={styles.formFieldset}
                   data-application-type={form.applicationType}
                 >
@@ -875,28 +876,35 @@ function ApplyPageInner() {
 
                   {/* Cloudflare Turnstile invisible widget — rendered via useEffect */}
                   <div ref={turnstileContainerRef} aria-hidden="true" />
-
-                  <button
-                    type="submit"
-                    disabled={submitting || !isValid}
-                    data-submitting={submitting || undefined}
-                    data-testid="apply-submit"
-                    className={styles.submitButton}
-                  >
-                    {submitting ? (
-                      <>
-                        <Spinner size="sm" label="Submitting..." />
-                        Submitting…
-                      </>
-                    ) : isNomination ? (
-                      "Submit Nomination"
-                    ) : (
-                      "Submit Application"
-                    )}
-                  </button>
-
-                  <p className={styles.disclaimer}>{submissionDisclaimer}</p>
                 </fieldset>
+                {confirmationPending && (
+                  <p role="status">
+                    Your application is still being confirmed. Keep this page
+                    open. We will show confirmation here when it finishes.
+                  </p>
+                )}
+                <button
+                  type="submit"
+                  disabled={submitting || !isValid}
+                  data-submitting={submitting || undefined}
+                  data-testid="apply-submit"
+                  className={styles.submitButton}
+                >
+                  {submitting ? (
+                    <>
+                      <Spinner size="sm" label="Submitting..." />
+                      Submitting…
+                    </>
+                  ) : confirmationPending ? (
+                    "Check submission"
+                  ) : isNomination ? (
+                    "Submit Nomination"
+                  ) : (
+                    "Submit Application"
+                  )}
+                </button>
+
+                <p className={styles.disclaimer}>{submissionDisclaimer}</p>
               </form>
             </div>
           )}

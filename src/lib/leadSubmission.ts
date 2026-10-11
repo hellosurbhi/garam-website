@@ -1,4 +1,5 @@
 import { safeLocalStorage } from "./safeStorage";
+import { z } from "zod";
 
 export interface LeadSubmissionPayload {
   [key: string]: string | number | undefined;
@@ -26,12 +27,12 @@ export interface LeadSubmissionPayload {
   geoTimezone?: string;
 }
 
-interface CaptureLeadResponse {
-  ok?: boolean;
-  id?: string;
-  updateToken?: string;
-  error?: string;
-}
+const captureResponseSchema = z.object({
+  ok: z.literal(true),
+  id: z.string().trim().min(1),
+  updateToken: z.string().min(1).optional(),
+});
+const updateResponseSchema = z.object({ ok: z.literal(true) });
 
 /**
  * Handle returned by captureLead and consumed by updateLeadPhone.
@@ -43,33 +44,43 @@ export interface LeadCaptureResult {
   updateToken?: string;
 }
 
-async function readJson<T>(response: Response): Promise<T | null> {
+async function postLead(path: string, payload: object): Promise<unknown> {
+  const controller = new AbortController();
+  const timer = setTimeout(() => controller.abort(), 20_000);
   try {
-    return (await response.json()) as T;
-  } catch {
-    return null;
+    const response = await fetch(path, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(payload),
+      signal: controller.signal,
+    });
+    const body: unknown = await response.json();
+    if (!response.ok) {
+      const error = z.object({ error: z.string() }).safeParse(body);
+      throw new Error(
+        error.success ? error.data.error : "Could not save your details",
+      );
+    }
+    return body;
+  } finally {
+    clearTimeout(timer);
   }
 }
 
 export async function captureLead(
   payload: LeadSubmissionPayload,
 ): Promise<LeadCaptureResult> {
-  const res = await fetch("/api/capture-lead", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(payload),
-  });
-  const result = await readJson<CaptureLeadResponse>(res);
-
-  if (!res.ok) {
-    throw new Error(result?.error ?? "Failed to save lead");
-  }
+  const response = await postLead("/api/capture-lead", payload);
+  const parsed = captureResponseSchema.safeParse(response);
+  if (!parsed.success)
+    throw new Error("Could not confirm your signup. Please try again.");
+  const result = parsed.data;
 
   safeLocalStorage.setItem("gmd-popup-subscribed", "true");
 
   return {
-    id: result?.id ?? "",
-    ...(result?.updateToken ? { updateToken: result.updateToken } : {}),
+    id: result.id,
+    ...(result.updateToken ? { updateToken: result.updateToken } : {}),
   };
 }
 
@@ -87,19 +98,13 @@ export async function updateLeadFields(
 ): Promise<void> {
   if (!lead.id) throw new Error("Lead id required");
 
-  const res = await fetch("/api/update-lead", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({
-      id: lead.id,
-      ...(lead.updateToken ? { token: lead.updateToken } : {}),
-      ...fields,
-    }),
+  const response = await postLead("/api/update-lead", {
+    id: lead.id,
+    ...(lead.updateToken ? { token: lead.updateToken } : {}),
+    ...fields,
   });
-  const result = await readJson<CaptureLeadResponse>(res);
-
-  if (!res.ok) {
-    throw new Error(result?.error ?? "Failed to update lead");
+  if (!updateResponseSchema.safeParse(response).success) {
+    throw new Error("Could not confirm your update. Please try again.");
   }
 }
 

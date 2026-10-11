@@ -122,6 +122,128 @@ describe("useApplyForm", () => {
     vi.restoreAllMocks();
   });
 
+  it.each(["success", "failure"])(
+    "reports missing photos as saved only after write %s",
+    async (outcome) => {
+      let resolveWrite!: (value: unknown) => void;
+      let rejectWrite!: (error: Error) => void;
+      mockAddDoc.mockReturnValueOnce(
+        new Promise((resolve, reject) => {
+          resolveWrite = resolve;
+          rejectWrite = reject;
+        }),
+      );
+      mockUploadBytesResumable.mockImplementationOnce(() =>
+        Object.assign(Promise.reject(new Error("upload failed")), {
+          cancel: vi.fn(),
+        }),
+      );
+      const { result } = renderHook(() => useApplyForm());
+      act(() =>
+        fillRequired(
+          result.current.set,
+          result.current.handleTermsCheckbox,
+          result.current.handleAddPhotos,
+        ),
+      );
+      let submission!: Promise<void>;
+      await act(async () => {
+        submission = result.current.handleSubmit(makeSubmitEvent());
+      });
+      expect(mockAddDoc).toHaveBeenCalledOnce();
+      expect(mockReportFailure).not.toHaveBeenCalled();
+      await act(async () => {
+        if (outcome === "success") resolveWrite({ id: "saved" });
+        else rejectWrite(new Error("denied"));
+        await submission;
+      });
+      expect(mockReportFailure).toHaveBeenCalledWith(
+        expect.objectContaining({
+          stage: outcome === "success" ? "photo_upload" : "submit",
+        }),
+      );
+      expect(result.current.submitted).toBe(outcome === "success");
+    },
+  );
+
+  it("keeps the saved outcome and notification when analytics throws", async () => {
+    mockIdentifyLead.mockImplementationOnce(() => {
+      throw new Error("analytics unavailable");
+    });
+    const { result } = renderHook(() => useApplyForm());
+    act(() =>
+      fillRequired(
+        result.current.set,
+        result.current.handleTermsCheckbox,
+        result.current.handleAddPhotos,
+      ),
+    );
+    await act(async () => {
+      await result.current.handleSubmit(makeSubmitEvent());
+    });
+    expect(result.current.submitted).toBe(true);
+    expect(mockDeleteObject).not.toHaveBeenCalled();
+    expect(fetch).toHaveBeenCalledWith(
+      "/api/notify-application",
+      expect.any(Object),
+    );
+    expect(mockReportFailure).not.toHaveBeenCalled();
+  });
+
+  it.each(["success", "failure"])(
+    "keeps a timed-out write and handles late %s without a second submission",
+    async (outcome) => {
+      let resolveWrite!: (value: unknown) => void;
+      let rejectWrite!: (error: Error) => void;
+      mockAddDoc.mockReturnValueOnce(
+        new Promise((resolve, reject) => {
+          resolveWrite = resolve;
+          rejectWrite = reject;
+        }),
+      );
+      const { result } = renderHook(() => useApplyForm());
+      act(() =>
+        fillRequired(
+          result.current.set,
+          result.current.handleTermsCheckbox,
+          result.current.handleAddPhotos,
+        ),
+      );
+      vi.useFakeTimers();
+      let submission!: Promise<void>;
+      try {
+        await act(async () => {
+          submission = result.current.handleSubmit(makeSubmitEvent());
+        });
+        expect(mockAddDoc).toHaveBeenCalledTimes(1);
+        await act(async () => {
+          await vi.advanceTimersByTimeAsync(15_001);
+        });
+        expect(result.current.confirmationPending).toBe(true);
+        expect(result.current.submitted).toBe(false);
+        expect(result.current.form.name).toBe("Jane Doe");
+        expect(mockDeleteObject).not.toHaveBeenCalled();
+        await act(async () => {
+          await result.current.handleSubmit(makeSubmitEvent());
+        });
+        expect(mockAddDoc).toHaveBeenCalledTimes(1);
+        expect(mockUploadBytesResumable).toHaveBeenCalledTimes(1);
+        await act(async () => {
+          if (outcome === "success") resolveWrite({ id: "late-write" });
+          else rejectWrite(new Error("permission denied"));
+          await submission;
+        });
+        expect(result.current.confirmationPending).toBe(false);
+        expect(result.current.submitted).toBe(outcome === "success");
+        expect(mockDeleteObject).toHaveBeenCalledTimes(
+          outcome === "success" ? 0 : 1,
+        );
+      } finally {
+        vi.useRealTimers();
+      }
+    },
+  );
+
   /* ── Initial state ────────────────────────────────────── */
 
   it("returns default form state", () => {

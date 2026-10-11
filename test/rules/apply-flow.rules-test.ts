@@ -24,7 +24,7 @@ import {
   getBytes,
   deleteObject,
 } from "firebase/storage";
-import { collection, doc, setDoc, getDoc } from "firebase/firestore";
+import { collection, doc, setDoc, getDoc, addDoc } from "firebase/firestore";
 import {
   buildApplicationDocument,
   INITIAL,
@@ -258,6 +258,28 @@ describe("firestore.rules: applications", () => {
     );
   });
 
+  for (const form of [fullSelfForm, nominationForm]) {
+    it.each(Array.from({ length: 10 }, (_, i) => i + 1))(
+      `${form.applicationType} application with %i photos is accepted`,
+      async (count) => {
+        await assertSucceeds(
+          setDoc(
+            appDoc(anonContext("anon-1")),
+            buildApplicationDocument(
+              form,
+              Array.from(
+                { length: count },
+                (_, i) => `photos/fixture-${i}.jpg`,
+              ),
+              form.applicationType === "Nomination",
+              docTimestamps(),
+            ),
+          ),
+        );
+      },
+    );
+  }
+
   it("fully-filled self application is accepted", async () => {
     await assertSucceeds(
       setDoc(appDoc(anonContext("anon-1")), validApplication),
@@ -397,6 +419,23 @@ describe("firestore.rules: applications", () => {
       setDoc(appDoc(anonContext("anon-1")), {
         ...validApplication,
         photoPaths: ["https://firebasestorage.googleapis.com/tokened.jpg"],
+      }),
+    );
+  });
+
+  it("rejects an invalid tenth photo and an eleventh photo", async () => {
+    const db = testEnv.authenticatedContext("anon-user").firestore();
+    const paths = Array.from({ length: 10 }, (_, i) => `photos/check-${i}.jpg`);
+    await assertFails(
+      addDoc(collection(db, "applications"), {
+        ...validApplication,
+        photoPaths: [...paths.slice(0, 9), "outside/invalid.jpg"],
+      }),
+    );
+    await assertFails(
+      addDoc(collection(db, "applications"), {
+        ...validApplication,
+        photoPaths: [...paths, "photos/extra.jpg"],
       }),
     );
   });

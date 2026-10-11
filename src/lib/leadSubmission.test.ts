@@ -1,4 +1,4 @@
-import { describe, it, expect, beforeEach, vi } from "vitest";
+import { describe, it, expect, beforeEach, afterEach, vi } from "vitest";
 import { captureLead, updateLeadPhone } from "./leadSubmission";
 
 function jsonResponse(body: unknown, status = 200): Response {
@@ -91,5 +91,69 @@ describe("updateLeadPhone", () => {
     await expect(
       updateLeadPhone({ id: "lead123", updateToken: "stale" }, "5551234567"),
     ).rejects.toThrow("Invalid or expired update token");
+  });
+});
+
+describe("submission response validation and deadlines", () => {
+  afterEach(() => {
+    vi.restoreAllMocks();
+    vi.useRealTimers();
+  });
+
+  it.each([{}, { ok: false }, { ok: true, id: "" }, { ok: true, id: 7 }])(
+    "rejects malformed capture success %j",
+    async (body) => {
+      localStorage.clear();
+      vi.spyOn(globalThis, "fetch").mockResolvedValue(jsonResponse(body));
+      await expect(
+        captureLead({ email: "fixture@example.com" }),
+      ).rejects.toThrow("Could not confirm");
+      expect(localStorage.getItem("gmd-popup-subscribed")).toBeNull();
+    },
+  );
+
+  it("rejects a malformed update success", async () => {
+    vi.spyOn(globalThis, "fetch").mockResolvedValue(jsonResponse({}));
+    await expect(updateLeadPhone({ id: "lead" }, "5551234567")).rejects.toThrow(
+      "Could not confirm",
+    );
+  });
+
+  it("aborts a stalled signup after twenty seconds", async () => {
+    vi.useFakeTimers();
+    vi.spyOn(globalThis, "fetch").mockImplementation(
+      (_url, init) =>
+        new Promise((_resolve, reject) => {
+          init?.signal?.addEventListener("abort", () =>
+            reject(new DOMException("Timed out", "AbortError")),
+          );
+        }),
+    );
+    const result = expect(
+      captureLead({ email: "fixture@example.com" }),
+    ).rejects.toThrow("Timed out");
+    await vi.advanceTimersByTimeAsync(20_000);
+    await result;
+  });
+
+  it("keeps the deadline active while reading a stalled response body", async () => {
+    vi.useFakeTimers();
+    vi.spyOn(globalThis, "fetch").mockImplementation(
+      async (_url, init) =>
+        ({
+          ok: true,
+          json: () =>
+            new Promise((_resolve, reject) => {
+              init?.signal?.addEventListener("abort", () =>
+                reject(new DOMException("Body timed out", "AbortError")),
+              );
+            }),
+        }) as Response,
+    );
+    const result = expect(
+      captureLead({ email: "fixture@example.com" }),
+    ).rejects.toThrow("Body timed out");
+    await vi.advanceTimersByTimeAsync(20_000);
+    await result;
   });
 });

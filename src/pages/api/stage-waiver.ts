@@ -1,3 +1,4 @@
+import { waitUntil } from "@vercel/functions";
 export const prerender = false;
 
 import type { APIRoute } from "astro";
@@ -123,24 +124,29 @@ export const POST: APIRoute = async ({ request }) => {
     );
   }
 
-  try {
-    const template = waiverReceipt(firstName.trim());
-    await sendMail({
-      to: email.trim().toLowerCase(),
-      subject: template.subject,
-      text: template.text,
-      html: template.html,
-    });
-  } catch (err) {
-    // Waiver is already signed; receipt email failure should not block the
-    // response, but a silently dead mailer must still page.
-    await alertOps({
-      flow: "waiver",
-      stage: "receipt_email",
-      errorMessage: err instanceof Error ? err.message : String(err),
-      context: signerContext,
-    });
-  }
+  // Receipt delivery must not delay confirmation of an already saved waiver.
+  waitUntil(
+    (async () => {
+      try {
+        const template = waiverReceipt(firstName.trim());
+        await sendMail({
+          to: email.trim().toLowerCase(),
+          subject: template.subject,
+          text: template.text,
+          html: template.html,
+        });
+      } catch (err) {
+        // Waiver is already signed; receipt email failure should not block the
+        // response, but a silently dead mailer must still page.
+        await alertOps({
+          flow: "waiver",
+          stage: "receipt_email",
+          errorMessage: err instanceof Error ? err.message : String(err),
+          context: signerContext,
+        });
+      }
+    })(),
+  );
 
   return jsonResponse({ ok: true });
 };

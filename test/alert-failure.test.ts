@@ -138,10 +138,10 @@ describe("alert-failure handler", () => {
     expect(html).toContain("&lt;script&gt;");
   });
 
-  it("still returns 200 when the mail send fails (client fires and forgets)", async () => {
+  it("returns 503 when the mail send fails", async () => {
     mockSend.mockRejectedValue(new Error("SMTP down"));
     const res = await POST(makeContext(makeRequest(validReport)));
-    expect(res.status).toBe(200);
+    expect(res.status).toBe(503);
   });
 
   describe("one failure incident = one email (Upstash dedupe)", () => {
@@ -156,6 +156,19 @@ describe("alert-failure handler", () => {
       vi.restoreAllMocks();
       delete import.meta.env.UPSTASH_REDIS_REST_URL;
       delete import.meta.env.UPSTASH_REDIS_REST_TOKEN;
+    });
+
+    it("releases the claim when the webhook returns HTTP 500 and email fails", async () => {
+      import.meta.env.ALERT_WEBHOOK_URL = "https://alerts.example.test/topic";
+      mockRedisSet.mockResolvedValue("OK");
+      mockRedisDel.mockResolvedValue(1);
+      mockSend.mockRejectedValue(new Error("SMTP down"));
+      vi.spyOn(globalThis, "fetch").mockResolvedValue(
+        new Response("unavailable", { status: 500 }),
+      );
+      const res = await POST(makeContext(makeRequest(validReport)));
+      expect(res.status).toBe(503);
+      expect(mockRedisDel).toHaveBeenCalledTimes(1);
     });
 
     it("first failure of an incident claims the dedupe key and sends", async () => {
@@ -183,7 +196,7 @@ describe("alert-failure handler", () => {
       mockRedisDel.mockResolvedValue(1);
       mockSend.mockRejectedValue(new Error("SMTP down"));
       const res = await POST(makeContext(makeRequest(validReport)));
-      expect(res.status).toBe(200);
+      expect(res.status).toBe(503);
       // The claim is freed so the NEXT report of this incident can page,
       // instead of an hour of suppression behind an alert that never sent.
       expect(mockRedisDel).toHaveBeenCalledTimes(1);

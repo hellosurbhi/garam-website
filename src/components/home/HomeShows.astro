@@ -248,6 +248,7 @@ const taglineMap = buildTaglineMap(events);
 <script>
   import { identifyLead, trackLeadEvent } from "@/lib/analytics";
   import { buildLeadAttribution } from "@/lib/leadAttribution";
+  import { reportFailure } from "@/lib/failureAlert";
   import {
     captureLead,
     type LeadSubmissionPayload,
@@ -358,7 +359,17 @@ const taglineMap = buildTaglineMap(events);
           trackLeadEvent("waitlist_submit", { ...attribution, ...cityProp });
           document.getElementById("city-form-view")?.setAttribute("hidden", "");
           document.getElementById("city-success")?.removeAttribute("hidden");
-        } catch {
+        } catch (err) {
+          reportFailure({
+            flow: "lead",
+            stage: "request_city",
+            errorMessage: err instanceof Error ? err.message : String(err),
+            contact: {
+              email: (
+                document.getElementById("city-email") as HTMLInputElement | null
+              )?.value,
+            },
+          });
           if (errorEl) {
             errorEl.textContent = "Something went wrong. Please try again.";
             errorEl.removeAttribute("hidden");

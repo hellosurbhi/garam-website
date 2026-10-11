@@ -54,6 +54,42 @@ describe("notify-application handler", () => {
     mockSend.mockResolvedValue({ id: "email-id" });
   });
 
+  it("notifies the producer when the saved application has no uploaded photos", async () => {
+    const res = await POST(
+      makeContext(
+        makeRequest({ ...validBody, photoPaths: [], photoUploadFailed: true }),
+      ),
+    );
+    expect(res.status).toBe(200);
+    expect(mockSend).toHaveBeenCalledTimes(2);
+  });
+
+  it.each([undefined, false])(
+    "rejects empty photos without a true failure flag: %s",
+    async (photoUploadFailed) => {
+      const res = await POST(
+        makeContext(
+          makeRequest({ ...validBody, photoPaths: [], photoUploadFailed }),
+        ),
+      );
+      expect(res.status).toBe(400);
+      expect(mockSend).not.toHaveBeenCalled();
+    },
+  );
+
+  it("reports a welcome email failure without failing the saved application", async () => {
+    mockSend
+      .mockResolvedValueOnce(undefined)
+      .mockRejectedValueOnce(new Error("welcome delivery failed"))
+      .mockResolvedValueOnce(undefined);
+    const res = await POST(makeContext(makeRequest(validBody)));
+    expect(res.status).toBe(200);
+    expect(await res.json()).toEqual({ sent: true, welcomeSent: false });
+    expect(mockSend).toHaveBeenCalledWith(
+      expect.objectContaining({ subject: "FAILURE [apply/welcome_email]" }),
+    );
+  });
+
   it("returns 500 when NOTIFICATION_EMAIL is missing", async () => {
     delete import.meta.env.NOTIFICATION_EMAIL;
     const res = await POST(makeContext(makeRequest(validBody)));

@@ -18,33 +18,39 @@ export const prerender = false;
 // number over the old 30-char cap saved to Firestore fine but silently
 // never triggered the admin email. Importing the shared constants instead
 // of duplicating numbers makes that drift structurally impossible to repeat.
-const ApplicationSchema = z.object({
-  name: z.string().min(1).max(FIELD_LIMITS.freeText),
-  age: z.number().int().min(18).max(120),
-  gender: z.string().min(1).max(100),
-  orientation: z.string().min(1).max(100),
-  city: z.string().min(1).max(FIELD_LIMITS.freeText),
-  state: z.string().max(100).default(""),
-  country: z.string().max(100).default(""),
-  email: z.string().email().max(FIELD_LIMITS.email),
-  instagram: z.string().min(1).max(FIELD_LIMITS.instagram),
-  community: z.string().max(100).default(""),
-  income: z.string().max(100).default(""),
-  applicationType: z.enum(["Self", "Nomination"]),
-  referrerName: z.string().max(FIELD_LIMITS.freeText).default(""),
-  nominationConsent: z.boolean().optional(),
-  pitch: z.string().max(FIELD_LIMITS.pitch).default(""),
-  phone: z.string().max(FIELD_LIMITS.phone).optional(),
-  height: z.string().max(FIELD_LIMITS.freeText).optional(),
-  type: z.string().max(FIELD_LIMITS.freeText).optional(),
-  seenShowBefore: z.boolean().optional(),
-  // Storage paths, not URLs: photo reads are admin-only, so the email links
-  // to the dashboard instead of exposing tokened photo URLs.
-  photoPaths: z
-    .array(z.string().regex(/^photos\/[A-Za-z0-9._-]+$/))
-    .min(1)
-    .max(10),
-});
+const ApplicationSchema = z
+  .object({
+    name: z.string().min(1).max(FIELD_LIMITS.freeText),
+    age: z.number().int().min(18).max(120),
+    gender: z.string().min(1).max(100),
+    orientation: z.string().min(1).max(100),
+    city: z.string().min(1).max(FIELD_LIMITS.freeText),
+    state: z.string().max(100).default(""),
+    country: z.string().max(100).default(""),
+    email: z.string().email().max(FIELD_LIMITS.email),
+    instagram: z.string().min(1).max(FIELD_LIMITS.instagram),
+    community: z.string().max(100).default(""),
+    income: z.string().max(100).default(""),
+    applicationType: z.enum(["Self", "Nomination"]),
+    referrerName: z.string().max(FIELD_LIMITS.freeText).default(""),
+    nominationConsent: z.boolean().optional(),
+    pitch: z.string().max(FIELD_LIMITS.pitch).default(""),
+    phone: z.string().max(FIELD_LIMITS.phone).optional(),
+    height: z.string().max(FIELD_LIMITS.freeText).optional(),
+    type: z.string().max(FIELD_LIMITS.freeText).optional(),
+    seenShowBefore: z.boolean().optional(),
+    // Storage paths, not URLs: photo reads are admin-only, so the email links
+    // to the dashboard instead of exposing tokened photo URLs.
+    photoPaths: z.array(z.string().regex(/^photos\/[A-Za-z0-9._-]+$/)).max(10),
+    photoUploadFailed: z.boolean().optional(),
+  })
+  .refine(
+    (data) => data.photoPaths.length > 0 || data.photoUploadFailed === true,
+    {
+      path: ["photoPaths"],
+      message: "Photos are required unless their upload failed",
+    },
+  );
 
 type ApplicationNotification = z.infer<typeof ApplicationSchema>;
 
@@ -111,6 +117,7 @@ function buildAdminEmailHtml(data: ApplicationNotification): string {
     : "";
 
   const photoSection = `<div style="margin-top:12px;">
+      ${data.photoUploadFailed ? "<p>Some photos could not be uploaded. Contact the applicant for the missing photos.</p>" : ""}
       <a href="${ADMIN_DASHBOARD_URL}" style="color:#DC2626;">View ${data.photoPaths.length} photo${data.photoPaths.length === 1 ? "" : "s"} in the admin dashboard</a>
     </div>`;
 
@@ -218,9 +225,20 @@ export const POST: APIRoute = async ({ request }) => {
     // Welcome email to applicant — non-fatal if it fails, but awaited so the
     // serverless function doesn't exit before the send attempt completes.
     const welcome = applicationReceived(body.name, body.city);
-    await Promise.allSettled([sendMail({ to: body.email, ...welcome })]);
+    let welcomeSent = true;
+    try {
+      await sendMail({ to: body.email, ...welcome });
+    } catch (error) {
+      welcomeSent = false;
+      await alertOps({
+        flow: "apply",
+        stage: "welcome_email",
+        errorMessage: error instanceof Error ? error.message : String(error),
+        context: { email: body.email, name: body.name },
+      });
+    }
 
-    return new Response(JSON.stringify({ sent: true }), {
+    return new Response(JSON.stringify({ sent: true, welcomeSent }), {
       status: 200,
       headers: { "Content-Type": "application/json" },
     });

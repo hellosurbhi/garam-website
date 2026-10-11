@@ -1,3 +1,4 @@
+import { trackError } from "./analytics";
 import { safeSessionStorage } from "./safeStorage";
 
 /** Attribution data collected from the visitor's session and stored on each lead submission. */
@@ -197,7 +198,16 @@ export async function buildLeadAttribution(params: {
     ]);
   }
 
-  const posthogDistinctId = window.posthog?.get_distinct_id?.();
+  let posthogDistinctId: string | undefined;
+  try {
+    posthogDistinctId = window.posthog?.get_distinct_id?.();
+  } catch (error) {
+    trackError({
+      error_message: String(error),
+      error_type: "api_error",
+      component: "leadAttribution",
+    });
+  }
   const attribution: LeadAttribution = {
     source: params.source,
     sourcePage: getPathname(),

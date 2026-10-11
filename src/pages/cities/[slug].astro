@@ -786,6 +786,7 @@ function renderCityText(text: string, href: string): string {
 </BaseLayout>
 
 <script>
+  import { reportFailure } from "@/lib/failureAlert";
   import { cleanPhone } from "@/lib/phone";
   import { identifyLead, trackLeadEvent } from "@/lib/analytics";
   import { buildLeadAttribution } from "@/lib/leadAttribution";
@@ -868,7 +869,19 @@ function renderCityText(text: string, href: string): string {
           document
             .getElementById("waitlist-success")
             ?.removeAttribute("hidden");
-        } catch {
+        } catch (err) {
+          reportFailure({
+            flow: "lead",
+            stage: "waitlist",
+            errorMessage: err instanceof Error ? err.message : String(err),
+            contact: {
+              email: (
+                document.getElementById(
+                  "waitlist-email",
+                ) as HTMLInputElement | null
+              )?.value,
+            },
+          });
           if (errorEl) {
             errorEl.textContent = "Something went wrong. Please try again.";
             errorEl.removeAttribute("hidden");
@@ -925,6 +938,18 @@ function renderCityText(text: string, href: string): string {
           ?.setAttribute("hidden", "");
         document.getElementById("city-notify-step2")?.removeAttribute("hidden");
       } catch (err) {
+        reportFailure({
+          flow: "lead",
+          stage: "email",
+          errorMessage: err instanceof Error ? err.message : String(err),
+          contact: {
+            email: (
+              document.getElementById(
+                "city-notify-email",
+              ) as HTMLInputElement | null
+            )?.value,
+          },
+        });
         if (errorEl) {
           errorEl.textContent = "Something went wrong. Please try again.";
           errorEl.removeAttribute("hidden");
@@ -993,6 +1018,18 @@ function renderCityText(text: string, href: string): string {
           .getElementById("city-notify-success")
           ?.removeAttribute("hidden");
       } catch (err) {
+        reportFailure({
+          flow: "lead",
+          stage: "phone",
+          errorMessage: err instanceof Error ? err.message : String(err),
+          contact: {
+            email: (
+              document.getElementById(
+                "city-notify-email",
+              ) as HTMLInputElement | null
+            )?.value,
+          },
+        });
         if (phoneErrorEl) {
           phoneErrorEl.textContent =
             "Something went wrong. Please try again or skip.";

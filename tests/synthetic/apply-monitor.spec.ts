@@ -8,6 +8,7 @@
  * admin dashboard hides it) and the cleanup script will only ever delete
  * documents carrying ALL of these markers.
  */
+import { readFileSync } from "node:fs";
 import { test, expect } from "@playwright/test";
 import {
   SYNTHETIC_MONITOR_EMAIL,
@@ -51,7 +52,14 @@ test("synthetic applicant can submit end to end on the live stack", async ({
     "#field-pitch",
     Array.from({ length: 7 }, () => pitchParagraphs).join("\n\n"),
   );
-  await page.setInputFiles("#photo-input", "tests/fixtures/1x1.png");
+  await page.setInputFiles(
+    "#photo-input",
+    Array.from({ length: 10 }, (_, i) => ({
+      name: `monitor-${i + 1}.png`,
+      mimeType: "image/png",
+      buffer: readFileSync("tests/fixtures/1x1.png"),
+    })),
+  );
   await page.check('input[name="marketingConsent"][value="yes"]');
   await page.check('[data-testid="apply-terms"]');
 

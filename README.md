@@ -83,6 +83,10 @@ scripts/          # Build-time scripts (prerender, data migration)
 | `npm run lint`            | Run ESLint                                  |
 | `npm run preview`         | Preview production build locally            |
 
+## Form reliability
+
+Application confirmation waits for the database write. If confirmation takes more than 15 seconds, keep the page open while the existing submission finishes. Waiver receipts run after persistence and do not delay the saved confirmation. See [form repair rollout](docs/form-repair-rollout.md) for rules deployment and verification.
+
 ## Deployment
 
 The site deploys to **Vercel**. The production build uses `build:prerender` to generate static HTML for key pages via Puppeteer. Security headers (CSP, HSTS, X-Frame-Options) are configured in `vercel.json`.

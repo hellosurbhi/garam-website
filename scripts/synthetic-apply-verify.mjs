@@ -163,7 +163,10 @@ const fresh = docs.some((doc) => {
     field(doc, "submittedAt")?.timestampValue ?? "",
   );
   return (
-    Number.isFinite(submittedAt) && Date.now() - submittedAt < FRESH_WINDOW_MS
+    Number.isFinite(submittedAt) &&
+    Date.now() - submittedAt < FRESH_WINDOW_MS &&
+    (field(doc, "photoPaths")?.arrayValue?.values ?? []).length === 10 &&
+    field(doc, "photoUploadFailed")?.booleanValue !== true
   );
 });
 // Verification verdict is reported at the very end: cleanup below must run
@@ -171,7 +174,7 @@ const fresh = docs.some((doc) => {
 // docs (and their photos) until the 48h guard refuses to clean at all.
 if (!fresh) {
   console.error(
-    `VERIFY FAILED: no synthetic application with submittedAt in the last 30 minutes (found ${docs.length} synthetic docs total). The apply form is likely broken in production.`,
+    `VERIFY FAILED: no complete ten-photo synthetic application with submittedAt in the last 30 minutes (found ${docs.length} synthetic docs total). The apply form is likely broken in production.`,
   );
 } else {
   console.log("VERIFY OK: synthetic application landed in Firestore.");

@@ -6,6 +6,8 @@ const mocks = vi.hoisted(() => ({
   signPortalToken: vi.fn(),
   midnightLocalUnix: vi.fn(),
   sendMail: vi.fn(),
+  waitUntil: vi.fn(),
+  alertOps: vi.fn(),
   cleanPhone: vi.fn(),
   waiverReceiptWithText: vi.fn(),
   getClientIp: vi.fn(),
@@ -21,6 +23,8 @@ vi.mock("@/lib/portalToken", () => ({
   signPortalToken: mocks.signPortalToken,
   _midnightLocalUnix: mocks.midnightLocalUnix,
 }));
+vi.mock("@vercel/functions", () => ({ waitUntil: mocks.waitUntil }));
+vi.mock("@/lib/opsAlert", () => ({ alertOps: mocks.alertOps }));
 vi.mock("@/lib/zohoMailer", () => ({ sendMail: mocks.sendMail }));
 vi.mock("@/lib/phone", () => ({ cleanPhone: mocks.cleanPhone }));
 vi.mock("@/data/emails", () => ({
@@ -73,6 +77,26 @@ describe("contestant-open-claim POST", () => {
       html: "<p>html</p>",
     });
     mocks.getClientIp.mockReturnValue("1.2.3.4");
+  });
+
+  it("confirms persisted signup while receipt delivery is still pending", async () => {
+    let rejectMail!: (error: Error) => void;
+    mocks.sendMail.mockReturnValueOnce(
+      new Promise<void>((_resolve, reject) => {
+        rejectMail = reject;
+      }),
+    );
+    const response = await POST({ request: makeRequest() } as Parameters<
+      typeof POST
+    >[0]);
+    expect(response.status).toBe(200);
+    expect(mocks.fsAdd).toHaveBeenCalled();
+    expect(mocks.waitUntil).toHaveBeenCalledOnce();
+    rejectMail(new Error("SMTP unavailable"));
+    await mocks.waitUntil.mock.calls[0][0];
+    expect(mocks.alertOps).toHaveBeenCalledWith(
+      expect.objectContaining({ stage: "receipt_email" }),
+    );
   });
 
   it("passes through rate limit response when limited", async () => {

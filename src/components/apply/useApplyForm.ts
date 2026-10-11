@@ -253,6 +253,9 @@ export function useApplyForm() {
   const [errors, setErrors] = useState<FormErrors>({});
   const [submitting, setSubmitting] = useState(false);
   const [submitted, setSubmitted] = useState(false);
+  const [confirmationPending, setConfirmationPending] = useState(false);
+  const submissionInFlightRef = useRef(false);
+  const pendingWriteRef = useRef<Promise<unknown> | null>(null);
   const [termsAgreed, setTermsAgreed] = useState(false);
   const [nominationConsent, setNominationConsent] = useState(false);
   const [showTermsModal, setShowTermsModal] = useState(false);
@@ -549,45 +552,56 @@ export function useApplyForm() {
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
+    if (submissionInFlightRef.current) {
+      if (pendingWriteRef.current) {
+        setToast({
+          msg: "Your application is still being confirmed. Keep this page open; there is no need to submit again.",
+          ok: false,
+        });
+      }
+      return;
+    }
     if (!validate()) return;
 
+    submissionInFlightRef.current = true;
+    setToast(null);
     setSubmitting(true);
     setPhotosFailed(false);
 
-    // Best-effort bot check: verify token when available, fail open when not.
-    // The real security gate is Firestore auth (signInAnonymously + rules).
-    const turnstileSiteKey = import.meta.env.PUBLIC_TURNSTILE_SITE_KEY;
-    if (turnstileSiteKey && turnstileToken) {
-      try {
-        const ctrl = new AbortController();
-        const timerId = setTimeout(() => ctrl.abort(), 8_000);
-        try {
-          await fetch("/api/verify-turnstile", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ token: turnstileToken }),
-            signal: ctrl.signal,
-          });
-        } finally {
-          clearTimeout(timerId);
-        }
-        // Token is one-time-use — reset widget regardless of result
-        setTurnstileToken("");
-        if (window.turnstile && turnstileWidgetIdRef.current) {
-          window.turnstile.reset(turnstileWidgetIdRef.current);
-        }
-        // Allow through even on verify failure — widget issues must not block real applicants
-      } catch {
-        // Network error or timeout — allow submission through
-        setTurnstileToken("");
-        if (window.turnstile && turnstileWidgetIdRef.current) {
-          window.turnstile.reset(turnstileWidgetIdRef.current);
-        }
-      }
-    }
-
     const uploadedRefs: (StorageReference | null)[] = [];
     try {
+      // Best-effort bot check: verify token when available, fail open when not.
+      // The real security gate is Firestore auth (signInAnonymously + rules).
+      const turnstileSiteKey = import.meta.env.PUBLIC_TURNSTILE_SITE_KEY;
+      if (turnstileSiteKey && turnstileToken) {
+        try {
+          const ctrl = new AbortController();
+          const timerId = setTimeout(() => ctrl.abort(), 8_000);
+          try {
+            await fetch("/api/verify-turnstile", {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({ token: turnstileToken }),
+              signal: ctrl.signal,
+            });
+          } finally {
+            clearTimeout(timerId);
+          }
+          // Token is one-time-use — reset widget regardless of result
+          setTurnstileToken("");
+          if (window.turnstile && turnstileWidgetIdRef.current) {
+            window.turnstile.reset(turnstileWidgetIdRef.current);
+          }
+          // Allow through even on verify failure — widget issues must not block real applicants
+        } catch {
+          // Network error or timeout — allow submission through
+          setTurnstileToken("");
+          if (window.turnstile && turnstileWidgetIdRef.current) {
+            window.turnstile.reset(turnstileWidgetIdRef.current);
+          }
+        }
+      }
+
       const [
         { signInAnonymously },
         auth,
@@ -691,17 +705,6 @@ export function useApplyForm() {
           failed_photo_count: failures.length,
           total_photo_count: photoFiles.length,
         });
-        reportFailure({
-          flow: "apply",
-          stage: "photo_upload",
-          errorMessage: `Application saved but ${failures.length} of ${photoFiles.length} photos failed to upload: ${message}`,
-          contact: {
-            name: form.name,
-            email: form.email,
-            phone: form.phone,
-            instagram: form.instagram,
-          },
-        });
       }
 
       const applicationData = buildApplicationData(
@@ -716,62 +719,93 @@ export function useApplyForm() {
         12_000,
         "Firestore init",
       );
-      await withTimeout(
-        addDoc(
-          collection(db, "applications"),
-          buildApplicationDocument(
-            form,
-            photoPaths,
-            nominationConsent,
-            {
-              termsAgreedAt: serverTimestamp(),
-              submittedAt: serverTimestamp(),
-            },
-            photoUploadFailed,
-          ),
+      // A deadline cannot cancel a Firestore write. Retain the same promise
+      // until it settles; an unknown outcome must not delete photos or retry.
+      pendingWriteRef.current = addDoc(
+        collection(db, "applications"),
+        buildApplicationDocument(
+          form,
+          photoPaths,
+          nominationConsent,
+          { termsAgreedAt: serverTimestamp(), submittedAt: serverTimestamp() },
+          photoUploadFailed,
         ),
-        15_000,
-        "Firestore write",
       );
+      const confirmationTimer = setTimeout(() => {
+        setConfirmationPending(true);
+        setSubmitting(false);
+      }, 15_000);
+      try {
+        await pendingWriteRef.current;
+      } finally {
+        clearTimeout(confirmationTimer);
+        pendingWriteRef.current = null;
+      }
       // All uploaded — no cleanup needed
       uploadedRefs.fill(null);
-
-      // The synthetic monitor submits 4x/day; keeping it out of analytics at
-      // the source means conversion metrics never depend on dashboard filters.
-      if (!isSyntheticSubmission(form.email)) {
-        const attribution = await buildLeadAttribution({ source: "apply" });
-        const igHandle = form.instagram.trim().replace(/^@/, "");
-        const identifier = form.email.trim();
-        if (identifier) {
-          identifyLead(identifier, {
+      setPhotosFailed(photoUploadFailed);
+      setSubmitted(true);
+      if (photoUploadFailed) {
+        const reason: unknown = failures[0].reason;
+        const message =
+          reason instanceof Error ? reason.message : String(reason);
+        reportFailure({
+          flow: "apply",
+          stage: "photo_upload",
+          errorMessage: `Application saved but ${failures.length} of ${photoFiles.length} photos failed to upload: ${message}`,
+          contact: {
             name: form.name,
+            email: form.email,
+            phone: form.phone,
+            instagram: form.instagram,
+          },
+        });
+      }
+
+      try {
+        // The synthetic monitor submits 4x/day; keeping it out of analytics at
+        // the source means conversion metrics never depend on dashboard filters.
+        if (!isSyntheticSubmission(form.email)) {
+          const attribution = await buildLeadAttribution({ source: "apply" });
+          const igHandle = form.instagram.trim().replace(/^@/, "");
+          const identifier = form.email.trim();
+          if (identifier) {
+            identifyLead(identifier, {
+              name: form.name,
+              city: form.city,
+              country: form.country,
+              applicationType: form.applicationType,
+              ...(igHandle ? { instagram: igHandle } : {}),
+              ...attribution,
+            });
+          }
+          trackLeadEvent("apply_submitted", {
+            ...attribution,
+            applicationType: form.applicationType,
             city: form.city,
             country: form.country,
-            applicationType: form.applicationType,
-            ...(igHandle ? { instagram: igHandle } : {}),
-            ...attribution,
           });
+          // A completed application supersedes its partial lead: flip the
+          // source so the admin dashboard can tell abandoned forms from
+          // completed ones. Fire-and-forget, failure changes nothing.
+          // Guard on the captured email: if the applicant corrected their email
+          // and submitted before the new capture settled, the ref can still
+          // point at the OLD email's lead, which must stay partial.
+          if (
+            partialLeadRef.current &&
+            partialLeadEmailRef.current === form.email.trim().toLowerCase()
+          ) {
+            updateLeadFields(partialLeadRef.current, {
+              source: "apply_form_completed",
+            }).catch(() => {});
+          }
         }
-        trackLeadEvent("apply_submitted", {
-          ...attribution,
-          applicationType: form.applicationType,
-          city: form.city,
-          country: form.country,
+      } catch (error) {
+        trackError({
+          error_message: String(error),
+          error_type: "api_error",
+          component: "applyAttribution",
         });
-        // A completed application supersedes its partial lead: flip the
-        // source so the admin dashboard can tell abandoned forms from
-        // completed ones. Fire-and-forget, failure changes nothing.
-        // Guard on the captured email: if the applicant corrected their email
-        // and submitted before the new capture settled, the ref can still
-        // point at the OLD email's lead, which must stay partial.
-        if (
-          partialLeadRef.current &&
-          partialLeadEmailRef.current === form.email.trim().toLowerCase()
-        ) {
-          updateLeadFields(partialLeadRef.current, {
-            source: "apply_form_completed",
-          }).catch(() => {});
-        }
       }
 
       // Fire-and-forget: email notification (does not affect submission outcome)
@@ -816,8 +850,6 @@ export function useApplyForm() {
       // Instant scroll before state swap — single frame, imperceptible.
       // Prevents the height collapse from leaving the viewport past end-of-content.
       window.scrollTo({ top: 0, behavior: "instant" as ScrollBehavior });
-      setPhotosFailed(photoUploadFailed);
-      setSubmitted(true);
     } catch (err) {
       const error = err instanceof Error ? err : new Error(String(err));
       // Cleanup any photos that were successfully uploaded before the failure
@@ -885,6 +917,8 @@ export function useApplyForm() {
         window.turnstile.reset(turnstileWidgetIdRef.current);
       }
     } finally {
+      submissionInFlightRef.current = false;
+      setConfirmationPending(false);
       setSubmitting(false);
     }
   }
@@ -895,6 +929,7 @@ export function useApplyForm() {
     photoFiles,
     errors,
     submitting,
+    confirmationPending,
     submitted,
     photosFailed,
     isValid,

@@ -1,10 +1,17 @@
 # Changelog
 
+## fix(forms): reliable submission outcomes (2026-10-11)
+
+Reduced application rule evaluation cost so fully filled self applications and nominations accept one through ten photos. Slow Firestore writes now keep their original pending operation and uploaded photos until confirmation, preventing duplicate submits and premature cleanup. Signup requests have a 20 second deadline and validate server confirmations. Analytics failures cannot block lead capture or turn saved applications into failures. Missing-photo notifications now accept the declared upload-failure flag and only claim an application was saved after persistence succeeds. Failed welcome emails and previously unreported city and popup signup failures reach operations alerts. Failed alert delivery returns 503 and releases deduplication claims. Saved waivers and contestant signups return before receipt emails finish through Vercel background work.
+
+Added regression tests for delayed saves, mail stalls, response validation and the one-to-ten-photo rules matrix. Smoke fixtures now speak the Firebase write protocol, follow the optional phone step and intercept first-party API writes. The production synthetic monitor submits ten photos and verifies that all ten reached the saved record before cleanup. Deployment and verification steps are in `docs/form-repair-rollout.md`.
+
 ## feat(events): reschedule Philadelphia and add Chicago (2026-09-28)
 
 Philadelphia is now Sunday October 4 2026 from 7:30 to 9 PM at Next In Line Comedy. Chicago is now Saturday October 24 2026 from 6 to 7:30 PM at The Lincoln Lodge. Both shows use their live Eventbrite listings and receive updated event landing pages with Event JSON-LD. Event schema generation now respects each show's IANA timezone, so Chicago publishes its correct Central Time UTC offset.
 
 **Files:** `src/data/events.ts`, `src/utils/eventSchema.ts`, `src/utils/timezone.ts`, `test/events.test.ts`, `src/utils/eventSchema.test.ts`, `src/utils/timezone.test.ts`, `EVENTS-HISTORY.md`
+
 ## feat(mixers): guest confirmation emails + auto waitlist state once a mixer ends (2026-09-15)
 
 PR #272. Two related gaps in the mixer RSVP flow, both surfaced by tonight's Romae mixer.

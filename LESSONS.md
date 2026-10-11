@@ -1,5 +1,11 @@
 # Lessons
 
+## A valid photo list can still exceed the Firestore rules evaluation budget
+
+The full application fixture passed with fewer photos but exceeded the 1,000-expression limit near the ten-photo ceiling. Caching the key set alone was insufficient; removing redundant presence checks on required fields brought the complete self and nomination fixtures within budget without removing validation. Keep the one-through-ten matrix and invalid final-photo checks. A write deadline is not cancellation: retain the original promise and its photo objects until the database gives a definitive outcome.
+
+The smoke fixture also returned a REST-shaped object to the Firestore WebChannel endpoint. The corrected fixture includes the stream handshake and timestamp transform results, with desktop and WebKit checks. Smoke form tests must intercept their side effects before opening a page.
+
 ## A green synthetic monitor proved the happy path while every long-form applicant was rejected
 
 **What went wrong:** The 6-hour synthetic apply monitor was green 10 runs straight while real applicants (Akshay Aug 30, Dua Aug 27 with 4 retries) got "Missing or insufficient permissions" and their applications were silently thrown away. The Firestore rules capped pitch at 2000 chars, phone at 20 and height at 20; the client validated none of these lengths, and one field (`type`) even had a form `maxLength={200}` four times larger than the deployed rules cap of 50. Anyone who wrote a long pitch, a spelled-out height or a formatted phone number was rejected at the last possible moment with a generic error, after doing all the work.

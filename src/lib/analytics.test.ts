@@ -342,3 +342,41 @@ describe("trackLeadEvent — filter precision", () => {
     );
   });
 });
+
+describe("analytics failures do not change submission outcomes", () => {
+  afterEach(() => {
+    delete window.posthog;
+    delete window.dataLayer;
+    delete window.__garamErrorQueue;
+  });
+
+  it("continues identification when PostHog throws and queues diagnostic errors", () => {
+    const push = vi.fn();
+    window.posthog = {
+      identify: () => {
+        throw new Error("identify failed");
+      },
+      capture: () => {
+        throw new Error("capture failed");
+      },
+    };
+    window.dataLayer = [];
+    window.dataLayer.push = push;
+    expect(() => identifyLead("fixture@example.com")).not.toThrow();
+    expect(push).toHaveBeenCalled();
+    expect(window.__garamErrorQueue?.[0].properties.error_message).toContain(
+      "identify failed",
+    );
+  });
+
+  it("does not throw when dataLayer rejects an identification event", () => {
+    window.dataLayer = [];
+    window.dataLayer.push = () => {
+      throw new Error("dataLayer failed");
+    };
+    expect(() => identifyLead("fixture@example.com")).not.toThrow();
+    expect(window.__garamErrorQueue?.[0].properties.error_message).toContain(
+      "dataLayer failed",
+    );
+  });
+});

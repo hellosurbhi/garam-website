@@ -159,6 +159,13 @@ export const POST: APIRoute = async ({ request }) => {
       `[alert-failure] delivery failed on every channel for ${report.flow}/${report.stage}; releasing dedupe claim`,
     );
     await claim.release();
+    return new Response(
+      JSON.stringify({ ok: false, error: "Alert delivery failed" }),
+      {
+        status: 503,
+        headers: { "Content-Type": "application/json" },
+      },
+    );
   }
   return new Response(JSON.stringify({ ok: true }), {
     status: 200,

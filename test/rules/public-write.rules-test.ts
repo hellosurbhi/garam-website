@@ -179,6 +179,112 @@ describe("firestore.rules: leads", () => {
     const adminDb = adminContext().firestore();
     await assertSucceeds(getDoc(doc(collection(adminDb, "leads"), "lead-1")));
   });
+
+  // WHY these exist as rules tests rather than an end-to-end signup test:
+  // capture-lead.ts builds its Firestore payload one addStringField() call at
+  // a time, so an unexpected key never reaches the database from the form and
+  // a "post a weird field through the real endpoint" test passes whatever the
+  // rules say. Only the emulator can prove the allowlist itself. These cases
+  // are the gate that lets the market-stamping writer ship: if they fail, the
+  // deployed rule rejects every signup carrying market fields and the lead is
+  // lost, not queued.
+  it("lead carrying all three market fields is accepted", async () => {
+    const db = testEnv.unauthenticatedContext().firestore();
+    await assertSucceeds(
+      setDoc(doc(collection(db, "leads"), "lead-1"), {
+        ...validLead,
+        market: "nyc",
+        marketConfidence: "high",
+        marketSource: "self-reported",
+      }),
+    );
+  });
+
+  it("market fields stay optional (a lead with none is still accepted)", async () => {
+    const db = testEnv.unauthenticatedContext().firestore();
+    await assertSucceeds(
+      setDoc(doc(collection(db, "leads"), "lead-1"), validLead),
+    );
+  });
+
+  it("every marketConfidence and marketSource value the resolver emits is accepted", async () => {
+    const db = testEnv.unauthenticatedContext().firestore();
+    const confidences = ["high", "medium", "low"];
+    const sources = ["self-reported", "source-city", "geo"];
+    for (const [i, marketConfidence] of confidences.entries()) {
+      await assertSucceeds(
+        setDoc(doc(collection(db, "leads"), `conf-${i}`), {
+          ...validLead,
+          market: "nyc",
+          marketConfidence,
+        }),
+      );
+    }
+    for (const [i, marketSource] of sources.entries()) {
+      await assertSucceeds(
+        setDoc(doc(collection(db, "leads"), `src-${i}`), {
+          ...validLead,
+          market: "nyc",
+          marketSource,
+        }),
+      );
+    }
+  });
+
+  it("marketConfidence outside the closed set is rejected", async () => {
+    const db = testEnv.unauthenticatedContext().firestore();
+    await assertFails(
+      setDoc(doc(collection(db, "leads"), "lead-1"), {
+        ...validLead,
+        market: "nyc",
+        marketConfidence: "probably",
+      }),
+    );
+  });
+
+  it("marketSource outside the closed set is rejected", async () => {
+    const db = testEnv.unauthenticatedContext().firestore();
+    await assertFails(
+      setDoc(doc(collection(db, "leads"), "lead-1"), {
+        ...validLead,
+        market: "nyc",
+        marketSource: "vibes",
+      }),
+    );
+  });
+
+  it("non-string market is rejected", async () => {
+    const db = testEnv.unauthenticatedContext().firestore();
+    await assertFails(
+      setDoc(doc(collection(db, "leads"), "lead-1"), {
+        ...validLead,
+        market: 42,
+      }),
+    );
+  });
+
+  it("oversized market is rejected", async () => {
+    const db = testEnv.unauthenticatedContext().firestore();
+    await assertFails(
+      setDoc(doc(collection(db, "leads"), "lead-1"), {
+        ...validLead,
+        market: "x".repeat(101),
+      }),
+    );
+  });
+
+  it("REGRESSION: widening the allowlist for market did not open it generally", async () => {
+    const db = testEnv.unauthenticatedContext().firestore();
+    await assertFails(
+      setDoc(doc(collection(db, "leads"), "lead-1"), {
+        ...validLead,
+        market: "nyc",
+        marketConfidence: "high",
+        marketSource: "self-reported",
+        isAdminMaybe: true,
+      }),
+    );
+  });
 });
 
 describe("firestore.rules: server-only collections stay closed to clients", () => {
@@ -186,6 +292,13 @@ describe("firestore.rules: server-only collections stay closed to clients", () =
     { name: "contestants", data: { firstName: "X", createdAt: "now" } },
     { name: "stage_waivers", data: { firstName: "X", createdAt: "now" } },
     { name: "orders", data: { total: 1 } },
+    // The announcement system's three collections. suppressions and
+    // copyLedger decide who is allowed to be emailed and what they have
+    // already seen, so a client write here would let a visitor un-suppress
+    // someone or erase their copy history and cause a duplicate send.
+    { name: "suppressions", data: { email: "x@example.com", reason: "reply" } },
+    { name: "announcements", data: { eventSlug: "nyc-2026-11-01" } },
+    { name: "copyLedger", data: { fingerprints: [] } },
   ];
 
   for (const { name, data } of cases) {
@@ -200,6 +313,49 @@ describe("firestore.rules: server-only collections stay closed to clients", () =
     const adminDb = adminContext().firestore();
     await assertFails(
       setDoc(doc(collection(adminDb, "orders"), "x"), { total: 1 }),
+    );
+  });
+
+  // WHY admin writes are denied too: approval and suppression go through
+  // admin-gated API routes that write with the service account, which bypasses
+  // rules entirely. Leaving a client-side admin write open would mean a stolen
+  // admin session could approve copy or clear a suppression straight from the
+  // browser, skipping the server's validation of both.
+  it("announcements, suppressions and copyLedger: even admins cannot write", async () => {
+    const adminDb = adminContext().firestore();
+    for (const name of ["announcements", "suppressions", "copyLedger"]) {
+      await assertFails(
+        setDoc(doc(collection(adminDb, name), "x"), { touched: true }),
+      );
+    }
+  });
+
+  it("announcements, suppressions and copyLedger: admins CAN read (dashboard)", async () => {
+    await testEnv.withSecurityRulesDisabled(async (ctx) => {
+      for (const name of ["announcements", "suppressions", "copyLedger"]) {
+        await setDoc(doc(collection(ctx.firestore(), name), "x"), {
+          seeded: true,
+        });
+      }
+    });
+    const adminDb = adminContext().firestore();
+    for (const name of ["announcements", "suppressions", "copyLedger"]) {
+      await assertSucceeds(getDoc(doc(collection(adminDb, name), "x")));
+    }
+  });
+
+  it("announcement milestone subcollections are closed to clients", async () => {
+    const anonDb = anonContext("anon-1").firestore();
+    await assertFails(
+      setDoc(
+        doc(collection(anonDb, "announcements/nyc-2026-11-01/events"), "e1"),
+        { kind: "sent" },
+      ),
+    );
+    await assertFails(
+      getDoc(
+        doc(collection(anonDb, "announcements/nyc-2026-11-01/events"), "e1"),
+      ),
     );
   });
 });

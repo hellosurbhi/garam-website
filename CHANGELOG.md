@@ -1,10 +1,21 @@
 # Changelog
 
+## feat(rules): lead market fields plus the announcement system's three collections (2026-10-02)
+
+Groundwork for automated city-bucketed show announcements, shipped alone and ahead of any code that uses it.
+
+- **`validLead()` now allows `market`, `marketConfidence` and `marketSource`.** The rule is a strict `hasOnly` allowlist and `capture-lead.ts` writes to Firestore REST with no `Authorization` header, so this rule is the only thing between a visitor's signup and the database. A writer that stamps market fields against a rule that does not know them rejects every new signup and loses the lead rather than queuing it. That is why this change ships as its own release: the rule has to be deployed, and the deploy confirmed by a live probe, before the writer goes out. `marketConfidence` and `marketSource` are closed sets, because a geo-only match is deliberately untrusted (`geoCity` and `geoLatitude` carry datacenter locations such as Google Cloud in Des Moines and Azure in Boydton) and `low` exists to keep those people out of automatic sends.
+- **Three new server-only collections:** `suppressions/{emailKey}` (the cloud half of the sender's `suppressed.csv`), `announcements/{eventSlug}` plus its milestone subcollection, and `copyLedger/{emailKey}`. All are admin-read and client-write-denied, matching the `orders` pattern. Admin writes are denied too: approval and suppression go through admin-gated API routes that write with the service account, so a stolen admin session cannot approve copy or clear a suppression straight from the browser and skip the server's validation.
+- **12 new emulator cases** in `test/rules/public-write.rules-test.ts` covering market acceptance, both closed sets, type and size rejection, a regression case proving the widened allowlist did not open generally, and client plus admin write denial on all three new collections. Verified by negative control: narrowing the allowlist back makes exactly the two acceptance cases fail.
+
+**Files:** `firestore.rules`, `test/rules/public-write.rules-test.ts`
+
 ## feat(events): reschedule Philadelphia and add Chicago (2026-09-28)
 
 Philadelphia is now Sunday October 4 2026 from 7:30 to 9 PM at Next In Line Comedy. Chicago is now Saturday October 24 2026 from 6 to 7:30 PM at The Lincoln Lodge. Both shows use their live Eventbrite listings and receive updated event landing pages with Event JSON-LD. Event schema generation now respects each show's IANA timezone, so Chicago publishes its correct Central Time UTC offset.
 
 **Files:** `src/data/events.ts`, `src/utils/eventSchema.ts`, `src/utils/timezone.ts`, `test/events.test.ts`, `src/utils/eventSchema.test.ts`, `src/utils/timezone.test.ts`, `EVENTS-HISTORY.md`
+
 ## feat(mixers): guest confirmation emails + auto waitlist state once a mixer ends (2026-09-15)
 
 PR #272. Two related gaps in the mixer RSVP flow, both surfaced by tonight's Romae mixer.

@@ -14,7 +14,7 @@ service cloud.firestore {
     // applicants (long pitch, spelled-out height, formatted phone).
     function validLead() {
       let d = request.resource.data;
-      return d.keys().hasOnly(['email', 'city', 'state', 'country', 'phone', 'name', 'instagram', 'source', 'sourcePage', 'landingPage', 'referrerHost', 'utmSource', 'utmMedium', 'utmCampaign', 'utmContent', 'utmTerm', 'fbclid', 'gclid', 'posthogDistinctId', 'sourceCitySlug', 'createdAt', 'geoCity', 'geoRegion', 'geoCountry', 'geoLatitude', 'geoLongitude', 'geoTimezone'])
+      return d.keys().hasOnly(['email', 'city', 'state', 'country', 'phone', 'name', 'instagram', 'source', 'sourcePage', 'landingPage', 'referrerHost', 'utmSource', 'utmMedium', 'utmCampaign', 'utmContent', 'utmTerm', 'fbclid', 'gclid', 'posthogDistinctId', 'sourceCitySlug', 'createdAt', 'geoCity', 'geoRegion', 'geoCountry', 'geoLatitude', 'geoLongitude', 'geoTimezone', 'market', 'marketConfidence', 'marketSource'])
         && d.keys().hasAll(['email', 'source', 'sourcePage', 'createdAt'])
         && d.email is string && d.email.size() > 0 && d.email.size() <= 1280
         && d.source is string && d.source.size() > 0 && d.source.size() <= 50
@@ -42,7 +42,26 @@ service cloud.firestore {
         && (!('geoCountry' in d.keys()) || (d.geoCountry is string && d.geoCountry.size() > 0 && d.geoCountry.size() <= 100))
         && (!('geoLatitude' in d.keys()) || (d.geoLatitude is number && d.geoLatitude >= -90 && d.geoLatitude <= 90))
         && (!('geoLongitude' in d.keys()) || (d.geoLongitude is number && d.geoLongitude >= -180 && d.geoLongitude <= 180))
-        && (!('geoTimezone' in d.keys()) || (d.geoTimezone is string && d.geoTimezone.size() > 0 && d.geoTimezone.size() <= 100));
+        && (!('geoTimezone' in d.keys()) || (d.geoTimezone is string && d.geoTimezone.size() > 0 && d.geoTimezone.size() <= 100))
+        // WHY these three are in the allowlist BEFORE any writer sends them:
+        // hasOnly() rejects the whole document when it sees a key it does not
+        // know, and capture-lead.ts writes to Firestore REST with no
+        // Authorization header, so this rule is the only thing standing
+        // between a visitor's signup and the database. Shipping a writer that
+        // stamps market fields against a deployed rule that lacks them
+        // rejects EVERY new signup, silently, with the lead lost rather than
+        // queued. That is why the rules change deploys as its own release
+        // ahead of the writer, and why widening this list is never bundled
+        // with the code that uses it. Rules propagation is not instant either,
+        // so the writer waits on a probe of the live project, not on the
+        // deploy command returning success.
+        // marketConfidence is a closed set because a geo-only match is
+        // deliberately untrusted: geoCity/geoLatitude carry datacenter
+        // locations (Google Cloud in Des Moines, Azure in Boydton), so 'low'
+        // exists to keep those people out of automatic sends.
+        && (!('market' in d.keys()) || (d.market is string && d.market.size() > 0 && d.market.size() <= 100))
+        && (!('marketConfidence' in d.keys()) || (d.marketConfidence is string && d.marketConfidence in ['high', 'medium', 'low']))
+        && (!('marketSource' in d.keys()) || (d.marketSource is string && d.marketSource in ['self-reported', 'source-city', 'geo']));
     }
 
     // Rules have no loops: photoPaths members are validated per index (the
@@ -211,6 +230,38 @@ service cloud.firestore {
     }
     match /systemConfig/{docId} {
       allow read, write: if isAdmin();
+    }
+
+    // Suppression list: the cloud half of sender/suppressed.csv. Written only
+    // by the unsubscribe endpoint and the import job, both service-account, so
+    // clients get nothing. Admin read exists so the dashboard can show who
+    // opted out; there is deliberately no client write path, because an
+    // opt-out that a Resend outage or a bad token could lose is worse than no
+    // automation at all.
+    match /suppressions/{emailKey} {
+      allow read: if isAdmin();
+      allow write: if false; // server-only via REST API with service account
+    }
+
+    // Per-show announcement campaign state: target markets, frozen copy,
+    // approval and one record per milestone. Approval happens through an
+    // admin-gated API route that writes with the service account, matching
+    // the orders pattern, so no client writes here either.
+    match /announcements/{eventSlug} {
+      allow read: if isAdmin();
+      allow write: if false; // server-only via REST API with service account
+    }
+    match /announcements/{eventSlug}/{subcollection=**} {
+      allow read: if isAdmin();
+      allow write: if false; // server-only via REST API with service account
+    }
+
+    // Copy ledger: which copy skeleton each person has already received, so
+    // one person never gets the same text for two different shows. Holds
+    // recipient keys, so it is admin-read and never client-readable.
+    match /copyLedger/{emailKey} {
+      allow read: if isAdmin();
+      allow write: if false; // server-only via REST API with service account
     }
   }
 }

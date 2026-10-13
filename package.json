@@ -42,7 +42,7 @@
     "mutation:ratchet": "bash scripts/mutation-ratchet.sh"
   },
   "dependencies": {
-    "@astrojs/react": "^6.0.2",
+    "@astrojs/react": "^7.0.1",
     "@astrojs/sitemap": "^3.7.4",
     "@astrojs/vercel": "^11.0.13",
     "@upstash/ratelimit": "^2.2.0",
@@ -52,7 +52,7 @@
     "@vercel/speed-insights": "^2.0.0",
     "astro": "^7.3.8",
     "country-state-city": "^3.2.1",
-    "firebase": "^12.17.1",
+    "firebase": "^13.0.0",
     "jose": "^6.2.12",
     "lucide-react": "^1.54.0",
     "nodemailer": "^10.0.3",
@@ -68,7 +68,7 @@
     "@astrojs/check": "^0.9.10",
     "@axe-core/playwright": "^4.13.0",
     "@eslint/js": "^10.0.1",
-    "@firebase/rules-unit-testing": "^5.0.1",
+    "@firebase/rules-unit-testing": "^6.0.0",
     "@lhci/cli": "^0.15.1",
     "@playwright/test": "^1.64.0",
     "@stryker-mutator/core": "^10.0.0",

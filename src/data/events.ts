@@ -594,6 +594,25 @@ export const events: EventEntry[] = [
     eventbriteId: "2002169289241",
     timezone: "America/Chicago",
   },
+  {
+    date: "Dec 6",
+    city: "Philadelphia",
+    state: "Pennsylvania",
+    stateAbbr: "PA",
+    citySlug: "philadelphia",
+    slug: buildEventSlug("philadelphia", "2026-12-06"),
+    description:
+      "Garam Masala Dating closes out the year at Next In Line Comedy in Philadelphia. A BYOB Sunday night, two real singles meeting for the first time on stage and an audience that decides how it ends.",
+    lineup: DEFAULT_LINEUP,
+    ticketSource: "their-eventbrite",
+    url: "https://www.eventbrite.com/e/garam-masala-1-desi-dating-show-byob-tickets-2002925676616",
+    isoDate: "2026-12-06",
+    startTime: "18:30",
+    endTime: "20:00",
+    venue: VENUE_NEXT_IN_LINE,
+    price: "15",
+    eventbriteId: "2002925676616",
+  },
 ];
 
 // Only show TBA entries for cities with active tour planning (not all 200+ expansion pages).

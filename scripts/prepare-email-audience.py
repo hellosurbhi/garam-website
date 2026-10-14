@@ -2,6 +2,7 @@
 import argparse
 import csv
 import json
+import os
 import re
 from datetime import datetime
 from pathlib import Path
@@ -57,7 +58,7 @@ if __name__ == "__main__":
     if args.output.resolve().is_relative_to(Path(__file__).resolve().parents[1]):
         parser.error("Audience data must be written outside the website repository")
     data = prepare(args.source)
-    with args.output.open("x") as handle:
+    descriptor = os.open(args.output, os.O_WRONLY | os.O_CREAT | os.O_EXCL, 0o600)
+    with os.fdopen(descriptor, "w") as handle:
         json.dump(data, handle)
-    args.output.chmod(0o600)
     print(f"Prepared {len(data['contacts'])} contacts, {len(data['suppressed'])} suppressions and {len(data['history'])} historical sends.")

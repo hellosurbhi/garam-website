@@ -2,6 +2,22 @@ import { fsListAll } from "@/lib/firestoreRest";
 import { store, fingerprint, type Store } from "./store";
 import { normalizeEmail, type Contact } from "./model";
 
+export function isSuppressed(record: Record<string, unknown>): boolean {
+  const yes = (value: unknown) =>
+    value === true ||
+    value === 1 ||
+    (typeof value === "string" &&
+      ["true", "yes", "1"].includes(value.trim().toLowerCase()));
+  const explicitEmailable = record.emailable;
+  return (
+    yes(record.unsubscribed) ||
+    yes(record.suppressed) ||
+    (explicitEmailable !== undefined &&
+      explicitEmailable !== null &&
+      !yes(explicitEmailable))
+  );
+}
+
 export async function upsertContact(db: Store, input: Contact) {
   const key = `emailContacts/${fingerprint(input.email)}`;
   const previous = await db.get<Contact>(key);
@@ -37,11 +53,7 @@ export async function refreshContacts(now: number) {
     unique.set(email, {
       email,
       city: typeof lead.city === "string" ? lead.city : "",
-      suppressed:
-        lead.unsubscribed === true ||
-        lead.suppressed === true ||
-        lead.emailable === false ||
-        unique.get(email)?.suppressed === true,
+      suppressed: isSuppressed(lead) || unique.get(email)?.suppressed === true,
     });
   }
   const contacts = [...unique.values()];

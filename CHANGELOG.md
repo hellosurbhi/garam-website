@@ -2,7 +2,7 @@
 
 ## feat(email): hosted show email scheduling (2026-10-14)
 
-Adds an authenticated Show emails tab with reusable copy, show details, publication controls and Gmail announcement, Monday and Friday schedules. A persistent Firestore queue reserves mailbox capacity, records delivery intent before sending and respects current suppression. Confirmed provider cooldowns resume automatically; ambiguous send responses are held instead of blindly repeated. The audience import preserves past announcements and the old Gmail rolling window. New website leads refresh each morning.
+Adds an authenticated Show emails tab with reusable copy, show details, publication controls and Gmail announcement, Monday and Friday schedules. A persistent Firestore queue reserves mailbox capacity, records delivery intent before sending and respects current suppression. Confirmed provider cooldowns resume automatically; ambiguous send responses are held instead of blindly repeated. The audience import preserves past announcements and the old Gmail rolling window. Contact refresh honors padded or capitalized opt-out values, and the private preparation file is created with owner-only permissions. New website leads refresh each morning.
 
 Managed shows feed the home page, tickets page, event pages and ticket redirects. Production remains gated behind online configuration and a completed private audience import. See `docs/automatic-show-email.md` for release setup and verification boundaries.
 

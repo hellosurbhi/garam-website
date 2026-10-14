@@ -1,5 +1,11 @@
 # Changelog
 
+## feat(email): hosted show email scheduling (2026-10-14)
+
+Adds an authenticated Show emails tab with reusable copy, show details, publication controls and Gmail announcement, Monday and Friday schedules. A persistent Firestore queue reserves mailbox capacity, records delivery intent before sending and respects current suppression. Confirmed provider cooldowns resume automatically; ambiguous send responses are held instead of blindly repeated. The audience import preserves past announcements and the old Gmail rolling window. Contact refresh honors padded or capitalized opt-out values, and the private preparation file is created with owner-only permissions. New website leads refresh each morning.
+
+Managed shows feed the home page, tickets page, event pages and ticket redirects. Production remains gated behind online configuration and a completed private audience import. See `docs/automatic-show-email.md` for release setup and verification boundaries.
+
 ## feat(events): new Philadelphia show Dec 6 at Next In Line Comedy (2026-10-11)
 
 Sunday December 6 2026, 6:30 to 8 PM, BYOB, tickets on the venue's Eventbrite (ID 2002925676616). Appears on the tickets page, home shows section and gets the `/events/philadelphia-2026-12-06` landing page with Event JSON-LD. Date, time and venue verified against the live Eventbrite listing; the venue matches the existing `VENUE_NEXT_IN_LINE` constant exactly, so no new venue was added. A pin test in `test/events.test.ts` protects the date, times and venue from accidental edits.

@@ -218,6 +218,10 @@ export default defineConfig({
   integrations: [
     react(),
     sitemap({
+      customPages: [
+        ...allEvents.map((event) => `${SITE}/events/${event.slug}`),
+        ...Object.keys(cities).map((slug) => `${SITE}/cities/${slug}`),
+      ],
       filter: (page) => {
         if (page.includes("?")) return false;
         if (

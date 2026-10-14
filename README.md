@@ -98,3 +98,7 @@ Code conventions and AI-assistant rules live in `CLAUDE.md`.
 Source code is licensed under the [MIT License](LICENSE).
 
 Brand assets, host photography, the WebGL hero shader, and all editorial content (journal articles, city pages, tips) are proprietary and are NOT covered by the MIT License. See [NOTICE](NOTICE) for details.
+
+## Automatic show email
+
+The admin dashboard includes Show emails for reusable copy, saved show details and online Gmail scheduling. Setup, pacing, data migration and recovery are documented in [Automatic show email](docs/automatic-show-email.md). Production activation requires the one-time server setup described there.

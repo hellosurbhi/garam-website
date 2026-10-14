@@ -1,7 +1,9 @@
 ---
 import BaseLayout from "@/layouts/BaseLayout.astro";
 import LeadCaptureModal from "@/components/LeadCaptureModal.astro";
-import { events } from "@/data/events";
+import { publishedShows } from "@/lib/outreach/publishedShows";
+export const prerender = false;
+const events = await publishedShows();
 import { ICON_SVGS, SOCIAL_ICON_SVGS, type IconName } from "@/data/icons";
 import { pressItems } from "@/data/press";
 import { SOCIAL_URLS } from "@/data/socials";

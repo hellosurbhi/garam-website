@@ -6,7 +6,7 @@
  * before the "Get Tickets" click hands off to the real checkout via
  * /api/go/[slug] (see src/pages/api/go/[slug].ts for the tracked redirect).
  *
- * Generates a static page for every entry in allEvents (confirmed shows +
+ * Resolves saved shows and existing catalog entries at request time (confirmed shows +
  * TBA/coming-soon cities), including hidden/sold-out/past ones: these pages
  * are permanent and may be indexed, bookmarked, or shared long after a show
  * happens, so EventTicketCta's state machine (src/components/events/
@@ -21,7 +21,7 @@ import EventLineupCard from "@/components/events/EventLineupCard.astro";
 import { Picture } from "astro:assets";
 import { SHOW_IMAGES_ASSETS } from "@/assets/backgrounds";
 import { slugToImageIndex } from "@/data/images";
-import { allEvents, type EventEntry } from "@/data/events";
+import { publishedShows } from "@/lib/outreach/publishedShows";
 import { PERFORMERS } from "@/data/lineup";
 import {
   EXPERIENCE_STEPS,
@@ -39,47 +39,17 @@ import {
   resolveEventDescription,
 } from "@/lib/eventbriteContent";
 
-/**
- * Pulls real Eventbrite listing copy at build time for every
- * `ticketSource === "our-eventbrite"` event so its landing page mirrors
- * what's actually live on Eventbrite instead of a manually-typed description
- * silently drifting out of date. Third-party listings (`"their-eventbrite"`, e.g.
- * Los Angeles) are skipped entirely: we have no right to represent someone
- * else's Eventbrite listing as sourced content (see eventbriteContent.ts).
- * `fetchEventbriteContent`/`resolveEventDescription` already fail soft to
- * the manual description, so a missing token or API hiccup keeps the build
- * green.
- */
-export async function getStaticPaths() {
-  const token = import.meta.env.EVENTBRITE_API_TOKEN;
-
-  return Promise.all(
-    allEvents.map(async (event) => {
-      const shouldFetch =
-        event.ticketSource === "our-eventbrite" &&
-        Boolean(event.eventbriteId) &&
-        Boolean(token);
-
-      const content = shouldFetch
-        ? await fetchEventbriteContent(event.eventbriteId!, token)
-        : null;
-
-      const description = resolveEventDescription(event.description, content);
-
-      return {
-        params: { slug: event.slug },
-        props: { event, description },
-      };
-    }),
-  );
-}
-
-interface Props {
-  event: EventEntry;
-  description: string;
-}
-
-const { event, description } = Astro.props;
+export const prerender = false;
+const event = (await publishedShows()).find(
+  (item) => item.slug === Astro.params.slug,
+);
+if (!event) return Astro.redirect("/404", 302);
+const token = import.meta.env.EVENTBRITE_API_TOKEN;
+const content =
+  event.ticketSource === "our-eventbrite" && event.eventbriteId && token
+    ? await fetchEventbriteContent(event.eventbriteId, token)
+    : null;
+const description = resolveEventDescription(event.description, content);
 
 const cityLabel = formatEventLocation(event);
 const heroImage =

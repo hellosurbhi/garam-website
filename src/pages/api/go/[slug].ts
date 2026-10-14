@@ -2,7 +2,8 @@ export const prerender = false;
 
 import type { APIRoute } from "astro";
 import { waitUntil } from "@vercel/functions";
-import { getEventBySlug, type EventEntry } from "@/data/events";
+import type { EventEntry } from "@/data/events";
+import { publishedShowBySlug } from "@/lib/outreach/publishedShows";
 import { isEventDatePast } from "@/utils/eventDate";
 import { enforceRateLimit, RATE_LIMITS, getClientIp } from "@/lib/rateLimit";
 import { applyUtmsToUrl } from "@/utils/utmForwarding";
@@ -116,7 +117,7 @@ async function recordClickSignals(
  */
 export const GET: APIRoute = async ({ params, request }) => {
   const slug = params.slug;
-  const event = slug ? getEventBySlug(slug) : undefined;
+  const event = slug ? await publishedShowBySlug(slug) : undefined;
 
   if (!event || !event.url || event.url === "#") {
     return new Response("Not found", { status: 404 });

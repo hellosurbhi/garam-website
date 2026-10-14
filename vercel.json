@@ -4,7 +4,8 @@
   "crons": [
     { "path": "/api/cron/followups", "schedule": "0 14 * * *" },
     { "path": "/api/cron/post-show", "schedule": "0 15 * * 1" },
-    { "path": "/api/sync-orders", "schedule": "0 13 * * *" }
+    { "path": "/api/sync-orders", "schedule": "0 13 * * *" },
+    { "path": "/api/cron/email", "schedule": "*/2 * * * *" }
   ],
   "github": {
     "silent": true

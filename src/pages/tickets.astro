@@ -2,7 +2,11 @@
 import BaseLayout from "@/layouts/BaseLayout.astro";
 import NotifyModal from "@/components/NotifyModal.astro";
 import { buildBreadcrumbJsonLd } from "@/utils/breadcrumbs";
-import { events, allEvents, isDisplayable } from "@/data/events";
+import { isDisplayable } from "@/data/events";
+import { publishedShows } from "@/lib/outreach/publishedShows";
+export const prerender = false;
+const allEvents = await publishedShows();
+const events = allEvents.filter((event) => event.isoDate);
 import { buildEventSchemas } from "@/utils/eventSchema";
 import LeadCaptureModal from "@/components/LeadCaptureModal.astro";
 import { buildTaglineMap } from "@/utils/eventTaglines";

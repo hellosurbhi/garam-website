@@ -33,6 +33,7 @@ import AnalyticsDashboard from "./AnalyticsDashboard";
 import ContestantFunnel from "./ContestantFunnel";
 import TaskInbox from "./TaskInbox";
 import WaitlistTab from "./WaitlistTab";
+import EmailTab from "./email/EmailTab";
 import styles from "./AdminDashboard.module.css";
 
 interface AdminDashboardProps {
@@ -149,7 +150,7 @@ export type PendingAdminAction = {
 
 export default function AdminDashboard({ onLogout }: AdminDashboardProps) {
   const [activeTab, setActiveTab] = useState<
-    "today" | "applicants" | "analytics" | "waitlist"
+    "today" | "applicants" | "analytics" | "waitlist" | "email"
   >("applicants");
   const [applications, setApplications] = useState<Application[]>([]);
   const [loading, setLoading] = useState(true);
@@ -479,6 +480,13 @@ export default function AdminDashboard({ onLogout }: AdminDashboardProps) {
               >
                 Waitlist
               </button>
+              <button
+                className={styles.tab}
+                data-active={activeTab === "email" || undefined}
+                onClick={() => setActiveTab("email")}
+              >
+                Show emails
+              </button>
             </div>
           </div>
           <button onClick={onLogout} className={styles.logoutButton}>
@@ -598,6 +606,7 @@ export default function AdminDashboard({ onLogout }: AdminDashboardProps) {
       )}
 
       {activeTab === "waitlist" && <WaitlistTab />}
+      {activeTab === "email" && <EmailTab />}
 
       {activeTab === "applicants" && (
         <main className={styles.main}>

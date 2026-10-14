@@ -2,7 +2,8 @@
 import BaseLayout from "@/layouts/BaseLayout.astro";
 import { cities } from "@/data/cities";
 import type { CityData } from "@/data/cities";
-import { getUpcomingEventsForCity } from "@/utils/cityEvents";
+import { isUpcomingEvent } from "@/utils/cityEvents";
+import { publishedShows } from "@/lib/outreach/publishedShows";
 import { buildBreadcrumbJsonLd } from "@/utils/breadcrumbs";
 import { buildEventSchemas } from "@/utils/eventSchema";
 import { Picture } from "astro:assets";
@@ -17,14 +18,9 @@ import { buildTicketUrl } from "@/utils/eventUrl";
 import { domainFromUrl, vendorFromUrl } from "@/lib/analyticsCapture";
 import { EVENTS, CITY_FOLLOW } from "@/data/copy";
 
-export function getStaticPaths() {
-  return Object.keys(cities).map((slug) => ({
-    params: { slug },
-    props: { city: cities[slug] },
-  }));
-}
-
-const { city } = Astro.props;
+export const prerender = false;
+const city = cities[Astro.params.slug ?? ""];
+if (!city) return Astro.redirect("/404", 302);
 
 const heroImage =
   SHOW_IMAGES_ASSETS[slugToImageIndex(city.slug, SHOW_IMAGES_ASSETS.length)];
@@ -39,7 +35,9 @@ const title = city.titleTag;
 const description = city.metaDescription;
 
 // Upcoming events for this city — derived from events data, not city.status
-const cityEvents = getUpcomingEventsForCity(city.slug);
+const cityEvents = (await publishedShows()).filter(
+  (event) => isUpcomingEvent(event) && event.citySlug === city.slug,
+);
 
 /* ── City JSON-LD ─────────────────────────────────────────── */
 

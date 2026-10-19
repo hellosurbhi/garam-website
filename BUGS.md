@@ -1,5 +1,11 @@
 # Bugs
 
+## Development dependency audit follow-up (2026-10-19)
+
+- Found while reproducing the ticket server crash: a clean `npm ci` on main reported 17 dependency findings, including 12 high and 5 moderate. The production-only audit subsequently reported zero findings, so these are outside the runtime repair.
+- Overnight plan: capture the full audit JSON, identify the affected development dependency chains and apply compatible fixes in a separate branch. Review any required major upgrades individually. Run lint, type checks, unit tests, the build and the packaged runtime check before opening a PR.
+- Acceptance: the full audit has no remaining high findings, or each unavailable fix has a documented dependency chain and follow-up. Keep the production audit at zero.
+
 <!-- Doc routing (2026-07-13): this file is an OPEN backlog only. It holds
 bugs not yet fixed, deferred or blocked items with their reason, and won't-fix
 or resolved-by-design decisions (kept so the same report is not re-filed).

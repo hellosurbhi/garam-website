@@ -270,6 +270,19 @@ export default defineConfig({
   ],
   vite: {
     plugins: [gitDatesPlugin()],
+    build: {
+      rolldownOptions: {
+        treeshake: {
+          // WHY: the Vercel entrypoint imports constants from the adapter's
+          // index, which also imports its build-time middleware generator.
+          // Its unused Rolldown import otherwise survives in the server and
+          // crashes on startup because the native bindings are not traced.
+          // Only drop that unused external import; retain other side effects.
+          moduleSideEffects: (id, external) =>
+            id === "rolldown" && external ? false : undefined,
+        },
+      },
+    },
     resolve: {
       alias: {
         "@": "/src",

@@ -1,5 +1,13 @@
 # Lessons
 
+## Packaged server checks must run outside the checkout
+
+The October 19 ticket failure reproduced only when the packaged function could not fall back to development dependencies. Copy the artifact to a temporary directory and start it with a clean environment. Exercise the packaged handler as well as unit tests.
+
+During this repair, the installed Rolldown version panicked on an object-rule catch-all in `moduleSideEffects`. The supported function form preserves the default for unmatched imports and removes only the unused external Rolldown import. The runtime check also needs to serve Astro's static 404 fallback locally; that asset request is separate from customer-service traffic.
+
+The commit-message hook requires a `Verified:` line. Include the checks actually run in the initial commit message; a passing pre-commit test run does not satisfy that separate requirement.
+
 ## A green synthetic monitor proved the happy path while every long-form applicant was rejected
 
 **What went wrong:** The 6-hour synthetic apply monitor was green 10 runs straight while real applicants (Akshay Aug 30, Dua Aug 27 with 4 retries) got "Missing or insufficient permissions" and their applications were silently thrown away. The Firestore rules capped pitch at 2000 chars, phone at 20 and height at 20; the client validated none of these lengths, and one field (`type`) even had a form `maxLength={200}` four times larger than the deployed rules cap of 50. Anyone who wrote a long pitch, a spelled-out height or a formatted phone number was rejected at the last possible moment with a generic error, after doing all the work.

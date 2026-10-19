@@ -1,5 +1,13 @@
 # Changelog
 
+## fix(runtime): restore ticket redirects and API startup (2026-10-19)
+
+Ticket clicks returned Vercel's `FUNCTION_INVOCATION_FAILED` because the server package retained an unused Rolldown import from the adapter's build-time middleware generator. Its native bindings were absent from the deployed function, so the shared server crashed before handling ticket or form requests. The build now removes that specific unused external import while preserving default handling for other modules.
+
+The build also starts a copy of the packaged server outside the checkout, with credentials removed and external fetches blocked. It checks API module loading, the ticket links rendered on the tickets page, attribution forwarding, location lookup and form validation guards. This gate runs before a Vercel build can complete. The original artifact fails the check with the production native binding error; the repaired artifact passes with 29 API modules and two ticket redirects.
+
+Verification: 1,304 unit tests passed, lint passed and Astro reported zero errors or warnings. The production build and isolated runtime check passed. Live release verification remains an owner action after merging.
+
 ## feat(events): new Philadelphia show Dec 6 at Next In Line Comedy (2026-10-11)
 
 Sunday December 6 2026, 6:30 to 8 PM, BYOB, tickets on the venue's Eventbrite (ID 2002925676616). Appears on the tickets page, home shows section and gets the `/events/philadelphia-2026-12-06` landing page with Event JSON-LD. Date, time and venue verified against the live Eventbrite listing; the venue matches the existing `VENUE_NEXT_IN_LINE` constant exactly, so no new venue was added. A pin test in `test/events.test.ts` protects the date, times and venue from accidental edits.

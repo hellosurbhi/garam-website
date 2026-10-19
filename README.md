@@ -85,7 +85,7 @@ scripts/          # Build-time scripts (prerender, data migration)
 
 ## Deployment
 
-The site deploys to **Vercel**. `npm run build` generates Astro's static pages and server function, then checks that the packaged server starts in isolation and handles ticket redirects and safe API requests. This check runs in CI and Vercel builds before release. It uses no credentials and does not submit customer data. Security headers (CSP, HSTS, X-Frame-Options) are configured in `vercel.json`.
+The site deploys to **Vercel**. `npm run build` generates Astro's static pages and server function, then checks that the packaged server starts in isolation and handles ticket redirects and safe API requests. This check runs in CI and Vercel builds before release. It blocks external fetches and does not submit customer data. Security headers (CSP, HSTS, X-Frame-Options) are configured in `vercel.json`.
 
 ## Contributing
 

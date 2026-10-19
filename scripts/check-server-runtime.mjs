@@ -21,7 +21,8 @@ if (process.argv[2] === "--worker") {
   );
 
   // WHY: exercise the real packaged handler without contacting vendors,
-  // analytics or customer services. The parent also strips credentials.
+  // analytics or customer services. Astro can inline build-time configuration,
+  // so clearing the child environment alone does not prevent external calls.
   const networkAttempts = [];
   globalThis.fetch = async (input) => {
     const url = new URL(input instanceof Request ? input.url : input);
@@ -30,6 +31,11 @@ if (process.argv[2] === "--worker") {
     if (url.href === "https://localhost/404.html") {
       return new Response("Not found", { status: 404 });
     }
+    // Exercise the existing rate-limit fail-open path when a Vercel build
+    // contains Redis configuration. No request or credential leaves the test.
+    if (url.hostname.endsWith(".upstash.io") && url.pathname === "/pipeline") {
+      throw new Error("Redis intentionally offline during runtime smoke check");
+    }
     networkAttempts.push(`${url.origin}${url.pathname}`);
     throw new Error("Runtime smoke checks must not call external services");
   };
@@ -37,8 +43,14 @@ if (process.argv[2] === "--worker") {
     pathToFileURL(join(artifact, config.handler)).href
   );
   assert.equal(typeof handler.fetch, "function");
-  const request = (path, init) =>
-    handler.fetch(new Request(`https://garammasaladating.com${path}`, init));
+  const request = (path, init = {}) => {
+    const headers = new Headers(init.headers);
+    // Use the existing bot exclusion so smoke clicks do not count as sales intent.
+    headers.set("user-agent", "Googlebot (packaged runtime smoke test)");
+    return handler.fetch(
+      new Request(`https://garammasaladating.com${path}`, { ...init, headers }),
+    );
+  };
 
   // OPTIONS loads each API module without executing a submission or cron.
   for (const route of routes) {

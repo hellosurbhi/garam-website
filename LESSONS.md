@@ -8,6 +8,8 @@ During this repair, the installed Rolldown version panicked on an object-rule ca
 
 The commit-message hook requires a `Verified:` line. Include the checks actually run in the initial commit message; a passing pre-commit test run does not satisfy that separate requirement.
 
+Astro can inline build-time service configuration into the server bundle. A child process with an empty environment can still attempt configured Redis or analytics calls. The smoke harness blocks external fetches, exercises the rate-limit fail-open path and uses the existing bot exclusion for checkout tracking. Verify this with fake build-time service values before relying on a clean local build.
+
 ## A green synthetic monitor proved the happy path while every long-form applicant was rejected
 
 **What went wrong:** The 6-hour synthetic apply monitor was green 10 runs straight while real applicants (Akshay Aug 30, Dua Aug 27 with 4 retries) got "Missing or insufficient permissions" and their applications were silently thrown away. The Firestore rules capped pitch at 2000 chars, phone at 20 and height at 20; the client validated none of these lengths, and one field (`type`) even had a form `maxLength={200}` four times larger than the deployed rules cap of 50. Anyone who wrote a long pitch, a spelled-out height or a formatted phone number was rejected at the last possible moment with a generic error, after doing all the work.

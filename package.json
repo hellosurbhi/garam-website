@@ -102,6 +102,11 @@
     "qs": "^6.15.2",
     "tmp": "^0.2.6",
     "uuid": ">=11.1.1",
+    "@lhci/utils": {
+      "js-yaml": {
+        "argparse": "^2.0.1"
+      }
+    },
     "@vercel/routing-utils": {
       "path-to-regexp": "^6.3.0"
     }

@@ -45,7 +45,7 @@
   "dependencies": {
     "@astrojs/react": "^6.0.2",
     "@astrojs/sitemap": "^3.7.4",
-    "@astrojs/vercel": "^11.0.13",
+    "@astrojs/vercel": "^11.0.16",
     "@upstash/ratelimit": "^2.2.0",
     "@upstash/redis": "^1.39.0",
     "@vercel/analytics": "^2.0.1",

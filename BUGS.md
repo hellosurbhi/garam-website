@@ -1,5 +1,12 @@
 # Bugs
 
+## Browser smoke harness follow-up (2026-10-19)
+
+- The desktop and iPhone critical-flow run on the clean runtime-repair build exposed existing fixture gaps. The waiver helper waits for `[data-testid="apply-terms"]`, while the standalone waiver uses its own agreement control. Apply and signup success checks also time out in the clean build. These results do not establish successful end-to-end form delivery; keep that limitation visible until repaired.
+- The ticket integrity test selects `a.ticket-card--live` and `a.ticket-card--soldout`, but current live cards wrap a `.ticket-card__inner` anchor in a div. The loop can pass without checking either purchasable show. Separate browser verification during the repair clicked both actual anchors at desktop and mobile sizes successfully.
+- Overnight plan: update the smoke fixtures to the current form contracts and selectors, supply non-secret Firebase test configuration and mock required network responses. Make the ticket test select the rendered inner anchors and assert a nonzero count in a fixed upcoming-event fixture. Verify real popup navigation and test the packaged redirect separately. Run the corrected tests on main and the repair branch to distinguish harness failures from product bugs; record and fix any confirmed product issue in that lane.
+- Acceptance: desktop and mobile critical-flow tests pass without skipped purchase assertions, customer writes or real notification delivery. A deliberately broken ticket href or form response must fail the appropriate test.
+
 ## Development dependency audit follow-up (2026-10-19)
 
 - Found while reproducing the ticket server crash: a clean `npm ci` on main reported 17 dependency findings, including 12 high and 5 moderate. The production-only audit subsequently reported zero findings, so these are outside the runtime repair.

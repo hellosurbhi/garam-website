@@ -8,6 +8,8 @@ The build also starts a copy of the packaged server outside the checkout, with c
 
 Verification: 1,304 unit tests passed, lint passed and Astro reported zero errors or warnings. The production build and isolated runtime check passed. Live release verification remains an owner action after merging.
 
+Both actual ticket anchors opened the expected tabs at desktop and mobile sizes with no page errors. The broader critical-flow browser suite passed 12 of 24 cases; form fixture and selector failures are recorded in `BUGS.md` for the overnight lane. Successful live form delivery is not claimed by the runtime guard checks.
+
 ## feat(events): new Philadelphia show Dec 6 at Next In Line Comedy (2026-10-11)
 
 Sunday December 6 2026, 6:30 to 8 PM, BYOB, tickets on the venue's Eventbrite (ID 2002925676616). Appears on the tickets page, home shows section and gets the `/events/philadelphia-2026-12-06` landing page with Event JSON-LD. Date, time and venue verified against the live Eventbrite listing; the venue matches the existing `VENUE_NEXT_IN_LINE` constant exactly, so no new venue was added. A pin test in `test/events.test.ts` protects the date, times and venue from accidental edits.

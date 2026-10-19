@@ -7,6 +7,7 @@
 `js-yaml@3` only imports `argparse` in its own command line tool, never in the library code Lighthouse uses, so an `overrides` entry now points that one edge at `argparse@2.0.1`. That version has no dependencies and was already in the lockfile, so no new package is added. `sprintf-js` and the nested `argparse@1.0.10` are gone from `package-lock.json`. Dev tooling only, nothing ships to the live site.
 
 **Files:** `package.json`, `package-lock.json`
+
 ## fix(runtime): restore ticket redirects and API startup (2026-10-19)
 
 Ticket clicks returned Vercel's `FUNCTION_INVOCATION_FAILED` because `@astrojs/vercel` 11.0.13 (arrived via the October Dependabot bumps) made the server entrypoint import the adapter's build-time code, including Rolldown. Rolldown's native binary is not shipped to the deployed function, so the shared server crashed on startup before handling ticket, form or lead requests. Astro fixed this upstream in 11.0.14 (withastro/astro#18328) by moving the shared constants into an import-free module. The adapter is now on 11.0.16; no bundler override is needed. The lockfile picked up in-range patch and minor updates to shiki, side-channel and a few other transitive packages.

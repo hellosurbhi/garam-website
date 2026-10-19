@@ -7,6 +7,7 @@
 `js-yaml@3` only imports `argparse` in its own command line tool, never in the library code Lighthouse uses, so an `overrides` entry now points that one edge at `argparse@2.0.1`. That version has no dependencies and was already in the lockfile, so no new package is added. `sprintf-js` and the nested `argparse@1.0.10` are gone from `package-lock.json`. Dev tooling only, nothing ships to the live site.
 
 **Files:** `package.json`, `package-lock.json`
+
 ## fix(deploy): stop installing dev-only tools on Vercel (2026-10-19)
 
 Every Vercel build installed `firebase-tools` and `@lhci/cli`, two dev-only tools the site never uses at build or run time. They were the source of all the deprecated package warnings in the build log (rimraf, inflight, glob, node-domexception, json-ptr) and of the `re2` install script note. Those old versions are pinned inside the two tools, so they cannot be upgraded away.

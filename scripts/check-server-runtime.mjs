@@ -114,13 +114,31 @@ if (process.argv[2] === "--worker") {
     ".vercel/output/static/tickets/index.html",
     "utf8",
   );
+  // WHY: asserting ticketLinks.length > 0 would fail every deploy while no
+  // show is on sale. Instead, each purchasable card (exact class, so sold-out
+  // and presale-notify cards are excluded) must yield one tracked redirect
+  // anchor, so a template change that drops or reroutes links fails here.
+  const purchasableCards = [
+    ...tickets.matchAll(/class="ticket-card ticket-card--live"/g),
+  ].length;
   const ticketLinks = [
     ...new Set(
-      [...tickets.matchAll(/href="(\/api\/go\/[^"?]+)"/g)].map(
-        (match) => match[1],
+      [...tickets.matchAll(/<a\b[^>]*\bdata-go-ticket\b[^>]*>/g)].map(
+        (anchor) => anchor[0].match(/\bhref="([^"]+)"/)?.[1] ?? "",
       ),
     ),
   ];
+  assert.equal(
+    ticketLinks.length,
+    purchasableCards,
+    `Expected one ticket redirect per purchasable card on /tickets, found ${ticketLinks.length} for ${purchasableCards}`,
+  );
+  for (const link of ticketLinks) {
+    assert.match(link, /^\/api\/go\/[^/?]+$/, `Unexpected ticket href ${link}`);
+  }
+  if (ticketLinks.length === 0) {
+    process.stdout.write("No shows on sale: no ticket redirects to probe.\n");
+  }
   // WHY: loading the artifact inside the checkout can silently resolve missing
   // dependencies from the development node_modules and hide deployment failures.
   const isolated = mkdtempSync(join(tmpdir(), "gmd-server-runtime-"));

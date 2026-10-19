@@ -1,5 +1,9 @@
 # Changelog
 
+## chore(runtime): move the project to Node 24 (2026-10-19)
+
+Node 22 moves to maintenance, so `.nvmrc`, `engines.node` (now `>=24.15.0 <25.0.0`, the floor set by jsdom's dependencies), all seven CI `setup-node` steps, README and CONTRIBUTING now name Node 24. Vercel reads `engines.node`, so production follows. `@types/node` moved from 26 to 24 so the types match the runtime major. Node 24 bundles npm 11, which matches the lockfile writer. Verified on Node 24.22.0: `npm ci`, lint, `astro check`, 1,304 unit tests and `astro build` all pass.
+
 ## fix(runtime): restore ticket redirects and API startup (2026-10-19)
 
 Ticket clicks returned Vercel's `FUNCTION_INVOCATION_FAILED` because `@astrojs/vercel` 11.0.13 (arrived via the October Dependabot bumps) made the server entrypoint import the adapter's build-time code, including Rolldown. Rolldown's native binary is not shipped to the deployed function, so the shared server crashed on startup before handling ticket, form or lead requests. Astro fixed this upstream in 11.0.14 (withastro/astro#18328) by moving the shared constants into an import-free module. The adapter is now on 11.0.16; no bundler override is needed. The lockfile picked up in-range patch and minor updates to shiki, side-channel and a few other transitive packages.

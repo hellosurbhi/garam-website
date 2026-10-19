@@ -2,9 +2,9 @@
 
 ## fix(runtime): restore ticket redirects and API startup (2026-10-19)
 
-Ticket clicks returned Vercel's `FUNCTION_INVOCATION_FAILED` because the server package retained an unused Rolldown import from the adapter's build-time middleware generator. Its native bindings were absent from the deployed function, so the shared server crashed before handling ticket or form requests. The build now removes that specific unused external import while preserving default handling for other modules.
+Ticket clicks returned Vercel's `FUNCTION_INVOCATION_FAILED` because `@astrojs/vercel` 11.0.13 (arrived via the October Dependabot bumps) made the server entrypoint import the adapter's build-time code, including Rolldown. Rolldown's native binary is not shipped to the deployed function, so the shared server crashed on startup before handling ticket, form or lead requests. Astro fixed this upstream in 11.0.14 (withastro/astro#18328) by moving the shared constants into an import-free module. The adapter is now on 11.0.16; no bundler override is needed. The lockfile picked up in-range patch and minor updates to shiki, side-channel and a few other transitive packages.
 
-The build also starts a copy of the packaged server outside the checkout, with credentials removed and external fetches blocked. It checks API module loading, the ticket links rendered on the tickets page, attribution forwarding, location lookup and form validation guards. This gate runs before a Vercel build can complete. The original artifact fails the check with the production native binding error; the repaired artifact passes with 29 API modules and two ticket redirects.
+The build also starts a copy of the packaged server outside the checkout, with credentials removed and external fetches blocked. It checks API module loading, the ticket links rendered on the tickets page, attribution forwarding, location lookup and form validation guards. This gate runs before a Vercel build can complete. Rebuilding with adapter 11.0.13 fails the check with the exact production native binding error; 11.0.16 passes with 29 API modules and two ticket redirects.
 
 Verification: 1,304 unit tests passed, lint passed and Astro reported zero errors or warnings. The production build and isolated runtime check passed. Live release verification remains an owner action after merging.
 

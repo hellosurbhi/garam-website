@@ -1,14 +1,12 @@
 # Lessons
 
-## Packaged server checks must run outside the checkout
+## A dependency bump crashed every server route and only production noticed
 
-The October 19 ticket failure reproduced only when the packaged function could not fall back to development dependencies. Copy the artifact to a temporary directory and start it with a clean environment. Exercise the packaged handler as well as unit tests.
+**What went wrong:** `@astrojs/vercel` 11.0.13 made the serverless entrypoint import a module that also imported Rolldown, a build-only tool. Locally the import resolved from `node_modules`; on Vercel the native binary was not traced into the function, so every server route (ticket redirects, forms, lead capture) returned `FUNCTION_INVOCATION_FAILED`. Lint, types, 1,304 unit tests and the build all passed.
 
-During this repair, the installed Rolldown version panicked on an object-rule catch-all in `moduleSideEffects`. The supported function form preserves the default for unmatched imports and removes only the unused external Rolldown import. The runtime check also needs to serve Astro's static 404 fallback locally; that asset request is separate from customer-service traffic.
+**Why:** We assumed a passing build meant a bootable server. Nothing started the packaged function outside the checkout, where missing dependencies would surface. The first repair attempt also patched around the library bug with a Rolldown `moduleSideEffects` override instead of checking whether upstream had already fixed it (it had, in 11.0.14).
 
-The commit-message hook requires a `Verified:` line. Include the checks actually run in the initial commit message; a passing pre-commit test run does not satisfy that separate requirement.
-
-Astro can inline build-time service configuration into the server bundle. A child process with an empty environment can still attempt configured Redis or analytics calls. The smoke harness blocks external fetches, exercises the rate-limit fail-open path and uses the existing bot exclusion for checkout tracking. Verify this with fake build-time service values before relying on a clean local build.
+**Rule:** Every build runs `npm run test:runtime`, which copies the packaged function to a temp directory and starts it with an empty environment and external fetches blocked. When a library bug breaks us, check its newer releases and changelog before writing a workaround; upgrade when a fix exists. Astro can inline build-time service config (Redis, Meta) into the bundle, so the smoke harness must block fetches itself rather than rely on a clean environment.
 
 ## A green synthetic monitor proved the happy path while every long-form applicant was rejected
 

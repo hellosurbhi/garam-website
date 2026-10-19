@@ -75,17 +75,17 @@ scripts/          # Build-time scripts (prerender, data migration)
 
 ## Scripts
 
-| Command                   | What it does                                |
-| ------------------------- | ------------------------------------------- |
-| `npm run dev`             | Start dev server with HMR                   |
-| `npm run build`           | Type-check and build for production         |
-| `npm run build:prerender` | Build + generate static HTML with Puppeteer |
-| `npm run lint`            | Run ESLint                                  |
-| `npm run preview`         | Preview production build locally            |
+| Command                | What it does                              |
+| ---------------------- | ----------------------------------------- |
+| `npm run dev`          | Start dev server with HMR                 |
+| `npm run build`        | Build and verify the packaged server      |
+| `npm run test:runtime` | Check the existing Vercel server artifact |
+| `npm run lint`         | Run ESLint                                |
+| `npm run preview`      | Preview production build locally          |
 
 ## Deployment
 
-The site deploys to **Vercel**. The production build uses `build:prerender` to generate static HTML for key pages via Puppeteer. Security headers (CSP, HSTS, X-Frame-Options) are configured in `vercel.json`.
+The site deploys to **Vercel**. `npm run build` generates Astro's static pages and server function, then checks that the packaged server starts in isolation and handles ticket redirects and safe API requests. This check runs in CI and Vercel builds before release. It blocks external fetches and does not submit customer data. Security headers (CSP, HSTS, X-Frame-Options) are configured in `vercel.json`.
 
 ## Contributing
 

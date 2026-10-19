@@ -7,6 +7,15 @@
 `js-yaml@3` only imports `argparse` in its own command line tool, never in the library code Lighthouse uses, so an `overrides` entry now points that one edge at `argparse@2.0.1`. That version has no dependencies and was already in the lockfile, so no new package is added. `sprintf-js` and the nested `argparse@1.0.10` are gone from `package-lock.json`. Dev tooling only, nothing ships to the live site.
 
 **Files:** `package.json`, `package-lock.json`
+## fix(deploy): stop installing dev-only tools on Vercel (2026-10-19)
+
+Every Vercel build installed `firebase-tools` and `@lhci/cli`, two dev-only tools the site never uses at build or run time. They were the source of all the deprecated package warnings in the build log (rimraf, inflight, glob, node-domexception, json-ptr) and of the `re2` install script note. Those old versions are pinned inside the two tools, so they cannot be upgraded away.
+
+The Vercel install command is now `npm ci --omit=dev`. Everything the build needs (`astro`, the Vercel adapter, `firebase`, React) already lives in `dependencies`. A production-only install followed by the full `npm run build`, including the after-build runtime check, passes locally with neither tool present.
+
+Left alone on purpose: the chunk size note comes from the server bundle, so it does not affect what visitors download, and `cache-dir` is a Vercel side setting. The Vercel project Node setting still says 24.x while `package.json` pins 22; that is a dashboard change, not a repo change.
+
+**Files:** `vercel.json`
 
 ## fix(runtime): restore ticket redirects and API startup (2026-10-19)
 

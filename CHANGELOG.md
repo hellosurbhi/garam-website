@@ -3,6 +3,23 @@
 ## chore(runtime): move the project to Node 24 (2026-10-19)
 
 Node 22 moves to maintenance, so `.nvmrc`, `engines.node` (now `>=24.15.0 <25.0.0`, the floor set by jsdom's dependencies), all seven CI `setup-node` steps, README and CONTRIBUTING now name Node 24. Vercel reads `engines.node`, so production follows. `@types/node` moved from 26 to 24 so the types match the runtime major. Node 24 bundles npm 11, which matches the lockfile writer. Verified on Node 24.22.0: `npm ci`, lint, `astro check`, 1,304 unit tests and `astro build` all pass.
+## fix(deps): remove sprintf-js from the dev tree to close Dependabot alert #111 (2026-10-19)
+
+`sprintf-js` (denial of service through unbounded precision specifiers) has no patched release: 1.1.3 is the latest and is also affected. It only reached the project through Lighthouse CI: `@lhci/cli` to `@lhci/utils` to `js-yaml@3` to `argparse@1`. Bumping the parent was not an option because `@lhci/cli` 0.15.1 is already the latest, and forcing `js-yaml@4` would break `@lhci/utils`, which still calls the removed `yaml.safeLoad`.
+
+`js-yaml@3` only imports `argparse` in its own command line tool, never in the library code Lighthouse uses, so an `overrides` entry now points that one edge at `argparse@2.0.1`. That version has no dependencies and was already in the lockfile, so no new package is added. `sprintf-js` and the nested `argparse@1.0.10` are gone from `package-lock.json`. Dev tooling only, nothing ships to the live site.
+
+**Files:** `package.json`, `package-lock.json`
+
+## fix(deploy): stop installing dev-only tools on Vercel (2026-10-19)
+
+Every Vercel build installed `firebase-tools` and `@lhci/cli`, two dev-only tools the site never uses at build or run time. They were the source of all the deprecated package warnings in the build log (rimraf, inflight, glob, node-domexception, json-ptr) and of the `re2` install script note. Those old versions are pinned inside the two tools, so they cannot be upgraded away.
+
+The Vercel install command is now `npm ci --omit=dev`. Everything the build needs (`astro`, the Vercel adapter, `firebase`, React) already lives in `dependencies`. A production-only install followed by the full `npm run build`, including the after-build runtime check, passes locally with neither tool present.
+
+Left alone on purpose: the chunk size note comes from the server bundle, so it does not affect what visitors download, and `cache-dir` is a Vercel side setting. The Vercel project Node setting still says 24.x while `package.json` pins 22; that is a dashboard change, not a repo change.
+
+**Files:** `vercel.json`
 
 ## fix(runtime): restore ticket redirects and API startup (2026-10-19)
 

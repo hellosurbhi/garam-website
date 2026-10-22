@@ -24,6 +24,12 @@ export default defineConfig({
       "test/rules/**",
       ".stryker-tmp/**",
       ".worktrees/**",
+      // WHY: Claude Code creates session worktrees under .claude/worktrees,
+      // each with its own node_modules. Without this, vitest collects every
+      // dependency's own test files from those checkouts, and the pre-commit
+      // gate fails on tests that were never this repo's. Removing it breaks
+      // every commit made while such a worktree exists.
+      ".claude/worktrees/**",
       "dist/**",
       "playwright-report/**",
       ".vercel/**",

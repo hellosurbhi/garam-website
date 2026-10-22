@@ -15,6 +15,15 @@
 - Does not include a fix for the underlying dead Zoho mailer itself (missing `ZOHO_SMTP_USER`/`ZOHO_SMTP_PASS`/`NOTIFICATION_EMAIL`/`ALERT_WEBHOOK_URL` in Vercel production) — that's a credential gap, not a code change, reported separately.
 - Found and logged, not fixed here (pre-existing, out of scope): `zohoMailer.ts`'s `sendMail` has no bounded SMTP timeout, sitewide — see BUGS.md.
 - Verified with `npm run check` (0 errors, 308 files).
+## fix(tests): repair the 75 failing smoke tests (2026-10-21)
+
+The weekly smoke suite had failed every run since August, and the same 75 cases failed on Node 22 and Node 24. The site was fine and the tests had gone stale: the HomeSignup, LeadCaptureModal and NotifyModal tests now complete the optional phone step before expecting success, the footer test checks the data driven city list by shape instead of five fixed cities, the city page test checks the heading is in the page (it is hidden at 1024px and below by design), the waiver test uses the waiver checkbox, and the Firebase mock answers `accounts:lookup`. The Apply happy path now proves auth, photo upload and the Firestore write are reached in order; the real success path stays with the daily synthetic monitor because the Firestore write channel cannot be faked with a canned reply. The full suite passes 319 of 320 on Node 24 (one third party accessibility flake retried green, queued in BUGS.md).
+
+**Files:** `tests/smoke/critical-flows.spec.ts`, `tests/smoke/site.spec.ts`, `LESSONS.md`
+
+## chore(runtime): move the project to Node 24 (2026-10-19)
+
+Node 22 moves to maintenance, so `.nvmrc`, `engines.node` (now `>=24.15.0 <25.0.0`, the floor set by jsdom's dependencies), all seven CI `setup-node` steps, README and CONTRIBUTING now name Node 24. Vercel reads `engines.node`, so production follows. `@types/node` moved from 26 to 24 so the types match the runtime major. Node 24 bundles npm 11, which matches the lockfile writer. Verified on Node 24.22.0: `npm ci`, lint, `astro check`, 1,304 unit tests and `astro build` all pass.
 
 ## fix(deps): remove sprintf-js from the dev tree to close Dependabot alert #111 (2026-10-19)
 

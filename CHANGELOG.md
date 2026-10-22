@@ -21,6 +21,15 @@ Two HIGH findings from the Codex 2026-08-12 review rounds, both open since the e
 **Operator step:** the ruleset is the real enforcement and lives in GitHub, not in this repo. Open the repo on GitHub, then Settings, then Rules, then the "Protect Main" ruleset, and under "Require status checks to pass" add a second check named exactly `Firestore/Storage rules (emulator)` (copy the string, the parentheses and spacing must match `ci.yml`'s job name character for character). Until that is added, this change only fixes the documentation of the gate, not the gate. To confirm it took: open any PR, and the merge box should list two required checks instead of one.
 
 **Files:** `.github/workflows/ci.yml`, `scripts/setup-branch-protection.sh`, `docs/security/REMEDIATION.md`, `src/lib/opsAlert.ts`, `test/required-checks.test.ts`, `test/ops-alert.test.ts`, `BUGS.md`, `LESSONS.md`, `.gitignore`
+## fix(tests): repair the 75 failing smoke tests (2026-10-21)
+
+The weekly smoke suite had failed every run since August, and the same 75 cases failed on Node 22 and Node 24. The site was fine and the tests had gone stale: the HomeSignup, LeadCaptureModal and NotifyModal tests now complete the optional phone step before expecting success, the footer test checks the data driven city list by shape instead of five fixed cities, the city page test checks the heading is in the page (it is hidden at 1024px and below by design), the waiver test uses the waiver checkbox, and the Firebase mock answers `accounts:lookup`. The Apply happy path now proves auth, photo upload and the Firestore write are reached in order; the real success path stays with the daily synthetic monitor because the Firestore write channel cannot be faked with a canned reply. The full suite passes 319 of 320 on Node 24 (one third party accessibility flake retried green, queued in BUGS.md).
+
+**Files:** `tests/smoke/critical-flows.spec.ts`, `tests/smoke/site.spec.ts`, `LESSONS.md`
+
+## chore(runtime): move the project to Node 24 (2026-10-19)
+
+Node 22 moves to maintenance, so `.nvmrc`, `engines.node` (now `>=24.15.0 <25.0.0`, the floor set by jsdom's dependencies), all seven CI `setup-node` steps, README and CONTRIBUTING now name Node 24. Vercel reads `engines.node`, so production follows. `@types/node` moved from 26 to 24 so the types match the runtime major. Node 24 bundles npm 11, which matches the lockfile writer. Verified on Node 24.22.0: `npm ci`, lint, `astro check`, 1,304 unit tests and `astro build` all pass.
 
 ## fix(deps): remove sprintf-js from the dev tree to close Dependabot alert #111 (2026-10-19)
 

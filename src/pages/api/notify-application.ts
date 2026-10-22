@@ -7,28 +7,36 @@ import { enforceRateLimit, RATE_LIMITS } from "@/lib/rateLimit";
 import { isAllowedOrigin } from "@/lib/allowedOrigin";
 import { isSyntheticSubmission } from "@/lib/syntheticMonitor";
 import { alertOps } from "@/lib/opsAlert";
+import { FIELD_LIMITS } from "@/lib/applicationFieldLimits";
 
 export const prerender = false;
 
+// WHY these mirror @/lib/applicationFieldLimits instead of the client's own
+// numbers: this schema drifted from FIELD_LIMITS after the 2026-08-31 "no
+// human hits a length limit" sweep (PR #244) raised the client/rules caps
+// but missed this file, so a real applicant with e.g. a formatted phone
+// number over the old 30-char cap saved to Firestore fine but silently
+// never triggered the admin email. Importing the shared constants instead
+// of duplicating numbers makes that drift structurally impossible to repeat.
 const ApplicationSchema = z.object({
-  name: z.string().min(1).max(200),
+  name: z.string().min(1).max(FIELD_LIMITS.freeText),
   age: z.number().int().min(18).max(120),
   gender: z.string().min(1).max(100),
   orientation: z.string().min(1).max(100),
-  city: z.string().min(1).max(200),
+  city: z.string().min(1).max(FIELD_LIMITS.freeText),
   state: z.string().max(100).default(""),
   country: z.string().max(100).default(""),
-  email: z.string().email().max(320),
-  instagram: z.string().min(1).max(100),
+  email: z.string().email().max(FIELD_LIMITS.email),
+  instagram: z.string().min(1).max(FIELD_LIMITS.instagram),
   community: z.string().max(100).default(""),
   income: z.string().max(100).default(""),
   applicationType: z.enum(["Self", "Nomination"]),
-  referrerName: z.string().max(200).default(""),
+  referrerName: z.string().max(FIELD_LIMITS.freeText).default(""),
   nominationConsent: z.boolean().optional(),
-  pitch: z.string().max(5000).default(""),
-  phone: z.string().max(30).optional(),
-  height: z.string().max(50).optional(),
-  type: z.string().max(200).optional(),
+  pitch: z.string().max(FIELD_LIMITS.pitch).default(""),
+  phone: z.string().max(FIELD_LIMITS.phone).optional(),
+  height: z.string().max(FIELD_LIMITS.freeText).optional(),
+  type: z.string().max(FIELD_LIMITS.freeText).optional(),
   seenShowBefore: z.boolean().optional(),
   // Storage paths, not URLs: photo reads are admin-only, so the email links
   // to the dashboard instead of exposing tokened photo URLs.

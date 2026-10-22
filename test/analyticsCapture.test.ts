@@ -38,6 +38,22 @@ describe("analyticsCapture", () => {
     expect(enriched.page_type).toBe("tickets");
   });
 
+  it("enrichEvent tags /cuffing-season and /singles-mixers page types", () => {
+    Object.defineProperty(window, "location", {
+      writable: true,
+      configurable: true,
+      value: new URL("https://garammasaladating.com/cuffing-season"),
+    });
+    expect(enrichEvent().page_type).toBe("cuffing");
+
+    Object.defineProperty(window, "location", {
+      writable: true,
+      configurable: true,
+      value: new URL("https://garammasaladating.com/singles-mixers"),
+    });
+    expect(enrichEvent().page_type).toBe("mixers");
+  });
+
   it("capture forwards enriched properties to posthog and dataLayer", () => {
     capture("ticket_click", {
       cta_text: "Buy Tickets",
@@ -66,6 +82,7 @@ describe("analyticsCapture", () => {
       "track",
       "CompleteRegistration",
       expect.any(Object),
+      undefined,
     );
   });
 
@@ -75,6 +92,7 @@ describe("analyticsCapture", () => {
       "track",
       "Lead",
       expect.any(Object),
+      undefined,
     );
 
     vi.mocked(window.fbq!).mockClear();
@@ -83,6 +101,25 @@ describe("analyticsCapture", () => {
       "track",
       "Lead",
       expect.any(Object),
+      undefined,
+    );
+  });
+
+  it("capture passes options.eventId through as fbq's eventID for CAPI dedup", () => {
+    // The tracked-redirect flow (src/pages/api/go/[slug].ts) fires a paired
+    // server-side CAPI call with the same event_id so Meta collapses the
+    // browser Pixel event and the server event into one conversion instead
+    // of double counting. See CaptureOptions.eventId in analyticsCapture.ts.
+    capture(
+      "checkout_opened",
+      { event_id: "manhattan-2026-05-10" },
+      { eventId: "manhattan-2026-05-10" },
+    );
+    expect(window.fbq).toHaveBeenCalledWith(
+      "track",
+      "InitiateCheckout",
+      expect.any(Object),
+      { eventID: "manhattan-2026-05-10" },
     );
   });
 

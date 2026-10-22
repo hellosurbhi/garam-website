@@ -3,12 +3,15 @@ import { validateEmail } from "@/utils/validateEmail";
 import { addKitSubscriber, type KitSubscriberFields } from "@/lib/kit";
 import { enforceRateLimit, RATE_LIMITS } from "@/lib/rateLimit";
 import { issueLeadToken } from "@/lib/leadToken";
+import { alertOps } from "@/lib/opsAlert";
 
 export const prerender = false;
 
 interface LeadPayload {
   email: string;
   phone?: string;
+  name?: string;
+  instagram?: string;
   city?: string;
   source?: string;
   sourcePage?: string;
@@ -123,8 +126,13 @@ export const POST: APIRoute = async ({ request }) => {
     createdAt: { stringValue: now },
   };
 
-  // Add optional fields
-  addStringField(fields, "phone", body.phone, 20);
+  // Add optional fields. Caps mirror firestore.rules validLead: phone 50 to
+  // match the apply form's format-sized ceiling (a formatted international
+  // number is longer than the old 20), name/instagram for the apply form's
+  // progressive capture.
+  addStringField(fields, "phone", body.phone, 50);
+  addStringField(fields, "name", body.name, 1000);
+  addStringField(fields, "instagram", body.instagram, 100);
   addStringField(fields, "city", body.city, 100);
   addStringField(fields, "source", body.source ?? "lead-capture", 50);
   addStringField(fields, "sourcePage", body.sourcePage ?? "/", 200);
@@ -172,6 +180,15 @@ export const POST: APIRoute = async ({ request }) => {
     if (!res.ok) {
       const errText = await res.text();
       console.error("[capture-lead] Firestore write failed:", errText);
+      // A 500 here is a lost lead; page with the email so the person is
+      // recoverable (the client also reports, but server-side coverage does
+      // not depend on the client surviving).
+      await alertOps({
+        flow: "lead",
+        stage: "firestore_write",
+        errorMessage: errText.slice(0, 2000),
+        context: { email, city: body.city },
+      });
       return new Response(JSON.stringify({ error: "Failed to save lead" }), {
         status: 500,
         headers: { "Content-Type": "application/json" },
@@ -213,7 +230,13 @@ export const POST: APIRoute = async ({ request }) => {
         headers: { "Content-Type": "application/json" },
       },
     );
-  } catch {
+  } catch (err) {
+    await alertOps({
+      flow: "lead",
+      stage: "capture_unhandled",
+      errorMessage: err instanceof Error ? err.message : String(err),
+      context: { email, city: body.city },
+    });
     return new Response(JSON.stringify({ error: "Server error" }), {
       status: 500,
       headers: { "Content-Type": "application/json" },

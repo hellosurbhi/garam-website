@@ -1,13 +1,6 @@
 import type { APIRoute } from "astro";
 import { enforceRateLimit, RATE_LIMITS } from "@/lib/rateLimit";
-
-function isAllowedOrigin(origin: string | null): boolean {
-  if (!origin) return false;
-  if (origin === "https://garammasaladating.com") return true;
-  if (/^https:\/\/[\w-]+-hellosurbhi\.vercel\.app$/.test(origin)) return true;
-  if (/^http:\/\/localhost(:\d+)?$/.test(origin)) return true;
-  return false;
-}
+import { isAllowedOrigin } from "@/lib/allowedOrigin";
 
 export const prerender = false;
 

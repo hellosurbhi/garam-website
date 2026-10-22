@@ -1,3 +1,4 @@
+#!/bin/sh
 if [ -x "$HOME/.git-hooks/commit-msg" ]; then
   bash "$HOME/.git-hooks/commit-msg" "$@"
 fi

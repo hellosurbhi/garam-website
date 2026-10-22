@@ -6,9 +6,42 @@ updates:
       interval: weekly
       day: monday
     open-pull-requests-limit: 5
+    ignore:
+      # WHY: @astrojs/check (<=0.9.9, peer typescript ^5 || ^6) and
+      # typescript-eslint (peer typescript <6.1.0) do not support TypeScript 7
+      # (the native compiler). A TS 7 bump fails npm ci with ERESOLVE, so the
+      # PR can never go green (see PR #134, retargeted to 6.0.3). Removing this
+      # rule before the Astro toolchain declares TS 7 peer support just re-files
+      # a permanently red PR every Monday.
+      - dependency-name: typescript
+        update-types: ["version-update:semver-major"]
     groups:
       minor-and-patch:
         update-types: [minor, patch]
+      stryker-major:
+        patterns:
+          - "@stryker-mutator/*"
+        update-types: [major]
+      # WHY: any two major-bump PRs opened in the same cycle conflict each
+      # other's package-lock.json (whichever merges first invalidates the
+      # other's lockfile hash), and the generic conflict-fixer can't safely
+      # 3-way-merge a lockfile, so they park forever. Bundling every major
+      # bump into one PR per week (mirrors minor-and-patch above) removes
+      # the collision instead of resolving it after the fact.
+      major:
+        update-types: [major]
+      # WHY: a `groups` entry defaults to `applies-to: version-updates`, so the
+      # three groups above never covered security advisories. Dependabot opened
+      # one PR per advisory instead (8 on 2026-10-11), and because the CI audit
+      # gate is repo-wide, every one of them stayed red: each PR fixes a single
+      # advisory while its own CI still sees the other seven, so none can ever
+      # go green on its own and merging them one at a time cannot converge.
+      # Batching them into one PR makes the gate satisfiable in a single merge.
+      # Removing this entry restores the one-PR-per-advisory pile-up.
+      security:
+        applies-to: security-updates
+        patterns:
+          - "*"
     reviewers:
       - hellosurbhi
 
@@ -17,5 +50,14 @@ updates:
     schedule:
       interval: monthly
     open-pull-requests-limit: 3
+    groups:
+      # WHY: unlike npm above, action bumps aren't split by update-type —
+      # action version bumps carry far lower breaking-change risk than npm
+      # majors, so one group for everything is enough to stop the actual
+      # problem (3 actions bumping in the same run opened 3 separate PRs
+      # within the same minute on 2026-08-26) without extra config surface.
+      all-actions:
+        patterns:
+          - "*"
     reviewers:
       - hellosurbhi

@@ -7,7 +7,7 @@ import {
   EXPERIENCE_STEPS,
 } from "@/data/copy";
 import { stripHtml } from "@/utils/stripHtml";
-import { events, getEventDisplayStatus } from "@/data/events";
+import { events, getEventDisplayStatus, isDisplayable } from "@/data/events";
 import { pressItems } from "@/data/press";
 import { SOCIAL_URLS, CREATOR_URLS } from "@/data/socials";
 import { journalPostsPublished } from "@/data/journal";
@@ -40,10 +40,16 @@ export const GET: APIRoute = () => {
   const today = new Date();
 
   const upcomingEvents = events.filter(
-    (e) => e.isoDate && new Date(e.isoDate + "T00:00:00") >= today && !e.hidden,
+    (e) =>
+      e.isoDate &&
+      new Date(e.isoDate + "T00:00:00") >= today &&
+      isDisplayable(e),
   );
   const pastEvents = events.filter(
-    (e) => e.isoDate && new Date(e.isoDate + "T00:00:00") < today && !e.hidden,
+    (e) =>
+      e.isoDate &&
+      new Date(e.isoDate + "T00:00:00") < today &&
+      isDisplayable(e),
   );
 
   const activeList = Object.values(activeCities).filter(
@@ -85,7 +91,6 @@ export const GET: APIRoute = () => {
               );
             if (e.startTime)
               lines.push(`Time: ${e.startTime} to ${e.endTime ?? "22:00"} ET`);
-            if (e.price) lines.push(`Tickets: $${e.price}`);
             const status = getEventDisplayStatus(e);
             if (status) lines.push(`Status: ${status}`);
             lines.push(`Ticket URL: ${e.url}`);
@@ -161,7 +166,7 @@ Garam Masala Dating is a live comedy dating show and entertainment brand. It is 
 
 ${SITE.description}
 
-The show runs weekly in Manhattan at Top Secret Comedy Club (44 Avenue A, East Village) and monthly in Jersey City at The Laugh Tour Comedy Club. It has expanded to Los Angeles, San Francisco and San Diego.
+The show is at City Winery NYC (25 11th Ave, Chelsea) in Manhattan and has toured to Jersey City. It has expanded to Los Angeles, San Francisco and San Diego.
 
 **Stats:** ${statsLine}
 
@@ -179,7 +184,7 @@ ${experienceSection}
 
 Surbhi is a New York-based stand-up comedian and the creative force behind Garam Masala Dating. She created the show in 2022 after noticing something missing in the South Asian comedy and dating scene: a space where desi singles could meet in real life, in a room full of energy, without the awkwardness of apps or the pressure of family setups.
 
-What started as a one-off experiment in a downtown bar is now America's #1 live desi comedy dating show. The show sells out 250-seat venues weekly in Manhattan, runs monthly in Jersey City, and has expanded to Los Angeles, San Francisco, and San Diego. Surbhi has performed at comedy venues across the US and UK, and has matched three real couples through the show, and counting.
+What started at Broadway Comedy Club, then moved to Top Secret Comedy Club, is now America's #1 live desi comedy dating show, running out of City Winery NYC. The show sells out 250-seat venues in Manhattan and has toured to Jersey City, Los Angeles, San Francisco, and San Diego. Surbhi has performed at comedy venues across the US and UK, and has matched three real couples through the show, and counting.
 
 She handles everything from casting and producing to hosting the show itself. Her ability to make strangers comfortable on stage in front of hundreds of people is the reason contestants keep coming back.
 
@@ -312,8 +317,7 @@ ${pressSection}
 
 - Email: contact@garammasaladating.com
 - Website: https://garammasaladating.com
-- Venue (NYC): Top Secret Comedy Club, 44 Avenue A, East Village, New York, NY 10009
-- Venue (Jersey City): The Laugh Tour Comedy Club, 555 Washington Blvd, Jersey City, NJ 07310
+- Venue (NYC): The Loft at City Winery NYC, 25 11th Ave, Chelsea, New York, NY 10011
 
 ---
 

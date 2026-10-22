@@ -1,6 +1,7 @@
 import { useState, useEffect, useMemo, useSyncExternalStore } from "react";
 import styles from "./ContestantPrepPage.module.css";
 import Skeleton from "./ui/Skeleton";
+import { safeSessionStorage } from "@/lib/safeStorage";
 
 /* ─── Hydration gate ───────────────────────────────────────────── */
 
@@ -29,8 +30,8 @@ const EXPIRES_KEY = "gm-prep-expires";
 
 /** Pure read: an expired or malformed session is treated as absent. */
 function readSession(): { token: string; expiresAt: number } | null {
-  const token = sessionStorage.getItem(TOKEN_KEY);
-  const expires = sessionStorage.getItem(EXPIRES_KEY);
+  const token = safeSessionStorage.getItem(TOKEN_KEY);
+  const expires = safeSessionStorage.getItem(EXPIRES_KEY);
   if (!token || !expires) return null;
   const expiresAt = parseInt(expires, 10);
   if (Number.isNaN(expiresAt) || Date.now() >= expiresAt) return null;
@@ -40,13 +41,13 @@ function readSession(): { token: string; expiresAt: number } | null {
 /** Storage hygiene, called from the effect (never during render). */
 function clearExpiredSession() {
   if (readSession() !== null) return;
-  sessionStorage.removeItem(TOKEN_KEY);
-  sessionStorage.removeItem(EXPIRES_KEY);
+  safeSessionStorage.removeItem(TOKEN_KEY);
+  safeSessionStorage.removeItem(EXPIRES_KEY);
 }
 
 function saveSession(token: string, expiresAt: number) {
-  sessionStorage.setItem(TOKEN_KEY, token);
-  sessionStorage.setItem(EXPIRES_KEY, String(expiresAt));
+  safeSessionStorage.setItem(TOKEN_KEY, token);
+  safeSessionStorage.setItem(EXPIRES_KEY, String(expiresAt));
 }
 
 /* ─── Loading state ────────────────────────────────────────────── */

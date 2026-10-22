@@ -1,3 +1,5 @@
+import { safeLocalStorage } from "./safeStorage";
+
 export type ConsentRecord = {
   v: 1;
   analytics: boolean;
@@ -13,7 +15,7 @@ const CONSENT_VERSION = 1 as const;
 // stored record with the old version will be treated as missing.
 export function readConsent(): ConsentRecord | null {
   try {
-    const raw = localStorage.getItem(CONSENT_KEY);
+    const raw = safeLocalStorage.getItem(CONSENT_KEY);
     if (!raw) return null;
 
     const parsed = JSON.parse(raw) as ConsentRecord;
@@ -35,7 +37,7 @@ export function writeConsent(prefs: {
     marketing: prefs.marketing,
     ts: Date.now(),
   };
-  localStorage.setItem(CONSENT_KEY, JSON.stringify(record));
+  safeLocalStorage.setItem(CONSENT_KEY, JSON.stringify(record));
   return record;
 }
 

@@ -1,7 +1,7 @@
 import type { APIRoute } from "astro";
 import { SITE, HOME_FAQS, STATS } from "@/data/copy";
 import { stripHtml } from "@/utils/stripHtml";
-import { events, getEventDisplayStatus } from "@/data/events";
+import { events, getEventDisplayStatus, isDisplayable } from "@/data/events";
 import { SOCIAL_URLS } from "@/data/socials";
 import { journalPostsPublished } from "@/data/journal";
 import { activeCities } from "@/data/cities/active";
@@ -10,7 +10,10 @@ export const GET: APIRoute = () => {
   const today = new Date();
 
   const upcomingEvents = events.filter(
-    (e) => e.isoDate && new Date(e.isoDate + "T00:00:00") >= today && !e.hidden,
+    (e) =>
+      e.isoDate &&
+      new Date(e.isoDate + "T00:00:00") >= today &&
+      isDisplayable(e),
   );
 
   const activeList = Object.values(activeCities).filter(

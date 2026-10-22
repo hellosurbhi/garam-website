@@ -43,7 +43,7 @@ Key pages: `/` `/tickets` `/apply` `/links` `/faq` `/hosts` `/journal` `/cities/
 
 When adding new content (shows, press, FAQs, testimonials), update the data file: never edit component HTML.
 
-**Ranked listicles are countdowns.** Write body headings highest number first, number 1 last: the winner is the payoff at the end, never the opener. Always populate `rankedItems` (ascending positions, 1 = best; the mismatch with body order is by design) so the countdown test in `journal.test.ts` protects the article. `keyTakeaway` may name the winner because it renders at the end of the article.
+Data-file rules (never-delete events, ranked listicle countdowns) live in `src/data/CLAUDE.md`, which loads automatically when working in that folder.
 
 ## Code rules
 
@@ -112,7 +112,7 @@ Colors from `:root` in `src/index.css`:
 - `--off-white` #FFF8F0 (page background)
 - `--charcoal` #1A1A1A (body text)
 - `--spice-orange` #FF6D00 (secondary accent)
-- `--muted` #888 (secondary text: needs contrast fix, see BUGS.md)
+- `--muted` #6b6b6b (secondary text, WCAG AA on off-white)
 
 Fonts: Playfair Display (headings), Nunito (body), Cormorant Garamond (decorative italic). Self-hosted woff2.
 

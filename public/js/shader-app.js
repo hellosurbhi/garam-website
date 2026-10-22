@@ -197,6 +197,7 @@ const fsSource = `
 // ============================================
 function createShader(gl, type, source) {
   const s = gl.createShader(type);
+  if (!s) return null;
   gl.shaderSource(s, source);
   gl.compileShader(s);
   if (!gl.getShaderParameter(s, gl.COMPILE_STATUS)) {

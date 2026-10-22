@@ -26,4 +26,12 @@ export const pressItems: PressItem[] = [
     url: "https://www.youtube.com/watch?v=wEVFBODzYdI",
     type: "podcast",
   },
+  {
+    title: "Garam Masala Comedy Dating Show: Spilling Tea In Boston",
+    source: "Time Out Boston",
+    url: "https://www.timeout.com/boston/comedy/garam-masala-comedy-dating-show-spilling-tea-in-boston",
+    type: "article",
+    quote:
+      "Dating shows have become their own form of live entertainment, but Garam Masala works because it treats the awkward moments as the punchline instead of chasing manufactured romance.",
+  },
 ];

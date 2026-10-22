@@ -11,7 +11,7 @@ export const SITE = {
   description:
     "Garam Masala Dating is America's #1 live desi comedy dating show where South Asian singles go on a blind date in front of a packed house. Our hosts Surbhi and Wyatt guide the chaos with stand-up, crowd work and genuine matchmaking instincts. Every show ends with a singles mixer where the audience gets to continue the experiment.",
   shortDescription:
-    "America's #1 live desi comedy dating show. Real singles. Real dates. 250-person audience. Weekly in Manhattan.",
+    "America's #1 live desi comedy dating show. Real singles. Real dates. 250-person audience. Live at City Winery NYC in Manhattan.",
   footerTagline: "America's #1 live desi comedy dating show.",
   footerHosts: "Hosted by Surbhi & Wyatt.",
   hosts: "Surbhi & Wyatt",
@@ -174,6 +174,9 @@ export const APPLY_PAGE = {
     `All contact info below is ${friendName ? `${friendName}'s` : "your friend's"}, not yours. Double-check every detail. If we cannot reach them, they will never hear from us.`,
   headingSelf: "Applying for yourself",
   headingNomination: "Nominating a friend",
+  photosFailedTitle: "One thing: your photos did not come through",
+  photosFailedNote:
+    "Your application is safely with us, but the photo upload failed on your connection. DM your photos to @garammasaladating on Instagram and we will attach them for you.",
   photoGuidanceHeading: "Photos: up to 10",
   photoGuidanceIntro: "We need to be able to tell what you look like. Include:",
   photoGuidanceItems: [
@@ -203,7 +206,6 @@ export const EVENTS = {
   ticketCta: "Grab My Spot",
   stickyCta: "Get Tickets",
   doorsLabel: "Doors",
-  priceFromLabel: "Tickets from",
   getTicketsCta: "Get tickets",
 } as const;
 
@@ -243,6 +245,50 @@ export const EXPERIENCE_STEPS = [
     text: "After the show, the venue transforms into a singles mixer. Same room, live DJ, and the energy from the show carries everyone forward. Included with your ticket.",
   },
 ];
+
+export interface AgendaSlot {
+  label: string;
+  /** Which event field this offset is measured against. */
+  anchor: "start" | "end";
+  /** Minutes from the anchor time; negative is earlier. */
+  offsetMinutes: number;
+}
+
+/**
+ * Run-of-show agenda for the per-event landing page. Offsets are computed
+ * against each event's actual startTime/endTime so the displayed clock times
+ * are always correct, even though the copy here is shared across every show.
+ */
+export const SHOW_AGENDA: AgendaSlot[] = [
+  { label: "Doors open", anchor: "start", offsetMinutes: -30 },
+  { label: "Show begins", anchor: "start", offsetMinutes: 0 },
+  { label: "Audience votes", anchor: "end", offsetMinutes: -15 },
+  { label: "Singles mixer begins", anchor: "end", offsetMinutes: 0 },
+  { label: "Mixer wraps", anchor: "end", offsetMinutes: 60 },
+];
+
+/**
+ * Section copy for the per-event landing page (src/pages/events/[slug].astro).
+ * No faqHeading here: the page mounts <HomeFAQ /> as-is (same accordion
+ * component the homepage uses) rather than rebuilding the FAQ interaction,
+ * so its own "Everything You Need to Know" heading applies instead.
+ */
+export const EVENT_PAGE = {
+  eyebrow: "Live Comedy Dating Show",
+  overviewHeading: "About This Show",
+  whatToExpectHeading: "What to Expect",
+  lineupHeading: "On Stage",
+  locationHeading: "Location",
+  getDirectionsCta: "Get Directions",
+  agendaHeading: "Run of Show",
+  socialProofHeading: "What People Are Saying",
+  bottomCtaHeading: "Ready to Grab Your Spot?",
+  /** Unique per-event meta description, built from the event's own description copy. */
+  metaDescription: (eventDescription: string): string =>
+    eventDescription.length <= 155
+      ? eventDescription
+      : `${eventDescription.slice(0, 152).trimEnd()}...`,
+} as const;
 
 export const JOURNAL_CTA_SOCIAL = {
   intro:

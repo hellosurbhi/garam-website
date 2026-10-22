@@ -1,4 +1,4 @@
-import { defineConfig } from "@playwright/test";
+import { defineConfig, devices } from "@playwright/test";
 
 const remoteBaseURL = process.env.PLAYWRIGHT_BASE_URL;
 const hasRemoteURL = !!remoteBaseURL;
@@ -27,6 +27,14 @@ export default defineConfig({
     {
       name: "iphone",
       use: { viewport: { width: 375, height: 812 } },
+    },
+    {
+      // WHY: every unnamed project runs Chromium, but 70% of traffic is
+      // mobile and the July 2026 production errors were Safari-only shapes
+      // that Chromium-only smoke runs can never reproduce. This project runs
+      // the real WebKit engine with the iPhone device profile.
+      name: "iphone-webkit",
+      use: { ...devices["iPhone 13"] },
     },
     {
       name: "ipad",

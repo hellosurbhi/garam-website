@@ -1,7 +1,7 @@
 import { SOCIAL_URLS } from "@/data/socials";
 import { cities } from "@/data/cities";
 import type { CityData } from "@/data/cities";
-import { allEvents, TBA_CITY_SLUGS } from "@/data/events";
+import { allEvents, TBA_CITY_SLUGS, isDisplayable } from "@/data/events";
 import { getUpcomingDated } from "@/utils/eventFilters";
 
 export interface FooterLink {
@@ -33,7 +33,8 @@ function buildFooterShowLinks(): FooterLink[] {
   }
 
   for (const e of allEvents) {
-    if (!e.citySlug || seen.has(e.citySlug) || e.hidden || e.isoDate) continue;
+    if (!e.citySlug || seen.has(e.citySlug) || !isDisplayable(e) || e.isoDate)
+      continue;
     seen.add(e.citySlug);
     slugs.push(e.citySlug);
   }

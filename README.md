@@ -14,6 +14,8 @@ Website, contestant application system, and admin dashboard for [Garam Masala Da
 ```bash
 git clone https://github.com/hellosurbhi/garam-masala-dating.git
 cd garam-masala-dating
+nvm install 22  # node 22.22.2 or newer 22.x required; jsdom and undici set the floor and installs are engine-gated
+npm install -g npm@11  # required: the lockfile is written by npm 11 and installs are gated on it
 npm install
 cp .env.example .env.local  # fill in your own Firebase project values
 npm run dev
@@ -73,17 +75,17 @@ scripts/          # Build-time scripts (prerender, data migration)
 
 ## Scripts
 
-| Command                   | What it does                                |
-| ------------------------- | ------------------------------------------- |
-| `npm run dev`             | Start dev server with HMR                   |
-| `npm run build`           | Type-check and build for production         |
-| `npm run build:prerender` | Build + generate static HTML with Puppeteer |
-| `npm run lint`            | Run ESLint                                  |
-| `npm run preview`         | Preview production build locally            |
+| Command                | What it does                              |
+| ---------------------- | ----------------------------------------- |
+| `npm run dev`          | Start dev server with HMR                 |
+| `npm run build`        | Build and verify the packaged server      |
+| `npm run test:runtime` | Check the existing Vercel server artifact |
+| `npm run lint`         | Run ESLint                                |
+| `npm run preview`      | Preview production build locally          |
 
 ## Deployment
 
-The site deploys to **Vercel**. The production build uses `build:prerender` to generate static HTML for key pages via Puppeteer. Security headers (CSP, HSTS, X-Frame-Options) are configured in `vercel.json`.
+The site deploys to **Vercel**. `npm run build` generates Astro's static pages and server function, then checks that the packaged server starts in isolation and handles ticket redirects and safe API requests. This check runs in CI and Vercel builds before release. It blocks external fetches and does not submit customer data. Security headers (CSP, HSTS, X-Frame-Options) are configured in `vercel.json`.
 
 ## Contributing
 

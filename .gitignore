@@ -67,8 +67,11 @@ link-results.json
 .lighthouseci/
 
 
-# Review pipeline artifacts (pre-commit reviewer outputs + verdict cache).
+# Review pipeline artifacts (reviewer outputs + verdict cache at the repo root).
 # Untracked AND ignored on purpose: CodeRabbit CLI scans untracked files, so
 # unignored review records made the pipeline review its own exhaust and block
 # commits over stale artifact contents (hit 2026-07-14).
-reviews/
+# Anchored: only the root reviews/ dir, not any nested directory of that name.
+/reviews/
+# Legacy husky-generated shims (never commit; hooks are the checked-in .husky files)
+.husky/_/

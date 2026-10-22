@@ -1,0 +1,106 @@
+# Auto-deploy Firestore/Storage security rules on merge to main.
+#
+# WHY this workflow exists (approved 2026-08-19, built 2026-09-11): the
+# July and August apply-form outages had the identical root cause — a PR
+# changed firestore.rules/storage.rules, Vercel deployed the client code
+# instantly, and the rules waited on a human to run a manual deploy that
+# never happened. Client and rules drifted, every application was
+# rejected with "Missing or insufficient permissions". This workflow
+# closes that class permanently: rules ship on the same merge that
+# changes them, no operator step, and the drift check verifies the
+# deployed rules afterward.
+#
+# Required repo secret: FIREBASE_SERVICE_ACCOUNT (JSON key for
+# github-rules-deploy@<project>.iam.gserviceaccount.com, scoped to rules
+# deploys only). The drift-check step reuses the FIREBASE_ADMIN_* secrets
+# the synthetic monitor already depends on. A missing secret FAILS the
+# run — never skip-but-green (the 2026-08 outage sat invisible for a week
+# precisely because nothing red pointed at the undeployed rules).
+name: Deploy Firebase Rules
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - firestore.rules
+      - storage.rules
+      - firebase.json
+      - .github/workflows/deploy-rules.yml
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  # issues: write exists ONLY for the failure pager step below, matching
+  # synthetic-apply.yml: a failed rules deploy recreates the exact outage
+  # class this workflow exists to kill, so it must page loudly.
+  issues: write
+
+concurrency:
+  group: deploy-rules
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    name: Test rules, deploy, verify no drift
+    runs-on: ubuntu-latest
+    steps:
+      - name: Fail loudly if the deploy credential is missing
+        env:
+          FIREBASE_SERVICE_ACCOUNT: ${{ secrets.FIREBASE_SERVICE_ACCOUNT }}
+        run: |
+          if [ -z "$FIREBASE_SERVICE_ACCOUNT" ]; then
+            echo "FIREBASE_SERVICE_ACCOUNT repo secret is missing. Rules can NOT auto-deploy." >&2
+            echo "Fix: recreate the github-rules-deploy service account key and run: gh secret set FIREBASE_SERVICE_ACCOUNT --repo ${GITHUB_REPOSITORY}" >&2
+            exit 1
+          fi
+      - uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm install -g npm@11
+      - run: npm ci
+      - name: Rules tests against the emulator
+        # WHY tests gate the deploy: a rules file that rejects legitimate
+        # applications must fail HERE, red on the merge commit, instead of
+        # shipping and being caught 6 hours later by the synthetic monitor
+        # (or worse, by a real applicant).
+        run: npm run test:rules
+      - name: Deploy firestore.rules + storage.rules
+        env:
+          FIREBASE_SERVICE_ACCOUNT: ${{ secrets.FIREBASE_SERVICE_ACCOUNT }}
+          FIREBASE_PROJECT_ID: ${{ secrets.FIREBASE_PROJECT_ID }}
+        run: |
+          printf '%s' "$FIREBASE_SERVICE_ACCOUNT" > "$RUNNER_TEMP/firebase-sa.json"
+          export GOOGLE_APPLICATION_CREDENTIALS="$RUNNER_TEMP/firebase-sa.json"
+          npx firebase-tools deploy --only firestore:rules,storage \
+            --project "$FIREBASE_PROJECT_ID" --non-interactive --force
+          rm -f "$RUNNER_TEMP/firebase-sa.json"
+      - name: Verify deployed rules match the repo
+        # Same drift check the synthetic monitor runs first; passing here
+        # is the proof the release actually landed, not just that the CLI
+        # exited 0.
+        run: node scripts/check-rules-drift.mjs
+        env:
+          FIREBASE_ADMIN_CLIENT_EMAIL: ${{ secrets.FIREBASE_ADMIN_CLIENT_EMAIL }}
+          FIREBASE_ADMIN_PRIVATE_KEY: ${{ secrets.FIREBASE_ADMIN_PRIVATE_KEY }}
+          FIREBASE_PROJECT_ID: ${{ secrets.FIREBASE_PROJECT_ID }}
+          FIREBASE_STORAGE_BUCKET: ${{ secrets.FIREBASE_STORAGE_BUCKET }}
+      - name: Page the producer via GitHub issue on failure
+        # Same one-thread pattern as synthetic-apply.yml. Plain language
+        # body: what broke, what it means, the one action.
+        if: failure()
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          RUN_URL: https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}
+        run: |
+          TITLE="Rules auto-deploy failing"
+          BODY="A merge to main changed the database security rules, but the automatic deploy FAILED. The live site is still running the OLD rules, so if the merged code depends on the new ones, the apply form may be rejecting real applicants right now. Claude will pick this up and fix the deploy; if the apply form matters in the next few hours, ask Claude to run the manual rules deploy. Run log: $RUN_URL"
+          EXISTING=$(gh issue list --repo "$GITHUB_REPOSITORY" --state open --search "\"$TITLE\" in:title" --json number --jq '.[0].number // empty')
+          if [ -n "$EXISTING" ]; then
+            gh issue comment "$EXISTING" --repo "$GITHUB_REPOSITORY" --body "$BODY"
+          else
+            gh issue create --repo "$GITHUB_REPOSITORY" --title "$TITLE" --body "$BODY" --assignee hellosurbhi
+          fi

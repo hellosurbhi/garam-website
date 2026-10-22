@@ -80,7 +80,11 @@ async function getAccessToken() {
   return (await res.json()).access_token;
 }
 
-async function querySyntheticDocs(token) {
+async function querySyntheticDocs(
+  token,
+  collectionId = "applications",
+  fieldPath = "emailNormalized",
+) {
   const res = await fetch(
     `https://firestore.googleapis.com/v1/projects/${projectId}/databases/(default)/documents:runQuery`,
     {
@@ -91,10 +95,10 @@ async function querySyntheticDocs(token) {
       },
       body: JSON.stringify({
         structuredQuery: {
-          from: [{ collectionId: "applications" }],
+          from: [{ collectionId }],
           where: {
             fieldFilter: {
-              field: { fieldPath: "emailNormalized" },
+              field: { fieldPath },
               op: "EQUAL",
               value: { stringValue: SYNTHETIC_EMAIL },
             },
@@ -156,6 +160,7 @@ async function deleteDoc(token, doc) {
 
 const token = await getAccessToken();
 const docs = await querySyntheticDocs(token);
+const leadDocs = await querySyntheticDocs(token, "leads", "email");
 
 // 1. VERIFY: today's run must have produced a fresh document.
 const fresh = docs.some((doc) => {
@@ -196,6 +201,36 @@ for (const doc of docs) {
     `Cleaned up ${doc.name} (+${photoPaths.length} photo${photoPaths.length === 1 ? "" : "s"}).`,
   );
 }
+// 3. LEADS: the lead-capture monitor posts to /api/capture-lead with the same
+// reserved email. A lead is verified and deleted on the same structural rules:
+// exact email match, source "synthetic-monitor", createdAt inside 48 hours.
+const leadFresh = leadDocs.some((doc) => {
+  const createdAt = Date.parse(field(doc, "createdAt")?.stringValue ?? "");
+  return Number.isFinite(createdAt) && Date.now() - createdAt < FRESH_WINDOW_MS;
+});
+if (!leadFresh) {
+  console.error(
+    `VERIFY FAILED: no synthetic lead with createdAt in the last 30 minutes (found ${leadDocs.length}). Lead capture is likely broken in production.`,
+  );
+} else {
+  console.log("VERIFY OK: synthetic lead landed in Firestore.");
+}
+for (const doc of leadDocs) {
+  const createdAt = Date.parse(field(doc, "createdAt")?.stringValue ?? "");
+  const ok =
+    field(doc, "email")?.stringValue === SYNTHETIC_EMAIL &&
+    field(doc, "source")?.stringValue === "synthetic-monitor" &&
+    Number.isFinite(createdAt) &&
+    Date.now() - createdAt < CLEANUP_WINDOW_MS;
+  if (!ok) {
+    console.error(
+      `CLEANUP REFUSED for ${doc.name}: lead matched the synthetic email query but failed the source/48h checks. Not deleting; investigate manually.`,
+    );
+    process.exit(2);
+  }
+  await deleteDoc(token, doc);
+  console.log(`Cleaned up lead ${doc.name}.`);
+}
 console.log("CLEANUP OK.");
 
-if (!fresh) process.exit(1);
+if (!fresh || !leadFresh) process.exit(1);

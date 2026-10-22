@@ -1,5 +1,13 @@
 # Changelog
 
+## feat(monitoring): check the live site every 15 minutes (2026-10-21)
+
+A new Site Health workflow asks production what a visitor would. Every page in the sitemap must load, every internal link on those pages must resolve and every API route in `src/pages/api` must be deployed instead of answering with a missing page. New API files are picked up automatically. A first red run is checked again two minutes later and only a second red opens a GitHub issue and sends one email. The issue closes itself when the site is healthy again.
+
+The 6-hour synthetic monitor now also posts a lead to `/api/capture-lead` and confirms it landed in Firestore. `capture-lead` skips the Kit sync for the reserved synthetic email so the monitor never reaches the newsletter list. The pager email script accepts a subject and message so other monitors can reuse it.
+
+**Files:** `.github/workflows/site-health.yml`, `.github/workflows/synthetic-apply.yml`, `tests/synthetic/site-health.spec.ts`, `tests/synthetic/lead-monitor.spec.ts`, `scripts/synthetic-apply-verify.mjs`, `scripts/send-pager-email.mjs`, `src/pages/api/capture-lead.ts`
+
 ## fix(deps): remove sprintf-js from the dev tree to close Dependabot alert #111 (2026-10-19)
 
 `sprintf-js` (denial of service through unbounded precision specifiers) has no patched release: 1.1.3 is the latest and is also affected. It only reached the project through Lighthouse CI: `@lhci/cli` to `@lhci/utils` to `js-yaml@3` to `argparse@1`. Bumping the parent was not an option because `@lhci/cli` 0.15.1 is already the latest, and forcing `js-yaml@4` would break `@lhci/utils`, which still calls the removed `yaml.safeLoad`.

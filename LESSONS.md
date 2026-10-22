@@ -1,5 +1,13 @@
 # Lessons
 
+## Hundreds of passing tests never touched the real backend, so a dead form and a missing API route went unseen
+
+**What went wrong:** The apply form was broken for about two months and a visitor-facing API link led to Vercel's error page. Lint, types and the full test suite stayed green the whole time, and nothing alerted.
+
+**Why:** We assumed a large test suite meant a working product. Most tests mock Firebase and the network, so they prove the code agrees with itself and say nothing about the deployed site. The only live check covered one form and ran every 6 hours.
+
+**Rule:** Anything a visitor can reach needs a check against production, not a mock. Site Health now discovers pages from the sitemap and routes from `src/pages/api`, so new ones are covered with no list to maintain. A mocked test never counts as proof that a user flow works. Alerts page only after a second red and close themselves when the site recovers.
+
 ## A dependency bump crashed every server route and only production noticed
 
 **What went wrong:** `@astrojs/vercel` 11.0.13 made the serverless entrypoint import a module that also imported Rolldown, a build-only tool. Locally the import resolved from `node_modules`; on Vercel the native binary was not traced into the function, so every server route (ticket redirects, forms, lead capture) returned `FUNCTION_INVOCATION_FAILED`. Lint, types, 1,304 unit tests and the build all passed.

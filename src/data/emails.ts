@@ -1,7 +1,19 @@
+import { formatDisplayTime } from "@/utils/eventDate";
+
 export interface EmailTemplate {
   subject: string;
   text: string;
   html: string;
+}
+
+export interface MixerDetails {
+  isoDate: string;
+  startTime: string;
+  endTime: string;
+  venueName: string;
+  streetAddress: string;
+  neighborhood: string;
+  partifulUrl: string;
 }
 
 export interface InterviewSummary {
@@ -415,6 +427,87 @@ export function applicationReceived(name: string, city: string): EmailTemplate {
         `We go through applications personally and will be in touch soon. In the meantime, follow us on ${link("https://www.instagram.com/garammasaladating/", "@garammasaladating")} for show updates and behind-the-scenes content.`,
       ) +
       p("Talk soon!") +
+      p("Surbhi<br>Garam Masala Dating"),
+  );
+
+  return { subject, text, html };
+}
+
+export function mixerRsvpDetails(
+  name: string,
+  mixer: MixerDetails,
+): EmailTemplate {
+  const firstName = name.split(" ")[0];
+  const subject = `You're on the list, ${subjectSafe(firstName)}`;
+  const dateFormatted = new Date(
+    `${mixer.isoDate}T12:00:00`,
+  ).toLocaleDateString("en-US", {
+    weekday: "long",
+    month: "long",
+    day: "numeric",
+    timeZone: "America/New_York",
+  });
+  const timeFormatted = `${formatDisplayTime(mixer.startTime)} to ${formatDisplayTime(mixer.endTime)}`;
+  const addressLine = `${mixer.venueName}, ${mixer.streetAddress}, ${mixer.neighborhood}`;
+
+  const text = [
+    `Hi ${firstName},`,
+    "",
+    "You're on the list for our next singles mixer. Here are the details.",
+    "",
+    `${dateFormatted}, ${timeFormatted}`,
+    addressLine,
+    "",
+    `Open the invite for everything else: ${mixer.partifulUrl}`,
+    "",
+    "See you there!",
+    "",
+    "Surbhi",
+    "Garam Masala Dating",
+  ].join("\n");
+
+  const safeFirstName = escapeHtml(firstName);
+  const safeDate = escapeHtml(dateFormatted);
+  const safeTime = escapeHtml(timeFormatted);
+  const safeAddress = escapeHtml(addressLine);
+
+  const html = wrap(
+    p(`Hi ${safeFirstName},`) +
+      p(
+        "You're on the list for our next singles mixer. Here are the details.",
+      ) +
+      p(`<strong>${safeDate}, ${safeTime}</strong><br>${safeAddress}`) +
+      p(`${link(mixer.partifulUrl, "Open the invite")} for everything else.`) +
+      p("See you there!") +
+      p("Surbhi<br>Garam Masala Dating"),
+  );
+
+  return { subject, text, html };
+}
+
+export function mixerRsvpMissed(name: string): EmailTemplate {
+  const firstName = name.split(" ")[0];
+  const subject = `Thanks for registering, ${subjectSafe(firstName)}`;
+  const text = [
+    `Hi ${firstName},`,
+    "",
+    "Thank you for registering. That mixer already took place and it was completely sold out.",
+    "",
+    "Thanks so much for checking us out. We'll email you as soon as the next mixer is on the calendar.",
+    "",
+    "Surbhi",
+    "Garam Masala Dating",
+  ].join("\n");
+
+  const safeFirstName = escapeHtml(firstName);
+  const html = wrap(
+    p(`Hi ${safeFirstName},`) +
+      p(
+        "Thank you for registering. That mixer already took place and it was completely sold out.",
+      ) +
+      p(
+        "Thanks so much for checking us out. We'll email you as soon as the next mixer is on the calendar.",
+      ) +
       p("Surbhi<br>Garam Masala Dating"),
   );
 

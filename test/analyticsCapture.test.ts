@@ -38,6 +38,22 @@ describe("analyticsCapture", () => {
     expect(enriched.page_type).toBe("tickets");
   });
 
+  it("enrichEvent tags /cuffing-season and /singles-mixers page types", () => {
+    Object.defineProperty(window, "location", {
+      writable: true,
+      configurable: true,
+      value: new URL("https://garammasaladating.com/cuffing-season"),
+    });
+    expect(enrichEvent().page_type).toBe("cuffing");
+
+    Object.defineProperty(window, "location", {
+      writable: true,
+      configurable: true,
+      value: new URL("https://garammasaladating.com/singles-mixers"),
+    });
+    expect(enrichEvent().page_type).toBe("mixers");
+  });
+
   it("capture forwards enriched properties to posthog and dataLayer", () => {
     capture("ticket_click", {
       cta_text: "Buy Tickets",

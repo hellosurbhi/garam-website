@@ -73,13 +73,83 @@ Branch protection on `main` via GitHub Ruleset (not Classic, which is deprecated
 
 - Restrict deletions
 - Require pull request (1 review on external contributions; Surbhi as owner bypasses)
-- Require status checks: Lint, Types, Test, Build
+- Require status checks: Lint, Types, Test, Build; Firestore/Storage rules (emulator)
+  - **Not yet true in GitHub as of 2026-09-02:** the live ruleset still requires
+    the first check only. The second name is documented here and in
+    `scripts/setup-branch-protection.sh` as the target state; an operator has to
+    add the exact string `Firestore/Storage rules (emulator)` under "Require
+    status checks to pass" in Settings, then Rules, then "Protect Main". Until
+    then a red rules job still merges. Confirmed by opening any PR: the merge box
+    should list two required checks. Open as [NON-BLOCKING-RULES-GATE] in
+    `BUGS.md`.
+  - Every job in `.github/workflows/ci.yml` must be listed here. The emulator job
+    was added in PR #135 and left unrequired, so a `firestore.rules` or
+    `storage.rules` regression could merge with a red rules job. Keep this
+    list, `scripts/setup-branch-protection.sh` and the ci.yml job names in sync;
+    `test/required-checks.test.ts` fails when they drift. It parses all three,
+    the line above included, so keep that line in the form
+    `- Require status checks: <name>; <name>` (semicolons separate the names,
+    because a name has commas of its own). A job that deliberately does not gate
+    goes in that test's `ADVISORY_JOBS` list with its reason, so the exemption is
+    a visible decision rather than a name someone forgot. The ruleset itself is
+    outside the test's reach, which is why the GitHub half needs a human to
+    confirm.
 
 ---
 
 ## Open Dependabot alerts (post-PR #96, as of 2026-07-03)
 
 The 3 Dependabot alerts are dev-only and resolved via npm overrides. GitHub may still show them as "open" until the next Dependabot re-scan detects the overrides. No additional action needed.
+
+---
+
+## Unblocking the stalled Dependabot security queue (2026-10-11)
+
+**Branch:** `session/71531`
+**Issues resolved:** 11 production advisories (10 high, 1 moderate), plus the config cause of the pile-up
+
+### Why nothing could merge
+
+The CI gate is `npm audit --audit-level=high --omit=dev`, which measures the whole
+production tree, not the diff. Dependabot had 8 open security PRs, each fixing one
+advisory, so every one of them still saw the other seven and stayed red. Merging
+them one at a time could never converge.
+
+The `groups:` entries in `.github/dependabot.yml` did not apply, because a group
+defaults to `applies-to: version-updates`. A `security` group with
+`applies-to: security-updates` now batches security advisories into one PR.
+
+### Fixed by lockfile update (7 advisories)
+
+`npm audit fix` under npm 11, lockfile only, no `package.json` dependency ranges
+touched: `http-cache-semantics` (via astro), `nodemailer`, `sharp`, `smol-toml`,
+`source-map-js` and their transitives.
+
+### Fixed by override (4 advisories)
+
+| Package         | Severity | Advisory                             | Fix                   |
+| --------------- | -------- | ------------------------------------ | --------------------- |
+| `@grpc/grpc-js` | HIGH     | GHSA-m9gg-hp2v-232j (getAuthContext) | Override to `^1.14.6` |
+| `@grpc/grpc-js` | HIGH     | GHSA-f596-whhp-79r4 (error leakage)  | Override to `^1.14.6` |
+
+`@firebase/firestore` pins `@grpc/grpc-js: ~1.9.0`, and the current firestore
+(4.18.0) still pins it, so the tree resolved to 1.9.16 while the patch is 1.13.6+.
+No firebase release fixes this and no Dependabot PR can: the patched versions sit
+outside the pinned range. An `overrides` entry is the npm mechanism for exactly
+this case, and it stays within grpc-js's own 1.x major, so it is semver-compatible
+by the library's own contract.
+
+Exposure was low before the fix and is zero after it: both advisories are gRPC
+server-side issues, this app runs no gRPC server, and the firebase client SDK is
+imported only by browser code (`src/lib/firebase.ts`, `src/components/**`), where
+firestore uses `@firebase/webchannel-wrapper` and never loads grpc-js. The
+override was taken anyway so the gate measures a genuinely patched tree rather
+than being weakened to ignore a finding.
+
+Verified against the real build output: the client bundle contains no
+`@grpc/grpc-js`, `getAuthContext`, `ChannelCredentials` or `makeUnaryRequest`.
+Its only grpc match is the firestore setting name `grpcFlowControlWindow`, and
+`webchannel` is present in the same bundle, which is the browser transport.
 
 ---
 

@@ -1,7 +1,16 @@
 # .github/workflows/ci.yml
 #
-# The "Lint, Types, Test, Build" check below is REQUIRED by the repo ruleset
-# "Protect Main" (managed in GitHub Settings, Rules). Two constraints follow:
+# Both checks below ("Lint, Types, Test, Build" and "Firestore/Storage rules
+# (emulator)") MUST be required by the repo ruleset "Protect Main" (managed in
+# GitHub Settings, Rules, which no file in this repo can read or write).
+#
+# STATE (2026-09-02): the ruleset requires "Lint, Types, Test, Build" only.
+# "Firestore/Storage rules (emulator)" is listed here, in
+# scripts/setup-branch-protection.sh and in docs/security/REMEDIATION.md as
+# required, but until an operator adds that exact string to the ruleset it stays
+# ADVISORY: it runs and shows a red X on the PR, and the merge goes through
+# anyway. Tracked as [NON-BLOCKING-RULES-GATE] in BUGS.md until someone confirms
+# the merge box lists two required checks. Two constraints follow:
 #
 # WHY there is no paths-ignore on the trigger (2026-07-14): a required check
 # that never starts blocks the PR forever. The old `paths-ignore: **.md` meant
@@ -13,11 +22,11 @@
 # paths-ignore re-creates the deadlock; skip-but-report-success patterns were
 # explicitly rejected as false success reporting.
 #
-# WHY the job name must not change: the ruleset matches the check by the exact
-# string "Lint, Types, Test, Build". Renaming the job here without renaming the
-# required check in the ruleset means the required name never reports again and
-# every PR is permanently BLOCKED (the same deadlock, different trigger).
-# Rename both together or neither.
+# WHY the job names must not change: the ruleset matches each check by its
+# exact `name:` string. Renaming a job here without renaming the required check
+# in the ruleset (and in scripts/setup-branch-protection.sh) means the required
+# name never reports again and every PR is permanently BLOCKED (the same
+# deadlock, different trigger). Rename both together or neither.
 name: CI
 
 on:
@@ -54,7 +63,7 @@ jobs:
           ref: ${{ github.event.pull_request.head.sha }}
       - uses: actions/setup-node@v7
         with:
-          node-version: 22
+          node-version: 24
           cache: npm
       - run: npm install -g npm@11
       - run: npm ci
@@ -74,7 +83,10 @@ jobs:
   # JOB 2: Security rules against the Firebase emulator.
   # The only test class that exercises firestore.rules/storage.rules with the
   # REAL client operations of the apply flow (a rules/client mismatch took
-  # the form down for a week in July 2026). Too heavy for local pre-commit.
+  # the form down for a week in July 2026). Too heavy for local pre-commit,
+  # which is exactly why it is a REQUIRED check: nothing else stops a rules
+  # regression from merging. Like job 1 it runs on every PR unconditionally,
+  # so requiring it cannot deadlock a merge.
   # ==========================================
   rules:
     name: Firestore/Storage rules (emulator)
@@ -85,7 +97,7 @@ jobs:
           persist-credentials: false
       - uses: actions/setup-node@v7
         with:
-          node-version: 22
+          node-version: 24
           cache: npm
       - uses: actions/setup-java@v6
         with:

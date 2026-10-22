@@ -149,4 +149,24 @@ describe("events data", () => {
       },
     });
   });
+
+  it("keeps the announced December Philadelphia show accurate", () => {
+    const philadelphia = events.find(
+      (event) => event.eventbriteId === "2002925676616",
+    );
+
+    expect(philadelphia).toMatchObject({
+      date: "Dec 6",
+      isoDate: "2026-12-06",
+      startTime: "18:30",
+      endTime: "20:00",
+      slug: "philadelphia-2026-12-06",
+      ticketSource: "their-eventbrite",
+      venue: {
+        name: "Next In Line Comedy",
+        streetAddress: "1025 Hamilton Street",
+        postalCode: "19123",
+      },
+    });
+  });
 });

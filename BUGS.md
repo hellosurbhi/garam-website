@@ -544,7 +544,6 @@ This review ran on the merge of main into `fix/speed-insights-node-env` (PR #157
 
 Fixed in-session the same day (entries removed per doc routing): CHECKOUT-RATE-LIMIT and STALE-PAST-CTA (go route now resolves the event first, sends canceled/past shows to /tickets, and a tripped rate limit only suppresses CAPI, never the redirect; covered by test/go-redirect.test.ts), BUILD-HANG (10s AbortSignal.timeout on the build-time Eventbrite content fetch), ANALYTICS-SEMANTICS (data-event-vendor standardized to vendorFromUrl across all seven CTA sites), MERGE-DEBRIS (formatter-escaped conflict markers removed from CHANGELOG.md) and the FABRICATED-REFERENCE critical (obsolete widget-loader entry deleted from ENHANCEMENTS.md). Remaining items below.
 
-- [ ] HIGH [UNBOUNDED-SYNC-RUNTIME] `src/pages/api/sync-orders.ts` awaits CAPI calls sequentially; the retry query permits 100 orders and each timeout is 3 seconds, so retries alone can consume 300 seconds of a run before other work. Needs bounded concurrency or a per-run time budget, plus a test. Executor: the 3:00 overnight fix-medium-bugs lane (or the next session in this repo if it runs first).
 - [ ] MEDIUM [MISSING-COVERAGE, remainder] The new redirect route now has test/go-redirect.test.ts, but the CAPI client (`src/lib/capi.ts`), bot detection (`src/lib/isBotUserAgent.ts`), ticket CTA wiring (`src/lib/ticketCtaTracking.ts`), withTimeout behavior and the sync-orders Purchase retry state machine remain untested. Executor: the 3:00 overnight fix-medium-bugs lane.
 - Decision (2026-08-14): [EVENT-ID-REUSE] in `src/lib/ticketCtaTracking.ts` is won't-fix, by design. The per-anchor event_id carries an explicit WHY comment: repeated clicks on one rendered anchor are a single checkout intent, and Meta deduping the browser Pixel, the server CAPI call and any repeat click into one InitiateCheckout is the wanted behavior. Regenerating per click would double-count intent and desynchronize the ?eid= already stamped on the href. Logged so the finding is not re-filed.
 
@@ -555,7 +554,6 @@ Fixed in-session the same day (entries removed per doc routing): CHECKOUT-RATE-L
 
 ### Codex (2026-08-15T02:23Z)
 
-- [ ] MEDIUM: [PERMANENT-RETRY-STARVATION] `src/pages/api/sync-orders.ts:793` retains every failed CAPI delivery indefinitely, including terminal 4xx responses and events whose original timestamp has aged outside Meta’s accepted window. These orders can repeatedly occupy the unordered 100-row query and starve newer purchases. Classify terminal failures and mark them unrecoverable. (Pre-existing PR #196 code.) Executor: the 3:00 overnight fix-medium-bugs lane.
 - [ ] MEDIUM: [CONTENT-ARCHITECTURE] User-facing copy is hardcoded throughout `src/components/events/EventTicketCta.astro:61` and `src/pages/events/[slug].astro:195`, contrary to the repository rule that copy belongs in `src/data/`. Move these strings into `src/data/copy.ts`. (Pre-existing PR #196 code.) Executor: the 3:00 overnight fix-medium-bugs lane.
 - [ ] MEDIUM: [MISSING-COVERAGE] The new CAPI client, terminal retry behavior, bot detection and ticket tracking module have no direct tests. The redirect test also omits the same-day timezone boundary that exposes the checkout cutoff. (Pre-existing PR #196 gap; largely duplicates the MISSING-COVERAGE remainder entry above, which already carries the executor.) Executor: the 3:00 overnight fix-medium-bugs lane.
 
@@ -575,14 +573,12 @@ Already handled elsewhere: the UTC date cutoff, UNBOUNDED-SYNC-RUNTIME, PERMANEN
 Note (2026-08-19, PR #193 merge pass): this round's own [UNSUPPORTED-NODE-RANGE] finding is dropped here; main's engines.node commit (`a4e4226`) already fixed and deleted it. Split from a shared checkbox into one line per finding (Fable `[SHARED-CHECKBOX]`, 2026-08-19) so the overnight fixer's one-checkbox-per-finding parsing doesn't silently drop the co-listed items.
 
 - [ ] HIGH: [UTC-CALENDAR-CUTOFF] `src/utils/eventDate.ts:107-111` uses the UTC calendar date, so `src/pages/api/go/[slug].ts:61` rejects same-day West Coast ticket purchases from 5 PM local time. Compare against the event timezone and end time.
-- [ ] HIGH: [UNBOUNDED-SYNC-RUNTIME] `src/pages/api/sync-orders.ts:758-838` processes up to 100 retries sequentially with a three-second timeout each. Failures can consume over 300 seconds before metadata is persisted, while `withTimeout` does not abort the underlying fetch.
 
 ### Codex (2026-08-18T16:11Z) — MEDIUM findings
 
 Split from a shared checkbox into one line per finding, same pass as above (Fable `[SHARED-CHECKBOX]`, `[DUP-SECTION-HEADER]`, 2026-08-19).
 
 - [ ] MEDIUM: [DELIVERY-FLAG-REGRESSION] `src/pages/api/sync-orders.ts:652-656` resets `purchaseCapiSent` to false before every upsert. When the optional CAPI token is absent, or the existing-state read fails, a previously delivered order is persisted as pending again.
-- [ ] MEDIUM: [PERMANENT-RETRY-STARVATION] `src/pages/api/sync-orders.ts:401-443` returns an unordered 100-row queue, but only missing source events become unrecoverable. Terminal Meta 4xx responses and expired events retry forever and can crowd out new purchases.
 - [ ] MEDIUM: [FALSE-PURCHASE-CONVERSION] `src/lib/eventbrite.ts:42-46` converts every unknown Eventbrite status to `placed`; the new branch at `src/pages/api/sync-orders.ts:677` then sends those orders to Meta as purchases. Unknown statuses must fail closed.
 - [ ] MEDIUM: [HIDDEN-EVENT-INDEXING] `src/pages/events/[slug].astro:53-73` generates pages for hidden records and `astro.config.mjs:217-232` includes them in the sitemap. This publicly indexes records such as the hidden Chicago and Edison entries.
 - [ ] MEDIUM: [TBA-SUPPRESSION] `src/data/events.ts:595-600` checks cancellation but not `hidden`, despite claiming to test displayability. A hidden future show suppresses its city's public notify card.

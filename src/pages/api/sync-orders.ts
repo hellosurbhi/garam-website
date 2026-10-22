@@ -6,7 +6,7 @@ import { verifyAdminToken } from "@/lib/verifyToken";
 import { getFirestoreAccessToken } from "@/lib/firestoreAdmin";
 import { fetchEventOrders } from "@/lib/eventbrite";
 import { sendCapiEvent } from "@/lib/capi";
-import { withTimeout } from "@/utils/withTimeout";
+import { mapWithConcurrency } from "@/utils/concurrency";
 import { alertOps } from "@/lib/opsAlert";
 import { events } from "@/data/events";
 import type { EventEntry } from "@/data/events";
@@ -18,6 +18,23 @@ import type { Order, SyncMeta } from "@/types/analytics";
 // this (unlike the go-redirect's InitiateCheckout call), so it's slightly
 // more lenient than that route's 2s guard.
 const CAPI_TIMEOUT_MS = 3000;
+
+// Bounds how many times the retry pass will re-attempt a stuck order's
+// Purchase CAPI delivery before giving up for good (see
+// markPurchaseCapiUnrecoverable / purchaseCapiAttempts below). Without a
+// cap, an order failing for a persistent reason unrelated to its source
+// event (a bad/expired access token, a malformed payload) retries forever
+// and can crowd out real pending orders under findPendingPurchaseOrders's
+// 100-row limit. Caught by Codex pre-push review (2026-08-03).
+const MAX_CAPI_ATTEMPTS = 5;
+
+// Bounds how many orders' CAPI sends run concurrently instead of fully
+// serial (a 100-order pending batch could consume up to
+// 100 * CAPI_TIMEOUT_MS in the worst case, risking the serverless
+// function's execution deadline before sync metadata is even persisted) or
+// fully parallel (risks overwhelming Meta's API). Caught by Codex pre-push
+// review (2026-08-03).
+const CAPI_CONCURRENCY = 10;
 
 // ─── Firestore REST types ─────────────────────────────────────────────────────
 
@@ -99,6 +116,9 @@ function orderToFirestoreFields(
     purchaseCapiSent: { booleanValue: order.purchaseCapiSent },
     purchaseCapiUnrecoverable: {
       booleanValue: order.purchaseCapiUnrecoverable,
+    },
+    purchaseCapiAttempts: {
+      integerValue: String(order.purchaseCapiAttempts),
     },
     attendees: {
       arrayValue: {
@@ -335,6 +355,41 @@ async function markPurchaseCapiUnrecoverable(
   }
 }
 
+/**
+ * Persists an incremented Purchase CAPI attempt count for a pending order.
+ * Used only by the retry pass after a failed send that hasn't yet crossed
+ * MAX_CAPI_ATTEMPTS (once it does, markPurchaseCapiUnrecoverable is used
+ * instead, see the retry pass's CAPI-failure branch). Scoped to this one
+ * field via updateMask, same reasoning as markPurchaseCapiSent: the retry
+ * pass only reconstructs a minimal PendingOrderDoc from Firestore and must
+ * not clobber the rest of the order's fields.
+ */
+async function incrementPurchaseCapiAttempts(
+  projectId: string,
+  accessToken: string,
+  orderId: string,
+  attempts: number,
+): Promise<void> {
+  const url = `https://firestore.googleapis.com/v1/projects/${projectId}/databases/(default)/documents/orders/${orderId}?updateMask.fieldPaths=purchaseCapiAttempts`;
+  const res = await fetch(url, {
+    method: "PATCH",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${accessToken}`,
+    },
+    body: JSON.stringify({
+      fields: { purchaseCapiAttempts: { integerValue: String(attempts) } },
+    }),
+  });
+
+  if (!res.ok) {
+    const body = (await res.json()) as FirestoreErrorBody;
+    throw new Error(
+      `Failed to increment CAPI attempts for order ${orderId}: ${res.status} ${body.error?.message ?? ""}`,
+    );
+  }
+}
+
 /** Minimal shape needed to retry a Purchase CAPI send; see PendingOrderDoc. */
 interface PendingOrderDoc {
   orderId: string;
@@ -344,6 +399,7 @@ interface PendingOrderDoc {
   grossRevenue: number;
   currency: string;
   quantity: number;
+  purchaseCapiAttempts: number;
 }
 
 function parsePendingOrderDoc(doc: FirestoreDocument): PendingOrderDoc | null {
@@ -366,6 +422,18 @@ function parsePendingOrderDoc(doc: FirestoreDocument): PendingOrderDoc | null {
     "integerValue" in fields.quantity
       ? parseInt(fields.quantity.integerValue, 10)
       : 1;
+  // Guarded with `fields.purchaseCapiAttempts &&` (unlike the fields above):
+  // this field didn't exist before this fix shipped, so orders upserted by
+  // an older deploy have it missing entirely, not just a different variant.
+  // `"x" in undefined` throws, so the plain `"integerValue" in fields...`
+  // pattern used above would crash parsing any pre-existing pending order.
+  // Missing means "never counted under this scheme", so 0 is the correct,
+  // safe default: it gives that order a fresh MAX_CAPI_ATTEMPTS budget
+  // rather than fabricating a count that was never tracked.
+  const purchaseCapiAttempts =
+    fields.purchaseCapiAttempts && "integerValue" in fields.purchaseCapiAttempts
+      ? parseInt(fields.purchaseCapiAttempts.integerValue, 10)
+      : 0;
 
   if (!eventbriteEventId || !email || !createdAt) return null;
 
@@ -377,6 +445,7 @@ function parsePendingOrderDoc(doc: FirestoreDocument): PendingOrderDoc | null {
     grossRevenue,
     currency,
     quantity,
+    purchaseCapiAttempts,
   };
 }
 
@@ -507,17 +576,49 @@ async function writeSyncMeta(
   }
 }
 
+// A show this many days past its date has no realistic new orders left to
+// sync (3 days covers late walk-up orders finalizing after doors).
+export const SYNC_WINDOW_DAYS = 3;
+
+// `isoDate` is a calendar date in the event's own local timezone, not UTC.
+// toISOString().slice(0, 10) reads the wrong calendar day for part of the
+// evening in US timezones (9pm ET is already "tomorrow" in UTC), which would
+// shift the cutoff by a day. `en-CA` makes Intl.DateTimeFormat emit
+// YYYY-MM-DD directly.
+function dateInZone(instant: Date, timeZone: string): string {
+  return new Intl.DateTimeFormat("en-CA", { timeZone }).format(instant);
+}
+
 /**
  * Events whose orders our Eventbrite access token can actually read: shows
- * ticketed on our own account that have a real listing ID. A
- * "their-eventbrite" show (e.g. Los Angeles) also carries a public
- * `eventbriteId`, but the orders API rejects our token on it, so including
- * one just generates an authorization error on every sync run.
+ * ticketed on our own account that have a real listing ID, and that are not
+ * more than SYNC_WINDOW_DAYS past their show date. A "their-eventbrite" show
+ * (e.g. Los Angeles) also carries a public `eventbriteId`, but the orders API
+ * rejects our token on it, so including one just generates an authorization
+ * error on every sync run.
+ *
+ * WHY the trailing window: one failed event fetch holds the shared
+ * `changed_since` cursor for EVERY event (see hadSyncFailure's WHY comment in
+ * the handler), so a long-past show whose ticketSource is stale or no longer
+ * verifiable would silently jam Purchase syncing for every current show.
+ * `ticketSource` is manual business knowledge with no drift detection, so
+ * this cannot be prevented at the source; bounding eligibility caps the blast
+ * radius instead. Shows without an `isoDate` (TBA) stay eligible.
  */
-export function orderSyncableEvents(list: EventEntry[]): EventEntry[] {
-  return list.filter(
-    (e) => e.ticketSource === "our-eventbrite" && e.eventbriteId,
+export function orderSyncableEvents(
+  list: EventEntry[],
+  now: Date = new Date(),
+): EventEntry[] {
+  const cutoffInstant = new Date(
+    now.getTime() - SYNC_WINDOW_DAYS * 24 * 60 * 60 * 1000,
   );
+  return list.filter((e) => {
+    if (e.ticketSource !== "our-eventbrite" || !e.eventbriteId) return false;
+    if (!e.isoDate) return true;
+    return (
+      e.isoDate >= dateInZone(cutoffInstant, e.timezone ?? "America/New_York")
+    );
+  });
 }
 
 // ─── Route handler ────────────────────────────────────────────────────────────
@@ -603,6 +704,18 @@ export const POST: APIRoute = async ({ request }) => {
     // Purchase CAPI is gated on the purchaseCapiSent flag, so nothing here
     // resends or double-writes on a retry.
     let hadSyncFailure = false;
+    // Captured BEFORE any fetching begins, not after the run completes: an
+    // order that changes on Eventbrite's side between this timestamp and the
+    // run's end must still be covered by the NEXT run's changed_since, and
+    // that only holds if the next cursor is <= when the order actually
+    // changed. Capturing "now" at the END of the run (the previous bug) set
+    // the next cursor to a timestamp AFTER such an order's change, so
+    // changed_since on the next run permanently skipped it. Reprocessing the
+    // resulting overlap on the next run is safe for the same reason
+    // hadSyncFailure's replay above is: upsertOrder is keyed by the stable
+    // order ID and Purchase CAPI is gated on purchaseCapiSent. Caught by
+    // Codex pre-push review (2026-08-03).
+    const syncStartedAt = new Date().toISOString();
 
     for (const event of syncableEvents) {
       const eventbriteId = event.eventbriteId!;
@@ -638,7 +751,7 @@ export const POST: APIRoute = async ({ request }) => {
         );
       }
 
-      for (const order of orders) {
+      await mapWithConcurrency(orders, CAPI_CONCURRENCY, async (order) => {
         try {
           // Check if the buyer email matches a known lead
           let matchedLeadId: string | null = null;
@@ -682,32 +795,35 @@ export const POST: APIRoute = async ({ request }) => {
                 // side, e.g. a refund): preserve the flag, don't resend.
                 orderWithMatch.purchaseCapiSent = true;
               } else if (order.status === "placed") {
-                const result = await withTimeout(
-                  sendCapiEvent(
-                    {
-                      eventName: "Purchase",
-                      eventId: order.orderId,
-                      eventTime: Math.floor(
-                        new Date(order.createdAt).getTime() / 1000,
-                      ),
-                      eventSourceUrl: `https://garammasaladating.com/events/${event.slug}`,
-                      userData: { email: order.email },
-                      customData: {
-                        value: order.grossRevenue,
-                        currency: order.currency,
-                        contentIds: [event.slug],
-                        contentType: "event",
-                        numItems: order.quantity,
-                      },
+                const result = await sendCapiEvent(
+                  {
+                    eventName: "Purchase",
+                    eventId: order.orderId,
+                    eventTime: Math.floor(
+                      new Date(order.createdAt).getTime() / 1000,
+                    ),
+                    eventSourceUrl: `https://garammasaladating.com/events/${event.slug}`,
+                    userData: { email: order.email },
+                    customData: {
+                      value: order.grossRevenue,
+                      currency: order.currency,
+                      contentIds: [event.slug],
+                      contentType: "event",
+                      numItems: order.quantity,
                     },
-                    capiAccessToken,
-                  ),
+                  },
+                  capiAccessToken,
                   CAPI_TIMEOUT_MS,
-                  "Meta CAPI Purchase",
                 );
                 if (result.ok) {
                   orderWithMatch.purchaseCapiSent = true;
                 } else {
+                  orderWithMatch.purchaseCapiAttempts += 1;
+                  if (
+                    orderWithMatch.purchaseCapiAttempts >= MAX_CAPI_ATTEMPTS
+                  ) {
+                    orderWithMatch.purchaseCapiUnrecoverable = true;
+                  }
                   console.error(
                     `[sync-orders] CAPI Purchase failed for order ${order.orderId}: ${result.error}`,
                   );
@@ -743,7 +859,7 @@ export const POST: APIRoute = async ({ request }) => {
           syncErrors.push(`order:${order.orderId}: ${msg}`);
           hadSyncFailure = true;
         }
-      }
+      });
     }
 
     // Retry pass: pick up every order still owed a Purchase delivery from
@@ -762,44 +878,48 @@ export const POST: APIRoute = async ({ request }) => {
         syncErrors.push(`pending-query: ${msg}`);
       }
 
-      for (const pendingOrder of pending) {
-        // Cross-reference by Eventbrite event ID, not the stored
-        // `eventSlug` (that field is actually `citySlug`, e.g.
-        // "manhattan", not the per-show landing-page `slug` CAPI's
-        // eventSourceUrl needs: see EventEntry in src/data/events.ts).
-        const sourceEvent = events.find(
-          (e) => e.eventbriteId === pendingOrder.eventbriteEventId,
-        );
-        if (!sourceEvent) {
-          // The show this order belongs to is no longer in events.ts
-          // (pruned after it aged out). Nothing to build a correct
-          // eventSourceUrl from, and this will never change on a future
-          // run either, so give up for good instead of leaving
-          // purchaseCapiSent false: see markPurchaseCapiUnrecoverable's
-          // doc comment for what breaks if this order just gets skipped
-          // (`continue`) here without changing anything, as it used to.
-          try {
-            await markPurchaseCapiUnrecoverable(
-              projectId,
-              accessToken,
-              pendingOrder.orderId,
-            );
-          } catch (err) {
-            const msg = err instanceof Error ? err.message : String(err);
-            console.error(
-              `[sync-orders] Failed to mark order ${pendingOrder.orderId} unrecoverable: ${msg}`,
-            );
-            syncErrors.push(`unrecoverable:${pendingOrder.orderId}: ${msg}`);
-          }
-          syncErrors.push(
-            `orphaned:${pendingOrder.orderId}: source event ${pendingOrder.eventbriteEventId} no longer in events.ts, Purchase CAPI will never be sent`,
+      await mapWithConcurrency(
+        pending,
+        CAPI_CONCURRENCY,
+        async (pendingOrder) => {
+          // Cross-reference by Eventbrite event ID, not the stored
+          // `eventSlug` (that field is actually `citySlug`, e.g.
+          // "manhattan", not the per-show landing-page `slug` CAPI's
+          // eventSourceUrl needs: see EventEntry in src/data/events.ts).
+          const sourceEvent = events.find(
+            (e) => e.eventbriteId === pendingOrder.eventbriteEventId,
           );
-          continue;
-        }
+          if (!sourceEvent) {
+            // The show this order belongs to is no longer in events.ts
+            // (pruned after it aged out). Nothing to build a correct
+            // eventSourceUrl from, and this will never change on a future
+            // run either, so give up for good instead of leaving
+            // purchaseCapiSent false: see markPurchaseCapiUnrecoverable's
+            // doc comment for what breaks if this order just gets skipped
+            // (`return`) here without changing anything, as it used to.
+            try {
+              await markPurchaseCapiUnrecoverable(
+                projectId,
+                accessToken,
+                pendingOrder.orderId,
+              );
+            } catch (err) {
+              const msg = err instanceof Error ? err.message : String(err);
+              console.error(
+                `[sync-orders] Failed to mark order ${pendingOrder.orderId} unrecoverable: ${msg}`,
+              );
+              syncErrors.push(`unrecoverable:${pendingOrder.orderId}: ${msg}`);
+            }
+            syncErrors.push(
+              `orphaned:${pendingOrder.orderId}: source event ${pendingOrder.eventbriteEventId} no longer in events.ts, Purchase CAPI will never be sent`,
+            );
+            return;
+          }
 
-        try {
-          const result = await withTimeout(
-            sendCapiEvent(
+          let capiFailed = false;
+          let capiErrorMsg = "";
+          try {
+            const result = await sendCapiEvent(
               {
                 eventName: "Purchase",
                 eventId: pendingOrder.orderId,
@@ -817,42 +937,77 @@ export const POST: APIRoute = async ({ request }) => {
                 },
               },
               capiAccessToken,
-            ),
-            CAPI_TIMEOUT_MS,
-            "Meta CAPI Purchase retry",
-          );
+              CAPI_TIMEOUT_MS,
+            );
 
-          if (result.ok) {
-            await markPurchaseCapiSent(
-              projectId,
-              accessToken,
-              pendingOrder.orderId,
-            );
-            purchaseRetried += 1;
-          } else {
-            console.error(
-              `[sync-orders] Retry CAPI Purchase failed for order ${pendingOrder.orderId}: ${result.error}`,
-            );
-            syncErrors.push(`retry:${pendingOrder.orderId}: ${result.error}`);
+            if (result.ok) {
+              await markPurchaseCapiSent(
+                projectId,
+                accessToken,
+                pendingOrder.orderId,
+              );
+              purchaseRetried += 1;
+            } else {
+              capiFailed = true;
+              capiErrorMsg = result.error ?? "unknown error";
+            }
+          } catch (err) {
+            capiFailed = true;
+            capiErrorMsg = err instanceof Error ? err.message : String(err);
           }
-        } catch (err) {
-          const msg = err instanceof Error ? err.message : String(err);
-          console.error(
-            `[sync-orders] Retry CAPI Purchase threw for order ${pendingOrder.orderId}: ${msg}`,
-          );
-          syncErrors.push(`retry:${pendingOrder.orderId}: ${msg}`);
-        }
-      }
+
+          if (capiFailed) {
+            console.error(
+              `[sync-orders] Retry CAPI Purchase failed for order ${pendingOrder.orderId}: ${capiErrorMsg}`,
+            );
+            syncErrors.push(`retry:${pendingOrder.orderId}: ${capiErrorMsg}`);
+
+            // Give up for good past MAX_CAPI_ATTEMPTS: see MAX_CAPI_ATTEMPTS's
+            // WHY comment for what a persistently failing order (bad token,
+            // malformed payload, not just a missing source event) would do to
+            // findPendingPurchaseOrders's 100-row query without this cap.
+            const attempts = pendingOrder.purchaseCapiAttempts + 1;
+            try {
+              if (attempts >= MAX_CAPI_ATTEMPTS) {
+                await markPurchaseCapiUnrecoverable(
+                  projectId,
+                  accessToken,
+                  pendingOrder.orderId,
+                );
+                syncErrors.push(
+                  `unrecoverable:${pendingOrder.orderId}: exceeded ${MAX_CAPI_ATTEMPTS} CAPI delivery attempts`,
+                );
+              } else {
+                await incrementPurchaseCapiAttempts(
+                  projectId,
+                  accessToken,
+                  pendingOrder.orderId,
+                  attempts,
+                );
+              }
+            } catch (err) {
+              const msg = err instanceof Error ? err.message : String(err);
+              console.error(
+                `[sync-orders] Failed to update CAPI attempts for order ${pendingOrder.orderId}: ${msg}`,
+              );
+              syncErrors.push(`attempts:${pendingOrder.orderId}: ${msg}`);
+            }
+          }
+        },
+      );
     }
 
     // Persist sync metadata, keeping last 10 errors
-    const now = new Date().toISOString();
     const allErrors = [...(prevMeta?.errors ?? []), ...syncErrors].slice(-10);
+    // Hold the cursor at its previous value when any event's fetch or order
+    // upsert failed this run (see hadSyncFailure's WHY comment above the
+    // sync loop); otherwise advance to syncStartedAt, captured before any
+    // fetching began rather than a fresh "now" after all work completes
+    // (see syncStartedAt's WHY comment for why an end-of-run timestamp is
+    // unsafe as the next cursor).
+    const nextCursor = hadSyncFailure ? (lastSyncAt ?? "") : syncStartedAt;
     const newMeta: SyncMeta = {
-      // Hold the cursor at its previous value when any event's fetch or
-      // order upsert failed this run: see hadSyncFailure's WHY comment
-      // above the sync loop for what breaks if this advances anyway.
-      lastSyncAt: hadSyncFailure ? (lastSyncAt ?? "") : now,
+      lastSyncAt: nextCursor,
       ordersProcessed: previousTotal + totalProcessed,
       errors: allErrors,
     };
@@ -867,7 +1022,7 @@ export const POST: APIRoute = async ({ request }) => {
         purchaseRetried,
         errors: syncErrors,
         rateLimitRemaining: globalRateLimitRemaining,
-        lastSyncAt: now,
+        lastSyncAt: nextCursor,
       }),
       { status: 200, headers: { "Content-Type": "application/json" } },
     );

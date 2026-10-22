@@ -1,5 +1,18 @@
 # Changelog
 
+## fix(sync): bounded order sync, stuck-order cap, safe cursor, completed-show window (2026-10-21)
+
+Recovered from the old sessions 65918 and 8546 after confirming main lacked each piece.
+
+- **Completed shows drop out of sync.** `orderSyncableEvents` skips shows more than 3 days past their date (in the show's own timezone), so one stale show can no longer hold the shared `changed_since` cursor back and stall Purchase tracking for every current show.
+- **Bounded runtime.** Purchase CAPI sends run through `mapWithConcurrency` (10 at a time) and use `AbortSignal.timeout`, so a hung Meta endpoint cancels instead of piling up. Previously up to 100 retries ran one by one at 3 seconds each.
+- **Stuck orders give up.** `purchaseCapiAttempts` counts failed deliveries; after 5 the order is marked unrecoverable so it stops crowding out new orders in the 100-row retry query.
+- **Cursor safety.** The next `changed_since` is the time the run started, not the time it ended, so an order changed mid-run is not skipped.
+
+Closes the BUGS.md entries UNBOUNDED-SYNC-RUNTIME (both) and PERMANENT-RETRY-STARVATION (both).
+
+**Files:** `src/pages/api/sync-orders.ts`, `src/utils/concurrency.ts`, `src/lib/capi.ts`, `src/lib/eventbrite.ts`, `src/types/analytics.ts`, plus tests
+
 ## fix(ops): the security-rules gate stops drifting silently, and applicant emails stop reaching the public alert topic (2026-09-02)
 
 Two HIGH findings from the Codex 2026-08-12 review rounds, both open since the emulator suite and the push alert channel shipped.
@@ -21,6 +34,7 @@ Two HIGH findings from the Codex 2026-08-12 review rounds, both open since the e
 **Operator step:** the ruleset is the real enforcement and lives in GitHub, not in this repo. Open the repo on GitHub, then Settings, then Rules, then the "Protect Main" ruleset, and under "Require status checks to pass" add a second check named exactly `Firestore/Storage rules (emulator)` (copy the string, the parentheses and spacing must match `ci.yml`'s job name character for character). Until that is added, this change only fixes the documentation of the gate, not the gate. To confirm it took: open any PR, and the merge box should list two required checks instead of one.
 
 **Files:** `.github/workflows/ci.yml`, `scripts/setup-branch-protection.sh`, `docs/security/REMEDIATION.md`, `src/lib/opsAlert.ts`, `test/required-checks.test.ts`, `test/ops-alert.test.ts`, `BUGS.md`, `LESSONS.md`, `.gitignore`
+
 ## fix(tests): repair the 75 failing smoke tests (2026-10-21)
 
 The weekly smoke suite had failed every run since August, and the same 75 cases failed on Node 22 and Node 24. The site was fine and the tests had gone stale: the HomeSignup, LeadCaptureModal and NotifyModal tests now complete the optional phone step before expecting success, the footer test checks the data driven city list by shape instead of five fixed cities, the city page test checks the heading is in the page (it is hidden at 1024px and below by design), the waiver test uses the waiver checkbox, and the Firebase mock answers `accounts:lookup`. The Apply happy path now proves auth, photo upload and the Firestore write are reached in order; the real success path stays with the daily synthetic monitor because the Firestore write channel cannot be faked with a canned reply. The full suite passes 319 of 320 on Node 24 (one third party accessibility flake retried green, queued in BUGS.md).

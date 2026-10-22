@@ -107,10 +107,19 @@ function buildCustomData(
  * or misconfigured CAPI call must never break the redirect/sync flow that
  * calls it, so every failure is caught and returned as `{ ok: false }` for
  * the caller to log and move on from.
+ *
+ * `timeoutMs` is enforced via `AbortSignal.timeout`, not the codebase's
+ * `withTimeout` (a `Promise.race` that lets the loser keep running): a
+ * caller processing many orders (see sync-orders.ts's retry pass) needs the
+ * underlying request actually cancelled at the deadline, or a hung Meta
+ * endpoint leaves that many dangling in-flight fetches piling up in the
+ * background instead of freeing the connection. Caught by Codex pre-push
+ * review (2026-08-03).
  */
 export async function sendCapiEvent(
   params: CapiEventParams,
   accessToken: string,
+  timeoutMs = 5000,
 ): Promise<CapiResult> {
   const body = {
     data: [
@@ -135,6 +144,7 @@ export async function sendCapiEvent(
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(body),
+        signal: AbortSignal.timeout(timeoutMs),
       },
     );
 

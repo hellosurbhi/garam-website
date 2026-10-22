@@ -1,5 +1,11 @@
 # Changelog
 
+## chore(site): take down the sponsorships page (2026-10-21)
+
+Owner request (2026-09-29). The `/sponsorship` page and its data file are removed, along with every link to it: footer, sitemap config, llms.txt files and analytics capture. `/sponsorship` now permanently redirects to the homepage so old links and search results do not hit a 404. The sponsorship journal article stays, but its calls to action now point to the contact email instead of the removed page.
+
+**Files:** `src/pages/sponsorship.astro`, `src/data/sponsorship.ts`, `astro.config.mjs`, `vercel.json`, `src/data/footer.ts`, `src/data/journal/business-pages.ts`, `src/lib/analyticsCapture.ts`, `src/pages/llms.txt.ts`, `src/pages/llms-full.txt.ts`
+
 ## fix(ops): the security-rules gate stops drifting silently, and applicant emails stop reaching the public alert topic (2026-09-02)
 
 Two HIGH findings from the Codex 2026-08-12 review rounds, both open since the emulator suite and the push alert channel shipped.
@@ -21,6 +27,7 @@ Two HIGH findings from the Codex 2026-08-12 review rounds, both open since the e
 **Operator step:** the ruleset is the real enforcement and lives in GitHub, not in this repo. Open the repo on GitHub, then Settings, then Rules, then the "Protect Main" ruleset, and under "Require status checks to pass" add a second check named exactly `Firestore/Storage rules (emulator)` (copy the string, the parentheses and spacing must match `ci.yml`'s job name character for character). Until that is added, this change only fixes the documentation of the gate, not the gate. To confirm it took: open any PR, and the merge box should list two required checks instead of one.
 
 **Files:** `.github/workflows/ci.yml`, `scripts/setup-branch-protection.sh`, `docs/security/REMEDIATION.md`, `src/lib/opsAlert.ts`, `test/required-checks.test.ts`, `test/ops-alert.test.ts`, `BUGS.md`, `LESSONS.md`, `.gitignore`
+
 ## fix(tests): repair the 75 failing smoke tests (2026-10-21)
 
 The weekly smoke suite had failed every run since August, and the same 75 cases failed on Node 22 and Node 24. The site was fine and the tests had gone stale: the HomeSignup, LeadCaptureModal and NotifyModal tests now complete the optional phone step before expecting success, the footer test checks the data driven city list by shape instead of five fixed cities, the city page test checks the heading is in the page (it is hidden at 1024px and below by design), the waiver test uses the waiver checkbox, and the Firebase mock answers `accounts:lookup`. The Apply happy path now proves auth, photo upload and the Firestore write are reached in order; the real success path stays with the daily synthetic monitor because the Firestore write channel cannot be faked with a canned reply. The full suite passes 319 of 320 on Node 24 (one third party accessibility flake retried green, queued in BUGS.md).

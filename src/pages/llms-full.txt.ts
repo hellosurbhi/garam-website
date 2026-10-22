@@ -19,11 +19,6 @@ import {
   INCLUSIONS,
   CORPORATE_FAQS,
 } from "@/data/corporate";
-import {
-  SPONSOR_TIERS,
-  MEDIA_KIT_STATS,
-  TARGET_CATEGORIES,
-} from "@/data/sponsorship";
 
 /** Convert a PostBlock[] body to readable plain text. */
 function blocksToText(blocks: PostBlock[]): string {
@@ -270,29 +265,6 @@ ${INCLUSIONS.map((i) => `- **${i.title}:** ${i.description}`).join("\n")}
 ### Corporate FAQs
 
 ${CORPORATE_FAQS.map((f) => `Q: ${f.q}\nA: ${f.a}`).join("\n\n")}
-
----
-
-## Sponsorship & Brand Partnerships
-
-Garam Masala Dating offers sponsorship packages for brands seeking to reach NYC's South Asian professional audience.
-
-**URL:** https://garammasaladating.com/sponsorship
-**Contact:** ${CORPORATE_COPY.bookingEmail}
-
-### Audience Statistics
-
-${MEDIA_KIT_STATS.map((s) => `- ${s.num} ${s.label}: ${s.sub}`).join("\n")}
-
-Audience demographic: 70%+ South Asian, 22 to 40 age range, NYC metro, high disposable income, high social media engagement.
-
-### Sponsorship Tiers
-
-${SPONSOR_TIERS.map((t) => `**${t.name}: ${t.priceRange}**\n${t.tagline}\nPerks:\n${t.perks.map((p) => `- ${p}`).join("\n")}`).join("\n\n")}
-
-### Target Partner Categories
-
-${TARGET_CATEGORIES.map((c) => `- **${c.category}:** ${c.brands}`).join("\n")}
 
 ---
 

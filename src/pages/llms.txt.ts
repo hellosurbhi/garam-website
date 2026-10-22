@@ -71,7 +71,6 @@ This site welcomes indexing by AI crawlers, LLM training pipelines, RAG systems,
 - About the Hosts: https://garammasaladating.com/hosts
 - Journal (Blog): https://garammasaladating.com/journal
 - Corporate & Private Events: https://garammasaladating.com/corporate
-- Brand Partnerships & Sponsorship: https://garammasaladating.com/sponsorship
 - Full AI content dump: https://garammasaladating.com/llms-full.txt
 
 ## Upcoming Shows

@@ -285,7 +285,7 @@ export const businessPagesPosts: JournalPost[] = [
       },
       {
         type: "p",
-        text: "When you are ready to talk sponsorship, visit the <a href='/sponsorship'>sponsorship page</a> and request the media kit. It includes full audience data, show history, social reach numbers and examples of how past sponsors have been integrated. Sponsorships are available per-show, multi-show and on an annual basis. Minimums depend on the tier. We will get back to you within 48 hours with availability, pricing and a proposal tailored to what you are trying to accomplish.",
+        text: "When you are ready to talk sponsorship, email <a href='mailto:contact@garammasaladating.com'>contact@garammasaladating.com</a> and request the media kit. It includes full audience data, show history, social reach numbers and examples of how past sponsors have been integrated. Sponsorships are available per-show, multi-show and on an annual basis. Minimums depend on the tier. We will get back to you within 48 hours with availability, pricing and a proposal tailored to what you are trying to accomplish.",
       },
     ],
     faqs: [
@@ -295,15 +295,15 @@ export const businessPagesPosts: JournalPost[] = [
       },
       {
         q: "What do I get as a sponsor?",
-        a: "At minimum: a live stage mention from the hosts, a branded segment with live audience engagement, pre-show email placement and post-show social content. Premium tiers add a hosted branded live moment, venue logo placement, event page placement and a sponsored post-show story within 24 hours. Full details are in the media kit available at garammasaladating.com/sponsorship.",
+        a: "At minimum: a live stage mention from the hosts, a branded segment with live audience engagement, pre-show email placement and post-show social content. Premium tiers add a hosted branded live moment, venue logo placement, event page placement and a sponsored post-show story within 24 hours. Full details are in the media kit, available by emailing contact@garammasaladating.com.",
       },
       {
         q: "What is the minimum commitment for a sponsorship?",
-        a: "Sponsorships are available on a per-show basis, so there is no long-term commitment required to start. Multi-show and annual packages are available at preferred rates. Minimums vary by tier. Contact us through the sponsorship page for current availability and pricing.",
+        a: "Sponsorships are available on a per-show basis, so there is no long-term commitment required to start. Multi-show and annual packages are available at preferred rates. Minimums vary by tier. Email contact@garammasaladating.com for current availability and pricing.",
       },
       {
         q: "How do I get started?",
-        a: "Visit garammasaladating.com/sponsorship and request the media kit. Come to a show first if you can: the live experience is the fastest way to understand what your brand would be part of. We respond to all sponsorship inquiries within 48 hours.",
+        a: "Email contact@garammasaladating.com and request the media kit. Come to a show first if you can: the live experience is the fastest way to understand what your brand would be part of. We respond to all sponsorship inquiries within 48 hours.",
       },
     ],
     relatedSlugs: [
@@ -315,19 +315,19 @@ export const businessPagesPosts: JournalPost[] = [
       intent: "show",
       topCta: {
         text: "Explore sponsorship opportunities",
-        href: "/sponsorship",
+        href: "mailto:contact@garammasaladating.com",
         ctaId: "sponsorship_article_top",
         variant: "primary",
       },
       midCta: {
         text: "Explore sponsorship opportunities",
-        href: "/sponsorship",
+        href: "mailto:contact@garammasaladating.com",
         ctaId: "sponsorship_article_mid",
         variant: "primary",
       },
       bottomCta: {
         text: "Download the media kit",
-        href: "/sponsorship",
+        href: "mailto:contact@garammasaladating.com",
         ctaId: "sponsorship_article_bottom",
         variant: "primary",
       },

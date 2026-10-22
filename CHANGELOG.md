@@ -1,5 +1,11 @@
 # Changelog
 
+## chore(site): take down the sponsorships page (2026-10-21)
+
+Owner request (2026-09-29). The `/sponsorship` page and its data file are removed, along with every link to it: footer, sitemap config, llms.txt files and analytics capture. `/sponsorship` now permanently redirects to the homepage so old links and search results do not hit a 404. The sponsorship journal article stays, but its calls to action now point to the contact email instead of the removed page.
+
+**Files:** `src/pages/sponsorship.astro`, `src/data/sponsorship.ts`, `astro.config.mjs`, `vercel.json`, `src/data/footer.ts`, `src/data/journal/business-pages.ts`, `src/lib/analyticsCapture.ts`, `src/pages/llms.txt.ts`, `src/pages/llms-full.txt.ts`
+
 ## fix(deps): remove sprintf-js from the dev tree to close Dependabot alert #111 (2026-10-19)
 
 `sprintf-js` (denial of service through unbounded precision specifiers) has no patched release: 1.1.3 is the latest and is also affected. It only reached the project through Lighthouse CI: `@lhci/cli` to `@lhci/utils` to `js-yaml@3` to `argparse@1`. Bumping the parent was not an option because `@lhci/cli` 0.15.1 is already the latest, and forcing `js-yaml@4` would break `@lhci/utils`, which still calls the removed `yaml.safeLoad`.

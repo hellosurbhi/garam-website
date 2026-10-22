@@ -67,7 +67,6 @@ export const FOOTER_INVOLVED_LINKS: FooterLink[] = [
   { label: "Corporate Events", href: "/corporate" },
   { label: "Parties & Celebrations", href: "/celebrate" },
   { label: "South Asian Events", href: "/desi-events" },
-  { label: "Sponsorship", href: "/sponsorship" },
 ];
 
 export const FOOTER_EXPLORE_LINKS: FooterLink[] = [

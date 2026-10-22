@@ -167,7 +167,7 @@ const citiesWithEvents = new Set(
 function getPriority(url) {
   if (url === `${SITE}/`) return 1.0;
   if (
-    /\/(tickets|apply|faq|hosts|corporate|sponsorship|singles-mixers)$/.test(
+    /\/(tickets|apply|faq|hosts|corporate|singles-mixers)$/.test(
       url,
     )
   )

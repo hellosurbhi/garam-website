@@ -1,5 +1,15 @@
 # Changelog
 
+## feat(rules): lead market fields plus the announcement system's three collections (2026-10-02)
+
+Groundwork for automated city-bucketed show announcements, shipped alone and ahead of any code that uses it.
+
+- **`validLead()` now allows `market`, `marketConfidence` and `marketSource`.** The rule is a strict `hasOnly` allowlist and `capture-lead.ts` writes to Firestore REST with no `Authorization` header, so this rule is the only thing between a visitor's signup and the database. A writer that stamps market fields against a rule that does not know them rejects every new signup and loses the lead rather than queuing it. That is why this change ships as its own release: the rule has to be deployed, and the deploy confirmed by a live probe, before the writer goes out. `marketConfidence` and `marketSource` are closed sets, because a geo-only match is deliberately untrusted (`geoCity` and `geoLatitude` carry datacenter locations such as Google Cloud in Des Moines and Azure in Boydton) and `low` exists to keep those people out of automatic sends.
+- **Three new server-only collections:** `suppressions/{emailKey}` (the cloud half of the sender's `suppressed.csv`), `announcements/{eventSlug}` plus its milestone subcollection, and `copyLedger/{emailKey}`. All are admin-read and client-write-denied, matching the `orders` pattern. Admin writes are denied too: approval and suppression go through admin-gated API routes that write with the service account, so a stolen admin session cannot approve copy or clear a suppression straight from the browser and skip the server's validation.
+- **12 new emulator cases** in `test/rules/public-write.rules-test.ts` covering market acceptance, both closed sets, type and size rejection, a regression case proving the widened allowlist did not open generally, and client plus admin write denial on all three new collections. Verified by negative control: narrowing the allowlist back makes exactly the two acceptance cases fail.
+
+**Files:** `firestore.rules`, `test/rules/public-write.rules-test.ts`
+
 ## fix(ops): the security-rules gate stops drifting silently, and applicant emails stop reaching the public alert topic (2026-09-02)
 
 Two HIGH findings from the Codex 2026-08-12 review rounds, both open since the emulator suite and the push alert channel shipped.
@@ -21,6 +31,7 @@ Two HIGH findings from the Codex 2026-08-12 review rounds, both open since the e
 **Operator step:** the ruleset is the real enforcement and lives in GitHub, not in this repo. Open the repo on GitHub, then Settings, then Rules, then the "Protect Main" ruleset, and under "Require status checks to pass" add a second check named exactly `Firestore/Storage rules (emulator)` (copy the string, the parentheses and spacing must match `ci.yml`'s job name character for character). Until that is added, this change only fixes the documentation of the gate, not the gate. To confirm it took: open any PR, and the merge box should list two required checks instead of one.
 
 **Files:** `.github/workflows/ci.yml`, `scripts/setup-branch-protection.sh`, `docs/security/REMEDIATION.md`, `src/lib/opsAlert.ts`, `test/required-checks.test.ts`, `test/ops-alert.test.ts`, `BUGS.md`, `LESSONS.md`, `.gitignore`
+
 ## fix(tests): repair the 75 failing smoke tests (2026-10-21)
 
 The weekly smoke suite had failed every run since August, and the same 75 cases failed on Node 22 and Node 24. The site was fine and the tests had gone stale: the HomeSignup, LeadCaptureModal and NotifyModal tests now complete the optional phone step before expecting success, the footer test checks the data driven city list by shape instead of five fixed cities, the city page test checks the heading is in the page (it is hidden at 1024px and below by design), the waiver test uses the waiver checkbox, and the Firebase mock answers `accounts:lookup`. The Apply happy path now proves auth, photo upload and the Firestore write are reached in order; the real success path stays with the daily synthetic monitor because the Firestore write channel cannot be faked with a canned reply. The full suite passes 319 of 320 on Node 24 (one third party accessibility flake retried green, queued in BUGS.md).

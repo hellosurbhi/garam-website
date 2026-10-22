@@ -11,6 +11,51 @@ Groundwork for mailing a show announcement to its own city instead of the whole 
 - Measured outcome on the 891 existing leads: 400 sendable (`high`), 263 geo-only (`low`, surfaced for review), 228 unbucketed. Of the unbucketed, 108 are Google Cloud and Azure datacenters and 94 are outside the US, which is the intended result.
 
 **Files:** `src/data/markets.json`, `src/lib/markets.ts`, `src/lib/markets.test.ts`, `CLAUDE.md`
+## fix(deps): remove sprintf-js from the dev tree to close Dependabot alert #111 (2026-10-19)
+
+`sprintf-js` (denial of service through unbounded precision specifiers) has no patched release: 1.1.3 is the latest and is also affected. It only reached the project through Lighthouse CI: `@lhci/cli` to `@lhci/utils` to `js-yaml@3` to `argparse@1`. Bumping the parent was not an option because `@lhci/cli` 0.15.1 is already the latest, and forcing `js-yaml@4` would break `@lhci/utils`, which still calls the removed `yaml.safeLoad`.
+
+`js-yaml@3` only imports `argparse` in its own command line tool, never in the library code Lighthouse uses, so an `overrides` entry now points that one edge at `argparse@2.0.1`. That version has no dependencies and was already in the lockfile, so no new package is added. `sprintf-js` and the nested `argparse@1.0.10` are gone from `package-lock.json`. Dev tooling only, nothing ships to the live site.
+
+**Files:** `package.json`, `package-lock.json`
+
+## fix(deploy): stop installing dev-only tools on Vercel (2026-10-19)
+
+Every Vercel build installed `firebase-tools` and `@lhci/cli`, two dev-only tools the site never uses at build or run time. They were the source of all the deprecated package warnings in the build log (rimraf, inflight, glob, node-domexception, json-ptr) and of the `re2` install script note. Those old versions are pinned inside the two tools, so they cannot be upgraded away.
+
+The Vercel install command is now `npm ci --omit=dev`. Everything the build needs (`astro`, the Vercel adapter, `firebase`, React) already lives in `dependencies`. A production-only install followed by the full `npm run build`, including the after-build runtime check, passes locally with neither tool present.
+
+Left alone on purpose: the chunk size note comes from the server bundle, so it does not affect what visitors download, and `cache-dir` is a Vercel side setting. The Vercel project Node setting still says 24.x while `package.json` pins 22; that is a dashboard change, not a repo change.
+
+**Files:** `vercel.json`
+
+## fix(runtime): restore ticket redirects and API startup (2026-10-19)
+
+Ticket clicks returned Vercel's `FUNCTION_INVOCATION_FAILED` because `@astrojs/vercel` 11.0.13 (arrived via the October Dependabot bumps) made the server entrypoint import the adapter's build-time code, including Rolldown. Rolldown's native binary is not shipped to the deployed function, so the shared server crashed on startup before handling ticket, form or lead requests. Astro fixed this upstream in 11.0.14 (withastro/astro#18328) by moving the shared constants into an import-free module. The adapter is now on 11.0.16; no bundler override is needed. The lockfile picked up in-range patch and minor updates to shiki, side-channel and a few other transitive packages.
+
+The build also starts a copy of the packaged server outside the checkout, with credentials removed and external fetches blocked. It checks API module loading, the ticket links rendered on the tickets page, attribution forwarding, location lookup and form validation guards. This gate runs before a Vercel build can complete. Rebuilding with adapter 11.0.13 fails the check with the exact production native binding error; 11.0.16 passes with 29 API modules and two ticket redirects.
+
+Verification: 1,304 unit tests passed, lint passed and Astro reported zero errors or warnings. The production build and isolated runtime check passed. Live release verification remains an owner action after merging.
+
+Both actual ticket anchors opened the expected tabs at desktop and mobile sizes with no page errors. The broader critical-flow browser suite passed 12 of 24 cases; form fixture and selector failures are recorded in `BUGS.md` for the overnight lane. Successful live form delivery is not claimed by the runtime guard checks.
+
+## feat(events): new Philadelphia show Dec 6 at Next In Line Comedy (2026-10-11)
+
+Sunday December 6 2026, 6:30 to 8 PM, BYOB, tickets on the venue's Eventbrite (ID 2002925676616). Appears on the tickets page, home shows section and gets the `/events/philadelphia-2026-12-06` landing page with Event JSON-LD. Date, time and venue verified against the live Eventbrite listing; the venue matches the existing `VENUE_NEXT_IN_LINE` constant exactly, so no new venue was added. A pin test in `test/events.test.ts` protects the date, times and venue from accidental edits.
+
+**Files:** `src/data/events.ts`, `test/events.test.ts`, `EVENTS-HISTORY.md`
+
+## fix(deps): clear the 11 production advisories blocking every Dependabot PR (2026-10-11)
+
+Eight Dependabot security PRs were all failing CI and none of them could ever pass. The audit gate checks the whole production dependency tree, so each PR fixed one advisory while its own CI still saw the other seven. Four of the advisories had no Dependabot fix at all: `@firebase/firestore` pins `@grpc/grpc-js: ~1.9.0` and the patch is 1.13.6 or newer, so the fix sits outside the range firebase allows and no firebase release changes that.
+
+Resolved in one lockfile pass plus one override, taking the gate from 11 production advisories (10 high, 1 moderate) to zero. The repeat cause is fixed too: Dependabot `groups:` default to version updates only, which is why security advisories arrived one PR each, so a `security` group with `applies-to: security-updates` now batches them.
+
+`src/utils/locationDisplay.test.ts` was the other half of the deadlock. It hand rolled a Firestore `Timestamp` and asserted it with a single cast, which breaks whenever the vendor type changes shape, and that is the type error that killed the 32 package group PR #288. The four other test files that fake a `Timestamp` all use `as unknown as`, so this one now matches them. Its `income` fixture also held a stale bracket written with an en dash that `INCOME_OPTIONS` no longer contains.
+
+**Verification:** lint passed, `astro check` 0 errors across 317 files, 1303 tests passed across 99 files, build completed, and `npm audit --audit-level=high --omit=dev` reports 0 vulnerabilities.
+
+**Files:** `package.json`, `package-lock.json`, `.github/dependabot.yml`, `src/utils/locationDisplay.test.ts`, `docs/security/REMEDIATION.md`
 
 ## feat(events): reschedule Philadelphia and add Chicago (2026-09-28)
 

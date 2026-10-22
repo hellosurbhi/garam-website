@@ -18,7 +18,7 @@ npm install
 npm run dev
 ```
 
-Requires Node 22. See README.md for full setup instructions.
+Requires Node 24. See README.md for full setup instructions.
 
 ## Licensing
 

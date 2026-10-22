@@ -59,7 +59,7 @@ function getHeroCity(city: string): string {
             // link straight to the vendor URL instead: there's no checkout to
             // initiate, so routing them through /api/go would misreport a
             // non-purchase as checkout intent.
-            const goHref = `/api/go/${event.slug}`;
+            const goHref = `/api/go/${event.slug}?campaign=home&content=hero`;
             const pillInner = (
               <>
                 <span class="next-show-pill-date">

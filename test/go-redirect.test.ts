@@ -50,10 +50,17 @@ function makeEvent(overrides: Partial<EventEntry> = {}): EventEntry {
   } as EventEntry;
 }
 
-function makeContext(slug: string, headers: Record<string, string> = {}) {
-  const request = new Request(`https://garammasaladating.com/api/go/${slug}`, {
-    headers,
-  });
+function makeContext(
+  slug: string,
+  headers: Record<string, string> = {},
+  query = "",
+) {
+  const request = new Request(
+    `https://garammasaladating.com/api/go/${slug}${query}`,
+    {
+      headers,
+    },
+  );
   return { params: { slug }, request } as unknown as Parameters<typeof GET>[0];
 }
 
@@ -89,6 +96,42 @@ describe("/api/go/[slug] tracked redirect", () => {
     expect(location.startsWith(CHECKOUT_URL)).toBe(true);
     expect(location).toContain("utm_source=garamsite");
     expect(sendCapiEvent).toHaveBeenCalledTimes(1);
+  });
+
+  it("restores the Eventbrite aff param and per-surface campaign/content", async () => {
+    vi.mocked(getEventBySlug).mockReturnValue(makeEvent());
+    const res = await GET(
+      makeContext("manhattan-2099-12-31", {}, "?campaign=home&content=hero"),
+    );
+    const location = new URL(res.headers.get("Location")!);
+    expect(location.searchParams.get("aff")).toBe("garamsitehomehero");
+    expect(location.searchParams.get("utm_campaign")).toBe("home");
+    expect(location.searchParams.get("utm_content")).toBe("hero");
+  });
+
+  it("falls back to per-event defaults for a bare link and ignores unsafe labels", async () => {
+    vi.mocked(getEventBySlug).mockReturnValue(makeEvent());
+    const bare = new URL(
+      (await GET(makeContext("manhattan-2099-12-31"))).headers.get("Location")!,
+    );
+    expect(bare.searchParams.get("aff")).toBe("garamsitemanhattan");
+    expect(bare.searchParams.get("utm_content")).toBe("manhattan-2099-12-31");
+
+    const hostile = new URL(
+      (
+        await GET(
+          makeContext(
+            "manhattan-2099-12-31",
+            {},
+            "?campaign=%3Cscript%3E&content=a%20b",
+          ),
+        )
+      ).headers.get("Location")!,
+    );
+    expect(hostile.searchParams.get("aff")).toBe("garamsitemanhattan");
+    expect(hostile.searchParams.get("utm_content")).toBe(
+      "manhattan-2099-12-31",
+    );
   });
 
   it("sends a canceled show to /tickets without firing CAPI", async () => {

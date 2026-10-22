@@ -19,7 +19,7 @@ const eventLocation = formatEventLocation(event);
 // checkout to track), so this is the only place the tagged direct URL is
 // still needed. Live events route through the tracked redirect below.
 const soldOutUrl = buildTicketUrl(event.url, "cities", citySlug);
-const goHref = `/api/go/${event.slug}`;
+const goHref = `/api/go/${event.slug}?campaign=cities&content=${encodeURIComponent(citySlug)}`;
 const eventTitle = `Garam Masala Dating - ${eventLocation} - ${event.date}`;
 const ctaText = isSoldOut ? "Sold Out" : `${event.date}: ${EVENTS.ticketCta}`;
 

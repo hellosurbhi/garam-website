@@ -282,7 +282,7 @@ function renderCityText(text: string, href: string): string {
             const evCtaText = isSoldOut
               ? "Sold Out"
               : `${event.date}: ${EVENTS.ticketCta}`;
-            const goHref = `/api/go/${event.slug}`;
+            const goHref = `/api/go/${event.slug}?campaign=cities&content=${encodeURIComponent(city.slug)}`;
             const ticketHref = isSoldOut ? evTicketUrl : goHref;
             return (
               <a

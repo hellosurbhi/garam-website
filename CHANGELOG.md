@@ -1,5 +1,13 @@
 # Changelog
 
+## fix(tickets): restore Eventbrite affiliate tag and per-surface attribution on tracked ticket links (2026-10-21)
+
+Every "Get Tickets" button routes through `/api/go/[slug]`, and that route rebuilt its own UTM defaults without ever setting Eventbrite's `aff` param. Affiliate tracking and the per-surface split (home hero, home shows, tickets list, city page, event page) were therefore lost on nearly all live ticket traffic.
+
+`applyTicketAttribution()` in `src/utils/eventUrl.ts` is now the one shared implementation; `buildTicketUrl` (browser) and the go route (server) both call it. Each button passes `?campaign=...&content=...`; the route accepts only short slug-style labels so a crafted link cannot stamp arbitrary text into affiliate reports. Recovered from the old event-pages session (65918) after confirming main still lacked it.
+
+**Files:** `src/utils/eventUrl.ts`, `src/pages/api/go/[slug].ts`, `src/components/cities/CityEventTicketEmbed.astro`, `src/components/events/EventTicketCta.astro`, `src/components/home/HomeHero.astro`, `src/components/home/HomeShows.astro`, `src/components/tickets/TicketCard.astro`, `src/pages/cities/[slug].astro`, plus tests
+
 ## fix(deps): remove sprintf-js from the dev tree to close Dependabot alert #111 (2026-10-19)
 
 `sprintf-js` (denial of service through unbounded precision specifiers) has no patched release: 1.1.3 is the latest and is also affected. It only reached the project through Lighthouse CI: `@lhci/cli` to `@lhci/utils` to `js-yaml@3` to `argparse@1`. Bumping the parent was not an option because `@lhci/cli` 0.15.1 is already the latest, and forcing `js-yaml@4` would break `@lhci/utils`, which still calls the removed `yaml.safeLoad`.

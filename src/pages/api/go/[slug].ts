@@ -5,7 +5,7 @@ import { waitUntil } from "@vercel/functions";
 import { getEventBySlug, type EventEntry } from "@/data/events";
 import { isEventDatePast } from "@/utils/eventDate";
 import { enforceRateLimit, RATE_LIMITS, getClientIp } from "@/lib/rateLimit";
-import { applyUtmsToUrl } from "@/utils/utmForwarding";
+import { applyTicketAttribution } from "@/utils/eventUrl";
 import { withTimeout } from "@/utils/withTimeout";
 import { sendCapiEvent } from "@/lib/capi";
 import { isBotUserAgent } from "@/lib/isBotUserAgent";
@@ -16,6 +16,18 @@ import { isBotUserAgent } from "@/lib/isBotUserAgent";
 // task open indefinitely. The 2s ceiling caps the worst case; a typical
 // Graph API call completes in well under 300ms.
 const CAPI_TIMEOUT_MS = 2000;
+
+// WHY an allowlist pattern on the surface labels: `campaign` and `content`
+// arrive as query params and end up in the vendor URL's `aff` and utm_*
+// values, so an unvalidated value would let anyone craft a ticket link that
+// stamps arbitrary text into our Eventbrite affiliate reporting. Real call
+// sites only send short slugs ("home", "hero", "manhattan"); anything else
+// falls back to the per-event default.
+const SURFACE_LABEL = /^[a-z0-9][a-z0-9_-]{0,39}$/i;
+
+function surfaceLabel(value: string | null, fallback: string): string {
+  return value && SURFACE_LABEL.test(value) ? value : fallback;
+}
 
 function readCookie(
   cookieHeader: string | null,
@@ -148,20 +160,25 @@ export const GET: APIRoute = async ({ params, request }) => {
   // (no-JS fallback, direct link, bot): still a valid, if unpaired, signal.
   const eventId = requestUrl.searchParams.get("eid") || crypto.randomUUID();
 
-  const destination = applyUtmsToUrl(
+  // `campaign`/`content` identify which on-site surface the click came from
+  // (home/hero, tickets/listing, cities/{slug}, events/{position}), matching
+  // the pairs `buildTicketUrl` uses for the sold-out direct link (see
+  // src/utils/eventUrl.ts). The defaults only cover a bare or legacy link
+  // that carries neither. Routing through applyTicketAttribution also sets
+  // the Eventbrite `aff` param, which this route used to drop.
+  const destination = applyTicketAttribution(
     event.url,
+    surfaceLabel(
+      requestUrl.searchParams.get("campaign"),
+      event.citySlug ?? "event",
+    ),
+    surfaceLabel(requestUrl.searchParams.get("content"), event.slug),
     {
       utmSource: requestUrl.searchParams.get("utm_source") ?? undefined,
       utmMedium: requestUrl.searchParams.get("utm_medium") ?? undefined,
       utmCampaign: requestUrl.searchParams.get("utm_campaign") ?? undefined,
       utmContent: requestUrl.searchParams.get("utm_content") ?? undefined,
       utmTerm: requestUrl.searchParams.get("utm_term") ?? undefined,
-    },
-    {
-      utmSource: "garamsite",
-      utmMedium: "web",
-      utmCampaign: event.citySlug ?? "event",
-      utmContent: event.slug,
     },
   );
 

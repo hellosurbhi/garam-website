@@ -132,6 +132,7 @@ function ApplyPageInner() {
     errors,
     submitting,
     submitted,
+    photosFailed,
     isValid,
     termsAgreed,
     nominationConsent,
@@ -207,7 +208,7 @@ function ApplyPageInner() {
       >
         <div className={styles.container}>
           {submitted ? (
-            <ApplySuccessPanel />
+            <ApplySuccessPanel photosFailed={photosFailed} />
           ) : (
             <div className={styles.panel}>
               {/* ── Selectivity banner ─────────────────────── */}
@@ -251,9 +252,7 @@ function ApplyPageInner() {
                   {/* ── Nomination intro message ───────────── */}
                   {isNomination && (
                     <div className={styles.nominationNotice}>
-                      <p>
-                        {APPLY_PAGE.nominationContactNote(friendFirstName)}
-                      </p>
+                      <p>{APPLY_PAGE.nominationContactNote(friendFirstName)}</p>
                     </div>
                   )}
 
@@ -458,8 +457,13 @@ function ApplyPageInner() {
                           type="text"
                           value={form.height}
                           onChange={(e) => set("height", e.target.value)}
+                          onBlur={() => handleBlur("height")}
                           placeholder={`5'8"`}
                           className={styles.input}
+                          aria-invalid={!!errors.height}
+                          aria-describedby={
+                            errors.height ? "field-height-error" : undefined
+                          }
                         />
                       </FieldGroup>
                     </div>
@@ -549,6 +553,7 @@ function ApplyPageInner() {
 
                     <FieldGroup
                       label="Phone Number (optional)"
+                      error={errors.phone}
                       htmlFor="field-phone"
                     >
                       <input
@@ -556,6 +561,7 @@ function ApplyPageInner() {
                         type="tel"
                         value={form.phone}
                         onChange={(e) => set("phone", e.target.value)}
+                        onBlur={() => handleBlur("phone")}
                         placeholder={
                           isNomination
                             ? `${friendFirstName ?? "Friend"}'s phone number`
@@ -564,6 +570,10 @@ function ApplyPageInner() {
                         className={styles.input}
                         autoComplete="tel"
                         inputMode="tel"
+                        aria-invalid={!!errors.phone}
+                        aria-describedby={
+                          errors.phone ? "field-phone-error" : undefined
+                        }
                       />
                     </FieldGroup>
 
@@ -682,9 +692,7 @@ function ApplyPageInner() {
                             }
                           />
                           <span>
-                            {APPLY_PAGE.nominationConsentLabel(
-                              friendFirstName,
-                            )}
+                            {APPLY_PAGE.nominationConsentLabel(friendFirstName)}
                             <span className={styles.requiredMark}>*</span>
                           </span>
                         </label>
@@ -718,6 +726,7 @@ function ApplyPageInner() {
                           ? `What's ${friendFirstName ? `${friendFirstName}'s` : "your friend's"} type... (we will do our best to match ${friendFirstName ?? "them"})`
                           : "What's your type... (we will do our best to match you)"
                       }
+                      error={errors.type}
                       htmlFor="field-type"
                     >
                       <input
@@ -725,9 +734,13 @@ function ApplyPageInner() {
                         type="text"
                         value={form.type}
                         onChange={(e) => set("type", e.target.value)}
+                        onBlur={() => handleBlur("type")}
                         placeholder="e.g. funny, ambitious, loves spice"
                         className={styles.input}
-                        maxLength={200}
+                        aria-invalid={!!errors.type}
+                        aria-describedby={
+                          errors.type ? "field-type-error" : undefined
+                        }
                       />
                     </FieldGroup>
                     <FieldGroup
@@ -736,13 +749,20 @@ function ApplyPageInner() {
                           ? `Why would ${friendFirstName ?? "your friend"} be a great fit? (optional)`
                           : "Why would you be a great fit?"
                       }
+                      error={errors.pitch}
+                      htmlFor="field-pitch"
                     >
                       <textarea
                         id="field-pitch"
                         value={form.pitch}
                         onChange={(e) => set("pitch", e.target.value)}
+                        onBlur={() => handleBlur("pitch")}
                         placeholder="Tell us something fun, bold, or irresistible…"
                         className={styles.textarea}
+                        aria-invalid={!!errors.pitch}
+                        aria-describedby={
+                          errors.pitch ? "field-pitch-error" : undefined
+                        }
                       />
                     </FieldGroup>
                   </div>
@@ -819,6 +839,7 @@ function ApplyPageInner() {
                     <label className={styles.checkRow}>
                       <input
                         type="checkbox"
+                        data-testid="apply-terms"
                         checked={termsAgreed}
                         onChange={(e) => handleTermsCheckbox(e.target.checked)}
                         className={styles.checkInput}

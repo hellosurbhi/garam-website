@@ -119,6 +119,7 @@ const { source = "notify-modal" } = Astro.props;
   import { cleanPhone } from "@/lib/phone";
   import { identifyLead, trackLeadEvent } from "@/lib/analytics";
   import { buildLeadAttribution } from "@/lib/leadAttribution";
+  import { reportFailure } from "@/lib/failureAlert";
   import {
     captureLead,
     updateLeadPhone,
@@ -301,11 +302,19 @@ const { source = "notify-modal" } = Astro.props;
           (
             document.getElementById("notify-phone") as HTMLInputElement | null
           )?.focus();
-        } catch {
+        } catch (err) {
           if (errorEl) {
             errorEl.textContent = "Something went wrong. Please try again.";
             errorEl.removeAttribute("hidden");
           }
+          // A failed capture is a silently lost lead; page with the email so
+          // the person is recoverable.
+          reportFailure({
+            flow: "lead",
+            stage: "email",
+            errorMessage: err instanceof Error ? err.message : String(err),
+            contact: { email: notifyEmail },
+          });
         } finally {
           if (submitBtn) {
             submitBtn.disabled = false;
@@ -402,6 +411,12 @@ const { source = "notify-modal" } = Astro.props;
               "Something went wrong. Please try again or skip.";
             phoneErrorEl.removeAttribute("hidden");
           }
+          reportFailure({
+            flow: "lead",
+            stage: "phone",
+            errorMessage: err instanceof Error ? err.message : String(err),
+            contact: { email: notifyEmail, phone: cleaned },
+          });
         } finally {
           if (submitBtn) {
             submitBtn.disabled = false;

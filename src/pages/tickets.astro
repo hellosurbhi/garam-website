@@ -2,14 +2,13 @@
 import BaseLayout from "@/layouts/BaseLayout.astro";
 import NotifyModal from "@/components/NotifyModal.astro";
 import { buildBreadcrumbJsonLd } from "@/utils/breadcrumbs";
-import { events, allEvents } from "@/data/events";
+import { events, allEvents, isDisplayable } from "@/data/events";
 import { buildEventSchemas } from "@/utils/eventSchema";
 import LeadCaptureModal from "@/components/LeadCaptureModal.astro";
 import { buildTaglineMap } from "@/utils/eventTaglines";
-import { getUpcomingDated } from "@/utils/eventFilters";
+import { getUpcomingDated, getSchemaDated } from "@/utils/eventFilters";
 import { PAGES } from "@/data/copy";
 import TicketCard from "@/components/tickets/TicketCard.astro";
-import EventbriteWidgetInit from "@/components/EventbriteWidgetInit.astro";
 import StickyCTA from "@/components/StickyCTA.astro";
 
 const TITLE = "Tickets & Upcoming Shows";
@@ -18,7 +17,7 @@ const DESC =
 
 const today = new Date().toISOString().slice(0, 10);
 const datedUpcoming = getUpcomingDated(allEvents, today);
-const tbaEvents = allEvents.filter((e) => !e.hidden && !e.isoDate);
+const tbaEvents = allEvents.filter((e) => isDisplayable(e) && !e.isoDate);
 const upcomingEvents = [...datedUpcoming, ...tbaEvents];
 
 const taglineMap = buildTaglineMap(upcomingEvents);
@@ -29,9 +28,7 @@ const breadcrumbJsonLd = buildBreadcrumbJsonLd([
 ]);
 
 // Individual Event JSON-LD blocks (one per upcoming dated show)
-const eventSchemas = buildEventSchemas(
-  events.filter((e) => !e.hidden && e.isoDate && e.isoDate >= today),
-);
+const eventSchemas = buildEventSchemas(getSchemaDated(events, today));
 
 // EventSeries JSON-LD — signals this is a recurring show, not a one-off
 const eventSeriesJsonLd = JSON.stringify({
@@ -40,7 +37,7 @@ const eventSeriesJsonLd = JSON.stringify({
   "@id": "https://garammasaladating.com/#event-series",
   name: "Garam Masala Dating",
   description:
-    "America's #1 recurring live desi comedy dating show. Two real singles go on a blind date in front of a 250-person audience. Bi-weekly in Manhattan at Top Secret Comedy Club.",
+    "America's #1 recurring live desi comedy dating show. Two real singles go on a blind date in front of a 250-person audience in Manhattan at City Winery NYC.",
   url: "https://garammasaladating.com",
   startDate: "2022",
   organizer: {
@@ -50,19 +47,15 @@ const eventSeriesJsonLd = JSON.stringify({
   },
   location: {
     "@type": "Place",
-    name: "Top Secret Comedy Club",
+    name: "The Loft at City Winery NYC",
     address: {
       "@type": "PostalAddress",
-      streetAddress: "44 Avenue A",
+      streetAddress: "25 11th Ave",
       addressLocality: "New York",
       addressRegion: "NY",
-      postalCode: "10009",
+      postalCode: "10011",
       addressCountry: "US",
     },
-  },
-  eventSchedule: {
-    "@type": "Schedule",
-    repeatFrequency: "P2W",
   },
 });
 ---
@@ -181,8 +174,6 @@ const eventSeriesJsonLd = JSON.stringify({
       </div>
     </div>
   </main>
-
-  <EventbriteWidgetInit />
 
   <script>
     import "@/lib/presaleReveal";

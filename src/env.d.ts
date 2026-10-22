@@ -7,16 +7,6 @@ declare module "virtual:git-dates" {
 
 interface Window {
   dataLayer?: Array<Record<string, unknown>>;
-  EBWidgets?: {
-    createWidget: (config: {
-      widgetType: string;
-      eventId: string;
-      modal: boolean;
-      modalTriggerElementId: string;
-      themeSettings?: Record<string, string>;
-      onOrderComplete?: () => void;
-    }) => void;
-  };
   posthog?: {
     capture?: (event: string, properties?: Record<string, unknown>) => void;
     identify?: (
@@ -30,6 +20,11 @@ interface Window {
     action: string,
     eventName: string,
     parameters?: Record<string, unknown>,
+    // 4th arg is Meta's browser/server dedup contract: passing the same
+    // eventID used in a paired server-side CAPI call (src/lib/capi.ts) tells
+    // Meta the two deliveries are one event, not two. See capture()'s
+    // `options.eventId` in src/lib/analyticsCapture.ts.
+    eventOptions?: { eventID?: string },
   ) => void;
   __garamAnalytics?: {
     posthog?: boolean;

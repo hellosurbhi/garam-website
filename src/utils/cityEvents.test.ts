@@ -39,6 +39,12 @@ describe("isUpcomingEvent date boundary (drives the CTA state machine)", () => {
     expect(isUpcomingEvent(makeEvent({ hidden: true }), TODAY)).toBe(false);
   });
 
+  it("excludes canceled events (city page reverts to no-event state)", () => {
+    expect(isUpcomingEvent(makeEvent({ status: "canceled" }), TODAY)).toBe(
+      false,
+    );
+  });
+
   it("excludes events without an isoDate", () => {
     expect(isUpcomingEvent(makeEvent({ isoDate: undefined }), TODAY)).toBe(
       false,

@@ -1,6 +1,11 @@
 import { describe, it, expect } from "vitest";
 import { isUpcomingByIso } from "../src/utils/eventDate";
-import { isDatedUpcoming, getUpcomingDated } from "../src/utils/eventFilters";
+import {
+  isDatedUpcoming,
+  getUpcomingDated,
+  getSchemaDated,
+} from "../src/utils/eventFilters";
+import { isDisplayable, computeAllEvents } from "../src/data/events";
 import type { EventEntry } from "../src/data/events";
 
 const TODAY = "2026-07-01";
@@ -9,6 +14,12 @@ describe("isUpcomingByIso", () => {
   it("returns false for hidden events regardless of date", () => {
     expect(
       isUpcomingByIso({ isoDate: "2026-07-15", hidden: true }, TODAY),
+    ).toBe(false);
+  });
+
+  it("returns false for canceled events regardless of date", () => {
+    expect(
+      isUpcomingByIso({ isoDate: "2026-07-15", status: "canceled" }, TODAY),
     ).toBe(false);
   });
 
@@ -110,6 +121,12 @@ describe("isDatedUpcoming", () => {
     );
   });
 
+  it("returns false for a canceled event", () => {
+    expect(
+      isDatedUpcoming(makeEvent({ status: "canceled" }), "2026-07-01"),
+    ).toBe(false);
+  });
+
   it("returns false for an event with no isoDate (TBA)", () => {
     expect(
       isDatedUpcoming(makeEvent({ isoDate: undefined }), "2026-07-01"),
@@ -167,5 +184,83 @@ describe("getUpcomingDated", () => {
     const result = getUpcomingDated(events, FIXED_TODAY);
     expect(result).toHaveLength(1);
     expect(result[0].isoDate).toBe("2026-07-12");
+  });
+
+  it("excludes canceled events", () => {
+    const events = [
+      makeEvent({ isoDate: "2026-07-12", status: "canceled" }),
+      makeEvent({ isoDate: "2026-07-19" }),
+    ];
+    const result = getUpcomingDated(events, FIXED_TODAY);
+    expect(result).toHaveLength(1);
+    expect(result[0].isoDate).toBe("2026-07-19");
+  });
+});
+
+describe("isDisplayable", () => {
+  it("is true for a plain event", () => {
+    expect(isDisplayable(makeEvent({}))).toBe(true);
+  });
+
+  it("is false for hidden events", () => {
+    expect(isDisplayable(makeEvent({ hidden: true }))).toBe(false);
+  });
+
+  it("is false for canceled events", () => {
+    expect(isDisplayable(makeEvent({ status: "canceled" }))).toBe(false);
+  });
+});
+
+describe("getSchemaDated", () => {
+  const FIXED_TODAY = "2026-07-01";
+
+  it("excludes canceled, hidden, past and undated events", () => {
+    const events = [
+      makeEvent({ isoDate: "2026-07-12" }),
+      makeEvent({ isoDate: "2026-07-13", status: "canceled" }),
+      makeEvent({ isoDate: "2026-07-14", hidden: true }),
+      makeEvent({ isoDate: "2026-05-01" }),
+      makeEvent({ isoDate: undefined, date: "TBA", url: "" }),
+    ];
+    const result = getSchemaDated(events, FIXED_TODAY);
+    expect(result.map((e) => e.isoDate)).toEqual(["2026-07-12"]);
+  });
+});
+
+describe("computeAllEvents TBA suppression", () => {
+  const FIXED_TODAY = "2026-07-01";
+  const tbaManhattan = makeEvent({
+    date: "TBA",
+    city: "Manhattan",
+    citySlug: "manhattan",
+    isoDate: undefined,
+    url: "",
+  });
+
+  it("suppresses a city's TBA card while it has an upcoming show", () => {
+    const confirmed = makeEvent({
+      citySlug: "manhattan",
+      isoDate: "2026-07-20",
+    });
+    const all = computeAllEvents([confirmed], [tbaManhattan], FIXED_TODAY);
+    expect(all).toHaveLength(1);
+    expect(all[0].isoDate).toBe("2026-07-20");
+  });
+
+  it("does NOT let a canceled show suppress its city's TBA card", () => {
+    const canceled = makeEvent({
+      citySlug: "manhattan",
+      isoDate: "2026-07-20",
+      status: "canceled",
+    });
+    const all = computeAllEvents([canceled], [tbaManhattan], FIXED_TODAY);
+    expect(all).toHaveLength(2);
+    expect(all[1].date).toBe("TBA");
+  });
+
+  it("does not let a past show suppress its city's TBA card", () => {
+    const past = makeEvent({ citySlug: "manhattan", isoDate: "2026-05-01" });
+    const all = computeAllEvents([past], [tbaManhattan], FIXED_TODAY);
+    expect(all).toHaveLength(2);
   });
 });

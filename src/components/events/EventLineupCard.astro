@@ -1,0 +1,129 @@
+---
+/**
+ * One performer's card in a /events/[slug] page's Lineup section.
+ * Pulls from the single lineup source of truth (src/data/lineup.ts) so this
+ * and hosts.astro never drift out of sync on bios/photos/credits.
+ */
+import type { Performer } from "@/data/lineup";
+
+interface Props {
+  performer: Performer;
+}
+
+const { performer } = Astro.props;
+---
+
+<article class="lineup-card">
+  <img
+    src={performer.photo}
+    alt={performer.name}
+    class="lineup-card__photo"
+    width="88"
+    height="88"
+    loading="lazy"
+  />
+  <div class="lineup-card__body">
+    <p class="lineup-card__role">{performer.role}</p>
+    <h3 class="lineup-card__name">
+      <a
+        href={performer.instagramUrl}
+        target="_blank"
+        rel="noopener noreferrer"
+      >
+        {performer.name}
+      </a>
+    </h3>
+    {
+      /* set:html: bioParagraphs may contain inline markup (e.g. <em>show
+        title</em>), same contract hosts.astro renders these with. Plain
+        interpolation would print the literal tags instead of italicizing
+        them. Content is static, internally authored copy, not user input,
+        so this is XSS-safe. */
+    }
+    <p class="lineup-card__bio" set:html={performer.bioParagraphs[0]} />
+    <div class="lineup-card__credits">
+      {performer.credits.map((credit) => <span>{credit}</span>)}
+    </div>
+  </div>
+</article>
+
+<style>
+  .lineup-card {
+    display: flex;
+    gap: 16px;
+    align-items: flex-start;
+    padding: 20px;
+    border-radius: 16px;
+    border: 1px solid rgba(0, 0, 0, 0.08);
+    background: white;
+    text-align: left;
+  }
+
+  .lineup-card__photo {
+    width: 88px;
+    height: 88px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 3px solid var(--brand-red);
+    flex-shrink: 0;
+  }
+
+  .lineup-card__body {
+    min-width: 0;
+  }
+
+  .lineup-card__role {
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    color: var(--brand-red);
+    margin-bottom: 4px;
+  }
+
+  .lineup-card__name {
+    margin-bottom: 8px;
+  }
+
+  .lineup-card__name a {
+    font-family: var(--font-cormorant), serif;
+    font-size: 22px;
+    font-weight: 700;
+    color: var(--charcoal);
+    text-decoration: none;
+    transition: color 0.2s;
+  }
+
+  .lineup-card__name a:hover {
+    color: var(--brand-red);
+  }
+
+  .lineup-card__bio {
+    font-size: 15px;
+    line-height: 1.6;
+    color: var(--text-secondary, #444);
+    margin-bottom: 12px;
+  }
+
+  .lineup-card__credits {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+  }
+
+  .lineup-card__credits span {
+    font-size: 10px;
+    font-weight: 600;
+    background: rgba(var(--brand-red-rgb), 0.08);
+    color: var(--brand-red);
+    padding: 3px 10px;
+    border-radius: 50px;
+    letter-spacing: 0.4px;
+  }
+
+  @media (min-width: 768px) {
+    .lineup-card {
+      padding: 24px;
+    }
+  }
+</style>

@@ -1,5 +1,17 @@
 import { describe, it, expect } from "vitest";
-import { nyOffset } from "./timezone";
+import { nyOffset, offsetForZone } from "./timezone";
+
+describe("offsetForZone", () => {
+  it("returns Chicago's daylight offset for the October show", () => {
+    expect(offsetForZone("2026-10-24", "18:00", "America/Chicago")).toBe(
+      "-05:00",
+    );
+  });
+
+  it("supports zones with a non-zero minute offset", () => {
+    expect(offsetForZone("2026-10-24", "18:00", "Asia/Kolkata")).toBe("+05:30");
+  });
+});
 
 describe("nyOffset", () => {
   it("returns -04:00 for a summer date (EDT)", () => {

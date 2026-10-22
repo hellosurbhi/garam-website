@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { WAIVER_VERSION, WAIVER_TEXT } from "@/data/waiver";
 import { SOCIAL_URLS } from "@/data/socials";
 import {
@@ -18,6 +18,8 @@ import {
   missingRoleError,
   claimErrorMessage,
 } from "@/data/contestantPortal";
+import { useWaiverSignature } from "@/components/waiver/useWaiverSignature";
+import { reportFailure } from "@/lib/failureAlert";
 import { WaiverPanel } from "@/components/WaiverPanel";
 
 type ContestantRole = "female" | "male";
@@ -131,6 +133,22 @@ function formatCallTime(startTime?: string | null): string | null {
 // which must never reach the user as-is. Without this, a mid-request network
 // change surfaces the literal string "Failed to fetch" in the UI.
 class PortalApiError extends Error {}
+
+// A failed claim is a contestant blocked from signing their waiver before a
+// show; page the producer with their contact fields so they can be walked
+// through it (the UI error alone leaves recovery to chance).
+function reportClaimFailure(err: unknown, data: PortalSignupData): void {
+  reportFailure({
+    flow: "portal",
+    stage: "claim",
+    errorMessage: err instanceof Error ? err.message : String(err),
+    contact: {
+      name: `${data.firstName} ${data.lastName}`.trim(),
+      email: data.email,
+      phone: data.phone,
+    },
+  });
+}
 
 async function claimPortal(endpoint: string, body: Record<string, unknown>) {
   const ctrl = new AbortController();
@@ -307,6 +325,7 @@ export default function ContestantPortal() {
             setFormError(
               err instanceof PortalApiError ? err.message : CLAIM_ERROR_MESSAGE,
             );
+            reportClaimFailure(err, data);
           } finally {
             setFormPhase("form");
           }
@@ -347,6 +366,7 @@ export default function ContestantPortal() {
             setFormError(
               err instanceof PortalApiError ? err.message : CLAIM_ERROR_MESSAGE,
             );
+            reportClaimFailure(err, data);
           } finally {
             setFormPhase("form");
           }
@@ -388,6 +408,7 @@ export default function ContestantPortal() {
             setFormError(
               err instanceof PortalApiError ? err.message : CLAIM_ERROR_MESSAGE,
             );
+            reportClaimFailure(err, data);
           } finally {
             setFormPhase("form");
           }
@@ -475,17 +496,18 @@ function ContestantPacketGate({
   const [selectedRole, setSelectedRole] = useState<ContestantRole | "">(
     role ?? "",
   );
-  const [signature, setSignature] = useState("");
-  const [waiverScrolled, setWaiverScrolled] = useState(false);
   const [agreed, setAgreed] = useState(false);
-  const handleWaiverUnlock = useCallback(() => setWaiverScrolled(true), []);
   const resolvedRole = role ?? selectedRole;
   const callTime = formatCallTime(startTime);
 
   const fullName = `${firstName.trim()} ${lastName.trim()}`.trim();
-  const signatureValid =
-    signature.trim().length > 0 &&
-    signature.trim().toLowerCase() === fullName.toLowerCase();
+  const {
+    signature,
+    setSignature,
+    signatureValid,
+    waiverScrolled,
+    markWaiverScrolled,
+  } = useWaiverSignature(fullName);
   const canSubmit =
     firstName.trim().length > 0 &&
     lastName.trim().length > 0 &&
@@ -613,7 +635,7 @@ function ContestantPacketGate({
         <WaiverPanel
           waiverText={WAIVER_TEXT}
           scrolled={waiverScrolled}
-          onScrolledToEnd={handleWaiverUnlock}
+          onScrolledToEnd={markWaiverScrolled}
           signature={signature}
           onSignatureChange={setSignature}
           signatureValid={signatureValid}

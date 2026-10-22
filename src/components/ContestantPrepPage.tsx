@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import styles from "./ContestantPrepPage.module.css";
 import Skeleton from "./ui/Skeleton";
+import { safeSessionStorage } from "@/lib/safeStorage";
 
 /* ─── Session helpers ──────────────────────────────────────────── */
 
@@ -9,21 +10,21 @@ const EXPIRES_KEY = "gm-prep-expires";
 
 function getSession(): { token: string; expiresAt: number } | null {
   if (typeof window === "undefined") return null;
-  const token = sessionStorage.getItem(TOKEN_KEY);
-  const expires = sessionStorage.getItem(EXPIRES_KEY);
+  const token = safeSessionStorage.getItem(TOKEN_KEY);
+  const expires = safeSessionStorage.getItem(EXPIRES_KEY);
   if (!token || !expires) return null;
   const expiresAt = parseInt(expires, 10);
   if (Number.isNaN(expiresAt) || Date.now() >= expiresAt) {
-    sessionStorage.removeItem(TOKEN_KEY);
-    sessionStorage.removeItem(EXPIRES_KEY);
+    safeSessionStorage.removeItem(TOKEN_KEY);
+    safeSessionStorage.removeItem(EXPIRES_KEY);
     return null;
   }
   return { token, expiresAt };
 }
 
 function saveSession(token: string, expiresAt: number) {
-  sessionStorage.setItem(TOKEN_KEY, token);
-  sessionStorage.setItem(EXPIRES_KEY, String(expiresAt));
+  safeSessionStorage.setItem(TOKEN_KEY, token);
+  safeSessionStorage.setItem(EXPIRES_KEY, String(expiresAt));
 }
 
 /* ─── Loading state ────────────────────────────────────────────── */

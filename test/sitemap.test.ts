@@ -8,7 +8,8 @@ function sitemapFilter(page: string): boolean {
   if (
     page.includes("/admin") ||
     page.includes("/contestant-prep") ||
-    page.includes("/waiver")
+    page.includes("/waiver") ||
+    page.includes("/cuffing-season")
   )
     return false;
   return true;
@@ -25,6 +26,14 @@ describe("sitemap filter", () => {
 
   it("excludes /waiver", () => {
     expect(sitemapFilter(`${SITE}/waiver`)).toBe(false);
+  });
+
+  it("excludes /cuffing-season (gated share link, not meant to rank)", () => {
+    expect(sitemapFilter(`${SITE}/cuffing-season`)).toBe(false);
+  });
+
+  it("includes /singles-mixers (evergreen SEO landing page)", () => {
+    expect(sitemapFilter(`${SITE}/singles-mixers`)).toBe(true);
   });
 
   it("excludes URLs with query params", () => {

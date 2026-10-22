@@ -19,7 +19,7 @@ import {
   STATUS_ORDER,
 } from "@/types/application";
 import { formatLocation } from "@/utils/locationDisplay";
-import { getApplicantPhotos } from "@/utils/applicantPhotos";
+import { useApplicantPhotos } from "@/components/admin/useApplicantPhotos";
 import { Modal } from "@/components/ui/Modal";
 import Spinner from "@/components/ui/Spinner";
 import { events } from "@/data/events";
@@ -120,11 +120,15 @@ export default function ApplicantModal({
   const isDeleted = !!app.deletedAt;
   const isNomination = app.applicationType === "Nomination";
 
-  const photos = useMemo(() => getApplicantPhotos(app), [app]);
+  const { photos } = useApplicantPhotos(app);
   const currentPhoto = photos[selectedPhotoIndex] ?? photos[0];
 
   const upcomingEvents = useMemo(
-    () => events.filter((e) => e.isoDate && e.isoDate >= TODAY_ISO),
+    // Admin deliberately sees hidden shows; only canceled ones are unpickable.
+    () =>
+      events.filter(
+        (e) => e.status !== "canceled" && e.isoDate && e.isoDate >= TODAY_ISO,
+      ),
     [],
   );
 
@@ -367,6 +371,24 @@ export default function ApplicantModal({
         <div className={styles.appTypePill} data-nomination={isNomination}>
           {isNomination ? "Nomination" : "Self"}
         </div>
+        {app.photoUploadFailed && (
+          <p
+            role="alert"
+            style={{
+              display: "inline-block",
+              margin: "8px 0 0",
+              padding: "2px 8px",
+              borderRadius: "100px",
+              fontSize: "11px",
+              fontWeight: 600,
+              background: "rgba(255, 214, 0, 0.25)",
+              color: "var(--charcoal)",
+              letterSpacing: "0.02em",
+            }}
+          >
+            Photos failed to upload, chase them for photos
+          </p>
+        )}
 
         {/* ── Info grid ────────────────────────────────────── */}
         <div className={styles.infoGrid}>

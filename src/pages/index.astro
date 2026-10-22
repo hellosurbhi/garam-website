@@ -1,6 +1,5 @@
 ---
 import BaseLayout from "@/layouts/BaseLayout.astro";
-import EventbriteWidgetInit from "@/components/EventbriteWidgetInit.astro";
 import HomeNav from "@/components/home/HomeNav.astro";
 import HomeHero from "@/components/home/HomeHero.astro";
 import HomeMarquee from "@/components/home/HomeMarquee.astro";
@@ -18,8 +17,9 @@ import { CREATOR_URLS } from "@/data/socials";
 import { PAGES } from "@/data/copy";
 import { buildOrganizationJsonLd } from "@/utils/organizationSchema";
 import { YOUTUBE_VIDEO_ID, VIDEO_METADATA } from "@/lib/constants";
-import { events, allEvents } from "@/data/events";
+import { events, allEvents, isDisplayable } from "@/data/events";
 import { isUpcomingByIso } from "@/utils/eventDate";
+import { getSchemaDated } from "@/utils/eventFilters";
 import { buildEventSchemas } from "@/utils/eventSchema";
 
 const HIDDEN_FROM_HOME = ["Salt Lake City", "Denver"];
@@ -29,7 +29,7 @@ const upcomingEvents = allEvents.filter(
 );
 const firstTicketUrl = "/tickets";
 const heroEvents = events
-  .filter((e) => !e.hidden && e.isoDate && e.isoDate >= today && e.url)
+  .filter((e) => isDisplayable(e) && e.isoDate && e.isoDate >= today && e.url)
   .slice(0, 5);
 
 // Organization JSON-LD
@@ -44,9 +44,7 @@ const websiteJsonLd = JSON.stringify({
 });
 
 // Individual Event JSON-LD blocks (one per upcoming show with a real date+url)
-const eventSchemas = buildEventSchemas(
-  events.filter((e) => !e.hidden && e.isoDate && e.isoDate >= today),
-);
+const eventSchemas = buildEventSchemas(getSchemaDated(events, today));
 
 // VideoObject JSON-LD
 const videoJsonLd = JSON.stringify({
@@ -77,7 +75,7 @@ const eventSeriesJsonLd = JSON.stringify({
   "@id": "https://garammasaladating.com/#event-series",
   name: "Garam Masala Dating",
   description:
-    "America's #1 recurring live desi comedy dating show. Two real South Asian singles go on a blind date in front of a 250-person audience. Bi-weekly in Manhattan at Top Secret Comedy Club.",
+    "America's #1 recurring live desi comedy dating show. Two real South Asian singles go on a blind date in front of a 250-person audience in Manhattan at City Winery NYC.",
   url: "https://garammasaladating.com",
   startDate: "2022",
   organizer: {
@@ -87,19 +85,15 @@ const eventSeriesJsonLd = JSON.stringify({
   },
   location: {
     "@type": "Place",
-    name: "Top Secret Comedy Club",
+    name: "The Loft at City Winery NYC",
     address: {
       "@type": "PostalAddress",
-      streetAddress: "44 Avenue A",
+      streetAddress: "25 11th Ave",
       addressLocality: "New York",
       addressRegion: "NY",
-      postalCode: "10009",
+      postalCode: "10011",
       addressCountry: "US",
     },
-  },
-  eventSchedule: {
-    "@type": "Schedule",
-    repeatFrequency: "P2W",
   },
   performer: [
     { "@type": "Person", name: "Surbhi", url: CREATOR_URLS.surbhi },
@@ -151,7 +145,6 @@ const speakableJsonLd = JSON.stringify({
     <HomeFAQ />
     <HomeJournal />
   </main>
-  <EventbriteWidgetInit />
 
   <!-- 30-second email popup -->
   <dialog id="email-popup" class="popup-dialog">
@@ -247,6 +240,7 @@ const speakableJsonLd = JSON.stringify({
   import { cleanPhone } from "@/lib/phone";
   import { identifyLead, trackLeadEvent } from "@/lib/analytics";
   import { buildLeadAttribution } from "@/lib/leadAttribution";
+  import { safeLocalStorage, safeSessionStorage } from "@/lib/safeStorage";
   import {
     captureLead,
     updateLeadPhone,
@@ -265,12 +259,12 @@ const speakableJsonLd = JSON.stringify({
 
   const popup = document.getElementById("email-popup") as HTMLDialogElement;
 
-  if (popup && !localStorage.getItem(POPUP_KEY)) {
+  if (popup && !safeLocalStorage.getItem(POPUP_KEY)) {
     const sessionStart = Date.now();
     let popupShown = false;
 
     function canShowPopup(): boolean {
-      const dismissed = localStorage.getItem(POPUP_DISMISS_KEY);
+      const dismissed = safeLocalStorage.getItem(POPUP_DISMISS_KEY);
       if (dismissed && Date.now() - Number(dismissed) < DISMISS_DURATION_MS)
         return false;
       return true;
@@ -287,7 +281,7 @@ const speakableJsonLd = JSON.stringify({
       const cityInput = document.getElementById(
         "popup-city",
       ) as HTMLInputElement | null;
-      const geoCity = sessionStorage.getItem("gmd-geo-city");
+      const geoCity = safeSessionStorage.getItem("gmd-geo-city");
       if (cityInput && geoCity && !cityInput.value) cityInput.value = geoCity;
       trackLeadEvent("popup_opened", {
         source: "popup",
@@ -333,8 +327,8 @@ const speakableJsonLd = JSON.stringify({
     const close = (): void => {
       // Save dismiss timestamp so the popup respects a 7-day cooldown.
       // Only set if user hasn't already subscribed (POPUP_KEY).
-      if (!localStorage.getItem(POPUP_KEY)) {
-        localStorage.setItem(POPUP_DISMISS_KEY, String(Date.now()));
+      if (!safeLocalStorage.getItem(POPUP_KEY)) {
+        safeLocalStorage.setItem(POPUP_DISMISS_KEY, String(Date.now()));
       }
       const inner = popup.querySelector(".popup-inner") as HTMLElement | null;
       const reduced = window.matchMedia(
@@ -392,7 +386,7 @@ const speakableJsonLd = JSON.stringify({
             ...attribution,
           });
           popupDocId = captured.id ? captured : null;
-          localStorage.setItem(POPUP_KEY, "true");
+          safeLocalStorage.setItem(POPUP_KEY, "true");
           identifyLead(savedEmail, attribution);
           trackLeadEvent("lead_email_submitted", attribution);
           trackLeadEvent("email_signup", attribution);

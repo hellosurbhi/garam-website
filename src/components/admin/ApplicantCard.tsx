@@ -1,7 +1,7 @@
 import { Trash2, ArchiveRestore, CheckCircle } from "lucide-react";
 import { type Application, STATUS_COLORS } from "@/types/application";
 import { formatLocation } from "@/utils/locationDisplay";
-import { getApplicantPhotos } from "@/utils/applicantPhotos";
+import { useApplicantPhotos } from "@/components/admin/useApplicantPhotos";
 import Spinner from "../ui/Spinner";
 
 interface ApplicantCardProps {
@@ -33,6 +33,25 @@ function StatusBadge({ status }: { status: Application["status"] }) {
       }}
     >
       {status}
+    </span>
+  );
+}
+
+function PhotosFailedPill() {
+  return (
+    <span
+      style={{
+        display: "inline-block",
+        padding: "2px 8px",
+        borderRadius: "100px",
+        fontSize: "11px",
+        fontWeight: 600,
+        background: "rgba(255, 214, 0, 0.25)",
+        color: "var(--charcoal)",
+        letterSpacing: "0.02em",
+      }}
+    >
+      Photos failed
     </span>
   );
 }
@@ -70,9 +89,8 @@ export default function ApplicantCard({
   actionsDisabled,
 }: ApplicantCardProps) {
   const handle = app.instagram.replace(/^@/, "");
-  const photos = getApplicantPhotos(app);
+  const { photos, count: photoCount } = useApplicantPhotos(app, 1);
   const firstPhoto = photos[0];
-  const photoCount = photos.length;
   const isNomination = app.applicationType === "Nomination";
 
   const actionButtons =
@@ -336,6 +354,7 @@ export default function ApplicantCard({
           }}
         >
           <AppTypePill applicationType={app.applicationType} />
+          {app.photoUploadFailed && <PhotosFailedPill />}
         </div>
 
         <a

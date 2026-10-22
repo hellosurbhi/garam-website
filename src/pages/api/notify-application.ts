@@ -1,40 +1,49 @@
+import { ADMIN_DASHBOARD_URL } from "@/data/brand";
 import type { APIRoute } from "astro";
 import { z } from "zod";
 import { sendMail } from "@/lib/zohoMailer";
 import { applicationReceived, escapeHtml, subjectSafe } from "@/data/emails";
 import { enforceRateLimit, RATE_LIMITS } from "@/lib/rateLimit";
+import { isAllowedOrigin } from "@/lib/allowedOrigin";
+import { isSyntheticSubmission } from "@/lib/syntheticMonitor";
+import { alertOps } from "@/lib/opsAlert";
+import { FIELD_LIMITS } from "@/lib/applicationFieldLimits";
 
 export const prerender = false;
 
-function isAllowedOrigin(origin: string | null): boolean {
-  if (!origin) return false;
-  if (origin === "https://garammasaladating.com") return true;
-  if (/^https:\/\/[\w-]+-hellosurbhi\.vercel\.app$/.test(origin)) return true;
-  if (/^http:\/\/localhost(:\d+)?$/.test(origin)) return true;
-  return false;
-}
-
+// WHY these mirror @/lib/applicationFieldLimits instead of the client's own
+// numbers: this schema drifted from FIELD_LIMITS after the 2026-08-31 "no
+// human hits a length limit" sweep (PR #244) raised the client/rules caps
+// but missed this file, so a real applicant with e.g. a formatted phone
+// number over the old 30-char cap saved to Firestore fine but silently
+// never triggered the admin email. Importing the shared constants instead
+// of duplicating numbers makes that drift structurally impossible to repeat.
 const ApplicationSchema = z.object({
-  name: z.string().min(1).max(200),
+  name: z.string().min(1).max(FIELD_LIMITS.freeText),
   age: z.number().int().min(18).max(120),
   gender: z.string().min(1).max(100),
   orientation: z.string().min(1).max(100),
-  city: z.string().min(1).max(200),
+  city: z.string().min(1).max(FIELD_LIMITS.freeText),
   state: z.string().max(100).default(""),
   country: z.string().max(100).default(""),
-  email: z.string().email().max(320),
-  instagram: z.string().min(1).max(100),
+  email: z.string().email().max(FIELD_LIMITS.email),
+  instagram: z.string().min(1).max(FIELD_LIMITS.instagram),
   community: z.string().max(100).default(""),
   income: z.string().max(100).default(""),
   applicationType: z.enum(["Self", "Nomination"]),
-  referrerName: z.string().max(200).default(""),
+  referrerName: z.string().max(FIELD_LIMITS.freeText).default(""),
   nominationConsent: z.boolean().optional(),
-  pitch: z.string().max(5000).default(""),
-  phone: z.string().max(30).optional(),
-  height: z.string().max(50).optional(),
-  type: z.string().max(200).optional(),
+  pitch: z.string().max(FIELD_LIMITS.pitch).default(""),
+  phone: z.string().max(FIELD_LIMITS.phone).optional(),
+  height: z.string().max(FIELD_LIMITS.freeText).optional(),
+  type: z.string().max(FIELD_LIMITS.freeText).optional(),
   seenShowBefore: z.boolean().optional(),
-  photoUrls: z.array(z.string().url().startsWith("https://")).min(1).max(10),
+  // Storage paths, not URLs: photo reads are admin-only, so the email links
+  // to the dashboard instead of exposing tokened photo URLs.
+  photoPaths: z
+    .array(z.string().regex(/^photos\/[A-Za-z0-9._-]+$/))
+    .min(1)
+    .max(10),
 });
 
 type ApplicationNotification = z.infer<typeof ApplicationSchema>;
@@ -101,25 +110,9 @@ function buildAdminEmailHtml(data: ApplicationNotification): string {
       </div>`
     : "";
 
-  const validPhotos = data.photoUrls.filter((url) => {
-    try {
-      return new URL(url).protocol === "https:";
-    } catch {
-      return false;
-    }
-  });
-
-  const photoSection =
-    validPhotos.length > 0
-      ? `<div style="margin-top:12px;">
-          ${validPhotos
-            .map(
-              (url, i) =>
-                `<a href="${escapeHtml(url)}" style="color:#DC2626;margin-right:12px;">View Photo ${i + 1}</a>`,
-            )
-            .join("")}
-        </div>`
-      : "";
+  const photoSection = `<div style="margin-top:12px;">
+      <a href="${ADMIN_DASHBOARD_URL}" style="color:#DC2626;">View ${data.photoPaths.length} photo${data.photoPaths.length === 1 ? "" : "s"} in the admin dashboard</a>
+    </div>`;
 
   return `<div style="font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;max-width:600px;margin:0 auto;padding:20px;">
     <h2 style="color:#DC2626;margin:0 0 16px;">New ${isNomination ? "Nomination" : "Self-Application"}</h2>
@@ -128,7 +121,7 @@ function buildAdminEmailHtml(data: ApplicationNotification): string {
     ${photoSection}
     <hr style="border:none;border-top:1px solid #eee;margin:24px 0 12px;" />
     <p style="color:#999;font-size:12px;margin:0;">
-      View all applications in the <a href="https://garammasaladating.com/admin" style="color:#DC2626;">admin dashboard</a>.
+      View all applications in the <a href="${ADMIN_DASHBOARD_URL}" style="color:#DC2626;">admin dashboard</a>.
     </p>
   </div>`;
 }
@@ -154,7 +147,7 @@ function buildAdminEmailText(data: ApplicationNotification): string {
   if (isNomination && data.referrerName)
     lines.push(`Nominated by: ${data.referrerName}`);
   if (data.pitch) lines.push("", `Pitch: ${data.pitch}`);
-  lines.push("", "https://garammasaladating.com/admin");
+  lines.push("", ADMIN_DASHBOARD_URL);
   return lines.join("\n");
 }
 
@@ -199,6 +192,18 @@ export const POST: APIRoute = async ({ request }) => {
     });
   }
 
+  // The daily synthetic monitor exercises the full production flow; its
+  // submission must not email the producer or "welcome" a robot.
+  // WHY: derived from the server-verified email only, never a request-body
+  // flag: a client-supplied boolean would let any caller suppress the admin
+  // notification for a real application already written to Firestore.
+  if (isSyntheticSubmission(body.email)) {
+    return new Response(JSON.stringify({ sent: false, synthetic: true }), {
+      status: 200,
+      headers: { "Content-Type": "application/json" },
+    });
+  }
+
   const isNomination = body.applicationType === "Nomination";
 
   try {
@@ -219,7 +224,20 @@ export const POST: APIRoute = async ({ request }) => {
       status: 200,
       headers: { "Content-Type": "application/json" },
     });
-  } catch {
+  } catch (err) {
+    // The application IS saved in Firestore at this point; a dead mailer
+    // means an invisible applicant. alertOps' email may fail for the same
+    // reason, which is exactly what the ALERT_WEBHOOK_URL channel is for.
+    await alertOps({
+      flow: "apply",
+      stage: "admin_email",
+      errorMessage: err instanceof Error ? err.message : String(err),
+      context: {
+        name: body.name,
+        email: body.email,
+        instagram: body.instagram,
+      },
+    });
     return new Response(
       JSON.stringify({ error: "Failed to send notification" }),
       {

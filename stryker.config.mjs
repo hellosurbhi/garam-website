@@ -17,18 +17,24 @@ export default {
   // mutate: ['src/utils/**/*.ts', 'src/lib/**/*.ts'],
 
   // Reporters
-  reporters: ["html", "clear-text", "progress"],
+  // "json" (default output: reports/mutation/mutation.json) feeds
+  // scripts/mutation-audit-summary.mjs, the weekly scheduled audit
+  // (.github/workflows/mutation-audit.yml) -- it needs per-mutant file/line/
+  // mutator detail that the clear-text table doesn't carry.
+  reporters: ["html", "clear-text", "progress", "json"],
   htmlReporter: {
     fileName: "reports/mutation/index.html",
   },
 
-  // Thresholds: reporting bands only. The absolute break gate is null on purpose:
-  // the real score is ~29% and a 60% break blocked EVERY push that touched a test
-  // file in the last 7 days, including the automation's own CI-fix pushes. The
-  // enforced gate lives in scripts/mutation-ratchet.sh (repo-tracked): it blocks
-  // any REGRESSION of the score vs the last recorded run. Invoked from
-  // .husky/pre-push (falls through to it when ~/.git-hooks/pre-push is absent).
-  // Run manually: npm run mutation:ratchet. Raise tests, the ratchet rises.
+  // Thresholds: reporting bands only. The absolute break gate is null on purpose,
+  // and there is deliberately no push-time or PR-time mutation gate at all as of
+  // 2026-07-16 (see .github/workflows/mutation-audit.yml). Mutation testing takes
+  // 15-20 minutes and was wired into the push path as a ratchet that could only
+  // ever get weaker over time (any dip became the new floor) while also blocking
+  // routine pushes for minutes. It now runs on a schedule instead and opens a
+  // draft PR with findings; a human decides what to do with them. Running
+  // `npm run mutation:ratchet` locally is still available as an optional,
+  // manual, non-blocking check, not an enforced gate.
   thresholds: {
     high: 80,
     low: 65,

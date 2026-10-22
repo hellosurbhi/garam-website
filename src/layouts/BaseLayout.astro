@@ -366,6 +366,7 @@ const {
           document.addEventListener("mousemove", (e) => {
             mx = e.clientX;
             my = e.clientY;
+            if (!Number.isFinite(mx) || !Number.isFinite(my)) return;
             const el = document.elementFromPoint(mx, my);
             const onDark = el?.closest(darkSel);
             cursor.classList.toggle("light", !!onDark);

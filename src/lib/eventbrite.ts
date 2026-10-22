@@ -63,6 +63,16 @@ function mapEBOrderToOrder(
       name: a.profile.name,
       email: a.profile.email,
     })),
+    // Freshly fetched from Eventbrite: sync-orders.ts hasn't attempted
+    // Purchase CAPI delivery for it yet. If this order already exists in
+    // Firestore with purchaseCapiSent: true, sync-orders.ts's own read
+    // (not this mapper) is what preserves that, since this object only
+    // represents what Eventbrite just returned, not our stored state.
+    purchaseCapiSent: false,
+    // Same reasoning as purchaseCapiSent above: a freshly re-fetched order
+    // is never unrecoverable on arrival, only sync-orders.ts's retry pass
+    // can determine that (when the order's source event no longer exists).
+    purchaseCapiUnrecoverable: false,
   };
 }
 

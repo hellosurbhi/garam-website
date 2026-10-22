@@ -1,35 +1,22 @@
 ---
 import BaseLayout from "@/layouts/BaseLayout.astro";
-import Spinner from "@/components/ui/Spinner.astro";
-
-const PAGE_TITLE = "Waiver";
-const PAGE_DESC = "Garam Masala Dating show waiver";
+import StandaloneWaiverForm from "@/components/waiver/StandaloneWaiverForm";
+import { WAIVER_PAGE } from "@/data/waiverPage";
 ---
 
 <BaseLayout
-  title={PAGE_TITLE}
-  description={PAGE_DESC}
+  title={WAIVER_PAGE.title}
+  description={WAIVER_PAGE.metaDescription}
   noindex={true}
   hideSpiceList={true}
 >
   <main id="main-content" class="waiver-page">
     <div class="waiver-container">
-      <h1>Show Waiver</h1>
-      <div class="form-wrapper">
-        <div class="form-loader" id="waiver-loader">
-          <Spinner label="Loading waiver form..." />
-          <span class="loader-text">Loading form...</span>
-        </div>
-        <script
-          is:inline
-          type="text/javascript"
-          src="https://form.jotform.com/jsform/261031391833047"></script>
-      </div>
+      <h1>{WAIVER_PAGE.heading}</h1>
+      <StandaloneWaiverForm client:load />
     </div>
   </main>
 </BaseLayout>
-
-<script is:inline src="/js/waiver-loader.js" defer></script>
 
 <style>
   .waiver-page {
@@ -46,23 +33,6 @@ const PAGE_DESC = "Garam Masala Dating show waiver";
     font-size: 32px;
     font-weight: 700;
     color: var(--charcoal);
-    margin-bottom: 32px;
-  }
-  .form-wrapper {
-    width: 100%;
-    position: relative;
-  }
-  .form-loader {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 16px;
-    padding: 64px 24px;
-    transition: opacity 0.2s ease-out;
-  }
-  .loader-text {
-    font-family: var(--font-nunito), sans-serif;
-    font-size: 15px;
-    color: var(--muted);
+    margin-bottom: 24px;
   }
 </style>

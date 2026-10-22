@@ -3,7 +3,9 @@ import type { EventEntry, EventVenue } from "@/data/events";
 import { DEFAULT_LINEUP } from "@/data/lineup";
 
 vi.mock("@/utils/timezone", () => ({
-  nyOffset: vi.fn(() => "-04:00"),
+  offsetForZone: vi.fn((_isoDate: string, _time: string, timeZone: string) =>
+    timeZone === "America/Chicago" ? "-05:00" : "-04:00",
+  ),
 }));
 
 import { buildEventSchemas } from "./eventSchema";
@@ -187,6 +189,23 @@ describe("buildEventSchemas", () => {
     const parsed = JSON.parse(schemas[0]);
     expect(parsed.startDate).toContain("-04:00");
     expect(parsed.endDate).toContain("-04:00");
+  });
+
+  it("uses the event timezone for Chicago dates", () => {
+    const parsed = JSON.parse(
+      buildEventSchemas([
+        makeEvent({
+          city: "Chicago",
+          state: "Illinois",
+          stateAbbr: "IL",
+          timezone: "America/Chicago",
+        }),
+      ])[0],
+    );
+
+    expect(parsed.startDate).toBe("2026-05-10T20:00:00-05:00");
+    expect(parsed.endDate).toBe("2026-05-10T22:00:00-05:00");
+    expect(parsed.doorTime).toBe("2026-05-10T19:30:00-05:00");
   });
 
   it("returns 0 schemas for a list of only hidden events", () => {

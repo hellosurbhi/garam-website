@@ -1,5 +1,13 @@
 # Lessons
 
+## A dependency bump crashed every server route and only production noticed
+
+**What went wrong:** `@astrojs/vercel` 11.0.13 made the serverless entrypoint import a module that also imported Rolldown, a build-only tool. Locally the import resolved from `node_modules`; on Vercel the native binary was not traced into the function, so every server route (ticket redirects, forms, lead capture) returned `FUNCTION_INVOCATION_FAILED`. Lint, types, 1,304 unit tests and the build all passed.
+
+**Why:** We assumed a passing build meant a bootable server. Nothing started the packaged function outside the checkout, where missing dependencies would surface. The first repair attempt also patched around the library bug with a Rolldown `moduleSideEffects` override instead of checking whether upstream had already fixed it (it had, in 11.0.14).
+
+**Rule:** Every build runs `npm run test:runtime`, which copies the packaged function to a temp directory and starts it with an empty environment and external fetches blocked. When a library bug breaks us, check its newer releases and changelog before writing a workaround; upgrade when a fix exists. Astro can inline build-time service config (Redis, Meta) into the bundle, so the smoke harness must block fetches itself rather than rely on a clean environment.
+
 ## A green synthetic monitor proved the happy path while every long-form applicant was rejected
 
 **What went wrong:** The 6-hour synthetic apply monitor was green 10 runs straight while real applicants (Akshay Aug 30, Dua Aug 27 with 4 retries) got "Missing or insufficient permissions" and their applications were silently thrown away. The Firestore rules capped pitch at 2000 chars, phone at 20 and height at 20; the client validated none of these lengths, and one field (`type`) even had a form `maxLength={200}` four times larger than the deployed rules cap of 50. Anyone who wrote a long pitch, a spelled-out height or a formatted phone number was rejected at the last possible moment with a generic error, after doing all the work.
@@ -365,3 +373,11 @@ The real XSS guards on this site are Firebase security rules and Firestore field
 **Why:** Both times the actual bug was a network-dependent step placed where a visitor's redirect/checkout hop had to wait on it, and both times the same-tab CTA had no loading state to mask the wait while it lasted. Fixing the underlying network call each time (widget removal, then backgrounding the tracking calls via `waitUntil()`) closed that occurrence but never touched the missing-feedback half of the pattern, so the identical user-facing symptom was free to recur under a third cause.
 
 **Rule:** Any checkout/redirect hop with a network dependency must satisfy both conditions, not just one: (1) the dependency never gates the response the visitor is waiting on, and (2) the click that starts the hop renders instant visual feedback (loading state, spinner, label change) independent of how fast the backend actually responds. Shipping only the backend fix leaves the UI blind to any future regression in that backend; shipping only the loading state leaves a slow backend un-fixed. Before closing out a "the button feels broken" report, verify both halves are true, not just the one that matches the immediate root cause found.
+
+## A field-limits sweep raised two of three enforcement points and silently dropped applicants at the third
+
+**What went wrong:** The daily synthetic apply-form monitor started failing with `notify-application HTTP 400`. The application itself saved to Firestore fine; the admin notification email that tells Surbhi a human applied simply never fired, and nothing surfaced that to her except the ops alert the monitor happened to trigger. A real applicant with a formatted phone number over 30 characters (e.g. "+1 (555) 010-0000 (WhatsApp preferred)") would have been silently invisible the same way, with no monitor to catch it.
+
+**Why:** PR #244 (2026-08-31, "no human ever hits a length limit") raised the apply form's field caps in the two places a real applicant can be blocked: the client form (`applicationFieldLimits.ts`) and `firestore.rules`. It missed the third enforcement point, `notify-application.ts`'s own hardcoded Zod schema, which still validated against the old, stricter numbers (phone 30 vs the new 50, pitch 5000 vs 50,000, several free-text fields 200/50 vs 1,000). A limit that exists in three places only needs one of them missed for the sweep to look complete while leaving a gap.
+
+**Rule:** A numeric limit enforced at more than one layer (client validation, database rules, server-side schema) must be imported from one shared source, never duplicated as a literal in each layer. When raising or changing any such limit, grep for the raw number across the codebase, not just the file you already know about, before considering the change complete.

@@ -126,7 +126,7 @@ export const POST: APIRoute = async ({ request }) => {
         flow: "lead",
         stage: "phone_update",
         errorMessage: errText.slice(0, 2000),
-        context: { leadId: id },
+        context: { leadId: id, fields: updateKeys.join(",") },
       });
       return new Response(JSON.stringify({ error: "Failed to update lead" }), {
         status: 500,
@@ -143,7 +143,7 @@ export const POST: APIRoute = async ({ request }) => {
       flow: "lead",
       stage: "phone_update_unhandled",
       errorMessage: err instanceof Error ? err.message : String(err),
-      context: { leadId: id },
+      context: { leadId: id, fields: updateKeys.join(",") },
     });
     return new Response(JSON.stringify({ error: "Server error" }), {
       status: 500,

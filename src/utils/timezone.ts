@@ -1,9 +1,13 @@
-/** Compute the UTC offset string (±HH:MM) for a date/time in America/New_York. */
-export function nyOffset(isoDate: string, time: string): string {
+/** Compute the UTC offset string (±HH:MM) for a local date/time in an IANA zone. */
+export function offsetForZone(
+  isoDate: string,
+  time: string,
+  timeZone: string,
+): string {
   const [y, m, d] = isoDate.split("-").map(Number);
   const [h, min] = time.split(":").map(Number);
   const fmt = new Intl.DateTimeFormat("en-US", {
-    timeZone: "America/New_York",
+    timeZone,
     year: "numeric",
     month: "2-digit",
     day: "2-digit",
@@ -37,4 +41,9 @@ export function nyOffset(isoDate: string, time: string): string {
   const sign = offsetMin >= 0 ? "+" : "-";
   const abs = Math.abs(offsetMin);
   return `${sign}${String(Math.floor(abs / 60)).padStart(2, "0")}:${String(abs % 60).padStart(2, "0")}`;
+}
+
+/** Compute the UTC offset string (±HH:MM) for a date/time in America/New_York. */
+export function nyOffset(isoDate: string, time: string): string {
+  return offsetForZone(isoDate, time, "America/New_York");
 }

@@ -18,6 +18,7 @@
 
 import { execSync } from "node:child_process";
 import { readFileSync, existsSync } from "node:fs";
+import { fileURLToPath } from "node:url";
 
 const THRESHOLD = 80;
 const COVERAGE_FILE = "coverage/coverage-final.json";
@@ -35,21 +36,6 @@ function sh(cmd) {
   return execSync(cmd, { encoding: "utf8", maxBuffer: 1024 * 1024 * 64 });
 }
 
-// Default to origin/main for ad-hoc local runs; CI always sets this from
-// github.event.pull_request.base.sha. No silent no-base skip: a missing base
-// is a config problem to surface, not a green check that never ran.
-const baseSha = process.env.DIFF_BASE_SHA || "origin/main";
-const headSha = process.env.DIFF_HEAD_SHA || "HEAD";
-
-if (!existsSync(COVERAGE_FILE)) {
-  console.error(
-    `${COVERAGE_FILE} not found. Run "npm run test:coverage" before this script.`,
-  );
-  process.exit(1);
-}
-
-const coverage = JSON.parse(readFileSync(COVERAGE_FILE, "utf8"));
-
 // Any statement with a hit count > 0 marks every line in its range covered.
 // Function declarations are included too: v8-to-istanbul (unlike
 // babel-plugin-istanbul) does not give a function's own signature line a
@@ -66,7 +52,7 @@ const coverage = JSON.parse(readFileSync(COVERAGE_FILE, "utf8"));
 // its coverage is identical to whether the function itself ran. Stopping at
 // decl.end left every multi-line signature's parameter lines permanently
 // "uncovered" no matter how well-tested the function was.
-function coveredLinesFor(fileCoverage) {
+export function coveredLinesFor(fileCoverage) {
   const covered = new Set();
   for (const key of Object.keys(fileCoverage.statementMap)) {
     if (fileCoverage.s[key] > 0) {
@@ -93,8 +79,32 @@ function coveredLinesFor(fileCoverage) {
 // runtime). Every real patch-coverage tool (diff-cover, Codecov's patch
 // check) excludes this class of line from its denominator instead of
 // demanding tests that cannot possibly make them "covered".
-const UNINSTRUMENTABLE_RE =
+export const UNINSTRUMENTABLE_RE =
   /^\s*($|\/\/|\/\*|\*\/|\*(?!\/)|[)}\]]+[,;]?\s*$|import\s|(export\s+)?(type|interface)\s+\w)/;
+
+// UNINSTRUMENTABLE_RE only matches a multi-line `import { ... } from "...";`
+// on its opening line (it starts with `import`). Prettier's continuation
+// lines -- each named import, and the closing `} from "...";` -- don't
+// start with `import` and aren't bare closing brackets alone, so the
+// per-line regex misses them. They'd then count as "changed, must be
+// covered" lines that no coverage tool can ever instrument (imports are
+// hoisted, never given a statementMap entry), permanently failing any PR
+// that adds a multi-line destructured import. Scan the whole file once to
+// mark every line inside an open import statement's body.
+export function importContinuationLinesFor(source) {
+  const lines = new Set();
+  let inImport = false;
+  for (let i = 0; i < source.length; i++) {
+    const line = source[i];
+    if (!inImport) {
+      if (/^\s*import\b.*\{[^}]*$/.test(line)) inImport = true;
+      continue;
+    }
+    lines.add(i + 1);
+    if (/\}.*from\s*["'][^"']+["']\s*;?\s*$/.test(line)) inImport = false;
+  }
+  return lines;
+}
 
 // A line ending in an opener/operator (Prettier wrapped it onto the next
 // line) has no statementMap entry of its own -- v8-to-istanbul attributes
@@ -103,7 +113,7 @@ const UNINSTRUMENTABLE_RE =
 // not a gap, just a mapping artifact of where the statement "starts".
 const CONTINUATION_RE = /(=|[({[,]|&&|\|\||\?\?|=>)$/;
 
-function rescueContinuationLines(changedLines, covered, sourceLines) {
+export function rescueContinuationLines(changedLines, covered, sourceLines) {
   for (const line of changedLines) {
     if (covered.has(line)) continue;
     const text = (sourceLines[line - 1] ?? "").trimEnd();
@@ -113,103 +123,129 @@ function rescueContinuationLines(changedLines, covered, sourceLines) {
   }
 }
 
-// coverage-final.json keys are absolute paths; normalize to repo-relative
-// forward-slash paths so they match the diff parser below.
-const repoRoot = sh("git rev-parse --show-toplevel").trim();
-const coverageByRelPath = new Map();
-for (const [absPath, fileCoverage] of Object.entries(coverage)) {
-  const relPath = absPath.startsWith(repoRoot)
-    ? absPath.slice(repoRoot.length + 1)
-    : absPath;
-  coverageByRelPath.set(relPath, coveredLinesFor(fileCoverage));
-}
+function main() {
+  // Default to origin/main for ad-hoc local runs; CI always sets this from
+  // github.event.pull_request.base.sha. No silent no-base skip: a missing
+  // base is a config problem to surface, not a green check that never ran.
+  const baseSha = process.env.DIFF_BASE_SHA || "origin/main";
+  const headSha = process.env.DIFF_HEAD_SHA || "HEAD";
 
-// Parse a zero-context unified diff into { file -> Set<addedLineNumber> }.
-// Zero context means every emitted line is a real add/remove, so the running
-// line counter needs no special casing for unchanged context lines.
-const diff = sh(`git diff --unified=0 ${baseSha} ${headSha}`);
-
-const changedLines = new Map(); // relPath -> Set<number>
-let currentFile = null;
-let trackFile = false;
-let nextLine = null;
-
-for (const line of diff.split("\n")) {
-  const fileMatch = line.match(/^\+\+\+ b\/(.+)$/);
-  if (fileMatch) {
-    currentFile = fileMatch[1];
-    trackFile = INCLUDE_RE.test(currentFile) && !EXCLUDE_RE.test(currentFile);
-    continue;
+  if (!existsSync(COVERAGE_FILE)) {
+    console.error(
+      `${COVERAGE_FILE} not found. Run "npm run test:coverage" before this script.`,
+    );
+    process.exit(1);
   }
-  const hunkMatch = line.match(/^@@ -\d+(?:,\d+)? \+(\d+)(?:,\d+)? @@/);
-  if (hunkMatch) {
-    nextLine = Number(hunkMatch[1]);
-    continue;
+
+  const coverage = JSON.parse(readFileSync(COVERAGE_FILE, "utf8"));
+
+  // coverage-final.json keys are absolute paths; normalize to repo-relative
+  // forward-slash paths so they match the diff parser below.
+  const repoRoot = sh("git rev-parse --show-toplevel").trim();
+  const coverageByRelPath = new Map();
+  for (const [absPath, fileCoverage] of Object.entries(coverage)) {
+    const relPath = absPath.startsWith(repoRoot)
+      ? absPath.slice(repoRoot.length + 1)
+      : absPath;
+    coverageByRelPath.set(relPath, coveredLinesFor(fileCoverage));
   }
-  if (trackFile && line.startsWith("+") && !line.startsWith("+++")) {
-    if (!changedLines.has(currentFile)) {
-      changedLines.set(currentFile, new Set());
-    }
-    changedLines.get(currentFile).add(nextLine);
-    nextLine++;
-  }
-}
 
-let totalChanged = 0;
-let totalCovered = 0;
-let totalExcluded = 0;
-const uncoveredByFile = new Map();
+  // Parse a zero-context unified diff into { file -> Set<addedLineNumber> }.
+  // Zero context means every emitted line is a real add/remove, so the
+  // running line counter needs no special casing for unchanged context lines.
+  const diff = sh(`git diff --unified=0 ${baseSha} ${headSha}`);
 
-for (const [file, lines] of changedLines) {
-  const covered = coverageByRelPath.get(file) ?? new Set();
-  const source = sh(`git show ${headSha}:${file}`).split("\n");
-  rescueContinuationLines(lines, covered, source);
+  const changedLines = new Map(); // relPath -> Set<number>
+  let currentFile = null;
+  let trackFile = false;
+  let nextLine = null;
 
-  for (const lineNum of lines) {
-    if (UNINSTRUMENTABLE_RE.test(source[lineNum - 1] ?? "")) {
-      totalExcluded++;
+  for (const line of diff.split("\n")) {
+    const fileMatch = line.match(/^\+\+\+ b\/(.+)$/);
+    if (fileMatch) {
+      currentFile = fileMatch[1];
+      trackFile = INCLUDE_RE.test(currentFile) && !EXCLUDE_RE.test(currentFile);
       continue;
     }
-    totalChanged++;
-    if (covered.has(lineNum)) {
-      totalCovered++;
-    } else {
-      if (!uncoveredByFile.has(file)) uncoveredByFile.set(file, []);
-      uncoveredByFile.get(file).push(lineNum);
+    const hunkMatch = line.match(/^@@ -\d+(?:,\d+)? \+(\d+)(?:,\d+)? @@/);
+    if (hunkMatch) {
+      nextLine = Number(hunkMatch[1]);
+      continue;
+    }
+    if (trackFile && line.startsWith("+") && !line.startsWith("+++")) {
+      if (!changedLines.has(currentFile)) {
+        changedLines.set(currentFile, new Set());
+      }
+      changedLines.get(currentFile).add(nextLine);
+      nextLine++;
     }
   }
-}
 
-if (totalExcluded > 0) {
-  console.log(
-    `${totalExcluded} changed line(s) excluded (blank/comment/import/type-only/bare-bracket -- never instrumentable).`,
-  );
-}
+  let totalChanged = 0;
+  let totalCovered = 0;
+  let totalExcluded = 0;
+  const uncoveredByFile = new Map();
 
-if (totalChanged === 0) {
-  console.log(
-    "No coverable src/**/*.ts(x) or api/**/*.ts lines changed -- nothing to enforce.",
-  );
-  process.exit(0);
-}
+  for (const [file, lines] of changedLines) {
+    const covered = coverageByRelPath.get(file) ?? new Set();
+    const source = sh(`git show ${headSha}:${file}`).split("\n");
+    rescueContinuationLines(lines, covered, source);
+    const importLines = importContinuationLinesFor(source);
 
-const pct = (totalCovered / totalChanged) * 100;
-console.log(
-  `Patch coverage: ${totalCovered}/${totalChanged} changed lines covered (${pct.toFixed(1)}%)`,
-);
-
-if (pct < THRESHOLD) {
-  console.error(
-    `\nFAILED: patch coverage ${pct.toFixed(1)}% is below the ${THRESHOLD}% threshold.\n`,
-  );
-  console.error("Uncovered changed lines:");
-  for (const [file, lines] of uncoveredByFile) {
-    if (lines.length > 0) console.error(`  ${file}: lines ${lines.join(", ")}`);
+    for (const lineNum of lines) {
+      if (
+        UNINSTRUMENTABLE_RE.test(source[lineNum - 1] ?? "") ||
+        importLines.has(lineNum)
+      ) {
+        totalExcluded++;
+        continue;
+      }
+      totalChanged++;
+      if (covered.has(lineNum)) {
+        totalCovered++;
+      } else {
+        if (!uncoveredByFile.has(file)) uncoveredByFile.set(file, []);
+        uncoveredByFile.get(file).push(lineNum);
+      }
+    }
   }
-  console.error(
-    "\nAdd or extend a test so these lines execute, then push again.",
+
+  if (totalExcluded > 0) {
+    console.log(
+      `${totalExcluded} changed line(s) excluded (blank/comment/import/type-only/bare-bracket -- never instrumentable).`,
+    );
+  }
+
+  if (totalChanged === 0) {
+    console.log(
+      "No coverable src/**/*.ts(x) or api/**/*.ts lines changed -- nothing to enforce.",
+    );
+    process.exit(0);
+  }
+
+  const pct = (totalCovered / totalChanged) * 100;
+  console.log(
+    `Patch coverage: ${totalCovered}/${totalChanged} changed lines covered (${pct.toFixed(1)}%)`,
   );
-  process.exit(1);
+
+  if (pct < THRESHOLD) {
+    console.error(
+      `\nFAILED: patch coverage ${pct.toFixed(1)}% is below the ${THRESHOLD}% threshold.\n`,
+    );
+    console.error("Uncovered changed lines:");
+    for (const [file, lines] of uncoveredByFile) {
+      if (lines.length > 0)
+        console.error(`  ${file}: lines ${lines.join(", ")}`);
+    }
+    console.error(
+      "\nAdd or extend a test so these lines execute, then push again.",
+    );
+    process.exit(1);
+  }
+
+  console.log(`Patch coverage OK (>= ${THRESHOLD}%).`);
 }
 
-console.log(`Patch coverage OK (>= ${THRESHOLD}%).`);
+if (process.argv[1] && fileURLToPath(import.meta.url) === process.argv[1]) {
+  main();
+}

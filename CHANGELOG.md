@@ -9,6 +9,16 @@ Groundwork for automated city-bucketed show announcements, shipped alone and ahe
 - **12 new emulator cases** in `test/rules/public-write.rules-test.ts` covering market acceptance, both closed sets, type and size rejection, a regression case proving the widened allowlist did not open generally, and client plus admin write denial on all three new collections. Verified by negative control: narrowing the allowlist back makes exactly the two acceptance cases fail.
 
 **Files:** `firestore.rules`, `test/rules/public-write.rules-test.ts`
+## fix(tests): repair the 75 failing smoke tests (2026-10-21)
+
+The weekly smoke suite had failed every run since August, and the same 75 cases failed on Node 22 and Node 24. The site was fine and the tests had gone stale: the HomeSignup, LeadCaptureModal and NotifyModal tests now complete the optional phone step before expecting success, the footer test checks the data driven city list by shape instead of five fixed cities, the city page test checks the heading is in the page (it is hidden at 1024px and below by design), the waiver test uses the waiver checkbox, and the Firebase mock answers `accounts:lookup`. The Apply happy path now proves auth, photo upload and the Firestore write are reached in order; the real success path stays with the daily synthetic monitor because the Firestore write channel cannot be faked with a canned reply. The full suite passes 319 of 320 on Node 24 (one third party accessibility flake retried green, queued in BUGS.md).
+
+**Files:** `tests/smoke/critical-flows.spec.ts`, `tests/smoke/site.spec.ts`, `LESSONS.md`
+
+## chore(runtime): move the project to Node 24 (2026-10-19)
+
+Node 22 moves to maintenance, so `.nvmrc`, `engines.node` (now `>=24.15.0 <25.0.0`, the floor set by jsdom's dependencies), all seven CI `setup-node` steps, README and CONTRIBUTING now name Node 24. Vercel reads `engines.node`, so production follows. `@types/node` moved from 26 to 24 so the types match the runtime major. Node 24 bundles npm 11, which matches the lockfile writer. Verified on Node 24.22.0: `npm ci`, lint, `astro check`, 1,304 unit tests and `astro build` all pass.
+
 ## fix(deps): remove sprintf-js from the dev tree to close Dependabot alert #111 (2026-10-19)
 
 `sprintf-js` (denial of service through unbounded precision specifiers) has no patched release: 1.1.3 is the latest and is also affected. It only reached the project through Lighthouse CI: `@lhci/cli` to `@lhci/utils` to `js-yaml@3` to `argparse@1`. Bumping the parent was not an option because `@lhci/cli` 0.15.1 is already the latest, and forcing `js-yaml@4` would break `@lhci/utils`, which still calls the removed `yaml.safeLoad`.

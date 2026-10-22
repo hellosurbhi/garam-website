@@ -1,5 +1,18 @@
 import { getFirestoreAccessToken } from "./firestoreAdmin";
 
+/**
+ * Reject any path segment that URL normalization would resolve outside the
+ * intended collection. A caller-supplied id such as "../../leads/target" would
+ * otherwise escape to a different document. Throws on empty, "." or ".."
+ * segments.
+ */
+export function assertSafePath(path: string): void {
+  const segments = path.split("/");
+  if (segments.some((s) => s === ".." || s === "." || s === "")) {
+    throw new Error(`Unsafe Firestore path segment in: ${path}`);
+  }
+}
+
 type FirestoreValue =
   | { nullValue: null }
   | { booleanValue: boolean }
@@ -64,6 +77,7 @@ function baseUrl(): string {
 export async function fsGet(
   docPath: string,
 ): Promise<Record<string, unknown> | null> {
+  assertSafePath(docPath);
   const token = await getFirestoreAccessToken();
   const res = await fetch(`${baseUrl()}/${docPath}`, {
     headers: { Authorization: `Bearer ${token}` },
@@ -79,6 +93,7 @@ export async function fsPatch(
   docPath: string,
   fields: Record<string, unknown>,
 ): Promise<void> {
+  assertSafePath(docPath);
   const token = await getFirestoreAccessToken();
   const fieldNames = Object.keys(fields);
   const mask = fieldNames
@@ -104,6 +119,7 @@ export async function fsAdd(
   collectionPath: string,
   fields: Record<string, unknown>,
 ): Promise<string> {
+  assertSafePath(collectionPath);
   const token = await getFirestoreAccessToken();
   const res = await fetch(`${baseUrl()}/${collectionPath}`, {
     method: "POST",
@@ -193,6 +209,7 @@ export async function fsQuery(
 export async function fsListAll(
   collectionId: string,
 ): Promise<Array<Record<string, unknown>>> {
+  assertSafePath(collectionId);
   const token = await getFirestoreAccessToken();
   const results: Array<Record<string, unknown>> = [];
   let pageToken: string | undefined;
@@ -233,6 +250,7 @@ export async function fsDeleteFields(
   docPath: string,
   fieldNames: string[],
 ): Promise<void> {
+  assertSafePath(docPath);
   const token = await getFirestoreAccessToken();
   const mask = fieldNames
     .map((f) => `updateMask.fieldPaths=${encodeURIComponent(f)}`)

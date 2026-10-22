@@ -1,5 +1,17 @@
 # Changelog
 
+## fix(security): path guard for Firestore calls, one shared cron auth check, one shared toMs (2026-10-21)
+
+Salvaged from five old sessions after checking each piece was still missing on main.
+
+- `src/lib/firestoreRest.ts`: `assertSafePath()` now runs first in `fsGet`, `fsPatch`, `fsAdd`, `fsListAll` and `fsDeleteFields`. An id like `../../leads/target` used to be normalized by the URL parser into a different document; it now throws before any network call.
+- `src/lib/cronAuth.ts`: one `verifyCronSecret()` using `timingSafeEqual`. `post-show.ts` compared the secret with `===` (timing leak); `followups.ts` had its own copy. Both import the shared one.
+- `src/utils/date.ts`: one `toMs()` replaces three local copies (`followups.ts`, `post-show.ts`, `ContestantFunnel.tsx`).
+
+Not salvaged: `country-state-city` removal (still imported by `scripts/migrate-locations.ts`), the post-show write try/catch (already on main), the NODE_ENV override (already gone).
+
+**Files:** `src/lib/firestoreRest.ts`, `src/lib/cronAuth.ts`, `src/utils/date.ts`, `src/pages/api/cron/followups.ts`, `src/pages/api/cron/post-show.ts`, `src/components/admin/ContestantFunnel.tsx`, plus tests
+
 ## fix(deps): remove sprintf-js from the dev tree to close Dependabot alert #111 (2026-10-19)
 
 `sprintf-js` (denial of service through unbounded precision specifiers) has no patched release: 1.1.3 is the latest and is also affected. It only reached the project through Lighthouse CI: `@lhci/cli` to `@lhci/utils` to `js-yaml@3` to `argparse@1`. Bumping the parent was not an option because `@lhci/cli` 0.15.1 is already the latest, and forcing `js-yaml@4` would break `@lhci/utils`, which still calls the removed `yaml.safeLoad`.

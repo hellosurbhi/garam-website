@@ -1,10 +1,11 @@
 export const prerender = false;
 
-import { timingSafeEqual } from "node:crypto";
 import type { APIRoute } from "astro";
 import { fsGet, fsPatch, fsAdd, fsListAll, fsQuery } from "@/lib/firestoreRest";
 import { sendMail } from "@/lib/zohoMailer";
 import { alertOps } from "@/lib/opsAlert";
+import { verifyCronSecret } from "@/lib/cronAuth";
+import { toMs } from "@/utils/date";
 import {
   schedulingFollowup,
   waiverNudge,
@@ -28,21 +29,6 @@ const D7 = 7 * 24 * 60 * 60 * 1000;
 const H24 = 24 * 60 * 60 * 1000;
 // Hard cap per section to bound cron execution time within Vercel's function limit.
 const MAX_PER_RUN = 50;
-
-function verifyCronSecret(request: Request): boolean {
-  const cronSecret = import.meta.env.CRON_SECRET;
-  if (!cronSecret) return false;
-  const provided = request.headers.get("authorization") ?? "";
-  const expected = `Bearer ${cronSecret}`;
-  if (provided.length !== expected.length) return false;
-  return timingSafeEqual(Buffer.from(provided), Buffer.from(expected));
-}
-
-function toMs(val: unknown): number | null {
-  if (typeof val !== "string") return null;
-  const ms = Date.parse(val);
-  return isNaN(ms) ? null : ms;
-}
 
 function todayNYC(): string {
   return new Date().toLocaleDateString("en-CA", {

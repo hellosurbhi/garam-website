@@ -1,5 +1,13 @@
 # Lessons
 
+## A dependency bump crashed every server route and only production noticed
+
+**What went wrong:** `@astrojs/vercel` 11.0.13 made the serverless entrypoint import a module that also imported Rolldown, a build-only tool. Locally the import resolved from `node_modules`; on Vercel the native binary was not traced into the function, so every server route (ticket redirects, forms, lead capture) returned `FUNCTION_INVOCATION_FAILED`. Lint, types, 1,304 unit tests and the build all passed.
+
+**Why:** We assumed a passing build meant a bootable server. Nothing started the packaged function outside the checkout, where missing dependencies would surface. The first repair attempt also patched around the library bug with a Rolldown `moduleSideEffects` override instead of checking whether upstream had already fixed it (it had, in 11.0.14).
+
+**Rule:** Every build runs `npm run test:runtime`, which copies the packaged function to a temp directory and starts it with an empty environment and external fetches blocked. When a library bug breaks us, check its newer releases and changelog before writing a workaround; upgrade when a fix exists. Astro can inline build-time service config (Redis, Meta) into the bundle, so the smoke harness must block fetches itself rather than rely on a clean environment.
+
 ## A green synthetic monitor proved the happy path while every long-form applicant was rejected
 
 **What went wrong:** The 6-hour synthetic apply monitor was green 10 runs straight while real applicants (Akshay Aug 30, Dua Aug 27 with 4 retries) got "Missing or insufficient permissions" and their applications were silently thrown away. The Firestore rules capped pitch at 2000 chars, phone at 20 and height at 20; the client validated none of these lengths, and one field (`type`) even had a form `maxLength={200}` four times larger than the deployed rules cap of 50. Anyone who wrote a long pitch, a spelled-out height or a formatted phone number was rejected at the last possible moment with a generic error, after doing all the work.

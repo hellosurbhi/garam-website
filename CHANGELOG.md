@@ -1,5 +1,18 @@
 # Changelog
 
+## fix(sync): bounded order sync, stuck-order cap, safe cursor, completed-show window (2026-10-21)
+
+Recovered from the old sessions 65918 and 8546 after confirming main lacked each piece.
+
+- **Completed shows drop out of sync.** `orderSyncableEvents` skips shows more than 3 days past their date (in the show's own timezone), so one stale show can no longer hold the shared `changed_since` cursor back and stall Purchase tracking for every current show.
+- **Bounded runtime.** Purchase CAPI sends run through `mapWithConcurrency` (10 at a time) and use `AbortSignal.timeout`, so a hung Meta endpoint cancels instead of piling up. Previously up to 100 retries ran one by one at 3 seconds each.
+- **Stuck orders give up.** `purchaseCapiAttempts` counts failed deliveries; after 5 the order is marked unrecoverable so it stops crowding out new orders in the 100-row retry query.
+- **Cursor safety.** The next `changed_since` is the time the run started, not the time it ended, so an order changed mid-run is not skipped.
+
+Closes the BUGS.md entries UNBOUNDED-SYNC-RUNTIME (both) and PERMANENT-RETRY-STARVATION (both).
+
+**Files:** `src/pages/api/sync-orders.ts`, `src/utils/concurrency.ts`, `src/lib/capi.ts`, `src/lib/eventbrite.ts`, `src/types/analytics.ts`, plus tests
+
 ## fix(deps): remove sprintf-js from the dev tree to close Dependabot alert #111 (2026-10-19)
 
 `sprintf-js` (denial of service through unbounded precision specifiers) has no patched release: 1.1.3 is the latest and is also affected. It only reached the project through Lighthouse CI: `@lhci/cli` to `@lhci/utils` to `js-yaml@3` to `argparse@1`. Bumping the parent was not an option because `@lhci/cli` 0.15.1 is already the latest, and forcing `js-yaml@4` would break `@lhci/utils`, which still calls the removed `yaml.safeLoad`.

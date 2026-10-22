@@ -278,6 +278,120 @@ describe("firestore.rules: applications", () => {
     );
   });
 
+  // These four pin the "no human ever hits a length limit" contract from
+  // src/lib/applicationFieldLimits.ts + firestore.rules. They are the shapes
+  // that got real applicants rejected in Aug 2026 (long pitch, spelled-out
+  // height, formatted phone). If any of these ever fails, the client/rules
+  // length contract has drifted and applications are being eaten again.
+  it("a 40,000 character pitch is accepted (no human-facing length limits)", async () => {
+    await assertSucceeds(
+      setDoc(
+        appDoc(anonContext("anon-1")),
+        buildApplicationDocument(
+          { ...fullSelfForm, pitch: "My story. ".repeat(4000) },
+          PHOTO_PATHS,
+          false,
+          docTimestamps(),
+        ),
+      ),
+    );
+  });
+
+  it("multi-byte text (emoji, accents) passes the 4x rules caps", async () => {
+    await assertSucceeds(
+      setDoc(
+        appDoc(anonContext("anon-1")),
+        buildApplicationDocument(
+          {
+            ...fullSelfForm,
+            name: "Príya Shàrmã 🌶️",
+            city: "São Paulo 🇧🇷",
+            // 900 UTF-16 units of emoji-heavy text stays under the client's
+            // 1,000 cap but expands to far more bytes under rules size();
+            // the 4x headroom is exactly what this pins.
+            type: "🌶️❤️😂".repeat(100),
+            pitch: "Chai, chaos and commitment 🌶️❤️. ".repeat(1000),
+          },
+          PHOTO_PATHS,
+          false,
+          docTimestamps(),
+        ),
+      ),
+    );
+  });
+
+  it('spelled-out height "5 feet 8 inches (172cm)" is accepted (the Aug 2026 rejection shape)', async () => {
+    await assertSucceeds(
+      setDoc(
+        appDoc(anonContext("anon-1")),
+        buildApplicationDocument(
+          { ...fullSelfForm, height: "5 feet 8 inches (172cm)" },
+          PHOTO_PATHS,
+          false,
+          docTimestamps(),
+        ),
+      ),
+    );
+  });
+
+  it("a formatted phone number longer than the old 20-char cap is accepted", async () => {
+    await assertSucceeds(
+      setDoc(
+        appDoc(anonContext("anon-1")),
+        buildApplicationDocument(
+          { ...fullSelfForm, phone: "+1 (555) 010-0000 (WhatsApp preferred)" },
+          PHOTO_PATHS,
+          false,
+          docTimestamps(),
+        ),
+      ),
+    );
+  });
+
+  it("photo-failure application (photoPaths [] + photoUploadFailed) is accepted", async () => {
+    await assertSucceeds(
+      setDoc(
+        appDoc(anonContext("anon-1")),
+        buildApplicationDocument(
+          fullSelfForm,
+          [],
+          false,
+          docTimestamps(),
+          true,
+        ),
+      ),
+    );
+  });
+
+  it("photoUploadFailed must be a boolean", async () => {
+    await assertFails(
+      setDoc(appDoc(anonContext("anon-1")), {
+        ...validApplication,
+        photoUploadFailed: "yes",
+      }),
+    );
+  });
+
+  it("empty photoPaths WITHOUT the failure flag is rejected", async () => {
+    // An empty photo list is only legal on the declared failure path: no
+    // application may exist with zero photos and no follow-up indicator.
+    await assertFails(
+      setDoc(
+        appDoc(anonContext("anon-1")),
+        buildApplicationDocument(fullSelfForm, [], false, docTimestamps()),
+      ),
+    );
+  });
+
+  it("empty photoPaths with photoUploadFailed: false is rejected", async () => {
+    await assertFails(
+      setDoc(appDoc(anonContext("anon-1")), {
+        ...buildApplicationDocument(fullSelfForm, [], false, docTimestamps()),
+        photoUploadFailed: false,
+      }),
+    );
+  });
+
   it("photoPaths entries outside the photos/ contract are rejected", async () => {
     await assertFails(
       setDoc(appDoc(anonContext("anon-1")), {

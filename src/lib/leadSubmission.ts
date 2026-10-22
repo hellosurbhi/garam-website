@@ -4,6 +4,8 @@ export interface LeadSubmissionPayload {
   [key: string]: string | number | undefined;
   email: string;
   phone?: string;
+  name?: string;
+  instagram?: string;
   city?: string;
   source?: string;
   sourcePage?: string;
@@ -71,9 +73,17 @@ export async function captureLead(
   };
 }
 
-export async function updateLeadPhone(
+/** Contact fields the step-2 lead update path accepts (bounded by firestore.rules validLeadContactUpdate). */
+export interface LeadUpdateFields {
+  phone?: string;
+  instagram?: string;
+  name?: string;
+  source?: string;
+}
+
+export async function updateLeadFields(
   lead: LeadCaptureResult,
-  phone: string,
+  fields: LeadUpdateFields,
 ): Promise<void> {
   if (!lead.id) throw new Error("Lead id required");
 
@@ -83,7 +93,7 @@ export async function updateLeadPhone(
     body: JSON.stringify({
       id: lead.id,
       ...(lead.updateToken ? { token: lead.updateToken } : {}),
-      phone,
+      ...fields,
     }),
   });
   const result = await readJson<CaptureLeadResponse>(res);
@@ -91,4 +101,11 @@ export async function updateLeadPhone(
   if (!res.ok) {
     throw new Error(result?.error ?? "Failed to update lead");
   }
+}
+
+export async function updateLeadPhone(
+  lead: LeadCaptureResult,
+  phone: string,
+): Promise<void> {
+  return updateLeadFields(lead, { phone });
 }

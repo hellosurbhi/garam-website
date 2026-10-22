@@ -42,6 +42,7 @@ export interface Application {
   photoUrl?: string; // legacy single-photo field, read via getApplicantPhotoSources()
   photoUrls?: string[]; // legacy multi-photo tokened URLs (pre July 2026 docs)
   photoPaths?: string[]; // canonical: Storage paths, resolved by admin session (getBlob)
+  photoUploadFailed?: boolean; // application saved but one or more photo uploads failed; chase the applicant for photos
   isSynthetic?: boolean; // true only for the daily synthetic monitor submission
   castEventId?: string; // composite key "{isoDate}__{citySlug}" when status = Cast
   deletedAt?: Timestamp | null;

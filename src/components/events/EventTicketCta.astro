@@ -41,6 +41,16 @@ const isPresale =
   Boolean(event.onSaleAt) && new Date(event.onSaleAt!) > new Date();
 const onSaleLabel = event.onSaleAt ? formatOnSaleDate(event.onSaleAt) : "";
 
+// WHY the two "Get Tickets" anchors below carry no target="_blank" (every
+// other ticket CTA on the site does: TicketCard, HomeShows, HomeHero,
+// CityEventTicketEmbed): this page is what paid Instagram/TikTok/Facebook
+// ads land visitors on, and those apps' in-app browsers are WebViews with
+// unreliable target="_blank"/window.open() support, sometimes silently
+// doing nothing, sometimes opening a tab a non-technical visitor can't find
+// their way back from. A same-tab navigation that takes a moment is
+// recoverable; a silently-blocked new tab strands the visitor with no
+// checkout link at all. See src/lib/ticketCtaTracking.ts for the loading
+// state that keeps that moment from reading as a dead button.
 const goHref = `/api/go/${event.slug}`;
 
 const sharedTrackingAttrs = {
@@ -237,5 +247,37 @@ const sharedTrackingAttrs = {
 
   .event-cta__button--outline:hover {
     border-color: var(--charcoal);
+  }
+
+  /* WHY :global here: wireTicketCtaTracking() (src/lib/ticketCtaTracking.ts)
+     injects the spinner element and toggles aria-busy at click time, after
+     Astro has already applied its scoped-style hash to the template. A
+     plain scoped selector would silently never match a node that didn't
+     exist at render time. */
+  :global(.event-cta__button[aria-busy="true"]) {
+    opacity: 0.85;
+    cursor: default;
+    pointer-events: none;
+  }
+
+  :global(.event-cta__spinner) {
+    display: inline-block;
+    width: 16px;
+    height: 16px;
+    margin-left: 10px;
+    vertical-align: -3px;
+    border: 2px solid rgba(255, 255, 255, 0.4);
+    border-top-color: white;
+    border-radius: 50%;
+    animation: event-cta-spin 0.6s linear infinite;
+  }
+
+  /* No per-component prefers-reduced-motion override needed: the global
+     kill-switch in src/index.css already zeroes every animation's duration
+     and iteration count site-wide. */
+  @keyframes event-cta-spin {
+    to {
+      transform: rotate(360deg);
+    }
   }
 </style>

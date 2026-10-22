@@ -44,7 +44,7 @@ export function reportFailure(report: FailureReport): void {
               contact: {
                 name: cut(report.contact.name, 200),
                 email: cut(report.contact.email, 320),
-                phone: cut(report.contact.phone, 30),
+                phone: cut(report.contact.phone, 50),
                 instagram: cut(report.contact.instagram, 100),
               },
             }

@@ -11,7 +11,7 @@ export const SITE = {
   description:
     "Garam Masala Dating is America's #1 live desi comedy dating show where South Asian singles go on a blind date in front of a packed house. Our hosts Surbhi and Wyatt guide the chaos with stand-up, crowd work and genuine matchmaking instincts. Every show ends with a singles mixer where the audience gets to continue the experiment.",
   shortDescription:
-    "America's #1 live desi comedy dating show. Real singles. Real dates. 250-person audience. Weekly in Manhattan.",
+    "America's #1 live desi comedy dating show. Real singles. Real dates. 250-person audience. Live at City Winery NYC in Manhattan.",
   footerTagline: "America's #1 live desi comedy dating show.",
   footerHosts: "Hosted by Surbhi & Wyatt.",
   hosts: "Surbhi & Wyatt",
@@ -174,6 +174,9 @@ export const APPLY_PAGE = {
     `All contact info below is ${friendName ? `${friendName}'s` : "your friend's"}, not yours. Double-check every detail. If we cannot reach them, they will never hear from us.`,
   headingSelf: "Applying for yourself",
   headingNomination: "Nominating a friend",
+  photosFailedTitle: "One thing: your photos did not come through",
+  photosFailedNote:
+    "Your application is safely with us, but the photo upload failed on your connection. DM your photos to @garammasaladating on Instagram and we will attach them for you.",
   photoGuidanceHeading: "Photos: up to 10",
   photoGuidanceIntro: "We need to be able to tell what you look like. Include:",
   photoGuidanceItems: [

@@ -10,6 +10,8 @@ export const prerender = false;
 interface LeadPayload {
   email: string;
   phone?: string;
+  name?: string;
+  instagram?: string;
   city?: string;
   source?: string;
   sourcePage?: string;
@@ -124,8 +126,13 @@ export const POST: APIRoute = async ({ request }) => {
     createdAt: { stringValue: now },
   };
 
-  // Add optional fields
-  addStringField(fields, "phone", body.phone, 20);
+  // Add optional fields. Caps mirror firestore.rules validLead: phone 50 to
+  // match the apply form's format-sized ceiling (a formatted international
+  // number is longer than the old 20), name/instagram for the apply form's
+  // progressive capture.
+  addStringField(fields, "phone", body.phone, 50);
+  addStringField(fields, "name", body.name, 1000);
+  addStringField(fields, "instagram", body.instagram, 100);
   addStringField(fields, "city", body.city, 100);
   addStringField(fields, "source", body.source ?? "lead-capture", 50);
   addStringField(fields, "sourcePage", body.sourcePage ?? "/", 200);

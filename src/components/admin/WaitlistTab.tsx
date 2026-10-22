@@ -50,16 +50,18 @@ export default function WaitlistTab() {
       const qs = new URLSearchParams();
       if (city) qs.set("city", city);
       const query = qs.toString();
-      const res = await fetch(
-        `/api/admin/leads${query ? `?${query}` : ""}`,
-        { headers: { Authorization: `Bearer ${idToken}` } },
-      );
+      const res = await fetch(`/api/admin/leads${query ? `?${query}` : ""}`, {
+        headers: { Authorization: `Bearer ${idToken}` },
+      });
       if (!res.ok) {
         const body = (await res.json()) as { error?: string };
         setError(body.error ?? "Failed to load waitlist.");
         return;
       }
-      const json = (await res.json()) as { total: number; leads: WaitlistLead[] };
+      const json = (await res.json()) as {
+        total: number;
+        leads: WaitlistLead[];
+      };
       setLeads(json.leads);
       loadedOnce.current = true;
     } catch {
@@ -159,7 +161,9 @@ export default function WaitlistTab() {
         </button>
       </div>
       {exportError && (
-        <p className={styles.exportError} role="alert">{exportError}</p>
+        <p className={styles.exportError} role="alert">
+          {exportError}
+        </p>
       )}
 
       <div className={styles.section}>
@@ -178,6 +182,7 @@ export default function WaitlistTab() {
                   <th>Name</th>
                   <th>Email</th>
                   <th>Phone</th>
+                  <th>Instagram</th>
                   <th>Source</th>
                   <th>Date</th>
                 </tr>
@@ -189,8 +194,11 @@ export default function WaitlistTab() {
                     <td>{l.name}</td>
                     <td>{l.email}</td>
                     <td>{l.phone}</td>
+                    <td>{l.instagram}</td>
                     <td>
-                      <span className={styles.pill}>{l.source || "unknown"}</span>
+                      <span className={styles.pill}>
+                        {l.source || "unknown"}
+                      </span>
                     </td>
                     <td>{fmtDate(l.createdAt)}</td>
                   </tr>

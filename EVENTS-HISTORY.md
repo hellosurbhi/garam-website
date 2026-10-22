@@ -4,6 +4,7 @@ Permanent record of every show change: cancellations, date moves, time moves, ro
 
 ## Log
 
+- 2026-10-22: San Francisco Nov 14 added (5 PM to 7 PM, The Faight Collective, Cuffing Season Coming edition). Placeholder dates added with email capture only, no tickets yet: Los Angeles Nov 13, San Diego Nov 15 and Manhattan Dec 12 at The Loft at City Winery NYC.
 - 2026-09-28: Philadelphia moved from Sep 27 to Oct 4, still 7:30 PM at Next In Line Comedy. Chicago announced for Oct 24 at 6 PM at The Lincoln Lodge.
 - 2026-08-26: Aug 30 Washington DC show start time moved from 8 PM to 6 PM (end time moved from 10 PM to 8 PM accordingly), date unchanged, still DC Comedy Loft.
 - 2026-08-26: Manhattan regular show venue changed from Top Secret Comedy Club to City Winery NYC (The Loft at City Winery NYC, 25 11th Ave), future/general copy only (homepage, tickets page, Manhattan city page, journal articles, llms-full feed). Past show entries and the VENUE_TOP_SECRET constant are untouched; the Oct 11 All Stars show already used City Winery NYC before this change.

@@ -17,8 +17,9 @@ describe("events data", () => {
       expect(typeof event.city).toBe("string");
       expect(event.city.trim()).not.toBe("");
       expect(typeof event.url).toBe("string");
-      // TBA events have no URL yet — url is intentionally empty until dates are confirmed
-      if (event.date !== "TBA") {
+      // Events with no tickets on sale (TBA cards and dated email-capture
+      // placeholders) carry ticketSource "none" and an intentionally empty url
+      if (event.ticketSource !== "none" && event.date !== "TBA") {
         expect(event.url.trim()).not.toBe("");
       }
     }

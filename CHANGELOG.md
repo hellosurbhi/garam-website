@@ -1,5 +1,24 @@
 # Changelog
 
+## docs(email): this repo's mailer is transactional only (2026-10-21)
+
+`CLAUDE.md` now has an "Outbound email" section. The mailer in this repo sends confirmations, alerts and receipts only. Campaigns and bulk lists never go out from here, because batch sending through the Zoho mailbox is what got `contact@garammasaladating.com` blocked on 2026-07-25. Campaigns live in `~/workspace/garam-email-outreach`, behind a validation gate that signs every recipient list.
+
+**Files:** `CLAUDE.md`
+
+## feat(markets): city-bucket resolver for show announcements (2026-10-02)
+
+Groundwork for mailing a show announcement to its own city instead of the whole list. `src/data/markets.json` defines 30 US sending markets by hand, each with coordinates, a radius, the `src/data/cities` and `events.ts` slugs that roll up into it, and aliases keyed by state. `src/lib/markets.ts` exports `resolveMarket()`, which buckets one lead and grades how much the bucket can be trusted.
+
+- **A lead's `city` is not reliably self-reported, and the resolver now knows that.** `HomeSignup.astro` prefills the optional city input from IP geo, so the spice-list forms submit geo data in a field that looks typed. Measured against the 2026-10-02 export of 891 leads: 140 of the 515 city-bearing rows are exact echoes of `geoCity`, including 32 `Des%20Moines` (Google Cloud) and 7 `Boydton` (Azure). Those grade `low` and stay out of automatic sends. A typed city carrying a state suffix, which the prefill never writes, still grades `high`.
+- **Ambiguous city names are refused, not guessed.** 14 alias texts are claimed by two markets (Arlington VA and TX, Newark NJ and CA, Hollywood FL and the LA neighbourhood, and 11 more). Without a state they resolve to nothing and surface as "needs a city". `markets.test.ts` pins that exact set, so a newly added city that collides fails the suite rather than becoming a coin flip at send time.
+- **`stateRollup` deliberately omits NY, NJ, CA, TX, FL, PA and VA**, because each holds more than one market and a bare state is not an answer there.
+- **markets.json is validated at import, not cast.** It is hand-edited and a typo in it decides who gets emailed, so a bad slug, radius, coordinate or alias key throws on module load.
+- A known city name typed with the wrong state (for example "Springfield, MA") grades `medium`, because the state rollup answered, not the alias. "Seattle, Washington" and "Buffalo, New York" now parse their state.
+- Measured outcome on the 891 existing leads: 400 sendable (`high`), 263 geo-only (`low`, surfaced for review), 228 unbucketed. Of the unbucketed, 108 are Google Cloud and Azure datacenters and 94 are outside the US, which is the intended result.
+
+**Files:** `src/data/markets.json`, `src/lib/markets.ts`, `src/lib/markets.test.ts`, `CLAUDE.md`
+
 ## fix(ops): the security-rules gate stops drifting silently, and applicant emails stop reaching the public alert topic (2026-09-02)
 
 Two HIGH findings from the Codex 2026-08-12 review rounds, both open since the emulator suite and the push alert channel shipped.

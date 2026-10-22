@@ -540,7 +540,10 @@ export const events: EventEntry[] = [
     state: "Pennsylvania",
     stateAbbr: "PA",
     citySlug: "philadelphia",
-    slug: buildEventSlug("philadelphia", "2026-10-04"),
+    // WHY: slug keeps the original Sep 27 date so links already shared for
+    // /events/philadelphia-2026-09-27 keep resolving after the reschedule
+    // (same pattern as the Boston Aug 13 entry). Do not rename to 10-04.
+    slug: buildEventSlug("philadelphia", "2026-09-27"),
     description:
       "Garam Masala Dating returns to Next In Line Comedy in Philadelphia for a BYOB night of live comedy and real blind dates on stage.",
     lineup: DEFAULT_LINEUP,

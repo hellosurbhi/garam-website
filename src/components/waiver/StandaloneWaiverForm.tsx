@@ -4,6 +4,7 @@ import { WAIVER_PAGE } from "@/data/waiverPage";
 import { WaiverDocument } from "@/components/WaiverDocument";
 import { useWaiverSignature } from "@/components/waiver/useWaiverSignature";
 import { reportFailure } from "@/lib/failureAlert";
+import { trackError } from "@/lib/analytics";
 import styles from "./StandaloneWaiverForm.module.css";
 
 type Phase = "form" | "submitting" | "success";
@@ -92,6 +93,12 @@ export default function StandaloneWaiverForm() {
         stage: "standalone_submit",
         errorMessage: err instanceof Error ? err.message : String(err),
         contact: { name: fullName, email, phone },
+      });
+      trackError({
+        error_message: err instanceof Error ? err.message : String(err),
+        error_type: "form_submission",
+        component: "StandaloneWaiverForm",
+        email,
       });
     }
   }

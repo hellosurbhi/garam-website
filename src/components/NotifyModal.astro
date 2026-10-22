@@ -117,7 +117,7 @@ const { source = "notify-modal" } = Astro.props;
 
 <script>
   import { cleanPhone } from "@/lib/phone";
-  import { identifyLead, trackLeadEvent } from "@/lib/analytics";
+  import { identifyLead, trackLeadEvent, trackError } from "@/lib/analytics";
   import { buildLeadAttribution } from "@/lib/leadAttribution";
   import { reportFailure } from "@/lib/failureAlert";
   import {
@@ -315,6 +315,12 @@ const { source = "notify-modal" } = Astro.props;
             errorMessage: err instanceof Error ? err.message : String(err),
             contact: { email: notifyEmail },
           });
+          trackError({
+            error_message: err instanceof Error ? err.message : String(err),
+            error_type: "api_error",
+            component: "NotifyModal",
+            email: notifyEmail,
+          });
         } finally {
           if (submitBtn) {
             submitBtn.disabled = false;
@@ -416,6 +422,12 @@ const { source = "notify-modal" } = Astro.props;
             stage: "phone",
             errorMessage: err instanceof Error ? err.message : String(err),
             contact: { email: notifyEmail, phone: cleaned },
+          });
+          trackError({
+            error_message: err instanceof Error ? err.message : String(err),
+            error_type: "api_error",
+            component: "NotifyModal",
+            email: notifyEmail,
           });
         } finally {
           if (submitBtn) {

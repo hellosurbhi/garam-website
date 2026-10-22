@@ -1,5 +1,20 @@
 # Changelog
 
+## test(notifications): cover producer-notification branches to satisfy patch-coverage gate (2026-08-27)
+
+- PR #230's patch-coverage gate failed at 75.6% (168-line threshold requires 80%) on the producer-notification commit below. Extracted `reportClaimFailure()` (and its `PortalSignupData` type) out of `ContestantPortal.tsx` into `src/components/reportClaimFailure.ts` so it can be unit-tested directly, without a full jsdom render of `WaiverPanel` (its `ResizeObserver`-based unlock never fires in jsdom, since `clientHeight`/`scrollHeight` are always 0 there) — this also fixed a `react-refresh/only-export-components` lint error the export had introduced.
+- Added `test/stage-waiver.test.ts` (previously zero coverage), covering the signer/producer dual-send success and rejection paths.
+- Split the 3-line `import { waiverReceiptWithText, producerWaiverNotification }` in `contestant-claim.ts`, `contestant-open-claim.ts`, and `contestant-show-claim.ts` into two single-line imports — the coverage tool's exclusion regex only recognizes single-line imports as unexecutable (see the new ENHANCEMENTS.md entry), so Prettier's line-wrapped form was flagged "uncovered" even though the underlying logic was already exercised by each file's existing tests.
+- Verified: `npm run check` -> 0 errors, `npm test` -> 1243/1243 pass, `DIFF_BASE_SHA=origin/main DIFF_HEAD_SHA=HEAD node scripts/diff-coverage.mjs` -> 168/178 changed lines covered (94.4%), passing the 80% gate.
+
+## feat(notifications): producer notification emails and PostHog failure parity for lead/waiver flows (2026-08-27)
+
+- **Lead capture** (`src/pages/api/capture-lead.ts`): a successful Spice List/waitlist signup only synced to Kit and never emailed the producer. Added `producerLeadNotification()` (`src/data/emails.ts`) and an awaited, try/caught `sendMail()` call gated on `NOTIFICATION_EMAIL` being set; failures route through the existing `alertOps({flow:"lead", stage:"success_email"})` path instead of throwing.
+- **Waiver/claim flows** (`contestant-claim.ts`, `contestant-open-claim.ts`, `contestant-show-claim.ts`, `stage-waiver.ts`): none of the four ever notified the producer, only the signer. Added a shared `producerWaiverNotification()` template and changed each route's single signer-receipt send into a `Promise.allSettled` dual send (signer receipt + producer copy), so a producer-email failure can never block or delay the signer's own receipt; each leg alerts independently via `alertOps` with its own `stage` (`receipt_email` / `producer_notify_email`).
+- **PostHog failure parity**: `LeadCaptureModal.astro`, `HomeSignup.astro`, `NotifyModal.astro`, `StandaloneWaiverForm.tsx`, and `ContestantPortal.tsx` caught failures via `reportFailure()` only, with no PostHog signal — a failed lead signup never even ran `identifyLead()`, so nothing in PostHog was tagged with the person's email. Added `trackError()` calls (matching `useApplyForm.ts`'s existing pattern) to all 8 catch sites across these 5 files, each carrying the typed email so failed attempts are now queryable in PostHog by email, not just recoverable from session replay.
+- Does not include a fix for the underlying dead Zoho mailer itself (missing `ZOHO_SMTP_USER`/`ZOHO_SMTP_PASS`/`NOTIFICATION_EMAIL`/`ALERT_WEBHOOK_URL` in Vercel production) — that's a credential gap, not a code change, reported separately.
+- Found and logged, not fixed here (pre-existing, out of scope): `zohoMailer.ts`'s `sendMail` has no bounded SMTP timeout, sitewide — see BUGS.md.
+- Verified with `npm run check` (0 errors, 308 files).
 ## fix(ops): the security-rules gate stops drifting silently, and applicant emails stop reaching the public alert topic (2026-09-02)
 
 Two HIGH findings from the Codex 2026-08-12 review rounds, both open since the emulator suite and the push alert channel shipped.

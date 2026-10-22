@@ -1005,8 +1005,12 @@ test.describe("Cities", () => {
         // Structure
         await expect(page.locator("main.city-page")).toBeVisible();
 
+        // WHY: [slug].astro hides .city-h1 with display:none at <=1024px on
+        // purpose (the eyebrow carries the heading on phones and tablets), so
+        // toBeVisible failed on every non-desktop viewport. Assert the h1 is in
+        // the DOM with text so the SEO heading is still guarded everywhere.
         const h1 = page.locator("h1.city-h1");
-        await expect(h1).toBeVisible();
+        await expect(h1).toBeAttached();
         const h1Text = await h1.textContent();
         expect(
           h1Text?.trim().length,
@@ -1184,21 +1188,12 @@ test.describe("Footer deep", () => {
     );
     expect(await footer.locator('a[href="/hosts"]').count()).toBeGreaterThan(0);
 
-    // Shows column
+    // Shows column: the city list is built from upcoming events
+    // (src/data/footer.ts), so assert the shape, not specific cities.
+    const cityLinks = footer.locator('a[href^="/cities/"]');
     expect(
-      await footer.locator('a[href="/cities/manhattan"]').count(),
-    ).toBeGreaterThan(0);
-    expect(
-      await footer.locator('a[href="/cities/jersey-city"]').count(),
-    ).toBeGreaterThan(0);
-    expect(
-      await footer.locator('a[href="/cities/los-angeles"]').count(),
-    ).toBeGreaterThan(0);
-    expect(
-      await footer.locator('a[href="/cities/san-francisco"]').count(),
-    ).toBeGreaterThan(0);
-    expect(
-      await footer.locator('a[href="/cities/san-diego"]').count(),
+      await cityLinks.count(),
+      "Footer should link at least one city page",
     ).toBeGreaterThan(0);
     expect(await footer.locator('a[href="/cities"]').count()).toBeGreaterThan(
       0,

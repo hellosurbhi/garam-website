@@ -107,6 +107,19 @@ describe("parsePlace", () => {
       name: "chicago",
       state: "IL",
     });
+    expect(parsePlace("Seattle, Washington")).toEqual({
+      name: "seattle",
+      state: "WA",
+    });
+    expect(parsePlace("Buffalo, New York")).toEqual({
+      name: "buffalo",
+      state: "NY",
+    });
+    expect(parsePlace("Washington")).toEqual({
+      name: "washington",
+      state: null,
+    });
+    expect(parsePlace("New York")).toEqual({ name: "new york", state: null });
     expect(parsePlace("San Francisco")).toEqual({
       name: "san francisco",
       state: null,
@@ -261,6 +274,15 @@ describe("resolveMarket precedence", () => {
       source: "self-reported",
     });
     expect(resolveMarket({ city: "Bakersfield, CA" }).market).toBeNull();
+  });
+
+  it("grades a known city name in the wrong state as a rollup, not an exact match", () => {
+    // springfield is registered only under VA, so MA falls through to the rollup.
+    expect(resolveMarket({ city: "Springfield, MA" })).toEqual({
+      market: "boston",
+      confidence: "medium",
+      source: "self-reported",
+    });
   });
 
   it("returns a reason naming the obstacle when nothing resolves", () => {

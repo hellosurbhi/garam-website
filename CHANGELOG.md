@@ -1,5 +1,11 @@
 # Changelog
 
+## docs(email): this repo's mailer is transactional only (2026-10-21)
+
+`CLAUDE.md` now has an "Outbound email" section. The mailer in this repo sends confirmations, alerts and receipts only. Campaigns and bulk lists never go out from here, because batch sending through the Zoho mailbox is what got `contact@garammasaladating.com` blocked on 2026-07-25. Campaigns live in `~/workspace/garam-email-outreach`, behind a validation gate that signs every recipient list.
+
+**Files:** `CLAUDE.md`
+
 ## feat(markets): city-bucket resolver for show announcements (2026-10-02)
 
 Groundwork for mailing a show announcement to its own city instead of the whole list. `src/data/markets.json` defines 30 US sending markets by hand, each with coordinates, a radius, the `src/data/cities` and `events.ts` slugs that roll up into it, and aliases keyed by state. `src/lib/markets.ts` exports `resolveMarket()`, which buckets one lead and grades how much the bucket can be trusted.
@@ -8,9 +14,11 @@ Groundwork for mailing a show announcement to its own city instead of the whole 
 - **Ambiguous city names are refused, not guessed.** 14 alias texts are claimed by two markets (Arlington VA and TX, Newark NJ and CA, Hollywood FL and the LA neighbourhood, and 11 more). Without a state they resolve to nothing and surface as "needs a city". `markets.test.ts` pins that exact set, so a newly added city that collides fails the suite rather than becoming a coin flip at send time.
 - **`stateRollup` deliberately omits NY, NJ, CA, TX, FL, PA and VA**, because each holds more than one market and a bare state is not an answer there.
 - **markets.json is validated at import, not cast.** It is hand-edited and a typo in it decides who gets emailed, so a bad slug, radius, coordinate or alias key throws on module load.
+- A known city name typed with the wrong state (for example "Springfield, MA") grades `medium`, because the state rollup answered, not the alias. "Seattle, Washington" and "Buffalo, New York" now parse their state.
 - Measured outcome on the 891 existing leads: 400 sendable (`high`), 263 geo-only (`low`, surfaced for review), 228 unbucketed. Of the unbucketed, 108 are Google Cloud and Azure datacenters and 94 are outside the US, which is the intended result.
 
 **Files:** `src/data/markets.json`, `src/lib/markets.ts`, `src/lib/markets.test.ts`, `CLAUDE.md`
+
 ## fix(tests): repair the 75 failing smoke tests (2026-10-21)
 
 The weekly smoke suite had failed every run since August, and the same 75 cases failed on Node 22 and Node 24. The site was fine and the tests had gone stale: the HomeSignup, LeadCaptureModal and NotifyModal tests now complete the optional phone step before expecting success, the footer test checks the data driven city list by shape instead of five fixed cities, the city page test checks the heading is in the page (it is hidden at 1024px and below by design), the waiver test uses the waiver checkbox, and the Firebase mock answers `accounts:lookup`. The Apply happy path now proves auth, photo upload and the Firestore write are reached in order; the real success path stays with the daily synthetic monitor because the Firestore write channel cannot be faked with a canned reply. The full suite passes 319 of 320 on Node 24 (one third party accessibility flake retried green, queued in BUGS.md).

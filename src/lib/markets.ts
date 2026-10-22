@@ -205,6 +205,12 @@ const STATE_NAMES: Record<string, string> = {
   "new hampshire": "NH",
   "new jersey": "NJ",
   "new mexico": "NM",
+  // WHY "washington" and "new york" are plain keys: basicNorm turns the comma into
+  // a space, so "Seattle, Washington" reaches the trailing-word path as
+  // "seattle washington". The old "washington_state" and "new york state" keys
+  // never matched ordinary input. The suffix paths below require a leading city
+  // word, so bare "washington" and bare "new york" still are not states.
+  "new york": "NY",
   "new york state": "NY",
   "north carolina": "NC",
   "north dakota": "ND",
@@ -220,7 +226,8 @@ const STATE_NAMES: Record<string, string> = {
   utah: "UT",
   vermont: "VT",
   virginia: "VA",
-  washington_state: "WA",
+  washington: "WA",
+  "washington state": "WA",
   "west virginia": "WV",
   wisconsin: "WI",
   wyoming: "WY",
@@ -381,7 +388,8 @@ export function marketForCitySlug(
   return citySlugIndex.get(basicNorm(slug).replace(/ /g, "-")) ?? null;
 }
 
-type TextMatch = { market: string } | { ambiguous: true } | null;
+type TextMatch =
+  { market: string; viaRollup: boolean } | { ambiguous: true } | null;
 
 function matchPlaceText(raw: string | null | undefined): TextMatch {
   const { name, state } = parsePlace(raw);
@@ -392,13 +400,14 @@ function matchPlaceText(raw: string | null | undefined): TextMatch {
       ? entries.filter((e) => e.state === state)
       : entries;
     const distinct = [...new Set(candidates.map((e) => e.market))];
-    if (distinct.length === 1) return { market: distinct[0] };
+    if (distinct.length === 1) return { market: distinct[0], viaRollup: false };
     if (distinct.length > 1) return { ambiguous: true };
     // The name is known but not in the stated state: a Portland, Maine rather
     // than a Portland, Oregon. Fall through to the state rollup, which refuses
     // the states that hold more than one market.
   }
-  if (state && stateRollup[state]) return { market: stateRollup[state] };
+  if (state && stateRollup[state])
+    return { market: stateRollup[state], viaRollup: true };
   return null;
 }
 
@@ -497,11 +506,9 @@ export function resolveMarket(input: MarketInput): MarketResolution {
   if (city && !echo) {
     const match = matchPlaceText(city);
     if (match && "market" in match) {
-      const parsed = parsePlace(city);
-      const exact = aliasIndex.has(parsed.name);
       return {
         market: match.market,
-        confidence: exact ? "high" : "medium",
+        confidence: match.viaRollup ? "medium" : "high",
         source: "self-reported",
       };
     }

@@ -1,0 +1,97 @@
+# Production site health, every 15 minutes.
+#
+# Asks the LIVE site what a visitor would: every page in the sitemap loads,
+# every internal link on those pages resolves, and every API route in
+# src/pages/api is actually deployed (not Vercel's "not found" page). Mocked
+# tests cannot see any of this; a form was dead for two months and a broken
+# /api link went unnoticed because nothing looked at production.
+#
+# One red run can be a deploy in progress, so the check runs a second time
+# two minutes later and only a second red pages. When the site is healthy
+# again the same run closes the open issue, so alerts clear themselves.
+name: Site Health
+
+on:
+  schedule:
+    - cron: "*/15 * * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  # issues: write is for the failure issue only (open, comment, close).
+  issues: write
+
+concurrency:
+  group: site-health
+  cancel-in-progress: false
+
+jobs:
+  health:
+    name: Live pages, links and API routes
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm install -g npm@11
+      - run: npm ci
+      - name: Install Playwright
+        run: npx playwright install chromium --with-deps
+      - name: Check production (second look before paging)
+        env:
+          PLAYWRIGHT_BASE_URL: https://garammasaladating.com
+        run: |
+          check() { npx playwright test --config playwright.synthetic.config.ts site-health --retries=0; }
+          if ! check; then
+            echo "First check failed; looking again in 2 minutes before paging."
+            sleep 120
+            check
+          fi
+      - name: Close the open alert once healthy
+        if: success()
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          for n in $(gh issue list --repo "$GITHUB_REPOSITORY" --state open --search '"Site health failing" in:title' --json number --jq '.[].number'); do
+            gh issue close "$n" --repo "$GITHUB_REPOSITORY" --comment "Production is healthy again. Closing automatically."
+          done
+      - name: Open or update the alert issue
+        if: failure()
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          RUN_URL: https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}
+        run: |
+          TITLE="Site health failing"
+          BODY="A page, an internal link or an API route on the live site is broken (two checks in a row). Run with the exact failing item: $RUN_URL"
+          EXISTING=$(gh issue list --repo "$GITHUB_REPOSITORY" --state open --search "\"$TITLE\" in:title" --json number --jq '.[0].number // empty')
+          if [ -n "$EXISTING" ]; then
+            gh issue comment "$EXISTING" --repo "$GITHUB_REPOSITORY" --body "$BODY"
+          else
+            gh issue create --repo "$GITHUB_REPOSITORY" --title "$TITLE" --body "$BODY" --assignee hellosurbhi
+          fi
+      - name: Email the producer once per incident
+        # Only when this run just opened the issue: a long outage sends one
+        # email, not one every 15 minutes.
+        if: failure()
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GMAIL_USER: ${{ secrets.GMAIL_USER }}
+          GMAIL_CLIENT_ID: ${{ secrets.GMAIL_CLIENT_ID }}
+          GMAIL_CLIENT_SECRET: ${{ secrets.GMAIL_CLIENT_SECRET }}
+          GMAIL_REFRESH_TOKEN: ${{ secrets.GMAIL_REFRESH_TOKEN }}
+          PAGER_EMAIL_TO: ${{ secrets.PAGER_EMAIL_TO }}
+          RUN_URL: https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}
+          PAGER_SUBJECT: "SITE BROKEN: a page, link or API route on garammasaladating.com is failing"
+          PAGER_MESSAGE: "Site health failed twice in a row. A visitor may be hitting a missing page or a broken link right now."
+        run: |
+          COMMENTS=$(gh issue list --repo "$GITHUB_REPOSITORY" --state open --search '"Site health failing" in:title' --json comments --jq '.[0].comments | length')
+          if [ "${COMMENTS:-0}" -eq 0 ]; then
+            node scripts/send-pager-email.mjs page
+          else
+            echo "Incident already announced; no repeat email."
+          fi

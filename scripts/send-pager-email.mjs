@@ -66,14 +66,19 @@ export async function sendPagerEmail(mode, env, fetchImpl) {
   const to = env.PAGER_EMAIL_TO?.trim() || user;
   const runUrl = env.RUN_URL?.trim() ?? "";
 
+  // PAGER_SUBJECT and PAGER_MESSAGE let other monitors (site health) reuse
+  // this channel with their own plain-language wording; the defaults stay the
+  // apply monitor's.
   const subject =
     mode === "page"
-      ? "APPLY MONITOR FAILED: production form likely broken"
+      ? env.PAGER_SUBJECT?.trim() ||
+        "APPLY MONITOR FAILED: production form likely broken"
       : "Weekly pager test: the Gmail alert channel works. No action needed.";
   const text =
     mode === "page"
       ? [
-          "The synthetic apply monitor FAILED. The production apply form is likely rejecting real applicants right now.",
+          env.PAGER_MESSAGE?.trim() ||
+            "The synthetic apply monitor FAILED. The production apply form is likely rejecting real applicants right now.",
           "",
           `Workflow run with the diagnosis: ${runUrl || "(run URL unavailable)"}`,
           "",

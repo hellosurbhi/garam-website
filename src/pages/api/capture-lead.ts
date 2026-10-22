@@ -4,6 +4,7 @@ import { addKitSubscriber, type KitSubscriberFields } from "@/lib/kit";
 import { enforceRateLimit, RATE_LIMITS } from "@/lib/rateLimit";
 import { issueLeadToken } from "@/lib/leadToken";
 import { alertOps } from "@/lib/opsAlert";
+import { isSyntheticSubmission } from "@/lib/syntheticMonitor";
 
 export const prerender = false;
 
@@ -210,9 +211,13 @@ export const POST: APIRoute = async ({ request }) => {
     if (body.utmSource) kitFields.utm_source = body.utmSource;
     if (body.utmMedium) kitFields.utm_medium = body.utmMedium;
     if (body.utmCampaign) kitFields.utm_campaign = body.utmCampaign;
-    addKitSubscriber(email, kitTags, kitFields).catch(() => {
-      // Kit errors are already logged inside addKitSubscriber
-    });
+    // The production lead monitor posts the reserved synthetic email every
+    // 6 hours; it must never reach the real newsletter list.
+    if (!isSyntheticSubmission(email)) {
+      addKitSubscriber(email, kitTags, kitFields).catch(() => {
+        // Kit errors are already logged inside addKitSubscriber
+      });
+    }
 
     // Ownership proof for the step-2 phone update. Null while
     // LEAD_UPDATE_SECRET is unset (feature off), in which case the key is

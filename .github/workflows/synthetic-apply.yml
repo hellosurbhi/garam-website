@@ -71,7 +71,7 @@ jobs:
       - name: Install Playwright
         run: npx playwright install chromium --with-deps
       - name: Submit synthetic application on production
-        run: npx playwright test --config playwright.synthetic.config.ts
+        run: npx playwright test --config playwright.synthetic.config.ts apply-monitor lead-monitor
         env:
           PLAYWRIGHT_BASE_URL: https://garammasaladating.com
       - name: Verify document landed and clean up

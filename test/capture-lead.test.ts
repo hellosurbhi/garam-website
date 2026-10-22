@@ -211,6 +211,32 @@ describe("capture-lead handler", () => {
     });
   });
 
+  it("saves the synthetic monitor lead but never syncs it to Kit", async () => {
+    import.meta.env.KIT_API_SECRET = "kit-secret";
+    const fetchSpy = vi.spyOn(globalThis, "fetch").mockResolvedValueOnce(
+      new Response(
+        JSON.stringify({
+          name: "projects/test-project/databases/(default)/documents/leads/synth1",
+        }),
+        { status: 200 },
+      ),
+    );
+
+    const res = await POST(
+      makeContext(
+        makeRequest({
+          email: "synthetic-monitor@garammasaladating.com",
+          source: "synthetic-monitor",
+        }),
+      ),
+    );
+
+    expect(res.status).toBe(200);
+    expect(await res.json()).toEqual({ ok: true, id: "synth1" });
+    // Only the Firestore write: a second call would be the Kit subscribe.
+    expect(fetchSpy).toHaveBeenCalledTimes(1);
+  });
+
   it("returns 400 for malformed email before writing to Firestore", async () => {
     const fetchSpy = vi.spyOn(globalThis, "fetch");
 

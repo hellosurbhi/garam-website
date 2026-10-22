@@ -70,6 +70,22 @@ describe("sendPagerEmail", () => {
     expect(String(err)).not.toContain(env.GMAIL_REFRESH_TOKEN);
   });
 
+  it("lets another monitor override the subject and message in page mode", async () => {
+    await sendPagerEmail(
+      "page",
+      {
+        ...env,
+        PAGER_SUBJECT: "SITE DOWN",
+        PAGER_MESSAGE: "A page is broken.",
+      },
+      mockFetch,
+    );
+    const message = decodeSentMessage();
+    expect(message).toContain("Subject: SITE DOWN");
+    expect(message).toContain("A page is broken.");
+    expect(message).not.toContain("apply form");
+  });
+
   it("exchanges the refresh token with a form-encoded request carrying all OAuth params", async () => {
     await sendPagerEmail("page", env, mockFetch);
     const [url, init] = mockFetch.mock.calls[0];

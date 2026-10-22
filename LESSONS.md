@@ -1,5 +1,13 @@
 # Lessons
 
+## Hundreds of passing tests never touched the real backend, so a dead form and a missing API route went unseen
+
+**What went wrong:** The apply form was broken for about two months and a visitor-facing API link led to Vercel's error page. Lint, types and the full test suite stayed green the whole time, and nothing alerted.
+
+**Why:** We assumed a large test suite meant a working product. Most tests mock Firebase and the network, so they prove the code agrees with itself and say nothing about the deployed site. The only live check covered one form and ran every 6 hours.
+
+**Rule:** Anything a visitor can reach needs a check against production, not a mock. Site Health now discovers pages from the sitemap and routes from `src/pages/api`, so new ones are covered with no list to maintain. A mocked test never counts as proof that a user flow works. Alerts page only after a second red and close themselves when the site recovers.
+
 ## Adding a CI job does not add a gate, and nothing said so out loud
 
 **What went wrong:** The Firestore/Storage emulator suite was promoted from "too heavy for pre-commit" to its own CI job in PR #135, precisely so a rules regression could not merge. It then sat unrequired for three weeks. The required-check list in `scripts/setup-branch-protection.sh`, the ruleset in GitHub Settings, and `docs/security/REMEDIATION.md` all still named one check, so a red rules job showed a red X on the PR and merged anyway. The one gate on `firestore.rules`/`storage.rules`, the exact file pair whose mismatch took the apply form down for a week in July 2026, was decorative.

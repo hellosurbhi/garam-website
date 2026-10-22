@@ -17,7 +17,7 @@ import { jsonResponse, parseJsonRequest } from "@/lib/http";
 export const prerender = false;
 
 const MixerRsvpNotifySchema = z.object({
-  name: z.string().min(1).max(200),
+  name: z.string().trim().min(1).max(200),
   email: z.string().email().max(320),
   source: z.enum(["cuffing-season", "singles-mixers"]),
 });

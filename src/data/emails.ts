@@ -80,6 +80,13 @@ export function subjectSafe(str: string): string {
   return str.replace(/[\x00-\x1f\x7f]+/g, " ").trim();
 }
 
+// First whitespace-delimited word of a full name. WHY not name.split(" ")[0]:
+// a leading space (" Ada") or a double space yields "" and the greeting and
+// subject render with a blank where the name belongs.
+export function firstNameOf(name: string): string {
+  return name.trim().split(/\s+/, 1)[0];
+}
+
 // Fills {{token}} placeholders in a copy template with the given values, in a
 // single pass over the ORIGINAL template string. Chained .replaceAll() calls
 // would re-scan already-substituted text on every subsequent call, so a
@@ -97,7 +104,7 @@ function fillTemplate(
 }
 
 export function schedulingInvite(name: string, calUrl: string): EmailTemplate {
-  const firstName = name.split(" ")[0];
+  const firstName = firstNameOf(name);
   const copy = schedulingInviteCopy;
 
   const subject = fillTemplate(copy.subject, {
@@ -116,7 +123,7 @@ export function schedulingFollowup(
   name: string,
   calUrl: string,
 ): EmailTemplate {
-  const firstName = name.split(" ")[0];
+  const firstName = firstNameOf(name);
   const copy = schedulingFollowupCopy;
 
   const subject = fillTemplate(copy.subject, {
@@ -183,7 +190,7 @@ export function inviteApproval(
 }
 
 export function waiverNudge(name: string, portalUrl: string): EmailTemplate {
-  const firstName = name.split(" ")[0];
+  const firstName = firstNameOf(name);
   const copy = waiverNudgeCopy;
 
   const subject = fillTemplate(copy.subject, {
@@ -294,7 +301,7 @@ export function postShow(name: string): EmailTemplate {
 }
 
 export function applicationReceived(name: string): EmailTemplate {
-  const firstName = name.split(" ")[0];
+  const firstName = firstNameOf(name);
   const copy = applicantWelcomeCopy;
 
   const subject = fillTemplate(copy.subject, {
@@ -310,7 +317,7 @@ export function mixerRsvpDetails(
   name: string,
   mixer: MixerDetails,
 ): EmailTemplate {
-  const firstName = name.split(" ")[0];
+  const firstName = firstNameOf(name);
   const subject = `You're on the list, ${subjectSafe(firstName)}`;
   const dateFormatted = new Date(
     `${mixer.isoDate}T12:00:00`,
@@ -359,7 +366,7 @@ export function mixerRsvpDetails(
 }
 
 export function mixerRsvpMissed(name: string): EmailTemplate {
-  const firstName = name.split(" ")[0];
+  const firstName = firstNameOf(name);
   const subject = `Thanks for registering, ${subjectSafe(firstName)}`;
   const text = [
     `Hi ${firstName},`,

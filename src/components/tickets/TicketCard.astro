@@ -46,7 +46,7 @@ const ticketUrl = isLive
 // src/lib/ticketCtaTracking.ts. Sold-out clicks skip this and link straight
 // to ticketUrl instead: there's no checkout to initiate, so routing them
 // through /api/go would misreport a non-purchase as checkout intent.
-const goHref = `/api/go/${event.slug}`;
+const goHref = `/api/go/${event.slug}?campaign=tickets&content=listing`;
 const eventTitle = `Garam Masala Dating - ${cityLabel} - ${event.date}`;
 const trackingAttrs = {
   "data-cta-position": `tickets_event_${index + 1}`,

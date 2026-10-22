@@ -67,7 +67,9 @@ if (process.argv[2] === "--worker") {
   const unknown = await request("/api/go/runtime-smoke-missing-event");
   assert.equal(unknown.status, 404);
   for (const href of ticketLinks) {
-    const response = await request(`${href}?utm_source=runtime-smoke`);
+    const response = await request(
+      `${href}${href.includes("?") ? "&" : "?"}utm_source=runtime-smoke`,
+    );
     assert.equal(response.status, 302, `Ticket redirect failed: ${href}`);
     const destination = new URL(response.headers.get("location"));
     assert.equal(destination.protocol, "https:");
@@ -124,7 +126,14 @@ if (process.argv[2] === "--worker") {
   const ticketLinks = [
     ...new Set(
       [...tickets.matchAll(/<a\b[^>]*\bdata-go-ticket\b[^>]*>/g)].map(
-        (anchor) => anchor[0].match(/\bhref="([^"]+)"/)?.[1] ?? "",
+        // WHY decode &amp;: Astro HTML-escapes the attribution query's "&" in
+        // the rendered href, but the probe requests the URL as a browser would
+        // after parsing, so it must see the decoded form.
+        (anchor) =>
+          (anchor[0].match(/\bhref="([^"]+)"/)?.[1] ?? "").replaceAll(
+            "&amp;",
+            "&",
+          ),
       ),
     ),
   ];
@@ -134,7 +143,13 @@ if (process.argv[2] === "--worker") {
     `Expected one ticket redirect per purchasable card on /tickets, found ${ticketLinks.length} for ${purchasableCards}`,
   );
   for (const link of ticketLinks) {
-    assert.match(link, /^\/api\/go\/[^/?]+$/, `Unexpected ticket href ${link}`);
+    // The optional query is the per-surface attribution the redirect forwards
+    // to the vendor (campaign/content); nothing else may ride on the href.
+    assert.match(
+      link,
+      /^\/api\/go\/[^/?]+(\?campaign=[\w-]+&content=[\w-]+)?$/,
+      `Unexpected ticket href ${link}`,
+    );
   }
   if (ticketLinks.length === 0) {
     process.stdout.write("No shows on sale: no ticket redirects to probe.\n");

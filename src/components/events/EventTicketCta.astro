@@ -51,7 +51,7 @@ const onSaleLabel = event.onSaleAt ? formatOnSaleDate(event.onSaleAt) : "";
 // recoverable; a silently-blocked new tab strands the visitor with no
 // checkout link at all. See src/lib/ticketCtaTracking.ts for the loading
 // state that keeps that moment from reading as a dead button.
-const goHref = `/api/go/${event.slug}`;
+const goHref = `/api/go/${event.slug}?campaign=events&content=${encodeURIComponent(position)}`;
 
 const sharedTrackingAttrs = {
   "data-ph-section": position,

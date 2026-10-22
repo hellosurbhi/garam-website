@@ -19,7 +19,7 @@ export const prerender = false;
 // never triggered the admin email. Importing the shared constants instead
 // of duplicating numbers makes that drift structurally impossible to repeat.
 const ApplicationSchema = z.object({
-  name: z.string().min(1).max(FIELD_LIMITS.freeText),
+  name: z.string().trim().min(1).max(FIELD_LIMITS.freeText),
   age: z.number().int().min(18).max(120),
   gender: z.string().min(1).max(100),
   orientation: z.string().min(1).max(100),
@@ -217,7 +217,7 @@ export const POST: APIRoute = async ({ request }) => {
 
     // Welcome email to applicant — non-fatal if it fails, but awaited so the
     // serverless function doesn't exit before the send attempt completes.
-    const welcome = applicationReceived(body.name, body.city);
+    const welcome = applicationReceived(body.name);
     await Promise.allSettled([sendMail({ to: body.email, ...welcome })]);
 
     return new Response(JSON.stringify({ sent: true }), {

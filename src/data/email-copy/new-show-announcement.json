@@ -1,0 +1,7 @@
+{
+  "_note": "Word-for-word wrapper copy from Surbhi. Do not edit unless she gives new copy word-for-word to replace it with. opts.subject and opts.customMessage are caller-supplied per show and are intentionally NOT stored here; fallbackMessage is used only when the caller omits customMessage. {{city}}/{{date}}/{{venue}} inside fallbackMessage and {{message}}/{{ticketUrl}} in text/html are runtime values, not copy.",
+  "fallbackMessage": "New show in {{city}} on {{date}} at {{venue}}!",
+  "text": "{{message}}\n\nGrab your tickets: {{ticketUrl}}\n\nSee you there!\n\nSurbhi\nGaram Masala Dating",
+  "html": "<div style=\"font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;max-width:600px;margin:0 auto;padding:24px;color:#1A1A1A;line-height:1.6;\"><p style=\"margin:0 0 16px;\">{{message}}</p><p style=\"margin:0 0 16px;\">{{ticketUrl}} before they sell out.</p><p style=\"margin:0 0 16px;\">See you there!</p><p style=\"margin:0 0 16px;\">Surbhi<br>Garam Masala Dating</p></div>",
+  "ticketLinkLabel": "Grab your tickets"
+}

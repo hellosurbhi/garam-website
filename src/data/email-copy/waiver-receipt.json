@@ -1,0 +1,6 @@
+{
+  "_note": "Word-for-word copy from Surbhi. Do not edit unless she gives new copy word-for-word to replace it with. {{name}} is the full name argument, used only in the body greeting; the subject is fully static.",
+  "subject": "We've got your waiver",
+  "text": "Hi {{name}},\n\nThanks for signing your contestant waiver for Garam Masala Dating. You're all set!\n\nWe'll be in touch with show day details as the date gets closer. In the meantime, feel free to reach out if you have any questions.\n\nCan't wait to have you on the show!\n\nSurbhi\nGaram Masala Dating",
+  "html": "<div style=\"font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;max-width:600px;margin:0 auto;padding:24px;color:#1A1A1A;line-height:1.6;\"><p style=\"margin:0 0 16px;\">Hi {{name}},</p><p style=\"margin:0 0 16px;\">Thanks for signing your contestant waiver for Garam Masala Dating. You're all set!</p><p style=\"margin:0 0 16px;\">We'll be in touch with show day details as the date gets closer. In the meantime, feel free to reach out if you have any questions.</p><p style=\"margin:0 0 16px;\">Can't wait to have you on the show!</p><p style=\"margin:0 0 16px;\">Surbhi<br>Garam Masala Dating</p></div>"
+}

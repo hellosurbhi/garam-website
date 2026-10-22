@@ -1,0 +1,7 @@
+{
+  "_note": "Internal ops digest sent to Surbhi herself, not applicant-facing. Word-for-word wrapper copy; edit only with her sign-off. {{count}} is interviews.length. Pluralization (\"interview\" vs \"interviews\") is grammar logic, not copy, and stays in emails.ts. The interview table rows are generated from live data in emails.ts and are not static copy.",
+  "subject": "Tomorrow's interviews ({{count}})",
+  "summaryLine": "You have {{count}} interview{{plural}} scheduled for tomorrow.",
+  "closingLine": "Good luck!",
+  "viewBookingLabel": "View booking"
+}

@@ -7,6 +7,15 @@ Every "Get Tickets" button routes through `/api/go/[slug]`, and that route rebui
 `applyTicketAttribution()` in `src/utils/eventUrl.ts` is now the one shared implementation; `buildTicketUrl` (browser) and the go route (server) both call it. Each button passes `?campaign=...&content=...`; the route accepts only short slug-style labels so a crafted link cannot stamp arbitrary text into affiliate reports. Recovered from the old event-pages session (65918) after confirming main still lacked it.
 
 **Files:** `src/utils/eventUrl.ts`, `src/pages/api/go/[slug].ts`, `src/components/cities/CityEventTicketEmbed.astro`, `src/components/events/EventTicketCta.astro`, `src/components/home/HomeHero.astro`, `src/components/home/HomeShows.astro`, `src/components/tickets/TicketCard.astro`, `src/pages/cities/[slug].astro`, plus tests
+## fix(tests): repair the 75 failing smoke tests (2026-10-21)
+
+The weekly smoke suite had failed every run since August, and the same 75 cases failed on Node 22 and Node 24. The site was fine and the tests had gone stale: the HomeSignup, LeadCaptureModal and NotifyModal tests now complete the optional phone step before expecting success, the footer test checks the data driven city list by shape instead of five fixed cities, the city page test checks the heading is in the page (it is hidden at 1024px and below by design), the waiver test uses the waiver checkbox, and the Firebase mock answers `accounts:lookup`. The Apply happy path now proves auth, photo upload and the Firestore write are reached in order; the real success path stays with the daily synthetic monitor because the Firestore write channel cannot be faked with a canned reply. The full suite passes 319 of 320 on Node 24 (one third party accessibility flake retried green, queued in BUGS.md).
+
+**Files:** `tests/smoke/critical-flows.spec.ts`, `tests/smoke/site.spec.ts`, `LESSONS.md`
+
+## chore(runtime): move the project to Node 24 (2026-10-19)
+
+Node 22 moves to maintenance, so `.nvmrc`, `engines.node` (now `>=24.15.0 <25.0.0`, the floor set by jsdom's dependencies), all seven CI `setup-node` steps, README and CONTRIBUTING now name Node 24. Vercel reads `engines.node`, so production follows. `@types/node` moved from 26 to 24 so the types match the runtime major. Node 24 bundles npm 11, which matches the lockfile writer. Verified on Node 24.22.0: `npm ci`, lint, `astro check`, 1,304 unit tests and `astro build` all pass.
 
 ## fix(deps): remove sprintf-js from the dev tree to close Dependabot alert #111 (2026-10-19)
 

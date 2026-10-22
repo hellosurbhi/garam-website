@@ -9,6 +9,12 @@ CHANGELOG.md. Never add completed or superseded entries to this file. -->
 
 ---
 
+## Test fixture duplication surfaced by the stalled Dependabot queue (2026-10-11)
+
+- [ ] ENHANCEMENT: extract one shared Application test factory and delete the duplicate locationDisplay test | Why: five test files each hand roll a Firestore `Timestamp` double, and one of them (`src/utils/locationDisplay.test.ts`) used a single cast instead of `as unknown as`, which is the type error that killed group PR #288 and blocked the whole security queue; `src/utils/locationDisplay.test.ts` and `test/locationDisplay.test.ts` are also two tests of the same `formatLocation` module, which CLAUDE.md forbids | Files: src/utils/locationDisplay.test.ts, test/locationDisplay.test.ts, src/components/admin/AdminDashboard.test.tsx, src/components/admin/ApplicantModal.test.tsx, src/components/admin/ApplicantCard.test.tsx, test/factories/application.ts (does not exist yet, this ticket creates it) | Plan: add `test/factories/application.ts` exporting `makeApplication(overrides)` that builds a valid `Application` with a real `Timestamp` from `firebase/firestore` so no cast is needed at all, point all five test files at it, then delete whichever locationDisplay test is the redundant copy and keep its unique cases | Verify: `npm run check` reports 0 errors, `npm test` passes, and `grep -r 'as unknown as Application' src/ test/` returns nothing.
+
+---
+
 ## Future city additions: batch recipe (2026-07-06)
 
 ## Apply-monitor fix follow-ups (2026-08-19)

@@ -17,8 +17,9 @@ describe("events data", () => {
       expect(typeof event.city).toBe("string");
       expect(event.city.trim()).not.toBe("");
       expect(typeof event.url).toBe("string");
-      // TBA events have no URL yet — url is intentionally empty until dates are confirmed
-      if (event.date !== "TBA") {
+      // Events with no tickets on sale (TBA cards and dated email-capture
+      // placeholders) carry ticketSource "none" and an intentionally empty url
+      if (event.ticketSource !== "none" && event.date !== "TBA") {
         expect(event.url.trim()).not.toBe("");
       }
     }
@@ -130,7 +131,7 @@ describe("events data", () => {
       previousDate: "2026-09-27",
       startTime: "19:30",
       endTime: "21:00",
-      slug: "philadelphia-2026-10-04",
+      slug: "philadelphia-2026-09-27",
       ticketSource: "their-eventbrite",
     });
     expect(chicago).toMatchObject({

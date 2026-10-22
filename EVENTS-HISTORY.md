@@ -4,6 +4,7 @@ Permanent record of every show change: cancellations, date moves, time moves, ro
 
 ## Log
 
+- 2026-10-22: San Francisco Nov 14 added (5 PM to 7 PM, The Faight Collective, Cuffing Season Coming edition). Placeholder dates added with email capture only, no tickets yet: Los Angeles Nov 13, San Diego Nov 15 and Manhattan Dec 12 at The Loft at City Winery NYC.
 - 2026-10-11: Philadelphia announced for Dec 6 at 6:30 PM at Next In Line Comedy, BYOB, tickets on the venue's Eventbrite.
 - 2026-09-28: Philadelphia moved from Sep 27 to Oct 4, still 7:30 PM at Next In Line Comedy. Chicago announced for Oct 24 at 6 PM at The Lincoln Lodge.
 - 2026-08-26: Aug 30 Washington DC show start time moved from 8 PM to 6 PM (end time moved from 10 PM to 8 PM accordingly), date unchanged, still DC Comedy Loft.
